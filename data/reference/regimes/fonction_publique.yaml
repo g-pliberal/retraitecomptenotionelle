@@ -1,0 +1,396 @@
+# Régimes de la fonction publique, 1853 -> aujourd'hui
+regimes:
+
+  - code: pensions_civiles_1853
+    nom: Régime des pensions civiles et militaires (loi du 9 juin 1853)
+    famille: fonction_publique
+    source_id: legifrance_textes
+    fiabilite: estimee
+    creation: 1853
+    fermeture: 1948
+    extinction: 1948
+    succede_a: []
+    integre_dans: fonction_publique_etat
+    population: Fonctionnaires civils et militaires de l'État.
+    hors_repartition: false
+    periodes:
+      - debut: 1930
+        fin: 1948
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.60
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.06
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        notes: >-
+          Antérieur à la répartition généralisée, mais versé sur crédits
+          budgétaires courants : fonctionnellement en répartition dès l'origine.
+          Retenue pour pension de 5 % puis 6 %. Catalogué à partir de 1930 pour
+          couvrir les carrières entrant dans le champ du modèle.
+
+  - code: fonction_publique_etat
+    nom: Régime des pensions civiles et militaires de retraite (Service des retraites de l'État)
+    famille: fonction_publique
+    source_id: sre_rapport_annuel
+    fiabilite: moyenne
+    creation: 1948
+    fermeture: null
+    extinction: null
+    succede_a: [pensions_civiles_1853]
+    integre_dans: null
+    population: Fonctionnaires titulaires de l'État, magistrats, militaires.
+    hors_repartition: false
+    periodes:
+      - debut: 1948
+        fin: 1963
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.06
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Loi du 20 septembre 1948 : 2 % par annuité, 37,5 annuités, 75 % du
+          traitement des six derniers mois. Catégorie active : ouverture à
+          55 ans, voire 50 ans pour les emplois « super-actifs ».
+      - debut: 1964
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.07
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Code des pensions civiles et militaires de retraite (loi du 26 décembre
+          1964). Retenue pour pension 6 % puis 7,85 %. Aucune décote :
+          la seule sanction d'une carrière courte est la proratisation.
+      - debut: 2004
+        fin: 2008
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi Fillon de 2003 : alignement de la durée sur le privé, création
+          d'une décote et d'une surcote dans la fonction publique, création du
+          RAFP sur les primes.
+      - debut: 2009
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi de financement de la sécurité sociale pour 2009 : la surcote passe
+          de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
+          même barème par ailleurs — seul le taux de surcote change.
+      - debut: 2011
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1029
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi de 2010 : alignement progressif de la retenue pour pension sur le
+          taux du privé (7,85 % -> 11,10 % en 2020), report des âges de 2 ans,
+          y compris pour les catégories actives (55 -> 57, 50 -> 52).
+      - debut: 2023
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1110
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion,
+           minimum_garanti, surcote_parentale]
+        notes: >-
+          Loi du 14 avril 2023 : catégories actives portées de 57 à 59 ans et de
+          52 à 54 ans. `taux_cotisation_retraite` ne porte ici que la RETENUE
+          SALARIALE, 11,10 % : c'est ce que dit `perimetre_taux: agent_seul`,
+          et c'est pourquoi `part_salariale` y vaut un.
+          La contribution de l'employeur est portée à part, dans
+          `legislation/contribution_employeur_public.csv` — 74,28 % pour les
+          civils de 2013 à 2024, 82,28 % en 2026 — et les scénarios 4 et 5 l'y
+          lisent. À garder en tête en la lisant : c'est un taux d'ÉQUILIBRE
+          budgétaire, fixé pour payer les pensions du moment, et non un taux
+          d'acquisition de droits.
+
+  - code: cnracl
+    nom: Caisse nationale de retraites des agents des collectivités locales
+    famille: fonction_publique
+    source_id: cdc_cnracl
+    fiabilite: moyenne
+    creation: 1945
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: Fonctionnaires territoriaux et hospitaliers.
+    hors_repartition: false
+    periodes:
+      - debut: 1945
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.07
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Ordonnance du 17 mai 1945. Règles calquées sur le code des pensions.
+          Catégorie active : ouverture à 55 ans (agents hospitaliers, police
+          municipale, sapeurs-pompiers…).
+      - debut: 2004
+        fin: 2008
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: Alignement Fillon.
+      - debut: 2009
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi de financement de la sécurité sociale pour 2009 : la surcote passe
+          de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
+          même barème par ailleurs — seul le taux de surcote change.
+      - debut: 2011
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1029
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Réforme de 2010 : âge d'ouverture porté à 62 ans, âge d'annulation de
+          la décote à 67. La période s'arrêtait à tort en 2011 avec les
+          paramètres de 2023, ce qui opposait l'âge légal de 64 ans à des
+          liquidations de 2011. Paramètres alignés sur ceux de l'État, dont ce
+          régime partage le code des pensions.
+      - debut: 2023
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1110
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion,
+           minimum_garanti, surcote_parentale]
+        notes: >-
+          Réforme de 2023. `taux_cotisation_retraite` ne porte que la retenue
+          salariale, 11,10 %. La contribution des employeurs territoriaux et
+          hospitaliers est dans
+          `legislation/contribution_employeur_public.csv`, où elle remonte à
+          1948 : 31,65 % en 2024, 34,65 % en 2025 (LFSS 2025, +3 points par an
+          jusqu'en 2028). C'est, là aussi, un taux d'équilibre.
+
+  - code: fspoeie
+    nom: Fonds spécial des pensions des ouvriers des établissements industriels de l'État
+    famille: fonction_publique
+    source_id: cdc_cnracl
+    fiabilite: estimee
+    creation: 1928
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: Ouvriers d'État (arsenaux, ateliers industriels de l'État).
+    hors_repartition: false
+    periodes:
+      - debut: 1930
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.06
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        notes: >-
+          Loi du 21 mars 1928. Ouverture à 55 ans pour les travaux insalubres.
+          Paramètres à certifier auprès de la Caisse des dépôts.
+      - debut: 2004
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1110
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, reversion, minimum_garanti]
+        notes: Aligné sur le code des pensions.
+
+  - code: rafp
+    nom: Retraite additionnelle de la fonction publique (ERAFP)
+    famille: additionnel_capitalise
+    source_id: erafp_parametres
+    fiabilite: haute
+    creation: 2005
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: Ensemble des fonctionnaires des trois versants.
+    hors_repartition: true
+    periodes:
+      - debut: 2005
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_taux_plein: 62
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: primes_uniquement
+        taux_cotisation_retraite: 0.10
+        part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
+          5 % agent + 5 % employeur sur les primes, dans la limite de 20 % du
+          traitement indiciaire. Conformément à la demande, les droits RAFP sont
+          isolés dans un compartiment de capitalisation distinct et ne sont pas
+          convertis en capital notionnel (cf. moteur/compartiments.py).

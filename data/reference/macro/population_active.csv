@@ -1,0 +1,136 @@
+# Population des 20 à 64 ans au 1er janvier, France
+# source_id: insee_projections_population
+# unite: personnes
+# fiabilite:
+#   certifiee (1962-2023) : estimations de population de l'INSEE.
+#   estimee   (2024-2070) : projections de population 2026, scénario
+#             central.
+#
+# À QUOI ELLE SERT, ET À QUOI ELLE NE SERT PAS
+# ---------------------------------------------
+# Elle ne compte aucun retraité : elle projette le DÉNOMINATEUR d'une
+# part de PIB. hypotheses_projection.yaml suppose l'emploi salarié
+# constant au-delà de la dernière année observée, et le dit neutre.
+# L'hypothèse est effectivement neutre pour l'indexation des comptes,
+# qui ne dépend que d'un taux de croissance ; elle ne l'est pas du tout
+# pour une dépense rapportée au PIB, où elle prêterait à la France de
+# 2070 douze pour cent d'actifs qu'aucune projection ne lui donne.
+#
+# Ce n'est pas non plus la population ACTIVE au sens du BIT — le
+# classeur de l'INSEE ne la projette pas. C'est la population d'âge
+# actif, dont on suppose le taux d'emploi constant. L'écart entre les
+# deux est une hypothèse assumée, et elle est écrite là où elle joue :
+# docs/limites.md, §5 ter.
+#
+# Ne pas modifier les années certifiées à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,effectif,fiabilite
+1962,25570714,certifiee
+1963,26050220,certifiee
+1964,26138623,certifiee
+1965,26204692,certifiee
+1966,26230524,certifiee
+1967,26445230,certifiee
+1968,26680104,certifiee
+1969,26980639,certifiee
+1970,27306346,certifiee
+1971,27646670,certifiee
+1972,27922461,certifiee
+1973,28189718,certifiee
+1974,28440403,certifiee
+1975,28662582,certifiee
+1976,28837955,certifiee
+1977,29087434,certifiee
+1978,29312574,certifiee
+1979,29523682,certifiee
+1980,29771726,certifiee
+1981,30183036,certifiee
+1982,30692321,certifiee
+1983,31152641,certifiee
+1984,31600901,certifiee
+1985,32013554,certifiee
+1986,32183834,certifiee
+1987,32366310,certifiee
+1988,32555134,certifiee
+1989,32757278,certifiee
+1990,32985839,certifiee
+1991,33196591,certifiee
+1992,33431760,certifiee
+1993,33672576,certifiee
+1994,33861341,certifiee
+1995,34826287,certifiee
+1996,34881038,certifiee
+1997,34928248,certifiee
+1998,35004973,certifiee
+1999,35106774,certifiee
+2000,35309851,certifiee
+2001,35583004,certifiee
+2002,35857967,certifiee
+2003,36140261,certifiee
+2004,36384483,certifiee
+2005,36647848,certifiee
+2006,36964121,certifiee
+2007,37293522,certifiee
+2008,37531799,certifiee
+2009,37719659,certifiee
+2010,37870703,certifiee
+2011,38026169,certifiee
+2012,38012222,certifiee
+2013,37950523,certifiee
+2014,37957071,certifiee
+2015,37835786,certifiee
+2016,37690520,certifiee
+2017,37577184,certifiee
+2018,37512310,certifiee
+2019,37509325,certifiee
+2020,37484752,certifiee
+2021,37610862,certifiee
+2022,37803666,certifiee
+2023,37956646,certifiee
+2024,38041888,projetee
+2025,38117174,projetee
+2026,38215215,projetee
+2027,38265497,projetee
+2028,38288066,projetee
+2029,38292956,projetee
+2030,38289535,projetee
+2031,38313934,projetee
+2032,38321090,projetee
+2033,38351430,projetee
+2034,38372281,projetee
+2035,38385254,projetee
+2036,38366959,projetee
+2037,38320087,projetee
+2038,38253166,projetee
+2039,38200694,projetee
+2040,38187809,projetee
+2041,38195802,projetee
+2042,38230253,projetee
+2043,38221426,projetee
+2044,38167491,projetee
+2045,38081928,projetee
+2046,37929466,projetee
+2047,37781624,projetee
+2048,37617641,projetee
+2049,37479179,projetee
+2050,37326628,projetee
+2051,37160928,projetee
+2052,36989318,projetee
+2053,36820277,projetee
+2054,36646652,projetee
+2055,36478860,projetee
+2056,36305103,projetee
+2057,36148422,projetee
+2058,35994104,projetee
+2059,35865485,projetee
+2060,35736500,projetee
+2061,35589157,projetee
+2062,35436477,projetee
+2063,35285416,projetee
+2064,35119343,projetee
+2065,34951922,projetee
+2066,34752256,projetee
+2067,34569357,projetee
+2068,34402262,projetee
+2069,34243956,projetee
+2070,34076591,projetee

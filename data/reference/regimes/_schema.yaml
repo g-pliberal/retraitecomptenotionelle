@@ -1,0 +1,296 @@
+# Schéma commun des fiches de régime
+# ===================================
+# Chaque fichier regimes/*.yaml (hors celui-ci) contient une clé `regimes`
+# qui est une liste de fiches conformes à ce schéma. Le chargeur
+# src/retraite_notionnelle/donnees/regimes.py valide contre ce schéma.
+
+schema_version: 1
+
+champs_regime:
+  code:        "identifiant court, stable, en minuscules (clé primaire)"
+  nom:         "libellé complet"
+  famille:     "base_prive | complementaire_prive | fonction_publique | special | non_salarie | agricole | liberal | additionnel_capitalise"
+  source_id:   "identifiant du jeu de données dans data/sources.yaml"
+  fiabilite:   "haute | moyenne | estimee — niveau de certification des paramètres"
+  creation:    "année de création du régime"
+  fermeture:   "année de fermeture aux nouveaux entrants (null si ouvert)"
+  extinction:  "année de disparition totale du régime (null si vivant)"
+  succede_a:   "liste de codes de régimes auxquels celui-ci succède"
+  integre_dans: "code du régime absorbant, le cas échéant"
+  population:  "description de la population couverte"
+  hors_repartition: "true si le régime est en capitalisation (exclu des comptes notionnels)"
+  periodes:    "liste de fiches de paramètres, cf. champs_periode"
+
+champs_periode:
+  debut: "première année d'application (incluse)"
+  fin:   "dernière année d'application (incluse), null si toujours en vigueur"
+
+  type_calcul:
+    description: "mode de liquidation en vigueur"
+    valeurs:
+      annuites:     "taux × salaire de référence × (durée validée / durée requise)"
+      points:       "nombre de points × valeur de service du point"
+      forfaitaire:  "montant forfaitaire, éventuellement proratisé"
+      mixte:        "part forfaitaire + part proportionnelle (ex. agricoles)"
+
+  age_ouverture:  "âge minimal de liquidation (années, décimales admises)"
+  age_taux_plein: "âge d'annulation de la décote / du taux plein d'office"
+  duree_requise_trimestres: "durée d'assurance requise pour le taux plein (null si sans objet)"
+  duree_requise_par_generation:
+    description: >-
+      Si vrai, la durée requise est lue dans
+      `legislation/duree_assurance_requise.csv` à l'ANNÉE DE NAISSANCE, et la
+      valeur ci-dessus ne sert que de repli pour les générations hors table.
+      C'est la règle depuis la loi du 22 juillet 1993 : deux assurés qui
+      liquident le même jour n'ont pas la même exigence s'ils ne sont pas de la
+      même génération. Absent ou faux, la durée est celle de la période, lue à
+      l'année de liquidation — ce qui reste correct avant 1993.
+    defaut: false
+
+  age_ouverture_par_generation:
+    description: >-
+      Si vrai, l'âge d'ouverture est lu dans
+      `legislation/age_ouverture_requis.csv` à l'ANNÉE DE NAISSANCE, et la
+      valeur ci-dessus ne sert que de repli. Réservé aux régimes alignés sur
+      l'âge légal général : les régimes spéciaux gardent le leur.
+    defaut: false
+  age_taux_plein_par_generation:
+    description: >-
+      Si vrai, l'âge d'annulation de la décote est lu dans
+      `legislation/age_annulation_decote.csv` à l'ANNÉE DE NAISSANCE, et la
+      valeur ci-dessus ne sert que de repli. La loi du 9 novembre 2010 fait
+      passer cet âge de 65 à 67 ans pour les seules générations 1951-1955 :
+      opposer 67 ans dès 2011, comme le faisait la fiche, l'appliquait à des
+      générations que la loi n'a jamais visées.
+    defaut: false
+
+  decote_par_generation:
+    description: >-
+      Si vrai, le coefficient de minoration est lu dans
+      `legislation/coefficient_minoration.csv` à l'ANNÉE DE NAISSANCE. La table
+      de l'article R. 351-27 vaut aussi bien pour l'ancien droit (2,5 % par
+      trimestre) que pour la montée en charge de la loi Fillon (jusqu'à 1,25 %
+      à partir de la génération 1953) : elle se branche donc sur toutes les
+      périodes des régimes alignés depuis 1983.
+    defaut: false
+
+  duree_proratisation_par_generation:
+    description: >-
+      Si vrai, le DÉNOMINATEUR de la proratisation est lu dans
+      `legislation/duree_proratisation.csv` à l'ANNÉE DE NAISSANCE, et non dans
+      la durée requise pour le taux plein. Ce sont deux paramètres distincts :
+      la loi du 22 juillet 1993 a fait monter la durée requise de 150 à 160
+      trimestres pour les générations 1934-1943, et n'a touché à la durée
+      maximale prise en compte par la proratisation (article R. 351-6) que pour
+      les générations 1944-1948. Un assuré né en 1945 se voit donc opposer
+      160 trimestres pour le taux et 154 pour la proratisation.
+
+      Le drapeau est réservé aux régimes qui suivent la règle du CODE DE LA
+      SÉCURITÉ SOCIALE — le régime général et les régimes alignés. La fonction
+      publique et les régimes spéciaux ont leur propre durée de proratisation,
+      calendaire et non générationnelle (article L. 13 du code des pensions) ;
+      elle n'est pas modélisée, et leur durée requise continue d'y faire office.
+
+      Quoi qu'il arrive, la durée de proratisation retenue ne dépasse jamais la
+      durée requise : les périodes anciennes, dont la durée maximale est plus
+      courte que 150 trimestres, gardent la leur.
+    defaut: false
+
+  salaire_reference_par_generation:
+    description: >-
+      Si vrai, le nombre d'années retenues au salaire annuel moyen est lu dans
+      `legislation/annees_salaire_reference.csv` à l'ANNÉE DE NAISSANCE : dix à
+      vingt-cinq années, une par génération, de 1934 à 1948 (loi du 22 juillet
+      1993). Ne vaut que pour un `salaire_reference` en meilleures années.
+    defaut: false
+
+  taux_plein: "taux de liquidation maximal (0.50 = 50 %)"
+
+  salaire_reference:
+    description: "assiette de calcul du salaire de référence"
+    valeurs: ["dernier_salaire", "derniers_6_mois", "10_meilleures_annees",
+              "25_meilleures_annees", "carriere_entiere", "sans_objet"]
+
+  assiette:
+    description: "borne d'assiette des cotisations"
+    valeurs: ["plafonnee", "deplafonnee", "tranche_1", "tranche_2", "tranche_a",
+              "tranche_2_arrco",
+              "tranche_b", "tranche_c", "hors_primes", "primes_uniquement", "forfaitaire",
+              "plafonnee_085_pass", "tranche_085_5_pass", "plafonnee_5_pass"]
+
+  taux_cotisation_retraite:
+    description: >-
+      Taux TOTAL de cotisation retraite (part salarié + part employeur, ou part
+      personnelle pour les non-salariés) affecté à ce régime sur cette assiette.
+      C'est la grandeur utilisée pour alimenter le compte notionnel lorsque le
+      paramètre `source_cotisations = taux_historiques`.
+      ATTENTION : pour les périodes marquées `perimetre_taux: agent_seul`, ce
+      champ ne porte QUE la retenue de l'agent — voir ce champ.
+    unite: "fraction de l'assiette"
+
+  part_salariale:
+    description: >-
+      Fraction du taux ci-dessus supportée par l'assuré lui-même. Le complément
+      est la part de l'employeur.
+
+      1.0 (défaut) couvre deux cas très différents et qui n'ont pas besoin d'être
+      distingués ici : les régimes de NON-SALARIÉS, où il n'y a pas d'employeur
+      et où la cotisation est intégralement personnelle ; et les périodes
+      `perimetre_taux: agent_seul`, dont le taux est déjà la seule retenue de
+      l'agent, la part de l'employeur public étant portée à part dans
+      `legislation/contribution_employeur_public.csv`.
+
+      Une valeur explicite est donc EXIGÉE de toute période de salariés dont le
+      taux est un total employeur compris — régime général, complémentaires,
+      MSA salariés, RAFP. `scripts/verifier_donnees.py` échoue si l'une manque.
+
+      La valeur est une part MOYENNE sur la période, comme le taux lui-même :
+      les fiches sont découpées par période législative, les taux salarié et
+      employeur bougent chacun à son rythme. Le contrôle de vraisemblance la
+      confronte à la transcription OpenFisca, année par année.
+    unite: "fraction, entre 0 et 1"
+    defaut: 1.0
+
+  taux_cotisation_deplafonnee:
+    description: >-
+      Taux TOTAL prélevé, sur la même période, sur la TOTALITÉ de la
+      rémunération — sans s'arrêter au plafond de l'assiette ci-dessus. Le
+      régime général en prélève un depuis 1983 : 0,44 % à l'origine, 2,41 %
+      depuis 2023.
+
+      Ce prélèvement N'OUVRE AUCUN DROIT dans le droit positif : il finance la
+      solidarité. Le scénario 1, qui doit coller à la loi, l'ignore donc, et
+      c'est voulu — aucun calcul de pension actuelle ne le lit.
+
+      Les comptes notionnels, eux, portent au compte ce qui a été VERSÉ : chaque
+      euro cotisé doit s'y retrouver. Ce champ était auparavant confondu avec
+      `taux_cotisation_retraite` — un seul taux, appliqué à l'assiette plafonnée
+      —, si bien que la déplafonnée s'arrêtait au plafond alors que la loi la
+      lève sur tout le salaire. En dessous du plafond les deux écritures sont
+      équivalentes ; au-dessus, une part de ce qui avait été payé manquait au
+      compte.
+
+      Un champ plutôt qu'une seconde période d'assiette `deplafonnee` : une
+      période supplémentaire serait entrée dans le calcul du scénario 1, qui
+      parcourt toutes les périodes actives d'un régime.
+    unite: "fraction de la rémunération entière"
+    defaut: 0.0
+
+  part_salariale_deplafonnee:
+    description: >-
+      Fraction de `taux_cotisation_deplafonnee` supportée par l'assuré. Elle
+      diffère largement de `part_salariale` — la déplafonnée est très
+      majoritairement patronale : 0 % jusqu'en 2003, 16,6 % depuis 2023 — d'où
+      un champ distinct plutôt qu'un partage commun.
+    unite: "fraction, entre 0 et 1"
+    defaut: 0.0
+
+  decote_par_trimestre: "abattement par trimestre manquant (fraction, null si aucun)"
+
+  bareme_decote:
+    description: >-
+      Barème de décote applicable. `regime_aligne` applique le coefficient
+      `decote_par_trimestre` ci-dessus, éventuellement lu à la génération, et
+      annule la décote à `age_taux_plein`. `fonction_publique` applique celui
+      de l'article L. 14 du code des pensions : le coefficient ET l'âge
+      d'annulation y montent en charge de 2006 à 2020, ce dernier étant la
+      LIMITE D'ÂGE du grade diminuée d'un nombre décroissant de trimestres
+      (`legislation/decote_fonction_publique.csv`).
+    valeurs: ["regime_aligne", "fonction_publique"]
+    defaut: regime_aligne
+
+  decote_annulee_par_la_duree:
+    description: >-
+      La durée d'assurance annule-t-elle la décote ? Vrai depuis l'ordonnance
+      du 26 mars 1982, qui ouvre le taux plein à 60 ans à qui a la durée
+      requise ; le nombre de trimestres de décote est alors le plus faible des
+      deux décomptes, durée manquante ou âge manquant. `false` pour les
+      périodes antérieures, où le taux ne dépendait QUE de l'âge.
+    defaut: true
+
+  decote_trimestres_maximum:
+    description: >-
+      Nombre maximal de trimestres de décote opposables. Vingt dans tous les
+      régimes qui en appliquent une : au-delà, le taux ne descend plus.
+      `null` lève le plafond.
+    defaut: 20
+
+  surcote_par_trimestre: "majoration par trimestre supplémentaire (fraction, null si aucune)"
+
+  abattement_points:
+    description: >-
+      Barème d'abattement d'un régime EN POINTS liquidé avant le taux plein.
+      `decote_du_regime_de_base` applique le coefficient de minoration ci-dessus ;
+      `agirc_arrco` applique les coefficients d'anticipation propres à ce
+      régime — deux tables, l'une indexée sur les trimestres manquants, l'autre
+      sur l'âge, dont la plus avantageuse est retenue.
+    valeurs: ["decote_du_regime_de_base", "agirc_arrco"]
+    defaut: decote_du_regime_de_base
+
+  plafond_majoration_enfants:
+    description: >-
+      Plafond en euros par an de la majoration pour enfants, et année à
+      laquelle il est publié (`plafond_majoration_annee`). Le plafond suit
+      ensuite la valeur de service du point. `null` : majoration non plafonnée,
+      ce qui est le cas de tous les régimes de base.
+
+  borne_basse_euros:
+  borne_haute_euros:
+    description: >-
+      Bornes de l'assiette exprimées EN EUROS plutôt qu'en plafonds de la
+      Sécurité sociale. La plupart des régimes découpent leur assiette en
+      multiples du plafond, qui suit les salaires ; d'autres la fixent en euros
+      et ne l'indexent pas — les tranches de la complémentaire des avocats
+      valent 42 507 € en 2023, en 2025 et en 2026, quand le plafond passait de
+      43 992 à 48 060 €. Les exprimer en plafonds les ferait dériver.
+      `null` : les bornes de `assiette` s'appliquent.
+
+  pension_forfaitaire_annuelle:
+  pension_forfaitaire_annee:
+    description: >-
+      Pension annuelle servie à taux plein par un régime FORFAITAIRE, dans les
+      euros de `pension_forfaitaire_annee`, proratisée par la durée. Elle ne
+      dépend pas du revenu : c'est tout l'objet d'un régime forfaitaire, et
+      c'est ce qu'un compte notionnel supprime le plus radicalement. Sans ce
+      montant, un `type_calcul: forfaitaire` retomberait sur la moyenne des
+      revenus, c'est-à-dire sur un taux de remplacement de 100 %.
+
+  points_minimum_annuels:
+    description: >-
+      Points garantis chaque année à qui cotise au régime, quelle que soit son
+      assiette — la garantie minimale de points de l'Agirc, 120 points par an
+      de 1989 à 2018. Droit gratuit, sans contrepartie de cotisation
+      proportionnelle : un cadre payé sous le plafond de la Sécurité sociale,
+      dont la tranche B est nulle, en acquérait autant qu'un autre.
+      `null` : aucune garantie.
+
+  points_maximum:
+    description: >-
+      Nombre de points attribués quand l'assiette atteint le repère décrit par
+      les deux champs suivants. Sert aux régimes dont le BARÈME est écrit en
+      points et non en prix d'achat : 525 points au plafond pour le régime de
+      base des libéraux, 100 points pour 1 820 SMIC à la complémentaire
+      agricole. `null` : les points s'achètent, cf. `valeurs_point.csv`.
+
+  assiette_repere_smic:
+    description: >-
+      Repère d'assiette, exprimé en heures de SMIC. `null` : le repère est la
+      borne haute de l'assiette, en plafonds de la Sécurité sociale.
+
+  assiette_plancher:
+    description: >-
+      L'assiette est-elle relevée au repère quand elle lui est inférieure ?
+      C'est l'assiette minimale de la complémentaire agricole, qui ouvre ses
+      cent points même à un revenu plus faible.
+    defaut: false
+
+  avantages_non_contributifs:
+    description: >-
+      Liste des droits gratuits en vigueur sur la période. Tous sont NEUTRALISÉS
+      dans les scénarios notionnels ; ils ne sont conservés que pour la
+      reconstitution du scénario « système actuel ».
+    valeurs_usuelles: ["minimum_contributif", "minimum_garanti", "aspa",
+                       "majoration_enfants", "mda", "avpf", "bonifications",
+                       "periodes_assimilees", "categorie_active", "reversion"]
+
+  notes: "texte libre — précisions, ruptures, renvois aux textes"

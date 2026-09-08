@@ -1,0 +1,585 @@
+{
+ "certifie_le": "2026-09-07",
+ "series": {
+  "age_ouverture_requis": {
+   "ajoutees": 0,
+   "colonne": "age",
+   "corrigees": 0,
+   "empreinte": "87324cfad7650683",
+   "identiques": 78,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale D. 161-2-1-9",
+   "valeurs": 78
+  },
+  "annees_salaire_reference": {
+   "ajoutees": 0,
+   "colonne": "annees",
+   "corrigees": 0,
+   "empreinte": "6e131b394a4502fe",
+   "identiques": 16,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale R. 351-29-1",
+   "valeurs": 16
+  },
+  "carriere_longue": {
+   "ajoutees": 0,
+   "colonne": "age_depart",
+   "corrigees": 0,
+   "empreinte": "60d9bb150a95f66c",
+   "identiques": 4,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale L. 351-1-1 et D. 351-1-1",
+   "valeurs": 4
+  },
+  "coefficient_minoration": {
+   "ajoutees": 0,
+   "colonne": "coefficient",
+   "corrigees": 0,
+   "empreinte": "4b9bcbfdd6753594",
+   "identiques": 76,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale R. 351-27",
+   "valeurs": 76
+  },
+  "decote_fonction_publique_coefficient": {
+   "ajoutees": 0,
+   "colonne": "coefficient",
+   "corrigees": 0,
+   "empreinte": "afaf067a8d867ac7",
+   "identiques": 14,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III",
+   "valeurs": 14
+  },
+  "decote_fonction_publique_trimestres": {
+   "ajoutees": 0,
+   "colonne": "trimestres_avant_limite",
+   "corrigees": 0,
+   "empreinte": "0d89630d58f3899d",
+   "identiques": 14,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III",
+   "valeurs": 14
+  },
+  "depenses_retraite": {
+   "ajoutees": 0,
+   "colonne": "depenses_meur",
+   "corrigees": 0,
+   "empreinte": "9f04d76baf7cce67",
+   "identiques": 66,
+   "niveau": "certifiee",
+   "source": "DREES, Comptes de la protection sociale, risque vieillesse-survie",
+   "valeurs": 66
+  },
+  "depenses_retraite_regimes": {
+   "ajoutees": 0,
+   "colonne": "depenses_meur",
+   "corrigees": 0,
+   "empreinte": "dd24a24c483059e2",
+   "identiques": 455,
+   "niveau": "certifiee",
+   "source": "DREES, Comptes de la protection sociale, risque vieillesse-survie par organisme",
+   "valeurs": 455
+  },
+  "duree_assurance_requise": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "eb9e393edaf923f5",
+   "identiques": 19,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-3",
+   "valeurs": 19
+  },
+  "duree_assurance_requise_1993": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "7401db09a3911535",
+   "identiques": 9,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale R. 351-45 II",
+   "valeurs": 9
+  },
+  "duree_assurance_requise_decrets": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "14397446493bf12c",
+   "identiques": 5,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décrets pris pour l'application de la loi du 21 août 2003 et de celle du 9 novembre 2010",
+   "valeurs": 5
+  },
+  "duree_proratisation": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "88a705f1e8ec84bd",
+   "identiques": 5,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale R. 351-6 II",
+   "valeurs": 5
+  },
+  "employeur_public_cnracl": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "9061fd34656bebfc",
+   "identiques": 40,
+   "niveau": "haute",
+   "source": "OpenFisca-France, décrets CNRACL et barèmes de la Caisse des dépôts",
+   "valeurs": 40
+  },
+  "employeur_public_cnracl_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "acd0d99a25bca141",
+   "identiques": 41,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 5 II, et décret n° 47-1846 du 19 septembre 1947, article 3",
+   "valeurs": 41
+  },
+  "employeur_public_etat": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "adce04ab61f245f8",
+   "identiques": 21,
+   "niveau": "certifiee",
+   "source": "Service des retraites de l'État, fiche « Historique des taux de cotisations »",
+   "valeurs": 21
+  },
+  "employeur_public_etat_implicite": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "f388868c5194a5a4",
+   "identiques": 11,
+   "niveau": "haute",
+   "source": "OpenFisca-France, taux implicite du jaune « pensions » du PLF 2011",
+   "valeurs": 11
+  },
+  "employeur_public_sncf": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "dc7b277485df7db5",
+   "identiques": 7,
+   "niveau": "haute",
+   "source": "OpenFisca-France, arrêtés annuels fixant les composantes T1 et T2",
+   "valeurs": 7
+  },
+  "employeur_public_sncf_textes": {
+   "ajoutees": 0,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "1cd4a73db65abbc8",
+   "identiques": 5,
+   "niveau": "certifiee",
+   "source": "DILA, arrêtés annuels du taux T1 (base JORF) et décret n° 2007-1056 du 28 juin 2007, article 2 IV (base LEGI)",
+   "valeurs": 5
+  },
+  "esperance_65_derivee": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "eb9ed5da75656a7a",
+   "identiques": 28,
+   "niveau": "haute",
+   "source": "dérivée des quotients INED de Vallin et Meslé",
+   "valeurs": 28
+  },
+  "esperances_projetees": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "78b7c81e9c34c206",
+   "identiques": 600,
+   "niveau": "projetee",
+   "source": "dérivée des quotients projetés de l'INSEE, projections 2026",
+   "valeurs": 600
+  },
+  "esperances_vie": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "0ddd59a38e01cfd9",
+   "identiques": 450,
+   "niveau": "certifiee",
+   "source": "INSEE BDM (e0, e60) et OCDE DSD_HEALTH_STAT@DF_LE (e65)",
+   "valeurs": 450
+  },
+  "inflation": {
+   "ajoutees": 0,
+   "colonne": "variation",
+   "corrigees": 0,
+   "empreinte": "545d9a49df7d26b5",
+   "identiques": 76,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbanks 000008965 et 001764363",
+   "valeurs": 76
+  },
+  "masse_salariale": {
+   "ajoutees": 0,
+   "colonne": "variation_nominale",
+   "corrigees": 0,
+   "empreinte": "79ffd6c89abaa812",
+   "identiques": 76,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbank 011785411",
+   "valeurs": 76
+  },
+  "minimum_contributif": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "86693c4efe70d0d7",
+   "identiques": 6,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale D. 351-2-1 et D. 173-21-0-0-1",
+   "valeurs": 6
+  },
+  "minimum_garanti_indice": {
+   "ajoutees": 0,
+   "colonne": "indice_majore",
+   "corrigees": 0,
+   "empreinte": "edcee2bbabc6d02b",
+   "identiques": 10,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
+   "valeurs": 10
+  },
+  "minimum_garanti_part": {
+   "ajoutees": 0,
+   "colonne": "part_15_ans",
+   "corrigees": 0,
+   "empreinte": "c55abedf9a3ebfb5",
+   "identiques": 10,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
+   "valeurs": 10
+  },
+  "minimum_garanti_points_15_30": {
+   "ajoutees": 0,
+   "colonne": "points_15_30",
+   "corrigees": 0,
+   "empreinte": "9cb988adb4af7778",
+   "identiques": 10,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
+   "valeurs": 10
+  },
+  "minimum_garanti_points_30_40": {
+   "ajoutees": 0,
+   "colonne": "points_30_40",
+   "corrigees": 0,
+   "empreinte": "1bed00f6a0b7883c",
+   "identiques": 10,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
+   "valeurs": 10
+  },
+  "minimum_garanti_reference": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "7b499a87b120f1f1",
+   "identiques": 2,
+   "niveau": "certifiee",
+   "source": "Service des retraites de l'État, page du minimum garanti",
+   "valeurs": 2
+  },
+  "minimum_garanti_seuil": {
+   "ajoutees": 0,
+   "colonne": "trimestres_seuil",
+   "corrigees": 0,
+   "empreinte": "ccf014eb1e42d6ef",
+   "identiques": 10,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
+   "valeurs": 10
+  },
+  "minimum_vieillesse": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "8d5c6c86331ea261",
+   "identiques": 9,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale, article D. 815-1",
+   "valeurs": 9
+  },
+  "pib_courant": {
+   "ajoutees": 0,
+   "colonne": "pib_meur",
+   "corrigees": 0,
+   "empreinte": "209ce398e76b837a",
+   "identiques": 77,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbank 011779992",
+   "valeurs": 77
+  },
+  "pib_nominal": {
+   "ajoutees": 0,
+   "colonne": "variation_nominale",
+   "corrigees": 0,
+   "empreinte": "e4e5db4f2d0dabe0",
+   "identiques": 76,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbank 011779992",
+   "valeurs": 76
+  },
+  "plafond": {
+   "ajoutees": 0,
+   "colonne": "pass_eur",
+   "corrigees": 0,
+   "empreinte": "4ff3567f49e62767",
+   "identiques": 25,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbank 000822494",
+   "valeurs": 25
+  },
+  "plafond_ancien": {
+   "ajoutees": 0,
+   "colonne": "pass_eur",
+   "corrigees": 0,
+   "empreinte": "7cf0228bbbe60ce6",
+   "identiques": 40,
+   "niveau": "haute",
+   "source": "OpenFisca-France, plafond_securite_sociale_annuel.yaml",
+   "valeurs": 40
+  },
+  "plafond_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "pass_eur",
+   "corrigees": 0,
+   "empreinte": "70f5ac6a99c4053f",
+   "identiques": 31,
+   "niveau": "certifiee",
+   "source": "DILA, base JORF, décrets portant fixation du plafond de la sécurité sociale",
+   "valeurs": 31
+  },
+  "point_indice_fonction_publique": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "aff9e1938730bd29",
+   "identiques": 36,
+   "niveau": "haute",
+   "source": "OpenFisca-France, point_indice_en_euros.yaml",
+   "valeurs": 36
+  },
+  "point_indice_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "e2ce048367b5e2b0",
+   "identiques": 32,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décret n° 85-1148 du 24 octobre 1985, article 3",
+   "valeurs": 32
+  },
+  "population_active": {
+   "ajoutees": 62,
+   "colonne": "effectif",
+   "corrigees": 0,
+   "empreinte": "8f27d54abe3f73fa",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE, estimations de population, scénario central des projections 2026",
+   "valeurs": 62
+  },
+  "population_active_projetee": {
+   "ajoutees": 47,
+   "colonne": "effectif",
+   "corrigees": 0,
+   "empreinte": "67acabf31a7d2563",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "INSEE, projections de population 2026, scénario central",
+   "valeurs": 47
+  },
+  "population_par_age": {
+   "ajoutees": 3410,
+   "colonne": "effectif",
+   "corrigees": 0,
+   "empreinte": "86f910a2a8348641",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE, estimations de population, scénario central des projections 2026",
+   "valeurs": 3410
+  },
+  "population_par_age_projetee": {
+   "ajoutees": 2585,
+   "colonne": "effectif",
+   "corrigees": 0,
+   "empreinte": "e11ac05261b4c4b0",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "INSEE, projections de population 2026, scénario central",
+   "valeurs": 2585
+  },
+  "productivite": {
+   "ajoutees": 0,
+   "colonne": "variation_reelle",
+   "corrigees": 0,
+   "empreinte": "9c69741a05c75be3",
+   "identiques": 76,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbanks 011785223 et 011793334",
+   "valeurs": 76
+  },
+  "quotients_mortalite": {
+   "ajoutees": 0,
+   "colonne": "qx",
+   "corrigees": 0,
+   "empreinte": "428254319c1001b4",
+   "identiques": 6850,
+   "niveau": "certifiee",
+   "source": "Eurostat demo_mlifetable, quotients de mortalité par âge",
+   "valeurs": 6850
+  },
+  "quotients_mortalite_anciens": {
+   "ajoutees": 0,
+   "colonne": "qx",
+   "corrigees": 0,
+   "empreinte": "ccd29a507d00e837",
+   "identiques": 18466,
+   "niveau": "certifiee",
+   "source": "INED, tables de Vallin et Meslé, quotients du moment par âge",
+   "valeurs": 18466
+  },
+  "salaire_moyen": {
+   "ajoutees": 0,
+   "colonne": "variation_nominale",
+   "corrigees": 0,
+   "empreinte": "1b8332a5465c4c4c",
+   "identiques": 76,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbanks 011785411 et 011793486",
+   "valeurs": 76
+  },
+  "smic_horaire": {
+   "ajoutees": 0,
+   "colonne": "smic_horaire",
+   "corrigees": 0,
+   "empreinte": "1e664f4810d8ce5f",
+   "identiques": 20,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
+   "valeurs": 20
+  },
+  "valeurs_point": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "b40e79d63ac553de",
+   "identiques": 306,
+   "niveau": "haute",
+   "source": "OpenFisca-France-Pension, paramètres des régimes en points",
+   "valeurs": 306
+  },
+  "valeurs_point_agirc_arrco": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "b3071e53b07b541a",
+   "identiques": 275,
+   "niveau": "certifiee",
+   "source": "Fédération Agirc-Arrco, compilation des valeurs de point (régime unifié, Agirc, Arrco et UNIRS)",
+   "valeurs": 275
+  },
+  "valeurs_point_agirc_arrco_en_cours": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "e398b564f1c064df",
+   "identiques": 1,
+   "niveau": "haute",
+   "source": "Fédération Agirc-Arrco, valeur en vigueur dans l'année en cours",
+   "valeurs": 1
+  },
+  "valeurs_point_cnavpl": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "d7c41cf89ee07d82",
+   "identiques": 13,
+   "niveau": "certifiee",
+   "source": "CNAVPL, recueils statistiques annuels",
+   "valeurs": 13
+  },
+  "valeurs_point_cnbf": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "988dba33ad15f670",
+   "identiques": 18,
+   "niveau": "certifiee",
+   "source": "CNBF, barèmes annuels des cotisations et prestations",
+   "valeurs": 18
+  },
+  "valeurs_point_ircantec": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "08dba684ba1976e6",
+   "identiques": 153,
+   "niveau": "certifiee",
+   "source": "Caisse des dépôts, barèmes Ircantec (IRC_BAR_01 et IRC_BAR_02)",
+   "valeurs": 153
+  },
+  "valeurs_point_msa": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "fcfafd64be80c849",
+   "identiques": 20,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code rural D. 732-166",
+   "valeurs": 20
+  },
+  "valeurs_point_rafp": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "105e66ec7c4bbe5d",
+   "identiques": 44,
+   "niveau": "certifiee",
+   "source": "ERAFP, évolution des valeurs du point depuis la création du RAFP",
+   "valeurs": 44
+  },
+  "valeurs_point_texte": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "33772abba31cf52b",
+   "identiques": 1,
+   "niveau": "moyenne",
+   "source": "Accord national interprofessionnel du 17 novembre 2017",
+   "valeurs": 1
+  },
+  "valeurs_point_unirs": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "f456045e1b51f980",
+   "identiques": 123,
+   "niveau": "moyenne",
+   "source": "UNIRS tenant lieu de point Arrco avant 1999 — barème de la fédération Agirc-Arrco, substitution du dépôt",
+   "valeurs": 123
+  },
+  "validation_trimestres": {
+   "ajoutees": 0,
+   "colonne": "heures",
+   "corrigees": 0,
+   "empreinte": "37614b2a66b3bf4e",
+   "identiques": 2,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale R. 351-9",
+   "valeurs": 2
+  }
+ }
+}

@@ -1,0 +1,712 @@
+# Régimes des travailleurs non salariés : artisans, commerçants, libéraux,
+# avocats, exploitants et salariés agricoles.
+regimes:
+
+  - code: cancava
+    nom: Caisse autonome nationale de compensation de l'assurance vieillesse artisanale
+    famille: non_salarie
+    source_id: cor_panorama_regimes
+    fiabilite: estimee
+    creation: 1949
+    fermeture: 2006
+    extinction: 2006
+    succede_a: []
+    integre_dans: rsi
+    population: Artisans.
+    hors_repartition: false
+    periodes:
+      - debut: 1949
+        fin: 1972
+        type_calcul: points
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.085
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Loi du 17 janvier 1948 créant les régimes autonomes des non-salariés.
+          Régime en points jusqu'à l'alignement de 1973.
+      - debut: 1973
+        fin: 2006
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 0.50
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          Loi du 3 juillet 1972 : ALIGNEMENT du régime de base des artisans sur
+          le régime général à compter du 1er janvier 1973. Les points acquis
+          avant 1973 sont conservés et convertis (« droits en points »).
+          L'alignement de l'article L. 634-2 emporte les règles familiales du
+          régime général : majoration de durée d'assurance et majoration pour
+          trois enfants. La fiche ne les portait pas, et le moteur ne les
+          servait donc pas à une artisane.
+
+  - code: organic
+    nom: Organisation autonome nationale de l'industrie et du commerce
+    famille: non_salarie
+    source_id: cor_panorama_regimes
+    fiabilite: estimee
+    creation: 1949
+    fermeture: 2006
+    extinction: 2006
+    succede_a: []
+    integre_dans: rsi
+    population: Commerçants et industriels.
+    hors_repartition: false
+    periodes:
+      - debut: 1949
+        fin: 1972
+        type_calcul: points
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.085
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: Régime en points, symétrique de la CANCAVA.
+      - debut: 1973
+        fin: 2006
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 0.50
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          Aligné sur le régime général en 1973, règles familiales comprises,
+          symétrique de la CANCAVA.
+
+  - code: rsi
+    nom: Régime social des indépendants
+    famille: non_salarie
+    source_id: cor_panorama_regimes
+    fiabilite: moyenne
+    creation: 2006
+    fermeture: 2018
+    extinction: 2020
+    succede_a: [cancava, organic]
+    integre_dans: regime_general
+    population: Artisans, commerçants et industriels.
+    hors_repartition: false
+    periodes:
+      - debut: 2006
+        fin: 2008
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.50
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1775
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          Fusion CANCAVA + ORGANIC + AMPI. Supprimé au 1er janvier 2018
+          (« suppression du RSI »), adossement au régime général achevé en 2020
+          sous le nom de Sécurité sociale des indépendants puis intégration
+          complète à la CNAV.
+      - debut: 2009
+        fin: 2018
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.50
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1775
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          Loi de financement de la sécurité sociale pour 2009 : la surcote passe
+          de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
+          même barème par ailleurs — seul le taux de surcote change.
+
+  - code: rci
+    nom: Régime complémentaire des indépendants
+    famille: non_salarie
+    source_id: cor_panorama_regimes
+    fiabilite: moyenne
+    creation: 2013
+    fermeture: null
+    extinction: null
+    succede_a: [rco_artisans, nric]
+    integre_dans: null
+    population: Artisans, commerçants et industriels.
+    hors_repartition: false
+    periodes:
+      - debut: 2013
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.07
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Fusion au 1er janvier 2013 du régime complémentaire des artisans
+          (créé en 1979) et du Nouveau régime complémentaire des industriels
+          et commerçants (NRCI, 2004). 7 % sous plafond, 8 % au-delà.
+
+  - code: cnavpl
+    nom: Régime de base des professions libérales (CNAVPL)
+    famille: liberal
+    source_id: cnavpl_parametres
+    fiabilite: moyenne
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Professions libérales réparties en dix sections professionnelles
+      (CARMF, CARPIMKO, CARCDSF, CAVP, CAVEC, CAVAMAC, CAVOM, CIPAV, CRN, CAVA).
+    hors_repartition: false
+    periodes:
+      - debut: 1949
+        fin: 2003
+        type_calcul: points
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: forfaitaire
+        taux_cotisation_retraite: 0.085
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Régime de base en points assis sur des CLASSES DE COTISATION
+          forfaitaires jusqu'à la réforme de 2004 : la reconstitution du compte
+          notionnel exige la grille des classes par année et par section
+          (non encore intégrée — voir data/reference/regimes/TODO_liberaux.md).
+      - debut: 2004
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 450
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_085_pass
+        taux_cotisation_retraite: 0.0823
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Réforme du 21 août 2003 : régime de base unique en points,
+          proportionnel au revenu, sur DEUX TRANCHES — d'où deux fiches par
+          période, qui se cumulent comme le fait la cotisation elle-même.
+          PREMIÈRE TRANCHE avant 2015 : 0 à 0,85 plafond, 450 points au maximum.
+          Le régime n'attribue pas un nombre de points proportionnel à la
+          cotisation mais un nombre PLAFONNÉ de points par tranche : c'est un
+          barème en points, et c'est lui — et non un prix d'achat, que la caisse
+          ne publie pas — qui convertit ici le revenu en droits.
+          Les taux de 8,23 % et 1,87 % sont ceux que la CNAVPL publie dans ses
+          recueils statistiques, versés certifiés dans valeurs_point.csv avec la
+          valeur de service du point (0,5731 € en 2021, 0,6540 € en 2025). Ils
+          ne sont publiés que depuis 2021 et sont repris ici pour 2004-2014
+          faute de série antérieure : cela ne déplace pas les points acquis, qui
+          ne dépendent pas du taux, mais seulement le flux versé au compte
+          notionnel.
+      - debut: 2004
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 100
+        salaire_reference: carriere_entiere
+        assiette: tranche_085_5_pass
+        taux_cotisation_retraite: 0.0187
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
+      - debut: 2015
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 525
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0823
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Depuis 2015 : première tranche de 0 à 1 plafond, 525 points au
+          maximum. Chaque section professionnelle gère en outre un régime
+          complémentaire obligatoire aux paramètres propres, non paramétré ici :
+          la simulation d'un libéral reste incomplète de ce côté.
+      - debut: 2015
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 25
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.0187
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Seconde tranche depuis 2015 : 0 à 5 plafonds, 25 points au maximum.
+          Elle part de zéro et recouvre donc la première — c'est bien la règle
+          du régime, les deux cotisations se cumulant sous le plafond.
+
+  - code: cnbf
+    nom: Caisse nationale des barreaux français
+    famille: liberal
+    source_id: cnbf_parametres
+    fiabilite: moyenne
+    creation: 1948
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: Avocats.
+    hors_repartition: false
+    periodes:
+      - debut: 1948
+        fin: 2003
+        type_calcul: forfaitaire
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        salaire_reference: sans_objet
+        assiette: forfaitaire
+        taux_cotisation_retraite: 0.09
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Régime de base FORFAITAIRE : la pension ne dépend pas du revenu mais
+          de la durée. Dans un compte notionnel, cette déconnexion disparaît
+          entièrement — c'est l'un des régimes les plus transformés par la
+          réforme simulée.
+      - debut: 2004
+        fin: null
+        type_calcul: forfaitaire
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: sans_objet
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.0320
+        pension_forfaitaire_annuelle: 19154
+        pension_forfaitaire_annee: 2026
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          RÉGIME DE BASE SEUL, depuis que la fiche a été scindée. Sa pension est
+          FORFAITAIRE : 19 154 € par an au taux plein en 2026, proratisés par la
+          durée, quel que soit le revenu. C'est la particularité du régime, et
+          c'est ce qu'un compte notionnel supprime le plus radicalement — la
+          pension y redevient proportionnelle aux cotisations.
+          La fiche agrégeait auparavant la base et le complémentaire en un seul
+          taux de 11,40 %, calculé au rendement instantané. Elle portait en
+          outre `salaire_reference: sans_objet` sans qu'aucun montant forfaitaire
+          ne prenne le relais : si la période avait été lue en annuités, elle
+          aurait servi la moyenne des revenus, c'est-à-dire un taux de
+          remplacement de 100 %.
+          Le taux porté ici est celui de la seule cotisation PROPORTIONNELLE au
+          revenu net, 3,20 % (barème CNBF 2026), plafonnée à 297 549 €. La
+          cotisation forfaitaire par tranche d'ancienneté — 363 € la première
+          année, 1 988 € à partir de la sixième — n'est pas modélisée : elle ne
+          dépend pas du revenu, et le compte notionnel ne sait porter qu'une
+          fraction d'assiette. C'est un écart documenté dans docs/limites.md.
+
+  - code: cnbf_complementaire
+    nom: Régime complémentaire obligatoire des avocats (CNBF)
+    famille: liberal
+    source_id: cnbf_baremes
+    fiabilite: haute
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Avocats. Régime en points, obligatoire, à trois classes de cotisation —
+      C1, C2 et C2+ — dont seule la première s'impose sans option.
+    hors_repartition: false
+    periodes:
+      - debut: 1979
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.0800
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Avant 2017, la CNBF ne met en ligne aucun barème exploitable : ces
+          années restent au rendement instantané, sur un taux moyen de 8 %
+          représentant la classe C1 sur un revenu de milieu de grille. La
+          progressivité par tranches n'est donc pas reproduite ici.
+
+      - debut: 2019
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 0
+        borne_haute_euros: 42507
+        taux_cotisation_retraite: 0.0700
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          PREMIÈRE TRANCHE DE LA GRILLE, et la seule que les trois classes
+          partagent : 7,00 % de 1 € à 42 507 €. Les quatre tranches suivantes
+          sont portées par les périodes ci-dessous.
+          LES TRANCHES SONT FIXÉES EN EUROS, ET LA CAISSE NE LES INDEXE PAS :
+          42 507 € en 2023, en 2025 et en 2026, quand le plafond de la Sécurité
+          sociale passait de 43 992 à 48 060 € sur la même période. Les exprimer
+          en plafonds, comme le fait le reste du catalogue, les ferait donc
+          dériver d'année en année — d'où le champ `borne_haute_euros`, écrit
+          pour ce régime et utilisable par tout autre qui fixerait son assiette
+          de la même façon. Le barème de 2019 portait 41 674 € : la caisse
+          révise ces bornes, mais rarement.
+          CLASSE C1 RETENUE. Trois classes coexistent, et rien ne permet de
+          deviner celle d'un avocat donné. C1 est celle qui s'applique SANS
+          option, et le modèle ne prête jamais à personne un avantage
+          facultatif — même règle que pour les minima sous condition de demande.
+
+      - debut: 2019
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 42507
+        borne_haute_euros: 85014
+        taux_cotisation_retraite: 0.1040
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: Deuxième tranche de la grille, classe C1 (barème 2026).
+
+      - debut: 2019
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 85014
+        borne_haute_euros: 127521
+        taux_cotisation_retraite: 0.1220
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: Troisième tranche de la grille, classe C1 (barème 2026).
+
+      - debut: 2019
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 127521
+        borne_haute_euros: 170028
+        taux_cotisation_retraite: 0.1400
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: Quatrième tranche de la grille, classe C1 (barème 2026).
+
+      - debut: 2019
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 170028
+        borne_haute_euros: 212535
+        taux_cotisation_retraite: 0.1580
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Cinquième et dernière tranche de la grille, classe C1 (barème 2026).
+          Au-delà de 212 535 €, la cotisation ne progresse plus : le revenu
+          excédentaire n'ouvre aucun droit complémentaire.
+
+  - code: msa_salaries
+    nom: Régime des salariés agricoles (MSA)
+    famille: agricole
+    source_id: msa_parametres
+    fiabilite: moyenne
+    creation: 1930
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: Salariés de l'agriculture.
+    hors_repartition: false
+    periodes:
+      - debut: 1930
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 0.50
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1787
+        part_salariale: 0.40   # régime aligné sur le régime général, dont il suit la répartition
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [minimum_contributif, majoration_enfants, mda, reversion,
+           periodes_assimilees, surcote_parentale]
+        notes: >-
+          Régime ALIGNÉ sur le régime général depuis l'origine (mêmes règles de
+          calcul, gestion distincte). Complémentaire : Agirc-Arrco.
+
+  - code: msa_non_salaries
+    nom: Régime des non-salariés agricoles (MSA — exploitants)
+    famille: agricole
+    source_id: msa_parametres
+    fiabilite: moyenne
+    creation: 1952
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: Chefs d'exploitation, conjoints collaborateurs, aides familiaux.
+    hors_repartition: false
+    periodes:
+      - debut: 1952
+        fin: 2002
+        type_calcul: mixte
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: 150
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: forfaitaire
+        taux_cotisation_retraite: 0.085
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Loi du 10 juillet 1952 créant l'assurance vieillesse agricole (AVA).
+          Retraite en deux parts : forfaitaire (indépendante du revenu) et
+          proportionnelle en points. La part forfaitaire est un droit quasi
+          non contributif : elle disparaît dans les scénarios notionnels.
+      - debut: 2003
+        fin: null
+        type_calcul: mixte
+        age_ouverture: 64
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1737
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [minimum_vieillesse, pension_majoree_reference, reversion]
+        notes: >-
+          Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
+          des non-salariés agricoles, en points. Cette fiche ne porte plus que
+          l'étage de BASE : la RCO a désormais la sienne (`msa_rco`), et le taux
+          de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
+          s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
+          neutralisé dans les scénarios notionnels.
+          Ce qui reste hors du modèle est le barème du régime de base, dont la
+          retraite proportionnelle attribue de 23 à 113 points par tranche de
+          revenu, sans série publiée ; la valeur de son point n'est entrée dans
+          le code qu'en 2025 (R. 732-66, 4,589 € au 1er janvier 2025 ; le COR
+          donne 4,264 € pour 2023). La part proportionnelle de la base reste
+          donc au rendement instantané. Voir docs/limites.md §1.
+
+  - code: msa_rco
+    nom: Retraite complémentaire obligatoire des non-salariés agricoles (RCO)
+    famille: agricole
+    source_id: dila_legi_msa
+    fiabilite: haute
+    creation: 2003
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: Chefs d'exploitation, conjoints collaborateurs, aides familiaux.
+    hors_repartition: false
+    periodes:
+      - debut: 2003
+        fin: null
+        type_calcul: points
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        points_maximum: 100
+        assiette_repere_smic: 1820
+        assiette_plancher: true
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.04
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [pension_majoree_reference, reversion]
+        notes: >-
+          Loi du 4 mars 2002, articles L. 732-56 et suivants du code rural.
+          Étage scindé de la fiche `msa_non_salaries`, qui agrégeait les deux :
+          tout verser dans le complémentaire aurait fait disparaître la base,
+          et c'est ce qui bloquait l'emploi de la série de valeurs de service
+          déjà présente au dépôt, certifiée de 2005 à 2024 depuis l'article
+          D. 732-166 (base LEGI de la DILA).
+          Ce qui débloque le calcul n'est pas un prix d'achat — l'arrêté qui le
+          fixe ne modifie pas le code, et il reste introuvable — mais le BARÈME
+          EN POINTS, qui, lui, est public : cotiser sur l'assiette minimale de
+          1 820 SMIC ouvre 100 points, et les points sont proportionnels
+          au-delà, sans plafond. Le nombre de points ne dépend donc pas du taux
+          de cotisation.
+          Le taux de 4 % est celui en vigueur (assiette minimale 1 820 SMIC pour
+          les chefs d'exploitation, 1 200 pour les aides familiaux). Sa série
+          historique n'est pas sourcée : la RCO a démarré en 2003 à un taux plus
+          bas. Cela ne déplace pas la pension calculée ici, qui ne dépend que du
+          barème en points, mais seulement le flux versé au compte notionnel.
+          Restent hors du modèle les points GRATUITS — 66 par an aux conjoints
+          et aides familiaux pour les périodes antérieures à 2011, dans la
+          limite de dix-sept années.
