@@ -618,6 +618,11 @@ cotisations versées, divisée par l'espérance de vie restante à la liquidatio
 appliqué de deux façons : <strong>rétroactivement</strong> depuis 1941, ou
 seulement <strong>à compter de 2026</strong>.</p>
 
+<p>Les cinq montants qu'il affiche sont ceux de la <strong>première pension</strong>,
+au premier mois de retraite : celle de l'année du départ pour qui est déjà
+retraité, celle de l'année du départ à venir pour qui est encore en activité.
+Jamais la pension d'aujourd'hui d'un retraité parti il y a vingt ans.</p>
+
 <div class="note"><strong>À lire avant les chiffres.</strong> Le scénario
 rétroactif n'est pas une proposition de réforme : c'est un contrefactuel, qui
 mesure ce qu'aurait produit une règle purement contributive appliquée depuis
@@ -641,7 +646,8 @@ function formulaire(saisie, contexte) {
       "table de mortalité unisexe par défaut"),
     g.champ("liquidation", "Âge de départ à la retraite",
       Math.floor(enMois(saisie.liquidation) / 12),
-      "effectif si retraité, souhaité si actif", "number",
+      "effectif si vous êtes déjà retraité, souhaité sinon : c'est la date "
+      + "à laquelle tout le calcul se place", "number",
       { min: "40", max: "75", step: "1" }),
     g.liste("liquidation_mois", "…et mois", MOIS_AGE,
       String(saisie.liquidation_mois),
@@ -798,6 +804,64 @@ function resumeParcours(contexte, saisie) {
     + "payé.</p>";
 }
 
+/**
+ * À quelle date se rapportent les montants affichés, et en quels euros.
+ *
+ * C'est la première question que pose un lecteur devant les cinq barres :
+ * « ce nombre, c'est celui de quand ? ». Deux conventions y répondent, dont
+ * aucune ne va de soi. Le moteur ne calcule qu'une pension AU MOMENT DE LA
+ * LIQUIDATION — il n'existe aucune phase postérieure qu'il revaloriserait —,
+ * et il l'exprime en euros constants. Autrement dit : jamais la pension
+ * d'aujourd'hui d'un retraité, toujours celle de son premier mois de retraite ;
+ * et jamais le montant nominal que porte un relevé bancaire, toujours son
+ * pouvoir d'achat ramené à une année de référence.
+ *
+ * Les deux conventions se disent différemment selon que le départ est passé ou
+ * à venir, parce que ce qu'elles écartent n'est pas le même : pour un actif,
+ * les euros de son année de départ ; pour un retraité, les revalorisations
+ * reçues depuis la sienne.
+ */
+function lectureDesMontants(comparaison, saisie) {
+  const carriere = comparaison.carriere;
+  const annee = carriere.anneeLiquidation;
+  const date = echapper(String(carriere.dateLiquidation));
+  const courante = comparaison.parametres.annee_courante;
+
+  let quand;
+  if (annee > courante) {
+    quand = "Vous n'êtes pas encore à la retraite : ces montants sont ceux de "
+      + "votre <strong>première pension</strong>, celle du mois où vous "
+      + `partiriez — ${date} —, et non d'une pension que vous toucheriez `
+      + `aujourd'hui. La somme effectivement versée en ${annee} sera plus `
+      + "grosse : l'inflation d'ici là s'y ajoutera, sans rien changer à ce "
+      + "qu'elle permettra d'acheter — et c'est ce pouvoir d'achat, et non "
+      + "le nombre inscrit sur le virement, que la page affiche.";
+  } else if (annee < courante) {
+    quand = "Vous êtes déjà à la retraite : ces montants sont ceux de votre "
+      + `pension <strong>au moment du départ</strong> — ${date} —, et non `
+      + `de celle que vous touchez aujourd'hui. Depuis ${annee}, votre `
+      + "pension a été revalorisée chaque année ; le simulateur s'arrête au "
+      + "jour de la liquidation et ne suit aucune de ces revalorisations.";
+  } else {
+    quand = "Vous liquidez cette année : ces montants sont ceux de votre "
+      + `<strong>première pension</strong>, celle de ${date}. Le simulateur `
+      + "s'arrête là et ne suit pas les revalorisations des années "
+      + "suivantes.";
+  }
+
+  return `
+<div class="note"><strong>De quand sont ces chiffres ?</strong> ${quand}
+Ce que compare cette page, ce sont cinq façons de CALCULER une pension de
+départ, pas cinq façons de la revaloriser ensuite : le premier mois de retraite
+est le seul instant où les cinq scénarios se laissent mettre côte à côte, et
+c'est donc à cet instant que tous les cinq sont calculés.</div>
+<p class="discret" style="margin-top:1.5rem">Montants bruts mensuels — avant CSG
+et prélèvements sociaux —, en euros constants de ${saisie.euros}, c'est-à-dire au
+pouvoir d'achat de ${saisie.euros} : seule unité qui permette de comparer des
+liquidations d'années différentes. Fiabilité du résultat :
+<span class="etiquette-fiabilite">${echapper(nomFiabilite(comparaison.fiabilite))}</span></p>`;
+}
+
 function resultats(contexte, saisie) {
   const comparaison = contexte.simuler(saisie);
   const carriere = comparaison.carriere;
@@ -916,10 +980,7 @@ function resultats(contexte, saisie) {
 </div>
 <div class="carte">
   ${scenarios}
-  <p class="discret" style="margin-top:1.5rem">Montants bruts mensuels, en euros
-  constants de ${saisie.euros} — seule unité qui permette de comparer des
-  liquidations d'années différentes. Fiabilité du résultat :
-  <span class="etiquette-fiabilite">${echapper(nomFiabilite(comparaison.fiabilite))}</span></p>
+  ${lectureDesMontants(comparaison, saisie)}
   ${capitalisation}
   ${minimum}
   ${ouverture}
