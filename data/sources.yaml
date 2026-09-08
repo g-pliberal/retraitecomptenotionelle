@@ -1,0 +1,1550 @@
+# Manifeste des sources institutionnelles
+# ---------------------------------------
+# Chaque jeu de données du dépôt référence une entrée de ce manifeste via son
+# champ `source_id`. Le manifeste est la seule autorité sur « d'où vient ce
+# chiffre ». Aucune donnée ne doit entrer dans data/reference/ sans y figurer.
+#
+# Champ `acces` :
+#   api      -> récupérable automatiquement (voir scripts/fetch/)
+#   fichier  -> fichier téléchargeable (xls/csv/pdf) à déposer dans data/brut/
+#   document -> publication (rapport, JO, décret) à saisir manuellement
+#
+# Champ `statut_integration` :
+#   certifie   -> data/reference/ est recontrôlé contre la source par
+#                 scripts/verifier_donnees.py, qui appose le niveau `certifiee`
+#   automatise -> data/reference/ est régénéré par un script
+#   saisi      -> valeurs saisies à la main depuis la source, à certifier
+#   a_faire    -> source identifiée, données pas encore intégrées
+#
+# Champ `idbank` : identifiant de série dans la Banque de données
+# macroéconomiques de l'INSEE, interrogeable sans clé d'accès à l'adresse
+# https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/<idbank>
+#
+# QUELLE SOURCE L'EMPORTE, QUAND DEUX SE DISPUTENT UNE VALEUR
+# ============================================================
+# Le manifeste dit d'où vient chaque chiffre ; ces quatre critères disent
+# laquelle des sources disponibles il faut aller chercher. Ils s'appliquent
+# dans l'ordre, et le premier qui départage tranche. Ce n'est pas un classement
+# d'institutions : c'est un classement de NATURES de données. La même
+# institution est primaire sur un terrain et secondaire sur l'autre.
+#
+# 1. LE PRODUCTEUR PRIME SUR LE REPRENEUR.
+#    On remonte d'un cran chaque fois qu'on le peut : l'INSEE plutôt qu'un
+#    rapport qui cite l'INSEE, la caisse plutôt que la synthèse qui la
+#    transcrit. C'est le critère qui gouverne le niveau de fiabilité, et il est
+#    déjà appliqué par scripts/verifier_donnees.py : `certifiee` suppose que la
+#    source soit le producteur de la donnée. Une transcription tierce, même
+#    sourcée et reprise automatiquement, plafonne à `haute`.
+#    La raison n'est pas cosmétique : le critère dit ce qu'un lecteur saurait
+#    vérifier lui-même en remontant d'un cran.
+#
+# 2. L'OBSERVÉ PRIME SUR LE PROJETÉ.
+#    Une série mesurée bat une hypothèse, toujours, y compris quand
+#    l'hypothèse est plus récente et mieux présentée. Une projection n'entre
+#    dans data/reference/ que là où l'observation manque, et elle y entre au
+#    niveau `estimee`, qui se propage jusqu'au résultat affiché.
+#
+# 3. LE MONTANT SERVI PRIME SUR LE MONTANT CALCULÉ.
+#    Quand une caisse publie ce qu'elle a réellement payé, ce chiffre l'emporte
+#    sur toute reconstitution, fût-elle fidèle au texte. Le minimum contributif
+#    et le minimum garanti en vivent : la revalorisation légale à laquelle
+#    leurs articles renvoient a été gelée puis sous-indexée, si bien que le
+#    calcul dépasse de plusieurs points ce qui a été versé.
+#
+# 4. LE RECONTRÔLABLE PRIME SUR LE SAISI.
+#    À qualité de source égale, on préfère ce qu'un script peut reconfronter
+#    chaque année (`acces: api`) à ce qu'il faut ressaisir à la main
+#    (`acces: document`). Une saisie est juste le jour où elle est faite ; une
+#    récupération automatisée le reste.
+#
+# CE QUE LES QUATRE CRITÈRES DONNENT, EN CLAIR
+# ---------------------------------------------
+# L'INSEE pour ce qu'il MESURE — prix, salaires, productivité, comptes
+# nationaux, espérances de vie, projections de population. Le COR pour ce qu'il
+# DÉCIDE — les hypothèses de long terme, dont il est l'auteur et non le
+# repreneur, et la description consolidée des régimes que personne d'autre ne
+# publie. Jamais le COR comme intermédiaire vers une donnée INSEE : ses
+# rapports tabulent commodément les projections démographiques de l'INSEE, les
+# recopier de là ferait perdre un cran de fiabilité sans rien gagner.
+#
+# Le même raisonnement vaut ailleurs : OpenFisca est un repreneur remarquable
+# et plafonne pourtant à `haute` ; Légifrance est le producteur du droit et
+# porte donc des valeurs certifiées ; une caisse est primaire sur son propre
+# barème et secondaire sur la macroéconomie.
+#
+# QUAND LES CRITÈRES NE TRANCHENT PAS
+# ------------------------------------
+# Il reste des valeurs dont personne n'est producteur : les hypothèses de
+# projection, et les régimes anciens dont l'historique n'a jamais été publié
+# ailleurs que dans une synthèse. Elles entrent quand même — un modèle qui
+# refuserait de projeter ne calculerait rien — mais au niveau que leur nature
+# impose, `estimee` ou `moyenne`, et en nommant le millésime de la publication
+# d'où elles sortent. Le champ `note` de l'entrée sert à ça.
+
+version_manifeste: "2026-09-05"
+
+institutions:
+
+  insee:
+    nom: Institut national de la statistique et des études économiques
+    role: >-
+      Indice des prix à la consommation, salaire moyen par tête, productivité,
+      comptes nationaux, tables de mortalité et projections démographiques.
+    jeux:
+      - id: insee_bdm_ipc
+        titre: Indice annuel des prix à la consommation, ensemble, 1949-2025
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/000008965
+        idbank: ["000008965", "001764363"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/ipc_annuel.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          Deux bases chaînées : base 100 en 1980 (publiée de 1949 à 1992) puis
+          base 2015 (à partir de 1990), raccordées sur 1990. L'API Melodi
+          (DS_IPC_PRINC) ne remonte pas avant les années 1990 ; la BDM, si.
+
+      - id: insee_ipc_long
+        titre: Indice des prix à la consommation depuis 1901
+        url: https://www.insee.fr/fr/information/2417794
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/macro/ipc_annuel.csv
+        note: >-
+          Seule source pour 1930-1949, que la BDM ne couvre pas. Tableau à
+          télécharger et convertisseur franc/euro, à saisir à la main.
+
+      - id: insee_ipc_melodi
+        titre: Indice des prix à la consommation (jeu principal)
+        url: https://api.insee.fr/melodi/data/DS_IPC_PRINC
+        acces: api
+        statut_integration: automatise
+        cible: data/brut/insee_ipc_melodi.json
+        note: Utilisé pour vérifier la partie récente de la série longue.
+
+      - id: insee_bdm_smpt
+        titre: Salaire moyen par tête, comptes nationaux annuels base 2020
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/011785411
+        idbank: ["011785411", "011793486"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/salaire_moyen.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          Salaires et traitements bruts (D11, total des branches) rapportés à
+          l'emploi salarié intérieur en personnes physiques — la définition du
+          SMPT dans les comptes nationaux. Disponible depuis 1949.
+
+      - id: insee_bdm_masse_salariale
+        titre: Masse salariale (D11), comptes nationaux annuels base 2020
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/011785411
+        idbank: ["011785411"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/masse_salariale.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          Le même agrégat que le numérateur du salaire moyen par tête, mais pris
+          EN NIVEAU : salaires et traitements bruts du total des branches, en
+          euros courants, disponibles depuis 1949. C'est l'assiette des
+          cotisations, donc le taux de rendement qu'un système en répartition
+          peut servir sans changer son taux de cotisation. L'écart avec le SMPT
+          est exactement la croissance de l'emploi salarié.
+
+      - id: insee_bdm_pib
+        titre: Produit intérieur brut, prix courant, comptes nationaux base 2020
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/011779992
+        idbank: ["011779992"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/pib_nominal.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          PIB approche produit, en euros courants, disponible depuis 1949.
+          Assiette la plus large qu'un système de retraite puisse viser : elle
+          capte le déplacement de la valeur ajoutée vers les revenus non
+          salariaux, que la masse salariale subit. Sert la variante « à
+          l'italienne » de l'indexation, dont le lissage sur cinq ans est
+          appliqué par le moteur et non par la série.
+
+      - id: insee_bdm_productivite
+        titre: Productivité du travail par tête, comptes nationaux base 2020
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/011785223
+        idbank: ["011785223", "011793334", "011793337"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/productivite.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          Valeur ajoutée en volume (prix chaînés de 2020) rapportée à l'emploi
+          intérieur total en personnes physiques. L'idbank 011793337 donne la
+          variante horaire, pour le paramètre indicateur_productivite.
+
+      - id: insee_bdm_esperance_vie
+        titre: Espérances de vie à la naissance et à 60 ans, 1946-2025
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/001686950
+        idbank: ["001686946", "001686951", "001686950", "001686955"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/mortalite/esperances_vie.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          France métropolitaine, par sexe, annuel. L'INSEE ne publie pas
+          l'espérance de vie à 65 ans, à aucune période : voir ocde_health_le.
+
+      - id: insee_bdm_point_complementaire
+        titre: Valeur de service du point Agirc, Arrco et Agirc-Arrco, 2001-
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/010593202
+        idbank: ["000849395", "000822495", "010593202"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          Séries mensuelles ; le dépôt retient l'observation de décembre, sa
+          convention étant la valeur en vigueur au 31 décembre. L'INSEE n'est
+          pas le producteur de ces barèmes — l'Agirc-Arrco l'est — donc ces
+          valeurs ne priment pas sur la transcription d'OpenFisca, seule à
+          couvrir l'avant-2001 : elles la recoupent, et les 42 années communes
+          concordent sans exception. Elles la prolongent en revanche là où elle
+          s'arrête, l'INSEE publiant encore après la dernière année d'OpenFisca.
+
+      - id: insee_deces_mortalite
+        titre: Décès et mortalité — séries longues
+        url: https://api.insee.fr/melodi/data/DS_DECES_MORTALITE_SERIES
+        acces: api
+        statut_integration: automatise
+        cible: data/brut/insee_mortalite_series.json
+
+      - id: insee_tables_mortalite
+        titre: Tables de mortalité du moment (TD/TV) et tables par génération
+        url: https://www.insee.fr/fr/statistiques/5390366
+        complement_url: https://www.insee.fr/fr/statistiques/fichier/2416631/
+        acces: fichier
+        statut_integration: a_faire
+        cible: data/reference/mortalite/quotients_periode.csv
+        note: >-
+          Seule source de quotients par âge antérieurs à 1986, et seule à
+          couvrir les grands âges. Diffusée en tableurs seulement : ni la BDM
+          ni Melodi ne l'exposent. Pour 1986-2024, la table vient d'Eurostat
+          (eurostat_mlifetable).
+
+      - id: insee_projections_mortalite
+        titre: >-
+          Projections de population 2026 — hypothèses de mortalité jusqu'en 2125
+        url: https://www.insee.fr/fr/statistiques/8990899
+        acces: fichier
+        statut_integration: automatise
+        cible: data/reference/mortalite/esperances_vie.csv
+        recuperation: scripts/fetch/insee_projections_mortalite.py
+        millesime: 2026
+        note: >-
+          Quotients de mortalité par âge (0 à 120 ans) et par année (2023 à
+          2125), pour les hypothèses d'espérance de vie centrale, basse et
+          haute. Le dépôt reprend la centrale et en DÉRIVE e0, e60 et e65 de
+          2026 à 2125 — dont e65, que l'INSEE ne publie jamais. Les années 2023
+          à 2025 sont ignorées : elles sont observées, et l'observé prime sur le
+          projeté même quand les deux viennent du même producteur. La somme des
+          survies se fait sans le demi-an usuel, ce classeur indexant ses
+          quotients par âge atteint dans l'année ; le récupérateur contrôle la
+          convention contre l'espérance de vie à la naissance que l'INSEE
+          publie pour 2070 (89,5 et 86,7 ans) et échoue si elle casse. Remplace
+          l'exercice 2021-2070, dont six valeurs étaient saisies aux années
+          rondes et une, 2080, dépassait l'horizon.
+      - id: insee_projections_population
+        titre: >-
+          Projections de population 2026 — scénario central, résultats détaillés
+        url: https://www.insee.fr/fr/statistiques/8990852
+        acces: fichier
+        statut_integration: certifie
+        recuperation: scripts/fetch/insee_projections_population.py
+        millesime: 2026
+        cible: >-
+          data/reference/macro/population_par_age.csv,
+          data/reference/macro/population_active.csv
+        note: >-
+          Pyramide des âges au 1er janvier, par âge détaillé et par année, de
+          1962 à 2070 — l'onglet `population` du classeur du scénario central.
+          C'est la pièce que le dépôt déclarait manquante pour passer du droit
+          individuel au coût collectif : sans elle, il fallait supposer toutes
+          les générations de même taille. L'INSEE date lui-même la frontière en
+          pied de tableau — « estimations de population jusqu'en 2023 ;
+          projections de population 2026 à partir de 2024 » —, et le dépôt la
+          reprend : `certifiee` jusqu'en 2023, `estimee` ensuite. Deux séries en
+          sont tirées : les effectifs par âge à partir de 50 ans, qui comptent
+          les retraités, et l'effectif des 20-64 ans, qui projette le
+          dénominateur d'une part de PIB. Seize autres scénarios sont publiés ;
+          seul le central est repris, comme pour les quotients de mortalité.
+
+  cor:
+    nom: Conseil d'orientation des retraites
+    role: >-
+      Projections du système de retraite, cas types, paramètres historiques
+      par régime, taux de remplacement, rendements.
+    jeux:
+      - id: cor_rapport_annuel
+        titre: Rapport annuel du COR — évolutions et perspectives des retraites
+        url: https://www.cor-retraites.fr/documents-rapports
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/*.yaml
+      - id: cor_hypotheses_projection
+        titre: >-
+          Hypothèses économiques de long terme du COR — scénario de référence et
+          variantes de productivité
+        url: https://www.cor-retraites.fr/sites/default/files/2026-06/Intro%20RA.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/macro/hypotheses_projection.yaml
+        millesime: juin 2026
+        note: >-
+          Le jeu de scénarios du dépôt transcrit celui du COR : référence à
+          0,7 % de croissance annuelle de la productivité horaire du travail,
+          variantes à 0,4 % et 1,0 %. Ce jeu apparaît dans le rapport de juin
+          2025 — qui abandonne explicitement la variante à 1,3 % — et est
+          reconduit à l'identique en juin 2026. Trois écarts assumés avec la
+          source, détaillés dans le fichier cible : productivité par tête et
+          non horaire, cible atteinte dès 2026 et non en 2040, emploi salarié
+          supposé constant. L'inflation de long terme à 1,75 % est une
+          convention reconduite des rapports antérieurs : les documents publics
+          de juin 2025 et juin 2026 ne la restatent pas.
+      - id: cor_cas_types
+        titre: Cas types du COR (carrières de référence)
+        url: https://www.cor-retraites.fr/simulateurs
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/cas_types.yaml
+      - id: cor_panorama_regimes
+        titre: Panorama des régimes de retraite français (fiches thématiques)
+        url: https://www.cor-retraites.fr/fiches-reperes
+        acces: document
+        statut_integration: saisi
+
+  csr:
+    nom: Comité de suivi des retraites
+    role: Avis annuels sur le pilotage, indicateurs de suivi.
+    jeux:
+      - id: csr_avis_annuel
+        titre: Avis annuel du Comité de suivi des retraites
+        url: https://www.strategie.gouv.fr/comite-de-suivi-des-retraites
+        acces: document
+        statut_integration: a_faire
+
+  drees:
+    nom: Direction de la recherche, des études, de l'évaluation et des statistiques
+    role: >-
+      Panorama « Les retraités et les retraites », EIR/EIC, modèle TRAJECTOiRE,
+      effectifs et montants de pensions par régime.
+    jeux:
+      - id: drees_panorama_retraites
+        titre: Les retraités et les retraites (édition annuelle)
+        url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/panoramas-de-la-drees/les-retraites-et-les-retraites
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/effectifs_retraites.csv
+      - id: drees_open_data
+        titre: Portail open data DREES
+        url: https://data.drees.solidarites-sante.gouv.fr/
+        acces: api
+        statut_integration: a_faire
+      - id: drees_comptes_protection_sociale
+        titre: Les comptes de la protection sociale (jeu 305, API Opendatasoft)
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/305_les-comptes-de-la-protection-sociale/
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/drees_cps.py
+        cible: >-
+          data/reference/macro/depenses_retraite.csv,
+          data/reference/macro/depenses_retraite_regimes.csv
+        note: >-
+          Comptabilité nationale du social : les prestations réellement versées,
+          année par année et organisme par organisme. Le risque
+          `VIEILLESSE-SURVIE` (poste E11-2) est la seule série longue française
+          de dépenses de retraite publiée par son producteur — 1959 à 2024 sans
+          interruption pour le total, 1990 à 2024 pour la ventilation. Le
+          producteur prime sur le repreneur (critère 1) : c'est la DREES qui
+          établit ces comptes, et non le COR, qui les reprend. Les sous-postes
+          — pensions de droit direct, de droit dérivé — ne sont publiés que
+          depuis 2020 : ils servent à dire ce que contient le total, pas à le
+          remplacer.
+      - id: drees_eic
+        titre: Échantillon interrégimes de cotisants (EIC)
+        url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/lechantillon-interregimes-de-cotisants-eic
+        acces: document
+        statut_integration: a_faire
+        note: >-
+          Source de référence pour les carrières individuelles rétrospectives.
+          Accès sous convention (CASD) — non redistribuable dans ce dépôt.
+
+  cnav:
+    nom: Caisse nationale d'assurance vieillesse
+    role: Régime général — paramètres, barèmes, statistiques.
+    jeux:
+      - id: cnav_montants_minimum
+        titre: Montants servis du minimum contributif et du plafond, 2024-2026
+        url: https://www.legislation.lassuranceretraite.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/minimum_contributif.csv
+        note: >-
+          Montants mensuels en vigueur au 31 décembre de chaque année, tels que
+          publiés et relayés : 733,03 € puis 747,69 € et 756,29 € pour le
+          minimum, 876,13 € puis 893,39 € et 903,93 € pour le majoré, plafond
+          d'écrêtement 1 394,86 € puis 1 444,89 €. Transcription, donc `haute`
+          et jamais `certifiee` — mais préférée à une projection, parce qu'elle
+          dit ce qui a été payé. Le montant de 2023 n'est pas repris ici : le
+          code le porte déjà, au centime près.
+
+      - id: cnav_revalorisation_salaires
+        titre: Coefficients de revalorisation des salaires portés au compte, dix colonnes 2017-2026
+        url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_29_22122025.pdf
+        acces: document
+        statut_integration: automatise
+        cible: data/reference/legislation/revalorisation_salaires.csv
+        recuperation: scripts/fetch/cnav_revalorisation_salaires.py
+        note: >-
+          Le salaire annuel moyen du régime général est la moyenne des N
+          MEILLEURES années, et « meilleures » se juge sur des salaires
+          REVALORISÉS : ces coefficients commandent donc à la fois le montant
+          retenu et le CHOIX des années. La circulaire annuelle de revalorisation
+          les publie en entier, une ligne par année de perception — c'est la
+          caisse qui les applique qui les publie.
+          Le modèle les approchait par « les salaires jusqu'en 1986, les prix
+          depuis », ce qui SUR-revalorise les salaires anciens de 12,1 % sur
+          1970-2018 et de 13,6 % sur 1980-2018.
+          Le dépôt a d'abord repris la table cumulée d'OpenFisca-France-Pension,
+          faute d'avoir cherché plus haut. Confrontée à la circulaire du
+          9 janvier 2023, elle s'en écarte de −3 % à −5,5 % sur toutes les
+          perceptions postérieures à 1990 — il lui manque la revalorisation
+          exceptionnelle de 4 % du 1er juillet 2022 — et de −17 % à +10 %, sans
+          régularité, sur les années 1949-1962. Une seconde implémentation est
+          une contre-expertise, pas une source.
+          DIX COLONNES sont conservées, d'octobre 2017 à janvier 2026. Le
+          coefficient entre deux années se lit dans une colonne, par rapport de
+          deux de ses valeurs, parce que l'arrêté annuel applique un coefficient
+          unique à tous les salaires déjà portés au compte. Une colonne
+          suffirait donc en théorie ; en pratique la caisse arrondit sa table à
+          trois décimales et repart chaque année de la précédente, si bien que
+          la reconstruction dérive avec la distance — 0,02 % à deux ans, 0,16 %
+          à sept. Le modèle sert donc la colonne de l'année quand elle existe et
+          ancre sinon sur la plus proche, ce qui divise la dérive par dix.
+          Les colonnes dont la date d'effet n'est pas le 1er janvier — octobre
+          2017, juillet 2022 — ne sont jamais servies telles quelles : le modèle
+          raisonne à l'année. Elles restent des ancres, leur date s'annulant
+          dans le rapport.
+          Le récupérateur recoupe chaque colonne contre chacune des autres à
+          chaque exécution et refuse d'écrire si l'une s'écarte de plus de 1 % ;
+          il refuse aussi une circulaire qui se déclare annulée et remplacée —
+          la 2020-5 l'est par la 2020-9. Les colonnes sont figées dans
+          tests/temoins/cnav_revalorisation_salaires.json, et deux tests les
+          opposent au modèle.
+          Fiabilité `haute`, jamais `certifiee` : la circulaire est la
+          publication de la caisse, non le Journal officiel — elle transcrit
+          l'arrêté et l'instruction interministérielle qu'elle cite.
+          Hors de la plage — perceptions antérieures à 1930, liquidations
+          postérieures à la dernière colonne — le modèle ancre sur la borne
+          connue et prolonge par son approximation. Avant 2017, aucune
+          circulaire n'est accessible en ligne : la dérive de la reconstruction
+          y est invérifiable.
+
+      - id: cnav_baremes
+        titre: Barèmes et paramètres du régime général (circulaires)
+        url: https://www.legislation.cnav.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/regime_general.yaml
+      - id: cnav_statistiques
+        titre: Statistiques et open data CNAV
+        url: https://www.statistiques-recherches.cnav.fr/
+        acces: fichier
+        statut_integration: a_faire
+
+  sre:
+    nom: Service des retraites de l'État
+    role: Fonction publique d'État — pensions civiles et militaires.
+    jeux:
+      - id: sre_rapport_annuel
+        titre: Rapport annuel du Service des retraites de l'État
+        url: https://retraitesdeletat.gouv.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/fonction_publique_etat.yaml
+
+      - id: sre_historique_taux
+        titre: Historique des taux de cotisations appelés par le CAS « Pensions »
+        url: https://retraitesdeletat.gouv.fr/files/files/Professionnels/CAS/Fiches/Historique%20taux%20cotisations.pdf
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/contribution_employeur_public.csv
+        recuperation: scripts/fetch/contribution_employeur_public.py
+        note: >-
+          La fiche du SERVICE QUI APPELLE la cotisation : quatorze colonnes, une
+          par situation d'emploi, du 1er janvier 2006 au 1er janvier 2026. Le
+          modèle en retient la contribution employeur de l'État pour un agent
+          civil — 49,90 % en 2006, 74,28 % de 2013 à 2024, 78,28 % en 2025,
+          82,28 % en 2026 (décret n° 2025-1341 du 26 décembre 2025). Source
+          primaire, donc certifiable ; le récupérateur la recoupe en outre
+          contre la transcription OpenFisca des mêmes décrets. Les taux
+          militaires (126,07 %) et ceux des employeurs d'accueil ne sont pas
+          repris : le modèle ne distingue pas les corps.
+
+      - id: sre_minimum_garanti
+        titre: Montant du minimum garanti, article L. 17 du code des pensions
+        url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/minimum_garanti_montants.csv
+        note: >-
+          Le montant PLEIN du minimum garanti, celui d'une carrière de quarante
+          ans de services : 997,96 € par mois au 1er janvier 2004, date à
+          laquelle l'article gèle sa référence, puis 1 174,33 € en 2020,
+          1 248,33 € en 2023, 1 325,01 € en 2024 et 1 354,16 € en 2025. Ces
+          montants SERVIS priment sur toute projection, comme ceux du minimum
+          contributif et pour la même raison : la revalorisation des pensions à
+          laquelle renvoie l'article a été gelée en 2014 et sous-indexée
+          depuis, si bien qu'une projection sur les prix dépasse de 4,6 % ce qui
+          a été payé en 2024. Transcriptions de publications, non confrontées à
+          un fichier du producteur : niveau `haute`.
+
+  caisse_des_depots:
+    nom: Caisse des dépôts (gestionnaire CNRACL, Ircantec, RAFP, FSPOEIE)
+    role: Régimes de la fonction publique territoriale et hospitalière, régimes gérés.
+    jeux:
+      - id: cdc_cnracl
+        titre: Paramètres et statistiques CNRACL
+        url: https://www.cnracl.retraites.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/cnracl.yaml
+      - id: cdc_ircantec_baremes
+        titre: Barèmes de l'Ircantec — valeur du point, salaire de référence, taux d'appel
+        url: https://politiques-sociales.caissedesdepots.fr/sites/default/files/IRC_BAR_02_ValPt_SalRef.csv
+        complement_url: https://politiques-sociales.caissedesdepots.fr/sites/default/files/IRC_BAR_01_txcotis.csv
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/cdc_ircantec.py
+        note: >-
+          Deux CSV publiés par le gestionnaire du régime, couvrant 1971-2021.
+          Source PRIMAIRE, donc certifiable : elle l'emporte sur la
+          transcription OpenFisca, qui ne couvre plus que 2022 et les régimes
+          prédécesseurs IPACTE et IGRANTE.
+
+      - id: cdc_open_data
+        titre: Open data de la Caisse des dépôts — retraites
+        url: https://opendata.caissedesdepots.fr/
+        acces: api
+        statut_integration: a_faire
+        note: >-
+          Quatre-vingt-sept jeux, tous des effectifs de cotisants et de
+          retraités : aucun barème.
+
+  dss:
+    nom: Direction de la Sécurité sociale
+    role: >-
+      Comptes de la Sécurité sociale, taux de cotisation historiques,
+      annexes PLFSS.
+    jeux:
+      - id: dss_comptes_secu
+        titre: Rapports de la Commission des comptes de la Sécurité sociale
+        url: https://www.securite-sociale.fr/accueil/rapports-et-statistiques
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/taux_cotisation.csv
+
+  cour_des_comptes:
+    nom: Cour des comptes
+    role: Rapports sur les régimes de retraite, régimes spéciaux, équilibre financier.
+    jeux:
+      - id: cdc_rapports_retraites
+        titre: Rapports publics thématiques sur les retraites
+        url: https://www.ccomptes.fr/fr/recherche?search=retraites
+        acces: document
+        statut_integration: saisi
+
+  agirc_arrco:
+    nom: Agirc-Arrco
+    role: >-
+      Retraite complémentaire des salariés du privé — valeurs d'achat et de
+      service du point, taux d'appel, historique Agirc / Arrco / Ircantec.
+    jeux:
+      - id: agirc_arrco_points
+        titre: Historique des valeurs du point Agirc, Arrco et Agirc-Arrco
+        url: https://www.agirc-arrco.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/valeurs_point.csv
+        note: >-
+          Source primaire, publiée en circulaires et en pages web, jamais en
+          série exploitable. La transcription machine est celle d'OpenFisca
+          (openfisca_points), reprise au niveau `haute`.
+
+      - id: agirc_arrco_valeurs_point
+        titre: Valeurs de service et d'achat du point — régime unifié 2019-2026,
+          Agirc 1947-2018, Arrco 1999-2018, UNIRS 1961-1998
+        url: https://www.agirc-arrco.fr/storage/2024/10/Compilation_valeurs_de_point_novembre_2025.pdf
+        acces: document
+        statut_integration: automatise
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/agirc_arrco_valeurs_point.py
+        note: >-
+          La fédération publie elle-même l'historique complet de ses deux
+          barèmes : c'est le PRODUCTEUR de la donnée, là où le dépôt se
+          contentait de la transcription d'OpenFisca, plafonnée à `haute`. Les
+          valeurs de 2019 à 2025 passent donc à `certifiee`, et les lignes
+          correspondantes sont retirées de la couverture d'OpenFisca comme de
+          celle de l'INSEE — qui n'est pas davantage productrice de ces barèmes.
+          Même règle que pour l'Ircantec, dont les barèmes viennent de la Caisse
+          des dépôts qui la gère.
+          La transcription était en outre en retard : elle s'arrête à 2025,
+          quand la fédération publie déjà la valeur d'achat de 2026 (20,1877 €,
+          gelée). Faute de ce barème, les cotisations de 2026 retombaient sur le
+          rendement instantané, et la valeur de service était prolongée PAR LES
+          PRIX — 1,46378 €, soit une revalorisation de +1,75 % que personne n'a
+          décidée, là où la fédération publie un gel à 1,4386 € jusqu'au
+          1er novembre 2026. Mesuré : −1,72 % sur la pension Agirc-Arrco et
+          −0,59 % sur le total d'une liquidation en 2026.
+          DEUX NIVEAUX. La valeur d'achat est publiée par année civile : celle
+          de 2026 est arrêtée. La valeur de service l'est par date d'effet, au
+          1er novembre, et la règle du dépôt retient celle du 31 décembre :
+          celle de 2026 est donc reconduite au niveau `haute`, la décision de
+          novembre pouvant encore la déplacer.
+          PÉRIMÈTRE, ÉLARGI AUX TABLES D'AVANT LA FUSION. Cette note disait que
+          les barèmes de l'Agirc et de l'Arrco d'avant 2019 « figurent dans le
+          même document sous une présentation différente, et restent transcrits
+          d'OpenFisca ». La présentation diffère en effet — une ligne par année,
+          une ou deux valeurs de point selon que le barème a bougé en cours
+          d'année, des francs jusqu'en 2001 et des anciens francs jusqu'en
+          1959 — mais ce n'est pas une raison de préférer une transcription au
+          producteur. Sont donc lues aussi : l'Agirc de 1947 à 2018, l'Arrco de
+          1999 à 2018, et l'UNIRS de 1961 à 1998, la caisse dont le barème tient
+          lieu de point Arrco avant l'unification. Ces 260 valeurs confirment la
+          transcription à 5 · 10⁻⁵ € près, l'écart tenant à l'arrondi de la
+          conversion en euros. Deux contrôles autorisent la lecture, tous deux
+          fondés sur ce que le document publie en regard de chaque valeur : son
+          évolution en pourcentage, recalculée depuis les valeurs lues et
+          exigée à un dixième de point près — y compris au passage de l'ancien
+          franc au nouveau, en 1960.
+          Ce que la source ne donne pas : l'Arrco d'avant 1961, et la série
+          reconstituée du salaire de référence Arrco depuis 1948, qui ne porte
+          pas la valeur de service correspondante.
+
+      - id: agirc_arrco_coefficients
+        titre: Coefficients d'anticipation et plafond des majorations familiales
+        url: https://www.agirc-arrco.fr/storage/2024/10/Coefficients-de-minorations-AA.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/complementaires_prive.yaml
+        note: >-
+          Le régime n'applique pas la décote du régime de base : il publie deux
+          tables de coefficients d'anticipation — l'une indexée sur les
+          trimestres manquants (0,99 à 0,78 de un à vingt), l'autre sur l'âge
+          (1 à 0,43 pour dix ans) — et retient la plus avantageuse. Les deux
+          descendent par paliers réguliers : un point de pourcentage par
+          trimestre jusqu'à douze, un point et quart jusqu'à vingt, un point
+          trois quarts au-delà. C'est cette régularité qui est portée dans le
+          moteur, plutôt que quarante lignes de barème.
+          Le plafond en euros de la majoration pour enfants — 2 367 € par an
+          pour les pensions servies depuis le 1er novembre 2025, revalorisé
+          comme la valeur de service du point, opposable aux seuls assurés nés
+          à compter du 2 août 1951 — vient des mêmes publications.
+
+  assemblee_nationale:
+    nom: Assemblée nationale
+    role: >-
+      Réponses ministérielles aux questions écrites. Source de dernier recours,
+      mais officielle, quand un montant n'est publié nulle part en série.
+    jeux:
+      - id: an_question_ecrite_mico
+        titre: Question écrite n° 32630 — montants du minimum contributif en 2020
+        url: https://www.assemblee-nationale.fr/dyn/15/questions/QANR5L15QE32630.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/minimum_contributif.csv
+        note: >-
+          « Le montant du minimum contributif s'élève en 2020 à 642,93 euros
+          pour une carrière complète. Celui-ci est majoré à 702,55 euros
+          lorsque l'intéressé justifie d'une durée d'assurance de plus de
+          120 trimestres. […] le minimum contributif ne peut pas porter la
+          somme des pensions au-dessus d'un certain montant, soit
+          1 191,57 euros. »
+          Ces trois montants sont ce que les caisses ont RÉELLEMENT SERVI cette
+          année-là. Ils priment sur toute projection depuis les ancres du code :
+          la réforme de 2023 ayant relevé le minimum majoré de plus de 30 %,
+          ramener sa valeur en arrière surestimait 2020 de 7,6 %.
+
+  union_retraite:
+    nom: Union Retraite / Info-Retraite
+    role: >-
+      Référentiel interrégimes, relevé de carrière unique, EIG. Point d'entrée
+      pour l'alimentation d'une simulation individuelle.
+    jeux:
+      - id: info_retraite_referentiel
+        titre: Répertoire général des carrières uniques (RGCU) — documentation
+        url: https://www.info-retraite.fr/
+        acces: document
+        statut_integration: a_faire
+        note: >-
+          Le RGCU n'est pas ouvert au public. L'import individuel se fait via
+          le relevé de carrière que l'usager télécharge lui-même
+          (voir scripts/import_releve_carriere.py).
+
+  msa:
+    nom: Caisse centrale de la Mutualité sociale agricole (CCMSA)
+    role: Régimes des non-salariés et salariés agricoles.
+    jeux:
+      - id: msa_parametres
+        titre: Paramètres des régimes agricoles (RCO, points, AVA)
+        url: https://www.msa.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/msa_non_salaries.yaml
+
+  cnavpl:
+    nom: Caisse nationale d'assurance vieillesse des professions libérales
+    role: Régime de base des libéraux (en points) et sections professionnelles.
+    jeux:
+      - id: cnavpl_parametres
+        titre: Valeurs du point du régime de base CNAVPL
+        url: https://www.cnavpl.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/cnavpl.yaml
+
+      - id: cnavpl_recueils
+        titre: Recueils statistiques, 2021-2025
+        url: https://www.cnavpl.fr/documents/
+        acces: fichier
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/cnavpl_recueils.py
+        note: >-
+          Valeur de service du point du régime de base et taux de cotisation des
+          deux tranches, publiés par la caisse elle-même. Aucune base ne les
+          porte : le décret annuel fixe un coefficient de revalorisation et non
+          un montant, si bien que ni le Journal officiel ni la législation
+          consolidée n'en gardent trace. Le recueil est un annuaire d'une
+          soixantaine de pages, lu avec scripts/fetch/lecture_pdf.py ; le
+          récupérateur refuse d'écrire une série qui ne serait pas croissante.
+          Les millésimes antérieurs à 2021 mettent la valeur dans un graphique.
+          Le nombre maximal de points — 525 sur la tranche 1 et 25 sur la
+          tranche 2 depuis 2015 — figure dans un tableau que le récupérateur ne
+          relit pas de façon sûre : il est en commentaire de la fiche de régime.
+
+  cnbf:
+    nom: Caisse nationale des barreaux français
+    role: Régime de retraite des avocats.
+    jeux:
+      - id: cnbf_parametres
+        titre: Paramètres du régime de base et complémentaire des avocats
+        url: https://www.cnbf.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/cnbf.yaml
+
+      - id: cnbf_baremes
+        titre: Barèmes annuels des cotisations et prestations, 2017-2026
+        url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
+        acces: fichier
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/cnbf_baremes.py
+        note: >-
+          Coût d'acquisition et valeur de service du point du régime
+          complémentaire, publiés par la caisse elle-même — seule source qui les
+          porte, la législation consolidée n'en gardant aucune trace. Diffusés
+          en PDF : le récupérateur les lit avec scripts/fetch/lecture_pdf.py et
+          refuse d'écrire une série qui ne serait pas monotone, faute de quoi
+          une erreur de lecture passerait inaperçue.
+
+  dgafp:
+    nom: Direction générale de l'administration et de la fonction publique
+    role: Rapport annuel sur l'état de la fonction publique, rémunérations.
+    jeux:
+      - id: dgafp_rapport_annuel
+        titre: Rapport annuel sur l'état de la fonction publique
+        url: https://www.fonction-publique.gouv.fr/
+        acces: fichier
+        statut_integration: a_faire
+
+  direction_budget:
+    nom: Direction du Budget
+    role: Compte d'affectation spéciale « Pensions », programmes budgétaires.
+    jeux:
+      - id: db_cas_pensions
+        titre: Compte d'affectation spéciale Pensions — documents budgétaires
+        url: https://www.budget.gouv.fr/
+        acces: document
+        statut_integration: a_faire
+
+  erafp:
+    nom: Établissement de retraite additionnelle de la fonction publique
+    role: >-
+      RAFP — régime par points obligatoire assis sur les primes.
+      Traité hors comptes notionnels (compartiment capitalisation).
+    jeux:
+      - id: erafp_parametres
+        titre: Valeurs d'acquisition et de service du point RAFP, 2005-2026
+        url: https://media.rafp.fr/s3fs-public/2024-02/RAFP-Evolution-valeurs-point.pdf
+        acces: document
+        statut_integration: automatise
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/erafp_valeurs_point.py
+        note: >-
+          « La valeur d'acquisition et la valeur de service du point RAFP sont
+          fixées chaque année par le conseil d'administration de l'ERAFP » : le
+          document le dit lui-même, et c'est ce qui en fait le producteur. Ces
+          valeurs venaient d'OpenFisca-France-Pension, transcription plafonnée
+          à `haute` ; elles passent à `certifiee` et sortent de la couverture
+          d'OpenFisca, comme celles de l'Ircantec et de l'Agirc-Arrco.
+          DEUX TROUVAILLES. La transcription répétait en 2021 la valeur
+          d'acquisition de 2020 — 1,2452 € au lieu de 1,2502 €, soit 0,4 % de
+          points achetés en trop cette année-là. Et elle s'arrêtait à 2021 quand
+          l'établissement publie jusqu'en 2026 : les années manquantes étaient
+          prolongées par les prix, alors que la valeur de service a monté de
+          5,7 % en 2023 et de 6,8 % en 2024.
+          Le contrôle est celui du document : il publie en regard de chaque
+          valeur son évolution, que le récupérateur recalcule et exige à deux
+          dixièmes de point près. C'est ainsi que l'erreur de 2021 s'est vue.
+          Une année à deux valeurs — 2016, dont la valeur de service change au
+          1er avril — est rendue par la seconde, la règle du dépôt retenant la
+          valeur en vigueur au 31 décembre.
+
+  ircantec:
+    nom: Ircantec
+    role: Retraite complémentaire des agents non titulaires du public.
+    jeux:
+      - id: ircantec_points
+        titre: Historique des valeurs du point Ircantec
+        url: https://www.ircantec.retraites.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/ircantec.yaml
+
+  regimes_speciaux:
+    nom: Caisses des régimes spéciaux (CPRPSNCF, CRPRATP, CNIEG, ENIM, CRPCEN, Banque de France, Opéra, Comédie-Française…)
+    role: Paramètres propres à chaque régime spécial, y compris régimes fermés.
+    jeux:
+      - id: rs_cprpsncf
+        titre: Règlement du régime spécial SNCF
+        url: https://www.cprpsncf.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/sncf.yaml
+      - id: rs_crpratp
+        titre: Règlement du régime spécial RATP
+        url: https://www.crpratp.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/ratp.yaml
+      - id: rs_cnieg
+        titre: Régime des industries électriques et gazières
+        url: https://www.cnieg.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/ieg.yaml
+      - id: rs_enim
+        titre: Établissement national des invalides de la marine
+        url: https://www.enim.eu/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/marins.yaml
+
+  urssaf:
+    nom: Urssaf Caisse nationale
+    role: >-
+      Plafond de la Sécurité sociale, taux de cotisation en vigueur,
+      séries historiques d'assiettes.
+    jeux:
+      - id: urssaf_pss
+        titre: Plafond annuel de la Sécurité sociale — série historique
+        url: https://www.urssaf.fr/accueil/outils-documentation/taux-baremes/plafonds-securite-sociale.html
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/macro/plafond_securite_sociale.csv
+        note: >-
+          Source primaire des plafonds anciens, mais non diffusée en accès
+          machine : le portail open data de l'Urssaf ne publie aucun jeu
+          « plafond ». En attendant, les valeurs de 1931 à 2001 viennent de la
+          transcription OpenFisca (openfisca_plafond), au niveau `haute`.
+      - id: urssaf_taux
+        titre: Taux de cotisations du régime général
+        url: https://www.urssaf.fr/accueil/outils-documentation/taux-baremes.html
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/taux_cotisation.csv
+      - id: urssaf_open_data
+        titre: Open data Urssaf
+        url: https://open.urssaf.fr/
+        acces: api
+        statut_integration: a_faire
+
+  legifrance:
+    nom: Légifrance / Journal officiel
+    role: >-
+      Texte des lois et décrets fondateurs et modificatifs (1930, 1941, 1945,
+      1971, 1982, 1993, 2003, 2010, 2014, 2023…). Source primaire des
+      paramètres législatifs historiques.
+    jeux:
+      - id: legifrance_textes
+        titre: Textes fondateurs et réformes des retraites
+        url: https://www.legifrance.gouv.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/reformes.yaml
+        note: >-
+          Portent aussi les tables par génération de
+          `data/reference/legislation/` qu'aucun numéro d'article ne rassemble :
+          l'âge d'annulation de la décote (loi du 9 novembre 2010), le nombre
+          d'années retenues au salaire annuel moyen (article R. 351-29), les
+          trimestres accordés au titre des enfants (loi du 31 décembre 1971,
+          loi du 3 janvier 1975, articles L. 12 b et L. 12 bis du code des
+          pensions), et les générations 1934-1957 de la durée requise, fixées
+          par des décrets de montée en charge non codifiés. Saisies depuis les textes, donc au
+          niveau `haute` : Légifrance refuse les requêtes automatisées et son
+          API demande une clé. Les trois autres tables — âge d'ouverture, durée
+          requise des générations 1958 et suivantes, coefficient de minoration —
+          ne sont plus ici : elles sont certifiées contre la base LEGI, voir
+          dila_legi_parametres_retraite.
+
+      - id: legifrance_cnracl_montee_en_charge
+        titre: Montée en charge de la contribution employeur CNRACL, 2025-2028
+        url: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000051070354
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/contribution_employeur_public.csv
+        recuperation: scripts/fetch/contribution_employeur_public.py
+        note: >-
+          Le décret n° 2025-86 du 30 janvier 2025 réécrit le premier alinéa du
+          II de l'article 5 du décret n° 91-613 du 28 juin 1991 et PROGRAMME
+          quatre marches de trois points : 34,65 % au 1er janvier 2025, puis
+          37,65 %, 40,65 % et 43,65 %. La transcription d'OpenFisca ne porte que
+          la première ; les trois autres étaient donc ignorées, et le modèle
+          prolongeait le taux de 2025 au niveau `estimee` — c'est-à-dire qu'il
+          ne voyait pas une hausse déjà publiée au Journal officiel.
+          Saisies depuis le texte, ni transcrites par un tiers ni recoupées :
+          niveau `moyenne`, comme le taux d'appel Agirc-Arrco. Elles sont
+          portées par la constante COMPLEMENTS du récupérateur, qui refuse un
+          complément recouvrant une année déjà transcrite — le décret programme
+          l'avenir, il ne réécrit pas le passé.
+
+      - id: dila_legi_minimum_contributif
+        titre: Minimum contributif, minimum majoré et plafond d'écrêtement
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/minimum_contributif.csv
+        recuperation: scripts/fetch/dila_legi_minimum_contributif.py
+        note: >-
+          Articles D. 351-2-1 (les deux montants) et D. 173-21-0-0-1 (le
+          plafond de l'article L. 173-2) du code de la sécurité sociale. Ce
+          manifeste a longtemps tenu ces montants pour introuvables hors des
+          circulaires CNAV : c'était la même erreur que pour la MSA, la donnée
+          est dans la loi et il fallait chercher par le numéro d'article.
+          Ce sont des ANCRES DATÉES, non des séries : le code n'est pas modifié
+          chaque année, les montants sont revalorisés par l'effet de la loi —
+          sur le SMIC depuis février 2014 pour le plafond, depuis la réforme du
+          14 avril 2023 pour les deux minima. Le modèle fait cette
+          revalorisation, et elle retombe sur les montants publiés par les
+          caisses à 0,03 % près.
+
+      - id: dila_legi_parametres_retraite
+        titre: Âge d'ouverture, durée requise, coefficient de minoration,
+          proratisation, assiette du trimestre et années du salaire de référence
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/age_ouverture_requis.csv
+        recuperation: scripts/fetch/dila_legi_parametres_retraite.py
+        note: >-
+          Articles D. 161-2-1-9 (âge d'ouverture des droits), L. 161-17-3
+          (durée d'assurance requise) et R. 351-27 (coefficient de minoration)
+          du code de la sécurité sociale, plus L. 351-1-1 et D. 351-1-1 pour
+          les bornes de la carrière longue. Troisième usage de la recherche par
+          NUMÉRO d'article dans le dump LEGI, après la RCO agricole et le
+          minimum contributif, et le premier à porter sur des tableaux : ces
+          articles énumèrent leurs valeurs génération par génération, en
+          toutes lettres et en clauses de bornes (« nés avant le 1er juillet
+          1951 », « à compter du 1er janvier 1968 »). Le récupérateur en
+          reconstitue la table année de naissance par année de naissance, en
+          appliquant les versions successives de l'article dans l'ordre
+          chronologique — sans quoi la table de 2011 recouvrirait celle de
+          2023 — et en attribuant une génération coupée en cours d'année à la
+          valeur qui en couvre le plus de mois.
+          La confrontation n'a corrigé AUCUNE des trente-cinq valeurs saisies à
+          la main : elles étaient exactes. Ce qu'elle apporte n'est pas une
+          correction mais une preuve, et cent trente-cinq générations que la
+          saisie laissait implicites. Alimente aussi
+          data/reference/legislation/duree_assurance_requise.csv et
+          coefficient_minoration.csv.
+          TROIS ARTICLES DE PLUS, POUR TROIS TABLES QU'ON N'ÉTAIT PAS ALLÉ
+          CHERCHER. Le II de l'article R. 351-6 porte la durée maximale prise en
+          compte par la PRORATISATION — « 152 trimestres pour les assurés nés en
+          1944 » —, qui n'est pas la durée requise pour le taux plein et que le
+          modèle a confondue avec elle. L'article R. 351-9 porte l'assiette d'un
+          trimestre, en heures de SMIC : 200 depuis 1972, 150 depuis 2014. Sept
+          valeurs de plus, toutes retrouvées identiques à la saisie. La ligne
+          1948 de la proratisation reste hors certification : l'article s'arrête
+          à 1947 et renvoie ensuite à la durée requise.
+          L'article R. 351-29-1 porte la troisième : le nombre d'années retenues
+          au salaire annuel moyen, génération par génération — « Vingt et une
+          années pour l'assuré né en 1944 » —, avec sa cible au I, « les durées
+          de vingt-cinq années […] applicables aux assurés nés après 1947 ».
+          Seize valeurs, elles aussi identiques à la saisie.
+          Même coût que les autres passes LEGI : 9 Go décompressés en flux, un
+          quart d'heure, une exécution par an.
+
+      - id: dila_legi_smic
+        titre: SMIC horaire, décrets de relèvement, 1997-2017
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/smic_horaire.csv
+        recuperation: scripts/fetch/dila_legi_smic.py
+        note: >-
+          Le SMIC n'est pas fixé par un article de code mais par un décret
+          annuel — « A compter du 1er juillet 1997 […] le montant du salaire
+          minimum de croissance est porté à 39,43 F de l'heure en métropole » —,
+          et la base LEGI les garde. Il n'entre dans le modèle qu'à un endroit,
+          mais cet endroit décide de la décote : un trimestre s'acquiert en
+          ayant cotisé sur 150 fois le SMIC horaire depuis 2014, 200 fois avant.
+          Vingt années passent de la transcription au Journal officiel, toutes
+          identiques à la saisie. TROIS TROUS SONT MESURÉS PLUTÔT QUE COMBLÉS :
+          l'avant-1997, que la base ne porte pas ; 2002, dont l'arrondi en euros
+          (6,67 € et non la conversion 6,6651 €) vient d'un texte de conversion
+          absent ; et l'après-2017, les décrets récents n'étant pas entrés dans
+          la base des textes consolidés. Le récupérateur écarte une année dont
+          le décret a plus de 365 jours, l'article L. 3231-5 imposant un
+          relèvement au moins annuel.
+          Attention à la date : celle du décret n'est pas celle de son effet, et
+          Mayotte a ses propres décrets dans le même dump.
+
+      - id: dila_legi_point_indice
+        titre: Point d'indice de la fonction publique, 1996-2027
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/point_indice_fonction_publique.csv
+        recuperation: scripts/fetch/dila_legi_point_indice.py
+        note: >-
+          Article 3 du décret n° 85-1148 du 24 octobre 1985, dont la base garde
+          quarante-six versions datées : « La valeur annuelle du traitement […]
+          afférents à l'indice 100 majoré […] est fixée à 5 907,34 € ». Le
+          décret porte le traitement de cent points, le dépôt celui d'un seul.
+          Trente-deux années passent à `certifiee`, et la confrontation n'a
+          corrigé que des arrondis — dont celui de 2002, que le décret de
+          bascule fixe à 5 181,75 € quand la conversion des 33 990 F donne
+          5 181,74 €.
+          AVANT 1996, LA CHAÎNE EST INCOMPLÈTE et la série reste transcrite :
+          deux relèvements manquent au dump, celui du 1er novembre 1991 et celui
+          du 1er janvier 1994, tous deux pris par un décret qui en portait deux
+          d'un coup. La série qu'on en tirerait serait plate là où le point a
+          monté — fausse de 1,0 % en 1992 —, et c'est la confrontation à la
+          transcription, année par année, qui l'a établi.
+
+      - id: dila_legi_duree_requise
+        titre: Durée d'assurance requise, générations 1953-1957
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/duree_assurance_requise.csv
+        recuperation: scripts/fetch/dila_legi_duree_requise.py
+        note: >-
+          L'article L. 161-17-3 ne porte la table qu'à compter de la génération
+          1958 ; celles d'avant relèvent de décrets pris sous l'ancien article
+          L. 351-1. Le dépôt les tenait pour hors de portée, « textes abrogés ou
+          non codifiés que la base LEGI n'expose pas sous un numéro d'article
+          unique ». Ils n'ont en effet pas de numéro utile — mais ils ont une
+          phrase : « […] sont fixées à 166 trimestres pour les assurés nés en
+          1955 ». Quatre décrets couvrent 1953 à 1957, et leurs cinq valeurs
+          sont identiques à la saisie.
+          UN PIÈGE : Saint-Pierre-et-Miquelon a son propre régime et sa loi du
+          17 juillet 1987 écrit sa table dans les mêmes termes, avec d'autres
+          valeurs — 152 trimestres pour la génération 1956 contre 166 au régime
+          général. Elle est écartée sur le nom du territoire.
+          Les générations 1934 à 1952 restent transcrites : leur montée en
+          charge vient des lois de 1993 et de 2003, dont les tableaux ne sont
+          pas des textes consolidés séparés.
+
+      - id: dila_legi_cnracl
+        titre: Contribution employeur de la CNRACL, 1984-1988 et 1993-2028
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/contribution_employeur_public.csv
+        recuperation: scripts/fetch/dila_legi_cnracl.py
+        note: >-
+          Article 5 II du décret n° 91-613 du 28 juin 1991, dont la base garde
+          vingt versions datées : « Le taux de la contribution sur les
+          traitements […] est fixé à 31,65 % ». Trente-six valeurs quittent la
+          transcription d'OpenFisca, dont les trois marches de 2026, 2027 et
+          2028 que le dépôt tenait pour une saisie non recoupée — elles sont au
+          Journal officiel depuis janvier 2025. Pour un agent territorial, cette
+          contribution vaut trois fois sa retenue : c'est elle qui décide de ce
+          que les scénarios 4 et 5 lui portent au compte.
+          TROIS DIFFICULTÉS DE LECTURE. Le même article fixe d'abord la retenue
+          de l'agent, puis la contribution de l'employeur, puis une contribution
+          supplémentaire : seul le II est lu. Une version porte plusieurs taux,
+          chacun daté par ce qui le SUIT — « 30,40 % pour l'année 2014 ; b)
+          30,45 % pour l'année 2015 » —, si bien que retenir la première date
+          rencontrée décale toute la table d'un cran. Enfin le décret de
+          relèvement paraît fin janvier avec effet au 1er janvier quand la
+          version consolidée s'ouvre au 1er février : une version ouverte avant
+          le 1er mars sans autre date vaut donc pour l'année entière.
+          Les taux d'avant 1993 sont dans les décrets abrogés que celui de 1991
+          a remplacés, et restent transcrits.
+          L'AVANT-1993 EST DANS L'ARTICLE QU'ON MODIFIAIT. Un décret modificatif
+          ne porte pas le taux, il porte un remplacement — « le taux de 13 p. 100
+          est remplacé par le taux de 11,20 p. 100 » ; le taux est dans l'article
+          3 du décret n° 47-1846 du 19 septembre 1947, dont la base garde quinze
+          versions datées au jour. MAIS LA CONTIGUÏTÉ N'EST PAS LA COMPLÉTUDE :
+          quand un décret manque à la base, la version qu'il aurait coupée court
+          sans coupure et la chaîne paraît pleine. La base le démontre —
+          le décret n° 83-36 du 24 janvier 1983 y figure et dit remplacer
+          13 p. 100, quand la version qu'il modifie se lit 18 p. 100. D'où deux
+          garde-fous : une version qu'un décret contredit est refusée, et une
+          version de plus de quatre ans aussi. Il en reste 1984-1988.
+          Les décrets modificatifs nomment celui de 1947 par sa DATE et non par
+          son numéro : chercher le seul numéro perdait le contrôle même qui rend
+          la lacune démontrable.
+
+      - id: dila_legi_decote_fonction_publique
+        titre: Décote de la fonction publique, montée en charge 2006-2019
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/decote_fonction_publique.csv
+        recuperation: scripts/fetch/dila_legi_decote_fonction_publique.py
+        note: >-
+          Article 66 III de la loi n° 2003-775 du 21 août 2003, qui déroge à
+          l'article L. 14 du code des pensions le temps de la montée en charge.
+          Son tableau porte les deux colonnes à la fois — « I : 2006 II :
+          0,125 % III : Limite d'âge moins 16 trimestres » —, soit vingt-huit
+          valeurs, toutes identiques à la saisie. La ligne 2020 du dépôt n'y est
+          pas : la dérogation court jusqu'au 31 décembre 2019 et L. 14
+          s'applique en plein ensuite ; elle reste au niveau `haute`.
+          Le même article porte à son II une autre table — le nombre de
+          trimestres nécessaires au pourcentage maximum de la pension civile —
+          que le motif de lecture écarte de lui-même : ses lignes ne portent ni
+          pourcentage ni limite d'âge.
+
+      - id: dila_legi_minimum_garanti
+        titre: Barème du minimum garanti de la fonction publique, 2004-2013
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/minimum_garanti.csv
+        recuperation: scripts/fetch/dila_legi_minimum_garanti.py
+        note: >-
+          Article 66 V de la loi n° 2003-775 du 21 août 2003 — le même article
+          que la décote de la fonction publique, un tableau plus bas. Il déroge
+          aux a et b de l'article L. 17 le temps de la montée en charge et porte
+          les cinq colonnes du fichier : « I : 2004 II : 59,7 % III : 217 IV :
+          3,8 points V : Vingt-cinq ans et demi VI : 0,04 point ». Cinquante
+          valeurs, toutes identiques à la transcription d'OpenFisca.
+          Le dépôt compte les points PAR TRIMESTRE et en fraction quand la loi
+          compte par année et en points de pourcentage ; la borne de la première
+          pente est écrite en toutes lettres, et parfois en demi-années.
+          LA LIGNE 1976 N'EST PAS DANS LE TABLEAU : celui-ci s'ouvre sur une
+          ligne 2003 qui décrit le droit antérieur, que le dépôt date de 1976.
+          Mêmes valeurs, autre clé — elle reste transcrite.
+
+      - id: dila_legi_msa
+        titre: Valeur de service du point de la RCO agricole, 2005-2024
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/dila_legi_msa.py
+        note: >-
+          Article D. 732-166 du code rural, dont la base LEGI garde les
+          dix-neuf versions datées. C'est la publication officielle elle-même,
+          non une transcription, d'où le niveau certifiee. Légifrance sert le
+          même article mais refuse les requêtes automatisées (403) et son API
+          demande une clé : le dump est le seul chemin reproductible.
+          Le récupérateur lit environ 1,1 Go compressés en flux et met un quart
+          d'heure ; une exécution par an suffit. Le dump global de la DILA étant
+          rafraîchi rarement, la dernière année peut manquer — au 13 août 2026
+          il datait de juillet 2025 et s'arrêtait à 2024, alors que le décret
+          n° 2026-78 du 11 février 2026 a fixé 0,3919 € pour 2025.
+
+      - id: jorf_plafond_securite_sociale
+        titre: Plafond de la Sécurité sociale, décrets de fixation, 1963-2025
+        url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/plafond_securite_sociale.csv
+        recuperation: scripts/fetch/jorf_plafond_securite_sociale.py
+        note: >-
+          Le plafond n'est pas une statistique mais un décret : le chercher chez
+          les diffuseurs de séries — l'INSEE ne le publie qu'à partir de 2001,
+          l'Urssaf pas du tout — était chercher au mauvais endroit. Il est dans
+          le JOURNAL OFFICIEL, dont la DILA ouvre un dump distinct de LEGI :
+          1,7 Go, une demi-heure de lecture en flux. La chaîne des décrets y est
+          COMPLÈTE DEPUIS 1963 — un texte par année, aucun ne manque — et trente
+          et une années d'avant 2002 en sont lues, qui passent de la
+          transcription au producteur : 1963, 1965-1981, 1984, 1987, 1988,
+          1990-1993, 1996-2001. Toutes identiques à l'euro près à ce que portait
+          OpenFisca, ce qui corrobore la transcription autant que cela certifie
+          ces trente et une-là.
+          QUATRE ÉCRITURES POUR UNE MÊME GRANDEUR, et elles se suivent dans le
+          temps : le TITRE seul avant 1982 — « PORTANT FIXATION POUR L'ANNEE
+          1969 DU PLAFOND DES COTISATIONS DE SECURITE SOCIALE A 16 320 FRS » —,
+          la NOTICE en capitales de 1982 à 1996, l'ARTICLE 1er en texte intégral
+          de 1997 à 2002, l'ARRÊTÉ à deux valeurs depuis 2003. Le récupérateur
+          lit les quatre et refait le taux que la notice annonce.
+          LE PIÈGE : « POUR L'ANNEE 1969 » vaut pour l'année, « A COMPTER DU
+          01-01-1982 » ne vaut que jusqu'au relèvement suivant, et le plafond
+          est devenu SEMESTRIEL en 1982. Confondre les deux donne 1982 à −3,6 %.
+          De même, janvier seul ne fait pas une année à moins que le texte ne
+          déclare la couvrir : sinon il faut un second montant lu dans l'année.
+          Le récupérateur ne reconduit jamais l'année précédente.
+          CE QUI RESTE HORS DE PORTÉE tient à la rédaction, non à l'accès, et
+          docs/limites.md le dit année par année : avant 1963 le décret ne nomme
+          pas l'année qu'il commande ; 1982-1983 et 1989 n'écrivent pas leur
+          montant ; 1985-1986 n'ont pas de notice ; 1994-1995 laissent leur
+          tableau en image.
+
+      - id: sncf_contribution_employeur
+        titre: Contribution employeur de la SNCF, composantes T1 et T2, 2007-2022
+        url: https://echanges.dila.gouv.fr/OPENDATA/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/contribution_employeur_public.csv
+        recuperation: scripts/fetch/sncf_contribution_employeur.py
+        note: >-
+          La seule grandeur du dépôt dont les deux termes sont dans deux textes
+          de nature différente, et qui demande donc les DEUX dumps de la DILA :
+          2,8 Go, une heure. L'article 2 du décret n° 2007-1056 du 28 juin 2007
+          définit le taux comme « la somme de deux composantes, ci-après
+          désignées T1 et T2 ». T1 est arrêté chaque année et publié au JORF ;
+          T2 est au IV du même article, que LEGI garde daté.
+          LA CONVENTION DE DATE : chaque arrêté porte le taux T1 DÉFINITIF de
+          l'année écoulée et le PROVISIONNEL de l'année qui vient. Le taux d'une
+          année est le définitif — 23,87 % et non 23,25 % pour 2018, soit six
+          dixièmes de point d'écart, et c'est le provisionnel qu'OpenFisca avait
+          retenu. Les deux sont récupérés, seul le premier compose la somme.
+          CE QUI LIMITE À CINQ ANNÉES : T1 est lu de 2007 à 2022, mais le décret
+          ne chiffre T2 que jusqu'en 2011 et le fait ensuite évoluer par renvoi
+          — « comme le rapport […] entre le montant des cotisations d'assurance
+          vieillesse assis sur le montant maximum des rémunérations ». Un taux
+          qui évolue par formule n'est écrit nulle part. La somme n'est donc
+          rendue que là où ses deux termes sont lus.
+          UN PIÈGE : l'arrêté fondateur du 6 mai 2008, seul à porter l'année
+          2007, écrit « le taux définitif T1 » quand tous les autres écrivent
+          « le taux T1 définitif ».
+
+      - id: sre_minimum_garanti
+        titre: Traitement de référence du minimum garanti, 2004 et année courante
+        url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti
+        acces: page
+        statut_integration: certifie
+        cible: data/reference/legislation/minimum_garanti_montants.csv
+        recuperation: scripts/fetch/sre_minimum_garanti.py
+        note: >-
+          Le Service des retraites de l'État liquide et paie ces pensions : sa
+          page du minimum garanti n'est pas une transcription du barème, c'est le
+          barème opposé à l'assuré. Elle porte les deux bornes de la chaîne que
+          l'article L. 17 décrit — l'ancre du 1er janvier 2004, « 997,96 € par
+          mois ou 11 975,57 € par an », et le montant courant qui se date
+          lui-même, « 16 396,19 € […] revalorisé au 01/01/2026 ».
+          L'ancre de 2004 a désormais TROIS chemins indépendants : le produit
+          227 × 52,7558 € que le vérificateur refait, la publication dont elle
+          était transcrite, et cette page. Les trois donnent le même centime.
+          CE QUE LA PAGE NE DONNE PAS : les années intermédiaires, qui restent
+          transcrites. Une exécution par an en ajoute une.
+          Une source scrutée peut changer de rédaction : le récupérateur lève
+          PageIllisible plutôt que d'écrire une série muette, et contrôle que le
+          mensuel annoncé soit bien l'annuel divisé par douze.
+
+      - id: dila_legi_minimum_vieillesse
+        titre: Montant de l'ASPA, code de la sécurité sociale D. 815-1, 2006-2020
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/minimum_vieillesse.csv
+        recuperation: scripts/fetch/dila_legi_minimum_vieillesse.py
+        note: >-
+          Ces montants venaient d'une saisie sur Légifrance — une lecture
+          humaine, non un fichier confronté au producteur. L'article D. 815-1 les
+          porte, datés, et la base garde ses versions : neuf ancres de 2006 à
+          2020, dont cinq que le dépôt n'avait pas.
+          LA LECTURE A CORRIGÉ UN CHIFFRE : le dépôt portait le montant MENSUEL
+          maximal multiplié par douze — 708,95 × 12 = 8 507,40 € pour 2010 —,
+          quand l'article fixe 8 507,49 € PAR AN, dont le mensuel arrondi se
+          déduit. Neuf centimes, et le sens de la dérivation rétabli.
+          CE QUE L'ARTICLE TAIT, et il en tait la moitié : il n'est pas réécrit à
+          chaque revalorisation. Sa version d'octobre 2014 tient jusqu'en avril
+          2018 sur un seul montant alors que l'allocation a monté en 2016 et en
+          2017, et il s'arrête en 2020. Le b) de l'article porte le barème du
+          COUPLE, que le modèle ne connaît pas : seul le a) est lu.
+
+      - id: dila_kali
+        titre: KALI — conventions collectives, essayée pour le taux d'appel de l'Agirc
+        url: https://echanges.dila.gouv.fr/OPENDATA/KALI/
+        acces: fichier
+        statut_integration: sans_objet
+        note: >-
+          Troisième base de la DILA essayée par ce dépôt, et la plus légère :
+          173 Mo, deux minutes, 7 632 textes retenus. Elle a été dépouillée pour
+          le TAUX D'APPEL DE L'AGIRC, que la convention collective nationale du
+          14 mars 1947 fixe par avenants. RÉSULTAT NÉGATIF, et la raison est
+          instructive : cette convention n'est pas dans KALI. Ce n'est pas une
+          convention de branche déposée mais un accord national
+          interprofessionnel ; la base n'en garde que l'accord de 1986 sur ses
+          « seuils d'accès ». 1 754 textes la citent, aucun n'est elle.
+          À retenir avant d'y revenir : KALI porte les conventions de BRANCHE,
+          pas les accords interprofessionnels que gèrent leurs signataires.
+
+      - id: dila_opendata
+        titre: Bases ouvertes de la DILA — JORF et LEGI
+        url: https://echanges.dila.gouv.fr/OPENDATA/
+        acces: fichier
+        statut_integration: a_faire
+        note: >-
+          Dumps complets, 1,6 Go et 1,1 Go compressés, filtrables en flux sans
+          écriture disque. Dépouillés cinq fois à la recherche des valeurs du
+          point de la CNAVPL, de la MSA et de la CNBF, 43 Go au total. Les
+          quatre premières passes filtraient sur le TEXTE et n'ont tiré de la
+          RCO agricole que quatre valeurs éparses ; la cinquième, indexée sur le
+          NUMÉRO d'article, les donne toutes — LEGI est organisée par version
+          d'article, pas par thème. C'est elle qu'automatise dila_legi_msa.
+          Ni la CNAVPL ni la CNBF n'y figurent en revanche, et ce n'est pas un
+          défaut de la recherche : leur décret annuel fixe un coefficient de
+          revalorisation, non un montant. Les 104 textes du JORF portant une
+          valeur de point ne mentionnent pas une fois le mot « libérale ». Ces
+          deux séries viennent donc des caisses — voir cnavpl_recueils et
+          cnbf_baremes. Lire docs/limites.md §1 avant de refaire le trajet.
+
+  ined:
+    nom: Institut national d'études démographiques
+    role: >-
+      Tables de mortalité françaises reconstituées, 1806-1997, et leurs
+      projections. Seule source ouverte à remonter avant Eurostat.
+    jeux:
+      - id: ined_vallin_mesle
+        titre: Quotients de mortalité du moment par année d'âge, 1806-2102
+        url: https://www.ined.fr/Xtradocs/cdrom_vallin_mesle/contenu.htm
+        acces: fichier
+        statut_integration: certifie
+        cible: data/reference/mortalite/quotients_periode.csv
+        recuperation: scripts/fetch/ined_vallin_mesle.py
+        note: >-
+          Vallin (Jacques) et Meslé (France), « Tables de mortalité françaises
+          pour les XIXe et XXe siècles et projections pour le XXIe siècle »,
+          INED, Données statistiques n° 4, 2001. L'INED sert librement le
+          contenu du cédérom, sans inscription : le tableau II-B-1 donne les
+          quotients du moment par année d'âge, de 0 à 104 ans. C'est ce que la
+          Human Mortality Database aurait donné, sans la barrière d'inscription
+          qui la mettait hors de portée d'un script.
+          Le dépôt n'en reprend que 1899-1985 : à partir de 1986 la donnée
+          observée vient d'Eurostat, son producteur. Les deux se recouvrent de
+          1986 à 1997 et concordent à un demi-point de pourcentage près sur
+          85 âges — c'est ce recoupement qui autorise à les aboucher.
+          Diffusé en classeur Excel 97, lu par scripts/fetch/lecture_xls.py.
+
+  eurostat:
+    nom: Eurostat
+    role: >-
+      Contrôle de cohérence sur l'inflation harmonisée, et espérance de vie à
+      65 ans — que l'INSEE ne publie pas en série longue.
+    jeux:
+      - id: eurostat_hicp
+        titre: HICP — annual data
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_aind
+        acces: api
+        statut_integration: automatise
+        cible: data/brut/eurostat_hicp.json
+        note: >-
+          Contrôle de vraisemblance seulement : l'IPCH et l'IPC national ne
+          mesurent pas la même chose, aucune valeur n'est certifiée par ce biais.
+
+      - id: eurostat_mlexpec
+        titre: Espérance de vie par âge et par sexe (demo_mlexpec)
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_mlexpec
+        acces: api
+        statut_integration: automatise
+        cible: data/brut/eurostat_esperance_vie.json
+        recuperation: scripts/fetch/eurostat_mortalite.py
+        note: >-
+          Contrôle croisé de l'espérance de vie à 65 ans, dont la source
+          retenue est l'OCDE (couverture plus longue). Les deux coïncident
+          exactement sur leurs 78 valeurs communes.
+
+      - id: eurostat_mlifetable
+        titre: Table de mortalité par âge et par sexe (demo_mlifetable)
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_mlifetable
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/mortalite/quotients_periode.csv
+        recuperation: scripts/fetch/eurostat_mortalite.py
+        note: >-
+          Quotients de mortalité par âge, 1986-2024 : les vraies tables du
+          moment, qui dispensent le modèle de sa calibration paramétrique aux
+          âges et années couverts. Territoires FX (1986-2012) puis FR
+          (1998-2024). Classes ouvertes (85 et plus, 95 et plus) écartées.
+
+  ocde:
+    nom: Organisation de coopération et de développement économiques
+    role: >-
+      Espérance de vie à 65 ans — la seule mesure dont le modèle a besoin et
+      que l'INSEE ne publie pas en série longue.
+    jeux:
+      - id: ocde_health_le
+        titre: Espérance de vie par âge et par sexe (DSD_HEALTH_STAT@DF_LE)
+        url: https://sdmx.oecd.org/public/rest/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_LE,
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/mortalite/esperances_vie.csv
+        recuperation: scripts/fetch/oecd_esperance_vie.py
+        note: >-
+          France, par sexe, 1960-2024, valeurs transmises par l'INSEE.
+          Retenue plutôt qu'Eurostat parce qu'elle remonte vingt-six ans plus
+          haut ; les deux sources coïncident sur leur période commune.
+
+  openfisca:
+    nom: OpenFisca-France (modèle socio-fiscal de l'administration française)
+    role: >-
+      Transcription machine, datée décret par décret, des paramètres du droit
+      social français : plafond de la Sécurité sociale depuis 1930, taux de
+      cotisation vieillesse depuis 1967.
+    note: >-
+      Source SECONDAIRE : transcription du Journal officiel, non producteur.
+      Les valeurs qui en viennent plafonnent au niveau `haute` et ne sont
+      jamais `certifiee`. Deux recoupements automatiques les corroborent, refaits
+      à chaque exécution de scripts/verifier_donnees.py.
+    jeux:
+      - id: openfisca_plafond
+        titre: Plafond annuel de la Sécurité sociale, 1930-2026
+        url: https://github.com/openfisca/openfisca-france/blob/master/openfisca_france/parameters/prelevements_sociaux/pss/plafond_securite_sociale_annuel.yaml
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/macro/plafond_securite_sociale.csv
+        recuperation: scripts/fetch/openfisca_plafond.py
+        note: >-
+          Renseigne les années 1931-2001, que ni l'INSEE ni l'Urssaf ne
+          diffusent. Au-delà de 2001, l'INSEE l'emporte et OpenFisca sert de
+          contrôle croisé.
+
+      - id: openfisca_points
+        titre: Valeurs d'achat et de service du point, 1947-2025
+        url: https://github.com/openfisca/openfisca-france-pension/tree/master/openfisca_france_pension/parameters/retraites
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/openfisca_points.py
+        note: >-
+          Salaire de référence, valeur de service et taux d'appel de l'Agirc
+          (1947), de l'Arrco (1949 via l'UNIRS, unifié en 1999), de l'Agirc-Arrco
+          (2019), de l'Ircantec avec ses prédécesseurs IPACTE et IGRANTE, du
+          RAFP (2005) et du RCI (2013). Ne couvre ni la CNAVPL, ni la MSA, ni
+          la CNBF : ces régimes ne sont pas modélisés par OpenFisca.
+          Recoupé à chaque exécution contre le rendement instantané que
+          l'Agirc-Arrco publie pour l'année en cours : 5,61 % en 2025.
+
+      - id: openfisca_regime_general_oracle
+        titre: Moteur de calcul du régime général — contre-expertise du scénario 1
+        url: https://github.com/openfisca/openfisca-france-pension
+        acces: api
+        statut_integration: automatise
+        cible: tests/temoins/openfisca_regime_general.json
+        recuperation: scripts/fetch/openfisca_regime_general.py
+        note: >-
+          Le seul jeu de cette liste dont on emprunte non pas les DONNÉES mais
+          le MOTEUR. Le scénario « système actuel » est l'étalon du modèle et
+          n'avait aucune contre-expertise : aucun simulateur officiel n'est
+          automatisable — M@rel exige FranceConnect et le relevé de carrière
+          réel — et relire deux fois le même code ne prouve rien.
+          OpenFisca-France-Pension est une SECONDE IMPLÉMENTATION, écrite par
+          d'autres à partir des mêmes textes. Dix profils à salaire nominal
+          constant y sont calculés, et le témoin versionné qui en sort permet de
+          rejouer la confrontation sans installer le paquet.
+          Ce n'est pas une source officielle, et un désaccord ne désigne pas
+          d'office le coupable : la première confrontation en a produit deux, un
+          de chaque côté. Chez nous, la durée de proratisation confondue avec la
+          durée requise (corrigé, `legislation/duree_proratisation.csv`). Chez
+          lui, une table de durée requise antérieure à la réforme du 14 avril
+          2023 — 169 trimestres à la génération 1965, là où l'article
+          L. 161-17-3 en donne 172.
+          Périmètre : régime général seul, liquidations antérieures à 2025. Son
+          Arrco est inutilisable dans la version publiée (le code demande un
+          paramètre que les barèmes livrés ne définissent pas) et ses barèmes
+          s'arrêtent en 2024.
+
+      - id: openfisca_point_indice
+        titre: Point d'indice de la fonction publique et barème du minimum garanti
+        url: https://github.com/openfisca/openfisca-france/blob/master/openfisca_france/parameters/marche_travail/remuneration_dans_fonction_publique/indicefp/point_indice_en_euros.yaml
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/point_indice_fonction_publique.csv
+        recuperation: scripts/fetch/openfisca_point_indice.py
+        note: >-
+          Deux séries pour un seul dispositif, le minimum garanti de l'article
+          L. 17 : le traitement annuel d'un point d'indice majoré, daté décret
+          par décret depuis 1960, et la montée en charge 2004-2013 du barème
+          (`secteur_public/pension_civile/minimum_garanti` d'OpenFisca-France-
+          Pension). L'ancre de l'article se recoupe d'elle-même : 227 points
+          d'indice au 1er janvier 2004 valent 11 975,57 € par an, soit les
+          997,96 € par mois que publie le Service des retraites de l'État.
+          Le montant en euros, lui, ne vient pas d'ici — voir sre_minimum_garanti.
+
+      - id: openfisca_contribution_employeur_public
+        titre: Contribution employeur des régimes publics — État, CNRACL, SNCF
+        url: https://github.com/openfisca/openfisca-france/tree/master/openfisca_france/parameters/prelevements_sociaux/cotisations_secteur_public
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/contribution_employeur_public.csv
+        recuperation: scripts/fetch/contribution_employeur_public.py
+        note: >-
+          Trois des quatre séries du fichier. `retraite/taux_implicite` porte le
+          taux employeur RECONSTITUÉ de l'État, 1995-2005, repris du tableau
+          p. 26 de l'annexe « pensions » au PLF 2011 — le seul document qui
+          chiffre ce que l'État consacrait à ses pensions avant qu'un taux
+          existe. `cnracl/employeur/cnracl` porte le taux réellement appelé
+          par la caisse territoriale et hospitalière depuis 1947, qui, elle,
+          n'a jamais eu ce problème. `sncf/…/cotisations_employeur/t1` et `t2`
+          portent les deux composantes de la contribution de l'entreprise,
+          2007-2018 : T1 calée sur le coût des mêmes salariés au privé, T2
+          finançant les droits spécifiques et le déséquilibre démographique.
+
+      - id: openfisca_cotisations
+        titre: Taux de cotisation vieillesse du régime général, 1967-2026
+        url: https://github.com/openfisca/openfisca-france/tree/master/openfisca_france/parameters/prelevements_sociaux/cotisations_securite_sociale_regime_general/cnav
+        acces: api
+        statut_integration: automatise
+        cible: data/brut/openfisca_cotisations.json
+        recuperation: scripts/fetch/openfisca_cotisations.py
+        note: >-
+          Sert de contrôle de vraisemblance sur les taux saisis dans les fiches
+          de régime, jamais de source versée automatiquement : une fiche est
+          structurée par périodes législatives, y reporter une série annuelle
+          demande un arbitrage qui doit rester explicite. Les quatre composantes
+          sont récupérées séparément — salarié et employeur, plafonnée et
+          déplafonnée —, et le contrôle les confronte aux fiches DEUX PAR DEUX :
+          `taux_cotisation_retraite` et `part_salariale` contre la plafonnée,
+          `taux_cotisation_deplafonnee` et `part_salariale_deplafonnee` contre
+          la déplafonnée. Comparer les sommes suffirait à laisser passer deux
+          erreurs de sens contraire qui se compensent — et qui ne portent
+          pourtant pas sur la même assiette.
+
+      - id: openfisca_part_salariale
+        titre: Répartition salarié / employeur des cotisations retraite
+        url: https://github.com/openfisca/openfisca-france/tree/master/openfisca_france/parameters/prelevements_sociaux/regimes_complementaires_retraite_secteur_prive
+        acces: api
+        statut_integration: saisi
+        cible: data/reference/regimes/*.yaml
+        note: >-
+          Le champ `part_salariale` des fiches, qui dit quelle fraction du taux
+          l'assuré supporte lui-même. Sans lui, le modèle ne pouvait pas
+          comparer la part salariale d'un fonctionnaire — sa retenue, seule
+          grandeur que sa fiche porte — à celle d'un salarié du privé, dont la
+          fiche porte un total. Sources par régime : `cnav/salarie` et
+          `cnav/employeur` pour le régime général depuis 1967 ;
+          `arrco|agirc/taux_effectifs_salaries_employeurs` et
+          `agirc_arrco/salarie|employeur` pour les complémentaires ;
+          `cotisations_secteur_public/ircantec/taux_cotisations_appeles` pour
+          l'Ircantec. La part est une MOYENNE sur la période de fiche, saisie à
+          la main et recoupée à chaque exécution de `verifier_donnees.py`.
+          Avant 1967 rien n'est transcrit : la part du régime général y est
+          celle mesurée sur 1968-1971, et celles des prédécesseurs de l'Arrco et
+          de l'Ircantec la règle 40-60 de leur successeur.

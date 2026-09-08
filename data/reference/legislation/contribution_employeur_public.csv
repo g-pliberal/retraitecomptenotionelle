@@ -1,0 +1,235 @@
+# Contribution EMPLOYEUR des régimes publics et spéciaux, par année
+# source_id: sre_historique_taux, dila_legi_cnracl,
+#            sncf_contribution_employeur,
+#            openfisca_contribution_employeur_public
+# unite: fraction de l'assiette de la retenue pour pension (traitement
+#        indiciaire brut et NBI ; les primes en sont exclues, elles relèvent
+#        du RAFP depuis 2005)
+#
+# Les fiches de data/reference/regimes/ ne portent, pour ces régimes, que la
+# RETENUE DE L'AGENT — 7,85 % hier, 11,10 % aujourd'hui. Ce fichier porte
+# l'autre moitié : ce que verse l'employeur public. Les deux s'additionnent
+# pour former l'effort contributif total, celui qui alimente les scénarios 4
+# et 5 ; les scénarios 2 et 3, eux, ne portent que la retenue.
+#
+# Pour un salarié du privé, la même distinction se lit dans la fiche du régime,
+# dont le taux est déjà un total : c'est son champ `part_salariale` qui dit
+# combien l'employeur y met. Ce fichier n'existe que parce que les fiches
+# publiques, elles, s'arrêtent à la retenue.
+#
+# D'OÙ VIENNENT CES TAUX.
+#
+#   État, 2006-2026        fiche « Historique des taux de cotisations » du
+#                          Service des retraites de l'État — `certifiee`.
+#   CNRACL, 1984-1988      article 3 du décret n° 47-1846 du 19 septembre 1947,
+#                          celui que les décrets abrogés MODIFIAIENT — un décret
+#                          modificatif ne porte pas le taux, il porte un
+#                          remplacement. `certifiee`, et seulement pour les
+#                          années dont la chaîne des versions est sûre : voir
+#                          scripts/fetch/dila_legi_cnracl.py.
+#   CNRACL, 1993-2028      article 5 II du décret n° 91-613 du 28 juin 1991,
+#                          LU dans la base LEGI (`dila_legi_cnracl.py`) :
+#                          « Le taux de la contribution sur les traitements
+#                          […] est fixé à 31,65 % ». `certifiee`, montée en
+#                          charge 2026-2028 comprise — elle est au Journal
+#                          officiel, pas dans une projection.
+#   SNCF, 2007-2011        somme des composantes T1 et T2, chacune lue dans
+#                          son texte : T1 dans l'arrêté annuel que publie le
+#                          Journal officiel — « le taux T1 définitif […] est
+#                          fixé à 23,81 % pour l'année 2022 » —, T2 au IV de
+#                          l'article 2 du décret n° 2007-1056, dans la base
+#                          LEGI. `certifiee`.
+#   CNRACL hors 1984-1988, transcription d'OpenFisca-France — `haute`.
+#   État 1995-2005,
+#   SNCF 2012-2018
+#
+# POURQUOI LA CNRACL S'ARRÊTE À CINQ ANNÉES AVANT 1993. La contiguïté des
+# versions n'est pas leur complétude : quand un décret modificatif manque à la
+# base, la version qu'il aurait coupée court sans coupure et la chaîne paraît
+# pleine. La base le démontre elle-même — le décret n° 83-36 du 24 janvier 1983
+# y figure et dit remplacer « 13 p. 100 », alors que la version qu'il modifie se
+# lit « 18 p. 100 ». Le récupérateur écarte donc toute version qu'un décret
+# contredit, et toute version qui a couru plus de quatre ans sur un taux que le
+# pouvoir réglementaire a bougé tous les un à trois ans.
+#
+# POURQUOI LA SNCF S'ARRÊTE À 2011. Le taux T1 est lu de 2007 à 2022, mais la
+# SOMME n'est lisible que là où ses deux termes le sont, et le décret ne chiffre
+# T2 que jusqu'en 2011 : « Après le 31 décembre 2011, le taux T2 évolue au
+# 1er janvier de chaque année comme le rapport […] ». Un taux qui évolue par
+# renvoi n'est écrit nulle part, et le calculer serait le reconstituer.
+#
+# LA CONVENTION DE DATE DE LA SNCF. Chaque arrêté porte deux taux T1 : le
+# DÉFINITIF de l'année écoulée et le PROVISIONNEL de l'année qui vient. Le taux
+# d'une année est le définitif — celui qui est dû, arrêté une fois l'exercice
+# connu. Les deux diffèrent : 23,87 % et 23,25 % pour 2018.
+#
+# POURQUOI LE TAUX IMPLICITE DE L'ÉTAT NE SE CERTIFIERA PAS. Ces onze taux sont
+# une RECONSTITUTION faite a posteriori par l'annexe « pensions » au projet de
+# loi de finances pour 2011 : leur producteur est la direction du Budget, et
+# elle seule. Son site répond 403 aux requêtes automatisées, et les deux
+# documents qui reprennent la série — le rapport de la Cour des comptes de 2016,
+# celui du Sénat de 2012 — sont des tiers, dont une transcription ne monterait
+# pas au-dessus de `haute`. Voir docs/limites.md.
+#
+# nature :
+#   appelee    : taux effectivement appelé, fixé par décret ou par arrêté
+#   implicite  : taux RECONSTITUÉ a posteriori. L'État n'appelait aucune
+#                cotisation avant 2006 — les pensions étaient payées sur
+#                crédits budgétaires. L'annexe « pensions » au PLF 2011 en a
+#                simulé un à partir du compte du régime et publie la série
+#                depuis 1995. Le périmètre est plus étroit que celui du compte
+#                d'affectation spéciale : la marche 2005 → 2006 (59,4 % puis
+#                49,9 %) est un changement de mesure, pas une baisse du coût
+#                des droits.
+#
+# Règle annuelle : taux en vigueur au 1er janvier, comme partout ailleurs dans
+# le dépôt. Deux abattements d'un mois y échappent volontairement — décembre
+# 2009 (40,14 %) et décembre 2013 (44,28 %), qui soldent l'exercice budgétaire
+# et ne sont pas des taux d'appel.
+#
+# Ce que ces taux SONT, et ce qu'ils ne sont pas. Le taux de l'État est fixé
+# pour équilibrer le compte d'affectation spéciale : 74,28 % de 2013 à 2024,
+# 78,28 % en 2025, 82,28 % en 2026. Il ne dit pas qu'un fonctionnaire acquiert
+# 82 % de son traitement en droits nouveaux ; il dit ce qu'il faut verser
+# aujourd'hui pour payer les pensions d'aujourd'hui. Le porter tel quel à un
+# compte notionnel — ce que font les scénarios 4 et 5 — répond à la question
+# « et si tout ce qui a été consacré aux pensions avait été porté au compte des
+# actifs ? », et à elle seule.
+#
+# Régimes couverts. fonction_publique_etat (implicite 1995-2005, appelée
+# depuis 2006), cnracl (appelée depuis 1948), sncf (T1 + T2, 2007-2018). Les
+# autres régimes à `perimetre_taux: agent_seul` — FSPOEIE, RATP, IEG, marins,
+# mines, CRPCEN, Banque de France, Opéra, Comédie-Française, SEITA — n'ont pas
+# de série publiée exploitable : la part patronale y est ESTIMÉE par l'effort
+# d'un salarié du privé de la même année, la fiabilité retombe à `estimee`, et
+# le nombre d'années concernées est affiché sous la simulation.
+# Voir docs/limites.md.
+#
+# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas
+# modifier à la main.
+annee,regime,taux,nature,fiabilite
+1948,cnracl,0.120000,appelee,haute
+1949,cnracl,0.120000,appelee,haute
+1950,cnracl,0.120000,appelee,haute
+1951,cnracl,0.180000,appelee,haute
+1952,cnracl,0.180000,appelee,haute
+1953,cnracl,0.180000,appelee,haute
+1954,cnracl,0.180000,appelee,haute
+1955,cnracl,0.210000,appelee,haute
+1956,cnracl,0.180000,appelee,haute
+1957,cnracl,0.180000,appelee,haute
+1958,cnracl,0.180000,appelee,haute
+1959,cnracl,0.180000,appelee,haute
+1960,cnracl,0.180000,appelee,haute
+1961,cnracl,0.200000,appelee,haute
+1962,cnracl,0.180000,appelee,haute
+1963,cnracl,0.180000,appelee,haute
+1964,cnracl,0.180000,appelee,haute
+1965,cnracl,0.180000,appelee,haute
+1966,cnracl,0.180000,appelee,haute
+1967,cnracl,0.180000,appelee,haute
+1968,cnracl,0.180000,appelee,haute
+1969,cnracl,0.180000,appelee,haute
+1970,cnracl,0.180000,appelee,haute
+1971,cnracl,0.182000,appelee,haute
+1972,cnracl,0.182000,appelee,haute
+1973,cnracl,0.182000,appelee,haute
+1974,cnracl,0.196000,appelee,haute
+1975,cnracl,0.196000,appelee,haute
+1976,cnracl,0.196000,appelee,haute
+1977,cnracl,0.180000,appelee,haute
+1978,cnracl,0.180000,appelee,haute
+1979,cnracl,0.180000,appelee,haute
+1980,cnracl,0.180000,appelee,haute
+1981,cnracl,0.130000,appelee,haute
+1982,cnracl,0.130000,appelee,haute
+1983,cnracl,0.125000,appelee,haute
+1984,cnracl,0.102000,appelee,certifiee
+1985,cnracl,0.102000,appelee,certifiee
+1986,cnracl,0.102000,appelee,certifiee
+1987,cnracl,0.152000,appelee,certifiee
+1988,cnracl,0.182000,appelee,certifiee
+1989,cnracl,0.197000,appelee,haute
+1990,cnracl,0.197000,appelee,haute
+1991,cnracl,0.197000,appelee,haute
+1992,cnracl,0.213000,appelee,haute
+1993,cnracl,0.213000,appelee,certifiee
+1994,cnracl,0.213000,appelee,certifiee
+1995,cnracl,0.251000,appelee,certifiee
+1995,fonction_publique_etat,0.486000,implicite,haute
+1996,cnracl,0.251000,appelee,certifiee
+1996,fonction_publique_etat,0.462000,implicite,haute
+1997,cnracl,0.251000,appelee,certifiee
+1997,fonction_publique_etat,0.474000,implicite,haute
+1998,cnracl,0.251000,appelee,certifiee
+1998,fonction_publique_etat,0.474000,implicite,haute
+1999,cnracl,0.251000,appelee,certifiee
+1999,fonction_publique_etat,0.486000,implicite,haute
+2000,cnracl,0.256000,appelee,certifiee
+2000,fonction_publique_etat,0.492000,implicite,haute
+2001,cnracl,0.261000,appelee,certifiee
+2001,fonction_publique_etat,0.487000,implicite,haute
+2002,cnracl,0.261000,appelee,certifiee
+2002,fonction_publique_etat,0.523000,implicite,haute
+2003,cnracl,0.265000,appelee,certifiee
+2003,fonction_publique_etat,0.527000,implicite,haute
+2004,cnracl,0.269000,appelee,certifiee
+2004,fonction_publique_etat,0.568000,implicite,haute
+2005,cnracl,0.273000,appelee,certifiee
+2005,fonction_publique_etat,0.594000,implicite,haute
+2006,cnracl,0.273000,appelee,certifiee
+2006,fonction_publique_etat,0.499000,appelee,certifiee
+2007,cnracl,0.273000,appelee,certifiee
+2007,fonction_publique_etat,0.507400,appelee,certifiee
+2007,sncf,0.344800,appelee,certifiee
+2008,cnracl,0.273000,appelee,certifiee
+2008,fonction_publique_etat,0.557100,appelee,certifiee
+2008,sncf,0.348300,appelee,certifiee
+2009,cnracl,0.273000,appelee,certifiee
+2009,fonction_publique_etat,0.601400,appelee,certifiee
+2009,sncf,0.350600,appelee,certifiee
+2010,cnracl,0.273000,appelee,certifiee
+2010,fonction_publique_etat,0.621400,appelee,certifiee
+2010,sncf,0.348900,appelee,certifiee
+2011,cnracl,0.273000,appelee,certifiee
+2011,fonction_publique_etat,0.653900,appelee,certifiee
+2011,sncf,0.337200,appelee,certifiee
+2012,cnracl,0.273000,appelee,certifiee
+2012,fonction_publique_etat,0.685900,appelee,certifiee
+2012,sncf,0.341700,appelee,haute
+2013,cnracl,0.288500,appelee,certifiee
+2013,fonction_publique_etat,0.742800,appelee,certifiee
+2013,sncf,0.345400,appelee,haute
+2014,cnracl,0.304000,appelee,certifiee
+2014,fonction_publique_etat,0.742800,appelee,certifiee
+2014,sncf,0.351800,appelee,haute
+2015,cnracl,0.305000,appelee,certifiee
+2015,fonction_publique_etat,0.742800,appelee,certifiee
+2015,sncf,0.351400,appelee,haute
+2016,cnracl,0.306000,appelee,certifiee
+2016,fonction_publique_etat,0.742800,appelee,certifiee
+2016,sncf,0.355400,appelee,haute
+2017,cnracl,0.306500,appelee,certifiee
+2017,fonction_publique_etat,0.742800,appelee,certifiee
+2017,sncf,0.353700,appelee,haute
+2018,cnracl,0.306500,appelee,certifiee
+2018,fonction_publique_etat,0.742800,appelee,certifiee
+2018,sncf,0.371000,appelee,haute
+2019,cnracl,0.306500,appelee,certifiee
+2019,fonction_publique_etat,0.742800,appelee,certifiee
+2020,cnracl,0.306500,appelee,certifiee
+2020,fonction_publique_etat,0.742800,appelee,certifiee
+2021,cnracl,0.306500,appelee,certifiee
+2021,fonction_publique_etat,0.742800,appelee,certifiee
+2022,cnracl,0.306500,appelee,certifiee
+2022,fonction_publique_etat,0.742800,appelee,certifiee
+2023,cnracl,0.306500,appelee,certifiee
+2023,fonction_publique_etat,0.742800,appelee,certifiee
+2024,cnracl,0.316500,appelee,certifiee
+2024,fonction_publique_etat,0.742800,appelee,certifiee
+2025,cnracl,0.346500,appelee,certifiee
+2025,fonction_publique_etat,0.782800,appelee,certifiee
+2026,cnracl,0.376500,appelee,certifiee
+2026,fonction_publique_etat,0.822800,appelee,certifiee
+2027,cnracl,0.406500,appelee,certifiee
+2028,cnracl,0.436500,appelee,certifiee

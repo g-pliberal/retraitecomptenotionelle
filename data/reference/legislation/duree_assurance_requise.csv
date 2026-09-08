@@ -1,0 +1,109 @@
+# Durée d'assurance requise pour le taux plein, PAR GÉNÉRATION
+# ------------------------------------------------------------
+# source_id: dila_legi_parametres_retraite, dila_legi_duree_requise,
+#            legifrance_textes
+#
+# La durée requise est indexée sur l'ANNÉE DE NAISSANCE, jamais sur l'année de
+# liquidation : deux assurés qui liquident le même jour n'ont pas la même
+# exigence s'ils ne sont pas de la même génération. C'est la règle depuis la
+# loi du 22 juillet 1993 (dite Balladur), qui a fait monter la durée de 150 à
+# 160 trimestres à raison d'un trimestre par génération, de 1934 à 1943.
+#
+# Étapes législatives reprises ici :
+#   - loi du 22 juillet 1993 : générations 1934-1943, 150 -> 160. Sa table est
+#     CODIFIÉE, à l'article R. 351-45 II — une disposition transitoire abrogée
+#     en 2009 que la base LEGI garde —, et les générations 1934-1942 en sont
+#     donc lues : `certifiee`.
+#
+#     CE QUE L'ARTICLE DIT DE PLUS. Son II ne vaut que pour les « pensions
+#     prenant effet avant le 1er janvier 2003 » ; son I porte 160 trimestres
+#     au-delà, « quelle que soit la date de naissance ». Ce fichier indexe la
+#     durée sur la seule génération, comme le fait le droit depuis 1993 : les
+#     deux lectures ne se séparent que pour un assuré de ces générations qui
+#     aurait liquidé après 2002, donc à plus de soixante ans quand l'âge légal
+#     en était soixante. C'est écrit parce que l'écart existe, non parce qu'il
+#     pèse.
+#
+#     Les générations 1943 à 1952 restent `haute` : 160 trimestres leur vient
+#     de la règle générale et non d'un alinéa qui les nomme, et les 161 à 164
+#     de 1949-1952 sont dans des décrets que la base n'expose pas — cherchés,
+#     et absents.
+#   - loi du 21 août 2003 (Fillon) : générations 1949-1952, 161 -> 164
+#   - loi du 9 novembre 2010 et décrets de montée en charge : 1953-1957
+#   - loi du 20 janvier 2014 (Touraine) : 1958 et suivantes, cible 172
+#   - loi du 14 avril 2023 : accélération, cible 172 atteinte dès 1965
+#
+# DEUX PROVENANCES, ET LA COLONNE `fiabilite` LES DISTINGUE.
+#
+#   * générations 1958 et suivantes — `certifiee`. Elles sont LUES dans le
+#     texte de l'article L. 161-17-3 du code de la sécurité sociale publié par
+#     la DILA dans la base LEGI, qui porte la table en toutes lettres depuis la
+#     loi de 2014, modifiée par celle de 2023
+#     (`scripts/fetch/dila_legi_parametres_retraite.py`). Les huit valeurs
+#     saisies à la main s'y sont retrouvées IDENTIQUES, et dix générations
+#     absentes de la saisie — 1966 à 1975, que l'article fixe à 172 — ont été
+#     ajoutées.
+#   * générations 1953 à 1957 — `certifiee` elles aussi, mais par une autre
+#     voie. L'article L. 161-17-3 ne les porte pas : leur durée a été fixée par
+#     des décrets pris sous l'ancien article L. 351-1. Cette page les tenait
+#     pour hors de portée, « textes abrogés ou non codifiés que la base LEGI
+#     n'expose pas sous un numéro d'article unique ». Ils n'ont en effet pas de
+#     numéro utile — mais ils ont une phrase, et c'est par elle qu'on les
+#     trouve : « […] sont fixées à 166 trimestres pour les assurés nés en
+#     1955 ». Quatre décrets couvrent ces cinq générations, et
+#     `scripts/fetch/dila_legi_duree_requise.py` les lit.
+#   * générations 1934 à 1952 — `haute`. Leur montée en charge vient des lois
+#     du 22 juillet 1993 et du 21 août 2003, dont les tableaux ne sont pas des
+#     textes consolidés séparés : ces dix-neuf valeurs restent une
+#     transcription, recoupée sur les circulaires CNAV.
+#
+# La génération 1961 est coupée au 1er septembre par la loi de 2023 ; le modèle
+# ne connaît que l'année de naissance et retient la valeur de la fraction la
+# plus nombreuse de la génération, soit 168.
+#
+# Avant la génération 1934, la durée requise ne dépendait pas de la génération :
+# elle est alors lue dans la fiche du régime, à l'année de liquidation.
+generation,trimestres,fiabilite
+1934,151,certifiee
+1935,152,certifiee
+1936,153,certifiee
+1937,154,certifiee
+1938,155,certifiee
+1939,156,certifiee
+1940,157,certifiee
+1941,158,certifiee
+1942,159,certifiee
+1943,160,haute
+1944,160,haute
+1945,160,haute
+1946,160,haute
+1947,160,haute
+1948,160,haute
+1949,161,haute
+1950,162,haute
+1951,163,haute
+1952,164,haute
+1953,165,certifiee
+1954,165,certifiee
+1955,166,certifiee
+1956,166,certifiee
+1957,166,certifiee
+1958,167,certifiee
+1959,167,certifiee
+1960,167,certifiee
+1961,168,certifiee
+1961.667,169,certifiee
+1962,169,certifiee
+1963,170,certifiee
+1964,171,certifiee
+1965,172,certifiee
+1966,172,certifiee
+1967,172,certifiee
+1968,172,certifiee
+1969,172,certifiee
+1970,172,certifiee
+1971,172,certifiee
+1972,172,certifiee
+1973,172,certifiee
+1974,172,certifiee
+1975,172,certifiee

@@ -1,0 +1,41 @@
+# Âge d'annulation de la décote, PAR GÉNÉRATION
+# ----------------------------------------------
+# source_id: legifrance_textes, cnav_circulaires
+#
+# C'est l'âge auquel le taux plein est acquis sans condition de durée. Comme
+# l'âge d'ouverture, il est indexé sur l'ANNÉE DE NAISSANCE et non sur l'année
+# de liquidation : les fiches de régime portaient l'âge CIBLE de la réforme dès
+# son entrée en vigueur — 67 ans opposés à des liquidations de 2011, alors que
+# la génération concernée cette année-là relevait de 65 ans.
+#
+# Étape législative unique : la loi du 9 novembre 2010, générations 1951-1955,
+# 65 -> 67 ans. La loi du 14 avril 2023 n'y a pas touché : elle a relevé l'âge
+# d'ouverture, pas celui-ci.
+#
+# La génération 1951 est coupée au 1er juillet par le texte, ET LA TABLE LA
+# COUPE AUSSI : la ligne `1951.5` désigne les assurés nés à compter du
+# 1er juillet 1951, comme dans age_ouverture_requis.csv. Ceux nés avant gardent
+# les 65 ans du droit antérieur, que le modèle leur refusait.
+#
+# POURQUOI CETTE TABLE RESTE `haute`, ET COMMENT ELLE EST TOUT DE MÊME
+# RECONTRÔLÉE. Aucun texte ne l'écrit génération par génération : ce que le code
+# écrit est une RÈGLE. L'article L. 351-8 1° donne « l'âge prévu à l'article
+# L. 161-17-2 augmenté de cinq années », devenu trois années quand la réforme du
+# 14 avril 2023 a porté l'âge d'ouverture à 64 ans — la cible restant 67. Cette
+# table est donc celle des âges d'ouverture, certifiée, décalée de cinq ans et
+# plafonnée à 67.
+#
+# Une valeur calculée n'est pas une valeur confrontée, et le dépôt applique ici
+# la règle qui vaut pour l'espérance de vie dérivée : niveau `haute`. Mais
+# `scripts/verifier_donnees.py` la recalcule à chaque exécution depuis la table
+# certifiée — si une réforme déplaçait l'âge d'ouverture sans que celui-ci
+# suive, l'écart se verrait là plutôt que dans une pension.
+generation,age,fiabilite
+1930,65,haute
+1950,65,haute
+1951,65,haute
+1951.5,65.33,haute
+1952,65.75,haute
+1953,66.17,haute
+1954,66.58,haute
+1955,67,haute
