@@ -1174,15 +1174,14 @@ conversion, comparer une pension liquidée en 1975 à une pension de 2064 n'a
 aucun sens : l'écart de niveau des prix dépasse largement l'effet de la réforme
 simulée.
 
-### Brut, net, euros et francs
+### Brut, et pas net
 
-Tout ce que le modèle manipule est **brut** : le revenu d'activité saisi, les
-cotisations versées, le capital notionnel, les cinq pensions. « Brut » au sens
-des comptes nationaux — *salaires et traitements bruts* (D11) rapportés à
-l'emploi salarié intérieur, la définition même du salaire moyen par tête qui
-sert d'unité —, c'est-à-dire **avant** cotisations salariales, **avant** CSG et
-CRDS, **avant** impôt sur le revenu, et **hors** cotisations patronales, qui
-s'ajoutent au brut sans en faire partie.
+Tout ce que le modèle manipule est **brut** : le salaire saisi, les cotisations
+versées, le capital notionnel, les cinq pensions. « Brut » au sens des comptes
+nationaux — *salaires et traitements bruts* (D11) rapportés à l'emploi salarié
+intérieur, la définition même du salaire moyen par tête qui sert d'unité —,
+c'est-à-dire **avant** cotisations salariales, CSG, CRDS et impôt sur le revenu,
+et **hors** cotisations patronales, qui s'ajoutent au brut sans en faire partie.
 
 Ce n'est pas une commodité d'affichage : c'est l'assiette sur laquelle les
 régimes appellent leurs cotisations, donc la seule grandeur qu'un compte
@@ -1193,22 +1192,19 @@ salaires. Le modèle ne convertit jamais en net, faute d'une série de taux de
 prélèvement par statut et par année qui soit du même niveau de preuve que le
 reste.
 
-L'unité de saisie du revenu est le **multiple du salaire moyen** de l'année
-considérée, parce qu'elle seule garde son sens sur quatre-vingts ans : une somme
-n'en a que rapportée à son année et à sa monnaie. Le formulaire accepte
-néanmoins des montants — euros ou francs, mensuels ou annuels — et fait la
-conversion, qu'il affiche dans les deux sens :
+Le salaire se saisit en **euros d'aujourd'hui** : ce que le métier paie
+maintenant. Le modèle, lui, ne connaît que le **multiple du salaire moyen**,
+seule unité qui garde son sens sur quatre-vingts ans — un montant n'en a que
+rapporté à son année. Le site fait donc une division, et une seule :
 
 ```
-niveau = montant annuel en euros ÷ salaire moyen de l'année indiquée
+niveau = salaire mensuel × 12 ÷ salaire moyen annuel
 ```
 
-Les francs sont convertis au taux irrévocable du règlement (CE) n° 2866/98,
-**1 € = 6,559 57 F**, et par cent de plus avant 1960 : le nouveau franc du
-décret du 27 décembre 1958 vaut cent anciens francs, et convertir « 40 000 F par
-mois en 1955 » au taux du nouveau franc donnerait cent fois le salaire moyen au
-lieu d'un salaire ordinaire. Au-delà de 2001, un montant en francs est refusé
-plutôt qu'interprété.
+Ce niveau suit ensuite le salaire moyen d'une année à l'autre, déformé par le
+profil de carrière : le salaire saisi est celui du milieu de carrière, pas celui
+de chaque année. Le multiple reste saisissable pour qui raisonne en relatif ; il
+est alors traduit en euros sous le champ, dans l'autre sens.
 
 ### Ancrage des rémunérations
 
@@ -1218,15 +1214,12 @@ Le modèle les cumule à partir d'un point d'ancrage — 40 000 € bruts annuel
 les revenus reconstitués, donc toutes les pensions, mais il est **sans effet sur
 les rapports entre scénarios**, qui sont l'objet du modèle.
 
-Il commande en revanche la traduction d'un montant en multiple, et donc ce que
-le site affiche comme repères d'une année : saisir un salaire en euros, c'est le
-lire à cette échelle-là. Le formulaire donne le salaire moyen, le SMIC et le
-plafond de la Sécurité sociale de l'année choisie, dans la monnaie choisie, pour
-que l'échelle soit visible au lieu d'être supposée. Le repère du SMIC n'est
-donné au mois qu'à partir de 2005, date à laquelle la garantie mensuelle unique
-sur 151,67 heures achève de se substituer aux durées légales antérieures ; avant
-elle, il est donné à l'heure, ce qui ne suppose aucune durée du travail que le
-modèle ne porte pas.
+Il commande en revanche la traduction d'un salaire en multiple, et donc les
+repères que le site affiche sous le champ — SMIC, salaire moyen, plafond de la
+Sécurité sociale — pour que l'échelle soit visible au lieu d'être supposée. Le
+SMIC mensuel y est calculé sur 151,67 heures, la durée légale actuelle ; l'année
+de référence étant celle du modèle, aucune durée du travail passée n'a à être
+supposée.
 
 ### Une carrière, plusieurs métiers
 

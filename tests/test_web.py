@@ -39,14 +39,13 @@ def contexte() -> Contexte:
     return Contexte()
 
 
-def _macro():
-    """Les séries du jeu de paramètres par défaut.
+def _echelle():
+    """L'échelle des salaires du jeu de paramètres par défaut.
 
-    ``Saisie.parcours`` en a besoin depuis que le formulaire accepte des
-    montants : convertir « 2 500 € par mois » en multiple du salaire moyen
-    suppose de connaître le salaire moyen de l'année.
+    ``Saisie.parcours`` en a besoin depuis que le formulaire accepte des euros :
+    convertir « 2 500 € par mois » en multiple suppose le salaire moyen.
     """
-    return Contexte().simulateur().macro
+    return Contexte().echelle(Saisie())
 
 
 @pytest.fixture(scope="module")
@@ -225,138 +224,79 @@ def test_interruption_mal_formee_est_refusee():
 # -- l'unité des revenus saisis ----------------------------------------------
 
 
-def test_l_unite_par_defaut_reste_le_multiple_du_salaire_moyen():
-    """Toute adresse partagée avant que les montants existent doit valoir encore."""
-    saisie = Saisie.depuis_requete({"salaire": "1.4"})
+def test_le_formulaire_vierge_demande_des_euros():
+    """C'est la question qui revenait : personne ne connaît son salaire en ratio."""
+    saisie = Saisie.depuis_requete({})
+    assert saisie.unite_revenu == "euros_mois"
+    assert saisie.revenu_en_euros is True
+
+
+def test_un_salaire_mensuel_devient_un_multiple():
+    """2 500 € par mois contre 40 000 € annuels d'ancrage, à l'échelle de 2026."""
+    saisie = Saisie.depuis_requete({"unite_revenu": "euros_mois", "salaire": "2500"})
+    echelle = _echelle()
+    assert saisie.niveaux(echelle) == pytest.approx([2500 * 12 / echelle.moyen])
+    assert saisie.parcours(echelle)[0].niveau_salaire == pytest.approx(
+        saisie.niveaux(echelle)[0]
+    )
+
+
+def test_le_multiple_reste_disponible():
+    saisie = Saisie.depuis_requete({"unite_revenu": "moyen", "salaire": "1.4"})
+    assert saisie.revenu_en_euros is False
+    assert saisie.parcours(_echelle())[0].niveau_salaire == 1.4
+
+
+def test_une_adresse_d_avant_les_euros_reste_lue_en_multiples():
+    """Un « salaire » nu vaut un multiple : le lire en euros en ferait un euro."""
+    saisie = Saisie.depuis_requete({"naissance": "1975", "salaire": "1.4"})
     assert saisie.unite_revenu == "moyen"
-    assert saisie.revenu_en_montant is False
-    assert saisie.parcours(_macro())[0].niveau_salaire == 1.4
-    # Et l'adresse produite ne se met pas à traîner deux paramètres muets.
-    requete = saisie.requete()
-    assert "unite_revenu" not in requete
-    assert "annee_revenu" not in requete
+    assert saisie.parcours(_echelle())[0].niveau_salaire == 1.4
 
 
-def test_un_montant_mensuel_en_euros_devient_un_multiple():
-    """2 500 € par mois de 2024, contre 40 000 € annuels d'ancrage : 0,75."""
-    saisie = Saisie.depuis_requete({
-        "unite_revenu": "euros_mois", "annee_revenu": "2024", "salaire": "2500",
-    })
-    assert saisie.revenu_en_montant is True
-    assert saisie.parcours(_macro())[0].niveau_salaire == pytest.approx(0.75)
+def test_l_unite_s_ecrit_toujours_dans_l_adresse():
+    """C'est ce qui distingue une adresse neuve d'une adresse d'avant les euros."""
+    for unite in ("euros_mois", "moyen"):
+        requete = Saisie.depuis_requete({"unite_revenu": unite, "salaire": "1"}).requete()
+        assert f"unite_revenu={unite}" in requete
 
 
-def test_le_mensuel_et_l_annuel_disent_la_meme_chose():
-    macro = _macro()
-    mensuel = Saisie.depuis_requete({
-        "unite_revenu": "euros_mois", "annee_revenu": "2024", "salaire": "2500",
-    })
-    annuel = Saisie.depuis_requete({
-        "unite_revenu": "euros_an", "annee_revenu": "2024", "salaire": "30000",
-    })
-    assert (mensuel.niveaux(macro)[0]
-            == pytest.approx(annuel.niveaux(macro)[0]))
+def test_un_salaire_hors_bornes_est_refuse_en_euros():
+    """Le refus doit dire quoi corriger, donc redire les bornes en euros."""
+    saisie = Saisie.depuis_requete({"unite_revenu": "euros_mois", "salaire": "200"})
+    with pytest.raises(ErreurSaisie, match="bruts par mois"):
+        saisie.parcours(_echelle())
 
 
-def test_les_francs_sont_convertis_au_taux_legal():
-    """1 € = 6,559 57 F : le multiple ne dépend pas de la monnaie choisie."""
-    macro = _macro()
-    francs = Saisie.depuis_requete({
-        "unite_revenu": "francs_an", "annee_revenu": "1985",
-        "salaire": str(100_000),
-    })
-    euros_ = Saisie.depuis_requete({
-        "unite_revenu": "euros_an", "annee_revenu": "1985",
-        "salaire": str(100_000 / 6.55957),
-    })
-    assert francs.niveaux(macro)[0] == pytest.approx(euros_.niveaux(macro)[0])
-
-
-def test_avant_1960_les_francs_sont_des_anciens_francs():
-    """Le nouveau franc vaut cent anciens : 1955 ne se convertit pas comme 1985.
-
-    Sans cette distinction, « 40 000 F par mois en 1955 » — un salaire ordinaire
-    de l'époque — serait lu comme cent fois le salaire moyen et refusé.
-    """
-    macro = _macro()
-    francs = Saisie.depuis_requete({
-        "unite_revenu": "francs_mois", "annee_revenu": "1955", "salaire": "40000",
-    })
-    # Les mêmes 40 000 anciens francs, écrits en euros : le taux légal divisé
-    # par cent, parce que le nouveau franc du décret de 1958 en vaut cent.
-    euros_ = Saisie.depuis_requete({
-        "unite_revenu": "euros_mois", "annee_revenu": "1955",
-        "salaire": str(40_000 / 655.957),
-    })
-    assert francs.niveaux(macro)[0] == pytest.approx(euros_.niveaux(macro)[0])
-    # Et le résultat est un salaire ordinaire, pas cent fois le salaire moyen.
-    assert 0.5 < francs.niveaux(macro)[0] < 2.0
-
-
-def test_un_salaire_en_francs_apres_2001_est_refuse():
-    with pytest.raises(ErreurSaisie, match="francs"):
-        Saisie.depuis_requete({
-            "unite_revenu": "francs_mois", "annee_revenu": "2010",
-            "salaire": "10000",
-        })
-
-
-def test_un_montant_hors_bornes_est_refuse_dans_son_unite():
-    """Le refus doit dire quoi corriger, donc redire les bornes en monnaie."""
-    saisie = Saisie.depuis_requete({
-        "unite_revenu": "euros_mois", "annee_revenu": "2024", "salaire": "200",
-    })
-    with pytest.raises(ErreurSaisie, match="€ bruts par mois"):
-        saisie.parcours(_macro())
-
-
-def test_un_montant_negatif_ou_nul_est_refuse():
+def test_un_salaire_negatif_ou_nul_est_refuse():
     for montant in ("0", "-1500"):
         with pytest.raises(ErreurSaisie):
-            Saisie.depuis_requete({
-                "unite_revenu": "euros_mois", "annee_revenu": "2024",
-                "salaire": montant,
-            })
-
-
-def test_l_unite_choisie_survit_dans_l_adresse():
-    saisie = Saisie.depuis_requete({
-        "unite_revenu": "euros_an", "annee_revenu": "2024", "salaire": "30000",
-    })
-    requete = saisie.requete()
-    assert "unite_revenu=euros_an" in requete
-    assert "annee_revenu=2024" in requete
+            Saisie.depuis_requete({"unite_revenu": "euros_mois", "salaire": montant})
 
 
 def test_l_unite_vaut_pour_tous_les_metiers():
-    macro = _macro()
+    echelle = _echelle()
     saisie = Saisie.depuis_requete({
-        "unite_revenu": "euros_mois", "annee_revenu": "2024", "salaire": "2500",
+        "unite_revenu": "euros_mois", "salaire": "2500",
         "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "5000",
     })
-    assert saisie.niveaux(macro) == pytest.approx([0.75, 1.5])
+    premier, second = saisie.niveaux(echelle)
+    assert second == pytest.approx(2 * premier)
 
 
 def test_le_formulaire_dit_brut_et_donne_l_echelle(contexte):
-    """La question posée — « brut ou net ? » — doit trouver sa réponse à l'écran."""
+    """La question posée — « brut ou net ? » — trouve sa réponse sur le champ."""
     _, corps = rendre(contexte, "/", {})
-    assert "Brut, jamais net" in corps
-    assert "impôt sur le revenu" in corps
-    assert "Repères pour 2026" in corps
-    # Le multiple est traduit en euros, sans quoi il ne dit rien à personne.
-    assert "fois le salaire moyen de 2026" in corps
+    assert "Salaire brut mensuel" in corps
+    assert "la ligne « brut » de la fiche de paie" in corps
+    # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
+    assert "SMIC" in corps and "moyenne" in corps and "plafond" in corps
 
 
-def test_le_formulaire_ecrit_ses_reperes_dans_la_monnaie_saisie(contexte):
-    _, corps = rendre(contexte, "/", {
-        "naissance": "1935", "unite_revenu": "francs_mois",
-        "annee_revenu": "1955", "salaire": "40000",
-    })
-    assert "Repères pour 1955" in corps
-    assert "\u202fF" in corps
-    # Le SMIC n'existe pas encore : mieux vaut un repère de moins qu'un faux.
-    assert "SMIC" not in corps.split("Repères pour 1955")[1].split("</p>")[0]
+def test_le_multiple_est_traduit_en_euros(contexte):
+    _, corps = rendre(contexte, "/", {"unite_revenu": "moyen", "salaire": "1"})
+    assert "1 = salaire moyen, soit" in corps
 
 
 # -- plusieurs métiers -------------------------------------------------------
@@ -375,7 +315,7 @@ def test_les_metiers_suivants_sont_lus_dans_la_requete():
         # statut n'est pas changer de revenu.
         (50.0, "artisan", 1.2),
     ]
-    parcours = saisie.parcours(_macro())
+    parcours = saisie.parcours(_echelle())
     assert len(parcours) == 3
     assert parcours[0].affiliation == "salarie_prive_non_cadre"
     assert parcours[0].niveau_salaire == 0.9
@@ -386,7 +326,7 @@ def test_une_adresse_sans_metier_decrit_une_carriere_d_un_seul_metier():
     """Toutes les adresses déjà partagées doivent continuer de valoir."""
     saisie = Saisie.depuis_requete({"naissance": "1960", "statut": "mineur"})
     assert saisie.metiers == []
-    assert [metier.affiliation for metier in saisie.parcours(_macro())] == ["mineur"]
+    assert [metier.affiliation for metier in saisie.parcours(_echelle())] == ["mineur"]
 
 
 def test_une_ligne_de_metier_a_moitie_remplie_est_refusee():
