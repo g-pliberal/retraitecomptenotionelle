@@ -343,6 +343,17 @@ def _pages(contexte: Contexte) -> dict:
         # Ni la bascule ni l'année des euros ne valent leur défaut : c'est le
         # cas qui débusque un texte citant une année écrite en dur — le chapeau
         # annonçait « à compter de 2026 » quand le scénario 3 partait de 2035.
+        # Le scénario 2 AU-DESSUS du scénario 1 : la trajectoire annonçait
+        # « l'écart se creuse » en affichant un montant négatif.
+        ("accueil_notionnel_plus_genereux", "/", {
+            **BASE, "statut": "profession_liberale", "liquidation": "70",
+            "salaire": "4", "unite_revenu": "moyen",
+        }),
+        # Liquidation en cours d'année : la trajectoire ne doit rien tracer
+        # avant le départ, quand elle partait de l'âge entier précédent.
+        ("accueil_depart_en_cours_d_annee", "/", {
+            **BASE, "liquidation_mois": "6",
+        }),
         ("accueil_annees_deplacees", "/", {
             **BASE, "bascule": "2035", "euros": "2000",
         }),
