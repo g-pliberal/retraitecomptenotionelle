@@ -340,6 +340,12 @@ def _pages(contexte: Contexte) -> dict:
         ("accueil_euros_hors_bornes", "/", {**BASE, "euros": "9999"}),
         ("accueil_bascule_hors_bornes", "/", {**BASE, "bascule": "1900"}),
         ("accueil_enfants_hors_bornes", "/", {**BASE, "enfants": "999"}),
+        # Ni la bascule ni l'année des euros ne valent leur défaut : c'est le
+        # cas qui débusque un texte citant une année écrite en dur — le chapeau
+        # annonçait « à compter de 2026 » quand le scénario 3 partait de 2035.
+        ("accueil_annees_deplacees", "/", {
+            **BASE, "bascule": "2035", "euros": "2000",
+        }),
         # Départ dans l'année de référence : les deux unités se confondent et
         # chaque scénario n'affiche qu'un chiffre. C'est la branche que les
         # textes d'unité doivent traiter à part.
