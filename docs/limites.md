@@ -2076,6 +2076,16 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   environ 9,1 % de la pension. Ce prélèvement étant proportionnel et identique
   dans les trois scénarios, il ne déplacerait aucun des écarts affichés : c'est
   la raison pour laquelle le brut suffit ici.
+  La règle vaut aussi à l'entrée : le revenu d'activité se saisit en brut, et le
+  simulateur ne propose pas de le saisir en net. Il faudrait pour cela une série
+  de taux de prélèvement salarial par statut et par année, du même niveau de
+  preuve que le reste du dépôt, qui n'y est pas. Le formulaire le dit donc
+  explicitement plutôt que de laisser deviner, et donne les repères — salaire
+  moyen, SMIC, plafond — dans l'unité et l'année choisies, pour que l'échelle
+  soit vérifiable. Le taux de remplacement affiché rapporte, lui, un brut à un
+  brut : il est plus bas qu'un taux calculé sur des nets, d'à peu près l'écart
+  entre les 9,1 % prélevés sur la pension et les quelque 22 % prélevés sur le
+  salaire.
 
 - **La capitalisation.** Le compartiment RAFP est isolé et converti au même
   coefficient actuariel que le reste, mais son **rendement financier propre**

@@ -416,23 +416,55 @@ export class Carriere {
   }
 }
 
+/**
+ * Ce que chaque profil de carrière fait du niveau de revenu saisi : sa valeur
+ * au tout début de la vie active, et l'AMPLITUDE dont elle croît jusqu'au
+ * dernier emploi. La table donne l'amplitude et non le point d'arrivée pour
+ * refaire au bit près l'arithmétique des trois formules qu'elle remplace ;
+ * `bornesDeformation` en reconstitue les deux bouts pour qui veut les afficher.
+ */
+export const DEFORMATIONS = {
+  plat: [1.0, 0.0],
+  ascendant: [0.6, 0.7],
+  fortement_ascendant: [0.5, 1.4],
+};
+
+/** Ce que le profil fait du niveau saisi, au premier et au dernier emploi. */
+export function bornesDeformation(profil) {
+  const [depart, amplitude] = DEFORMATIONS[profil];
+  return [depart, depart + amplitude];
+}
+
 function deformation(profil, avancement) {
-  if (profil === "plat") {
-    return 1.0;
+  if (!(profil in DEFORMATIONS)) {
+    throw new Error(`profil de carrière inconnu : ${profil}`);
   }
-  if (profil === "ascendant") {
-    // Profil ouvrier/employé : de 60 % à 130 % du niveau cible.
-    return 0.6 + 0.7 * avancement;
-  }
-  if (profil === "fortement_ascendant") {
-    // Profil cadre : de 50 % à 190 %.
-    return 0.5 + 1.4 * avancement;
-  }
-  throw new Error(`profil de carrière inconnu : ${profil}`);
+  const [depart, amplitude] = DEFORMATIONS[profil];
+  return depart + amplitude * avancement;
+}
+
+/**
+ * Point d'ancrage du salaire moyen par tête, en euros bruts annuels courants.
+ * Les comptes nationaux ne publient que des taux de croissance ; il faut un
+ * niveau pour les cumuler. Il est ici, en un seul endroit, parce que le site
+ * l'affiche désormais — dire « 1 = salaire moyen » sans dire combien cela fait
+ * d'euros laissait toute la saisie dans le flou.
+ */
+export const ANCRAGE_SALAIRE_MOYEN = [2024, 40000.0];
+
+/** Salaire moyen par tête d'une année, en euros BRUTS courants de cette année. */
+export function salaireMoyenAnnuel(macro, annee) {
+  return indiceSalaireMoyen(macro, annee, annee).get(annee);
 }
 
 /**
  * Salaire moyen par tête reconstitué en euros courants de chaque année.
+ *
+ * Le montant est un salaire BRUT : la série de comptes nationaux dont il dérive
+ * est celle des salaires et traitements bruts (D11) rapportés à l'emploi
+ * salarié, c'est-à-dire avant cotisations salariales, avant CSG et avant impôt
+ * sur le revenu, cotisations patronales exclues. C'est la même assiette que
+ * celle sur laquelle les régimes appellent leurs cotisations.
  *
  * La série de comptes nationaux ne donne que des TAUX DE CROISSANCE. On les
  * cumule à partir d'un point d'ancrage : le salaire moyen par tête du secteur
@@ -442,8 +474,7 @@ function deformation(profil, avancement) {
  * effet sur les RAPPORTS entre scénarios, qui sont l'objet du modèle.
  */
 export function indiceSalaireMoyen(macro, debut, fin) {
-  const ancrageAnnee = 2024;
-  const ancrageValeur = 40000.0;
+  const [ancrageAnnee, ancrageValeur] = ANCRAGE_SALAIRE_MOYEN;
   const valeurs = new Map([[ancrageAnnee, ancrageValeur]]);
 
   const borneHaute = Math.max(fin, ancrageAnnee);

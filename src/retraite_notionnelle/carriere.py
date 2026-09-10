@@ -350,10 +350,13 @@ class Carriere:
         cas particulier auquel se réduisait tout le modèle : on faisait autrefois
         le même métier toute sa vie, c'est devenu l'exception.
 
-        ``niveau_salaire`` s'exprime en multiples du salaire moyen par tête de
-        l'année considérée : 1,0 = salaire moyen, 0,6 ≈ niveau du SMIC,
-        3,0 = cadre supérieur. Ce choix d'unité évite à l'utilisateur d'avoir à
-        convertir des francs de 1975 en euros.
+        ``niveau_salaire`` s'exprime en multiples du salaire moyen par tête
+        BRUT de l'année considérée : 1,0 = salaire moyen, 0,6 ≈ niveau du SMIC,
+        3,0 = cadre supérieur. Ce choix d'unité évite d'avoir à convertir des
+        francs de 1975 en euros — le site, lui, accepte les deux et fait la
+        conversion (voir :func:`salaire_moyen_annuel`). Brut au sens des
+        comptes nationaux : avant cotisations salariales, avant CSG et avant
+        impôt sur le revenu, cotisations patronales exclues.
 
         ``profil_carriere`` décrit la déformation du salaire relatif au cours de
         la vie active, et il vaut pour la carrière ENTIÈRE, changements de métier
@@ -421,7 +424,7 @@ class Carriere:
         # dernière année pleine, comme avant : une carrière commençant et
         # finissant au 1er janvier retrouve exactement ses anciennes valeurs.
         duree_mois = max(fin.rang - 12 - debut.rang, 12)
-        salaire_moyen_reference = _indice_salaire_moyen(macro, annee_debut, annee_fin)
+        salaire_moyen_reference = indice_salaire_moyen(macro, annee_debut, annee_fin)
 
         lignes: list[AnneeCarriere] = []
         for annee in annees:
@@ -510,18 +513,60 @@ class Carriere:
         )
 
 
+#: Ce que chaque profil de carrière fait du niveau de revenu saisi : sa valeur
+#: au tout début de la vie active, et sa valeur à la fin. Entre les deux, la
+#: déformation est linéaire. La table est ici, et non enfouie dans une suite de
+#: `if`, parce que le site l'affiche : dire « profil ascendant » sans dire que
+#: le revenu saisi vaut 0,6 fois moins au premier emploi et 1,3 fois plus au
+#: dernier laisse croire qu'on a saisi un salaire constant.
+#: La table donne le point de départ et l'AMPLITUDE, non le point d'arrivée :
+#: c'est l'arithmétique qu'écrivaient les trois formules qu'elle remplace, et
+#: la garder au bit près évite de faire bouger toutes les pensions du dépôt
+#: pour une réécriture qui ne change rien. :func:`bornes_deformation` en
+#: reconstitue les deux bouts pour qui veut les afficher.
+DEFORMATIONS = {
+    "plat": (1.0, 0.0),
+    "ascendant": (0.60, 0.70),
+    "fortement_ascendant": (0.50, 1.40),
+}
+
+
+def bornes_deformation(profil: str) -> tuple[float, float]:
+    """Ce que le profil fait du niveau saisi, au premier et au dernier emploi."""
+    depart, amplitude = DEFORMATIONS[profil]
+    return depart, depart + amplitude
+
+
 def _deformation(profil: str, avancement: float) -> float:
-    if profil == "plat":
-        return 1.0
-    if profil == "ascendant":
-        return 0.60 + 0.70 * avancement
-    if profil == "fortement_ascendant":
-        return 0.50 + 1.40 * avancement
-    raise ValueError(f"profil de carrière inconnu : {profil!r}")
+    if profil not in DEFORMATIONS:
+        raise ValueError(f"profil de carrière inconnu : {profil!r}")
+    depart, amplitude = DEFORMATIONS[profil]
+    return depart + amplitude * avancement
 
 
-def _indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int, float]:
+#: Point d'ancrage du salaire moyen par tête, en euros bruts annuels courants.
+#: Les comptes nationaux ne publient que des taux de croissance ; il faut un
+#: niveau pour les cumuler. Il est ici, en un seul endroit, parce que le site
+#: l'affiche désormais — dire « 1 = salaire moyen » sans dire combien cela fait
+#: d'euros laissait toute la saisie dans le flou.
+ANCRAGE_SALAIRE_MOYEN = (2024, 40_000.0)
+
+
+def salaire_moyen_annuel(macro: DonneesMacro, annee: int) -> float:
+    """Salaire moyen par tête d'une année, en euros BRUTS courants de cette année."""
+    return indice_salaire_moyen(macro, annee, annee)[annee]
+
+
+def indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int, float]:
     """Salaire moyen par tête reconstitué en euros courants de chaque année.
+
+    Le montant est un salaire **BRUT** : la série de comptes nationaux dont il
+    dérive est celle des salaires et traitements bruts (D11) rapportés à
+    l'emploi salarié, c'est-à-dire avant cotisations salariales, avant CSG et
+    avant impôt sur le revenu, cotisations patronales exclues. C'est la même
+    assiette que celle sur laquelle les régimes appellent leurs cotisations :
+    le niveau de revenu saisi, les cotisations versées et les pensions
+    calculées sont donc tous bruts, et se comparent directement.
 
     La série de comptes nationaux ne donne que des TAUX DE CROISSANCE. On les
     cumule à partir d'un point d'ancrage : le salaire moyen par tête du secteur
@@ -530,7 +575,7 @@ def _indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int
     tous les revenus reconstitués, donc toutes les pensions, mais il est sans
     effet sur les RAPPORTS entre scénarios, qui sont l'objet du modèle.
     """
-    ancrage_annee, ancrage_valeur = 2024, 40_000.0
+    ancrage_annee, ancrage_valeur = ANCRAGE_SALAIRE_MOYEN
     valeurs = {ancrage_annee: ancrage_valeur}
 
     borne_haute = max(fin, ancrage_annee)
