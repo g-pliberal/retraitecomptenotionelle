@@ -24,12 +24,14 @@ from retraite_notionnelle.web.gabarit import (
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante
 from retraite_notionnelle.web.pages import (
     AGES_REFERENCE,
+    DECIMALES_MULTIPLE,
     ANNEE_MAXIMALE,
     ANNEE_MINIMALE,
     ENFANTS_MAXIMUM,
     INDEXATIONS,
     LISSAGE_MAXIMUM,
     METIERS_MAXIMUM,
+    PAS_MULTIPLE,
     PROFILS,
     PROJECTIONS,
     TABLES,
@@ -376,17 +378,56 @@ def test_la_bascule_d_unite_convertit_les_montants(contexte):
 
 
 def test_la_bascule_revient_au_meme_revenu(contexte):
-    """Aller et retour : le revenu décrit doit être le même, à l'euro près.
+    """Aller et retour : de combien le revenu décrit peut-il bouger ?
 
-    C'est ce qui commande le pas des deux champs. Au centième de salaire moyen,
-    l'aller-retour déplaçait le salaire d'un demi-pour-cent.
+    Pas de zéro : le multiple s'écrit au millième, et un millième de salaire
+    moyen vaut environ trois euros cinquante par mois. L'écart est donc borné
+    par un demi-pas, plus l'arrondi à l'euro — et cette borne est CALCULÉE
+    depuis le pas du champ, pour qu'elle suive si le pas change un jour. Le
+    balayage porte sur tout le domaine accepté : sur trois valeurs choisies, un
+    aller-retour semble exact alors qu'il ne l'est pas.
     """
-    for depart in ("2900", "3500", "1234", "9000"):
-        aller, _ = _lien_de_bascule(contexte, {
-            "naissance": "1975", "unite_revenu": "euros_mois", "salaire": depart,
+    echelle = contexte.echelle(Saisie())
+    borne = echelle.mensuel(PAS_MULTIPLE) / 2 + 1
+
+    def aller_retour(euros: int) -> int:
+        return round(echelle.mensuel(round(echelle.niveau(euros), DECIMALES_MULTIPLE)))
+
+    plancher, plafond = round(echelle.mensuel(0.1)), round(echelle.mensuel(10))
+    pire = max(abs(aller_retour(euros) - euros)
+               for euros in range(plancher, plafond + 1))
+    assert pire <= borne, f"{pire} € d'écart, au-delà des {borne:.2f} € admis"
+    # Et l'ordre de grandeur, pour que la borne ne se relâche pas en silence.
+    assert pire == 2
+
+
+def test_la_bascule_ne_fait_jamais_sortir_des_bornes(contexte):
+    """Un revenu accepté doit le rester une fois converti.
+
+    Sinon le lien mènerait à une page qui refuse ce qu'elle affichait juste
+    avant — l'arrondi peut faire franchir 0,1 ou 10 à un revenu qui les frôle.
+    """
+    echelle = contexte.echelle(Saisie())
+    for euros in range(round(echelle.mensuel(0.1)), round(echelle.mensuel(10)) + 1):
+        multiple = round(echelle.niveau(euros), DECIMALES_MULTIPLE)
+        assert 0.1 <= multiple <= 10, f"{euros} € donne {multiple}"
+    for millieme in range(100, 10001):
+        euros = round(echelle.mensuel(millieme / 1000))
+        assert 0.1 <= echelle.niveau(euros) <= 10, f"{millieme / 1000} donne {euros} €"
+
+
+def test_les_bornes_annoncees_par_le_refus_sont_acceptees(contexte):
+    """Un message d'erreur ne doit pas nommer un montant qu'il refuserait.
+
+    Il dit « de 348 à 34 754 € » : les deux valeurs sont arrondies, et un
+    arrondi du mauvais côté nommerait une borne hors bornes.
+    """
+    echelle = contexte.echelle(Saisie())
+    for borne in (round(echelle.mensuel(0.1)), round(echelle.mensuel(10))):
+        saisie = Saisie.depuis_requete({
+            "unite_revenu": "euros_mois", "salaire": str(borne),
         })
-        retour, _ = _lien_de_bascule(contexte, aller)
-        assert float(retour["salaire"]) == pytest.approx(float(depart), abs=1)
+        saisie.parcours(echelle)  # ne doit pas lever
 
 
 def test_la_bascule_convertit_tous_les_metiers(contexte):
@@ -852,6 +893,141 @@ def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
     try:
         execution = subprocess.run(
             ["node", "tests/js/comparer.mjs", chemin],
+            cwd=racine, capture_output=True, text=True, check=False,
+        )
+    finally:
+        Path(chemin).unlink(missing_ok=True)
+    assert execution.returncode == 0, execution.stdout + execution.stderr
+
+
+def test_le_portage_javascript_arrondit_comme_python():
+    """Les demis, là où les deux langages divergent par défaut.
+
+    ``round`` va au pair en Python, ``Math.round`` monte en JavaScript. Le lien
+    de bascule d'unité écrit un nombre arrondi : s'il différait d'un côté, le
+    site et la référence n'enverraient pas vers la même adresse. Les valeurs
+    balayées ici sont choisies pour tomber PILE sur un demi — seizièmes et
+    huitièmes, exacts en binaire — puisque c'est le seul cas litigieux.
+    """
+    import json
+    import random
+    import shutil
+    import struct
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+
+    alea = random.Random(20260910)
+    valeurs = set()
+    for n in range(1, 2000):
+        # n/16 et n/8 sont exacts en binaire : leur 4e et 3e décimale est un 5
+        # franc, et c'est la parité du chiffre précédent qui doit trancher.
+        valeurs.update((n / 16, n / 8, n / 2, n / 1000))
+    for _ in range(2000):
+        valeurs.add(alea.uniform(0.1, 10))
+        valeurs.add(alea.uniform(0, 40000))
+        # Des doubles quelconques, tirés bit à bit : aucune structure décimale.
+        tire = struct.unpack("<d", struct.pack("<Q", alea.getrandbits(64)))[0]
+        if tire == tire and 0 <= abs(tire) < 1e15:
+            valeurs.add(abs(tire))
+
+    cas = [{"x": x, "attendus": [f"{round(x, d):g}" for d in range(5)]}
+           for x in sorted(valeurs)]
+
+    racine = Path(__file__).resolve().parents[1]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(cas, fichier)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", "tests/js/comparer-arrondis.mjs", chemin],
+            cwd=racine, capture_output=True, text=True, check=False,
+        )
+    finally:
+        Path(chemin).unlink(missing_ok=True)
+    assert execution.returncode == 0, execution.stdout + execution.stderr
+
+
+def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
+    """Le HTML, et pas seulement les nombres, sur des saisies non prévues.
+
+    La comparaison des seuls résultats ne voit ni les libellés, ni les aides
+    chiffrées, ni le lien de bascule d'unité — c'est-à-dire précisément là où
+    l'arrondi d'AFFICHAGE se décide. Les paramètres du modèle restent fixes :
+    ce que ce test balaie, c'est la saisie du revenu, dans les deux unités et
+    jusqu'à ses bords.
+    """
+    import importlib.util
+    import json
+    import random
+    import shutil
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+
+    racine = Path(__file__).resolve().parents[1]
+    specification = importlib.util.spec_from_file_location(
+        "construire_temoins", racine / "scripts" / "construire_temoins.py"
+    )
+    temoins = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(temoins)
+
+    contexte = Contexte()
+    alea = random.Random(20260910)
+    statuts = list(contexte.simulateur().affiliations.codes)
+    # Les bords comptent plus que le milieu : ce sont eux que l'arrondi fait
+    # basculer d'un côté ou de l'autre des bornes du modèle.
+    echelle = contexte.echelle(Saisie())
+    plancher, plafond = round(echelle.mensuel(0.1)), round(echelle.mensuel(10))
+    euros = [str(plancher - 1), str(plancher), str(plafond), str(plafond + 1),
+             "0", "3500", "1", f"{alea.uniform(1, 40000):.2f}"]
+    multiples = ["0.099", "0.1", "10", "10.001", "1", "0.0005",
+                 f"{alea.uniform(0.1, 10):.4f}", f"{alea.uniform(0.1, 10):.6f}"]
+
+    cas = []
+    for numero in range(40):
+        unite = alea.choice(["euros_mois", "moyen"])
+        debut = alea.randint(14, 30)
+        requete = {
+            "naissance": str(alea.randint(1900, 2005)),
+            "naissance_mois": str(alea.randint(1, 12)),
+            "sexe": alea.choice(["H", "F"]),
+            "statut": alea.choice(statuts),
+            "debut": str(debut),
+            "liquidation": str(alea.randint(max(41, debut + 1), 75)),
+            "unite_revenu": unite,
+            "salaire": alea.choice(euros if unite == "euros_mois" else multiples),
+            "profil": alea.choice([code for code, _ in PROFILS]),
+        }
+        for rang, age in enumerate(sorted(alea.sample(
+                range(debut + 1, int(requete["liquidation"])),
+                min(alea.randint(0, 2), max(0, int(requete["liquidation"]) - debut - 1)),
+        )), start=2):
+            requete[f"metier{rang}_debut"] = str(age)
+            requete[f"metier{rang}_statut"] = alea.choice(statuts)
+            requete[f"metier{rang}_salaire"] = alea.choice(
+                euros if unite == "euros_mois" else multiples
+            )
+        cas.append({
+            "nom": f"page_{numero}",
+            "requete": requete,
+            "corps": temoins.sans_bloc_json(rendre(contexte, "/", requete)[1]),
+        })
+
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(cas, fichier, ensure_ascii=False)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", "tests/js/comparer-pages.mjs", chemin],
             cwd=racine, capture_output=True, text=True, check=False,
         )
     finally:
