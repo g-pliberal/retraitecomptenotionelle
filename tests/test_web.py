@@ -7,6 +7,8 @@ standard et sert de référence au portage JavaScript.
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from retraite_notionnelle.web import gabarit as g
@@ -20,6 +22,9 @@ from retraite_notionnelle.web.gabarit import (
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante
 from retraite_notionnelle.web.pages import (
     AGES_REFERENCE,
+    ANNEE_MAXIMALE,
+    ANNEE_MINIMALE,
+    ENFANTS_MAXIMUM,
     INDEXATIONS,
     LISSAGE_MAXIMUM,
     METIERS_MAXIMUM,
@@ -174,6 +179,63 @@ def test_saisie_par_defaut_est_valide():
 def test_saisies_refusees(champs):
     with pytest.raises(ErreurSaisie):
         Saisie.depuis_requete(champs)
+
+
+@pytest.mark.parametrize("champ", ["bascule", "euros"])
+@pytest.mark.parametrize("valeur", ["1800", "9999", "-5", "0"])
+def test_les_annees_hors_bornes_sont_refusees(champ, valeur):
+    """Une adresse forgée à la main ne doit pas franchir les bornes du champ.
+
+    Elles n'existaient que sur le formulaire, donc opposables au navigateur
+    seulement. « ?euros=9999 » traversait toute la chaîne sans erreur et
+    faisait afficher des pensions à soixante chiffres, l'année des euros
+    servant d'exposant à l'inflation cumulée.
+    """
+    with pytest.raises(ErreurSaisie):
+        Saisie.depuis_requete({champ: valeur})
+
+
+@pytest.mark.parametrize("champ", ["bascule", "euros"])
+def test_les_annees_aux_bornes_sont_acceptees(champ):
+    for valeur in (ANNEE_MINIMALE, ANNEE_MAXIMALE):
+        assert getattr(
+            Saisie.depuis_requete({champ: str(valeur)}), champ
+        ) == valeur
+
+
+def test_le_nombre_d_enfants_reste_borne():
+    """Les majorations du scénario 1 en dépendent : le champ n'était borné que
+    dans le formulaire, et « ?enfants=999 » gonflait la pension de référence."""
+    assert Saisie.depuis_requete(
+        {"enfants": str(ENFANTS_MAXIMUM)}
+    ).enfants == ENFANTS_MAXIMUM
+    for refuse in ("-1", str(ENFANTS_MAXIMUM + 1), "999"):
+        with pytest.raises(ErreurSaisie):
+            Saisie.depuis_requete({"enfants": refuse})
+
+
+def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur(contexte):
+    """Aucun champ numérique ne doit être borné dans le seul HTML.
+
+    Le formulaire porte des attributs « min » et « max » ; le navigateur les
+    respecte, une adresse partagée non. Ce test relit le formulaire rendu et
+    vérifie que chaque borne déclarée est bien refusée par le modèle.
+    """
+    formulaire = rendre(contexte, "/", {})[1]
+    champs = re.findall(
+        r'<input type="number" id="([a-z_0-9]+)" name="[^"]*" value="[^"]*"'
+        r'(?: min="(-?[0-9.]+)")?(?: max="(-?[0-9.]+)")?',
+        formulaire,
+    )
+    assert champs, "le formulaire ne déclare plus aucun champ numérique"
+    for nom, minimum, maximum in champs:
+        for borne, pas in ((minimum, -1), (maximum, +1)):
+            if not borne:
+                continue
+            dehors = float(borne) + pas
+            valeur = str(int(dehors)) if float(borne).is_integer() else str(dehors)
+            with pytest.raises(ErreurSaisie, match=r"."):
+                Saisie.depuis_requete({nom: valeur})
 
 
 def test_valeur_non_numerique_est_refusee_proprement():

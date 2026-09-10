@@ -328,6 +328,19 @@ def _pages(contexte: Contexte) -> dict:
             **BASE, "interruptions": "1996:2038:chomage_indemnise",
         }),
         ("accueil_saisie_refusee", "/", {**BASE, "liquidation": "12"}),
+        # Bornes que seul le formulaire opposait autrefois : une adresse forgée
+        # à la main les franchissait, et la page affichait sans broncher des
+        # pensions à soixante chiffres. Les trois cas figent, côté Python
+        # comme côté JavaScript, le refus qui les arrête.
+        ("accueil_euros_hors_bornes", "/", {**BASE, "euros": "9999"}),
+        ("accueil_bascule_hors_bornes", "/", {**BASE, "bascule": "1900"}),
+        ("accueil_enfants_hors_bornes", "/", {**BASE, "enfants": "999"}),
+        # Départ dans l'année de référence : les deux unités se confondent et
+        # chaque scénario n'affiche qu'un chiffre. C'est la branche que les
+        # textes d'unité doivent traiter à part.
+        ("accueil_depart_annee_reference", "/", {
+            **BASE, "naissance": "1962", "liquidation": "64", "euros": "2026",
+        }),
         # Une carrière en trois métiers : le formulaire porte alors trois lignes
         # remplies et une quatrième vide, et la page récapitule le parcours.
         ("accueil_plusieurs_metiers", "/", {
