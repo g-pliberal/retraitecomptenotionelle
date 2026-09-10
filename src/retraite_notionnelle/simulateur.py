@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from functools import cached_property
 
 from .calendrier import formater_age
-from .carriere import Affiliations, Carriere, Metier
+from .carriere import Affiliations, Carriere, Metier, salaire_moyen_annuel
 from .config import Parametres, PartCotisation
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.macro import DonneesMacro
@@ -120,6 +120,10 @@ class Comparaison:
     #: Coefficient de passage des euros de l'année de liquidation aux euros
     #: constants de ``parametres.annee_euros_constants``.
     coefficient_euros_constants: float = 1.0
+    #: Dernier revenu d'activité, annualisé ET ramené à l'année de liquidation.
+    #: Dénominateur du taux de remplacement. Calculé par le simulateur, qui
+    #: seul dispose des séries : voir :meth:`Simulateur._dernier_revenu`.
+    dernier_revenu_annualise: float = 0.0
 
     # -- indicateurs ---------------------------------------------------------
 
@@ -163,25 +167,26 @@ class Comparaison:
 
     @property
     def taux_remplacement_actuel(self) -> float:
-        return _taux_remplacement(self.carriere, self.actuel.pension_annuelle)
+        return self._taux(self.actuel.pension_annuelle)
 
     @property
     def taux_remplacement_retroactif(self) -> float:
-        return _taux_remplacement(
-            self.carriere, self.notionnel_retroactif.pension_annuelle
-        )
+        return self._taux(self.notionnel_retroactif.pension_annuelle)
 
     @property
     def taux_remplacement_prospectif(self) -> float:
-        return _taux_remplacement(
-            self.carriere, self.notionnel_prospectif.pension_annuelle
-        )
+        return self._taux(self.notionnel_prospectif.pension_annuelle)
+
+    def _taux(self, pension: float) -> float:
+        """Pension rapportée au dernier revenu d'activité, à la date du départ."""
+        revenu = self.dernier_revenu_annualise
+        if pension <= 0 or revenu <= 0:
+            return 0.0
+        return pension / revenu
 
     def taux_remplacement(self, scenario: str) -> float:
         """Taux de remplacement de n'importe lequel des scénarios notionnels."""
-        return _taux_remplacement(
-            self.carriere, getattr(self, scenario).pension_annuelle
-        )
+        return self._taux(getattr(self, scenario).pension_annuelle)
 
     # -- restitution ---------------------------------------------------------
 
@@ -405,20 +410,36 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
     }
 
 
-def _taux_remplacement(carriere: Carriere, pension: float) -> float:
-    """Pension rapportée au dernier revenu d'activité, ANNUALISÉ.
+def _dernier_revenu_annualise(carriere: Carriere, macro: DonneesMacro) -> float:
+    """Dénominateur du taux de remplacement, à la DATE du départ.
+
+    Deux corrections y sont faites, chacune pour une raison distincte.
 
     L'année du départ est incomplète — six mois de salaire pour qui liquide au
-    1er juillet —, et la rapporter telle quelle doublait le taux de
-    remplacement. Ce que le taux compare, c'est une pension annuelle au
-    traitement ANNUEL que l'assuré percevait en partant : c'est donc le revenu
-    ramené à l'année pleine qui fait le dénominateur.
+    1er juillet —, et la rapporter telle quelle doublait le taux. Le revenu est
+    donc ramené à l'année pleine.
+
+    Il est ensuite ramené à l'ANNÉE DE LIQUIDATION. Qui part le 1er janvier n'a
+    travaillé aucun mois de cette année-là : sa dernière année cotisée est la
+    précédente, et le taux rapportait alors une pension en euros de l'année du
+    départ à un salaire en euros de l'année d'avant. Deux millésimes pour un
+    seul rapport, et un décrochement de 1,84 point entre un départ en janvier
+    et un départ en février — la marche la plus grosse de toute l'année, alors
+    qu'un mois seulement les sépare. Le salaire est donc avancé jusqu'à l'année
+    du départ par l'indice du salaire moyen, celui-là même dont la carrière est
+    tirée. Il reste une marche de 0,58 point, du même ordre que celles des
+    frontières de trimestre : celle-là mesure un mois de cotisation en moins,
+    et non un changement d'unité.
     """
     derniers = [l for l in carriere.lignes if l.cotise]
-    if not derniers or pension <= 0:
+    if not derniers:
         return 0.0
-    dernier = derniers[-1].revenu_annualise
-    return pension / dernier if dernier > 0 else 0.0
+    dernier = derniers[-1]
+    reference = salaire_moyen_annuel(macro, dernier.annee)
+    if reference <= 0:
+        return dernier.revenu_annualise
+    facteur = salaire_moyen_annuel(macro, carriere.annee_liquidation) / reference
+    return dernier.revenu_annualise * facteur
 
 
 class Simulateur:
@@ -611,6 +632,7 @@ class Simulateur:
             coefficient_euros_constants=self.macro.coefficient_prix(
                 carriere.annee_liquidation, self.parametres.annee_euros_constants
             ),
+            dernier_revenu_annualise=_dernier_revenu_annualise(carriere, self.macro),
         )
 
     def _verifier_fiabilite(self, carriere: Carriere) -> None:

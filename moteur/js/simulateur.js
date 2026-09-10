@@ -6,7 +6,7 @@
  * carrières que voulu.
  */
 
-import { Carriere } from "./carriere.js";
+import { Carriere, salaireMoyenAnnuel } from "./carriere.js";
 import { PARAMETRES_DEFAUT, PartCotisation } from "./config.js";
 import { ConstructeurCompte } from "./compte.js";
 import { Convertisseur } from "./conversion.js";
@@ -46,6 +46,7 @@ export class Comparaison {
     carriere, actuel, notionnelRetroactif, notionnelProspectif,
     notionnelRetroactifEmployeur, notionnelProspectifEmployeur,
     regimeFusionne, parametres, coefficientEurosConstants = 1.0,
+    dernierRevenuAnnualise = 0.0,
   }) {
     this.carriere = carriere;
     this.actuel = actuel;
@@ -58,6 +59,17 @@ export class Comparaison {
     //: Coefficient de passage des euros de l'année de liquidation aux euros
     //: constants de ``parametres.annee_euros_constants``.
     this.coefficient_euros_constants = coefficientEurosConstants;
+    //: Dernier revenu d'activité, annualisé ET ramené à l'année de
+    //: liquidation. Dénominateur du taux de remplacement. Calculé par le
+    //: simulateur, qui seul dispose des séries.
+    this.dernier_revenu_annualise = dernierRevenuAnnualise;
+  }
+
+  /** Pension rapportée au dernier revenu d'activité, à la date du départ. */
+  _taux(pension) {
+    const revenu = this.dernier_revenu_annualise;
+    if (pension <= 0 || revenu <= 0) return 0.0;
+    return pension / revenu;
   }
 
   enEurosConstants(montant) {
@@ -111,20 +123,20 @@ export class Comparaison {
   }
 
   get tauxRemplacementActuel() {
-    return tauxRemplacement(this.carriere, this.actuel.pension_annuelle);
+    return this._taux(this.actuel.pension_annuelle);
   }
 
   get tauxRemplacementRetroactif() {
-    return tauxRemplacement(this.carriere, this.notionnel_retroactif.pension_annuelle);
+    return this._taux(this.notionnel_retroactif.pension_annuelle);
   }
 
   get tauxRemplacementProspectif() {
-    return tauxRemplacement(this.carriere, this.notionnel_prospectif.pension_annuelle);
+    return this._taux(this.notionnel_prospectif.pension_annuelle);
   }
 
   /** Taux de remplacement de n'importe lequel des scénarios notionnels. */
   tauxRemplacement(scenario) {
-    return tauxRemplacement(this.carriere, this[scenario].pension_annuelle);
+    return this._taux(this[scenario].pension_annuelle);
   }
 
   /** Forme sérialisable, pour un export ou une comparaison. */
@@ -244,22 +256,35 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
   };
 }
 
-/** Pension rapportée au dernier revenu d'activité. */
 /**
- * Pension rapportée au dernier revenu d'activité, ANNUALISÉ.
+ * Dénominateur du taux de remplacement, à la DATE du départ.
+ *
+ * Deux corrections y sont faites, chacune pour une raison distincte.
  *
  * L'année du départ est incomplète — six mois de salaire pour qui liquide au
- * 1er juillet —, et la rapporter telle quelle doublait le taux de remplacement.
- * Ce que le taux compare, c'est une pension annuelle au traitement ANNUEL que
- * l'assuré percevait en partant.
+ * 1er juillet —, et la rapporter telle quelle doublait le taux. Le revenu est
+ * donc ramené à l'année pleine.
+ *
+ * Il est ensuite ramené à l'ANNÉE DE LIQUIDATION. Qui part le 1er janvier n'a
+ * travaillé aucun mois de cette année-là : sa dernière année cotisée est la
+ * précédente, et le taux rapportait alors une pension en euros de l'année du
+ * départ à un salaire en euros de l'année d'avant. Deux millésimes pour un seul
+ * rapport, et un décrochement de 1,84 point entre un départ en janvier et un
+ * départ en février — la marche la plus grosse de toute l'année, alors qu'un
+ * mois seulement les sépare. Le salaire est donc avancé jusqu'à l'année du
+ * départ par l'indice du salaire moyen, celui-là même dont la carrière est
+ * tirée. Il reste une marche de 0,58 point, du même ordre que celles des
+ * frontières de trimestre : celle-là mesure un mois de cotisation en moins, et
+ * non un changement d'unité.
  */
-function tauxRemplacement(carriere, pension) {
+function dernierRevenuAnnualise(carriere, macro) {
   const derniers = carriere.lignes.filter((ligne) => ligne.cotise);
-  if (derniers.length === 0 || pension <= 0) {
-    return 0.0;
-  }
-  const dernier = derniers[derniers.length - 1].revenuAnnualise;
-  return dernier > 0 ? pension / dernier : 0.0;
+  if (derniers.length === 0) return 0.0;
+  const dernier = derniers[derniers.length - 1];
+  const reference = salaireMoyenAnnuel(macro, dernier.annee);
+  if (reference <= 0) return dernier.revenuAnnualise;
+  const facteur = salaireMoyenAnnuel(macro, carriere.anneeLiquidation) / reference;
+  return dernier.revenuAnnualise * facteur;
 }
 
 /** Façade : charge les données une fois, simule autant de carrières que voulu. */
@@ -366,6 +391,7 @@ export class Simulateur {
       coefficientEurosConstants: this.macro.coefficientPrix(
         carriere.anneeLiquidation, this.parametres.annee_euros_constants,
       ),
+      dernierRevenuAnnualise: dernierRevenuAnnualise(carriere, this.macro),
     });
   }
 

@@ -849,7 +849,9 @@ export function rendre(contexte, chemin, parametres = null) {
     } catch (erreur) {
       // Saisie refusée, données insuffisantes, régime inconnu : le message est
       // rendu dans la page. Une adresse mal formée doit afficher une phrase,
-      // pas une trace d'exécution.
+      // pas une trace d'exécution. Une faute de programme, elle, n'est pas une
+      // faute de saisie et ne doit pas être présentée comme telle.
+      if (fauteDeProgramme(erreur)) throw erreur;
       corps += messageErreur(erreur.message);
     }
   }
@@ -864,6 +866,25 @@ export function statuts(contexte) {
 }
 
 // -- fragments ---------------------------------------------------------------
+
+/**
+ * Vrai si l'exception est une faute de PROGRAMME, non une faute de saisie.
+ *
+ * Le portage attrapait tout et affichait « Saisie refusée » : un TypeError du
+ * moteur accusait donc le lecteur d'une erreur qui n'était pas la sienne — et
+ * un bug du portage passait pour une adresse mal formée. Le Python de
+ * référence, lui, ne nomme dans son « except » que les fautes prévues :
+ * ErreurSaisie, DonneeInsuffisante, KeyError, ValueError. Les exceptions
+ * ci-dessous sont l'équivalent JavaScript de ce que Python ne rattrape pas ;
+ * elles remontent jusqu'à index.html, qui dit « Le calcul a échoué » et en
+ * montre le détail, sans mettre la faute sur personne.
+ */
+function fauteDeProgramme(erreur) {
+  return erreur instanceof TypeError
+    || erreur instanceof ReferenceError
+    || erreur instanceof RangeError
+    || erreur instanceof SyntaxError;
+}
 
 function messageErreur(message) {
   return `<div class="erreur"><strong>Saisie refusée.</strong> ${echapper(message)}</div>`;
@@ -1666,6 +1687,7 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
         ? comparaison
         : contexte.simuler(new Saisie({ ...saisie, projection: code }));
     } catch (erreur) {
+      if (fauteDeProgramme(erreur)) throw erreur;
       continue;
     }
     const par_scenario = {};
@@ -1816,6 +1838,7 @@ function decomposition(contexte, saisie, comparaison) {
         ? comparaison
         : contexte.simuler(new Saisie({ ...saisie, indexation: code }));
     } catch (erreur) {
+      if (fauteDeProgramme(erreur)) throw erreur;
       continue;
     }
     const mensuel = variante.enEurosConstants(
