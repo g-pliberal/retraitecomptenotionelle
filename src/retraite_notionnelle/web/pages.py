@@ -164,6 +164,29 @@ ANNEE_MAXIMALE = 2070
 #: champ était borné à douze dans le formulaire et nulle part ailleurs.
 ENFANTS_MAXIMUM = 12
 
+#: Âge auquel s'arrête la trajectoire individuelle. Les tables de mortalité du
+#: modèle vont jusqu'à 120 ans : ce n'est pas la table qui s'arrête tôt, c'est
+#: la MOYENNE par laquelle le capital notionnel est divisé. Un graphique qui
+#: s'arrêterait à cette moyenne cacherait justement ce qu'il doit montrer — que
+#: la moitié d'une génération lui survit. À 105 ans, le modèle donne encore une
+#: personne sur dix vivante parmi celles parties à 64 ans : la borne n'est pas
+#: une fantaisie, elle est le bout de la distribution, pas son milieu.
+AGE_MAXIMUM_TRAJECTOIRE = 105
+
+#: Les cinq courbes : attribut du modèle, variable CSS de couleur — la même que
+#: la barre du haut, pour qu'une couleur désigne partout le même scénario — et
+#: le chiffre posé au bout de la courbe. Ce chiffre n'est pas décoratif : la
+#: palette des cinq scénarios échoue au contrôle de séparation daltonienne
+#: (pire paire voisine : ΔE 4,3 sous deutéranopie), et cinq courbes qui se
+#: croisent ne peuvent pas être identifiées par la couleur seule.
+TRAJECTOIRE = (
+    ("actuel", "--actuel", "1"),
+    ("notionnel_retroactif", "--retroactif", "2"),
+    ("notionnel_prospectif", "--prospectif", "3"),
+    ("notionnel_retroactif_employeur", "--retroactif-employeur", "4"),
+    ("notionnel_prospectif_employeur", "--prospectif-employeur", "5"),
+)
+
 #: Rang de chaque métier, tel que le formulaire l'annonce.
 RANGS_METIER = ("premier", "deuxième", "troisième", "quatrième", "cinquième",
                 "sixième", "septième", "huitième")
@@ -1209,6 +1232,151 @@ Fiabilité du résultat :
 <span class="etiquette-fiabilite">{escape(str(comparaison.fiabilite))}</span></p>"""
 
 
+def _trajectoire(contexte: Contexte, comparaison: Comparaison,
+                 saisie: Saisie) -> str:
+    """Le cumul versé par chaque scénario, du départ à 105 ans.
+
+    Les cinq barres du haut donnent la pension d'UN mois — le premier. Elles ne
+    disent donc rien de ce qu'une retraite finit par verser, ni de ce que la
+    durée y change. Or c'est là que la mécanique notionnelle se joue : la
+    pension vaut le capital divisé par l'espérance de vie, si bien que vivre
+    au-delà de cette moyenne, c'est toucher plus que ce que la carrière a
+    financé, et mourir avant, moins. Un graphique arrêté à l'espérance de vie
+    cacherait exactement cela ; celui-ci va jusqu'à 105 ans.
+
+    Ce que le cumul suppose, et que la page dit : la pension garde son pouvoir
+    d'achat après le départ. Le moteur ne simule aucune revalorisation
+    postérieure à la liquidation — additionner en euros constants est la
+    convention la plus neutre dont on dispose, ce n'est pas une prévision.
+    """
+    carriere = comparaison.carriere
+    depart = carriere.age_liquidation or 0.0
+    if not 0 < depart < AGE_MAXIMUM_TRAJECTOIRE:
+        return ""
+
+    annuel = {
+        cle: comparaison.en_euros_constants(getattr(comparaison, cle).pension_annuelle)
+        for cle, _, _ in TRAJECTOIRE
+    }
+    if max(annuel.values(), default=0.0) <= 0:
+        return ""
+
+    ages = tuple(range(int(math.floor(depart)), AGE_MAXIMUM_TRAJECTOIRE + 1))
+    titres = dict(_titres_scenarios(saisie))
+    series = tuple(
+        g.Serie(
+            libelle=titres[cle],
+            # En milliers : l'axe monterait sinon à sept chiffres, illisibles
+            # dans la marge d'un graphique qui doit tenir sur un téléphone.
+            valeurs=tuple(
+                annuel[cle] * max(0.0, age - depart) / 1000 for age in ages
+            ),
+            couleur=f"var({couleur})",
+        )
+        for cle, couleur, _ in TRAJECTOIRE
+    )
+    etiquettes = tuple(chiffre for _, _, chiffre in TRAJECTOIRE)
+
+    conversion = comparaison.notionnel_retroactif.conversion
+    esperance = conversion.esperance_residuelle
+    age_esperance = depart + esperance
+    survie = _survie(contexte, carriere, conversion.table)
+
+    def vivants(age: float) -> str:
+        return g.pourcentage(_part_vivante(survie, age - depart), decimales=0)
+
+    ecart = annuel["actuel"] - annuel["notionnel_retroactif"]
+    # Unité brève : le libellé est ancré à gauche de l'axe et déborderait du
+    # cadre au-delà d'une poignée de caractères — « milliers d'euros de 2026,
+    # cumulés » sortait du viewBox par la gauche, et « k€ 2026 » y perdait
+    # encore son « k » sur téléphone, où les textes du repère sont grossis. Le
+    # texte sous le graphique dit ce que « k€ » désigne, et de quelle année.
+    unite = "k€"
+    return f"""
+<h2>Ce que chaque scénario finit par verser</h2>
+<p>Les cinq montants ci-dessus sont ceux d'<strong>un seul mois</strong>, le
+premier. Ce graphique les additionne, année après année, à mesure que le
+retraité vieillit. C'est là que la durée entre dans le calcul : une pension
+notionnelle vaut le capital divisé par l'espérance de vie, donc
+<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce que la
+carrière a financé</strong> — et mourir avant, moins.</p>
+{g.graphique(
+    "Cumul versé par chaque scénario, du départ à "
+    f"{AGE_MAXIMUM_TRAJECTOIRE} ans",
+    ages, series,
+    unite=unite,
+    repere=age_esperance,
+    libelle_repere=f"espérance de vie : {g.nombre(age_esperance, 1)} ans",
+    etiquettes=etiquettes,
+)}
+<p>Le trait vertical est l'espérance de vie que la table donne à
+{_age(depart)} : <strong>{g.nombre(esperance, 1)} ans</strong>, soit
+{g.nombre(age_esperance, 1)} ans d'âge. C'est le nombre par lequel le capital
+notionnel est divisé — et c'est une <strong>moyenne</strong>, pas une échéance.
+D'après la même table, {vivants(age_esperance)} de la génération est encore en
+vie à cet âge, {vivants(100)} à 100 ans, et {vivants(AGE_MAXIMUM_TRAJECTOIRE)}
+à {AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête. Près de la moitié
+d'une génération dépasse donc le nombre qui a servi à calculer sa pension :
+c'est pour que cette moitié-là se lise que la courbe va si loin.</p>
+<p class="discret">Cumuls bruts, en <strong>milliers</strong> d'euros constants
+de {saisie.euros} — c'est ce que « k€ » désigne sur l'axe. Ils
+supposent que la pension <strong>garde son pouvoir d'achat</strong> après le
+départ : le moteur ne simule aucune revalorisation postérieure à la
+liquidation, et additionner en euros constants est la convention la plus neutre
+dont on dispose — ce n'est pas une prévision. Une indexation qui décrocherait
+des prix ferait fléchir les cinq courbes à la fois, sans changer leur ordre.
+L'écart annuel entre le scénario 1 et le scénario 2, {g.euros(ecart)} par an,
+se creuse ici d'autant d'années que la retraite dure : c'est ce que la
+comparaison des cinq barres, prises au premier mois, ne pouvait pas montrer.</p>
+"""
+
+
+def _titres_scenarios(saisie: Saisie) -> tuple[tuple[str, str], ...]:
+    """Le libellé de chaque scénario, dans l'ordre des barres."""
+    return (
+        ("actuel", "1. Système actuel"),
+        ("notionnel_retroactif", "2. Notionnel rétroactif"),
+        ("notionnel_prospectif", f"3. Notionnel dès {saisie.bascule}"),
+        ("notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"),
+        ("notionnel_prospectif_employeur",
+         f"5. Dès {saisie.bascule}, avec le patronal"),
+    )
+
+
+def _survie(contexte: Contexte, carriere, table: str) -> tuple[float, ...]:
+    """Courbe de survie EXACTEMENT celle dont le coefficient a été tiré.
+
+    Le sexe et le type de table se relisent sur le libellé que porte le
+    coefficient, plutôt que d'être recalculés depuis les paramètres : deux
+    chemins de décision pour une seule table finiraient par diverger, et le
+    graphique annoncerait alors une espérance de vie qui ne serait pas celle
+    ayant servi à diviser le capital.
+    """
+    sexe = None if table.startswith("unisexe") else table.split("_")[0]
+    generation = table.endswith("_generation")
+    return contexte.simulateur().mortalite.courbe(
+        carriere.age_liquidation or 0.0,
+        carriere.annee_liquidation + (carriere.mois_liquidation - 1) / 12,
+        sexe, generation,
+    )
+
+
+def _part_vivante(survie: tuple[float, ...], duree: float) -> float:
+    """Part encore en vie ``duree`` années après la liquidation.
+
+    Interpolée entre deux âges entiers : l'espérance de vie tombe rarement sur
+    un anniversaire, et arrondir la durée à l'année déplacerait le chiffre cité
+    d'un point ou deux.
+    """
+    if duree <= 0:
+        return 1.0
+    rang = int(math.floor(duree))
+    if rang + 1 >= len(survie):
+        return survie[-1] if survie else 0.0
+    fraction = duree - rang
+    return survie[rang] * (1 - fraction) + survie[rang + 1] * fraction
+
+
 def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     comparaison = contexte.simuler(saisie)
     carriere = comparaison.carriere
@@ -1379,6 +1547,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
   {minimum}
   {ouverture}
 </div>
+{_trajectoire(contexte, comparaison, saisie)}
 {_fourchette(contexte, saisie, comparaison)}
 {_decomposition(contexte, saisie, comparaison)}
 {_contribution_employeur(comparaison)}

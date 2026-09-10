@@ -518,6 +518,16 @@ PAS_RONDS = (1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0)
 #: l'écran d'un téléphone, où les textes du repère sont grossis.
 ECART_MINIMAL_GRADUATIONS = 6
 
+#: Écart vertical minimal, en unités du repère, entre deux étiquettes posées au
+#: bout des courbes. Les couleurs des cinq scénarios ne suffisent pas à les
+#: distinguer — mesuré : la pire paire voisine tombe à ΔE 4,3 sous deutéranopie,
+#: et à 11,8 en vision normale, sous le plancher de 15. Une étiquette en bout de
+#: courbe donne un second encodage, qui ne dépend pas de la couleur ; encore
+#: faut-il que deux étiquettes ne se recouvrent pas.
+#: 22 et non 12 : sur téléphone les textes du repère sont grossis de 12 à 20
+#: unités du viewBox, et deux étiquettes séparées de douze s'y chevauchaient.
+ESPACEMENT_ETIQUETTES = 22.0
+
 
 @dataclass(frozen=True)
 class Serie:
@@ -634,10 +644,54 @@ def _sommet(series: tuple[Serie, ...], empile: bool) -> tuple[float, float]:
     return pas * DIVISIONS_Y, pas
 
 
+def _etiquettes_de_fin(series: tuple[Serie, ...], annees: tuple[int, ...],
+                       sommet: float, etiquettes: tuple[str, ...]) -> str:
+    """Le libellé court de chaque courbe, posé à son extrémité droite.
+
+    Second encodage de l'identité, exigé ici parce que la couleur seule ne
+    sépare pas les cinq scénarios. Les étiquettes sont écartées les unes des
+    autres quand deux courbes finissent trop près : sans cela, les scénarios 3
+    et 4, que trente-huit mille euros séparent au bout de quarante ans,
+    superposeraient leurs chiffres.
+    """
+    poses: list[tuple[float, int, str]] = []
+    for rang, (serie, texte) in enumerate(zip(series, etiquettes)):
+        derniere = next(
+            (v for v in reversed(serie.valeurs) if v is not None), None
+        )
+        if derniere is None or not texte:
+            continue
+        poses.append((_ordonnee(derniere, sommet), rang, texte))
+    if not poses:
+        return ""
+
+    # Tri sur (ordonnée, rang) : le rang départage deux courbes de même hauteur,
+    # pour que les deux portages posent les étiquettes dans le même ordre.
+    poses.sort(key=lambda pose: (pose[0], pose[1]))
+    ecartees: list[tuple[float, str]] = []
+    precedent = float("-inf")
+    for y, _, texte in poses:
+        y = max(y, precedent + ESPACEMENT_ETIQUETTES)
+        ecartees.append((y, texte))
+        precedent = y
+
+    # Débordement par le bas : tout le paquet remonte d'un bloc, plutôt que la
+    # dernière étiquette sorte du cadre.
+    base = _ordonnee(0.0, sommet)
+    debord = max(0.0, precedent - base)
+    x = nombre_brut(LARGEUR_TRACE - MARGE_DROITE + 4)
+    return "".join(
+        f'<text class="graduation" x="{x}" y="{nombre_brut(y - debord)}" '
+        f'dy="0.32em" text-anchor="start">{escape(texte)}</text>'
+        for y, texte in ecartees
+    )
+
+
 def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
               unite: str = "", empile: bool = False, decimales: int = 0,
-              legende: bool = True, repere: int | None = None,
-              libelle_repere: str = "") -> str:
+              legende: bool = True, repere: float | None = None,
+              libelle_repere: str = "",
+              etiquettes: tuple[str, ...] = ()) -> str:
     """Graphique en courbes, ou en bandes empilées si ``empile``.
 
     ``titre`` n'est pas affiché : il est le texte alternatif du SVG, c'est-à-dire
@@ -715,13 +769,16 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
             f'x2="{x}" y2="{base}"/>{etiquette}'
         )
     legende_html = _legende(series) if legende else ""
+    etiquettes_html = (
+        _etiquettes_de_fin(series, annees, sommet, etiquettes) if etiquettes else ""
+    )
     return (
         f'<figure class="graphique">'
         f'<svg viewBox="0 0 {LARGEUR_TRACE} {HAUTEUR_TRACE}" role="img" '
         f'aria-label="{escape(titre)}">'
         f"{''.join(lignes)}{''.join(traces)}"
         f'<line class="axe" x1="{gauche}" y1="{base}" x2="{droite}" y2="{base}"/>'
-        f"{repere_html}{unite_html}"
+        f"{repere_html}{unite_html}{etiquettes_html}"
         f"</svg>{legende_html}</figure>"
     )
 
