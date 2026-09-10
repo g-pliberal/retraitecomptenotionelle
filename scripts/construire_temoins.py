@@ -358,6 +358,22 @@ def _pages(contexte: Contexte) -> dict:
         # Une ligne de métier laissée à moitié remplie : la page doit le dire,
         # et dire ce qui manque.
         ("accueil_metier_incomplet", "/", {**BASE, "metier2_debut": "40"}),
+        # Quatre blocs de la page de résultats qu'aucun témoin n'atteignait —
+        # le portage y était comparé par le seul tirage au hasard, qui ne dit
+        # pas en diff ce qu'un changement déplace. Le tableau des indexations
+        # ne paraît que sur la règle par défaut, la rente RAFP que pour un
+        # fonctionnaire à primes, le minimum contributif que sous son plafond,
+        # et l'avertissement d'ouverture que sur un départ que le droit refuse.
+        ("accueil_indexation_par_defaut", "/", {**BASE, "indexation": "masse_salariale"}),
+        ("accueil_rafp", "/", {
+            **BASE, "statut": "fonctionnaire_etat", "primes": "0.2",
+        }),
+        ("accueil_minimum_contributif", "/", {
+            **BASE, "salaire": "0.35", "debut": "20", "liquidation": "67",
+        }),
+        ("accueil_liquidation_non_ouverte", "/", {
+            **BASE, "liquidation": "55", "debut": "30",
+        }),
         # Le salaire saisi en euros : le formulaire change de libellé et donne
         # l'échelle chiffrée, au lieu du multiple que personne ne connaît.
         ("accueil_revenu_en_euros", "/", {

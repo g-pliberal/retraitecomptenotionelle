@@ -1417,10 +1417,10 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
         amplitude = (haut / bas - 1.0) if bas > 0 else float("nan")
         lignes.append([
             escape(libelle),
-            g.euros(bas / 12),
-            g.euros(montants[saisie.projection][scenario] / 12)
+            g.euros_centimes(bas / 12),
+            g.euros_centimes(montants[saisie.projection][scenario] / 12)
             if saisie.projection in montants else "—",
-            g.euros(haut / 12),
+            g.euros_centimes(haut / 12),
             g.pourcentage(amplitude),
         ])
 
@@ -1438,10 +1438,10 @@ la dernière année observée. Ces {g.pourcentage(projetees / total)} du calcul 
 reposent sur aucune mesure : elles reposent sur l'hypothèse de croissance de la
 productivité, celle que le Conseil d'orientation des retraites fixe et révise.</p>
 <p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
-passe de {g.euros(basse["notionnel_retroactif"] / 12)} à
-{g.euros(haute["notionnel_retroactif"] / 12)} par mois, soit
+passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
+{g.euros_centimes(haute["notionnel_retroactif"] / 12)} par mois, soit
 <strong>{g.pourcentage(ecart_2)} d'amplitude</strong> autour des
-{g.euros(reference)} affichés plus haut.</p>
+{g.euros_centimes(reference)} affichés plus haut.</p>
 {g.tableau(
     ["Scénario", "Productivité 0,4 %", escape(retenu), "Productivité 1,0 %",
      "Amplitude"],
@@ -1545,7 +1545,7 @@ def _decomposition(contexte: Contexte, saisie: Saisie,
         lignes.append([
             escape(libelle),
             "×" + g.nombre(variante.notionnel_retroactif.compte.rendement_cumule, 2),
-            g.euros(mensuel),
+            g.euros_centimes(mensuel),
             g.pourcentage(variante.variation("notionnel_retroactif"), signe=True),
         ])
 
@@ -1638,7 +1638,7 @@ def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
         [f"a) Droits acquis à {saisie.bascule}",
          "carrière arrêtée à la bascule, règles actuelles, avantages non "
          "contributifs retirés, sans décote",
-         g.euros(acquis.pension_figee) + " par an"],
+         g.euros_centimes(acquis.pension_figee) + " par an"],
         [f"b) × diviseur à {_age(acquis.age_conversion)}",
          f"coefficient de conversion en {saisie.bascule} : "
          f"{g.nombre(acquis.diviseur, 2)}",
@@ -1654,7 +1654,7 @@ def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
          g.euros(prospectif.capital_notionnel)],
         [f"f) ÷ diviseur à {_age(age_liquidation)}",
          f"coefficient de conversion en {liquidation} : {g.nombre(diviseur, 2)}",
-         g.euros(prospectif.pension_annuelle) + " par an"],
+         g.euros_centimes(prospectif.pension_annuelle) + " par an"],
     ]
 
     part_acquis = acquis.capital / prospectif.capital_notionnel
@@ -1682,7 +1682,7 @@ rendrait fausse. {renvoi_cascade}</p>
     lignes,
     ["", "", "nombre"],
 )}
-<p>À comparer aux {g.euros(actuel)} par an du système actuel. L'écart ne vient
+<p>À comparer aux {g.euros_centimes(actuel)} par an du système actuel. L'écart ne vient
 d'aucun abattement appliqué au scénario 1 : il vient de ce que le capital
 réellement constitué, {g.euros(prospectif.capital_notionnel)}, ne finance pas
 les {g.euros(actuel * diviseur)} que le droit en vigueur promet sur
@@ -1723,30 +1723,46 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
         "Le départ tombant sur l'année de référence, c'est aussi l'unité des "
         "cinq montants affichés plus haut."
     )
-    lignes_actuel: list[list[str]] = [
-        [escape(nom_regime(pension.regime)), g.euros(pension.montant),
-         g.franciser(escape(pension.detail))]
-        for pension in pensions
-    ]
+    # Les régimes PROVISIONNÉS sont sortis du tableau principal : leur rente ne
+    # fait pas partie du total, et une ligne posée au-dessus d'un total qui
+    # l'ignore fait un tableau qui ne s'additionne pas — 33 176,69 + 667,12
+    # valait 33 176,69 à l'écran, sous une phrase affirmant le contraire. Elle
+    # est reportée sous le total, où son exclusion se lit.
+    repartis = [p for p in pensions if not catalogue[p.regime].hors_repartition]
+    provisionnes = [p for p in pensions if catalogue[p.regime].hors_repartition]
+
+    def ligne(pension) -> list[str]:
+        return [escape(nom_regime(pension.regime)),
+                g.euros_centimes(pension.montant),
+                g.franciser(escape(pension.detail))]
+
+    lignes_actuel: list[list[str]] = [ligne(pension) for pension in repartis]
     if lignes_actuel and actuel.avantages_appliques:
         lignes_actuel.append([
             "<strong>Sous-total contributif</strong>",
-            "<strong>" + g.euros(actuel.total_contributif) + "</strong>",
+            "<strong>" + g.euros_centimes(actuel.total_contributif) + "</strong>",
             '<span class="discret">ce que la carrière a ouvert par ses seules '
             "cotisations</span>",
         ])
     for avantage in actuel.avantages_appliques:
         lignes_actuel.append([
             "+ " + escape(avantage.libelle),
-            g.euros(avantage.montant),
+            g.euros_centimes(avantage.montant),
             f'<span class="discret">{escape(avantage.detail)}</span>',
         ])
     if lignes_actuel:
         lignes_actuel.append([
             "<strong>Pension du système actuel</strong>",
-            "<strong>" + g.euros(actuel.pension_annuelle) + "</strong>",
+            "<strong>" + g.euros_centimes(actuel.pension_annuelle) + "</strong>",
             '<span class="discret">c\'est le scénario 1 ci-dessus, pris '
             "dans les euros de son année de départ</span>",
+        ])
+    for pension in provisionnes:
+        libelle, montant, detail = ligne(pension)
+        lignes_actuel.append([
+            "hors total — " + libelle, montant,
+            '<span class="discret">régime PROVISIONNÉ, servi à part et retiré '
+            "des cinq scénarios</span> · " + detail,
         ])
 
     regimes = g.tableau(
@@ -1760,7 +1776,7 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
     if actuel.avantages_appliques and actuel.pension_annuelle > 0:
         gratuit = sum(a.montant for a in actuel.avantages_appliques)
         part = (
-            f'<p>Les avantages non contributifs pèsent {g.euros(gratuit)} par an, '
+            f'<p>Les avantages non contributifs pèsent {g.euros_centimes(gratuit)} par an, '
             f"soit {g.pourcentage(gratuit / actuel.pension_annuelle)} de la "
             "pension. C'est exactement ce que les deux scénarios notionnels "
             "retirent : ils ne conservent que le sous-total contributif, et le "
@@ -1781,7 +1797,7 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
              g.nombre(retro.conversion.diviseur, 2)
              + f" ({escape(retro.conversion.table)})"],
             [f"Pension annuelle, en euros de {annee}",
-             g.euros(retro.pension_annuelle)],
+             g.euros_centimes(retro.pension_annuelle)],
         ],
         ["", "nombre"],
     )
@@ -1794,8 +1810,10 @@ calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une autre
 année ferait des totaux faux.</p>
 <h3>Scénario 1 — de quoi votre pension actuelle est faite</h3>
 <p>Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute
-par-dessus. Les lignes s'additionnent exactement : le total est la pension du
-scénario 1.</p>
+par-dessus. Le total est la pension du scénario 1. Un minimum, lui, est déjà
+compris dans la ligne du régime qui le sert : le sous-total contributif l'en
+retire, et la ligne suivante le rend visible — c'est la même somme, comptée une
+fois.</p>
 {regimes}
 {part}
 <h3>Scénario 2 — construction du compte notionnel rétroactif</h3>
