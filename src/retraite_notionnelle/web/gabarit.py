@@ -155,8 +155,19 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 .scenario { margin: 1.4rem 0; }
 .scenario .entete { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
 .scenario .titre { font-weight: 600; }
-.scenario .montant { font-variant-numeric: tabular-nums; white-space: nowrap; }
-.scenario .montant .mensuel { font-size: 1.25rem; }
+/* Deux montants par scénario, côte à côte : le pouvoir d'achat d'aujourd'hui,
+   mis en avant, et la somme nominale du mois du départ, en retrait. Ils
+   partagent la même ligne de base pour se lire comme un seul chiffre donné en
+   deux unités, et non comme deux résultats concurrents. */
+.scenario .montant { display: flex; justify-content: flex-end; align-items: baseline;
+                     gap: 1.1rem; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.scenario .chiffre { display: flex; flex-direction: column; align-items: flex-end;
+                     white-space: nowrap; }
+.scenario .chiffre .somme { line-height: 1.2; }
+.scenario .chiffre .unite { font-size: 0.78rem; color: var(--texte-doux); }
+.scenario .principal .somme { font-size: 1.45rem; font-weight: 600; }
+.scenario .depart { padding-left: 1.1rem; border-left: 1px solid var(--trait); }
+.scenario .depart .somme { font-size: 1.05rem; color: var(--texte-doux); }
 .scenario .montant .annuel { color: var(--texte-doux); font-size: 0.85rem; }
 .barre { height: 12px; background: var(--fond-appui); border-radius: 6px; margin-top: 0.4rem; }
 .barre > span { display: block; height: 100%; border-radius: 6px; }
@@ -248,13 +259,24 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   header.bandeau .interieur { gap: 0.4rem 1rem; }
   nav a { margin: 0 1.1rem 0 0; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
-  .scenario .montant { white-space: normal; }
+  /* Le montant passe sous l'intitulé : les deux chiffres s'alignent alors sur
+     le bord gauche, comme lui, et restent l'un à côté de l'autre. */
+  .scenario .montant { justify-content: flex-start; gap: 0.9rem; }
+  .scenario .chiffre { align-items: flex-start; }
+  .scenario .depart { padding-left: 0.9rem; }
   .fiches { grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); }
   form .grille { gap: 0.9rem; }
   /* Le SVG se réduit avec la page : ses textes, exprimés en unités du viewBox,
      se réduiraient d'autant et deviendraient illisibles. On les grossit donc
      dans le repère pour qu'ils gardent leur taille à l'écran. */
   .graphique .graduation { font-size: 20px; }
+}
+
+/* Écran très étroit : les deux chiffres ne tiennent plus l'un à côté de
+   l'autre et passent l'un sous l'autre. Le trait qui les sépare n'a alors plus
+   rien à séparer, et pendrait dans le vide. */
+@media (max-width: 22rem) {
+  .scenario .depart { padding-left: 0; border-left: none; }
 }
 """
 
