@@ -145,26 +145,14 @@ def _cas() -> list[dict]:
     for salaire in ("0.2", "0.55", "1.5", "3", "8"):
         cas.append((f"salaire_{salaire}", {"salaire": salaire}))
 
-    # Les revenus saisis en monnaie. Ce qui est balayé ici, c'est la conversion
-    # elle-même : le passage du mensuel à l'annuel, le taux légal du franc, le
-    # facteur cent de l'ancien franc, et le fait qu'une même carrière décrite
-    # dans trois unités doit donner exactement la même pension.
-    cas.append(("revenu_euros_mois", {
-        "unite_revenu": "euros_mois", "annee_revenu": "2024", "salaire": "2500",
+    # Le salaire saisi en euros : la division qui le ramène au multiple du
+    # salaire moyen est le seul endroit où l'euro entre dans le modèle, et elle
+    # doit donner le même chiffre des deux côtés du portage.
+    cas.append(("revenu_en_euros", {
+        "unite_revenu": "euros_mois", "salaire": "2500",
     }))
-    cas.append(("revenu_euros_an", {
-        "unite_revenu": "euros_an", "annee_revenu": "2024", "salaire": "30000",
-    }))
-    cas.append(("revenu_francs_mois_1985", {
-        "naissance": "1955", "unite_revenu": "francs_mois",
-        "annee_revenu": "1985", "salaire": "8000",
-    }))
-    cas.append(("revenu_anciens_francs_1955", {
-        "naissance": "1935", "unite_revenu": "francs_mois",
-        "annee_revenu": "1955", "salaire": "40000",
-    }))
-    cas.append(("revenu_euros_par_metier", {
-        "unite_revenu": "euros_mois", "annee_revenu": "2024", "salaire": "2000",
+    cas.append(("revenu_en_euros_par_metier", {
+        "unite_revenu": "euros_mois", "salaire": "2000",
         "metier2_debut": "38", "metier2_statut": "salarie_prive_cadre",
         "metier2_salaire": "4500",
     }))
@@ -352,26 +340,15 @@ def _pages(contexte: Contexte) -> dict:
         # Une ligne de métier laissée à moitié remplie : la page doit le dire,
         # et dire ce qui manque.
         ("accueil_metier_incomplet", "/", {**BASE, "metier2_debut": "40"}),
-        # Les revenus saisis en monnaie : le formulaire change de libellés, les
-        # repères changent d'unité, et l'écho traduit la saisie dans l'autre
-        # sens. Trois pages pour trois branches — euros, francs, anciens francs.
+        # Le salaire saisi en euros : le formulaire change de libellé et donne
+        # l'échelle chiffrée, au lieu du multiple que personne ne connaît.
         ("accueil_revenu_en_euros", "/", {
-            **BASE, "unite_revenu": "euros_mois", "annee_revenu": "2024",
-            "salaire": "2500",
+            **BASE, "unite_revenu": "euros_mois", "salaire": "2500",
         }),
-        ("accueil_revenu_en_francs", "/", {
-            **BASE, "naissance": "1955", "unite_revenu": "francs_mois",
-            "annee_revenu": "1985", "salaire": "8000",
-        }),
-        ("accueil_revenu_en_anciens_francs", "/", {
-            **BASE, "naissance": "1935", "unite_revenu": "francs_an",
-            "annee_revenu": "1955", "salaire": "480000",
-        }),
-        # Un montant qui, converti, sort des bornes du modèle : le refus doit
+        # Un salaire qui, converti, sort des bornes du modèle : le refus doit
         # redire ces bornes en euros, pas en multiples du salaire moyen.
         ("accueil_revenu_hors_bornes", "/", {
-            **BASE, "unite_revenu": "euros_mois", "annee_revenu": "2024",
-            "salaire": "200",
+            **BASE, "unite_revenu": "euros_mois", "salaire": "200",
         }),
         ("cas_types", "/cas-types", {}),
         ("cout", "/cout", {}),
