@@ -22,11 +22,11 @@ FEUILLE_DE_STYLE = """
   --trait: #ddd7cb;
   --accent: #7a2e1e;
   --accent-doux: #f0e2dd;
-  --actuel: #3f5c66;
-  --retroactif: #a2472e;
-  --prospectif: #6a6a4d;
-  --retroactif-employeur: #7c5a86;
-  --prospectif-employeur: #35705f;
+  --actuel: #03729a;
+  --retroactif: #9e4334;
+  --prospectif: #817f2a;
+  --retroactif-employeur: #86538b;
+  --prospectif-employeur: #107550;
   --alerte: #8a5a00;
   /* Palette des graphiques : neuf teintes, assez distinctes pour se suivre
      empilées, assez proches pour ne pas jurer avec le reste de la page. */
@@ -50,11 +50,11 @@ FEUILLE_DE_STYLE = """
     --trait: #35333c;
     --accent: #e08b6f;
     --accent-doux: #3a2820;
-    --actuel: #8fb2c0;
-    --retroactif: #e08b6f;
-    --prospectif: #bcbc8e;
-    --retroactif-employeur: #c39ccd;
-    --prospectif-employeur: #79bda9;
+    --actuel: #3d9bc2;
+    --retroactif: #cb745f;
+    --prospectif: #837118;
+    --retroactif-employeur: #a27dc0;
+    --prospectif-employeur: #39a48a;
     --alerte: #e0b062;
     --serie-1: #8fb2c0;
     --serie-2: #e08b6f;
@@ -153,14 +153,22 @@ thead th { font-size: 0.82rem; color: var(--texte-doux); font-weight: 600; }
 tbody tr:last-child td { border-bottom: none; }
 td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 .scenario { margin: 1.4rem 0; }
-.scenario .entete { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+/* Le bloc des montants passe sous l'intitulé D'UN SEUL TENANT quand la place
+   manque : c'est l'entête qui se replie, pas le montant. Depuis que les sommes
+   portent les centimes, un intitulé sur deux lignes ne laissait plus la largeur
+   des deux colonnes, et la seconde tombait seule sous la première — alors que
+   les deux chiffres doivent justement rester côte à côte. */
+.scenario .entete { display: flex; justify-content: space-between; gap: 0.2rem 1rem;
+                    align-items: baseline; flex-wrap: wrap; }
+.scenario .titre { flex: 1 1 14rem; }
 .scenario .titre { font-weight: 600; }
 /* Deux montants par scénario, côte à côte : le pouvoir d'achat d'aujourd'hui,
    mis en avant, et la somme nominale du mois du départ, en retrait. Ils
    partagent la même ligne de base pour se lire comme un seul chiffre donné en
    deux unités, et non comme deux résultats concurrents. */
 .scenario .montant { display: flex; justify-content: flex-end; align-items: baseline;
-                     gap: 1.1rem; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+                     gap: 1.1rem; flex-wrap: nowrap; margin-left: auto;
+                     font-variant-numeric: tabular-nums; }
 .scenario .chiffre { display: flex; flex-direction: column; align-items: flex-end;
                      white-space: nowrap; }
 .scenario .chiffre .somme { line-height: 1.2; }
@@ -276,6 +284,9 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
    l'autre et passent l'un sous l'autre. Le trait qui les sépare n'a alors plus
    rien à séparer, et pendrait dans le vide. */
 @media (max-width: 22rem) {
+  /* Les deux chiffres ne tiennent plus l'un à côté de l'autre : ils passent
+     l'un sous l'autre, et le trait qui les sépare n'a plus rien à séparer. */
+  .scenario .montant { flex-wrap: wrap; }
   .scenario .depart { padding-left: 0; border-left: none; }
 }
 """

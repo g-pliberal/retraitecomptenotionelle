@@ -1616,3 +1616,81 @@ def test_le_moteur_javascript_est_versionne():
                 assert origine.startswith("./"), (
                     f"{chemin.name} importe depuis l'extérieur : {origine}"
                 )
+
+# -- palette des scénarios ----------------------------------------------------
+
+#: Bornes du contrôle de palette catégorielle, en OKLCh / OKLab. Elles viennent
+#: du validateur de la compétence « dataviz », qui les applique en dehors de ce
+#: dépôt ; on en reprend ici les trois qui se calculent sans simuler une vision
+#: daltonienne. La quatrième — séparation sous deutéranopie et protanopie — a
+#: été vérifiée à l'extérieur au moment où la palette a été posée, et c'est elle
+#: qui a fait rejeter la précédente : sa pire paire voisine tombait à ΔE 4,3.
+BANDE_LUMINOSITE = {"clair": (0.43, 0.77), "sombre": (0.48, 0.67)}
+CHROMA_MINIMAL = 0.10
+ECART_MINIMAL_VISION_NORMALE = 15.0
+
+SCENARIOS_COLORES = ("actuel", "retroactif", "prospectif",
+                     "retroactif-employeur", "prospectif-employeur")
+
+
+def _oklab(hexa: str) -> tuple[float, float, float]:
+    """sRGB hexadécimal vers OKLab. Formules de Björn Ottosson."""
+    canaux = [int(hexa[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    r, v, b = [
+        c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+        for c in canaux
+    ]
+    l = (0.4122214708 * r + 0.5363325363 * v + 0.0514459929 * b) ** (1 / 3)
+    m = (0.2119034982 * r + 0.6806995451 * v + 0.1073969566 * b) ** (1 / 3)
+    s = (0.0883024619 * r + 0.2817188376 * v + 0.6299787005 * b) ** (1 / 3)
+    return (
+        0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+        1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+        0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s,
+    )
+
+
+def _palette(theme: str) -> list[str]:
+    """Les cinq couleurs de scénario lues dans la feuille de style.
+
+    Le thème sombre les redéfinit dans un bloc ``prefers-color-scheme`` : on
+    prend la DERNIÈRE définition pour le sombre, la première pour le clair.
+    """
+    feuille = g.FEUILLE_DE_STYLE
+    couleurs = []
+    for nom in SCENARIOS_COLORES:
+        trouvees = re.findall(rf"--{nom}:\s*(#[0-9a-f]{{6}})\s*;", feuille)
+        assert trouvees, f"couleur « --{nom} » absente de la feuille de style"
+        couleurs.append(trouvees[0] if theme == "clair" else trouvees[-1])
+    return couleurs
+
+
+@pytest.mark.parametrize("theme", ["clair", "sombre"])
+def test_la_palette_des_scenarios_reste_lisible(theme):
+    """Cinq courbes qui se croisent ne peuvent pas être séparées par la couleur
+    seule si cette couleur est trop pâle ou trop proche de sa voisine.
+
+    La palette précédente échouait aux trois contrôles : quatre de ses cinq
+    couleurs passaient sous le plancher de chroma — elles lisaient gris —, et sa
+    pire paire voisine tombait à ΔE 11,8 en vision normale, sous le plancher de
+    15. Ce test ne rejoue pas la simulation daltonienne, mais il arrête la
+    dérive qui l'avait provoquée.
+    """
+    couleurs = _palette(theme)
+    assert len(set(couleurs)) == 5, "deux scénarios partagent une couleur"
+    bas, haut = BANDE_LUMINOSITE[theme]
+    for couleur in couleurs:
+        clarte, a, b = _oklab(couleur)
+        assert bas <= clarte <= haut, (
+            f"{couleur} : clarté {clarte:.3f} hors de la bande {bas}–{haut}"
+        )
+        assert (a * a + b * b) ** 0.5 >= CHROMA_MINIMAL, (
+            f"{couleur} : chroma trop faible, la couleur lit gris"
+        )
+    for premiere, seconde in zip(couleurs, couleurs[1:]):
+        x, y = _oklab(premiere), _oklab(seconde)
+        ecart = 100 * sum((u - v) ** 2 for u, v in zip(x, y)) ** 0.5
+        assert ecart >= ECART_MINIMAL_VISION_NORMALE, (
+            f"{premiere} et {seconde} : ΔE {ecart:.1f}, sous le plancher de "
+            f"{ECART_MINIMAL_VISION_NORMALE:.0f} en vision normale"
+        )
