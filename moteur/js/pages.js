@@ -135,6 +135,33 @@ export const HEURES_SMIC_PAR_MOIS = 151.67;
 export const METIERS_MAXIMUM = 6;
 
 /**
+ * Âge auquel s'arrête la trajectoire individuelle. Les tables de mortalité du
+ * modèle vont jusqu'à 120 ans : ce n'est pas la table qui s'arrête tôt, c'est
+ * la MOYENNE par laquelle le capital notionnel est divisé. Un graphique qui
+ * s'arrêterait à cette moyenne cacherait justement ce qu'il doit montrer — que
+ * la moitié d'une génération lui survit. À 105 ans, le modèle donne encore une
+ * personne sur dix vivante parmi celles parties à 64 ans : la borne n'est pas
+ * une fantaisie, elle est le bout de la distribution, pas son milieu.
+ */
+export const AGE_MAXIMUM_TRAJECTOIRE = 105;
+
+/**
+ * Les cinq courbes : attribut du modèle, variable CSS de couleur — la même que
+ * la barre du haut, pour qu'une couleur désigne partout le même scénario — et
+ * le chiffre posé au bout de la courbe. Ce chiffre n'est pas décoratif : la
+ * palette des cinq scénarios échoue au contrôle de séparation daltonienne
+ * (pire paire voisine : ΔE 4,3 sous deutéranopie), et cinq courbes qui se
+ * croisent ne peuvent pas être identifiées par la couleur seule.
+ */
+export const TRAJECTOIRE = [
+  ["actuel", "--actuel", "1"],
+  ["notionnel_retroactif", "--retroactif", "2"],
+  ["notionnel_prospectif", "--prospectif", "3"],
+  ["notionnel_retroactif_employeur", "--retroactif-employeur", "4"],
+  ["notionnel_prospectif_employeur", "--prospectif-employeur", "5"],
+];
+
+/**
  * Bornes des deux années que l'utilisateur peut choisir : celle de la bascule
  * au régime unique, et celle des euros constants dans lesquels les montants
  * sont exprimés. Elles étaient déclarées sur les champs du formulaire, donc
@@ -1272,6 +1299,139 @@ function legendeDesUnites(comparaison, saisie) {
     + `celui d'à côté est ${autre}.</p>`;
 }
 
+/**
+ * Le cumul versé par chaque scénario, du départ à 105 ans.
+ *
+ * Les cinq barres du haut donnent la pension d'UN mois — le premier. Elles ne
+ * disent donc rien de ce qu'une retraite finit par verser, ni de ce que la
+ * durée y change. Or c'est là que la mécanique notionnelle se joue : la pension
+ * vaut le capital divisé par l'espérance de vie, si bien que vivre au-delà de
+ * cette moyenne, c'est toucher plus que ce que la carrière a financé, et mourir
+ * avant, moins. Un graphique arrêté à l'espérance de vie cacherait exactement
+ * cela ; celui-ci va jusqu'à 105 ans.
+ *
+ * Ce que le cumul suppose, et que la page dit : la pension garde son pouvoir
+ * d'achat après le départ. Le moteur ne simule aucune revalorisation
+ * postérieure à la liquidation — additionner en euros constants est la
+ * convention la plus neutre dont on dispose, ce n'est pas une prévision.
+ */
+function trajectoire(contexte, comparaison, saisie) {
+  const carriere = comparaison.carriere;
+  const depart = carriere.age_liquidation || 0.0;
+  if (!(depart > 0 && depart < AGE_MAXIMUM_TRAJECTOIRE)) return "";
+
+  const annuel = {};
+  for (const [cle] of TRAJECTOIRE) {
+    annuel[cle] = comparaison.enEurosConstants(comparaison[cle].pension_annuelle);
+  }
+  if (Math.max(...Object.values(annuel)) <= 0) return "";
+
+  const ages = [];
+  for (let a = Math.floor(depart); a <= AGE_MAXIMUM_TRAJECTOIRE; a += 1) ages.push(a);
+  const titres = new Map(titresScenarios(saisie));
+  const series = TRAJECTOIRE.map(([cle, couleur]) => new g.Serie(
+    titres.get(cle),
+    // En milliers : l'axe monterait sinon à sept chiffres, illisibles dans la
+    // marge d'un graphique qui doit tenir sur un téléphone.
+    ages.map((age) => annuel[cle] * Math.max(0.0, age - depart) / 1000),
+    `var(${couleur})`,
+  ));
+  const etiquettes = TRAJECTOIRE.map(([, , chiffre]) => chiffre);
+
+  const conversion = comparaison.notionnel_retroactif.conversion;
+  const esperance = conversion.esperance_residuelle;
+  const ageEsperance = depart + esperance;
+  const survie = courbeDeSurvie(contexte, carriere, conversion.table);
+  const vivants = (age) => g.pourcentage(partVivante(survie, age - depart), false, 0);
+
+  const ecart = annuel.actuel - annuel.notionnel_retroactif;
+  // Unité brève : le libellé est ancré à gauche de l'axe et déborderait du
+  // cadre au-delà d'une poignée de caractères — « milliers d'euros de 2026,
+  // cumulés » sortait du viewBox par la gauche, et « k€ 2026 » y perdait encore
+  // son « k » sur téléphone, où les textes du repère sont grossis. Le texte
+  // sous le graphique dit ce que « k€ » désigne, et de quelle année.
+  const unite = "k€";
+  return `
+<h2>Ce que chaque scénario finit par verser</h2>
+<p>Les cinq montants ci-dessus sont ceux d'<strong>un seul mois</strong>, le
+premier. Ce graphique les additionne, année après année, à mesure que le
+retraité vieillit. C'est là que la durée entre dans le calcul : une pension
+notionnelle vaut le capital divisé par l'espérance de vie, donc
+<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce que la
+carrière a financé</strong> — et mourir avant, moins.</p>
+${g.graphique(
+    "Cumul versé par chaque scénario, du départ à "
+    + `${AGE_MAXIMUM_TRAJECTOIRE} ans`,
+    ages, series, unite, false, 0, true, ageEsperance,
+    `espérance de vie : ${g.nombre(ageEsperance, 1)} ans`, etiquettes,
+  )}
+<p>Le trait vertical est l'espérance de vie que la table donne à
+${age(depart)} : <strong>${g.nombre(esperance, 1)} ans</strong>, soit
+${g.nombre(ageEsperance, 1)} ans d'âge. C'est le nombre par lequel le capital
+notionnel est divisé — et c'est une <strong>moyenne</strong>, pas une échéance.
+D'après la même table, ${vivants(ageEsperance)} de la génération est encore en
+vie à cet âge, ${vivants(100)} à 100 ans, et ${vivants(AGE_MAXIMUM_TRAJECTOIRE)}
+à ${AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête. Près de la moitié
+d'une génération dépasse donc le nombre qui a servi à calculer sa pension :
+c'est pour que cette moitié-là se lise que la courbe va si loin.</p>
+<p class="discret">Cumuls bruts, en <strong>milliers</strong> d'euros constants
+de ${saisie.euros} — c'est ce que « k€ » désigne sur l'axe. Ils
+supposent que la pension <strong>garde son pouvoir d'achat</strong> après le
+départ : le moteur ne simule aucune revalorisation postérieure à la
+liquidation, et additionner en euros constants est la convention la plus neutre
+dont on dispose — ce n'est pas une prévision. Une indexation qui décrocherait
+des prix ferait fléchir les cinq courbes à la fois, sans changer leur ordre.
+L'écart annuel entre le scénario 1 et le scénario 2, ${g.euros(ecart)} par an,
+se creuse ici d'autant d'années que la retraite dure : c'est ce que la
+comparaison des cinq barres, prises au premier mois, ne pouvait pas montrer.</p>
+`;
+}
+
+/** Le libellé de chaque scénario, dans l'ordre des barres. */
+function titresScenarios(saisie) {
+  return [
+    ["actuel", "1. Système actuel"],
+    ["notionnel_retroactif", "2. Notionnel rétroactif"],
+    ["notionnel_prospectif", `3. Notionnel dès ${saisie.bascule}`],
+    ["notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"],
+    ["notionnel_prospectif_employeur", `5. Dès ${saisie.bascule}, avec le patronal`],
+  ];
+}
+
+/**
+ * Courbe de survie EXACTEMENT celle dont le coefficient a été tiré.
+ *
+ * Le sexe et le type de table se relisent sur le libellé que porte le
+ * coefficient, plutôt que d'être recalculés depuis les paramètres : deux
+ * chemins de décision pour une seule table finiraient par diverger, et le
+ * graphique annoncerait alors une espérance de vie qui ne serait pas celle
+ * ayant servi à diviser le capital.
+ */
+function courbeDeSurvie(contexte, carriere, table) {
+  const sexe = table.startsWith("unisexe") ? null : table.split("_")[0];
+  const generation = table.endsWith("_generation");
+  return contexte.simulateur().mortalite.courbe(
+    carriere.age_liquidation || 0.0,
+    carriere.anneeLiquidation + (carriere.moisLiquidation - 1) / 12,
+    sexe, generation,
+  );
+}
+
+/**
+ * Part encore en vie ``duree`` années après la liquidation.
+ *
+ * Interpolée entre deux âges entiers : l'espérance de vie tombe rarement sur un
+ * anniversaire, et arrondir la durée à l'année déplacerait le chiffre cité d'un
+ * point ou deux.
+ */
+function partVivante(survie, duree) {
+  if (duree <= 0) return 1.0;
+  const rang = Math.floor(duree);
+  if (rang + 1 >= survie.length) return survie.length ? survie[survie.length - 1] : 0.0;
+  const fraction = duree - rang;
+  return survie[rang] * (1 - fraction) + survie[rang + 1] * fraction;
+}
+
 function resultats(contexte, saisie) {
   const comparaison = contexte.simuler(saisie);
   const carriere = comparaison.carriere;
@@ -1428,6 +1588,7 @@ function resultats(contexte, saisie) {
   ${minimum}
   ${ouverture}
 </div>
+${trajectoire(contexte, comparaison, saisie)}
 ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
 ${contributionEmployeur(comparaison)}

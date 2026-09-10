@@ -206,6 +206,19 @@ export const MARGE_GAUCHE = 66;
  * qui est centrée sur elle : trop étroite, « 2024 » déborderait du viewBox.
  */
 export const MARGE_DROITE = 24;
+
+/**
+ * Écart vertical minimal, en unités du repère, entre deux étiquettes posées au
+ * bout des courbes. Les couleurs des cinq scénarios ne suffisent pas à les
+ * distinguer — mesuré : la pire paire voisine tombe à ΔE 4,3 sous
+ * deutéranopie, et à 11,8 en vision normale, sous le plancher de 15. Une
+ * étiquette en bout de courbe donne un second encodage, qui ne dépend pas de
+ * la couleur ; encore faut-il que deux étiquettes ne se recouvrent pas.
+ *
+ * 22 et non 12 : sur téléphone les textes du repère sont grossis de 12 à 20
+ * unités du viewBox, et deux étiquettes séparées de douze s'y chevauchaient.
+ */
+export const ESPACEMENT_ETIQUETTES = 22.0;
 export const MARGE_HAUT = 26;
 export const MARGE_BAS = 28;
 
@@ -359,9 +372,54 @@ function sommetEchelle(series, empile) {
  * ce que lit une synthèse vocale. Ce que voit l'œil est dans la légende et dans
  * la phrase qui précède le graphique.
  */
+/**
+ * Le libellé court de chaque courbe, posé à son extrémité droite.
+ *
+ * Second encodage de l'identité, exigé ici parce que la couleur seule ne sépare
+ * pas les cinq scénarios. Les étiquettes sont écartées les unes des autres
+ * quand deux courbes finissent trop près : sans cela, les scénarios 3 et 4, que
+ * trente-huit mille euros séparent au bout de quarante ans, superposeraient
+ * leurs chiffres.
+ */
+function etiquettesDeFin(series, sommet, etiquettes) {
+  const poses = [];
+  series.forEach((serie, rang) => {
+    const texte = etiquettes[rang];
+    if (!texte) return;
+    let derniere = null;
+    for (let i = serie.valeurs.length - 1; i >= 0; i -= 1) {
+      const valeur = serie.valeurs[i];
+      if (valeur !== null && valeur !== undefined) { derniere = valeur; break; }
+    }
+    if (derniere === null) return;
+    poses.push({ y: ordonnee(derniere, sommet), rang, texte });
+  });
+  if (!poses.length) return "";
+
+  // Tri sur (ordonnée, rang) : le rang départage deux courbes de même hauteur,
+  // pour que les deux portages posent les étiquettes dans le même ordre.
+  poses.sort((a, b) => (a.y - b.y) || (a.rang - b.rang));
+  const ecartees = [];
+  let precedent = -Infinity;
+  for (const pose of poses) {
+    const y = Math.max(pose.y, precedent + ESPACEMENT_ETIQUETTES);
+    ecartees.push({ y, texte: pose.texte });
+    precedent = y;
+  }
+
+  // Débordement par le bas : tout le paquet remonte d'un bloc, plutôt que la
+  // dernière étiquette sorte du cadre.
+  const base = ordonnee(0.0, sommet);
+  const debord = Math.max(0.0, precedent - base);
+  const x = nombreBrut(LARGEUR_TRACE - MARGE_DROITE + 4);
+  return ecartees.map(({ y, texte }) => `<text class="graduation" x="${x}" `
+    + `y="${nombreBrut(y - debord)}" dy="0.32em" text-anchor="start">`
+    + `${echapper(texte)}</text>`).join("");
+}
+
 export function graphique(titre, annees, series, unite = "", empile = false,
                           decimales = 0, legendeVisible = true, repere = null,
-                          libelleRepere = "") {
+                          libelleRepere = "", etiquettes = []) {
   if (!annees.length || !series.length) {
     return "";
   }
@@ -433,6 +491,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     + lignes.join("") + traces.join("")
     + `<line class="axe" x1="${gauche}" y1="${base}" x2="${droite}" y2="${base}"/>`
     + repereHtml + uniteHtml
+    + (etiquettes.length ? etiquettesDeFin(series, sommet, etiquettes) : "")
     + `</svg>${legendeVisible ? legende(series) : ""}</figure>`;
 }
 
