@@ -1255,14 +1255,27 @@ Une chaîne de calcul montrée à l'écran doit pouvoir se refaire à la main. C
 ne dépend pas seulement de l'exactitude du modèle : un coefficient affiché trop
 court rend la chaîne infaisable alors même que le calcul est juste. Les
 précisions ne sont donc pas décoratives, elles sont **mesurées** — pour chaque
-étape, on prend la plus courte qui referme la ligne à deux euros près sur des
-capitaux de plusieurs centaines de milliers d'euros :
+étape, on prend la plus courte au-delà de laquelle le gain s'arrête :
 
-| Coefficient | Décimales | Ce que coûtait l'ancien affichage |
-|---|---|---|
-| Diviseur de conversion | 4 (`DECIMALES_DIVISEUR`) | à 2, « capital ÷ coefficient » tombait à 2,80 € de la pension |
-| Coefficient de revalorisation | 5 (`DECIMALES_FACTEUR`) | à 3, l'étape ratait le capital de 123 € |
-| Rendement cumulé du compte | 5 (`DECIMALES_FACTEUR`) | à 2, « cotisations × rendement » ratait le capital de 377 € |
+Attention au piège : la mesure doit porter sur les valeurs **affichées**, pas
+sur les valeurs exactes du modèle. Faite sur les secondes, elle ignore l'arrondi
+des lignes que le lecteur a sous les yeux et fait paraître suffisante une
+décimale de moins — c'est ainsi que le diviseur a d'abord été fixé à quatre
+décimales alors qu'il en faut cinq.
+
+Écart maximal de la ligne reconstituée depuis l'écran, sur 52 carrières :
+
+| Étape | 4 déc. | 5 déc. | 6 déc. | Retenu |
+|---|---|---|---|---|
+| Droits acquis × diviseur | 2,70 € | **0,57 €** | 0,57 € | 5 (`DECIMALES_DIVISEUR`) |
+| Capital ÷ diviseur | 0,10 € | **0,02 €** | 0,02 € | 5 |
+| Capital × revalorisation | 62,27 € | 6,47 € | **1,23 €** | 6 (`DECIMALES_FACTEUR`) |
+| Cotisations × rendement cumulé | 50,92 € | 5,09 € | **1,07 €** | 6 |
+
+Au-delà, le gain s'arrête : ce qui reste vient de ce que les **capitaux
+s'affichent à l'euro**, ce qui borne toute reconstitution à un demi-euro par
+terme. Cette borne-là ne se rachète pas par des décimales — il faudrait afficher
+les capitaux au centime, où le centime n'a pas de sens.
 
 Le tableau des neuf règles d'indexation garde deux décimales : son rendement
 n'entre dans aucune multiplication affichée, il sert à comparer des règles entre
