@@ -1220,6 +1220,35 @@ euro par un test. Le pas du champ et la précision du lien sont tenus par une
 même constante (`DECIMALES_MULTIPLE`) : s'ils divergeaient, le lien écrirait un
 nombre que le navigateur refuserait de soumettre.
 
+### Arrondis : ce que le droit fait, et ce que le modèle fait
+
+La question se pose parce que la réponse n'est pas celle qu'on attend : **le
+droit n'arrondit pas la pension**. Depuis le 1er décembre 1986, les prestations
+de vieillesse du régime général sont payées « sur un montant non arrondi
+(y compris les centimes) » — décrets n° 86-130 et 86-131 du 28 janvier 1986,
+notifiés par la circulaire Cnav 49/86 du 25 juin 1986, qui supprime
+explicitement la règle d'arrondi antérieure. Cette règle-là, héritée de
+l'article 5 de la loi n° 50-147 du 3 février 1950, portait le total trimestriel
+au multiple de 50 centimes immédiatement supérieur (circulaire Cnav 21/71 du
+10 juin 1971). Elle n'a plus cours.
+
+Le modèle ne fait donc **aucun arrondi monétaire**, dans aucun des cinq
+scénarios, et c'est la lecture conforme au droit pour le scénario 1 comme pour
+les autres. Le site affiche les cinq pensions **au centime**, pour la même
+raison : l'euro rond laissait croire à un arrondi que la caisse ne fait pas.
+
+Trois arrondis subsistent en droit, et voici ce que le modèle en fait :
+
+| Arrondi | Fondement | Le modèle |
+|---|---|---|
+| Trimestres, à l'entier supérieur | CSS art. R. 351-27 | **appliqué** — et il pèse : un trimestre vaut environ 0,6 % de la pension |
+| Revenus portés au compte, à l'euro le plus proche (la fraction de 0,50 comptée pour 1) | CSS art. L. 133-10, section « Règles d'arrondis » | **non appliqué** — voir `limites.md` |
+| Montants anciens en francs, convertis puis arrondis au centime | doctrine Cnav, *Revenu annuel moyen* | sans objet : le modèle ne lit pas de relevé de carrière réel |
+
+Le revenu annuel moyen lui-même n'est arrondi par aucun texte : il est la somme
+des revenus revalorisés des meilleures années divisée par leur nombre, calculée
+sur des revenus exprimés en euros.
+
 ### Ancrage des rémunérations
 
 Les comptes nationaux ne publient que des taux de croissance du salaire moyen.

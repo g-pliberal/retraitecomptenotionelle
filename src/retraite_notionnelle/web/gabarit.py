@@ -336,8 +336,28 @@ def nombre(valeur: float, decimales: int = 2) -> str:
 
 
 def euros(montant: float) -> str:
-    """Montant en euros."""
+    """Montant en euros, à l'euro près.
+
+    L'unité de tout ce qui n'est pas une pension : capital notionnel,
+    cotisations cumulées, salaires portés au compte. Les centimes y seraient du
+    bruit — ces grandeurs se lisent par leur ordre de grandeur.
+    """
     return nombre(montant, 0) + "\u202f\u20ac"
+
+
+def euros_centimes(montant: float) -> str:
+    """Montant en euros ET en centimes.
+
+    L'unité des PENSIONS, parce que c'est celle que la caisse verse : depuis le
+    1er décembre 1986, les prestations de vieillesse sont payées « sur un
+    montant non arrondi (y compris les centimes) » — décrets n° 86-130 et
+    86-131 du 28 janvier 1986, circulaire Cnav 49/86 du 25 juin 1986. La règle
+    d'arrondi qui la précédait — total trimestriel porté au multiple de
+    50 centimes supérieur, loi n° 50-147 du 3 février 1950 — a été supprimée à
+    cette date. Afficher l'euro rond laissait croire à un arrondi que le droit
+    ne fait pas.
+    """
+    return nombre(montant, 2) + "\u202f\u20ac"
 
 
 def pourcentage(valeur: float, signe: bool = False, decimales: int = 1) -> str:

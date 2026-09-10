@@ -72,6 +72,21 @@ export function euros(montant) {
   return `${nombre(montant, 0)}${FINE}€`;
 }
 
+/**
+ * Montant en euros ET en centimes.
+ *
+ * L'unité des PENSIONS, parce que c'est celle que la caisse verse : depuis le
+ * 1er décembre 1986, les prestations de vieillesse sont payées « sur un montant
+ * non arrondi (y compris les centimes) » — décrets n° 86-130 et 86-131 du
+ * 28 janvier 1986, circulaire Cnav 49/86 du 25 juin 1986. La règle d'arrondi qui
+ * la précédait — total trimestriel porté au multiple de 50 centimes supérieur,
+ * loi n° 50-147 du 3 février 1950 — a été supprimée à cette date. Afficher
+ * l'euro rond laissait croire à un arrondi que le droit ne fait pas.
+ */
+export function eurosCentimes(montant) {
+  return `${nombre(montant, 2)}${FINE}€`;
+}
+
 export function pourcentage(valeur, signe = false, decimales = 1) {
   let texte = nombre(valeur * 100, decimales);
   if (signe && valeur >= 0) {
