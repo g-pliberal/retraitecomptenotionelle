@@ -134,10 +134,6 @@ button {
 button:hover { opacity: 0.9; }
 /* Les métiers de la carrière : une boîte par métier, la dernière en pointillé
    parce qu'elle n'en décrit encore aucun — c'est celle qui sert à en ajouter. */
-/* Le choix d'unité vaut pour toute la carrière : il est au-dessus des
-   métiers, et volontairement étroit — étalé sur toute la largeur, il
-   pèserait plus que les champs auxquels il s'applique. */
-form .unite { max-width: 20rem; margin-top: 1.1rem; }
 .metiers { display: grid; gap: 0.9rem; margin: 0.9rem 0 0; }
 .metier { border: 1px solid var(--trait); border-radius: 4px; padding: 0.9rem 1rem; }
 .metier.facultatif { border-style: dashed; }
@@ -380,6 +376,16 @@ def champ(nom: str, libelle: str, valeur: str, aide: str = "",
         f'<input type="{type_}" id="{nom}" name="{nom}" '
         f'value="{escape(str(valeur))}"{supplement}></div>'
     )
+
+
+def cache(nom: str, valeur: str) -> str:
+    """Un champ que le formulaire porte sans le montrer.
+
+    Sert à ce que le formulaire renvoie un réglage qui ne se change pas dans le
+    formulaire mais par un lien — l'unité de saisie des salaires : la changer
+    convertit les montants, ce qu'un menu HTML ne sait pas faire.
+    """
+    return f'<input type="hidden" name="{nom}" value="{escape(str(valeur))}">'
 
 
 def liste(nom: str, libelle: str, options: list[tuple[str, str]],
