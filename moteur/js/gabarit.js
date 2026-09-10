@@ -108,6 +108,17 @@ export function champ(nom, libelle, valeur, aide = "", type = "text", attributs 
     + `value="${echapper(valeur)}"${supplement}></div>`;
 }
 
+/**
+ * Un champ que le formulaire porte sans le montrer.
+ *
+ * Sert à ce que le formulaire renvoie un réglage qui ne se change pas dans le
+ * formulaire mais par un lien — l'unité de saisie des salaires : la changer
+ * convertit les montants, ce qu'un menu HTML ne sait pas faire.
+ */
+export function cache(nom, valeur) {
+  return `<input type="hidden" name="${nom}" value="${echapper(String(valeur))}">`;
+}
+
 export function liste(nom, libelle, options, selection, aide = "") {
   const choix = options.map(([code, texte]) => `<option value="${echapper(code)}"`
     + (code === selection ? " selected" : "")

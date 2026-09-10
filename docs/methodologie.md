@@ -1176,7 +1176,7 @@ simulée.
 
 ### Brut, et pas net
 
-Tout ce que le modèle manipule est **brut** : le salaire saisi, les cotisations
+Tout ce que le modèle manipule est **brut** : le revenu saisi, les cotisations
 versées, le capital notionnel, les cinq pensions. « Brut » au sens des comptes
 nationaux — *salaires et traitements bruts* (D11) rapportés à l'emploi salarié
 intérieur, la définition même du salaire moyen par tête qui sert d'unité —,
@@ -1192,19 +1192,28 @@ salaires. Le modèle ne convertit jamais en net, faute d'une série de taux de
 prélèvement par statut et par année qui soit du même niveau de preuve que le
 reste.
 
-Le salaire se saisit en **euros d'aujourd'hui** : ce que le métier paie
-maintenant. Le modèle, lui, ne connaît que le **multiple du salaire moyen**,
+Le revenu d'activité se saisit en **euros d'aujourd'hui** : ce que le métier
+paie maintenant. Le modèle, lui, ne connaît que le **multiple du salaire moyen**,
 seule unité qui garde son sens sur quatre-vingts ans — un montant n'en a que
 rapporté à son année. Le site fait donc une division, et une seule :
 
 ```
-niveau = salaire mensuel × 12 ÷ salaire moyen annuel
+niveau = revenu mensuel × 12 ÷ salaire moyen annuel
 ```
 
 Ce niveau suit ensuite le salaire moyen d'une année à l'autre, déformé par le
-profil de carrière : le salaire saisi est celui du milieu de carrière, pas celui
-de chaque année. Le multiple reste saisissable pour qui raisonne en relatif ; il
-est alors traduit en euros sous le champ, dans l'autre sens.
+profil de carrière : le revenu saisi est celui du milieu de carrière, pas celui
+de chaque année.
+
+Le multiple reste saisissable pour qui raisonne en relatif : un lien sous les
+métiers bascule d'une unité à l'autre. Un **lien** et non un menu, parce qu'un
+formulaire HTML ne convertit rien quand on change un menu — le nombre resterait
+celui de l'ancienne unité, et « 3 500 » deviendrait 3 500 fois le salaire moyen.
+Le lien, lui, porte l'adresse complète, unité et montants déjà traduits, si bien
+que la page revient dans l'autre unité en décrivant la même carrière. Les deux
+champs déclarent un pas assez fin pour que l'aller-retour soit sans effet :
+l'euro d'un côté, le millième de salaire moyen de l'autre — au centième, un
+aller-retour déplaçait le salaire d'un demi-pour-cent.
 
 ### Ancrage des rémunérations
 

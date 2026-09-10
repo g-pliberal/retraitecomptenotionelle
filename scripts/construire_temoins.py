@@ -328,6 +328,11 @@ def _pages(contexte: Contexte) -> dict:
             **BASE, "interruptions": "1996:2038:chomage_indemnise",
         }),
         ("accueil_saisie_refusee", "/", {**BASE, "liquidation": "12"}),
+        # Un refus alors qu'on saisissait en multiples : le formulaire repart de
+        # ses valeurs par défaut, mais dans l'unité où l'on travaillait.
+        ("accueil_saisie_refusee_en_multiples", "/", {
+            **BASE, "liquidation": "12", "unite_revenu": "moyen", "salaire": "1.2",
+        }),
         # Bornes que seul le formulaire opposait autrefois : une adresse forgée
         # à la main les franchissait, et la page affichait sans broncher des
         # pensions à soixante chiffres. Les trois cas figent, côté Python
@@ -362,6 +367,18 @@ def _pages(contexte: Contexte) -> dict:
         # redire ces bornes en euros, pas en multiples du salaire moyen.
         ("accueil_revenu_hors_bornes", "/", {
             **BASE, "unite_revenu": "euros_mois", "salaire": "200",
+        }),
+        # L'autre unité : libellés, aide et lien de bascule changent tous les
+        # trois, et le lien doit porter les montants déjà convertis.
+        ("accueil_revenu_en_multiples", "/", {
+            **BASE, "unite_revenu": "moyen", "salaire": "1.2",
+        }),
+        # La bascule avec plusieurs métiers : le lien convertit chacun d'eux,
+        # et c'est le seul endroit du site qui écrive une adresse complète.
+        ("accueil_bascule_plusieurs_metiers", "/", {
+            **BASE, "unite_revenu": "euros_mois", "salaire": "2900",
+            "metier2_debut": "40", "metier2_statut": "artisan",
+            "metier2_salaire": "4200",
         }),
         ("cas_types", "/cas-types", {}),
         ("cout", "/cout", {}),

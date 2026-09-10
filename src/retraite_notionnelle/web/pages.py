@@ -92,7 +92,9 @@ PROJECTIONS = [
 #: Les deux façons d'écrire un revenu. Le modèle n'en connaît qu'une — le
 #: multiple du salaire moyen, seule qui garde son sens sur quatre-vingts ans —,
 #: mais personne ne connaît son salaire dans cette unité-là : c'est l'euro qui
-#: est proposé d'abord, et le multiple reste pour qui raisonne en relatif.
+#: est proposé d'abord, et le multiple reste à un clic pour qui raisonne en
+#: relatif. La liste ne s'affiche pas — on passe d'une unité à l'autre par un
+#: lien, qui convertit au passage — mais elle borne ce qu'une adresse peut dire.
 UNITES_REVENU = [
     ("euros_mois", "€ bruts par mois"),
     ("moyen", "× le salaire moyen"),
@@ -349,7 +351,7 @@ class Saisie:
         """
         if self.revenu_en_euros:
             if valeur <= 0:
-                raise _refus(rang, "Le salaire doit être strictement positif.")
+                raise _refus(rang, "Le revenu doit être strictement positif.")
         elif not 0.1 <= valeur <= 10:
             raise _refus(
                 rang,
@@ -403,7 +405,7 @@ class Saisie:
             )
         raise _refus(
             rang,
-            f"Ce salaire vaut {g.nombre(niveau, 2)} fois le salaire moyen ; le "
+            f"Ce revenu vaut {g.nombre(niveau, 2)} fois le salaire moyen ; le "
             "modèle en accepte de 0,1 à 10 fois, soit de "
             f"{g.nombre(echelle.mensuel(0.1), 0)} à "
             f"{g.euros(echelle.mensuel(10))} bruts par mois.",
@@ -720,7 +722,15 @@ def rendre(contexte: Contexte, chemin: str,
     try:
         saisie = Saisie.depuis_requete(parametres or {})
     except ErreurSaisie as erreur:
-        saisie = Saisie(demandee=False)
+        # Le formulaire repart de ses valeurs par défaut — c'est ce qui permet
+        # de le réafficher quoi qu'ait porté l'adresse —, mais il garde l'unité
+        # de saisie : sans cela, une faute de frappe sur l'année de naissance
+        # renverrait en euros quelqu'un qui raisonnait en multiples, avec des
+        # nombres de l'autre unité sous les yeux.
+        unite = _parmi(parametres or {}, "unite_revenu", UNITES_REVENU,
+                       Saisie.unite_revenu)
+        saisie = Saisie(demandee=False, unite_revenu=unite,
+                        salaire=SALAIRE_DEFAUT[unite])
         return TITRES["/"], (
             _presentation() + _erreur(str(erreur)) + _formulaire(saisie, contexte)
         )
@@ -776,6 +786,7 @@ notionnels — le simulateur permet de séparer les deux effets.</div>
 def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     affiliations = contexte.simulateur().affiliations
     statuts = [(code, affiliations.libelle(code)) for code in affiliations.codes]
+    echelle = contexte.echelle(saisie)
 
     identite = "".join([
         g.champ("naissance", "Année de naissance", saisie.naissance,
@@ -832,6 +843,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
 
     return f"""
 <form class="carte" method="get" action="{g.lien('/')}">
+  {g.cache("unite_revenu", saisie.unite_revenu)}
   <h2 style="margin-top:0">Simuler une carrière</h2>
   <div class="grille">{identite}</div>
   <h3>Les métiers exercés</h3>
@@ -840,8 +852,8 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   d'un taux de cotisation et d'un barème à un autre — et c'est exactement ce
   qu'un compte notionnel enregistre. Ajouter un métier, c'est remplir la
   dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
-  {_choix_unite(saisie)}
-  {_metiers(saisie, statuts, contexte.echelle(saisie))}
+  {_metiers(saisie, statuts, echelle)}
+  {_bascule_unite(saisie, echelle)}
   <details>
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
     <div class="grille">{avance}</div>
@@ -863,41 +875,71 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
         aide = ("en multiples du salaire moyen brut" if bref else
                 f"1 = salaire moyen, soit {g.euros(echelle.mensuel(1))} bruts "
                 "par mois")
+        # Pas de 0,001, et non de 0,05 comme autrefois : un centième de
+        # salaire moyen vaut trente-cinq euros par mois, si bien qu'un aller et
+        # retour entre les deux unités déplaçait le salaire d'un demi-pour-cent.
+        # Le navigateur refuse par ailleurs de soumettre un nombre qui ne tombe
+        # pas sur le pas déclaré, et le lien de bascule en produit.
         return g.champ(nom, "Niveau de revenu", valeur, aide, type_="number",
-                       min="0.1", max="10", step="0.05")
+                       min="0.1", max="10", step="0.001")
 
+    # « Revenu » et non « salaire » : douze des vingt-deux statuts ne sont pas
+    # salariés, et un artisan n'a ni salaire ni fiche de paie. Le brut garde le
+    # même sens pour lui — ce sur quoi ses cotisations sont assises —, et la
+    # fiche de paie n'est plus donnée que comme l'exemple qu'elle est.
     aide = ("en euros bruts par mois" if bref else
-            "la ligne « brut » de la fiche de paie, avant cotisations et impôt, "
-            f"en euros d'aujourd'hui — SMIC {g.euros(echelle.smic)}, moyenne "
-            f"{g.euros(echelle.mensuel(1))}, plafond {g.euros(echelle.plafond)}")
-    return g.champ(nom, "Salaire brut mensuel", valeur, aide, type_="number",
-                   min="0", step="10")
+            "en euros d'aujourd'hui, avant cotisations et impôt — pour un "
+            "salarié, la ligne « brut » de la fiche de paie · SMIC "
+            f"{g.euros(echelle.smic)}, moyenne {g.euros(echelle.mensuel(1))}, "
+            f"plafond {g.euros(echelle.plafond)}")
+    return g.champ(nom, "Revenu brut mensuel", valeur, aide, type_="number",
+                   min="0", step="1")
 
 
 def _aide_profil(profil: str) -> str:
     """Ce que le profil fait du salaire saisi, en toutes lettres.
 
     Sans elle, saisir « 2 900 € par mois » se lit comme la promesse de gagner
-    2 900 € chaque année de sa vie, alors que le salaire saisi est celui du
+    2 900 € chaque année de sa vie, alors que le revenu saisi est celui du
     milieu de carrière et que le profil le déforme aux deux bouts.
     """
     debut, fin = bornes_deformation(profil)
     if debut == fin:
-        return "le salaire saisi vaut pour toutes les années de la carrière"
-    return (f"le salaire saisi est celui du milieu de carrière : ×{g.nombre(debut, 2)} "
+        return "le revenu saisi vaut pour toutes les années de la carrière"
+    return (f"le revenu saisi est celui du milieu de carrière : ×{g.nombre(debut, 2)} "
             f"au premier emploi, ×{g.nombre(fin, 2)} au dernier")
 
 
-def _choix_unite(saisie: Saisie) -> str:
-    """Le menu des deux unités, une fois pour toute la carrière.
+def _bascule_unite(saisie: Saisie, echelle: "Echelle") -> str:
+    """Le lien qui change l'unité de saisie, montants déjà convertis.
 
-    Il précède les métiers plutôt qu'il ne les accompagne : une unité par métier
-    n'aurait décrit aucune carrière réelle, et aurait posé six fois la même
-    question.
+    Un lien, et non un menu : un formulaire HTML ne convertit rien quand on
+    change un menu, si bien que le nombre resterait celui de l'ancienne unité —
+    « 3 500 » deviendrait 3 500 fois le salaire moyen, et la page refuserait la
+    saisie au lieu de la traduire. Le lien, lui, porte l'adresse complète, unité
+    ET montants déjà traduits : la page revient dans l'autre unité en décrivant
+    exactement la même carrière. C'est la façon dont tout le reste du site
+    navigue, et elle ne demande pas une ligne de JavaScript.
+
+    L'unité vaut pour toute la carrière : une unité par métier n'aurait décrit
+    aucune carrière réelle, et aurait posé six fois la même question.
     """
-    return '<div class="unite">' + g.liste(
-        "unite_revenu", "Salaires saisis en", UNITES_REVENU, saisie.unite_revenu,
-    ) + "</div>"
+    vers_les_euros = not saisie.revenu_en_euros
+    autre = "euros_mois" if vers_les_euros else "moyen"
+    # ``niveaux`` ramène les montants à l'unité du modèle quelle que soit celle
+    # de la saisie : la traduction dans l'autre sens part donc toujours de là.
+    valeurs = [
+        _nombre(round(echelle.mensuel(niveau)) if vers_les_euros else round(niveau, 3))
+        for niveau in saisie.niveaux(echelle)
+    ]
+    remplacements = {"unite_revenu": autre, "salaire": valeurs[0]}
+    for rang, valeur in enumerate(valeurs[1:], start=2):
+        remplacements[f"metier{rang}_salaire"] = valeur
+    libelle = ("Saisir plutôt des euros par mois" if vers_les_euros
+               else "Saisir plutôt un multiple du salaire moyen")
+    return (f'<p class="discret" style="margin:0.9rem 0 0">'
+            f'<a href="#/?{escape(saisie.requete(**remplacements))}">{libelle}</a>'
+            "</p>")
 
 
 def _metiers(saisie: Saisie, statuts: list[tuple[str, str]],
@@ -1104,7 +1146,8 @@ est le seul instant où les cinq scénarios se laissent mettre côte à côte, e
 c'est donc à cet instant que tous les cinq sont calculés.</div>
 <p class="discret" style="margin-top:1.5rem">Montants <strong>bruts</strong>
 mensuels — avant CSG, CRDS et prélèvements sociaux, avant impôt sur le revenu —
-comme le salaire saisi plus haut : le <strong>taux de remplacement</strong>, qui
+comme le revenu d'activité saisi plus haut : le <strong>taux de
+remplacement</strong>, qui
 rapporte la pension annuelle au dernier revenu d'activité ramené à l'année
 pleine, compare donc un brut à un brut, et il est plus bas qu'un taux calculé
 sur des nets, la pension étant moins prélevée que le salaire. Ses deux termes
@@ -2554,7 +2597,7 @@ que le revenu porté au compte reste la somme de ce que les deux ont
 réellement payé.</p>
 
 <h3 id="unites">Brut, et pas net</h3>
-<p>Tout ce que le modèle manipule est <strong>brut</strong> : le salaire saisi,
+<p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,
 les cotisations versées, le capital notionnel, les cinq pensions. « Brut » a ici
 le sens des comptes nationaux — <em>salaires et traitements bruts</em> (D11)
 rapportés à l'emploi salarié intérieur, ce qui est la définition même du salaire
@@ -2566,20 +2609,22 @@ cotisations, donc la seule grandeur qu'un compte notionnel puisse enregistrer.
 Le taux de remplacement affiché rapporte donc un brut à un brut, et il est
 mécaniquement plus bas qu'un taux calculé sur des nets — les pensions sont moins
 prélevées que les salaires.</p>
-<p>Le salaire se saisit en <strong>euros d'aujourd'hui</strong> : ce que le
-métier paie maintenant. Le modèle, lui, ne connaît que le
+<p>Le revenu d'activité se saisit en <strong>euros d'aujourd'hui</strong> :
+ce que le métier paie maintenant. Le modèle, lui, ne connaît que le
 <strong>multiple du salaire moyen</strong>, seule unité qui garde son sens sur
 quatre-vingts ans — un montant n'en a que rapporté à son année. La page fait
-donc une division, et une seule : <code>niveau = salaire mensuel × 12 ÷ salaire
+donc une division, et une seule : <code>niveau = revenu mensuel × 12 ÷ salaire
 moyen annuel</code>. Ce niveau, ensuite, suit le salaire moyen d'une année à
-l'autre, déformé par le profil de carrière.</p>
+l'autre, déformé par le profil de carrière : le revenu saisi est celui du milieu
+de carrière, pas celui de chaque année. Un lien sous les métiers bascule entre
+les deux unités, montants convertis au passage.</p>
 <p>Reste que les comptes nationaux ne publient que des <em>taux de croissance</em>
 du salaire moyen. Les niveaux en sont reconstitués à partir d'un point
 d'ancrage — <strong>40 000 € bruts annuels en 2024</strong> —, paramètre
 documenté et non donnée certifiée. Il déplace proportionnellement tous les
 revenus reconstitués, donc toutes les pensions, mais il est sans effet sur les
 <strong>rapports</strong> entre scénarios, qui sont l'objet du modèle. Il
-commande en revanche la traduction d'un salaire en multiple : saisir un montant
+commande en revanche la traduction d'un revenu en multiple : saisir un montant
 en euros, c'est le lire à cette échelle-là.</p>
 
 <h3>Périmètre</h3>

@@ -7,7 +7,9 @@ standard et sert de référence au portage JavaScript.
 
 from __future__ import annotations
 
+import html
 import re
+from urllib.parse import parse_qsl
 
 import pytest
 
@@ -347,10 +349,98 @@ def test_l_unite_vaut_pour_tous_les_metiers():
     assert second == pytest.approx(2 * premier)
 
 
+def _lien_de_bascule(contexte, parametres):
+    """L'adresse que porte le lien « saisir plutôt … », lue comme une requête."""
+    corps = rendre(contexte, "/", parametres)[1]
+    lien = re.search(r'<a href="#/\?([^"]*)">([^<]*)</a></p>', corps)
+    assert lien, "le formulaire ne porte plus de lien de bascule d'unité"
+    return dict(parse_qsl(html.unescape(lien.group(1)))), html.unescape(lien.group(2))
+
+
+def test_la_bascule_d_unite_convertit_les_montants(contexte):
+    """Le piège que ce lien existe pour éviter.
+
+    Un menu HTML ne convertit rien : basculer l'unité sans retoucher le nombre
+    aurait fait lire « 3 500 » comme 3 500 fois le salaire moyen, et la page
+    aurait refusé la saisie au lieu de la traduire. Le lien, lui, porte les
+    montants déjà convertis.
+    """
+    suite, libelle = _lien_de_bascule(contexte, {"naissance": "1975"})
+    assert libelle == "Saisir plutôt un multiple du salaire moyen"
+    assert suite["unite_revenu"] == "moyen"
+    # 3 500 € par mois, à l'échelle d'un salaire moyen de 3 475 € : environ 1.
+    assert float(suite["salaire"]) == pytest.approx(1.0, abs=0.05)
+    # Et la page qui suit ce lien calcule, au lieu de refuser.
+    corps = rendre(contexte, "/", suite)[1]
+    assert "Saisie refusée" not in corps
+
+
+def test_la_bascule_revient_au_meme_revenu(contexte):
+    """Aller et retour : le revenu décrit doit être le même, à l'euro près.
+
+    C'est ce qui commande le pas des deux champs. Au centième de salaire moyen,
+    l'aller-retour déplaçait le salaire d'un demi-pour-cent.
+    """
+    for depart in ("2900", "3500", "1234", "9000"):
+        aller, _ = _lien_de_bascule(contexte, {
+            "naissance": "1975", "unite_revenu": "euros_mois", "salaire": depart,
+        })
+        retour, _ = _lien_de_bascule(contexte, aller)
+        assert float(retour["salaire"]) == pytest.approx(float(depart), abs=1)
+
+
+def test_la_bascule_convertit_tous_les_metiers(contexte):
+    suite, _ = _lien_de_bascule(contexte, {
+        "naissance": "1975", "unite_revenu": "euros_mois", "salaire": "2900",
+        "metier2_debut": "40", "metier2_statut": "artisan",
+        "metier2_salaire": "5800",
+    })
+    assert float(suite["metier2_salaire"]) == pytest.approx(
+        2 * float(suite["salaire"]), rel=0.01
+    )
+
+
+def test_les_valeurs_du_lien_tombent_sur_le_pas_des_champs(contexte):
+    """Un navigateur refuse de soumettre un nombre qui rate le pas déclaré.
+
+    Le lien écrit des valeurs arrondies ; si le champ annonçait un pas plus
+    grossier, la page d'arrivée serait impossible à valider.
+    """
+    for parametres in ({"naissance": "1975"},
+                       {"naissance": "1975", "unite_revenu": "moyen", "salaire": "1.2"}):
+        suite, _ = _lien_de_bascule(contexte, parametres)
+        corps = rendre(contexte, "/", suite)[1]
+        champ = re.search(r'id="salaire"[^>]*value="([^"]*)"[^>]*step="([^"]*)"', corps)
+        valeur, pas = float(champ.group(1)), float(champ.group(2))
+        assert round(valeur / pas) == pytest.approx(valeur / pas, abs=1e-9)
+
+
+def test_le_formulaire_renvoie_l_unite_qu_il_affiche(contexte):
+    """L'unité n'est plus un champ visible : le formulaire doit la porter caché.
+
+    Sans cela, valider le formulaire après avoir suivi le lien de bascule
+    retomberait dans l'unité par défaut, avec des nombres de l'autre.
+    """
+    for unite in ("euros_mois", "moyen"):
+        salaire = "3500" if unite == "euros_mois" else "1"
+        corps = rendre(contexte, "/", {"unite_revenu": unite, "salaire": salaire})[1]
+        assert f'<input type="hidden" name="unite_revenu" value="{unite}">' in corps
+
+
+def test_un_refus_garde_l_unite_de_saisie(contexte):
+    """Une faute de frappe ailleurs ne doit pas changer d'unité sous les doigts."""
+    corps = rendre(contexte, "/", {
+        "naissance": "1700", "unite_revenu": "moyen", "salaire": "1.2",
+    })[1]
+    assert "Saisie refusée" in corps
+    assert '<input type="hidden" name="unite_revenu" value="moyen">' in corps
+    assert "Niveau de revenu" in corps
+
+
 def test_le_formulaire_dit_brut_et_donne_l_echelle(contexte):
     """La question posée — « brut ou net ? » — trouve sa réponse sur le champ."""
     _, corps = rendre(contexte, "/", {})
-    assert "Salaire brut mensuel" in corps
+    assert "Revenu brut mensuel" in corps
     assert "la ligne « brut » de la fiche de paie" in corps
     # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
     assert "SMIC" in corps and "moyenne" in corps and "plafond" in corps
