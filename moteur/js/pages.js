@@ -1333,7 +1333,11 @@ function trajectoire(contexte, comparaison, saisie) {
     titres.get(cle),
     // En milliers : l'axe monterait sinon à sept chiffres, illisibles dans la
     // marge d'un graphique qui doit tenir sur un téléphone.
-    ages.map((age) => annuel[cle] * Math.max(0.0, age - depart) / 1000),
+    // Rien avant le départ : pour une liquidation en cours d'année,
+    // « max(0, âge - départ) » faisait partir la courbe de l'âge entier
+    // précédent, soit jusqu'à onze mois de pension qui n'ont pas été versés.
+    // La courbe commence maintenant au premier âge atteint.
+    ages.map((age) => (age < depart ? null : annuel[cle] * (age - depart) / 1000)),
     `var(${couleur})`,
   ));
   const etiquettes = TRAJECTOIRE.map(([, , chiffre]) => chiffre);
@@ -1344,7 +1348,16 @@ function trajectoire(contexte, comparaison, saisie) {
   const survie = courbeDeSurvie(contexte, carriere, conversion.table);
   const vivants = (age) => g.pourcentage(partVivante(survie, age - depart), false, 0);
 
+  // Le scénario 2 passe au-dessus du scénario 1 pour qui a beaucoup cotisé sans
+  // que le droit en vigueur le lui rende — un libéral à quatre fois le salaire
+  // moyen, par exemple. La phrase disait « l'écart se creuse » en affichant
+  // « -45 575 € par an » : un signe moins au milieu d'un texte qui affirmait le
+  // contraire.
   const ecart = annuel.actuel - annuel.notionnel_retroactif;
+  const phraseEcart = `Le scénario 2 verse ${g.euros(Math.abs(ecart))} par an de `
+    + (ecart >= 0 ? "moins" : "plus")
+    + " que le scénario 1 ; l'écart se creuse ici d'autant d'années que la "
+    + "retraite dure";
   // Unité brève : le libellé est ancré à gauche de l'axe et déborderait du
   // cadre au-delà d'une poignée de caractères — « milliers d'euros de 2026,
   // cumulés » sortait du viewBox par la gauche, et « k€ 2026 » y perdait encore
@@ -1369,11 +1382,12 @@ ${g.graphique(
 ${age(depart)} : <strong>${g.nombre(esperance, 1)} ans</strong>, soit
 ${g.nombre(ageEsperance, 1)} ans d'âge. C'est le nombre par lequel le capital
 notionnel est divisé — et c'est une <strong>moyenne</strong>, pas une échéance.
-D'après la même table, ${vivants(ageEsperance)} de la génération est encore en
-vie à cet âge, ${vivants(100)} à 100 ans, et ${vivants(AGE_MAXIMUM_TRAJECTOIRE)}
-à ${AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête. Près de la moitié
-d'une génération dépasse donc le nombre qui a servi à calculer sa pension :
-c'est pour que cette moitié-là se lise que la courbe va si loin.</p>
+D'après la même table, <strong>${vivants(ageEsperance)}</strong> de ceux qui
+partent à ${age(depart)} sont encore en vie à cet âge : ils dépassent donc le
+nombre qui a servi à calculer leur pension, et touchent plus que ce que leur
+carrière a financé. Plus loin encore, ${vivants(100)} atteignent 100 ans et
+${vivants(AGE_MAXIMUM_TRAJECTOIRE)} atteignent ${AGE_MAXIMUM_TRAJECTOIRE} ans, où
+le graphique s'arrête — c'est pour eux qu'il va si loin.</p>
 <p class="discret">Cumuls bruts, en <strong>milliers</strong> d'euros constants
 de ${saisie.euros} — c'est ce que « k€ » désigne sur l'axe. Ils
 supposent que la pension <strong>garde son pouvoir d'achat</strong> après le
@@ -1381,9 +1395,8 @@ départ : le moteur ne simule aucune revalorisation postérieure à la
 liquidation, et additionner en euros constants est la convention la plus neutre
 dont on dispose — ce n'est pas une prévision. Une indexation qui décrocherait
 des prix ferait fléchir les cinq courbes à la fois, sans changer leur ordre.
-L'écart annuel entre le scénario 1 et le scénario 2, ${g.euros(ecart)} par an,
-se creuse ici d'autant d'années que la retraite dure : c'est ce que la
-comparaison des cinq barres, prises au premier mois, ne pouvait pas montrer.</p>
+${phraseEcart} : c'est ce que la comparaison des cinq barres, prises au premier
+mois, ne pouvait pas montrer.</p>
 `;
 }
 
@@ -1419,6 +1432,11 @@ function courbeDeSurvie(contexte, carriere, table) {
 
 /**
  * Part encore en vie ``duree`` années après la liquidation.
+ *
+ * Conditionnelle au fait d'être vivant AU DÉPART : la courbe part de 1 à l'âge
+ * de liquidation. Ce n'est donc pas une part de la génération née la même année
+ * — celle-là a déjà perdu des siens avant la retraite —, et la page dit « de
+ * ceux qui partent à tel âge », non « de la génération ».
  *
  * Interpolée entre deux âges entiers : l'espérance de vie tombe rarement sur un
  * anniversaire, et arrondir la durée à l'année déplacerait le chiffre cité d'un
