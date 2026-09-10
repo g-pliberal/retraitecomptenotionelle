@@ -1084,6 +1084,212 @@ def test_les_colonnes_derivees_de_la_page_cout_se_refont(contexte):
                 )
 
 
+@pytest.mark.parametrize("nom,champs", [
+    ("départ à l'âge de référence", {"naissance": "1975", "liquidation": "67"}),
+    ("départ anticipé de deux ans", {"naissance": "1975", "liquidation": "62"}),
+    # Dix ans d'anticipation : le coefficient tombe à 0,43, et la formule
+    # affichée donnait deux fois trop sans dire pourquoi.
+    ("départ très anticipé", {"naissance": "1975", "debut": "30", "liquidation": "55"}),
+    ("bas salaire", {"naissance": "1955", "unite_revenu": "moyen", "salaire": "0.4"}),
+])
+def test_la_formule_affichee_retrouve_la_pension_du_regime(contexte, nom, champs):
+    """La colonne « Calcul » doit produire le montant de la ligne.
+
+    Elle est écrite pour être refaite : points × valeur de service, cotisations
+    × rendement, et le coefficient d'anticipation quand il s'applique. Ce
+    dernier manquait, si bien qu'à dix ans d'anticipation la formule donnait
+    2,3 fois le montant affiché.
+    """
+    comparaison = contexte.simuler(Saisie.depuis_requete(champs))
+    for pension in comparaison.actuel.pensions_par_regime:
+        if "points ×" not in pension.detail:
+            continue
+        points = re.search(r"([\d,]+\.\d+) points × valeur de service ([\d.]+)",
+                           pension.detail)
+        refait = float(points.group(1).replace(",", "")) * float(points.group(2))
+        cotisations = re.search(
+            r"cotisations revalorisées ([\d,]+) € × rendement ([\d.]+)%",
+            pension.detail,
+        )
+        if cotisations:
+            refait += (float(cotisations.group(1).replace(",", ""))
+                       * float(cotisations.group(2)) / 100)
+        anticipation = re.search(r"coefficient d'anticipation ([\d.]+)", pension.detail)
+        if anticipation:
+            refait *= float(anticipation.group(1))
+        # Les points sont affichés au centième et les cotisations à l'euro :
+        # l'écart ne peut venir que de là.
+        assert refait == pytest.approx(pension.montant, abs=0.25), (
+            f"{nom}, {pension.regime} : « {pension.detail} » donne {refait:,.2f} €, "
+            f"la ligne affiche {pension.montant:,.2f} €"
+        )
+
+
+def _refaire_la_formule(detail: str) -> float | None:
+    """Le montant que produit une formule affichée, ou None si elle n'en est pas une.
+
+    Les deux familles : régimes en points — points × valeur de service, plus
+    éventuellement cotisations × rendement, le tout multiplié par un coefficient
+    d'anticipation — et régimes en annuités — salaire de référence × taux ×
+    durée, éventuellement porté au minimum contributif.
+    """
+    def sans_virgules(texte: str) -> float:
+        return float(texte.replace(",", ""))
+
+    annuites = re.match(r"(?:SR|forfait) ([\d,]+\.\d+) € × taux ([\d.]+)% × (\d+)/(\d+)",
+                        detail)
+    if annuites:
+        reference, taux, acquis, requis = annuites.groups()
+        montant = sans_virgules(reference) * float(taux) / 100 * int(acquis) / int(requis)
+        surcote = re.search(r"surcote parentale ([\d.]+)%", detail)
+        if surcote:
+            montant *= 1 + float(surcote.group(1)) / 100
+        # Les deux planchers disent de combien ils relèvent la pension.
+        plancher = re.search(
+            r"porté au minimum (?:contributif|garanti) par \+ ([\d,]+\.\d+) €", detail)
+        return montant + (sans_virgules(plancher.group(1)) if plancher else 0.0)
+
+    points = re.search(r"([\d,]+\.\d+) points × valeur de service ([\d.]+)", detail)
+    if not points:
+        return None
+    montant = sans_virgules(points.group(1)) * float(points.group(2))
+    cotisations = re.search(
+        r"cotisations revalorisées ([\d,]+) € × rendement ([\d.]+)%", detail)
+    if cotisations:
+        montant += sans_virgules(cotisations.group(1)) * float(cotisations.group(2)) / 100
+    anticipation = re.search(r"coefficient d'anticipation ([\d.]+)", detail)
+    if anticipation:
+        montant *= float(anticipation.group(1))
+    return montant
+
+
+def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
+    """Balayage de tous les statuts, à l'heure et anticipé.
+
+    La colonne « Calcul » est écrite pour être refaite. Trois facteurs y
+    manquaient : le coefficient d'anticipation des régimes en points — 2,3 fois
+    d'écart à dix ans d'anticipation —, les décimales des points, et le montant
+    du relèvement au minimum contributif.
+    """
+    ecarts = []
+    controlees = 0
+    branches = set()
+    # Deux branches que le balayage par statut n'atteint pas : le minimum
+    # garanti de la fonction publique, qui demande une carrière très courte, et
+    # la surcote parentale, qui demande une mère de trois enfants au-delà de
+    # l'âge de référence. Elles sont nommées, sans quoi elles resteraient
+    # muettes — le minimum garanti l'est resté jusqu'ici.
+    particuliers = [
+        ("fonctionnaire_etat", {"naissance": "1950", "statut": "fonctionnaire_etat",
+                                "debut": "40", "liquidation": "62",
+                                "unite_revenu": "moyen", "salaire": "0.3"}),
+        ("surcote parentale", {"naissance": "1965", "sexe": "F", "enfants": "3",
+                               "debut": "20", "liquidation": "64",
+                               "unite_revenu": "moyen", "salaire": "1"}),
+    ]
+    for statut in [affiliation["code"] for affiliation in statuts(contexte)]:
+        # Quatre carrières par statut : complète, très anticipée, ancienne, et
+        # une carrière COURTE — c'est elle qui déclenche les planchers, minimum
+        # contributif et minimum garanti, et aucune des trois autres ne les
+        # atteignait. Le relèvement au minimum garanti est resté sans montant
+        # affiché jusqu'à ce que celle-ci l'exerce.
+        for naissance, debut, liquidation in (("1975", "21", "67"),
+                                              ("1975", "30", "55"),
+                                              ("1955", "20", "64"),
+                                              ("1960", "38", "64")):
+            champs = {"naissance": naissance, "statut": statut, "debut": debut,
+                      "liquidation": liquidation, "unite_revenu": "moyen",
+                      "salaire": "0.4"}
+            try:
+                comparaison = contexte.simuler(Saisie.depuis_requete(champs))
+            except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError):
+                continue
+            for pension in comparaison.actuel.pensions_par_regime:
+                refait = _refaire_la_formule(pension.detail)
+                if refait is None or pension.montant == 0:
+                    continue
+                controlees += 1
+                for marqueur in ("minimum contributif", "minimum garanti",
+                                 "coefficient d'anticipation", "surcote parentale"):
+                    if marqueur in pension.detail:
+                        branches.add(marqueur)
+                # Les grandeurs de la formule sont arrondies pour l'affichage :
+                # un euro sur le salaire de référence, un centime sur les points.
+                if abs(refait - pension.montant) > 0.25:
+                    ecarts.append(
+                        f"{statut}/{naissance}/{liquidation} {pension.regime} : "
+                        f"« {pension.detail[:70]} » donne {refait:,.2f} €, "
+                        f"la ligne affiche {pension.montant:,.2f} €"
+                    )
+    for nom, champs in particuliers:
+        for pension in contexte.simuler(
+                Saisie.depuis_requete(champs)).actuel.pensions_par_regime:
+            refait = _refaire_la_formule(pension.detail)
+            if refait is None or pension.montant == 0:
+                continue
+            controlees += 1
+            for marqueur in ("minimum contributif", "minimum garanti",
+                             "coefficient d'anticipation", "surcote parentale"):
+                if marqueur in pension.detail:
+                    branches.add(marqueur)
+            if abs(refait - pension.montant) > 0.25:
+                ecarts.append(
+                    f"{nom} {pension.regime} : « {pension.detail[:70]} » donne "
+                    f"{refait:,.2f} €, la ligne affiche {pension.montant:,.2f} €"
+                )
+
+    assert not ecarts, "\n".join(ecarts[:8])
+    # Un balayage qui n'exerce rien passe toujours : le compte et la liste des
+    # branches sont le garde-fou. Écrit une première fois, ce test dépaquetait
+    # mal les statuts et contrôlait ZÉRO formule, en vert.
+    assert controlees > 150, f"{controlees} formules seulement ont été refaites"
+    assert branches == {"minimum contributif", "minimum garanti",
+                        "coefficient d'anticipation", "surcote parentale"}, (
+        f"branches non exercées : {branches}"
+    )
+
+
+def test_les_selecteurs_du_resume_vocal_existent_dans_le_html(contexte):
+    """Le résumé lu par les synthèses vocales vise des classes du HTML rendu.
+
+    Elles vivent dans deux fichiers que rien ne relie : le sélecteur est écrit
+    dans ``index.html``, la classe dans ``pages.py``. « .mensuel » y a été visé
+    pendant tout ce temps sans jamais exister, si bien que l'annonce se
+    réduisait au titre — exactement ce que cette région est là pour éviter.
+    """
+    from pathlib import Path
+
+    racine = Path(__file__).resolve().parents[1]
+    amorce = (racine / "index.html").read_text(encoding="utf-8")
+    resume = amorce[amorce.index("function resume("):amorce.index("function chargement(")]
+    selecteurs = re.findall(r'querySelector(?:All)?\("([^"]+)"\)', resume)
+    assert selecteurs, "le résumé vocal ne vise plus aucune classe"
+
+    # Deux rendus : « .erreur » n'existe que sur le chemin du refus, les autres
+    # que sur celui du calcul. Chaque classe visée doit exister dans l'un des deux.
+    classes = set()
+    for champs in ({"naissance": "1975"}, {"naissance": "1700"}):
+        for attribut in re.findall(r'class="([^"]*)"',
+                                   rendre(contexte, "/", champs)[1]):
+            classes.update(attribut.split())
+    for selecteur in selecteurs:
+        for classe in re.findall(r"\.([a-z-]+)", selecteur):
+            assert classe in classes, (
+                f"« {selecteur} » vise « .{classe} », absent du HTML rendu"
+            )
+
+
+def test_le_resume_vocal_annonce_bien_les_montants(contexte):
+    """Et le sélecteur doit trouver quelque chose, pas seulement exister."""
+    corps = rendre(contexte, "/", {"naissance": "1975"})[1]
+    blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
+    assert len(blocs) == 5
+    for bloc in blocs:
+        assert re.search(r'class="titre">[^<]+<', bloc), "scénario sans titre"
+        assert re.search(r'class="chiffre principal">\s*<span class="somme">[^<]+<',
+                         bloc), "scénario sans montant mis en avant"
+
+
 def test_le_portage_javascript_arrondit_comme_python():
     """Les demis, là où les deux langages divergent par défaut.
 

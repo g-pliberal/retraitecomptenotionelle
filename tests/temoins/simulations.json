@@ -99,17 +99,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -307,17 +307,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -518,17 +518,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "801 points × valeur de service 2.3383 € + cotisations revalorisées 181,123 € × rendement 5.81%",
+       "detail": "801.17 points × valeur de service 2.338319 € + cotisations revalorisées 181,123 € × rendement 5.81%",
        "montant": 12396.665215510688,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "658 points × valeur de service 2.3383 €",
+       "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
       },
       {
-       "detail": "SR 80,856 € × taux 50.00% × 172/172",
+       "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
       }
@@ -714,17 +714,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "801 points × valeur de service 2.3383 € + cotisations revalorisées 181,123 € × rendement 5.81%",
+       "detail": "801.17 points × valeur de service 2.338319 € + cotisations revalorisées 181,123 € × rendement 5.81%",
        "montant": 12396.665215510688,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "658 points × valeur de service 2.3383 €",
+       "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
       },
       {
-       "detail": "SR 80,856 € × taux 50.00% × 172/172",
+       "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
       }
@@ -908,17 +908,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "801 points × valeur de service 2.3383 € + cotisations revalorisées 181,123 € × rendement 5.81%",
+       "detail": "801.17 points × valeur de service 2.338319 € + cotisations revalorisées 181,123 € × rendement 5.81%",
        "montant": 12396.665215510688,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "658 points × valeur de service 2.3383 €",
+       "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
       },
       {
-       "detail": "SR 80,856 € × taux 50.00% × 172/172",
+       "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
       }
@@ -1116,17 +1116,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "801 points × valeur de service 2.3383 € + cotisations revalorisées 181,123 € × rendement 5.81%",
+       "detail": "801.17 points × valeur de service 2.338319 € + cotisations revalorisées 181,123 € × rendement 5.81%",
        "montant": 12396.665215510688,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "658 points × valeur de service 2.3383 €",
+       "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
       },
       {
-       "detail": "SR 80,856 € × taux 50.00% × 172/172",
+       "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
       }
@@ -1324,17 +1324,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "801 points × valeur de service 2.3383 € + cotisations revalorisées 181,123 € × rendement 5.81%",
+       "detail": "801.17 points × valeur de service 2.338319 € + cotisations revalorisées 181,123 € × rendement 5.81%",
        "montant": 12396.665215510688,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "658 points × valeur de service 2.3383 €",
+       "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
       },
       {
-       "detail": "SR 80,856 € × taux 50.00% × 172/172",
+       "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
       }
@@ -1518,17 +1518,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -1726,17 +1726,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -1934,17 +1934,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "998 points × valeur de service 2.0003 € + cotisations revalorisées 110,657 € × rendement 5.81%",
+       "detail": "998.19 points × valeur de service 2.000295 € + cotisations revalorisées 110,657 € × rendement 5.81%",
        "montant": 8425.853264255626,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,179 points × valeur de service 2.0003 €",
+       "detail": "2,178.96 points × valeur de service 2.000295 €",
        "montant": 4358.563756746257,
        "regime": "arrco"
       },
       {
-       "detail": "SR 66,427 € × taux 65.00% × 172/172",
+       "detail": "SR 66,426.53 € × taux 65.000% × 172/172",
        "montant": 43177.24436274273,
        "regime": "regime_general"
       }
@@ -2142,17 +2142,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "7,188 points × valeur de service 0.3742 €",
+       "detail": "7,187.99 points × valeur de service 0.374232 €",
        "montant": 2689.975604096324,
        "regime": "arrco"
       },
       {
-       "detail": "SR 21,465 € × taux 50.00% × 150/150",
+       "detail": "SR 21,464.72 € × taux 50.000% × 150/150",
        "montant": 10732.361787856073,
        "regime": "regime_general"
       },
       {
-       "detail": "426 points × valeur de service 0.3742 €",
+       "detail": "426.37 points × valeur de service 0.374232 €",
        "montant": 159.56076264353024,
        "regime": "unirs"
       }
@@ -2349,17 +2349,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172, surcote parentale 5.00%",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172, surcote parentale 5.00%",
        "montant": 29619.530819151987,
        "regime": "regime_general"
       }
@@ -2564,7 +2564,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,146 points × valeur de service 0.0585 €",
+       "detail": "2,146.01 points × valeur de service 0.05854 €",
        "montant": 125.62713491780539,
        "regime": "arrco"
       },
@@ -2574,12 +2574,12 @@
        "regime": "assurances_sociales"
       },
       {
-       "detail": "SR 2,952 € × taux 20.00% × 100/120",
+       "detail": "SR 2,951.79 € × taux 20.000% × 100/120",
        "montant": 491.9647086472815,
        "regime": "regime_general"
       },
       {
-       "detail": "636 points × valeur de service 0.0585 €",
+       "detail": "636.31 points × valeur de service 0.05854 €",
        "montant": 37.2494981197125,
        "regime": "unirs"
       }
@@ -2776,17 +2776,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "983 points × valeur de service 1.8026 € + cotisations revalorisées 65,682 € × rendement 5.81%",
+       "detail": "(982.89 points × valeur de service 1.802551 € + cotisations revalorisées 65,682 € × rendement 5.81%) × coefficient d'anticipation 0.8800",
        "montant": 4917.274277382008,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,291 points × valeur de service 1.8026 €",
+       "detail": "1,290.67 points × valeur de service 1.802551 € × coefficient d'anticipation 0.9600",
        "montant": 2233.4352005803953,
        "regime": "arrco"
       },
       {
-       "detail": "SR 53,944 € × taux 42.50% × 160/172",
+       "detail": "SR 53,943.79 € × taux 42.500% × 160/172",
        "montant": 21326.61612829194,
        "regime": "regime_general"
       }
@@ -3001,7 +3001,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 51,677 € × taux 63.75% × 148/167",
+       "detail": "SR 51,676.77 € × taux 63.750% × 148/167",
        "montant": 29195.82786316998,
        "regime": "fonction_publique_etat"
       },
@@ -3209,7 +3209,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 93,958 € × taux 63.75% × 142/172",
+       "detail": "SR 93,957.77 € × taux 63.750% × 142/172",
        "montant": 49450.73665858247,
        "regime": "fonction_publique_etat"
       },
@@ -3427,7 +3427,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,859 points × valeur de service 0.0768 €",
+       "detail": "2,859.05 points × valeur de service 0.076834 € × coefficient d'anticipation 0.8050",
        "montant": 176.83626904159073,
        "regime": "arrco"
       },
@@ -3437,12 +3437,12 @@
        "regime": "assurances_sociales"
       },
       {
-       "detail": "SR 3,872 € × taux 25.00% × 124/150",
+       "detail": "SR 3,871.96 € × taux 25.000% × 124/150",
        "montant": 800.2043441804449,
        "regime": "regime_general"
       },
       {
-       "detail": "629 points × valeur de service 0.0768 €",
+       "detail": "629.40 points × valeur de service 0.076834 € × coefficient d'anticipation 0.8050",
        "montant": 38.92907532705001,
        "regime": "unirs"
       }
@@ -3626,7 +3626,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,859 points × valeur de service 0.0768 €",
+       "detail": "2,859.05 points × valeur de service 0.076834 € × coefficient d'anticipation 0.7800",
        "montant": 171.3444594440258,
        "regime": "arrco"
       },
@@ -3636,12 +3636,12 @@
        "regime": "assurances_sociales"
       },
       {
-       "detail": "SR 3,872 € × taux 25.00% × 112/150",
+       "detail": "SR 3,871.96 € × taux 25.000% × 112/150",
        "montant": 722.7652140984663,
        "regime": "regime_general"
       },
       {
-       "detail": "629 points × valeur de service 0.0768 €",
+       "detail": "629.40 points × valeur de service 0.076834 € × coefficient d'anticipation 0.7800",
        "montant": 37.72009783242113,
        "regime": "unirs"
       }
@@ -3832,17 +3832,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "983 points × valeur de service 1.8026 € + cotisations revalorisées 65,682 € × rendement 5.81%",
+       "detail": "(982.89 points × valeur de service 1.802551 € + cotisations revalorisées 65,682 € × rendement 5.81%) × coefficient d'anticipation 0.8800",
        "montant": 4917.274277382008,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,291 points × valeur de service 1.8026 €",
+       "detail": "1,290.67 points × valeur de service 1.802551 € × coefficient d'anticipation 0.9600",
        "montant": 2233.4352005803953,
        "regime": "arrco"
       },
       {
-       "detail": "SR 53,944 € × taux 42.50% × 136/172",
+       "detail": "SR 53,943.79 € × taux 42.500% × 136/172",
        "montant": 18127.623709048148,
        "regime": "regime_general"
       }
@@ -4053,17 +4053,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 23,387 € × taux 50.00% × 128/160",
+       "detail": "SR 23,387.16 € × taux 50.000% × 128/160",
        "montant": 9354.863353410645,
        "regime": "cancava"
       },
       {
-       "detail": "150 points × valeur de service 1.1770 €",
+       "detail": "149.76 points × valeur de service 1.177 € × coefficient d'anticipation 0.9750",
        "montant": 171.86375977815013,
        "regime": "rci"
       },
       {
-       "detail": "SR 36,479 € × taux 48.38% × 32/162",
+       "detail": "SR 36,478.93 € × taux 48.375% × 32/162",
        "montant": 3485.764671291709,
        "regime": "rsi"
       }
@@ -4247,17 +4247,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -4455,17 +4455,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -4663,17 +4663,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -4871,17 +4871,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "7,187 points × valeur de service 0.3698 €",
+       "detail": "7,186.88 points × valeur de service 0.36978 €",
        "montant": 2657.563701769582,
        "regime": "arrco"
       },
       {
-       "detail": "SR 21,214 € × taux 50.00% × 150/150",
+       "detail": "SR 21,214.11 € × taux 50.000% × 150/150",
        "montant": 10607.057111111111,
        "regime": "regime_general"
       },
       {
-       "detail": "477 points × valeur de service 0.3698 €",
+       "detail": "477.39 points × valeur de service 0.36978 €",
        "montant": 176.52818636657318,
        "regime": "unirs"
       }
@@ -5065,12 +5065,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "3,929 points × valeur de service 1.0886 €",
+       "detail": "3,928.93 points × valeur de service 1.0886 €",
        "montant": 4277.031402667371,
        "regime": "arrco"
       },
       {
-       "detail": "SR 26,601 € × taux 55.62% × 150/150",
+       "detail": "SR 26,601.34 € × taux 55.625% × 150/150",
        "montant": 14796.99378631831,
        "regime": "regime_general"
       }
@@ -5254,12 +5254,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "4,404 points × valeur de service 1.2513 €",
+       "detail": "4,403.70 points × valeur de service 1.2513 €",
        "montant": 5510.352437027269,
        "regime": "arrco"
       },
       {
-       "detail": "SR 31,021 € × taux 56.25% × 162/162",
+       "detail": "SR 31,020.88 € × taux 56.250% × 162/162",
        "montant": 17449.245001793257,
        "regime": "regime_general"
       }
@@ -5443,17 +5443,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "923 points × valeur de service 1.4386 €",
+       "detail": "922.54 points × valeur de service 1.4386 €",
        "montant": 1327.1626181922638,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,838 points × valeur de service 1.4386 €",
+       "detail": "3,838.12 points × valeur de service 1.4386 €",
        "montant": 5521.52527152778,
        "regime": "arrco"
       },
       {
-       "detail": "SR 39,478 € × taux 53.12% × 167/167",
+       "detail": "SR 39,478.09 € × taux 53.125% × 167/167",
        "montant": 20972.734945971155,
        "regime": "regime_general"
       }
@@ -5637,17 +5637,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,151 points × valeur de service 1.6528 € + cotisations revalorisées 38,568 € × rendement 5.81%",
+       "detail": "1,151.15 points × valeur de service 1.652781 € + cotisations revalorisées 38,568 € × rendement 5.81%",
        "montant": 4143.384674156262,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,720 points × valeur de service 1.6528 €",
+       "detail": "2,720.33 points × valeur de service 1.652781 €",
        "montant": 4496.111364880835,
        "regime": "arrco"
       },
       {
-       "detail": "SR 50,100 € × taux 50.00% × 172/172",
+       "detail": "SR 50,099.53 € × taux 50.000% × 172/172",
        "montant": 25049.76597583713,
        "regime": "regime_general"
       }
@@ -5845,17 +5845,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "970 points × valeur de service 1.9659 € + cotisations revalorisées 101,184 € × rendement 5.81%",
+       "detail": "969.78 points × valeur de service 1.965892 € + cotisations revalorisées 101,184 € × rendement 5.81%",
        "montant": 7785.235850831783,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,662 points × valeur de service 1.9659 €",
+       "detail": "1,662.00 points × valeur de service 1.965892 €",
        "montant": 3267.3165256787856,
        "regime": "arrco"
       },
       {
-       "detail": "SR 63,610 € × taux 50.00% × 172/172",
+       "detail": "SR 63,609.85 € × taux 50.000% × 172/172",
        "montant": 31804.92409412946,
        "regime": "regime_general"
       }
@@ -6053,17 +6053,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "801 points × valeur de service 2.3383 € + cotisations revalorisées 181,123 € × rendement 5.81%",
+       "detail": "801.17 points × valeur de service 2.338319 € + cotisations revalorisées 181,123 € × rendement 5.81%",
        "montant": 12396.665215510688,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "658 points × valeur de service 2.3383 €",
+       "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
       },
       {
-       "detail": "SR 80,856 € × taux 50.00% × 172/172",
+       "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
       }
@@ -6261,12 +6261,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "491 points × valeur de service 2.7813 € + cotisations revalorisées 281,865 € × rendement 5.81%",
+       "detail": "491.35 points × valeur de service 2.781301 € + cotisations revalorisées 281,865 € × rendement 5.81%",
        "montant": 17742.953208383067,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 102,999 € × taux 50.00% × 172/172",
+       "detail": "SR 102,999.20 € × taux 50.000% × 172/172",
        "montant": 51499.600419677896,
        "regime": "regime_general"
       }
@@ -6464,12 +6464,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "77 points × valeur de service 3.0333 € + cotisations revalorisées 341,096 € × rendement 5.81%",
+       "detail": "76.81 points × valeur de service 3.033333 € + cotisations revalorisées 341,096 € × rendement 5.81%",
        "montant": 20050.678640445356,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 116,250 € × taux 50.00% × 172/172",
+       "detail": "SR 116,250.19 € × taux 50.000% × 172/172",
        "montant": 58125.094649371116,
        "regime": "regime_general"
       }
@@ -6654,12 +6654,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "4,211 points × valeur de service 1.2513 €",
+       "detail": "4,210.55 points × valeur de service 1.2513 €",
        "montant": 5268.656985937465,
        "regime": "arrco"
       },
       {
-       "detail": "SR 29,894 € × taux 50.00% × 163/163",
+       "detail": "SR 29,894.19 € × taux 50.000% × 163/163",
        "montant": 14947.095194016261,
        "regime": "regime_general"
       }
@@ -6844,12 +6844,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "4,204 points × valeur de service 1.2513 €",
+       "detail": "4,204.27 points × valeur de service 1.2513 €",
        "montant": 5260.80249470308,
        "regime": "arrco"
       },
       {
-       "detail": "SR 29,947 € × taux 50.00% × 163/163",
+       "detail": "SR 29,947.42 € × taux 50.000% × 163/163",
        "montant": 14973.709310443426,
        "regime": "regime_general"
       }
@@ -7034,17 +7034,17 @@
      "motif_ouverture": "non_ouverte",
      "par_regime": [
       {
-       "detail": "875 points × valeur de service 1.4159 €",
+       "detail": "875.47 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
        "montant": 1177.595706425748,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,692 points × valeur de service 1.4159 €",
+       "detail": "3,691.57 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
        "montant": 4965.550643340667,
        "regime": "arrco"
       },
       {
-       "detail": "SR 36,582 € × taux 46.88% × 164/169",
+       "detail": "SR 36,582.02 € × taux 46.875% × 164/169",
        "montant": 16640.490241919102,
        "regime": "regime_general"
       }
@@ -7229,17 +7229,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "846 points × valeur de service 1.4159 €",
+       "detail": "845.56 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
        "montant": 1137.365671516949,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,714 points × valeur de service 1.4159 €",
+       "detail": "3,713.64 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
        "montant": 4995.232166452149,
        "regime": "arrco"
       },
       {
-       "detail": "SR 36,652 € × taux 46.88% × 163/168",
+       "detail": "SR 36,651.97 € × taux 46.875% × 163/168",
        "montant": 16669.283355099775,
        "regime": "regime_general"
       }
@@ -7423,17 +7423,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -7631,17 +7631,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -7839,17 +7839,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -8047,17 +8047,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -8255,17 +8255,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -8463,17 +8463,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -8671,17 +8671,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -8879,17 +8879,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -9087,17 +9087,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,151 points × valeur de service 1.6528 € + cotisations revalorisées 38,568 € × rendement 5.81%",
+       "detail": "1,151.15 points × valeur de service 1.652781 € + cotisations revalorisées 38,568 € × rendement 5.81%",
        "montant": 4143.384674156262,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,720 points × valeur de service 1.6528 €",
+       "detail": "2,720.33 points × valeur de service 1.652781 €",
        "montant": 4496.111364880835,
        "regime": "arrco"
       },
       {
-       "detail": "SR 50,010 € × taux 50.00% × 172/172",
+       "detail": "SR 50,010.33 € × taux 50.000% × 172/172",
        "montant": 25005.165702188453,
        "regime": "regime_general"
       }
@@ -9295,17 +9295,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,819 points × valeur de service 1.8026 €",
+       "detail": "1,818.76 points × valeur de service 1.802551 €",
        "montant": 3278.4025868847275,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -9503,17 +9503,17 @@
      "motif_ouverture": "non_ouverte",
      "par_regime": [
       {
-       "detail": "1,363 points × valeur de service 1.4638 €",
+       "detail": "1,362.57 points × valeur de service 1.463776 € × coefficient d'anticipation 0.4300",
        "montant": 857.6331303005518,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,455 points × valeur de service 1.4638 €",
+       "detail": "2,454.65 points × valeur de service 1.463776 € × coefficient d'anticipation 0.4300",
        "montant": 1545.0124564352843,
        "regime": "arrco"
       },
       {
-       "detail": "SR 39,449 € × taux 37.50% × 124/172",
+       "detail": "SR 39,448.68 € × taux 37.500% × 124/172",
        "montant": 10664.905803670168,
        "regime": "regime_general"
       }
@@ -9711,17 +9711,17 @@
      "motif_ouverture": "non_ouverte",
      "par_regime": [
       {
-       "detail": "1,165 points × valeur de service 1.5964 € + cotisations revalorisées 26,927 € × rendement 5.81%",
+       "detail": "(1,165.34 points × valeur de service 1.596418 € + cotisations revalorisées 26,927 € × rendement 5.81%) × coefficient d'anticipation 0.4300",
        "montant": 1472.662653169863,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,350 points × valeur de service 1.5964 €",
+       "detail": "2,349.62 points × valeur de service 1.596418 € × coefficient d'anticipation 0.5700",
        "montant": 2138.05923691654,
        "regime": "arrco"
       },
       {
-       "detail": "SR 46,223 € × taux 37.50% × 144/172",
+       "detail": "SR 46,222.64 € × taux 37.500% × 144/172",
        "montant": 14511.758818717937,
        "regime": "regime_general"
       }
@@ -9919,17 +9919,17 @@
      "motif_ouverture": "non_ouverte",
      "par_regime": [
       {
-       "detail": "1,101 points × valeur de service 1.6817 € + cotisations revalorisées 43,765 € × rendement 5.81%",
+       "detail": "(1,101.20 points × valeur de service 1.681705 € + cotisations revalorisées 43,765 € × rendement 5.81%) × coefficient d'anticipation 0.8300",
        "montant": 3647.542127601263,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,300 points × valeur de service 1.6817 €",
+       "detail": "2,299.88 points × valeur de service 1.681705 € × coefficient d'anticipation 0.8300",
        "montant": 3210.201492489269,
        "regime": "arrco"
       },
       {
-       "detail": "SR 50,478 € × taux 40.00% × 156/172",
+       "detail": "SR 50,478.37 € × taux 40.000% × 156/172",
        "montant": 18313.083655525028,
        "regime": "regime_general"
       }
@@ -10127,17 +10127,17 @@
      "motif_ouverture": "non_ouverte",
      "par_regime": [
       {
-       "detail": "1,076 points × valeur de service 1.7411 € + cotisations revalorisées 55,521 € × rendement 5.81%",
+       "detail": "(1,076.43 points × valeur de service 1.74108 € + cotisations revalorisées 55,521 € × rendement 5.81%) × coefficient d'anticipation 0.9200",
        "montant": 4691.93739930132,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,271 points × valeur de service 1.7411 €",
+       "detail": "2,270.86 points × valeur de service 1.74108 € × coefficient d'anticipation 0.9200",
        "montant": 3637.442285420245,
        "regime": "arrco"
       },
       {
-       "detail": "SR 53,368 € × taux 45.00% × 164/172",
+       "detail": "SR 53,368.32 € × taux 45.000% × 164/172",
        "montant": 22898.732708892134,
        "regime": "regime_general"
       }
@@ -10335,17 +10335,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -10543,17 +10543,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,024 points × valeur de service 1.8989 € + cotisations revalorisées 88,313 € × rendement 5.81%",
+       "detail": "1,024.27 points × valeur de service 1.89885 € + cotisations revalorisées 88,313 € × rendement 5.81%",
        "montant": 7075.947135263554,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,210 points × valeur de service 1.8989 €",
+       "detail": "2,209.59 points × valeur de service 1.89885 €",
        "montant": 4195.685641076838,
        "regime": "arrco"
       },
       {
-       "detail": "SR 61,291 € × taux 57.50% × 172/172",
+       "detail": "SR 61,291.15 € × taux 57.500% × 172/172",
        "montant": 35242.40995491101,
        "regime": "regime_general"
       }
@@ -10751,17 +10751,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "998 points × valeur de service 2.0003 € + cotisations revalorisées 110,657 € × rendement 5.81%",
+       "detail": "998.19 points × valeur de service 2.000295 € + cotisations revalorisées 110,657 € × rendement 5.81%",
        "montant": 8425.853264255626,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,179 points × valeur de service 2.0003 €",
+       "detail": "2,178.96 points × valeur de service 2.000295 €",
        "montant": 4358.563756746257,
        "regime": "arrco"
       },
       {
-       "detail": "SR 66,427 € × taux 65.00% × 172/172",
+       "detail": "SR 66,426.53 € × taux 65.000% × 172/172",
        "montant": 43177.24436274273,
        "regime": "regime_general"
       }
@@ -10959,17 +10959,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,250 points × valeur de service 1.4386 €",
+       "detail": "1,249.95 points × valeur de service 1.4386 €",
        "montant": 1798.177990852273,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,586 points × valeur de service 1.4386 €",
+       "detail": "3,585.85 points × valeur de service 1.4386 €",
        "montant": 5158.609753633621,
        "regime": "arrco"
       },
       {
-       "detail": "SR 41,280 € × taux 51.88% × 169/169",
+       "detail": "SR 41,279.88 € × taux 51.875% × 169/169",
        "montant": 21413.93994117698,
        "regime": "regime_general"
       }
@@ -11153,17 +11153,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,052 points × valeur de service 1.8026 € + cotisations revalorisées 70,798 € × rendement 5.81%",
+       "detail": "1,051.91 points × valeur de service 1.802551 € + cotisations revalorisées 70,798 € × rendement 5.81%",
        "montant": 6009.502464136913,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,278 points × valeur de service 1.8026 €",
+       "detail": "2,278.03 points × valeur de service 1.802551 €",
        "montant": 4106.261599925203,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,359 € × taux 51.25% × 172/172",
+       "detail": "SR 56,359.44 € × taux 51.250% × 172/172",
        "montant": 28884.2110981266,
        "regime": "regime_general"
       }
@@ -11362,17 +11362,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -11571,17 +11571,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,053 points × valeur de service 1.8026 € + cotisations revalorisées 68,460 € × rendement 5.81%",
+       "detail": "1,053.19 points × valeur de service 1.802551 € + cotisations revalorisées 68,460 € × rendement 5.81%",
        "montant": 5875.9844673516345,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,244 points × valeur de service 1.8026 €",
+       "detail": "2,243.56 points × valeur de service 1.802551 €",
        "montant": 4044.1315680593716,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,391 € × taux 50.00% × 172/172",
+       "detail": "SR 56,390.55 € × taux 50.000% × 172/172",
        "montant": 28195.273249380873,
        "regime": "regime_general"
       }
@@ -11780,17 +11780,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,052 points × valeur de service 1.8026 € + cotisations revalorisées 68,909 € × rendement 5.81%",
+       "detail": "1,052.31 points × valeur de service 1.802551 € + cotisations revalorisées 68,909 € × rendement 5.81%",
        "montant": 5900.4771615172085,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,243 points × valeur de service 1.8026 €",
+       "detail": "2,242.52 points × valeur de service 1.802551 €",
        "montant": 4042.264620907135,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,363 € × taux 50.00% × 172/172",
+       "detail": "SR 56,363.05 € × taux 50.000% × 172/172",
        "montant": 28181.52408830381,
        "regime": "regime_general"
       }
@@ -11989,17 +11989,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,051 points × valeur de service 1.8026 € + cotisations revalorisées 69,356 € × rendement 5.81%",
+       "detail": "1,051.43 points × valeur de service 1.802551 € + cotisations revalorisées 69,356 € × rendement 5.81%",
        "montant": 5924.842070099875,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,241 points × valeur de service 1.8026 €",
+       "detail": "2,241.49 points × valeur de service 1.802551 €",
        "montant": 4040.405038437946,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,336 € × taux 50.62% × 172/172",
+       "detail": "SR 56,335.66 € × taux 50.625% × 172/172",
        "montant": 28519.92702910542,
        "regime": "regime_general"
       }
@@ -12198,17 +12198,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,051 points × valeur de service 1.8026 € + cotisations revalorisées 69,800 € × rendement 5.81%",
+       "detail": "1,050.56 points × valeur de service 1.802551 € + cotisations revalorisées 69,800 € × rendement 5.81%",
        "montant": 5949.079947738905,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,240 points × valeur de service 1.8026 €",
+       "detail": "2,240.47 points × valeur de service 1.802551 €",
        "montant": 4038.5527771595803,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,308 € × taux 50.62% × 172/172",
+       "detail": "SR 56,308.38 € × taux 50.625% × 172/172",
        "montant": 28506.115509788666,
        "regime": "regime_general"
       }
@@ -12407,17 +12407,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,050 points × valeur de service 1.8026 € + cotisations revalorisées 70,242 € × rendement 5.81%",
+       "detail": "1,049.68 points × valeur de service 1.802551 € + cotisations revalorisées 70,242 € × rendement 5.81%",
        "montant": 5973.191543143196,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,239 points × valeur de service 1.8026 €",
+       "detail": "2,239.44 points × valeur de service 1.802551 €",
        "montant": 4036.7077939216015,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,281 € × taux 50.62% × 172/172",
+       "detail": "SR 56,281.20 € × taux 50.625% × 172/172",
        "montant": 28492.358259703018,
        "regime": "regime_general"
       }
@@ -12616,17 +12616,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,049 points × valeur de service 1.8026 € + cotisations revalorisées 70,682 € × rendement 5.81%",
+       "detail": "1,048.82 points × valeur de service 1.802551 € + cotisations revalorisées 70,682 € × rendement 5.81%",
        "montant": 5997.177599149427,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,238 points × valeur de service 1.8026 €",
+       "detail": "2,238.42 points × valeur de service 1.802551 €",
        "montant": 4034.8700459120073,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,254 € × taux 51.25% × 172/172",
+       "detail": "SR 56,254.13 € × taux 51.250% × 172/172",
        "montant": 28830.2432924525,
        "regime": "regime_general"
       }
@@ -12825,17 +12825,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,048 points × valeur de service 1.8026 € + cotisations revalorisées 71,120 € × rendement 5.81%",
+       "detail": "1,047.95 points × valeur de service 1.802551 € + cotisations revalorisées 71,120 € × rendement 5.81%",
        "montant": 6021.038852779502,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,237 points × valeur de service 1.8026 €",
+       "detail": "2,237.41 points × valeur de service 1.802551 €",
        "montant": 4033.0394906539173,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,227 € × taux 51.25% × 172/172",
+       "detail": "SR 56,227.17 € × taux 51.250% × 172/172",
        "montant": 28816.425111230477,
        "regime": "regime_general"
       }
@@ -13034,17 +13034,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,047 points × valeur de service 1.8026 € + cotisations revalorisées 71,555 € × rendement 5.81%",
+       "detail": "1,047.09 points × valeur de service 1.802551 € + cotisations revalorisées 71,555 € × rendement 5.81%",
        "montant": 6044.776035297346,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,236 points × valeur de service 1.8026 €",
+       "detail": "2,236.40 points × valeur de service 1.802551 €",
        "montant": 4031.216086002305,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,200 € × taux 51.25% × 172/172",
+       "detail": "SR 56,200.31 € × taux 51.250% × 172/172",
        "montant": 28802.660907278856,
        "regime": "regime_general"
       }
@@ -13243,17 +13243,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,046 points × valeur de service 1.8026 € + cotisations revalorisées 71,988 € × rendement 5.81%",
+       "detail": "1,046.23 points × valeur de service 1.802551 € + cotisations revalorisées 71,988 € × rendement 5.81%",
        "montant": 6068.3898722650165,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,235 points × valeur de service 1.8026 €",
+       "detail": "2,235.39 points × valeur de service 1.802551 €",
        "montant": 4029.3997901407565,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,174 € × taux 51.88% × 172/172",
+       "detail": "SR 56,173.56 € × taux 51.875% × 172/172",
        "montant": 29140.03512548914,
        "regime": "regime_general"
       }
@@ -13452,17 +13452,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,045 points × valeur de service 1.8026 € + cotisations revalorisées 72,419 € × rendement 5.81%",
+       "detail": "1,045.38 points × valeur de service 1.802551 € + cotisations revalorisées 72,419 € × rendement 5.81%",
        "montant": 6091.8810835981785,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,234 points × valeur de service 1.8026 €",
+       "detail": "2,234.38 points × valeur de service 1.802551 €",
        "montant": 4027.5905615782817,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,147 € × taux 51.88% × 172/172",
+       "detail": "SR 56,146.91 € × taux 51.875% × 172/172",
        "montant": 29126.21138041971,
        "regime": "regime_general"
       }
@@ -13661,17 +13661,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,045 points × valeur de service 1.8026 € + cotisations revalorisées 72,847 € × rendement 5.81%",
+       "detail": "1,044.53 points × valeur de service 1.802551 € + cotisations revalorisées 72,847 € × rendement 5.81%",
        "montant": 6115.250383620913,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,233 points × valeur de service 1.8026 €",
+       "detail": "2,233.38 points × valeur de service 1.802551 €",
        "montant": 4025.7883591461446,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,120 € × taux 51.88% × 172/172",
+       "detail": "SR 56,120.37 € × taux 51.875% × 172/172",
        "montant": 29112.44131979717,
        "regime": "regime_general"
       }
@@ -13870,17 +13870,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -14079,17 +14079,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -14288,17 +14288,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -14497,17 +14497,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -14708,22 +14708,22 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,614 points × valeur de service 1.6528 €",
+       "detail": "1,614.03 points × valeur de service 1.652781 €",
        "montant": 2667.6403179485415,
        "regime": "arrco"
       },
       {
-       "detail": "1,563 points × valeur de service 1.5406 € + cotisations revalorisées 39,329 € × rendement 6.74%",
+       "detail": "1,562.85 points × valeur de service 1.540637 € + cotisations revalorisées 39,329 € × rendement 6.74%",
        "montant": 5058.567545372214,
        "regime": "rci"
       },
       {
-       "detail": "SR 46,236 € × taux 50.00% × 140/172",
+       "detail": "SR 46,235.99 € × taux 50.000% × 140/172",
        "montant": 18816.972642813646,
        "regime": "regime_general"
       },
       {
-       "detail": "SR 44,545 € × taux 50.00% × 32/172",
+       "detail": "SR 44,545.08 € × taux 50.000% × 32/172",
        "montant": 4143.728359741038,
        "regime": "rsi"
       }
@@ -14926,17 +14926,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,138 points × valeur de service 1.8026 €",
+       "detail": "2,138.29 points × valeur de service 1.802551 €",
        "montant": 3854.375138506335,
        "regime": "arrco"
       },
       {
-       "detail": "965 points × valeur de service 1.6802 € + cotisations revalorisées 68,956 € × rendement 6.74%",
+       "detail": "965.29 points × valeur de service 1.680244 € + cotisations revalorisées 68,956 € × rendement 6.74%",
        "montant": 6269.540414322663,
        "regime": "rci"
       },
       {
-       "detail": "SR 59,198 € × taux 50.00% × 172/172",
+       "detail": "SR 59,198.06 € × taux 50.000% × 172/172",
        "montant": 29599.028093269528,
        "regime": "regime_general"
       }
@@ -15139,22 +15139,22 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,968 points × valeur de service 1.8026 €",
+       "detail": "1,968.00 points × valeur de service 1.802551 € × coefficient d'anticipation 0.9900",
        "montant": 3511.9407396823176,
        "regime": "arrco"
       },
       {
-       "detail": "1,123 points × valeur de service 1.6802 € + cotisations revalorisées 67,036 € × rendement 6.74%",
+       "detail": "(1,122.60 points × valeur de service 1.680244 € + cotisations revalorisées 67,036 € × rendement 6.74%) × coefficient d'anticipation 0.9875",
        "montant": 6324.384581360427,
        "regime": "rci"
       },
       {
-       "detail": "SR 58,583 € × taux 49.38% × 167/172",
+       "detail": "SR 58,582.62 € × taux 49.375% × 167/172",
        "montant": 28084.32010041461,
        "regime": "regime_general"
       },
       {
-       "detail": "SR 58,491 € × taux 49.38% × 4/172",
+       "detail": "SR 58,491.20 € × taux 49.375% × 4/172",
        "montant": 671.6286499400393,
        "regime": "rsi"
       }
@@ -15357,17 +15357,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,323 points × valeur de service 1.8026 €",
+       "detail": "2,322.73 points × valeur de service 1.802551 €",
        "montant": 4186.840700121621,
        "regime": "arrco"
       },
       {
-       "detail": "965 points × valeur de service 1.6802 € + cotisations revalorisées 67,804 € × rendement 6.74%",
+       "detail": "965.29 points × valeur de service 1.680244 € + cotisations revalorisées 67,804 € × rendement 6.74%",
        "montant": 6191.891171123996,
        "regime": "rci"
       },
       {
-       "detail": "SR 59,222 € × taux 50.00% × 172/172",
+       "detail": "SR 59,222.21 € × taux 50.000% × 172/172",
        "montant": 29611.10619675456,
        "regime": "regime_general"
       }
@@ -15582,52 +15582,52 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "840 points × valeur de service 0.4695 €",
+       "detail": "840.00 points × valeur de service 0.469458 € × coefficient d'anticipation 0.9700",
        "montant": 382.5144847250446,
        "regime": "agirc"
       },
       {
-       "detail": "539 points × valeur de service 1.3498 €",
+       "detail": "538.86 points × valeur de service 1.3498 € × coefficient d'anticipation 0.9700",
        "montant": 705.5371194308505,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,403 points × valeur de service 1.3498 €",
+       "detail": "2,402.95 points × valeur de service 1.3498 € × coefficient d'anticipation 0.9700",
        "montant": 3146.20152604489,
        "regime": "arrco"
       },
       {
-       "detail": "forfait 17,433 € × taux 96.25% × 12/167",
+       "detail": "forfait 17,433.01 € × taux 96.250% × 12/167",
        "montant": 1205.6964083423327,
        "regime": "cnbf"
       },
       {
-       "detail": "cotisations revalorisées 8,033 € × rendement 8.50%",
+       "detail": "cotisations revalorisées 8,033 € × rendement 8.50% × coefficient d'anticipation 0.9625",
        "montant": 657.1949812688956,
        "regime": "cnbf_complementaire"
       },
       {
-       "detail": "SR 34,103 € × taux 75.00% × 12/150",
+       "detail": "SR 34,103.35 € × taux 75.000% × 12/150",
        "montant": 2046.2012741868223,
        "regime": "marins"
       },
       {
-       "detail": "cotisations revalorisées 20,444 € × rendement 6.00%",
+       "detail": "cotisations revalorisées 20,444 € × rendement 6.00% × coefficient d'anticipation 0.9625",
        "montant": 1180.6514378216186,
        "regime": "msa_non_salaries"
       },
       {
-       "detail": "619 points × valeur de service 0.3614 €",
+       "detail": "618.67 points × valeur de service 0.3614 €",
        "montant": 223.58578998441374,
        "regime": "msa_rco"
       },
       {
-       "detail": "SR 29,256 € × taux 48.12% × 116/167",
+       "detail": "SR 29,256.17 € × taux 48.125% × 116/167",
        "montant": 9779.79524078359,
        "regime": "regime_general"
       },
       {
-       "detail": "SR 31,669 € × taux 75.00% × 12/167",
+       "detail": "SR 31,669.49 € × taux 75.000% × 12/167",
        "montant": 1706.7389107584586,
        "regime": "sncf"
       }
@@ -15818,12 +15818,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,009 points × valeur de service 1.8026 €",
+       "detail": "2,008.66 points × valeur de service 1.802551 €",
        "montant": 3620.7169963137753,
        "regime": "arrco"
       },
       {
-       "detail": "SR 73,759 € × taux 75.00% × 88/172",
+       "detail": "SR 73,758.67 € × taux 75.000% × 88/172",
        "montant": 28302.743811047487,
        "regime": "fonction_publique_etat"
       },
@@ -15833,7 +15833,7 @@
        "regime": "rafp"
       },
       {
-       "detail": "SR 34,766 € × taux 50.00% × 84/172",
+       "detail": "SR 34,765.80 € × taux 50.000% × 84/172",
        "montant": 8489.323167709888,
        "regime": "regime_general"
       }
@@ -16037,22 +16037,22 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,232 points × valeur de service 1.8026 €",
+       "detail": "1,232.07 points × valeur de service 1.802551 €",
        "montant": 2220.872221998992,
        "regime": "arrco"
       },
       {
-       "detail": "1,734 points × valeur de service 1.6802 € + cotisations revalorisées 65,500 € × rendement 6.74%",
+       "detail": "1,733.95 points × valeur de service 1.680244 € + cotisations revalorisées 65,500 € × rendement 6.74%",
        "montant": 7328.126801290562,
        "regime": "rci"
       },
       {
-       "detail": "SR 57,471 € × taux 50.00% × 140/172",
+       "detail": "SR 57,471.21 € × taux 50.000% × 140/172",
        "montant": 23389.4469767273,
        "regime": "regime_general"
       },
       {
-       "detail": "SR 56,435 € × taux 50.00% × 32/172",
+       "detail": "SR 56,435.09 € × taux 50.000% × 32/172",
        "montant": 5249.775594322159,
        "regime": "rsi"
       }
@@ -16260,17 +16260,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,032 points × valeur de service 1.8026 €",
+       "detail": "1,032.18 points × valeur de service 1.802551 €",
        "montant": 1860.5630400765995,
        "regime": "arrco"
       },
       {
-       "detail": "SR 95,886 € × taux 75.00% × 64/172",
+       "detail": "SR 95,886.27 € × taux 75.000% × 64/172",
        "montant": 26758.957784990347,
        "regime": "fonction_publique_etat"
       },
       {
-       "detail": "4,649 points × valeur de service 0.6779 €",
+       "detail": "4,649.49 points × valeur de service 0.677893 €",
        "montant": 3151.861066111045,
        "regime": "ircantec"
       },
@@ -16280,7 +16280,7 @@
        "regime": "rafp"
       },
       {
-       "detail": "SR 33,880 € × taux 50.00% × 108/172",
+       "detail": "SR 33,880.05 € × taux 50.000% × 108/172",
        "montant": 10636.761040609976,
        "regime": "regime_general"
       }
@@ -16483,17 +16483,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,028 points × valeur de service 1.8341 € + cotisations revalorisées 75,441 € × rendement 5.81%",
+       "detail": "(1,028.45 points × valeur de service 1.834095 € + cotisations revalorisées 75,441 € × rendement 5.81%) × coefficient d'anticipation 0.9700",
        "montant": 6081.335893873366,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,015 points × valeur de service 1.8341 €",
+       "detail": "2,014.77 points × valeur de service 1.834095 € × coefficient d'anticipation 0.9800",
        "montant": 3621.3663140185804,
        "regime": "arrco"
       },
       {
-       "detail": "SR 57,521 € × taux 48.12% × 169/172",
+       "detail": "SR 57,520.87 € × taux 48.125% × 169/172",
        "montant": 27199.093191431668,
        "regime": "regime_general"
       }
@@ -16694,12 +16694,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 57,532 € × taux 75.00% × 172/172",
+       "detail": "SR 57,531.76 € × taux 75.000% × 172/172",
        "montant": 43148.81942829695,
        "regime": "fonction_publique_etat"
       },
       {
-       "detail": "12,637 points × valeur de service 0.0711 € + cotisations revalorisées 17,454 € × rendement 3.89%",
+       "detail": "12,636.95 points × valeur de service 0.071057 € + cotisations revalorisées 17,454 € × rendement 3.89%",
        "montant": 1576.9042797932639,
        "regime": "rafp"
       }
@@ -16900,17 +16900,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,801 points × valeur de service 1.8026 € + cotisations revalorisées 139,766 € × rendement 5.81%",
+       "detail": "1,800.65 points × valeur de service 1.802551 € + cotisations revalorisées 139,766 € × rendement 5.81%",
        "montant": 11366.177644142113,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,502 points × valeur de service 1.8026 €",
+       "detail": "2,501.65 points × valeur de service 1.802551 €",
        "montant": 4509.352192742858,
        "regime": "arrco"
       },
       {
-       "detail": "SR 60,527 € × taux 50.00% × 172/172",
+       "detail": "SR 60,527.40 € × taux 50.000% × 172/172",
        "montant": 30263.702480736338,
        "regime": "regime_general"
       }
@@ -17108,17 +17108,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,012 points × valeur de service 1.8026 € + cotisations revalorisées 51,614 € × rendement 5.81%",
+       "detail": "1,011.61 points × valeur de service 1.802551 € + cotisations revalorisées 51,614 € × rendement 5.81%",
        "montant": 4822.27446160591,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,866 points × valeur de service 1.8026 €",
+       "detail": "2,865.81 points × valeur de service 1.802551 €",
        "montant": 5165.760515047075,
        "regime": "arrco"
       },
       {
-       "detail": "SR 52,518 € × taux 50.00% × 172/172",
+       "detail": "SR 52,518.22 € × taux 50.000% × 172/172",
        "montant": 26259.111699117526,
        "regime": "regime_general"
       }
@@ -17316,17 +17316,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 66,218 € × rendement 5.81%",
+       "detail": "1,053.66 points × valeur de service 1.802551 € + cotisations revalorisées 66,218 € × rendement 5.81%",
        "montant": 5746.551589795122,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 55,815 € × taux 50.00% × 172/172",
+       "detail": "SR 55,814.57 € × taux 50.000% × 172/172",
        "montant": 27907.286099050212,
        "regime": "regime_general"
       }
@@ -17524,17 +17524,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 69,858 € × rendement 5.81%",
+       "detail": "1,054.49 points × valeur de service 1.802551 € + cotisations revalorisées 69,858 € × rendement 5.81%",
        "montant": 5959.511939282344,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 57,032 € × taux 50.00% × 172/172",
+       "detail": "SR 57,032.45 € × taux 50.000% × 172/172",
        "montant": 28516.22423533991,
        "regime": "regime_general"
       }
@@ -17733,17 +17733,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "675 points × valeur de service 1.3498 €",
+       "detail": "674.92 points × valeur de service 1.3498 €",
        "montant": 911.0096213033534,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "4,076 points × valeur de service 1.3498 €",
+       "detail": "4,075.68 points × valeur de service 1.3498 €",
        "montant": 5501.351515140682,
        "regime": "arrco"
       },
       {
-       "detail": "SR 36,469 € × taux 54.37% × 167/167",
+       "detail": "SR 36,469.41 € × taux 54.375% × 167/167",
        "montant": 19830.242046293835,
        "regime": "regime_general"
       }
@@ -17928,17 +17928,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "574 points × valeur de service 1.3498 €",
+       "detail": "573.99 points × valeur de service 1.3498 €",
        "montant": 774.7717601054513,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "4,101 points × valeur de service 1.3498 €",
+       "detail": "4,100.55 points × valeur de service 1.3498 €",
        "montant": 5534.92186827972,
        "regime": "arrco"
       },
       {
-       "detail": "SR 35,192 € × taux 53.12% × 167/167",
+       "detail": "SR 35,191.55 € × taux 53.125% × 167/167",
        "montant": 18695.510191126035,
        "regime": "regime_general"
       }
@@ -18123,17 +18123,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "758 points × valeur de service 1.8026 € + cotisations revalorisées 44,913 € × rendement 5.81%",
+       "detail": "758.23 points × valeur de service 1.802551 € + cotisations revalorisées 44,913 € × rendement 5.81%",
        "montant": 3976.220168211742,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,615 points × valeur de service 1.8026 €",
+       "detail": "1,614.61 points × valeur de service 1.802551 €",
        "montant": 2910.422508230997,
        "regime": "arrco"
       },
       {
-       "detail": "SR 41,752 € × taux 50.00% × 172/172",
+       "detail": "SR 41,751.86 € × taux 50.000% × 172/172",
        "montant": 20875.928153960198,
        "regime": "regime_general"
       }
@@ -18336,22 +18336,22 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "720 points × valeur de service 0.6269 €",
+       "detail": "720.00 points × valeur de service 0.626924 €",
        "montant": 451.38531523074994,
        "regime": "agirc"
       },
       {
-       "detail": "1,704 points × valeur de service 1.8026 € + cotisations revalorisées 118,091 € × rendement 5.81%",
+       "detail": "1,704.06 points × valeur de service 1.802551 € + cotisations revalorisées 118,091 € × rendement 5.81%",
        "montant": 9932.731220926538,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,827 points × valeur de service 1.8026 €",
+       "detail": "1,827.21 points × valeur de service 1.802551 €",
        "montant": 3293.6462330186464,
        "regime": "arrco"
       },
       {
-       "detail": "SR 60,755 € × taux 50.00% × 172/172",
+       "detail": "SR 60,755.40 € × taux 50.000% × 172/172",
        "montant": 30377.70002743831,
        "regime": "regime_general"
       }
@@ -18549,17 +18549,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "211 points × valeur de service 1.8026 € + cotisations revalorisées 12,488 € × rendement 5.81%",
+       "detail": "(210.82 points × valeur de service 1.802551 € + cotisations revalorisées 12,488 € × rendement 5.81%) × coefficient d'anticipation 0.8800",
        "montant": 972.8672089397002,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "449 points × valeur de service 1.8026 €",
+       "detail": "448.92 points × valeur de service 1.802551 € × coefficient d'anticipation 0.9600",
        "montant": 776.8331373565541,
        "regime": "arrco"
       },
       {
-       "detail": "SR 11,609 € × taux 42.50% × 136/172",
+       "detail": "SR 11,608.50 € × taux 42.500% × 136/172",
        "montant": 3900.99730458237,
        "regime": "regime_general"
       }
@@ -18757,17 +18757,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "580 points × valeur de service 1.8026 € + cotisations revalorisées 34,341 € × rendement 5.81%",
+       "detail": "579.74 points × valeur de service 1.802551 € + cotisations revalorisées 34,341 € × rendement 5.81%",
        "montant": 3040.210027936563,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,235 points × valeur de service 1.8026 €",
+       "detail": "1,234.53 points × valeur de service 1.802551 €",
        "montant": 2225.3032580526283,
        "regime": "arrco"
       },
       {
-       "detail": "SR 31,923 € × taux 50.00% × 172/172",
+       "detail": "SR 31,923.39 € × taux 50.000% × 172/172",
        "montant": 15961.693123420944,
        "regime": "regime_general"
       }
@@ -18965,17 +18965,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,297 points × valeur de service 1.8026 € + cotisations revalorisées 153,239 € × rendement 5.81%",
+       "detail": "2,297.44 points × valeur de service 1.802551 € + cotisations revalorisées 153,239 € × rendement 5.81%",
        "montant": 13044.449889599517,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,726 points × valeur de service 1.8026 €",
+       "detail": "3,726.20 points × valeur de service 1.802551 €",
        "montant": 6716.65869908594,
        "regime": "arrco"
       },
       {
-       "detail": "SR 60,773 € × taux 50.00% × 172/172",
+       "detail": "SR 60,773.30 € × taux 50.000% × 172/172",
        "montant": 30386.64963914229,
        "regime": "regime_general"
       }
@@ -19173,17 +19173,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "6,635 points × valeur de service 1.8026 € + cotisations revalorisées 410,170 € × rendement 5.81%",
+       "detail": "6,634.95 points × valeur de service 1.802551 € + cotisations revalorisées 410,170 € × rendement 5.81%",
        "montant": 35790.71343464412,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "12,155 points × valeur de service 1.8026 €",
+       "detail": "12,154.89 points × valeur de service 1.802551 €",
        "montant": 21909.810631817927,
        "regime": "arrco"
       },
       {
-       "detail": "SR 60,773 € × taux 50.00% × 172/172",
+       "detail": "SR 60,773.30 € × taux 50.000% × 172/172",
        "montant": 30386.64963914229,
        "regime": "regime_general"
       }
@@ -19381,17 +19381,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "21,093 points × valeur de service 1.8026 € + cotisations revalorisées 1,196,465 € × rendement 5.81%",
+       "detail": "21,093.35 points × valeur de service 1.802551 € + cotisations revalorisées 1,196,465 € × rendement 5.81%",
        "montant": 107536.44944734908,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "20,743 points × valeur de service 1.8026 €",
+       "detail": "20,742.84 points × valeur de service 1.802551 €",
        "montant": 37390.01284650679,
        "regime": "arrco"
       },
       {
-       "detail": "SR 60,773 € × taux 50.00% × 172/172",
+       "detail": "SR 60,773.30 € × taux 50.000% × 172/172",
        "montant": 30386.64963914229,
        "regime": "regime_general"
       }
@@ -19591,7 +19591,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 73,759 € × taux 75.00% × 172/172",
+       "detail": "SR 73,758.67 € × taux 75.000% × 172/172",
        "montant": 55318.99926704736,
        "regime": "banque_de_france"
       }
@@ -19793,17 +19793,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "546 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "545.99 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 4935.508004423637,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 52,970 € × taux 75.00% × 108/172",
+       "detail": "SR 52,970.42 € × taux 75.000% × 108/172",
        "montant": 24945.374165150417,
        "regime": "ieg"
       },
       {
-       "detail": "SR 61,046 € × taux 50.00% × 64/172",
+       "detail": "SR 61,046.20 € × taux 50.000% × 64/172",
        "montant": 11357.432143590002,
        "regime": "regime_general"
       }
@@ -20005,17 +20005,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "546 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "545.99 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 4935.508004423637,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 52,970 € × taux 75.00% × 108/172",
+       "detail": "SR 52,970.42 € × taux 75.000% × 108/172",
        "montant": 24945.374165150417,
        "regime": "ratp"
       },
       {
-       "detail": "SR 61,046 € × taux 50.00% × 64/172",
+       "detail": "SR 61,046.20 € × taux 50.000% × 64/172",
        "montant": 11357.432143590002,
        "regime": "regime_general"
       }
@@ -20218,17 +20218,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "930 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "929.82 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5627.3860378285335,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 59,557 € × taux 50.00% × 76/172",
+       "detail": "SR 59,556.92 € × taux 50.000% × 76/172",
        "montant": 13157.92451102847,
        "regime": "regime_general"
       },
       {
-       "detail": "SR 50,600 € × taux 75.00% × 96/172",
+       "detail": "SR 50,599.76 € × taux 75.000% × 96/172",
        "montant": 21181.294810415577,
        "regime": "sncf"
       }
@@ -20429,22 +20429,22 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 28,576 € × taux 50.00% × 40/160",
+       "detail": "SR 28,576.09 € × taux 50.000% × 40/160",
        "montant": 3572.0113791318,
        "regime": "cancava"
       },
       {
-       "detail": "1,441 points × valeur de service 1.6802 € + cotisations revalorisées 64,496 € × rendement 6.74%",
+       "detail": "1,441.19 points × valeur de service 1.680244 € + cotisations revalorisées 64,496 € × rendement 6.74%",
        "montant": 6768.574820990826,
        "regime": "rci"
       },
       {
-       "detail": "SR 58,578 € × taux 50.00% × 84/172",
+       "detail": "SR 58,578.40 € × taux 50.000% × 84/172",
        "montant": 14304.027250962044,
        "regime": "regime_general"
       },
       {
-       "detail": "SR 40,979 € × taux 50.00% × 48/172",
+       "detail": "SR 40,979.19 € × taux 50.000% × 48/172",
        "montant": 5718.026905999652,
        "regime": "rsi"
       }
@@ -20642,12 +20642,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "forfait 24,000 € × taux 100.00% × 172/172",
+       "detail": "forfait 23,999.76 € × taux 100.000% × 172/172",
        "montant": 23999.760939625467,
        "regime": "cnbf"
       },
       {
-       "detail": "2,575 points × valeur de service 1.2858 € + cotisations revalorisées 123,479 € × rendement 8.50%",
+       "detail": "2,575.18 points × valeur de service 1.285818 € + cotisations revalorisées 123,479 € × rendement 8.50%",
        "montant": 13806.94257146246,
        "regime": "cnbf_complementaire"
       }
@@ -20847,7 +20847,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 73,759 € × taux 75.00% × 172/172",
+       "detail": "SR 73,758.67 € × taux 75.000% × 172/172",
        "montant": 55318.99926704736,
        "regime": "crpcen"
       }
@@ -21047,22 +21047,22 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 28,576 € × taux 50.00% × 40/160",
+       "detail": "SR 28,576.09 € × taux 50.000% × 40/160",
        "montant": 3572.0113791318,
        "regime": "organic"
       },
       {
-       "detail": "1,441 points × valeur de service 1.6802 € + cotisations revalorisées 64,496 € × rendement 6.74%",
+       "detail": "1,441.19 points × valeur de service 1.680244 € + cotisations revalorisées 64,496 € × rendement 6.74%",
        "montant": 6768.574820990826,
        "regime": "rci"
       },
       {
-       "detail": "SR 58,578 € × taux 50.00% × 84/172",
+       "detail": "SR 58,578.40 € × taux 50.000% × 84/172",
        "montant": 14304.027250962044,
        "regime": "regime_general"
       },
       {
-       "detail": "SR 40,979 € × taux 50.00% × 48/172",
+       "detail": "SR 40,979.19 € × taux 50.000% × 48/172",
        "montant": 5718.026905999652,
        "regime": "rsi"
       }
@@ -21260,12 +21260,12 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "9,357 points × valeur de service 0.6779 € + cotisations revalorisées 68,548 € × rendement 8.52%",
+       "detail": "9,357.41 points × valeur de service 0.677893 € + cotisations revalorisées 68,548 € × rendement 8.52%",
        "montant": 12183.658110060233,
        "regime": "ircantec"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -21468,7 +21468,7 @@
        "regime": "msa_non_salaries"
       },
       {
-       "detail": "6,873 points × valeur de service 0.4935 €",
+       "detail": "6,873.30 points × valeur de service 0.493541 €",
        "montant": 3392.2546522237362,
        "regime": "msa_rco"
       }
@@ -21669,7 +21669,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 73,759 € × taux 75.00% × 172/172",
+       "detail": "SR 73,758.67 € × taux 75.000% × 172/172",
        "montant": 55318.99926704736,
        "regime": "fonction_publique_etat"
       },
@@ -21877,7 +21877,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 73,759 € × taux 75.00% × 172/172",
+       "detail": "SR 73,758.67 € × taux 75.000% × 172/172",
        "montant": 55318.99926704736,
        "regime": "cnracl"
       },
@@ -22084,7 +22084,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 47,634 € × taux 75.00% × 150/150",
+       "detail": "SR 47,634.11 € × taux 75.000% × 150/150",
        "montant": 35725.58250903992,
        "regime": "marins"
       }
@@ -22286,17 +22286,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 40,829 € × taux 75.00% × 60/120",
+       "detail": "SR 40,829.48 € × taux 75.000% × 60/120",
        "montant": 15311.055255741627,
        "regime": "mines"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 112/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 112/172",
        "montant": 18368.70128319503,
        "regime": "regime_general"
       }
@@ -22498,7 +22498,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 73,759 € × taux 75.00% × 172/172",
+       "detail": "SR 73,758.67 € × taux 75.000% × 172/172",
        "montant": 55318.99926704736,
        "regime": "fspoeie"
       },
@@ -22705,17 +22705,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "546 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "545.99 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 4935.508004423637,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 52,970 € × taux 75.00% × 100/100",
+       "detail": "SR 52,970.42 € × taux 75.000% × 100/100",
        "montant": 39727.81811486918,
        "regime": "comedie_francaise"
       },
       {
-       "detail": "SR 61,046 € × taux 50.00% × 64/172",
+       "detail": "SR 61,046.20 € × taux 50.000% × 64/172",
        "montant": 11357.432143590002,
        "regime": "regime_general"
       }
@@ -22917,17 +22917,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "546 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "545.99 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 4935.508004423637,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "SR 52,970 € × taux 75.00% × 100/100",
+       "detail": "SR 52,970.42 € × taux 75.000% × 100/100",
        "montant": 39727.81811486918,
        "regime": "opera_de_paris"
       },
       {
-       "detail": "SR 61,046 € × taux 50.00% × 64/172",
+       "detail": "SR 61,046.20 € × taux 50.000% × 64/172",
        "montant": 11357.432143590002,
        "regime": "regime_general"
       }
@@ -23127,7 +23127,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "15,976 points × valeur de service 0.8338 € + cotisations revalorisées 19,512 € × rendement 6.20%",
+       "detail": "15,976.08 points × valeur de service 0.833796 € + cotisations revalorisées 19,512 € × rendement 6.20%",
        "montant": 14530.49555095619,
        "regime": "cnavpl"
       }
@@ -23325,17 +23325,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "msa_salaries"
       }
@@ -23533,22 +23533,22 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,760 points × valeur de service 0.6269 €",
+       "detail": "2,760.00 points × valeur de service 0.626924 €",
        "montant": 1730.3103750512082,
        "regime": "agirc"
       },
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -23746,17 +23746,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -24153,17 +24153,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,238 points × valeur de service 1.5964 € + cotisations revalorisées 27,377 € × rendement 5.81%",
+       "detail": "1,238.29 points × valeur de service 1.596418 € + cotisations revalorisées 27,377 € × rendement 5.81%",
        "montant": 3567.4232313902185,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,173 points × valeur de service 1.5964 €",
+       "detail": "3,173.44 points × valeur de service 1.596418 €",
        "montant": 5066.132810639639,
        "regime": "arrco"
       },
       {
-       "detail": "SR 48,155 € × taux 50.00% × 172/172, surcote parentale 5.00%",
+       "detail": "SR 48,155.17 € × taux 50.000% × 172/172, surcote parentale 5.00%",
        "montant": 25281.465836157684,
        "regime": "regime_general"
       }
@@ -24368,17 +24368,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,162 points × valeur de service 1.6817 € + cotisations revalorisées 44,919 € × rendement 5.81%",
+       "detail": "1,162.27 points × valeur de service 1.681705 € + cotisations revalorisées 44,919 € × rendement 5.81%",
        "montant": 4564.411751260209,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,112 points × valeur de service 1.6817 €",
+       "detail": "3,111.63 points × valeur de service 1.681705 €",
        "montant": 5232.850968772104,
        "regime": "arrco"
       },
       {
-       "detail": "SR 52,261 € × taux 57.50% × 172/172, surcote parentale 5.00%",
+       "detail": "SR 52,260.82 € × taux 57.500% × 172/172, surcote parentale 5.00%",
        "montant": 31552.469835410007,
        "regime": "regime_general"
       }
@@ -24583,17 +24583,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,147 points × valeur de service 1.5964 € + cotisations revalorisées 26,804 € × rendement 5.81%",
+       "detail": "(1,147.13 points × valeur de service 1.596418 € + cotisations revalorisées 26,804 € × rendement 5.81%) × coefficient d'anticipation 0.8800",
        "montant": 2981.9672542037574,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,117 points × valeur de service 1.5964 €",
+       "detail": "2,116.57 points × valeur de service 1.596418 € × coefficient d'anticipation 0.9600",
        "montant": 3243.7652570444598,
        "regime": "arrco"
       },
       {
-       "detail": "SR 45,682 € × taux 42.50% × 152/172",
+       "detail": "SR 45,681.52 € × taux 42.500% × 152/172",
        "montant": 17157.127861673507,
        "regime": "regime_general"
       }
@@ -24802,7 +24802,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 62,263 € × taux 75.00% × 172/172, surcote parentale 5.00%",
+       "detail": "SR 62,262.90 € × taux 75.000% × 172/172, surcote parentale 5.00%",
        "montant": 49032.03009815111,
        "regime": "fonction_publique_etat"
       },
@@ -25009,17 +25009,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,238 points × valeur de service 1.5964 € + cotisations revalorisées 27,377 € × rendement 5.81%",
+       "detail": "1,238.29 points × valeur de service 1.596418 € + cotisations revalorisées 27,377 € × rendement 5.81%",
        "montant": 3567.4232313902185,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,173 points × valeur de service 1.5964 €",
+       "detail": "3,173.44 points × valeur de service 1.596418 €",
        "montant": 5066.132810639639,
        "regime": "arrco"
       },
       {
-       "detail": "SR 48,155 € × taux 50.00% × 172/172",
+       "detail": "SR 48,155.17 € × taux 50.000% × 172/172",
        "montant": 24077.586510626366,
        "regime": "regime_general"
       }
@@ -25217,17 +25217,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
@@ -25425,17 +25425,17 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "1,054 points × valeur de service 1.8026 € + cotisations revalorisées 68,009 € × rendement 5.81%",
+       "detail": "1,054.08 points × valeur de service 1.802551 € + cotisations revalorisées 68,009 € × rendement 5.81%",
        "montant": 5851.363226974683,
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,245 points × valeur de service 1.8026 €",
+       "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
       },
       {
-       "detail": "SR 56,418 € × taux 50.00% × 172/172",
+       "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
       }
