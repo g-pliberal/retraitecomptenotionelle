@@ -14,8 +14,8 @@ from dataclasses import dataclass, field
 from html import escape
 from urllib.parse import urlencode
 
-from ..calendrier import en_mois, formater_age
-from ..carriere import Metier
+from ..calendrier import MOIS_PAR_AN, en_mois, formater_age
+from ..carriere import Metier, bornes_deformation, salaire_moyen_annuel
 from ..castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
 from ..config import (
     AgeConversionDroitsAcquis,
@@ -89,6 +89,51 @@ PROJECTIONS = [
 ]
 
 
+#: Unités dans lesquelles un revenu d'activité peut être saisi. Le modèle n'en
+#: connaît qu'une — le multiple du salaire moyen —, parce qu'elle seule garde
+#: son sens sur quatre-vingts ans : 40 000 francs ne veulent pas dire la même
+#: chose en 1955, en 1985 et jamais après 2001. Mais personne ne connaît son
+#: salaire dans cette unité-là, et la question « brut ou net, et combien en
+#: euros ? » revenait à chaque lecture. Le formulaire accepte donc aussi le
+#: montant que porte le bulletin de paie, et fait la conversion lui-même.
+UNITES_REVENU = [
+    ("moyen", "En multiples du salaire moyen (défaut)"),
+    ("euros_mois", "En euros bruts par mois"),
+    ("euros_an", "En euros bruts par an"),
+    ("francs_mois", "En francs bruts par mois"),
+    ("francs_an", "En francs bruts par an"),
+]
+
+#: Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
+#: mois, soit 151,67 heures. Elle ne sert qu'à écrire un repère à l'échelle
+#: d'un salaire mensuel.
+HEURES_SMIC_PAR_MOIS = 151.67
+
+#: Première année où ce repère mensuel a un sens. La durée légale a été de 40
+#: heures jusqu'en 1982, de 39 ensuite, puis de 35 par étapes ; la garantie
+#: mensuelle unique sur 151,67 heures n'existe qu'au terme de l'harmonisation
+#: prévue par la loi du 17 janvier 2003, achevée au 1er juillet 2005. Le modèle
+#: ne porte pas la durée légale année par année : plutôt que de l'inventer, le
+#: repère des années antérieures est donné à l'heure, ce qui ne suppose rien.
+ANNEE_SMIC_MENSUEL = 2005
+
+#: Taux de conversion irrévocable fixé par le règlement (CE) n° 2866/98 :
+#: 1 euro = 6,559 57 francs.
+FRANCS_PAR_EURO = 6.55957
+
+#: Le « nouveau franc » du décret du 27 décembre 1958 vaut cent anciens francs
+#: et a cours à partir du 1er janvier 1960. Un montant en francs d'avant cette
+#: date est donc en anciens francs : le convertir au taux du nouveau franc le
+#: multiplierait par cent. Le formulaire connaît l'année du montant, il applique
+#: donc le bon des deux sans rien demander.
+ANNEE_NOUVEAU_FRANC = 1960
+
+#: Dernière année où un salaire pouvait être libellé en francs. L'euro est la
+#: monnaie de compte depuis le 1er janvier 1999, mais les bulletins de paie ont
+#: porté les deux jusqu'au basculement des espèces, le 1er janvier 2002.
+DERNIERE_ANNEE_FRANC = 2001
+
+
 #: Nombre maximal de métiers d'une carrière, le premier compris. Le formulaire
 #: affiche toujours une ligne vide de plus que les métiers saisis : c'est ainsi
 #: qu'on en ajoute un, sans une ligne de JavaScript. La borne n'est pas une
@@ -119,6 +164,18 @@ class ErreurSaisie(ValueError):
     """Saisie inexploitable, à afficher telle quelle à l'utilisateur."""
 
 
+def _refus(rang: int, phrase: str) -> ErreurSaisie:
+    """Un refus, daté du métier qu'il concerne quand il y en a plusieurs.
+
+    La phrase est écrite une fois, avec sa majuscule ; le rang la fait passer
+    au milieu d'une autre, où la majuscule n'a plus lieu d'être. Écrire les
+    deux versions à la main les laisserait diverger.
+    """
+    if rang == 1:
+        return ErreurSaisie(phrase)
+    return ErreurSaisie(f"Métier n° {rang} : " + phrase[0].lower() + phrase[1:])
+
+
 @dataclass
 class MetierSaisi:
     """Un métier tel que le formulaire le porte : un âge, un statut, un niveau."""
@@ -127,7 +184,8 @@ class MetierSaisi:
     debut: float
     #: Statut d'affiliation sous lequel il est exercé.
     statut: str
-    #: Niveau de revenu, en multiples du salaire moyen.
+    #: Revenu, dans l'unité que ``Saisie.unite_revenu`` désigne : multiple
+    #: du salaire moyen brut, ou montant brut en euros ou en francs.
     salaire: float
 
 
@@ -141,7 +199,18 @@ class Saisie:
     statut: str = "salarie_prive_non_cadre"
     debut: float = 21
     liquidation: float = 64
+    #: Revenu du premier métier, dans l'unité choisie ci-dessous.
     salaire: float = 1.0
+    #: Unité dans laquelle les revenus sont saisis, pour TOUS les métiers : un
+    #: seul choix pour la carrière entière, parce qu'on décrit une même vie de
+    #: travail et qu'un changement d'unité en cours de route n'est pas une
+    #: information sur la carrière.
+    unite_revenu: str = "moyen"
+    #: Année dont les montants saisis sont ceux-là. Sans effet quand l'unité est
+    #: le multiple du salaire moyen — celui-ci vaut pour toute la carrière —,
+    #: indispensable dès qu'on saisit une somme : 2 000 € de 1990 et 2 000 € de
+    #: 2026 ne décrivent pas la même carrière.
+    annee_revenu: int = 2026
     #: Les métiers exercés APRÈS le premier. Le premier, lui, est décrit par
     #: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
     #: multiples reste donc valide, et décrit la carrière d'un seul métier.
@@ -170,6 +239,10 @@ class Saisie:
         statut = parametres.get("statut") or defauts.statut
         salaire = _reel(parametres, "salaire", defauts.salaire)
         saisie = cls(
+            unite_revenu=_parmi(
+                parametres, "unite_revenu", UNITES_REVENU, defauts.unite_revenu
+            ),
+            annee_revenu=_entier(parametres, "annee_revenu", defauts.annee_revenu),
             naissance=_entier(parametres, "naissance", defauts.naissance),
             naissance_mois=_entier(
                 parametres, "naissance_mois", defauts.naissance_mois
@@ -222,10 +295,8 @@ class Saisie:
             raise ErreurSaisie(
                 "L'âge de liquidation doit être postérieur à l'âge de début d'activité."
             )
-        if not 0.1 <= self.salaire <= 10:
-            raise ErreurSaisie(
-                "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen."
-            )
+        self._verifier_unite()
+        self._verifier_revenu(self.salaire, rang=1)
         if not 0 <= self.primes <= 0.6:
             raise ErreurSaisie("Part de primes attendue entre 0 et 0,6.")
         if not 1 <= self.lissage <= LISSAGE_MAXIMUM:
@@ -253,28 +324,119 @@ class Saisie:
                     f"Métier n° {rang} : il doit commencer avant le départ à la "
                     f"retraite, fixé à {_age(self.liquidation)}."
                 )
-            if not 0.1 <= metier.salaire <= 10:
-                raise ErreurSaisie(
-                    f"Métier n° {rang} : niveau de revenu attendu entre 0,1 et "
-                    "10 fois le salaire moyen."
-                )
+            self._verifier_revenu(metier.salaire, rang=rang)
             precedent = metier.debut
 
+    # -- l'unité des revenus -------------------------------------------------
+
     @property
-    def parcours(self) -> list[Metier]:
+    def revenu_en_montant(self) -> bool:
+        """Vrai si les revenus sont saisis en monnaie, faux s'ils sont un ratio."""
+        return self.unite_revenu != "moyen"
+
+    @property
+    def revenu_en_francs(self) -> bool:
+        return self.unite_revenu.startswith("francs")
+
+    def _verifier_unite(self) -> None:
+        """Ce que l'unité choisie exige, avant même de regarder les montants."""
+        if not self.revenu_en_montant:
+            return
+        if not 1941 <= self.annee_revenu <= 2070:
+            raise ErreurSaisie(
+                "Année des montants saisis attendue entre 1941 et 2070 "
+                f"(reçu : {self.annee_revenu})."
+            )
+        if self.revenu_en_francs and self.annee_revenu > DERNIERE_ANNEE_FRANC:
+            raise ErreurSaisie(
+                "Un salaire n'était plus libellé en francs après "
+                f"{DERNIERE_ANNEE_FRANC} : choisir une année antérieure, ou "
+                "saisir les revenus en euros."
+            )
+
+    def _verifier_revenu(self, valeur: float, rang: int) -> None:
+        """Un revenu saisi, contrôlé dans l'unité où il a été écrit.
+
+        Le message parle la langue du champ : refuser « 2 500 € par mois » au
+        motif qu'il faut « entre 0,1 et 10 fois le salaire moyen » ne dirait
+        rien à qui n'a jamais entendu parler de cette unité.
+        """
+        if self.revenu_en_montant:
+            if valeur <= 0:
+                raise _refus(
+                    rang, "Le revenu doit être un montant strictement positif."
+                )
+        elif not 0.1 <= valeur <= 10:
+            raise _refus(
+                rang,
+                "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen.",
+            )
+
+    def niveau(self, macro, valeur: float) -> float:
+        """Un revenu saisi, ramené à l'unité du modèle : un multiple du salaire moyen.
+
+        C'est ici, et nulle part ailleurs, que la monnaie entre dans le modèle.
+        Le moteur ne connaît que le ratio : il garde son sens sur quatre-vingts
+        ans, quand un montant n'en a que rapporté à son année et à sa monnaie.
+        """
+        if not self.revenu_en_montant:
+            return valeur
+        return _euros_annuels(
+            self.unite_revenu, valeur, self.annee_revenu
+        ) / salaire_moyen_annuel(macro, self.annee_revenu)
+
+    def niveaux(self, macro) -> list[float]:
+        """Le niveau de chaque métier, du premier au dernier, en multiples."""
+        return [self.niveau(macro, self.salaire)] + [
+            self.niveau(macro, metier.salaire) for metier in self.metiers
+        ]
+
+    def parcours(self, macro) -> list[Metier]:
         """La carrière comme suite de métiers, le premier compris.
 
         C'est sous cette forme que le modèle la reçoit ; le formulaire, lui,
-        garde le premier métier dans ses champs historiques.
+        garde le premier métier dans ses champs historiques. ``macro`` sert à
+        convertir les revenus saisis en monnaie — il ne coûte rien quand ils
+        sont déjà des multiples du salaire moyen.
         """
+        niveaux = self.niveaux(macro)
+        for rang, niveau in enumerate(niveaux, start=1):
+            self._verifier_niveau(niveau, rang, macro)
+        statuts = [self.statut] + [metier.statut for metier in self.metiers]
+        debuts = [self.debut] + [metier.debut for metier in self.metiers]
         return [
-            Metier(affiliation=self.statut, age_debut=self.debut,
-                   niveau_salaire=self.salaire)
-        ] + [
-            Metier(affiliation=metier.statut, age_debut=metier.debut,
-                   niveau_salaire=metier.salaire)
-            for metier in self.metiers
+            Metier(affiliation=statut, age_debut=debut, niveau_salaire=niveau)
+            for statut, debut, niveau in zip(statuts, debuts, niveaux)
         ]
+
+    def _verifier_niveau(self, niveau: float, rang: int, macro) -> None:
+        """Le montant converti tient-il dans ce que le modèle sait décrire ?
+
+        Le contrôle ne peut se faire qu'ici : « 0,1 à 10 fois le salaire moyen »
+        ne devient un intervalle de montants qu'une fois l'année connue et la
+        série chargée. Le refus redit donc les bornes en monnaie, faute de quoi
+        il n'indiquerait pas quoi corriger.
+        """
+        if 0.1 <= niveau <= 10:
+            return
+        if not self.revenu_en_montant:
+            raise _refus(
+                rang,
+                "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen.",
+            )
+        moyen = salaire_moyen_annuel(macro, self.annee_revenu)
+
+        def borne(part: float) -> str:
+            return g.nombre(_depuis_euros_annuels(
+                self.unite_revenu, part * moyen, self.annee_revenu), 0)
+
+        raise _refus(
+            rang,
+            f"Ce revenu vaut {g.nombre(niveau, 2)} fois le salaire moyen de "
+            f"{self.annee_revenu}, et le modèle en accepte de 0,1 à 10 fois — "
+            f"soit de {borne(0.1)} à {borne(10)} "
+            f"{_libelle_unite(self.unite_revenu)} de {self.annee_revenu}.",
+        )
 
     @property
     def liquidation_mois(self) -> int:
@@ -340,6 +502,13 @@ class Saisie:
             "part_cotisation": self.part_cotisation,
             "projection": self.projection, "bascule": self.bascule, "euros": self.euros,
         }
+        # L'unité par défaut ne s'écrit pas : une adresse produite avant que le
+        # formulaire n'accepte les montants reste exactement celle qu'elle
+        # était, et une adresse en multiples du salaire moyen ne se met pas à
+        # traîner deux paramètres qui ne disent rien.
+        if self.revenu_en_montant:
+            champs["unite_revenu"] = self.unite_revenu
+            champs["annee_revenu"] = self.annee_revenu
         # Les métiers qui suivent le premier, un groupe de trois champs chacun.
         # Une ligne vide du formulaire n'en produit aucun : l'adresse ne porte
         # que ce qui a été saisi.
@@ -349,6 +518,51 @@ class Saisie:
             champs[f"metier{rang}_salaire"] = _nombre(metier.salaire)
         champs.update(remplacements)
         return urlencode(champs)
+
+
+#: Comment chaque unité se dit à la suite d'un nombre.
+_LIBELLES_UNITE = {
+    "moyen": "fois le salaire moyen",
+    "euros_mois": "€ bruts par mois",
+    "euros_an": "€ bruts par an",
+    "francs_mois": "F bruts par mois",
+    "francs_an": "F bruts par an",
+}
+
+
+def _libelle_unite(unite: str) -> str:
+    return _LIBELLES_UNITE[unite]
+
+
+def _francs_par_euro(annee: int) -> float:
+    """Combien de francs de ``annee`` valaient un euro.
+
+    Le taux légal, 6,559 57, ne vaut que pour le franc issu du décret de 1958.
+    Avant 1960, un salaire s'écrivait en anciens francs, cent fois plus petits :
+    convertir « 60 000 F par mois en 1955 » au taux du nouveau franc donnerait
+    neuf mille euros là où il faut en lire quatre-vingt-onze.
+    """
+    if annee >= ANNEE_NOUVEAU_FRANC:
+        return FRANCS_PAR_EURO
+    return FRANCS_PAR_EURO * 100
+
+
+def _euros_annuels(unite: str, valeur: float, annee: int) -> float:
+    """Un montant saisi, ramené à des euros bruts ANNUELS de son année."""
+    if unite in ("euros_mois", "francs_mois"):
+        valeur *= MOIS_PAR_AN
+    if unite.startswith("francs"):
+        valeur /= _francs_par_euro(annee)
+    return valeur
+
+
+def _depuis_euros_annuels(unite: str, euros: float, annee: int) -> float:
+    """L'opération inverse : des euros annuels réécrits dans l'unité saisie."""
+    if unite.startswith("francs"):
+        euros *= _francs_par_euro(annee)
+    if unite in ("euros_mois", "francs_mois"):
+        euros /= MOIS_PAR_AN
+    return euros
 
 
 def _metiers_saisis(parametres: dict[str, str],
@@ -488,9 +702,18 @@ class Contexte:
                 self.simulateur(), self.depenses(), self.population())
         return self._cout
 
+    def macro(self, saisie: Saisie):
+        """Les séries macroéconomiques du jeu de paramètres d'une saisie.
+
+        Le formulaire en a besoin pour convertir un montant en multiple du
+        salaire moyen, et il lui faut CELLES-LÀ : au-delà de la dernière année
+        observée, le salaire moyen dépend du scénario de projection choisi.
+        """
+        return self.simulateur(saisie.parametres(self.base)).macro
+
     def simuler(self, saisie: Saisie) -> Comparaison:
         simulateur = self.simulateur(saisie.parametres(self.base))
-        parcours = saisie.parcours
+        parcours = saisie.parcours(simulateur.macro)
         for metier in parcours:
             if metier.affiliation not in simulateur.affiliations:
                 raise ErreurSaisie(
@@ -659,7 +882,11 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   d'un taux de cotisation et d'un barème à un autre — et c'est exactement ce
   qu'un compte notionnel enregistre. Ajouter un métier, c'est remplir la
   dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
+  {_choix_unite(saisie)}
+  {_note_brut_ou_net()}
+  {_reperes(contexte, saisie)}
   {_metiers(saisie, statuts)}
+  {_echo_revenus(contexte, saisie)}
   <details>
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
     <div class="grille">{avance}</div>
@@ -667,6 +894,180 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   <p style="margin-top:1.4rem"><button type="submit">Calculer les cinq scénarios</button></p>
 </form>
 """
+
+
+def _champ_revenu(nom: str, saisie: Saisie, valeur: str,
+                  bref: bool = False) -> str:
+    """Le champ « combien gagnez-vous », dans l'unité que l'utilisateur a choisie.
+
+    Le libellé porte le mot ``brut`` dès qu'un montant est saisi : c'est la
+    question qui revenait le plus souvent devant ce formulaire, et une aide
+    dépliée sous le champ ne suffisait pas à y répondre — elle se lit après.
+    """
+    if not saisie.revenu_en_montant:
+        # Le repère chiffré du SMIC n'est pas répété ici : il est calculé juste
+        # au-dessus, pour l'année choisie, et une valeur écrite en dur dans
+        # cette aide finirait par ne plus lui correspondre.
+        aide = ("en multiples du salaire moyen brut"
+                if bref else
+                "en multiples du salaire moyen BRUT : 1 = salaire moyen, "
+                "et les repères ci-dessus donnent l'échelle")
+        return g.champ(nom, "Niveau de revenu", valeur, aide, type_="number",
+                       min="0.1", max="10", step="0.05")
+
+    mensuel = saisie.unite_revenu.endswith("_mois")
+    libelle = "Revenu brut mensuel" if mensuel else "Revenu brut annuel"
+    monnaie = "francs" if saisie.revenu_en_francs else "euros"
+    aide = f"en {monnaie} de {saisie.annee_revenu}"
+    if not bref:
+        aide += ", avant cotisations salariales et avant impôt"
+    return g.champ(nom, libelle, valeur, aide, type_="number",
+                   min="0", step="1")
+
+
+def _choix_unite(saisie: Saisie) -> str:
+    """Le choix d'unité, une fois pour toute la carrière.
+
+    Il précède les métiers plutôt qu'il ne les accompagne : une unité par
+    métier n'aurait décrit aucune carrière réelle, et aurait multiplié par six
+    la question à laquelle ce bloc répond.
+    """
+    return '<div class="grille">' + g.liste(
+        "unite_revenu", "Revenus saisis", UNITES_REVENU, saisie.unite_revenu,
+        "le modèle ne connaît que le multiple du salaire moyen ; "
+        "il convertit les montants lui-même",
+    ) + g.champ(
+        "annee_revenu", "…de l'année", saisie.annee_revenu,
+        "l'année dont les montants saisis sont ceux-là, et celle des repères "
+        "ci-dessous", type_="number", min="1941", max="2070", step="1",
+    ) + "</div>"
+
+
+def _note_brut_ou_net() -> str:
+    """La réponse à « brut ou net ? », écrite une fois et placée là où on la pose.
+
+    Le simulateur raisonne de bout en bout sur des montants bruts : c'est
+    l'assiette des cotisations, donc la seule grandeur qu'un compte notionnel
+    puisse enregistrer. Rien ne le disait, et la question revenait à chaque
+    lecture — assez souvent pour valoir un encadré plutôt qu'une incise.
+    """
+    return (
+        '<div class="note"><strong>Brut, jamais net.</strong> Le revenu attendu '
+        "ici est le <strong>salaire brut</strong> — la ligne « brut » du "
+        "bulletin de paie : <strong>avant</strong> cotisations salariales, "
+        "<strong>avant</strong> CSG et CRDS, <strong>avant</strong> impôt sur "
+        "le revenu. Les cotisations patronales, elles, n'en font pas partie : "
+        "elles s'ajoutent au brut, elles n'en sont pas déduites. C'est la "
+        "définition des comptes nationaux (salaires et traitements bruts, D11) "
+        "et c'est l'assiette sur laquelle les régimes appellent leurs "
+        "cotisations — donc la seule grandeur qu'un compte notionnel puisse "
+        "enregistrer. Les pensions affichées plus bas sont brutes elles aussi : "
+        "les deux se comparent directement. À titre d'ordre de grandeur, un "
+        "salaire net avant impôt vaut aujourd'hui un peu moins de 80 % du brut "
+        "dans le privé ; le simulateur ne fait pas cette conversion, qui dépend "
+        "du statut, du régime et de l'année.</div>"
+    )
+
+
+def _reperes(contexte: Contexte, saisie: Saisie) -> str:
+    """Les trois montants qui donnent l'échelle : salaire moyen, SMIC, plafond.
+
+    Sans eux, « 1 = salaire moyen » n'est une information pour personne. Ils
+    sont écrits dans l'unité choisie — en francs si c'est en francs qu'on
+    saisit —, sans quoi le repère resterait à convertir de tête, ce qui est
+    exactement le travail dont ce formulaire dispense.
+    """
+    macro = contexte.macro(saisie)
+    annee = saisie.annee_revenu
+    moyen = salaire_moyen_annuel(macro, annee)
+
+    reperes = [
+        f"salaire moyen <strong>{_montant(saisie, moyen)}</strong> par mois, "
+        f"soit {_montant(saisie, moyen, mensuel=False)} par an"
+    ]
+    # Le SMIC n'existe qu'à partir de 1970 ; avant lui le SMIG, qui n'est pas
+    # la même grandeur et que le modèle ne porte pas. Mieux vaut un repère de
+    # moins qu'un repère faux.
+    if annee >= ANNEE_SMIC_MENSUEL:
+        smic = HEURES_SMIC_PAR_MOIS * MOIS_PAR_AN * macro.smic_horaire(annee)
+        reperes.append(f"SMIC {_montant(saisie, smic)} par mois "
+                       f"(×{g.nombre(smic / moyen, 2)})")
+    elif annee >= macro.smic_horaire.premiere_annee:
+        reperes.append("SMIC " + _montant(
+            saisie, macro.smic_horaire(annee), mensuel=False, decimales=2,
+        ) + " de l'heure")
+    plafond = macro.plafond_securite_sociale(annee)
+    reperes.append(
+        f"plafond de la Sécurité sociale {_montant(saisie, plafond)} par mois "
+        f"(×{g.nombre(plafond / moyen, 2)})"
+    )
+
+    return (f'<p class="discret">Repères pour {annee}, tous bruts : '
+            + " · ".join(reperes) + ".</p>")
+
+
+def _echo_revenus(contexte: Contexte, saisie: Saisie) -> str:
+    """Ce que devient, dans l'autre unité, chaque revenu saisi.
+
+    La conversion est faite par la page ; la montrer est ce qui la rend
+    vérifiable. Elle dit aussi ce que le profil de carrière fera du niveau
+    saisi : sans cela, saisir « 2 500 € par mois » se lit comme la promesse de
+    gagner 2 500 € chaque année de sa vie, ce que le modèle ne fait jamais.
+    """
+    macro = contexte.macro(saisie)
+    annee = saisie.annee_revenu
+    moyen = salaire_moyen_annuel(macro, annee)
+    niveaux = saisie.niveaux(macro)
+
+    # Chaque revenu est redit dans l'AUTRE unité que celle où il a été écrit :
+    # répéter un montant en francs à qui vient de saisir des francs n'apprend
+    # rien, et c'est le rapport au salaire moyen qui manque. Inversement, un
+    # multiple ne dit rien tant qu'il n'est pas chiffré.
+    lectures = []
+    for rang, niveau in enumerate(niveaux, start=1):
+        rappel = "" if len(niveaux) == 1 else f"{RANGS_METIER[rang - 1]} métier, "
+        if saisie.revenu_en_montant:
+            saisi = saisie.salaire if rang == 1 else saisie.metiers[rang - 2].salaire
+            lectures.append(
+                f"{rappel}{g.nombre(saisi, 0)} "
+                f"{_libelle_unite(saisie.unite_revenu)} de {annee} = "
+                f"<strong>{g.nombre(niveau, 2)} fois le salaire moyen</strong> "
+                "de cette année-là"
+            )
+        else:
+            lectures.append(
+                f"{rappel}{g.nombre(niveau, 2)} fois le salaire moyen de {annee} "
+                f"= <strong>{_montant(saisie, niveau * moyen)} bruts par "
+                "mois</strong>"
+            )
+
+    debut, fin = bornes_deformation(saisie.profil)
+    profil = (
+        "le profil de carrière « plat » l'applique tel quel à toutes les années"
+        if debut == fin else
+        f"le profil de carrière choisi le fait varier de ×{g.nombre(debut, 2)} au "
+        f"premier emploi à ×{g.nombre(fin, 2)} au dernier"
+    )
+    return (
+        f'<p class="discret">Ce qui est porté au compte : ' + " ; ".join(lectures)
+        + f". Ce niveau suit ensuite le salaire moyen d'année en année, et "
+        f"{profil}.</p>"
+    )
+
+
+def _montant(saisie: Saisie, euros: float, mensuel: bool = True,
+             decimales: int = 0) -> str:
+    """Une somme en euros de ``annee_revenu``, écrite dans la monnaie affichée.
+
+    ``mensuel`` divise par douze : l'appelant passe des euros annuels, parce
+    que c'est l'unité de tout ce que le modèle porte au compte, et le lecteur
+    lit des salaires mensuels.
+    """
+    francs = saisie.revenu_en_francs
+    valeur = euros * (_francs_par_euro(saisie.annee_revenu) if francs else 1.0)
+    if mensuel:
+        valeur /= MOIS_PAR_AN
+    return g.nombre(valeur, decimales) + ("\u202fF" if francs else "\u202f\u20ac")
 
 
 def _metiers(saisie: Saisie, statuts: list[tuple[str, str]]) -> str:
@@ -684,15 +1085,13 @@ def _metiers(saisie: Saisie, statuts: list[tuple[str, str]]) -> str:
         + g.liste("debut_mois", "…et mois", MOIS_AGE, str(saisie.debut_mois),
                   "l'année d'entrée n'est complète que si l'on entre en janvier")
         + g.liste("statut", "Statut d'affiliation", statuts, saisie.statut)
-        + g.champ("salaire", "Niveau de revenu", _nombre(saisie.salaire),
-                  "en multiples du salaire moyen : 0,55 ≈ SMIC, 1 = salaire moyen",
-                  type_="number", min="0.1", max="10", step="0.05"),
+        + _champ_revenu("salaire", saisie, _nombre(saisie.salaire)),
     )]
 
     for rang, metier in enumerate(saisie.metiers, start=2):
         lignes.append(_ligne_metier(
             rang, _champs_metier(rang, _nombre(metier.debut), metier.statut,
-                                 _nombre(metier.salaire), statuts)))
+                                 _nombre(metier.salaire), statuts, saisie)))
 
     # La ligne vide : elle n'existe que tant qu'il reste de la place, et son
     # statut n'est pas présélectionné — un statut choisi par défaut ferait
@@ -700,13 +1099,13 @@ def _metiers(saisie: Saisie, statuts: list[tuple[str, str]]) -> str:
     rang = len(saisie.metiers) + 2
     if rang <= METIERS_MAXIMUM:
         lignes.append(_ligne_metier(
-            rang, _champs_metier(rang, "", "", "", statuts), vide=True))
+            rang, _champs_metier(rang, "", "", "", statuts, saisie), vide=True))
 
     return f'<div class="metiers">{"".join(lignes)}</div>'
 
 
 def _champs_metier(rang: int, debut: str, statut: str, salaire: str,
-                   statuts: list[tuple[str, str]]) -> str:
+                   statuts: list[tuple[str, str]], saisie: Saisie) -> str:
     """Les trois champs d'un métier qui suit le premier.
 
     Le mois du changement n'est pas demandé : ce qui se date au mois, c'est
@@ -720,9 +1119,7 @@ def _champs_metier(rang: int, debut: str, statut: str, salaire: str,
                 min="14", max="75", step="1")
         + g.liste(f"metier{rang}_statut", "Statut d'affiliation",
                   [("", "— aucun —")] + statuts, statut)
-        + g.champ(f"metier{rang}_salaire", "Niveau de revenu", salaire,
-                  "en multiples du salaire moyen", type_="number",
-                  min="0.1", max="10", step="0.05")
+        + _champ_revenu(f"metier{rang}_salaire", saisie, salaire, bref=True)
     )
 
 
@@ -740,7 +1137,7 @@ def _resume_parcours(contexte: Contexte, saisie: Saisie) -> str:
     Muet pour une carrière d'un seul métier : il n'y a rien à récapituler, le
     formulaire juste au-dessus le dit déjà.
     """
-    parcours = saisie.parcours
+    parcours = saisie.parcours(contexte.macro(saisie))
     if len(parcours) < 2:
         return ""
 
@@ -870,11 +1267,14 @@ Ce que compare cette page, ce sont cinq façons de CALCULER une pension de
 départ, pas cinq façons de la revaloriser ensuite : le premier mois de retraite
 est le seul instant où les cinq scénarios se laissent mettre côte à côte, et
 c'est donc à cet instant que tous les cinq sont calculés.</div>
-<p class="discret" style="margin-top:1.5rem">Montants bruts mensuels — avant CSG
-et prélèvements sociaux. Le chiffre mis en avant est en euros constants de
-{saisie.euros}, c'est-à-dire au pouvoir d'achat de {saisie.euros} : seule unité
-qui permette de comparer des liquidations d'années différentes. Fiabilité du
-résultat :
+<p class="discret" style="margin-top:1.5rem">Montants <strong>bruts</strong>
+mensuels — avant CSG, CRDS et prélèvements sociaux, avant impôt sur le revenu —
+comme le revenu d'activité saisi plus haut : le taux de remplacement rapporte
+donc un brut à un brut, et il est plus bas qu'un taux calculé sur des nets, la
+pension étant moins prélevée que le salaire. Le chiffre mis en avant est en
+euros constants de {saisie.euros}, c'est-à-dire au pouvoir d'achat de
+{saisie.euros} : seule unité qui permette de comparer des liquidations d'années
+différentes. Fiabilité du résultat :
 <span class="etiquette-fiabilite">{escape(str(comparaison.fiabilite))}</span></p>"""
 
 
@@ -2271,6 +2671,38 @@ l'année, les régimes liquident à l'année : l'année d'un changement revient 
 métier qui en occupe le plus de mois, et à égalité à celui qui l'ouvre, tandis
 que le revenu porté au compte reste la somme de ce que les deux ont
 réellement payé.</p>
+
+<h3 id="unites">Brut, net, euros et francs</h3>
+<p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu
+d'activité saisi, les cotisations versées, le capital notionnel, les cinq
+pensions. « Brut » a ici le sens des comptes nationaux — <em>salaires et
+traitements bruts</em> (D11) rapportés à l'emploi salarié intérieur, ce qui est
+la définition même du salaire moyen par tête qui sert d'unité. C'est-à-dire
+<strong>avant</strong> cotisations salariales, <strong>avant</strong> CSG et
+CRDS, <strong>avant</strong> impôt sur le revenu, et <strong>hors</strong>
+cotisations patronales, qui s'ajoutent au brut sans en faire partie. Ce n'est
+pas une commodité : c'est l'assiette sur laquelle les régimes appellent leurs
+cotisations, donc la seule grandeur qu'un compte notionnel puisse enregistrer.
+Le taux de remplacement affiché rapporte donc un brut à un brut, et il est
+mécaniquement plus bas qu'un taux calculé sur des nets — les pensions sont moins
+prélevées que les salaires.</p>
+<p>L'unité de saisie est le <strong>multiple du salaire moyen</strong> de
+l'année considérée, parce qu'elle seule garde son sens sur quatre-vingts ans :
+une somme n'en a que rapportée à son année et à sa monnaie. Le formulaire
+accepte néanmoins des montants — euros ou francs, mensuels ou annuels — et fait
+la conversion, qu'il affiche : <code>niveau = montant annuel ÷ salaire moyen de
+l'année indiquée</code>. Les francs sont convertis au taux irrévocable du
+règlement (CE) n° 2866/98, <strong>1 € = 6,559 57 F</strong>, et par cent de
+plus avant 1960, le nouveau franc du décret du 27 décembre 1958 valant cent
+anciens francs.</p>
+<p>Reste que les comptes nationaux ne publient que des <em>taux de croissance</em>
+du salaire moyen. Les niveaux en sont reconstitués à partir d'un point
+d'ancrage — <strong>40 000 € bruts annuels en 2024</strong> —, paramètre
+documenté et non donnée certifiée. Il déplace proportionnellement tous les
+revenus reconstitués, donc toutes les pensions, mais il est sans effet sur les
+<strong>rapports</strong> entre scénarios, qui sont l'objet du modèle. Il
+commande en revanche la traduction d'un montant en multiple : saisir un salaire
+en euros, c'est le lire à cette échelle-là.</p>
 
 <h3>Périmètre</h3>
 <p>Origine 1941 (allocation aux vieux travailleurs salariés), premier dispositif

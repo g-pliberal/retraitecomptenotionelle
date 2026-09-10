@@ -6,7 +6,8 @@
  * vérifient les témoins de ``tests/temoins/pages.json``.
  */
 
-import { enMois, formaterAge } from "./calendrier.js";
+import { MOIS_PAR_AN, enMois, formaterAge } from "./calendrier.js";
+import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
 import { CAS_TYPES, GENERATIONS, calculerCasTypes } from "./castypes.js";
 import {
   AgeConversionDroitsAcquis, ModeAgeReference, ModeIndexation, PARAMETRES_DEFAUT, PartCotisation,
@@ -72,6 +73,50 @@ export const PROJECTIONS = [
   ["cor_productivite_haute", "COR variante haute — 1,0 %"],
 ];
 
+// Unités dans lesquelles un revenu d'activité peut être saisi. Le modèle n'en
+// connaît qu'une — le multiple du salaire moyen —, parce qu'elle seule garde son
+// sens sur quatre-vingts ans : 40 000 francs ne veulent pas dire la même chose
+// en 1955, en 1985 et jamais après 2001. Mais personne ne connaît son salaire
+// dans cette unité-là, et la question « brut ou net, et combien en euros ? »
+// revenait à chaque lecture. Le formulaire accepte donc aussi le montant que
+// porte le bulletin de paie, et fait la conversion lui-même.
+export const UNITES_REVENU = [
+  ["moyen", "En multiples du salaire moyen (défaut)"],
+  ["euros_mois", "En euros bruts par mois"],
+  ["euros_an", "En euros bruts par an"],
+  ["francs_mois", "En francs bruts par mois"],
+  ["francs_an", "En francs bruts par an"],
+];
+
+// Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au mois,
+// soit 151,67 heures. Elle ne sert qu'à écrire un repère à l'échelle d'un
+// salaire mensuel.
+export const HEURES_SMIC_PAR_MOIS = 151.67;
+
+// Première année où ce repère mensuel a un sens. La durée légale a été de 40
+// heures jusqu'en 1982, de 39 ensuite, puis de 35 par étapes ; la garantie
+// mensuelle unique sur 151,67 heures n'existe qu'au terme de l'harmonisation
+// prévue par la loi du 17 janvier 2003, achevée au 1er juillet 2005. Le modèle
+// ne porte pas la durée légale année par année : plutôt que de l'inventer, le
+// repère des années antérieures est donné à l'heure, ce qui ne suppose rien.
+export const ANNEE_SMIC_MENSUEL = 2005;
+
+// Taux de conversion irrévocable fixé par le règlement (CE) n° 2866/98 :
+// 1 euro = 6,559 57 francs.
+export const FRANCS_PAR_EURO = 6.55957;
+
+// Le « nouveau franc » du décret du 27 décembre 1958 vaut cent anciens francs et
+// a cours à partir du 1er janvier 1960. Un montant en francs d'avant cette date
+// est donc en anciens francs : le convertir au taux du nouveau franc le
+// multiplierait par cent. Le formulaire connaît l'année du montant, il applique
+// donc le bon des deux sans rien demander.
+export const ANNEE_NOUVEAU_FRANC = 1960;
+
+// Dernière année où un salaire pouvait être libellé en francs. L'euro est la
+// monnaie de compte depuis le 1er janvier 1999, mais les bulletins de paie ont
+// porté les deux jusqu'au basculement des espèces, le 1er janvier 2002.
+export const DERNIERE_ANNEE_FRANC = 2001;
+
 /**
  * Nombre maximal de métiers d'une carrière, le premier compris. Le formulaire
  * affiche toujours une ligne vide de plus que les métiers saisis : c'est ainsi
@@ -111,7 +156,18 @@ const DEFAUTS = Object.freeze({
   statut: "salarie_prive_non_cadre",
   debut: 21,
   liquidation: 64,
+  //: Revenu du premier métier, dans l'unité choisie ci-dessous.
   salaire: 1.0,
+  //: Unité dans laquelle les revenus sont saisis, pour TOUS les métiers : un
+  //: seul choix pour la carrière entière, parce qu'on décrit une même vie de
+  //: travail et qu'un changement d'unité en cours de route n'est pas une
+  //: information sur la carrière.
+  unite_revenu: "moyen",
+  //: Année dont les montants saisis sont ceux-là. Sans effet quand l'unité est
+  //: le multiple du salaire moyen — celui-ci vaut pour toute la carrière —,
+  //: indispensable dès qu'on saisit une somme : 2 000 € de 1990 et 2 000 € de
+  //: 2026 ne décrivent pas la même carrière.
+  annee_revenu: 2026,
   //: Les métiers exercés APRÈS le premier. Le premier, lui, est décrit par
   //: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
   //: multiples reste donc valide, et décrit la carrière d'un seul métier.
@@ -145,6 +201,8 @@ export class Saisie {
     const statut = parametres.statut || DEFAUTS.statut;
     const salaire = reel(parametres, "salaire", DEFAUTS.salaire);
     const saisie = new Saisie({
+      unite_revenu: parmi(parametres, "unite_revenu", UNITES_REVENU, DEFAUTS.unite_revenu),
+      annee_revenu: entier(parametres, "annee_revenu", DEFAUTS.annee_revenu),
       naissance: entier(parametres, "naissance", DEFAUTS.naissance),
       naissance_mois: entier(parametres, "naissance_mois", DEFAUTS.naissance_mois),
       sexe: parametres.sexe === "F" ? "F" : "H",
@@ -198,11 +256,8 @@ export class Saisie {
         "L'âge de liquidation doit être postérieur à l'âge de début d'activité.",
       );
     }
-    if (!(this.salaire >= 0.1 && this.salaire <= 10)) {
-      throw new ErreurSaisie(
-        "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen.",
-      );
-    }
+    this.verifierUnite();
+    this.verifierRevenu(this.salaire, 1);
     if (!(this.primes >= 0 && this.primes <= 0.6)) {
       throw new ErreurSaisie("Part de primes attendue entre 0 et 0,6.");
     }
@@ -234,30 +289,126 @@ export class Saisie {
           + `fixé à ${age(this.liquidation)}.`,
         );
       }
-      if (!(metier.salaire >= 0.1 && metier.salaire <= 10)) {
-        throw new ErreurSaisie(
-          `Métier n° ${rang} : niveau de revenu attendu entre 0,1 et 10 fois le `
-          + "salaire moyen.",
-        );
-      }
+      this.verifierRevenu(metier.salaire, rang);
       precedent = metier.debut;
     });
+  }
+
+  /** Vrai si les revenus sont saisis en monnaie, faux s'ils sont un ratio. */
+  get revenu_en_montant() {
+    return this.unite_revenu !== "moyen";
+  }
+
+  get revenu_en_francs() {
+    return this.unite_revenu.startsWith("francs");
+  }
+
+  /** Ce que l'unité choisie exige, avant même de regarder les montants. */
+  verifierUnite() {
+    if (!this.revenu_en_montant) {
+      return;
+    }
+    if (!(this.annee_revenu >= 1941 && this.annee_revenu <= 2070)) {
+      throw new ErreurSaisie(
+        "Année des montants saisis attendue entre 1941 et 2070 "
+        + `(reçu : ${this.annee_revenu}).`,
+      );
+    }
+    if (this.revenu_en_francs && this.annee_revenu > DERNIERE_ANNEE_FRANC) {
+      throw new ErreurSaisie(
+        "Un salaire n'était plus libellé en francs après "
+        + `${DERNIERE_ANNEE_FRANC} : choisir une année antérieure, ou saisir `
+        + "les revenus en euros.",
+      );
+    }
+  }
+
+  /**
+   * Un revenu saisi, contrôlé dans l'unité où il a été écrit. Le message parle
+   * la langue du champ : refuser « 2 500 € par mois » au motif qu'il faut
+   * « entre 0,1 et 10 fois le salaire moyen » ne dirait rien à qui n'a jamais
+   * entendu parler de cette unité.
+   */
+  verifierRevenu(valeur, rang) {
+    if (this.revenu_en_montant) {
+      if (!(valeur > 0)) {
+        throw refus(rang, "Le revenu doit être un montant strictement positif.");
+      }
+      return;
+    }
+    if (!(valeur >= 0.1 && valeur <= 10)) {
+      throw refus(
+        rang, "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen.",
+      );
+    }
+  }
+
+  /**
+   * Un revenu saisi, ramené à l'unité du modèle : un multiple du salaire moyen.
+   * C'est ici, et nulle part ailleurs, que la monnaie entre dans le modèle. Le
+   * moteur ne connaît que le ratio : il garde son sens sur quatre-vingts ans,
+   * quand un montant n'en a que rapporté à son année et à sa monnaie.
+   */
+  niveau(macro, valeur) {
+    if (!this.revenu_en_montant) {
+      return valeur;
+    }
+    return eurosAnnuels(this.unite_revenu, valeur, this.annee_revenu)
+      / salaireMoyenAnnuel(macro, this.annee_revenu);
+  }
+
+  /** Le niveau de chaque métier, du premier au dernier, en multiples. */
+  niveaux(macro) {
+    return [this.niveau(macro, this.salaire)].concat(
+      this.metiers.map((metier) => this.niveau(macro, metier.salaire)),
+    );
   }
 
   /**
    * La carrière comme suite de métiers, le premier compris. C'est sous cette
    * forme que le modèle la reçoit ; le formulaire, lui, garde le premier métier
-   * dans ses champs historiques.
+   * dans ses champs historiques. `macro` sert à convertir les revenus saisis en
+   * monnaie — il ne coûte rien quand ils sont déjà des multiples.
    */
-  get parcours() {
-    return [
-      { affiliation: this.statut, age_debut: this.debut, niveau_salaire: this.salaire },
-      ...this.metiers.map((metier) => ({
-        affiliation: metier.statut,
-        age_debut: metier.debut,
-        niveau_salaire: metier.salaire,
-      })),
-    ];
+  parcours(macro) {
+    const niveaux = this.niveaux(macro);
+    niveaux.forEach((niveau, index) => this.verifierNiveau(niveau, index + 1, macro));
+    const statuts_ = [this.statut, ...this.metiers.map((metier) => metier.statut)];
+    const debuts = [this.debut, ...this.metiers.map((metier) => metier.debut)];
+    return niveaux.map((niveau, index) => ({
+      affiliation: statuts_[index],
+      age_debut: debuts[index],
+      niveau_salaire: niveau,
+    }));
+  }
+
+  /**
+   * Le montant converti tient-il dans ce que le modèle sait décrire ? Le
+   * contrôle ne peut se faire qu'ici : « 0,1 à 10 fois le salaire moyen » ne
+   * devient un intervalle de montants qu'une fois l'année connue et la série
+   * chargée. Le refus redit donc les bornes en monnaie, faute de quoi il
+   * n'indiquerait pas quoi corriger.
+   */
+  verifierNiveau(niveau, rang, macro) {
+    if (niveau >= 0.1 && niveau <= 10) {
+      return;
+    }
+    if (!this.revenu_en_montant) {
+      throw refus(
+        rang, "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen.",
+      );
+    }
+    const moyen = salaireMoyenAnnuel(macro, this.annee_revenu);
+    const borne = (part) => g.nombre(
+      depuisEurosAnnuels(this.unite_revenu, part * moyen, this.annee_revenu), 0,
+    );
+    throw refus(
+      rang,
+      `Ce revenu vaut ${g.nombre(niveau, 2)} fois le salaire moyen de `
+      + `${this.annee_revenu}, et le modèle en accepte de 0,1 à 10 fois — `
+      + `soit de ${borne(0.1)} à ${borne(10)} `
+      + `${libelleUnite(this.unite_revenu)} de ${this.annee_revenu}.`,
+    );
   }
 
   parametres(base) {
@@ -328,6 +479,14 @@ export class Saisie {
       part_cotisation: this.part_cotisation,
       projection: this.projection, bascule: this.bascule, euros: this.euros,
     };
+    // L'unité par défaut ne s'écrit pas : une adresse produite avant que le
+    // formulaire n'accepte les montants reste exactement celle qu'elle était, et
+    // une adresse en multiples du salaire moyen ne se met pas à traîner deux
+    // paramètres qui ne disent rien.
+    if (this.revenu_en_montant) {
+      champs.unite_revenu = this.unite_revenu;
+      champs.annee_revenu = this.annee_revenu;
+    }
     // Les métiers qui suivent le premier, un groupe de trois champs chacun. Une
     // ligne vide du formulaire n'en produit aucun : l'adresse ne porte que ce
     // qui a été saisi.
@@ -517,9 +676,19 @@ export class Contexte {
     return this._cout;
   }
 
+  /**
+   * Les séries macroéconomiques du jeu de paramètres d'une saisie. Le
+   * formulaire en a besoin pour convertir un montant en multiple du salaire
+   * moyen, et il lui faut CELLES-LÀ : au-delà de la dernière année observée, le
+   * salaire moyen dépend du scénario de projection choisi.
+   */
+  macro(saisie) {
+    return this.simulateur(saisie.parametres(this.base)).macro;
+  }
+
   simuler(saisie) {
     const simulateur = this.simulateur(saisie.parametres(this.base));
-    const parcours = saisie.parcours;
+    const parcours = saisie.parcours(simulateur.macro);
     for (const metier of parcours) {
       if (!simulateur.affiliations.contient(metier.affiliation)) {
         throw new ErreurSaisie(
@@ -700,7 +869,11 @@ function formulaire(saisie, contexte) {
   d'un taux de cotisation et d'un barème à un autre — et c'est exactement ce
   qu'un compte notionnel enregistre. Ajouter un métier, c'est remplir la
   dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
+  ${choixUnite(saisie)}
+  ${noteBrutOuNet()}
+  ${reperes(contexte, saisie)}
   ${metiersFormulaire(saisie, listeStatuts)}
+  ${echoRevenus(contexte, saisie)}
   <details>
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
     <div class="grille">${avance}</div>
@@ -708,6 +881,230 @@ function formulaire(saisie, contexte) {
   <p style="margin-top:1.4rem"><button type="submit">Calculer les cinq scénarios</button></p>
 </form>
 `;
+}
+
+// Comment chaque unité se dit à la suite d'un nombre.
+const LIBELLES_UNITE = {
+  moyen: "fois le salaire moyen",
+  euros_mois: "€ bruts par mois",
+  euros_an: "€ bruts par an",
+  francs_mois: "F bruts par mois",
+  francs_an: "F bruts par an",
+};
+
+function libelleUnite(unite) {
+  return LIBELLES_UNITE[unite];
+}
+
+/**
+ * Un refus, daté du métier qu'il concerne quand il y en a plusieurs. La phrase
+ * est écrite une fois, avec sa majuscule ; le rang la fait passer au milieu
+ * d'une autre, où la majuscule n'a plus lieu d'être. Écrire les deux versions à
+ * la main les laisserait diverger.
+ */
+function refus(rang, phrase) {
+  if (rang === 1) {
+    return new ErreurSaisie(phrase);
+  }
+  return new ErreurSaisie(
+    `Métier n° ${rang} : ${phrase.charAt(0).toLowerCase()}${phrase.slice(1)}`,
+  );
+}
+
+/**
+ * Combien de francs de `annee` valaient un euro. Le taux légal, 6,559 57, ne
+ * vaut que pour le franc issu du décret de 1958. Avant 1960, un salaire
+ * s'écrivait en anciens francs, cent fois plus petits : convertir « 60 000 F par
+ * mois en 1955 » au taux du nouveau franc donnerait neuf mille euros là où il
+ * faut en lire quatre-vingt-onze.
+ */
+function francsParEuro(annee) {
+  return annee >= ANNEE_NOUVEAU_FRANC ? FRANCS_PAR_EURO : FRANCS_PAR_EURO * 100;
+}
+
+/** Un montant saisi, ramené à des euros bruts ANNUELS de son année. */
+function eurosAnnuels(unite, valeur, annee) {
+  let montantAnnuel = valeur;
+  if (unite === "euros_mois" || unite === "francs_mois") {
+    montantAnnuel *= MOIS_PAR_AN;
+  }
+  if (unite.startsWith("francs")) {
+    montantAnnuel /= francsParEuro(annee);
+  }
+  return montantAnnuel;
+}
+
+/** L'opération inverse : des euros annuels réécrits dans l'unité saisie. */
+function depuisEurosAnnuels(unite, euros_, annee) {
+  let valeur = euros_;
+  if (unite.startsWith("francs")) {
+    valeur *= francsParEuro(annee);
+  }
+  if (unite === "euros_mois" || unite === "francs_mois") {
+    valeur /= MOIS_PAR_AN;
+  }
+  return valeur;
+}
+
+/**
+ * Une somme en euros de `annee_revenu`, écrite dans la monnaie affichée.
+ * `mensuel` divise par douze : l'appelant passe des euros annuels, parce que
+ * c'est l'unité de tout ce que le modèle porte au compte, et le lecteur lit des
+ * salaires mensuels.
+ */
+function montant(saisie, euros_, mensuel = true, decimales = 0) {
+  const francs = saisie.revenu_en_francs;
+  let valeur = euros_ * (francs ? francsParEuro(saisie.annee_revenu) : 1.0);
+  if (mensuel) {
+    valeur /= MOIS_PAR_AN;
+  }
+  return g.nombre(valeur, decimales) + (francs ? "\u202fF" : "\u202f\u20ac");
+}
+
+/**
+ * Le champ « combien gagnez-vous », dans l'unité que l'utilisateur a choisie.
+ * Le libellé porte le mot « brut » dès qu'un montant est saisi : c'est la
+ * question qui revenait le plus souvent devant ce formulaire, et une aide
+ * dépliée sous le champ ne suffisait pas à y répondre — elle se lit après.
+ */
+function champRevenu(nom, saisie, valeur, bref = false) {
+  if (!saisie.revenu_en_montant) {
+    // Le repère chiffré du SMIC n'est pas répété ici : il est calculé juste
+    // au-dessus, pour l'année choisie, et une valeur écrite en dur dans cette
+    // aide finirait par ne plus lui correspondre.
+    const aide = bref
+      ? "en multiples du salaire moyen brut"
+      : "en multiples du salaire moyen BRUT : 1 = salaire moyen, "
+        + "et les repères ci-dessus donnent l'échelle";
+    return g.champ(nom, "Niveau de revenu", valeur, aide, "number",
+      { min: "0.1", max: "10", step: "0.05" });
+  }
+  const mensuel = saisie.unite_revenu.endsWith("_mois");
+  const libelle = mensuel ? "Revenu brut mensuel" : "Revenu brut annuel";
+  const monnaie = saisie.revenu_en_francs ? "francs" : "euros";
+  let aide = `en ${monnaie} de ${saisie.annee_revenu}`;
+  if (!bref) {
+    aide += ", avant cotisations salariales et avant impôt";
+  }
+  return g.champ(nom, libelle, valeur, aide, "number", { min: "0", step: "1" });
+}
+
+/**
+ * Le choix d'unité, une fois pour toute la carrière. Il précède les métiers
+ * plutôt qu'il ne les accompagne : une unité par métier n'aurait décrit aucune
+ * carrière réelle, et aurait multiplié par six la question à laquelle ce bloc
+ * répond.
+ */
+function choixUnite(saisie) {
+  return `<div class="grille">${
+    g.liste("unite_revenu", "Revenus saisis", UNITES_REVENU, saisie.unite_revenu,
+      "le modèle ne connaît que le multiple du salaire moyen ; "
+      + "il convertit les montants lui-même")
+  }${
+    g.champ("annee_revenu", "…de l'année", saisie.annee_revenu,
+      "l'année dont les montants saisis sont ceux-là, et celle des repères "
+      + "ci-dessous", "number", { min: "1941", max: "2070", step: "1" })
+  }</div>`;
+}
+
+/**
+ * La réponse à « brut ou net ? », écrite une fois et placée là où on la pose.
+ * Le simulateur raisonne de bout en bout sur des montants bruts : c'est
+ * l'assiette des cotisations, donc la seule grandeur qu'un compte notionnel
+ * puisse enregistrer. Rien ne le disait, et la question revenait à chaque
+ * lecture — assez souvent pour valoir un encadré plutôt qu'une incise.
+ */
+function noteBrutOuNet() {
+  return '<div class="note"><strong>Brut, jamais net.</strong> Le revenu attendu '
+    + "ici est le <strong>salaire brut</strong> — la ligne « brut » du "
+    + "bulletin de paie : <strong>avant</strong> cotisations salariales, "
+    + "<strong>avant</strong> CSG et CRDS, <strong>avant</strong> impôt sur "
+    + "le revenu. Les cotisations patronales, elles, n'en font pas partie : "
+    + "elles s'ajoutent au brut, elles n'en sont pas déduites. C'est la "
+    + "définition des comptes nationaux (salaires et traitements bruts, D11) "
+    + "et c'est l'assiette sur laquelle les régimes appellent leurs "
+    + "cotisations — donc la seule grandeur qu'un compte notionnel puisse "
+    + "enregistrer. Les pensions affichées plus bas sont brutes elles aussi : "
+    + "les deux se comparent directement. À titre d'ordre de grandeur, un "
+    + "salaire net avant impôt vaut aujourd'hui un peu moins de 80 % du brut "
+    + "dans le privé ; le simulateur ne fait pas cette conversion, qui dépend "
+    + "du statut, du régime et de l'année.</div>";
+}
+
+/**
+ * Les trois montants qui donnent l'échelle : salaire moyen, SMIC, plafond. Sans
+ * eux, « 1 = salaire moyen » n'est une information pour personne. Ils sont
+ * écrits dans l'unité choisie — en francs si c'est en francs qu'on saisit —,
+ * sans quoi le repère resterait à convertir de tête, ce qui est exactement le
+ * travail dont ce formulaire dispense.
+ */
+function reperes(contexte, saisie) {
+  const macro = contexte.macro(saisie);
+  const annee = saisie.annee_revenu;
+  const moyen = salaireMoyenAnnuel(macro, annee);
+
+  const lignes = [
+    `salaire moyen <strong>${montant(saisie, moyen)}</strong> par mois, `
+    + `soit ${montant(saisie, moyen, false)} par an`,
+  ];
+  // Le SMIC n'existe qu'à partir de 1970 ; avant lui le SMIG, qui n'est pas la
+  // même grandeur et que le modèle ne porte pas. Mieux vaut un repère de moins
+  // qu'un repère faux.
+  if (annee >= ANNEE_SMIC_MENSUEL) {
+    const smic = HEURES_SMIC_PAR_MOIS * MOIS_PAR_AN * macro.smic_horaire.valeur(annee);
+    lignes.push(`SMIC ${montant(saisie, smic)} par mois `
+      + `(×${g.nombre(smic / moyen, 2)})`);
+  } else if (annee >= macro.smic_horaire.premiereAnnee) {
+    lignes.push(`SMIC ${
+      montant(saisie, macro.smic_horaire.valeur(annee), false, 2)
+    } de l'heure`);
+  }
+  const plafond = macro.plafond_securite_sociale.valeur(annee);
+  lignes.push(`plafond de la Sécurité sociale ${montant(saisie, plafond)} par mois `
+    + `(×${g.nombre(plafond / moyen, 2)})`);
+
+  return `<p class="discret">Repères pour ${annee}, tous bruts : `
+    + `${lignes.join(" · ")}.</p>`;
+}
+
+/**
+ * Ce que devient, dans l'autre unité, chaque revenu saisi. La conversion est
+ * faite par la page ; la montrer est ce qui la rend vérifiable. Elle dit aussi
+ * ce que le profil de carrière fera du niveau saisi : sans cela, saisir
+ * « 2 500 € par mois » se lit comme la promesse de gagner 2 500 € chaque année
+ * de sa vie, ce que le modèle ne fait jamais.
+ */
+function echoRevenus(contexte, saisie) {
+  const macro = contexte.macro(saisie);
+  const annee = saisie.annee_revenu;
+  const moyen = salaireMoyenAnnuel(macro, annee);
+  const niveaux = saisie.niveaux(macro);
+
+  // Chaque revenu est redit dans l'AUTRE unité que celle où il a été écrit :
+  // répéter un montant en francs à qui vient de saisir des francs n'apprend
+  // rien, et c'est le rapport au salaire moyen qui manque. Inversement, un
+  // multiple ne dit rien tant qu'il n'est pas chiffré.
+  const lectures = niveaux.map((niveau, index) => {
+    const rappel = niveaux.length === 1 ? "" : `${RANGS_METIER[index]} métier, `;
+    if (saisie.revenu_en_montant) {
+      const saisi = index === 0 ? saisie.salaire : saisie.metiers[index - 1].salaire;
+      return `${rappel}${g.nombre(saisi, 0)} `
+        + `${libelleUnite(saisie.unite_revenu)} de ${annee} = `
+        + `<strong>${g.nombre(niveau, 2)} fois le salaire moyen</strong> `
+        + "de cette année-là";
+    }
+    return `${rappel}${g.nombre(niveau, 2)} fois le salaire moyen de ${annee} `
+      + `= <strong>${montant(saisie, niveau * moyen)} bruts par mois</strong>`;
+  });
+
+  const [debut, fin] = bornesDeformation(saisie.profil);
+  const profil = debut === fin
+    ? "le profil de carrière « plat » l'applique tel quel à toutes les années"
+    : `le profil de carrière choisi le fait varier de ×${g.nombre(debut, 2)} au `
+      + `premier emploi à ×${g.nombre(fin, 2)} au dernier`;
+  return `<p class="discret">Ce qui est porté au compte : ${lectures.join(" ; ")}. `
+    + "Ce niveau suit ensuite le salaire moyen d'année en année, et "
+    + `${profil}.</p>`;
 }
 
 /**
@@ -727,16 +1124,14 @@ function metiersFormulaire(saisie, statuts) {
     + g.liste("debut_mois", "…et mois", MOIS_AGE, String(saisie.debut_mois),
       "l'année d'entrée n'est complète que si l'on entre en janvier")
     + g.liste("statut", "Statut d'affiliation", statuts, saisie.statut)
-    + g.champ("salaire", "Niveau de revenu", nombreBrut(saisie.salaire),
-      "en multiples du salaire moyen : 0,55 ≈ SMIC, 1 = salaire moyen", "number",
-      { min: "0.1", max: "10", step: "0.05" }),
+    + champRevenu("salaire", saisie, nombreBrut(saisie.salaire)),
   )];
 
   saisie.metiers.forEach((metier, index) => {
     const rang = index + 2;
     lignes.push(ligneMetier(rang, champsMetier(
       rang, nombreBrut(metier.debut), metier.statut,
-      nombreBrut(metier.salaire), statuts,
+      nombreBrut(metier.salaire), statuts, saisie,
     )));
   });
 
@@ -745,7 +1140,9 @@ function metiersFormulaire(saisie, statuts) {
   // un métier que personne n'a demandé.
   const rang = saisie.metiers.length + 2;
   if (rang <= METIERS_MAXIMUM) {
-    lignes.push(ligneMetier(rang, champsMetier(rang, "", "", "", statuts), true));
+    lignes.push(ligneMetier(
+      rang, champsMetier(rang, "", "", "", statuts, saisie), true,
+    ));
   }
 
   return `<div class="metiers">${lignes.join("")}</div>`;
@@ -759,15 +1156,13 @@ function metiersFormulaire(saisie, statuts) {
  * bornes tronquent une année civile. Un changement de métier, lui, ne fait que
  * déplacer des mois d'un statut à l'autre à l'intérieur de la carrière.
  */
-function champsMetier(rang, debut, statut, salaire, statuts) {
+function champsMetier(rang, debut, statut, salaire, statuts, saisie) {
   return g.champ(`metier${rang}_debut`, "Âge du changement", debut,
     "âge auquel ce métier commence", "number",
     { min: "14", max: "75", step: "1" })
     + g.liste(`metier${rang}_statut`, "Statut d'affiliation",
       [["", "— aucun —"], ...statuts], statut)
-    + g.champ(`metier${rang}_salaire`, "Niveau de revenu", salaire,
-      "en multiples du salaire moyen", "number",
-      { min: "0.1", max: "10", step: "0.05" });
+    + champRevenu(`metier${rang}_salaire`, saisie, salaire, true);
 }
 
 function ligneMetier(rang, champs, vide = false) {
@@ -789,7 +1184,7 @@ function majuscule(texte) {
  * formulaire juste au-dessus le dit déjà.
  */
 function resumeParcours(contexte, saisie) {
-  const parcours = saisie.parcours;
+  const parcours = saisie.parcours(contexte.macro(saisie));
   if (parcours.length < 2) {
     return "";
   }
@@ -878,11 +1273,14 @@ Ce que compare cette page, ce sont cinq façons de CALCULER une pension de
 départ, pas cinq façons de la revaloriser ensuite : le premier mois de retraite
 est le seul instant où les cinq scénarios se laissent mettre côte à côte, et
 c'est donc à cet instant que tous les cinq sont calculés.</div>
-<p class="discret" style="margin-top:1.5rem">Montants bruts mensuels — avant CSG
-et prélèvements sociaux. Le chiffre mis en avant est en euros constants de
-${saisie.euros}, c'est-à-dire au pouvoir d'achat de ${saisie.euros} : seule unité
-qui permette de comparer des liquidations d'années différentes. Fiabilité du
-résultat :
+<p class="discret" style="margin-top:1.5rem">Montants <strong>bruts</strong>
+mensuels — avant CSG, CRDS et prélèvements sociaux, avant impôt sur le revenu —
+comme le revenu d'activité saisi plus haut : le taux de remplacement rapporte
+donc un brut à un brut, et il est plus bas qu'un taux calculé sur des nets, la
+pension étant moins prélevée que le salaire. Le chiffre mis en avant est en
+euros constants de ${saisie.euros}, c'est-à-dire au pouvoir d'achat de
+${saisie.euros} : seule unité qui permette de comparer des liquidations d'années
+différentes. Fiabilité du résultat :
 <span class="etiquette-fiabilite">${echapper(nomFiabilite(comparaison.fiabilite))}</span></p>`;
 }
 
@@ -2304,6 +2702,38 @@ l'année, les régimes liquident à l'année : l'année d'un changement revient 
 métier qui en occupe le plus de mois, et à égalité à celui qui l'ouvre, tandis
 que le revenu porté au compte reste la somme de ce que les deux ont
 réellement payé.</p>
+
+<h3 id="unites">Brut, net, euros et francs</h3>
+<p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu
+d'activité saisi, les cotisations versées, le capital notionnel, les cinq
+pensions. « Brut » a ici le sens des comptes nationaux — <em>salaires et
+traitements bruts</em> (D11) rapportés à l'emploi salarié intérieur, ce qui est
+la définition même du salaire moyen par tête qui sert d'unité. C'est-à-dire
+<strong>avant</strong> cotisations salariales, <strong>avant</strong> CSG et
+CRDS, <strong>avant</strong> impôt sur le revenu, et <strong>hors</strong>
+cotisations patronales, qui s'ajoutent au brut sans en faire partie. Ce n'est
+pas une commodité : c'est l'assiette sur laquelle les régimes appellent leurs
+cotisations, donc la seule grandeur qu'un compte notionnel puisse enregistrer.
+Le taux de remplacement affiché rapporte donc un brut à un brut, et il est
+mécaniquement plus bas qu'un taux calculé sur des nets — les pensions sont moins
+prélevées que les salaires.</p>
+<p>L'unité de saisie est le <strong>multiple du salaire moyen</strong> de
+l'année considérée, parce qu'elle seule garde son sens sur quatre-vingts ans :
+une somme n'en a que rapportée à son année et à sa monnaie. Le formulaire
+accepte néanmoins des montants — euros ou francs, mensuels ou annuels — et fait
+la conversion, qu'il affiche : <code>niveau = montant annuel ÷ salaire moyen de
+l'année indiquée</code>. Les francs sont convertis au taux irrévocable du
+règlement (CE) n° 2866/98, <strong>1 € = 6,559 57 F</strong>, et par cent de
+plus avant 1960, le nouveau franc du décret du 27 décembre 1958 valant cent
+anciens francs.</p>
+<p>Reste que les comptes nationaux ne publient que des <em>taux de croissance</em>
+du salaire moyen. Les niveaux en sont reconstitués à partir d'un point
+d'ancrage — <strong>40 000 € bruts annuels en 2024</strong> —, paramètre
+documenté et non donnée certifiée. Il déplace proportionnellement tous les
+revenus reconstitués, donc toutes les pensions, mais il est sans effet sur les
+<strong>rapports</strong> entre scénarios, qui sont l'objet du modèle. Il
+commande en revanche la traduction d'un montant en multiple : saisir un salaire
+en euros, c'est le lire à cette échelle-là.</p>
 
 <h3>Périmètre</h3>
 <p>Origine 1941 (allocation aux vieux travailleurs salariés), premier dispositif
