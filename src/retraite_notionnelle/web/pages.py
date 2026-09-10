@@ -1151,8 +1151,10 @@ départ, pas cinq façons de la revaloriser ensuite : le premier mois de retrait
 est le seul instant où les cinq scénarios se laissent mettre côte à côte, et
 c'est donc à cet instant que tous les cinq sont calculés.</div>
 <p class="discret" style="margin-top:1.5rem">Montants <strong>bruts</strong>
-mensuels — avant CSG, CRDS et prélèvements sociaux, avant impôt sur le revenu —
-comme le revenu d'activité saisi plus haut : le <strong>taux de
+mensuels et <strong>au centime</strong>, comme la caisse les verse — depuis le
+1<sup>er</sup> décembre 1986 les prestations de vieillesse sont payées sans
+arrondi, centimes compris. Avant CSG, CRDS et prélèvements sociaux, avant impôt
+sur le revenu, comme le revenu d'activité saisi plus haut : le <strong>taux de
 remplacement</strong>, qui
 rapporte la pension annuelle au dernier revenu d'activité ramené à l'année
 pleine, compare donc un brut à un brut, et il est plus bas qu'un taux calculé
@@ -1212,7 +1214,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         )
         depart = f"""
       <span class="chiffre depart">
-        <span class="somme">{g.euros(courants[cle] / 12)}</span>
+        <span class="somme">{g.euros_centimes(courants[cle] / 12)}</span>
         <span class="unite">par mois, en euros de {annee_depart}</span>
       </span>""" if deux_unites else ""
         return f"""
@@ -1221,9 +1223,9 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     <span class="titre">{escape(titre)}</span>
     <span class="montant">
       <span class="chiffre principal">
-        <span class="somme">{g.euros(montant / 12)}</span>
+        <span class="somme">{g.euros_centimes(montant / 12)}</span>
         <span class="unite">{unite_reference}</span>
-        <span class="annuel">{g.euros(montant)} par an</span>
+        <span class="annuel">{g.euros_centimes(montant)} par an</span>
       </span>{depart}
     </span>
   </div>
@@ -1288,7 +1290,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         )
         capitalisation = (
             f'<p class="discret">Hors répartition, servi à part : '
-            f"{g.euros(montant / 12)} par mois de RAFP, en euros de "
+            f"{g.euros_centimes(montant / 12)} par mois de RAFP, en euros de "
             f"{saisie.euros} comme les cinq montants ci-dessus. Ce régime est "
             "PROVISIONNÉ — sa rente sort d'un placement, non de la cotisation "
             "des actifs —, si bien qu'une réforme de la répartition ne "

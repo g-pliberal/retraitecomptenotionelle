@@ -2084,6 +2084,23 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   de la fiche de paie » — et donne l'échelle chiffrée, SMIC, salaire moyen et
   plafond, plutôt que de la laisser deviner.
 
+- **L'arrondi des revenus portés au compte.** L'article L. 133-10 du code de
+  la sécurité sociale arrondit à l'euro le plus proche « le montant des
+  cotisations et contributions sociales et de leurs assiettes » — donc les
+  revenus inscrits au compte, la fraction de 0,50 € étant comptée pour 1. Le
+  modèle ne l'applique pas : il porte au compte des revenus reconstitués, au
+  centime. L'écart est borné et il est petit — chaque année retenue s'écarte de
+  0,50 € au plus, donc leur moyenne aussi, donc la pension de **0,25 € par an**,
+  soit **0,02 € par mois**, quel que soit le niveau de revenu. À comparer aux
+  8,5 % d'amplitude qu'ouvre le seul choix d'hypothèse de productivité. Deux
+  raisons de ne pas l'appliquer aujourd'hui : la règle vise des assiettes
+  DÉCLARÉES, que le modèle n'a pas — il synthétise ses revenus depuis un profil
+  —, et la doctrine ne dit pas si l'arrondi précède ou suit la revalorisation,
+  ce qui n'a aucun effet sur le résultat mais en aurait un sur ce qu'on pourrait
+  affirmer. Le reste de la chaîne, lui, est conforme : les trimestres sont
+  arrondis à l'entier supérieur (R. 351-27), et la pension n'est pas arrondie du
+  tout — voir `methodologie.md`.
+
 - **La capitalisation.** Le compartiment RAFP est isolé et converti au même
   coefficient actuariel que le reste, mais son **rendement financier propre**
   n'est pas modélisé : ses points sont valorisés au barème publié par l'ERAFP,
