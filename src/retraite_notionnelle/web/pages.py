@@ -117,15 +117,24 @@ PAS_MULTIPLE = 10 ** -DECIMALES_MULTIPLE
 
 #: Décimales des coefficients qui font une CHAÎNE DE CALCUL affichée : le
 #: diviseur de conversion, le coefficient de revalorisation, le rendement
-#: cumulé. Elles ne sont pas décoratives — elles sont mesurées. Le lecteur doit
-#: pouvoir refaire chaque ligne depuis les nombres affichés au-dessus et
-#: retomber sur celui d'en dessous ; un test le vérifie ligne à ligne. À deux
-#: décimales, « capital ÷ coefficient » tombait à 2,80 € de la pension et
-#: « cotisations × rendement » à 377 € du capital ; aux précisions retenues
-#: ici, chaque étape se referme à deux euros près sur des capitaux de plusieurs
-#: centaines de milliers d'euros.
-DECIMALES_DIVISEUR = 4
-DECIMALES_FACTEUR = 5
+#: cumulé. Elles ne sont pas décoratives — elles sont mesurées, et mesurées SUR
+#: LES VALEURS AFFICHÉES : calibrées sur les valeurs exactes du modèle, elles
+#: paraissaient suffire une décimale plus tôt, parce que la mesure ignorait
+#: l'arrondi des lignes que le lecteur, lui, a sous les yeux.
+#:
+#: Écart maximal de la ligne reconstituée, sur cinquante-deux carrières :
+#:
+#:                         4 déc.    5 déc.    6 déc.
+#:   a) × diviseur         2,70 €    0,57 €    0,57 €
+#:   capital ÷ diviseur    0,10 €    0,02 €    0,02 €
+#:   b) × revalorisation  62,27 €    6,47 €    1,23 €
+#:   cotisations × rendt  50,92 €    5,09 €    1,07 €
+#:
+#: Au-delà, le gain s'arrête : ce qui reste vient de ce que les capitaux
+#: s'affichent à l'euro, ce qui borne toute reconstitution à un demi-euro par
+#: terme, et cette borne-là ne se rachète pas par des décimales.
+DECIMALES_DIVISEUR = 5
+DECIMALES_FACTEUR = 6
 
 #: Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
 #: mois, soit 151,67 heures. Elle ne sert qu'à écrire un repère à l'échelle
