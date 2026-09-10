@@ -117,6 +117,20 @@ HEURES_SMIC_PAR_MOIS = 151.67
 #: un relevé de carrière année par année, et il se saisit autrement.
 METIERS_MAXIMUM = 6
 
+#: Bornes des deux années que l'utilisateur peut choisir : celle de la bascule
+#: au régime unique, et celle des euros constants dans lesquels les montants
+#: sont exprimés. Elles étaient déclarées sur les champs du formulaire, donc
+#: opposables au navigateur seulement : une adresse forgée à la main les
+#: franchissait sans rien déclencher, et « ?euros=9999 » faisait afficher au
+#: simulateur des pensions à soixante chiffres. La borne se dit ici, une fois,
+#: et le formulaire la lit — les deux ne peuvent plus diverger.
+ANNEE_MINIMALE = 1941
+ANNEE_MAXIMALE = 2070
+
+#: Un enfant de plus change la pension du scénario 1 par ses majorations. Le
+#: champ était borné à douze dans le formulaire et nulle part ailleurs.
+ENFANTS_MAXIMUM = 12
+
 #: Rang de chaque métier, tel que le formulaire l'annonce.
 RANGS_METIER = ("premier", "deuxième", "troisième", "quatrième", "cinquième",
                 "sixième", "septième", "huitième")
@@ -277,6 +291,20 @@ class Saisie:
         self._verifier_revenu(self.salaire, rang=1)
         if not 0 <= self.primes <= 0.6:
             raise ErreurSaisie("Part de primes attendue entre 0 et 0,6.")
+        if not 0 <= self.enfants <= ENFANTS_MAXIMUM:
+            raise ErreurSaisie(
+                f"Nombre d'enfants attendu entre 0 et {ENFANTS_MAXIMUM}."
+            )
+        if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
+            raise ErreurSaisie(
+                f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
+                f"{ANNEE_MAXIMALE}."
+            )
+        if not ANNEE_MINIMALE <= self.euros <= ANNEE_MAXIMALE:
+            raise ErreurSaisie(
+                f"Année des euros constants attendue entre {ANNEE_MINIMALE} et "
+                f"{ANNEE_MAXIMALE}."
+            )
         if not 1 <= self.lissage <= LISSAGE_MAXIMUM:
             raise ErreurSaisie(
                 f"Fenêtre de lissage attendue entre 1 et {LISSAGE_MAXIMUM} ans "
@@ -775,7 +803,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
                 min="0", max="0.6", step="0.01"),
         g.champ("enfants", "Nombre d'enfants", saisie.enfants,
                 "sans effet notionnel : les majorations sont supprimées",
-                type_="number", min="0", max="12", step="1"),
+                type_="number", min="0", max=str(ENFANTS_MAXIMUM), step="1"),
         g.champ("interruptions", "Interruptions", saisie.interruptions,
                 "« 1995:1999:education_enfant », séparées par des virgules"),
         g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
@@ -795,9 +823,11 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
         g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
                 "au-delà de la dernière observation"),
         g.champ("bascule", "Année de bascule", saisie.bascule,
-                "passage au régime unique", type_="number", min="1941", max="2070"),
+                "passage au régime unique", type_="number",
+                min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
         g.champ("euros", "Euros constants de", saisie.euros,
-                type_="number", min="1941", max="2070"),
+                "l'année dont les montants prennent le pouvoir d'achat",
+                type_="number", min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
     ])
 
     return f"""
@@ -1073,11 +1103,16 @@ départ, pas cinq façons de la revaloriser ensuite : le premier mois de retrait
 est le seul instant où les cinq scénarios se laissent mettre côte à côte, et
 c'est donc à cet instant que tous les cinq sont calculés.</div>
 <p class="discret" style="margin-top:1.5rem">Montants <strong>bruts</strong>
-mensuels — avant CSG et impôt, comme le salaire saisi : le taux de remplacement
-rapporte donc un brut à un brut. Le chiffre mis en avant est en euros constants
-de {saisie.euros}, c'est-à-dire au pouvoir d'achat de {saisie.euros} : seule
-unité qui permette de comparer des liquidations d'années différentes. Fiabilité
-du résultat :
+mensuels — avant CSG, CRDS et prélèvements sociaux, avant impôt sur le revenu —
+comme le salaire saisi plus haut : le <strong>taux de remplacement</strong>, qui
+rapporte la pension annuelle au dernier revenu d'activité ramené à l'année
+pleine, compare donc un brut à un brut, et il est plus bas qu'un taux calculé
+sur des nets, la pension étant moins prélevée que le salaire. Ses deux termes
+étant pris dans les euros de leur propre année, il ne dépend pas de l'unité
+d'affichage. Le chiffre mis en avant, lui, est en euros constants de
+{saisie.euros}, c'est-à-dire au pouvoir d'achat de {saisie.euros} : seule unité
+qui permette de comparer des liquidations d'années différentes.
+Fiabilité du résultat :
 <span class="etiquette-fiabilite">{escape(str(comparaison.fiabilite))}</span></p>"""
 
 
@@ -1185,8 +1220,16 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                 f'<span class="discret">en {carriere.date_liquidation}</span>'),
         g.fiche(f"âge de référence — {anticipation}",
                 f"{_age(ecart.age_reference)}"),
-        g.fiche("coefficient de conversion", g.nombre(conversion.diviseur, 1)),
-        g.fiche("capital notionnel rétroactif", g.euros(retro.capital_notionnel)),
+        # Deux décimales, et non une : le lecteur qui refait la division
+        # « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7
+        # au lieu de 25,67 il tombait un euro à côté, et doutait du reste.
+        g.fiche("coefficient de conversion", g.nombre(conversion.diviseur, 2)),
+        # Le capital est un montant de l'année de liquidation, quand les cinq
+        # pensions ci-dessous sont mises en avant en euros de l'année de
+        # référence : sans l'unité, deux grandeurs de nature différente se
+        # touchaient sans que rien ne les distingue.
+        g.fiche(f"capital notionnel rétroactif, en euros de {annee_depart}",
+                g.euros(retro.capital_notionnel)),
     ])
 
     capitalisation = ""
@@ -1196,7 +1239,8 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         )
         capitalisation = (
             f'<p class="discret">Hors répartition, servi à part : '
-            f"{g.euros(montant / 12)} par mois de RAFP. Ce régime est "
+            f"{g.euros(montant / 12)} par mois de RAFP, en euros de "
+            f"{saisie.euros} comme les cinq montants ci-dessus. Ce régime est "
             "PROVISIONNÉ — sa rente sort d'un placement, non de la cotisation "
             "des actifs —, si bien qu'une réforme de la répartition ne "
             "l'atteint pas. Il est donc retiré des cinq totaux et servi à "
@@ -1468,7 +1512,9 @@ productivité, seul change ce qu'on en retient. La colonne « rendement » est l
 facteur par lequel les cotisations ont été multipliées entre leur versement et
 la liquidation.</p>
 {g.tableau(
-    ["Règle d'indexation", "Rendement cumulé", "Pension mensuelle", "Écart au système actuel"],
+    ["Règle d'indexation", "Rendement cumulé",
+     f"Pension mensuelle, en euros de {saisie.euros}",
+     "Écart au système actuel"],
     lignes,
     ["", "nombre", "nombre", "nombre"],
 )}
@@ -1529,6 +1575,13 @@ def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
     diviseur = prospectif.conversion.diviseur
     capital_apres = prospectif.capital_notionnel - acquis.capital
     actuel = comparaison.actuel.pension_annuelle
+    renvoi_cascade = (
+        "La dernière ligne est donc le scénario 3 tel que la <em>seconde</em> "
+        "colonne l'affiche, non le chiffre mis en avant."
+        if liquidation != saisie.euros else
+        "Le départ tombant sur l'année de référence, la dernière ligne est "
+        "exactement le montant du scénario 3 affiché plus haut."
+    )
 
     lignes = [
         [f"a) Droits acquis à {saisie.bascule}",
@@ -1569,9 +1622,10 @@ def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
     return f"""
 <h2>Du scénario 1 au scénario 3, ligne à ligne</h2>
 <p>Le scénario 3 n'est pas le scénario 1 diminué d'un pourcentage : c'est une
-autre formule appliquée à la même carrière. Montants en euros courants de
-l'année de liquidation — la chaîne de calcul est arithmétique, la convertir en
-euros constants ligne à ligne la rendrait fausse.</p>
+autre formule appliquée à la même carrière. Montants en <strong>euros de
+{liquidation}</strong>, l'année du départ — la chaîne de calcul est
+arithmétique, la convertir ligne à ligne au pouvoir d'achat d'une autre année la
+rendrait fausse. {renvoi_cascade}</p>
 {g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
@@ -1602,6 +1656,22 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
             return code
 
     actuel = comparaison.actuel
+    # Tout ce tableau est en euros de l'année de liquidation : c'est la seule
+    # unité dans laquelle la chaîne de calcul s'additionne. Les cinq blocs du
+    # haut, eux, mettent en avant les euros de l'année de référence. Sans dire
+    # laquelle est laquelle, la dernière ligne prétendait valoir « le montant
+    # de la ligne 1 ci-dessus » en désignant un nombre que la ligne 1
+    # n'affichait pas.
+    annee = comparaison.carriere.annee_liquidation
+    annee_reference = comparaison.parametres.annee_euros_constants
+    renvoi = (
+        "C'est l'unité de la <em>seconde</em> colonne des cinq scénarios, celle "
+        "du virement — pas celle du chiffre mis en avant, qui les ramène au "
+        f"pouvoir d'achat de {annee_reference}."
+        if annee != annee_reference else
+        "Le départ tombant sur l'année de référence, c'est aussi l'unité des "
+        "cinq montants affichés plus haut."
+    )
     lignes_actuel: list[list[str]] = [
         [escape(nom_regime(pension.regime)), g.euros(pension.montant),
          g.franciser(escape(pension.detail))]
@@ -1624,12 +1694,13 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
         lignes_actuel.append([
             "<strong>Pension du système actuel</strong>",
             "<strong>" + g.euros(actuel.pension_annuelle) + "</strong>",
-            '<span class="discret">c\'est le montant de la ligne 1 '
-            "ci-dessus</span>",
+            '<span class="discret">c\'est le scénario 1 ci-dessus, pris '
+            "dans les euros de son année de départ</span>",
         ])
 
     regimes = g.tableau(
-        ["Régime, puis avantage", "Pension annuelle", "Calcul"],
+        ["Régime, puis avantage", f"Pension annuelle, en euros de {annee}",
+         "Calcul"],
         lignes_actuel,
         ["", "nombre", ""],
     ) if lignes_actuel else "<p>Aucun droit liquidé dans le système actuel.</p>"
@@ -1648,21 +1719,28 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
     compte = g.tableau(
         ["Poste", "Montant"],
         [
-            ["Cotisations effectivement versées, en euros courants",
+            ["Cotisations effectivement versées, sommées aux euros de "
+             "chaque année",
              g.euros(retro.compte.cotisations_versees)],
             ["Rendement cumulé appliqué à ces cotisations",
              "×" + g.nombre(retro.compte.rendement_cumule, 2)],
-            ["Capital notionnel à la liquidation", g.euros(retro.capital_notionnel)],
+            [f"Capital notionnel à la liquidation, en euros de {annee}",
+             g.euros(retro.capital_notionnel)],
             ["Divisé par le coefficient de conversion",
              g.nombre(retro.conversion.diviseur, 2)
              + f" ({escape(retro.conversion.table)})"],
-            ["Pension annuelle en euros courants", g.euros(retro.pension_annuelle)],
+            [f"Pension annuelle, en euros de {annee}",
+             g.euros(retro.pension_annuelle)],
         ],
         ["", "nombre"],
     )
 
     return f"""
 <h2>Le détail du calcul</h2>
+<p class="note">Toute cette section est en <strong>euros de {annee}</strong>,
+l'année du départ. {renvoi} C'est la seule unité dans laquelle une chaîne de
+calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une autre
+année ferait des totaux faux.</p>
 <h3>Scénario 1 — de quoi votre pension actuelle est faite</h3>
 <p>Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute
 par-dessus. Les lignes s'additionnent exactement : le total est la pension du
