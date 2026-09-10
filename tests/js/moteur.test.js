@@ -91,6 +91,31 @@ test("les simulations retrouvent les chiffres du modèle Python", () => {
   assert.deepEqual(ecarts, [], `${ecarts.length} écart(s) sur ${cas} cas`);
 });
 
+test("une faute de programme n'est pas présentée comme une faute de saisie", () => {
+  // Le portage attrapait toute exception et affichait « Saisie refusée » : un
+  // bug du moteur JavaScript accusait donc le lecteur. Ce test l'a vérifié
+  // après coup sur un vrai bug — « serie.valeurs is not iterable » s'affichait
+  // ainsi. Une saisie réellement invalide doit toujours donner sa phrase ; une
+  // faute de programme doit remonter jusqu'à la page, qui dit « Le calcul a
+  // échoué » sans mettre la faute sur personne.
+  const contexte = new Contexte(paquet);
+  const [, refus] = rendre(contexte, "/", { liquidation: "12" });
+  assert.match(refus, /Saisie refusée/, "une saisie invalide garde sa phrase");
+
+  const prototype = Object.getPrototypeOf(contexte);
+  const vrai = prototype.simuler;
+  prototype.simuler = () => { throw new TypeError("bug interne simulé"); };
+  try {
+    assert.throws(
+      () => rendre(contexte, "/", { naissance: "1975", liquidation: "64" }),
+      TypeError,
+      "une faute de programme doit remonter, non être déguisée en refus",
+    );
+  } finally {
+    prototype.simuler = vrai;
+  }
+});
+
 test("les pages rendent le même HTML que le modèle Python", () => {
   const contexte = new Contexte(paquet);
   for (const [nom, temoin] of Object.entries(temoinsPages)) {
