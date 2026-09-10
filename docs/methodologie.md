@@ -1249,6 +1249,31 @@ Le revenu annuel moyen lui-même n'est arrondi par aucun texte : il est la somme
 des revenus revalorisés des meilleures années divisée par leur nombre, calculée
 sur des revenus exprimés en euros.
 
+### Précision des coefficients affichés
+
+Une chaîne de calcul montrée à l'écran doit pouvoir se refaire à la main. Cela
+ne dépend pas seulement de l'exactitude du modèle : un coefficient affiché trop
+court rend la chaîne infaisable alors même que le calcul est juste. Les
+précisions ne sont donc pas décoratives, elles sont **mesurées** — pour chaque
+étape, on prend la plus courte qui referme la ligne à deux euros près sur des
+capitaux de plusieurs centaines de milliers d'euros :
+
+| Coefficient | Décimales | Ce que coûtait l'ancien affichage |
+|---|---|---|
+| Diviseur de conversion | 4 (`DECIMALES_DIVISEUR`) | à 2, « capital ÷ coefficient » tombait à 2,80 € de la pension |
+| Coefficient de revalorisation | 5 (`DECIMALES_FACTEUR`) | à 3, l'étape ratait le capital de 123 € |
+| Rendement cumulé du compte | 5 (`DECIMALES_FACTEUR`) | à 2, « cotisations × rendement » ratait le capital de 377 € |
+
+Le tableau des neuf règles d'indexation garde deux décimales : son rendement
+n'entre dans aucune multiplication affichée, il sert à comparer des règles entre
+elles, et neuf lignes à cinq décimales ne se lisent plus.
+
+Un test refait chaque chaîne depuis les seuls nombres AFFICHÉS — cascade du
+scénario 1 au scénario 3, compte du scénario 2, mensuel contre annuel des cinq
+blocs, lignes contre total du détail par régime, écarts et économies de la page
+Coût. Ses bornes se déduisent des précisions ci-dessus plutôt que d'être
+choisies : elles suivront si ces précisions changent.
+
 ### Ancrage des rémunérations
 
 Les comptes nationaux ne publient que des taux de croissance du salaire moyen.

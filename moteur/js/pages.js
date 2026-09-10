@@ -99,6 +99,18 @@ export const SALAIRE_DEFAUT = { euros_mois: 3500.0, moyen: 1.0 };
 export const DECIMALES_MULTIPLE = 3;
 export const PAS_MULTIPLE = 10 ** -DECIMALES_MULTIPLE;
 
+// Décimales des coefficients qui font une CHAÎNE DE CALCUL affichée : le
+// diviseur de conversion, le coefficient de revalorisation, le rendement
+// cumulé. Elles ne sont pas décoratives — elles sont mesurées. Le lecteur doit
+// pouvoir refaire chaque ligne depuis les nombres affichés au-dessus et
+// retomber sur celui d'en dessous ; un test le vérifie ligne à ligne. À deux
+// décimales, « capital ÷ coefficient » tombait à 2,80 € de la pension et
+// « cotisations × rendement » à 377 € du capital ; aux précisions retenues ici,
+// chaque étape se referme à deux euros près sur des capitaux de plusieurs
+// centaines de milliers d'euros.
+export const DECIMALES_DIVISEUR = 4;
+export const DECIMALES_FACTEUR = 5;
+
 // Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
 // mois, soit 151,67 heures. Elle ne sert qu'à écrire un repère à l'échelle d'un
 // salaire mensuel.
@@ -1325,7 +1337,8 @@ function resultats(contexte, saisie) {
     // Deux décimales, et non une : le lecteur qui refait la division
     // « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7 au
     // lieu de 25,67 il tombait un euro à côté, et doutait du reste.
-    g.fiche("coefficient de conversion", g.nombre(conversion.diviseur, 2)),
+    g.fiche("coefficient de conversion",
+      g.nombre(conversion.diviseur, DECIMALES_DIVISEUR)),
     // Le capital est un montant de l'année de liquidation, quand les cinq
     // pensions ci-dessous sont mises en avant en euros de l'année de
     // référence : sans l'unité, deux grandeurs de nature différente se
@@ -1695,11 +1708,11 @@ function cascade(comparaison, saisie) {
       `${g.eurosCentimes(acquis.pension_figee)} par an`],
     [`b) × diviseur à ${age(acquis.age_conversion)}`,
       `coefficient de conversion en ${saisie.bascule} : `
-      + `${g.nombre(acquis.diviseur, 2)}`,
+      + `${g.nombre(acquis.diviseur, DECIMALES_DIVISEUR)}`,
       g.euros(acquis.capital_a_la_bascule)],
     [`c) × revalorisation ${saisie.bascule}-${liquidation}`,
       "règle d'indexation retenue : ×"
-      + `${g.nombre(acquis.coefficient_revalorisation, 3)}`,
+      + `${g.nombre(acquis.coefficient_revalorisation, DECIMALES_FACTEUR)}`,
       g.euros(acquis.capital)],
     [`d) + cotisations ${saisie.bascule}-${liquidation - 1}`,
       "versées au régime unique, revalorisées de même",
@@ -1707,7 +1720,8 @@ function cascade(comparaison, saisie) {
     ["e) = capital notionnel", "ce que la carrière a effectivement financé",
       g.euros(prospectif.capital_notionnel)],
     [`f) ÷ diviseur à ${age(ageLiquidation)}`,
-      `coefficient de conversion en ${liquidation} : ${g.nombre(diviseur, 2)}`,
+      `coefficient de conversion en ${liquidation} : `
+      + `${g.nombre(diviseur, DECIMALES_DIVISEUR)}`,
       `${g.eurosCentimes(prospectif.pension_annuelle)} par an`],
   ];
 
@@ -1842,11 +1856,12 @@ function detail(contexte, comparaison) {
       ["Cotisations effectivement versées, sommées aux euros de chaque année",
         g.euros(retro.compte.cotisations_versees)],
       ["Rendement cumulé appliqué à ces cotisations",
-        `×${g.nombre(retro.compte.rendement_cumule, 2)}`],
+        `×${g.nombre(retro.compte.rendement_cumule, DECIMALES_FACTEUR)}`],
       [`Capital notionnel à la liquidation, en euros de ${annee}`,
         g.euros(retro.capital_notionnel)],
       ["Divisé par le coefficient de conversion",
-        `${g.nombre(retro.conversion.diviseur, 2)} (${echapper(retro.conversion.table)})`],
+        `${g.nombre(retro.conversion.diviseur, DECIMALES_DIVISEUR)} `
+        + `(${echapper(retro.conversion.table)})`],
       [`Pension annuelle, en euros de ${annee}`,
         g.eurosCentimes(retro.pension_annuelle)],
     ],
