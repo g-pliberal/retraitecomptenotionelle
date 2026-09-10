@@ -24,6 +24,8 @@ from retraite_notionnelle.web.gabarit import (
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante
 from retraite_notionnelle.web.pages import (
     AGES_REFERENCE,
+    DECIMALES_DIVISEUR,
+    DECIMALES_FACTEUR,
     DECIMALES_MULTIPLE,
     ANNEE_MAXIMALE,
     ANNEE_MINIMALE,
@@ -945,6 +947,141 @@ def test_le_tableau_du_detail_s_additionne_a_l_ecran(contexte, nom, champs):
         f"{nom} : les lignes affichées font {sum(regimes):.2f} €, "
         f"le total affiché {total:.2f} €"
     )
+
+
+def _nombres(bloc: str) -> list[float]:
+    """Les montants d'un fragment de HTML, dans l'ordre où ils s'y lisent."""
+    return [float(m.replace("\u202f", "").replace(",", "."))
+            for m in re.findall(r"([\d\u202f]+(?:,\d+)?)\u202f€", bloc)]
+
+
+def _cellules(tableau: str) -> list[list[str]]:
+    return [[re.sub(r"<[^>]+>", "", c) for c in
+             re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", ligne, re.S)]
+            for ligne in re.findall(r"<tr>(.*?)</tr>", tableau, re.S)]
+
+
+def _bloc(corps: str, debut: str, fin: str) -> str:
+    rang = corps.index(debut)
+    return corps[rang:corps.index(fin, rang)]
+
+
+@pytest.mark.parametrize("nom,champs", [
+    ("carrière ordinaire", {"naissance": "1975"}),
+    ("cadre", {"naissance": "1980", "statut": "salarie_prive_cadre",
+               "unite_revenu": "moyen", "salaire": "2.5"}),
+    ("artisan", {"naissance": "1970", "statut": "artisan"}),
+    ("régime spécial", {"naissance": "1960", "statut": "agent_sncf",
+                        "liquidation": "52"}),
+    ("polypensionné", {"naissance": "1968", "unite_revenu": "moyen",
+                       "salaire": "1", "metier2_debut": "40",
+                       "metier2_statut": "artisan", "metier2_salaire": "1.5"}),
+])
+def test_les_chaines_de_calcul_se_refont_depuis_l_ecran(contexte, nom, champs):
+    """Chaque ligne d'une chaîne doit se retrouver depuis celles du dessus.
+
+    C'est ce que la page promet : « la chaîne de calcul est arithmétique ». Le
+    contrôle porte donc sur les nombres AFFICHÉS, coefficients compris — un
+    coefficient trop court rend la chaîne infaisable même quand le modèle a
+    raison. Les bornes ne sont pas choisies : elles se déduisent des précisions
+    d'affichage, et suivront si celles-ci changent.
+    """
+    corps = rendre(contexte, "/", champs)[1]
+    pas_diviseur = 0.5 * 10 ** -DECIMALES_DIVISEUR
+    pas_facteur = 0.5 * 10 ** -DECIMALES_FACTEUR
+
+    # -- la cascade du scénario 1 au scénario 3 -----------------------------
+    # Muette quand la bascule est postérieure au départ : il n'y a alors pas de
+    # phase notionnelle à détailler, et le reste de la page le dit.
+    if "Du scénario 1 au scénario 3" in corps:
+        _verifier_cascade(nom, corps, pas_diviseur, pas_facteur)
+
+    # -- le compte du scénario 2 --------------------------------------------
+    compte = _bloc(corps, "Cotisations effectivement versées", "</table>")
+    cotisations, capital, pension = _nombres(compte)[:3]
+    rendement, diviseur = (
+        float(x.replace("\u202f", "").replace(",", "."))
+        for x in re.findall(r">×?([\d\u202f]+,\d+)(?: \(|</td>)", compte)[:2]
+    )
+    borne = 0.5 + cotisations * pas_facteur + rendement * 0.5
+    assert abs(cotisations * rendement - capital) <= borne, f"{nom} : capital"
+    borne = 0.01 + capital * pas_diviseur / diviseur + 0.5 / diviseur
+    assert abs(capital / diviseur - pension) <= borne, f"{nom} : pension"
+
+
+def _verifier_cascade(nom, corps, pas_diviseur, pas_facteur):
+    """Les six lignes qui mènent du scénario 1 au scénario 3."""
+    cascade = _bloc(corps, "Du scénario 1 au scénario 3", "</table>")
+    rangs = {ligne[0][0]: ligne for ligne in _cellules(cascade)
+             if ligne and ligne[0][:2] in ("a)", "b)", "c)", "d)", "e)", "f)")}
+    valeur = {cle: _nombres(" ".join(ligne))[0] for cle, ligne in rangs.items()}
+    coefficient = {
+        cle: float(re.search(r"([\d\u202f]+,\d+)", ligne[1]).group(1)
+                   .replace("\u202f", "").replace(",", "."))
+        for cle, ligne in rangs.items()
+        if re.search(r"([\d\u202f]+,\d+)", ligne[1])
+    }
+
+    # a) est au centime, b) à l'euro : chacun apporte sa propre imprécision.
+    borne = 0.5 + valeur["a"] * pas_diviseur + coefficient["b"] * 0.005
+    assert abs(valeur["a"] * coefficient["b"] - valeur["b"]) <= borne, f"{nom} : b)"
+    borne = 0.5 + valeur["b"] * pas_facteur + coefficient["c"] * 0.5
+    assert abs(valeur["b"] * coefficient["c"] - valeur["c"]) <= borne, f"{nom} : c)"
+    assert abs(valeur["c"] + valeur["d"] - valeur["e"]) <= 1.5, f"{nom} : e)"
+    borne = 0.5 + valeur["f"] * pas_diviseur / coefficient["f"] + 0.5 / coefficient["f"]
+    assert abs(valeur["e"] / coefficient["f"] - valeur["f"]) <= borne, f"{nom} : f)"
+
+
+def test_les_cinq_scenarios_donnent_le_meme_montant_au_mois_et_a_l_annee(contexte):
+    """Mensuel × 12 = annuel, sur les nombres affichés, pour les cinq blocs."""
+    corps = rendre(contexte, "/", {"naissance": "1975"})[1]
+    blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
+    assert len(blocs) == 5, f"{len(blocs)} scénarios affichés, cinq attendus"
+    for bloc in blocs:
+        mensuel = _nombres(re.search(r'principal">(.*?)</span>\s*<span class="annuel',
+                                     bloc, re.S).group(1))[0]
+        annuel = _nombres(re.search(r'class="annuel">(.*?)</span>', bloc, re.S).group(1))[0]
+        # Chacun est arrondi au centime : l'écart ne peut passer 12 × 0,005 €.
+        assert abs(mensuel * 12 - annuel) <= 0.06 + 0.005, bloc[:120]
+
+
+def test_les_colonnes_derivees_de_la_page_cout_se_refont(contexte):
+    """Écarts et économies de la page Coût, reconstitués depuis les cumuls affichés.
+
+    Ces colonnes ne sont pas des mesures : ce sont des différences et des
+    rapports entre deux nombres de la même ligne ou de la ligne de référence.
+    Elles doivent donc se retrouver, aux arrondis d'affichage près.
+    """
+    corps = rendre(contexte, "/cout", {})[1]
+    tableaux = re.findall(r"<table.*?</table>", corps, re.S)
+    for tableau in tableaux:
+        lignes = _cellules(tableau)
+        entete = lignes[0] if lignes else []
+        if not any("Écart" in cellule for cellule in entete):
+            continue
+        rang_cumul = next(i for i, c in enumerate(entete) if c.startswith("Cumul"))
+        rang_ecart = next(i for i, c in enumerate(entete) if "Écart" in c)
+        rang_economie = next((i for i, c in enumerate(entete) if "économie" in c), None)
+
+        def milliards(cellule: str) -> float:
+            return float(re.search(r"(-?[\d\u202f]+(?:,\d+)?)", cellule)
+                         .group(1).replace("\u202f", "").replace(",", "."))
+
+        reference = None
+        for ligne in lignes[1:]:
+            cumul = milliards(ligne[rang_cumul])
+            if reference is None:
+                reference = cumul
+                continue
+            ecart = float(re.search(r"(-?[\d,+]+)\u202f%", ligne[rang_ecart])
+                          .group(1).replace(",", ".").lstrip("+"))
+            attendu = (cumul / reference - 1) * 100
+            assert abs(attendu - ecart) <= 0.1, f"écart : {ligne[0][:30]}"
+            if rang_economie is not None and "—" not in ligne[rang_economie]:
+                economie = milliards(ligne[rang_economie])
+                assert abs((cumul - reference) - economie) <= 1.5, (
+                    f"économie : {ligne[0][:30]}"
+                )
 
 
 def test_le_portage_javascript_arrondit_comme_python():
