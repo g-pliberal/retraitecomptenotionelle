@@ -1210,10 +1210,15 @@ métiers bascule d'une unité à l'autre. Un **lien** et non un menu, parce qu'u
 formulaire HTML ne convertit rien quand on change un menu — le nombre resterait
 celui de l'ancienne unité, et « 3 500 » deviendrait 3 500 fois le salaire moyen.
 Le lien, lui, porte l'adresse complète, unité et montants déjà traduits, si bien
-que la page revient dans l'autre unité en décrivant la même carrière. Les deux
-champs déclarent un pas assez fin pour que l'aller-retour soit sans effet :
-l'euro d'un côté, le millième de salaire moyen de l'autre — au centième, un
-aller-retour déplaçait le salaire d'un demi-pour-cent.
+que la page revient dans l'autre unité en décrivant la même carrière.
+
+L'aller-retour n'est pas exact, et il ne peut pas l'être : le multiple s'écrit au
+millième, et un millième de salaire moyen vaut **environ 3,50 € par mois**. Un
+aller-retour déplace donc le revenu d'un demi-pas au plus, plus l'arrondi à
+l'euro — **deux euros par mois** sur tout le domaine accepté, balayé euro par
+euro par un test. Le pas du champ et la précision du lien sont tenus par une
+même constante (`DECIMALES_MULTIPLE`) : s'ils divergeaient, le lien écrirait un
+nombre que le navigateur refuserait de soumettre.
 
 ### Ancrage des rémunérations
 

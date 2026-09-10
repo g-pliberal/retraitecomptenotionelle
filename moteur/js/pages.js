@@ -89,6 +89,16 @@ export const UNITES_REVENU = [
 // champ est fait pour être remplacé, et « 3 500 » se relit mieux que « 3 475 ».
 export const SALAIRE_DEFAUT = { euros_mois: 3500.0, moyen: 1.0 };
 
+// Précision du multiple du salaire moyen, en décimales et en pas. Les deux
+// doivent rester d'accord : le lien de bascule écrit un multiple arrondi à
+// DECIMALES_MULTIPLE, et un navigateur refuse de soumettre un nombre qui ne
+// tombe pas sur le `step` déclaré par le champ. Le millième n'est pas gratuit :
+// il vaut trois euros cinquante par mois, ce qui borne la fidélité d'un
+// aller-retour entre les deux unités — au centième, l'écart atteignait vingt
+// euros.
+export const DECIMALES_MULTIPLE = 3;
+export const PAS_MULTIPLE = 10 ** -DECIMALES_MULTIPLE;
+
 // Durée mensuelle de référence du SMIC : 35 heures par semaine ramenées au
 // mois, soit 151,67 heures. Elle ne sert qu'à écrire un repère à l'échelle d'un
 // salaire mensuel.
@@ -940,13 +950,8 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
     const aideMultiple = bref
       ? "en multiples du salaire moyen brut"
       : `1 = salaire moyen, soit ${g.euros(echelle.mensuel(1))} bruts par mois`;
-    // Pas de 0,001, et non de 0,05 comme autrefois : un centième de salaire
-    // moyen vaut trente-cinq euros par mois, si bien qu'un aller et retour
-    // entre les deux unités déplaçait le salaire d'un demi-pour-cent. Le
-    // navigateur refuse par ailleurs de soumettre un nombre qui ne tombe pas
-    // sur le pas déclaré, et le lien de bascule en produit.
     return g.champ(nom, "Niveau de revenu", valeur, aideMultiple, "number",
-      { min: "0.1", max: "10", step: "0.001" });
+      { min: "0.1", max: "10", step: nombreBrut(PAS_MULTIPLE) });
   }
   // « Revenu » et non « salaire » : douze des vingt-deux statuts ne sont pas
   // salariés, et un artisan n'a ni salaire ni fiche de paie. Le brut garde le
@@ -996,7 +1001,8 @@ function basculeUnite(saisie, echelle) {
   // `niveaux` ramène les montants à l'unité du modèle quelle que soit celle de
   // la saisie : la traduction dans l'autre sens part donc toujours de là.
   const valeurs = saisie.niveaux(echelle).map((niveau) => nombreBrut(
-    versLesEuros ? arrondir(echelle.mensuel(niveau), 0) : arrondir(niveau, 3),
+    versLesEuros ? arrondir(echelle.mensuel(niveau), 0)
+      : arrondir(niveau, DECIMALES_MULTIPLE),
   ));
   const remplacements = { unite_revenu: autre, salaire: valeurs[0] };
   valeurs.slice(1).forEach((valeur, index) => {
