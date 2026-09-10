@@ -2114,8 +2114,8 @@ def test_la_surcote_est_passee_a_1_25_pour_cent_au_1er_janvier_2009(simulateur):
 
     # Huit trimestres cotisés au-delà de l'âge légal et de la durée requise :
     # 50 % × (1 + 8 × 0,75 %) en 2008, 50 % × (1 + 8 × 1,25 %) en 2009.
-    assert "taux 53.00%" in taux(2008)
-    assert "taux 55.00%" in taux(2009)
+    assert "taux 53.000%" in taux(2008)
+    assert "taux 55.000%" in taux(2009)
 
 
 def test_la_surcote_parentale_se_cumule_avec_la_surcote_ordinaire(simulateur):
@@ -2130,7 +2130,7 @@ def test_la_surcote_parentale_se_cumule_avec_la_surcote_ordinaire(simulateur):
                 if p.regime == "regime_general")
     # Taux plein majoré de la surcote ordinaire (douze trimestres au-delà de
     # 64 ans), puis surcote parentale de 5 % par-dessus.
-    assert "taux 57.50%" in base.detail
+    assert "taux 57.500%" in base.detail
     assert "surcote parentale 5.00%" in base.detail
 
 
@@ -2163,9 +2163,11 @@ def test_le_regime_de_base_des_liberaux_est_calcule_en_points(simulateur):
         annee_naissance=1960, sexe="H", affiliation="profession_liberale",
         age_debut=27, age_liquidation=66, niveau_salaire=8.0,
     )
+    # La formule s'ouvre par une parenthèse quand un coefficient d'anticipation
+    # multiplie la somme de ses termes : elle se retire avant de lire le nombre.
     points_riche = float(next(p for p in simulateur.scenario_actuel.calculer(
         riche).pensions_par_regime if p.regime == "cnavpl"
-    ).detail.split(" points")[0].replace(",", ""))
+    ).detail.split(" points")[0].lstrip("(").replace(",", ""))
     annees = 66 - 27
     assert points_riche < 550 * annees
 
@@ -2356,8 +2358,8 @@ def test_le_salaire_de_reference_ne_retient_que_les_annees_du_regime(simulateur)
     seule = {p.regime: p for p in publique_seule.pensions_par_regime}
     # Même assiette des deux côtés : la pension civile ne connaît que le
     # traitement des années passées dans la fonction publique.
-    assert "SR 28,501 €" in pension["fonction_publique_etat"].detail
-    assert "SR 28,501 €" in seule["fonction_publique_etat"].detail
+    assert "SR 28,501.10 €" in pension["fonction_publique_etat"].detail
+    assert "SR 28,501.10 €" in seule["fonction_publique_etat"].detail
     # Et le salaire annuel moyen du régime général ne connaît que les années
     # privées : y verser les années publiques, plus faibles, l'abaissait.
     privee_seule = simulateur.scenario_actuel.calculer(Carriere(
@@ -2647,7 +2649,9 @@ def test_la_garantie_minimale_de_points_agirc_est_servie(simulateur):
 
     # Vingt-neuf années cotisées de 1990 à 2018, toutes garanties.
     assert agirc.montant > 0
-    assert "3,480 points" in agirc.detail
+    # Les points s'affichent au centième depuis que la formule doit se
+    # refaire : trente-quatre-cent-quatre-vingts, virgule zéro zéro.
+    assert "3,480.00 points" in agirc.detail
 
 
 def test_le_regime_de_base_des_avocats_est_forfaitaire(simulateur):

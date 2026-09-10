@@ -753,8 +753,8 @@ export class ScenarioActuel {
               fiabiliteRegime, fiabiliteService, fiabilitePoints.get(code),
             );
             details.push(
-              `${formatFixe(points, 0, true)} points × valeur de service `
-              + `${formatFixe(service, 4)} €`,
+              `${formatFixe(points, 2, true)} points × valeur de service `
+              + `${sansZerosInutiles(service, 6)} €`,
             );
           }
         }
@@ -774,17 +774,19 @@ export class ScenarioActuel {
         }
 
         fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteRegime);
+        let abattement = 1.0;
         if (!ignorerPenaliteAge) {
-          montant *= this.abattementPoints(
+          abattement = this.abattementPoints(
             periode, carriere, trimestres, requisReference, ageLiquidation,
             anneeLiquidation,
           );
+          montant *= abattement;
         }
         pensions.push({
           regime: code,
           montant,
           type_calcul: periode.type_calcul,
-          detail: details.join(" + ") || "aucun droit",
+          detail: formulePoints(details, abattement),
           fiabilite: fiabiliteRegime,
         });
         continue;
@@ -902,9 +904,12 @@ export class ScenarioActuel {
         regime: code,
         montant: salaireReference * taux * (trimestresRegime / proratisation),
         type_calcul: "annuites",
+        // Salaire de référence au centime et taux au millième : à l'euro et au
+        // centième, refaire « SR × taux × durée » ratait le montant de 1,20 €
+        // sur un régime spécial, le taux arrondi pesant à lui seul 0,89 €.
         detail: `${forfaitaire ? "forfait" : "SR"} `
-          + `${formatFixe(salaireReference, 0, true)} € `
-          + `× taux ${formatPourcentage(taux, 2)} × ${trimestresRegime}/${proratisation}`,
+          + `${formatFixe(salaireReference, 2, true)} € `
+          + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`,
         fiabilite: regime.fiabilite,
       });
     }
@@ -1027,10 +1032,16 @@ export class ScenarioActuel {
       }
       if (releve > 0) {
         for (const [indice, complement] of complements) {
+          // Le complément est DIT, pas seulement annoncé : sans lui, refaire la
+          // formule donnait la pension d'avant le minimum et l'écart restait
+          // inexpliqué — deux mille euros par an sur une petite retraite, ce
+          // qui n'est pas un détail.
           pensions[indice] = {
             ...pensions[indice],
             montant: pensions[indice].montant + complement,
-            detail: `${pensions[indice].detail}, porté au minimum contributif`,
+            detail: `${pensions[indice].detail} = `
+              + `${formatFixe(pensions[indice].montant, 2, true)} €, porté au `
+              + `minimum contributif par + ${formatFixe(complement, 2, true)} €`,
           };
         }
         total += releve;
@@ -1069,7 +1080,12 @@ export class ScenarioActuel {
           pensions[eligible.indice] = {
             ...pension,
             montant: plancher[0],
-            detail: `${pension.detail}, porté au minimum garanti`,
+            // Le complément est DIT, comme pour le minimum contributif :
+            // sans lui, refaire la formule donnait la pension d'avant le
+            // plancher, et l'écart restait sans explication.
+            detail: `${pension.detail} = `
+              + `${formatFixe(pension.montant, 2, true)} €, porté au minimum `
+              + `garanti par + ${formatFixe(complement, 2, true)} €`,
           };
         }
       }
@@ -1279,6 +1295,39 @@ const COEFFICIENT_ANTICIPATION_PLANCHER = 0.43;
  * évite qu'un flottant tout juste au-dessus d'un entier n'en fasse compter un
  * de plus.
  */
+/**
+ * Un nombre à `decimales` chiffres au plus, sans les zéros de fin.
+ *
+ * Certaines valeurs de service sont des barèmes PUBLIÉS à quatre décimales —
+ * 1,8026 € à l'Agirc-Arrco —, d'autres sont CALCULÉES et en portent bien
+ * davantage. Les tronquer toutes à quatre inventait un écart de vingt-huit
+ * centimes entre la formule affichée et le montant de la ligne ; les afficher
+ * toutes à six aurait inventé, à l'inverse, une précision que le barème n'a pas.
+ * Chacune est donc écrite à la précision qu'elle porte.
+ */
+function sansZerosInutiles(valeur, decimales) {
+  const texte = formatFixe(valeur, decimales);
+  return texte.includes(".") ? texte.replace(/\.?0+$/, "") : texte;
+}
+
+/**
+ * La formule d'un régime en points, telle qu'on doit pouvoir la refaire.
+ *
+ * Le coefficient d'anticipation multiplie la SOMME des termes, il ne s'y ajoute
+ * pas : il vient donc après, et la somme prend ses parenthèses dès qu'elle en
+ * compte plusieurs. Sans lui, la formule affichée ne retrouvait pas le montant
+ * de la ligne — à dix ans d'anticipation elle en donnait 2,3 fois trop, sans
+ * que rien à l'écran ne dise pourquoi.
+ */
+function formulePoints(termes, abattement) {
+  const formule = termes.join(" + ") || "aucun droit";
+  if (abattement === 1.0 || termes.length === 0) {
+    return formule;
+  }
+  const somme = termes.length > 1 ? `(${formule})` : formule;
+  return `${somme} × coefficient d'anticipation ${formatFixe(abattement, 4)}`;
+}
+
 export function auTrimestreSuperieur(trimestres) {
   return Math.max(0, Math.ceil(Math.round(trimestres * 1000) / 1000));
 }

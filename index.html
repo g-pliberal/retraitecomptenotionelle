@@ -142,9 +142,13 @@ function resume(titre, contenu) {
   const refus = contenu.querySelector(".erreur");
   if (refus) { return `${titre}. ${refus.textContent.trim()}`; }
 
+  // « .principal .somme », et non « .mensuel » : cette dernière classe n'a
+  // jamais existé dans le HTML rendu, si bien que le montant était toujours
+  // indéfini, la liste toujours vide, et l'annonce réduite au seul titre —
+  // exactement ce que cette région est là pour éviter.
   const scenarios = [...contenu.querySelectorAll(".scenario")].map((bloc) => {
     const nom = bloc.querySelector(".titre")?.textContent.trim();
-    const mensuel = bloc.querySelector(".mensuel")?.textContent.trim();
+    const mensuel = bloc.querySelector(".principal .somme")?.textContent.trim();
     return nom && mensuel ? `${nom} : ${mensuel} par mois` : null;
   }).filter(Boolean);
 

@@ -365,6 +365,36 @@ _PALIERS_ANTICIPATION: tuple[tuple[int, float], ...] = (
 _COEFFICIENT_ANTICIPATION_PLANCHER = 0.43
 
 
+def _sans_zeros_inutiles(valeur: float, decimales: int) -> str:
+    """Un nombre à ``decimales`` chiffres au plus, sans les zéros de fin.
+
+    Certaines valeurs de service sont des barèmes PUBLIÉS à quatre décimales —
+    1,8026 € à l'Agirc-Arrco —, d'autres sont CALCULÉES et en portent bien
+    davantage. Les tronquer toutes à quatre inventait un écart de vingt-huit
+    centimes entre la formule affichée et le montant de la ligne ; les afficher
+    toutes à six aurait inventé, à l'inverse, une précision que le barème n'a
+    pas. Chacune est donc écrite à la précision qu'elle porte.
+    """
+    return f"{valeur:.{decimales}f}".rstrip("0").rstrip(".")
+
+
+def _formule_points(termes: list[str], abattement: float) -> str:
+    """La formule d'un régime en points, telle qu'on doit pouvoir la refaire.
+
+    Le coefficient d'anticipation multiplie la SOMME des termes, il ne s'y
+    ajoute pas : il vient donc après, et la somme prend ses parenthèses dès
+    qu'elle en compte plusieurs. Sans lui, la formule affichée ne retrouvait pas
+    le montant de la ligne — à dix ans d'anticipation elle en donnait 2,3 fois
+    trop, sans que rien à l'écran ne dise pourquoi.
+    """
+    formule = " + ".join(termes) or "aucun droit"
+    if abattement == 1.0 or not termes:
+        return formule
+    if len(termes) > 1:
+        formule = f"({formule})"
+    return f"{formule} × coefficient d'anticipation {abattement:.4f}"
+
+
 def _au_trimestre_superieur(trimestres: float) -> int:
     """Nombre de trimestres arrondi à l'entier supérieur, jamais négatif.
 
@@ -1768,7 +1798,8 @@ class ScenarioActuel:
                             fiabilite_regime, fiabilite_service, fiabilite_points[code]
                         )
                         details.append(
-                            f"{points:,.0f} points × valeur de service {service:.4f} €"
+                            f"{points:,.2f} points × valeur de service "
+                            f"{_sans_zeros_inutiles(service, 6)} €"
                         )
 
                 # Années sans prix d'achat connu : le rendement instantané prend
@@ -1785,14 +1816,20 @@ class ScenarioActuel:
                     )
 
                 fiabilite_globale = min(fiabilite_globale, fiabilite_regime)
+                abattement = 1.0
                 if not ignorer_penalite_age:
-                    montant *= self._abattement_points(
+                    # Le coefficient d'anticipation multiplie le montant : sans
+                    # lui, la formule affichée ne le retrouve pas — à dix ans
+                    # d'anticipation elle en donnait deux fois trop, sans que
+                    # rien à l'écran ne dise pourquoi.
+                    abattement = self._abattement_points(
                         periode, carriere, trimestres, requis_reference,
                         age_liquidation, annee_liquidation,
                     )
+                    montant *= abattement
                 pensions.append(PensionRegime(
                     regime=code, montant=montant, type_calcul=periode.type_calcul,
-                    detail=" + ".join(details) or "aucun droit",
+                    detail=_formule_points(details, abattement),
                     fiabilite=fiabilite_regime,
                 ))
                 continue
@@ -1925,7 +1962,11 @@ class ScenarioActuel:
                 regime=code, montant=montant, type_calcul="annuites",
                 detail=(
                     f"{'forfait' if periode.pension_forfaitaire_annuelle is not None else 'SR'} "
-                    f"{salaire_reference:,.0f} € × taux {taux:.2%} "
+                    # Salaire de référence au centime et taux au millième : à
+                    # l'euro et au centième, refaire « SR × taux × durée »
+                    # ratait le montant de 1,20 € sur un régime spécial, le
+                    # taux arrondi pesant à lui seul 0,89 €.
+                    f"{salaire_reference:,.2f} € × taux {taux:.3%} "
                     f"× {trimestres_regime}/{proratisation}"
                 ),
                 fiabilite=regime.fiabilite,
@@ -2071,11 +2112,18 @@ class ScenarioActuel:
                 releve = admissible
             if releve > 0:
                 for indice, complement in complements.items():
+                    # Le complément est DIT, pas seulement annoncé : sans lui,
+                    # refaire la formule donnait la pension d'avant le minimum
+                    # et l'écart restait inexpliqué — deux mille euros par an
+                    # sur une petite retraite, ce qui n'est pas un détail.
                     pensions[indice] = replace(
                         pensions[indice],
                         montant=pensions[indice].montant + complement,
-                        detail=(pensions[indice].detail
-                                + ", porté au minimum contributif"),
+                        detail=(
+                            f"{pensions[indice].detail} = "
+                            f"{pensions[indice].montant:,.2f} €, porté au minimum "
+                            f"contributif par + {complement:,.2f} €"
+                        ),
                     )
                 total += releve
                 minimum_applique = True
@@ -2111,10 +2159,14 @@ class ScenarioActuel:
                     complement = plancher[0] - pension.montant
                     releve_garanti += complement
                     fiabilite_globale = min(fiabilite_globale, plancher[1])
+                    # Le complément est DIT, comme pour le minimum contributif :
+                    # sans lui, refaire la formule donnait la pension d'avant le
+                    # plancher, et l'écart restait sans explication.
                     pensions[eligible.indice] = replace(
                         pension,
                         montant=plancher[0],
-                        detail=pension.detail + ", porté au minimum garanti",
+                        detail=(f"{pension.detail} = {pension.montant:,.2f} €, "
+                                f"porté au minimum garanti par + {complement:,.2f} €"),
                     )
             if releve_garanti > 0:
                 total += releve_garanti
