@@ -763,10 +763,10 @@ def rendre(contexte: Contexte, chemin: str,
         saisie = Saisie(demandee=False, unite_revenu=unite,
                         salaire=SALAIRE_DEFAUT[unite])
         return TITRES["/"], (
-            _presentation() + _erreur(str(erreur)) + _formulaire(saisie, contexte)
+            _presentation(saisie) + _erreur(str(erreur)) + _formulaire(saisie, contexte)
         )
 
-    corps = _presentation() + _formulaire(saisie, contexte)
+    corps = _presentation(saisie) + _formulaire(saisie, contexte)
     if saisie.demandee:
         try:
             corps += _resultats(contexte, saisie)
@@ -788,22 +788,43 @@ def _erreur(message: str) -> str:
     return f'<div class="erreur"><strong>Saisie refusée.</strong> {escape(message)}</div>'
 
 
-def _presentation() -> str:
+def _presentation(saisie: Saisie) -> str:
+    """Ce que le simulateur calcule, et ce que ses nombres sont.
+
+    Deux conventions gouvernent tout ce que la page affiche, et le lecteur ne
+    peut deviner ni l'une ni l'autre : le moteur ne calcule que la pension du
+    PREMIER mois de retraite, et il l'écrit dans deux unités. Elles se disent
+    ici en deux paragraphes séparés, un par convention — les mêler en un seul
+    les rendait indémêlables.
+
+    Le mot « aujourd'hui » n'y paraît qu'une fois, et pour la date. Il servait
+    aussi pour l'unité, et la page enchaînait « jamais la pension d'aujourd'hui »
+    et « en euros d'aujourd'hui » à une phrase d'intervalle : deux sens du même
+    mot dans un paragraphe qui prétendait lever une confusion.
+
+    Les deux années citées sont celles de la saisie, et non des constantes
+    écrites dans le texte : le chapeau annonçait « à compter de 2026 » quand le
+    scénario 3 était calculé, à la demande du lecteur, à compter de 2035.
+    """
     return f"""
 <p class="chapeau">Ce simulateur calcule, pour une même carrière, ce que verse le
 système de retraite français tel qu'il est, et ce que verserait un système
 en <strong>comptes notionnels</strong> — pension strictement proportionnelle aux
 cotisations versées, divisée par l'espérance de vie restante à la liquidation —
 appliqué de deux façons : <strong>rétroactivement</strong> depuis 1941, ou
-seulement <strong>à compter de 2026</strong>.</p>
+seulement <strong>à compter de {saisie.bascule}</strong>.</p>
 
-<p>Les cinq montants qu'il affiche sont ceux de la <strong>première pension</strong>,
-au premier mois de retraite : celle de l'année du départ pour qui est déjà
-retraité, celle de l'année du départ à venir pour qui est encore en activité.
-Jamais la pension d'aujourd'hui d'un retraité parti il y a vingt ans. Chacun est
-donné <strong>deux fois</strong> : en euros d'aujourd'hui, et tel qu'il serait
-inscrit sur le virement le mois du départ — la conversion n'est ainsi à refaire
-de tête ni dans un sens ni dans l'autre.</p>
+<p>Pour chacun des cinq scénarios, il calcule <strong>une seule pension</strong> :
+la première, celle du premier mois de retraite. Il ne suit pas ce qu'elle
+devient ensuite. Qui est parti il y a vingt ans lit donc ce qu'il a touché à son
+départ, et non ce qu'il touche aujourd'hui ; qui n'est pas encore parti lit sa
+première pension future.</p>
+
+<p>Cette pension unique est <strong>écrite deux fois</strong>, dans deux unités :
+la somme portée sur le virement le mois du départ, et cette même somme ramenée
+au pouvoir d'achat de {saisie.euros} — c'est celle-là qui est mise en avant,
+parce qu'elle seule se compare à un salaire ou à un loyer connus. Deux écritures
+d'un même montant, jamais deux montants.</p>
 
 <div class="note"><strong>À lire avant les chiffres.</strong> Le scénario
 rétroactif n'est pas une proposition de réforme : c'est un contrefactuel, qui
