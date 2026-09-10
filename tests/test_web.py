@@ -900,6 +900,53 @@ def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
     assert execution.returncode == 0, execution.stdout + execution.stderr
 
 
+@pytest.mark.parametrize("nom,champs", [
+    ("carrière ordinaire", {"naissance": "1975"}),
+    # Un régime PROVISIONNÉ : sa rente est retirée des cinq scénarios, donc du
+    # total. Posée au-dessus de lui, sa ligne faisait un tableau qui ne
+    # s'additionnait pas — 33 176,69 + 667,12 valait 33 176,69 à l'écran.
+    ("fonctionnaire, rente RAFP",
+     {"naissance": "1960", "statut": "fonctionnaire_etat", "primes": "0.2"}),
+    # Un minimum contributif : il est déjà compris dans la ligne du régime qui
+    # le sert, et le sous-total l'en retire avant que la ligne suivante ne le
+    # rende visible.
+    ("bas salaire, minimum contributif",
+     {"naissance": "1955", "unite_revenu": "moyen", "salaire": "0.4"}),
+])
+def test_le_tableau_du_detail_s_additionne_a_l_ecran(contexte, nom, champs):
+    """Ce que la page affirme du tableau doit se vérifier sur les nombres AFFICHÉS.
+
+    Pas sur ceux du modèle : un lecteur additionne ce qu'il lit. Le contrôle
+    porte donc sur le HTML rendu, lignes de régime d'un côté, total de l'autre,
+    la ligne « hors total » exclue puisqu'elle s'annonce comme telle.
+    """
+    corps = rendre(contexte, "/", champs)[1]
+    debut = corps.index("de quoi votre pension actuelle est faite")
+    tableau = corps[debut:corps.index("</table>", debut)]
+    lignes = re.findall(r"<tr>(.*?)</tr>", tableau, re.S)
+
+    def somme(cellules: str) -> float:
+        montant = re.search(r"([\d\u202f]+,\d{2})\u202f€", cellules)
+        return float(montant.group(1).replace("\u202f", "").replace(",", "."))
+
+    regimes, total = [], None
+    for ligne in lignes[1:]:                       # la première est l'en-tête
+        if "Pension du système actuel" in ligne:
+            total = somme(ligne)
+        elif ("hors total" in ligne or "Sous-total" in ligne
+              or re.search(r"<td[^>]*>\+ ", ligne)):
+            continue
+        elif "€" in ligne:
+            regimes.append(somme(ligne))
+
+    assert total is not None, f"{nom} : pas de ligne de total"
+    assert regimes, f"{nom} : aucune ligne de régime"
+    assert sum(regimes) == pytest.approx(total, abs=0.01), (
+        f"{nom} : les lignes affichées font {sum(regimes):.2f} €, "
+        f"le total affiché {total:.2f} €"
+    )
+
+
 def test_le_portage_javascript_arrondit_comme_python():
     """Les demis, là où les deux langages divergent par défaut.
 

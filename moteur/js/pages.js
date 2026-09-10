@@ -1464,9 +1464,9 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     const amplitude = bas > 0 ? haut / bas - 1 : NaN;
     return [
       echapper(libelle),
-      g.euros(bas / 12),
-      retenus ? g.euros(retenus[scenario] / 12) : "—",
-      g.euros(haut / 12),
+      g.eurosCentimes(bas / 12),
+      retenus ? g.eurosCentimes(retenus[scenario] / 12) : "—",
+      g.eurosCentimes(haut / 12),
       g.pourcentage(amplitude),
     ];
   });
@@ -1488,10 +1488,10 @@ la dernière année observée. Ces ${g.pourcentage(projetees / total)} du calcul
 reposent sur aucune mesure : elles reposent sur l'hypothèse de croissance de la
 productivité, celle que le Conseil d'orientation des retraites fixe et révise.</p>
 <p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
-passe de ${g.euros(basse.notionnel_retroactif / 12)} à
-${g.euros(haute.notionnel_retroactif / 12)} par mois, soit
+passe de ${g.eurosCentimes(basse.notionnel_retroactif / 12)} à
+${g.eurosCentimes(haute.notionnel_retroactif / 12)} par mois, soit
 <strong>${g.pourcentage(ecart2)} d'amplitude</strong> autour des
-${g.euros(reference)} affichés plus haut.</p>
+${g.eurosCentimes(reference)} affichés plus haut.</p>
 ${g.tableau(
     ["Scénario", "Productivité 0,4 %", echapper(retenu), "Productivité 1,0 %",
       "Amplitude"],
@@ -1598,7 +1598,7 @@ function decomposition(contexte, saisie, comparaison) {
     lignes.push([
       echapper(libelle),
       `×${g.nombre(variante.notionnel_retroactif.compte.rendement_cumule, 2)}`,
-      g.euros(mensuel),
+      g.eurosCentimes(mensuel),
       g.pourcentage(variante.variation("notionnel_retroactif"), true),
     ]);
   }
@@ -1692,7 +1692,7 @@ function cascade(comparaison, saisie) {
     [`a) Droits acquis à ${saisie.bascule}`,
       "carrière arrêtée à la bascule, règles actuelles, avantages non "
       + "contributifs retirés, sans décote",
-      `${g.euros(acquis.pension_figee)} par an`],
+      `${g.eurosCentimes(acquis.pension_figee)} par an`],
     [`b) × diviseur à ${age(acquis.age_conversion)}`,
       `coefficient de conversion en ${saisie.bascule} : `
       + `${g.nombre(acquis.diviseur, 2)}`,
@@ -1708,7 +1708,7 @@ function cascade(comparaison, saisie) {
       g.euros(prospectif.capital_notionnel)],
     [`f) ÷ diviseur à ${age(ageLiquidation)}`,
       `coefficient de conversion en ${liquidation} : ${g.nombre(diviseur, 2)}`,
-      `${g.euros(prospectif.pension_annuelle)} par an`],
+      `${g.eurosCentimes(prospectif.pension_annuelle)} par an`],
   ];
 
   const partAcquis = acquis.capital / prospectif.capital_notionnel;
@@ -1736,7 +1736,7 @@ ${g.tableau(
     lignes,
     ["", "", "nombre"],
   )}
-<p>À comparer aux ${g.euros(actuel)} par an du système actuel. L'écart ne vient
+<p>À comparer aux ${g.eurosCentimes(actuel)} par an du système actuel. L'écart ne vient
 d'aucun abattement appliqué au scénario 1 : il vient de ce que le capital
 réellement constitué, ${g.euros(prospectif.capital_notionnel)}, ne finance pas
 les ${g.euros(actuel * diviseur)} que le droit en vigueur promet sur
@@ -1771,15 +1771,23 @@ function detail(contexte, comparaison) {
       + `pouvoir d'achat de ${anneeReference}.`
     : "Le départ tombant sur l'année de référence, c'est aussi l'unité des "
       + "cinq montants affichés plus haut.";
-  const lignesActuel = pensions.map((pension) => [
+  // Les régimes PROVISIONNÉS sont sortis du tableau principal : leur rente ne
+  // fait pas partie du total, et une ligne posée au-dessus d'un total qui
+  // l'ignore fait un tableau qui ne s'additionne pas — 33 176,69 + 667,12
+  // valait 33 176,69 à l'écran, sous une phrase affirmant le contraire. Elle est
+  // reportée sous le total, où son exclusion se lit.
+  const ligne = (pension) => [
     echapper(nomRegime(pension.regime)),
-    g.euros(pension.montant),
+    g.eurosCentimes(pension.montant),
     g.franciser(echapper(pension.detail)),
-  ]);
+  ];
+  const repartis = pensions.filter((p) => !catalogue.obtenir(p.regime).hors_repartition);
+  const provisionnes = pensions.filter((p) => catalogue.obtenir(p.regime).hors_repartition);
+  const lignesActuel = repartis.map(ligne);
   if (lignesActuel.length > 0 && actuel.avantages_appliques.length > 0) {
     lignesActuel.push([
       "<strong>Sous-total contributif</strong>",
-      `<strong>${g.euros(actuel.total_contributif)}</strong>`,
+      `<strong>${g.eurosCentimes(actuel.total_contributif)}</strong>`,
       '<span class="discret">ce que la carrière a ouvert par ses seules '
       + "cotisations</span>",
     ]);
@@ -1787,16 +1795,24 @@ function detail(contexte, comparaison) {
   for (const avantage of actuel.avantages_appliques) {
     lignesActuel.push([
       `+ ${echapper(avantage.libelle)}`,
-      g.euros(avantage.montant),
+      g.eurosCentimes(avantage.montant),
       `<span class="discret">${echapper(avantage.detail)}</span>`,
     ]);
   }
   if (lignesActuel.length > 0) {
     lignesActuel.push([
       "<strong>Pension du système actuel</strong>",
-      `<strong>${g.euros(actuel.pension_annuelle)}</strong>`,
+      `<strong>${g.eurosCentimes(actuel.pension_annuelle)}</strong>`,
       '<span class="discret">c\'est le scénario 1 ci-dessus, pris dans les '
       + "euros de son année de départ</span>",
+    ]);
+  }
+  for (const pension of provisionnes) {
+    const [libelle, montant, detail] = ligne(pension);
+    lignesActuel.push([
+      `hors total — ${libelle}`, montant,
+      '<span class="discret">régime PROVISIONNÉ, servi à part et retiré des '
+      + "cinq scénarios</span> · " + detail,
     ]);
   }
 
@@ -1813,7 +1829,7 @@ function detail(contexte, comparaison) {
   if (actuel.avantages_appliques.length > 0 && actuel.pension_annuelle > 0) {
     const gratuit = actuel.avantages_appliques
       .reduce((somme, a) => somme + a.montant, 0.0);
-    part = `<p>Les avantages non contributifs pèsent ${g.euros(gratuit)} par an, `
+    part = `<p>Les avantages non contributifs pèsent ${g.eurosCentimes(gratuit)} par an, `
       + `soit ${g.pourcentage(gratuit / actuel.pension_annuelle)} de la `
       + "pension. C'est exactement ce que les deux scénarios notionnels "
       + "retirent : ils ne conservent que le sous-total contributif, et le "
@@ -1832,7 +1848,7 @@ function detail(contexte, comparaison) {
       ["Divisé par le coefficient de conversion",
         `${g.nombre(retro.conversion.diviseur, 2)} (${echapper(retro.conversion.table)})`],
       [`Pension annuelle, en euros de ${annee}`,
-        g.euros(retro.pension_annuelle)],
+        g.eurosCentimes(retro.pension_annuelle)],
     ],
     ["", "nombre"],
   );
@@ -1845,8 +1861,10 @@ calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une autre
 année ferait des totaux faux.</p>
 <h3>Scénario 1 — de quoi votre pension actuelle est faite</h3>
 <p>Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute
-par-dessus. Les lignes s'additionnent exactement : le total est la pension du
-scénario 1.</p>
+par-dessus. Le total est la pension du scénario 1. Un minimum, lui, est déjà
+compris dans la ligne du régime qui le sert : le sous-total contributif l'en
+retire, et la ligne suivante le rend visible — c'est la même somme, comptée une
+fois.</p>
 ${regimes}
 ${part}
 <h3>Scénario 2 — construction du compte notionnel rétroactif</h3>
