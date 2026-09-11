@@ -2058,6 +2058,35 @@ Trois assiettes ont dû être ajoutées au moteur, qui n'en connaissait aucune
 au-delà d'un plafond pour ce type de régime : `plafonnee_3_pass`,
 `plafonnee_4_pass` et `tranche_1_4_pass`.
 
+**Le RCI lui-même y a gagné deux tranches et une hausse.** Sa fiche portait une
+seule période, 7 % arrêtés au plafond de la Sécurité sociale, et annonçait en
+note « 7 % sous plafond, 8 % au-delà » — mais la seconde tranche n'était portée
+par aucune période et ne prélevait donc rien. Tout revenu d'indépendant
+au-dessus du plafond échappait à la complémentaire. Le même dépouillement la
+rétablit, et ajoute la hausse de 2025 : **8,1 %** et **9,1 %**.
+
+| | Sous le plafond | Au-delà, jusqu'à 4 plafonds |
+|---|---|---|
+| 2013-2024 | 7,0 % | 8,0 % |
+| 2025- | 8,1 % | 9,1 % |
+
+**Et la date d'un état n'est pas celle de son effet.** L'état qui porte 8,1 % et
+9,1 % entre en vigueur le 7 juillet 2024, mais précise que, conformément à
+l'article 6 du décret n° 2024-688 du 5 juillet 2024, ces dispositions
+s'appliquent aux cotisations « dues au titre des périodes courant à compter du
+1<sup>er</sup> janvier 2025 ». Se fier à la date de version, comme le faisait
+d'abord le récupérateur, prélevait ce taux un an trop tôt. C'est la seule
+clause de ce genre parmi les états lus des quatre articles, et elle suffit à
+interdire la date de version comme repère.
+
+Ce que la seconde tranche déplace, artisan né en 1975, carrière de 25 à 64 ans :
+
+| Revenu | Pension actuelle | Pension notionnelle |
+|---|---|---|
+| 1 × salaire moyen | 27 532 -> 28 011 € (+1,7 %) | 22 711 -> 22 735 € |
+| 1,5 × | 32 712 -> 35 534 € (+8,6 %) | 29 803 -> 30 656 € (+2,9 %) |
+| 2,5 × | 35 134 -> 44 583 € (**+26,9 %**) | 39 889 -> 43 205 € (+8,3 %) |
+
 **Ce qui reste ouvert sur ces deux fiches.** Le plus ancien état de D. 635-6
 est du 21 décembre 1985 : les six premières années du régime des artisans,
 **1979-1984**, ne sont couvertes par aucune version datée. La fiche y porte le
@@ -2355,7 +2384,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 390 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 521 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
