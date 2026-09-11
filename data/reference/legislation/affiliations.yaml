@@ -199,6 +199,19 @@ affiliations:
       à la création de l'Arrco : les six années intermédiaires ne relèvent que
       du régime général, comme pour tout salarié du privé de cette période.
 
+  ministre_du_culte:
+    libelle: Ministre du culte ou membre d'une congrégation religieuse
+    periodes:
+      - {debut: 1979, fin: null, regimes: [cavimac]}
+    note: >-
+      Avant 1979, aucun régime obligatoire : la loi du 2 janvier 1978 crée
+      celui-ci et ses cotisations commencent au 1er janvier 1979. Les années
+      antérieures ne portent donc aucun droit, ce qui est le droit lui-même et
+      non une lacune du modèle. Le statut n'est PAS marqué `sans_employeur` :
+      la congrégation joue le rôle d'employeur et l'article R. 382-90 met à sa
+      charge la part patronale du régime général, que les scénarios 4 et 5
+      doivent donc compter.
+
   sans_activite:
     libelle: Sans activité professionnelle
     periodes:

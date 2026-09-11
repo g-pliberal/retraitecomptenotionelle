@@ -619,7 +619,13 @@ export class ScenarioActuel {
             pass, this.macro.smic_horaire.valeur(ligne.annee),
           ) * (periode.assiette_repere_smic !== null
             && periode.assiette_repere_smic !== undefined ? part : 1.0);
-          if (periode.assiette_plancher && assiette < repere) {
+          if (periode.assiette_forfaitaire) {
+            // Assiette FORFAITAIRE : le régime des cultes cotise sur un
+            // forfait égal au SMIC mensuel, quel que soit le revenu —
+            // inconditionnel, là où assiette_plancher ne relève que les
+            // assiettes trop basses.
+            assiette = repere;
+          } else if (periode.assiette_plancher && assiette < repere) {
             // Assiette minimale : la complémentaire agricole cotise sur
             // 1 820 SMIC même quand le revenu est en dessous.
             assiette = repere;
@@ -1075,7 +1081,15 @@ export class ScenarioActuel {
         }
         const pension = pensions[eligible.indice];
         if (pension.montant > 0 && pension.montant < plancher[0]) {
-          releveGaranti += plancher[0] - pension.montant;
+          // Le complément était calculé en ligne et jamais nommé, alors que la
+          // phrase juste dessous le cite : `complement` n'existait pas dans
+          // cette portée — seulement dans la boucle du minimum contributif, au
+          // -dessus — et toute carrière passant ici faisait tomber le moteur
+          // JavaScript sur « complement is not defined » quand le Python, lui,
+          // rendait sa pension. Le Python nomme la variable ; le portage ne le
+          // faisait pas.
+          const complement = plancher[0] - pension.montant;
+          releveGaranti += complement;
           fiabiliteGlobale = Math.min(fiabiliteGlobale, plancher[1]);
           pensions[eligible.indice] = {
             ...pension,

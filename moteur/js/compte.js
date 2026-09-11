@@ -385,7 +385,13 @@ export class ConstructeurCompte {
           this.macro.plafond_securite_sociale.valeur(annee),
           this.macro.smic_horaire.valeur(annee),
         ) * part;
-        if (periode.assiette_plancher && assiette < repere) {
+        if (periode.assiette_forfaitaire) {
+          // Assiette FORFAITAIRE : le régime des cultes cotise sur un
+          // forfait égal au SMIC mensuel, quel que soit le revenu —
+          // inconditionnel, là où assiette_plancher ne relève que les
+          // assiettes trop basses.
+          assiette = repere;
+        } else if (periode.assiette_plancher && assiette < repere) {
           // Assiette minimale : la complémentaire agricole prélève sur
           // 1 820 SMIC même quand le revenu est en dessous. Ce qui a été
           // prélevé ouvre des droits, ici comme dans le scénario 1.

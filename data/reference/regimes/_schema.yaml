@@ -285,6 +285,17 @@ champs_periode:
       cent points même à un revenu plus faible.
     defaut: false
 
+  assiette_forfaitaire:
+    description: >-
+      L'assiette EST le repère, quel que soit le revenu — et non un plancher.
+      C'est la base forfaitaire du régime des cultes : les articles R. 382-89
+      et R. 382-90 l'égalent au SMIC mensuel, que l'assuré perçoive davantage,
+      moins, ou rien du tout. Un ministre du culte n'a pas de salaire dont on
+      prélèverait une fraction ; la congrégation et lui cotisent sur un
+      forfait. Suppose un repère : `assiette_repere_smic`, ou une borne haute
+      d'assiette à défaut.
+    defaut: false
+
   avantages_non_contributifs:
     description: >-
       Liste des droits gratuits en vigueur sur la période. Tous sont NEUTRALISÉS

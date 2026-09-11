@@ -471,7 +471,15 @@ class ConstructeurCompte:
                     self.macro.plafond_securite_sociale(annee),
                     self.macro.smic_horaire(annee),
                 ) * part
-                if periode.assiette_plancher and assiette < repere:
+                if periode.assiette_forfaitaire:
+                    # Assiette FORFAITAIRE : le régime des cultes ne prélève pas
+                    # une fraction d'un revenu, il prélève sur un forfait égal au
+                    # SMIC mensuel (R. 382-89 et R. 382-90), que l'assuré
+                    # perçoive davantage, moins, ou rien. Le remplacement est
+                    # donc inconditionnel, là où `assiette_plancher` ne relève
+                    # que les assiettes trop basses.
+                    assiette = repere
+                elif periode.assiette_plancher and assiette < repere:
                     # Assiette minimale : la complémentaire agricole prélève sur
                     # 1 820 SMIC même quand le revenu est en dessous. Ce qui a
                     # été prélevé ouvre des droits, ici comme dans le scénario 1.
