@@ -1200,7 +1200,27 @@ institutions:
           lisible, ou site dont les liens ne s'exposent pas en HTML simple.
           Ce qui distingue la CARMF et l'IRCEC n'est donc pas la transparence
           en général mais un fait précis : elles publient de quoi RECONSTITUER
-          le prix du point. Lire docs/limites.md avant de refaire le trajet.
+          le prix du point.
+          SECONDE PASSE, avec un lecteur de pages qui rend le texte là où une
+          requête simple ne voyait rien. Aucune fiche de plus, mais trois
+          constats. Le RENDEMENT est souvent publié là où le prix du point ne
+          l'est pas — la CAVEC écrit que 1 000 € de cotisations génèrent 83 €
+          de pension annuelle, soit 8,33 %, exactement ce que
+          rendements_points.csv consomme : chercher le rendement D'ABORD.
+          Plusieurs sections sont PAR CLASSES et non proportionnelles, ce qui
+          n'est pas une donnée manquante mais une forme que le dépôt ne sait
+          pas exprimer — CAVEC neuf classes, 1 841 points, point à 1,3850 € ;
+          CAVP classes plus part capitalisée ; c'est la forme du RAAP d'avant
+          2017. Et le chiffre qui manque à la CARPIMKO N'EXISTE PAS ENCORE :
+          passée au 1er janvier 2026 à 8,70 % entièrement proportionnels,
+          valeur de service 21,48 €, elle n'a pas publié son taux de conversion
+          en points — la Fédération nationale des orthophonistes répond « dès
+          que les textes définitifs seront publiés ». Donnée à attendre, et
+          elle débloquera la plus grosse population libérale absente.
+          Chiffré rapporté pour la prochaine passe : CARPIMKO 8,70 % et
+          21,48 € ; CAVEC 8,33 %, 1,3850 €, 1 841 points ; CAVAMAC 0,4082 € au
+          01/01/2025.
+          Lire docs/limites.md avant de refaire le trajet.
 
       - id: carmf_chiffres_cles
         titre: Chiffres clés du régime complémentaire des médecins (CARMF)

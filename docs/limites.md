@@ -2171,6 +2171,46 @@ point — la première en donnant le nombre maximal de points et la cotisation q
 les ouvre, la seconde en donnant directement l'achat, le service ET le
 rendement.
 
+### Une seconde passe, et trois choses qu'elle a corrigées
+
+Le relevé ci-dessus a été refait avec un lecteur de pages qui rend le texte là
+où une simple requête ne voyait rien. Il n'en sort **aucune fiche de plus**,
+mais trois constats qui changent la carte.
+
+**Le RENDEMENT est souvent publié là où le prix du point ne l'est pas.** La
+CAVEC écrit que « 1 000 € de cotisations génèrent environ 83 € de pension
+annuelle » — un rendement technique de **8,33 %**, c'est-à-dire exactement la
+grandeur que `regimes/rendements_points.csv` consomme. L'IRCEC fait de même. La
+prochaine tentative doit donc chercher le rendement d'abord, et le prix du
+point seulement ensuite : c'est l'inverse de l'ordre suivi ici.
+
+**Plusieurs sections ne sont pas proportionnelles mais PAR CLASSES**, et c'est
+un obstacle d'une autre nature qu'une donnée manquante : il n'y a pas de taux à
+écrire dans une fiche. La CAVEC a neuf classes depuis 2026, jusqu'à 1 841 points
+par an, point à 1,3850 € ; la CAVP mêle des classes à une part capitalisée.
+C'est la même forme que le RAAP d'avant 2017, et le dépôt ne sait pas encore
+l'exprimer.
+
+**Et un chiffre manquait parce qu'il n'existe pas encore.** La CARPIMKO est
+passée au 1<sup>er</sup> janvier 2026 à un complémentaire entièrement
+proportionnel — 8,70 % entre un demi et trois plafonds, valeur de service
+21,48 € — mais le taux de conversion des cotisations en points n'est pas publié.
+Interrogée, la Fédération nationale des orthophonistes répond : « nous
+reviendrons vers vous dès que les textes définitifs seront publiés ». Ce n'est
+donc pas une donnée introuvable, c'est une donnée **à attendre**, et elle
+débloquera la plus grosse population libérale encore absente.
+
+Ce que la seconde passe a rapporté de chiffré, pour que la troisième reparte de
+là : CARPIMKO 8,70 % et 21,48 € de valeur de service ; CAVEC rendement 8,33 %,
+point à 1,3850 €, 1 841 points maximum sur neuf classes ; CAVAMAC valeur de
+service 0,4082 € au 1<sup>er</sup> janvier 2025.
+
+**Le recueil statistique de la CNAVPL a été rouvert et refermé.** Il nomme les
+dix sections et porte une table « Valeur de service du point » — mais sa mise en
+page ne se reconstitue pas : quatre lignes pour cent soixante-seize mille
+caractères. C'est ce que `scripts/fetch/cnavpl_recueils.py` disait déjà, et qui
+est ici confirmé plutôt que contourné.
+
 **Et ceux qu'on n'a pas cherchés** : régimes des élus locaux, de l'Assemblée
 nationale et du Sénat, des chambres de commerce, et les régimes en extinction
 d'outre-mer. Populations très petites, aucun barème en accès ouvert, et aucune
