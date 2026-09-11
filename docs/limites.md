@@ -2142,10 +2142,34 @@ publié tel quel par la caisse.
 * **toute série historique pour la CARMF** : la caisse ne publie que l'année en
   cours, et les chiffres de 2026 sont appliqués à toute la période.
 
-**Les neuf autres sections libérales restent dehors**, et pas toutes pour la
-même raison. La CARPIMKO publie son taux — 8,70 % sur l'assiette comprise entre
-un demi et trois plafonds — mais pas sa valeur de point, sans laquelle une
-cotisation ne se convertit pas en pension. Les autres n'ont pas été relevées.
+**Les autres sections ont été relevées une par une, et le mur est toujours le
+même.** Il ne tient pas au taux — presque toutes le publient — mais au **PRIX
+D'ACHAT DU POINT**, sans lequel une cotisation ne devient pas une pension. Voici
+ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
+
+| Caisse | Taux du complémentaire | Valeur de service | Prix d'achat |
+|---|---|---|---|
+| **CARMF**, médecins | 11,8 % jusqu'à 3,5 plafonds | 77,14 € (2026) | déduit : 11,52 points pour 19 849 € → **1 723 €**. FICHE ÉCRITE |
+| **IRCEC**, artistes-auteurs | 8 % jusqu'à 3 plafonds | 9,75 € (2026) | **90,30 €**, publié. FICHE ÉCRITE |
+| **CAVAMAC**, agents d'assurance | 6,30 % créateur de droits, taux d'appel 121,6 % → 7,66 % effectif, plus 2,50 % versés par les compagnies mandantes | 0,4082 € (2025) | **absent** |
+| **CARPIMKO**, auxiliaires médicaux | 8,70 % entre un demi et trois plafonds | absente | **absent** |
+| **CAVP**, pharmaciens | régime MIXTE : part en répartition forfaitaire de 7 657 € (taux d'appel 105,4 % en 2026), part en CAPITALISATION de 2 906 à 17 436 € selon la classe | absente | **absent** |
+| **CAVOM**, officiers ministériels | les taux publiés sont ceux de la base CNAVPL, pas du complémentaire | absente | **absent** |
+| CAVEC, CARCDSF, CARPV, CIPAV, CRN | non aboutis : pages sans barème lisible, ou site dont les liens ne s'exposent pas en HTML simple | — | — |
+
+Deux remarques que ce relevé impose. La première : **la CAVP n'est pas un régime
+en répartition pure**, son étage complémentaire mêle une part répartie et une
+part capitalisée par classes — le dépôt saurait le dire, avec son drapeau
+`hors_repartition`, mais pas le chiffrer. La seconde : les notices PDF, qui
+semblaient la piste la plus prometteuse, ne portent pas davantage le prix
+d'achat — celle de la CAVP, dix-neuf mille caractères, dit seulement que « les
+points acquis dans ce régime varient selon le montant des cotisations versées ».
+
+Ce qui distingue la CARMF et l'IRCEC des autres n'est donc pas la transparence
+en général, mais un fait précis : elles publient de quoi RECONSTITUER le prix du
+point — la première en donnant le nombre maximal de points et la cotisation qui
+les ouvre, la seconde en donnant directement l'achat, le service ET le
+rendement.
 
 **Et ceux qu'on n'a pas cherchés** : régimes des élus locaux, de l'Assemblée
 nationale et du Sénat, des chambres de commerce, et les régimes en extinction
