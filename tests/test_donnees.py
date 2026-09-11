@@ -618,6 +618,45 @@ def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
         assert len(raison.split()) >= 10, f"{code} : raison trop courte pour être une raison"
 
 
+def test_le_salaire_de_reference_se_borne_a_sa_tranche():
+    """Une période à borne basse ne liquide que la part du salaire qui lui revient.
+
+    Le personnel navigant est le premier régime en ANNUITÉS du catalogue dont
+    le barème est écrit tranche par tranche : l'article R. 426-16-1 attribue
+    1,85 % par annuité à la première tranche et 1,4 % à la seconde. Les deux
+    sont deux périodes simultanées de la même fiche, et sans découpage elles
+    calculeraient l'une et l'autre le salaire moyen ENTIER — la seconde
+    paierait une deuxième fois sur ce que la première a déjà payé.
+
+    Le découpage ne touche que les assiettes dont la borne basse n'est pas
+    nulle. `plafonnee`, `tranche_1` et `tranche_a` partent de zéro et gardent
+    le chemin d'avant : c'est ce que la seconde moitié du test vérifie, et
+    c'est pourquoi aucun chiffre du catalogue n'a bougé.
+    """
+    from dataclasses import replace
+
+    def borne(assiette: str, revenu: float, pass_annuel: float) -> float:
+        modele = CatalogueRegimes(RACINE_DONNEES)["regime_general"].periodes[0]
+        periode = replace(modele, assiette=assiette)
+        basse, haute = periode.bornes_assiette_en_euros(pass_annuel)
+        if basse > 0:
+            return max(0.0, min(revenu, haute or revenu) - basse)
+        return revenu
+
+    pass_annuel = 46_368.0
+    # Un revenu de deux plafonds et demi, découpé comme le ferait le moteur.
+    revenu = 2.5 * pass_annuel
+    assert borne("tranche_1_4_pass", revenu, pass_annuel) == pytest.approx(
+        1.5 * pass_annuel
+    ), "la seconde tranche doit s'arrêter à ce qui dépasse le plafond"
+    assert borne("plafonnee", revenu, pass_annuel) == revenu, (
+        "une assiette partant de zéro n'est pas découpée ici — le plafonnement "
+        "reste à la charge de `plafonner`"
+    )
+    # Un revenu sous le plafond ne laisse rien à la seconde tranche.
+    assert borne("tranche_1_4_pass", 0.4 * pass_annuel, pass_annuel) == 0.0
+
+
 def test_la_cavimac_ne_derive_jamais_du_regime_general(catalogue):
     """Le régime des cultes n'a aucun taux à lui, et ne doit pas en prendre un.
 

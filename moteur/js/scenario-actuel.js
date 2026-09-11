@@ -190,6 +190,19 @@ export class ScenarioActuel {
       } else {
         revenu = assietteDeReference(periode, ligne);
       }
+      // TRANCHE DE SALAIRE. Un régime qui liquide tranche par tranche — le
+      // personnel navigant, 1,85 % par annuité sur la première et 1,4 % sur la
+      // seconde (R. 426-16-1) — a besoin du salaire de SA tranche, sans quoi
+      // les deux périodes simultanées calculeraient le même salaire moyen.
+      // N'affecte que les assiettes à borne basse non nulle : celles qui
+      // partent de zéro passent par `plafonner` comme avant.
+      const [borneBasse, borneHaute] = periode.bornesAssietteEnEuros(
+        this.macro.plafond_securite_sociale.valeur(ligne.annee)
+          * ligne.fraction_annee,
+      );
+      if (borneBasse > 0) {
+        revenu = Math.max(0.0, Math.min(revenu, borneHaute || revenu) - borneBasse);
+      }
       if (plafonner) {
         // Le plafond se proratise sur les mois travaillés : l'année d'entrée
         // dans la vie active n'est pas pleine.

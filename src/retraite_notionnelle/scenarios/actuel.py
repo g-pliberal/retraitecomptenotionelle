@@ -1206,6 +1206,26 @@ class ScenarioActuel:
                 revenu = ligne.revenu_avpf
             else:
                 revenu = _assiette_de_reference(periode, ligne)
+            # TRANCHE DE SALAIRE. Un régime qui liquide TRANCHE PAR TRANCHE —
+            # le personnel navigant, dont l'article R. 426-16-1 attribue
+            # 1,85 % par annuité à la première et 1,4 % à la seconde — a
+            # besoin que son salaire de référence soit celui de SA tranche, et
+            # non le salaire entier. Sans quoi les deux périodes simultanées
+            # calculeraient le même salaire moyen et la seconde paierait une
+            # deuxième fois sur la première.
+            #
+            # Le découpage ne s'applique qu'aux assiettes dont la borne basse
+            # n'est pas nulle : `plafonnee`, `tranche_1` et `tranche_a` partent
+            # de zéro et continuent de passer par `plafonner` ci-dessous,
+            # exactement comme avant. Aucun régime en annuités du catalogue
+            # n'utilisait de tranche à borne basse avant celui-ci : ce bloc ne
+            # déplace donc aucun chiffre existant.
+            borne_basse, borne_haute = periode.bornes_assiette_en_euros(
+                self.macro.plafond_securite_sociale(ligne.annee)
+                * ligne.fraction_annee
+            )
+            if borne_basse > 0:
+                revenu = max(0.0, min(revenu, borne_haute or revenu) - borne_basse)
             if plafonner:
                 # Le plafond se proratise sur les mois travaillés : l'année
                 # d'entrée dans la vie active n'est pas pleine, et un plafond
