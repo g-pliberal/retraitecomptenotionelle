@@ -2024,6 +2024,47 @@ Le mineur est corrigé par le routage seul — l'Arrco existe au catalogue et
 couvre la période. Les deux autres appelaient les fiches manquantes, que le
 RCI nommait déjà dans son propre `succede_a` sans que le catalogue les porte.
 
+**Et il a fallu aller chercher leurs taux.** Aucune source ouverte ne les porte
+en série : OpenFisca-France-Pension ne modélise les indépendants qu'à partir du
+RCI de 2013, et les barèmes IPP, sa source amont, couvrent la CANCAVA et
+l'ORGANIC — les régimes de BASE — mais pas leur étage complémentaire. Ils sont
+pourtant écrits, décret par décret, dans le code de la sécurité sociale, et la
+base LEGI en garde chaque version datée. `scripts/fetch/dila_legi_rci.py` la
+lit en flux, comme celui de la MSA, et retient quatre articles : **D. 635-6**
+puis **D. 635-7** pour les artisans, **D. 635-10** pour les commerçants, et
+**D. 635-4** pour l'assiette d'avant 2004 — trois fois le plafond, sans quoi
+les taux porteraient sur la mauvaise borne.
+
+| | Artisans (D. 635-6, puis D. 635-7) | Commerçants (D. 635-10) |
+|---|---|---|
+| 1985-1996 | 4,50 % (4,40 + 0,10 additionnelle) | — |
+| 1997 / 1998 / 1999 | 4,90 % / 5,30 % / 5,70 % | — |
+| 2000-2002 | 6,00 % | — |
+| 2003 / 2004 | 6,20 % / 6,70 % | 4,00 % en 2004 |
+| 2005-2007 | 7,00 %, assiette portée à 4 plafonds | 6,50 % |
+| 2008-2012 | 7,20 % sous le plafond, 7,60 % au-delà | 6,50 % |
+
+Trois rédactions coexistent et il faut les trois : le taux unique, le taux
+augmenté d'une **cotisation additionnelle** — l'état de 1985 pose 4,40 % puis
+0,10 % en sus, et les deux lignes se cumulent —, et le découpage en **deux
+tranches** de 2008, dont l'article fixe la borne à 33 276 € pour cette
+année-là : c'est exactement le plafond de la Sécurité sociale de 2008, d'où une
+borne exprimée en plafonds comme les autres. Une quatrième forme n'apparaît
+qu'une fois : 2004 est écrite en demi-exercices pour les commerçants — 3,5 %
+puis 4,5 % —, ramenés à 4 % sur l'année, la convention du dépôt étant un taux
+annuel.
+
+Trois assiettes ont dû être ajoutées au moteur, qui n'en connaissait aucune
+au-delà d'un plafond pour ce type de régime : `plafonnee_3_pass`,
+`plafonnee_4_pass` et `tranche_1_4_pass`.
+
+**Ce qui reste ouvert sur ces deux fiches.** Le plus ancien état de D. 635-6
+est du 21 décembre 1985 : les six premières années du régime des artisans,
+**1979-1984**, ne sont couvertes par aucune version datée. La fiche y porte le
+taux de 1985 et le dit. Et les taux, s'ils viennent du texte officiel, sont
+saisis au niveau `haute` et non `certifiee` : rien ne les recontrôle
+automatiquement, faute d'entrée dans `controle_vraisemblance_cotisations`.
+
 **Cinq fiches qu'aucun statut n'atteignait.** L'AVTS, l'IGRANTE, la SEITA, le
 port de Strasbourg et les chemins de fer secondaires étaient au catalogue,
 comptés dans les trente-sept, et inatteignables : jamais calculés. Les trois

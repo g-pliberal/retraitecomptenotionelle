@@ -177,8 +177,8 @@ regimes:
   - code: rco_artisans
     nom: Régime complémentaire obligatoire des artisans
     famille: non_salarie
-    source_id: cor_panorama_regimes
-    fiabilite: estimee
+    source_id: dila_legi_rci
+    fiabilite: haute
     creation: 1979
     fermeture: 2012
     extinction: 2013
@@ -186,10 +186,173 @@ regimes:
     integre_dans: rci
     population: >-
       Artisans. Étage complémentaire obligatoire créé en 1979, au-dessus du
-      régime de base aligné depuis 1973 ; fondu dans le RCI au 1er janvier 2013.
+      régime de base aligné sur le régime général depuis 1973 ; fondu dans le
+      RCI au 1er janvier 2013.
     hors_repartition: false
     periodes:
       - debut: 1979
+        fin: 1984
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0440
+        notes: >-
+          Taux le plus ancien que porte le code : l'état de l'article au 21 décembre 1985, le premier que garde la base LEGI, fixe 4,40 %. Que ce taux ait valu depuis la création du régime en 1979 n'est PAS établi — c'est la seule période de cette fiche qui ne s'appuie sur aucun état daté, et elle est à certifier.
+      - debut: 1985
+        fin: 1996
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0450
+        notes: >-
+          D. 635-6, état du 21 décembre 1985 : 4,40 %, plus une cotisation additionnelle de 0,10 % due à compter du 1er janvier 1985. Assiette : trois fois le plafond (D. 635-4).
+      - debut: 1997
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0490
+        notes: >-
+          D. 635-6, état du 26 février 1997, qui échelonne quatre hausses.
+      - debut: 1998
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0530
+        notes: >-
+          D. 635-6, même état.
+      - debut: 1999
+        fin: 1999
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0570
+        notes: >-
+          D. 635-6, même état.
+      - debut: 2000
+        fin: 2002
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0600
+        notes: >-
+          D. 635-6, même état.
+      - debut: 2003
+        fin: 2003
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0620
+        notes: >-
+          D. 635-6, état du 29 octobre 2003, qui échelonne 2003, 2004 et 2005.
+      - debut: 2004
+        fin: 2004
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0670
+        notes: >-
+          D. 635-6, même état.
+      - debut: 2005
+        fin: 2007
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_4_pass
+        taux_cotisation_retraite: 0.0700
+        notes: >-
+          D. 635-7, état du 24 août 2004 : 7 %, et l'assiette passe de trois à quatre fois le plafond.
+      - debut: 2008
         fin: 2012
         type_calcul: points
         age_ouverture: 60
@@ -200,27 +363,37 @@ regimes:
         age_taux_plein_par_generation: true
         decote_par_generation: true
         salaire_reference: carriere_entiere
-        assiette: plafonnee
-        taux_cotisation_retraite: 0.07
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0720
         notes: >-
-          TAUX REPRIS DU RÉGIME SUCCESSEUR, faute de série publiée : le RCI
-          prélève 7 % sous plafond depuis 2013, et c'est ce taux qui est
-          appliqué en amont — le même procédé que la part patronale du public,
-          et pour la même raison. Ce qui est certain, et qui motive la fiche,
-          c'est que le régime EXISTAIT : `affiliations.yaml` y envoyait
-          l'artisan de 1979 à 2005 par le code `rci`, dont aucune période ne
-          couvre ces années, si bien que vingt-sept ans de complémentaire ne
-          portaient RIEN au compte notionnel. Un taux estimé dit ce qu'un
-          silence taisait. À certifier auprès de la caisse.
+          D. 635-7, état du 1er janvier 2008 : le taux se découpe en deux tranches. Première tranche, 7,2 %, sous un plafond que l'article fixe à 33 276 € pour 2008 — c'est exactement le plafond de la Sécurité sociale de cette année-là, d'où la borne d'un plafond.
+      - debut: 2008
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: tranche_1_4_pass
+        taux_cotisation_retraite: 0.0760
+        notes: >-
+          D. 635-7, même état : seconde tranche, 7,6 % au-delà du plafond et jusqu'à quatre fois celui-ci.
 
   - code: nric
     nom: Nouveau régime complémentaire des industriels et commerçants
     famille: non_salarie
-    source_id: cor_panorama_regimes
-    fiabilite: estimee
+    source_id: dila_legi_rci
+    fiabilite: haute
     creation: 2004
     fermeture: 2012
     extinction: 2013
@@ -233,6 +406,24 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 2004
+        fin: 2004
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0400
+        notes: >-
+          D. 635-10, état du 24 août 2004 : 3,5 % au premier semestre et 4,5 % au second, soit 4 % sur l'année — la convention du dépôt étant un taux annuel, c'est la moyenne des deux semestres qui est portée.
+      - debut: 2005
         fin: 2012
         type_calcul: points
         age_ouverture: 60
@@ -243,17 +434,13 @@ regimes:
         age_taux_plein_par_generation: true
         decote_par_generation: true
         salaire_reference: carriere_entiere
-        assiette: plafonnee
-        taux_cotisation_retraite: 0.07
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0650
         notes: >-
-          Même réserve que pour la complémentaire des artisans : le taux est
-          celui du RCI, son successeur, appliqué en amont faute de série
-          publiée, et la fiche s'annonce `estimee`. Elle couvre les deux années
-          — 2004 et 2005 — que le routage du commerçant envoyait vers un RCI
-          qui n'existait pas encore. À certifier auprès de la caisse.
+          D. 635-10, état du 26 mars 2005 : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI.
 
   - code: rci
     nom: Régime complémentaire des indépendants
