@@ -618,6 +618,49 @@ def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
         assert len(raison.split()) >= 10, f"{code} : raison trop courte pour être une raison"
 
 
+def test_tout_regime_en_points_sait_convertir_ses_points(catalogue):
+    """Un régime en points sans barème ni rendement sert une pension NULLE.
+
+    `Rendements.rendement` renvoie `0.0` pour un régime que
+    `regimes/rendements_points.csv` ne couvre pas — pas une exception, zéro.
+    Un régime en points a donc besoin de l'une de ces trois choses, sans quoi
+    le scénario 1 lui compte des cotisations et ne lui rend rien :
+
+    * un prix d'achat et une valeur de service dans `valeurs_point.csv` ;
+    * un barème en points (`points_maximum`), pour les régimes dont le
+      règlement attribue un nombre de points plutôt qu'un prix ;
+    * à défaut, une ligne de rendement instantané, qui s'assume approximative.
+
+    Les régimes HORS RÉPARTITION sont dispensés : leur pension est servie dans
+    un compartiment à part, à l'identique dans les cinq scénarios.
+    """
+    import csv
+
+    def _codes(fichier: str) -> set[str]:
+        chemin = RACINE_DONNEES / "reference" / "regimes" / fichier
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            return {ligne["regime"] for ligne in csv.DictReader(lignes)}
+
+    avec_point = _codes("valeurs_point.csv")
+    avec_rendement = _codes("rendements_points.csv")
+    muets = []
+    for regime in catalogue:
+        if regime.hors_repartition:
+            continue
+        if not any(p.type_calcul == "points" for p in regime.periodes):
+            continue
+        if any(p.points_maximum is not None for p in regime.periodes):
+            continue
+        if regime.code in avec_point or regime.code in avec_rendement:
+            continue
+        muets.append(regime.code)
+    assert not muets, (
+        "régimes en points qui serviraient une pension nulle sans le dire : "
+        + ", ".join(sorted(muets))
+    )
+
+
 def test_toute_succession_designe_un_regime_du_catalogue(catalogue):
     """`succede_a` et `integre_dans` ne peuvent pas pointer dans le vide.
 
