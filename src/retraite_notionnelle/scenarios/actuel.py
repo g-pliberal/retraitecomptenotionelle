@@ -1658,7 +1658,13 @@ class ScenarioActuel:
                     repere = periode.repere_assiette(
                         pass_annuel, self.macro.smic_horaire(ligne.annee)
                     ) * (part if periode.assiette_repere_smic is not None else 1.0)
-                    if periode.assiette_plancher and assiette < repere:
+                    if periode.assiette_forfaitaire:
+                        # Assiette FORFAITAIRE : le régime des cultes cotise sur
+                        # un forfait égal au SMIC mensuel, quel que soit le
+                        # revenu. Inconditionnel, là où `assiette_plancher` ne
+                        # relève que les assiettes trop basses.
+                        assiette = repere
+                    elif periode.assiette_plancher and assiette < repere:
                         # Assiette minimale : la complémentaire agricole cotise
                         # sur 1 820 SMIC même quand le revenu est en dessous,
                         # et ouvre donc ses cent points malgré tout.

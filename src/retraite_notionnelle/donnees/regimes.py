@@ -162,6 +162,13 @@ class PeriodeRegime:
     #: L'assiette est-elle relevée au repère quand elle lui est inférieure ?
     #: C'est l'assiette minimale de la complémentaire agricole.
     assiette_plancher: bool
+    #: L'assiette EST le repère, quel que soit le revenu — et non un
+    #: plancher. C'est la base forfaitaire du régime des cultes : les
+    #: articles R. 382-89 et R. 382-90 l'égalent au SMIC mensuel, que
+    #: l'assuré perçoive davantage, moins, ou rien du tout. Un ministre
+    #: du culte n'a pas de salaire dont on prélèverait une fraction ; la
+    #: congrégation et lui cotisent sur un forfait.
+    assiette_forfaitaire: bool
     avantages_non_contributifs: tuple[str, ...]
     #: Taux prélevé sur la TOTALITÉ de la rémunération, en plus du taux
     #: ci-dessus, et qui n'ouvre AUCUN droit — la cotisation « déplafonnée » du
@@ -469,6 +476,7 @@ class CatalogueRegimes:
                     else float(p["assiette_repere_smic"])
                 ),
                 assiette_plancher=bool(p.get("assiette_plancher", False)),
+                assiette_forfaitaire=bool(p.get("assiette_forfaitaire", False)),
                 avantages_non_contributifs=tuple(p.get("avantages_non_contributifs") or ()),
                 notes=(p.get("notes") or "").strip(),
             )

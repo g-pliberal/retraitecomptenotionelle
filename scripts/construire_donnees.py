@@ -253,6 +253,7 @@ def _regimes() -> list[dict]:
                     "pension_forfaitaire_annee": p.pension_forfaitaire_annee,
                     "assiette_repere_smic": p.assiette_repere_smic,
                     "assiette_plancher": p.assiette_plancher,
+                    "assiette_forfaitaire": p.assiette_forfaitaire,
                     "avantages_non_contributifs": list(p.avantages_non_contributifs),
                     "notes": p.notes,
                 }

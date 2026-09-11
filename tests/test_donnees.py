@@ -618,6 +618,51 @@ def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
         assert len(raison.split()) >= 10, f"{code} : raison trop courte pour être une raison"
 
 
+def test_la_cavimac_ne_derive_jamais_du_regime_general(catalogue):
+    """Le régime des cultes n'a aucun taux à lui, et ne doit pas en prendre un.
+
+    R. 382-89 : « le taux de la cotisation d'assurance vieillesse des assurés
+    est celui de la cotisation mise à la charge des salariés affiliés au régime
+    général » ; R. 382-90 dit la même chose de la congrégation pour la part
+    employeur. La fiche RECOPIE donc des chiffres qui appartiennent à une autre
+    fiche — et une recopie qu'on ne surveille pas finit par diverger, le jour
+    où le régime général est corrigé et pas celle-ci. Ce test est la
+    surveillance : il relit les deux fiches année par année.
+    """
+    cultes = catalogue["cavimac"]
+    general = catalogue["regime_general"]
+    for annee in range(cultes.periodes[0].debut, 2027):
+        chez_cultes = cultes.periode(annee)
+        chez_general = general.periode(annee)
+        assert chez_cultes is not None, annee
+        assert chez_general is not None, annee
+        assert chez_cultes.taux_cotisation_retraite == chez_general.taux_cotisation_retraite, (
+            f"{annee} : cultes {chez_cultes.taux_cotisation_retraite}, "
+            f"régime général {chez_general.taux_cotisation_retraite}"
+        )
+        assert chez_cultes.part_salariale == chez_general.part_salariale, (
+            f"{annee} : cultes {chez_cultes.part_salariale}, "
+            f"régime général {chez_general.part_salariale}"
+        )
+
+
+def test_l_assiette_forfaitaire_suppose_un_repere(catalogue):
+    """Sans repère, `assiette_forfaitaire` mettrait l'assiette à zéro.
+
+    `repere_assiette` renvoie 0 quand la fiche ne porte ni repère en heures de
+    SMIC ni borne haute d'assiette. Le drapeau remplaçant l'assiette par le
+    repère sans condition, une fiche mal réglée ne prélèverait plus rien.
+    """
+    for regime in catalogue:
+        for periode in regime.periodes:
+            if not periode.assiette_forfaitaire:
+                continue
+            borne_haute = periode.bornes_assiette_en_pass()[1]
+            assert periode.assiette_repere_smic or borne_haute, (
+                f"{regime.code} {periode.debut} : assiette forfaitaire sans repère"
+            )
+
+
 def test_tout_regime_en_points_sait_convertir_ses_points(catalogue):
     """Un régime en points sans barème ni rendement sert une pension NULLE.
 

@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 39 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 40 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1996,9 +1996,62 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **39 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **40 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
+
+### Les régimes qui manquent encore, et ce qui bloque chacun
+
+**Cette liste n'est pas dérivée d'un fichier, et c'est une limite en soi.**
+Aucune source du dépôt n'énumère les régimes français : la série DREES agrège
+en treize systèmes, le panorama du COR est un document saisi à la main, et les
+portails officiels ne servent pas de liste exploitable. Ce qui suit vient donc
+de la connaissance du domaine, non d'un inventaire vérifiable — un régime peut
+manquer à cette liste des manquants.
+
+**Le régime des cultes, lui, est entré**, et c'est le seul du lot que le code
+spécifie entièrement — sans lui donner un seul chiffre propre :
+
+* l'**assiette** : R. 382-89 et R. 382-90 égalent la base forfaitaire, pour
+  l'assuré comme pour sa congrégation, à « la valeur horaire du salaire
+  minimum de croissance en vigueur, multipliée par le nombre légal d'heures de
+  travail mensuel » ;
+* les **taux** : les mêmes articles les égalent à ceux du régime général,
+  respectivement part salarié et part employeur ;
+* la **pension** : L. 382-27 la sert « dans les conditions définies aux
+  articles L. 351-1 à L. 351-1-3 […] L. 351-8 à L. 351-13 », c'est-à-dire aux
+  règles du régime général.
+
+La fiche ne porte donc aucune valeur qui lui soit propre, et un test relit les
+deux fiches année par année pour interdire qu'elle dérive de celle du régime
+général. Il a fallu un drapeau au moteur, `assiette_forfaitaire` : un ministre
+du culte n'a pas de salaire dont on prélèverait une fraction, l'assiette EST le
+forfait, là où `assiette_plancher` ne relevait que les assiettes trop basses.
+
+**Ce que la fiche des cultes approxime.** Deux choses, et dans le même sens.
+Le passage du forfait de 169 à 151,67 heures mensuelles est daté de 2002, ce
+que la clause transitoire de R. 382-89 rend probable sans l'écrire ; et la
+garantie mensuelle de rémunération qui, du 1<sup>er</sup> janvier 2002 au
+30 juin 2005, s'ajoutait à cette base n'est pas modélisée — ces quatre années
+sous-estiment donc la cotisation. Enfin, L. 382-27 réserve les périodes
+antérieures au 1<sup>er</sup> janvier 1998 aux règles d'avant, forfaitaires :
+le modèle applique les règles du régime général sur toute la durée. Cela ne
+touche que le scénario 1 ; les comptes notionnels, eux, ne lisent que des
+cotisations, et celles-là sont sourcées de bout en bout.
+
+**Les trois autres, et le mur devant chacun :**
+
+| Régime | Population | Ce qui bloque |
+|---|---|---|
+| **CRPNPAC**, personnel navigant de l'aéronautique civile | pilotes et personnel de cabine | Ses paramètres ne sont pas dans le code de la sécurité sociale mais dans le **code de l'aviation civile**, articles R. 426-*. Le régime n'est pas en points mais en annuités à **deux tranches de salaire** — 1,85 % et 1,4 % par annuité (R. 426-16-1) —, multipliées par un « indice de variation des salaires » propre à la caisse. Deux mécanismes que le moteur ne sait pas exprimer aujourd'hui |
+| **IRCEC**, complémentaire des artistes-auteurs (RAAP, RACD, RACL) | auteurs, compositeurs | L. 382-12 renvoie leurs complémentaires à L. 644-1, et leur barème au **règlement de la caisse**, approuvé par arrêté : rien dans le code. C'est le mur déjà rencontré pour le point de l'Agirc-Arrco et pour les sections libérales |
+| **Sections complémentaires des professions libérales** (CARMF, CARPIMKO, CIPAV…) | dix sections | Le même mur, et c'est la limite la plus ancienne du dépôt — déjà décrite au tableau ci-dessus |
+
+**Et ceux qu'on n'a pas cherchés** : régimes des élus locaux, de l'Assemblée
+nationale et du Sénat, des chambres de commerce, et les régimes en extinction
+d'outre-mer. Populations très petites, aucun barème en accès ouvert, et aucune
+demande : ils sont nommés ici pour que leur absence soit un choix visible
+plutôt qu'un oubli.
 
 ### Le catalogue et le routage ne se parlaient pas
 
@@ -2141,7 +2194,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 25 statuts », « 39 régimes » —, parce que ce sont des chiffres de données et
+« 26 statuts », « 40 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
@@ -2407,7 +2460,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 522 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 524 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
