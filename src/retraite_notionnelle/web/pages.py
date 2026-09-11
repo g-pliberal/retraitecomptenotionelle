@@ -913,6 +913,8 @@ chaque modification par les contrôles automatiques du dépôt :</p>
   <li>couleurs des cinq scénarios séparables autrement que par la teinte, et
   contrôlées pour les visions daltoniennes ;</li>
   <li>tableaux titrés, avec en-têtes de colonne et de ligne ;</li>
+  <li>chaque graphique suivi du tableau de ses points, année par année : une
+  courbe est une image, et ce tableau en est la description détaillée ;</li>
   <li>formulaire entièrement étiqueté, groupé par métier, utilisable au
   clavier ;</li>
   <li>résultat du calcul annoncé aux synthèses vocales, qui ne verraient
@@ -922,12 +924,13 @@ chaque modification par les contrôles automatiques du dépôt :</p>
 </ul>
 <p><strong>Ce qui reste non conforme, ou non vérifié :</strong></p>
 <ul class="serree">
-  <li>les graphiques sont du dessin : chacun porte un intitulé et une légende en
-  texte, mais leurs courbes ne sont pas restituées point par point à une
-  synthèse vocale. Les tableaux qui les accompagnent en donnent les valeurs
-  clés, pas toutes ;</li>
-  <li>certaines grilles — douze cas types sur sept générations — restent larges
-  et demandent un défilement horizontal sur petit écran ;</li>
+  <li>les graphiques restent du dessin : le tracé lui-même — la forme d'une
+  courbe, le moment où deux d'entre elles se croisent — ne se lit qu'à l'œil.
+  Le tableau de ses points en donne toutes les valeurs, mais lire une forme
+  dans une colonne de nombres demande un effort que voir n'exige pas ;</li>
+  <li>certaines grilles — douze cas types sur sept générations, ou les cent onze
+  lignes d'un tableau de graphique — restent larges et demandent un défilement
+  sur petit écran ;</li>
   <li>le site exige JavaScript : le calcul se fait dans le navigateur, faute de
   serveur pour le faire ailleurs ;</li>
   <li>aucun test n'a été mené sur lecteur d'écran réel (NVDA, JAWS, VoiceOver).</li>
@@ -1493,6 +1496,7 @@ carrière a financé</strong> — et mourir avant, moins.</p>
     repere=age_esperance,
     libelle_repere=f"espérance de vie : {g.nombre(age_esperance, 1)} ans",
     etiquettes=etiquettes,
+    nom_abscisse="Âge",
 )}
 <p>Le trait vertical est l'espérance de vie que la table donne à
 {_age(depart)} : <strong>{g.nombre(esperance, 1)} ans</strong>, soit

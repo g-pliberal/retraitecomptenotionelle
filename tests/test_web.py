@@ -1965,3 +1965,77 @@ def test_le_focus_ne_retombe_pas_au_debut_du_document_apres_un_rendu():
     #: l'adresse EST la route, et l'écrire renverrait le simulateur à sa page
     #: d'accueil, perdant la simulation en cours.
     assert 'closest("a.evitement")' in page and "evenement.preventDefault()" in page
+
+
+# -- la description détaillée des graphiques -----------------------------------
+
+
+def test_un_graphique_porte_le_tableau_de_ses_points():
+    """Un tracé est une image ; le tableau de ses points en est la description.
+
+    Le tableau est produit par la fonction qui trace, à partir des mêmes séries
+    : c'est ce qui garantit qu'il ne peut pas s'en écarter. Le contrôle porte
+    donc sur ce que cette fonction restitue — toutes les valeurs, un tiret là où
+    la série n'en a pas, et les valeurs PROPRES de chaque série même quand le
+    graphique les empile.
+    """
+    series = (
+        g.Serie("Première", (1.0, None, 3.0), "var(--serie-1)"),
+        g.Serie("Seconde", (10.0, 20.0, 30.0), "var(--serie-2)"),
+    )
+    for empile in (False, True):
+        html = g.graphique("Un essai", (1990, 1991, 1992), series,
+                           unite="Md €", empile=empile)
+        detail = html[html.index('<details class="donnees-graphique">'):]
+        assert "année par année (3 lignes)" in detail
+
+        lignes = re.findall(r"<tr>(.*?)</tr>", detail, re.S)
+        assert len(lignes) == 4, "une ligne d'en-tête et trois années"
+        assert "Première (Md €)" in lignes[0] and "Seconde (Md €)" in lignes[0]
+
+        valeurs = [re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", ligne)
+                   for ligne in lignes[1:]]
+        assert valeurs == [
+            ["1990", "1", "10"],
+            # La série n'a pas de valeur cette année-là : la courbe s'y
+            # interrompt, et le tableau ne l'invente pas davantage.
+            ["1991", "—", "20"],
+            ["1992", "3", "30"],
+        ], valeurs
+
+
+def test_le_tableau_d_un_graphique_nomme_ce_que_porte_son_axe():
+    """La trajectoire d'un retraité se lit en âges, non en années : une colonne
+    « Année » pour une suite d'âges serait un contresens, et c'est la seule
+    chose que le tracé ne dit pas de lui-même."""
+    series = (g.Serie("Cumul", (0.0, 31.0), "var(--actuel)"),)
+    html = g.graphique("Un essai", (64, 65), series, nom_abscisse="Âge")
+    assert "âge par âge (2 lignes)" in html
+    assert '<th class="" scope="col">Âge</th>' in html
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_aucun_graphique_n_est_livre_sans_ses_chiffres(contexte, chemin):
+    """Le tableau est émis par ``graphique()`` : il ne peut donc pas manquer.
+
+    Ce test le vérifie sur les pages réellement rendues — c'est lui qui
+    échouerait si quelqu'un réécrivait un tracé à la main, hors de la fonction
+    qui en produit la description.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    traces = corps.count('<figure class="graphique">')
+    tableaux = corps.count('<details class="donnees-graphique">')
+    assert traces == tableaux, (
+        f"{chemin} : {traces} graphiques pour {tableaux} tableaux de données"
+    )
+
+
+def test_le_graphique_de_la_trajectoire_porte_ses_ages(contexte):
+    """Sur la page de résultats, le seul graphique qui ne se lit pas en années."""
+    corps = rendre(contexte, "/", {
+        "naissance": "1975", "statut": "salarie_prive_non_cadre",
+        "debut": "21", "liquidation": "64", "salaire": "3500",
+        "unite_revenu": "euros_mois",
+    })[1]
+    assert "âge par âge" in corps
+    assert '<th class="" scope="col">Âge</th>' in corps

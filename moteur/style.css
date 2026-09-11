@@ -271,6 +271,23 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
   fill: var(--texte-doux); font-family: inherit; font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
+/* Le tableau des points du graphique. Il se range juste sous son tracé, et non
+   à la distance qui sépare deux paragraphes : c'est la même figure, dite
+   autrement. Déplié, il est borné en hauteur — cent onze lignes avalent un
+   écran entier —, et ses en-têtes de colonne restent visibles pendant qu'on le
+   parcourt : sans cela, la colonne lue se perd dès la dixième ligne. */
+.donnees-graphique { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-graphique table { font-size: 0.88rem; }
+/* Lignes serrées : à l'interligne des autres tableaux, huit années tenaient
+   dans la boîte, sur soixante-six. Le double y tient maintenant, ce qui est la
+   différence entre consulter une série et la faire défiler. */
+.donnees-graphique th, .donnees-graphique td { padding: 0.22rem 0.6rem; }
+.donnees-graphique thead th {
+  position: sticky; top: 0; background: var(--fond);
+  box-shadow: inset 0 -1px 0 var(--trait);
+}
+.donnees-graphique caption { padding-bottom: 0.35rem; }
 ul.legende {
   list-style: none; margin: 0.6rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; font-size: 0.86rem;
