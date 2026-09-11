@@ -485,7 +485,8 @@ function etiquettesDeFin(series, sommet, etiquettes) {
 
 export function graphique(titre, annees, series, unite = "", empile = false,
                           decimales = 0, legendeVisible = true, repere = null,
-                          libelleRepere = "", etiquettes = []) {
+                          libelleRepere = "", etiquettes = [],
+                          nomAbscisse = "Année") {
   if (!annees.length || !series.length) {
     return "";
   }
@@ -558,7 +559,48 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     + `<line class="axe" x1="${gauche}" y1="${base}" x2="${droite}" y2="${base}"/>`
     + repereHtml + uniteHtml
     + (etiquettes.length ? etiquettesDeFin(series, sommet, etiquettes) : "")
-    + `</svg>${legendeVisible ? legende(series) : ""}</figure>`;
+    + `</svg>${legendeVisible ? legende(series) : ""}</figure>`
+    + donneesDuGraphique(titre, annees, series, unite, decimales, nomAbscisse);
+}
+
+/**
+ * Les chiffres du graphique, année par année.
+ *
+ * Un tracé est une image : ce que dit son `aria-label` — de quoi il parle, sur
+ * quelle plage — ne remplace pas ce qu'il montre. Le RGAA demande pour une
+ * image complexe une description détaillée ; pour une courbe, la description
+ * détaillée EST le tableau de ses points.
+ *
+ * Il est produit ici, dans la fonction qui trace, et à partir des mêmes séries
+ * : aucun graphique ne peut être livré sans ses chiffres, et le tableau ne peut
+ * pas s'écarter de la courbe. Les valeurs sont celles de chaque série, non le
+ * cumul, y compris pour un graphique en bandes empilées — c'est ce qu'on lit
+ * dans une colonne, et le cumul s'additionne de tête.
+ *
+ * Replié, parce que cent onze lignes couperaient la page en deux. Dépliable,
+ * parce que c'est ce qui rend le graphique lisible sans le voir — et parce
+ * qu'un lecteur qui veut le chiffre exact d'une année le trouve là, et nulle
+ * part ailleurs.
+ */
+export function donneesDuGraphique(titre, annees, series, unite = "",
+                                   decimales = 0, nomAbscisse = "Année") {
+  if (!annees.length || !series.length) {
+    return "";
+  }
+  const enTete = unite ? echapper(unite) : "";
+  const entetes = [nomAbscisse].concat(
+    series.map((serie) => serie.libelle + (enTete ? ` (${enTete})` : "")));
+  const lignes = annees.map((annee, rang) => [String(annee)].concat(
+    series.map((serie) => (rang < serie.valeurs.length
+      && serie.valeurs[rang] !== null && serie.valeurs[rang] !== undefined
+      ? nombre(serie.valeurs[rang], decimales)
+      : "—"))));
+  const grille = tableau(entetes, lignes,
+    [""].concat(series.map(() => "nombre")), titre, true);
+  const pas = nomAbscisse.toLowerCase();
+  return '<details class="donnees-graphique">'
+    + `<summary>Les chiffres de ce graphique, ${pas} par ${pas} `
+    + `(${annees.length} lignes)</summary>${grille}</details>`;
 }
 
 /**

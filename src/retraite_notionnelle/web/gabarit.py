@@ -283,6 +283,23 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
   fill: var(--texte-doux); font-family: inherit; font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
+/* Le tableau des points du graphique. Il se range juste sous son tracé, et non
+   à la distance qui sépare deux paragraphes : c'est la même figure, dite
+   autrement. Déplié, il est borné en hauteur — cent onze lignes avalent un
+   écran entier —, et ses en-têtes de colonne restent visibles pendant qu'on le
+   parcourt : sans cela, la colonne lue se perd dès la dixième ligne. */
+.donnees-graphique { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-graphique table { font-size: 0.88rem; }
+/* Lignes serrées : à l'interligne des autres tableaux, huit années tenaient
+   dans la boîte, sur soixante-six. Le double y tient maintenant, ce qui est la
+   différence entre consulter une série et la faire défiler. */
+.donnees-graphique th, .donnees-graphique td { padding: 0.22rem 0.6rem; }
+.donnees-graphique thead th {
+  position: sticky; top: 0; background: var(--fond);
+  box-shadow: inset 0 -1px 0 var(--trait);
+}
+.donnees-graphique caption { padding-bottom: 0.35rem; }
 ul.legende {
   list-style: none; margin: 0.6rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; font-size: 0.86rem;
@@ -874,7 +891,8 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
               unite: str = "", empile: bool = False, decimales: int = 0,
               legende: bool = True, repere: float | None = None,
               libelle_repere: str = "",
-              etiquettes: tuple[str, ...] = ()) -> str:
+              etiquettes: tuple[str, ...] = (),
+              nom_abscisse: str = "Année") -> str:
     """Graphique en courbes, ou en bandes empilées si ``empile``.
 
     ``titre`` n'est pas affiché : il est le texte alternatif du SVG, c'est-à-dire
@@ -885,6 +903,11 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     l'observation s'arrête et où la projection commence — une frontière qu'un
     graphique doit montrer, faute de quoi il donne à une hypothèse l'apparence
     d'une mesure.
+
+    ``nom_abscisse`` nomme ce que porte l'axe horizontal — une année, sauf pour
+    la trajectoire d'un retraité, qui se lit en âges. Ce nom sert au tableau de
+    données : une colonne intitulée « Année » pour une suite d'âges serait un
+    contresens, et c'est la seule chose que le tracé ne dit pas de lui-même.
     """
     if not annees or not series:
         return ""
@@ -963,6 +986,55 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
         f'<line class="axe" x1="{gauche}" y1="{base}" x2="{droite}" y2="{base}"/>'
         f"{repere_html}{unite_html}{etiquettes_html}"
         f"</svg>{legende_html}</figure>"
+        + donnees_du_graphique(titre, annees, series, unite, decimales, nom_abscisse)
+    )
+
+
+def donnees_du_graphique(titre: str, annees: tuple[int, ...],
+                         series: tuple[Serie, ...], unite: str = "",
+                         decimales: int = 0, nom_abscisse: str = "Année") -> str:
+    """Les chiffres du graphique, année par année.
+
+    Un tracé est une image : ce que dit son ``aria-label`` — de quoi il parle,
+    sur quelle plage — ne remplace pas ce qu'il montre. Le RGAA demande pour une
+    image complexe une description détaillée ; pour une courbe, la description
+    détaillée EST le tableau de ses points.
+
+    Il est produit ici, dans la fonction qui trace, et à partir des mêmes séries
+    : aucun graphique ne peut être livré sans ses chiffres, et le tableau ne
+    peut pas s'écarter de la courbe. Les valeurs sont celles de chaque série,
+    non le cumul, y compris pour un graphique en bandes empilées — c'est ce
+    qu'on lit dans une colonne, et le cumul s'additionne de tête.
+
+    Replié, parce que cent onze lignes couperaient la page en deux. Dépliable,
+    parce que c'est ce qui rend le graphique lisible sans le voir — et parce
+    qu'un lecteur qui veut le chiffre exact d'une année le trouve là, et nulle
+    part ailleurs.
+    """
+    if not annees or not series:
+        return ""
+    en_tete = escape(unite) if unite else ""
+    entetes = [nom_abscisse] + [
+        serie.libelle + (f" ({en_tete})" if en_tete else "") for serie in series
+    ]
+    lignes = [
+        [str(annee)] + [
+            nombre(serie.valeurs[rang], decimales)
+            if rang < len(serie.valeurs) and serie.valeurs[rang] is not None
+            else "—"
+            for serie in series
+        ]
+        for rang, annee in enumerate(annees)
+    ]
+    grille = tableau(
+        entetes, lignes, [""] + ["nombre" for _ in series],
+        titre=titre, entete_de_ligne=True,
+    )
+    pas = nom_abscisse.lower()
+    return (
+        '<details class="donnees-graphique">'
+        f"<summary>Les chiffres de ce graphique, {pas} par {pas} "
+        f"({len(annees)} lignes)</summary>{grille}</details>"
     )
 
 
