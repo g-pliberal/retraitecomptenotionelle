@@ -540,6 +540,101 @@ def test_regime_inconnu_leve_une_erreur_explicite(catalogue):
         catalogue["nexiste_pas"]
 
 
+# -- cohérence entre le catalogue et le routage ------------------------------
+#
+# Ce sont deux fichiers séparés — `regimes/*.yaml` dit ce qu'est un régime,
+# `legislation/affiliations.yaml` dit qui y cotise — et rien ne les confrontait.
+# Trois désaccords y vivaient sans bruit : un statut routé vers un régime qui
+# n'existait pas encore cette année-là (la cotisation tombait alors à zéro sans
+# un mot, cf. `moteur/compte.py`), cinq fiches qu'aucun statut n'atteignait, et
+# deux successions désignant des régimes absents du catalogue.
+
+
+def _affiliations():
+    from retraite_notionnelle.carriere import Affiliations
+
+    return Affiliations(RACINE_DONNEES)
+
+
+def test_toute_annee_routee_trouve_une_periode_de_regime(catalogue):
+    """Un statut ne peut pas router vers un régime qui ne tourne pas encore.
+
+    `Compte.taux_effectif` parcourt `regime.periodes_actives(annee)` : quand ce
+    parcours est vide, la boucle n'ajoute rien et l'année ne porte AUCUNE
+    cotisation au compte notionnel — sans exception, sans avertissement, sans
+    trace dans le journal. Trois routages faisaient exactement cela : l'artisan
+    de 1979 à 2005 et le commerçant de 2004 à 2005, envoyés vers un RCI créé en
+    2013, et le mineur passé au privé en 2011, envoyé vers une Agirc-Arrco née
+    en 2019. Vingt-sept années de complémentaire perdues pour le premier.
+    """
+    affiliations = _affiliations()
+    manquants = []
+    for statut in affiliations.codes:
+        for periode in affiliations.periodes(statut):
+            fin = periode["fin"]
+            for code in periode["regimes"] or ():
+                regime = catalogue[code]
+                if fin is None and not any(p.fin is None for p in regime.periodes):
+                    manquants.append(
+                        f"{statut}/{code} : routage ouvert vers un régime clos"
+                    )
+                    continue
+                for annee in range(periode["debut"], (fin or 2026) + 1):
+                    if not regime.periodes_actives(annee):
+                        manquants.append(f"{statut}/{code} : {annee}")
+                        break
+    assert not manquants, "années routées sans période de régime : " + "; ".join(
+        manquants
+    )
+
+
+def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
+    """Une fiche que personne n'atteint est une fiche jamais calculée.
+
+    Cinq l'étaient. Trois ont reçu leur statut — SEITA, port de Strasbourg,
+    chemins de fer secondaires ; les deux autres sont nommées, avec leur
+    raison, sous `regimes_sans_affiliation`. Le silence n'est plus une option :
+    une sixième fiche orpheline fait échouer ce test.
+    """
+    affiliations = _affiliations()
+    routes = {
+        code
+        for statut in affiliations.codes
+        for periode in affiliations.periodes(statut)
+        for code in periode["regimes"] or ()
+    }
+    declares = set(affiliations.hors_routage)
+    orphelins = {r.code for r in catalogue} - routes - declares
+    assert not orphelins, (
+        "régimes qu'aucune affiliation n'atteint et que rien ne déclare : "
+        + ", ".join(sorted(orphelins))
+    )
+    assert not (declares & routes), (
+        "déclarés hors routage mais pourtant routés : "
+        + ", ".join(sorted(declares & routes))
+    )
+    for code, raison in affiliations.hors_routage.items():
+        assert code in catalogue, f"{code} déclaré hors routage mais absent"
+        assert len(raison.split()) >= 10, f"{code} : raison trop courte pour être une raison"
+
+
+def test_toute_succession_designe_un_regime_du_catalogue(catalogue):
+    """`succede_a` et `integre_dans` ne peuvent pas pointer dans le vide.
+
+    Le RCI déclarait succéder au complémentaire des artisans et au NRCI — deux
+    codes absents du catalogue. La fiche disait donc juste ce que les données
+    ne portaient pas.
+    """
+    pendantes = []
+    for regime in catalogue:
+        for code in regime.succede_a:
+            if code not in catalogue:
+                pendantes.append(f"{regime.code}.succede_a -> {code}")
+        if regime.integre_dans is not None and regime.integre_dans not in catalogue:
+            pendantes.append(f"{regime.code}.integre_dans -> {regime.integre_dans}")
+    assert not pendantes, "successions vers un régime absent : " + "; ".join(pendantes)
+
+
 # -- mortalité ---------------------------------------------------------------
 
 

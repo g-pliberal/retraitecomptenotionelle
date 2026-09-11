@@ -68,8 +68,8 @@ affiliations:
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1978, regimes: [cancava]}
-      - {debut: 1979, fin: 2005, regimes: [cancava, rci]}
-      - {debut: 2006, fin: 2012, regimes: [rsi]}
+      - {debut: 1979, fin: 2005, regimes: [cancava, rco_artisans]}
+      - {debut: 2006, fin: 2012, regimes: [rsi, rco_artisans]}
       - {debut: 2013, fin: 2017, regimes: [rsi, rci]}
       - {debut: 2018, fin: null, regimes: [regime_general, rci]}
 
@@ -78,8 +78,8 @@ affiliations:
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 2003, regimes: [organic]}
-      - {debut: 2004, fin: 2005, regimes: [organic, rci]}
-      - {debut: 2006, fin: 2012, regimes: [rsi]}
+      - {debut: 2004, fin: 2005, regimes: [organic, nric]}
+      - {debut: 2006, fin: 2012, regimes: [rsi, nric]}
       - {debut: 2013, fin: 2017, regimes: [rsi, rci]}
       - {debut: 2018, fin: null, regimes: [regime_general, rci]}
 
@@ -143,7 +143,8 @@ affiliations:
     libelle: Mineur
     periodes:
       - {debut: 1930, fin: 2010, regimes: [mines]}
-      - {debut: 2011, fin: null, regimes: [regime_general, agirc_arrco]}
+      - {debut: 2011, fin: 2018, regimes: [regime_general, arrco]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
 
   clerc_de_notaire:
     libelle: Clerc ou employé de notaire
@@ -167,6 +168,37 @@ affiliations:
       - {debut: 1930, fin: 2022, regimes: [comedie_francaise]}
       - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco]}
 
+  agent_seita:
+    libelle: Agent du personnel de la SEITA
+    periodes:
+      - {debut: 1935, fin: 1981, regimes: [seita]}
+      - {debut: 1982, fin: 2018, regimes: [regime_general, arrco]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
+    note: >-
+      Régime fermé aux recrutements en 1981 ; les agents recrutés après
+      relèvent du droit commun des salariés du privé. Avant 1935, la fiche
+      du régime ne porte aucune période : les carrières antérieures ne sont
+      pas simulables sous ce statut.
+
+  agent_port_strasbourg:
+    libelle: Agent du Port autonome de Strasbourg
+    periodes:
+      - {debut: 1930, fin: 2022, regimes: [port_strasbourg]}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco]}
+    note: Régime fermé aux recrutements depuis le 1er septembre 2023.
+
+  agent_chemins_fer_secondaires:
+    libelle: Agent des chemins de fer secondaires d'intérêt général
+    periodes:
+      - {debut: 1930, fin: 1954, regimes: [chemins_fer_secondaires]}
+      - {debut: 1955, fin: 1960, regimes: [regime_general]}
+      - {debut: 1961, fin: 2018, regimes: [regime_general, arrco]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
+    note: >-
+      Régime fermé en 1954. La complémentaire ne prend le relais qu'en 1961,
+      à la création de l'Arrco : les six années intermédiaires ne relèvent que
+      du régime général, comme pour tout salarié du privé de cette période.
+
   sans_activite:
     libelle: Sans activité professionnelle
     periodes:
@@ -176,3 +208,33 @@ affiliations:
       Le système actuel accorde au contraire des trimestres au titre de
       l'AVPF, du chômage ou de la maladie : c'est l'un des écarts les plus
       importants entre les scénarios.
+
+# Régimes du catalogue que AUCUNE affiliation ne route, et pourquoi
+# -----------------------------------------------------------------
+# Le catalogue et le routage sont deux fichiers distincts, et rien ne les
+# reliait : cinq fiches n'étaient atteignables par aucun statut, donc jamais
+# calculées, sans que rien ne le dise. Trois ont reçu leur statut ; les deux
+# qui suivent n'en recevront pas, et ce tableau porte la raison plutôt que de
+# laisser le silence la porter. `tests/test_donnees.py` exige que tout régime
+# du catalogue soit routé par une affiliation OU nommé ici : un sixième cas
+# muet fait échouer les tests.
+
+regimes_sans_affiliation:
+
+  avts: >-
+    Allocation sous condition de ressources, non contributive, servie aux
+    salariés âgés démunis — pas un régime d'affiliation. Sa fiche porte les
+    8 % des assurances sociales, qui la financent : la router à côté de
+    `assurances_sociales` compterait deux fois la même cotisation. Elle reste
+    au catalogue parce qu'elle date le premier mécanisme en répartition, ce
+    dont le paramètre `annee_debut_repartition` se sert.
+
+  igrante: >-
+    Jumelle de l'IPACTE : même population — les non-titulaires de l'État avant
+    1971 —, mêmes paramètres, et une série de points qui est celle de
+    l'Ircantec rétro-remplie pour les deux, à une valeur près sur 98. Le
+    critère qui répartissait un agent entre les deux institutions n'est
+    documenté par aucune source du dépôt ; inventer un statut pour le poser
+    donnerait à l'utilisateur un choix sans conséquence chiffrée et sans
+    fondement. L'IPACTE route seule, et la fiche reste au catalogue pour que
+    la conversion de points vers l'Ircantec garde ses deux entrées.
