@@ -41,6 +41,14 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     "plafonnee_085_pass": (0.0, 0.85),
     "tranche_085_5_pass": (0.85, 5.0),
     "plafonnee_5_pass": (0.0, 5.0),
+    # Complémentaires des indépendants : le revenu y est plafonné à trois
+    # plafonds jusqu'en 2004 (D. 635-4), à quatre pour les artisans ensuite
+    # (D. 635-7), et la réforme de 2008 y découpe deux tranches — l'article
+    # fixe la borne de la première à 33 276 € pour 2008, qui est le plafond
+    # de cette année-là.
+    "plafonnee_3_pass": (0.0, 3.0),
+    "plafonnee_4_pass": (0.0, 4.0),
+    "tranche_1_4_pass": (1.0, 4.0),
     "hors_primes": (0.0, None),
     "primes_uniquement": (0.0, None),
     "forfaitaire": (0.0, None),

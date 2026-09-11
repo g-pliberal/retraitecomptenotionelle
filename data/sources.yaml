@@ -1149,6 +1149,29 @@ institutions:
           ligne 2003 qui décrit le droit antérieur, que le dépôt date de 1976.
           Mêmes valeurs, autre clé — elle reste transcrite.
 
+      - id: dila_legi_rci
+        titre: >-
+          Taux de cotisation des complémentaires obligatoires des artisans
+          (1985-2012) et des commerçants (2004-2012)
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: saisi
+        cible: data/reference/regimes/non_salaries.yaml
+        recuperation: scripts/fetch/dila_legi_rci.py
+        note: >-
+          Articles D. 635-6 puis D. 635-7 du code de la sécurité sociale pour
+          les artisans, D. 635-10 pour les commerçants, et D. 635-4 pour
+          l'assiette d'avant 2004 — trois fois le plafond. La base LEGI en
+          garde chaque version datée ; c'est la publication officielle
+          elle-même. Les taux sont saisis dans les fiches de régime au niveau
+          `haute` : rien ne les recontrôle encore automatiquement, faute
+          d'entrée dans `controle_vraisemblance_cotisations`, et c'est ce qui
+          les sépare de `certifiee`. Le récupérateur lit le dump en flux, comme
+          celui de la MSA, et met un quart d'heure. Le plus ancien état de
+          l'article est du 21 décembre 1985 : les six premières années du
+          régime des artisans, 1979-1984, ne sont couvertes par aucune version
+          datée et restent à certifier.
+
       - id: dila_legi_msa
         titre: Valeur de service du point de la RCO agricole, 2005-2024
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
