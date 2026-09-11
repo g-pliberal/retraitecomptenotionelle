@@ -180,6 +180,30 @@ export const ANNEE_MAXIMALE = 2070;
  */
 export const ENFANTS_MAXIMUM = 12;
 
+/**
+ * Bornes de l'année de naissance et des deux âges saisis. Elles étaient écrites
+ * deux fois — une fois dans `verifier`, une fois sur le champ du formulaire —,
+ * comme l'étaient les années de bascule avant `ANNEE_MINIMALE`. Elles se disent
+ * ici, une fois, et le formulaire les lit.
+ */
+export const NAISSANCE_MINIMALE = 1900;
+export const NAISSANCE_MAXIMALE = 2020;
+export const AGE_DEBUT_MINIMAL = 14;
+export const AGE_DEBUT_MAXIMAL = 40;
+export const AGE_LIQUIDATION_MINIMAL = 40;
+export const AGE_LIQUIDATION_MAXIMAL = 75;
+
+/**
+ * Toute année qu'une carrière peut couvrir, quel qu'en soit l'auteur : né au
+ * plus tôt et entré au plus jeune d'un côté, né au plus tard et parti au plus
+ * vieux de l'autre. Sert à borner les interruptions, dont les années étaient
+ * reprises telles quelles : « 0:999999999:chomage_indemnise » faisait boucler un
+ * milliard de fois et figeait l'onglet. Une plage hors de cette fenêtre ne
+ * décrit aucune carrière, et se refuse au lieu de se calculer.
+ */
+export const ANNEE_CARRIERE_MINIMALE = NAISSANCE_MINIMALE + AGE_DEBUT_MINIMAL;
+export const ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL;
+
 /** Rang de chaque métier, tel que le formulaire l'annonce. */
 export const RANGS_METIER = ["premier", "deuxième", "troisième", "quatrième",
   "cinquième", "sixième", "septième", "huitième"];
@@ -298,17 +322,24 @@ export class Saisie {
     if (!(this.naissance_mois >= 1 && this.naissance_mois <= 12)) {
       throw new ErreurSaisie("Mois de naissance attendu entre 1 et 12.");
     }
-    if (!(this.naissance >= 1900 && this.naissance <= 2020)) {
+    if (!(this.naissance >= NAISSANCE_MINIMALE && this.naissance <= NAISSANCE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de naissance hors du champ du modèle : ${this.naissance}. `
-        + "Attendu entre 1900 et 2020.",
+        + `Attendu entre ${NAISSANCE_MINIMALE} et ${NAISSANCE_MAXIMALE}.`,
       );
     }
-    if (!(this.debut >= 14 && this.debut <= 40)) {
-      throw new ErreurSaisie("Âge de début d'activité attendu entre 14 et 40 ans.");
+    if (!(this.debut >= AGE_DEBUT_MINIMAL && this.debut <= AGE_DEBUT_MAXIMAL)) {
+      throw new ErreurSaisie(
+        `Âge de début d'activité attendu entre ${AGE_DEBUT_MINIMAL} et `
+        + `${AGE_DEBUT_MAXIMAL} ans.`,
+      );
     }
-    if (!(this.liquidation >= 40 && this.liquidation <= 75)) {
-      throw new ErreurSaisie("Âge de liquidation attendu entre 40 et 75 ans.");
+    if (!(this.liquidation >= AGE_LIQUIDATION_MINIMAL
+          && this.liquidation <= AGE_LIQUIDATION_MAXIMAL)) {
+      throw new ErreurSaisie(
+        `Âge de liquidation attendu entre ${AGE_LIQUIDATION_MINIMAL} et `
+        + `${AGE_LIQUIDATION_MAXIMAL} ans.`,
+      );
     }
     if (this.liquidation <= this.debut) {
       throw new ErreurSaisie(
@@ -347,9 +378,11 @@ export class Saisie {
     let precedent = this.debut;
     this.metiers.forEach((metier, index) => {
       const rang = index + 2;
-      if (!(metier.debut >= 14 && metier.debut <= 75)) {
+      if (!(metier.debut >= AGE_DEBUT_MINIMAL
+            && metier.debut <= AGE_LIQUIDATION_MAXIMAL)) {
         throw new ErreurSaisie(
-          `Métier n° ${rang} : âge de début attendu entre 14 et 75 ans.`,
+          `Métier n° ${rang} : âge de début attendu entre ${AGE_DEBUT_MINIMAL} et `
+          + `${AGE_LIQUIDATION_MAXIMAL} ans.`,
         );
       }
       if (metier.debut <= precedent) {
@@ -465,25 +498,77 @@ export class Saisie {
     });
   }
 
-  /** « 1995:1999:education_enfant, 2003:2004:chomage » -> Map année → motif. */
-  interruptionsAnalysees() {
+  /**
+   * « 1995:1999:education_enfant, 2003:2004:chomage » -> Map année → motif.
+   *
+   * Trois contrôles s'ajoutent à celui de la forme, parce que les trois fautes
+   * qu'ils attrapent étaient muettes.
+   *
+   * Une plage sans borne bouclait autant de fois qu'elle comptait d'années :
+   * « 0:999999999:chomage_indemnise » remplissait la mémoire et figeait
+   * l'onglet. Le calcul se fait chez le lecteur, et l'adresse EST la saisie :
+   * le lien suffisait donc à figer l'onglet de quelqu'un d'autre. Les années
+   * sont désormais tenues dans la fenêtre que n'importe quelle carrière peut
+   * couvrir.
+   *
+   * Une plage à l'envers — « 2004:2003 » — ne décrivait rien : la boucle ne
+   * tournait pas, et l'interruption saisie n'existait nulle part.
+   *
+   * Un motif mal orthographié, enfin, retombait sur `sans_activite` :
+   * « educaton_enfant » validait zéro trimestre au lieu de quatre et changeait
+   * la pension affichée, sans un mot. Se tromper de touche ne doit pas donner
+   * un autre chiffre, mais un refus.
+   *
+   * `motifsConnus` est la liste que porte le paquet de données. Une saisie ne
+   * connaît pas les données : l'appelant la fournit, et le contrôle du motif
+   * n'a lieu que s'il l'a fait.
+   */
+  interruptionsAnalysees(motifsConnus = null) {
     const plages = new Map();
+    const connus = motifsConnus === null ? null : [...motifsConnus].sort();
     for (const brut of this.interruptions.replace(/\n/g, ",").split(",")) {
       const morceau = brut.trim();
       if (!morceau) {
         continue;
       }
       const parties = morceau.split(":");
-      const [debut, fin, motif] = parties;
-      if (parties.length !== 3 || !estEntier(debut) || !estEntier(fin)) {
+      if (parties.length !== 3 || !estEntier(parties[0]) || !estEntier(parties[1])) {
         throw new ErreurSaisie(
           `Interruption mal formée : « ${morceau} ». Attendu `
           + "« année_début:année_fin:motif », par exemple "
           + "1995:1999:education_enfant.",
         );
       }
-      for (let annee = Number(debut); annee <= Number(fin); annee += 1) {
-        plages.set(annee, motif.trim());
+      const debut = Number(parties[0]);
+      const fin = Number(parties[1]);
+      const motif = parties[2].trim();
+      // L'année est citée TELLE QU'ELLE A ÉTÉ ÉCRITE, et non relue du nombre :
+      // « 999999999999999999999 » s'écrit « 1e+21 » une fois passé par
+      // `Number`, et reste un entier côté Python, si bien que les deux moteurs
+      // refusaient la même saisie par deux phrases différentes.
+      for (const [texte, annee] of [[parties[0], debut], [parties[1], fin]]) {
+        if (!(annee >= ANNEE_CARRIERE_MINIMALE && annee <= ANNEE_CARRIERE_MAXIMALE)) {
+          throw new ErreurSaisie(
+            `Interruption « ${morceau} » : ${texte.trim()} ne tombe dans aucune `
+            + `carrière possible. Attendu entre ${ANNEE_CARRIERE_MINIMALE} et `
+            + `${ANNEE_CARRIERE_MAXIMALE}.`,
+          );
+        }
+      }
+      if (fin < debut) {
+        throw new ErreurSaisie(
+          `Interruption « ${morceau} » : elle finit (${fin}) avant de `
+          + `commencer (${debut}).`,
+        );
+      }
+      if (connus !== null && !connus.includes(motif)) {
+        throw new ErreurSaisie(
+          `Interruption « ${morceau} » : motif inconnu « ${motif} ». `
+          + `Attendu l'un de : ${connus.join(", ")}.`,
+        );
+      }
+      for (let annee = debut; annee <= fin; annee += 1) {
+        plages.set(annee, motif);
       }
     }
     return plages;
@@ -584,12 +669,22 @@ function cleEnum(enumeration, valeur) {
 
 const NOMBRE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
+/**
+ * Le nombre écrit dans ce texte, ou `null` s'il n'y en a pas.
+ *
+ * L'infini n'en est pas un : « 1e400 » passe l'expression ci-dessus et vaut
+ * `Infinity`, que la suite du calcul propage sans jamais échouer — le
+ * simulateur affichait « Ce revenu vaut inf fois le salaire moyen ». Il se
+ * refuse ici, là où le nombre entre, plutôt qu'à chacun des contrôles qui le
+ * liraient ensuite.
+ */
 function versFlottant(texte) {
   const propre = String(texte).trim();
   if (!NOMBRE.test(propre)) {
     return null;
   }
-  return Number(propre);
+  const valeur = Number(propre);
+  return Number.isFinite(valeur) ? valeur : null;
 }
 
 function estEntier(texte) {
@@ -783,7 +878,12 @@ export class Contexte {
       metiers: parcours,
       age_liquidation: saisie.liquidation,
       profil_carriere: saisie.profil,
-      interruptions: saisie.interruptionsAnalysees(),
+      // Les motifs viennent des données, pas d'une liste écrite ici : le
+      // moteur y lit ce que chaque période ouvre, et une saisie refusée doit
+      // l'être sur la même table que celle qui calcule.
+      interruptions: saisie.interruptionsAnalysees(
+        Object.keys(this.paquet.periodes_non_travaillees ?? {}),
+      ),
       nombre_enfants: saisie.enfants,
       part_primes: saisie.primes,
       identifiant: "assuré",
@@ -956,7 +1056,10 @@ function formulaire(saisie, contexte) {
     // navigateur — et aux outils qui s'appuient sur lui, dont les aides à la
     // saisie — le moyen de reconnaître ce que le champ demande.
     g.champ("naissance", "Année de naissance", saisie.naissance, "", "number",
-      { min: "1900", max: "2020", step: "1", autocomplete: "bday-year" }),
+      {
+        min: String(NAISSANCE_MINIMALE), max: String(NAISSANCE_MAXIMALE),
+        step: "1", autocomplete: "bday-year",
+      }),
     g.liste("naissance_mois", "Mois de naissance", MOIS_NAISSANCE,
       String(saisie.naissance_mois),
       "deux générations sont coupées en cours d'année par les textes"),
@@ -966,7 +1069,11 @@ function formulaire(saisie, contexte) {
       Math.floor(enMois(saisie.liquidation) / 12),
       "effectif si vous êtes déjà retraité, souhaité sinon : c'est la date "
       + "à laquelle tout le calcul se place", "number",
-      { min: "40", max: "75", step: "1" }),
+      {
+        min: String(AGE_LIQUIDATION_MINIMAL),
+        max: String(AGE_LIQUIDATION_MAXIMAL),
+        step: "1",
+      }),
     g.liste("liquidation_mois", "…et mois", MOIS_AGE,
       String(saisie.liquidation_mois),
       "la pension prend effet le premier du mois"),
@@ -1133,7 +1240,9 @@ function metiersFormulaire(saisie, statuts, echelle) {
     1,
     g.champ("debut", "Âge de début d'activité",
       Math.floor(enMois(saisie.debut) / 12), "", "number",
-      { min: "14", max: "40", step: "1" })
+      {
+        min: String(AGE_DEBUT_MINIMAL), max: String(AGE_DEBUT_MAXIMAL), step: "1",
+      })
     + g.liste("debut_mois", "…et mois", MOIS_AGE, String(saisie.debut_mois),
       "l'année d'entrée n'est complète que si l'on entre en janvier")
     + g.liste("statut", "Statut d'affiliation", statuts, saisie.statut)
@@ -1172,7 +1281,10 @@ function metiersFormulaire(saisie, statuts, echelle) {
 function champsMetier(rang, debut, statut, salaire, statuts, saisie, echelle) {
   return g.champ(`metier${rang}_debut`, "Âge du changement", debut,
     "âge auquel ce métier commence", "number",
-    { min: "14", max: "75", step: "1" })
+    {
+      min: String(AGE_DEBUT_MINIMAL), max: String(AGE_LIQUIDATION_MAXIMAL),
+      step: "1",
+    })
     + g.liste(`metier${rang}_statut`, "Statut d'affiliation",
       [["", "— aucun —"], ...statuts], statut)
     + champRevenu(`metier${rang}_salaire`, saisie, echelle, salaire, true);

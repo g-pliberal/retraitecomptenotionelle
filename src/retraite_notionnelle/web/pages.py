@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import json
 import math
+import re
+from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
 from html import escape
 from urllib.parse import urlencode
@@ -26,7 +28,11 @@ from ..config import (
     TableConversion,
 )
 from ..cout import SCENARIOS, calculer_cout
-from ..donnees.chargement import DonneeInsuffisante, journal_certification
+from ..donnees.chargement import (
+    DonneeInsuffisante,
+    charger_periodes_non_travaillees,
+    journal_certification,
+)
 from ..donnees.depenses import SYSTEMES, DepensesRetraite
 from ..donnees.population import Population
 from ..simulateur import Comparaison, Simulateur
@@ -163,6 +169,26 @@ ANNEE_MAXIMALE = 2070
 #: Un enfant de plus change la pension du scénario 1 par ses majorations. Le
 #: champ était borné à douze dans le formulaire et nulle part ailleurs.
 ENFANTS_MAXIMUM = 12
+
+#: Bornes de l'année de naissance et des deux âges saisis. Elles étaient
+#: écrites deux fois — une fois dans ``verifier``, une fois sur le champ du
+#: formulaire —, comme l'étaient les années de bascule avant ``ANNEE_MINIMALE``.
+#: Elles se disent ici, une fois, et le formulaire les lit.
+NAISSANCE_MINIMALE = 1900
+NAISSANCE_MAXIMALE = 2020
+AGE_DEBUT_MINIMAL = 14
+AGE_DEBUT_MAXIMAL = 40
+AGE_LIQUIDATION_MINIMAL = 40
+AGE_LIQUIDATION_MAXIMAL = 75
+
+#: Toute année qu'une carrière peut couvrir, quel qu'en soit l'auteur : né au
+#: plus tôt et entré au plus jeune d'un côté, né au plus tard et parti au plus
+#: vieux de l'autre. Sert à borner les interruptions, dont les années étaient
+#: reprises telles quelles : « 0:999999999:chomage_indemnise » faisait boucler
+#: un milliard de fois et figeait l'onglet. Une plage hors de cette fenêtre ne
+#: décrit aucune carrière, et se refuse au lieu de se calculer.
+ANNEE_CARRIERE_MINIMALE = NAISSANCE_MINIMALE + AGE_DEBUT_MINIMAL
+ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL
 
 #: Âge auquel s'arrête la trajectoire individuelle. Les tables de mortalité du
 #: modèle vont jusqu'à 120 ans : ce n'est pas la table qui s'arrête tôt, c'est
@@ -331,15 +357,21 @@ class Saisie:
     def verifier(self) -> None:
         if not 1 <= self.naissance_mois <= 12:
             raise ErreurSaisie("Mois de naissance attendu entre 1 et 12.")
-        if not 1900 <= self.naissance <= 2020:
+        if not NAISSANCE_MINIMALE <= self.naissance <= NAISSANCE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de naissance hors du champ du modèle : {self.naissance}. "
-                "Attendu entre 1900 et 2020."
+                f"Attendu entre {NAISSANCE_MINIMALE} et {NAISSANCE_MAXIMALE}."
             )
-        if not 14 <= self.debut <= 40:
-            raise ErreurSaisie("Âge de début d'activité attendu entre 14 et 40 ans.")
-        if not 40 <= self.liquidation <= 75:
-            raise ErreurSaisie("Âge de liquidation attendu entre 40 et 75 ans.")
+        if not AGE_DEBUT_MINIMAL <= self.debut <= AGE_DEBUT_MAXIMAL:
+            raise ErreurSaisie(
+                f"Âge de début d'activité attendu entre {AGE_DEBUT_MINIMAL} et "
+                f"{AGE_DEBUT_MAXIMAL} ans."
+            )
+        if not AGE_LIQUIDATION_MINIMAL <= self.liquidation <= AGE_LIQUIDATION_MAXIMAL:
+            raise ErreurSaisie(
+                f"Âge de liquidation attendu entre {AGE_LIQUIDATION_MINIMAL} et "
+                f"{AGE_LIQUIDATION_MAXIMAL} ans."
+            )
         if self.liquidation <= self.debut:
             raise ErreurSaisie(
                 "L'âge de liquidation doit être postérieur à l'âge de début d'activité."
@@ -372,9 +404,10 @@ class Saisie:
         # remontée du modèle.
         precedent = self.debut
         for rang, metier in enumerate(self.metiers, start=2):
-            if not 14 <= metier.debut <= 75:
+            if not AGE_DEBUT_MINIMAL <= metier.debut <= AGE_LIQUIDATION_MAXIMAL:
                 raise ErreurSaisie(
-                    f"Métier n° {rang} : âge de début attendu entre 14 et 75 ans."
+                    f"Métier n° {rang} : âge de début attendu entre "
+                    f"{AGE_DEBUT_MINIMAL} et {AGE_LIQUIDATION_MAXIMAL} ans."
                 )
             if metier.debut <= precedent:
                 raise ErreurSaisie(
@@ -491,23 +524,73 @@ class Saisie:
             annee_euros_constants=self.euros,
         )
 
-    def interruptions_analysees(self) -> dict[int, str]:
-        """« 1995:1999:education_enfant, 2003:2004:chomage_indemnise » -> dict."""
+    def interruptions_analysees(
+        self, motifs_connus: Iterable[str] | None = None,
+    ) -> dict[int, str]:
+        """« 1995:1999:education_enfant, 2003:2004:chomage_indemnise » -> dict.
+
+        Trois contrôles s'ajoutent à celui de la forme, parce que les trois
+        fautes qu'ils attrapent étaient muettes.
+
+        Une plage sans borne bouclait autant de fois qu'elle comptait d'années :
+        « 0:999999999:chomage_indemnise » remplissait la mémoire et figeait
+        l'onglet. Le calcul se fait chez le lecteur, et l'adresse EST la
+        saisie : le lien suffisait donc à figer l'onglet de quelqu'un d'autre.
+        Les années sont désormais tenues dans la fenêtre que n'importe quelle
+        carrière peut couvrir.
+
+        Une plage à l'envers — « 2004:2003 » — ne décrivait rien : la boucle ne
+        tournait pas, et l'interruption saisie n'existait nulle part.
+
+        Un motif mal orthographié, enfin, retombait sur ``sans_activite`` :
+        « educaton_enfant » validait zéro trimestre au lieu de quatre et
+        changeait la pension affichée, sans un mot. Se tromper de touche ne doit
+        pas donner un autre chiffre, mais un refus.
+
+        ``motifs_connus`` est la liste que porte le paquet de données. Une
+        saisie ne connaît pas les données : l'appelant la fournit, et le
+        contrôle du motif n'a lieu que s'il l'a fait.
+        """
         plages: dict[int, str] = {}
+        connus = None if motifs_connus is None else sorted(motifs_connus)
         for morceau in self.interruptions.replace("\n", ",").split(","):
             morceau = morceau.strip()
             if not morceau:
                 continue
-            try:
-                debut, fin, motif = morceau.split(":")
-                for annee in range(int(debut), int(fin) + 1):
-                    plages[annee] = motif.strip()
-            except ValueError:
+            parties = morceau.split(":")
+            if len(parties) != 3 or not all(
+                _est_entier(partie) for partie in parties[:2]
+            ):
                 raise ErreurSaisie(
                     f"Interruption mal formée : « {morceau} ». Attendu "
                     "« année_début:année_fin:motif », par exemple "
                     "1995:1999:education_enfant."
-                ) from None
+                )
+            debut, fin = int(parties[0]), int(parties[1])
+            motif = parties[2].strip()
+            # L'année est citée TELLE QU'ELLE A ÉTÉ ÉCRITE, et non relue du
+            # nombre : « 999999999999999999999 » reste un entier ici et
+            # devient « 1e+21 » en JavaScript, si bien que les deux moteurs
+            # refusaient la même saisie par deux phrases différentes.
+            for texte, annee in ((parties[0], debut), (parties[1], fin)):
+                if not ANNEE_CARRIERE_MINIMALE <= annee <= ANNEE_CARRIERE_MAXIMALE:
+                    raise ErreurSaisie(
+                        f"Interruption « {morceau} » : {texte.strip()} ne tombe "
+                        "dans aucune carrière possible. Attendu entre "
+                        f"{ANNEE_CARRIERE_MINIMALE} et {ANNEE_CARRIERE_MAXIMALE}."
+                    )
+            if fin < debut:
+                raise ErreurSaisie(
+                    f"Interruption « {morceau} » : elle finit ({fin}) avant de "
+                    f"commencer ({debut})."
+                )
+            if connus is not None and motif not in connus:
+                raise ErreurSaisie(
+                    f"Interruption « {morceau} » : motif inconnu « {motif} ». "
+                    "Attendu l'un de : " + ", ".join(connus) + "."
+                )
+            for annee in range(debut, fin + 1):
+                plages[annee] = motif
         return plages
 
     def requete(self, **remplacements) -> str:
@@ -580,24 +663,57 @@ def _metiers_saisis(parametres: dict[str, str],
     return metiers
 
 
+#: Ce qu'un nombre saisi a le droit de s'écrire — et rien d'autre. L'expression
+#: est celle de ``moteur/js/pages.js``, au caractère près, parce que ``float``
+#: et ``Number`` ne lisent pas le même langage : ``float`` accepte « nan »,
+#: « inf » et « 1_975 », que ``Number`` refuse. Les deux lectures se seraient
+#: séparées sur une adresse forgée, et le témoin ne l'aurait pas vu : personne
+#: ne tire « nan » au hasard.
+_NOMBRE = re.compile(r"^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$")
+
+
+#: Un entier saisi, bornes d'une plage d'interruption comprises. Même
+#: expression que ``EST_ENTIER`` du portage : « 1995 » oui, « 1995,0 » non.
+_ENTIER = re.compile(r"^\s*[+-]?\d+\s*$")
+
+
+def _est_entier(texte: str) -> bool:
+    return bool(_ENTIER.match(str(texte)))
+
+
+def _vers_flottant(texte: str) -> float | None:
+    """Le nombre écrit dans ce texte, ou ``None`` s'il n'y en a pas.
+
+    L'infini n'en est pas un : « 1e400 » passe l'expression ci-dessus et vaut
+    ``inf``, que la suite du calcul propage sans jamais échouer — le simulateur
+    affichait « Ce revenu vaut inf fois le salaire moyen ». Il se refuse ici,
+    là où le nombre entre, plutôt qu'à chacun des contrôles qui le liraient.
+    """
+    propre = str(texte).strip()
+    if not _NOMBRE.match(propre):
+        return None
+    valeur = float(propre)
+    return valeur if math.isfinite(valeur) else None
+
+
 def _entier(parametres: dict[str, str], nom: str, defaut: int) -> int:
     valeur = parametres.get(nom)
     if valeur in (None, ""):
         return defaut
-    try:
-        return int(float(valeur))
-    except ValueError:
-        raise ErreurSaisie(f"« {nom} » doit être un nombre entier (reçu : {valeur}).") from None
+    flottant = _vers_flottant(valeur)
+    if flottant is None:
+        raise ErreurSaisie(f"« {nom} » doit être un nombre entier (reçu : {valeur}).")
+    return int(flottant)
 
 
 def _reel(parametres: dict[str, str], nom: str, defaut: float) -> float:
     valeur = parametres.get(nom)
     if valeur in (None, ""):
         return defaut
-    try:
-        return float(str(valeur).replace(",", "."))
-    except ValueError:
-        raise ErreurSaisie(f"« {nom} » doit être un nombre (reçu : {valeur}).") from None
+    flottant = _vers_flottant(str(valeur).replace(",", "."))
+    if flottant is None:
+        raise ErreurSaisie(f"« {nom} » doit être un nombre (reçu : {valeur}).")
+    return flottant
 
 
 def _age_saisi(parametres: dict[str, str], nom: str, defaut: float) -> float:
@@ -738,7 +854,12 @@ class Contexte:
             mois_naissance=saisie.naissance_mois,
             age_liquidation=saisie.liquidation,
             profil_carriere=saisie.profil,
-            interruptions=saisie.interruptions_analysees(),
+            # Les motifs viennent des données, pas d'une liste écrite ici :
+            # le moteur y lit ce que chaque période ouvre, et une saisie
+            # refusée doit l'être sur la même table que celle qui calcule.
+            interruptions=saisie.interruptions_analysees(
+                charger_periodes_non_travaillees(simulateur.macro.racine)
+            ),
             nombre_enfants=saisie.enfants,
             part_primes=saisie.primes,
             identifiant="assuré",
@@ -1029,7 +1150,8 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
         # navigateur — et aux outils qui s'appuient sur lui, dont les aides à la
         # saisie — le moyen de reconnaître ce que le champ demande.
         g.champ("naissance", "Année de naissance", saisie.naissance,
-                type_="number", min="1900", max="2020", step="1",
+                type_="number", min=str(NAISSANCE_MINIMALE),
+                max=str(NAISSANCE_MAXIMALE), step="1",
                 autocomplete="bday-year"),
         g.liste("naissance_mois", "Mois de naissance", MOIS_NAISSANCE,
                 str(saisie.naissance_mois),
@@ -1040,7 +1162,8 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
                 en_mois(saisie.liquidation) // 12,
                 "effectif si vous êtes déjà retraité, souhaité sinon : "
                 "c'est la date à laquelle tout le calcul se place",
-                type_="number", min="40", max="75", step="1"),
+                type_="number", min=str(AGE_LIQUIDATION_MINIMAL),
+                max=str(AGE_LIQUIDATION_MAXIMAL), step="1"),
         g.liste("liquidation_mois", "…et mois", MOIS_AGE,
                 str(saisie.liquidation_mois),
                 "la pension prend effet le premier du mois"),
@@ -1190,7 +1313,8 @@ def _metiers(saisie: Saisie, statuts: list[tuple[str, str]],
     lignes = [_ligne_metier(
         1,
         g.champ("debut", "Âge de début d'activité", en_mois(saisie.debut) // 12,
-                type_="number", min="14", max="40", step="1")
+                type_="number", min=str(AGE_DEBUT_MINIMAL),
+                max=str(AGE_DEBUT_MAXIMAL), step="1")
         + g.liste("debut_mois", "…et mois", MOIS_AGE, str(saisie.debut_mois),
                   "l'année d'entrée n'est complète que si l'on entre en janvier")
         + g.liste("statut", "Statut d'affiliation", statuts, saisie.statut)
@@ -1228,7 +1352,8 @@ def _champs_metier(rang: int, debut: str, statut: str, salaire: str,
     return (
         g.champ(f"metier{rang}_debut", "Âge du changement", debut,
                 "âge auquel ce métier commence", type_="number",
-                min="14", max="75", step="1")
+                min=str(AGE_DEBUT_MINIMAL), max=str(AGE_LIQUIDATION_MAXIMAL),
+                step="1")
         + g.liste(f"metier{rang}_statut", "Statut d'affiliation",
                   [("", "— aucun —")] + statuts, statut)
         + _champ_revenu(f"metier{rang}_salaire", saisie, echelle, salaire,
