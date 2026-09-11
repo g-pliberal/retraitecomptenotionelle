@@ -15,6 +15,7 @@ import {
 } from "./config.js";
 import { SCENARIOS, calculerCout } from "./cout.js";
 import { SYSTEMES, DepensesRetraite } from "./depenses.js";
+import { Indexation } from "./indexation.js";
 import { Population } from "./population.js";
 import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
@@ -2786,9 +2787,73 @@ publie ce qu'aurait coûté un système qui n'a pas existé.</p>
 `;
 }
 
+/**
+ * Les neuf règles que compare la page Méthode, dans l'ordre d'affichage :
+ * libellé, mode, fenêtre de lissage. L'ordre n'est pas celui des valeurs — il
+ * va de la règle demandée à celle que la théorie désigne, en passant par celle
+ * que le droit applique.
+ */
+const REGLES_COMPAREES = [
+  ["Triple lock inversé, littéral", ModeIndexation.TRIPLE_LOCK_INVERSE, 1],
+  ["Moyenne des trois taux", ModeIndexation.MOYENNE_TROIS_TAUX, 1],
+  ["Triple lock inversé, tout en nominal",
+    ModeIndexation.TRIPLE_LOCK_INVERSE_NOMINAL, 1],
+  ["Indexation sur les prix", ModeIndexation.PRIX, 1],
+  ["Médiane des trois taux", ModeIndexation.MEDIANE_TROIS_TAUX, 1],
+  ["Revalorisation réellement pratiquée",
+    ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE, 1],
+  ["Masse salariale (règle d'équilibre)", ModeIndexation.MASSE_SALARIALE, 1],
+  ["PIB nominal", ModeIndexation.PIB_NOMINAL, 1],
+  ["PIB nominal lissé sur 5 ans (Italie)", ModeIndexation.PIB_NOMINAL, 5],
+];
+
+/**
+ * Bornes du cumul comparé. Une somme versée en 1940 est revalorisée à partir de
+ * l'année SUIVANTE : les taux appliqués sont donc ceux de 1941 à 2025 inclus,
+ * ce que l'intitulé de la colonne appelle « appliquée 1941-2025 ».
+ */
+const ANNEE_VERSEMENT_COMPARE = 1940;
+const ANNEE_ARRIVEE_COMPAREE = 2025;
+
+/**
+ * Rendement cumulé de chaque règle comparée, sur 1941-2025.
+ *
+ * Ces neuf nombres étaient écrits à la main dans la page — les seuls du site à
+ * ne pas sortir du modèle. Ils ne dépendent d'aucune carrière, ce qui les
+ * rendait faciles à recopier, et l'un d'eux avait fini par mentir de trois
+ * dixièmes de point.
+ */
+function cumulsIndexation(contexte) {
+  const simulateur = contexte.simulateur();
+  const cumuls = new Map();
+  for (const [libelle, mode, lissage] of REGLES_COMPAREES) {
+    const parametres = avec(simulateur.parametres, {
+      mode_indexation: mode, lissage_indexation: lissage,
+    });
+    cumuls.set(libelle, new Indexation(simulateur.macro, parametres)
+      .coefficient(ANNEE_VERSEMENT_COMPARE, ANNEE_ARRIVEE_COMPAREE));
+  }
+  return cumuls;
+}
+
 function methode(contexte) {
   const fusionne = contexte.simulateur().regimeFusionne;
   const nombreRegimes = contexte.simulateur().catalogue.taille;
+  const cumuls = cumulsIndexation(contexte);
+  const prix = cumuls.get("Indexation sur les prix");
+  const lignesIndexation = REGLES_COMPAREES.map(([libelle]) => {
+    const valeur = cumuls.get(libelle);
+    let conserve = g.pourcentage(valeur / prix, false, 1);
+    if (libelle === REGLES_COMPAREES[0][0]) {
+      // La règle demandée est celle que la page vient d'annoncer : c'est son
+      // chiffre qu'on vient lire, et il est mis en valeur.
+      conserve = `<strong>${conserve}</strong>`;
+    }
+    return [libelle, `×${g.nombre(valeur, 1)}`, `×${g.nombre(prix, 1)}`, conserve];
+  });
+  const conserveLitteral = g.pourcentage(
+    cumuls.get(REGLES_COMPAREES[0][0]) / prix, false, 1);
+  const revalPratiquee = cumuls.get("Revalorisation réellement pratiquée");
   return `
 <h2 style="margin-top:0">Ce que le modèle calcule</h2>
 
@@ -2822,23 +2887,13 @@ Prise à la lettre, elle compare deux taux nominaux à un taux réel, et voici c
 qu'elle produit.</p>
 ${g.tableau(
     ["Règle appliquée 1941-2025", "Comptes", "Prix", "Pouvoir d'achat conservé"],
-    [
-      ["Triple lock inversé, littéral", "×4,9", "×322,2", "<strong>1,5 %</strong>"],
-      ["Moyenne des trois taux", "×175,7", "×322,2", "54,5 %"],
-      ["Triple lock inversé, tout en nominal", "×223,3", "×322,2", "69,3 %"],
-      ["Indexation sur les prix", "×322,2", "×322,2", "100 %"],
-      ["Médiane des trois taux", "×397,6", "×322,2", "123,4 %"],
-      ["Revalorisation réellement pratiquée", "×1 538,2", "×322,2", "477,4 %"],
-      ["Masse salariale (règle d'équilibre)", "×3 685,1", "×322,2", "1 143,7 %"],
-      ["PIB nominal", "×3 442,3", "×322,2", "1 068,6 %"],
-      ["PIB nominal lissé sur 5 ans (Italie)", "×4 152,7", "×322,2", "1 288,8 %"],
-    ],
+    lignesIndexation,
     ["", "nombre", "nombre", "nombre"],
     "Ce que chaque règle d'indexation aurait conservé du pouvoir d'achat, "
       + "1941-2025",
     true,
   )}
-<p>Une cotisation de 1950 ne conserve donc que 1,5 % de sa valeur réelle. C'est
+<p>Une cotisation de 1950 ne conserve donc que ${conserveLitteral} de sa valeur réelle. C'est
 la règle telle qu'énoncée, appliquée sans correctif — et c'est de là que vient
 l'essentiel de la baisse affichée par le scénario rétroactif, non du passage aux
 comptes notionnels. Le tableau « D'où vient l'écart » de chaque simulation
@@ -2846,7 +2901,7 @@ sépare les deux effets.</p>
 <p>La ligne « Revalorisation réellement pratiquée » est la seule qui ne soit pas
 une hypothèse : c'est le coefficient que les arrêtés annuels ont réellement
 appliqué aux salaires portés au compte, celui dont le scénario 1 se sert pour
-calculer le salaire de référence. Il vaut <strong>×1 538</strong> sur la période, soit près de cinq
+calculer le salaire de référence. Il vaut <strong>×${g.nombre(revalPratiquee, 0)}</strong> sur la période, soit près de cinq
 fois les prix, parce que le régime général a revalorisé sur les SALAIRES
 jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc cette ligne, et
 non « Indexation sur les prix », qui neutralise la question de l'indexation
