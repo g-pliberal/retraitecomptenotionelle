@@ -199,6 +199,29 @@ affiliations:
       à la création de l'Arrco : les six années intermédiaires ne relèvent que
       du régime général, comme pour tout salarié du privé de cette période.
 
+  artiste_auteur:
+    libelle: Artiste-auteur (écrivain, illustrateur, photographe…)
+    periodes:
+      - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap]}
+    note: >-
+      Les artistes-auteurs relèvent du RÉGIME GÉNÉRAL pour leur retraite de
+      base — la loi du 31 décembre 1975 les y rattache — et du RAAP pour leur
+      complémentaire. Le statut n'est donc PAS marqué `sans_employeur` : le
+      diffuseur verse une contribution à côté du précompte de l'auteur, comme
+      un employeur. Avant 1977, aucune affiliation obligatoire.
+
+  medecin_liberal:
+    libelle: Médecin libéral
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: null, regimes: [cnavpl, carmf_complementaire]}
+    note: >-
+      Le statut `profession_liberale` route vers le seul régime de base et
+      sous-estime donc lourdement toute carrière libérale : la complémentaire
+      d'un médecin pèse plus que sa base. Celui-ci ajoute la CARMF. Les neuf
+      autres sections de la CNAVPL restent sans complémentaire, faute de
+      barème publié — voir docs/limites.md.
+
   personnel_navigant:
     libelle: Personnel navigant professionnel de l'aéronautique civile
     periodes:

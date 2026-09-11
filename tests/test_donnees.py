@@ -1045,7 +1045,7 @@ def test_les_statuts_sans_employeur_sont_marques():
     sans = {code for code in affiliations.codes
             if affiliations.sans_employeur(code)}
     assert sans == {"artisan", "commercant", "profession_liberale", "avocat",
-                    "exploitant_agricole"}
+                    "exploitant_agricole", "medecin_liberal"}
     assert not affiliations.sans_employeur("salarie_prive_non_cadre")
     assert not affiliations.sans_employeur("fonctionnaire_etat")
 

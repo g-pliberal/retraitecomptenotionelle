@@ -49,6 +49,9 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     "plafonnee_3_pass": (0.0, 3.0),
     "plafonnee_4_pass": (0.0, 4.0),
     "tranche_1_4_pass": (1.0, 4.0),
+    # Complémentaires des sections libérales : la CARMF prélève jusqu'à
+    # trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
+    "plafonnee_3_5_pass": (0.0, 3.5),
     "hors_primes": (0.0, None),
     "primes_uniquement": (0.0, None),
     "forfaitaire": (0.0, None),
