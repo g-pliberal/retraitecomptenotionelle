@@ -37,6 +37,7 @@ from retraite_notionnelle.web.pages import (
     PROFILS,
     PROJECTIONS,
     TABLES,
+    TITRES,
     Contexte,
     ErreurSaisie,
     Saisie,
@@ -573,11 +574,12 @@ def test_changer_de_metier_change_le_resultat(contexte):
 def test_le_formulaire_offre_toujours_une_ligne_de_metier_de_plus(page):
     """C'est ainsi qu'on ajoute un métier : sans une ligne de JavaScript."""
     vierge = page("/")
-    assert vierge.count('<p class="rang">') == 2
+    # Chaque métier est un groupe de champs, et son rang en est la légende.
+    assert vierge.count('<legend class="rang">') == 2
     assert 'name="metier2_debut" value=""' in vierge
 
     rempli = page("/", naissance=1975, metier2_debut=40, metier2_statut="artisan")
-    assert rempli.count('<p class="rang">') == 3
+    assert rempli.count('<legend class="rang">') == 3
     assert 'name="metier3_debut" value=""' in rempli
 
 
@@ -587,7 +589,7 @@ def test_le_formulaire_s_arrete_au_nombre_maximal_de_metiers(page):
         champs[f"metier{rang}_debut"] = 30 + rang
         champs[f"metier{rang}_statut"] = "artisan"
     texte = page("/", **champs)
-    assert texte.count('<p class="rang">') == METIERS_MAXIMUM
+    assert texte.count('<legend class="rang">') == METIERS_MAXIMUM
     assert f'name="metier{METIERS_MAXIMUM + 1}_debut"' not in texte
 
 
@@ -936,7 +938,11 @@ def test_le_tableau_du_detail_s_additionne_a_l_ecran(contexte, nom, champs):
         if "Pension du système actuel" in ligne:
             total = somme(ligne)
         elif ("hors total" in ligne or "Sous-total" in ligne
-              or re.search(r"<td[^>]*>\+ ", ligne)):
+              # La première cellule d'une ligne est un en-tête de ligne
+              # depuis que les tableaux en portent : les deux balises sont
+              # admises ici, faute de quoi les lignes « + avantage » ne
+              # seraient plus exclues et le total serait compté deux fois.
+              or re.search(r"<t[dh][^>]*>\+ ", ligne)):
             continue
         elif "€" in ligne:
             regimes.append(somme(ligne))
@@ -1448,7 +1454,7 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
 
     #: Seules adresses tolérées : le dépôt lui-même (liens que le lecteur suit
     #: s'il le veut) et l'espace de noms SVG, qui n'est jamais requêté.
-    autorisees = ("https://github.com/gillesg-droid/", "http://www.w3.org/2000/svg")
+    autorisees = ("https://github.com/g-pliberal/", "http://www.w3.org/2000/svg")
     for hote in ("http://", "https://"):
         for morceau in page.split(hote)[1:]:
             adresse = hote + morceau.split('"')[0]
@@ -1694,3 +1700,268 @@ def test_la_palette_des_scenarios_reste_lisible(theme):
             f"{premiere} et {seconde} : ΔE {ecart:.1f}, sous le plancher de "
             f"{ECART_MINIMAL_VISION_NORMALE:.0f} en vision normale"
         )
+
+
+# -- accessibilité -------------------------------------------------------------
+#
+# Ce que le site promet dans ses mentions légales, vérifié ici. Une déclaration
+# d'accessibilité qui n'est adossée à aucun contrôle se périme au premier
+# changement de gabarit : celui qui suit ne se périme pas.
+
+#: Plancher de contraste des textes courants, et des textes agrandis ou des
+#: contours de composants — WCAG 2.1, critères 1.4.3 et 1.4.11.
+CONTRASTE_TEXTE = 4.5
+CONTRASTE_COMPOSANT = 3.0
+
+
+def _couleur(nom: str, theme: str) -> str:
+    """Une variable de la feuille de style, dans l'un des deux thèmes.
+
+    Le thème sombre redéfinit les mêmes noms dans un bloc
+    ``prefers-color-scheme`` : la première définition est celle du clair, la
+    dernière celle du sombre.
+    """
+    trouvees = re.findall(rf"--{nom}:\s*(#[0-9a-f]{{6}})\s*;", g.FEUILLE_DE_STYLE)
+    assert trouvees, f"couleur « --{nom} » absente de la feuille de style"
+    return trouvees[0] if theme == "clair" else trouvees[-1]
+
+
+def _luminance(hexa: str) -> float:
+    """Luminance relative, au sens de WCAG 2.1."""
+    canaux = [int(hexa[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    r, v, b = [
+        c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+        for c in canaux
+    ]
+    return 0.2126 * r + 0.7152 * v + 0.0722 * b
+
+
+def _contraste(premiere: str, seconde: str) -> float:
+    claire, sombre = sorted((_luminance(premiere), _luminance(seconde)),
+                            reverse=True)
+    return (claire + 0.05) / (sombre + 0.05)
+
+
+@pytest.mark.parametrize("theme", ["clair", "sombre"])
+def test_les_textes_tiennent_le_plancher_de_contraste(theme):
+    """Tout ce qui s'écrit, sur chacun des trois fonds de la page.
+
+    ``--texte-doux`` porte les aides de saisie, les gloses, les graduations des
+    graphiques et le pied de page : c'est la couleur la plus employée du site
+    après le texte courant, et la première à céder quand la palette bouge. Elle
+    a déjà cédé une fois — l'aide sous chaque libellé de champ était peinte à
+    80 % d'opacité, ce qui la ramenait à 4,23:1 sur le fond clair.
+    """
+    for fond in ("fond", "fond-carte", "fond-appui"):
+        for texte in ("texte", "texte-doux", "accent", "alerte"):
+            mesure = _contraste(_couleur(texte, theme), _couleur(fond, theme))
+            assert mesure >= CONTRASTE_TEXTE, (
+                f"{theme} : --{texte} sur --{fond} tombe à {mesure:.2f}:1, "
+                f"sous le plancher de {CONTRASTE_TEXTE}:1"
+            )
+
+
+@pytest.mark.parametrize("theme", ["clair", "sombre"])
+def test_le_contour_des_champs_se_distingue_du_fond(theme):
+    """Un champ de saisie se reconnaît à son contour : encore faut-il le voir.
+
+    WCAG 1.4.11 demande 3:1 entre un composant d'interface et ce qui l'entoure.
+    Le filet décoratif ``--trait`` plafonne à 1,4:1 — c'est voulu, il ne porte
+    aucune information —, et les champs ont donc leur propre couleur de bord.
+    """
+    for fond in ("fond", "fond-carte"):
+        mesure = _contraste(_couleur("trait-champ", theme), _couleur(fond, theme))
+        assert mesure >= CONTRASTE_COMPOSANT, (
+            f"{theme} : le contour des champs tombe à {mesure:.2f}:1 sur "
+            f"--{fond}, sous le plancher de {CONTRASTE_COMPOSANT}:1"
+        )
+
+
+def test_la_feuille_de_style_respecte_le_reglage_mouvement_reduit():
+    """La jauge d'attente glisse sans fin ; une animation sans fin rend malade.
+
+    Le système le signale, et la feuille l'écoute — WCAG 2.2.2 et 2.3.3.
+    """
+    assert "@media (prefers-color-scheme: dark)" in g.FEUILLE_DE_STYLE
+    bloc = g.FEUILLE_DE_STYLE.split("@media (prefers-reduced-motion: reduce)")
+    assert len(bloc) == 2, "la feuille ne tient pas compte du mouvement réduit"
+    assert "animation-iteration-count: 1 !important" in bloc[1], (
+        "une animation qui boucle doit cesser de boucler"
+    )
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_chaque_tableau_porte_un_titre_et_des_en_tetes_de_ligne(contexte, chemin):
+    """Un tableau sans titre s'annonce « tableau, 7 colonnes, 12 lignes ».
+
+    Et sans en-tête de ligne, une cellule lue au hasard n'est rattachée à rien :
+    la synthèse vocale énonce « moins 31 % » sans dire de quel cas type ni de
+    quelle génération. RGAA 4.1, critères 5.4 et 5.7.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    tableaux = re.findall(r"<table>(.*?)</table>", corps, re.S)
+    for rang, tableau_html in enumerate(tableaux, start=1):
+        assert tableau_html.startswith("<caption>"), (
+            f"{chemin} : le tableau n° {rang} n'a pas de titre"
+        )
+        lignes = re.findall(r"<tr>(.*?)</tr>", tableau_html, re.S)
+        for ligne in lignes[1:]:
+            assert ligne.startswith("<th ") and 'scope="row"' in ligne, (
+                f"{chemin} : une ligne du tableau n° {rang} n'a pas d'en-tête"
+            )
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_toute_zone_defilante_est_atteignable_au_clavier(contexte, chemin):
+    """Une boîte qui défile sans être focusable est hors d'atteinte au clavier.
+
+    Les moteurs ne s'accordent pas sur ce point — Firefox rend focusables les
+    boîtes défilantes, les autres non —, et un tableau plus large que l'écran
+    devient alors impossible à parcourir sans souris. WCAG 2.1.1.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    for ouverture in re.findall(r'<div class="defilant"[^>]*>', corps):
+        assert 'tabindex="0"' in ouverture, (
+            f"{chemin} : zone défilante inatteignable au clavier — {ouverture}"
+        )
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_aucune_information_ne_vit_dans_une_infobulle(contexte, chemin):
+    """``title`` ne s'ouvre ni au clavier, ni au doigt, ni sous synthèse vocale.
+
+    Les gloses des douze cas types et des huit systèmes y ont vécu : elles sont
+    désormais en clair, sous le tableau qu'elles expliquent.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    assert ' title="' not in corps, (
+        f"{chemin} : une information n'est accessible qu'au survol de la souris"
+    )
+
+
+def test_chaque_champ_du_formulaire_porte_une_etiquette(page):
+    """Un champ sans étiquette est un champ dont personne ne sait ce qu'il veut.
+
+    Le contrôle vaut aussi pour les listes déroulantes, et ignore les champs
+    cachés, qui ne sont pas saisis.
+    """
+    texte = page("/")
+    etiquetes = set(re.findall(r'<label for="([^"]+)"', texte))
+    for balise in re.findall(r"<(?:input|select)\b[^>]*>", texte):
+        if 'type="hidden"' in balise:
+            continue
+        identifiant = re.search(r'id="([^"]+)"', balise)
+        assert identifiant, f"champ sans identifiant : {balise}"
+        assert identifiant.group(1) in etiquetes, (
+            f"champ sans étiquette : {identifiant.group(1)}"
+        )
+
+
+def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
+    """« Revenu brut mensuel » est le même libellé dans chaque bloc de métier.
+
+    Seul le rang les distingue : il doit donc être la LÉGENDE d'un groupe, qui
+    est énoncée avec chacun des champs qu'elle couvre, et non un intertitre, qui
+    ne se voit qu'à l'œil. WCAG 3.3.2.
+    """
+    texte = page("/")
+    groupes = re.findall(r'<fieldset class="metier[^"]*">(.{0,80})', texte, re.S)
+    assert len(groupes) >= 2, "les métiers ne forment plus des groupes de champs"
+    for debut in groupes:
+        assert debut.startswith('<legend class="rang">'), (
+            f"un groupe de métier n'a pas de légende : {debut!r}"
+        )
+
+
+def test_les_champs_qui_decrivent_la_personne_sont_reconnaissables(page):
+    """WCAG 1.3.5 : un champ qui demande une information sur l'utilisateur doit
+    dire laquelle, pour que le navigateur et les aides à la saisie la
+    reconnaissent."""
+    texte = page("/")
+    assert 'id="naissance"' in texte and 'autocomplete="bday-year"' in texte
+    assert 'id="sexe"' in texte and 'autocomplete="sex"' in texte
+
+
+def test_le_lien_d_evitement_ouvre_chaque_page(contexte):
+    """Premier élément parcouru au clavier, et seul moyen d'atteindre le contenu
+    sans retraverser l'en-tête à chaque page. RGAA 12.7."""
+    entete = g.entete("/")
+    assert entete.startswith('<a class="evitement" href="#contenu">'), entete[:80]
+    assert 'aria-label="Navigation principale"' in entete, (
+        "le repère de navigation doit porter un nom"
+    )
+
+
+def test_les_mentions_legales_sont_joignables_depuis_toute_page():
+    """La loi veut qu'elles le soient. Le pied est posé une fois, à côté de
+    ``<main>``, et ne dépend donc pas de la page affichée."""
+    pied = g.pied()
+    assert 'href="#/mentions"' in pied
+    assert "aucune valeur officielle" in pied, (
+        "le pied doit dire que le simulateur n'engage aucune caisse"
+    )
+
+
+def test_la_page_des_mentions_dit_l_hebergeur_et_l_etat_d_accessibilite(contexte):
+    """Les trois obligations que la page porte, et le trou qu'elle signale.
+
+    La LCEN impose de nommer l'hébergeur ; l'éditeur personne morale doit
+    s'identifier, et ce qui manque pour cela doit être visible plutôt que
+    comblé au jugé.
+    """
+    _, corps = rendre(contexte, "/mentions", {})
+    assert "GitHub, Inc." in corps, "l'hébergeur doit être nommé"
+    assert "conformité partielle" in corps, (
+        "l'état d'accessibilité doit être déclaré, et sans le surestimer"
+    )
+    assert "Aucun audit externe" in corps
+    assert corps.count("a-completer") >= 4, (
+        "les mentions que l'éditeur doit encore fournir doivent rester visibles"
+    )
+    assert "ne collecte rien" in corps
+
+
+def test_chaque_page_du_site_est_comparee_au_portage(contexte):
+    """Une page qui n'a pas de témoin n'est comparée à rien.
+
+    Les deux rendus — Python et JavaScript — ne divergeraient alors qu'à
+    l'écran, et personne ne le saurait avant un lecteur.
+    """
+    import json
+    from pathlib import Path
+
+    temoins = json.loads(
+        (Path(__file__).resolve().parent / "temoins" / "pages.json")
+        .read_text(encoding="utf-8")
+    )
+    couverts = {page["chemin"] for page in temoins.values()}
+    assert set(TITRES) <= couverts, (
+        f"pages sans témoin : {set(TITRES) - couverts} — les ajouter à "
+        "scripts/construire_temoins.py"
+    )
+
+
+def test_le_focus_ne_retombe_pas_au_debut_du_document_apres_un_rendu():
+    """``<main>`` est remplacé en bloc : ce qui avait le focus vient de
+    disparaître, et le navigateur le renvoie sur ``<body>``. Au clavier, la
+    tabulation suivante repart alors du tout début du document."""
+    from pathlib import Path
+
+    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    assert 'main id="contenu" tabindex="-1"' in page, (
+        "<main> doit pouvoir recevoir le focus"
+    )
+    assert "function reprendre(" in page and "reprendre(contenu)" in page
+
+    #: Sauf au tout premier rendu : le focus est alors là où le navigateur l'a
+    #: laissé, c'est-à-dire au début du document — d'où le lien d'évitement est
+    #: le premier élément qu'une tabulation rencontre. Le déplacer dans <main>
+    #: dès le chargement rendrait ce lien inatteignable en avant, et la page
+    #: perdrait le raccourci même qu'elle offre.
+    assert "let premierRendu = true;" in page
+    assert "if (premierRendu) {" in page
+
+    #: Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici
+    #: l'adresse EST la route, et l'écrire renverrait le simulateur à sa page
+    #: d'accueil, perdant la simulation en cours.
+    assert 'closest("a.evitement")' in page and "evenement.preventDefault()" in page

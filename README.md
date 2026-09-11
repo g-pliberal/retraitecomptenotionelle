@@ -87,7 +87,7 @@ Scénario                                                  Courants   Constants 
 
 ## Ouvrir le simulateur
 
-### 👉 [gillesg-droid.github.io/retraitecomptenotionelle](https://gillesg-droid.github.io/retraitecomptenotionelle/)
+### 👉 [g-pliberal.github.io/retraitecomptenotionelle](https://g-pliberal.github.io/retraitecomptenotionelle/)
 
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
@@ -100,7 +100,9 @@ décomposition de l'écart règle par règle et la cascade qui mène du scénari
 scénario 3), **Cas types** (la grille 12 carrières × 7 générations),
 **Coût** (ce que la retraite a coûté depuis 1959, régime par régime, ce que les
 cinq systèmes auraient coûté, et ce qu'ils coûteraient d'ici 2070),
-**Méthode**, **Données** (l'état de fiabilité des séries).
+**Méthode**, **Données** (l'état de fiabilité des séries). Le pied de page
+renvoie aux **Mentions légales**, qui disent qui édite, qui héberge, ce que le
+site fait des données saisies — rien — et où en est son accessibilité.
 
 L'adresse d'une simulation contient tous ses paramètres — elle peut être citée
 ou partagée telle quelle — et chaque résultat est consultable en JSON au bas de
@@ -877,12 +879,19 @@ JSON ».
 python -m pytest tests
 ```
 
-282 tests couvrant le chargement et la fiabilité des données, la règle de
+472 tests couvrant le chargement et la fiabilité des données, la règle de
 certification, la calibration des tables de mortalité et sa concordance avec les
 tables observées, les propriétés du moteur
 (monotonie du diviseur, cliquet de l'âge de référence, règles de fusion), le
 comportement des scénarios, le rendu des pages et la fraîcheur de ce que charge
 le site. Aucun test n'accède au réseau : les sources sont simulées.
+
+Une vingtaine d'entre eux tiennent l'accessibilité : contrastes mesurés dans les
+deux thèmes, titres et en-têtes de ligne des tableaux, étiquettes et groupes du
+formulaire, zones défilantes atteignables au clavier, absence d'information
+enfermée dans une infobulle, et focus reposé après chaque rendu. Ce que la page
+« Mentions légales » déclare est donc vérifié à chaque modification, et non
+affirmé une fois pour toutes.
 
 Deux d'entre eux lancent `node` pour rejouer le calcul côté JavaScript — les
 cas-témoins figés, puis des carrières tirées au hasard ; ils sont ignorés si
@@ -896,5 +905,7 @@ node --test tests/js/moteur.test.js
 
 ## Licence
 
-MIT. Les données publiques référencées restent soumises aux licences de leurs
-producteurs respectifs (licence ouverte Etalab pour la plupart).
+MIT — voir [LICENSE](LICENSE). Les données publiques référencées restent
+soumises aux licences de leurs producteurs respectifs (licence ouverte Etalab
+pour la plupart), qui imposent toutes la citation de la source : elle est dans
+[`data/sources.yaml`](data/sources.yaml), valeur par valeur.

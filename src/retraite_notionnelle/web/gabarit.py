@@ -20,6 +20,12 @@ FEUILLE_DE_STYLE = """
   --texte: #1b1a17;
   --texte-doux: #5c574d;
   --trait: #ddd7cb;
+  /* Bordure des CHAMPS, distincte du filet décoratif : un contour de champ est
+     ce qui dit où l'on peut écrire, et doit donc atteindre 3:1 sur les deux
+     fonds qu'il sépare — celui du champ et celui de la carte qui le porte
+     (WCAG 2.1, 1.4.11). Le filet `--trait` plafonne à 1,4:1 ; mesuré ici :
+     3,38:1 sur le fond, 3,53:1 sur la carte. */
+  --trait-champ: #8e887a;
   --accent: #7a2e1e;
   --accent-doux: #f0e2dd;
   --actuel: #03729a;
@@ -48,6 +54,7 @@ FEUILLE_DE_STYLE = """
     --texte: #ece9e3;
     --texte-doux: #a5a099;
     --trait: #35333c;
+    --trait-champ: #787581;
     --accent: #e08b6f;
     --accent-doux: #3a2820;
     --actuel: #3d9bc2;
@@ -73,10 +80,33 @@ body {
   background: var(--fond);
   color: var(--texte);
   font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  font-size: 17px;
+  /* En `rem` et non en pixels : une taille en pixels ignore la préférence de
+     taille de police du navigateur, sur laquelle comptent ceux qui l'ont
+     agrandie une fois pour toutes. 1,0625rem vaut les 17px d'origine quand la
+     préférence n'a pas été touchée. */
+  font-size: 1.0625rem;
   line-height: 1.6;
 }
 main { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem; }
+/* Lien d'évitement : premier élément parcouru au clavier, invisible tant qu'il
+   n'a pas le focus. Sans lui, atteindre le contenu depuis la barre d'adresse
+   impose de traverser les six liens de l'en-tête à chaque page (WCAG 2.4.1). Il
+   n'est pas caché par `display:none`, qui le sortirait de l'ordre de tabulation
+   : il est simplement remonté hors de l'écran. */
+.evitement {
+  position: absolute; left: 0.5rem; top: -4rem; z-index: 10;
+  background: var(--fond-carte); color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 0 0 4px 4px;
+  padding: 0.5rem 0.9rem; font-size: 0.92rem; text-decoration: none;
+  transition: top 0.15s;
+}
+.evitement:focus { top: 0; }
+/* `<main>` reçoit le focus au changement de page (voir index.html) : sans quoi
+   le clavier repartirait du haut du document à chaque calcul. Il ne porte pas
+   de contour pour autant — ce n'est pas un élément interactif, et le cerner
+   tout entier n'apprendrait rien. */
+main:focus { outline: none; }
+
 header.bandeau {
   border-bottom: 1px solid var(--trait);
   background: var(--fond-carte);
@@ -114,16 +144,40 @@ a { color: var(--accent); }
 }
 .note.avertissement { border-left-color: var(--alerte); }
 .discret { color: var(--texte-doux); font-size: 0.9rem; }
+/* Un champ des mentions légales que l'éditeur n'a pas encore renseigné. Il est
+   marqué, et non masqué : un trou visible se comble, un trou discret reste. */
+.a-completer {
+  font-style: normal; color: var(--alerte);
+  border-bottom: 1px dashed currentColor;
+}
 form .grille {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   gap: 1rem 1.5rem;
 }
+/* Les aides de saisie n'ont pas toutes la même longueur : celle qui passe à la
+   ligne décalait son champ d'un cran vers le bas, et les champs d'une même
+   rangée ne s'alignaient plus. Chaque cellule devient une colonne dont le
+   libellé absorbe la hauteur en trop ; les champs se posent alors sur la même
+   ligne, quelle que soit l'aide au-dessus. */
+form .grille > div { display: flex; flex-direction: column; }
+form .grille > div > label { flex: 1 0 auto; }
 label { display: block; font-size: 0.88rem; color: var(--texte-doux); margin-bottom: 0.25rem; }
-label .aide { display: block; font-size: 0.8rem; opacity: 0.8; }
+/* Pas d'`opacity` ici : à 0,8 sur `--texte-doux`, l'aide tombait à 4,23:1 sur
+   le fond clair, sous le plancher de 4,5:1 des textes courants (WCAG 1.4.3).
+   La couleur pleine la remonte à 6,88:1, et la taille suffit à la distinguer du
+   libellé. */
+label .aide { display: block; font-size: 0.8rem; }
 input, select {
   width: 100%; padding: 0.45rem 0.6rem; font: inherit; font-size: 0.95rem;
-  color: var(--texte); background: var(--fond); border: 1px solid var(--trait);
+  color: var(--texte); background: var(--fond); border: 1px solid var(--trait-champ);
   border-radius: 4px;
+}
+/* Un seul indicateur de focus pour tout ce qui se parcourt au clavier — champs,
+   liens, bouton, dépliants, tableaux défilants. Le contour du navigateur varie
+   d'un moteur à l'autre et disparaît sur fond sombre ; celui-ci est posé et
+   mesuré : `--accent` tient 8,99:1 sur le fond clair, 7,00:1 sur le sombre. */
+:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px;
 }
 input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 button {
@@ -135,18 +189,36 @@ button:hover { opacity: 0.9; }
 /* Les métiers de la carrière : une boîte par métier, la dernière en pointillé
    parce qu'elle n'en décrit encore aucun — c'est celle qui sert à en ajouter. */
 .metiers { display: grid; gap: 0.9rem; margin: 0.9rem 0 0; }
-.metier { border: 1px solid var(--trait); border-radius: 4px; padding: 0.9rem 1rem; }
+.metier {
+  border: 1px solid var(--trait); border-radius: 4px; padding: 0.9rem 1rem;
+  /* `<fieldset>` porte des marges et un padding propres à chaque navigateur. */
+  margin: 0; min-width: 0;
+}
 .metier.facultatif { border-style: dashed; }
+/* Le rang du métier est la LÉGENDE du groupe : « Revenu brut mensuel » est le
+   même libellé dans les deux blocs, et seule cette légende dit lequel on
+   remplit — à l'œil comme à l'oreille (WCAG 3.3.2). */
 .metier > .rang {
-  margin: 0 0 0.7rem; font-size: 0.78rem; letter-spacing: 0.05em;
+  margin: 0; padding: 0 0.35rem; font-size: 0.78rem; letter-spacing: 0.05em;
   text-transform: uppercase; color: var(--texte-doux);
 }
 details { margin-top: 1.25rem; }
 summary { cursor: pointer; color: var(--texte-doux); font-size: 0.92rem; }
 summary:hover { color: var(--accent); }
 details > .grille { margin-top: 1rem; }
+/* Un tableau plus large que l'écran défile horizontalement. La zone qui défile
+   doit pouvoir recevoir le focus, sinon elle est inatteignable au clavier chez
+   les moteurs qui ne rendent pas focusables les boîtes défilantes (WCAG 2.1.1)
+   : le HTML lui donne `tabindex="0"`, et le style rend ce focus visible. */
 .defilant { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+/* Le titre du tableau, énoncé par les synthèses vocales avant son contenu et
+   lu à l'écran comme l'intitulé de la grille. */
+caption {
+  caption-side: top; text-align: left; font-size: 0.88rem;
+  color: var(--texte-doux); padding: 0 0 0.5rem;
+}
+tbody th { font-weight: 600; }
 th, td { text-align: right; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--trait); }
 th:first-child, td:first-child { text-align: left; }
 thead th { font-size: 0.82rem; color: var(--texte-doux); font-weight: 600; }
@@ -220,6 +292,12 @@ ul.legende li { display: flex; align-items: baseline; gap: 0.4rem; }
   display: inline-block; flex: none;
   width: 0.7rem; height: 0.7rem; border-radius: 2px;
 }
+/* Ce qu'un tableau ne peut pas porter dans ses cellules sans devenir illisible
+   — la phrase qui explique une ligne. Elle était autrefois dans un attribut
+   `title`, c'est-à-dire nulle part pour qui n'a pas de souris. */
+dl.gloses { margin: 0.8rem 0 0; font-size: 0.9rem; }
+dl.gloses dt { font-weight: 600; margin-top: 0.7rem; }
+dl.gloses dd { margin: 0.15rem 0 0; padding: 0; color: var(--texte-doux); }
 ul.serree { margin: 0.5rem 0; padding-left: 1.2rem; }
 ul.serree li { margin: 0.3rem 0; }
 footer {
@@ -260,7 +338,7 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
 /* Téléphone : le montant passe sous l'intitulé du scénario plutôt que de se
    serrer contre lui, et la page respire un peu moins large. */
 @media (max-width: 34rem) {
-  body { font-size: 16px; }
+  body { font-size: 1rem; }
   main { padding: 0 1rem; }
   footer { width: calc(100% - 2rem); padding: 1.25rem 0 4rem; }
   .carte { padding: 1rem 1.1rem; }
@@ -289,9 +367,38 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .scenario .montant { flex-wrap: wrap; }
   .scenario .depart { padding-left: 0; border-left: none; }
 }
+
+/* Mouvement réduit : la jauge d'attente glisse sans fin, et une animation qui
+   ne s'arrête jamais déclenche nausées et migraines chez qui y est sensible
+   (WCAG 2.2.2 et 2.3.3). Le système le signale ; on l'écoute. La jauge reste,
+   immobile et pleine : elle dit encore « ça travaille », sans bouger. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .chargement .jauge > span { width: 100%; }
+}
+
+/* Impression : le lecteur qui imprime une simulation veut les chiffres. La
+   navigation ne s'y suit pas, et une zone qui défile ne défile plus — le
+   tableau qu'elle contient serait coupé à la largeur de la page. Le formulaire,
+   lui, reste : ses champs portent les valeurs saisies, et sont la seule trace
+   imprimée de ce qui a été simulé. Les adresses des liens externes sont
+   dépliées, faute de quoi une page imprimée renvoie à des liens qu'on ne peut
+   pas suivre. */
+@media print {
+  header.bandeau nav, .evitement { display: none; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .defilant { overflow: visible; }
+  .carte, .note, table, .graphique, .scenario { break-inside: avoid; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
+}
 """
 
-DEPOT = "https://github.com/gillesg-droid/retraitecomptenotionelle"
+DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle"
 
 LIENS = (
     ("/", "Simuler"),
@@ -323,18 +430,38 @@ def navigation(chemin_actif: str = "/") -> str:
 
 
 def entete(chemin_actif: str = "/") -> str:
-    return f"""<header class="bandeau"><div class="interieur">
+    """Bandeau de tête, précédé du lien d'évitement.
+
+    Le lien d'évitement est le premier élément parcouru au clavier. Le repère de
+    navigation porte un nom : une page peut en compter plusieurs, et « navigation »
+    tout court ne dit pas laquelle on parcourt.
+    """
+    return f"""<a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
   <h1><a href="{lien('/')}">Retraite à comptes notionnels</a></h1>
-  <nav>{navigation(chemin_actif)}</nav>
+  <nav aria-label="Navigation principale">{navigation(chemin_actif)}</nav>
 </div></header>"""
 
 
 def pied() -> str:
+    """Pied de page.
+
+    Il porte ce que la loi exige d'atteindre depuis n'importe quelle page — les
+    mentions légales — et ce que le lecteur doit savoir avant de citer un
+    chiffre : d'où vient le modèle, en quelle unité il compte, et qu'il ne vaut
+    pas relevé de carrière.
+    """
     return f"""<footer>
+  <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+  d'aucune caisse de retraite et ne vaut ni relevé de carrière, ni estimation
+  de vos droits : c'est un modèle, appliqué à ce que vous saisissez.
+  Pour vos droits réels, seule fait foi votre caisse
+  (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
   <p>Modèle ouvert, code et données sur <a href="{DEPOT}">GitHub</a> (licence MIT).
   Les montants sont bruts, exprimés en euros constants de l'année de référence.
   Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
   <a href="{DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
+  <p><a href="{lien('/mentions')}">Mentions légales, données personnelles et accessibilité</a></p>
 </footer>"""
 
 
@@ -420,7 +547,11 @@ def cache(nom: str, valeur: str) -> str:
 
 
 def liste(nom: str, libelle: str, options: list[tuple[str, str]],
-          selection: str, aide: str = "") -> str:
+          selection: str, aide: str = "", **attributs: str) -> str:
+    supplement = "".join(
+        f' {cle.rstrip("_").replace("_", "-")}="{escape(str(val))}"'
+        for cle, val in attributs.items()
+    )
     choix = "".join(
         f'<option value="{escape(code)}"'
         + (" selected" if code == selection else "")
@@ -430,7 +561,7 @@ def liste(nom: str, libelle: str, options: list[tuple[str, str]],
     aide_html = f'<span class="aide">{escape(aide)}</span>' if aide else ""
     return (
         f'<div><label for="{nom}">{escape(libelle)}{aide_html}</label>'
-        f'<select id="{nom}" name="{nom}">{choix}</select></div>'
+        f'<select id="{nom}" name="{nom}"{supplement}>{choix}</select></div>'
     )
 
 
@@ -452,27 +583,68 @@ class Cellule:
 
 
 def tableau(entetes: list[str], lignes: list[list[str | Cellule]],
-            classes_colonnes: list[str] | None = None) -> str:
+            classes_colonnes: list[str] | None = None, titre: str = "",
+            entete_de_ligne: bool = False) -> str:
+    """Tableau de données.
+
+    ``titre`` devient le ``<caption>``. Sans lui, un lecteur d'écran qui arrive
+    sur la grille annonce « tableau, 4 colonnes, 41 lignes » et rien de plus :
+    il faut en sortir pour deviner ce qu'elle contient. Il nomme aussi la zone
+    défilante, qui porte ``tabindex`` afin d'être atteignable au clavier là où
+    le tableau dépasse la largeur de l'écran.
+
+    ``entete_de_ligne`` promeut la première cellule de chaque ligne en
+    ``<th scope="row">``. C'est ce qui permet à la synthèse vocale d'annoncer
+    « Cnav, 2019, 89,4 » plutôt que trois nombres nus : sans en-tête de ligne,
+    une cellule lue au hasard dans la grille n'est rattachée à rien.
+    """
     classes = classes_colonnes or ["" for _ in entetes]
     tete = "".join(
-        f'<th class="{cls}" scope="col">{escape(titre)}</th>'
-        for titre, cls in zip(entetes, classes)
+        f'<th class="{cls}" scope="col">{escape(intitule)}</th>'
+        for intitule, cls in zip(entetes, classes)
     )
-    corps = "".join(
-        "<tr>" + "".join(
-            f'<td class="{cls}"'
+
+    def _cellule(cellule: str | Cellule, cls: str, premiere: bool) -> str:
+        balise = "th" if premiere and entete_de_ligne else "td"
+        portee = ' scope="row"' if balise == "th" else ""
+        return (
+            f'<{balise} class="{cls}"{portee}'
             + (cellule.style() if isinstance(cellule, Cellule) else "")
             + ">"
             + (cellule.html if isinstance(cellule, Cellule) else cellule)
-            + "</td>"
-            for cellule, cls in zip(ligne, classes)
+            + f"</{balise}>"
+        )
+
+    corps = "".join(
+        "<tr>" + "".join(
+            _cellule(cellule, cls, rang == 0)
+            for rang, (cellule, cls) in enumerate(zip(ligne, classes))
         ) + "</tr>"
         for ligne in lignes
     )
+    legende = f"<caption>{escape(titre)}</caption>" if titre else ""
+    nom = f' role="region" aria-label="{escape(titre)}"' if titre else ""
     return (
-        f'<div class="defilant"><table><thead><tr>{tete}</tr></thead>'
+        f'<div class="defilant" tabindex="0"{nom}><table>{legende}'
+        f"<thead><tr>{tete}</tr></thead>"
         f"<tbody>{corps}</tbody></table></div>"
     )
+
+
+def gloses(entrees: list[tuple[str, str]]) -> str:
+    """Les phrases qu'un tableau ne peut pas porter dans ses cellules.
+
+    Elles tenaient jusqu'ici dans un attribut ``title``, c'est-à-dire nulle part
+    : une infobulle de survol ne s'ouvre ni au clavier, ni au doigt, ni sous une
+    synthèse vocale. Sorties du tableau, elles se lisent dans tous les cas.
+    """
+    if not entrees:
+        return ""
+    corps = "".join(
+        f"<dt>{escape(terme)}</dt><dd>{escape(texte)}</dd>"
+        for terme, texte in entrees
+    )
+    return f'<dl class="gloses">{corps}</dl>'
 
 
 def fiche(etiquette: str, valeur: str) -> str:
@@ -795,6 +967,13 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
 
 
 def _legende(series: tuple[Serie, ...]) -> str:
+    """Légende du graphique, posée en ``<figcaption>``.
+
+    Ce n'est pas un ornement : le SVG est annoncé comme une image, et la légende
+    est la seule chose qui dise, en texte, ce que chaque couleur représente.
+    Dans la figure, elle en devient le nom accessible ; hors d'elle, elle
+    n'était qu'une liste flottant sous un dessin.
+    """
     entrees = "".join(
         f'<li><span class="pastille" style="background:{serie.couleur}"></span>'
         f"<span>{escape(serie.libelle)}"
@@ -802,4 +981,4 @@ def _legende(series: tuple[Serie, ...]) -> str:
         + "</span></li>"
         for serie in series
     )
-    return f'<ul class="legende">{entrees}</ul>'
+    return f'<figcaption><ul class="legende">{entrees}</ul></figcaption>'

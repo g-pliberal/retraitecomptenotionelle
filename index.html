@@ -65,6 +65,12 @@
   .replique { text-align: left; border-left: 3px solid var(--accent);
               background: var(--fond-appui); padding: 0.9rem 1.1rem; margin-top: 1.5rem;
               font-size: 0.92rem; }
+  /* La feuille de style principale coupe déjà les animations quand le système
+     demande d'en réduire le mouvement ; la jauge, elle, doit encore dire que
+     quelque chose travaille. Immobile et pleine, elle le dit. */
+  @media (prefers-reduced-motion: reduce) {
+    #amorce .jauge > span { width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -92,6 +98,15 @@ let contexte = null;
 
 function echec(titre, detail) {
   amorce.innerHTML = `<h1>${titre}</h1><div class="replique">${detail}</div>`;
+}
+
+// Ce qu'un message d'erreur peut porter de texte arbitraire — le nom d'un
+// fichier, une chaîne renvoyée par le navigateur — ne doit jamais être lu comme
+// du balisage. La page n'échappait que les chevrons, et seulement par endroits.
+function neutraliser(texte) {
+  return String(texte).replace(/[&<>"']/g, (caractere) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#x27;",
+  }[caractere]));
 }
 
 // -- démarrage ---------------------------------------------------------------
@@ -122,7 +137,8 @@ function coquille() {
   // navigation par repères. Il est statique, le reconstruire à chaque rendu ne
   // servait rien non plus.
   document.body.insertAdjacentHTML("beforeend",
-    '<div id="entete"></div><main id="contenu"></main>' + gabarit.pied());
+    '<div id="entete"></div><main id="contenu" tabindex="-1"></main>'
+    + gabarit.pied());
 }
 
 // Ce que la synthèse vocale doit entendre après un calcul. Le contenu de <main>
@@ -183,6 +199,9 @@ const MESSAGES_ATTENTE = {
 // qui les a dépliées une fois y revient.
 let optionsDepliees = false;
 
+// Le premier rendu ne déplace pas le focus — voir `reprendre`.
+let premierRendu = true;
+
 async function afficher() {
   const cible = adresse();
   const contenu = document.getElementById("contenu");
@@ -204,8 +223,8 @@ async function afficher() {
   } catch (erreur) {
     document.body.classList.remove("calcul-en-cours");
     contenu.innerHTML = '<div class="erreur"><strong>Le calcul a échoué.</strong> '
-      + String(erreur).replace(/[<>&]/g, "") + "</div>";
-    annoncer(`Le calcul a échoué. ${String(erreur).replace(/[<>&]/g, "")}`);
+      + neutraliser(erreur) + "</div>";
+    annoncer(`Le calcul a échoué. ${String(erreur)}`);
     return;
   }
 
@@ -217,7 +236,41 @@ async function afficher() {
 
   const nouveauDetails = contenu.querySelector("form details");
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
+  reprendre(contenu);
+}
+
+// Où reprend la lecture après un rendu.
+//
+// Le contenu de <main> est remplacé en bloc : l'élément qui avait le focus —
+// le bouton « Calculer », un lien de la page — vient d'être détruit, et le
+// navigateur renvoie alors le focus sur <body>. Au clavier, la tabulation
+// suivante repart du tout début du document : il faut retraverser l'en-tête et
+// le formulaire entier pour revenir là où l'on était. Le focus est donc reposé
+// à la main, sur ce que le lecteur vient de demander.
+//
+// Un calcul aboutit sur ses résultats, et non en haut de page : c'est ce qu'on
+// vient de demander, et les faire défiler sous les yeux plutôt que renvoyer au
+// formulaire épargne la moitié d'un écran de retour en arrière. Une page
+// simplement ouverte, elle, se lit depuis son début.
+function reprendre(contenu) {
+  // Sauf au tout premier rendu : personne n'a encore rien demandé, le focus
+  // est là où le navigateur l'a laissé — au début du document —, et le lien
+  // d'évitement est le premier élément qu'une tabulation rencontre. Le
+  // déplacer ici le rendrait inatteignable en avant, ce qui priverait la page
+  // du raccourci qu'elle vient d'ajouter.
+  if (premierRendu) {
+    premierRendu = false;
+    return;
+  }
+
+  const resultats = contenu.querySelector("#resultats");
+  if (resultats) {
+    resultats.focus({ preventScroll: true });
+    resultats.scrollIntoView({ block: "start" });
+    return;
+  }
   window.scrollTo({ top: 0 });
+  contenu.focus({ preventScroll: true });
 }
 
 // -- navigation --------------------------------------------------------------
@@ -235,6 +288,19 @@ document.addEventListener("submit", (evenement) => {
   if (location.hash === cible) { afficher(); } else { location.hash = cible; }
 });
 
+// Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici
+// l'adresse EST la route, et y écrire une ancre de section renverrait le
+// simulateur à sa page d'accueil, perdant la simulation en cours. Il déplace
+// donc le focus lui-même, sans toucher à l'adresse.
+document.addEventListener("click", (evenement) => {
+  if (!evenement.target.closest("a.evitement")) { return; }
+  evenement.preventDefault();
+  const contenu = document.getElementById("contenu");
+  if (!contenu) { return; }
+  contenu.focus();
+  contenu.scrollIntoView({ block: "start" });
+});
+
 window.addEventListener("hashchange", afficher);
 
 preparer().then(() => {
@@ -243,13 +309,13 @@ preparer().then(() => {
 }).catch((erreur) => {
   echec(
     "Le simulateur n'a pas pu se charger",
-    `<p>${String(erreur)}</p>`
+    `<p>${neutraliser(erreur)}</p>`
     + "<p>Le modèle et ses données sont servis depuis ce dépôt : un réseau "
     + "coupé pendant le chargement, ou un navigateur qui bloque les modules "
     + "JavaScript, peuvent l'empêcher d'aboutir. Recharger la page suffit "
     + "souvent ; sinon, un navigateur à jour (Firefox, Chrome, Safari, Edge) "
     + "règle le problème.</p>"
-    + '<p><a href="https://github.com/gillesg-droid/retraitecomptenotionelle">'
+    + '<p><a href="https://github.com/g-pliberal/retraitecomptenotionelle">'
     + "Le dépôt du projet</a></p>",
   );
 });

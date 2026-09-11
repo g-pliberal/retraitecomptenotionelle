@@ -13,7 +13,7 @@
 
 import { echapper, formatFixe } from "./format.js";
 
-export const DEPOT = "https://github.com/gillesg-droid/retraitecomptenotionelle";
+export const DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle";
 
 /** Espace insécable fin, séparateur de milliers à la française. */
 const FINE = "\u202f";
@@ -44,19 +44,41 @@ export function navigation(cheminActif = "/") {
     + `>${echapper(libelle)}</a>`).join("");
 }
 
+/**
+ * Bandeau de tête, précédé du lien d'évitement.
+ *
+ * Le lien d'évitement est le premier élément parcouru au clavier. Le repère de
+ * navigation porte un nom : une page peut en compter plusieurs, et
+ * « navigation » tout court ne dit pas laquelle on parcourt.
+ */
 export function entete(cheminActif = "/") {
-  return `<header class="bandeau"><div class="interieur">
+  return `<a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
   <h1><a href="${lien("/")}">Retraite à comptes notionnels</a></h1>
-  <nav>${navigation(cheminActif)}</nav>
+  <nav aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
 }
 
+/**
+ * Pied de page.
+ *
+ * Il porte ce que la loi exige d'atteindre depuis n'importe quelle page — les
+ * mentions légales — et ce que le lecteur doit savoir avant de citer un chiffre
+ * : d'où vient le modèle, en quelle unité il compte, et qu'il ne vaut pas
+ * relevé de carrière.
+ */
 export function pied() {
   return `<footer>
+  <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+  d'aucune caisse de retraite et ne vaut ni relevé de carrière, ni estimation
+  de vos droits : c'est un modèle, appliqué à ce que vous saisissez.
+  Pour vos droits réels, seule fait foi votre caisse
+  (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
   <p>Modèle ouvert, code et données sur <a href="${DEPOT}">GitHub</a> (licence MIT).
   Les montants sont bruts, exprimés en euros constants de l'année de référence.
   Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
   <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
+  <p><a href="${lien("/mentions")}">Mentions légales, données personnelles et accessibilité</a></p>
 </footer>`;
 }
 
@@ -134,13 +156,16 @@ export function cache(nom, valeur) {
   return `<input type="hidden" name="${nom}" value="${echapper(String(valeur))}">`;
 }
 
-export function liste(nom, libelle, options, selection, aide = "") {
+export function liste(nom, libelle, options, selection, aide = "", attributs = {}) {
+  const supplement = Object.entries(attributs)
+    .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
+    .join("");
   const choix = options.map(([code, texte]) => `<option value="${echapper(code)}"`
     + (code === selection ? " selected" : "")
     + `>${echapper(texte)}</option>`).join("");
   const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
   return `<div><label for="${nom}">${echapper(libelle)}${aideHtml}</label>`
-    + `<select id="${nom}" name="${nom}">${choix}</select></div>`;
+    + `<select id="${nom}" name="${nom}"${supplement}>${choix}</select></div>`;
 }
 
 /** Cellule de tableau portant une teinte de fond proportionnelle à sa valeur. */
@@ -162,19 +187,60 @@ export class Cellule {
   }
 }
 
-export function tableau(entetes, lignes, classesColonnes = null) {
+/**
+ * Tableau de données.
+ *
+ * `titre` devient le `<caption>`. Sans lui, un lecteur d'écran qui arrive sur
+ * la grille annonce « tableau, 4 colonnes, 41 lignes » et rien de plus : il
+ * faut en sortir pour deviner ce qu'elle contient. Il nomme aussi la zone
+ * défilante, qui porte `tabindex` afin d'être atteignable au clavier là où le
+ * tableau dépasse la largeur de l'écran.
+ *
+ * `enteteDeLigne` promeut la première cellule de chaque ligne en
+ * `<th scope="row">`. C'est ce qui permet à la synthèse vocale d'annoncer
+ * « Cnav, 2019, 89,4 » plutôt que trois nombres nus : sans en-tête de ligne,
+ * une cellule lue au hasard dans la grille n'est rattachée à rien.
+ */
+export function tableau(entetes, lignes, classesColonnes = null, titre = "",
+                        enteteDeLigne = false) {
   const classes = classesColonnes || entetes.map(() => "");
-  const tete = entetes.map((titre, i) => `<th class="${classes[i]}" scope="col">`
-    + `${echapper(titre)}</th>`).join("");
-  const corps = lignes.map((ligne) => `<tr>${
-    ligne.slice(0, classes.length).map((cellule, i) => `<td class="${classes[i]}"`
-      + (cellule instanceof Cellule ? cellule.style() : "")
+  const tete = entetes.map((intitule, i) => `<th class="${classes[i]}" scope="col">`
+    + `${echapper(intitule)}</th>`).join("");
+  const cellule = (valeur, classe, premiere) => {
+    const balise = premiere && enteteDeLigne ? "th" : "td";
+    const portee = balise === "th" ? ' scope="row"' : "";
+    return `<${balise} class="${classe}"${portee}`
+      + (valeur instanceof Cellule ? valeur.style() : "")
       + ">"
-      + (cellule instanceof Cellule ? cellule.html : cellule)
-      + "</td>").join("")
+      + (valeur instanceof Cellule ? valeur.html : valeur)
+      + `</${balise}>`;
+  };
+  const corps = lignes.map((ligne) => `<tr>${
+    ligne.slice(0, classes.length)
+      .map((valeur, i) => cellule(valeur, classes[i], i === 0)).join("")
   }</tr>`).join("");
-  return `<div class="defilant"><table><thead><tr>${tete}</tr></thead>`
+  const legendeHtml = titre ? `<caption>${echapper(titre)}</caption>` : "";
+  const nom = titre ? ` role="region" aria-label="${echapper(titre)}"` : "";
+  return `<div class="defilant" tabindex="0"${nom}><table>${legendeHtml}`
+    + `<thead><tr>${tete}</tr></thead>`
     + `<tbody>${corps}</tbody></table></div>`;
+}
+
+/**
+ * Les phrases qu'un tableau ne peut pas porter dans ses cellules.
+ *
+ * Elles tenaient jusqu'ici dans un attribut `title`, c'est-à-dire nulle part :
+ * une infobulle de survol ne s'ouvre ni au clavier, ni au doigt, ni sous une
+ * synthèse vocale. Sorties du tableau, elles se lisent dans tous les cas.
+ */
+export function gloses(entrees) {
+  if (!entrees.length) {
+    return "";
+  }
+  const corps = entrees
+    .map(([terme, texte]) => `<dt>${echapper(terme)}</dt><dd>${echapper(texte)}</dd>`)
+    .join("");
+  return `<dl class="gloses">${corps}</dl>`;
 }
 
 export function fiche(etiquette, valeur) {
@@ -495,11 +561,19 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     + `</svg>${legendeVisible ? legende(series) : ""}</figure>`;
 }
 
+/**
+ * Légende du graphique, posée en `<figcaption>`.
+ *
+ * Ce n'est pas un ornement : le SVG est annoncé comme une image, et la légende
+ * est la seule chose qui dise, en texte, ce que chaque couleur représente. Dans
+ * la figure, elle en devient le nom accessible ; hors d'elle, elle n'était
+ * qu'une liste flottant sous un dessin.
+ */
 function legende(series) {
   const entrees = series.map((serie) => '<li><span class="pastille" '
     + `style="background:${serie.couleur}"></span>`
     + `<span>${echapper(serie.libelle)}`
     + (serie.glose ? ` <span class="discret">${echapper(serie.glose)}</span>` : "")
     + "</span></li>").join("");
-  return `<ul class="legende">${entrees}</ul>`;
+  return `<figcaption><ul class="legende">${entrees}</ul></figcaption>`;
 }
