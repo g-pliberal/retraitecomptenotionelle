@@ -2348,6 +2348,46 @@ def test_la_correction_des_trois_generations_se_retrouve(contexte):
         assert écrit in corps, f"« {écrit} » a disparu de la page"
 
 
+def test_le_README_dit_le_vrai_nombre_de_tests():
+    """Troisième chiffre de données annoncé en prose, et le plus volatil.
+
+    Le README annonçait 321 tests et `docs/limites.md` 390 : le dépôt en
+    comptait 520. Les deux phrases étaient vraies le jour où elles ont été
+    écrites, et aucune n'a suivi. C'est la même dérive que « 472 tests pour
+    485 », déjà corrigée à la main une fois — la corriger à la main ne suffit
+    donc pas, il faut que quelque chose compte.
+
+    Le décompte se fait par une collecte pytest dans un PROCESSUS SÉPARÉ.
+    Interroger la session courante donnerait un nombre faux dès que quelqu'un
+    lance un sous-ensemble (`-k`, un fichier) : le test échouerait sans qu'une
+    ligne du dépôt ait bougé.
+    """
+    import re
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    racine = Path(__file__).resolve().parents[1]
+    collecte = subprocess.run(
+        [sys.executable, "-m", "pytest", "--collect-only", "-q",
+         "-p", "no:cacheprovider", str(racine / "tests")],
+        capture_output=True, text=True, cwd=racine,
+    )
+    compte = re.search(r"(\d+) tests? collected", collecte.stdout)
+    assert compte, f"collecte illisible : {collecte.stdout[-400:]}"
+    reels = int(compte.group(1))
+
+    for nom, motif in (("README.md", r"(\d+) tests Python"),
+                       ("docs/limites.md", r"(\d+) tests couvrent")):
+        texte = (racine / nom).read_text(encoding="utf-8")
+        annonces = re.findall(motif, texte)
+        assert annonces, f"{nom} n'annonce plus de nombre de tests"
+        for annonce in annonces:
+            assert int(annonce) == reels, (
+                f"{nom} annonce {annonce} tests, le dépôt en collecte {reels}"
+            )
+
+
 def test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes():
     """Deux comptes annoncés en quatre endroits, et rien ne les recoupait.
 

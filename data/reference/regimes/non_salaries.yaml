@@ -445,17 +445,50 @@ regimes:
   - code: rci
     nom: Régime complémentaire des indépendants
     famille: non_salarie
-    source_id: cor_panorama_regimes
-    fiabilite: moyenne
+    source_id: dila_legi_rci
+    fiabilite: haute
     creation: 2013
     fermeture: null
     extinction: null
     succede_a: [rco_artisans, nric]
     integre_dans: null
-    population: Artisans, commerçants et industriels.
+    population: >-
+      Artisans, commerçants et industriels. Fusion au 1er janvier 2013 du
+      régime complémentaire obligatoire des artisans et du nouveau régime
+      complémentaire des industriels et commerçants.
     hors_repartition: false
     periodes:
       - debut: 2013
+        fin: 2024
+        type_calcul: points
+        age_ouverture: 62
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0700
+        notes: >-
+          D. 635-7, état du 1er janvier 2013 : première tranche, 7 % sous le plafond de la Sécurité sociale. La fiche ne portait que ce taux-là et s'arrêtait au plafond : la seconde tranche, annoncée en note, n'était portée par aucune période et ne prélevait donc rien.
+      - debut: 2013
+        fin: 2024
+        type_calcul: points
+        age_ouverture: 62
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: tranche_1_4_pass
+        taux_cotisation_retraite: 0.0800
+        notes: >-
+          D. 635-7, même état : seconde tranche, 8 % au-delà du plafond et jusqu'à quatre fois celui-ci.
+      - debut: 2025
         fin: null
         type_calcul: points
         age_ouverture: 62
@@ -463,15 +496,28 @@ regimes:
         duree_requise_trimestres: 172
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: plafonnee
-        taux_cotisation_retraite: 0.07
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0810
         notes: >-
-          Fusion au 1er janvier 2013 du régime complémentaire des artisans
-          (créé en 1979) et du Nouveau régime complémentaire des industriels
-          et commerçants (NRCI, 2004). 7 % sous plafond, 8 % au-delà.
+          D. 635-7, état du 7 juillet 2024, qui porte la première tranche à 8,1 %. La DATE DE L'ÉTAT N'EST PAS CELLE DE L'EFFET : l'article précise que, conformément à l'article 6 du décret n° 2024-688 du 5 juillet 2024, ces dispositions s'appliquent aux cotisations « dues au titre des périodes courant à compter du 1er janvier 2025 ». C'est la seule clause de ce genre parmi les états lus.
+      - debut: 2025
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        assiette: tranche_1_4_pass
+        taux_cotisation_retraite: 0.0910
+        notes: >-
+          D. 635-7, même état : seconde tranche portée à 9,1 %, même report au 1er janvier 2025.
 
   - code: cnavpl
     nom: Régime de base des professions libérales (CNAVPL)

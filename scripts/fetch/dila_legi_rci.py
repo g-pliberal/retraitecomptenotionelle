@@ -135,6 +135,26 @@ ADDITIONNELLE = re.compile(rf"cotisation additionnelle fixée à\s*{NOMBRE}")
 #: « fixé à : 1° 7,2 % … 2° 7,6 % » — le découpage en tranches de 2008
 TRANCHES = re.compile(rf"1°\s*{NOMBRE}.{{0,200}}?2°\s*{NOMBRE}", re.S)
 
+#: « Conformément à l'article 6 du décret n° 2024-688 …, ces dispositions
+#: s'appliquent … au titre des périodes courant à compter du 1er janvier 2025 ».
+#: La date d'un état LEGI est celle de son ENTRÉE EN VIGUEUR, qui n'est pas
+#: toujours celle de son EFFET : l'état du 7 juillet 2024 porte des taux qui ne
+#: s'appliquent qu'aux cotisations de 2025. Dater ce taux de 2024, comme le
+#: ferait la date de l'état, le ferait prélever un an trop tôt. C'est le seul
+#: état des quatre articles qui diffère ainsi son effet, mais il suffit à
+#: interdire de se fier à la date de version seule.
+#: Le motif ne peut pas s'interdire les points : la clause en contient —
+#: « l'article D. 643-1 du code de la sécurité sociale » —, et un motif qui
+#: s'arrête à la première ponctuation, comme celui d'abord écrit ici, ne
+#: franchit jamais ce renvoi. L'apostrophe non plus n'est pas uniforme : le
+#: JORF écrit « l'article » avec l'apostrophe typographique et « s'appliquent »
+#: avec la droite, dans la même phrase.
+EFFET_DIFFERE = re.compile(
+    r"Conform[ée]ment.{0,400}?s['\u2019]appliquent.{0,400}?"
+    r"compter du 1er janvier (\d{4})",
+    re.S,
+)
+
 #: « fixé pour l'année 2004 à 3,5 % pour le premier semestre et à 4,5 % pour
 #: le second semestre » — la seule année que le code écrit en demi-exercices
 SEMESTRES = re.compile(
@@ -173,6 +193,18 @@ def taux_semestriels(texte: str) -> tuple[int, float] | None:
     if m is None:
         return None
     return int(m.group(1)), (_nombre(m.group(2)) + _nombre(m.group(3))) / 2
+
+
+def annee_d_effet(texte: str, debut: str) -> int | None:
+    """L'année à laquelle un état commence à produire ses effets.
+
+    Par défaut celle de son entrée en vigueur ; celle que porte la clause
+    d'application quand l'état en pose une.
+    """
+    differe = EFFET_DIFFERE.search(texte)
+    if differe:
+        return int(differe.group(1))
+    return int(debut[:4]) if debut[:4].isdigit() else None
 
 
 def dernier_dump() -> str:
@@ -236,8 +268,10 @@ def main() -> int:
         regime = ARTICLES.get(article)
         if regime not in series:
             continue
-        if regime == "rco_artisans" and debut[:4].isdigit() \
-                and int(debut[:4]) >= FUSION:
+        effet = annee_d_effet(corps, debut)
+        if effet is None:
+            continue
+        if regime == "rco_artisans" and effet >= FUSION:
             regime = "rci"
         semestriel = taux_semestriels(corps)
         if semestriel is not None:
@@ -248,8 +282,8 @@ def main() -> int:
             series[regime].update(dict(echelonnes))
             continue
         valeur = taux_simple(corps)
-        if valeur is not None and debut[:4].isdigit():
-            simples[regime].append((int(debut[:4]), valeur))
+        if valeur is not None:
+            simples[regime].append((effet, valeur))
 
     for regime, poses in simples.items():
         for annee, valeur in sorted(poses):
