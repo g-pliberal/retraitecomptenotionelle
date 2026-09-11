@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 40 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 42 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **40 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **42 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2043,9 +2043,57 @@ cotisations, et celles-là sont sourcées de bout en bout.
 
 | Régime | Population | Ce qui bloque |
 |---|---|---|
-| **CRPNPAC**, personnel navigant de l'aéronautique civile | pilotes et personnel de cabine | Ses paramètres ne sont pas dans le code de la sécurité sociale mais dans le **code de l'aviation civile**, articles R. 426-*. Le régime n'est pas en points mais en annuités à **deux tranches de salaire** — 1,85 % et 1,4 % par annuité (R. 426-16-1) —, multipliées par un « indice de variation des salaires » propre à la caisse. Deux mécanismes que le moteur ne sait pas exprimer aujourd'hui |
 | **IRCEC**, complémentaire des artistes-auteurs (RAAP, RACD, RACL) | auteurs, compositeurs | L. 382-12 renvoie leurs complémentaires à L. 644-1, et leur barème au **règlement de la caisse**, approuvé par arrêté : rien dans le code. C'est le mur déjà rencontré pour le point de l'Agirc-Arrco et pour les sections libérales |
 | **Sections complémentaires des professions libérales** (CARMF, CARPIMKO, CIPAV…) | dix sections | Le même mur, et c'est la limite la plus ancienne du dépôt — déjà décrite au tableau ci-dessus |
+
+**Le personnel navigant est entré, et il a fallu deux choses pour cela.**
+
+D'abord trouver ses paramètres : ils ne sont pas dans le code de la sécurité
+sociale mais dans le **code de l'aviation civile**, et deux dépouillements les
+ont manqués pour cette seule raison — le filtre exigeait une mention de la
+sécurité sociale. Le troisième les donne tous : cotisations de 6 % et 12 %
+jusqu'en 2011, de 7,668 % et 13,632 % ensuite (R. 426-6, R. 426-7), taux
+d'appel (R. 426-8), barème de **1,85 % et 1,4 % de taux de pension par annuité
+selon la tranche** (R. 426-16-1), bornes des tranches à quatre et huit plafonds
+(R. 426-16-1-1), assiette de cotisation plafonnée au sommet de la seconde
+tranche (R. 426-5 a), âge d'ouverture à cinquante ans (R. 426-11).
+
+Ensuite apprendre au moteur à **liquider tranche par tranche**, ce qu'il ne
+savait pas faire : le salaire de référence ignorait les bornes d'assiette, si
+bien que deux tranches auraient calculé l'une et l'autre le salaire moyen
+entier. En revanche le taux PAR ANNUITÉ, que ce document donnait aussi pour
+inexprimable, l'était déjà : `taux_plein / durée_requise` est un taux par
+trimestre, et 1,85 % par annuité s'écrit `taux_plein = 1,85 % × 30 annuités`.
+
+**Pourquoi deux fiches pour une seule caisse.** Le calcul de pension ne retient
+qu'UNE période active par régime : deux tranches simultanées dans la même fiche
+verraient la seconde ignorée en silence. Plutôt que de refondre cette boucle,
+le dépôt fait ce qu'il fait déjà pour la CNBF et sa complémentaire, et pour le
+régime agricole et sa RCO — deux codes pour deux étages.
+
+**Trois choses que le code ne donne pas**, et qui sont écrites dans les notes
+des fiches : le taux d'appel de 1995 à 2011, dont la formule dépend de la
+valeur N du fonds de retraite, et qui n'est donc pas appliqué — ce qui
+sous-estime la cotisation ; l'**indice de variation des salaires**, fixé chaque
+année par le conseil d'administration (R. 426-5 b), auquel la revalorisation de
+salaires du dépôt tient lieu ; et les bornes des tranches d'avant 2012, que ce
+même indice portait avant que le décret n° 2011-1500 ne les fixe en plafonds.
+Depuis le 1<sup>er</sup> novembre 2023 ces articles sont abrogés et le régime
+est passé au **code des transports** : les fiches s'arrêtent à l'état de 2023.
+
+Un navigant est le seul assuré du catalogue à cotiser à **quatre régimes
+simultanément** — régime général, Agirc-Arrco, et les deux tranches de sa
+caisse. Carrière de 25 à 55 ans, génération 1965 :
+
+| Revenu | Pension actuelle | Notionnelle | Part patronale comprise |
+|---|---|---|---|
+| 2 × salaire moyen | 53 755 € | 11 647 € | 31 667 € |
+| 4 × | 104 566 € | 23 650 € | 65 508 € |
+| 6 × | 159 865 € | 29 646 € | 83 581 € |
+
+C'est le cas type qui montre le plus nettement ce que mesure ce dépôt : partir
+à 55 ans coûte deux fois, et un régime spécial à départ précoce est ce qu'un
+compte notionnel défait le plus violemment.
 
 **Et ceux qu'on n'a pas cherchés** : régimes des élus locaux, de l'Assemblée
 nationale et du Sénat, des chambres de commerce, et les régimes en extinction
@@ -2194,7 +2242,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 26 statuts », « 40 régimes » —, parce que ce sont des chiffres de données et
+« 27 statuts », « 42 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas

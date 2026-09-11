@@ -199,6 +199,20 @@ affiliations:
       à la création de l'Arrco : les six années intermédiaires ne relèvent que
       du régime général, comme pour tout salarié du privé de cette période.
 
+  personnel_navigant:
+    libelle: Personnel navigant professionnel de l'aéronautique civile
+    periodes:
+      - {debut: 1945, fin: 1946, regimes: [regime_general]}
+      - {debut: 1947, fin: 1962, regimes: [regime_general, agirc]}
+      - {debut: 1963, fin: 2018, regimes: [regime_general, arrco, agirc, crpnpac, crpnpac_tranche_2]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco, crpnpac, crpnpac_tranche_2]}
+    note: >-
+      Le seul statut du catalogue à cotiser à QUATRE régimes simultanément. La
+      CRPN n'est pas un régime de base : c'est un régime spécial légalement
+      obligatoire qui s'ajoute au régime général et à la complémentaire de
+      droit commun. Le navigant est cadre, d'où l'Agirc dès 1947. Ses deux
+      tranches de salaire sont deux fiches, pour la raison qu'elles portent.
+
   ministre_du_culte:
     libelle: Ministre du culte ou membre d'une congrégation religieuse
     periodes:
