@@ -1149,6 +1149,37 @@ institutions:
           ligne 2003 qui décrit le droit antérieur, que le dépôt date de 1976.
           Mêmes valeurs, autre clé — elle reste transcrite.
 
+      - id: dila_legi_crpn
+        titre: >-
+          Cotisations et barème de la caisse de retraite du personnel navigant,
+          code de l'aviation civile, articles R. 426-5 à R. 426-16-1-1
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: saisi
+        cible: data/reference/regimes/regimes_speciaux.yaml
+        note: >-
+          Le seul régime du dépôt dont les paramètres ne sont pas dans le code
+          de la sécurité sociale : ils sont dans le CODE DE L'AVIATION CIVILE,
+          et deux dépouillements les ont manqués pour cette seule raison — le
+          filtre exigeait une mention de la sécurité sociale. Cotisations :
+          R. 426-6 et R. 426-7, 6 % et 12 % jusqu'en 2011, 7,668 % et 13,632 %
+          ensuite ; taux d'appel R. 426-8. Barème : R. 426-16-1, 1,85 % et
+          1,4 % de taux de pension par annuité selon la tranche ; bornes des
+          tranches R. 426-16-1-1, quatre et huit plafonds de la Sécurité
+          sociale. Assiette de cotisation plafonnée « à la limite supérieure de
+          la deuxième tranche » (R. 426-5 a). Âge d'ouverture cinquante ans
+          (R. 426-11).
+          TROIS CHOSES QUE LE CODE NE DONNE PAS, et qui sont dans les notes des
+          fiches : le taux d'appel de 1995 à 2011, dont la formule dépend de la
+          valeur N du fonds de retraite ; l'indice de variation des salaires,
+          fixé chaque année par le conseil d'administration (R. 426-5 b) ; et
+          les bornes des tranches d'avant 2012, que ce même indice portait
+          avant que le décret n° 2011-1500 ne les fixe en plafonds.
+          Depuis le 1er novembre 2023, ces articles sont abrogés et le régime
+          est passé au CODE DES TRANSPORTS (R. 6527-*) : les fiches s'arrêtent
+          donc à l'état de 2023, qu'aucun texte postérieur n'a modifié au
+          fond.
+
       - id: dila_legi_cultes
         titre: >-
           Assiette et taux du régime vieillesse des cultes (CAVIMAC),

@@ -501,6 +501,201 @@ regimes:
           général ». Assiette forfaitaire égale au SMIC mensuel, soit
           1820 heures de SMIC par an (151,67 heures par mois).
 
+  - code: crpnpac
+    nom: >-
+      Caisse de retraite du personnel navigant professionnel de l'aéronautique
+      civile — première tranche de salaire
+    famille: special
+    source_id: dila_legi_crpn
+    fiabilite: haute
+    creation: 1963
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    hors_repartition: false
+    population: >-
+      Pilotes, mécaniciens et personnel de cabine de l'aéronautique civile.
+      Régime spécial LÉGALEMENT OBLIGATOIRE qui s'ajoute au régime général et à
+      l'Agirc-Arrco, et non un régime de base : un navigant cotise aux trois.
+    periodes:
+      - debut: 1963
+        fin: 1994
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 100
+        taux_plein: 0.4625
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_4_pass
+        taux_cotisation_retraite: 0.14400
+        part_salariale: 0.3333
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Première tranche : 1.85% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 25 annuités — d'où un taux
+          plein de 46.25%. Cotisation de 6 % pour l'affilié et 12 % pour l'employeur (R. 426-6, R. 426-7).
+          Taux d'appel de 80 % (R. 426-8), déjà appliqué au taux ci-dessus.
+      - debut: 1995
+        fin: 2011
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 100
+        taux_plein: 0.4625
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_4_pass
+        taux_cotisation_retraite: 0.18000
+        part_salariale: 0.3333
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Première tranche : 1.85% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 25 annuités — d'où un taux
+          plein de 46.25%. Cotisation de 6 % pour l'affilié et 12 % pour l'employeur (R. 426-6, R. 426-7).
+          Le taux d'appel de cette période suit une formule fondée sur la valeur N du fonds de retraite (R. 426-8), que la caisse ne publie pas : il n'est PAS appliqué ici, ce qui sous-estime la cotisation réellement appelée dès que N descend sous 6.
+      - debut: 2012
+        fin: 2015
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 120
+        taux_plein: 0.5550
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_4_pass
+        taux_cotisation_retraite: 0.21832
+        part_salariale: 0.3600
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Première tranche : 1.85% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
+          plein de 55.50%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
+          Taux d'appel de 102,5 % en moyenne (101 % en 2012 à 104 % en 2015) (R. 426-8), déjà appliqué au taux ci-dessus.
+      - debut: 2016
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 120
+        taux_plein: 0.5550
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_4_pass
+        taux_cotisation_retraite: 0.22365
+        part_salariale: 0.3600
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Première tranche : 1.85% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
+          plein de 55.50%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
+          Taux d'appel de 105 % (R. 426-8), déjà appliqué au taux ci-dessus.
+
+  - code: crpnpac_tranche_2
+    nom: >-
+      Caisse de retraite du personnel navigant professionnel de l'aéronautique
+      civile — seconde tranche de salaire
+    famille: special
+    source_id: dila_legi_crpn
+    fiabilite: haute
+    creation: 1963
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    hors_repartition: false
+    population: >-
+      Même caisse et mêmes affiliés que `crpnpac` : c'est la SECONDE TRANCHE de
+      salaire du même régime, de quatre à huit plafonds de la Sécurité sociale,
+      dont le taux de pension par annuité est plus faible. Pourquoi deux fiches
+      et non deux périodes d'une seule : le calcul de pension ne retient qu'UNE
+      période active par régime, si bien que deux tranches simultanées dans la
+      même fiche verraient la seconde ignorée en silence. Le dépôt sépare déjà
+      de la même façon la CNBF de sa complémentaire et le régime agricole de sa
+      RCO.
+    periodes:
+      - debut: 1963
+        fin: 1994
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 100
+        taux_plein: 0.3500
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.14400
+        part_salariale: 0.3333
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Seconde tranche : 1.40% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 25 annuités — d'où un taux
+          plein de 35.00%. Cotisation de 6 % pour l'affilié et 12 % pour l'employeur (R. 426-6, R. 426-7).
+          Taux d'appel de 80 % (R. 426-8), déjà appliqué au taux ci-dessus.
+      - debut: 1995
+        fin: 2011
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 100
+        taux_plein: 0.3500
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.18000
+        part_salariale: 0.3333
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Seconde tranche : 1.40% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 25 annuités — d'où un taux
+          plein de 35.00%. Cotisation de 6 % pour l'affilié et 12 % pour l'employeur (R. 426-6, R. 426-7).
+          Le taux d'appel de cette période suit une formule fondée sur la valeur N du fonds de retraite (R. 426-8), que la caisse ne publie pas : il n'est PAS appliqué ici, ce qui sous-estime la cotisation réellement appelée dès que N descend sous 6.
+      - debut: 2012
+        fin: 2015
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 120
+        taux_plein: 0.4200
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.21832
+        part_salariale: 0.3600
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Seconde tranche : 1.40% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
+          plein de 42.00%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
+          Taux d'appel de 102,5 % en moyenne (101 % en 2012 à 104 % en 2015) (R. 426-8), déjà appliqué au taux ci-dessus.
+      - debut: 2016
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 50
+        duree_requise_trimestres: 120
+        taux_plein: 0.4200
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.22365
+        part_salariale: 0.3600
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Seconde tranche : 1.40% de taux de pension par annuité validée
+          (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
+          plein de 42.00%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
+          Taux d'appel de 105 % (R. 426-8), déjà appliqué au taux ci-dessus.
+
   - code: crpcen
     nom: Caisse de retraite et de prévoyance des clercs et employés de notaires
     famille: special
