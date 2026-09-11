@@ -417,6 +417,7 @@ def _pages(contexte: Contexte) -> dict:
         ("cout", "/cout", {}),
         ("methode", "/methode", {}),
         ("donnees", "/donnees", {}),
+        ("mentions", "/mentions", {}),
     ]
     pages = {}
     for nom, chemin, parametres in demandes:

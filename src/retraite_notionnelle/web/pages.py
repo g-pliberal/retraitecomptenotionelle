@@ -753,6 +753,10 @@ TITRES = {
     "/cout": "Coût",
     "/methode": "Méthode",
     "/donnees": "Données",
+    # Hors de la barre de navigation, où elle prendrait la place d'une page
+    # qu'on vient lire : le pied de page y renvoie depuis toutes les autres,
+    # ce que la loi demande — être joignable depuis n'importe où sur le site.
+    "/mentions": "Mentions légales",
 }
 
 
@@ -772,6 +776,8 @@ def rendre(contexte: Contexte, chemin: str,
         return TITRES[chemin], _methode(contexte)
     if chemin == "/donnees":
         return TITRES[chemin], _donnees(contexte)
+    if chemin == "/mentions":
+        return TITRES[chemin], _mentions()
 
     try:
         saisie = Saisie.depuis_requete(parametres or {})
@@ -796,6 +802,158 @@ def rendre(contexte: Contexte, chemin: str,
         except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError) as erreur:
             corps += _erreur(str(erreur))
     return TITRES["/"], corps
+
+
+def _mentions() -> str:
+    """Mentions légales, données personnelles, accessibilité.
+
+    Trois obligations distinctes tiennent sur une seule page parce qu'un lecteur
+    qui cherche l'une y cherche souvent les autres :
+
+    * la loi pour la confiance dans l'économie numérique (art. 6-III) impose de
+      dire qui édite le site et qui l'héberge ;
+    * le RGPD impose de dire ce qu'on fait des données — ici, rien, et c'est
+      précisément ce qu'il faut écrire, parce qu'un formulaire qui demande une
+      année de naissance et un salaire laisse supposer le contraire ;
+    * la déclaration d'accessibilité n'est pas obligatoire pour ce site — le
+      décret du 24 juillet 2019 vise les personnes publiques et les entreprises
+      au-delà de 250 M€ de chiffre d'affaires —, mais un site qui affiche un
+      état d'accessibilité mesuré vaut mieux qu'un site qui se tait.
+
+    Les champs que l'éditeur doit renseigner lui-même sont marqués en clair :
+    mieux vaut un trou signalé qu'une mention inventée.
+    """
+    a_completer = ('<em class="a-completer">information à compléter par '
+                   "l'éditeur</em>")
+    return f"""
+<h2 style="margin-top:0">Mentions légales</h2>
+<p class="chapeau">Qui publie ce site, qui l'héberge, ce qu'il fait de ce que
+vous saisissez — c'est-à-dire rien —, et où il en est de son accessibilité.</p>
+
+<h3>Éditeur</h3>
+<p>Parti Libéral Français.</p>
+<div class="note avertissement">
+  <p><strong>Cette rubrique est incomplète.</strong> Un site édité par une
+  personne morale doit afficher sa dénomination exacte, l'adresse de son siège,
+  un numéro de téléphone et le nom de son directeur de la publication
+  (loi n° 2004-575 du 21 juin 2004, article 6-III-1 ; loi n° 82-652 du
+  29 juillet 1982, article 93-2). Manquent ici :</p>
+  <ul class="serree">
+    <li>dénomination sociale ou statutaire exacte, et forme juridique : {a_completer}</li>
+    <li>adresse du siège : {a_completer}</li>
+    <li>numéro de téléphone : {a_completer}</li>
+    <li>directeur de la publication : {a_completer}</li>
+  </ul>
+</div>
+
+<h3>Hébergement</h3>
+<p>Le site est publié par GitHub Pages. Hébergeur : GitHub, Inc.,
+88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis —
+<a href="https://github.com/contact">github.com/contact</a>.</p>
+
+<h3>Contact</h3>
+<p>Pour signaler une erreur de calcul, une source mal citée ou un défaut
+d'accessibilité : <a href="{g.DEPOT}/issues">les tickets du dépôt</a>. Une
+demande y est publique, ce qui est aussi la façon la plus simple de vérifier
+qu'elle a reçu une réponse.</p>
+
+<h3>Ce que ce simulateur n'est pas</h3>
+<p>Il n'émane d'aucune caisse de retraite, d'aucune administration, et n'engage
+personne. Ce qu'il affiche est le résultat d'un modèle appliqué aux données que
+vous saisissez : ce n'est ni un relevé de carrière, ni une estimation de vos
+droits, ni un conseil patrimonial ou financier. Vos droits réels ne sont établis
+que par vos caisses, dont le service commun est
+<a href="https://www.info-retraite.fr/">info-retraite.fr</a>. Les écarts entre
+scénarios sont l'objet du modèle ; les niveaux affichés pour une carrière
+individuelle en gardent la marge d'incertitude décrite par la
+page <a href="{g.lien('/donnees')}">Données</a>.</p>
+
+<h3>Données personnelles</h3>
+<p><strong>Ce site ne collecte rien.</strong> Il n'a pas de serveur de calcul :
+le modèle, ses tables et ses séries sont téléchargés une fois, puis tout
+s'exécute dans votre navigateur. Ce que vous saisissez — année de naissance,
+sexe, âge de départ, revenu — n'est envoyé nulle part, n'est enregistré nulle
+part, et disparaît quand vous fermez l'onglet.</p>
+<ul class="serree">
+  <li><strong>Aucun cookie, aucun traceur, aucune mesure d'audience.</strong>
+  Rien n'est déposé sur votre appareil, et le site ne demande donc aucun
+  consentement : il n'a rien à faire consentir.</li>
+  <li><strong>Aucune ressource tierce.</strong> Pas de police d'écriture
+  distante, pas de carte, pas de bibliothèque appelée à un autre domaine : tout
+  ce que la page charge vient de cette adresse. Un contrôle automatique le
+  vérifie à chaque modification du dépôt.</li>
+  <li><strong>L'adresse de la page contient vos paramètres.</strong> C'est ce
+  qui rend une simulation citable et refaisable à l'identique. La partie qui les
+  porte suit le signe <code>#</code>, que les navigateurs n'envoient jamais au
+  serveur ; elle reste en revanche dans l'historique de votre navigateur, et
+  partager le lien, c'est partager ce que vous avez saisi.</li>
+  <li><strong>L'hébergeur, lui, voit passer votre visite.</strong> Servir une
+  page suppose de recevoir une requête : GitHub, comme tout hébergeur, traite à
+  ce titre votre adresse IP, selon sa propre politique de confidentialité.
+  L'éditeur de ce site n'y a pas accès.</li>
+</ul>
+<p>Il n'y a donc, du côté de l'éditeur, aucun traitement de données à caractère
+personnel au sens du règlement (UE) 2016/679, et rien sur quoi exercer un droit
+d'accès ou d'effacement : il n'existe nulle part de données vous concernant qui
+viennent de ce site.</p>
+
+<h3>Accessibilité : conformité partielle</h3>
+<p>Ce site n'entre pas dans le champ de l'obligation d'accessibilité de
+l'article 47 de la loi n° 2005-102 du 11 février 2005, qui vise les personnes
+publiques, les délégataires de service public et les entreprises de plus de
+250 millions d'euros de chiffre d'affaires. Il vise néanmoins le
+<strong>RGAA 4.1</strong>, c'est-à-dire le niveau AA des WCAG 2.1.</p>
+<p><strong>État déclaré : conformité partielle, par auto-évaluation.</strong>
+Aucun audit externe n'a été mené, et aucun test n'a été conduit avec des
+utilisateurs de technologies d'assistance. Ce qui a été vérifié, et l'est à
+chaque modification par les contrôles automatiques du dépôt :</p>
+<ul class="serree">
+  <li>contrastes de texte au-delà de 4,5:1 et contours de champs au-delà de
+  3:1, dans le thème clair comme dans le thème sombre ;</li>
+  <li>couleurs des cinq scénarios séparables autrement que par la teinte, et
+  contrôlées pour les visions daltoniennes ;</li>
+  <li>tableaux titrés, avec en-têtes de colonne et de ligne ;</li>
+  <li>formulaire entièrement étiqueté, groupé par métier, utilisable au
+  clavier ;</li>
+  <li>résultat du calcul annoncé aux synthèses vocales, qui ne verraient
+  autrement rien changer ;</li>
+  <li>lien d'évitement, repères de page, et respect du réglage système
+  « animations réduites ».</li>
+</ul>
+<p><strong>Ce qui reste non conforme, ou non vérifié :</strong></p>
+<ul class="serree">
+  <li>les graphiques sont du dessin : chacun porte un intitulé et une légende en
+  texte, mais leurs courbes ne sont pas restituées point par point à une
+  synthèse vocale. Les tableaux qui les accompagnent en donnent les valeurs
+  clés, pas toutes ;</li>
+  <li>certaines grilles — douze cas types sur sept générations — restent larges
+  et demandent un défilement horizontal sur petit écran ;</li>
+  <li>le site exige JavaScript : le calcul se fait dans le navigateur, faute de
+  serveur pour le faire ailleurs ;</li>
+  <li>aucun test n'a été mené sur lecteur d'écran réel (NVDA, JAWS, VoiceOver).</li>
+</ul>
+<p>Un défaut d'accessibilité peut être signalé par
+<a href="{g.DEPOT}/issues">les tickets du dépôt</a>. À défaut de réponse, le
+Défenseur des droits peut être saisi :
+<a href="https://formulaire.defenseurdesdroits.fr/">formulaire.defenseurdesdroits.fr</a>.</p>
+
+<h3>Code, données et réutilisation</h3>
+<p>Le code du modèle et du site est publié sous
+<a href="{g.DEPOT}/blob/main/LICENSE">licence MIT</a> : réutilisable, y compris
+commercialement, à condition d'en conserver la mention.</p>
+<p>Les données, elles, ne sont pas la propriété de l'éditeur. Les séries
+françaises reprises ici — INSEE, DREES, DILA et Légifrance, Service des
+retraites de l'État, caisses — sont des informations publiques, réutilisables
+au titre des articles L321-1 et suivants du code des relations entre le public
+et l'administration, le plus souvent sous Licence Ouverte (Etalab). Eurostat et
+l'OCDE posent leurs propres conditions de réutilisation. Toutes imposent la
+citation de la source : chaque valeur du dépôt porte la sienne dans
+<a href="{g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a>, et la
+page <a href="{g.lien('/donnees')}">Données</a> en donne l'état de
+contrôle. Qui reprend un chiffre d'ici cite le producteur, pas ce site.</p>
+<p class="discret">Dernière mise à jour de cette page : elle suit le dépôt, dont
+l'historique complet est public.</p>
+"""
 
 
 def statuts(contexte: Contexte) -> list[dict[str, str]]:
@@ -864,13 +1022,17 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     echelle = contexte.echelle(saisie)
 
     identite = "".join([
+        # ``autocomplete`` n'est pas là pour épargner une frappe : il donne au
+        # navigateur — et aux outils qui s'appuient sur lui, dont les aides à la
+        # saisie — le moyen de reconnaître ce que le champ demande.
         g.champ("naissance", "Année de naissance", saisie.naissance,
-                type_="number", min="1900", max="2020", step="1"),
+                type_="number", min="1900", max="2020", step="1",
+                autocomplete="bday-year"),
         g.liste("naissance_mois", "Mois de naissance", MOIS_NAISSANCE,
                 str(saisie.naissance_mois),
                 "deux générations sont coupées en cours d'année par les textes"),
         g.liste("sexe", "Sexe", [("H", "Homme"), ("F", "Femme")], saisie.sexe,
-                "table de mortalité unisexe par défaut"),
+                "table de mortalité unisexe par défaut", autocomplete="sex"),
         g.champ("liquidation", "Âge de départ à la retraite",
                 en_mois(saisie.liquidation) // 12,
                 "effectif si vous êtes déjà retraité, souhaité sinon : "
@@ -1072,11 +1234,18 @@ def _champs_metier(rang: int, debut: str, statut: str, salaire: str,
 
 
 def _ligne_metier(rang: int, champs: str, vide: bool = False) -> str:
+    """Un métier : un ``<fieldset>``, et son rang en ``<legend>``.
+
+    « Revenu brut mensuel » et « Statut d'affiliation » sont les mêmes libellés
+    dans chaque bloc ; seul le rang les distingue. Un intertitre ordinaire le
+    montrerait à l'œil sans le dire à personne d'autre : la légende d'un groupe,
+    elle, est énoncée avec chacun des champs qu'elle couvre.
+    """
     titre = (f"{RANGS_METIER[rang - 1].capitalize()} métier" if not vide
              else "Un autre métier ?")
     classe = "metier facultatif" if vide else "metier"
-    return (f'<div class="{classe}"><p class="rang">{escape(titre)}</p>'
-            f'<div class="grille">{champs}</div></div>')
+    return (f'<fieldset class="{classe}"><legend class="rang">{escape(titre)}</legend>'
+            f'<div class="grille">{champs}</div></fieldset>')
 
 
 def _resume_parcours(contexte: Contexte, saisie: Saisie) -> str:
@@ -1555,7 +1724,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         )
 
     return f"""
-<h2>Résultats</h2>
+<h2 id="resultats" tabindex="-1">Résultats</h2>
 <div class="carte">
   <div class="fiches">{fiches}</div>
   {_resume_parcours(contexte, saisie)}
@@ -1680,6 +1849,9 @@ passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
      "Amplitude"],
     lignes,
     ["", "nombre", "nombre", "nombre", "nombre"],
+    titre="Pension mensuelle de chaque scénario sous les trois hypothèses de "
+          "productivité du COR",
+    entete_de_ligne=True,
 )}
 <p class="discret">Montants mensuels bruts, en euros constants de {saisie.euros}.
 La fourchette ne fait varier que la <strong>productivité</strong> — 0,4 %, 0,7 %
@@ -1704,7 +1876,7 @@ def _contribution_employeur(comparaison: Comparaison) -> str:
     partage = ""
     if employeur.a_un_employeur:
         partage = g.tableau(
-            ["Sur toute la carrière, en euros courants cumulés", "", "Montant"],
+            ["Part", "Ce qu'elle recouvre", "Montant"],
             [
                 ["Part salariale", "ce que l'assuré supporte — scénarios 2 et 3",
                  g.euros(employeur.agent)],
@@ -1713,6 +1885,9 @@ def _contribution_employeur(comparaison: Comparaison) -> str:
                 ["Total", "scénarios 4 et 5", g.euros(employeur.total)],
             ],
             ["", "", "nombre"],
+            titre="Cotisations versées sur toute la carrière, en euros courants "
+                  "cumulés",
+            entete_de_ligne=True,
         ) + (
             f"<p>L'employeur verse ici <strong>"
             f"{g.pourcentage(employeur.part)}</strong> du total.</p>"
@@ -1801,6 +1976,8 @@ la liquidation.</p>
      "Écart au système actuel"],
     lignes,
     ["", "nombre", "nombre", "nombre"],
+    titre="Ce que la même carrière donne sous chaque règle d'indexation",
+    entete_de_ligne=True,
 )}
 <p class="discret">La ligne de repère est la <strong>revalorisation réellement
 pratiquée</strong> : c'est celle du droit positif. L'écart entre elle et le
@@ -1915,6 +2092,8 @@ rendrait fausse. {renvoi_cascade}</p>
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
     ["", "", "nombre"],
+    titre=f"Du scénario 1 au scénario 3, étape par étape, en euros de {liquidation}",
+    entete_de_ligne=True,
 )}
 <p>À comparer aux {g.euros_centimes(actuel)} par an du système actuel. L'écart ne vient
 d'aucun abattement appliqué au scénario 1 : il vient de ce que le capital
@@ -2004,6 +2183,8 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
          "Calcul"],
         lignes_actuel,
         ["", "nombre", ""],
+        titre="Pension du système actuel, régime par régime",
+        entete_de_ligne=True,
     ) if lignes_actuel else "<p>Aucun droit liquidé dans le système actuel.</p>"
 
     part = ""
@@ -2034,6 +2215,8 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
              g.euros_centimes(retro.pension_annuelle)],
         ],
         ["", "nombre"],
+        titre="Construction du compte notionnel rétroactif, poste par poste",
+        entete_de_ligne=True,
     )
 
     return f"""
@@ -2064,12 +2247,13 @@ elle peut être citée ou partagée telle quelle.</p>
 def _cas_types(contexte: Contexte) -> str:
     resultat = calculer_cas_types(contexte.simulateur())
 
-    def grille(scenario: str) -> str:
+    def grille(scenario: str, intitule: str) -> str:
         lignes = []
         for cas in CAS_TYPES:
-            cellules: list[str | g.Cellule] = [
-                f'<span title="{escape(cas.commentaire)}">{escape(cas.libelle)}</span>'
-            ]
+            # Le libellé seul : ce qu'il recouvre est dit une fois pour toutes
+            # sous la première grille, et non dans une infobulle de survol que
+            # ni le clavier ni le doigt n'ouvrent.
+            cellules: list[str | g.Cellule] = [escape(cas.libelle)]
             for generation in GENERATIONS:
                 comparaison = resultat.resultats.get((cas.code, generation))
                 if comparaison is None:
@@ -2085,7 +2269,19 @@ def _cas_types(contexte: Contexte) -> str:
             ["Cas type"] + [str(generation) for generation in GENERATIONS],
             lignes,
             [""] + ["nombre"] * len(GENERATIONS),
+            titre=f"{intitule} : écart de pension au système actuel, par cas "
+                  "type et par génération",
+            entete_de_ligne=True,
         )
+
+    # Les douze cas types, décrits une fois. Repliés, parce que la page se lit
+    # d'abord par ses grilles ; dépliables, parce que la description est
+    # nécessaire pour les comprendre.
+    description_des_cas = (
+        "<details><summary>Ce que recouvre chacun des douze cas types</summary>"
+        + g.gloses([(cas.libelle, cas.commentaire) for cas in CAS_TYPES])
+        + "</details>"
+    )
 
     echecs = ""
     if resultat.echecs:
@@ -2100,15 +2296,16 @@ def _cas_types(contexte: Contexte) -> str:
 <p class="chapeau">Douze carrières représentatives × sept générations. Chaque
 cellule est l'écart de pension par rapport au système actuel, à carrière
 identique : négatif = pension plus faible qu'aujourd'hui.</p>
+{description_des_cas}
 
 <h3>Scénario 2 — comptes notionnels rétroactifs depuis 1941</h3>
-{grille("notionnel_retroactif")}
+{grille("notionnel_retroactif", "Scénario 2, comptes notionnels rétroactifs")}
 <p class="discret">Les générations anciennes sont les plus touchées : leurs
 cotisations, versées quand l'inflation dépassait la productivité, ont été
 revalorisées à un taux très inférieur à la hausse des prix.</p>
 
 <h3>Scénario 3 — comptes notionnels à compter de la bascule</h3>
-{grille("notionnel_prospectif")}
+{grille("notionnel_prospectif", "Scénario 3, comptes notionnels à compter de la bascule")}
 <p class="discret">Les générations déjà retraitées sont inchangées : leurs droits
 sont intégralement acquis avant la bascule. Les indépendants et professions
 libérales progressent parce que le régime unique relève leur taux de cotisation
@@ -2116,7 +2313,7 @@ et déplafonne leur assiette — un effort contributif accru, pas un avantage
 accordé.</p>
 
 <h3>Scénario 4 — le scénario 2, part patronale comprise</h3>
-{grille("notionnel_retroactif_employeur")}
+{grille("notionnel_retroactif_employeur", "Scénario 4, scénario 2 part patronale comprise")}
 <p class="discret">Toutes les lignes bougent, sauf celles des non-salariés —
 artisan, exploitant agricole, profession libérale — qui n'ont pas d'employeur et
 pour qui ce scénario est le scénario 2. Les lignes publiques bougent le plus :
@@ -2124,7 +2321,7 @@ la contribution de leur employeur est un taux d'équilibre, sans commune mesure
 avec la part patronale d'un salarié.</p>
 
 <h3>Scénario 5 — le scénario 3, part patronale comprise</h3>
-{grille("notionnel_prospectif_employeur")}
+{grille("notionnel_prospectif_employeur", "Scénario 5, scénario 3 part patronale comprise")}
 <p class="discret">Même lecture, à compter de la bascule : les droits acquis
 restent ceux du scénario 3, et seul le flux postérieur change. À compter de la
 bascule il n'y a plus qu'un régime, dont la répartition salarié/employeur est
@@ -2236,7 +2433,7 @@ def _cout(contexte: Contexte) -> str:
             for annee in ventilees
         )
         lignes_systemes.append([
-            f'<span title="{escape(systeme.glose)}">{escape(systeme.libelle)}</span>',
+            escape(systeme.libelle),
             _milliards(fin, 1),
             g.pourcentage(fin / total, decimales=1),
             _milliards(cumul, 0),
@@ -2424,7 +2621,11 @@ remonte à {cout.premiere_annee}.</p>
      "Croissance réelle", "Répartition"],
     lignes_systemes,
     ["", "nombre", "nombre", "nombre", "nombre", ""],
+    titre=f"Dépense de vieillesse-survie par système en {derniere}, et cumul "
+          f"depuis {premiere_ventilee}",
+    entete_de_ligne=True,
 )}
+{g.gloses([(systeme.libelle, systeme.glose) for systeme in SYSTEMES])}
 <p class="discret">Le cumul est en euros constants de {euros} : additionner des
 euros de 1990 et de {derniere} n'aurait aucun sens. La croissance réelle est
 celle de la dépense annuelle, déflatée, de {premiere_ventilee} à {derniere}.
@@ -2453,6 +2654,9 @@ des âges de l'INSEE ; les écarts viennent des douze cas types croisés avec
      f"Coût {derniere}", f"Part du PIB {derniere}"],
     lignes_scenarios,
     ["", "nombre", "nombre", "nombre", "nombre"],
+    titre=f"Ce que les cinq systèmes auraient coûté de {cout.premiere_annee} "
+          f"à {derniere}",
+    entete_de_ligne=True,
 )}
 
 <div class="note"><strong>Les scénarios 3 et 5 coûtent exactement ce que coûte
@@ -2547,6 +2751,8 @@ l'autre : c'est le meilleur contrôle externe dont cette page dispose.</p>
      "Dont économie"],
     lignes_avenir,
     ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    titre=f"Ce que chaque système coûterait d'ici {avenir.derniere_annee}",
+    entete_de_ligne=True,
 )}
 <p class="discret">Le cumul porte sur les seules années projetées, en euros
 constants de {euros}. Les scénarios 2 et 4 restent des contrefactuels et non des
@@ -2561,6 +2767,8 @@ pour la suite.</p>
      f"Notionnel dès {bascule}", f"Notionnel dès {bascule}, avec l'employeur"],
     horizons,
     ["", "nombre", "nombre", "nombre", "nombre"],
+    titre="Dépendance démographique et part de la dépense dans le PIB, par horizon",
+    entete_de_ligne=True,
 )}
 <p class="discret">La première colonne est le rapport de dépendance
 démographique de l'INSEE : {g.nombre(depart.dependance, 2)} personne de 65 ans
@@ -2621,6 +2829,8 @@ l'acquisition plutôt qu'au versement.</p>
      "Coût du scénario 2", "Coût du scénario 4"],
     decennies,
     ["", "nombre", "nombre", "nombre", "nombre"],
+    titre="Dépense de retraite, décennie par décennie",
+    entete_de_ligne=True,
 )}
 <p class="discret">Les deux dernières colonnes sont en pourcentage de la dépense
 réellement engagée la même décennie. Elles remontent : plus on approche du
@@ -2709,6 +2919,9 @@ qu'elle produit.</p>
         ["PIB nominal lissé sur 5 ans (Italie)", "×4 152,7", "×322,2", "1 288,8 %"],
     ],
     ["", "nombre", "nombre", "nombre"],
+    titre="Ce que chaque règle d'indexation aurait conservé du pouvoir d'achat, "
+          "1941-2025",
+    entete_de_ligne=True,
 )}
 <p>Une cotisation de 1950 ne conserve donc que 1,5 % de sa valeur réelle. C'est
 la règle telle qu'énoncée, appliquée sans correctif — et c'est de là que vient
@@ -2950,7 +3163,9 @@ puis <code>scripts/verifier_donnees.py --appliquer</code>.</div>"""
 
 <h3>Ce qui a été recontrôlé contre la source</h3>
 {g.tableau(["Série", "Valeurs", "Niveau", "Source"], certifications,
-           ["", "nombre", "", ""])}
+           ["", "nombre", "", ""],
+           titre="Séries recontrôlées contre la source qui les produit",
+           entete_de_ligne=True)}
 <p class="discret">Une valeur n'est « certifiée » que si elle a été confrontée au
 fichier téléchargé depuis le <em>producteur</em> de la donnée. Une transcription
 tierce, même sourcée et reprise automatiquement, plafonne à « haute ». Hors de
@@ -2966,12 +3181,16 @@ coefficients propres à chaque régime, repris des textes.</p>
     ["Période", "Inflation", "Salaire moyen", "Productivité", "Ensemble"],
     periodes,
     ["", "", "", "", ""],
+    titre="Fiabilité des séries macroéconomiques, décennie par décennie",
+    entete_de_ligne=True,
 )}
 <p class="discret">Une projection ne se fait jamais passer pour une observation :
 au-delà de la dernière année observée, la fiabilité retombe à « estimée ».</p>
 
 <h3>Fiabilité des {len(simulateur.catalogue)} régimes</h3>
-{g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", ""])}
+{g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", ""],
+           titre="Nombre de régimes par niveau de fiabilité",
+           entete_de_ligne=True)}
 
 <h3>Sources</h3>
 <p>Vingt-six institutions sont recensées dans
