@@ -92,7 +92,7 @@ Scénario                                                  Courants   Constants 
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 277 Ko compressés (1 Mo brut) et prend quelques dixièmes
+chargement transfère 165 Ko compressés (621 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
@@ -879,12 +879,13 @@ JSON ».
 python -m pytest tests
 ```
 
-472 tests couvrant le chargement et la fiabilité des données, la règle de
-certification, la calibration des tables de mortalité et sa concordance avec les
-tables observées, les propriétés du moteur
-(monotonie du diviseur, cliquet de l'âge de référence, règles de fusion), le
-comportement des scénarios, le rendu des pages et la fraîcheur de ce que charge
-le site. Aucun test n'accède au réseau : les sources sont simulées.
+Près de cinq cents tests couvrent le chargement et la fiabilité des données, la
+règle de certification, la calibration des tables de mortalité et sa concordance
+avec les tables observées, les propriétés du moteur (monotonie du diviseur,
+cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
+le rendu des pages et la fraîcheur de ce que charge le site. Le compte exact
+n'est pas écrit ici : un nombre que rien ne recoupe finit toujours par mentir.
+Aucun test n'accède au réseau : les sources sont simulées.
 
 Une vingtaine d'entre eux tiennent l'accessibilité : contrastes mesurés dans les
 deux thèmes, titres et en-têtes de ligne des tableaux, étiquettes et groupes du
