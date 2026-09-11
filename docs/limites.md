@@ -2087,10 +2087,33 @@ Ce que la seconde tranche déplace, artisan né en 1975, carrière de 25 à 64 a
 | 1,5 × | 32 712 -> 35 534 € (+8,6 %) | 29 803 -> 30 656 € (+2,9 %) |
 | 2,5 × | 35 134 -> 44 583 € (**+26,9 %**) | 39 889 -> 43 205 € (+8,3 %) |
 
-**Ce qui reste ouvert sur ces deux fiches.** Le plus ancien état de D. 635-6
-est du 21 décembre 1985 : les six premières années du régime des artisans,
-**1979-1984**, ne sont couvertes par aucune version datée. La fiche y porte le
-taux de 1985 et le dit. Et les taux, s'ils viennent du texte officiel, sont
+**Les six années 1979-1984, et pourquoi LEGI ne suffisait pas.** Le plus ancien
+état de D. 635-6 est du 21 décembre 1985 — c'est la date à laquelle le décret
+n° 85-1354 crée la partie réglementaire du code. Avant elle, le régime existait
+mais n'était pas codifié : LEGI, qui n'est qu'une base d'ARTICLES, n'en sait
+rien. Le **JORF** porte les décrets eux-mêmes, et deux passes y établissent la
+chaîne complète :
+
+| Texte | Ce qu'il fait |
+|---|---|
+| Décret n° **78-351** du 14 mars 1978 | institue le régime ; son article 12 date les cotisations du **1<sup>er</sup> janvier 1979** et les prestations du 1<sup>er</sup> avril |
+| Décret n° **81-407** du 23 avril 1981 | répartit les biens de l'organisation autonome et fixe le versement du complémentaire au régime de base — **ne touche pas aux cotisations** |
+| Décret n° **84-1064** du 30 novembre 1984 | « INSTITUTION D'UNE COTISATION ADDITIONNELLE FIXEE A 0,10% DU REVENU », applicable au 1<sup>er</sup> janvier 1985 |
+| Décret n° **85-1354** du 17 décembre 1985 | codifie, et l'article porte dès lors 4,40 % + 0,10 % |
+
+Onze textes seulement, dans tout le dump, concernent ce régime avant 1987, et
+**aucun entre 1979 et 1983**. La date de création que portait la fiche, 1979,
+est donc juste : le décret est de 1978, les cotisations de 1979.
+
+**Et ce que le JORF ne donne pas.** Le texte intégral de l'article 5 du décret
+de 1978. Les textes de cette époque n'y sont que par leur NOTICE, en capitales
+et sans accents, qui énumère les intitulés d'articles — « ART. 5 : TAUX DES
+COTISATIONS » — sans leur valeur. Les 4,40 % de 1979-1984 restent donc une
+**déduction** : le taux figé à la codification, plus l'absence de tout texte
+modificatif entre les deux. La chaîne est sans trou, ce qui n'est pas la même
+chose qu'une lecture directe, et la fiche le dit à cet endroit précis.
+
+**Ce qui reste ouvert.** Les taux, s'ils viennent du texte officiel, sont
 saisis au niveau `haute` et non `certifiee` : rien ne les recontrôle
 automatiquement, faute d'entrée dans `controle_vraisemblance_cotisations`.
 

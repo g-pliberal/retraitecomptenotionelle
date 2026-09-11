@@ -1197,6 +1197,36 @@ institutions:
           il datait de juillet 2025 et s'arrêtait à 2024, alors que le décret
           n° 2026-78 du 11 février 2026 a fixé 0,3919 € pour 2025.
 
+      - id: jorf_decrets_rco_artisans
+        titre: >-
+          Décrets fondateur et modificatifs du complémentaire des artisans,
+          1978-1985
+        url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+        acces: api
+        statut_integration: saisi
+        cible: data/reference/regimes/non_salaries.yaml
+        note: >-
+          LEGI ne remonte pas avant la codification du 21 décembre 1985 : les
+          six premières années du régime, 1979-1984, n'y ont aucun état daté.
+          Le JORF, lui, porte les décrets eux-mêmes. Deux passes y ont établi
+          la chaîne complète : le décret n° 78-351 du 14 mars 1978 institue le
+          régime et date les cotisations du 1er janvier 1979 (art. 12) ; le
+          décret n° 81-407 du 23 avril 1981 répartit les biens de
+          l'organisation autonome et fixe le versement du complémentaire au
+          régime de base, SANS toucher aux cotisations ; le décret n° 84-1064
+          du 30 novembre 1984 ajoute la cotisation additionnelle de 0,10 % au
+          1er janvier 1985 ; la codification de décembre 1985 fige 4,40 %
+          + 0,10 %. Onze textes seulement, dans tout le dump, concernent ce
+          régime avant 1987, et aucun entre 1979 et 1983.
+          CE QUE LE JORF NE DONNE PAS : le texte intégral de l'article 5 du
+          décret de 1978. Les textes de cette époque n'y sont que par leur
+          NOTICE, en capitales et sans accents, qui énumère les intitulés
+          d'articles — « ART. 5 : TAUX DES COTISATIONS » — sans leur valeur.
+          Les 4,40 % de 1979-1984 sont donc une déduction : le taux figé à la
+          codification, plus l'absence de tout texte modificatif entre les
+          deux. Pas de récupérateur : la chaîne est un constat d'existence,
+          non une série à rafraîchir.
+
       - id: jorf_plafond_securite_sociale
         titre: Plafond de la Sécurité sociale, décrets de fixation, 1963-2025
         url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
