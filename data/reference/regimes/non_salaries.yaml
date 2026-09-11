@@ -174,6 +174,87 @@ regimes:
           de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
           même barème par ailleurs — seul le taux de surcote change.
 
+  - code: rco_artisans
+    nom: Régime complémentaire obligatoire des artisans
+    famille: non_salarie
+    source_id: cor_panorama_regimes
+    fiabilite: estimee
+    creation: 1979
+    fermeture: 2012
+    extinction: 2013
+    succede_a: []
+    integre_dans: rci
+    population: >-
+      Artisans. Étage complémentaire obligatoire créé en 1979, au-dessus du
+      régime de base aligné depuis 1973 ; fondu dans le RCI au 1er janvier 2013.
+    hors_repartition: false
+    periodes:
+      - debut: 1979
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.07
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          TAUX REPRIS DU RÉGIME SUCCESSEUR, faute de série publiée : le RCI
+          prélève 7 % sous plafond depuis 2013, et c'est ce taux qui est
+          appliqué en amont — le même procédé que la part patronale du public,
+          et pour la même raison. Ce qui est certain, et qui motive la fiche,
+          c'est que le régime EXISTAIT : `affiliations.yaml` y envoyait
+          l'artisan de 1979 à 2005 par le code `rci`, dont aucune période ne
+          couvre ces années, si bien que vingt-sept ans de complémentaire ne
+          portaient RIEN au compte notionnel. Un taux estimé dit ce qu'un
+          silence taisait. À certifier auprès de la caisse.
+
+  - code: nric
+    nom: Nouveau régime complémentaire des industriels et commerçants
+    famille: non_salarie
+    source_id: cor_panorama_regimes
+    fiabilite: estimee
+    creation: 2004
+    fermeture: 2012
+    extinction: 2013
+    succede_a: []
+    integre_dans: rci
+    population: >-
+      Commerçants et industriels. Complémentaire rendue obligatoire au
+      1er janvier 2004 par la loi du 21 août 2003 ; fondue dans le RCI au
+      1er janvier 2013.
+    hors_repartition: false
+    periodes:
+      - debut: 2004
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        age_ouverture_par_generation: true
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.07
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Même réserve que pour la complémentaire des artisans : le taux est
+          celui du RCI, son successeur, appliqué en amont faute de série
+          publiée, et la fiche s'annonce `estimee`. Elle couvre les deux années
+          — 2004 et 2005 — que le routage du commerçant envoyait vers un RCI
+          qui n'existait pas encore. À certifier auprès de la caisse.
+
   - code: rci
     nom: Régime complémentaire des indépendants
     famille: non_salarie

@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 37 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 39 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1996,9 +1996,60 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **37 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **39 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
+
+### Le catalogue et le routage ne se parlaient pas
+
+Un régime n'existe pour le modèle que si un STATUT y conduit. Ce sont deux
+fichiers séparés — `regimes/*.yaml` dit ce qu'est un régime,
+`legislation/affiliations.yaml` dit qui y cotise — et rien ne les confrontait.
+Trois désaccords y vivaient, dont un qui coûtait des années entières de
+cotisation.
+
+**Des années routées vers un régime qui ne tournait pas encore.**
+`Compte.taux_effectif` parcourt `regime.periodes_actives(annee)` ; quand ce
+parcours est vide, la boucle n'ajoute rien. L'année ne porte alors AUCUNE
+cotisation au compte notionnel — sans exception, sans avertissement, sans trace
+dans le journal de fiabilité. Trois routages faisaient exactement cela :
+
+| Statut | Régime visé | Années perdues | Pourquoi |
+|---|---|---|---|
+| Artisan | `rci` | 1979-2005 | le RCI est né en 2013 ; la fiche n'a pas de période avant |
+| Commerçant | `rci` | 2004-2005 | idem |
+| Mineur passé au privé | `agirc_arrco` | 2011-2018 | le régime unifié est né en 2019 ; c'est l'Arrco qui couvre ces années |
+
+Le mineur est corrigé par le routage seul — l'Arrco existe au catalogue et
+couvre la période. Les deux autres appelaient les fiches manquantes, que le
+RCI nommait déjà dans son propre `succede_a` sans que le catalogue les porte.
+
+**Cinq fiches qu'aucun statut n'atteignait.** L'AVTS, l'IGRANTE, la SEITA, le
+port de Strasbourg et les chemins de fer secondaires étaient au catalogue,
+comptés dans les trente-sept, et inatteignables : jamais calculés. Les trois
+derniers ont reçu leur statut. Les deux premiers n'en recevront pas, et le
+fichier de routage porte désormais la raison plutôt que le silence, sous
+`regimes_sans_affiliation` :
+
+* l'**AVTS** est une allocation sous condition de ressources, non contributive,
+  et sa fiche porte les 8 % des assurances sociales qui la financent — la
+  router à côté de `assurances_sociales` compterait deux fois la même
+  cotisation. Elle reste au catalogue parce qu'elle date le premier mécanisme
+  en répartition, ce dont `annee_debut_repartition` se sert ;
+* l'**IGRANTE** est la jumelle de l'IPACTE : même population, mêmes paramètres,
+  et une série de points qui est celle de l'Ircantec rétro-remplie pour les
+  deux — 98 valeurs, dont une seule diffère. Le critère qui répartissait un
+  agent entre les deux institutions n'est documenté par aucune source du
+  dépôt ; inventer un statut pour le poser donnerait un choix sans conséquence
+  chiffrée et sans fondement.
+
+**Ce qui empêche la récidive.** Trois tests confrontent désormais les deux
+fichiers : toute année routée doit trouver une période de régime, tout régime
+du catalogue doit être routé ou nommé avec sa raison, toute succession
+(`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
+rattache aux données les nombres que le README et ce document annoncent —
+« 25 statuts », « 39 régimes » —, parce que ce sont des chiffres de données et
+non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 

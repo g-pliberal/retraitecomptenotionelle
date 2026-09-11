@@ -597,6 +597,12 @@ class Affiliations:
         self._profils: dict[str, dict] = contenu.get("affiliations", {})
         if not self._profils:
             raise ValueError("aucun profil d'affiliation chargé")
+        #: Régimes du catalogue que le fichier déclare volontairement hors
+        #: routage, avec leur raison. Le moteur ne s'en sert pas ; la cohérence
+        #: entre catalogue et routage, si — cf. `tests/test_donnees.py`.
+        self._hors_routage: dict[str, str] = contenu.get(
+            "regimes_sans_affiliation", {}
+        )
 
     def __contains__(self, code: str) -> bool:
         return code in self._profils
@@ -607,6 +613,15 @@ class Affiliations:
 
     def libelle(self, code: str) -> str:
         return self._profils[code].get("libelle", code)
+
+    def periodes(self, affiliation: str) -> tuple[dict, ...]:
+        """Les tranches temporelles déclarées par ce statut, telles qu'écrites."""
+        return tuple(self._profils[affiliation].get("periodes", []))
+
+    @property
+    def hors_routage(self) -> dict[str, str]:
+        """Régimes qu'aucune affiliation ne route, et la raison déclarée."""
+        return dict(self._hors_routage)
 
     def sans_employeur(self, affiliation: str) -> bool:
         """Ce statut cotise-t-il sans employeur ?

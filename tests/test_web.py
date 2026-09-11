@@ -2348,6 +2348,39 @@ def test_la_correction_des_trois_generations_se_retrouve(contexte):
         assert écrit in corps, f"« {écrit} » a disparu de la page"
 
 
+def test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes():
+    """Deux comptes annoncés en quatre endroits, et rien ne les recoupait.
+
+    Le README écrit « les 22 statuts et les 37 régimes du catalogue », et
+    répète le second deux fois de plus ; `docs/limites.md` l'écrit deux fois
+    encore. Ce sont des chiffres de données, pas de prose : ils bougent chaque
+    fois qu'une fiche ou un statut est ajouté, et rien n'obligeait la phrase à
+    suivre. Le dépôt s'est déjà fait prendre — « 472 tests pour 485 » — par la
+    main qui écrit ces lignes. Ici, les fichiers comptent eux-mêmes.
+    """
+    from pathlib import Path
+
+    from retraite_notionnelle.carriere import Affiliations
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.regimes import CatalogueRegimes
+
+    racine = Path(__file__).resolve().parents[1]
+    statuts_reels = len(Affiliations(RACINE_DONNEES).codes)
+    regimes_reels = len(list(CatalogueRegimes(RACINE_DONNEES)))
+
+    for nom in ("README.md", "docs/limites.md"):
+        texte = (racine / nom).read_text(encoding="utf-8")
+        for annonce, attendu, quoi in (
+            (r"(\d+) statuts", statuts_reels, "statuts"),
+            (r"(\d+) (?:régimes|fiches de régime|fiches du catalogue)",
+             regimes_reels, "régimes"),
+        ):
+            for trouve in re.findall(annonce, texte):
+                assert int(trouve) == attendu, (
+                    f"{nom} annonce {trouve} {quoi}, le dépôt en compte {attendu}"
+                )
+
+
 def test_le_README_dit_le_vrai_poids_du_paquet():
     """« 165 Ko compressés (621 Ko brut) » est une mesure, pas une impression.
 
