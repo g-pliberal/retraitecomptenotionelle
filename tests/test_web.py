@@ -21,9 +21,14 @@ from retraite_notionnelle.web.gabarit import (
     pourcentage,
     tableau,
 )
-from retraite_notionnelle.donnees.chargement import DonneeInsuffisante
+from retraite_notionnelle.donnees.chargement import (
+    DonneeInsuffisante,
+    charger_periodes_non_travaillees,
+)
 from retraite_notionnelle.web.pages import (
     AGES_REFERENCE,
+    ANNEE_CARRIERE_MAXIMALE,
+    ANNEE_CARRIERE_MINIMALE,
     DECIMALES_DIVISEUR,
     DECIMALES_FACTEUR,
     DECIMALES_MULTIPLE,
@@ -288,6 +293,79 @@ def test_interruptions_analysees():
 def test_interruption_mal_formee_est_refusee():
     with pytest.raises(ErreurSaisie):
         Saisie(interruptions="1995-1997").interruptions_analysees()
+
+
+@pytest.mark.parametrize("plage", [
+    "0:999999999:chomage_indemnise",
+    "1:2147483647:maladie",
+    "1200:1300:maladie",
+    f"1990:{ANNEE_CARRIERE_MAXIMALE + 1}:maladie",
+    f"{ANNEE_CARRIERE_MINIMALE - 1}:1990:maladie",
+])
+def test_une_plage_d_interruption_hors_de_toute_carriere_est_refusee(plage):
+    """La boucle reprenait les deux années telles quelles.
+
+    Le calcul se fait chez le lecteur et l'adresse EST la saisie :
+    « ?interruptions=0:999999999:chomage_indemnise » remplissait la mémoire de
+    l'onglet et le figeait — et le lien partagé figeait celui d'un autre. Aucune
+    carrière ne sort de la fenêtre contrôlée ici, et le refus est immédiat.
+    """
+    with pytest.raises(ErreurSaisie, match="carrière possible"):
+        Saisie(interruptions=plage).interruptions_analysees()
+
+
+def test_une_plage_d_interruption_aux_bornes_reste_acceptee():
+    plages = Saisie(
+        interruptions=f"{ANNEE_CARRIERE_MINIMALE}:{ANNEE_CARRIERE_MAXIMALE}:maladie"
+    ).interruptions_analysees()
+    assert plages[ANNEE_CARRIERE_MINIMALE] == "maladie"
+    assert plages[ANNEE_CARRIERE_MAXIMALE] == "maladie"
+
+
+def test_une_plage_d_interruption_a_l_envers_est_refusee():
+    """« 2004:2003 » ne décrivait rien : la boucle ne tournait pas."""
+    with pytest.raises(ErreurSaisie, match="avant de commencer"):
+        Saisie(interruptions="2004:2003:maladie").interruptions_analysees()
+
+
+def test_un_motif_d_interruption_inconnu_est_refuse():
+    """Une faute de frappe retombait sur « sans_activite », donc sur zéro
+    trimestre au lieu de quatre : elle changeait la pension sans un mot."""
+    motifs = charger_periodes_non_travaillees(Contexte().base.racine_donnees)
+    with pytest.raises(ErreurSaisie, match="motif inconnu"):
+        Saisie(interruptions="1998:2002:educaton_enfant").interruptions_analysees(motifs)
+
+
+def test_les_motifs_acceptes_sont_ceux_que_le_moteur_sait_traiter():
+    """Ni plus — une liste écrite à la main aurait dérivé des données — ni
+    moins : chaque motif du paquet doit rester saisissable."""
+    motifs = charger_periodes_non_travaillees(Contexte().base.racine_donnees)
+    assert motifs, "le paquet ne porte plus aucune période non travaillée"
+    for motif in motifs:
+        plages = Saisie(
+            interruptions=f"1998:1999:{motif}"
+        ).interruptions_analysees(motifs)
+        assert plages[1998] == motif
+
+
+def test_le_motif_n_est_controle_que_si_les_donnees_sont_fournies():
+    """Une saisie ne connaît pas les données : sans elles, le motif passe."""
+    assert Saisie(interruptions="1998:1999:peu_importe").interruptions_analysees()
+
+
+@pytest.mark.parametrize("champ", ["naissance", "salaire", "primes", "euros"])
+@pytest.mark.parametrize("valeur", ["nan", "inf", "-inf", "1e400", "1_975"])
+def test_un_nombre_non_fini_ou_exotique_est_refuse(champ, valeur):
+    """``float`` et ``Number`` ne lisent pas le même langage.
+
+    « nan » et « 1_975 » sont des nombres pour Python, pas pour JavaScript :
+    les deux lectures se seraient séparées sur une adresse forgée. « 1e400 »,
+    lui, passe des deux côtés et vaut l'infini, que le calcul propage sans
+    jamais échouer — le simulateur affichait « Ce revenu vaut inf fois le
+    salaire moyen », et « ?naissance=inf » levait un OverflowError nu.
+    """
+    with pytest.raises(ErreurSaisie):
+        Saisie.depuis_requete({"unite_revenu": "euros_mois", champ: valeur})
 
 
 # -- l'unité des revenus saisis ----------------------------------------------
@@ -1416,6 +1494,100 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
             "requete": requete,
             "corps": temoins.sans_bloc_json(rendre(contexte, "/", requete)[1]),
         })
+
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(cas, fichier, ensure_ascii=False)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", "tests/js/comparer-pages.mjs", chemin],
+            cwd=racine, capture_output=True, text=True, check=False,
+        )
+    finally:
+        Path(chemin).unlink(missing_ok=True)
+    assert execution.returncode == 0, execution.stdout + execution.stderr
+
+
+def test_les_refus_de_saisie_sont_ecrits_a_l_identique_par_les_deux_moteurs():
+    """Un refus est une page comme une autre, et il se compare comme telle.
+
+    Le tirage au hasard de la page précédente ne produit que des carrières
+    valides : il ne dirait rien des phrases que le simulateur écrit quand il
+    refuse. Ce sont pourtant elles que le lecteur lit le plus souvent, et elles
+    citent des bornes — années, motifs, âges — qu'un portage peut écrire
+    autrement sans qu'aucun chiffre ne bouge.
+    """
+    import importlib.util
+    import json
+    import random
+    import shutil
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+
+    racine = Path(__file__).resolve().parents[1]
+    specification = importlib.util.spec_from_file_location(
+        "construire_temoins", racine / "scripts" / "construire_temoins.py"
+    )
+    temoins = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(temoins)
+
+    contexte = Contexte()
+    refuses = [
+        {"interruptions": "0:999999999:chomage_indemnise"},
+        {"interruptions": "1200:1300:maladie"},
+        # Une année qu'aucun des deux moteurs n'écrit pareil une fois relue :
+        # « 1e+21 » en JavaScript, l'entier exact en Python.
+        {"interruptions": "999999999999999999999:2000:maladie"},
+        {"interruptions": "0009999:2000:maladie"},
+        {"interruptions": "-1990:2000:maladie"},
+        {"interruptions": "2004:2003:maladie"},
+        {"interruptions": "1998:2002:educaton_enfant"},
+        {"interruptions": "1995-1997"},
+        {"naissance": "inf"},
+        {"naissance": "1_975"},
+        {"naissance": "1700"},
+        {"unite_revenu": "euros_mois", "salaire": "nan"},
+        {"unite_revenu": "euros_mois", "salaire": "1e400"},
+        {"unite_revenu": "euros_mois", "salaire": "1"},
+        {"debut": "12"},
+        {"liquidation": "90"},
+        {"enfants": "99"},
+        {"primes": "0.99"},
+        {"euros": "9999"},
+        {"statut": "astronaute"},
+        {"metier2_debut": "18", "metier2_statut": "salarie_prive_cadre"},
+    ]
+    # Les voisines immédiates de ces refus, qui doivent au contraire calculer :
+    # une borne posée d'un cran trop loin se verrait ici, et nulle part ailleurs.
+    acceptees = [
+        {"interruptions": "1995:1999:education_enfant"},
+        {"interruptions": f"{ANNEE_CARRIERE_MINIMALE}:1990:sans_activite"},
+        {"unite_revenu": "euros_mois", "salaire": "1e3"},
+        {"enfants": str(ENFANTS_MAXIMUM)},
+    ]
+
+    cas = []
+    for prefixe, champs_, refuse in (("refus", refuses, True),
+                                     ("accepte", acceptees, False)):
+        for numero, champs in enumerate(champs_):
+            requete = {"naissance": "1975", **champs}
+            corps = temoins.sans_bloc_json(rendre(contexte, "/", requete)[1])
+            # Le test ne vaut que si chaque saisie tombe du côté attendu : une
+            # borne relâchée les ferait toutes calculer, et la comparaison
+            # passerait sans rien couvrir.
+            assert ('class="erreur"' in corps) is refuse, (
+                f"{prefixe}_{numero} {requete} : le simulateur "
+                + ("calcule au lieu de refuser" if refuse
+                   else "refuse au lieu de calculer")
+            )
+            cas.append({
+                "nom": f"{prefixe}_{numero}", "requete": requete, "corps": corps,
+            })
 
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
