@@ -1149,6 +1149,48 @@ institutions:
           ligne 2003 qui décrit le droit antérieur, que le dépôt date de 1976.
           Mêmes valeurs, autre clé — elle reste transcrite.
 
+      - id: ircec_memos
+        titre: >-
+          Taux, seuils et valeurs du point des régimes de l'IRCEC (RAAP, RACD,
+          RACL), mémos annuels
+        url: https://www.ircec.fr/actualite/memo-des-valeurs-2026/
+        acces: page
+        statut_integration: saisi
+        cible: data/reference/regimes/rendements_points.csv
+        note: >-
+          Rien de tout cela n'est dans le code : L. 382-12 renvoie les
+          complémentaires des artistes-auteurs à L. 644-1, et leur barème au
+          règlement de la caisse. La caisse, elle, le publie — et mieux que la
+          plupart : un « mémo des valeurs » par an, en HTML, qui donne le taux,
+          le seuil d'affiliation, le plafond, la valeur d'achat, la valeur de
+          service ET LE RENDEMENT. Trois années ont été relevées : 2023
+          (83,03 € d'achat, 9,05 € de service, rendement 10,9 %), 2024 (87,60,
+          9,55, 10,9 %) et 2026 (90,30, 9,75, 10,8 %). Le mémo 2026 donne aussi
+          le RACD (4,78 / 0,421, 8,8 %) et le RACL (10,304 / 0,618, 6 %), qui
+          ne sont pas encore au catalogue.
+          CE QUI MANQUE : les années antérieures à 2023, et surtout la table
+          des CLASSES de cotisation d'avant 2017, que la caisse ne publie plus.
+          Le guide n'en parle que par le dispositif transitoire qui permet de
+          conserver jusqu'en 2027 la classe choisie en 2016.
+
+      - id: carmf_chiffres_cles
+        titre: Chiffres clés du régime complémentaire des médecins (CARMF)
+        url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-chiffre.htm
+        acces: page
+        statut_integration: saisi
+        cible: data/reference/regimes/rendements_points.csv
+        note: >-
+          La CARMF publie ses paramètres en HTML, sur deux pages : les
+          cotisations (11,8 % des revenus nets dans la limite de trois plafonds
+          et demi, soit 19 849 € au maximum en 2026) et les points (11,52
+          points au maximum par an pour le complémentaire, valeur de service
+          77,14 € à 62 ans). Le rendement de 4,48 % se déduit de ces trois
+          chiffres, et c'est lui que porte la fiche.
+          CE QUI MANQUE : toute série historique. La caisse ne publie que
+          l'année en cours ; le taux comme la valeur du point ont bougé, et la
+          fiche applique les chiffres de 2026 à toute la période. C'est la
+          limite la plus lourde des deux fiches libérales.
+
       - id: dila_legi_crpn
         titre: >-
           Cotisations et barème de la caisse de retraite du personnel navigant,

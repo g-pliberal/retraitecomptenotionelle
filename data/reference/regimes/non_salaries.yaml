@@ -652,6 +652,137 @@ regimes:
           Elle part de zéro et recouvre donc la première — c'est bien la règle
           du régime, les deux cotisations se cumulant sous le plafond.
 
+  - code: ircec_raap
+    nom: >-
+      Régime des artistes et auteurs professionnels (RAAP), géré par l'IRCEC
+    famille: liberal
+    source_id: ircec_memos
+    fiabilite: haute
+    creation: 1962
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Artistes-auteurs : écrivains, illustrateurs, photographes, auteurs de
+      bande dessinée, traducteurs. Complémentaire obligatoire au-dessus du
+      RÉGIME GÉNÉRAL, auquel les artistes-auteurs sont affiliés pour leur
+      retraite de base — ce n'est donc pas un régime de base.
+    hors_repartition: false
+    periodes:
+      - debut: 1962
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.08
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          AVANT 2017 LE RÉGIME N'ÉTAIT PAS PROPORTIONNEL mais organisé en
+          CLASSES de cotisation, dont la caisse ne publie pas la table : le
+          guide de l'IRCEC n'en parle plus que par le dispositif transitoire
+          qui permet, jusqu'en 2027, de conserver la classe choisie en 2016.
+          Faute de cette table, la période porte le taux proportionnel de 8 %
+          introduit en 2017. L'approximation SURESTIME la cotisation des
+          artistes-auteurs à faibles revenus, pour qui les classes basses
+          étaient plus légères que 8 % du revenu, et c'est la population la
+          plus nombreuse du régime.
+      - debut: 2017
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.08
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          8 % de l'assiette sociale, plafonnée à trois fois le plafond de la
+          Sécurité sociale — 144 180 € en 2026. La conversion en pension passe
+          par le RENDEMENT, que la caisse publie elle-même dans ses mémos
+          annuels — 10,9 % en 2023 et 2024, 10,8 % en 2026 — plutôt que par
+          `valeurs_point.csv`, dont les contrôles de `verifier_donnees.py`
+          possèdent le contenu. Les valeurs sont pourtant connues : 83,03 €
+          d'achat et 9,05 € de service en 2023, 87,60 et 9,55 en 2024, 90,30 et
+          9,75 en 2026. Un taux réduit de 4 % est
+          ouvert sur demande aux revenus inférieurs à 2 700 SMIC horaires, et
+          divise les droits par deux ; il n'est pas modélisé, le modèle ne
+          sachant pas si un assuré l'a demandé. En dessous du seuil
+          d'affiliation — 900 SMIC horaires, 10 692 € en 2026 — la cotisation
+          n'est pas due du tout : le modèle la prélève quand même, faute d'un
+          mécanisme de SEUIL D'EXONÉRATION (le drapeau `assiette_plancher`
+          relève une assiette trop basse, il ne l'annule pas). Surestime donc
+          les droits des toutes petites carrières artistiques.
+
+  - code: carmf_complementaire
+    nom: >-
+      Régime complémentaire vieillesse des médecins libéraux (CARMF)
+    famille: liberal
+    source_id: carmf_chiffres_cles
+    fiabilite: haute
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Médecins libéraux. Étage complémentaire obligatoire au-dessus du régime
+      de base des professions libérales (CNAVPL), et le plus lourd des deux :
+      sa cotisation maximale dépasse 19 000 € par an quand celle de la base
+      plafonne bien plus bas.
+    hors_repartition: false
+    periodes:
+      - debut: 1949
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.118
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          11,8 % des revenus nets d'activité dans la limite de trois plafonds
+          et demi de la Sécurité sociale — 168 210 € en 2026, soit une
+          cotisation maximale de 19 849 €, qui ouvre 11,52 points, servis
+          77,14 € pièce à 62 ans. Ces trois chiffres donnent un prix d'achat de
+          1 723 € et un RENDEMENT de 4,48 %, et c'est par ce rendement que la
+          fiche convertit ses cotisations — `regimes/valeurs_point.csv` est
+          alimenté par les contrôles de `scripts/verifier_donnees.py`, dont
+          aucun ne couvre les caisses libérales, et y saisir une valeur à la
+          main désaccorde le journal de certification. La
+          majoration de 1,25 % par trimestre différé entre 62 et 65 ans, puis
+          0,75 % entre 65 et 70, est portée par la surcote ci-dessus pour la
+          première tranche seulement.
+          LES CHIFFRES SONT CEUX DE 2026 et valent pour toute la période : la
+          caisse ne publie ses chiffres clés que pour l'année en cours, et
+          aucune série historique de la valeur du point n'a été trouvée. Le
+          taux comme la valeur ont pourtant bougé — c'est la limite la plus
+          lourde de cette fiche.
+
   - code: cnbf
     nom: Caisse nationale des barreaux français
     famille: liberal

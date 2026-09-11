@@ -117,7 +117,8 @@ champs_periode:
               "tranche_2_arrco",
               "tranche_b", "tranche_c", "hors_primes", "primes_uniquement", "forfaitaire",
               "plafonnee_085_pass", "tranche_085_5_pass", "plafonnee_5_pass",
-              "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass"]
+              "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass",
+              "plafonnee_3_5_pass"]
 
   taux_cotisation_retraite:
     description: >-

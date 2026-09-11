@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 42 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 44 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **42 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **44 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2043,8 +2043,6 @@ cotisations, et celles-là sont sourcées de bout en bout.
 
 | Régime | Population | Ce qui bloque |
 |---|---|---|
-| **IRCEC**, complémentaire des artistes-auteurs (RAAP, RACD, RACL) | auteurs, compositeurs | L. 382-12 renvoie leurs complémentaires à L. 644-1, et leur barème au **règlement de la caisse**, approuvé par arrêté : rien dans le code. C'est le mur déjà rencontré pour le point de l'Agirc-Arrco et pour les sections libérales |
-| **Sections complémentaires des professions libérales** (CARMF, CARPIMKO, CIPAV…) | dix sections | Le même mur, et c'est la limite la plus ancienne du dépôt — déjà décrite au tableau ci-dessus |
 
 **Le personnel navigant est entré, et il a fallu deux choses pour cela.**
 
@@ -2094,6 +2092,60 @@ caisse. Carrière de 25 à 55 ans, génération 1965 :
 C'est le cas type qui montre le plus nettement ce que mesure ce dépôt : partir
 à 55 ans coûte deux fois, et un régime spécial à départ précoce est ce qu'un
 compte notionnel défait le plus violemment.
+
+**Le mur du règlement de caisse a cédé, pour deux régimes sur onze.** Ni le
+RAAP ni les sections libérales ne sont dans le code : L. 382-12 renvoie les
+complémentaires des artistes-auteurs à L. 644-1, et leur barème au règlement de
+la caisse. Mais ce que le code tait, la caisse le publie parfois — et deux le
+publient bien.
+
+**L'IRCEC publie un « mémo des valeurs » par an, en HTML**, qui donne le taux,
+le seuil, le plafond, la valeur d'achat, la valeur de service ET le rendement.
+Trois années relevées : 2023 (83,03 € d'achat, 9,05 € de service, rendement
+10,9 %), 2024 (87,60 / 9,55 / 10,9 %), 2026 (90,30 / 9,75 / 10,8 %). Le mémo
+2026 donne aussi le RACD (4,78 / 0,421 / 8,8 %) et le RACL (10,304 / 0,618 /
+6 %), qui restent hors catalogue faute d'un statut qui les distingue.
+
+**La CARMF publie ses chiffres clés sur deux pages** : 11,8 % des revenus nets
+dans la limite de trois plafonds et demi — 19 849 € de cotisation maximale en
+2026 —, 11,52 points par an au maximum, valeur de service 77,14 € à 62 ans. Ces
+trois chiffres donnent un prix d'achat de 1 723 € et un rendement de 4,48 %.
+
+Ce que la CARMF change à une simulation de médecin est exactement ce que ce
+document annonçait sans pouvoir le combler — carrière de 25 à 64 ans, à trois
+fois le salaire moyen :
+
+| Statut | Pension actuelle | Notionnelle |
+|---|---|---|
+| `profession_liberale`, base seule | 16 176 € | 17 898 € |
+| `medecin_liberal`, base + CARMF | **39 552 €** | **44 076 €** |
+
+**Pourquoi ces valeurs ne sont pas dans `valeurs_point.csv`.** Ce fichier
+appartient aux contrôles de `scripts/verifier_donnees.py` : le journal de
+certification compte ses lignes par niveau de fiabilité, et toute ligne saisie
+à la main le désaccorde — un test le vérifie, et c'est lui qui a refusé la
+première écriture. Les deux fiches passent donc par le **rendement instantané**
+de `regimes/rendements_points.csv`, qui est le filet de sécurité prévu pour
+cela. Pour le RAAP ce n'est même pas une approximation : le rendement est
+publié tel quel par la caisse.
+
+**Ce qui manque encore à ces deux fiches**, et il faut le dire franchement :
+
+* la table des **classes de cotisation du RAAP d'avant 2017**, que la caisse ne
+  publie plus — le régime n'est devenu proportionnel qu'en 2017, et la fiche
+  applique les 8 % en amont, ce qui SURESTIME la cotisation des petits revenus
+  artistiques, la population la plus nombreuse du régime ;
+* le **seuil d'affiliation** du RAAP — 900 SMIC horaires, 10 692 € en 2026 —
+  en dessous duquel aucune cotisation n'est due : le modèle prélève quand même,
+  n'ayant pas de mécanisme de seuil d'exonération (`assiette_plancher` relève
+  une assiette trop basse, il ne l'annule pas) ;
+* **toute série historique pour la CARMF** : la caisse ne publie que l'année en
+  cours, et les chiffres de 2026 sont appliqués à toute la période.
+
+**Les neuf autres sections libérales restent dehors**, et pas toutes pour la
+même raison. La CARPIMKO publie son taux — 8,70 % sur l'assiette comprise entre
+un demi et trois plafonds — mais pas sa valeur de point, sans laquelle une
+cotisation ne se convertit pas en pension. Les autres n'ont pas été relevées.
 
 **Et ceux qu'on n'a pas cherchés** : régimes des élus locaux, de l'Assemblée
 nationale et du Sénat, des chambres de commerce, et les régimes en extinction
@@ -2242,7 +2294,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 27 statuts », « 42 régimes » —, parce que ce sont des chiffres de données et
+« 29 statuts », « 44 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
