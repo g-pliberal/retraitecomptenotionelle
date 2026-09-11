@@ -207,7 +207,7 @@ regimes:
         assiette: plafonnee_3_pass
         taux_cotisation_retraite: 0.0440
         notes: >-
-          Taux le plus ancien que porte le code : l'état de l'article au 21 décembre 1985, le premier que garde la base LEGI, fixe 4,40 %. Que ce taux ait valu depuis la création du régime en 1979 n'est PAS établi — c'est la seule période de cette fiche qui ne s'appuie sur aucun état daté, et elle est à certifier.
+          4,40 %, taux de l'article 5 du décret n° 78-351 du 14 mars 1978 qui institue le régime. Il n'est pas lu dans ce décret — le JORF n'en garde que la notice — mais dans l'état codifié du 21 décembre 1985, le plus ancien que porte LEGI, ET dans le fait qu'aucun texte ne l'a modifié entre-temps : les trois seuls textes qui touchent au régime sur la période sont le décret n° 81-407 du 23 avril 1981, qui répartit les biens de l'organisation autonome et fixe le versement du complémentaire au régime de base sans toucher aux cotisations, le décret n° 84-1064 du 30 novembre 1984, qui ajoute la cotisation additionnelle de 0,10 % à compter du 1er janvier 1985, et la codification de décembre 1985. Le décret fondateur date les cotisations du 1er janvier 1979 (art. 12), d'où le début de cette période. La chaîne est complète et sans trou ; elle reste une déduction, le texte de l'article 5 n'étant pas publié en accès ouvert.
       - debut: 1985
         fin: 1996
         type_calcul: points
@@ -225,7 +225,7 @@ regimes:
         assiette: plafonnee_3_pass
         taux_cotisation_retraite: 0.0450
         notes: >-
-          D. 635-6, état du 21 décembre 1985 : 4,40 %, plus une cotisation additionnelle de 0,10 % due à compter du 1er janvier 1985. Assiette : trois fois le plafond (D. 635-4).
+          D. 635-6, état du 21 décembre 1985 : 4,40 %, plus une cotisation additionnelle de 0,10 % due à compter du 1er janvier 1985. Cette additionnelle est datée par son propre texte, le décret n° 84-1064 du 30 novembre 1984 — « INSTITUTION D'UNE COTISATION ADDITIONNELLE FIXEE A 0,10% DU REVENU », applicable au 1er janvier 1985. Assiette : trois fois le plafond (D. 635-4).
       - debut: 1997
         fin: 1997
         type_calcul: points
