@@ -1173,6 +1173,35 @@ institutions:
           Le guide n'en parle que par le dispositif transitoire qui permet de
           conserver jusqu'en 2027 la classe choisie en 2016.
 
+      - id: sections_liberales_relevees
+        titre: >-
+          Relevé des barèmes publiés par les sections de la CNAVPL, caisse par
+          caisse
+        url: https://www.cnavpl.fr/
+        acces: page
+        statut_integration: a_faire
+        note: >-
+          Neuf sections ont été relevées une par une sur leurs sites. Le mur
+          n'est pas le taux — presque toutes le publient — mais le PRIX D'ACHAT
+          DU POINT, sans lequel une cotisation ne devient pas une pension.
+          CAVAMAC : 6,30 % créateur de droits, taux d'appel 121,6 % soit 7,66 %
+          effectif, plus 2,50 % versés par les compagnies mandantes ; valeur de
+          service 0,4082 € au 1er janvier 2025 ; prix d'achat absent.
+          CARPIMKO : 8,70 % sur l'assiette comprise entre un demi et trois
+          plafonds ; ni valeur de service ni prix d'achat.
+          CAVP : régime MIXTE, une part en répartition forfaitaire de 7 657 €
+          (taux d'appel 105,4 % en 2026) et une part en CAPITALISATION de 2 906
+          à 17 436 € selon la classe ; aucune valeur de point. Sa notice PDF de
+          dix-neuf mille caractères dit seulement que « les points acquis dans
+          ce régime varient selon le montant des cotisations versées ».
+          CAVOM : les taux publiés sont ceux de la base CNAVPL, pas du
+          complémentaire.
+          CAVEC, CARCDSF, CARPV, CIPAV, CRN : non aboutis — pages sans barème
+          lisible, ou site dont les liens ne s'exposent pas en HTML simple.
+          Ce qui distingue la CARMF et l'IRCEC n'est donc pas la transparence
+          en général mais un fait précis : elles publient de quoi RECONSTITUER
+          le prix du point. Lire docs/limites.md avant de refaire le trajet.
+
       - id: carmf_chiffres_cles
         titre: Chiffres clés du régime complémentaire des médecins (CARMF)
         url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-chiffre.htm
