@@ -1854,6 +1854,7 @@ function decomposition(contexte, saisie, comparaison) {
     return "";
   }
 
+  const loterie = loterieDeCohorte(contexte);
   const lignes = [];
   for (const [code, libelle] of INDEXATIONS) {
     let variante;
@@ -1927,9 +1928,9 @@ les revenus non salariaux, que la masse salariale subit.</p>
 indépendant de la règle : il applique une moyenne glissante au taux que la règle
 produit, quelle qu'elle soit, et s'applique donc à toutes les lignes de ce
 tableau à la fois. Ce qu'il vise n'est pas le niveau mais la loterie de cohorte :
-sur le PIB nominal brut, une cotisation de 1980 vaut ×5,44 à une liquidation de
-2019 et ×5,18 en 2020 — attendre un an fait perdre, parce que l'année traversée
-s'est mal passée. Lissée sur cinq ans, la même cotisation vaut ×6,64 puis ×6,71,
+sur le PIB nominal brut, une cotisation de ${ANNEE_COTISATION_LOTERIE} vaut ${loterie.get("1|2019")} à une liquidation de
+2019 et ${loterie.get("1|2020")} en 2020 — attendre un an fait perdre, parce que l'année traversée
+s'est mal passée. Lissée sur cinq ans, la même cotisation vaut ${loterie.get("5|2019")} puis ${loterie.get("5|2020")},
 et le recul disparaît. « PIB nominal » lissé sur cinq ans, c'est la règle
 italienne ; le modèle en reprend le taux, pas le reste du système italien.</p>
 `;
@@ -2816,6 +2817,37 @@ const ANNEE_VERSEMENT_COMPARE = 1940;
 const ANNEE_ARRIVEE_COMPAREE = 2025;
 
 /**
+ * La cotisation et les deux liquidations qui illustrent la loterie de cohorte.
+ * 2020 est l'année du trou ; liquider un an plus tard rapportait alors moins.
+ */
+const ANNEE_COTISATION_LOTERIE = 1980;
+const LIQUIDATIONS_LOTERIE = [2019, 2020];
+
+/**
+ * Ce que vaut une même cotisation selon l'année où l'on liquide.
+ *
+ * Quatre coefficients : la cotisation de 1980 portée à 2019 puis à 2020, sans
+ * lissage puis lissée sur cinq ans. Deux passages du site les citent en toutes
+ * lettres pour montrer qu'attendre un an pouvait faire perdre — autant qu'ils
+ * les lisent au même endroit, et que cet endroit soit le modèle.
+ */
+function loterieDeCohorte(contexte) {
+  const simulateur = contexte.simulateur();
+  const valeurs = new Map();
+  for (const lissage of [1, 5]) {
+    const parametres = avec(simulateur.parametres, {
+      mode_indexation: ModeIndexation.PIB_NOMINAL, lissage_indexation: lissage,
+    });
+    const indexation = new Indexation(simulateur.macro, parametres);
+    for (const arrivee of LIQUIDATIONS_LOTERIE) {
+      const coefficient = indexation.coefficient(ANNEE_COTISATION_LOTERIE, arrivee);
+      valeurs.set(`${lissage}|${arrivee}`, `×${g.nombre(coefficient, 2)}`);
+    }
+  }
+  return valeurs;
+}
+
+/**
  * Rendement cumulé de chaque règle comparée, sur 1941-2025.
  *
  * Ces neuf nombres étaient écrits à la main dans la page — les seuls du site à
@@ -2854,6 +2886,8 @@ function methode(contexte) {
   const conserveLitteral = g.pourcentage(
     cumuls.get(REGLES_COMPAREES[0][0]) / prix, false, 1);
   const revalPratiquee = cumuls.get("Revalorisation réellement pratiquée");
+  const masseSalariale = cumuls.get("Masse salariale (règle d'équilibre)");
+  const loterie = loterieDeCohorte(contexte);
   return `
 <h2 style="margin-top:0">Ce que le modèle calcule</h2>
 
@@ -2906,8 +2940,9 @@ fois les prix, parce que le régime général a revalorisé sur les SALAIRES
 jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc cette ligne, et
 non « Indexation sur les prix », qui neutralise la question de l'indexation
 quand on veut isoler l'effet propre des comptes notionnels — cette page a
-longtemps désigné la mauvaise. Sur une carrière, la correction reste modeste :
-+6,2 points pour la génération 1920, +0,1 pour 1945, et -0,5 pour 1958, dont la
+longtemps désigné la mauvaise. Sur une carrière — un salarié du privé non cadre
+au salaire moyen, entré à 20 ans et parti à 62 —, la correction reste modeste :
++6,2 points pour la génération 1920, +0,0 pour 1945, et -0,4 pour 1958, dont la
 carrière est presque entièrement postérieure à 1987. Les cotisations se
 concentrent sur les dernières années, là où les deux règles coïncident.</p>
 <p>La dernière ligne est d'une autre nature : elle ne décrit ni une règle
@@ -2916,7 +2951,7 @@ désigne. En répartition, le rendement qu'un système peut servir sans changer 
 taux de cotisation est la croissance de son assiette — la masse salariale, soit
 le salaire moyen multiplié par l'emploi salarié (Samuelson 1958, Aaron 1966).
 C'est le taux d'indexation des comptes notionnels suédois, italiens, polonais et
-lettons, à des variantes près. Sur 1941-2025 il vaut ×3 685, onze fois les
+lettons, à des variantes près. Sur 1941-2025 il vaut ×${g.nombre(masseSalariale, 0)}, onze fois les
 prix : l'emploi salarié a doublé depuis 1950, et cette croissance-là s'ajoute
 chaque année à celle des salaires. Une réserve : ce rendement est celui du
 système ENTIER, alors que les scénarios 2 et 3 ne portent au compte que la part
@@ -2929,9 +2964,9 @@ l'Italie pour ses propres comptes notionnels.</p>
 <p>Le lissage n'est pas une règle : c'est un réglage à part, qui applique une
 moyenne glissante au taux que la règle produit — n'importe laquelle. Ce qu'il
 vise n'est pas le niveau mais la <strong>loterie de cohorte</strong> : sur le PIB
-nominal brut, une cotisation de 1980 vaut ×5,44 à une liquidation de 2019 et
-×5,18 en 2020 — attendre un an fait <em>perdre</em>, parce que l'année traversée
-s'est mal passée. Lissée sur cinq ans, elle vaut ×6,64 puis ×6,71 : le trou de
+nominal brut, une cotisation de ${ANNEE_COTISATION_LOTERIE} vaut ${loterie.get("1|2019")} à une liquidation de 2019 et
+${loterie.get("1|2020")} en 2020 — attendre un an fait <em>perdre</em>, parce que l'année traversée
+s'est mal passée. Lissée sur cinq ans, elle vaut ${loterie.get("5|2019")} puis ${loterie.get("5|2020")} : le trou de
 2020 est absorbé par les quatre années qui l'entourent au lieu d'être porté en
 entier par qui a eu le tort de liquider cette année-là. Sur 1950-2025, le PIB
 nominal brut compte deux années où liquider plus tard rapporte moins ; lissé sur

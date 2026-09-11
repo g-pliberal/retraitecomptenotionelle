@@ -2126,3 +2126,84 @@ def test_le_tableau_des_regles_d_indexation_sort_bien_du_modele(contexte):
         f"{reference:.2f} : la phrase ne tient plus"
     )
     assert f"×{g.nombre(cumul(ModeIndexation.TRIPLE_LOCK_INVERSE), 1)}" in corps
+
+
+def test_la_correction_des_trois_generations_se_retrouve(contexte):
+    """Le seul chiffre du site qui reste écrit à la main, et pourquoi.
+
+    La page Méthode dit de combien la ligne de neutralisation — revalorisation
+    réellement pratiquée plutôt qu'indexation sur les prix — déplace l'écart du
+    scénario 2, pour trois générations. Le calculer à l'affichage demande six
+    simulations, soit plus d'une seconde : c'est le seul endroit où la mesure
+    coûte trop cher pour être refaite à chaque page.
+
+    Elle est donc écrite, et vérifiée ici. Le texte nomme désormais la carrière
+    — un salarié du privé non cadre au salaire moyen, de 20 à 62 ans —, sans
+    quoi personne, ce test compris, ne pourrait refaire le calcul.
+    """
+    from dataclasses import replace
+
+    from retraite_notionnelle.config import ModeIndexation, Parametres
+    from retraite_notionnelle.simulateur import Simulateur
+
+    def correction(generation: int) -> float:
+        ecarts = {}
+        for mode in (ModeIndexation.PRIX,
+                     ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE):
+            simulateur = Simulateur(replace(Parametres(), mode_indexation=mode))
+            carriere = simulateur.carriere_simple(
+                annee_naissance=generation, sexe="H",
+                affiliation="salarie_prive_non_cadre", age_debut=20,
+                age_liquidation=62, niveau_salaire=1.0,
+                profil_carriere="ascendant")
+            ecarts[mode] = simulateur.simuler(carriere).variation(
+                "notionnel_retroactif") * 100
+        return (ecarts[ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE]
+                - ecarts[ModeIndexation.PRIX])
+
+    corps = rendre(contexte, "/methode", {})[1]
+    assert "un salarié du privé non cadre" in corps, (
+        "la page doit dire sur quelle carrière ces points sont mesurés"
+    )
+    for generation, attendu in ((1920, 6.2), (1945, 0.0), (1958, -0.4)):
+        mesure = correction(generation)
+        assert round(mesure, 1) == attendu, (
+            f"génération {generation} : la page annonce {attendu:+.1f} point(s), "
+            f"le modèle en donne {mesure:+.1f}"
+        )
+        signe = "+" if attendu >= 0 else "-"
+        écrit = f"{signe}{abs(attendu):.1f}".replace(".", ",")
+        assert écrit in corps, f"« {écrit} » a disparu de la page"
+
+
+def test_le_README_dit_le_vrai_poids_du_paquet():
+    """« 165 Ko compressés (621 Ko brut) » est une mesure, pas une impression.
+
+    Elle annonçait 277 Ko compressés et 1 Mo brut, pour un paquet qui en fait
+    165 et 621 : la phrase avait été écrite une fois, et les données avaient
+    changé depuis. C'est le sort de tout chiffre recopié que rien ne recoupe.
+
+    La tolérance est large — cinq pour cent —, parce que le README arrondit et
+    qu'il n'a pas à être réécrit pour un kilo-octet ; elle est assez serrée pour
+    attraper un doublement.
+    """
+    import gzip
+    import re
+    from pathlib import Path
+
+    racine = Path(__file__).resolve().parents[1]
+    paquet = (racine / "moteur" / "donnees.json").read_bytes()
+    brut = len(paquet) / 1024
+    compresse = len(gzip.compress(paquet)) / 1024
+
+    annonce = re.search(r"transfère (\d+) Ko compressés \((\d+) Ko brut\)",
+                        (racine / "README.md").read_text(encoding="utf-8"))
+    assert annonce, "le README ne dit plus ce que le premier chargement transfère"
+    dit_compresse, dit_brut = (int(annonce.group(1)), int(annonce.group(2)))
+
+    for dit, mesure, quoi in ((dit_compresse, compresse, "compressé"),
+                              (dit_brut, brut, "brut")):
+        assert abs(dit - mesure) / mesure < 0.05, (
+            f"le README annonce {dit} Ko {quoi}, le paquet en fait "
+            f"{mesure:.0f} — écart de {abs(dit - mesure) / mesure:.0%}"
+        )
