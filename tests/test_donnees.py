@@ -826,3 +826,42 @@ def test_les_statuts_sans_employeur_sont_marques():
                     "exploitant_agricole"}
     assert not affiliations.sans_employeur("salarie_prive_non_cadre")
     assert not affiliations.sans_employeur("fonctionnaire_etat")
+
+
+def test_les_deux_series_de_pib_disent_la_meme_chose():
+    """``pib_courant`` donne le niveau, ``pib_nominal`` la variation annuelle.
+
+    Les deux viennent du même idbank INSEE, et se recoupent de 1949 à 2025 : sur
+    cette plage, la variation se déduit du niveau. C'est la seule redondance du
+    dossier de données — elle existe parce que la variation, elle, remonte à
+    1930, là où le niveau manque. Rien ne la vérifiait : une correction apportée
+    à l'une des deux séries et pas à l'autre passerait inaperçue, et le modèle
+    lirait deux PIB différents selon l'endroit où il regarde.
+
+    La tolérance est celle de l'écriture : le taux est stocké à cinq décimales,
+    donc un demi-millionième près.
+    """
+    import csv
+
+    def serie(nom: str) -> dict[int, float]:
+        chemin = RACINE_DONNEES / "reference" / "macro" / nom
+        lignes = [
+            ligne for ligne in chemin.read_text(encoding="utf-8").splitlines()
+            if ligne and not ligne.lstrip().startswith("#")
+        ]
+        return {
+            int(rang[0]): float(rang[1])
+            for rang in csv.reader(lignes[1:]) if rang and rang[1]
+        }
+
+    niveau = serie("pib_courant.csv")
+    taux = serie("pib_nominal.csv")
+    recoupees = [a for a in sorted(niveau) if a - 1 in niveau and a in taux]
+    assert len(recoupees) > 70, "les deux séries ne se recoupent plus"
+
+    for annee in recoupees:
+        attendu = niveau[annee] / niveau[annee - 1] - 1
+        assert abs(taux[annee] - attendu) < 5e-6, (
+            f"{annee} : pib_nominal dit {taux[annee]:.5f}, le niveau donne "
+            f"{attendu:.5f} — les deux séries ont divergé"
+        )

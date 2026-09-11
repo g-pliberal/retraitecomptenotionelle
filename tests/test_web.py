@@ -2039,3 +2039,90 @@ def test_le_graphique_de_la_trajectoire_porte_ses_ages(contexte):
     })[1]
     assert "âge par âge" in corps
     assert '<th class="" scope="col">Âge</th>' in corps
+
+
+def test_le_tableau_des_regles_d_indexation_sort_bien_du_modele(contexte):
+    """Les seuls chiffres du site qui soient écrits à la main.
+
+    La page Méthode affiche, pour neuf règles d'indexation, le rendement cumulé
+    1941-2025 et la part du pouvoir d'achat conservée. Ces valeurs ne sont pas
+    calculées au rendu : elles sont dans le gabarit, en toutes lettres, parce
+    qu'elles ne dépendent d'aucune carrière et coûteraient neuf parcours de
+    quatre-vingt-cinq ans à chaque affichage de la page.
+
+    Le prix de ce choix est qu'elles peuvent se démentir en silence — ce qui
+    était arrivé à l'une d'elles. Ce test les recalcule depuis le modèle.
+
+    La convention des bornes est celle de ``coefficient`` : une somme versée en
+    1940 est revalorisée à partir de l'année suivante, donc par les taux de 1941
+    à 2025 inclus — ce que l'intitulé de la colonne appelle « appliquée
+    1941-2025 ».
+    """
+    from dataclasses import replace
+
+    from retraite_notionnelle.config import ModeIndexation
+    from retraite_notionnelle.moteur.indexation import Indexation
+
+    simulateur = contexte.simulateur()
+
+    def cumul(mode: ModeIndexation, lissage: int = 1) -> float:
+        parametres = replace(simulateur.parametres, mode_indexation=mode,
+                             lissage_indexation=lissage)
+        return Indexation(simulateur.macro, parametres).coefficient(1940, 2025)
+
+    prix = cumul(ModeIndexation.PRIX)
+    attendues = [
+        ("Triple lock inversé, littéral", ModeIndexation.TRIPLE_LOCK_INVERSE, 1),
+        ("Moyenne des trois taux", ModeIndexation.MOYENNE_TROIS_TAUX, 1),
+        ("Triple lock inversé, tout en nominal",
+         ModeIndexation.TRIPLE_LOCK_INVERSE_NOMINAL, 1),
+        ("Indexation sur les prix", ModeIndexation.PRIX, 1),
+        ("Médiane des trois taux", ModeIndexation.MEDIANE_TROIS_TAUX, 1),
+        ("Revalorisation réellement pratiquée",
+         ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE, 1),
+        ("Masse salariale (règle d'équilibre)", ModeIndexation.MASSE_SALARIALE, 1),
+        ("PIB nominal", ModeIndexation.PIB_NOMINAL, 1),
+        ("PIB nominal lissé sur 5 ans (Italie)", ModeIndexation.PIB_NOMINAL, 5),
+    ]
+
+    corps = rendre(contexte, "/methode", {})[1]
+    debut = corps.index("Règle appliquée 1941-2025")
+    tableau_html = corps[debut:corps.index("</table>", debut)]
+    # La mise en valeur d'une cellule — la ligne littérale est en gras — n'est
+    # pas son contenu : on compare des nombres, pas du balisage.
+    def texte(cellule: str) -> str:
+        return re.sub(r"<[^>]+>", "", cellule).strip()
+
+    lignes = {
+        cellules[0]: cellules[1:]
+        for cellules in (
+            [texte(cellule)
+             for cellule in re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", ligne)]
+            for ligne in re.findall(r"<tr>(.*?)</tr>", tableau_html, re.S)
+        )
+        if cellules
+    }
+
+    for libelle, mode, lissage in attendues:
+        assert libelle in lignes, f"ligne « {libelle} » absente du tableau"
+        comptes, prix_affiche, conserve = lignes[libelle]
+        valeur = cumul(mode, lissage)
+        assert comptes == "×" + g.nombre(valeur, 1), (
+            f"{libelle} : la page affiche {comptes}, le modèle donne "
+            f"×{g.nombre(valeur, 1)}"
+        )
+        assert prix_affiche == "×" + g.nombre(prix, 1)
+        attendu = g.pourcentage(valeur / prix, decimales=1)
+        assert conserve == attendu, (
+            f"{libelle} : la page conserve {conserve}, le modèle donne {attendu}"
+        )
+
+    # La prose qui entoure le tableau cite deux de ses chiffres. Le premier est
+    # calculé comme lui ; le second est une phrase — « près de cinq fois les
+    # prix » —, qui n'est vraie que dans une fourchette. Elle y est.
+    reference = cumul(ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE) / prix
+    assert 4.5 <= reference < 5.5, (
+        f"la page dit « près de cinq fois les prix » pour un rapport de "
+        f"{reference:.2f} : la phrase ne tient plus"
+    )
+    assert f"×{g.nombre(cumul(ModeIndexation.TRIPLE_LOCK_INVERSE), 1)}" in corps
