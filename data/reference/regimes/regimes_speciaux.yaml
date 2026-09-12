@@ -200,9 +200,22 @@ regimes:
         notes: >-
           Le plus ancien régime de retraite français (Colbert, 1673).
           Cotisations et pensions assises sur des SALAIRES FORFAITAIRES par
-          catégorie, non sur la rémunération réelle : la reconstitution du
-          compte notionnel exige la grille des salaires forfaitaires par année
-          (paramètre `assiette_forfaitaire`, non encore intégrée).
+          catégorie, non sur la rémunération réelle.
+          CE QUI MANQUE N'EST PAS SEULEMENT LA GRILLE, et c'est ce qui rend
+          l'obstacle plus sérieux qu'il n'y paraît. Le décret n° 2020-649 du
+          28 mai 2020, qui réécrit le décret n° 48-1709 du 5 novembre 1948,
+          définit bien « les vingt catégories de classement des fonctions des
+          marins » — mais il les définit par le MÉTIER, non par le revenu :
+          « 1re : apprenti ; 2e : matelot de moins de 18 ans ; 3e : élève
+          officier, matelot léger… ». Et il renvoie les montants ailleurs : « le
+          montant des salaires forfaitaires est fixé par arrêté des ministres
+          chargés de la mer, de la sécurité sociale et du budget ».
+          Une carrière saisie dans ce simulateur porte un revenu, pas une
+          fonction à bord. Même publiée, la grille ne serait donc pas
+          applicable sans une convention supplémentaire — ranger le marin dans
+          la catégorie dont le forfait approche le plus son revenu déclaré —,
+          et cette convention n'aurait aucune source. C'est la raison pour
+          laquelle la fiche s'en tient au revenu déclaré.
           Ouverture dès 50 ans sous conditions de services embarqués.
 
   - code: mines
