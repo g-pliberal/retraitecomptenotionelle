@@ -505,11 +505,11 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "d7c41cf89ee07d82",
-   "identiques": 13,
+   "empreinte": "0d82ac84181a353c",
+   "identiques": 19,
    "niveau": "certifiee",
    "source": "CNAVPL, recueils statistiques annuels",
-   "valeurs": 13
+   "valeurs": 19
   },
   "valeurs_point_cnbf": {
    "ajoutees": 0,
@@ -522,11 +522,11 @@
    "valeurs": 18
   },
   "valeurs_point_independants": {
-   "ajoutees": 85,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "3b912b67d18682a1",
-   "identiques": 0,
+   "identiques": 85,
    "niveau": "haute",
    "source": "IPP, barèmes des régimes de retraite des indépendants",
    "valeurs": 85

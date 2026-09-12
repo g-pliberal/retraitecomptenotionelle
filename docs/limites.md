@@ -393,7 +393,8 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Valeurs d'acquisition et de service du point, RAFP | 2005-2026 | **certifiée** | ERAFP, dont le conseil d'administration les fixe |
 | Valeurs d'achat et de service du point, autres | RCI 2013-2023, IGRANTE et IPACTE 1947-2022 | haute | OpenFisca-France-Pension |
 | Valeurs du point, complémentaire des avocats | 2017-2026 | **certifiée** | CNBF, ses barèmes annuels |
-| Valeur du point et taux, base des professions libérales | 2021-2025 | **certifiée** | CNAVPL, ses recueils statistiques |
+| Valeur du point, base des professions libérales | 2021-2025 | **certifiée** | CNAVPL, ses recueils statistiques |
+| Taux des deux tranches, base des professions libérales | 2020-2026 | **certifiée** | CNAVPL, le tableau des cotisations de ses recueils, exercice par exercice |
 | Valeur de service du point, complémentaire agricole | 2005-2024 | **certifiée** | DILA, base LEGI, code rural `D. 732-166` |
 | Valeur du point, base agricole et valeurs d'achat RCO | — | absentes | hors du code ; voir plus bas |
 
@@ -963,24 +964,29 @@ plus volontiers.
   point nulle part ailleurs que dans son **recueil statistique**, un annuaire
   d'une soixantaine de pages paru chaque année, sous une phrase invariable :
   « La valeur du point est fixée à 0,6540 au 1er janvier 2025. » Le même recueil
-  donne les deux taux de cotisation — 8,23 % sur la tranche 1, 1,87 % sur la
-  tranche 2. Ces valeurs sont dans le dépôt, certifiées, de 2021 à 2025 ; les
-  millésimes antérieurs mettent la valeur dans un graphique et non dans une
-  phrase, d'où le début de série.
+  donne les deux taux de cotisation, dans un tableau qui les chiffre exercice
+  par exercice — 8,23 % sur la tranche 1 jusqu'en 2024, 8,73 % depuis 2025,
+  1,87 % sur la tranche 2. Ces valeurs sont dans le dépôt, certifiées : la
+  valeur du point de 2021 à 2025, les taux de 2020 à 2026. Les millésimes
+  antérieurs mettent la valeur dans un graphique et non dans une phrase, d'où
+  le début de série.
 
   **Le moteur s'en sert désormais.** Ce qui bloquait n'était pas la donnée mais
   la forme du barème : le régime n'attribue pas un nombre de points
   proportionnel à la cotisation, mais **525 points au maximum sur la tranche 1
-  et 25 sur la tranche 2**, soit 550 depuis 2015 — 450 et 100 avant. Un
+  et 25 sur la tranche 2**, soit 550 de 2015 à 2024 — 450 et 100 avant, 557 et
+  25 depuis 2025, le barème suivant la hausse du taux de T1. Un
   plafonnement en points est une règle de calcul, pas une colonne à ajouter :
   il a fallu l'écrire dans le moteur, sous la forme d'un champ `points_maximum`
   qui dit combien de points ouvre une assiette donnée. La fiche est scindée en
   ses deux tranches, qui se recouvrent depuis 2015 comme le fait la cotisation.
   Le nombre de points ne dépend alors pas du taux de cotisation, ce qui est
   heureux : c'est le barème que la caisse publie, pas le prix d'achat.
-  Reste hors du modèle la période 1949-2003, assise sur des classes
-  forfaitaires dont la grille n'est pas publiée : ces années restent au
-  rendement instantané.
+  La période 1949-2003 obéit à une troisième règle, et c'est celle qui
+  manquait : « les trimestres validés avant le 1er janvier 2004 sont convertis
+  en points à raison de 100 points par trimestre ». La grille des classes
+  forfaitaires qu'on cherchait pour ces années ne commandait pas la pension —
+  elle ne commande que la cotisation.
 
 * *Âges, durées requises, décotes* — **certifiés, par la même clé que la MSA.**
   Cette page écrivait : « ils viennent de lois, pas de séries statistiques.
@@ -1604,8 +1610,10 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   Ircantec depuis 1949), avec conversion des points aux fusions. S'y ajoutent
   depuis peu deux régimes dont le barème n'est pas un prix d'achat mais un
   NOMBRE DE POINTS par tranche d'assiette : le régime de base des professions
-  libérales (525 points au plafond, 25 sur la seconde tranche) et la
-  complémentaire agricole (100 points pour 1 820 SMIC). La complémentaire des
+  libérales (525 points au plafond jusqu'en 2024, 557 depuis 2025, 25 sur la
+  seconde tranche) et la complémentaire agricole (100 points pour 1 820 SMIC).
+  Le même régime de base en connaît une troisième forme pour ce qui précède
+  2004 : CENT POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant cotisé. La complémentaire des
   avocats les a rejoints, avec le prix d'achat publié par la CNBF et les cinq
   tranches en euros de la classe C1, depuis 2019 seulement — les tranches
   antérieures ne sont pas publiées. Restent au rendement instantané le RCI et le
@@ -1974,7 +1982,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
-| Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
+| Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | les montants des salaires forfaitaires, que le décret renvoie à un arrêté — et surtout la CATÉGORIE du marin, que le décret définit par le métier (« matelot de moins de 18 ans », « élève officier ») et qu'une carrière saisie ne porte pas | le revenu déclaré, plafonné comme au régime général | **indéterminé** : la grille est plus favorable que le salaire réel aux bas revenus, moins au-delà. Même publiée, elle ne s'appliquerait pas sans une convention reliant un revenu à une fonction à bord, qui n'aurait aucune source |
 | Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (363 € la première, 1 988 € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de 3,20 % ET le forfait à sa valeur de croisière, 1 988 € ; les années d'avant 2019 restent au rendement instantané | **surestime de 4 586 € sur une carrière** le flux des cinq premières années, contre 70 000 € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
 | Non-salariés agricoles | le barème de points du régime de base (23 à 113 points par tranche de revenu), que personne ne publie ; les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans | la retraite forfaitaire et la RCO, dont le barème en points est public | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
@@ -1985,7 +1993,10 @@ de base des avocats était rangé ici comme « à scinder » : il l'est, et sa
 pension ne dépend plus du revenu. La complémentaire agricole y figurait sans
 valeur de point : elle en a une, certifiée de 2005 à 2024, tirée du code rural.
 Le régime de base des professions libérales y figurait sans barème : il a le
-sien, plafonné en points comme la caisse le publie.
+sien, plafonné en points comme la caisse le publie. La grille des classes de
+son étage d'avant 2004 y figurait aussi : **elle n'était pas la bonne
+question** — la pension d'avant 2004 ne dépend d'aucune classe, et la section
+« Cent points par trimestre » plus bas dit pourquoi.
 
 **Pourquoi ce qui reste ne se referme pas de la même façon.** Les limites
 refermées cette année l'ont toutes été par un changement de CLÉ D'ENTRÉE — un
@@ -2982,6 +2993,89 @@ automatisé.
 PAR NOTRE OUTIL » — et qu'une limite ainsi formulée cache une question qu'on
 n'a pas posée. Trois des quatre lignes ci-dessus avaient été écrites comme des
 limites de la SOURCE ; elles étaient des limites du LECTEUR.
+
+### Cent points par trimestre, et la pension que le moteur inventait
+
+Le régime de base des professions libérales couvre soixante-quinze ans, et le
+modèle n'en paramétrait vraiment que les vingt derniers. Pour tout ce qui
+précède 2004, sa fiche portait `assiette: forfaitaire` — un mot que le moteur ne
+connaît pas, et qu'il lisait donc comme « le revenu entier, sans plafond ». Il
+prélevait là-dessus 8,5 %, capitalisait au rendement de 8 %, et servait une
+pension de base **proportionnelle au revenu** : trente ans à 200 000 € y
+ouvraient 40 000 € par an. Le régime, la même année, servait une pension moyenne
+de **3 809 €** (recueil statistique de la CNAVPL, exercice 2003 ; 4 948 € en
+2024).
+
+L'écart n'est pas une imprécision de barème, c'est une erreur de NATURE. Le
+régime d'avant 2004 ne servait pas une pension proportionnelle, mais une
+ALLOCATION VIEILLESSE, la même pour le notaire et pour le kinésithérapeute : la
+moitié de l'AVTS à l'origine, son montant entier depuis le décret n° 62-439 du
+14 avril 1962, puis, au 1er janvier 1983, « 1/15e d'AVTS par année cotisée »,
+la condition de quinze années d'activité étant supprimée — les années au-delà de
+quinze comptant depuis le 1er juillet 1978. La réforme du 21 août 2003 a
+converti ce droit en points, et la règle de conversion tient en une ligne :
+
+> Les trimestres validés avant le 1er janvier 2004 sont convertis en points à
+> raison de 100 points par trimestre.
+
+C'est la fiche du recueil pour l'article `D. 643-1`. Quatre cents points par
+année pleine, au point de 2025, font 261,60 € : quarante ans de carrière
+antérieure à la réforme ne peuvent pas dépasser 10 500 €, et le revenu n'entre
+dans ce compte que par les trimestres qu'il valide — 150 heures de SMIC chacun,
+200 avant 2014, quatre par an au plus.
+
+**L'erreur ne jouait pas toujours dans le même sens**, et c'est ce qui la
+rendait indétectable à l'œil. Le point de bascule est à 38 000 € environ de
+revenu annuel, en euros de la liquidation — c'est le revenu où 8,5 % capitalisés
+à 8 % valent les 400 points de l'année : au-dessus, l'ancien calcul servait plus
+que le régime ; en dessous, moins. Les dix carrières témoins de statut libéral,
+qui commencent modestement, gagnent toutes 1 828 € par an à la correction ;
+trente années d'avant 2004 à 200 000 € en perdent plus de trente mille.
+
+Le moteur a donc un mécanisme de plus, `points_par_trimestre_valide`, porté des
+deux côtés du portage et documenté au schéma. Il ne sert qu'à ce régime, et il
+est la forme la plus simple qu'un droit à retraite puisse prendre : un nombre de
+points par trimestre, sans assiette.
+
+**Ce qui reste conventionnel n'est plus la pension, mais la cotisation.** La
+cotisation de base était forfaitaire jusqu'en 1992 ; le 1er janvier 1993 (loi
+n° 91-73 du 18 janvier 1991), « une fraction de la cotisation du régime de base
+est devenue proportionnelle aux revenus, dans la limite de 5 fois le plafond de
+la sécurité sociale ». La série des forfaits n'est nulle part — ni au recueil,
+qui ne donne de cotisations qu'en agrégats d'un exercice, ni dans les tableaux
+de compensation démographique, qui portent une tout autre « cotisation de
+référence ». Le compte notionnel prélève donc 8,5 % du revenu **borné à cinq
+plafonds**, le plafond que le régime s'est lui-même donné en 1993. C'est une
+convention, elle est nommée dans la fiche, et elle ne touche plus que les
+scénarios notionnels.
+
+**La phrase citée n'est pas dans la loi consolidée.** Le dépouillement complet
+du dump LEGI — 5 253 903 fichiers — ne trouve « cent points par trimestre » ni
+« 100 points par trimestre » nulle part, sous aucune graphie. La règle est
+donnée par la caisse, qui la rattache à `D. 643-1`, et recoupée par les guides
+de retraite ; elle est saisie à ce titre, sur la foi du producteur, comme la
+valeur du point du même régime — que la loi ne porte pas davantage, le décret
+annuel ne fixant qu'un coefficient de revalorisation.
+
+### Le taux de la première tranche a changé, et la phrase qui le portait mentait
+
+Le récupérateur du recueil lisait les taux des deux tranches dans une phrase de
+l'historique : « le taux de la première tranche est de 8,23 %, celui de la
+seconde tranche est de 1,87 % ». Elle est exacte — mais elle décrit la réforme
+DE 2015, et le script l'estampillait de l'année du recueil. Tant que le taux
+n'a pas bougé, personne ne pouvait s'en apercevoir. Il a bougé : la réforme de
+l'assiette des indépendants (article 18 de la loi n° 2023-1250 du 26 décembre
+2023) porte T1 à **8,73 % dès l'exercice 2025**, et le barème en points suit —
+**557 points** au plafond au lieu de 525, soit exactement le rapport des deux
+taux, le prix d'achat d'un point ne bougeant pas.
+
+Le bon endroit est le TABLEAU DES COTISATIONS, que chaque recueil donne sur
+trois exercices. Il passait pour illisible, et il l'était pour les montants :
+les polices qui les portent n'exposent pas de table `ToUnicode`. Les taux et les
+nombres de points, eux, se relisent. Les cinq recueils en ligne se recouvrent
+sur quinze lectures, de 2020 à 2026, et concordent toutes — ce recouvrement est
+désormais le contrôle du récupérateur, qui s'arrête si deux millésimes se
+contredisent.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 

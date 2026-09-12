@@ -1732,6 +1732,28 @@ class ScenarioActuel:
                         )
                         if par_classe is not None:
                             cotisation = par_classe[0] * part
+                    if periode.points_par_trimestre_valide is not None:
+                        # POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant.
+                        # Le régime de base des libéraux d'avant 2004 ne servait
+                        # pas une pension proportionnelle au revenu mais une
+                        # ALLOCATION : un quinzième de l'AVTS par année cotisée,
+                        # la même pour le notaire et pour le kinésithérapeute.
+                        # La réforme de 2003 l'a convertie en points « à raison
+                        # de cent points par trimestre » (D. 643-1), et c'est
+                        # cette conversion — non l'assiette, qu'on n'a pas —
+                        # qui porte le droit d'avant 2004.
+                        echelle, fiabilite_echelle = self.conversions_points.echelle(
+                            code, ligne.annee, annee_liquidation
+                        )
+                        points_acquis[code] = points_acquis.get(code, 0.0) + (
+                            periode.points_par_trimestre_valide
+                            * carriere.trimestres_retenus(ligne) * echelle
+                        )
+                        fiabilite_points[code] = min(
+                            fiabilite_points.get(code, Fiabilite.CERTIFIEE),
+                            regime.fiabilite, fiabilite_echelle,
+                        )
+                        continue
                     if periode.points_maximum is not None and repere > 0:
                         # Barème écrit en POINTS et non en prix d'achat : le
                         # régime annonce combien de points ouvre une assiette

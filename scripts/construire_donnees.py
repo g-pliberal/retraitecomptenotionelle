@@ -247,6 +247,7 @@ def _regimes() -> list[dict]:
                     "plafond_majoration_annee": p.plafond_majoration_annee,
                     "points_maximum": p.points_maximum,
                     "points_minimum_annuels": p.points_minimum_annuels,
+                    "points_par_trimestre_valide": p.points_par_trimestre_valide,
                     "borne_basse_euros": p.borne_basse_euros,
                     "borne_haute_euros": p.borne_haute_euros,
                     "pension_forfaitaire_annuelle": p.pension_forfaitaire_annuelle,
