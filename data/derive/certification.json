@@ -1,5 +1,5 @@
 {
- "certifie_le": "2026-09-07",
+ "certifie_le": "2026-09-12",
  "series": {
   "age_ouverture_requis": {
    "ajoutees": 0,
@@ -520,6 +520,16 @@
    "niveau": "certifiee",
    "source": "CNBF, barèmes annuels des cotisations et prestations",
    "valeurs": 18
+  },
+  "valeurs_point_independants": {
+   "ajoutees": 85,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "3b912b67d18682a1",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "IPP, barèmes des régimes de retraite des indépendants",
+   "valeurs": 85
   },
   "valeurs_point_ircantec": {
    "ajoutees": 0,

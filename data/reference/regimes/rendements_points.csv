@@ -47,6 +47,13 @@ agirc_arrco,2019,2100,0.0581,haute
 ircantec,1971,1989,0.2281,haute
 ircantec,1990,2008,0.1225,haute
 ircantec,2009,2100,0.0852,haute
+# Artisans et commerçants : CES DEUX LIGNES NE SERVENT PLUS. Depuis que les
+# barèmes IPP versent le prix d'achat et la valeur de service de ces deux
+# régimes dans valeurs_point.csv, le moteur accumule de vrais points et ne
+# les consulte plus. Elles restent comme filet, et pour mémoire de ce
+# qu'elles valaient : 6,74 % de 1979 à 2012, c'est-à-dire le rendement du
+# RCI d'aujourd'hui prêté à toute la période, quand celui du complémentaire
+# des artisans valait 11,95 % en 1980.
 rco_artisans,1979,2012,0.0674,estimee
 nric,2004,2012,0.0674,estimee
 rci,2013,2100,0.0674,haute
