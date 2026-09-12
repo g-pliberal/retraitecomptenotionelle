@@ -107,6 +107,21 @@ affiliations:
       La borne de 1979 est celle du décret n° 79-262 du 21 mars 1979, qui
       institue le complémentaire des architectes.
 
+  pharmacien:
+    libelle: Pharmacien ou biologiste libéral
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: null, regimes: [cnavpl, cavp_complementaire]}
+    note: >-
+      Le complémentaire de la CAVP a DEUX VOLETS, et ce statut n'en porte qu'un.
+      Celui en RÉPARTITION est une cotisation forfaitaire — identique dans
+      toutes les classes —, convertie en annuités : c'est lui qu'un compte
+      notionnel sait porter. Celui en CAPITALISATION, réparti en classes de
+      2 906 à 17 436 € en 2026, n'est pas au catalogue : il n'est pas de la
+      répartition, et sa grille n'est pas publiée sous une forme lisible.
+      Un pharmacien simulé ici est donc sous-estimé de la part capitalisée de
+      son complémentaire, qui peut en représenter la moitié.
+
   expert_comptable:
     libelle: Expert-comptable ou commissaire aux comptes
     sans_employeur: true

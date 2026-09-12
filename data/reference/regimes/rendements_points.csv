@@ -75,6 +75,15 @@ ircec_raap,1962,2100,0.1090,haute
 # rendement à 5,95 % : il n'a pas quitté la bande 5,92 – 5,97 % en sept
 # exercices. Avant 2020 la caisse ne publie rien ; la valeur centrale de cette
 # bande est reconduite, et c'est une estimation.
+# CAVP, volet en répartition : la caisse compte en ANNUITÉS et non en points —
+# « nombre d'années validées × 320,75 » (mémento 2024) —, et la cotisation
+# forfaitaire de 6 880 € donne exactement ce rendement : 320,75 / 6 880 =
+# 4,66 %. Les deux écritures coïncident parce que la cotisation est constante.
+# En 2026 elle passe à 7 657 € dont un TAUX D'APPEL de 105,4 % qui n'ouvre
+# aucun droit, quand l'annuité ne monte qu'à 328,80 € : le rendement de ce qui
+# est VERSÉ tombe à 4,29 %, et c'est lui que porte un compte notionnel.
+cavp_complementaire,1949,2025,0.0466,moyenne
+cavp_complementaire,2026,2100,0.0429,haute
 # CAVEC : rendement vérifié sur les neuf classes du guide annuel 2026 — la
 # classe D cotise 8 282 € pour 498 points, servis 1,3850 €, soit 8,33 %, et les
 # huit autres donnent le même à un dix-millième près. C'est aussi le chiffre
