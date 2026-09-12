@@ -1179,6 +1179,8 @@ institutions:
           RACL), mémos annuels
         url: https://www.ircec.fr/actualite/memo-des-valeurs-2026/
         acces: page
+        urls_secondaires:
+          - https://www.ircec.fr/wp-content/uploads/2016/11/cpircecrefraapdecret27012016.pdf
         statut_integration: saisi
         cible: data/reference/regimes/rendements_points.csv
         note: >-
@@ -1192,10 +1194,23 @@ institutions:
           9,55, 10,9 %) et 2026 (90,30, 9,75, 10,8 %). Le mémo 2026 donne aussi
           le RACD (4,78 / 0,421, 8,8 %) et le RACL (10,304 / 0,618, 6 %), qui
           ne sont pas encore au catalogue.
-          CE QUI MANQUE : les années antérieures à 2023, et surtout la table
-          des CLASSES de cotisation d'avant 2017, que la caisse ne publie plus.
-          Le guide n'en parle que par le dispositif transitoire qui permet de
-          conserver jusqu'en 2027 la classe choisie en 2016.
+          CE QUI MANQUE : les années antérieures à 2023.
+          SUR LES CLASSES D'AVANT LA RÉFORME, le communiqué de presse de la
+          caisse du 27 janvier 2016 dit ce que ses guides ne disent plus, et
+          règle la question autrement qu'en la laissant ouverte : le système
+          était « OPTIONNEL — l'adhérent choisissait un montant » —, et
+          « déconnecté des revenus artistiques perçus ». Ce n'est donc pas la
+          table qui manque : même publiée, elle ne servirait à rien, puisque le
+          mécanisme de classes du dépôt range l'assuré d'après son REVENU. Au
+          RAAP la classe était un choix, et aucun modèle ne devine le choix
+          d'un assuré. La caisse ajoute l'ordre de grandeur de ce que
+          l'approximation coûte : « jusqu'à présent, 80 % des adhérents
+          cotisent sur la base » la plus basse.
+          LE MÊME COMMUNIQUÉ PORTE LA MONTÉE EN CHARGE, que la fiche ignorait :
+          « le taux sera de 5 % en 2017 sur les revenus perçus en 2016, 6 % en
+          2018 sur les revenus perçus en 2017, 7 % en 2019 sur les revenus
+          perçus en 2018 et 8 % en 2020 sur les revenus perçus en 2019 ». Le
+          décret d'application est celui du 30 décembre 2015.
 
       - id: sections_liberales_relevees
         titre: >-

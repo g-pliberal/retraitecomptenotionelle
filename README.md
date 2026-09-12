@@ -92,7 +92,7 @@ Scénario                                                  Courants   Constants 
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 174 Ko compressés (821 Ko brut) et prend quelques dixièmes
+chargement transfère 175 Ko compressés (826 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
