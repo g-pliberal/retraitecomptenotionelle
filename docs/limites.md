@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 48 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 49 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1974,7 +1974,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
-| Professions libérales (CNAVPL) | les complémentaires de quatre sections sur dix — CARPIMKO, CAVAMAC, CPRN, CARPV, CAVOM — et le volet CAPITALISÉ de la CAVP ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les six qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), experts-comptables (CAVEC), pharmaciens (CAVP, volet réparti), et la Cipav pour le statut générique | **sous-estime** la pension d'un libéral d'une des six sections restantes, fortement : la complémentaire y pèse souvent plus lourd que la base |
+| Professions libérales (CNAVPL) | les complémentaires de trois sections sur dix — CAVAMAC, CPRN, CARPV — et le volet CAPITALISÉ de la CAVP ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les sept qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), experts-comptables (CAVEC), pharmaciens (CAVP, volet réparti), auxiliaires médicaux (CARPIMKO), et la Cipav pour le statut générique | **sous-estime** la pension d'un libéral d'une des six sections restantes, fortement : la complémentaire y pèse souvent plus lourd que la base |
 | Marins (ENIM) | la grille des salaires forfaitaires par catégorie et par année, qui est l'assiette réelle du régime | le revenu déclaré, plafonné comme au régime général | **indéterminé** : la grille est plus favorable que le salaire réel aux bas revenus, moins au-delà. L'écart porte sur l'assiette, donc sur la pension ET sur le compte notionnel, en partie compensé |
 | Avocats (CNBF) | la cotisation forfaitaire de base, de 363 à 1 988 €/an selon l'ancienneté ; les tranches de la grille complémentaire d'avant 2019 | seule la cotisation proportionnelle de 3,20 % alimente le compte ; les années d'avant 2019 restent au rendement instantané | **sous-estime le flux versé**, donc la pension notionnelle, sans toucher à la pension actuelle — qui est forfaitaire et ne dépend pas de la cotisation. L'écart joue donc contre les scénarios notionnels |
 | Non-salariés agricoles | le barème de points du régime de base (23 à 113 points par tranche de revenu), que personne ne publie ; les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans | la retraite forfaitaire et la RCO, dont le barème en points est public | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **48 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **49 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2157,7 +2157,7 @@ ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
 | **CARMF**, médecins | 11,8 % jusqu'à 3,5 plafonds | 77,14 € (2026) | déduit : 11,52 points pour 19 849 € → **1 723 €**. FICHE ÉCRITE |
 | **IRCEC**, artistes-auteurs | 8 % jusqu'à 3 plafonds | 9,75 € (2026) | **90,30 €**, publié. FICHE ÉCRITE |
 | **CAVAMAC**, agents d'assurance | 6,30 % créateur de droits, taux d'appel 121,6 % → 7,66 % effectif, plus 2,50 % versés par les compagnies mandantes | 0,4082 € (2025) | **absent** |
-| **CARPIMKO**, auxiliaires médicaux | 8,70 % entre un demi et trois plafonds | absente | **absent** |
+| **CARPIMKO**, auxiliaires médicaux | forfait + 3 % de 1996 à 2025, 8,70 % entre un demi et trois plafonds depuis 2026 — série complète au Journal officiel | 18,08 € (2010) à 21,48 € (2026), publiée par la caisse | sans objet : le rendement se déduit des 8 points du forfait. FICHE ÉCRITE |
 | **CAVP**, pharmaciens | régime MIXTE : part en répartition FORFAITAIRE de 7 657 € (taux d'appel 105,4 % en 2026), identique dans toutes les classes ; part en CAPITALISATION de 2 906 à 17 436 € selon la classe | annuité de 320,75 € (2024), 328,80 € (2026) | sans objet : le régime compte en annuités. FICHE ÉCRITE pour le volet réparti |
 | **CAVOM**, officiers ministériels | les taux publiés sont ceux de la base CNAVPL, pas du complémentaire | absente | **absent** |
 | **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous |
@@ -2324,6 +2324,55 @@ droit » : un compte notionnel porte ce qui est versé, et le rendement tombe à
 Ce qui reste au volet capitalisé de la CAVP : sa grille de classes, composée
 dans une police sans table de correspondance. Ce n'est pas de la répartition, et
 le dépôt saurait le dire avec `hors_repartition` — mais pas le chiffrer.
+
+### La source que deux passes avaient manquée : le décret annuel
+
+Les deux relevés précédents interrogeaient les CAISSES, et concluaient à chaque
+fois la même chose : elles ne publient que l'année en cours, et leurs statuts
+renvoient les montants au conseil d'administration. Les deux constats sont
+vrais. Ils ne concluent rien.
+
+**Un décret par an fixe ces montants pour les neuf sections à la fois**, et le
+Journal officiel le publie depuis 2001 :
+
+> « 5° Section professionnelle des auxiliaires médicaux : cotisation
+> forfaitaire : 1 648 euros ; taux de la cotisation proportionnelle : 3 % ;
+> limites de l'assiette de la cotisation proportionnelle : seuil : 25 246
+> euros ; plafond : 176 313 euros. »
+
+Vingt-quatre décrets, 335 valeurs, lus par `scripts/fetch/jorf_cotisations_liberales.py`.
+Ils donnent la série de la CARPIMKO — dont la fiche est écrite —, la valeur
+d'achat du point de la CAVOM et de la CARPV de 2016 à 2025, le montant de la
+première classe de la CAVEC et de la Cipav année par année, et la section C des
+notaires. Ils RECOUPENT au passage tout ce que les caisses publiaient : le
+forfait et le taux de la CARCDSF, le taux de la CARMF, la grille 2022 de la
+Cipav, tous identiques.
+
+**Et ils corrigent une caisse contre elle-même.** Le décret n° 2025-1076 du
+10 novembre 2025 fixe pour la Cipav « 11 % » en première tranche et « 21 % » en
+seconde ; la fiche pratique 2026 de la caisse imprime encore 9 % et 22 % — les
+taux de 2023 — et les applique dans son exemple chiffré. Le décret fait foi, et
+la fiche du dépôt a été corrigée.
+
+### Un rendement unique là où il faudrait une série
+
+La fiche CARPIMKO met en lumière une approximation qui vaut pour TOUS les
+régimes convertis par `rendements_points.csv` : le moteur applique **un seul
+rendement, celui de l'année de liquidation**, aux cotisations revalorisées de
+toute la carrière. Or le rendement de la CARPIMKO tombe de 13,10 % en 2010 à
+7,36 % en 2025. Une infirmière qui liquide en 2027 voit donc ses cotisations de
+2010 converties à 7,36 % au lieu de 13,10 % : sa complémentaire ressort à
+3 683 € là où l'accumulation année par année en donnerait environ 5 600 €, soit
+un tiers de moins.
+
+Le chemin exact existe déjà dans le moteur — `valeurs_point.csv`, qui accumule
+des points année par année —, et la CARPIMKO a de quoi l'emprunter : son prix
+du point implicite est le forfait divisé par 8, et il donne les mêmes points que
+la part proportionnelle divisée par 22. Ce qui manque n'est pas la donnée mais
+le raccordement : `valeurs_point.csv` est un fichier CERTIFIÉ, dont le journal
+verrouille le nombre de lignes par niveau, et y verser des valeurs demande un
+contrôle dans `verifier_donnees.py` — donc un récupérateur pour la valeur de
+service, que la caisse publie en PDF depuis 2010.
 
 UN PIÈGE DÉCOUVERT EN CHEMIN, et refermé par un test. La table des tranches
 d'assiette existe DEUX FOIS — `BORNES_ASSIETTE` dans `donnees/regimes.py` et
@@ -2629,7 +2678,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 32 statuts », « 48 régimes » —, parce que ce sont des chiffres de données et
+« 33 statuts », « 49 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
