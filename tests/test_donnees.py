@@ -781,6 +781,38 @@ def test_l_assiette_forfaitaire_suppose_un_repere(catalogue):
             )
 
 
+def test_toute_assiette_ecrite_dans_une_fiche_est_une_assiette_connue(catalogue):
+    """Une étiquette d'assiette inconnue vaut « le revenu entier, sans plafond ».
+
+    `bornes_assiette_en_pass` lit `BORNES_ASSIETTE.get(assiette, (0.0, None))` :
+    une faute de frappe dans une fiche ne lève rien, elle déplafonne. Le
+    paramétrage le plus prudent — écrire une tranche — devient alors le plus
+    dangereux, et le régime prélève sur tout le revenu sans que rien ne le dise.
+
+    Le schéma énumère les valeurs autorisées ; ce test vérifie qu'il dit la même
+    chose que le moteur, et que les fiches s'y tiennent.
+    """
+    import yaml
+
+    from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
+
+    schema = yaml.safe_load(
+        (RACINE_DONNEES / "reference" / "regimes" / "_schema.yaml")
+        .read_text(encoding="utf-8")
+    )
+    declarees = set(schema["champs_periode"]["assiette"]["valeurs"])
+    assert declarees == set(BORNES_ASSIETTE), (
+        "le schéma et le moteur ne connaissent pas les mêmes assiettes : "
+        f"{declarees ^ set(BORNES_ASSIETTE)}"
+    )
+    for regime in catalogue:
+        for periode in regime.periodes:
+            assert periode.assiette in BORNES_ASSIETTE, (
+                f"{regime.code} {periode.debut} : assiette « {periode.assiette} » "
+                "inconnue du moteur, donc déplafonnée sans le dire"
+            )
+
+
 def test_tout_regime_en_points_sait_convertir_ses_points(catalogue):
     """Un régime en points sans barème ni rendement sert une pension NULLE.
 
