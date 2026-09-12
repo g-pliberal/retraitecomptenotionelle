@@ -618,6 +618,40 @@ def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
         assert len(raison.split()) >= 10, f"{code} : raison trop courte pour être une raison"
 
 
+def test_le_lecteur_pdf_ne_colle_pas_les_pages_entre_elles():
+    """Deux pages, deux lignes — et non une seule qui les empile.
+
+    Chaque page d'un PDF a son propre repère : l'ordonnée 700 y désigne le même
+    endroit de la feuille, page 1 comme page 60. `lignes_pdf` regroupait ses
+    fragments sur la SEULE ordonnée, si bien que la ligne du haut de chaque
+    page du document se retrouvait collée à celle de toutes les autres. Sur un
+    document d'une page le défaut est invisible ; sur la chronologie de la
+    CARMF, cent pages de tableaux, il rendait huit lignes pour cent
+    quatre-vingt mille caractères — et l'on en concluait que la mise en page
+    « ne se reconstituait pas ». Elle se reconstitue : c'était le lecteur qui
+    empilait les pages.
+    """
+    import sys
+    from pathlib import Path as _Path
+
+    sys.path.insert(0, str(_Path(__file__).resolve().parents[1] / "scripts" / "fetch"))
+    from lecture_pdf import lignes_pdf
+
+    def flux(texte: str) -> bytes:
+        corps = f"BT /F1 12 Tf 100 700 Td ({texte}) Tj ET".encode("latin-1")
+        return (b"<< /Length %d >>\nstream\n" % len(corps)) + corps + b"\nendstream"
+
+    # Deux flux distincts, MÊME ordonnée : c'est exactement le cas que le
+    # lecteur confondait.
+    pdf = (b"%PDF-1.4\n"
+           + b"1 0 obj\n" + flux("PAGE UN") + b"\nendobj\n"
+           + b"2 0 obj\n" + flux("PAGE DEUX") + b"\nendobj\n"
+           + b"trailer\n<< >>\n%%EOF\n")
+
+    lignes = lignes_pdf(pdf)
+    assert lignes == ["PAGE UN", "PAGE DEUX"], lignes
+
+
 def test_le_salaire_de_reference_se_borne_a_sa_tranche():
     """Une période à borne basse ne liquide que la part du salaire qui lui revient.
 

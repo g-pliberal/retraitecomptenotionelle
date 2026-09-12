@@ -2200,6 +2200,41 @@ reviendrons vers vous dès que les textes définitifs seront publiés ». Ce n'e
 donc pas une donnée introuvable, c'est une donnée **à attendre**, et elle
 débloquera la plus grosse population libérale encore absente.
 
+### Le lecteur de PDF empilait les pages
+
+Trois documents avaient été déclarés illisibles — le recueil de la CNAVPL, la
+chronologie de la CARMF, le guide de l'IRCEC — et le dépôt en avait tiré une
+règle : « reconstituer les lignes de ce document n'a pas de sens ». La règle
+était fausse. `scripts/fetch/lecture_pdf.py` regroupait ses fragments sur la
+**seule ordonnée**, en ignorant la page d'où ils venaient.
+
+Or chaque page d'un PDF a son propre repère : l'ordonnée 700 désigne le même
+endroit de la feuille, page 1 comme page 60. Le lecteur collait donc bout à
+bout la ligne du haut de CHAQUE page — un titre de la page 1, un chiffre de la
+page 40, une note de la page 97, dans une même chaîne. Sur un document d'une
+page le défaut est invisible, et c'est pourquoi il a survécu : les barèmes de
+la CNBF, pour lesquels le lecteur a été écrit, tiennent sur une page.
+
+Le numéro de flux entre dans la clé de regroupement, et le même code rend :
+
+| Document | Avant | Après |
+|---|---|---|
+| Chronologie de la CARMF | 8 lignes | **842** |
+| Recueil de la CNAVPL | 4 lignes | **2 645** |
+| Guide de l'IRCEC | 19 lignes | **956** |
+
+La chronologie de la CARMF livre alors ce qu'elle contenait depuis le début :
+la valeur du point du régime complémentaire **année par année depuis 1949** —
+1,77 € en 1949, 74,47 € en 1988, 69,00 € en 2004, 77,14 € en 2026 —, les
+allocations du régime de base depuis 1949, l'évolution de la lettre « C »
+depuis 1967, et les décrets qui fixent les cotisations.
+
+**Ce qui reste à faire pour en tirer des séries.** Les pages composées en DEUX
+COLONNES côte à côte mêlent encore leurs valeurs sur une même ligne : le
+regroupement se fait par ordonnée dans la page, pas par colonne. Lire ces
+tables demande un regroupement par ABSCISSE, que le lecteur ne fait pas
+encore. C'est la limite suivante, et elle est nommée plutôt que subie.
+
 ### La troisième passe : une forme de plus, et un dentiste
 
 Le mécanisme qui manquait n'était pas celui des classes mais celui de la
@@ -2247,11 +2282,11 @@ là : CARPIMKO 8,70 % et 21,48 € de valeur de service ; CAVEC rendement 8,33 %
 point à 1,3850 €, 1 841 points maximum sur neuf classes ; CAVAMAC valeur de
 service 0,4082 € au 1<sup>er</sup> janvier 2025.
 
-**Le recueil statistique de la CNAVPL a été rouvert et refermé.** Il nomme les
-dix sections et porte une table « Valeur de service du point » — mais sa mise en
-page ne se reconstitue pas : quatre lignes pour cent soixante-seize mille
-caractères. C'est ce que `scripts/fetch/cnavpl_recueils.py` disait déjà, et qui
-est ici confirmé plutôt que contourné.
+**Le recueil statistique de la CNAVPL a été rouvert.** Il nomme les dix sections
+et porte une table « Valeur de service du point ». Il en ressortait quatre
+lignes pour cent soixante-seize mille caractères, ce dont ce document concluait
+que sa mise en page « ne se reconstituait pas ». **C'était faux, et le défaut
+était chez nous** : voir ci-dessous.
 
 **Et ceux qu'on n'a pas cherchés** : régimes des élus locaux, de l'Assemblée
 nationale et du Sénat, des chambres de commerce, et les régimes en extinction
@@ -2666,7 +2701,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 525 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 526 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

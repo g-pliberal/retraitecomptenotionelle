@@ -124,10 +124,23 @@ JETONS = re.compile(
 
 
 def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
-    """Reconstitue les lignes visuelles du document, de haut en bas."""
+    """Reconstitue les lignes visuelles du document, de haut en bas.
+
+    LE NUMÉRO DE FLUX FAIT PARTIE DE LA CLÉ, et c'est tout sauf un détail.
+    Chaque page d'un PDF a son propre repère : l'ordonnée 700 y désigne le même
+    endroit de la feuille, page 1 comme page 60. Regrouper les fragments sur la
+    seule ordonnée, comme le faisait cette fonction, collait donc bout à bout
+    la ligne du haut de CHAQUE page du document — un titre de la page 1 suivi
+    d'un chiffre de la page 40 et d'une note de la page 97, dans une même
+    chaîne. Sur un document d'une page le défaut ne se voit pas. Sur la
+    chronologie de la CARMF, cent pages de tableaux, il rendait huit lignes
+    pour cent quatre-vingt mille caractères, et l'on en concluait que la mise
+    en page « ne se reconstituait pas ». Elle se reconstitue très bien : c'est
+    le lecteur qui empilait les pages.
+    """
     tables = _polices(octets)
-    fragments: list[tuple[float, float, str]] = []
-    for objet in _objets(octets).values():
+    fragments: list[tuple[int, float, float, str]] = []
+    for page, objet in enumerate(_objets(octets).values()):
         contenu = _flux(objet)
         if not contenu or (b"Tj" not in contenu and b"TJ" not in contenu):
             continue
@@ -154,19 +167,22 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
                            if jeton.group("hex")
                            else _litteral(jeton.group("txt")[1:-1]))
                 if morceau.strip():
-                    fragments.append((y, x, morceau))
+                    fragments.append((page, y, x, morceau))
 
-    fragments.sort(key=lambda f: (-f[0], f[1]))
+    fragments.sort(key=lambda f: (f[0], -f[1], f[2]))
     lignes: list[str] = []
     courante: list[str] = []
     ordonnee = None
-    for y, _, morceau in fragments:
-        if ordonnee is None or abs(y - ordonnee) <= tolerance:
+    feuille = None
+    for page, y, _, morceau in fragments:
+        meme_ligne = (ordonnee is not None and page == feuille
+                      and abs(y - ordonnee) <= tolerance)
+        if meme_ligne or ordonnee is None:
             courante.append(morceau)
         else:
             lignes.append(re.sub(r"\s+", " ", "".join(courante)).strip())
             courante = [morceau]
-        ordonnee = y
+        ordonnee, feuille = y, page
     if courante:
         lignes.append(re.sub(r"\s+", " ", "".join(courante)).strip())
     return [l for l in lignes if l]
