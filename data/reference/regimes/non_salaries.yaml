@@ -2491,9 +2491,13 @@ regimes:
     population: >-
       Pharmaciens et biologistes libéraux. Le complémentaire de la CAVP a DEUX
       VOLETS : celui-ci, en répartition, et un volet en CAPITALISATION par
-      classes, qui n'est pas au catalogue — un compte notionnel ne porte que
-      la répartition, et le volet capitalisé ne se laisse de toute façon pas
-      chiffrer sans la grille des classes.
+      classes, qui n'est pas au catalogue — un compte notionnel ne porte que la
+      répartition. Sa grille, longtemps réputée illisible, se lit pourtant : la
+      part capitalisée vaut (classe − 1) fois une cotisation de référence de
+      1 453 € en 2026, sur un revenu de référence qui commence à 85 369 € et
+      monte par paliers de 17 662 €. Ce qui manque est la CONVERSION du capital
+      en rente, « actuariellement neutre », dont ni les coefficients ni le
+      rendement du plan ne sont publiés.
     hors_repartition: false
     periodes:
       - debut: 1949
@@ -3192,35 +3196,47 @@ regimes:
         avantages_non_contributifs: [reversion]
         notes: >-
           COTISATION PAR CLASSES, et la grille est une TABLE DE POINTS déguisée.
-          Quatre classes en 2026 : 10 234 € jusqu'à 76 994 € de revenus, 12 642 €
-          de 76 995 à 102 659 €, 15 050 € de 102 660 à 128 324 €, 16 856 €
-          au-delà — pour 17, 21, 25 et 28 points. Chacune divise exactement par
-          son nombre de points en 602,00 €, qui est la valeur d'achat du point,
-          et le rendement vaut donc 39,54 / 602 = 6,5681 % sur les quatre
-          classes à la fois, au dix-millième près. C'est ce qui autorise à
-          convertir la cotisation par un rendement plutôt que par une table de
-          points, et c'est la vérification la plus nette qu'ait donnée une
-          section libérale.
+          Chaque classe divise exactement par son nombre de points en la valeur
+          d'achat du point que fixe le décret annuel : 9 124,16 € pour 16 points
+          en 2024, soit 570,26 € ; 10 234 € pour 17 points en 2026, soit
+          602,00 €. Le rendement est donc le simple rapport de la valeur de
+          service à la valeur d'achat, identique sur toutes les classes —
+          39,54 / 602 = 6,5681 % en 2026.
+          LA GRILLE A CHANGÉ DE FORME EN 2026. Jusqu'en 2025 elle ne comptait
+          que TROIS classes, à 16, 20 et 24 points ; le rapport annuel 2024 de
+          la caisse annonce la réforme : « un point supplémentaire pour les
+          classes B, C et D qui passent respectivement de 16 à 17 points, de 20
+          à 21 points et de 24 à 25 points, ainsi que la CRÉATION D'UNE
+          CLASSE E à 28 points ». En 2026 : 10 234 € jusqu'à 76 994 € de
+          revenus, 12 642 € de 76 995 à 102 659 €, 15 050 € de 102 660 à
+          128 324 €, 16 856 € au-delà.
           LA CLASSE EST SUBIE, ET DEUX CHOIX NE SONT PAS PRIS. « Les
           vétérinaires dont les revenus sont inférieurs à 76 995 € sont appelés
           en classe B », écrit la caisse : c'est le revenu de l'année N-1 qui
           range l'assuré, et le dépôt sait le calculer. Restent deux facultés
-          qu'il ne prête à personne — « opter pour une classe supérieure à titre
-          volontaire », et demander un allègement en dessous de 51 330 € de
-          revenus. La première majorerait la pension, la seconde la
-          minorerait ; aucune n'est prévisible.
-          CE QUE LE DÉCRET ANNUEL DONNE, ET OÙ IL S'ARRÊTE. Depuis 2016 il fixe
-          pour cette section une « valeur d'achat du point » — 446 € en 2016,
-          570,26 € en 2024 — d'où les neuf grilles reconstituées de
-          `classes_cotisation.csv` : le nombre de points de chaque classe
-          multiplié par le prix de l'année. Avant 2016 il fixait tout autre
-          chose, un « taux d'appel de la cotisation » monté de 78,5 % en 2002 à
-          104 % en 2015, appliqué à des montants de classe que rien ne publie.
-          Deux inconnues s'ajoutent alors : la grille de 2026 y est reportée par
-          le rapport des plafonds, et ce report IGNORE le taux d'appel — une
-          cotisation de 2002 est donc surestimée d'un quart environ, et les
-          droits qu'elle porte avec elle. Soixante-cinq ans reportés depuis une
-          seule grille : c'est la limite de cette fiche, et elle est grande.
+          qu'il ne prête à personne — l'option pour une classe supérieure, que
+          les statuts font « pour trois ans », et les cinq CLASSES D'ALLÈGEMENT,
+          de « Super Spéciale I » à « Classe A », qui n'ouvrent que 2 à 12
+          points et ne s'obtiennent que sur demande. La première majorerait la
+          pension, les secondes la minoreraient ; aucune n'est prévisible.
+          CE QUE LES LIVRETS DONNENT, ET OÙ LE DÉCRET PREND LE RELAIS. Les
+          livrets annuels de la caisse publient la grille entière — bornes,
+          montants et points — pour 2024, 2025 et 2026 ; ces trois millésimes
+          sont saisis tels quels. Pour 2016 à 2023, le décret annuel donne la
+          « valeur d'achat du point » — 446 € en 2016, 539 € en 2023 — et les
+          montants s'en déduisent en la multipliant par les points de chaque
+          classe ; les bornes sont celles de 2024 indexées sur le plafond, faute
+          d'autre ancre. Les trois millésimes publiés disent ce que vaut cette
+          convention : les bornes ont monté de 1,68 % entre 2024 et 2025 quand
+          le plafond montait de 1,58 %.
+          AVANT 2016 LE DÉCRET FIXAIT TOUT AUTRE CHOSE, un « taux d'appel de la
+          cotisation » monté de 78,5 % en 2002 à 104 % en 2015, appliqué à des
+          montants de classe que rien ne publie. Deux inconnues s'ajoutent
+          alors : la grille de 2024 y est reportée par le rapport des plafonds,
+          et ce report IGNORE le taux d'appel — une cotisation de 2002 est donc
+          surestimée d'un quart environ, et les droits qu'elle porte avec elle.
+          Soixante-cinq ans reportés depuis une grille : c'est la limite de
+          cette fiche, et elle est grande.
           L'ÂGE SEUL COMMANDE, PAS LA DURÉE. « Il fonctionne selon un système à
           points et prend en compte uniquement l'âge de départ (et non la durée
           de cotisation) », écrit la caisse : départ possible à 60 ans, taux

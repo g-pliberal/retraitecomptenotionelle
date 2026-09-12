@@ -2162,7 +2162,7 @@ ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
 | **CAVOM**, officiers ministériels | 12,50 % jusqu'à huit plafonds depuis 2016, six CLASSES avant | 3,3745 € (2026) | **55,1390 €**, publié par le guide de la caisse, qui donne aussi le rendement : 6,12 %. FICHE ÉCRITE à partir de 2016 |
 | **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous |
 | **CAVEC**, experts-comptables | neuf classes, de 898 € à 30 616 € | 1,3850 € (2026) | rendement 8,33 %, vérifié sur les neuf classes. FICHE ÉCRITE |
-| **CARPV**, vétérinaires | quatre classes, de 10 234 à 16 856 € en 2026 | 39,54 € (2026) | **602,00 €**, déduit : chacune des quatre classes divise exactement par ses points en ce montant, et le décret annuel fixe ce prix depuis 2016. FICHE ÉCRITE |
+| **CARPV**, vétérinaires | trois classes jusqu'en 2025 (16, 20 et 24 points), quatre depuis 2026 (17, 21, 25 et 28) | 37,79 € (2023) à 39,54 € (2026) | **602,00 €** en 2026, 570,26 € en 2024 : le décret annuel le fixe depuis 2016, et chaque classe divise exactement par ses points en ce montant. FICHE ÉCRITE |
 | **CPRN**, notaires | section C : 4,10 % des produits de l'office ; section B : huit classes de 10 à 80 points | section B 17,7710 €, section C 0,9422 € (2026) | section B 279,12 € × 115 %, section C **17,69 €**, tous deux publiés par le guide de la caisse. FICHE ÉCRITE pour la section C |
 | CARCDSF | abouti : fiche écrite | — | — |
 
@@ -2328,9 +2328,19 @@ passe à 7 657 €, mais « intègre un taux d'appel de 105,4 % qui ne produira 
 droit » : un compte notionnel porte ce qui est versé, et le rendement tombe à
 4,29 %.
 
-Ce qui reste au volet capitalisé de la CAVP : sa grille de classes, composée
-dans une police sans table de correspondance. Ce n'est pas de la répartition, et
-le dépôt saurait le dire avec `hors_repartition` — mais pas le chiffrer.
+Ce qui reste au volet capitalisé de la CAVP n'est pas ce qu'on croyait. **Sa
+grille de classes se lit** — déclarée illisible parce que le lecteur de PDF du
+dépôt en sortait des glyphes, elle s'ouvre avec pypdf, et son arithmétique la
+résume en une ligne : la part capitalisée vaut (classe − 1) fois une cotisation
+de référence de 1 453 € en 2026, soit 2 906 € en classe 3 et 17 436 € en
+classe 13, et la classe se lit sur un revenu de référence qui commence à
+85 369 € et monte par paliers de 17 662 €. Ce qui manque est la **conversion** :
+« à chaque âge de départ, le coefficient de conversion du capital en rente
+viagère tient compte de l'espérance de vie pour chaque génération, d'un
+rendement financier précompté et du choix ou non de la réversion » — et ni ces
+coefficients ni le rendement du plan ne sont publiés. Ce n'est de toute façon
+pas de la répartition : le dépôt le dirait avec `hors_repartition`, hors
+comparaison.
 
 ### La source que deux passes avaient manquée : le décret annuel
 
@@ -2700,28 +2710,41 @@ des raisons opposées : la première publiait tout sans qu'on l'ait lue, la
 seconde ne publie qu'une moitié de son histoire.
 
 **La CARPV publie sa grille en clair, et l'arithmétique y ajoute le prix du
-point.** Le tableau HTML de la caisse donne quatre classes, leurs bornes de
-revenus, leur cotisation ET les points qu'elles ouvrent : 10 234 € pour 17
-points jusqu'à 76 994 € de revenus, puis 12 642 € pour 21, 15 050 € pour 25 et
-16 856 € pour 28. Ces quatre quotients valent tous **602,00 €** — la valeur
-d'achat du point, que la caisse n'écrit nulle part et que le décret annuel fixe
-pour cette section depuis 2016. Avec la valeur de service de 39,54 €, le
-rendement vaut 6,5681 % sur les quatre classes à la fois, au dix-millième près.
+point.** Le tableau de la caisse donne les classes, leurs bornes de revenus,
+leur cotisation ET les points qu'elles ouvrent. Chaque cotisation divise
+exactement par ses points en la **valeur d'achat du point** que le décret annuel
+fixe pour cette section depuis 2016 : 9 124,16 € pour 16 points en 2024, soit
+570,26 € ; 10 234 € pour 17 points en 2026, soit 602,00 €. Le rendement est donc
+le simple rapport de la valeur de service à la valeur d'achat, identique sur
+toutes les classes.
 
-Cette identité vaut mieux qu'un contrôle : elle permet de reconstruire les
-grilles de 2016 à 2024 en multipliant les points de chaque classe par le prix
-du point de l'année — 446 € en 2016, 570,26 € en 2024. Reporter la grille de
-2026 par le plafond, comme le fait la Cipav faute de mieux, aurait surestimé la
-cotisation de 2016 de 8,5 %. Ce que cette reconstruction suppose, et qu'il faut
-dire : que les quatre classes ouvraient déjà 17, 21, 25 et 28 points. Le décret
-publie le prix, jamais le nombre.
+**Et la grille a changé de forme en 2026 — ce qu'une première version de cette
+fiche n'avait pas vu.** Les livrets annuels, longtemps réputés illisibles, se
+lisent avec pypdf : jusqu'en 2025 la section ne comptait que **trois** classes,
+à 16, 20 et 24 points. Le rapport annuel 2024 annonce la réforme — « un point
+supplémentaire pour les classes B, C et D qui passent respectivement de 16 à 17
+points, de 20 à 21 points et de 24 à 25 points, ainsi que la création d'une
+classe E à 28 points ». La fiche avait reporté la grille de 2026 vers l'amont :
+elle prêtait à 2016 une quatrième classe qui n'existait pas.
 
-Ce qui manque encore chez elle : les BORNES de revenus d'avant 2026, reportées
-par le plafond, et toute grille d'avant 2016 — le décret ne fixait alors pas un
-prix du point mais un **taux d'appel**, monté de 78,5 % en 2002 à 104 % en 2015,
-appliqué à des montants que rien ne publie. Une cotisation de 2002 est donc
-surestimée d'un quart environ. Les livrets annuels de la caisse porteraient ces
-bornes, mais ils sont composés dans une police sans table de correspondance.
+Les livrets donnent désormais la grille entière — bornes, montants et points —
+pour 2024, 2025 et 2026, saisis tels quels. Pour 2016 à 2023, les montants sont
+le produit des points par le prix du point de l'année (446 € en 2016, 539 € en
+2023) et les bornes celles de 2024 indexées sur le plafond. Les trois millésimes
+publiés disent ce que vaut cette convention : les bornes ont monté de 1,68 %
+entre 2024 et 2025 quand le plafond montait de 1,58 %.
+
+**Le rendement, lui, baisse régulièrement**, et la caisse en publie les deux
+termes : 37,79 / 539 en 2023, 39,42 / 570,26 en 2024, 39,50 / 591,36 en 2025,
+39,54 / 602 en 2026 — soit 7,01 %, 6,91 %, 6,68 % et 6,57 %. Le rapport annuel
+confirme le troisième au centième. Avant 2023 la valeur de service n'est pas
+publiée : c'est le plus ancien rapport connu qui est reconduit, et comme la
+pente descend, il s'agit d'un plancher.
+
+Ce qui manque encore : les bornes d'avant 2024 et toute grille d'avant 2016 — le
+décret ne fixait alors pas un prix du point mais un **taux d'appel**, monté de
+78,5 % en 2002 à 104 % en 2015, appliqué à des montants que rien ne publie. Une
+cotisation de 2002 est donc surestimée d'un quart environ.
 
 **La CAVOM donne trois grandeurs qui se referment l'une sur l'autre.** Son guide
 2026 publie la valeur d'achat du point (55,1390 €), la valeur de service
@@ -2932,6 +2955,33 @@ portage, et le fichier de schéma le documente. Il ne sert qu'à ces deux
 sections, et il faut espérer qu'il n'en serve jamais davantage : un facteur
 moyen est une approximation grossière, et la seule chose qui la rende acceptable
 est qu'elle remplace une absence.
+
+### Ce que le lecteur de PDF du dépôt ne lit pas, et ce que cela avait coûté
+
+`scripts/fetch/lecture_pdf.py` est écrit à la main, sans dépendance : le dépôt
+n'en a qu'une, PyYAML, et cette règle vaut mieux qu'un lecteur parfait. Mais
+elle a un prix, et il s'est chiffré. Ce lecteur ne sait pas décoder les polices
+qui n'embarquent pas de table `/ToUnicode` — il en sort des glyphes —, et
+**quatre conclusions de ce document reposaient sur ce silence** :
+
+| Document | Ce qu'on en concluait | Ce qu'il contenait |
+|---|---|---|
+| Recueil statistique de la CNAVPL | « la valeur du point, et rien d'autre » | les cotisations du régime de base **par section et par tranche**, d'où le revenu moyen de chaque section |
+| Livrets annuels de la CARPV | « les bornes y seraient, mais illisibles » | la grille entière de 2024 et 2025 — et **trois classes**, non quatre |
+| Mémento de la CAVP | « la grille du volet capitalisé est illisible » | (classe − 1) × 1 453 €, par paliers de revenu de 17 662 € |
+| Rapport de l'IGAS sur la CRN | « chiffré, donc fermé » | la règle des 900 points, le rendement 2004-2012, la nature facultative de la section B |
+
+Les trois premiers se lisent avec **pypdf**, le quatrième aussi une fois
+déchiffré (AES-128, mot de passe vide). Aucun n'entre pour autant dans les
+récupérateurs du dépôt : ce serait une dépendance de plus, et les valeurs qui en
+viennent sont saisies à la main, avec leur source, comme tout ce qui n'est pas
+automatisé.
+
+**La leçon n'est pas « il faut un meilleur lecteur ».** C'est que l'expression
+« ce document est illisible » doit toujours se lire « ce document est illisible
+PAR NOTRE OUTIL » — et qu'une limite ainsi formulée cache une question qu'on
+n'a pas posée. Trois des quatre lignes ci-dessus avaient été écrites comme des
+limites de la SOURCE ; elles étaient des limites du LECTEUR.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 

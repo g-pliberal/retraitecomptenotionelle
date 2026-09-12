@@ -78,63 +78,66 @@ cavec_complementaire,2026,134854,20222,haute
 cavec_complementaire,2026,181208,25627,haute
 cavec_complementaire,2026,,30616,haute
 # CARPV : LA GRILLE EST UNE TABLE DE POINTS DÉGUISÉE, et son arithmétique le
-# montre. Les quatre classes de 2026 appellent 10 234, 12 642, 15 050 et
-# 16 856 € pour 17, 21, 25 et 28 points : chacune divise exactement par son
-# nombre de points en 602,00 €. C'est la valeur d'achat du point — celle que le
-# décret annuel fixe pour cette section depuis 2016 — et le rendement tombe
-# alors sur les quatre classes au dix-millième près : 39,54 / 602 = 6,5681 %.
+# montre. Chaque classe divise exactement par son nombre de points en la VALEUR
+# D'ACHAT DU POINT que le décret annuel fixe pour cette section depuis 2016 :
+# 9 124,16 € pour 16 points en 2024, soit 570,26 € ; 10 234 € pour 17 points en
+# 2026, soit 602,00 €. Le rendement s'en déduit d'un trait — valeur de service
+# divisée par valeur d'achat, identique sur toutes les classes.
 #
-# D'où neuf millésimes de plus, de 2016 à 2024. Leurs MONTANTS sont le produit
-# du nombre de points par la valeur d'achat que publie le décret — 446 € en
-# 2016, puis 451,50, 461, 469,20, 473,44, 487,64, 503,74, 539 et 570,26 € en
-# 2024 — et non la grille de 2026 ramenée par le plafond, qui aurait surestimé
-# la cotisation de 2016 de 8,5 %. Ce que cette construction SUPPOSE, c'est que
-# les quatre classes ouvraient déjà 17, 21, 25 et 28 points : le décret publie
-# le prix du point, jamais le nombre. Leurs BORNES, elles, restent celles de
-# 2026 indexées sur le plafond, faute d'autre chose.
+# LA GRILLE A CHANGÉ DE FORME EN 2026, et c'est le rapport annuel 2024 de la
+# caisse qui l'annonce : « un point supplémentaire pour les classes B, C et D
+# qui passent respectivement de 16 à 17 points, de 20 à 21 points et de 24 à
+# 25 points, ainsi que la création d'une classe E à 28 points ». Jusqu'en 2025
+# il n'y avait donc que TROIS classes, à 16, 20 et 24 points. Une version
+# antérieure de ce fichier avait reporté la grille de 2026 vers l'amont : elle
+# prêtait à 2016 une quatrième classe qui n'existait pas et des points qu'aucune
+# classe n'ouvrait.
 #
-# 2025 manque à la série des décrets récupérée : cet exercice prend la grille
-# de 2024 indexée sur le plafond, comme toute année sans grille. Avant 2016 le
-# décret ne fixait pas un prix du point mais un TAUX D'APPEL — 78,5 % en 2002,
-# 104 % en 2015 — appliqué à des montants de classe que rien ne publie : la
-# grille de 2016 y est reportée par le plafond, et ce report ignore le taux
-# d'appel. Voir la fiche du régime.
-carpv_complementaire,2016,61864,7582,moyenne
-carpv_complementaire,2016,82486,9366,moyenne
-carpv_complementaire,2016,103108,11150,moyenne
-carpv_complementaire,2016,,12488,moyenne
-carpv_complementaire,2017,62845,7675.5,moyenne
-carpv_complementaire,2017,83793,9481.5,moyenne
-carpv_complementaire,2017,104742,11287.5,moyenne
-carpv_complementaire,2017,,12642,moyenne
-carpv_complementaire,2018,63652,7837,moyenne
-carpv_complementaire,2018,84870,9681,moyenne
-carpv_complementaire,2018,106088,11525,moyenne
-carpv_complementaire,2018,,12908,moyenne
-carpv_complementaire,2019,64921,7976.4,moyenne
-carpv_complementaire,2019,86562,9853.2,moyenne
-carpv_complementaire,2019,108202,11730,moyenne
-carpv_complementaire,2019,,13137.6,moyenne
-carpv_complementaire,2020,65901,8048.48,moyenne
-carpv_complementaire,2020,87869,9942.24,moyenne
-carpv_complementaire,2020,109836,11836,moyenne
-carpv_complementaire,2020,,13256.3,moyenne
-carpv_complementaire,2021,65901,8289.88,moyenne
-carpv_complementaire,2021,87869,10240.4,moyenne
-carpv_complementaire,2021,109836,12191,moyenne
-carpv_complementaire,2021,,13653.9,moyenne
-carpv_complementaire,2022,65901,8563.58,moyenne
-carpv_complementaire,2022,87869,10578.5,moyenne
-carpv_complementaire,2022,109836,12593.5,moyenne
-carpv_complementaire,2022,,14104.7,moyenne
-carpv_complementaire,2023,70477,9163,moyenne
-carpv_complementaire,2023,93970,11319,moyenne
-carpv_complementaire,2023,117462,13475,moyenne
-carpv_complementaire,2023,,15092,moyenne
-carpv_complementaire,2024,74283,9694.42,moyenne
-carpv_complementaire,2024,99045,11975.5,moyenne
-carpv_complementaire,2024,123806,14256.5,moyenne
-carpv_complementaire,2024,,15967.3,moyenne
+# CE QUI EST PUBLIÉ, ET CE QUI EST RECONSTRUIT. Les livrets annuels de la caisse
+# donnent la grille entière — bornes, montants et points — pour 2024, 2025 et
+# 2026 : ces trois millésimes sont saisis tels quels. Pour 2016 à 2023, les
+# MONTANTS sont le produit du nombre de points par la valeur d'achat que publie
+# le décret (446 € en 2016, 539 € en 2023), et les BORNES sont celles de 2024
+# indexées sur le plafond de la Sécurité sociale — l'ancre publiée la plus
+# proche. Les trois millésimes publiés montrent ce que vaut cette convention :
+# les bornes ont monté de 1,68 % entre 2024 et 2025 quand le plafond montait de
+# 1,58 %, et de 0,83 % entre 2025 et 2026 quand le plafond montait de 2,04 %.
+#
+# LES CLASSES D'ALLÈGEMENT NE SONT PAS ICI. La caisse en publie cinq — de
+# « Super Spéciale I » à « Classe A », 2 à 12 points —, mais elles ne
+# s'obtiennent que SUR DEMANDE, « valable trois ans », et l'option pour une
+# classe supérieure pas davantage. Le dépôt ne prête jamais à personne un choix
+# qu'il ne peut pas connaître ; seule la classe d'appel entre ici.
+carpv_complementaire,2016,62548,7136,moyenne
+carpv_complementaire,2016,83398,8920,moyenne
+carpv_complementaire,2016,,10704,moyenne
+carpv_complementaire,2017,63539,7224,moyenne
+carpv_complementaire,2017,84720,9030,moyenne
+carpv_complementaire,2017,,10836,moyenne
+carpv_complementaire,2018,64355,7376,moyenne
+carpv_complementaire,2018,85808,9220,moyenne
+carpv_complementaire,2018,,11064,moyenne
+carpv_complementaire,2019,65638,7507.2,moyenne
+carpv_complementaire,2019,87519,9384,moyenne
+carpv_complementaire,2019,,11260.8,moyenne
+carpv_complementaire,2020,66630,7575.04,moyenne
+carpv_complementaire,2020,88841,9468.8,moyenne
+carpv_complementaire,2020,,11362.6,moyenne
+carpv_complementaire,2021,66630,7802.24,moyenne
+carpv_complementaire,2021,88841,9752.8,moyenne
+carpv_complementaire,2021,,11703.4,moyenne
+carpv_complementaire,2022,66630,8059.84,moyenne
+carpv_complementaire,2022,88841,10074.8,moyenne
+carpv_complementaire,2022,,12089.8,moyenne
+carpv_complementaire,2023,71256,8624,moyenne
+carpv_complementaire,2023,95009,10780,moyenne
+carpv_complementaire,2023,,12936,moyenne
+carpv_complementaire,2024,75104,9124.16,haute
+carpv_complementaire,2024,100140,11405.2,haute
+carpv_complementaire,2024,,13686.2,haute
+carpv_complementaire,2025,76364,9461.76,haute
+carpv_complementaire,2025,101820,11827.2,haute
+carpv_complementaire,2025,,14192.64,haute
 carpv_complementaire,2026,76994,10234,haute
 carpv_complementaire,2026,102659,12642,haute
 carpv_complementaire,2026,128324,15050,haute
