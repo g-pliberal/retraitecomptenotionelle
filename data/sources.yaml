@@ -1876,6 +1876,60 @@ institutions:
       2022 pour la CARCDSF, 1983 à 2026 pour la CARMF — ils concordent, et
       c'est ce recouvrement qui autorise à se fier au reste.
     jeux:
+      - id: jorf_statuts_sections_liberales
+        titre: >-
+          Arrêtés portant approbation des statuts des régimes complémentaires
+          des sections professionnelles libérales, dans le dump JORF de la DILA
+        url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+        acces: fichier
+        statut_integration: a_faire
+        cible: docs/limites.md
+        note: >-
+          Les statuts de chaque régime complémentaire de section libérale sont
+          approuvés PAR ARRÊTÉ, et le Journal officiel en publie l'annexe en
+          entier. Le dump global — 1,67 Go, lu en flux — en rend 236 textes ;
+          Légifrance, lui, refuse les requêtes (403).
+          CE QU'IL DONNE : la RÈGLE d'acquisition des points. L'arrêté du 14
+          novembre 2025 sur la CARPIMKO dit que ses affiliés ont acquis, de 1996
+          à 2025, « 8 points au titre de la cotisation forfaitaire ; 22 points
+          maximum au titre de la cotisation proportionnelle » — un barème écrit
+          EN POINTS, la forme que le dépôt sait déjà exprimer, et qui rend le
+          prix d'achat inutile sur ces trente exercices.
+          CE QU'IL NE DONNERA JAMAIS : les valeurs annuelles. L'arrêté du 23
+          juin 2011 sur la CAVAMAC l'écrit noir sur blanc — le prix d'achat du
+          point est « fixé annuellement par le conseil d'administration ». Le
+          chercher au Journal officiel est un trajet à ne pas refaire.
+
+      - id: cipav_fiches_pratiques
+        titre: >-
+          Fiches pratiques annuelles de la Cipav — cotisations, classes,
+          valeurs du point
+        url: https://www.lacipav.fr/documents-utiles
+        acces: fichier
+        statut_integration: a_faire
+        cible: data/reference/regimes/non_salaries.yaml
+        note: >-
+          La Cipav était rangée parmi les caisses « non abouties ». Elle publie
+          en fait TOUT ce qu'un modèle en points demande.
+          DEPUIS 2023 LE RÉGIME EST PROPORTIONNEL — « les cotisations de
+          retraite complémentaire ne sont plus forfaitaires mais
+          proportionnelles au revenu » : 9 % de zéro à un plafond, 22 % d'un à
+          trois. Et les points s'achètent, l'exemple de la caisse faisant foi :
+          « 3 600 € / 47,40 € (valeur d'achat du point en 2026) = 75,9 points ».
+          Achat, service et rendement sont publiés ensemble : 42,43 € et 2,63 €
+          en 2022, 45,30 € et 2,77 € pour 6,10 % en 2023, 47,40 € et 2,89 € en
+          2026.
+          AVANT 2023, HUIT CLASSES, et la fiche pratique 2022 en donne la
+          grille entière : 1 527 € jusqu'à 26 580 € de revenus, puis 3 055 €,
+          4 582 €, 7 637 €, 10 692 €, 16 802 €, 18 329 € et 19 857 € au-delà de
+          123 300 €. La classe est DÉTERMINÉE par le revenu, non choisie — le
+          même document présente juste à côté celle du régime invalidité-décès,
+          qui l'est, et les distingue explicitement.
+          CE QUI BLOQUE N'EST DONC PLUS UNE DONNÉE MAIS UNE FORME : une grille
+          de classes est une fonction en escalier du revenu, et une fiche ne
+          sait porter qu'un taux et un forfait. Le même obstacle vaut pour la
+          CAVEC, la part répartie de la CAVP et le RAAP d'avant 2017.
+
       - id: ipp_points_independants
         titre: >-
           Prix d'achat et valeur de service du point des complémentaires

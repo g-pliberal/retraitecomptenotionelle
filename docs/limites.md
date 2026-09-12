@@ -2155,7 +2155,9 @@ ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
 | **CARPIMKO**, auxiliaires médicaux | 8,70 % entre un demi et trois plafonds | absente | **absent** |
 | **CAVP**, pharmaciens | régime MIXTE : part en répartition forfaitaire de 7 657 € (taux d'appel 105,4 % en 2026), part en CAPITALISATION de 2 906 à 17 436 € selon la classe | absente | **absent** |
 | **CAVOM**, officiers ministériels | les taux publiés sont ceux de la base CNAVPL, pas du complémentaire | absente | **absent** |
-| CAVEC, CARCDSF, CARPV, CIPAV, CRN | non aboutis : pages sans barème lisible, ou site dont les liens ne s'exposent pas en HTML simple | — | — |
+| **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous |
+| **CAVEC**, experts-comptables | neuf classes | 1,3850 € (2026) | rendement 8,33 % publié, mais classes |
+| CARCDSF, CARPV, CRN | la CARCDSF a depuis abouti (fiche écrite) ; les deux autres restent sans barème lisible | — | — |
 
 Deux remarques que ce relevé impose. La première : **la CAVP n'est pas un régime
 en répartition pure**, son étage complémentaire mêle une part répartie et une
@@ -2199,6 +2201,74 @@ Interrogée, la Fédération nationale des orthophonistes répond : « nous
 reviendrons vers vous dès que les textes définitifs seront publiés ». Ce n'est
 donc pas une donnée introuvable, c'est une donnée **à attendre**, et elle
 débloquera la plus grosse population libérale encore absente.
+
+### Une troisième passe, par le *Journal officiel*, et la carte change
+
+Les deux passes précédentes avaient interrogé les caisses. Celle-ci interroge
+l'ÉTAT : les statuts de chaque régime complémentaire de section libérale sont
+approuvés **par arrêté publié au Journal officiel**, et le JO publie l'annexe en
+entier. Le dump global de la DILA — 1,67 Go, lu en flux — en rend 236 textes.
+Le trajet est reproductible : `https://echanges.dila.gouv.fr/OPENDATA/JORF/`,
+fichier `Freemium_jorf_global_*.tar.gz`, puis les incréments quotidiens pour
+l'année en cours. (Légifrance lui-même refuse les requêtes : 403.)
+
+**Ce que le JO donne, et ce qu'il ne donnera jamais.** Il donne la RÈGLE
+d'acquisition des points, article par article. Il ne donne pas les VALEURS
+annuelles, et l'arrêté CAVAMAC du 23 juin 2011 dit pourquoi en toutes lettres :
+
+> « Article 10. Acquisition de points de retraite. Le versement de la cotisation
+> donne lieu à l'inscription au compte de droits de l'adhérent d'un nombre de
+> points de retraite P, donné par la formule : P = CA/CR […] CR désigne la
+> valeur du coefficient de référence, c'est-à-dire le prix d'achat du point de
+> retraite complémentaire, **fixée annuellement par le conseil
+> d'administration**. »
+
+Le prix d'achat de la CAVAMAC n'est donc pas introuvable par accident : aucun
+texte réglementaire ne le porte, par construction. Le chercher au JO est un
+trajet à ne pas refaire.
+
+**La CARPIMKO n'est pas bloquée par ce qu'on croyait.** L'arrêté du 14 novembre
+2025 (JORFTEXT000052604983) publie ses statuts modifiés, et son article 8 dit
+combien de points ouvrait chaque cotisation :
+
+> « 1) Pour les périodes comprises entre le 1er janvier 1996 et le 31 décembre
+> 2025, les affiliés ont acquis, annuellement […] 8 points au titre de la
+> cotisation forfaitaire ; 22 points maximum au titre de la cotisation
+> proportionnelle. »
+
+C'est un barème ÉCRIT EN POINTS, exactement la forme que le dépôt sait déjà
+exprimer (`points_maximum`, celle du régime de base des libéraux et de la
+complémentaire agricole) : le prix d'achat n'est pas nécessaire pour 1996-2025.
+Il ne l'est que depuis 2026, où le même arrêté rend la cotisation entièrement
+proportionnelle — « un nombre de points obtenu en divisant le montant de cette
+cotisation par le coût d'acquisition d'un point de retraite » —, et ce coût
+n'est toujours pas publié. Restent à trouver, pour écrire la fiche : le montant
+de la cotisation forfaitaire année par année, les bornes de l'assiette, et la
+série de la valeur de service (21,28 € en 2025, 21,48 € en 2026).
+
+**La CIPAV, donnée pour « non aboutie », est entièrement documentée.** Ses
+fiches pratiques portent tout, et l'obstacle est ailleurs — dans le moteur.
+
+* Depuis 2023 le régime est **proportionnel** : « les cotisations de retraite
+  complémentaire ne sont plus forfaitaires mais proportionnelles au revenu »,
+  9 % de 0 à un plafond, 22 % d'un à trois plafonds.
+* Les points s'achètent : « 3 600 € / 47,40 € (valeur d'achat du point en 2026)
+  = 75,9 points », et se servent à 2,89 € en 2026. La caisse publie les trois
+  grandeurs — achat, service, rendement : 42,43 € / 2,63 € en 2022, 45,30 € /
+  2,77 € et 6,10 % en 2023, 47,40 € / 2,89 € en 2026.
+* Avant 2023 la cotisation était **par classes**, et la fiche pratique 2022 en
+  donne la grille complète : 1 527 € jusqu'à 26 580 € de revenus, 3 055 €
+  jusqu'à 49 280 €, 4 582 €, 7 637 €, 10 692 €, 16 802 €, 18 329 €, et 19 857 €
+  au-delà de 123 300 €. **La classe est déterminée par le revenu**, elle n'est
+  pas choisie — contrairement à celle du régime invalidité-décès, que le même
+  document présente juste à côté comme une option.
+
+Une grille de ce genre est une FONCTION EN ESCALIER du revenu, et c'est le seul
+obstacle qui reste : une fiche ne sait porter qu'un taux et un forfait. Le même
+obstacle bloque la CAVEC (neuf classes, rendement 8,33 % pourtant publié), la
+part répartie de la CAVP, et le RAAP d'avant 2017. **Un mécanisme de classes
+dans le moteur débloquerait quatre régimes d'un coup**, dont la plus grosse
+population libérale encore absente.
 
 ### Le lecteur de PDF empilait les pages
 
