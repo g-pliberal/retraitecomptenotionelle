@@ -508,8 +508,22 @@ def test_periodes_de_regime_sont_ordonnees_et_jointives(catalogue):
 
 
 def test_taux_de_cotisation_plausibles(catalogue):
+    """Un taux nul n'est admis qu'accompagné d'un forfait.
+
+    Un régime PUREMENT FORFAITAIRE — le complémentaire de la CARCDSF avant
+    l'institution de la cotisation proportionnelle en 1997 — n'a pas de taux :
+    il prélève un montant. Le taux nul est alors la bonne écriture, à condition
+    que la période porte effectivement un forfait ; sans lui, elle ne
+    prélèverait rien, et c'est exactement le silence que ce test traque.
+    """
     for regime in catalogue:
         for periode in regime.periodes:
+            forfait = periode.cotisation_forfaitaire_euros or 0.0
+            if periode.taux_cotisation_retraite == 0.0:
+                assert forfait > 0.0, (
+                    f"{regime.code} {periode.debut} : taux nul sans forfait"
+                )
+                continue
             assert 0.0 < periode.taux_cotisation_retraite < 0.60, (
                 f"{regime.code} {periode.debut} : taux hors plage plausible"
             )
