@@ -1196,8 +1196,10 @@ institutions:
           ce régime varient selon le montant des cotisations versées ».
           CAVOM : les taux publiés sont ceux de la base CNAVPL, pas du
           complémentaire.
-          CAVEC, CARCDSF, CARPV, CIPAV, CRN : non aboutis — pages sans barème
+          CAVEC, CARPV, CIPAV, CRN : non aboutis — pages sans barème
           lisible, ou site dont les liens ne s'exposent pas en HTML simple.
+          (La CARCDSF, qui figurait ici, a depuis abouti : voir
+          `carcdsf_notices`.)
           Ce qui distingue la CARMF et l'IRCEC n'est donc pas la transparence
           en général mais un fait précis : elles publient de quoi RECONSTITUER
           le prix du point.
@@ -1245,6 +1247,21 @@ institutions:
           obtenu, alors que les pages HTML de la caisse ne le disent nulle part
           et qu'une source tierce annonçait un tout autre barème (0,375 % et
           un point maximum), qui est un état ancien.
+          SECONDE PASSE — LA SÉRIE, ET NON PLUS LA SEULE ANNÉE EN COURS. La
+          page d'accueil de la caisse ne publie que le millésime courant, mais
+          https://www.carcdsf.fr/mementos/mementos garde les MÉMENTOS DU
+          CHIRURGIEN-DENTISTE de 2017 à 2025. Sept exercices s'en lisent d'un
+          coup — forfait, points attribués, valeur de service, taux et bornes :
+          2 690,40 € et 10,65 % en 2020 et 2021, 2 769 € en 2022, 2 959,80 € et
+          10,80 % en 2023, 3 108 € en 2024, 3 178,80 € en 2025. Le millésime
+          2017 est un PDF NUMÉRISÉ, sans texte : la série s'arrête là.
+          LA NOTE 5 DU MÉMENTO 2020 vaut démonstration : « 18 181 € / 448,40 €
+          = 40,54 points ». 448,40 € est le forfait divisé par six ; la part
+          PROPORTIONNELLE achète donc au prix du forfait, ce que la fiche ne
+          faisait jusqu'ici que supposer.
+          Le rendement, recalculé exercice par exercice, ne quitte pas la bande
+          5,92 – 5,97 % : le conseil le pilote. Avant 2020, ni forfait ni
+          valeur de point ne sont publiés.
 
       - id: carmf_chronologie
         titre: >-
@@ -1278,30 +1295,15 @@ institutions:
           CE QUE CELA CORRIGE : le rendement passe de 14,35 % en 1983 à 4,48 %
           en 2026. La fiche portait le seul chiffre de 2026 sur toute la
           période, ce qui divisait par deux ou trois les droits d'avant 2000.
-
-      - id: carcdsf_notices
-        titre: >-
-          Notice d'affiliation et pages de cotisations de la CARCDSF
-          (chirurgiens-dentistes et sages-femmes)
-        url: https://www.carcdsf.fr/images/pdf/2025/Notice_CD-Affiliation-2025-CARCDSF.pdf
-        acces: fichier
-        statut_integration: saisi
-        cible: data/reference/regimes/rendements_points.csv
-        note: >-
-          La notice donne la phrase qui manquait partout ailleurs : « Cotisation
-          forfaitaire : 3 178,80 en 2025, ATTRIBUANT 6 POINTS », et la
-          proportionnelle « calculée sur la base de 10,80 % des revenus […]
-          compris entre 0,85 et 5 fois la valeur du plafond ». Le site donne
-          l'état 2026 : forfait 3 210,60 €, taux 11,35 %, tranche élargie à
-          0,65-5 plafonds par la réforme de l'assiette sociale, valeur de
-          service 31,82 €. D'où 535,10 € le point et un rendement de 5,95 %.
-          UN PIÈGE DE LECTURE : la notice est composée dans une police dont la
-          table ToUnicode ne se lit pas, et sort en glyphes — mais la
-          substitution est régulière, les chiffres passent en clair, et le
-          texte se décode. C'est ainsi que « attribuant 6 points » a été
-          obtenu, alors que les pages HTML de la caisse ne le disent nulle part
-          et qu'une source tierce annonçait un tout autre barème (0,375 % et
-          un point maximum), qui est un état ancien.
+          SECONDE PASSE — LA PART FORFAITAIRE, QUI N'ÉTAIT PAS ILLISIBLE NON
+          PLUS. La table « Cotisations forfaitaires » porte une colonne
+          « Complémentaire » qui donne le montant de 1949 à 1995 : 16,01 €,
+          puis 402,47 € en 1970, 2 405,65 € en 1990, 2 166 € en 1995. Elle est
+          composée en TEXTE PIVOTÉ — toutes ses cellules partagent une même
+          ordonnée, et le lecteur du dépôt la rend en une seule ligne de mille
+          caractères. Elle se relit à condition de la vérifier sur elle-même :
+          la table additionne ses propres colonnes, et 10,67 + 16,01 = 26,68
+          désigne sans ambiguïté la part complémentaire de 1949.
 
       - id: carmf_chiffres_cles
         titre: Chiffres clés du régime complémentaire des médecins (CARMF)
@@ -1832,3 +1834,49 @@ institutions:
           Avant 1967 rien n'est transcrit : la part du régime général y est
           celle mesurée sur 1968-1971, et celles des prédécesseurs de l'Arrco et
           de l'Ircantec la règle 40-60 de leur successeur.
+
+  ipp:
+    nom: Institut des politiques publiques (IPP)
+    role: >-
+      Barèmes socio-fiscaux : reconstitution, décret par décret, des taux de
+      cotisation français depuis 1925 — dont ceux des régimes complémentaires
+      des professions libérales, section par section.
+    note: >-
+      Source SECONDAIRE : transcription du Journal officiel et des publications
+      de caisses, non productrice. Les valeurs qui en viennent plafonnent au
+      niveau `haute`, comme celles d'OpenFisca, et ne sont jamais `certifiee`.
+      ELLE N'EST PAS À JOUR PARTOUT : la colonne des chirurgiens-dentistes
+      s'arrête en fait à 2019 et porte encore 10,65 % en 2026, quand la caisse
+      écrit 10,80 % depuis 2023 et 11,35 % en 2026. Quand le barème et la
+      caisse divergent, la caisse fait foi ; là où ils se recouvrent — 2020 à
+      2022 pour la CARCDSF, 1983 à 2026 pour la CARMF — ils concordent, et
+      c'est ce recouvrement qui autorise à se fier au reste.
+    jeux:
+      - id: ipp_retraite_complementaire_liberaux
+        titre: >-
+          Cotisation de sécurité sociale pour la retraite complémentaire des
+          professions libérales, 1949-2026
+        url: https://baremes.ipp.eu/parameters/prelevements-sociaux/prelevements_sociaux.professions_liberales.ret_comp_pl/csv
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/non_salaries.yaml
+        note: >-
+          Un CSV d'une colonne par section professionnelle, chaque ligne étant
+          une DATE D'EFFET : une année absente veut dire que rien n'a changé.
+          CE QU'IL A DÉBLOQUÉ. Le taux de la cotisation proportionnelle de la
+          CARCDSF de son institution en 1997 — 8 %, décret 97-830 du 4
+          septembre 1997 — à 2019, années que les mémentos de la caisse ne
+          couvrent pas ; et la PART FORFAITAIRE du complémentaire de la CARMF
+          de 1949 à 1995, sous l'intitulé « Part forfaitaire retraite
+          complémentaire CARMF », identique chiffre pour chiffre à la colonne
+          « Complémentaire » de la chronologie de la caisse.
+          CE QU'IL A CORRIGÉ SANS QU'ON LE CHERCHE : il ne donne AUCUN taux
+          proportionnel avant 1983 pour la CARMF ni avant 1997 pour la CARCDSF,
+          et sa note de 1997 l'explique — la proportionnelle est instituée « en
+          plus de la cotisation forfaitaire qui existait déjà ». Les deux
+          fiches prêtaient à ces années un taux qui n'existait pas.
+          CE QU'IL PORTE ENCORE, ET QUI N'EST PAS UTILISÉ : les taux du
+          complémentaire des agents généraux d'assurance (CAVAMAC) de 1968 à
+          2026, des auxiliaires médicaux (CARPIMKO) depuis 1996 et des notaires
+          (CPRN) depuis 1949. Ces trois sections n'ont pas de fiche, faute non
+          pas du taux mais du PRIX DU POINT — voir la note de `cnavpl`.
