@@ -4130,6 +4130,8 @@ regimes:
         salaire_reference: sans_objet
         assiette: deplafonnee
         taux_cotisation_retraite: 0.0320
+        cotisation_forfaitaire_euros: 1988
+        cotisation_forfaitaire_annee: 2026
         pension_forfaitaire_annuelle: 19154
         pension_forfaitaire_annee: 2026
         decote_par_trimestre: 0.0125
@@ -4147,12 +4149,30 @@ regimes:
           ne prenne le relais : si la période avait été lue en annuités, elle
           aurait servi la moyenne des revenus, c'est-à-dire un taux de
           remplacement de 100 %.
-          Le taux porté ici est celui de la seule cotisation PROPORTIONNELLE au
-          revenu net, 3,20 % (barème CNBF 2026), plafonnée à 297 549 €. La
-          cotisation forfaitaire par tranche d'ancienneté — 363 € la première
-          année, 1 988 € à partir de la sixième — n'est pas modélisée : elle ne
-          dépend pas du revenu, et le compte notionnel ne sait porter qu'une
-          fraction d'assiette. C'est un écart documenté dans docs/limites.md.
+          DEUX COTISATIONS, ET LA FICHE PORTE ENFIN LES DEUX. La
+          PROPORTIONNELLE d'abord : 3,20 % du revenu net, plafonnée à
+          297 549 € (barème CNBF 2026). La FORFAITAIRE ensuite, qui monte par
+          tranche d'ancienneté — « 1ère année 363 €, 2ème 730 €, 3ème 1 145 €,
+          4ème 1 558 €, 5ème 1 558 €, 6ème année et avocats âgés de 65 ans et
+          plus 1 988 € » — et que la fiche porte à sa valeur de croisière,
+          1 988 €.
+          CE QUE CETTE SIMPLIFICATION COÛTE, ET CE QU'ELLE RAPPORTE. Les cinq
+          premières années sont surestimées, de 1 625 € la première à 430 € la
+          cinquième, soit 4 586 € sur une carrière ; les trente-cinq suivantes
+          sont justes, à 1 988 € l'an. Ne rien porter du tout — ce que faisait
+          cette fiche — revenait à oublier près de 70 000 € de cotisations sur
+          une carrière entière. Le forfait ne change rien au scénario 1, dont
+          la pension est forfaitaire par construction ; il change le compte
+          notionnel, qui porte ce qui a été versé.
+          LA JUSTIFICATION DE CE MANQUE ÉTAIT PÉRIMÉE : « le compte notionnel
+          ne sait porter qu'une fraction d'assiette », disait cette note. Il
+          sait porter un forfait depuis que la CARCDSF l'a exigé —
+          `cotisation_forfaitaire_euros`, indexé sur les prix comme la pension
+          forfaitaire.
+          RESTE DEHORS la contribution équivalente aux droits de plaidoirie,
+          68 € par avocat en 2026 plus 163 € appelés auprès du barreau, et les
+          tranches d'ancienneté d'avant 2019, que les barèmes en ligne ne
+          couvrent pas.
 
   - code: cnbf_complementaire
     nom: Régime complémentaire obligatoire des avocats (CNBF)
