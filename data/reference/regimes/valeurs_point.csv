@@ -1,6 +1,8 @@
 # Valeurs d'achat et de service du point, régime par régime
 # source_id: agirc_arrco_valeurs_point (Agirc depuis 1947, Arrco et UNIRS),
-#            cdc_ircantec (Ircantec 1971-2021), openfisca_points (le reste)
+#            cdc_ircantec (Ircantec 1971-2021),
+#            ipp_points_independants (complémentaires artisans 1979-2012 et
+#            commerçants 2004-2012), openfisca_points (le reste)
 #
 # mesure :
 #   salaire_reference : prix d'achat du point, en euros courants de l'année.
@@ -19,7 +21,8 @@
 #               Agirc-Arrco pour l'Agirc, l'Arrco, l'UNIRS et le régime unifié,
 #               la Caisse des dépôts pour l'Ircantec, la CNBF pour les avocats,
 #               la CNAVPL pour les libéraux, le code rural pour la MSA
-#   haute     : transcription OpenFisca du texte de la circulaire. Le TAUX
+#   haute     : transcription OpenFisca ou barème IPP du texte de la
+#               circulaire. Le TAUX
 #               D'APPEL DE L'AGIRC (1948-1995) en est, et le restera : il est
 #               fixé par les avenants d'une convention collective que ses
 #               signataires publient eux-mêmes, et qui n'entre au Journal
@@ -838,6 +841,24 @@ msa_rco,2021,valeur_service,0.343800,certifiee
 msa_rco,2022,valeur_service,0.361400,certifiee
 msa_rco,2023,valeur_service,0.364200,certifiee
 msa_rco,2024,valeur_service,0.383500,certifiee
+nric,2004,salaire_reference,13.890000,haute
+nric,2004,valeur_service,1.000000,haute
+nric,2005,salaire_reference,14.112000,haute
+nric,2005,valeur_service,1.016000,haute
+nric,2006,salaire_reference,14.389000,haute
+nric,2006,valeur_service,1.036000,haute
+nric,2007,salaire_reference,14.648000,haute
+nric,2007,valeur_service,1.055000,haute
+nric,2008,salaire_reference,14.809000,haute
+nric,2008,valeur_service,1.067000,haute
+nric,2009,salaire_reference,15.300000,haute
+nric,2009,valeur_service,1.102000,haute
+nric,2010,salaire_reference,15.483000,haute
+nric,2010,valeur_service,1.110000,haute
+nric,2011,salaire_reference,15.808000,haute
+nric,2011,valeur_service,1.138000,haute
+nric,2012,salaire_reference,16.140000,haute
+nric,2012,valeur_service,1.162000,haute
 rafp,2005,salaire_reference,1.000000,certifiee
 rafp,2005,valeur_service,0.040000,certifiee
 rafp,2006,salaire_reference,1.017000,certifiee
@@ -904,6 +925,73 @@ rci,2022,salaire_reference,17.956000,haute
 rci,2022,valeur_service,1.221000,haute
 rci,2023,salaire_reference,19.394000,haute
 rci,2023,valeur_service,1.280000,haute
+rco_artisans,1979,salaire_reference,0.893351,haute
+rco_artisans,1980,salaire_reference,1.003115,haute
+rco_artisans,1980,valeur_service,0.119825,haute
+rco_artisans,1981,salaire_reference,1.137270,haute
+rco_artisans,1981,valeur_service,0.134155,haute
+rco_artisans,1982,salaire_reference,1.282096,haute
+rco_artisans,1982,valeur_service,0.151839,haute
+rco_artisans,1983,salaire_reference,1.410153,haute
+rco_artisans,1983,valeur_service,0.165407,haute
+rco_artisans,1984,salaire_reference,1.544309,haute
+rco_artisans,1984,valeur_service,0.182329,haute
+rco_artisans,1985,salaire_reference,1.655596,haute
+rco_artisans,1985,valeur_service,0.193000,haute
+rco_artisans,1986,salaire_reference,1.708953,haute
+rco_artisans,1986,valeur_service,0.197574,haute
+rco_artisans,1987,salaire_reference,1.768409,haute
+rco_artisans,1987,valeur_service,0.205196,haute
+rco_artisans,1988,salaire_reference,1.849207,haute
+rco_artisans,1988,valeur_service,0.214648,haute
+rco_artisans,1989,salaire_reference,1.919333,haute
+rco_artisans,1989,valeur_service,0.223490,haute
+rco_artisans,1990,salaire_reference,2.010803,haute
+rco_artisans,1990,valeur_service,0.234162,haute
+rco_artisans,1991,salaire_reference,2.099223,haute
+rco_artisans,1991,valeur_service,0.243614,haute
+rco_artisans,1992,salaire_reference,2.170874,haute
+rco_artisans,1992,valeur_service,0.251846,haute
+rco_artisans,1993,salaire_reference,2.231854,haute
+rco_artisans,1993,valeur_service,0.258249,haute
+rco_artisans,1994,salaire_reference,2.266917,haute
+rco_artisans,1994,valeur_service,0.260688,haute
+rco_artisans,1995,salaire_reference,2.292833,haute
+rco_artisans,1995,valeur_service,0.263737,haute
+rco_artisans,1996,salaire_reference,2.344666,haute
+rco_artisans,1996,valeur_service,0.268463,haute
+rco_artisans,1997,salaire_reference,2.344666,haute
+rco_artisans,1997,valeur_service,0.274866,haute
+rco_artisans,1998,salaire_reference,2.661760,haute
+rco_artisans,1998,valeur_service,0.274866,haute
+rco_artisans,1999,salaire_reference,3.103862,haute
+rco_artisans,1999,valeur_service,0.275689,haute
+rco_artisans,2000,salaire_reference,3.282227,haute
+rco_artisans,2000,valeur_service,0.278982,haute
+rco_artisans,2001,salaire_reference,3.388942,haute
+rco_artisans,2001,valeur_service,0.284700,haute
+rco_artisans,2002,salaire_reference,3.382000,haute
+rco_artisans,2002,valeur_service,0.287300,haute
+rco_artisans,2003,salaire_reference,3.731000,haute
+rco_artisans,2003,valeur_service,0.287280,haute
+rco_artisans,2004,salaire_reference,3.882000,haute
+rco_artisans,2004,valeur_service,0.287280,haute
+rco_artisans,2005,salaire_reference,4.104000,haute
+rco_artisans,2005,valeur_service,0.287280,haute
+rco_artisans,2006,salaire_reference,4.145000,haute
+rco_artisans,2006,valeur_service,0.290120,haute
+rco_artisans,2007,salaire_reference,4.145000,haute
+rco_artisans,2007,valeur_service,0.292590,haute
+rco_artisans,2008,salaire_reference,4.207000,haute
+rco_artisans,2008,valeur_service,0.297700,haute
+rco_artisans,2009,salaire_reference,4.324000,haute
+rco_artisans,2009,valeur_service,0.306030,haute
+rco_artisans,2010,salaire_reference,4.692000,haute
+rco_artisans,2010,valeur_service,0.309700,haute
+rco_artisans,2011,salaire_reference,4.790530,haute
+rco_artisans,2011,valeur_service,0.316200,haute
+rco_artisans,2012,salaire_reference,4.891130,haute
+rco_artisans,2012,valeur_service,0.322840,haute
 unirs,1949,salaire_reference,0.450000,haute
 unirs,1950,salaire_reference,0.550000,haute
 unirs,1951,salaire_reference,0.700000,haute

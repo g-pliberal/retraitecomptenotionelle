@@ -778,6 +778,29 @@ def source_valeurs_point_cnavpl() -> dict[tuple, float]:
     }
 
 
+def source_valeurs_point_independants() -> dict[tuple, float]:
+    """Prix et valeur du point des complémentaires artisans et commerçants.
+
+    Ces deux régimes — le complémentaire des artisans de 1979 à 2012, le
+    Nouveau régime des indépendants des commerçants de 2004 à 2012 — sont
+    déclarés EN POINTS par leurs fiches, et n'avaient aucune valeur de point :
+    le moteur retombait sur le rendement instantané, qui portait pour eux le
+    6,74 % du RCI d'aujourd'hui. Leur rendement réel valait 11,95 % en 1980.
+
+    Les barèmes IPP les portent, et sont une TRANSCRIPTION : le niveau est donc
+    `haute`, jamais `certifiee`, comme pour OpenFisca. Le RCI qui leur succède
+    en 2013 est déjà couvert ; ce contrôle s'arrête en 2012 pour ne pas
+    revendiquer deux fois les mêmes lignes.
+    """
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(
+            _serie_json("ipp_points_independants.json",
+                        "scripts/fetch/ipp_points_independants.py").items()
+        )
+    }
+
+
 def source_valeurs_point_msa() -> dict[tuple, float]:
     """Valeur de service du point de la complémentaire agricole, dans le code rural.
 
@@ -2017,6 +2040,17 @@ CERTIFICATIONS = (
         origine="CNAVPL, recueils statistiques annuels",
         decimales=6,
         tolerance=5e-7,
+    ),
+    Certification(
+        nom="valeurs_point_independants",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_independants,
+        origine="IPP, barèmes des régimes de retraite des indépendants",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
     ),
     Certification(
         nom="valeurs_point_msa",

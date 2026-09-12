@@ -907,6 +907,30 @@ institutions:
           ne sont plus ici : elles sont certifiées contre la base LEGI, voir
           dila_legi_parametres_retraite.
 
+      - id: circulaire_rsi_conversion_rci
+        titre: >-
+          Circulaire RSI 2013/004 du 17 janvier 2013 — reprise des points par le
+          régime complémentaire des indépendants
+        url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_rsi_2013_004_17012013.pdf
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/conversions_points.csv
+        note: >-
+          Le coefficient de reprise des points d'artisan par le RCI, que le
+          dépôt devait jusqu'ici deviner ou ignorer. La circulaire cite
+          l'article 8 du règlement RCI et donne le calcul en toutes lettres :
+          « le rapport entre, d'une part, la valeur la plus haute du point
+          cotisé RCO artisan au 31 décembre 2012 (celle appliquée pour les
+          points cotisés de la période postérieure au 31 décembre 1996) et,
+          d'autre part, la valeur du point NRCO commerçant au 31 décembre
+          2012 […] soit 0,32284 / 1,162 = 0,277831325 arrondi à 0,2778 ».
+          DEUX CHOSES S'Y RÈGLENT D'UN COUP. Le coefficient lui-même ; et le
+          choix de colonne du récupérateur des barèmes IPP, puisque la valeur
+          que la circulaire retient est celle du millésime postérieur à 1996,
+          exactement celle que `ipp_points_independants` verse comme valeur de
+          service du régime. Les points du NRCO commerçant, eux, sont repris un
+          pour un : leur valeur est le dénominateur du quotient.
+
       - id: legifrance_cnracl_montee_en_charge
         titre: Montée en charge de la contribution employeur CNRACL, 2025-2028
         url: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000051070354
@@ -1852,6 +1876,37 @@ institutions:
       2022 pour la CARCDSF, 1983 à 2026 pour la CARMF — ils concordent, et
       c'est ce recouvrement qui autorise à se fier au reste.
     jeux:
+      - id: ipp_points_independants
+        titre: >-
+          Prix d'achat et valeur de service du point des complémentaires
+          artisans (1979-2012) et commerçants (2004-2012)
+        url: https://baremes.ipp.eu/parameters/regimes-de-retraites/
+        acces: fichier
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/ipp_points_independants.py
+        note: >-
+          Quatre paramètres — `salref_rc_art`, `pt_rc_art`, `salref_rc_com`,
+          `pt_rc_com` — comblent un trou que le dépôt portait sans le voir :
+          ces deux régimes se déclarent EN POINTS et n'avaient aucun prix de
+          point. Le moteur retombait sur le rendement instantané, qui leur
+          prêtait les 6,74 % du RCI d'aujourd'hui de 1979 à 2012. Le rendement
+          réel du complémentaire des artisans valait 11,95 % en 1980.
+          TROIS PIÈGES DE LECTURE, TRAITÉS PAR LE RÉCUPÉRATEUR. Les barèmes sont
+          en francs jusqu'en 2001, et le fichier de référence tient ses valeurs
+          en euros courants. Le libellé de la valeur de service des artisans au
+          1er janvier 2001 est FAUX — « 0,2847 FRF » est un euro, comme le
+          prouve la continuité avec 1,83 F en 2000 et 0,2845 € en 2002 —, et le
+          script le corrige puis vérifie qu'aucune autre rupture ne subsiste.
+          Enfin le barème est une suite de dates d'effet et non une série
+          annuelle : c'est la dernière de l'année qui est retenue, comme le veut
+          la règle du fichier de référence.
+          CE QUE LA LECTURE A VALIDÉ. Le coefficient de reprise des points par
+          le RCI, 0,2778, est le rapport de deux valeurs que ce barème porte :
+          0,32284 pour l'artisan et 1,162 pour le commerçant, au 31 décembre
+          2012. La circulaire RSI 2013/004 pose exactement ce quotient. Deux
+          chemins indépendants, le même nombre à sept décimales.
+
       - id: ipp_retraite_complementaire_liberaux
         titre: >-
           Cotisation de sécurité sociale pour la retraite complémentaire des

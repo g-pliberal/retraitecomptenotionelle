@@ -208,6 +208,21 @@ regimes:
         taux_cotisation_retraite: 0.0440
         notes: >-
           4,40 %, taux de l'article 5 du décret n° 78-351 du 14 mars 1978 qui institue le régime. Il n'est pas lu dans ce décret — le JORF n'en garde que la notice — mais dans l'état codifié du 21 décembre 1985, le plus ancien que porte LEGI, ET dans le fait qu'aucun texte ne l'a modifié entre-temps : les trois seuls textes qui touchent au régime sur la période sont le décret n° 81-407 du 23 avril 1981, qui répartit les biens de l'organisation autonome et fixe le versement du complémentaire au régime de base sans toucher aux cotisations, le décret n° 84-1064 du 30 novembre 1984, qui ajoute la cotisation additionnelle de 0,10 % à compter du 1er janvier 1985, et la codification de décembre 1985. Le décret fondateur date les cotisations du 1er janvier 1979 (art. 12), d'où le début de cette période. La chaîne est complète et sans trou ; elle reste une déduction, le texte de l'article 5 n'étant pas publié en accès ouvert.
+          LE RÉGIME ACCUMULE DE VRAIS POINTS DEPUIS QUE SON BARÈME EST VERSÉ.
+          Il se déclarait « en points » sans qu'aucun prix de point lui soit
+          connu : le moteur retombait alors sur le rendement instantané de
+          `rendements_points.csv`, qui lui prêtait les 6,74 % du RCI
+          d'aujourd'hui sur toute sa durée. Les barèmes IPP portent les deux
+          grandeurs qui manquaient — salaire de référence et valeur de service,
+          de 1979 et 1980 à 2012 —, et le rendement réel valait 11,95 % en 1980
+          pour tomber à 6,60 % en 2012. Trente ans de droits étaient comptés à
+          peu près moitié moins qu'ils ne valaient.
+          À LA FUSION DE 2013, les points sont repris par le RCI au coefficient
+          0,2778 de l'article 8 de son règlement, porté par
+          `conversions_points.csv`. Le RCI sert les points d'avant 1997 à une
+          valeur plus basse que les autres — 4,5 % d'écart —, mais son règlement
+          ne retient qu'un coefficient pour tous les millésimes, et le dépôt
+          applique la règle telle qu'elle est écrite.
       - debut: 1985
         fin: 1996
         type_calcul: points
@@ -423,6 +438,13 @@ regimes:
         taux_cotisation_retraite: 0.0400
         notes: >-
           D. 635-10, état du 24 août 2004 : 3,5 % au premier semestre et 4,5 % au second, soit 4 % sur l'année — la convention du dépôt étant un taux annuel, c'est la moyenne des deux semestres qui est portée.
+          LE RÉGIME ACCUMULE DE VRAIS POINTS, lui aussi, depuis que les barèmes
+          IPP versent son salaire de référence et sa valeur de service de 2004 à
+          2012. Son rendement y est stable à 7,20 %, là où le repli de
+          `rendements_points.csv` lui prêtait 6,74 %.
+          À LA FUSION DE 2013 ses points sont repris UN POUR UN : le point du
+          RCI est celui du commerçant — c'est lui qui sert de dénominateur au
+          coefficient appliqué aux artisans.
       - debut: 2005
         fin: 2012
         type_calcul: points

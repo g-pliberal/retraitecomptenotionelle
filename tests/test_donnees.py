@@ -319,6 +319,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "valeurs_point_agirc_arrco": "regimes/valeurs_point.csv",
         "valeurs_point_agirc_arrco_en_cours": "regimes/valeurs_point.csv",
         "valeurs_point_msa": "regimes/valeurs_point.csv",
+        "valeurs_point_independants": "regimes/valeurs_point.csv",
         "valeurs_point_unirs": "regimes/valeurs_point.csv",
         "valeurs_point_texte": "regimes/valeurs_point.csv",
         "employeur_public_etat":

@@ -1,6 +1,7 @@
 # Conversions de points aux fusions et aux changements d'échelle
 # ---------------------------------------------------------------
-# source_id: agirc_arrco_points, legifrance_textes
+# source_id: agirc_arrco_points, legifrance_textes,
+#            circulaire_rsi_conversion_rci
 #
 # POURQUOI CE FICHIER EXISTE
 #
@@ -65,6 +66,24 @@
 #     changer l'unité de compte : les séries que ce dépôt porte pour les trois
 #     régimes sont d'ailleurs identiques année par année. Coefficient 1.
 #
+#   rco_artisans -> rci, 2013 — création du régime complémentaire des
+#     indépendants. L'article 8 de son règlement fixe le coefficient, et la
+#     circulaire RSI 2013/004 du 17 janvier 2013 en publie le calcul :
+#     « le rapport entre, d'une part, la valeur la plus haute du point cotisé
+#     RCO artisan au 31 décembre 2012 (celle appliquée pour les points cotisés
+#     de la période postérieure au 31 décembre 1996) et, d'autre part, la
+#     valeur du point NRCO commerçant au 31 décembre 2012 […] soit
+#     0,32284 / 1,162 = 0,277831325 arrondi à 0,2778 ».
+#     Ces deux nombres sont ceux que ce dépôt porte dans valeurs_point.csv pour
+#     l'exercice 2012 : le coefficient se recalcule depuis la référence.
+#     LE RÈGLEMENT N'EN RETIENT QU'UN, pour tous les millésimes de points, alors
+#     que le RCI sert les points d'avant 1997 à une valeur plus basse. C'est sa
+#     règle, et le dépôt l'applique telle quelle.
+#
+#   nric -> rci, 2013 — le point du RCI EST celui du commerçant : c'est lui qui
+#     sert de dénominateur au coefficient ci-dessus. Les points du NRCO sont
+#     donc repris un pour un.
+#
 regime,annee_effet,successeur,coefficient,fiabilite
 arrco,1999,,0.387464,haute
 unirs,1999,arrco,0.387464,haute
@@ -72,3 +91,5 @@ arrco,2019,agirc_arrco,1.000000,haute
 agirc,2019,agirc_arrco,0.347798289,haute
 ipacte,1971,ircantec,1.000000,moyenne
 igrante,1971,ircantec,1.000000,moyenne
+rco_artisans,2013,rci,0.277800,haute
+nric,2013,rci,1.000000,haute
