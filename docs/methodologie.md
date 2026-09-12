@@ -989,7 +989,7 @@ pas parmi les scénarios 2 à 5 parce qu'elle ne répond pas à la même questio
 elle ne mesure plus ce qui a été versé, mais ce qu'une réforme choisirait de
 reconnaître. C'est précisément la question que pose le scénario 6.
 
-### Scénario 6 — la proposition libérale : 18 % pour tous, et une garantie vieillesse
+### Scénario 6 — la proposition libérale : 18 % pour tous dès la bascule, et une garantie vieillesse
 
 Le scénario 6 est la proposition du Parti libéral français. C'est **exactement
 le scénario 4** — compte rétroactif depuis l'origine de la répartition,
@@ -997,15 +997,21 @@ cotisation salariale et patronale confondues, mêmes âges de départ et de
 référence, même indexation, même coefficient de conversion — à deux différences
 près, qui sont les deux termes de la proposition.
 
-**Un taux unique de 18 %.** Parts salariale et patronale additionnées, le même
-pour tous les statuts, prélevé une fois sur la rémunération — sur l'assiette
-réunie des régimes en répartition, comme le fait le taux d'acquisition commun
-ci-dessus, dont ce scénario est un cas (`taux_cotisation_liberal`). Ce qui a
-été prélevé au-delà n'ouvre aucun droit ; ce qui l'a été en deçà ne manque pas
-au compte. Un fonctionnaire, un artisan et un salarié du privé de même
-rémunération acquièrent donc le même capital, et le 6 se lit contre le 4 : les
-statuts qui cotisaient plus de 18 % descendent, ceux qui cotisaient moins
-remontent. Après la bascule, le régime unique applique le même taux.
+**Un taux unique de 18 %, à compter de la bascule.** Parts salariale et
+patronale additionnées, le même pour tous les statuts, prélevé une fois sur la
+rémunération — comme le taux d'acquisition commun ci-dessus, mais seulement à
+partir de l'année de bascule (`taux_cotisation_liberal`,
+`source_cotisations = taux_historiques_puis_uniforme`). Avant la bascule, rien
+ne change : ce qui a été cotisé sous le système actuel est porté au compte tel
+qu'il a été prélevé, aux taux réels de chaque régime, salariale et patronale
+confondues — c'est le scénario 4. Une personne née en 1975, entrée à 21 ans et
+partie à 64, cotise donc aux taux réels de 1996 à 2025, puis à 18 % de 2026 à
+2038. Qui a liquidé avant la bascule n'a aucune année à 18 % : son compte est
+celui du scénario 4, et seule la garantie peut l'en séparer. Pour les années
+d'après, un fonctionnaire, un artisan et un salarié du privé de même
+rémunération acquièrent le même capital : les statuts qui cotisaient plus de
+18 % descendent sous le scénario 4, ceux qui cotisaient moins remontent,
+d'autant plus que la carrière est récente.
 
 **Une garantie vieillesse, financée par l'impôt.** Elle remplace l'ASPA et en
 garde le principe — une allocation différentielle, qui porte les ressources à
@@ -1054,7 +1060,10 @@ Deux réserves, les mêmes que pour l'ASPA du scénario 1. Le modèle liquide et
 s'arrête : un assuré parti à 62 ans avec une petite pension ne reçoit rien dans
 le scénario 6, alors qu'il recevrait la garantie trois ans plus tard. Et les
 cas types liquident presque tous avant 65 ans : la page Coût ne voit de la
-garantie qu'un ordre de grandeur bas.
+garantie qu'un ordre de grandeur bas. Sur le passé, la page Coût ne voit pas
+non plus le taux unique — aucune pension servie avant la bascule n'a une année
+cotisée à 18 % — et la courbe du scénario 6 y est celle du scénario 4 plus la
+garantie ; c'est d'ici 2070 que le taux se voit.
 
 ---
 

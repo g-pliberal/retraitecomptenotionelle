@@ -74,11 +74,17 @@ export const PartCotisation = Object.freeze({
  * `taux_uniforme` est un taux d'ACQUISITION COMMUN : un seul taux pour tout le
  * monde, prélevé une fois sur la rémunération. Ce qui est prélevé au-delà
  * finance les engagements du passé et n'ouvre aucun droit. Les scénarios 2 à 5
- * ne l'emploient pas ; le scénario 6 en est un cas, à 18 % pour tous.
+ * ne l'emploient pas.
+ *
+ * `taux_historiques_puis_uniforme` est le flux du scénario 6 : les taux
+ * historiques JUSQU'À la bascule — ce qui a été cotisé sous le système actuel
+ * est porté au compte tel qu'il a été prélevé, comme dans le scénario 4 — et
+ * le taux uniforme (18 %) À COMPTER d'elle.
  */
 export const SourceCotisations = Object.freeze({
   TAUX_HISTORIQUES: "taux_historiques",
   TAUX_UNIFORME: "taux_uniforme",
+  TAUX_HISTORIQUES_PUIS_UNIFORME: "taux_historiques_puis_uniforme",
 });
 
 /** Construction de l'âge auquel une liquidation est réputée « à l'heure ». */
@@ -224,9 +230,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 
   // --- Scénario 6 : la proposition libérale ----------------------------------
   //: Le scénario 6 est le scénario 4 — compte rétroactif, cotisation entière,
-  //: mêmes âges, même indexation — à deux différences près : un TAUX UNIQUE,
-  //: salariale et patronale additionnées, le même pour tous, prélevé une fois
-  //: sur la rémunération ; et une GARANTIE VIEILLESSE qui remplace l'ASPA,
+  //: mêmes âges, même indexation — à deux différences près : à compter de la
+  //: bascule, un TAUX UNIQUE, salariale et patronale additionnées, le même
+  //: pour tous, prélevé une fois sur la rémunération (avant elle, les taux
+  //: réels du scénario 4) ; et une GARANTIE VIEILLESSE qui remplace l'ASPA,
   //: différentielle, individualisée, financée par l'impôt, ouverte à 65 ans.
   taux_cotisation_liberal: 0.18,
   //: Montants MENSUELS, en euros de `annee_euros_garantie_vieillesse`, ramenés

@@ -125,9 +125,17 @@ class SourceCotisations(str, Enum):
     #: une fois par régime : les régimes qui découpent la même tranche voient
     #: leurs assiettes réunies, pas additionnées. Les scénarios 2 à 5 ne
     #: l'emploient pas — il sert à isoler l'effet des règles de liquidation de
-    #: celui des différences de taux entre régimes. Le scénario 6, lui, en est
-    #: un cas : 18 % pour tous, voir ``Parametres.taux_cotisation_liberal``.
+    #: celui des différences de taux entre régimes.
     TAUX_UNIFORME = "taux_uniforme"
+
+    #: Les taux historiques JUSQU'À la bascule, le taux uniforme À COMPTER
+    #: d'elle. C'est le flux du scénario 6 : ce qui a été cotisé sous le
+    #: système actuel est porté au compte tel qu'il a été prélevé, comme dans
+    #: le scénario 4, et c'est seulement à partir de la bascule que le taux
+    #: unique de 18 % remplace ceux des régimes — voir
+    #: ``Parametres.taux_cotisation_liberal``. Une personne née en 1975 cotise
+    #: donc aux taux réels de 1996 à 2025, puis à 18 % de 2026 à son départ.
+    TAUX_HISTORIQUES_PUIS_UNIFORME = "taux_historiques_puis_uniforme"
 
 
 class ModeAgeReference(str, Enum):
@@ -383,8 +391,8 @@ class Parametres:
     #: l'effort contributif retraite total — salarié et employeur — d'un salarié
     #: du privé non cadre sous le plafond en 2025 : le taux que le privé
     #: supporte déjà. Aucun des scénarios 2 à 5 ne l'emploie ; c'est un
-    #: contrefactuel, à activer explicitement. Le scénario 6 le remplace par
-    #: ``taux_cotisation_liberal``.
+    #: contrefactuel, à activer explicitement. Le scénario 6 emploie, lui,
+    #: ``taux_cotisation_liberal`` — à compter de la bascule seulement.
     taux_cotisation_uniforme: float = 0.2531
 
     # NOTE : il n'y a pas non plus de paramètre « le taux d'appel ouvre-t-il des
@@ -472,12 +480,14 @@ class Parametres:
     #: à deux différences près, qui sont les deux termes de la proposition du
     #: Parti libéral français.
     #:
-    #: La première : un TAUX UNIQUE, le même pour tous les statuts, parts
-    #: salariale et patronale additionnées. Il est prélevé une fois sur la
-    #: rémunération, sur l'assiette réunie des régimes en répartition, comme
-    #: le fait ``SourceCotisations.TAUX_UNIFORME`` dont ce scénario est un cas.
-    #: Ce qui a été prélevé au-delà n'ouvre aucun droit ; ce qui l'a été en
-    #: deçà ne manque pas au compte.
+    #: La première : un TAUX UNIQUE À COMPTER DE LA BASCULE, le même pour tous
+    #: les statuts, parts salariale et patronale additionnées, prélevé une
+    #: fois sur la rémunération. Avant la bascule, le compte est celui du
+    #: scénario 4 : ce qui a été cotisé sous le système actuel y est porté tel
+    #: qu'il a été prélevé, aux taux réels de chaque régime — une personne née
+    #: en 1975 cotise aux taux réels de 1996 à 2025, puis à 18 % de 2026 à son
+    #: départ. Qui a liquidé avant la bascule retrouve donc, sur ce point, le
+    #: scénario 4. Voir ``SourceCotisations.TAUX_HISTORIQUES_PUIS_UNIFORME``.
     taux_cotisation_liberal: float = 0.18
 
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui

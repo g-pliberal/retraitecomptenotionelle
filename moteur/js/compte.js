@@ -188,6 +188,9 @@ export class ConstructeurCompte {
    *   fiabilité.
    */
   tauxUnifie(ligne, annee, regimeFusionne) {
+    // Un taux d'acquisition commun s'applique ici qu'il ait couvert toute la
+    // carrière (TAUX_UNIFORME) ou qu'il ne commence qu'à la bascule
+    // (TAUX_HISTORIQUES_PUIS_UNIFORME, le scénario 6).
     if (this.parametres.source_cotisations !== SourceCotisations.TAUX_HISTORIQUES) {
       return [this.parametres.taux_cotisation_uniforme, 0.0, "", Fiabilite.CERTIFIEE];
     }

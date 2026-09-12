@@ -33,7 +33,7 @@ export const SCENARIOS = [
   ["notionnel_prospectif_employeur",
     "5. Notionnel dès la bascule, avec la part patronale"],
   ["notionnel_liberal",
-    "6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse"],
+    "6. Notionnel rétroactif, 18 % dès la bascule, garantie vieillesse"],
 ];
 
 /**

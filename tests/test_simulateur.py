@@ -725,50 +725,51 @@ def _carriere_modeste(simulateur, age_liquidation: float, **kwargs) -> Carriere:
     )
 
 
-def test_le_scenario_6_preleve_18_pour_cent_pour_tous(simulateur):
-    """Un seul taux, salariale et patronale confondues, prélevé une fois.
+def test_le_scenario_6_preleve_18_pour_cent_pour_tous_a_compter_de_la_bascule(simulateur):
+    """Les taux réels avant la bascule, 18 % pour tous à compter d'elle.
 
-    Pour un salarié sous le plafond, l'assiette réunie est le salaire entier :
-    la cotisation portée au compte vaut exactement 18 % du revenu, année après
-    année, là où le scénario 4 porte les taux réellement en vigueur.
+    Une personne née en 1975 a cotisé sous le système actuel de 1996 à 2025 :
+    ces années sont portées au compte telles qu'elles ont été prélevées, à
+    l'euro près celles du scénario 4. De 2026 à son départ, un seul taux,
+    salariale et patronale confondues, prélevé une fois sur la rémunération —
+    le même pour le salarié et pour le fonctionnaire.
     """
+    bascule = simulateur.parametres.annee_bascule
+    for affiliation in ("salarie_prive_non_cadre", "fonctionnaire_etat"):
+        comparaison = simulateur.simuler(simulateur.carriere_simple(
+            annee_naissance=1975, sexe="F", affiliation=affiliation,
+            age_debut=21, age_liquidation=64, niveau_salaire=0.5,
+        ))
+        liberal = {c.annee: c for c in comparaison.notionnel_liberal.compte.cotisations}
+        quatre = {c.annee: c for c in
+                  comparaison.notionnel_retroactif_employeur.compte.cotisations}
+        assert set(liberal) == set(quatre)
+        avant = [a for a in liberal if a < bascule and not liberal[a].nulle]
+        apres = [a for a in liberal if a >= bascule and not liberal[a].nulle]
+        assert avant and apres, affiliation
+        for annee in avant:
+            assert liberal[annee].cotisation == pytest.approx(quatre[annee].cotisation), (
+                affiliation, annee)
+        for annee in apres:
+            assert liberal[annee].taux_effectif == pytest.approx(0.18), (affiliation, annee)
+            assert liberal[annee].cotisation == pytest.approx(
+                0.18 * liberal[annee].assiette_retenue)
+
+
+def test_avant_la_bascule_le_scenario_6_est_le_scenario_4(simulateur):
+    """Qui a liquidé avant la bascule n'a aucune année à 18 % : son compte est
+    exactement celui du scénario 4, et seule la garantie peut l'en séparer."""
     comparaison = simulateur.simuler(_carriere_modeste(simulateur, 62))
-    compte = comparaison.notionnel_liberal.compte
-    annees = [c for c in compte.cotisations if not c.nulle]
-    assert annees
-    for cotisation in annees:
-        assert cotisation.cotisation == pytest.approx(0.18 * cotisation.assiette_retenue)
-        assert cotisation.assiette_retenue == pytest.approx(cotisation.revenu)
-    # Le fonctionnaire cotise seul au même taux que le salarié : c'est ce qui
-    # fait du 6 un scénario « pour tous ».
-    fonctionnaire = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1960, sexe="F", affiliation="fonctionnaire_etat",
-        age_debut=21, age_liquidation=62, niveau_salaire=0.5,
-    ))
-    for cotisation in fonctionnaire.notionnel_liberal.compte.cotisations:
-        if not cotisation.nulle:
-            assert cotisation.taux_effectif == pytest.approx(0.18)
-
-
-def test_le_scenario_6_est_le_4_a_taux_unique_avant_la_garantie(simulateur):
-    """Même compte, même diviseur, même âge : seul le taux sépare le 6 du 4.
-
-    Le contrôle porte sur ce qui doit être identique — le coefficient de
-    conversion, l'écart d'âge — et sur ce qui doit différer d'un simple rapport
-    de taux : pour un salarié sous le plafond, dont le scénario 4 porte un taux
-    constant sur chaque année, le rapport des capitaux est celui des taux.
-    """
-    comparaison = simulateur.simuler(_carriere_modeste(simulateur, 62))
+    assert comparaison.carriere.annee_liquidation < simulateur.parametres.annee_bascule
     liberal = comparaison.notionnel_liberal
     employeur = comparaison.notionnel_retroactif_employeur
+    assert liberal.capital_notionnel == pytest.approx(employeur.capital_notionnel)
     assert liberal.conversion.diviseur == employeur.conversion.diviseur
     assert liberal.ecart_age == employeur.ecart_age
     assert liberal.garantie_vieillesse is not None
     assert liberal.garantie_vieillesse.pension_contributive == pytest.approx(
-        liberal.capital_notionnel / liberal.conversion.diviseur
+        employeur.pension_annuelle
     )
-    # Ce salarié cotisait plus de 18 % : le taux unique lui retire du capital.
-    assert liberal.capital_notionnel < employeur.capital_notionnel
 
 
 def test_la_garantie_reproduit_le_tableau_de_la_proposition(simulateur):

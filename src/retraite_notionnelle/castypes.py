@@ -189,7 +189,7 @@ class ResultatCasTypes:
         ("notionnel_prospectif_employeur",
          "scénario 5, notionnel PROSPECTIF, part patronale comprise"),
         ("notionnel_liberal",
-         "scénario 6, notionnel RÉTROACTIF, 18 % pour tous, garantie vieillesse"),
+         "scénario 6, notionnel RÉTROACTIF, 18 % dès la bascule, garantie vieillesse"),
     )
 
     def tableau(self, cas_types=CAS_TYPES, generations=GENERATIONS) -> str:

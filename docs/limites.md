@@ -2892,10 +2892,11 @@ par construction, n'existe plus.
 
 ### Le scénario 6, et ce que sa garantie ne voit pas
 
-Le scénario 6 — le scénario 4 à un taux unique de 18 % pour tous, plus une
-garantie vieillesse individualisée, financée par l'impôt — hérite des limites
-du scénario 4, sauf une : son taux ne dépend d'aucune série employeur, et la
-part patronale inconnue du public ne le concerne pas. Il en ajoute trois.
+Le scénario 6 — le scénario 4 jusqu'à la bascule, puis un taux unique de 18 %
+pour tous, plus une garantie vieillesse individualisée, financée par l'impôt —
+hérite des limites du scénario 4, part patronale inconnue du public comprise :
+ce qui a été cotisé avant la bascule y est porté aux mêmes taux, et estimé là
+où le 4 l'estime. Il en ajoute trois.
 
 **La garantie n'est ouverte qu'à 65 ans, et le modèle ne suit pas l'assuré
 jusque-là.** C'est la réserve de l'ASPA du scénario 1, reprise telle quelle :
