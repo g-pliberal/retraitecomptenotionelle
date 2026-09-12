@@ -21,6 +21,7 @@
   --prospectif: #817f2a;
   --retroactif-employeur: #86538b;
   --prospectif-employeur: #107550;
+  --liberal: #c04a9a;
   --alerte: #8a5a00;
   /* Palette des graphiques : neuf teintes, assez distinctes pour se suivre
      empilées, assez proches pour ne pas jurer avec le reste de la page. */
@@ -50,6 +51,7 @@
     --prospectif: #837118;
     --retroactif-employeur: #a27dc0;
     --prospectif-employeur: #39a48a;
+    --liberal: #c86bb0;
     --alerte: #e0b062;
     --serie-1: #8fb2c0;
     --serie-2: #e08b6f;
@@ -244,6 +246,7 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 .barre.prospectif > span { background: var(--prospectif); }
 .barre.retroactif-employeur > span { background: var(--retroactif-employeur); }
 .barre.prospectif-employeur > span { background: var(--prospectif-employeur); }
+.barre.liberal > span { background: var(--liberal); }
 .scenario .glose { font-size: 0.88rem; color: var(--texte-doux); margin-top: 0.35rem; }
 .fiches { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; }
 .fiche .valeur { font-size: 1.2rem; font-variant-numeric: tabular-nums; }

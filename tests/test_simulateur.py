@@ -13,6 +13,7 @@ from retraite_notionnelle.config import (
     ModeIndexation,
     Neutralisations,
     Parametres,
+    SituationFoyer,
     SourceCotisations,
 )
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Simulateur
@@ -550,7 +551,7 @@ def test_l_ancienne_convention_d_alignement_reste_accessible():
 # -- scénarios 4 et 5 : les cotisations employeur du public -------------------
 
 
-def test_les_cinq_scenarios_sont_calcules(simulateur, salarie_moyen):
+def test_les_six_scenarios_sont_calcules(simulateur, salarie_moyen):
     comparaison = simulateur.simuler(salarie_moyen)
     for cle, _, _ in SCENARIOS_NOTIONNELS:
         assert getattr(comparaison, cle).pension_annuelle > 0, cle
@@ -710,6 +711,134 @@ def test_les_scenarios_4_et_5_ne_qualifient_pas_la_fiabilite_d_ensemble(simulate
     )
     assert (comparaison.notionnel_retroactif_employeur.fiabilite
             <= comparaison.notionnel_retroactif.fiabilite)
+
+
+# -- scénario 6 : la proposition libérale --------------------------------------
+
+
+def _carriere_modeste(simulateur, age_liquidation: float, **kwargs) -> Carriere:
+    """Un demi-salaire moyen, entré à 21 ans : sous le plancher à coup sûr."""
+    return simulateur.carriere_simple(
+        annee_naissance=1960, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=21, age_liquidation=age_liquidation, niveau_salaire=0.5,
+        **kwargs,
+    )
+
+
+def test_le_scenario_6_preleve_18_pour_cent_pour_tous(simulateur):
+    """Un seul taux, salariale et patronale confondues, prélevé une fois.
+
+    Pour un salarié sous le plafond, l'assiette réunie est le salaire entier :
+    la cotisation portée au compte vaut exactement 18 % du revenu, année après
+    année, là où le scénario 4 porte les taux réellement en vigueur.
+    """
+    comparaison = simulateur.simuler(_carriere_modeste(simulateur, 62))
+    compte = comparaison.notionnel_liberal.compte
+    annees = [c for c in compte.cotisations if not c.nulle]
+    assert annees
+    for cotisation in annees:
+        assert cotisation.cotisation == pytest.approx(0.18 * cotisation.assiette_retenue)
+        assert cotisation.assiette_retenue == pytest.approx(cotisation.revenu)
+    # Le fonctionnaire cotise seul au même taux que le salarié : c'est ce qui
+    # fait du 6 un scénario « pour tous ».
+    fonctionnaire = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1960, sexe="F", affiliation="fonctionnaire_etat",
+        age_debut=21, age_liquidation=62, niveau_salaire=0.5,
+    ))
+    for cotisation in fonctionnaire.notionnel_liberal.compte.cotisations:
+        if not cotisation.nulle:
+            assert cotisation.taux_effectif == pytest.approx(0.18)
+
+
+def test_le_scenario_6_est_le_4_a_taux_unique_avant_la_garantie(simulateur):
+    """Même compte, même diviseur, même âge : seul le taux sépare le 6 du 4.
+
+    Le contrôle porte sur ce qui doit être identique — le coefficient de
+    conversion, l'écart d'âge — et sur ce qui doit différer d'un simple rapport
+    de taux : pour un salarié sous le plafond, dont le scénario 4 porte un taux
+    constant sur chaque année, le rapport des capitaux est celui des taux.
+    """
+    comparaison = simulateur.simuler(_carriere_modeste(simulateur, 62))
+    liberal = comparaison.notionnel_liberal
+    employeur = comparaison.notionnel_retroactif_employeur
+    assert liberal.conversion.diviseur == employeur.conversion.diviseur
+    assert liberal.ecart_age == employeur.ecart_age
+    assert liberal.garantie_vieillesse is not None
+    assert liberal.garantie_vieillesse.pension_contributive == pytest.approx(
+        liberal.capital_notionnel / liberal.conversion.diviseur
+    )
+    # Ce salarié cotisait plus de 18 % : le taux unique lui retire du capital.
+    assert liberal.capital_notionnel < employeur.capital_notionnel
+
+
+def test_la_garantie_reproduit_le_tableau_de_la_proposition(simulateur):
+    """Les cinq lignes du tableau de la proposition, en euros de 2026.
+
+    300 € et 300 € → 1 000 € ; 300 € et 1 500 € → 500 € ; 900 € et 900 € →
+    0 € ; 300 € et 5 000 € → 500 € ; une personne seule à 300 € → 750 €. La
+    garantie étant individualisée, un couple est deux personnes calculées
+    séparément, chacune contre le plancher de 800 €.
+    """
+    carriere = _carriere_modeste(simulateur, 66)   # liquide en 2026 : coefficient 1
+    assert carriere.annee_liquidation == 2026
+
+    def aide(simulateur_, pension_mensuelle: float) -> float:
+        garantie = simulateur_.scenario_liberal._garantie_vieillesse(
+            carriere, pension_mensuelle * 12.0
+        )
+        assert garantie.coefficient_prix == pytest.approx(1.0)
+        return garantie.complement / 12.0
+
+    en_couple = Simulateur(Parametres(situation_foyer=SituationFoyer.COUPLE))
+    assert aide(en_couple, 300) + aide(en_couple, 300) == pytest.approx(1000)
+    assert aide(en_couple, 300) + aide(en_couple, 1500) == pytest.approx(500)
+    assert aide(en_couple, 900) + aide(en_couple, 900) == pytest.approx(0)
+    assert aide(en_couple, 300) + aide(en_couple, 5000) == pytest.approx(500)
+    assert aide(simulateur, 300) == pytest.approx(750)
+
+
+def test_la_garantie_n_est_ouverte_qu_a_65_ans(simulateur):
+    """Comme l'ASPA qu'elle remplace : liquider à 62 ans n'ouvre rien, à 65 ans
+    la pension contributive est portée au plancher, et la pension du scénario 6
+    est la somme des deux — ce que l'impôt paie s'ajoute, il ne remplace pas."""
+    avant = simulateur.simuler(_carriere_modeste(simulateur, 62)).notionnel_liberal
+    assert not avant.garantie_vieillesse.age_atteint
+    assert avant.garantie_vieillesse.complement == 0.0
+    assert avant.pension_annuelle == pytest.approx(
+        avant.garantie_vieillesse.pension_contributive
+    )
+
+    apres = simulateur.simuler(_carriere_modeste(simulateur, 65)).notionnel_liberal
+    garantie = apres.garantie_vieillesse
+    assert garantie.age_atteint and garantie.servie
+    assert apres.pension_annuelle == pytest.approx(garantie.plancher_annuel)
+    assert apres.pension_annuelle == pytest.approx(
+        garantie.pension_contributive + garantie.complement
+    )
+
+
+def test_le_plancher_suit_les_prix_depuis_2026(simulateur):
+    """800 € et 250 € sont des euros de 2026 : une liquidation de 2025 les
+    déflate par l'indice des prix, exactement comme l'ASPA entre deux ancres."""
+    comparaison = simulateur.simuler(_carriere_modeste(simulateur, 65))
+    garantie = comparaison.notionnel_liberal.garantie_vieillesse
+    assert comparaison.carriere.annee_liquidation == 2025
+    coefficient = simulateur.macro.coefficient_prix(2026, 2025)
+    assert garantie.coefficient_prix == pytest.approx(coefficient)
+    assert garantie.base_annuelle == pytest.approx(800 * 12 * coefficient)
+    assert garantie.isolement_annuel == pytest.approx(250 * 12 * coefficient)
+
+
+def test_une_grosse_pension_ne_recoit_aucune_garantie(simulateur):
+    """Différentielle : au-dessus du plancher, rien — et le scénario 6 est un
+    compte notionnel à taux unique, sans plus."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1960, sexe="H", affiliation="salarie_prive_cadre",
+        age_debut=23, age_liquidation=65, niveau_salaire=2.5,
+    ))
+    garantie = comparaison.notionnel_liberal.garantie_vieillesse
+    assert garantie.age_atteint and not garantie.servie
+    assert garantie.pension_contributive > garantie.plancher_annuel
 
 
 # -- taux d'acquisition commun (paramètre, pas scénario) ----------------------
@@ -931,7 +1060,16 @@ def test_dictionnaire_est_serialisable(simulateur, salarie_moyen):
     assert set(donnees["scenarios"]) == {
         "actuel", "notionnel_retroactif", "notionnel_prospectif",
         "notionnel_retroactif_employeur", "notionnel_prospectif_employeur",
+        "notionnel_liberal",
     }
+    # La garantie vieillesse n'existe que dans le scénario 6, et y est
+    # toujours décrite, servie ou non.
+    assert donnees["scenarios"]["notionnel_retroactif_employeur"]["garantie_vieillesse"] is None
+    garantie = donnees["scenarios"]["notionnel_liberal"]["garantie_vieillesse"]
+    assert garantie["situation"] == "seul"
+    assert garantie["plancher_annuel"] == pytest.approx(
+        garantie["base_annuelle"] + garantie["isolement_annuel"]
+    )
     assert donnees["unite"]["euros_constants_de"] == 2026
 
 

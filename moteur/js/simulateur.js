@@ -1,5 +1,5 @@
 /**
- * Simulateur : assemble les données, le moteur et les cinq scénarios.
+ * Simulateur : assemble les données, le moteur et les six scénarios.
  *
  * Portage de ``src/retraite_notionnelle/simulateur.py``. C'est le point d'entrée
  * unique : une instance charge les données une fois et simule ensuite autant de
@@ -7,7 +7,7 @@
  */
 
 import { Carriere, salaireMoyenAnnuel } from "./carriere.js";
-import { PARAMETRES_DEFAUT, PartCotisation } from "./config.js";
+import { PARAMETRES_DEFAUT, PartCotisation, SourceCotisations } from "./config.js";
 import { ConstructeurCompte } from "./compte.js";
 import { Convertisseur } from "./conversion.js";
 import { AgeReference } from "./age-reference.js";
@@ -23,13 +23,16 @@ import {
 } from "./serie.js";
 
 /**
- * Les quatre scénarios notionnels, dans l'ordre où ils s'affichent, avec le
+ * Les cinq scénarios notionnels, dans l'ordre où ils s'affichent, avec le
  * numéro et le titre sous lesquels le tableau, la page et l'API les citent.
  *
- * Deux paires : 2 et 3 ne portent au compte que la part SALARIALE de la
- * cotisation, 4 et 5 y ajoutent la part PATRONALE. À l'intérieur de chaque
- * paire, l'un est rétroactif et l'autre prospectif. Le 4 se lit contre le 2, le
- * 5 contre le 3, et l'écart mesure exactement ce que l'employeur verse.
+ * Deux paires, puis un sixième : 2 et 3 ne portent au compte que la part
+ * SALARIALE de la cotisation, 4 et 5 y ajoutent la part PATRONALE. À
+ * l'intérieur de chaque paire, l'un est rétroactif et l'autre prospectif. Le 4
+ * se lit contre le 2, le 5 contre le 3, et l'écart mesure exactement ce que
+ * l'employeur verse. Le 6 se lit contre le 4 : même compte rétroactif,
+ * cotisation entière, mais à un taux unique de 18 % pour tous, et une garantie
+ * vieillesse individualisée, financée par l'impôt, par-dessus.
  */
 export const SCENARIOS_NOTIONNELS = Object.freeze([
   ["notionnel_retroactif", 2, "Notionnel rétroactif, part salariale"],
@@ -38,13 +41,15 @@ export const SCENARIOS_NOTIONNELS = Object.freeze([
     "Notionnel rétroactif, salariale + patronale"],
   ["notionnel_prospectif_employeur", 5,
     "Notionnel dès {bascule}, salariale + patronale"],
+  ["notionnel_liberal", 6,
+    "Notionnel rétroactif, 18 % pour tous, garantie vieillesse"],
 ]);
 
-/** Les cinq résultats, côte à côte, pour une même carrière. */
+/** Les six résultats, côte à côte, pour une même carrière. */
 export class Comparaison {
   constructor({
     carriere, actuel, notionnelRetroactif, notionnelProspectif,
-    notionnelRetroactifEmployeur, notionnelProspectifEmployeur,
+    notionnelRetroactifEmployeur, notionnelProspectifEmployeur, notionnelLiberal,
     regimeFusionne, parametres, coefficientEurosConstants = 1.0,
     dernierRevenuAnnualise = 0.0,
   }) {
@@ -54,6 +59,7 @@ export class Comparaison {
     this.notionnel_prospectif = notionnelProspectif;
     this.notionnel_retroactif_employeur = notionnelRetroactifEmployeur;
     this.notionnel_prospectif_employeur = notionnelProspectifEmployeur;
+    this.notionnel_liberal = notionnelLiberal;
     this.regime_fusionne = regimeFusionne;
     this.parametres = parametres;
     //: Coefficient de passage des euros de l'année de liquidation aux euros
@@ -78,7 +84,7 @@ export class Comparaison {
 
   /**
    * Fiabilité de l'étalon et des deux scénarios de référence. Les scénarios 4
-   * et 5 en sont exclus à dessein : ils reposent sur une série employeur qui
+   * à 6 en sont exclus à dessein : ils reposent sur une série employeur qui
    * n'existe pas pour tous les régimes ni sur toutes les années, et les laisser
    * qualifier l'ensemble ferait retomber toute simulation publique à
    * « estimée » alors que les trois premiers ne se sont pas dégradés. La sortie
@@ -252,6 +258,16 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
       ),
     ),
     rente_capitalisation: resultat.rente_capitalisation_annuelle,
+    garantie_vieillesse: resultat.garantie_vieillesse === null ? null : {
+      situation: resultat.garantie_vieillesse.situation,
+      age_atteint: resultat.garantie_vieillesse.age_atteint,
+      coefficient_prix: resultat.garantie_vieillesse.coefficient_prix,
+      base_annuelle: resultat.garantie_vieillesse.base_annuelle,
+      isolement_annuel: resultat.garantie_vieillesse.isolement_annuel,
+      plancher_annuel: resultat.garantie_vieillesse.plancher_annuel,
+      pension_contributive: resultat.garantie_vieillesse.pension_contributive,
+      complement: resultat.garantie_vieillesse.complement,
+    },
     fiabilite: nomFiabilite(resultat.fiabilite),
   };
 }
@@ -325,6 +341,21 @@ export class Simulateur {
       ),
       this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
     );
+    // Scénario 6 : le constructeur du scénario 4 au taux unique de la
+    // proposition — un taux d'acquisition commun, prélevé une fois sur la
+    // rémunération, à la place des taux historiques de chaque régime.
+    this.scenarioLiberal = new ScenarioNotionnel(
+      new ConstructeurCompte(
+        this.macro, this.catalogue, this.affiliations, this.indexation,
+        {
+          ...parametres,
+          part_cotisation: PartCotisation.TOTALE,
+          source_cotisations: SourceCotisations.TAUX_UNIFORME,
+          taux_cotisation_uniforme: parametres.taux_cotisation_liberal,
+        },
+      ),
+      this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
+    );
     this._regimeFusionne = null;
   }
 
@@ -367,7 +398,7 @@ export class Simulateur {
     }
   }
 
-  /** Calcule les cinq scénarios pour une carrière. */
+  /** Calcule les six scénarios pour une carrière. */
   simuler(carriere) {
     this._verifierFiabilite(carriere);
 
@@ -386,6 +417,7 @@ export class Simulateur {
         carriere, this.regimeFusionne,
         "Comptes notionnels à compter de la bascule, cotisation salariale et patronale",
       ),
+      notionnelLiberal: this.scenarioLiberal.liberal(carriere, fusionne),
       regimeFusionne: this.regimeFusionne,
       parametres: this.parametres,
       coefficientEurosConstants: this.macro.coefficientPrix(

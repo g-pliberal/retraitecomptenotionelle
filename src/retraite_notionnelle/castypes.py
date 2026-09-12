@@ -178,7 +178,7 @@ class ResultatCasTypes:
     resultats: dict[tuple[str, int], Comparaison] = field(default_factory=dict)
     echecs: dict[tuple[str, int], str] = field(default_factory=dict)
 
-    #: Les quatre grilles, dans l'ordre, avec le titre qui les introduit.
+    #: Les cinq grilles, dans l'ordre, avec le titre qui les introduit.
     GRILLES = (
         ("notionnel_retroactif",
          "scénario 2, notionnel RÉTROACTIF, part salariale seule"),
@@ -188,6 +188,8 @@ class ResultatCasTypes:
          "scénario 4, notionnel RÉTROACTIF, part patronale comprise"),
         ("notionnel_prospectif_employeur",
          "scénario 5, notionnel PROSPECTIF, part patronale comprise"),
+        ("notionnel_liberal",
+         "scénario 6, notionnel RÉTROACTIF, 18 % pour tous, garantie vieillesse"),
     )
 
     def tableau(self, cas_types=CAS_TYPES, generations=GENERATIONS) -> str:

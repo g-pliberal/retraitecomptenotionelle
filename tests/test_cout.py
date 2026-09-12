@@ -17,6 +17,7 @@ import pytest
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.cout import (
+    COMPOSANTE_GARANTIE,
     DERNIERE_GENERATION,
     HORIZON,
     PREMIERE_GENERATION,
@@ -183,10 +184,20 @@ def test_les_cumuls_sont_en_euros_constants(cout):
 
 
 def test_chaque_scenario_a_une_courbe_et_un_libelle(cout):
-    codes = {scenario for scenario, _ in SCENARIOS}
+    codes = {scenario for scenario, _ in SCENARIOS} | {COMPOSANTE_GARANTIE}
     for ligne in cout.annees:
         assert set(ligne.rapports) == codes
-    assert len(SCENARIOS) == 5
+    assert len(SCENARIOS) == 6
+
+
+def test_la_garantie_vieillesse_est_comptee_dans_le_6_et_redite_a_part(cout, avenir):
+    """La part que l'impôt finance est une composante du scénario 6, jamais
+    plus grosse que lui, et jamais négative ; sur la fenêtre observée elle ne
+    se voit presque pas, parce qu'un seul cas type liquide à 65 ans ou après."""
+    for ligne in cout.annees + avenir.annees:
+        assert 0.0 <= ligne.rapports[COMPOSANTE_GARANTIE] <= ligne.rapports["notionnel_liberal"]
+    assert cout.cumul(COMPOSANTE_GARANTIE) > 0.0
+    assert cout.cumul(COMPOSANTE_GARANTIE) < 0.05 * cout.cumul("notionnel_liberal")
 
 
 # -- la pyramide des âges ----------------------------------------------------

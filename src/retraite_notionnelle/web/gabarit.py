@@ -33,6 +33,7 @@ FEUILLE_DE_STYLE = """
   --prospectif: #817f2a;
   --retroactif-employeur: #86538b;
   --prospectif-employeur: #107550;
+  --liberal: #c04a9a;
   --alerte: #8a5a00;
   /* Palette des graphiques : neuf teintes, assez distinctes pour se suivre
      empilées, assez proches pour ne pas jurer avec le reste de la page. */
@@ -62,6 +63,7 @@ FEUILLE_DE_STYLE = """
     --prospectif: #837118;
     --retroactif-employeur: #a27dc0;
     --prospectif-employeur: #39a48a;
+    --liberal: #c86bb0;
     --alerte: #e0b062;
     --serie-1: #8fb2c0;
     --serie-2: #e08b6f;
@@ -256,6 +258,7 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 .barre.prospectif > span { background: var(--prospectif); }
 .barre.retroactif-employeur > span { background: var(--retroactif-employeur); }
 .barre.prospectif-employeur > span { background: var(--prospectif-employeur); }
+.barre.liberal > span { background: var(--liberal); }
 .scenario .glose { font-size: 0.88rem; color: var(--texte-doux); margin-top: 0.35rem; }
 .fiches { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; }
 .fiche .valeur { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
@@ -719,7 +722,7 @@ PAS_RONDS = (1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0)
 ECART_MINIMAL_GRADUATIONS = 6
 
 #: Écart vertical minimal, en unités du repère, entre deux étiquettes posées au
-#: bout des courbes. Les couleurs des cinq scénarios ne suffisent pas à les
+#: bout des courbes. Les couleurs des six scénarios ne suffisent pas à les
 #: distinguer — mesuré : la pire paire voisine tombe à ΔE 4,3 sous deutéranopie,
 #: et à 11,8 en vision normale, sous le plancher de 15. Une étiquette en bout de
 #: courbe donne un second encodage, qui ne dépend pas de la couleur ; encore
@@ -849,7 +852,7 @@ def _etiquettes_de_fin(series: tuple[Serie, ...], annees: tuple[int, ...],
     """Le libellé court de chaque courbe, posé à son extrémité droite.
 
     Second encodage de l'identité, exigé ici parce que la couleur seule ne
-    sépare pas les cinq scénarios. Les étiquettes sont écartées les unes des
+    sépare pas les six scénarios. Les étiquettes sont écartées les unes des
     autres quand deux courbes finissent trop près : sans cela, les scénarios 3
     et 4, que trente-huit mille euros séparent au bout de quarante ans,
     superposeraient leurs chiffres.

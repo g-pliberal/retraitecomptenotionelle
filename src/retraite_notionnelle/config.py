@@ -123,9 +123,10 @@ class SourceCotisations(str, Enum):
     #: spécial — finance alors les engagements hérités du passé et n'ouvre aucun
     #: droit nouveau. Le taux est prélevé UNE FOIS sur la rémunération, et non
     #: une fois par régime : les régimes qui découpent la même tranche voient
-    #: leurs assiettes réunies, pas additionnées. Aucun des cinq scénarios ne
-    #: l'emploie — il sert à isoler l'effet des règles de liquidation de celui
-    #: des différences de taux entre régimes.
+    #: leurs assiettes réunies, pas additionnées. Les scénarios 2 à 5 ne
+    #: l'emploient pas — il sert à isoler l'effet des règles de liquidation de
+    #: celui des différences de taux entre régimes. Le scénario 6, lui, en est
+    #: un cas : 18 % pour tous, voir ``Parametres.taux_cotisation_liberal``.
     TAUX_UNIFORME = "taux_uniforme"
 
 
@@ -233,6 +234,20 @@ class TableConversion(str, Enum):
     #: Table par sexe. Actuariellement exacte, juridiquement inapplicable en
     #: France (principe de non-discrimination). Fournie pour mesurer l'écart.
     PAR_SEXE = "par_sexe"
+
+
+class SituationFoyer(str, Enum):
+    """Situation de foyer retenue pour la garantie vieillesse du scénario 6.
+
+    La garantie est INDIVIDUALISÉE : chaque personne est comparée à son propre
+    plancher, et les revenus du conjoint n'entrent jamais dans le calcul. La
+    situation ne change donc qu'une chose — l'allocation d'isolement, qui
+    s'ajoute au plancher d'une personne vivant seule. À deux, chacun a la
+    sienne, sans que l'une regarde la pension de l'autre.
+    """
+
+    SEUL = "seul"
+    COUPLE = "couple"
 
 
 @dataclass(frozen=True)
@@ -355,7 +370,7 @@ class Parametres:
 
     # NOTE : il n'y a pas de paramètre « indexer les pensions liquidées ». Le
     # moteur ne calcule qu'une pension AU MOMENT DE LA LIQUIDATION, dans les
-    # euros de cette année-là, pour les cinq scénarios ; il n'existe aucune
+    # euros de cette année-là, pour les six scénarios ; il n'existe aucune
     # phase postérieure à revaloriser. Le drapeau qui figurait ici ne servait à
     # rien et laissait croire le contraire. Ce que la règle d'indexation fait
     # aux pensions déjà liquidées reste hors du modèle, et `docs/limites.md` le
@@ -367,8 +382,9 @@ class Parametres:
     #: Taux utilisé si ``source_cotisations == TAUX_UNIFORME``. 25,31 % est
     #: l'effort contributif retraite total — salarié et employeur — d'un salarié
     #: du privé non cadre sous le plafond en 2025 : le taux que le privé
-    #: supporte déjà. Aucun des cinq scénarios ne l'emploie ; c'est un
-    #: contrefactuel, à activer explicitement.
+    #: supporte déjà. Aucun des scénarios 2 à 5 ne l'emploie ; c'est un
+    #: contrefactuel, à activer explicitement. Le scénario 6 le remplace par
+    #: ``taux_cotisation_liberal``.
     taux_cotisation_uniforme: float = 0.2531
 
     # NOTE : il n'y a pas non plus de paramètre « le taux d'appel ouvre-t-il des
@@ -449,6 +465,45 @@ class Parametres:
     #: LIGNE SÉPARÉE de la cascade, de sorte qu'on puisse la retrancher d'un
     #: coup d'œil. Mettre ce paramètre à ``False`` la retire du calcul.
     minimum_vieillesse_dans_le_scenario_actuel: bool = True
+
+    # --- Scénario 6 : la proposition libérale --------------------------------
+    #: Le scénario 6 est le scénario 4 — compte rétroactif, cotisation salariale
+    #: et patronale confondues, mêmes âges, même indexation, même liquidation —
+    #: à deux différences près, qui sont les deux termes de la proposition du
+    #: Parti libéral français.
+    #:
+    #: La première : un TAUX UNIQUE, le même pour tous les statuts, parts
+    #: salariale et patronale additionnées. Il est prélevé une fois sur la
+    #: rémunération, sur l'assiette réunie des régimes en répartition, comme
+    #: le fait ``SourceCotisations.TAUX_UNIFORME`` dont ce scénario est un cas.
+    #: Ce qui a été prélevé au-delà n'ouvre aucun droit ; ce qui l'a été en
+    #: deçà ne manque pas au compte.
+    taux_cotisation_liberal: float = 0.18
+
+    #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
+    #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les
+    #: ressources à un plancher —, mais individualise le plancher. Chacun est
+    #: comparé au sien, sans regarder la pension du conjoint : 300 € et 1 500 €
+    #: dans un couple ouvrent 500 € au premier et rien au second, là où l'ASPA
+    #: actuelle, qui regarde le foyer, ne sert rien. Financée par l'impôt, non
+    #: par les cotisations : la page Coût la sort du compte des cotisants.
+    #:
+    #: Montants MENSUELS, en euros de ``annee_euros_garantie_vieillesse``,
+    #: ramenés à l'année de liquidation par l'indice des prix.
+    garantie_vieillesse_mensuelle: float = 800.0
+
+    #: Allocation d'isolement : s'ajoute au plancher d'une personne vivant
+    #: seule. 800 + 250 = 1 050 € par mois seul, 800 € par personne à deux.
+    allocation_isolement_mensuelle: float = 250.0
+
+    #: Année dans les euros de laquelle les deux montants ci-dessus sont fixés.
+    annee_euros_garantie_vieillesse: int = 2026
+
+    #: Seul ou à deux. Ne joue que sur l'allocation d'isolement : la garantie
+    #: est individualisée, et le conjoint n'entre pas dans le calcul. Le défaut
+    #: est la personne seule, comme pour l'ASPA du scénario 1, de sorte que les
+    #: deux planchers se comparent.
+    situation_foyer: SituationFoyer = SituationFoyer.SEUL
 
     # --- Neutralisations ----------------------------------------------------
     neutralisations: Neutralisations = field(default_factory=Neutralisations)

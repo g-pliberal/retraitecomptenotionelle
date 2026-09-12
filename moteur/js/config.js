@@ -71,9 +71,10 @@ export const PartCotisation = Object.freeze({
 /**
  * Origine du flux qui alimente le compte notionnel.
  *
- * `taux_uniforme` est le taux d'ACQUISITION COMMUN du scénario 5 : un seul taux
- * pour tout le monde, prélevé une fois sur la rémunération. Ce qui est prélevé
- * au-delà finance les engagements du passé et n'ouvre aucun droit.
+ * `taux_uniforme` est un taux d'ACQUISITION COMMUN : un seul taux pour tout le
+ * monde, prélevé une fois sur la rémunération. Ce qui est prélevé au-delà
+ * finance les engagements du passé et n'ouvre aucun droit. Les scénarios 2 à 5
+ * ne l'emploient pas ; le scénario 6 en est un cas, à 18 % pour tous.
  */
 export const SourceCotisations = Object.freeze({
   TAUX_HISTORIQUES: "taux_historiques",
@@ -108,6 +109,17 @@ export const AgeConversionDroitsAcquis = Object.freeze({
 export const TableConversion = Object.freeze({
   UNISEXE: "unisexe",
   PAR_SEXE: "par_sexe",
+});
+
+/**
+ * Situation de foyer retenue pour la garantie vieillesse du scénario 6. La
+ * garantie est INDIVIDUALISÉE : chacun est comparé à son propre plancher, et
+ * les revenus du conjoint n'entrent jamais dans le calcul. La situation ne
+ * change qu'une chose — l'allocation d'isolement d'une personne vivant seule.
+ */
+export const SituationFoyer = Object.freeze({
+  SEUL: "seul",
+  COUPLE: "couple",
 });
 
 /**
@@ -209,6 +221,23 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: personne seule sans autre ressource, et toujours comme une ligne SÉPARÉE
   //: de la cascade.
   minimum_vieillesse_dans_le_scenario_actuel: true,
+
+  // --- Scénario 6 : la proposition libérale ----------------------------------
+  //: Le scénario 6 est le scénario 4 — compte rétroactif, cotisation entière,
+  //: mêmes âges, même indexation — à deux différences près : un TAUX UNIQUE,
+  //: salariale et patronale additionnées, le même pour tous, prélevé une fois
+  //: sur la rémunération ; et une GARANTIE VIEILLESSE qui remplace l'ASPA,
+  //: différentielle, individualisée, financée par l'impôt, ouverte à 65 ans.
+  taux_cotisation_liberal: 0.18,
+  //: Montants MENSUELS, en euros de `annee_euros_garantie_vieillesse`, ramenés
+  //: à l'année de liquidation par l'indice des prix. 800 + 250 = 1 050 € seul,
+  //: 800 € par personne à deux.
+  garantie_vieillesse_mensuelle: 800.0,
+  allocation_isolement_mensuelle: 250.0,
+  annee_euros_garantie_vieillesse: 2026,
+  //: Seul ou à deux : ne joue que sur l'allocation d'isolement. Le défaut est
+  //: la personne seule, comme pour l'ASPA du scénario 1.
+  situation_foyer: SituationFoyer.SEUL,
 
   // --- Neutralisations ------------------------------------------------------
   neutralisations: NEUTRALISATIONS_DEFAUT,

@@ -1,5 +1,5 @@
 /**
- * Scénarios 2 et 3 — les comptes notionnels.
+ * Scénarios 2 à 6 — les comptes notionnels.
  *
  * Portage de ``src/retraite_notionnelle/scenarios/notionnel.py``.
  *
@@ -18,10 +18,17 @@
  * Le choix de l'âge a_c est le seul endroit du modèle où le passage aux comptes
  * notionnels peut, à lui seul, retirer quelque chose à des droits déjà ouverts.
  * Voir ``AgeConversionDroitsAcquis``.
+ *
+ * **Scénario 6, la proposition libérale.** Le scénario 4 à un taux unique de
+ * 18 % pour tous — c'est le constructeur qui le porte —, puis une garantie
+ * vieillesse par-dessus : différentielle, individualisée, financée par l'impôt,
+ * ouverte à 65 ans comme l'ASPA qu'elle remplace. Elle est gardée à part dans
+ * ``garantie_vieillesse``, étape par étape.
  */
 
 import { Carriere } from "./carriere.js";
-import { AgeConversionDroitsAcquis, TableConversion } from "./config.js";
+import { AgeConversionDroitsAcquis, SituationFoyer, TableConversion } from "./config.js";
+import { MinimumVieillesse } from "./regimes.js";
 
 /** Produit les deux variantes de comptes notionnels. */
 export class ScenarioNotionnel {
@@ -73,6 +80,60 @@ export class ScenarioNotionnel {
       fiabilite: Math.min(compte.fiabilite, conversion.fiabilite),
       libelle,
     });
+  }
+
+  // -- scénario 6 ------------------------------------------------------------
+
+  /**
+   * Le scénario 4 à taux unique, puis la garantie vieillesse par-dessus.
+   *
+   * Le compte est celui de `retroactif` : ce qui l'alimente — 18 % pour tous —
+   * tient aux paramètres du constructeur. Ce que cette méthode ajoute, et elle
+   * seule, est la garantie : différentielle, individualisée, servie en dernier,
+   * et gardée à part pour que l'on sache ce qui vient de l'impôt.
+   */
+  liberal(carriere, regimeFusionne = null,
+          libelle = "Comptes notionnels rétroactifs, taux unique et garantie vieillesse") {
+    const resultat_ = this.retroactif(carriere, regimeFusionne, libelle);
+    const garantie = this._garantieVieillesse(carriere, resultat_.pension_annuelle);
+    resultat_.pension_annuelle += garantie.complement;
+    resultat_.pension_mensuelle = resultat_.pension_annuelle / 12.0;
+    resultat_.garantie_vieillesse = garantie;
+    return resultat_;
+  }
+
+  /**
+   * Ce qui manque à la pension contributive pour atteindre le plancher.
+   *
+   * Le plancher d'une personne seule est la garantie de base plus l'allocation
+   * d'isolement ; celui d'une personne en couple est la garantie de base seule,
+   * et la pension du conjoint ne compte pas — c'est l'individualisation. L'âge
+   * est celui de l'ASPA, avec la même réserve : le modèle liquide et s'arrête.
+   */
+  _garantieVieillesse(carriere, pensionContributive) {
+    const parametres = this.parametres;
+    const annee = carriere.anneeLiquidation;
+    const coefficient = this.constructeur.macro.coefficientPrix(
+      parametres.annee_euros_garantie_vieillesse, annee,
+    );
+    const base = parametres.garantie_vieillesse_mensuelle * 12.0 * coefficient;
+    const isolement = parametres.situation_foyer === SituationFoyer.SEUL
+      ? parametres.allocation_isolement_mensuelle * 12.0 * coefficient
+      : 0.0;
+    const plancher = base + isolement;
+    const ageAtteint = (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE;
+    const complement = ageAtteint ? Math.max(0.0, plancher - pensionContributive) : 0.0;
+    return {
+      situation: parametres.situation_foyer,
+      age_atteint: ageAtteint,
+      coefficient_prix: coefficient,
+      base_annuelle: base,
+      isolement_annuel: isolement,
+      plancher_annuel: plancher,
+      pension_contributive: pensionContributive,
+      complement,
+      servie: complement > 0,
+    };
   }
 
   // -- scénario 3 ------------------------------------------------------------
@@ -208,8 +269,10 @@ export class ScenarioNotionnel {
 function resultat(champs) {
   return {
     // Le détail de la conversion des droits figés n'existe qu'en prospectif ;
-    // ailleurs il vaut null, comme du côté Python.
+    // ailleurs il vaut null, comme du côté Python. La garantie vieillesse, de
+    // même, n'existe que dans le scénario 6.
     droits_acquis: null,
+    garantie_vieillesse: null,
     ...champs,
     pension_mensuelle: champs.pension_annuelle / 12.0,
     /**
@@ -219,7 +282,7 @@ function resultat(champs) {
      * valeur dit ce qu'il donnerait s'il l'était.
      *
      * Ce n'est PAS ce qui est servi. Un régime provisionné n'est pas atteint
-     * par une réforme de la répartition : les cinq scénarios servent sa rente à
+     * par une réforme de la répartition : les six scénarios servent sa rente à
      * son propre barème, celui du scénario 1 (`pension_hors_repartition`), et
      * c'est cette valeur-là qui est affichée.
      */

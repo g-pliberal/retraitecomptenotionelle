@@ -18,16 +18,17 @@ Il n'y a donc ni minimum, ni majoration, ni trimestre gratuit : ce qui n'a pas
 été cotisé n'existe pas, et partir tôt coûte deux fois — moins de cotisations
 accumulées, et une rente à servir plus longtemps.
 
-Le modèle calcule **cinq scénarios pour une même carrière**, afin qu'ils soient
+Le modèle calcule **six scénarios pour une même carrière**, afin qu'ils soient
 comparables :
 
 | | Scénario | Ce qu'il mesure |
 |---|---|---|
-| **1** | Système actuel | Le droit en vigueur, minima et majorations compris. C'est la référence. Le total affiché est celui de la **répartition seule** : ce qui relève de la capitalisation (RAFP) est servi à part, à l'identique dans les cinq scénarios. |
+| **1** | Système actuel | Le droit en vigueur, minima et majorations compris. C'est la référence. Le total affiché est celui de la **répartition seule** : ce qui relève de la capitalisation (RAFP) est servi à part, à l'identique dans les six scénarios. |
 | **2** | Notionnel **rétroactif** depuis 1941 | Contrefactuel : toute la carrière recalculée sur les seules cotisations, comme si la règle avait toujours existé. |
 | **3** | Notionnel **à compter de 2026** | Réforme prospective : les droits déjà acquis sont figés — au contributif seul, avantages non contributifs retirés — puis convertis en capital, et les règles notionnelles s'appliquent ensuite. Qui a liquidé avant la bascule garde sa pension telle quelle : c'est ce qui distingue ce scénario du **2**. |
 | **4** | Le scénario **2**, part patronale comprise | Le même compte rétroactif, la cotisation de l'employeur en plus : celle de la fiche pour le privé, celle réellement versée — jusqu'à 82,28 % du traitement en 2026 — pour le public. |
 | **5** | Le scénario **3**, part patronale comprise | Le même compte prospectif, droits acquis conservés, avec la même part patronale en plus. |
+| **6** | La **proposition libérale** : le scénario **4** à 18 % pour tous, avec une garantie vieillesse | Le même compte rétroactif, cotisation entière, mais à un **taux unique de 18 %** — salariale et patronale additionnées, le même pour tous les statuts — et, par-dessus, une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
 
 Les comptes sont revalorisés, par défaut, sur la croissance de la **masse
 salariale** — l'assiette des cotisations, donc le rendement qu'un système en
@@ -56,13 +57,14 @@ print(simulateur.simuler(simulateur.carriere_simple(
 ```
 Agent de conduite SNCF né en 1955, parti à 50 ans (quinze ans avant l'âge de référence)
 
-Scénario                                                  Courants   Constants   Mensuel    Écart
-------------------------------------------------------------------------------------------------
-1. Système actuel                                          22,479€     31,472€    2,623€     réf.
-2. Notionnel rétroactif, part salariale                     2,131€      2,983€      249€   -90.5%
-3. Notionnel dès 2026, part salariale                      22,479€     31,472€    2,623€    +0.0%
-4. Notionnel rétroactif, salariale + patronale              5,390€      7,546€      629€   -76.0%
-5. Notionnel dès 2026, salariale + patronale               22,479€     31,472€    2,623€    +0.0%
+Scénario                                                          Courants   Constants   Mensuel    Écart
+--------------------------------------------------------------------------------------------------------
+1. Système actuel                                                  22,479€     31,472€    2,623€     réf.
+2. Notionnel rétroactif, part salariale                             2,131€      2,983€      249€   -90.5%
+3. Notionnel dès 2026, part salariale                              22,479€     31,472€    2,623€    +0.0%
+4. Notionnel rétroactif, salariale + patronale                      5,390€      7,546€      629€   -76.0%
+5. Notionnel dès 2026, salariale + patronale                       22,479€     31,472€    2,623€    +0.0%
+6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse        4,855€      6,797€      566€   -78.4%
 ```
 
 > Les scénarios 4 et 5 sont les scénarios 2 et 3, à une différence près et une
@@ -72,6 +74,18 @@ Scénario                                                  Courants   Constants 
 >
 > Les scénarios 3 et 5 sont ici identiques au système actuel parce que cet agent
 > a liquidé en 2005, avant la bascule : ses droits sont intégralement acquis.
+
+> **Le scénario 6 est la proposition du Parti libéral français**, et il se lit
+> contre le scénario 4 : même compte rétroactif, cotisation salariale et
+> patronale confondues, mêmes âges, même indexation, même liquidation. Deux
+> choses changent. Le taux — 18 % pour tous, là où le scénario 4 porte les taux
+> réellement en vigueur de chaque régime : les statuts qui cotisaient plus
+> descendent, ceux qui cotisaient moins remontent. Et un plancher — la seule
+> ligne des scénarios notionnels qui ne vienne pas d'une cotisation —, servi à
+> partir de 65 ans comme l'ASPA, mais **individualisé** : à 300 € et 1 500 €
+> dans un couple, l'ASPA ne sert rien, la garantie sert 500 € au premier. La
+> page de simulation détaille la garantie étape par étape, et la page Coût
+> compte à part ce que l'impôt en finance.
 
 > **Le scénario 2 n'est pas une proposition de réforme**, et l'écart qu'il
 > affiche ne mesure pas l'effet des comptes notionnels. Deux raisons, et aucune
@@ -99,7 +113,7 @@ Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, ave
 décomposition de l'écart règle par règle et la cascade qui mène du scénario 1 au
 scénario 3), **Cas types** (la grille 12 carrières × 7 générations),
 **Coût** (ce que la retraite a coûté depuis 1959, régime par régime, ce que les
-cinq systèmes auraient coûté, et ce qu'ils coûteraient d'ici 2070),
+six systèmes auraient coûté, et ce qu'ils coûteraient d'ici 2070),
 **Méthode**, **Données** (l'état de fiabilité des séries). Le pied de page
 renvoie aux **Mentions légales**, qui disent qui édite, qui héberge, ce que le
 site fait des données saisies — rien — et où en est son accessibilité.
@@ -242,14 +256,14 @@ print(simulateur.simuler(carriere).tableau())
 | Départ trop tôt = pension réduite | Âge de référence **à cliquet** : l'abaissement de 1982 ne le fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | SNCF à 50 ans = 15 ans d'anticipation ; Opéra à 40 ans = 25 ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
-| Cinq résultats comparables | Système actuel / notionnel rétroactif / notionnel prospectif sur la part salariale, puis les deux mêmes comptes notionnels part patronale comprise |
+| Six résultats comparables | Système actuel / notionnel rétroactif / notionnel prospectif sur la part salariale, puis les deux mêmes comptes notionnels part patronale comprise, puis la proposition libérale — le compte rétroactif à 18 % pour tous, avec une garantie vieillesse individualisée financée par l'impôt |
 | Cas particulier **et** cas général | Simulation individuelle + grille 12 cas types × 7 générations |
 | Fusion des régimes au cas le plus défavorable | Âge 64/67, 172 trimestres, carrière entière, assiette déplafonnée, zéro avantage |
 | Droits acquis respectés à la bascule | Conversion à l'âge de référence par défaut — le seul endroit où l'âge de départ pèse sur les droits d'avant la bascule, donc ce qui empêche de gagner à partir tôt ; l'âge de départ effectif est offert en variante, et la cascade de calcul est affichée |
 | Statuts comparables au même étalon | Les fiches publiques ne portent que la retenue de l'agent ; elle est alignée sur l'effort contributif total du privé, sans quoi on compare un demi-effort à un effort entier |
 | Part salariale et part patronale distinguées, pour tous | `part_salariale` dans chaque fiche de salariés — 40,87 % au régime général en 2023, 40 % à l'Agirc-Arrco —, et `sans_employeur` sur les cinq statuts qui cotisent seuls |
 | Part employeur du public, quand elle est publiée | Taux implicite de l'État 1995-2005, taux appelé par le CAS « Pensions » 2006-2026, CNRACL depuis 1948, SNCF 2007-2018 — portés au compte par les scénarios 4 et 5, et le modèle dit sur combien d'années il a dû s'en passer |
-| Capitalisation hors comparaison | Le RAFP et les assurances sociales de 1930 sont PROVISIONNÉS : leur rente sort d'un placement, non de la cotisation des actifs. Une réforme de la répartition ne les atteint pas — ils sont donc retirés des **cinq** totaux et servis à l'identique, à leur propre barème, affichés à côté |
+| Capitalisation hors comparaison | Le RAFP et les assurances sociales de 1930 sont PROVISIONNÉS : leur rente sort d'un placement, non de la cotisation des actifs. Une réforme de la répartition ne les atteint pas — ils sont donc retirés des **six** totaux et servis à l'identique, à leur propre barème, affichés à côté |
 | Le mois, là où le droit le date | Date de liquidation, année d'entrée et année de départ portées au compte au prorata de leurs mois, trimestres bornés aux trimestres civils écoulés, diviseur lu à l'âge exact, circulaire de revalorisation en vigueur à la date, générations que la loi coupe au 1<sup>er</sup> juillet 1951 et au 1<sup>er</sup> septembre 1961. Le pas du moteur reste l'année, parce que les séries le sont — voir [« Le mois, là où le droit le date »](docs/limites.md#le-mois-là-où-le-droit-le-date) |
 | Trimestres acquis par le revenu, pas par le temps | 150 SMIC horaires depuis 2014, 200 avant : un temps très partiel valide moins de quatre trimestres |
 | Motif d'interruption lu, pas seulement enregistré | Un chômage indemnisé ouvre des points complémentaires financés par l'UNEDIC ; un chômage non indemnisé n'ouvre rien |
@@ -487,20 +501,28 @@ for pension in comparaison.actuel.pensions_par_regime:
 ```
 Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 
-Scénario                                                  Courants   Constants   Mensuel    Écart
-------------------------------------------------------------------------------------------------
-1. Système actuel                                          42,656€     34,043€    2,837€     réf.
-2. Notionnel rétroactif, part salariale                     8,241€      6,577€      548€   -80.7%
-3. Notionnel dès 2026, part salariale                      25,690€     20,503€    1,709€   -39.8%
-4. Notionnel rétroactif, salariale + patronale             45,509€     36,321€    3,027€    +6.7%
-5. Notionnel dès 2026, salariale + patronale               31,176€     24,881€    2,073€   -26.9%
+Scénario                                                          Courants   Constants   Mensuel    Écart
+--------------------------------------------------------------------------------------------------------
+1. Système actuel                                                  41,065€     32,773€    2,731€     réf.
+2. Notionnel rétroactif, part salariale                             7,956€      6,349€      529€   -80.6%
+3. Notionnel dès 2026, part salariale                              24,862€     19,842€    1,654€   -39.5%
+4. Notionnel rétroactif, salariale + patronale                     43,933€     35,062€    2,922€    +7.0%
+5. Notionnel dès 2026, salariale + patronale                       30,158€     24,069€    2,006€   -26.6%
+6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse       14,744€     11,767€      981€   -64.1%
+--------------------------------------------------------------------------------------------------------
+   hors répartition (RAFP), servi à part, identique aux 6           1,424€      1,137€       95€     réf.
 
 Qui verse la cotisation, en euros courants cumulés :
-  part salariale           138,298 €   scénarios 2 et 3
-  part patronale           524,169 €   soit 79% du total
-  total                    662,467 €   scénarios 4 et 5
+  part salariale           136,530 €   scénarios 2 et 3
+  part patronale           521,583 €   soit 79% du total
+  total                    658,113 €   scénarios 4 et 5
   contribution employeur publique trouvée sur 29 année(s)
 ```
+
+Le scénario 6 tombe ici loin sous le scénario 4 — et c'est le taux, pas la
+garantie : à 18 % pour tous, la cotisation entière d'un fonctionnaire cesse
+d'être les 82,28 % que l'État verse en 2026, et la pension contributive dépasse
+de toute façon le plancher.
 
 L'employeur verse ici 79 % du total. C'est l'ordre de grandeur d'un taux
 d'**équilibre**, et c'est la limite du scénario 4 : 82,28 % ne signifie pas
@@ -556,10 +578,12 @@ par la probabilité d'être en vie lue dans les tables de mortalité du dépôt 
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | 14 987 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 3 408 Md € | −77,3 % |
+| 2. Notionnel rétroactif, part salariale | 3 743 Md € | −75,0 % |
 | 3. Notionnel dès 2026, part salariale | 14 987 Md € | +0,0 % |
-| 4. Notionnel rétroactif, salariale + patronale | 6 679 Md € | −55,4 % |
+| 4. Notionnel rétroactif, salariale + patronale | 6 863 Md € | −54,2 % |
 | 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
+| 6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse | 8 148 Md € | −45,6 % |
+| *dont garantie vieillesse du 6, financée par l'impôt* | *48 Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -572,8 +596,11 @@ bascule était avancée avant la dernière année observée.
 
 L'écart du scénario 2 ne mesure pas, lui non plus, l'effet des comptes
 notionnels : il mesure la part salariale seule — le scénario 4, qui ajoute la
-part patronale, coûte 96 % de plus — et la règle d'indexation, dont le résultat
-1 ci-dessus montre qu'elle domine tout.
+part patronale, coûte 83 % de plus — et la règle d'indexation, dont le résultat
+1 ci-dessus montre qu'elle domine tout. Le scénario 6, à 18 % pour tous, se
+place entre les deux ; sa garantie vieillesse n'y pèse que 48 milliards sur
+soixante-six ans, parce qu'un seul des douze cas types liquide à 65 ans ou
+après — c'est un ordre de grandeur bas, et la page le dit.
 
 Les poids de génération ne sont pas supposés : ce sont les effectifs de la
 **pyramide des âges de l'INSEE**, observés jusqu'en 2023. Restent deux limites,
@@ -584,7 +611,7 @@ chose — aucune institution ne publie le coût d'un système qui n'a pas exist�
 
 ### 5. Une réforme prospective ne fait rien économiser tout de suite, et beaucoup ensuite
 
-Le passé ne se change pas ; l'avenir, si. La page **Coût** projette donc les cinq
+Le passé ne se change pas ; l'avenir, si. La page **Coût** projette donc les six
 systèmes jusqu'en **2070**, horizon des projections de population de l'INSEE — ni
 plus, ni moins : c'est la source qui borne la page, pas une décision du dépôt.
 
@@ -598,15 +625,16 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 
 | Système | Coût 2070 | Part du PIB 2070 | Cumul 2025-2070 | Écart |
 |---|---|---|---|---|
-| 1. Système actuel | 546 Md € | **14,8 %** | 22 098 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 251 Md € | 6,8 % | 8 054 Md € | −63,6 % |
-| 3. Notionnel dès 2026, part salariale | 322 Md € | **8,7 %** | 17 973 Md € | −18,7 % |
-| 4. Notionnel rétroactif, salariale + patronale | 459 Md € | 12,4 % | 16 938 Md € | −23,4 % |
-| 5. Notionnel dès 2026, salariale + patronale | 471 Md € | 12,7 % | 20 548 Md € | −7,0 % |
+| 1. Système actuel | 564 Md € | **15,2 %** | 22 562 Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | 237 Md € | 6,4 % | 8 546 Md € | −62,1 % |
+| 3. Notionnel dès 2026, part salariale | 303 Md € | **8,2 %** | 17 810 Md € | −21,1 % |
+| 4. Notionnel rétroactif, salariale + patronale | 427 Md € | 11,5 % | 16 691 Md € | −26,0 % |
+| 5. Notionnel dès 2026, salariale + patronale | 439 Md € | 11,9 % | 20 172 Md € | −10,6 % |
+| 6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse | 289 Md € | 7,8 % | 11 348 Md € | −49,7 % |
 
 Trois choses à lire dans ce tableau.
 
-**Le système actuel ne dérape pas.** Il passe de 13,6 % du PIB en 2024 à 14,8 %
+**Le système actuel ne dérape pas.** Il passe de 13,6 % du PIB en 2024 à 15,2 %
 en 2070, alors que le nombre de personnes de 65 ans ou plus rapporté aux 20-64
 ans passe de 0,39 à 0,62. Ce qui absorbe le choc est l'indexation sur les prix,
 qui fait décrocher les pensions des salaires génération après génération. Le
@@ -616,8 +644,8 @@ sans rien de commun, à un demi-point l'un de l'autre. C'est le meilleur contrô
 externe dont ce dépôt dispose.
 
 **Une réforme prospective met une génération à produire son effet.** Le scénario
-3 ne fait rien économiser en 2026 — les droits acquis sont conservés —, 1,2 point
-de PIB en 2040, 2,6 points en 2050, et 6,1 points en 2070. Décider vite ne fait
+3 ne fait rien économiser en 2026 — les droits acquis sont conservés —, 1,3 point
+de PIB en 2040, 3,0 points en 2050, et 7,0 points en 2070. Décider vite ne fait
 pas économiser vite ; cela fait économiser longtemps.
 
 **L'écart entre 3 et 5 mesure encore une seule chose** : ce que verse
@@ -830,7 +858,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          529 tests Python
+tests/                          538 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et le relevé d'OpenFisca-France-Pension qui sert
                                 de contre-expertise au scénario 1

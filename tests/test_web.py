@@ -695,6 +695,32 @@ def test_requete_reconstruit_les_parametres():
     assert "statut=mineur" in requete
 
 
+def test_la_situation_de_foyer_traverse_l_adresse_et_le_modele():
+    """« foyer=couple » retire l'allocation d'isolement du scénario 6, et rien
+    d'autre : l'adresse la porte, le formulaire la relit, le modèle la reçoit."""
+    from retraite_notionnelle.config import Parametres, SituationFoyer
+
+    saisie = Saisie.depuis_requete({"foyer": "couple"})
+    assert saisie.foyer == "couple"
+    assert "foyer=couple" in saisie.requete()
+    assert saisie.parametres(Parametres()).situation_foyer is SituationFoyer.COUPLE
+    assert Saisie.depuis_requete({"foyer": "n'importe quoi"}).foyer == "seul"
+
+
+def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
+    """À 65 ans et à petit salaire, la garantie est servie et la page dit
+    combien l'impôt en finance ; à 62 ans, elle dit pourquoi rien n'est servi."""
+    texte = page("/", naissance=1958, liquidation=65, salaire=1500,
+                 unite_revenu="euros_mois")
+    assert "Le scénario 6 : un taux pour tous" in texte
+    assert "Garantie vieillesse servie" in texte
+    assert "l'impôt en finance" in texte
+    assert "personne seule, 300 €" in texte
+    texte = page("/", naissance=1958, liquidation=62, salaire=1500,
+                 unite_revenu="euros_mois")
+    assert "avant les 65 ans" in texte
+
+
 # -- rendu -------------------------------------------------------------------
 
 
@@ -1152,11 +1178,11 @@ def _verifier_cascade(nom, corps, pas_diviseur, pas_facteur):
     assert abs(valeur["e"] / coefficient["f"] - valeur["f"]) <= borne, f"{nom} : f)"
 
 
-def test_les_cinq_scenarios_donnent_le_meme_montant_au_mois_et_a_l_annee(contexte):
-    """Mensuel × 12 = annuel, sur les nombres affichés, pour les cinq blocs."""
+def test_les_six_scenarios_donnent_le_meme_montant_au_mois_et_a_l_annee(contexte):
+    """Mensuel × 12 = annuel, sur les nombres affichés, pour les six blocs."""
     corps = rendre(contexte, "/", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
-    assert len(blocs) == 5, f"{len(blocs)} scénarios affichés, cinq attendus"
+    assert len(blocs) == 6, f"{len(blocs)} scénarios affichés, six attendus"
     for bloc in blocs:
         mensuel = _nombres(re.search(r'principal">(.*?)</span>\s*<span class="annuel',
                                      bloc, re.S).group(1))[0]
@@ -1192,6 +1218,10 @@ def test_les_colonnes_derivees_de_la_page_cout_se_refont(contexte):
             cumul = milliards(ligne[rang_cumul])
             if reference is None:
                 reference = cumul
+                continue
+            if "—" in ligne[rang_ecart]:
+                # La composante « dont garantie vieillesse » du scénario 6 :
+                # une part d'une ligne, pas un système, et sans écart à refaire.
                 continue
             ecart = float(re.search(r"(-?[\d,+]+)\u202f%", ligne[rang_ecart])
                           .group(1).replace(",", ".").lstrip("+"))
@@ -1403,7 +1433,7 @@ def test_le_resume_vocal_annonce_bien_les_montants(contexte):
     """Et le sélecteur doit trouver quelque chose, pas seulement exister."""
     corps = rendre(contexte, "/", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
-    assert len(blocs) == 5
+    assert len(blocs) == 6
     for bloc in blocs:
         assert re.search(r'class="titre">[^<]+<', bloc), "scénario sans titre"
         assert re.search(r'class="chiffre principal">\s*<span class="somme">[^<]+<',
@@ -1844,7 +1874,7 @@ CHROMA_MINIMAL = 0.10
 ECART_MINIMAL_VISION_NORMALE = 15.0
 
 SCENARIOS_COLORES = ("actuel", "retroactif", "prospectif",
-                     "retroactif-employeur", "prospectif-employeur")
+                     "retroactif-employeur", "prospectif-employeur", "liberal")
 
 
 def _oklab(hexa: str) -> tuple[float, float, float]:
@@ -1865,7 +1895,7 @@ def _oklab(hexa: str) -> tuple[float, float, float]:
 
 
 def _palette(theme: str) -> list[str]:
-    """Les cinq couleurs de scénario lues dans la feuille de style.
+    """Les six couleurs de scénario lues dans la feuille de style.
 
     Le thème sombre les redéfinit dans un bloc ``prefers-color-scheme`` : on
     prend la DERNIÈRE définition pour le sombre, la première pour le clair.
@@ -1881,7 +1911,7 @@ def _palette(theme: str) -> list[str]:
 
 @pytest.mark.parametrize("theme", ["clair", "sombre"])
 def test_la_palette_des_scenarios_reste_lisible(theme):
-    """Cinq courbes qui se croisent ne peuvent pas être séparées par la couleur
+    """Six courbes qui se croisent ne peuvent pas être séparées par la couleur
     seule si cette couleur est trop pâle ou trop proche de sa voisine.
 
     La palette précédente échouait aux trois contrôles : quatre de ses cinq
@@ -1891,7 +1921,7 @@ def test_la_palette_des_scenarios_reste_lisible(theme):
     dérive qui l'avait provoquée.
     """
     couleurs = _palette(theme)
-    assert len(set(couleurs)) == 5, "deux scénarios partagent une couleur"
+    assert len(set(couleurs)) == 6, "deux scénarios partagent une couleur"
     bas, haut = BANDE_LUMINOSITE[theme]
     for couleur in couleurs:
         clarte, a, b = _oklab(couleur)
