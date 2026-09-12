@@ -59,8 +59,20 @@ cnbf,1948,2100,0.0650,estimee
 cnbf_complementaire,1979,2100,0.0850,estimee
 rafp,2005,2100,0.0389,haute
 ircec_raap,1962,2100,0.1090,haute
-# 3 210,60 € pour six points, soit 535,10 € le point, servi 31,82 €.
-carcdsf_complementaire,1949,2100,0.0595,moyenne
+# CARCDSF complémentaire : rendement RECALCULÉ ANNÉE PAR ANNÉE depuis les
+# mémentos du chirurgien-dentiste, qui donnent pour chaque exercice la
+# cotisation forfaitaire, les six points qu'elle attribue — d'où le prix du
+# point, forfait ÷ 6 — et la valeur de service en regard. La caisse écrit
+# elle-même que la part proportionnelle achète au même prix : « 18 181 € /
+# 448,40 € = 40,54 points » (mémento 2020, note 5). Le conseil pilote le
+# rendement à 5,95 % : il n'a pas quitté la bande 5,92 – 5,97 % en sept
+# exercices. Avant 2020 la caisse ne publie rien ; la valeur centrale de cette
+# bande est reconduite, et c'est une estimation.
+carcdsf_complementaire,1949,2019,0.0595,estimee
+carcdsf_complementaire,2020,2021,0.0592,moyenne
+carcdsf_complementaire,2022,2022,0.0597,moyenne
+carcdsf_complementaire,2023,2025,0.0595,moyenne
+carcdsf_complementaire,2026,2100,0.0595,moyenne
 # CARMF complémentaire : rendement RECALCULÉ ANNÉE PAR ANNÉE depuis « La
 # chronologie des chiffres de la CARMF », qui donne d'un côté la valeur de
 # service du point et de l'autre la cotisation maximale et les points
