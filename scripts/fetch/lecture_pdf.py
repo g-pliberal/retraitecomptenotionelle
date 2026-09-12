@@ -145,19 +145,32 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
         if not contenu or (b"Tj" not in contenu and b"TJ" not in contenu):
             continue
         x = y = 0.0
+        # ÉCHELLE DE LA MATRICE DE TEXTE. `Tm` ne pose pas seulement une
+        # position, il pose un repère : « 9 0 0 9 82.97 723.62 Tm » place le
+        # curseur ET multiplie par neuf tout ce qui suit. Les décalages `Td`
+        # qui viennent ensuite sont exprimés dans CE repère, pas en points de
+        # la page. Les additionner tels quels, comme le faisait cette
+        # fonction, écrasait les interlignes d'un facteur neuf : des lignes
+        # distantes de 14,4 points sur la feuille se retrouvaient à 1,6 l'une
+        # de l'autre, donc sous la tolérance de regroupement, donc fondues en
+        # une seule. C'est ce qui rendait illisibles les tableaux de la
+        # chronologie de la CARMF — trente-six lignes ramenées à quatre.
+        echelle_x = echelle_y = 1.0
         interligne = 0.0
         police = None
         for jeton in JETONS.finditer(contenu):
             if jeton.group("tm"):
                 nombres = jeton.group("tm").split()
+                echelle_x, echelle_y = float(nombres[0]), float(nombres[3])
                 x, y = float(nombres[4]), float(nombres[5])
             elif jeton.group("td"):
                 nombres = jeton.group("td").split()
-                x, y = x + float(nombres[0]), y + float(nombres[1])
+                x += float(nombres[0]) * echelle_x
+                y += float(nombres[1]) * echelle_y
                 if jeton.group("td").rstrip().endswith(b"TD"):
-                    interligne = -float(nombres[1])
+                    interligne = -float(nombres[1]) * echelle_y
             elif jeton.group("tl"):
-                interligne = float(jeton.group("tl").split()[0])
+                interligne = float(jeton.group("tl").split()[0]) * echelle_y
             elif jeton.group("etoile") or jeton.group("retour"):
                 y -= interligne
             elif jeton.group("tf"):
