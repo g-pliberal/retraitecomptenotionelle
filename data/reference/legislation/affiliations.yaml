@@ -107,6 +107,19 @@ affiliations:
       La borne de 1979 est celle du décret n° 79-262 du 21 mars 1979, qui
       institue le complémentaire des architectes.
 
+  expert_comptable:
+    libelle: Expert-comptable ou commissaire aux comptes
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1952, regimes: [cnavpl]}
+      - {debut: 1953, fin: null, regimes: [cnavpl, cavec_complementaire]}
+    note: >-
+      La CAVEC gère pour le compte de la CNAVPL le régime de base des
+      professions libérales, et pilote en propre son complémentaire — institué
+      en 1953, et par CLASSES depuis l'origine : « un système de points avec
+      cotisations indépendantes du revenu », écrit la caisse. C'est lui qui
+      pèse l'essentiel de la pension d'un expert-comptable.
+
   avocat:
     libelle: Avocat
     sans_employeur: true

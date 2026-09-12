@@ -75,6 +75,15 @@ ircec_raap,1962,2100,0.1090,haute
 # rendement à 5,95 % : il n'a pas quitté la bande 5,92 – 5,97 % en sept
 # exercices. Avant 2020 la caisse ne publie rien ; la valeur centrale de cette
 # bande est reconduite, et c'est une estimation.
+# CAVEC : rendement vérifié sur les neuf classes du guide annuel 2026 — la
+# classe D cotise 8 282 € pour 498 points, servis 1,3850 €, soit 8,33 %, et les
+# huit autres donnent le même à un dix-millième près. C'est aussi le chiffre
+# que la caisse annonce en toutes lettres. À partir de 2027, 8,25 % : les
+# statuts approuvés par l'arrêté du 4 juillet 2025 en font une CIBLE STATUTAIRE
+# — « ces paramètres sont déterminés de sorte que le taux de rendement […]
+# atteigne 8,25 % à échéance de l'année 2027 ». Avant 2026 rien n'est publié.
+cavec_complementaire,1953,2026,0.0833,moyenne
+cavec_complementaire,2027,2100,0.0825,haute
 # Cipav : la caisse publie les trois grandeurs ensemble — valeur d'achat,
 # valeur de service, et le rendement qui les rapporte. 42,43 € et 2,63 € en
 # 2022, soit 6,20 % ; 45,30 € et 2,77 € en 2023, soit 6,10 % que la caisse

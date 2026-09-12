@@ -45,8 +45,20 @@
 # plafond a crû plus vite que les prix, et une grille reportée vers l'amont en
 # euros constants rangerait presque tout le monde dans la première classe.
 #
-# Repère de contrôle : Cipav 2022, un revenu de 27 000 € tombe en classe B et
-# doit 3 055 € — c'est l'exemple que la caisse déroule elle-même.
+# CE QUE L'INDEXATION SUR LE PLAFOND SUPPOSE, RÉGIME PAR RÉGIME. Pour la Cipav
+# elle est DÉMONTRÉE par l'arithmétique ci-dessus. Pour la CAVEC elle est un
+# CHOIX : ses neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
+# 3,77 plafonds de 2026, et rien n'y est rond. Le plafond reste la meilleure
+# échelle disponible pour une grille assise sur des revenus — mieux que les
+# prix, qui ont crû moins vite —, mais c'est une convention, et la fiche le dit.
+#
+# Repères de contrôle : Cipav 2022, un revenu de 27 000 € tombe en classe B et
+# doit 3 055 € — c'est l'exemple que la caisse déroule elle-même. CAVEC 2026,
+# un revenu de 50 000 € tombe en classe D et doit 8 282 €, qui ouvrent 498
+# points ; 498 × 1,3850 € / 8 282 € = 8,33 %, le rendement que la caisse
+# annonce. Les neuf classes donnent le même à un dix-millième près : c'est ce
+# qui autorise à convertir la cotisation par le rendement plutôt que par une
+# table de points.
 regime,annee,revenu_maximum,cotisation,fiabilite
 cipav_complementaire,2022,26580,1527,haute
 cipav_complementaire,2022,49280,3055,haute
@@ -56,3 +68,12 @@ cipav_complementaire,2022,83060,10692,haute
 cipav_complementaire,2022,103180,16802,haute
 cipav_complementaire,2022,123300,18329,haute
 cipav_complementaire,2022,,19857,haute
+cavec_complementaire,2026,14919,898,haute
+cavec_complementaire,2026,31842,3476,haute
+cavec_complementaire,2026,44822,5554,haute
+cavec_complementaire,2026,65572,8282,haute
+cavec_complementaire,2026,81454,12589,haute
+cavec_complementaire,2026,99946,18260,haute
+cavec_complementaire,2026,134854,20222,haute
+cavec_complementaire,2026,181208,25627,haute
+cavec_complementaire,2026,,30616,haute
