@@ -1900,6 +1900,35 @@ institutions:
           point est « fixé annuellement par le conseil d'administration ». Le
           chercher au Journal officiel est un trajet à ne pas refaire.
 
+      - id: cavec_guide_annuel
+        titre: >-
+          Guide annuel retraite et prévoyance de la CAVEC — grille des classes,
+          points et valeur du point
+        url: https://www.cavec.fr/wp-content/uploads/Guide-annuel-retraite-prevoyance.pdf
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/classes_cotisation.csv
+        note: >-
+          Le guide donne la grille entière du complémentaire — neuf classes, de
+          898 € jusqu'à 14 919 € de revenus à 30 616 € au-delà de 181 208 € —
+          ET, en regard de chacune, LE NOMBRE DE POINTS QU'ELLE OUVRE. Avec la
+          valeur de service de 1,3850 € en 2026, le rendement se vérifie ligne
+          à ligne : 498 points pour 8 282 € en classe D, soit 8,33 %, et les
+          huit autres classes donnent le même à un dix-millième près. C'est
+          aussi le chiffre que la caisse annonce.
+          CE QUE LE JOURNAL OFFICIEL AJOUTE. Les statuts approuvés par l'arrêté
+          du 4 juillet 2025 fixent une cible au conseil d'administration : « ces
+          paramètres sont déterminés de sorte que le taux de rendement du régime
+          d'assurance vieillesse complémentaire atteigne 8,25 % à échéance de
+          l'année 2027 ». Un rendement futur écrit au Journal officiel : la
+          fiche le porte à partir de cet exercice.
+          UNE OPTION QUE LE MODÈLE NE PREND PAS : « vous pouvez opter pour la
+          classe immédiatement supérieure à celle qui correspond à vos
+          revenus ». Avantage facultatif, donc écarté — même règle que pour la
+          classe C1 des avocats.
+          CE QUI MANQUE : toute série. Un seul millésime est publié, et
+          soixante-dix ans sont reportés depuis lui.
+
       - id: cipav_fiches_pratiques
         titre: >-
           Fiches pratiques annuelles de la Cipav — cotisations, classes,

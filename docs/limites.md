@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 46 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 47 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1974,7 +1974,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
-| Professions libérales (CNAVPL) | les complémentaires de six sections sur dix — CARPIMKO, CAVAMAC, CAVP, CAVEC, CPRN, CARPV, CAVOM ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les quatre qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), et la Cipav pour le statut générique | **sous-estime** la pension d'un libéral d'une des six sections restantes, fortement : la complémentaire y pèse souvent plus lourd que la base |
+| Professions libérales (CNAVPL) | les complémentaires de six sections sur dix — CARPIMKO, CAVAMAC, CAVP, CPRN, CARPV, CAVOM ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les cinq qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), experts-comptables (CAVEC), et la Cipav pour le statut générique | **sous-estime** la pension d'un libéral d'une des six sections restantes, fortement : la complémentaire y pèse souvent plus lourd que la base |
 | Marins (ENIM) | la grille des salaires forfaitaires par catégorie et par année, qui est l'assiette réelle du régime | le revenu déclaré, plafonné comme au régime général | **indéterminé** : la grille est plus favorable que le salaire réel aux bas revenus, moins au-delà. L'écart porte sur l'assiette, donc sur la pension ET sur le compte notionnel, en partie compensé |
 | Avocats (CNBF) | la cotisation forfaitaire de base, de 363 à 1 988 €/an selon l'ancienneté ; les tranches de la grille complémentaire d'avant 2019 | seule la cotisation proportionnelle de 3,20 % alimente le compte ; les années d'avant 2019 restent au rendement instantané | **sous-estime le flux versé**, donc la pension notionnelle, sans toucher à la pension actuelle — qui est forfaitaire et ne dépend pas de la cotisation. L'écart joue donc contre les scénarios notionnels |
 | Non-salariés agricoles | le barème de points du régime de base (23 à 113 points par tranche de revenu), que personne ne publie ; les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans | la retraite forfaitaire et la RCO, dont le barème en points est public | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **46 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **47 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2156,7 +2156,7 @@ ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
 | **CAVP**, pharmaciens | régime MIXTE : part en répartition forfaitaire de 7 657 € (taux d'appel 105,4 % en 2026), part en CAPITALISATION de 2 906 à 17 436 € selon la classe | absente | **absent** |
 | **CAVOM**, officiers ministériels | les taux publiés sont ceux de la base CNAVPL, pas du complémentaire | absente | **absent** |
 | **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous |
-| **CAVEC**, experts-comptables | neuf classes | 1,3850 € (2026) | rendement 8,33 % publié, mais classes |
+| **CAVEC**, experts-comptables | neuf classes, de 898 € à 30 616 € | 1,3850 € (2026) | rendement 8,33 %, vérifié sur les neuf classes. FICHE ÉCRITE |
 | CARCDSF, CARPV, CRN | la CARCDSF a depuis abouti (fiche écrite) ; les deux autres restent sans barème lisible | — | — |
 
 Deux remarques que ce relevé impose. La première : **la CAVP n'est pas un régime
@@ -2277,9 +2277,23 @@ valent 0,646, 1,198, 1,406, 1,614, 2,019, 2,508 et 2,997 — soit 0,65, 1,2,
 Sept bornes sur sept à un demi-pour-cent d'un multiple rond : la grille est
 écrite en plafonds, et l'indexer sur les prix la déformerait.
 
-Ce qui reste à faire tient au même mécanisme et à des données qui, elles,
-existent : la CAVEC (neuf classes, rendement de 8,33 % publié), la part
-répartie de la CAVP, et le RAAP d'avant 2017.
+**La CAVEC a suivi**, et son guide annuel donnait plus que la grille : en
+regard de chaque classe, LE NOMBRE DE POINTS QU'ELLE OUVRE. Avec la valeur de
+service de 1,3850 €, le rendement se vérifie ligne à ligne — 498 points pour
+8 282 € en classe D, soit 8,33 %, et les huit autres classes donnent le même à
+un dix-millième près. Les statuts approuvés par l'arrêté du 4 juillet 2025
+ajoutent un chiffre qu'aucune caisse ne publie d'ordinaire : une CIBLE de
+rendement, « 8,25 % à échéance de l'année 2027 ».
+
+Chez elle l'indexation de la grille sur le plafond est un CHOIX et non une
+démonstration : ses neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08,
+2,81 et 3,77 plafonds de 2026, et rien n'y est rond. Le plafond reste la
+meilleure échelle pour une grille assise sur des revenus, mais soixante-dix ans
+reportés depuis un seul millésime, c'est la limite de cette fiche, et elle est
+grande.
+
+Ce qui reste à faire tient au même mécanisme : la part répartie de la CAVP, et
+le RAAP d'avant 2017.
 
 UN PIÈGE DÉCOUVERT EN CHEMIN, et refermé par un test. La table des tranches
 d'assiette existe DEUX FOIS — `BORNES_ASSIETTE` dans `donnees/regimes.py` et
@@ -2585,7 +2599,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 30 statuts », « 46 régimes » —, parce que ce sont des chiffres de données et
+« 31 statuts », « 47 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas

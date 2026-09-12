@@ -2405,6 +2405,93 @@ regimes:
           pour six points, d'où un prix du point de 535,10 € ; la valeur de
           service étant de 31,82 €, le rendement reste 5,95 %.
 
+  - code: cavec_complementaire
+    nom: >-
+      Régime complémentaire des experts-comptables et des commissaires aux
+      comptes (CAVEC)
+    famille: liberal
+    source_id: cavec_guide_annuel
+    fiabilite: moyenne
+    creation: 1953
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Experts-comptables et commissaires aux comptes, libéraux comme salariés.
+      La caisse gère pour le compte de la CNAVPL le régime de base des
+      professions libérales, et pilote en propre ce complémentaire — qui pèse
+      l'essentiel de la pension.
+    hors_repartition: false
+    periodes:
+      - debut: 1953
+        fin: 2026
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_4_pass
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        notes: >-
+          COTISATION PAR CLASSES depuis l'origine : « institué en 1953, ce
+          régime fonctionnait selon un système de points avec cotisations
+          INDÉPENDANTES DU REVENU », écrit la caisse dans son histoire. Il l'est
+          resté, à ceci près que la classe est aujourd'hui déterminée par le
+          revenu. Le guide annuel 2026 en donne la grille : neuf classes, de
+          898 € jusqu'à 14 919 € de revenus à 30 616 € au-delà de 181 208 €.
+          UNE OPTION EXISTE, ET LE MODÈLE NE LA PREND PAS. « Vous pouvez opter
+          pour la classe immédiatement supérieure à celle qui correspond à vos
+          revenus », écrit le guide. C'est un avantage facultatif, et le dépôt
+          ne prête jamais à personne un choix qu'il ne peut pas connaître —
+          même règle que pour la classe C1 des avocats.
+          LE RENDEMENT SE VÉRIFIE SUR CHAQUE LIGNE. Le guide donne, en regard de
+          chaque classe, le nombre de points qu'elle ouvre, et la valeur de
+          service 2026 est de 1,3850 €. La classe D cotise 8 282 € pour 498
+          points, soit 498 × 1,3850 / 8 282 = 8,33 % — et les neuf classes
+          donnent le même à un dix-millième près. C'est ce qui autorise à
+          convertir la cotisation par le rendement plutôt que par une table de
+          points, et 8,33 % est aussi le chiffre que la caisse annonce.
+          UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2026, ramené aux autres
+          exercices par le rapport des plafonds. Pour la Cipav cette règle est
+          démontrée par l'arithmétique de sa grille ; ici elle est un CHOIX —
+          les neuf bornes valent 0,31, 0,66, 0,93, 1,36, 1,69, 2,08, 2,81 et
+          3,77 plafonds, et rien n'y est rond. Soixante-dix ans reportés depuis
+          une seule grille : c'est la limite de cette fiche, et elle est
+          grande.
+      - debut: 2027
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_4_pass
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        notes: >-
+          Les statuts approuvés par l'arrêté du 4 juillet 2025 fixent une cible
+          au conseil : « ces paramètres sont déterminés de sorte que le taux de
+          rendement du régime d'assurance vieillesse complémentaire atteigne
+          8,25 % à échéance de l'année 2027 ». C'est ce rendement que porte
+          `rendements_points.csv` à partir de cet exercice — un chiffre écrit au
+          Journal officiel, et non une extrapolation.
+
   - code: cipav_complementaire
     nom: >-
       Régime complémentaire de la Caisse interprofessionnelle de prévoyance et
