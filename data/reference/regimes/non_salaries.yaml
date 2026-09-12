@@ -2477,6 +2477,88 @@ regimes:
           pour six points, d'où un prix du point de 535,10 € ; la valeur de
           service étant de 31,82 €, le rendement reste 5,95 %.
 
+  - code: cavp_complementaire
+    nom: >-
+      Régime complémentaire par répartition des pharmaciens (CAVP)
+    famille: liberal
+    source_id: cavp_mementos
+    fiabilite: moyenne
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Pharmaciens et biologistes libéraux. Le complémentaire de la CAVP a DEUX
+      VOLETS : celui-ci, en répartition, et un volet en CAPITALISATION par
+      classes, qui n'est pas au catalogue — un compte notionnel ne porte que
+      la répartition, et le volet capitalisé ne se laisse de toute façon pas
+      chiffrer sans la grille des classes.
+    hors_repartition: false
+    periodes:
+      - debut: 1949
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.005
+        avantages_non_contributifs: [reversion]
+        cotisation_forfaitaire_euros: 6880.00
+        cotisation_forfaitaire_annee: 2024
+        notes: >-
+          COTISATION FORFAITAIRE, ET ELLE L'EST VRAIMENT. Le volet capitalisé de
+          ce régime est réparti en classes, mais le volet en RÉPARTITION ne
+          l'est pas : le mémento de la caisse aligne les classes 3 à 13 en
+          colonnes et la ligne « Part gérée par répartition » y porte le même
+          montant partout. 6 880 € en 2024, quel que soit le revenu.
+          LA PENSION SE COMPTE EN ANNUITÉS, pas en points : « RÉGIME
+          COMPLÉMENTAIRE PAR RÉPARTITION : nombre d'années validées × 320,75 »,
+          écrit le mémento 2024. Le moteur, lui, convertit une cotisation par un
+          rendement — et les deux écritures coïncident exactement, la cotisation
+          étant constante : 6 880 × 4,66 % = 320,75 €. Une carrière de N années
+          rend N × 320,75 € des deux façons.
+          Le régime est institué par le décret n° 49-580 du 22 avril 1949, que
+          les arrêtés d'approbation de ses statuts visent encore aujourd'hui.
+          UN SEUL MILLÉSIME EST PUBLIÉ ICI AUSSI : le forfait de 2024, reconduit
+          en euros constants vers l'amont — soixante-quinze ans depuis un seul
+          chiffre, et la fiche ne vaut pas mieux que cela.
+      - debut: 2026
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.005
+        avantages_non_contributifs: [reversion]
+        cotisation_forfaitaire_euros: 7657.00
+        cotisation_forfaitaire_annee: 2026
+        notes: >-
+          7 657 € en 2026, et le rendement recule : la cotisation « intègre en
+          2026 un TAUX D'APPEL DE 105,4 % QUI NE PRODUIRA AUCUN DROIT de
+          retraite afin de garantir la soutenabilité financière du volet géré
+          en répartition », écrit la caisse. Le décret n° 2025-1076 du 10
+          novembre 2025 le prévoit.
+          Le compte notionnel porte ce qui est VERSÉ, taux d'appel compris ;
+          c'est donc le rendement qui absorbe l'écart — 328,80 € servis pour
+          7 657 € appelés, soit 4,29 % contre 4,66 % en 2024.
+
   - code: cavec_complementaire
     nom: >-
       Régime complémentaire des experts-comptables et des commissaires aux

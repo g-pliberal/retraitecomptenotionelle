@@ -1915,6 +1915,39 @@ institutions:
           point est « fixé annuellement par le conseil d'administration ». Le
           chercher au Journal officiel est un trajet à ne pas refaire.
 
+      - id: cavp_mementos
+        titre: >-
+          Mémentos annuels de la CAVP — cotisations des deux volets du
+          complémentaire et formule de calcul de la retraite
+        url: https://www.cavp.fr/media/documents/Publications/2024/CAVP-2024-MEMENTO-DEBUT-EXERCICE-PL.pdf
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/rendements_points.csv
+        note: >-
+          DEUX CHOSES QUE LE MÉMENTO RÈGLE D'UN COUP. La première : le volet en
+          RÉPARTITION n'est pas par classes. Le tableau aligne les classes 3 à
+          13 en colonnes, et la ligne « Part gérée par répartition » y porte le
+          même montant partout — 6 880 € en 2024, quel que soit le revenu. Seul
+          le volet CAPITALISÉ est par classes, et il n'est pas de la
+          répartition.
+          La seconde : la formule. « LE CALCUL D'UNE RETRAITE CAVP À TAUX PLEIN
+          EN 2024 — RÉGIME COMPLÉMENTAIRE PAR RÉPARTITION : nombre d'années
+          validées × 320,75 ». Le régime compte en ANNUITÉS, pas en points, et
+          320,75 / 6 880 = 4,66 % : le rendement du dépôt reproduit la formule
+          exactement, la cotisation étant constante.
+          EN 2026 la cotisation passe à 7 657 € et l'annuité à 328,80 €, mais la
+          hausse « intègre un TAUX D'APPEL DE 105,4 % qui ne produira aucun
+          droit de retraite afin de garantir la soutenabilité financière du
+          volet géré en répartition » (décret n° 2025-1076 du 10 novembre
+          2025). Le rendement de ce qui est VERSÉ tombe donc à 4,29 %, et c'est
+          celui-là qu'un compte notionnel doit porter.
+          Le régime est institué par le décret n° 49-580 du 22 avril 1949, que
+          les arrêtés d'approbation des statuts visent encore — trouvé dans le
+          dump JORF, la caisse ne le citant nulle part.
+          CE QUI MANQUE : la grille des classes du volet capitalisé, composée
+          dans une police sans table de correspondance ; et toute série, un
+          seul millésime étant publié.
+
       - id: cavec_guide_annuel
         titre: >-
           Guide annuel retraite et prévoyance de la CAVEC — grille des classes,
