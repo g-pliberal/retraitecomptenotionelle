@@ -75,6 +75,35 @@ ircec_raap,1962,2100,0.1090,haute
 # rendement à 5,95 % : il n'a pas quitté la bande 5,92 – 5,97 % en sept
 # exercices. Avant 2020 la caisse ne publie rien ; la valeur centrale de cette
 # bande est reconduite, et c'est une estimation.
+# CARPIMKO : rendement RECALCULÉ ANNÉE PAR ANNÉE, et vérifié deux fois. Les
+# statuts approuvés par l'arrêté du 14 novembre 2025 disent que, de 1996 à 2025,
+# la cotisation forfaitaire ouvrait 8 points et la proportionnelle 22 au
+# maximum ; les décrets annuels donnent le forfait, le taux et les bornes ; la
+# caisse publie la valeur du point depuis 2010. Les deux parts donnent alors LE
+# MÊME rendement, chaque année, à la quatrième décimale près — 8 × valeur de
+# service / forfait d'un côté, 22 × valeur de service / (plafond − seuil) × 3 %
+# de l'autre. Il tombe de 13,10 % en 2010 à 7,36 % en 2025.
+# Avant 2010 la caisse ne publie pas la valeur du point : c'est le rendement de
+# 2010 qui est reconduit. En 2026 le coût d'acquisition du point n'est pas
+# encore publié : c'est celui de 2025.
+carpimko_complementaire,1984,2009,0.1310,estimee
+carpimko_complementaire,2010,2010,0.1310,haute
+carpimko_complementaire,2011,2011,0.1219,haute
+carpimko_complementaire,2012,2012,0.1153,haute
+carpimko_complementaire,2013,2013,0.1107,haute
+carpimko_complementaire,2014,2014,0.1106,haute
+carpimko_complementaire,2015,2015,0.1104,haute
+carpimko_complementaire,2016,2016,0.1104,haute
+carpimko_complementaire,2017,2017,0.1064,haute
+carpimko_complementaire,2018,2018,0.1026,haute
+carpimko_complementaire,2019,2019,0.0979,haute
+carpimko_complementaire,2020,2020,0.0979,haute
+carpimko_complementaire,2021,2021,0.0927,haute
+carpimko_complementaire,2022,2022,0.0886,haute
+carpimko_complementaire,2023,2023,0.0849,haute
+carpimko_complementaire,2024,2024,0.0768,haute
+carpimko_complementaire,2025,2025,0.0736,haute
+carpimko_complementaire,2026,2100,0.0736,estimee
 # CAVP, volet en répartition : la caisse compte en ANNUITÉS et non en points —
 # « nombre d'années validées × 320,75 » (mémento 2024) —, et la cotisation
 # forfaitaire de 6 880 € donne exactement ce rendement : 320,75 / 6 880 =

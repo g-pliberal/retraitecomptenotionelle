@@ -581,6 +581,8 @@ export const BORNES_ASSIETTE = Object.freeze({
   tranche_1_4_pass: [1.0, 4.0],
   // Cipav depuis 2023 : 9 % jusqu'au plafond, 22 % du plafond au triple.
   tranche_1_3_pass: [1.0, 3.0],
+  // CARPIMKO depuis 2026 : 8,70 % entre un demi et trois plafonds.
+  tranche_05_3_pass: [0.5, 3.0],
   // Complémentaires des sections libérales : la CARMF prélève jusqu'à
   // trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
   plafonnee_3_5_pass: [0.0, 3.5],

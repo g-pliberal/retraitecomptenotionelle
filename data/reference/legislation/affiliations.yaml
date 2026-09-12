@@ -107,6 +107,24 @@ affiliations:
       La borne de 1979 est celle du décret n° 79-262 du 21 mars 1979, qui
       institue le complémentaire des architectes.
 
+  auxiliaire_medical:
+    libelle: >-
+      Auxiliaire médical libéral (infirmier, masseur-kinésithérapeute,
+      orthophoniste)
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1983, regimes: [cnavpl]}
+      - {debut: 1984, fin: null, regimes: [cnavpl, carpimko_complementaire]}
+    note: >-
+      La CARPIMKO est la plus nombreuse des dix sections professionnelles de la
+      CNAVPL. Son complémentaire est créé par le décret n° 84-143 du 22 février
+      1984, d'où la borne : purement forfaitaire jusqu'en 1995, forfait plus
+      3 % ensuite, et entièrement proportionnel depuis 2026.
+      CE STATUT NE PORTE PAS L'ASV, le régime des prestations complémentaires
+      de vieillesse des auxiliaires médicaux conventionnés, dont les deux tiers
+      sont payés par l'assurance maladie. Un infirmier conventionné est donc
+      sous-estimé de cet étage.
+
   pharmacien:
     libelle: Pharmacien ou biologiste libéral
     sans_employeur: true

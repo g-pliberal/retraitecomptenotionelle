@@ -1915,6 +1915,48 @@ institutions:
           point est « fixé annuellement par le conseil d'administration ». Le
           chercher au Journal officiel est un trajet à ne pas refaire.
 
+      - id: jorf_cotisations_liberales
+        titre: >-
+          Décrets annuels fixant les cotisations des régimes complémentaires
+          des sections professionnelles libérales, 2001-2025
+        url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/non_salaries.yaml
+        recuperation: scripts/fetch/jorf_cotisations_liberales.py
+        note: >-
+          LA SOURCE QUE DEUX PASSES AVAIENT MANQUÉE, parce qu'elles
+          interrogeaient les caisses. Les caisses ne publient que l'année en
+          cours et leurs statuts renvoient les montants au conseil
+          d'administration : les deux constats sont vrais et ne concluent rien.
+          UN DÉCRET PAR AN FIXE CES MONTANTS POUR LES NEUF SECTIONS À LA FOIS,
+          et le Journal officiel le publie. « 5° Section professionnelle des
+          auxiliaires médicaux : cotisation forfaitaire : 1 648 euros ; taux de
+          la cotisation proportionnelle : 3 % ; limites de l'assiette : seuil :
+          25 246 euros ; plafond : 176 313 euros. » Vingt-quatre décrets, 335
+          valeurs, de 2001 à 2025.
+          CE QU'IL DÉBLOQUE : la série de la CARPIMKO, dont la fiche est
+          écrite ; la valeur d'achat du point de la CAVOM (2016-2025) et de la
+          CARPV (2016-2025) ; le montant de la première classe de la CAVEC et
+          de la Cipav, année par année ; la section C des notaires. Et il
+          RECOUPE ce que les caisses publiaient : le forfait et le taux de la
+          CARCDSF, le taux de la CARMF, la grille 2022 de la Cipav — tous
+          identiques.
+          IL A AUSSI CORRIGÉ UNE CAISSE CONTRE ELLE-MÊME. Le décret
+          n° 2025-1076 du 10 novembre 2025 fixe pour la Cipav « 11 % » en
+          première tranche et « 21 % » en seconde, quand la fiche pratique 2026
+          de la caisse imprime encore 9 % et 22 % — les taux de 2023 — et les
+          applique dans son exemple chiffré. Le décret fait foi.
+          TROIS PIÈGES DE FORME, traités par le récupérateur : l'unité change de
+          nom (« EUR », « € », « euros »), les puces changent de signe, et la
+          numérotation des sections n'apparaît qu'en 2012. Le découpage se fait
+          donc sur « Section professionnelle des … », qui est constant, et les
+          champs sur leur intitulé, qui l'est aussi.
+          UN JUMEAU À NE PAS CONFONDRE : un autre décret annuel, de même forme
+          et avec les mêmes sections, fixe la cotisation forfaitaire du régime
+          de BASE — en francs jusqu'en 2001. Le mot « complémentaire » est
+          exigé dans le motif pour l'écarter.
+
       - id: cavp_mementos
         titre: >-
           Mémentos annuels de la CAVP — cotisations des deux volets du

@@ -2559,6 +2559,602 @@ regimes:
           c'est donc le rendement qui absorbe l'écart — 328,80 € servis pour
           7 657 € appelés, soit 4,29 % contre 4,66 % en 2024.
 
+  - code: carpimko_complementaire
+    nom: >-
+      Régime complémentaire des auxiliaires médicaux (CARPIMKO)
+    famille: liberal
+    source_id: jorf_cotisations_liberales
+    fiabilite: haute
+    creation: 1984
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues,
+      orthophonistes et orthoptistes libéraux. C'est la plus nombreuse des dix
+      sections professionnelles de la CNAVPL — plus de treize mille
+      immatriculations par an.
+    hors_repartition: false
+    periodes:
+      - debut: 1984
+        fin: 1995
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.0
+        cotisation_forfaitaire_euros: 624.00
+        cotisation_forfaitaire_annee: 2002
+        notes: >-
+          LE RÉGIME EST CRÉÉ PAR LE DÉCRET N° 84-143 DU 22 FÉVRIER 1984, et il est
+          alors PUREMENT FORFAITAIRE : la cotisation proportionnelle n'est instituée
+          qu'en 1996, « en plus de la cotisation forfaitaire qui existait depuis la
+          création du régime complémentaire en 1984 », note le barème IPP. Le taux
+          est donc nul ici, et le forfait est toute la cotisation.
+          SON MONTANT EST EXTRAPOLÉ : les décrets annuels ne sont dépouillés qu'à
+          partir de 2001, et le forfait de 2002 est reconduit vers l'amont en euros
+          constants. C'est la convention du dépôt pour un montant sans série.
+      - debut: 1996
+        fin: 2001
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 82446
+        cotisation_forfaitaire_euros: 624.00
+        cotisation_forfaitaire_annee: 2002
+        notes: >-
+          LA COTISATION PROPORTIONNELLE EST INSTITUÉE EN 1996, à 3 % — taux qu'elle
+          gardera trente ans, jusqu'à la réforme de 2026. Les bornes de son assiette
+          sont celles de 2002, premier exercice que les décrets couvrent ici.
+          LE SEUIL EST FIXÉ EN EUROS ET NE BOUGE JAMAIS : 25 246 €, de 2002 à 2025,
+          sans indexation d'aucune sorte. C'est pourquoi cette fiche porte des bornes
+          en euros et non en plafonds — les exprimer en multiples du plafond les
+          ferait dériver de 60 % sur la période.
+      - debut: 2002
+        fin: 2002
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 82446
+        cotisation_forfaitaire_euros: 624.00
+        cotisation_forfaitaire_annee: 2002
+        notes: >-
+          À PARTIR D'ICI, TOUT EST LU DANS LE JOURNAL OFFICIEL. Un décret par an
+          fixe ces trois nombres pour toutes les sections libérales à la fois :
+          « 5° Section professionnelle des auxiliaires médicaux : cotisation
+          forfaitaire : … ; taux de la cotisation proportionnelle : 3 % ; limites
+          de l'assiette de la cotisation proportionnelle : seuil : 25 246 euros ;
+          plafond : … ». Le forfait passe de 624 € en 2002 à 2 312 € en 2025, et
+          le plafond de 82 446 € à 237 179 € ; le seuil et le taux, eux, ne
+          bougent pas.
+      - debut: 2003
+        fin: 2003
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 87586
+        cotisation_forfaitaire_euros: 680.00
+        cotisation_forfaitaire_annee: 2003
+      - debut: 2004
+        fin: 2004
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 89046
+        cotisation_forfaitaire_euros: 696.00
+        cotisation_forfaitaire_annee: 2004
+      - debut: 2005
+        fin: 2005
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 89046
+        cotisation_forfaitaire_euros: 696.00
+        cotisation_forfaitaire_annee: 2005
+        notes: >-
+          Le décret de 2005 ne revient ni sur le forfait ni sur les bornes : ceux de 2004 restent en vigueur.
+      - debut: 2006
+        fin: 2006
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 89046
+        cotisation_forfaitaire_euros: 696.00
+        cotisation_forfaitaire_annee: 2006
+      - debut: 2007
+        fin: 2007
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 108846
+        cotisation_forfaitaire_euros: 912.00
+        cotisation_forfaitaire_annee: 2007
+      - debut: 2008
+        fin: 2008
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 116179
+        cotisation_forfaitaire_euros: 992.00
+        cotisation_forfaitaire_annee: 2008
+      - debut: 2009
+        fin: 2009
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 119113
+        cotisation_forfaitaire_euros: 1024.00
+        cotisation_forfaitaire_annee: 2009
+      - debut: 2010
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 126446
+        cotisation_forfaitaire_euros: 1104.00
+        cotisation_forfaitaire_annee: 2010
+      - debut: 2011
+        fin: 2011
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 135246
+        cotisation_forfaitaire_euros: 1200.00
+        cotisation_forfaitaire_annee: 2011
+      - debut: 2012
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 144046
+        cotisation_forfaitaire_euros: 1296.00
+        cotisation_forfaitaire_annee: 2012
+      - debut: 2013
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 151379
+        cotisation_forfaitaire_euros: 1376.00
+        cotisation_forfaitaire_annee: 2013
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 152846
+        cotisation_forfaitaire_euros: 1392.00
+        cotisation_forfaitaire_annee: 2014
+      - debut: 2015
+        fin: 2015
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 153579
+        cotisation_forfaitaire_euros: 1400.00
+        cotisation_forfaitaire_annee: 2015
+      - debut: 2016
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 153579
+        cotisation_forfaitaire_euros: 1400.00
+        cotisation_forfaitaire_annee: 2016
+      - debut: 2017
+        fin: 2017
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 158713
+        cotisation_forfaitaire_euros: 1456.00
+        cotisation_forfaitaire_annee: 2017
+      - debut: 2018
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 165313
+        cotisation_forfaitaire_euros: 1528.00
+        cotisation_forfaitaire_annee: 2018
+      - debut: 2019
+        fin: 2019
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 174113
+        cotisation_forfaitaire_euros: 1624.00
+        cotisation_forfaitaire_annee: 2019
+      - debut: 2020
+        fin: 2020
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 176313
+        cotisation_forfaitaire_euros: 1648.00
+        cotisation_forfaitaire_annee: 2020
+      - debut: 2021
+        fin: 2021
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 185113
+        cotisation_forfaitaire_euros: 1744.00
+        cotisation_forfaitaire_annee: 2021
+      - debut: 2022
+        fin: 2022
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 193913
+        cotisation_forfaitaire_euros: 1840.00
+        cotisation_forfaitaire_annee: 2022
+      - debut: 2023
+        fin: 2023
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 203446
+        cotisation_forfaitaire_euros: 1944.00
+        cotisation_forfaitaire_annee: 2023
+      - debut: 2024
+        fin: 2024
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 224713
+        cotisation_forfaitaire_euros: 2176.00
+        cotisation_forfaitaire_annee: 2024
+      - debut: 2025
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.03
+        borne_basse_euros: 25246
+        borne_haute_euros: 237179
+        cotisation_forfaitaire_euros: 2312.00
+        cotisation_forfaitaire_annee: 2025
+        notes: >-
+          Dernier exercice de l'ancienne architecture. Décret n° 2025-1076 du 10 novembre 2025.
+      - debut: 2026
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [reversion]
+        assiette: tranche_05_3_pass
+        taux_cotisation_retraite: 0.087
+        notes: >-
+          LA RÉFORME DU 1er JANVIER 2026 SUPPRIME LE FORFAIT. Le décret n° 2025-1076
+          du 10 novembre 2025 écrit, pour 2026 : « taux de la cotisation
+          proportionnelle : 8,7 % ; limites de l'assiette : seuil : 50 % du plafond
+          annuel de la sécurité sociale ; plafond : 3 fois le plafond annuel ». Les
+          bornes quittent l'euro pour le plafond, et la fiche les suit.
+          L'arrêté du 14 novembre 2025 qui approuve les statuts le dit autrement :
+          l'article 6 perd le mot « forfaitaire », et l'article 7 devient « une
+          cotisation proportionnelle […] Le versement de la cotisation porte
+          attribution, annuellement, d'un nombre de points obtenu en divisant le
+          montant de cette cotisation par le coût d'acquisition d'un point ».
+          CE COÛT N'EST PAS ENCORE PUBLIÉ. Le rendement de 2025 est donc reconduit,
+          et c'est la seule valeur estimée de cette fiche depuis 2010.
+
   - code: cavec_complementaire
     nom: >-
       Régime complémentaire des experts-comptables et des commissaires aux
@@ -2709,7 +3305,7 @@ regimes:
           La borne de début est celle du décret n° 79-262 du 21 mars 1979, qui
           institue le complémentaire des architectes — le noyau de la caisse.
       - debut: 2023
-        fin: null
+        fin: 2024
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -2736,7 +3332,7 @@ regimes:
           un rendement de 6,10 % que la caisse publie elle-même — c'est lui que
           porte `rendements_points.csv`.
       - debut: 2023
-        fin: null
+        fin: 2024
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -2755,6 +3351,54 @@ regimes:
           Seconde tranche de la cotisation proportionnelle : 22 % des revenus
           compris entre un et trois plafonds, soit 48 060 € et 144 180 € en
           2026.
+
+      - debut: 2025
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.11
+        notes: >-
+          LE DÉCRET CONTREDIT LA BROCHURE DE LA CAISSE, ET C'EST LUI QUI FAIT
+          FOI. Le décret n° 2025-1076 du 10 novembre 2025 fixe pour 2025 « taux
+          de la cotisation proportionnelle de première tranche : 11 % ; taux de
+          la cotisation proportionnelle de la deuxième tranche : 21 % » ; son
+          article pour 2026 ne revient pas sur la Cipav, donc ces taux valent
+          aussi pour 2026. La fiche pratique 2026 de la caisse imprime pourtant
+          encore 9 % et 22 %, et son exemple chiffré applique 9 % — ce sont les
+          taux de 2023, que le décret de cette année-là confirme mot pour mot.
+          La brochure n'a pas suivi.
+          La valeur d'achat du point, elle, ne bouge pas : 47,40 €, écrite dans
+          le décret comme dans la brochure.
+      - debut: 2025
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        assiette: tranche_1_3_pass
+        taux_cotisation_retraite: 0.21
+        notes: >-
+          Seconde tranche : 21 % des revenus compris entre un et trois plafonds
+          depuis 2025, contre 22 % en 2023 et 2024.
 
   - code: cnbf
     nom: Caisse nationale des barreaux français
