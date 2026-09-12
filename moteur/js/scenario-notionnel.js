@@ -19,8 +19,9 @@
  * notionnels peut, à lui seul, retirer quelque chose à des droits déjà ouverts.
  * Voir ``AgeConversionDroitsAcquis``.
  *
- * **Scénario 6, la proposition libérale.** Le scénario 4 à un taux unique de
- * 18 % pour tous — c'est le constructeur qui le porte —, puis une garantie
+ * **Scénario 6, la proposition libérale.** Le scénario 4 jusqu'à la bascule,
+ * puis un taux unique de 18 % pour tous — c'est le constructeur qui le porte —,
+ * puis une garantie
  * vieillesse par-dessus : différentielle, individualisée, financée par l'impôt,
  * ouverte à 65 ans comme l'ASPA qu'elle remplace. Elle est gardée à part dans
  * ``garantie_vieillesse``, étape par étape.
@@ -85,15 +86,16 @@ export class ScenarioNotionnel {
   // -- scénario 6 ------------------------------------------------------------
 
   /**
-   * Le scénario 4 à taux unique, puis la garantie vieillesse par-dessus.
+   * Le scénario 4 jusqu'à la bascule, 18 % ensuite, puis la garantie.
    *
-   * Le compte est celui de `retroactif` : ce qui l'alimente — 18 % pour tous —
-   * tient aux paramètres du constructeur. Ce que cette méthode ajoute, et elle
+   * Le compte est celui de `retroactif` : ce qui l'alimente — les taux réels
+   * jusqu'à la bascule, 18 % pour tous à compter d'elle — tient aux paramètres
+   * du constructeur. Ce que cette méthode ajoute, et elle
    * seule, est la garantie : différentielle, individualisée, servie en dernier,
    * et gardée à part pour que l'on sache ce qui vient de l'impôt.
    */
   liberal(carriere, regimeFusionne = null,
-          libelle = "Comptes notionnels rétroactifs, taux unique et garantie vieillesse") {
+          libelle = "Comptes notionnels rétroactifs, taux unique dès la bascule et garantie vieillesse") {
     const resultat_ = this.retroactif(carriere, regimeFusionne, libelle);
     const garantie = this._garantieVieillesse(carriere, resultat_.pension_annuelle);
     resultat_.pension_annuelle += garantie.complement;

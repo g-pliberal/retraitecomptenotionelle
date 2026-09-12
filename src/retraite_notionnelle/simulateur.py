@@ -43,9 +43,10 @@ from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
 #: l'intérieur de chaque paire, l'un est rétroactif et l'autre prospectif. Rien
 #: d'autre ne les sépare, et c'est ce qui les rend comparables deux à deux : 4
 #: se lit contre 2, 5 contre 3, et l'écart mesure exactement ce que l'employeur
-#: verse. Le 6 se lit contre le 4 : même compte rétroactif, cotisation entière,
-#: mais à un taux unique de 18 % pour tous, et une garantie vieillesse
-#: individualisée, financée par l'impôt, par-dessus.
+#: verse. Le 6 se lit contre le 4 : même compte rétroactif, cotisation entière
+#: aux taux réels jusqu'à la bascule, puis un taux unique de 18 % pour tous à
+#: compter d'elle, et une garantie vieillesse individualisée, financée par
+#: l'impôt, par-dessus.
 SCENARIOS_NOTIONNELS = (
     ("notionnel_retroactif", 2, "Notionnel rétroactif, part salariale"),
     ("notionnel_prospectif", 3, "Notionnel dès {bascule}, part salariale"),
@@ -54,7 +55,7 @@ SCENARIOS_NOTIONNELS = (
     ("notionnel_prospectif_employeur", 5,
      "Notionnel dès {bascule}, salariale + patronale"),
     ("notionnel_liberal", 6,
-     "Notionnel rétroactif, 18 % pour tous, garantie vieillesse"),
+     "Notionnel rétroactif, 18 % dès {bascule}, garantie vieillesse"),
 )
 
 
@@ -547,18 +548,20 @@ class Simulateur:
 
     @cached_property
     def constructeur_liberal(self) -> ConstructeurCompte:
-        """Le constructeur du scénario 6 : le taux unique de la proposition.
+        """Le constructeur du scénario 6 : le scénario 4 jusqu'à la bascule,
+        le taux unique de la proposition ensuite.
 
-        Il ne diffère de celui du scénario 4 que par ce qui alimente le compte :
-        un taux d'acquisition commun, prélevé une fois sur la rémunération, à
-        la place des taux historiques de chaque régime. La part de cotisation
-        reste ``TOTALE`` — le taux unique additionne les deux parts — pour que
-        le compartiment provisionné, qui garde ses taux propres, soit traité
-        comme dans le scénario 4.
+        Il ne diffère de celui du scénario 4 que par ce qui alimente le compte
+        À COMPTER DE LA BASCULE : un taux d'acquisition commun, prélevé une
+        fois sur la rémunération, à la place des taux du régime unique. Avant
+        la bascule, ce qui a été cotisé sous le système actuel est porté tel
+        qu'il a été prélevé, aux taux réels de chaque régime, salariale et
+        patronale confondues — exactement le scénario 4. La part de cotisation
+        reste donc ``TOTALE``.
         """
         return self._constructeur_variante(
             part_cotisation=PartCotisation.TOTALE,
-            source_cotisations=SourceCotisations.TAUX_UNIFORME,
+            source_cotisations=SourceCotisations.TAUX_HISTORIQUES_PUIS_UNIFORME,
             taux_cotisation_uniforme=self.parametres.taux_cotisation_liberal,
         )
 
@@ -590,7 +593,7 @@ class Simulateur:
 
     @cached_property
     def scenario_liberal(self) -> ScenarioNotionnel:
-        """Scénario 6 : le scénario notionnel au taux unique de la proposition."""
+        """Scénario 6 : le scénario 4 jusqu'à la bascule, 18 % pour tous ensuite."""
         return ScenarioNotionnel(
             self.constructeur_liberal, self.convertisseur,
             self.age_reference, self.scenario_actuel, self.parametres,

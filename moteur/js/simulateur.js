@@ -31,8 +31,9 @@ import {
  * l'intérieur de chaque paire, l'un est rétroactif et l'autre prospectif. Le 4
  * se lit contre le 2, le 5 contre le 3, et l'écart mesure exactement ce que
  * l'employeur verse. Le 6 se lit contre le 4 : même compte rétroactif,
- * cotisation entière, mais à un taux unique de 18 % pour tous, et une garantie
- * vieillesse individualisée, financée par l'impôt, par-dessus.
+ * cotisation entière aux taux réels jusqu'à la bascule, puis un taux unique de
+ * 18 % pour tous à compter d'elle, et une garantie vieillesse individualisée,
+ * financée par l'impôt, par-dessus.
  */
 export const SCENARIOS_NOTIONNELS = Object.freeze([
   ["notionnel_retroactif", 2, "Notionnel rétroactif, part salariale"],
@@ -42,7 +43,7 @@ export const SCENARIOS_NOTIONNELS = Object.freeze([
   ["notionnel_prospectif_employeur", 5,
     "Notionnel dès {bascule}, salariale + patronale"],
   ["notionnel_liberal", 6,
-    "Notionnel rétroactif, 18 % pour tous, garantie vieillesse"],
+    "Notionnel rétroactif, 18 % dès {bascule}, garantie vieillesse"],
 ]);
 
 /** Les six résultats, côte à côte, pour une même carrière. */
@@ -341,16 +342,16 @@ export class Simulateur {
       ),
       this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
     );
-    // Scénario 6 : le constructeur du scénario 4 au taux unique de la
-    // proposition — un taux d'acquisition commun, prélevé une fois sur la
-    // rémunération, à la place des taux historiques de chaque régime.
+    // Scénario 6 : le constructeur du scénario 4 jusqu'à la bascule — taux
+    // réels, salariale et patronale confondues —, puis le taux unique de la
+    // proposition, prélevé une fois sur la rémunération, à compter d'elle.
     this.scenarioLiberal = new ScenarioNotionnel(
       new ConstructeurCompte(
         this.macro, this.catalogue, this.affiliations, this.indexation,
         {
           ...parametres,
           part_cotisation: PartCotisation.TOTALE,
-          source_cotisations: SourceCotisations.TAUX_UNIFORME,
+          source_cotisations: SourceCotisations.TAUX_HISTORIQUES_PUIS_UNIFORME,
           taux_cotisation_uniforme: parametres.taux_cotisation_liberal,
         },
       ),

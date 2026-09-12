@@ -73,7 +73,7 @@ SCENARIOS: tuple[tuple[str, str], ...] = (
     ("notionnel_prospectif", "3. Notionnel dès la bascule, part salariale"),
     ("notionnel_retroactif_employeur", "4. Notionnel rétroactif, avec la part patronale"),
     ("notionnel_prospectif_employeur", "5. Notionnel dès la bascule, avec la part patronale"),
-    ("notionnel_liberal", "6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse"),
+    ("notionnel_liberal", "6. Notionnel rétroactif, 18 % dès la bascule, garantie vieillesse"),
 )
 
 #: La part du scénario 6 que l'IMPÔT finance : la garantie vieillesse, portée

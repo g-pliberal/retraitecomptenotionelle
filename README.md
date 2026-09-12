@@ -28,7 +28,7 @@ comparables :
 | **3** | Notionnel **à compter de 2026** | Réforme prospective : les droits déjà acquis sont figés — au contributif seul, avantages non contributifs retirés — puis convertis en capital, et les règles notionnelles s'appliquent ensuite. Qui a liquidé avant la bascule garde sa pension telle quelle : c'est ce qui distingue ce scénario du **2**. |
 | **4** | Le scénario **2**, part patronale comprise | Le même compte rétroactif, la cotisation de l'employeur en plus : celle de la fiche pour le privé, celle réellement versée — jusqu'à 82,28 % du traitement en 2026 — pour le public. |
 | **5** | Le scénario **3**, part patronale comprise | Le même compte prospectif, droits acquis conservés, avec la même part patronale en plus. |
-| **6** | La **proposition libérale** : le scénario **4** à 18 % pour tous, avec une garantie vieillesse | Le même compte rétroactif, cotisation entière, mais à un **taux unique de 18 %** — salariale et patronale additionnées, le même pour tous les statuts — et, par-dessus, une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
+| **6** | La **proposition libérale** : le scénario **4** jusqu'à 2026, 18 % pour tous ensuite, avec une garantie vieillesse | Le même compte rétroactif, cotisation entière aux taux réels jusqu'à la bascule, puis un **taux unique de 18 %** à compter de 2026 — salariale et patronale additionnées, le même pour tous les statuts — et, par-dessus, une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
 
 Les comptes sont revalorisés, par défaut, sur la croissance de la **masse
 salariale** — l'assiette des cotisations, donc le rendement qu'un système en
@@ -64,7 +64,7 @@ Scénario                                                          Courants   Co
 3. Notionnel dès 2026, part salariale                              22,479€     31,472€    2,623€    +0.0%
 4. Notionnel rétroactif, salariale + patronale                      5,390€      7,546€      629€   -76.0%
 5. Notionnel dès 2026, salariale + patronale                       22,479€     31,472€    2,623€    +0.0%
-6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse        4,855€      6,797€      566€   -78.4%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse         5,390€      7,546€      629€   -76.0%
 ```
 
 > Les scénarios 4 et 5 sont les scénarios 2 et 3, à une différence près et une
@@ -73,14 +73,20 @@ Scénario                                                          Courants   Co
 > mesure donc exactement une chose — ce que verse l'employeur.
 >
 > Les scénarios 3 et 5 sont ici identiques au système actuel parce que cet agent
-> a liquidé en 2005, avant la bascule : ses droits sont intégralement acquis.
+> a liquidé en 2005, avant la bascule : ses droits sont intégralement acquis. Le
+> scénario 6 est identique au scénario 4 pour la même raison : aucune de ses
+> années n'est cotisée à 18 %, et à 50 ans la garantie vieillesse n'est pas
+> ouverte.
 
 > **Le scénario 6 est la proposition du Parti libéral français**, et il se lit
 > contre le scénario 4 : même compte rétroactif, cotisation salariale et
 > patronale confondues, mêmes âges, même indexation, même liquidation. Deux
-> choses changent. Le taux — 18 % pour tous, là où le scénario 4 porte les taux
-> réellement en vigueur de chaque régime : les statuts qui cotisaient plus
-> descendent, ceux qui cotisaient moins remontent. Et un plancher — la seule
+> choses changent. Le taux — 18 % pour tous à compter de 2026, là où le
+> scénario 4 porte les taux réellement en vigueur de chaque régime ; ce qui a
+> été cotisé avant 2026 sous le système actuel reste porté au compte tel quel,
+> et qui a liquidé avant n'a aucune année à 18 %. Pour les années d'après, les
+> statuts qui cotisaient plus descendent, ceux qui cotisaient moins remontent.
+> Et un plancher — la seule
 > ligne des scénarios notionnels qui ne vienne pas d'une cotisation —, servi à
 > partir de 65 ans comme l'ASPA, mais **individualisé** : à 300 € et 1 500 €
 > dans un couple, l'ASPA ne sert rien, la garantie sert 500 € au premier. La
@@ -508,7 +514,7 @@ Scénario                                                          Courants   Co
 3. Notionnel dès 2026, part salariale                              24,862€     19,842€    1,654€   -39.5%
 4. Notionnel rétroactif, salariale + patronale                     43,933€     35,062€    2,922€    +7.0%
 5. Notionnel dès 2026, salariale + patronale                       30,158€     24,069€    2,006€   -26.6%
-6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse       14,744€     11,767€      981€   -64.1%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        41,254€     32,925€    2,744€    +0.5%
 --------------------------------------------------------------------------------------------------------
    hors répartition (RAFP), servi à part, identique aux 6           1,424€      1,137€       95€     réf.
 
@@ -519,10 +525,11 @@ Qui verse la cotisation, en euros courants cumulés :
   contribution employeur publique trouvée sur 29 année(s)
 ```
 
-Le scénario 6 tombe ici loin sous le scénario 4 — et c'est le taux, pas la
-garantie : à 18 % pour tous, la cotisation entière d'un fonctionnaire cesse
-d'être les 82,28 % que l'État verse en 2026, et la pension contributive dépasse
-de toute façon le plancher.
+Le scénario 6 reste ici un peu sous le scénario 4, et c'est le taux, pas la
+garantie : jusqu'en 2025 son compte est celui du 4, aux taux réels, et ce n'est
+que sur les années 2026-2038, cotisées à 18 % au lieu des 82,28 % que l'État
+verse, qu'il s'en écarte. La pension contributive dépasse de toute façon le
+plancher.
 
 L'employeur verse ici 79 % du total. C'est l'ordre de grandeur d'un taux
 d'**équilibre**, et c'est la limite du scénario 4 : 82,28 % ne signifie pas
@@ -582,8 +589,8 @@ par la probabilité d'être en vie lue dans les tables de mortalité du dépôt 
 | 3. Notionnel dès 2026, part salariale | 14 987 Md € | +0,0 % |
 | 4. Notionnel rétroactif, salariale + patronale | 6 863 Md € | −54,2 % |
 | 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
-| 6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse | 8 148 Md € | −45,6 % |
-| *dont garantie vieillesse du 6, financée par l'impôt* | *48 Md €* | |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 6 956 Md € | −53,6 % |
+| *dont garantie vieillesse du 6, financée par l'impôt* | *93 Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -597,10 +604,11 @@ bascule était avancée avant la dernière année observée.
 L'écart du scénario 2 ne mesure pas, lui non plus, l'effet des comptes
 notionnels : il mesure la part salariale seule — le scénario 4, qui ajoute la
 part patronale, coûte 83 % de plus — et la règle d'indexation, dont le résultat
-1 ci-dessus montre qu'elle domine tout. Le scénario 6, à 18 % pour tous, se
-place entre les deux ; sa garantie vieillesse n'y pèse que 48 milliards sur
-soixante-six ans, parce qu'un seul des douze cas types liquide à 65 ans ou
-après — c'est un ordre de grandeur bas, et la page le dit.
+1 ci-dessus montre qu'elle domine tout. Le scénario 6 est ici le scénario 4
+plus sa garantie vieillesse : aucune pension servie avant 2026 n'a une année
+cotisée à 18 %. La garantie n'y pèse que 93 milliards sur soixante-six ans,
+parce qu'un seul des douze cas types liquide à 65 ans ou après — c'est un
+ordre de grandeur bas, et la page le dit.
 
 Les poids de génération ne sont pas supposés : ce sont les effectifs de la
 **pyramide des âges de l'INSEE**, observés jusqu'en 2023. Restent deux limites,
@@ -630,7 +638,7 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 | 3. Notionnel dès 2026, part salariale | 303 Md € | **8,2 %** | 17 810 Md € | −21,1 % |
 | 4. Notionnel rétroactif, salariale + patronale | 427 Md € | 11,5 % | 16 691 Md € | −26,0 % |
 | 5. Notionnel dès 2026, salariale + patronale | 439 Md € | 11,9 % | 20 172 Md € | −10,6 % |
-| 6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse | 289 Md € | 7,8 % | 11 348 Md € | −49,7 % |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 327 Md € | 8,8 % | 14 947 Md € | −33,8 % |
 
 Trois choses à lire dans ce tableau.
 

@@ -69,10 +69,14 @@ rétroactif, cotisation salariale et patronale confondues, mêmes âges de dépa
 même indexation, même liquidation — à deux différences près, et ce sont les deux
 termes de la proposition du Parti libéral français.
 
-Un **taux unique de 18 %**, salariale et patronale additionnées, le même pour
-tous les statuts, prélevé une fois sur la rémunération : c'est le taux
-d'acquisition commun de ``SourceCotisations.TAUX_UNIFORME``, dont ce scénario
-est un cas. Et une **garantie vieillesse** qui remplace l'ASPA : allocation
+Un **taux unique de 18 % à compter de la bascule**, salariale et patronale
+additionnées, le même pour tous les statuts, prélevé une fois sur la
+rémunération. Avant la bascule, rien ne change : ce qui a été cotisé sous le
+système actuel est porté au compte tel qu'il a été prélevé, aux taux réels de
+chaque régime, comme dans le scénario 4 — une personne née en 1975 cotise aux
+taux réels de 1996 à 2025, puis à 18 % de 2026 à son départ
+(``SourceCotisations.TAUX_HISTORIQUES_PUIS_UNIFORME``). Et une **garantie
+vieillesse** qui remplace l'ASPA : allocation
 différentielle, financée par l'impôt, qui porte la pension à 800 € par mois,
 plus 250 € d'allocation d'isolement pour une personne seule — 1 050 € seul,
 800 € par personne à deux. Le plancher est **individualisé** : chacun est
@@ -272,12 +276,13 @@ class ScenarioNotionnel:
     def liberal(self, carriere: Carriere,
                 regime_fusionne: RegimeFusionne | None = None,
                 libelle: str = "Comptes notionnels rétroactifs, taux unique "
-                               "et garantie vieillesse") -> ResultatNotionnel:
-        """Le scénario 4 à taux unique, puis la garantie vieillesse par-dessus.
+                               "dès la bascule et garantie vieillesse") -> ResultatNotionnel:
+        """Le scénario 4 jusqu'à la bascule, 18 % ensuite, puis la garantie.
 
-        Le compte est celui de :meth:`retroactif` : ce qui l'alimente — 18 %
-        pour tous — tient aux paramètres du constructeur, comme pour les
-        scénarios 4 et 5. Ce que cette méthode ajoute, et elle seule, est la
+        Le compte est celui de :meth:`retroactif` : ce qui l'alimente — les
+        taux réels jusqu'à la bascule, 18 % pour tous à compter d'elle — tient
+        aux paramètres du constructeur, comme pour les scénarios 4 et 5. Ce
+        que cette méthode ajoute, et elle seule, est la
         garantie : différentielle, individualisée, servie en dernier, et
         gardée à part pour que l'on sache ce qui vient de l'impôt.
         """

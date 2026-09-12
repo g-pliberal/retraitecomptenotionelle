@@ -1675,7 +1675,7 @@ def _titres_scenarios(saisie: Saisie) -> tuple[tuple[str, str], ...]:
         ("notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"),
         ("notionnel_prospectif_employeur",
          f"5. Dès {saisie.bascule}, avec le patronal"),
-        ("notionnel_liberal", "6. Libéral : 18 % et garantie"),
+        ("notionnel_liberal", f"6. Libéral : 18 % dès {saisie.bascule}, garantie"),
     )
 
 
@@ -1810,8 +1810,10 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                comparaison.variation("notionnel_prospectif_employeur"),
                comparaison.taux_remplacement("notionnel_prospectif_employeur"))
         + bloc("liberal",
-               "6. Proposition libérale : 18 % pour tous, garantie vieillesse",
-               "le scénario 4 à taux unique, plus une garantie financée par l'impôt",
+               f"6. Proposition libérale : 18 % pour tous dès {saisie.bascule}, "
+               "garantie vieillesse",
+               f"le scénario 4 jusqu'à {saisie.bascule}, 18 % pour tous ensuite, "
+               "plus une garantie financée par l'impôt",
                comparaison.variation("notionnel_liberal"),
                comparaison.taux_remplacement("notionnel_liberal"))
     )
@@ -1920,7 +1922,7 @@ SCENARIOS_AFFICHES = (
     ("notionnel_prospectif", "3. Notionnel à la bascule"),
     ("notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"),
     ("notionnel_prospectif_employeur", "5. Bascule, avec le patronal"),
-    ("notionnel_liberal", "6. Libéral : 18 % et garantie"),
+    ("notionnel_liberal", "6. Libéral : 18 % dès la bascule, garantie"),
 )
 
 
@@ -2114,7 +2116,25 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
         return ""
     parametres = comparaison.parametres
     annee = comparaison.carriere.annee_liquidation
+    bascule = parametres.annee_bascule
     capital_4 = comparaison.notionnel_retroactif_employeur.capital_notionnel
+    # Les années cotisées à 18 % : celles de la bascule au départ. Avant, le
+    # compte est celui du scénario 4, et le capital ne s'en écarte pas.
+    annees_18 = [c.annee for c in liberal.compte.cotisations
+                 if c.annee >= bascule and not c.nulle]
+    if annees_18:
+        taux_unique = (
+            f"Ici, les années {annees_18[0]} à {annees_18[-1]} sont cotisées à "
+            f"{{taux}} ; celles d'avant {bascule} le sont aux taux réels, et le "
+            f"capital vaut {g.euros(liberal.capital_notionnel)} contre "
+            f"{g.euros(capital_4)} pour le scénario 4."
+        )
+    else:
+        taux_unique = (
+            f"Ici, la carrière s'achève avant {bascule} : aucune année n'est "
+            f"cotisée à {{taux}}, et le compte est exactement celui du "
+            f"scénario 4, {g.euros(liberal.capital_notionnel)}."
+        )
     taux = g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)
     base_mensuelle = parametres.garantie_vieillesse_mensuelle
     isolement_mensuel = parametres.allocation_isolement_mensuelle
@@ -2135,7 +2155,8 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
          f"ce qu'{situation} doit percevoir au minimum",
          g.euros_centimes(garantie.plancher_annuel) + " par an"],
         ["d) Pension contributive",
-         f"le compte notionnel du scénario 6, à {taux} pour tous, divisé par "
+         f"le compte notionnel du scénario 6 — taux réels avant {bascule}, "
+         f"{taux} pour tous ensuite — divisé par "
          f"{g.nombre(liberal.conversion.diviseur, DECIMALES_DIVISEUR)}",
          g.euros_centimes(garantie.pension_contributive) + " par an"],
         ["e) Garantie vieillesse servie",
@@ -2193,11 +2214,13 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
 <h2>Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt</h2>
 <p>Le scénario 6 est le scénario 4 — même compte rétroactif, cotisation
 salariale et patronale confondues, mêmes âges, même indexation, même
-liquidation — à deux différences près. La première : un <strong>taux unique de
-{taux}</strong>, parts salariale et patronale additionnées, le même pour tous
-les statuts, prélevé une fois sur la rémunération. Son capital vaut ici
-{g.euros(liberal.capital_notionnel)} contre {g.euros(capital_4)} pour le
-scénario 4 aux taux réellement en vigueur. La seconde : une <strong>garantie
+liquidation — à deux différences près. La première : à compter de
+{bascule}, un <strong>taux unique de {taux}</strong>, parts salariale et
+patronale additionnées, le même pour tous les statuts, prélevé une fois sur
+la rémunération. Ce qui a été cotisé avant {bascule} sous le système actuel
+reste porté au compte tel qu'il a été prélevé, aux taux réels de chaque
+régime : sur ces années-là, le 6 est le 4.
+{taux_unique.format(taux=taux)} La seconde : une <strong>garantie
 vieillesse</strong> qui remplace l'ASPA, et que le tableau suivant détaille en
 euros de {annee}, l'année du départ.</p>
 {g.tableau(
@@ -2633,17 +2656,19 @@ restent ceux du scénario 3, et seul le flux postérieur change. À compter de l
 bascule il n'y a plus qu'un régime, dont la répartition salarié/employeur est
 celle du statut pivot privé : les écarts entre statuts s'y referment.</p>
 
-<h3>Scénario 6 — le scénario 4 à 18 % pour tous, avec une garantie vieillesse</h3>
-{grille("notionnel_liberal", "Scénario 6, scénario 4 à taux unique et garantie vieillesse")}
-<p class="discret">Le même compte rétroactif que le scénario 4, alimenté à un
-taux unique de 18 % — salariale et patronale confondues — au lieu des taux
-réellement en vigueur, puis une garantie vieillesse individualisée, financée par
-l'impôt, par-dessus : 1 050 € par mois pour une personne seule, 800 € par
-personne à deux, en euros de 2026. Les lignes qui cotisaient au-delà de 18 %
-descendent sous le scénario 4 ; celles qui cotisaient en deçà remontent ; et la
-garantie ne se voit que sur les cas dont la pension reste sous le plancher, à
-partir de 65 ans — les cas types qui liquident avant cet âge n'en mesurent que
-le taux unique.</p>
+<h3>Scénario 6 — le scénario 4 jusqu'à la bascule, 18 % pour tous ensuite, avec une garantie vieillesse</h3>
+{grille("notionnel_liberal", "Scénario 6, scénario 4 à taux unique dès la bascule et garantie vieillesse")}
+<p class="discret">Le même compte rétroactif que le scénario 4, aux taux
+réellement en vigueur jusqu'à la bascule, puis alimenté à un taux unique de
+18 % — salariale et patronale confondues — à compter d'elle, et une garantie
+vieillesse individualisée, financée par l'impôt, par-dessus : 1 050 € par mois
+pour une personne seule, 800 € par personne à deux, en euros de 2026. Les
+générations parties avant la bascule sont donc celles du scénario 4 ; pour les
+suivantes, les lignes qui cotisaient au-delà de 18 % descendent sous le
+scénario 4 et celles qui cotisaient en deçà remontent, d'autant plus que la
+carrière est récente. La garantie ne se voit que sur les cas dont la pension
+reste sous le plancher, à partir de 65 ans — les cas types qui liquident avant
+cet âge n'en mesurent que le taux unique.</p>
 {echecs}
 """
 
@@ -3022,15 +3047,18 @@ scénario 4, qui y ajoute la part patronale, coûte
 de plus —, et il applique une <a href="{g.lien("/methode", "indexation")}">règle
 d'indexation</a> dont la page Méthode montre qu'elle domine tout le reste.</p>
 
-<p>Le scénario 6 est le scénario 4 à un taux unique de 18 % pour tous, avec
-une garantie vieillesse par-dessus : il aurait coûté
-{_milliards(cout.cumul("notionnel_liberal"), 0)}, dont
-{_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} de garantie vieillesse. Cette
-part-là est <strong>financée par l'impôt</strong> et non par les cotisations :
-la ligne en italique du tableau la redit à part, pour que l'on voie ce que ce
-scénario retire aux cotisations et ce qu'il demande au contribuable. C'est un
-ordre de grandeur bas : l'allocation n'est ouverte qu'à 65 ans, et un seul des
-douze cas types liquide à cet âge ou après.</p>
+<p>Le scénario 6 est le scénario 4 jusqu'à la bascule, puis un taux unique de
+18 % pour tous, avec une garantie vieillesse par-dessus. Sur le passé, ses
+18 % ne comptent pas encore — aucune pension servie avant {bascule} n'a une
+année cotisée à ce taux —, et sa courbe est celle du scénario 4 plus la
+garantie : il aurait coûté {_milliards(cout.cumul("notionnel_liberal"), 0)},
+dont {_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} de garantie vieillesse.
+Cette part-là est <strong>financée par l'impôt</strong> et non par les
+cotisations : la ligne en italique du tableau la redit à part, pour que l'on
+voie ce que ce scénario retire aux cotisations et ce qu'il demande au
+contribuable. C'est un ordre de grandeur bas : l'allocation n'est ouverte qu'à
+65 ans, et un seul des douze cas types liquide à cet âge ou après. C'est
+d'ici {avenir.derniere_annee} que le taux unique se voit.</p>
 
 <h2>Demain : ce que chaque système coûterait d'ici {avenir.derniere_annee}</h2>
 <p class="chapeau">On ne change pas le passé. La question qui décide de quelque
@@ -3481,8 +3509,10 @@ active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le scén
 <p>Une exception, annoncée comme telle : le <strong>scénario 6</strong>, la
 proposition du Parti libéral français, remet un plancher — et un seul. C'est le
 scénario 4, compte rétroactif alimenté par la cotisation entière, à deux
-différences près : un taux unique de 18 % pour tous, salariale et patronale
-additionnées, prélevé une fois sur la rémunération ; et une garantie vieillesse
+différences près : à compter de la bascule, un taux unique de 18 % pour tous,
+salariale et patronale additionnées, prélevé une fois sur la rémunération —
+avant elle, ce qui a été cotisé sous le système actuel reste porté au compte
+aux taux réels, comme dans le scénario 4 ; et une garantie vieillesse
 qui remplace l'ASPA, différentielle comme elle, servie à partir de 65 ans comme
 elle, mais <em>individualisée</em> — 800 € par mois par personne, plus 250 €
 d'allocation d'isolement pour qui vit seul, en euros de 2026, sans que la

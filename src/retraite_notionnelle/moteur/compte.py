@@ -309,6 +309,10 @@ class ConstructeurCompte:
         la bascule ; il cotise seul après, à un taux plus élevé — c'est déjà ce
         que dit le modèle, et la répartition doit le suivre.
         """
+        # Un taux d'acquisition commun s'applique ici qu'il ait couvert toute la
+        # carrière (``TAUX_UNIFORME``) ou qu'il ne commence qu'à la bascule
+        # (``TAUX_HISTORIQUES_PUIS_UNIFORME``, le scénario 6) : après la
+        # bascule, les deux sources se confondent.
         if self.parametres.source_cotisations is not SourceCotisations.TAUX_HISTORIQUES:
             return self.parametres.taux_cotisation_uniforme, 0.0, "", Fiabilite.CERTIFIEE
 
@@ -469,7 +473,9 @@ class ConstructeurCompte:
         # un seul taux, prélevé une fois sur la rémunération. Les régimes en
         # répartition n'y servent plus qu'à délimiter l'assiette, qu'on réunit
         # avant de prélever. Le compartiment de capitalisation, lui, garde ses
-        # taux propres : il n'est pas un compte notionnel.
+        # taux propres : il n'est pas un compte notionnel. La source « taux
+        # historiques puis uniforme » ne passe pas par ici : avant la bascule,
+        # elle est exactement les taux historiques.
         acquisition_commune = (
             self.parametres.source_cotisations is SourceCotisations.TAUX_UNIFORME
         )
