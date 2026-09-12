@@ -2405,6 +2405,116 @@ regimes:
           pour six points, d'où un prix du point de 535,10 € ; la valeur de
           service étant de 31,82 €, le rendement reste 5,95 %.
 
+  - code: cipav_complementaire
+    nom: >-
+      Régime complémentaire de la Caisse interprofessionnelle de prévoyance et
+      d'assurance vieillesse (CIPAV)
+    famille: liberal
+    source_id: cipav_fiches_pratiques
+    fiabilite: moyenne
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Professions libérales non rattachées à une section spécialisée :
+      architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes,
+      guides, et une longue liste de métiers non réglementés — la plus grosse
+      population libérale après les auxiliaires médicaux. C'est la section
+      « par défaut » du régime de base des libéraux, et le statut
+      `profession_liberale` y route pour cette raison.
+    hors_repartition: false
+    periodes:
+      - debut: 1979
+        fin: 2022
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        notes: >-
+          COTISATION PAR CLASSES, et c'est la première fiche du dépôt de cette
+          forme. La caisse ne prélevait ni un taux ni un forfait : elle rangeait
+          l'assuré dans l'un de huit paliers selon son revenu, et appelait le
+          montant du palier. Sa fiche pratique 2022 en donne la grille entière —
+          1 527 € jusqu'à 26 580 € de revenus, puis 3 055, 4 582, 7 637, 10 692,
+          16 802, 18 329 et 19 857 € au-delà de 123 300 € —, et elle est portée
+          dans `classes_cotisation.csv`.
+          LA CLASSE EST SUBIE, PAS CHOISIE. Le même document écrit du
+          complémentaire que « son montant est DÉTERMINÉ selon ce tableau », et
+          de l'invalidité-décès, présenté juste à côté, que l'assuré « a la
+          possibilité de CHOISIR sa classe de cotisation, quels que soient ses
+          revenus ». Seule la première forme est modélisable, et le dépôt ne
+          prête jamais à personne un choix qu'il ne peut pas connaître.
+          UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2022, et il vaut pour toute la
+          période — ramené aux autres exercices par le rapport des plafonds,
+          parce que la grille est écrite en plafonds : ses sept bornes valent
+          0,65, 1,2, 1,4, 1,6, 2, 2,5 et 3 plafonds de 2022, et ses huit
+          montants 1, 2, 3, 5, 7, 11, 12 et 13 fois une unité qui vaut 3,71 %
+          du plafond. C'est ce qui autorise à la reporter ; ce n'est pas ce qui
+          prouve qu'elle avait déjà cette forme en 1979, et plus on remonte,
+          moins la fiche vaut.
+          La borne de début est celle du décret n° 79-262 du 21 mars 1979, qui
+          institue le complémentaire des architectes — le noyau de la caisse.
+      - debut: 2023
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.09
+        notes: >-
+          LA RÉFORME DE 2023 REND LE RÉGIME PROPORTIONNEL : « les cotisations de
+          retraite complémentaire ne sont plus forfaitaires mais
+          proportionnelles au revenu », écrit le guide pratique de la caisse.
+          9 % de zéro à un plafond, et 22 % d'un à trois — la seconde tranche
+          est la période jumelle de celle-ci.
+          Les points s'achètent, et la caisse déroule l'arithmétique : « 40 000 €
+          x 9 % = 3 600 € de cotisations. 3 600 € / 47,40 € (valeur d'achat du
+          point en 2026) = 75,9 points ». Valeur de service 2,89 € en 2026, d'où
+          un rendement de 6,10 % que la caisse publie elle-même — c'est lui que
+          porte `rendements_points.csv`.
+      - debut: 2023
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        assiette: tranche_1_3_pass
+        taux_cotisation_retraite: 0.22
+        notes: >-
+          Seconde tranche de la cotisation proportionnelle : 22 % des revenus
+          compris entre un et trois plafonds, soit 48 060 € et 144 180 € en
+          2026.
+
   - code: cnbf
     nom: Caisse nationale des barreaux français
     famille: liberal

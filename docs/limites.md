@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 45 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 46 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1974,7 +1974,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
-| Professions libérales (CNAVPL) | les régimes complémentaires des dix sections (CARMF, CARPIMKO, CIPAV…), chacun avec son barème ; la grille des classes de cotisation d'avant 2004 | le seul régime de base, en points plafonnés à 550 | **sous-estime** la pension, fortement : la complémentaire d'un médecin ou d'un dentiste pèse plus lourd que sa base. Un libéral n'est comparable qu'à lui-même d'un scénario à l'autre |
+| Professions libérales (CNAVPL) | les complémentaires de six sections sur dix — CARPIMKO, CAVAMAC, CAVP, CAVEC, CPRN, CARPV, CAVOM ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les quatre qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), et la Cipav pour le statut générique | **sous-estime** la pension d'un libéral d'une des six sections restantes, fortement : la complémentaire y pèse souvent plus lourd que la base |
 | Marins (ENIM) | la grille des salaires forfaitaires par catégorie et par année, qui est l'assiette réelle du régime | le revenu déclaré, plafonné comme au régime général | **indéterminé** : la grille est plus favorable que le salaire réel aux bas revenus, moins au-delà. L'écart porte sur l'assiette, donc sur la pension ET sur le compte notionnel, en partie compensé |
 | Avocats (CNBF) | la cotisation forfaitaire de base, de 363 à 1 988 €/an selon l'ancienneté ; les tranches de la grille complémentaire d'avant 2019 | seule la cotisation proportionnelle de 3,20 % alimente le compte ; les années d'avant 2019 restent au rendement instantané | **sous-estime le flux versé**, donc la pension notionnelle, sans toucher à la pension actuelle — qui est forfaitaire et ne dépend pas de la cotisation. L'écart joue donc contre les scénarios notionnels |
 | Non-salariés agricoles | le barème de points du régime de base (23 à 113 points par tranche de revenu), que personne ne publie ; les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans | la retraite forfaitaire et la RCO, dont le barème en points est public | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **45 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **46 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2263,12 +2263,32 @@ fiches pratiques portent tout, et l'obstacle est ailleurs — dans le moteur.
   pas choisie — contrairement à celle du régime invalidité-décès, que le même
   document présente juste à côté comme une option.
 
-Une grille de ce genre est une FONCTION EN ESCALIER du revenu, et c'est le seul
-obstacle qui reste : une fiche ne sait porter qu'un taux et un forfait. Le même
-obstacle bloque la CAVEC (neuf classes, rendement 8,33 % pourtant publié), la
-part répartie de la CAVP, et le RAAP d'avant 2017. **Un mécanisme de classes
-dans le moteur débloquerait quatre régimes d'un coup**, dont la plus grosse
-population libérale encore absente.
+Une grille de ce genre est une FONCTION EN ESCALIER du revenu, et c'était le
+seul obstacle qui restait : une fiche ne savait porter qu'un taux et un
+forfait. **Elle sait désormais porter une grille** — `classes_cotisation.csv`,
+le drapeau `cotisation_par_classes`, et la lecture dans les deux moteurs —, et
+la Cipav est entrée au catalogue.
+
+La grille est INDEXÉE SUR LE PLAFOND et non sur les prix, et c'est son
+arithmétique qui l'impose : rapportées au plafond de 2022, ses sept bornes
+valent 0,646, 1,198, 1,406, 1,614, 2,019, 2,508 et 2,997 — soit 0,65, 1,2,
+1,4, 1,6, 2, 2,5 et 3 plafonds —, et ses huit montants sont 1, 2, 3, 5, 7, 11,
+12 et 13 fois une même unité de 1 527 €, qui vaut elle-même 3,71 % du plafond.
+Sept bornes sur sept à un demi-pour-cent d'un multiple rond : la grille est
+écrite en plafonds, et l'indexer sur les prix la déformerait.
+
+Ce qui reste à faire tient au même mécanisme et à des données qui, elles,
+existent : la CAVEC (neuf classes, rendement de 8,33 % publié), la part
+répartie de la CAVP, et le RAAP d'avant 2017.
+
+UN PIÈGE DÉCOUVERT EN CHEMIN, et refermé par un test. La table des tranches
+d'assiette existe DEUX FOIS — `BORNES_ASSIETTE` dans `donnees/regimes.py` et
+dans `moteur/js/regimes.js` —, parce que le portage ne lit pas le Python. La
+tranche `tranche_1_3_pass` ajoutée pour la Cipav n'avait été écrite que d'un
+côté : le JavaScript retombait sur `[0, null]`, c'est-à-dire SANS PLAFOND, et
+cotisait 39 146 € là où le modèle en cotisait 19 356. Aucune erreur n'était
+levée ; seule la comparaison des témoins l'a vu. Un test compare désormais les
+deux tables.
 
 ### Le lecteur de PDF empilait les pages
 
@@ -2565,7 +2585,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 30 statuts », « 45 régimes » —, parce que ce sont des chiffres de données et
+« 30 statuts », « 46 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
@@ -2831,7 +2851,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 527 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 528 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

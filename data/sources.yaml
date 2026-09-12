@@ -1906,8 +1906,8 @@ institutions:
           valeurs du point
         url: https://www.lacipav.fr/documents-utiles
         acces: fichier
-        statut_integration: a_faire
-        cible: data/reference/regimes/non_salaries.yaml
+        statut_integration: saisi
+        cible: data/reference/regimes/classes_cotisation.csv
         note: >-
           La Cipav était rangée parmi les caisses « non abouties ». Elle publie
           en fait TOUT ce qu'un modèle en points demande.
@@ -1925,10 +1925,17 @@ institutions:
           123 300 €. La classe est DÉTERMINÉE par le revenu, non choisie — le
           même document présente juste à côté celle du régime invalidité-décès,
           qui l'est, et les distingue explicitement.
-          CE QUI BLOQUE N'EST DONC PLUS UNE DONNÉE MAIS UNE FORME : une grille
-          de classes est une fonction en escalier du revenu, et une fiche ne
-          sait porter qu'un taux et un forfait. Le même obstacle vaut pour la
-          CAVEC, la part répartie de la CAVP et le RAAP d'avant 2017.
+          CE QUI BLOQUAIT N'ÉTAIT PAS UNE DONNÉE MAIS UNE FORME, et la forme
+          existe désormais : `classes_cotisation.csv` porte la grille, le
+          drapeau `cotisation_par_classes` la lève dans la fiche, et les deux
+          moteurs la lisent. La Cipav est au catalogue, et le statut
+          `profession_liberale` y route.
+          LA GRILLE EST INDEXÉE SUR LE PLAFOND, parce qu'elle est écrite en
+          plafonds : ses sept bornes valent 0,646, 1,198, 1,406, 1,614, 2,019,
+          2,508 et 2,997 plafonds de 2022, et ses huit montants 1, 2, 3, 5, 7,
+          11, 12 et 13 fois une unité de 1 527 € qui vaut 3,71 % du plafond.
+          Restent, au même mécanisme et avec des données qui existent : la
+          CAVEC, la part répartie de la CAVP, le RAAP d'avant 2017.
 
       - id: ipp_points_independants
         titre: >-

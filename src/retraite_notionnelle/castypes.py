@@ -152,7 +152,10 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="profession_liberale",
         age_debut=27, age_liquidation=66, niveau_salaire=2.5,
         profil_carriere="fortement_ascendant",
-        commentaire="Régime complémentaire de section non paramétré : résultat incomplet.",
+        commentaire="Régime de base CNAVPL et complémentaire Cipav, la section par "
+                    "défaut. Un libéral d'une section spécialisée — auxiliaires "
+                    "médicaux, pharmaciens, notaires — aurait un complémentaire "
+                    "différent, et celui-là n'est pas paramétré.",
     ),
     CasType(
         code="contractuel_public",

@@ -1,0 +1,58 @@
+# Cotisations PAR CLASSES — les régimes qui prélèvent un montant, par palier
+# ------------------------------------------------------------------------
+# source_id: cipav_fiches_pratiques
+#
+# POURQUOI CE FICHIER EXISTE
+#
+# Une fiche de régime sait porter un taux et un forfait. Plusieurs
+# complémentaires libéraux ne prélèvent ni l'un ni l'autre : ils rangent
+# l'assuré dans une CLASSE selon son revenu, et chaque classe a son montant.
+# C'est une fonction en escalier, et c'est la seule forme que le catalogue ne
+# savait pas exprimer — assez pour laisser hors du modèle la Cipav d'avant
+# 2023, la CAVEC, la part répartie de la CAVP et le RAAP d'avant 2017.
+#
+# LA CLASSE EST SUBIE, PAS CHOISIE — et c'est ce qui rend la grille
+# modélisable. La fiche pratique 2022 de la Cipav présente côte à côte deux
+# grilles : celle du complémentaire, dont elle écrit « son montant est
+# DÉTERMINÉ selon ce tableau », et celle de l'invalidité-décès, dont elle écrit
+# « vous avez la possibilité de CHOISIR votre classe de cotisation, quels que
+# soient vos revenus ». Seule la première entre ici : le dépôt ne prête jamais
+# à personne un choix qu'il ne peut pas connaître.
+#
+# COMMENT LIRE UNE LIGNE
+#
+#   revenu_maximum : borne HAUTE de la classe, incluse. Vide pour la dernière,
+#                    qui n'en a pas.
+#   cotisation     : montant dû, en euros de `annee`.
+#
+# ANNÉES SANS GRILLE PUBLIÉE : LA GRILLE EST INDEXÉE SUR LE PLAFOND
+#
+# Le fichier porte le millésime que la caisse publie ; pour les autres
+# exercices, c'est la grille la plus récente qui précède qui s'applique, bornes
+# ET montants multipliés par le rapport des plafonds de la Sécurité sociale.
+#
+# Ce n'est pas la convention habituelle du dépôt — un montant sans série y est
+# d'ordinaire tenu constant en EUROS CONSTANTS, comme le fait
+# `cotisation_forfaitaire_euros`. Mais la grille de la Cipav n'est pas écrite en
+# euros : elle est écrite en plafonds, et son arithmétique le montre. Rapportées
+# au plafond de 2022 (41 136 €), ses sept bornes valent 0,646, 1,198, 1,406,
+# 1,614, 2,019, 2,508 et 2,997 — soit 0,65, 1,2, 1,4, 1,6, 2, 2,5 et 3 plafonds.
+# Et ses huit montants sont 1, 2, 3, 5, 7, 11, 12 et 13 fois une même unité de
+# 1 527 €, qui vaut elle-même 3,71 % du plafond. Sept bornes sur sept tombent à
+# un demi-pour-cent d'un multiple rond : ce n'est pas une coïncidence.
+#
+# Indexer sur les prix une grille de cette forme serait sciemment faux : le
+# plafond a crû plus vite que les prix, et une grille reportée vers l'amont en
+# euros constants rangerait presque tout le monde dans la première classe.
+#
+# Repère de contrôle : Cipav 2022, un revenu de 27 000 € tombe en classe B et
+# doit 3 055 € — c'est l'exemple que la caisse déroule elle-même.
+regime,annee,revenu_maximum,cotisation,fiabilite
+cipav_complementaire,2022,26580,1527,haute
+cipav_complementaire,2022,49280,3055,haute
+cipav_complementaire,2022,57850,4582,haute
+cipav_complementaire,2022,66400,7637,haute
+cipav_complementaire,2022,83060,10692,haute
+cipav_complementaire,2022,103180,16802,haute
+cipav_complementaire,2022,123300,18329,haute
+cipav_complementaire,2022,,19857,haute

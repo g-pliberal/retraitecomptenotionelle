@@ -254,6 +254,7 @@ def _regimes() -> list[dict]:
                     "assiette_repere_smic": p.assiette_repere_smic,
                     "assiette_plancher": p.assiette_plancher,
                     "assiette_forfaitaire": p.assiette_forfaitaire,
+                    "cotisation_par_classes": p.cotisation_par_classes,
                     "cotisation_forfaitaire_euros": p.cotisation_forfaitaire_euros,
                     "cotisation_forfaitaire_annee": p.cotisation_forfaitaire_annee,
                     "avantages_non_contributifs": list(p.avantages_non_contributifs),
@@ -285,6 +286,24 @@ def _valeurs_point() -> dict:
             for annee, (valeur, fiabilite) in sorted(table.items())
         }
         for (regime, mesure), table in sorted(valeurs._table.items())
+    }
+
+
+def _classes_cotisation() -> dict:
+    """Grilles de cotisation par classes, régime par régime et par millésime.
+
+    Une ligne : borne haute du palier (``null`` pour le dernier, qui n'en a
+    pas), montant, fiabilité. Les paliers sont déjà triés à la lecture.
+    """
+    from retraite_notionnelle.donnees.regimes import ClassesCotisation
+
+    classes = ClassesCotisation(DONNEES)
+    return {
+        f"{regime}|{annee}": [
+            [c.revenu_maximum, c.cotisation, int(c.fiabilite)] for c in grille
+        ]
+        for regime, grilles in sorted(classes._table.items())
+        for annee, grille in sorted(grilles.items())
     }
 
 
@@ -480,6 +499,7 @@ def construire() -> bytes:
         "valeurs_point": _valeurs_point(),
         "rendements_points": _rendements(),
         "conversions_points": _conversions_points(),
+        "classes_cotisation": _classes_cotisation(),
         "durees_requises": _table_par_generation(DureesRequises),
         "durees_proratisation": _table_par_generation(DureesProratisation),
         "revalorisation_salaires": _revalorisation_salaires(),

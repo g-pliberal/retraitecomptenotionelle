@@ -84,14 +84,28 @@ affiliations:
       - {debut: 2018, fin: null, regimes: [regime_general, rci]}
 
   profession_liberale:
-    libelle: Profession libérale (régime de base CNAVPL)
+    libelle: Profession libérale (CNAVPL et CIPAV)
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: null, regimes: [cnavpl]}
+      - {debut: 1949, fin: 1978, regimes: [cnavpl]}
+      - {debut: 1979, fin: null, regimes: [cnavpl, cipav_complementaire]}
     note: >-
-      Le régime complémentaire obligatoire dépend de la section (CARMF,
-      CARPIMKO, CIPAV…) et n'est pas encore paramétré : la simulation d'un
-      libéral est donc incomplète côté complémentaire.
+      LA SECTION PAR DÉFAUT EST LA CIPAV, et c'est elle que ce statut porte
+      depuis que sa fiche existe. Le régime complémentaire obligatoire d'un
+      libéral dépend de sa section : les médecins ont la CARMF, les
+      chirurgiens-dentistes et sages-femmes la CARCDSF, les avocats la CNBF —
+      trois statuts distincts les routent. Tous les autres métiers non
+      réglementés, et les professions de la construction, relèvent de la
+      CIPAV : architectes, ingénieurs-conseils, géomètres, psychologues,
+      ostéopathes, guides. C'est la section la plus nombreuse après les
+      auxiliaires médicaux, et le choix le moins arbitraire pour un statut
+      générique.
+      Restent sans complémentaire les sections spécialisées que le dépôt ne
+      sait pas encore chiffrer — CARPIMKO, CAVAMAC, CAVP, CAVEC, CPRN, CARPV,
+      CAVOM : un libéral de l'une d'elles est sous-estimé s'il est simulé
+      ici. Voir docs/limites.md.
+      La borne de 1979 est celle du décret n° 79-262 du 21 mars 1979, qui
+      institue le complémentaire des architectes.
 
   avocat:
     libelle: Avocat
