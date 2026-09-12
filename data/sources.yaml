@@ -1246,6 +1246,63 @@ institutions:
           et qu'une source tierce annonçait un tout autre barème (0,375 % et
           un point maximum), qui est un état ancien.
 
+      - id: carmf_chronologie
+        titre: >-
+          La chronologie des chiffres de la CARMF — valeur du point et
+          cotisations du régime complémentaire, 1949-2025
+        url: https://www.carmf.fr/doc/publications/chronologie/2025/chronologie-2025.pdf
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/rendements_points.csv
+        note: >-
+          Cent pages de tableaux, et tout y était depuis le début : la valeur
+          de service du point année par année depuis 1949, la cotisation
+          maximale et les POINTS QU'ELLE OUVRE depuis 1983, les taux, les
+          plafonds de revenu. Ce document avait été déclaré illisible ; il ne
+          l'était pas, c'est le lecteur de PDF du dépôt qui empilait les pages
+          et écrasait les interlignes — voir docs/limites.md.
+          CE QU'IL A FALLU COMPRENDRE POUR S'EN SERVIR. De 1991 à 1997 la table
+          porte DEUX valeurs de point par année, sans dire laquelle est
+          laquelle. Le rapport des deux vaut 1,3333 à quatre millièmes près sur
+          cinq des sept années, et les statuts du régime donnent la clé : les
+          points acquis avant le 1er janvier 1991 sont affectés d'un
+          coefficient de 1,33. La série basse est donc le point NOUVEAU, et
+          c'est elle qui rejoint 1998 (68,91 €), 2004 (69,00 €) et 2026
+          (77,14 €) ; la série haute est le point ancien, qui s'éteint.
+          DEUX AUTRES PIÈGES. La valeur publiée est celle « à 65 ans » jusqu'en
+          2016 et « à 62 ans » à partir de 2017 : la chute apparente de 78,55 à
+          68,30 est un changement de référence, pas une baisse. Et le régime
+          n'est « totalement proportionnel aux revenus » que depuis 1996, dit
+          la caisse en note ; avant, une part forfaitaire coexistait, dont les
+          points ne sont pas publiés.
+          CE QUE CELA CORRIGE : le rendement passe de 14,35 % en 1983 à 4,48 %
+          en 2026. La fiche portait le seul chiffre de 2026 sur toute la
+          période, ce qui divisait par deux ou trois les droits d'avant 2000.
+
+      - id: carcdsf_notices
+        titre: >-
+          Notice d'affiliation et pages de cotisations de la CARCDSF
+          (chirurgiens-dentistes et sages-femmes)
+        url: https://www.carcdsf.fr/images/pdf/2025/Notice_CD-Affiliation-2025-CARCDSF.pdf
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/rendements_points.csv
+        note: >-
+          La notice donne la phrase qui manquait partout ailleurs : « Cotisation
+          forfaitaire : 3 178,80 en 2025, ATTRIBUANT 6 POINTS », et la
+          proportionnelle « calculée sur la base de 10,80 % des revenus […]
+          compris entre 0,85 et 5 fois la valeur du plafond ». Le site donne
+          l'état 2026 : forfait 3 210,60 €, taux 11,35 %, tranche élargie à
+          0,65-5 plafonds par la réforme de l'assiette sociale, valeur de
+          service 31,82 €. D'où 535,10 € le point et un rendement de 5,95 %.
+          UN PIÈGE DE LECTURE : la notice est composée dans une police dont la
+          table ToUnicode ne se lit pas, et sort en glyphes — mais la
+          substitution est régulière, les chiffres passent en clair, et le
+          texte se décode. C'est ainsi que « attribuant 6 points » a été
+          obtenu, alors que les pages HTML de la caisse ne le disent nulle part
+          et qu'une source tierce annonçait un tout autre barème (0,375 % et
+          un point maximum), qui est un état ancien.
+
       - id: carmf_chiffres_cles
         titre: Chiffres clés du régime complémentaire des médecins (CARMF)
         url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-chiffre.htm

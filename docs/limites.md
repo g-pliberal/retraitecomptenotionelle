@@ -2246,12 +2246,54 @@ tri par x rend « 74,47 » sous la forme « ,4477 ». Cela fait, la table des
 valeurs du point de la CARMF se lit : 1988 → 74,47 € pour le médecin et 44,74 €
 pour le conjoint survivant, 1998 → 68,91 et 41,34, 2003 → 68,00 et 40,80.
 
-Reste une **zone ambiguë, 1990 à 1997**, où chaque année porte DEUX valeurs de
-point sur deux sous-lignes — 1991 : 61,40 puis 84,30 — sans que la géométrie
-dise laquelle est laquelle. Un écart de trente-sept pour cent ne se devine pas.
-Tant que les notes de la caisse ne l'auront pas levé, la fiche garde son
-rendement unique de 4,48 % : un chiffre approché mais assumé vaut mieux qu'une
-série dont huit années seraient fausses.
+### Ce que la chronologie de la CARMF a fini par dire
+
+De 1991 à 1997 sa table porte **deux valeurs de point par année** — 1991 :
+61,40 et 84,30 — sans que la géométrie dise laquelle est laquelle. Un écart de
+trente-sept pour cent ne se devine pas. Trois recoupements l'ont levé :
+
+* les **statuts du régime** affectent d'un coefficient de **1,33** les points
+  acquis avant le 1<sup>er</sup> janvier 1991 ;
+* le **rapport des deux séries** vaut 1,3333 à quatre millièmes près sur cinq
+  des sept années — 81,87 / 61,40, 84,30 / 63,23, 86,90 / 65,17… ;
+* les **raccords tiennent aux deux bouts** : la série haute prolonge la valeur
+  unique de 1990 (78,97 → 81,87, soit +3,7 %), et la série basse rejoint la
+  valeur unique de 1998 (68,68 → 68,91).
+
+La série basse est donc le point NOUVEAU, celui que le modèle doit porter ; la
+série haute est le point ancien, servi majoré d'un tiers jusqu'à extinction.
+
+**Deux autres pièges, dans le même document.** La valeur publiée est celle
+« à 65 ans » jusqu'en 2016 et « à 62 ans » depuis 2017 : la chute apparente de
+78,55 à 68,30 est un changement de référence, pas une baisse. Et le régime
+n'est « totalement proportionnel aux revenus » que depuis 1996, écrit la caisse
+en note de bas de page ; avant, une part forfaitaire coexistait, dont les
+points ne sont pas publiés.
+
+**Ce que cela corrige, et c'est lourd.** La fiche portait un taux unique de
+11,8 % et un rendement unique de 4,48 % — les chiffres de 2026 — sur toute la
+période depuis 1949. Les deux sont désormais lus année par année :
+
+| | Taux de cotisation | Rendement |
+|---|---|---|
+| 1983 | 2 % | 14,35 % |
+| 1991 | 5 % | 13,11 % |
+| 1996 | 7,5 % | 9,99 % |
+| 2004 | 9 % | 7,47 % |
+| 2016 | 9,6 % | 6,05 % |
+| 2026 | 11,8 % | 4,48 % |
+
+Les deux erreurs jouaient en sens inverse — un taux trop élevé, un rendement
+trop faible — et se compensaient à moitié. Sur un médecin né en 1965 gagnant
+trois fois le salaire moyen, la pension du scénario 1 passe de 39 552 € à
+**33 708 €**, soit quinze pour cent de moins. Le dépôt annonçait cette fiche
+comme portant « la limite la plus lourde » de ses deux fiches libérales ; elle
+est levée.
+
+**Ce qui reste.** Avant 1983, la table des cotisations proportionnelles ne
+commence pas : le taux et le rendement de 1983 y sont prolongés. Et la part
+FORFAITAIRE d'avant 1996 n'est pas modélisée, faute de connaître les points
+qu'elle ouvrait — ce qui SOUS-ESTIME les droits acquis avant cette date.
 
 ### La troisième passe : une forme de plus, et un dentiste
 

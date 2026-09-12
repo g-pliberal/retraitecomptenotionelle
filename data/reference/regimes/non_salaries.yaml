@@ -734,7 +734,7 @@ regimes:
     nom: >-
       Régime complémentaire vieillesse des médecins libéraux (CARMF)
     famille: liberal
-    source_id: carmf_chiffres_cles
+    source_id: carmf_chronologie
     fiabilite: haute
     creation: 1949
     fermeture: null
@@ -743,12 +743,318 @@ regimes:
     integre_dans: null
     population: >-
       Médecins libéraux. Étage complémentaire obligatoire au-dessus du régime
-      de base des professions libérales (CNAVPL), et le plus lourd des deux :
-      sa cotisation maximale dépasse 19 000 € par an quand celle de la base
-      plafonne bien plus bas.
+      de base des professions libérales, et le plus lourd des deux : sa
+      cotisation maximale dépasse 19 000 € par an en 2026 quand celle de la
+      base plafonne bien plus bas.
     hors_repartition: false
     periodes:
       - debut: 1949
+        fin: 1982
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0200
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Avant 1983 la chronologie de la CARMF ne donne pas la cotisation proportionnelle : le taux de 1983 y est prolongé. Le régime comportait alors une part FORFAITAIRE, supprimée en 1996, dont le nombre de points n'est pas publié — elle n'est donc pas modélisée, ce qui SOUS-ESTIME les droits acquis avant cette date.
+      - debut: 1983
+        fin: 1990
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0200
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux lu dans la table « Régime complémentaire / Cotisations proportionnelles » de la chronologie de la CARMF. Une part FORFAITAIRE coexistait jusqu'en 1996 — « depuis 1996, la cotisation du régime Complémentaire est totalement proportionnelle aux revenus », écrit la caisse — et n'est pas modélisée faute de connaître les points qu'elle ouvrait.
+      - debut: 1991
+        fin: 1995
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0500
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Le taux passe de 2 à 5 % avec la réforme du 1er janvier 1991, qui crée un point NOUVEAU : les points acquis auparavant sont servis affectés d'un coefficient de 1,33 (statuts du régime), ce que le rapport des deux séries publiées confirme à 1,3333 près. Le modèle ne porte que le point nouveau, et sous-estime donc d'un tiers les droits d'avant 1991.
+      - debut: 1996
+        fin: 1996
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0750
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Le régime devient TOTALEMENT PROPORTIONNEL : la part forfaitaire disparaît et la cotisation maximale ouvre dix points pleins. À partir d'ici la fiche est exacte, taux et rendement venant tous deux des tables de la caisse.
+      - debut: 1997
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0810
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 1999
+        fin: 1999
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0870
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2000
+        fin: 2007
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0900
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2008
+        fin: 2008
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0910
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2009
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0920
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2013
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0930
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0940
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2015
+        fin: 2015
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0950
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2016
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0960
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2017
+        fin: 2017
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0970
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2018
+        fin: 2021
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.0980
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2022
+        fin: 2023
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.1000
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2024
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_5_pass
+        taux_cotisation_retraite: 0.1020
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
+      - debut: 2026
         fin: null
         type_calcul: points
         age_ouverture: 62
@@ -760,28 +1066,12 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: plafonnee_3_5_pass
-        taux_cotisation_retraite: 0.118
+        taux_cotisation_retraite: 0.1180
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [reversion]
         notes: >-
-          11,8 % des revenus nets d'activité dans la limite de trois plafonds
-          et demi de la Sécurité sociale — 168 210 € en 2026, soit une
-          cotisation maximale de 19 849 €, qui ouvre 11,52 points, servis
-          77,14 € pièce à 62 ans. Ces trois chiffres donnent un prix d'achat de
-          1 723 € et un RENDEMENT de 4,48 %, et c'est par ce rendement que la
-          fiche convertit ses cotisations — `regimes/valeurs_point.csv` est
-          alimenté par les contrôles de `scripts/verifier_donnees.py`, dont
-          aucun ne couvre les caisses libérales, et y saisir une valeur à la
-          main désaccorde le journal de certification. La
-          majoration de 1,25 % par trimestre différé entre 62 et 65 ans, puis
-          0,75 % entre 65 et 70, est portée par la surcote ci-dessus pour la
-          première tranche seulement.
-          LES CHIFFRES SONT CEUX DE 2026 et valent pour toute la période : la
-          caisse ne publie ses chiffres clés que pour l'année en cours, et
-          aucune série historique de la valeur du point n'a été trouvée. Le
-          taux comme la valeur ont pourtant bougé — c'est la limite la plus
-          lourde de cette fiche.
+          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
 
   - code: carcdsf_complementaire
     nom: >-

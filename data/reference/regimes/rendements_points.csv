@@ -59,6 +59,56 @@ cnbf,1948,2100,0.0650,estimee
 cnbf_complementaire,1979,2100,0.0850,estimee
 rafp,2005,2100,0.0389,haute
 ircec_raap,1962,2100,0.1090,haute
-carmf_complementaire,1949,2100,0.0448,moyenne
 # 3 210,60 € pour six points, soit 535,10 € le point, servi 31,82 €.
 carcdsf_complementaire,1949,2100,0.0595,moyenne
+# CARMF complémentaire : rendement RECALCULÉ ANNÉE PAR ANNÉE depuis « La
+# chronologie des chiffres de la CARMF », qui donne d'un côté la valeur de
+# service du point et de l'autre la cotisation maximale et les points
+# qu'elle ouvre. Il passe de 14,35 % en 1983 à 4,48 % en 2026 — divisé par
+# trois. La fiche portait auparavant le seul chiffre de 2026 sur toute la
+# période, ce qui divisait par deux ou trois les droits d'avant 2000.
+# Avant 1983 la table des cotisations proportionnelles ne commence pas, et
+# la part FORFAITAIRE du régime — supprimée en 1996 — n'a jamais publié le
+# nombre de points qu'elle ouvrait : le rendement de 1983 y est prolongé.
+carmf_complementaire,1949,1982,0.1435,estimee
+carmf_complementaire,1983,1983,0.1435,moyenne
+carmf_complementaire,1984,1985,0.1427,moyenne
+carmf_complementaire,1986,1986,0.1434,moyenne
+carmf_complementaire,1987,1987,0.1437,moyenne
+carmf_complementaire,1988,1988,0.1318,moyenne
+carmf_complementaire,1989,1989,0.131,moyenne
+carmf_complementaire,1990,1990,0.1309,moyenne
+carmf_complementaire,1991,1991,0.1311,moyenne
+carmf_complementaire,1992,1992,0.1306,moyenne
+carmf_complementaire,1993,1993,0.1304,moyenne
+carmf_complementaire,1994,1994,0.1282,moyenne
+carmf_complementaire,1995,1995,0.1254,moyenne
+carmf_complementaire,1996,1996,0.0999,moyenne
+carmf_complementaire,1997,1997,0.0912,moyenne
+carmf_complementaire,1998,1998,0.0904,moyenne
+carmf_complementaire,1999,1999,0.0818,moyenne
+carmf_complementaire,2000,2000,0.0786,moyenne
+carmf_complementaire,2001,2001,0.0769,moyenne
+carmf_complementaire,2002,2002,0.0761,moyenne
+carmf_complementaire,2003,2003,0.0751,moyenne
+carmf_complementaire,2004,2004,0.0747,moyenne
+carmf_complementaire,2005,2005,0.0741,moyenne
+carmf_complementaire,2006,2007,0.0734,moyenne
+carmf_complementaire,2008,2008,0.0724,moyenne
+carmf_complementaire,2009,2009,0.0709,moyenne
+carmf_complementaire,2010,2010,0.0713,moyenne
+carmf_complementaire,2011,2011,0.0659,moyenne
+carmf_complementaire,2012,2012,0.0649,moyenne
+carmf_complementaire,2013,2013,0.0642,moyenne
+carmf_complementaire,2014,2014,0.0631,moyenne
+carmf_complementaire,2015,2015,0.062,moyenne
+carmf_complementaire,2016,2016,0.0605,moyenne
+carmf_complementaire,2017,2017,0.0513,moyenne
+carmf_complementaire,2018,2018,0.0501,moyenne
+carmf_complementaire,2019,2019,0.0496,moyenne
+carmf_complementaire,2020,2021,0.0494,moyenne
+carmf_complementaire,2022,2022,0.0487,moyenne
+carmf_complementaire,2023,2023,0.0476,moyenne
+carmf_complementaire,2024,2024,0.0455,moyenne
+carmf_complementaire,2025,2025,0.0453,moyenne
+carmf_complementaire,2026,2100,0.0448,moyenne
