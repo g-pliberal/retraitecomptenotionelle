@@ -20,10 +20,18 @@ points a besoin pour convertir une cotisation en droits :
 * la cotisation est proportionnelle au revenu, sur deux tranches — T1 de 0 à un
   plafond de la Sécurité sociale, T2 de 0 à cinq plafonds ;
 * le taux de T1 et celui de T2 sont donnés en toutes lettres ;
-* **525 points** au maximum sur T1, **25** sur T2, soit 550 — depuis 2015, et
-  c'est la seule des cinq grandeurs que ce script ne lit pas : elle n'apparaît
-  que dans un tableau dont la mise en page ne se laisse pas relire de façon
-  sûre. Elle figure en commentaire du fichier de référence, avec sa source.
+* **525 points** au maximum sur T1, **25** sur T2 — et 557 sur T1 depuis 2025,
+  le taux passant alors à 8,73 %.
+
+Les taux ne sont PAS lus dans la phrase de l'historique, et c'est une correction
+importante : cette phrase — « le taux de la première tranche est de 8,23 % » —
+décrit la réforme de 2015, non l'année du recueil. La lire donnait 8,23 % pour
+2025, alors que le recueil de cette année-là appelle 8,73 %. Les taux et les
+points sont donc lus dans le TABLEAU DES COTISATIONS, qui les donne année par
+année, sur trois exercices par recueil. Sa mise en page passait pour illisible ;
+elle ne l'est pas : les polices qui portent les montants n'exposent pas de table
+`ToUnicode`, mais les taux et les nombres de points, eux, se relisent. Les cinq
+recueils se recouvrent sur quinze lectures et concordent toutes.
 
 Le prix d'achat d'un point de T1 s'en déduit — taux × plafond ÷ 525 — mais ce
 calcul appartient au moteur, pas au récupérateur : on ne verse ici que ce que la
@@ -62,9 +70,16 @@ RECUEILS = {
 # Les accents disparaissent dans certains millésimes, où la police n'expose pas
 # de table ToUnicode complète : les motifs les rendent facultatifs.
 VALEUR = re.compile(r"valeurdupointestfix[ée]{0,2}e?à?(\d+[,.]\d+)")
-TAUX = re.compile(
-    r"[Ll]etauxdelapremi[èe]retrancheestde(\d+[,.]\d+)%,"
-    r"celuidelasecondetrancheestde(\d+[,.]\d+)%"
+#: Une ligne du tableau des cotisations, pour un exercice. Le texte est collé et
+#: entrelardé des caractères que les polices sans table `ToUnicode` rendent
+#: illisibles : les séparateurs sont donc tolérants. Les deux nombres de points
+#: y sont collés l'un à l'autre — « 557557 », le maximum au plafond et celui à
+#: cinq plafonds, qui sont égaux puisque T1 s'arrête au plafond.
+TABLEAU = re.compile(
+    r"Tauxdecotisation(?P<annee>\d{4})"
+    r".*?PASS:(?P<t1>\d+[,.]\d+)%"
+    r".*?(?P<points>\d{3})(?P=points)0.{0,6}?5PASS:(?P<t2>\d+[,.]\d+)%",
+    re.S,
 )
 SORTIE = Path("data/brut/cnavpl_recueils.json")
 
@@ -97,9 +112,33 @@ def _nombre(texte: str) -> float:
     return float(texte.replace(",", "."))
 
 
+def lignes_du_tableau(texte: str) -> dict[int, tuple[float, float, int]]:
+    """Taux des deux tranches et points de T1, exercice par exercice.
+
+    Le tableau des cotisations en porte trois par recueil — l'exercice écoulé,
+    celui en cours et le suivant. Les recueils se recouvrent donc, et ce
+    recouvrement est le contrôle : une lecture qui se contredirait d'un millésime
+    à l'autre arrêterait le script.
+    """
+    lu: dict[int, tuple[float, float, int]] = {}
+    for morceau in texte.split("Tauxdecotisation")[1:]:
+        trouve = TABLEAU.search("Tauxdecotisation" + morceau)
+        if trouve is None:
+            continue
+        lu[int(trouve.group("annee"))] = (
+            _nombre(trouve.group("t1")) / 100,
+            _nombre(trouve.group("t2")) / 100,
+            int(trouve.group("points")),
+        )
+    return lu
+
+
 def main() -> int:
     serie: dict[str, float] = {}
     valeurs: dict[int, float] = {}
+    #: Taux et points lus, avec le recueil qui les a donnés : deux recueils qui
+    #: se contrediraient sur un même exercice arrêtent le script.
+    tranches: dict[int, tuple[tuple[float, float, int], int]] = {}
     for annee, chemin in sorted(RECUEILS.items()):
         url = f"{RACINE}/{chemin}"
         try:
@@ -113,18 +152,29 @@ def main() -> int:
             return 1
 
         texte = texte_colle(octets)
-        point, taux = VALEUR.search(texte), TAUX.search(texte)
+        point = VALEUR.search(texte)
         if not point:
             print(f"IGNORÉ  recueil {annee} : la phrase attendue est absente")
             continue
         valeurs[annee] = _nombre(point.group(1))
         serie[f"cnavpl|{annee}|valeur_service"] = valeurs[annee]
-        detail = ""
-        if taux:
-            serie[f"cnavpl|{annee}|taux_t1"] = _nombre(taux.group(1)) / 100
-            serie[f"cnavpl|{annee}|taux_t2"] = _nombre(taux.group(2)) / 100
-            detail = f", tranches {taux.group(1)} % et {taux.group(2)} %"
-        print(f"OK      {annee} : valeur du point {valeurs[annee]} €{detail}")
+        for exercice, lecture in sorted(lignes_du_tableau(texte).items()):
+            precedent = tranches.get(exercice)
+            if precedent is not None and precedent[0] != lecture:
+                print(f"\nLectures contradictoires pour {exercice}, rien n'est "
+                      f"écrit : recueil {precedent[1]} donne {precedent[0]}, "
+                      f"recueil {annee} donne {lecture}", file=sys.stderr)
+                return 1
+            tranches[exercice] = (lecture, annee)
+            serie[f"cnavpl|{exercice}|taux_t1"] = lecture[0]
+            serie[f"cnavpl|{exercice}|taux_t2"] = lecture[1]
+        lues = ", ".join(
+            f"{e} : {t1:.2%} sur T1 ({p} points) et {t2:.2%} sur T2"
+            for e, ((t1, t2, p), source) in sorted(tranches.items())
+            if source == annee
+        )
+        print(f"OK      {annee} : valeur du point {valeurs[annee]} €"
+              + (f" ; {lues}" if lues else ""))
 
     croissantes = sorted(valeurs)
     for precedente, courante in zip(croissantes, croissantes[1:]):
@@ -140,9 +190,14 @@ def main() -> int:
             "source": RACINE,
             "recupere_le": date.today().isoformat(),
             "recueils": {str(a): f"{RACINE}/{c}" for a, c in sorted(RECUEILS.items())},
-            "note": "régime de base des professions libérales, en points depuis 2004 ; "
-                    "525 points au maximum sur T1 et 25 sur T2, non relus par ce "
-                    "script (tableau non relisible de façon sûre)",
+            "note": "régime de base des professions libérales, en points depuis "
+                    "2004 ; taux lus dans le tableau des cotisations, exercice "
+                    "par exercice, et non dans la phrase de l'historique, qui "
+                    "décrit la réforme de 2015 et non l'année du recueil",
+            "points_maximum_t1": {
+                str(exercice): points
+                for exercice, ((_, _, points), _) in sorted(tranches.items())
+            },
             "serie": dict(sorted(serie.items())),
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",

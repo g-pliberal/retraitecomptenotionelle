@@ -1363,18 +1363,21 @@ def test_rendement_instantane_reproduit_le_repere_publie(simulateur):
 def test_un_regime_sans_valeur_de_point_garde_le_rendement(simulateur):
     """La bascule est régime par régime, pas globale.
 
-    La CNAVPL, la MSA ou la CNBF n'ont pas de série de valeurs du point dans le
-    dépôt : elles doivent continuer d'être calculées au rendement instantané,
-    sans que rien ne casse.
+    La part proportionnelle de la MSA n'a pas de prix d'achat du point dans le
+    dépôt : elle doit continuer d'être calculée au rendement instantané, sans
+    que rien ne casse. Le régime de base des libéraux tenait ce rôle jusqu'à ce
+    que ses deux façons d'acquérir des points soient toutes deux paramétrées —
+    cent points par trimestre validé avant 2004, un barème en points depuis —
+    et il ne passe donc plus par le rendement.
     """
     carriere = simulateur.carriere_simple(
-        annee_naissance=1960, sexe="F", affiliation="profession_liberale",
+        annee_naissance=1960, sexe="F", affiliation="exploitant_agricole",
         age_debut=25, age_liquidation=64,
     )
     pensions = {p.regime: p for p in simulateur.simuler(carriere).actuel.pensions_par_regime}
-    assert "cnavpl" in pensions
-    assert "rendement" in pensions["cnavpl"].detail
-    assert pensions["cnavpl"].montant > 0
+    assert "msa_non_salaries" in pensions
+    assert "rendement" in pensions["msa_non_salaries"].detail
+    assert pensions["msa_non_salaries"].montant > 0
 
 
 def test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie(simulateur):
@@ -1540,7 +1543,14 @@ def test_valeur_du_point_des_liberaux_est_sourcee(simulateur):
     valeurs = {(int(l["annee"]), l["mesure"]): float(l["valeur"]) for l in lignes}
     assert {l["fiabilite"] for l in lignes} == {"certifiee"}
     assert valeurs[(2025, "valeur_service")] == pytest.approx(0.6540)
-    assert valeurs[(2025, "taux_t1")] == pytest.approx(0.0823)
+    # 8,73 % en 2025 : le taux de T1 a été relevé avec la réforme de l'assiette
+    # des indépendants, et le barème en points a suivi — 557 points au plafond
+    # au lieu de 525, soit le rapport exact des deux taux. Les recueils 2024 et
+    # 2025 portent l'un et l'autre ce tableau, et ils concordent. La série le
+    # lisait à 8,23 %, taux pris dans une phrase de l'historique qui décrit la
+    # réforme de 2015 et non l'année du recueil.
+    assert valeurs[(2025, "taux_t1")] == pytest.approx(0.0873)
+    assert valeurs[(2024, "taux_t1")] == pytest.approx(0.0823)
     assert valeurs[(2025, "taux_t2")] == pytest.approx(0.0187)
 
     services = [valeurs[(a, "valeur_service")]

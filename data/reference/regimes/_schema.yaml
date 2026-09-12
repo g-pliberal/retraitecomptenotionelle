@@ -268,6 +268,18 @@ champs_periode:
       dont la tranche B est nulle, en acquérait autant qu'un autre.
       `null` : aucune garantie.
 
+  points_par_trimestre_valide:
+    description: >-
+      Points attribués par TRIMESTRE VALIDÉ, sans égard au montant cotisé.
+      C'est la règle du régime de base des professions libérales pour tout ce
+      qui précède 2004 : « les trimestres validés avant le 1er janvier 2004
+      sont convertis en points à raison de cent points par trimestre »
+      (D. 643-1). Le droit d'avant la réforme n'était pas contributif —
+      l'allocation vieillesse valait un quinzième de l'AVTS par année cotisée,
+      la même pour tous —, et sa conversion ignore donc l'assiette. Les
+      trimestres, eux, restent ceux que le revenu a validés.
+      `null` : le régime convertit des cotisations, pas des trimestres.
+
   points_maximum:
     description: >-
       Nombre de points attribués quand l'assiette atteint le repère décrit par

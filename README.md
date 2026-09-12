@@ -709,6 +709,7 @@ COR pour ce qu'il **décide**.
 | Valeurs du point de l'Ircantec | 1971-2021 | Caisse des dépôts, qui gère le régime |
 | Valeurs du point des avocats | 2017-2026 | CNBF, ses barèmes annuels |
 | Valeur du point des professions libérales | 2021-2025 | CNAVPL, ses recueils statistiques |
+| Taux des deux tranches du régime de base des libéraux | 2020-2026 | CNAVPL, le tableau des cotisations de ses recueils |
 | Valeur du point de la complémentaire agricole | 2005-2024 | code rural D. 732-166, base LEGI de la DILA |
 | Minimum contributif et plafond d'écrêtement | ancres 2007-2014 | code de la sécurité sociale, base LEGI de la DILA |
 | Âge d'ouverture et coefficient de minoration, par génération | 1900-1975 | code de la sécurité sociale `D. 161-2-1-9` et `R. 351-27`, base LEGI |

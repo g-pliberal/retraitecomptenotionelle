@@ -564,16 +564,41 @@ regimes:
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: forfaitaire
+        assiette: plafonnee_5_pass
         taux_cotisation_retraite: 0.085
+        points_par_trimestre_valide: 100
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [minimum_vieillesse, reversion]
         notes: >-
-          Régime de base en points assis sur des CLASSES DE COTISATION
-          forfaitaires jusqu'à la réforme de 2004 : la reconstitution du compte
-          notionnel exige la grille des classes par année et par section
-          (non encore intégrée — voir data/reference/regimes/TODO_liberaux.md).
+          LE DROIT D'AVANT 2004 N'EST PAS PROPORTIONNEL AU REVENU, et la fiche
+          le faisait croire. Le régime servait une ALLOCATION VIEILLESSE, la
+          même pour le notaire et pour le kinésithérapeute : la moitié de
+          l'AVTS à l'origine, son montant entier depuis le décret n° 62-439 du
+          14 avril 1962, puis, le 1er janvier 1983, « 1/15e d'AVTS par année
+          cotisée », la condition de quinze années d'activité ayant été
+          supprimée (les périodes au-delà de quinze ans comptent depuis le
+          1er juillet 1978). La réforme du 21 août 2003 a converti ce droit en
+          points, et la règle de conversion est publiée : « les trimestres
+          validés avant le 1er janvier 2004 sont convertis en points à raison
+          de cent points par trimestre » (D. 643-1, cité par le recueil
+          statistique de la CNAVPL). C'est `points_par_trimestre_valide`, et le
+          revenu n'y entre que par les trimestres qu'il valide.
+          Le moteur portait auparavant 8,5 % du revenu ENTIER, sans plafond, au
+          rendement de 8 % : trente ans de carrière à 200 000 € y ouvraient
+          40 000 € de pension de base, quand le régime en servait 3 809 € en
+          moyenne en 2003 — quarante ans de cotisations ne pouvant dépasser
+          16 000 points, soit 10 500 € au point de 2025.
+          CE QUI RESTE CONVENTIONNEL EST LA COTISATION, non la pension. La
+          cotisation de base était forfaitaire jusqu'en 1992 ; le 1er janvier
+          1993 (loi n° 91-73 du 18 janvier 1991), « une fraction de la
+          cotisation du régime de base est devenue proportionnelle aux revenus,
+          dans la limite de 5 fois le plafond de la sécurité sociale ». Faute de
+          la série des forfaits, le compte notionnel prélève ici 8,5 % du revenu
+          BORNÉ À CINQ PLAFONDS — le plafond que le régime s'est lui-même donné
+          en 1993. C'est une convention, et elle est nommée : elle ne touche que
+          le scénario notionnel, la pension du système actuel ne dépendant plus,
+          pour ces années, que des trimestres.
       - debut: 2004
         fin: 2014
         type_calcul: points
@@ -629,7 +654,7 @@ regimes:
         notes: >-
           Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
       - debut: 2015
-        fin: null
+        fin: 2024
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -647,10 +672,43 @@ regimes:
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs: [minimum_vieillesse, reversion]
         notes: >-
-          Depuis 2015 : première tranche de 0 à 1 plafond, 525 points au
+          De 2015 à 2024 : première tranche de 0 à 1 plafond, 525 points au
           maximum. Chaque section professionnelle gère en outre un régime
-          complémentaire obligatoire aux paramètres propres, non paramétré ici :
-          la simulation d'un libéral reste incomplète de ce côté.
+          complémentaire obligatoire aux paramètres propres, décrit par sa
+          propre fiche.
+      - debut: 2025
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 557
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0873
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          LE TAUX DE T1 PASSE À 8,73 % EN 2025, et le barème en points suit :
+          557 points au plafond au lieu de 525, soit exactement le rapport des
+          deux taux — le prix d'achat d'un point ne bouge pas. La hausse
+          accompagne la réforme de l'assiette des indépendants (article 18 de la
+          loi n° 2023-1250 du 26 décembre 2023), qui asseoit la cotisation, à
+          partir de 2026 et sur le revenu 2025, sur le chiffre d'affaires
+          diminué des charges puis d'un abattement de 26 %.
+          Les recueils statistiques 2024 et 2025 de la CNAVPL portent l'un et
+          l'autre ce tableau, et ils concordent. La fiche le lisait encore à
+          8,23 % et 525 points : le taux venait d'une phrase de l'historique —
+          « le taux de la première tranche est de 8,23 % » — qui décrit la
+          réforme de 2015, non l'année du recueil.
+          La réforme de l'assiette, elle, n'est pas modélisée : la carrière
+          saisie porte un revenu, pas un chiffre d'affaires.
       - debut: 2015
         fin: null
         type_calcul: points

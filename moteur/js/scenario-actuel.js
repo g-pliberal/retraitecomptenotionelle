@@ -678,6 +678,27 @@ export class ScenarioActuel {
               cotisation = parClasse[0] * part;
             }
           }
+          if (periode.points_par_trimestre_valide !== null
+              && periode.points_par_trimestre_valide !== undefined) {
+            // POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant. Le régime de
+            // base des libéraux d'avant 2004 ne servait pas une pension
+            // proportionnelle au revenu mais une ALLOCATION : un quinzième de
+            // l'AVTS par année cotisée, la même pour tous. La réforme de 2003
+            // l'a convertie en points « à raison de cent points par trimestre »
+            // (D. 643-1), et c'est cette conversion qui porte le droit
+            // d'avant 2004.
+            const [echelleTrim, fiabiliteEchelleTrim] = this.conversionsPoints
+              .echelle(code, ligne.annee, anneeLiquidation);
+            pointsAcquis.set(code,
+              (pointsAcquis.get(code) ?? 0.0)
+                + periode.points_par_trimestre_valide
+                  * carriere.trimestresRetenus(ligne) * echelleTrim);
+            fiabilitePoints.set(code, Math.min(
+              fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
+              fiabiliteEchelleTrim,
+            ));
+            continue;
+          }
           if (periode.points_maximum !== null && periode.points_maximum !== undefined
               && repere > 0) {
             // Barème écrit en POINTS et non en prix d'achat : le régime annonce

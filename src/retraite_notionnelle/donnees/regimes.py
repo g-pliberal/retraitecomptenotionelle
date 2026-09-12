@@ -176,6 +176,15 @@ class PeriodeRegime:
     #: 120 points par an de 1989 à 2018, y compris pour un cadre dont la
     #: tranche B est nulle. Droit GRATUIT, sans contrepartie de cotisation.
     points_minimum_annuels: float | None
+    #: Points attribués par TRIMESTRE VALIDÉ, sans égard au montant cotisé.
+    #: C'est la règle du régime de base des professions libérales pour tout ce
+    #: qui précède la réforme de 2004 : « les trimestres validés avant le
+    #: 1er janvier 2004 sont convertis en points à raison de cent points par
+    #: trimestre » (D. 643-1). Le droit d'avant 2004 n'était pas contributif —
+    #: l'allocation vieillesse valait un quinzième de l'AVTS par année cotisée,
+    #: la même pour tous —, et c'est pourquoi sa conversion ignore l'assiette.
+    #: Le nombre de trimestres, lui, reste celui que le revenu a validés.
+    points_par_trimestre_valide: float | None
     #: Repère d'assiette, exprimé en heures de SMIC. ``None`` : le repère est
     #: la borne haute de l'assiette, en plafonds de la Sécurité sociale.
     assiette_repere_smic: float | None
@@ -615,6 +624,10 @@ class CatalogueRegimes:
                 points_minimum_annuels=(
                     None if p.get("points_minimum_annuels") is None
                     else float(p["points_minimum_annuels"])
+                ),
+                points_par_trimestre_valide=(
+                    None if p.get("points_par_trimestre_valide") is None
+                    else float(p["points_par_trimestre_valide"])
                 ),
                 assiette_repere_smic=(
                     None if p.get("assiette_repere_smic") is None

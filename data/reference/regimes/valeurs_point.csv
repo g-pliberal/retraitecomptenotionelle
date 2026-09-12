@@ -417,6 +417,8 @@ arrco,2017,salaire_reference,16.187900,certifiee
 arrco,2017,valeur_service,1.251300,certifiee
 arrco,2018,salaire_reference,16.722600,certifiee
 arrco,2018,valeur_service,1.258800,certifiee
+cnavpl,2020,taux_t1,0.082300,certifiee
+cnavpl,2020,taux_t2,0.018700,certifiee
 cnavpl,2021,taux_t1,0.082300,certifiee
 cnavpl,2021,taux_t2,0.018700,certifiee
 cnavpl,2021,valeur_service,0.573100,certifiee
@@ -426,10 +428,14 @@ cnavpl,2022,valeur_service,0.579500,certifiee
 cnavpl,2023,taux_t1,0.082300,certifiee
 cnavpl,2023,taux_t2,0.018700,certifiee
 cnavpl,2023,valeur_service,0.607600,certifiee
+cnavpl,2024,taux_t1,0.082300,certifiee
+cnavpl,2024,taux_t2,0.018700,certifiee
 cnavpl,2024,valeur_service,0.639900,certifiee
-cnavpl,2025,taux_t1,0.082300,certifiee
+cnavpl,2025,taux_t1,0.087300,certifiee
 cnavpl,2025,taux_t2,0.018700,certifiee
 cnavpl,2025,valeur_service,0.654000,certifiee
+cnavpl,2026,taux_t1,0.087300,certifiee
+cnavpl,2026,taux_t2,0.018700,certifiee
 cnbf_complementaire,2017,salaire_reference,9.243500,certifiee
 cnbf_complementaire,2017,valeur_service,0.935800,certifiee
 cnbf_complementaire,2018,salaire_reference,9.511500,certifiee
