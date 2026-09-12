@@ -693,7 +693,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1962
-        fin: 2016
+        fin: 2015
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -709,16 +709,85 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
-          AVANT 2017 LE RÉGIME N'ÉTAIT PAS PROPORTIONNEL mais organisé en
-          CLASSES de cotisation, dont la caisse ne publie pas la table : le
-          guide de l'IRCEC n'en parle plus que par le dispositif transitoire
-          qui permet, jusqu'en 2027, de conserver la classe choisie en 2016.
-          Faute de cette table, la période porte le taux proportionnel de 8 %
-          introduit en 2017. L'approximation SURESTIME la cotisation des
-          artistes-auteurs à faibles revenus, pour qui les classes basses
-          étaient plus légères que 8 % du revenu, et c'est la population la
-          plus nombreuse du régime.
+          AVANT LA RÉFORME LE RÉGIME N'ÉTAIT PAS PROPORTIONNEL mais OPTIONNEL,
+          et c'est plus grave qu'une table manquante. « Un système optionnel :
+          l'adhérent choisissait un montant parmi [des classes] », écrit
+          l'IRCEC dans son communiqué du 27 janvier 2016, qui ajoute que « le
+          taux de cotisation proportionnel aux revenus artistiques » vient « en
+          lieu et place » de ce système, « déconnecté des revenus artistiques
+          perçus ».
+          LE MÉCANISME DE CLASSES DU DÉPÔT NE PEUT DONC PAS SERVIR ICI. Il
+          range l'assuré dans un palier d'après son REVENU, ce que font la
+          Cipav et la CAVEC ; au RAAP la classe était un CHOIX, et aucun modèle
+          ne peut deviner celui d'un assuré. Ce n'est pas la table qui manque,
+          c'est le lien entre le revenu et la cotisation.
+          La période porte donc le taux proportionnel de 8 %, et
+          l'approximation SURESTIME lourdement : la caisse écrit que « jusqu'à
+          présent, 80 % des adhérents cotisent sur la base » la plus basse.
+      - debut: 2016
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.05
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          MONTÉE EN CHARGE DU DÉCRET DU 30 DÉCEMBRE 2015, que la fiche ignorait
+          en appliquant 8 % dès l'origine de la réforme. Le communiqué de
+          l'IRCEC du 27 janvier 2016 la donne en toutes lettres : « le taux
+          sera de 5 % en 2017 sur les revenus perçus en 2016, 6 % en 2018 sur
+          les revenus perçus en 2017, 7 % en 2019 sur les revenus perçus en
+          2018 et 8 % en 2020 sur les revenus perçus en 2019 ».
+          Les périodes suivent l'ANNÉE DU REVENU, comme tout le catalogue : le
+          taux porté ici est celui qui frappe les revenus de l'exercice, non
+          celui appelé cette année-là.
       - debut: 2017
+        fin: 2017
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.06
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Deuxième palier de la montée en charge : 6 % des revenus de 2017,
+          appelés en 2018.
+      - debut: 2018
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.07
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Troisième palier : 7 % des revenus de 2018, appelés en 2019.
+      - debut: 2019
         fin: null
         type_calcul: points
         age_ouverture: 62
@@ -735,6 +804,9 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
+          TAUX PLEIN DE LA RÉFORME, atteint sur les revenus de 2019 au terme
+          d'une montée en charge de quatre ans — voir les trois périodes qui
+          précèdent.
           8 % de l'assiette sociale, plafonnée à trois fois le plafond de la
           Sécurité sociale — 144 180 € en 2026. La conversion en pension passe
           par le RENDEMENT, que la caisse publie elle-même dans ses mémos

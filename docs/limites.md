@@ -2131,10 +2131,15 @@ publié tel quel par la caisse.
 
 **Ce qui manque encore à ces deux fiches**, et il faut le dire franchement :
 
-* la table des **classes de cotisation du RAAP d'avant 2017**, que la caisse ne
-  publie plus — le régime n'est devenu proportionnel qu'en 2017, et la fiche
-  applique les 8 % en amont, ce qui SURESTIME la cotisation des petits revenus
-  artistiques, la population la plus nombreuse du régime ;
+* le **lien entre revenu et cotisation au RAAP d'avant la réforme** — et non,
+  comme on l'a longtemps écrit ici, la table de ses classes. Le communiqué de
+  l'IRCEC du 27 janvier 2016 tranche : le système était « OPTIONNEL —
+  l'adhérent choisissait un montant » —, et « déconnecté des revenus
+  artistiques perçus ». Le mécanisme de classes du dépôt, qui range l'assuré
+  d'après son REVENU, ne peut donc rien ici : même publiée, la table ne dirait
+  pas quelle classe un assuré avait choisie. La fiche applique les 8 % en
+  amont, et la caisse donne l'ordre de grandeur de ce que cela coûte :
+  « jusqu'à présent, 80 % des adhérents cotisent sur la base » la plus basse ;
 * le **seuil d'affiliation** du RAAP — 900 SMIC horaires, 10 692 € en 2026 —
   en dessous duquel aucune cotisation n'est due : le modèle prélève quand même,
   n'ayant pas de mécanisme de seuil d'exonération (`assiette_plancher` relève
@@ -2292,8 +2297,18 @@ meilleure échelle pour une grille assise sur des revenus, mais soixante-dix ans
 reportés depuis un seul millésime, c'est la limite de cette fiche, et elle est
 grande.
 
-Ce qui reste à faire tient au même mécanisme : la part répartie de la CAVP, et
-le RAAP d'avant 2017.
+**Le RAAP, lui, sort de cette liste, et pour une raison de fond.** Ses classes
+d'avant 2016 étaient CHOISIES, pas subies : « un système optionnel — l'adhérent
+choisissait un montant », « déconnecté des revenus artistiques perçus », écrit
+la caisse. Le mécanisme range l'assuré d'après son revenu ; il ne sait pas
+deviner un choix. Ce n'était donc pas une table qui manquait.
+
+La passe a tout de même corrigé sa fiche sur un autre point : le décret du
+30 décembre 2015 fait MONTER LE TAUX EN CHARGE sur quatre ans — 5 % sur les
+revenus de 2016, 6 % sur ceux de 2017, 7 % sur ceux de 2018, 8 % à partir de
+2019 —, et la fiche appliquait 8 % dès l'origine de la réforme.
+
+Ce qui reste à faire tient au même mécanisme : la part répartie de la CAVP.
 
 UN PIÈGE DÉCOUVERT EN CHEMIN, et refermé par un test. La table des tranches
 d'assiette existe DEUX FOIS — `BORNES_ASSIETTE` dans `donnees/regimes.py` et
