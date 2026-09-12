@@ -397,7 +397,19 @@ export class ConstructeurCompte {
           // prélevé ouvre des droits, ici comme dans le scénario 1.
           assiette = repere;
         }
-        if (assiette <= 0) {
+        // LA COTISATION FORFAITAIRE. Certains complémentaires libéraux ne
+        // sont ni proportionnels ni forfaitaires mais LES DEUX : le régime des
+        // chirurgiens-dentistes appelle 3 210,60 € en 2026, qui ouvrent six
+        // points, PLUS 11,35 % du revenu. Le forfait est dû quel que soit le
+        // revenu et ne s'annule donc pas avec l'assiette.
+        let forfait = 0.0;
+        if (periode.cotisation_forfaitaire_euros !== null
+            && periode.cotisation_forfaitaire_euros !== undefined) {
+          const reference = periode.cotisation_forfaitaire_annee || annee;
+          forfait = periode.cotisation_forfaitaire_euros
+            * this.macro.coefficientPrix(reference, annee) * part;
+        }
+        if (assiette <= 0 && forfait <= 0) {
           continue;
         }
 
@@ -408,7 +420,7 @@ export class ConstructeurCompte {
           origines.push(origine);
           fiabilite = Math.min(fiabilite, fiabiliteTaux);
         }
-        let montant = assiette * taux;
+        let montant = assiette * taux + forfait;
 
         // LA COTISATION DÉPLAFONNÉE. Au-dessus du plafond, le régime général
         // prélève encore sur la TOTALITÉ du salaire — 2,42 % en 2025 — et

@@ -582,6 +582,9 @@ export const BORNES_ASSIETTE = Object.freeze({
   // Complémentaires des sections libérales : la CARMF prélève jusqu'à
   // trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
   plafonnee_3_5_pass: [0.0, 3.5],
+  // Complémentaire des chirurgiens-dentistes : tranche partant de 0,85
+  // plafond jusqu'en 2025, de 0,65 depuis la réforme de 2026.
+  tranche_065_5_pass: [0.65, 5.0],
   hors_primes: [0.0, null],
   primes_uniquement: [0.0, null],
   forfaitaire: [0.0, null],

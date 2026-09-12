@@ -1689,7 +1689,19 @@ class ScenarioActuel:
                         # sur 1 820 SMIC même quand le revenu est en dessous,
                         # et ouvre donc ses cent points malgré tout.
                         assiette = repere
-                    cotisation = assiette * periode.taux_cotisation_retraite
+                    # La cotisation forfaitaire s'ajoute à la proportionnelle,
+                    # et elle est due quel que soit le revenu — cf.
+                    # `Compte._cotisation_forfaitaire`, même convention
+                    # d'indexation sur les prix.
+                    forfait = 0.0
+                    if periode.cotisation_forfaitaire_euros is not None:
+                        reference = (periode.cotisation_forfaitaire_annee
+                                     or ligne.annee)
+                        forfait = (periode.cotisation_forfaitaire_euros
+                                   * self.macro.coefficient_prix(
+                                       reference, ligne.annee))
+                    cotisation = (assiette * periode.taux_cotisation_retraite
+                                  + forfait)
                     if periode.points_maximum is not None and repere > 0:
                         # Barème écrit en POINTS et non en prix d'achat : le
                         # régime annonce combien de points ouvre une assiette

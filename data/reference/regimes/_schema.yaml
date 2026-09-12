@@ -118,7 +118,7 @@ champs_periode:
               "tranche_b", "tranche_c", "hors_primes", "primes_uniquement", "forfaitaire",
               "plafonnee_085_pass", "tranche_085_5_pass", "plafonnee_5_pass",
               "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass",
-              "plafonnee_3_5_pass"]
+              "plafonnee_3_5_pass", "tranche_065_5_pass"]
 
   taux_cotisation_retraite:
     description: >-
@@ -285,6 +285,20 @@ champs_periode:
       C'est l'assiette minimale de la complémentaire agricole, qui ouvre ses
       cent points même à un revenu plus faible.
     defaut: false
+
+  cotisation_forfaitaire_euros:
+  cotisation_forfaitaire_annee:
+    description: >-
+      Cotisation FORFAITAIRE, exprimée dans les euros de
+      `cotisation_forfaitaire_annee`, qui s'AJOUTE à la cotisation
+      proportionnelle. C'est la forme du complémentaire des chirurgiens-
+      dentistes : 3 210,60 € en 2026, qui ouvrent six points, PLUS 11,35 % du
+      revenu. Ni un taux, ni un forfait pur — les deux à la fois, et le modèle
+      ne savait exprimer que le premier. Le forfait est dû quel que soit le
+      revenu : il ne s'annule pas avec une assiette nulle. Il est ramené à
+      l'année courante par l'indice des PRIX, faute d'une série publiée sur
+      toute la durée — même convention que `pension_forfaitaire_annuelle`.
+      `null` : le régime n'a pas de part forfaitaire.
 
   assiette_forfaitaire:
     description: >-

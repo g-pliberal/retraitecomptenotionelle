@@ -52,6 +52,10 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     # Complémentaires des sections libérales : la CARMF prélève jusqu'à
     # trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
     "plafonnee_3_5_pass": (0.0, 3.5),
+    # Complémentaire des chirurgiens-dentistes : sa tranche part de
+    # 0,85 plafond jusqu'en 2025, de 0,65 depuis la réforme de
+    # l'assiette sociale de 2026.
+    "tranche_065_5_pass": (0.65, 5.0),
     "hors_primes": (0.0, None),
     "primes_uniquement": (0.0, None),
     "forfaitaire": (0.0, None),
@@ -172,6 +176,15 @@ class PeriodeRegime:
     #: du culte n'a pas de salaire dont on prélèverait une fraction ; la
     #: congrégation et lui cotisent sur un forfait.
     assiette_forfaitaire: bool
+    #: COTISATION FORFAITAIRE, en euros de `cotisation_forfaitaire_annee`,
+    #: qui s'AJOUTE à la cotisation proportionnelle. C'est la forme du
+    #: complémentaire des chirurgiens-dentistes : 3 210,60 € en 2026,
+    #: attribuant six points, PLUS 11,35 % du revenu. Ni un taux ni un
+    #: forfait pur — les deux à la fois, et le modèle ne savait exprimer
+    #: que le premier. Indexée sur les prix, comme la pension
+    #: forfaitaire, faute d'une série publiée pour les années anciennes.
+    cotisation_forfaitaire_euros: float | None
+    cotisation_forfaitaire_annee: int | None
     avantages_non_contributifs: tuple[str, ...]
     #: Taux prélevé sur la TOTALITÉ de la rémunération, en plus du taux
     #: ci-dessus, et qui n'ouvre AUCUN droit — la cotisation « déplafonnée » du
@@ -480,6 +493,14 @@ class CatalogueRegimes:
                 ),
                 assiette_plancher=bool(p.get("assiette_plancher", False)),
                 assiette_forfaitaire=bool(p.get("assiette_forfaitaire", False)),
+                cotisation_forfaitaire_euros=(
+                    None if p.get("cotisation_forfaitaire_euros") is None
+                    else float(p["cotisation_forfaitaire_euros"])
+                ),
+                cotisation_forfaitaire_annee=(
+                    None if p.get("cotisation_forfaitaire_annee") is None
+                    else int(p["cotisation_forfaitaire_annee"])
+                ),
                 avantages_non_contributifs=tuple(p.get("avantages_non_contributifs") or ()),
                 notes=(p.get("notes") or "").strip(),
             )

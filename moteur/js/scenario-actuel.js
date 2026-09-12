@@ -643,7 +643,16 @@ export class ScenarioActuel {
             // 1 820 SMIC même quand le revenu est en dessous.
             assiette = repere;
           }
-          const cotisation = assiette * periode.taux_cotisation_retraite;
+          // La cotisation forfaitaire s'ajoute à la proportionnelle, et elle est
+          // due quel que soit le revenu — même convention que dans compte.js.
+          let forfait = 0.0;
+          if (periode.cotisation_forfaitaire_euros !== null
+              && periode.cotisation_forfaitaire_euros !== undefined) {
+            const reference = periode.cotisation_forfaitaire_annee || ligne.annee;
+            forfait = periode.cotisation_forfaitaire_euros
+              * this.macro.coefficientPrix(reference, ligne.annee);
+          }
+          const cotisation = assiette * periode.taux_cotisation_retraite + forfait;
           if (periode.points_maximum !== null && periode.points_maximum !== undefined
               && repere > 0) {
             // Barème écrit en POINTS et non en prix d'achat : le régime annonce

@@ -161,6 +161,21 @@ class ConstructeurCompte:
         self._taux_pivot[annee] = total
         return total
 
+    def _cotisation_forfaitaire(self, periode, annee: int) -> float:
+        """Part forfaitaire de la cotisation, en euros de l'année demandée.
+
+        La fiche la porte dans les euros d'une année de référence ; elle est
+        ramenée à l'année courante par l'indice des prix, faute d'une série
+        publiée sur toute la durée. C'est la convention déjà retenue pour
+        ``pension_forfaitaire_annuelle``.
+        """
+        if periode.cotisation_forfaitaire_euros is None:
+            return 0.0
+        reference = periode.cotisation_forfaitaire_annee or annee
+        return periode.cotisation_forfaitaire_euros * self.macro.coefficient_prix(
+            reference, annee
+        )
+
     def taux_effectif(self, regime: str, periode, annee: int,
                       sans_employeur: bool = False
                       ) -> tuple[float, float, str, Fiabilite]:
@@ -484,7 +499,14 @@ class ConstructeurCompte:
                     # 1 820 SMIC même quand le revenu est en dessous. Ce qui a
                     # été prélevé ouvre des droits, ici comme dans le scénario 1.
                     assiette = repere
-                if assiette <= 0:
+                # LA COTISATION FORFAITAIRE. Certains complémentaires libéraux
+                # ne sont ni proportionnels ni forfaitaires mais LES DEUX : le
+                # régime des chirurgiens-dentistes appelle 3 210,60 € en 2026,
+                # qui ouvrent six points, PLUS 11,35 % du revenu. Le forfait est
+                # dû quel que soit le revenu : il ne dépend pas de l'assiette et
+                # ne s'annule donc pas avec elle.
+                forfait = self._cotisation_forfaitaire(periode, annee) * part
+                if assiette <= 0 and forfait <= 0:
                     continue
 
                 taux, taux_employeur, origine, fiabilite_taux = self.taux_effectif(
@@ -493,7 +515,7 @@ class ConstructeurCompte:
                 if origine:
                     origines.append(origine)
                     fiabilite = min(fiabilite, fiabilite_taux)
-                montant = assiette * taux
+                montant = assiette * taux + forfait
 
                 # LA COTISATION DÉPLAFONNÉE. Le régime général prélève, en
                 # plus de la cotisation plafonnée, un taux sur la TOTALITÉ du
