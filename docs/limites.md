@@ -2811,11 +2811,20 @@ tromperait d'un facteur deux et demi, ce qui est pire.
 
 **Une dernière singularité : un tiers de la cotisation est payé par
 quelqu'un d'autre.** Le « concours conventionnel des compagnies mandantes »
-apporte 2,50 points sur les 7,66 appelés en 2026. Les compagnies ne sont pas
-l'employeur d'un agent général ; le statut reste marqué `sans_employeur`, et le
-moteur porte donc cette part au compte de l'agent. La fiche porte le partage
-exact — 5,16 / 7,66 —, et un test l'y oblige, mais les scénarios 2 et 3 prêtent
-encore à l'agent un effort qu'il n'a pas fourni.
+apporte 2,50 points sur les 7,66 appelés en 2026, et la fiche des taux de la
+caisse l'énumère comme une ligne à part entière. Le gouvernement en a donné
+l'ancienneté et le poids au Sénat en 2021 : « depuis 1952, des accords
+conventionnels successifs » font financer le régime en partie par les
+compagnies, pour « environ 90 millions d'euros, soit plus du tiers des
+ressources du régime » — la proportion d'aujourd'hui.
+
+**L'agent général est donc le seul libéral du catalogue qui ne cotise pas
+seul**, et son statut n'est pas marqué `sans_employeur`. Les compagnies ne sont
+pas son employeur ; elles paient pourtant, et le modèle n'a pas d'autre façon de
+le dire. Les scénarios 2 et 3 ne portent à son compte que les 5,16 points qu'il
+supporte, les scénarios 4 et 5 les 7,66 entiers — sur une carrière au revenu
+moyen de la section, 15 147 € contre 22 486 € par an. Son régime de BASE reste
+intégralement à sa charge, la fiche de la CNAVPL ne portant aucun partage.
 
 **La CPRN, elle, était bien bloquée par son assiette** — les produits de
 l'office, pas le revenu du notaire — et c'est un rapport d'inspection, non la
@@ -2827,15 +2836,31 @@ fixe le prix du point de la section C :
 > des notaires soit toujours égale à 900 points. »
 
 Avec le prix que publie le décret annuel — 17,69 € — et le taux — 4,10 % —, les
-produits moyens d'un office valent 900 × 17,69 / 0,041 = **388 317 €**. Le
-revenu moyen s'obtient par l'autre bout, en retranchant de la cotisation moyenne
-que publie la caisse (32 864 €, tous régimes) la section C (15 921 €) et une
-section B de classe 3 (9 515 €) : il reste 7 428 € de régime de base, que son
-barème renvoie à **190 000 €** de revenu. D'où un facteur de **2,04**, borné par
-un contrôle indépendant — le Conseil supérieur du notariat publie 9,0 milliards
-d'euros de produits pour 17 305 notaires, soit 520 000 € par notaire, du même
-ordre. C'est une convention, la fiche le dit, et elle porte `fiabilite: estimee`
-pour cette raison.
+produits moyens d'un office valent 900 × 17,69 / 0,041 = **388 317 €**.
+
+**Le revenu moyen, lui, se mesure** — et c'est le recueil statistique de la
+CNAVPL qui le permet, une fois relu avec un lecteur de PDF capable de ses
+polices. Il publie, section par section, les cotisations du régime de base
+encaissées sur CHACUNE DES DEUX TRANCHES : pour les notaires en 2024, 43 405 k€
+sur la tranche 1 et 27 195 k€ sur la tranche 2, pour 12 096 cotisants. Divisées
+par leurs taux — 8,23 % et 1,87 % —, ces deux sommes donnent deux **moments
+écrêtés** de la distribution des revenus : 43 601 € en moyenne sous un plafond,
+120 228 € sous cinq. Deux moments suffisent à caler une log-normale, dont la
+moyenne entière vaut **152 097 €**.
+
+**La méthode se vérifie sur une autre section.** Appliquée à la CAVAMAC, dont la
+caisse publie de son côté le revenu moyen déclaré, elle donne 116 579 € contre
+115 443 € publiés — **1 % d'écart**. C'est ce contrôle qui autorise à s'en
+servir là où personne ne publie le revenu moyen.
+
+D'où un facteur de **2,553** : le notaire garde 39 % des produits de son office,
+le reste payant les collaborateurs et l'étude — le notariat compte 55 556
+collaborateurs pour 17 305 notaires. Un second calcul recoupe la chaîne : la
+cotisation moyenne que publie la caisse (32 864 €, tous régimes) moins la part
+du régime de base que donne le recueil (5 837 €) laisse 27 027 € pour les deux
+sections, dont 15 921 € de section C laissent 11 106 € de section B — soit la
+classe 3,5, au milieu d'une grille qui en compte huit. La fiche porte
+`fiabilite: estimee` parce qu'une chaîne reste une chaîne.
 
 **La moitié forfaitaire du régime reste dehors, et pour une raison de
 principe.** La section B a huit classes, de 10 à 80 points, et sa cotisation

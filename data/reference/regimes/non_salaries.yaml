@@ -3266,6 +3266,7 @@ regimes:
         assiette: plafonnee_13_pass
         assiette_facteur_revenu: 2.387
         taux_cotisation_retraite: 0.036
+        part_salariale: 0.673629
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -3308,6 +3309,7 @@ regimes:
         assiette: plafonnee_13_pass
         assiette_facteur_revenu: 2.387
         taux_cotisation_retraite: 0.063
+        part_salariale: 0.673629
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -3330,6 +3332,7 @@ regimes:
         assiette: plafonnee_13_pass
         assiette_facteur_revenu: 2.387
         taux_cotisation_retraite: 0.0693
+        part_salariale: 0.673629
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -3355,6 +3358,7 @@ regimes:
         assiette: plafonnee_13_pass
         assiette_facteur_revenu: 2.387
         taux_cotisation_retraite: 0.080325
+        part_salariale: 0.673629
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -3378,6 +3382,7 @@ regimes:
         assiette: plafonnee_13_pass
         assiette_facteur_revenu: 2.387
         taux_cotisation_retraite: 0.081585
+        part_salariale: 0.673629
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -3397,6 +3402,7 @@ regimes:
         assiette: plafonnee_13_pass
         assiette_facteur_revenu: 2.387
         taux_cotisation_retraite: 0.09
+        part_salariale: 0.673629
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -3419,6 +3425,7 @@ regimes:
         assiette: plafonnee_13_pass
         assiette_facteur_revenu: 2.387
         taux_cotisation_retraite: 0.0816
+        part_salariale: 0.673629
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -3451,15 +3458,25 @@ regimes:
           dont 2,50 % (concours des compagnies mandantes) et 5,16 % (part à la
           charge de l'assuré) ». Le barème de l'IPP porte encore 8,16 % ; la
           caisse fait foi, comme toujours dans ce dépôt.
-          DEUX CINQUIÈMES SONT PAYÉS PAR QUELQU'UN D'AUTRE. Le « concours
-          conventionnel des compagnies mandantes » — 2,50 points sur 7,66 —
-          n'est ni une cotisation de l'agent ni une cotisation d'employeur :
-          c'est la contrepartie d'un accord de branche, en place depuis 1952.
-          `part_salariale` porte le partage exact, 5,16 / 7,66 = 67,36 % ; mais
-          le statut `agent_general_assurance` est marqué `sans_employeur`, comme
-          tous les libéraux, et le moteur porte alors TOUT au compte de
-          l'agent. Les scénarios 2 et 3 lui prêtent donc un tiers d'effort qu'il
-          n'a pas fourni, et le chiffre est ici pour qui voudra corriger cela.
+          UN TIERS EST PAYÉ PAR QUELQU'UN D'AUTRE, ET CE N'EST PAS UN
+          EMPLOYEUR. La fiche des taux de la caisse l'énumère à part : « taux de
+          cotisation créateur de droits RCO : 6,30 % ; CONCOURS CONVENTIONNEL
+          DES COMPAGNIES MANDANTES : 2,50 % des commissions brutes plafonnées ;
+          taux d'appel : 121,6 % ; taux de cotisation effectif : 7,66 % », et
+          son tableau de paramètres détaille les 7,66 % « dont 2,50 %
+          (concours des compagnies mandantes) et 5,16 % (part à la charge de
+          l'assuré) ». D'où `part_salariale` = 5,16 / 7,66 = 67,36 %.
+          CE CONCOURS EST AUSSI VIEUX QUE LA PROFESSION L'EST SOUS SA FORME
+          ACTUELLE. Le gouvernement l'a rappelé au Sénat en 2021 : « depuis
+          1952, des accords conventionnels successifs » font financer le régime
+          en partie par les compagnies, et ce concours représentait alors
+          « environ 90 millions d'euros, soit plus du tiers des ressources du
+          régime » — la même proportion qu'aujourd'hui. C'est pourquoi la part
+          de 2026 est reportée sur toutes les périodes : seul son niveau exact
+          est daté, son existence ne l'est pas. Le statut
+          `agent_general_assurance` n'est DONC PAS marqué `sans_employeur` —
+          c'est le seul libéral du catalogue dans ce cas, et il l'est parce
+          qu'un tiers paie réellement pour lui.
           LE RENDEMENT EST PUBLIÉ, ET IL EST STABLE : « le coefficient de
           référence, correspondant au prix d'achat d'un point de retraite :
           fixé à 8,1806 €, maintenant ainsi le taux de rendement du régime à
@@ -3835,7 +3852,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: deplafonnee
-        assiette_facteur_revenu: 2.04
+        assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.10
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.01
@@ -3848,31 +3865,43 @@ regimes:
           pour un notaire associé, au prorata de sa part dans les bénéfices. Les
           produits d'un office sont ce qu'il encaisse, pas ce qui reste à son
           titulaire.
-          LE FACTEUR DE 2,04 EST UNE CONVENTION, ET VOICI SON ARITHMÉTIQUE
-          ENTIÈRE. Le rapport de l'IGAS sur la caisse (n° 2012-110P) donne la
-          règle qui fixe le prix du point C : « cette valeur d'acquisition est
-          calculée de façon à ajuster le nombre de points attribué à chaque
-          notaire de façon à ce que LA MOYENNE sur l'ensemble des notaires soit
-          toujours ÉGALE À 900 POINTS ». Le décret annuel donne ce prix —
-          17,69 € — et le taux — 4,10 %. Donc la cotisation moyenne de section C
-          vaut 900 × 17,69 = 15 921 €, et les produits moyens 15 921 / 0,041 =
-          388 317 €.
-          Le revenu moyen s'obtient par l'autre bout : la caisse publie une
-          cotisation moyenne annuelle de 32 864 € « tous affiliés confondus (B,
-          C et régime de base) ». Ôtés les 15 921 € de section C et les 9 515 €
-          d'une section B de classe 3 — la seule classe qui laisse au régime de
-          base un montant inférieur à son maximum —, il reste 7 428 € de
-          cotisation de base, que le barème 2025 (8,23 % sous un plafond,
-          1,87 % jusqu'à cinq) renvoie à un revenu de 190 000 €. D'où
-          388 317 / 190 000 = 2,04.
-          CE QUE CETTE CHAÎNE SUPPOSE : que la règle des 900 points vaille
-          encore — le prix du point C est gelé à 17,69 € depuis 2019, ce qui
-          suggère qu'elle ne s'applique plus — et que la classe moyenne de la
-          section B soit la troisième. Un contrôle indépendant la borne : le
-          Conseil supérieur du notariat publie 9,0 milliards d'euros de produits
-          pour 17 305 notaires en 2024, soit 520 000 € par notaire, du même
-          ordre. Le facteur est donc juste à un quart près, et la fiche porte
-          `fiabilite: estimee` pour cette raison.
+          LE FACTEUR DE 2,553 A DEUX MOITIÉS, ET AUCUNE N'EST DEVINÉE.
+          LES PRODUITS MOYENS D'UN OFFICE viennent du rapport de l'IGAS sur la
+          caisse (n° 2012-110P), qui donne la règle fixant le prix du point C :
+          « cette valeur d'acquisition est calculée de façon à ajuster le
+          nombre de points attribué à chaque notaire de façon à ce que LA
+          MOYENNE sur l'ensemble des notaires soit toujours ÉGALE À 900
+          POINTS ». Le décret annuel donne ce prix — 17,69 € — et le taux —
+          4,10 % : la cotisation moyenne de section C vaut donc 900 × 17,69 =
+          15 921 €, et les produits moyens 15 921 / 0,041 = 388 317 €.
+          LE REVENU MOYEN EST MESURÉ, et c'est le recueil statistique de la
+          CNAVPL qui le permet : il publie, section par section, les cotisations
+          du régime de base encaissées sur CHACUNE DES DEUX TRANCHES. Pour les
+          notaires en 2024, 43 405 k€ sur la tranche 1 et 27 195 k€ sur la
+          tranche 2, pour 12 096 cotisants. Divisées par leurs taux — 8,23 % et
+          1,87 % —, ces deux sommes donnent deux MOMENTS ÉCRÊTÉS de la
+          distribution des revenus : 43 601 € en moyenne sous un plafond,
+          120 228 € sous cinq. Deux moments suffisent à caler une loi
+          log-normale, dont la moyenne entière vaut alors 152 097 € (médiane
+          103 721 €, sigma 0,875).
+          LA MÉTHODE EST VÉRIFIÉE SUR UNE AUTRE SECTION. Appliquée à la
+          CAVAMAC, dont la caisse publie de son côté le revenu moyen déclaré,
+          elle donne 116 579 € contre 115 443 € publiés — un pour cent d'écart.
+          C'est ce contrôle qui autorise à s'en servir là où personne ne publie
+          le revenu moyen.
+          D'où 388 317 / 152 097 = 2,553. Le notaire garde donc 39 % des
+          produits de son office, le reste payant les collaborateurs et
+          l'étude — le notariat compte 55 556 collaborateurs pour 17 305
+          notaires.
+          CE QUE LA CHAÎNE SUPPOSE ENCORE : que la règle des 900 points vaille
+          toujours. Le prix du point C est gelé à 17,69 € depuis 2019, ce qui
+          suggère qu'elle ne pilote plus rien ; un second calcul la recoupe
+          néanmoins. La caisse publie une cotisation moyenne de 32 864 €, tous
+          régimes confondus ; le recueil donne la part du régime de base,
+          5 837 € ; restent 27 027 € pour les deux sections, dont 15 921 € de
+          section C laissent 11 106 € de section B — soit la classe 3,5, au
+          milieu d'une grille qui en compte huit. Tout se tient. La fiche porte
+          `fiabilite: estimee` parce qu'une chaîne reste une chaîne.
           10 % À L'ORIGINE : 5 % pour la section A, dite « allocation
           variable », et 5 % pour la section U, dite « allocation uniforme »,
           toutes deux assises sur les produits (décret n° 49-578 du 22 avril
@@ -3888,7 +3917,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: deplafonnee
-        assiette_facteur_revenu: 2.04
+        assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.045
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.01
@@ -3922,7 +3951,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: deplafonnee
-        assiette_facteur_revenu: 2.04
+        assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.0414
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.01
@@ -3943,7 +3972,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: deplafonnee
-        assiette_facteur_revenu: 2.04
+        assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.041
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.01
@@ -3960,7 +3989,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: deplafonnee
-        assiette_facteur_revenu: 2.04
+        assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.040
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.01
@@ -3980,7 +4009,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: deplafonnee
-        assiette_facteur_revenu: 2.04
+        assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.041
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.01
