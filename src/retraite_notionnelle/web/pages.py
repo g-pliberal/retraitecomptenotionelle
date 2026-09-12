@@ -25,9 +25,10 @@ from ..config import (
     ModeAgeReference,
     ModeIndexation,
     Parametres,
+    SituationFoyer,
     TableConversion,
 )
-from ..cout import SCENARIOS, calculer_cout
+from ..cout import COMPOSANTE_GARANTIE, SCENARIOS, calculer_cout
 from ..donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
@@ -86,6 +87,14 @@ PARTS_COTISATION = [
 CONVERSIONS_ACQUIS = [
     ("reference", "À l'âge de référence (défaut)"),
     ("liquidation", "À l'âge de départ effectif"),
+]
+
+#: Situation de foyer de la garantie vieillesse du scénario 6. Elle ne joue que
+#: sur l'allocation d'isolement : la garantie est individualisée, et la pension
+#: du conjoint n'entre jamais dans le calcul.
+SITUATIONS_FOYER = [
+    ("seul", "Personne seule (défaut)"),
+    ("couple", "En couple"),
 ]
 
 PROJECTIONS = [
@@ -199,11 +208,11 @@ ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL
 #: une fantaisie, elle est le bout de la distribution, pas son milieu.
 AGE_MAXIMUM_TRAJECTOIRE = 105
 
-#: Les cinq courbes : attribut du modèle, variable CSS de couleur — la même que
+#: Les six courbes : attribut du modèle, variable CSS de couleur — la même que
 #: la barre du haut, pour qu'une couleur désigne partout le même scénario — et
 #: le chiffre posé au bout de la courbe. Ce chiffre n'est pas décoratif : la
-#: palette des cinq scénarios échoue au contrôle de séparation daltonienne
-#: (pire paire voisine : ΔE 4,3 sous deutéranopie), et cinq courbes qui se
+#: palette des six scénarios échoue au contrôle de séparation daltonienne
+#: (pire paire voisine : ΔE 4,3 sous deutéranopie), et six courbes qui se
 #: croisent ne peuvent pas être identifiées par la couleur seule.
 TRAJECTOIRE = (
     ("actuel", "--actuel", "1"),
@@ -211,6 +220,7 @@ TRAJECTOIRE = (
     ("notionnel_prospectif", "--prospectif", "3"),
     ("notionnel_retroactif_employeur", "--retroactif-employeur", "4"),
     ("notionnel_prospectif_employeur", "--prospectif-employeur", "5"),
+    ("notionnel_liberal", "--liberal", "6"),
 )
 
 #: Rang de chaque métier, tel que le formulaire l'annonce.
@@ -293,6 +303,10 @@ class Saisie:
     table: str = "unisexe"
     conversion_acquis: str = "reference"
     part_cotisation: str = "salariale"
+    #: Seul ou en couple : la situation de foyer de la garantie vieillesse du
+    #: scénario 6. Le défaut est la personne seule, comme pour l'ASPA du
+    #: scénario 1, de sorte que les deux planchers se comparent.
+    foyer: str = "seul"
     projection: str = "cor_reference"
     bascule: int = 2026
     euros: int = 2026
@@ -346,6 +360,7 @@ class Saisie:
                 parametres, "part_cotisation", PARTS_COTISATION,
                 defauts.part_cotisation,
             ),
+            foyer=_parmi(parametres, "foyer", SITUATIONS_FOYER, defauts.foyer),
             projection=_parmi(parametres, "projection", PROJECTIONS, defauts.projection),
             bascule=_entier(parametres, "bascule", defauts.bascule),
             euros=_entier(parametres, "euros", defauts.euros),
@@ -519,6 +534,7 @@ class Saisie:
             part_cotisation=PartCotisation(
                 self.part_cotisation
             ),
+            situation_foyer=SituationFoyer(self.foyer),
             scenario_projection=self.projection,
             annee_bascule=self.bascule,
             annee_euros_constants=self.euros,
@@ -610,6 +626,7 @@ class Saisie:
             "age_reference": self.age_reference, "table": self.table,
             "conversion_acquis": self.conversion_acquis,
             "part_cotisation": self.part_cotisation,
+            "foyer": self.foyer,
             "projection": self.projection, "bascule": self.bascule, "euros": self.euros,
         }
         # L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut :
@@ -817,7 +834,7 @@ class Contexte:
         return self._population
 
     def cout(self):
-        """Le coût agrégé des cinq systèmes — deux secondes de calcul, une fois."""
+        """Le coût agrégé des six systèmes — deux secondes de calcul, une fois."""
         if self._cout is None:
             self._cout = calculer_cout(
                 self.simulateur(), self.depenses(), self.population())
@@ -1031,7 +1048,7 @@ chaque modification par les contrôles automatiques du dépôt :</p>
 <ul class="serree">
   <li>contrastes de texte au-delà de 4,5:1 et contours de champs au-delà de
   3:1, dans le thème clair comme dans le thème sombre ;</li>
-  <li>couleurs des cinq scénarios séparables autrement que par la teinte, et
+  <li>couleurs des six scénarios séparables autrement que par la teinte, et
   contrôlées pour les visions daltoniennes ;</li>
   <li>tableaux titrés, avec en-têtes de colonne et de ligne ;</li>
   <li>chaque graphique suivi du tableau de ses points, année par année : une
@@ -1119,7 +1136,7 @@ cotisations versées, divisée par l'espérance de vie restante à la liquidatio
 appliqué de deux façons : <strong>rétroactivement</strong> depuis 1941, ou
 seulement <strong>à compter de {saisie.bascule}</strong>.</p>
 
-<p>Pour chacun des cinq scénarios, il calcule <strong>une seule pension</strong> :
+<p>Pour chacun des six scénarios, il calcule <strong>une seule pension</strong> :
 la première, celle du premier mois de retraite. Il ne suit pas ce qu'elle
 devient ensuite. Qui est parti il y a vingt ans lit donc ce qu'il a touché à son
 départ, et non ce qu'il touche aujourd'hui ; qui n'est pas encore parti lit sa
@@ -1194,6 +1211,10 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
         g.liste("conversion_acquis", "Conversion des droits acquis",
                 CONVERSIONS_ACQUIS, saisie.conversion_acquis,
                 "âge auquel les droits figés à la bascule sont convertis"),
+        g.liste("foyer", "Situation de foyer (scénario 6)",
+                SITUATIONS_FOYER, saisie.foyer,
+                "ne joue que sur l'allocation d'isolement de la garantie "
+                "vieillesse : 1 050 € seul, 800 € par personne à deux"),
         g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
                 "au-delà de la dernière observation"),
         g.champ("bascule", "Année de bascule", saisie.bascule,
@@ -1221,7 +1242,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
     <div class="grille">{avance}</div>
   </details>
-  <p style="margin-top:1.4rem"><button type="submit">Calculer les cinq scénarios</button></p>
+  <p style="margin-top:1.4rem"><button type="submit">Calculer les six scénarios</button></p>
 </form>
 """
 
@@ -1437,7 +1458,7 @@ def _legende_des_unites(comparaison: Comparaison, saisie: Saisie) -> str:
 def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     """À quelle date se rapportent les montants affichés, et en quels euros.
 
-    C'est la première question que pose un lecteur devant les cinq barres :
+    C'est la première question que pose un lecteur devant les six barres :
     « ce nombre, c'est celui de quand ? ». Deux conventions y répondent, dont
     aucune ne va de soi. Le moteur ne calcule qu'une pension AU MOMENT DE LA
     LIQUIDATION — il n'existe aucune phase postérieure qu'il revaloriserait —,
@@ -1508,10 +1529,10 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     return f"""
 <div class="note"><strong>De quand sont ces chiffres ?</strong> {quand}
 {unites}
-Ce que compare cette page, ce sont cinq façons de CALCULER une pension de
-départ, pas cinq façons de la revaloriser ensuite : le premier mois de retraite
-est le seul instant où les cinq scénarios se laissent mettre côte à côte, et
-c'est donc à cet instant que tous les cinq sont calculés.</div>
+Ce que compare cette page, ce sont six façons de CALCULER une pension de
+départ, pas six façons de la revaloriser ensuite : le premier mois de retraite
+est le seul instant où les six scénarios se laissent mettre côte à côte, et
+c'est donc à cet instant que tous les six sont calculés.</div>
 <p class="discret" style="margin-top:1.5rem">Montants <strong>bruts</strong>
 mensuels et <strong>au centime</strong>, comme la caisse les verse — depuis le
 1<sup>er</sup> décembre 1986 les prestations de vieillesse sont payées sans
@@ -1533,7 +1554,7 @@ def _trajectoire(contexte: Contexte, comparaison: Comparaison,
                  saisie: Saisie) -> str:
     """Le cumul versé par chaque scénario, du départ à 105 ans.
 
-    Les cinq barres du haut donnent la pension d'UN mois — le premier. Elles ne
+    Les six barres du haut donnent la pension d'UN mois — le premier. Elles ne
     disent donc rien de ce qu'une retraite finit par verser, ni de ce que la
     durée y change. Or c'est là que la mécanique notionnelle se joue : la
     pension vaut le capital divisé par l'espérance de vie, si bien que vivre
@@ -1607,7 +1628,7 @@ def _trajectoire(contexte: Contexte, comparaison: Comparaison,
     unite = "k€"
     return f"""
 <h2>Ce que chaque scénario finit par verser</h2>
-<p>Les cinq montants ci-dessus sont ceux d'<strong>un seul mois</strong>, le
+<p>Les six montants ci-dessus sont ceux d'<strong>un seul mois</strong>, le
 premier. Ce graphique les additionne, année après année, à mesure que le
 retraité vieillit. C'est là que la durée entre dans le calcul : une pension
 notionnelle vaut le capital divisé par l'espérance de vie, donc
@@ -1639,8 +1660,8 @@ supposent que la pension <strong>garde son pouvoir d'achat</strong> après le
 départ : le moteur ne simule aucune revalorisation postérieure à la
 liquidation, et additionner en euros constants est la convention la plus neutre
 dont on dispose — ce n'est pas une prévision. Une indexation qui décrocherait
-des prix ferait fléchir les cinq courbes à la fois, sans changer leur ordre.
-{phrase_ecart} : c'est ce que la comparaison des cinq barres, prises au premier
+des prix ferait fléchir les six courbes à la fois, sans changer leur ordre.
+{phrase_ecart} : c'est ce que la comparaison des six barres, prises au premier
 mois, ne pouvait pas montrer.</p>
 """
 
@@ -1654,6 +1675,7 @@ def _titres_scenarios(saisie: Saisie) -> tuple[tuple[str, str], ...]:
         ("notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"),
         ("notionnel_prospectif_employeur",
          f"5. Dès {saisie.bascule}, avec le patronal"),
+        ("notionnel_liberal", "6. Libéral : 18 % et garantie"),
     )
 
 
@@ -1718,6 +1740,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             comparaison.notionnel_retroactif_employeur.pension_annuelle,
         "prospectif-employeur":
             comparaison.notionnel_prospectif_employeur.pension_annuelle,
+        "liberal": comparaison.notionnel_liberal.pension_annuelle,
     }
     constants = {cle: comparaison.en_euros_constants(montant)
                  for cle, montant in courants.items()}
@@ -1786,6 +1809,11 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                "le scénario 3, la part patronale en plus",
                comparaison.variation("notionnel_prospectif_employeur"),
                comparaison.taux_remplacement("notionnel_prospectif_employeur"))
+        + bloc("liberal",
+               "6. Proposition libérale : 18 % pour tous, garantie vieillesse",
+               "le scénario 4 à taux unique, plus une garantie financée par l'impôt",
+               comparaison.variation("notionnel_liberal"),
+               comparaison.taux_remplacement("notionnel_liberal"))
     )
 
     anticipation = (
@@ -1805,7 +1833,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         # au lieu de 25,67 il tombait un euro à côté, et doutait du reste.
         g.fiche("coefficient de conversion",
                 g.nombre(conversion.diviseur, DECIMALES_DIVISEUR)),
-        # Le capital est un montant de l'année de liquidation, quand les cinq
+        # Le capital est un montant de l'année de liquidation, quand les six
         # pensions ci-dessous sont mises en avant en euros de l'année de
         # référence : sans l'unité, deux grandeurs de nature différente se
         # touchaient sans que rien ne les distingue.
@@ -1821,11 +1849,11 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         capitalisation = (
             f'<p class="discret">Hors répartition, servi à part : '
             f"{g.euros_centimes(montant / 12)} par mois de RAFP, en euros de "
-            f"{saisie.euros} comme les cinq montants ci-dessus. Ce régime est "
+            f"{saisie.euros} comme les six montants ci-dessus. Ce régime est "
             "PROVISIONNÉ — sa rente sort d'un placement, non de la cotisation "
             "des actifs —, si bien qu'une réforme de la répartition ne "
-            "l'atteint pas. Il est donc retiré des cinq totaux et servi à "
-            "l'identique dans les cinq scénarios : c'est la seule façon de "
+            "l'atteint pas. Il est donc retiré des six totaux et servi à "
+            "l'identique dans les six scénarios : c'est la seule façon de "
             "comparer ce qui est comparable.</p>"
         )
 
@@ -1833,7 +1861,8 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     if comparaison.actuel.minimum_applique:
         minimum = (
             '<p class="discret">Le minimum contributif s\'applique dans le '
-            "scénario 1 ; il est supprimé dans les scénarios 2 à 5.</p>"
+            "scénario 1 ; il est supprimé dans les scénarios 2 à 5, et le "
+            "scénario 6 lui substitue sa garantie vieillesse.</p>"
         )
 
     ouverture = ""
@@ -1847,7 +1876,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             f"{g.nombre(comparaison.carriere.age_liquidation, 2)} ans{attente}. "
             "Ni l'âge légal du régime, ni le départ anticipé pour carrière "
             "longue ne le permettent. Le montant du scénario 1 reste calculé, "
-            "parce qu'il faut bien comparer les cinq scénarios sur la même "
+            "parce qu'il faut bien comparer les six scénarios sur la même "
             "carrière, mais il ne décrit aucune pension que le système actuel "
             "servirait.</p>"
         )
@@ -1870,6 +1899,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
 {_fourchette(contexte, saisie, comparaison)}
 {_decomposition(contexte, saisie, comparaison)}
 {_contribution_employeur(comparaison)}
+{_garantie_vieillesse(comparaison, saisie)}
 {_cascade(comparaison, saisie)}
 {_detail(contexte, comparaison)}
 """
@@ -1882,7 +1912,7 @@ NATURES_PART_EMPLOYEUR = {
 }
 
 
-#: Les cinq scénarios, dans l'ordre où la page les affiche, avec le libellé
+#: Les six scénarios, dans l'ordre où la page les affiche, avec le libellé
 #: court que la fourchette leur donne.
 SCENARIOS_AFFICHES = (
     ("actuel", "1. Système actuel"),
@@ -1890,6 +1920,7 @@ SCENARIOS_AFFICHES = (
     ("notionnel_prospectif", "3. Notionnel à la bascule"),
     ("notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"),
     ("notionnel_prospectif_employeur", "5. Bascule, avec le patronal"),
+    ("notionnel_liberal", "6. Libéral : 18 % et garantie"),
 )
 
 
@@ -2053,6 +2084,151 @@ actifs ? » — et à elle seule.</p>"""
 son employeur verse. Les scénarios 2 et 3 ne portent au compte que la première ;
 les scénarios 4 et 5 y ajoutent la seconde, et ne changent rien d'autre.</p>
 {partage}{public}"""
+
+
+#: Les couples du tableau de la proposition, en euros mensuels : deux pensions,
+#: ou une seule pour une personne seule. La page les recalcule avec la règle
+#: que le scénario applique, plutôt que de les recopier.
+EXEMPLES_GARANTIE = (
+    ((300.0, 300.0), "300 € et 300 €"),
+    ((300.0, 1500.0), "300 € et 1 500 €"),
+    ((900.0, 900.0), "900 € et 900 €"),
+    ((300.0, 5000.0), "300 € et 5 000 €"),
+    ((300.0,), "personne seule, 300 €"),
+)
+
+
+def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
+    """Ce que le scénario 6 change, et ce que l'impôt y paie.
+
+    Deux choses, et le bloc les sépare. Le taux unique change ce que le compte
+    reçoit : il se lit dans le capital, contre celui du scénario 4. La garantie
+    vieillesse change ce qui est servi par-dessus : différentielle,
+    individualisée, financée par l'impôt — et c'est elle que le tableau
+    détaille, étape par étape, parce qu'elle est la seule ligne de toute la
+    page qui ne vienne pas d'une cotisation.
+    """
+    liberal = comparaison.notionnel_liberal
+    garantie = liberal.garantie_vieillesse
+    if garantie is None:
+        return ""
+    parametres = comparaison.parametres
+    annee = comparaison.carriere.annee_liquidation
+    capital_4 = comparaison.notionnel_retroactif_employeur.capital_notionnel
+    taux = g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)
+    base_mensuelle = parametres.garantie_vieillesse_mensuelle
+    isolement_mensuel = parametres.allocation_isolement_mensuelle
+    seul = garantie.situation == "seul"
+    situation = "une personne seule" if seul else "une personne en couple"
+
+    lignes = [
+        ["a) Garantie de base",
+         f"{g.euros(base_mensuelle)} par mois en euros de "
+         f"{parametres.annee_euros_garantie_vieillesse}, soit "
+         f"×{g.nombre(garantie.coefficient_prix, DECIMALES_FACTEUR)} en {annee}",
+         g.euros_centimes(garantie.base_annuelle) + " par an"],
+        ["b) + allocation d'isolement",
+         f"{g.euros(isolement_mensuel)} par mois pour une personne seule, "
+         + ("servie ici" if seul else "rien à deux"),
+         g.euros_centimes(garantie.isolement_annuel) + " par an"],
+        ["c) = plancher",
+         f"ce qu'{situation} doit percevoir au minimum",
+         g.euros_centimes(garantie.plancher_annuel) + " par an"],
+        ["d) Pension contributive",
+         f"le compte notionnel du scénario 6, à {taux} pour tous, divisé par "
+         f"{g.nombre(liberal.conversion.diviseur, DECIMALES_DIVISEUR)}",
+         g.euros_centimes(garantie.pension_contributive) + " par an"],
+        ["e) Garantie vieillesse servie",
+         "max(0, c − d) à partir de 65 ans, financée par l'impôt"
+         if garantie.age_atteint else
+         "rien : la liquidation a lieu avant 65 ans, l'âge de l'allocation",
+         g.euros_centimes(garantie.complement) + " par an"],
+        ["f) = pension du scénario 6", "d + e",
+         g.euros_centimes(liberal.pension_annuelle) + " par an"],
+    ]
+
+    if garantie.servie:
+        lecture = (
+            f"<p>Ici, la pension contributive de "
+            f"{g.euros_centimes(garantie.pension_contributive / 12)} par mois "
+            f"reste sous le plancher de {g.euros_centimes(garantie.plancher_annuel / 12)} : "
+            f"l'impôt en finance <strong>{g.euros_centimes(garantie.complement / 12)} "
+            f"par mois</strong>, soit {g.pourcentage(garantie.complement / liberal.pension_annuelle)} "
+            "de ce que le scénario 6 verse.</p>"
+        )
+    elif not garantie.age_atteint:
+        lecture = (
+            f"<p>Ici, rien n'est servi : la liquidation a lieu à "
+            f"{_age(comparaison.carriere.age_liquidation or 0.0)}, avant les 65 ans "
+            "de l'allocation. Le modèle liquide et s'arrête — il ne suit pas "
+            "l'assuré jusqu'à 65 ans, où la garantie s'ouvrirait si sa pension "
+            "restait sous le plancher. C'est la même réserve que pour l'ASPA du "
+            "scénario 1.</p>"
+        )
+    else:
+        lecture = (
+            f"<p>Ici, la pension contributive de "
+            f"{g.euros_centimes(garantie.pension_contributive / 12)} par mois "
+            f"dépasse le plancher de {g.euros_centimes(garantie.plancher_annuel / 12)} : "
+            "la garantie ne sert rien, et le scénario 6 est un compte notionnel "
+            "à taux unique, sans plus.</p>"
+        )
+
+    # Le tableau de la proposition, recalculé avec la règle du scénario — en
+    # euros mensuels de l'année où la proposition fixe ses montants, sans
+    # l'âge : il illustre le mécanisme, pas cette carrière.
+    plancher_seul = base_mensuelle + isolement_mensuel
+    exemples = []
+    for pensions, libelle in EXEMPLES_GARANTIE:
+        plancher = plancher_seul if len(pensions) == 1 else base_mensuelle
+        aides = [max(0.0, plancher - pension) for pension in pensions]
+        detail = " + ".join(g.euros(aide) for aide in aides) if len(aides) > 1 else ""
+        exemples.append([
+            libelle,
+            g.euros(sum(aides)),
+            detail if detail else "—",
+        ])
+
+    return f"""
+<h2>Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt</h2>
+<p>Le scénario 6 est le scénario 4 — même compte rétroactif, cotisation
+salariale et patronale confondues, mêmes âges, même indexation, même
+liquidation — à deux différences près. La première : un <strong>taux unique de
+{taux}</strong>, parts salariale et patronale additionnées, le même pour tous
+les statuts, prélevé une fois sur la rémunération. Son capital vaut ici
+{g.euros(liberal.capital_notionnel)} contre {g.euros(capital_4)} pour le
+scénario 4 aux taux réellement en vigueur. La seconde : une <strong>garantie
+vieillesse</strong> qui remplace l'ASPA, et que le tableau suivant détaille en
+euros de {annee}, l'année du départ.</p>
+{g.tableau(
+    ["Étape", "Ce qu'elle fait", "Résultat"],
+    lignes,
+    ["", "", "nombre"],
+    titre=f"La garantie vieillesse du scénario 6, étape par étape, en euros de {annee}",
+    entete_de_ligne=True,
+)}
+{lecture}
+<p>Ce qui la sépare de l'ASPA tient en un mot : elle est
+<strong>individualisée</strong>. L'ASPA regarde les ressources du foyer, et son
+plafond de couple n'est pas le double de celui d'une personne seule ; la
+garantie compare chacun à son propre plancher — {g.euros(base_mensuelle)} par
+mois, plus {g.euros(isolement_mensuel)} d'allocation d'isolement pour qui vit
+seul — sans jamais regarder la pension du conjoint. Le tableau de la
+proposition, recalculé par la règle que ce scénario applique, en euros de
+{parametres.annee_euros_garantie_vieillesse} et par mois :</p>
+{g.tableau(
+    ["Pensions des deux personnes", "Aide totale du foyer", "Détail"],
+    exemples,
+    ["", "nombre", ""],
+    titre="Ce que la garantie individualisée sert à un foyer, selon les deux pensions",
+    entete_de_ligne=True,
+)}
+<p class="discret">La garantie est <strong>financée par l'impôt</strong>, non
+par les cotisations : la page Coût la sort du compte des cotisants et la
+compte à part. Elle garde de l'ASPA son âge — 65 ans — et sa place, une ligne
+servie en dernier, après la pension contributive. L'option « situation de
+foyer » du formulaire ne change qu'une chose, l'allocation d'isolement ; elle
+vaut ici pour {situation}.</p>"""
 
 
 def _decomposition(contexte: Contexte, saisie: Saisie,
@@ -2251,7 +2427,7 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
 
     actuel = comparaison.actuel
     # Tout ce tableau est en euros de l'année de liquidation : c'est la seule
-    # unité dans laquelle la chaîne de calcul s'additionne. Les cinq blocs du
+    # unité dans laquelle la chaîne de calcul s'additionne. Les six blocs du
     # haut, eux, mettent en avant les euros de l'année de référence. Sans dire
     # laquelle est laquelle, la dernière ligne prétendait valoir « le montant
     # de la ligne 1 ci-dessus » en désignant un nombre que la ligne 1
@@ -2259,12 +2435,12 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
     annee = comparaison.carriere.annee_liquidation
     annee_reference = comparaison.parametres.annee_euros_constants
     renvoi = (
-        "C'est l'unité de la <em>seconde</em> colonne des cinq scénarios, celle "
+        "C'est l'unité de la <em>seconde</em> colonne des six scénarios, celle "
         "du virement — pas celle du chiffre mis en avant, qui les ramène au "
         f"pouvoir d'achat de {annee_reference}."
         if annee != annee_reference else
         "Le départ tombant sur l'année de référence, c'est aussi l'unité des "
-        "cinq montants affichés plus haut."
+        "six montants affichés plus haut."
     )
     # Les régimes PROVISIONNÉS sont sortis du tableau principal : leur rente ne
     # fait pas partie du total, et une ligne posée au-dessus d'un total qui
@@ -2305,7 +2481,7 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
         lignes_actuel.append([
             "hors total — " + libelle, montant,
             '<span class="discret">régime PROVISIONNÉ, servi à part et retiré '
-            "des cinq scénarios</span> · " + detail,
+            "des six scénarios</span> · " + detail,
         ])
 
     regimes = g.tableau(
@@ -2456,6 +2632,18 @@ avec la part patronale d'un salarié.</p>
 restent ceux du scénario 3, et seul le flux postérieur change. À compter de la
 bascule il n'y a plus qu'un régime, dont la répartition salarié/employeur est
 celle du statut pivot privé : les écarts entre statuts s'y referment.</p>
+
+<h3>Scénario 6 — le scénario 4 à 18 % pour tous, avec une garantie vieillesse</h3>
+{grille("notionnel_liberal", "Scénario 6, scénario 4 à taux unique et garantie vieillesse")}
+<p class="discret">Le même compte rétroactif que le scénario 4, alimenté à un
+taux unique de 18 % — salariale et patronale confondues — au lieu des taux
+réellement en vigueur, puis une garantie vieillesse individualisée, financée par
+l'impôt, par-dessus : 1 050 € par mois pour une personne seule, 800 € par
+personne à deux, en euros de 2026. Les lignes qui cotisaient au-delà de 18 %
+descendent sous le scénario 4 ; celles qui cotisaient en deçà remontent ; et la
+garantie ne se voit que sur les cas dont la pension reste sous le plancher, à
+partir de 65 ans — les cas types qui liquident avant cet âge n'en mesurent que
+le taux unique.</p>
 {echecs}
 """
 
@@ -2472,7 +2660,7 @@ BANDES_COUT = (
     ("professions_liberales", "var(--serie-6)"),
 )
 
-#: Couleur de chacun des cinq scénarios — les mêmes que sur la page de
+#: Couleur de chacun des six scénarios — les mêmes que sur la page de
 #: résultats, pour qu'un lecteur qui passe de l'une à l'autre les reconnaisse.
 COULEURS_SCENARIOS = {
     "actuel": "var(--actuel)",
@@ -2480,6 +2668,7 @@ COULEURS_SCENARIOS = {
     "notionnel_prospectif": "var(--prospectif)",
     "notionnel_retroactif_employeur": "var(--retroactif-employeur)",
     "notionnel_prospectif_employeur": "var(--prospectif-employeur)",
+    "notionnel_liberal": "var(--liberal)",
 }
 
 
@@ -2571,7 +2760,7 @@ def _cout(contexte: Contexte) -> str:
             "oui" if systeme.repartition else "non",
         ])
 
-    # -- ce que les cinq systèmes auraient coûté ---------------------------
+    # -- ce que les six systèmes auraient coûté ----------------------------
     # Un scénario dont la courbe est exactement celle du système actuel serait
     # tracé PAR-DESSUS elle et la ferait disparaître : le graphique montrerait
     # alors une seule courbe en prétendant en montrer trois. On ne trace donc que
@@ -2607,6 +2796,19 @@ def _cout(contexte: Contexte) -> str:
             _milliards(dernier.cout(scenario), 1),
             g.pourcentage(dernier.part_pib * dernier.rapports[scenario], decimales=1),
         ])
+    # La garantie vieillesse du scénario 6 est financée par l'impôt : elle est
+    # comptée dans sa ligne, puisqu'elle est versée, et redite à part, pour que
+    # l'on voie ce que ce scénario retire aux cotisations et ce qu'il demande
+    # au contribuable.
+    dernier = cout.annee(derniere)
+    lignes_scenarios.append([
+        "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
+        _milliards(cout.cumul(COMPOSANTE_GARANTIE), 0),
+        "—",
+        _milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
+        g.pourcentage(dernier.part_pib * dernier.rapports[COMPOSANTE_GARANTIE],
+                      decimales=1),
+    ])
 
     # -- demain : la trajectoire de la répartition jusqu'à l'horizon INSEE --
     avenir = cout.avenir
@@ -2646,6 +2848,14 @@ def _cout(contexte: Contexte) -> str:
             "—" if scenario == "actuel"
             else _milliards(avenir.ecart_cumule(scenario), 0),
         ])
+    lignes_avenir.append([
+        "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
+        _milliards(horizon.cout_constants(COMPOSANTE_GARANTIE), 0),
+        g.pourcentage(horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1),
+        _milliards(avenir.cumul(COMPOSANTE_GARANTIE), 0),
+        "—",
+        "—",
+    ])
 
     horizons = []
     for millesime in range(2030, avenir.derniere_annee + 1, 10):
@@ -2690,7 +2900,7 @@ def _cout(contexte: Contexte) -> str:
 <p class="chapeau">Le reste du site calcule des droits : ce qu'une carrière
 ouvre. Cette page porte la grandeur inverse — ce qui a été payé, année par année
 depuis {cout.premiere_annee}, système par système. Puis elle pose les deux
-questions qui suivent : ce que les quatre autres systèmes auraient coûté sur la
+questions qui suivent : ce que les cinq autres systèmes auraient coûté sur la
 même période, et ce qu'ils coûteraient d'ici {avenir.derniere_annee}. On ne
 change pas le passé ; c'est la seconde question qui décide de quelque chose.</p>
 
@@ -2764,7 +2974,7 @@ en 2020 les artisans et les commerçants, dont le régime a été adossé à la 
 et les « régimes spéciaux » de la comptabilité nationale contiennent la CNRACL,
 c'est-à-dire la fonction publique territoriale et hospitalière.</p>
 
-<h3>Ce que les cinq systèmes auraient coûté</h3>
+<h3>Ce que les six systèmes auraient coûté</h3>
 <p>La dépense observée n'est pas modélisée : elle est ce qu'elle est. Ce qui est
 modélisé, c'est le <strong>rapport</strong> entre ce qui a été versé et ce que
 chaque système aurait versé aux mêmes retraités — la moyenne des écarts de
@@ -2775,7 +2985,7 @@ des âges de l'INSEE ; les écarts viennent des douze cas types croisés avec
 {cout.generations[-1]}.</p>
 
 {g.graphique(
-    f"Coût annuel des cinq systèmes, {cout.premiere_annee}-{derniere}, "
+    f"Coût annuel des six systèmes, {cout.premiere_annee}-{derniere}, "
     f"en milliards d'euros constants de {euros}",
     annees, courbes_scenarios, unite=f"Md € {euros}")}
 
@@ -2784,7 +2994,7 @@ des âges de l'INSEE ; les écarts viennent des douze cas types croisés avec
      f"Coût {derniere}", f"Part du PIB {derniere}"],
     lignes_scenarios,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    titre=f"Ce que les cinq systèmes auraient coûté de {cout.premiere_annee} "
+    titre=f"Ce que les six systèmes auraient coûté de {cout.premiere_annee} "
           f"à {derniere}",
     entete_de_ligne=True,
 )}
@@ -2811,6 +3021,16 @@ scénario 4, qui y ajoute la part patronale, coûte
     / cout.cumul("notionnel_retroactif") - 1, signe=True, decimales=0)}
 de plus —, et il applique une <a href="{g.lien("/methode", "indexation")}">règle
 d'indexation</a> dont la page Méthode montre qu'elle domine tout le reste.</p>
+
+<p>Le scénario 6 est le scénario 4 à un taux unique de 18 % pour tous, avec
+une garantie vieillesse par-dessus : il aurait coûté
+{_milliards(cout.cumul("notionnel_liberal"), 0)}, dont
+{_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} de garantie vieillesse. Cette
+part-là est <strong>financée par l'impôt</strong> et non par les cotisations :
+la ligne en italique du tableau la redit à part, pour que l'on voie ce que ce
+scénario retire aux cotisations et ce qu'il demande au contribuable. C'est un
+ordre de grandeur bas : l'allocation n'est ouverte qu'à 65 ans, et un seul des
+douze cas types liquide à cet âge ou après.</p>
 
 <h2>Demain : ce que chaque système coûterait d'ici {avenir.derniere_annee}</h2>
 <p class="chapeau">On ne change pas le passé. La question qui décide de quelque
@@ -2846,12 +3066,12 @@ répartition seule qu'il s'agit ici, de {avenir.premiere_annee} à
 {avenir.derniere_annee}.</div>
 
 {g.graphique(
-    f"Coût annuel des cinq systèmes de {avenir.premiere_annee} à "
+    f"Coût annuel des six systèmes de {avenir.premiere_annee} à "
     f"{avenir.derniere_annee}, en milliards d'euros constants de {euros}",
     annees_avenir, courbes_avenir, unite=f"Md € {euros}",
     repere=derniere, libelle_repere="projection")}
 <p class="discret">À gauche du trait, la dépense est publiée par la DREES ; à
-droite, elle est projetée. Les cinq courbes se suivent jusqu'à la bascule de
+droite, elle est projetée. Les courbes des scénarios 1, 3 et 5 se suivent jusqu'à la bascule de
 {bascule} — les droits déjà acquis sont conservés — puis les deux scénarios
 prospectifs s'en détachent, d'abord imperceptiblement, ensuite pour de bon. Une
 réforme des retraites met une génération entière à produire son effet, et c'est
@@ -2885,11 +3105,12 @@ l'autre : c'est le meilleur contrôle externe dont cette page dispose.</p>
     entete_de_ligne=True,
 )}
 <p class="discret">Le cumul porte sur les seules années projetées, en euros
-constants de {euros}. Les scénarios 2 et 4 restent des contrefactuels et non des
-réformes : ils supposent recalculées les pensions de gens qui les perçoivent
+constants de {euros}. Les scénarios 2, 4 et 6 restent des contrefactuels et non
+des réformes : ils supposent recalculées les pensions de gens qui les perçoivent
 depuis trente ans, ce qu'aucun droit ne permettrait. Les scénarios 3 et 5, eux,
 décrivent une réforme applicable — droits acquis conservés, règles nouvelles
-pour la suite.</p>
+pour la suite. La ligne en italique redit la part du scénario 6 que l'impôt
+finance, la garantie vieillesse, déjà comptée dans sa ligne.</p>
 
 <h3>Ce qui pousse la dépense, et ce qui la retient</h3>
 {g.tableau(
@@ -2995,7 +3216,7 @@ proches des règles actuelles, et moins le compte notionnel s'en écarte.</p>
 </ul>
 <p class="discret">Fiabilité de l'ensemble : la dépense observée est
 <strong>certifiée</strong> — recontrôlée contre l'API de la DREES à chaque
-exécution —, le rapport qui en tire les quatre contrefactuels est
+exécution —, le rapport qui en tire les cinq contrefactuels est
 <strong>estimé</strong>, et ne peut pas être autre chose : aucune institution ne
 publie ce qu'aurait coûté un système qui n'a pas existé.</p>
 """
@@ -3247,7 +3468,7 @@ la garantie minimale de points de l'Agirc, 120 points par an de 1989 à 2018
 même quand la tranche B est nulle.</p>
 <p>Enfin, le scénario dit si le droit <strong>ouvre</strong> la liquidation
 demandée — âge légal du régime, ou départ anticipé pour carrière longue. Quand
-il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les cinq
+il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les six
 scénarios sur la même carrière, mais la page le signale : il ne décrit alors
 aucune pension que le système actuel servirait.</p>
 
@@ -3257,6 +3478,17 @@ ni minimum contributif, ni minimum garanti, ni ASPA, ni majoration pour enfants,
 ni majoration de durée d'assurance, ni AVPF, ni bonifications, ni catégorie
 active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le scénario
 1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
+<p>Une exception, annoncée comme telle : le <strong>scénario 6</strong>, la
+proposition du Parti libéral français, remet un plancher — et un seul. C'est le
+scénario 4, compte rétroactif alimenté par la cotisation entière, à deux
+différences près : un taux unique de 18 % pour tous, salariale et patronale
+additionnées, prélevé une fois sur la rémunération ; et une garantie vieillesse
+qui remplace l'ASPA, différentielle comme elle, servie à partir de 65 ans comme
+elle, mais <em>individualisée</em> — 800 € par mois par personne, plus 250 €
+d'allocation d'isolement pour qui vit seul, en euros de 2026, sans que la
+pension du conjoint entre dans le calcul — et financée par l'impôt, non par les
+cotisations. La page de simulation en détaille chaque étape, et la page Coût
+compte cette part à part.</p>
 
 <h3>La fusion des régimes</h3>
 <p>À compter de l'année de bascule, les {nombre_regimes} régimes du catalogue sont remplacés
@@ -3272,7 +3504,7 @@ porte un statut d'affiliation, un âge de début et un niveau de revenu, et cour
 jusqu'au début du suivant. On faisait autrefois le même métier toute sa vie ;
 c'est devenu l'exception, et chaque changement fait passer d'un régime à un
 autre — donc d'un taux de cotisation, d'une assiette et d'un barème à un autre.
-C'est précisément ce que les cinq scénarios mesurent.</p>
+C'est précisément ce que les six scénarios mesurent.</p>
 <p>Deux conventions le bornent, imposées l'une et l'autre par la maille des
 données. Le <strong>profil de carrière</strong> vaut pour la vie active entière,
 changements compris : c'est une progression de carrière et non d'emploi, et le
@@ -3285,7 +3517,7 @@ réellement payé.</p>
 
 <h3 id="unites">Brut, et pas net</h3>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,
-les cotisations versées, le capital notionnel, les cinq pensions. « Brut » a ici
+les cotisations versées, le capital notionnel, les six pensions. « Brut » a ici
 le sens des comptes nationaux — <em>salaires et traitements bruts</em> (D11)
 rapportés à l'emploi salarié intérieur, ce qui est la définition même du salaire
 moyen par tête qui sert d'unité au modèle. C'est-à-dire <strong>avant</strong>

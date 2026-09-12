@@ -1,4 +1,4 @@
-"""Le coût des cinq systèmes : ce qu'il a été depuis 1959, ce qu'il serait d'ici 2070.
+"""Le coût des six systèmes : ce qu'il a été depuis 1959, ce qu'il serait d'ici 2070.
 
 Le modèle calcule des pensions individuelles. Ce module en tire une grandeur
 collective, en deux temps qui n'ont pas le même statut et qu'il ne faut jamais
@@ -65,7 +65,7 @@ from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
 from .simulateur import Simulateur
 
-#: Les cinq systèmes, dans l'ordre du tableau de comparaison. Ce sont les
+#: Les six systèmes, dans l'ordre du tableau de comparaison. Ce sont les
 #: attributs de ``Comparaison`` ; « actuel » est l'étalon et le dénominateur.
 SCENARIOS: tuple[tuple[str, str], ...] = (
     ("actuel", "1. Système actuel"),
@@ -73,6 +73,20 @@ SCENARIOS: tuple[tuple[str, str], ...] = (
     ("notionnel_prospectif", "3. Notionnel dès la bascule, part salariale"),
     ("notionnel_retroactif_employeur", "4. Notionnel rétroactif, avec la part patronale"),
     ("notionnel_prospectif_employeur", "5. Notionnel dès la bascule, avec la part patronale"),
+    ("notionnel_liberal", "6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse"),
+)
+
+#: La part du scénario 6 que l'IMPÔT finance : la garantie vieillesse, portée
+#: à part de la pension contributive. Ce n'est pas un système, c'est une
+#: composante d'un système — elle a sa masse et son rapport comme les autres,
+#: pour que la page puisse dire ce que le scénario 6 demande aux cotisations
+#: et ce qu'il demande au contribuable, mais elle n'entre dans aucun tableau
+#: de comparaison comme une ligne à part entière.
+COMPOSANTE_GARANTIE = "garantie_vieillesse_liberal"
+
+#: Tout ce dont une masse est calculée : les six systèmes, et la composante.
+CLES_MASSES: tuple[str, ...] = tuple(scenario for scenario, _ in SCENARIOS) + (
+    COMPOSANTE_GARANTIE,
 )
 
 #: Première génération dont une liquidation puisse tomber après le début de la
@@ -294,10 +308,15 @@ def _pensionnes(simulateur: Simulateur,
             generation=generation,
             annee_liquidation=comparaison.carriere.annee_liquidation,
             pensions={
-                scenario: comparaison.en_euros_constants(
-                    getattr(comparaison, scenario).pension_annuelle
-                )
-                for scenario, _ in SCENARIOS
+                **{
+                    scenario: comparaison.en_euros_constants(
+                        getattr(comparaison, scenario).pension_annuelle
+                    )
+                    for scenario, _ in SCENARIOS
+                },
+                COMPOSANTE_GARANTIE: comparaison.en_euros_constants(
+                    comparaison.notionnel_liberal.garantie_vieillesse.complement
+                ),
             },
         )
         for (_, generation), comparaison in grille.resultats.items()
@@ -327,7 +346,7 @@ def _masses(pensionnes: list[Pensionne], population: Population,
     de monter. Le pas de la grille commande le temps de calcul ; il ne doit pas
     commander la forme du résultat.
     """
-    masses = {scenario: 0.0 for scenario, _ in SCENARIOS}
+    masses = {cle: 0.0 for cle in CLES_MASSES}
     vivants = 0
     for pensionne in pensionnes:
         poids = 0.0
@@ -340,15 +359,13 @@ def _masses(pensionnes: list[Pensionne], population: Population,
         if poids <= 0.0:
             continue
         vivants += 1
-        for scenario, _ in SCENARIOS:
-            masses[scenario] += poids * pensionne.pensions[scenario]
+        for cle in CLES_MASSES:
+            masses[cle] += poids * pensionne.pensions[cle]
     return masses, vivants
 
 
 def _rapports(masses: dict[str, float]) -> dict[str, float]:
-    return {
-        scenario: masses[scenario] / masses["actuel"] for scenario, _ in SCENARIOS
-    }
+    return {cle: masses[cle] / masses["actuel"] for cle in CLES_MASSES}
 
 
 def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
@@ -430,7 +447,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
 def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   population: Population,
                   cas_types: tuple[CasType, ...] = CAS_TYPES) -> Cout:
-    """Le coût observé, les quatre contrefactuels, et la trajectoire jusqu'en 2070.
+    """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
     Les années où le modèle ne sert AUCUNE pension — celles d'avant la première
     liquidation possible — sont écartées : un rapport y serait une division par

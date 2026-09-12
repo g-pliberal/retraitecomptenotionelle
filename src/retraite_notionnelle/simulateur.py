@@ -1,4 +1,4 @@
-"""Simulateur : assemble les données, le moteur et les cinq scénarios.
+"""Simulateur : assemble les données, le moteur et les six scénarios.
 
 C'est le point d'entrée unique. Une seule instance charge les données une fois
 et peut ensuite simuler autant de carrières que voulu :
@@ -21,7 +21,7 @@ from functools import cached_property
 
 from .calendrier import formater_age
 from .carriere import Affiliations, Carriere, Metier, salaire_moyen_annuel
-from .config import Parametres, PartCotisation
+from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.macro import DonneesMacro
 from .donnees.mortalite import DonneesMortalite
@@ -35,14 +35,17 @@ from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
 
 
-#: Les quatre scénarios notionnels, dans l'ordre où ils s'affichent, avec le
+#: Les cinq scénarios notionnels, dans l'ordre où ils s'affichent, avec le
 #: numéro et le titre sous lesquels le tableau, la page et l'API les citent.
 #:
-#: Deux paires : 2 et 3 ne portent au compte que la part SALARIALE de la
-#: cotisation, 4 et 5 y ajoutent la part PATRONALE. À l'intérieur de chaque
-#: paire, l'un est rétroactif et l'autre prospectif. Rien d'autre ne les sépare,
-#: et c'est ce qui les rend comparables deux à deux : 4 se lit contre 2, 5
-#: contre 3, et l'écart mesure exactement ce que l'employeur verse.
+#: Deux paires, puis un sixième. 2 et 3 ne portent au compte que la part
+#: SALARIALE de la cotisation, 4 et 5 y ajoutent la part PATRONALE. À
+#: l'intérieur de chaque paire, l'un est rétroactif et l'autre prospectif. Rien
+#: d'autre ne les sépare, et c'est ce qui les rend comparables deux à deux : 4
+#: se lit contre 2, 5 contre 3, et l'écart mesure exactement ce que l'employeur
+#: verse. Le 6 se lit contre le 4 : même compte rétroactif, cotisation entière,
+#: mais à un taux unique de 18 % pour tous, et une garantie vieillesse
+#: individualisée, financée par l'impôt, par-dessus.
 SCENARIOS_NOTIONNELS = (
     ("notionnel_retroactif", 2, "Notionnel rétroactif, part salariale"),
     ("notionnel_prospectif", 3, "Notionnel dès {bascule}, part salariale"),
@@ -50,6 +53,8 @@ SCENARIOS_NOTIONNELS = (
      "Notionnel rétroactif, salariale + patronale"),
     ("notionnel_prospectif_employeur", 5,
      "Notionnel dès {bascule}, salariale + patronale"),
+    ("notionnel_liberal", 6,
+     "Notionnel rétroactif, 18 % pour tous, garantie vieillesse"),
 )
 
 
@@ -107,7 +112,7 @@ class ContributionEmployeur:
 
 @dataclass
 class Comparaison:
-    """Les cinq résultats, côte à côte, pour une même carrière."""
+    """Les six résultats, côte à côte, pour une même carrière."""
 
     carriere: Carriere
     actuel: ResultatActuel
@@ -115,6 +120,7 @@ class Comparaison:
     notionnel_prospectif: ResultatNotionnel
     notionnel_retroactif_employeur: ResultatNotionnel
     notionnel_prospectif_employeur: ResultatNotionnel
+    notionnel_liberal: ResultatNotionnel
     regime_fusionne: RegimeFusionne
     parametres: Parametres
     #: Coefficient de passage des euros de l'année de liquidation aux euros
@@ -134,7 +140,7 @@ class Comparaison:
     def fiabilite(self) -> Fiabilite:
         """Fiabilité de l'ÉTALON et des deux scénarios de référence.
 
-        Les scénarios 4 et 5 en sont exclus à dessein : ils reposent sur une
+        Les scénarios 4 à 6 en sont exclus à dessein : ils reposent sur une
         série employeur qui n'existe pas pour tous les régimes ni sur toutes les
         années. Les laisser qualifier l'ensemble ferait retomber toute
         simulation publique à « estimée » alors que les trois premiers
@@ -211,16 +217,16 @@ class Comparaison:
             f"de {self.parametres.annee_euros_constants},",
             "seule unité permettant de comparer des liquidations d'années différentes.",
             "",
-            f"{'Scénario':<54} {'Courants':>11} {'Constants':>11} "
+            f"{'Scénario':<62} {'Courants':>11} {'Constants':>11} "
             f"{'Mensuel':>9} {'Écart':>8}",
-            "-" * 96,
+            "-" * 104,
         ]
 
         def ligne(nom: str, montant: float, ecart_relatif: float | None) -> str:
             variation = "réf." if ecart_relatif is None else f"{ecart_relatif:+.1%}"
             constant = self.en_euros_constants(montant)
             return (
-                f"{nom:<54} {montant:>10,.0f}€ {constant:>10,.0f}€ "
+                f"{nom:<62} {montant:>10,.0f}€ {constant:>10,.0f}€ "
                 f"{constant/12:>8,.0f}€ {variation:>8}"
             )
 
@@ -233,15 +239,15 @@ class Comparaison:
             ))
 
         # Ce qui n'est pas de la répartition est servi À L'IDENTIQUE dans les
-        # cinq scénarios : un régime provisionné n'est pas atteint par une
+        # six scénarios : un régime provisionné n'est pas atteint par une
         # réforme de la répartition. Il est donc sorti des cinq totaux, et
         # affiché une seule fois — à son propre barème, celui du scénario 1, et
         # non converti en rente notionnelle.
         hors_repartition = self.actuel.pension_hors_repartition
         if hors_repartition > 0:
             lignes += [
-                "-" * 96,
-                ligne("   hors répartition (RAFP), servi à part, identique aux 5",
+                "-" * 104,
+                ligne("   hors répartition (RAFP), servi à part, identique aux 6",
                       hors_repartition, None),
             ]
 
@@ -282,7 +288,15 @@ class Comparaison:
         if self.actuel.minimum_applique:
             lignes.append(
                 "Note : le minimum contributif s'applique dans le scénario 1 ; "
-                "il est supprimé dans les scénarios 2 à 5."
+                "il est supprimé dans les scénarios 2 à 6."
+            )
+        garantie = self.notionnel_liberal.garantie_vieillesse
+        if garantie is not None and garantie.servie:
+            lignes.append(
+                f"Garantie vieillesse du scénario 6 : {garantie.complement:,.0f} € "
+                f"par an, financés par l'impôt, portent la pension contributive "
+                f"de {garantie.pension_contributive:,.0f} € au plancher de "
+                f"{garantie.plancher_annuel:,.0f} € ({garantie.situation})."
             )
         if not self.actuel.liquidation_ouverte:
             age = self.actuel.age_ouverture_opposable
@@ -406,6 +420,16 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
             sorted(resultat.compte.annees_part_employeur.items())
         ),
         "rente_capitalisation": resultat.rente_capitalisation_annuelle,
+        "garantie_vieillesse": None if resultat.garantie_vieillesse is None else {
+            "situation": resultat.garantie_vieillesse.situation,
+            "age_atteint": resultat.garantie_vieillesse.age_atteint,
+            "coefficient_prix": resultat.garantie_vieillesse.coefficient_prix,
+            "base_annuelle": resultat.garantie_vieillesse.base_annuelle,
+            "isolement_annuel": resultat.garantie_vieillesse.isolement_annuel,
+            "plancher_annuel": resultat.garantie_vieillesse.plancher_annuel,
+            "pension_contributive": resultat.garantie_vieillesse.pension_contributive,
+            "complement": resultat.garantie_vieillesse.complement,
+        },
         "fiabilite": str(resultat.fiabilite),
     }
 
@@ -522,6 +546,23 @@ class Simulateur:
         )
 
     @cached_property
+    def constructeur_liberal(self) -> ConstructeurCompte:
+        """Le constructeur du scénario 6 : le taux unique de la proposition.
+
+        Il ne diffère de celui du scénario 4 que par ce qui alimente le compte :
+        un taux d'acquisition commun, prélevé une fois sur la rémunération, à
+        la place des taux historiques de chaque régime. La part de cotisation
+        reste ``TOTALE`` — le taux unique additionne les deux parts — pour que
+        le compartiment provisionné, qui garde ses taux propres, soit traité
+        comme dans le scénario 4.
+        """
+        return self._constructeur_variante(
+            part_cotisation=PartCotisation.TOTALE,
+            source_cotisations=SourceCotisations.TAUX_UNIFORME,
+            taux_cotisation_uniforme=self.parametres.taux_cotisation_liberal,
+        )
+
+    @cached_property
     def scenario_actuel(self) -> ScenarioActuel:
         return ScenarioActuel(
             self.macro, self.catalogue, self.affiliations, self.parametres
@@ -544,6 +585,14 @@ class Simulateur:
         """
         return ScenarioNotionnel(
             self.constructeur_employeur, self.convertisseur,
+            self.age_reference, self.scenario_actuel, self.parametres,
+        )
+
+    @cached_property
+    def scenario_liberal(self) -> ScenarioNotionnel:
+        """Scénario 6 : le scénario notionnel au taux unique de la proposition."""
+        return ScenarioNotionnel(
+            self.constructeur_liberal, self.convertisseur,
             self.age_reference, self.scenario_actuel, self.parametres,
         )
 
@@ -600,7 +649,7 @@ class Simulateur:
             )
 
     def simuler(self, carriere: Carriere) -> Comparaison:
-        """Calcule les cinq scénarios pour une carrière."""
+        """Calcule les six scénarios pour une carrière."""
         self._verifier_fiabilite(carriere)
 
         fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
@@ -617,6 +666,7 @@ class Simulateur:
             libelle="Comptes notionnels à compter de la bascule, "
                     "cotisation salariale et patronale",
         )
+        liberal = self.scenario_liberal.liberal(carriere, fusionne)
 
         self.mortalite.enregistrer_cache()
 
@@ -627,6 +677,7 @@ class Simulateur:
             notionnel_prospectif=prospectif,
             notionnel_retroactif_employeur=retroactif_employeur,
             notionnel_prospectif_employeur=prospectif_employeur,
+            notionnel_liberal=liberal,
             regime_fusionne=self.regime_fusionne,
             parametres=self.parametres,
             coefficient_euros_constants=self.macro.coefficient_prix(

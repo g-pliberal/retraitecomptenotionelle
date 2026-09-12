@@ -275,7 +275,7 @@ export const MARGE_DROITE = 24;
 
 /**
  * Écart vertical minimal, en unités du repère, entre deux étiquettes posées au
- * bout des courbes. Les couleurs des cinq scénarios ne suffisent pas à les
+ * bout des courbes. Les couleurs des six scénarios ne suffisent pas à les
  * distinguer — mesuré : la pire paire voisine tombe à ΔE 4,3 sous
  * deutéranopie, et à 11,8 en vision normale, sous le plancher de 15. Une
  * étiquette en bout de courbe donne un second encodage, qui ne dépend pas de
@@ -442,7 +442,7 @@ function sommetEchelle(series, empile) {
  * Le libellé court de chaque courbe, posé à son extrémité droite.
  *
  * Second encodage de l'identité, exigé ici parce que la couleur seule ne sépare
- * pas les cinq scénarios. Les étiquettes sont écartées les unes des autres
+ * pas les six scénarios. Les étiquettes sont écartées les unes des autres
  * quand deux courbes finissent trop près : sans cela, les scénarios 3 et 4, que
  * trente-huit mille euros séparent au bout de quarante ans, superposeraient
  * leurs chiffres.

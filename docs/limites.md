@@ -1147,7 +1147,7 @@ plus volontiers.
   Elle s'arrêtait en outre à 2021, quand l'établissement publie jusqu'en 2026 :
   les cinq années manquantes étaient prolongées par les prix, alors que la
   valeur de service a monté de 5,7 % en 2023 et de 6,8 % en 2024. Le RAFP est
-  servi à part, à l'identique dans les cinq scénarios : cela ne déplace aucun
+  servi à part, à l'identique dans les six scénarios : cela ne déplace aucun
   écart, seulement le montant affiché à un fonctionnaire.
 
 * *Durée requise des générations 1953-1957, et contribution employeur de la
@@ -1890,7 +1890,7 @@ le contient à quatre totaux qui ne le contiennent pas.
 **Ce n'est plus le cas.** Un régime PROVISIONNÉ — le RAFP, les anciennes
 assurances sociales de 1930 — sert une rente issue d'un placement, non de la
 cotisation des actifs. Remplacer la répartition par des comptes notionnels ne
-l'atteint pas. Les cinq scénarios le servent donc à l'identique, à son propre
+l'atteint pas. Les six scénarios le servent donc à l'identique, à son propre
 barème, et il est retiré des cinq totaux.
 
 Le CALCUL du scénario 1 n'est pas touché pour autant : l'écrêtement du minimum
@@ -2890,6 +2890,32 @@ celle d'un employeur public. Ce que le scénario 5 mesure après 2026 est donc l
 répartition du régime unique, non le financement de la fonction publique — qui,
 par construction, n'existe plus.
 
+### Le scénario 6, et ce que sa garantie ne voit pas
+
+Le scénario 6 — le scénario 4 à un taux unique de 18 % pour tous, plus une
+garantie vieillesse individualisée, financée par l'impôt — hérite des limites
+du scénario 4, sauf une : son taux ne dépend d'aucune série employeur, et la
+part patronale inconnue du public ne le concerne pas. Il en ajoute trois.
+
+**La garantie n'est ouverte qu'à 65 ans, et le modèle ne suit pas l'assuré
+jusque-là.** C'est la réserve de l'ASPA du scénario 1, reprise telle quelle :
+qui liquide à 62 ans avec une petite pension ne reçoit rien dans le scénario 6,
+alors que la garantie s'ouvrirait trois ans plus tard. La page de simulation le
+dit à chaque fois que c'est le cas.
+
+**Les montants sont des euros de 2026, déflatés par les prix.** 800 € et 250 €
+sont ceux de la proposition ; une liquidation de 1995 les reçoit ramenés par
+l'indice des prix, comme l'ASPA entre deux ancres de son barème. Ce n'est
+qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
+indexée sur les prix depuis 1941.
+
+**La page Coût ne voit de la garantie qu'un ordre de grandeur bas.** Un seul
+des douze cas types liquide à 65 ans ou après ; la masse de la garantie, et
+donc ce que l'impôt paierait, est portée par lui seul. La ligne « dont garantie
+vieillesse » de la page dit ce que le modèle voit, pas ce que la mesure
+coûterait. Et le modèle ne dit rien de l'impôt lui-même : il compte ce qui est
+versé, jamais ce qui est prélevé.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -3051,7 +3077,7 @@ avancée avant la dernière année publiée.
 
 ## 5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut
 
-La seconde moitié de la page **Coût** projette les cinq systèmes de 2025 à 2070.
+La seconde moitié de la page **Coût** projette les six systèmes de 2025 à 2070.
 Rien n'y est certifié, rien ne peut l'être, et le lecteur doit savoir sur quoi
 chaque chiffre repose.
 
@@ -3120,7 +3146,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 529 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 538 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

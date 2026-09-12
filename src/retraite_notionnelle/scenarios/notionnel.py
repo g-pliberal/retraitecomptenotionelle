@@ -1,4 +1,4 @@
-"""Scénarios 2 à 5 — les comptes notionnels.
+"""Scénarios 2 à 6 — les comptes notionnels.
 
 **Scénario 2, rétroactif.** Le compte notionnel est ouvert à l'entrée dans la
 vie active, ou à l'année d'origine de la répartition si la carrière a commencé
@@ -63,6 +63,27 @@ qu'il faut aujourd'hui cette contribution pour payer les pensions
 d'aujourd'hui. Les porter au compte répond à une question précise — « et si tout
 ce qui a été consacré aux pensions avait été porté au compte des actifs ? » — et
 à elle seule.
+
+**Scénario 6 : la proposition libérale.** C'est le scénario 4 — compte
+rétroactif, cotisation salariale et patronale confondues, mêmes âges de départ,
+même indexation, même liquidation — à deux différences près, et ce sont les deux
+termes de la proposition du Parti libéral français.
+
+Un **taux unique de 18 %**, salariale et patronale additionnées, le même pour
+tous les statuts, prélevé une fois sur la rémunération : c'est le taux
+d'acquisition commun de ``SourceCotisations.TAUX_UNIFORME``, dont ce scénario
+est un cas. Et une **garantie vieillesse** qui remplace l'ASPA : allocation
+différentielle, financée par l'impôt, qui porte la pension à 800 € par mois,
+plus 250 € d'allocation d'isolement pour une personne seule — 1 050 € seul,
+800 € par personne à deux. Le plancher est **individualisé** : chacun est
+comparé au sien, et la pension du conjoint n'entre jamais dans le calcul. Là où
+l'ASPA d'aujourd'hui, qui regarde le foyer, ne sert rien à un couple à 300 € et
+1 500 €, la garantie sert 500 € au premier et rien au second.
+
+La garantie garde de l'ASPA son âge — 65 ans — et sa place : une ligne à part,
+servie en dernier, après la pension contributive. Elle est portée dans
+:class:`GarantieVieillesse`, avec chacune de ses étapes, pour que la page puisse
+dire ce qui vient des cotisations et ce qui vient de l'impôt.
 """
 
 from __future__ import annotations
@@ -70,13 +91,49 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from ..carriere import Carriere
-from ..config import AgeConversionDroitsAcquis, Parametres
+from ..config import AgeConversionDroitsAcquis, Parametres, SituationFoyer
 from ..donnees.chargement import Fiabilite
 from ..moteur.age_reference import AgeReference, EcartAge
 from ..moteur.compte import CompteNotionnel, ConstructeurCompte
 from ..moteur.conversion import CoefficientConversion, Convertisseur
 from ..moteur.fusion import RegimeFusionne
-from .actuel import ScenarioActuel
+from .actuel import MinimumVieillesse, ScenarioActuel
+
+
+@dataclass(frozen=True)
+class GarantieVieillesse:
+    """La garantie vieillesse du scénario 6, étape par étape.
+
+    Une allocation différentielle : ce qui manque à la pension contributive
+    pour atteindre le plancher. Le plancher est en euros de l'année de
+    liquidation — les montants de la proposition sont fixés dans les euros
+    d'une année et ramenés par l'indice des prix, comme l'ASPA du scénario 1
+    entre deux ancres de son barème.
+    """
+
+    #: ``seul`` ou ``couple`` : ne joue que sur l'allocation d'isolement.
+    situation: str
+    #: L'allocation est-elle ouverte à l'âge de liquidation ? Même âge que
+    #: l'ASPA : 65 ans, et le modèle ne suit pas l'assuré au-delà du départ.
+    age_atteint: bool
+    #: Coefficient de passage des euros de la proposition aux euros de la
+    #: liquidation.
+    coefficient_prix: float
+    #: Garantie de base, annuelle, en euros de la liquidation.
+    base_annuelle: float
+    #: Allocation d'isolement, annuelle — nulle à deux.
+    isolement_annuel: float
+    #: ``base + isolement`` : le plancher auquel la pension est comparée.
+    plancher_annuel: float
+    #: La pension issue du compte notionnel seul, avant la garantie.
+    pension_contributive: float
+    #: Ce que la garantie ajoute : ``max(0, plancher - contributive)`` si l'âge
+    #: est atteint, zéro sinon. C'est la part financée par l'impôt.
+    complement: float
+
+    @property
+    def servie(self) -> bool:
+        return self.complement > 0
 
 
 @dataclass(frozen=True)
@@ -118,6 +175,9 @@ class ResultatNotionnel:
     libelle: str
     #: Détail de la conversion des droits figés — seulement en prospectif.
     droits_acquis: DroitsAcquis | None = None
+    #: La garantie vieillesse et ses étapes — seulement dans le scénario 6, où
+    #: ``pension_annuelle`` la comprend.
+    garantie_vieillesse: GarantieVieillesse | None = None
 
     @property
     def pension_mensuelle(self) -> float:
@@ -133,7 +193,7 @@ class ResultatNotionnel:
         coefficient actuariel.
 
         **Ce n'est pas ce qui est servi.** Un régime provisionné n'est pas
-        atteint par une réforme de la répartition : les cinq scénarios servent
+        atteint par une réforme de la répartition : les six scénarios servent
         sa rente à son propre barème, celui du scénario 1
         (:attr:`ResultatActuel.pension_hors_repartition`), et c'est cette
         valeur-là qui est affichée. Celle-ci ne sert plus qu'à mesurer l'écart
@@ -205,6 +265,62 @@ class ScenarioNotionnel:
             capital_capitalisation=compte.capital_hors_repartition,
             fiabilite=min(compte.fiabilite, conversion.fiabilite),
             libelle=libelle,
+        )
+
+    # -- scénario 6 ----------------------------------------------------------
+
+    def liberal(self, carriere: Carriere,
+                regime_fusionne: RegimeFusionne | None = None,
+                libelle: str = "Comptes notionnels rétroactifs, taux unique "
+                               "et garantie vieillesse") -> ResultatNotionnel:
+        """Le scénario 4 à taux unique, puis la garantie vieillesse par-dessus.
+
+        Le compte est celui de :meth:`retroactif` : ce qui l'alimente — 18 %
+        pour tous — tient aux paramètres du constructeur, comme pour les
+        scénarios 4 et 5. Ce que cette méthode ajoute, et elle seule, est la
+        garantie : différentielle, individualisée, servie en dernier, et
+        gardée à part pour que l'on sache ce qui vient de l'impôt.
+        """
+        resultat = self.retroactif(carriere, regime_fusionne, libelle=libelle)
+        garantie = self._garantie_vieillesse(carriere, resultat.pension_annuelle)
+        resultat.pension_annuelle += garantie.complement
+        resultat.garantie_vieillesse = garantie
+        return resultat
+
+    def _garantie_vieillesse(self, carriere: Carriere,
+                             pension_contributive: float) -> GarantieVieillesse:
+        """Ce qui manque à la pension contributive pour atteindre le plancher.
+
+        Le plancher d'une personne seule est la garantie de base plus
+        l'allocation d'isolement ; celui d'une personne en couple est la
+        garantie de base seule, et la pension du conjoint ne compte pas — c'est
+        l'individualisation, et c'est ce qui sépare cette garantie de l'ASPA.
+        L'âge est celui de l'ASPA, avec la même réserve : le modèle liquide et
+        s'arrête, il ne suit pas l'assuré jusqu'à 65 ans.
+        """
+        parametres = self.parametres
+        annee = carriere.annee_liquidation
+        coefficient = self.constructeur.macro.coefficient_prix(
+            parametres.annee_euros_garantie_vieillesse, annee
+        )
+        base = parametres.garantie_vieillesse_mensuelle * 12.0 * coefficient
+        isolement = (
+            parametres.allocation_isolement_mensuelle * 12.0 * coefficient
+            if parametres.situation_foyer is SituationFoyer.SEUL else 0.0
+        )
+        plancher = base + isolement
+        age_atteint = (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE
+        complement = (max(0.0, plancher - pension_contributive)
+                      if age_atteint else 0.0)
+        return GarantieVieillesse(
+            situation=parametres.situation_foyer.value,
+            age_atteint=age_atteint,
+            coefficient_prix=coefficient,
+            base_annuelle=base,
+            isolement_annuel=isolement,
+            plancher_annuel=plancher,
+            pension_contributive=pension_contributive,
+            complement=complement,
         )
 
     # -- scénario 3 ----------------------------------------------------------

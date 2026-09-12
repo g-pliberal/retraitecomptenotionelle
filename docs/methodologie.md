@@ -552,7 +552,7 @@ savoir qu'il traduit une hausse de prélèvement, pas un cadeau.
 
 ---
 
-## 8. Les cinq scénarios
+## 8. Les six scénarios
 
 ### Scénario 1 — le système actuel
 
@@ -984,9 +984,77 @@ scénario 2 ne l'est.
 
 Une troisième lecture existe — fixer un **taux d'acquisition commun** à tous, le
 surplus restant une contribution de transition qui n'ouvre aucun droit — et le
-moteur sait la calculer : `source_cotisations = taux_uniforme`. Elle ne figure pas parmi les
-cinq scénarios parce qu'elle ne répond pas à la même question : elle ne mesure
-plus ce qui a été versé, mais ce qu'une réforme choisirait de reconnaître.
+moteur sait la calculer : `source_cotisations = taux_uniforme`. Elle ne figure
+pas parmi les scénarios 2 à 5 parce qu'elle ne répond pas à la même question :
+elle ne mesure plus ce qui a été versé, mais ce qu'une réforme choisirait de
+reconnaître. C'est précisément la question que pose le scénario 6.
+
+### Scénario 6 — la proposition libérale : 18 % pour tous, et une garantie vieillesse
+
+Le scénario 6 est la proposition du Parti libéral français. C'est **exactement
+le scénario 4** — compte rétroactif depuis l'origine de la répartition,
+cotisation salariale et patronale confondues, mêmes âges de départ et de
+référence, même indexation, même coefficient de conversion — à deux différences
+près, qui sont les deux termes de la proposition.
+
+**Un taux unique de 18 %.** Parts salariale et patronale additionnées, le même
+pour tous les statuts, prélevé une fois sur la rémunération — sur l'assiette
+réunie des régimes en répartition, comme le fait le taux d'acquisition commun
+ci-dessus, dont ce scénario est un cas (`taux_cotisation_liberal`). Ce qui a
+été prélevé au-delà n'ouvre aucun droit ; ce qui l'a été en deçà ne manque pas
+au compte. Un fonctionnaire, un artisan et un salarié du privé de même
+rémunération acquièrent donc le même capital, et le 6 se lit contre le 4 : les
+statuts qui cotisaient plus de 18 % descendent, ceux qui cotisaient moins
+remontent. Après la bascule, le régime unique applique le même taux.
+
+**Une garantie vieillesse, financée par l'impôt.** Elle remplace l'ASPA et en
+garde le principe — une allocation différentielle, qui porte les ressources à
+un plancher — et l'âge, 65 ans. Elle en change une chose, et c'est la seule :
+le plancher est **individualisé**. Chaque personne est comparée au sien, sans
+que la pension du conjoint entre dans le calcul :
+
+| | Plancher mensuel, en euros de 2026 |
+|---|---|
+| Garantie de base, par personne | 800 € |
+| Allocation d'isolement, pour qui vit seul | + 250 € |
+| **Personne seule** | **1 050 €** |
+| **À deux** | **800 € chacun, soit 1 600 €** |
+
+Ce que l'individualisation change, sur les couples de la proposition :
+
+| Pensions mensuelles des deux personnes | ASPA actuelle du couple | Garantie individualisée |
+|---|---:|---:|
+| 300 € et 300 € | 1 000 € | 1 000 € |
+| 300 € et 1 500 € | 0 € | 500 € |
+| 900 € et 900 € | 0 € | 0 € |
+| 300 € et 5 000 € | 0 € | 500 € |
+| personne seule, 300 € | 750 € | 750 € |
+
+L'ASPA regarde les ressources du foyer : à 300 € et 1 500 €, le couple dépasse
+son plafond et ne reçoit rien. La garantie regarde chacun : le premier reçoit
+800 − 300 = 500 €, le second rien. Un test rejoue ces cinq lignes par la règle
+que le moteur applique, et la page de simulation les recalcule sous les yeux du
+lecteur.
+
+Les montants sont fixés en euros de 2026 (`annee_euros_garantie_vieillesse`) et
+ramenés à l'année de liquidation par l'indice des prix — la convention déjà
+retenue pour l'ASPA du scénario 1 entre deux ancres de son barème. La
+situation de foyer est un paramètre (`situation_foyer`, `seul` par défaut comme
+pour l'ASPA du scénario 1, de sorte que les deux planchers se comparent) ; elle
+ne joue que sur l'allocation d'isolement.
+
+La garantie est servie **en dernier**, après la pension contributive, et gardée
+à part dans le résultat (`garantie_vieillesse`, avec chacune de ses étapes) :
+c'est la seule ligne des scénarios notionnels qui ne vienne pas d'une
+cotisation. Elle est **financée par l'impôt** et non par les cotisations, et la
+page Coût la compte à part, pour que l'on voie ce que ce scénario retire aux
+cotisations et ce qu'il demande au contribuable.
+
+Deux réserves, les mêmes que pour l'ASPA du scénario 1. Le modèle liquide et
+s'arrête : un assuré parti à 62 ans avec une petite pension ne reçoit rien dans
+le scénario 6, alors qu'il recevrait la garantie trois ans plus tard. Et les
+cas types liquident presque tous avant 65 ans : la page Coût ne voit de la
+garantie qu'un ordre de grandeur bas.
 
 ---
 

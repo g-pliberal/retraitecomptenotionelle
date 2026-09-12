@@ -1,5 +1,5 @@
 /**
- * Le coût des cinq systèmes : ce qu'il a été depuis 1959, ce qu'il serait d'ici 2070.
+ * Le coût des six systèmes : ce qu'il a été depuis 1959, ce qu'il serait d'ici 2070.
  *
  * Portage de ``src/retraite_notionnelle/cout.py``. Deux temps, qui n'ont pas le
  * même statut et qu'il ne faut jamais confondre.
@@ -23,7 +23,7 @@
 import { CAS_TYPES, calculerCasTypes } from "./castypes.js";
 import { Fiabilite } from "./serie.js";
 
-/** Les cinq systèmes, dans l'ordre du tableau de comparaison. */
+/** Les six systèmes, dans l'ordre du tableau de comparaison. */
 export const SCENARIOS = [
   ["actuel", "1. Système actuel"],
   ["notionnel_retroactif", "2. Notionnel rétroactif, part salariale"],
@@ -32,7 +32,20 @@ export const SCENARIOS = [
     "4. Notionnel rétroactif, avec la part patronale"],
   ["notionnel_prospectif_employeur",
     "5. Notionnel dès la bascule, avec la part patronale"],
+  ["notionnel_liberal",
+    "6. Notionnel rétroactif, 18 % pour tous, garantie vieillesse"],
 ];
+
+/**
+ * La part du scénario 6 que l'IMPÔT finance : la garantie vieillesse, portée à
+ * part de la pension contributive. Une composante d'un système, pas un système :
+ * elle a sa masse et son rapport comme les autres, mais n'entre dans aucun
+ * tableau de comparaison comme une ligne à part entière.
+ */
+export const COMPOSANTE_GARANTIE = "garantie_vieillesse_liberal";
+
+/** Tout ce dont une masse est calculée : les six systèmes, et la composante. */
+export const CLES_MASSES = [...SCENARIOS.map(([scenario]) => scenario), COMPOSANTE_GARANTIE];
 
 /**
  * Première génération dont une liquidation puisse tomber après le début de la
@@ -77,6 +90,9 @@ function pensionnes(simulateur, casTypes) {
         comparaison[scenario].pension_annuelle,
       );
     }
+    pensions[COMPOSANTE_GARANTIE] = comparaison.enEurosConstants(
+      comparaison.notionnel_liberal.garantie_vieillesse.complement,
+    );
     // La clé de la grille est « code|génération » : la génération en est la
     // seconde moitié, et c'est elle qui dit quel âge ce couple a chaque année.
     liste.push({
@@ -102,7 +118,7 @@ function pensionnes(simulateur, casTypes) {
  */
 function masses(liste, population, annee) {
   const total = {};
-  for (const [scenario] of SCENARIOS) total[scenario] = 0;
+  for (const cle of CLES_MASSES) total[cle] = 0;
   let vivants = 0;
   for (const pensionne of liste) {
     let poids = 0;
@@ -112,8 +128,8 @@ function masses(liste, population, annee) {
     }
     if (poids <= 0) continue;
     vivants += 1;
-    for (const [scenario] of SCENARIOS) {
-      total[scenario] += poids * pensionne.pensions[scenario];
+    for (const cle of CLES_MASSES) {
+      total[cle] += poids * pensionne.pensions[cle];
     }
   }
   return { total, vivants };
@@ -121,8 +137,8 @@ function masses(liste, population, annee) {
 
 function rapports(total) {
   const resultat = {};
-  for (const [scenario] of SCENARIOS) {
-    resultat[scenario] = total[scenario] / total.actuel;
+  for (const cle of CLES_MASSES) {
+    resultat[cle] = total[cle] / total.actuel;
   }
   return resultat;
 }
@@ -346,7 +362,7 @@ function construireAvenir(liste, depenses, population, simulateur) {
 }
 
 /**
- * Le coût observé, les quatre contrefactuels, et la trajectoire jusqu'en 2070.
+ * Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
  * Les années où le modèle ne sert aucune pension sont écartées : un rapport y
  * serait une division par zéro, et non un résultat.
  */
