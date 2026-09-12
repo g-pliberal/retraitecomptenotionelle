@@ -888,9 +888,21 @@ institutions:
           qui va avec — le mécanisme est « procyclique », le rendement monte
           quand les produits des études baissent.
           LA NATURE DE LA SECTION B : créée en 1962, « EN PARTIE FACULTATIVE »,
-          avec « une gestion individualisée proche de la capitalisation ». Un
+          avec « une gestion individualisée proche de la capitalisation ».
+          L'inscription était obligatoire, mais « LE CHOIX DE LA CLASSE
+          ELLE-MÊME ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE » — et « en
+          l'absence d'indication, le cotisant est affilié en classe 1 ». Un
           régime dont la classe se choisissait n'entre pas dans ce dépôt ; sa
           fiche ne porte donc que la section proportionnelle.
+          ET CE QUE CE CHOIX DONNAIT : le rapport publie la répartition des
+          8 356 cotisants de 2011 entre les sept classes — 1 587 en classe 0,
+          2 593 en classe 1 —, soit 23,8 points par an en moyenne, la classe
+          2,4. La moitié de la profession cotisait au plancher ou presque.
+          LES DEUX SÉRIES DE LA SECTION C, ENFIN, de 2004 à 2012 : coût
+          d'acquisition du point de 12,95 € à 16,64 €, valeur de service de
+          0,5816 € à 0,6848 €. Leur rapport recoupe le texte du rapport au
+          millième près, et il montre un CREUX — 4,49 % en 2004, 3,47 % en
+          2009, 4,12 % en 2012 — que la règle des 900 points explique.
           LE FICHIER EST CHIFFRÉ (AES-128, mot de passe vide) : il se lit avec
           pypdf, pas avec `scripts/fetch/lecture_pdf.py`.
 

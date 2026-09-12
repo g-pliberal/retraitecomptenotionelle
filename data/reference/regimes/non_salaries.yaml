@@ -3862,9 +3862,14 @@ regimes:
           OFFICE, et c'est ce qui tenait cette section hors du catalogue. « Les
           cotisations du régime complémentaire sont déterminées en fonction de
           la MOYENNE DES PRODUITS DE L'ÉTUDE sur 3 années », écrit la caisse ;
-          pour un notaire associé, au prorata de sa part dans les bénéfices. Les
-          produits d'un office sont ce qu'il encaisse, pas ce qui reste à son
-          titulaire.
+          pour un notaire associé, au prorata de sa part dans les bénéfices.
+          CE NE SONT PAS LES PRODUITS BRUTS, et la caisse le précise ailleurs :
+          « ces produits correspondent à la part du notaire dans les émoluments
+          de l'office, APRÈS DÉDUCTION DE CERTAINES CHARGES professionnelles ».
+          C'est ce qui réconcilie les 388 317 € calculés plus bas avec le
+          chiffre d'affaires que publie le Conseil supérieur du notariat — 9,0
+          milliards d'euros pour 17 305 notaires, soit 520 000 € par tête, dont
+          les taxes et déboursés que l'office encaisse pour le compte d'autrui.
           LE FACTEUR DE 2,553 A DEUX MOITIÉS, ET AUCUNE N'EST DEVINÉE.
           LES PRODUITS MOYENS D'UN OFFICE viennent du rapport de l'IGAS sur la
           caisse (n° 2012-110P), qui donne la règle fixant le prix du point C :
@@ -3927,19 +3932,52 @@ regimes:
           2,50 % (section A) plus 2 % (section U) de 1962 à 2003, puis 4,50 %
           pour la section C qui les remplace en 2004. La fusion n'a pas changé
           le taux — elle a changé la façon de servir.
-          LA SECTION B N'EST PAS PORTÉE, ET C'EST UN CHOIX DE MÉTHODE. Créée en
-          1962, elle était « EN PARTIE FACULTATIVE » (IGAS) : le notaire y
-          choisissait sa classe pour augmenter sa retraite. Le dépôt ne prête
-          jamais à personne un choix qu'il ne peut pas connaître — même règle
-          que pour les classes du RAAP d'avant 2017 et l'option de classe
-          supérieure de la CAVEC. Depuis, la classe est déterminée par les
-          produits, mais ses BORNES sont « déterminées par le conseil
-          d'administration chaque année par référence à la moyenne des produits
-          de base du notariat » (statuts, arrêté du 31 mai 2017) et ne sont
-          publiées nulle part. Ce qui manque est chiffrable : environ 9 500 €
-          pour le notaire moyen en 2025, contre 15 900 € de section C — soit
-          près de quatre dixièmes du complémentaire. Un notaire simulé ici est
-          sous-estimé d'autant.
+          LA SECTION B N'EST PAS PORTÉE, ET LA RAISON N'EST PAS CELLE QU'ON
+          CROIRAIT. Ce n'est pas une grille introuvable : de 1962 à 2013, IL
+          N'Y EN A PAS EU. Le rapport de l'IGAS (n° 2012-110P) décrit le régime
+          tel qu'il fonctionnait encore en 2012 : sept classes numérotées
+          0, 1, 2, 3, 4, 6 et 8, « l'inscription dans une des classes de cette
+          section est obligatoire pour les notaires en exercice ; LE CHOIX DE LA
+          CLASSE ELLE-MÊME ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en
+          l'absence d'indication, le cotisant est affilié en classe 1 ». Créée
+          en 1962 pour « répondre aux vœux du notariat qui souhaitait une
+          cotisation INDÉPENDANTE DES PRODUITS réalisés par l'office », elle
+          était un supplément facultatif — et le dépôt ne prête jamais à
+          personne un choix qu'il ne peut pas connaître. Même règle que pour les
+          classes du RAAP d'avant 2017 et l'option de classe supérieure de la
+          CAVEC.
+          CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
+          cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la moitié
+          de la profession au plancher ou presque —, pour une moyenne de 23,8
+          points par an, soit la classe 2,4.
+          DEPUIS 2014 LA CLASSE SE DÉTERMINE PAR LES PRODUITS, et le décret
+          n° 2013-1157 du 13 décembre 2013 qui l'institue DÉLÈGUE SES BORNES
+          dans la même phrase : « les bornes de chaque classe de cotisation de
+          la section B sont déterminées PAR LE CONSEIL D'ADMINISTRATION de la
+          Caisse de retraite des notaires pour une période de trois ans par
+          référence à la moyenne des produits de base du notariat au titre des
+          trois années précédentes ». Elles ne sont donc pas introuvables par
+          accident : aucun texte réglementaire ne les porte, par construction —
+          exactement comme le prix du point de la CAVAMAC, à ceci près que la
+          CAVAMAC publie la délibération de son conseil et que la CPRN ne
+          publie pas la sienne. Une passe entière du Journal officiel n'en a
+          rien tiré.
+          ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er janvier 2029, le
+          notaire sera systématiquement inscrit pour l'exercice n dans la classe
+          de cotisation correspondant aux produits de son étude ». Jusque-là,
+          les règles de maintien de classe — un notaire assermenté avant 2014 ne
+          monte que d'une classe par an et ne descend jamais d'office — et la
+          dérogation de six ans des nouveaux notaires laissent subsister
+          l'ancien mécanisme.
+          CE QUI MANQUE EST CHIFFRABLE : environ 11 100 € pour le notaire moyen
+          en 2025, contre 15 900 € de section C — soit quatre dixièmes du
+          complémentaire. Un notaire simulé ici est sous-estimé d'autant, et le
+          jour où la caisse publiera ses bornes, la fiche sera complète en une
+          demi-heure : la cotisation vaut « le nombre de points de la classe
+          multiplié par 115 % du coût d'acquisition du point B » pour tout
+          notaire assermenté depuis 2014, les classes ouvrent 10 à 80 points, et
+          le rendement de la section se calcule comme celui de la C — 9,50 % en
+          2004, 7,79 % en 2012, 5,54 % en 2026.
       - debut: 2017
         fin: 2017
         type_calcul: points
