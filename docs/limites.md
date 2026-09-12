@@ -2229,11 +2229,29 @@ la valeur du point du régime complémentaire **année par année depuis 1949** 
 allocations du régime de base depuis 1949, l'évolution de la lettre « C »
 depuis 1967, et les décrets qui fixent les cotisations.
 
-**Ce qui reste à faire pour en tirer des séries.** Les pages composées en DEUX
-COLONNES côte à côte mêlent encore leurs valeurs sur une même ligne : le
-regroupement se fait par ordonnée dans la page, pas par colonne. Lire ces
-tables demande un regroupement par ABSCISSE, que le lecteur ne fait pas
-encore. C'est la limite suivante, et elle est nommée plutôt que subie.
+**Et un second défaut, sous le premier.** `Tm` ne pose pas une position mais un
+REPÈRE : « 9 0 0 9 82.97 723.62 Tm » place le curseur ET multiplie par neuf
+tout ce qui suit. Les décalages `Td` qui viennent ensuite sont exprimés dans ce
+repère, pas en points de la page ; les additionner tels quels écrasait les
+interlignes d'un facteur neuf. Des lignes distantes de 14,4 points sur la
+feuille se retrouvaient à 1,6 l'une de l'autre — sous la tolérance de
+regroupement, donc fondues. Les deux corrections ensemble portent la
+chronologie de la CARMF de 8 lignes à **4 424**, et ses tableaux se lisent
+ligne par ligne.
+
+**Ce qui reste pour en tirer des séries.** Les colonnes se séparent très bien
+par l'abscisse — encore faut-il, DANS une cellule, conserver l'ordre
+d'ÉMISSION : tous les glyphes d'un nombre y partagent la même abscisse, et un
+tri par x rend « 74,47 » sous la forme « ,4477 ». Cela fait, la table des
+valeurs du point de la CARMF se lit : 1988 → 74,47 € pour le médecin et 44,74 €
+pour le conjoint survivant, 1998 → 68,91 et 41,34, 2003 → 68,00 et 40,80.
+
+Reste une **zone ambiguë, 1990 à 1997**, où chaque année porte DEUX valeurs de
+point sur deux sous-lignes — 1991 : 61,40 puis 84,30 — sans que la géométrie
+dise laquelle est laquelle. Un écart de trente-sept pour cent ne se devine pas.
+Tant que les notes de la caisse ne l'auront pas levé, la fiche garde son
+rendement unique de 4,48 % : un chiffre approché mais assumé vaut mieux qu'une
+série dont huit années seraient fausses.
 
 ### La troisième passe : une forme de plus, et un dentiste
 
@@ -2701,7 +2719,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 526 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 527 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

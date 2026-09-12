@@ -652,6 +652,33 @@ def test_le_lecteur_pdf_ne_colle_pas_les_pages_entre_elles():
     assert lignes == ["PAGE UN", "PAGE DEUX"], lignes
 
 
+def test_le_lecteur_pdf_applique_l_echelle_de_la_matrice_de_texte():
+    """« 9 0 0 9 … Tm » ne pose pas une position mais un REPÈRE.
+
+    Les décalages `Td` qui suivent sont exprimés dans ce repère, pas en points
+    de la page : les additionner tels quels écrase les interlignes d'un facteur
+    neuf. Des lignes distantes de 14,4 points sur la feuille se retrouvaient
+    alors à 1,6 l'une de l'autre, donc sous la tolérance de regroupement, donc
+    fondues en une seule. C'est ce qui rendait illisibles les tableaux de la
+    chronologie de la CARMF : trente-six lignes ramenées à quatre.
+    """
+    import sys
+    from pathlib import Path as _Path
+
+    sys.path.insert(0, str(_Path(__file__).resolve().parents[1] / "scripts" / "fetch"))
+    from lecture_pdf import lignes_pdf
+
+    # Deux lignes séparées de 1,6 dans un repère d'échelle 9 : 14,4 points sur
+    # la feuille, bien au-delà de la tolérance de 3.
+    corps = (b"BT /F1 1 Tf 9 0 0 9 80 700 Tm (PREMIERE) Tj "
+             b"0 -1.6 Td (SECONDE) Tj ET")
+    entete = b"%PDF-1.4\n1 0 obj\n<< /Length " + str(len(corps)).encode()
+    pdf = (entete + b" >>\nstream\n" + corps
+           + b"\nendstream\nendobj\ntrailer\n<< >>\n%%EOF\n")
+
+    assert lignes_pdf(pdf) == ["PREMIERE", "SECONDE"], lignes_pdf(pdf)
+
+
 def test_le_salaire_de_reference_se_borne_a_sa_tranche():
     """Une période à borne basse ne liquide que la part du salaire qui lui revient.
 
