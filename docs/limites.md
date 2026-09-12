@@ -2838,6 +2838,18 @@ fixe le prix du point de la section C :
 Avec le prix que publie le décret annuel — 17,69 € — et le taux — 4,10 % —, les
 produits moyens d'un office valent 900 × 17,69 / 0,041 = **388 317 €**.
 
+**Le rendement d'avant 2013 est publié, année par année.** Le même rapport de
+l'IGAS donne les deux séries de la section C de 2004 à 2012 — coût d'acquisition
+du point de 12,95 € à 16,64 €, valeur de service de 0,5816 € à 0,6848 € —, et
+leur rapport recoupe le texte du rapport au millième près. Il montre surtout que
+**le rendement n'a pas baissé régulièrement : il a fait un creux**, de 4,49 % en
+2004 à 3,47 % en 2009, avant de remonter à 4,12 % en 2012. C'est le mécanisme
+même du régime, celui des 900 points : le prix du point monte quand les produits
+des études montent. L'actuaire de la caisse appelle cela « procyclique » — le
+rendement s'élève au moment où les ressources se réduisent. La fiche porte donc
+neuf lignes au lieu d'une, et reconduit la plus ancienne vers l'amont faute de
+mieux.
+
 **Le revenu moyen, lui, se mesure** — et c'est le recueil statistique de la
 CNAVPL qui le permet, une fois relu avec un lecteur de PDF capable de ses
 polices. Il publie, section par section, les cotisations du régime de base
@@ -2855,24 +2867,63 @@ servir là où personne ne publie le revenu moyen.
 
 D'où un facteur de **2,553** : le notaire garde 39 % des produits de son office,
 le reste payant les collaborateurs et l'étude — le notariat compte 55 556
-collaborateurs pour 17 305 notaires. Un second calcul recoupe la chaîne : la
+collaborateurs pour 17 305 notaires. Et ces « produits » ne sont pas le chiffre
+d'affaires brut : la caisse précise qu'ils « correspondent à la part du notaire
+dans les émoluments de l'office, APRÈS DÉDUCTION DE CERTAINES CHARGES
+professionnelles ». C'est ce qui réconcilie les 388 317 € avec les 520 000 € par
+notaire que publie le Conseil supérieur du notariat, lesquels incluent les taxes
+et déboursés encaissés pour le compte d'autrui. Un second calcul recoupe la chaîne : la
 cotisation moyenne que publie la caisse (32 864 €, tous régimes) moins la part
 du régime de base que donne le recueil (5 837 €) laisse 27 027 € pour les deux
 sections, dont 15 921 € de section C laissent 11 106 € de section B — soit la
 classe 3,5, au milieu d'une grille qui en compte huit. La fiche porte
 `fiabilite: estimee` parce qu'une chaîne reste une chaîne.
 
-**La moitié forfaitaire du régime reste dehors, et pour une raison de
-principe.** La section B a huit classes, de 10 à 80 points, et sa cotisation
-vaut « le nombre de points de la classe multiplié par 115 % du coût
-d'acquisition du point B » — tout est publié sauf une chose : les bornes de
-produits qui rangent un notaire dans sa classe, « déterminées par le conseil
-d'administration chaque année par référence à la moyenne des produits de base du
-notariat ». Et avant 2014 il n'y avait pas de bornes du tout : la section était
-« en partie facultative », écrit l'IGAS, le notaire y choisissait sa classe.
-Le dépôt ne prête jamais à personne un choix qu'il ne peut pas connaître — même
-règle que pour les classes du RAAP d'avant 2017. Ce qui manque se chiffre :
-environ 9 500 € pour le notaire moyen en 2025, contre 15 900 € de section C.
+**La moitié forfaitaire du régime reste dehors, et la raison n'est pas celle
+qu'on croirait.** Ce n'est pas une grille introuvable : **de 1962 à 2013, il n'y en a pas eu**. L'IGAS décrit le régime tel qu'il fonctionnait encore
+en 2012 — sept classes numérotées 0, 1, 2, 3, 4, 6 et 8 :
+
+> « L'inscription dans une des classes de cette section est obligatoire pour les
+> notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME ÉTANT LAISSÉ À
+> L'APPRÉCIATION DU NOTAIRE. […] En l'absence d'indication, le cotisant est
+> affilié en classe 1. »
+
+Créée en 1962 pour « répondre aux vœux du notariat qui souhaitait une cotisation
+INDÉPENDANTE DES PRODUITS réalisés par l'office », la section B était un
+supplément facultatif, et le dépôt ne prête jamais à personne un choix qu'il ne
+peut pas connaître — même règle que pour les classes du RAAP d'avant 2017. Le
+même rapport montre ce que ce choix donnait : en 2011, sur 8 356 cotisants,
+1 587 étaient en classe 0 et 2 593 en classe 1, pour une moyenne de 23,8 points
+par an — la classe 2,4.
+
+**Depuis 2014 la classe se détermine par les produits — et le décret qui
+l'institue délègue ses bornes dans la même phrase.** Le décret n° 2013-1157 du
+13 décembre 2013 :
+
+> « Les bornes de chaque classe de cotisation de la section B sont déterminées
+> PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite des notaires pour une
+> période de trois ans par référence à la moyenne des produits de base du
+> notariat au titre des trois années précédentes. »
+
+Ces bornes ne sont donc pas introuvables par accident : **aucun texte
+réglementaire ne les porte, par construction** — exactement comme le prix du
+point de la CAVAMAC, à ceci près que la CAVAMAC publie la délibération de son
+conseil et que la CPRN ne publie pas la sienne. Une passe entière du *Journal
+officiel* sur les textes qui parlent à la fois des notaires, de classes de
+cotisation et de produits n'en a rien tiré. Et la bascule n'est pas achevée :
+« à partir du 1er janvier 2029, le notaire sera systématiquement inscrit pour
+l'exercice n dans la classe de cotisation correspondant aux produits de son
+étude » ; jusque-là, un notaire assermenté avant 2014 ne monte que d'une classe
+par an et ne descend jamais d'office, et les nouveaux gardent six ans la
+classe 1.
+
+Ce qui manque se chiffre : environ 11 100 € pour le notaire moyen en 2025,
+contre 15 900 € de section C. Et le jour où la caisse publiera ses bornes, la
+fiche se complètera en une demi-heure : la cotisation vaut « le nombre de points
+de la classe multiplié par 115 % du coût d'acquisition du point B » pour tout
+notaire assermenté depuis 2014, les classes ouvrent 10 à 80 points, et le
+rendement de la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+en 2012, 5,54 % en 2026.
 
 **Un mécanisme de plus dans le moteur, et le troisième cette année.** Après la
 cotisation par classes et la cotisation forfaitaire qui s'ajoute à un taux,

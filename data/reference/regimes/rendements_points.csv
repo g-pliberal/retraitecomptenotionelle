@@ -159,17 +159,32 @@ cavamac_complementaire,2004,2018,0.0353,estimee
 cavamac_complementaire,2019,2025,0.0389,moyenne
 cavamac_complementaire,2026,2100,0.0414,haute
 # CPRN, section C : le rapport de la valeur de service au coût d'acquisition du
-# point, tous deux publiés — 0,9083 / 17,69 en 2024, 0,9283 / 17,69 en 2025
-# (la caisse annonce 5,25 %, le calcul en donne 5,247), 0,9422 / 17,69 en 2026.
-# Pour les années anciennes, le rapport de l'IGAS sur la caisse (n° 2012-110P)
-# donne deux points : « le taux de rendement instantané du régime passe de
-# 3,47 % en 2009 à 4,12 % en 2012 ». Entre 2013 et 2023 rien n'est publié : le
-# chiffre de 2012 y est reconduit. Avant 2009 non plus, et c'est le plus
-# ancien connu qui vaut — mais le mécanisme est « procyclique », dit
-# l'actuaire de la caisse : le rendement monte quand les produits des études
-# baissent, ce qu'aucune reconduction ne sait imiter.
-cprn_complementaire,1949,2008,0.0347,estimee
-cprn_complementaire,2009,2011,0.0347,haute
+# point, tous deux publiés. Pour 2004 à 2012, c'est le rapport de l'IGAS sur la
+# caisse (n° 2012-110P) qui donne les deux séries, année par année — coût
+# d'acquisition de 12,95 € à 16,64 €, valeur de service de 0,5816 € à 0,6848 €.
+# Leur rapport se recoupe avec le texte du rapport, qui écrit que « le taux de
+# rendement instantané du régime passe de 3,47 % en 2009 à 4,12 % en 2012 » :
+# la table donne 3,473 % et 4,115 %.
+# LE RENDEMENT N'A PAS BAISSÉ RÉGULIÈREMENT, il a fait un creux. De 4,49 % en
+# 2004 il tombe à 3,47 % en 2009 puis remonte, et c'est le mécanisme même du
+# régime : le prix du point est « calculé de façon à ce que la moyenne des
+# points attribués soit toujours égale à 900 points », si bien qu'il monte
+# quand les produits des études montent. L'actuaire de la caisse appelle cela
+# « procyclique » — le rendement s'élève au moment où les ressources se
+# réduisent. Aucune reconduction ne sait imiter cela : avant 2004 c'est le plus
+# ancien chiffre connu qui vaut, et il est marqué `estimee` pour cette raison.
+# Entre 2013 et 2023 rien n'est publié non plus ; la série reprend en 2024 avec
+# les valeurs de la caisse — 0,9083 / 17,69 —, puis 0,9283 / 17,69 en 2025 (la
+# caisse annonce 5,25 %, le calcul en donne 5,247) et 0,9422 / 17,69 en 2026.
+cprn_complementaire,1949,2003,0.0449,estimee
+cprn_complementaire,2004,2004,0.0449,haute
+cprn_complementaire,2005,2005,0.0427,haute
+cprn_complementaire,2006,2006,0.0407,haute
+cprn_complementaire,2007,2007,0.0379,haute
+cprn_complementaire,2008,2008,0.0357,haute
+cprn_complementaire,2009,2009,0.0347,haute
+cprn_complementaire,2010,2010,0.0358,haute
+cprn_complementaire,2011,2011,0.0390,haute
 cprn_complementaire,2012,2023,0.0412,moyenne
 cprn_complementaire,2024,2024,0.0513,haute
 cprn_complementaire,2025,2025,0.0525,haute
