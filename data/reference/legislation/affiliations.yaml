@@ -100,12 +100,13 @@ affiliations:
       ostéopathes, guides. C'est la section la plus nombreuse après les
       auxiliaires médicaux, et le choix le moins arbitraire pour un statut
       générique.
-      Huit des dix sections ont maintenant leur fiche et leur statut : CARMF,
-      CARCDSF, CARPIMKO, CAVP, CAVEC, CARPV, CAVOM et la CIPAV que porte ce
-      statut-ci. Restent la CAVAMAC, dont aucun texte ne publie le prix du
-      point, et la CPRN, dont l'assiette est le produit de l'office et non le
-      revenu du notaire : un agent général d'assurance ou un notaire simulé ici
-      est sous-estimé de tout son complémentaire. Voir docs/limites.md.
+      LES DIX SECTIONS ONT MAINTENANT LEUR FICHE ET LEUR STATUT : CARMF,
+      CARCDSF, CARPIMKO, CAVP, CAVEC, CARPV, CAVOM, CAVAMAC, CPRN, et la CIPAV
+      que porte ce statut-ci. Les deux dernières venues ne cotisent pas sur le
+      revenu de l'assuré mais sur une grandeur qui lui est proportionnelle —
+      commissions pour l'une, produits de l'office pour l'autre —, et la CPRN
+      ne porte que la moitié proportionnelle de son régime. Voir
+      docs/limites.md.
       La borne de 1979 est celle du décret n° 79-262 du 21 mars 1979, qui
       institue le complémentaire des architectes.
 
@@ -154,6 +155,38 @@ affiliations:
       en 1953, et par CLASSES depuis l'origine : « un système de points avec
       cotisations indépendantes du revenu », écrit la caisse. C'est lui qui
       pèse l'essentiel de la pension d'un expert-comptable.
+
+  agent_general_assurance:
+    libelle: Agent général d'assurance
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1967, regimes: [cnavpl]}
+      - {debut: 1968, fin: null, regimes: [cnavpl, cavamac_complementaire]}
+    note: >-
+      SON COMPLÉMENTAIRE NE COTISE PAS SUR SON REVENU mais sur les COMMISSIONS
+      que les compagnies lui versent, qui valent en moyenne 2,387 fois
+      celui-ci — la caisse publie les deux grandeurs, et la fiche du régime
+      porte le facteur. C'est aussi la seule section libérale dont une part de
+      la cotisation est payée par un tiers : 2,50 points sur 7,66 viennent des
+      compagnies mandantes, au titre d'un accord de branche. Le statut reste
+      marqué `sans_employeur`, comme tous les libéraux, et le moteur porte donc
+      cette part au compte de l'agent : voir la fiche.
+      La borne de 1968 est celle du décret n° 67-1169 du 22 décembre 1967, qui
+      institue le régime.
+
+  notaire:
+    libelle: Notaire libéral
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: null, regimes: [cnavpl, cprn_complementaire]}
+    note: >-
+      UN NOTAIRE SIMULÉ ICI EST SOUS-ESTIMÉ, ET DE BEAUCOUP. Son complémentaire
+      a deux sections ; le statut n'en porte qu'une, la section C
+      proportionnelle, parce que les bornes de classes de la section B ne sont
+      publiées nulle part. Il manque environ quatre dixièmes du complémentaire.
+      L'assiette elle-même n'est pas son revenu mais les PRODUITS DE SON
+      OFFICE : la fiche les reconstitue par un facteur de 2,04, qui est une
+      convention — son arithmétique entière est dans les notes du régime.
 
   veterinaire:
     libelle: Vétérinaire libéral

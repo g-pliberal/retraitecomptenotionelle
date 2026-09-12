@@ -627,6 +627,12 @@ export class ScenarioActuel {
           } else if (periode.assiette === "hors_primes") {
             base = baseLigne * (1.0 - ligne.part_primes);
           }
+          // Commissions de la CAVAMAC, produits de l'office de la CPRN : le
+          // facteur reconstitue l'assiette depuis le revenu, avant les bornes.
+          if (periode.assiette_facteur_revenu !== null
+              && periode.assiette_facteur_revenu !== undefined) {
+            base *= periode.assiette_facteur_revenu;
+          }
           const plafond = borneHaute === null ? base : borneHaute;
           let assiette = Math.max(0.0, Math.min(base, plafond) - borneBasse);
           const repere = periode.repereAssiette(

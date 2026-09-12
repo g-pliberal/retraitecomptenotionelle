@@ -787,6 +787,102 @@ institutions:
           récapitulatif des paramètres est composé dans une police sans table de
           correspondance.
 
+      - id: cavamac_parametres
+        titre: >-
+          Paramètres annuels des régimes RBL-RCO-RID de la CAVAMAC, fiche
+          « Taux et assiette des cotisations RCO-RID », et délibérations du
+          conseil d'administration sur la valeur du point
+        url: https://www.cavamac.fr/documents-utiles-et-formulaires/
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/non_salaries.yaml
+        note: >-
+          CETTE CAISSE ÉTAIT DONNÉE POUR SANS ESPOIR : « aucun texte ne publie
+          le prix du point », concluait une passe précédente, et l'arrêté du
+          23 juin 2011 le confirmait en renvoyant la valeur au conseil
+          d'administration. C'est vrai du Journal officiel. Ce ne l'est pas de
+          la caisse, qui publie la décision du conseil dans ses ACTUALITÉS,
+          chiffre à l'appui : « le coefficient de référence, correspondant au
+          prix d'achat d'un point de retraite : fixé à 8,1806 €, maintenant
+          ainsi le taux de rendement du régime à 5,04 % ». Trois exercices sont
+          ainsi documentés — 7,597 € en 2023, 7,9246 € en 2024, 8,1806 € en
+          2026 — et le rendement s'y vérifie à chaque fois.
+          LE TABLEAU DE PARAMÈTRES ANNUELS donne le reste d'un coup : « le taux
+          de cotisation statutaire est de 6,30 % au taux d'appel de 121,6 %,
+          soit un taux de cotisation effectif de 7,66 % des commissions et
+          rémunérations brutes limitées au plafond, dont 2,50 %
+          (concours des compagnies mandantes) et 5,16 % (part à la charge de
+          l'assuré) », plafond 625 777 €, valeur du point 0,4123 €.
+          LA PAGE DE STATISTIQUES DÉBLOQUE L'ASSIETTE, et c'est elle qui rend
+          la fiche possible : « la commission moyenne plafonnée augmente de
+          5,0 %, passant de 275 525 € à 286 168 € » et « le revenu moyen
+          déclaré en 2024 par les agents s'élève à 115 443 euros ». Deux
+          grandeurs, même source, même page : leur rapport — 2,387 — est le
+          facteur qui convertit un revenu en commissions.
+          CE QUI MANQUE : la série des valeurs du point avant 2022, et l'année
+          exacte où le taux d'appel est retombé de 129,5 % à 121,6 %. La fiche
+          la place en 2026, année du tableau qui l'écrit ; le rapport
+          statistique de 2025 note « la baisse du taux d'appel » sans la dater.
+
+      - id: cprn_guide
+        titre: >-
+          Guide du nouvel affilié, rapport d'activité et pages de cotisations
+          de la CPRN
+        url: https://cprn.fr/je-suis-affilie/je-suis-actif/mes-cotisations/
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/non_salaries.yaml
+        note: >-
+          LE GUIDE PORTE LE TABLEAU QUI MANQUAIT : coût d'acquisition et valeur
+          de service, pour les quatre étages du régime. Base T1 7,99 € et
+          0,6599 € ; base T2 179,74 € et 0,6599 € ; SECTION B 279,12 € et
+          17,7710 € ; SECTION C 17,69 € et 0,9422 €. Les deux premières lignes
+          se recalculent depuis le barème — 8,73 % × 48 060 / 525 points =
+          7,99 € —, ce qui authentifie les deux autres.
+          LE RAPPORT D'ACTIVITÉ donne les revalorisations et les moyennes : point
+          de service de la section B +1,0 % et coût d'achat +1,2 % pour 2026,
+          « 1 point = 320,99 € pour un notaire dont le coefficient d'âge est de
+          1,15 » — soit 279,12 × 1,15 —, des rendements qui « continuent de
+          converger (respectivement 5,25 % et 5,4 % en 2025) », et une
+          cotisation moyenne annuelle de 32 864 € pour 12 444 cotisants, tous
+          régimes confondus.
+          CE QUI RESTE DEHORS : les bornes de classes de la section B. Les
+          statuts disent qui les fixe et comment — « déterminées par le conseil
+          d'administration chaque année par référence à la moyenne des produits
+          de base du notariat au titre des trois années précédentes » — mais
+          personne ne les publie. C'est près de quatre dixièmes du
+          complémentaire d'un notaire.
+
+      - id: igas_crn
+        titre: >-
+          Contrôle des placements de la Caisse de retraite des notaires,
+          rapport IGAS n° 2012-110P
+        url: https://igas.gouv.fr/sites/igas/files/files-spip/pdf/RM_2012-110_P_CRN.pdf
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/rendements_points.csv
+        note: >-
+          UN RAPPORT D'INSPECTION DÉCRIT UN RÉGIME MIEUX QUE SA CAISSE, parce
+          qu'il en explique les mécanismes au lieu d'en donner les tarifs.
+          Trois choses en viennent, et de nulle part ailleurs.
+          LA RÈGLE DES 900 POINTS, qui fixe le prix du point C : « cette valeur
+          d'acquisition est calculée de façon à ajuster le nombre de points
+          attribué à chaque notaire de façon à ce que la moyenne sur l'ensemble
+          des notaires soit toujours égale à 900 points ». Avec le prix publié
+          et le taux publié, elle donne les PRODUITS MOYENS d'un office —
+          900 × 17,69 / 4,10 % = 388 317 € — et c'est ce chiffre qui permet de
+          relier l'assiette du régime au revenu de l'assuré.
+          LE RENDEMENT D'AVANT 2013 : « le taux de rendement instantané du
+          régime passe de 3,47 % en 2009 à 4,12 % en 2012 », et l'avertissement
+          qui va avec — le mécanisme est « procyclique », le rendement monte
+          quand les produits des études baissent.
+          LA NATURE DE LA SECTION B : créée en 1962, « EN PARTIE FACULTATIVE »,
+          avec « une gestion individualisée proche de la capitalisation ». Un
+          régime dont la classe se choisissait n'entre pas dans ce dépôt ; sa
+          fiche ne porte donc que la section proportionnelle.
+          LE FICHIER EST CHIFFRÉ (AES-128, mot de passe vide) : il se lit avec
+          pypdf, pas avec `scripts/fetch/lecture_pdf.py`.
+
   cnbf:
     nom: Caisse nationale des barreaux français
     role: Régime de retraite des avocats.

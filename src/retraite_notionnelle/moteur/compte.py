@@ -493,6 +493,15 @@ class ConstructeurCompte:
                 base = self._base_selon_assiette(
                     periode.assiette, base_ligne, ligne.part_primes
                 )
+                # L'ASSIETTE N'EST PAS TOUJOURS LE REVENU. La CAVAMAC prélève
+                # sur les commissions que les compagnies versent à l'agent
+                # général, la CPRN sur les produits de l'office du notaire :
+                # deux grandeurs que la carrière ne porte pas et qui valent
+                # plusieurs fois le revenu. Le facteur les reconstitue AVANT
+                # les bornes — c'est bien l'assiette qui est plafonnée, pas le
+                # revenu.
+                if periode.assiette_facteur_revenu is not None:
+                    base *= periode.assiette_facteur_revenu
 
                 if acquisition_commune and en_repartition:
                     # Regroupées par ASSIETTE DE DÉPART — traitement indiciaire,

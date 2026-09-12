@@ -3234,6 +3234,240 @@ regimes:
           fiches voisines ne la portent pas davantage.
           La borne de début est celle du décret n° 50-1318 du 21 octobre 1950,
           qui institue le régime au sein de la caisse créée deux ans plus tôt.
+  - code: cavamac_complementaire
+    nom: >-
+      Régime complémentaire des agents généraux d'assurance (CAVAMAC, RCO)
+    famille: liberal
+    source_id: cavamac_parametres
+    fiabilite: moyenne
+    creation: 1968
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Agents généraux d'assurance et mandataires non salariés d'assurance —
+      12 452 cotisants en 2025. Le régime est « propre aux agents généraux,
+      piloté par eux à travers les conseils d'administration », et il a une
+      particularité qu'aucune autre section libérale ne partage : les
+      COMPAGNIES MANDANTES en paient une part.
+    hors_repartition: false
+    periodes:
+      - debut: 1968
+        fin: 1970
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.036
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          L'ASSIETTE N'EST PAS LE REVENU, ET C'EST CE QUI TENAIT CETTE SECTION
+          HORS DU CATALOGUE. « À la différence des cotisations de retraite de
+          base assises sur votre revenu professionnel, vos cotisations de
+          retraite complémentaire sont calculées sur la base de vos COMMISSIONS
+          ET RÉMUNÉRATIONS BRUTES réalisées l'année précédente », écrit la
+          caisse — celles que les compagnies versent à l'agent, avant qu'il
+          n'ait payé un loyer, un salarié ou une charge.
+          LE FACTEUR VIENT DE LA CAISSE ELLE-MÊME, et de deux phrases de la même
+          page de statistiques : « la commission moyenne plafonnée augmente de
+          5,0 %, passant de 275 525 € à 286 168 € » et « le revenu moyen déclaré
+          en 2024 par les agents s'élève à 115 443 euros ». Le rapport des deux
+          grandeurs de 2024 — 275 525 / 115 443 — vaut 2,387, et c'est lui que
+          porte `assiette_facteur_revenu`. C'est une MOYENNE DE SECTION : deux
+          agents à même revenu n'ont pas les mêmes commissions, et la fiche ne
+          prétend pas décrire l'un d'eux. Sans ce facteur, elle se tromperait
+          d'un facteur deux et demi, ce qui est pire.
+          LE PLAFOND EST INDEXÉ SUR LA COMMISSION MOYENNE, pas sur celui de la
+          Sécurité sociale : la caisse l'a porté à 625 777 € pour 2026,
+          « soit une augmentation de 4 %, conformément à l'évolution de la
+          commission moyenne ». Treize plafonds de la Sécurité sociale en sont
+          la meilleure approximation indexable — 624 780 € contre 625 777 € en
+          2026, à un millième près ; l'écart atteint 6 % en 2024, et joue sur
+          les seules commissions supérieures à douze plafonds.
+          3,60 % À L'ORIGINE. Le régime est institué par le décret n° 67-1169 du
+          22 décembre 1967 ; le taux double en 1971.
+      - debut: 1971
+        fin: 1992
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.063
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          6,30 %, ET CE TAUX N'A JAMAIS CHANGÉ DEPUIS. C'est le taux
+          STATUTAIRE, celui qui ouvre des droits ; tout ce qui bouge après 1992
+          est le TAUX D'APPEL, qui prélève davantage sans rien ouvrir de plus.
+          Jusqu'en 1992 les deux coïncident : appel à 100 %, cotisation égale au
+          droit.
+      - debut: 1993
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.0693
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LE PREMIER TAUX D'APPEL, et le décret n° 92-1372 du 29 décembre 1992
+          dit exactement ce qu'il fait : « la cotisation définie à l'article 1er
+          est appelée à hauteur de 110 %. La majoration de cotisation afférente
+          à la fraction du taux d'appel excédant 100 % N'OUVRE PAS DE DROIT
+          SUPPLÉMENTAIRE. » 6,30 % × 110 % = 6,93 % prélevés pour 6,30 % de
+          droits — et c'est le montant PRÉLEVÉ qu'un compte notionnel porte.
+          Le rendement de ce qui est versé baisse d'autant : voir
+          `rendements_points.csv`.
+      - debut: 1998
+        fin: 2000
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.080325
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          APPEL PORTÉ À 127,5 % par le décret n° 97-1056 du 13 novembre 1997, et
+          sa notice dit pourquoi en toutes lettres : « d'après les projections
+          réalisées par la CAVAMAC, à rendement inchangé, les réserves du régime
+          seraient totalement épuisées en 2004 […] un projet de réforme visant à
+          en DIMINUER LE RENDEMENT par un relèvement du taux d'appel de la
+          cotisation de 127,5 % ». 6,30 % × 1,275 = 8,0325 %.
+      - debut: 2001
+        fin: 2003
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.081585
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Appel à 129,5 % (décret n° 2001-864 du 17 septembre 2001), soit
+          8,1585 %.
+      - debut: 2004
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.09
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LE SOMMET : appel à 142,86 % (décret n° 2003-1255 du 26 décembre
+          2003), soit 9 % prélevés pour 6,30 % de droits. Quinze ans durant, un
+          agent général verse sept euros pour cinq euros de droits — et le
+          rendement de ce qu'il verse tombe à 3,53 %, le plus bas du catalogue
+          libéral.
+      - debut: 2019
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.0816
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
+          barème de l'IPP porte, et il le porte encore pour 2026 : la caisse,
+          elle, a publié autre chose — voir la période suivante.
+      - debut: 2026
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        assiette_facteur_revenu: 2.387
+        taux_cotisation_retraite: 0.0766
+        part_salariale: 0.673629
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LA BAISSE DU TAUX D'APPEL, que la caisse annonce dans son tableau de
+          paramètres 2026 : « le taux de cotisation statutaire est de 6,30 % au
+          taux d'appel de 121,6 %, soit un taux de cotisation effectif de
+          7,66 % des commissions et rémunérations brutes limitées au plafond,
+          dont 2,50 % (concours des compagnies mandantes) et 5,16 % (part à la
+          charge de l'assuré) ». Le barème de l'IPP porte encore 8,16 % ; la
+          caisse fait foi, comme toujours dans ce dépôt.
+          DEUX CINQUIÈMES SONT PAYÉS PAR QUELQU'UN D'AUTRE. Le « concours
+          conventionnel des compagnies mandantes » — 2,50 points sur 7,66 —
+          n'est ni une cotisation de l'agent ni une cotisation d'employeur :
+          c'est la contrepartie d'un accord de branche, en place depuis 1952.
+          `part_salariale` porte le partage exact, 5,16 / 7,66 = 67,36 % ; mais
+          le statut `agent_general_assurance` est marqué `sans_employeur`, comme
+          tous les libéraux, et le moteur porte alors TOUT au compte de
+          l'agent. Les scénarios 2 et 3 lui prêtent donc un tiers d'effort qu'il
+          n'a pas fourni, et le chiffre est ici pour qui voudra corriger cela.
+          LE RENDEMENT EST PUBLIÉ, ET IL EST STABLE : « le coefficient de
+          référence, correspondant au prix d'achat d'un point de retraite :
+          fixé à 8,1806 €, maintenant ainsi le taux de rendement du régime à
+          5,04 % ». Valeur de service 0,4123 € en 2026 : 0,4123 / 8,1806 =
+          5,0399 %. Le même calcul tombe sur 5,04 % en 2023 (0,3829 / 7,597) et
+          en 2024 (0,3994 / 7,9246) — la caisse pilote ce rendement, et le dit.
+          C'est le rendement HORS TAUX D'APPEL ; celui de ce qui est versé se
+          lit dans `rendements_points.csv`.
   - code: cavec_complementaire
     nom: >-
       Régime complémentaire des experts-comptables et des commissaires aux
@@ -3571,6 +3805,204 @@ regimes:
           Seconde tranche : 21 % des revenus compris entre un et trois plafonds
           depuis 2025, contre 22 % en 2023 et 2024.
 
+  - code: cprn_complementaire
+    nom: >-
+      Régime complémentaire des notaires (CPRN) — part proportionnelle,
+      sections A et U puis section C
+    famille: liberal
+    source_id: cprn_guide
+    fiabilite: estimee
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Notaires libéraux, titulaires d'office ou associés — 12 444 cotisants en
+      2025. LA FICHE NE PORTE QU'UNE PARTIE DU RÉGIME : le complémentaire des
+      notaires a deux sections, et seule la SECTION C, proportionnelle, entre
+      ici. La section B, forfaitaire par classes, reste dehors — voir les notes.
+    hors_repartition: false
+    periodes:
+      - debut: 1949
+        fin: 1961
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.04
+        taux_cotisation_retraite: 0.10
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          L'ASSIETTE N'EST PAS LE REVENU DU NOTAIRE MAIS LES PRODUITS DE SON
+          OFFICE, et c'est ce qui tenait cette section hors du catalogue. « Les
+          cotisations du régime complémentaire sont déterminées en fonction de
+          la MOYENNE DES PRODUITS DE L'ÉTUDE sur 3 années », écrit la caisse ;
+          pour un notaire associé, au prorata de sa part dans les bénéfices. Les
+          produits d'un office sont ce qu'il encaisse, pas ce qui reste à son
+          titulaire.
+          LE FACTEUR DE 2,04 EST UNE CONVENTION, ET VOICI SON ARITHMÉTIQUE
+          ENTIÈRE. Le rapport de l'IGAS sur la caisse (n° 2012-110P) donne la
+          règle qui fixe le prix du point C : « cette valeur d'acquisition est
+          calculée de façon à ajuster le nombre de points attribué à chaque
+          notaire de façon à ce que LA MOYENNE sur l'ensemble des notaires soit
+          toujours ÉGALE À 900 POINTS ». Le décret annuel donne ce prix —
+          17,69 € — et le taux — 4,10 %. Donc la cotisation moyenne de section C
+          vaut 900 × 17,69 = 15 921 €, et les produits moyens 15 921 / 0,041 =
+          388 317 €.
+          Le revenu moyen s'obtient par l'autre bout : la caisse publie une
+          cotisation moyenne annuelle de 32 864 € « tous affiliés confondus (B,
+          C et régime de base) ». Ôtés les 15 921 € de section C et les 9 515 €
+          d'une section B de classe 3 — la seule classe qui laisse au régime de
+          base un montant inférieur à son maximum —, il reste 7 428 € de
+          cotisation de base, que le barème 2025 (8,23 % sous un plafond,
+          1,87 % jusqu'à cinq) renvoie à un revenu de 190 000 €. D'où
+          388 317 / 190 000 = 2,04.
+          CE QUE CETTE CHAÎNE SUPPOSE : que la règle des 900 points vaille
+          encore — le prix du point C est gelé à 17,69 € depuis 2019, ce qui
+          suggère qu'elle ne s'applique plus — et que la classe moyenne de la
+          section B soit la troisième. Un contrôle indépendant la borne : le
+          Conseil supérieur du notariat publie 9,0 milliards d'euros de produits
+          pour 17 305 notaires en 2024, soit 520 000 € par notaire, du même
+          ordre. Le facteur est donc juste à un quart près, et la fiche porte
+          `fiabilite: estimee` pour cette raison.
+          10 % À L'ORIGINE : 5 % pour la section A, dite « allocation
+          variable », et 5 % pour la section U, dite « allocation uniforme »,
+          toutes deux assises sur les produits (décret n° 49-578 du 22 avril
+          1949). Les deux fusionnent en 2004 dans la section C.
+      - debut: 1962
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.04
+        taux_cotisation_retraite: 0.045
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          4,50 % PENDANT CINQUANTE-CINQ ANS, et la continuité est frappante :
+          2,50 % (section A) plus 2 % (section U) de 1962 à 2003, puis 4,50 %
+          pour la section C qui les remplace en 2004. La fusion n'a pas changé
+          le taux — elle a changé la façon de servir.
+          LA SECTION B N'EST PAS PORTÉE, ET C'EST UN CHOIX DE MÉTHODE. Créée en
+          1962, elle était « EN PARTIE FACULTATIVE » (IGAS) : le notaire y
+          choisissait sa classe pour augmenter sa retraite. Le dépôt ne prête
+          jamais à personne un choix qu'il ne peut pas connaître — même règle
+          que pour les classes du RAAP d'avant 2017 et l'option de classe
+          supérieure de la CAVEC. Depuis, la classe est déterminée par les
+          produits, mais ses BORNES sont « déterminées par le conseil
+          d'administration chaque année par référence à la moyenne des produits
+          de base du notariat » (statuts, arrêté du 31 mai 2017) et ne sont
+          publiées nulle part. Ce qui manque est chiffrable : environ 9 500 €
+          pour le notaire moyen en 2025, contre 15 900 € de section C — soit
+          près de quatre dixièmes du complémentaire. Un notaire simulé ici est
+          sous-estimé d'autant.
+      - debut: 2017
+        fin: 2017
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.04
+        taux_cotisation_retraite: 0.0414
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          La baisse commence : 4,14 % en 2017, puis 4,10 %, 4 % et de nouveau
+          4,10 %. Le décret annuel des sections libérales fixe ce taux, et le
+          barème de l'IPP le confirme année par année — les deux sources
+          concordent sur toute la plage où elles se recouvrent.
+      - debut: 2018
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.04
+        taux_cotisation_retraite: 0.041
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: 4,10 % en 2018.
+      - debut: 2019
+        fin: 2021
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.04
+        taux_cotisation_retraite: 0.040
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          4,00 % de 2019 à 2021 — « taux de cotisation de la section C : 4,00 %
+          ; valeur d'acquisition du point section C : 17,69 euros », écrit le
+          décret, qui donne les deux ensemble.
+      - debut: 2022
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.04
+        taux_cotisation_retraite: 0.041
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          4,10 % DEPUIS 2022, sur la moyenne des produits de base des trois
+          années précédant l'année antérieure — en 2026, les exercices 2022,
+          2023 et 2024.
+          L'ÂGE SEUL COMMANDE, comme dans les trois autres complémentaires de
+          sections écrits cette année : « sur la base de l'âge légal de départ à
+          la retraite est appliqué un coefficient correspondant à l'âge de
+          l'affilié », décote de 1,25 % par trimestre d'anticipation plafonnée à
+          25 %, surcote de 1 % par trimestre au-delà, jusqu'au soixante-dixième
+          anniversaire. Aucune durée d'assurance n'y entre.
+          UN PLAFOND EXISTE ET N'EST PAS PORTÉ : l'assiette est « limitée à
+          trois fois la moyenne générale des produits des études de France »
+          (IGAS), soit environ 1 165 000 € de produits — un revenu de 570 000 €
+          au facteur de cette fiche. Aucune carrière simulée ici ne l'atteint.
+          UN MINIMUM NON PLUS : un notaire ayant exercé plus de dix ans reçoit
+          un nombre de points plancher, que la caisse a fixé à 575 points par
+          année d'exercice en 2012 et à 64 % de la moyenne distribuée depuis.
+          Il relève la pension des petits offices, et la fiche l'ignore.
   - code: cnbf
     nom: Caisse nationale des barreaux français
     famille: liberal

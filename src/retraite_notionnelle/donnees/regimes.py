@@ -57,6 +57,11 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     # borne la plus haute du catalogue libéral, et le décret la fixe en
     # plafonds — 384 480 € en 2026.
     "plafonnee_8_pass": (0.0, 8.0),
+    # CAVAMAC : le plafond des commissions, que la caisse indexe sur la
+    # commission MOYENNE et non sur celui de la Sécurité sociale — 625 777 €
+    # en 2026, quand treize plafonds en valent 624 780. C'est la meilleure
+    # approximation indexable ; l'écart atteint 6 % en 2024.
+    "plafonnee_13_pass": (0.0, 13.0),
     # Complémentaires des sections libérales : la CARMF prélève jusqu'à
     # trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
     "plafonnee_3_5_pass": (0.0, 3.5),
@@ -188,6 +193,21 @@ class PeriodeRegime:
     #: mais un MONTANT par palier de revenu, lu dans `classes_cotisation.csv`.
     #: C'est la forme de la Cipav d'avant 2023.
     cotisation_par_classes: bool
+    #: L'ASSIETTE N'EST PAS LE REVENU, mais une grandeur qui lui est
+    #: proportionnelle et que la carrière saisie ne porte pas. Deux sections
+    #: libérales sont dans ce cas, et c'est ce qui les tenait hors du
+    #: catalogue : la CAVAMAC prélève sur les COMMISSIONS BRUTES que les
+    #: compagnies versent à l'agent général, la CPRN sur les PRODUITS DE
+    #: L'OFFICE du notaire. L'une et l'autre valent plusieurs fois le revenu
+    #: professionnel qui reste à l'assuré une fois ses charges payées.
+    #:
+    #: Le facteur reconstitue cette grandeur : assiette = revenu × facteur,
+    #: avant application des bornes. C'est une MOYENNE DE SECTION, prise dans
+    #: les statistiques de la caisse, et elle ne décrit aucun assuré en
+    #: particulier — deux agents généraux à même revenu n'ont pas les mêmes
+    #: commissions. Le taux, lui, reste celui du texte : la fiche ne maquille
+    #: pas le facteur en taux, elle le nomme.
+    assiette_facteur_revenu: float | None
     #: COTISATION FORFAITAIRE, en euros de `cotisation_forfaitaire_annee`,
     #: qui s'AJOUTE à la cotisation proportionnelle. C'est la forme du
     #: complémentaire des chirurgiens-dentistes : 3 210,60 € en 2026,
@@ -604,6 +624,10 @@ class CatalogueRegimes:
                 assiette_forfaitaire=bool(p.get("assiette_forfaitaire", False)),
                 cotisation_par_classes=bool(
                     p.get("cotisation_par_classes", False)
+                ),
+                assiette_facteur_revenu=(
+                    None if p.get("assiette_facteur_revenu") is None
+                    else float(p["assiette_facteur_revenu"])
                 ),
                 cotisation_forfaitaire_euros=(
                     None if p.get("cotisation_forfaitaire_euros") is None

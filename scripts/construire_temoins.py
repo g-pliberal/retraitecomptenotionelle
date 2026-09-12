@@ -63,6 +63,7 @@ STATUTS = (
     "medecin_liberal", "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
     "pharmacien", "auxiliaire_medical", "veterinaire", "officier_ministeriel",
     "artiste_auteur", "ministre_du_culte", "personnel_navigant",
+    "agent_general_assurance", "notaire",
     "agent_seita", "agent_port_strasbourg", "agent_chemins_fer_secondaires",
 )
 
