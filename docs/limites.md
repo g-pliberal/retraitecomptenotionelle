@@ -969,7 +969,10 @@ plus volontiers.
   1,87 % sur la tranche 2. Ces valeurs sont dans le dépôt, certifiées : la
   valeur du point de 2021 à 2025, les taux de 2020 à 2026. Les millésimes
   antérieurs mettent la valeur dans un graphique et non dans une phrase, d'où
-  le début de série.
+  le début de série. Pour les années d'avant, ce n'est pas la caisse qui dit le
+  taux mais le code : `D. 642-3`, dont les versions successives donnent 8,6 %
+  de 2004 à 2011, 8,63 % en 2012, 9,75 % en 2013 et 10,1 % en 2014 sur la
+  première tranche, 1,6 % puis 1,81 % puis 1,87 % sur la seconde.
 
   **Le moteur s'en sert désormais.** Ce qui bloquait n'était pas la donnée mais
   la forme du barème : le régime n'attribue pas un nombre de points
@@ -3049,13 +3052,19 @@ plafonds**, le plafond que le régime s'est lui-même donné en 1993. C'est une
 convention, elle est nommée dans la fiche, et elle ne touche plus que les
 scénarios notionnels.
 
-**La phrase citée n'est pas dans la loi consolidée.** Le dépouillement complet
-du dump LEGI — 5 253 903 fichiers — ne trouve « cent points par trimestre » ni
-« 100 points par trimestre » nulle part, sous aucune graphie. La règle est
-donnée par la caisse, qui la rattache à `D. 643-1`, et recoupée par les guides
-de retraite ; elle est saisie à ce titre, sur la foi du producteur, comme la
-valeur du point du même régime — que la loi ne porte pas davantage, le décret
-annuel ne fixant qu'un coefficient de revalorisation.
+**La phrase citée n'est pas dans la loi consolidée, et l'article qu'elle cite
+dit autre chose.** Le dépouillement complet du dump LEGI — 5 253 903 fichiers —
+ne trouve « cent points par trimestre » ni « 100 points par trimestre » nulle
+part, sous aucune graphie. Les sept versions de `D. 643-1` y sont pourtant : la
+plus ancienne, en vigueur de 1985 à 2004, traite de l'âge des anciens
+combattants ; toutes les suivantes portent le barème en points du régime
+d'après la réforme — 450 points au plafond de la première tranche en 2004, 525
+en 2015, 557 depuis le décret n° 2024-688 du 5 juillet 2024. La conversion des
+trimestres d'avant 2004 n'y figure dans aucune. Elle est donnée par la caisse,
+qui la rattache à cet article, et recoupée par les guides de retraite ; elle est
+saisie à ce titre, sur la foi du producteur, comme la valeur du point du même
+régime — que la loi ne porte pas davantage, le décret annuel ne fixant qu'un
+coefficient de revalorisation.
 
 ### Le taux de la première tranche a changé, et la phrase qui le portait mentait
 
@@ -3069,8 +3078,18 @@ l'assiette des indépendants (article 18 de la loi n° 2023-1250 du 26 décembre
 **557 points** au plafond au lieu de 525, soit exactement le rapport des deux
 taux, le prix d'achat d'un point ne bougeant pas.
 
-Le bon endroit est le TABLEAU DES COTISATIONS, que chaque recueil donne sur
-trois exercices. Il passait pour illisible, et il l'était pour les montants :
+**Et le taux n'était pas faux que depuis 2025.** La même phrase servait pour
+2004-2014, faute de série antérieure — la fiche le disait. `D. 642-3` la donne,
+version par version : 8,6 % de 2004 à 2011, **8,63 % en 2012, 9,75 % en 2013,
+10,1 % en 2014**, avant que la réforme de 2015 ne ramène le taux à 8,23 % en
+élargissant la tranche de 0,85 plafond au plafond entier. La seconde tranche
+suit le même chemin : 1,6 % jusqu'en 2012, 1,81 % en 2013, 1,87 % depuis. Le
+compte notionnel d'un libéral était donc sous-alimenté de près d'un cinquième
+sur l'année 2014, et d'un dixième en moyenne sur la décennie. Les points, eux,
+ne bougent pas : ils ne dépendent pas du taux.
+
+Le bon endroit pour l'année en cours est le TABLEAU DES COTISATIONS, que chaque
+recueil donne sur trois exercices. Il passait pour illisible, et il l'était pour les montants :
 les polices qui les portent n'exposent pas de table `ToUnicode`. Les taux et les
 nombres de points, eux, se relisent. Les cinq recueils en ligne se recouvrent
 sur quinze lectures, de 2020 à 2026, et concordent toutes — ce recouvrement est
