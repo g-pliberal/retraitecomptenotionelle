@@ -765,13 +765,20 @@ institutions:
           point de l'année.
           LA CLASSE EST SUBIE : « les vétérinaires dont les revenus sont
           inférieurs à 76 995 € sont appelés en classe B ». Deux facultés
-          restent hors du modèle, l'option pour la classe supérieure et
-          l'allègement en dessous de 51 330 € de revenus.
-          CE QUI MANQUE : les bornes de revenus d'avant 2026, et toute grille
-          d'avant 2016 — le décret ne fixait alors qu'un taux d'appel. Les
-          livrets annuels de la caisse les porteraient, mais ils sont composés
-          dans une police sans table de correspondance, illisibles par
-          scripts/fetch/lecture_pdf.py.
+          restent hors du modèle, l'option pour la classe supérieure et les
+          cinq classes d'allègement, qui ne s'obtiennent que sur demande.
+          LES LIVRETS ANNUELS SE LISENT, ET ILS CORRIGENT LA FICHE. Déclarés
+          illisibles parce que `scripts/fetch/lecture_pdf.py` en sortait des
+          glyphes, ils s'ouvrent sans peine avec pypdf — et ils montrent que la
+          grille de 2026 n'a pas toujours eu cette forme : jusqu'en 2025 la
+          section ne comptait que TROIS classes, à 16, 20 et 24 points. Le
+          rapport annuel 2024 annonce la réforme, « un point supplémentaire
+          pour les classes B, C et D […] ainsi que la création d'une classe E à
+          28 points », et donne les deux valeurs du point de 2023 et 2024 :
+          « 570,26 € vs 539 € » pour l'achat, « 39,42 € vs 37,79 € » pour le
+          service.
+          CE QUI MANQUE ENCORE : les bornes de revenus d'avant 2024, et toute
+          grille d'avant 2016 — le décret ne fixait alors qu'un taux d'appel.
 
       - id: cavom_guide
         titre: >-
@@ -2161,9 +2168,22 @@ institutions:
           Le régime est institué par le décret n° 49-580 du 22 avril 1949, que
           les arrêtés d'approbation des statuts visent encore — trouvé dans le
           dump JORF, la caisse ne le citant nulle part.
-          CE QUI MANQUE : la grille des classes du volet capitalisé, composée
-          dans une police sans table de correspondance ; et toute série, un
-          seul millésime étant publié.
+          LA GRILLE DU VOLET CAPITALISÉ SE LIT, ELLE AUSSI. Déclarée illisible
+          pour la même raison que les livrets de la CARPV, elle s'ouvre avec
+          pypdf, et son arithmétique la résume en une ligne : la part
+          capitalisée vaut (classe − 1) fois une cotisation de référence de
+          1 453 € en 2026, soit 2 906 € en classe 3 et 17 436 € en classe 13,
+          et la classe se lit sur un revenu de référence qui commence à
+          85 369 € et monte par paliers de 17 662 €.
+          CE QUI MANQUE N'EST DONC PAS LA GRILLE mais la CONVERSION : « à chaque
+          âge de départ, le coefficient de conversion du capital en rente
+          viagère tient compte de l'espérance de vie pour chaque génération,
+          d'un rendement financier précompté et du choix ou non de la
+          réversion », et ni ces coefficients ni le rendement du plan ne sont
+          publiés. Un volet capitalisé ne se chiffre pas sans eux — et il
+          n'entre de toute façon pas dans la comparaison, qui ne porte que sur
+          la répartition.
+          MANQUE AUSSI toute série : un seul millésime est publié.
 
       - id: cavec_guide_annuel
         titre: >-
