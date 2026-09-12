@@ -118,7 +118,8 @@ champs_periode:
               "tranche_b", "tranche_c", "hors_primes", "primes_uniquement", "forfaitaire",
               "plafonnee_085_pass", "tranche_085_5_pass", "plafonnee_5_pass",
               "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass",
-              "plafonnee_3_5_pass", "tranche_065_5_pass"]
+              "tranche_1_3_pass", "tranche_05_3_pass", "plafonnee_8_pass",
+              "plafonnee_3_5_pass", "tranche_065_5_pass", "sans_objet"]
 
   taux_cotisation_retraite:
     description: >-

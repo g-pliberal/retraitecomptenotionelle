@@ -100,10 +100,12 @@ affiliations:
       ostéopathes, guides. C'est la section la plus nombreuse après les
       auxiliaires médicaux, et le choix le moins arbitraire pour un statut
       générique.
-      Restent sans complémentaire les sections spécialisées que le dépôt ne
-      sait pas encore chiffrer — CARPIMKO, CAVAMAC, CAVP, CAVEC, CPRN, CARPV,
-      CAVOM : un libéral de l'une d'elles est sous-estimé s'il est simulé
-      ici. Voir docs/limites.md.
+      Huit des dix sections ont maintenant leur fiche et leur statut : CARMF,
+      CARCDSF, CARPIMKO, CAVP, CAVEC, CARPV, CAVOM et la CIPAV que porte ce
+      statut-ci. Restent la CAVAMAC, dont aucun texte ne publie le prix du
+      point, et la CPRN, dont l'assiette est le produit de l'office et non le
+      revenu du notaire : un agent général d'assurance ou un notaire simulé ici
+      est sous-estimé de tout son complémentaire. Voir docs/limites.md.
       La borne de 1979 est celle du décret n° 79-262 du 21 mars 1979, qui
       institue le complémentaire des architectes.
 
@@ -152,6 +154,40 @@ affiliations:
       en 1953, et par CLASSES depuis l'origine : « un système de points avec
       cotisations indépendantes du revenu », écrit la caisse. C'est lui qui
       pèse l'essentiel de la pension d'un expert-comptable.
+
+  veterinaire:
+    libelle: Vétérinaire libéral
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1949, regimes: [cnavpl]}
+      - {debut: 1950, fin: null, regimes: [cnavpl, carpv_complementaire]}
+    note: >-
+      La CARPV est la plus petite des dix sections de la CNAVPL, et celle dont
+      le complémentaire pèse le plus lourd devant la base : un vétérinaire à
+      76 000 € de revenus lui verse 10 234 € en 2026 contre 5 377 € au régime
+      de base. Cotisation par CLASSES, déterminées par le revenu de l'année
+      précédente, et la classe est subie : c'est ce qui la rend modélisable.
+      La borne de 1950 est celle du décret n° 50-1318 du 21 octobre 1950, qui
+      institue le régime complémentaire au sein de la caisse.
+
+  officier_ministeriel:
+    libelle: >-
+      Officier ministériel ou public (commissaire de justice, greffier de
+      tribunal de commerce, avocat aux Conseils)
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 2015, regimes: [cnavpl]}
+      - {debut: 2016, fin: null, regimes: [cnavpl, cavom_complementaire]}
+    note: >-
+      LA BORNE DE 2016 N'EST PAS CELLE DU RÉGIME, mais celle de ce que le dépôt
+      sait en chiffrer. Le complémentaire de la CAVOM existe depuis le décret
+      n° 79-265 du 27 mars 1979 ; il prélevait par classes jusqu'en 2015, et
+      cette grille-là n'est publiée nulle part — seules la classe spéciale et la
+      sixième classe sont connues, deux extrémités qui ne suffisent pas à
+      deviner ce qu'il y avait entre elles. Depuis 2016 la cotisation est
+      proportionnelle, 12,50 % jusqu'à huit plafonds, et se calcule sans
+      difficulté. Un officier ministériel simulé ici est donc sous-estimé de
+      tout son complémentaire d'avant 2016.
 
   avocat:
     libelle: Avocat

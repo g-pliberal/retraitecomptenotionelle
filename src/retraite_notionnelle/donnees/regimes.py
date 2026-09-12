@@ -53,6 +53,10 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     "tranche_1_3_pass": (1.0, 3.0),
     # CARPIMKO depuis 2026 : 8,70 % entre un demi et trois plafonds.
     "tranche_05_3_pass": (0.5, 3.0),
+    # CAVOM depuis 2016 : 12,5 % du revenu, jusqu'à huit plafonds. C'est la
+    # borne la plus haute du catalogue libéral, et le décret la fixe en
+    # plafonds — 384 480 € en 2026.
+    "plafonnee_8_pass": (0.0, 8.0),
     # Complémentaires des sections libérales : la CARMF prélève jusqu'à
     # trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
     "plafonnee_3_5_pass": (0.0, 3.5),

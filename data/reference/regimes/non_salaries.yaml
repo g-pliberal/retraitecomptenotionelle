@@ -3155,6 +3155,85 @@ regimes:
           CE COÛT N'EST PAS ENCORE PUBLIÉ. Le rendement de 2025 est donc reconduit,
           et c'est la seule valeur estimée de cette fiche depuis 2010.
 
+  - code: carpv_complementaire
+    nom: >-
+      Régime complémentaire de la Caisse autonome de retraite et de prévoyance
+      des vétérinaires (CARPV)
+    famille: liberal
+    source_id: carpv_bareme
+    fiabilite: moyenne
+    creation: 1950
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Vétérinaires non salariés inscrits à l'Ordre national des vétérinaires,
+      « exerçant à titre principal, exclusif ou accessoire » : la caisse écrit
+      que le régime complémentaire leur est obligatoire à tous. C'est la plus
+      petite des dix sections professionnelles de la CNAVPL, et le
+      complémentaire y pèse plus lourd que la base : un vétérinaire à 76 000 €
+      de revenus verse 10 234 € au premier en 2026 et 5 377 € au second.
+    hors_repartition: false
+    periodes:
+      - debut: 1950
+        fin: null
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          COTISATION PAR CLASSES, et la grille est une TABLE DE POINTS déguisée.
+          Quatre classes en 2026 : 10 234 € jusqu'à 76 994 € de revenus, 12 642 €
+          de 76 995 à 102 659 €, 15 050 € de 102 660 à 128 324 €, 16 856 €
+          au-delà — pour 17, 21, 25 et 28 points. Chacune divise exactement par
+          son nombre de points en 602,00 €, qui est la valeur d'achat du point,
+          et le rendement vaut donc 39,54 / 602 = 6,5681 % sur les quatre
+          classes à la fois, au dix-millième près. C'est ce qui autorise à
+          convertir la cotisation par un rendement plutôt que par une table de
+          points, et c'est la vérification la plus nette qu'ait donnée une
+          section libérale.
+          LA CLASSE EST SUBIE, ET DEUX CHOIX NE SONT PAS PRIS. « Les
+          vétérinaires dont les revenus sont inférieurs à 76 995 € sont appelés
+          en classe B », écrit la caisse : c'est le revenu de l'année N-1 qui
+          range l'assuré, et le dépôt sait le calculer. Restent deux facultés
+          qu'il ne prête à personne — « opter pour une classe supérieure à titre
+          volontaire », et demander un allègement en dessous de 51 330 € de
+          revenus. La première majorerait la pension, la seconde la
+          minorerait ; aucune n'est prévisible.
+          CE QUE LE DÉCRET ANNUEL DONNE, ET OÙ IL S'ARRÊTE. Depuis 2016 il fixe
+          pour cette section une « valeur d'achat du point » — 446 € en 2016,
+          570,26 € en 2024 — d'où les neuf grilles reconstituées de
+          `classes_cotisation.csv` : le nombre de points de chaque classe
+          multiplié par le prix de l'année. Avant 2016 il fixait tout autre
+          chose, un « taux d'appel de la cotisation » monté de 78,5 % en 2002 à
+          104 % en 2015, appliqué à des montants de classe que rien ne publie.
+          Deux inconnues s'ajoutent alors : la grille de 2026 y est reportée par
+          le rapport des plafonds, et ce report IGNORE le taux d'appel — une
+          cotisation de 2002 est donc surestimée d'un quart environ, et les
+          droits qu'elle porte avec elle. Soixante-cinq ans reportés depuis une
+          seule grille : c'est la limite de cette fiche, et elle est grande.
+          L'ÂGE SEUL COMMANDE, PAS LA DURÉE. « Il fonctionne selon un système à
+          points et prend en compte uniquement l'âge de départ (et non la durée
+          de cotisation) », écrit la caisse : départ possible à 60 ans, taux
+          plein automatique à 65 ans, décote de 1,25 % par trimestre manquant
+          avant 65 ans, et « il n'existe pas de surcote dans le régime
+          complémentaire au-delà du taux plein ». D'où une durée requise nulle
+          et une surcote absente, là où les autres sections libérales suivent
+          la génération.
+          UNE MAJORATION N'EST PAS PORTÉE : la bonification de 10 % pour trois
+          enfants et plus, que la caisse accorde dans les deux régimes. Les
+          fiches voisines ne la portent pas davantage.
+          La borne de début est celle du décret n° 50-1318 du 21 octobre 1950,
+          qui institue le régime au sein de la caisse créée deux ans plus tôt.
   - code: cavec_complementaire
     nom: >-
       Régime complémentaire des experts-comptables et des commissaires aux
@@ -3242,6 +3321,98 @@ regimes:
           `rendements_points.csv` à partir de cet exercice — un chiffre écrit au
           Journal officiel, et non une extrapolation.
 
+  - code: cavom_complementaire
+    nom: >-
+      Régime complémentaire de la Caisse d'assurance vieillesse des officiers
+      ministériels, des officiers publics et des compagnies judiciaires (CAVOM)
+    famille: liberal
+    source_id: cavom_guide
+    fiabilite: moyenne
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Commissaires de justice — huissiers et commissaires-priseurs judiciaires
+      réunis depuis 2022 —, greffiers des tribunaux de commerce, administrateurs
+      et mandataires judiciaires, avocats au Conseil d'État et à la Cour de
+      cassation. Une des plus petites sections de la CNAVPL, et la seule dont
+      les affiliés salariés cotisent au même régime que les libéraux, à un taux
+      moindre et pour 60 % à la charge de l'employeur.
+    hors_repartition: false
+    periodes:
+      - debut: 2016
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_8_pass
+        taux_cotisation_retraite: 0.125
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LA RÉFORME DE 2016 REND LE RÉGIME PROPORTIONNEL, et c'est de là que
+          cette fiche part : 12,50 % du revenu non salarié, dans la limite de
+          huit plafonds — 384 480 € en 2026. Le décret annuel des sections
+          libérales porte ce taux sans discontinuer depuis 2016, et le guide de
+          la caisse la valeur d'achat du point, 55,1390 € en 2026.
+          L'ARITHMÉTIQUE SE REFERME SUR ELLE-MÊME. Le guide 2026 imprime, en
+          regard du plafond, « 871,62 points » : huit plafonds à 12,5 % font
+          48 060 €, que 55,1390 € achètent 871,62 fois. Et « 20,70 points »
+          pour le minimum, soit 9 131 € à 12,5 %, divisés par le même prix. Les
+          deux tombent juste à la deuxième décimale — le taux, l'assiette et le
+          prix du point disent la même chose.
+          LE RENDEMENT EST PUBLIÉ ET IL SE VÉRIFIE : « le taux de rendement du
+          régime complémentaire est de 6,12 % », écrit le guide, et la valeur de
+          service qu'il donne à la page d'en face, 3,3745 €, divisée par la
+          valeur d'achat 55,1390 €, donne 6,1200 %. C'est ce chiffre que porte
+          `rendements_points.csv` pour toute la période : seul l'exercice 2026
+          le prouve, les précédents le supposent stable.
+          CE QUI MANQUE AVANT 2016, ET POURQUOI. Le régime existe depuis le
+          décret n° 79-265 du 27 mars 1979 et prélevait alors par CLASSES — six,
+          selon le revenu de l'année N-2, plus une classe spéciale. La grille
+          n'est publiée nulle part : le décret annuel ne chiffre que la classe
+          spéciale (284 € en 2002, 694 € en 2015), et le seul autre point connu
+          est la sixième classe, 13 886 € en 2015 dès deux plafonds de revenus.
+          Entre les deux, rien — et une grille de six classes ne se devine pas
+          à partir de ses deux extrémités. La fiche ne commence donc qu'en 2016,
+          et une carrière d'officier ministériel antérieure à cette date est
+          sous-estimée de tout son complémentaire. C'est la plus grosse lacune
+          du catalogue libéral, et elle est nommée dans docs/limites.md.
+          L'ASSIETTE MINIMALE N'EST PAS PORTÉE. En dessous de 19 % du plafond —
+          9 131 € en 2026 —, comme pendant les deux premières années
+          d'activité, le revenu est « fixé forfaitairement » à ce seuil et la
+          cotisation ne descend pas sous 1 141 €. Le dépôt ne modélise aucune
+          assiette minimale libérale, pas plus celle-ci que celle du régime de
+          base ; l'écart ne joue que sur des revenus inférieurs à un cinquième
+          du plafond.
+          « LA LIQUIDATION DU RÉGIME COMPLÉMENTAIRE EST OPÉRÉE UNIQUEMENT EN
+          FONCTION DE L'ÂGE » — d'où une durée requise nulle, et aucune carrière
+          longue : la caisse écrit qu'à la différence de son régime de base, le
+          complémentaire n'en prévoit pas. Les bornes d'âge sont les siennes :
+          60-65 ans jusqu'à la génération 1955, relevées à 62-67 au rythme de
+          deux trimestres par génération depuis 1956, puis l'ouverture portée de
+          62 à 64 ans à partir de la génération 1965 depuis le 1er janvier 2025.
+          La fiche les lit dans les tables générales, qui donnent exactement
+          cela à partir de la génération 1968 et retardent l'ouverture de deux
+          ans au plus pour les générations les plus anciennes.
+          LA DÉCOTE NE SE FRACTIONNE PAS : « une décote définitive de 5 % par
+          année manquante peut être appliquée au montant de la pension, sans que
+          celle-ci puisse être fractionnée ». Le dépôt la compte par trimestre,
+          à 1,25 % — même pente, mais il minore là où la caisse attend l'année
+          entière. « En cas de prolongation de l'activité au-delà de l'âge du
+          taux plein, aucune surcote n'est applicable » : la fiche n'en porte
+          donc aucune.
+          LES SALARIÉS DU RÉGIME NE SONT PAS PORTÉS NON PLUS : ils cotisent à
+          7,50 %, dont 60 % à la charge de l'employeur, et le statut qui route
+          vers cette fiche est celui d'un libéral.
   - code: cipav_complementaire
     nom: >-
       Régime complémentaire de la Caisse interprofessionnelle de prévoyance et

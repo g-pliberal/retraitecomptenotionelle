@@ -731,6 +731,62 @@ institutions:
           tranche 2 depuis 2015 — figure dans un tableau que le récupérateur ne
           relit pas de façon sûre : il est en commentaire de la fiche de régime.
 
+      - id: carpv_bareme
+        titre: >-
+          Grille des classes de cotisation et valeur du point du régime
+          complémentaire des vétérinaires (CARPV)
+        url: https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
+        acces: page
+        statut_integration: saisi
+        cible: data/reference/regimes/classes_cotisation.csv
+        note: >-
+          LA CAISSE PUBLIE SA GRILLE EN CLAIR, dans un tableau HTML : quatre
+          classes, leurs bornes de revenus, leur cotisation ET le nombre de
+          points qu'elles ouvrent — 10 234 € pour 17 points en classe B, puis
+          12 642 pour 21, 15 050 pour 25, 16 856 pour 28. La page voisine donne
+          la valeur de service, 39,54 € en 2026.
+          CE QUE L'ARITHMÉTIQUE AJOUTE. Les quatre cotisations divisées par
+          leurs points donnent toutes 602,00 € : c'est la valeur d'achat du
+          point, que le décret annuel fixe pour cette section depuis 2016 sans
+          que la caisse ait besoin de l'écrire. Le rendement s'en déduit sur les
+          quatre lignes à la fois — 39,54 / 602 = 6,5681 % —, et les millésimes
+          2016 à 2024 se reconstruisent en multipliant les points par le prix du
+          point de l'année.
+          LA CLASSE EST SUBIE : « les vétérinaires dont les revenus sont
+          inférieurs à 76 995 € sont appelés en classe B ». Deux facultés
+          restent hors du modèle, l'option pour la classe supérieure et
+          l'allègement en dessous de 51 330 € de revenus.
+          CE QUI MANQUE : les bornes de revenus d'avant 2026, et toute grille
+          d'avant 2016 — le décret ne fixait alors qu'un taux d'appel. Les
+          livrets annuels de la caisse les porteraient, mais ils sont composés
+          dans une police sans table de correspondance, illisibles par
+          scripts/fetch/lecture_pdf.py.
+
+      - id: cavom_guide
+        titre: >-
+          Guide retraite et prévoyance annuel de la CAVOM et tableau
+          récapitulatif des paramètres de l'exercice
+        url: https://www.cavom.net/vos-cotisations/vous-etes-professionnel-liberal/
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/regimes/rendements_points.csv
+        note: >-
+          TROIS GRANDEURS, ET ELLES SE VÉRIFIENT L'UNE PAR L'AUTRE. Le guide
+          2026 donne la valeur d'achat du point (55,1390 €), la valeur de
+          service (3,3745 €) et le rendement (« le taux de rendement du régime
+          complémentaire est de 6,12 % ») : 3,3745 / 55,1390 = 6,1200 %. Il
+          imprime aussi le nombre de points qu'ouvre le plafond, 871,62, et
+          celui de la cotisation minimale, 20,70 — soit huit plafonds et 19 %
+          d'un plafond, tous deux à 12,5 %, divisés par le prix du point. Le
+          taux, l'assiette et le prix se referment l'un sur l'autre.
+          CE QUI MANQUE : tout ce qui précède la réforme de 2016. Le régime
+          prélevait alors par classes, et de cette grille ne subsistent que deux
+          points — la classe spéciale, chiffrée par le décret annuel (284 € en
+          2002, 694 € en 2015), et la sixième classe, 13 886 € en 2015 dès deux
+          plafonds de revenus. Le guide ne remonte pas, et le tableau
+          récapitulatif des paramètres est composé dans une police sans table de
+          correspondance.
+
   cnbf:
     nom: Caisse nationale des barreaux français
     role: Régime de retraite des avocats.
