@@ -1126,7 +1126,8 @@ def test_les_statuts_sans_employeur_sont_marques():
     assert sans == {"artisan", "commercant", "profession_liberale", "avocat",
                     "exploitant_agricole", "medecin_liberal",
                     "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
-                    "pharmacien", "auxiliaire_medical"}
+                    "pharmacien", "auxiliaire_medical", "veterinaire",
+                    "officier_ministeriel"}
     assert not affiliations.sans_employeur("salarie_prive_non_cadre")
     assert not affiliations.sans_employeur("fonctionnaire_etat")
 

@@ -877,6 +877,42 @@ def test_les_temoins_du_portage_sont_a_jour():
         )
 
 
+def test_le_balayage_des_temoins_couvre_tous_les_statuts():
+    """Un statut sans témoin n'est comparé à rien, des deux côtés du portage.
+
+    Le balayage « un statut, une génération » se voulait le catalogue entier ;
+    il en oubliait treize, dont les huit sections libérales écrites depuis. Ce
+    n'est pas une lacune de couverture ordinaire : c'est le SEUL dispositif qui
+    confronte `moteur/js/` au modèle Python, et il ne confronte que ce qu'il
+    simule. `tranche_1_3_pass`, ajoutée d'un seul côté, n'a été prise que parce
+    qu'un statut du balayage l'empruntait — la même faute sur une borne que seul
+    un officier ministériel traverse serait passée sans bruit.
+
+    La liste reste écrite à la main, pour qu'on voie ce qui est couvert ; ce
+    test la force à rester complète.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    from retraite_notionnelle.carriere import Affiliations
+    from retraite_notionnelle.config import RACINE_DONNEES
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "construire_temoins.py"
+    specification = importlib.util.spec_from_file_location("construire_temoins", chemin)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+
+    manquants = set(Affiliations(RACINE_DONNEES).codes) - set(module.STATUTS)
+    assert not manquants, (
+        "statuts sans témoin, donc sans comparaison Python/JavaScript : "
+        + ", ".join(sorted(manquants))
+    )
+    inconnus = set(module.STATUTS) - set(Affiliations(RACINE_DONNEES).codes)
+    assert not inconnus, "statuts balayés mais absents du routage : " + ", ".join(
+        sorted(inconnus)
+    )
+
+
 def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
     """Lance ``node --test`` : le site doit calculer comme la référence Python."""
     import shutil

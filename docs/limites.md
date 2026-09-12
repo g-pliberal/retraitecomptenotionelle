@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 49 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 51 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1974,7 +1974,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
-| Professions libérales (CNAVPL) | les complémentaires de trois sections sur dix — CAVAMAC, CPRN, CARPV — et le volet CAPITALISÉ de la CAVP ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les sept qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), experts-comptables (CAVEC), pharmaciens (CAVP, volet réparti), auxiliaires médicaux (CARPIMKO), et la Cipav pour le statut générique | **sous-estime** la pension d'un libéral d'une des six sections restantes, fortement : la complémentaire y pèse souvent plus lourd que la base |
+| Professions libérales (CNAVPL) | les complémentaires de deux sections sur dix — CAVAMAC et CPRN — ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les huit qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), experts-comptables (CAVEC), pharmaciens (CAVP, volet réparti), auxiliaires médicaux (CARPIMKO), vétérinaires (CARPV), officiers ministériels (CAVOM, depuis 2016), et la Cipav pour le statut générique | **sous-estime** la pension d'un agent général d'assurance et d'un notaire, fortement — la complémentaire y pèse souvent plus lourd que la base —, et celle d'un officier ministériel de tout son complémentaire d'avant 2016 |
 | Marins (ENIM) | la grille des salaires forfaitaires par catégorie et par année, qui est l'assiette réelle du régime | le revenu déclaré, plafonné comme au régime général | **indéterminé** : la grille est plus favorable que le salaire réel aux bas revenus, moins au-delà. L'écart porte sur l'assiette, donc sur la pension ET sur le compte notionnel, en partie compensé |
 | Avocats (CNBF) | la cotisation forfaitaire de base, de 363 à 1 988 €/an selon l'ancienneté ; les tranches de la grille complémentaire d'avant 2019 | seule la cotisation proportionnelle de 3,20 % alimente le compte ; les années d'avant 2019 restent au rendement instantané | **sous-estime le flux versé**, donc la pension notionnelle, sans toucher à la pension actuelle — qui est forfaitaire et ne dépend pas de la cotisation. L'écart joue donc contre les scénarios notionnels |
 | Non-salariés agricoles | le barème de points du régime de base (23 à 113 points par tranche de revenu), que personne ne publie ; les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans | la retraite forfaitaire et la RCO, dont le barème en points est public | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **49 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **51 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2159,10 +2159,11 @@ ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
 | **CAVAMAC**, agents d'assurance | 6,30 % créateur de droits, taux d'appel 121,6 % → 7,66 % effectif, plus 2,50 % versés par les compagnies mandantes | 0,4082 € (2025) | **absent** |
 | **CARPIMKO**, auxiliaires médicaux | forfait + 3 % de 1996 à 2025, 8,70 % entre un demi et trois plafonds depuis 2026 — série complète au Journal officiel | 18,08 € (2010) à 21,48 € (2026), publiée par la caisse | sans objet : le rendement se déduit des 8 points du forfait. FICHE ÉCRITE |
 | **CAVP**, pharmaciens | régime MIXTE : part en répartition FORFAITAIRE de 7 657 € (taux d'appel 105,4 % en 2026), identique dans toutes les classes ; part en CAPITALISATION de 2 906 à 17 436 € selon la classe | annuité de 320,75 € (2024), 328,80 € (2026) | sans objet : le régime compte en annuités. FICHE ÉCRITE pour le volet réparti |
-| **CAVOM**, officiers ministériels | les taux publiés sont ceux de la base CNAVPL, pas du complémentaire | absente | **absent** |
+| **CAVOM**, officiers ministériels | 12,50 % jusqu'à huit plafonds depuis 2016, six CLASSES avant | 3,3745 € (2026) | **55,1390 €**, publié par le guide de la caisse, qui donne aussi le rendement : 6,12 %. FICHE ÉCRITE à partir de 2016 |
 | **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous |
 | **CAVEC**, experts-comptables | neuf classes, de 898 € à 30 616 € | 1,3850 € (2026) | rendement 8,33 %, vérifié sur les neuf classes. FICHE ÉCRITE |
-| CARCDSF, CARPV, CRN | la CARCDSF a depuis abouti (fiche écrite) ; les deux autres restent sans barème lisible | — | — |
+| **CARPV**, vétérinaires | quatre classes, de 10 234 à 16 856 € en 2026 | 39,54 € (2026) | **602,00 €**, déduit : chacune des quatre classes divise exactement par ses points en ce montant, et le décret annuel fixe ce prix depuis 2016. FICHE ÉCRITE |
+| CARCDSF, CRN | la CARCDSF a depuis abouti (fiche écrite) ; la CRN — les notaires, régime de la CPRN — reste bloquée par son ASSIETTE, qui est le produit de l'office et non le revenu du notaire | — | — |
 
 Deux remarques que ce relevé impose. La première : **la CAVP n'est pas un régime
 en répartition pure**, son étage complémentaire mêle une part répartie et une
@@ -2342,7 +2343,9 @@ Journal officiel le publie depuis 2001 :
 
 Vingt-quatre décrets, 335 valeurs, lus par `scripts/fetch/jorf_cotisations_liberales.py`.
 Ils donnent la série de la CARPIMKO — dont la fiche est écrite —, la valeur
-d'achat du point de la CAVOM et de la CARPV de 2016 à 2025, le montant de la
+d'achat du point de la CAVOM et de la CARPV depuis 2016 — dont les fiches sont
+écrites, et dont la seconde reconstitue ses grilles de 2016 à 2024 en
+multipliant ce prix par le nombre de points de chaque classe —, le montant de la
 première classe de la CAVEC et de la Cipav année par année, et la section C des
 notaires. Ils RECOUPENT au passage tout ce que les caisses publiaient : le
 forfait et le taux de la CARCDSF, le taux de la CARMF, la grille 2022 de la
@@ -2515,10 +2518,12 @@ part proportionnelle n'est due qu'à partir de la troisième année d'activité,
 ce que le modèle n'exprime pas.
 
 **Restent donc trois formes et non plus une.** Proportionnelle pure — CARMF,
-IRCEC, CARPIMKO depuis 2026 — que le dépôt sait exprimer. Forfait plus taux —
-CARCDSF, CARPIMKO avant 2026 — qu'il sait exprimer depuis cette passe. Et
-**par classes** — CAVEC, CAVP, RAAP d'avant 2017 —, qui reste dehors : il n'y a
-pas de taux à écrire, et la table des classes est à relever caisse par caisse.
+IRCEC, CARPIMKO depuis 2026, CAVOM depuis 2016 — que le dépôt sait exprimer.
+Forfait plus taux — CARCDSF, CARPIMKO avant 2026 — qu'il sait exprimer depuis
+cette passe. Et **par classes** — Cipav d'avant 2023, CAVEC, CARPV —, qui
+restait alors dehors : il n'y a pas de taux à écrire, et la table des classes
+est à relever caisse par caisse. C'est ce que les passes suivantes ont fait,
+avec `classes_cotisation.csv`.
 
 Ce que la seconde passe a rapporté de chiffré, pour que la troisième reparte de
 là : CARPIMKO 8,70 % et 21,48 € de valeur de service ; CAVEC rendement 8,33 %,
@@ -2678,8 +2683,74 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 33 statuts », « 49 régimes » —, parce que ce sont des chiffres de données et
+« 35 statuts », « 51 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
+
+### Les deux dernières sections que le décret annuel débloquait
+
+Huit des dix sections libérales ont maintenant leur fiche. Les deux qui
+manquaient encore — vétérinaires et officiers ministériels — sont tombées pour
+des raisons opposées : la première publiait tout sans qu'on l'ait lue, la
+seconde ne publie qu'une moitié de son histoire.
+
+**La CARPV publie sa grille en clair, et l'arithmétique y ajoute le prix du
+point.** Le tableau HTML de la caisse donne quatre classes, leurs bornes de
+revenus, leur cotisation ET les points qu'elles ouvrent : 10 234 € pour 17
+points jusqu'à 76 994 € de revenus, puis 12 642 € pour 21, 15 050 € pour 25 et
+16 856 € pour 28. Ces quatre quotients valent tous **602,00 €** — la valeur
+d'achat du point, que la caisse n'écrit nulle part et que le décret annuel fixe
+pour cette section depuis 2016. Avec la valeur de service de 39,54 €, le
+rendement vaut 6,5681 % sur les quatre classes à la fois, au dix-millième près.
+
+Cette identité vaut mieux qu'un contrôle : elle permet de reconstruire les
+grilles de 2016 à 2024 en multipliant les points de chaque classe par le prix
+du point de l'année — 446 € en 2016, 570,26 € en 2024. Reporter la grille de
+2026 par le plafond, comme le fait la Cipav faute de mieux, aurait surestimé la
+cotisation de 2016 de 8,5 %. Ce que cette reconstruction suppose, et qu'il faut
+dire : que les quatre classes ouvraient déjà 17, 21, 25 et 28 points. Le décret
+publie le prix, jamais le nombre.
+
+Ce qui manque encore chez elle : les BORNES de revenus d'avant 2026, reportées
+par le plafond, et toute grille d'avant 2016 — le décret ne fixait alors pas un
+prix du point mais un **taux d'appel**, monté de 78,5 % en 2002 à 104 % en 2015,
+appliqué à des montants que rien ne publie. Une cotisation de 2002 est donc
+surestimée d'un quart environ. Les livrets annuels de la caisse porteraient ces
+bornes, mais ils sont composés dans une police sans table de correspondance.
+
+**La CAVOM donne trois grandeurs qui se referment l'une sur l'autre.** Son guide
+2026 publie la valeur d'achat du point (55,1390 €), la valeur de service
+(3,3745 €) et le rendement — « le taux de rendement du régime complémentaire est
+de 6,12 % » —, et 3,3745 / 55,1390 = 6,1200 %. Il imprime aussi les points
+qu'ouvre le plafond, 871,62, et ceux de la cotisation minimale, 20,70 : huit
+plafonds et 19 % d'un plafond, tous deux à 12,5 %, divisés par le prix du point.
+Le taux, l'assiette et le prix disent la même chose trois fois.
+
+**Mais la fiche ne commence qu'en 2016**, et c'est la plus grosse lacune du
+catalogue libéral. Avant la réforme, le régime prélevait par CLASSES — six,
+déterminées par le revenu de l'année N-2, plus une classe spéciale — et cette
+grille n'est publiée nulle part. Le décret annuel ne chiffre que la classe
+spéciale (284 € en 2002, 694 € en 2015) ; la seule autre valeur retrouvée est
+la sixième classe, 13 886 € en 2015 dès deux plafonds de revenus. Deux
+extrémités ne font pas une grille de six classes. Un officier ministériel simulé
+ici est donc sous-estimé de tout son complémentaire d'avant 2016, et la fiche le
+dit.
+
+**Restent deux sections sur dix.** La CAVAMAC, dont aucun texte ne publie le
+prix du point — ses arrêtés renvoient explicitement au conseil d'administration
+—, et la CPRN, bloquée non par un barème manquant mais par son ASSIETTE : la
+cotisation d'un notaire est assise sur les produits de son office, une grandeur
+que le modèle ne connaît pas et que la carrière saisie ne porte pas. S'y ajoute,
+chez une section déjà écrite, le volet CAPITALISÉ de la CAVP, qui n'est pas de
+la répartition.
+
+**Un trou de couverture refermé au passage.** Le balayage « un statut, une
+génération » des témoins — le SEUL dispositif qui confronte le portage
+JavaScript au modèle Python — se voulait le catalogue entier et en oubliait
+treize, dont les huit sections libérales écrites cette année. La divergence de
+`tranche_1_3_pass` n'avait été prise que parce qu'un statut du balayage
+l'empruntait ; la même faute sur une borne que seul un officier ministériel
+traverse serait passée sans bruit. Les treize sont entrés, et un test oblige
+désormais la liste à rester complète.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 
@@ -2944,7 +3015,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 528 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 529 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

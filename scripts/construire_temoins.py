@@ -47,7 +47,12 @@ BASE = {
     "bascule": "2026", "euros": "2026",
 }
 
-#: Statuts couverts par le balayage « un statut, une génération ».
+#: Statuts couverts par le balayage « un statut, une génération ». LA LISTE EST
+#: EXHAUSTIVE, et un test l'y oblige : un statut absent d'ici n'est comparé à
+#: rien: le portage JavaScript peut alors s'écarter du modèle Python sans que
+#: rien ne le dise. C'est exactement ce qui est arrivé à `tranche_1_3_pass`,
+#: ajoutée d'un seul côté — seul le témoin d'un statut qui l'empruntait l'a
+#: montrée, et treize statuts n'en avaient aucun.
 STATUTS = (
     "salarie_prive_non_cadre", "salarie_prive_cadre", "fonctionnaire_etat",
     "fonctionnaire_territorial_hospitalier", "contractuel_public", "agent_sncf",
@@ -55,6 +60,10 @@ STATUTS = (
     "exploitant_agricole", "salarie_agricole", "avocat", "marin",
     "agent_banque_de_france", "clerc_de_notaire", "mineur", "ouvrier_etat",
     "personnel_opera", "personnel_comedie_francaise", "sans_activite",
+    "medecin_liberal", "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
+    "pharmacien", "auxiliaire_medical", "veterinaire", "officier_ministeriel",
+    "artiste_auteur", "ministre_du_culte", "personnel_navigant",
+    "agent_seita", "agent_port_strasbourg", "agent_chemins_fer_secondaires",
 )
 
 

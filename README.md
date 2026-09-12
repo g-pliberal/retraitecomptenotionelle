@@ -113,7 +113,7 @@ la page.
 
 `index.html` charge deux choses : `moteur/donnees.json` (694 Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
-2070, les 49 fiches de régime) et
+2070, les 51 fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
 du dépôt, telle quelle : c'est ce que GitHub Pages publie sans aucun réglage, et
 `.nojekyll` demande que les fichiers soient servis sans transformation. Rien
@@ -207,7 +207,7 @@ print(simulateur.simuler(simulateur.carriere_parcours(
 # Le cas général : grille cas type × génération
 print(calculer_cas_types(simulateur).tableau())
 
-# Les 33 statuts et les 49 régimes du catalogue
+# Les 35 statuts et les 51 régimes du catalogue
 for regime in simulateur.catalogue:
     print(f"{regime.code:<26} {regime.famille:<22} {regime.nom}")
 ```
@@ -238,7 +238,7 @@ print(simulateur.simuler(carriere).tableau())
 | Exigence | Réalisation |
 |---|---|
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
-| Tous les régimes, actuels **et** disparus | 49 régimes : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… |
+| Tous les régimes, actuels **et** disparus | 51 régimes : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… |
 | Départ trop tôt = pension réduite | Âge de référence **à cliquet** : l'abaissement de 1982 ne le fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | SNCF à 50 ans = 15 ans d'anticipation ; Opéra à 40 ans = 25 ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
@@ -259,7 +259,7 @@ print(simulateur.simuler(carriere).tableau())
 | Le droit ouvre-t-il ce départ ? | Âge légal du régime ou carrière longue ; sinon le montant est marqué comme un contrefactuel, pas une pension servie |
 | Suppression des minima | Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite |
 | Suppression des avantages | Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits |
-| Tout le monde peut simuler | 33 statuts d'affiliation, cinq informations suffisent |
+| Tout le monde peut simuler | 35 statuts d’affiliation, cinq informations suffisent |
 | Un revenu se saisit comme un revenu | « Revenu brut mensuel : 2 900 € », en euros d'aujourd'hui — plus un multiple du salaire moyen que personne ne connaît, resté à un lien de là pour qui raisonne en relatif, montants convertis au passage. Le champ dit **brut** et donne l'échelle chiffrée (SMIC, moyenne, plafond) ; le modèle, lui, ne connaît toujours que le multiple, et l'euro n'entre qu'à un seul endroit |
 | Une carrière, plusieurs métiers | On faisait autrefois le même métier toute sa vie, c'est devenu l'exception : la carrière se décrit comme une suite de métiers, chacun avec son statut et son niveau de revenu, et chaque changement fait passer d'un régime à un autre. L'année du changement revient au métier qui en occupe le plus de mois — les régimes liquident à l'année —, mais le revenu porté au compte reste la somme de ce que les deux ont payé |
 | Utilisable sans rien installer | Le modèle s'exécute dans le navigateur, sur une simple adresse |
@@ -267,7 +267,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait de 12 % sur quarante ans, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347798289 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue 123 simulations témoins figées depuis le modèle Python |
+| Portage vérifié, pas cru sur parole | Le site rejoue 136 simulations témoins figées depuis le modèle Python — un cas par statut d’affiliation, et un test oblige ce balayage à les couvrir tous |
 
 ---
 
@@ -798,7 +798,7 @@ data/
                                 dépenses de retraite observées, pyramide des âges,
                                 projections
     mortalite/                  espérances de vie et quotients par âge observés
-    regimes/                    49 fiches de régime + schéma + valeurs du point
+    regimes/                    51 fiches de régime + schéma + valeurs du point
     legislation/                âges et durées par génération, barèmes des
                                 minima, décote de la fonction publique,
                                 carrière longue, contribution employeur des
@@ -830,7 +830,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          528 tests Python
+tests/                          529 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et le relevé d'OpenFisca-France-Pension qui sert
                                 de contre-expertise au scénario 1

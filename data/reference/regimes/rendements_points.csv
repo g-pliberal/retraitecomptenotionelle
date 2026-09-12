@@ -122,6 +122,20 @@ cavp_complementaire,2026,2100,0.0429,haute
 # atteigne 8,25 % à échéance de l'année 2027 ». Avant 2026 rien n'est publié.
 cavec_complementaire,1953,2026,0.0833,moyenne
 cavec_complementaire,2027,2100,0.0825,haute
+# CARPV : rendement vérifié sur les QUATRE classes de 2026, et elles donnent le
+# même chiffre à la quatrième décimale — 17 points pour 10 234 €, 21 pour
+# 12 642, 25 pour 15 050, 28 pour 16 856, servis 39,54 € le point. Chacune
+# revient à acheter le point 602,00 €, la valeur d'achat que fixe le décret, et
+# 39,54 / 602 = 6,5681 %. Avant 2016 le décret ne fixait pas ce prix mais un
+# taux d'appel : le rendement de ces années-là n'est pas celui-ci, et rien ne
+# le publie.
+carpv_complementaire,1950,2015,0.0657,estimee
+carpv_complementaire,2016,2100,0.0657,haute
+# CAVOM : « le taux de rendement du régime complémentaire est de 6,12 % », écrit
+# le guide 2026 de la caisse, et ses deux valeurs le confirment — 3,3745 € de
+# valeur de service divisés par 55,1390 € de valeur d'achat font 6,1200 %. La
+# fiche ne commence qu'en 2016, faute de grille de classes avant cette date.
+cavom_complementaire,2016,2100,0.0612,haute
 # Cipav : la caisse publie les trois grandeurs ensemble — valeur d'achat,
 # valeur de service, et le rendement qui les rapporte. 42,43 € et 2,63 € en
 # 2022, soit 6,20 % ; 45,30 € et 2,77 € en 2023, soit 6,10 % que la caisse
