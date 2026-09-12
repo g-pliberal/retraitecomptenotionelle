@@ -158,19 +158,23 @@ affiliations:
 
   agent_general_assurance:
     libelle: Agent général d'assurance
-    sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1967, regimes: [cnavpl]}
       - {debut: 1968, fin: null, regimes: [cnavpl, cavamac_complementaire]}
     note: >-
-      SON COMPLÉMENTAIRE NE COTISE PAS SUR SON REVENU mais sur les COMMISSIONS
-      que les compagnies lui versent, qui valent en moyenne 2,387 fois
-      celui-ci — la caisse publie les deux grandeurs, et la fiche du régime
-      porte le facteur. C'est aussi la seule section libérale dont une part de
-      la cotisation est payée par un tiers : 2,50 points sur 7,66 viennent des
-      compagnies mandantes, au titre d'un accord de branche. Le statut reste
-      marqué `sans_employeur`, comme tous les libéraux, et le moteur porte donc
-      cette part au compte de l'agent : voir la fiche.
+      LE SEUL LIBÉRAL DU CATALOGUE QUI NE COTISE PAS SEUL, et c'est pour cela
+      qu'il n'est pas marqué `sans_employeur`. Un tiers des ressources de son
+      complémentaire vient du « concours conventionnel des compagnies
+      mandantes » — 2,50 points sur les 7,66 % appelés en 2026 —, en vertu
+      d'accords de branche successifs « depuis 1952 », rappelait le
+      gouvernement au Sénat en 2021. Les compagnies ne sont pas son employeur ;
+      elles paient pourtant pour sa retraite, et le modèle ne saurait le dire
+      autrement. Son régime de BASE, lui, reste intégralement à sa charge : la
+      fiche de la CNAVPL ne porte aucun partage, donc sa part y vaut un.
+      SON COMPLÉMENTAIRE NE COTISE PAS NON PLUS SUR SON REVENU mais sur les
+      COMMISSIONS que les compagnies lui versent, qui valent en moyenne 2,387
+      fois celui-ci — la caisse publie les deux grandeurs, et la fiche du
+      régime porte le facteur.
       La borne de 1968 est celle du décret n° 67-1169 du 22 décembre 1967, qui
       institue le régime.
 

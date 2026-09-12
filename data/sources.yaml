@@ -730,6 +730,17 @@ institutions:
           Le nombre maximal de points — 525 sur la tranche 1 et 25 sur la
           tranche 2 depuis 2015 — figure dans un tableau que le récupérateur ne
           relit pas de façon sûre : il est en commentaire de la fiche de régime.
+          CE QUE LE RECUEIL PORTE D'AUTRE, ET QUI A DÉBLOQUÉ DEUX FICHES. Sa
+          table de gestion technique donne, SECTION PAR SECTION, les cotisations
+          du régime de base encaissées sur CHACUNE DES DEUX TRANCHES — 43 405 k€
+          et 27 195 k€ pour les notaires en 2024 —, et sa table des effectifs le
+          nombre de cotisants. Divisées par leurs taux, ces sommes donnent deux
+          moments écrêtés de la distribution des revenus de la section, dont se
+          déduit son REVENU MOYEN : la seule mesure disponible là où aucune
+          caisse ne le publie. Voir docs/limites.md.
+          CES TABLES NE SE LISENT PAS AVEC `lecture_pdf.py` : leurs chiffres
+          sont composés dans une police sans table de correspondance, et
+          sortaient en glyphes. Elles se lisent avec pypdf.
 
       - id: carpv_bareme
         titre: >-

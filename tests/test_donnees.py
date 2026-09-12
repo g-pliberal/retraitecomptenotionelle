@@ -1146,8 +1146,13 @@ def test_les_statuts_sans_employeur_sont_marques():
                     "exploitant_agricole", "medecin_liberal",
                     "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
                     "pharmacien", "auxiliaire_medical", "veterinaire",
-                    "officier_ministeriel", "agent_general_assurance",
-                    "notaire"}
+                    "officier_ministeriel", "notaire"}
+    # L'AGENT GÉNÉRAL D'ASSURANCE EST LE SEUL LIBÉRAL QUI N'Y EST PAS, et ce
+    # n'est pas un oubli : un tiers de son complémentaire est payé par les
+    # compagnies mandantes, « depuis 1952 » et par accords de branche
+    # successifs, rappelait le gouvernement au Sénat en 2021. Il a donc un
+    # cofinanceur, à défaut d'un employeur.
+    assert not affiliations.sans_employeur("agent_general_assurance")
     assert not affiliations.sans_employeur("salarie_prive_non_cadre")
     assert not affiliations.sans_employeur("fonctionnaire_etat")
 
