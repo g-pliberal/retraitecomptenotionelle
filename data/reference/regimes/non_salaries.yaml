@@ -600,6 +600,84 @@ regimes:
           le scénario notionnel, la pension du système actuel ne dépendant plus,
           pour ces années, que des trimestres.
       - debut: 2004
+        fin: 2011
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 450
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_085_pass
+        taux_cotisation_retraite: 0.086
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Réforme du 21 août 2003 : régime de base unique en points,
+          proportionnel au revenu, sur DEUX TRANCHES — d'où deux fiches par
+          période, qui se cumulent comme le fait la cotisation elle-même.
+          PREMIÈRE TRANCHE avant 2015 : 0 à 0,85 plafond, 450 points au maximum
+          (D. 643-1 dans sa rédaction de 2004). Le régime n'attribue pas un nombre
+          de points proportionnel à la cotisation mais un nombre PLAFONNÉ de points
+          par tranche : c'est un barème en points, et c'est lui — et non un prix
+          d'achat, que la caisse ne publie pas — qui convertit ici le revenu en
+          droits.
+          LE TAUX EST CELUI DE LA LOI, et il bouge quatre fois en onze ans :
+          8,6 % de 2004 à 2011, 8,63 % en 2012, 9,75 % en 2013, 10,1 % en 2014
+          (D. 642-3, versions successives lues dans la base LEGI). La fiche portait
+          8,23 % sur toute la période — le taux de 2015, reporté en arrière faute
+          de série. Cela ne déplace pas les points acquis, qui ne dépendent pas du
+          taux, mais le flux versé au compte notionnel, sous-estimé de près d'un
+          cinquième en 2014.
+      - debut: 2012
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 450
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_085_pass
+        taux_cotisation_retraite: 0.0863
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          8,63 % pour la seule année 2012 : le décret de juillet 2012 réécrit
+          D. 642-3 avec un taux par année, et il est lui-même remplacé six mois
+          plus tard.
+      - debut: 2013
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 450
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_085_pass
+        taux_cotisation_retraite: 0.0975
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          9,75 % en 2013, première marche d'une hausse que la réforme de 2015
+          effacera en élargissant la tranche au plafond entier.
+      - debut: 2014
         fin: 2014
         type_calcul: points
         age_ouverture: 62
@@ -613,27 +691,55 @@ regimes:
         points_maximum: 450
         salaire_reference: carriere_entiere
         assiette: plafonnee_085_pass
-        taux_cotisation_retraite: 0.0823
+        taux_cotisation_retraite: 0.101
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs: [minimum_vieillesse, reversion]
         notes: >-
-          Réforme du 21 août 2003 : régime de base unique en points,
-          proportionnel au revenu, sur DEUX TRANCHES — d'où deux fiches par
-          période, qui se cumulent comme le fait la cotisation elle-même.
-          PREMIÈRE TRANCHE avant 2015 : 0 à 0,85 plafond, 450 points au maximum.
-          Le régime n'attribue pas un nombre de points proportionnel à la
-          cotisation mais un nombre PLAFONNÉ de points par tranche : c'est un
-          barème en points, et c'est lui — et non un prix d'achat, que la caisse
-          ne publie pas — qui convertit ici le revenu en droits.
-          Les taux de 8,23 % et 1,87 % sont ceux que la CNAVPL publie dans ses
-          recueils statistiques, versés certifiés dans valeurs_point.csv avec la
-          valeur de service du point (0,5731 € en 2021, 0,6540 € en 2025). Ils
-          ne sont publiés que depuis 2021 et sont repris ici pour 2004-2014
-          faute de série antérieure : cela ne déplace pas les points acquis, qui
-          ne dépendent pas du taux, mais seulement le flux versé au compte
-          notionnel.
+          10,1 % en 2014 : le taux le plus haut qu'ait porté la première tranche,
+          et celui que la fiche remplaçait par 8,23 %.
       - debut: 2004
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 100
+        salaire_reference: carriere_entiere
+        assiette: tranche_085_5_pass
+        taux_cotisation_retraite: 0.016
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
+          1,6 % de 2004 à 2012 (D. 642-3).
+      - debut: 2013
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        decote_par_generation: true
+        points_maximum: 100
+        salaire_reference: carriere_entiere
+        assiette: tranche_085_5_pass
+        taux_cotisation_retraite: 0.0181
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          1,81 % pour la seule année 2013.
+      - debut: 2014
         fin: 2014
         type_calcul: points
         age_ouverture: 62
@@ -652,7 +758,8 @@ regimes:
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs: [minimum_vieillesse, reversion]
         notes: >-
-          Seconde tranche avant 2015 : 0,85 à 5 plafonds, 100 points au maximum.
+          1,87 % à compter de 2014 — le taux de la seconde tranche n'a plus bougé
+          depuis, la réforme de 2015 ne touchant que sa borne.
       - debut: 2015
         fin: 2024
         type_calcul: points
