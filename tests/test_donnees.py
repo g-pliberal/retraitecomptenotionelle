@@ -1094,11 +1094,30 @@ def test_la_retenue_de_l_agent_est_deja_la_part_salariale(catalogue):
 
 
 def test_les_non_salaries_cotisent_seuls(catalogue):
-    """Sans employeur, la cotisation est intégralement personnelle."""
+    """Sans employeur, la cotisation est intégralement personnelle.
+
+    UNE SECTION FAIT EXCEPTION, et ce n'est pas une faute de saisie. Le
+    complémentaire des agents généraux d'assurance est financé depuis 1952 par
+    un « CONCOURS CONVENTIONNEL DES COMPAGNIES MANDANTES » : sur les 7,66 % de
+    commissions appelés en 2026, la caisse écrit que 2,50 points sont à la
+    charge des compagnies et 5,16 à celle de l'assuré. Les compagnies ne sont
+    pas l'employeur d'un agent général — il est libéral, et son statut reste
+    marqué `sans_employeur` —, mais elles paient une part de sa retraite, ce
+    qu'aucune autre section libérale ne connaît. La fiche porte le partage
+    exact ; le moteur, lui, ne s'en sert pas tant que le statut dit que
+    l'assuré cotise seul.
+    """
     for regime in catalogue:
         if regime.famille in ("non_salarie", "liberal"):
             for periode in regime.periodes:
+                if regime.code == "cavamac_complementaire":
+                    continue
                 assert periode.part_salariale == 1.0, regime.code
+    concours = [p for p in catalogue["cavamac_complementaire"].periodes
+                if p.part_salariale < 1.0]
+    assert concours, "le concours des compagnies mandantes a disparu de la fiche"
+    for periode in concours:
+        assert abs(periode.part_salariale - 5.16 / 7.66) < 1e-6
 
 
 def test_les_parts_salariales_sont_plausibles(catalogue):
@@ -1127,7 +1146,8 @@ def test_les_statuts_sans_employeur_sont_marques():
                     "exploitant_agricole", "medecin_liberal",
                     "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
                     "pharmacien", "auxiliaire_medical", "veterinaire",
-                    "officier_ministeriel"}
+                    "officier_ministeriel", "agent_general_assurance",
+                    "notaire"}
     assert not affiliations.sans_employeur("salarie_prive_non_cadre")
     assert not affiliations.sans_employeur("fonctionnaire_etat")
 

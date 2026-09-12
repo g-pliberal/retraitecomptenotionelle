@@ -389,9 +389,16 @@ export class ConstructeurCompte {
           periode, annee, part,
         );
 
-        const base = this._baseSelonAssiette(
+        let base = this._baseSelonAssiette(
           periode.assiette, baseLigne, ligne.part_primes,
         );
+        // L'ASSIETTE N'EST PAS TOUJOURS LE REVENU : commissions versées par
+        // les compagnies pour la CAVAMAC, produits de l'office pour la CPRN.
+        // Le facteur les reconstitue AVANT les bornes.
+        if (periode.assiette_facteur_revenu !== null
+            && periode.assiette_facteur_revenu !== undefined) {
+          base *= periode.assiette_facteur_revenu;
+        }
 
         if (acquisitionCommune && enRepartition) {
           // Regroupées par ASSIETTE DE DÉPART, et non par régime : c'est la

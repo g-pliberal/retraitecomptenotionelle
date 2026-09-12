@@ -1675,6 +1675,12 @@ class ScenarioActuel:
                         base = base_ligne * ligne.part_primes
                     elif periode.assiette == "hors_primes":
                         base = base_ligne * (1.0 - ligne.part_primes)
+                    # L'assiette de la CAVAMAC est faite des commissions
+                    # versées par les compagnies, celle de la CPRN des produits
+                    # de l'office : le facteur les reconstitue depuis le
+                    # revenu, avant les bornes. Voir `PeriodeRegime`.
+                    if periode.assiette_facteur_revenu is not None:
+                        base *= periode.assiette_facteur_revenu
                     plafond = base if borne_haute is None else borne_haute
                     assiette = max(0.0, min(base, plafond) - borne_basse)
                     repere = periode.repere_assiette(

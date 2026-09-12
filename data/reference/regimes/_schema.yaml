@@ -119,6 +119,7 @@ champs_periode:
               "plafonnee_085_pass", "tranche_085_5_pass", "plafonnee_5_pass",
               "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass",
               "tranche_1_3_pass", "tranche_05_3_pass", "plafonnee_8_pass",
+              "plafonnee_13_pass",
               "plafonnee_3_5_pass", "tranche_065_5_pass", "sans_objet"]
 
   taux_cotisation_retraite:
@@ -279,6 +280,16 @@ champs_periode:
     description: >-
       Repère d'assiette, exprimé en heures de SMIC. `null` : le repère est la
       borne haute de l'assiette, en plafonds de la Sécurité sociale.
+
+  assiette_facteur_revenu:
+    description: >-
+      L'assiette n'est pas le revenu mais une grandeur qui lui est
+      proportionnelle et que la carrière ne porte pas : les COMMISSIONS BRUTES
+      versées par les compagnies pour la CAVAMAC, les PRODUITS DE L'OFFICE pour
+      la CPRN. L'assiette vaut alors revenu × facteur, avant application des
+      bornes. C'est une moyenne de section, prise dans les statistiques de la
+      caisse ; le taux, lui, reste celui du texte.
+    defaut: null
 
   assiette_plancher:
     description: >-

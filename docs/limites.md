@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 51 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 53 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1974,7 +1974,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
-| Professions libérales (CNAVPL) | les complémentaires de deux sections sur dix — CAVAMAC et CPRN — ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section pour les huit qui en ont un : médecins (CARMF), chirurgiens-dentistes et sages-femmes (CARCDSF), avocats (CNBF), experts-comptables (CAVEC), pharmaciens (CAVP, volet réparti), auxiliaires médicaux (CARPIMKO), vétérinaires (CARPV), officiers ministériels (CAVOM, depuis 2016), et la Cipav pour le statut générique | **sous-estime** la pension d'un agent général d'assurance et d'un notaire, fortement — la complémentaire y pèse souvent plus lourd que la base —, et celle d'un officier ministériel de tout son complémentaire d'avant 2016 |
+| Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; la grille des classes de cotisation du régime de BASE d'avant 2004 | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | la grille des salaires forfaitaires par catégorie et par année, qui est l'assiette réelle du régime | le revenu déclaré, plafonné comme au régime général | **indéterminé** : la grille est plus favorable que le salaire réel aux bas revenus, moins au-delà. L'écart porte sur l'assiette, donc sur la pension ET sur le compte notionnel, en partie compensé |
 | Avocats (CNBF) | la cotisation forfaitaire de base, de 363 à 1 988 €/an selon l'ancienneté ; les tranches de la grille complémentaire d'avant 2019 | seule la cotisation proportionnelle de 3,20 % alimente le compte ; les années d'avant 2019 restent au rendement instantané | **sous-estime le flux versé**, donc la pension notionnelle, sans toucher à la pension actuelle — qui est forfaitaire et ne dépend pas de la cotisation. L'écart joue donc contre les scénarios notionnels |
 | Non-salariés agricoles | le barème de points du régime de base (23 à 113 points par tranche de revenu), que personne ne publie ; les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans | la retraite forfaitaire et la RCO, dont le barème en points est public | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **51 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **53 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2156,14 +2156,15 @@ ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
 |---|---|---|---|
 | **CARMF**, médecins | 11,8 % jusqu'à 3,5 plafonds | 77,14 € (2026) | déduit : 11,52 points pour 19 849 € → **1 723 €**. FICHE ÉCRITE |
 | **IRCEC**, artistes-auteurs | 8 % jusqu'à 3 plafonds | 9,75 € (2026) | **90,30 €**, publié. FICHE ÉCRITE |
-| **CAVAMAC**, agents d'assurance | 6,30 % créateur de droits, taux d'appel 121,6 % → 7,66 % effectif, plus 2,50 % versés par les compagnies mandantes | 0,4082 € (2025) | **absent** |
+| **CAVAMAC**, agents d'assurance | 6,30 % créateur de droits, taux d'appel 121,6 % → 7,66 % effectif, dont 2,50 points versés par les compagnies mandantes | 0,4123 € (2026) | **8,1806 €**, publié — non par le Journal officiel, qui renvoie au conseil d'administration, mais par la délibération de ce conseil que la caisse met en ligne. Rendement 5,04 %. FICHE ÉCRITE |
 | **CARPIMKO**, auxiliaires médicaux | forfait + 3 % de 1996 à 2025, 8,70 % entre un demi et trois plafonds depuis 2026 — série complète au Journal officiel | 18,08 € (2010) à 21,48 € (2026), publiée par la caisse | sans objet : le rendement se déduit des 8 points du forfait. FICHE ÉCRITE |
 | **CAVP**, pharmaciens | régime MIXTE : part en répartition FORFAITAIRE de 7 657 € (taux d'appel 105,4 % en 2026), identique dans toutes les classes ; part en CAPITALISATION de 2 906 à 17 436 € selon la classe | annuité de 320,75 € (2024), 328,80 € (2026) | sans objet : le régime compte en annuités. FICHE ÉCRITE pour le volet réparti |
 | **CAVOM**, officiers ministériels | 12,50 % jusqu'à huit plafonds depuis 2016, six CLASSES avant | 3,3745 € (2026) | **55,1390 €**, publié par le guide de la caisse, qui donne aussi le rendement : 6,12 %. FICHE ÉCRITE à partir de 2016 |
 | **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous |
 | **CAVEC**, experts-comptables | neuf classes, de 898 € à 30 616 € | 1,3850 € (2026) | rendement 8,33 %, vérifié sur les neuf classes. FICHE ÉCRITE |
 | **CARPV**, vétérinaires | quatre classes, de 10 234 à 16 856 € en 2026 | 39,54 € (2026) | **602,00 €**, déduit : chacune des quatre classes divise exactement par ses points en ce montant, et le décret annuel fixe ce prix depuis 2016. FICHE ÉCRITE |
-| CARCDSF, CRN | la CARCDSF a depuis abouti (fiche écrite) ; la CRN — les notaires, régime de la CPRN — reste bloquée par son ASSIETTE, qui est le produit de l'office et non le revenu du notaire | — | — |
+| **CPRN**, notaires | section C : 4,10 % des produits de l'office ; section B : huit classes de 10 à 80 points | section B 17,7710 €, section C 0,9422 € (2026) | section B 279,12 € × 115 %, section C **17,69 €**, tous deux publiés par le guide de la caisse. FICHE ÉCRITE pour la section C |
+| CARCDSF | abouti : fiche écrite | — | — |
 
 Deux remarques que ce relevé impose. La première : **la CAVP n'est pas un régime
 en répartition pure**, son étage complémentaire mêle une part répartie et une
@@ -2232,6 +2233,11 @@ annuelles, et l'arrêté CAVAMAC du 23 juin 2011 dit pourquoi en toutes lettres 
 Le prix d'achat de la CAVAMAC n'est donc pas introuvable par accident : aucun
 texte réglementaire ne le porte, par construction. Le chercher au JO est un
 trajet à ne pas refaire.
+
+*(Et la conclusion qu'on en avait tirée — que ce prix était hors d'atteinte —
+était fausse : le conseil d'administration délibère et LA CAISSE PUBLIE SA
+DÉLIBÉRATION. Voir « Les deux dernières sections » plus bas. Ce qui est écrit
+ci-dessus reste vrai du Journal officiel, et faux de tout le reste.)*
 
 **La CARPIMKO n'est pas bloquée par ce qu'on croyait.** L'arrêté du 14 novembre
 2025 (JORFTEXT000052604983) publie ses statuts modifiés, et son article 8 dit
@@ -2683,7 +2689,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 35 statuts », « 51 régimes » —, parce que ce sont des chiffres de données et
+« 37 statuts », « 53 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -2735,13 +2741,14 @@ extrémités ne font pas une grille de six classes. Un officier ministériel sim
 ici est donc sous-estimé de tout son complémentaire d'avant 2016, et la fiche le
 dit.
 
-**Restent deux sections sur dix.** La CAVAMAC, dont aucun texte ne publie le
-prix du point — ses arrêtés renvoient explicitement au conseil d'administration
-—, et la CPRN, bloquée non par un barème manquant mais par son ASSIETTE : la
-cotisation d'un notaire est assise sur les produits de son office, une grandeur
-que le modèle ne connaît pas et que la carrière saisie ne porte pas. S'y ajoute,
-chez une section déjà écrite, le volet CAPITALISÉ de la CAVP, qui n'est pas de
-la répartition.
+**Restent deux sections sur dix**, et la passe suivante les a prises toutes les
+deux — voir plus bas. La CAVAMAC, dont aucun texte RÉGLEMENTAIRE ne publie le
+prix du point (ses arrêtés renvoient au conseil d'administration, mais la caisse
+publie la délibération de ce conseil), et la CPRN, bloquée non par un barème
+manquant mais par son ASSIETTE : la cotisation d'un notaire est assise sur les
+produits de son office, une grandeur que le modèle ne connaît pas et que la
+carrière saisie ne porte pas. S'y ajoute, chez une section déjà écrite, le volet
+CAPITALISÉ de la CAVP, qui n'est pas de la répartition.
 
 **Un trou de couverture refermé au passage.** Le balayage « un statut, une
 génération » des témoins — le SEUL dispositif qui confronte le portage
@@ -2751,6 +2758,104 @@ treize, dont les huit sections libérales écrites cette année. La divergence d
 l'empruntait ; la même faute sur une borne que seul un officier ministériel
 traverse serait passée sans bruit. Les treize sont entrés, et un test oblige
 désormais la liste à rester complète.
+
+### Les deux dernières sections, et le mur qui n'était pas celui qu'on croyait
+
+Les dix sections libérales ont maintenant leur fiche. Les deux dernières —
+agents généraux d'assurance et notaires — étaient rangées ici comme bloquées,
+l'une faute de prix du point, l'autre faute d'assiette. Le premier diagnostic
+était faux ; le second était juste, et il a fallu lui trouver un contournement.
+
+**La CAVAMAC ne publiait pas son prix du point — au Journal officiel.** Ce
+document concluait, arrêté du 23 juin 2011 à l'appui, que ce prix n'était « pas
+introuvable par accident : aucun texte réglementaire ne le porte, par
+construction », et que le chercher au JO était « un trajet à ne pas refaire ».
+Les deux phrases restent vraies. Elles regardaient simplement au mauvais
+endroit : **le conseil d'administration délibère, et la caisse publie sa
+délibération dans ses actualités**, avec le chiffre :
+
+> « Le coefficient de référence, correspondant au prix d'achat d'un point de
+> retraite : fixé à 8,1806 €, maintenant ainsi le taux de rendement du régime à
+> 5,04 %. »
+
+Trois exercices sont ainsi documentés — 7,597 € en 2023, 7,9246 € en 2024,
+8,1806 € en 2026 — et le rendement s'y vérifie à chaque fois : 0,3829 / 7,597,
+0,3994 / 7,9246, 0,4123 / 8,1806 font 5,04 % les trois fois. La caisse pilote ce
+rendement et le dit.
+
+**Et le taux d'appel de cette section est le plus lourd du catalogue.** Le taux
+statutaire n'a pas bougé depuis 1971 — 6,30 % — mais ce qui est appelé, oui :
+100 % jusqu'en 1992, 110 % en 1993, 127,5 % en 1998, 129,5 % en 2001, **142,86 %
+de 2004 à 2018**, 129,5 % ensuite, 121,6 % en 2026. Le décret de 1992 dit ce que
+cela signifie : « la majoration de cotisation afférente à la fraction du taux
+d'appel excédant 100 % n'ouvre pas de droit supplémentaire ». Quinze ans durant,
+un agent général a versé sept euros pour cinq euros de droits, et le rendement
+de ce qu'il versait est tombé à 3,53 % — le plus bas du catalogue libéral.
+
+**L'assiette, elle, n'est pas le revenu, et c'était le vrai mur.** Les
+cotisations de ce régime « sont calculées sur la base de vos COMMISSIONS ET
+RÉMUNÉRATIONS BRUTES », écrit la caisse, celles que les compagnies versent avant
+que l'agent n'ait payé un loyer ou un salarié. Une carrière saisie dans ce
+simulateur ne porte pas cette grandeur. La caisse la donne pourtant, sur la même
+page de statistiques que le revenu :
+
+> « La commission moyenne plafonnée augmente de 5,0 %, passant de 275 525 € à
+> 286 168 €. […] Le revenu moyen déclaré en 2024 par les agents s'élève à
+> 115 443 euros. »
+
+Le rapport vaut **2,387**, et c'est ce que porte le nouveau champ
+`assiette_facteur_revenu` : l'assiette du régime est le revenu multiplié par ce
+facteur, avant application des bornes. C'est une moyenne de section — deux
+agents à même revenu n'ont pas les mêmes commissions — mais l'ignorer se
+tromperait d'un facteur deux et demi, ce qui est pire.
+
+**Une dernière singularité : un tiers de la cotisation est payé par
+quelqu'un d'autre.** Le « concours conventionnel des compagnies mandantes »
+apporte 2,50 points sur les 7,66 appelés en 2026. Les compagnies ne sont pas
+l'employeur d'un agent général ; le statut reste marqué `sans_employeur`, et le
+moteur porte donc cette part au compte de l'agent. La fiche porte le partage
+exact — 5,16 / 7,66 —, et un test l'y oblige, mais les scénarios 2 et 3 prêtent
+encore à l'agent un effort qu'il n'a pas fourni.
+
+**La CPRN, elle, était bien bloquée par son assiette** — les produits de
+l'office, pas le revenu du notaire — et c'est un rapport d'inspection, non la
+caisse, qui a fourni la clé. L'IGAS (rapport n° 2012-110P) décrit la règle qui
+fixe le prix du point de la section C :
+
+> « Cette valeur d'acquisition est calculée de façon à ajuster le nombre de
+> points attribué à chaque notaire de façon à ce que la moyenne sur l'ensemble
+> des notaires soit toujours égale à 900 points. »
+
+Avec le prix que publie le décret annuel — 17,69 € — et le taux — 4,10 % —, les
+produits moyens d'un office valent 900 × 17,69 / 0,041 = **388 317 €**. Le
+revenu moyen s'obtient par l'autre bout, en retranchant de la cotisation moyenne
+que publie la caisse (32 864 €, tous régimes) la section C (15 921 €) et une
+section B de classe 3 (9 515 €) : il reste 7 428 € de régime de base, que son
+barème renvoie à **190 000 €** de revenu. D'où un facteur de **2,04**, borné par
+un contrôle indépendant — le Conseil supérieur du notariat publie 9,0 milliards
+d'euros de produits pour 17 305 notaires, soit 520 000 € par notaire, du même
+ordre. C'est une convention, la fiche le dit, et elle porte `fiabilite: estimee`
+pour cette raison.
+
+**La moitié forfaitaire du régime reste dehors, et pour une raison de
+principe.** La section B a huit classes, de 10 à 80 points, et sa cotisation
+vaut « le nombre de points de la classe multiplié par 115 % du coût
+d'acquisition du point B » — tout est publié sauf une chose : les bornes de
+produits qui rangent un notaire dans sa classe, « déterminées par le conseil
+d'administration chaque année par référence à la moyenne des produits de base du
+notariat ». Et avant 2014 il n'y avait pas de bornes du tout : la section était
+« en partie facultative », écrit l'IGAS, le notaire y choisissait sa classe.
+Le dépôt ne prête jamais à personne un choix qu'il ne peut pas connaître — même
+règle que pour les classes du RAAP d'avant 2017. Ce qui manque se chiffre :
+environ 9 500 € pour le notaire moyen en 2025, contre 15 900 € de section C.
+
+**Un mécanisme de plus dans le moteur, et le troisième cette année.** Après la
+cotisation par classes et la cotisation forfaitaire qui s'ajoute à un taux,
+voici l'assiette qui n'est pas le revenu. Le champ est porté des deux côtés du
+portage, et le fichier de schéma le documente. Il ne sert qu'à ces deux
+sections, et il faut espérer qu'il n'en serve jamais davantage : un facteur
+moyen est une approximation grossière, et la seule chose qui la rende acceptable
+est qu'elle remplace une absence.
 
 ### La part patronale du public, et ce qu'on n'en sait pas
 
