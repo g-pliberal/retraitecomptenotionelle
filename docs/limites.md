@@ -1966,7 +1966,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 44 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 45 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -1996,7 +1996,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **44 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **45 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2200,6 +2200,48 @@ reviendrons vers vous dès que les textes définitifs seront publiés ». Ce n'e
 donc pas une donnée introuvable, c'est une donnée **à attendre**, et elle
 débloquera la plus grosse population libérale encore absente.
 
+### La troisième passe : une forme de plus, et un dentiste
+
+Le mécanisme qui manquait n'était pas celui des classes mais celui de la
+**cotisation forfaitaire qui s'ajoute à un taux**. Le complémentaire des
+chirurgiens-dentistes et des sages-femmes appelle 3 210,60 € en 2026, qui
+ouvrent six points, PLUS 11,35 % du revenu entre 0,65 et 5 plafonds. Ni un taux,
+ni un forfait : les deux. Le moteur et son portage le savent maintenant, avec
+`cotisation_forfaitaire_euros` — indexée sur les prix, comme la pension
+forfaitaire, faute de série publiée.
+
+**Où la phrase décisive se cachait.** Aucune page HTML de la caisse ne dit
+combien de points le forfait attribue. Sa notice d'affiliation le dit, mais
+elle est composée dans une police dont la table ToUnicode ne se lit pas : le
+texte sort en glyphes. La substitution étant régulière et les chiffres passant
+en clair, elle se décode — et donne « Cotisation forfaitaire : 3 178,80 en
+2025, **attribuant 6 points** ». D'où 535,10 € le point en 2026, servi 31,82 €,
+soit un **rendement de 5,95 %**. Une source tierce annonçait un tout autre
+barème — 0,375 % et un point maximum — qui est un état ancien : c'est la notice
+de la caisse qui tranche.
+
+Ce que le complémentaire change pour un dentiste, carrière de 25 à 64 ans :
+
+| Revenu | Base seule | Avec la CARCDSF | Notionnel |
+|---|---|---|---|
+| 1 × salaire moyen | 10 075 € | 17 930 € | 14 523 € |
+| 2 × | 13 465 € | **30 809 €** | 27 614 € |
+| 4 × | 18 888 € | **55 258 €** | 53 281 € |
+
+**Ce que la fiche suppose, et qu'il faut dire** : que la part proportionnelle
+achète ses points au même prix que la part forfaitaire. La caisse ne publie le
+nombre de points que pour le forfait. C'est la seule hypothèse de cette fiche —
+et c'est ce qu'un régime en points fait d'ordinaire. S'y ajoutent deux réserves
+mineures : les chiffres de 2025 valent pour toute la période antérieure, et la
+part proportionnelle n'est due qu'à partir de la troisième année d'activité,
+ce que le modèle n'exprime pas.
+
+**Restent donc trois formes et non plus une.** Proportionnelle pure — CARMF,
+IRCEC, CARPIMKO depuis 2026 — que le dépôt sait exprimer. Forfait plus taux —
+CARCDSF, CARPIMKO avant 2026 — qu'il sait exprimer depuis cette passe. Et
+**par classes** — CAVEC, CAVP, RAAP d'avant 2017 —, qui reste dehors : il n'y a
+pas de taux à écrire, et la table des classes est à relever caisse par caisse.
+
 Ce que la seconde passe a rapporté de chiffré, pour que la troisième reparte de
 là : CARPIMKO 8,70 % et 21,48 € de valeur de service ; CAVEC rendement 8,33 %,
 point à 1,3850 €, 1 841 points maximum sur neuf classes ; CAVAMAC valeur de
@@ -2358,7 +2400,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 29 statuts », « 44 régimes » —, parce que ce sont des chiffres de données et
+« 30 statuts », « 45 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### La part patronale du public, et ce qu'on n'en sait pas

@@ -783,6 +783,86 @@ regimes:
           taux comme la valeur ont pourtant bougé — c'est la limite la plus
           lourde de cette fiche.
 
+  - code: carcdsf_complementaire
+    nom: >-
+      Régime complémentaire des chirurgiens-dentistes et des sages-femmes
+      (CARCDSF)
+    famille: liberal
+    source_id: carcdsf_notices
+    fiabilite: haute
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Chirurgiens-dentistes et sages-femmes libéraux. Étage complémentaire
+      au-dessus du régime de base des professions libérales, et l'essentiel de
+      la pension d'un dentiste — la caisse écrit qu'il en représente environ la
+      moitié, et le quart de celle d'une sage-femme.
+    hors_repartition: false
+    periodes:
+      - debut: 1949
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_085_5_pass
+        taux_cotisation_retraite: 0.1080
+        cotisation_forfaitaire_euros: 3178.80
+        cotisation_forfaitaire_annee: 2025
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          Notice d'affiliation 2025 de la caisse : « Cotisation forfaitaire :
+          3 178,80 en 2025, attribuant 6 points » et, à partir de la troisième
+          année d'activité, « une cotisation proportionnelle calculée sur la
+          base de 10,80 % des revenus professionnels libéraux non salariés non
+          agricoles de N-1 compris entre 0,85 et 5 fois la valeur du plafond de
+          la Sécurité sociale ».
+          LES CHIFFRES DE 2025 VALENT POUR TOUTE LA PÉRIODE ANTÉRIEURE : la
+          caisse ne publie pas de série. La part proportionnelle n'est due
+          qu'à partir de la troisième année d'activité, ce que le modèle
+          n'exprime pas — il la prélève dès la première, et surestime donc
+          légèrement les deux premières années de chaque carrière.
+      - debut: 2026
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_065_5_pass
+        taux_cotisation_retraite: 0.1135
+        cotisation_forfaitaire_euros: 3210.60
+        cotisation_forfaitaire_annee: 2026
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          La réforme de l'assiette sociale des indépendants élargit la tranche
+          — de 0,65 à 5 plafonds au lieu de 0,85 à 5 — et porte le taux à
+          11,35 %. Le forfait passe à 3 210,60 €, toujours pour six points,
+          d'où un prix du point de 535,10 € ; la valeur de service étant de
+          31,82 €, le RENDEMENT est de 5,95 %, et c'est par lui que la fiche
+          convertit ses cotisations.
+          CE QUE CE RENDEMENT SUPPOSE : que la part proportionnelle achète ses
+          points au même prix que la part forfaitaire. La caisse ne le dit pas
+          — elle ne publie le nombre de points que pour le forfait. C'est la
+          seule hypothèse de cette fiche, et elle est exactement ce qu'un
+          régime en points fait d'ordinaire.
+
   - code: cnbf
     nom: Caisse nationale des barreaux français
     famille: liberal

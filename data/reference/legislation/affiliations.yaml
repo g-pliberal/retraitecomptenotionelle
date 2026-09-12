@@ -210,6 +210,17 @@ affiliations:
       diffuseur verse une contribution à côté du précompte de l'auteur, comme
       un employeur. Avant 1977, aucune affiliation obligatoire.
 
+  chirurgien_dentiste_ou_sage_femme:
+    libelle: Chirurgien-dentiste ou sage-femme libéral
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: null, regimes: [cnavpl, carcdsf_complementaire]}
+    note: >-
+      Le complémentaire porte l'essentiel de la pension : la caisse écrit qu'il
+      en représente environ la moitié pour un dentiste, le quart pour une
+      sage-femme. Sa cotisation est la seule du catalogue à mêler un FORFAIT et
+      un taux — 3 210,60 € plus 11,35 % en 2026.
+
   medecin_liberal:
     libelle: Médecin libéral
     sans_employeur: true
