@@ -49,6 +49,8 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     "plafonnee_3_pass": (0.0, 3.0),
     "plafonnee_4_pass": (0.0, 4.0),
     "tranche_1_4_pass": (1.0, 4.0),
+    # Cipav depuis 2023 : 9 % jusqu'au plafond, 22 % du plafond au triple.
+    "tranche_1_3_pass": (1.0, 3.0),
     # Complémentaires des sections libérales : la CARMF prélève jusqu'à
     # trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
     "plafonnee_3_5_pass": (0.0, 3.5),
@@ -176,6 +178,10 @@ class PeriodeRegime:
     #: du culte n'a pas de salaire dont on prélèverait une fraction ; la
     #: congrégation et lui cotisent sur un forfait.
     assiette_forfaitaire: bool
+    #: COTISATION PAR CLASSES : le régime ne prélève ni un taux ni un forfait
+    #: mais un MONTANT par palier de revenu, lu dans `classes_cotisation.csv`.
+    #: C'est la forme de la Cipav d'avant 2023.
+    cotisation_par_classes: bool
     #: COTISATION FORFAITAIRE, en euros de `cotisation_forfaitaire_annee`,
     #: qui s'AJOUTE à la cotisation proportionnelle. C'est la forme du
     #: complémentaire des chirurgiens-dentistes : 3 210,60 € en 2026,
@@ -370,6 +376,103 @@ class ContributionsEmployeurPubliques:
         return annees[precedente]
 
 
+@dataclass(frozen=True)
+class ClasseCotisation:
+    """Un palier : jusqu'à ce revenu, ce montant."""
+
+    #: Borne haute du palier, incluse. ``None`` pour le dernier, qui n'en a pas.
+    revenu_maximum: float | None
+    #: Montant dû, en euros de l'année de la grille.
+    cotisation: float
+    fiabilite: Fiabilite
+
+
+class ClassesCotisation:
+    """Cotisations par CLASSES, pour les régimes qui prélèvent un montant.
+
+    Une fiche sait porter un taux et un forfait. Plusieurs complémentaires
+    libéraux ne prélèvent ni l'un ni l'autre : ils rangent l'assuré dans une
+    classe selon son revenu, et chaque classe a son montant. C'est une fonction
+    en escalier, et c'était la seule forme que le catalogue ne savait pas
+    exprimer.
+
+    La classe est SUBIE, pas choisie, et c'est ce qui la rend modélisable : la
+    fiche pratique 2022 de la Cipav écrit du complémentaire que « son montant
+    est DÉTERMINÉ selon ce tableau », quand elle écrit de l'invalidité-décès,
+    juste à côté, que l'assuré « a la possibilité de CHOISIR sa classe ». Seule
+    la première forme entre ici.
+
+    ANNÉES SANS GRILLE PUBLIÉE : c'est la grille la plus récente qui précède
+    l'exercice qui s'applique, bornes et montants indexés sur les prix par
+    l'appelant — la convention déjà retenue pour la cotisation forfaitaire. Un
+    exercice antérieur à toute grille connue prend la plus ancienne, indexée de
+    la même façon.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, dict[int, list[ClasseCotisation]]] = {}
+        chemin = racine / "reference" / "regimes" / "classes_cotisation.csv"
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                borne = ligne["revenu_maximum"].strip()
+                self._table.setdefault(ligne["regime"], {}).setdefault(
+                    int(ligne["annee"]), []
+                ).append(ClasseCotisation(
+                    revenu_maximum=float(borne) if borne else None,
+                    cotisation=float(ligne["cotisation"]),
+                    fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
+                ))
+        for grilles in self._table.values():
+            for classes in grilles.values():
+                # Les paliers sans borne ferment la grille : ils passent en fin.
+                classes.sort(key=lambda c: (c.revenu_maximum is None,
+                                            c.revenu_maximum or 0.0))
+
+    def __bool__(self) -> bool:
+        return bool(self._table)
+
+    @property
+    def regimes(self) -> tuple[str, ...]:
+        return tuple(sorted(self._table))
+
+    def annee_grille(self, regime: str, annee: int) -> int | None:
+        """Millésime de la grille qui s'applique à cet exercice."""
+        grilles = self._table.get(regime)
+        if not grilles:
+            return None
+        anterieures = [a for a in grilles if a <= annee]
+        return max(anterieures) if anterieures else min(grilles)
+
+    def grille(self, regime: str, annee: int
+               ) -> tuple[ClasseCotisation, ...] | None:
+        millesime = self.annee_grille(regime, annee)
+        if millesime is None:
+            return None
+        return tuple(self._table[regime][millesime])
+
+    def cotisation(self, regime: str, annee: int, revenu: float,
+                   coefficient: float = 1.0
+                   ) -> tuple[float, Fiabilite] | None:
+        """Montant dû pour ce revenu, ``None`` si le régime n'a pas de grille.
+
+        ``coefficient`` ramène la grille de son millésime à l'exercice demandé :
+        il multiplie les bornes ET les montants, faute de quoi l'indexation
+        ferait glisser tout le monde d'une classe.
+        """
+        classes = self.grille(regime, annee)
+        if not classes:
+            return None
+        for classe in classes:
+            borne = classe.revenu_maximum
+            if borne is None or revenu <= borne * coefficient:
+                return classe.cotisation * coefficient, classe.fiabilite
+        dernier = classes[-1]
+        return dernier.cotisation * coefficient, dernier.fiabilite
+
+
 class CatalogueRegimes:
     """Ensemble des régimes chargés depuis ``data/reference/regimes/*.yaml``."""
 
@@ -493,6 +596,9 @@ class CatalogueRegimes:
                 ),
                 assiette_plancher=bool(p.get("assiette_plancher", False)),
                 assiette_forfaitaire=bool(p.get("assiette_forfaitaire", False)),
+                cotisation_par_classes=bool(
+                    p.get("cotisation_par_classes", False)
+                ),
                 cotisation_forfaitaire_euros=(
                     None if p.get("cotisation_forfaitaire_euros") is None
                     else float(p["cotisation_forfaitaire_euros"])

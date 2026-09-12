@@ -2421,6 +2421,42 @@ def test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes():
                 )
 
 
+def test_les_bornes_d_assiette_sont_les_memes_des_deux_cotes():
+    """Le JavaScript recopie la table des tranches : elle doit rester à jour.
+
+    `BORNES_ASSIETTE` existe deux fois — dans `donnees/regimes.py` et dans
+    `moteur/js/regimes.js` — parce que le portage ne lit pas le Python. Une
+    tranche ajoutée d'un seul côté ne fait échouer aucun import : le JavaScript
+    retombe sur `[0, null]`, c'est-à-dire SANS PLAFOND, et le régime prélève
+    alors sur la totalité du revenu. C'est exactement ce qui est arrivé en
+    ajoutant `tranche_1_3_pass` pour la Cipav : le portage cotisait 39 146 €
+    là où le modèle en cotisait 19 356, sans qu'aucune erreur soit levée — seul
+    le témoin l'a vu.
+    """
+    import re
+    from pathlib import Path
+
+    from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
+
+    racine = Path(__file__).resolve().parents[1]
+    source = (racine / "moteur" / "js" / "regimes.js").read_text(encoding="utf-8")
+    bloc = re.search(r"BORNES_ASSIETTE = Object\.freeze\(\{(.*?)\}\);",
+                     source, re.S)
+    assert bloc, "la table des bornes n'est plus reconnaissable dans le portage"
+
+    js = {}
+    for nom, basse, haute in re.findall(
+        r"^\s*(\w+):\s*\[([\d.]+),\s*([\d.]+|null)\]", bloc.group(1), re.M
+    ):
+        js[nom] = (float(basse), None if haute == "null" else float(haute))
+
+    assert js == dict(BORNES_ASSIETTE), (
+        "les tranches divergent entre le modèle et son portage : "
+        f"seulement en Python {sorted(set(BORNES_ASSIETTE) - set(js))}, "
+        f"seulement en JavaScript {sorted(set(js) - set(BORNES_ASSIETTE))}"
+    )
+
+
 def test_le_README_dit_le_vrai_poids_du_paquet():
     """« 165 Ko compressés (621 Ko brut) » est une mesure, pas une impression.
 

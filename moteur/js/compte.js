@@ -13,7 +13,7 @@
  */
 
 import { SourceCotisations, PartCotisation } from "./config.js";
-import { ContributionsEmployeurPubliques } from "./regimes.js";
+import { ClassesCotisation, ContributionsEmployeurPubliques } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 
 /** Construit un compte notionnel à partir d'une carrière. */
@@ -26,6 +26,7 @@ export class ConstructeurCompte {
     this.parametres = parametres;
     this._tauxPivot = new Map();
     this.contributionsPubliques = new ContributionsEmployeurPubliques(macro.paquet);
+    this.classes = new ClassesCotisation(macro.paquet);
   }
 
   // -- taux ------------------------------------------------------------------
@@ -62,6 +63,35 @@ export class ConstructeurCompte {
     }
     this._tauxPivot.set(annee, total);
     return total;
+  }
+
+  /**
+   * Montant du palier où tombe ce revenu, `null` hors de cette forme.
+   *
+   * La grille est celle du millésime publié ; pour les autres exercices elle
+   * est ramenée par le RAPPORT DES PLAFONDS, bornes et montants ensemble —
+   * n'indexer que les montants ferait glisser tout le monde d'une classe à
+   * chaque revalorisation. Le plafond et non les prix, parce que la grille est
+   * écrite en plafonds : rapportées à celui de 2022, les sept bornes de la
+   * Cipav valent 0,65, 1,2, 1,4, 1,6, 2, 2,5 et 3 plafonds.
+   * @returns {[number, number]|null} montant et fiabilité.
+   */
+  _cotisationParClasses(code, periode, revenu, annee) {
+    if (!periode.cotisation_par_classes) {
+      return null;
+    }
+    const millesime = this.classes.anneeGrille(code, annee);
+    if (millesime === null) {
+      return null;
+    }
+    const reference = this.macro.plafond_securite_sociale.valeur(millesime);
+    if (reference <= 0) {
+      return null;
+    }
+    return this.classes.cotisation(
+      code, annee, revenu,
+      this.macro.plafond_securite_sociale.valeur(annee) / reference,
+    );
   }
 
   /**
@@ -409,7 +439,16 @@ export class ConstructeurCompte {
           forfait = periode.cotisation_forfaitaire_euros
             * this.macro.coefficientPrix(reference, annee) * part;
         }
-        if (assiette <= 0 && forfait <= 0) {
+        // LA COTISATION PAR CLASSES. La Cipav, avant 2023, ne prélevait ni un
+        // taux ni un forfait : elle rangeait l'assuré dans un des huit paliers
+        // de son barème et appelait le montant du palier. Ni l'assiette ni le
+        // taux n'ont alors de rôle — c'est la grille qui décide, sur le revenu
+        // ENTIER de l'année, et le montant est proratisé comme un forfait pour
+        // une année incomplète.
+        const classe = this._cotisationParClasses(code, periode, base, annee);
+        if (classe !== null) {
+          fiabilite = Math.min(fiabilite, classe[1]);
+        } else if (assiette <= 0 && forfait <= 0) {
           continue;
         }
 
@@ -420,7 +459,9 @@ export class ConstructeurCompte {
           origines.push(origine);
           fiabilite = Math.min(fiabilite, fiabiliteTaux);
         }
-        let montant = assiette * taux + forfait;
+        let montant = classe !== null
+          ? classe[0] * part
+          : assiette * taux + forfait;
 
         // LA COTISATION DÉPLAFONNÉE. Au-dessus du plafond, le régime général
         // prélève encore sur la TOTALITÉ du salaire — 2,42 % en 2025 — et

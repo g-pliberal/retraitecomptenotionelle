@@ -311,6 +311,19 @@ champs_periode:
       d'assiette à défaut.
     defaut: false
 
+  cotisation_par_classes:
+    description: >-
+      Le régime ne prélève ni un taux ni un forfait mais un MONTANT PAR PALIER
+      de revenu, lu dans `classes_cotisation.csv`. C'est la forme de la Cipav
+      d'avant 2023 : 1 527 € jusqu'à 26 580 € de revenus, 3 055 € jusqu'à
+      49 280 €, et ainsi de huit paliers. Quand ce drapeau est levé, le taux et
+      le forfait de la période sont ignorés — c'est la grille qui décide —, et
+      la période doit donc porter un taux nul.
+      La grille est celle du millésime publié, bornes ET montants ramenés par
+      le rapport des plafonds pour les autres exercices — elle est écrite en
+      plafonds, pas en euros.
+    defaut: false
+
   avantages_non_contributifs:
     description: >-
       Liste des droits gratuits en vigueur sur la période. Tous sont NEUTRALISÉS

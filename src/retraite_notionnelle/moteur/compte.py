@@ -24,7 +24,8 @@ from ..carriere import Affiliations, Carriere
 from ..config import Parametres, PartCotisation, SourceCotisations
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import DonneesMacro
-from ..donnees.regimes import CatalogueRegimes, ContributionsEmployeurPubliques
+from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
+                              ContributionsEmployeurPubliques)
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 
@@ -125,6 +126,7 @@ class ConstructeurCompte:
         self.contributions_publiques = ContributionsEmployeurPubliques(
             parametres.racine_donnees
         )
+        self.classes = ClassesCotisation(parametres.racine_donnees)
 
     # -- taux ----------------------------------------------------------------
 
@@ -174,6 +176,37 @@ class ConstructeurCompte:
         reference = periode.cotisation_forfaitaire_annee or annee
         return periode.cotisation_forfaitaire_euros * self.macro.coefficient_prix(
             reference, annee
+        )
+
+    def _cotisation_par_classes(self, code: str, periode, revenu: float,
+                                annee: int) -> tuple[float, Fiabilite] | None:
+        """Montant du palier où tombe ce revenu, ``None`` hors de cette forme.
+
+        La grille est celle du millésime publié ; pour les autres exercices
+        elle est ramenée par le RAPPORT DES PLAFONDS, bornes et montants
+        ensemble — n'indexer que les montants ferait glisser tout le monde
+        d'une classe à chaque revalorisation.
+
+        Le plafond, et non les prix comme le fait ``_cotisation_forfaitaire``,
+        parce que la grille est écrite en plafonds : rapportées à celui de
+        2022, les sept bornes de la Cipav valent 0,65, 1,2, 1,4, 1,6, 2, 2,5 et
+        3 plafonds, et ses huit montants sont 1, 2, 3, 5, 7, 11, 12 et 13 fois
+        une unité qui vaut 3,71 % du plafond. L'indexer sur les prix la
+        déformerait : le plafond a crû plus vite qu'eux, et une grille reportée
+        vers l'amont en euros constants rangerait presque tout le monde dans la
+        première classe.
+        """
+        if not periode.cotisation_par_classes:
+            return None
+        millesime = self.classes.annee_grille(code, annee)
+        if millesime is None:
+            return None
+        reference = self.macro.plafond_securite_sociale(millesime)
+        if reference <= 0:
+            return None
+        return self.classes.cotisation(
+            code, annee, revenu,
+            self.macro.plafond_securite_sociale(annee) / reference,
         )
 
     def taux_effectif(self, regime: str, periode, annee: int,
@@ -506,7 +539,20 @@ class ConstructeurCompte:
                 # dû quel que soit le revenu : il ne dépend pas de l'assiette et
                 # ne s'annule donc pas avec elle.
                 forfait = self._cotisation_forfaitaire(periode, annee) * part
-                if assiette <= 0 and forfait <= 0:
+
+                # LA COTISATION PAR CLASSES. La Cipav, avant 2023, ne prélevait
+                # ni un taux ni un forfait : elle rangeait l'assuré dans un des
+                # huit paliers de son barème et appelait le montant du palier.
+                # Ni l'assiette ni le taux n'ont alors de rôle — c'est la
+                # grille qui décide, sur le revenu ENTIER de l'année, et le
+                # montant est proratisé comme un forfait pour une année
+                # incomplète.
+                classe = self._cotisation_par_classes(code, periode, base, annee)
+                if classe is not None:
+                    montant_classe, fiabilite_classe = classe
+                    montant_classe *= part
+                    fiabilite = min(fiabilite, fiabilite_classe)
+                elif assiette <= 0 and forfait <= 0:
                     continue
 
                 taux, taux_employeur, origine, fiabilite_taux = self.taux_effectif(
@@ -515,7 +561,8 @@ class ConstructeurCompte:
                 if origine:
                     origines.append(origine)
                     fiabilite = min(fiabilite, fiabilite_taux)
-                montant = assiette * taux + forfait
+                montant = (montant_classe if classe is not None
+                           else assiette * taux + forfait)
 
                 # LA COTISATION DÉPLAFONNÉE. Le régime général prélève, en
                 # plus de la cotisation plafonnée, un taux sur la TOTALITÉ du

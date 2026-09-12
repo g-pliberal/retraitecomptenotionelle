@@ -23,7 +23,7 @@ import {
   AgesAnnulationDecote, AgesOuverture, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DureesProratisation, DureesRequises,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
-  ConversionsPoints, Rendements, SurcoteParentale, ValeursPoint,
+  ClassesCotisation, ConversionsPoints, Rendements, SurcoteParentale, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 
@@ -42,6 +42,7 @@ export class ScenarioActuel {
     this.rendements = new Rendements(paquet);
     this.valeursPoint = new ValeursPoint(paquet);
     this.conversionsPoints = new ConversionsPoints(paquet);
+    this.classes = new ClassesCotisation(paquet);
     this.dureesRequises = new DureesRequises(paquet);
     this.dureesProratisation = new DureesProratisation(paquet);
     this.agesOuverture = new AgesOuverture(paquet);
@@ -652,7 +653,25 @@ export class ScenarioActuel {
             forfait = periode.cotisation_forfaitaire_euros
               * this.macro.coefficientPrix(reference, ligne.annee);
           }
-          const cotisation = assiette * periode.taux_cotisation_retraite + forfait;
+          let cotisation = assiette * periode.taux_cotisation_retraite + forfait;
+          // COTISATION PAR CLASSES : la Cipav, avant 2023, appelait le montant
+          // du palier où tombait le revenu, et non une fraction d'une assiette.
+          // Ce montant achète des points comme n'importe quelle cotisation —
+          // « 3 600 € / 47,40 € = 75,9 points », écrit la caisse —, et c'est
+          // donc ici, avant la conversion, qu'il se substitue.
+          if (periode.cotisation_par_classes) {
+            const millesime = this.classes.anneeGrille(code, ligne.annee);
+            const reference = millesime === null
+              ? 0.0
+              : this.macro.plafond_securite_sociale.valeur(millesime);
+            const parClasse = reference <= 0 ? null : this.classes.cotisation(
+              code, ligne.annee, base,
+              this.macro.plafond_securite_sociale.valeur(ligne.annee) / reference,
+            );
+            if (parClasse !== null) {
+              cotisation = parClasse[0] * part;
+            }
+          }
           if (periode.points_maximum !== null && periode.points_maximum !== undefined
               && repere > 0) {
             // Barème écrit en POINTS et non en prix d'achat : le régime annonce

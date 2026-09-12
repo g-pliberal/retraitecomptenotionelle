@@ -579,6 +579,8 @@ export const BORNES_ASSIETTE = Object.freeze({
   plafonnee_3_pass: [0.0, 3.0],
   plafonnee_4_pass: [0.0, 4.0],
   tranche_1_4_pass: [1.0, 4.0],
+  // Cipav depuis 2023 : 9 % jusqu'au plafond, 22 % du plafond au triple.
+  tranche_1_3_pass: [1.0, 3.0],
   // Complémentaires des sections libérales : la CARMF prélève jusqu'à
   // trois plafonds et demi, le RAAP des artistes-auteurs jusqu'à trois.
   plafonnee_3_5_pass: [0.0, 3.5],
@@ -781,6 +783,66 @@ export class Affiliations {
     return [];
   }
 }
+
+/**
+ * Cotisations PAR CLASSES, pour les régimes qui prélèvent un montant.
+ *
+ * La Cipav, avant 2023, ne prélevait ni un taux ni un forfait : elle rangeait
+ * l'assuré dans un des huit paliers de son barème selon son revenu, et
+ * appelait le montant du palier. La classe est SUBIE, pas choisie — la fiche
+ * pratique 2022 écrit du complémentaire que « son montant est DÉTERMINÉ selon
+ * ce tableau », et de l'invalidité-décès, juste à côté, que l'assuré « a la
+ * possibilité de CHOISIR sa classe ».
+ *
+ * Un seul millésime est publié : pour les autres exercices, c'est la grille la
+ * plus récente qui précède, bornes ET montants ramenés par le rapport des
+ * plafonds. Le plafond et non les prix, parce que la grille est écrite en
+ * plafonds — voir `ClassesCotisation` côté Python.
+ */
+export class ClassesCotisation {
+  constructor(paquet) {
+    this._table = new Map();
+    for (const [cle, grille] of Object.entries(paquet.classes_cotisation ?? {})) {
+      const [regime, annee] = cle.split('|');
+      if (!this._table.has(regime)) {
+        this._table.set(regime, new Map());
+      }
+      this._table.get(regime).set(Number(annee), grille);
+    }
+  }
+
+  /** @returns {number|null} millésime de la grille applicable à cet exercice. */
+  anneeGrille(regime, annee) {
+    const grilles = this._table.get(regime);
+    if (!grilles) {
+      return null;
+    }
+    const anterieures = [...grilles.keys()].filter((a) => a <= annee);
+    return anterieures.length
+      ? Math.max(...anterieures)
+      : Math.min(...grilles.keys());
+  }
+
+  /** @returns {[number, number]|null} montant dû et fiabilité. */
+  cotisation(regime, annee, revenu, coefficient = 1.0) {
+    const millesime = this.anneeGrille(regime, annee);
+    if (millesime === null) {
+      return null;
+    }
+    const grille = this._table.get(regime).get(millesime);
+    if (!grille || !grille.length) {
+      return null;
+    }
+    for (const [borne, montant, fiabilite] of grille) {
+      if (borne === null || borne === undefined || revenu <= borne * coefficient) {
+        return [montant * coefficient, fiabilite];
+      }
+    }
+    const [, montant, fiabilite] = grille[grille.length - 1];
+    return [montant * coefficient, fiabilite];
+  }
+}
+
 
 /** Rendements instantanés des régimes en points. */
 export class Rendements {

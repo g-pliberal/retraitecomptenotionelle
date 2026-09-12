@@ -51,7 +51,8 @@ from ..carriere import Affiliations, Carriere
 from ..config import Parametres
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import DonneesMacro
-from ..donnees.regimes import CatalogueRegimes, PeriodeRegime
+from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
+                              PeriodeRegime)
 
 
 @dataclass(frozen=True)
@@ -1024,6 +1025,7 @@ class ScenarioActuel:
         self.rendements = Rendements(parametres.racine_donnees)
         self.valeurs_point = ValeursPoint(parametres.racine_donnees)
         self.conversions_points = ConversionsPoints(parametres.racine_donnees)
+        self.classes = ClassesCotisation(parametres.racine_donnees)
         self.durees_requises = DureesRequises(parametres.racine_donnees)
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
@@ -1702,6 +1704,28 @@ class ScenarioActuel:
                                        reference, ligne.annee))
                     cotisation = (assiette * periode.taux_cotisation_retraite
                                   + forfait)
+                    # COTISATION PAR CLASSES : la Cipav, avant 2023, appelait
+                    # le montant du palier où tombait le revenu, et non une
+                    # fraction d'une assiette. Ce montant achète des points
+                    # comme n'importe quelle cotisation — « 3 600 € / 47,40 € =
+                    # 75,9 points », écrit la caisse —, et c'est donc ici, avant
+                    # la conversion, qu'il se substitue.
+                    if periode.cotisation_par_classes:
+                        millesime = self.classes.annee_grille(code, ligne.annee)
+                        reference = (
+                            0.0 if millesime is None
+                            else self.macro.plafond_securite_sociale(millesime)
+                        )
+                        par_classe = (
+                            None if reference <= 0
+                            else self.classes.cotisation(
+                                code, ligne.annee, base,
+                                self.macro.plafond_securite_sociale(ligne.annee)
+                                / reference,
+                            )
+                        )
+                        if par_classe is not None:
+                            cotisation = par_classe[0] * part
                     if periode.points_maximum is not None and repere > 0:
                         # Barème écrit en POINTS et non en prix d'achat : le
                         # régime annonce combien de points ouvre une assiette
