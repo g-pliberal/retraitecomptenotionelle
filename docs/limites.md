@@ -2018,7 +2018,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 | Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | les montants des salaires forfaitaires, que le décret renvoie à un arrêté — et surtout la CATÉGORIE du marin, que le décret définit par le métier (« matelot de moins de 18 ans », « élève officier ») et qu'une carrière saisie ne porte pas ; les deux exceptions au plafond de vingt-cinq annuités, l'invalidité et le marin de cinquante-deux ans et demi réunissant trente-sept annuités et demie | le revenu déclaré, plafonné comme au régime général ; le plafond de vingt-cinq annuités avant cinquante-cinq ans, lui, est désormais porté | **indéterminé** sur la grille : elle est plus favorable que le salaire réel aux bas revenus, moins au-delà. Même publiée, elle ne s'appliquerait pas sans une convention reliant un revenu à une fonction à bord, qui n'aurait aucune source. **Sous-estime** la pension du marin embarqué très jeune, à qui le plafond est opposé alors que le texte l'en dispense |
 | Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (363 € la première, 1 988 € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de 3,20 % ET le forfait à sa valeur de croisière, 1 988 € ; les années d'avant 2019 restent au rendement instantané | **surestime de 4 586 € sur une carrière** le flux des cinq premières années, contre 70 000 € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
-| Non-salariés agricoles | les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, qui calcule la base sur les vingt-cinq meilleures années pour les pensions prenant effet à compter de 2026 | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
+| Non-salariés agricoles | les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés — mais plus des textes : l'Opéra, la Comédie-Française, la SEITA, les clercs de notaires, la Banque de France, le fonds spécial des ouvriers de l'État et le personnel navigant ont leurs décrets lus VERSION PAR VERSION dans la base LEGI, et passent au niveau `moyenne`. Restent au niveau `estimee` les mines — dont dix-huit millésimes sont interpolés entre deux valeurs sourcées —, les marins, le port autonome de Strasbourg et les chemins de fer secondaires | pour les quatre derniers, les textes fondateurs sans recontrôle ; le port de Strasbourg n'a rien dans LEGI que des décrets de compensation, son règlement de retraite étant un acte de l'établissement | **indéterminé** pour ces quatre-là, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
 
 **Ce qui a été refermé depuis la version précédente de ce tableau.** Le régime
@@ -3551,6 +3551,42 @@ soixante-deux pour les autres. C'est l'âge du ballet qui est retenu, celui pour
 lequel ce régime est connu et le plus bas du système français : un musicien de
 l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
 lui ouvre qu'à soixante.
+
+### La réforme agricole de 2026 est en vigueur, et elle n'est pas calculable
+
+Le tableau des manques disait « la réforme du 28 février 2025 n'est pas
+modélisée ». La lecture du code rural dans la base LEGI dit quelque chose de plus
+précis, et de plus gênant.
+
+**La loi est bien en vigueur.** L'article L. 732-24 a été entièrement réécrit au
+1<sup>er</sup> janvier 2026 par la loi n° 2025-199 du 28 février 2025, et
+l'article L. 732-24-1 — celui qui fixait l'objectif à la Nation depuis 2023 — a
+été abrogé le même jour, son objet étant atteint. La pension « cumule » désormais
+une part calculée sur les seuls revenus postérieurs à 2016 et une part reprenant
+les droits d'avant 2016.
+
+**Mais deux de ses trois paramètres n'existent pas.** Le texte les renvoie
+ailleurs, mot pour mot : la part forfaitaire d'avant 2016 est « d'une part dont
+le montant maximal attribué pour une durée minimale d'assurance **est prévu par
+décret** » ; la part proportionnelle d'avant 2016 se calcule « en retenant un
+nombre d'années sélectionnées **dans des conditions fixées par voie
+réglementaire** » ; et son IV ajoute « les modalités d'application du présent
+article sont définies par **décret en Conseil d'État** ».
+
+Ce décret n'est pas dans la base. Un dépouillement de toute la législation
+consolidée ne rend, pour le 1<sup>er</sup> janvier 2026, que des articles
+LÉGISLATIFS — L. 732-21, L. 732-24, L. 732-35, L. 732-60 du code rural, et trois
+articles du code de la sécurité sociale — et aucun article réglementaire nouveau.
+Les articles R. 732-60, R. 732-63 et R. 732-66, qui décrivent le calcul en
+points, courent toujours jusqu'à 2999.
+
+**Ce que le modèle fait, et pourquoi c'est le moins faux.** Il sert la formule
+d'avant — retraite forfaitaire plus retraite proportionnelle en points —, qui est
+la seule dont les paramètres soient publiés, et dont la partie réglementaire est
+toujours en vigueur. Inventer les deux paramètres manquants reviendrait à écrire
+le décret à la place du Conseil d'État. C'est écrit dans les trois périodes
+concernées de la fiche, et c'est la seule limite du dépôt qui tienne à un texte
+que le Gouvernement n'a pas encore pris.
 
 ### Cent soixante-douze trimestres demandés aux assurés nés avant 1934
 
