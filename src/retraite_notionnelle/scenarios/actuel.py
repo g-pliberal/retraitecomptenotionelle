@@ -1407,6 +1407,77 @@ class ScenarioActuel:
             trimestres_decote = min(trimestres_decote, periode.decote_trimestres_maximum)
         return trimestres_decote
 
+    def _valeur_point_fiche(self, periode: PeriodeRegime, annee: int) -> float:
+        """Valeur de service du point écrite dans la fiche, à l'année demandée.
+
+        La MSA est seule à publier celle de sa retraite proportionnelle — ni le
+        code rural, ni les barèmes IPP, ni OpenFisca ne la portent —, et elle le
+        fait dans un communiqué annuel. Une ancre datée suffit : la loi
+        (L. 161-23-1) revalorise cette valeur sur les prix, et c'est donc l'index
+        des prix qui la porte d'une année à l'autre.
+        """
+        if periode.valeur_point_euros is None:
+            return 0.0
+        return periode.valeur_point_euros * self.macro.coefficient_prix(
+            periode.valeur_point_annee or annee, annee
+        )
+
+    def _points_msa(self, periode: PeriodeRegime, annee: int,
+                    revenu: float) -> float:
+        """Points de retraite proportionnelle agricole d'une année (R. 732-71).
+
+        Le barème est un escalier à quatre marches, et chacune de ses bornes est
+        une grandeur que le modèle connaît déjà :
+
+        * jusqu'à **400 SMIC horaires**, quinze points, quel que soit le revenu ;
+        * de 400 à **800 SMIC**, une pente de quinze à trente points ;
+        * de 800 SMIC à **deux fois le minimum contributif** non majoré, trente
+          points, et le barème ne bouge pas sur toute cette plage ;
+        * au-delà, une pente de trente points au maximum **M** de l'année, que
+          l'article R. 732-70 définit par ``M = (PM − AVTS) / (37,5 × VP)`` —
+          PM étant la pension maximale du régime général, c'est-à-dire la moitié
+          du plafond, AVTS l'allocation aux vieux travailleurs salariés et VP la
+          valeur du point. Le plafond de revenu de cette dernière marche est le
+          plafond de la Sécurité sociale lui-même.
+
+        **Le barème s'auto-vérifie.** Au minimum d'assiette du chef
+        d'exploitation — six cents fois le SMIC horaire, D. 731-120 —, la deuxième marche
+        donne 22,5 points, et au plafond la quatrième en donne 113,4 en 2025 :
+        ce sont les « 23 à 113 points » que la MSA et le ministère annoncent
+        sans jamais publier la formule. Et la pension maximale qui en résulte
+        pour une carrière pleine vaut exactement ``PM − AVTS``, la valeur du
+        point s'annulant : le forfait complète la proportionnelle jusqu'à la
+        pension maximale du régime général, ce qui est bien la construction du
+        régime.
+        """
+        smic = self.macro.smic_horaire(annee)
+        pass_annuel = self.macro.plafond_securite_sociale(annee)
+        valeur_point = self._valeur_point_fiche(periode, annee)
+        if smic <= 0 or pass_annuel <= 0 or valeur_point <= 0:
+            return 0.0
+        # L'AVTS est le montant de la retraite forfaitaire elle-même : la loi
+        # les a égalés jusqu'en 2014 (L. 732-24), puis a figé le forfait sur
+        # l'AVTS de cette année-là. Les deux ont depuis divergé — 4 023,51 €
+        # d'AVTS au 1er janvier 2025 contre 3 850 € environ de forfait —, ce qui
+        # porte M à 115,1 points au lieu de 113,4 : un pour cent et demi de trop
+        # sur la marche la plus haute du barème. La fiche ne porte qu'un
+        # montant, et c'est celui-là ; le jour où l'AVTS entrera dans le dépôt,
+        # c'est ici qu'elle se substituera.
+        avts = (periode.pension_forfaitaire_annuelle or 0.0) * self.macro.coefficient_prix(
+            periode.pension_forfaitaire_annee or annee, annee
+        )
+        minimum_contributif, _, _, _ = self.minimum_contributif.valeurs(annee)
+        maximum = (0.5 * pass_annuel - avts) / (37.5 * valeur_point)
+        if revenu <= 400 * smic:
+            return 15.0
+        if revenu <= 800 * smic:
+            return min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic))
+        if revenu <= 2 * minimum_contributif or pass_annuel <= 2 * minimum_contributif:
+            return 30.0
+        return min(maximum, 30.0 + (maximum - 30.0)
+                   * (revenu - 2 * minimum_contributif)
+                   / (pass_annuel - 2 * minimum_contributif))
+
     def _abattement_points(self, periode: PeriodeRegime, carriere: Carriere,
                            trimestres: int, requis: int,
                            age_liquidation: float,
@@ -1732,6 +1803,28 @@ class ScenarioActuel:
                         )
                         if par_classe is not None:
                             cotisation = par_classe[0] * part
+                    if periode.bareme_points == "msa_proportionnelle":
+                        # BARÈME NOMMÉ : le nombre de points ne se lit ni dans
+                        # un prix d'achat ni dans un repère d'assiette, mais
+                        # dans un escalier à quatre marches que R. 732-71 écrit
+                        # en SMIC, en minimum contributif et en plafond. Voir
+                        # `_points_msa`. C'est l'ASSIETTE qui y entre, et non le
+                        # revenu : la cotisation qui ouvre ces points est due
+                        # sur six cents SMIC horaires au moins (D. 731-120, 2°)
+                        # et sur un plafond au plus, et ce sont ces deux bornes
+                        # qui font les « 23 à 113 points ».
+                        echelle, fiabilite_echelle = self.conversions_points.echelle(
+                            code, ligne.annee, annee_liquidation
+                        )
+                        points_acquis[code] = points_acquis.get(code, 0.0) + (
+                            self._points_msa(periode, ligne.annee, assiette)
+                            * part * echelle
+                        )
+                        fiabilite_points[code] = min(
+                            fiabilite_points.get(code, Fiabilite.CERTIFIEE),
+                            regime.fiabilite, fiabilite_echelle,
+                        )
+                        continue
                     if periode.points_par_trimestre_valide is not None:
                         # POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant.
                         # Le régime de base des libéraux d'avant 2004 ne servait
@@ -1881,15 +1974,73 @@ class ScenarioActuel:
                 points = points_acquis.get(code, 0.0)
                 if points:
                     valeur = self.valeur_du_point(code, annee_liquidation)
+                    if valeur is None and periode.valeur_point_euros is not None:
+                        # Valeur de service écrite dans la fiche : le régime
+                        # dont la caisse est seule à la publier n'a rien de
+                        # certifiable dans `valeurs_point.csv`, et retombait
+                        # donc sur le rendement instantané.
+                        valeur = (
+                            self._valeur_point_fiche(periode, annee_liquidation),
+                            Fiabilite.MOYENNE,
+                        )
                     if valeur is not None:
                         service, fiabilite_service = valeur
-                        montant += points * service
+                        # COEFFICIENT DE DURÉE de la proportionnelle agricole :
+                        # la pension vaut « points × valeur du point × 37,5 /
+                        # durée requise en années ». Il est neutre pour les
+                        # générations qui devaient 37,5 ans, et retire un
+                        # huitième à celles qui en doivent 43 — sans lui, le
+                        # maximum du barème cesse de valoir ce que le code lui
+                        # fait valoir.
+                        coefficient_duree = 1.0
+                        if periode.bareme_points == "msa_proportionnelle":
+                            requis, fiabilite_duree = self._duree_requise(
+                                periode, carriere
+                            )
+                            if fiabilite_duree is not None:
+                                fiabilite_regime = min(
+                                    fiabilite_regime, fiabilite_duree
+                                )
+                            if requis > 0:
+                                coefficient_duree = 37.5 / (requis / 4.0)
+                        montant += points * service * coefficient_duree
                         fiabilite_regime = min(
                             fiabilite_regime, fiabilite_service, fiabilite_points[code]
                         )
                         details.append(
                             f"{points:,.2f} points × valeur de service "
                             f"{_sans_zeros_inutiles(service, 6)} €"
+                            + ("" if coefficient_duree == 1.0
+                               else f" × {coefficient_duree:.4f}")
+                        )
+
+                # RÉGIME MIXTE : une part forfaitaire s'ajoute aux points. Le
+                # régime agricole en est le seul exemple — sa retraite
+                # forfaitaire vaut l'allocation aux vieux travailleurs salariés
+                # pour une carrière complète, et se proratise sur la durée
+                # (L. 732-24). Le moteur traitait `mixte` comme un synonyme de
+                # `points` et ne la servait pas du tout.
+                if (periode.type_calcul == "mixte"
+                        and periode.pension_forfaitaire_annuelle is not None):
+                    requis, _ = self._duree_requise(periode, carriere)
+                    proratisation, fiabilite_prorata = self._duree_proratisation(
+                        periode, carriere, requis
+                    )
+                    if fiabilite_prorata is not None:
+                        fiabilite_regime = min(fiabilite_regime, fiabilite_prorata)
+                    acquis = min(trimestres_par_regime.get(code, 0), proratisation)
+                    if proratisation > 0 and acquis > 0:
+                        forfait = (
+                            periode.pension_forfaitaire_annuelle
+                            * self.macro.coefficient_prix(
+                                periode.pension_forfaitaire_annee or annee_liquidation,
+                                annee_liquidation,
+                            )
+                            * acquis / proratisation
+                        )
+                        montant += forfait
+                        details.append(
+                            f"forfait {forfait:,.2f} € ({acquis}/{proratisation})"
                         )
 
                 # Années sans prix d'achat connu : le rendement instantané prend

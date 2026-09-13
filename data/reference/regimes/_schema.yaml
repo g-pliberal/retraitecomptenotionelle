@@ -280,6 +280,26 @@ champs_periode:
       trimestres, eux, restent ceux que le revenu a validés.
       `null` : le régime convertit des cotisations, pas des trimestres.
 
+  bareme_points:
+    description: >-
+      Barème de points NOMMÉ, dont la formule vit dans le moteur parce qu'elle
+      ne s'écrit pas en colonnes. Seule valeur connue : `msa_proportionnelle`,
+      la retraite proportionnelle des non-salariés agricoles — quinze points
+      jusqu'à 400 SMIC horaires, une pente jusqu'à trente à 800 SMIC, un
+      plateau à trente jusqu'à deux fois le minimum contributif, puis une pente
+      jusqu'au maximum de l'année (R. 732-70 et R. 732-71 du code rural). La
+      pension multiplie ensuite les points par 37,5 / la durée requise en
+      années. `null` : le régime n'a pas de barème nommé.
+    valeurs: ["msa_proportionnelle"]
+
+  valeur_point_euros:
+    description: >-
+      Valeur de service du point écrite dans la fiche, en euros de
+      `valeur_point_annee`, pour un régime dont la caisse est seule à la
+      publier et dont `valeurs_point.csv` ne porte donc rien. Revalorisée sur
+      les prix d'une année à l'autre, comme la loi le prescrit (L. 161-23-1).
+      `valeurs_point.csv` prime quand il porte le régime.
+
   points_maximum:
     description: >-
       Nombre de points attribués quand l'assiette atteint le repère décrit par

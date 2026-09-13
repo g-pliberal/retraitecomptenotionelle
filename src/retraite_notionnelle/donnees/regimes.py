@@ -185,6 +185,21 @@ class PeriodeRegime:
     #: la même pour tous —, et c'est pourquoi sa conversion ignore l'assiette.
     #: Le nombre de trimestres, lui, reste celui que le revenu a validés.
     points_par_trimestre_valide: float | None
+    #: BARÈME DE POINTS NOMMÉ, dont la formule vit dans le moteur parce qu'elle
+    #: ne se laisse pas écrire en colonnes. Une seule valeur pour l'instant :
+    #: ``msa_proportionnelle``, la retraite proportionnelle des non-salariés
+    #: agricoles (R. 732-70 et R. 732-71 du code rural). Le nombre de points
+    #: y dépend du revenu par quatre paliers — 15 points jusqu'à 400 SMIC
+    #: horaires, une pente jusqu'à 800, un plateau à 30 jusqu'à deux fois le
+    #: minimum contributif, puis une pente jusqu'au maximum M de l'année —, et
+    #: la pension multiplie les points par 37,5 / la durée requise en années.
+    bareme_points: str | None
+    #: VALEUR DE SERVICE DU POINT écrite dans la fiche, en euros de
+    #: ``valeur_point_annee``, pour les régimes dont la caisse est seule à la
+    #: publier et dont `valeurs_point.csv` ne porte donc rien de certifiable.
+    #: Revalorisée sur les prix, comme la loi le prescrit (L. 161-23-1).
+    valeur_point_euros: float | None
+    valeur_point_annee: int | None
     #: Repère d'assiette, exprimé en heures de SMIC. ``None`` : le repère est
     #: la borne haute de l'assiette, en plafonds de la Sécurité sociale.
     assiette_repere_smic: float | None
@@ -628,6 +643,15 @@ class CatalogueRegimes:
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None
                     else float(p["points_par_trimestre_valide"])
+                ),
+                bareme_points=p.get("bareme_points"),
+                valeur_point_euros=(
+                    None if p.get("valeur_point_euros") is None
+                    else float(p["valeur_point_euros"])
+                ),
+                valeur_point_annee=(
+                    None if p.get("valeur_point_annee") is None
+                    else int(p["valeur_point_annee"])
                 ),
                 assiette_repere_smic=(
                     None if p.get("assiette_repere_smic") is None

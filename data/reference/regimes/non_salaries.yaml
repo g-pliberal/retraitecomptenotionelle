@@ -4545,6 +4545,39 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1952
+        fin: 1989
+        type_calcul: mixte
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: 150
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.085
+        pension_forfaitaire_annuelle: 3628.98
+        pension_forfaitaire_annee: 2023
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          Loi du 10 juillet 1952 créant l'assurance vieillesse agricole (AVA).
+          Retraite en deux parts : FORFAITAIRE, indépendante du revenu, et
+          PROPORTIONNELLE en points. La part forfaitaire vaut, pour une carrière
+          complète, l'allocation aux vieux travailleurs salariés (L. 732-24),
+          et se proratise sur la durée ; le moteur ne la servait pas du tout,
+          traitant `mixte` comme un synonyme de `points`.
+          LE BARÈME DE POINTS N'EXISTE QU'À PARTIR DE 1990 : l'article R. 732-70
+          ne l'ouvre qu'« à compter du 1er janvier 1990 ». Les années
+          antérieures restent donc au rendement instantané, faute d'un barème
+          publié pour la période des classes.
+          L'ASSIETTE EST BORNÉE AU PLAFOND, et c'est une convention nommée : la
+          cotisation d'alors était assise sur un forfait tiré de la surface de
+          l'exploitation, dont la série n'est nulle part. La fiche portait
+          `forfaitaire`, que le moteur lit « le revenu entier, sans plafond » :
+          une carrière à quatre fois le salaire moyen sortait par ces dix années
+          une pension de base supérieure au maximum que le régime peut servir.
+          Le plafond retenu est celui que le régime s'est donné en 1990.
+      - debut: 1990
         fin: 2002
         type_calcul: mixte
         age_ouverture: 65
@@ -4552,16 +4585,23 @@ regimes:
         duree_requise_trimestres: 150
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: forfaitaire
+        assiette: plafonnee
         taux_cotisation_retraite: 0.085
+        bareme_points: msa_proportionnelle
+        assiette_repere_smic: 600
+        assiette_plancher: true
+        valeur_point_euros: 4.589
+        valeur_point_annee: 2025
+        pension_forfaitaire_annuelle: 3628.98
+        pension_forfaitaire_annee: 2023
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [minimum_vieillesse, reversion]
         notes: >-
-          Loi du 10 juillet 1952 créant l'assurance vieillesse agricole (AVA).
-          Retraite en deux parts : forfaitaire (indépendante du revenu) et
-          proportionnelle en points. La part forfaitaire est un droit quasi
-          non contributif : elle disparaît dans les scénarios notionnels.
+          « À compter du 1er janvier 1990 » (R. 732-70), la cotisation ouvre un
+          nombre de points qui dépend du revenu par un escalier à quatre marches
+          écrit à l'article R. 732-71 — voir `_points_msa` dans le moteur, et
+          la section de docs/limites.md qui refait l'arithmétique.
       - debut: 2003
         fin: null
         type_calcul: mixte
@@ -4572,6 +4612,13 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: plafonnee
         taux_cotisation_retraite: 0.1737
+        bareme_points: msa_proportionnelle
+        assiette_repere_smic: 600
+        assiette_plancher: true
+        valeur_point_euros: 4.589
+        valeur_point_annee: 2025
+        pension_forfaitaire_annuelle: 3628.98
+        pension_forfaitaire_annee: 2023
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs:
@@ -4583,12 +4630,26 @@ regimes:
           de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
           s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
           neutralisé dans les scénarios notionnels.
-          Ce qui reste hors du modèle est le barème du régime de base, dont la
-          retraite proportionnelle attribue de 23 à 113 points par tranche de
-          revenu, sans série publiée ; la valeur de son point n'est entrée dans
-          le code qu'en 2025 (R. 732-66, 4,589 € au 1er janvier 2025 ; le COR
-          donne 4,264 € pour 2023). La part proportionnelle de la base reste
-          donc au rendement instantané. Voir docs/limites.md §1.
+          LE BARÈME DE POINTS EST DANS LE CODE, et le modèle le sert
+          désormais : R. 732-71 attribue quinze points jusqu'à 400 SMIC
+          horaires, puis une pente jusqu'à trente à 800 SMIC, puis trente
+          jusqu'à deux fois le minimum contributif, puis une pente jusqu'au
+          maximum M que R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du
+          point). Les « 23 à 113 points » que la caisse annonce sans publier la
+          formule en sortent : 22,5 au minimum d'assiette du chef d'exploitation
+          (600 SMIC horaires), 113,4 au plafond en 2025.
+          La valeur du point est celle du code rural (R. 732-66, 4,589 € au
+          1er janvier 2025), recoupée par le communiqué de la MSA et par le COR
+          pour 2023 (4,264 €) ; les années antérieures sont ramenées sur les
+          prix, comme la loi le prescrit (L. 161-23-1).
+          La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
+          (communiqué de la MSA du 14 février 2023) pour une carrière complète.
+          CE QUI RESTE HORS DU MODÈLE est la réforme du 28 février 2025 (LFSS
+          2025, article 87), qui, pour les pensions prenant effet à compter du
+          1er janvier 2026, calcule la base sur les VINGT-CINQ MEILLEURES ANNÉES
+          de revenus à partir de 2016 et sur les meilleures années de points
+          avant. Le modèle sert encore la formule d'avant la réforme.
+          Voir docs/limites.md.
 
   - code: msa_rco
     nom: Retraite complémentaire obligatoire des non-salariés agricoles (RCO)

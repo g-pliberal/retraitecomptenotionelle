@@ -1303,6 +1303,18 @@ def _refaire_la_formule(detail: str) -> float | None:
     if not points:
         return None
     montant = sans_virgules(points.group(1)) * float(points.group(2))
+    # Coefficient de durée de la proportionnelle agricole : « 37,5 / durée
+    # requise », affiché à la suite de la valeur de service parce qu'il ne
+    # multiplie que les points, ni le forfait ni les cotisations.
+    duree = re.search(
+        r"points × valeur de service [\d.]+ € × ([\d.]+)", detail)
+    if duree:
+        montant *= float(duree.group(1))
+    # Part forfaitaire d'un régime MIXTE : la retraite forfaitaire agricole,
+    # proratisée sur la durée, s'ajoute aux points.
+    forfait = re.search(r"forfait ([\d,]+\.\d+) € \(\d+/\d+\)", detail)
+    if forfait:
+        montant += sans_virgules(forfait.group(1))
     cotisations = re.search(
         r"cotisations revalorisées ([\d,]+) € × rendement ([\d.]+)%", detail)
     if cotisations:
