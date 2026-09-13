@@ -3078,7 +3078,7 @@ modèle :
 
 | Régime | Couverture | Jeux de règles | Années par jeu |
 |---|---|---|---|
-| `port_strasbourg`, `mines`, `marins` | 1930-2026 | 1 | 97 |
+| `port_strasbourg`, `marins` | 1930-2026 | 1 | 97 |
 | `seita` | 1935-2026 | 1 | 92 |
 | `carpv_complementaire` | 1950-2026 | 1 | 77 |
 | `cnbf` | 1948-2026 | 2 | 40 |
@@ -3518,6 +3518,54 @@ soixante-deux pour les autres. C'est l'âge du ballet qui est retenu, celui pour
 lequel ce régime est connu et le plus bas du système français : un musicien de
 l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
 lui ouvre qu'à soixante.
+
+### La pension du mineur ne dépend pas de son salaire, et le modèle la doublait
+
+C'est la plus grosse erreur que cette campagne ait trouvée, et elle tenait à une
+seule ligne de fiche : `type_calcul: annuites`, `taux_plein: 0.75`,
+`salaire_reference: dernier_salaire`. Le régime minier ne calcule rien de tel.
+
+> « Le montant annuel de la pension de vieillesse est proportionnel à la durée de
+> service ; il est égal au produit du montant de pension pour un trimestre de
+> services et du nombre de trimestres de services effectués. »
+> — article 131 du décret n° 46-2769 du 27 novembre 1946
+
+La pension du mineur est un **forfait par trimestre de service**, le même pour
+l'abatteur et pour l'ingénieur. Le décret en porte la valeur, et la base LEGI en
+garde quatre états :
+
+| En vigueur | Valeur du trimestre | Article |
+|---|---|---|
+| 1er avril 1974 | 74,26 F (11,32 €) | art. 147 |
+| 1er juillet 1992 | 382,08 F (58,25 €) | art. 131 |
+| 1er janvier 2002 | 69,22 € | art. 131 |
+| 1er avril 2013 | 82,83 € | art. 131 |
+
+Trente ans de mine valent donc 9 940 € par an aujourd'hui, quarante ans
+13 253 € — quand la fiche en servait 75 % du dernier salaire, soit le double.
+Les trois cas types du balayage perdent de 43 % à 55 % de leur pension, et c'est
+la correction qui les rapproche du droit.
+
+**Deux contrôles internes.** Le premier vient du décret lui-même : l'article 147
+fixe « 8 911,20 F pour […] trente années de service » et l'article 148 « 4 455,60
+F pour 60 trimestres », soit exactement la moitié pour la moitié des trimestres,
+et 8 911,20 / 120 = 74,26. Le second vient du modèle : la période 2001-2012,
+ancrée sur la valeur de 2002 et portée par les prix, donne 79,18 € en 2010 ; la
+valeur que le décret fixe au 1er avril 2013 est 82,83 €, soit 79,3 € ramenés à
+2010. Deux ancres indépendantes à deux pour mille l'une de l'autre.
+
+**Ce que la fiche ne sait toujours pas.** Le forfait a été revalorisé sur les
+SALAIRES jusqu'en 1987, et le modèle ne sait le porter que par les prix : une
+liquidation du milieu des années 1980 est sous-estimée d'environ un quart. Les
+revalorisations intermédiaires sont des arrêtés annuels, que la version
+consolidée du décret ne conserve pas. Avant 1974, la base ne porte aucune
+version : la valeur de 1974 est reportée en arrière par les prix, et une
+liquidation des années 1950 est incertaine dans les deux sens. Enfin l'âge de
+cinquante ans que la fiche oppose est l'âge ANTICIPÉ, celui du fond — l'article
+125 garantit la pension « aux affiliés âgés de cinquante-cinq ans au moins », et
+l'abaissement se gagne « à raison d'un an par tranche de quatre années de service
+au fond ». Le moteur ne sait pas où un mineur a travaillé, et lui donne l'âge du
+fond.
 
 ---
 

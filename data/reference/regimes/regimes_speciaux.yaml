@@ -350,30 +350,158 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1930
-        fin: null
-        type_calcul: annuites
+        fin: 1973
+        type_calcul: points
         age_ouverture: 50
         age_taux_plein: 55
         duree_requise_trimestres: 120
-        taux_plein: 0.75
-        salaire_reference: dernier_salaire
+        taux_plein: 1.0
+        points_par_trimestre_valide: 1
+        salaire_reference: sans_objet
         assiette: plafonnee
         taux_cotisation_retraite: 0.0805
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        valeur_point_euros: 11.32
+        valeur_point_annee: 1974
         notes: >-
-          Loi du 29 juin 1894. Départ possible à 50 ans avec 30 ans de services
-          au fond. Régime emblématique de l'écart maximal à l'âge de référence.
+          LA PENSION DU MINEUR N'A JAMAIS DÉPENDU DE SON SALAIRE. C'est un
+          FORFAIT PAR TRIMESTRE DE SERVICE, et il est le même pour l'abatteur
+          et pour l'ingénieur : « le montant annuel de la pension de vieillesse
+          est proportionnel à la durée de service ; il est égal au produit du
+          montant de pension pour un trimestre de services et du nombre de
+          trimestres de services effectués » (article 131 du décret n° 46-2769
+          du 27 novembre 1946). La fiche servait 75 % du dernier salaire : pour
+          un mineur payé au salaire moyen, elle inventait deux fois la pension
+          que le décret lui donne.
+          LA PÉRIODE LA PLUS ANCIENNE EST UNE EXTENSION. La base LEGI ne porte
+          aucune version du montant avant 1974 : la valeur de 1974 est reportée
+          en arrière par l'indice des prix, ce qui suppose que le forfait a
+          suivi les prix depuis 1930. Il ne les a pas suivis — il a longtemps
+          suivi les salaires —, et une liquidation des années 1950 est donc
+          incertaine dans les deux sens.
+      - debut: 1974
+        fin: 1991
+        type_calcul: points
+        age_ouverture: 50
+        age_taux_plein: 55
+        duree_requise_trimestres: 120
+        taux_plein: 1.0
+        points_par_trimestre_valide: 1
+        salaire_reference: sans_objet
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0805
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        valeur_point_euros: 11.32
+        valeur_point_annee: 1974
+        notes: >-
+          SOIXANTE-QUATORZE FRANCS VINGT-SIX PAR TRIMESTRE. L'article 147, dans
+          sa rédaction du 1er avril 1974 : « le montant de la pension dont
+          bénéficient les affiliés est fixé à 8 911,20 F pour ceux qui
+          justifient soit de cinquante-cinq ans d'âge et de trente années de
+          travail à la mine, soit de cinquante ans d'âge et de trente années de
+          travail à la mine, dont vingt années au moins au fond. Ce chiffre est
+          majoré de 74,26 F pour chaque trimestre de service en sus de 120 » —
+          et 8 911,20 / 120 = 74,26 exactement. L'article 148 le confirme par
+          l'autre bout : « 4 455,60 F pour 60 trimestres de service », soit la
+          moitié pour la moitié des trimestres. La fiche porte la valeur en
+          euros au taux officiel de 6,55957 F.
+          CE QUE CETTE PÉRIODE NE SAIT PAS. Le forfait était revalorisé sur les
+          SALAIRES jusqu'en 1987, et la fiche ne sait le porter que par les
+          prix : une liquidation de 1985 est sous-estimée d'environ un quart.
+          Nommer l'écart est tout ce qu'on peut faire ici — les revalorisations
+          intermédiaires sont des arrêtés annuels, que la version consolidée du
+          décret ne conserve pas.
+      - debut: 1992
+        fin: 2000
+        type_calcul: points
+        age_ouverture: 50
+        age_taux_plein: 55
+        duree_requise_trimestres: 120
+        taux_plein: 1.0
+        points_par_trimestre_valide: 1
+        salaire_reference: sans_objet
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0805
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        valeur_point_euros: 58.25
+        valeur_point_annee: 1992
+        notes: >-
+          « Le montant de pension pour un trimestre de services s'élève, pour
+          les pensions liquidées à compter du 1er juillet 1992, à 382,08 F »
+          (article 131, rédaction du 1er janvier 1993), soit 58,25 € au taux
+          officiel. Trente ans de mine valaient donc 45 850 F par an, moins de
+          7 000 €.
+      - debut: 2001
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 50
+        age_taux_plein: 55
+        duree_requise_trimestres: 120
+        taux_plein: 1.0
+        points_par_trimestre_valide: 1
+        salaire_reference: sans_objet
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0805
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        valeur_point_euros: 69.22
+        valeur_point_annee: 2002
+        notes: >-
+          « La valeur du trimestre de services servant au calcul de ces pensions
+          et allocation s'élève à 67,73 euros au 1er janvier 2001 et à 69,22
+          euros au 1er janvier 2002 » (article 131, rédaction du 5 mai 2002).
+          C'est la seconde valeur qui est portée, et l'indice des prix la
+          ramène à 2001.
+      - debut: 2013
+        fin: null
+        type_calcul: points
+        age_ouverture: 50
+        age_taux_plein: 55
+        duree_requise_trimestres: 120
+        taux_plein: 1.0
+        points_par_trimestre_valide: 1
+        salaire_reference: sans_objet
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.0805
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        valeur_point_euros: 82.83
+        valeur_point_annee: 2013
+        notes: >-
+          « La valeur du trimestre de services […] s'élève à 82,83 euros au
+          1er avril 2013 » (article 131, rédaction du 6 septembre 2015), et
+          c'est la dernière que le décret porte : trente ans de mine valent
+          9 940 € par an, quarante ans 13 253 €. Les pensions liquidées sont
+          ensuite revalorisées comme les autres (article 181), d'où
+          l'indexation sur les prix au-delà de 2013.
           FERMÉ AUX NOUVEAUX ENTRANTS depuis le 1er septembre 2010 (décret
           n° 2010-975 du 27 août 2010), et à eux seuls : le mineur qui était
           déjà là garde son régime jusqu'à sa retraite, et ses règles ne
           changent pas. C'est un régime en EXTINCTION, que les réformes de 2010,
-          2014 et 2023 ont laissé où il était — l'âge d'ouverture reste 55 ans,
-          50 avec les services au fond —, et non un régime réformé. La période
-          court donc jusqu'à aujourd'hui : la borner à 2010 faisait basculer au
-          régime général, cette année-là, un mineur entré vingt ans plus tôt.
+          2014 et 2023 ont laissé où il était — l'article 125 garantit toujours
+          la pension « aux affiliés âgés de cinquante-cinq ans au moins » —, et
+          non un régime réformé.
+          L'ÂGE DE CINQUANTE ANS EST L'ÂGE ANTICIPÉ, et la fiche le sert à tous.
+          L'article 146, jusqu'en 1985, l'ouvrait « aux travailleurs qui
+          justifient, à cet âge, de trente années de service à la mine dont
+          vingt années au moins au fond » ; depuis 1985, l'âge « est abaissé à
+          raison d'un an par tranche de quatre années de service au fond pour
+          les travailleurs comptant au moins trente années d'affiliation ». Le
+          moteur ne sait pas où un mineur a travaillé : il lui donne l'âge du
+          fond, cinquante ans, quand celui du jour est cinquante-cinq.
 
   - code: cavimac
     nom: >-
