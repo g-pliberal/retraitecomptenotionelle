@@ -3132,7 +3132,7 @@ témoin. Chaque statut est donc désormais simulé à QUATRE générations — n
 1925, qui liquide vers 1990 ; née en 1935, qui liquide vers 1999, sous la durée
 requise de 150 ou 160 trimestres et les dix meilleures années ; née en 1955, qui
 liquide vers 2019 ; née en 1975, qui liquide après la réforme de 2023. Le fichier
-de témoins passe de 138 à 249 cas, et une correction d'histoire s'y voit
+de témoins passe de 138 à 250 cas, et une correction d'histoire s'y voit
 maintenant. La génération 1925 est la dernière venue, et pour une raison
 précise : les tables par génération ne répondent pas toutes en deçà de 1934, et
 le défaut que cela cachait est raconté plus bas.
@@ -3585,7 +3585,7 @@ toutes à 1900. Celle-là était la seule à ne pas le faire.
 
 **Et aucun témoin ne l'a vue**, parce que le balayage s'arrêtait à la génération
 1935. C'est la seconde fois que ce diagnostic tombe ; le balayage a donc une
-quatrième génération, née en 1925, et le fichier de témoins passe de 212 à 249
+quatrième génération, née en 1925, et le fichier de témoins passe de 212 à 250
 cas.
 
 ### Une surcote servie vingt-cinq ans avant sa création
