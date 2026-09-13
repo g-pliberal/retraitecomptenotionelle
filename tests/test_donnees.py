@@ -869,6 +869,57 @@ def test_tout_regime_en_points_sait_convertir_ses_points(catalogue):
     )
 
 
+def test_deux_complementaires_du_prive_ne_couvrent_pas_la_meme_part(catalogue):
+    """Un salarié ne cotise pas deux fois sur la même part de son salaire.
+
+    L'Arrco et l'Agirc se partagent le salaire d'un cadre : l'Arrco jusqu'au
+    plafond, l'Agirc au-dessus. La tranche 2 de l'Arrco, d'un à trois plafonds,
+    n'est due QUE par les non-cadres — et elle avait été écrite dans la fiche
+    `arrco`, que l'affiliation donne aussi aux cadres. Le modèle servait donc au
+    cadre deux pensions sur la même part de salaire : à deux plafonds de
+    rémunération, 8 374 € par an qu'aucun régime ne lui devait.
+
+    Le contrôle ne vaut que pour la famille `complementaire_prive`, où tous les
+    régimes sont du même étage. Ailleurs, un régime de BASE et le
+    complémentaire de sa section couvrent légitimement la même part — c'est même
+    la règle chez les libéraux et les non-salariés.
+    """
+    from retraite_notionnelle.carriere import Affiliations
+    from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    #: Assiettes qui ne se comparent pas en plafonds : elles découpent la
+    #: rémunération autrement (primes, traitement indiciaire, forfait).
+    sans_borne = {"hors_primes", "primes_uniquement", "sans_objet", "forfaitaire"}
+    doublons = []
+    for statut in affiliations.codes:
+        for annee in range(1930, 2027):
+            tranches = []
+            for code in affiliations.regimes(statut, annee):
+                if code not in catalogue:
+                    continue
+                regime = catalogue[code]
+                if regime.famille != "complementaire_prive":
+                    continue
+                for periode in regime.periodes_actives(annee):
+                    if periode.assiette in sans_borne:
+                        continue
+                    basse, haute = BORNES_ASSIETTE[periode.assiette]
+                    tranches.append((code, basse, 99.0 if haute is None else haute))
+            for indice, premiere in enumerate(tranches):
+                for seconde in tranches[indice + 1:]:
+                    if premiere[0] == seconde[0]:
+                        continue
+                    bas = max(premiere[1], seconde[1])
+                    haut = min(premiere[2], seconde[2])
+                    if haut - bas > 1e-9:
+                        doublons.append(
+                            f"{statut} {annee} : {premiere[0]} et {seconde[0]} "
+                            f"couvrent tous deux [{bas}–{haut}] plafonds"
+                        )
+    assert not doublons, "\n".join(sorted(set(doublons))[:8])
+
+
 def test_toute_succession_designe_un_regime_du_catalogue(catalogue):
     """`succede_a` et `integre_dans` ne peuvent pas pointer dans le vide.
 
