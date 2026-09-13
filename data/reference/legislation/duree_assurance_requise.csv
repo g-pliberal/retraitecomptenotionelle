@@ -33,6 +33,26 @@
 #   - loi du 20 janvier 2014 (Touraine) : 1958 et suivantes, cible 172
 #   - loi du 14 avril 2023 : accélération, cible 172 atteinte dès 1965
 #
+# LA GÉNÉRATION 1900 EST LA CLEF DE VOÛTE, et elle manquait. Une table par
+# génération ne répond pas en deçà de sa première ligne : les générations
+# antérieures à 1934 n'avaient donc aucune durée requise, et chaque fiche
+# retombait sur la sienne — celle d'aujourd'hui, cent soixante-douze trimestres,
+# opposée à des assurés nés dans les années 1920. Un ministre du culte né en
+# 1933 se voyait ainsi demander 172 trimestres et son cadet d'un an 151 : la même
+# carrière perdait un tiers de sa pension pour une année de naissance.
+#
+# La ligne 1900 porte CENT CINQUANTE trimestres, la durée que la loi du
+# 31 décembre 1971 dite Boulin a fixée et que la loi du 22 juillet 1993 relève à
+# partir de la génération 1934 : ces générations-là ne sont pas touchées par la
+# réforme, et c'est précisément ce que dit son tableau en commençant à 1934.
+# `haute` et non `certifiee` : la ligne est la lecture en creux d'un texte qui
+# nomme les générations suivantes, non une ligne écrite dans un tableau.
+#
+# CE QU'ELLE NE DIT PAS : les assurés qui ont liquidé AVANT 1972 devaient trente
+# années, soit cent vingt trimestres, et non trente-sept et demie. La table est
+# indexée sur la génération, comme le droit depuis 1993 ; la borne de 1972 est
+# calendaire, et les fiches du régime général la portent dans leurs périodes.
+#
 # DEUX PROVENANCES, ET LA COLONNE `fiabilite` LES DISTINGUE.
 #
 #   * générations 1958 et suivantes — `certifiee`. Elles sont LUES dans le
@@ -64,6 +84,7 @@
 # Avant la génération 1934, la durée requise ne dépendait pas de la génération :
 # elle est alors lue dans la fiche du régime, à l'année de liquidation.
 generation,trimestres,fiabilite
+1900,150,haute
 1934,151,certifiee
 1935,152,certifiee
 1936,153,certifiee

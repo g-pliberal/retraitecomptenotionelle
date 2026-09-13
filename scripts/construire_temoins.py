@@ -93,7 +93,12 @@ def _cas() -> list[dict]:
     # sous la durée requise de 150 ou 160 trimestres et les dix meilleures
     # années ; une carrière née en 1955 liquide vers 2019, entre Balladur et la
     # réforme de 2023.
-    for naissance in (1935, 1955):
+    # UNE QUATRIÈME GÉNÉRATION, NÉE EN 1925, parce que les tables par génération
+    # ne répondent pas toutes en deçà de 1934 : la durée requise n'y répondait
+    # pas, et chaque fiche retombait sur la sienne — celle d'aujourd'hui. La
+    # correction n'a déplacé aucun témoin, faute d'un cas assez vieux pour la
+    # voir. Celle-ci liquide vers 1990.
+    for naissance in (1925, 1935, 1955):
         for statut in STATUTS:
             cas.append((f"statut_{statut}_{naissance}",
                         {"statut": statut, "naissance": str(naissance)}))
