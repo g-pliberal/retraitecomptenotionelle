@@ -24,6 +24,12 @@ Le livrable est le site statique ; voir `README.md`.
 - Données (barèmes, régimes, séries) : `data/`
 - Tous les régimes, calculés ou non : `data/reference/regimes/inventaire.yaml`.
   Toute fiche ajoutée au catalogue y prend sa ligne, un test l'exige.
+- L'histoire des règles : `data/reference/legislation/reformes.yaml` (le calendrier
+  des réformes, régime par régime) et `data/reference/regimes/pivots.yaml` (les
+  articles dont les versions datent chaque fiche). `python scripts/calendrier_regimes.py
+  --regime X` lit leurs versions dans l'index LEGI et dit ce que la fiche ne coupe
+  pas ; `--carte` imprime le tableau des jeux de règles. Un test impose que toute
+  réforme touchant un régime soit coupée, absorbée ou déclarée `non_appliquee`.
 - Ce que le site charge : `moteur/` — portage JavaScript du modèle (`moteur/js/`),
   paquet de données et feuille de style, tous deux produits par
   `python scripts/construire_donnees.py`. À reconstruire après toute modification

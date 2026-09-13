@@ -53,6 +53,11 @@ BASE = {
 #: rien ne le dise. C'est exactement ce qui est arrivé à `tranche_1_3_pass`,
 #: ajoutée d'un seul côté — seul le témoin d'un statut qui l'empruntait l'a
 #: montrée, et treize statuts n'en avaient aucun.
+#: Les générations auxquelles chaque statut est simulé, en plus du cas de
+#: base né en 1975 ; un test exige qu'il y en ait au moins cinq, dont une
+#: née avant 1934 et une après 1961.
+GENERATIONS_BALAYEES = (1925, 1935, 1945, 1955, 1965)
+
 STATUTS = (
     "salarie_prive_non_cadre", "salarie_prive_cadre", "fonctionnaire_etat",
     "fonctionnaire_territorial_hospitalier", "contractuel_public", "agent_sncf",
@@ -98,7 +103,11 @@ def _cas() -> list[dict]:
     # pas, et chaque fiche retombait sur la sienne — celle d'aujourd'hui. La
     # correction n'a déplacé aucun témoin, faute d'un cas assez vieux pour la
     # voir. Celle-ci liquide vers 1990.
-    for naissance in (1925, 1935, 1955):
+    # DEUX GÉNÉRATIONS DE PLUS, NÉES EN 1945 ET 1965 : la première liquide
+    # entre 2005 et 2010, sous la loi Fillon et avant la loi Woerth, la seconde
+    # après 2027, à soixante-quatre ans et cent soixante-douze trimestres.
+    # Aucune des quatre autres ne visitait ces deux états du droit.
+    for naissance in GENERATIONS_BALAYEES:
         for statut in STATUTS:
             cas.append((f"statut_{statut}_{naissance}",
                         {"statut": statut, "naissance": str(naissance)}))

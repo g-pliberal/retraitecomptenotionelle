@@ -1415,3 +1415,71 @@ def test_l_inventaire_couvre_les_regimes_que_le_code_enumere(inventaire):
     for ligne in inventaire:
         par_couverture[ligne.couverture] = par_couverture.get(ligne.couverture, 0) + 1
     assert set(par_couverture) == {"modelise", "partiel", "a_modeliser", "hors_champ"}
+
+
+# ---------------------------------------------------------------------------
+# Le calendrier des réformes et les articles pivots
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def reformes():
+    from retraite_notionnelle.donnees.regimes import charger_reformes
+
+    return charger_reformes(RACINE_DONNEES)
+
+
+@pytest.fixture(scope="module")
+def pivots():
+    from retraite_notionnelle.donnees.regimes import charger_pivots
+
+    return charger_pivots(RACINE_DONNEES)
+
+
+def test_toute_reforme_est_coupee_absorbee_ou_declaree(catalogue, reformes):
+    """Une réforme qui touche un régime laisse une trace dans sa fiche.
+
+    Une période qui commence l'année d'effet, ou un drapeau par génération
+    qui la porte, ou une déclaration `non_appliquee` avec sa raison. C'est le
+    test qui a fait apparaître que les exploitants agricoles se voyaient
+    opposer 64 ans dès 2003, que le RAFP ouvrait à 62 ans dès 2005 et que
+    l'Ircantec passait à 62 ans deux ans avant la loi Woerth.
+    """
+    from retraite_notionnelle.donnees.regimes import reformes_non_portees
+
+    manques = reformes_non_portees(catalogue, reformes)
+    assert not manques, "\n".join(f"{r} / {c} : {d}" for r, c, d in manques)
+
+
+def test_le_calendrier_des_reformes_est_coherent(catalogue, reformes):
+    codes = {r.code for r in catalogue}
+    for reforme in reformes:
+        assert reforme.regimes, f"{reforme.code} ne touche aucun régime"
+        inconnus = set(reforme.regimes) - codes
+        assert not inconnus, f"{reforme.code} : régimes inconnus {sorted(inconnus)}"
+        hors_liste = set(reforme.non_appliquee) - set(reforme.regimes)
+        assert not hors_liste, f"{reforme.code} : déclarés sans être touchés {sorted(hors_liste)}"
+        for code, raison in reforme.non_appliquee.items():
+            assert len(raison.split()) >= 10, f"{reforme.code} / {code} : raison trop courte"
+        assert reforme.parametres, f"{reforme.code} : aucun paramètre"
+        assert len(reforme.texte["reference"].split()) >= 3, f"{reforme.code} : référence vide"
+    dates = [r.date for r in reformes]
+    assert dates == sorted(dates)
+
+
+def test_tout_regime_calcule_a_ses_articles_pivots(catalogue, pivots):
+    """Chaque fiche dit dans quel texte ses paramètres se lisent — ou pourquoi
+    aucun texte de LEGI ne les porte."""
+    par_regime, hors_legi = pivots
+    codes = {r.code for r in catalogue}
+    assert set(par_regime) == codes, (
+        f"pivots sans fiche : {sorted(set(par_regime) - codes)} ; "
+        f"fiches sans pivot : {sorted(codes - set(par_regime))}"
+    )
+    for code, liste in par_regime.items():
+        if not liste:
+            assert len(hors_legi[code].split()) >= 8, f"{code} : raison hors_legi trop courte"
+            continue
+        for pivot in liste:
+            assert len(pivot.texte) >= 8, f"{code} : texte pivot illisible {pivot.texte!r}"
+            assert pivot.parametres, f"{code} / {pivot.texte} : aucun paramètre"

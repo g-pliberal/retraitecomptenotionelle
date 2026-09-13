@@ -2566,3 +2566,30 @@ def test_le_README_dit_le_vrai_poids_du_paquet():
             f"le README annonce {dit} Ko {quoi}, le paquet en fait "
             f"{mesure:.0f} — écart de {abs(dit - mesure) / mesure:.0%}"
         )
+
+
+def test_le_balayage_des_temoins_visite_six_generations():
+    """Chaque statut est simulé à plusieurs générations, pour que les périodes
+    ANCIENNES des fiches soient visitées autant que les récentes.
+
+    Le balayage n'en connaissait qu'une, née en 1975 : corriger le régime des
+    salariés agricoles n'avait déplacé aucun témoin. Il en faut au moins
+    cinq en plus du cas de base, dont une née avant 1934 — les tables par
+    génération ne répondent pas toutes en deçà — et une après 1961, qui
+    liquide sous la loi de 2023.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "construire_temoins.py"
+    specification = importlib.util.spec_from_file_location("construire_temoins", chemin)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    generations = set(module.GENERATIONS_BALAYEES)
+    assert len(generations) >= 5
+    assert min(generations) < 1934
+    assert max(generations) > 1961
+    noms = {c["nom"] if isinstance(c, dict) else c[0] for c in module._cas()}
+    for statut in module.STATUTS:
+        for naissance in generations:
+            assert f"statut_{statut}_{naissance}" in noms, (statut, naissance)

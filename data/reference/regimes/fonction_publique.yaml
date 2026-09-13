@@ -678,9 +678,35 @@ regimes:
     hors_repartition: true
     periodes:
       - debut: 2005
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: primes_uniquement
+        taux_cotisation_retraite: 0.10
+        part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
+          5 % agent + 5 % employeur sur les primes, dans la limite de 20 % du
+          traitement indiciaire. Conformément à la demande, les droits RAFP sont
+          isolés dans un compartiment de capitalisation distinct et ne sont pas
+          convertis en capital notionnel (cf. moteur/compartiments.py).
+          L'ÂGE EST DATÉ PAR L'ARTICLE 9 DU DÉCRET N° 2004-569 : jusqu'au 2 juin
+          2011 (LEGIARTI000006453304), « l'ouverture des droits est subordonnée
+          à la condition qu'ils aient atteint l'âge de soixante ans » ; la
+          fiche opposait 62 ans dès 2005. Aucune décote : l'âge d'ouverture est
+          aussi celui du taux plein.
+      - debut: 2011
         fin: null
         type_calcul: points
         age_ouverture: 62
+        age_ouverture_par_generation: true
         age_taux_plein: 62
         duree_requise_trimestres: null
         taux_plein: 1.0
@@ -697,3 +723,9 @@ regimes:
           traitement indiciaire. Conformément à la demande, les droits RAFP sont
           isolés dans un compartiment de capitalisation distinct et ne sont pas
           convertis en capital notionnel (cf. moteur/compartiments.py).
+          Depuis le 3 juin 2011 (LEGIARTI000024113145, puis LEGIARTI000036070843),
+          l'article 9 subordonne l'ouverture des droits à « l'âge mentionné à
+          l'article L. 161-17-2 » : 62 ans pour la génération 1955, 64 pour
+          1968 et les suivantes, lu à la génération. Le régime n'a pas de
+          décote ni d'âge d'annulation propre : `age_taux_plein` reste la
+          valeur de repli de l'ouverture et n'est pas lu.
