@@ -909,21 +909,96 @@ regimes:
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: Aligné sur le code des pensions civiles à compter de 2007.
       - debut: 2008
-        fin: null
+        fin: 2008
         type_calcul: annuites
-        age_ouverture: 64
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          ALIGNÉ SUR LE CODE DES PENSIONS CIVILES À COMPTER DE 2007, et la fiche
+          s'arrêtait là. Elle portait une seule période ouverte en 2008, avec l'âge
+          de 64 ans et la retenue de 11,10 % — c'est-à-dire le droit de 2023 — pour
+          un agent parti en 2009. Les périodes qui suivent sont celles de la
+          fonction publique d'État, sur lesquelles le régime est aligné : 2008-2008
+          (60 ans, 160 trimestres, retenue de 7,85 %), 2009-2010, 2011-2022 (âges
+          reportés de deux ans), 2023 (64 ans).
+      - debut: 2009
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          La surcote passe de 0,75 % à 1,25 % par trimestre au 1er janvier 2009.
+      - debut: 2011
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
-        taux_cotisation_retraite: 0.1110
+        taux_cotisation_retraite: 0.1029
         perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
-        avantages_non_contributifs: [majoration_enfants, reversion]
-        notes: Alignement sur la fonction publique d'État.
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi de 2010 : retenue pour pension alignée progressivement sur le taux du
+          privé, bornes d'âge reportées de deux ans.
+      - debut: 2023
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.111
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi du 14 avril 2023 : âge d'ouverture porté à 64 ans.
 
   - code: opera_de_paris
     nom: Caisse de retraites des personnels de l'Opéra national de Paris
