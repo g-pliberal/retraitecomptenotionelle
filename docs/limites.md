@@ -3191,9 +3191,7 @@ modèle :
 | `cipav_complementaire` | 1979-2026 | 3 | 44 | 3 | 0 |
 | `ieg` | 1946-2026 | 12 | 40 | 0 | 0 |
 | `cnbf_complementaire` | 1979-2026 | 2 | 40 | 0 | 0 |
-| `arrco` | 1961-2018 | 2 | 35 | 1 | 0 |
 | `msa_non_salaries` | 1952-2026 | 7 | 34 | 13 | 0 |
-| `agirc` | 1947-2018 | 5 | 34 | 0 | 0 |
 | `crpnpac_tranche_2` | 1963-2026 | 4 | 32 | 0 | 0 |
 | `crpnpac` | 1963-2026 | 4 | 32 | 5 | 0 |
 | `regime_general` | 1945-2026 | 8 | 27 | 14 | 0 |
@@ -3204,29 +3202,31 @@ modèle :
 | `organic` | 1949-2006 | 5 | 24 | 3 | 0 |
 | `msa_rco` | 2003-2026 | 1 | 24 | 24 | 0 |
 | `cancava` | 1949-2006 | 5 | 24 | 3 | 0 |
-| `arrco_tranche_2` | 1996-2018 | 1 | 23 | 0 | 0 |
 | `cavamac_complementaire` | 1968-2026 | 8 | 22 | 5 | 0 |
+| `ipacte` | 1951-1970 | 1 | 20 | 0 | 0 |
 | `pensions_civiles_1853` | 1930-1948 | 1 | 19 | 0 | 0 |
 | `ircantec` | 1971-2026 | 15 | 17 | 5 | 0 |
 | `rafp` | 2005-2026 | 2 | 16 | 6 | 0 |
 | `assurances_sociales` | 1930-1945 | 1 | 16 | 0 | 0 |
+| `agirc` | 1947-2018 | 24 | 13 | 0 | 0 |
 | `rco_artisans` | 1979-2012 | 10 | 12 | 2 | 0 |
 | `rci` | 2013-2026 | 2 | 12 | 2 | 0 |
-| `ipacte` | 1959-1970 | 1 | 12 | 0 | 0 |
-| `igrante` | 1959-1970 | 1 | 12 | 0 | 0 |
 | `cavimac` | 1979-2026 | 8 | 12 | 0 | 0 |
 | `carpimko_complementaire` | 1984-2026 | 27 | 12 | 0 | 0 |
+| `arrco` | 1961-2018 | 18 | 12 | 1 | 0 |
+| `igrante` | 1960-1970 | 1 | 11 | 0 | 0 |
 | `cavom_complementaire` | 2016-2026 | 1 | 11 | 2 | 0 |
 | `rsi` | 2006-2018 | 2 | 10 | 4 | 0 |
+| `arrco_tranche_2` | 1961-2018 | 22 | 9 | 0 | 0 |
 | `nric` | 2004-2012 | 2 | 8 | 3 | 0 |
 | `carmf_complementaire` | 1949-2026 | 62 | 8 | 1 | 0 |
-| `agirc_arrco` | 2019-2026 | 1 | 8 | 0 | 0 |
 | `unirs` | 1957-1961 | 1 | 5 | 0 | 0 |
 | `avts` | 1941-1945 | 1 | 5 | 0 | 0 |
+| `agirc_arrco` | 2019-2026 | 2 | 5 | 0 | 0 |
 
 **Ce tableau n'est plus écrit à la main** : c'est la sortie de
-`python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1
-et B2 de la campagne « les règles à travers l'histoire » (voir
+`python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1,
+B2 et B3 de la campagne « les règles à travers l'histoire » (voir
 [`regimes.md`](regimes.md), journal de la campagne). Les deux dernières
 colonnes viennent de l'index LEGI et du calendrier des réformes
 (`legislation/reformes.yaml`) : une « coupure de texte non reflétée » est une
@@ -3376,6 +3376,21 @@ pas aux autres. La tranche 2 de l'Arrco devient donc une fiche à part
 salarié agricole, mineur d'après 2011, agent de la SEITA, agent des chemins de
 fer secondaires — et à eux seuls. Le catalogue passe de 53 à 54 régimes sans
 qu'aucun régime nouveau n'existe : c'est un découpage, pas une découverte.
+
+**Et elle existe depuis 1961, pas depuis 1996.** La fiche affirmait qu'« avant
+1997, l'Arrco ne cotisait pas au-dessus du plafond ». C'est vrai des seules
+entreprises créées à compter du 1er janvier 1997, dont le barème commence à
+14 % ; l'accord du 8 décembre 1961 asseyait déjà la cotisation des non-cadres
+sur la totalité du salaire jusqu'à trois plafonds, au taux de la tranche 1, et
+OpenFisca-France en porte la série dans son barème des entreprises adhérentes
+avant 1997. La tranche B3 de la campagne (voir [`regimes.md`](regimes.md)) a
+retenu ce barème-là, pour l'Arrco comme pour l'Agirc (entreprises adhérentes
+avant 1981) : c'est la population la plus nombreuse, et la carrière saisie ne
+dit pas la date de création de l'employeur. Le barème des entreprises nouvelles
+— 12 % à l'Agirc dès 1983, 14 % sur la tranche 2 dès 1997 — est récupéré dans
+le même fichier brut et n'est prêté à personne : un salarié d'une entreprise
+créée après ces dates est sous-estimé jusqu'à ce que les deux barèmes se
+rejoignent (1996 à l'Agirc, 2005 à l'Arrco).
 
 Les points, eux, restent des POINTS ARRCO. Le moteur apprend pour cela un champ
 `points_de`, qui dit de quel régime une période emprunte le barème — prix
@@ -4212,7 +4227,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 572 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 578 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

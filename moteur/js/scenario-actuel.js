@@ -479,10 +479,17 @@ export class ScenarioActuel {
   abattementPoints(periode, carriere, trimestres, requis, ageLiquidation,
     anneeLiquidation) {
     if (periode.abattement_points === "agirc_arrco") {
-      if (trimestres >= requis) {
+      // Avant l'ASF de 1983, l'âge seul : une période sans durée requise — ni
+      // en dur, ni lue à la génération — abat toute anticipation avant
+      // l'âge du taux plein, et la table par durée ne s'y consulte pas.
+      const parAgeSeul = (periode.duree_requise_trimestres === null
+        || periode.duree_requise_trimestres === undefined)
+        && !periode.duree_requise_par_generation;
+      if (!parAgeSeul && trimestres >= requis) {
         return 1.0;
       }
-      const parDuree = coefficientAnticipation(requis - trimestres, 20);
+      const parDuree = parAgeSeul
+        ? null : coefficientAnticipation(requis - trimestres, 20);
       const ecartAge = Math.max(
         0.0, (this.ageTauxPlein(periode, carriere) - ageLiquidation) * 4,
       );

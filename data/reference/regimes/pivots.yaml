@@ -49,7 +49,9 @@ pivots:
   agirc:
     hors_legi: >-
       Convention collective nationale du 14 mars 1947 et ses avenants, hors
-      JORF et hors KALI ; seuls L. 921-1 et L. 921-4 encadrent le régime.
+      JORF et hors KALI ; seuls L. 921-1 et L. 921-4 encadrent le régime. Le
+      barème est lu dans OpenFisca-France (scripts/fetch/openfisca_cotisations.py),
+      les avis d'extension du JORF ne le chiffrant qu'à partir de 2004.
   unirs:
     hors_legi: >-
       Accord du 15 mai 1957 entre partenaires sociaux, hors JORF et hors
@@ -58,20 +60,20 @@ pivots:
     - {texte: "Code de la sécurité sociale", num: L921-4, parametres: [obligation]}
   arrco_tranche_2:
     hors_legi: >-
-      Accord du 25 avril 1996 entre partenaires sociaux, hors JORF ; le taux
-      de la tranche 2 est lu dans la compilation de la fédération.
+      Accords du 8 décembre 1961 et du 25 avril 1996 entre partenaires
+      sociaux, hors JORF ; le taux de la tranche 2 est lu dans OpenFisca-France
+      (barème des entreprises adhérentes avant 1997).
   agirc_arrco:
     hors_legi: >-
-      Accord national interprofessionnel du 17 novembre 2017, hors JORF et
-      hors KALI ; barème et coefficients lus chez la fédération.
+      Accord national interprofessionnel du 17 novembre 2017, étendu par
+      l'arrêté du 24 avril 2018 (JORFTEXT000036847920) qui n'en reprend pas
+      le texte ; barème et coefficients lus chez la fédération.
   ipacte:
-    hors_legi: >-
-      Décret n° 59-1569 du 31 décembre 1959, sans version consolidée dans
-      LEGI.
+    # LEGI ne garde du décret que l'assiette (art. 7) : ni taux, ni âge.
+    - {texte: "Décret n° 51-1445", num: "7", parametres: [assiette]}
   igrante:
-    hors_legi: >-
-      Même décret n° 59-1569 que l'IPACTE, sans version consolidée dans
-      LEGI ; paramètres à certifier auprès de la Caisse des dépôts.
+    # Même limite : l'article 2 donne l'assiette, rien d'autre n'est consolidé.
+    - {texte: "Décret n° 59-1569", num: "2", parametres: [assiette]}
   ircantec:
     - {texte: "Arrêté du 30 décembre 1970", num: "16", parametres: [age_ouverture, age_taux_plein, decote_par_trimestre]}
     - {texte: "Décret n°70-1277", num: "5", parametres: [taux_cotisation_retraite]}

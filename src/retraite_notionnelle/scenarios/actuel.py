@@ -1556,9 +1556,23 @@ class ScenarioActuel:
         où elle en donnerait 0,50.
         """
         if periode.abattement_points == "agirc_arrco":
-            if trimestres >= requis:
+            # AVANT L'ASF, L'ÂGE SEUL. Jusqu'à l'accord du 4 février 1983,
+            # l'Agirc et l'Arrco servaient le taux plein à soixante-cinq ans et
+            # abattaient toute anticipation, quelle que soit la durée : c'est
+            # l'ASF qui a financé la retraite à soixante ans sans abattement
+            # pour qui avait le taux plein au régime de base. Une période sans
+            # durée requise — ni en dur, ni lue à la génération — porte ce
+            # droit-là, et la table par durée ne s'y consulte pas.
+            par_age_seul = (
+                periode.duree_requise_trimestres is None
+                and not periode.duree_requise_par_generation
+            )
+            if not par_age_seul and trimestres >= requis:
                 return 1.0
-            par_duree = _coefficient_anticipation(requis - trimestres, 20)
+            par_duree = (
+                None if par_age_seul
+                else _coefficient_anticipation(requis - trimestres, 20)
+            )
             ecart_age = max(
                 0.0, (self._age_taux_plein(periode, carriere) - age_liquidation) * 4
             )

@@ -71,10 +71,10 @@ repris par un autre.
 | Association générale des institutions de retraite des cadres (`agirc`) | complémentaire, privé | 1947-2018 | ✅ modélisé | `salarie_prive_cadre`, `personnel_navigant` |  |
 | Union nationale des institutions de retraite des salariés (`unirs`) | complémentaire, privé | 1957-1962 | ◐ partiel | `salarie_prive_non_cadre` | L'UNIRS tient lieu de toutes les institutions fédérées avant 1961 — CRI, CIRCC, CGRCR, IRPSIMMEC, CAPIMMEC et les autres —, dont aucune n'a de fiche propre : chacune avait son barème, et le dépôt n'en connaît qu'un. |
 | Association des régimes de retraite complémentaire des salariés (`arrco`) | complémentaire, privé | 1961-2018 | ◐ partiel | `salarie_prive_non_cadre`, `salarie_prive_cadre`, `salarie_agricole`, `personnel_navigant`, `mineur`, `agent_seita`, `agent_chemins_fer_secondaires` | Routée à tous les salariés dès 1961, alors que l'affiliation n'est obligatoire pour tous que depuis la loi du 29 décembre 1972 : entre 1961 et 1972 le modèle prête une complémentaire à qui n'en avait pas. |
-| Arrco, tranche 2 des non-cadres (`arrco_tranche_2`) | complémentaire, privé | 1996-2018 | ✅ modélisé | `salarie_prive_non_cadre`, `salarie_agricole`, `mineur`, `agent_seita`, `agent_chemins_fer_secondaires` |  |
+| Arrco, tranche 2 des non-cadres (`arrco_tranche_2`) | complémentaire, privé | 1961-2018 | ✅ modélisé | `salarie_prive_non_cadre`, `salarie_agricole`, `mineur`, `agent_seita`, `agent_chemins_fer_secondaires` |  |
 | Régime unifié Agirc-Arrco (`agirc_arrco`) | complémentaire, privé | depuis 2019 | ✅ modélisé | `salarie_prive_non_cadre`, `salarie_prive_cadre`, `salarie_agricole`, `personnel_navigant`, `agent_sncf`, `agent_ratp`, `agent_ieg`, `mineur`, `personnel_opera`, `personnel_comedie_francaise`, `agent_seita`, `agent_port_strasbourg`, `agent_chemins_fer_secondaires` |  |
-| Institution de prévoyance des agents contractuels et temporaires de l'État (`ipacte`) | complémentaire, privé | 1959-1971 | ✅ modélisé | `contractuel_public` |  |
-| Institution générale de retraite des agents non titulaires de l'État (`igrante`) | complémentaire, privé | 1959-1971 | ✅ modélisé | — |  |
+| Institution de prévoyance des agents contractuels et temporaires de l'État (`ipacte`) | complémentaire, privé | 1951-1971 | ◐ partiel | `contractuel_public` | LEGI ne conserve du décret que l'assiette (article 7) : le taux de cotisation et l'âge de liquidation ne sont écrits nulle part dans l'index, et la fiche les estime — 4 %, 60 et 65 ans. |
+| Institution générale de retraite des agents non titulaires de l'État (`igrante`) | complémentaire, privé | 1960-1971 | ◐ partiel | `contractuel_public` | Comme l'IPACTE, taux et âge estimés faute d'article ; et la fiche ne porte que la tranche sous le plafond, celle de l'agent qui relève aussi de l'IPACTE — les autres non-titulaires cotisaient jusqu'à trois plafonds, part qu'aucun statut ne distingue. |
 | Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques (`ircantec`) | complémentaire, privé | depuis 1971 | ✅ modélisé | `contractuel_public` |  |
 | Affiliation des élus locaux à l'Ircantec | complémentaire, privé | depuis 1973 | ✚ à modéliser | — | Un statut à part : l'indemnité de fonction ouvre des points Ircantec sans régime de base, et depuis 2013 elle est aussi soumise aux cotisations du régime général au-delà d'un seuil. Le régime existe au catalogue, pas le statut qui y route une indemnité. |
 | Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1 (`crpnpac`) | spécial | depuis 1963 | ◐ partiel | `personnel_navigant` | Les fiches s'arrêtent à l'état de 2023, quand le régime est passé du code de l'aviation civile au code des transports ; le taux d'appel de 1995 à 2011 n'est pas appliqué. |
@@ -246,20 +246,55 @@ notionnel rétroactif — il avait cotisé 6 % et non 7,85 % —, celui né en 1
 des clercs nés en 1945 et 1955 descendent d'un à quatre ans et demi. Les
 pensions actuelles ne bougent pas : les cas types liquident après l'âge.
 
-### Feuille de route B3-B4 — ce que le script montre à lire
+### Tranche B3 — les complémentaires du privé, les taux de trente ans
+
+Ni le JORF ni LEGI ne chiffrent le barème de l'Agirc et de l'Arrco avant 1980 :
+les conventions sont hors Journal officiel et hors KALI, et les notices
+d'avant 1990 n'ont pas de corps. La source est OpenFisca-France (transcription
+du Barème social périodique, niveau `haute`), récupérée par
+`scripts/fetch/openfisca_cotisations.py` sous quatre formes — taux effectif,
+taux contractuel, taux d'appel, répartition salarié/employeur — et dans les
+deux barèmes d'adhésion qu'elle distingue. Les fiches portent celui des
+**entreprises existantes** (adhérentes avant 1981 à l'Agirc, avant 1997 à
+l'Arrco), une période par valeur de « contractuel × appel » ; le contrôle de
+vraisemblance de `verifier_donnees.py` les confronte à cinq centièmes près, et
+la répartition à un centième. Le taux d'appel de `regimes/valeurs_point.csv`,
+que le moteur retire pour convertir une cotisation en points, coïncide année
+par année avec celui d'OpenFisca : ce que la fiche porte en trop est exactement
+ce que le moteur retire.
+
+| Régime | Ce qui était faux | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `agirc` | 8 % pendant trente-quatre ans, puis trois moyennes de période (11,58 %, 14 %, 19,48 %) posées sur huit à vingt-cinq ans, prises dans le barème des entreprises créées après 1981 ; 160 trimestres en dur de 1994 à 2018 ; le taux plein à l'âge seul d'avant 1983 jamais porté | Taux d'appel de 100 % à 78 % (1952), 80, 85, 90, 95 %, 100 % (1966), 103 % (1979), 106, 110, 113,4, 117 % (1990), 121 puis 125 % (1994-1995) ; taux contractuel 8 % jusqu'en 1993, 10 → 16 % de 1994 à 1999 (accord du 9 février 1994, puis du 25 avril 1996), 16,24 % au 1er janvier 2006 (avenant A-222, `JORFARTI000001866147`), 16,34 et 16,44 % en 2014-2015 (accord du 13 mars 2013) ; ASF du 4 février 1983 (durée requise lue à la génération), GMP 1989, tranche C obligatoire en 1991 (accord du 24 mars 1988), âge du taux plein à la génération depuis 2011 | vingt-quatre périodes au lieu de cinq ; le cadre né en 1925 perd 0,6 % de pension actuelle — ses points de 1952 à 1965 étaient achetés au taux effectif de 8 % divisé par un appel de 78 à 95 %, soit plus que le contractuel —, ceux nés en 1935, 1945 et 1955 gagnent 0,6, 1,0 et 0,9 % |
+| `arrco` | 4 % effectifs de 1961 à 1995 quand le moteur divisait par un taux d'appel monté à 125 % : jusqu'à un cinquième des points de 1971-1995 perdus ; 7,50 % de 1996 à 2018, valeur de fin de période | 2,5 % (1962-1966), 4 % (1967), dix marches d'appel de 102,5 % (1971) à 125 % (1992), 4,5 → 6 % de 1996 à 1999 (accords du 10 février 1993 et du 25 avril 1996), 6,10 et 6,20 % en 2014-2015 (`JORFARTI000027826484`) ; mêmes coupures d'âge que l'Agirc | dix-huit périodes ; tous les affiliés Arrco nés de 1935 à 1965 gagnent 0,4 à 1,0 % ; le non-cadre né en 1910 (témoin `enfants_avant_1972`) perd 8,9 % : ses années 1957-1966 étaient cotisées à 4 % quand le barème dit 2,5 % |
+| `arrco_tranche_2` | créée en 1996 sur la foi d'« avant 1997, l'Arrco ne cotisait pas au-dessus du plafond » — vrai des seules entreprises créées après 1997 ; 19,50 % en moyenne de 1996 à 2018 | la tranche existe dès l'accord de 1961, au taux de la tranche 1, puis 10, 12, 14, 16 % de 2000 à 2005 (accord du 25 avril 1996, article 26) ; les non-cadres, salariés agricoles, agents de la SEITA et des chemins de fer secondaires y sont routés dès 1961 (`affiliations.yaml`) | vingt-deux périodes ; le salarié agricole né en 1925 gagne 1,7 % ; le non-cadre né en 1975 payé huit plafonds perd 2,9 % (sa tranche 2 de 1996 à 2004 était cotisée à 19,5 % au lieu de 7,5 à 17,5 %) |
+| `agirc_arrco` | coefficient de solidarité sans fin | avenant n° 17 du 22 novembre 2023 (`JORFARTI000049224707`, arrêté d'extension du 15 avril 2024, `JORFTEXT000049424935`) ; l'ANI lui-même étendu par l'arrêté du 24 avril 2018 (`JORFTEXT000036847920`) | rien : le coefficient est remplacé par la conversion actuarielle dans les scénarios notionnels |
+| `unirs` | 4 %, « à certifier » | aucune source ne date le barème ; 2,5 % par continuité avec la première valeur datée de l'Arrco, toujours `estimee` | compris dans les −8,9 % du non-cadre né en 1910 |
+| `ipacte` | née en 1959 ; 4 % sur la tranche 1 | décret n° 51-1445 du 12 décembre 1951 (`LEGITEXT000006060604`) : huit ans de plus ; assiette au-dessus du plafond jusqu'à quatre fois, 4,75 dès 1961 (article 7, `LEGIARTI000006368159`) ; salaires de référence 1951-1970 (`LEGIARTI000006381673`), identiques à la série du dépôt sauf 1955 (74 F, soit 0,113 €, contre 0,130) ; ni taux ni âge dans l'index — la fiche passe `partiel` | le contractuel né en 1925 perd 0,4 % : payé sous le plafond, l'année 1959 ne lui ouvre plus de points |
+| `igrante` | jamais routée : « le critère qui répartissait un agent entre les deux institutions n'est documenté par aucune source » | décret n° 59-1569, article 2 (`LEGIARTI000006368165`) : toute la rémunération jusqu'à trois plafonds, et sous le plafond seulement pour les affiliés de l'IPACTE ; répartition 40/60 (arrêté du 17 février 1960, article 15, `LEGIARTI000006381706`) ; routée au contractuel de 1960 à 1970 sur la tranche 1, sans recouvrement avec l'IPACTE | rien de visible : même point que l'IPACTE |
+| moteur | l'abattement de l'Agirc-Arrco consultait la table par durée sur toute l'histoire | avant l'ASF de 1983, l'âge seul : une période sans durée requise ne consulte que la table par âge (`_abattement_points`, porté dans `moteur/js/`) ; et depuis 2011 l'âge du taux plein des points Arrco et Agirc d'avant 2019 se lit à la génération | le non-cadre né en 1975 liquidant à 57 ans perd 3,0 % : ses points d'avant 2019 sont abattus jusqu'à 67 ans, l'âge de sa génération, et non 65 |
+
+Deux cent six témoins bougent, sur 324. Outre ce qui précède, tous les statuts
+publics gagnent 0,4 à 1,8 % sur le scénario libéral et la part employeur des
+générations 1925 à 1965 : avant 1995, la contribution de l'employeur public est
+estimée par l'effort d'un employeur privé de la même année, qui comprend
+désormais la tranche 2 et les marches d'appel de l'Arrco. Aucun âge opposable
+ne bouge.
+
+Ce qui reste, et où : le taux et l'âge de l'IPACTE et de l'IGRANTE (Caisse des
+dépôts, hors index) ; le barème de l'UNIRS ; le barème des entreprises nouvelles,
+récupéré mais prêté à personne ; la série salarié d'OpenFisca en retard d'une
+marche d'appel sur la série employeur en 1953 et 1989 (arrondie à un quart) ;
+le salaire de référence IPACTE de 1955 dans `valeurs_point.csv`, que la
+certification OpenFisca réécrirait.
+
+### Feuille de route B4 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
 [`limites.md`](limites.md)) compte, pour chaque fiche, les versions d'articles
 pivots qui commencent sans qu'une période commence. Ce que ces nombres disent
 pour les tranches suivantes :
 
-- **Complémentaires du privé (B3).** `agirc`, `unirs`, `arrco_tranche_2` et
-  `agirc_arrco` n'ont aucun texte dans LEGI : accords hors JORF. L'Agirc de
-  1947 à 1980 (8 % pendant trente-quatre ans) et l'Arrco de 1961 à 1995 (4 %)
-  se dateront chez la fédération, dont la compilation des valeurs de point est
-  déjà lue par `scripts/fetch/agirc_arrco_valeurs_point.py`, et dans les
-  barèmes IPP ; à défaut, aux dates connues des accords (1962, 1970-1976,
-  1988, 1996), au niveau `moyenne`.
 - **Libéraux (B4).** `carpv_complementaire` : 18 coupures de texte, toutes du
   décret n° 50-1318 (cotisation en actes médicaux par classes d'âge de 1954 à
   1997, puis en points) — la grille par millésime est lisible ; `cavp`
@@ -280,5 +315,7 @@ pour les tranches suivantes :
   `comedie_francaise`) ; les dix-sept versions du règlement de la Banque de
   France ; le décret n° 84-63 des IEG dont l'index ne porte pas le chiffre ;
   le règlement du port autonome de Strasbourg, à demander.
+- **Restes de B3.** Taux et âge de l'IPACTE et de l'IGRANTE, à demander à la
+  Caisse des dépôts ; barème de l'UNIRS ; salaire de référence IPACTE de 1955.
 - **Puis B5**, les dix-huit régimes à modéliser de l'inventaire, par
   population décroissante.

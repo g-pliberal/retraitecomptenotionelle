@@ -5,7 +5,7 @@ regimes:
     nom: Association générale des institutions de retraite des cadres
     famille: complementaire_prive
     source_id: agirc_arrco_points
-    fiabilite: moyenne
+    fiabilite: haute
     creation: 1947
     fermeture: 2018
     extinction: 2018
@@ -15,7 +15,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1947
-        fin: 1980
+        fin: 1951
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
@@ -27,47 +27,33 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: tranche_b
         taux_cotisation_retraite: 0.08
-        part_salariale: 0.25   # OpenFisca : un quart, trois quarts
-        decote_par_trimestre: 0.01
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
-        notes: >-
-          Convention collective nationale du 14 mars 1947. Régime par points sur
-          les tranches B et C. Taux contractuel monté progressivement de 8 % à
-          16 % ; la garantie minimale de points (GMP) n'existe pas encore : elle
-          est créée par l'accord du 9 février 1988, applicable au 1er janvier
-          1989, d'où la coupure de période à cette date.
-          Le taux de 8 % est celui du taux contractuel d'origine. OpenFisca ne
-          transcrit les taux effectifs de l'Agirc qu'à partir de 1981 : ces
-          trente-quatre années restent hors de portée d'un recoupement, et la
-          période a été coupée à 1981 pour que celles qui suivent le soient.
-
-      - debut: 1981
-        fin: 1988
-        type_calcul: points
-        age_ouverture: 60
-        age_taux_plein: 65
-        duree_requise_trimestres: null
-        taux_plein: 1.0
-        abattement_points: agirc_arrco
-        plafond_majoration_enfants: 2367
-        plafond_majoration_annee: 2025
-        salaire_reference: carriere_entiere
-        assiette: tranche_b
-        taux_cotisation_retraite: 0.1158
-        part_salariale: 0.3125   # OpenFisca, moyenne 1981-1988
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Taux EFFECTIF moyen de la période, 11,58 %, mesuré sur la série
-          annuelle d'OpenFisca-France — 8,24 % en 1981, 12 % en 1988. La fiche
-          portait 8 % sur toute la période 1947-1988, soit le taux contractuel
-          d'origine appliqué à quarante-deux ans : les huit dernières années y
-          étaient sous-cotisées d'un tiers.
+          Taux contractuel 8 % appelé à 100 % : 8 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1947, inchangées jusqu'en 1951). Convention collective
+          nationale du 14 mars 1947 (arrêté d'agrément du 31 mars 1947,
+          JORFTEXT000000653842) : taux contractuel de 8 % sur la tranche B,
+          appelé à 100 %. OpenFisca-France date sa série de 1948 ; 1947 porte
+          la même valeur. MÉTHODE DE LA TRANCHE B3. Ni le JORF ni LEGI ne
+          chiffrent le barème de l'Agirc avant 1980 : la convention de 1947 et
+          ses avenants ne sont ni au Journal officiel ni dans KALI, et les
+          notices d'avant 1990 n'ont pas de corps. La série est celle
+          d'OpenFisca-France (transcription du Barème social périodique,
+          niveau `haute`), barème des ENTREPRISES ADHÉRENTES AVANT 1981 — la
+          population la plus nombreuse ; les entreprises créées après 1981
+          cotisaient 12 % dès 1983, un barème que le modèle ne prête à
+          personne. Le taux porté ici est le taux EFFECTIF, contractuel ×
+          appel : le moteur retire le taux d'appel (regimes/valeurs_point.csv,
+          série identique à celle d'OpenFisca) pour ne convertir en points que
+          la part contractuelle. Une période par changement de l'un ou de
+          l'autre.
 
-      - debut: 1989
-        fin: 1993
+      - debut: 1952
+        fin: 1952
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
@@ -78,119 +64,886 @@ regimes:
         plafond_majoration_annee: 2025
         salaire_reference: carriere_entiere
         assiette: tranche_b
-        taux_cotisation_retraite: 0.14
-        part_salariale: 0.3133   # OpenFisca, moyenne 1989-1993
+        taux_cotisation_retraite: 0.0624
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
         decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 78 % : 6,24 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1952). Taux d'appel abaissé à 78 % par la commission
+          paritaire, décision que seule la transcription d'OpenFisca-France
+          date : le régime, jeune, prélevait moins que le taux contractuel.
+
+      - debut: 1953
+        fin: 1954
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.064
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 80 % : 6,4 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1953, inchangées jusqu'en 1954). Taux d'appel porté à 80
+          %.
+
+      - debut: 1955
+        fin: 1960
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.068
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 85 % : 6,8 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1955, inchangées jusqu'en 1960). Taux d'appel porté à 85
+          %.
+
+      - debut: 1961
+        fin: 1964
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.072
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 90 % : 7,2 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1961, inchangées jusqu'en 1964). Taux d'appel porté à 90
+          %.
+
+      - debut: 1965
+        fin: 1965
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.076
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 95 % : 7,6 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1965). Taux d'appel porté à 95 %.
+
+      - debut: 1966
+        fin: 1978
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.08
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 100 % : 8 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1966, inchangées jusqu'en 1978). Taux d'appel revenu à
+          100 % : le taux contractuel est intégralement prélevé.
+
+      - debut: 1979
+        fin: 1982
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.0824
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 103 % : 8,24 % prélevés sur
+          l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1979, inchangées jusqu'en 1982). Taux d'appel
+          porté à 103 % — le Barème social périodique de 1976 écrivait encore
+          « 2 % à la charge du salarié, 6 % à la charge de l'employeur ».
+
+      - debut: 1983
+        fin: 1985
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.0824
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 103 % : 8,24 % prélevés sur
+          l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1983, inchangées jusqu'en 1985). ACCORD ASF
+          DU 4 FÉVRIER 1983 (Association pour la structure financière) : la
+          retraite complémentaire est servie sans abattement dès soixante ans
+          à qui a le taux plein au régime de base. Jusque-là, le taux plein
+          était à soixante-cinq ans et toute anticipation abattue à l'âge seul
+          — c'est ce que portent les périodes antérieures, sans durée requise.
+          La durée est désormais lue à la génération, comme au régime de base,
+          ce qui porte aussi Balladur, Fillon et Touraine ; l'âge d'ouverture
+          l'est aussi.
+
+      - debut: 1986
+        fin: 1986
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.0848
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 106 % : 8,48 % prélevés sur
+          l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1986). Taux d'appel porté à 106 % (agrément
+          publié au Journal officiel du 13 mai 1987).
+
+      - debut: 1987
+        fin: 1988
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.088
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 8 % appelé à 110 % : 8,8 % prélevés sur l'assiette,
+          dont un quart à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1987, inchangées jusqu'en 1988). Taux d'appel porté à
+          110 %.
+
+      - debut: 1989
+        fin: 1989
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.09072
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
         points_minimum_annuels: 120
         avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
         notes: >-
-          GARANTIE MINIMALE DE POINTS, accord du 9 février 1988 : tout cadre
-          cotisant à l'Agirc acquiert au moins 120 points par an, même quand sa
-          tranche B est nulle — c'est-à-dire même quand son salaire ne dépasse
-          pas le plafond de la Sécurité sociale. C'est un droit GRATUIT, sans
-          contrepartie de cotisation proportionnelle, et le modèle le déclarait
-          sans jamais le servir : un cadre payé sous le plafond n'acquérait
-          aucun point à l'Agirc, quand le droit lui en donnait 120 par an.
-          La garantie disparaît avec la fusion Agirc-Arrco du 1er janvier 2019.
+          Taux contractuel 8 % appelé à 113,4 % : 9,072 % prélevés sur
+          l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1989). GARANTIE MINIMALE DE POINTS, accord du
+          9 février 1988 : tout cadre cotisant à l'Agirc acquiert au moins 120
+          points par an, même quand sa tranche B est nulle — un droit gratuit,
+          sans cotisation proportionnelle, qui disparaît avec la fusion du 1er
+          janvier 2019. Taux d'appel porté à 113,4 %.
+
+      - debut: 1990
+        fin: 1993
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.0936
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 8 % appelé à 117 % : 9,36 % prélevés sur
+          l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1990, inchangées jusqu'en 1993). Taux d'appel
+          porté à 117 %.
+
       - debut: 1994
+        fin: 1994
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.121
+        part_salariale: 0.301   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 10 % appelé à 121 % : 12,1 % prélevés sur
+          l'assiette, dont 30,1 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1994). ACCORD AGIRC DU 9 FÉVRIER 1994 : taux
+          contractuel porté de 8 % à 10 %, puis 12 % en 1995 ; taux d'appel à
+          121 %, puis 125 % en 1995. Le barème unique rejoint celui des
+          entreprises créées après 1981, qui cotisaient déjà 12 %.
+
+      - debut: 1995
+        fin: 1995
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.15
+        part_salariale: 0.3333   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 12 % appelé à 125 % : 15 % prélevés sur l'assiette,
+          dont 33,333 % à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1995). Accord Agirc du 9 février 1994 : 12 % appelés à
+          125 %.
+
+      - debut: 1996
+        fin: 1996
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.1625
+        part_salariale: 0.3462   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 13 % appelé à 125 % : 16,25 % prélevés sur
+          l'assiette, dont 34,615 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1996). Accord Agirc du 9 février 1994 : 13 %
+          ; fin de la clause spéciale des entreprises créées après 1981
+          (Barème social périodique).
+
+      - debut: 1997
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.175
+        part_salariale: 0.3571   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 14 % appelé à 125 % : 17,5 % prélevés sur
+          l'assiette, dont 35,714 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1997). ACCORD AGIRC-ARRCO DU 25 AVRIL 1996 :
+          14 %, « ce taux sera porté à 15 % en 1998 et à 16 % en 1999 »
+          (Barème social périodique). La saisine du Conseil constitutionnel de
+          1997 confirme la cible : « 6 % à l'ARRCO et 16 % à l'AGIRC »
+          (JORFARTI000001796933).
+
+      - debut: 1998
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.1875
+        part_salariale: 0.3667   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 15 % appelé à 125 % : 18,75 % prélevés sur
+          l'assiette, dont 36,667 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1998). Accord Agirc-Arrco du 25 avril 1996 :
+          15 %.
+
+      - debut: 1999
+        fin: 2005
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.2
+        part_salariale: 0.375   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 16 % appelé à 125 % : 20 % prélevés sur l'assiette,
+          dont 37,5 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1999, inchangées jusqu'en 2005). Accord Agirc-Arrco du 25
+          avril 1996 : 16 %, appelés à 125 % — 20 % prélevés sur la tranche B,
+          dont trois huitièmes à la charge du cadre.
+
+      - debut: 2006
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.203
+        part_salariale: 0.3793   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 16,24 % appelé à 125 % : 20,3 % prélevés sur
+          l'assiette, dont 37,931 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2006, inchangées jusqu'en 2010). ACCORD DU 13
+          NOVEMBRE 2003, avenant A-222 : « taux contractuel porté à 16,24 % »
+          sur les tranches B et C au 1er janvier 2006, part patronale 10 →
+          10,08 %, part salariale 6 → 6,16 % (JORFARTI000001866147,
+          JORFARTI000001473027) ; pourcentage d'appel maintenu à 125 % de 2006
+          à 2009 (JORFARTI000001299122) et pour les exercices 2011 à 2015
+          (JORFARTI000023951193).
+
+      - debut: 2011
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.203
+        part_salariale: 0.3793   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 16,24 % appelé à 125 % : 20,3 % prélevés sur
+          l'assiette, dont 37,931 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2011, inchangées jusqu'en 2013). LOI DU 9
+          NOVEMBRE 2010 (Woerth), portée aux complémentaires par l'accord du
+          18 mars 2011 : l'âge du taux plein sans condition de durée suit
+          celui du régime de base, lu à la génération (65 → 67 ans).
+
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_b
+        taux_cotisation_retraite: 0.20425
+        part_salariale: 0.3793   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        points_minimum_annuels: 120
+        avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
+        notes: >-
+          Taux contractuel 16,34 % appelé à 125 % : 20,425 % prélevés sur
+          l'assiette, dont 37,934 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2014). ACCORD DU 13 MARS 2013 (circulaire
+          Agirc-Arrco 2013-16-DRJ) : +0,10 point de taux contractuel en 2014
+          (16,34 %) et en 2015 (16,44 %) ; le JORF en porte l'équivalent
+          Arrco, 6,10 % et 16,10 % (JORFARTI000027826484).
+
+      - debut: 2015
         fin: 2018
         type_calcul: points
         age_ouverture: 60
         age_ouverture_par_generation: true
         age_taux_plein: 65
-        duree_requise_trimestres: 160
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
         plafond_majoration_annee: 2025
         salaire_reference: carriere_entiere
         assiette: tranche_b
-        taux_cotisation_retraite: 0.1948
-        part_salariale: 0.3712   # OpenFisca, moyenne 1994-2018
+        taux_cotisation_retraite: 0.2055
+        part_salariale: 0.3796   # OpenFisca, barème salarié / employeur
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         points_minimum_annuels: 120
         avantages_non_contributifs: [majoration_enfants, reversion, garantie_minimale_points]
         notes: >-
-          Taux contractuel 16,44 % + taux d'appel 125 % = 20,55 % de cotisation
-          effective sur T B/C EN FIN DE PÉRIODE, pour 16,44 % de points acquis.
-          L'écart taux d'appel / taux de calcul est une cotisation de solidarité
-          sans contrepartie de droits : elle est traitée comme une cotisation
-          effective dans le compte notionnel (paramètre `taux_appel_ouvre_droits`).
-          La fiche portait ces 20,43 % sur toute la période 1994-2018 ; le taux
-          effectif moyen de la période, mesuré sur la série annuelle
-          d'OpenFisca-France, est de 19,48 % — 16,25 % en 1994, 20,55 % depuis
-          2015. C'est cette moyenne qui est retenue.
+          Taux contractuel 16,44 % appelé à 125 % : 20,55 % prélevés sur
+          l'assiette, dont 37,956 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2015, inchangées jusqu'en 2018). Accord du 13
+          mars 2013 : 16,44 % appelés à 125 %, soit 20,55 % — le dernier
+          barème de l'Agirc, jusqu'à la fusion du 1er janvier 2019 (accord
+          national interprofessionnel du 17 novembre 2017, étendu par l'arrêté
+          du 24 avril 2018, JORFTEXT000036847920).
+
+      # ---- Tranche C, de quatre à huit plafonds, obligatoire depuis 1991
 
       - debut: 1991
         fin: 1993
         type_calcul: points
         age_ouverture: 60
+        age_ouverture_par_generation: true
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
         plafond_majoration_annee: 2025
         salaire_reference: carriere_entiere
         assiette: tranche_c
-        taux_cotisation_retraite: 0.14
-        part_salariale: 0.3133
+        taux_cotisation_retraite: 0.0936
+        part_salariale: 0.25   # OpenFisca, barème salarié / employeur
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          LA TRANCHE C, DE QUATRE À HUIT PLAFONDS, MANQUAIT AU CATALOGUE. La
-          fiche l'annonçait pourtant — « régime par points sur les tranches B
-          et C » — et n'en portait aucune période : un cadre payé au-dessus de
-          quatre plafonds cotisait sans qu'aucun point ne lui soit porté.
-          LE TAUX EST CELUI DE LA TRANCHE B, et ce n'est pas une approximation :
-          le barème d'OpenFisca-France, qui transcrit le Barème social
-          périodique, porte le MÊME taux sur les deux tranches, année par année,
-          de 1948 à la fusion de 2019.
-          LA PÉRIODE COMMENCE EN 1991, et non à la création du régime : la
-          cotisation sur la tranche C n'est obligatoire que « depuis le
-          01/01/88 pour les entreprises affiliées à CCSBTP, IRCASUP et IRICASE ;
-          au 01/01/91 pour toutes les entreprises » (Barème social périodique,
-          cité par OpenFisca). Avant cette date, elle dépendait de l'entreprise
-          — un choix que la carrière saisie ne porte pas, et que le modèle ne
-          prête donc à personne.
-          La répartition salarié/employeur est celle de la tranche B : sur la
-          tranche C elle est LIBRE, fixée par accord d'entreprise, et la
-          documentation d'OpenFisca conseille elle-même d'y appliquer celle de
-          la tranche B.
-          La garantie minimale de points n'y figure pas : elle porte sur la
-          seule tranche B, et la servir deux fois donnerait 240 points par an à
-          un cadre au-dessus de quatre plafonds.
+          Taux contractuel 8 % appelé à 117 % : 9,36 % prélevés sur
+          l'assiette, dont un quart à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1991, inchangées jusqu'en 1993). ACCORD DU 24
+          MARS 1988 : la cotisation sur la TRANCHE C, de quatre à huit
+          plafonds, devient obligatoire pour toutes les entreprises au 1er
+          janvier 1991 (depuis 1988 pour celles affiliées à CCSBTP, IRCASUP et
+          IRICASE). Avant, elle dépendait de l'entreprise — un choix que la
+          carrière saisie ne porte pas. Même taux que la tranche B, année par
+          année ; répartition libre sur la tranche C, celle de la tranche B
+          est appliquée comme OpenFisca-France le conseille.
+
       - debut: 1994
+        fin: 1994
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.121
+        part_salariale: 0.3   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 10 % appelé à 121 % : 12,1 % prélevés sur
+          l'assiette, dont 30 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1994). ACCORD AGIRC DU 9 FÉVRIER 1994 : taux
+          contractuel porté de 8 % à 10 %, puis 12 % en 1995 ; taux d'appel à
+          121 %, puis 125 % en 1995. Le barème unique rejoint celui des
+          entreprises créées après 1981, qui cotisaient déjà 12 %.
+
+      - debut: 1995
+        fin: 1995
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.15
+        part_salariale: 0.3333   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 12 % appelé à 125 % : 15 % prélevés sur l'assiette,
+          dont 33,333 % à la charge du salarié (OpenFisca-France, valeurs au
+          1er janvier 1995). Accord Agirc du 9 février 1994 : 12 % appelés à
+          125 %.
+
+      - debut: 1996
+        fin: 1996
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.1625
+        part_salariale: 0.3462   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 13 % appelé à 125 % : 16,25 % prélevés sur
+          l'assiette, dont 34,615 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1996). Accord Agirc du 9 février 1994 : 13 %
+          ; fin de la clause spéciale des entreprises créées après 1981
+          (Barème social périodique).
+
+      - debut: 1997
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.175
+        part_salariale: 0.3571   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 14 % appelé à 125 % : 17,5 % prélevés sur
+          l'assiette, dont 35,714 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1997). ACCORD AGIRC-ARRCO DU 25 AVRIL 1996 :
+          14 %, « ce taux sera porté à 15 % en 1998 et à 16 % en 1999 »
+          (Barème social périodique). La saisine du Conseil constitutionnel de
+          1997 confirme la cible : « 6 % à l'ARRCO et 16 % à l'AGIRC »
+          (JORFARTI000001796933).
+
+      - debut: 1998
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.1875
+        part_salariale: 0.3667   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 15 % appelé à 125 % : 18,75 % prélevés sur
+          l'assiette, dont 36,667 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1998). Accord Agirc-Arrco du 25 avril 1996 :
+          15 %.
+
+      - debut: 1999
+        fin: 2005
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.2
+        part_salariale: 0.375   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16 % appelé à 125 % : 20 % prélevés sur l'assiette,
+          dont 37,5 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1999, inchangées jusqu'en 2005). Accord Agirc-Arrco du 25
+          avril 1996 : 16 %, appelés à 125 % — 20 % prélevés sur la tranche B,
+          dont trois huitièmes à la charge du cadre.
+
+      - debut: 2006
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.203
+        part_salariale: 0.3793   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16,24 % appelé à 125 % : 20,3 % prélevés sur
+          l'assiette, dont 37,931 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2006, inchangées jusqu'en 2010). ACCORD DU 13
+          NOVEMBRE 2003, avenant A-222 : « taux contractuel porté à 16,24 % »
+          sur les tranches B et C au 1er janvier 2006, part patronale 10 →
+          10,08 %, part salariale 6 → 6,16 % (JORFARTI000001866147,
+          JORFARTI000001473027) ; pourcentage d'appel maintenu à 125 % de 2006
+          à 2009 (JORFARTI000001299122) et pour les exercices 2011 à 2015
+          (JORFARTI000023951193).
+
+      - debut: 2011
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.203
+        part_salariale: 0.3793   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16,24 % appelé à 125 % : 20,3 % prélevés sur
+          l'assiette, dont 37,931 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2011, inchangées jusqu'en 2013). LOI DU 9
+          NOVEMBRE 2010 (Woerth), portée aux complémentaires par l'accord du
+          18 mars 2011 : l'âge du taux plein sans condition de durée suit
+          celui du régime de base, lu à la génération (65 → 67 ans).
+
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.20425
+        part_salariale: 0.3793   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16,34 % appelé à 125 % : 20,425 % prélevés sur
+          l'assiette, dont 37,934 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2014). ACCORD DU 13 MARS 2013 (circulaire
+          Agirc-Arrco 2013-16-DRJ) : +0,10 point de taux contractuel en 2014
+          (16,34 %) et en 2015 (16,44 %) ; le JORF en porte l'équivalent
+          Arrco, 6,10 % et 16,10 % (JORFARTI000027826484).
+
+      - debut: 2015
         fin: 2018
         type_calcul: points
         age_ouverture: 60
         age_ouverture_par_generation: true
         age_taux_plein: 65
-        duree_requise_trimestres: 160
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
         plafond_majoration_annee: 2025
         salaire_reference: carriere_entiere
         assiette: tranche_c
-        taux_cotisation_retraite: 0.1948
-        part_salariale: 0.3712
+        taux_cotisation_retraite: 0.2055
+        part_salariale: 0.3796   # OpenFisca, barème salarié / employeur
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Tranche C de 1994 à la fusion : même taux effectif moyen que la
-          tranche B, 19,48 %, et même répartition. La tranche C disparaît le
-          1er janvier 2019 avec l'Agirc : la tranche 2 de l'Agirc-Arrco, de un à
-          huit plafonds, la remplace pour tous les salariés.
+          Taux contractuel 16,44 % appelé à 125 % : 20,55 % prélevés sur
+          l'assiette, dont 37,956 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2015, inchangées jusqu'en 2018). Accord du 13
+          mars 2013 : 16,44 % appelés à 125 %, soit 20,55 % — le dernier
+          barème de l'Agirc, jusqu'à la fusion du 1er janvier 2019 (accord
+          national interprofessionnel du 17 novembre 2017, étendu par l'arrêté
+          du 24 avril 2018, JORFTEXT000036847920).
+
 
   - code: arrco
     nom: Association pour le régime de retraite complémentaire des salariés
     famille: complementaire_prive
     source_id: agirc_arrco_points
-    fiabilite: moyenne
+    fiabilite: haute
     creation: 1961
     fermeture: 2018
     extinction: 2018
@@ -202,7 +955,42 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1961
-        fin: 1995
+        fin: 1966
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.025
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 2,5 % appelé à 100 % : 2,5 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1961, inchangées jusqu'en 1966). ACCORD
+          NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément du
+          27 mars 1962) : taux contractuel minimal de 2,5 % sur la totalité du
+          salaire jusqu'à trois plafonds, appelé à 100 %. OpenFisca-France
+          date sa série du 1er janvier 1962 ; 1961 porte la même valeur. Sur
+          la tranche 1, le taux est celui de tous les salariés ; sur la
+          tranche 2 il n'est dû que par les non-cadres (fiche
+          `arrco_tranche_2`). MÉTHODE DE LA TRANCHE B3. L'accord de 1961 et
+          ses avenants sont hors JORF ; seuls L. 921-1 et L. 921-4 encadrent
+          le régime. La série est celle d'OpenFisca-France (niveau `haute`),
+          barème des ENTREPRISES ADHÉRENTES AVANT 1997 ; le taux porté est le
+          taux effectif, contractuel × appel, et le moteur retire l'appel pour
+          convertir en points. Une période par changement de l'un ou de
+          l'autre.
+
+      - debut: 1967
+        fin: 1970
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
@@ -214,42 +1002,439 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.04
-        part_salariale: 0.40   # règle de répartition 40-60
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Accord du 8 décembre 1961 généralisant la retraite complémentaire.
-          Taux contractuel minimal de 4 % monté par étapes.
-      - debut: 1996
-        fin: 2018
+          Taux contractuel 4 % appelé à 100 % : 4 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1967, inchangées jusqu'en 1970). Taux contractuel minimal
+          porté à 4 %, la valeur que l'avenant n° 78 de 2004 cite encore comme
+          référence du régime (index JORF).
+
+      - debut: 1971
+        fin: 1971
         type_calcul: points
         age_ouverture: 60
-        age_ouverture_par_generation: true
         age_taux_plein: 65
-        duree_requise_trimestres: 160
+        duree_requise_trimestres: null
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
         plafond_majoration_annee: 2025
         salaire_reference: carriere_entiere
         assiette: tranche_1
-        taux_cotisation_retraite: 0.0750
-        part_salariale: 0.40   # règle de répartition 40-60
+        taux_cotisation_retraite: 0.041
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Taux contractuel 6 % sur T1 et 16 % sur T2, taux d'appel 125 %.
-          Taux effectif moyen de la période d'après OpenFisca-France : 7,42 % ;
-          la fiche porte 7,50 %, valeur de fin de période.
+          Taux contractuel 4 % appelé à 102,5 % : 4,1 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1971). Taux d'appel porté à 102,5 % —
+          première marche d'une série de quatre (105 % en 1972, 107,5 % en
+          1973, 110 % en 1974), transcrite par OpenFisca-France sans référence
+          d'accord.
+
+      - debut: 1972
+        fin: 1972
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.042
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 105 % : 4,2 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1972). Taux d'appel porté à 105 %.
+
+      - debut: 1973
+        fin: 1973
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.043
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 107,5 % : 4,3 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1973). Taux d'appel porté à 107,5 %.
+
+      - debut: 1974
+        fin: 1982
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.044
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 110 % : 4,4 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1974, inchangées jusqu'en 1982). Taux d'appel porté à 110 %.
+
+      - debut: 1983
+        fin: 1986
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.046
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 115 % : 4,6 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1983, inchangées jusqu'en 1986). Taux d'appel porté à 115 %
+          (lettre-circulaire Arrco 82-28 du 9 juillet 1982). ACCORD ASF DU 4
+          FÉVRIER 1983 (Association pour la structure financière) : la
+          retraite complémentaire est servie sans abattement dès soixante ans
+          à qui a le taux plein au régime de base. Jusque-là, le taux plein
+          était à soixante-cinq ans et toute anticipation abattue à l'âge seul
+          — c'est ce que portent les périodes antérieures, sans durée requise.
+          La durée est désormais lue à la génération, comme au régime de base,
+          ce qui porte aussi Balladur, Fillon et Touraine ; l'âge d'ouverture
+          l'est aussi.
+
+      - debut: 1987
+        fin: 1987
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.047
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 117,5 % : 4,7 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1987). Accords Arrco du 12 novembre 1986 :
+          taux d'appel porté à 117,5 %.
+
+      - debut: 1988
+        fin: 1990
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.048
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 120 % : 4,8 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1988, inchangées jusqu'en 1990). Accords Arrco du 12
+          novembre 1986 : taux d'appel porté à 120 %.
+
+      - debut: 1991
+        fin: 1991
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0492
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 123 % : 4,92 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1991). Accords Arrco du 12 novembre 1986 et
+          du 1er décembre 1989 : taux d'appel porté à 123 %.
+
+      - debut: 1992
+        fin: 1995
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.05
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 125 % : 5 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1992, inchangées jusqu'en 1995). Accords Arrco du 12
+          novembre 1986 et du 1er décembre 1989 : taux d'appel porté à 125 %,
+          où il reste jusqu'à la fusion.
+
+      - debut: 1996
+        fin: 1996
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.05625
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4,5 % appelé à 125 % : 5,625 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1996). ACCORD ARRCO DU 10 FÉVRIER 1993 : taux
+          contractuel porté de 4 % à 4,5 % au 1er janvier 1996, première
+          marche vers les 6 % de 1999. Le Journal officiel n'en garde qu'un
+          témoignage indirect : « 6 % au 1er janvier 1993 » cité en 2021
+          (JORFARTI000044548092), pour la cible.
+
+      - debut: 1997
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0625
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 5 % appelé à 125 % : 6,25 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1997). Accords du 9 février 1994 et du 25
+          avril 1996 : 5 %.
+
+      - debut: 1998
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.06875
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 5,5 % appelé à 125 % : 6,875 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1998). Accord Arrco du 25 avril 1996, article
+          26 : 5,5 %.
+
+      - debut: 1999
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.075
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 6 % appelé à 125 % : 7,5 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1999, inchangées jusqu'en 2010). Accord Arrco du 25 avril
+          1996, article 26 : 6 %, appelés à 125 % — 7,5 % prélevés sur la
+          tranche 1 ; unification des quarante-cinq régimes Arrco en un régime
+          unique au 1er janvier 1999, portée par
+          regimes/conversions_points.csv.
+
+      - debut: 2011
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.075
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 6 % appelé à 125 % : 7,5 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 2011, inchangées jusqu'en 2013). LOI DU 9 NOVEMBRE 2010
+          (Woerth), portée aux complémentaires par l'accord du 18 mars 2011 :
+          l'âge du taux plein sans condition de durée suit celui du régime de
+          base, lu à la génération (65 → 67 ans).
+
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.07625
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 6,1 % appelé à 125 % : 7,625 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2014). Accord Agirc-Arrco du 13 mars 2013 :
+          +0,10 point, 6,10 % sur la tranche 1 et 16,10 % sur la tranche 2
+          (JORFARTI000027826484).
+
+      - debut: 2015
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0775
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 6,2 % appelé à 125 % : 7,75 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2015, inchangées jusqu'en 2018). Accord du 13
+          mars 2013 : 6,20 % et 16,20 % — le dernier barème de l'Arrco,
+          jusqu'à la fusion du 1er janvier 2019 (accord national
+          interprofessionnel du 17 novembre 2017, étendu par l'arrêté du 24
+          avril 2018, JORFTEXT000036847920).
+
 
   - code: arrco_tranche_2
     nom: Arrco, tranche 2 (non-cadres)
     famille: complementaire_prive
     source_id: agirc_arrco_points
-    fiabilite: moyenne
-    creation: 1996
+    fiabilite: haute
+    creation: 1961
     fermeture: 2018
     extinction: 2018
     succede_a: []
@@ -262,42 +1447,622 @@ regimes:
       pas aux autres.
     hors_repartition: false
     periodes:
-      - debut: 1996
-        fin: 2018
+      - debut: 1961
+        fin: 1966
         type_calcul: points
         age_ouverture: 60
-        age_ouverture_par_generation: true
         age_taux_plein: 65
-        duree_requise_trimestres: 160
+        duree_requise_trimestres: null
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
         plafond_majoration_annee: 2025
         salaire_reference: carriere_entiere
         assiette: tranche_2_arrco
-        taux_cotisation_retraite: 0.1950
-        part_salariale: 0.40   # règle de répartition 40-60
+        taux_cotisation_retraite: 0.025
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
         points_de: arrco
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          TRANCHE 2 DE L'ARRCO, ET ELLE N'EST PAS DUE PAR TOUT LE MONDE. Tous
-          les salariés du privé cotisent à l'Arrco sur la tranche 1, mais SEULS
-          LES NON-CADRES cotisent sur la tranche 2 — la part de salaire comprise
-          entre un et TROIS plafonds, et non huit comme dans le régime unifié
-          d'après 2019. Un cadre, lui, cotise l'Agirc sur cette part.
-          Elle figurait auparavant dans la fiche `arrco`, que l'affiliation
-          donne aussi aux cadres : un cadre acquérait donc DEUX FOIS des droits
-          sur la même part de salaire, une fois à l'Arrco et une fois à l'Agirc.
-          Sur deux plafonds de salaire, cela lui prêtait près de sept mille
-          euros de pension par an qu'aucun régime ne lui devait.
-          Les points restent des POINTS ARRCO — `points_de: arrco` —, achetés au
-          salaire de référence de l'Arrco et servis à la valeur de son point ;
-          seule l'assiette, et donc l'affiliation, diffère.
-          Taux effectifs d'OpenFisca-France : 17,50 % en 1997, 20,25 % depuis
-          2015, soit 19,50 % en moyenne sur la période où la tranche existe.
-          Avant 1997, l'Arrco ne cotisait pas au-dessus du plafond.
+          Taux contractuel 2,5 % appelé à 100 % : 2,5 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1961, inchangées jusqu'en 1966). ACCORD
+          NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément du
+          27 mars 1962) : taux contractuel minimal de 2,5 % sur la totalité du
+          salaire jusqu'à trois plafonds, appelé à 100 %. OpenFisca-France
+          date sa série du 1er janvier 1962 ; 1961 porte la même valeur. Sur
+          la tranche 1, le taux est celui de tous les salariés ; sur la
+          tranche 2 il n'est dû que par les non-cadres (fiche
+          `arrco_tranche_2`). TRANCHE 2 DE L'ARRCO, ET ELLE N'EST PAS DUE PAR
+          TOUT LE MONDE : seuls les non-cadres cotisent sur la part de salaire
+          comprise entre un et TROIS plafonds ; un cadre cotise l'Agirc sur
+          cette part. Elle figurait auparavant dans la fiche `arrco`, que
+          l'affiliation donne aussi aux cadres, qui acquéraient donc deux fois
+          des droits sur la même part. Les points restent des POINTS ARRCO
+          (`points_de: arrco`), achetés au salaire de référence de l'Arrco et
+          servis à la valeur de son point ; seule l'assiette, et donc
+          l'affiliation, diffère. LA TRANCHE EXISTE DEPUIS L'ORIGINE :
+          l'accord de 1961 assied la cotisation sur la totalité du salaire
+          jusqu'à trois plafonds, au même taux que la tranche 1, et c'est ce
+          que porte le barème des entreprises adhérentes avant 1997
+          d'OpenFisca-France. La fiche affirmait qu'« avant 1997, l'Arrco ne
+          cotisait pas au-dessus du plafond » : ce n'est vrai que des
+          entreprises créées à compter de cette date, dont le barème commence
+          à 14 %. MÉTHODE DE LA TRANCHE B3. L'accord de 1961 et ses avenants
+          sont hors JORF ; seuls L. 921-1 et L. 921-4 encadrent le régime. La
+          série est celle d'OpenFisca-France (niveau `haute`), barème des
+          ENTREPRISES ADHÉRENTES AVANT 1997 ; le taux porté est le taux
+          effectif, contractuel × appel, et le moteur retire l'appel pour
+          convertir en points. Une période par changement de l'un ou de
+          l'autre.
+
+      - debut: 1967
+        fin: 1970
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.04
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 100 % : 4 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1967, inchangées jusqu'en 1970). Taux contractuel minimal
+          porté à 4 %, la valeur que l'avenant n° 78 de 2004 cite encore comme
+          référence du régime (index JORF).
+
+      - debut: 1971
+        fin: 1971
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.041
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 102,5 % : 4,1 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1971). Taux d'appel porté à 102,5 % —
+          première marche d'une série de quatre (105 % en 1972, 107,5 % en
+          1973, 110 % en 1974), transcrite par OpenFisca-France sans référence
+          d'accord.
+
+      - debut: 1972
+        fin: 1972
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.042
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 105 % : 4,2 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1972). Taux d'appel porté à 105 %.
+
+      - debut: 1973
+        fin: 1973
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.043
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 107,5 % : 4,3 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1973). Taux d'appel porté à 107,5 %.
+
+      - debut: 1974
+        fin: 1982
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.044
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 110 % : 4,4 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1974, inchangées jusqu'en 1982). Taux d'appel porté à 110 %.
+
+      - debut: 1983
+        fin: 1986
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.046
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 115 % : 4,6 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1983, inchangées jusqu'en 1986). Taux d'appel porté à 115 %
+          (lettre-circulaire Arrco 82-28 du 9 juillet 1982). ACCORD ASF DU 4
+          FÉVRIER 1983 (Association pour la structure financière) : la
+          retraite complémentaire est servie sans abattement dès soixante ans
+          à qui a le taux plein au régime de base. Jusque-là, le taux plein
+          était à soixante-cinq ans et toute anticipation abattue à l'âge seul
+          — c'est ce que portent les périodes antérieures, sans durée requise.
+          La durée est désormais lue à la génération, comme au régime de base,
+          ce qui porte aussi Balladur, Fillon et Touraine ; l'âge d'ouverture
+          l'est aussi.
+
+      - debut: 1987
+        fin: 1987
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.047
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 117,5 % : 4,7 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1987). Accords Arrco du 12 novembre 1986 :
+          taux d'appel porté à 117,5 %.
+
+      - debut: 1988
+        fin: 1990
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.048
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 120 % : 4,8 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1988, inchangées jusqu'en 1990). Accords Arrco du 12
+          novembre 1986 : taux d'appel porté à 120 %.
+
+      - debut: 1991
+        fin: 1991
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.0492
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 123 % : 4,92 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1991). Accords Arrco du 12 novembre 1986 et
+          du 1er décembre 1989 : taux d'appel porté à 123 %.
+
+      - debut: 1992
+        fin: 1995
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.05
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4 % appelé à 125 % : 5 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1992, inchangées jusqu'en 1995). Accords Arrco du 12
+          novembre 1986 et du 1er décembre 1989 : taux d'appel porté à 125 %,
+          où il reste jusqu'à la fusion.
+
+      - debut: 1996
+        fin: 1996
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.05625
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 4,5 % appelé à 125 % : 5,625 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1996). ACCORD ARRCO DU 10 FÉVRIER 1993 : taux
+          contractuel porté de 4 % à 4,5 % au 1er janvier 1996, première
+          marche vers les 6 % de 1999. Le Journal officiel n'en garde qu'un
+          témoignage indirect : « 6 % au 1er janvier 1993 » cité en 2021
+          (JORFARTI000044548092), pour la cible.
+
+      - debut: 1997
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.0625
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 5 % appelé à 125 % : 6,25 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1997). Accords du 9 février 1994 et du 25
+          avril 1996 : 5 %.
+
+      - debut: 1998
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.06875
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 5,5 % appelé à 125 % : 6,875 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 1998). Accord Arrco du 25 avril 1996, article
+          26 : 5,5 %.
+
+      - debut: 1999
+        fin: 1999
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.075
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 6 % appelé à 125 % : 7,5 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 1999). Accord Arrco du 25 avril 1996, article 26 : 6 %,
+          appelés à 125 % — 7,5 % prélevés sur la tranche 1 ; unification des
+          quarante-cinq régimes Arrco en un régime unique au 1er janvier 1999,
+          portée par regimes/conversions_points.csv.
+
+      - debut: 2000
+        fin: 2001
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.125
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 10 % appelé à 125 % : 12,5 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2000, inchangées jusqu'en 2001). ACCORD ARRCO
+          DU 25 AVRIL 1996, ARTICLE 26 : pour les entreprises adhérentes avant
+          1997, le taux contractuel de la tranche 2 monte par marches — 10 %
+          en 2000, 12 % en 2002, 14 % en 2004, 16 % en 2005 — pour rejoindre
+          celui imposé d'emblée aux entreprises créées à compter du 1er
+          janvier 1997 (14 % en 1997, 15 % en 1999, 16 % en 2000).
+
+      - debut: 2002
+        fin: 2003
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.15
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 12 % appelé à 125 % : 15 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 2002, inchangées jusqu'en 2003). Accord Arrco du 25 avril
+          1996, article 26 : 12 % sur la tranche 2.
+
+      - debut: 2004
+        fin: 2004
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.175
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 14 % appelé à 125 % : 17,5 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2004). Accord Arrco du 25 avril 1996, article
+          26 : 14 % sur la tranche 2 ; l'avenant n° 78 de 2004 en porte la
+          trace au JORF.
+
+      - debut: 2005
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.2
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16 % appelé à 125 % : 20 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 2005, inchangées jusqu'en 2010). Accord Arrco du 25 avril
+          1996, article 26 : 16 % sur la tranche 2, appelés à 125 % — 20 %
+          prélevés, comme sur la tranche B de l'Agirc.
+
+      - debut: 2011
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.2
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16 % appelé à 125 % : 20 % prélevés sur l'assiette,
+          dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er
+          janvier 2011, inchangées jusqu'en 2013). LOI DU 9 NOVEMBRE 2010
+          (Woerth), portée aux complémentaires par l'accord du 18 mars 2011 :
+          l'âge du taux plein sans condition de durée suit celui du régime de
+          base, lu à la génération (65 → 67 ans).
+
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.20125
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16,1 % appelé à 125 % : 20,125 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2014). Accord Agirc-Arrco du 13 mars 2013 :
+          +0,10 point, 6,10 % sur la tranche 1 et 16,10 % sur la tranche 2
+          (JORFARTI000027826484).
+
+      - debut: 2015
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2_arrco
+        taux_cotisation_retraite: 0.2025
+        part_salariale: 0.4   # OpenFisca, barème salarié / employeur
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux contractuel 16,2 % appelé à 125 % : 20,25 % prélevés sur
+          l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
+          valeurs au 1er janvier 2015, inchangées jusqu'en 2018). Accord du 13
+          mars 2013 : 6,20 % et 16,20 % — le dernier barème de l'Arrco,
+          jusqu'à la fusion du 1er janvier 2019 (accord national
+          interprofessionnel du 17 novembre 2017, étendu par l'arrêté du 24
+          avril 2018, JORFTEXT000036847920).
+
 
   - code: agirc_arrco
     nom: Régime unifié Agirc-Arrco
@@ -313,13 +2078,14 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 2019
-        fin: null
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
@@ -332,24 +2098,31 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
         notes: >-
-          Accord national interprofessionnel du 17 novembre 2017.
-          L'abattement n'est pas la décote du régime de base : le régime
-          publie ses propres COEFFICIENTS D'ANTICIPATION, en deux tables — l'une
-          indexée sur les trimestres manquants (0,99 à 0,78 de un à vingt),
-          l'autre sur l'âge (1 à 0,43 pour dix ans d'anticipation) — et retient
-          la plus avantageuse pour l'assuré. La majoration pour enfants est
-          quant à elle PLAFONNÉE en euros : 2 367 € par an pour les pensions
-          servies depuis le 1er novembre 2025, revalorisés comme la valeur de
-          service du point, et opposables aux seuls assurés nés à compter du
-          2 août 1951.
-          Tranche 1 (0 -> 1 PASS) : taux d'appel 7,87 %, taux de calcul des
-          points 6,20 %. Tranche 2 (1 -> 8 PASS) : taux d'appel 21,59 %,
-          taux de calcul 17,00 % (voir `tranche_2` ci-dessous).
-          Le coefficient de solidarité (malus 10 % pendant 3 ans) et le
-          coefficient majorant sont des dispositifs d'incitation d'âge :
-          ils sont remplacés par le coefficient de conversion actuariel dans
-          les scénarios notionnels.
-      - debut: 2019
+          ACCORD NATIONAL INTERPROFESSIONNEL DU 17 NOVEMBRE 2017, étendu et
+          élargi par l'arrêté du 24 avril 2018 (JORFTEXT000036847920, articles
+          JORFARTI000036847923 et JORFARTI000036847926, au visa de L. 921-4) :
+          régime unique au 1er janvier 2019, deux tranches, taux de calcul des
+          points 6,20 % sur la tranche 1 (0 → 1 PASS) et 17 % sur la tranche 2
+          (1 → 8 PASS), taux d'appel 127 % (loi n° 2018-32,
+          JORFARTI000036526047) — 7,87 % et 21,59 % prélevés, répartis 40/60
+          (article 38). L'abattement n'est pas la décote du régime de base :
+          le régime publie ses propres COEFFICIENTS D'ANTICIPATION, en deux
+          tables — l'une indexée sur les trimestres manquants (0,99 à 0,78 de
+          un à vingt), l'autre sur l'âge (1 à 0,43 pour dix ans
+          d'anticipation) — et retient la plus avantageuse ; l'âge du taux
+          plein et la durée sont lus à la génération, ce qui porte la loi du
+          14 avril 2023. La majoration pour enfants est PLAFONNÉE en euros : 2
+          367 € par an pour les pensions servies depuis le 1er novembre 2025,
+          revalorisés comme la valeur de service du point, opposables aux
+          seuls assurés nés à compter du 2 août 1951. COEFFICIENTS DE
+          SOLIDARITÉ (ANI du 30 octobre 2015, JORFARTI000031602387) : malus de
+          10 % pendant trois ans, au plus jusqu'à 67 ans, pour les assurés nés
+          à compter de 1957 liquidant au taux plein sans différer d'un an, et
+          coefficients majorants pour qui diffère de deux ans ou plus. Ce sont
+          des dispositifs d'incitation d'âge : le coefficient de conversion
+          actuariel les remplace dans les scénarios notionnels.
+
+      - debut: 2024
         fin: null
         type_calcul: points
         age_ouverture: 62
@@ -357,6 +2130,37 @@ regimes:
         age_taux_plein: 67
         age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0787
+        part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          AVENANT N° 17 DU 22 NOVEMBRE 2023 (avis JORFARTI000049224707, arrêté
+          d'extension du 15 avril 2024, JORFTEXT000049424935) : « suppression
+          des coefficients de solidarité et des coefficients majorants
+          appliqués dans le régime depuis 2019 », pour les retraites prenant
+          effet à compter du 1er décembre 2023 et, à compter du 1er avril
+          2024, pour celles déjà minorées. Le barème ne change pas ; seule la
+          liste des avantages perd le coefficient de solidarité. La fiche
+          coupe au 1er janvier 2024, sa granularité étant l'année.
+
+      - debut: 2019
+        fin: 2023
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
@@ -368,7 +2172,37 @@ regimes:
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
-        notes: Tranche 2, de 1 à 8 plafonds de la Sécurité sociale.
+        notes: >-
+          Tranche 2, de 1 à 8 plafonds de la Sécurité sociale : 17 % de taux
+          de calcul appelés à 127 %, 21,59 % prélevés. Elle remplace la
+          tranche B et la tranche C de l'Agirc comme la tranche 2 de l'Arrco
+          (loi n° 2018-32, JORFARTI000036526047 : « fusion de la tranche T2 et
+          de la tranche TB »).
+
+      - debut: 2024
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.2159
+        part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche 2 depuis l'avenant n° 17 : barème inchangé, coefficient de
+          solidarité supprimé.
+
 
   - code: ircantec
     nom: Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités
@@ -963,15 +2797,17 @@ regimes:
     famille: complementaire_prive
     source_id: ircantec_points
     fiabilite: estimee
-    creation: 1959
+    creation: 1951
     fermeture: 1970
     extinction: 1971
     succede_a: []
     integre_dans: ircantec
-    population: Agents contractuels de l'État.
+    population: >-
+      Agents contractuels et temporaires de l'État, sur la part de rémunération
+      au-dessus du plafond des assurances sociales.
     hors_repartition: false
     periodes:
-      - debut: 1959
+      - debut: 1951
         fin: 1970
         type_calcul: points
         age_ouverture: 60
@@ -979,28 +2815,53 @@ regimes:
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: tranche_1
+        assiette: tranche_b
         taux_cotisation_retraite: 0.04
         part_salariale: 0.40   # prédécesseur de l'Ircantec, même répartition — estimée
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
-        notes: Paramètres à certifier auprès de la Caisse des dépôts.
+        notes: >-
+          DÉCRET N° 51-1445 DU 12 DÉCEMBRE 1951 (LEGITEXT000006060604), régime
+          de retraites complémentaire des agents contractuels et temporaires
+          de l'État, abrogé et remplacé par l'Ircantec au 1er janvier 1971
+          (décret n° 70-1277, JORFTEXT000000306984). La fiche le faisait
+          naître en 1959, année de l'IGRANTE : il a huit ans de plus, et LEGI
+          porte ses salaires de référence de 1951 à 1970 (arrêté du 12
+          décembre 1951, article 8, LEGIARTI000006381673 : 63 F pour 1951,
+          2,59 F pour 1970), qui sont, à une valeur près, ceux que
+          regimes/valeurs_point.csv porte — 1955 y vaut 0,130 € quand l'arrêté
+          dit 74 F, soit 0,113 €. L'ASSIETTE est lue dans l'article 7
+          (LEGIARTI000006368159) : « la fraction de la rémunération excédant
+          le plafond des assurances sociales […] dans la limite du quadruple
+          dudit plafond ; toutefois et à compter du 1er janvier 1961, cette
+          limite est portée à 4,75 fois le plafond ». C'est la tranche B du
+          moteur, de un à quatre plafonds ; le trois-quarts de plafond ajouté
+          en 1961 n'a pas d'assiette et ne touche que les rémunérations entre
+          quatre et 4,75 plafonds. Sous le plafond, l'agent relève de
+          l'IGRANTE à partir de 1960 (décret n° 59-1569, article 2). LEGI ne
+          conserve du décret que les articles 1, 2, 6 à 10 : aucun n'écrit le
+          taux ni l'âge, et l'index du JORF n'a que des titres (accord Agirc-
+          IPACTE de 1952, JORFTEXT000000797895). Le taux de 4 % et les âges
+          restent ESTIMÉS, à certifier auprès de la Caisse des dépôts.
 
   - code: igrante
     nom: Institution générale de retraite des agents non titulaires de l'État
     famille: complementaire_prive
     source_id: ircantec_points
     fiabilite: estimee
-    creation: 1959
+    creation: 1960
     fermeture: 1970
     extinction: 1971
     succede_a: []
     integre_dans: ircantec
-    population: Agents non titulaires de l'État hors IPACTE.
+    population: >-
+      Agents non titulaires de l'État, sur la rémunération jusqu'au plafond des
+      assurances sociales — et jusqu'à trois plafonds pour ceux qui ne relèvent
+      pas de l'IPACTE.
     hors_repartition: false
     periodes:
-      - debut: 1959
+      - debut: 1960
         fin: 1970
         type_calcul: points
         age_ouverture: 60
@@ -1010,11 +2871,31 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.04
-        part_salariale: 0.40   # prédécesseur de l'Ircantec, même répartition — estimée
+        part_salariale: 0.40   # arrêté du 17 février 1960, art. 15 : l'employeur verse une fois et demie l'agent
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
-        notes: Paramètres à certifier auprès de la Caisse des dépôts.
+        notes: >-
+          DÉCRET N° 59-1569 DU 31 DÉCEMBRE 1959 (LEGITEXT000006060876,
+          JORFTEXT000000486546), en vigueur en 1960, abrogé et remplacé par
+          l'Ircantec au 1er janvier 1971. L'ASSIETTE est lue dans l'article 2
+          (LEGIARTI000006368165) : « l'ensemble de la rémunération […] dans la
+          limite du triple du plafond des cotisations du régime général.
+          Toutefois, en ce qui concerne le personnel affilié au régime […]
+          créé par le décret du 12 décembre 1951, les cotisations ne sont
+          assises que sur la fraction de la rémunération inférieure audit
+          plafond ». La fiche porte cette dernière assiette — la tranche 1 —,
+          celle de l'agent qui relève aussi de l'IPACTE : c'est ainsi que le
+          statut `contractuel_public` route les deux institutions sans
+          qu'elles se recouvrent. Les agents hors IPACTE cotisaient jusqu'à
+          trois plafonds, part que le modèle ne leur prête pas faute d'un
+          statut qui les distingue. La RÉPARTITION vient de l'article 15 de
+          l'arrêté du 17 février 1960 (LEGIARTI000006381706) : « le service
+          employeur effectue un versement égal à une fois et demie le
+          précédent », soit 40/60. Le taux de 4 % et les âges restent ESTIMÉS
+          : le décret n° 68-1029 qui modifiait « le taux de cotisation des
+          pensions » (article 2, alinéa 4) n'a que son titre dans l'index
+          (JORFTEXT000000869583).
 
   - code: unirs
     nom: Union nationale des institutions de retraite des salariés
@@ -1041,9 +2922,20 @@ regimes:
         plafond_majoration_annee: 2025
         salaire_reference: carriere_entiere
         assiette: tranche_1
-        taux_cotisation_retraite: 0.04
+        taux_cotisation_retraite: 0.025
         part_salariale: 0.40   # prédécesseur de l'Arrco, même répartition — estimée
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
-        notes: Régime précurseur, paramètres à certifier.
+        notes: >-
+          Accord du 15 mai 1957 créant l'UNIRS, hors JORF ; l'index n'en porte
+          que le nom, dans des arrêtés d'extension postérieurs. AUCUNE SOURCE
+          NE DATE SON BARÈME : la fiche portait 4 %, le taux minimal de
+          l'Arrco de 1967. Elle porte désormais 2,5 %, la première valeur
+          datée de l'Arrco (1er janvier 1962, OpenFisca-France), par
+          continuité — l'UNIRS est la caisse dont le point a servi de
+          référence au régime unifié, et l'accord de 1961 a généralisé son
+          barème sans le relever. Le niveau reste `estimee`. Les valeurs du
+          point sont celles de la fédération (regimes/valeurs_point.csv, série
+          `unirs` depuis 1949), et la conversion de 1999 est portée par
+          regimes/conversions_points.csv.

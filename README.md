@@ -112,7 +112,7 @@ Scénario                                                          Courants   Co
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 226 Ko compressés (1401 Ko brut) et prend quelques dixièmes
+chargement transfère 237 Ko compressés (1528 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
@@ -131,7 +131,7 @@ la page.
 <details>
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
-`index.html` charge deux choses : `moteur/donnees.json` (1401 Ko — les séries, les
+`index.html` charge deux choses : `moteur/donnees.json` (1528 Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les 54 fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -877,7 +877,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (1401 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (1528 Ko, produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
@@ -885,7 +885,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          572 tests Python
+tests/                          578 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et le relevé d'OpenFisca-France-Pension qui sert
                                 de contre-expertise au scénario 1
