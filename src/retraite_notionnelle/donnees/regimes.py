@@ -110,6 +110,16 @@ class PeriodeRegime:
     #: Le nombre d'années retenues au salaire de référence suit-il la
     #: génération ? Vrai depuis la loi Balladur (dix à vingt-cinq années).
     salaire_reference_par_generation: bool
+    #: Âge en deçà duquel la durée liquidable est PLAFONNÉE, et ce plafond en
+    #: trimestres. Les marins sont seuls à porter cette règle : l'article R. 13
+    #: de leur code fixe « le maximum des annuités liquidables dans les pensions
+    #: d'ancienneté dont la liquidation est demandée avant cinquante-cinq ans
+    #: […] à vingt-cinq annuités », là où la pension liquidée à cinquante-cinq
+    #: ans en compte trente-sept et demie. Un marin parti à cinquante ans avec
+    #: trente ans de mer ne touche donc pas 60 % du salaire forfaitaire, mais
+    #: 50 %.
+    duree_maximum_avant_age: float | None
+    duree_maximum_avant_age_trimestres: int | None
     taux_plein: float | None
     salaire_reference: str
     assiette: str
@@ -592,6 +602,14 @@ class CatalogueRegimes:
                 ),
                 salaire_reference_par_generation=bool(
                     p.get("salaire_reference_par_generation", False)
+                ),
+                duree_maximum_avant_age=(
+                    None if p.get("duree_maximum_avant_age") is None
+                    else float(p["duree_maximum_avant_age"])
+                ),
+                duree_maximum_avant_age_trimestres=(
+                    None if p.get("duree_maximum_avant_age_trimestres") is None
+                    else int(p["duree_maximum_avant_age_trimestres"])
                 ),
                 taux_plein=None if p.get("taux_plein") is None else float(p["taux_plein"]),
                 salaire_reference=p.get("salaire_reference", "sans_objet"),

@@ -189,6 +189,22 @@ champs_periode:
     unite: "fraction, entre 0 et 1"
     defaut: 0.0
 
+  duree_maximum_avant_age:
+    description: >-
+      Âge en deçà duquel la durée liquidable est plafonnée, et
+      `duree_maximum_avant_age_trimestres` ce plafond. Les marins sont seuls à
+      porter cette règle : l'article R. 13 de leur code fixe « le maximum des
+      annuités liquidables dans les pensions d'ancienneté dont la liquidation
+      est demandée avant cinquante-cinq ans […] à vingt-cinq annuités », là où
+      la pension liquidée à cinquante-cinq ans en compte trente-sept et demie.
+      C'est la seule règle du catalogue où l'ÂGE borne la DURÉE, et non
+      l'inverse.
+    defaut: null
+
+  duree_maximum_avant_age_trimestres:
+    description: "plafond de durée liquidable en deçà de `duree_maximum_avant_age`"
+    defaut: null
+
   decote_par_trimestre: "abattement par trimestre manquant (fraction, null si aucun)"
 
   bareme_decote:

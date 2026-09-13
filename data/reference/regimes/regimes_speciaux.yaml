@@ -288,6 +288,8 @@ regimes:
         age_ouverture: 55
         age_taux_plein: 55
         duree_requise_trimestres: 150
+        duree_maximum_avant_age: 55
+        duree_maximum_avant_age_trimestres: 100
         taux_plein: 0.75
         salaire_reference: sans_objet
         assiette: forfaitaire
@@ -307,13 +309,26 @@ regimes:
           vigueur depuis le 7 novembre 1985, lue dans la base LEGI. Les 150
           trimestres et les 75 % de cette fiche sont donc ceux du droit, et la
           période unique est justifiée pour ce qui est de la formule.
-          CE QUE LA FICHE NE PORTE PAS : le plafond de VINGT-CINQ annuités
-          qu'oppose le même article à la pension liquidée avant cinquante-cinq
-          ans — un marin parti à cinquante ans ne peut donc pas dépasser 50 % du
-          salaire forfaitaire, quand le modèle lui en accorde 75 %. Et les
-          bornes d'âge d'après la recodification de 2010 dans le code des
-          transports, que l'article L. 5552-9 renvoie à un décret en Conseil
-          d'État non dépouillé ici.
+          LE PLAFOND DE VINGT-CINQ ANNUITÉS EST PORTÉ, depuis que le même
+          article a été lu en entier : « en outre, le maximum des annuités
+          liquidables dans les pensions d'ancienneté dont la liquidation est
+          demandée avant cinquante-cinq ans est fixé à vingt-cinq annuités ».
+          Un marin parti à cinquante ans ne dépasse donc pas 50 % du salaire
+          forfaitaire, quand la fiche lui en accordait 75 %. C'est la seule
+          règle du catalogue où l'ÂGE borne la DURÉE, d'où les deux champs
+          `duree_maximum_avant_age` que le moteur a appris à lire.
+          LES DEUX EXCEPTIONS À CE PLAFOND NE SONT PAS PORTÉES : le même alinéa
+          l'écarte « dans le cas de pension liquidée [pour invalidité] » et
+          « au profit d'un marin âgé d'au moins cinquante-deux ans et demi,
+          réunissant trente-sept annuités et demie de services ». Le second cas
+          est atteignable — un marin embarqué à quinze ans —, et la fiche lui
+          oppose le plafond à tort.
+          LES ÂGES SONT CEUX DE 1968, ET N'ONT PAS BOUGÉ : l'article R. 2
+          — inchangé depuis le 31 mars 1968 — acquiert le droit « lorsque se
+          trouve remplie la double condition de cinquante ans d'âge et de
+          vingt-cinq années de services » et fixe « l'âge d'entrée en jouissance
+          de la pension à cinquante-cinq ans ». La fiche porte cinquante-cinq,
+          l'âge de jouissance.
           Le plus ancien régime de retraite français (Colbert, 1673).
           Cotisations et pensions assises sur des SALAIRES FORFAITAIRES par
           catégorie, non sur la rémunération réelle.
