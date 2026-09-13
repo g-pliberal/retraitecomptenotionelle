@@ -1,0 +1,60 @@
+# Construit ou met à jour l'index plein texte des bases DILA (voir
+# scripts/fetch/dila_index.py) et le dépose sur la release « index-dila ».
+#
+# Le jeton d'une session Claude Code n'a pas le droit d'écrire les releases ;
+# celui d'un workflow, avec `contents: write`, l'a. D'où ce fichier : la
+# publication se fait ici, jamais depuis un poste.
+#
+# - Lancement à la main (onglet Actions, « Run workflow ») : par défaut,
+#   récupère l'index publié et lui applique les incréments parus depuis
+#   (quelques minutes). Cocher « reconstruire » pour repartir du dump global
+#   (une heure et demie pour le JORF, une heure pour LEGI), ce qui est aussi
+#   ce qui se passe tant qu'aucun index n'est publié.
+# - Chaque lundi à 4 h UTC : la mise à jour seule.
+
+name: Index DILA
+
+on:
+  workflow_dispatch:
+    inputs:
+      reconstruire:
+        description: "Reconstruire depuis le dump global de la DILA (sinon : mise à jour de l'index publié)"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "0 4 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        base: [jorf, legi]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Récupérer et mettre à jour, ou reconstruire
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ inputs.reconstruire }}" != "true" ] \
+             && python scripts/fetch/dila_index.py ${{ matrix.base }} --recuperer; then
+            python scripts/fetch/dila_index.py ${{ matrix.base }} --mettre-a-jour
+          else
+            python scripts/fetch/dila_index.py ${{ matrix.base }}
+          fi
+          python scripts/fetch/dila_cherche.py ${{ matrix.base }} --etat
+
+      - name: Publier sur la release index-dila
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/fetch/dila_index.py ${{ matrix.base }} --publier
