@@ -1194,7 +1194,9 @@ class ScenarioActuel:
         for ligne in carriere.lignes:
             if ligne.annee >= annee_liquidation:
                 continue
-            if code not in self.affiliations.regimes(ligne.affiliation, ligne.annee):
+            if code not in self.affiliations.regimes(
+                    ligne.affiliation, ligne.annee,
+                    carriere.entree(ligne.affiliation)):
                 continue
             if not ligne.cotise:
                 # Assurance vieillesse des parents au foyer : la CNAF cotise
@@ -1260,7 +1262,8 @@ class ScenarioActuel:
             if (derniere is not None and derniere.cotise
                     and derniere.fraction_annee > 0
                     and code in self.affiliations.regimes(
-                        derniere.affiliation, annee_liquidation)):
+                        derniere.affiliation, annee_liquidation,
+                        carriere.entree(derniere.affiliation))):
                 traitement = (_assiette_de_reference(periode, derniere)
                               / derniere.fraction_annee)
                 if plafonner:
@@ -1670,7 +1673,9 @@ class ScenarioActuel:
             retenus_ligne = carriere.trimestres_retenus(ligne)
             if retenus_ligne <= 0:
                 continue
-            for code in self.affiliations.regimes(ligne.affiliation, ligne.annee):
+            for code in self.affiliations.regimes(
+                    ligne.affiliation, ligne.annee,
+                    carriere.entree(ligne.affiliation)):
                 if code not in self.catalogue:
                     continue
                 trimestres_par_regime[code] = (
@@ -1720,7 +1725,9 @@ class ScenarioActuel:
             familles_admises = (
                 None if ligne.cotise else set(ligne.familles_cotisantes)
             )
-            for code in self.affiliations.regimes(ligne.affiliation, ligne.annee):
+            for code in self.affiliations.regimes(
+                    ligne.affiliation, ligne.annee,
+                    carriere.entree(ligne.affiliation)):
                 if code not in self.catalogue:
                     continue
                 regime = self.catalogue[code]

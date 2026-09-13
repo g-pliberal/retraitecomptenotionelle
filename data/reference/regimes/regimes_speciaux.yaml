@@ -234,7 +234,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1930
-        fin: 2010
+        fin: null
         type_calcul: annuites
         age_ouverture: 50
         age_taux_plein: 55
@@ -250,6 +250,14 @@ regimes:
         notes: >-
           Loi du 29 juin 1894. Départ possible à 50 ans avec 30 ans de services
           au fond. Régime emblématique de l'écart maximal à l'âge de référence.
+          FERMÉ AUX NOUVEAUX ENTRANTS depuis le 1er septembre 2010 (décret
+          n° 2010-975 du 27 août 2010), et à eux seuls : le mineur qui était
+          déjà là garde son régime jusqu'à sa retraite, et ses règles ne
+          changent pas. C'est un régime en EXTINCTION, que les réformes de 2010,
+          2014 et 2023 ont laissé où il était — l'âge d'ouverture reste 55 ans,
+          50 avec les services au fond —, et non un régime réformé. La période
+          court donc jusqu'à aujourd'hui : la borner à 2010 faisait basculer au
+          régime général, cette année-là, un mineur entré vingt ans plus tôt.
 
   - code: cavimac
     nom: >-
@@ -907,7 +915,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1935
-        fin: 1981
+        fin: null
         type_calcul: annuites
         age_ouverture: 55
         age_taux_plein: 60
@@ -924,6 +932,12 @@ regimes:
           Exemple de régime ÉTEINT dont les pensions restent servies :
           intégré au catalogue pour permettre la simulation rétroactive des
           carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
 
   - code: chemins_fer_secondaires
     nom: Régimes des chemins de fer secondaires d'intérêt général

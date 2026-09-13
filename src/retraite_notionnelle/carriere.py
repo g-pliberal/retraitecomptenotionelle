@@ -217,6 +217,23 @@ class Carriere:
     # -- agrégats ------------------------------------------------------------
 
     @cached_property
+    def _entrees(self) -> dict[str, int]:
+        """Première année de chaque statut dans la carrière.
+
+        C'est elle qui décide de la CLAUSE DU GRAND-PÈRE : un régime fermé aux
+        nouveaux entrants reste celui de qui était déjà là. Les lignes étant
+        chronologiques, la première rencontre suffit.
+        """
+        entrees: dict[str, int] = {}
+        for ligne in self.lignes:
+            entrees.setdefault(ligne.affiliation, ligne.annee)
+        return entrees
+
+    def entree(self, affiliation: str) -> int | None:
+        """Année d'entrée dans ce statut, ou ``None`` s'il n'y figure pas."""
+        return self._entrees.get(affiliation)
+
+    @cached_property
     def annees_cotisees(self) -> tuple[int, ...]:
         return tuple(ligne.annee for ligne in self.lignes if ligne.cotise)
 
@@ -634,15 +651,39 @@ class Affiliations:
         """
         return bool(self._profils.get(affiliation, {}).get("sans_employeur", False))
 
-    def regimes(self, affiliation: str, annee: int) -> tuple[str, ...]:
-        """Régimes applicables à ce statut cette année-là."""
+    def regimes(self, affiliation: str, annee: int,
+                annee_entree: int | None = None) -> tuple[str, ...]:
+        """Régimes applicables à ce statut cette année-là.
+
+        **La fermeture d'un régime ne vaut que pour les nouveaux entrants.**
+        Le régime de la SNCF est fermé aux agents recrutés depuis le 1er janvier
+        2020, celui de la RATP et celui des IEG depuis le 1er septembre 2023 :
+        un agent recruté avant garde le sien jusqu'à sa retraite, et c'est la
+        « clause du grand-père ». Le routage par la seule ANNÉE faisait basculer
+        tout le monde à la date de fermeture, y compris l'agent entré vingt ans
+        plus tôt : un cheminot né en 1975, entré en 1996, perdait vingt années
+        de régime spécial et vingt points de taux de remplacement.
+
+        Une période peut donc porter `entres_avant` ou `entres_depuis`, et
+        ``annee_entree`` — la première année du statut dans la carrière — dit
+        laquelle s'applique. Sans cette année, on suppose une entrée l'année
+        demandée : c'est le comportement d'avant, et il reste juste pour qui
+        commence sa carrière cette année-là.
+        """
         if affiliation not in self._profils:
             raise KeyError(
                 f"affiliation inconnue : {affiliation!r}. Disponibles : "
                 + ", ".join(self.codes)
             )
+        entree = annee if annee_entree is None else annee_entree
         for periode in self._profils[affiliation].get("periodes", []):
             fin = periode.get("fin")
-            if periode["debut"] <= annee and (fin is None or annee <= fin):
-                return tuple(periode.get("regimes") or ())
+            if not (periode["debut"] <= annee and (fin is None or annee <= fin)):
+                continue
+            avant, depuis = periode.get("entres_avant"), periode.get("entres_depuis")
+            if avant is not None and entree >= avant:
+                continue
+            if depuis is not None and entree < depuis:
+                continue
+            return tuple(periode.get("regimes") or ())
         return ()

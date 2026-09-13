@@ -175,7 +175,9 @@ export class ScenarioActuel {
       if (ligne.annee >= anneeLiquidation) {
         continue;
       }
-      if (!this.affiliations.regimes(ligne.affiliation, ligne.annee).includes(code)) {
+      if (!this.affiliations.regimes(
+        ligne.affiliation, ligne.annee, carriere.entree(ligne.affiliation),
+      ).includes(code)) {
         continue;
       }
       let revenu;
@@ -238,7 +240,9 @@ export class ScenarioActuel {
       // on l'annualise plutôt que de reculer d'un an.
       const derniere = carriere.ligne(anneeLiquidation);
       if (derniere !== null && derniere.cotise && derniere.fraction_annee > 0
-          && this.affiliations.regimes(derniere.affiliation, anneeLiquidation)
+          && this.affiliations.regimes(
+            derniere.affiliation, anneeLiquidation,
+            carriere.entree(derniere.affiliation))
             .includes(code)) {
         let traitement = assietteDeReference(periode, derniere)
           / derniere.fraction_annee;
@@ -597,7 +601,9 @@ export class ScenarioActuel {
       if (retenusLigne <= 0) {
         continue;
       }
-      for (const code of this.affiliations.regimes(ligne.affiliation, ligne.annee)) {
+      for (const code of this.affiliations.regimes(
+        ligne.affiliation, ligne.annee, carriere.entree(ligne.affiliation),
+      )) {
         if (!this.catalogue.contient(code)) {
           continue;
         }
@@ -648,7 +654,9 @@ export class ScenarioActuel {
         baseLigne *= part / ligne.fraction_annee;
       }
       const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
-      for (const code of this.affiliations.regimes(ligne.affiliation, ligne.annee)) {
+      for (const code of this.affiliations.regimes(
+        ligne.affiliation, ligne.annee, carriere.entree(ligne.affiliation),
+      )) {
         if (!this.catalogue.contient(code)) {
           continue;
         }
