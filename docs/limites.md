@@ -131,6 +131,36 @@ l'être.
   65 : aucune durée n'ouvrait le taux plein avant l'âge. La fiche ne portait
   d'ailleurs aucune minoration, et 40 % étaient servis à tout âge.
 
+**Sept erreurs d'histoire**, trouvées en relisant les décrets de chaque régime
+version par version dans la base LEGI, et en balayant le catalogue à six
+générations. Chacune est racontée en détail au §4.
+
+- **Les régimes spéciaux décotaient de 1,25 % dès 2009.** Leur réforme de 2008
+  ne donne aucune décote avant le 1<sup>er</sup> juillet 2010, puis un dixième du
+  taux plein, et 1,25 % seulement en 2019. Un cheminot parti en 2011 perdait un
+  quart de sa pension au lieu d'un quarantième.
+- **La pension du mineur était de 75 % de son dernier salaire.** C'est un forfait
+  par trimestre de service, le même pour l'abatteur et pour l'ingénieur : le
+  modèle la doublait.
+- **L'avocat d'avant 2004 recevait cent pour cent de son revenu moyen**, faute
+  d'un montant forfaitaire dans la période, là où sa retraite de base est la même
+  pour tous.
+- **Le personnel navigant n'avait pas de décote**, alors que son code lui en
+  donne une de 5 % par annuité manquante depuis 2012.
+- **Le fonctionnaire cotisait à 7 % jusqu'en 2003.** L'article L. 61 porte 7,85 %
+  depuis février 1991 et 8,9 % en 1990 : un huitième de cotisation oublié pendant
+  treize ans dans les comptes notionnels.
+- **Le ministre du culte recevait une surcote depuis 1979**, vingt-cinq ans avant
+  que la loi ne la crée.
+- **Les assurés nés avant 1934 devaient 172 trimestres.** La table des durées
+  requises commence à la génération 1934 et ne répondait pas en deçà : chaque
+  fiche retombait alors sur sa durée d'aujourd'hui.
+
+**Et trois régimes ont retrouvé leur histoire** : l'Opéra de Paris passe d'une
+période à quatre — l'âge de la danse dépendait du sexe jusqu'en 2002, l'âge de
+référence du ballet est de 42 ans —, la SEITA de une à huit, les mines de une à
+vingt-deux.
+
 **Cinq dispositifs déclarés mais jamais appliqués.** Les fiches de régime les
 listaient et les *Neutralisations* annonçaient que les scénarios notionnels les
 retiraient. On ne retire pas ce qui n'a jamais été mis.
