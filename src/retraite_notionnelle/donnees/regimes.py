@@ -772,3 +772,115 @@ class CatalogueRegimes:
             vu.add(suivant)
             courant = self[suivant]
         return courant.code
+
+
+# ---------------------------------------------------------------------------
+# L'inventaire : tous les régimes, calculés ou non
+# ---------------------------------------------------------------------------
+
+#: Ce que le dépôt sait faire d'un régime de l'inventaire.
+COUVERTURES = ("modelise", "partiel", "a_modeliser", "hors_champ")
+
+
+@dataclass(frozen=True)
+class RegimeInventaire:
+    """Une ligne de ``data/reference/regimes/inventaire.yaml``.
+
+    Le catalogue ne connaît que les régimes qu'il calcule ; l'inventaire les
+    nomme tous — vivants, disparus, et ceux qu'on ne calculera pas — avec,
+    pour chacun, ce qui manque au dépôt. Un régime ``modelise`` ou ``partiel``
+    a une fiche au catalogue sous le même code ; ``a_modeliser`` et
+    ``hors_champ`` n'en ont pas, et disent pourquoi.
+    """
+
+    code: str
+    nom: str
+    famille: str
+    population: str
+    creation: int | None
+    fermeture: int | None
+    extinction: int | None
+    succede_a: tuple[str, ...]
+    integre_dans: str | None
+    couverture: str
+    statuts: tuple[str, ...]
+    textes: tuple[dict, ...]
+    manque: str
+    raison_hors_champ: str
+
+    @property
+    def au_catalogue(self) -> bool:
+        return self.couverture in ("modelise", "partiel")
+
+    def dictionnaire(self) -> dict:
+        return {
+            "code": self.code,
+            "nom": self.nom,
+            "famille": self.famille,
+            "population": self.population,
+            "creation": self.creation,
+            "fermeture": self.fermeture,
+            "extinction": self.extinction,
+            "succede_a": list(self.succede_a),
+            "integre_dans": self.integre_dans,
+            "couverture": self.couverture,
+            "statuts": list(self.statuts),
+            "textes": [dict(t) for t in self.textes],
+            "manque": self.manque,
+            "raison_hors_champ": self.raison_hors_champ,
+        }
+
+
+def _annee(valeur) -> int | None:
+    return None if valeur is None else int(valeur)
+
+
+def charger_inventaire(racine: Path) -> tuple[RegimeInventaire, ...]:
+    """L'inventaire, dans l'ordre du fichier, validé champ par champ."""
+    chemin = racine / "reference" / "regimes" / "inventaire.yaml"
+    contenu = charger_yaml(chemin)
+    lignes: list[RegimeInventaire] = []
+    codes: set[str] = set()
+    for fiche in contenu.get("inventaire", []):
+        manquants = {"code", "nom", "famille", "population", "couverture",
+                     "statuts", "textes"} - set(fiche)
+        if manquants:
+            raise ValueError(
+                f"{chemin.name} / {fiche.get('code', '?')} : champs manquants "
+                f"{sorted(manquants)}"
+            )
+        code = str(fiche["code"])
+        if code in codes:
+            raise ValueError(f"{chemin.name} : code dupliqué {code}")
+        codes.add(code)
+        if fiche["famille"] not in FAMILLES:
+            raise ValueError(f"{chemin.name} / {code} : famille inconnue {fiche['famille']!r}")
+        if fiche["couverture"] not in COUVERTURES:
+            raise ValueError(
+                f"{chemin.name} / {code} : couverture inconnue {fiche['couverture']!r}"
+            )
+        textes = tuple(
+            {"reference": str(t["reference"]), "id": t.get("id")}
+            for t in fiche["textes"] or ()
+        )
+        if not textes:
+            raise ValueError(f"{chemin.name} / {code} : aucun texte de référence")
+        lignes.append(RegimeInventaire(
+            code=code,
+            nom=str(fiche["nom"]),
+            famille=str(fiche["famille"]),
+            population=" ".join(str(fiche["population"]).split()),
+            creation=_annee(fiche.get("creation")),
+            fermeture=_annee(fiche.get("fermeture")),
+            extinction=_annee(fiche.get("extinction")),
+            succede_a=tuple(fiche.get("succede_a") or ()),
+            integre_dans=fiche.get("integre_dans"),
+            couverture=str(fiche["couverture"]),
+            statuts=tuple(fiche["statuts"] or ()),
+            textes=textes,
+            manque=" ".join(str(fiche.get("manque") or "").split()),
+            raison_hors_champ=" ".join(str(fiche.get("raison_hors_champ") or "").split()),
+        ))
+    if not lignes:
+        raise ValueError(f"aucun régime dans {chemin}")
+    return tuple(lignes)

@@ -22,6 +22,8 @@ Le livrable est le site statique ; voir `README.md`.
 
 - Modèle de référence, en Python : `src/`
 - Données (barèmes, régimes, séries) : `data/`
+- Tous les régimes, calculés ou non : `data/reference/regimes/inventaire.yaml`.
+  Toute fiche ajoutée au catalogue y prend sa ligne, un test l'exige.
 - Ce que le site charge : `moteur/` — portage JavaScript du modèle (`moteur/js/`),
   paquet de données et feuille de style, tous deux produits par
   `python scripts/construire_donnees.py`. À reconstruire après toute modification

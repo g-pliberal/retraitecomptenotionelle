@@ -35,6 +35,7 @@ from ..donnees.chargement import (
     journal_certification,
 )
 from ..donnees.depenses import SYSTEMES, DepensesRetraite
+from ..donnees.regimes import charger_inventaire
 from ..donnees.population import Population
 from ..simulateur import Comparaison, Simulateur
 from . import gabarit as g
@@ -3587,6 +3588,87 @@ isolés dans un compartiment séparé, jamais converti.</p>
 """
 
 
+
+#: Libellés des familles de régimes, tels que la page « Données » les affiche.
+FAMILLES_INVENTAIRE = {
+    "base_prive": "base, privé",
+    "complementaire_prive": "complémentaire, privé",
+    "fonction_publique": "fonction publique",
+    "special": "spécial",
+    "non_salarie": "non-salariés",
+    "agricole": "agricole",
+    "liberal": "libéral",
+    "additionnel_capitalise": "additionnel, capitalisé",
+}
+
+#: Les quatre couvertures, dans l'ordre d'affichage : le titre du tableau, le
+#: nom au pluriel pour la phrase de compte, et l'intitulé de la dernière
+#: colonne — vide pour les régimes modélisés, qui n'ont rien à expliquer.
+COUVERTURES_INVENTAIRE = (
+    ("modelise", "Régimes modélisés", "modélisés", ""),
+    ("partiel", "Régimes calculés, mais incomplets", "partiels", "Ce qui manque"),
+    ("a_modeliser", "Régimes à modéliser", "à modéliser", "Ce qui bloque"),
+    ("hors_champ", "Régimes hors champ", "hors champ", "Pourquoi"),
+)
+
+
+def _periode_inventaire(creation, fermeture, extinction) -> str:
+    if creation is None:
+        return "—"
+    if extinction is not None:
+        return f"{creation}-{extinction}"
+    if fermeture is not None:
+        return f"depuis {creation}, fermé en {fermeture}"
+    return f"depuis {creation}"
+
+
+def _inventaire_section(racine) -> str:
+    """Tous les régimes, calculés ou non — la liste qui manquait au dépôt."""
+    lignes = charger_inventaire(racine)
+    comptes = {cle: sum(1 for l in lignes if l.couverture == cle)
+               for cle, _, _, _ in COUVERTURES_INVENTAIRE}
+    phrase = ", ".join(
+        f"{comptes[cle]} {pluriel}" for cle, _, pluriel, _ in COUVERTURES_INVENTAIRE
+    )
+    tableaux = []
+    for cle, titre, _, derniere in COUVERTURES_INVENTAIRE:
+        entetes = ["Régime", "Famille", "Période", "Statuts"]
+        classes = ["", "", "", ""]
+        if derniere:
+            entetes.append(derniere)
+            classes.append("")
+        corps = []
+        for ligne in lignes:
+            if ligne.couverture != cle:
+                continue
+            rang = [
+                escape(ligne.nom),
+                escape(FAMILLES_INVENTAIRE[ligne.famille]),
+                escape(_periode_inventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
+                escape(", ".join(ligne.statuts)) if ligne.statuts else "—",
+            ]
+            if derniere:
+                rang.append(escape(ligne.raison_hors_champ if cle == "hors_champ" else ligne.manque))
+            corps.append(rang)
+        tableaux.append(f"<h4>{escape(titre)} ({comptes[cle]})</h4>" + g.tableau(
+            entetes, corps, classes,
+            titre=f"{titre}, {comptes[cle]} régimes",
+            entete_de_ligne=True,
+        ))
+    return f"""
+<h3>Tous les régimes, modélisés ou non</h3>
+<p>L'inventaire compte {len(lignes)} régimes de retraite obligatoires, actuels
+et disparus : {phrase}. Il fait foi dans
+<a href="{g.DEPOT}/blob/main/data/reference/regimes/inventaire.yaml">inventaire.yaml</a>,
+où chaque ligne cite son texte fondateur, et un test le tient aligné sur le
+catalogue : une fiche sans ligne d'inventaire, ou une ligne qui prétend calculer
+ce qu'aucune fiche ne calcule, fait échouer les tests. Un régime « partiel » est
+calculé, mais un étage, un barème ou une période lui manque ; un régime « à
+modéliser » n'a pas de fiche, et la colonne dit ce qui bloque.</p>
+{"".join(tableaux)}
+"""
+
+
 def _donnees(contexte: Contexte) -> str:
     simulateur = contexte.simulateur()
     macro = simulateur.macro
@@ -3667,7 +3749,7 @@ au-delà de la dernière année observée, la fiabilité retombe à « estimée 
 {g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", ""],
            titre="Nombre de régimes par niveau de fiabilité",
            entete_de_ligne=True)}
-
+{_inventaire_section(macro.racine)}
 <h3>Sources</h3>
 <p>Vingt-six institutions sont recensées dans
 <a href="{g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a> : INSEE,

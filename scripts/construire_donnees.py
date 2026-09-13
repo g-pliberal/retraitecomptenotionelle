@@ -47,7 +47,10 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
 from retraite_notionnelle.donnees.depenses import SYSTEMES  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.donnees.regimes import CatalogueRegimes  # noqa: E402
+from retraite_notionnelle.donnees.regimes import (  # noqa: E402
+    CatalogueRegimes,
+    charger_inventaire,
+)
 from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesAnnulationDecote,
     AgesOuverture,
@@ -67,7 +70,7 @@ STYLE = RACINE / "moteur" / "style.css"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 8
+VERSION = 9
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -506,6 +509,11 @@ def _hypotheses() -> dict:
     }
 
 
+def _inventaire() -> list:
+    """Tous les régimes, calculés ou non, tels que la page « Données » les liste."""
+    return [ligne.dictionnaire() for ligne in charger_inventaire(DONNEES)]
+
+
 def construire() -> bytes:
     """Paquet complet, à contenu identique pour des données identiques."""
     paquet = {
@@ -515,6 +523,7 @@ def construire() -> bytes:
         "quotients": _quotients(),
         "calibrations": _calibrations(),
         "regimes": _regimes(),
+        "inventaire": _inventaire(),
         "affiliations": _affiliations(),
         "valeurs_point": _valeurs_point(),
         "rendements_points": _rendements(),
