@@ -3167,23 +3167,78 @@ ci-dessous compte, pour chaque régime, le nombre d'ANNÉES par jeu de règles
 distinct. Plus le nombre est grand, moins l'histoire du régime est dans le
 modèle :
 
-| Régime | Couverture | Jeux de règles | Années par jeu |
-|---|---|---|---|
-| `port_strasbourg`, `marins` | 1930-2026 | 1 | 97 |
-| `carpv_complementaire` | 1950-2026 | 1 | 77 |
-| `cnbf` | 1948-2026 | 2 | 40 |
-| `cavp_complementaire`, `cavec_complementaire` | 1949-2026 | 2 | 37 à 39 |
-| `sncf`, `ratp` | 1930-2026 | 3 | 32 |
-| `ieg` | 1946-2026 | 3 | 27 |
-| `opera_de_paris`, `comedie_francaise` | 1930-2026 | 4 | 24 |
-| `seita` | 1935-2026 | 8 | 12 |
-| `mines` | 1930-2026 | 22 | 4 |
+| Régime | Couverture | Jeux de règles | Années par jeu | Coupures de texte non reflétées | Réformes non portées |
+|---|---|---|---|---|---|
+| `port_strasbourg` | 1930-2026 | 1 | 97 | 0 | 0 |
+| `marins` | 1930-2026 | 1 | 97 | 2 | 0 |
+| `sncf` | 1930-2026 | 8 | 79 | 3 | 0 |
+| `ratp` | 1930-2026 | 8 | 79 | 3 | 0 |
+| `banque_de_france` | 1930-2026 | 5 | 78 | 0 | 0 |
+| `cavp_complementaire` | 1949-2026 | 2 | 77 | 7 | 0 |
+| `carpv_complementaire` | 1950-2026 | 1 | 77 | 18 | 0 |
+| `cavec_complementaire` | 1953-2026 | 2 | 74 | 0 | 0 |
+| `opera_de_paris` | 1930-2026 | 4 | 72 | 4 | 0 |
+| `crpcen` | 1937-2026 | 16 | 71 | 0 | 0 |
+| `comedie_francaise` | 1930-2026 | 4 | 63 | 1 | 0 |
+| `cnbf` | 1948-2026 | 2 | 56 | 2 | 0 |
+| `cprn_complementaire` | 1949-2026 | 6 | 55 | 4 | 0 |
+| `cnavpl` | 1949-2026 | 7 | 55 | 9 | 0 |
+| `ircec_raap` | 1962-2026 | 5 | 54 | 2 | 0 |
+| `seita` | 1935-2026 | 8 | 49 | 0 | 0 |
+| `carcdsf_complementaire` | 1949-2026 | 22 | 48 | 0 | 0 |
+| `cnracl` | 1945-2026 | 7 | 45 | 17 | 0 |
+| `mines` | 1930-2026 | 22 | 44 | 1 | 0 |
+| `cipav_complementaire` | 1979-2026 | 3 | 44 | 3 | 0 |
+| `ieg` | 1946-2026 | 12 | 40 | 0 | 0 |
+| `cnbf_complementaire` | 1979-2026 | 2 | 40 | 0 | 0 |
+| `arrco` | 1961-2018 | 2 | 35 | 1 | 0 |
+| `msa_non_salaries` | 1952-2026 | 7 | 34 | 13 | 0 |
+| `agirc` | 1947-2018 | 5 | 34 | 0 | 0 |
+| `crpnpac_tranche_2` | 1963-2026 | 4 | 32 | 0 | 0 |
+| `crpnpac` | 1963-2026 | 4 | 32 | 5 | 0 |
+| `regime_general` | 1945-2026 | 8 | 27 | 14 | 0 |
+| `msa_salaries` | 1945-2026 | 8 | 27 | 3 | 0 |
+| `fspoeie` | 1930-2026 | 9 | 26 | 4 | 0 |
+| `fonction_publique_etat` | 1948-2026 | 8 | 26 | 7 | 0 |
+| `chemins_fer_secondaires` | 1930-1954 | 1 | 25 | 0 | 0 |
+| `organic` | 1949-2006 | 5 | 24 | 3 | 0 |
+| `msa_rco` | 2003-2026 | 1 | 24 | 24 | 0 |
+| `cancava` | 1949-2006 | 5 | 24 | 3 | 0 |
+| `arrco_tranche_2` | 1996-2018 | 1 | 23 | 0 | 0 |
+| `cavamac_complementaire` | 1968-2026 | 8 | 22 | 5 | 0 |
+| `pensions_civiles_1853` | 1930-1948 | 1 | 19 | 0 | 0 |
+| `ircantec` | 1971-2026 | 15 | 17 | 5 | 0 |
+| `rafp` | 2005-2026 | 2 | 16 | 6 | 0 |
+| `assurances_sociales` | 1930-1945 | 1 | 16 | 0 | 0 |
+| `rco_artisans` | 1979-2012 | 10 | 12 | 2 | 0 |
+| `rci` | 2013-2026 | 2 | 12 | 2 | 0 |
+| `ipacte` | 1959-1970 | 1 | 12 | 0 | 0 |
+| `igrante` | 1959-1970 | 1 | 12 | 0 | 0 |
+| `cavimac` | 1979-2026 | 8 | 12 | 0 | 0 |
+| `carpimko_complementaire` | 1984-2026 | 27 | 12 | 0 | 0 |
+| `cavom_complementaire` | 2016-2026 | 1 | 11 | 2 | 0 |
+| `rsi` | 2006-2018 | 2 | 10 | 4 | 0 |
+| `nric` | 2004-2012 | 2 | 8 | 3 | 0 |
+| `carmf_complementaire` | 1949-2026 | 62 | 8 | 1 | 0 |
+| `agirc_arrco` | 2019-2026 | 1 | 8 | 0 | 0 |
+| `unirs` | 1957-1961 | 1 | 5 | 0 | 0 |
+| `avts` | 1941-1945 | 1 | 5 | 0 | 0 |
 
-Les deux dernières lignes sont l'état d'arrivée de cette campagne, et les deux
-premières ce qui lui résiste : le port autonome de Strasbourg, dont le règlement
-de retraite est un acte de l'établissement et non un texte publié, et les marins,
-dont la formule est stable depuis 1968 — vérifiée article par article — mais dont
-la grille des salaires forfaitaires reste introuvable.
+**Ce tableau n'est plus écrit à la main** : c'est la sortie de
+`python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1
+et B2 de la campagne « les règles à travers l'histoire » (voir
+[`regimes.md`](regimes.md), journal de la campagne). Les deux dernières
+colonnes viennent de l'index LEGI et du calendrier des réformes
+(`legislation/reformes.yaml`) : une « coupure de texte non reflétée » est une
+version d'un article pivot (`regimes/pivots.yaml`) qui commence une année où
+aucune période de la fiche ne commence — un endroit où lire, pas un verdict,
+car beaucoup de versions ne changent qu'un renvoi ; une « réforme non portée »
+est un manque, et le test `test_toute_reforme_est_coupee_absorbee_ou_declaree`
+impose qu'il n'y en ait aucune. Les deux premières lignes restent ce qui
+résiste : le port autonome de Strasbourg, dont le règlement de retraite est un
+acte de l'établissement et non un texte publié, et les marins, dont la formule
+est stable depuis 1968 — vérifiée article par article — mais dont la grille des
+salaires forfaitaires reste introuvable.
 
 Le nombre n'est pas à lui seul un verdict : un régime dont les règles n'ont pas
 bougé mérite une seule période, et c'est le cas des trois complémentaires
