@@ -3105,8 +3105,24 @@ et une correction d'histoire s'y voit maintenant.
 
 Ce qui a été refermé de cette façon jusqu'ici : le régime des salariés agricoles
 (aligné sur le régime général, ses huit périodes reprises une à une), les régimes
-alignés des artisans et des commerçants depuis 1973, la durée requise de l'Opéra
-et de la Comédie-Française, et la clause du grand-père de huit régimes fermés.
+alignés des artisans et des commerçants depuis 1973, le fonds spécial des
+ouvriers de l'État (aligné sur le code des pensions, six périodes), la Banque de
+France (alignée depuis 2007, quatre périodes) et la caisse des clercs de notaire
+(trois périodes au lieu d'une depuis 2009, et le barème de décote de la fonction
+publique que son décret lui donne) ; la durée requise de l'Opéra et de la
+Comédie-Française ; les bornes d'âge de la RATP et des IEG, qui étaient celles de
+2017 dès 2009 ; et la clause du grand-père de huit régimes fermés.
+
+**Trois manières de se tromper, et elles reviennent.** La première est la fiche
+d'un régime ALIGNÉ qui ne suit pas l'histoire de son modèle : on la corrige en
+recopiant les périodes du régime général ou du code des pensions, ce qui est sûr
+parce que l'alignement est une règle de droit. La deuxième est la période
+OUVERTE — `fin: null` — qui porte les paramètres du jour : elle applique le droit
+d'aujourd'hui à toute la période qu'elle couvre, et c'est ainsi qu'un agent de la
+Banque de France parti en 2009 se voyait opposer l'âge de 2023. La troisième est
+la réforme qui ne touche pas tout en même temps : celle de 2008 crée la décote
+dès 2009 dans les régimes spéciaux, mais ne relève les bornes d'âge qu'à partir
+de 2017.
 
 ### La clause du grand-père : six régimes fermés l'étaient pour tout le monde
 
