@@ -441,7 +441,7 @@ regimes:
     nom: Fonds spécial des pensions des ouvriers des établissements industriels de l'État
     famille: fonction_publique
     source_id: cdc_cnracl
-    fiabilite: estimee
+    fiabilite: moyenne
     creation: 1928
     fermeture: null
     extinction: null
