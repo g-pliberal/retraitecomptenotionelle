@@ -1988,7 +1988,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 | Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | les montants des salaires forfaitaires, que le décret renvoie à un arrêté — et surtout la CATÉGORIE du marin, que le décret définit par le métier (« matelot de moins de 18 ans », « élève officier ») et qu'une carrière saisie ne porte pas | le revenu déclaré, plafonné comme au régime général | **indéterminé** : la grille est plus favorable que le salaire réel aux bas revenus, moins au-delà. Même publiée, elle ne s'appliquerait pas sans une convention reliant un revenu à une fonction à bord, qui n'aurait aucune source |
 | Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (363 € la première, 1 988 € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de 3,20 % ET le forfait à sa valeur de croisière, 1 988 € ; les années d'avant 2019 restent au rendement instantané | **surestime de 4 586 € sur une carrière** le flux des cinq premières années, contre 70 000 € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
-| Non-salariés agricoles | le barème de points du régime de base (23 à 113 points par tranche de revenu), que personne ne publie ; les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans | la retraite forfaitaire et la RCO, dont le barème en points est public | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
+| Non-salariés agricoles | les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, qui calcule la base sur les vingt-cinq meilleures années pour les pensions prenant effet à compter de 2026 | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés : les taux et les âges sont saisis au niveau `estimee`, caisse par caisse | les textes fondateurs, sans recontrôle | **indéterminé**, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
 
 **Ce qui a été refermé depuis la version précédente de ce tableau.** Le régime
@@ -3065,6 +3065,78 @@ qui la rattache à cet article, et recoupée par les guides de retraite ; elle e
 saisie à ce titre, sur la foi du producteur, comme la valeur du point du même
 régime — que la loi ne porte pas davantage, le décret annuel ne fixant qu'un
 coefficient de revalorisation.
+
+### « De 23 à 113 points » : le barème que personne ne publiait est dans le code
+
+La MSA, le ministère de l'agriculture et tous les guides de retraite écrivent la
+même phrase : le nombre de points de la retraite proportionnelle des chefs
+d'exploitation « varie de 23 à 113 selon le barème ». Aucun ne donne le barème,
+et ce document l'a longtemps rangé parmi les paramètres que personne ne publie.
+Il est dans le **code rural**, en deux articles, et il n'y est pas caché :
+
+* `R. 732-71` écrit un escalier à quatre marches — quinze points jusqu'à
+  **400 SMIC horaires** ; une pente de quinze à trente entre 400 et
+  **800 SMIC** ; trente points de là jusqu'à **deux fois le minimum
+  contributif** ; puis une pente de trente au maximum de l'année jusqu'au
+  **plafond de la Sécurité sociale** ;
+* `R. 732-70` définit ce maximum : `M = (PM − AVTS) / (37,5 × VP)`, où PM est la
+  pension maximale du régime général — la moitié du plafond —, AVTS
+  l'allocation aux vieux travailleurs salariés et VP la valeur du point.
+
+**Le barème se vérifie sur ses propres bornes.** La cotisation qui ouvre ces
+points est due sur six cents SMIC horaires au moins (`D. 731-120`, 2°, et le
+décret n° 2001-584 du 4 juillet 2001 avant lui) : la deuxième marche y donne
+**22,5 points**, ce qui s'annonce 23. Au plafond, en 2025, la quatrième en donne **113,4**. Les deux nombres que
+tout le monde cite sortent de la formule que personne ne cite.
+
+Mieux : la construction du régime apparaît en résolvant le maximum. Pour une
+carrière pleine au plafond, la pension proportionnelle vaut
+`M × VP × 37,5 = PM − AVTS` — la valeur du point s'annule. La retraite
+forfaitaire, qui vaut l'AVTS (`L. 732-24`), la complète donc exactement jusqu'à
+la pension maximale du régime général. Un régime qu'on croyait bricolé est un
+régime construit.
+
+**Trois choses entrent donc dans le moteur en même temps.** Le barème lui-même,
+sous la forme d'un `bareme_points: msa_proportionnelle` — une règle NOMMÉE dont
+la formule vit dans le code, comme l'abattement Agirc-Arrco, parce qu'elle ne
+s'écrit pas en colonnes. Le coefficient de durée `37,5 / durée requise`, qui
+retire un huitième aux générations qui doivent 43 ans. Et la **part
+forfaitaire**, que le moteur ne servait pas du tout : `mixte` y était un
+synonyme de `points`, si bien que la retraite forfaitaire — 3 628,98 € au
+1er janvier 2023 pour une carrière complète — n'existait nulle part.
+
+Ce qui manquait vraiment n'était donc pas le barème mais **la valeur du point**,
+que le code rural ne porte que depuis 2025 (`R. 732-66`, 4,589 €) ; le
+communiqué de la MSA du 14 février 2023 et le COR en donnent 4,264 € pour 2023,
+et les deux concordent à un dixième de pour cent une fois la revalorisation
+appliquée. La fiche porte l'ancre de 2025 et le moteur la ramène sur les prix,
+comme la loi le prescrit (`L. 161-23-1`).
+
+**Ce que le modèle ne fait toujours pas.** L'AVTS elle-même n'est dans aucune
+série du dépôt : le moteur lui substitue le montant de la retraite forfaitaire,
+que la loi lui avait égalé jusqu'en 2014 avant de les laisser diverger. Le
+maximum ressort à 115,1 points au lieu de 113,4 — un pour cent et demi de trop
+sur la marche la plus haute, et rien ailleurs. Les années d'avant 1990 restent
+au rendement instantané : `R. 732-70` n'ouvre le barème qu'« à compter du
+1er janvier 1990 ».
+
+### La réforme agricole de 2026 n'est pas modélisée, et il faut le dire
+
+L'article 87 de la loi n° 2025-199 du 28 février 2025 de financement de la
+sécurité sociale réécrit `L. 732-24` : pour les pensions prenant effet à compter
+du **1er janvier 2026**, la retraite de base des non-salariés agricoles n'est
+plus la somme d'un forfait et de points de carrière entière, mais un calcul sur
+les **vingt-cinq meilleures années** — de revenus à partir de 2016, de points
+avant, les revenus n'étant pas connus plus tôt. Un dispositif transitoire
+recalcule en 2028 les pensions liquidées en 2026 et 2027, au bénéfice de
+l'assuré.
+
+Le modèle sert encore la formule d'avant. C'est une limite DATÉE, et la seule de
+ce document qui se périme d'elle-même : elle porte sur les liquidations
+postérieures à 2025, c'est-à-dire sur la moitié des simulations que le site
+propose. La modéliser demande une mécanique que le régime agricole n'a jamais
+eue — un salaire annuel moyen sur vingt-cinq années, greffé sur un compte en
+points — et c'est pourquoi elle n'est pas faite ici plutôt que faite à moitié.
 
 ### Le taux de la première tranche a changé, et la phrase qui le portait mentait
 

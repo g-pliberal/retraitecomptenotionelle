@@ -404,6 +404,52 @@ export class ScenarioActuel {
    * de base : elle publie ses propres COEFFICIENTS D'ANTICIPATION, en deux
    * tables — trimestres manquants, et âge — et retient la plus avantageuse.
    */
+  /** Valeur de service du point écrite dans la fiche, à l'année demandée.
+   *
+   * La MSA est seule à publier celle de sa retraite proportionnelle. Une ancre
+   * datée suffit : la loi (L. 161-23-1) la revalorise sur les prix.
+   */
+  valeurPointFiche(periode, annee) {
+    if (periode.valeur_point_euros === null || periode.valeur_point_euros === undefined) {
+      return 0.0;
+    }
+    return periode.valeur_point_euros * this.macro.coefficientPrix(
+      periode.valeur_point_annee ?? annee, annee,
+    );
+  }
+
+  /** Points de retraite proportionnelle agricole d'une année (R. 732-71).
+   *
+   * Escalier à quatre marches : quinze points jusqu'à 400 SMIC horaires, une
+   * pente jusqu'à trente à 800 SMIC, un plateau à trente jusqu'à deux fois le
+   * minimum contributif, puis une pente jusqu'au maximum M de l'année, que
+   * R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du point).
+   */
+  pointsMsa(periode, annee, revenu) {
+    const smic = this.macro.smic_horaire.valeur(annee);
+    const passAnnuel = this.macro.plafond_securite_sociale.valeur(annee);
+    const valeurPoint = this.valeurPointFiche(periode, annee);
+    if (smic <= 0 || passAnnuel <= 0 || valeurPoint <= 0) {
+      return 0.0;
+    }
+    const avts = (periode.pension_forfaitaire_annuelle ?? 0.0)
+      * this.macro.coefficientPrix(periode.pension_forfaitaire_annee ?? annee, annee);
+    const minimumContributif = this.minimumContributif.valeurs(annee)[0];
+    const maximum = (0.5 * passAnnuel - avts) / (37.5 * valeurPoint);
+    if (revenu <= 400 * smic) {
+      return 15.0;
+    }
+    if (revenu <= 800 * smic) {
+      return Math.min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic));
+    }
+    if (revenu <= 2 * minimumContributif || passAnnuel <= 2 * minimumContributif) {
+      return 30.0;
+    }
+    return Math.min(maximum, 30.0 + (maximum - 30.0)
+      * (revenu - 2 * minimumContributif)
+      / (passAnnuel - 2 * minimumContributif));
+  }
+
   abattementPoints(periode, carriere, trimestres, requis, ageLiquidation,
     anneeLiquidation) {
     if (periode.abattement_points === "agirc_arrco") {
@@ -678,6 +724,21 @@ export class ScenarioActuel {
               cotisation = parClasse[0] * part;
             }
           }
+          if (periode.bareme_points === "msa_proportionnelle") {
+            // BARÈME NOMMÉ : R. 732-71 écrit l'escalier, `pointsMsa` le sert.
+            // C'est l'ASSIETTE qui y entre : la cotisation est due sur six
+            // cents SMIC horaires au moins et sur un plafond au plus.
+            const [echelleMsa, fiabiliteEchelleMsa] = this.conversionsPoints
+              .echelle(code, ligne.annee, anneeLiquidation);
+            pointsAcquis.set(code,
+              (pointsAcquis.get(code) ?? 0.0)
+                + this.pointsMsa(periode, ligne.annee, assiette) * part * echelleMsa);
+            fiabilitePoints.set(code, Math.min(
+              fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
+              fiabiliteEchelleMsa,
+            ));
+            continue;
+          }
           if (periode.points_par_trimestre_valide !== null
               && periode.points_par_trimestre_valide !== undefined) {
             // POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant. Le régime de
@@ -819,16 +880,66 @@ export class ScenarioActuel {
 
         const points = pointsAcquis.get(code) ?? 0.0;
         if (points) {
-          const valeur = this.valeurDuPoint(code, anneeLiquidation);
+          let valeur = this.valeurDuPoint(code, anneeLiquidation);
+          if (valeur === null && periode.valeur_point_euros !== null
+              && periode.valeur_point_euros !== undefined) {
+            // Valeur de service écrite dans la fiche, faute d'une série
+            // certifiable dans `valeurs_point.csv`.
+            valeur = [
+              this.valeurPointFiche(periode, anneeLiquidation), Fiabilite.MOYENNE,
+            ];
+          }
           if (valeur !== null) {
             const [service, fiabiliteService] = valeur;
-            montant += points * service;
+            // COEFFICIENT DE DURÉE de la proportionnelle agricole : la pension
+            // vaut « points × valeur du point × 37,5 / durée requise ».
+            let coefficientDuree = 1.0;
+            if (periode.bareme_points === "msa_proportionnelle") {
+              const [requisMsa, fiabiliteDureeMsa] = this.dureeRequise(periode, carriere);
+              if (fiabiliteDureeMsa !== null) {
+                fiabiliteRegime = Math.min(fiabiliteRegime, fiabiliteDureeMsa);
+              }
+              if (requisMsa > 0) {
+                coefficientDuree = 37.5 / (requisMsa / 4.0);
+              }
+            }
+            montant += points * service * coefficientDuree;
             fiabiliteRegime = Math.min(
               fiabiliteRegime, fiabiliteService, fiabilitePoints.get(code),
             );
             details.push(
               `${formatFixe(points, 2, true)} points × valeur de service `
-              + `${sansZerosInutiles(service, 6)} €`,
+              + `${sansZerosInutiles(service, 6)} €`
+              + (coefficientDuree === 1.0 ? "" : ` × ${formatFixe(coefficientDuree, 4)}`),
+            );
+          }
+        }
+
+        // RÉGIME MIXTE : une part forfaitaire s'ajoute aux points — la retraite
+        // forfaitaire agricole, qui vaut l'AVTS pour une carrière complète et
+        // se proratise sur la durée (L. 732-24).
+        if (periode.type_calcul === "mixte"
+            && periode.pension_forfaitaire_annuelle !== null
+            && periode.pension_forfaitaire_annuelle !== undefined) {
+          const requisForfait = this.dureeRequise(periode, carriere)[0];
+          const [proratisationForfait, fiabiliteProrataForfait] = this
+            .dureeProratisation(periode, carriere, requisForfait);
+          if (fiabiliteProrataForfait !== null) {
+            fiabiliteRegime = Math.min(fiabiliteRegime, fiabiliteProrataForfait);
+          }
+          const acquis = Math.min(
+            trimestresParRegime.get(code) ?? 0, proratisationForfait,
+          );
+          if (proratisationForfait > 0 && acquis > 0) {
+            const forfait = periode.pension_forfaitaire_annuelle
+              * this.macro.coefficientPrix(
+                periode.pension_forfaitaire_annee ?? anneeLiquidation, anneeLiquidation,
+              )
+              * acquis / proratisationForfait;
+            montant += forfait;
+            details.push(
+              `forfait ${formatFixe(forfait, 2, true)} € `
+              + `(${acquis}/${proratisationForfait})`,
             );
           }
         }
