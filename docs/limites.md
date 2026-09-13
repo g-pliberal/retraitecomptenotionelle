@@ -3174,26 +3174,25 @@ modèle :
 | `sncf` | 1930-2033 | 16 | 79 | 1 | 0 |
 | `ratp` | 1930-2033 | 16 | 79 | 3 | 0 |
 | `banque_de_france` | 1930-2026 | 16 | 78 | 0 | 0 |
-| `cavp_complementaire` | 1949-2026 | 2 | 77 | 7 | 0 |
-| `carpv_complementaire` | 1950-2026 | 1 | 77 | 18 | 0 |
 | `cavec_complementaire` | 1953-2026 | 2 | 74 | 0 | 0 |
 | `opera_de_paris` | 1930-2026 | 4 | 72 | 4 | 0 |
 | `crpcen` | 1937-2026 | 16 | 71 | 0 | 0 |
 | `comedie_francaise` | 1930-2026 | 4 | 63 | 1 | 0 |
 | `cnbf` | 1948-2026 | 2 | 56 | 2 | 0 |
-| `cprn_complementaire` | 1949-2026 | 6 | 55 | 4 | 0 |
 | `cnavpl` | 1949-2026 | 7 | 55 | 9 | 0 |
 | `ircec_raap` | 1962-2026 | 5 | 54 | 2 | 0 |
 | `seita` | 1935-2026 | 8 | 49 | 0 | 0 |
 | `carcdsf_complementaire` | 1949-2026 | 22 | 48 | 0 | 0 |
 | `cnracl` | 1945-2026 | 7 | 45 | 17 | 0 |
 | `mines` | 1930-2026 | 22 | 44 | 1 | 0 |
-| `cipav_complementaire` | 1979-2026 | 3 | 44 | 3 | 0 |
 | `cnbf_complementaire` | 1979-2026 | 2 | 40 | 0 | 0 |
 | `ieg` | 1946-2026 | 15 | 38 | 3 | 0 |
+| `cavom_complementaire` | 1979-2026 | 2 | 37 | 5 | 0 |
 | `msa_non_salaries` | 1952-2026 | 7 | 34 | 13 | 0 |
+| `cipav_complementaire` | 1979-2026 | 4 | 34 | 1 | 0 |
 | `crpnpac_tranche_2` | 1963-2026 | 4 | 32 | 0 | 0 |
 | `crpnpac` | 1963-2026 | 4 | 32 | 5 | 0 |
+| `cavp_complementaire` | 1949-2026 | 7 | 29 | 2 | 0 |
 | `regime_general` | 1945-2026 | 8 | 27 | 14 | 0 |
 | `msa_salaries` | 1945-2026 | 8 | 27 | 3 | 0 |
 | `fspoeie` | 1930-2026 | 9 | 26 | 4 | 0 |
@@ -3202,12 +3201,14 @@ modèle :
 | `organic` | 1949-2006 | 5 | 24 | 3 | 0 |
 | `msa_rco` | 2003-2026 | 1 | 24 | 24 | 0 |
 | `cancava` | 1949-2006 | 5 | 24 | 3 | 0 |
+| `cprn_complementaire` | 1949-2026 | 9 | 22 | 2 | 0 |
 | `cavamac_complementaire` | 1968-2026 | 8 | 22 | 5 | 0 |
 | `ipacte` | 1951-1970 | 1 | 20 | 0 | 0 |
 | `pensions_civiles_1853` | 1930-1948 | 1 | 19 | 0 | 0 |
 | `ircantec` | 1971-2026 | 15 | 17 | 6 | 0 |
 | `rafp` | 2005-2026 | 2 | 16 | 6 | 0 |
 | `assurances_sociales` | 1930-1945 | 1 | 16 | 0 | 0 |
+| `carpv_complementaire` | 1950-2026 | 10 | 15 | 0 | 0 |
 | `agirc` | 1947-2018 | 24 | 13 | 0 | 0 |
 | `rco_artisans` | 1979-2012 | 10 | 12 | 2 | 0 |
 | `rci` | 2013-2026 | 2 | 12 | 2 | 0 |
@@ -3215,7 +3216,6 @@ modèle :
 | `carpimko_complementaire` | 1984-2026 | 27 | 12 | 0 | 0 |
 | `arrco` | 1961-2018 | 18 | 12 | 1 | 0 |
 | `igrante` | 1960-1970 | 1 | 11 | 0 | 0 |
-| `cavom_complementaire` | 2016-2026 | 1 | 11 | 2 | 0 |
 | `arrco_tranche_2_entreprises_nouvelles` | 1997-2018 | 6 | 11 | 0 | 0 |
 | `rsi` | 2006-2018 | 2 | 10 | 4 | 0 |
 | `arrco_tranche_2` | 1961-2018 | 22 | 9 | 0 | 0 |
@@ -3227,8 +3227,8 @@ modèle :
 | `agirc_arrco` | 2019-2026 | 2 | 5 | 0 | 0 |
 
 **Ce tableau n'est plus écrit à la main** : c'est la sortie de
-`python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1,
-B2, B3 et leurs restes de la campagne « les règles à travers l'histoire » (voir
+`python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1
+à B4 de la campagne « les règles à travers l'histoire » (voir
 [`regimes.md`](regimes.md), journal de la campagne). Les deux dernières
 colonnes viennent de l'index LEGI et du calendrier des réformes
 (`legislation/reformes.yaml`) : une « coupure de texte non reflétée » est une

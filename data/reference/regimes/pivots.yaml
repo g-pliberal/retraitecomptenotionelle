@@ -146,8 +146,10 @@ pivots:
   carpimko_complementaire:
     - {texte: "Décret n°84-143", num: "2", parametres: [taux_cotisation_retraite, cotisation_forfaitaire_euros]}
   carpv_complementaire:
+    # Les neuf arrêtés du 10 juillet 2026 sont des textes distincts, pas des
+    # versions : ils ne datent rien, et le règlement qu'ils approuvent n'a
+    # qu'un état. Le décret seul porte l'histoire.
     - {texte: "Décret n°50-1318", num: "2", parametres: [cotisation_par_classes]}
-    - {texte: "Arrêté du 10 juillet 2026", num: "", parametres: [age_ouverture, age_taux_plein, decote_par_trimestre]}
   cavamac_complementaire:
     - {texte: "Décret n°67-1169", num: "2", parametres: [taux_cotisation_retraite, assiette]}
   cavec_complementaire:

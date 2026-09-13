@@ -993,17 +993,28 @@ regimes:
           LE TAUX DE T1 PASSE À 8,73 % EN 2025, et le barème en points suit :
           557 points au plafond au lieu de 525, soit exactement le rapport des
           deux taux — le prix d'achat d'un point ne bouge pas. La hausse
-          accompagne la réforme de l'assiette des indépendants (article 18 de la
-          loi n° 2023-1250 du 26 décembre 2023), qui asseoit la cotisation, à
-          partir de 2026 et sur le revenu 2025, sur le chiffre d'affaires
-          diminué des charges puis d'un abattement de 26 %.
-          Les recueils statistiques 2024 et 2025 de la CNAVPL portent l'un et
-          l'autre ce tableau, et ils concordent. La fiche le lisait encore à
-          8,23 % et 525 points : le taux venait d'une phrase de l'historique —
-          « le taux de la première tranche est de 8,23 % » — qui décrit la
-          réforme de 2015, non l'année du recueil.
-          La réforme de l'assiette, elle, n'est pas modélisée : la carrière
-          saisie porte un revenu, pas un chiffre d'affaires.
+          accompagne la réforme de l'assiette des indépendants (article 18 de
+          la loi n° 2023-1250 du 26 décembre 2023), qui asseoit la cotisation,
+          à partir de 2026 et sur le revenu 2025, sur le chiffre d'affaires
+          diminué des charges puis d'un abattement de 26 %. Les recueils
+          statistiques 2024 et 2025 de la CNAVPL portent l'un et l'autre ce
+          tableau, et ils concordent. La fiche le lisait encore à 8,23 % et
+          525 points : le taux venait d'une phrase de l'historique — « le taux
+          de la première tranche est de 8,23 % » — qui décrit la réforme de
+          2015, non l'année du recueil. La réforme de l'assiette, elle, n'est
+          pas modélisée : la carrière saisie porte un revenu, pas un chiffre
+          d'affaires. D. 642-3 lu version par version (quinze versions,
+          LEGIARTI000006738112 → LEGIARTI000049904651) : 8,6 % sous 85 % du
+          plafond et 1,6 % au-delà dès 2004 (LEGIARTI000006738115), 9,75 % et
+          1,81 % en 2013, 10,1 % et 1,87 % en 2014 (LEGIARTI000026704782),
+          8,23 % sous le plafond et 1,87 % jusqu'à cinq plafonds dès le 19
+          juillet 2015 (LEGIARTI000030910750), 8,73 % pour les périodes
+          courant à compter du 1er janvier 2025 (LEGIARTI000049904651) : la
+          fiche coïncide. L. 643-3 dans sa rédaction de la loi n° 2025-1403 du
+          30 décembre 2025 (LEGIARTI000053280388), aux pensions prenant effet
+          à compter du 1er septembre 2026, ouvre une majoration de pension
+          pour les trimestres cotisés l'année précédant l'âge légal aux
+          assurés qui ont des trimestres d'enfants : non portée.
       - debut: 2015
         fin: null
         type_calcul: points
@@ -2344,8 +2355,13 @@ regimes:
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [reversion]
         notes: >-
-          Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
-
+          Taux de la table « Cotisations proportionnelles » de la chronologie
+          de la CARMF. L'article 2 du décret n° 49-579 n'est consolidé dans
+          LEGI qu'à partir du 29 mai 2004 (LEGIARTI000006781640) et porte « 14
+          % » dans toutes ses versions (LEGIARTI000024194100 en 2011,
+          LEGIARTI000026885080, LEGIARTI000050865167, LEGIARTI000054168125) :
+          c'est le taux contractuel, appelé aux taux annuels de la chronologie
+          de la caisse que la fiche porte.
   - code: carcdsf_complementaire
     nom: >-
       Régime complémentaire des chirurgiens-dentistes et des sages-femmes
@@ -2854,6 +2870,162 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1949
+        fin: 1977
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.005
+        avantages_non_contributifs: [reversion]
+        cotisation_forfaitaire_euros: 6880.00
+        cotisation_forfaitaire_annee: 2024
+        notes: >-
+          DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+          (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+          cotisation de référence est fixée chaque année par le conseil
+          d'administration puis, depuis 2009, par décret : le forfait de la
+          fiche, indexé sur les prix, en tient lieu. 1949-1977 : aucune
+          version consolidée ; le forfait est reconduit en arrière, niveau
+          estimé. COTISATION FORFAITAIRE, ET ELLE L'EST VRAIMENT. Le volet
+          capitalisé de ce régime est réparti en classes, mais le volet en
+          RÉPARTITION ne l'est pas : le mémento de la caisse aligne les
+          classes 3 à 13 en colonnes et la ligne « Part gérée par répartition
+          » y porte le même montant partout. 6 880 € en 2024, quel que soit le
+          revenu. LA PENSION SE COMPTE EN ANNUITÉS, pas en points : « RÉGIME
+          COMPLÉMENTAIRE PAR RÉPARTITION : nombre d'années validées × 320,75
+          », écrit le mémento 2024. Le moteur, lui, convertit une cotisation
+          par un rendement — et les deux écritures coïncident exactement, la
+          cotisation étant constante : 6 880 × 4,66 % = 320,75 €. Une carrière
+          de N années rend N × 320,75 € des deux façons. Le régime est
+          institué par le décret n° 49-580 du 22 avril 1949, que les arrêtés
+          d'approbation de ses statuts visent encore aujourd'hui. UN SEUL
+          MILLÉSIME EST PUBLIÉ ICI AUSSI : le forfait de 2024, reconduit en
+          euros constants vers l'amont — soixante-quinze ans depuis un seul
+          chiffre, et la fiche ne vaut pas mieux que cela.
+      - debut: 1978
+        fin: 1986
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.005
+        avantages_non_contributifs: [reversion]
+        cotisation_forfaitaire_euros: 6880.00
+        cotisation_forfaitaire_annee: 2024
+        notes: >-
+          DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+          (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+          cotisation de référence est fixée chaque année par le conseil
+          d'administration puis, depuis 2009, par décret : le forfait de la
+          fiche, indexé sur les prix, en tient lieu. 1978-1986
+          (LEGIARTI000006770075) : OPTION entre les classes 1, 3, 5, 7 et 9,
+          de quatre à douze fois la cotisation de référence, classe 1 d'office
+          ; classes 2 et 4 maintenues à titre transitoire pour les options
+          d'avant 1974.
+      - debut: 1987
+        fin: 2008
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.005
+        avantages_non_contributifs: [reversion]
+        cotisation_forfaitaire_euros: 6880.00
+        cotisation_forfaitaire_annee: 2024
+        notes: >-
+          DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+          (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+          cotisation de référence est fixée chaque année par le conseil
+          d'administration puis, depuis 2009, par décret : le forfait de la
+          fiche, indexé sur les prix, en tient lieu. 1987-2008
+          (LEGIARTI000006770076, puis LEGIARTI000006770077 en 1989 et
+          LEGIARTI000006770078 en 2002, euro) : sept classes 1, 3, 5, 7, 9, 11
+          et 13, de cinq à dix-sept fois la cotisation de référence.
+      - debut: 2009
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.005
+        avantages_non_contributifs: [reversion]
+        cotisation_forfaitaire_euros: 6880.00
+        cotisation_forfaitaire_annee: 2024
+        notes: >-
+          DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+          (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+          cotisation de référence est fixée chaque année par le conseil
+          d'administration puis, depuis 2009, par décret : le forfait de la
+          fiche, indexé sur les prix, en tient lieu. 2009-2014
+          (LEGIARTI000020081467, 1er juillet 2009) : classe 1 supprimée,
+          classe 3 d'office (sept fois la référence), option de 3 à 13 ; la
+          cotisation de référence est fixée par décret depuis le 1er janvier
+          2009.
+      - debut: 2015
+        fin: 2019
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.005
+        avantages_non_contributifs: [reversion]
+        cotisation_forfaitaire_euros: 6880.00
+        cotisation_forfaitaire_annee: 2024
+        notes: >-
+          DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+          (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+          cotisation de référence est fixée chaque année par le conseil
+          d'administration puis, depuis 2009, par décret : le forfait de la
+          fiche, indexé sur les prix, en tient lieu. 2015-2019
+          (LEGIARTI000029843618, 1er juillet 2015) : FIN DE L'OPTION — six
+          classes d'office selon la moyenne des revenus de la quatrième à la
+          deuxième année précédente, bornées en plafonds de la Sécurité
+          sociale : classe 3 jusqu'à 2 PASS (sept fois la référence), 5 de 2 à
+          2,75 PASS (neuf fois), 7 de 2,75 à 3,5 (onze), 9 de 3,5 à 4,25
+          (treize), 11 de 4,25 à 5 (quinze), 13 au-delà (dix-sept) ;
+          LEGIARTI000038358448 (2019) : assiette de l'avant-dernière année, L.
+          131-6.
+      - debut: 2020
         fin: 2025
         type_calcul: points
         age_ouverture: 62
@@ -2872,22 +3044,29 @@ regimes:
         cotisation_forfaitaire_euros: 6880.00
         cotisation_forfaitaire_annee: 2024
         notes: >-
-          COTISATION FORFAITAIRE, ET ELLE L'EST VRAIMENT. Le volet capitalisé de
-          ce régime est réparti en classes, mais le volet en RÉPARTITION ne
-          l'est pas : le mémento de la caisse aligne les classes 3 à 13 en
-          colonnes et la ligne « Part gérée par répartition » y porte le même
-          montant partout. 6 880 € en 2024, quel que soit le revenu.
-          LA PENSION SE COMPTE EN ANNUITÉS, pas en points : « RÉGIME
-          COMPLÉMENTAIRE PAR RÉPARTITION : nombre d'années validées × 320,75 »,
-          écrit le mémento 2024. Le moteur, lui, convertit une cotisation par un
-          rendement — et les deux écritures coïncident exactement, la cotisation
-          étant constante : 6 880 × 4,66 % = 320,75 €. Une carrière de N années
-          rend N × 320,75 € des deux façons.
-          Le régime est institué par le décret n° 49-580 du 22 avril 1949, que
+          DÉCRET N° 49-580 DU 22 AVRIL 1949, ARTICLE 2, LU VERSION PAR VERSION
+          (dix versions, de 1978 à 2026 ; rien de 1949 à 1977 dans LEGI). La
+          cotisation de référence est fixée chaque année par le conseil
+          d'administration puis, depuis 2009, par décret : le forfait de la
+          fiche, indexé sur les prix, en tient lieu. 2020-2025
+          (LEGIARTI000038358500, décret n° 2019-288) : onze classes, de 1,8125
+          PASS (classe 3, sept fois la référence) par marches de 0,375 PASS
+          jusqu'à la classe 13. COTISATION FORFAITAIRE, ET ELLE L'EST
+          VRAIMENT. Le volet capitalisé de ce régime est réparti en classes,
+          mais le volet en RÉPARTITION ne l'est pas : le mémento de la caisse
+          aligne les classes 3 à 13 en colonnes et la ligne « Part gérée par
+          répartition » y porte le même montant partout. 6 880 € en 2024, quel
+          que soit le revenu. LA PENSION SE COMPTE EN ANNUITÉS, pas en points
+          : « RÉGIME COMPLÉMENTAIRE PAR RÉPARTITION : nombre d'années validées
+          × 320,75 », écrit le mémento 2024. Le moteur, lui, convertit une
+          cotisation par un rendement — et les deux écritures coïncident
+          exactement, la cotisation étant constante : 6 880 × 4,66 % = 320,75
+          €. Une carrière de N années rend N × 320,75 € des deux façons. Le
+          régime est institué par le décret n° 49-580 du 22 avril 1949, que
           les arrêtés d'approbation de ses statuts visent encore aujourd'hui.
-          UN SEUL MILLÉSIME EST PUBLIÉ ICI AUSSI : le forfait de 2024, reconduit
-          en euros constants vers l'amont — soixante-quinze ans depuis un seul
-          chiffre, et la fiche ne vaut pas mieux que cela.
+          UN SEUL MILLÉSIME EST PUBLIÉ ICI AUSSI : le forfait de 2024,
+          reconduit en euros constants vers l'amont — soixante-quinze ans
+          depuis un seul chiffre, et la fiche ne vaut pas mieux que cela.
       - debut: 2026
         fin: null
         type_calcul: points
@@ -3534,6 +3713,285 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1950
+        fin: 1953
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 1950-1953 (LEGIARTI000006776818) : « la
+          cotisation annuelle des vétérinaires est calculée en fonction d'un
+          certain nombre d'actes médicaux, compte tenu de l'âge des intéressés
+          », sans tableau.
+      - debut: 1954
+        fin: 1966
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 1954-1966 (LEGIARTI000006776819) : premier
+          tableau par âge — 50 actes avant trente-cinq ans, 80 de trente-cinq
+          à soixante-cinq ans, 50 au-delà ; coefficients de réduction
+          transitoires jusqu'en 1956 pour les moins de quarante-cinq ans. La
+          cotisation dépend de l'ÂGE, non du revenu.
+      - debut: 1967
+        fin: 1981
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 1967-1981 (LEGIARTI000006776820) : tableau
+          par âge relevé — 95 actes avant trente-cinq ans, 152 de trente-cinq
+          à soixante-cinq ans, 95 au-delà.
+      - debut: 1982
+        fin: 1992
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 1982-1992 (LEGIARTI000006776821) : 144 / 228
+          / 144 actes selon l'âge, qui forment la classe obligatoire A ; deux
+          classes spéciales I et II ouvertes aux revenus inférieurs aux
+          plafonds des statuts.
+      - debut: 1993
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 1993-1997 (LEGIARTI000006776822) : 144 actes
+          avant trente-deux ans ou après soixante-cinq, 228 entre les deux ;
+          classes spéciales I (48 actes) et II.
+      - debut: 1998
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 1998-2012 (LEGIARTI000006776823, décret du 2
+          décembre 1997) : PASSAGE AUX CLASSES DE REVENU — classe B (revenu
+          inférieur à 4 500 AMV) 480 AMV, classe C (4 500 à 6 000 AMV) 600
+          AMV, classe D (au-delà) 720 AMV ; classes réduites super spéciale I
+          (60 AMV) à A (360 AMV) sous 3 000 AMV de revenu. C'est la première
+          grille par revenu, celle que `cotisation_par_classes` décrit.
+      - debut: 2013
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 2013-2014 (LEGIARTI000026885093) : mêmes
+          classes et montants, l'assiette devient le revenu d'activité de
+          l'article L. 131-6.
+      - debut: 2015
+        fin: 2021
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 2015-2021 (LEGIARTI000030774327, décret du 23
+          juin 2015) : PASSAGE AU POINT — la cotisation est « le prix d'achat
+          du point (PA) multiplié par le nombre de points correspondant à la
+          tranche de revenu » : classe B 16 PA (revenu inférieur à 4 500 ×
+          IR), C 20 PA, D 24 PA ; l'indice de référence IR est fixé par le
+          conseil d'administration, le PA par décret annuel.
+      - debut: 2022
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: sans_objet
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. 2022-2025 (LEGIARTI000044223137, décret n°
+          2021-1358) : l'assiette passe de l'avant-dernière à l'année
+          précédente ; classes inchangées. COTISATION PAR CLASSES, et la
+          grille est une TABLE DE POINTS déguisée. Chaque classe divise
+          exactement par son nombre de points en la valeur d'achat du point
+          que fixe le décret annuel : 9 124,16 € pour 16 points en 2024, soit
+          570,26 € ; 10 234 € pour 17 points en 2026, soit 602,00 €. Le
+          rendement est donc le simple rapport de la valeur de service à la
+          valeur d'achat, identique sur toutes les classes — 39,54 / 602 =
+          6,5681 % en 2026. LA GRILLE A CHANGÉ DE FORME EN 2026. Jusqu'en 2025
+          elle ne comptait que TROIS classes, à 16, 20 et 24 points ; le
+          rapport annuel 2024 de la caisse annonce la réforme : « un point
+          supplémentaire pour les classes B, C et D qui passent respectivement
+          de 16 à 17 points, de 20 à 21 points et de 24 à 25 points, ainsi que
+          la CRÉATION D'UNE CLASSE E à 28 points ». En 2026 : 10 234 € jusqu'à
+          76 994 € de revenus, 12 642 € de 76 995 à 102 659 €, 15 050 € de 102
+          660 à 128 324 €, 16 856 € au-delà. LA CLASSE EST SUBIE, ET DEUX
+          CHOIX NE SONT PAS PRIS. « Les vétérinaires dont les revenus sont
+          inférieurs à 76 995 € sont appelés en classe B », écrit la caisse :
+          c'est le revenu de l'année N-1 qui range l'assuré, et le dépôt sait
+          le calculer. Restent deux facultés qu'il ne prête à personne —
+          l'option pour une classe supérieure, que les statuts font « pour
+          trois ans », et les cinq CLASSES D'ALLÈGEMENT, de « Super Spéciale I
+          » à « Classe A », qui n'ouvrent que 2 à 12 points et ne s'obtiennent
+          que sur demande. La première majorerait la pension, les secondes la
+          minoreraient ; aucune n'est prévisible. CE QUE LES LIVRETS DONNENT,
+          ET OÙ LE DÉCRET PREND LE RELAIS. Les livrets annuels de la caisse
+          publient la grille entière — bornes, montants et points — pour 2024,
+          2025 et 2026 ; ces trois millésimes sont saisis tels quels. Pour
+          2016 à 2023, le décret annuel donne la « valeur d'achat du point » —
+          446 € en 2016, 539 € en 2023 — et les montants s'en déduisent en la
+          multipliant par les points de chaque classe ; les bornes sont celles
+          de 2024 indexées sur le plafond, faute d'autre ancre. Les trois
+          millésimes publiés disent ce que vaut cette convention : les bornes
+          ont monté de 1,68 % entre 2024 et 2025 quand le plafond montait de
+          1,58 %. AVANT 2016 LE DÉCRET FIXAIT TOUT AUTRE CHOSE, un « taux
+          d'appel de la cotisation » monté de 78,5 % en 2002 à 104 % en 2015,
+          appliqué à des montants de classe que rien ne publie. Deux inconnues
+          s'ajoutent alors : la grille de 2024 y est reportée par le rapport
+          des plafonds, et ce report IGNORE le taux d'appel — une cotisation
+          de 2002 est donc surestimée d'un quart environ, et les droits
+          qu'elle porte avec elle. Soixante-cinq ans reportés depuis une
+          grille : c'est la limite de cette fiche, et elle est grande. L'ÂGE
+          SEUL COMMANDE, PAS LA DURÉE. « Il fonctionne selon un système à
+          points et prend en compte uniquement l'âge de départ (et non la
+          durée de cotisation) », écrit la caisse : départ possible à 60 ans,
+          taux plein automatique à 65 ans, décote de 1,25 % par trimestre
+          manquant avant 65 ans, et « il n'existe pas de surcote dans le
+          régime complémentaire au-delà du taux plein ». D'où une durée
+          requise nulle et une surcote absente, là où les autres sections
+          libérales suivent la génération. UNE MAJORATION N'EST PAS PORTÉE :
+          la bonification de 10 % pour trois enfants et plus, que la caisse
+          accorde dans les deux régimes. Les fiches voisines ne la portent pas
+          davantage. La borne de début est celle du décret n° 50-1318 du 21
+          octobre 1950, qui institue le régime au sein de la caisse créée deux
+          ans plus tôt.
+      - debut: 2026
         fin: null
         type_calcul: points
         age_ouverture: 60
@@ -3548,61 +4006,68 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
-          COTISATION PAR CLASSES, et la grille est une TABLE DE POINTS déguisée.
-          Chaque classe divise exactement par son nombre de points en la valeur
-          d'achat du point que fixe le décret annuel : 9 124,16 € pour 16 points
-          en 2024, soit 570,26 € ; 10 234 € pour 17 points en 2026, soit
-          602,00 €. Le rendement est donc le simple rapport de la valeur de
-          service à la valeur d'achat, identique sur toutes les classes —
-          39,54 / 602 = 6,5681 % en 2026.
+          DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
+          VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
+          chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
+          (AMV) est fixé par l'ordre, le prix d'achat du point par décret
+          annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
+          indexée sur les prix, tient lieu de montant, et la période dit ce
+          que le droit exigeait. Depuis 2026 (LEGIARTI000052567915, décret n°
+          2025-1076, périodes courant à compter du 1er janvier 2026 ; puis
+          LEGIARTI000054168212, décret n° 2026-418 du 29 mai 2026, en vigueur
+          le 1er juillet 2026). COTISATION PAR CLASSES, et la grille est une
+          TABLE DE POINTS déguisée. Chaque classe divise exactement par son
+          nombre de points en la valeur d'achat du point que fixe le décret
+          annuel : 9 124,16 € pour 16 points en 2024, soit 570,26 € ; 10 234 €
+          pour 17 points en 2026, soit 602,00 €. Le rendement est donc le
+          simple rapport de la valeur de service à la valeur d'achat,
+          identique sur toutes les classes — 39,54 / 602 = 6,5681 % en 2026.
           LA GRILLE A CHANGÉ DE FORME EN 2026. Jusqu'en 2025 elle ne comptait
           que TROIS classes, à 16, 20 et 24 points ; le rapport annuel 2024 de
           la caisse annonce la réforme : « un point supplémentaire pour les
-          classes B, C et D qui passent respectivement de 16 à 17 points, de 20
-          à 21 points et de 24 à 25 points, ainsi que la CRÉATION D'UNE
+          classes B, C et D qui passent respectivement de 16 à 17 points, de
+          20 à 21 points et de 24 à 25 points, ainsi que la CRÉATION D'UNE
           CLASSE E à 28 points ». En 2026 : 10 234 € jusqu'à 76 994 € de
-          revenus, 12 642 € de 76 995 à 102 659 €, 15 050 € de 102 660 à
-          128 324 €, 16 856 € au-delà.
-          LA CLASSE EST SUBIE, ET DEUX CHOIX NE SONT PAS PRIS. « Les
-          vétérinaires dont les revenus sont inférieurs à 76 995 € sont appelés
-          en classe B », écrit la caisse : c'est le revenu de l'année N-1 qui
-          range l'assuré, et le dépôt sait le calculer. Restent deux facultés
-          qu'il ne prête à personne — l'option pour une classe supérieure, que
-          les statuts font « pour trois ans », et les cinq CLASSES D'ALLÈGEMENT,
-          de « Super Spéciale I » à « Classe A », qui n'ouvrent que 2 à 12
-          points et ne s'obtiennent que sur demande. La première majorerait la
-          pension, les secondes la minoreraient ; aucune n'est prévisible.
-          CE QUE LES LIVRETS DONNENT, ET OÙ LE DÉCRET PREND LE RELAIS. Les
-          livrets annuels de la caisse publient la grille entière — bornes,
-          montants et points — pour 2024, 2025 et 2026 ; ces trois millésimes
-          sont saisis tels quels. Pour 2016 à 2023, le décret annuel donne la
-          « valeur d'achat du point » — 446 € en 2016, 539 € en 2023 — et les
-          montants s'en déduisent en la multipliant par les points de chaque
-          classe ; les bornes sont celles de 2024 indexées sur le plafond, faute
-          d'autre ancre. Les trois millésimes publiés disent ce que vaut cette
-          convention : les bornes ont monté de 1,68 % entre 2024 et 2025 quand
-          le plafond montait de 1,58 %.
-          AVANT 2016 LE DÉCRET FIXAIT TOUT AUTRE CHOSE, un « taux d'appel de la
-          cotisation » monté de 78,5 % en 2002 à 104 % en 2015, appliqué à des
-          montants de classe que rien ne publie. Deux inconnues s'ajoutent
-          alors : la grille de 2024 y est reportée par le rapport des plafonds,
-          et ce report IGNORE le taux d'appel — une cotisation de 2002 est donc
-          surestimée d'un quart environ, et les droits qu'elle porte avec elle.
-          Soixante-cinq ans reportés depuis une grille : c'est la limite de
-          cette fiche, et elle est grande.
-          L'ÂGE SEUL COMMANDE, PAS LA DURÉE. « Il fonctionne selon un système à
-          points et prend en compte uniquement l'âge de départ (et non la durée
-          de cotisation) », écrit la caisse : départ possible à 60 ans, taux
-          plein automatique à 65 ans, décote de 1,25 % par trimestre manquant
-          avant 65 ans, et « il n'existe pas de surcote dans le régime
-          complémentaire au-delà du taux plein ». D'où une durée requise nulle
-          et une surcote absente, là où les autres sections libérales suivent
-          la génération.
-          UNE MAJORATION N'EST PAS PORTÉE : la bonification de 10 % pour trois
+          revenus, 12 642 € de 76 995 à 102 659 €, 15 050 € de 102 660 à 128
+          324 €, 16 856 € au-delà. LA CLASSE EST SUBIE, ET DEUX CHOIX NE SONT
+          PAS PRIS. « Les vétérinaires dont les revenus sont inférieurs à 76
+          995 € sont appelés en classe B », écrit la caisse : c'est le revenu
+          de l'année N-1 qui range l'assuré, et le dépôt sait le calculer.
+          Restent deux facultés qu'il ne prête à personne — l'option pour une
+          classe supérieure, que les statuts font « pour trois ans », et les
+          cinq CLASSES D'ALLÈGEMENT, de « Super Spéciale I » à « Classe A »,
+          qui n'ouvrent que 2 à 12 points et ne s'obtiennent que sur demande.
+          La première majorerait la pension, les secondes la minoreraient ;
+          aucune n'est prévisible. CE QUE LES LIVRETS DONNENT, ET OÙ LE DÉCRET
+          PREND LE RELAIS. Les livrets annuels de la caisse publient la grille
+          entière — bornes, montants et points — pour 2024, 2025 et 2026 ; ces
+          trois millésimes sont saisis tels quels. Pour 2016 à 2023, le décret
+          annuel donne la « valeur d'achat du point » — 446 € en 2016, 539 €
+          en 2023 — et les montants s'en déduisent en la multipliant par les
+          points de chaque classe ; les bornes sont celles de 2024 indexées
+          sur le plafond, faute d'autre ancre. Les trois millésimes publiés
+          disent ce que vaut cette convention : les bornes ont monté de 1,68 %
+          entre 2024 et 2025 quand le plafond montait de 1,58 %. AVANT 2016 LE
+          DÉCRET FIXAIT TOUT AUTRE CHOSE, un « taux d'appel de la cotisation »
+          monté de 78,5 % en 2002 à 104 % en 2015, appliqué à des montants de
+          classe que rien ne publie. Deux inconnues s'ajoutent alors : la
+          grille de 2024 y est reportée par le rapport des plafonds, et ce
+          report IGNORE le taux d'appel — une cotisation de 2002 est donc
+          surestimée d'un quart environ, et les droits qu'elle porte avec
+          elle. Soixante-cinq ans reportés depuis une grille : c'est la limite
+          de cette fiche, et elle est grande. L'ÂGE SEUL COMMANDE, PAS LA
+          DURÉE. « Il fonctionne selon un système à points et prend en compte
+          uniquement l'âge de départ (et non la durée de cotisation) », écrit
+          la caisse : départ possible à 60 ans, taux plein automatique à 65
+          ans, décote de 1,25 % par trimestre manquant avant 65 ans, et « il
+          n'existe pas de surcote dans le régime complémentaire au-delà du
+          taux plein ». D'où une durée requise nulle et une surcote absente,
+          là où les autres sections libérales suivent la génération. UNE
+          MAJORATION N'EST PAS PORTÉE : la bonification de 10 % pour trois
           enfants et plus, que la caisse accorde dans les deux régimes. Les
-          fiches voisines ne la portent pas davantage.
-          La borne de début est celle du décret n° 50-1318 du 21 octobre 1950,
-          qui institue le régime au sein de la caisse créée deux ans plus tôt.
+          fiches voisines ne la portent pas davantage. La borne de début est
+          celle du décret n° 50-1318 du 21 octobre 1950, qui institue le
+          régime au sein de la caisse créée deux ans plus tôt.
   - code: cavamac_complementaire
     nom: >-
       Régime complémentaire des agents généraux d'assurance (CAVAMAC, RCO)
@@ -3821,39 +4286,46 @@ regimes:
         avantages_non_contributifs: [reversion]
         notes: >-
           LA BAISSE DU TAUX D'APPEL, que la caisse annonce dans son tableau de
-          paramètres 2026 : « le taux de cotisation statutaire est de 6,30 % au
-          taux d'appel de 121,6 %, soit un taux de cotisation effectif de
+          paramètres 2026 : « le taux de cotisation statutaire est de 6,30 %
+          au taux d'appel de 121,6 %, soit un taux de cotisation effectif de
           7,66 % des commissions et rémunérations brutes limitées au plafond,
           dont 2,50 % (concours des compagnies mandantes) et 5,16 % (part à la
           charge de l'assuré) ». Le barème de l'IPP porte encore 8,16 % ; la
-          caisse fait foi, comme toujours dans ce dépôt.
-          UN TIERS EST PAYÉ PAR QUELQU'UN D'AUTRE, ET CE N'EST PAS UN
-          EMPLOYEUR. La fiche des taux de la caisse l'énumère à part : « taux de
-          cotisation créateur de droits RCO : 6,30 % ; CONCOURS CONVENTIONNEL
-          DES COMPAGNIES MANDANTES : 2,50 % des commissions brutes plafonnées ;
-          taux d'appel : 121,6 % ; taux de cotisation effectif : 7,66 % », et
-          son tableau de paramètres détaille les 7,66 % « dont 2,50 %
-          (concours des compagnies mandantes) et 5,16 % (part à la charge de
-          l'assuré) ». D'où `part_salariale` = 5,16 / 7,66 = 67,36 %.
-          CE CONCOURS EST AUSSI VIEUX QUE LA PROFESSION L'EST SOUS SA FORME
-          ACTUELLE. Le gouvernement l'a rappelé au Sénat en 2021 : « depuis
-          1952, des accords conventionnels successifs » font financer le régime
-          en partie par les compagnies, et ce concours représentait alors
-          « environ 90 millions d'euros, soit plus du tiers des ressources du
+          caisse fait foi, comme toujours dans ce dépôt. UN TIERS EST PAYÉ PAR
+          QUELQU'UN D'AUTRE, ET CE N'EST PAS UN EMPLOYEUR. La fiche des taux
+          de la caisse l'énumère à part : « taux de cotisation créateur de
+          droits RCO : 6,30 % ; CONCOURS CONVENTIONNEL DES COMPAGNIES
+          MANDANTES : 2,50 % des commissions brutes plafonnées ; taux d'appel
+          : 121,6 % ; taux de cotisation effectif : 7,66 % », et son tableau
+          de paramètres détaille les 7,66 % « dont 2,50 % (concours des
+          compagnies mandantes) et 5,16 % (part à la charge de l'assuré) ».
+          D'où `part_salariale` = 5,16 / 7,66 = 67,36 %. CE CONCOURS EST AUSSI
+          VIEUX QUE LA PROFESSION L'EST SOUS SA FORME ACTUELLE. Le
+          gouvernement l'a rappelé au Sénat en 2021 : « depuis 1952, des
+          accords conventionnels successifs » font financer le régime en
+          partie par les compagnies, et ce concours représentait alors «
+          environ 90 millions d'euros, soit plus du tiers des ressources du
           régime » — la même proportion qu'aujourd'hui. C'est pourquoi la part
           de 2026 est reportée sur toutes les périodes : seul son niveau exact
           est daté, son existence ne l'est pas. Le statut
           `agent_general_assurance` n'est DONC PAS marqué `sans_employeur` —
           c'est le seul libéral du catalogue dans ce cas, et il l'est parce
-          qu'un tiers paie réellement pour lui.
-          LE RENDEMENT EST PUBLIÉ, ET IL EST STABLE : « le coefficient de
-          référence, correspondant au prix d'achat d'un point de retraite :
-          fixé à 8,1806 €, maintenant ainsi le taux de rendement du régime à
-          5,04 % ». Valeur de service 0,4123 € en 2026 : 0,4123 / 8,1806 =
-          5,0399 %. Le même calcul tombe sur 5,04 % en 2023 (0,3829 / 7,597) et
-          en 2024 (0,3994 / 7,9246) — la caisse pilote ce rendement, et le dit.
-          C'est le rendement HORS TAUX D'APPEL ; celui de ce qui est versé se
-          lit dans `rendements_points.csv`.
+          qu'un tiers paie réellement pour lui. LE RENDEMENT EST PUBLIÉ, ET IL
+          EST STABLE : « le coefficient de référence, correspondant au prix
+          d'achat d'un point de retraite : fixé à 8,1806 €, maintenant ainsi
+          le taux de rendement du régime à 5,04 % ». Valeur de service 0,4123
+          € en 2026 : 0,4123 / 8,1806 = 5,0399 %. Le même calcul tombe sur
+          5,04 % en 2023 (0,3829 / 7,597) et en 2024 (0,3994 / 7,9246) — la
+          caisse pilote ce rendement, et le dit. C'est le rendement HORS TAUX
+          D'APPEL ; celui de ce qui est versé se lit dans
+          `rendements_points.csv`. LE DÉCRET NE BOUGE PAS : l'article 2 du
+          décret n° 67-1169, dans ses onze versions (LEGIARTI000006776899 →
+          LEGIARTI000046813836), fixe « la cotisation à 6,30 % du montant des
+          commissions et rémunérations » de 1967 à aujourd'hui ; ce qui change
+          est l'assiette — commissions brutes (2010), plafond de 413 028 €
+          pour 2011 (LEGIARTI000024744283) puis revalorisé chaque année — et
+          le taux d'appel, que les délibérations fixent. Les taux de la fiche
+          sont les taux appelés reconstitués ; 6,30 % est le contractuel.
   - code: cavec_complementaire
     nom: >-
       Régime complémentaire des experts-comptables et des commissaires aux
@@ -3962,6 +4434,39 @@ regimes:
       moindre et pour 60 % à la charge de l'employeur.
     hors_repartition: false
     periodes:
+      - debut: 1979
+        fin: 2015
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_8_pass
+        taux_cotisation_retraite: 0.125
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          QUARANTE ANS QUE LA FICHE NE PORTAIT PAS. Le régime naît du décret
+          n° 79-265 du 27 mars 1979 et fonctionne par CLASSES jusqu'en 2015 :
+          article 2, version de 1980 (LEGIARTI000006770098) — classe spéciale
+          2 points, classes A à E de 4 à 28 points, aux montants de 2 à 14
+          fois la classe spéciale ; version de 1987 (LEGIARTI000006770099) —
+          classe spéciale, B à F de 8 à 40 points, 4 à 20 fois ; version de
+          2013 (LEGIARTI000026892955) — 18, 72, 126, 180, 252 et 360 points,
+          mêmes multiples. La classe dépend du revenu selon des bornes fixées
+          par les statuts, HORS INDEX, et le montant de la classe spéciale par
+          décret annuel : ni l'un ni l'autre ne permet de reconstituer la
+          cotisation. La réforme du 1er janvier 2016 (décret n° 2015-1667) a
+          converti le régime en cotisation proportionnelle de 12,5 % dans la
+          limite de huit plafonds, avec une montée du plafond de 4 à 7 PASS de
+          2016 à 2019 (LEGIARTI000031875318) ; ce taux est projeté en arrière
+          sur 1979-2015 comme équivalent moyen des classes, au niveau
+          `estimee`, plutôt que de laisser l'officier ministériel sans
+          complémentaire pendant trente-sept ans.
       - debut: 2016
         fin: null
         type_calcul: points
@@ -4055,6 +4560,57 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1979
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [reversion]
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        notes: >-
+          DÉCRET N° 79-262 DU 21 MARS 1979, ARTICLE 2 (LEGIARTI000006767473,
+          puis LEGIARTI000006767474 en 1985 pour les conditions d'option,
+          classes inchangées) : six classes de cotisation portant attribution
+          de quatre (classe 1), huit (2), douze (3), vingt (5), vingt-huit (7)
+          et quarante (10) points, aux montants de un à dix fois la cotisation
+          de la classe 1, la classe étant fixée par le revenu professionnel
+          net selon les statuts ; les classes 5, 7 et 10 ne deviennent
+          obligatoires qu'en 1980, 1981 et 1982. Les bornes de revenu sont
+          dans les statuts, hors index : la grille de `classes_cotisation.csv`
+          la plus ancienne, indexée sur les prix, tient lieu de montant.
+          COTISATION PAR CLASSES, et c'est la première fiche du dépôt de cette
+          forme. La caisse ne prélevait ni un taux ni un forfait : elle
+          rangeait l'assuré dans l'un de huit paliers selon son revenu, et
+          appelait le montant du palier. Sa fiche pratique 2022 en donne la
+          grille entière — 1 527 € jusqu'à 26 580 € de revenus, puis 3 055, 4
+          582, 7 637, 10 692, 16 802, 18 329 et 19 857 € au-delà de 123 300 €
+          —, et elle est portée dans `classes_cotisation.csv`. LA CLASSE EST
+          SUBIE, PAS CHOISIE. Le même document écrit du complémentaire que «
+          son montant est DÉTERMINÉ selon ce tableau », et de l'invalidité-
+          décès, présenté juste à côté, que l'assuré « a la possibilité de
+          CHOISIR sa classe de cotisation, quels que soient ses revenus ».
+          Seule la première forme est modélisable, et le dépôt ne prête jamais
+          à personne un choix qu'il ne peut pas connaître. UN SEUL MILLÉSIME
+          EST PUBLIÉ, celui de 2022, et il vaut pour toute la période — ramené
+          aux autres exercices par le rapport des plafonds, parce que la
+          grille est écrite en plafonds : ses sept bornes valent 0,65, 1,2,
+          1,4, 1,6, 2, 2,5 et 3 plafonds de 2022, et ses huit montants 1, 2,
+          3, 5, 7, 11, 12 et 13 fois une unité qui vaut 3,71 % du plafond.
+          C'est ce qui autorise à la reporter ; ce n'est pas ce qui prouve
+          qu'elle avait déjà cette forme en 1979, et plus on remonte, moins la
+          fiche vaut. La borne de début est celle du décret n° 79-262 du 21
+          mars 1979, qui institue le complémentaire des architectes — le noyau
+          de la caisse.
+      - debut: 2013
         fin: 2022
         type_calcul: points
         age_ouverture: 62
@@ -4072,29 +4628,35 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         notes: >-
-          COTISATION PAR CLASSES, et c'est la première fiche du dépôt de cette
-          forme. La caisse ne prélevait ni un taux ni un forfait : elle rangeait
-          l'assuré dans l'un de huit paliers selon son revenu, et appelait le
-          montant du palier. Sa fiche pratique 2022 en donne la grille entière —
-          1 527 € jusqu'à 26 580 € de revenus, puis 3 055, 4 582, 7 637, 10 692,
-          16 802, 18 329 et 19 857 € au-delà de 123 300 € —, et elle est portée
-          dans `classes_cotisation.csv`.
-          LA CLASSE EST SUBIE, PAS CHOISIE. Le même document écrit du
-          complémentaire que « son montant est DÉTERMINÉ selon ce tableau », et
-          de l'invalidité-décès, présenté juste à côté, que l'assuré « a la
-          possibilité de CHOISIR sa classe de cotisation, quels que soient ses
-          revenus ». Seule la première forme est modélisable, et le dépôt ne
-          prête jamais à personne un choix qu'il ne peut pas connaître.
-          UN SEUL MILLÉSIME EST PUBLIÉ, celui de 2022, et il vaut pour toute la
-          période — ramené aux autres exercices par le rapport des plafonds,
-          parce que la grille est écrite en plafonds : ses sept bornes valent
-          0,65, 1,2, 1,4, 1,6, 2, 2,5 et 3 plafonds de 2022, et ses huit
-          montants 1, 2, 3, 5, 7, 11, 12 et 13 fois une unité qui vaut 3,71 %
-          du plafond. C'est ce qui autorise à la reporter ; ce n'est pas ce qui
-          prouve qu'elle avait déjà cette forme en 1979, et plus on remonte,
-          moins la fiche vaut.
-          La borne de début est celle du décret n° 79-262 du 21 mars 1979, qui
-          institue le complémentaire des architectes — le noyau de la caisse.
+          DÉCRET N° 79-262, ARTICLE 2, VERSION DU 1ER JANVIER 2013
+          (LEGIARTI000026892951) : refonte en huit classes A à H portant
+          attribution de 36, 72, 108, 180, 252, 396, 432 et 468 points, aux
+          montants de 1, 2, 3, 5, 7, 11, 12 et 13 fois la classe A, selon le
+          revenu d'activité de l'article L. 131-6 ; montants fixés par décret
+          annuel. C'est la grille que la fiche pratique 2022 de la Cipav
+          décrit. COTISATION PAR CLASSES, et c'est la première fiche du dépôt
+          de cette forme. La caisse ne prélevait ni un taux ni un forfait :
+          elle rangeait l'assuré dans l'un de huit paliers selon son revenu,
+          et appelait le montant du palier. Sa fiche pratique 2022 en donne la
+          grille entière — 1 527 € jusqu'à 26 580 € de revenus, puis 3 055, 4
+          582, 7 637, 10 692, 16 802, 18 329 et 19 857 € au-delà de 123 300 €
+          —, et elle est portée dans `classes_cotisation.csv`. LA CLASSE EST
+          SUBIE, PAS CHOISIE. Le même document écrit du complémentaire que «
+          son montant est DÉTERMINÉ selon ce tableau », et de l'invalidité-
+          décès, présenté juste à côté, que l'assuré « a la possibilité de
+          CHOISIR sa classe de cotisation, quels que soient ses revenus ».
+          Seule la première forme est modélisable, et le dépôt ne prête jamais
+          à personne un choix qu'il ne peut pas connaître. UN SEUL MILLÉSIME
+          EST PUBLIÉ, celui de 2022, et il vaut pour toute la période — ramené
+          aux autres exercices par le rapport des plafonds, parce que la
+          grille est écrite en plafonds : ses sept bornes valent 0,65, 1,2,
+          1,4, 1,6, 2, 2,5 et 3 plafonds de 2022, et ses huit montants 1, 2,
+          3, 5, 7, 11, 12 et 13 fois une unité qui vaut 3,71 % du plafond.
+          C'est ce qui autorise à la reporter ; ce n'est pas ce qui prouve
+          qu'elle avait déjà cette forme en 1979, et plus on remonte, moins la
+          fiche vaut. La borne de début est celle du décret n° 79-262 du 21
+          mars 1979, qui institue le complémentaire des architectes — le noyau
+          de la caisse.
       - debut: 2023
         fin: 2024
         type_calcul: points
@@ -4281,6 +4843,218 @@ regimes:
           toutes deux assises sur les produits (décret n° 49-578 du 22 avril
           1949). Les deux fusionnent en 2004 dans la section C.
       - debut: 1962
+        fin: 1982
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.553
+        taux_cotisation_retraite: 0.045
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          1962-1982 : aucune version consolidée du décret n° 49-578 avant 1983
+          ; le taux de 4,5 % des produits de l'office est reconduit en
+          arrière, niveau estimé. 4,50 % PENDANT CINQUANTE-CINQ ANS, et la
+          continuité est frappante : 2,50 % (section A) plus 2 % (section U)
+          de 1962 à 2003, puis 4,50 % pour la section C qui les remplace en
+          2004. La fusion n'a pas changé le taux — elle a changé la façon de
+          servir. LA SECTION B N'EST PAS PORTÉE, ET LA RAISON N'EST PAS CELLE
+          QU'ON CROIRAIT. Ce n'est pas une grille introuvable : de 1962 à
+          2013, IL N'Y EN A PAS EU. Le rapport de l'IGAS (n° 2012-110P) décrit
+          le régime tel qu'il fonctionnait encore en 2012 : sept classes
+          numérotées 0, 1, 2, 3, 4, 6 et 8, « l'inscription dans une des
+          classes de cette section est obligatoire pour les notaires en
+          exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME ÉTANT LAISSÉ À
+          L'APPRÉCIATION DU NOTAIRE », et « en l'absence d'indication, le
+          cotisant est affilié en classe 1 ». Créée en 1962 pour « répondre
+          aux vœux du notariat qui souhaitait une cotisation INDÉPENDANTE DES
+          PRODUITS réalisés par l'office », elle était un supplément
+          facultatif — et le dépôt ne prête jamais à personne un choix qu'il
+          ne peut pas connaître. Même règle que pour les classes du RAAP
+          d'avant 2017 et l'option de classe supérieure de la CAVEC. CE QUE LE
+          CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
+          cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
+          moitié de la profession au plancher ou presque —, pour une moyenne
+          de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
+          DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
+          2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
+          bornes de chaque classe de cotisation de la section B sont
+          déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
+          des notaires pour une période de trois ans par référence à la
+          moyenne des produits de base du notariat au titre des trois années
+          précédentes ». Elles ne sont donc pas introuvables par accident :
+          aucun texte réglementaire ne les porte, par construction —
+          exactement comme le prix du point de la CAVAMAC, à ceci près que la
+          CAVAMAC publie la délibération de son conseil et que la CPRN ne
+          publie pas la sienne. Une passe entière du Journal officiel n'en a
+          rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
+          janvier 2029, le notaire sera systématiquement inscrit pour
+          l'exercice n dans la classe de cotisation correspondant aux produits
+          de son étude ». Jusque-là, les règles de maintien de classe — un
+          notaire assermenté avant 2014 ne monte que d'une classe par an et ne
+          descend jamais d'office — et la dérogation de six ans des nouveaux
+          notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
+          CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
+          15 900 € de section C — soit quatre dixièmes du complémentaire. Un
+          notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
+          publiera ses bornes, la fiche sera complète en une demi-heure : la
+          cotisation vaut « le nombre de points de la classe multiplié par 115
+          % du coût d'acquisition du point B » pour tout notaire assermenté
+          depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
+          la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+          en 2012, 5,54 % en 2026.
+      - debut: 1983
+        fin: 2004
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.553
+        taux_cotisation_retraite: 0.045
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          DÉCRET N° 49-578 DU 22 AVRIL 1949, ARTICLE 2, VERSION DU 26 JUIN
+          1983 (LEGIARTI000006763853, puis LEGIARTI000006763854 en 2001) : «
+          les taux des éléments afférents à l'allocation uniforme et à une
+          fraction de l'allocation variable sont respectivement égaux à 2 % et
+          à 2,5 % de la moyenne des produits de l'étude » — 4,5 % en tout, ce
+          que la fiche porte — et, en outre, une option entre sept classes de
+          cotisation (classe de base à classe 8, de cinq à quatre-vingts
+          points, en multiples du salaire mensuel minimal d'un clerc de
+          troisième catégorie), la section B, non modélisée. 4,50 % PENDANT
+          CINQUANTE-CINQ ANS, et la continuité est frappante : 2,50 % (section
+          A) plus 2 % (section U) de 1962 à 2003, puis 4,50 % pour la section
+          C qui les remplace en 2004. La fusion n'a pas changé le taux — elle
+          a changé la façon de servir. LA SECTION B N'EST PAS PORTÉE, ET LA
+          RAISON N'EST PAS CELLE QU'ON CROIRAIT. Ce n'est pas une grille
+          introuvable : de 1962 à 2013, IL N'Y EN A PAS EU. Le rapport de
+          l'IGAS (n° 2012-110P) décrit le régime tel qu'il fonctionnait encore
+          en 2012 : sept classes numérotées 0, 1, 2, 3, 4, 6 et 8, «
+          l'inscription dans une des classes de cette section est obligatoire
+          pour les notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME
+          ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en l'absence
+          d'indication, le cotisant est affilié en classe 1 ». Créée en 1962
+          pour « répondre aux vœux du notariat qui souhaitait une cotisation
+          INDÉPENDANTE DES PRODUITS réalisés par l'office », elle était un
+          supplément facultatif — et le dépôt ne prête jamais à personne un
+          choix qu'il ne peut pas connaître. Même règle que pour les classes
+          du RAAP d'avant 2017 et l'option de classe supérieure de la CAVEC.
+          CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
+          cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
+          moitié de la profession au plancher ou presque —, pour une moyenne
+          de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
+          DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
+          2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
+          bornes de chaque classe de cotisation de la section B sont
+          déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
+          des notaires pour une période de trois ans par référence à la
+          moyenne des produits de base du notariat au titre des trois années
+          précédentes ». Elles ne sont donc pas introuvables par accident :
+          aucun texte réglementaire ne les porte, par construction —
+          exactement comme le prix du point de la CAVAMAC, à ceci près que la
+          CAVAMAC publie la délibération de son conseil et que la CPRN ne
+          publie pas la sienne. Une passe entière du Journal officiel n'en a
+          rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
+          janvier 2029, le notaire sera systématiquement inscrit pour
+          l'exercice n dans la classe de cotisation correspondant aux produits
+          de son étude ». Jusque-là, les règles de maintien de classe — un
+          notaire assermenté avant 2014 ne monte que d'une classe par an et ne
+          descend jamais d'office — et la dérogation de six ans des nouveaux
+          notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
+          CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
+          15 900 € de section C — soit quatre dixièmes du complémentaire. Un
+          notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
+          publiera ses bornes, la fiche sera complète en une demi-heure : la
+          cotisation vaut « le nombre de points de la classe multiplié par 115
+          % du coût d'acquisition du point B » pour tout notaire assermenté
+          depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
+          la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+          en 2012, 5,54 % en 2026.
+      - debut: 2005
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        assiette_facteur_revenu: 2.553
+        taux_cotisation_retraite: 0.045
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.01
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          VERSION DU 1ER JANVIER 2005 (LEGIARTI000006763855) : deux sections,
+          C et B — « au titre de la section C, chaque notaire en exercice est
+          tenu d'acquitter une cotisation égale à 4,5 % de la moyenne des
+          produits de base de l'office » ; section B par classes 0 à 8 (cinq à
+          quatre-vingts points), montants par décret annuel. 4,50 % PENDANT
+          CINQUANTE-CINQ ANS, et la continuité est frappante : 2,50 % (section
+          A) plus 2 % (section U) de 1962 à 2003, puis 4,50 % pour la section
+          C qui les remplace en 2004. La fusion n'a pas changé le taux — elle
+          a changé la façon de servir. LA SECTION B N'EST PAS PORTÉE, ET LA
+          RAISON N'EST PAS CELLE QU'ON CROIRAIT. Ce n'est pas une grille
+          introuvable : de 1962 à 2013, IL N'Y EN A PAS EU. Le rapport de
+          l'IGAS (n° 2012-110P) décrit le régime tel qu'il fonctionnait encore
+          en 2012 : sept classes numérotées 0, 1, 2, 3, 4, 6 et 8, «
+          l'inscription dans une des classes de cette section est obligatoire
+          pour les notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME
+          ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en l'absence
+          d'indication, le cotisant est affilié en classe 1 ». Créée en 1962
+          pour « répondre aux vœux du notariat qui souhaitait une cotisation
+          INDÉPENDANTE DES PRODUITS réalisés par l'office », elle était un
+          supplément facultatif — et le dépôt ne prête jamais à personne un
+          choix qu'il ne peut pas connaître. Même règle que pour les classes
+          du RAAP d'avant 2017 et l'option de classe supérieure de la CAVEC.
+          CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
+          cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
+          moitié de la profession au plancher ou presque —, pour une moyenne
+          de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
+          DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
+          2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
+          bornes de chaque classe de cotisation de la section B sont
+          déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
+          des notaires pour une période de trois ans par référence à la
+          moyenne des produits de base du notariat au titre des trois années
+          précédentes ». Elles ne sont donc pas introuvables par accident :
+          aucun texte réglementaire ne les porte, par construction —
+          exactement comme le prix du point de la CAVAMAC, à ceci près que la
+          CAVAMAC publie la délibération de son conseil et que la CPRN ne
+          publie pas la sienne. Une passe entière du Journal officiel n'en a
+          rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
+          janvier 2029, le notaire sera systématiquement inscrit pour
+          l'exercice n dans la classe de cotisation correspondant aux produits
+          de son étude ». Jusque-là, les règles de maintien de classe — un
+          notaire assermenté avant 2014 ne monte que d'une classe par an et ne
+          descend jamais d'office — et la dérogation de six ans des nouveaux
+          notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
+          CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
+          15 900 € de section C — soit quatre dixièmes du complémentaire. Un
+          notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
+          publiera ses bornes, la fiche sera complète en une demi-heure : la
+          cotisation vaut « le nombre de points de la classe multiplié par 115
+          % du coût d'acquisition du point B » pour tout notaire assermenté
+          depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
+          la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+          en 2012, 5,54 % en 2026.
+      - debut: 2014
         fin: 2016
         type_calcul: points
         age_ouverture: 62
@@ -4297,56 +5071,60 @@ regimes:
         surcote_par_trimestre: 0.01
         avantages_non_contributifs: [reversion]
         notes: >-
-          4,50 % PENDANT CINQUANTE-CINQ ANS, et la continuité est frappante :
-          2,50 % (section A) plus 2 % (section U) de 1962 à 2003, puis 4,50 %
-          pour la section C qui les remplace en 2004. La fusion n'a pas changé
-          le taux — elle a changé la façon de servir.
-          LA SECTION B N'EST PAS PORTÉE, ET LA RAISON N'EST PAS CELLE QU'ON
-          CROIRAIT. Ce n'est pas une grille introuvable : de 1962 à 2013, IL
-          N'Y EN A PAS EU. Le rapport de l'IGAS (n° 2012-110P) décrit le régime
-          tel qu'il fonctionnait encore en 2012 : sept classes numérotées
-          0, 1, 2, 3, 4, 6 et 8, « l'inscription dans une des classes de cette
-          section est obligatoire pour les notaires en exercice ; LE CHOIX DE LA
-          CLASSE ELLE-MÊME ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en
-          l'absence d'indication, le cotisant est affilié en classe 1 ». Créée
-          en 1962 pour « répondre aux vœux du notariat qui souhaitait une
-          cotisation INDÉPENDANTE DES PRODUITS réalisés par l'office », elle
-          était un supplément facultatif — et le dépôt ne prête jamais à
-          personne un choix qu'il ne peut pas connaître. Même règle que pour les
-          classes du RAAP d'avant 2017 et l'option de classe supérieure de la
-          CAVEC.
+          VERSION DU 1ER JANVIER 2014 (LEGIARTI000028325795, décret n°
+          2013-1157) : le taux de la section C n'est plus écrit dans le décret
+          mais fixé par décret annuel, « 4,5 % jusqu'à la publication du
+          décret » ; section B à huit classes de dix à quatre-vingts points ;
+          période transitoire de quinze ans pour les notaires en exercice
+          avant 2014, inscrits en classe 1 pendant six ans. 4,50 % PENDANT
+          CINQUANTE-CINQ ANS, et la continuité est frappante : 2,50 % (section
+          A) plus 2 % (section U) de 1962 à 2003, puis 4,50 % pour la section
+          C qui les remplace en 2004. La fusion n'a pas changé le taux — elle
+          a changé la façon de servir. LA SECTION B N'EST PAS PORTÉE, ET LA
+          RAISON N'EST PAS CELLE QU'ON CROIRAIT. Ce n'est pas une grille
+          introuvable : de 1962 à 2013, IL N'Y EN A PAS EU. Le rapport de
+          l'IGAS (n° 2012-110P) décrit le régime tel qu'il fonctionnait encore
+          en 2012 : sept classes numérotées 0, 1, 2, 3, 4, 6 et 8, «
+          l'inscription dans une des classes de cette section est obligatoire
+          pour les notaires en exercice ; LE CHOIX DE LA CLASSE ELLE-MÊME
+          ÉTANT LAISSÉ À L'APPRÉCIATION DU NOTAIRE », et « en l'absence
+          d'indication, le cotisant est affilié en classe 1 ». Créée en 1962
+          pour « répondre aux vœux du notariat qui souhaitait une cotisation
+          INDÉPENDANTE DES PRODUITS réalisés par l'office », elle était un
+          supplément facultatif — et le dépôt ne prête jamais à personne un
+          choix qu'il ne peut pas connaître. Même règle que pour les classes
+          du RAAP d'avant 2017 et l'option de classe supérieure de la CAVEC.
           CE QUE LE CHOIX DONNAIT, l'IGAS le montre aussi : en 2011, sur 8 356
-          cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la moitié
-          de la profession au plancher ou presque —, pour une moyenne de 23,8
-          points par an, soit la classe 2,4.
-          DEPUIS 2014 LA CLASSE SE DÉTERMINE PAR LES PRODUITS, et le décret
-          n° 2013-1157 du 13 décembre 2013 qui l'institue DÉLÈGUE SES BORNES
-          dans la même phrase : « les bornes de chaque classe de cotisation de
-          la section B sont déterminées PAR LE CONSEIL D'ADMINISTRATION de la
-          Caisse de retraite des notaires pour une période de trois ans par
-          référence à la moyenne des produits de base du notariat au titre des
-          trois années précédentes ». Elles ne sont donc pas introuvables par
-          accident : aucun texte réglementaire ne les porte, par construction —
+          cotisants, 1 587 étaient en classe 0 et 2 593 en classe 1 — la
+          moitié de la profession au plancher ou presque —, pour une moyenne
+          de 23,8 points par an, soit la classe 2,4. DEPUIS 2014 LA CLASSE SE
+          DÉTERMINE PAR LES PRODUITS, et le décret n° 2013-1157 du 13 décembre
+          2013 qui l'institue DÉLÈGUE SES BORNES dans la même phrase : « les
+          bornes de chaque classe de cotisation de la section B sont
+          déterminées PAR LE CONSEIL D'ADMINISTRATION de la Caisse de retraite
+          des notaires pour une période de trois ans par référence à la
+          moyenne des produits de base du notariat au titre des trois années
+          précédentes ». Elles ne sont donc pas introuvables par accident :
+          aucun texte réglementaire ne les porte, par construction —
           exactement comme le prix du point de la CAVAMAC, à ceci près que la
           CAVAMAC publie la délibération de son conseil et que la CPRN ne
           publie pas la sienne. Une passe entière du Journal officiel n'en a
-          rien tiré.
-          ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er janvier 2029, le
-          notaire sera systématiquement inscrit pour l'exercice n dans la classe
-          de cotisation correspondant aux produits de son étude ». Jusque-là,
-          les règles de maintien de classe — un notaire assermenté avant 2014 ne
-          monte que d'une classe par an et ne descend jamais d'office — et la
-          dérogation de six ans des nouveaux notaires laissent subsister
-          l'ancien mécanisme.
-          CE QUI MANQUE EST CHIFFRABLE : environ 11 100 € pour le notaire moyen
-          en 2025, contre 15 900 € de section C — soit quatre dixièmes du
-          complémentaire. Un notaire simulé ici est sous-estimé d'autant, et le
-          jour où la caisse publiera ses bornes, la fiche sera complète en une
-          demi-heure : la cotisation vaut « le nombre de points de la classe
-          multiplié par 115 % du coût d'acquisition du point B » pour tout
-          notaire assermenté depuis 2014, les classes ouvrent 10 à 80 points, et
-          le rendement de la section se calcule comme celui de la C — 9,50 % en
-          2004, 7,79 % en 2012, 5,54 % en 2026.
+          rien tiré. ET LA BASCULE N'EST PAS ACHEVÉE : « à partir du 1er
+          janvier 2029, le notaire sera systématiquement inscrit pour
+          l'exercice n dans la classe de cotisation correspondant aux produits
+          de son étude ». Jusque-là, les règles de maintien de classe — un
+          notaire assermenté avant 2014 ne monte que d'une classe par an et ne
+          descend jamais d'office — et la dérogation de six ans des nouveaux
+          notaires laissent subsister l'ancien mécanisme. CE QUI MANQUE EST
+          CHIFFRABLE : environ 11 100 € pour le notaire moyen en 2025, contre
+          15 900 € de section C — soit quatre dixièmes du complémentaire. Un
+          notaire simulé ici est sous-estimé d'autant, et le jour où la caisse
+          publiera ses bornes, la fiche sera complète en une demi-heure : la
+          cotisation vaut « le nombre de points de la classe multiplié par 115
+          % du coût d'acquisition du point B » pour tout notaire assermenté
+          depuis 2014, les classes ouvrent 10 à 80 points, et le rendement de
+          la section se calcule comme celui de la C — 9,50 % en 2004, 7,79 %
+          en 2012, 5,54 % en 2026.
       - debut: 2017
         fin: 2017
         type_calcul: points

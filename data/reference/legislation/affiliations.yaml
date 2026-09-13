@@ -254,18 +254,16 @@ affiliations:
       tribunal de commerce, avocat aux Conseils)
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 2015, regimes: [cnavpl]}
-      - {debut: 2016, fin: null, regimes: [cnavpl, cavom_complementaire]}
+      - {debut: 1949, fin: 1978, regimes: [cnavpl]}
+      - {debut: 1979, fin: null, regimes: [cnavpl, cavom_complementaire]}
     note: >-
-      LA BORNE DE 2016 N'EST PAS CELLE DU RÉGIME, mais celle de ce que le dépôt
-      sait en chiffrer. Le complémentaire de la CAVOM existe depuis le décret
-      n° 79-265 du 27 mars 1979 ; il prélevait par classes jusqu'en 2015, et
-      cette grille-là n'est publiée nulle part — seules la classe spéciale et la
-      sixième classe sont connues, deux extrémités qui ne suffisent pas à
-      deviner ce qu'il y avait entre elles. Depuis 2016 la cotisation est
-      proportionnelle, 12,50 % jusqu'à huit plafonds, et se calcule sans
-      difficulté. Un officier ministériel simulé ici est donc sous-estimé de
-      tout son complémentaire d'avant 2016.
+      Le complémentaire de la CAVOM existe depuis le décret n° 79-265 du
+      27 mars 1979 (article 2, LEGIARTI000006770098) et il est routé depuis
+      cette date. Il prélevait par classes jusqu'en 2015, selon des bornes de
+      revenu que les statuts fixent hors index : la fiche projette en arrière
+      le taux proportionnel de 2016 — 12,50 % jusqu'à huit plafonds — au niveau
+      estimé, plutôt que de laisser l'officier ministériel sans complémentaire
+      pendant trente-sept ans, ce que le dépôt faisait jusqu'à la tranche B4.
 
   avocat:
     libelle: Avocat
