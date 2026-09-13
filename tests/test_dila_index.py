@@ -263,6 +263,44 @@ def test_horodatage_et_tri_des_increments():
     assert index.horodatage("dump_essai.tar.gz") == ""
 
 
+def test_precharger_telecharge_chaque_increment_en_parallele(tmp_path: Path, monkeypatch):
+    vus: list[str] = []
+    monkeypatch.setattr(index, "CACHE", tmp_path)
+    monkeypatch.setattr(index, "telecharger",
+                        lambda url, cible: (vus.append(url), cible.parent.mkdir(exist_ok=True),
+                                            cible.write_text("x"), cible)[-1])
+    index.precharger("jorf", ["JORF_20260101-000000.tar.gz", "JORF_20260102-000000.tar.gz"])
+    assert sorted(vus) == [index.RACINE + "JORF/JORF_20260101-000000.tar.gz",
+                           index.RACINE + "JORF/JORF_20260102-000000.tar.gz"]
+    assert (tmp_path / "increments" / "JORF_20260102-000000.tar.gz").read_text() == "x"
+
+
+def test_recuperer_decompresse_l_index_publie(tmp_path: Path, dump: Path, monkeypatch, capsys):
+    """Le trajet de ``--recuperer``, la release étant remplacée par un fichier
+    local que curl sait lire (``file://``)."""
+    import gzip
+    import shutil
+    origine = tmp_path / "origine.sqlite"
+    index.construire("jorf", origine, archive=dump)
+    publie = tmp_path / "jorf.sqlite.gz"
+    with origine.open("rb") as source, gzip.open(publie, "wb") as cible:
+        shutil.copyfileobj(source, cible)
+    monkeypatch.setattr(index, "CACHE", tmp_path / "cache")
+    monkeypatch.setattr(index, "url_publiee", lambda base: publie.as_uri())
+    cible = tmp_path / "recu" / "jorf.sqlite"
+    index.recuperer("jorf", cible)
+    assert _ids(cible) == _ids(origine)
+    assert not (tmp_path / "cache" / "jorf.sqlite.gz").exists()
+    assert "3 documents" in capsys.readouterr().err
+
+
+def test_recuperer_dit_quand_rien_n_est_publie(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr(index, "CACHE", tmp_path / "cache")
+    monkeypatch.setattr(index, "url_publiee", lambda base: (tmp_path / "absent.gz").as_uri())
+    with pytest.raises(RuntimeError):
+        index.recuperer("jorf", tmp_path / "jorf.sqlite")
+
+
 # ---------------------------------------------------------------------------
 # L'outil de recherche
 # ---------------------------------------------------------------------------

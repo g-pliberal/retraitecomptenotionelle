@@ -35,6 +35,14 @@ filtre pour qui a le disque. Un texte hors champ n'y est donc pas, et une
 recherche qui n'y trouve rien ne prouve rien sur le JORF entier : c'est le
 dump qui fait foi, et les scripts de certification continuent de le lire.
 
+QUI PEUT PUBLIER. ``--publier`` crée la release ``index-dila`` du dépôt et y
+dépose ``<base>.sqlite.gz`` (380 Mo pour LEGI, 650 Mo pour le JORF) avec le
+jeton ``GH_TOKEN`` ou ``GITHUB_TOKEN`` de l'environnement. Il faut un jeton
+qui ait le droit d'écrire les releases : celui d'une session Claude Code ne
+l'a pas — GitHub répond « Creating, editing, or deleting releases is not
+permitted for this session type » —, et la publication se fait donc depuis
+un poste où le dépôt est cloné, après avoir construit l'index.
+
 LE DUMP GLOBAL A QUATORZE MOIS. La DILA ne l'a pas régénéré depuis juillet
 2025 ; ce qui a paru depuis n'est que dans les incréments quotidiens
 (``JORF_AAAAMMJJ-HHMMSS.tar.gz``, cent à deux cents Ko chacun). L'index les
@@ -267,12 +275,24 @@ def telecharger(url: str, cible: Path) -> Path:
         return cible
     cible.parent.mkdir(parents=True, exist_ok=True)
     partiel = cible.with_suffix(cible.suffix + ".partiel")
-    commande = ["curl", "-sS", "-L", "--retry", "5", "--retry-delay", "5",
+    commande = ["curl", "-sSf", "-L", "--retry", "5", "--retry-delay", "5",
                 "-C", "-", "--max-time", "14400", "-o", str(partiel), url]
-    if subprocess.run(commande).returncode != 0:
-        raise RuntimeError(f"téléchargement interrompu : {url}")
+    resultat = subprocess.run(commande, stderr=subprocess.PIPE, text=True)
+    if resultat.returncode != 0:
+        if "404" in resultat.stderr:      # rien à reprendre : la page n'existe pas
+            partiel.unlink(missing_ok=True)
+        raise RuntimeError(f"téléchargement en échec ({resultat.stderr.strip()}) : {url}")
     partiel.rename(cible)
     return cible
+
+
+def precharger(base: str, noms: list[str], travailleurs: int = 8) -> None:
+    """Télécharge des incréments en parallèle : chacun ne fait que cent à deux
+    cents Ko, et c'est la latence d'une requête, non le débit, qui coûte."""
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(travailleurs) as pool:
+        list(pool.map(lambda nom: telecharger(RACINE + base.upper() + "/" + nom,
+                                              CACHE / "increments" / nom), noms))
 
 
 def verser_archive(db: sqlite3.Connection, archive: Path, tout: bool,
@@ -341,9 +361,9 @@ def mettre_a_jour(base: str, chemin: Path, tout: bool | None = None) -> int:
     nouveaux = increments(base, depuis)
     print(f"{len(nouveaux)} incréments à appliquer depuis {depuis or 'l’origine'}",
           file=sys.stderr)
+    precharger(base, nouveaux)
     for i, nom in enumerate(nouveaux, 1):
-        archive = telecharger(RACINE + base.upper() + "/" + nom,
-                              CACHE / "increments" / nom)
+        archive = CACHE / "increments" / nom
         lus, gardes = verser_archive(db, archive, tout, remplacer=True)
         _ecrire_meta(db, "dernier_increment", horodatage(nom))
         db.commit()
@@ -364,7 +384,15 @@ def url_publiee(base: str) -> str:
 
 def recuperer(base: str, chemin: Path) -> None:
     """L'index publié, décompressé sur place."""
-    comprime = telecharger(url_publiee(base), CACHE / f"{base}.sqlite.gz")
+    try:
+        comprime = telecharger(url_publiee(base), CACHE / f"{base}.sqlite.gz")
+    except RuntimeError as erreur:
+        if "404" in str(erreur):
+            raise LookupError(
+                f"aucun index {base} publié sur la release {ETIQUETTE} : le construire "
+                f"(dila_index.py {base}, une demi-heure de téléchargement puis une "
+                "heure et demie), ou demander sa publication") from erreur
+        raise
     chemin.parent.mkdir(parents=True, exist_ok=True)
     with gzip.open(comprime, "rb") as source, chemin.open("wb") as cible:
         shutil.copyfileobj(source, cible, 1 << 22)

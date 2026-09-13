@@ -3836,9 +3836,15 @@ chacun, plus de sept cents depuis juillet 2025, qui portent tout ce que le
 dump global ignore, dont l'arrêté du plafond 2026), et verse le tout dans une
 base SQLite FTS5 : une ligne par texte et par article, avec identifiant,
 dates, nature, titre et texte sans balises ; un incrément qui republie un
-document le remplace, une liste de suppression le retire. La base est publiée
-comme fichier de la release `index-dila` du dépôt, d'où `--recuperer` la
-rapatrie en une minute. `dila_cherche.py` l'interroge en syntaxe FTS5 —
+document le remplace, une liste de suppression le retire. La construction
+complète a pris une heure et demie pour le JORF (421 160 documents gardés sur
+3 978 789, 1,9 Go en SQLite, 650 Mo compressés) et une heure pour LEGI
+(245 498 sur 1 894 969, 1,3 Go, 380 Mo compressés). La base se dépose sur la
+release `index-dila` du dépôt par `--publier`, d'où `--recuperer` la rapatrie
+en une minute — à condition qu'un jeton ayant le droit d'écrire les releases
+l'ait fait : celui d'une session Claude Code ne l'a pas (GitHub répond que la
+création de releases n'est pas permise à ce type de session), et la première
+publication attend donc un poste de travail. `dila_cherche.py` l'interroge en syntaxe FTS5 —
 phrases, `OR`, `NEAR`, filtres par années, nature et numéro d'article — et
 rend, par document, une ligne d'identification et un extrait de quatorze mots
 entre crochets ; le texte entier ne s'imprime qu'à la demande, et `--motif`
@@ -4086,7 +4092,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 559 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 563 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
