@@ -3109,6 +3109,36 @@ Le salaire de référence et la valeur du point, eux, s'arrêtent en 2022 chez l
 producteur comme chez OpenFisca : les années suivantes sont ramenées sur les
 prix, et les arrêtés annuels qui les fixent restent à dépouiller.
 
+### Et l'Agirc n'avait pas de tranche C
+
+Le même contrôle, passé sur tout le catalogue, en trouve une seconde. L'Agirc
+cotisait sur DEUX tranches — B, d'un à quatre plafonds, et C, de quatre à
+huit —, et la fiche le disait en toutes lettres : « régime par points sur les
+tranches B et C ». Elle ne portait que la tranche B. Un cadre payé au-dessus de
+quatre plafonds voyait donc sa pension Agirc **saturer** : 54 442 € à six fois
+le salaire moyen comme à huit, alors que le régime lui en sert 70 773 € et
+95 108 €. C'est un tiers puis trois quarts de pension Agirc effacés.
+
+Trois choses rendaient la correction sûre. Le taux d'abord : le barème
+d'OpenFisca-France, qui transcrit le Barème social périodique, porte le **même
+taux sur les deux tranches**, année par année, de 1948 à la fusion de 2019 — la
+tranche C n'a donc pas de série propre à retrouver. La date ensuite : la
+cotisation sur la tranche C n'est obligatoire que « depuis le 01/01/88 pour les
+entreprises affiliées à CCSBTP, IRCASUP et IRICASE ; au 01/01/91 pour toutes les
+entreprises », et la fiche commence donc en **1991** — avant, elle dépendait de
+l'entreprise, c'est-à-dire d'un choix que la carrière saisie ne porte pas et que
+le modèle ne prête à personne. La répartition enfin : elle est LIBRE sur la
+tranche C, fixée par accord d'entreprise, et la documentation d'OpenFisca
+conseille elle-même d'y appliquer celle de la tranche B.
+
+La garantie minimale de points reste sur la seule tranche B : la porter aussi
+sur la C donnerait 240 points par an au cadre qui dépasse quatre plafonds, quand
+l'accord de 1988 lui en garantit 120.
+
+Aucune des cent trente-huit carrières témoins ne dépasse quatre plafonds : la
+correction ne déplace aucun témoin, et c'est précisément pourquoi elle avait pu
+rester invisible.
+
 ### « De 23 à 113 points » : le barème que personne ne publiait est dans le code
 
 La MSA, le ministère de l'agriculture et tous les guides de retraite écrivent la

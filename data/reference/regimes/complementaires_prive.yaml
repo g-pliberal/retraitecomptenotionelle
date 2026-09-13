@@ -122,6 +122,70 @@ regimes:
           d'OpenFisca-France, est de 19,48 % — 16,25 % en 1994, 20,55 % depuis
           2015. C'est cette moyenne qui est retenue.
 
+      - debut: 1991
+        fin: 1993
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.14
+        part_salariale: 0.3133
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          LA TRANCHE C, DE QUATRE À HUIT PLAFONDS, MANQUAIT AU CATALOGUE. La
+          fiche l'annonçait pourtant — « régime par points sur les tranches B
+          et C » — et n'en portait aucune période : un cadre payé au-dessus de
+          quatre plafonds cotisait sans qu'aucun point ne lui soit porté.
+          LE TAUX EST CELUI DE LA TRANCHE B, et ce n'est pas une approximation :
+          le barème d'OpenFisca-France, qui transcrit le Barème social
+          périodique, porte le MÊME taux sur les deux tranches, année par année,
+          de 1948 à la fusion de 2019.
+          LA PÉRIODE COMMENCE EN 1991, et non à la création du régime : la
+          cotisation sur la tranche C n'est obligatoire que « depuis le
+          01/01/88 pour les entreprises affiliées à CCSBTP, IRCASUP et IRICASE ;
+          au 01/01/91 pour toutes les entreprises » (Barème social périodique,
+          cité par OpenFisca). Avant cette date, elle dépendait de l'entreprise
+          — un choix que la carrière saisie ne porte pas, et que le modèle ne
+          prête donc à personne.
+          La répartition salarié/employeur est celle de la tranche B : sur la
+          tranche C elle est LIBRE, fixée par accord d'entreprise, et la
+          documentation d'OpenFisca conseille elle-même d'y appliquer celle de
+          la tranche B.
+          La garantie minimale de points n'y figure pas : elle porte sur la
+          seule tranche B, et la servir deux fois donnerait 240 points par an à
+          un cadre au-dessus de quatre plafonds.
+      - debut: 1994
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_c
+        taux_cotisation_retraite: 0.1948
+        part_salariale: 0.3712
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche C de 1994 à la fusion : même taux effectif moyen que la
+          tranche B, 19,48 %, et même répartition. La tranche C disparaît le
+          1er janvier 2019 avec l'Agirc : la tranche 2 de l'Agirc-Arrco, de un à
+          huit plafonds, la remplace pour tous les salariés.
+
   - code: arrco
     nom: Association pour le régime de retraite complémentaire des salariés
     famille: complementaire_prive
