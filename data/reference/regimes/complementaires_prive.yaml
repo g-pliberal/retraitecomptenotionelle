@@ -295,6 +295,100 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1971
+        fin: 1982
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0210
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          LES TAUX SONT CEUX DU PRODUCTEUR, année par année. La fiche portait
+          5,75 % sur toute la période 1971-2008 : le taux appelé sur la
+          tranche A valait 2,10 % jusqu'en 1982 et n'a atteint 5,63 % qu'en
+          1992. Le régime achetant ses points avec la cotisation — points =
+          cotisation / (taux d'appel × salaire de référence) —, un agent des
+          années 1970 recevait DEUX FOIS ET DEMIE les points que le barème lui
+          donnait. Les taux appelés des deux tranches sont dans le fichier
+          `IRC_BAR_01_txcotis.csv` que publie la Caisse des dépôts, qui GÈRE le
+          régime : c'est le producteur, et ce fichier porte déjà, dans ce dépôt,
+          le taux d'appel et le salaire de référence.
+          La répartition 40 % / 60 % de la tranche A et 35,64 % / 64,36 % de la
+          tranche B est celle des barèmes 2025 et 2026 (2,80 % et 4,20 % sur la
+          tranche A, 6,95 % et 12,55 % sur la tranche B en 2025 ; 2,84 % et
+          4,27 %, 7,06 % et 12,75 % en 2026) ; elle est reportée sur les années
+          antérieures, faute d'une série publiée, et c'est une convention.
+      - debut: 1983
+        fin: 1987
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0280
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 1983 à 1987 : 2.80 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 1988
+        fin: 1988
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0350
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 1988 à 1988 : 3.50 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 1989
+        fin: 1990
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0490
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 1989 à 1990 : 4.90 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 1991
+        fin: 1991
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0528
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 1991 à 1991 : 5.28 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 1992
         fin: 2008
         type_calcul: points
         age_ouverture: 60
@@ -303,13 +397,150 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
-        taux_cotisation_retraite: 0.0575
-        part_salariale: 0.40   # OpenFisca, taux appelés
+        taux_cotisation_retraite: 0.0563
+        part_salariale: 0.40
         decote_par_trimestre: 0.0055
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
-        notes: Décret du 23 décembre 1970. Succède à l'IPACTE (1959) et l'IGRANTE (1959).
+        notes: >-
+          Tranche A de 1992 à 2008 : 5.63 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
       - debut: 2009
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0563
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2009 à 2010 : 5.63 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2011
+        fin: 2011
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0569
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2011 à 2011 : 5.69 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2012
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0588
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2012 à 2012 : 5.88 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2013
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0613
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2013 à 2013 : 6.13 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0634
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2014 à 2014 : 6.34 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2015
+        fin: 2015
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0660
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2015 à 2015 : 6.60 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2016
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0680
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2016 à 2016 : 6.80 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2017
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        taux_cotisation_retraite: 0.0700
+        part_salariale: 0.40
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche A de 2017 à 2025 : 7 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 2026
         fin: null
         type_calcul: points
         age_ouverture: 62
@@ -319,14 +550,268 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
-        taux_cotisation_retraite: 0.0703
-        part_salariale: 0.40   # OpenFisca, taux appelés
+        taux_cotisation_retraite: 0.0711
+        part_salariale: 0.399
         decote_par_trimestre: 0.0055
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Réforme de 2008 : hausse progressive des taux jusqu'en 2017
-          (T A 7,03 %, T B 20,44 % en cible), baisse du rendement.
+          Tranche A de 2026 à aujourd’hui : 7.11 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+      - debut: 1971
+        fin: 1982
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.0750
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          LA TRANCHE B N'EXISTAIT PAS DANS LE CATALOGUE, et c'est la plus
+          grosse omission qu'il ait portée pour le secteur public contractuel :
+          l'Ircantec cotise de un à huit plafonds à un taux appelé près de trois
+          fois celui de la tranche A. Un contractuel payé trois fois le salaire
+          moyen versait 14 600 € par an au régime sans qu'aucun point ne lui
+          soit porté — sa pension Ircantec ne dépassait celle d'un agent payé au
+          plafond que de quinze pour cent, quand le droit la lui triple.
+      - debut: 1983
+        fin: 1987
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1000
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 1983 à 1987 : 10.00 % appelés, de un à huit plafonds.
+      - debut: 1988
+        fin: 1988
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1250
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 1988 à 1988 : 12.50 % appelés, de un à huit plafonds.
+      - debut: 1989
+        fin: 1990
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1526
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 1989 à 1990 : 15.26 % appelés, de un à huit plafonds.
+      - debut: 1991
+        fin: 1991
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1642
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 1991 à 1991 : 16.42 % appelés, de un à huit plafonds.
+      - debut: 1992
+        fin: 2008
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1750
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 1992 à 2008 : 17.50 % appelés, de un à huit plafonds.
+      - debut: 2009
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1750
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2009 à 2010 : 17.50 % appelés, de un à huit plafonds.
+      - debut: 2011
+        fin: 2011
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1760
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2011 à 2011 : 17.60 % appelés, de un à huit plafonds.
+      - debut: 2012
+        fin: 2012
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1780
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2012 à 2012 : 17.80 % appelés, de un à huit plafonds.
+      - debut: 2013
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1806
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2013 à 2013 : 18.06 % appelés, de un à huit plafonds.
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1836
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2014 à 2014 : 18.36 % appelés, de un à huit plafonds.
+      - debut: 2015
+        fin: 2015
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1876
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2015 à 2015 : 18.76 % appelés, de un à huit plafonds.
+      - debut: 2016
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1910
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2016 à 2016 : 19.10 % appelés, de un à huit plafonds.
+      - debut: 2017
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1950
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2017 à 2025 : 19.50 % appelés, de un à huit plafonds.
+      - debut: 2026
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_2
+        taux_cotisation_retraite: 0.1981
+        part_salariale: 0.3564
+        decote_par_trimestre: 0.0055
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Tranche B de 2026 à aujourd’hui : 19.81 % appelés, de un à huit plafonds.
 
   - code: ipacte
     nom: Institution de prévoyance des agents contractuels et temporaires de l'État
