@@ -2086,7 +2086,10 @@ institutions:
           fiches portent le barème des ENTREPRISES EXISTANTES, une période par
           valeur de « contractuel × appel », au niveau `haute` ; le contrôle
           les confronte à cinq centièmes près, et la répartition à un
-          centième.
+          centième. Le barème des entreprises nouvelles est porté par deux
+          fiches parallèles (`agirc_entreprises_nouvelles`,
+          `arrco_tranche_2_entreprises_nouvelles`), confrontées à leur propre
+          variante.
 
       - id: openfisca_part_salariale
         titre: Répartition salarié / employeur des cotisations retraite

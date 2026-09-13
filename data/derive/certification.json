@@ -1,5 +1,5 @@
 {
- "certifie_le": "2026-09-12",
+ "certifie_le": "2026-09-13",
  "series": {
   "age_ouverture_requis": {
    "ajoutees": 0,
@@ -475,11 +475,11 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "b40e79d63ac553de",
-   "identiques": 306,
+   "empreinte": "1bcaeeeded1c4acf",
+   "identiques": 304,
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, paramètres des régimes en points",
-   "valeurs": 306
+   "valeurs": 304
   },
   "valeurs_point_agirc_arrco": {
    "ajoutees": 0,
@@ -520,6 +520,16 @@
    "niveau": "certifiee",
    "source": "CNBF, barèmes annuels des cotisations et prestations",
    "valeurs": 18
+  },
+  "valeurs_point_estimees": {
+   "ajoutees": 40,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "91ac7e9cfe4737e5",
+   "identiques": 0,
+   "niveau": "estimee",
+   "source": "Taux d'appel de l'Ircantec 1971 prolongé sur l'IPACTE et l'IGRANTE (décret 70-1277, art. 7, LEGIARTI000006368121)",
+   "valeurs": 40
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -564,12 +574,12 @@
   "valeurs_point_texte": {
    "ajoutees": 0,
    "colonne": "valeur",
-   "corrigees": 0,
-   "empreinte": "33772abba31cf52b",
+   "corrigees": 2,
+   "empreinte": "152ea1eec2cea59d",
    "identiques": 1,
    "niveau": "moyenne",
-   "source": "Accord national interprofessionnel du 17 novembre 2017",
-   "valeurs": 1
+   "source": "Valeurs saisies dans le texte : ANI du 17 novembre 2017, art. 3 ; arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673)",
+   "valeurs": 3
   },
   "valeurs_point_unirs": {
    "ajoutees": 0,

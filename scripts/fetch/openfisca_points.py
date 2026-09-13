@@ -145,16 +145,48 @@ SOURCES: dict[str, dict[str, tuple[str, str | None]]] = {
 #: référence avant l'unification de 1999 : ses valeurs comblent 1957-1998.
 SUBSTITUTIONS = {"arrco": ("unirs", 1999)}
 
-#: Ce qu'OpenFisca ne porte pas, et qui vient directement du texte.
+#: Ce qu'OpenFisca ne porte pas, ou porte faux, et qui vient directement du texte.
 #:
-#: Le taux d'appel Agirc-Arrco est fixé à 127 % par l'accord national
-#: interprofessionnel du 17 novembre 2017 : cotiser 7,87 % sur la tranche 1
-#: n'ouvre des droits que sur 6,20 %. Une seule valeur, stable depuis 2019.
+#: * Le taux d'appel Agirc-Arrco est fixé à 127 % par l'accord national
+#:   interprofessionnel du 17 novembre 2017 : cotiser 7,87 % sur la tranche 1
+#:   n'ouvre des droits que sur 6,20 %. Une seule valeur, stable depuis 2019.
+#: * Le salaire de référence de l'IPACTE pour 1955 : « 74 F pour l'année 1955
+#:   (arrêté du 12 septembre 1956) », article 8 de l'arrêté du 12 décembre 1951
+#:   (LEGIARTI000006381673), confirmé par l'annexe de l'arrêté du 17 février
+#:   1960 (LEGIARTI000006381707). OpenFisca-France-Pension porte 0,130 € sur
+#:   la série IPACTE — la seule des quatre-vingt-dix-huit clés où elle diverge
+#:   de la série IGRANTE, qui dit 0,113. 74 F ÷ 6,55957 ÷ 10 = 0,112812 €.
+#: * Le taux d'appel de l'IPACTE et de l'IGRANTE, 1951-1970. Les décrets
+#:   51-1445 (art. 7) et 59-1569 (art. 2) fixent des taux CONTRACTUELS — la
+#:   réduction des cotisations « n'affecte pas le calcul des points » — sans
+#:   chiffrer l'appel ; l'Ircantec, qui reprend ces deux barèmes mot pour mot
+#:   au 1er janvier 1971 (décret 70-1277, art. 7, LEGIARTI000006368121),
+#:   appelle à 60 % (Caisse des dépôts, série certifiée). La valeur est
+#:   PROLONGÉE en arrière sur les deux prédécesseurs : c'est une continuité,
+#:   pas une lecture, et elle vaut le niveau `estimee`, non `moyenne` — voir
+#:   `COMPLEMENTS_ESTIMES`.
 COMPLEMENTS = {
     "agirc_arrco|2019|taux_appel": 1.27,
+    "ipacte|1955|salaire_reference": 0.112812,
+    "igrante|1955|salaire_reference": 0.112812,
 }
-ORIGINE_COMPLEMENTS = ("Accord national interprofessionnel du 17 novembre 2017, "
-                       "article 3 (taux d'appel de 127 %)")
+ORIGINE_COMPLEMENTS = (
+    "Valeurs saisies dans le texte : accord national interprofessionnel du "
+    "17 novembre 2017, article 3 (taux d'appel de 127 %) ; arrêté du 12 décembre "
+    "1951, article 8, et annexe de l'arrêté du 17 février 1960 (salaire de "
+    "référence 1955 : 74 F)"
+)
+#: Prolongements assumés, sans texte : niveau `estimee`.
+COMPLEMENTS_ESTIMES = {
+    f"{regime}|{annee}|taux_appel": 0.6
+    for regime in ("ipacte", "igrante")
+    for annee in range(1951, 1971)
+}
+ORIGINE_COMPLEMENTS_ESTIMES = (
+    "Taux d'appel de l'Ircantec au 1er janvier 1971 (60 %, Caisse des dépôts), "
+    "prolongé sur l'IPACTE et l'IGRANTE dont le décret 70-1277 reprend les "
+    "barèmes ; aucun texte de l'index ne chiffre leur appel"
+)
 
 SORTIE = Path("data/brut/openfisca_points.json")
 PREMIERE_ANNEE = 1947
@@ -244,6 +276,8 @@ def main() -> int:
             "cles_substituees": sorted(substitues),
             "origine_complements": ORIGINE_COMPLEMENTS,
             "complements": COMPLEMENTS,
+            "origine_complements_estimes": ORIGINE_COMPLEMENTS_ESTIMES,
+            "complements_estimes": COMPLEMENTS_ESTIMES,
             "serie": dict(sorted(serie.items())),
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",

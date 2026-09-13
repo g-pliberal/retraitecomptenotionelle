@@ -54,7 +54,7 @@ reformes:
   - code: ipacte_1951
     date: 1951-12-18
     texte: {reference: "décret n° 51-1445 du 12 décembre 1951 instituant un régime de retraites complémentaire pour les agents contractuels et temporaires de l'État", id: LEGITEXT000006060604}
-    parametres: [creation, assiette]
+    parametres: [creation, assiette, taux_cotisation_retraite]
     regimes: [ipacte]
     absorbee_par: []
     non_appliquee: {}
@@ -70,7 +70,7 @@ reformes:
   - code: igrante_1960
     date: 1960-01-01
     texte: {reference: "décret n° 59-1569 du 31 décembre 1959 instituant un régime de retraite complémentaire pour les agents non titulaires de l'État, article 2", id: LEGITEXT000006060876}
-    parametres: [creation, assiette]
+    parametres: [creation, assiette, taux_cotisation_retraite]
     regimes: [igrante]
     absorbee_par: []
     non_appliquee: {}
@@ -123,7 +123,8 @@ reformes:
     date: 1983-04-01
     texte: {reference: "accord du 4 février 1983 créant l'Association pour la structure financière (ASF) : retraite complémentaire sans abattement dès soixante ans au taux plein du régime de base, hors JORF", id: null}
     parametres: [duree_requise_trimestres, age_ouverture]
-    regimes: [agirc, arrco, arrco_tranche_2]
+    regimes: [agirc, arrco, arrco_tranche_2, agirc_entreprises_nouvelles,
+              arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: [duree_requise_par_generation]
     non_appliquee: {}
 
@@ -139,7 +140,7 @@ reformes:
     date: 1989-01-01
     texte: {reference: "accord du 9 février 1988 (garantie minimale de points) et accord du 24 mars 1988 (tranche C obligatoire au 1er janvier 1991), hors JORF", id: null}
     parametres: [points_minimum_annuels, assiette]
-    regimes: [agirc]
+    regimes: [agirc, agirc_entreprises_nouvelles]
     absorbee_par: []
     non_appliquee: {}
 
@@ -156,7 +157,7 @@ reformes:
     texte: {reference: "loi n° 93-936 du 22 juillet 1993 relative aux pensions de retraite et à la sauvegarde de la protection sociale", id: LEGITEXT000006082396}
     parametres: [duree_requise_trimestres, salaire_reference, revalorisation]
     regimes: [regime_general, msa_salaries, cancava, organic, cavimac, agirc, arrco,
-              arrco_tranche_2]
+              arrco_tranche_2, agirc_entreprises_nouvelles, arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: [duree_requise_par_generation, salaire_reference_par_generation]
     non_appliquee: {}
 
@@ -164,7 +165,7 @@ reformes:
     date: 1994-01-01
     texte: {reference: "accord Agirc du 9 février 1994 : taux contractuel porté de 8 % à 16 % de 1994 à 1999, taux d'appel à 125 % en 1995, hors JORF", id: null}
     parametres: [taux_cotisation_retraite]
-    regimes: [agirc]
+    regimes: [agirc, agirc_entreprises_nouvelles]
     absorbee_par: []
     non_appliquee: {}
 
@@ -172,7 +173,7 @@ reformes:
     date: 1996-01-01
     texte: {reference: "accord Arrco du 10 février 1993 (4,5 % en 1996) et accord du 25 avril 1996, article 26 (6 % en 1999, tranche 2 à 16 % en 2005), hors JORF", id: null}
     parametres: [taux_cotisation_retraite, assiette]
-    regimes: [arrco, arrco_tranche_2]
+    regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: []
     non_appliquee: {}
 
@@ -201,7 +202,8 @@ reformes:
     texte: {reference: "loi n° 2003-775 du 21 août 2003 portant réforme des retraites", id: LEGITEXT000005635050}
     parametres: [duree_requise_trimestres, decote_par_trimestre, surcote_par_trimestre, bareme_decote]
     regimes: [regime_general, msa_salaries, cancava, organic, fonction_publique_etat, cnracl,
-              fspoeie, cavimac, cnavpl, cnbf, msa_non_salaries, agirc, arrco, arrco_tranche_2]
+              fspoeie, cavimac, cnavpl, cnbf, msa_non_salaries, agirc, arrco, arrco_tranche_2,
+              agirc_entreprises_nouvelles, arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: [duree_requise_par_generation, decote_par_generation]
     non_appliquee: {}
 
@@ -217,7 +219,7 @@ reformes:
     date: 2006-01-01
     texte: {reference: "accord Agirc-Arrco du 13 novembre 2003, avenant A-222 : taux contractuel Agirc porté à 16,24 % au 1er janvier 2006, pourcentage d'appel maintenu à 125 %", id: JORFARTI000001866147}
     parametres: [taux_cotisation_retraite]
-    regimes: [agirc]
+    regimes: [agirc, agirc_entreprises_nouvelles]
     absorbee_par: []
     non_appliquee: {}
 
@@ -292,10 +294,11 @@ reformes:
     parametres: [age_ouverture, age_taux_plein]
     regimes: [regime_general, msa_salaries, rsi, cavimac, fonction_publique_etat, cnracl, fspoeie,
               cnavpl, cnbf, cnbf_complementaire, ircantec, agirc, arrco, arrco_tranche_2, rafp,
-              msa_non_salaries, msa_rco, crpcen, banque_de_france, comedie_francaise, opera_de_paris,
-              carmf_complementaire, carcdsf_complementaire, carpimko_complementaire, cavp_complementaire,
-              cavec_complementaire, cipav_complementaire, cprn_complementaire, cavamac_complementaire,
-              carpv_complementaire, ircec_raap, rco_artisans, nric]
+              msa_non_salaries, msa_rco, crpcen, banque_de_france, comedie_francaise,
+              opera_de_paris, carmf_complementaire, carcdsf_complementaire, carpimko_complementaire,
+              cavp_complementaire, cavec_complementaire, cipav_complementaire, cprn_complementaire,
+              cavamac_complementaire, carpv_complementaire, ircec_raap, rco_artisans, nric,
+              agirc_entreprises_nouvelles, arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: [age_ouverture_par_generation, age_taux_plein_par_generation]
     non_appliquee:
       carpv_complementaire: >-
@@ -328,7 +331,8 @@ reformes:
     date: 2014-01-01
     texte: {reference: "accord Agirc-Arrco du 13 mars 2013 : +0,10 point de taux contractuel en 2014 et en 2015 (Arrco 6,10 % et 16,10 %, puis 6,20 % et 16,20 %)", id: JORFARTI000027826484}
     parametres: [taux_cotisation_retraite]
-    regimes: [agirc, arrco, arrco_tranche_2]
+    regimes: [agirc, arrco, arrco_tranche_2, agirc_entreprises_nouvelles,
+              arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: []
     non_appliquee: {}
 
@@ -341,7 +345,8 @@ reformes:
               banque_de_france, sncf, ratp, ieg, opera_de_paris, comedie_francaise,
               carmf_complementaire, carcdsf_complementaire, carpimko_complementaire,
               cavp_complementaire, cavec_complementaire, cipav_complementaire, ircec_raap, agirc,
-              arrco, arrco_tranche_2]
+              arrco, arrco_tranche_2, agirc_entreprises_nouvelles,
+              arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: [duree_requise_par_generation]
     non_appliquee: {}
 
@@ -392,7 +397,8 @@ reformes:
     date: 2019-01-01
     texte: {reference: "accord national interprofessionnel du 17 novembre 2017, étendu et élargi par l'arrêté du 24 avril 2018", id: JORFTEXT000036847920}
     parametres: [creation, taux_cotisation_retraite, abattement_points, avantages_non_contributifs]
-    regimes: [agirc, arrco, arrco_tranche_2, agirc_arrco]
+    regimes: [agirc, arrco, arrco_tranche_2, agirc_arrco, agirc_entreprises_nouvelles,
+              arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: []
     non_appliquee: {}
 

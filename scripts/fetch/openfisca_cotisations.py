@@ -131,21 +131,37 @@ APPELS = {
     "agirc_arrco": ("agirc_arrco/tx_appel.yaml", 2019),
 }
 
-#: Barèmes salarié et employeur des taux effectifs, pour la répartition. Pour
-#: l'Arrco, le barème non cadre porte les deux tranches ; le barème cadre
-#: n'a que la tranche 1, la tranche 2 du cadre étant l'Agirc.
+#: Barèmes salarié et employeur des taux effectifs, pour la répartition, dans
+#: les deux variantes d'adhésion. Pour l'Arrco, le barème non cadre porte les
+#: deux tranches (entreprises existantes) ; la tranche 2 des entreprises créées
+#: après 1997 a ses propres fichiers. Le barème cadre de l'Arrco n'a que la
+#: tranche 1, la tranche 2 du cadre étant l'Agirc.
 REPARTITION = {
     "arrco": {
-        "salarie": "arrco/taux_effectifs_salaries_employeurs/salarie/noncadre/arrco.yaml",
-        "employeur": "arrco/taux_effectifs_salaries_employeurs/employeur/noncadre/arrco.yaml",
+        "entreprises_existantes": {
+            "salarie": "arrco/taux_effectifs_salaries_employeurs/salarie/noncadre/arrco.yaml",
+            "employeur": "arrco/taux_effectifs_salaries_employeurs/employeur/noncadre/arrco.yaml",
+        },
+        "entreprises_nouvelles": {
+            "salarie": "arrco/taux_effectifs_salaries_employeurs/salarie/tranche_2_apres_1997.yaml",
+            "employeur": "arrco/taux_effectifs_salaries_employeurs/employeur/tranche_2_apres_1997.yaml",
+        },
     },
     "agirc": {
-        "salarie": "agirc/taux_effectifs_salaries_employeurs/avant81/salarie/agirc.yaml",
-        "employeur": "agirc/taux_effectifs_salaries_employeurs/avant81/employeur/agirc.yaml",
+        "entreprises_existantes": {
+            "salarie": "agirc/taux_effectifs_salaries_employeurs/avant81/salarie/agirc.yaml",
+            "employeur": "agirc/taux_effectifs_salaries_employeurs/avant81/employeur/agirc.yaml",
+        },
+        "entreprises_nouvelles": {
+            "salarie": "agirc/taux_effectifs_salaries_employeurs/depuis81/salarie/agirc.yaml",
+            "employeur": "agirc/taux_effectifs_salaries_employeurs/depuis81/employeur/agirc.yaml",
+        },
     },
     "agirc_arrco": {
-        "salarie": "agirc_arrco/salarie/agirc_arrco.yaml",
-        "employeur": "agirc_arrco/employeur/agirc_arrco.yaml",
+        "entreprises_existantes": {
+            "salarie": "agirc_arrco/salarie/agirc_arrco.yaml",
+            "employeur": "agirc_arrco/employeur/agirc_arrco.yaml",
+        },
     },
 }
 
@@ -260,6 +276,7 @@ def main() -> int:
     contractuels: dict[str, dict[str, dict[str, dict[str, float]]]] = {}
     appels: dict[str, dict[str, float]] = {}
     repartition: dict[str, dict[str, dict[str, float]]] = {}
+    repartition_variantes: dict[str, dict[str, dict[str, dict[str, float]]]] = {}
     try:
         for regime, par_variante in COMPLEMENTAIRES.items():
             for variante, (chemin, premiere) in par_variante.items():
@@ -283,7 +300,7 @@ def main() -> int:
                 if _en_vigueur(bareme, a) > 0
             }
             print(f"OK      {regime:<24} taux d'appel, {len(appels[regime])} années")
-        for regime, cotes in REPARTITION.items():
+        def _parts(cotes: dict[str, str]) -> dict[str, dict[str, float]]:
             salarie = _tranches(_lire(cotes["salarie"]))
             employeur = _tranches(_lire(cotes["employeur"]))
             premiere = min(int(cle[:4]) for t in salarie for cle in t)
@@ -296,8 +313,16 @@ def main() -> int:
                         par_tranche[f"tranche_{i + 1}"] = round(s_ / (s_ + e_), 5)
                 if par_tranche:
                     parts[str(annee)] = par_tranche
-            repartition[regime] = parts
-            print(f"OK      {regime:<24} répartition salarié/employeur")
+            return parts
+
+        for regime, par_variante in REPARTITION.items():
+            for variante, cotes in par_variante.items():
+                parts = _parts(cotes)
+                repartition_variantes.setdefault(regime, {})[variante] = parts
+                if variante == VARIANTE_RETENUE:
+                    repartition[regime] = parts
+            print(f"OK      {regime:<24} répartition salarié/employeur, "
+                  f"{len(par_variante)} variante(s)")
     except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
         print(f"ÉCHEC   complémentaires : {erreur}", file=sys.stderr)
         return 1
@@ -336,6 +361,7 @@ def main() -> int:
             "contractuels": contractuels,
             "taux_appel": appels,
             "part_salariale": repartition,
+            "part_salariale_variantes": repartition_variantes,
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )

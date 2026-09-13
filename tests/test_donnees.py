@@ -322,6 +322,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "valeurs_point_independants": "regimes/valeurs_point.csv",
         "valeurs_point_unirs": "regimes/valeurs_point.csv",
         "valeurs_point_texte": "regimes/valeurs_point.csv",
+        "valeurs_point_estimees": "regimes/valeurs_point.csv",
         "employeur_public_etat":
             "legislation/contribution_employeur_public.csv",
         "employeur_public_etat_implicite":
@@ -1560,3 +1561,29 @@ def test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas(catalogue):
     assert catalogue["igrante"].periode(1965).assiette == "tranche_1"
     assert catalogue["ipacte"].creation == 1951
     assert catalogue["igrante"].creation == 1960
+
+
+def test_les_entreprises_nouvelles_ont_leur_bareme_et_leurs_statuts(catalogue):
+    """L'Agirc a imposé 12 % dès 1983 aux entreprises créées après 1981, l'Arrco
+    14 % de tranche 2 dès 1997 à celles créées après 1997 : deux fiches
+    parallèles, deux statuts, et rien avant la création de l'entreprise."""
+    from retraite_notionnelle.carriere import Affiliations
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    nouvelles = catalogue["agirc_entreprises_nouvelles"]
+    anciennes = catalogue["agirc"]
+    assert nouvelles.periode(1985).points_de == "agirc"
+    # 12 % × 106 % en 1986 contre 8 % × 106 %
+    assert nouvelles.periode(1986).taux_cotisation_retraite > anciennes.periode(1986).taux_cotisation_retraite * 1.4
+    # les deux barèmes se rejoignent en 1996
+    assert nouvelles.periode(2000).taux_cotisation_retraite == pytest.approx(
+        anciennes.periode(2000).taux_cotisation_retraite)
+    tranche_2 = catalogue["arrco_tranche_2_entreprises_nouvelles"]
+    assert tranche_2.creation == 1997 and tranche_2.periode(1996) is None
+    assert tranche_2.periode(1997).points_de == "arrco"
+    assert list(affiliations.regimes("salarie_prive_cadre_entreprise_recente", 1990)) == [
+        "regime_general", "arrco", "agirc_entreprises_nouvelles"]
+    assert list(affiliations.regimes("salarie_prive_non_cadre_entreprise_recente", 1990)) == [
+        "regime_general", "arrco"]
+    assert list(affiliations.regimes("salarie_prive_non_cadre_entreprise_recente", 2000)) == [
+        "regime_general", "arrco", "arrco_tranche_2_entreprises_nouvelles"]

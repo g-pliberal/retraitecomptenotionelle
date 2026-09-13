@@ -70,6 +70,7 @@ STATUTS = (
     "artiste_auteur", "ministre_du_culte", "personnel_navigant",
     "agent_general_assurance", "notaire",
     "agent_seita", "agent_port_strasbourg", "agent_chemins_fer_secondaires",
+    "salarie_prive_non_cadre_entreprise_recente", "salarie_prive_cadre_entreprise_recente",
 )
 
 
