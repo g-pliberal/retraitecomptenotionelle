@@ -776,19 +776,37 @@ export class Affiliations {
     return Boolean((this._profils[affiliation] ?? {}).sans_employeur);
   }
 
-  /** Régimes applicables à ce statut cette année-là. */
-  regimes(affiliation, annee) {
+  /** Régimes applicables à ce statut cette année-là.
+   *
+   * LA FERMETURE D'UN RÉGIME NE VAUT QUE POUR LES NOUVEAUX ENTRANTS. Le régime
+   * de la SNCF est fermé aux agents recrutés depuis le 1er janvier 2020, celui
+   * de la RATP et celui des IEG depuis le 1er septembre 2023 : un agent
+   * recruté avant garde le sien jusqu'à sa retraite. `anneeEntree` — la
+   * première année du statut dans la carrière — décide ; sans elle, on suppose
+   * une entrée l'année demandée.
+   */
+  regimes(affiliation, annee, anneeEntree = null) {
     const profil = this._profils[affiliation];
     if (profil === undefined) {
       throw new Error(
         `affiliation inconnue : ${affiliation}. Disponibles : ${this.codes.join(", ")}`,
       );
     }
+    const entree = anneeEntree === null || anneeEntree === undefined ? annee : anneeEntree;
     for (const periode of profil.periodes || []) {
       const fin = periode.fin ?? null;
-      if (periode.debut <= annee && (fin === null || annee <= fin)) {
-        return periode.regimes || [];
+      if (!(periode.debut <= annee && (fin === null || annee <= fin))) {
+        continue;
       }
+      const avant = periode.entres_avant ?? null;
+      const depuis = periode.entres_depuis ?? null;
+      if (avant !== null && entree >= avant) {
+        continue;
+      }
+      if (depuis !== null && entree < depuis) {
+        continue;
+      }
+      return periode.regimes || [];
     }
     return [];
   }

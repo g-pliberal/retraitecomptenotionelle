@@ -279,6 +279,10 @@ class ConstructeurCompte:
         """
         if self.affiliations.sans_employeur(ligne.affiliation):
             return False
+        # L'année d'entrée n'est pas connue ici, et elle ne change rien : la
+        # question posée est celle de l'EXISTENCE d'un employeur, et un régime
+        # fermé aux nouveaux entrants est remplacé par un autre régime de
+        # salariés, jamais par un statut sans employeur.
         for code in self.affiliations.regimes(ligne.affiliation, annee):
             if code not in self.catalogue:
                 continue
@@ -459,7 +463,9 @@ class ConstructeurCompte:
         # encaissent, et sur le salaire d'avant l'interruption.
         familles_admises = None if ligne.cotise else set(ligne.familles_cotisantes)
 
-        codes = self.affiliations.regimes(ligne.affiliation, annee)
+        codes = self.affiliations.regimes(
+            ligne.affiliation, annee, carriere.entree(ligne.affiliation)
+        )
         sans_employeur = self.affiliations.sans_employeur(ligne.affiliation)
         cotisation = 0.0
         assiette_totale = 0.0

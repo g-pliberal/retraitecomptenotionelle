@@ -82,6 +82,22 @@ def _cas() -> list[dict]:
     for naissance in (1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2005):
         cas.append((f"generation_{naissance}", {"naissance": str(naissance)}))
 
+    # CHAQUE STATUT À DEUX ÂGES DE PLUS, et c'est le balayage qui manquait. Le
+    # balayage par statut ci-dessus ne connaît qu'une génération, née en 1975 :
+    # il ne visite donc que les périodes RÉCENTES de chaque fiche de régime, et
+    # un régime qui appliquerait le droit de 2023 à toute son histoire y passe
+    # invisible. C'est ce qui est arrivé au régime des salariés agricoles, qui
+    # portait une seule période de 1930 à aujourd'hui : la corriger n'a déplacé
+    # aucun témoin.
+    # Une carrière née en 1935 liquide vers 1999 — avant la réforme de 2003,
+    # sous la durée requise de 150 ou 160 trimestres et les dix meilleures
+    # années ; une carrière née en 1955 liquide vers 2019, entre Balladur et la
+    # réforme de 2023.
+    for naissance in (1935, 1955):
+        for statut in STATUTS:
+            cas.append((f"statut_{statut}_{naissance}",
+                        {"statut": statut, "naissance": str(naissance)}))
+
     # Âges de liquidation : départ très anticipé, à l'heure, très différé.
     for age in ("52", "57", "60", "62", "64", "67", "70"):
         cas.append((f"liquidation_{age}", {"liquidation": age}))

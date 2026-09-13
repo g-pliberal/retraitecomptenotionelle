@@ -253,22 +253,35 @@ affiliations:
   agent_sncf:
     libelle: Agent du cadre permanent de la SNCF
     periodes:
-      - {debut: 1930, fin: 2019, regimes: [sncf]}
-      - {debut: 2020, fin: null, regimes: [regime_general, agirc_arrco]}
-    note: Régime fermé aux agents recrutés depuis le 1er janvier 2020.
+      - {debut: 1930, fin: null, regimes: [sncf], entres_avant: 2020}
+      - {debut: 2020, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2020}
+    note: >-
+      Régime fermé aux agents RECRUTÉS depuis le 1er janvier 2020, et à eux
+      seuls : celui qui était déjà là le garde jusqu'à sa retraite. Le
+      routage par la seule année faisait basculer tout le monde en 2020,
+      y compris l'agent entré vingt ans plus tôt.
 
   agent_ratp:
     libelle: Agent statutaire de la RATP
     periodes:
-      - {debut: 1930, fin: 2022, regimes: [ratp]}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco]}
-    note: Régime fermé aux agents recrutés depuis le 1er septembre 2023.
+      - {debut: 1930, fin: null, regimes: [ratp], entres_avant: 2023}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2023}
+    note: >-
+      Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 : la
+      réforme du 14 avril 2023 l'éteint par clause du grand-père, et celui
+      qui était déjà là le garde.
 
   agent_ieg:
     libelle: Agent des industries électriques et gazières
     periodes:
-      - {debut: 1946, fin: 2022, regimes: [ieg]}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco]}
+      - {debut: 1946, fin: null, regimes: [ieg], entres_avant: 2023}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2023}
+    note: >-
+      Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 ; celui
+      qui était déjà là le garde jusqu'à sa retraite.
 
   marin:
     libelle: Marin professionnel
@@ -278,9 +291,14 @@ affiliations:
   mineur:
     libelle: Mineur
     periodes:
-      - {debut: 1930, fin: 2010, regimes: [mines]}
-      - {debut: 2011, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
-      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
+      - {debut: 1930, fin: null, regimes: [mines], entres_avant: 2011}
+      - {debut: 2011, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2],
+         entres_depuis: 2011}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2011}
+    note: >-
+      Régime fermé aux mineurs RECRUTÉS depuis le 1er septembre 2010 ; celui
+      qui était déjà là le garde jusqu'à sa retraite.
 
   clerc_de_notaire:
     libelle: Clerc ou employé de notaire
@@ -295,22 +313,33 @@ affiliations:
   personnel_opera:
     libelle: Personnel de l'Opéra national de Paris
     periodes:
-      - {debut: 1930, fin: 2022, regimes: [opera_de_paris]}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco]}
+      - {debut: 1930, fin: null, regimes: [opera_de_paris], entres_avant: 2023}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2023}
+    note: >-
+      Régime fermé aux artistes et personnels RECRUTÉS depuis le
+      1er septembre 2023 ; celui qui était déjà là le garde.
 
   personnel_comedie_francaise:
     libelle: Personnel de la Comédie-Française
     periodes:
-      - {debut: 1930, fin: 2022, regimes: [comedie_francaise]}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco]}
+      - {debut: 1930, fin: null, regimes: [comedie_francaise], entres_avant: 2023}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2023}
+    note: >-
+      Régime fermé aux personnels RECRUTÉS depuis le 1er septembre 2023 ;
+      celui qui était déjà là le garde.
 
   agent_seita:
     libelle: Agent du personnel de la SEITA
     periodes:
-      - {debut: 1935, fin: 1981, regimes: [seita]}
-      - {debut: 1982, fin: 1995, regimes: [regime_general, arrco]}
-      - {debut: 1996, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
-      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
+      - {debut: 1935, fin: null, regimes: [seita], entres_avant: 1982}
+      - {debut: 1982, fin: 1995, regimes: [regime_general, arrco],
+         entres_depuis: 1982}
+      - {debut: 1996, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2],
+         entres_depuis: 1982}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 1982}
     note: >-
       Régime fermé aux recrutements en 1981 ; les agents recrutés après
       relèvent du droit commun des salariés du privé. Avant 1935, la fiche
@@ -320,9 +349,12 @@ affiliations:
   agent_port_strasbourg:
     libelle: Agent du Port autonome de Strasbourg
     periodes:
-      - {debut: 1930, fin: 2022, regimes: [port_strasbourg]}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco]}
-    note: Régime fermé aux recrutements depuis le 1er septembre 2023.
+      - {debut: 1930, fin: null, regimes: [port_strasbourg], entres_avant: 2023}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2023}
+    note: >-
+      Régime fermé aux RECRUTEMENTS depuis le 1er septembre 2023 ; celui qui
+      était déjà là le garde.
 
   agent_chemins_fer_secondaires:
     libelle: Agent des chemins de fer secondaires d'intérêt général

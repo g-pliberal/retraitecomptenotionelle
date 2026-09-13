@@ -172,6 +172,21 @@ export class Carriere {
 
   // -- agrégats --------------------------------------------------------------
 
+  /** Année d'entrée dans ce statut, ou null s'il ne figure pas dans la carrière.
+   *
+   * C'est elle qui décide de la CLAUSE DU GRAND-PÈRE : un régime fermé aux
+   * nouveaux entrants reste celui de qui était déjà là. Les lignes étant
+   * chronologiques, la première rencontre suffit.
+   */
+  entree(affiliation) {
+    for (const ligne of this.lignes) {
+      if (ligne.affiliation === affiliation) {
+        return ligne.annee;
+      }
+    }
+    return null;
+  }
+
   get anneesCotisees() {
     return this.lignes.filter((ligne) => ligne.cotise).map((ligne) => ligne.annee);
   }

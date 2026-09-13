@@ -356,7 +356,9 @@ export class ConstructeurCompte {
     // encaissent, et sur le salaire d'avant l'interruption.
     const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
 
-    const codes = this.affiliations.regimes(ligne.affiliation, annee);
+    const codes = this.affiliations.regimes(
+      ligne.affiliation, annee, carriere.entree(ligne.affiliation),
+    );
     const sansEmployeur = this.affiliations.sansEmployeur(ligne.affiliation);
     let cotisation = 0.0;
     let assietteTotale = 0.0;

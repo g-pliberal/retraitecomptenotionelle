@@ -3066,6 +3066,39 @@ saisie à ce titre, sur la foi du producteur, comme la valeur du point du même
 régime — que la loi ne porte pas davantage, le décret annuel ne fixant qu'un
 coefficient de revalorisation.
 
+### La clause du grand-père : six régimes fermés l'étaient pour tout le monde
+
+Le régime de la SNCF est fermé aux agents **recrutés** depuis le 1er janvier
+2020 ; celui de la RATP, des IEG, de l'Opéra de Paris, de la Comédie-Française
+et du port autonome de Strasbourg depuis le 1er septembre 2023 ; celui des mines
+depuis le 1er septembre 2010 ; celui de la SEITA depuis 1981. Dans les huit cas,
+la fermeture ne vaut que pour les nouveaux entrants : **celui qui était déjà là
+garde son régime jusqu'à sa retraite.** C'est la clause du grand-père, et les
+fiches la nommaient — « Régime fermé aux agents recrutés depuis le 1er janvier
+2020 », disait le routage de la SNCF.
+
+Le routage, lui, ne connaissait que l'ANNÉE. À la date de fermeture, il faisait
+basculer au régime général **tout le monde**, y compris l'agent entré vingt ans
+plus tôt. Un cheminot né en 1975, entré en 1996, perdait ainsi vingt années de
+régime spécial : sa pension passait de 55 319 € à 39 967 €, **trente-huit pour
+cent de moins**. Un agent des IEG ou de la RATP en perdait trente-quatre, un
+mineur dix-neuf.
+
+Le routage apprend donc une seconde dimension. Une période d'affiliation peut
+porter `entres_avant` ou `entres_depuis`, et la carrière fournit l'année
+d'entrée dans le statut — sa première année, les lignes étant chronologiques.
+Sans cette année, on suppose une entrée l'année demandée : c'est le comportement
+d'avant, et il reste juste pour qui commence sa carrière cette année-là.
+
+**Deux fiches ont dû s'allonger pour que le routage tienne.** Celle des mines
+s'arrêtait en 2010 et celle de la SEITA en 1981 — leur année de fermeture. Or
+un régime fermé aux nouveaux entrants continue d'accueillir ceux qui y sont :
+leurs périodes courent donc jusqu'à aujourd'hui, aux mêmes paramètres, parce que
+ces deux régimes sont en EXTINCTION et que les réformes de 2010, 2014 et 2023
+les ont laissés où ils étaient — le programme 195 du budget de l'État les
+finance à ce titre. Un test l'a imposé : il refuse qu'un statut route vers un
+régime dont la fiche ne porte aucune période cette année-là.
+
 ### L'Ircantec n'avait pas de tranche B, et ses taux étaient ceux de 2008
 
 Le catalogue décrivait l'Ircantec par deux périodes et une seule assiette : la
