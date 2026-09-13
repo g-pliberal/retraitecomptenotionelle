@@ -107,6 +107,13 @@ def _cas() -> list[dict]:
     for age in ("52", "57", "60", "62", "64", "67", "70"):
         cas.append((f"liquidation_{age}", {"liquidation": age}))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))
+    # LE PLAFOND D'ÂGE DES MARINS : vingt-cinq annuités au plus si la pension
+    # est demandée avant cinquante-cinq ans (R. 13 de leur code). Aucun témoin
+    # ne visitait cette branche — celui-ci part à cinquante ans après une
+    # carrière commencée à vingt, quand le régime plafonne à cent trimestres.
+    cas.append(("marin_avant_cinquante_cinq", {
+        "statut": "marin", "debut": "20", "liquidation": "50",
+    }))
 
     # LE MOIS. Douze départs séparés d'un mois, pour que le diff montre ce que
     # chaque mois déplace — et surtout qu'il ne montre plus la marche de six à
