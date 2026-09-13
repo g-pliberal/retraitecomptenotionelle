@@ -744,12 +744,55 @@ regimes:
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
-        notes: Loi du 12 juillet 1937.
+        notes: >-
+          Loi du 12 juillet 1937, appliquée par le décret n° 90-1215 du
+          20 décembre 1990. L'âge de 55 ans est celui de la DÉROGATION qui fait
+          la réputation du régime : l'article 84 ouvre le droit à pension à
+          soixante ans, mais ne l'oppose pas aux clercs justifiant de vingt-cinq
+          années de cotisation — c'est la voie que la réforme de 2008 referme
+          progressivement, jusqu'au 1er janvier 2018. La fiche retient cette
+          voie pour toute la période, parce qu'elle était la règle commune d'un
+          métier où l'on entrait jeune ; c'est une approximation nommée.
       - debut: 2009
-        fin: null
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1360
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          RÉFORME DES RÉGIMES SPÉCIAUX, transposée ici par le décret
+          n° 2008-147 du 15 février 2008. Le coefficient de minoration est
+          celui des fonctionnaires : « un coefficient de minoration, dont le
+          taux est celui qui est prévu pour les fonctionnaires de l'État par le
+          I de l'article L. 14 du code des pensions civiles et militaires de
+          retraite, s'applique au montant de la pension » (article 85-1 du
+          décret de 1990). La fiche portait 1,25 % par trimestre sans la montée
+          en charge, alors que le barème de la fonction publique la donne.
+          La durée nécessaire au pourcentage maximum est « fixée à 151
+          trimestres pour les personnes remplissant les conditions entre le
+          1er juillet et le 31 décembre 2008 » et « augmente d'un trimestre au
+          1er janvier et au 1er juillet de chaque année jusqu'au 1er juillet
+          2012 » (article 85-2) : la montée en charge est lue ici dans la table
+          des durées par génération.
+      - debut: 2011
+        fin: 2022
         type_calcul: annuites
         age_ouverture: 62
+        age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
@@ -757,10 +800,35 @@ regimes:
         assiette: deplafonnee
         taux_cotisation_retraite: 0.1360
         perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [majoration_enfants, reversion]
-        notes: Réforme des régimes spéciaux.
+        notes: >-
+          Loi de 2010 : les bornes d'âge du régime suivent celles du droit
+          commun, relevées de deux ans par génération.
+      - debut: 2023
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1360
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Loi du 14 avril 2023 : l'âge d'ouverture passe à 64 ans. La fiche
+          s'arrêtait à 62 — celui de 2011 —, et servait donc à un clerc
+          liquidant aujourd'hui la borne d'âge d'il y a douze ans.
 
   - code: banque_de_france
     nom: Caisse de réserve des employés de la Banque de France
