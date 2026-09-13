@@ -428,25 +428,20 @@ reformes:
               carpv_complementaire, ircec_raap, crpnpac, crpnpac_tranche_2]
     absorbee_par: [age_ouverture_par_generation, duree_requise_par_generation]
     non_appliquee:
-      sncf: >-
-        Le relèvement de deux ans des âges des régimes spéciaux par la loi
-        de 2023 est étalé par génération à compter de 2025 et n'a pas encore
-        été lu dans le décret d'application ; à traiter dans la tranche B2.
-      ratp: >-
-        Même situation que la SNCF : relèvement étalé à compter de 2025, non
-        lu, à traiter dans la tranche B2 avec le décret d'application.
-      ieg: >-
-        Même situation que la SNCF et la RATP : relèvement étalé à compter de
-        2025, non lu, à traiter dans la tranche B2.
       opera_de_paris: >-
-        Régime fermé aux recrutés depuis septembre 2023 ; le relèvement des
-        âges pour les agents en place n'a pas été lu, à traiter en B2.
+        La loi ferme le régime aux recrutés à compter du 1er septembre 2023,
+        ce que le routage porte, mais son décret d'application (n° 2023-840,
+        JORFTEXT000048011057, articles 6 ter, 16, 28 et 33 : carrières
+        longues, minimum, retraite progressive, cumul) ne relève pas les âges
+        des agents en place — l'article 6 reste à sa version de 2014.
       comedie_francaise: >-
-        Régime fermé aux recrutés depuis septembre 2023 ; le relèvement des
-        âges pour les agents en place n'a pas été lu, à traiter en B2.
+        Même décret n° 2023-840 (LEGIARTI000048031556, …549, …544, …539) :
+        fermeture portée par le routage, aucun relèvement d'âge, l'article 12
+        reste à sa version de 2017.
       port_strasbourg: >-
-        Fermé aux recrutés depuis septembre 2023 ; règlement hors LEGI, une
-        seule période, à traiter en B2.
+        Fermé aux recrutés depuis septembre 2023 (loi n° 2023-270, art. 1er),
+        ce que le routage porte ; le règlement de retraite est un acte de
+        l'établissement, absent de LEGI et du JORF, une seule période.
       marins: >-
         L'ENIM n'est pas touché par la loi de 2023 : l'âge de cinquante-cinq
         ans et la formule du code des pensions de retraite des marins sont

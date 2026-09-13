@@ -3171,9 +3171,9 @@ modèle :
 |---|---|---|---|---|---|
 | `port_strasbourg` | 1930-2026 | 1 | 97 | 0 | 0 |
 | `marins` | 1930-2026 | 1 | 97 | 2 | 0 |
-| `sncf` | 1930-2026 | 8 | 79 | 3 | 0 |
-| `ratp` | 1930-2026 | 8 | 79 | 3 | 0 |
-| `banque_de_france` | 1930-2026 | 5 | 78 | 0 | 0 |
+| `sncf` | 1930-2033 | 16 | 79 | 1 | 0 |
+| `ratp` | 1930-2033 | 16 | 79 | 3 | 0 |
+| `banque_de_france` | 1930-2026 | 16 | 78 | 0 | 0 |
 | `cavp_complementaire` | 1949-2026 | 2 | 77 | 7 | 0 |
 | `carpv_complementaire` | 1950-2026 | 1 | 77 | 18 | 0 |
 | `cavec_complementaire` | 1953-2026 | 2 | 74 | 0 | 0 |
@@ -3189,8 +3189,8 @@ modèle :
 | `cnracl` | 1945-2026 | 7 | 45 | 17 | 0 |
 | `mines` | 1930-2026 | 22 | 44 | 1 | 0 |
 | `cipav_complementaire` | 1979-2026 | 3 | 44 | 3 | 0 |
-| `ieg` | 1946-2026 | 12 | 40 | 0 | 0 |
 | `cnbf_complementaire` | 1979-2026 | 2 | 40 | 0 | 0 |
+| `ieg` | 1946-2026 | 15 | 38 | 3 | 0 |
 | `msa_non_salaries` | 1952-2026 | 7 | 34 | 13 | 0 |
 | `crpnpac_tranche_2` | 1963-2026 | 4 | 32 | 0 | 0 |
 | `crpnpac` | 1963-2026 | 4 | 32 | 5 | 0 |
@@ -3228,7 +3228,7 @@ modèle :
 
 **Ce tableau n'est plus écrit à la main** : c'est la sortie de
 `python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1,
-B2 et B3 de la campagne « les règles à travers l'histoire » (voir
+B2, B3 et leurs restes de la campagne « les règles à travers l'histoire » (voir
 [`regimes.md`](regimes.md), journal de la campagne). Les deux dernières
 colonnes viennent de l'index LEGI et du calendrier des réformes
 (`legislation/reformes.yaml`) : une « coupure de texte non reflétée » est une

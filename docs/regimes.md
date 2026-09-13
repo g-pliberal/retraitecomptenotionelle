@@ -298,6 +298,19 @@ certification OpenFisca réécrirait.
 | `agirc_entreprises_nouvelles`, `arrco_tranche_2_entreprises_nouvelles` | le barème des entreprises créées après 1981 (Agirc : 12 % dès 1983) et après 1997 (Arrco tranche 2 : 14 % d'emblée) n'était prêté à personne | deux fiches générées de la variante `entreprises_nouvelles` d'OpenFisca (27 et 6 périodes, `points_de` Agirc/Arrco), deux statuts « entreprise créée après 1981 / 1997 » | douze témoins nouveaux (336), identiques aux témoins de droit commun au salaire moyen, qui n'atteint ni le plafond ni la tranche 2 ; à deux plafonds, le cadre né en 1955 d'une entreprise créée après 1981 touche 1,7 % de pension actuelle de plus que celui d'une entreprise ancienne (12 % de points Agirc au lieu de 8 % de 1983 à 1993) |
 | outillage | une valeur lue dans un texte était réécrite par la transcription OpenFisca au prochain `--appliquer` | `source_valeurs_point` retire les clés des `COMPLEMENTS` (`openfisca_points.py`) ; nouvelle certification `valeurs_point_estimees` pour les prolongements assumés | le journal de certification distingue « saisi dans le texte » (`moyenne`) et « prolongé » (`estimee`) |
 
+### Restes de B2 — le relèvement de 2023 dans les régimes spéciaux, et deux séries de taux
+
+| Régime | Ce qui était faux | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `sncf` | le relèvement de la loi du 14 avril 2023, déclaré « non lu » ; pivots posés sur les articles 3 (pension proportionnelle) et 17 (entrée en jouissance) | décret n° 2023-967, article 37-1 (`LEGIARTI000048240186`, `LEGIARTI000048896987`) : aux pensions prenant effet dès le 1er janvier 2025, conduite 52 → 54 ans, trois mois par génération 1973-1979 ; sédentaires 57 → 59 ; annulation de la décote 62 → 64 ; pivots refaits sur les articles 37-1 (âges) et 13 (décote) | huit périodes 2025-2034 ; l'âge opposable du cheminot né en 1975 passe de 52 à 54 ans, celui du né en 1965 à 53 ans (calendrier par année de liquidation) ; aucune pension ne bouge, les cas liquident après l'âge |
+| `ratp` | idem, pivot sur l'article 13 qui n'a qu'une version | décret n° 2023-690 : article 6 (`LEGIARTI000047913991`, 54/59/64 ans dès 2025) et 51-1 (`LEGIARTI000047914257`, mêmes rampes 1972-1979, 1967-1974, 1962-1969) | mêmes huit périodes, mêmes âges opposables |
+| `ieg` | idem ; pivot sur le seul décret n° 2011-290, à une version | décret n° 2023-692 (`JORFTEXT000047903232`) réécrit l'annexe 3 du statut, non consolidée dans LEGI : « l'âge mentionné à l'article L. 161-17-2 » et « cet âge abaissé de cinq ans » aux pensions dès 2025 — 57 → 59 ans des services actifs, générations 1961-1968 ; durée 170-172 (art. 45 I bis, plus exigeante d'un à trois trimestres que la table nationale, non portée) ; pivot sur l'annexe 3 (`LEGIARTI000006632496`, 21 versions) | périodes 2025-2026 (58 ans 9 mois) et 2027- (59 ans) ; l'âge opposable des agents nés en 1965 et 1975 passe de 57 à 59 ans |
+| `ieg` 1984 | 6 % de retenue reconduits jusqu'en 1985, le chiffre du décret n° 84-63 manquant à LEGI | la notice du Journal officiel le porte : « art. 24 parag. 2 : 7 %, cotisations à compter du 01-01-1984 » (`JORFTEXT000000885345`) ; les six décrets frères (n° 69-265 à 90-772) touchent le paragraphe 8 de l'article 23, la cotisation aux caisses mutuelles d'action sociale, et non la retraite | période 1984-1985 à 7 % ; le compte notionnel rétroactif de l'agent né en 1925 gagne 2,1 %, celui de 1935 1,0 %, celui de 1955 0,3 % |
+| `banque_de_france` | 10,29 % de 2011 à 2022 (le palier de 2019 servi douze ans), 11,10 % dès 2023 ; relèvement à 64 ans coupé au 1er septembre 2023 | les quatorze versions du règlement annexé (`LEGIARTI000006778516` → `LEGIARTI000047909725`) : 7,85 % jusqu'en 2012, 8,12 % (2013), 8,54 % (2014), puis l'échelle définitive 8,86 → 11,10 % de 2015 à 2022 ; la fermeture de 2023 ne relève rien (`LEGIARTI000047909413`), le relèvement date du 1er janvier 2025 (`LEGIARTI000047909725`, table de l'article 72, la même que la table nationale) | seize périodes ; le compte notionnel rétroactif de l'agent né en 1955 perd 5,3 %, celui de 1965 2,8 %, celui de 1975 1,9 % : ils avaient cotisé moins que 10,29 % de 2011 à 2018 |
+| `opera_de_paris`, `comedie_francaise` | déclarés « relèvement non lu » | le décret n° 2023-840 (`JORFTEXT000048011057`) ne touche que carrières longues, minimum, retraite progressive et cumul : aucun relèvement d'âge, la fermeture est portée par le routage ; les versions de 1995, 2011 et 2017 lues (`LEGIARTI000006765538`, `LEGIARTI000024468762`, `LEGIARTI000029135161`, `LEGIARTI000029134341`) ne changent rien pour la catégorie modélisée (ballet à 40 ans ; durée par génération identique à la table nationale) | rien ; raisons `non_appliquee` réécrites |
+| `marins` | pivots sur L. 14 et R. 13 seuls | R. 2 (`LEGIARTI000006791972` : 55 ans, 50 avec vingt-cinq ans de services), R. 11 (`LEGIARTI000006791987` : salaire forfaitaire de la catégorie des trois dernières années), R. 13 (`LEGIARTI000006791990` : 2 % par annuité, 37,5 annuités) confirment la fiche ; la grille des vingt catégories (décret n° 52-540, art. 1er, huit versions) n'est chiffrée au JORF que depuis 2008 (`JORFARTI000017964781` → `JORFARTI000051452700`) et exige une catégorie que la carrière ne porte pas | rien ; inventaire précisé |
+| `port_strasbourg` | — | rien dans les deux index hormis le décret de 1925, l'affiliation au régime local et la liste de 2014 (`LEGIARTI000021290664`, `LEGIARTI000006742525`, `JORFARTI000029964983`) | rien ; inventaire précisé |
+
 ### Feuille de route B4 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
@@ -320,11 +333,9 @@ pour les tranches suivantes :
   codification) d'articles dont les paramètres sont déjà lus à la génération
   par les tables de `legislation/` ; à relire une fois pour le confirmer, sans
   attendre de coupure.
-- **Restes de B2.** Le relèvement de 2023 des régimes spéciaux, étalé à
-  compter de 2025 (`sncf`, `ratp`, `ieg`, `opera_de_paris`,
-  `comedie_francaise`) ; les dix-sept versions du règlement de la Banque de
-  France ; le décret n° 84-63 des IEG dont l'index ne porte pas le chiffre ;
-  le règlement du port autonome de Strasbourg, à demander.
+- **Restes de B2.** Le règlement du port autonome de Strasbourg, à demander ;
+  la grille des salaires forfaitaires des marins, qui attend une saisie de
+  catégorie.
 - **Restes de B3.** L'âge de liquidation de l'IPACTE et de l'IGRANTE (articles
   absents de LEGI) et le barème de l'UNIRS restent à demander à la Caisse des
   dépôts et à la fédération.
