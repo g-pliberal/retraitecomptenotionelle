@@ -1483,3 +1483,80 @@ def test_tout_regime_calcule_a_ses_articles_pivots(catalogue, pivots):
         for pivot in liste:
             assert len(pivot.texte) >= 8, f"{code} : texte pivot illisible {pivot.texte!r}"
             assert pivot.parametres, f"{code} / {pivot.texte} : aucun paramètre"
+
+
+# -- tranche B3 : les complémentaires du privé --------------------------------
+
+
+def test_la_tranche_2_arrco_est_routee_aux_non_cadres_des_1961(catalogue):
+    """L'accord de 1961 assied la cotisation jusqu'à trois plafonds : la tranche
+    2 des non-cadres existe dès l'origine, et jamais pour un cadre."""
+    from retraite_notionnelle.carriere import Affiliations
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    for statut in ("salarie_prive_non_cadre", "salarie_agricole"):
+        for annee in range(1961, 2019):
+            assert "arrco_tranche_2" in affiliations.regimes(statut, annee), (statut, annee)
+    for statut in ("salarie_prive_cadre", "personnel_navigant"):
+        for annee in range(1947, 2027):
+            assert "arrco_tranche_2" not in affiliations.regimes(statut, annee), (statut, annee)
+    assert catalogue["arrco_tranche_2"].creation == 1961
+
+
+def test_les_complementaires_suivent_l_asf_de_1983(catalogue):
+    """Avant l'accord du 4 février 1983, taux plein à soixante-cinq ans et
+    anticipation abattue à l'âge seul : aucune durée requise. Depuis, la durée
+    du régime de base, lue à la génération — jamais un nombre en dur."""
+    for code in ("agirc", "arrco", "arrco_tranche_2"):
+        for periode in catalogue[code].periodes:
+            assert periode.duree_requise_trimestres is None, (code, periode.debut)
+            assert periode.duree_requise_par_generation is (periode.debut >= 1983), (
+                code, periode.debut)
+            assert periode.age_ouverture_par_generation is (periode.debut >= 1983), (
+                code, periode.debut)
+            assert periode.age_taux_plein_par_generation is (periode.debut >= 2011), (
+                code, periode.debut)
+
+
+def test_le_coefficient_de_solidarite_disparait_en_2024(catalogue):
+    """Avenant n° 17 du 22 novembre 2023 : plus de malus temporaire."""
+    for periode in catalogue["agirc_arrco"].periodes:
+        attendu = periode.debut < 2024
+        assert ("coefficient_solidarite" in periode.avantages_non_contributifs) is attendu, (
+            periode.debut, periode.avantages_non_contributifs)
+
+
+def test_les_taux_des_complementaires_sont_contractuel_fois_appel(catalogue):
+    """Chaque période porte « taux contractuel × taux d'appel », le taux
+    d'appel étant celui de regimes/valeurs_point.csv que le moteur retire :
+    le quotient doit retomber sur un taux contractuel à quatre décimales."""
+    from retraite_notionnelle.scenarios.actuel import ValeursPoint
+
+    valeurs = ValeursPoint(RACINE_DONNEES)
+    verifiees = 0
+    for code in ("agirc", "arrco", "arrco_tranche_2"):
+        for periode in catalogue[code].periodes:
+            bareme = periode.points_de or code
+            achat = valeurs.achat(bareme, periode.debut)
+            assert achat is not None, (code, periode.debut)
+            contractuel = periode.taux_cotisation_retraite / achat[1]
+            assert abs(contractuel * 10000 - round(contractuel * 10000)) < 1e-6, (
+                code, periode.debut, periode.taux_cotisation_retraite, achat[1])
+            verifiees += 1
+    assert verifiees >= 70
+
+
+def test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas(catalogue):
+    """IPACTE au-dessus du plafond (décret 51-1445, art. 7), IGRANTE sous le
+    plafond pour le même agent (décret 59-1569, art. 2) : le statut
+    `contractuel_public` route les deux de 1960 à 1970 sur deux assiettes."""
+    from retraite_notionnelle.carriere import Affiliations
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    assert list(affiliations.regimes("contractuel_public", 1951)) == ["regime_general", "ipacte"]
+    assert list(affiliations.regimes("contractuel_public", 1965)) == [
+        "regime_general", "ipacte", "igrante"]
+    assert catalogue["ipacte"].periode(1955).assiette == "tranche_b"
+    assert catalogue["igrante"].periode(1965).assiette == "tranche_1"
+    assert catalogue["ipacte"].creation == 1951
+    assert catalogue["igrante"].creation == 1960

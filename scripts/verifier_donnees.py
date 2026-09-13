@@ -2948,18 +2948,29 @@ def controle_vraisemblance_cotisations() -> list[str]:
         "tranche_2_arrco": "tranche_2", "tranche_2": "tranche_2",
         "tranche_b": "tranche_2", "tranche_c": "tranche_3",
     }
-    par_regime = json.loads(chemin.read_text(encoding="utf-8")).get(
-        "complementaires", {})
+    brut = json.loads(chemin.read_text(encoding="utf-8"))
+    par_regime = brut.get("complementaires", {})
+    parts_publiees = brut.get("part_salariale", {})
+    variante = brut.get("variante_retenue", "?")
     fiches = yaml.safe_load(
         (REFERENCE / "regimes" / "complementaires_prive.yaml").read_text(
             encoding="utf-8")
     )
+    # La tranche 2 des non-cadres emprunte le barème de l'Arrco (`points_de`) :
+    # elle se confronte à la série de l'Arrco, sur sa propre assiette.
     complementaires = 0
     for regime in fiches["regimes"]:
-        annuel = par_regime.get(regime["code"])
+        code_serie = regime["code"]
+        if code_serie not in par_regime:
+            code_serie = next(
+                (p.get("points_de") for p in regime["periodes"] if p.get("points_de")),
+                code_serie,
+            )
+        annuel = par_regime.get(code_serie)
         if not annuel:
             continue
         couverture = {int(a) for a in annuel}
+        parts_regime = parts_publiees.get(code_serie, {})
         for periode in regime["periodes"]:
             tranche = tranches.get(periode.get("assiette"))
             if tranche is None:
@@ -2973,16 +2984,39 @@ def controle_vraisemblance_cotisations() -> list[str]:
             complementaires += 1
             publie = sum(annuel[str(a)][tranche] for a in annees) / len(annees)
             saisi = float(periode["taux_cotisation_retraite"])
-            if abs(publie - saisi) > 0.005:
+            # DEPUIS LA TRANCHE B3, LES PÉRIODES SONT EXACTES : une par valeur
+            # de « contractuel × appel », si bien que le seuil descend d'un
+            # demi-point à cinq centièmes — l'arrondi de la fiche, rien de
+            # plus. Un écart plus grand est une période qui ne suit plus la
+            # série, ou une série qu'OpenFisca a corrigée depuis.
+            if abs(publie - saisi) > 0.0005:
                 anomalies.append(
                     f"SUSPECT cotisations {regime['code']} {periode['debut']}-"
                     f"{periode['fin']} {periode['assiette']} : fiche {saisi:.2%}, "
-                    f"OpenFisca {publie:.2%} en moyenne sur "
+                    f"OpenFisca ({variante}) {publie:.2%} en moyenne sur "
                     f"{annees[0]}-{annees[-1]}"
                 )
+            parts = [parts_regime[str(a)][tranche] for a in annees
+                     if str(a) in parts_regime
+                     and tranche in parts_regime[str(a)]]
+            if parts and periode.get("part_salariale") is not None:
+                publiee = sum(parts) / len(parts)
+                saisie = float(periode["part_salariale"])
+                # Même seuil que pour le régime général : un centième. La
+                # série salarié d'OpenFisca reste parfois en retard d'une
+                # marche d'appel sur la série employeur (Agirc 1953 et 1989).
+                if abs(publiee - saisie) > 0.01:
+                    anomalies.append(
+                        f"SUSPECT part salariale {regime['code']} "
+                        f"{periode['debut']}-{periode['fin']} "
+                        f"{periode['assiette']} : fiche {saisie:.2%}, "
+                        f"OpenFisca {publiee:.2%} en moyenne sur "
+                        f"{annees[0]}-{annees[-1]}"
+                    )
     messages.append(
         f"OK      vraisemblance cotisations : {complementaires} périodes des "
-        f"complémentaires du privé comparées à leurs taux effectifs par tranche"
+        f"complémentaires du privé comparées à leurs taux effectifs par tranche "
+        f"et à leur répartition salarié/employeur (barème « {variante} »)"
     )
     return messages + anomalies
 

@@ -3007,3 +3007,28 @@ def test_les_generations_coupees_en_cours_d_annee_sont_lues_au_mois(simulateur):
     assert opposables(1961, 10) == (pytest.approx(62.25), 169)
     # Une génération que nul texte ne coupe ne bouge pas avec le mois.
     assert opposables(1960, 2) == opposables(1960, 11)
+
+
+def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
+    """Jusqu'à l'accord du 4 février 1983, l'Agirc et l'Arrco servaient le taux
+    plein à soixante-cinq ans et abattaient toute anticipation, quelle que soit
+    la durée. Une période sans durée requise porte ce droit : à soixante-deux
+    ans, douze trimestres d'anticipation valent 0,88 même au taux plein du
+    régime de base. Depuis 1983, la durée lue à la génération rend le taux
+    plein dès soixante ans.
+    """
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1920, sexe="H", affiliation="salarie_prive_cadre",
+        age_debut=20, age_liquidation=62,
+    )
+    scenario = simulateur.scenario_actuel
+    avant = simulateur.catalogue["agirc"].periode(1980)
+    assert avant.duree_requise_trimestres is None
+    assert not avant.duree_requise_par_generation
+    assert scenario._abattement_points(
+        avant, carriere, 168, 150, 62.0, 1982) == pytest.approx(0.88)
+
+    apres = simulateur.catalogue["agirc"].periode(1984)
+    assert apres.duree_requise_par_generation
+    assert scenario._abattement_points(
+        apres, carriere, 168, 150, 62.0, 1984) == pytest.approx(1.0)

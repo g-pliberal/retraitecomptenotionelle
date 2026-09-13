@@ -2077,6 +2077,16 @@ institutions:
           la déplafonnée. Comparer les sommes suffirait à laisser passer deux
           erreurs de sens contraire qui se compensent — et qui ne portent
           pourtant pas sur la même assiette.
+          Le même fichier porte les COMPLÉMENTAIRES du privé depuis la tranche
+          B3 : taux effectifs, taux contractuels, taux d'appel et répartition
+          salarié/employeur de l'Agirc (1948-2018), de l'Arrco (1962-2018) et
+          du régime unifié, tranche par tranche, dans les deux barèmes
+          d'adhésion qu'OpenFisca distingue (entreprises adhérentes avant ou
+          après 1981 pour l'Agirc, avant ou après 1997 pour l'Arrco). Les
+          fiches portent le barème des ENTREPRISES EXISTANTES, une période par
+          valeur de « contractuel × appel », au niveau `haute` ; le contrôle
+          les confronte à cinq centièmes près, et la répartition à un
+          centième.
 
       - id: openfisca_part_salariale
         titre: Répartition salarié / employeur des cotisations retraite
