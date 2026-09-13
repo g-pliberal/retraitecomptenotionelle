@@ -3818,6 +3818,44 @@ l'abaissement se gagne « à raison d'un an par tranche de quatre années de ser
 au fond ». Le moteur ne sait pas où un mineur a travaillé, et lui donne l'âge du
 fond.
 
+### Le Journal officiel en une requête, et non plus en une demi-heure
+
+Chaque passe par les bases de la DILA racontée plus haut a coûté la même
+chose : le dump global du JORF, 1,67 Go, ou celui de LEGI, 1,1 Go, retéléchargé
+et dépouillé en flux par un script écrit pour la question du jour. Mesuré
+depuis une session de travail : 21 minutes de téléchargement à 1,3 Mo/s, puis
+7 minutes de décompression et de filtre — pour un dump global que la DILA n'a
+pas régénéré depuis le 13 juillet 2025. Quatorze scripts de `scripts/fetch/`
+font ce trajet, chacun avec son propre filtre, et celui du plafond imprime
+jusqu'à 12 000 caractères par texte retenu : 800 Ko pour une passe, qu'il
+fallait lire pour y trouver trois lignes.
+
+**Ce qui a changé.** `scripts/fetch/dila_index.py` lit le dump UNE fois — gardé
+en cache sur disque —, puis les incréments quotidiens (cent à deux cents Ko
+chacun, plus de sept cents depuis juillet 2025, qui portent tout ce que le
+dump global ignore, dont l'arrêté du plafond 2026), et verse le tout dans une
+base SQLite FTS5 : une ligne par texte et par article, avec identifiant,
+dates, nature, titre et texte sans balises ; un incrément qui republie un
+document le remplace, une liste de suppression le retire. La base est publiée
+comme fichier de la release `index-dila` du dépôt, d'où `--recuperer` la
+rapatrie en une minute. `dila_cherche.py` l'interroge en syntaxe FTS5 —
+phrases, `OR`, `NEAR`, filtres par années, nature et numéro d'article — et
+rend, par document, une ligne d'identification et un extrait de quatorze mots
+entre crochets ; le texte entier ne s'imprime qu'à la demande, et `--motif`
+n'en imprime que les fenêtres utiles. Une recherche prend de deux à
+soixante-quinze millisecondes.
+
+**Ce que l'index ne contient pas, et qu'il faut savoir avant de conclure.**
+Tout le JORF fait quatre millions de documents et 6,5 Go en SQLite : trop pour
+être publié. La base ne garde que les documents dont le titre ou le texte
+touche au champ social — retraite, pension, cotisation, Sécurité sociale,
+plafond, SMIC, point d'indice, minima, régimes, sections professionnelles…,
+le motif exact est inscrit dans sa table `meta` — soit un quart d'entre eux.
+Ne rien y trouver ne dit rien du reste du Journal officiel, et la
+certification continue de lire le dump : les scripts `jorf_*` et
+`dila_legi_*` n'ont pas changé, l'index sert à savoir où chercher avant de
+les écrire.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -4048,7 +4086,13 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 543 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 559 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
+- Les bases JORF et LEGI de la DILA sont interrogeables sans retélécharger
+  leurs dumps : `python scripts/fetch/dila_index.py jorf --recuperer` rapatrie
+  l'index plein texte publié sur la release `index-dila` du dépôt,
+  `--mettre-a-jour` y applique les incréments quotidiens parus depuis, et
+  `dila_cherche.py` l'interroge. L'index se reconstruit depuis le dump par
+  `dila_index.py jorf` (une demi-heure, dump gardé en cache dans `data/brut/dila/`).
