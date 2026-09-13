@@ -38,7 +38,10 @@ ce que le changement déplace.
 ## Chercher dans le JORF ou LEGI
 
 Ne pas retélécharger les dumps de la DILA pour une recherche : l'index plein
-texte du champ social est publié, et se récupère en une minute.
+texte du champ social se récupère en une minute depuis la release `index-dila`
+du dépôt. Si `--recuperer` répond qu'aucun index n'est publié, le construire
+(`dila_index.py jorf`, deux heures) plutôt que d'écrire un nouveau filtre en
+flux, et signaler que la publication reste à faire depuis un poste de travail.
 
 ```bash
 python scripts/fetch/dila_index.py jorf --recuperer      # une fois par session
