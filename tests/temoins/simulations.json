@@ -32189,11 +32189,11 @@
     "trimestres_actuels": 172
    },
    "contribution_employeur": {
-    "agent": 158642.46755396962,
+    "agent": 157445.49046506756,
     "annees_par_origine": {},
-    "employeur": 235003.2928153907,
-    "part": 0.5969918044967273,
-    "total": 393645.76036936033
+    "employeur": 230753.1239342502,
+    "part": 0.5944202667784064,
+    "total": 388198.61439931777
    },
    "conversion": {
     "diviseur": 25.66724565230235,
@@ -32292,9 +32292,9 @@
     "notionnel_liberal": {
      "annees_part_employeur": {},
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 368905.20952370274,
-     "cotisations_employeur": 119023.35530956183,
-     "cotisations_versees": 334980.22726596735,
+     "capital_notionnel": 362545.84101157624,
+     "cotisations_employeur": 114773.18642842131,
+     "cotisations_versees": 329533.0812959248,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": {
@@ -32303,17 +32303,17 @@
       "coefficient_prix": 1.2529895029563258,
       "complement": 0.0,
       "isolement_annuel": 3758.9685088689776,
-      "pension_contributive": 14372.606025633762,
+      "pension_contributive": 14124.844010251483,
       "plancher_annuel": 15787.667737249707,
       "situation": "seul"
      },
-     "pension_annuelle": 14372.606025633762,
-     "pension_annuelle_euros_constants": 11470.651583052197,
-     "pension_mensuelle": 1197.7171688028136,
-     "rendement_cumule": 1.1012745812928226,
+     "pension_annuelle": 14124.844010251483,
+     "pension_annuelle_euros_constants": 11272.914878317077,
+     "pension_mensuelle": 1177.0703341876235,
+     "rendement_cumule": 1.1001804115866765,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.19352849737786856,
-     "variation_vs_actuel": -0.6228300592536861
+     "taux_remplacement": 0.1901923584439322,
+     "variation_vs_actuel": -0.6293318992466738
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -32366,36 +32366,36 @@
     "notionnel_retroactif": {
      "annees_part_employeur": {},
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 173358.99711341364,
+     "capital_notionnel": 171914.20220452282,
      "cotisations_employeur": 0.0,
-     "cotisations_versees": 158642.46755396947,
+     "cotisations_versees": 157445.4904650675,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 6754.094282721113,
-     "pension_annuelle_euros_constants": 5390.383771600147,
-     "pension_mensuelle": 562.8411902267594,
-     "rendement_cumule": 1.0927653848704646,
+     "pension_annuelle": 6697.804841755669,
+     "pension_annuelle_euros_constants": 5345.459659440681,
+     "pension_mensuelle": 558.1504034796391,
+     "rendement_cumule": 1.0918966411595352,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.090944517323596,
-     "variation_vs_actuel": -0.8227571718124369
+     "taux_remplacement": 0.09018657468543743,
+     "variation_vs_actuel": -0.8242343350405748
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 430299.38994672796,
-     "cotisations_employeur": 235003.2928153907,
-     "cotisations_versees": 393645.76036936033,
+     "capital_notionnel": 423940.02143460145,
+     "cotisations_employeur": 230753.1239342502,
+     "cotisations_versees": 388198.61439931777,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 16764.533124267276,
-     "pension_annuelle_euros_constants": 13379.627750043188,
-     "pension_mensuelle": 1397.044427022273,
-     "rendement_cumule": 1.0931132334385496,
+     "pension_annuelle": 16516.771108884997,
+     "pension_annuelle_euros_constants": 13181.891045308068,
+     "pension_mensuelle": 1376.397592407083,
+     "rendement_cumule": 1.0920698985249817,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.2257360216368894,
-     "variation_vs_actuel": -0.560060440407105
+     "taux_remplacement": 0.22239988270295308,
+     "variation_vs_actuel": -0.5665622804000927
     }
    },
    "unite": {

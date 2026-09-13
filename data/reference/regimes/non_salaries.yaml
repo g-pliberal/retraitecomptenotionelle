@@ -4515,29 +4515,201 @@ regimes:
     population: Salariés de l'agriculture.
     hors_repartition: false
     periodes:
-      - debut: 1930
-        fin: null
-        type_calcul: annuites
-        age_ouverture: 64
-        age_taux_plein: 67
-        duree_requise_trimestres: 172
-        taux_plein: 0.50
+      - debut: 1945
+        fin: 1971
+        type_calcul: 'annuites'
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 120
+        taux_plein: 0.4
+        salaire_reference: '10_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.086
+        part_salariale: 0.3488
+        decote_par_trimestre: 0.025
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          RÉGIME ALIGNÉ, ET LA FICHE NE L'ÉTAIT PAS. Les salariés agricoles
+          relèvent depuis l'origine d'un régime dont les règles de calcul sont
+          celles du régime général — même durée requise, même salaire de
+          référence, mêmes décote et surcote, mêmes minima —, avec une gestion
+          distincte confiée à la Mutualité sociale agricole. La fiche le disait
+          en note et ne le faisait pas : elle portait UNE SEULE période, de 1930
+          à aujourd'hui, avec les paramètres de 2023. Un salarié agricole parti
+          en 1980 se voyait donc opposer la durée requise de 2023, et calculer
+          sur ses vingt-cinq meilleures années quand le droit n'en retenait que
+          dix.
+          Les périodes qui suivent sont celles du régime général, reprises une à
+          une : 1945, 1972 (loi Boulin), 1983, 1994 (réforme Balladur), 2004,
+          2009, 2011, 2023. Le taux de cotisation et sa répartition sont ceux du
+          régime général, que la MSA appelle aux mêmes taux.
+          LA COTISATION DÉPLAFONNÉE SÉPARÉE, aussi : la fiche additionnait la
+          part plafonnée et la part déplafonnée en un seul taux de 17,87 %
+          prélevé sous le plafond, ce qui sous-estimait la cotisation d'un
+          salarié payé au-dessus et surestimait celle des autres.
+          Avant 1945, le salarié agricole relevait des ASSURANCES SOCIALES,
+          comme son homologue de l'industrie : c'est l'affiliation qui l'y
+          route désormais, et non plus cette fiche.
+      - debut: 1972
+        fin: 1982
+        type_calcul: 'annuites'
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 150
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference: '10_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.1119
+        part_salariale: 0.3343
+        decote_par_trimestre: 0.025
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, mda, reversion, periodes_assimilees]
+        notes: >-
+          Mêmes règles que le régime général sur 1972-1982 : la MSA les applique à l'identique.
+      - debut: 1983
+        fin: 1993
+        type_calcul: 'annuites'
+        age_ouverture: 60
+        age_taux_plein: 65
         age_taux_plein_par_generation: true
+        duree_requise_trimestres: 150
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference: '10_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.1461
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale: 0.439
+        part_salariale_deplafonnee: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+        notes: >-
+          Mêmes règles que le régime général sur 1983-1993 : la MSA les applique à l'identique.
+      - debut: 1994
+        fin: 2003
+        type_calcul: 'annuites'
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.5
         decote_par_generation: true
         salaire_reference_par_generation: true
         duree_proratisation_par_generation: true
-        salaire_reference: 25_meilleures_annees
-        assiette: plafonnee
-        taux_cotisation_retraite: 0.1787
-        part_salariale: 0.40   # régime aligné sur le régime général, dont il suit la répartition
+        salaire_reference: '25_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.1475
+        taux_cotisation_deplafonnee: 0.016
+        part_salariale: 0.4441
+        part_salariale_deplafonnee: 0.0
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees]
+        notes: >-
+          Mêmes règles que le régime général sur 1994-2003 : la MSA les applique à l'identique.
+      - debut: 2004
+        fin: 2008
+        type_calcul: 'annuites'
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 164
+        duree_requise_par_generation: true
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: '25_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.1487
+        taux_cotisation_deplafonnee: 0.017
+        part_salariale: 0.4445
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
+        notes: >-
+          Mêmes règles que le régime général sur 2004-2008 : la MSA les applique à l'identique.
+      - debut: 2009
+        fin: 2010
+        type_calcul: 'annuites'
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 164
+        duree_requise_par_generation: true
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: '25_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.1495
+        taux_cotisation_deplafonnee: 0.017
+        part_salariale: 0.4448
+        part_salariale_deplafonnee: 0.0588
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
-        avantages_non_contributifs:
-          [minimum_contributif, majoration_enfants, mda, reversion,
-           periodes_assimilees, surcote_parentale]
+        avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue]
         notes: >-
-          Régime ALIGNÉ sur le régime général depuis l'origine (mêmes règles de
-          calcul, gestion distincte). Complémentaire : Agirc-Arrco.
+          Mêmes règles que le régime général sur 2009-2010 : la MSA les applique à l'identique.
+      - debut: 2011
+        fin: 2022
+        type_calcul: 'annuites'
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: '25_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.1533
+        taux_cotisation_deplafonnee: 0.021
+        part_salariale: 0.4463
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite]
+        notes: >-
+          Mêmes règles que le régime général sur 2011-2022 : la MSA les applique à l'identique.
+      - debut: 2023
+        fin: null
+        type_calcul: 'annuites'
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: '25_meilleures_annees'
+        assiette: 'plafonnee'
+        taux_cotisation_retraite: 0.1545
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale: 0.4466
+        part_salariale_deplafonnee: 0.166
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [minimum_contributif, minimum_vieillesse, majoration_enfants, mda, avpf, reversion, periodes_assimilees, carriere_longue, penibilite, surcote_parentale]
+        notes: >-
+          Mêmes règles que le régime général sur 2023-aujourd’hui : la MSA les applique à l'identique.
 
   - code: msa_non_salaries
     nom: Régime des non-salariés agricoles (MSA — exploitants)
