@@ -292,6 +292,15 @@ champs_periode:
       années. `null` : le régime n'a pas de barème nommé.
     valeurs: ["msa_proportionnelle"]
 
+  points_de:
+    description: >-
+      Code du régime dont cette période emprunte le BARÈME DU POINT — prix
+      d'achat, valeur de service, échelle de conversion. Sert à une TRANCHE que
+      tous les affiliés d'un régime ne cotisent pas : la tranche 2 de l'Arrco
+      n'est due que par les non-cadres, forme une fiche à part que l'affiliation
+      donne aux uns et pas aux autres, et ses points restent des points Arrco.
+      `null` : le barème est celui du régime lui-même.
+
   valeur_point_euros:
     description: >-
       Valeur de service du point écrite dans la fiche, en euros de

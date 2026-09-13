@@ -123,6 +123,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -373,6 +378,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -629,6 +639,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
@@ -811,6 +826,7 @@
     "regimes_fusionnes": [
      "agirc",
      "arrco",
+     "arrco_tranche_2",
      "banque_de_france",
      "cancava",
      "carcdsf_complementaire",
@@ -867,6 +883,11 @@
        "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
@@ -1105,6 +1126,11 @@
        "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
@@ -1359,6 +1385,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
@@ -1611,6 +1642,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
        "montant": 40428.183851510265,
        "regime": "regime_general"
@@ -1847,6 +1883,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -2101,6 +2142,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -2351,6 +2397,11 @@
        "detail": "2,178.96 points × valeur de service 2.000295 €",
        "montant": 4358.563756746257,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 66,426.53 € × taux 65.000% × 172/172",
@@ -2854,6 +2905,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172, surcote parentale 5.00%",
@@ -3369,6 +3425,11 @@
        "detail": "1,290.67 points × valeur de service 1.802551 € × coefficient d'anticipation 0.9600",
        "montant": 2233.4352005803953,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 53,943.79 € × taux 42.500% × 160/172",
@@ -4653,6 +4714,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 53,943.79 € × taux 42.500% × 136/172",
        "montant": 18127.623709048148,
        "regime": "regime_general"
@@ -5161,6 +5227,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -5413,6 +5484,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -5663,6 +5739,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -6145,9 +6226,14 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "3,928.93 points × valeur de service 1.0886 €",
-       "montant": 4277.031402667371,
+       "detail": "3,779.16 points × valeur de service 1.0886 €",
+       "montant": 4113.998449996593,
        "regime": "arrco"
+      },
+      {
+       "detail": "149.76 points × valeur de service 1.0886 €",
+       "montant": 163.03295267077894,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 26,601.34 € × taux 55.625% × 150/150",
@@ -6378,9 +6464,14 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "4,403.70 points × valeur de service 1.2513 €",
-       "montant": 5510.352437027269,
+       "detail": "4,167.12 points × valeur de service 1.2513 €",
+       "montant": 5214.313152302656,
        "regime": "arrco"
+      },
+      {
+       "detail": "236.59 points × valeur de service 1.2513 €",
+       "montant": 296.0392847246129,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 31,020.88 € × taux 56.250% × 162/162",
@@ -6616,9 +6707,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,838.12 points × valeur de service 1.4386 €",
-       "montant": 5521.52527152778,
+       "detail": "3,811.46 points × valeur de service 1.4386 €",
+       "montant": 5483.165876758368,
        "regime": "arrco"
+      },
+      {
+       "detail": "26.66 points × valeur de service 1.4386 €",
+       "montant": 38.35939476941336,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 39,478.09 € × taux 53.125% × 167/167",
@@ -6857,6 +6953,11 @@
        "detail": "2,720.33 points × valeur de service 1.652781 €",
        "montant": 4496.111364880835,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 50,099.53 € × taux 50.000% × 172/172",
@@ -7111,6 +7212,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 63,609.85 € × taux 50.000% × 172/172",
        "montant": 31804.92409412946,
        "regime": "regime_general"
@@ -7361,6 +7467,11 @@
        "detail": "658.10 points × valeur de service 2.338319 €",
        "montant": 1538.8405347815506,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 80,856.37 € × taux 50.000% × 172/172",
@@ -8086,9 +8197,14 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "4,210.55 points × valeur de service 1.2513 €",
-       "montant": 5268.656985937465,
+       "detail": "3,981.58 points × valeur de service 1.2513 €",
+       "montant": 4982.153926088841,
        "regime": "arrco"
+      },
+      {
+       "detail": "228.96 points × valeur de service 1.2513 €",
+       "montant": 286.5030598486226,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 29,894.19 € × taux 50.000% × 163/163",
@@ -8096,12 +8212,12 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 20215.752179953728,
-     "pension_annuelle_euros_constants": 25014.054347957972,
+     "pension_annuelle": 20215.752179953724,
+     "pension_annuelle_euros_constants": 25014.05434795797,
      "pension_hors_repartition": 0,
-     "pension_mensuelle": 1684.646014996144,
-     "taux_remplacement": 0.486818614298319,
-     "total_contributif": 20215.752179953728
+     "pension_mensuelle": 1684.6460149961438,
+     "taux_remplacement": 0.4868186142983189,
+     "total_contributif": 20215.752179953724
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -8131,36 +8247,36 @@
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 516896.6818552131,
-     "capital_notionnel": 516896.6818552131,
+     "capital_droits_acquis": 516896.68185521296,
+     "capital_notionnel": 516896.68185521296,
      "cotisations_employeur": 0.0,
      "cotisations_versees": 2403.2022811039697,
      "droits_acquis": null,
      "fiabilite": "moyenne",
      "garantie_vieillesse": null,
-     "pension_annuelle": 20215.752179953728,
-     "pension_annuelle_euros_constants": 25014.054347957972,
-     "pension_mensuelle": 1684.646014996144,
+     "pension_annuelle": 20215.752179953724,
+     "pension_annuelle_euros_constants": 25014.05434795797,
+     "pension_mensuelle": 1684.6460149961438,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.486818614298319,
+     "taux_remplacement": 0.4868186142983189,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 516896.6818552131,
-     "capital_notionnel": 516896.6818552131,
+     "capital_droits_acquis": 516896.68185521296,
+     "capital_notionnel": 516896.68185521296,
      "cotisations_employeur": 3548.451999541276,
      "cotisations_versees": 5951.654280645244,
      "droits_acquis": null,
      "fiabilite": "moyenne",
      "garantie_vieillesse": null,
-     "pension_annuelle": 20215.752179953728,
-     "pension_annuelle_euros_constants": 25014.054347957972,
-     "pension_mensuelle": 1684.646014996144,
+     "pension_annuelle": 20215.752179953724,
+     "pension_annuelle_euros_constants": 25014.05434795797,
+     "pension_mensuelle": 1684.6460149961438,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.486818614298319,
+     "taux_remplacement": 0.4868186142983189,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -8178,7 +8294,7 @@
      "rendement_cumule": 1.1250661083731257,
      "rente_capitalisation": 0.0,
      "taux_remplacement": 0.07454949732297465,
-     "variation_vs_actuel": -0.8468639137177872
+     "variation_vs_actuel": -0.8468639137177871
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -8320,9 +8436,14 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "4,204.27 points × valeur de service 1.2513 €",
-       "montant": 5260.80249470308,
+       "detail": "3,975.00 points × valeur de service 1.2513 €",
+       "montant": 4973.921728286626,
        "regime": "arrco"
+      },
+      {
+       "detail": "229.27 points × valeur de service 1.2513 €",
+       "montant": 286.8807664164542,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 29,947.42 € × taux 50.000% × 163/163",
@@ -8559,9 +8680,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,691.57 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
-       "montant": 4965.550643340667,
+       "detail": "3,665.52 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
+       "montant": 4930.507501872888,
        "regime": "arrco"
+      },
+      {
+       "detail": "26.05 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
+       "montant": 35.04314146777907,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 36,582.02 € × taux 46.875% × 164/169",
@@ -8798,9 +8924,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,713.64 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
-       "montant": 4995.232166452149,
+       "detail": "3,684.76 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
+       "montant": 4956.395632500597,
        "regime": "arrco"
+      },
+      {
+       "detail": "28.87 points × valeur de service 1.4159 € × coefficient d'anticipation 0.9500",
+       "montant": 38.836533951552894,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 36,651.97 € × taux 46.875% × 163/168",
@@ -8808,12 +8939,12 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 22801.88119306887,
-     "pension_annuelle_euros_constants": 23888.32690571029,
+     "pension_annuelle": 22801.881193068875,
+     "pension_annuelle_euros_constants": 23888.326905710295,
      "pension_hors_repartition": 0,
-     "pension_mensuelle": 1900.1567660890726,
-     "taux_remplacement": 0.44755932120007574,
-     "total_contributif": 22801.88119306887
+     "pension_mensuelle": 1900.156766089073,
+     "taux_remplacement": 0.44755932120007585,
+     "total_contributif": 22801.881193068875
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -8850,12 +8981,12 @@
      "droits_acquis": null,
      "fiabilite": "moyenne",
      "garantie_vieillesse": null,
-     "pension_annuelle": 22801.88119306887,
-     "pension_annuelle_euros_constants": 23888.32690571029,
-     "pension_mensuelle": 1900.1567660890726,
+     "pension_annuelle": 22801.881193068875,
+     "pension_annuelle_euros_constants": 23888.326905710295,
+     "pension_mensuelle": 1900.156766089073,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.44755932120007574,
+     "taux_remplacement": 0.44755932120007585,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
@@ -8867,12 +8998,12 @@
      "droits_acquis": null,
      "fiabilite": "moyenne",
      "garantie_vieillesse": null,
-     "pension_annuelle": 22801.88119306887,
-     "pension_annuelle_euros_constants": 23888.32690571029,
-     "pension_mensuelle": 1900.1567660890726,
+     "pension_annuelle": 22801.881193068875,
+     "pension_annuelle_euros_constants": 23888.326905710295,
+     "pension_mensuelle": 1900.156766089073,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.44755932120007574,
+     "taux_remplacement": 0.44755932120007585,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -9039,6 +9170,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -9293,6 +9429,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -9543,6 +9684,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -9797,6 +9943,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -10047,6 +10198,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -10301,6 +10457,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -10551,6 +10712,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -10805,6 +10971,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -11055,6 +11226,11 @@
        "detail": "2,720.33 points × valeur de service 1.652781 €",
        "montant": 4496.111364880835,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 50,010.33 € × taux 50.000% × 172/172",
@@ -11309,6 +11485,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -11559,6 +11740,11 @@
        "detail": "2,454.65 points × valeur de service 1.463776 € × coefficient d'anticipation 0.4300",
        "montant": 1545.0124564352843,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 39,448.68 € × taux 37.500% × 124/172",
@@ -11813,6 +11999,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 46,222.64 € × taux 37.500% × 144/172",
        "montant": 14511.758818717937,
        "regime": "regime_general"
@@ -12063,6 +12254,11 @@
        "detail": "2,299.88 points × valeur de service 1.681705 € × coefficient d'anticipation 0.8300",
        "montant": 3210.201492489269,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 50,478.37 € × taux 40.000% × 156/172",
@@ -12317,6 +12513,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 53,368.32 € × taux 45.000% × 164/172",
        "montant": 22898.732708892134,
        "regime": "regime_general"
@@ -12567,6 +12768,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -12821,6 +13027,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 61,291.15 € × taux 57.500% × 172/172",
        "montant": 35242.40995491101,
        "regime": "regime_general"
@@ -13073,6 +13284,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 66,426.53 € × taux 65.000% × 172/172",
        "montant": 43177.24436274273,
        "regime": "regime_general"
@@ -13320,9 +13536,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,585.85 points × valeur de service 1.4386 €",
-       "montant": 5158.609753633621,
+       "detail": "3,580.82 points × valeur de service 1.4386 €",
+       "montant": 5151.364707018063,
        "regime": "arrco"
+      },
+      {
+       "detail": "5.04 points × valeur de service 1.4386 €",
+       "montant": 7.245046615557748,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 41,279.88 € × taux 51.875% × 169/169",
@@ -13561,6 +13782,11 @@
        "detail": "2,278.03 points × valeur de service 1.802551 €",
        "montant": 4106.261599925203,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,359.44 € × taux 51.250% × 172/172",
@@ -13816,6 +14042,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -14067,6 +14298,11 @@
        "detail": "2,243.56 points × valeur de service 1.802551 €",
        "montant": 4044.1315680593716,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,390.55 € × taux 50.000% × 172/172",
@@ -14322,6 +14558,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,363.05 € × taux 50.000% × 172/172",
        "montant": 28181.52408830381,
        "regime": "regime_general"
@@ -14573,6 +14814,11 @@
        "detail": "2,241.49 points × valeur de service 1.802551 €",
        "montant": 4040.405038437946,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,335.66 € × taux 50.625% × 172/172",
@@ -14828,6 +15074,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,308.38 € × taux 50.625% × 172/172",
        "montant": 28506.115509788666,
        "regime": "regime_general"
@@ -15079,6 +15330,11 @@
        "detail": "2,239.44 points × valeur de service 1.802551 €",
        "montant": 4036.7077939216015,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,281.20 € × taux 50.625% × 172/172",
@@ -15334,6 +15590,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,254.13 € × taux 51.250% × 172/172",
        "montant": 28830.2432924525,
        "regime": "regime_general"
@@ -15585,6 +15846,11 @@
        "detail": "2,237.41 points × valeur de service 1.802551 €",
        "montant": 4033.0394906539173,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,227.17 € × taux 51.250% × 172/172",
@@ -15840,6 +16106,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,200.31 € × taux 51.250% × 172/172",
        "montant": 28802.660907278856,
        "regime": "regime_general"
@@ -16091,6 +16362,11 @@
        "detail": "2,235.39 points × valeur de service 1.802551 €",
        "montant": 4029.3997901407565,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,173.56 € × taux 51.875% × 172/172",
@@ -16346,6 +16622,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,146.91 € × taux 51.875% × 172/172",
        "montant": 29126.21138041971,
        "regime": "regime_general"
@@ -16597,6 +16878,11 @@
        "detail": "2,233.38 points × valeur de service 1.802551 €",
        "montant": 4025.7883591461446,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,120.37 € × taux 51.875% × 172/172",
@@ -16852,6 +17138,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -17103,6 +17394,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -17358,6 +17654,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -17611,6 +17912,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -17859,6 +18165,11 @@
        "detail": "1,614.03 points × valeur de service 1.652781 €",
        "montant": 2667.6403179485415,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "1,565.55 points × valeur de service 1.540637 € + cotisations revalorisées 48,166 € × rendement 6.74%",
@@ -18118,9 +18429,14 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,138.29 points × valeur de service 1.802551 €",
-       "montant": 3854.375138506335,
+       "detail": "2,062.56 points × valeur de service 1.802551 €",
+       "montant": 3717.8735979521234,
        "regime": "arrco"
+      },
+      {
+       "detail": "75.73 points × valeur de service 1.802551 €",
+       "montant": 136.50154055421163,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "2,706.98 points × valeur de service 1.680244 € + cotisations revalorisées 263,464 € × rendement 6.74%",
@@ -18380,6 +18696,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "(3,042.51 points × valeur de service 1.680244 € + cotisations revalorisées 256,826 € × rendement 6.74%) × coefficient d'anticipation 0.9875",
        "montant": 22141.96911270817,
        "regime": "rci"
@@ -18637,9 +18958,14 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "2,322.73 points × valeur de service 1.802551 €",
-       "montant": 4186.840700121621,
+       "detail": "2,093.06 points × valeur de service 1.802551 €",
+       "montant": 3772.850178761457,
        "regime": "arrco"
+      },
+      {
+       "detail": "229.67 points × valeur de service 1.802551 €",
+       "montant": 413.99052136016405,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "2,718.88 points × valeur de service 1.680244 € + cotisations revalorisées 259,492 € × rendement 6.74%",
@@ -18831,13 +19157,13 @@
     "trimestres_actuels": 164
    },
    "contribution_employeur": {
-    "agent": 112025.24652525711,
+    "agent": 111511.6493987246,
     "annees_par_origine": {
      "repli": 6
     },
-    "employeur": 114320.94879083238,
-    "part": 0.5050712190288186,
-    "total": 226346.1953160895
+    "employeur": 113550.55310103355,
+    "part": 0.5045296448707578,
+    "total": 225062.20249975816
    },
    "conversion": {
     "diviseur": 26.035296552566095,
@@ -18916,9 +19242,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,402.95 points × valeur de service 1.3498 € × coefficient d'anticipation 0.9700",
-       "montant": 3146.20152604489,
+       "detail": "2,339.52 points × valeur de service 1.3498 € × coefficient d'anticipation 0.9700",
+       "montant": 3063.1442276523653,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "forfait 17,433.01 € × taux 96.250% × 12/167",
@@ -18956,21 +19287,21 @@
        "regime": "sncf"
       }
      ],
-     "pension_annuelle": 21168.93446078671,
-     "pension_annuelle_euros_constants": 23258.7316131168,
+     "pension_annuelle": 21085.877162394187,
+     "pension_annuelle_euros_constants": 23167.474898453118,
      "pension_hors_repartition": 0,
-     "pension_mensuelle": 1764.0778717322257,
-     "taux_remplacement": 0.4373177412296142,
-     "total_contributif": 21168.93446078671
+     "pension_mensuelle": 1757.1564301995156,
+     "taux_remplacement": 0.43560190474323196,
+     "total_contributif": 21085.877162394187
     },
     "notionnel_liberal": {
      "annees_part_employeur": {
       "repli": 6
      },
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 236146.2478593695,
-     "cotisations_employeur": 114320.94879083238,
-     "cotisations_versees": 226346.1953160895,
+     "capital_notionnel": 234909.13773738564,
+     "cotisations_employeur": 113550.55310103355,
+     "cotisations_versees": 225062.20249975816,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": {
@@ -18979,87 +19310,87 @@
       "coefficient_prix": 0.9101499949742939,
       "complement": 0.0,
       "isolement_annuel": 2730.449984922882,
-      "pension_contributive": 9070.234609488034,
+      "pension_contributive": 9022.717957642488,
       "plancher_annuel": 11467.889936676103,
       "situation": "seul"
      },
-     "pension_annuelle": 9070.234609488034,
-     "pension_annuelle_euros_constants": 9965.64814544026,
-     "pension_mensuelle": 755.8528841240028,
-     "rendement_cumule": 1.0432967407717826,
+     "pension_annuelle": 9022.717957642488,
+     "pension_annuelle_euros_constants": 9913.4406498539,
+     "pension_mensuelle": 751.893163136874,
+     "rendement_cumule": 1.0437520611113635,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.18737714546717754,
-     "variation_vs_actuel": -0.5715308852087139
+     "taux_remplacement": 0.18639552426681052,
+     "variation_vs_actuel": -0.5720966271332482
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 551139.4863884178,
-     "capital_notionnel": 551139.4863884178,
+     "capital_droits_acquis": 548977.0649939135,
+     "capital_notionnel": 548977.0649939135,
      "cotisations_employeur": 0,
      "cotisations_versees": 0,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 21168.93446078671,
-     "pension_annuelle_euros_constants": 23258.7316131168,
-     "pension_mensuelle": 1764.0778717322257,
+     "pension_annuelle": 21085.877162394187,
+     "pension_annuelle_euros_constants": 23167.474898453118,
+     "pension_mensuelle": 1757.1564301995156,
      "rendement_cumule": 0.0,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.4373177412296142,
+     "taux_remplacement": 0.43560190474323196,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 551139.4863884178,
-     "capital_notionnel": 551139.4863884178,
+     "capital_droits_acquis": 548977.0649939135,
+     "capital_notionnel": 548977.0649939135,
      "cotisations_employeur": 0,
      "cotisations_versees": 0,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 21168.93446078671,
-     "pension_annuelle_euros_constants": 23258.7316131168,
-     "pension_mensuelle": 1764.0778717322257,
+     "pension_annuelle": 21085.877162394187,
+     "pension_annuelle_euros_constants": 23167.474898453118,
+     "pension_mensuelle": 1757.1564301995156,
      "rendement_cumule": 0.0,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.4373177412296142,
+     "taux_remplacement": 0.43560190474323196,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 116265.05478326375,
+     "capital_notionnel": 115770.21073447021,
      "cotisations_employeur": 0.0,
-     "cotisations_versees": 112025.24652525713,
+     "cotisations_versees": 111511.64939872458,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 4465.670461963853,
-     "pension_annuelle_euros_constants": 4906.521437809798,
-     "pension_mensuelle": 372.1392051636544,
-     "rendement_cumule": 1.0378468996008925,
+     "pension_annuelle": 4446.663801225634,
+     "pension_annuelle_euros_constants": 4885.638439575254,
+     "pension_mensuelle": 370.55531676880287,
+     "rendement_cumule": 1.0381893852230504,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.09225390739998839,
-     "variation_vs_actuel": -0.789046044323296
+     "taux_remplacement": 0.09186125891984157,
+     "variation_vs_actuel": -0.7891164893459552
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {
       "repli": 6
      },
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 236146.2478593695,
-     "cotisations_employeur": 114320.94879083238,
-     "cotisations_versees": 226346.1953160895,
+     "capital_notionnel": 234909.13773738564,
+     "cotisations_employeur": 113550.55310103355,
+     "cotisations_versees": 225062.20249975816,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 9070.234609488034,
-     "pension_annuelle_euros_constants": 9965.64814544026,
-     "pension_mensuelle": 755.8528841240028,
-     "rendement_cumule": 1.0432967407717826,
+     "pension_annuelle": 9022.717957642488,
+     "pension_annuelle_euros_constants": 9913.4406498539,
+     "pension_mensuelle": 751.893163136874,
+     "rendement_cumule": 1.0437520611113635,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.18737714546717754,
-     "variation_vs_actuel": -0.5715308852087139
+     "taux_remplacement": 0.18639552426681052,
+     "variation_vs_actuel": -0.5720966271332482
     }
    },
    "unite": {
@@ -19191,6 +19522,11 @@
        "detail": "2,008.66 points × valeur de service 1.802551 €",
        "montant": 3620.7169963137753,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 73,758.67 € × taux 75.000% × 88/172",
@@ -19456,6 +19792,11 @@
        "detail": "1,232.07 points × valeur de service 1.802551 €",
        "montant": 2220.872221998992,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "2,387.61 points × valeur de service 1.680244 € + cotisations revalorisées 129,741 € × rendement 6.74%",
@@ -19730,6 +20071,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 95,886.27 € × taux 75.000% × 64/172",
        "montant": 26758.957784990347,
        "regime": "fonction_publique_etat"
@@ -20002,6 +20348,11 @@
        "detail": "2,014.77 points × valeur de service 1.834095 € × coefficient d'anticipation 0.9800",
        "montant": 3621.3663140185804,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 57,520.87 € × taux 48.125% × 169/172",
@@ -20507,9 +20858,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "2,501.65 points × valeur de service 1.802551 €",
-       "montant": 4509.352192742858,
+       "detail": "2,471.57 points × valeur de service 1.802551 €",
+       "montant": 4455.121545798835,
        "regime": "arrco"
+      },
+      {
+       "detail": "30.09 points × valeur de service 1.802551 €",
+       "montant": 54.23064694402368,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 60,527.40 € × taux 50.000% × 172/172",
@@ -20764,6 +21120,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 52,518.22 € × taux 50.000% × 172/172",
        "montant": 26259.111699117526,
        "regime": "regime_general"
@@ -21014,6 +21375,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 55,814.57 € × taux 50.000% × 172/172",
@@ -21268,6 +21634,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 57,032.45 € × taux 50.000% × 172/172",
        "montant": 28516.22423533991,
        "regime": "regime_general"
@@ -21516,9 +21887,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "4,075.68 points × valeur de service 1.3498 €",
-       "montant": 5501.351515140682,
+       "detail": "4,021.10 points × valeur de service 1.3498 €",
+       "montant": 5427.679193778168,
        "regime": "arrco"
+      },
+      {
+       "detail": "54.58 points × valeur de service 1.3498 €",
+       "montant": 73.67232136251259,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 36,469.41 € × taux 54.375% × 167/167",
@@ -21755,9 +22131,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "4,100.55 points × valeur de service 1.3498 €",
-       "montant": 5534.92186827972,
+       "detail": "4,034.28 points × valeur de service 1.3498 €",
+       "montant": 5445.469688963402,
        "regime": "arrco"
+      },
+      {
+       "detail": "66.27 points × valeur de service 1.3498 €",
+       "montant": 89.45217931631726,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 35,191.55 € × taux 53.125% × 167/167",
@@ -21999,6 +22380,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 41,751.86 € × taux 50.000% × 172/172",
        "montant": 20875.928153960198,
        "regime": "regime_general"
@@ -22173,11 +22559,11 @@
     "trimestres_actuels": 172
    },
    "contribution_employeur": {
-    "agent": 180676.02852021455,
+    "agent": 180192.60189331445,
     "annees_par_origine": {},
-    "employeur": 265473.7404221089,
-    "part": 0.5950327869752373,
-    "total": 446149.76894232346
+    "employeur": 264748.6004817588,
+    "part": 0.595019294838384,
+    "total": 444941.2023750733
    },
    "conversion": {
     "diviseur": 25.66724565230235,
@@ -22256,9 +22642,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "1,827.21 points × valeur de service 1.802551 €",
-       "montant": 3293.6462330186464,
+       "detail": "1,767.83 points × valeur de service 1.802551 €",
+       "montant": 3186.595185781638,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 60,755.40 € × taux 50.000% × 172/172",
@@ -22266,19 +22657,19 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 44055.46279661424,
-     "pension_annuelle_euros_constants": 35160.28082651052,
+     "pension_annuelle": 43948.411749377236,
+     "pension_annuelle_euros_constants": 35074.84431887464,
      "pension_hors_repartition": 0,
-     "pension_mensuelle": 3671.2885663845204,
-     "taux_remplacement": 0.45814941893682903,
-     "total_contributif": 44055.46279661424
+     "pension_mensuelle": 3662.3676457814363,
+     "taux_remplacement": 0.457036154611026,
+     "total_contributif": 43948.411749377236
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 402990.90479788464,
-     "cotisations_employeur": 115303.14537861582,
-     "cotisations_versees": 370189.752027868,
+     "capital_notionnel": 401669.7999333848,
+     "cotisations_employeur": 114578.0054382657,
+     "cotisations_versees": 368981.18546061777,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": {
@@ -22287,99 +22678,99 @@
       "coefficient_prix": 1.2529895029563258,
       "complement": 0.0,
       "isolement_annuel": 3758.9685088689776,
-      "pension_contributive": 15700.590170715743,
+      "pension_contributive": 15649.11971368284,
       "plancher_annuel": 15787.667737249707,
       "situation": "seul"
      },
-     "pension_annuelle": 15700.590170715743,
-     "pension_annuelle_euros_constants": 12530.504153204389,
-     "pension_mensuelle": 1308.382514226312,
-     "rendement_cumule": 1.088606323082513,
+     "pension_annuelle": 15649.11971368284,
+     "pension_annuelle_euros_constants": 12489.4260301144,
+     "pension_mensuelle": 1304.09330947357,
+     "rendement_cumule": 1.0885915481895376,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.16327637498411482,
-     "variation_vs_actuel": -0.6436176316385815
+     "taux_remplacement": 0.16274111423584162,
+     "variation_vs_actuel": -0.643920699502762
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 392068.2368189454,
-     "capital_notionnel": 499512.7282156944,
+     "capital_droits_acquis": 390007.5458531778,
+     "capital_notionnel": 497452.0372499268,
      "cotisations_employeur": 0.0,
      "cotisations_versees": 102669.15077913816,
      "droits_acquis": {
       "age_conversion": 67.0,
-      "capital": 392068.2368189454,
-      "capital_a_la_bascule": 358078.7447391733,
+      "capital": 390007.5458531778,
+      "capital_a_la_bascule": 356196.70083706,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.028567812418725,
-      "pension_figee": 16255.198603392837
+      "pension_figee": 16169.762095756954
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 19461.095864444193,
-     "pension_annuelle_euros_constants": 15531.730967041094,
-     "pension_mensuelle": 1621.7579887036827,
+     "pension_annuelle": 19380.811014496423,
+     "pension_annuelle_euros_constants": 15467.656328140813,
+     "pension_mensuelle": 1615.0675845413687,
      "rendement_cumule": 1.0465119325656405,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.2023832958770837,
-     "variation_vs_actuel": -0.5582591890070936
+     "taux_remplacement": 0.20154838335958705,
+     "variation_vs_actuel": -0.5590099791314744
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 392068.2368189454,
-     "capital_notionnel": 656668.0478491925,
+     "capital_droits_acquis": 390007.5458531778,
+     "capital_notionnel": 654607.3568834249,
      "cotisations_employeur": 150170.595043493,
      "cotisations_versees": 252839.74582263117,
      "droits_acquis": {
       "age_conversion": 67.0,
-      "capital": 392068.2368189454,
-      "capital_a_la_bascule": 358078.7447391733,
+      "capital": 390007.5458531778,
+      "capital_a_la_bascule": 356196.70083706,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.028567812418725,
-      "pension_figee": 16255.198603392837
+      "pension_figee": 16169.762095756954
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 25583.892278300984,
-     "pension_annuelle_euros_constants": 20418.28141252412,
-     "pension_mensuelle": 2131.991023191749,
+     "pension_annuelle": 25503.607428353214,
+     "pension_annuelle_euros_constants": 20354.20677362384,
+     "pension_mensuelle": 2125.3006190294345,
      "rendement_cumule": 1.0465119325656407,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.26605657136228805,
-     "variation_vs_actuel": -0.419279910951993
+     "taux_remplacement": 0.2652216588447914,
+     "variation_vs_actuel": -0.41969217058874464
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 195360.88195072024,
+     "capital_notionnel": 194832.4400049203,
      "cotisations_employeur": 0.0,
-     "cotisations_versees": 180676.02852021466,
+     "cotisations_versees": 180192.60189331457,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 7611.291238536005,
-     "pension_annuelle_euros_constants": 6074.505189850185,
-     "pension_mensuelle": 634.2742698780004,
-     "rendement_cumule": 1.0812772648966136,
+     "pension_annuelle": 7590.703055722843,
+     "pension_annuelle_euros_constants": 6058.073940614189,
+     "pension_mensuelle": 632.5585879769036,
+     "rendement_cumule": 1.081245500413349,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.07915269610020395,
-     "variation_vs_actuel": -0.8272338830334351
+     "taux_remplacement": 0.07893859180089466,
+     "variation_vs_actuel": -0.827281515905284
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
      "capital_droits_acquis": 0.0,
-     "capital_notionnel": 482483.96889675024,
-     "cotisations_employeur": 265473.7404221089,
-     "cotisations_versees": 446149.76894232346,
+     "capital_notionnel": 481162.86403225036,
+     "cotisations_employeur": 264748.6004817588,
+     "cotisations_versees": 444941.2023750733,
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 18797.652675033773,
-     "pension_annuelle_euros_constants": 15002.24274080689,
-     "pension_mensuelle": 1566.4710562528144,
-     "rendement_cumule": 1.0814394682766808,
+     "pension_annuelle": 18746.182218000868,
+     "pension_annuelle_euros_constants": 14961.1646177169,
+     "pension_mensuelle": 1562.1818515000723,
+     "rendement_cumule": 1.0814077488527196,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.19548389924313572,
-     "variation_vs_actuel": -0.5733184608271006
+     "taux_remplacement": 0.19494863849486252,
+     "variation_vs_actuel": -0.5734502915622086
     }
    },
    "unite": {
@@ -22511,6 +22902,11 @@
        "detail": "448.92 points × valeur de service 1.802551 € × coefficient d'anticipation 0.9600",
        "montant": 776.8331373565541,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 11,608.50 € × taux 42.500% × 136/172",
@@ -22765,6 +23161,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 31,923.39 € × taux 50.000% × 172/172",
        "montant": 15961.693123420944,
        "regime": "regime_general"
@@ -23012,9 +23413,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "3,726.20 points × valeur de service 1.802551 €",
-       "montant": 6716.65869908594,
+       "detail": "3,142.34 points × valeur de service 1.802551 €",
+       "montant": 5664.2277521681635,
        "regime": "arrco"
+      },
+      {
+       "detail": "583.86 points × valeur de service 1.802551 €",
+       "montant": 1052.4309469177765,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 60,773.30 € × taux 50.000% × 172/172",
@@ -23264,9 +23670,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "12,154.89 points × valeur de service 1.802551 €",
-       "montant": 21909.810631817927,
+       "detail": "3,345.62 points × valeur de service 1.802551 €",
+       "montant": 6030.647233307545,
        "regime": "arrco"
+      },
+      {
+       "detail": "8,809.27 points × valeur de service 1.802551 €",
+       "montant": 15879.163398510387,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 60,773.30 € × taux 50.000% × 172/172",
@@ -23516,9 +23927,14 @@
        "regime": "agirc_arrco"
       },
       {
-       "detail": "20,742.84 points × valeur de service 1.802551 €",
-       "montant": 37390.01284650679,
+       "detail": "3,345.62 points × valeur de service 1.802551 €",
+       "montant": 6030.647233307545,
        "regime": "arrco"
+      },
+      {
+       "detail": "17,397.22 points × valeur de service 1.802551 €",
+       "montant": 31359.365613199243,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 60,773.30 € × taux 50.000% × 172/172",
@@ -24019,6 +24435,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -25292,6 +25713,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -29314,6 +29740,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 40,829.48 € × taux 75.000% × 60/120",
        "montant": 15311.055255741627,
        "regime": "mines"
@@ -31841,6 +32272,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "msa_salaries"
@@ -32348,6 +32784,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
@@ -33092,6 +33533,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 48,155.17 € × taux 50.000% × 172/172, surcote parentale 5.00%",
        "montant": 25281.465836157684,
        "regime": "regime_general"
@@ -33351,6 +33797,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 52,260.82 € × taux 57.500% × 172/172, surcote parentale 5.00%",
        "montant": 31552.469835410007,
        "regime": "regime_general"
@@ -33608,6 +34059,11 @@
        "detail": "2,116.57 points × valeur de service 1.596418 € × coefficient d'anticipation 0.9600",
        "montant": 3243.7652570444598,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 45,681.52 € × taux 42.500% × 152/172",
@@ -34128,6 +34584,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 48,155.17 € × taux 50.000% × 172/172",
        "montant": 24077.586510626366,
        "regime": "regime_general"
@@ -34380,6 +34841,11 @@
        "regime": "arrco"
       },
       {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
+      },
+      {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",
        "montant": 28209.07697062094,
        "regime": "regime_general"
@@ -34630,6 +35096,11 @@
        "detail": "2,244.60 points × valeur de service 1.802551 €",
        "montant": 4046.005923732052,
        "regime": "arrco"
+      },
+      {
+       "detail": "aucun droit",
+       "montant": 0.0,
+       "regime": "arrco_tranche_2"
       },
       {
        "detail": "SR 56,418.15 € × taux 50.000% × 172/172",

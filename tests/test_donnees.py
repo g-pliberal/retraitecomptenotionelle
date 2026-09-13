@@ -824,6 +824,10 @@ def test_tout_regime_en_points_sait_convertir_ses_points(catalogue):
     * un prix d'achat et une valeur de service dans `valeurs_point.csv` ;
     * un barème en points (`points_maximum`), pour les régimes dont le
       règlement attribue un nombre de points plutôt qu'un prix ;
+    * un barème NOMMÉ (`bareme_points`), dont la formule vit dans le moteur ;
+    * les cent points par trimestre validé (`points_par_trimestre_valide`) ;
+    * le barème d'un AUTRE régime (`points_de`), pour une tranche que tous les
+      affiliés ne cotisent pas et qui forme une fiche à part ;
     * à défaut, une ligne de rendement instantané, qui s'assume approximative.
 
     Les régimes HORS RÉPARTITION sont dispensés : leur pension est servie dans
@@ -846,6 +850,15 @@ def test_tout_regime_en_points_sait_convertir_ses_points(catalogue):
         if not any(p.type_calcul == "points" for p in regime.periodes):
             continue
         if any(p.points_maximum is not None for p in regime.periodes):
+            continue
+        if any(p.bareme_points or p.points_par_trimestre_valide is not None
+               or p.valeur_point_euros is not None for p in regime.periodes):
+            continue
+        # Le barème emprunté à un autre régime compte, à condition que celui-là
+        # en ait un : c'est le cas de la tranche 2 de l'Arrco, dont les points
+        # sont des points Arrco.
+        empruntes = {p.points_de for p in regime.periodes if p.points_de}
+        if empruntes and empruntes <= (avec_point | avec_rendement):
             continue
         if regime.code in avec_point or regime.code in avec_rendement:
             continue

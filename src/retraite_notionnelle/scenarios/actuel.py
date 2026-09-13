@@ -1728,6 +1728,10 @@ class ScenarioActuel:
                         and regime.famille not in familles_admises):
                     continue
                 for periode in regime.periodes_actives(ligne.annee):
+                    # BARÈME D'UN AUTRE RÉGIME : une tranche que tous les
+                    # affiliés ne cotisent pas forme une fiche à part, dont les
+                    # points restent ceux du régime d'origine. Voir `points_de`.
+                    bareme = periode.points_de or code
                     # Les bornes d'assiette et le repère en points sont
                     # ANNUELS : une année incomplète ne les atteint qu'à
                     # proportion de ses mois, comme le plafond lui-même.
@@ -1814,7 +1818,7 @@ class ScenarioActuel:
                         # et sur un plafond au plus, et ce sont ces deux bornes
                         # qui font les « 23 à 113 points ».
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            code, ligne.annee, annee_liquidation
+                            bareme, ligne.annee, annee_liquidation
                         )
                         points_acquis[code] = points_acquis.get(code, 0.0) + (
                             self._points_msa(periode, ligne.annee, assiette)
@@ -1836,7 +1840,7 @@ class ScenarioActuel:
                         # cette conversion — non l'assiette, qu'on n'a pas —
                         # qui porte le droit d'avant 2004.
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            code, ligne.annee, annee_liquidation
+                            bareme, ligne.annee, annee_liquidation
                         )
                         points_acquis[code] = points_acquis.get(code, 0.0) + (
                             periode.points_par_trimestre_valide
@@ -1857,7 +1861,7 @@ class ScenarioActuel:
                         # heureux : ce sont les barèmes qui sont publiés, pas
                         # les prix d'achat.
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            code, ligne.annee, annee_liquidation
+                            bareme, ligne.annee, annee_liquidation
                         )
                         points_acquis[code] = points_acquis.get(code, 0.0) + (
                             periode.points_maximum * assiette / repere * echelle
@@ -1867,7 +1871,7 @@ class ScenarioActuel:
                             regime.fiabilite, fiabilite_echelle,
                         )
                         continue
-                    achat = (self.valeurs_point.achat(code, ligne.annee)
+                    achat = (self.valeurs_point.achat(bareme, ligne.annee)
                              if periode.type_calcul in ("points", "mixte") else None)
                     if achat is not None:
                         reference, taux_appel, fiabilite_achat = achat
@@ -1892,7 +1896,7 @@ class ScenarioActuel:
                         # n'en produisaient que 11,15 — un facteur 2,7 en une
                         # année, pour une unification qui était neutre.
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            code, ligne.annee, annee_liquidation
+                            bareme, ligne.annee, annee_liquidation
                         )
                         points_acquis[code] = (
                             points_acquis.get(code, 0.0) + points_annee * echelle
@@ -1973,7 +1977,9 @@ class ScenarioActuel:
 
                 points = points_acquis.get(code, 0.0)
                 if points:
-                    valeur = self.valeur_du_point(code, annee_liquidation)
+                    valeur = self.valeur_du_point(
+                        periode.points_de or code, annee_liquidation
+                    )
                     if valeur is None and periode.valeur_point_euros is not None:
                         # Valeur de service écrite dans la fiche : le régime
                         # dont la caisse est seule à la publier n'a rien de
