@@ -3098,11 +3098,14 @@ de 150 et calculer sur ses vingt-cinq meilleures années au lieu de dix.
 **Les témoins ne le voyaient pas, et c'est le second enseignement.** Le balayage
 par statut ne connaissait qu'une génération, née en 1975 : il ne visitait que les
 périodes RÉCENTES de chaque fiche. Corriger le régime agricole n'a déplacé aucun
-témoin. Chaque statut est donc désormais simulé à TROIS générations — née en
-1935, qui liquide vers 1999, sous la durée requise de 150 ou 160 trimestres et
-les dix meilleures années ; née en 1955, qui liquide vers 2019 ; née en 1975, qui
-liquide après la réforme de 2023. Le fichier de témoins passe de 138 à 212 cas,
-et une correction d'histoire s'y voit maintenant.
+témoin. Chaque statut est donc désormais simulé à QUATRE générations — née en
+1925, qui liquide vers 1990 ; née en 1935, qui liquide vers 1999, sous la durée
+requise de 150 ou 160 trimestres et les dix meilleures années ; née en 1955, qui
+liquide vers 2019 ; née en 1975, qui liquide après la réforme de 2023. Le fichier
+de témoins passe de 138 à 249 cas, et une correction d'histoire s'y voit
+maintenant. La génération 1925 est la dernière venue, et pour une raison
+précise : les tables par génération ne répondent pas toutes en deçà de 1934, et
+le défaut que cela cachait est raconté plus bas.
 
 Ce qui a été refermé de cette façon jusqu'ici : le régime des salariés agricoles
 (aligné sur le régime général, ses huit périodes reprises une à une), les régimes
@@ -3518,6 +3521,42 @@ soixante-deux pour les autres. C'est l'âge du ballet qui est retenu, celui pour
 lequel ce régime est connu et le plus bas du système français : un musicien de
 l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
 lui ouvre qu'à soixante.
+
+### Cent soixante-douze trimestres demandés aux assurés nés avant 1934
+
+Le même balayage par génération, une fois la CAVIMAC corrigée, laissait un saut
+de 53 % entre les générations 1933 et 1934 du ministre du culte. La cause n'est
+pas dans une fiche : elle est dans une TABLE.
+
+`legislation/duree_assurance_requise.csv` commence à la génération 1934, parce
+que c'est là que commence le tableau de la loi du 22 juillet 1993. Une table par
+génération ne répond pas en deçà de sa première ligne — et le moteur, faute de
+réponse, retombait alors sur la durée écrite dans la fiche du régime, c'est-à-dire
+celle d'aujourd'hui. Un assuré né en 1933 se voyait donc demander **172
+trimestres**, et son cadet d'un an 151.
+
+Le défaut touchait tout ce qui lit cette table : le régime général et les régimes
+alignés dans leur période 1994-2003, la MSA, la CAVIMAC, et les dix
+complémentaires libérales dont les fiches portent 172 trimestres. Toutes les
+générations nées avant 1934 — celles qui ont liquidé avant 1999 — étaient
+concernées.
+
+La table porte désormais une ligne `1900,150` : la durée de la loi du 31 décembre
+1971, celle que la réforme de 1993 relève **à partir de** la génération 1934.
+Niveau `haute`, parce que c'est la lecture en creux d'un tableau qui nomme les
+générations suivantes, non une ligne écrite. Ce qu'elle ne dit toujours pas : les
+assurés qui ont liquidé avant 1972 devaient trente années, soit 120 trimestres —
+une borne calendaire, que les périodes du régime général portent et qu'une table
+par génération ne peut pas exprimer.
+
+Les six autres tables par génération du dépôt — âge d'ouverture, coefficient de
+minoration, durée de proratisation, années de salaire de référence — commencent
+toutes à 1900. Celle-là était la seule à ne pas le faire.
+
+**Et aucun témoin ne l'a vue**, parce que le balayage s'arrêtait à la génération
+1935. C'est la seconde fois que ce diagnostic tombe ; le balayage a donc une
+quatrième génération, née en 1925, et le fichier de témoins passe de 212 à 249
+cas.
 
 ### Une surcote servie vingt-cinq ans avant sa création
 
