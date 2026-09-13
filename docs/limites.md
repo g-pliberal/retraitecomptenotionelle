@@ -3150,6 +3150,16 @@ l'assiette des indépendants (article 18 de la loi n° 2023-1250 du 26 décembre
 **557 points** au plafond au lieu de 525, soit exactement le rapport des deux
 taux, le prix d'achat d'un point ne bougeant pas.
 
+**Une assiette minimale, que la fiche ne porte pas.** Le même dépouillement
+donne la série complète de l'assiette minimale de la cotisation libérale
+(`D. 642-4`) : 200 fois le SMIC horaire de 2004 à 2011, 5,25 % du plafond de
+2012 à 2014, 7,70 % en 2015, 11,5 % de 2016 à 2023, 450 fois le SMIC horaire
+depuis 2024. Elle ne mord que sous 5 400 € de revenu environ, et la porter
+demanderait un plancher d'assiette INDÉPENDANT du repère en points — le seul
+plancher que le moteur connaisse est celui qui se confond avec ce repère, et il
+relèverait ici toute assiette au plafond entier. La série est donc écrite dans
+la fiche, en attendant le mécanisme.
+
 **Et le taux n'était pas faux que depuis 2025.** La même phrase servait pour
 2004-2014, faute de série antérieure — la fiche le disait. `D. 642-3` la donne,
 version par version : 8,6 % de 2004 à 2011, **8,63 % en 2012, 9,75 % en 2013,
