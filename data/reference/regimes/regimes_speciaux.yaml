@@ -1076,7 +1076,34 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1930
-        fin: null
+        fin: 1992
+        type_calcul: annuites
+        age_ouverture: 55
+        age_taux_plein: 55
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, reversion]
+        notes: >-
+          DEUX POUR CENT PAR ANNUITÉ, TRENTE-SEPT ANNUITÉS ET DEMIE, et la fiche
+          portait vingt-cinq : l'article 12 du décret n° 68-960 du 11 octobre 1968
+          rémunère « chaque annuité liquidable à raison de 2 % des émoluments de
+          base » et fixe « le maximum des annuités liquidables dans la pension à
+          trente-sept annuités et demie ».
+          L'ÂGE A CHANGÉ TROIS FOIS, et la fiche n'en portait qu'un — soixante ans,
+          celui de 1993, appliqué depuis 1930. Avant le décret du 25 mars 1993, le
+          droit à pension s'ouvrait « à cinquante ans d'âge, pour le personnel
+          féminin ; à cinquante-cinq ans d'âge, pour le personnel masculin » chez
+          les artistes aux appointements. Le moteur ne portant qu'un âge par
+          période, c'est celui des hommes qui est retenu : une comédienne partie en
+          1970 se voit donc opposer cinq ans de plus que son droit.
+      - debut: 1993
+        fin: 2008
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -1090,27 +1117,57 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [bonifications, reversion]
         notes: >-
-          TRENTE-SEPT ANNUITÉS ET DEMIE, et non vingt-cinq : l'article 12 du
-          décret n° 68-960 du 11 octobre 1968 rémunère « chaque annuité
-          liquidable à raison de 2 % des émoluments de base » et fixe « le
-          maximum des annuités liquidables dans la pension à trente-sept
-          annuités et demie ». La fiche portait 100 trimestres : elle servait
-          75 % du traitement après vingt-cinq ans de maison, là où le régime en
-          demande trente-sept et demi.
-          L'ÂGE A CHANGÉ TROIS FOIS, et la fiche n'en porte qu'un. Avant 1993,
-          le droit à pension s'ouvrait à cinquante ans pour le personnel féminin
-          et cinquante-cinq pour le personnel masculin chez les artistes aux
-          appointements ; depuis le décret du 25 mars 1993, à soixante ans pour
-          les artistes et les employés à traitement fixe, cinquante-cinq pour
-          les machinistes, électriciens, régisseurs et pompiers. Les décrets
-          n° 2008-658 du 2 juillet 2008 puis n° 2011-1134 du 21 septembre 2011
-          y ont porté la réforme des régimes spéciaux — durée d'assurance
-          alignée, coefficient de minoration, âge relevé de deux ans par
-          génération (article 51 : soixante-deux ans pour les assurés nés à
-          compter du 1er janvier 1962). Ces régimes d'âge successifs ne sont pas
-          chiffrés ici : la fiche retient celui d'aujourd'hui pour les artistes,
-          et c'est une approximation nommée.
-          Fermé aux recrutements depuis le 1er septembre 2023.
+          Décret du 25 mars 1993 : « le droit à pension est acquis […] 1° à l'âge
+          de soixante ans, pour les artistes aux appointements et pour les employés
+          à traitement fixe […] 2° à l'âge de cinquante-cinq ans, pour les
+          machinistes, les électriciens, les régisseurs ayant la responsabilité du
+          spectacle et les pompiers civils ». La fiche retient le premier cas.
+      - debut: 2009
+        fin: 2011
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, reversion]
+        notes: >-
+          RÉFORME DES RÉGIMES SPÉCIAUX, portée ici par le décret n° 2008-658 du
+          2 juillet 2008 : coefficient de minoration et durée d'assurance alignée
+          sur celle de la fonction publique, qui monte par génération. Les bornes
+          d'âge, elles, ne bougent qu'en 2011.
+      - debut: 2012
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 62
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, reversion]
+        notes: >-
+          Décret n° 2011-1134 du 21 septembre 2011 : « le droit à pension est
+          acquis 1° à l'âge de soixante-deux ans, pour les artistes aux
+          appointements et pour les employés à traitement fixe […] 2° à l'âge de
+          cinquante-sept ans » pour les machinistes, électriciens, régisseurs et
+          pompiers. C'est la rédaction ENCORE EN VIGUEUR : la réforme de 2023 n'a
+          pas touché cet article — elle a fermé le régime aux recrutements du
+          1er septembre 2023, et réécrit l'article 6 ter sur les carrières
+          longues, sans relever l'âge de soixante-deux ans.
 
   - code: port_strasbourg
     nom: Régime de retraite du Port autonome de Strasbourg
