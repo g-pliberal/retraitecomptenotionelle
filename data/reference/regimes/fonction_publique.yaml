@@ -325,7 +325,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1930
-        fin: 2003
+        fin: 1947
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -337,11 +337,125 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          Loi du 21 mars 1928. Ouverture à 55 ans pour les travaux insalubres.
-          Paramètres à certifier auprès de la Caisse des dépôts.
+          Loi du 21 mars 1928, qui crée le fonds spécial. Ouverture à 55 ans pour
+          les travaux insalubres. Les paramètres d'avant le code des pensions de
+          1948 ne sont pas certifiés : ce sont ceux du code, portés en arrière.
+      - debut: 1948
+        fin: 1963
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.06
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          RÉGIME ALIGNÉ SUR LE CODE DES PENSIONS, et la fiche ne l'était pas. Les
+          pensions des ouvriers des établissements industriels de l'État sont
+          calculées selon les mêmes règles que celles des fonctionnaires — deux
+          pour cent par annuité, trente-sept annuités et demie, traitement des six
+          derniers mois —, avec un fonds distinct géré par la Caisse des dépôts.
+          La fiche portait deux périodes, 1930-2003 et 2004 à aujourd'hui : la
+          seconde appliquait à un ouvrier parti en 2005 la retenue pour pension de
+          2023, 11,10 %, quand elle valait alors 7,85 %.
+          Les périodes qui suivent sont celles de la fonction publique d'État,
+          reprises une à une : 1948 (code des pensions), 1964, 2004 (loi Fillon),
+          2009, 2011, 2023. La majoration pour trois enfants y entre au passage :
+          elle est au code des pensions, elle s'applique aux ouvriers d'État, et la
+          fiche ne la portait pas.
+      - debut: 1964
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.07
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Code des pensions civiles et militaires de retraite du 26 décembre 1964.
+          Retenue pour pension portée à 7 %, puis 7,85 %.
       - debut: 2004
+        fin: 2008
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi Fillon de 2003 : durée alignée sur le privé, décote et surcote.
+          Le décret n° 2004-1056 du 5 octobre 2004 la transpose au fonds spécial.
+      - debut: 2009
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          La surcote passe de 0,75 % à 1,25 % par trimestre au 1er janvier 2009.
+      - debut: 2011
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1029
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          Loi de 2010 : retenue pour pension alignée progressivement sur le taux du
+          privé — 7,85 % en 2010, 11,10 % en 2020 —, âges reportés de deux ans.
+      - debut: 2023
         fin: null
         type_calcul: annuites
         age_ouverture: 64
@@ -353,13 +467,16 @@ regimes:
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
-        taux_cotisation_retraite: 0.1110
+        taux_cotisation_retraite: 0.111
         perimetre_taux: agent_seul
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
-        avantages_non_contributifs: [bonifications, categorie_active, reversion, minimum_garanti]
-        notes: Aligné sur le code des pensions.
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti, surcote_parentale]
+        notes: >-
+          Loi du 14 avril 2023. `taux_cotisation_retraite` ne porte ici que la
+          RETENUE SALARIALE, 11,10 % : c'est ce que dit `perimetre_taux`.
 
   - code: rafp
     nom: Retraite additionnelle de la fonction publique (ERAFP)
