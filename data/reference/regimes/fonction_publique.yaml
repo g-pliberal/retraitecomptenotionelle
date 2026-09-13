@@ -66,7 +66,7 @@ regimes:
           traitement des six derniers mois. Catégorie active : ouverture à
           55 ans, voire 50 ans pour les emplois « super-actifs ».
       - debut: 1964
-        fin: 2003
+        fin: 1989
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -83,6 +83,66 @@ regimes:
           Code des pensions civiles et militaires de retraite (loi du 26 décembre
           1964). Retenue pour pension 6 % puis 7,85 %. Aucune décote :
           la seule sanction d'une carrière courte est la proratisation.
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement.
+      - debut: 1990
+        fin: 1990
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.089
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Code des pensions civiles et militaires de retraite (loi du 26 décembre
+          1964). Retenue pour pension 6 % puis 7,85 %. Aucune décote :
+          la seule sanction d'une carrière courte est la proratisation.
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement.
+      - debut: 1991
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Code des pensions civiles et militaires de retraite (loi du 26 décembre
+          1964). Retenue pour pension 6 % puis 7,85 %. Aucune décote :
+          la seule sanction d'une carrière courte est la proratisation.
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement.
       - debut: 2004
         fin: 2008
         type_calcul: annuites
@@ -198,7 +258,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1945
-        fin: 2003
+        fin: 1989
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -215,6 +275,72 @@ regimes:
           Ordonnance du 17 mai 1945. Règles calquées sur le code des pensions.
           Catégorie active : ouverture à 55 ans (agents hospitaliers, police
           municipale, sapeurs-pompiers…).
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement. La CNRACL ne fixe pas son
+          taux : le décret du 7 février 2007 le cale sur celui de l'État, et
+          la fiche le suit depuis toujours.
+      - debut: 1990
+        fin: 1990
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.089
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Ordonnance du 17 mai 1945. Règles calquées sur le code des pensions.
+          Catégorie active : ouverture à 55 ans (agents hospitaliers, police
+          municipale, sapeurs-pompiers…).
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement. La CNRACL ne fixe pas son
+          taux : le décret du 7 février 2007 le cale sur celui de l'État, et
+          la fiche le suit depuis toujours.
+      - debut: 1991
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Ordonnance du 17 mai 1945. Règles calquées sur le code des pensions.
+          Catégorie active : ouverture à 55 ans (agents hospitaliers, police
+          municipale, sapeurs-pompiers…).
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement. La CNRACL ne fixe pas son
+          taux : le décret du 7 février 2007 le cale sur celui de l'État, et
+          la fiche le suit depuis toujours.
       - debut: 2004
         fin: 2008
         type_calcul: annuites
@@ -373,7 +499,7 @@ regimes:
           elle est au code des pensions, elle s'applique aux ouvriers d'État, et la
           fiche ne la portait pas.
       - debut: 1964
-        fin: 2003
+        fin: 1989
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -390,6 +516,66 @@ regimes:
         notes: >-
           Code des pensions civiles et militaires de retraite du 26 décembre 1964.
           Retenue pour pension portée à 7 %, puis 7,85 %.
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement.
+      - debut: 1990
+        fin: 1990
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.089
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Code des pensions civiles et militaires de retraite du 26 décembre 1964.
+          Retenue pour pension portée à 7 %, puis 7,85 %.
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement.
+      - debut: 1991
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          Code des pensions civiles et militaires de retraite du 26 décembre 1964.
+          Retenue pour pension portée à 7 %, puis 7,85 %.
+          SEPT POUR CENT JUSQU'EN 1989 SEULEMENT, et la fiche les servait
+          jusqu'en 2003. L'article L. 61 du code des pensions, lu dans la base
+          LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
+          février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
+          2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
+          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
+          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
+          compte notionnel en dépend entièrement.
       - debut: 2004
         fin: 2008
         type_calcul: annuites

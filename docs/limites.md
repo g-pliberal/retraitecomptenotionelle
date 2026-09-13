@@ -3519,6 +3519,56 @@ lequel ce régime est connu et le plus bas du système français : un musicien d
 l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
 lui ouvre qu'à soixante.
 
+### Sept pour cent jusqu'en 2003 : le taux de retenue du fonctionnaire était faux depuis 1991
+
+Trouvé par la bande, en cherchant à quel taux la SEITA cotisait : son article 108
+renvoie, depuis 1995, « au taux de la retenue pour pension définie à l'article
+L. 61 du code des pensions civiles et militaires de retraite ». Il fallait donc
+lire L. 61 — et la base LEGI n'en garde que deux versions chiffrées, parce que
+l'article cesse d'écrire un taux au 1er janvier 2006 et renvoie au décret :
+
+> « Les agents visés à l'article L. 2 supportent une retenue de **8,9 %** sur les
+> sommes payées à titre de traitement ou de solde. » (30 décembre 1989)
+>
+> « […] une retenue de **7,85 %** […] » (1er février 1991, jusqu'au 1er janvier
+> 2006)
+
+Les fiches de la fonction publique d'État, de la CNRACL et du fonds spécial des
+ouvriers de l'État portaient 7 % jusqu'en 2003. C'est un huitième de cotisation
+oublié pendant treize ans, plus l'année 1990 à 8,9 %. Le scénario 1 n'en dépend
+pas — la pension du fonctionnaire ne se calcule pas sur ses cotisations — mais le
+compte notionnel en dépend entièrement : le témoin du fonctionnaire né en 1935
+gagne 6,2 % de pension notionnelle rétroactive, celui né en 1955 3,4 %.
+
+### La SEITA partait à cinquante-cinq ans, et son décret dit soixante
+
+Le régime des tabacs est fermé depuis 1981 et n'a jamais été réformé : ses
+articles courent sans modification jusqu'à aujourd'hui. C'est justement ce qui
+permet de les lire une fois pour toute l'histoire du régime — et trois d'entre
+eux disent autre chose que la fiche.
+
+**L'âge.** Article 110 : « les agents peuvent prétendre à pension dès qu'ils
+atteignent l'âge de soixante ans. Toutefois, les agents féminins occupant un
+emploi d'ouvrière (catégories A, B, C, D et E) peuvent prétendre à pension à
+partir de l'âge de cinquante-cinq ans dès qu'ils réunissent un minimum de trente
+années de services ». La fiche servait à tous l'âge des ouvrières.
+
+**La majoration pour enfants.** Article 118 : « pour les titulaires ayant élevé
+au moins trois enfants jusqu'à l'âge de seize ans, la pension est majorée de 10 %
+pour les trois premiers enfants et de 5 % par enfant au-delà du troisième ». La
+fiche ne la portait pas.
+
+**Le taux de retenue.** Article 108 : 7,7 % au 1er janvier 1984, 7,9 % au
+1er juillet 1987, 8,9 % au 30 décembre 1988, puis le taux de la fonction publique
+depuis le 2 février 1995. La fiche en portait un seul, 7 %, pour quatre-vingt-dix
+ans : le compte notionnel rétroactif de l'agent né en 1955 gagne 24 %.
+
+Reste hors du modèle l'article 117, qui définit les émoluments de base comme
+« une fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au cours
+d'une durée consécutive de trois ans » : le moteur ne sait pas exprimer cette
+règle et lui oppose celle de la fonction publique, proche et légèrement plus
+favorable.
+
 ### Le navigant n'avait pas de décote, et son régime en a une depuis 2012
 
 Trouvée en balayant les taux de remplacement de tous les statuts à six

@@ -1609,9 +1609,9 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1935
-        fin: null
+        fin: 1983
         type_calcul: annuites
-        age_ouverture: 55
+        age_ouverture: 60
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
@@ -1621,7 +1621,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, reversion]
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
           intégré au catalogue pour permettre la simulation rétroactive des
@@ -1632,6 +1632,406 @@ regimes:
           que le programme 195 du budget de l'État finance. La période court
           donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
           général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
+      - debut: 1984
+        fin: 1986
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.077
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+        notes: >-
+          Exemple de régime ÉTEINT dont les pensions restent servies :
+          intégré au catalogue pour permettre la simulation rétroactive des
+          carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
+      - debut: 1987
+        fin: 1988
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.079
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+        notes: >-
+          Exemple de régime ÉTEINT dont les pensions restent servies :
+          intégré au catalogue pour permettre la simulation rétroactive des
+          carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
+      - debut: 1989
+        fin: 1994
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.089
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+        notes: >-
+          Exemple de régime ÉTEINT dont les pensions restent servies :
+          intégré au catalogue pour permettre la simulation rétroactive des
+          carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
+      - debut: 1995
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+        notes: >-
+          Exemple de régime ÉTEINT dont les pensions restent servies :
+          intégré au catalogue pour permettre la simulation rétroactive des
+          carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
+      - debut: 2004
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+        notes: >-
+          Exemple de régime ÉTEINT dont les pensions restent servies :
+          intégré au catalogue pour permettre la simulation rétroactive des
+          carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
+      - debut: 2011
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1029
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+        notes: >-
+          Exemple de régime ÉTEINT dont les pensions restent servies :
+          intégré au catalogue pour permettre la simulation rétroactive des
+          carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
+      - debut: 2023
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.111
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
+        notes: >-
+          Exemple de régime ÉTEINT dont les pensions restent servies :
+          intégré au catalogue pour permettre la simulation rétroactive des
+          carrières concernées.
+          FERMÉ AUX RECRUTEMENTS en 1981, et à eux seuls : l'agent déjà en poste
+          y est resté jusqu'à sa retraite, aux mêmes règles. Le régime figure
+          encore, avec celui des mines, parmi les régimes spéciaux en extinction
+          que le programme 195 du budget de l'État finance. La période court
+          donc jusqu'à aujourd'hui : la borner à 1981 faisait basculer au régime
+          général, cette année-là, un agent entré vingt ans plus tôt.
+          SOIXANTE ANS, ET NON CINQUANTE-CINQ. L'article 110 du décret
+          n° 62-766 du 6 juillet 1962 : « les agents peuvent prétendre à pension
+          dès qu'ils atteignent l'âge de soixante ans. Toutefois, les agents
+          féminins occupant un emploi d'ouvrière (catégories A, B, C, D et E)
+          peuvent prétendre à pension à partir de l'âge de cinquante-cinq ans
+          dès qu'ils réunissent un minimum de trente années de services ». La
+          fiche servait à tous l'âge des ouvrières ; elle sert désormais celui
+          de droit commun, et l'anticipation féminine reste hors du modèle.
+          C'est la rédaction ENCORE EN VIGUEUR : ni 2010, ni 2014, ni 2023 n'ont
+          touché cet article — un agent de la SEITA garde soixante ans.
+          DEUX POUR CENT PAR ANNUITÉ, SOIXANTE-QUINZE POUR CENT AU PLUS
+          (article 118), et une majoration pour enfants que la fiche ignorait :
+          « pour les titulaires ayant élevé au moins trois enfants jusqu'à l'âge
+          de seize ans, la pension est majorée de 10 % pour les trois premiers
+          enfants et de 5 % par enfant au-delà du troisième ».
+          LES ÉMOLUMENTS DE BASE NE SONT PAS LES SIX DERNIERS MOIS mais « une
+          fraction du traitement statutaire LE PLUS ÉLEVÉ acquis par l'agent au
+          cours d'une durée consécutive de trois ans » (article 117). Le moteur
+          ne sait pas exprimer cette règle ; il lui oppose celle de la fonction
+          publique, qui en est proche et légèrement plus favorable.
+          LE TAUX DE RETENUE EST DATÉ, et la fiche en portait un seul.
+          L'article 108 du décret n° 62-766 le fixe à 7,7 % au 1er janvier
+          1984, à 7,9 % au 1er juillet 1987, à 8,9 % au 30 décembre 1988, puis
+          — depuis le 2 février 1995 — « à un taux égal au taux de la retenue
+          pour pension définie à l'article L. 61 du code des pensions civiles
+          et militaires de retraite », d'où l'alignement sur la fonction
+          publique à partir de cette date. Avant 1984, la base LEGI ne porte
+          aucune version : les 7 % de la fonction publique de l'époque
+          tiennent lieu d'estimation.
 
   - code: chemins_fer_secondaires
     nom: Régimes des chemins de fer secondaires d'intérêt général
