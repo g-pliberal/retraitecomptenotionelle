@@ -10,7 +10,13 @@ propres, sur son site des politiques sociales :
 * ``IRC_BAR_02_ValPt_SalRef.csv`` — valeur du point au 31 décembre et salaire de
   référence, chaque année depuis 1971 ;
 * ``IRC_BAR_01_txcotis.csv`` — taux théoriques et appelés sur les tranches A et
-  B, et surtout le **taux d'appel**, sur la même période.
+  B, et le **taux d'appel**, sur la même période. Les trois sont versés : le
+  taux d'appel dans ``valeurs_point.csv``, où il entre dans le prix du point ;
+  les taux APPELÉS des deux tranches dans la trace, parce qu'ils appartiennent
+  à la fiche du régime et non à une série de barème. Ce script ne lisait que le
+  premier, et la fiche portait 5,75 % sur toute la période 1971-2008 quand le
+  taux appelé de la tranche A valait 2,10 % jusqu'en 1982 — un agent des années
+  1970 recevait deux fois et demie les points que le barème lui donnait.
 
 C'est ce qui permet de faire passer l'Ircantec de ``haute`` à ``certifiee`` :
 jusqu'ici ses barèmes venaient d'OpenFisca, transcription tierce. Les deux
@@ -70,9 +76,18 @@ def main() -> int:
         annee = int(ligne["Annee"])
         serie[f"ircantec|{annee}|valeur_service"] = _nombre(ligne["val_point_31-12"])
         serie[f"ircantec|{annee}|salaire_reference"] = _nombre(ligne["sal_ref"])
+    #: Taux APPELÉS des deux tranches, année par année. Ils ne vont pas dans
+    #: `valeurs_point.csv` — ce sont des paramètres de fiche, pas un barème de
+    #: point — mais ils sont consignés ici, avec leur source, parce que c'est
+    #: d'eux que la fiche du régime tire ses `taux_cotisation_retraite`.
+    appeles: dict[str, dict[str, float]] = {}
     for ligne in taux:
         annee = int(ligne["Annee"])
         serie[f"ircantec|{annee}|taux_appel"] = _nombre(ligne["taux_appel"]) / 100.0
+        appeles[str(annee)] = {
+            "tranche_a": _nombre(ligne["tx_cotis_appel_TA"]) / 100.0,
+            "tranche_b": _nombre(ligne["tx_cotis_appel_TB"]) / 100.0,
+        }
 
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
@@ -80,6 +95,7 @@ def main() -> int:
             "source": f"{RACINE}/{VALEURS}, {RACINE}/{TAUX}",
             "recupere_le": date.today().isoformat(),
             "regle_annuelle": "valeur du point au 31 décembre, telle que publiée",
+            "taux_appeles": appeles,
             "serie": dict(sorted(serie.items())),
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",

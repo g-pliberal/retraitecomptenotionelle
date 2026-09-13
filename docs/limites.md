@@ -3066,6 +3066,49 @@ saisie à ce titre, sur la foi du producteur, comme la valeur du point du même
 régime — que la loi ne porte pas davantage, le décret annuel ne fixant qu'un
 coefficient de revalorisation.
 
+### L'Ircantec n'avait pas de tranche B, et ses taux étaient ceux de 2008
+
+Le catalogue décrivait l'Ircantec par deux périodes et une seule assiette : la
+tranche A, de zéro au plafond de la Sécurité sociale. Le régime en a deux. La
+**tranche B** court du plafond à huit fois le plafond, à un taux appelé de
+19,50 % — près de trois fois celui de la tranche A. Un contractuel payé trois
+fois le salaire moyen versait donc 14 600 € par an à un régime qui ne lui
+portait aucun point : sa pension Ircantec ne dépassait celle d'un agent payé au
+plafond que de quinze pour cent, quand le droit la lui triple.
+
+Les taux de la tranche A étaient faux aussi, et depuis l'origine : la fiche
+portait **5,75 % sur toute la période 1971-2008**, quand le taux appelé valait
+2,10 % jusqu'en 1982, 2,80 % jusqu'en 1987, et n'a atteint 5,63 % qu'en 1992.
+Le régime achetant ses points avec la cotisation — `points = cotisation /
+(taux d'appel × salaire de référence)` —, un agent des années 1970 recevait
+**deux fois et demie** les points que le barème lui donnait. La fiche portait en
+outre 7,03 % pour l'après-2008 ; le taux appelé est de 7,00 % depuis 2017, et
+7,11 % depuis le 1er janvier 2026.
+
+**La série était déjà dans le dépôt, ou presque.** Le récupérateur de la Caisse
+des dépôts — qui GÈRE l'Ircantec, et en est donc le producteur — télécharge
+depuis le début le fichier `IRC_BAR_01_txcotis.csv`, qui porte cinq colonnes :
+taux théoriques et appelés des deux tranches, et taux d'appel. Il n'en gardait
+qu'une, le taux d'appel. Les quatre autres étaient téléchargées puis jetées, à
+chaque exécution, depuis que le script existe. Il les consigne désormais.
+
+**Le contrôle est un régime voisin.** Un contractuel du public à trois fois le
+salaire moyen, carrière complète, obtient maintenant 81 799 € de pension totale.
+Un cadre du privé au même salaire et à la même carrière en obtient 83 678 € par
+une mécanique entièrement différente — Agirc, Arrco, Agirc-Arrco et régime
+général. Deux pour cent d'écart entre deux structures qui n'ont rien en commun :
+c'est le meilleur contrôle disponible, et il ne valait rien avant, le
+contractuel ressortant quarante pour cent en dessous.
+
+La répartition entre l'agent et l'employeur — 40 % / 60 % sur la tranche A,
+35,64 % / 64,36 % sur la tranche B — est celle des barèmes 2025 et 2026 (2,80 %
+et 4,20 %, 6,95 % et 12,55 % en 2025 ; 2,84 % et 4,27 %, 7,06 % et 12,75 % en
+2026, recoupés par plusieurs centres de gestion), reportée sur les années
+antérieures faute d'une série publiée. Elle ne touche que les scénarios 4 et 5.
+Le salaire de référence et la valeur du point, eux, s'arrêtent en 2022 chez le
+producteur comme chez OpenFisca : les années suivantes sont ramenées sur les
+prix, et les arrêtés annuels qui les fixent restent à dépouiller.
+
 ### « De 23 à 113 points » : le barème que personne ne publiait est dans le code
 
 La MSA, le ministère de l'agriculture et tous les guides de retraite écrivent la
