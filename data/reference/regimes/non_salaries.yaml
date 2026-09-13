@@ -4953,6 +4953,110 @@ regimes:
           écrit à l'article R. 732-71 — voir `_points_msa` dans le moteur, et
           la section de docs/limites.md qui refait l'arithmétique.
       - debut: 2003
+        fin: 2003
+        type_calcul: mixte
+        age_ouverture: 64
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1737
+        bareme_points: msa_proportionnelle
+        assiette_repere_smic: 600
+        assiette_plancher: true
+        valeur_point_euros: 4.589
+        valeur_point_annee: 2025
+        pension_forfaitaire_annuelle: 3628.98
+        pension_forfaitaire_annee: 2023
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [minimum_vieillesse, pension_majoree_reference, reversion]
+        notes: >-
+          Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
+          des non-salariés agricoles, en points. Cette fiche ne porte plus que
+          l'étage de BASE : la RCO a désormais la sienne (`msa_rco`), et le taux
+          de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
+          s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
+          neutralisé dans les scénarios notionnels.
+          LE BARÈME DE POINTS EST DANS LE CODE, et le modèle le sert
+          désormais : R. 732-71 attribue quinze points jusqu'à 400 SMIC
+          horaires, puis une pente jusqu'à trente à 800 SMIC, puis trente
+          jusqu'à deux fois le minimum contributif, puis une pente jusqu'au
+          maximum M que R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du
+          point). Les « 23 à 113 points » que la caisse annonce sans publier la
+          formule en sortent : 22,5 au minimum d'assiette du chef d'exploitation
+          (600 SMIC horaires), 113,4 au plafond en 2025.
+          La valeur du point est celle du code rural (R. 732-66, 4,589 € au
+          1er janvier 2025), recoupée par le communiqué de la MSA et par le COR
+          pour 2023 (4,264 €) ; les années antérieures sont ramenées sur les
+          prix, comme la loi le prescrit (L. 161-23-1).
+          La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
+          (communiqué de la MSA du 14 février 2023) pour une carrière complète.
+          CE QUI RESTE HORS DU MODÈLE est la réforme du 28 février 2025 (LFSS
+          2025, article 87), qui, pour les pensions prenant effet à compter du
+          1er janvier 2026, calcule la base sur les VINGT-CINQ MEILLEURES ANNÉES
+          de revenus à partir de 2016 et sur les meilleures années de points
+          avant. Le modèle sert encore la formule d'avant la réforme.
+          Voir docs/limites.md.
+          LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
+          naît de la loi du 21 août 2003, pour les liquidations de 2004, à
+          0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
+          scindée pour cela seul : rien d'autre n'y change.
+      - debut: 2004
+        fin: 2008
+        type_calcul: mixte
+        age_ouverture: 64
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1737
+        bareme_points: msa_proportionnelle
+        assiette_repere_smic: 600
+        assiette_plancher: true
+        valeur_point_euros: 4.589
+        valeur_point_annee: 2025
+        pension_forfaitaire_annuelle: 3628.98
+        pension_forfaitaire_annee: 2023
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [minimum_vieillesse, pension_majoree_reference, reversion]
+        notes: >-
+          Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
+          des non-salariés agricoles, en points. Cette fiche ne porte plus que
+          l'étage de BASE : la RCO a désormais la sienne (`msa_rco`), et le taux
+          de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
+          s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
+          neutralisé dans les scénarios notionnels.
+          LE BARÈME DE POINTS EST DANS LE CODE, et le modèle le sert
+          désormais : R. 732-71 attribue quinze points jusqu'à 400 SMIC
+          horaires, puis une pente jusqu'à trente à 800 SMIC, puis trente
+          jusqu'à deux fois le minimum contributif, puis une pente jusqu'au
+          maximum M que R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du
+          point). Les « 23 à 113 points » que la caisse annonce sans publier la
+          formule en sortent : 22,5 au minimum d'assiette du chef d'exploitation
+          (600 SMIC horaires), 113,4 au plafond en 2025.
+          La valeur du point est celle du code rural (R. 732-66, 4,589 € au
+          1er janvier 2025), recoupée par le communiqué de la MSA et par le COR
+          pour 2023 (4,264 €) ; les années antérieures sont ramenées sur les
+          prix, comme la loi le prescrit (L. 161-23-1).
+          La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
+          (communiqué de la MSA du 14 février 2023) pour une carrière complète.
+          CE QUI RESTE HORS DU MODÈLE est la réforme du 28 février 2025 (LFSS
+          2025, article 87), qui, pour les pensions prenant effet à compter du
+          1er janvier 2026, calcule la base sur les VINGT-CINQ MEILLEURES ANNÉES
+          de revenus à partir de 2016 et sur les meilleures années de points
+          avant. Le modèle sert encore la formule d'avant la réforme.
+          Voir docs/limites.md.
+          LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
+          naît de la loi du 21 août 2003, pour les liquidations de 2004, à
+          0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
+          scindée pour cela seul : rien d'autre n'y change.
+      - debut: 2009
         fin: null
         type_calcul: mixte
         age_ouverture: 64
@@ -5000,6 +5104,10 @@ regimes:
           de revenus à partir de 2016 et sur les meilleures années de points
           avant. Le modèle sert encore la formule d'avant la réforme.
           Voir docs/limites.md.
+          LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
+          naît de la loi du 21 août 2003, pour les liquidations de 2004, à
+          0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
+          scindée pour cela seul : rien d'autre n'y change.
 
   - code: msa_rco
     nom: Retraite complémentaire obligatoire des non-salariés agricoles (RCO)

@@ -3519,6 +3519,33 @@ lequel ce régime est connu et le plus bas du système français : un musicien d
 l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
 lui ouvre qu'à soixante.
 
+### Une surcote servie vingt-cinq ans avant sa création
+
+Un second balayage, après celui des taux de remplacement : la même carrière
+déplacée d'une génération à l'autre, de 1920 à 1980, et le rapport de la pension
+au dernier salaire pour chacune. Ce que cette courbe montre, ce sont les SAUTS —
+là où une année de naissance de plus change la pension de plus d'un dixième.
+
+Le ministre du culte en avait un de 68 % entre les générations 1933 et 1934. La
+cause : la fiche de la CAVIMAC portait `surcote_par_trimestre: 0,0125` sur toutes
+ses périodes depuis 1979. Or ce régime reprend les règles du régime général — sa
+propre note le dit pour les taux de cotisation, que R. 382-89 et R. 382-90
+alignent sur ceux des salariés — et **le régime général n'a de surcote que depuis
+la loi du 21 août 2003**, appliquée aux liquidations de 2004 : 0,75 % par
+trimestre jusqu'en 2008, 1,25 % ensuite. Un ministre du culte parti en 1996 avec
+plus que la durée requise voyait donc sa pension majorée de dix pour cent que
+personne ne lui devait.
+
+La même vérification, passée sur tout le catalogue, montre que le régime général
+lui-même, la fonction publique, les régimes alignés et la MSA salariés ont la
+bonne chronologie. Deux fiches ne l'avaient pas : la CAVIMAC, corrigée ici, et la
+MSA non-salariés, dont la période ouverte en 2003 servait 1,25 % dès sa première
+année — elle est scindée en trois pour porter la montée en charge. Restent quatre
+complémentaires libérales — CARMF, CARPIMKO, CAVEC, CIPAV et la caisse des
+notaires — dont la majoration pour âge est une règle PROPRE, fixée par leurs
+statuts et non par la loi de 2003 : elles peuvent légitimement en avoir servi une
+avant 2004, et le dépôt n'a pas de quoi le vérifier.
+
 ### Sept pour cent jusqu'en 2003 : le taux de retenue du fonctionnaire était faux depuis 1991
 
 Trouvé par la bande, en cherchant à quel taux la SEITA cotisait : son article 108
