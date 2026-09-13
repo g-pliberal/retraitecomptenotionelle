@@ -1,0 +1,72 @@
+# Décote des régimes spéciaux — réforme de 2008, montée en charge
+# ---------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# LES RÉGIMES SPÉCIAUX N'ONT PAS DÉCOTÉ DE 1,25 % DÈS 2009, et le modèle le
+# leur faisait faire. La réforme de 2008 leur a donné la décote de la fonction
+# publique AVEC QUATRE ANS DE RETARD : elle ne s'applique qu'aux liquidations
+# postérieures au 1er juillet 2010, et elle monte en charge d'un dixième par
+# an à partir de cette date. Opposer 1,25 % par trimestre manquant à un
+# cheminot parti en 2011, c'est décoter DIX FOIS TROP — et, la décote étant
+# plafonnée à vingt trimestres, retirer 25 % de la pension là où le droit en
+# retirait 2,5 %.
+#
+# LE TEXTE, mot pour mot. Article 14 V du décret n° 68-382 du 5 avril 1968
+# (Opéra national de Paris), dans sa rédaction issue de la réforme, lu dans la
+# base LEGI de la DILA :
+#
+#   « Le coefficient de minoration prévu au II ci-dessus n'est applicable
+#   qu'aux personnes remplissant les conditions définies à l'article 6 à
+#   compter du 1er juillet 2010. Pour les personnes remplissant les conditions
+#   définies à l'article 6 entre le 1er juillet 2010 et le 30 juin 2011
+#   inclus, il est fixé par trimestre manquant à un dixième du taux prévu au
+#   premier alinéa du II ci-dessus. Pour les personnes remplissant les
+#   conditions définies audit article postérieurement au 30 juin 2011, ce taux
+#   augmente du même montant au 1er juillet de chaque année jusqu'à égaler le
+#   taux prévu au premier alinéa du II ci-dessus. L'âge auquel le coefficient
+#   de minoration s'annule correspond, pour la période comprise entre le
+#   1er juillet 2010 et le 30 juin 2011 inclus, à l'âge de référence mentionné
+#   au 1° du II diminué de seize trimestres. Pour les périodes postérieures au
+#   30 juin 2011, cette diminution est réduite de deux trimestres au
+#   1er juillet de chaque année jusqu'au 30 juin 2013 inclus puis d'un
+#   trimestre au 1er juillet de chaque année jusqu'au 30 juin 2024 inclus. »
+#
+# La même phrase se lit, aux mêmes dates, dans les décrets de réforme des
+# autres régimes spéciaux : c'est un calendrier commun, décidé une fois.
+#
+#   âge d'annulation de la décote = âge de référence − trimestres_avant / 4
+#
+# et l'âge de référence des régimes spéciaux est, sauf catégorie atypique,
+# l'ÂGE D'OUVERTURE DU DROIT MAJORÉ DE CINQ ANS — non la limite d'âge du
+# grade, comme dans la fonction publique.
+#
+# POURQUOI LES LIGNES SONT DÉCALÉES D'UN AN. Les marches tombent au 1er juillet
+# et le modèle lit un millésime. Chaque ligne porte donc la règle en vigueur du
+# 1er juillet de l'année PRÉCÉDENTE au 30 juin de l'année écrite : la ligne
+# 2011 est celle du 1er juillet 2010. C'est la lecture qui n'oppose jamais à
+# l'assuré plus que le droit — une liquidation du second semestre se voit
+# appliquer la marche de l'année précédente, jamais celle de l'année suivante —
+# et c'est celle qui laisse 2010 sans décote, comme la première phrase du texte
+# le veut pour sa première moitié.
+#
+# Avant 2011 : aucune ligne, donc aucune décote. Après 2025 : la dernière ligne
+# vaut, l'âge d'annulation est l'âge de référence lui-même.
+#
+# Niveau `haute` : ces quinze lignes sont la mise en table d'un article lu dans
+# la base LEGI, non la sortie d'un script de collecte.
+annee,trimestres_avant_limite,coefficient,fiabilite
+2011,16,0.00125,haute
+2012,14,0.00250,haute
+2013,12,0.00375,haute
+2014,11,0.00500,haute
+2015,10,0.00625,haute
+2016,9,0.00750,haute
+2017,8,0.00875,haute
+2018,7,0.01000,haute
+2019,6,0.01125,haute
+2020,5,0.01250,haute
+2021,4,0.01250,haute
+2022,3,0.01250,haute
+2023,2,0.01250,haute
+2024,1,0.01250,haute
+2025,0,0.01250,haute

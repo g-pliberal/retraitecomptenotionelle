@@ -561,6 +561,15 @@ class SurcoteParentale:
         return None
 
 
+#: Barèmes de décote lus dans une table, et non dans la fiche du régime : le
+#: coefficient et l'âge d'annulation y montent en charge à l'année de
+#: liquidation. ``regimes_speciaux_age_fixe`` prend le coefficient de la table
+#: des régimes spéciaux mais garde l'âge d'annulation écrit dans la fiche.
+_BAREMES_DECOTE_EN_TABLE = frozenset(
+    {"fonction_publique", "regimes_speciaux", "regimes_speciaux_age_fixe"}
+)
+
+
 class DecoteFonctionPublique:
     """Barème de décote de l'article L. 14 du code des pensions.
 
@@ -575,9 +584,12 @@ class DecoteFonctionPublique:
     Rien avant 2006 : la décote n'existait pas dans la fonction publique.
     """
 
+    #: Table lue par cette classe, dans ``data/reference/legislation/``.
+    FICHIER = "decote_fonction_publique.csv"
+
     def __init__(self, racine: Path) -> None:
         self._table: dict[int, tuple[int, float, Fiabilite]] = {}
-        chemin = racine / "reference" / "legislation" / "decote_fonction_publique.csv"
+        chemin = racine / "reference" / "legislation" / self.FICHIER
         if not chemin.exists():
             return
         with chemin.open(encoding="utf-8") as flux:
@@ -600,6 +612,29 @@ class DecoteFonctionPublique:
                 break
             applicable = candidate
         return self._table[applicable]
+
+
+class DecoteRegimesSpeciaux(DecoteFonctionPublique):
+    """Barème de décote des régimes spéciaux, réforme de 2008.
+
+    **Les régimes spéciaux n'ont pas décoté de 1,25 % dès 2009**, et le modèle
+    le leur faisait faire. La réforme de 2008 leur donne la décote de la
+    fonction publique AVEC QUATRE ANS DE RETARD : rien avant le 1er juillet
+    2010, puis un dixième du taux plein, et un dixième de plus chaque
+    1er juillet jusqu'à 1,25 % en 2019. Opposer 1,25 % à un cheminot parti en
+    2011, c'est décoter dix fois trop — et, la décote étant plafonnée à vingt
+    trimestres, lui retirer 25 % de sa pension là où le droit lui en retirait
+    2,5 %.
+
+    L'âge d'annulation suit le même retard : c'est l'âge de référence du régime
+    — l'âge d'ouverture du droit majoré de cinq ans, non la limite d'âge du
+    grade — diminué de seize trimestres en 2010, de rien à partir de 2024.
+
+    La table et sa lecture au millésime sont documentées dans
+    ``legislation/decote_regimes_speciaux.csv``.
+    """
+
+    FICHIER = "decote_regimes_speciaux.csv"
 
 
 class MinimumVieillesse:
@@ -1037,6 +1072,9 @@ class ScenarioActuel:
         self.decote_fonction_publique = DecoteFonctionPublique(
             parametres.racine_donnees
         )
+        self.decote_regimes_speciaux = DecoteRegimesSpeciaux(
+            parametres.racine_donnees
+        )
         self.minimum_contributif = MinimumContributif(parametres.racine_donnees, macro)
         self.minimum_garanti = MinimumGaranti(parametres.racine_donnees, macro)
         self.carriere_longue = CarriereLongue(parametres.racine_donnees)
@@ -1352,13 +1390,30 @@ class ScenarioActuel:
         décote s'annuler à 63 ans, pas à 67 — et chaque trimestre manquant lui
         coûtait 0,875 %, pas 1,25 %. Lui opposer le barème du privé retirait
         jusqu'à un sixième de sa pension.
+
+        **Et les régimes spéciaux ont ce barème avec quatre ans de retard.**
+        La réforme de 2008 ne leur applique aucune décote avant le 1er juillet
+        2010, puis un dixième du taux plein, un dixième de plus chaque année
+        jusqu'à 1,25 % en 2019 : un cheminot parti en 2011 décotait de 0,125 %
+        par trimestre manquant, non de 1,25 %.
         """
         age_annulation = self._age_taux_plein(periode, carriere)
-        if periode.bareme_decote == "fonction_publique":
-            parametres = self.decote_fonction_publique.parametres(annee_liquidation)
+        if periode.bareme_decote in _BAREMES_DECOTE_EN_TABLE:
+            table = (self.decote_fonction_publique
+                     if periode.bareme_decote == "fonction_publique"
+                     else self.decote_regimes_speciaux)
+            parametres = table.parametres(annee_liquidation)
             if parametres is None:
                 return None, age_annulation, None
             trimestres_avant, coefficient, fiabilite = parametres
+            if periode.bareme_decote == "regimes_speciaux_age_fixe":
+                # Les catégories d'âge atypique — artistes du ballet, musiciens
+                # de l'orchestre — n'ont pas l'âge de référence de droit
+                # commun : le V de l'article 14 leur donne « l'âge minimum
+                # d'ouverture du droit à pension qui leur est applicable majoré
+                # de […] huit trimestres », un âge fixe que la montée en charge
+                # ne recule pas. La fiche le porte tel quel.
+                return coefficient, age_annulation, fiabilite
             return coefficient, age_annulation - trimestres_avant / 4.0, fiabilite
         if periode.decote_par_trimestre is None:
             return None, age_annulation, None

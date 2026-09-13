@@ -21,7 +21,8 @@
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesOuverture, AnneesSalaireReference, CarriereLongue,
-  CoefficientsMinoration, DecoteFonctionPublique, DureesProratisation, DureesRequises,
+  CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
+  DureesProratisation, DureesRequises,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SurcoteParentale, ValeursPoint,
 } from "./regimes.js";
@@ -32,6 +33,16 @@ const LIBELLE_MAJORATION = {
   mda: "Majoration de durée d'assurance",
   bonifications: "Bonification pour enfants",
 };
+
+/**
+ * Barèmes de décote lus dans une table, et non dans la fiche du régime : le
+ * coefficient et l'âge d'annulation y montent en charge à l'année de
+ * liquidation. `regimes_speciaux_age_fixe` prend le coefficient de la table des
+ * régimes spéciaux mais garde l'âge d'annulation écrit dans la fiche.
+ */
+const BAREMES_DECOTE_EN_TABLE = new Set([
+  "fonction_publique", "regimes_speciaux", "regimes_speciaux_age_fixe",
+]);
 
 export class ScenarioActuel {
   constructor(paquet, macro, catalogue, affiliations, parametres) {
@@ -51,6 +62,7 @@ export class ScenarioActuel {
     this.anneesSalaireReference = new AnneesSalaireReference(paquet);
     this.minimumContributif = new MinimumContributif(paquet, macro);
     this.decoteFonctionPublique = new DecoteFonctionPublique(paquet);
+    this.decoteRegimesSpeciaux = new DecoteRegimesSpeciaux(paquet);
     this.minimumGaranti = new MinimumGaranti(paquet, macro);
     this.minimumVieillesse = new MinimumVieillesse(paquet, macro);
     this.carriereLongue = new CarriereLongue(paquet);
@@ -348,12 +360,22 @@ export class ScenarioActuel {
    */
   decote(periode, carriere, anneeLiquidation) {
     const ageAnnulation = this.ageTauxPlein(periode, carriere);
-    if (periode.bareme_decote === "fonction_publique") {
-      const parametres = this.decoteFonctionPublique.parametres(anneeLiquidation);
+    if (BAREMES_DECOTE_EN_TABLE.has(periode.bareme_decote)) {
+      const table = periode.bareme_decote === "fonction_publique"
+        ? this.decoteFonctionPublique
+        : this.decoteRegimesSpeciaux;
+      const parametres = table.parametres(anneeLiquidation);
       if (parametres === null || parametres === undefined) {
         return [null, ageAnnulation, null];
       }
       const [trimestresAvant, coefficient, fiabilite] = parametres;
+      if (periode.bareme_decote === "regimes_speciaux_age_fixe") {
+        // Les catégories d'âge atypique — artistes du ballet, musiciens de
+        // l'orchestre — n'ont pas l'âge de référence de droit commun : le V de
+        // l'article 14 leur donne leur âge d'ouverture majoré de huit
+        // trimestres, un âge fixe que la montée en charge ne recule pas.
+        return [coefficient, ageAnnulation, fiabilite];
+      }
       return [coefficient, ageAnnulation - trimestresAvant / 4.0, fiabilite];
     }
     if (periode.decote_par_trimestre === null) {

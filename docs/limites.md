@@ -3078,13 +3078,14 @@ modèle :
 
 | Régime | Couverture | Jeux de règles | Années par jeu |
 |---|---|---|---|
-| `port_strasbourg`, `opera_de_paris`, `comedie_francaise` | 1930-2026 | 1 | 97 |
-| `mines`, `marins` | 1930-2026 | 1 | 97 |
+| `port_strasbourg`, `mines`, `marins` | 1930-2026 | 1 | 97 |
 | `seita` | 1935-2026 | 1 | 92 |
-| `cavp_complementaire`, `carpv_complementaire`, `cavec_complementaire` | 1949-2026 | 1 | 74 à 78 |
-| `ratp`, `fspoeie`, `banque_de_france` | 1930-2026 | 2 | 48 |
-| `crpcen` | 1937-2026 | 2 | 45 |
-| `ieg` | 1946-2026 | 2 | 40 |
+| `carpv_complementaire` | 1950-2026 | 1 | 77 |
+| `cnbf` | 1948-2026 | 2 | 40 |
+| `cavp_complementaire`, `cavec_complementaire` | 1949-2026 | 2 | 37 à 39 |
+| `sncf`, `ratp` | 1930-2026 | 3 | 32 |
+| `ieg` | 1946-2026 | 3 | 27 |
+| `opera_de_paris`, `comedie_francaise` | 1930-2026 | 4 | 24 |
 
 Le nombre n'est pas à lui seul un verdict : un régime dont les règles n'ont pas
 bougé mérite une seule période, et c'est le cas des trois complémentaires
@@ -3120,9 +3121,10 @@ parce que l'alignement est une règle de droit. La deuxième est la période
 OUVERTE — `fin: null` — qui porte les paramètres du jour : elle applique le droit
 d'aujourd'hui à toute la période qu'elle couvre, et c'est ainsi qu'un agent de la
 Banque de France parti en 2009 se voyait opposer l'âge de 2023. La troisième est
-la réforme qui ne touche pas tout en même temps : celle de 2008 crée la décote
-dès 2009 dans les régimes spéciaux, mais ne relève les bornes d'âge qu'à partir
-de 2017.
+la réforme qui ne touche pas tout en même temps : celle de 2008 ne relève les
+bornes d'âge des régimes spéciaux qu'à partir de 2017, et sa décote n'existe pas
+avant le 1er juillet 2010 — elle monte ensuite en charge jusqu'en 2024, quand les
+fiches la servaient pleine dès 2009.
 
 ### La clause du grand-père : six régimes fermés l'étaient pour tout le monde
 
@@ -3431,6 +3433,92 @@ vieillesse » de la page dit ce que le modèle voit, pas ce que la mesure
 coûterait. Et le modèle ne dit rien de l'impôt lui-même : il compte ce qui est
 versé, jamais ce qui est prélevé.
 
+### La décote des régimes spéciaux avait quatre ans d'avance
+
+La réforme de 2008 donne aux régimes spéciaux la décote de la fonction publique.
+Les fiches en avaient tiré un coefficient plat de 1,25 % par trimestre manquant à
+partir de 2009 — et c'est la seule chose que le droit n'écrit nulle part. Le V
+des décrets de réforme porte un calendrier, et il est écrit MOT POUR MOT À
+L'IDENTIQUE dans les six textes concernés :
+
+> « Le coefficient de minoration prévu au II ci-dessus n'est applicable qu'aux
+> personnes remplissant les conditions définies à l'article 6 à compter du
+> 1er juillet 2010. Pour les personnes remplissant les conditions définies à
+> l'article 6 entre le 1er juillet 2010 et le 30 juin 2011 inclus, il est fixé
+> par trimestre manquant à un dixième du taux prévu au premier alinéa du II
+> ci-dessus. Pour les personnes remplissant les conditions définies audit
+> article postérieurement au 30 juin 2011, ce taux augmente du même montant au
+> 1er juillet de chaque année jusqu'à égaler le taux prévu au premier alinéa du
+> II ci-dessus. L'âge auquel le coefficient de minoration s'annule correspond,
+> pour la période comprise entre le 1er juillet 2010 et le 30 juin 2011 inclus, à
+> l'âge de référence mentionné au 1° du II diminué de seize trimestres. Pour les
+> périodes postérieures au 30 juin 2011, cette diminution est réduite de deux
+> trimestres au 1er juillet de chaque année jusqu'au 30 juin 2013 inclus puis
+> d'un trimestre au 1er juillet de chaque année jusqu'au 30 juin 2024 inclus. »
+
+C'est le calendrier de la fonction publique — la loi du 21 août 2003, dix
+huitièmes de point par an et seize trimestres qui s'effacent — DÉCALÉ DE QUATRE
+ANS. Une passe sur la base LEGI, cherchant la phrase « un dixième du taux
+prévu », rend exactement six textes : le statut national des IEG (décret n°
+46-1541), la Comédie-Française (décret n° 68-960), l'Opéra (décret n° 68-382),
+la SNCF (décret n° 2008-639), la RATP (décrets n° 2008-48 et n° 2008-637) et les
+clercs de notaires (décret n° 90-1215). Ni les mines, ni les marins, ni le port
+autonome de Strasbourg, ni la SEITA : ces régimes-là n'ont pas eu de décote.
+
+**Ce que cela déplaçait.** Un cheminot parti en 2011 à cinquante-cinq ans avec
+vingt trimestres manquants perdait un quart de sa pension dans le modèle ; le
+droit lui en retirait un quarantième — 0,125 % par trimestre, non 1,25 %. Et la
+caisse des clercs de notaires était branchée sur le barème de la fonction
+publique, en avance de quatre ans sur le sien : 0,875 % par trimestre en 2012
+au lieu de 0,375 %. Le barème est désormais une table à part,
+`legislation/decote_regimes_speciaux.csv`, branchée par
+`bareme_decote: regimes_speciaux` ; les marches tombant au 1er juillet et le
+modèle lisant un millésime, chaque ligne porte la règle du 1er juillet de
+l'année précédente — la lecture qui n'oppose jamais à l'assuré plus que le droit.
+
+### L'Opéra de Paris : un âge pour tout le monde, et quarante-deux ans pour le ballet
+
+La fiche de l'Opéra portait une période de 1930 à aujourd'hui, avec l'âge de
+quarante ans et aucune décote. Quatre périodes la remplacent, et chacune corrige
+quelque chose.
+
+**L'âge de la danse a dépendu du sexe jusqu'en 2002.** L'article 6 du décret
+n° 68-382 ouvrait le droit « à quarante ans d'âge, pour le personnel féminin de
+la danse ; à quarante-cinq ans d'âge, pour le personnel masculin de la danse »,
+puis cinquante ans pour le chant et les chœurs, cinquante-cinq pour les emplois à
+fatigues exceptionnelles, soixante pour les autres. C'est en 2002 que le texte
+devient « à quarante ans d'âge pour les artistes du ballet », sans distinction.
+Le moteur ne porte qu'un âge par période : comme à la Comédie-Française, c'est
+celui des hommes qui est retenu avant 2002, et une danseuse partie en 1970 se
+voit donc opposer cinq ans de plus que son droit.
+
+**Quarante-deux ans, et non quarante-cinq.** La réforme de 2008 donne à chaque
+catégorie un âge de référence pour la décote — l'âge d'ouverture majoré de cinq
+ans —, et y déroge pour deux d'entre elles : « toutefois, pour les artistes du
+ballet, l'âge de référence est fixé à 42 ans et, pour les musiciens de
+l'orchestre, les chefs de chant et les pianistes, il est fixé à 62 ans ». Un
+danseur qui part à quarante ans se voit donc opposer huit trimestres de décote,
+non vingt : le maximum du régime, pour lui, vaut deux ans. C'est le seul âge de
+référence du modèle qui ne se déduise pas de l'âge d'ouverture, d'où le barème
+`regimes_speciaux_age_fixe`, qui prend le coefficient de la table des régimes
+spéciaux et garde l'âge d'annulation écrit dans la fiche.
+
+**Cent soixante-douze trimestres depuis 2014.** L'article 14 fixait « cent
+soixante » trimestres en 2008, évoluant « comme la durée des services et
+bonifications exigée des fonctionnaires de l'État », puis « cent soixante-douze »
+en toutes lettres depuis le 26 juin 2014. La fiche en portait 150 pour toute
+l'histoire du régime : un danseur né en 1975 voyait sa pension proratisée sur
+cent cinquante trimestres au lieu de cent soixante-douze.
+
+**Ce que la fiche ne porte toujours pas.** Un seul âge d'ouverture par période, là
+où l'article 6 en compte cinq depuis 2011 — quarante ans pour le ballet,
+cinquante-sept pour les chœurs et les emplois à fatigues exceptionnelles,
+soixante pour les musiciens, chefs de chant et pianistes accompagnateurs,
+soixante-deux pour les autres. C'est l'âge du ballet qui est retenu, celui pour
+lequel ce régime est connu et le plus bas du système français : un musicien de
+l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
+lui ouvre qu'à soixante.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -3661,7 +3749,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 540 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 542 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

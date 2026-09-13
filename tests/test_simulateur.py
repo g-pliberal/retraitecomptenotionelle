@@ -2588,6 +2588,70 @@ def test_la_decote_de_la_fonction_publique_est_celle_de_l_article_l14(simulateur
     assert age_annulation == pytest.approx(67.0)
 
 
+def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
+    """La réforme de 2008 leur donne la décote de la fonction publique, en 2010.
+
+    Le V des décrets de réforme est écrit mot pour mot à l'identique dans les
+    six régimes concernés : « le coefficient de minoration […] n'est applicable
+    qu'aux personnes remplissant les conditions […] à compter du 1er juillet
+    2010 […] il est fixé par trimestre manquant à un dixième du taux prévu ».
+    Servir 1,25 % dès 2009, comme le faisaient les fiches, c'est décoter dix
+    fois trop — et retirer un quart de la pension au lieu d'un quarantième.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1955, sexe="H", affiliation="agent_sncf",
+        age_debut=25, age_liquidation=55, niveau_salaire=1.2,
+    )
+
+    # 2009 : le régime n'a pas encore de décote.
+    periode = simulateur.catalogue["sncf"].periode(2009)
+    coefficient, _, _ = scenario._decote(periode, carriere, 2009)
+    assert coefficient is None
+
+    # 2012 : deux dixièmes du taux plein, soit 0,25 % — la marche du 1er juillet
+    # 2011, que la table porte au millésime suivant pour ne jamais opposer à
+    # l'assuré plus que le droit. C'est le taux de la fonction publique quatre
+    # ans plus tôt, et le septième de celui que la fiche servait. L'âge
+    # d'annulation est l'âge de référence du régime, 55 ans, diminué de
+    # quatorze trimestres.
+    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2012)
+    assert coefficient == pytest.approx(0.0025)
+    assert age_annulation == pytest.approx(55.0 - 14.0 / 4.0)
+
+    # 2025 : la montée en charge est finie.
+    periode = simulateur.catalogue["sncf"].periode(2025)
+    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2025)
+    assert coefficient == pytest.approx(0.0125)
+    assert age_annulation == pytest.approx(57.0)
+
+
+def test_l_age_d_annulation_du_ballet_de_l_opera_est_quarante_deux_ans(simulateur):
+    """Le seul âge de référence qui ne soit pas l'âge d'ouverture plus cinq ans.
+
+    Le II de l'article 14 du décret n° 68-382 déroge pour deux catégories :
+    « toutefois, pour les artistes du ballet, l'âge de référence est fixé à
+    42 ans et, pour les musiciens de l'orchestre, les chefs de chant et les
+    pianistes, il est fixé à 62 ans ». Un danseur qui part à quarante ans se
+    voit donc opposer huit trimestres de décote, non vingt.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1980, sexe="F", affiliation="personnel_opera",
+        age_debut=18, age_liquidation=40, niveau_salaire=1.0,
+    )
+    periode = simulateur.catalogue["opera_de_paris"].periode(2020)
+    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2020)
+    assert coefficient == pytest.approx(0.0125)
+    assert age_annulation == pytest.approx(42.0)
+
+    trimestres = scenario._trimestres_de_decote(
+        periode, trimestres=88, requis=172, age_liquidation=40.0,
+        age_annulation=age_annulation,
+    )
+    assert trimestres == 8
+
+
 def test_le_taux_d_avant_1983_ne_depend_que_de_l_age(simulateur):
     """Le taux plein par la durée est une création de 1982.
 

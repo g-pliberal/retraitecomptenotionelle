@@ -54,9 +54,25 @@ regimes:
         taux_cotisation_retraite: 0.0892
         perimetre_taux: agent_seul
         decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: "Réforme des régimes spéciaux de 2008 : décote, durée alignée progressivement."
+        notes: >-
+          RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, portée ici par le décret n°
+          2008-639 du 30 juin 2008 : décote, durée alignée progressivement. LA
+          DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait pleine
+          dès 2009. Le calendrier est écrit mot pour mot, et à l'identique, dans
+          chacun des décrets de la réforme : « le coefficient de minoration […]
+          n'est applicable qu'aux personnes remplissant les conditions […] à
+          compter du 1er juillet 2010 […] il est fixé par trimestre manquant à un
+          dixième du taux prévu […] ce taux augmente du même montant au 1er
+          juillet de chaque année ». Un départ de 2011 décotait donc de 0,125 %
+          par trimestre manquant, non de 1,25 % : dix fois moins, et le plafond de
+          vingt trimestres retirait 2,5 % de la pension au lieu de 25 %. L'âge
+          d'annulation monte de même, de l'âge de référence diminué de seize
+          trimestres en 2010 jusqu'à l'âge de référence lui-même en 2024. La
+          période branche donc `bareme_decote: regimes_speciaux`, qui lit ce
+          calendrier dans `legislation/decote_regimes_speciaux.csv`.
       - debut: 2018
         fin: null
         type_calcul: annuites
@@ -70,6 +86,7 @@ regimes:
         taux_cotisation_retraite: 0.1085
         perimetre_taux: agent_seul
         decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: Report d'âge de 2 ans puis extinction progressive du régime (clause du grand-père).
@@ -117,6 +134,7 @@ regimes:
         taux_cotisation_retraite: 0.1229
         perimetre_taux: agent_seul
         decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -126,6 +144,20 @@ regimes:
           génération. La fiche portait 52 et 57 ans dès 2009 : elle opposait à un
           machiniste parti en 2012 un âge que le régime ne lui demandait que cinq
           ans plus tard.
+          LA DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait
+          pleine dès 2009. Le calendrier est écrit mot pour mot, et à
+          l'identique, dans chacun des décrets de la réforme : « le
+          coefficient de minoration […] n'est applicable qu'aux personnes
+          remplissant les conditions […] à compter du 1er juillet 2010 […] il
+          est fixé par trimestre manquant à un dixième du taux prévu […] ce
+          taux augmente du même montant au 1er juillet de chaque année ». Un
+          départ de 2011 décotait donc de 0,125 % par trimestre manquant, non
+          de 1,25 % : dix fois moins, et le plafond de vingt trimestres
+          retirait 2,5 % de la pension au lieu de 25 %. L'âge d'annulation
+          monte de même, de l'âge de référence diminué de seize trimestres en
+          2010 jusqu'à l'âge de référence lui-même en 2024. La période branche
+          donc `bareme_decote: regimes_speciaux`, qui lit ce calendrier dans
+          `legislation/decote_regimes_speciaux.csv`.
       - debut: 2017
         fin: null
         type_calcul: annuites
@@ -139,6 +171,7 @@ regimes:
         taux_cotisation_retraite: 0.1229
         perimetre_taux: agent_seul
         decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -193,6 +226,7 @@ regimes:
         taux_cotisation_retraite: 0.1229
         perimetre_taux: agent_seul
         decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -200,6 +234,20 @@ regimes:
           d'âge, elles, ne bougent qu'à partir de 2017 et par génération. La fiche
           portait 57 et 62 ans dès 2009, et opposait donc à un agent parti en 2012
           un âge que le régime ne lui demandait pas encore.
+          LA DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait
+          pleine dès 2009. Le calendrier est écrit mot pour mot, et à
+          l'identique, dans chacun des décrets de la réforme : « le
+          coefficient de minoration […] n'est applicable qu'aux personnes
+          remplissant les conditions […] à compter du 1er juillet 2010 […] il
+          est fixé par trimestre manquant à un dixième du taux prévu […] ce
+          taux augmente du même montant au 1er juillet de chaque année ». Un
+          départ de 2011 décotait donc de 0,125 % par trimestre manquant, non
+          de 1,25 % : dix fois moins, et le plafond de vingt trimestres
+          retirait 2,5 % de la pension au lieu de 25 %. L'âge d'annulation
+          monte de même, de l'âge de référence diminué de seize trimestres en
+          2010 jusqu'à l'âge de référence lui-même en 2024. La période branche
+          donc `bareme_decote: regimes_speciaux`, qui lit ce calendrier dans
+          `legislation/decote_regimes_speciaux.csv`.
       - debut: 2017
         fin: null
         type_calcul: annuites
@@ -213,6 +261,7 @@ regimes:
         taux_cotisation_retraite: 0.1229
         perimetre_taux: agent_seul
         decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -834,7 +883,7 @@ regimes:
         assiette: deplafonnee
         taux_cotisation_retraite: 0.1360
         perimetre_taux: agent_seul
-        bareme_decote: fonction_publique
+        bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -853,6 +902,14 @@ regimes:
           1er janvier et au 1er juillet de chaque année jusqu'au 1er juillet
           2012 » (article 85-2) : la montée en charge est lue ici dans la table
           des durées par génération.
+          ET CE N'EST PAS LE BARÈME DE LA FONCTION PUBLIQUE, mais le sien, qui
+          lui ressemble avec quatre ans de retard. L'article 85-2 du décret de
+          1990 porte le même calendrier que les autres régimes spéciaux :
+          décote inapplicable avant le 1er juillet 2010, « un dixième du taux
+          » ensuite, un dixième de plus chaque 1er juillet. La fiche renvoyait
+          au barème de la fonction publique, en avance de quatre ans : elle
+          opposait 0,875 % par trimestre à un clerc parti en 2012, quand son
+          régime lui en opposait 0,375 %.
       - debut: 2011
         fin: 2022
         type_calcul: annuites
@@ -867,7 +924,7 @@ regimes:
         assiette: deplafonnee
         taux_cotisation_retraite: 0.1360
         perimetre_taux: agent_seul
-        bareme_decote: fonction_publique
+        bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -888,7 +945,7 @@ regimes:
         assiette: deplafonnee
         taux_cotisation_retraite: 0.1360
         perimetre_taux: agent_seul
-        bareme_decote: fonction_publique
+        bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -1031,7 +1088,42 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1930
-        fin: null
+        fin: 2001
+        type_calcul: annuites
+        age_ouverture: 45
+        age_taux_plein: 45
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        notes: >-
+          TRENTE-SEPT ANNUITÉS ET DEMIE, et non vingt-cinq. L'article 14 du
+          décret n° 68-382 du 5 avril 1968 le dit depuis l'origine : « chaque
+          annuité liquidable est rémunérée à raison de 2 % des émoluments de
+          base […] le maximum des annuités liquidables, dans la pension, est
+          fixé à trente-sept annuités et demie ». La fiche portait 100
+          trimestres : elle servait 75 % du traitement après vingt-cinq ans de
+          maison, là où le régime en demande trente-sept et demi.
+          CINQ ÂGES, ET DEUX POUR LA SEULE DANSE. L'article 6, dans sa
+          rédaction en vigueur jusqu'en 2002, ouvre le droit « à quarante ans
+          d'âge, pour le personnel féminin de la danse ; à quarante-cinq ans
+          d'âge, pour le personnel masculin de la danse ; à cinquante ans
+          d'âge, pour les artistes du chant et les artistes des chœurs ; à
+          cinquante-cinq ans d'âge, pour les machinistes, les électriciens, les
+          régisseurs ayant la responsabilité du spectacle et les pompiers
+          civils […] ; à soixante ans d'âge, pour les autres catégories du
+          personnel ». Le moteur ne portant qu'un âge par période, c'est celui
+          des hommes de la danse qui est retenu, comme à la Comédie-Française :
+          une danseuse partie en 1970 se voit donc opposer cinq ans de plus que
+          son droit. Aucune décote : la durée manquante ne joue que par la
+          proratisation.
+      - debut: 2002
+        fin: 2008
         type_calcul: annuites
         age_ouverture: 40
         age_taux_plein: 40
@@ -1045,22 +1137,89 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [bonifications, categorie_active, reversion]
         notes: >-
-          Âge d'ouverture de 40 ans pour les artistes du ballet (limite d'âge
-          statutaire), 60-62 ans pour les autres personnels.
-          TRENTE-SEPT ANNUITÉS ET DEMIE, et non vingt-cinq. L'article 14 du
-          décret n° 68-382 du 5 avril 1968 le dit depuis l'origine : « chaque
-          annuité liquidable est rémunérée à raison de 2 % des émoluments de
-          base […] le maximum des annuités liquidables, dans la pension, est
-          fixé à trente-sept annuités et demie ». La fiche portait 100
-          trimestres : elle servait 75 % du traitement après vingt-cinq ans de
-          maison, là où le régime en demande trente-sept et demi. Les décrets
-          n° 2008-240 du 6 mars 2008 et n° 2011-953 du 10 août 2011 y ont porté
-          la réforme des régimes spéciaux — durée d'assurance alignée,
-          coefficient de minoration, âge relevé de deux ans par génération — et
-          ces régimes successifs ne sont pas chiffrés ici. CAS EXTRÊME de
-          l'écart à l'âge de référence : 27 ans d'anticipation par rapport à
-          l'âge de référence 2026. Régime fermé aux recrutements depuis le
-          1er septembre 2023.
+          L'ÂGE DE LA DANSE CESSE DE DÉPENDRE DU SEXE. L'article 6, dans sa
+          rédaction en vigueur le 14 mars 2002, ouvre le droit « à quarante ans
+          d'âge pour les artistes du ballet » — sans distinction — puis à
+          cinquante ans pour le chant et les chœurs, cinquante-cinq pour les
+          emplois à fatigues exceptionnelles, soixante pour les autres. C'est
+          la période où l'âge de quarante ans, celui pour lequel ce régime est
+          connu, vaut pour tout le ballet.
+      - debut: 2009
+        fin: 2013
+        type_calcul: annuites
+        age_ouverture: 40
+        age_taux_plein: 42
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        bareme_decote: regimes_speciaux_age_fixe
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        notes: >-
+          RÉFORME DES RÉGIMES SPÉCIAUX. L'article 14 du décret, réécrit en
+          2008, fixe « le nombre de trimestres nécessaire pour obtenir le
+          pourcentage maximum de la pension à cent soixante », le fait évoluer
+          « comme la durée des services et bonifications exigée des
+          fonctionnaires de l'État » et maintient le pourcentage maximum à
+          75 %.
+          QUARANTE-DEUX ANS, ET NON QUARANTE-CINQ. Le II du même article donne
+          à chaque catégorie un âge de référence — l'âge d'ouverture majoré de
+          cinq ans — mais y déroge pour la danse : « toutefois, pour les
+          artistes du ballet, l'âge de référence est fixé à 42 ans et, pour les
+          musiciens de l'orchestre, les chefs de chant et les pianistes, il est
+          fixé à 62 ans ». Un danseur partant à quarante ans se voit donc
+          opposer huit trimestres de décote, non vingt.
+          LA DÉCOTE NE MONTE PAS À LA MÊME VITESSE POUR LUI. Le V ramène les
+          autres catégories à l'âge de référence diminué de seize trimestres en
+          2010, diminution qui s'efface jusqu'en 2024 ; pour le ballet et les
+          musiciens il écrit au contraire un âge fixe — ouverture « majoré de
+          quatre trimestres » de juillet 2010 à juin 2011, « six trimestres »
+          l'année suivante, « huit trimestres » ensuite. La fiche porte l'âge
+          d'arrivée, quarante-deux ans : un danseur liquidant en 2011 se voit
+          donc opposer jusqu'à quatre trimestres de décote de trop, au taux de
+          0,125 % — un quart de point de pension.
+      - debut: 2014
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 40
+        age_taux_plein: 42
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        bareme_decote: regimes_speciaux_age_fixe
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        notes: >-
+          CENT SOIXANTE-DOUZE TRIMESTRES, ÉCRITS EN TOUTES LETTRES. L'article
+          14, depuis le 26 juin 2014, ne renvoie plus à la fonction publique :
+          « le nombre de trimestres nécessaire pour obtenir le pourcentage
+          maximum de la pension est fixé à cent soixante-douze. Le pourcentage
+          maximum de la pension est fixé à 75 % ». Le V le module encore par
+          génération jusqu'aux assurés nés en 1973, d'où la lecture à la
+          génération que la fiche conserve.
+          L'ÂGE DU BALLET N'A PAS BOUGÉ. Le décret n° 2011-953 du 10 août 2011
+          a relevé les autres : « 1° A quarante ans pour les artistes du
+          ballet ; 2° A cinquante-sept ans pour les artistes des chœurs ; 3° A
+          cinquante-sept ans pour les personnels qui occupent des emplois
+          reconnus […] comme comportant des fatigues exceptionnelles ; 4° A
+          soixante ans pour les musiciens, chefs de chant et pianistes
+          accompagnateurs ; 5° A soixante-deux ans pour les autres catégories
+          de personnel ». C'est la rédaction encore en vigueur : la réforme de
+          2023 a fermé le régime aux recrutements du 1er septembre 2023 sans
+          toucher à ces âges.
+          CAS EXTRÊME de l'écart à l'âge de référence : vingt-quatre ans
+          d'anticipation par rapport à l'âge de référence 2026, et le seul
+          régime français où l'on liquide à quarante ans.
 
   - code: comedie_francaise
     nom: Caisse de retraites des personnels de la Comédie-Française
@@ -1134,7 +1293,7 @@ regimes:
         assiette: hors_primes
         taux_cotisation_retraite: 0.1085
         perimetre_taux: agent_seul
-        bareme_decote: fonction_publique
+        bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, reversion]
@@ -1143,6 +1302,10 @@ regimes:
           2 juillet 2008 : coefficient de minoration et durée d'assurance alignée
           sur celle de la fonction publique, qui monte par génération. Les bornes
           d'âge, elles, ne bougent qu'en 2011.
+          La décote, elle, monte en charge sur le calendrier des régimes
+          spéciaux — rien avant le 1er juillet 2010, un dixième du taux plein
+          ensuite, 1,25 % seulement en 2019 —, et non sur celui de la fonction
+          publique, qui a quatre ans d'avance.
       - debut: 2012
         fin: null
         type_calcul: annuites
@@ -1155,7 +1318,7 @@ regimes:
         assiette: hors_primes
         taux_cotisation_retraite: 0.1085
         perimetre_taux: agent_seul
-        bareme_decote: fonction_publique
+        bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, reversion]

@@ -227,8 +227,9 @@ export class MinimumContributif {
  * 2020. Rien avant 2006 : la décote n'existait pas dans la fonction publique.
  */
 export class DecoteFonctionPublique {
-  constructor(paquet) {
-    this._table = paquet.decote_fonction_publique ?? {};
+  /** @param {object} paquet @param {string} cle table du paquet à lire. */
+  constructor(paquet, cle = "decote_fonction_publique") {
+    this._table = paquet[cle] ?? {};
     this._annees = Object.keys(this._table).map(Number).sort((a, b) => a - b);
   }
 
@@ -245,6 +246,26 @@ export class DecoteFonctionPublique {
       applicable = candidate;
     }
     return this._table[String(applicable)];
+  }
+}
+
+/**
+ * Décote des régimes spéciaux — réforme de 2008, montée en charge.
+ *
+ * LES RÉGIMES SPÉCIAUX N'ONT PAS DÉCOTÉ DE 1,25 % DÈS 2009. La réforme de 2008
+ * leur donne la décote de la fonction publique AVEC QUATRE ANS DE RETARD :
+ * rien avant le 1er juillet 2010, puis un dixième du taux plein, un dixième de
+ * plus chaque 1er juillet jusqu'à 1,25 % en 2019. Opposer 1,25 % à un cheminot
+ * parti en 2011, c'est décoter dix fois trop — et, la décote étant plafonnée à
+ * vingt trimestres, lui retirer 25 % de sa pension au lieu de 2,5 %.
+ *
+ * L'âge d'annulation suit le même retard : l'âge de référence du régime —
+ * l'âge d'ouverture du droit majoré de cinq ans, non la limite d'âge du grade
+ * — diminué de seize trimestres en 2010, de rien à partir de 2024.
+ */
+export class DecoteRegimesSpeciaux extends DecoteFonctionPublique {
+  constructor(paquet) {
+    super(paquet, "decote_regimes_speciaux");
   }
 }
 

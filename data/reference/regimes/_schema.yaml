@@ -199,8 +199,20 @@ champs_periode:
       de l'article L. 14 du code des pensions : le coefficient ET l'âge
       d'annulation y montent en charge de 2006 à 2020, ce dernier étant la
       LIMITE D'ÂGE du grade diminuée d'un nombre décroissant de trimestres
-      (`legislation/decote_fonction_publique.csv`).
-    valeurs: ["regime_aligne", "fonction_publique"]
+      (`legislation/decote_fonction_publique.csv`). `regimes_speciaux`
+      applique le même barème avec QUATRE ANS DE RETARD, celui que la réforme
+      de 2008 a donné aux régimes spéciaux : rien avant le 1er juillet 2010,
+      un dixième du taux plein ensuite, 1,25 % seulement en 2019, et un âge
+      d'annulation qui est l'âge de référence du régime — l'âge d'ouverture
+      majoré de cinq ans — diminué de seize trimestres en 2010 puis de rien à
+      partir de 2024 (`legislation/decote_regimes_speciaux.csv`).
+      `regimes_speciaux_age_fixe` en prend le coefficient mais garde l'âge
+      d'annulation écrit dans la fiche : c'est ce que le V de l'article 14 fait
+      pour les catégories d'âge atypique, artistes du ballet et musiciens de
+      l'orchestre, dont l'âge d'annulation est leur âge d'ouverture majoré de
+      huit trimestres et ne recule pas avec la montée en charge.
+    valeurs: ["regime_aligne", "fonction_publique", "regimes_speciaux",
+              "regimes_speciaux_age_fixe"]
     defaut: regime_aligne
 
   decote_annulee_par_la_duree:

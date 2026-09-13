@@ -128,7 +128,14 @@ class PeriodeRegime:
     #: coefficient ci-dessus, éventuellement lu à la génération ;
     #: ``fonction_publique`` applique celui de l'article L. 14 du code des
     #: pensions, dont le coefficient ET l'âge d'annulation montent en charge de
-    #: 2006 à 2020 (``legislation/decote_fonction_publique.csv``).
+    #: 2006 à 2020 (``legislation/decote_fonction_publique.csv``) ;
+    #: ``regimes_speciaux`` applique le même barème avec QUATRE ANS DE RETARD,
+    #: celui que la réforme de 2008 a donné aux régimes spéciaux — rien avant
+    #: le 1er juillet 2010, un dixième du taux plein ensuite, 1,25 % seulement
+    #: en 2019 (``legislation/decote_regimes_speciaux.csv``) ;
+    #: ``regimes_speciaux_age_fixe`` en prend le coefficient mais garde l'âge
+    #: d'annulation de la fiche, comme le V de l'article 14 le fait pour les
+    #: catégories d'âge atypique — artistes du ballet, musiciens de l'orchestre.
     bareme_decote: str
     #: La durée d'assurance annule-t-elle la décote ? Vrai depuis l'ordonnance
     #: du 26 mars 1982, qui ouvre le taux plein à 60 ans à qui a la durée

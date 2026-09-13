@@ -420,6 +420,17 @@ def _decote_fonction_publique() -> dict:
     }
 
 
+def _decote_regimes_speciaux() -> dict:
+    """Barème de décote des régimes spéciaux, par année de liquidation."""
+    from retraite_notionnelle.scenarios.actuel import DecoteRegimesSpeciaux
+
+    return {
+        str(annee): [trimestres, coefficient, int(fiabilite)]
+        for annee, (trimestres, coefficient, fiabilite)
+        in sorted(DecoteRegimesSpeciaux(DONNEES)._table.items())
+    }
+
+
 def _minimum_garanti() -> dict:
     """Barème de l'article L. 17, point d'indice et montants servis."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
@@ -519,6 +530,7 @@ def construire() -> bytes:
         "minimum_garanti": _minimum_garanti(),
         "minimum_vieillesse": _minimum_vieillesse(),
         "decote_fonction_publique": _decote_fonction_publique(),
+        "decote_regimes_speciaux": _decote_regimes_speciaux(),
         "carriere_longue": _carriere_longue(),
         "majorations_enfants": _majorations_enfants(),
         "surcote_parentale": _surcote_parentale(),
