@@ -40,8 +40,11 @@ dépose ``<base>.sqlite.gz`` (380 Mo pour LEGI, 650 Mo pour le JORF) avec le
 jeton ``GH_TOKEN`` ou ``GITHUB_TOKEN`` de l'environnement. Il faut un jeton
 qui ait le droit d'écrire les releases : celui d'une session Claude Code ne
 l'a pas — GitHub répond « Creating, editing, or deleting releases is not
-permitted for this session type » —, et la publication se fait donc depuis
-un poste où le dépôt est cloné, après avoir construit l'index.
+permitted for this session type » —, celui d'un workflow GitHub Actions
+l'a. C'est donc ``.github/workflows/index-dila.yml`` qui publie : lancé à
+la main (onglet Actions, « Run workflow »), il récupère l'index publié et
+lui applique les incréments parus, ou le reconstruit depuis le dump si on
+le lui demande ou si rien n'est publié ; chaque lundi, la mise à jour seule.
 
 LE DUMP GLOBAL A QUATORZE MOIS. La DILA ne l'a pas régénéré depuis juillet
 2025 ; ce qui a paru depuis n'est que dans les incréments quotidiens

@@ -39,9 +39,10 @@ ce que le changement déplace.
 
 Ne pas retélécharger les dumps de la DILA pour une recherche : l'index plein
 texte du champ social se récupère en une minute depuis la release `index-dila`
-du dépôt. Si `--recuperer` répond qu'aucun index n'est publié, le construire
-(`dila_index.py jorf`, deux heures) plutôt que d'écrire un nouveau filtre en
-flux, et signaler que la publication reste à faire depuis un poste de travail.
+du dépôt, que le workflow GitHub Actions `index-dila.yml` tient à jour chaque
+lundi. Si `--recuperer` répond qu'aucun index n'est publié, lancer ce workflow
+(onglet Actions, « Run workflow ») plutôt que d'écrire un nouveau filtre en
+flux ; une session ne peut pas publier elle-même, GitHub le lui interdit.
 
 ```bash
 python scripts/fetch/dila_index.py jorf --recuperer      # une fois par session

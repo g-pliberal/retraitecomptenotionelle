@@ -817,9 +817,9 @@ python scripts/verifier_donnees.py --appliquer  # aligne sur la source et certif
 > 1,7 Go, une demi-heure par passe, pour un dump qui n'a pas changé depuis
 > juillet 2025. Pour EXPLORER, `scripts/fetch/dila_index.py` construit une fois
 > une base SQLite FTS5 du champ social du JORF et de LEGI (titres et textes,
-> tenue à jour par les incréments quotidiens), à publier comme fichier de la
-> release `index-dila` du dépôt (`--publier`, avec un jeton qui a le droit
-> d'écrire les releases) d'où `--recuperer` la rapatrie en une minute ;
+> tenue à jour par les incréments quotidiens), publiée comme fichier de la
+> release `index-dila` du dépôt par le workflow GitHub Actions `index-dila.yml`
+> (chaque lundi, ou à la demande) d'où `--recuperer` la rapatrie en une minute ;
 > `dila_cherche.py` y répond en quelques millisecondes, par des extraits et
 > non des textes entiers. La certification, elle, continue de lire le dump :
 > l'index n'en garde que ce qui touche au champ du dépôt.
