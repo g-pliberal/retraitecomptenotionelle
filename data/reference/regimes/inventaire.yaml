@@ -719,7 +719,7 @@ inventaire:
     couverture: modelise
     statuts: [agent_ieg]
     textes:
-      - {reference: "loi n° 46-628 du 8 avril 1946, article 47, et décret n° 46-1541 du 22 juin 1946 (statut national)", id: null}
+      - {reference: "loi n° 46-628 du 8 avril 1946, article 47, et décret n° 46-1541 du 22 juin 1946 (statut national), annexe 3", id: LEGIARTI000006632496}
       - {reference: "code de la sécurité sociale, R. 711-1 8°", id: LEGIARTI000048031379}
 
   - code: marins
@@ -767,11 +767,17 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: modelise
+    couverture: partiel
     statuts: [clerc_de_notaire]
     textes:
       - {reference: "loi du 12 juillet 1937 instituant une caisse de retraite et de prévoyance des clercs et employés de notaires", id: null}
       - {reference: "ordonnance n° 45-2574 du 31 octobre 1945 modifiant la loi du 12 juillet 1937", id: LEGITEXT000045170442}
+      - {reference: "décret n° 90-1215 du 20 décembre 1990, article 84 (âge d'ouverture, neuf versions)", id: LEGIARTI000006775247}
+    manque: >-
+      Deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée
+      justifiant de vingt-cinq années de cotisations — et le moteur n'en porte
+      qu'un : la fiche garde le second. Les décrets de taux (1977, 1979, 1986)
+      donnent la cotisation de tous les risques, pas la part vieillesse.
 
   - code: banque_de_france
     nom: Régime spécial de retraite de la Banque de France

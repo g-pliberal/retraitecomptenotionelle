@@ -14,8 +14,8 @@ savoir de quels régimes on parle, puis, pour chacun, quelles règles il a
 appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
-L'inventaire compte **81 régimes** : 34 modélisés,
-20 calculés mais incomplets, 18 à modéliser,
+L'inventaire compte **81 régimes** : 33 modélisés,
+21 calculés mais incomplets, 18 à modéliser,
 9 hors champ.
 
 | Couverture | Ce que cela veut dire |
@@ -108,7 +108,7 @@ repris par un autre.
 | Régime spécial des industries électriques et gazières (CNIEG) (`ieg`) | spécial | depuis 1946, fermé en 2023 | ✅ modélisé | `agent_ieg` |  |
 | Régime des marins (ENIM) (`marins`) | spécial | depuis 1673 | ◐ partiel | `marin` | La grille des salaires forfaitaires par catégorie, que le décret renvoie à un arrêté, est introuvable, et la catégorie du marin n'est pas dans la carrière saisie ; un seul jeu de règles pour 1930-2026. |
 | Régime spécial de sécurité sociale dans les mines (CANSSM) (`mines`) | spécial | depuis 1894, fermé en 2010 | ✅ modélisé | `mineur` |  |
-| Caisse de retraite et de prévoyance des clercs et employés de notaires (`crpcen`) | spécial | depuis 1937 | ✅ modélisé | `clerc_de_notaire` |  |
+| Caisse de retraite et de prévoyance des clercs et employés de notaires (`crpcen`) | spécial | depuis 1937 | ◐ partiel | `clerc_de_notaire` | Deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée justifiant de vingt-cinq années de cotisations — et le moteur n'en porte qu'un : la fiche garde le second. Les décrets de taux (1977, 1979, 1986) donnent la cotisation de tous les risques, pas la part vieillesse. |
 | Régime spécial de retraite de la Banque de France (`banque_de_france`) | spécial | depuis 1806, fermé en 2007 | ✅ modélisé | `agent_banque_de_france` |  |
 | Régime de retraite du personnel de l'Opéra national de Paris (`opera_de_paris`) | spécial | depuis 1698, fermé en 2023 | ✅ modélisé | `personnel_opera` |  |
 | Régime de retraite du personnel de la Comédie-Française (`comedie_francaise`) | spécial | depuis 1812, fermé en 2023 | ✅ modélisé | `personnel_comedie_francaise` |  |
@@ -224,3 +224,61 @@ Trois témoins bougent sur 250, et 74 nouveaux entrent (générations 1945 et
 1965). C'est peu, et c'est attendu : les cas types liquident à 64 ans avec
 une carrière complète, là où les âges faux ne mordaient pas ; ils mordaient
 sur qui liquidait tôt, que le balayage ne visite que pour le privé.
+
+### Tranche B2 — les régimes spéciaux à longue période fermée
+
+Ce que l'index LEGI porte, et ce qu'il ne porte pas, pour les sept régimes
+de la tranche ; ce qui a été lu et découpé ; ce qui reste.
+
+| Régime | Ce qui a été lu | Ce qui change | Ce qui reste |
+|---|---|---|---|
+| `sncf` | Décret n° 2008-639, article 1 (`LEGIARTI000032935195`) et article 37-1 (`LEGIARTI000023732614`, `LEGIARTI000029165223`) : le relèvement de 2017 est étalé par génération, quatre mois par année de naissance — cinquante ans pour les agents de conduite nés avant 1967, cinquante-deux ans à compter de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962-1967, pour les autres | la marche d'un coup de 2018 (50 → 52 ans) devient six périodes, 2017 à 2024, qui suivent le calendrier par année de liquidation ; l'âge de référence de la décote suit | avant 2008, LEGI ne porte rien du règlement de retraites de la SNCF (1911, 1954) ; les cinquante ans, 150 trimestres, 75 % et six derniers mois de 1930-2008 restent lus dans le décret de 2008 « avant modification » ; le relèvement de 2023, étalé à compter de 2025, reste à lire |
+| `ratp` | Décret n° 2008-637, article 6 (`LEGIARTI000023732842`) et article 51-1 II (`LEGIARTI000023732424`, décret n° 2011-292) : même calendrier que la SNCF, tableau B à cinquante-deux ans pour les agents nés à compter de 1972 | six périodes 2017-2024 au lieu de la marche de 2017 | avant 2008, rien dans LEGI ; le relèvement de 2023 reste à lire |
+| `ieg` | Statut national de 1946, annexe 3 (`LEGIARTI000006632496`, version de 1946, puis `LEGIARTI000023733902`, version du 21 mars 2011) ; les décrets de retenue n° 86-874, 87-468, 88-792, 88-1221 et 91-159 art. 6 | **la retenue de l'agent était fausse de 1946 à 1990** : 7,85 % sur toute la période, quand le statut disait 6 % en 1946 et les décrets 7,7 % au 1er août 1986, 7,9 % de juillet 1987, 8,9 % de janvier 1989, 7,85 % seulement depuis février 1991 — cinq périodes de taux ; et six périodes 2017-2024 pour le calendrier 55 → 57 ans des services actifs | le décret n° 84-63 du 27 janvier 1984 a modifié le taux au 1er janvier 1984 mais l'index n'en porte que la clause d'application (`LEGIARTI000006766294`) : 6 % est reconduit jusqu'en 1985, lecture incomplète et nommée ; le relèvement de 2023 reste à lire |
+| `crpcen` | Décret n° 51-721, article 27 (`LEGIARTI000006773239`, 1977-1990) ; décret n° 90-1215, article 84 dans ses neuf versions (`LEGIARTI000006775247` à `LEGIARTI000047910068`) ; décrets de taux n° 74-172, 77-44, 79-423, 86-896, 87-467 | **la table du régime général était lue à la place du calendrier propre du régime** : le drapeau `age_ouverture_par_generation` donnait soixante-deux ans à la génération 1955 quand l'article 84 lui donne cinquante-sept ans et trois mois. Quinze périodes suivent maintenant le calendrier de l'article 84 par année de liquidation, 2008 à 2024, puis l'âge légal lu à la génération depuis 2025 ; la fiche passe de « modélisé » à « partiel » | deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée ayant vingt-cinq années de cotisations —, la fiche garde le second ; les décrets de taux donnent la cotisation de tous les risques (9,90 % en 1977, 10,75 % en 1979, 16,20 % en 1986), pas la part vieillesse : les 11 % de la fiche restent une estimation |
+| `marins` | Code des pensions de retraite des marins, L. 14 (`LEGIARTI000006791907`, `LEGIARTI000006791908`) : « le montant des pensions […] est fixé par voie réglementaire sur la base du salaire forfaitaire » ; R. 2, R. 11 et R. 13 à une ou deux versions (1968, 1985) | rien : la formule est stable et déjà lue | la grille des salaires forfaitaires, l'âge des pensions proportionnelles à cinquante ans, et le code des transports depuis 2010 |
+| `banque_de_france` | Décret n° 2007-262 : son règlement annexé existe dans LEGI en dix-sept versions, de 2007 à 2025 (`LEGIARTI000006778516` à `LEGIARTI000047909725`) | rien cette fois | lire ces dix-sept versions, notamment celle du décret n° 2012-701 applicable aux pensions de 2016 ; avant 2007, le règlement du 29 mars 1968 n'est pas dans LEGI |
+| `port_strasbourg` | rien : LEGI ne porte que des décrets de compensation | rien | le règlement de retraite est un acte de l'établissement ; la seule voie est de le demander |
+
+Dix témoins bougent : l'agent des IEG né en 1925 perd 18 % de compte
+notionnel rétroactif — il avait cotisé 6 % et non 7,85 % —, celui né en 1955
+1,5 % ; les âges opposables des cheminots, agents RATP et IEG nés en 1955 et
+des clercs nés en 1945 et 1955 descendent d'un à quatre ans et demi. Les
+pensions actuelles ne bougent pas : les cas types liquident après l'âge.
+
+### Feuille de route B3-B4 — ce que le script montre à lire
+
+`python scripts/calendrier_regimes.py --carte` (le tableau est dans
+[`limites.md`](limites.md)) compte, pour chaque fiche, les versions d'articles
+pivots qui commencent sans qu'une période commence. Ce que ces nombres disent
+pour les tranches suivantes :
+
+- **Complémentaires du privé (B3).** `agirc`, `unirs`, `arrco_tranche_2` et
+  `agirc_arrco` n'ont aucun texte dans LEGI : accords hors JORF. L'Agirc de
+  1947 à 1980 (8 % pendant trente-quatre ans) et l'Arrco de 1961 à 1995 (4 %)
+  se dateront chez la fédération, dont la compilation des valeurs de point est
+  déjà lue par `scripts/fetch/agirc_arrco_valeurs_point.py`, et dans les
+  barèmes IPP ; à défaut, aux dates connues des accords (1962, 1970-1976,
+  1988, 1996), au niveau `moyenne`.
+- **Libéraux (B4).** `carpv_complementaire` : 18 coupures de texte, toutes du
+  décret n° 50-1318 (cotisation en actes médicaux par classes d'âge de 1954 à
+  1997, puis en points) — la grille par millésime est lisible ; `cavp`
+  (7, décret n° 49-580), `cnavpl` (9, dont D. 643-1 et D. 642-3 versions
+  2004-2015), `cavamac` (5), `cprn` (4), `cipav` (3), `cnbf` (2, R. 723-43),
+  `ircec_raap` (2), `cavom` (2). Ce sont des décrets consolidés à plusieurs
+  versions : la lecture est faisable version par version, comme pour la
+  tranche B2.
+- **Bruit à connaître.** `msa_rco` (24) et `carmf` (1) : la valeur du point
+  change chaque année, c'est `valeurs_point.csv` qui la porte, pas la fiche.
+  `regime_general` (14), `cnracl` (17), `fonction_publique_etat` (7),
+  `fspoeie` (4), `msa_salaries` (3) : versions de rédaction (renvois,
+  codification) d'articles dont les paramètres sont déjà lus à la génération
+  par les tables de `legislation/` ; à relire une fois pour le confirmer, sans
+  attendre de coupure.
+- **Restes de B2.** Le relèvement de 2023 des régimes spéciaux, étalé à
+  compter de 2025 (`sncf`, `ratp`, `ieg`, `opera_de_paris`,
+  `comedie_francaise`) ; les dix-sept versions du règlement de la Banque de
+  France ; le décret n° 84-63 des IEG dont l'index ne porte pas le chiffre ;
+  le règlement du port autonome de Strasbourg, à demander.
+- **Puis B5**, les dix-huit régimes à modéliser de l'inventaire, par
+  population décroissante.

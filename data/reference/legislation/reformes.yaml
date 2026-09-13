@@ -222,6 +222,14 @@ reformes:
         absent de LEGI ; la fiche n'a qu'une période et la tranche B2 doit
         dire ce que la réforme de 2008 y a changé.
 
+  - code: crpcen_2008
+    date: 2008-02-18
+    texte: {reference: "décret n° 2008-147 du 15 février 2008 relatif au régime spécial de retraite des clercs et employés de notaires (article 84 du décret n° 90-1215)", id: LEGIARTI000018129122}
+    parametres: [age_ouverture, duree_requise_trimestres]
+    regimes: [crpcen]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: ircantec_2008
     date: 2009-01-01
     texte: {reference: "décret n° 2008-996 du 23 septembre 2008 modifiant le décret n° 70-1277 (rendement et taux de l'Ircantec)", id: LEGITEXT000019510329}

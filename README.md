@@ -112,7 +112,7 @@ Scénario                                                          Courants   Co
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 221 Ko compressés (1306 Ko brut) et prend quelques dixièmes
+chargement transfère 226 Ko compressés (1401 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
@@ -131,7 +131,7 @@ la page.
 <details>
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
-`index.html` charge deux choses : `moteur/donnees.json` (1306 Ko — les séries, les
+`index.html` charge deux choses : `moteur/donnees.json` (1401 Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les 54 fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -877,7 +877,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (1306 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (1401 Ko, produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
