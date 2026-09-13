@@ -3109,13 +3109,20 @@ modèle :
 | Régime | Couverture | Jeux de règles | Années par jeu |
 |---|---|---|---|
 | `port_strasbourg`, `marins` | 1930-2026 | 1 | 97 |
-| `seita` | 1935-2026 | 1 | 92 |
 | `carpv_complementaire` | 1950-2026 | 1 | 77 |
 | `cnbf` | 1948-2026 | 2 | 40 |
 | `cavp_complementaire`, `cavec_complementaire` | 1949-2026 | 2 | 37 à 39 |
 | `sncf`, `ratp` | 1930-2026 | 3 | 32 |
 | `ieg` | 1946-2026 | 3 | 27 |
 | `opera_de_paris`, `comedie_francaise` | 1930-2026 | 4 | 24 |
+| `seita` | 1935-2026 | 8 | 12 |
+| `mines` | 1930-2026 | 22 | 4 |
+
+Les deux dernières lignes sont l'état d'arrivée de cette campagne, et les deux
+premières ce qui lui résiste : le port autonome de Strasbourg, dont le règlement
+de retraite est un acte de l'établissement et non un texte publié, et les marins,
+dont la formule est stable depuis 1968 — vérifiée article par article — mais dont
+la grille des salaires forfaitaires reste introuvable.
 
 Le nombre n'est pas à lui seul un verdict : un régime dont les règles n'ont pas
 bougé mérite une seule période, et c'est le cas des trois complémentaires
