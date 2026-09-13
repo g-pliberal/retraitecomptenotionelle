@@ -804,9 +804,23 @@ python scripts/fetch/openfisca_regime_general.py  # contre-expertise du scénari
 python scripts/fetch/cnav_revalorisation_salaires.py  # revalorisation des salaires portés au compte
 python scripts/fetch/agirc_arrco_valeurs_point.py  # valeurs du point, par la fédération
 
+python scripts/fetch/dila_index.py jorf --recuperer   # l'index plein texte du JO, publié (1 min)
+python scripts/fetch/dila_index.py legi --recuperer   # le même pour LEGI
+python scripts/fetch/dila_cherche.py jorf 'plafond NEAR("securite sociale") FRS' --jusqu 1981
+
 python scripts/verifier_donnees.py              # confronte, sans rien écrire
 python scripts/verifier_donnees.py --appliquer  # aligne sur la source et certifie
 ```
+
+> **Chercher dans le Journal officiel sans le retélécharger.** Les scripts
+> `dila_legi_*` et `jorf_*` lisent le dump global de la DILA en flux — 1,1 à
+> 1,7 Go, une demi-heure par passe, pour un dump qui n'a pas changé depuis
+> juillet 2025. Pour EXPLORER, `scripts/fetch/dila_index.py` construit une fois
+> une base SQLite FTS5 du champ social du JORF et de LEGI (titres et textes,
+> tenue à jour par les incréments quotidiens), publiée comme fichier de release
+> GitHub ; `dila_cherche.py` y répond en quelques millisecondes, par des
+> extraits et non des textes entiers. La certification, elle, continue de lire
+> le dump : l'index n'en garde que ce qui touche au champ du dépôt.
 
 > **Ce qui reste saisi à la main :** le salaire moyen et la productivité
 > d'avant 1950, les taux de cotisation d'avant 1967 et ceux des régimes autres
@@ -867,7 +881,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          543 tests Python
+tests/                          559 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et le relevé d'OpenFisca-France-Pension qui sert
                                 de contre-expertise au scénario 1

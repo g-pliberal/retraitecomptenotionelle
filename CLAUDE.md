@@ -34,3 +34,22 @@ Le Python de `src/` fait foi. Toute modification du modèle doit être portée d
 `moteur/js/`, puis les témoins régénérés par
 `python scripts/construire_temoins.py` : leur diff montre, chiffre par chiffre,
 ce que le changement déplace.
+
+## Chercher dans le JORF ou LEGI
+
+Ne pas retélécharger les dumps de la DILA pour une recherche : l'index plein
+texte du champ social est publié, et se récupère en une minute.
+
+```bash
+python scripts/fetch/dila_index.py jorf --recuperer      # une fois par session
+python scripts/fetch/dila_index.py jorf --mettre-a-jour  # les incréments parus depuis
+python scripts/fetch/dila_cherche.py jorf 'plafond NEAR("securite sociale")' --jusqu 1981
+python scripts/fetch/dila_cherche.py jorf --texte JORFTEXT000000568533 --motif mensuel
+python scripts/fetch/dila_cherche.py legi '"sur la base de" heures' --num R351-9
+```
+
+Lire les extraits, pas les textes : `--compter` d'abord si la requête est
+large, `--limite` ensuite, `--texte ID --motif` pour ne lire que les fenêtres
+utiles. L'index ne contient que le champ social (voir `THEMATIQUE` dans
+`dila_index.py`) : ce qu'il ne trouve pas peut exister dans le dump, que les
+scripts de certification continuent de lire.
