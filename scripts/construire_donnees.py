@@ -249,6 +249,7 @@ def _regimes() -> list[dict]:
                     "points_minimum_annuels": p.points_minimum_annuels,
                     "points_par_trimestre_valide": p.points_par_trimestre_valide,
                     "bareme_points": p.bareme_points,
+                    "points_de": p.points_de,
                     "valeur_point_euros": p.valeur_point_euros,
                     "valeur_point_annee": p.valeur_point_annee,
                     "borne_basse_euros": p.borne_basse_euros,

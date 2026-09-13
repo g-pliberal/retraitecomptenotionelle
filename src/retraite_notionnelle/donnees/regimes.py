@@ -194,6 +194,14 @@ class PeriodeRegime:
     #: minimum contributif, puis une pente jusqu'au maximum M de l'année —, et
     #: la pension multiplie les points par 37,5 / la durée requise en années.
     bareme_points: str | None
+    #: BARÈME D'UN AUTRE RÉGIME. Le prix d'achat et la valeur de service du
+    #: point sont ceux du régime nommé ici, et non ceux du code de la fiche.
+    #: Une seule situation l'exige : une TRANCHE que tous les affiliés d'un
+    #: régime ne cotisent pas. La tranche 2 de l'Arrco n'est due que par les
+    #: non-cadres — les cadres cotisent l'Agirc au-dessus du plafond —, et elle
+    #: forme donc une fiche à part, que l'affiliation donne aux uns et pas aux
+    #: autres ; ses points restent des points Arrco.
+    points_de: str | None
     #: VALEUR DE SERVICE DU POINT écrite dans la fiche, en euros de
     #: ``valeur_point_annee``, pour les régimes dont la caisse est seule à la
     #: publier et dont `valeurs_point.csv` ne porte donc rien de certifiable.
@@ -645,6 +653,7 @@ class CatalogueRegimes:
                     else float(p["points_par_trimestre_valide"])
                 ),
                 bareme_points=p.get("bareme_points"),
+                points_de=p.get("points_de"),
                 valeur_point_euros=(
                     None if p.get("valeur_point_euros") is None
                     else float(p["valeur_point_euros"])

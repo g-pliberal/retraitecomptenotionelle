@@ -657,6 +657,10 @@ export class ScenarioActuel {
           continue;
         }
         for (const periode of regime.periodesActives(ligne.annee)) {
+          // BARÈME D'UN AUTRE RÉGIME : une tranche que tous les affiliés ne
+          // cotisent pas forme une fiche à part, dont les points restent ceux
+          // du régime d'origine. Voir `points_de`.
+          const bareme = periode.points_de ?? code;
           // Les bornes d'assiette et le repère en points sont ANNUELS : une
           // année incomplète ne les atteint qu'à proportion de ses mois, comme
           // le plafond lui-même.
@@ -729,7 +733,7 @@ export class ScenarioActuel {
             // C'est l'ASSIETTE qui y entre : la cotisation est due sur six
             // cents SMIC horaires au moins et sur un plafond au plus.
             const [echelleMsa, fiabiliteEchelleMsa] = this.conversionsPoints
-              .echelle(code, ligne.annee, anneeLiquidation);
+              .echelle(bareme, ligne.annee, anneeLiquidation);
             pointsAcquis.set(code,
               (pointsAcquis.get(code) ?? 0.0)
                 + this.pointsMsa(periode, ligne.annee, assiette) * part * echelleMsa);
@@ -749,7 +753,7 @@ export class ScenarioActuel {
             // (D. 643-1), et c'est cette conversion qui porte le droit
             // d'avant 2004.
             const [echelleTrim, fiabiliteEchelleTrim] = this.conversionsPoints
-              .echelle(code, ligne.annee, anneeLiquidation);
+              .echelle(bareme, ligne.annee, anneeLiquidation);
             pointsAcquis.set(code,
               (pointsAcquis.get(code) ?? 0.0)
                 + periode.points_par_trimestre_valide
@@ -767,7 +771,7 @@ export class ScenarioActuel {
             // ne dépend alors pas du taux de cotisation, et c'est heureux : ce
             // sont les barèmes qui sont publiés, pas les prix d'achat.
             const [echelleBareme, fiabiliteEchelleBareme] = this.conversionsPoints
-              .echelle(code, ligne.annee, anneeLiquidation);
+              .echelle(bareme, ligne.annee, anneeLiquidation);
             pointsAcquis.set(code,
               (pointsAcquis.get(code) ?? 0.0)
                 + periode.points_maximum * assiette / repere * echelleBareme);
@@ -778,7 +782,7 @@ export class ScenarioActuel {
             continue;
           }
           const achat = (periode.type_calcul === "points" || periode.type_calcul === "mixte")
-            ? this.valeursPoint.achat(code, ligne.annee)
+            ? this.valeursPoint.achat(bareme, ligne.annee)
             : null;
           if (achat !== null) {
             const [reference, tauxAppel, fiabiliteAchat] = achat;
@@ -796,7 +800,7 @@ export class ScenarioActuel {
             // 1998 produisaient 30,31 € de pension quand les mêmes cent euros
             // de 1999 n'en produisaient que 11,15.
             const [echelle, fiabiliteEchelle] = this.conversionsPoints
-              .echelle(code, ligne.annee, anneeLiquidation);
+              .echelle(bareme, ligne.annee, anneeLiquidation);
             pointsAcquis.set(code, (pointsAcquis.get(code) ?? 0.0) + pointsAnnee * echelle);
             fiabilitePoints.set(code, Math.min(
               fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, fiabiliteAchat,
@@ -880,7 +884,7 @@ export class ScenarioActuel {
 
         const points = pointsAcquis.get(code) ?? 0.0;
         if (points) {
-          let valeur = this.valeurDuPoint(code, anneeLiquidation);
+          let valeur = this.valeurDuPoint(periode.points_de ?? code, anneeLiquidation);
           if (valeur === null && periode.valeur_point_euros !== null
               && periode.valeur_point_euros !== undefined) {
             // Valeur de service écrite dans la fiche, faute d'une série

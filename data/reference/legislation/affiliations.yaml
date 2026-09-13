@@ -25,7 +25,8 @@ affiliations:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
       - {debut: 1945, fin: 1956, regimes: [regime_general]}
       - {debut: 1957, fin: 1960, regimes: [regime_general, unirs]}
-      - {debut: 1961, fin: 2018, regimes: [regime_general, arrco]}
+      - {debut: 1961, fin: 1995, regimes: [regime_general, arrco]}
+      - {debut: 1996, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
 
   salarie_prive_cadre:
@@ -237,7 +238,8 @@ affiliations:
     libelle: Salarié agricole
     periodes:
       - {debut: 1930, fin: 1960, regimes: [msa_salaries]}
-      - {debut: 1961, fin: 2018, regimes: [msa_salaries, arrco]}
+      - {debut: 1961, fin: 1995, regimes: [msa_salaries, arrco]}
+      - {debut: 1996, fin: 2018, regimes: [msa_salaries, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [msa_salaries, agirc_arrco]}
 
   exploitant_agricole:
@@ -276,7 +278,7 @@ affiliations:
     libelle: Mineur
     periodes:
       - {debut: 1930, fin: 2010, regimes: [mines]}
-      - {debut: 2011, fin: 2018, regimes: [regime_general, arrco]}
+      - {debut: 2011, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
 
   clerc_de_notaire:
@@ -305,7 +307,8 @@ affiliations:
     libelle: Agent du personnel de la SEITA
     periodes:
       - {debut: 1935, fin: 1981, regimes: [seita]}
-      - {debut: 1982, fin: 2018, regimes: [regime_general, arrco]}
+      - {debut: 1982, fin: 1995, regimes: [regime_general, arrco]}
+      - {debut: 1996, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
     note: >-
       Régime fermé aux recrutements en 1981 ; les agents recrutés après
@@ -325,7 +328,8 @@ affiliations:
     periodes:
       - {debut: 1930, fin: 1954, regimes: [chemins_fer_secondaires]}
       - {debut: 1955, fin: 1960, regimes: [regime_general]}
-      - {debut: 1961, fin: 2018, regimes: [regime_general, arrco]}
+      - {debut: 1961, fin: 1995, regimes: [regime_general, arrco]}
+      - {debut: 1996, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
     note: >-
       Régime fermé en 1954. La complémentaire ne prend le relais qu'en 1961,

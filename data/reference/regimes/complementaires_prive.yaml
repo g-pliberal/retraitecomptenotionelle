@@ -244,6 +244,24 @@ regimes:
           Taux effectif moyen de la période d'après OpenFisca-France : 7,42 % ;
           la fiche porte 7,50 %, valeur de fin de période.
 
+  - code: arrco_tranche_2
+    nom: Arrco, tranche 2 (non-cadres)
+    famille: complementaire_prive
+    source_id: agirc_arrco_points
+    fiabilite: moyenne
+    creation: 1996
+    fermeture: 2018
+    extinction: 2018
+    succede_a: []
+    integre_dans: agirc_arrco
+    population: >-
+      Salariés NON CADRES du privé, sur la part de salaire comprise entre un et
+      trois plafonds de la Sécurité sociale. Les cadres cotisent l'Agirc sur
+      cette même part, et n'ont donc pas de tranche 2 Arrco : c'est pourquoi
+      cette tranche forme une fiche à part, que l'affiliation donne aux uns et
+      pas aux autres.
+    hors_repartition: false
+    periodes:
       - debut: 1996
         fin: 2018
         type_calcul: points
@@ -259,22 +277,27 @@ regimes:
         assiette: tranche_2_arrco
         taux_cotisation_retraite: 0.1950
         part_salariale: 0.40   # règle de répartition 40-60
+        points_de: arrco
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          TRANCHE 2 DE L'ARRCO, que la fiche ignorait. Tous les salariés du
-          privé cotisent à l'Arrco sur la tranche 1, mais SEULS LES NON-CADRES
-          cotisent sur la tranche 2 — la part de salaire comprise entre un et
-          TROIS plafonds de la Sécurité sociale, et non huit comme dans le
-          régime unifié d'après 2019. La fiche n'ayant que la tranche 1, un
-          non-cadre payé au-dessus du plafond n'acquérait aucun droit
-          complémentaire sur ce qui dépassait, alors que son régime y prélevait
-          près d'un cinquième.
+          TRANCHE 2 DE L'ARRCO, ET ELLE N'EST PAS DUE PAR TOUT LE MONDE. Tous
+          les salariés du privé cotisent à l'Arrco sur la tranche 1, mais SEULS
+          LES NON-CADRES cotisent sur la tranche 2 — la part de salaire comprise
+          entre un et TROIS plafonds, et non huit comme dans le régime unifié
+          d'après 2019. Un cadre, lui, cotise l'Agirc sur cette part.
+          Elle figurait auparavant dans la fiche `arrco`, que l'affiliation
+          donne aussi aux cadres : un cadre acquérait donc DEUX FOIS des droits
+          sur la même part de salaire, une fois à l'Arrco et une fois à l'Agirc.
+          Sur deux plafonds de salaire, cela lui prêtait près de sept mille
+          euros de pension par an qu'aucun régime ne lui devait.
+          Les points restent des POINTS ARRCO — `points_de: arrco` —, achetés au
+          salaire de référence de l'Arrco et servis à la valeur de son point ;
+          seule l'assiette, et donc l'affiliation, diffère.
           Taux effectifs d'OpenFisca-France : 17,50 % en 1997, 20,25 % depuis
           2015, soit 19,50 % en moyenne sur la période où la tranche existe.
-          Avant 1997, l'Arrco ne cotisait pas au-dessus du plafond : la période
-          1961-1995 n'a donc pas de tranche 2.
+          Avant 1997, l'Arrco ne cotisait pas au-dessus du plafond.
 
   - code: agirc_arrco
     nom: Régime unifié Agirc-Arrco

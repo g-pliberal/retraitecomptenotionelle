@@ -1977,7 +1977,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 53 fiches du catalogue
+Un régime « incomplet » n'est pas un régime absent : les 54 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -2010,7 +2010,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **53 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **54 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2713,7 +2713,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 37 statuts », « 53 régimes » —, parce que ce sont des chiffres de données et
+« 37 statuts », « 54 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -3108,6 +3108,35 @@ antérieures faute d'une série publiée. Elle ne touche que les scénarios 4 et
 Le salaire de référence et la valeur du point, eux, s'arrêtent en 2022 chez le
 producteur comme chez OpenFisca : les années suivantes sont ramenées sur les
 prix, et les arrêtés annuels qui les fixent restent à dépouiller.
+
+### La tranche 2 de l'Arrco était servie aux cadres, qui n'y cotisent pas
+
+La même vérification, poussée jusqu'au bout, retourne l'erreur. La tranche 2 de
+l'Arrco — d'un à trois plafonds — avait été ajoutée au catalogue parce qu'elle
+manquait aux non-cadres ; elle avait été ajoutée à la fiche `arrco`, que
+l'affiliation donne AUSSI aux cadres. Or un cadre ne cotise pas la tranche 2 de
+l'Arrco : au-dessus du plafond, c'est l'Agirc qui prend le relais. Le modèle lui
+servait donc DEUX PENSIONS SUR LA MÊME PART DE SALAIRE. À deux plafonds de
+rémunération, cela lui prêtait 8 374 € par an qu'aucun régime ne lui devait —
+un cinquième de sa pension totale.
+
+Une tranche que tous les affiliés d'un régime ne cotisent pas ne peut pas vivre
+dans la fiche de ce régime : c'est l'AFFILIATION qui doit la donner aux uns et
+pas aux autres. La tranche 2 de l'Arrco devient donc une fiche à part
+(`arrco_tranche_2`), attribuée aux cinq statuts non cadres — salarié du privé,
+salarié agricole, mineur d'après 2011, agent de la SEITA, agent des chemins de
+fer secondaires — et à eux seuls. Le catalogue passe de 53 à 54 régimes sans
+qu'aucun régime nouveau n'existe : c'est un découpage, pas une découverte.
+
+Les points, eux, restent des POINTS ARRCO. Le moteur apprend pour cela un champ
+`points_de`, qui dit de quel régime une période emprunte le barème — prix
+d'achat, valeur de service, échelle de conversion aux fusions. Sans lui, la
+tranche 2 aurait eu besoin d'une copie de la série Arrco sous son propre code,
+et deux séries identiques finissent toujours par diverger.
+
+Le contrôle : la pension du non-cadre ne bouge pas d'un euro — 6 445 € de
+tranche 1 plus 8 374 € de tranche 2, exactement ce que la fiche unique donnait —
+et celle du cadre perd les 8 374 € qu'elle ne devait pas avoir.
 
 ### Et l'Agirc n'avait pas de tranche C
 
