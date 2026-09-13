@@ -237,7 +237,8 @@ affiliations:
   salarie_agricole:
     libelle: Salarié agricole
     periodes:
-      - {debut: 1930, fin: 1960, regimes: [msa_salaries]}
+      - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
+      - {debut: 1945, fin: 1960, regimes: [msa_salaries]}
       - {debut: 1961, fin: 1995, regimes: [msa_salaries, arrco]}
       - {debut: 1996, fin: 2018, regimes: [msa_salaries, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [msa_salaries, agirc_arrco]}
