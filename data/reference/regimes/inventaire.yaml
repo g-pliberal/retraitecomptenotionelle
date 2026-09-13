@@ -1,0 +1,1445 @@
+# Inventaire des régimes de retraite obligatoires français
+# ==========================================================
+# Le catalogue (`*.yaml` de ce dossier) ne contient que les régimes que le
+# modèle CALCULE. Ce fichier-ci les énumère TOUS — ceux qui existent, ceux qui
+# ont existé, ceux qu'on ne calculera pas — et dit pour chacun où en est le
+# dépôt. `docs/limites.md` écrivait que la liste des régimes manquants n'était
+# « dérivée d'aucun fichier, et c'est une limite en soi » : ce fichier est ce
+# fichier, et `tests/test_donnees.py` le tient aligné sur le catalogue.
+#
+# Champs :
+#   code          code du catalogue si le régime est calculé, sinon un code libre
+#   nom, famille  famille : même énumération que `_schema.yaml`
+#   population    qui cotise
+#   creation, fermeture (aux nouveaux entrants), extinction, succede_a,
+#                 integre_dans : mêmes valeurs que la fiche quand elle existe
+#   couverture    modelise    : fiche complète sur toute son histoire connue
+#                 partiel     : fiche calculée, mais un étage, un barème ou une
+#                               période manque — `manque` dit lequel
+#                 a_modeliser : aucune fiche — `manque` dit ce qui bloque
+#                 hors_champ  : ne sera pas modélisé — `raison_hors_champ`
+#   statuts       statuts de `legislation/affiliations.yaml` qui y routent
+#   textes        textes fondateurs ou de référence ; `id` est l'identifiant
+#                 DILA (LEGITEXT/LEGIARTI/JORFTEXT) lu dans l'index du dépôt,
+#                 `null` si le texte n'y est pas (antérieur à 1947, hors JORF)
+#
+# Ancrages de la liste : R. 711-1 du code de la sécurité sociale (les régimes
+# spéciaux), D. 643-1 (les sections des professions libérales), L. 921-1 et
+# L. 921-4 (les complémentaires obligatoires), le programme 195 des lois de
+# finances (les régimes fermés que l'État finance). Tout ce qui est marqué
+# « à modéliser » l'est par décision, y compris l'outre-mer et les assemblées.
+
+source_id: legifrance_inventaire_regimes
+
+inventaire:
+
+  # ---------------------------------------------------------------------
+  # Salariés du privé — régimes de base
+  # ---------------------------------------------------------------------
+
+  - code: retraites_ouvrieres_paysannes
+    nom: Retraites ouvrières et paysannes
+    famille: base_prive
+    population: Salariés de l'industrie, du commerce et de l'agriculture, à bas revenus
+    creation: 1911
+    fermeture: 1930
+    extinction: 1930
+    succede_a: []
+    integre_dans: assurances_sociales
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi du 5 avril 1910 sur les retraites ouvrières et paysannes", id: null}
+    raison_hors_champ: >-
+      Régime en capitalisation, antérieur à 1930, l'année où le modèle commence :
+      aucun assuré vivant n'y a cotisé, et le texte n'est pas dans le dump de la
+      DILA, qui commence en 1947.
+
+  - code: assurances_sociales
+    nom: Assurances sociales (assurance vieillesse)
+    famille: base_prive
+    population: Salariés de l'industrie et du commerce sous plafond de rémunération
+    creation: 1930
+    fermeture: 1945
+    extinction: 1945
+    succede_a: []
+    integre_dans: regime_general
+    couverture: modelise
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole]
+    textes:
+      - {reference: "loi du 5 avril 1928 sur les assurances sociales", id: null}
+      - {reference: "loi du 30 avril 1930 modifiant la loi du 5 avril 1928", id: null}
+
+  - code: regime_local_alsace_moselle
+    nom: Régime local d'assurance invalidité-vieillesse d'Alsace-Moselle
+    famille: base_prive
+    population: Salariés du Bas-Rhin, du Haut-Rhin et de la Moselle
+    creation: 1919
+    fermeture: 1946
+    extinction: 1946
+    succede_a: []
+    integre_dans: regime_general
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "décret n° 76-405 du 10 mai 1976, modalités d'application aux assurés relevant de l'ex-régime local", id: LEGITEXT000006062483}
+    raison_hors_champ: >-
+      Législation allemande de 1889 et 1911 maintenue après 1918, fondue dans
+      le régime général en 1946 : les droits acquis sous ce régime sont liquidés
+      par le régime général selon les décrets de 1974 à 1977. Aucun assuré
+      vivant n'y a cotisé assez longtemps pour que ses règles pèsent.
+
+  - code: avts
+    nom: Allocation aux vieux travailleurs salariés
+    famille: base_prive
+    population: Salariés âgés démunis
+    creation: 1941
+    fermeture: 1945
+    extinction: 1945
+    succede_a: [assurances_sociales]
+    integre_dans: regime_general
+    couverture: modelise
+    statuts: []
+    textes:
+      - {reference: "loi du 14 mars 1941 relative à l'allocation aux vieux travailleurs salariés", id: null}
+
+  - code: regime_general
+    nom: Régime général de la Sécurité sociale (Cnav)
+    famille: base_prive
+    population: Salariés du secteur privé, et depuis 2018 les artisans et commerçants
+    creation: 1945
+    fermeture: null
+    extinction: null
+    succede_a: [assurances_sociales, avts]
+    integre_dans: null
+    couverture: modelise
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan,
+              commercant, artiste_auteur, personnel_navigant, agent_sncf, agent_ratp,
+              agent_ieg, mineur, personnel_opera, personnel_comedie_francaise,
+              agent_seita, agent_port_strasbourg, agent_chemins_fer_secondaires]
+    textes:
+      - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
+      - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
+      - {reference: "code de la sécurité sociale, L. 351-1 et suivants", id: null}
+
+  - code: msa_salaries
+    nom: Assurances sociales agricoles, salariés (MSA)
+    famille: agricole
+    population: Salariés agricoles
+    creation: 1930
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [salarie_agricole]
+    textes:
+      - {reference: "loi du 30 avril 1930, titre II (assurances sociales agricoles)", id: null}
+      - {reference: "code rural et de la pêche maritime, L. 722-20 et suivants", id: null}
+
+  - code: cssm_mayotte
+    nom: Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte)
+    famille: base_prive
+    population: Salariés du secteur privé et agents de droit privé à Mayotte
+    creation: 1987
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 85-10 du 3 janvier 1985, article 98", id: LEGIARTI000006756839}
+      - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de retraite au profit des salariés de Mayotte", id: LEGITEXT000006065859}
+      - {reference: "ordonnance n° 2002-411 du 27 mars 2002 relative à la protection sanitaire et sociale à Mayotte", id: null}
+    manque: >-
+      Droit national, mais paramètres propres — âge, durée, plafond, taux —
+      qui convergent vers ceux du régime général selon un calendrier que le
+      dépôt n'a pas encore lu ; ni statut ni fiche.
+
+  - code: cps_saint_pierre_et_miquelon
+    nom: Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
+    famille: base_prive
+    population: Salariés et non-salariés de Saint-Pierre-et-Miquelon
+    creation: 1987
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon", id: null}
+    manque: >-
+      Durée requise et âges propres — 152 trimestres pour la génération 1956
+      quand le régime général en exige 166, déjà signalé dans docs/limites.md
+      comme un piège des tables par génération ; ni statut ni fiche.
+
+  - code: cps_polynesie
+    nom: Régime de retraite des travailleurs salariés de Polynésie française (CPS)
+    famille: base_prive
+    population: Salariés de Polynésie française
+    creation: 1968
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "délibérations de l'assemblée de la Polynésie française (compétence locale, hors JORF)", id: null}
+    manque: >-
+      Compétence locale : les textes ne sont ni dans le JORF ni dans LEGI, et
+      la source est la caisse elle-même. Rien n'est lu.
+
+  - code: cafat_nouvelle_caledonie
+    nom: Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
+    famille: base_prive
+    population: Salariés de Nouvelle-Calédonie
+    creation: 1958
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "délibérations du congrès de la Nouvelle-Calédonie (compétence locale, hors JORF)", id: null}
+    manque: >-
+      Compétence locale, comme la Polynésie : source chez la caisse, rien
+      n'est lu.
+
+  - code: wallis_et_futuna
+    nom: Retraite des salariés de Wallis-et-Futuna
+    famille: base_prive
+    population: Salariés de Wallis-et-Futuna
+    creation: null
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "compétence locale, hors JORF", id: null}
+    manque: >-
+      Pas de régime de retraite obligatoire de droit commun recensé par le
+      dépôt ; à établir avant toute fiche.
+
+  # ---------------------------------------------------------------------
+  # Salariés du privé — complémentaires
+  # ---------------------------------------------------------------------
+
+  - code: agirc
+    nom: Association générale des institutions de retraite des cadres
+    famille: complementaire_prive
+    population: Cadres du secteur privé, tranches B et C
+    creation: 1947
+    fermeture: 2018
+    extinction: 2018
+    succede_a: []
+    integre_dans: agirc_arrco
+    couverture: modelise
+    statuts: [salarie_prive_cadre, personnel_navigant]
+    textes:
+      - {reference: "convention collective nationale du 14 mars 1947 (hors JORF et hors KALI)", id: null}
+      - {reference: "code de la sécurité sociale, L. 921-1 et L. 921-4", id: LEGIARTI000006745499}
+
+  - code: unirs
+    nom: Union nationale des institutions de retraite des salariés
+    famille: complementaire_prive
+    population: Non-cadres du secteur privé, avant l'Arrco
+    creation: 1957
+    fermeture: 1961
+    extinction: 1962
+    succede_a: []
+    integre_dans: arrco
+    couverture: partiel
+    statuts: [salarie_prive_non_cadre]
+    textes:
+      - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
+    manque: >-
+      L'UNIRS tient lieu de toutes les institutions fédérées avant 1961 — CRI,
+      CIRCC, CGRCR, IRPSIMMEC, CAPIMMEC et les autres —, dont aucune n'a de
+      fiche propre : chacune avait son barème, et le dépôt n'en connaît qu'un.
+
+  - code: arrco
+    nom: Association des régimes de retraite complémentaire des salariés
+    famille: complementaire_prive
+    population: Salariés du secteur privé, tranche 1
+    creation: 1961
+    fermeture: 2018
+    extinction: 2018
+    succede_a: [unirs]
+    integre_dans: agirc_arrco
+    couverture: partiel
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
+              mineur, agent_seita, agent_chemins_fer_secondaires]
+    textes:
+      - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
+      - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
+      - {reference: "code de la sécurité sociale, L. 921-1", id: LEGIARTI000006745499}
+    manque: >-
+      Routée à tous les salariés dès 1961, alors que l'affiliation n'est
+      obligatoire pour tous que depuis la loi du 29 décembre 1972 : entre 1961
+      et 1972 le modèle prête une complémentaire à qui n'en avait pas.
+
+  - code: arrco_tranche_2
+    nom: Arrco, tranche 2 des non-cadres
+    famille: complementaire_prive
+    population: Non-cadres, entre un et trois plafonds
+    creation: 1996
+    fermeture: 2018
+    extinction: 2018
+    succede_a: []
+    integre_dans: agirc_arrco
+    couverture: modelise
+    statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita,
+              agent_chemins_fer_secondaires]
+    textes:
+      - {reference: "accord du 25 avril 1996 (hors JORF)", id: null}
+
+  - code: agirc_arrco
+    nom: Régime unifié Agirc-Arrco
+    famille: complementaire_prive
+    population: Salariés du secteur privé
+    creation: 2019
+    fermeture: null
+    extinction: null
+    succede_a: [agirc, arrco]
+    integre_dans: null
+    couverture: modelise
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
+              agent_sncf, agent_ratp, agent_ieg, mineur, personnel_opera,
+              personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
+              agent_chemins_fer_secondaires]
+    textes:
+      - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
+
+  - code: ipacte
+    nom: Institution de prévoyance des agents contractuels et temporaires de l'État
+    famille: complementaire_prive
+    population: Non-titulaires de l'État, avant l'Ircantec
+    creation: 1959
+    fermeture: 1970
+    extinction: 1971
+    succede_a: []
+    integre_dans: ircantec
+    couverture: modelise
+    statuts: [contractuel_public]
+    textes:
+      - {reference: "décret n° 59-1569 du 31 décembre 1959", id: null}
+
+  - code: igrante
+    nom: Institution générale de retraite des agents non titulaires de l'État
+    famille: complementaire_prive
+    population: Non-titulaires de l'État, avant l'Ircantec
+    creation: 1959
+    fermeture: 1970
+    extinction: 1971
+    succede_a: []
+    integre_dans: ircantec
+    couverture: modelise
+    statuts: []
+    textes:
+      - {reference: "décret n° 59-1569 du 31 décembre 1959", id: null}
+
+  - code: ircantec
+    nom: Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques
+    famille: complementaire_prive
+    population: Agents non titulaires des trois fonctions publiques, praticiens hospitaliers, élus locaux
+    creation: 1971
+    fermeture: null
+    extinction: null
+    succede_a: [ipacte, igrante]
+    integre_dans: null
+    couverture: modelise
+    statuts: [contractuel_public]
+    textes:
+      - {reference: "décret n° 70-1277 du 23 décembre 1970", id: null}
+      - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime", id: LEGITEXT000024251295}
+
+  - code: elus_locaux_ircantec
+    nom: Affiliation des élus locaux à l'Ircantec
+    famille: complementaire_prive
+    population: Maires, adjoints et élus indemnisés
+    creation: 1973
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires et adjoints au régime de retraite complémentaire des agents non titulaires", id: LEGITEXT000006068431}
+      - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux", id: null}
+    manque: >-
+      Un statut à part : l'indemnité de fonction ouvre des points Ircantec
+      sans régime de base, et depuis 2013 elle est aussi soumise aux
+      cotisations du régime général au-delà d'un seuil. Le régime existe au
+      catalogue, pas le statut qui y route une indemnité.
+
+  - code: crpnpac
+    nom: Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1
+    famille: special
+    population: Personnel navigant technique et commercial
+    creation: 1963
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [personnel_navigant]
+    textes:
+      - {reference: "code de l'aviation civile, R. 426-1 et suivants (abrogés au 1er novembre 2023)", id: null}
+      - {reference: "code des transports, partie réglementaire, depuis le 1er novembre 2023", id: null}
+    manque: >-
+      Les fiches s'arrêtent à l'état de 2023, quand le régime est passé du code
+      de l'aviation civile au code des transports ; le taux d'appel de 1995 à
+      2011 n'est pas appliqué.
+
+  - code: crpnpac_tranche_2
+    nom: Caisse de retraite du personnel navigant, tranche 2
+    famille: special
+    population: Personnel navigant, entre quatre et huit plafonds
+    creation: 1963
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [personnel_navigant]
+    textes:
+      - {reference: "code de l'aviation civile, R. 426-16-1-1", id: null}
+    manque: >-
+      Même limite que la tranche 1 : état de 2023.
+
+  - code: ircec_raap
+    nom: Régime des artistes-auteurs professionnels (IRCEC)
+    famille: liberal
+    population: Artistes-auteurs
+    creation: 1962
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [artiste_auteur]
+    textes:
+      - {reference: "décret n° 62-420 du 11 avril 1962 relatif au régime d'assurance vieillesse complémentaire commun aux artistes", id: LEGIARTI000006781618}
+      - {reference: "arrêté du 21 novembre 2013 portant approbation des statuts de l'IRCEC", id: LEGIARTI000028255012}
+    manque: >-
+      Avant 2017 la cotisation était optionnelle, choisie par classe sans lien
+      avec le revenu ; le seuil d'affiliation de 900 SMIC horaires n'est pas
+      appliqué.
+
+  - code: ircec_racd
+    nom: Régime des auteurs et compositeurs dramatiques (IRCEC)
+    famille: liberal
+    population: Auteurs et compositeurs dramatiques, auteurs de l'audiovisuel
+    creation: 1964
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "décret n° 64-226 du 11 mars 1964 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs dramatiques", id: LEGIARTI000006761271}
+    manque: >-
+      Second étage obligatoire pour une partie des artistes-auteurs, en plus du
+      RAAP ; le mémo annuel de l'IRCEC en publie le barème (4,78 € d'achat,
+      0,421 € de service en 2026) mais aucun statut ne distingue ces auteurs.
+
+  - code: ircec_racl
+    nom: Régime des auteurs et compositeurs lyriques (IRCEC)
+    famille: liberal
+    population: Auteurs et compositeurs lyriques
+    creation: 1962
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "arrêté du 9 mars 1987 portant approbation des modifications apportées aux régimes complémentaires de retraite", id: LEGIARTI000006784842}
+    manque: >-
+      Même situation que le RACD : barème publié par la caisse (10,304 € et
+      0,618 € en 2026), pas de statut.
+
+  - code: regimes_professionnels_integres
+    nom: Régimes professionnels de salariés intégrés à l'Agirc-Arrco
+    famille: complementaire_prive
+    population: >-
+      Personnels des banques (régime professionnel AFB, intégré en 1994), des
+      organismes de sécurité sociale (CPPOSS, 1994), des caisses d'épargne
+      (CGRCE, 2000), du Crédit agricole, des chambres de commerce et
+      d'industrie (régime annexé au statut de 1973), VRP (IRREP), cadres et
+      salariés agricoles (CAMARCA, 1973)
+    creation: 1947
+    fermeture: 2000
+    extinction: null
+    succede_a: []
+    integre_dans: agirc_arrco
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 99-532 du 25 juin 1999, article 32 (caisses d'épargne)", id: LEGIARTI000006711574}
+      - {reference: "arrêté du 13 novembre 1973 portant homologation du statut du personnel administratif des CCI, régime de retraite annexé", id: LEGIARTI000006610583}
+      - {reference: "décret n° 2002-1012 du 19 juillet 2002, article 21 (affiliation à la CAMARCA)", id: LEGIARTI000006602079}
+    manque: >-
+      Régimes à prestations définies, chacun avec son barème, servis jusqu'à
+      leur intégration à l'Arrco et à l'Agirc, dont les affiliés d'avant sont
+      encore vivants ; le modèle leur applique l'Arrco et l'Agirc de droit
+      commun sur toute la période.
+
+  - code: enseignants_prive_additionnel
+    nom: Régime additionnel de retraite des enseignants du privé sous contrat
+    famille: additionnel_capitalise
+    population: Maîtres de l'enseignement privé sous contrat
+    creation: 2005
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 2005-5 du 5 janvier 2005 relative à la situation des maîtres des établissements d'enseignement privés sous contrat", id: null}
+      - {reference: "décret n° 2005-1233 du 30 septembre 2005 relatif au régime additionnel de retraite des personnels enseignants", id: LEGITEXT000006052499}
+      - {reference: "arrêté du 28 juillet 2006 pris pour l'application du décret n° 2005-1233", id: LEGITEXT000006054116}
+    manque: >-
+      Un troisième étage en répartition, financé par une cotisation de 1,5 %
+      partagée, qui s'ajoute au régime général et à l'Agirc-Arrco des maîtres
+      du privé ; pas de statut.
+
+  # ---------------------------------------------------------------------
+  # Fonction publique et assimilés
+  # ---------------------------------------------------------------------
+
+  - code: pensions_civiles_1853
+    nom: Pensions civiles et militaires, loi de 1853
+    famille: fonction_publique
+    population: Fonctionnaires de l'État et militaires, avant 1948
+    creation: 1853
+    fermeture: 1948
+    extinction: 1948
+    succede_a: []
+    integre_dans: fonction_publique_etat
+    couverture: modelise
+    statuts: [fonctionnaire_etat]
+    textes:
+      - {reference: "loi du 9 juin 1853 sur les pensions civiles", id: null}
+      - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires", id: null}
+
+  - code: fonction_publique_etat
+    nom: Pensions civiles et militaires de retraite (Service des retraites de l'État)
+    famille: fonction_publique
+    population: Fonctionnaires civils de l'État, magistrats, militaires
+    creation: 1948
+    fermeture: null
+    extinction: null
+    succede_a: [pensions_civiles_1853]
+    integre_dans: null
+    couverture: partiel
+    statuts: [fonctionnaire_etat]
+    textes:
+      - {reference: "loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des pensions civiles et militaires", id: null}
+      - {reference: "loi n° 64-1339 du 26 décembre 1964 portant réforme du code des pensions civiles et militaires de retraite", id: null}
+      - {reference: "code des pensions civiles et militaires de retraite, L. 1 et suivants", id: null}
+    manque: >-
+      Les militaires sont routés comme des civils : pension après quinze ou
+      dix-sept ans de services, limites d'âge de grade, bonifications de
+      campagne et du cinquième ne sont pas modélisées — un statut `militaire`
+      manque. Les fonctionnaires de La Poste et d'Orange ont la même pension
+      mais une contribution employeur propre depuis 2006, non distinguée.
+
+  - code: cnracl
+    nom: Caisse nationale de retraites des agents des collectivités locales
+    famille: fonction_publique
+    population: Fonctionnaires territoriaux et hospitaliers
+    creation: 1945
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [fonctionnaire_territorial_hospitalier]
+    textes:
+      - {reference: "ordonnance n° 45-993 du 17 mai 1945", id: null}
+      - {reference: "décret n° 47-1846 du 19 septembre 1947", id: null}
+      - {reference: "décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la CNRACL", id: null}
+
+  - code: caisses_communales_avant_1945
+    nom: Caisses communales de retraite et Caisse intercommunale de retraites
+    famille: fonction_publique
+    population: Agents des communes et des départements, avant la CNRACL
+    creation: 1930
+    fermeture: 1945
+    extinction: 1945
+    succede_a: []
+    integre_dans: cnracl
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi du 5 avril 1910 et règlements communaux (hors JORF numérisé)", id: null}
+    raison_hors_champ: >-
+      Fondues dans la CNRACL en 1945, qui a repris leurs droits ; le statut
+      territorial route vers la CNRACL dès 1945 et personne de vivant n'a
+      liquidé sous une caisse communale.
+
+  - code: fspoeie
+    nom: Fonds spécial des pensions des ouvriers des établissements industriels de l'État
+    famille: fonction_publique
+    population: Ouvriers de l'État
+    creation: 1928
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [ouvrier_etat]
+    textes:
+      - {reference: "loi du 21 mars 1928", id: null}
+      - {reference: "décret n° 67-711 du 18 août 1967 fixant les conditions d'application du régime des pensions des ouvriers des établissements industriels de l'État", id: LEGIARTI000006767403}
+      - {reference: "décret n° 2004-1056 du 5 octobre 2004", id: null}
+
+  - code: rafp
+    nom: Retraite additionnelle de la fonction publique
+    famille: additionnel_capitalise
+    population: Fonctionnaires des trois fonctions publiques, sur leurs primes
+    creation: 2005
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [fonctionnaire_etat, fonctionnaire_territorial_hospitalier, ouvrier_etat]
+    textes:
+      - {reference: "loi n° 2003-775 du 21 août 2003, article 76", id: null}
+      - {reference: "décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique", id: null}
+
+  - code: assemblees_parlementaires
+    nom: Caisses de retraite des anciens députés, des anciens sénateurs et des personnels des assemblées
+    famille: special
+    population: Députés, sénateurs, fonctionnaires de l'Assemblée nationale et du Sénat
+    creation: 1904
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "règlements des assemblées, pris en vertu de l'ordonnance n° 58-1100 du 17 novembre 1958 (hors JORF)", id: null}
+    manque: >-
+      Régimes autonomes fixés par les bureaux des assemblées et non publiés au
+      Journal officiel ; le dépôt n'a lu ni barème ni règlement. À modéliser
+      par décision, avec les rapports publics des assemblées pour source.
+
+  - code: cese_membres
+    nom: Caisse de retraite des anciens membres du Conseil économique, social et environnemental
+    famille: special
+    population: Membres du CESE
+    creation: 1957
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "règlement de la caisse de retraite des anciens membres du Conseil économique et social (hors JORF)", id: null}
+    manque: >-
+      Même situation que les assemblées parlementaires, pour quelques
+      centaines de personnes.
+
+  - code: fonctionnaires_pacifique
+    nom: Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
+    famille: fonction_publique
+    population: Fonctionnaires territoriaux et communaux du Pacifique
+    creation: 1959
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "textes des collectivités (compétence locale, hors JORF)", id: null}
+    manque: >-
+      Compétence locale ; la Caisse locale de retraites de Nouvelle-Calédonie
+      et la CPS polynésienne publient leurs propres règlements, non lus.
+
+  # ---------------------------------------------------------------------
+  # Régimes spéciaux de salariés
+  # ---------------------------------------------------------------------
+
+  - code: sncf
+    nom: Régime spécial des agents du cadre permanent de la SNCF
+    famille: special
+    population: Agents du cadre permanent recrutés avant 2020
+    creation: 1909
+    fermeture: 2020
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [agent_sncf]
+    textes:
+      - {reference: "loi du 21 juillet 1909 relative aux conditions de retraite du personnel des grands réseaux de chemins de fer", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 6°", id: LEGIARTI000048031379}
+      - {reference: "décret n° 2008-639 du 30 juin 2008 relatif au régime spécial de retraite du personnel de la SNCF", id: null}
+
+  - code: ratp
+    nom: Régime spécial de retraite du personnel de la RATP
+    famille: special
+    population: Agents statutaires recrutés avant septembre 2023
+    creation: 1900
+    fermeture: 2023
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [agent_ratp]
+    textes:
+      - {reference: "loi n° 48-506 du 21 mars 1948 (organisation des transports parisiens)", id: null}
+      - {reference: "décret n° 2008-1514 du 30 décembre 2008 relatif au régime spécial de retraite du personnel de la RATP", id: null}
+
+  - code: ieg
+    nom: Régime spécial des industries électriques et gazières (CNIEG)
+    famille: special
+    population: Personnels statutaires des IEG recrutés avant septembre 2023
+    creation: 1946
+    fermeture: 2023
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [agent_ieg]
+    textes:
+      - {reference: "loi n° 46-628 du 8 avril 1946, article 47, et décret n° 46-1541 du 22 juin 1946 (statut national)", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 8°", id: LEGIARTI000048031379}
+
+  - code: marins
+    nom: Régime des marins (ENIM)
+    famille: special
+    population: Marins du commerce, de la pêche et de la plaisance professionnelle
+    creation: 1673
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [marin]
+    textes:
+      - {reference: "décret-loi du 17 juin 1938 relatif à la réorganisation et à l'unification du régime d'assurance des marins", id: null}
+      - {reference: "code des pensions de retraite des marins, R. 13", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 4°", id: LEGIARTI000048031379}
+    manque: >-
+      La grille des salaires forfaitaires par catégorie, que le décret renvoie
+      à un arrêté, est introuvable, et la catégorie du marin n'est pas dans la
+      carrière saisie ; un seul jeu de règles pour 1930-2026.
+
+  - code: mines
+    nom: Régime spécial de sécurité sociale dans les mines (CANSSM)
+    famille: special
+    population: Ouvriers et employés des mines, recrutés avant septembre 2010
+    creation: 1894
+    fermeture: 2010
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [mineur]
+    textes:
+      - {reference: "loi du 29 juin 1894 sur les caisses de secours et de retraites des ouvriers mineurs", id: null}
+      - {reference: "décret n° 46-2769 du 27 novembre 1946 portant organisation de la sécurité sociale dans les mines", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 5°", id: LEGIARTI000048031379}
+
+  - code: crpcen
+    nom: Caisse de retraite et de prévoyance des clercs et employés de notaires
+    famille: special
+    population: Clercs et employés de notaires
+    creation: 1937
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [clerc_de_notaire]
+    textes:
+      - {reference: "loi du 12 juillet 1937 instituant une caisse de retraite et de prévoyance des clercs et employés de notaires", id: null}
+      - {reference: "ordonnance n° 45-2574 du 31 octobre 1945 modifiant la loi du 12 juillet 1937", id: LEGITEXT000045170442}
+
+  - code: banque_de_france
+    nom: Régime spécial de retraite de la Banque de France
+    famille: special
+    population: Agents titulaires recrutés avant septembre 2023
+    creation: 1806
+    fermeture: 2007
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [agent_banque_de_france]
+    textes:
+      - {reference: "décret n° 2007-262 du 27 février 2007 relatif au régime de retraite des agents titulaires de la Banque de France", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 9°", id: LEGIARTI000048031379}
+
+  - code: opera_de_paris
+    nom: Régime de retraite du personnel de l'Opéra national de Paris
+    famille: special
+    population: Personnels de l'Opéra, artistes du ballet et de l'orchestre compris
+    creation: 1698
+    fermeture: 2023
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [personnel_opera]
+    textes:
+      - {reference: "décret n° 68-382 du 5 avril 1968 portant statut de la caisse de retraites des personnels de l'Opéra", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 10°", id: LEGIARTI000048031379}
+
+  - code: comedie_francaise
+    nom: Régime de retraite du personnel de la Comédie-Française
+    famille: special
+    population: Personnels de la Comédie-Française
+    creation: 1812
+    fermeture: 2023
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [personnel_comedie_francaise]
+    textes:
+      - {reference: "décret n° 68-960 du 11 octobre 1968 relatif à la caisse de retraites des personnels de la Comédie-Française", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 10°", id: LEGIARTI000048031379}
+
+  - code: port_strasbourg
+    nom: Régime de retraite du personnel du port autonome de Strasbourg
+    famille: special
+    population: Agents du port autonome de Strasbourg recrutés avant septembre 2023
+    creation: 1926
+    fermeture: 2023
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [agent_port_strasbourg]
+    textes:
+      - {reference: "règlement de retraite du port autonome de Strasbourg (acte de l'établissement, hors JORF)", id: null}
+    manque: >-
+      Le règlement de retraite est un acte de l'établissement, absent de LEGI,
+      qui ne porte que des décrets de compensation : un seul jeu de règles
+      pour 1930-2026, au niveau `estimee`.
+
+  - code: seita
+    nom: Régime de retraite du personnel de la SEITA
+    famille: special
+    population: Personnels recrutés avant 1981
+    creation: 1935
+    fermeture: 1981
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [agent_seita]
+    textes:
+      - {reference: "ordonnance n° 59-80 du 7 janvier 1959, article 3", id: null}
+      - {reference: "loi n° 84-603 du 13 juillet 1984, article 6", id: LEGIARTI000006302124}
+      - {reference: "décret n° 85-844 du 8 août 1985 portant statut du personnel de la SEITA, article 63", id: LEGIARTI000006325837}
+
+  - code: chemins_fer_secondaires
+    nom: Caisse autonome mutuelle de retraites des chemins de fer secondaires et tramways (CAMR)
+    famille: special
+    population: Agents des chemins de fer d'intérêt local et des tramways, recrutés avant 1954
+    creation: 1922
+    fermeture: 1954
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [agent_chemins_fer_secondaires]
+    textes:
+      - {reference: "loi du 22 juillet 1922 relative aux retraites des agents des chemins de fer secondaires et des tramways", id: null}
+      - {reference: "code de la sécurité sociale, R. 711-1 7°", id: LEGIARTI000048031379}
+    manque: >-
+      Une seule période, au niveau `estimee`, depuis le texte fondateur sans
+      recontrôle.
+
+  - code: cavimac
+    nom: Régime des cultes (CAVIMAC)
+    famille: special
+    population: Ministres des cultes et membres des congrégations religieuses
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [ministre_du_culte]
+    textes:
+      - {reference: "loi n° 78-4 du 2 janvier 1978 relative aux régimes d'assurance maladie, maternité, invalidité, vieillesse applicables aux ministres des cultes", id: null}
+      - {reference: "code de la sécurité sociale, L. 382-15 et suivants", id: LEGIARTI000031686004}
+
+  - code: gerants_debits_tabac
+    nom: Régime d'allocation viagère des gérants de débits de tabac (RAVGDT)
+    famille: special
+    population: Gérants de débits de tabac
+    creation: 1963
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "décret n° 63-1104 du 30 octobre 1963 relatif au régime d'allocation viagère des gérants de débits de tabac", id: null}
+      - {reference: "arrêté du 13 novembre 1963 pris pour l'application du décret du 30 octobre 1963", id: LEGIARTI000006787837}
+    manque: >-
+      Régime obligatoire en points géré par la Caisse des dépôts, qui s'ajoute
+      au régime des commerçants du gérant ; cotisation sur les remises, avec
+      une participation du fonds des redevances égale au double. Ni statut ni
+      fiche.
+
+  - code: imprimerie_nationale
+    nom: Caisse des retraites de l'Imprimerie nationale
+    famille: special
+    population: Personnels de l'Imprimerie nationale
+    creation: 1927
+    fermeture: 1994
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi du 29 juin 1927 (régime de retraites des personnels de l'Imprimerie nationale), citée par R*77 du code des pensions", id: LEGIARTI000006363032}
+      - {reference: "code de la sécurité sociale, R. 711-1 1°", id: LEGIARTI000048031379}
+      - {reference: "lois de finances, programme 195 « Régimes de retraite des mines, de la SEITA et divers »", id: JORFARTI000023316030}
+    manque: >-
+      Régime fermé, financé par l'État au programme 195 ; ses paramètres ne
+      sont pas lus et la date de fermeture est à confirmer dans les textes de
+      transformation de l'Imprimerie nationale en société (1993-1994).
+
+  - code: credit_foncier
+    nom: Régime spécial de retraite du Crédit foncier de France
+    famille: special
+    population: Personnels du Crédit foncier de France
+    creation: 1930
+    fermeture: 1988
+    extinction: 1988
+    succede_a: []
+    integre_dans: regime_general
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "décret n° 89-157 du 8 mars 1989 fixant les modalités du transfert au régime général, au 1er janvier 1989, du régime spécial du Crédit foncier", id: LEGIARTI000006774339}
+    raison_hors_champ: >-
+      Transféré au régime général au 1er janvier 1989, pensions et cotisants
+      compris : les droits acquis sont servis par le régime général et le
+      dépôt n'a pas de source pour le barème d'avant.
+
+  - code: ortf
+    nom: Régime de retraite des personnels de l'ORTF
+    famille: special
+    population: Personnels de l'Office de radiodiffusion-télévision française
+    creation: 1964
+    fermeture: 1975
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "arrêté du 14 avril 1980, validation pour la retraite des services accomplis à l'ORTF", id: JORFTEXT000000855476}
+      - {reference: "lois de finances, programme 195, action « versements liés à la liquidation de l'ORTF »", id: JORFARTI000023316030}
+    raison_hors_champ: >-
+      Régime en extinction dont l'État verse les derniers engagements ; aucun
+      cotisant depuis 1975.
+
+  - code: regies_ferroviaires_outre_mer
+    nom: Caisse des retraites des régies ferroviaires d'outre-mer et caisses des chemins de fer d'Afrique du Nord
+    famille: special
+    population: Anciens agents des chemins de fer coloniaux et d'Afrique du Nord
+    creation: 1930
+    fermeture: 1962
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "décret n° 58-1090 du 6 novembre 1958 portant affiliation au régime général des retraités de la caisse des retraites des régies ferroviaires", id: JORFTEXT000000669975}
+      - {reference: "décret n° 93-1150 du 29 septembre 1993, transfert à l'État de la gestion du régime des anciennes régies ferroviaires d'outre-mer", id: JORFTEXT000000332371}
+    raison_hors_champ: >-
+      Régimes de rapatriés en extinction, gérés par l'État depuis 1993 ; les
+      services sont validés au régime général par les lois de 1964 et 1965 sur
+      les rapatriés.
+
+  - code: sapeurs_pompiers_volontaires
+    nom: Prestation de fidélisation et de reconnaissance des sapeurs-pompiers volontaires
+    famille: special
+    population: Sapeurs-pompiers volontaires
+    creation: 2005
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi n° 96-370 du 3 mai 1996, article 15-1 (rédaction de 2004)", id: LEGIARTI000006367738}
+    raison_hors_champ: >-
+      Une prestation financée par les collectivités, sans cotisation du
+      bénéficiaire : ce n'est pas un régime de retraite au sens du modèle.
+
+  # ---------------------------------------------------------------------
+  # Non-salariés non agricoles
+  # ---------------------------------------------------------------------
+
+  - code: cancava
+    nom: Caisse autonome nationale de compensation de l'assurance vieillesse artisanale
+    famille: non_salarie
+    population: Artisans
+    creation: 1949
+    fermeture: 2006
+    extinction: 2006
+    succede_a: []
+    integre_dans: rsi
+    couverture: modelise
+    statuts: [artisan]
+    textes:
+      - {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse pour les personnes non salariées", id: null}
+
+  - code: organic
+    nom: Organisation autonome nationale de l'industrie et du commerce
+    famille: non_salarie
+    population: Industriels et commerçants
+    creation: 1949
+    fermeture: 2006
+    extinction: 2006
+    succede_a: []
+    integre_dans: rsi
+    couverture: modelise
+    statuts: [commercant]
+    textes:
+      - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
+
+  - code: rsi
+    nom: Régime social des indépendants
+    famille: non_salarie
+    population: Artisans, industriels et commerçants
+    creation: 2006
+    fermeture: 2018
+    extinction: 2020
+    succede_a: [cancava, organic]
+    integre_dans: regime_general
+    couverture: modelise
+    statuts: [artisan, commercant]
+    textes:
+      - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}
+      - {reference: "loi n° 2017-1836 du 30 décembre 2017 de financement de la sécurité sociale pour 2018, article 15", id: null}
+
+  - code: rco_artisans
+    nom: Régime complémentaire obligatoire des artisans
+    famille: non_salarie
+    population: Artisans
+    creation: 1979
+    fermeture: 2012
+    extinction: 2013
+    succede_a: []
+    integre_dans: rci
+    couverture: modelise
+    statuts: [artisan]
+    textes:
+      - {reference: "décret n° 78-351 du 14 mars 1978 (régime complémentaire obligatoire d'assurance vieillesse des artisans)", id: null}
+
+  - code: nric
+    nom: Nouveau régime complémentaire des industriels et commerçants
+    famille: non_salarie
+    population: Industriels et commerçants
+    creation: 2004
+    fermeture: 2012
+    extinction: 2013
+    succede_a: []
+    integre_dans: rci
+    couverture: modelise
+    statuts: [commercant]
+    textes:
+      - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire des industriels et commerçants)", id: null}
+
+  - code: organic_conjoints_batiment
+    nom: Régimes complémentaires des conjoints de commerçants et des entrepreneurs du bâtiment (Organic)
+    famille: non_salarie
+    population: Conjoints des industriels et commerçants ; entrepreneurs du bâtiment et des travaux publics
+    creation: 1970
+    fermeture: 2004
+    extinction: 2004
+    succede_a: []
+    integre_dans: nric
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 70-13 du 3 janvier 1970 et décret n° 70-368 du 29 avril 1970 (entrepreneurs du bâtiment)", id: LEGIARTI000006762430}
+      - {reference: "code de la sécurité sociale, D. 635-35-1 (conjoints des industriels et commerçants)", id: LEGIARTI000006738059}
+      - {reference: "arrêté du 9 février 2012 portant approbation du règlement du RCI, reprise des points de l'ancien régime des conjoints", id: LEGIARTI000025397326}
+    manque: >-
+      Deux complémentaires obligatoires d'avant le NRIC, dont les points ont
+      été repris par le RCI : le commerçant d'avant 2004 du modèle n'a aucune
+      complémentaire, alors que le conjoint collaborateur et l'entrepreneur du
+      bâtiment en avaient une.
+
+  - code: rci
+    nom: Régime complémentaire des indépendants
+    famille: non_salarie
+    population: Artisans, industriels et commerçants
+    creation: 2013
+    fermeture: null
+    extinction: null
+    succede_a: [rco_artisans, nric]
+    integre_dans: null
+    couverture: modelise
+    statuts: [artisan, commercant]
+    textes:
+      - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
+
+  - code: micro_entrepreneurs
+    nom: Régime micro-social des micro-entrepreneurs
+    famille: non_salarie
+    population: Micro-entrepreneurs (artisans, commerçants, libéraux non réglementés)
+    creation: 2009
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 2008-776 du 4 août 2008 de modernisation de l'économie, article 1er (L. 133-6-8)", id: LEGIARTI000019284945}
+      - {reference: "décret n° 2018-1120 du 10 décembre 2018 relatif aux modalités d'application du régime micro-social aux professionnels libéraux", id: LEGITEXT000037798308}
+    manque: >-
+      Pas un régime mais une manière de cotiser : un pourcentage du chiffre
+      d'affaires, dont une fraction va au régime de base et à la
+      complémentaire, et des trimestres validés par le chiffre d'affaires. Le
+      modèle ne sait décrire qu'un revenu, pas un chiffre d'affaires ; c'est la
+      population non salariée la plus nombreuse aujourd'hui.
+
+  - code: cnavpl
+    nom: Caisse nationale d'assurance vieillesse des professions libérales, régime de base
+    famille: liberal
+    population: Professions libérales réglementées et, jusqu'en 2018, non réglementées
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [profession_liberale, auxiliaire_medical, pharmacien, expert_comptable,
+              agent_general_assurance, notaire, veterinaire, officier_ministeriel,
+              chirurgien_dentiste_ou_sage_femme, medecin_liberal]
+    textes:
+      - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
+      - {reference: "code de la sécurité sociale, L. 640-1 (professions affiliées, rédaction de la LFSS 2018)", id: LEGIARTI000036391511}
+      - {reference: "code de la sécurité sociale, D. 643-1", id: LEGIARTI000029825121}
+    manque: >-
+      Les libéraux non réglementés qui créent leur activité depuis 2018
+      relèvent du régime général et du RCI, non de la CNAVPL et de la Cipav :
+      le routage du statut générique devrait dépendre de l'année d'entrée, et
+      ne le fait pas.
+
+  - code: carmf_complementaire
+    nom: Complémentaire des médecins (CARMF)
+    famille: liberal
+    population: Médecins libéraux
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [medecin_liberal]
+    textes:
+      - {reference: "décret n° 49-579 du 22 avril 1949 et statuts du régime complémentaire (arrêtés d'approbation)", id: null}
+    manque: >-
+      La caisse ne publie que l'année en cours : les chiffres de 2026 sont
+      appliqués à toute la période.
+
+  - code: carcdsf_complementaire
+    nom: Complémentaire des chirurgiens-dentistes et des sages-femmes (CARCDSF)
+    famille: liberal
+    population: Chirurgiens-dentistes et sages-femmes libéraux
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [chirurgien_dentiste_ou_sage_femme]
+    textes:
+      - {reference: "décret n° 2008-1490 du 30 décembre 2008 (fusion de la CARCD et de la CARSAF)", id: null}
+    manque: >-
+      La CARSAF des sages-femmes, fusionnée dans la CARCDSF en 2009, avait son
+      propre barème avant : les sages-femmes d'avant 2009 reçoivent celui des
+      dentistes.
+
+  - code: cavp_complementaire
+    nom: Complémentaire des pharmaciens (CAVP)
+    famille: liberal
+    population: Pharmaciens libéraux
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [pharmacien]
+    textes:
+      - {reference: "statuts du régime complémentaire de la CAVP (arrêtés d'approbation)", id: null}
+    manque: >-
+      Le volet en capitalisation par classes n'est pas chiffré ; seule la part
+      forfaitaire en répartition l'est.
+
+  - code: carpimko_complementaire
+    nom: Complémentaire des auxiliaires médicaux (CARPIMKO)
+    famille: liberal
+    population: Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes, orthoptistes
+    creation: 1984
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [auxiliaire_medical]
+    textes:
+      - {reference: "décret n° 84-143 du 22 février 1984", id: null}
+
+  - code: carpv_complementaire
+    nom: Complémentaire des vétérinaires (CARPV)
+    famille: liberal
+    population: Vétérinaires libéraux
+    creation: 1950
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [veterinaire]
+    textes:
+      - {reference: "décrets annuels fixant les cotisations du régime complémentaire des vétérinaires (depuis 2016)", id: null}
+    manque: >-
+      Un seul jeu de règles pour 1950-2026 : les classes d'avant 2016 ne sont
+      pas datées.
+
+  - code: cavamac_complementaire
+    nom: Complémentaire des agents généraux d'assurance (CAVAMAC)
+    famille: liberal
+    population: Agents généraux d'assurance
+    creation: 1968
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [agent_general_assurance]
+    textes:
+      - {reference: "décret n° 68-1101 du 5 décembre 1968 et délibérations du conseil d'administration", id: null}
+    manque: >-
+      L'assiette est reconstituée par un facteur moyen de commissions, qui ne
+      décrit aucun assuré en particulier.
+
+  - code: cavec_complementaire
+    nom: Complémentaire des experts-comptables et commissaires aux comptes (CAVEC)
+    famille: liberal
+    population: Experts-comptables et commissaires aux comptes libéraux
+    creation: 1953
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [expert_comptable]
+    textes:
+      - {reference: "statuts du régime complémentaire de la CAVEC (arrêtés d'approbation)", id: null}
+
+  - code: cavom_complementaire
+    nom: Complémentaire des officiers ministériels (CAVOM)
+    famille: liberal
+    population: Huissiers, commissaires-priseurs, greffiers des tribunaux de commerce
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [officier_ministeriel]
+    textes:
+      - {reference: "décret n° 2015-1667 du 14 décembre 2015 (passage à la cotisation proportionnelle)", id: null}
+    manque: >-
+      Fiche écrite à partir de 2016 seulement : le régime par classes de
+      1979 à 2015 n'a pas de grille publiée.
+
+  - code: cipav_complementaire
+    nom: Complémentaire de la Cipav
+    famille: liberal
+    population: Architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes et professions non réglementées
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [profession_liberale]
+    textes:
+      - {reference: "décret n° 79-262 du 21 mars 1979 instituant le complémentaire des architectes", id: null}
+      - {reference: "arrêté du 9 mars 1987 portant approbation des régimes complémentaires (architectes, ingénieurs, techniciens, experts et conseils)", id: LEGIARTI000006784842}
+
+  - code: cprn_complementaire
+    nom: Complémentaire des notaires (CPRN), section C
+    famille: liberal
+    population: Notaires
+    creation: 1949
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [notaire]
+    textes:
+      - {reference: "statuts du régime complémentaire de la CPRN (arrêtés d'approbation)", id: null}
+    manque: >-
+      La section B, par classes, dont les bornes ne sont publiées nulle part,
+      n'est pas portée : près de quatre dixièmes du complémentaire d'un notaire.
+
+  - code: asv_conventionnes
+    nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)
+    famille: liberal
+    population: Médecins, chirurgiens-dentistes, sages-femmes, auxiliaires médicaux et directeurs de laboratoire conventionnés
+    creation: 1972
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: a_modeliser
+    statuts: []
+    textes:
+      - {reference: "loi n° 70-1325 du 31 décembre 1970 et décret n° 72-968 du 27 octobre 1972 (ASV des médecins)", id: null}
+      - {reference: "code de la sécurité sociale, L. 645-1 et suivants", id: null}
+    manque: >-
+      Un troisième étage obligatoire pour les professionnels de santé
+      conventionnés, financé aux deux tiers par l'assurance maladie, qui pèse
+      près du tiers de la pension d'un médecin de secteur 1 ; aucun des
+      statuts de santé ne le porte.
+
+  - code: cnbf
+    nom: Caisse nationale des barreaux français, régime de base
+    famille: liberal
+    population: Avocats
+    creation: 1948
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [avocat]
+    textes:
+      - {reference: "loi n° 48-1490 du 31 décembre 1948", id: null}
+      - {reference: "code de la sécurité sociale, L. 723-1 (rédaction de 1985)", id: LEGIARTI000006744085}
+    manque: >-
+      La progression de la cotisation forfaitaire sur les cinq premières années
+      et la contribution équivalente aux droits de plaidoirie ne sont pas
+      portées.
+
+  - code: cnbf_complementaire
+    nom: Complémentaire des avocats (CNBF)
+    famille: liberal
+    population: Avocats
+    creation: 1979
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: modelise
+    statuts: [avocat]
+    textes:
+      - {reference: "décret n° 79-316 du 19 avril 1979 (régime complémentaire des avocats)", id: null}
+
+  - code: caisse_francais_etranger
+    nom: Caisse des Français de l'étranger et assurance volontaire vieillesse
+    famille: base_prive
+    population: Français expatriés, sur adhésion
+    creation: 1984
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi n° 84-604 du 13 juillet 1984 et décret n° 84-780 du 9 août 1984", id: LEGITEXT000006064599}
+    raison_hors_champ: >-
+      Adhésion facultative qui ouvre des droits au régime général : ce n'est
+      pas un régime distinct, et le modèle ne décrit que des affiliations
+      obligatoires.
+
+  # ---------------------------------------------------------------------
+  # Non-salariés agricoles
+  # ---------------------------------------------------------------------
+
+  - code: msa_non_salaries
+    nom: Assurance vieillesse des non-salariés agricoles (MSA)
+    famille: agricole
+    population: Chefs d'exploitation, conjoints collaborateurs, aides familiaux
+    creation: 1952
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [exploitant_agricole]
+    textes:
+      - {reference: "loi n° 52-799 du 10 juillet 1952 assurant la mise en œuvre du régime de l'allocation de vieillesse des personnes non salariées", id: null}
+      - {reference: "code rural et de la pêche maritime, L. 732-18 et suivants, R. 732-70 et R. 732-71", id: null}
+    manque: >-
+      Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février
+      2025, en vigueur depuis 2026, renvoie deux de ses trois paramètres à un
+      décret absent de la base ; conjoints et aides familiaux sont
+      sous-estimés.
+
+  - code: msa_rco
+    nom: Retraite complémentaire obligatoire des non-salariés agricoles
+    famille: agricole
+    population: Chefs d'exploitation, et depuis 2011 conjoints et aides familiaux
+    creation: 2003
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [exploitant_agricole]
+    textes:
+      - {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}
+      - {reference: "code rural et de la pêche maritime, D. 732-166", id: null}
+    manque: >-
+      Les points gratuits attribués aux conjoints et aides familiaux — 66 par
+      an dans la limite de 17 ans — ne sont pas portés.
+
+  - code: cotisants_solidarite
+    nom: Cotisants de solidarité agricoles
+    famille: agricole
+    population: Exploitants en dessous du seuil d'assujettissement
+    creation: 1980
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "code rural et de la pêche maritime, L. 731-23", id: null}
+    raison_hors_champ: >-
+      La cotisation de solidarité n'ouvre aucun droit à retraite : il n'y a
+      rien à porter au compte.

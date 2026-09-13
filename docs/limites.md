@@ -2046,12 +2046,75 @@ extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 
 ### Les régimes qui manquent encore, et ce qui bloque chacun
 
-**Cette liste n'est pas dérivée d'un fichier, et c'est une limite en soi.**
-Aucune source du dépôt n'énumère les régimes français : la série DREES agrège
-en treize systèmes, le panorama du COR est un document saisi à la main, et les
-portails officiels ne servent pas de liste exploitable. Ce qui suit vient donc
-de la connaissance du domaine, non d'un inventaire vérifiable — un régime peut
-manquer à cette liste des manquants.
+**Cette liste est désormais dérivée d'un fichier.** Elle ne l'était pas, et
+c'était une limite en soi : aucune source du dépôt n'énumérait les régimes
+français — la série DREES agrège en treize systèmes, le panorama du COR est un
+document saisi à la main, et les portails officiels ne servent pas de liste
+exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
+[`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
+énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
+champ — 81 lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+programme 195 des lois de finances, chacune avec son texte fondateur et, quand
+l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
+modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose
+que l'inventaire et le catalogue coïncident sur les régimes calculés ; la page
+« Données » du site l'affiche ; [`docs/regimes.md`](regimes.md) le commente,
+famille par famille. Ce qui suit est l'histoire de la façon dont les fiches
+sont entrées, et reste vrai ; la liste à jour de ce qui manque est là-bas.
+
+**Ce que l'inventaire a fait apparaître**, que la liste de mémoire ne portait
+pas : le régime d'allocation viagère des gérants de débits de tabac (décret
+du 30 octobre 1963, géré par la Caisse des dépôts), le régime additionnel des
+enseignants du privé sous contrat (décret n° 2005-1233), les deux
+complémentaires d'Organic d'avant le NRIC — conjoints de commerçants
+(`D. 635-35-1`) et entrepreneurs du bâtiment (loi n° 70-13) —, les régimes
+RACD et RACL de l'IRCEC, les régimes professionnels intégrés à l'Agirc-Arrco
+(banques, organismes de sécurité sociale, caisses d'épargne, CCI, CAMARCA),
+l'affiliation des élus locaux à l'Ircantec dès 1973 (loi n° 72-1201) et non
+1992, le régime micro-social, l'ASV des conventionnés, et cinq régimes
+d'outre-mer. Et trois régimes fermés dont on ne savait plus s'ils avaient
+existé, retrouvés dans l'index : le régime spécial du Crédit foncier de France
+(transféré au régime général au 1er janvier 1989, décret n° 89-157), la caisse
+des régies ferroviaires d'outre-mer (décret n° 58-1090, puis transfert à
+l'État en 1993), et le régime de l'ORTF.
+
+#### Ce que JORF et LEGI ne contiennent pas
+
+Le dépôt embarque, par l'index de `scripts/fetch/dila_index.py`, deux bases de
+la DILA filtrées sur le champ social. Pour l'histoire des règles de chaque
+régime — l'étape qui suit l'inventaire —, il faut savoir ce qu'elles ne
+donnent pas, afin de ne pas le chercher deux fois :
+
+1. **Tout ce qui précède 1947.** Le dump JORF commence en 1947. Les lois de
+   1910, de 1928 et 1930, de 1941, les ordonnances de 1945, la loi de 1909 sur
+   les retraites des cheminots, celle de 1894 sur les mines et celle de 1937
+   sur les clercs de notaires ne s'y trouvent que par les textes postérieurs
+   qui les citent. Elles sont sur Gallica, en images.
+2. **De 1947 à 1989, le texte intégral manque souvent.** Le JORF ancien n'est
+   dans le dump que par sa notice ou son titre — constaté sur 1950 et sur
+   1985-1986 —, et certains tableaux ne sont que des images (1994-1995). C'est
+   la période où les règles des régimes se sont fixées : 1945, 1971, 1982,
+   1983. Le « JO numérisé » en fac-similé de Légifrance n'est pas en open
+   data.
+3. **LEGI ne remonte pas avant la codification de 1985** pour les états
+   datés des articles ; les versions antérieures des décrets des régimes
+   spéciaux — statut des IEG de 1946, règlement SNCF de 1954 — n'y sont pas.
+4. **Les accords de l'Agirc et de l'Arrco** — 1947, 1961, 2017 — et leurs
+   annexes ne sont ni dans le JORF, qui n'a les avis d'extension que depuis
+   les années 2000, ni dans KALI. La fédération est la seule source.
+5. **Les règlements des caisses** — sections de la CNAVPL, CNBF, IRCEC, CRPN,
+   port autonome de Strasbourg, Banque de France, CCI — : le JORF porte
+   l'arrêté d'approbation, rarement son annexe.
+6. **Les circulaires** de la Cnav et le BOSS ne sont pas dans JORF ni LEGI ;
+   celles de la revalorisation des salaires sont récupérées à part.
+7. **Les régimes des assemblées et des collectivités du Pacifique** relèvent
+   de textes qui ne paraissent pas au Journal officiel.
+
+Ce qu'il ne manque pas : le filtre thématique de l'index est assez large —
+« retrait », « pension », « cotis », « invalidit »… — pour retenir les textes de
+tous les régimes de l'inventaire ; les recherches qui ont établi la liste y
+ont trouvé le décret du Crédit foncier, celui de Mayotte, l'arrêté des débits
+de tabac, la loi des maires et adjoints, sans reconstruire l'index.
 
 **Le régime des cultes, lui, est entré**, et c'est le seul du lot que le code
 spécifie entièrement — sans lui donner un seul chiffre propre :
@@ -2083,10 +2146,8 @@ le modèle applique les règles du régime général sur toute la durée. Cela n
 touche que le scénario 1 ; les comptes notionnels, eux, ne lisent que des
 cotisations, et celles-là sont sourcées de bout en bout.
 
-**Les trois autres, et le mur devant chacun :**
-
-| Régime | Population | Ce qui bloque |
-|---|---|---|
+**Les autres, et le mur devant chacun** : voir la couverture « à modéliser »
+de l'inventaire, qui porte pour chacun ce qui bloque.
 
 **Le personnel navigant est entré, et il a fallu deux choses pour cela.**
 
@@ -4096,7 +4157,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 563 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 568 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

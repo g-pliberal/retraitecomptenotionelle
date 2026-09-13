@@ -1089,6 +1089,27 @@ institutions:
           ne sont plus ici : elles sont certifiées contre la base LEGI, voir
           dila_legi_parametres_retraite.
 
+      - id: legifrance_inventaire_regimes
+        titre: Inventaire des régimes de retraite obligatoires, actuels et disparus
+        url: https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000048031379
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/inventaire.yaml
+        note: >-
+          La liste de TOUS les régimes — ceux que le catalogue calcule et ceux
+          qu'il ne calcule pas encore, ou jamais —, ancrée sur les textes qui
+          les énumèrent : l'article R. 711-1 du code de la sécurité sociale
+          pour les régimes spéciaux, D. 643-1 pour les sections des professions
+          libérales, L. 921-1 et L. 921-4 pour les complémentaires obligatoires,
+          le programme 195 des lois de finances pour les régimes fermés que
+          l'État finance. Chaque ligne cite son texte fondateur avec, quand
+          l'index DILA du dépôt le porte, son identifiant LEGI ou JORF ; les
+          textes d'avant 1947 et les règlements hors JORF restent sans
+          identifiant. Ce qui est d'outre-mer ou des assemblées y est « à
+          modéliser » par décision, non par oubli. `tests/test_donnees.py`
+          impose que l'inventaire et le catalogue coïncident sur les régimes
+          calculés.
+
       - id: circulaire_rsi_conversion_rci
         titre: >-
           Circulaire RSI 2013/004 du 17 janvier 2013 — reprise des points par le

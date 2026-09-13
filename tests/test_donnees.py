@@ -1290,3 +1290,128 @@ def test_les_deux_series_de_pib_disent_la_meme_chose():
             f"{annee} : pib_nominal dit {taux[annee]:.5f}, le niveau donne "
             f"{attendu:.5f} — les deux séries ont divergé"
         )
+
+
+# ---------------------------------------------------------------------------
+# L'inventaire : tous les régimes, et ce que le catalogue en calcule
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def inventaire():
+    from retraite_notionnelle.donnees.regimes import charger_inventaire
+
+    return charger_inventaire(RACINE_DONNEES)
+
+
+def test_l_inventaire_et_le_catalogue_coincident_sur_les_regimes_calcules(catalogue, inventaire):
+    """Le catalogue calcule, l'inventaire énumère ; ils doivent se répondre.
+
+    `docs/limites.md` disait que la liste des régimes manquants n'était
+    « dérivée d'aucun fichier, et c'est une limite en soi ». L'inventaire est
+    ce fichier : tout régime du catalogue y est, sous son code, marqué
+    `modelise` ou `partiel` ; et tout régime marqué ainsi a sa fiche. Une
+    fiche ajoutée sans ligne d'inventaire, ou une ligne qui prétend calculer
+    ce qu'aucune fiche ne calcule, fait échouer ce test.
+    """
+    calcules = {ligne.code for ligne in inventaire if ligne.au_catalogue}
+    fiches = {regime.code for regime in catalogue}
+    assert fiches - calcules == set(), (
+        "fiches du catalogue absentes de l'inventaire : "
+        + ", ".join(sorted(fiches - calcules))
+    )
+    assert calcules - fiches == set(), (
+        "inventaire dit calculé, mais sans fiche : " + ", ".join(sorted(calcules - fiches))
+    )
+    absents = {ligne.code for ligne in inventaire if not ligne.au_catalogue}
+    assert not (absents & fiches), (
+        "marqués sans fiche alors qu'une fiche existe : " + ", ".join(sorted(absents & fiches))
+    )
+
+
+def test_l_inventaire_porte_les_dates_et_la_lignee_des_fiches(catalogue, inventaire):
+    """Deux fichiers, une histoire : les dates ne doivent pas diverger."""
+    ecarts = []
+    for ligne in inventaire:
+        if not ligne.au_catalogue:
+            continue
+        regime = catalogue[ligne.code]
+        for champ in ("creation", "fermeture", "extinction", "integre_dans"):
+            if getattr(ligne, champ) != getattr(regime, champ):
+                ecarts.append(
+                    f"{ligne.code}.{champ} : inventaire {getattr(ligne, champ)!r}, "
+                    f"fiche {getattr(regime, champ)!r}"
+                )
+        if tuple(ligne.succede_a) != tuple(regime.succede_a):
+            ecarts.append(
+                f"{ligne.code}.succede_a : inventaire {ligne.succede_a}, fiche {regime.succede_a}"
+            )
+    assert not ecarts, "\n".join(ecarts)
+
+
+def test_l_inventaire_dit_ce_qui_manque_ou_pourquoi_on_s_en_passe(inventaire):
+    """Un régime non calculé sans raison écrite est un silence, pas une limite."""
+    for ligne in inventaire:
+        if ligne.couverture in ("partiel", "a_modeliser"):
+            assert len(ligne.manque.split()) >= 10, f"{ligne.code} : `manque` trop court"
+            assert not ligne.raison_hors_champ, f"{ligne.code} : hors champ ET à modéliser ?"
+        elif ligne.couverture == "hors_champ":
+            assert len(ligne.raison_hors_champ.split()) >= 10, (
+                f"{ligne.code} : `raison_hors_champ` trop courte"
+            )
+            assert not ligne.statuts, f"{ligne.code} : hors champ mais routé"
+        else:
+            assert not ligne.manque and not ligne.raison_hors_champ, (
+                f"{ligne.code} : modélisé, mais avec un manque ou une raison d'exclusion"
+            )
+        for texte in ligne.textes:
+            assert len(texte["reference"].split()) >= 3, f"{ligne.code} : référence vide"
+            ident = texte["id"]
+            assert ident is None or (
+                isinstance(ident, str)
+                and ident[:8] in ("LEGITEXT", "LEGIARTI", "JORFTEXT", "JORFARTI")
+                and len(ident) == 20
+            ), f"{ligne.code} : identifiant DILA mal formé {ident!r}"
+
+
+def test_les_statuts_de_l_inventaire_routent_bien_vers_le_regime(catalogue, inventaire):
+    """Les statuts cités sont ceux qui, une année au moins, atteignent le régime."""
+    affiliations = _affiliations()
+    attendus: dict[str, set[str]] = {}
+    for statut in affiliations.codes:
+        for periode in affiliations.periodes(statut):
+            for code in periode["regimes"] or ():
+                attendus.setdefault(code, set()).add(statut)
+    ecarts = []
+    for ligne in inventaire:
+        cites = set(ligne.statuts)
+        if ligne.au_catalogue:
+            if cites != attendus.get(ligne.code, set()):
+                ecarts.append(
+                    f"{ligne.code} : inventaire {sorted(cites)}, "
+                    f"routage {sorted(attendus.get(ligne.code, set()))}"
+                )
+        else:
+            inconnus = cites - set(affiliations.codes)
+            if inconnus:
+                ecarts.append(f"{ligne.code} : statuts inconnus {sorted(inconnus)}")
+    assert not ecarts, "\n".join(ecarts)
+
+
+def test_l_inventaire_couvre_les_regimes_que_le_code_enumere(inventaire):
+    """R. 711-1 nomme les régimes spéciaux, D. 643-1 les sections libérales :
+    chacun a sa ligne, et les grandes familles ont leurs manquants nommés."""
+    codes = {ligne.code for ligne in inventaire}
+    for code in ("marins", "mines", "sncf", "chemins_fer_secondaires", "ieg",
+                 "banque_de_france", "opera_de_paris", "comedie_francaise",
+                 "imprimerie_nationale", "fspoeie", "cnracl", "fonction_publique_etat",
+                 "carmf_complementaire", "carcdsf_complementaire", "cavp_complementaire",
+                 "carpimko_complementaire", "carpv_complementaire", "cavamac_complementaire",
+                 "cavec_complementaire", "cavom_complementaire", "cipav_complementaire",
+                 "cprn_complementaire", "cnbf", "micro_entrepreneurs", "asv_conventionnes",
+                 "gerants_debits_tabac", "cssm_mayotte", "assemblees_parlementaires"):
+        assert code in codes, f"{code} manque à l'inventaire"
+    par_couverture = {}
+    for ligne in inventaire:
+        par_couverture[ligne.couverture] = par_couverture.get(ligne.couverture, 0) + 1
+    assert set(par_couverture) == {"modelise", "partiel", "a_modeliser", "hors_champ"}

@@ -3481,6 +3481,96 @@ isolés dans un compartiment séparé, jamais converti.</p>
 `;
 }
 
+
+/** Libellés des familles de régimes, tels que la page « Données » les affiche. */
+const FAMILLES_INVENTAIRE = {
+  base_prive: "base, privé",
+  complementaire_prive: "complémentaire, privé",
+  fonction_publique: "fonction publique",
+  special: "spécial",
+  non_salarie: "non-salariés",
+  agricole: "agricole",
+  liberal: "libéral",
+  additionnel_capitalise: "additionnel, capitalisé",
+};
+
+/**
+ * Les quatre couvertures, dans l'ordre d'affichage : le titre du tableau, le
+ * nom au pluriel pour la phrase de compte, et l'intitulé de la dernière
+ * colonne — vide pour les régimes modélisés, qui n'ont rien à expliquer.
+ */
+const COUVERTURES_INVENTAIRE = [
+  ["modelise", "Régimes modélisés", "modélisés", ""],
+  ["partiel", "Régimes calculés, mais incomplets", "partiels", "Ce qui manque"],
+  ["a_modeliser", "Régimes à modéliser", "à modéliser", "Ce qui bloque"],
+  ["hors_champ", "Régimes hors champ", "hors champ", "Pourquoi"],
+];
+
+function periodeInventaire(creation, fermeture, extinction) {
+  if (creation === null || creation === undefined) {
+    return "—";
+  }
+  if (extinction !== null && extinction !== undefined) {
+    return `${creation}-${extinction}`;
+  }
+  if (fermeture !== null && fermeture !== undefined) {
+    return `depuis ${creation}, fermé en ${fermeture}`;
+  }
+  return `depuis ${creation}`;
+}
+
+/** Tous les régimes, calculés ou non — la liste qui manquait au dépôt. */
+function inventaireSection(lignes) {
+  const comptes = {};
+  for (const [cle] of COUVERTURES_INVENTAIRE) {
+    comptes[cle] = lignes.filter((l) => l.couverture === cle).length;
+  }
+  const phrase = COUVERTURES_INVENTAIRE
+    .map(([cle, , pluriel]) => `${comptes[cle]} ${pluriel}`).join(", ");
+  const tableaux = [];
+  for (const [cle, titre, , derniere] of COUVERTURES_INVENTAIRE) {
+    const entetes = ["Régime", "Famille", "Période", "Statuts"];
+    const classes = ["", "", "", ""];
+    if (derniere) {
+      entetes.push(derniere);
+      classes.push("");
+    }
+    const corps = [];
+    for (const ligne of lignes) {
+      if (ligne.couverture !== cle) {
+        continue;
+      }
+      const rang = [
+        echapper(ligne.nom),
+        echapper(FAMILLES_INVENTAIRE[ligne.famille]),
+        echapper(periodeInventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
+        ligne.statuts.length > 0 ? echapper(ligne.statuts.join(", ")) : "—",
+      ];
+      if (derniere) {
+        rang.push(echapper(cle === "hors_champ" ? ligne.raison_hors_champ : ligne.manque));
+      }
+      corps.push(rang);
+    }
+    tableaux.push(`<h4>${echapper(titre)} (${comptes[cle]})</h4>` + g.tableau(
+      entetes, corps, classes,
+      `${titre}, ${comptes[cle]} régimes`,
+      true,
+    ));
+  }
+  return `
+<h3>Tous les régimes, modélisés ou non</h3>
+<p>L'inventaire compte ${lignes.length} régimes de retraite obligatoires, actuels
+et disparus : ${phrase}. Il fait foi dans
+<a href="${g.DEPOT}/blob/main/data/reference/regimes/inventaire.yaml">inventaire.yaml</a>,
+où chaque ligne cite son texte fondateur, et un test le tient aligné sur le
+catalogue : une fiche sans ligne d'inventaire, ou une ligne qui prétend calculer
+ce qu'aucune fiche ne calcule, fait échouer les tests. Un régime « partiel » est
+calculé, mais un étage, un barème ou une période lui manque ; un régime « à
+modéliser » n'a pas de fiche, et la colonne dit ce qui bloque.</p>
+${tableaux.join("")}
+`;
+}
+
 function donnees(contexte) {
   const simulateur = contexte.simulateur();
   const macro = simulateur.macro;
@@ -3569,7 +3659,7 @@ au-delà de la dernière année observée, la fiabilité retombe à « estimée 
 ${g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", ""],
     "Nombre de régimes par niveau de fiabilité",
     true)}
-
+${inventaireSection(contexte.paquet.inventaire || [])}
 <h3>Sources</h3>
 <p>Vingt-six institutions sont recensées dans
 <a href="${g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a> : INSEE,
