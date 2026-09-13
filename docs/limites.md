@@ -3841,10 +3841,14 @@ complète a pris une heure et demie pour le JORF (421 160 documents gardés sur
 3 978 789, 1,9 Go en SQLite, 650 Mo compressés) et une heure pour LEGI
 (245 498 sur 1 894 969, 1,3 Go, 380 Mo compressés). La base se dépose sur la
 release `index-dila` du dépôt par `--publier`, d'où `--recuperer` la rapatrie
-en une minute — à condition qu'un jeton ayant le droit d'écrire les releases
-l'ait fait : celui d'une session Claude Code ne l'a pas (GitHub répond que la
-création de releases n'est pas permise à ce type de session), et la première
-publication attend donc un poste de travail. `dila_cherche.py` l'interroge en syntaxe FTS5 —
+en une minute (36 secondes mesurées pour LEGI). Il y faut un jeton ayant le
+droit d'écrire les releases : celui d'une session Claude Code ne l'a pas —
+GitHub répond que la création de releases n'est pas permise à ce type de
+session, et refuse de même l'ajout d'un fichier à une release existante —,
+celui d'un workflow GitHub Actions l'a. C'est donc le workflow
+`.github/workflows/index-dila.yml` qui construit et publie, sur les machines
+de GitHub : la première fois depuis le dump, puis chaque lundi par les seuls
+incréments, en quelques minutes. `dila_cherche.py` l'interroge en syntaxe FTS5 —
 phrases, `OR`, `NEAR`, filtres par années, nature et numéro d'article — et
 rend, par document, une ligne d'identification et un extrait de quatorze mots
 entre crochets ; le texte entier ne s'imprime qu'à la demande, et `--motif`
