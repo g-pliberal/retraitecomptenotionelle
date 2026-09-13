@@ -3066,6 +3066,48 @@ saisie à ce titre, sur la foi du producteur, comme la valeur du point du même
 régime — que la loi ne porte pas davantage, le décret annuel ne fixant qu'un
 coefficient de revalorisation.
 
+### Le simulateur doit être juste à tout âge : où il ne l'est pas encore
+
+Une fiche de régime porte des PÉRIODES, et chaque période un jeu de règles. Un
+régime dont la fiche n'a qu'une période applique donc les mêmes règles à toute
+son histoire — et comme les fiches sont écrites à partir des paramètres
+d'aujourd'hui, c'est le droit de 2026 qu'elles appliquent à 1950. Le tableau
+ci-dessous compte, pour chaque régime, le nombre d'ANNÉES par jeu de règles
+distinct. Plus le nombre est grand, moins l'histoire du régime est dans le
+modèle :
+
+| Régime | Couverture | Jeux de règles | Années par jeu |
+|---|---|---|---|
+| `port_strasbourg`, `opera_de_paris`, `comedie_francaise` | 1930-2026 | 1 | 97 |
+| `mines`, `marins` | 1930-2026 | 1 | 97 |
+| `seita` | 1935-2026 | 1 | 92 |
+| `cavp_complementaire`, `carpv_complementaire`, `cavec_complementaire` | 1949-2026 | 1 | 74 à 78 |
+| `ratp`, `fspoeie`, `banque_de_france` | 1930-2026 | 2 | 48 |
+| `crpcen` | 1937-2026 | 2 | 45 |
+| `ieg` | 1946-2026 | 2 | 40 |
+
+Le nombre n'est pas à lui seul un verdict : un régime dont les règles n'ont pas
+bougé mérite une seule période, et c'est le cas des trois complémentaires
+libérales de la liste, qui prélèvent par classes depuis leur création. Mais il
+dit où chercher, et ce qu'on y trouve est parfois gros : le régime des salariés
+agricoles portait une période pour quatre-vingt-seize ans, avec les paramètres de
+2023 — un salarié agricole parti en 1980 se voyait opposer 172 trimestres au lieu
+de 150 et calculer sur ses vingt-cinq meilleures années au lieu de dix.
+
+**Les témoins ne le voyaient pas, et c'est le second enseignement.** Le balayage
+par statut ne connaissait qu'une génération, née en 1975 : il ne visitait que les
+périodes RÉCENTES de chaque fiche. Corriger le régime agricole n'a déplacé aucun
+témoin. Chaque statut est donc désormais simulé à TROIS générations — née en
+1935, qui liquide vers 1999, sous la durée requise de 150 ou 160 trimestres et
+les dix meilleures années ; née en 1955, qui liquide vers 2019 ; née en 1975, qui
+liquide après la réforme de 2023. Le fichier de témoins passe de 138 à 212 cas,
+et une correction d'histoire s'y voit maintenant.
+
+Ce qui a été refermé de cette façon jusqu'ici : le régime des salariés agricoles
+(aligné sur le régime général, ses huit périodes reprises une à une), les régimes
+alignés des artisans et des commerçants depuis 1973, la durée requise de l'Opéra
+et de la Comédie-Française, et la clause du grand-père de huit régimes fermés.
+
 ### La clause du grand-père : six régimes fermés l'étaient pour tout le monde
 
 Le régime de la SNCF est fermé aux agents **recrutés** depuis le 1er janvier
