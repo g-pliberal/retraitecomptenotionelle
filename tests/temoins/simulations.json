@@ -43929,7 +43929,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 73,758.67 € × taux 75.000% × 100/100",
+       "detail": "SR 73,758.67 € × taux 75.000% × 150/150",
        "montant": 55318.99926704736,
        "regime": "comedie_francaise"
       }
@@ -43971,51 +43971,51 @@
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 811721.2827356096,
-     "capital_notionnel": 894702.9436521918,
+     "capital_droits_acquis": 649377.0261884877,
+     "capital_notionnel": 732358.6871050699,
      "cotisations_employeur": 0.0,
      "cotisations_versees": 79293.56401426159,
      "droits_acquis": {
       "age_conversion": 67.0,
-      "capital": 811721.2827356096,
-      "capital_a_la_bascule": 741350.8943196122,
+      "capital": 649377.0261884877,
+      "capital_a_la_bascule": 593080.7154556897,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.028567812418725,
-      "pension_figee": 33654.066875
+      "pension_figee": 26923.2535
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 34857.769928731606,
-     "pension_annuelle_euros_constants": 27819.68232494172,
-     "pension_mensuelle": 2904.814160727634,
+     "pension_annuelle": 28532.811701959046,
+     "pension_annuelle_euros_constants": 22771.788298815132,
+     "pension_mensuelle": 2377.7343084965873,
      "rendement_cumule": 1.0465119325656407,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.46936316380058957,
-     "variation_vs_actuel": -0.36987706953159183
+     "taux_remplacement": 0.38419700399477896,
+     "variation_vs_actuel": -0.48421316220455235
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 811721.2827356096,
-     "capital_notionnel": 1016077.332190259,
+     "capital_droits_acquis": 649377.0261884877,
+     "capital_notionnel": 853733.0756431371,
      "cotisations_employeur": 115979.93750582893,
      "cotisations_versees": 195273.5015200905,
      "droits_acquis": {
       "age_conversion": 67.0,
-      "capital": 811721.2827356096,
-      "capital_a_la_bascule": 741350.8943196122,
+      "capital": 649377.0261884877,
+      "capital_a_la_bascule": 593080.7154556897,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.028567812418725,
-      "pension_figee": 33654.066875
+      "pension_figee": 26923.2535
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 39586.535538499316,
-     "pension_annuelle_euros_constants": 31593.66893744771,
-     "pension_mensuelle": 3298.8779615416097,
+     "pension_annuelle": 33261.57731172676,
+     "pension_annuelle_euros_constants": 26545.774911321125,
+     "pension_mensuelle": 2771.798109310563,
      "rendement_cumule": 1.0465119325656405,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.5330364392857938,
-     "variation_vs_actuel": -0.28439530607921926
+     "taux_remplacement": 0.44787027947998326,
+     "variation_vs_actuel": -0.3987313987521798
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -44179,7 +44179,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 28,174.20 € × taux 75.000% × 100/100",
+       "detail": "SR 28,174.20 € × taux 75.000% × 150/150",
        "montant": 21130.65344487862,
        "regime": "comedie_francaise"
       }
@@ -44415,7 +44415,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 44,731.64 € × taux 75.000% × 100/100",
+       "detail": "SR 44,731.64 € × taux 75.000% × 150/150",
        "montant": 33548.733041293286,
        "regime": "comedie_francaise"
       }
@@ -45420,7 +45420,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 73,758.67 € × taux 75.000% × 100/100",
+       "detail": "SR 73,758.67 € × taux 75.000% × 150/150",
        "montant": 55318.99926704736,
        "regime": "opera_de_paris"
       }
@@ -45462,51 +45462,51 @@
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 811721.2827356096,
-     "capital_notionnel": 894702.9436521918,
+     "capital_droits_acquis": 649377.0261884877,
+     "capital_notionnel": 732358.6871050699,
      "cotisations_employeur": 0.0,
      "cotisations_versees": 79293.56401426159,
      "droits_acquis": {
       "age_conversion": 67.0,
-      "capital": 811721.2827356096,
-      "capital_a_la_bascule": 741350.8943196122,
+      "capital": 649377.0261884877,
+      "capital_a_la_bascule": 593080.7154556897,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.028567812418725,
-      "pension_figee": 33654.066875
+      "pension_figee": 26923.2535
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 34857.769928731606,
-     "pension_annuelle_euros_constants": 27819.68232494172,
-     "pension_mensuelle": 2904.814160727634,
+     "pension_annuelle": 28532.811701959046,
+     "pension_annuelle_euros_constants": 22771.788298815132,
+     "pension_mensuelle": 2377.7343084965873,
      "rendement_cumule": 1.0465119325656407,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.46936316380058957,
-     "variation_vs_actuel": -0.36987706953159183
+     "taux_remplacement": 0.38419700399477896,
+     "variation_vs_actuel": -0.48421316220455235
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 811721.2827356096,
-     "capital_notionnel": 1016077.332190259,
+     "capital_droits_acquis": 649377.0261884877,
+     "capital_notionnel": 853733.0756431371,
      "cotisations_employeur": 115979.93750582893,
      "cotisations_versees": 195273.5015200905,
      "droits_acquis": {
       "age_conversion": 67.0,
-      "capital": 811721.2827356096,
-      "capital_a_la_bascule": 741350.8943196122,
+      "capital": 649377.0261884877,
+      "capital_a_la_bascule": 593080.7154556897,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.028567812418725,
-      "pension_figee": 33654.066875
+      "pension_figee": 26923.2535
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 39586.535538499316,
-     "pension_annuelle_euros_constants": 31593.66893744771,
-     "pension_mensuelle": 3298.8779615416097,
+     "pension_annuelle": 33261.57731172676,
+     "pension_annuelle_euros_constants": 26545.774911321125,
+     "pension_mensuelle": 2771.798109310563,
      "rendement_cumule": 1.0465119325656405,
      "rente_capitalisation": 0.0,
-     "taux_remplacement": 0.5330364392857938,
-     "variation_vs_actuel": -0.28439530607921926
+     "taux_remplacement": 0.44787027947998326,
+     "variation_vs_actuel": -0.3987313987521798
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -45670,7 +45670,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 28,174.20 € × taux 75.000% × 100/100",
+       "detail": "SR 28,174.20 € × taux 75.000% × 150/150",
        "montant": 21130.65344487862,
        "regime": "opera_de_paris"
       }
@@ -45906,7 +45906,7 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 44,731.64 € × taux 75.000% × 100/100",
+       "detail": "SR 44,731.64 € × taux 75.000% × 150/150",
        "montant": 33548.733041293286,
        "regime": "opera_de_paris"
       }

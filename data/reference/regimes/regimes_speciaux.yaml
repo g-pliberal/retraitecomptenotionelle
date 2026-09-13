@@ -825,7 +825,7 @@ regimes:
         type_calcul: annuites
         age_ouverture: 40
         age_taux_plein: 40
-        duree_requise_trimestres: 100
+        duree_requise_trimestres: 150
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -836,7 +836,18 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, reversion]
         notes: >-
           Âge d'ouverture de 40 ans pour les artistes du ballet (limite d'âge
-          statutaire), 60-62 ans pour les autres personnels. CAS EXTRÊME de
+          statutaire), 60-62 ans pour les autres personnels.
+          TRENTE-SEPT ANNUITÉS ET DEMIE, et non vingt-cinq. L'article 14 du
+          décret n° 68-382 du 5 avril 1968 le dit depuis l'origine : « chaque
+          annuité liquidable est rémunérée à raison de 2 % des émoluments de
+          base […] le maximum des annuités liquidables, dans la pension, est
+          fixé à trente-sept annuités et demie ». La fiche portait 100
+          trimestres : elle servait 75 % du traitement après vingt-cinq ans de
+          maison, là où le régime en demande trente-sept et demi. Les décrets
+          n° 2008-240 du 6 mars 2008 et n° 2011-953 du 10 août 2011 y ont porté
+          la réforme des régimes spéciaux — durée d'assurance alignée,
+          coefficient de minoration, âge relevé de deux ans par génération — et
+          ces régimes successifs ne sont pas chiffrés ici. CAS EXTRÊME de
           l'écart à l'âge de référence : 27 ans d'anticipation par rapport à
           l'âge de référence 2026. Régime fermé aux recrutements depuis le
           1er septembre 2023.
@@ -859,7 +870,7 @@ regimes:
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
-        duree_requise_trimestres: 100
+        duree_requise_trimestres: 150
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -868,7 +879,28 @@ regimes:
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [bonifications, reversion]
-        notes: Fermé aux recrutements depuis le 1er septembre 2023.
+        notes: >-
+          TRENTE-SEPT ANNUITÉS ET DEMIE, et non vingt-cinq : l'article 12 du
+          décret n° 68-960 du 11 octobre 1968 rémunère « chaque annuité
+          liquidable à raison de 2 % des émoluments de base » et fixe « le
+          maximum des annuités liquidables dans la pension à trente-sept
+          annuités et demie ». La fiche portait 100 trimestres : elle servait
+          75 % du traitement après vingt-cinq ans de maison, là où le régime en
+          demande trente-sept et demi.
+          L'ÂGE A CHANGÉ TROIS FOIS, et la fiche n'en porte qu'un. Avant 1993,
+          le droit à pension s'ouvrait à cinquante ans pour le personnel féminin
+          et cinquante-cinq pour le personnel masculin chez les artistes aux
+          appointements ; depuis le décret du 25 mars 1993, à soixante ans pour
+          les artistes et les employés à traitement fixe, cinquante-cinq pour
+          les machinistes, électriciens, régisseurs et pompiers. Les décrets
+          n° 2008-658 du 2 juillet 2008 puis n° 2011-1134 du 21 septembre 2011
+          y ont porté la réforme des régimes spéciaux — durée d'assurance
+          alignée, coefficient de minoration, âge relevé de deux ans par
+          génération (article 51 : soixante-deux ans pour les assurés nés à
+          compter du 1er janvier 1962). Ces régimes d'âge successifs ne sont pas
+          chiffrés ici : la fiche retient celui d'aujourd'hui pour les artistes,
+          et c'est une approximation nommée.
+          Fermé aux recrutements depuis le 1er septembre 2023.
 
   - code: port_strasbourg
     nom: Régime de retraite du Port autonome de Strasbourg
