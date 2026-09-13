@@ -239,6 +239,9 @@ def _regimes() -> list[dict]:
                     "salaire_reference_par_generation": p.salaire_reference_par_generation,
                     "decote_par_trimestre": p.decote_par_trimestre,
                     "bareme_decote": p.bareme_decote,
+                    "duree_maximum_avant_age": p.duree_maximum_avant_age,
+                    "duree_maximum_avant_age_trimestres":
+                        p.duree_maximum_avant_age_trimestres,
                     "decote_annulee_par_la_duree": p.decote_annulee_par_la_duree,
                     "decote_trimestres_maximum": p.decote_trimestres_maximum,
                     "surcote_par_trimestre": p.surcote_par_trimestre,

@@ -1045,7 +1045,20 @@ export class ScenarioActuel {
       if (fiabiliteProratisation !== null) {
         fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteProratisation);
       }
-      const trimestresRegime = Math.min(trimestresParRegime.get(code) ?? 0, proratisation);
+      let trimestresRegime = Math.min(trimestresParRegime.get(code) ?? 0, proratisation);
+      if (periode.duree_maximum_avant_age !== null
+          && periode.duree_maximum_avant_age !== undefined
+          && periode.duree_maximum_avant_age_trimestres !== null
+          && periode.duree_maximum_avant_age_trimestres !== undefined
+          && ageLiquidation < periode.duree_maximum_avant_age) {
+        // DURÉE LIQUIDABLE PLAFONNÉE PAR L'ÂGE. L'article R. 13 du code des
+        // pensions de retraite des marins : « le maximum des annuités
+        // liquidables dans les pensions d'ancienneté dont la liquidation est
+        // demandée avant cinquante-cinq ans est fixé à vingt-cinq annuités ».
+        trimestresRegime = Math.min(
+          trimestresRegime, periode.duree_maximum_avant_age_trimestres,
+        );
+      }
 
       let taux = periode.taux_plein || 0.5;
       // Part du taux qui vient de la surcote : le minimum contributif se

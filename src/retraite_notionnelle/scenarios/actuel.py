@@ -2179,6 +2179,20 @@ class ScenarioActuel:
             if fiabilite_proratisation is not None:
                 fiabilite_globale = min(fiabilite_globale, fiabilite_proratisation)
             trimestres_regime = min(trimestres_par_regime.get(code, 0), proratisation)
+            if (periode.duree_maximum_avant_age is not None
+                    and periode.duree_maximum_avant_age_trimestres is not None
+                    and age_liquidation < periode.duree_maximum_avant_age):
+                # DURÉE LIQUIDABLE PLAFONNÉE PAR L'ÂGE. L'article R. 13 du code
+                # des pensions de retraite des marins : « le maximum des
+                # annuités liquidables dans les pensions d'ancienneté dont la
+                # liquidation est demandée avant cinquante-cinq ans est fixé à
+                # vingt-cinq annuités ». Un marin parti à cinquante ans avec
+                # trente ans de mer touche 50 % du salaire forfaitaire, non
+                # 60 %. C'est la seule règle du catalogue où l'ÂGE borne la
+                # durée, et non l'inverse.
+                trimestres_regime = min(
+                    trimestres_regime, periode.duree_maximum_avant_age_trimestres
+                )
 
             taux = periode.taux_plein or 0.5
             #: Part du taux qui vient de la surcote. Le minimum contributif se

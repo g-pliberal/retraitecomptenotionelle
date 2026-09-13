@@ -2588,6 +2588,32 @@ def test_la_decote_de_la_fonction_publique_est_celle_de_l_article_l14(simulateur
     assert age_annulation == pytest.approx(67.0)
 
 
+def test_le_marin_parti_avant_cinquante_cinq_ans_plafonne_a_vingt_cinq_annuites(
+        simulateur):
+    """L'âge y borne la durée, et c'est le seul régime où cela se voit.
+
+    Article R. 13 du code des pensions de retraite des marins : « le maximum
+    des annuités liquidables dans les pensions d'ancienneté dont la liquidation
+    est demandée avant cinquante-cinq ans est fixé à vingt-cinq annuités ».
+    Trente ans de mer ne valent donc pas 60 % du salaire forfaitaire à cinquante
+    ans, mais 50 %.
+    """
+    scenario = simulateur.scenario_actuel
+    avant = scenario.calculer(simulateur.carriere_simple(
+        annee_naissance=1960, sexe="H", affiliation="marin",
+        age_debut=20, age_liquidation=54, niveau_salaire=1.0,
+    ))
+    apres = scenario.calculer(simulateur.carriere_simple(
+        annee_naissance=1960, sexe="H", affiliation="marin",
+        age_debut=20, age_liquidation=55, niveau_salaire=1.0,
+    ))
+    assert "100/150" in avant.pensions_par_regime[0].detail
+    assert "140/150" in apres.pensions_par_regime[0].detail
+    # Le plafond ne joue que sous l'âge : la pension de cinquante-cinq ans vaut
+    # plus de la moitié de plus, pour une année de mer de plus.
+    assert apres.pension_annuelle > avant.pension_annuelle * 1.35
+
+
 def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     """La réforme de 2008 leur donne la décote de la fonction publique, en 2010.
 
