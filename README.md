@@ -258,6 +258,7 @@ print(simulateur.simuler(carriere).tableau())
 | Exigence | Réalisation |
 |---|---|
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
+| Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, 36 entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
 | Tous les régimes, actuels **et** disparus | 54 régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **quatre-vingt-un régimes** obligatoires ayant existé depuis 1930, ancré sur `R. 711-1`, qui dit lesquels manquent et pourquoi ; un test le tient aligné sur le catalogue |
 | Départ trop tôt = pension réduite | Âge de référence **à cliquet** : l'abaissement de 1982 ne le fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | SNCF à 50 ans = 15 ans d'anticipation ; Opéra à 40 ans = 25 ans |
@@ -287,7 +288,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait de 12 % sur quarante ans, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347798289 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue 250 simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à quatre générations, née en 1925, 1935, 1955 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts |
+| Portage vérifié, pas cru sur parole | Le site rejoue 324 simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 
@@ -884,7 +885,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          568 tests Python
+tests/                          572 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et le relevé d'OpenFisca-France-Pension qui sert
                                 de contre-expertise au scénario 1

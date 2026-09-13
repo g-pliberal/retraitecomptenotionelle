@@ -193,3 +193,34 @@ raison de ne pas en avoir, une série de points ou un rendement, la
 `part_salariale`, le statut dans les témoins, la reconstruction du paquet et
 des témoins, et le portage JavaScript si une assiette nouvelle apparaît.
 
+
+## Journal de la campagne « les règles à travers l'histoire »
+
+Chaque tranche de la campagne laisse ici une ligne par régime : ce qui a été
+coupé, d'après quel texte, ce que cela déplace sur les témoins, ce qui reste.
+L'outillage qui la porte : `data/reference/legislation/reformes.yaml` (le
+calendrier des réformes, avec les régimes que chacune touche),
+`data/reference/regimes/pivots.yaml` (les articles dont les versions datent
+chaque fiche) et `scripts/calendrier_regimes.py`, qui lit les versions dans
+l'index LEGI et dit ce que la fiche ne coupe pas. Un test impose que toute
+réforme touchant un régime soit coupée, absorbée par un drapeau par
+génération, ou déclarée non appliquée avec sa raison. Les témoins balaient
+désormais chaque statut à six générations — 1925, 1935, 1945, 1955, 1965,
+1975 —, 324 cas au lieu de 250.
+
+### Tranche B1 — les régimes alignés qui ne suivaient pas leur modèle
+
+| Régime | Ce qui était faux | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `msa_non_salaries` | 65 ans opposés jusqu'en 2002, puis **64 ans, 67 ans et 172 trimestres dès 2003** — le droit de 2023 sur vingt ans ; aucun drapeau par génération | 65 ans jusqu'en 1985 (ancien code rural, art. 1122, `LEGIARTI000006581025`) ; 60 ans depuis la loi du 6 janvier 1986 (`LEGITEXT000006068962`), minoration entre 60 et 65 ans sans la durée tous régimes (L. 732-25, `LEGIARTI000006585545`) ; loi Fillon aux pensions de 2004 (`LEGIARTI000006585546`), durée et coefficient lus à la génération ; loi Woerth aux pensions prenant effet à compter du 1er juillet 2011 (L. 732-18, `LEGIARTI000023030985`), âges lus à la génération, ce qui porte aussi 2014 et 2023 | sept périodes au lieu de cinq ; exploitant né en 1955 : +2,2 % de pension actuelle ; un exploitant liquidant à 60 ou 62 ans entre 1986 et 2010 n'est plus un contrefactuel |
+| `rafp` | 62 ans dès 2005 | 60 ans jusqu'au 2 juin 2011 (décret 2004-569, art. 9, `LEGIARTI000006453304`), puis l'âge de L. 161-17-2 lu à la génération (`LEGIARTI000024113145`) | aucun témoin : personne ne liquide entre 60 et 62 ans dans le balayage ; le droit est daté |
+| `ircantec` | 62 et 67 ans dès 2009, deux ans avant la loi Woerth ; coefficient de 0,55 % par trimestre, sans source | Arrêté du 30 décembre 1970, art. 16, douze versions (`LEGIARTI000006381606` à `LEGIARTI000048065521`) : 65 ans, anticipation dès 55, coefficient 0,78 à 60 ans — 1,1 % par trimestre — jusqu'au 30 juin 2011 ; ensuite l'âge de L. 351-8 et celui de L. 161-17-2, lus à la génération | 2009-2010 revient à 60/65 ; les âges et la durée se lisent à la génération depuis 2011 ; aucun témoin déplacé (les cas liquident à 64 ans) |
+| `rci` | 62, 67 et 172 en dur, y compris pour les générations à 64 ans | Règlement approuvé le 9 février 2012 (`LEGIARTI000025397326`) : âge légal et taux plein du régime de base — drapeaux par génération | aucun témoin déplacé à 64 ans ; un artisan né en 1968 liquidant à 62 ans est maintenant décoté comme le droit le fait |
+| `agirc_arrco` | âge d'annulation 67 en dur | L. 351-8 lu à la génération | rien : personne né avant 1955 n'y liquide |
+| `carpv_complementaire` | présumé aligné sur l'âge légal | Le règlement approuvé par l'arrêté du 10 juillet 2026 (`LEGIARTI000054437680`) garde le taux plein à 65 ans et l'anticipation dès 60 ans à 1,25 % par trimestre : la section n'a pas suivi la loi, et la fiche avait raison | déclaré `non_appliquee` pour 2010 et 2023 |
+| `cancava`, `organic`, `rsi`, `mines`, `seita`, `port_strasbourg`, `sncf`, `ratp`, `ieg`, `opera_de_paris`, `comedie_francaise`, `marins`, `crpnpac`, sections à l'âge seul | — | déclarés `non_appliquee` réforme par réforme, avec la raison : extinction portée par la fiche, régime laissé où il était, règlement hors LEGI, ou lecture à faire en tranche B2 | rien |
+
+Trois témoins bougent sur 250, et 74 nouveaux entrent (générations 1945 et
+1965). C'est peu, et c'est attendu : les cas types liquident à 64 ans avec
+une carrière complète, là où les âges faux ne mordaient pas ; ils mordaient
+sur qui liquidait tôt, que le balayage ne visite que pour le privé.

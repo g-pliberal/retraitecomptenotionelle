@@ -884,3 +884,141 @@ def charger_inventaire(racine: Path) -> tuple[RegimeInventaire, ...]:
     if not lignes:
         raise ValueError(f"aucun régime dans {chemin}")
     return tuple(lignes)
+
+
+# ---------------------------------------------------------------------------
+# Le calendrier des réformes et les articles pivots
+# ---------------------------------------------------------------------------
+
+#: Drapeaux d'une période qui lisent un paramètre à la génération plutôt
+#: qu'à l'année : ce sont eux qui peuvent « absorber » une réforme sans
+#: qu'une période nouvelle commence.
+DRAPEAUX_PAR_GENERATION = (
+    "duree_requise_par_generation",
+    "age_ouverture_par_generation",
+    "age_taux_plein_par_generation",
+    "decote_par_generation",
+    "duree_proratisation_par_generation",
+    "salaire_reference_par_generation",
+)
+
+
+@dataclass(frozen=True)
+class Reforme:
+    """Une ligne de ``data/reference/legislation/reformes.yaml``."""
+
+    code: str
+    date: str
+    annee: int
+    texte: dict
+    parametres: tuple[str, ...]
+    regimes: tuple[str, ...]
+    absorbee_par: tuple[str, ...]
+    non_appliquee: dict[str, str]
+
+
+def charger_reformes(racine: Path) -> tuple[Reforme, ...]:
+    chemin = racine / "reference" / "legislation" / "reformes.yaml"
+    contenu = charger_yaml(chemin)
+    reformes: list[Reforme] = []
+    codes: set[str] = set()
+    for fiche in contenu.get("reformes", []):
+        manquants = {"code", "date", "texte", "parametres", "regimes"} - set(fiche)
+        if manquants:
+            raise ValueError(f"{chemin.name} / {fiche.get('code', '?')} : {sorted(manquants)}")
+        code = str(fiche["code"])
+        if code in codes:
+            raise ValueError(f"{chemin.name} : réforme dupliquée {code}")
+        codes.add(code)
+        date = str(fiche["date"])
+        if len(date) < 4 or not date[:4].isdigit():
+            raise ValueError(f"{chemin.name} / {code} : date illisible {date!r}")
+        absorbee = tuple(fiche.get("absorbee_par") or ())
+        inconnus = set(absorbee) - set(DRAPEAUX_PAR_GENERATION)
+        if inconnus:
+            raise ValueError(f"{chemin.name} / {code} : drapeaux inconnus {sorted(inconnus)}")
+        reformes.append(Reforme(
+            code=code,
+            date=date,
+            annee=int(date[:4]),
+            texte={"reference": str(fiche["texte"]["reference"]),
+                   "id": fiche["texte"].get("id")},
+            parametres=tuple(fiche["parametres"] or ()),
+            regimes=tuple(fiche["regimes"] or ()),
+            absorbee_par=absorbee,
+            non_appliquee={
+                str(k): " ".join(str(v).split())
+                for k, v in (fiche.get("non_appliquee") or {}).items()
+            },
+        ))
+    if not reformes:
+        raise ValueError(f"aucune réforme dans {chemin}")
+    return tuple(sorted(reformes, key=lambda r: r.date))
+
+
+@dataclass(frozen=True)
+class Pivot:
+    """Un article de code ou de décret qui porte un paramètre d'une fiche."""
+
+    texte: str
+    num: str
+    parametres: tuple[str, ...]
+
+
+def charger_pivots(racine: Path) -> tuple[dict[str, tuple[Pivot, ...]], dict[str, str]]:
+    """Rend (pivots par régime, raison ``hors_legi`` par régime)."""
+    chemin = racine / "reference" / "regimes" / "pivots.yaml"
+    contenu = charger_yaml(chemin)
+    pivots: dict[str, tuple[Pivot, ...]] = {}
+    hors_legi: dict[str, str] = {}
+    for code, valeur in (contenu.get("pivots") or {}).items():
+        if isinstance(valeur, dict) and "hors_legi" in valeur:
+            hors_legi[str(code)] = " ".join(str(valeur["hors_legi"]).split())
+            pivots[str(code)] = ()
+            continue
+        if not isinstance(valeur, list) or not valeur:
+            raise ValueError(f"{chemin.name} / {code} : ni pivots ni raison hors_legi")
+        pivots[str(code)] = tuple(
+            Pivot(texte=str(p["texte"]), num=str(p.get("num") or ""),
+                  parametres=tuple(p.get("parametres") or ()))
+            for p in valeur
+        )
+    return pivots, hors_legi
+
+
+def reformes_non_portees(catalogue: "CatalogueRegimes",
+                         reformes: tuple[Reforme, ...],
+                         tolerance: int = 1) -> list[tuple[str, str, str]]:
+    """Les couples (réforme, régime) que la fiche ne porte ni ne déclare.
+
+    Une réforme est PORTÉE par une fiche si une période commence l'année
+    d'effet à ``tolerance`` près, ou si une période active cette année-là
+    lève un des drapeaux qui l'absorbent, ou si le régime est déclaré dans
+    ``non_appliquee`` avec sa raison. Un régime sans période active à la date
+    — pas encore créé, déjà éteint — n'est pas concerné. Rend une liste de
+    (code réforme, code régime, diagnostic).
+    """
+    manques: list[tuple[str, str, str]] = []
+    for reforme in reformes:
+        for code in reforme.regimes:
+            if code not in catalogue:
+                continue
+            if code in reforme.non_appliquee:
+                continue
+            regime = catalogue[code]
+            actives = [p for p in regime.periodes
+                       if p.debut <= reforme.annee <= (p.fin if p.fin is not None else 9999)]
+            if not actives:
+                continue
+            coupee = any(abs(p.debut - reforme.annee) <= tolerance for p in regime.periodes)
+            if coupee:
+                continue
+            absorbee = any(getattr(p, drapeau, False)
+                           for p in actives for drapeau in reforme.absorbee_par)
+            if absorbee:
+                continue
+            debuts = sorted({p.debut for p in actives})
+            manques.append((reforme.code, code,
+                            f"période(s) active(s) depuis {debuts} sans coupure en "
+                            f"{reforme.annee} ni drapeau {list(reforme.absorbee_par) or '—'}"))
+    return manques

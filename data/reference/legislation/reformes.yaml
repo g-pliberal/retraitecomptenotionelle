@@ -1,0 +1,437 @@
+# Calendrier central des réformes des retraites
+# ==============================================
+# Ce fichier était déclaré comme cible de `legifrance_textes` dans
+# data/sources.yaml sans exister : chaque réforme vivait dans les notes des
+# fiches, et rien ne recoupait le découpage d'une fiche avec ce que le droit
+# a réellement changé pour elle. Ici, une entrée par réforme, avec les régimes
+# qu'elle touche, et `tests/test_donnees.py` impose que pour chaque couple
+# (réforme, régime) la fiche ait été COUPÉE à cette date (une période commence
+# l'année d'effet, à un an près), ou que la réforme soit ABSORBÉE par un
+# drapeau par génération levé sur la période active, ou que le régime soit
+# DÉCLARÉ dans `non_appliquee` avec la raison. Le silence n'est pas une option.
+#
+# Champs :
+#   code           identifiant court
+#   date           date d'effet du paramètre (pas la date de promulgation)
+#   texte          référence et identifiant DILA lu dans l'index du dépôt
+#   parametres     ce que la réforme change, dans le vocabulaire de _schema.yaml
+#   regimes        codes du catalogue touchés en droit
+#   absorbee_par   drapeaux `*_par_generation` qui portent la réforme sans coupure
+#   non_appliquee  régimes touchés en droit mais dont la fiche ne coupe pas, et
+#                  pourquoi — un régime en extinction laissé où il était, un
+#                  règlement qui n'a pas suivi la loi, une lecture à faire
+#
+# Le script scripts/calendrier_regimes.py confronte ce calendrier et les
+# versions des articles pivots (regimes/pivots.yaml) aux périodes des fiches.
+
+source_id: legifrance_textes
+
+reformes:
+
+  - code: ordonnances_1945
+    date: 1945-10-04
+    texte: {reference: "ordonnances n° 45-2250 du 4 octobre 1945 et n° 45-2454 du 19 octobre 1945", id: null}
+    parametres: [type_calcul, taux_plein, salaire_reference]
+    regimes: [regime_general, msa_salaries]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: code_pensions_1948
+    date: 1948-09-20
+    texte: {reference: "loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des pensions civiles et militaires", id: null}
+    parametres: [taux_plein, taux_cotisation_retraite]
+    regimes: [fonction_publique_etat, fspoeie]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: allocation_vieillesse_non_salaries_1948
+    date: 1949-01-01
+    texte: {reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse pour les personnes non salariées", id: null}
+    parametres: [type_calcul]
+    regimes: [cancava, organic, cnavpl]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: assurance_vieillesse_agricole_1952
+    date: 1952-07-10
+    texte: {reference: "loi n° 52-799 du 10 juillet 1952", id: null}
+    parametres: [type_calcul]
+    regimes: [msa_non_salaries]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: code_pensions_1964
+    date: 1964-12-26
+    texte: {reference: "loi n° 64-1339 du 26 décembre 1964 portant réforme du code des pensions civiles et militaires de retraite", id: LEGITEXT000006068242}
+    parametres: [taux_cotisation_retraite, duree_requise_trimestres]
+    regimes: [fonction_publique_etat, fspoeie]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: boulin_1971
+    date: 1972-01-01
+    texte: {reference: "loi n° 71-1132 du 31 décembre 1971 portant amélioration des pensions de vieillesse du régime général", id: LEGITEXT000006068397}
+    parametres: [taux_plein, duree_requise_trimestres, salaire_reference]
+    regimes: [regime_general, msa_salaries]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: alignement_independants_1973
+    date: 1973-01-01
+    texte: {reference: "loi n° 72-554 du 3 juillet 1972 portant réforme de l'assurance vieillesse des travailleurs non salariés", id: LEGITEXT000006068442}
+    parametres: [type_calcul, taux_plein, salaire_reference]
+    regimes: [cancava, organic]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: generalisation_arrco_1973
+    date: 1973-01-01
+    texte: {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: LEGITEXT000006068436}
+    parametres: [affiliation]
+    regimes: [arrco]
+    absorbee_par: []
+    non_appliquee:
+      arrco: >-
+        La loi change qui cotise, pas le barème : la fiche route l'Arrco à
+        tous les salariés dès 1961, et l'inventaire porte comme manque les
+        années 1961-1972 prêtées à qui n'était pas affilié.
+
+  - code: retraite_60_ans_1983
+    date: 1983-04-01
+    texte: {reference: "ordonnance n° 82-270 du 26 mars 1982 relative à l'abaissement de l'âge de la retraite", id: LEGITEXT000006069322}
+    parametres: [age_ouverture, decote_annulee_par_la_duree]
+    regimes: [regime_general, msa_salaries, cancava, organic, cavimac, ircantec]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: age_60_agricole_1986
+    date: 1986-01-01
+    texte: {reference: "loi n° 86-19 du 6 janvier 1986 relative à l'abaissement à soixante ans de l'âge de la retraite des non-salariés agricoles", id: LEGITEXT000006068962}
+    parametres: [age_ouverture, decote_par_trimestre]
+    regimes: [msa_non_salaries]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: gmp_agirc_1989
+    date: 1989-01-01
+    texte: {reference: "accord du 9 février 1988 (garantie minimale de points, hors JORF)", id: null}
+    parametres: [points_minimum_annuels]
+    regimes: [agirc]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: retenue_fonction_publique_1990
+    date: 1990-01-01
+    texte: {reference: "code des pensions civiles et militaires de retraite, article L. 61, versions de 1989 et 1991", id: null}
+    parametres: [taux_cotisation_retraite]
+    regimes: [fonction_publique_etat, cnracl, fspoeie]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: balladur_1993
+    date: 1994-01-01
+    texte: {reference: "loi n° 93-936 du 22 juillet 1993 relative aux pensions de retraite et à la sauvegarde de la protection sociale", id: LEGITEXT000006082396}
+    parametres: [duree_requise_trimestres, salaire_reference, revalorisation]
+    regimes: [regime_general, msa_salaries, cancava, organic, cavimac]
+    absorbee_par: [duree_requise_par_generation, salaire_reference_par_generation]
+    non_appliquee: {}
+
+  - code: taux_arrco_1996
+    date: 1996-01-01
+    texte: {reference: "accord du 25 avril 1996 (hors JORF)", id: null}
+    parametres: [taux_cotisation_retraite, assiette]
+    regimes: [arrco, arrco_tranche_2]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: unification_arrco_1999
+    date: 1999-01-01
+    texte: {reference: "accord du 25 avril 1996, régime unique Arrco au 1er janvier 1999 (hors JORF)", id: null}
+    parametres: [valeur_point]
+    regimes: [arrco]
+    absorbee_par: []
+    non_appliquee:
+      arrco: >-
+        L'unification est un changement d'unité, porté par
+        regimes/conversions_points.csv (un point UNIRS vaut 0,387464 point
+        Arrco) et non par une période de la fiche.
+
+  - code: rco_agricole_2003
+    date: 2003-01-01
+    texte: {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}
+    parametres: [taux_cotisation_retraite]
+    regimes: [msa_rco, msa_non_salaries]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: fillon_2003
+    date: 2004-01-01
+    texte: {reference: "loi n° 2003-775 du 21 août 2003 portant réforme des retraites", id: LEGITEXT000005635050}
+    parametres: [duree_requise_trimestres, decote_par_trimestre, surcote_par_trimestre, bareme_decote]
+    regimes: [regime_general, msa_salaries, cancava, organic, fonction_publique_etat, cnracl,
+              fspoeie, cavimac, cnavpl, cnbf, msa_non_salaries]
+    absorbee_par: [duree_requise_par_generation, decote_par_generation]
+    non_appliquee: {}
+
+  - code: rafp_2005
+    date: 2005-01-01
+    texte: {reference: "loi n° 2003-775, article 76, et décret n° 2004-569 du 18 juin 2004", id: LEGITEXT000005788807}
+    parametres: [creation]
+    regimes: [rafp]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: rsi_2006
+    date: 2006-07-01
+    texte: {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}
+    parametres: [gestion]
+    regimes: [rsi, cancava, organic]
+    absorbee_par: []
+    non_appliquee:
+      cancava: >-
+        La fiche s'éteint en 2006, ce que porte son champ `extinction` ; le
+        transfert au RSI ne change aucun de ses paramètres.
+      organic: >-
+        Même situation que la Cancava : extinction en 2006 portée par la
+        fiche, paramètres inchangés par le transfert.
+
+  - code: banque_de_france_2007
+    date: 2008-01-01
+    texte: {reference: "décret n° 2007-262 du 27 février 2007 relatif au régime de retraite des agents titulaires de la Banque de France", id: null}
+    parametres: [bareme_decote, duree_requise_trimestres]
+    regimes: [banque_de_france]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: regimes_speciaux_2008
+    date: 2008-07-01
+    texte: {reference: "décrets n° 2008-639 (SNCF), 2008-637 (RATP), 2008-658 (Comédie-Française), 2008-147 (clercs de notaires) et décret n° 2008-1514 du 30 décembre 2008", id: LEGITEXT000020076262}
+    parametres: [duree_requise_trimestres, bareme_decote, surcote_par_trimestre]
+    regimes: [sncf, ratp, ieg, crpcen, opera_de_paris, comedie_francaise, mines, seita, port_strasbourg]
+    absorbee_par: []
+    non_appliquee:
+      mines: >-
+        Régime en extinction, fermé aux nouveaux entrants en 2010 et financé
+        par le programme 195 : les réformes de 2008 à 2023 l'ont laissé où il
+        était, et la fiche le dit période par période.
+      seita: >-
+        Régime fermé en 1981, jamais réformé depuis : ses articles courent
+        sans modification et sont lus une fois pour toute l'histoire.
+      port_strasbourg: >-
+        Le règlement de retraite du port est un acte de l'établissement,
+        absent de LEGI ; la fiche n'a qu'une période et la tranche B2 doit
+        dire ce que la réforme de 2008 y a changé.
+
+  - code: ircantec_2008
+    date: 2009-01-01
+    texte: {reference: "décret n° 2008-996 du 23 septembre 2008 modifiant le décret n° 70-1277 (rendement et taux de l'Ircantec)", id: LEGITEXT000019510329}
+    parametres: [taux_cotisation_retraite, valeur_point]
+    regimes: [ircantec]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: lfss_2009_surcote
+    date: 2009-01-01
+    texte: {reference: "loi n° 2008-1330 du 17 décembre 2008 de financement de la sécurité sociale pour 2009 (surcote à 1,25 %)", id: LEGITEXT000019945312}
+    parametres: [surcote_par_trimestre]
+    regimes: [regime_general, msa_salaries, rsi, fonction_publique_etat, cnracl, fspoeie, cavimac, msa_non_salaries]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: woerth_2010
+    date: 2011-07-01
+    texte: {reference: "loi n° 2010-1330 du 9 novembre 2010 portant réforme des retraites", id: LEGITEXT000023023907}
+    parametres: [age_ouverture, age_taux_plein]
+    regimes: [regime_general, msa_salaries, rsi, cavimac, fonction_publique_etat, cnracl, fspoeie,
+              cnavpl, cnbf, cnbf_complementaire, ircantec, agirc, arrco, arrco_tranche_2, rafp,
+              msa_non_salaries, msa_rco, crpcen, banque_de_france, comedie_francaise, opera_de_paris,
+              carmf_complementaire, carcdsf_complementaire, carpimko_complementaire, cavp_complementaire,
+              cavec_complementaire, cipav_complementaire, cprn_complementaire, cavamac_complementaire,
+              carpv_complementaire, ircec_raap, rco_artisans, nric]
+    absorbee_par: [age_ouverture_par_generation, age_taux_plein_par_generation]
+    non_appliquee:
+      carpv_complementaire: >-
+        Le règlement du régime, approuvé par l'arrêté du 10 juillet 2026
+        (LEGIARTI000054437680), sert toujours le taux plein à soixante-cinq
+        ans et l'anticipation dès soixante ans à 1,25 % par trimestre : la
+        section n'a pas suivi l'âge légal, et la fiche non plus.
+      opera_de_paris: >-
+        Le décret n° 2011-953 du 10 août 2011 reporte la montée en charge du
+        régime de l'Opéra ; la fiche coupe en 2014 après lecture de ce décret,
+        et les artistes du ballet gardent un âge fixe (V de l'article 14).
+
+  - code: navigants_2012
+    date: 2012-01-01
+    texte: {reference: "décret n° 2011-1500 du 10 novembre 2011 relatif au régime complémentaire de retraite du personnel navigant", id: LEGITEXT000024779211}
+    parametres: [duree_requise_trimestres, taux_plein, decote_par_trimestre, age_taux_plein]
+    regimes: [crpnpac, crpnpac_tranche_2]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: rci_2013
+    date: 2013-01-01
+    texte: {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire des indépendants", id: LEGIARTI000025397326}
+    parametres: [creation, valeur_point]
+    regimes: [rci, rco_artisans, nric]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: touraine_2014
+    date: 2014-01-22
+    texte: {reference: "loi n° 2014-40 du 20 janvier 2014 garantissant l'avenir et la justice du système de retraites", id: LEGITEXT000028494557}
+    parametres: [duree_requise_trimestres]
+    regimes: [regime_general, msa_salaries, rsi, fonction_publique_etat, cnracl, fspoeie, cavimac,
+              cnavpl, cnbf, cnbf_complementaire, msa_non_salaries, msa_rco, rci, ircantec, crpcen,
+              banque_de_france, sncf, ratp, ieg, opera_de_paris, comedie_francaise,
+              carmf_complementaire, carcdsf_complementaire, carpimko_complementaire,
+              cavp_complementaire, cavec_complementaire, cipav_complementaire, ircec_raap]
+    absorbee_par: [duree_requise_par_generation]
+    non_appliquee: {}
+
+  - code: ircec_2016
+    date: 2016-01-01
+    texte: {reference: "décret n° 2015-1877 du 30 décembre 2015 (RAAP proportionnel)", id: null}
+    parametres: [taux_cotisation_retraite, cotisation_par_classes]
+    regimes: [ircec_raap]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cavom_2016
+    date: 2016-01-01
+    texte: {reference: "décret n° 2015-1667 du 14 décembre 2015 (CAVOM, cotisation proportionnelle)", id: null}
+    parametres: [taux_cotisation_retraite, cotisation_par_classes]
+    regimes: [cavom_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: speciaux_bornes_2017
+    date: 2017-01-01
+    texte: {reference: "décrets n° 2011-290 (IEG), 2011-291 (SNCF) et 2011-292 (RATP) du 18 mars 2011, relèvement des bornes d'âge à compter de 2017", id: null}
+    parametres: [age_ouverture, age_taux_plein]
+    regimes: [sncf, ratp, ieg]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: ssi_2018
+    date: 2018-01-01
+    texte: {reference: "loi n° 2017-1836 du 30 décembre 2017 de financement de la sécurité sociale pour 2018, article 15 (suppression du RSI)", id: null}
+    parametres: [affiliation]
+    regimes: [rsi, regime_general, cnavpl]
+    absorbee_par: []
+    non_appliquee:
+      rsi: >-
+        La fiche est fermée en 2018 et éteinte en 2020, ce que portent ses
+        champs `fermeture` et `extinction` ; ses paramètres ne changent pas.
+      regime_general: >-
+        Changement d'affiliation, porté par legislation/affiliations.yaml :
+        les artisans et commerçants passent au régime général en 2018 sans
+        que ses paramètres changent.
+      cnavpl: >-
+        Les libéraux non réglementés créés depuis 2018 relèvent du régime
+        général et non de la CNAVPL ; c'est un routage à faire dépendre de
+        l'année d'entrée, porté comme manque dans l'inventaire.
+
+  - code: fusion_agirc_arrco_2019
+    date: 2019-01-01
+    texte: {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
+    parametres: [creation, taux_cotisation_retraite, abattement_points]
+    regimes: [agirc, arrco, arrco_tranche_2, agirc_arrco]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: fermeture_sncf_2020
+    date: 2020-01-01
+    texte: {reference: "loi n° 2018-515 du 27 juin 2018 pour un nouveau pacte ferroviaire, article 3", id: null}
+    parametres: [fermeture]
+    regimes: [sncf]
+    absorbee_par: []
+    non_appliquee:
+      sncf: >-
+        Fermeture aux recrutés depuis 2020, clause du grand-père : portée par
+        `entres_avant` dans affiliations.yaml, les paramètres de la fiche ne
+        changent pas.
+
+  - code: reforme_2023
+    date: 2023-09-01
+    texte: {reference: "loi n° 2023-270 du 14 avril 2023 de financement rectificative de la sécurité sociale pour 2023", id: LEGITEXT000047447783}
+    parametres: [age_ouverture, duree_requise_trimestres, fermeture]
+    regimes: [regime_general, msa_salaries, cavimac, fonction_publique_etat, cnracl, fspoeie,
+              cnavpl, cnbf, cnbf_complementaire, msa_non_salaries, msa_rco, rci, rafp, ircantec,
+              agirc_arrco, crpcen, banque_de_france, sncf, ratp, ieg, opera_de_paris,
+              comedie_francaise, port_strasbourg, marins, mines, seita,
+              carmf_complementaire, carcdsf_complementaire, carpimko_complementaire,
+              cavp_complementaire, cavec_complementaire, cipav_complementaire,
+              cprn_complementaire, cavamac_complementaire, cavom_complementaire,
+              carpv_complementaire, ircec_raap, crpnpac, crpnpac_tranche_2]
+    absorbee_par: [age_ouverture_par_generation, duree_requise_par_generation]
+    non_appliquee:
+      sncf: >-
+        Le relèvement de deux ans des âges des régimes spéciaux par la loi
+        de 2023 est étalé par génération à compter de 2025 et n'a pas encore
+        été lu dans le décret d'application ; à traiter dans la tranche B2.
+      ratp: >-
+        Même situation que la SNCF : relèvement étalé à compter de 2025, non
+        lu, à traiter dans la tranche B2 avec le décret d'application.
+      ieg: >-
+        Même situation que la SNCF et la RATP : relèvement étalé à compter de
+        2025, non lu, à traiter dans la tranche B2.
+      opera_de_paris: >-
+        Régime fermé aux recrutés depuis septembre 2023 ; le relèvement des
+        âges pour les agents en place n'a pas été lu, à traiter en B2.
+      comedie_francaise: >-
+        Régime fermé aux recrutés depuis septembre 2023 ; le relèvement des
+        âges pour les agents en place n'a pas été lu, à traiter en B2.
+      port_strasbourg: >-
+        Fermé aux recrutés depuis septembre 2023 ; règlement hors LEGI, une
+        seule période, à traiter en B2.
+      marins: >-
+        L'ENIM n'est pas touché par la loi de 2023 : l'âge de cinquante-cinq
+        ans et la formule du code des pensions de retraite des marins sont
+        inchangés.
+      mines: >-
+        Régime en extinction laissé où il était par la loi de 2023, comme par
+        celles de 2010 et 2014 ; financé par le programme 195.
+      seita: >-
+        Régime fermé en 1981 et jamais réformé ; la loi de 2023 ne le touche
+        pas.
+      carpv_complementaire: >-
+        Le règlement approuvé le 10 juillet 2026 garde le taux plein à
+        soixante-cinq ans et l'anticipation dès soixante ans : la loi de 2023
+        ne s'y applique pas.
+      cavom_complementaire: >-
+        L'âge seul commande ce régime, lu à la génération par
+        `age_ouverture_par_generation` ; il n'a pas de durée requise à
+        relever.
+      cavamac_complementaire: >-
+        Même situation que la CAVOM : l'âge seul commande, lu à la génération
+        ; aucune durée requise dans la fiche.
+      cprn_complementaire: >-
+        Même situation : âge lu à la génération, pas de durée requise, la
+        section C liquide sur l'âge.
+      crpnpac: >-
+        Le code des transports garde l'âge de cinquante ans et la durée de
+        cent vingt trimestres propres au régime des navigants ; la loi de
+        2023 ne les a pas modifiés.
+      crpnpac_tranche_2: >-
+        Même situation que la tranche 1 : paramètres propres du code des
+        transports, inchangés par la loi de 2023.
+
+  - code: agricole_2025
+    date: 2026-01-01
+    texte: {reference: "loi n° 2025-199 du 28 février 2025 de financement de la sécurité sociale pour 2025, article 87 (pension des non-salariés agricoles sur les vingt-cinq meilleures années)", id: LEGITEXT000051273698}
+    parametres: [salaire_reference, type_calcul]
+    regimes: [msa_non_salaries]
+    absorbee_par: []
+    non_appliquee:
+      msa_non_salaries: >-
+        Réforme en vigueur depuis le 1er janvier 2026 mais non calculable :
+        deux de ses trois paramètres sont renvoyés à un décret absent de la
+        base LEGI ; la fiche sert la formule d'avant et le dit.
+
+  - code: assiette_liberaux_2026
+    date: 2026-01-01
+    texte: {reference: "décret n° 2025-1076 du 10 novembre 2025 fixant pour 2025 et 2026 les paramètres des régimes d'assurance vieillesse des professions libérales", id: LEGITEXT000052566362}
+    parametres: [assiette, taux_cotisation_retraite]
+    regimes: [carcdsf_complementaire, carpimko_complementaire, cavp_complementaire, cavec_complementaire, cipav_complementaire, cnavpl]
+    absorbee_par: []
+    non_appliquee: {}

@@ -1075,6 +1075,13 @@ institutions:
         statut_integration: saisi
         cible: data/reference/legislation/reformes.yaml
         note: >-
+          Le fichier cible a longtemps été déclaré sans exister : les
+          réformes vivaient dans les notes des fiches. Il existe depuis la
+          campagne « règles à travers l'histoire » : une entrée par réforme,
+          avec sa date d'effet, son identifiant LEGI quand l'index le porte,
+          les régimes qu'elle touche et les drapeaux qui l'absorbent ;
+          `tests/test_donnees.py` impose que chaque fiche la coupe, l'absorbe
+          ou la déclare non appliquée.
           Portent aussi les tables par génération de
           `data/reference/legislation/` qu'aucun numéro d'article ne rassemble :
           l'âge d'annulation de la décote (loi du 9 novembre 2010), le nombre
@@ -1088,6 +1095,22 @@ institutions:
           requise des générations 1958 et suivantes, coefficient de minoration —
           ne sont plus ici : elles sont certifiées contre la base LEGI, voir
           dila_legi_parametres_retraite.
+
+      - id: legifrance_pivots
+        titre: Articles pivots des fiches de régime, lus dans l'index LEGI
+        url: https://www.legifrance.gouv.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/pivots.yaml
+        note: >-
+          Pour chaque régime calculé, les articles de code ou de décret dont
+          les versions datées portent ses paramètres. Ce n'est pas une
+          donnée chiffrée mais une carte : `scripts/calendrier_regimes.py`
+          lit dans l'index LEGI du dépôt le calendrier des versions de chaque
+          pivot — identifiant, début et fin de validité, chaîne jointive ou
+          trouée — et le confronte aux périodes de la fiche. Les régimes sans
+          texte dans LEGI (accords Agirc-Arrco, règlements de caisse, textes
+          d'avant 1947) portent la raison à la place.
 
       - id: legifrance_inventaire_regimes
         titre: Inventaire des régimes de retraite obligatoires, actuels et disparus

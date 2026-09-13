@@ -318,6 +318,7 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
         taux_plein: 1.0
         abattement_points: agirc_arrco
@@ -354,6 +355,7 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
         taux_plein: 1.0
         abattement_points: agirc_arrco
@@ -392,7 +394,7 @@ regimes:
         assiette: tranche_1
         taux_cotisation_retraite: 0.0210
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -411,6 +413,26 @@ regimes:
           tranche A, 6,95 % et 12,55 % sur la tranche B en 2025 ; 2,84 % et
           4,27 %, 7,06 % et 12,75 % en 2026) ; elle est reportée sur les années
           antérieures, faute d'une série publiée, et c'est une convention.
+          L'ÂGE EST CELUI DE L'ARTICLE 16 DE L'ARRÊTÉ DU 30 DÉCEMBRE 1970, lu
+          version par version dans la base LEGI. De 1971 au 30 juin 2011
+          (LEGIARTI000006381606 à LEGIARTI000019511923) : « l'allocation de
+          retraite est normalement liquidée à l'âge de soixante-cinq ans.
+          Cependant elle peut faire l'objet d'une anticipation, au plus tôt à
+          cinquante-cinq ans » ; le coefficient vaut 0,43 à cinquante-cinq
+          ans, 0,78 à soixante, 0,88 à soixante-deux, 1 à soixante-cinq — soit
+          1,1 % par trimestre manquant entre soixante et soixante-cinq ans, et
+          c'est ce coefficient que porte `decote_par_trimestre` (la fiche
+          portait 0,55 %, sans source). Depuis l'ordonnance de 1982 et la
+          version du 31 août 1983 (LEGIARTI000006381610), le coefficient n'est
+          pas appliqué à qui liquide sa pension du régime général au taux
+          plein : c'est `decote_annulee_par_la_duree`. Le décret n° 2008-996
+          du 23 septembre 2008 n'a pas touché aux âges (LEGIARTI000019511923
+          les répète) : la fiche faisait passer l'Ircantec à 62 et 67 ans dès
+          2009, deux ans avant la loi Woerth. Depuis le 1er juillet 2011
+          (LEGIARTI000024266924), l'allocation est « normalement liquidée à
+          l'âge prévu au 1° de l'article L. 351-8 », avec anticipation « au
+          plus tôt dix ans avant », et le coefficient 0,78 s'applique à l'âge
+          de l'article L. 161-17-2 : les âges se lisent donc à la génération.
       - debut: 1983
         fin: 1987
         type_calcul: points
@@ -422,7 +444,7 @@ regimes:
         assiette: tranche_1
         taux_cotisation_retraite: 0.0280
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -438,7 +460,7 @@ regimes:
         assiette: tranche_1
         taux_cotisation_retraite: 0.0350
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -454,7 +476,7 @@ regimes:
         assiette: tranche_1
         taux_cotisation_retraite: 0.0490
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -470,7 +492,7 @@ regimes:
         assiette: tranche_1
         taux_cotisation_retraite: 0.0528
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -486,7 +508,7 @@ regimes:
         assiette: tranche_1
         taux_cotisation_retraite: 0.0563
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -494,33 +516,37 @@ regimes:
       - debut: 2009
         fin: 2010
         type_calcul: points
-        age_ouverture: 62
-        age_ouverture_par_generation: true
-        age_taux_plein: 67
-        duree_requise_trimestres: 172
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0563
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           Tranche A de 2009 à 2010 : 5.63 % appelés (Caisse des dépôts, IRC_BAR_01_txcotis.csv).
+          Les âges de 60 et 65 ans sont ceux de l'arrêté du 30 décembre 1970 jusqu'au
+          30 juin 2011 (LEGIARTI000019511923) ; la loi Woerth ne s'applique à l'Ircantec
+          qu'à compter du 1er juillet 2011, voir la première période.
       - debut: 2011
         fin: 2011
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0569
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -531,13 +557,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0588
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -548,13 +576,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0613
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -565,13 +595,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0634
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -582,13 +614,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0660
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -599,13 +633,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0680
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -616,13 +652,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0700
         part_salariale: 0.40
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -633,13 +671,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_1
         taux_cotisation_retraite: 0.0711
         part_salariale: 0.399
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -655,7 +695,7 @@ regimes:
         assiette: tranche_2
         taux_cotisation_retraite: 0.0750
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -677,7 +717,7 @@ regimes:
         assiette: tranche_2
         taux_cotisation_retraite: 0.1000
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -693,7 +733,7 @@ regimes:
         assiette: tranche_2
         taux_cotisation_retraite: 0.1250
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -709,7 +749,7 @@ regimes:
         assiette: tranche_2
         taux_cotisation_retraite: 0.1526
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -725,7 +765,7 @@ regimes:
         assiette: tranche_2
         taux_cotisation_retraite: 0.1642
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -741,7 +781,7 @@ regimes:
         assiette: tranche_2
         taux_cotisation_retraite: 0.1750
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -749,33 +789,37 @@ regimes:
       - debut: 2009
         fin: 2010
         type_calcul: points
-        age_ouverture: 62
-        age_ouverture_par_generation: true
-        age_taux_plein: 67
-        duree_requise_trimestres: 172
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1750
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           Tranche B de 2009 à 2010 : 17.50 % appelés, de un à huit plafonds.
+          Les âges de 60 et 65 ans sont ceux de l'arrêté du 30 décembre 1970 jusqu'au
+          30 juin 2011 (LEGIARTI000019511923) ; la loi Woerth ne s'applique à l'Ircantec
+          qu'à compter du 1er juillet 2011, voir la première période.
       - debut: 2011
         fin: 2011
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1760
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -786,13 +830,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1780
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -803,13 +849,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1806
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -820,13 +868,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1836
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -837,13 +887,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1876
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -854,13 +906,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1910
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -871,13 +925,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1950
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -888,13 +944,15 @@ regimes:
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: tranche_2
         taux_cotisation_retraite: 0.1981
         part_salariale: 0.3564
-        decote_par_trimestre: 0.0055
+        decote_par_trimestre: 0.011
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-

@@ -1,0 +1,217 @@
+# Articles pivots : les textes dont les versions datent chaque fiche
+# =================================================================
+# Pour chaque régime du catalogue, la liste des articles de code ou de décret
+# qui portent ses paramètres. `scripts/calendrier_regimes.py` lit dans l'index
+# LEGI du dépôt (data/brut/dila/legi.sqlite) le calendrier des versions de
+# chacun — identifiant, date de début et de fin de validité —, vérifie que la
+# chaîne est jointive, et confronte ces dates aux périodes de la fiche : une
+# version qui commence une année où aucune période ne commence est une
+# coupure de texte que la fiche ne porte pas.
+#
+# Champs d'un pivot :
+#   texte       début du titre tel que l'index le porte : « Code de la
+#               sécurité sociale », « Décret n° 2008-639 » (l'espace après le
+#               « n° » est indifférent, le script essaie les deux)
+#   num         numéro d'article, normalisé comme dila_cherche.py (majuscules,
+#               sans espaces ni points) ; vide pour le texte entier
+#   parametres  ce que l'article commande, dans le vocabulaire de _schema.yaml
+#
+# `hors_legi` : la raison, quand aucun texte de LEGI ne porte le régime — un
+# accord, un règlement de caisse, un texte d'avant 1947. Tout régime calculé a
+# au moins un pivot ou cette raison, un test l'exige.
+
+pivots:
+
+  # --- Salariés du privé, base -------------------------------------------
+  assurances_sociales:
+    hors_legi: >-
+      Lois de 1928 et 1930, antérieures au dump de la DILA ; aucune version
+      consolidée dans LEGI.
+  avts:
+    hors_legi: >-
+      Loi du 14 mars 1941, antérieure au dump ; l'AVTS ne subsiste que comme
+      référence de montant (L. 732-24 du code rural).
+  regime_general:
+    - {texte: "Code de la sécurité sociale", num: L351-1, parametres: [taux_plein, salaire_reference]}
+    - {texte: "Code de la sécurité sociale", num: L351-8, parametres: [age_taux_plein]}
+    - {texte: "Code de la sécurité sociale", num: L161-17-2, parametres: [age_ouverture]}
+    - {texte: "Code de la sécurité sociale", num: L161-17-3, parametres: [duree_requise_trimestres]}
+    - {texte: "Code de la sécurité sociale", num: R351-27, parametres: [decote_par_trimestre]}
+    - {texte: "Code de la sécurité sociale", num: R351-29, parametres: [salaire_reference]}
+    - {texte: "Code de la sécurité sociale", num: R351-6, parametres: [duree_proratisation]}
+    - {texte: "Code de la sécurité sociale", num: D351-1-4, parametres: [surcote_par_trimestre]}
+  msa_salaries:
+    - {texte: "Code rural", num: L742-3, parametres: [alignement]}
+    - {texte: "Code de la sécurité sociale", num: L351-1, parametres: [taux_plein, salaire_reference]}
+    - {texte: "Code de la sécurité sociale", num: R351-27, parametres: [decote_par_trimestre]}
+
+  # --- Complémentaires du privé ------------------------------------------
+  agirc:
+    hors_legi: >-
+      Convention collective nationale du 14 mars 1947 et ses avenants, hors
+      JORF et hors KALI ; seuls L. 921-1 et L. 921-4 encadrent le régime.
+  unirs:
+    hors_legi: >-
+      Accord du 15 mai 1957 entre partenaires sociaux, hors JORF et hors
+      KALI ; la fédération Agirc-Arrco est la seule source de son barème.
+  arrco:
+    - {texte: "Code de la sécurité sociale", num: L921-4, parametres: [obligation]}
+  arrco_tranche_2:
+    hors_legi: >-
+      Accord du 25 avril 1996 entre partenaires sociaux, hors JORF ; le taux
+      de la tranche 2 est lu dans la compilation de la fédération.
+  agirc_arrco:
+    hors_legi: >-
+      Accord national interprofessionnel du 17 novembre 2017, hors JORF et
+      hors KALI ; barème et coefficients lus chez la fédération.
+  ipacte:
+    hors_legi: >-
+      Décret n° 59-1569 du 31 décembre 1959, sans version consolidée dans
+      LEGI.
+  igrante:
+    hors_legi: >-
+      Même décret n° 59-1569 que l'IPACTE, sans version consolidée dans
+      LEGI ; paramètres à certifier auprès de la Caisse des dépôts.
+  ircantec:
+    - {texte: "Arrêté du 30 décembre 1970", num: "16", parametres: [age_ouverture, age_taux_plein, decote_par_trimestre]}
+    - {texte: "Décret n°70-1277", num: "5", parametres: [taux_cotisation_retraite]}
+    - {texte: "Décret n° 2008-996", num: "", parametres: [taux_cotisation_retraite, valeur_point]}
+
+  # --- Fonction publique -------------------------------------------------
+  pensions_civiles_1853:
+    hors_legi: >-
+      Lois du 9 juin 1853 et du 14 avril 1924, antérieures au dump de la
+      DILA ; aucune version consolidée dans LEGI.
+  fonction_publique_etat:
+    - {texte: "Code des pensions civiles et militaires de retraite", num: L13, parametres: [duree_requise_trimestres, taux_plein]}
+    - {texte: "Code des pensions civiles et militaires de retraite", num: L14, parametres: [decote_par_trimestre, surcote_par_trimestre, bareme_decote]}
+    - {texte: "Code des pensions civiles et militaires de retraite", num: L24, parametres: [age_ouverture]}
+    - {texte: "Code des pensions civiles et militaires de retraite", num: L61, parametres: [taux_cotisation_retraite]}
+  cnracl:
+    - {texte: "Décret n°2003-1306", num: "25", parametres: [age_ouverture]}
+    - {texte: "Décret n°2003-1306", num: "15", parametres: [duree_requise_trimestres, taux_plein]}
+    - {texte: "Décret n°2003-1306", num: "20", parametres: [decote_par_trimestre, surcote_par_trimestre]}
+    - {texte: "Décret n°91-613", num: "5", parametres: [contribution_employeur]}
+  fspoeie:
+    - {texte: "Décret n°2004-1056", num: "9", parametres: [duree_requise_trimestres, taux_plein]}
+    - {texte: "Décret n°2004-1056", num: "20", parametres: [age_ouverture]}
+    - {texte: "Code des pensions civiles et militaires de retraite", num: L61, parametres: [taux_cotisation_retraite]}
+  rafp:
+    - {texte: "Décret n°2004-569", num: "9", parametres: [age_ouverture]}
+    - {texte: "Décret n°2004-569", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+
+  # --- Non-salariés ------------------------------------------------------
+  cancava:
+    - {texte: "Code de la sécurité sociale", num: L634-2, parametres: [alignement]}
+  organic:
+    - {texte: "Code de la sécurité sociale", num: L634-2, parametres: [alignement]}
+  rsi:
+    - {texte: "Code de la sécurité sociale", num: L634-2, parametres: [alignement]}
+  rco_artisans:
+    - {texte: "Code de la sécurité sociale", num: D635-7, parametres: [taux_cotisation_retraite, assiette]}
+    - {texte: "Décret n°78-351", num: "5", parametres: [taux_cotisation_retraite]}
+  nric:
+    - {texte: "Code de la sécurité sociale", num: D635-10, parametres: [taux_cotisation_retraite]}
+  rci:
+    - {texte: "Code de la sécurité sociale", num: D635-7, parametres: [taux_cotisation_retraite, assiette]}
+    - {texte: "Arrêté du 9 février 2012", num: "", parametres: [valeur_point, age_ouverture]}
+  cnavpl:
+    - {texte: "Code de la sécurité sociale", num: L643-3, parametres: [age_ouverture, age_taux_plein]}
+    - {texte: "Code de la sécurité sociale", num: D643-1, parametres: [points_maximum, points_par_trimestre_valide]}
+    - {texte: "Code de la sécurité sociale", num: D642-3, parametres: [taux_cotisation_retraite, assiette]}
+    - {texte: "Code de la sécurité sociale", num: D643-3, parametres: [decote_par_trimestre]}
+  ircec_raap:
+    - {texte: "Décret n°62-420", num: "1", parametres: [creation]}
+    - {texte: "Arrêté du 21 novembre 2013", num: "", parametres: [taux_cotisation_retraite, valeur_point]}
+  carmf_complementaire:
+    - {texte: "Décret n°49-579", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+  carcdsf_complementaire:
+    hors_legi: >-
+      Décret n° 2008-1490 et statuts approuvés par arrêté : les millésimes
+      du forfait sont des décrets annuels lus par jorf_cotisations_liberales.py,
+      pas des versions consolidées.
+  cavp_complementaire:
+    - {texte: "Décret n°49-580", num: "2", parametres: [cotisation_forfaitaire_euros]}
+  carpimko_complementaire:
+    - {texte: "Décret n°84-143", num: "2", parametres: [taux_cotisation_retraite, cotisation_forfaitaire_euros]}
+  carpv_complementaire:
+    - {texte: "Décret n°50-1318", num: "2", parametres: [cotisation_par_classes]}
+    - {texte: "Arrêté du 10 juillet 2026", num: "", parametres: [age_ouverture, age_taux_plein, decote_par_trimestre]}
+  cavamac_complementaire:
+    - {texte: "Décret n°67-1169", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+  cavec_complementaire:
+    hors_legi: >-
+      Statuts approuvés par arrêté (arrêté du 4 juillet 2025), grille de
+      classes lue dans l'arrêté et non dans un article consolidé.
+  cavom_complementaire:
+    - {texte: "Décret n°79-265", num: "2", parametres: [taux_cotisation_retraite, cotisation_par_classes]}
+  cipav_complementaire:
+    - {texte: "Décret n°79-262", num: "2", parametres: [taux_cotisation_retraite, cotisation_par_classes]}
+  cprn_complementaire:
+    - {texte: "Décret n°49-578", num: "2", parametres: [taux_cotisation_retraite, assiette_facteur_revenu]}
+  cnbf:
+    - {texte: "Code de la sécurité sociale", num: R723-43, parametres: [cotisation_forfaitaire_euros]}
+    - {texte: "Code de la sécurité sociale", num: L723-1, parametres: [affiliation]}
+  cnbf_complementaire:
+    - {texte: "Décret n°79-316", num: "1", parametres: [creation, taux_cotisation_retraite]}
+  msa_non_salaries:
+    - {texte: "Code rural", num: L732-18, parametres: [age_ouverture]}
+    - {texte: "Code rural", num: L732-25, parametres: [age_taux_plein, duree_requise_trimestres, decote_par_trimestre]}
+    - {texte: "Code rural", num: L732-24, parametres: [type_calcul, pension_forfaitaire_annuelle]}
+    - {texte: "Code rural", num: R732-70, parametres: [bareme_points]}
+    - {texte: "Code rural", num: D732-42, parametres: [surcote_par_trimestre]}
+  msa_rco:
+    - {texte: "Code rural", num: D732-166, parametres: [valeur_point]}
+    - {texte: "Code rural", num: L732-56, parametres: [affiliation]}
+
+  # --- Régimes spéciaux --------------------------------------------------
+  sncf:
+    - {texte: "Décret n° 2008-639", num: "13", parametres: [age_ouverture]}
+    - {texte: "Décret n° 2008-639", num: "6", parametres: [duree_requise_trimestres, taux_plein]}
+    - {texte: "Décret n° 2008-639", num: "17", parametres: [decote_par_trimestre, bareme_decote]}
+    - {texte: "Décret n° 2008-639", num: "3", parametres: [taux_cotisation_retraite]}
+  ratp:
+    - {texte: "Décret n° 2008-637", num: "13", parametres: [age_ouverture]}
+    - {texte: "Décret n° 2008-637", num: "6", parametres: [duree_requise_trimestres, taux_plein]}
+    - {texte: "Décret n° 2008-637", num: "17", parametres: [decote_par_trimestre, bareme_decote]}
+  ieg:
+    - {texte: "Décret n° 2011-290", num: "", parametres: [age_ouverture, duree_requise_trimestres]}
+  marins:
+    - {texte: "Code des pensions de retraite des marins", num: L14, parametres: [age_ouverture]}
+    - {texte: "Code des pensions de retraite des marins", num: R13, parametres: [duree_maximum_avant_age_trimestres]}
+  mines:
+    - {texte: "Décret n°46-2769", num: "147", parametres: [pension_forfaitaire_annuelle]}
+    - {texte: "Décret n°46-2769", num: "131", parametres: [valeur_point_euros]}
+    - {texte: "Décret n°46-2769", num: "146", parametres: [age_ouverture, duree_requise_trimestres]}
+  cavimac:
+    - {texte: "Code de la sécurité sociale", num: R382-89, parametres: [assiette_forfaitaire]}
+    - {texte: "Code de la sécurité sociale", num: L382-27, parametres: [type_calcul, alignement]}
+  crpnpac:
+    - {texte: "Code de l'aviation civile", num: R426-11, parametres: [age_ouverture]}
+    - {texte: "Code de l'aviation civile", num: R426-16-1, parametres: [taux_plein, duree_requise_trimestres]}
+    - {texte: "Code de l'aviation civile", num: R426-6, parametres: [taux_cotisation_retraite]}
+  crpnpac_tranche_2:
+    - {texte: "Code de l'aviation civile", num: R426-16-1-1, parametres: [assiette]}
+  crpcen:
+    - {texte: "Décret n°90-1215", num: "84", parametres: [age_ouverture]}
+    - {texte: "Décret n°90-1215", num: "85-1", parametres: [duree_requise_trimestres]}
+    - {texte: "Décret n°90-1215", num: "85-2", parametres: [decote_par_trimestre]}
+  banque_de_france:
+    - {texte: "Décret n° 2007-262", num: "", parametres: [alignement]}
+  opera_de_paris:
+    - {texte: "Décret n°68-382", num: "6", parametres: [age_ouverture]}
+    - {texte: "Décret n°68-382", num: "14", parametres: [duree_requise_trimestres, taux_plein]}
+  comedie_francaise:
+    - {texte: "Décret n°68-960", num: "12", parametres: [age_ouverture]}
+  port_strasbourg:
+    hors_legi: >-
+      Règlement de retraite du port autonome de Strasbourg, acte de
+      l'établissement ; LEGI ne porte que des décrets de compensation.
+  seita:
+    - {texte: "Décret n°62-766", num: "108", parametres: [taux_cotisation_retraite]}
+    - {texte: "Décret n°62-766", num: "110", parametres: [age_ouverture]}
+    - {texte: "Décret n°62-766", num: "118", parametres: [avantages_non_contributifs]}
+  chemins_fer_secondaires:
+    hors_legi: >-
+      Loi du 22 juillet 1922 et règlement de la CAMR, antérieurs au dump ;
+      régime fermé en 1954.

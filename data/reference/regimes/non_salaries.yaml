@@ -641,26 +641,41 @@ regimes:
         fin: 2024
         type_calcul: points
         age_ouverture: 62
+        age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
+        decote_par_generation: true
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         assiette: plafonnee
         taux_cotisation_retraite: 0.0700
         notes: >-
           D. 635-7, état du 1er janvier 2013 : première tranche, 7 % sous le plafond de la Sécurité sociale. La fiche ne portait que ce taux-là et s'arrêtait au plafond : la seconde tranche, annoncée en note, n'était portée par aucune période et ne prélevait donc rien.
+          LES ÂGES ET LA DURÉE SE LISENT À LA GÉNÉRATION : le règlement du régime
+          (arrêté du 9 février 2012, LEGIARTI000025397326) liquide les points
+          à l'âge légal de l'article L. 161-17-2, sans abattement pour qui
+          justifie du taux plein du régime de base, et l'âge d'annulation est
+          celui de l'article L. 351-8. La fiche opposait 62 et 67 ans et
+          172 trimestres à toutes les générations, y compris à celles que la
+          loi de 2023 porte à 64 ans.
       - debut: 2013
         fin: 2024
         type_calcul: points
         age_ouverture: 62
+        age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
+        decote_par_generation: true
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         assiette: tranche_1_4_pass
@@ -671,11 +686,15 @@ regimes:
         fin: null
         type_calcul: points
         age_ouverture: 62
+        age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
+        decote_par_generation: true
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         assiette: plafonnee
@@ -686,11 +705,15 @@ regimes:
         fin: null
         type_calcul: points
         age_ouverture: 62
+        age_ouverture_par_generation: true
         age_taux_plein: 67
+        age_taux_plein_par_generation: true
         duree_requise_trimestres: 172
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
+        decote_par_generation: true
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         assiette: tranche_1_4_pass
@@ -4895,7 +4918,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1952
-        fin: 1989
+        fin: 1985
         type_calcul: mixte
         age_ouverture: 65
         age_taux_plein: 65
@@ -4927,10 +4950,44 @@ regimes:
           une carrière à quatre fois le salaire moyen sortait par ces dix années
           une pension de base supérieure au maximum que le régime peut servir.
           Le plafond retenu est celui que le régime s'est donné en 1990.
+          L'ÂGE EST DE SOIXANTE-CINQ ANS JUSQU'EN 1985 : l'article 1122 de
+          l'ancien code rural (LEGIARTI000006581025, version en vigueur du
+          5 juillet 1980 au 8 janvier 1986) donne « droit à la retraite à
+          l'âge de soixante-cinq ans ou de soixante ans en cas d'inaptitude ».
+      - debut: 1986
+        fin: 1989
+        type_calcul: mixte
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 150
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.085
+        pension_forfaitaire_annuelle: 3628.98
+        pension_forfaitaire_annee: 2023
+        decote_par_trimestre: 0.025
+        decote_par_generation: true
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        notes: >-
+          SOIXANTE ANS DEPUIS LE 1ER JANVIER 1986 : la loi n° 86-19 du
+          6 janvier 1986 « relative à l'abaissement à soixante ans de l'âge de
+          la retraite des personnes non salariées des professions agricoles »
+          (LEGITEXT000006068962) ouvre la pension à soixante ans aux
+          pensions « prenant effet postérieurement au 1er janvier 1986 »
+          (article 11, LEGIARTI000006757038). La fiche opposait soixante-cinq
+          ans jusqu'en 2002. Entre soixante et soixante-cinq ans, la pension
+          est minorée à qui n'a pas la durée requise tous régimes confondus
+          (L. 732-25 dans sa codification de 2000, LEGIARTI000006585545), au
+          coefficient du régime général de l'époque, lu à la génération :
+          2,5 % par trimestre pour les assurés nés avant 1944.
+          Le reste de la période reprend la précédente : barème d'avant 1990
+          au rendement instantané, assiette bornée au plafond.
       - debut: 1990
         fin: 2002
         type_calcul: mixte
-        age_ouverture: 65
+        age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: 150
         taux_plein: 1.0
@@ -4944,7 +5001,8 @@ regimes:
         valeur_point_annee: 2025
         pension_forfaitaire_annuelle: 3628.98
         pension_forfaitaire_annee: 2023
-        decote_par_trimestre: null
+        decote_par_trimestre: 0.025
+        decote_par_generation: true
         surcote_par_trimestre: null
         avantages_non_contributifs: [minimum_vieillesse, reversion]
         notes: >-
@@ -4952,12 +5010,16 @@ regimes:
           nombre de points qui dépend du revenu par un escalier à quatre marches
           écrit à l'article R. 732-71 — voir `_points_msa` dans le moteur, et
           la section de docs/limites.md qui refait l'arithmétique.
+          Âge de soixante ans depuis la loi du 6 janvier 1986, taux plein à
+          soixante-cinq ans ou avec cent cinquante trimestres tous régimes
+          (L. 732-25, LEGIARTI000006585545) ; la loi du 22 juillet 1993 n'a
+          pas touché ce régime, qui n'est pas un régime aligné.
       - debut: 2003
         fin: 2003
         type_calcul: mixte
-        age_ouverture: 64
-        age_taux_plein: 67
-        duree_requise_trimestres: 172
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 150
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: plafonnee
@@ -4969,7 +5031,8 @@ regimes:
         valeur_point_annee: 2025
         pension_forfaitaire_annuelle: 3628.98
         pension_forfaitaire_annee: 2023
-        decote_par_trimestre: 0.0125
+        decote_par_trimestre: 0.025
+        decote_par_generation: true
         surcote_par_trimestre: null
         avantages_non_contributifs:
           [minimum_vieillesse, pension_majoree_reference, reversion]
@@ -5022,12 +5085,18 @@ regimes:
           naît de la loi du 21 août 2003, pour les liquidations de 2004, à
           0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
           scindée pour cela seul : rien d'autre n'y change.
+          LES ÂGES DE 2023 ÉTAIENT OPPOSÉS DÈS 2003 : la période portait
+          64 ans, 67 ans et 172 trimestres. En 2003 le droit est celui de la
+          loi du 6 janvier 1986 — soixante ans, taux plein à soixante-cinq ans
+          ou avec cent cinquante trimestres — et la loi Fillon ne s'applique
+          qu'aux pensions de 2004 (L. 732-25, LEGIARTI000006585546).
       - debut: 2004
         fin: 2008
         type_calcul: mixte
-        age_ouverture: 64
-        age_taux_plein: 67
-        duree_requise_trimestres: 172
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: plafonnee
@@ -5040,6 +5109,7 @@ regimes:
         pension_forfaitaire_annuelle: 3628.98
         pension_forfaitaire_annee: 2023
         decote_par_trimestre: 0.0125
+        decote_par_generation: true
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs:
           [minimum_vieillesse, pension_majoree_reference, reversion]
@@ -5092,12 +5162,22 @@ regimes:
           naît de la loi du 21 août 2003, pour les liquidations de 2004, à
           0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
           scindée pour cela seul : rien d'autre n'y change.
+          LA LOI FILLON S'APPLIQUE AUX PENSIONS DE 2004 : L. 732-25 dans sa
+          version du 1er juillet 2004 (LEGIARTI000006585546) minore la pension
+          liquidée « avant un âge déterminé » — soixante-cinq ans — sans « une
+          durée minimale d'assurance » que le décret aligne sur celle du
+          régime général, lue à la génération ; le coefficient de minoration
+          suit la montée en charge du régime général (R. 351-27), lue à la
+          génération. Soixante ans reste l'âge d'ouverture (L. 732-18,
+          LEGIARTI000006585523, jusqu'au 30 juin 2011). La période portait
+          64, 67 et 172.
       - debut: 2009
-        fin: null
+        fin: 2010
         type_calcul: mixte
-        age_ouverture: 64
-        age_taux_plein: 67
-        duree_requise_trimestres: 172
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: plafonnee
@@ -5110,6 +5190,7 @@ regimes:
         pension_forfaitaire_annuelle: 3628.98
         pension_forfaitaire_annee: 2023
         decote_par_trimestre: 0.0125
+        decote_par_generation: true
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs:
           [minimum_vieillesse, pension_majoree_reference, reversion]
@@ -5162,7 +5243,92 @@ regimes:
           naît de la loi du 21 août 2003, pour les liquidations de 2004, à
           0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
           scindée pour cela seul : rien d'autre n'y change.
-
+          Mêmes âges que la période précédente — soixante et soixante-cinq
+          ans, durée lue à la génération — jusqu'au 30 juin 2011 ; seule la
+          surcote passe à 1,25 % (D. 732-42, LEGIARTI000020090088).
+      - debut: 2011
+        fin: null
+        type_calcul: mixte
+        age_ouverture: 64
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1737
+        bareme_points: msa_proportionnelle
+        assiette_repere_smic: 600
+        assiette_plancher: true
+        valeur_point_euros: 4.589
+        valeur_point_annee: 2025
+        pension_forfaitaire_annuelle: 3628.98
+        pension_forfaitaire_annee: 2023
+        decote_par_trimestre: 0.0125
+        decote_par_generation: true
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [minimum_vieillesse, pension_majoree_reference, reversion]
+        notes: >-
+          Loi du 4 mars 2002 créant la retraite complémentaire obligatoire (RCO)
+          des non-salariés agricoles, en points. Cette fiche ne porte plus que
+          l'étage de BASE : la RCO a désormais la sienne (`msa_rco`), et le taux
+          de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
+          s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
+          neutralisé dans les scénarios notionnels.
+          LE BARÈME DE POINTS EST DANS LE CODE, et le modèle le sert
+          désormais : R. 732-71 attribue quinze points jusqu'à 400 SMIC
+          horaires, puis une pente jusqu'à trente à 800 SMIC, puis trente
+          jusqu'à deux fois le minimum contributif, puis une pente jusqu'au
+          maximum M que R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du
+          point). Les « 23 à 113 points » que la caisse annonce sans publier la
+          formule en sortent : 22,5 au minimum d'assiette du chef d'exploitation
+          (600 SMIC horaires), 113,4 au plafond en 2025.
+          La valeur du point est celle du code rural (R. 732-66, 4,589 € au
+          1er janvier 2025), recoupée par le communiqué de la MSA et par le COR
+          pour 2023 (4,264 €) ; les années antérieures sont ramenées sur les
+          prix, comme la loi le prescrit (L. 161-23-1).
+          La retraite forfaitaire, elle, vaut 3 628,98 € au 1er janvier 2023
+          (communiqué de la MSA du 14 février 2023) pour une carrière complète.
+          LA RÉFORME DE 2026 EST EN VIGUEUR, ET ELLE N'EST PAS CALCULABLE.
+          L'article L. 732-24 a été entièrement réécrit au 1er janvier 2026 par
+          la loi n° 2025-199 du 28 février 2025 : la pension « cumule 1° un
+          montant calculé dans les conditions prévues à l'article L. 732-18
+          […] sur les bases des seuls revenus des années à compter du
+          1er janvier 2016 » et « 2° la somme : a) d'une part dont le montant
+          maximal attribué pour une durée minimale d'assurance EST PRÉVU PAR
+          DÉCRET […] b) d'une part calculée en fonction des montants […] des
+          cotisations acquittées […] au titre des périodes d'assurance
+          antérieures au 1er janvier 2016, EN RETENANT UN NOMBRE D'ANNÉES
+          SÉLECTIONNÉES DANS DES CONDITIONS FIXÉES PAR VOIE RÉGLEMENTAIRE ».
+          Son IV ajoute : « les modalités d'application du présent article sont
+          définies par décret en Conseil d'État ».
+          CE DÉCRET N'EST PAS DANS LA BASE. Un dépouillement de la législation
+          consolidée ne rend, pour le 1er janvier 2026, que des articles
+          LÉGISLATIFS — L. 732-21, L. 732-24, L. 732-35, L. 732-60 — et aucun
+          article réglementaire nouveau. Les articles R. 732-60, R. 732-63 et
+          R. 732-66, qui décrivent le calcul en points, courent toujours
+          jusqu'à 2999. Deux des trois inconnues de la formule nouvelle — le
+          maximum de la part forfaitaire d'avant 2016, le nombre d'années
+          retenues pour la part proportionnelle — ne sont donc écrites nulle
+          part, et la formule ne peut pas être calculée. La fiche sert celle
+          d'avant, la seule dont les paramètres existent, et le dit.
+          Voir docs/limites.md.
+          LA SURCOTE EST DATÉE, et la période en servait une dès 2003. Elle
+          naît de la loi du 21 août 2003, pour les liquidations de 2004, à
+          0,75 % par trimestre ; elle passe à 1,25 % en 2009. La période est
+          scindée pour cela seul : rien d'autre n'y change.
+          LA LOI WOERTH S'APPLIQUE AUX PENSIONS PRENANT EFFET À COMPTER DU
+          1ER JUILLET 2011 : L. 732-18 (LEGIARTI000023030985) renvoie l'âge
+          d'ouverture à l'article L. 161-17-2, et L. 732-25 (versions
+          LEGIARTI000023030980 puis LEGIARTI000028498264) l'âge d'annulation à
+          ce même âge « augmenté de cinq années » et la durée à
+          l'article L. 161-17-3 : âges, durée et coefficient se lisent à la
+          génération, ce qui porte aussi les lois de 2014 et de 2023 (à
+          compter du 1er septembre 2023, LEGIARTI000047452862). Les valeurs
+          écrites ne sont que le repli hors table.
   - code: msa_rco
     nom: Retraite complémentaire obligatoire des non-salariés agricoles (RCO)
     famille: agricole
