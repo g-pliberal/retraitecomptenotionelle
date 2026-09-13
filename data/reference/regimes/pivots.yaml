@@ -177,19 +177,28 @@ pivots:
 
   # --- Régimes spéciaux --------------------------------------------------
   sncf:
-    - {texte: "Décret n° 2008-639", num: "13", parametres: [age_ouverture]}
+    # L'article 13 porte la décote, l'article 37-1 le calendrier des âges par
+    # génération ; les articles 3 (pension proportionnelle) et 17 (entrée en
+    # jouissance) ne datent aucun paramètre de la fiche.
+    - {texte: "Décret n° 2008-639", num: "37-1", parametres: [age_ouverture, age_taux_plein]}
+    - {texte: "Décret n° 2008-639", num: "13", parametres: [decote_par_trimestre, bareme_decote]}
     - {texte: "Décret n° 2008-639", num: "6", parametres: [duree_requise_trimestres, taux_plein]}
-    - {texte: "Décret n° 2008-639", num: "17", parametres: [decote_par_trimestre, bareme_decote]}
-    - {texte: "Décret n° 2008-639", num: "3", parametres: [taux_cotisation_retraite]}
   ratp:
-    - {texte: "Décret n° 2008-637", num: "13", parametres: [age_ouverture]}
-    - {texte: "Décret n° 2008-637", num: "6", parametres: [duree_requise_trimestres, taux_plein]}
+    # L'article 6 porte les âges cibles, l'article 51-1 leur calendrier par
+    # génération ; l'article 13 n'a qu'une version et ne date rien.
+    - {texte: "Décret n° 2008-637", num: "6", parametres: [age_ouverture, age_taux_plein]}
+    - {texte: "Décret n° 2008-637", num: "51-1", parametres: [age_ouverture, age_taux_plein]}
     - {texte: "Décret n° 2008-637", num: "17", parametres: [decote_par_trimestre, bareme_decote]}
   ieg:
+    # L'annexe 3 du statut national porte les âges et la retenue ; sa rédaction
+    # de 2023 (décret n° 2023-692) n'est pas consolidée et se lit au JORF.
+    - {texte: "Décret n°46-1541", num: "Annexe 3", parametres: [age_ouverture, taux_cotisation_retraite]}
     - {texte: "Décret n° 2011-290", num: "", parametres: [age_ouverture, duree_requise_trimestres]}
   marins:
     - {texte: "Code des pensions de retraite des marins", num: L14, parametres: [age_ouverture]}
-    - {texte: "Code des pensions de retraite des marins", num: R13, parametres: [duree_maximum_avant_age_trimestres]}
+    - {texte: "Code des pensions de retraite des marins", num: R2, parametres: [age_ouverture, duree_requise_trimestres]}
+    - {texte: "Code des pensions de retraite des marins", num: R11, parametres: [salaire_reference]}
+    - {texte: "Code des pensions de retraite des marins", num: R13, parametres: [taux_plein, duree_maximum_avant_age_trimestres]}
   mines:
     - {texte: "Décret n°46-2769", num: "147", parametres: [pension_forfaitaire_annuelle]}
     - {texte: "Décret n°46-2769", num: "131", parametres: [valeur_point_euros]}
@@ -208,7 +217,8 @@ pivots:
     - {texte: "Décret n°90-1215", num: "85-1", parametres: [duree_requise_trimestres]}
     - {texte: "Décret n°90-1215", num: "85-2", parametres: [decote_par_trimestre]}
   banque_de_france:
-    - {texte: "Décret n° 2007-262", num: "", parametres: [alignement]}
+    # Le règlement annexé est l'article « Annexe » du décret, quatorze versions.
+    - {texte: "Décret n° 2007-262", num: "Annexe", parametres: [age_ouverture, taux_cotisation_retraite, duree_requise_trimestres]}
   opera_de_paris:
     - {texte: "Décret n°68-382", num: "6", parametres: [age_ouverture]}
     - {texte: "Décret n°68-382", num: "14", parametres: [duree_requise_trimestres, taux_plein]}

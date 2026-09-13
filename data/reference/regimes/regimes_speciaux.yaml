@@ -194,7 +194,7 @@ regimes:
           portait la période précédente. L'âge de référence de la décote
           (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
       - debut: 2024
-        fin: null
+        fin: 2024
         type_calcul: annuites
         age_ouverture: 52
         age_taux_plein: 57
@@ -217,6 +217,278 @@ regimes:
           l'atteint cette année-là —, au lieu de la marche d'un coup que
           portait la période précédente. L'âge de référence de la décote
           (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+      - debut: 2025
+        fin: 2025
+        type_calcul: annuites
+        age_ouverture: 52.25
+        age_taux_plein: 57.25
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
+      - debut: 2026
+        fin: 2026
+        type_calcul: annuites
+        age_ouverture: 52.5
+        age_taux_plein: 57.5
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
+      - debut: 2027
+        fin: 2028
+        type_calcul: annuites
+        age_ouverture: 52.75
+        age_taux_plein: 57.75
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
+      - debut: 2029
+        fin: 2029
+        type_calcul: annuites
+        age_ouverture: 53
+        age_taux_plein: 58
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
+      - debut: 2030
+        fin: 2030
+        type_calcul: annuites
+        age_ouverture: 53.25
+        age_taux_plein: 58.25
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
+      - debut: 2031
+        fin: 2031
+        type_calcul: annuites
+        age_ouverture: 53.5
+        age_taux_plein: 58.5
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
+      - debut: 2032
+        fin: 2033
+        type_calcul: annuites
+        age_ouverture: 53.75
+        age_taux_plein: 58.75
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
+      - debut: 2034
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 54
+        age_taux_plein: 59
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1085
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
+          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
+          (LEGIARTI000048240186, puis LEGIARTI000048896987) porte l'âge
+          d'ouverture de la catégorie agent de conduite de cinquante-deux ans
+          (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
+          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
+          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
+          compter de 1980 ; l'âge des autres agents de cinquante-sept à
+          cinquante-neuf ans, générations 1968 à 1975 ; l'âge d'annulation de
+          la décote de soixante-deux à soixante-quatre ans, générations 1963 à
+          1970. La fiche suit ce calendrier par année de liquidation — l'âge
+          de la génération qui l'atteint cette année-là —, l'âge de référence
+          de la décote cinq ans au-dessus. Un ou deux trimestres sont
+          retranchés aux durées des carrières longues des générations
+          1963-1972 (non porté).
   - code: ratp
     nom: Caisse de retraites du personnel de la RATP (CRPRATP)
     famille: special
@@ -405,7 +677,7 @@ regimes:
           portait la période précédente. L'âge de référence de la décote
           (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
       - debut: 2024
-        fin: null
+        fin: 2024
         type_calcul: annuites
         age_ouverture: 52
         age_taux_plein: 57
@@ -428,6 +700,278 @@ regimes:
           l'atteint cette année-là —, au lieu de la marche d'un coup que
           portait la période précédente. L'âge de référence de la décote
           (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+      - debut: 2025
+        fin: 2025
+        type_calcul: annuites
+        age_ouverture: 52.25
+        age_taux_plein: 57.25
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
+      - debut: 2026
+        fin: 2026
+        type_calcul: annuites
+        age_ouverture: 52.5
+        age_taux_plein: 57.5
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
+      - debut: 2027
+        fin: 2028
+        type_calcul: annuites
+        age_ouverture: 52.75
+        age_taux_plein: 57.75
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
+      - debut: 2029
+        fin: 2029
+        type_calcul: annuites
+        age_ouverture: 53
+        age_taux_plein: 58
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
+      - debut: 2030
+        fin: 2030
+        type_calcul: annuites
+        age_ouverture: 53.25
+        age_taux_plein: 58.25
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
+      - debut: 2031
+        fin: 2031
+        type_calcul: annuites
+        age_ouverture: 53.5
+        age_taux_plein: 58.5
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
+      - debut: 2032
+        fin: 2033
+        type_calcul: annuites
+        age_ouverture: 53.75
+        age_taux_plein: 58.75
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
+      - debut: 2034
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 54
+        age_taux_plein: 59
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
+          trois mois par année de naissance, aux pensions prenant effet à
+          compter du 1er janvier 2025 : l'article 51-1 du décret n° 2008-637,
+          dans sa rédaction du décret n° 2023-690 du 28 juillet 2023 (article
+          6 : cinquante-quatre, cinquante-neuf et soixante-quatre ans,
+          LEGIARTI000047913991) (LEGIARTI000047914257) porte l'âge d'ouverture
+          de la catégorie tableau A de cinquante-deux ans (nés en 1972) à
+          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
+          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
+          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
+          l'âge des autres agents de cinquante-sept à cinquante-neuf ans,
+          générations 1968 à 1975 ; l'âge d'annulation de la décote de
+          soixante-deux à soixante-quatre ans, générations 1963 à 1970. La
+          fiche suit ce calendrier par année de liquidation — l'âge de la
+          génération qui l'atteint cette année-là —, l'âge de référence de la
+          décote cinq ans au-dessus. Un ou deux trimestres sont retranchés aux
+          durées des carrières longues des générations 1963-1972 (non porté).
   - code: ieg
     nom: Régime des industries électriques et gazières (CNIEG)
     famille: special
@@ -444,7 +988,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1946
-        fin: 1985
+        fin: 1983
         type_calcul: annuites
         age_ouverture: 55
         age_taux_plein: 55
@@ -460,7 +1004,39 @@ regimes:
         notes: >-
           Statut national du personnel des IEG (décret du 22 juin 1946).
           Ouverture à 55 ans, 50 ans pour les services actifs et insalubres.
-          SIX POUR CENT DE RETENUE DE 1946 À 1985 : l'annexe 3 du statut national (LEGIARTI000006632496, version de 1946) évalue les « retenues participations, prestations, pensions » d'un agent qui quitte les industries à « 6 % des salaires ou traitements totalisés ». Le décret n° 84-63 du 27 janvier 1984 a modifié le taux au 1er janvier 1984, mais l'index n'en porte que la clause d'application (LEGIARTI000006766294), pas le chiffre : 6 % est reconduit jusqu'en 1985, et c'est une lecture incomplète, nommée.
+          SIX POUR CENT DE RETENUE DE 1946 À 1983 : l'annexe 3 du statut
+          national (LEGIARTI000006632496, version de 1946) évalue les «
+          retenues participations, prestations, pensions » d'un agent qui
+          quitte les industries à « 6 % des salaires ou traitements totalisés
+          ».
+      - debut: 1984
+        fin: 1985
+        type_calcul: annuites
+        age_ouverture: 55
+        age_taux_plein: 55
+        duree_requise_trimestres: 150
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.07
+        perimetre_taux: agent_seul
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          SEPT POUR CENT AU 1ER JANVIER 1984 : le décret n° 84-63 du 27
+          janvier 1984 modifie le paragraphe 2 de l'article 24 du statut, et
+          la notice du Journal officiel en porte le chiffre — « MODIFICATION
+          DE L'ART. 24 PARAG. 2 DU DECRET 461541 DU 22-06-1946 : 7 %.
+          APPLICATION AUX COTISATIONS ASSISES SUR LES REMUNERATIONS VERSEES A
+          COMPTER DU 01-01-1984 » (JORFTEXT000000885345) ; LEGI n'en consolide
+          que la clause d'application (LEGIARTI000006766294). Niveau `moyenne`
+          : une notice, pas un article. Les décrets frères n° 69-265, 70-1015,
+          88-881, 89-33, 90-516 et 90-772 (JORFTEXT000000336368, …850007,
+          …867909, …885248, …159223, …717919) modifient le paragraphe 8 de
+          l'article 23 — la cotisation aux caisses mutuelles complémentaires
+          et d'action sociale, 3,20 à 3,40 % — et non la retraite : rien à
+          couper.
       - debut: 1986
         fin: 1986
         type_calcul: annuites
@@ -685,7 +1261,7 @@ regimes:
           portait la période précédente. L'âge de référence de la décote
           (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
       - debut: 2024
-        fin: null
+        fin: 2024
         type_calcul: annuites
         age_ouverture: 57
         age_taux_plein: 62
@@ -708,6 +1284,82 @@ regimes:
           l'atteint cette année-là —, au lieu de la marche d'un coup que
           portait la période précédente. L'âge de référence de la décote
           (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+      - debut: 2025
+        fin: 2026
+        type_calcul: annuites
+        age_ouverture: 58.75
+        age_taux_plein: 63.75
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 : le décret n° 2023-692 du
+          28 juillet 2023 (JORFTEXT000047903232, article 2
+          JORFARTI000047903271) réécrit l'article 16 de l'annexe 3 du statut
+          national — l'âge de soixante-deux ans devient « l'âge mentionné à
+          l'article L. 161-17-2 du code de la sécurité sociale », celui de
+          cinquante-sept ans « cet âge abaissé de cinq ans » — aux pensions
+          prenant effet à compter du 1er janvier 2025 (article 3,
+          JORFARTI000047903346). LEGI ne consolide pas cette rédaction
+          (articles 1er et 2 datés 2999) : elle est lue au Journal officiel.
+          Par génération, l'âge des services actifs va de cinquante-sept ans
+          (nés avant 1961) à cinquante-neuf ans (nés à compter de 1968), trois
+          mois par année de naissance ; en 2025, la génération 1967 l'atteint
+          à cinquante-huit ans et neuf mois, la génération 1968 à cinquante-
+          neuf ans en 2027 — la fiche suit ce calendrier par année de
+          liquidation, l'âge de référence de la décote cinq ans au-dessus. La
+          durée requise du I bis de l'article 45 (170 trimestres pour les nés
+          de 1964 à 1966, 171 pour 1967-1968, 172 à compter de 1969, pour cinq
+          ans de services actifs) est plus exigeante d'un à trois trimestres
+          que la table nationale lue à la génération : écart non porté. Le
+          régime est fermé aux agents recrutés à compter du 1er septembre 2023
+          (annexe 3, art. 1er), ce que le routage porte.
+      - debut: 2027
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 59
+        age_taux_plein: 64
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 : le décret n° 2023-692 du
+          28 juillet 2023 (JORFTEXT000047903232, article 2
+          JORFARTI000047903271) réécrit l'article 16 de l'annexe 3 du statut
+          national — l'âge de soixante-deux ans devient « l'âge mentionné à
+          l'article L. 161-17-2 du code de la sécurité sociale », celui de
+          cinquante-sept ans « cet âge abaissé de cinq ans » — aux pensions
+          prenant effet à compter du 1er janvier 2025 (article 3,
+          JORFARTI000047903346). LEGI ne consolide pas cette rédaction
+          (articles 1er et 2 datés 2999) : elle est lue au Journal officiel.
+          Par génération, l'âge des services actifs va de cinquante-sept ans
+          (nés avant 1961) à cinquante-neuf ans (nés à compter de 1968), trois
+          mois par année de naissance ; en 2025, la génération 1967 l'atteint
+          à cinquante-huit ans et neuf mois, la génération 1968 à cinquante-
+          neuf ans en 2027 — la fiche suit ce calendrier par année de
+          liquidation, l'âge de référence de la décote cinq ans au-dessus. La
+          durée requise du I bis de l'article 45 (170 trimestres pour les nés
+          de 1964 à 1966, 171 pour 1967-1968, 172 à compter de 1969, pour cinq
+          ans de services actifs) est plus exigeante d'un à trois trimestres
+          que la table nationale lue à la génération : écart non porté. Le
+          régime est fermé aux agents recrutés à compter du 1er septembre 2023
+          (annexe 3, art. 1er), ce que le routage porte.
   - code: marins
     nom: Établissement national des invalides de la marine (ENIM)
     famille: special
@@ -3146,7 +3798,245 @@ regimes:
         notes: >-
           La surcote passe de 0,75 % à 1,25 % par trimestre au 1er janvier 2009.
       - debut: 2011
-        fin: 2022
+        fin: 2012
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0785
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2013
+        fin: 2013
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0812
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2014
+        fin: 2014
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0854
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2015
+        fin: 2015
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0886
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2016
+        fin: 2016
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0928
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2017
+        fin: 2017
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0965
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2018
+        fin: 2018
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.0997
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2019
+        fin: 2019
         type_calcul: annuites
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -3165,9 +4055,150 @@ regimes:
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
-          Loi de 2010 : retenue pour pension alignée progressivement sur le taux du
-          privé, bornes d'âge reportées de deux ans.
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2020
+        fin: 2020
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1056
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2021
+        fin: 2021
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1083
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
+      - debut: 2022
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1110
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          LOI DE 2010 : bornes d'âge reportées de deux ans (règlement annexé
+          au décret n° 2007-262, article 72, table par génération), retenue
+          pour pension alignée par marches sur le taux du privé. L'ÉCHELLE DE
+          COTISATION EST CELLE DU RÈGLEMENT, VERSION PAR VERSION : 7,85 %
+          jusqu'au 31 décembre 2012 (LEGIARTI000006778516) ; 8,12 % en 2013
+          (version du 9 mai 2012, LEGIARTI000025882187) ; 8,54 % en 2014
+          (version du 1er janvier 2014, LEGIARTI000028435924) ; puis l'échelle
+          définitive de la version du 20 décembre 2014 (LEGIARTI000029924596)
+          : 8,86 % (2015), 9,28 % (2016), 9,65 % (2017), 9,97 % (2018), 10,29
+          % (2019), 10,56 % (2020), 10,83 % (2021), 11,10 % « à compter de
+          l'année 2022 ». La fiche portait 10,29 % de 2011 à 2022 — le palier
+          de 2019 servi sur douze ans — et 11,10 % seulement depuis 2023.
+          Décote 1,25 %, taux plein 75 %, plafond de vingt trimestres :
+          invariants sur les quatorze versions.
       - debut: 2023
+        fin: 2024
+        type_calcul: annuites
+        age_ouverture: 62
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1110
+        perimetre_taux: agent_seul
+        bareme_decote: fonction_publique
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+        notes: >-
+          FERMETURE SANS RELÈVEMENT : le décret n° 2023-693 du 28 juillet 2023
+          ferme le régime aux agents recrutés à compter du 1er septembre 2023
+          (article 1er, LEGIARTI000047909408) mais la version du règlement en
+          vigueur du 1er septembre 2023 au 1er janvier 2025
+          (LEGIARTI000047909413) garde soixante-deux ans à l'article 26 et la
+          table de 2010 à l'article 72 : la fiche coupait au 1er septembre
+          2023 avec soixante-quatre ans, deux ans trop tôt. Les âges sont ici
+          écrits en dur — la table nationale lue à la génération porterait
+          déjà le relèvement de 2023 aux nés de 1961.
+      - debut: 2025
         fin: null
         type_calcul: annuites
         age_ouverture: 64
@@ -3187,8 +4218,18 @@ regimes:
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
-          Loi du 14 avril 2023 : âge d'ouverture porté à 64 ans.
-
+          RELÈVEMENT AU 1ER JANVIER 2025 : version du règlement en vigueur
+          depuis le 1er janvier 2025 (LEGIARTI000047909725, décret n°
+          2023-839) — l'article 26 renvoie « à l'âge mentionné au premier
+          alinéa de l'article L. 161-17-2 […] ou au moins cet âge abaissé de
+          cinq années », l'article 72 donne la table : soixante-deux ans avant
+          1963, et trois mois par génération jusqu'à soixante-quatre ans pour
+          les nés à compter du 1er janvier 1970 (cinquante-sept à cinquante-
+          neuf ans, générations 1968 à 1975, pour les catégories à
+          nomenclature) ; l'article 31 fixe la durée à 172 trimestres ;
+          l'article 68 réécrit les carrières longues en trois bornes, 58, 60
+          et 62 ans. Les âges sont lus à la génération dans la table
+          nationale, qui est la même.
   - code: opera_de_paris
     nom: Caisse de retraites des personnels de l'Opéra national de Paris
     famille: special

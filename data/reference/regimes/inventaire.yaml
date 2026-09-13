@@ -792,9 +792,15 @@ inventaire:
       - {reference: "code des pensions de retraite des marins, R. 13", id: null}
       - {reference: "code de la sécurité sociale, R. 711-1 4°", id: LEGIARTI000048031379}
     manque: >-
-      La grille des salaires forfaitaires par catégorie, que le décret renvoie
-      à un arrêté, est introuvable, et la catégorie du marin n'est pas dans la
-      carrière saisie ; un seul jeu de règles pour 1930-2026.
+      La formule est lue — cinquante-cinq ans, cinquante avec vingt-cinq ans
+      de services (R. 2, LEGIARTI000006791972), 2 % par annuité et trente-sept
+      annuités et demie (R. 13, LEGIARTI000006791990), salaire forfaitaire de
+      la catégorie des trois dernières années (R. 11, LEGIARTI000006791987) —,
+      mais la grille des vingt catégories (décret n° 52-540, art. 1er, huit
+      versions) n'est chiffrée au Journal officiel que depuis l'arrêté du
+      31 décembre 2007 (JORFARTI000017964781, puis chaque année jusqu'à
+      JORFARTI000051452700 en 2025), et la catégorie du marin n'est pas dans
+      la carrière saisie : un seul jeu de règles pour 1930-2026.
 
   - code: mines
     nom: Régime spécial de sécurité sociale dans les mines (CANSSM)
@@ -892,9 +898,12 @@ inventaire:
     textes:
       - {reference: "règlement de retraite du port autonome de Strasbourg (acte de l'établissement, hors JORF)", id: null}
     manque: >-
-      Le règlement de retraite est un acte de l'établissement, absent de LEGI,
-      qui ne porte que des décrets de compensation : un seul jeu de règles
-      pour 1930-2026, au niveau `estimee`.
+      Le règlement de retraite est un acte de l'établissement, absent de LEGI
+      et du JORF, qui ne portent que le décret constitutif de 1925
+      (LEGIARTI000021290664), l'affiliation au régime local d'Alsace-Moselle
+      (L. 325-1, LEGIARTI000006742525), la liste des régimes spéciaux de 2014
+      (JORFARTI000029964983) et des décrets de compensation : un seul jeu de
+      règles pour 1930-2026, au niveau `estimee`.
 
   - code: seita
     nom: Régime de retraite du personnel de la SEITA

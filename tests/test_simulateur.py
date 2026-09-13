@@ -2645,11 +2645,15 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     assert coefficient == pytest.approx(0.0025)
     assert age_annulation == pytest.approx(55.0 - 14.0 / 4.0)
 
-    # 2025 : la montée en charge est finie.
+    # 2025 : la montée en charge est finie. L'âge de référence est celui de la
+    # période — et depuis le relèvement de la loi du 14 avril 2023, étalé par
+    # génération aux pensions prenant effet en 2025 (décret n° 2023-967,
+    # art. 37-1), il vaut cette année-là cinquante-deux ans et trois mois
+    # d'ouverture, plus cinq ans.
     periode = simulateur.catalogue["sncf"].periode(2025)
     coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2025)
     assert coefficient == pytest.approx(0.0125)
-    assert age_annulation == pytest.approx(57.0)
+    assert age_annulation == pytest.approx(57.25)
 
 
 def test_l_age_d_annulation_du_ballet_de_l_opera_est_quarante_deux_ans(simulateur):
