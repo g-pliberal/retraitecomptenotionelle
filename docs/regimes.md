@@ -311,21 +311,40 @@ certification OpenFisca réécrirait.
 | `marins` | pivots sur L. 14 et R. 13 seuls | R. 2 (`LEGIARTI000006791972` : 55 ans, 50 avec vingt-cinq ans de services), R. 11 (`LEGIARTI000006791987` : salaire forfaitaire de la catégorie des trois dernières années), R. 13 (`LEGIARTI000006791990` : 2 % par annuité, 37,5 annuités) confirment la fiche ; la grille des vingt catégories (décret n° 52-540, art. 1er, huit versions) n'est chiffrée au JORF que depuis 2008 (`JORFARTI000017964781` → `JORFARTI000051452700`) et exige une catégorie que la carrière ne porte pas | rien ; inventaire précisé |
 | `port_strasbourg` | — | rien dans les deux index hormis le décret de 1925, l'affiliation au régime local et la liste de 2014 (`LEGIARTI000021290664`, `LEGIARTI000006742525`, `JORFARTI000029964983`) | rien ; inventaire précisé |
 
-### Feuille de route B4 — ce que le script montre à lire
+### Tranche B4 — les libéraux, décret par décret
+
+Les montants annuels (forfaits, classes, prix du point) de 1998 à 2024 étaient déjà
+lus au Journal officiel par `scripts/fetch/jorf_cotisations_liberales.py` ; ce qui
+manquait, c'est la STRUCTURE des barèmes avant 1998 et les coupures de droit, que
+les décrets consolidés portent version par version. Aucun montant d'époque n'est
+dans ces textes — valeur de l'acte médical vétérinaire, cotisation de référence des
+pharmaciens, bornes de revenu des classes : fixés par l'ordre, par le conseil
+d'administration, par les statuts —, si bien que les périodes nouvelles disent ce
+que le droit exigeait, et la grille ou le forfait le plus ancien, indexé sur les
+prix, tient lieu de montant.
+
+| Régime | Ce qui était faux | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `carpv_complementaire` | une période 1950-2026 ; pivot mal formé (neuf arrêtés du 10 juillet 2026 pris pour neuf versions) | décret n° 50-1318, art. 2, onze versions (`LEGIARTI000006776818` → `LEGIARTI000054168212`) : actes médicaux par âge (50/80/50 en 1954, 95/152/95 en 1967, 144/228/144 en 1982), classes de revenu en AMV dès le 2 décembre 1997 (B 480, C 600, D 720), points × prix d'achat dès 2015 (16/20/24 PA), assiette de l'année précédente dès 2022 | dix périodes ; rien sur les témoins (la grille de 2016 indexée sert de montant) |
+| `cavp_complementaire` | deux périodes 1949-2025 et 2026- | décret n° 49-580, art. 2, dix versions (`LEGIARTI000006770075` → `LEGIARTI000054168167`) : option entre classes 1-9 (× 4 à 12 la référence) en 1978, 1-13 (× 5 à 17) en 1987, 3-13 en 2009, six classes d'office bornées en PASS (2 / 2,75 / 3,5 / 4,25 / 5) en 2015, onze classes dès 2020 | sept périodes ; rien sur les témoins |
+| `cipav_complementaire` | 1979-2022 d'un bloc | décret n° 79-262, art. 2 : classes 1-10 de 4 à 40 points (`LEGIARTI000006767473`), refonte A-H de 36 à 468 points au 1er janvier 2013 (`LEGIARTI000026892951`) | deux périodes au lieu d'une ; rien sur les témoins |
+| `cprn_complementaire` | 1962-2016 d'un bloc | décret n° 49-578, art. 2 : « 2 % et 2,5 % de la moyenne des produits de l'étude » en 1983 (`LEGIARTI000006763853`, soit les 4,5 % de la fiche), section C à 4,5 % en 2005 (`LEGIARTI000006763855`), taux par décret annuel dès 2014 (`LEGIARTI000028325795`) ; rien avant 1983 | quatre périodes au lieu d'une ; rien sur les témoins |
+| `cavom_complementaire` | fiche commençant en 2016 : trente-sept ans sans complémentaire pour l'officier ministériel | décret n° 79-265, art. 2 : classes de points de 1980 (`LEGIARTI000006770098`), 1987 (`…099`), 2013 (`LEGIARTI000026892955`), bornes de revenu dans les statuts, hors index ; plafond transitoire 4 → 7 PASS 2016-2019 (`LEGIARTI000031875318`) | période 1979-2015 au taux de 2016 projeté en arrière, `estimee`, routée ; **l'officier ministériel né en 1955 gagne 71 % de pension actuelle, celui né en 1965 39 %, celui né en 1975 20 %** ; les comptes notionnels des générations 1925-1945 doublent |
+| `cnavpl` | — | D. 642-3 en quinze versions : 8,6 %/1,6 % dès 2004 (`LEGIARTI000006738115`), 9,75 %/1,81 % en 2013 et 10,1 %/1,87 % en 2014 (`LEGIARTI000026704782`), 8,23 %/1,87 % dès le 19 juillet 2015 (`LEGIARTI000030910750`), 8,73 % dès 2025 (`LEGIARTI000049904651`) — la fiche coïncidait déjà ; L. 643-3 version de la loi du 30 décembre 2025 (`LEGIARTI000053280388`, pensions dès le 1er septembre 2026) : majoration pour trimestres cotisés avant l'âge légal, non portée | rien |
+| `cavamac_complementaire`, `carmf_complementaire` | — | le décret porte un taux contractuel constant (6,30 % ; 14 %) et la fiche les taux appelés : notes de réconciliation | rien |
+| `cavec_complementaire`, `carcdsf_complementaire`, `carpimko_complementaire`, `ircec_raap`, `cnbf`, `cnbf_complementaire` | — | hors LEGI ou déjà millésimés par le Journal officiel ; rien à couper | rien |
+
+Ce qui reste : les montants d'avant 1998 (AMV, cotisation de référence, bornes des
+classes), fixés hors index ; la section B des notaires ; la majoration de 2026 des
+libéraux ; les coupures informatives restantes de la carte (versions de rédaction).
+
+### Feuille de route B5 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
 [`limites.md`](limites.md)) compte, pour chaque fiche, les versions d'articles
 pivots qui commencent sans qu'une période commence. Ce que ces nombres disent
 pour les tranches suivantes :
 
-- **Libéraux (B4).** `carpv_complementaire` : 18 coupures de texte, toutes du
-  décret n° 50-1318 (cotisation en actes médicaux par classes d'âge de 1954 à
-  1997, puis en points) — la grille par millésime est lisible ; `cavp`
-  (7, décret n° 49-580), `cnavpl` (9, dont D. 643-1 et D. 642-3 versions
-  2004-2015), `cavamac` (5), `cprn` (4), `cipav` (3), `cnbf` (2, R. 723-43),
-  `ircec_raap` (2), `cavom` (2). Ce sont des décrets consolidés à plusieurs
-  versions : la lecture est faisable version par version, comme pour la
-  tranche B2.
 - **Bruit à connaître.** `msa_rco` (24) et `carmf` (1) : la valeur du point
   change chaque année, c'est `valeurs_point.csv` qui la porte, pas la fiche.
   `regime_general` (14), `cnracl` (17), `fonction_publique_etat` (7),

@@ -1269,8 +1269,12 @@ inventaire:
     textes:
       - {reference: "statuts du régime complémentaire de la CAVP (arrêtés d'approbation)", id: null}
     manque: >-
-      Le volet en capitalisation par classes n'est pas chiffré ; seule la part
-      forfaitaire en répartition l'est.
+      Les dix versions de l'article 2 du décret n° 49-580 datent les grilles
+      de classes (option de 1978 à 2015, classes d'office en plafonds depuis
+      2015, onze classes depuis 2020), mais la cotisation de référence de
+      chaque année n'est pas dans le texte : le forfait indexé sur les prix
+      en tient lieu, et rien n'est consolidé avant 1978 ; le volet en
+      capitalisation par classes n'est pas chiffré.
 
   - code: carpimko_complementaire
     nom: Complémentaire des auxiliaires médicaux (CARPIMKO)
@@ -1300,8 +1304,12 @@ inventaire:
     textes:
       - {reference: "décrets annuels fixant les cotisations du régime complémentaire des vétérinaires (depuis 2016)", id: null}
     manque: >-
-      Un seul jeu de règles pour 1950-2026 : les classes d'avant 2016 ne sont
-      pas datées.
+      Dix périodes suivent les onze versions de l'article 2 du décret n°
+      50-1318 (actes médicaux par âge de 1950 à 1997, classes de revenu en
+      AMV de 1998 à 2014, points depuis 2015), mais aucun montant d'époque
+      n'est dans le texte — la valeur de l'acte et le prix du point sont
+      fixés hors index — : la grille de 2016 indexée sur les prix tient lieu
+      de montant avant 2016.
 
   - code: cavamac_complementaire
     nom: Complémentaire des agents généraux d'assurance (CAVAMAC)
@@ -1348,8 +1356,11 @@ inventaire:
     textes:
       - {reference: "décret n° 2015-1667 du 14 décembre 2015 (passage à la cotisation proportionnelle)", id: null}
     manque: >-
-      Fiche écrite à partir de 2016 seulement : le régime par classes de
-      1979 à 2015 n'a pas de grille publiée.
+      Le régime par classes de 1979 à 2015 (décret n° 79-265, art. 2, trois
+      grilles de points) dépend de bornes de revenu fixées par les statuts,
+      hors index, et de montants par décret annuel : le taux proportionnel
+      de 2016 est projeté en arrière sur ces trente-sept ans au niveau
+      estimé.
 
   - code: cipav_complementaire
     nom: Complémentaire de la Cipav
@@ -1380,8 +1391,10 @@ inventaire:
     textes:
       - {reference: "statuts du régime complémentaire de la CPRN (arrêtés d'approbation)", id: null}
     manque: >-
-      La section B, par classes, dont les bornes ne sont publiées nulle part,
-      n'est pas portée : près de quatre dixièmes du complémentaire d'un notaire.
+      La section B, par classes, dont les bornes ne sont publiées nulle
+      part, n'est pas modélisée ; les versions de 1983, 2005 et 2014 de
+      l'article 2 du décret n° 49-578 datent la section C à 4,5 % des
+      produits de l'office, mais rien n'est consolidé avant 1983.
 
   - code: asv_conventionnes
     nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)
