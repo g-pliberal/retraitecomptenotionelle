@@ -105,6 +105,28 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: 50 ans pour les tables de roulement, 55 ans pour les autres agents.
       - debut: 2009
+        fin: 2016
+        type_calcul: annuites
+        age_ouverture: 50
+        age_taux_plein: 55
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, et elle ne touche pas tout en même
+          temps. Le décret n° 2008-637 du 30 juin 2008 crée la décote et aligne la
+          durée, mais les BORNES D'ÂGE ne bougent qu'à partir de 2017, et par
+          génération. La fiche portait 52 et 57 ans dès 2009 : elle opposait à un
+          machiniste parti en 2012 un âge que le régime ne lui demandait que cinq
+          ans plus tard.
+      - debut: 2017
         fin: null
         type_calcul: annuites
         age_ouverture: 52
@@ -119,7 +141,12 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: Réformes 2008 puis 2023.
+        notes: >-
+          Bornes d'âge relevées de deux ans — 50 à 52 pour les tables de roulement,
+          55 à 57 pour les autres agents. Le relèvement est ÉTALÉ par génération
+          jusqu'en 2024 ; la fiche le fait à l'année, ce qui est l'approximation la
+          plus proche que permette un jeu de périodes annuelles. Régime fermé aux
+          agents recrutés depuis le 1er septembre 2023.
 
   - code: ieg
     nom: Régime des industries électriques et gazières (CNIEG)
@@ -154,6 +181,26 @@ regimes:
           Statut national du personnel des IEG (décret du 22 juin 1946).
           Ouverture à 55 ans, 50 ans pour les services actifs et insalubres.
       - debut: 2009
+        fin: 2016
+        type_calcul: annuites
+        age_ouverture: 55
+        age_taux_plein: 60
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          RÉFORME DES RÉGIMES SPÉCIAUX DE 2008 : décote, durée alignée. Les bornes
+          d'âge, elles, ne bougent qu'à partir de 2017 et par génération. La fiche
+          portait 57 et 62 ans dès 2009, et opposait donc à un agent parti en 2012
+          un âge que le régime ne lui demandait pas encore.
+      - debut: 2017
         fin: null
         type_calcul: annuites
         age_ouverture: 57
@@ -168,7 +215,10 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: Réformes 2008 puis 2023.
+        notes: >-
+          Bornes d'âge relevées de deux ans, étalées par génération jusqu'en 2024 ;
+          la fiche le fait à l'année. Régime fermé aux agents recrutés depuis le
+          1er septembre 2023.
 
   - code: marins
     nom: Établissement national des invalides de la marine (ENIM)
