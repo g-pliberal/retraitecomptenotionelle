@@ -3519,6 +3519,39 @@ lequel ce régime est connu et le plus bas du système français : un musicien d
 l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
 lui ouvre qu'à soixante.
 
+### Le navigant n'avait pas de décote, et son régime en a une depuis 2012
+
+Trouvée en balayant les taux de remplacement de tous les statuts à six
+générations : le personnel navigant ressortait à plus de cent pour cent du
+dernier salaire, seul de la liste. Une partie de cet écart tient au cas type —
+quarante-trois ans de carrière dans un régime dont les annuités plafonnent à
+trente —, mais la lecture du code de l'aviation civile a montré autre chose : la
+CRPN a une décote, et la fiche n'en portait aucune.
+
+> « La pension est dite à taux plein si l'affilié réunit cumulativement […] 1°
+> avoir atteint l'âge de cinquante-cinq ans ou justifier de trente annuités […]
+> 2° la somme de l'âge et du nombre d'annuités […] est supérieure ou égale à 80.
+> Lorsque l'affilié ne remplit pas les conditions de liquidation des droits à
+> pension à taux plein, il est appliqué à la pension une décote égale à 5 % par
+> année manquante. »
+> — article R. 426-11 du code de l'aviation civile, rédaction du 1er janvier 2012
+
+Depuis le 1er janvier 2022, la condition d'âge disparaît et seule la durée
+compte. Cinq pour cent par année manquante, c'est 1,25 % par trimestre, et cette
+décote **s'ajoute à la proportionnalité** : un navigant parti avec vingt-cinq
+annuités touche 25/30 du taux plein, puis un quart de moins. Le modèle le fait
+désormais — 41,6 % au lieu de 55,5 % pour ce cas, et 27,8 % pour vingt annuités,
+où le plafond de quarante trimestres joue.
+
+**Trois écarts, nommés dans la fiche.** Le droit prend le PLUS GRAND des deux
+manques — âge et durée — quand l'affilié a moins de cinquante-cinq ans, quand le
+moteur prend le plus petit : la fiche décote alors moins que le droit. L'âge
+d'annulation retenu, soixante-cinq ans, est celui de l'article R. 426-12, qui
+écarte la décote pour la pension prenant effet à la limite d'âge de vol. Et le
+maximum de quarante trimestres n'est pas écrit dans le texte : il se déduit de ce
+que la liquidation n'est pas ouverte avant vingt annuités et que le taux plein en
+demande trente.
+
 ### L'avocat d'avant 2004 recevait cent pour cent de son revenu
 
 Même forme d'erreur, trouvée en cherchant la précédente. La retraite de base des

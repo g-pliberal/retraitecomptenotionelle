@@ -826,14 +826,15 @@ regimes:
         fin: 2015
         type_calcul: annuites
         age_ouverture: 50
-        age_taux_plein: 50
+        age_taux_plein: 65
         duree_requise_trimestres: 120
         taux_plein: 0.5550
         salaire_reference: carriere_entiere
         assiette: plafonnee_4_pass
         taux_cotisation_retraite: 0.21832
         part_salariale: 0.3600
-        decote_par_trimestre: null
+        decote_par_trimestre: 0.0125
+        decote_trimestres_maximum: 40
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -841,18 +842,44 @@ regimes:
           (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
           plein de 55.50%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
           Taux d'appel de 102,5 % en moyenne (101 % en 2012 à 104 % en 2015) (R. 426-8), déjà appliqué au taux ci-dessus.
+          UNE DÉCOTE EXISTE DEPUIS 2012, et la fiche n'en portait aucune.
+          L'article R. 426-11, réécrit au 1er janvier 2012 : « la pension est
+          dite à taux plein si l'affilié réunit cumulativement […] 1° avoir
+          atteint l'âge de cinquante-cinq ans ou justifier de trente annuités
+          […] 2° la somme de l'âge et du nombre d'annuités […] est supérieure
+          ou égale à 80. Lorsque l'affilié ne remplit pas les conditions […]
+          il est appliqué à la pension une décote égale à 5 % par année
+          manquante » — et depuis le 1er janvier 2022, la condition d'âge
+          disparaît : « la pension est dite à taux plein si l'affilié justifie
+          […] d'au moins trente annuités […] lorsque l'affilié n'atteint pas
+          cette durée, il est appliqué à la pension une décote égale à 5 % par
+          annuité manquante ». Cinq pour cent par année, c'est 1,25 % par
+          trimestre, et cette décote s'ajoute à la proportionnalité : un
+          navigant parti avec vingt-cinq annuités touche 25/30 du taux plein,
+          puis 25 % de moins. TROIS ÉCARTS, NOMMÉS. Le décompte du droit prend
+          le PLUS GRAND des deux manques — âge et durée — quand l'affilié a
+          moins de cinquante-cinq ans, quand le moteur prend le plus petit :
+          la fiche décote donc moins que le droit dans ce cas. L'âge
+          d'annulation porté ici, soixante-cinq ans, est celui de l'article R.
+          426-12, qui écarte la décote pour la pension prenant effet « à
+          compter d'un âge au moins égal à celui mentionné au premier alinéa
+          de l'article L. 6521-4 du code des transports », la limite d'âge de
+          vol. Et le maximum de quarante trimestres n'est pas écrit : il se
+          déduit de ce que la liquidation n'est pas ouverte avant vingt
+          annuités et que le taux plein en demande trente.
       - debut: 2016
         fin: null
         type_calcul: annuites
         age_ouverture: 50
-        age_taux_plein: 50
+        age_taux_plein: 65
         duree_requise_trimestres: 120
         taux_plein: 0.5550
         salaire_reference: carriere_entiere
         assiette: plafonnee_4_pass
         taux_cotisation_retraite: 0.22365
         part_salariale: 0.3600
-        decote_par_trimestre: null
+        decote_par_trimestre: 0.0125
+        decote_trimestres_maximum: 40
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -860,6 +887,31 @@ regimes:
           (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
           plein de 55.50%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
           Taux d'appel de 105 % (R. 426-8), déjà appliqué au taux ci-dessus.
+          UNE DÉCOTE EXISTE DEPUIS 2012, et la fiche n'en portait aucune.
+          L'article R. 426-11, réécrit au 1er janvier 2012 : « la pension est
+          dite à taux plein si l'affilié réunit cumulativement […] 1° avoir
+          atteint l'âge de cinquante-cinq ans ou justifier de trente annuités
+          […] 2° la somme de l'âge et du nombre d'annuités […] est supérieure
+          ou égale à 80. Lorsque l'affilié ne remplit pas les conditions […]
+          il est appliqué à la pension une décote égale à 5 % par année
+          manquante » — et depuis le 1er janvier 2022, la condition d'âge
+          disparaît : « la pension est dite à taux plein si l'affilié justifie
+          […] d'au moins trente annuités […] lorsque l'affilié n'atteint pas
+          cette durée, il est appliqué à la pension une décote égale à 5 % par
+          annuité manquante ». Cinq pour cent par année, c'est 1,25 % par
+          trimestre, et cette décote s'ajoute à la proportionnalité : un
+          navigant parti avec vingt-cinq annuités touche 25/30 du taux plein,
+          puis 25 % de moins. TROIS ÉCARTS, NOMMÉS. Le décompte du droit prend
+          le PLUS GRAND des deux manques — âge et durée — quand l'affilié a
+          moins de cinquante-cinq ans, quand le moteur prend le plus petit :
+          la fiche décote donc moins que le droit dans ce cas. L'âge
+          d'annulation porté ici, soixante-cinq ans, est celui de l'article R.
+          426-12, qui écarte la décote pour la pension prenant effet « à
+          compter d'un âge au moins égal à celui mentionné au premier alinéa
+          de l'article L. 6521-4 du code des transports », la limite d'âge de
+          vol. Et le maximum de quarante trimestres n'est pas écrit : il se
+          déduit de ce que la liquidation n'est pas ouverte avant vingt
+          annuités et que le taux plein en demande trente.
 
   - code: crpnpac_tranche_2
     nom: >-
@@ -926,14 +978,15 @@ regimes:
         fin: 2015
         type_calcul: annuites
         age_ouverture: 50
-        age_taux_plein: 50
+        age_taux_plein: 65
         duree_requise_trimestres: 120
         taux_plein: 0.4200
         salaire_reference: carriere_entiere
         assiette: tranche_c
         taux_cotisation_retraite: 0.21832
         part_salariale: 0.3600
-        decote_par_trimestre: null
+        decote_par_trimestre: 0.0125
+        decote_trimestres_maximum: 40
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -941,18 +994,44 @@ regimes:
           (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
           plein de 42.00%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
           Taux d'appel de 102,5 % en moyenne (101 % en 2012 à 104 % en 2015) (R. 426-8), déjà appliqué au taux ci-dessus.
+          UNE DÉCOTE EXISTE DEPUIS 2012, et la fiche n'en portait aucune.
+          L'article R. 426-11, réécrit au 1er janvier 2012 : « la pension est
+          dite à taux plein si l'affilié réunit cumulativement […] 1° avoir
+          atteint l'âge de cinquante-cinq ans ou justifier de trente annuités
+          […] 2° la somme de l'âge et du nombre d'annuités […] est supérieure
+          ou égale à 80. Lorsque l'affilié ne remplit pas les conditions […]
+          il est appliqué à la pension une décote égale à 5 % par année
+          manquante » — et depuis le 1er janvier 2022, la condition d'âge
+          disparaît : « la pension est dite à taux plein si l'affilié justifie
+          […] d'au moins trente annuités […] lorsque l'affilié n'atteint pas
+          cette durée, il est appliqué à la pension une décote égale à 5 % par
+          annuité manquante ». Cinq pour cent par année, c'est 1,25 % par
+          trimestre, et cette décote s'ajoute à la proportionnalité : un
+          navigant parti avec vingt-cinq annuités touche 25/30 du taux plein,
+          puis 25 % de moins. TROIS ÉCARTS, NOMMÉS. Le décompte du droit prend
+          le PLUS GRAND des deux manques — âge et durée — quand l'affilié a
+          moins de cinquante-cinq ans, quand le moteur prend le plus petit :
+          la fiche décote donc moins que le droit dans ce cas. L'âge
+          d'annulation porté ici, soixante-cinq ans, est celui de l'article R.
+          426-12, qui écarte la décote pour la pension prenant effet « à
+          compter d'un âge au moins égal à celui mentionné au premier alinéa
+          de l'article L. 6521-4 du code des transports », la limite d'âge de
+          vol. Et le maximum de quarante trimestres n'est pas écrit : il se
+          déduit de ce que la liquidation n'est pas ouverte avant vingt
+          annuités et que le taux plein en demande trente.
       - debut: 2016
         fin: null
         type_calcul: annuites
         age_ouverture: 50
-        age_taux_plein: 50
+        age_taux_plein: 65
         duree_requise_trimestres: 120
         taux_plein: 0.4200
         salaire_reference: carriere_entiere
         assiette: tranche_c
         taux_cotisation_retraite: 0.22365
         part_salariale: 0.3600
-        decote_par_trimestre: null
+        decote_par_trimestre: 0.0125
+        decote_trimestres_maximum: 40
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -960,6 +1039,31 @@ regimes:
           (R. 426-16-1), dans la limite de 30 annuités — d'où un taux
           plein de 42.00%. Cotisation de 7,668 % pour l'affilié et 13,632 % pour l'employeur (R. 426-6 et R. 426-7 dans leur rédaction du décret n° 2011-1500).
           Taux d'appel de 105 % (R. 426-8), déjà appliqué au taux ci-dessus.
+          UNE DÉCOTE EXISTE DEPUIS 2012, et la fiche n'en portait aucune.
+          L'article R. 426-11, réécrit au 1er janvier 2012 : « la pension est
+          dite à taux plein si l'affilié réunit cumulativement […] 1° avoir
+          atteint l'âge de cinquante-cinq ans ou justifier de trente annuités
+          […] 2° la somme de l'âge et du nombre d'annuités […] est supérieure
+          ou égale à 80. Lorsque l'affilié ne remplit pas les conditions […]
+          il est appliqué à la pension une décote égale à 5 % par année
+          manquante » — et depuis le 1er janvier 2022, la condition d'âge
+          disparaît : « la pension est dite à taux plein si l'affilié justifie
+          […] d'au moins trente annuités […] lorsque l'affilié n'atteint pas
+          cette durée, il est appliqué à la pension une décote égale à 5 % par
+          annuité manquante ». Cinq pour cent par année, c'est 1,25 % par
+          trimestre, et cette décote s'ajoute à la proportionnalité : un
+          navigant parti avec vingt-cinq annuités touche 25/30 du taux plein,
+          puis 25 % de moins. TROIS ÉCARTS, NOMMÉS. Le décompte du droit prend
+          le PLUS GRAND des deux manques — âge et durée — quand l'affilié a
+          moins de cinquante-cinq ans, quand le moteur prend le plus petit :
+          la fiche décote donc moins que le droit dans ce cas. L'âge
+          d'annulation porté ici, soixante-cinq ans, est celui de l'article R.
+          426-12, qui écarte la décote pour la pension prenant effet « à
+          compter d'un âge au moins égal à celui mentionné au premier alinéa
+          de l'article L. 6521-4 du code des transports », la limite d'âge de
+          vol. Et le maximum de quarante trimestres n'est pas écrit : il se
+          déduit de ce que la liquidation n'est pas ouverte avant vingt
+          annuités et que le taux plein en demande trente.
 
   - code: crpcen
     nom: Caisse de retraite et de prévoyance des clercs et employés de notaires
