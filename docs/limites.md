@@ -3519,6 +3519,24 @@ lequel ce régime est connu et le plus bas du système français : un musicien d
 l'orchestre se voit donc offrir une liquidation à quarante ans que son statut ne
 lui ouvre qu'à soixante.
 
+### L'avocat d'avant 2004 recevait cent pour cent de son revenu
+
+Même forme d'erreur, trouvée en cherchant la précédente. La retraite de base des
+avocats est FORFAITAIRE — 19 154 € par an au taux plein en 2026, quel que soit le
+revenu —, et la fiche le disait pour la période ouverte en 2004 seulement. La
+période 1948-2003 portait `salaire_reference: sans_objet` sans qu'aucun montant
+ne prenne le relais : lue en annuités, elle servait la moyenne des revenus. Un
+avocat né en 1935, liquidant en 2000, recevait 18 499 € — cent pour cent de son
+revenu moyen, quand le régime sert à tous le même montant.
+
+La période porte désormais le forfait, à la valeur de 2026 ramenée par l'indice
+des prix, et le cas type perd 29 %. **C'est une convention, et elle est nommée :**
+le montant de la retraite de base des avocats n'est pas dans le code — l'article
+R. 723-43 y renvoie à une décision de l'assemblée générale de la caisse — et
+aucune série historique n'en est publiée. Le report par les prix suppose que le
+forfait les a suivis, ce qui est vrai depuis les années 2000 et l'est moins
+avant.
+
 ### La pension du mineur ne dépend pas de son salaire, et le modèle la doublait
 
 C'est la plus grosse erreur que cette campagne ait trouvée, et elle tenait à une

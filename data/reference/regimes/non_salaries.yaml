@@ -4439,6 +4439,8 @@ regimes:
         salaire_reference: sans_objet
         assiette: forfaitaire
         taux_cotisation_retraite: 0.09
+        pension_forfaitaire_annuelle: 19154
+        pension_forfaitaire_annee: 2026
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -4447,6 +4449,17 @@ regimes:
           de la durée. Dans un compte notionnel, cette déconnexion disparaît
           entièrement — c'est l'un des régimes les plus transformés par la
           réforme simulée.
+          ET LA PÉRIODE NE PORTAIT AUCUN FORFAIT, ce qui la faisait retomber sur
+          la moyenne des revenus : un avocat liquidant en 1999 se voyait servir
+          18 499 € — cent pour cent de son revenu moyen —, là où le régime sert
+          un montant le même pour tous. La période porte désormais le forfait,
+          faute de mieux à la valeur de 2026 ramenée par l'indice des prix.
+          C'EST UNE CONVENTION, ET ELLE EST NOMMÉE : le montant de la retraite
+          de base des avocats n'est pas dans le code — l'article R. 723-43 y
+          renvoie à une décision de l'assemblée générale de la caisse —, et
+          aucune série historique n'en est publiée. Le report par les prix
+          suppose que le forfait les a suivis, ce qui est vrai depuis les années
+          2000 mais l'est moins avant.
       - debut: 2004
         fin: null
         type_calcul: forfaitaire
