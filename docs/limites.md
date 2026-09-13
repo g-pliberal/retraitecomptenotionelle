@@ -3682,11 +3682,22 @@ ancrée sur la valeur de 2002 et portée par les prix, donne 79,18 € en 2010 ;
 valeur que le décret fixe au 1er avril 2013 est 82,83 €, soit 79,3 € ramenés à
 2010. Deux ancres indépendantes à deux pour mille l'une de l'autre.
 
-**Ce que la fiche ne sait toujours pas.** Le forfait a été revalorisé sur les
-SALAIRES jusqu'en 1987, et le modèle ne sait le porter que par les prix : une
-liquidation du milieu des années 1980 est sous-estimée d'environ un quart. Les
-revalorisations intermédiaires sont des arrêtés annuels, que la version
-consolidée du décret ne conserve pas. Avant 1974, la base ne porte aucune
+**Entre 1974 et 1992, la valeur est RECONSTITUÉE, et voici pourquoi.** Porter
+celle de 1974 par l'indice des prix la laissait 32 % sous celle de 1992 : la
+pension d'un mineur liquidant en 1991 bondissait de 47 % l'année suivante, ce qui
+n'était certainement pas le droit. Le balayage par génération l'a signalé comme
+le plus gros saut du catalogue. Ni les prix ni les salaires ne reproduisent la
+hausse réelle — le forfait a été multiplié par 5,15 quand les prix l'étaient par
+3,57 et les salaires par 4,20 —, et le décret n° 2002-800 dit pourquoi : il est
+pris après un protocole « relatif aux mesures de revalorisation et de rattrapage
+des avantages miniers du fait de leur **décrochage** par rapport aux pensions de
+vieillesse du régime général ». Ce forfait n'a suivi aucun indice : il a décroché,
+puis rattrapé. Entre deux points connus, la fiche interpole donc
+géométriquement — 9,9 % l'an, une période par millésime —, ce qui est la chose
+la moins fausse qu'on puisse dire, et ce qui est écrit dans chacune de ces
+dix-huit périodes. Les revalorisations intermédiaires sont des arrêtés annuels,
+que la version consolidée du décret ne garde pas et qu'un dépouillement du
+*Journal officiel* n'a pas retrouvés. Avant 1974, la base ne porte aucune
 version : la valeur de 1974 est reportée en arrière par les prix, et une
 liquidation des années 1950 est incertaine dans les deux sens. Enfin l'âge de
 cinquante ans que la fiche oppose est l'âge ANTICIPÉ, celui du fond — l'article
