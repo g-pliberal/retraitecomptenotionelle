@@ -721,6 +721,11 @@ def source_valeurs_point() -> dict[tuple, float]:
             producteurs |= set(source())
         except SourceAbsente:
             continue
+    # Et ce que le TEXTE corrige : une valeur saisie depuis l'arrêté (le salaire
+    # de référence IPACTE de 1955) prime sur la transcription qui la porte
+    # fausse. Sans cette soustraction, les deux contrôles se disputeraient la
+    # clé — écart perpétuel, et journal de certification faux d'une ligne.
+    producteurs |= set(source_valeurs_point_texte())
     return {cle: valeur for cle, valeur in valeurs.items() if cle not in producteurs}
 
 
@@ -1149,6 +1154,15 @@ def source_valeurs_point_texte() -> dict[tuple, float]:
     charge = _charge_points()
     return {tuple(cle.split("|")): valeur
             for cle, valeur in sorted(charge["complements"].items())}
+
+
+def source_valeurs_point_estimees() -> dict[tuple, float]:
+    """Prolongements assumés, sans texte : le taux d'appel des prédécesseurs de
+    l'Ircantec, emprunté à son successeur. Niveau ``estimee``, et rien de plus :
+    ce n'est ni une lecture ni une transcription."""
+    charge = _charge_points()
+    return {tuple(cle.split("|")): valeur
+            for cle, valeur in sorted(charge.get("complements_estimes", {}).items())}
 
 
 def source_minimum_vieillesse() -> dict[tuple, float]:
@@ -2107,10 +2121,23 @@ CERTIFICATIONS = (
         cles=("regime", "annee", "mesure"),
         colonne="valeur",
         source=source_valeurs_point_texte,
-        origine="Accord national interprofessionnel du 17 novembre 2017",
+        origine="Valeurs saisies dans le texte : ANI du 17 novembre 2017, art. 3 ; "
+                "arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673)",
         decimales=6,
         tolerance=5e-7,
         niveau="moyenne",
+    ),
+    Certification(
+        nom="valeurs_point_estimees",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_estimees,
+        origine="Taux d'appel de l'Ircantec 1971 prolongé sur l'IPACTE et l'IGRANTE "
+                "(décret 70-1277, art. 7, LEGIARTI000006368121)",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="estimee",
     ),
     Certification(
         nom="age_ouverture_requis",
@@ -2952,6 +2979,10 @@ def controle_vraisemblance_cotisations() -> list[str]:
     par_regime = brut.get("complementaires", {})
     parts_publiees = brut.get("part_salariale", {})
     variante = brut.get("variante_retenue", "?")
+    # Les fiches « entreprises nouvelles » portent l'autre barème d'adhésion :
+    # elles se confrontent à sa série, pas à celle du dépôt.
+    variantes = brut.get("complementaires_variantes", {})
+    parts_variantes = brut.get("part_salariale_variantes", {})
     fiches = yaml.safe_load(
         (REFERENCE / "regimes" / "complementaires_prive.yaml").read_text(
             encoding="utf-8")
@@ -2966,11 +2997,18 @@ def controle_vraisemblance_cotisations() -> list[str]:
                 (p.get("points_de") for p in regime["periodes"] if p.get("points_de")),
                 code_serie,
             )
-        annuel = par_regime.get(code_serie)
+        if regime["code"].endswith("_entreprises_nouvelles"):
+            annuel = variantes.get(code_serie, {}).get("entreprises_nouvelles")
+            parts_regime = parts_variantes.get(code_serie, {}).get(
+                "entreprises_nouvelles", {})
+            variante_fiche = "entreprises_nouvelles"
+        else:
+            annuel = par_regime.get(code_serie)
+            parts_regime = parts_publiees.get(code_serie, {})
+            variante_fiche = variante
         if not annuel:
             continue
         couverture = {int(a) for a in annuel}
-        parts_regime = parts_publiees.get(code_serie, {})
         for periode in regime["periodes"]:
             tranche = tranches.get(periode.get("assiette"))
             if tranche is None:
@@ -2993,12 +3031,17 @@ def controle_vraisemblance_cotisations() -> list[str]:
                 anomalies.append(
                     f"SUSPECT cotisations {regime['code']} {periode['debut']}-"
                     f"{periode['fin']} {periode['assiette']} : fiche {saisi:.2%}, "
-                    f"OpenFisca ({variante}) {publie:.2%} en moyenne sur "
+                    f"OpenFisca ({variante_fiche}) {publie:.2%} en moyenne sur "
                     f"{annees[0]}-{annees[-1]}"
                 )
             parts = [parts_regime[str(a)][tranche] for a in annees
                      if str(a) in parts_regime
                      and tranche in parts_regime[str(a)]]
+            if not parts and variante_fiche == "entreprises_nouvelles":
+                # Le barème salarié/employeur de la tranche 2 des entreprises
+                # nouvelles ne porte que cette tranche, numérotée 1 chez OpenFisca.
+                parts = [next(iter(parts_regime[str(a)].values())) for a in annees
+                         if str(a) in parts_regime and parts_regime[str(a)]]
             if parts and periode.get("part_salariale") is not None:
                 publiee = sum(parts) / len(parts)
                 saisie = float(periode["part_salariale"])

@@ -288,6 +288,16 @@ marche d'appel sur la série employeur en 1953 et 1989 (arrondie à un quart) ;
 le salaire de référence IPACTE de 1955 dans `valeurs_point.csv`, que la
 certification OpenFisca réécrirait.
 
+### Restes de B3 — ce que les mêmes articles disaient encore
+
+| Régime | Ce qui était faux | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `ipacte` | taux 4 % « à certifier », répartition 40/60 prêtée de l'Ircantec | l'article 7 du décret 51-1445 (`LEGIARTI000006368159`), déjà cité pour l'assiette, écrit aussi le taux : « 4,25 p. 100 et 8,25 p. 100 », soit 12,5 % contractuels, 34 % à la charge de l'agent ; l'article 7 du décret 70-1277 (`LEGIARTI000006368121`) reprend ces chiffres mot pour mot au 1er janvier 1971, et l'Ircantec les appelle à 60 % (Caisse des dépôts) : appel prolongé sur 1951-1970 au niveau `estimee`, effectif 7,5 % ; salaire de référence 1955 corrigé à 74 F = 0,112812 € (`LEGIARTI000006381673`, `LEGIARTI000006381707`) ; anticipation abattue de 1,1 % par trimestre comme le successeur | le contractuel né en 1925 et en 1935 : voir le diff des témoins ; fiche `moyenne` (version consolidée unique, décrets modificatifs à titre seul), âge toujours estimé |
+| `igrante` | taux 4 % « à certifier » | article 2 du décret 59-1569 (`LEGIARTI000006368165`) : « 1,40 p. 100 et 2,10 p. 100 », 3,5 % contractuels, 40 % agent — le rapport 1,40/3,50 confirme l'article 15 de l'arrêté de 1960 ; appel 60 % prolongé, effectif 2,1 % | idem |
+| `unirs` | note parlant d'« arrêtés d'extension » | les deux seules occurrences du nom avant 1975 sont un arrêté d'approbation (`JORFTEXT000000849607`) et un décret de subvention (`JORFTEXT000000875512`), sans chiffre ; LEGI n'en porte rien | rien : 2,5 % `estimee` conservé, inventaire précisé |
+| `agirc_entreprises_nouvelles`, `arrco_tranche_2_entreprises_nouvelles` | le barème des entreprises créées après 1981 (Agirc : 12 % dès 1983) et après 1997 (Arrco tranche 2 : 14 % d'emblée) n'était prêté à personne | deux fiches générées de la variante `entreprises_nouvelles` d'OpenFisca (27 et 6 périodes, `points_de` Agirc/Arrco), deux statuts « entreprise créée après 1981 / 1997 » | douze témoins nouveaux (336), identiques aux témoins de droit commun au salaire moyen, qui n'atteint ni le plafond ni la tranche 2 ; à deux plafonds, le cadre né en 1955 d'une entreprise créée après 1981 touche 1,7 % de pension actuelle de plus que celui d'une entreprise ancienne (12 % de points Agirc au lieu de 8 % de 1983 à 1993) |
+| outillage | une valeur lue dans un texte était réécrite par la transcription OpenFisca au prochain `--appliquer` | `source_valeurs_point` retire les clés des `COMPLEMENTS` (`openfisca_points.py`) ; nouvelle certification `valeurs_point_estimees` pour les prolongements assumés | le journal de certification distingue « saisi dans le texte » (`moyenne`) et « prolongé » (`estimee`) |
+
 ### Feuille de route B4 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
@@ -315,7 +325,8 @@ pour les tranches suivantes :
   `comedie_francaise`) ; les dix-sept versions du règlement de la Banque de
   France ; le décret n° 84-63 des IEG dont l'index ne porte pas le chiffre ;
   le règlement du port autonome de Strasbourg, à demander.
-- **Restes de B3.** Taux et âge de l'IPACTE et de l'IGRANTE, à demander à la
-  Caisse des dépôts ; barème de l'UNIRS ; salaire de référence IPACTE de 1955.
+- **Restes de B3.** L'âge de liquidation de l'IPACTE et de l'IGRANTE (articles
+  absents de LEGI) et le barème de l'UNIRS restent à demander à la Caisse des
+  dépôts et à la fédération.
 - **Puis B5**, les dix-huit régimes à modéliser de l'inventaire, par
   population décroissante.

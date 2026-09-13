@@ -2007,7 +2007,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n'est pas un régime absent : les 54 fiches du catalogue
+Un régime « incomplet » n’est pas un régime absent : les 56 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -2040,7 +2040,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **54 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **56 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2804,7 +2804,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 37 statuts », « 54 régimes » —, parce que ce sont des chiffres de données et
+« 39 statuts », « 56 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -3205,7 +3205,7 @@ modèle :
 | `cavamac_complementaire` | 1968-2026 | 8 | 22 | 5 | 0 |
 | `ipacte` | 1951-1970 | 1 | 20 | 0 | 0 |
 | `pensions_civiles_1853` | 1930-1948 | 1 | 19 | 0 | 0 |
-| `ircantec` | 1971-2026 | 15 | 17 | 5 | 0 |
+| `ircantec` | 1971-2026 | 15 | 17 | 6 | 0 |
 | `rafp` | 2005-2026 | 2 | 16 | 6 | 0 |
 | `assurances_sociales` | 1930-1945 | 1 | 16 | 0 | 0 |
 | `agirc` | 1947-2018 | 24 | 13 | 0 | 0 |
@@ -3216,10 +3216,12 @@ modèle :
 | `arrco` | 1961-2018 | 18 | 12 | 1 | 0 |
 | `igrante` | 1960-1970 | 1 | 11 | 0 | 0 |
 | `cavom_complementaire` | 2016-2026 | 1 | 11 | 2 | 0 |
+| `arrco_tranche_2_entreprises_nouvelles` | 1997-2018 | 6 | 11 | 0 | 0 |
 | `rsi` | 2006-2018 | 2 | 10 | 4 | 0 |
 | `arrco_tranche_2` | 1961-2018 | 22 | 9 | 0 | 0 |
 | `nric` | 2004-2012 | 2 | 8 | 3 | 0 |
 | `carmf_complementaire` | 1949-2026 | 62 | 8 | 1 | 0 |
+| `agirc_entreprises_nouvelles` | 1981-2018 | 17 | 7 | 0 | 0 |
 | `unirs` | 1957-1961 | 1 | 5 | 0 | 0 |
 | `avts` | 1941-1945 | 1 | 5 | 0 | 0 |
 | `agirc_arrco` | 2019-2026 | 2 | 5 | 0 | 0 |
@@ -3374,7 +3376,7 @@ dans la fiche de ce régime : c'est l'AFFILIATION qui doit la donner aux uns et
 pas aux autres. La tranche 2 de l'Arrco devient donc une fiche à part
 (`arrco_tranche_2`), attribuée aux cinq statuts non cadres — salarié du privé,
 salarié agricole, mineur d'après 2011, agent de la SEITA, agent des chemins de
-fer secondaires — et à eux seuls. Le catalogue passe de 53 à 54 régimes sans
+fer secondaires — et à eux seuls. Le catalogue passe de cinquante-trois à cinquante-quatre fiches sans
 qu'aucun régime nouveau n'existe : c'est un découpage, pas une découverte.
 
 **Et elle existe depuis 1961, pas depuis 1996.** La fiche affirmait qu'« avant
@@ -3387,10 +3389,13 @@ avant 1997. La tranche B3 de la campagne (voir [`regimes.md`](regimes.md)) a
 retenu ce barème-là, pour l'Arrco comme pour l'Agirc (entreprises adhérentes
 avant 1981) : c'est la population la plus nombreuse, et la carrière saisie ne
 dit pas la date de création de l'employeur. Le barème des entreprises nouvelles
-— 12 % à l'Agirc dès 1983, 14 % sur la tranche 2 dès 1997 — est récupéré dans
-le même fichier brut et n'est prêté à personne : un salarié d'une entreprise
-créée après ces dates est sous-estimé jusqu'à ce que les deux barèmes se
-rejoignent (1996 à l'Agirc, 2005 à l'Arrco).
+— 12 % à l'Agirc dès 1983, 14 % sur la tranche 2 dès 1997 — est porté par deux
+fiches parallèles (`agirc_entreprises_nouvelles`, `arrco_tranche_2_entreprises_nouvelles`,
+points Agirc et Arrco par `points_de`) et par deux statuts, « cadre, entreprise
+créée après 1981 » et « non cadre, entreprise créée après 1997 » : c'est à
+l'utilisateur de dire dans quelle entreprise il a travaillé, et le modèle ne
+choisit plus pour lui. Les deux barèmes se rejoignent en 1996 à l'Agirc et en
+2005 à l'Arrco.
 
 Les points, eux, restent des POINTS ARRCO. Le moteur apprend pour cela un champ
 `points_de`, qui dit de quel régime une période emprunte le barème — prix
@@ -4227,7 +4232,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 578 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 579 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

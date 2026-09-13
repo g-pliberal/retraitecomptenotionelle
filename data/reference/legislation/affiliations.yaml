@@ -37,6 +37,39 @@ affiliations:
       - {debut: 1961, fin: 2018, regimes: [regime_general, arrco, agirc]}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
 
+  salarie_prive_non_cadre_entreprise_recente:
+    libelle: Salarié du secteur privé, non cadre, entreprise créée après 1997
+    periodes:
+      - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
+      - {debut: 1945, fin: 1956, regimes: [regime_general]}
+      - {debut: 1957, fin: 1960, regimes: [regime_general, unirs]}
+      - {debut: 1961, fin: 1996, regimes: [regime_general, arrco]}
+      - {debut: 1997, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2_entreprises_nouvelles]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
+    note: >-
+      L'accord Arrco du 25 avril 1996 a imposé aux entreprises créées à compter
+      du 1er janvier 1997 un taux de tranche 2 de 14 % d'emblée (16 % en 2000),
+      quand les entreprises déjà adhérentes montaient par marches de 4 % à 16 %
+      jusqu'en 2005. Ce statut porte ce barème-là ; avant 1997, l'entreprise
+      n'existant pas, la tranche 2 n'est pas cotisée. Le statut « salarié non
+      cadre » porte le barème des entreprises existantes, le plus nombreux.
+
+  salarie_prive_cadre_entreprise_recente:
+    libelle: Salarié du secteur privé, cadre, entreprise créée après 1981
+    periodes:
+      - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
+      - {debut: 1945, fin: 1946, regimes: [regime_general]}
+      - {debut: 1947, fin: 1960, regimes: [regime_general, agirc]}
+      - {debut: 1961, fin: 1980, regimes: [regime_general, arrco, agirc]}
+      - {debut: 1981, fin: 2018, regimes: [regime_general, arrco, agirc_entreprises_nouvelles]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
+    note: >-
+      L'Agirc a imposé aux entreprises créées à compter du 1er janvier 1981 un
+      taux contractuel de 12 % dès 1983, quand les entreprises déjà adhérentes
+      gardaient 8 % jusqu'en 1993 ; les deux barèmes se rejoignent en 1996. Ce
+      statut porte ce barème-là de 1981 à 2018 ; avant 1981 il suit le cadre de
+      droit commun.
+
   fonctionnaire_etat:
     libelle: Fonctionnaire titulaire de l'État (civil ou militaire)
     periodes:

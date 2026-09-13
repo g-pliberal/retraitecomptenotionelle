@@ -58,6 +58,14 @@ pivots:
       KALI ; la fédération Agirc-Arrco est la seule source de son barème.
   arrco:
     - {texte: "Code de la sécurité sociale", num: L921-4, parametres: [obligation]}
+  agirc_entreprises_nouvelles:
+    hors_legi: >-
+      Même convention de 1947 que l'Agirc, hors JORF et hors KALI ; le barème des
+      entreprises créées après 1981 est lu dans OpenFisca-France.
+  arrco_tranche_2_entreprises_nouvelles:
+    hors_legi: >-
+      Même accord de 1996 que la tranche 2 de l'Arrco, hors JORF ; le barème des
+      entreprises créées après 1997 est lu dans OpenFisca-France.
   arrco_tranche_2:
     hors_legi: >-
       Accords du 8 décembre 1961 et du 25 avril 1996 entre partenaires
@@ -69,14 +77,15 @@ pivots:
       l'arrêté du 24 avril 2018 (JORFTEXT000036847920) qui n'en reprend pas
       le texte ; barème et coefficients lus chez la fédération.
   ipacte:
-    # LEGI ne garde du décret que l'assiette (art. 7) : ni taux, ni âge.
-    - {texte: "Décret n° 51-1445", num: "7", parametres: [assiette]}
+    # L'article 7 porte l'assiette ET le taux (4,25 / 8,25 %) ; aucun article d'âge.
+    - {texte: "Décret n° 51-1445", num: "7", parametres: [assiette, taux_cotisation_retraite]}
   igrante:
-    # Même limite : l'article 2 donne l'assiette, rien d'autre n'est consolidé.
-    - {texte: "Décret n° 59-1569", num: "2", parametres: [assiette]}
+    # L'article 2 porte l'assiette ET le taux (1,40 / 2,10 %) ; aucun article d'âge.
+    - {texte: "Décret n° 59-1569", num: "2", parametres: [assiette, taux_cotisation_retraite]}
   ircantec:
     - {texte: "Arrêté du 30 décembre 1970", num: "16", parametres: [age_ouverture, age_taux_plein, decote_par_trimestre]}
     - {texte: "Décret n°70-1277", num: "5", parametres: [taux_cotisation_retraite]}
+    - {texte: "Décret n°70-1277", num: "7", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n° 2008-996", num: "", parametres: [taux_cotisation_retraite, valeur_point]}
 
   # --- Fonction publique -------------------------------------------------

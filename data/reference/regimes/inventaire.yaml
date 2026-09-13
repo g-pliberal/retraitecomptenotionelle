@@ -65,7 +65,8 @@ inventaire:
     succede_a: []
     integre_dans: regime_general
     couverture: modelise
-    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole]
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole,
+              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente]
     textes:
       - {reference: "loi du 5 avril 1928 sur les assurances sociales", id: null}
       - {reference: "loi du 30 avril 1930 modifiant la loi du 5 avril 1928", id: null}
@@ -113,10 +114,11 @@ inventaire:
     succede_a: [assurances_sociales, avts]
     integre_dans: null
     couverture: modelise
-    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan,
-              commercant, artiste_auteur, personnel_navigant, agent_sncf, agent_ratp,
-              agent_ieg, mineur, personnel_opera, personnel_comedie_francaise,
-              agent_seita, agent_port_strasbourg, agent_chemins_fer_secondaires]
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan, commercant,
+              artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
+              personnel_opera, personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
+              agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
+              salarie_prive_non_cadre_entreprise_recente]
     textes:
       - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
       - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
@@ -240,7 +242,7 @@ inventaire:
     succede_a: []
     integre_dans: agirc_arrco
     couverture: modelise
-    statuts: [salarie_prive_cadre, personnel_navigant]
+    statuts: [salarie_prive_cadre, personnel_navigant, salarie_prive_cadre_entreprise_recente]
     textes:
       - {reference: "convention collective nationale du 14 mars 1947 (hors JORF et hors KALI)", id: null}
       - {reference: "code de la sécurité sociale, L. 921-1 et L. 921-4", id: LEGIARTI000006745499}
@@ -255,13 +257,15 @@ inventaire:
     succede_a: []
     integre_dans: arrco
     couverture: partiel
-    statuts: [salarie_prive_non_cadre]
+    statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente]
     textes:
       - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
     manque: >-
       L'UNIRS tient lieu de toutes les institutions fédérées avant 1961 — CRI,
       CIRCC, CGRCR, IRPSIMMEC, CAPIMMEC et les autres —, dont aucune n'a de
-      fiche propre : chacune avait son barème, et le dépôt n'en connaît qu'un.
+      fiche propre : chacune avait son barème, et le dépôt n'en connaît qu'un ;
+      et ce barème n'est chiffré nulle part dans l'index (deux occurrences du
+      nom avant 1975, sans taux) : 2,5 % par continuité avec l'Arrco de 1962.
 
   - code: arrco
     nom: Association des régimes de retraite complémentaire des salariés
@@ -274,7 +278,8 @@ inventaire:
     integre_dans: agirc_arrco
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
-              mineur, agent_seita, agent_chemins_fer_secondaires]
+              mineur, agent_seita, agent_chemins_fer_secondaires,
+              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
@@ -300,6 +305,34 @@ inventaire:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
 
+  - code: agirc_entreprises_nouvelles
+    nom: Agirc, barème des entreprises créées après 1981
+    famille: complementaire_prive
+    population: Cadres des entreprises créées à compter du 1er janvier 1981, tranches B et C
+    creation: 1981
+    fermeture: 2018
+    extinction: 2018
+    succede_a: []
+    integre_dans: agirc_arrco
+    couverture: modelise
+    statuts: [salarie_prive_cadre_entreprise_recente]
+    textes:
+      - {reference: "convention collective nationale du 14 mars 1947, avenant A75 du 26 juin 1978 et avenant A99 du 15 juin 1983 (hors JORF et hors KALI)", id: null}
+
+  - code: arrco_tranche_2_entreprises_nouvelles
+    nom: Arrco, tranche 2 des entreprises créées après 1997
+    famille: complementaire_prive
+    population: Non-cadres des entreprises créées à compter du 1er janvier 1997, entre un et trois plafonds
+    creation: 1997
+    fermeture: 2018
+    extinction: 2018
+    succede_a: []
+    integre_dans: agirc_arrco
+    couverture: modelise
+    statuts: [salarie_prive_non_cadre_entreprise_recente]
+    textes:
+      - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
+
   - code: agirc_arrco
     nom: Régime unifié Agirc-Arrco
     famille: complementaire_prive
@@ -313,7 +346,8 @@ inventaire:
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
               agent_sncf, agent_ratp, agent_ieg, mineur, personnel_opera,
               personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
-              agent_chemins_fer_secondaires]
+              agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
+              salarie_prive_non_cadre_entreprise_recente]
     textes:
       - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
       - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
@@ -336,9 +370,10 @@ inventaire:
       - {reference: "arrêté du 30 août 1952 approuvant la convention Agirc-IPACTE", id: JORFTEXT000000797895}
       - {reference: "décret n° 70-1277 du 23 décembre 1970 (abrogation au 1er janvier 1971)", id: JORFTEXT000000306984}
     manque: >-
-      LEGI ne conserve du décret que l'assiette (article 7) : le taux de
-      cotisation et l'âge de liquidation ne sont écrits nulle part dans
-      l'index, et la fiche les estime — 4 %, 60 et 65 ans.
+      Le taux (4,25 % et 8,25 %) est lu dans l'article 7, mais dans une version
+      consolidée unique, et le taux d'appel est celui de l'Ircantec de 1971
+      prolongé en arrière ; l'âge de liquidation n'est écrit nulle part dans
+      l'index (article 5 absent de LEGI) et prend le barème du successeur.
 
   - code: igrante
     nom: Institution générale de retraite des agents non titulaires de l'État
@@ -356,10 +391,12 @@ inventaire:
       - {reference: "arrêté du 17 février 1960, article 15 (répartition)", id: LEGIARTI000006381706}
       - {reference: "décret n° 68-1029 du 26 novembre 1968 (taux, corps absent de l'index)", id: JORFTEXT000000869583}
     manque: >-
-      Comme l'IPACTE, taux et âge estimés faute d'article ; et la fiche ne
-      porte que la tranche sous le plafond, celle de l'agent qui relève aussi
-      de l'IPACTE — les autres non-titulaires cotisaient jusqu'à trois
-      plafonds, part qu'aucun statut ne distingue.
+      Le taux (1,40 % et 2,10 %) est lu dans l'article 2, version consolidée
+      unique, l'appel est prolongé de l'Ircantec et l'âge prend le barème du
+      successeur (article 5 bis absent de LEGI) ; et la fiche ne porte que la
+      tranche sous le plafond, celle de l'agent qui relève aussi de l'IPACTE —
+      les autres non-titulaires cotisaient jusqu'à trois plafonds, part
+      qu'aucun statut ne distingue.
 
   - code: ircantec
     nom: Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques
