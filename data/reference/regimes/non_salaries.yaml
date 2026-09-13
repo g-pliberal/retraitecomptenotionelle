@@ -32,13 +32,66 @@ regimes:
           Loi du 17 janvier 1948 créant les régimes autonomes des non-salariés.
           Régime en points jusqu'à l'alignement de 1973.
       - debut: 1973
-        fin: 2006
+        fin: 1982
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 65
-        duree_requise_trimestres: 160
-        taux_plein: 0.50
+        duree_requise_trimestres: 150
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.025
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          ALIGNEMENT DE 1973, ET IL SE SUIT DANS LE TEMPS. La loi du 3 juillet
+          1972 aligne le régime de base sur le régime général à compter du
+          1er janvier 1973 : les points acquis avant sont conservés et convertis
+          (« droits en points »). L'alignement emporte les règles du régime
+          général — durée requise, salaire de référence, décote, surcote,
+          majorations familiales de l'article L. 634-2 —, ET IL LES EMPORTE
+          TOUTES, y compris leurs changements. La fiche portait une seule
+          période de 1973 à 2006, avec la durée requise de 160 trimestres et les
+          vingt-cinq meilleures années : un artisan parti en 1980 se voyait donc
+          opposer une durée que le droit ne lui demandait pas — 150 trimestres —
+          et une décote de 1,25 % par trimestre quand elle était de 2,5 %.
+          Les quatre périodes qui suivent sont celles du régime général, bornées
+          à l'alignement de 1973 et à l'absorption dans le RSI en 2006.
+      - debut: 1983
+        fin: 1993
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
         age_taux_plein_par_generation: true
+        duree_requise_trimestres: 150
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
+          trimestre. La durée requise reste de 150 trimestres.
+      - debut: 1994
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.5
         decote_par_generation: true
         salaire_reference_par_generation: true
         duree_proratisation_par_generation: true
@@ -51,13 +104,36 @@ regimes:
           [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
            reversion, periodes_assimilees]
         notes: >-
-          Loi du 3 juillet 1972 : ALIGNEMENT du régime de base des artisans sur
-          le régime général à compter du 1er janvier 1973. Les points acquis
-          avant 1973 sont conservés et convertis (« droits en points »).
-          L'alignement de l'article L. 634-2 emporte les règles familiales du
-          régime général : majoration de durée d'assurance et majoration pour
-          trois enfants. La fiche ne les portait pas, et le moteur ne les
-          servait donc pas à une artisane.
+          Réforme Balladur, applicable aux pensions prenant effet à compter du
+          1er janvier 1994 : la durée requise monte de 150 à 160 trimestres par
+          génération, et le salaire de référence passe des dix aux vingt-cinq
+          meilleures années, là aussi par génération. Les deux montées en charge
+          sont lues dans les tables du dépôt.
+      - debut: 2004
+        fin: 2006
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 164
+        duree_requise_par_generation: true
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees, carriere_longue]
+        notes: >-
+          Loi Fillon de 2003 : durée requise au-delà de 160 trimestres, création
+          de la surcote et de la retraite anticipée pour carrière longue. Le
+          régime est absorbé par le RSI le 1er janvier 2006.
 
   - code: organic
     nom: Organisation autonome nationale de l'industrie et du commerce
@@ -87,13 +163,66 @@ regimes:
         avantages_non_contributifs: [minimum_vieillesse, reversion]
         notes: Régime en points, symétrique de la CANCAVA.
       - debut: 1973
-        fin: 2006
+        fin: 1982
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 65
-        duree_requise_trimestres: 160
-        taux_plein: 0.50
+        duree_requise_trimestres: 150
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.025
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          ALIGNEMENT DE 1973, ET IL SE SUIT DANS LE TEMPS. La loi du 3 juillet
+          1972 aligne le régime de base sur le régime général à compter du
+          1er janvier 1973 : les points acquis avant sont conservés et convertis
+          (« droits en points »). L'alignement emporte les règles du régime
+          général — durée requise, salaire de référence, décote, surcote,
+          majorations familiales de l'article L. 634-2 —, ET IL LES EMPORTE
+          TOUTES, y compris leurs changements. Symétrique de la CANCAVA, et affectée du même défaut : la fiche portait une seule
+          période de 1973 à 2006, avec la durée requise de 160 trimestres et les
+          vingt-cinq meilleures années : un artisan parti en 1980 se voyait donc
+          opposer une durée que le droit ne lui demandait pas — 150 trimestres —
+          et une décote de 1,25 % par trimestre quand elle était de 2,5 %.
+          Les quatre périodes qui suivent sont celles du régime général, bornées
+          à l'alignement de 1973 et à l'absorption dans le RSI en 2006.
+      - debut: 1983
+        fin: 1993
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
         age_taux_plein_par_generation: true
+        duree_requise_trimestres: 150
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
+          trimestre. La durée requise reste de 150 trimestres.
+      - debut: 1994
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 160
+        duree_requise_par_generation: true
+        taux_plein: 0.5
         decote_par_generation: true
         salaire_reference_par_generation: true
         duree_proratisation_par_generation: true
@@ -106,8 +235,36 @@ regimes:
           [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
            reversion, periodes_assimilees]
         notes: >-
-          Aligné sur le régime général en 1973, règles familiales comprises,
-          symétrique de la CANCAVA.
+          Réforme Balladur, applicable aux pensions prenant effet à compter du
+          1er janvier 1994 : la durée requise monte de 150 à 160 trimestres par
+          génération, et le salaire de référence passe des dix aux vingt-cinq
+          meilleures années, là aussi par génération. Les deux montées en charge
+          sont lues dans les tables du dépôt.
+      - debut: 2004
+        fin: 2006
+        type_calcul: annuites
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 164
+        duree_requise_par_generation: true
+        taux_plein: 0.5
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1655
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees, carriere_longue]
+        notes: >-
+          Loi Fillon de 2003 : durée requise au-delà de 160 trimestres, création
+          de la surcote et de la retraite anticipée pour carrière longue. Le
+          régime est absorbé par le RSI le 1er janvier 2006.
 
   - code: rsi
     nom: Régime social des indépendants
