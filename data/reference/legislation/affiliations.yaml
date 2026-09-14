@@ -70,6 +70,22 @@ affiliations:
       statut porte ce barème-là de 1981 à 2018 ; avant 1981 il suit le cadre de
       droit commun.
 
+  maitre_enseignement_prive:
+    libelle: Maître de l'enseignement privé sous contrat
+    periodes:
+      - {debut: 1945, fin: 1956, regimes: [regime_general]}
+      - {debut: 1957, fin: 1960, regimes: [regime_general, unirs]}
+      - {debut: 1961, fin: 2004, regimes: [regime_general, arrco, arrco_tranche_2]}
+      - {debut: 2005, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2, enseignants_prive_additionnel]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco, enseignants_prive_additionnel]}
+    note: >-
+      Un salarié de droit privé payé par l'État : régime général et Arrco
+      comme le non-cadre, puis, depuis le 1er septembre 2005, le régime
+      additionnel de la loi n° 2005-5 (décret n° 2005-1233), assis sur la
+      rémunération versée par l'État. Le maître entré avant 2005 y a des
+      droits pour ses années antérieures — la fraction de 2 % de l'article
+      7 — sans avoir cotisé : ils ne sont pas dans la fiche.
+
   fonctionnaire_etat:
     libelle: Fonctionnaire titulaire de l'État (civil ou militaire)
     periodes:
@@ -429,13 +445,17 @@ affiliations:
     libelle: Médecin libéral
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: null, regimes: [cnavpl, carmf_complementaire]}
+      - {debut: 1949, fin: 1971, regimes: [cnavpl, carmf_complementaire]}
+      - {debut: 1972, fin: null, regimes: [cnavpl, carmf_complementaire, asv_conventionnes]}
     note: >-
       Le statut `profession_liberale` route vers le seul régime de base et
       sous-estime donc lourdement toute carrière libérale : la complémentaire
       d'un médecin pèse plus que sa base. Celui-ci ajoute la CARMF. Les neuf
       autres sections de la CNAVPL restent sans complémentaire, faute de
-      barème publié — voir docs/limites.md.
+      barème publié — voir docs/limites.md. Depuis le décret n° 72-968 du 27
+      octobre 1972, le médecin conventionné cotise aussi à l'ASV, dont les
+      caisses d'assurance maladie paient les deux tiers : la fiche
+      `asv_conventionnes` porte sa part seule, le statut étant sans employeur.
 
   personnel_navigant:
     libelle: Personnel navigant professionnel de l'aéronautique civile

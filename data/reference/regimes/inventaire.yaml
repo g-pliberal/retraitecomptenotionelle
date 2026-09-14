@@ -118,7 +118,8 @@ inventaire:
               artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
               personnel_opera, personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
-              salarie_prive_non_cadre_entreprise_recente]
+              salarie_prive_non_cadre_entreprise_recente,
+              maitre_enseignement_prive]
     textes:
       - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
       - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
@@ -257,7 +258,8 @@ inventaire:
     succede_a: []
     integre_dans: arrco
     couverture: partiel
-    statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente]
+    statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente,
+              maitre_enseignement_prive]
     textes:
       - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
     manque: >-
@@ -279,7 +281,8 @@ inventaire:
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
               mineur, agent_seita, agent_chemins_fer_secondaires,
-              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente]
+              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
+              maitre_enseignement_prive]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
@@ -300,7 +303,8 @@ inventaire:
     integre_dans: agirc_arrco
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita,
-              agent_chemins_fer_secondaires]
+              agent_chemins_fer_secondaires,
+              maitre_enseignement_prive]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
@@ -347,7 +351,8 @@ inventaire:
               agent_sncf, agent_ratp, agent_ieg, mineur, personnel_opera,
               personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
-              salarie_prive_non_cadre_entreprise_recente]
+              salarie_prive_non_cadre_entreprise_recente,
+              maitre_enseignement_prive]
     textes:
       - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
       - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
@@ -550,23 +555,20 @@ inventaire:
 
   - code: enseignants_prive_additionnel
     nom: Régime additionnel de retraite des enseignants du privé sous contrat
-    famille: additionnel_capitalise
+    famille: special
     population: Maîtres de l'enseignement privé sous contrat
     creation: 2005
     fermeture: null
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: modelise
+    statuts: [maitre_enseignement_prive]
     textes:
       - {reference: "loi n° 2005-5 du 5 janvier 2005 relative à la situation des maîtres des établissements d'enseignement privés sous contrat", id: null}
       - {reference: "décret n° 2005-1233 du 30 septembre 2005 relatif au régime additionnel de retraite des personnels enseignants", id: LEGITEXT000006052499}
-      - {reference: "arrêté du 28 juillet 2006 pris pour l'application du décret n° 2005-1233", id: LEGITEXT000006054116}
-    manque: >-
-      Un troisième étage en répartition, financé par une cotisation de 1,5 %
-      partagée, qui s'ajoute au régime général et à l'Agirc-Arrco des maîtres
-      du privé ; pas de statut.
+      - {reference: "décret n° 2005-1233, article 2 (assiette) et article 7 (fraction des pensions de base et complémentaire)", id: LEGIARTI000027090124}
+      - {reference: "arrêté du 28 juillet 2006 pris pour l'application du décret n° 2005-1233, article 1 (taux de 0,75 %, 1 %, puis 1,5 % patronal et salarial)", id: LEGIARTI000049688551}
 
   # ---------------------------------------------------------------------
   # Fonction publique et assimilés
@@ -1153,14 +1155,23 @@ inventaire:
     couverture: a_modeliser
     statuts: []
     textes:
-      - {reference: "loi n° 70-13 du 3 janvier 1970 et décret n° 70-368 du 29 avril 1970 (entrepreneurs du bâtiment)", id: LEGIARTI000006762430}
-      - {reference: "code de la sécurité sociale, D. 635-35-1 (conjoints des industriels et commerçants)", id: LEGIARTI000006738059}
+      - {reference: "décret n° 50-60 du 13 janvier 1950 (régime complémentaire des entrepreneurs du bâtiment et des travaux publics), article 2", id: LEGIARTI000006781230}
+      - {reference: "décret n° 70-368 du 29 avril 1970, article 16 (prélèvement au profit du régime du bâtiment)", id: LEGIARTI000006762430}
+      - {reference: "code de la sécurité sociale, D. 635-35 (régime des conjoints, 1985-2003)", id: LEGIARTI000006738057}
+      - {reference: "code de la sécurité sociale, D. 635-36 : 0,50 % et 1,82 % (1985-1998), 1,5 % et 3,5 % (1998-2003)", id: LEGIARTI000006738096}
+      - {reference: "code de la sécurité sociale, D. 635-35-1 (coefficient de reprise des points par le NRIC en 2004)", id: LEGIARTI000006738059}
       - {reference: "arrêté du 9 février 2012 portant approbation du règlement du RCI, reprise des points de l'ancien régime des conjoints", id: LEGIARTI000025397326}
     manque: >-
       Deux complémentaires obligatoires d'avant le NRIC, dont les points ont
-      été repris par le RCI : le commerçant d'avant 2004 du modèle n'a aucune
-      complémentaire, alors que le conjoint collaborateur et l'entrepreneur du
-      bâtiment en avaient une.
+      été repris par le RCI. Le régime des conjoints (D. 635-35 et D.
+      635-36, LEGIARTI000006738095 à LEGIARTI000006738097) sert une pension
+      AU CONJOINT du commerçant, financée par une cotisation du chef
+      d'entreprise : c'est un droit du conjoint, que la carrière
+      individuelle du modèle ne porte pas. Le régime du bâtiment (décret n°
+      50-60, art. 2, LEGIARTI000006781230) concernait une population
+      artisanale que le statut `artisan` ne distingue pas ; le coefficient
+      de reprise de 2004 (D. 635-35-1) reste à lire pour
+      `conversions_points.csv`.
 
   - code: rci
     nom: Régime complémentaire des indépendants
@@ -1405,16 +1416,24 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [medecin_liberal]
     textes:
-      - {reference: "loi n° 70-1325 du 31 décembre 1970 et décret n° 72-968 du 27 octobre 1972 (ASV des médecins)", id: null}
-      - {reference: "code de la sécurité sociale, L. 645-1 et suivants", id: null}
+      - {reference: "décret n° 72-968 du 27 octobre 1972, article 2 (points par année cotisée)", id: LEGIARTI000024871109}
+      - {reference: "code de la sécurité sociale, D. 645-2 (cotisation en multiples du tarif de la consultation) et D. 645-3 (part des caisses d'assurance maladie)", id: LEGIARTI000006738166}
+      - {reference: "décret n° 2011-1644 du 25 novembre 2011 (forfait en euros, cotisation d'ajustement, valeur de service)", id: LEGIARTI000033090911}
+      - {reference: "décret n° 2007-458 du 25 mars 2007 (chirurgiens-dentistes : forfait de 3 150 à 3 900 €, dix points, ajustement 1,45 %)", id: LEGIARTI000034762381}
+      - {reference: "décret n° 2017-1812 du 28 décembre 2017 (sages-femmes) et décret n° 2007-597 du 24 avril 2007 (directeurs de laboratoire : 0,30 %, cinquante points, point à 0,96 €)", id: LEGIARTI000026885155}
     manque: >-
-      Un troisième étage obligatoire pour les professionnels de santé
-      conventionnés, financé aux deux tiers par l'assurance maladie, qui pèse
-      près du tiers de la pension d'un médecin de secteur 1 ; aucun des
-      statuts de santé ne le porte.
+      La fiche ne porte que les médecins, et la seule part qu'ils paient :
+      les deux tiers versés par les caisses d'assurance maladie sont
+      décrits, non comptés. Les points d'ajustement sont pris au plafond de
+      neuf par an, atteint dès 68 000 € de revenu. Les chirurgiens-dentistes
+      (décret n° 2007-458 : dix points par forfait, ajustement 1,45 %), les
+      sages-femmes (2017-1812), les auxiliaires médicaux et les directeurs
+      de laboratoire (2007-597) ont chacun leur barème, lu mais non porté ;
+      leurs statuts restent sans ASV. Le tarif de la consultation, base du
+      forfait de 1985 à 2011, n'est pas une série du dépôt.
 
   - code: cnbf
     nom: Caisse nationale des barreaux français, régime de base

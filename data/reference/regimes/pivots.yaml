@@ -136,6 +136,13 @@ pivots:
     - {texte: "Arrêté du 21 novembre 2013", num: "", parametres: [taux_cotisation_retraite, valeur_point]}
   carmf_complementaire:
     - {texte: "Décret n°49-579", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+  asv_conventionnes:
+    - {texte: "Décret n°72-968", num: "2", parametres: [points_par_trimestre_valide]}
+    - {texte: "Code de la sécurité sociale", num: "D645-2", parametres: [cotisation_forfaitaire_euros]}
+    - {texte: "Code de la sécurité sociale", num: "D645-3", parametres: [cotisation_forfaitaire_euros]}
+    - {texte: "Décret n° 2011-1644", num: "1", parametres: [cotisation_forfaitaire_euros]}
+    - {texte: "Décret n° 2011-1644", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+    - {texte: "Décret n° 2011-1644", num: "4", parametres: [valeur_point_euros]}
   carcdsf_complementaire:
     hors_legi: >-
       Décret n° 2008-1490 et statuts approuvés par arrêté : les millésimes
@@ -230,6 +237,10 @@ pivots:
     hors_legi: >-
       Règlement de retraite du port autonome de Strasbourg, acte de
       l'établissement ; LEGI ne porte que des décrets de compensation.
+  enseignants_prive_additionnel:
+    - {texte: "Décret n°2005-1233", num: "2", parametres: [assiette]}
+    - {texte: "Décret n°2005-1233", num: "7", parametres: [type_calcul]}
+    - {texte: "Arrêté du 28 juillet 2006", num: "1", parametres: [taux_cotisation_retraite, part_salariale]}
   seita:
     - {texte: "Décret n°62-766", num: "108", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n°62-766", num: "110", parametres: [age_ouverture]}

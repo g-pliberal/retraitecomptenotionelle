@@ -501,3 +501,67 @@ reformes:
     regimes: [carcdsf_complementaire, carpimko_complementaire, cavp_complementaire, cavec_complementaire, cipav_complementaire, cnavpl]
     absorbee_par: []
     non_appliquee: {}
+
+  - code: asv_1972
+    date: 1972-10-27
+    texte: {reference: "décret n° 72-968 du 27 octobre 1972 tendant à rendre obligatoire le régime de prestations supplémentaires de vieillesse des médecins conventionnés", id: LEGITEXT000006061933}
+    parametres: [creation, points_par_trimestre_valide]
+    regimes: [asv_conventionnes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: asv_part_caisses_1993
+    date: 1993-03-30
+    texte: {reference: "code de la sécurité sociale, D. 645-3, part de l'assurance maladie ramenée à l'égalité pour les médecins (30 mars 1993 - 8 juillet 1994)", id: LEGIARTI000006738167}
+    parametres: [cotisation_forfaitaire_euros]
+    regimes: [asv_conventionnes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: asv_2012
+    date: 2012-01-01
+    texte: {reference: "décret n° 2011-1644 du 25 novembre 2011 relatif au régime des prestations complémentaires de vieillesse des médecins libéraux", id: LEGITEXT000024853543}
+    parametres: [cotisation_forfaitaire_euros, taux_cotisation_retraite, assiette, valeur_point_euros]
+    regimes: [asv_conventionnes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: asv_2017
+    date: 2016-09-05
+    texte: {reference: "décret n° 2016-1198 du 2 septembre 2016 (cotisation d'ajustement 2017-2020, valeur de service des points liquidés à compter de 2017)", id: LEGIARTI000033090908}
+    parametres: [taux_cotisation_retraite, valeur_point_euros]
+    regimes: [asv_conventionnes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: asv_2026
+    date: 2026-01-01
+    texte: {reference: "décret n° 2025-1076 du 10 novembre 2025, article 9 (cotisation d'ajustement 4 %, valeurs de service 2021-2025)", id: LEGIARTI000052567960}
+    parametres: [taux_cotisation_retraite, valeur_point_euros]
+    regimes: [asv_conventionnes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: rafep_2005
+    date: 2005-09-01
+    texte: {reference: "loi n° 2005-5 du 5 janvier 2005 et décret n° 2005-1233 du 30 septembre 2005 relatif au régime additionnel de retraite des personnels enseignants et de documentation", id: LEGITEXT000006052499}
+    parametres: [creation, assiette, taux_cotisation_retraite]
+    regimes: [enseignants_prive_additionnel]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: rafep_2013
+    date: 2013-02-21
+    texte: {reference: "décret n° 2013-145 du 18 février 2013 (fraction de 8 % et 2 % selon la part des services d'après 2005) et arrêté du 15 février 2013 (cotisations portées à 1 % et 1 %)", id: LEGIARTI000027090163}
+    parametres: [taux_cotisation_retraite, type_calcul]
+    regimes: [enseignants_prive_additionnel]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: rafep_2024
+    date: 2024-06-01
+    texte: {reference: "arrêté du 22 mai 2024 modifiant l'arrêté du 28 juillet 2006 (cotisations portées à 1,5 % et 1,5 %, par paliers de 1,2 % à 1,4 % jusqu'en 2026)", id: LEGIARTI000049688551}
+    parametres: [taux_cotisation_retraite]
+    regimes: [enseignants_prive_additionnel]
+    absorbee_par: []
+    non_appliquee: {}
