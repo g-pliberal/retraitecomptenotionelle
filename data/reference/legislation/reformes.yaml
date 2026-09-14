@@ -725,3 +725,35 @@ reformes:
     regimes: [fonctionnaires_pacifique]
     absorbee_par: []
     non_appliquee: {}
+
+  - code: conjoints_commercants_1973
+    date: 1973-01-01
+    texte: {reference: "loi n° 70-13 du 3 janvier 1970 et décret n° 70-368 du 29 avril 1970 (régime complémentaire obligatoire des conjoints des industriels et commerçants), codifiés en 1985 aux articles D. 635-32 à D. 635-36", id: LEGIARTI000006738054}
+    parametres: [creation, assiette, taux_cotisation_retraite]
+    regimes: [organic_conjoints_batiment]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: conjoints_commercants_1998
+    date: 1998-01-01
+    texte: {reference: "code de la sécurité sociale, D. 635-36 (cotisation portée à 1,5 % et 3,5 %)", id: LEGIARTI000006738096}
+    parametres: [taux_cotisation_retraite]
+    regimes: [organic_conjoints_batiment]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: conjoints_commercants_1999
+    date: 1999-01-01
+    texte: {reference: "code de la sécurité sociale, D. 635-36 (cotisation portée à 2,5 % et 3,95 %)", id: LEGIARTI000006738097}
+    parametres: [taux_cotisation_retraite]
+    regimes: [organic_conjoints_batiment]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: banques_afb_1994
+    date: 1994-01-01
+    texte: {reference: "accord professionnel de la banque du 13 septembre 1993 : intégration à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993, complément bancaire différentiel (hors JORF)", id: null}
+    parametres: [fermeture]
+    regimes: [regimes_professionnels_integres]
+    absorbee_par: []
+    non_appliquee: {}

@@ -4236,3 +4236,61 @@ regimes:
           fraction porte sur des pensions déjà minorées. TAUX : 1,5 % patronal
           et 1,5 % salarial, le droit commun de l'arrêté une fois la
           dérogation épuisée (art. 1, LEGIARTI000049688551).
+
+  - code: regimes_professionnels_integres
+    nom: >-
+      Régimes professionnels de salariés intégrés à l'Agirc-Arrco (banques AFB, organismes de sécurité sociale, caisses d'épargne)
+    famille: complementaire_prive
+    source_id: sites_institutionnels
+    fiabilite: estimee
+    creation: 1947
+    fermeture: 1993
+    extinction: null
+    succede_a: []
+    integre_dans: agirc_arrco
+    population: >-
+      Personnels des banques AFB (régime professionnel intégré en 1994), des
+      organismes de sécurité sociale (CPPOSS, 1994), des caisses d'épargne
+      (CGRCE, 2000), du Crédit agricole, des CCI, VRP (IRREP) et cadres
+      agricoles (CAMARCA, 1973) : des régimes CHAPEAU à prestations définies,
+      servis à la place de l'Arrco et de l'Agirc jusqu'à leur intégration. La
+      fiche porte le barème bancaire, le seul lisible, pour tous.
+    hors_repartition: false
+    periodes:
+      - debut: 1947
+        fin: 1993
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 168
+        taux_plein: 0.35
+        salaire_reference: dernier_salaire
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1600
+        part_salariale: 0.30
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UN RÉGIME CHAPEAU LU À TRAVERS SA RÉFORME. Source : « La réforme des
+          retraites des banques », Fondation IFRAP (www.ifrap.org/retraite/la-
+          reforme-des-retraites-des-banques, lue par
+          scripts/fetch/sites_institutionnels.py) ; l'accord du 13 septembre
+          1993 et les règlements des caisses ne sont pas publiés. PENSION : «
+          72 à 75 % du dernier salaire pour une carrière complète de 42 ans,
+          c'est-à-dire 1,667 % par année de carrière bancaire », SÉCURITÉ
+          SOCIALE COMPRISE — la caisse bancaire servait la différence. Le
+          régime général sert 50 % du salaire moyen, soit 38 à 40 % du dernier
+          salaire quand « l'écart entre le salaire moyen et le dernier salaire
+          était en moyenne de 30 % » : la fiche ne porte que le COMPLÉMENT, 35
+          % du dernier salaire pour 168 trimestres, 0,83 % par annuité, sur
+          toute la rémunération. COTISATION : « 12 à 20 % de la masse
+          salariale suivant la caisse » — 16 %, dont trois dixièmes au
+          salarié, part estimée. Âges 60 et 65 ans, sans décote lue. AU 1ER
+          JANVIER 1994 les droits sont figés « comme si chaque salarié
+          liquidait sa pension à cette date » et servis en complément
+          différentiel, raboté ensuite (revalorisation « moins 1,9 point ») :
+          le rabot n'est pas modélisé, la fiche sert le complément acquis à
+          1993. Les autres régimes intégrés (CPPOSS, CGRCE, CCI, IRREP,
+          CAMARCA) ont chacun leur barème, non publié : le barème bancaire
+          leur tient lieu, niveau `estimee`.

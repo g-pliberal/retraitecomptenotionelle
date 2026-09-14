@@ -652,7 +652,9 @@ class Affiliations:
         return bool(self._profils.get(affiliation, {}).get("sans_employeur", False))
 
     def regimes(self, affiliation: str, annee: int,
-                annee_entree: int | None = None) -> tuple[str, ...]:
+                annee_entree: int | None = None,
+                revenu: float | None = None,
+                plafond: float | None = None) -> tuple[str, ...]:
         """Régimes applicables à ce statut cette année-là.
 
         **La fermeture d'un régime ne vaut que pour les nouveaux entrants.**
@@ -669,6 +671,16 @@ class Affiliations:
         laquelle s'applique. Sans cette année, on suppose une entrée l'année
         demandée : c'est le comportement d'avant, et il reste juste pour qui
         commence sa carrière cette année-là.
+
+        **Un régime peut n'être dû qu'au-delà d'un seuil de revenu.** L'élu
+        local n'est assujetti au régime général que « lorsque le montant
+        total [de ses indemnités] est supérieur à une fraction, fixée par
+        décret, de la valeur du plafond » (L. 382-31) — la moitié. Une
+        période porte alors ``seuil_pass: {regime: fraction}`` ; quand
+        ``revenu`` et ``plafond`` (de l'année) sont fournis, les régimes dont
+        le seuil n'est pas atteint sont retirés. Sans eux, la période est
+        rendue telle quelle : c'est la liste des régimes POSSIBLES, celle
+        que l'inventaire et les tests de cohérence attendent.
         """
         if affiliation not in self._profils:
             raise KeyError(
@@ -685,5 +697,12 @@ class Affiliations:
                 continue
             if depuis is not None and entree < depuis:
                 continue
-            return tuple(periode.get("regimes") or ())
+            regimes = tuple(periode.get("regimes") or ())
+            seuils = periode.get("seuil_pass") or {}
+            if seuils and revenu is not None and plafond is not None:
+                regimes = tuple(
+                    code for code in regimes
+                    if revenu >= float(seuils.get(code, 0.0)) * plafond
+                )
+            return regimes
         return ()

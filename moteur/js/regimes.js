@@ -609,6 +609,8 @@ export const BORNES_ASSIETTE = Object.freeze({
   // plafonds — 384 480 € en 2026.
   plafonnee_8_pass: [0.0, 8.0],
   tranche_1_2_pass: [1.0, 2.0],
+  plafonnee_033_pass: [0.0, 1.0 / 3.0],
+  tranche_033_1_pass: [1.0 / 3.0, 1.0],
   // CAVAMAC : le plafond des commissions, que la caisse indexe sur la
   // commission MOYENNE et non sur celui de la Sécurité sociale — 625 777 €
   // en 2026, quand treize plafonds en valent 624 780.
@@ -806,8 +808,14 @@ export class Affiliations {
    * recruté avant garde le sien jusqu'à sa retraite. `anneeEntree` — la
    * première année du statut dans la carrière — décide ; sans elle, on suppose
    * une entrée l'année demandée.
+   *
+   * UN RÉGIME PEUT N'ÊTRE DÛ QU'AU-DELÀ D'UN SEUIL DE REVENU : l'élu local
+   * n'est assujetti au régime général qu'au-dessus de la moitié du plafond
+   * (L. 382-31). Une période porte alors `seuil_pass: {regime: fraction}` ;
+   * avec `revenu` et `plafond`, les régimes sous le seuil sont retirés ;
+   * sans eux, la liste des régimes possibles est rendue telle quelle.
    */
-  regimes(affiliation, annee, anneeEntree = null) {
+  regimes(affiliation, annee, anneeEntree = null, revenu = null, plafond = null) {
     const profil = this._profils[affiliation];
     if (profil === undefined) {
       throw new Error(
@@ -828,7 +836,15 @@ export class Affiliations {
       if (depuis !== null && entree < depuis) {
         continue;
       }
-      return periode.regimes || [];
+      let regimes = periode.regimes || [];
+      const seuils = periode.seuil_pass || null;
+      if (seuils && revenu !== null && revenu !== undefined
+          && plafond !== null && plafond !== undefined) {
+        regimes = regimes.filter(
+          (code) => revenu >= Number(seuils[code] ?? 0.0) * plafond,
+        );
+      }
+      return regimes;
     }
     return [];
   }

@@ -69,6 +69,10 @@ DOCUMENTS = [
     ("douane_ravgdt.html",
      "https://www.douane.gouv.fr/fiche/regime-dallocations-viageres-des-gerants-de-tabacs-ravgdt",
      "point d'achat 4,94 € et de service 2,42 €, cotisation de 2 % (fiche gerants_debits_tabac)"),
+    ("ifrap_reforme_retraites_banques.html",
+     "https://www.ifrap.org/retraite/la-reforme-des-retraites-des-banques",
+     "pension bancaire de 72 à 75 % du dernier salaire en 42 ans, cotisation de 12 à 20 % "
+     "(fiche regimes_professionnels_integres)"),
     ("ircec_memo_2026.html",
      "https://www.ircec.fr/actualite/memo-des-valeurs-2026/",
      "taux, prix d'achat et valeurs de service du RAAP, du RACD et du RACL (fiches ircec_racd, ircec_racl)"),

@@ -60,6 +60,12 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     # Tranche B de la CPS polynésienne : entre 269 000 et 525 000 FCFP par
     # mois, soit 0,69 à 1,35 plafond national — la borne la plus proche.
     "tranche_1_2_pass": (1.0, 2.0),
+    # Régime des conjoints de commerçants (D. 635-36, 1985-2003) : un taux
+    # « des revenus ou de la part des revenus qui n'excèdent pas le tiers du
+    # plafond », un autre « de la part des revenus comprise entre le tiers
+    # et le montant dudit plafond ».
+    "plafonnee_033_pass": (0.0, 1.0 / 3.0),
+    "tranche_033_1_pass": (1.0 / 3.0, 1.0),
     # CAVAMAC : le plafond des commissions, que la caisse indexe sur la
     # commission MOYENNE et non sur celui de la Sécurité sociale — 625 777 €
     # en 2026, quand treize plafonds en valent 624 780. C'est la meilleure
@@ -782,7 +788,7 @@ class CatalogueRegimes:
 # ---------------------------------------------------------------------------
 
 #: Ce que le dépôt sait faire d'un régime de l'inventaire.
-COUVERTURES = ("modelise", "partiel", "a_modeliser", "hors_champ")
+COUVERTURES = ("modelise", "partiel", "a_modeliser", "routage", "hors_champ")
 
 
 @dataclass(frozen=True)
@@ -793,7 +799,10 @@ class RegimeInventaire:
     nomme tous — vivants, disparus, et ceux qu'on ne calculera pas — avec,
     pour chacun, ce qui manque au dépôt. Un régime ``modelise`` ou ``partiel``
     a une fiche au catalogue sous le même code ; ``a_modeliser`` et
-    ``hors_champ`` n'en ont pas, et disent pourquoi.
+    ``hors_champ`` n'en ont pas, et disent pourquoi. ``routage`` est la ligne
+    qui n'est pas un régime mais une AFFILIATION — l'élu local à l'Ircantec,
+    le micro-social — : un statut du catalogue la porte, et ``manque`` dit
+    ce que ce statut ne lit pas encore.
     """
 
     code: str
@@ -861,6 +870,10 @@ def charger_inventaire(racine: Path) -> tuple[RegimeInventaire, ...]:
         if fiche["couverture"] not in COUVERTURES:
             raise ValueError(
                 f"{chemin.name} / {code} : couverture inconnue {fiche['couverture']!r}"
+            )
+        if fiche["couverture"] == "routage" and not fiche.get("statuts"):
+            raise ValueError(
+                f"{chemin.name} / {code} : une ligne `routage` doit nommer son statut"
             )
         textes = tuple(
             {"reference": str(t["reference"]), "id": t.get("id")}

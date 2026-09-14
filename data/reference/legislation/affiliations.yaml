@@ -90,15 +90,21 @@ affiliations:
     libelle: Élu local indemnisé (maire, adjoint, conseiller)
     periodes:
       - {debut: 1973, fin: 2012, regimes: [ircantec]}
-      - {debut: 2013, fin: null, regimes: [regime_general, ircantec]}
+      - {debut: 2013, fin: null, regimes: [regime_general, ircantec],
+         seuil_pass: {regime_general: 0.5}}
     note: >-
       L'indemnité de fonction ouvre des points Ircantec depuis la loi
       n° 72-1201 du 23 décembre 1972 (art. 1, LEGIARTI000006338235 ;
-      L. 2123-28 du CGCT, LEGIARTI000006390053), sans régime de base ;
-      depuis 2013 elle est soumise aux cotisations du régime général
-      au-delà d'un seuil (L. 382-31), que le statut ne lit pas : le revenu
-      saisi est l'indemnité, cotisée en entier. La collectivité verse la
-      part patronale, le statut n'est donc pas sans employeur.
+      L. 2123-28 du CGCT, LEGIARTI000006390053), sans régime de base.
+      Depuis 2013 elle est « assujettie aux cotisations de sécurité
+      sociale lorsque [son] montant total est supérieur à une fraction,
+      fixée par décret, de la valeur du plafond » (L. 382-31,
+      LEGIARTI000026790815) — la moitié, D. 382-34, hors index : c'est le
+      `seuil_pass` de la période, lu par le moteur année par année sur le
+      revenu saisi, qui est l'indemnité. L'élu qui a cessé toute activité
+      professionnelle est assujetti même sous le seuil : non porté. La
+      collectivité verse la part patronale, le statut n'est donc pas sans
+      employeur.
 
   salarie_saint_pierre_et_miquelon:
     libelle: Salarié de Saint-Pierre-et-Miquelon
@@ -146,7 +152,8 @@ affiliations:
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1962, regimes: [organic]}
-      - {debut: 1963, fin: 2003, regimes: [organic, gerants_debits_tabac]}
+      - {debut: 1963, fin: 1972, regimes: [organic, gerants_debits_tabac]}
+      - {debut: 1973, fin: 2003, regimes: [organic, organic_conjoints_batiment, gerants_debits_tabac]}
       - {debut: 2004, fin: 2005, regimes: [organic, nric, gerants_debits_tabac]}
       - {debut: 2006, fin: 2012, regimes: [rsi, nric, gerants_debits_tabac]}
       - {debut: 2013, fin: 2017, regimes: [rsi, rci, gerants_debits_tabac]}
@@ -161,7 +168,8 @@ affiliations:
     libelle: Micro-entrepreneur (commerçant, artisan ou libéral non réglementé)
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 2003, regimes: [organic]}
+      - {debut: 1949, fin: 1972, regimes: [organic]}
+      - {debut: 1973, fin: 2003, regimes: [organic, organic_conjoints_batiment]}
       - {debut: 2004, fin: 2005, regimes: [organic, nric]}
       - {debut: 2006, fin: 2008, regimes: [rsi, nric]}
       - {debut: 2009, fin: 2012, regimes: [rsi, nric]}
@@ -239,6 +247,22 @@ affiliations:
       Caisse locale de retraites de Nouvelle-Calédonie. Le revenu saisi est
       le traitement, dont la part de primes est exclue de l'assiette.
 
+  salarie_regime_professionnel_integre:
+    libelle: Salarié d'une banque AFB, d'un organisme de sécurité sociale ou d'une caisse d'épargne, entré avant l'intégration à l'Agirc-Arrco
+    periodes:
+      - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
+      - {debut: 1945, fin: 1946, regimes: [regime_general]}
+      - {debut: 1947, fin: 1993, regimes: [regime_general, regimes_professionnels_integres]}
+      - {debut: 1994, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
+    note: >-
+      Jusqu'à l'intégration (1994 pour les banques et les organismes de
+      sécurité sociale, 2000 pour les caisses d'épargne), le régime
+      professionnel tenait lieu de complémentaire : ni Arrco ni Agirc. La
+      fiche est celle des banques et s'arrête en 1993 pour tous ; ensuite,
+      l'Arrco du non-cadre — le cadre bancaire relevait de l'Agirc dès 1994,
+      ce que le statut ne distingue pas.
+
   fonctionnaire_etat:
     libelle: Fonctionnaire titulaire de l'État (civil ou militaire)
     periodes:
@@ -287,7 +311,8 @@ affiliations:
     libelle: Commerçant ou industriel
     sans_employeur: true
     periodes:
-      - {debut: 1949, fin: 2003, regimes: [organic]}
+      - {debut: 1949, fin: 1972, regimes: [organic]}
+      - {debut: 1973, fin: 2003, regimes: [organic, organic_conjoints_batiment]}
       - {debut: 2004, fin: 2005, regimes: [organic, nric]}
       - {debut: 2006, fin: 2012, regimes: [rsi, nric]}
       - {debut: 2013, fin: 2017, regimes: [rsi, rci]}

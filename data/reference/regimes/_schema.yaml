@@ -120,7 +120,7 @@ champs_periode:
               "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass",
               "tranche_1_3_pass", "tranche_05_3_pass", "plafonnee_8_pass",
               "plafonnee_13_pass",
-              "tranche_1_2_pass",
+              "tranche_1_2_pass", "plafonnee_033_pass", "tranche_033_1_pass",
               "plafonnee_3_5_pass", "tranche_065_5_pass", "sans_objet"]
 
   taux_cotisation_retraite:
