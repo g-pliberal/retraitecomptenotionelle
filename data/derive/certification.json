@@ -501,6 +501,16 @@
    "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
    "valeurs": 20
   },
+  "taux_cotisation_annuels": {
+   "ajoutees": 512,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "5e6442e558c33ffb",
+   "identiques": 562,
+   "niveau": "haute",
+   "source": "OpenFisca-France, barèmes datés de la cotisation vieillesse (cnav, artisans, commerçants, indépendants)",
+   "valeurs": 1074
+  },
   "valeurs_point": {
    "ajoutees": 0,
    "colonne": "valeur",

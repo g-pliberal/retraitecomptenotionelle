@@ -357,7 +357,7 @@ export class ConstructeurCompte {
     const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
 
     const codes = this.affiliations.regimes(
-      ligne.affiliation, annee, carriere.entree(ligne.affiliation),
+      ligne.affiliation, annee, carriere.dateEntree(ligne.affiliation),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       this.macro.plafond_securite_sociale.valeur(annee),
     );

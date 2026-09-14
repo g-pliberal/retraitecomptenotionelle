@@ -108,7 +108,7 @@ def test_la_saisie_est_reinjectee_dans_le_formulaire(page):
     texte = page("/", naissance=1955, statut="mineur",
                  debut=18, liquidation=55)
     assert 'value="1955"' in texte
-    assert '<option value="mineur" selected>' in texte
+    assert '<option value="mineur" selected data-fermeture="2010-09">' in texte
 
 
 def test_saisie_invalide_affiche_un_message_et_pas_de_trace(page):
@@ -162,6 +162,86 @@ def test_simulation_en_dictionnaire(contexte):
     assert scenarios["actuel"]["pension_annuelle"] > 0
     assert scenarios["notionnel_retroactif"]["pension_annuelle"] > 0
     assert donnees["fiabilite"]
+
+
+def test_un_statut_ferme_est_refuse_a_qui_y_entre_apres_la_fermeture(contexte):
+    """Un jeune d'aujourd'hui ne peut pas se déclarer mineur.
+
+    Le régime des mines est fermé aux recrutés depuis le 1er septembre 2010
+    (décret n° 2010-975). Le routage le savait et envoyait ce mineur-là au
+    régime général, en silence : la page affichait « Mineur » au-dessus d'une
+    pension de salarié du privé. Le refus dit la date d'entrée, la date de
+    fermeture et le statut de droit commun qui porte le même calcul.
+    """
+    saisie = Saisie.depuis_requete(
+        {"naissance": "2000", "statut": "mineur", "debut": "20", "liquidation": "64"}
+    )
+    with pytest.raises(ErreurSaisie) as refus:
+        contexte.simuler(saisie)
+    message = str(refus.value)
+    assert "« Mineur »" in message
+    assert "depuis septembre 2010" in message
+    assert "commence en janvier 2020" in message
+    assert "« Salarié du secteur privé, non cadre »" in message
+
+    # Le même statut, pour qui y était avant : accepté, et au régime des mines.
+    saisie = Saisie.depuis_requete(
+        {"naissance": "1980", "statut": "mineur", "debut": "20", "liquidation": "64"}
+    )
+    regimes = {p.regime for p in contexte.simuler(saisie).actuel.pensions_par_regime}
+    assert "mines" in regimes
+
+
+def test_la_fermeture_se_lit_au_mois_et_sur_la_date_d_entree(contexte):
+    """La loi ferme la RATP « aux recrutés à compter du 1er septembre 2023 ».
+
+    Né en décembre 2001, entré à vingt et un ans : décembre 2022, avant la
+    fermeture, régime spécial. Un métier commencé en octobre 2022 n'a sa
+    première LIGNE qu'en 2023 — l'année d'un changement revient au métier qui
+    en occupe le plus de mois — et n'est pas recruté après la fermeture pour
+    autant : c'est la date d'entrée qui décide, non la première ligne.
+    """
+    def regimes(champs):
+        return {p.regime for p in contexte.simuler(
+            Saisie.depuis_requete(champs)).actuel.pensions_par_regime}
+
+    avant = {"naissance": "2001", "naissance_mois": "12", "statut": "agent_ratp",
+             "debut": "21", "liquidation": "64"}
+    assert "ratp" in regimes(avant)
+    with pytest.raises(ErreurSaisie, match="septembre 2023"):
+        regimes({**avant, "naissance": "2002", "naissance_mois": "9"})
+
+    second_metier = {"naissance": "1975", "naissance_mois": "10",
+                     "statut": "salarie_prive_non_cadre", "debut": "21",
+                     "liquidation": "64", "metier2_debut": "47",
+                     "metier2_statut": "agent_ratp", "metier2_salaire": "1"}
+    assert "ratp" in regimes(second_metier)
+    with pytest.raises(ErreurSaisie, match=r"Métier n° 2 : le statut"):
+        regimes({**second_metier, "metier2_debut": "48"})
+
+
+def test_le_menu_des_statuts_est_date(page, contexte):
+    """Chaque statut dit entre quelles dates il se déclare, et le menu grise
+    ceux que l'entrée saisie ferme — sauf la sélection, qu'un navigateur
+    n'enverrait pas si elle était désactivée."""
+    texte = page("/", naissance=1975, statut="salarie_prive_non_cadre",
+                 debut=21, liquidation=64)
+    assert ">Mineur (recrutés avant septembre 2010)<" in texte
+    assert ">Artiste-auteur (écrivain, illustrateur, photographe…) (depuis 1977)<" in texte
+    assert ">Salarié du secteur privé, non cadre<" in texte
+    # Entré en 1996 : la SEITA (fermée en 1981) est grisée, les mines non.
+    assert '<option value="agent_seita" disabled data-fermeture="1981-01">' in texte
+    assert '<option value="mineur" data-fermeture="2010-09">' in texte
+    # La sélection reste choisissable, même fermée à cette date.
+    texte = page("/", naissance=1975, statut="agent_seita", debut=21, liquidation=64)
+    assert '<option value="agent_seita" selected data-fermeture="1981-01">' in texte
+    assert "Saisie refusée" in texte
+
+    dates = {s["code"]: s for s in statuts(contexte)}
+    assert dates["mineur"]["fermeture_entrants"] == "2010-09"
+    assert dates["mineur"]["releve_par"] == "salarie_prive_non_cadre"
+    assert dates["artiste_auteur"]["ouverture"] == 1977
+    assert dates["salarie_prive_non_cadre"]["fermeture_entrants"] is None
 
 
 def test_statut_inconnu_est_refuse(contexte):
@@ -2590,6 +2670,13 @@ def test_le_balayage_des_temoins_visite_six_generations():
     assert min(generations) < 1934
     assert max(generations) > 1961
     noms = {c["nom"] if isinstance(c, dict) else c[0] for c in module._cas()}
+    # Un statut fermé aux nouveaux entrants n'est balayé qu'aux générations
+    # qui peuvent encore y entrer : l'agent des chemins de fer secondaires né
+    # en 1975 n'est qu'un salarié du privé, et le formulaire le refuse.
     for statut in module.STATUTS:
         for naissance in generations:
-            assert f"statut_{statut}_{naissance}" in noms, (statut, naissance)
+            attendu = module.debut_admissible(statut, naissance) is not None
+            assert (f"statut_{statut}_{naissance}" in noms) == attendu, (statut, naissance)
+    assert module.debut_admissible("agent_chemins_fer_secondaires", 1975) is None
+    assert module.debut_admissible("agent_chemins_fer_secondaires", 1935) == 19
+    assert module.debut_admissible("mineur", 1975) == 21

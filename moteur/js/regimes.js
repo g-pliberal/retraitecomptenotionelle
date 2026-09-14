@@ -1,3 +1,5 @@
+import { DateMois } from "./calendrier.js";
+
 /**
  * Durée d'assurance requise pour le taux plein, PAR GÉNÉRATION.
  *
@@ -806,6 +808,25 @@ export class CatalogueRegimes {
   }
 }
 
+/**
+ * Une borne d'entrée du routage, en rang de mois : `2020` se lit janvier 2020,
+ * `"2023-09"` septembre 2023. Le YAML garde les deux écritures parce que la
+ * loi ferme un régime « aux agents recrutés à compter du 1er septembre 2023 »,
+ * et non à compter d'une année.
+ */
+export function rangBorne(borne) {
+  if (typeof borne === "number") {
+    return new DateMois(borne, 1).rang;
+  }
+  const [annee, mois] = String(borne).split("-");
+  return new DateMois(Number(annee), Number(mois)).rang;
+}
+
+/** « 2020 » pour un 1er janvier, « septembre 2023 » sinon. */
+export function formaterBorne(borne) {
+  return borne.mois === 1 ? String(borne.annee) : String(borne);
+}
+
 /** Correspondance statut -> régimes, année par année. */
 export class Affiliations {
   constructor(paquet) {
@@ -824,6 +845,38 @@ export class Affiliations {
     return this._profils[code].libelle ?? code;
   }
 
+  /** Les tranches temporelles déclarées par ce statut, telles qu'écrites. */
+  periodes(affiliation) {
+    return this._profils[affiliation].periodes || [];
+  }
+
+  /** Première année que le statut route — l'année où son régime naît. */
+  ouverture(affiliation) {
+    return Math.min(...this.periodes(affiliation).map((periode) => periode.debut));
+  }
+
+  /**
+   * Mois depuis lequel le statut est fermé aux nouveaux entrants : la plus
+   * ancienne borne `entres_avant` de ses périodes, null pour un statut ouvert.
+   * Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le régime des
+   * mines est fermé aux recrutés depuis septembre 2010, et c'est cette date
+   * que le formulaire lui oppose.
+   */
+  fermetureEntrants(affiliation) {
+    const bornes = this.periodes(affiliation)
+      .filter((periode) => periode.entres_avant !== undefined && periode.entres_avant !== null)
+      .map((periode) => rangBorne(periode.entres_avant));
+    if (bornes.length === 0) {
+      return null;
+    }
+    return DateMois.depuisRang(Math.min(...bornes));
+  }
+
+  /** Le statut de droit commun dont relève qui entre après la fermeture. */
+  relevePar(affiliation) {
+    return this._profils[affiliation].releve_par ?? null;
+  }
+
   /**
    * Ce statut cotise-t-il sans employeur ?
    *
@@ -840,9 +893,11 @@ export class Affiliations {
    * LA FERMETURE D'UN RÉGIME NE VAUT QUE POUR LES NOUVEAUX ENTRANTS. Le régime
    * de la SNCF est fermé aux agents recrutés depuis le 1er janvier 2020, celui
    * de la RATP et celui des IEG depuis le 1er septembre 2023 : un agent
-   * recruté avant garde le sien jusqu'à sa retraite. `anneeEntree` — la
-   * première année du statut dans la carrière — décide ; sans elle, on suppose
-   * une entrée l'année demandée.
+   * recruté avant garde le sien jusqu'à sa retraite. `anneeEntree` — l'entrée
+   * dans le statut, une année ou un mois (DateMois) — décide ; les bornes
+   * s'écrivent au mois quand la loi le fait, et une année vaut son 1er
+   * janvier. Sans entrée, on suppose une entrée en janvier de l'année
+   * demandée.
    *
    * UN RÉGIME PEUT N'ÊTRE DÛ QU'AU-DELÀ D'UN SEUIL DE REVENU : l'élu local
    * n'est assujetti au régime général qu'au-dessus de la moitié du plafond
@@ -857,7 +912,14 @@ export class Affiliations {
         `affiliation inconnue : ${affiliation}. Disponibles : ${this.codes.join(", ")}`,
       );
     }
-    const entree = anneeEntree === null || anneeEntree === undefined ? annee : anneeEntree;
+    let entree;
+    if (anneeEntree === null || anneeEntree === undefined) {
+      entree = new DateMois(annee, 1).rang;
+    } else if (anneeEntree instanceof DateMois) {
+      entree = anneeEntree.rang;
+    } else {
+      entree = new DateMois(Number(anneeEntree), 1).rang;
+    }
     for (const periode of profil.periodes || []) {
       const fin = periode.fin ?? null;
       if (!(periode.debut <= annee && (fin === null || annee <= fin))) {
@@ -865,10 +927,10 @@ export class Affiliations {
       }
       const avant = periode.entres_avant ?? null;
       const depuis = periode.entres_depuis ?? null;
-      if (avant !== null && entree >= avant) {
+      if (avant !== null && entree >= rangBorne(avant)) {
         continue;
       }
-      if (depuis !== null && entree < depuis) {
+      if (depuis !== null && entree < rangBorne(depuis)) {
         continue;
       }
       let regimes = periode.regimes || [];

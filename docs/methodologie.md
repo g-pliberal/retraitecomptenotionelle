@@ -895,6 +895,14 @@ La part est une **moyenne sur la période**, comme le taux lui-même : les fiche
 sont découpées par période législative, et les parts salariale et patronale
 bougent chacune à son rythme. Le contrôle de vraisemblance les confronte année
 par année à OpenFisca, et le fait pour la répartition comme pour le taux.
+**Pour le régime général et les fiches qui le suivent** — salariés agricoles,
+cultes, Mayotte, Saint-Pierre-et-Miquelon — **et pour les non-salariés depuis
+1973**, la moyenne ne sert plus qu'aux années d'avant 1967 : le taux et la part
+de chaque année sont lus dans `regimes/taux_cotisation_annuels.csv` et
+appliqués au chargement des fiches, période découpée année par année (voir
+[`limites.md`](limites.md), « Le compte notionnel recevait une moyenne de
+période »). Les lignes du tableau ci-dessus restent celles des fiches ; le
+compte, lui, reçoit 35,3 % de part salariale en 1967 et 44,7 % en 2024.
 
 **Le drapeau porte sur le STATUT, pas seulement sur le régime.** Un artisan
 cotise au régime général, dont la fiche porte la répartition 41/59 d'un salarié.

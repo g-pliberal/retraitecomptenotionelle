@@ -112,7 +112,7 @@ Scénario                                                          Courants   Co
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 284 Ko compressés (2287 Ko brut) et prend quelques dixièmes
+chargement transfère 297 Ko compressés (2469 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
@@ -131,7 +131,7 @@ la page.
 <details>
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
-`index.html` charge deux choses : `moteur/donnees.json` (2287 Ko — les séries, les
+`index.html` charge deux choses : `moteur/donnees.json` (2469 Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les 72 fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -259,7 +259,7 @@ print(simulateur.simuler(carriere).tableau())
 |---|---|
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
 | Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, 36 entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
-| Tous les régimes, actuels **et** disparus | 72 régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **quatre-vingt-quatre régimes** obligatoires ayant existé depuis 1930, ancré sur `R. 711-1`, qui dit lesquels manquent et pourquoi ; un test le tient aligné sur le catalogue |
+| Tous les régimes, actuels **et** disparus | 72 régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **quatre-vingt-neuf lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
 | Départ trop tôt = pension réduite | Âge de référence **à cliquet** : l'abaissement de 1982 ne le fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | SNCF à 50 ans = 15 ans d'anticipation ; Opéra à 40 ans = 25 ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
@@ -281,6 +281,8 @@ print(simulateur.simuler(carriere).tableau())
 | Suppression des minima | Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite |
 | Suppression des avantages | Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits |
 | Tout le monde peut simuler | 54 statuts d’affiliation, cinq informations suffisent |
+| La cotisation de chaque année, pas une moyenne de période | Le compte notionnel reçoit le taux de l'année — 8,5 % en 1967, 12,9 % en 1979, 16,35 % en 1991 au régime général —, lu dans `taux_cotisation_annuels.csv` (1 074 valeurs depuis les barèmes datés d'OpenFisca-France, pour le régime général, les salariés agricoles, les cultes, Mayotte, Saint-Pierre-et-Miquelon, les artisans, les commerçants et le RSI) et appliqué année par année au chargement des fiches, qui gardent leur moyenne pour les années d'avant 1967 |
+| Un statut ne se déclare qu'aux dates où son régime recrutait | Le menu date chaque statut — « Mineur (recrutés avant septembre 2010) » — et grise ceux que l'entrée saisie ferme ; le calcul refuse un jeune d'aujourd'hui qui se déclarerait mineur, et nomme le statut de droit commun qui porte le même calcul. La fermeture se lit au mois, sur la date d'entrée dans le métier : la loi ferme la RATP « aux recrutés à compter du 1<sup>er</sup> septembre 2023 », et l'article 1<sup>er</sup> de la loi n° 2023-270 ne ferme que cinq régimes — RATP, IEG, clercs de notaires, Banque de France, CESE —, non l'Opéra, la Comédie-Française ni le port de Strasbourg, que le dépôt croyait fermés |
 | Un revenu se saisit comme un revenu | « Revenu brut mensuel : 2 900 € », en euros d'aujourd'hui — plus un multiple du salaire moyen que personne ne connaît, resté à un lien de là pour qui raisonne en relatif, montants convertis au passage. Le champ dit **brut** et donne l'échelle chiffrée (SMIC, moyenne, plafond) ; le modèle, lui, ne connaît toujours que le multiple, et l'euro n'entre qu'à un seul endroit |
 | Une carrière, plusieurs métiers | On faisait autrefois le même métier toute sa vie, c'est devenu l'exception : la carrière se décrit comme une suite de métiers, chacun avec son statut et son niveau de revenu, et chaque changement fait passer d'un régime à un autre. L'année du changement revient au métier qui en occupe le plus de mois — les régimes liquident à l'année —, mais le revenu porté au compte reste la somme de ce que les deux ont payé |
 | Utilisable sans rien installer | Le modèle s'exécute dans le navigateur, sur une simple adresse |
@@ -881,7 +883,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (2287 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (2469 Ko, produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
@@ -889,7 +891,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          594 tests Python
+tests/                          600 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

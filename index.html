@@ -236,7 +236,51 @@ async function afficher() {
 
   const nouveauDetails = contenu.querySelector("form details");
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
+  daterStatuts(contenu);
   reprendre(contenu);
+}
+
+// -- les statuts, aux seules dates où leur régime recrutait -------------------
+//
+// Le formulaire arrive avec les statuts fermés à la date d'entrée saisie déjà
+// grisés — c'est le modèle qui les grise, en Python comme ici. Mais l'année de
+// naissance et l'âge de début changent sous les yeux du lecteur, et le menu
+// doit suivre sans attendre le calcul : un mineur né en 2000 ne doit pas
+// pouvoir se déclarer mineur. Chaque option fermée porte sa date en
+// `data-fermeture` (« 2010-09 » : septembre 2010), et le tri se refait ici à
+// chaque saisie. L'option déjà choisie n'est jamais désactivée : un navigateur
+// n'envoie pas la valeur d'une option désactivée, et la saisie repartirait sur
+// le statut par défaut sans que rien ne le dise — c'est le calcul qui refuse.
+function rangMois(annee, mois) { return annee * 12 + (mois - 1); }
+
+function daterStatuts(contenu) {
+  const formulaire = contenu.querySelector("form");
+  if (!formulaire) { return; }
+  const lire = (nom) => {
+    const champ = formulaire.elements[nom];
+    return champ ? Number(champ.value) : NaN;
+  };
+  const trier = () => {
+    const naissance = lire("naissance");
+    const naissanceMois = lire("naissance_mois") || 1;
+    for (const menu of formulaire.querySelectorAll("select[name$='statut']")) {
+      const rang = menu.name === "statut" ? 1 : Number(menu.name.replace(/\D/g, ""));
+      const age = rang === 1 ? lire("debut") : lire(`metier${rang}_debut`);
+      const mois = rang === 1 ? (lire("debut_mois") || 0) : 0;
+      const entree = Number.isFinite(naissance) && Number.isFinite(age) && age > 0
+        ? rangMois(naissance, naissanceMois) + Math.floor(age) * 12 + mois
+        : null;
+      for (const option of menu.options) {
+        const fermeture = option.dataset.fermeture;
+        if (!fermeture) { continue; }
+        const [annee, moisFermeture] = fermeture.split("-").map(Number);
+        option.disabled = entree !== null && option.value !== menu.value
+          && entree >= rangMois(annee, moisFermeture);
+      }
+    }
+  };
+  formulaire.addEventListener("input", trier);
+  formulaire.addEventListener("change", trier);
 }
 
 // Où reprend la lecture après un rendu.

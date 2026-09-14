@@ -120,7 +120,7 @@ inventaire:
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan, commercant,
               artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
-              personnel_opera, personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
+              clerc_de_notaire, agent_banque_de_france, agent_seita,
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
               salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
@@ -317,8 +317,7 @@ inventaire:
     integre_dans: arrco
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive,
-              membre_cese]
+              maitre_enseignement_prive, agent_chemins_fer_secondaires]
     textes:
       - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
     manque: >-
@@ -342,8 +341,7 @@ inventaire:
               mineur, agent_seita, agent_chemins_fer_secondaires,
               salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon,
-              membre_cese, salarie_nouvelle_caledonie,
+              salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
               salarie_regime_professionnel_integre]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
@@ -367,8 +365,7 @@ inventaire:
     statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita,
               agent_chemins_fer_secondaires,
               maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon,
-              membre_cese, salarie_nouvelle_caledonie,
+              salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
               salarie_regime_professionnel_integre]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
@@ -413,8 +410,8 @@ inventaire:
     integre_dans: null
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
-              agent_sncf, agent_ratp, agent_ieg, mineur, personnel_opera,
-              personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
+              agent_sncf, agent_ratp, agent_ieg, mineur, clerc_de_notaire,
+              agent_banque_de_france, agent_seita,
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
               salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
@@ -1034,9 +1031,9 @@ inventaire:
   - code: crpcen
     nom: Caisse de retraite et de prévoyance des clercs et employés de notaires
     famille: special
-    population: Clercs et employés de notaires
+    population: Clercs et employés de notaires recrutés avant le 1er septembre 2023
     creation: 1937
-    fermeture: null
+    fermeture: 2023
     extinction: null
     succede_a: []
     integre_dans: null
@@ -1046,6 +1043,7 @@ inventaire:
       - {reference: "loi du 12 juillet 1937 instituant une caisse de retraite et de prévoyance des clercs et employés de notaires", id: null}
       - {reference: "ordonnance n° 45-2574 du 31 octobre 1945 modifiant la loi du 12 juillet 1937", id: LEGITEXT000045170442}
       - {reference: "décret n° 90-1215 du 20 décembre 1990, article 84 (âge d'ouverture, neuf versions)", id: LEGIARTI000006775247}
+      - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er III (fermeture aux clercs et employés recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
     manque: >-
       Deux âges avant 2008 — soixante ans, ou cinquante-cinq pour l'assurée
       justifiant de vingt-cinq années de cotisations — et le moteur n'en porte
@@ -1055,16 +1053,17 @@ inventaire:
   - code: banque_de_france
     nom: Régime spécial de retraite de la Banque de France
     famille: special
-    population: Agents titulaires recrutés avant septembre 2023
+    population: Agents titulaires recrutés avant le 1er septembre 2023
     creation: 1806
-    fermeture: 2007
+    fermeture: 2023
     extinction: null
     succede_a: []
     integre_dans: null
     couverture: modelise
     statuts: [agent_banque_de_france]
     textes:
-      - {reference: "décret n° 2007-262 du 27 février 2007 relatif au régime de retraite des agents titulaires de la Banque de France", id: null}
+      - {reference: "décret n° 2007-262 du 27 février 2007 relatif au régime de retraite des agents titulaires de la Banque de France, article 1er (« s'applique aux agents titulaires recrutés avant le 1er septembre 2023 »)", id: LEGIARTI000047909408}
+      - {reference: "loi n° 2023-270 du 14 avril 2023, article 1er II (fermeture aux agents recrutés à compter du 1er septembre 2023)", id: JORFARTI000047445082}
       - {reference: "code de la sécurité sociale, R. 711-1 9°", id: LEGIARTI000048031379}
 
   - code: opera_de_paris
@@ -1072,7 +1071,7 @@ inventaire:
     famille: special
     population: Personnels de l'Opéra, artistes du ballet et de l'orchestre compris
     creation: 1698
-    fermeture: 2023
+    fermeture: null
     extinction: null
     succede_a: []
     integre_dans: null
@@ -1087,7 +1086,7 @@ inventaire:
     famille: special
     population: Personnels de la Comédie-Française
     creation: 1812
-    fermeture: 2023
+    fermeture: null
     extinction: null
     succede_a: []
     integre_dans: null
@@ -1100,9 +1099,9 @@ inventaire:
   - code: port_strasbourg
     nom: Régime de retraite du personnel du port autonome de Strasbourg
     famille: special
-    population: Agents du port autonome de Strasbourg recrutés avant septembre 2023
+    population: Agents du port autonome de Strasbourg
     creation: 1926
-    fermeture: 2023
+    fermeture: null
     extinction: null
     succede_a: []
     integre_dans: null

@@ -117,8 +117,14 @@ regimes:
           40 % à 65 ans par majorations d'ajournement (4 points par année
           différée). Durée maximale de 30 ans. Le taux de cotisation vieillesse
           évolue de 8 % (1946) à environ 8,75 % (1971) : la valeur portée ici
-          est une moyenne de période, à affiner à partir des Comptes de la
-          Sécurité sociale.
+          est une moyenne de période, qui ne sert plus qu'AVANT 1967. Depuis
+          1967, le taux de chaque année et sa part salariale sont ceux de
+          `taux_cotisation_annuels.csv`, lus dans les barèmes datés
+          d'OpenFisca-France (8,5 % en 1967, 8,75 % en 1970) : le chargeur
+          découpe cette période et les suivantes année par année, et c'est
+          ce taux-là que le compte notionnel reçoit. Les moyennes des
+          périodes suivantes restent écrites pour le contrôle de
+          vraisemblance, qui les confronte à la même série.
           LES MAJORATIONS D'AJOURNEMENT SONT UNE DÉCOTE, ET LA FICHE N'EN
           PORTAIT AUCUNE : le taux de 40 % était servi à tout âge, si bien
           qu'un départ à 60 ans valait autant qu'un départ à 65. Quatre points

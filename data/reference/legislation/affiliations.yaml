@@ -10,6 +10,15 @@
 # régimes actifs. Les régimes marqués `hors_repartition` dans le catalogue sont
 # automatiquement isolés dans le compartiment de capitalisation.
 #
+# Une période peut porter `entres_avant` ou `entres_depuis` : la clause du
+# grand-père. La borne s'écrit en année (`2020`, pour un 1er janvier) ou en
+# année-mois (`2023-09`, pour le 1er septembre 2023) ; elle se compare à la
+# DATE d'entrée dans le statut, au mois près, que la carrière connaît. Un
+# statut dont la première période porte `entres_avant` est FERMÉ AUX NOUVEAUX
+# ENTRANTS depuis cette date : il porte alors `releve_par`, le statut de droit
+# commun dont relève qui l'embrasse après la fermeture — c'est ce que le
+# formulaire oppose à qui se déclarerait mineur en 2015.
+#
 # `sans_employeur: true` marque les statuts qui n'ont PAS d'employeur : la
 # cotisation y est intégralement personnelle. Le drapeau est nécessaire parce
 # qu'un non-salarié relève souvent d'un régime partagé avec des salariés — un
@@ -198,11 +207,10 @@ affiliations:
 
   membre_cese:
     libelle: Membre du Conseil économique, social et environnemental
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1957, fin: null, regimes: [cese_membres], entres_avant: 2023}
-      - {debut: 1957, fin: 1960, regimes: [regime_general, unirs], entres_depuis: 2023}
-      - {debut: 1961, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2], entres_depuis: 2023}
-      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco], entres_depuis: 2023}
+      - {debut: 1957, fin: null, regimes: [cese_membres], entres_avant: 2023-09}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco], entres_depuis: 2023-09}
     note: >-
       La caisse de retraites des anciens membres est fermée aux membres
       désignés à compter du 1er septembre 2023, « affiliés au régime général
@@ -249,10 +257,12 @@ affiliations:
 
   salarie_regime_professionnel_integre:
     libelle: Salarié d'une banque AFB, d'un organisme de sécurité sociale ou d'une caisse d'épargne, entré avant l'intégration à l'Agirc-Arrco
+    releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
       - {debut: 1945, fin: 1946, regimes: [regime_general]}
-      - {debut: 1947, fin: 1993, regimes: [regime_general, regimes_professionnels_integres]}
+      - {debut: 1947, fin: 1993, regimes: [regime_general, regimes_professionnels_integres],
+         entres_avant: 1994}
       - {debut: 1994, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
     note: >-
@@ -483,6 +493,7 @@ affiliations:
 
   agent_sncf:
     libelle: Agent du cadre permanent de la SNCF
+    releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: null, regimes: [sncf], entres_avant: 2020}
       - {debut: 2020, fin: null, regimes: [regime_general, agirc_arrco],
@@ -495,24 +506,28 @@ affiliations:
 
   agent_ratp:
     libelle: Agent statutaire de la RATP
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1930, fin: null, regimes: [ratp], entres_avant: 2023}
+      - {debut: 1930, fin: null, regimes: [ratp], entres_avant: 2023-09}
       - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
-         entres_depuis: 2023}
+         entres_depuis: 2023-09}
     note: >-
-      Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 : la
-      réforme du 14 avril 2023 l'éteint par clause du grand-père, et celui
-      qui était déjà là le garde.
+      Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 (loi
+      n° 2023-270, art. 1er I, JORFARTI000047445082) : la réforme du 14 avril
+      2023 l'éteint par clause du grand-père, et celui qui était déjà là le
+      garde.
 
   agent_ieg:
     libelle: Agent des industries électriques et gazières
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1946, fin: null, regimes: [ieg], entres_avant: 2023}
+      - {debut: 1946, fin: null, regimes: [ieg], entres_avant: 2023-09}
       - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
-         entres_depuis: 2023}
+         entres_depuis: 2023-09}
     note: >-
-      Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 ; celui
-      qui était déjà là le garde jusqu'à sa retraite.
+      Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 (loi
+      n° 2023-270, art. 1er V, JORFARTI000047445082) ; celui qui était déjà
+      là le garde jusqu'à sa retraite.
 
   marin:
     libelle: Marin professionnel
@@ -521,81 +536,116 @@ affiliations:
 
   mineur:
     libelle: Mineur
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1930, fin: null, regimes: [mines], entres_avant: 2011}
-      - {debut: 2011, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2],
-         entres_depuis: 2011}
+      - {debut: 1930, fin: null, regimes: [mines], entres_avant: 2010-09}
+      - {debut: 2010, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2],
+         entres_depuis: 2010-09}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco],
-         entres_depuis: 2011}
+         entres_depuis: 2010-09}
     note: >-
-      Régime fermé aux mineurs RECRUTÉS depuis le 1er septembre 2010 ; celui
-      qui était déjà là le garde jusqu'à sa retraite.
+      Régime fermé aux mineurs RECRUTÉS depuis le 1er septembre 2010 (décret
+      n° 2010-975 du 27 août 2010) ; celui qui était déjà là le garde jusqu'à
+      sa retraite. La borne était écrite « 2011 », ce qui prêtait le régime au
+      recruté d'octobre 2010 : elle est au mois, maintenant que la carrière
+      date l'entrée.
 
   clerc_de_notaire:
     libelle: Clerc ou employé de notaire
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1937, fin: null, regimes: [crpcen]}
+      - {debut: 1937, fin: null, regimes: [crpcen], entres_avant: 2023-09}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2023-09}
+    note: >-
+      Régime fermé aux clercs et employés RECRUTÉS depuis le 1er septembre
+      2023 : l'article 1er III de la loi n° 2023-270 (JORFARTI000047445082)
+      réserve la pension de vieillesse de la caisse à ceux « recrutés avant
+      le 1er septembre 2023 et qui remplissent, sans aucune interruption à
+      compter de cette date, les conditions d'affiliation » ; les autres
+      relèvent du régime général et de l'Agirc-Arrco, la caisse ne gardant
+      que la maladie, l'invalidité et le décès. Celui qui était déjà là
+      garde son régime.
 
   agent_banque_de_france:
     libelle: Agent titulaire de la Banque de France
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1930, fin: null, regimes: [banque_de_france]}
+      - {debut: 1930, fin: null, regimes: [banque_de_france], entres_avant: 2023-09}
+      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
+         entres_depuis: 2023-09}
+    note: >-
+      Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 :
+      l'article 1er II de la loi n° 2023-270 (JORFARTI000047445082) n'affilie
+      au régime spécial que « les agents titulaires régis par ce statut et
+      recrutés avant le 1er septembre 2023 », et l'article 1er du décret
+      n° 2007-262 le redit depuis (LEGIARTI000047909408). Les recrutés depuis
+      relèvent du régime général et de l'Agirc-Arrco.
 
   personnel_opera:
     libelle: Personnel de l'Opéra national de Paris
     periodes:
-      - {debut: 1930, fin: null, regimes: [opera_de_paris], entres_avant: 2023}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
-         entres_depuis: 2023}
+      - {debut: 1930, fin: null, regimes: [opera_de_paris]}
     note: >-
-      Régime fermé aux artistes et personnels RECRUTÉS depuis le
-      1er septembre 2023 ; celui qui était déjà là le garde.
+      RÉGIME TOUJOURS OUVERT. Le routage le fermait aux recrutés depuis le
+      1er septembre 2023, comme la RATP : l'article 1er de la loi n° 2023-270
+      (JORFARTI000047445082) ne ferme que la RATP, les IEG, la CRPCEN, la
+      Banque de France et le CESE, et aucun texte ne nomme l'Opéra.
 
   personnel_comedie_francaise:
     libelle: Personnel de la Comédie-Française
     periodes:
-      - {debut: 1930, fin: null, regimes: [comedie_francaise], entres_avant: 2023}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
-         entres_depuis: 2023}
+      - {debut: 1930, fin: null, regimes: [comedie_francaise]}
     note: >-
-      Régime fermé aux personnels RECRUTÉS depuis le 1er septembre 2023 ;
-      celui qui était déjà là le garde.
+      RÉGIME TOUJOURS OUVERT, pour la même raison que l'Opéra : l'article 1er
+      de la loi n° 2023-270 ne le nomme pas.
 
   agent_seita:
     libelle: Agent du personnel de la SEITA
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1935, fin: null, regimes: [seita], entres_avant: 1982}
-      - {debut: 1982, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2],
-         entres_depuis: 1982}
+      - {debut: 1935, fin: null, regimes: [seita], entres_avant: 1981}
+      - {debut: 1981, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2],
+         entres_depuis: 1981}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco],
-         entres_depuis: 1982}
+         entres_depuis: 1981}
     note: >-
-      Régime fermé aux recrutements en 1981 ; les agents recrutés après
-      relèvent du droit commun des salariés du privé. Avant 1935, la fiche
-      du régime ne porte aucune période : les carrières antérieures ne sont
-      pas simulables sous ce statut.
+      Le régime est « maintenu pour les personnels titulaires en fonctions à
+      la date d'entrée en vigueur de la loi précitée du 2 juillet 1980 » (loi
+      n° 84-603, art. 6, LEGIARTI000006302124 ; décret n° 85-844, art. 63,
+      LEGIARTI000006325837 ; décret n° 95-99, art. 1er, LEGIARTI000006778213).
+      La loi n° 80-495 n'est pas dans l'index et sa date d'entrée en vigueur
+      n'y est donc pas lue : la fiche retient 1981, l'année de la
+      transformation du service en établissement public, et la borne était
+      écrite « 1982 », un an trop tard. Les agents recrutés depuis relèvent du
+      droit commun des salariés du privé. Avant 1935, la fiche du régime ne
+      porte aucune période : les carrières antérieures ne sont pas simulables
+      sous ce statut.
 
   agent_port_strasbourg:
     libelle: Agent du Port autonome de Strasbourg
     periodes:
-      - {debut: 1930, fin: null, regimes: [port_strasbourg], entres_avant: 2023}
-      - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
-         entres_depuis: 2023}
+      - {debut: 1930, fin: null, regimes: [port_strasbourg]}
     note: >-
-      Régime fermé aux RECRUTEMENTS depuis le 1er septembre 2023 ; celui qui
-      était déjà là le garde.
+      RÉGIME TOUJOURS OUVERT, pour la même raison que l'Opéra et la
+      Comédie-Française : l'article 1er de la loi n° 2023-270 ne le nomme pas.
 
   agent_chemins_fer_secondaires:
     libelle: Agent des chemins de fer secondaires d'intérêt général
+    releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1930, fin: 1954, regimes: [chemins_fer_secondaires]}
-      - {debut: 1955, fin: 1960, regimes: [regime_general]}
+      - {debut: 1930, fin: 1954, regimes: [chemins_fer_secondaires], entres_avant: 1955}
+      - {debut: 1955, fin: 1956, regimes: [regime_general]}
+      - {debut: 1957, fin: 1960, regimes: [regime_general, unirs]}
       - {debut: 1961, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco]}
     note: >-
-      Régime fermé en 1954. La complémentaire ne prend le relais qu'en 1961,
-      à la création de l'Arrco : les six années intermédiaires ne relèvent que
-      du régime général, comme pour tout salarié du privé de cette période.
+      Régime fermé en 1954. Ensuite, le droit commun du salarié du privé non
+      cadre, année pour année : le régime général seul, l'UNIRS de 1957 à
+      1960, puis l'Arrco. Le statut laissait ces agents sans l'UNIRS que le
+      statut de droit commun porte : un test exige désormais qu'un statut
+      fermé route, après sa fermeture, exactement ce que route le statut qui
+      le relève.
 
   artiste_auteur:
     libelle: Artiste-auteur (écrivain, illustrateur, photographe…)

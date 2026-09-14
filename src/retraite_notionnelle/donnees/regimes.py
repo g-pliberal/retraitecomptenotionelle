@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import csv
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import cached_property
 from pathlib import Path
 
@@ -557,12 +557,112 @@ class ClassesCotisation:
         return dernier.cotisation * coefficient, dernier.fiabilite
 
 
+#: Champ de la période que chaque mesure de `taux_cotisation_annuels.csv`
+#: remplace.
+_MESURES_TAUX_ANNUELS = {
+    "taux_plafonne": "taux_cotisation_retraite",
+    "part_salariale": "part_salariale",
+    "taux_deplafonne": "taux_cotisation_deplafonnee",
+    "part_salariale_deplafonnee": "part_salariale_deplafonnee",
+}
+
+
+def charger_taux_annuels(racine: Path) -> dict[str, dict[int, dict[str, float]]]:
+    """``taux_cotisation_annuels.csv`` : régime -> année -> champ -> valeur.
+
+    Absent, le fichier ne change rien : les fiches gardent leurs moyennes.
+    """
+    chemin = racine / "reference" / "regimes" / "taux_cotisation_annuels.csv"
+    if not chemin.exists():
+        return {}
+    table: dict[str, dict[int, dict[str, float]]] = {}
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
+    for ligne in lignes:
+        champ = _MESURES_TAUX_ANNUELS.get(ligne["mesure"])
+        if champ is None:
+            raise ValueError(
+                f"{chemin.name} : mesure inconnue {ligne['mesure']!r} "
+                f"({ligne['regime']}, {ligne['annee']})"
+            )
+        table.setdefault(ligne["regime"], {}).setdefault(int(ligne["annee"]), {})[
+            champ
+        ] = float(ligne["valeur"])
+    return table
+
+
+def dater_les_taux(periodes: tuple[PeriodeRegime, ...],
+                   annuels: dict[int, dict[str, float]],
+                   ) -> tuple[PeriodeRegime, ...]:
+    """Découpe les périodes ``plafonnee`` d'un régime selon ses taux annuels.
+
+    Une fiche porte un taux par PÉRIODE LÉGISLATIVE — huit périodes de 1945 à
+    aujourd'hui pour le régime général, et un taux moyen dans chacune, écrit
+    comme tel dans ses notes : « une moyenne de période, à affiner ». Le
+    droit a changé ce taux presque chaque année, et c'est lui qui alimente le
+    compte notionnel : la moyenne 1972-1982 prêtait à 1972 les 12,9 % de 1979,
+    quand il cotisait 8,75 %.
+
+    Chaque période dont l'assiette est ``plafonnee`` — celle que la table
+    décrit — est donc réécrite année par année : le taux, sa part salariale,
+    la cotisation déplafonnée et sa part sont ceux de la table quand elle a
+    l'année, ceux de la fiche sinon ; les années consécutives identiques sont
+    refondues en une période, et la dernière garde la borne de la fiche — une
+    période ouverte reste ouverte, au dernier taux connu. Tout le reste de la
+    période — âges, durées, barème de liquidation — est recopié tel quel : la
+    liquidation ne change pas, seule la cotisation se date.
+    """
+    if not annuels:
+        return periodes
+    derniere_annee = max(annuels)
+    resultat: list[PeriodeRegime] = []
+    for periode in periodes:
+        if periode.assiette != "plafonnee" or periode.perimetre_taux == "agent_seul":
+            resultat.append(periode)
+            continue
+        fin = derniere_annee if periode.fin is None else min(periode.fin, derniere_annee)
+        annees = [a for a in range(periode.debut, fin + 1) if a in annuels]
+        if not annees:
+            resultat.append(periode)
+            continue
+        # Les valeurs de chaque année de la période, table puis fiche.
+        valeurs = []
+        for annee in range(periode.debut, fin + 1):
+            champs = {
+                champ: getattr(periode, champ) for champ in _MESURES_TAUX_ANNUELS.values()
+            }
+            champs.update(annuels.get(annee, {}))
+            valeurs.append((annee, champs))
+        # Refonte des années consécutives identiques.
+        tranches: list[tuple[int, int, dict[str, float]]] = []
+        for annee, champs in valeurs:
+            if tranches and tranches[-1][2] == champs:
+                tranches[-1] = (tranches[-1][0], annee, champs)
+            else:
+                tranches.append((annee, annee, champs))
+        for rang, (debut, fin_tranche, champs) in enumerate(tranches):
+            derniere = rang == len(tranches) - 1
+            resultat.append(replace(
+                periode, debut=debut,
+                fin=periode.fin if derniere else fin_tranche,
+                **champs,
+            ))
+    return tuple(resultat)
+
+
 class CatalogueRegimes:
-    """Ensemble des régimes chargés depuis ``data/reference/regimes/*.yaml``."""
+    """Ensemble des régimes chargés depuis ``data/reference/regimes/*.yaml``.
+
+    Les taux de cotisation des régimes que `taux_cotisation_annuels.csv`
+    couvre sont datés année par année au chargement : voir
+    :func:`dater_les_taux`. Le portage JavaScript reçoit les périodes ainsi
+    découpées dans le paquet de données, et n'a rien à refaire.
+    """
 
     def __init__(self, racine: Path) -> None:
         self.racine = racine
         self._regimes: dict[str, Regime] = {}
+        self.taux_annuels = charger_taux_annuels(racine)
         dossier = racine / "reference" / "regimes"
         for chemin in sorted(dossier.glob("*.yaml")):
             if chemin.name.startswith("_"):
@@ -572,9 +672,18 @@ class CatalogueRegimes:
                 regime = self._construire(fiche, chemin)
                 if regime.code in self._regimes:
                     raise ValueError(f"code de régime dupliqué : {regime.code}")
+                if regime.code in self.taux_annuels:
+                    regime = replace(regime, periodes=dater_les_taux(
+                        regime.periodes, self.taux_annuels[regime.code]))
                 self._regimes[regime.code] = regime
         if not self._regimes:
             raise ValueError(f"aucun régime chargé depuis {dossier}")
+        inconnus = set(self.taux_annuels) - set(self._regimes)
+        if inconnus:
+            raise ValueError(
+                "taux_cotisation_annuels.csv nomme des régimes sans fiche : "
+                + ", ".join(sorted(inconnus))
+            )
 
     @staticmethod
     def _construire(fiche: dict, chemin: Path) -> Regime:
