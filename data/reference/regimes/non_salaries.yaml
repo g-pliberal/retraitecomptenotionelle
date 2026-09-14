@@ -6963,3 +6963,96 @@ regimes:
           2021, 11,48 euros pour l'exercice 2022, 11,71 euros pour les
           exercices 2023 et 2024 et 11,82 euros à compter de l'exercice 2025 »
           (art. 4, LEGIARTI000052567955).
+
+  - code: ircec_racd
+    nom: >-
+      Régime de retraite complémentaire des auteurs et compositeurs dramatiques (RACD, IRCEC)
+    famille: liberal
+    source_id: legifrance_textes
+    fiabilite: estimee
+    creation: 1964
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Auteurs et compositeurs dramatiques et auteurs de films, dont les droits
+      sont perçus par la SACD : second étage obligatoire, en plus du RAAP,
+      depuis le décret n° 64-226 du 11 mars 1964.
+    hors_repartition: false
+    periodes:
+      - debut: 1964
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        taux_cotisation_retraite: 0.0800
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          TAUX : « la cotisation complémentaire […] est fixée à 8 % de la
+          totalité du montant des droits perçus pendant l'année dans la limite
+          d'un maximum fixé par le règlement » (décret n° 64-226, art. 2,
+          LEGIARTI000006761271, puis LEGIARTI000006761272 dès 2004) ; 8 %
+          encore au mémo 2026 de l'IRCEC, sous un plafond de 597 500 € —
+          treize plafonds de la Sécurité sociale, la borne la plus proche du
+          catalogue. POINTS : le règlement, hors index, fixe le prix d'achat
+          (4,78 € en 2026) et la valeur de service (0,421 €) :
+          `rendements_points.csv` porte leur rapport, 8,8 centimes de rente
+          par euro, appliqué à toute la carrière faute de série ancienne ;
+          niveau `estimee`. Âges et décote de la fiche `ircec_raap`.
+
+  - code: ircec_racl
+    nom: >-
+      Régime de retraite complémentaire des auteurs et compositeurs lyriques (RACL, IRCEC)
+    famille: liberal
+    source_id: legifrance_textes
+    fiabilite: estimee
+    creation: 1962
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Auteurs et compositeurs de musique dont les droits d'exécution publique
+      et de reproduction mécanique sont perçus par la SACEM : second étage
+      obligatoire, en plus du RAAP, depuis le décret n° 61-1304 du 4 décembre
+      1961.
+    hors_repartition: false
+    periodes:
+      - debut: 1962
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_8_pass
+        taux_cotisation_retraite: 0.0650
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          TAUX : le décret ne fixe qu'un seuil d'affiliation et renvoie au
+          règlement (décret n° 61-1304, art. 1, LEGIARTI000006781613,
+          LEGIARTI000018123908 dès 2004 ; arrêté du 9 mars 1987,
+          LEGIARTI000006784842, statuts modifiés sans être reproduits) ; le
+          mémo 2026 de l'IRCEC écrit 6,5 % des droits compris entre 3 170,46 €
+          et 435 938,46 € — un peu plus de neuf plafonds, la fiche s'arrête à
+          huit, borne la plus proche, et ignore le seuil. POINTS : prix
+          d'achat 10,304 €, valeur de service 0,618 € en 2026, soit 6,0
+          centimes de rente par euro dans `rendements_points.csv`, appliqués à
+          toute la carrière ; niveau `estimee`. Âges et décote de la fiche
+          `ircec_raap`.

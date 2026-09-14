@@ -241,6 +241,24 @@ pivots:
     - {texte: "Décret n°2005-1233", num: "2", parametres: [assiette]}
     - {texte: "Décret n°2005-1233", num: "7", parametres: [type_calcul]}
     - {texte: "Arrêté du 28 juillet 2006", num: "1", parametres: [taux_cotisation_retraite, part_salariale]}
+  cps_saint_pierre_et_miquelon:
+    - {texte: "Loi n° 87-563", num: "5", parametres: [duree_requise_trimestres, age_ouverture, age_taux_plein]}
+    - {texte: "Décret n°89-110", num: "9", parametres: [duree_requise_trimestres, taux_plein, decote_par_trimestre]}
+    - {texte: "Décret n° 2017-1000", num: "3", parametres: [salaire_reference, age_ouverture]}
+  cssm_mayotte:
+    - {texte: "Décret n°87-175", num: "2", parametres: [age_ouverture, age_taux_plein, duree_requise_trimestres]}
+    - {texte: "Décret n°2003-589", num: "2", parametres: [age_ouverture]}
+    - {texte: "Décret n°2003-589", num: "9", parametres: [duree_requise_trimestres, taux_plein]}
+    - {texte: "Décret n°2003-589", num: "10", parametres: [age_taux_plein]}
+    - {texte: "Décret n°2003-589", num: "11", parametres: [decote_par_trimestre]}
+  ircec_racd:
+    - {texte: "Décret n°64-226", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+  ircec_racl:
+    - {texte: "Décret n°61-1304", num: "1", parametres: [assiette]}
+  gerants_debits_tabac:
+    - {texte: "Arrêté du 13 novembre 1963", num: "5 bis", parametres: [taux_cotisation_retraite]}
+    - {texte: "Arrêté du 13 novembre 1963", num: "6", parametres: [assiette]}
+    - {texte: "Arrêté du 13 novembre 1963", num: "17", parametres: [type_calcul]}
   seita:
     - {texte: "Décret n°62-766", num: "108", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n°62-766", num: "110", parametres: [age_ouverture]}

@@ -2007,7 +2007,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n’est pas un régime absent : les 58 fiches du catalogue
+Un régime « incomplet » n’est pas un régime absent : les 63 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -2040,7 +2040,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **58 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **63 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2804,7 +2804,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 40 statuts », « 58 régimes » —, parce que ce sont des chiffres de données et
+« 47 statuts », « 63 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -3177,6 +3177,8 @@ modèle :
 | `cavec_complementaire` | 1953-2026 | 2 | 74 | 0 | 0 |
 | `opera_de_paris` | 1930-2026 | 4 | 72 | 4 | 0 |
 | `crpcen` | 1937-2026 | 16 | 71 | 0 | 0 |
+| `ircec_racl` | 1962-2026 | 1 | 65 | 1 | 0 |
+| `ircec_racd` | 1964-2026 | 1 | 63 | 2 | 0 |
 | `comedie_francaise` | 1930-2026 | 4 | 63 | 1 | 0 |
 | `cnbf` | 1948-2026 | 2 | 56 | 2 | 0 |
 | `cnavpl` | 1949-2026 | 7 | 55 | 9 | 0 |
@@ -3187,6 +3189,7 @@ modèle :
 | `mines` | 1930-2026 | 22 | 44 | 1 | 0 |
 | `cnbf_complementaire` | 1979-2026 | 2 | 40 | 0 | 0 |
 | `ieg` | 1946-2026 | 15 | 38 | 3 | 0 |
+| `gerants_debits_tabac` | 1963-2026 | 2 | 37 | 10 | 0 |
 | `cavom_complementaire` | 1979-2026 | 2 | 37 | 5 | 0 |
 | `msa_non_salaries` | 1952-2026 | 7 | 34 | 13 | 0 |
 | `cipav_complementaire` | 1979-2026 | 4 | 34 | 1 | 0 |
@@ -3207,8 +3210,10 @@ modèle :
 | `pensions_civiles_1853` | 1930-1948 | 1 | 19 | 0 | 0 |
 | `ircantec` | 1971-2026 | 15 | 17 | 6 | 0 |
 | `rafp` | 2005-2026 | 2 | 16 | 6 | 0 |
+| `cssm_mayotte` | 1987-2036 | 34 | 16 | 0 | 0 |
 | `assurances_sociales` | 1930-1945 | 1 | 16 | 0 | 0 |
 | `carpv_complementaire` | 1950-2026 | 10 | 15 | 0 | 0 |
+| `cps_saint_pierre_et_miquelon` | 1987-2037 | 32 | 13 | 0 | 0 |
 | `asv_conventionnes` | 1972-2026 | 21 | 13 | 10 | 0 |
 | `agirc` | 1947-2018 | 24 | 13 | 0 | 0 |
 | `rco_artisans` | 1979-2012 | 10 | 12 | 2 | 0 |
@@ -3230,7 +3235,7 @@ modèle :
 
 **Ce tableau n'est plus écrit à la main** : c'est la sortie de
 `python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1
-à B5a de la campagne « les règles à travers l'histoire » (voir
+à B5b de la campagne « les règles à travers l'histoire » (voir
 [`regimes.md`](regimes.md), journal de la campagne). Les deux dernières
 colonnes viennent de l'index LEGI et du calendrier des réformes
 (`legislation/reformes.yaml`) : une « coupure de texte non reflétée » est une

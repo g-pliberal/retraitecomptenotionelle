@@ -565,3 +565,107 @@ reformes:
     regimes: [enseignants_prive_additionnel]
     absorbee_par: []
     non_appliquee: {}
+
+  - code: spm_1987
+    date: 1987-08-01
+    texte: {reference: "loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon et décret n° 89-110 du 20 février 1989 (durée transitoire de 108 trimestres, plus 4 par an)", id: LEGIARTI000006774247}
+    parametres: [creation, duree_requise_trimestres, age_ouverture, taux_plein]
+    regimes: [cps_saint_pierre_et_miquelon]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: spm_2015
+    date: 2015-07-25
+    texte: {reference: "ordonnance n° 2015-896 du 23 juillet 2015 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon (table de durée et âges par génération, décalés de sept ans)", id: LEGIARTI000030930361}
+    parametres: [duree_requise_trimestres, age_ouverture, age_taux_plein]
+    regimes: [cps_saint_pierre_et_miquelon]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: spm_2017
+    date: 2017-05-12
+    texte: {reference: "décret n° 2017-1000 du 10 mai 2017 relatif à l'assurance vieillesse-veuvage applicable à Saint-Pierre-et-Miquelon (extension de R. 351-1 et suivants)", id: LEGIARTI000034740766}
+    parametres: [salaire_reference]
+    regimes: [cps_saint_pierre_et_miquelon]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: spm_2026
+    date: 2026-07-23
+    texte: {reference: "ordonnance n° 2026-648 du 22 juillet 2026 (table de durée 167 à 172 trimestres des générations 1965 à 1974)", id: LEGIARTI000054477924}
+    parametres: [duree_requise_trimestres]
+    regimes: [cps_saint_pierre_et_miquelon]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: mayotte_1987
+    date: 1987-01-01
+    texte: {reference: "décret n° 87-175 du 16 mars 1987 portant création et organisation d'un régime de retraite au profit des salariés de Mayotte", id: LEGIARTI000006770150}
+    parametres: [creation, age_ouverture, duree_requise_trimestres]
+    regimes: [cssm_mayotte]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: mayotte_2003
+    date: 2003-07-02
+    texte: {reference: "ordonnance n° 2002-411 du 27 mars 2002 et décret n° 2003-589 du 1er juillet 2003 (âge de 55 à 60 ans de 2003 à 2010, durée de 64 trimestres plus 4 par an, coefficient de 2,5 %)", id: LEGIARTI000006781028}
+    parametres: [age_ouverture, duree_requise_trimestres, decote_par_trimestre]
+    regimes: [cssm_mayotte]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: mayotte_2012
+    date: 2012-10-21
+    texte: {reference: "décret n° 2012-1170 du 19 octobre 2012 (âge par génération de 60 à 62 ans, générations 1956 à 1961 ; taux plein à l'âge d'ouverture plus cinq ans)", id: LEGIARTI000026514429}
+    parametres: [age_ouverture, age_taux_plein]
+    regimes: [cssm_mayotte]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: mayotte_2016
+    date: 2016-09-26
+    texte: {reference: "décret n° 2016-1246 du 22 septembre 2016 (durée par génération de 120 à 172 trimestres pour les pensions prenant effet dès 2018, coefficient de minoration par génération dès 2026)", id: LEGIARTI000033155436}
+    parametres: [duree_requise_trimestres, decote_par_trimestre]
+    regimes: [cssm_mayotte]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: mayotte_2024
+    date: 2024-07-10
+    texte: {reference: "décret n° 2024-766 du 8 juillet 2024 (âge de 62 ans et 3 mois à 63 ans et 9 mois pour les générations 1962 à 1968, pensions dès le 1er septembre 2023) et décret n° 2026-345 du 7 mai 2026 (génération 1969)", id: LEGIARTI000049915788}
+    parametres: [age_ouverture, age_taux_plein]
+    regimes: [cssm_mayotte]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: racl_1962
+    date: 1962-01-01
+    texte: {reference: "décret n° 61-1304 du 4 décembre 1961 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs de musique", id: LEGIARTI000006781613}
+    parametres: [creation, assiette]
+    regimes: [ircec_racl]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: racd_1964
+    date: 1964-03-15
+    texte: {reference: "décret n° 64-226 du 11 mars 1964 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs dramatiques et auteurs de films (8 % des droits)", id: LEGIARTI000006761271}
+    parametres: [creation, taux_cotisation_retraite, assiette]
+    regimes: [ircec_racd]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: ravgdt_1963
+    date: 1963-11-21
+    texte: {reference: "décret n° 63-1104 du 30 octobre 1963 et arrêté du 13 novembre 1963 relatifs au régime d'allocation viagère des gérants de débits de tabac", id: LEGIARTI000006787840}
+    parametres: [creation, assiette, type_calcul]
+    regimes: [gerants_debits_tabac]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: ravgdt_1990
+    date: 1990-10-24
+    texte: {reference: "arrêté du 16 octobre 1990 modifiant l'arrêté du 13 novembre 1963 (cotisation des gérants fixée à 2 % des remises brutes, participation du fonds au double)", id: LEGIARTI000006787842}
+    parametres: [taux_cotisation_retraite]
+    regimes: [gerants_debits_tabac]
+    absorbee_par: []
+    non_appliquee: {}

@@ -119,7 +119,8 @@ inventaire:
               personnel_opera, personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
               salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive]
+              maitre_enseignement_prive,
+              elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac, micro_entrepreneur]
     textes:
       - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
       - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
@@ -149,16 +150,19 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [salarie_mayotte]
     textes:
       - {reference: "loi n° 85-10 du 3 janvier 1985, article 98", id: LEGIARTI000006756839}
-      - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de retraite au profit des salariés de Mayotte", id: LEGITEXT000006065859}
-      - {reference: "ordonnance n° 2002-411 du 27 mars 2002 relative à la protection sanitaire et sociale à Mayotte", id: null}
+      - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de retraite au profit des salariés de Mayotte, articles 2 et 3", id: LEGIARTI000006770150}
+      - {reference: "ordonnance n° 2002-411 du 27 mars 2002 et décret n° 2003-589 du 1er juillet 2003, articles 2, 9, 10 et 11 (âge, durée, taux plein, coefficient de minoration)", id: LEGIARTI000033155436}
+      - {reference: "décret n° 2024-766 du 8 juillet 2024 et décret n° 2026-345 du 7 mai 2026 (relèvement de l'âge, générations 1962 à 1969)", id: LEGIARTI000054059636}
     manque: >-
-      Droit national, mais paramètres propres — âge, durée, plafond, taux —
-      qui convergent vers ceux du régime général selon un calendrier que le
-      dépôt n'a pas encore lu ; ni statut ni fiche.
+      Le SMIG mahorais, qui valide les trimestres (200 puis 150 heures par
+      trimestre), n'est pas une série du dépôt : la validation se fait au
+      SMIC national. Taux et plafond de la caisse de sécurité sociale de
+      Mayotte, en convergence jusqu'en 2036, remplacés par ceux du régime
+      général. Salaire de référence supposé sur vingt-cinq ans dès 2003.
 
   - code: cps_saint_pierre_et_miquelon
     nom: Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
@@ -169,14 +173,18 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [salarie_saint_pierre_et_miquelon]
     textes:
-      - {reference: "loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon", id: null}
+      - {reference: "loi n° 87-563 du 17 juillet 1987 portant réforme du régime d'assurance vieillesse applicable à Saint-Pierre-et-Miquelon, article 5 (table de durée et âges par génération)", id: LEGIARTI000054477924}
+      - {reference: "décret n° 89-110 du 20 février 1989, article 9 (durée transitoire de 108 trimestres en 1987, plus 4 par an)", id: LEGIARTI000006774247}
+      - {reference: "décret n° 2017-1000 du 10 mai 2017 relatif à l'assurance vieillesse-veuvage applicable à Saint-Pierre-et-Miquelon, article 3", id: LEGIARTI000034740766}
     manque: >-
-      Durée requise et âges propres — 152 trimestres pour la génération 1956
-      quand le régime général en exige 166, déjà signalé dans docs/limites.md
-      comme un piège des tables par génération ; ni statut ni fiche.
+      Taux de cotisation et plafond de la caisse de prévoyance sociale,
+      fixés localement et absents de l'index : ceux du régime général
+      tiennent lieu. Le régime d'avant août 1987 (ordonnance n° 77-1102)
+      n'est pas porté. La table par génération est lue en dur, année par
+      année, faute d'un drapeau qui la décale de sept ans.
 
   - code: cps_polynesie
     nom: Régime de retraite des travailleurs salariés de Polynésie française (CPS)
@@ -282,7 +290,8 @@ inventaire:
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
               mineur, agent_seita, agent_chemins_fer_secondaires,
               salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive]
+              maitre_enseignement_prive,
+              salarie_saint_pierre_et_miquelon]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
@@ -304,7 +313,8 @@ inventaire:
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita,
               agent_chemins_fer_secondaires,
-              maitre_enseignement_prive]
+              maitre_enseignement_prive,
+              salarie_saint_pierre_et_miquelon]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
@@ -352,7 +362,8 @@ inventaire:
               personnel_comedie_francaise, agent_seita, agent_port_strasbourg,
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
               salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive]
+              maitre_enseignement_prive,
+              salarie_saint_pierre_et_miquelon]
     textes:
       - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
       - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
@@ -413,7 +424,8 @@ inventaire:
     succede_a: [ipacte, igrante]
     integre_dans: null
     couverture: modelise
-    statuts: [contractuel_public]
+    statuts: [contractuel_public,
+              elu_local]
     textes:
       - {reference: "décret n° 70-1277 du 23 décembre 1970", id: null}
       - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime", id: LEGITEXT000024251295}
@@ -428,15 +440,18 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: a_modeliser
-    statuts: []
+    statuts: [elu_local]
     textes:
-      - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires et adjoints au régime de retraite complémentaire des agents non titulaires", id: LEGITEXT000006068431}
+      - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires et adjoints au régime de retraite complémentaire des agents non titulaires, article 1", id: LEGIARTI000006338235}
+      - {reference: "code général des collectivités territoriales, L. 2123-28 (affiliation des élus indemnisés à l'Ircantec)", id: LEGIARTI000006390053}
       - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux", id: null}
     manque: >-
-      Un statut à part : l'indemnité de fonction ouvre des points Ircantec
-      sans régime de base, et depuis 2013 elle est aussi soumise aux
-      cotisations du régime général au-delà d'un seuil. Le régime existe au
-      catalogue, pas le statut qui y route une indemnité.
+      Le statut `elu_local` route l'Ircantec depuis 1973, et le régime
+      général depuis 2013, sur l'indemnité entière ; ce n'est pas un régime
+      mais une affiliation, et il ne reste pas de fiche à écrire. Non portés
+      : le seuil de L. 382-31 en deçà duquel l'indemnité échappe au régime
+      général, et les régimes de retraite par rente (FONPEL, CAREL) auxquels
+      les élus peuvent adhérer.
 
   - code: crpnpac
     nom: Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1
@@ -483,7 +498,8 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [artiste_auteur]
+    statuts: [artiste_auteur,
+              auteur_dramatique, auteur_lyrique]
     textes:
       - {reference: "décret n° 62-420 du 11 avril 1962 relatif au régime d'assurance vieillesse complémentaire commun aux artistes", id: LEGIARTI000006781618}
       - {reference: "arrêté du 21 novembre 2013 portant approbation des statuts de l'IRCEC", id: LEGIARTI000028255012}
@@ -501,14 +517,15 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [auteur_dramatique]
     textes:
-      - {reference: "décret n° 64-226 du 11 mars 1964 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs dramatiques", id: LEGIARTI000006761271}
+      - {reference: "décret n° 64-226 du 11 mars 1964 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs dramatiques, article 2 (8 % des droits)", id: LEGIARTI000006761271}
+      - {reference: "mémo des valeurs 2026 de l'IRCEC (prix d'achat 4,78 €, valeur de service 0,421 €)", id: null}
     manque: >-
-      Second étage obligatoire pour une partie des artistes-auteurs, en plus du
-      RAAP ; le mémo annuel de l'IRCEC en publie le barème (4,78 € d'achat,
-      0,421 € de service en 2026) mais aucun statut ne distingue ces auteurs.
+      Le barème du point est celui du seul mémo 2026 de l'IRCEC, appliqué en
+      rendement à toute la carrière ; le plafond de 597 500 € est arrondi à
+      treize plafonds de la Sécurité sociale.
 
   - code: ircec_racl
     nom: Régime des auteurs et compositeurs lyriques (IRCEC)
@@ -519,13 +536,17 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [auteur_lyrique]
     textes:
+      - {reference: "décret n° 61-1304 du 4 décembre 1961 relatif au régime d'assurance vieillesse complémentaire des auteurs et compositeurs de musique, article 1", id: LEGIARTI000006781613}
       - {reference: "arrêté du 9 mars 1987 portant approbation des modifications apportées aux régimes complémentaires de retraite", id: LEGIARTI000006784842}
+      - {reference: "mémo des valeurs 2026 de l'IRCEC (6,5 % des droits, prix d'achat 10,304 €, valeur de service 0,618 €)", id: null}
     manque: >-
-      Même situation que le RACD : barème publié par la caisse (10,304 € et
-      0,618 € en 2026), pas de statut.
+      Le taux de 6,5 % et le barème du point viennent du seul mémo 2026 de
+      l'IRCEC, appliqués à toute la carrière ; le seuil d'affiliation (3 170
+      €) est ignoré et le plafond de 435 938 € arrondi à huit plafonds de la
+      Sécurité sociale.
 
   - code: regimes_professionnels_integres
     nom: Régimes professionnels de salariés intégrés à l'Agirc-Arrco
@@ -965,16 +986,17 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [gerant_debit_tabac]
     textes:
-      - {reference: "décret n° 63-1104 du 30 octobre 1963 relatif au régime d'allocation viagère des gérants de débits de tabac", id: null}
-      - {reference: "arrêté du 13 novembre 1963 pris pour l'application du décret du 30 octobre 1963", id: LEGIARTI000006787837}
+      - {reference: "décret n° 63-1104 du 30 octobre 1963 relatif au régime d'allocation viagère des gérants de débits de tabac, modifié par le décret n° 90-424 du 16 mai 1990", id: LEGIARTI000006774753}
+      - {reference: "arrêté du 13 novembre 1963 pris pour l'application du décret du 30 octobre 1963, articles 5, 5 bis, 6 et 17", id: LEGIARTI000006787842}
     manque: >-
-      Régime obligatoire en points géré par la Caisse des dépôts, qui s'ajoute
-      au régime des commerçants du gérant ; cotisation sur les remises, avec
-      une participation du fonds des redevances égale au double. Ni statut ni
-      fiche.
+      Le revenu saisi tient lieu de remises sur les tabacs, sans le plafond
+      de remises de l'article 6 ; le barème du point (4,94 € d'achat en
+      2026, 2,42 € de service en 2025) est celui de la Caisse des dépôts,
+      hors index, appliqué en rendement à toute la carrière ; le taux
+      d'avant 1990 est projeté.
 
   - code: imprimerie_nationale
     nom: Caisse des retraites de l'Imprimerie nationale
@@ -1096,7 +1118,8 @@ inventaire:
     succede_a: []
     integre_dans: rsi
     couverture: modelise
-    statuts: [commercant]
+    statuts: [commercant,
+              gerant_debit_tabac, micro_entrepreneur]
     textes:
       - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
 
@@ -1110,7 +1133,8 @@ inventaire:
     succede_a: [cancava, organic]
     integre_dans: regime_general
     couverture: modelise
-    statuts: [artisan, commercant]
+    statuts: [artisan, commercant,
+              gerant_debit_tabac, micro_entrepreneur]
     textes:
       - {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}
       - {reference: "loi n° 2017-1836 du 30 décembre 2017 de financement de la sécurité sociale pour 2018, article 15", id: null}
@@ -1139,7 +1163,8 @@ inventaire:
     succede_a: []
     integre_dans: rci
     couverture: modelise
-    statuts: [commercant]
+    statuts: [commercant,
+              gerant_debit_tabac, micro_entrepreneur]
     textes:
       - {reference: "décret n° 2004-848 du 23 août 2004 (régime complémentaire obligatoire des industriels et commerçants)", id: null}
 
@@ -1183,7 +1208,8 @@ inventaire:
     succede_a: [rco_artisans, nric]
     integre_dans: null
     couverture: modelise
-    statuts: [artisan, commercant]
+    statuts: [artisan, commercant,
+              gerant_debit_tabac, micro_entrepreneur]
     textes:
       - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
 
@@ -1197,16 +1223,20 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: a_modeliser
-    statuts: []
+    statuts: [micro_entrepreneur]
     textes:
       - {reference: "loi n° 2008-776 du 4 août 2008 de modernisation de l'économie, article 1er (L. 133-6-8)", id: LEGIARTI000019284945}
       - {reference: "décret n° 2018-1120 du 10 décembre 2018 relatif aux modalités d'application du régime micro-social aux professionnels libéraux", id: LEGITEXT000037798308}
+      - {reference: "code de la sécurité sociale, L. 133-6-8 (prestations calculées sur le chiffre d'affaires après abattement de 71 %, 50 % ou 34 %)", id: LEGIARTI000033712872}
+      - {reference: "code de la sécurité sociale, D. 131-6-3 (fraction du taux pendant l'exonération de début d'activité)", id: LEGIARTI000034163578}
     manque: >-
-      Pas un régime mais une manière de cotiser : un pourcentage du chiffre
-      d'affaires, dont une fraction va au régime de base et à la
-      complémentaire, et des trimestres validés par le chiffre d'affaires. Le
-      modèle ne sait décrire qu'un revenu, pas un chiffre d'affaires ; c'est la
-      population non salariée la plus nombreuse aujourd'hui.
+      Pas un régime mais une manière de cotiser : le statut
+      `micro_entrepreneur` route les régimes du commerçant sur le revenu
+      reconstitué (chiffre d'affaires après abattement), ce qui reproduit
+      les droits mais pas la cotisation réellement versée, calculée sur le
+      chiffre d'affaires par un taux global ventilé entre les branches ; les
+      seuils de chiffre d'affaires qui valident les trimestres ne sont pas
+      portés.
 
   - code: cnavpl
     nom: Caisse nationale d'assurance vieillesse des professions libérales, régime de base

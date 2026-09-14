@@ -4985,3 +4985,92 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [bonifications, reversion]
         notes: Paramètres à certifier ; régime résiduel.
+
+  - code: gerants_debits_tabac
+    nom: >-
+      Régime d'allocation viagère des gérants de débits de tabac (RAVGDT)
+    famille: special
+    source_id: legifrance_textes
+    fiabilite: estimee
+    creation: 1963
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Gérants de débits de tabac : un étage obligatoire en points, géré par la
+      Caisse des dépôts, qui s'ajoute au régime des commerçants du gérant et
+      que le fonds des redevances finance aux deux tiers (décret n° 63-1104 du
+      30 octobre 1963).
+    hors_repartition: false
+    periodes:
+      - debut: 1963
+        fin: 1989
+        type_calcul: points
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.0200
+        assiette_facteur_revenu: 1.0
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LA FICHE PORTE LA COTISATION DU GÉRANT SEULE — le statut est sans
+          employeur — et décrit la participation du fonds des redevances des
+          débits de tabac, « égale au double de la cotisation des gérants »
+          (arrêté du 13 novembre 1963, art. 5, LEGIARTI000006787840), sans la
+          compter. ASSIETTE : « les remises allouées pour la vente des tabacs
+          », dans la limite d'un plafond de remises (art. 6, 30 000 F en 1963,
+          290 000 F en 1981, LEGIARTI000006787856) ; le revenu saisi tient
+          lieu de remises, sans plafond. POINTS : « la valeur du point
+          d'allocation viagère est fixée chaque année par le ministre » et «
+          s'établit à 1 F pour l'année 1963 », indexée sur la moyenne des
+          remises (art. 17, LEGIARTI000006787896) ; le barème actuel est hors
+          index — prix d'achat 4,94 € au 1er janvier 2026, valeur de service
+          2,42 € au 1er juillet 2025 (Caisse des dépôts) —, d'où un rendement
+          de 49 centimes de rente par euro cotisé par le gérant dans
+          `rendements_points.csv`, le fonds payant les deux autres tiers ;
+          niveau `estimee`. Allocation à taux plein à 65 ans, sans décote lue.
+          TAUX : « fixé par le ministre des finances » (art. 6,
+          LEGIARTI000006787848), sans chiffre dans l'index avant 1990 ; le
+          taux de 2 % de 1990 est projeté en arrière.
+      - debut: 1990
+        fin: null
+        type_calcul: points
+        age_ouverture: 65
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.0200
+        assiette_facteur_revenu: 1.0
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LA FICHE PORTE LA COTISATION DU GÉRANT SEULE — le statut est sans
+          employeur — et décrit la participation du fonds des redevances des
+          débits de tabac, « égale au double de la cotisation des gérants »
+          (arrêté du 13 novembre 1963, art. 5, LEGIARTI000006787840), sans la
+          compter. ASSIETTE : « les remises allouées pour la vente des tabacs
+          », dans la limite d'un plafond de remises (art. 6, 30 000 F en 1963,
+          290 000 F en 1981, LEGIARTI000006787856) ; le revenu saisi tient
+          lieu de remises, sans plafond. POINTS : « la valeur du point
+          d'allocation viagère est fixée chaque année par le ministre » et «
+          s'établit à 1 F pour l'année 1963 », indexée sur la moyenne des
+          remises (art. 17, LEGIARTI000006787896) ; le barème actuel est hors
+          index — prix d'achat 4,94 € au 1er janvier 2026, valeur de service
+          2,42 € au 1er juillet 2025 (Caisse des dépôts) —, d'où un rendement
+          de 49 centimes de rente par euro cotisé par le gérant dans
+          `rendements_points.csv`, le fonds payant les deux autres tiers ;
+          niveau `estimee`. Allocation à taux plein à 65 ans, sans décote lue.
+          TAUX : « 2 % du montant des remises brutes allouées à ces gérants
+          pour la vente des tabacs », participation du fonds « égale au double
+          » (art. 5 bis, LEGIARTI000006787842, 24 octobre 1990 ; version en
+          vigueur jusqu'au 1er janvier 2006, le taux de 2 % étant encore celui
+          que publie la Caisse des dépôts).

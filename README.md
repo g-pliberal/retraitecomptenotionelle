@@ -112,7 +112,7 @@ Scénario                                                          Courants   Co
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 255 Ko compressés (1807 Ko brut) et prend quelques dixièmes
+chargement transfère 264 Ko compressés (2005 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
@@ -131,9 +131,9 @@ la page.
 <details>
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
-`index.html` charge deux choses : `moteur/donnees.json` (1807 Ko — les séries, les
+`index.html` charge deux choses : `moteur/donnees.json` (2005 Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
-2070, les 58 fiches de régime) et
+2070, les 63 fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
 du dépôt, telle quelle : c'est ce que GitHub Pages publie sans aucun réglage, et
 `.nojekyll` demande que les fichiers soient servis sans transformation. Rien
@@ -227,7 +227,7 @@ print(simulateur.simuler(simulateur.carriere_parcours(
 # Le cas général : grille cas type × génération
 print(calculer_cas_types(simulateur).tableau())
 
-# Les 40 statuts et les 58 régimes du catalogue
+# Les 47 statuts et les 63 régimes du catalogue
 for regime in simulateur.catalogue:
     print(f"{regime.code:<26} {regime.famille:<22} {regime.nom}")
 ```
@@ -259,7 +259,7 @@ print(simulateur.simuler(carriere).tableau())
 |---|---|
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
 | Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, 36 entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
-| Tous les régimes, actuels **et** disparus | 58 régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **quatre-vingt-un régimes** obligatoires ayant existé depuis 1930, ancré sur `R. 711-1`, qui dit lesquels manquent et pourquoi ; un test le tient aligné sur le catalogue |
+| Tous les régimes, actuels **et** disparus | 63 régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **quatre-vingt-un régimes** obligatoires ayant existé depuis 1930, ancré sur `R. 711-1`, qui dit lesquels manquent et pourquoi ; un test le tient aligné sur le catalogue |
 | Départ trop tôt = pension réduite | Âge de référence **à cliquet** : l'abaissement de 1982 ne le fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | SNCF à 50 ans = 15 ans d'anticipation ; Opéra à 40 ans = 25 ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
@@ -268,7 +268,7 @@ print(simulateur.simuler(carriere).tableau())
 | Fusion des régimes au cas le plus défavorable | Âge 64/67, 172 trimestres, carrière entière, assiette déplafonnée, zéro avantage |
 | Droits acquis respectés à la bascule | Conversion à l'âge de référence par défaut — le seul endroit où l'âge de départ pèse sur les droits d'avant la bascule, donc ce qui empêche de gagner à partir tôt ; l'âge de départ effectif est offert en variante, et la cascade de calcul est affichée |
 | Statuts comparables au même étalon | Les fiches publiques ne portent que la retenue de l'agent ; elle est alignée sur l'effort contributif total du privé, sans quoi on compare un demi-effort à un effort entier |
-| Part salariale et part patronale distinguées, pour tous | `part_salariale` dans chaque fiche de salariés — 40,87 % au régime général en 2023, 40 % à l'Agirc-Arrco —, et `sans_employeur` sur les cinq statuts qui cotisent seuls |
+| Part salariale et part patronale distinguées, pour tous | `part_salariale` dans chaque fiche de salariés — 40,87 % au régime général en 2023, 40 % à l'Agirc-Arrco —, et `sans_employeur` sur les statuts qui cotisent seuls |
 | Part employeur du public, quand elle est publiée | Taux implicite de l'État 1995-2005, taux appelé par le CAS « Pensions » 2006-2026, CNRACL depuis 1948, SNCF 2007-2018 — portés au compte par les scénarios 4 et 5, et le modèle dit sur combien d'années il a dû s'en passer |
 | Capitalisation hors comparaison | Le RAFP et les assurances sociales de 1930 sont PROVISIONNÉS : leur rente sort d'un placement, non de la cotisation des actifs. Une réforme de la répartition ne les atteint pas — ils sont donc retirés des **six** totaux et servis à l'identique, à leur propre barème, affichés à côté |
 | Le mois, là où le droit le date | Date de liquidation, année d'entrée et année de départ portées au compte au prorata de leurs mois, trimestres bornés aux trimestres civils écoulés, diviseur lu à l'âge exact, circulaire de revalorisation en vigueur à la date, générations que la loi coupe au 1<sup>er</sup> juillet 1951 et au 1<sup>er</sup> septembre 1961. Le pas du moteur reste l'année, parce que les séries le sont — voir [« Le mois, là où le droit le date »](docs/limites.md#le-mois-là-où-le-droit-le-date) |
@@ -280,7 +280,7 @@ print(simulateur.simuler(carriere).tableau())
 | Le droit ouvre-t-il ce départ ? | Âge légal du régime ou carrière longue ; sinon le montant est marqué comme un contrefactuel, pas une pension servie |
 | Suppression des minima | Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite |
 | Suppression des avantages | Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits |
-| Tout le monde peut simuler | 40 statuts d’affiliation, cinq informations suffisent |
+| Tout le monde peut simuler | 47 statuts d’affiliation, cinq informations suffisent |
 | Un revenu se saisit comme un revenu | « Revenu brut mensuel : 2 900 € », en euros d'aujourd'hui — plus un multiple du salaire moyen que personne ne connaît, resté à un lien de là pour qui raisonne en relatif, montants convertis au passage. Le champ dit **brut** et donne l'échelle chiffrée (SMIC, moyenne, plafond) ; le modèle, lui, ne connaît toujours que le multiple, et l'euro n'entre qu'à un seul endroit |
 | Une carrière, plusieurs métiers | On faisait autrefois le même métier toute sa vie, c'est devenu l'exception : la carrière se décrit comme une suite de métiers, chacun avec son statut et son niveau de revenu, et chaque changement fait passer d'un régime à un autre. L'année du changement revient au métier qui en occupe le plus de mois — les régimes liquident à l'année —, mais le revenu porté au compte reste la somme de ce que les deux ont payé |
 | Utilisable sans rien installer | Le modèle s'exécute dans le navigateur, sur une simple adresse |
@@ -288,7 +288,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait de 12 % sur quarante ans, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347798289 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue 342 simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
+| Portage vérifié, pas cru sur parole | Le site rejoue 384 simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 
@@ -852,7 +852,7 @@ data/
                                 dépenses de retraite observées, pyramide des âges,
                                 projections
     mortalite/                  espérances de vie et quotients par âge observés
-    regimes/                    58 fiches de régime + schéma + valeurs du point,
+    regimes/                    63 fiches de régime + schéma + valeurs du point,
                                 et l'inventaire de tous les régimes (inventaire.yaml)
     legislation/                âges et durées par génération, barèmes des
                                 minima, décote de la fonction publique,
@@ -877,7 +877,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (1807 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (2005 Ko, produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
