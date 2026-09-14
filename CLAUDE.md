@@ -35,6 +35,8 @@ Le livrable est le site statique ; voir `README.md`.
   `python scripts/construire_donnees.py`. À reconstruire après toute modification
   des données ou du style.
 - Tests : `tests/` — `python -m pytest` (lance aussi `node --test`)
+- Les chantiers à mener, classés par ce qu'ils déplacent : `docs/feuille_de_route.md`.
+  Une session qui cherche quoi faire commence là, et y note ce qu'elle a fait.
 - Seule dépendance hors bibliothèque standard : PyYAML. Le portage JavaScript
   n'utilise aucune bibliothèque.
 
