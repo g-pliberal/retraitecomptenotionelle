@@ -81,7 +81,7 @@
 # impose, `estimee` ou `moyenne`, et en nommant le millésime de la publication
 # d'où elles sortent. Le champ `note` de l'entrée sert à ça.
 
-version_manifeste: "2026-09-05"
+version_manifeste: "2026-09-14"
 
 institutions:
 
@@ -339,9 +339,51 @@ institutions:
       - id: drees_panorama_retraites
         titre: Les retraités et les retraites (édition annuelle)
         url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/panoramas-de-la-drees/les-retraites-et-les-retraites
-        acces: fichier
-        statut_integration: saisi
+        acces: document
+        statut_integration: a_faire
+        note: >-
+          La synthèse annuelle. Elle n'est pas la source des effectifs : le
+          critère 1 fait remonter d'un cran, jusqu'aux fichiers de l'EACR et de
+          l'EIR que le panorama commente et que les deux entrées suivantes
+          récupèrent.
+      - id: drees_eacr
+        titre: Enquête annuelle auprès des caisses de retraite (EACR), fichier diffusé
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/donnes_eacr/
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/drees_eacr.py
         cible: data/reference/regimes/effectifs_retraites.csv
+        note: >-
+          Le dénombrement exhaustif des retraités, caisse par caisse et année par
+          année depuis 2004 — vingt-huit caisses, la ligne « tous régimes »
+          comprise. La feuille `A-Cadrage` du classeur porte, pour chaque couple
+          (année, caisse), l'effectif des bénéficiaires et le montant moyen de
+          leur pension. Le champ retenu est `ddir`, les bénéficiaires d'un droit
+          DIRECT : les droits dérivés sont hors du modèle, qui décrit une
+          carrière et non un ménage. La DREES empile les campagnes — l'effectif
+          de 2014 est publié par l'EACR 2014 puis corrigé par l'EACR 2015 —, et
+          c'est le millésime le plus récent qui est retenu ; les désaccords sont
+          nuls pour la moitié des couples et de 2,5 % au pire. Cette série ne
+          porte AUCUNE pension : elle pondère les cas types de la page « Coût ».
+      - id: drees_eir_distribution
+        titre: Distribution des pensions mensuelles (échantillon interrégimes de retraités)
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/4178_distribution-des-pensions-mensuelles/
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/drees_distribution_pensions.py
+        cible: data/reference/macro/distribution_pensions.csv
+        note: >-
+          L'EIR apparie tous les quatre ans les fichiers de toutes les caisses
+          sur un même échantillon d'individus : c'est la seule source française
+          qui publie la RÉPARTITION des pensions individuelles, par tranches de
+          cent euros, et non la seule moyenne d'un régime. Le classeur porte
+          huit tableaux ; on lit le premier — pension mensuelle BRUTE de DROIT
+          DIRECT —, le seul qui soit dans la même grandeur que la pension du
+          modèle. Une réserve sans remède dans cette source : il comprend la
+          majoration pour trois enfants, que les scénarios notionnels ne servent
+          pas. Elle sert à chiffrer la garantie vieillesse du scénario 6, qui est
+          une allocation différentielle : son coût est celui de la queue basse de
+          cette distribution, et ne se lit sur aucun cas type.
       - id: drees_open_data
         titre: Portail open data DREES
         url: https://data.drees.solidarites-sante.gouv.fr/

@@ -23,6 +23,7 @@ from .calendrier import formater_age
 from .carriere import Affiliations, Carriere, Metier, salaire_moyen_annuel
 from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
+from .donnees.effectifs import EffectifsRetraites
 from .donnees.macro import DonneesMacro
 from .donnees.mortalite import DonneesMortalite
 from .donnees.regimes import CatalogueRegimes
@@ -496,6 +497,15 @@ class Simulateur:
     @cached_property
     def catalogue(self) -> CatalogueRegimes:
         return CatalogueRegimes(self.parametres.racine_donnees)
+
+    @cached_property
+    def effectifs(self) -> EffectifsRetraites:
+        """Effectifs de retraités par caisse — la pondération des cas types.
+
+        Aucune pension n'en dépend : ils ne servent qu'aux AGRÉGATS, où ils
+        disent ce que chaque configuration de carrière pèse réellement.
+        """
+        return EffectifsRetraites(self.parametres.racine_donnees)
 
     @cached_property
     def affiliations(self) -> Affiliations:

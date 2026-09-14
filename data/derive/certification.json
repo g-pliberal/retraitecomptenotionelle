@@ -91,6 +91,16 @@
    "source": "DREES, Comptes de la protection sociale, risque vieillesse-survie par organisme",
    "valeurs": 455
   },
+  "distribution_pensions": {
+   "ajoutees": 138,
+   "colonne": "part_pct",
+   "corrigees": 0,
+   "empreinte": "f449061ccd0888d1",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR)",
+   "valeurs": 138
+  },
   "duree_assurance_requise": {
    "ajoutees": 0,
    "colonne": "trimestres",
@@ -150,6 +160,16 @@
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, trimtp.yaml de la pension civile, colonne de 2003",
    "valeurs": 5
+  },
+  "effectifs_retraites": {
+   "ajoutees": 0,
+   "colonne": "effectifs",
+   "corrigees": 0,
+   "empreinte": "16f187a2309d5b1b",
+   "identiques": 334,
+   "niveau": "certifiee",
+   "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+   "valeurs": 334
   },
   "employeur_public_cnracl": {
    "ajoutees": 0,

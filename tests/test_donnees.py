@@ -342,6 +342,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/contribution_employeur_public.csv",
         "employeur_public_sncf_textes":
             "legislation/contribution_employeur_public.csv",
+        "effectifs_retraites": "regimes/effectifs_retraites.csv",
+        "distribution_pensions": "macro/distribution_pensions.csv",
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_avant_1967": "regimes/taux_cotisation_annuels.csv",
         "salaires_forfaitaires_marins": "regimes/salaires_forfaitaires.csv",
@@ -1825,3 +1827,64 @@ def test_les_entreprises_nouvelles_ont_leur_bareme_et_leurs_statuts(catalogue):
         "regime_general", "arrco"]
     assert list(affiliations.regimes("salarie_prive_non_cadre_entreprise_recente", 2000)) == [
         "regime_general", "arrco", "arrco_tranche_2_entreprises_nouvelles"]
+
+
+def test_les_effectifs_de_retraites_ne_depassent_pas_le_tous_regimes_par_caisse():
+    """Contrôle de cohérence interne de l'EACR, et de son piège.
+
+    La ligne « tous régimes » compte des PERSONNES ; les autres comptent des
+    droits, et un polypensionné en a plusieurs. Deux conséquences se
+    vérifient : aucune caisse prise seule ne peut dépasser le total des
+    personnes, et leur somme doit au contraire le dépasser — si elle ne le
+    dépassait pas, c'est que la série aurait été mal lue.
+    """
+    from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
+
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    caisses = [c for c in effectifs.caisses() if c != EffectifsRetraites.TOUS_REGIMES]
+    assert len(caisses) >= 25
+    for annee in (2004, 2014, 2024):
+        personnes = effectifs.effectif(EffectifsRetraites.TOUS_REGIMES, annee)
+        droits = sum(effectifs.effectif(caisse, annee) for caisse in caisses)
+        assert personnes > 10e6
+        assert droits > personnes
+        for caisse in caisses:
+            assert effectifs.effectif(caisse, annee) < personnes, f"{caisse}/{annee}"
+
+
+def test_les_effectifs_de_retraites_sont_estimes_hors_de_la_fenetre_publiee():
+    """La reconduction du bord ne doit jamais se donner pour une observation.
+
+    La DREES publie 2004-2024 ; le modèle a besoin de 1959 à 2070. Les années
+    empruntées portent le niveau ``estimee``, et c'est lui qui, remontant par le
+    maillon le plus faible, qualifie les agrégats de la page « Coût ».
+    """
+    from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
+
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    assert effectifs.fiabilite("cnav", 2024) == Fiabilite.CERTIFIEE
+    assert effectifs.fiabilite("cnav", 1960) == Fiabilite.ESTIMEE
+    assert effectifs.fiabilite("cnav", 2070) == Fiabilite.ESTIMEE
+    assert effectifs.effectif("cnav", 1960) == effectifs.effectif(
+        "cnav", effectifs.serie("cnav").premiere_annee)
+
+
+def test_la_distribution_des_pensions_est_une_partition():
+    """Des tranches contiguës de cent euros, et une seule tranche ouverte.
+
+    Un trou ou un recouvrement dans les bornes ferait compter deux fois — ou
+    zéro fois — une part de la population, et le coût d'un plancher
+    différentiel s'en trouverait faux sans que rien ne le signale.
+    """
+    from retraite_notionnelle.donnees.distribution import DistributionPensions
+
+    for sexe in ("ensemble", "H", "F"):
+        distribution = DistributionPensions(RACINE_DONNEES, sexe=sexe)
+        assert distribution.somme_des_parts == pytest.approx(1.0, abs=1e-3)
+        assert distribution.fiabilite == Fiabilite.CERTIFIEE
+        tranches = distribution.tranches
+        assert tranches[0].borne_inferieure == 0.0
+        assert tranches[-1].ouverte
+        for precedente, suivante in zip(tranches, tranches[1:]):
+            assert precedente.borne_superieure == suivante.borne_inferieure
+            assert suivante.borne_inferieure - precedente.borne_inferieure == 100.0

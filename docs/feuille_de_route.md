@@ -31,7 +31,7 @@ actions 5 et 7 touchent les deux moteurs.
 
 ## Premier rang — ce qui déplace les résultats de tête
 
-### 1. Pondérer les cas types par les effectifs réels, et donner une distribution au scénario 6 — `à faire`
+### 1. Pondérer les cas types par les effectifs réels, et donner une distribution au scénario 6 — `fait`
 
 **Pourquoi.** Tous les agrégats de la page Coût — le « quinze mille milliards »
 du README, le rapport de −77 % du scénario 2, la trajectoire à 2070 — reposent
@@ -61,6 +61,36 @@ plutôt qu'aux cas types, et afficher les deux chiffres.
 
 **Fin.** Le README et `limites.md` donnent l'ancien et le nouveau rapport, et
 la page Coût dit lequel elle affiche.
+
+**Ce que ça a déplacé.** Deux sources nouvelles, toutes deux certifiées et
+récupérées automatiquement chez leur producteur : l'enquête annuelle auprès des
+caisses de retraite (`data/reference/regimes/effectifs_retraites.csv`, 28 caisses
+de 2004 à 2024) et la distribution des pensions de l'échantillon interrégimes
+(`data/reference/macro/distribution_pensions.csv`, 46 tranches de cent euros,
+fin 2020).
+
+- *La pondération.* Chaque cas type porte l'effectif des retraités de sa caisse,
+  lu année par année ; la Cnav se partage entre les quatre carrières du privé.
+  L'agent de conduite pèse 0,7 % et non 8,3 %, le privé 64 % et non 33 %. Le
+  cumul 1959-2024 du scénario 2 passe de −75,9 % à **−79,5 %**, celui du
+  scénario 4 de −55,9 % à **−51,9 %**, celui du 6 de −55,2 % à **−51,7 %**.
+  L'ancienne convention reste calculable (`ponderation="egale"`) et un test
+  vérifie qu'elle reproduit exactement l'ancien résultat.
+- *Le sens du biais annoncé était faux à moitié.* `limites.md` disait le rapport
+  « plutôt un plancher » ; c'est vrai des scénarios qui portent la part
+  patronale, et faux du scénario 2, pour lequel c'était un plafond.
+- *La garantie vieillesse.* Les 93 milliards sur soixante-six ans qu'en tiraient
+  les cas types — 33 avec la pondération nouvelle — étaient un chiffre faux : un
+  seul des douze liquide à 65 ans ou après. Le barème appliqué à la distribution
+  réelle coûte **18,4 milliards par an** aux pensions d'aujourd'hui (22,8 % des
+  retraités), 32,2 au plancher majoré, et 33 à 59 aux pensions du scénario 6. La
+  page Coût porte les quatre chiffres et dit ce que chacun suppose.
+- *Ce que ça a cassé, et qui n'est pas une régression.* La trajectoire projetée
+  du système actuel passe de 16,5 % à **18,4 % du PIB en 2070**, contre 14,2 %
+  au COR : l'écart avec le seul contrôle externe de la page double. La
+  pondération a retiré une compensation accidentelle — voir l'action 8, ouverte
+  pour cette raison. La borne du test de vraisemblance a été portée de 18 à
+  20 %, et son texte dit que c'est un aveu.
 
 ### 2. La part patronale du public, lue dans les comptes des régimes — `à faire`
 
@@ -188,6 +218,40 @@ analysé dans `moteur/js/pages.js` et dans `web/pages.py` à l'identique, porté
 dans l'adresse comme le reste des paramètres, avec des témoins. L'import
 automatique reste impossible (`limites.md` §5, « Les carrières réelles »).
 
+### 8. Faire liquider chaque cas type à l'âge de SA génération — `à faire`
+
+**Pourquoi.** Découvert en menant l'action 1, et c'est désormais le premier
+défaut de la page Coût. Un cas type liquide à l'âge écrit dans `castypes.py` —
+64 ans pour les carrières ordinaires — quelle que soit sa génération. Une
+génération née en 1940 est donc réputée partir en 2004 à 64 ans, alors qu'elle
+est partie à 60 ou 65 ans sous d'autres règles ; le stock de retraités du modèle
+est trop vieux au départ de la projection, et il croît donc trop vite — la
+population des 64 ans et plus gagne 41 % d'ici 2070 quand celle des 52 ans et
+plus n'en gagne que 25 %. C'est la principale cause des quatre points d'écart
+avec le COR en 2070 (18,4 % du PIB contre 14,2 %), et l'ancienne pondération
+égalitaire le masquait en donnant un sixième du poids à des carrières qui
+liquident à 52 et 57 ans.
+
+**Sources à lire.** Rien à récupérer : le dépôt porte déjà, et certifiés, l'âge
+d'ouverture des droits par génération (`legislation/age_ouverture_requis.csv`)
+et l'âge d'annulation de la décote. Pour le comportement plutôt que le droit :
+DREES, âge conjoncturel moyen de départ à la retraite — la feuille
+`A-Age_conjoncturel` du classeur EACR déjà téléchargé par
+`scripts/fetch/drees_eacr.py` le porte de 2004 à 2024.
+
+**Fichiers.** `src/retraite_notionnelle/castypes.py` (`CasType.age_liquidation`
+devient une règle et non un nombre), `moteur/js/castypes.js`, les témoins,
+`docs/limites.md` §5 ter.
+
+**Marche.** Donner au cas type un âge de liquidation RELATIF — « à l'âge
+d'ouverture de sa génération », « dix ans avant » pour la catégorie active —
+plutôt qu'absolu, en gardant l'âge absolu comme variante pour mesurer l'écart.
+Puis regarder si la trajectoire 2070 revient vers le COR : c'est le contrôle
+qui dira si le diagnostic était bon.
+
+**Fin.** L'écart avec le COR en 2070 est mesuré avant et après, `limites.md`
+§5 ter le dit, et la borne du test de vraisemblance redescend si elle le peut.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -211,3 +275,9 @@ automatique reste impossible (`limites.md` §5, « Les carrières réelles »).
 - **Septembre 2026.** Fichier créé à l'issue d'une relecture du dépôt après
   les tranches B1 à B5d de la campagne sur les régimes. Aucune action
   commencée.
+- **Septembre 2026, action 1.** Faite. Deux sources certifiées de plus (EACR,
+  EIR), les cas types pondérés par les effectifs de leur caisse, la garantie
+  vieillesse chiffrée sur la distribution des pensions. Le détail de ce qu'elle
+  a déplacé est sous l'action. Elle a ouvert l'action 8, qui est le défaut
+  qu'elle a rendu visible : l'âge de liquidation des cas types ne suit pas leur
+  génération. L'action 2 reste la plus haute qui ne soit pas commencée.

@@ -535,6 +535,101 @@ def source_depenses_retraite_regimes() -> dict[tuple, float]:
     return dict(sorted(par_systeme.items()))
 
 
+def _eacr() -> dict:
+    return _lire_json("drees_eacr.json", "scripts/fetch/drees_eacr.py")
+
+
+#: Caisses de l'EACR, du code que la DREES leur donne au nom que ce dépôt leur
+#: donne. Deux raisons de ne pas garder le code brut : il ne dit rien à la
+#: lecture, et la DREES RENUMÉROTE — la Cnav porte 0010 jusqu'en 2019 puis 0015,
+#: sur un champ légèrement plus large (13,80 contre 13,96 million en 2019, seule
+#: année où les deux coexistent). Les deux codes font une seule série, et là où
+#: ils se recouvrent c'est le PLUS RÉCENT qui l'emporte : la DREES a cessé de
+#: publier l'ancien, et le nouveau est celui qu'elle prolonge.
+CAISSES_EACR: tuple[tuple[str, str], ...] = (
+    ("0000", "tous_regimes"),
+    ("0010", "cnav"),
+    ("0015", "cnav"),
+    ("0012", "fonction_publique_etat_civile"),
+    ("0013", "fonction_publique_etat_militaire"),
+    ("0021", "msa_salaries"),
+    ("0022", "msa_exploitants"),
+    ("0023", "msa_exploitants_complementaire"),
+    ("0032", "cnracl"),
+    ("0033", "fspoeie"),
+    ("0043", "rci_complementaire"),
+    ("0060", "sncf"),
+    ("0061", "sncf_coordination"),
+    ("0070", "enim"),
+    ("0080", "canssm"),
+    ("0090", "cavimac"),
+    ("0100", "cnieg"),
+    ("0300", "ratp"),
+    ("0301", "ratp_coordination"),
+    ("0500", "crpcen"),
+    ("0600", "banque_de_france"),
+    ("1000", "ircantec"),
+    ("2100", "cnavpl"),
+    ("2200", "cnavpl_complementaire"),
+    ("2201", "cnbf"),
+    ("2202", "cnbf_complementaire"),
+    ("3000", "erafp"),
+    ("5600", "agirc_arrco"),
+)
+
+
+def source_effectifs_retraites() -> dict[tuple, float]:
+    """Effectifs de retraités de droit direct, caisse par caisse et année par année.
+
+    Le dénombrement exhaustif de l'enquête annuelle auprès des caisses de
+    retraite. Il sert à PONDÉRER les cas types de la page « Coût » : sans lui,
+    l'agent de conduite pèse ce que pèse le salarié au salaire moyen.
+
+    Une caisse absente de ``CAISSES_EACR`` ferait échouer le contrôle plutôt que
+    de disparaître en silence : la DREES ajoute des caisses d'une campagne à
+    l'autre — la Cavimac est apparue en 2023 —, et une série qu'on ne nomme pas
+    est une série qu'on ne voit pas.
+    """
+    effectifs = _eacr()["effectifs"]
+    inconnues = set(effectifs) - {code for code, _ in CAISSES_EACR}
+    if inconnues:
+        raise SourceAbsente(
+            "caisses EACR absentes de CAISSES_EACR : " + ", ".join(sorted(inconnues))
+        )
+    par_caisse: dict[tuple, tuple[str, float]] = {}
+    for code, nom in CAISSES_EACR:
+        for annee, valeur in effectifs.get(code, {}).items():
+            cle = (annee, nom)
+            if code >= par_caisse.get(cle, ("", 0.0))[0]:
+                par_caisse[cle] = (code, valeur)
+    return {cle: valeur for cle, (_, valeur) in par_caisse.items()}
+
+
+def source_distribution_pensions() -> dict[tuple, float]:
+    """Part des retraités par tranche de cent euros de pension brute mensuelle.
+
+    L'échantillon interrégimes de retraités, seule source française qui dise
+    non pas la moyenne d'un régime mais la RÉPARTITION des pensions
+    individuelles. Elle sert à chiffrer la garantie vieillesse du scénario 6,
+    qui est une allocation différentielle : son coût est celui de la queue
+    basse de cette distribution, et ne se lit sur aucun cas type.
+    """
+    charge = _lire_json(
+        "drees_distribution_pensions.json",
+        "scripts/fetch/drees_distribution_pensions.py",
+    )
+    # Le millésime de l'EIR est une CLÉ et non une note d'en-tête : les pensions
+    # d'une distribution sont dans les euros de son année, et l'enquête paraît
+    # tous les quatre ans. Une campagne nouvelle ajoutera ses lignes sans
+    # effacer celles de la précédente.
+    annee = str(charge["millesime"])
+    return {
+        (annee, borne, sexe): part
+        for sexe, serie in charge["parts"].items()
+        for borne, part in serie.items()
+    }
+
+
 def source_esperances() -> dict[tuple, float]:
     """Espérances de vie : e0 et e60 par l'INSEE, e65 par l'OCDE.
 
@@ -1680,6 +1775,11 @@ def source_employeur_sncf() -> dict[tuple, float]:
 # ---------------------------------------------------------------------------
 
 
+#: Colonnes-clés qui se trient en NOMBRE et non en texte. Sans elles, la borne
+#: « 1000 » d'une tranche de pension tomberait entre « 100 » et « 200 ».
+CLES_NUMERIQUES = frozenset({"annee", "generation", "borne_mensuelle"})
+
+
 @dataclass(frozen=True)
 class Certification:
     """Confrontation d'une série de référence à sa source."""
@@ -1778,8 +1878,7 @@ class Certification:
 
         if appliquer:
             lignes.sort(key=lambda l: tuple(
-                (int(l[c]) if c == "annee"
-                 else float(l[c]) if c == "generation" else l[c])
+                float(l[c]) if c in CLES_NUMERIQUES else l[c]
                 for c in self.cles
             ))
             _ecrire(self.chemin, commentaires, champs, lignes)
@@ -2133,6 +2232,102 @@ CERTIFICATIONS = (
             "#",
             "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="effectifs_retraites",
+        chemin=REFERENCE / "regimes" / "effectifs_retraites.csv",
+        cles=("annee", "caisse"),
+        colonne="effectifs",
+        source=source_effectifs_retraites,
+        origine="DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+        decimales=0,
+        tolerance=0.51,
+        unite=" retraités",
+        entete=(
+            "# Retraités de droit direct, par caisse, France",
+            "# source_id: drees_eacr",
+            "# unite: personnes",
+            "# fiabilite:",
+            "#   certifiee (2004-2024) : effectifs de l'enquête annuelle auprès des",
+            "#             caisses de retraite, feuille A-Cadrage du classeur diffusé",
+            "#             par la DREES, recontrôlés par scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À PONDÉRER les cas types de la page « Coût ». Ils ont d'abord pesé",
+            "# d'un poids égal, faute de source : l'agent de conduite comptait",
+            "# autant que le salarié au salaire moyen, alors qu'il y a cent fois",
+            "# moins de retraités à la SNCF qu'à la Cnav. Ces effectifs disent le",
+            "# rapport, et la page le porte désormais.",
+            "#",
+            "# LA CAISSE EST DÉSIGNÉE PAR SON CODE",
+            "# ------------------------------------",
+            "# La DREES rebaptise ses caisses sans changer leur code — « SSI",
+            "# complémentaire » est devenue « RCI complémentaire » —, et elle en",
+            "# renumérote : la Cnav porte le code 0010 jusqu'en 2019 puis 0015,",
+            "# sur un champ légèrement plus large. Le code est donc conservé tel",
+            "# quel, la colonne `caisse` porte le libellé de la dernière campagne,",
+            "# et le raccord des deux codes d'une même caisse est une décision du",
+            "# modèle, écrite dans donnees/effectifs.py.",
+            "#",
+            "# CE QU'UN EFFECTIF DE CAISSE N'EST PAS",
+            "# --------------------------------------",
+            "# Ce n'est pas un effectif de personnes : un polypensionné compte dans",
+            "# chacune de ses caisses, et la somme des caisses dépasse d'un tiers le",
+            "# « Tous régimes » (code 0000) qui, lui, compte les personnes. C'est la",
+            "# raison pour laquelle les poids des cas types sont RELATIFS et que",
+            "# docs/limites.md §5 bis dit le sens du biais qui reste.",
+            "#",
+            "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="distribution_pensions",
+        chemin=REFERENCE / "macro" / "distribution_pensions.csv",
+        cles=("annee", "borne_mensuelle", "sexe"),
+        colonne="part_pct",
+        source=source_distribution_pensions,
+        origine="DREES, échantillon interrégimes de retraités (EIR)",
+        decimales=2,
+        tolerance=0.005,
+        unite=" %",
+        entete=(
+            "# Distribution de la pension mensuelle brute de droit direct",
+            "# source_id: drees_eir_distribution",
+            "# unite: pour cent des retraités de droit direct, par tranche de 100 €",
+            "# fiabilite:",
+            "#   certifiee : tableau 1 du classeur « Distribution des pensions",
+            "#             mensuelles » de l'EIR, diffusé par la DREES et recontrôlé",
+            "#             par scripts/verifier_donnees.py.",
+            "#",
+            "# `annee` est le millésime de l'enquête, qui paraît tous les quatre ans :",
+            "# les montants sont dans les euros de cette année-là, et le modèle les y",
+            "# ramène avant de leur appliquer un barème.",
+            "#",
+            "# `borne_mensuelle` est la borne INFÉRIEURE de la tranche, en euros par",
+            "# mois : 700 est la tranche de 700 à 800 euros. La dernière — 4500 — est",
+            "# ouverte : le classeur ne découpe pas au-delà.",
+            "#",
+            "# POURQUOI LA PENSION BRUTE DE DROIT DIRECT, ET PAS UNE AUTRE",
+            "# ------------------------------------------------------------",
+            "# Le classeur porte huit tableaux ; celui-ci est le seul qui soit dans",
+            "# la même grandeur que la pension du modèle. BRUTE, parce que le modèle",
+            "# ne calcule aucun prélèvement social. DE DROIT DIRECT, parce que la",
+            "# réversion est hors du modèle par construction — il décrit une",
+            "# carrière, pas un ménage. Une réserve reste, sans remède dans cette",
+            "# source : le tableau comprend la majoration pour trois enfants, que les",
+            "# scénarios notionnels ne servent pas.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À chiffrer la garantie vieillesse du scénario 6, qui est une allocation",
+            "# différentielle : son coût est celui de la queue basse de cette",
+            "# distribution, et ne se lit sur aucun cas type.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
         ),
     ),
     Certification(

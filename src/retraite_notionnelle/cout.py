@@ -36,13 +36,25 @@ le baby-boom dément cette hypothèse d'un tiers, et elle interdisait toute
 projection. Chaque génération de la grille en représente cinq : son poids est
 l'effectif des cinq classes d'âge correspondantes.
 
+CE QUE CHAQUE CAS TYPE PÈSE
+---------------------------
+Les douze cas types ont longtemps pesé d'un poids ÉGAL, faute de source. Ils ne
+décrivent pas la population française — il y a près de cent fois moins de
+retraités à la SNCF qu'à la Cnav —, et le biais avait un sens connu : les
+départs très précoces, que le notionnel pénalise le plus, étaient
+surreprésentés, si bien que l'écart affiché était un plancher. Chaque cas type
+porte désormais l'effectif des retraités de sa caisse, publié par la DREES et
+lu année par année (``castypes.poids_effectifs``). L'ancienne convention reste
+disponible — ``ponderation="egale"`` — pour dire de combien elle déplaçait les
+résultats, ce qu'aucun argument ne remplace.
+
 CE QUE CE MODULE NE FAIT TOUJOURS PAS
 -------------------------------------
-1. **Les douze cas types pèsent d'un poids égal.** Ils ne décrivent pas la
-   population active française — il y a moins d'agents de conduite que de
-   salariés au salaire moyen. C'est la convention de la grille des cas types,
-   reconduite plutôt que remplacée par une pondération qu'aucune source ne
-   fixerait.
+1. **Un effectif de caisse n'est pas un effectif de personnes.** Un
+   polypensionné compte dans chacune de ses caisses ; la pondération
+   surreprésente donc les régimes dont les affiliés ont typiquement aussi une
+   carrière au régime général. Le biais est l'inverse de celui de l'ancienne
+   convention, et beaucoup plus petit.
 2. **Le taux d'emploi et le taux de couverture sont supposés constants.** Le
    modèle compte des générations, non des cotisants : il suppose que la même
    proportion de chaque génération perçoit une pension, et que la carrière type
@@ -58,8 +70,15 @@ CE QUE CE MODULE NE FAIT TOUJOURS PAS
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Callable
 
-from .castypes import CAS_TYPES, CasType, calculer_cas_types
+from .castypes import (
+    CAS_TYPES,
+    CasType,
+    calculer_cas_types,
+    poids_effectifs,
+    poids_egaux,
+)
 from .donnees.chargement import Fiabilite
 from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
@@ -118,10 +137,18 @@ def generations() -> tuple[int, ...]:
     return tuple(range(PREMIERE_GENERATION, DERNIERE_GENERATION + 1, PAS_GENERATIONS))
 
 
+#: Les deux pondérations possibles des cas types. ``effectifs`` est celle des
+#: résultats affichés ; ``egale`` est l'ancienne convention, gardée pour mesurer
+#: ce qu'elle valait.
+PONDERATIONS: tuple[str, ...] = ("effectifs", "egale")
+
+
 @dataclass(frozen=True)
 class Pensionne:
     """Un couple (cas type, génération), et la pension qu'il perçoit."""
 
+    #: Code du cas type : c'est par lui que le couple reçoit son poids.
+    code: str
     generation: int
     #: Année de liquidation : avant elle, aucune pension n'est servie.
     annee_liquidation: int
@@ -251,6 +278,11 @@ class Cout:
     generations: tuple[int, ...] = ()
     #: Cas types que le modèle a refusé de calculer, par motif.
     echecs: dict[str, int] = field(default_factory=dict)
+    #: Pondération appliquée aux cas types : ``effectifs`` ou ``egale``.
+    ponderation: str = "effectifs"
+    #: Poids de chaque cas type la DERNIÈRE année observée — ce que la page
+    #: affiche pour dire sur quoi ses agrégats reposent.
+    poids: dict[str, float] = field(default_factory=dict)
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
 
     @property
@@ -305,6 +337,7 @@ def _pensionnes(simulateur: Simulateur,
     grille = calculer_cas_types(simulateur, cas_types, generations())
     pensionnes = [
         Pensionne(
+            code=code,
             generation=generation,
             annee_liquidation=comparaison.carriere.annee_liquidation,
             pensions={
@@ -319,7 +352,7 @@ def _pensionnes(simulateur: Simulateur,
                 ),
             },
         )
-        for (_, generation), comparaison in grille.resultats.items()
+        for (code, generation), comparaison in grille.resultats.items()
     ]
     motifs: dict[str, int] = {}
     for motif in grille.echecs.values():
@@ -331,24 +364,29 @@ def _pensionnes(simulateur: Simulateur,
 _DEMI_TRANCHE = PAS_GENERATIONS // 2
 
 
-def _masses(pensionnes: list[Pensionne], population: Population,
-            annee: int) -> tuple[dict[str, float], int]:
+def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
+            poids_cas: dict[str, float]) -> tuple[dict[str, float], int]:
     """Masse de pensions par système, une année donnée, et le nombre de couples.
 
-    Chaque génération de la grille en représente cinq, et les cinq sont
-    parcourues une à une : leur poids est l'effectif RÉEL de leur classe d'âge,
-    publié par l'INSEE, et chacune liquide sa propre année — celle de la
-    génération de la grille, décalée d'autant.
+    DEUX pondérations se composent ici, et elles ne disent pas la même chose.
+    Celle de la GÉNÉRATION est démographique : chaque génération de la grille en
+    représente cinq, parcourues une à une, dont le poids est l'effectif réel de
+    la classe d'âge publié par l'INSEE, et chacune liquide sa propre année —
+    celle de la génération de la grille, décalée d'autant. Ce décalage n'est pas
+    un raffinement gratuit : faire basculer les cinq cohortes le même jour ferait
+    entrer cinq classes d'âge d'un coup dans la masse, et la trajectoire avancerait
+    par marches de cinq ans au lieu de monter.
 
-    Ce décalage n'est pas un raffinement gratuit. Faire basculer les cinq
-    cohortes le même jour ferait entrer cinq classes d'âge d'un coup dans la
-    masse, et la trajectoire projetée avancerait par marches de cinq ans au lieu
-    de monter. Le pas de la grille commande le temps de calcul ; il ne doit pas
-    commander la forme du résultat.
+    Celle du CAS TYPE est sociologique : elle dit combien de retraités ont eu
+    cette carrière-là, et vient des effectifs de caisse de la DREES. Sans elle,
+    l'agent de conduite pèserait ce que pèse le salarié au salaire moyen.
     """
     masses = {cle: 0.0 for cle in CLES_MASSES}
     vivants = 0
     for pensionne in pensionnes:
+        part = poids_cas.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
         poids = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             if annee < pensionne.annee_liquidation + decalage:
@@ -360,8 +398,33 @@ def _masses(pensionnes: list[Pensionne], population: Population,
             continue
         vivants += 1
         for cle in CLES_MASSES:
-            masses[cle] += poids * pensionne.pensions[cle]
+            masses[cle] += part * poids * pensionne.pensions[cle]
     return masses, vivants
+
+
+def _ponderation(simulateur: Simulateur, mode: str,
+                 cas_types: tuple[CasType, ...]) -> Callable[[int], dict[str, float]]:
+    """Fonction qui rend le poids de chaque cas type une année donnée.
+
+    Les poids d'effectifs varient d'une année à l'autre — la France de 1960
+    comptait plus d'exploitants agricoles que de fonctionnaires —, et la fenêtre
+    publiée par la DREES est 2004-2024 : hors d'elle, la répartition du bord est
+    reconduite, et la série le dit en tombant au niveau ``estimee``.
+    """
+    if mode not in PONDERATIONS:
+        raise ValueError(f"pondération inconnue : {mode!r} (attendu : {PONDERATIONS})")
+    if mode == "egale":
+        fixes = poids_egaux(cas_types)
+        return lambda annee: fixes
+    effectifs = simulateur.effectifs
+    memoire: dict[int, dict[str, float]] = {}
+
+    def poids(annee: int) -> dict[str, float]:
+        if annee not in memoire:
+            memoire[annee] = poids_effectifs(effectifs, annee, cas_types)
+        return memoire[annee]
+
+    return poids
 
 
 def _rapports(masses: dict[str, float]) -> dict[str, float]:
@@ -369,7 +432,8 @@ def _rapports(masses: dict[str, float]) -> dict[str, float]:
 
 
 def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
-            population: Population, simulateur: Simulateur) -> Avenir:
+            population: Population, simulateur: Simulateur,
+            poids: Callable[[int], dict[str, float]]) -> Avenir:
     """La trajectoire de la répartition, de la première année ventilée à l'horizon.
 
     Deux régimes, une seule formule. Jusqu'à la dernière année publiée, la base
@@ -381,7 +445,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     annee_euros = simulateur.parametres.annee_euros_constants
     derniere_publiee = depenses.derniere_annee
 
-    masses_ancrage, _ = _masses(pensionnes, population, derniere_publiee)
+    masses_ancrage, _ = _masses(pensionnes, population, derniere_publiee,
+                                poids(derniere_publiee))
     if masses_ancrage["actuel"] <= 0.0:
         return Avenir()
     # L'ancrage est le prix, en euros constants de référence, d'une unité de la
@@ -410,7 +475,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
 
     lignes: list[AvenirAnnuel] = []
     for annee in range(depenses.premiere_annee_ventilee, HORIZON + 1):
-        masses, _ = _masses(pensionnes, population, annee)
+        masses, _ = _masses(pensionnes, population, annee, poids(annee))
         if masses["actuel"] <= 0.0:
             continue
         projete = annee > derniere_publiee
@@ -446,20 +511,26 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
 
 def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   population: Population,
-                  cas_types: tuple[CasType, ...] = CAS_TYPES) -> Cout:
+                  cas_types: tuple[CasType, ...] = CAS_TYPES,
+                  ponderation: str = "effectifs") -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
     Les années où le modèle ne sert AUCUNE pension — celles d'avant la première
     liquidation possible — sont écartées : un rapport y serait une division par
     zéro, et non un résultat.
+
+    ``ponderation`` choisit ce que chaque cas type pèse : ``effectifs``, les
+    retraités de sa caisse publiés par la DREES, ou ``egale``, l'ancienne
+    convention. Le second n'existe que pour mesurer ce que le premier a déplacé.
     """
     pensionnes, echecs = _pensionnes(simulateur, cas_types)
+    poids = _ponderation(simulateur, ponderation, cas_types)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
 
     lignes: list[CoutAnnuel] = []
     for annee in depenses.annees():
-        masses, vivants = _masses(pensionnes, population, annee)
+        masses, vivants = _masses(pensionnes, population, annee, poids(annee))
         if masses["actuel"] <= 0.0:
             continue
         lignes.append(CoutAnnuel(
@@ -477,10 +548,12 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     )
     return Cout(
         annees=lignes,
-        avenir=_avenir(pensionnes, depenses, population, simulateur),
+        avenir=_avenir(pensionnes, depenses, population, simulateur, poids),
         annee_euros=annee_euros,
         generations=generations(),
         echecs=echecs,
+        ponderation=ponderation,
+        poids=poids(depenses.derniere_annee),
         # Le contrefactuel ne peut jamais valoir mieux qu'« estimé » : la
         # dépense observée est certifiée, le rapport qui la corrige ne l'est
         # pas et ne peut pas l'être — aucune institution ne publie ce qu'un

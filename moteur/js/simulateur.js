@@ -17,6 +17,7 @@ import { Indexation } from "./indexation.js";
 import { ScenarioActuel } from "./scenario-actuel.js";
 import { ScenarioNotionnel } from "./scenario-notionnel.js";
 import { Affiliations, CatalogueRegimes } from "./regimes.js";
+import { EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
 import {
   DonneeInsuffisante, Fiabilite, fiabiliteDepuisTexte, nomFiabilite,
@@ -314,6 +315,9 @@ export class Simulateur {
     this.mortalite = new DonneesMortalite(paquet);
     this.catalogue = new CatalogueRegimes(paquet);
     this.affiliations = new Affiliations(paquet);
+    // Aucune pension n'en dépend : les effectifs de retraités par caisse ne
+    // servent qu'aux AGRÉGATS, où ils disent ce que chaque cas type pèse.
+    this.effectifs = new EffectifsRetraites(paquet);
 
     this.indexation = new Indexation(this.macro, parametres);
     this.convertisseur = new Convertisseur(this.mortalite, parametres);

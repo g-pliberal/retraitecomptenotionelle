@@ -1,0 +1,173 @@
+# Distribution de la pension mensuelle brute de droit direct
+# source_id: drees_eir_distribution
+# unite: pour cent des retraités de droit direct, par tranche de 100 €
+# fiabilite:
+#   certifiee : tableau 1 du classeur « Distribution des pensions
+#             mensuelles » de l'EIR, diffusé par la DREES et recontrôlé
+#             par scripts/verifier_donnees.py.
+#
+# `annee` est le millésime de l'enquête, qui paraît tous les quatre ans :
+# les montants sont dans les euros de cette année-là, et le modèle les y
+# ramène avant de leur appliquer un barème.
+#
+# `borne_mensuelle` est la borne INFÉRIEURE de la tranche, en euros par
+# mois : 700 est la tranche de 700 à 800 euros. La dernière — 4500 — est
+# ouverte : le classeur ne découpe pas au-delà.
+#
+# POURQUOI LA PENSION BRUTE DE DROIT DIRECT, ET PAS UNE AUTRE
+# ------------------------------------------------------------
+# Le classeur porte huit tableaux ; celui-ci est le seul qui soit dans
+# la même grandeur que la pension du modèle. BRUTE, parce que le modèle
+# ne calcule aucun prélèvement social. DE DROIT DIRECT, parce que la
+# réversion est hors du modèle par construction — il décrit une
+# carrière, pas un ménage. Une réserve reste, sans remède dans cette
+# source : le tableau comprend la majoration pour trois enfants, que les
+# scénarios notionnels ne servent pas.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À chiffrer la garantie vieillesse du scénario 6, qui est une allocation
+# différentielle : son coût est celui de la queue basse de cette
+# distribution, et ne se lit sur aucun cas type.
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,borne_mensuelle,sexe,part_pct,fiabilite
+2020,0,F,2.32,certifiee
+2020,0,H,3.72,certifiee
+2020,0,ensemble,2.98,certifiee
+2020,100,F,5.17,certifiee
+2020,100,H,2.17,certifiee
+2020,100,ensemble,3.75,certifiee
+2020,200,F,5.83,certifiee
+2020,200,H,1.45,certifiee
+2020,200,ensemble,3.76,certifiee
+2020,300,F,5.34,certifiee
+2020,300,H,1.23,certifiee
+2020,300,ensemble,3.40,certifiee
+2020,400,F,4.77,certifiee
+2020,400,H,1.13,certifiee
+2020,400,ensemble,3.05,certifiee
+2020,500,F,4.78,certifiee
+2020,500,H,1.20,certifiee
+2020,500,ensemble,3.09,certifiee
+2020,600,F,5.25,certifiee
+2020,600,H,1.43,certifiee
+2020,600,ensemble,3.45,certifiee
+2020,700,F,6.53,certifiee
+2020,700,H,1.88,certifiee
+2020,700,ensemble,4.33,certifiee
+2020,800,F,6.69,certifiee
+2020,800,H,3.61,certifiee
+2020,800,ensemble,5.24,certifiee
+2020,900,F,5.67,certifiee
+2020,900,H,3.52,certifiee
+2020,900,ensemble,4.65,certifiee
+2020,1000,F,4.50,certifiee
+2020,1000,H,3.48,certifiee
+2020,1000,ensemble,4.02,certifiee
+2020,1100,F,4.63,certifiee
+2020,1100,H,3.98,certifiee
+2020,1100,ensemble,4.32,certifiee
+2020,1200,F,4.14,certifiee
+2020,1200,H,4.36,certifiee
+2020,1200,ensemble,4.25,certifiee
+2020,1300,F,3.91,certifiee
+2020,1300,H,5.03,certifiee
+2020,1300,ensemble,4.44,certifiee
+2020,1400,F,3.57,certifiee
+2020,1400,H,5.50,certifiee
+2020,1400,ensemble,4.48,certifiee
+2020,1500,F,3.12,certifiee
+2020,1500,H,5.31,certifiee
+2020,1500,ensemble,4.15,certifiee
+2020,1600,F,2.75,certifiee
+2020,1600,H,4.85,certifiee
+2020,1600,ensemble,3.74,certifiee
+2020,1700,F,2.48,certifiee
+2020,1700,H,4.40,certifiee
+2020,1700,ensemble,3.38,certifiee
+2020,1800,F,2.40,certifiee
+2020,1800,H,4.18,certifiee
+2020,1800,ensemble,3.24,certifiee
+2020,1900,F,2.33,certifiee
+2020,1900,H,3.98,certifiee
+2020,1900,ensemble,3.11,certifiee
+2020,2000,F,2.32,certifiee
+2020,2000,H,3.79,certifiee
+2020,2000,ensemble,3.02,certifiee
+2020,2100,F,1.89,certifiee
+2020,2100,H,3.25,certifiee
+2020,2100,ensemble,2.53,certifiee
+2020,2200,F,1.58,certifiee
+2020,2200,H,2.89,certifiee
+2020,2200,ensemble,2.20,certifiee
+2020,2300,F,1.36,certifiee
+2020,2300,H,2.56,certifiee
+2020,2300,ensemble,1.93,certifiee
+2020,2400,F,1.13,certifiee
+2020,2400,H,2.26,certifiee
+2020,2400,ensemble,1.66,certifiee
+2020,2500,F,0.91,certifiee
+2020,2500,H,2.00,certifiee
+2020,2500,ensemble,1.43,certifiee
+2020,2600,F,0.76,certifiee
+2020,2600,H,1.78,certifiee
+2020,2600,ensemble,1.24,certifiee
+2020,2700,F,0.69,certifiee
+2020,2700,H,1.54,certifiee
+2020,2700,ensemble,1.09,certifiee
+2020,2800,F,0.56,certifiee
+2020,2800,H,1.44,certifiee
+2020,2800,ensemble,0.97,certifiee
+2020,2900,F,0.44,certifiee
+2020,2900,H,1.22,certifiee
+2020,2900,ensemble,0.81,certifiee
+2020,3000,F,0.39,certifiee
+2020,3000,H,1.08,certifiee
+2020,3000,ensemble,0.72,certifiee
+2020,3100,F,0.26,certifiee
+2020,3100,H,0.95,certifiee
+2020,3100,ensemble,0.59,certifiee
+2020,3200,F,0.25,certifiee
+2020,3200,H,0.87,certifiee
+2020,3200,ensemble,0.54,certifiee
+2020,3300,F,0.17,certifiee
+2020,3300,H,0.72,certifiee
+2020,3300,ensemble,0.43,certifiee
+2020,3400,F,0.15,certifiee
+2020,3400,H,0.64,certifiee
+2020,3400,ensemble,0.38,certifiee
+2020,3500,F,0.13,certifiee
+2020,3500,H,0.56,certifiee
+2020,3500,ensemble,0.33,certifiee
+2020,3600,F,0.11,certifiee
+2020,3600,H,0.52,certifiee
+2020,3600,ensemble,0.31,certifiee
+2020,3700,F,0.10,certifiee
+2020,3700,H,0.50,certifiee
+2020,3700,ensemble,0.29,certifiee
+2020,3800,F,0.08,certifiee
+2020,3800,H,0.43,certifiee
+2020,3800,ensemble,0.25,certifiee
+2020,3900,F,0.08,certifiee
+2020,3900,H,0.39,certifiee
+2020,3900,ensemble,0.23,certifiee
+2020,4000,F,0.06,certifiee
+2020,4000,H,0.37,certifiee
+2020,4000,ensemble,0.21,certifiee
+2020,4100,F,0.06,certifiee
+2020,4100,H,0.31,certifiee
+2020,4100,ensemble,0.17,certifiee
+2020,4200,F,0.04,certifiee
+2020,4200,H,0.28,certifiee
+2020,4200,ensemble,0.15,certifiee
+2020,4300,F,0.04,certifiee
+2020,4300,H,0.27,certifiee
+2020,4300,ensemble,0.15,certifiee
+2020,4400,F,0.03,certifiee
+2020,4400,H,0.23,certifiee
+2020,4400,ensemble,0.13,certifiee
+2020,4500,F,0.24,certifiee
+2020,4500,H,2.74,certifiee
+2020,4500,ensemble,1.42,certifiee
