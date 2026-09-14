@@ -264,3 +264,6 @@ carmf_complementaire,2026,2100,0.0448,moyenne
 enseignants_prive_additionnel,2005,2035,0.085,estimee
 enseignants_prive_additionnel,2036,2045,0.065,estimee
 enseignants_prive_additionnel,2046,2100,0.045,estimee
+ircec_racd,1964,2100,0.0881,estimee
+ircec_racl,1962,2100,0.0600,estimee
+gerants_debits_tabac,1963,2100,0.4900,estimee

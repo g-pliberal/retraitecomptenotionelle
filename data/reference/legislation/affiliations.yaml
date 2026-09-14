@@ -86,6 +86,97 @@ affiliations:
       droits pour ses années antérieures — la fraction de 2 % de l'article
       7 — sans avoir cotisé : ils ne sont pas dans la fiche.
 
+  elu_local:
+    libelle: Élu local indemnisé (maire, adjoint, conseiller)
+    periodes:
+      - {debut: 1973, fin: 2012, regimes: [ircantec]}
+      - {debut: 2013, fin: null, regimes: [regime_general, ircantec]}
+    note: >-
+      L'indemnité de fonction ouvre des points Ircantec depuis la loi
+      n° 72-1201 du 23 décembre 1972 (art. 1, LEGIARTI000006338235 ;
+      L. 2123-28 du CGCT, LEGIARTI000006390053), sans régime de base ;
+      depuis 2013 elle est soumise aux cotisations du régime général
+      au-delà d'un seuil (L. 382-31), que le statut ne lit pas : le revenu
+      saisi est l'indemnité, cotisée en entier. La collectivité verse la
+      part patronale, le statut n'est donc pas sans employeur.
+
+  salarie_saint_pierre_et_miquelon:
+    libelle: Salarié de Saint-Pierre-et-Miquelon
+    periodes:
+      - {debut: 1987, fin: 2018, regimes: [cps_saint_pierre_et_miquelon, arrco, arrco_tranche_2]}
+      - {debut: 2019, fin: null, regimes: [cps_saint_pierre_et_miquelon, agirc_arrco]}
+    note: >-
+      Le régime de base de la loi n° 87-563 remplace en août 1987 celui de
+      l'ordonnance n° 77-1102, dont l'index ne porte pas le barème : rien
+      n'est routé avant. Les complémentaires de salariés y sont
+      applicables (art. 36, LEGIARTI000006757200) : l'Arrco du non-cadre.
+
+  salarie_mayotte:
+    libelle: Salarié de Mayotte
+    periodes:
+      - {debut: 1987, fin: null, regimes: [cssm_mayotte]}
+    note: >-
+      Le décret n° 87-175 crée le régime au 1er janvier 1987 ; rien avant.
+      Aucune complémentaire obligatoire : l'Agirc-Arrco n'est pas
+      applicable à Mayotte.
+
+  auteur_dramatique:
+    libelle: Auteur ou compositeur dramatique, auteur de l'audiovisuel (SACD)
+    periodes:
+      - {debut: 1964, fin: 1976, regimes: [ircec_racd]}
+      - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap, ircec_racd]}
+    note: >-
+      Comme l'artiste-auteur, avec le RACD en plus depuis le décret
+      n° 64-226 ; le régime général et le RAAP suivent la loi du 31
+      décembre 1975. Le diffuseur cotise à côté de l'auteur : le statut
+      n'est pas sans employeur.
+
+  auteur_lyrique:
+    libelle: Auteur ou compositeur de musique (SACEM)
+    periodes:
+      - {debut: 1962, fin: 1976, regimes: [ircec_racl]}
+      - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap, ircec_racl]}
+    note: >-
+      Comme l'artiste-auteur, avec le RACL en plus depuis le décret
+      n° 61-1304 ; le régime général et le RAAP suivent la loi du 31
+      décembre 1975.
+
+  gerant_debit_tabac:
+    libelle: Gérant de débit de tabac (buraliste)
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1962, regimes: [organic]}
+      - {debut: 1963, fin: 2003, regimes: [organic, gerants_debits_tabac]}
+      - {debut: 2004, fin: 2005, regimes: [organic, nric, gerants_debits_tabac]}
+      - {debut: 2006, fin: 2012, regimes: [rsi, nric, gerants_debits_tabac]}
+      - {debut: 2013, fin: 2017, regimes: [rsi, rci, gerants_debits_tabac]}
+      - {debut: 2018, fin: null, regimes: [regime_general, rci, gerants_debits_tabac]}
+    note: >-
+      Un commerçant, avec l'allocation viagère de 1963 par-dessus. Le
+      revenu saisi tient lieu de remises sur les tabacs pour la fiche
+      `gerants_debits_tabac`, ce qui les surestime pour un débit qui vend
+      aussi de la presse ou des jeux.
+
+  micro_entrepreneur:
+    libelle: Micro-entrepreneur (commerçant, artisan ou libéral non réglementé)
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 2003, regimes: [organic]}
+      - {debut: 2004, fin: 2005, regimes: [organic, nric]}
+      - {debut: 2006, fin: 2008, regimes: [rsi, nric]}
+      - {debut: 2009, fin: 2012, regimes: [rsi, nric]}
+      - {debut: 2013, fin: 2017, regimes: [rsi, rci]}
+      - {debut: 2018, fin: null, regimes: [regime_general, rci]}
+    note: >-
+      Le micro-social n'est pas un régime mais une manière de cotiser
+      (L. 133-6-8) : un pourcentage du chiffre d'affaires, dont une fraction
+      va au régime de base et à la complémentaire des commerçants, et des
+      droits calculés sur le chiffre d'affaires après abattement (71 %, 50 %
+      ou 34 %). Le revenu saisi doit donc être ce revenu reconstitué ; le
+      statut route les mêmes régimes que le commerçant, avant 2009 comme
+      lui. Les seuils de chiffre d'affaires qui valident les trimestres ne
+      sont pas portés.
+
   fonctionnaire_etat:
     libelle: Fonctionnaire titulaire de l'État (civil ou militaire)
     periodes:

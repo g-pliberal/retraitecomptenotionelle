@@ -333,3 +333,2410 @@ regimes:
           plafonnée 6,90 % salarié + 8,55 % employeur ; déplafonnée
           0,40 % + 2,02 %. Le taux porté ici agrège plafonnée et déplafonnée
           rapportées à l'assiette plafonnée pour un salaire au plafond.
+
+  - code: cps_saint_pierre_et_miquelon
+    nom: >-
+      Régime d'assurance vieillesse de Saint-Pierre-et-Miquelon (Caisse de prévoyance sociale)
+    famille: base_prive
+    source_id: legifrance_textes
+    fiabilite: estimee
+    creation: 1987
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Salariés de l'archipel, depuis la loi n° 87-563 du 17 juillet 1987 qui
+      substitue un régime de base calqué sur le régime général au régime de
+      l'ordonnance n° 77-1102. Mêmes formules que le régime général, mais
+      durée requise et âges propres, en retard de sept générations sur la
+      table nationale.
+    hors_repartition: false
+    periodes:
+      - debut: 1987
+        fin: 1987
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 108
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. DURÉE
+          TRANSITOIRE : « cette durée est abaissée à 108 trimestres pour les
+          pensions dont l'entrée en jouissance intervient entre le 1er août
+          1987 et le 31 décembre 1987. Elle est égale à 110 trimestres au 1er
+          janvier 1988 ; elle augmente ultérieurement de 4 trimestres par
+          année civile » (décret n° 89-110, art. 9, LEGIARTI000006774247) ;
+          taux de 50 % et coefficient de minoration de R. 351-27 par renvoi du
+          même article, pension « égale à autant de 150es » ; âges de 60 et 65
+          ans par renvoi aux articles R. 351-1 et suivants (art. 7,
+          LEGIARTI000006774242).
+      - debut: 1988
+        fin: 1988
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 110
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 110 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1989
+        fin: 1989
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 114
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 114 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1990
+        fin: 1990
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 118
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 118 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1991
+        fin: 1991
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 122
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 122 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1992
+        fin: 1992
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 126
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 126 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1993
+        fin: 1993
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 130
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 130 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1994
+        fin: 1994
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 134
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1475
+        part_salariale: 0.4441
+        taux_cotisation_deplafonnee: 0.0160
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 134 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1995
+        fin: 1995
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 138
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1475
+        part_salariale: 0.4441
+        taux_cotisation_deplafonnee: 0.0160
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 138 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1996
+        fin: 1996
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 142
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1475
+        part_salariale: 0.4441
+        taux_cotisation_deplafonnee: 0.0160
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 142 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1997
+        fin: 1997
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 146
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1475
+        part_salariale: 0.4441
+        taux_cotisation_deplafonnee: 0.0160
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. Durée
+          transitoire de 146 trimestres (décret n° 89-110, art. 9,
+          LEGIARTI000006774247 : 110 au 1er janvier 1988, plus 4 par année
+          civile).
+      - debut: 1998
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 150
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1475
+        part_salariale: 0.4441
+        taux_cotisation_deplafonnee: 0.0160
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. DURÉE DE 150
+          TRIMESTRES, celle du 1° de R. 351-27 par renvoi de l'article 9 du
+          décret n° 89-110 — la loi du 22 juillet 1993 n'a pas été étendue à
+          l'archipel, et l'ordonnance n° 2015-896 le confirme en écrivant «
+          150 trimestres pour les assurés nés avant le 1er janvier 1956 » (loi
+          n° 87-563, art. 5, c, LEGIARTI000030930361). La table nationale par
+          génération ne s'applique pas ici, d'où une durée en dur. Salaire de
+          référence : dix meilleures années, faute d'extension lue de R.
+          351-29 avant le décret n° 2017-1000.
+      - debut: 2011
+        fin: 2015
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 150
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0187
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. DURÉE DE 150
+          TRIMESTRES, celle du 1° de R. 351-27 par renvoi de l'article 9 du
+          décret n° 89-110 — la loi du 22 juillet 1993 n'a pas été étendue à
+          l'archipel, et l'ordonnance n° 2015-896 le confirme en écrivant «
+          150 trimestres pour les assurés nés avant le 1er janvier 1956 » (loi
+          n° 87-563, art. 5, c, LEGIARTI000030930361). La table nationale par
+          génération ne s'applique pas ici, d'où une durée en dur. Coefficient
+          de minoration pris à mi-chemin entre l'ancien (2,5 %) et le nouveau
+          (1,25 %) de R. 351-27, dont la montée en charge par génération est
+          décalée ici.
+      - debut: 2016
+        fin: 2016
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 152
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1956.
+      - debut: 2017
+        fin: 2017
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 154
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1957 ; salaire de référence sur vingt-cinq ans par
+          application de R. 351-29 (décret n° 2017-1000, art. 3, X,
+          LEGIARTI000034740766).
+      - debut: 2018
+        fin: 2018
+        type_calcul: annuites
+        age_ouverture: 60.33
+        age_taux_plein: 65
+        duree_requise_trimestres: 156
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1958 : 60 ans et 4 mois.
+      - debut: 2019
+        fin: 2020
+        type_calcul: annuites
+        age_ouverture: 60.75
+        age_taux_plein: 65
+        duree_requise_trimestres: 158
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1959 : 60 ans et 9 mois.
+      - debut: 2021
+        fin: 2021
+        type_calcul: annuites
+        age_ouverture: 61.17
+        age_taux_plein: 65
+        duree_requise_trimestres: 160
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1960 : 61 ans et 2 mois.
+      - debut: 2022
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 61.58
+        age_taux_plein: 65
+        duree_requise_trimestres: 162
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1961 : 61 ans et 7 mois.
+      - debut: 2023
+        fin: 2023
+        type_calcul: annuites
+        age_ouverture: 61.58
+        age_taux_plein: 65.33
+        duree_requise_trimestres: 162
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là. Âge
+          d'annulation de la décote : 65 ans et 4 mois pour la génération
+          1958.
+      - debut: 2024
+        fin: 2024
+        type_calcul: annuites
+        age_ouverture: 62
+        age_taux_plein: 65.75
+        duree_requise_trimestres: 164
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1962 : 62 ans ; annulation à 65 ans et 9 mois (1959).
+      - debut: 2025
+        fin: 2025
+        type_calcul: annuites
+        age_ouverture: 62.25
+        age_taux_plein: 65.75
+        duree_requise_trimestres: 166
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1963 : 62 ans et 3 mois, 166 trimestres.
+      - debut: 2026
+        fin: 2026
+        type_calcul: annuites
+        age_ouverture: 62.25
+        age_taux_plein: 66.17
+        duree_requise_trimestres: 166
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1964 ; annulation à 66 ans et 2 mois (1960).
+      - debut: 2027
+        fin: 2027
+        type_calcul: annuites
+        age_ouverture: 62.25
+        age_taux_plein: 66.58
+        duree_requise_trimestres: 166
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1965 (janvier-septembre) ; annulation à 66 ans et 7 mois
+          (1961).
+      - debut: 2028
+        fin: 2028
+        type_calcul: annuites
+        age_ouverture: 62.75
+        age_taux_plein: 66.58
+        duree_requise_trimestres: 168
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Générations 1965 (octobre-décembre, 167 trimestres) et 1966 : 62 ans
+          et 9 mois, 168 trimestres.
+      - debut: 2029
+        fin: 2029
+        type_calcul: annuites
+        age_ouverture: 62.75
+        age_taux_plein: 67
+        duree_requise_trimestres: 168
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Annulation de la décote à 67 ans dès la génération 1962.
+      - debut: 2030
+        fin: 2030
+        type_calcul: annuites
+        age_ouverture: 63
+        age_taux_plein: 67
+        duree_requise_trimestres: 169
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1967 : 63 ans, 169 trimestres.
+      - debut: 2031
+        fin: 2031
+        type_calcul: annuites
+        age_ouverture: 63.25
+        age_taux_plein: 67
+        duree_requise_trimestres: 170
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1968 : 63 ans et 3 mois, 170 trimestres.
+      - debut: 2032
+        fin: 2032
+        type_calcul: annuites
+        age_ouverture: 63.5
+        age_taux_plein: 67
+        duree_requise_trimestres: 170
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1969 : 63 ans et 6 mois.
+      - debut: 2033
+        fin: 2034
+        type_calcul: annuites
+        age_ouverture: 63.75
+        age_taux_plein: 67
+        duree_requise_trimestres: 170
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1970 : 63 ans et 9 mois.
+      - debut: 2035
+        fin: 2037
+        type_calcul: annuites
+        age_ouverture: 64
+        age_taux_plein: 67
+        duree_requise_trimestres: 171
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Générations 1971 à 1973 : 64 ans, 171 trimestres.
+      - debut: 2038
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET ASSIETTE PRÊTÉS DU RÉGIME GÉNÉRAL. La caisse de prévoyance
+          sociale fixe ses propres taux (60 % employeur, 40 % salarié) et son
+          propre plafond, « revalorisé à la même date et du même taux que le
+          plafond des cotisations du régime général » (loi n° 87-563, art. 13)
+          ; aucun des deux n'est une série du dépôt : la fiche porte le taux
+          et le plafond nationaux de l'année, niveau `estimee`. TABLE PROPRE
+          PAR GÉNÉRATION (loi n° 87-563, art. 5, c, LEGIARTI000030930361 dès
+          le 25 juillet 2015, LEGIARTI000054477924 depuis l'ordonnance n°
+          2026-648) : 152 trimestres pour 1956, puis deux par génération
+          jusqu'à 166 pour 1963, 167 à 172 de 1965 à 1974 ; ÂGES décalés de
+          sept générations sur la table nationale (art. 5, b : « l'année 1969
+          est remplacée par l'année 1971 », et D. 161-2-1-9 où « nés en 1952 »
+          devient « nés en 1959 », décret n° 2017-1000, art. 3,
+          LEGIARTI000034740766). La fiche porte, année par année, la durée et
+          l'âge de la génération qui atteint l'ouverture cette année-là.
+          Génération 1974 et suivantes : 64 ans, 172 trimestres.
+
+  - code: cssm_mayotte
+    nom: >-
+      Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte)
+    famille: base_prive
+    source_id: legifrance_textes
+    fiabilite: estimee
+    creation: 1987
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Salariés du secteur privé et agents de droit privé à Mayotte, depuis le
+      décret n° 87-175 du 16 mars 1987 ; refondu par l'ordonnance n° 2002-411
+      et le décret n° 2003-589, qui font converger l'âge, la durée et le
+      coefficient de minoration vers ceux du régime général à l'horizon des
+      générations 1969-1973. Aucune complémentaire obligatoire : l'Agirc-Arrco
+      n'y est pas applicable.
+    hors_repartition: false
+    periodes:
+      - debut: 1987
+        fin: 2002
+        type_calcul: annuites
+        age_ouverture: 55
+        age_taux_plein: 65
+        duree_requise_trimestres: 120
+        taux_plein: 0.50
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1461
+        part_salariale: 0.4390
+        taux_cotisation_deplafonnee: 0.0044
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. DÉCRET
+          N° 87-175 : « une pension d'ancienneté aux assurés réunissant 150
+          trimestres d'assurance à compter de l'âge de soixante ans », pension
+          proportionnelle à 65 ans avec 40 trimestres (art. 2,
+          LEGIARTI000006770150) ; « à titre transitoire, l'âge […] est abaissé
+          de cinq ans » et « la durée d'assurance […] est de 120 trimestres »
+          (art. 27, reproduit en tête de l'article 2). La formule de la
+          pension n'est pas dans l'index : celle du régime général tient lieu.
+      - debut: 2003
+        fin: 2003
+        type_calcul: annuites
+        age_ouverture: 55
+        age_taux_plein: 65
+        duree_requise_trimestres: 64
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1475
+        part_salariale: 0.4441
+        taux_cotisation_deplafonnee: 0.0160
+        part_salariale_deplafonnee: 0.0000
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2003 : 55 ans, 64
+          trimestres.
+      - debut: 2004
+        fin: 2004
+        type_calcul: annuites
+        age_ouverture: 55
+        age_taux_plein: 65
+        duree_requise_trimestres: 68
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1487
+        part_salariale: 0.4445
+        taux_cotisation_deplafonnee: 0.0170
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2004 : 55 ans, 68
+          trimestres.
+      - debut: 2005
+        fin: 2005
+        type_calcul: annuites
+        age_ouverture: 55
+        age_taux_plein: 65
+        duree_requise_trimestres: 72
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1487
+        part_salariale: 0.4445
+        taux_cotisation_deplafonnee: 0.0170
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2005 : 55 ans, 72
+          trimestres.
+      - debut: 2006
+        fin: 2006
+        type_calcul: annuites
+        age_ouverture: 56
+        age_taux_plein: 65
+        duree_requise_trimestres: 76
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1487
+        part_salariale: 0.4445
+        taux_cotisation_deplafonnee: 0.0170
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2006 : 56 ans, 76
+          trimestres.
+      - debut: 2007
+        fin: 2007
+        type_calcul: annuites
+        age_ouverture: 57
+        age_taux_plein: 65
+        duree_requise_trimestres: 80
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1487
+        part_salariale: 0.4445
+        taux_cotisation_deplafonnee: 0.0170
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2007 : 57 ans, 80
+          trimestres.
+      - debut: 2008
+        fin: 2008
+        type_calcul: annuites
+        age_ouverture: 58
+        age_taux_plein: 65
+        duree_requise_trimestres: 84
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1487
+        part_salariale: 0.4445
+        taux_cotisation_deplafonnee: 0.0170
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2008 : 58 ans, 84
+          trimestres.
+      - debut: 2009
+        fin: 2009
+        type_calcul: annuites
+        age_ouverture: 59
+        age_taux_plein: 65
+        duree_requise_trimestres: 88
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1495
+        part_salariale: 0.4448
+        taux_cotisation_deplafonnee: 0.0170
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2009 : 59 ans, 88
+          trimestres.
+      - debut: 2010
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 92
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1495
+        part_salariale: 0.4448
+        taux_cotisation_deplafonnee: 0.0170
+        part_salariale_deplafonnee: 0.0588
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2010 : 60 ans, 92
+          trimestres.
+      - debut: 2011
+        fin: 2011
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 96
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2011 : 60 ans, 96
+          trimestres.
+      - debut: 2012
+        fin: 2012
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 100
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2012 : 60 ans, 100
+          trimestres.
+      - debut: 2013
+        fin: 2013
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 104
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2013 : 60 ans, 104
+          trimestres.
+      - debut: 2014
+        fin: 2014
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 108
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2014 : 60 ans, 108
+          trimestres.
+      - debut: 2015
+        fin: 2015
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 65
+        duree_requise_trimestres: 112
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit.
+          ORDONNANCE N° 2002-411 ET DÉCRET N° 2003-589 : « pour les pensions
+          prenant effet en 2003, la durée d'assurance requise pour l'obtention
+          du taux plein est de 64 trimestres, puis, chaque année, cette durée
+          est augmentée de quatre trimestres » (art. 9, LEGIARTI000006781028)
+          ; âge d'ouverture « cinquante-cinq ans pour les pensions prenant
+          effet en 2003, 2004 et 2005 ; cinquante-six ans […] en 2006 », un an
+          de plus chaque année jusqu'à soixante en 2010 (art. 2,
+          LEGIARTI000006781021) ; taux plein à 65 ans (art. 10) ; coefficient
+          de minoration de 2,5 % par trimestre (art. 11,
+          LEGIARTI000006781030). Pensions prenant effet en 2015 : 60 ans, 112
+          trimestres.
+      - debut: 2016
+        fin: 2016
+        type_calcul: annuites
+        age_ouverture: 60.33
+        age_taux_plein: 65.33
+        duree_requise_trimestres: 116
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1956 : 60 ans et 4 mois ; durée calendaire 116
+          trimestres.
+      - debut: 2017
+        fin: 2017
+        type_calcul: annuites
+        age_ouverture: 60.67
+        age_taux_plein: 65.67
+        duree_requise_trimestres: 120
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1957 : 60 ans et 8 mois ; 120 trimestres, fin de la
+          montée calendaire.
+      - debut: 2018
+        fin: 2018
+        type_calcul: annuites
+        age_ouverture: 60.67
+        age_taux_plein: 65.67
+        duree_requise_trimestres: 128
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Table de 2018 : 128 trimestres pour la génération 1957.
+      - debut: 2019
+        fin: 2019
+        type_calcul: annuites
+        age_ouverture: 61
+        age_taux_plein: 66
+        duree_requise_trimestres: 132
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1958 : 61 ans, 132 trimestres.
+      - debut: 2020
+        fin: 2020
+        type_calcul: annuites
+        age_ouverture: 61.33
+        age_taux_plein: 66.33
+        duree_requise_trimestres: 136
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1959 : 61 ans et 4 mois, 136 trimestres.
+      - debut: 2021
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 61.67
+        age_taux_plein: 66.67
+        duree_requise_trimestres: 140
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1533
+        part_salariale: 0.4463
+        taux_cotisation_deplafonnee: 0.0210
+        part_salariale_deplafonnee: 0.1429
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1960 : 61 ans et 8 mois, 140 trimestres.
+      - debut: 2023
+        fin: 2023
+        type_calcul: annuites
+        age_ouverture: 62
+        age_taux_plein: 67
+        duree_requise_trimestres: 144
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1961 : 62 ans, 144 trimestres.
+      - debut: 2024
+        fin: 2024
+        type_calcul: annuites
+        age_ouverture: 62.25
+        age_taux_plein: 67.25
+        duree_requise_trimestres: 148
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1962 : 62 ans et 3 mois, 148 trimestres.
+      - debut: 2025
+        fin: 2025
+        type_calcul: annuites
+        age_ouverture: 62.5
+        age_taux_plein: 67.5
+        duree_requise_trimestres: 152
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1963 : 62 ans et 6 mois, 152 trimestres.
+      - debut: 2026
+        fin: 2026
+        type_calcul: annuites
+        age_ouverture: 62.5
+        age_taux_plein: 67.5
+        duree_requise_trimestres: 156
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0250
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1964 : 156 trimestres ; coefficient de 2,5 % pour les
+          générations d'avant 1964 (2,375 % pour 1964).
+      - debut: 2027
+        fin: 2027
+        type_calcul: annuites
+        age_ouverture: 62.5
+        age_taux_plein: 67.5
+        duree_requise_trimestres: 160
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0238
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1965 (janvier-juin) : 160 trimestres.
+      - debut: 2028
+        fin: 2028
+        type_calcul: annuites
+        age_ouverture: 62.75
+        age_taux_plein: 67.75
+        duree_requise_trimestres: 160
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0225
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1965 (juillet-décembre) : 62 ans et 9 mois.
+      - debut: 2029
+        fin: 2029
+        type_calcul: annuites
+        age_ouverture: 63
+        age_taux_plein: 68
+        duree_requise_trimestres: 162
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0213
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1966 : 63 ans, 162 trimestres.
+      - debut: 2030
+        fin: 2030
+        type_calcul: annuites
+        age_ouverture: 63.25
+        age_taux_plein: 68.25
+        duree_requise_trimestres: 164
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0200
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1967 : 63 ans et 3 mois, 164 trimestres.
+      - debut: 2031
+        fin: 2031
+        type_calcul: annuites
+        age_ouverture: 63.5
+        age_taux_plein: 68.5
+        duree_requise_trimestres: 166
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0187
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1968 : 63 ans et 6 mois, 166 trimestres.
+      - debut: 2032
+        fin: 2033
+        type_calcul: annuites
+        age_ouverture: 63.75
+        age_taux_plein: 68.75
+        duree_requise_trimestres: 168
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0175
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1969 : 63 ans et 9 mois, 168 trimestres.
+      - debut: 2034
+        fin: 2034
+        type_calcul: annuites
+        age_ouverture: 64
+        age_taux_plein: 69
+        duree_requise_trimestres: 169
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0150
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1970 : 169 trimestres ; 64 ans supposés, le décret n°
+          2026-345 s'arrêtant à la génération 1969.
+      - debut: 2035
+        fin: 2035
+        type_calcul: annuites
+        age_ouverture: 64
+        age_taux_plein: 69
+        duree_requise_trimestres: 170
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0138
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1971 : 170 trimestres.
+      - debut: 2036
+        fin: 2036
+        type_calcul: annuites
+        age_ouverture: 64
+        age_taux_plein: 69
+        duree_requise_trimestres: 171
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1972 : 171 trimestres.
+      - debut: 2037
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 64
+        age_taux_plein: 69
+        duree_requise_trimestres: 172
+        taux_plein: 0.50
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1545
+        part_salariale: 0.4466
+        taux_cotisation_deplafonnee: 0.0241
+        part_salariale_deplafonnee: 0.1660
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
+        notes: >-
+          TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
+          sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
+          2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
+          en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
+          VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
+          représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
+          (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
+          2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
+          qui est plus élevé : la fiche valide moins vite que le droit. ÂGE
+          PAR GÉNÉRATION depuis le décret du 19 octobre 2012 : 60 ans avant
+          1956, 60 ans et 4 mois pour 1956, 60 ans et 8 mois pour 1957, 61 ans
+          pour 1958, 61 ans et 4 mois pour 1959, 61 ans et 8 mois pour 1960,
+          62 ans dès 1961 (art. 2, LEGIARTI000026514429), puis 62 ans et 3
+          mois pour 1962 jusqu'à 63 ans et 9 mois pour 1968 (décret n°
+          2024-766, LEGIARTI000049915788) et pour 1969 (décret n° 2026-345,
+          LEGIARTI000054059636) ; taux plein à « l'âge prévu à l'article 2
+          augmenté de cinq années » (art. 10, LEGIARTI000026514415). DURÉE PAR
+          GÉNÉRATION pour les pensions prenant effet dès 2018 : 120 trimestres
+          avant 1956, puis 4 de plus par génération jusqu'à 160 pour 1965, 162
+          à 171 de 1966 à 1972, 172 dès 1973 (art. 9, LEGIARTI000033155436).
+          La fiche porte, année par année, la génération qui atteint
+          l'ouverture cette année-là. COEFFICIENT DE MINORATION : 2,5 % par
+          trimestre pour les pensions prenant effet avant 2026, puis 2,5 %
+          pour les générations d'avant 1964 et 0,125 point de moins par
+          génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
+          Génération 1973 et suivantes : 172 trimestres, coefficient de 1,25
+          %.

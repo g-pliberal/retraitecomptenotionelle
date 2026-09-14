@@ -362,6 +362,27 @@ auxiliaires médicaux et des directeurs de laboratoire (2007-597), lus mais non
 portés ; les points d'ajustement proportionnels au revenu sous 68 000 € ; le tarif
 de la consultation de 1985 à 2011.
 
+### Tranche B5b — des statuts nouveaux, l'index suffisant
+
+Sept statuts et cinq fiches, tous lus dans LEGI ou, pour les barèmes de points
+que les caisses seules publient, sur leurs sites (IRCEC, Caisse des dépôts). Deux
+lignes de l'inventaire n'ont pas de fiche parce que ce ne sont pas des régimes :
+l'affiliation des élus locaux à l'Ircantec et le micro-social, qui ne sont qu'un
+routage ; elles restent `a_modeliser` avec leur statut et ce qui manque.
+
+| Régime | Ce qui manquait | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `cps_saint_pierre_et_miquelon` | aucune fiche | loi n° 87-563, art. 5 (`LEGIARTI000030930361`, `LEGIARTI000054477924`) : durée par génération de 150 (avant 1956) à 172 trimestres (1974), âges décalés de sept générations sur L. 161-17-2 ; décret n° 89-110, art. 9 (`LEGIARTI000006774247`) : 108 trimestres en 1987, plus quatre par an jusqu'à 150 en 1998, taux et coefficient de R. 351-27 ; décret n° 2017-1000, art. 3 (`LEGIARTI000034740766`) : R. 351-29 étendu | trente-deux périodes, taux et plafond prêtés du régime général ; statut `salarie_saint_pierre_et_miquelon` (1987-, Arrco du non-cadre) : même pension actuelle que le non-cadre pour la génération 1975, 41 % de moins pour 1945 (trois années sans régime avant 1987 ne se rattrapent pas) |
+| `cssm_mayotte` | aucune fiche | décret n° 87-175, art. 2 (`LEGIARTI000006770150`) : 55 ans et 120 trimestres à titre transitoire ; décret n° 2003-589 : 64 trimestres en 2003 plus quatre par an (`LEGIARTI000006781028`), âge de 55 à 60 ans de 2003 à 2010 (`LEGIARTI000006781021`), âge par génération de 60 à 62 ans (`LEGIARTI000026514429`) puis 63 ans et 9 mois pour 1968-1969 (`LEGIARTI000049915788`, `LEGIARTI000054059636`), durée par génération de 120 à 172 dès 2018 (`LEGIARTI000033155436`), coefficient de 2,5 % à 1,25 % (`LEGIARTI000033155432`), taux plein à l'âge plus cinq ans (`LEGIARTI000026514415`) | trente-quatre périodes ; statut `salarie_mayotte` (1987-, sans complémentaire) : 26 % de moins que le non-cadre pour la génération 1975, faute d'Agirc-Arrco |
+| `ircec_racd`, `ircec_racl` | aucune fiche, deux populations confondues avec l'artiste-auteur | décret n° 64-226, art. 2 (`LEGIARTI000006761271`) : 8 % des droits ; décret n° 61-1304, art. 1 (`LEGIARTI000006781613`) ; mémo 2026 de l'IRCEC : 6,5 % au RACL, points à 4,78 € et 0,421 € (RACD), 10,304 € et 0,618 € (RACL) | une période chacune, rendements 8,8 et 6,0 centimes ; statuts `auteur_dramatique` et `auteur_lyrique` : +32 % et +18 % de pension actuelle sur l'artiste-auteur (génération 1975) |
+| `gerants_debits_tabac` | aucune fiche | arrêté du 13 novembre 1963, art. 5 (`LEGIARTI000006787840`, participation du fonds au double), art. 5 bis (`LEGIARTI000006787842`, 2 % des remises brutes dès 1990), art. 6 (plafond de remises), art. 17 (`LEGIARTI000006787896`, point à 1 F en 1963) ; Caisse des dépôts : point à 4,94 € d'achat et 2,42 € de service | deux périodes, part du gérant seule, rendement de 49 centimes par euro du gérant (le fonds paie les deux autres tiers) ; statut `gerant_debit_tabac` : +63 % de pension actuelle sur le commerçant pour la génération 1975 — le revenu saisi tient lieu de remises, ce qui surestime un débit qui vend aussi presse ou jeux |
+| `elus_locaux_ircantec` | pas de statut | loi n° 72-1201, art. 1 (`LEGIARTI000006338235`), L. 2123-28 (`LEGIARTI000006390053`) | statut `elu_local` : Ircantec seule de 1973 à 2012, régime général en plus depuis 2013 ; 27 % de moins que le contractuel public pour la génération 1975 (quarante ans sans base) ; pas de fiche, la ligne le dit |
+| `micro_entrepreneurs` | pas de statut | L. 133-6-8 (`LEGIARTI000033712872`, abattements de 71, 50 et 34 %), D. 131-6-3 (`LEGIARTI000034163578`) | statut `micro_entrepreneur` : les régimes du commerçant sur le revenu reconstitué, témoins identiques à ceux du commerçant ; les seuils de chiffre d'affaires restent à porter |
+
+Ce qui reste de B5b : le seuil de L. 382-31 des élus, le SMIG mahorais et le
+plafond local des deux caisses d'outre-mer, les barèmes anciens du RACD, du RACL
+et du RAVGDT, la cotisation micro-sociale réellement versée.
+
 ### Feuille de route B5 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
@@ -383,7 +404,6 @@ pour les tranches suivantes :
   absents de LEGI) et le barème de l'UNIRS restent à demander à la Caisse des
   dépôts et à la fédération.
 - **Puis B5**, les dix-huit régimes à modéliser de l'inventaire, par
-  population décroissante — B5a ci-dessus en a porté deux ; restent les élus
-  locaux, Saint-Pierre-et-Miquelon, Mayotte, le RACD et le RACL, les débits de
-  tabac, les micro-entrepreneurs (B5b), puis les régimes sans texte dans
-  l'index, à lire sur les sites des institutions (B5c).
+  population décroissante — B5a et B5b ci-dessus en ont porté sept ; restent
+  les régimes sans texte dans l'index, à lire sur les sites des institutions
+  (B5c).
