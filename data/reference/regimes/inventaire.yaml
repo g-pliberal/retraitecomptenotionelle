@@ -150,7 +150,10 @@ inventaire:
   - code: cssm_mayotte
     nom: Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte)
     famille: base_prive
-    population: Salariés du secteur privé et agents de droit privé à Mayotte
+    population: >-
+      Salariés du secteur privé et agents de droit privé à Mayotte ; depuis
+      2012, travailleurs non salariés artisans, commerçants, libéraux et
+      agricoles de Mayotte (assurance de base des non-salariés, même caisse)
     creation: 1987
     fermeture: null
     extinction: null
@@ -163,12 +166,19 @@ inventaire:
       - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de retraite au profit des salariés de Mayotte, articles 2 et 3", id: LEGIARTI000006770150}
       - {reference: "ordonnance n° 2002-411 du 27 mars 2002 et décret n° 2003-589 du 1er juillet 2003, articles 2, 9, 10 et 11 (âge, durée, taux plein, coefficient de minoration)", id: LEGIARTI000033155436}
       - {reference: "décret n° 2024-766 du 8 juillet 2024 et décret n° 2026-345 du 7 mai 2026 (relèvement de l'âge, générations 1962 à 1969)", id: LEGIARTI000054059636}
+      - {reference: "ordonnance n° 2011-1923 du 22 décembre 2011, article 20 (chapitre II « Assurance de base des travailleurs non salariés des professions artisanales, industrielles et commerciales, et agricoles », articles 23-1 à 23-4 de l'ordonnance de 2002)", id: LEGIARTI000025017034}
+      - {reference: "ordonnance n° 2002-411, article 23-4 (la pension des non-salariés suit les règles du chapitre Ier, revenu annuel moyen adapté par décret)", id: LEGIARTI000025021012}
     manque: >-
       Le SMIG mahorais, qui valide les trimestres (200 puis 150 heures par
       trimestre), n'est pas une série du dépôt : la validation se fait au
       SMIC national. Taux et plafond de la caisse de sécurité sociale de
       Mayotte, en convergence jusqu'en 2036, remplacés par ceux du régime
       général. Salaire de référence supposé sur vingt-cinq ans dès 2003.
+      Les non-salariés de Mayotte, affiliés à la même caisse depuis 2012
+      avec une pension calculée selon les mêmes règles (article 23-4),
+      n'ont aucun statut qui les y route : seul `salarie_mayotte` atteint
+      la fiche, et le décret d'adaptation de leur revenu annuel moyen n'est
+      pas lu.
 
   - code: cps_saint_pierre_et_miquelon
     nom: Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
@@ -594,7 +604,9 @@ inventaire:
       organismes de sécurité sociale (CPPOSS, 1994), des caisses d'épargne
       (CGRCE, 2000), du Crédit agricole, des chambres de commerce et
       d'industrie (régime annexé au statut de 1973), VRP (IRREP), cadres et
-      salariés agricoles (CAMARCA, 1973)
+      salariés agricoles (CAMARCA, 1973), personnel au sol statutaire
+      d'Air France (règlement de retraite approuvé par arrêté, 1956, devenu
+      régime différentiel au-dessus de l'Agirc-Arrco en 1993)
     creation: 1947
     fermeture: 1993
     extinction: null
@@ -608,13 +620,17 @@ inventaire:
       - {reference: "décret n° 2002-1012 du 19 juillet 2002, article 21 (affiliation à la CAMARCA)", id: LEGIARTI000006602079}
       - {reference: "Fondation IFRAP, « La réforme des retraites des banques » (72 à 75 % du dernier salaire en 42 ans, cotisation de 12 à 20 %)", id: null}
       - {reference: "accord professionnel de la banque du 13 septembre 1993 (intégration à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993, complément bancaire différentiel), modifié par l'accord du 25 février 2005 (hors JORF)", id: null}
+      - {reference: "arrêté du 4 mai 1956 portant approbation d'une refonte du règlement de retraites du personnel au sol de la Compagnie nationale Air France (affiliation obligatoire du personnel statutaire, modifié jusqu'à l'arrêté du 31 décembre 1991)", id: JORFTEXT000000434601}
+      - {reference: "arrêté du 1er juin 1993 approuvant le règlement de retraite et le règlement du régime différentiel du personnel au sol d'Air France, qui se substituent au règlement antérieur", id: JORFTEXT000000712110}
+      - {reference: "arrêté du 11 janvier 1994 portant extension de l'avenant du 14 décembre 1992 étendant la convention collective nationale du 14 mars 1947 (Agirc) au personnel au sol d'Air France", id: JORFTEXT000000729483}
     manque: >-
       La fiche porte le barème bancaire pour toutes les populations : le
       complément de 35 % du dernier salaire en 42 ans, la Sécurité sociale
       déduite, et 16 % de cotisation ; les barèmes propres de la CPPOSS, de
-      la CGRCE, des CCI, de l'IRREP et de la CAMARCA, le complément
-      différentiel de 1994 et son rabot, et l'Agirc du cadre bancaire ne le
-      sont pas.
+      la CGRCE, des CCI, de l'IRREP, de la CAMARCA et du personnel au sol
+      d'Air France (règlement de 1956, régime différentiel de 1993), le
+      complément différentiel de 1994 et son rabot, et l'Agirc du cadre
+      bancaire ne le sont pas.
 
   - code: enseignants_prive_additionnel
     nom: Régime additionnel de retraite des enseignants du privé sous contrat
@@ -780,6 +796,74 @@ inventaire:
       contribution du Conseil ne l'est pas ; l'assiette de référence de 2,06
       fois la rémunération et le plafond des trois quarts sont écrits comme
       un taux plein de 154,5 % de l'indemnité.
+
+  - code: crfom
+    nom: Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer (CRFOM)
+    famille: fonction_publique
+    population: Fonctionnaires et agents des cadres locaux des colonies, protectorats et territoires d'outre-mer
+    creation: 1924
+    fermeture: 1976
+    extinction: null
+    succede_a: []
+    integre_dans: fonction_publique_etat
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires, article 71 (création de la caisse intercoloniale de retraites)", id: LEGIARTI000020851163}
+      - {reference: "décret n° 50-1348 du 27 octobre 1950, articles 43 et 46 (retenue de 6 % des tributaires de la caisse de retraites de la France d'outre-mer, régime du décret du 21 avril 1950)", id: LEGIARTI000006504747}
+      - {reference: "loi n° 75-1278 du 30 décembre 1975 de finances pour 1976, article 73 (les fonctionnaires en activité du régime du décret du 21 avril 1950 sont affiliés d'office, au 1er janvier 1976, au régime des pensions civiles et militaires)", id: LEGIARTI000006272976}
+    raison_hors_champ: >-
+      Régime des cadres coloniaux fermé par la loi de finances pour 1976 :
+      ses derniers actifs ont été affiliés d'office aux pensions civiles et
+      militaires au 1er janvier 1976, et ses pensions sont servies par
+      l'État. Le statut `fonctionnaire_etat` porte la carrière ; le dépôt
+      n'a pas le règlement du décret du 21 avril 1950.
+
+  - code: fonctionnaires_algerie_maroc_tunisie
+    nom: Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties)
+    famille: fonction_publique
+    population: Fonctionnaires français des cadres d'Algérie, du Maroc et de Tunisie, agents des communes d'Algérie
+    creation: null
+    fermeture: 1962
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi n° 52-432 du 28 avril 1952 portant statut général du personnel des communes, article 94 C (affiliation obligatoire à la caisse générale des retraites de l'Algérie)", id: LEGIARTI000006399171}
+      - {reference: "code des pensions civiles et militaires de retraite, R. 35 (coordination avec la caisse générale des retraites de l'Algérie et la caisse marocaine de retraites)", id: LEGIARTI000006362950}
+      - {reference: "loi n° 75-1278 du 30 décembre 1975, article 73 I (les fonctionnaires français de ces trois caisses admis aux avantages du régime général des retraites)", id: LEGIARTI000006272976}
+      - {reference: "loi n° 81-734 du 3 août 1981 de finances rectificative, article 26 (pensions garanties par l'État aux ressortissants de l'Algérie)", id: LEGIARTI000006273652}
+    raison_hors_champ: >-
+      Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés
+      aux Français avec l'indépendance et dont l'État garantit les pensions
+      depuis ; leurs textes fondateurs, décisions de l'assemblée algérienne
+      et dahirs, ne sont pas au Journal officiel de la République. Aucun
+      cotisant depuis 1962.
+
+  - code: crfm_mayotte
+    nom: Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM)
+    famille: fonction_publique
+    population: Agents titulaires de la collectivité, des communes et des établissements publics de Mayotte, avant leur intégration dans les fonctions publiques
+    creation: null
+    fermeture: 2010
+    extinction: null
+    succede_a: []
+    integre_dans: cnracl
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi n° 2001-616 du 11 juillet 2001 relative à Mayotte, article 64-1 (intégration des agents dans les fonctions publiques au plus tard le 31 décembre 2010 ; IX : dissolution de la caisse)", id: LEGIARTI000025950147}
+      - {reference: "décret n° 2012-1256 du 13 novembre 2012 relatif au règlement des droits à pension des agents publics de Mayotte intégrés ou titularisés (préliquidation par la CRFM de la part antérieure)", id: LEGITEXT000026637100}
+      - {reference: "décret n° 2013-255 du 26 mars 2013, article 2 (pensions dues par la CRFM versées par la CNRACL ou par le service des retraites de l'État)", id: LEGIARTI000027239454}
+    raison_hors_champ: >-
+      Caisse locale, instituée par délibération hors Journal officiel,
+      fermée par l'intégration de ses affiliés dans les fonctions publiques
+      d'État, territoriale et hospitalière au plus tard fin 2010, puis
+      dissoute : ses pensions sont versées par la CNRACL ou par l'État. Les
+      statuts de fonctionnaire portent la carrière ; le règlement de la
+      caisse n'est pas dans l'index.
 
   - code: fonctionnaires_pacifique
     nom: Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
@@ -1485,6 +1569,29 @@ inventaire:
       part, n'est pas modélisée ; les versions de 1983, 2005 et 2014 de
       l'article 2 du décret n° 49-578 datent la section C à 4,5 % des
       produits de l'office, mais rien n'est consolidé avant 1983.
+
+  - code: crea
+    nom: Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA)
+    famille: liberal
+    population: Enseignants libéraux, professeurs de musique et musiciens, artistes hors AGESSA, professions du sport et du tourisme, vendeurs-colporteurs de presse
+    creation: 1977
+    fermeture: 2004
+    extinction: 2004
+    succede_a: []
+    integre_dans: cipav_complementaire
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "arrêté du 4 juillet 1977 approuvant les statuts de la section professionnelle des artistes auteurs ne relevant pas de l'article L. 631-1, des professeurs de musique et des musiciens, qui prend le nom de « Caisse de retraite de l'enseignement et des arts appliqués »", id: JORFTEXT000000488757}
+      - {reference: "décret n° 94-404 du 16 mai 1994 (rattachement des vendeurs-colporteurs de presse à la CREA)", id: JORFTEXT000000183429}
+      - {reference: "arrêté du 22 juillet 2003 relatif à l'échantillon interrégimes de cotisants, article 2, 18° (régime de base et régime complémentaire de la CREA)", id: LEGIARTI000006221466}
+      - {reference: "décret n° 2004-461 du 27 mai 2004, article 13 VIII (les affiliés de la CREA soumis, au 1er janvier 2004, à la Cipav)", id: LEGIARTI000006781338}
+    raison_hors_champ: >-
+      Section de la CNAVPL fondue dans la Cipav au 1er janvier 2004, qui a
+      repris ses affiliés et leurs points ; le statut `profession_liberale`
+      route vers la Cipav sur toute la période, et le barème propre de la
+      CREA n'est pas au Journal officiel, qui n'a que l'arrêté d'approbation
+      de ses statuts.
 
   - code: asv_conventionnes
     nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)

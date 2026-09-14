@@ -2154,7 +2154,7 @@ document saisi à la main, et les portails officiels ne servent pas de liste
 exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
 [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
 énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
-champ — 84 lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+champ — 88 lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
 programme 195 des lois de finances, chacune avec son texte fondateur et, quand
 l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
 modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose
@@ -2177,7 +2177,15 @@ d'outre-mer. Et trois régimes fermés dont on ne savait plus s'ils avaient
 existé, retrouvés dans l'index : le régime spécial du Crédit foncier de France
 (transféré au régime général au 1er janvier 1989, décret n° 89-157), la caisse
 des régies ferroviaires d'outre-mer (décret n° 58-1090, puis transfert à
-l'État en 1993), et le régime de l'ORTF.
+l'État en 1993), et le régime de l'ORTF. Une relecture de septembre 2026
+contre l'arrêté du 22 juillet 2003 relatif à l'échantillon interrégimes de
+cotisants, qui énumère les organismes de tous les régimes obligatoires, a
+ajouté quatre caisses fermées — la CREA des professions de l'enseignement
+fondue dans la Cipav en 2004, la Caisse de retraites de la France d'outre-mer,
+les caisses des fonctionnaires d'Algérie, du Maroc et de Tunisie, la CRFM des
+agents publics de Mayotte —, les non-salariés de Mayotte à la caisse de
+sécurité sociale de Mayotte et le personnel au sol d'Air France aux régimes
+professionnels intégrés ; voir [`docs/regimes.md`](regimes.md).
 
 #### Ce que JORF et LEGI ne contiennent pas
 
