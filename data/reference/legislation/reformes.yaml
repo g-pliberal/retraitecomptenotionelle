@@ -152,9 +152,9 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
-  - code: retenue_fonction_publique_1990
-    date: 1990-01-01
-    texte: {reference: "code des pensions civiles et militaires de retraite, article L. 61, versions de 1989 et 1991", id: null}
+  - code: retenue_fonction_publique_1989
+    date: 1989-01-01
+    texte: {reference: "loi n° 89-18 du 13 janvier 1989, article 23 : la retenue de l'article L. 61 « est majorée d'un point » pour les traitements perçus après le 31 décembre 1988 (JORFTEXT000000321867, lu sur Légifrance ; la loi n'est pas dans l'index thématique)", id: null}
     parametres: [taux_cotisation_retraite]
     regimes: [fonction_publique_etat, cnracl, fspoeie]
     absorbee_par: []

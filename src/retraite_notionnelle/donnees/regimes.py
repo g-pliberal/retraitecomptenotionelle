@@ -251,6 +251,14 @@ class PeriodeRegime:
     #: mais un MONTANT par palier de revenu, lu dans `classes_cotisation.csv`.
     #: C'est la forme de la Cipav d'avant 2023.
     cotisation_par_classes: bool
+    #: ASSIETTE PAR GRILLE : le régime cotise et liquide sur un SALAIRE
+    #: FORFAITAIRE par catégorie, lu dans `salaires_forfaitaires.csv` sous ce
+    #: code, et non sur la rémunération réelle. C'est le régime des marins :
+    #: vingt catégories de fonction à bord, dont le montant est fixé par
+    #: arrêté chaque année. Une carrière saisie porte un revenu, pas une
+    #: fonction : le moteur range l'assuré, chaque année, dans la catégorie
+    #: dont le forfait est le plus proche de son revenu annualisé.
+    assiette_grille: str | None
     #: L'ASSIETTE N'EST PAS LE REVENU, mais une grandeur qui lui est
     #: proportionnelle et que la carrière saisie ne porte pas. Deux sections
     #: libérales sont dans ce cas, et c'est ce qui les tenait hors du
@@ -557,6 +565,85 @@ class ClassesCotisation:
         return dernier.cotisation * coefficient, dernier.fiabilite
 
 
+@dataclass(frozen=True)
+class SalaireForfaitaire:
+    categorie: int
+    montant: float
+    fiabilite: Fiabilite
+
+
+class SalairesForfaitaires:
+    """Grilles de salaires forfaitaires par catégorie, régime par régime.
+
+    Le régime des marins ne cotise ni ne liquide sur le salaire réel mais sur
+    un forfait par catégorie de fonction à bord, publié chaque année par
+    arrêté ; `salaires_forfaitaires.csv` les porte depuis 2008, lus au
+    Journal officiel. Une carrière saisie porte un revenu, pas une fonction :
+    :meth:`forfait` range l'assuré dans la catégorie dont le montant est le
+    plus proche de son revenu annualisé — convention nommée, la seule qui
+    rende la grille applicable à une carrière décrite par un revenu.
+
+    Hors des années publiées, la grille la plus proche est ramenée par le
+    salaire moyen de l'économie, et le résultat le dit : fiabilité
+    ``estimee``.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, dict[int, list[SalaireForfaitaire]]] = {}
+        chemin = racine / "reference" / "regimes" / "salaires_forfaitaires.csv"
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                self._table.setdefault(ligne["regime"], {}).setdefault(
+                    int(ligne["annee"]), []
+                ).append(SalaireForfaitaire(
+                    categorie=int(ligne["categorie"]),
+                    montant=float(ligne["montant_annuel"]),
+                    fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
+                ))
+        for grilles in self._table.values():
+            for grille in grilles.values():
+                grille.sort(key=lambda c: c.montant)
+
+    def __bool__(self) -> bool:
+        return bool(self._table)
+
+    @property
+    def regimes(self) -> tuple[str, ...]:
+        return tuple(sorted(self._table))
+
+    def annees(self, regime: str) -> tuple[int, ...]:
+        return tuple(sorted(self._table.get(regime, {})))
+
+    def forfait(self, regime: str, annee: int, revenu_annuel: float,
+                indice_salaire) -> tuple[float, int, Fiabilite] | None:
+        """Le forfait de la catégorie la plus proche du revenu, sa catégorie,
+        et ce qu'il vaut.
+
+        ``indice_salaire`` est une fonction année -> salaire moyen, qui sert
+        à ramener la grille la plus proche aux années qu'aucun arrêté ne
+        couvre. À égalité de distance, la catégorie la plus basse.
+        """
+        grilles = self._table.get(regime)
+        if not grilles:
+            return None
+        if annee in grilles:
+            grille, coefficient, hors_grille = grilles[annee], 1.0, False
+        else:
+            proche = min(grilles, key=lambda a: (abs(a - annee), a))
+            grille = grilles[proche]
+            coefficient = indice_salaire(annee) / indice_salaire(proche)
+            hors_grille = True
+        meilleur = min(
+            grille,
+            key=lambda c: (abs(c.montant * coefficient - revenu_annuel), c.categorie),
+        )
+        fiabilite = Fiabilite.ESTIMEE if hors_grille else meilleur.fiabilite
+        return meilleur.montant * coefficient, meilleur.categorie, fiabilite
+
+
 #: Champ de la période que chaque mesure de `taux_cotisation_annuels.csv`
 #: remplace.
 _MESURES_TAUX_ANNUELS = {
@@ -814,6 +901,7 @@ class CatalogueRegimes:
                 cotisation_par_classes=bool(
                     p.get("cotisation_par_classes", False)
                 ),
+                assiette_grille=p.get("assiette_grille"),
                 assiette_facteur_revenu=(
                     None if p.get("assiette_facteur_revenu") is None
                     else float(p["assiette_facteur_revenu"])

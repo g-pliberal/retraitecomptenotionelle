@@ -133,7 +133,7 @@ regimes:
           vigueur en fin d'année, comme les autres séries de taux du dépôt ;
           même barème par ailleurs.
       - debut: 1987
-        fin: 1989
+        fin: 1988
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -148,12 +148,15 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
-          article 4), lu chez OpenFisca-France. OpenFisca date 8,9 % du 1er
-          janvier 1989 (loi n° 89-18 du 13 janvier 1989, article 23) ; la
-          version de L. 61 que la base LEGI garde est datée du 30 décembre 1989,
-          la fiche suit la version, et le contrôle de vraisemblance signale
-          l'écart de cette année-là. Même barème par ailleurs.
-      - debut: 1990
+          article 4), lu chez OpenFisca-France. L'article 23 de la loi n° 89-18
+          du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
+          taux de la retenue prévu à l'article L. 61 […] est majoré d'un
+          point », applicable « aux traitements et soldes perçus au titre de la
+          période postérieure au 31 décembre 1988 » — 8,9 % dès le 1er janvier
+          1989, comme OpenFisca le date. La fiche s'arrêtait à la version de
+          L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
+          trop ; le contrôle de vraisemblance ne signale plus d'écart.
+      - debut: 1989
         fin: 1990
         type_calcul: annuites
         age_ouverture: 60
@@ -590,7 +593,7 @@ regimes:
           vigueur en fin d'année, comme les autres séries de taux du dépôt ;
           même barème par ailleurs.
       - debut: 1987
-        fin: 1989
+        fin: 1988
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -605,12 +608,15 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
-          article 4), lu chez OpenFisca-France. OpenFisca date 8,9 % du 1er
-          janvier 1989 (loi n° 89-18 du 13 janvier 1989, article 23) ; la
-          version de L. 61 que la base LEGI garde est datée du 30 décembre 1989,
-          la fiche suit la version, et le contrôle de vraisemblance signale
-          l'écart de cette année-là. Même barème par ailleurs.
-      - debut: 1990
+          article 4), lu chez OpenFisca-France. L'article 23 de la loi n° 89-18
+          du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
+          taux de la retenue prévu à l'article L. 61 […] est majoré d'un
+          point », applicable « aux traitements et soldes perçus au titre de la
+          période postérieure au 31 décembre 1988 » — 8,9 % dès le 1er janvier
+          1989, comme OpenFisca le date. La fiche s'arrêtait à la version de
+          L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
+          trop ; le contrôle de vraisemblance ne signale plus d'écart.
+      - debut: 1989
         fin: 1990
         type_calcul: annuites
         age_ouverture: 60
@@ -1097,7 +1103,7 @@ regimes:
           vigueur en fin d'année, comme les autres séries de taux du dépôt ;
           même barème par ailleurs.
       - debut: 1987
-        fin: 1989
+        fin: 1988
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -1113,12 +1119,15 @@ regimes:
           [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
-          article 4), lu chez OpenFisca-France. OpenFisca date 8,9 % du 1er
-          janvier 1989 (loi n° 89-18 du 13 janvier 1989, article 23) ; la
-          version de L. 61 que la base LEGI garde est datée du 30 décembre 1989,
-          la fiche suit la version, et le contrôle de vraisemblance signale
-          l'écart de cette année-là. Même barème par ailleurs.
-      - debut: 1990
+          article 4), lu chez OpenFisca-France. L'article 23 de la loi n° 89-18
+          du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
+          taux de la retenue prévu à l'article L. 61 […] est majoré d'un
+          point », applicable « aux traitements et soldes perçus au titre de la
+          période postérieure au 31 décembre 1988 » — 8,9 % dès le 1er janvier
+          1989, comme OpenFisca le date. La fiche s'arrêtait à la version de
+          L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
+          trop ; le contrôle de vraisemblance ne signale plus d'écart.
+      - debut: 1989
         fin: 1990
         type_calcul: annuites
         age_ouverture: 60

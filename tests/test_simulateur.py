@@ -2623,6 +2623,47 @@ def test_le_marin_parti_avant_cinquante_cinq_ans_plafonne_a_vingt_cinq_annuites(
     assert apres.pension_annuelle > avant.pension_annuelle * 1.35
 
 
+def test_le_marin_cotise_et_liquide_sur_le_forfait_de_sa_categorie(simulateur):
+    """R. 11 : la pension est calculée sur « le salaire forfaitaire de la
+    catégorie dans laquelle le marin a été classé », non sur sa paie.
+
+    Un marin à 40 000 € en 2024 est de treizième catégorie, 41 467,86 € ; c'est
+    ce forfait, et non les 40 000 €, que le compte notionnel reçoit et que le
+    scénario 1 liquide.
+    """
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H", affiliation="marin",
+        age_debut=20, age_liquidation=60, niveau_salaire=1.0,
+    )
+    ligne = carriere.ligne(2024)
+    forfait = simulateur.scenario_actuel.grilles.forfait(
+        "marins", 2024, ligne.revenu_annualise,
+        lambda a: salaire_moyen_annuel(simulateur.macro, a),
+    )
+    assert forfait[1] == 13
+    assert forfait[0] == pytest.approx(41467.86)
+    assert abs(ligne.revenu - 40000.0) < 2000.0
+    cotisation = simulateur.constructeur.cotisation_annuelle(carriere, 2024)
+    assert cotisation.assiette_retenue == pytest.approx(41467.86)
+    actuel = simulateur.scenario_actuel.calculer(carriere)
+    assert "150/150" in actuel.pensions_par_regime[0].detail
+    # 2 % par annuité, 37,5 annuités : 75 % du forfait de la dernière année de
+    # mer, 2024 — le départ tombe en janvier 2025 —, ramené en euros de 2025.
+    forfait_depart = forfait[0] * simulateur.macro.coefficient_prix(2024, 2025)
+    assert actuel.pension_annuelle == pytest.approx(0.75 * forfait_depart, rel=1e-6)
+
+
+def test_les_points_carmf_d_avant_1991_valent_un_tiers_de_plus(simulateur):
+    """Statuts de la CARMF : les points acquis avant la réforme de 1991 sont
+    servis affectés d'un coefficient de 1,33."""
+    conversions = simulateur.scenario_actuel.conversions_points
+    assert conversions.echelle("carmf_complementaire", 1985, 2020)[0] == pytest.approx(1.333333)
+    assert conversions.echelle("carmf_complementaire", 1995, 2020)[0] == 1.0
+    assert conversions.echelle("carmf_complementaire", 1985, 1990)[0] == 1.0
+
+
 def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     """La réforme de 2008 leur donne la décote de la fonction publique, en 2010.
 

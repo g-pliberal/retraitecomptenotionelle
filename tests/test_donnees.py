@@ -343,6 +343,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "employeur_public_sncf_textes":
             "legislation/contribution_employeur_public.csv",
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",
+        "taux_cotisation_avant_1967": "regimes/taux_cotisation_annuels.csv",
+        "salaires_forfaitaires_marins": "regimes/salaires_forfaitaires.csv",
         "employeur_public_texte":
             "legislation/contribution_employeur_public.csv",
     }
@@ -713,8 +715,9 @@ def test_la_cotisation_est_celle_de_chaque_annee_et_non_une_moyenne(catalogue):
     assert general.periode(1979).part_salariale == pytest.approx(0.047 / 0.129)
     assert general.periode(1991).taux_cotisation_deplafonnee == pytest.approx(0.016)
     assert general.periode(1985).taux_cotisation_deplafonnee == 0.0
-    # Avant 1967, aucune transcription : la moyenne de la fiche tient lieu.
-    assert general.periode(1950).taux_cotisation_retraite == pytest.approx(0.0860)
+    # Avant 1967, la part vieillesse conventionnelle des assurances sociales,
+    # datée d'après le COR : 6 + 10 de 1947 à 1958, dont 8,5/21 pour la vieillesse.
+    assert general.periode(1950).taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
     # La liquidation est recopiée telle quelle sur chaque tranche.
     assert general.periode(1972).duree_requise_trimestres == 150
     assert general.periode(1979).duree_requise_trimestres == 150
@@ -727,6 +730,56 @@ def test_la_cotisation_est_celle_de_chaque_annee_et_non_une_moyenne(catalogue):
     assert catalogue["cancava"].periode(1973).taux_cotisation_retraite == pytest.approx(0.0875)
     assert catalogue["cancava"].periode(1960).taux_cotisation_retraite == pytest.approx(0.085)
     assert catalogue["rsi"].periode(2015).taux_cotisation_deplafonnee == pytest.approx(0.0035)
+
+
+def test_la_grille_des_marins_est_lue_et_le_marin_range_dans_sa_categorie(catalogue):
+    """Vingt forfaits par an depuis 2008, croissants, lus au Journal officiel ;
+    le moteur prend la catégorie la plus proche du revenu, et ramène la grille
+    de 2008 par le salaire moyen avant."""
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+    from retraite_notionnelle.donnees.regimes import SalairesForfaitaires
+
+    grilles = SalairesForfaitaires(RACINE_DONNEES)
+    assert grilles.regimes == ("marins",)
+    annees = grilles.annees("marins")
+    assert annees[0] == 2008 and annees[-1] >= 2025
+    assert set(annees) == set(range(annees[0], annees[-1] + 1))
+    for annee in annees:
+        grille = grilles._table["marins"][annee]
+        assert [c.categorie for c in grille] == list(range(1, 21)), annee
+        assert all(a.montant < b.montant for a, b in zip(grille, grille[1:])), annee
+    # 2008 : 11 549,33 € pour la 1re catégorie, 59 899,76 € pour la 20e.
+    forfait, categorie, fiabilite = grilles.forfait("marins", 2008, 12000.0, lambda a: 1.0)
+    assert (forfait, categorie, fiabilite) == (11549.33, 1, Fiabilite.CERTIFIEE)
+    forfait, categorie, _ = grilles.forfait("marins", 2008, 200000.0, lambda a: 1.0)
+    assert (forfait, categorie) == (59899.76, 20)
+    # Avant 2008 : la grille de 2008, ramenée par l'indice fourni, estimée.
+    forfait, categorie, fiabilite = grilles.forfait(
+        "marins", 1990, 6000.0, lambda a: {1990: 0.5, 2008: 1.0}[a])
+    assert (forfait, categorie, fiabilite) == pytest.approx((5774.665, 1, Fiabilite.ESTIMEE))
+    assert catalogue["marins"].periode(2024).assiette_grille == "marins"
+
+
+def test_les_taux_d_avant_1967_sont_dates_par_convention_nommee(catalogue):
+    """La part vieillesse des assurances sociales, 8,5/21 des taux que le COR
+    date d'après la Cnav : 6 + 6 en 1945, 6 + 10 de 1947 à 1958, 6 + 15 en 1966."""
+    general = catalogue["regime_general"]
+    assert general.periode(1945).taux_cotisation_retraite == pytest.approx(0.12 * 8.5 / 21, abs=1e-6)
+    assert general.periode(1950).taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
+    assert general.periode(1950).part_salariale == pytest.approx(6 / 16, abs=1e-6)
+    assert general.periode(1962).taux_cotisation_retraite == pytest.approx(0.2025 * 8.5 / 21, abs=1e-6)
+    assert general.periode(1966).taux_cotisation_retraite == pytest.approx(0.085)
+    assert catalogue["msa_salaries"].periode(1950).taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
+
+
+def test_la_retenue_des_fonctionnaires_passe_a_8_9_pour_cent_en_1989(catalogue):
+    """Loi n° 89-18, article 23 : « majoré d'un point » pour les traitements
+    perçus après le 31 décembre 1988."""
+    for code in ("fonction_publique_etat", "cnracl", "fspoeie"):
+        assert catalogue[code].periode(1988).taux_cotisation_retraite == pytest.approx(0.079), code
+        assert catalogue[code].periode(1989).taux_cotisation_retraite == pytest.approx(0.089), code
+        assert catalogue[code].periode(1990).taux_cotisation_retraite == pytest.approx(0.089), code
+        assert catalogue[code].periode(1991).taux_cotisation_retraite == pytest.approx(0.0785), code
 
 
 def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):

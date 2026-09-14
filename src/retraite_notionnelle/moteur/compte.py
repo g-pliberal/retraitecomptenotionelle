@@ -20,12 +20,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from ..carriere import Affiliations, Carriere
+from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import Parametres, PartCotisation, SourceCotisations
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
-                              ContributionsEmployeurPubliques)
+                              ContributionsEmployeurPubliques, SalairesForfaitaires)
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 
@@ -127,6 +127,7 @@ class ConstructeurCompte:
             parametres.racine_donnees
         )
         self.classes = ClassesCotisation(parametres.racine_donnees)
+        self.grilles = SalairesForfaitaires(parametres.racine_donnees)
 
     # -- taux ----------------------------------------------------------------
 
@@ -516,6 +517,19 @@ class ConstructeurCompte:
                 # revenu.
                 if periode.assiette_facteur_revenu is not None:
                     base *= periode.assiette_facteur_revenu
+                # L'ASSIETTE PAR GRILLE : le marin cotise sur le salaire
+                # forfaitaire de sa catégorie, non sur sa rémunération. La
+                # catégorie est celle dont le forfait approche le plus le
+                # revenu annualisé ; le forfait est proratisé sur les mois
+                # retenus, comme l'était le revenu.
+                if periode.assiette_grille:
+                    forfait_grille = self.grilles.forfait(
+                        periode.assiette_grille, annee, ligne.revenu_annualise,
+                        lambda a: salaire_moyen_annuel(self.macro, a),
+                    )
+                    if forfait_grille is not None:
+                        base = forfait_grille[0] * part
+                        fiabilite = min(fiabilite, forfait_grille[2])
 
                 if acquisition_commune and en_repartition:
                     # Regroupées par ASSIETTE DE DÉPART — traitement indiciaire,

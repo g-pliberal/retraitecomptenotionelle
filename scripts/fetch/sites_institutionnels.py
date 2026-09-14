@@ -76,6 +76,11 @@ DOCUMENTS = [
     ("ircec_memo_2026.html",
      "https://www.ircec.fr/actualite/memo-des-valeurs-2026/",
      "taux, prix d'achat et valeurs de service du RAAP, du RACD et du RACL (fiches ircec_racd, ircec_racl)"),
+    ("cor_parametres_cnav_2009.pdf",
+     "https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1071.pdf",
+     "COR, « L'évolution des paramètres du régime de la CNAV » : tableau des taux de "
+     "cotisation des assurances sociales 1945-1967, d'après la Cnav "
+     "(taux_cotisation_annuels.csv, années d'avant 1967)"),
 ]
 
 
@@ -91,7 +96,12 @@ def _texte_pdf(chemin: Path) -> str | None:
     try:
         from pypdf import PdfReader
     except ImportError:
-        return None
+        # Le lecteur du dépôt, sans dépendance : celui des barèmes de la CNBF.
+        try:
+            from lecture_pdf import texte_pdf
+        except ImportError:
+            return None
+        return texte_pdf(chemin.read_bytes())
     lecteur = PdfReader(str(chemin))
     return "\n".join(page.extract_text() or "" for page in lecteur.pages)
 

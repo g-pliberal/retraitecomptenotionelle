@@ -19,13 +19,15 @@
  */
 
 import { enMois } from "./calendrier.js";
+import { salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesOuverture, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesFonctionPublique,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
-  ClassesCotisation, ConversionsPoints, Rendements, SurcoteParentale, ValeursPoint,
+  ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
+  SurcoteParentale, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 
@@ -55,6 +57,7 @@ export class ScenarioActuel {
     this.valeursPoint = new ValeursPoint(paquet);
     this.conversionsPoints = new ConversionsPoints(paquet);
     this.classes = new ClassesCotisation(paquet);
+    this.grilles = new SalairesForfaitaires(paquet);
     this.dureesRequises = new DureesRequises(paquet);
     this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
     this.dureesProratisation = new DureesProratisation(paquet);
@@ -160,6 +163,25 @@ export class ScenarioActuel {
    * rémunération entière : la pension civile porte sur le seul traitement
    * indiciaire, primes exclues.
    */
+  /**
+   * La rémunération que ce régime liquide : `assietteDeReference`, et, pour un
+   * régime à grille, le salaire forfaitaire de la catégorie — le marin liquide
+   * « sur le salaire forfaitaire de la catégorie dans laquelle il a été
+   * classé » (R. 11), non sur sa paie. Proratisé sur les mois de l'année.
+   */
+  assietteDeReference(periode, ligne) {
+    if (periode.assiette_grille) {
+      const forfaitGrille = this.grilles.forfait(
+        periode.assiette_grille, ligne.annee, ligne.revenuAnnualise,
+        (a) => salaireMoyenAnnuel(this.macro, a),
+      );
+      if (forfaitGrille !== null) {
+        return forfaitGrille[0] * ligne.fraction_annee;
+      }
+    }
+    return assietteDeReference(periode, ligne);
+  }
+
   salaireDeReference(code, carriere, periode, anneeLiquidation, plafonner,
     generation = null, avpf = true) {
     const avpfOuvert = avpf
@@ -219,7 +241,7 @@ export class ScenarioActuel {
         }
         revenu = ligne.revenu_avpf;
       } else {
-        revenu = assietteDeReference(periode, ligne);
+        revenu = this.assietteDeReference(periode, ligne);
       }
       // TRANCHE DE SALAIRE. Un régime qui liquide tranche par tranche — le
       // personnel navigant, 1,85 % par annuité sur la première et 1,4 % sur la
@@ -273,7 +295,7 @@ export class ScenarioActuel {
             carriere.dateEntree(derniere.affiliation),
             derniere.revenu, this.macro.plafond_securite_sociale.valeur(anneeLiquidation))
             .includes(code)) {
-        let traitement = assietteDeReference(periode, derniere)
+        let traitement = this.assietteDeReference(periode, derniere)
           / derniere.fraction_annee;
         if (plafonner) {
           traitement = Math.min(
@@ -778,6 +800,17 @@ export class ScenarioActuel {
           if (periode.assiette_facteur_revenu !== null
               && periode.assiette_facteur_revenu !== undefined) {
             base *= periode.assiette_facteur_revenu;
+          }
+          // Le marin cotise sur le salaire forfaitaire de sa catégorie : voir
+          // `ConstructeurCompte.cotisationAnnuelle`.
+          if (periode.assiette_grille) {
+            const forfaitGrille = this.grilles.forfait(
+              periode.assiette_grille, ligne.annee, ligne.revenuAnnualise,
+              (a) => salaireMoyenAnnuel(this.macro, a),
+            );
+            if (forfaitGrille !== null) {
+              base = forfaitGrille[0] * part;
+            }
           }
           const plafond = borneHaute === null ? base : borneHaute;
           let assiette = Math.max(0.0, Math.min(base, plafond) - borneBasse);

@@ -131,9 +131,25 @@ l'être.
   65 : aucune durée n'ouvrait le taux plein avant l'âge. La fiche ne portait
   d'ailleurs aucune minoration, et 40 % étaient servis à tout âge.
 
-**Neuf erreurs d'histoire**, trouvées en relisant les décrets de chaque régime
-version par version dans la base LEGI, et en balayant le catalogue à six
-générations. Chacune est racontée en détail au §4.
+**Treize erreurs d'histoire**, trouvées en relisant les décrets de chaque
+régime version par version dans la base LEGI, et en balayant le catalogue à
+six générations. Chacune est racontée en détail au §4.
+
+- **Le marin cotisait sur sa paie.** Le régime ne connaît que vingt salaires
+  forfaitaires, un par catégorie de fonction à bord, publiés chaque année par
+  arrêté : ils sont lus au Journal officiel depuis 2008, et le marin est rangé
+  dans la catégorie la plus proche de son revenu, sur laquelle il cotise et
+  liquide.
+- **Avant 1967, le régime général cotisait 8,6 % sans texte.** La cotisation
+  des assurances sociales est datée d'après le COR (6 + 6 en 1945, 6 + 10 en
+  1947, 6 + 15 en 1966) et sa part vieillesse est la convention de 8,5/21 de
+  l'ordonnance de 1967, nommée et marquée estimée.
+- **La retenue des fonctionnaires passait à 8,9 % en 1990.** L'article 23 de
+  la loi n° 89-18 la majore d'un point pour les traitements perçus après le
+  31 décembre 1988.
+- **Les points CARMF d'avant 1991 étaient servis un tiers trop bas.** Les
+  statuts les affectent d'un coefficient de 1,33, que le moteur applique par
+  une ligne d'échelle.
 
 - **Trois régimes étaient fermés qui ne le sont pas, deux étaient ouverts qui
   ne le sont plus.** L'article 1<sup>er</sup> de la loi n° 2023-270 ferme aux
@@ -161,7 +177,7 @@ générations. Chacune est racontée en détail au §4.
 - **Le personnel navigant n'avait pas de décote**, alors que son code lui en
   donne une de 5 % par annuité manquante depuis 2012.
 - **Le fonctionnaire cotisait à 7 % jusqu'en 2003.** L'article L. 61 porte 7,85 %
-  depuis février 1991 et 8,9 % en 1990 : un huitième de cotisation oublié pendant
+  depuis février 1991 et 8,9 % en 1989 et 1990 : un huitième de cotisation oublié pendant
   treize ans dans les comptes notionnels.
 - **Le ministre du culte recevait une surcote depuis 1979**, vingt-cinq ans avant
   que la loi ne la crée.
@@ -1591,9 +1607,9 @@ et c'est lui, et lui seul, qui isole l'effet propre des comptes notionnels.
 Ce que la correction déplace reste modeste, et il faut le dire aussi : les
 cotisations se concentrent sur les dernières années d'une carrière, où les deux
 règles coïncident. La ligne de référence du scénario rétroactif passe de
--90,8 % à -84,6 % pour la génération 1920, de -88,8 % à -86,1 % pour 1930, de
--84,5 % à -84,3 % pour 1945 — et l'écart change de signe pour les carrières
-entièrement postérieures à 1987 (-79,9 % à -80,4 % pour 1958), les arrêtés
+-89,9 % à -84,7 % pour la génération 1920, de -89,0 % à -87,5 % pour 1930, et
+ne bouge pas pour 1945 (-85,1 %) — et l'écart change de signe pour les carrières
+entièrement postérieures à 1987 (-81,0 % à -81,4 % pour 1958), les arrêtés
 ayant depuis 1990 revalorisé un peu moins vite que les prix. L'erreur portait
 sur l'indice cumulé et sur ce qu'on en disait, pas sur l'ordre de grandeur des
 résultats.
@@ -2130,7 +2146,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
 | Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
-| Marins (ENIM) | les montants des salaires forfaitaires, que le décret renvoie à un arrêté — et surtout la CATÉGORIE du marin, que le décret définit par le métier (« matelot de moins de 18 ans », « élève officier ») et qu'une carrière saisie ne porte pas ; les deux exceptions au plafond de vingt-cinq annuités, l'invalidité et le marin de cinquante-deux ans et demi réunissant trente-sept annuités et demie | le revenu déclaré, plafonné comme au régime général ; le plafond de vingt-cinq annuités avant cinquante-cinq ans, lui, est désormais porté | **indéterminé** sur la grille : elle est plus favorable que le salaire réel aux bas revenus, moins au-delà. Même publiée, elle ne s'appliquerait pas sans une convention reliant un revenu à une fonction à bord, qui n'aurait aucune source. **Sous-estime** la pension du marin embarqué très jeune, à qui le plafond est opposé alors que le texte l'en dispense |
+| Marins (ENIM) | les salaires forfaitaires d'avant 2008, que les textes de l'index ne chiffrent pas ; la CATÉGORIE du marin, que le décret définit par le métier et qu'une carrière saisie ne porte pas ; les deux exceptions au plafond de vingt-cinq annuités, l'invalidité et le marin de cinquante-deux ans et demi réunissant trente-sept annuités et demie | la grille des vingt forfaits lue au Journal officiel depuis 2008, la catégorie la plus proche du revenu — convention nommée —, et la grille de 2008 ramenée par le salaire moyen avant ; le plafond de vingt-cinq annuités avant cinquante-cinq ans est porté | **estimé** avant 2008, la grille de 2008 étant ramenée par le salaire moyen ; **sous-estime** la pension du marin embarqué très jeune, à qui le plafond est opposé alors que le texte l'en dispense |
 | Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (363 € la première, 1 988 € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de 3,20 % ET le forfait à sa valeur de croisière, 1 988 € ; les années d'avant 2019 restent au rendement instantané | **surestime de 4 586 € sur une carrière** le flux des cinq premières années, contre 70 000 € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
 | Non-salariés agricoles | les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés — mais plus des textes : l'Opéra, la Comédie-Française, la SEITA, les clercs de notaires, la Banque de France, le fonds spécial des ouvriers de l'État et le personnel navigant ont leurs décrets lus VERSION PAR VERSION dans la base LEGI, et passent au niveau `moyenne`. Restent au niveau `estimee` les mines — dont dix-huit millésimes sont interpolés entre deux valeurs sourcées —, les marins, le port autonome de Strasbourg et les chemins de fer secondaires | pour les quatre derniers, les textes fondateurs sans recontrôle ; le port de Strasbourg n'a rien dans LEGI que des décrets de compensation, son règlement de retraite étant un acte de l'établissement | **indéterminé** pour ces quatre-là, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
@@ -3425,6 +3441,18 @@ bornes d'âge des régimes spéciaux qu'à partir de 2017, et sa décote n'exist
 avant le 1er juillet 2010 — elle monte ensuite en charge jusqu'en 2024, quand les
 fiches la servaient pleine dès 2009.
 
+### La retenue de 8,9 % datait de 1990, et la loi la fait partir de 1989
+
+L'article 23 de la loi n° 89-18 du 13 janvier 1989 — absente de l'index
+thématique, lue sur Légifrance (`JORFTEXT000000321867`) — dispose que « le
+taux de la retenue prévu à l'article L. 61 […] est majoré d'un point », pour
+les traitements « perçus au titre de la période postérieure au 31 décembre
+1988 ». La retenue passe donc de 7,9 % à 8,9 % au 1<sup>er</sup> janvier 1989,
+comme OpenFisca la date ; les trois fiches — État, CNRACL, ouvriers de
+l'État — la faisaient partir de 1990, date de la version de L. 61 que la base
+LEGI consolide, et servaient 7,9 % un an de trop. Le contrôle de vraisemblance
+ne signale plus d'écart.
+
 ### La clause du grand-père : six régimes fermés l'étaient pour tout le monde
 
 Le régime de la SNCF est fermé aux agents **recrutés** depuis le 1er janvier
@@ -3505,6 +3533,59 @@ leurs années fortes tombaient au-dessus ou au-dessous de la moyenne — un
 salarié né en 1935 gagne un pour cent au scénario 2 ; le scénario 1 ne bouge
 pas, puisqu'il liquide sur les trimestres et le salaire de référence, non sur
 la cotisation.
+
+### Avant 1967, la cotisation vieillesse n'existait pas séparément — et le dépôt lui prêtait 8,6 %
+
+La fiche du régime général portait, de 1945 à 1966, une moyenne de 8,6 % sans
+texte : avant l'ordonnance du 21 août 1967, la cotisation des assurances
+sociales couvrait maladie, maternité, invalidité, vieillesse et décès d'un
+seul taux, et aucun texte n'en isolait la part vieillesse. Le tableau « Taux
+de cotisation vieillesse des assurances sociales (maladie et vieillesse) du
+régime général (1945-1967) » du document du COR *L'évolution des paramètres du
+régime de la CNAV* (d'après la Cnav, lu par `sites_institutionnels.py`) date
+chaque taux et son texte : 6 % salarié et 6 % employeur au 1<sup>er</sup>
+janvier 1945 (ordonnance du 30 décembre 1944), 10 % employeur en 1947, 12,5 %
+en 1959, 13,5 % en 1961, 14,25 % en 1962, 15 % au 1<sup>er</sup> septembre 1966.
+
+La part vieillesse est une **convention, nommée et unique** : celle que
+l'ordonnance de 1967 a donnée à la vieillesse en séparant les branches, 8,5
+points sur 21 (3 + 5,5 pour la vieillesse, 6 + 15 en tout, décret n° 67-803).
+Elle vaut 4,86 % en 1945, 6,48 % de 1947 à 1958, 7,49 % en 1959, 7,89 % en
+1961, 8,20 % en 1962, 8,50 % en 1966 — et 1966 retrouve exactement le taux du
+1<sup>er</sup> octobre 1967, ce qui est le signe que la convention ne fait
+pas violence à la série. La Cnav, elle, retient « un taux de 9 % » pour les
+périodes antérieures au 1<sup>er</sup> octobre 1967 dans ses calculs de
+validation. Ces 132 valeurs sont au niveau `estimee`, parce que la convention
+n'est pas un texte ; les taux globaux, eux, sont datés. Un salarié né en 1925
+gagne quelques pour cent de capital notionnel sur ses années 1945-1958, à
+6,5 % au lieu de 8,6 %.
+
+### Le marin cotisait sur sa paie, et le régime ne connaît que vingt forfaits
+
+Le régime des marins ne cotise ni ne liquide sur le salaire réel mais sur un
+**salaire forfaitaire par catégorie de fonction à bord** — vingt catégories,
+de l'apprenti à la vingtième —, dont « le montant est fixé par arrêté »
+(décret n° 2020-649). La fiche s'en tenait au revenu déclaré, au motif que la
+grille n'était pas chiffrée au Journal officiel et qu'une convention manquait
+pour l'appliquer à un revenu. La première raison est tombée : les arrêtés
+annuels « portant majoration des salaires forfaitaires » publient les vingt
+montants depuis 2008, et l'index JORF du dépôt les porte tous
+(`JORFARTI000017964781` en 2008 … `JORFARTI000053743024` en 2026) ;
+`scripts/fetch/jorf_salaires_forfaitaires_marins.py` les lit, et
+`verifier_donnees.py --appliquer` en fait `salaires_forfaitaires.csv`, 380
+montants au niveau `certifiee`, grille en vigueur au 1<sup>er</sup> juillet de
+chaque année.
+
+La seconde raison est une **convention, nommée** : le moteur range le marin,
+chaque année, dans la catégorie dont le forfait est le plus proche de son
+revenu annualisé (`assiette_grille: marins`, dans les deux moteurs), et cotise
+comme il liquide sur ce forfait — le salaire de référence est le forfait de la
+catégorie de la dernière année, ce que R. 11 demande. Un marin à 40 000 € en
+2024 est de treizième catégorie (41 468 €) ; à 20 000 €, de troisième
+(21 504 €) ; au-delà de 75 000 €, de vingtième. Avant 2008, les textes de
+l'index ne portent que le titre ou le visa (décrets de 1956 à 1961, arrêtés de
+1991 à 2006) : la grille de 2008 est ramenée par le salaire moyen, et ces
+années sont marquées estimées.
 
 ### Un jeune d'aujourd'hui pouvait se déclarer mineur, et la page le laissait croire
 
@@ -4082,13 +4163,13 @@ là où la fiche portait 16,55 %, un chiffre de synthèse qui surcomptait de cin
 points la cotisation des années 1970. Le scénario 1 n'en dépend pas ; le compte
 notionnel d'un fonctionnaire ou d'un artisan en dépend entièrement.
 
-Ce que le contrôle signale encore, et pourquoi on le laisse : la marche de
-8,9 % qu'OpenFisca date du 1<sup>er</sup> janvier 1989 (loi n° 89-18, article
-23) et que la fiche porte à 1990, date de la version de L. 61 que la base LEGI
-garde ; le taux 2025 de la première tranche de la CNAVPL, 8,73 % chez le
-producteur, qu'OpenFisca n'a pas encore ; et la CANCAVA de 1973 à 1982, dont la
-moyenne recouvre une montée de 8,75 % à 12,9 % que seule une période par
-décret rendrait exacte.
+Ce que le contrôle signale encore, et pourquoi on le laisse : le taux 2025 de
+la première tranche de la CNAVPL, 8,73 % chez le producteur, qu'OpenFisca n'a
+pas encore. Deux écarts qu'il signalait sont refermés : la marche de 8,9 % de
+la retenue des fonctionnaires, que la loi n° 89-18 fait bien partir du
+1<sup>er</sup> janvier 1989 (voir plus bas), et la CANCAVA de 1973 à 1982, dont
+la moyenne recouvre une montée de 8,75 % à 12,9 % que
+`taux_cotisation_annuels.csv` porte désormais année par année.
 
 ### La SEITA partait à cinquante-cinq ans, et son décret dit soixante
 
@@ -4507,7 +4588,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 600 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 605 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -164,9 +164,9 @@ que le droit en vigueur a accordé ?**
 Ce que la correction déplace est modeste, et le dire fait partie de la
 correction : les cotisations se concentrent sur les dernières années d'une
 carrière, où les deux règles coïncident. La ligne de référence du scénario
-rétroactif passe de -90,8 % à -84,6 % pour la génération 1920, de -88,8 % à
--86,1 % pour 1930, de -84,5 % à -84,3 % pour 1945, et l'écart s'inverse pour
-les carrières entièrement postérieures à 1987 (-79,9 % à -80,4 % pour 1958) :
+rétroactif passe de -89,9 % à -84,7 % pour la génération 1920, de -89,0 % à
+-87,5 % pour 1930, ne bouge pas pour 1945 (-85,1 %), et l'écart s'inverse pour
+les carrières entièrement postérieures à 1987 (-81,0 % à -81,4 % pour 1958) :
 depuis 1990, les arrêtés revalorisent un peu moins vite que les prix (×1,69
 contre ×1,80), l'indexation légale étant assise sur l'inflation de l'année
 précédente. Le facteur cinq est celui de l'indice cumulé sur 1941-2025, pas
