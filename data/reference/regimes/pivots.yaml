@@ -259,6 +259,34 @@ pivots:
     - {texte: "Arrêté du 13 novembre 1963", num: "5 bis", parametres: [taux_cotisation_retraite]}
     - {texte: "Arrêté du 13 novembre 1963", num: "6", parametres: [assiette]}
     - {texte: "Arrêté du 13 novembre 1963", num: "17", parametres: [type_calcul]}
+  assemblees_parlementaires:
+    hors_legi: >-
+      Règlement de la Caisse de pensions des députés, pris par le Bureau de
+      l'Assemblée nationale et publié sur son site, jamais au JORF.
+  cese_membres:
+    hors_legi: >-
+      Règlement de la caisse de retraites des membres du CESE, arrêté par le
+      Bureau du Conseil et publié sur lecese.fr, hors JORF.
+  cps_polynesie:
+    hors_legi: >-
+      Délibérations de l'assemblée de la Polynésie française, compétence
+      locale ; le CLEISS en publie le résumé chiffré.
+  cps_polynesie_tranche_b:
+    hors_legi: >-
+      Délibérations de l'assemblée de la Polynésie française, compétence
+      locale ; le CLEISS en publie le résumé chiffré.
+  cafat_nouvelle_caledonie:
+    hors_legi: >-
+      Délibérations du congrès de la Nouvelle-Calédonie, compétence locale ;
+      le CLEISS et la CAFAT en publient le résumé chiffré.
+  wallis_et_futuna:
+    hors_legi: >-
+      Délibérations de l'assemblée territoriale de Wallis-et-Futuna, hors
+      JORF ; la CPSWF publie le barème sur son site.
+  fonctionnaires_pacifique:
+    hors_legi: >-
+      Lois du pays et délibérations du congrès de la Nouvelle-Calédonie, hors
+      JORF ; la direction de la fonction publique en publie les chiffres.
   seita:
     - {texte: "Décret n°62-766", num: "108", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n°62-766", num: "110", parametres: [age_ouverture]}

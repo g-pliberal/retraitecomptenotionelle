@@ -2007,7 +2007,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n’est pas un régime absent : les 63 fiches du catalogue
+Un régime « incomplet » n’est pas un régime absent : les 70 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -2040,7 +2040,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **63 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **70 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2053,7 +2053,7 @@ document saisi à la main, et les portails officiels ne servent pas de liste
 exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
 [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
 énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
-champ — 81 lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+champ — 84 lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
 programme 195 des lois de finances, chacune avec son texte fondateur et, quand
 l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
 modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose
@@ -2804,7 +2804,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 47 statuts », « 63 régimes » —, parce que ce sont des chiffres de données et
+« 53 statuts », « 70 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -3173,17 +3173,22 @@ modèle :
 | `marins` | 1930-2026 | 1 | 97 | 2 | 0 |
 | `sncf` | 1930-2033 | 16 | 79 | 1 | 0 |
 | `ratp` | 1930-2033 | 16 | 79 | 3 | 0 |
+| `assemblees_parlementaires` | 1930-2030 | 22 | 79 | 0 | 0 |
 | `banque_de_france` | 1930-2026 | 16 | 78 | 0 | 0 |
 | `cavec_complementaire` | 1953-2026 | 2 | 74 | 0 | 0 |
 | `opera_de_paris` | 1930-2026 | 4 | 72 | 4 | 0 |
 | `crpcen` | 1937-2026 | 16 | 71 | 0 | 0 |
 | `ircec_racl` | 1962-2026 | 1 | 65 | 1 | 0 |
+| `fonctionnaires_pacifique` | 1959-2029 | 8 | 65 | 0 | 0 |
+| `cafat_nouvelle_caledonie` | 1958-2026 | 5 | 65 | 0 | 0 |
 | `ircec_racd` | 1964-2026 | 1 | 63 | 2 | 0 |
 | `comedie_francaise` | 1930-2026 | 4 | 63 | 1 | 0 |
 | `cnbf` | 1948-2026 | 2 | 56 | 2 | 0 |
+| `cps_polynesie` | 1968-2026 | 2 | 55 | 0 | 0 |
 | `cnavpl` | 1949-2026 | 7 | 55 | 9 | 0 |
 | `ircec_raap` | 1962-2026 | 5 | 54 | 2 | 0 |
 | `seita` | 1935-2026 | 8 | 49 | 0 | 0 |
+| `cese_membres` | 1957-2026 | 14 | 48 | 0 | 0 |
 | `carcdsf_complementaire` | 1949-2026 | 22 | 48 | 0 | 0 |
 | `cnracl` | 1945-2026 | 7 | 45 | 17 | 0 |
 | `mines` | 1930-2026 | 22 | 44 | 1 | 0 |
@@ -3191,10 +3196,12 @@ modèle :
 | `ieg` | 1946-2026 | 15 | 38 | 3 | 0 |
 | `gerants_debits_tabac` | 1963-2026 | 2 | 37 | 10 | 0 |
 | `cavom_complementaire` | 1979-2026 | 2 | 37 | 5 | 0 |
+| `wallis_et_futuna` | 1975-2026 | 13 | 34 | 0 | 0 |
 | `msa_non_salaries` | 1952-2026 | 7 | 34 | 13 | 0 |
 | `cipav_complementaire` | 1979-2026 | 4 | 34 | 1 | 0 |
 | `crpnpac_tranche_2` | 1963-2026 | 4 | 32 | 0 | 0 |
 | `crpnpac` | 1963-2026 | 4 | 32 | 5 | 0 |
+| `cps_polynesie_tranche_b` | 1995-2026 | 1 | 32 | 0 | 0 |
 | `cavp_complementaire` | 1949-2026 | 7 | 29 | 2 | 0 |
 | `regime_general` | 1945-2026 | 8 | 27 | 14 | 0 |
 | `msa_salaries` | 1945-2026 | 8 | 27 | 3 | 0 |
@@ -3235,7 +3242,7 @@ modèle :
 
 **Ce tableau n'est plus écrit à la main** : c'est la sortie de
 `python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1
-à B5b de la campagne « les règles à travers l'histoire » (voir
+à B5c de la campagne « les règles à travers l'histoire » (voir
 [`regimes.md`](regimes.md), journal de la campagne). Les deux dernières
 colonnes viennent de l'index LEGI et du calendrier des réformes
 (`legislation/reformes.yaml`) : une « coupure de texte non reflétée » est une

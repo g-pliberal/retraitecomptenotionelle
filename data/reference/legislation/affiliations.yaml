@@ -177,6 +177,68 @@ affiliations:
       lui. Les seuils de chiffre d'affaires qui valident les trimestres ne
       sont pas portés.
 
+  parlementaire:
+    libelle: Député ou sénateur (indemnité parlementaire)
+    periodes:
+      - {debut: 1930, fin: null, regimes: [assemblees_parlementaires]}
+    note: >-
+      Le revenu saisi est l'indemnité parlementaire. La caisse de chaque
+      assemblée sert la pension ; la fiche est celle des députés, les
+      sénateurs y sont assimilés. L'assemblée verse une part que le
+      règlement n'écrit pas : le statut n'est pas sans employeur, et la
+      fiche ne porte que la retenue du parlementaire.
+
+  membre_cese:
+    libelle: Membre du Conseil économique, social et environnemental
+    periodes:
+      - {debut: 1957, fin: null, regimes: [cese_membres], entres_avant: 2023}
+      - {debut: 1957, fin: 1960, regimes: [regime_general, unirs], entres_depuis: 2023}
+      - {debut: 1961, fin: 2018, regimes: [regime_general, arrco, arrco_tranche_2], entres_depuis: 2023}
+      - {debut: 2019, fin: null, regimes: [regime_general, agirc_arrco], entres_depuis: 2023}
+    note: >-
+      La caisse de retraites des anciens membres est fermée aux membres
+      désignés à compter du 1er septembre 2023, « affiliés au régime général
+      de sécurité sociale et à l'Ircantec » ; le catalogue les route au
+      régime général et à la complémentaire du non-cadre, l'Ircantec étant
+      une fiche de tranche 1 que le modèle réserve aux agents publics.
+
+  salarie_polynesie:
+    libelle: Salarié de Polynésie française
+    periodes:
+      - {debut: 1968, fin: 1994, regimes: [cps_polynesie]}
+      - {debut: 1995, fin: null, regimes: [cps_polynesie, cps_polynesie_tranche_b]}
+    note: >-
+      Régime général des salariés de la Caisse de prévoyance sociale ; les
+      fonctionnaires territoriaux de Polynésie y sont aussi. L'Agirc-Arrco y
+      est facultative, elle n'est pas routée.
+
+  salarie_nouvelle_caledonie:
+    libelle: Salarié de Nouvelle-Calédonie
+    periodes:
+      - {debut: 1958, fin: 1960, regimes: [cafat_nouvelle_caledonie]}
+      - {debut: 1961, fin: 2018, regimes: [cafat_nouvelle_caledonie, arrco, arrco_tranche_2]}
+      - {debut: 2019, fin: null, regimes: [cafat_nouvelle_caledonie, agirc_arrco]}
+    note: >-
+      Retraite CAFAT en points, et l'Agirc-Arrco, « applicable à toutes les
+      personnes exerçant une activité salariée relevant du secteur privé
+      en Nouvelle-Calédonie » (CLEISS) : celle du non-cadre.
+
+  salarie_wallis_et_futuna:
+    libelle: Salarié de Wallis-et-Futuna
+    periodes:
+      - {debut: 1975, fin: null, regimes: [wallis_et_futuna]}
+    note: >-
+      Caisse des prestations sociales des îles Wallis et Futuna, seule ; pas
+      de complémentaire.
+
+  fonctionnaire_pacifique:
+    libelle: Fonctionnaire de Nouvelle-Calédonie (CLR)
+    periodes:
+      - {debut: 1959, fin: null, regimes: [fonctionnaires_pacifique]}
+    note: >-
+      Caisse locale de retraites de Nouvelle-Calédonie. Le revenu saisi est
+      le traitement, dont la part de primes est exclue de l'assiette.
+
   fonctionnaire_etat:
     libelle: Fonctionnaire titulaire de l'État (civil ou militaire)
     periodes:

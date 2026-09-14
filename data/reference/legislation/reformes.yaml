@@ -669,3 +669,59 @@ reformes:
     regimes: [gerants_debits_tabac]
     absorbee_par: []
     non_appliquee: {}
+
+  - code: deputes_2018
+    date: 2018-01-01
+    texte: {reference: "règlement de la Caisse de pensions des députés et des anciens députés consolidé au 1er janvier 2018 (arrêté du Bureau du 8 novembre 2017 ; arrêté des Questeurs n° 15-043 du 14 avril 2015 pour la retenue), hors JORF", id: null}
+    parametres: [taux_cotisation_retraite, taux_plein, duree_requise_trimestres, age_ouverture]
+    regimes: [assemblees_parlementaires]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cese_2013
+    date: 2013-10-28
+    texte: {reference: "règlement de la Caisse de retraites des membres du CESE au 1er janvier 2025, article 17 (taux par annuité de 2,11 % à 1,82 %) et article 4 (retenue égale à 3,42 fois celle de L. 61), hors JORF", id: null}
+    parametres: [taux_plein, duree_requise_trimestres, taux_cotisation_retraite]
+    regimes: [cese_membres]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cese_2023
+    date: 2023-09-01
+    texte: {reference: "loi n° 2023-270 du 14 avril 2023 de financement rectificative de la sécurité sociale pour 2023 (fermeture aux membres désignés à compter du 1er septembre 2023, affiliés au régime général et à l'Ircantec)", id: null}
+    parametres: [fermeture]
+    regimes: [cese_membres]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: polynesie_2023
+    date: 2023-01-01
+    texte: {reference: "loi du pays et délibérations de l'assemblée de la Polynésie française portant réforme des retraites du régime général des salariés (62 ans, 456 mois, depuis le 1er janvier 2023), résumées par le CLEISS", id: null}
+    parametres: [age_ouverture, duree_requise_trimestres]
+    regimes: [cps_polynesie]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: caledonie_2023
+    date: 2023-01-01
+    texte: {reference: "délibérations du congrès de la Nouvelle-Calédonie portant réforme de l'assurance retraite CAFAT (âge de 60 à 62 ans et durée de 35 à 37 ans de 2023 à 2026), résumées par le CLEISS et la CAFAT", id: null}
+    parametres: [age_ouverture, duree_requise_trimestres]
+    regimes: [cafat_nouvelle_caledonie]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: wallis_2009
+    date: 2009-03-01
+    texte: {reference: "délibérations de l'assemblée territoriale de Wallis-et-Futuna relevant chaque année la cotisation retraite de 17,1 % (2009) à 27 % (2020), publiées par la CPSWF", id: null}
+    parametres: [taux_cotisation_retraite]
+    regimes: [wallis_et_futuna]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: clr_2023
+    date: 2023-10-01
+    texte: {reference: "loi du pays de la Nouvelle-Calédonie portant mesures d'urgence en faveur de la Caisse locale de retraites (cotisations de 10,8 % à 13 % et de 25,1 % à 28,8 %, minoration avant 60 ans) puis loi du pays de 2024 (âge de 60 à 62 ans de 2025 à 2030)", id: null}
+    parametres: [taux_cotisation_retraite, age_ouverture, decote_par_trimestre]
+    regimes: [fonctionnaires_pacifique]
+    absorbee_par: []
+    non_appliquee: {}

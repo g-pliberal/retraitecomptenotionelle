@@ -120,7 +120,8 @@ inventaire:
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
               salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
-              elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac, micro_entrepreneur]
+              elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac, micro_entrepreneur,
+              membre_cese]
     textes:
       - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
       - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
@@ -195,13 +196,34 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [salarie_polynesie]
     textes:
-      - {reference: "délibérations de l'assemblée de la Polynésie française (compétence locale, hors JORF)", id: null}
+      - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » et fiche de cotisations 2026 (délibérations de l'assemblée de la Polynésie française, compétence locale, hors JORF)", id: null}
     manque: >-
-      Compétence locale : les textes ne sont ni dans le JORF ni dans LEGI, et
-      la source est la caisse elle-même. Rien n'est lu.
+      Seuls les paramètres de 2026 sont lus, projetés sur toute la période ;
+      le plafond de 269 000 FCFP par mois n'est pas une série du dépôt et le
+      plafond national, plus haut, tient lieu ; la montée en charge de la
+      réforme de 2023 n'est pas lue.
+
+  - code: cps_polynesie_tranche_b
+    nom: Régime de retraite des travailleurs salariés de Polynésie française, tranche B (CPS)
+    famille: base_prive
+    population: Salariés de Polynésie française au-dessus du plafond de la tranche A
+    creation: 1995
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [salarie_polynesie]
+    textes:
+      - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » (points de la tranche B : salaire minimum horaire de référence 1 024,74 FCFP, point à 20,49 FCFP)", id: null}
+    manque: >-
+      La tranche 269 000-525 000 FCFP est écrite comme la tranche entre un et
+      deux plafonds nationaux, la borne la plus proche du catalogue ; le
+      barème de 2026 est projeté sur toute la période et la date de création
+      de la tranche est prise à 1995.
 
   - code: cafat_nouvelle_caledonie
     nom: Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
@@ -212,34 +234,38 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [salarie_nouvelle_caledonie]
     textes:
-      - {reference: "délibérations du congrès de la Nouvelle-Calédonie (compétence locale, hors JORF)", id: null}
+      - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Nouvelle-Calédonie » et fiche de cotisations 2026 ; page « Le montant de ma retraite » de la CAFAT (délibérations du congrès, compétence locale, hors JORF)", id: null}
     manque: >-
-      Compétence locale, comme la Polynésie : source chez la caisse, rien
-      n'est lu.
+      La valeur de référence qui convertit les cotisations en points n'est
+      pas publiée : le rendement est estimé ; taux et barème de 2026
+      projetés sur toute la période ; plafond de 548 600 FCFP remplacé par
+      le plafond national.
 
   - code: wallis_et_futuna
     nom: Retraite des salariés de Wallis-et-Futuna
     famille: base_prive
     population: Salariés de Wallis-et-Futuna
-    creation: null
+    creation: 1975
     fermeture: null
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [salarie_wallis_et_futuna]
     textes:
-      - {reference: "compétence locale, hors JORF", id: null}
-    manque: >-
-      Pas de régime de retraite obligatoire de droit commun recensé par le
-      dépôt ; à établir avant toute fiche.
+      - {reference: "Caisse des prestations sociales des îles Wallis et Futuna, pages « Retraites » et « Les taux de cotisation » (délibérations de l'assemblée territoriale, hors JORF)", id: null}
 
   # ---------------------------------------------------------------------
   # Salariés du privé — complémentaires
   # ---------------------------------------------------------------------
+    manque: >-
+      Le régime existe bel et bien, contrairement à ce que l'inventaire
+      disait : 60 ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur
+      les quinze meilleures années. Non lus : le plafond, la date de
+      création, le barème d'avant 2009, la réforme en préparation (65 ans).
 
   - code: agirc
     nom: Association générale des institutions de retraite des cadres
@@ -267,7 +293,8 @@ inventaire:
     integre_dans: arrco
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente,
-              maitre_enseignement_prive]
+              maitre_enseignement_prive,
+              membre_cese]
     textes:
       - {reference: "accord du 15 mai 1957 créant l'UNIRS (hors JORF)", id: null}
     manque: >-
@@ -291,7 +318,8 @@ inventaire:
               mineur, agent_seita, agent_chemins_fer_secondaires,
               salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon]
+              salarie_saint_pierre_et_miquelon,
+              membre_cese, salarie_nouvelle_caledonie]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
@@ -314,7 +342,8 @@ inventaire:
     statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita,
               agent_chemins_fer_secondaires,
               maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon]
+              salarie_saint_pierre_et_miquelon,
+              membre_cese, salarie_nouvelle_caledonie]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
@@ -363,7 +392,8 @@ inventaire:
               agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
               salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
-              salarie_saint_pierre_et_miquelon]
+              salarie_saint_pierre_et_miquelon,
+              membre_cese, salarie_nouvelle_caledonie]
     textes:
       - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
       - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
@@ -568,11 +598,16 @@ inventaire:
       - {reference: "loi n° 99-532 du 25 juin 1999, article 32 (caisses d'épargne)", id: LEGIARTI000006711574}
       - {reference: "arrêté du 13 novembre 1973 portant homologation du statut du personnel administratif des CCI, régime de retraite annexé", id: LEGIARTI000006610583}
       - {reference: "décret n° 2002-1012 du 19 juillet 2002, article 21 (affiliation à la CAMARCA)", id: LEGIARTI000006602079}
+      - {reference: "accord professionnel de la banque du 13 septembre 1993 (intégration à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993, complément bancaire différentiel), modifié par l'accord du 25 février 2005 (hors JORF)", id: null}
     manque: >-
-      Régimes à prestations définies, chacun avec son barème, servis jusqu'à
-      leur intégration à l'Arrco et à l'Agirc, dont les affiliés d'avant sont
-      encore vivants ; le modèle leur applique l'Arrco et l'Agirc de droit
-      commun sur toute la période.
+      Régimes à prestations définies servis jusqu'à leur intégration à
+      l'Arrco et à l'Agirc. Pour les banques, l'accord du 13 septembre 1993
+      fige les droits au 31 décembre 1993 et sert un complément égal à la
+      différence entre la pension bancaire de cette date, revalorisée, et la
+      somme des pensions Arrco, Agirc et Sécurité sociale : le modèle
+      applique l'Arrco et l'Agirc de droit commun sur toute la période, et
+      ce complément manque ; le barème bancaire d'avant 1994 n'est pas
+      publié.
 
   - code: enseignants_prive_additionnel
     nom: Régime additionnel de retraite des enseignants du privé sous contrat
@@ -706,31 +741,38 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [parlementaire]
     textes:
-      - {reference: "règlements des assemblées, pris en vertu de l'ordonnance n° 58-1100 du 17 novembre 1958 (hors JORF)", id: null}
+      - {reference: "règlement de la Caisse de pensions des députés et des anciens députés, consolidé au 1er janvier 2018, publié par l'Assemblée nationale (hors JORF)", id: null}
+      - {reference: "arrêté des Questeurs n° 15-043 du 14 avril 2015 relatif au taux de cotisation à la Caisse de pensions (9,34 % en 2015, 10,85 % en 2020)", id: null}
+      - {reference: "Bureau du Sénat du 12 juillet 2023, transposition de la loi du 14 avril 2023 à la caisse des retraites des anciens sénateurs (62 à 64 ans, 43 annuités)", id: null}
     manque: >-
-      Régimes autonomes fixés par les bureaux des assemblées et non publiés au
-      Journal officiel ; le dépôt n'a lu ni barème ni règlement. À modéliser
-      par décision, avec les rapports publics des assemblées pour source.
+      La fiche est celle des députés, lue dans le règlement de 2018 ; les
+      sénateurs y sont assimilés faute d'un règlement publié, et les
+      fonctionnaires des assemblées restent hors fiche. La part versée par
+      l'Assemblée n'est pas écrite : seule la retenue du député est portée.
+      La retenue d'avant 2015 est estimée.
 
   - code: cese_membres
     nom: Caisse de retraite des anciens membres du Conseil économique, social et environnemental
     famille: special
     population: Membres du CESE
     creation: 1957
-    fermeture: null
+    fermeture: 2023
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [membre_cese]
     textes:
-      - {reference: "règlement de la caisse de retraite des anciens membres du Conseil économique et social (hors JORF)", id: null}
+      - {reference: "règlement de la Caisse de retraites des membres du Conseil économique, social et environnemental au 1er janvier 2025, articles 4, 7 et 17 (lecese.fr, hors JORF)", id: null}
+      - {reference: "loi n° 57-761 du 10 juillet 1957 et décret n° 59-601 du 5 mai 1959 (institution de la caisse)", id: null}
     manque: >-
-      Même situation que les assemblées parlementaires, pour quelques
-      centaines de personnes.
+      La retenue de 3,42 fois celle de la fonction publique est lue, la
+      contribution du Conseil ne l'est pas ; l'assiette de référence de 2,06
+      fois la rémunération et le plafond des trois quarts sont écrits comme
+      un taux plein de 154,5 % de l'indemnité.
 
   - code: fonctionnaires_pacifique
     nom: Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
@@ -741,17 +783,20 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [fonctionnaire_pacifique]
     textes:
-      - {reference: "textes des collectivités (compétence locale, hors JORF)", id: null}
-    manque: >-
-      Compétence locale ; la Caisse locale de retraites de Nouvelle-Calédonie
-      et la CPS polynésienne publient leurs propres règlements, non lus.
+      - {reference: "Direction des ressources humaines et de la fonction publique de Nouvelle-Calédonie, « Mesures d'urgence en faveur de la CLR » (3 octobre 2023) et « Mesures favorisant la pérennité du régime de retraite des fonctionnaires » (16 septembre 2024) — lois du pays et délibérations du congrès, hors JORF", id: null}
 
   # ---------------------------------------------------------------------
   # Régimes spéciaux de salariés
   # ---------------------------------------------------------------------
+    manque: >-
+      La fiche est celle de la Caisse locale de retraites de Nouvelle-
+      Calédonie ; les fonctionnaires de Polynésie relèvent de la CPS, portée
+      par le statut salarié. Les cotisations d'avant 2023 sont projetées ;
+      la durée de services requise et la table exacte de l'âge après 2025
+      restent à lire dans la loi du pays.
 
   - code: sncf
     nom: Régime spécial des agents du cadre permanent de la SNCF
@@ -1004,19 +1049,20 @@ inventaire:
     population: Personnels de l'Imprimerie nationale
     creation: 1927
     fermeture: 1994
-    extinction: null
+    extinction: 2013
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
+    couverture: hors_champ
     statuts: []
     textes:
       - {reference: "loi du 29 juin 1927 (régime de retraites des personnels de l'Imprimerie nationale), citée par R*77 du code des pensions", id: LEGIARTI000006363032}
       - {reference: "code de la sécurité sociale, R. 711-1 1°", id: LEGIARTI000048031379}
-      - {reference: "lois de finances, programme 195 « Régimes de retraite des mines, de la SEITA et divers »", id: JORFARTI000023316030}
-    manque: >-
-      Régime fermé, financé par l'État au programme 195 ; ses paramètres ne
-      sont pas lus et la date de fermeture est à confirmer dans les textes de
-      transformation de l'Imprimerie nationale en société (1993-1994).
+      - {reference: "projets annuels de performances du programme 195 « Régimes de retraite des mines, de la SEITA et divers » (dix affiliés en 2007, régime éteint fin 2013 au décès du dernier pensionné)", id: JORFARTI000023316030}
+    raison_hors_champ: >-
+      Régime éteint : les documents budgétaires du programme 195 comptent
+      dix affiliés en 2007 et constatent l'extinction fin 2013 « avec le
+      décès du dernier pensionné » ; aucun assuré vivant n'y a de droit, il
+      n'y a rien à simuler.
 
   - code: credit_foncier
     nom: Régime spécial de retraite du Crédit foncier de France

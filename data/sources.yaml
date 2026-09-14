@@ -2367,3 +2367,40 @@ institutions:
           2026, des auxiliaires médicaux (CARPIMKO) depuis 1996 et des notaires
           (CPRN) depuis 1949. Ces trois sections n'ont pas de fiche, faute non
           pas du taux mais du PRIX DU POINT — voir la note de `cnavpl`.
+
+  institutions:
+    nom: Sites des institutions dont le régime n'est dans aucun texte de l'index
+    role: >-
+      Assemblées parlementaires, CESE, CLEISS, caisses du Pacifique, douane,
+      IRCEC : les seuls endroits où les règles de huit régimes sont écrites.
+    jeux:
+      - id: sites_institutionnels
+        titre: >-
+          Règlements et fiches publiés par les assemblées, le CESE, le CLEISS,
+          les caisses du Pacifique, la CAFAT, la CPSWF, la direction de la
+          fonction publique de Nouvelle-Calédonie, la douane et l'IRCEC
+        url: https://www2.assemblee-nationale.fr/static/CRD-janvier-2018.pdf
+        acces: web
+        statut_integration: saisi
+        cible: data/reference/regimes/
+        recuperation: scripts/fetch/sites_institutionnels.py
+        note: >-
+          Huit régimes de l'inventaire n'ont ni décret ni arrêté dans le JORF
+          ou dans LEGI : réglés par les bureaux des assemblées, par des
+          délibérations locales du Pacifique, ou par le règlement d'une
+          caisse. Le récupérateur garde la PIÈCE — quatorze pages et PDF dans
+          data/brut/sites_institutionnels/, le texte des PDF extrait à côté —
+          et chaque fiche cite la phrase qu'elle en tire ; rien n'est
+          recontrôlé automatiquement, d'où le niveau `estimee` de toutes ces
+          fiches. Lu le 14 septembre 2026 : règlement de la Caisse de
+          pensions des députés au 1er janvier 2018 (annuité de 2,11 % à
+          1,9628 %, 40 à 43 annuités, retenue de 9,34 % à 10,85 %), règlement
+          de la caisse des membres du CESE au 1er janvier 2025 (retenue de
+          3,42 fois celle de L. 61, 1,82 % de 2,06 fois la rémunération par
+          annuité), fiches du CLEISS pour la Polynésie (tranche A : 70 % de
+          la moyenne de 180 mois pour 456 mois, 23,53 % ; tranche B : points
+          à 1 024,74 FCFP et 20,49 FCFP) et la Nouvelle-Calédonie (14 %,
+          point à 256,09 FCFP, 62 ans et 37 ans en 2026), CPSWF (2,60 % puis
+          1,30 % par an, cotisation de 17,1 à 27 %), CLR (2 % par annuité,
+          80 % au plus, cotisations de 10,8 à 13 % et de 25,1 à 28,8 %),
+          douane (RAVGDT : point à 4,94 € et 2,42 €), IRCEC (mémo 2026).
