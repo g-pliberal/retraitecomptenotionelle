@@ -645,8 +645,19 @@ def test_un_statut_ferme_dit_qui_le_releve_et_ne_route_rien_d_autre():
                     ecarts.append(f"{statut}.{cle} : borne illisible {borne!r}")
                 rang_borne(borne)
         if fermeture is None:
-            if releve is not None:
-                ecarts.append(f"{statut} : releve_par sans fermeture")
+            # Un statut dont les régimes changent pour les nouveaux entrants
+            # sans qu'il cesse d'exister : il doit router quelque chose à qui
+            # entre après la borne, sans quoi c'est une fermeture qui ne dit
+            # pas son nom.
+            bornes = [periode["entres_avant"] for periode in affiliations.periodes(statut)
+                      if periode.get("entres_avant") is not None]
+            for borne in bornes:
+                entree = DateMois.depuis_rang(rang_borne(borne))
+                if not affiliations.regimes(statut, entree.annee, entree):
+                    ecarts.append(
+                        f"{statut} : entré en {entree}, ne route rien — "
+                        "déclarer releve_par"
+                    )
             continue
         if releve is None:
             ecarts.append(f"{statut} : fermé depuis {fermeture}, sans releve_par")
@@ -666,6 +677,12 @@ def test_un_statut_ferme_dit_qui_le_releve_et_ne_route_rien_d_autre():
                 break
     assert not ecarts, "\n".join(ecarts)
     assert affiliations.fermeture_entrants("mineur") == DateMois(2010, 9)
+    # Le libéral non réglementé change de régimes en 2019 sans se fermer.
+    assert affiliations.fermeture_entrants("liberal_non_reglemente") is None
+    assert affiliations.regimes("liberal_non_reglemente", 2020, DateMois(2018, 6)) == (
+        "cnavpl", "cipav_complementaire")
+    assert affiliations.regimes("liberal_non_reglemente", 2020, DateMois(2019, 1)) == (
+        "regime_general", "rci")
     assert affiliations.fermeture_entrants("agent_sncf") == DateMois(2020, 1)
     assert affiliations.fermeture_entrants("salarie_prive_non_cadre") is None
 
@@ -1355,7 +1372,7 @@ def test_les_statuts_sans_employeur_sont_marques():
                     "exploitant_agricole", "medecin_liberal",
                     "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
                     "pharmacien", "auxiliaire_medical", "veterinaire",
-                    "officier_ministeriel", "notaire",
+                    "officier_ministeriel", "notaire", "liberal_non_reglemente",
                     "gerant_debit_tabac", "micro_entrepreneur"}
     # L'AGENT GÉNÉRAL D'ASSURANCE EST LE SEUL LIBÉRAL QUI N'Y EST PAS, et ce
     # n'est pas un oubli : un tiers de son complémentaire est payé par les

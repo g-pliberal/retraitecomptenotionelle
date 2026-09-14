@@ -863,6 +863,14 @@ export class Affiliations {
    * que le formulaire lui oppose.
    */
   fermetureEntrants(affiliation) {
+    // Seul un statut qui déclare `releve_par` est fermé : celui dont le nom
+    // cesse de convenir après la date. Un statut dont les régimes changent
+    // pour les nouveaux entrants sans qu'il cesse d'exister — le libéral non
+    // réglementé, à la Cipav avant 2019, au régime général et au RCI depuis —
+    // reste ouvert.
+    if (this.relevePar(affiliation) === null) {
+      return null;
+    }
     const bornes = this.periodes(affiliation)
       .filter((periode) => periode.entres_avant !== undefined && periode.entres_avant !== null)
       .map((periode) => rangBorne(periode.entres_avant));

@@ -684,11 +684,18 @@ class Affiliations:
         """Mois depuis lequel le statut est fermé aux nouveaux entrants.
 
         C'est la clause du grand-père lue depuis le routage lui-même : la plus
-        ancienne borne ``entres_avant`` de ses périodes. ``None`` pour un statut
-        ouvert. Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le
-        régime des mines est fermé aux recrutés depuis septembre 2010, et c'est
-        cette date que le formulaire lui oppose.
+        ancienne borne ``entres_avant`` de ses périodes, POUR UN STATUT QUI
+        DÉCLARE ``releve_par`` — celui dont le nom même cesse de convenir
+        après la date : un jeune d'aujourd'hui ne peut pas se déclarer mineur,
+        le régime des mines est fermé aux recrutés depuis septembre 2010, et
+        c'est cette date que le formulaire lui oppose. ``None`` pour un statut
+        ouvert, et aussi pour un statut dont les régimes changent pour les
+        nouveaux entrants sans qu'il cesse d'exister — le libéral non
+        réglementé est à la Cipav s'il y était avant 2019, au régime général
+        et au RCI sinon, et reste un libéral non réglementé.
         """
+        if self.releve_par(affiliation) is None:
+            return None
         bornes = [periode["entres_avant"] for periode in self.periodes(affiliation)
                   if periode.get("entres_avant") is not None]
         if not bornes:

@@ -237,6 +237,19 @@ def test_le_menu_des_statuts_est_date(page, contexte):
     assert '<option value="agent_seita" selected data-fermeture="1981-01">' in texte
     assert "Saisie refusée" in texte
 
+    # Un statut dont les régimes changent sans qu'il se ferme n'est pas daté,
+    # et se déclare à toute date : le libéral non réglementé installé en 2020
+    # est au régime général et au RCI, celui de 2010 à la Cipav.
+    assert (">Profession libérale non réglementée (consultant, formateur, coach, "
+            "développeur…) (depuis 1949)<") in texte
+    def regimes(champs):
+        return {p.regime for p in contexte.simuler(
+            Saisie.depuis_requete(champs)).actuel.pensions_par_regime}
+    assert regimes({"naissance": "1995", "statut": "liberal_non_reglemente",
+                    "debut": "25", "liquidation": "64"}) >= {"regime_general", "rci"}
+    assert regimes({"naissance": "1985", "statut": "liberal_non_reglemente",
+                    "debut": "25", "liquidation": "64"}) >= {"cnavpl", "cipav_complementaire"}
+
     dates = {s["code"]: s for s in statuts(contexte)}
     assert dates["mineur"]["fermeture_entrants"] == "2010-09"
     assert dates["mineur"]["releve_par"] == "salarie_prive_non_cadre"

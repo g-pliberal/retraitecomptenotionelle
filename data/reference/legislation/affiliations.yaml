@@ -355,6 +355,38 @@ affiliations:
       La borne de 1979 est celle du décret n° 79-262 du 21 mars 1979, qui
       institue le complémentaire des architectes.
 
+  liberal_non_reglemente:
+    libelle: Profession libérale non réglementée (consultant, formateur, coach, développeur…)
+    sans_employeur: true
+    periodes:
+      - {debut: 1949, fin: 1978, regimes: [cnavpl]}
+      - {debut: 1979, fin: null, regimes: [cnavpl, cipav_complementaire], entres_avant: 2019}
+      - {debut: 2019, fin: null, regimes: [regime_general, rci], entres_depuis: 2019}
+    note: >-
+      LE MÊME MÉTIER CHANGE DE RÉGIME SELON LA DATE D'INSTALLATION, et le
+      statut ne cesse pas d'exister pour autant : il ne porte donc pas
+      `releve_par`, et le formulaire le propose à toute date. L'article
+      L. 640-1 du code de la sécurité sociale, dans sa rédaction du 1er
+      janvier 2018 (LEGIARTI000036391511), n'affilie plus aux régimes des
+      professions libérales que les professions qu'il énumère — santé,
+      droit, chiffre, architecture et construction, artistes, guides,
+      moniteurs de ski, vétérinaires —, « pour les travailleurs indépendants
+      créant leur activité […] au plus tard le 1er janvier 2019 » hors
+      micro-social (loi n° 2016-1827, art. 50 X). Les autres — consultants,
+      formateurs, coachs, développeurs, tout métier hors liste — relèvent
+      depuis de la sécurité sociale des indépendants : le régime général
+      pour la base et le RCI pour le complément, comme un commerçant. Ceux
+      « affiliés avant le 1er janvier 2019 à la Caisse nationale d'assurance
+      vieillesse des professions libérales et à la Caisse interprofessionnelle
+      de prévoyance et d'assurance vieillesse restent affiliés à ces
+      régimes » (loi n° 2017-1836, art. 15, JORFARTI000036339157) : clause du
+      grand-père, portée par `entres_avant`. Le micro-entrepreneur libéral
+      créé dès 2018 relève du statut `micro_entrepreneur`, qui route les
+      régimes du commerçant depuis 2018. Le statut `profession_liberale`
+      reste celui des professions de la liste que la Cipav conserve —
+      architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes,
+      guides.
+
   auxiliaire_medical:
     libelle: >-
       Auxiliaire médical libéral (infirmier, masseur-kinésithérapeute,
