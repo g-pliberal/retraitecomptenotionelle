@@ -491,6 +491,16 @@
    "source": "INSEE BDM, idbanks 011785411 et 011793486",
    "valeurs": 76
   },
+  "salaires_forfaitaires_marins": {
+   "ajoutees": 380,
+   "colonne": "montant_annuel",
+   "corrigees": 0,
+   "empreinte": "d4170672424d311e",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, base JORF, arrêtés annuels portant majoration des salaires forfaitaires des marins",
+   "valeurs": 380
+  },
   "smic_horaire": {
    "ajoutees": 0,
    "colonne": "smic_horaire",
@@ -502,14 +512,24 @@
    "valeurs": 20
   },
   "taux_cotisation_annuels": {
-   "ajoutees": 512,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "5e6442e558c33ffb",
-   "identiques": 562,
+   "identiques": 1074,
    "niveau": "haute",
    "source": "OpenFisca-France, barèmes datés de la cotisation vieillesse (cnav, artisans, commerçants, indépendants)",
    "valeurs": 1074
+  },
+  "taux_cotisation_avant_1967": {
+   "ajoutees": 132,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "a508951393a0aece",
+   "identiques": 0,
+   "niveau": "estimee",
+   "source": "COR d'après la Cnav, taux des assurances sociales 1945-1967 ; part vieillesse conventionnelle de 8,5/21",
+   "valeurs": 132
   },
   "valeurs_point": {
    "ajoutees": 0,

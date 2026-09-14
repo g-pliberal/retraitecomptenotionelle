@@ -45,6 +45,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import sys
 from dataclasses import dataclass, field
 from datetime import date
@@ -1374,6 +1375,92 @@ def source_minimum_garanti_reference() -> dict[tuple, float]:
     serie = _serie_json("sre_minimum_garanti.json",
                         "scripts/fetch/sre_minimum_garanti.py")
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
+
+
+def source_salaires_forfaitaires_marins() -> dict[tuple, float]:
+    """Les salaires forfaitaires des marins, par catégorie et par année, au JORF.
+
+    Cotisations et pensions des marins sont assises sur un salaire FORFAITAIRE
+    par catégorie de fonction à bord, non sur la rémunération réelle. Le
+    *Journal officiel* en est le producteur : chaque année depuis 2008, un
+    arrêté « portant majoration des salaires forfaitaires » publie les vingt
+    montants ; ``scripts/fetch/jorf_salaires_forfaitaires_marins.py`` les lit
+    dans l'index du dépôt et retient la grille en vigueur au 1er juillet.
+    """
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(
+            _serie_json("jorf_salaires_forfaitaires_marins.json",
+                        "scripts/fetch/jorf_salaires_forfaitaires_marins.py").items()
+        )
+    }
+
+
+#: Part de la cotisation d'assurances sociales d'avant 1967 que le modèle
+#: attribue à la vieillesse : celle que l'ordonnance du 21 août 1967 lui a
+#: donnée en séparant les branches — 8,5 points sur 21 (3 + 5,5 pour la
+#: vieillesse, 6 + 15 en tout au 1er octobre 1967, décret n° 67-803).
+PART_VIEILLESSE_AVANT_1967 = 8.5 / 21.0
+_TAUX_AVANT_1967 = re.compile(
+    r"^(\d\d)/(\d\d)/(19[4-6]\d)\s*([\d,]+)%\s*([\d,]+)%\s*([\d,]+)%", re.M
+)
+
+
+def source_taux_avant_1967() -> dict[tuple, float]:
+    """Le régime général avant 1967 : la cotisation d'assurances sociales, et sa
+    part vieillesse par convention.
+
+    Avant l'ordonnance du 21 août 1967, la cotisation des assurances sociales
+    couvrait maladie, maternité, invalidité, vieillesse et décès d'un seul
+    taux, et aucun texte n'en isolait la part vieillesse. Le tableau « Taux de
+    cotisation vieillesse des assurances sociales (maladie et vieillesse) du
+    régime général (1945-1967) » du document du COR « L'évolution des
+    paramètres du régime de la CNAV » (d'après la Cnav) date chaque taux et
+    son texte : 6 % salarié et 6 % employeur au 1er janvier 1945 (ordonnance
+    du 30 décembre 1944), 6 % et 10 % au 1er janvier 1947, 12,5 % employeur
+    en 1959, 13,5 % en 1961, 14,25 % en 1962, 15 % au 1er septembre 1966.
+
+    La part vieillesse est une CONVENTION, nommée et unique : la part que
+    l'ordonnance de 1967 a donnée à la vieillesse en séparant les branches
+    (8,5 points sur 21). Elle vaut 4,86 % en 1945, 6,48 % de 1947 à 1958,
+    7,49 % en 1959, 7,89 % en 1961, 8,20 % en 1962, 8,50 % en 1966 — la
+    cotisation de 1966 retrouve exactement celle du 1er octobre 1967. La
+    Cnav, elle, retient « un taux de 9 % » pour les périodes antérieures au
+    1er octobre 1967 dans ses calculs de validation. Niveau ``estimee``, parce
+    que la convention n'est pas un texte ; les taux globaux, eux, sont datés.
+    """
+    chemin = BRUT / "sites_institutionnels" / "cor_parametres_cnav_2009.pdf"
+    if not chemin.exists():
+        raise SourceAbsente(
+            f"{chemin} absent (lancer scripts/fetch/sites_institutionnels.py)"
+        )
+    sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
+    from lecture_pdf import texte_pdf  # noqa: E402
+
+    texte = texte_pdf(chemin.read_bytes()).replace("\u202f", " ")
+    bornes: list[tuple[int, int, float, float]] = []
+    for jour, mois, annee, salarie, _, employeur in _TAUX_AVANT_1967.findall(texte):
+        bornes.append((int(annee), int(mois), float(salarie.replace(",", ".")),
+                       float(employeur.replace(",", "."))))
+    if not bornes:
+        raise SourceAbsente(f"{chemin} : tableau des taux 1945-1967 introuvable")
+    bornes.sort()
+    valeurs: dict[tuple, float] = {}
+    for annee in range(1945, 1967):
+        # Le taux en vigueur au 1er janvier ; l'année 1966 prend celui du
+        # 1er septembre, qui est celui que 1967 reconduit.
+        en_vigueur = [b for b in bornes if (b[0], b[1]) <= (annee, 12)]
+        if not en_vigueur:
+            continue
+        _, _, salarie, employeur = en_vigueur[-1]
+        total = (salarie + employeur) / 100.0 * PART_VIEILLESSE_AVANT_1967
+        valeurs[("regime_general", str(annee), "taux_plafonne")] = total
+        valeurs[("regime_general", str(annee), "part_salariale")] = salarie / (salarie + employeur)
+        valeurs[("regime_general", str(annee), "taux_deplafonne")] = 0.0
+        valeurs[("regime_general", str(annee), "part_salariale_deplafonnee")] = 0.0
+        valeurs[("msa_salaries", str(annee), "taux_plafonne")] = total
+        valeurs[("msa_salaries", str(annee), "part_salariale")] = salarie / (salarie + employeur)
+    return valeurs
 
 
 def source_plafond_journal_officiel() -> dict[tuple, float]:
@@ -2720,6 +2807,51 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         gabarit={"nature": "appelee"},
+    ),
+    Certification(
+        nom="taux_cotisation_avant_1967",
+        chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_taux_avant_1967,
+        origine="COR d'après la Cnav, taux des assurances sociales 1945-1967 ; "
+                "part vieillesse conventionnelle de 8,5/21",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="estimee",
+    ),
+    Certification(
+        nom="salaires_forfaitaires_marins",
+        chemin=REFERENCE / "regimes" / "salaires_forfaitaires.csv",
+        cles=("regime", "annee", "categorie"),
+        colonne="montant_annuel",
+        source=source_salaires_forfaitaires_marins,
+        origine="DILA, base JORF, arrêtés annuels portant majoration des "
+                "salaires forfaitaires des marins",
+        decimales=2,
+        tolerance=0.005,
+        unite=" €",
+        entete=(
+            "# Salaires forfaitaires des marins, par catégorie et par année",
+            "# source_id: jorf_salaires_forfaitaires_marins",
+            "# unite: euros courants par an",
+            "#",
+            "# Cotisations et pensions des marins ne sont pas assises sur le salaire",
+            "# réel mais sur un SALAIRE FORFAITAIRE fixé par catégorie de fonction à",
+            "# bord — vingt catégories, de l'apprenti à la vingtième — dont le",
+            "# montant est fixé par arrêté (décret n° 2020-649, réécrivant le décret",
+            "# n° 48-1709). Chaque arrêté est lu dans l'index JORF du dépôt, et la",
+            "# grille retenue pour une année est celle en vigueur au 1er juillet.",
+            "#",
+            "# Une carrière saisie porte un revenu, pas une fonction à bord : le",
+            "# moteur range le marin, chaque année, dans la catégorie dont le forfait",
+            "# est le plus proche de son revenu annualisé — convention nommée dans",
+            "# la fiche `marins` —, et cotise comme il liquide sur ce forfait. Avant",
+            "# 2008, la grille de 2008 est ramenée par le salaire moyen (estimee).",
+            "#",
+            "# Écrit par scripts/verifier_donnees.py --appliquer depuis",
+            "# data/brut/jorf_salaires_forfaitaires_marins.json.",
+        ),
     ),
     Certification(
         nom="taux_cotisation_annuels",

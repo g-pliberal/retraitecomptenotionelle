@@ -13,7 +13,10 @@
  */
 
 import { SourceCotisations, PartCotisation } from "./config.js";
-import { ClassesCotisation, ContributionsEmployeurPubliques } from "./regimes.js";
+import { salaireMoyenAnnuel } from "./carriere.js";
+import {
+  ClassesCotisation, ContributionsEmployeurPubliques, SalairesForfaitaires,
+} from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 
 /** Construit un compte notionnel à partir d'une carrière. */
@@ -27,6 +30,7 @@ export class ConstructeurCompte {
     this._tauxPivot = new Map();
     this.contributionsPubliques = new ContributionsEmployeurPubliques(macro.paquet);
     this.classes = new ClassesCotisation(macro.paquet);
+    this.grilles = new SalairesForfaitaires(macro.paquet);
   }
 
   // -- taux ------------------------------------------------------------------
@@ -405,6 +409,20 @@ export class ConstructeurCompte {
         if (periode.assiette_facteur_revenu !== null
             && periode.assiette_facteur_revenu !== undefined) {
           base *= periode.assiette_facteur_revenu;
+        }
+        // L'ASSIETTE PAR GRILLE : le marin cotise sur le salaire forfaitaire
+        // de sa catégorie, non sur sa rémunération — la catégorie dont le
+        // forfait approche le plus le revenu annualisé, proratisé sur les
+        // mois retenus comme l'était le revenu.
+        if (periode.assiette_grille) {
+          const forfaitGrille = this.grilles.forfait(
+            periode.assiette_grille, annee, ligne.revenuAnnualise,
+            (a) => salaireMoyenAnnuel(this.macro, a),
+          );
+          if (forfaitGrille !== null) {
+            base = forfaitGrille[0] * part;
+            fiabilite = Math.min(fiabilite, forfaitGrille[2]);
+          }
         }
 
         if (acquisitionCommune && enRepartition) {

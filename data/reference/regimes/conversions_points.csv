@@ -51,6 +51,12 @@
 #     de sa série dans valeurs_point.csv. Le coefficient est donc ce montant
 #     lui-même. L'opération était neutre en droits par construction.
 #
+#   carmf_complementaire (échelle), 1991 — la réforme du 1er janvier 1991 crée
+#     un point nouveau, et « les points acquis avant sont servis affectés d'un
+#     coefficient de 1,33 » (statuts du régime, chronologie de la CARMF) ; le
+#     rapport des deux séries de valeurs publiées le confirme à 1,3333 près.
+#     Un point d'avant 1991 vaut donc 1,333333 point d'après.
+#
 #   arrco -> agirc_arrco, 2019 — accord national interprofessionnel du
 #     17 novembre 2017 : un point Agirc-Arrco vaut un point Arrco. La valeur de
 #     service du régime unifié a été fixée au 1er janvier 2019 à celle de
@@ -92,4 +98,5 @@ agirc,2019,agirc_arrco,0.347798289,haute
 ipacte,1971,ircantec,1.000000,moyenne
 igrante,1971,ircantec,1.000000,moyenne
 rco_artisans,2013,rci,0.277800,haute
+carmf_complementaire,1991,,1.333333,haute
 nric,2013,rci,1.000000,haute

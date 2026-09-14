@@ -48,11 +48,11 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 from ..calendrier import en_mois
-from ..carriere import Affiliations, Carriere
+from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import Parametres
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import DonneesMacro
-from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
+from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation, SalairesForfaitaires,
                               PeriodeRegime)
 
 
@@ -1120,6 +1120,7 @@ class ScenarioActuel:
         self.valeurs_point = ValeursPoint(parametres.racine_donnees)
         self.conversions_points = ConversionsPoints(parametres.racine_donnees)
         self.classes = ClassesCotisation(parametres.racine_donnees)
+        self.grilles = SalairesForfaitaires(parametres.racine_donnees)
         self.durees_requises = DureesRequises(parametres.racine_donnees)
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
@@ -1213,6 +1214,22 @@ class ScenarioActuel:
         return None  # pragma: no cover - chaîne de successions cyclique
 
     # -- salaire de référence ------------------------------------------------
+
+    def _assiette_de_reference(self, periode: PeriodeRegime, ligne) -> float:
+        """La rémunération que ce régime liquide : voir la fonction du même
+        nom, et, pour un régime à grille, le salaire forfaitaire de la
+        catégorie — le marin liquide « sur le salaire forfaitaire de la
+        catégorie dans laquelle il a été classé » (R. 11), non sur sa paie.
+        Le forfait est proratisé sur les mois de l'année, comme le revenu.
+        """
+        if periode.assiette_grille:
+            forfait_grille = self.grilles.forfait(
+                periode.assiette_grille, ligne.annee, ligne.revenu_annualise,
+                lambda a: salaire_moyen_annuel(self.macro, a),
+            )
+            if forfait_grille is not None:
+                return forfait_grille[0] * ligne.fraction_annee
+        return _assiette_de_reference(periode, ligne)
 
     def salaire_de_reference(self, code: str, carriere: Carriere,
                              periode: PeriodeRegime,
@@ -1322,7 +1339,7 @@ class ScenarioActuel:
                     continue
                 revenu = ligne.revenu_avpf
             else:
-                revenu = _assiette_de_reference(periode, ligne)
+                revenu = self._assiette_de_reference(periode, ligne)
             # TRANCHE DE SALAIRE. Un régime qui liquide TRANCHE PAR TRANCHE —
             # le personnel navigant, dont l'article R. 426-16-1 attribue
             # 1,85 % par annuité à la première et 1,4 % à la seconde — a
@@ -1379,7 +1396,7 @@ class ScenarioActuel:
                         carriere.date_entree(derniere.affiliation),
                         revenu=derniere.revenu,
                         plafond=self.macro.plafond_securite_sociale(annee_liquidation))):
-                traitement = (_assiette_de_reference(periode, derniere)
+                traitement = (self._assiette_de_reference(periode, derniere)
                               / derniere.fraction_annee)
                 if plafonner:
                     traitement = min(
@@ -1961,6 +1978,16 @@ class ScenarioActuel:
                     # revenu, avant les bornes. Voir `PeriodeRegime`.
                     if periode.assiette_facteur_revenu is not None:
                         base *= periode.assiette_facteur_revenu
+                    # Le marin cotise sur le salaire forfaitaire de sa
+                    # catégorie : voir `Compte.cotisation_annuelle`.
+                    if periode.assiette_grille:
+                        forfait_grille = self.grilles.forfait(
+                            periode.assiette_grille, ligne.annee,
+                            ligne.revenu_annualise,
+                            lambda a: salaire_moyen_annuel(self.macro, a),
+                        )
+                        if forfait_grille is not None:
+                            base = forfait_grille[0] * part
                     plafond = base if borne_haute is None else borne_haute
                     assiette = max(0.0, min(base, plafond) - borne_basse)
                     repere = periode.repere_assiette(

@@ -1719,6 +1719,21 @@ institutions:
           deux. Pas de récupérateur : la chaîne est un constat d'existence,
           non une série à rafraîchir.
 
+      - id: jorf_salaires_forfaitaires_marins
+        titre: Salaires forfaitaires des marins par catégorie, arrêtés annuels, 2008-2026
+        url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/salaires_forfaitaires.csv
+        recuperation: scripts/fetch/jorf_salaires_forfaitaires_marins.py
+        note: >-
+          Les arrêtés « portant majoration des salaires forfaitaires servant de
+          base au calcul des contributions des armateurs, des cotisations et des
+          pensions des marins » publient chaque année les vingt montants de la
+          grille. Le script les lit dans l'index JORF du dépôt et retient la
+          grille en vigueur au 1er juillet ; avant 2008, les textes de l'index
+          n'en portent que le titre ou le visa.
+
       - id: jorf_plafond_securite_sociale
         titre: Plafond de la Sécurité sociale, décrets de fixation, 1963-2025
         url: https://echanges.dila.gouv.fr/OPENDATA/JORF/

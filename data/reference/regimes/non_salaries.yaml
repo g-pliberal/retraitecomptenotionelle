@@ -2120,9 +2120,12 @@ regimes:
           le régime déplace son poids du montant vers le revenu.
           Cette réforme crée un point NOUVEAU : les points acquis auparavant sont
           servis affectés d'un coefficient de 1,33 (statuts du régime), ce que le
-          rapport des deux séries publiées confirme à 1,3333 près. Le modèle ne
-          porte que le point nouveau, et sous-estime donc d'un tiers les droits
-          d'avant 1991.
+          rapport des deux séries publiées confirme à 1,3333 près. Le moteur
+          l'applique par une ligne d'ÉCHELLE dans `conversions_points.csv`
+          (carmf_complementaire, 1991, 1,333333) : les points acquis avant
+          1991 et liquidés depuis valent un tiers de plus, comme le régime les
+          sert. La fiche disait sous-estimer d'un tiers les droits d'avant
+          1991 ; ce n'est plus le cas.
       - debut: 1992
         fin: 1992
         type_calcul: points

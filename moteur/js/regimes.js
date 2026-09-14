@@ -1,4 +1,5 @@
 import { DateMois } from "./calendrier.js";
+import { Fiabilite } from "./serie.js";
 
 /**
  * Durée d'assurance requise pour le taux plein, PAR GÉNÉRATION.
@@ -970,6 +971,66 @@ export class Affiliations {
  * plafonds. Le plafond et non les prix, parce que la grille est écrite en
  * plafonds — voir `ClassesCotisation` côté Python.
  */
+/**
+ * Grilles de salaires forfaitaires par catégorie, régime par régime — voir
+ * `SalairesForfaitaires` côté Python. Le régime des marins cotise et liquide
+ * sur un forfait par catégorie de fonction à bord, publié chaque année par
+ * arrêté ; le moteur range l'assuré dans la catégorie dont le montant est le
+ * plus proche de son revenu annualisé. Hors des années publiées, la grille la
+ * plus proche est ramenée par le salaire moyen, et le résultat le dit.
+ */
+export class SalairesForfaitaires {
+  constructor(paquet) {
+    this._table = new Map();
+    for (const [cle, grille] of Object.entries(paquet.salaires_forfaitaires ?? {})) {
+      const [regime, annee] = cle.split("|");
+      if (!this._table.has(regime)) {
+        this._table.set(regime, new Map());
+      }
+      this._table.get(regime).set(
+        Number(annee), [...grille].sort((a, b) => a[1] - b[1]),
+      );
+    }
+  }
+
+  /** @returns {[number, number, number]|null} forfait, catégorie, fiabilité. */
+  forfait(regime, annee, revenuAnnuel, indiceSalaire) {
+    const grilles = this._table.get(regime);
+    if (!grilles || grilles.size === 0) {
+      return null;
+    }
+    let grille;
+    let coefficient = 1.0;
+    let horsGrille = false;
+    if (grilles.has(annee)) {
+      grille = grilles.get(annee);
+    } else {
+      let proche = null;
+      for (const a of grilles.keys()) {
+        if (proche === null || Math.abs(a - annee) < Math.abs(proche - annee)
+            || (Math.abs(a - annee) === Math.abs(proche - annee) && a < proche)) {
+          proche = a;
+        }
+      }
+      grille = grilles.get(proche);
+      coefficient = indiceSalaire(annee) / indiceSalaire(proche);
+      horsGrille = true;
+    }
+    let meilleur = null;
+    for (const [categorie, montant, fiabilite] of grille) {
+      const ecart = Math.abs(montant * coefficient - revenuAnnuel);
+      if (meilleur === null || ecart < meilleur[0]
+          || (ecart === meilleur[0] && categorie < meilleur[1])) {
+        meilleur = [ecart, categorie, montant, fiabilite];
+      }
+    }
+    return [
+      meilleur[2] * coefficient, meilleur[1],
+      horsGrille ? Fiabilite.ESTIMEE : meilleur[3],
+    ];
+  }
+}
+
 export class ClassesCotisation {
   constructor(paquet) {
     this._table = new Map();

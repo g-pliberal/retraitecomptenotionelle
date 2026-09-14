@@ -266,6 +266,7 @@ def _regimes() -> list[dict]:
                     "assiette_plancher": p.assiette_plancher,
                     "assiette_forfaitaire": p.assiette_forfaitaire,
                     "cotisation_par_classes": p.cotisation_par_classes,
+                    "assiette_grille": p.assiette_grille,
                     "assiette_facteur_revenu": p.assiette_facteur_revenu,
                     "cotisation_forfaitaire_euros": p.cotisation_forfaitaire_euros,
                     "cotisation_forfaitaire_annee": p.cotisation_forfaitaire_annee,
@@ -317,6 +318,19 @@ def _classes_cotisation() -> dict:
         ]
         for regime, grilles in sorted(classes._table.items())
         for annee, grille in sorted(grilles.items())
+    }
+
+
+def _salaires_forfaitaires() -> dict:
+    """Grilles de salaires forfaitaires par catégorie : ``regime|annee`` ->
+    liste de [catégorie, montant annuel, fiabilité]."""
+    from retraite_notionnelle.donnees.regimes import SalairesForfaitaires
+
+    grilles = SalairesForfaitaires(DONNEES)
+    return {
+        f"{regime}|{annee}": [[c.categorie, c.montant, int(c.fiabilite)] for c in grille]
+        for regime, annees in sorted(grilles._table.items())
+        for annee, grille in sorted(annees.items())
     }
 
 
@@ -541,6 +555,7 @@ def construire() -> bytes:
         "rendements_points": _rendements(),
         "conversions_points": _conversions_points(),
         "classes_cotisation": _classes_cotisation(),
+        "salaires_forfaitaires": _salaires_forfaitaires(),
         "durees_requises": _table_par_generation(DureesRequises),
         "durees_proratisation": _table_par_generation(DureesProratisation),
         "revalorisation_salaires": _revalorisation_salaires(),

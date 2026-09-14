@@ -1382,8 +1382,9 @@ regimes:
         duree_maximum_avant_age: 55
         duree_maximum_avant_age_trimestres: 100
         taux_plein: 0.75
-        salaire_reference: sans_objet
+        salaire_reference: dernier_salaire
         assiette: forfaitaire
+        assiette_grille: marins
         taux_cotisation_retraite: 0.1085
         perimetre_taux: agent_seul
         decote_par_trimestre: null
@@ -1432,12 +1433,22 @@ regimes:
           officier, matelot léger… ». Et il renvoie les montants ailleurs : « le
           montant des salaires forfaitaires est fixé par arrêté des ministres
           chargés de la mer, de la sécurité sociale et du budget ».
-          Une carrière saisie dans ce simulateur porte un revenu, pas une
-          fonction à bord. Même publiée, la grille ne serait donc pas
-          applicable sans une convention supplémentaire — ranger le marin dans
-          la catégorie dont le forfait approche le plus son revenu déclaré —,
-          et cette convention n'aurait aucune source. C'est la raison pour
-          laquelle la fiche s'en tient au revenu déclaré.
+          LA GRILLE EST LUE, ET APPLIQUÉE. Les arrêtés annuels « portant
+          majoration des salaires forfaitaires » publient les vingt montants
+          depuis 2008 (JORFARTI000017964781 … JORFARTI000053743024 en 2026),
+          et `salaires_forfaitaires.csv` les porte, lus au Journal officiel
+          par `scripts/fetch/jorf_salaires_forfaitaires_marins.py`, grille en
+          vigueur au 1er juillet de chaque année. Une carrière saisie porte
+          un revenu, pas une fonction à bord : le moteur range le marin,
+          chaque année, dans la catégorie dont le forfait approche le plus
+          son revenu annualisé (`assiette_grille: marins`), et cotise comme
+          il liquide sur ce forfait — le salaire de référence est celui de
+          la catégorie de la dernière année, ce que R. 11 demande. C'est une
+          CONVENTION, la seule qui rende la grille applicable, et elle est
+          nommée. Avant 2008, les textes de l'index ne portent pas les
+          montants (décrets de 1956 à 1961, arrêtés de 1991 à 2006 : visas et
+          titres seuls) : la grille de 2008 est ramenée par le salaire moyen,
+          et ces années sont marquées estimées.
           Ouverture dès 50 ans sous conditions de services embarqués.
 
   - code: mines
