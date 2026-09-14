@@ -99,7 +99,7 @@ repris par un autre.
 | Caisses de retraite des anciens députés, des anciens sénateurs et des personnels des assemblées | spécial | depuis 1904 | ✚ à modéliser | — | Régimes autonomes fixés par les bureaux des assemblées et non publiés au Journal officiel ; le dépôt n'a lu ni barème ni règlement. À modéliser par décision, avec les rapports publics des assemblées pour source. |
 | Caisse de retraite des anciens membres du Conseil économique, social et environnemental | spécial | depuis 1957 | ✚ à modéliser | — | Même situation que les assemblées parlementaires, pour quelques centaines de personnes. |
 | Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer (CRFOM) | fonction publique | depuis 1924, fermé en 1976 | ⊘ hors champ | — | Régime des cadres coloniaux fermé par la loi de finances pour 1976 : ses derniers actifs ont été affiliés d'office aux pensions civiles et militaires au 1er janvier 1976, et ses pensions sont servies par l'État. Le statut `fonctionnaire_etat` porte la carrière ; le dépôt n'a pas le règlement du décret du 21 avril 1950. |
-| Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties) | fonction publique | fermé en 1962 | ⊘ hors champ | — | Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés aux Français avec l'indépendance et dont l'État garantit les pensions depuis ; leurs textes fondateurs ne sont pas au Journal officiel de la République. Aucun cotisant depuis 1962. |
+| Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties) | fonction publique | depuis 1903, fermé en 1962 | ⊘ hors champ | — | Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés aux Français avec l'indépendance et dont l'État garantit les pensions depuis. La caisse des retraites de l'Algérie, créée par la loi de finances du 30 décembre 1903 et organisée par le décret du 16 juillet 1907, a ses décrets de 1907 à 1937 dans l'index ; ses règles d'après 1947 et les caisses marocaine et tunisienne n'y sont que par leurs homologations et les règles de coordination. Aucun cotisant depuis 1962. |
 | Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM) | fonction publique | depuis 1977, fermé en 2010 | ⊘ hors champ | — | Caisse locale créée en mars 1977 par délibération hors Journal officiel, fermée par l'intégration de ses affiliés dans les fonctions publiques au plus tard fin 2010, en liquidation depuis : ses pensions sont versées par la CNRACL ou par l'État (loi n° 2001-616, article 64-1 ; décrets n° 2012-1256 et 2013-255). |
 | Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie | spécial | — | ⊘ hors champ | — | Régimes fixés par les assemblées elles-mêmes, hors Journal officiel. En Polynésie, les représentants ont un régime par capitalisation auprès d'un assureur privé, et les membres du gouvernement ne cotisent au régime de base de la CPS que depuis le 1er juin 2024 ; en Nouvelle-Calédonie, la loi organique (articles 78 et 163) confie au congrès et aux assemblées de province le régime de retraite de leurs membres, et le dépôt n'a lu aucune de leurs délibérations. |
 | Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française | fonction publique | depuis 1959 | ✚ à modéliser | — | Compétence locale ; la Caisse locale de retraites de Nouvelle-Calédonie et la CPS polynésienne publient leurs propres règlements, non lus. |
@@ -214,9 +214,28 @@ des assemblées du Pacifique ont leur ligne, hors champ : la loi organique de
 de leurs membres (articles 78 et 163), les représentants polynésiens ont un
 régime par capitalisation auprès d'un assureur privé et les membres du
 gouvernement polynésien ne cotisent à la CPS que depuis le 1er juin 2024,
-d'après la presse locale. Reste vide, faute de source atteignable : la date
-de création de la caisse générale des retraites de l'Algérie, et les
-délibérations calédoniennes sur les élus.
+d'après la presse locale.
+
+**Ce qu'une troisième passe a trouvé.** La caisse des retraites de l'Algérie
+n'était pas sans texte : l'index JORF, qui remonte ici avant 1947, porte le
+décret du 16 juillet 1907 sur son fonctionnement, le décret du 2 février 1926
+réformant ses pensions et une dizaine de décrets d'affiliation jusqu'en 1937 ;
+la création elle-même est dans la loi de finances du 30 décembre 1903, lue
+par le Journal officiel sur Gallica (dont le site refuse les lectures
+automatiques : la date est reprise du résumé du moteur de recherche, non du
+fac-similé). L'Agirc-Arrco de Nouvelle-Calédonie tient à l'accord
+interprofessionnel territorial du 29 août 1994, étendu par arrêté du
+25 avril 1995 et généralisé au 1er janvier 1995 avec validation des services
+passés, publié par la direction du travail de Nouvelle-Calédonie. Pour les
+élus polynésiens, Outre-mer La 1ère (30 avril 2024) confirme que
+« représentants et ministres souscrivent à des régimes de retraite privés »
+et que la cotisation des ministres à la CPS est d'environ 3 % de leurs
+indemnités. Reste hors d'atteinte : les délibérations calédoniennes sur la
+retraite des membres du congrès (la seule proposition récente, n° 211 de
+2026, organise leur protection juridique, non leur retraite), le texte
+polynésien fondateur du régime des représentants (Lexpol et le rapport de
+l'assemblée sont inaccessibles ou scannés sans texte), et la page de la Cour
+des comptes sur la CRFM, qui répond indisponible.
 
 ## Ce qui a été cherché sans être trouvé
 
