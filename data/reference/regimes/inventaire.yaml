@@ -126,7 +126,8 @@ inventaire:
               maitre_enseignement_prive,
               elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac, micro_entrepreneur,
               membre_cese,
-              salarie_regime_professionnel_integre]
+              salarie_regime_professionnel_integre,
+              liberal_non_reglemente]
     textes:
       - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
       - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
@@ -1394,7 +1395,8 @@ inventaire:
     integre_dans: null
     couverture: modelise
     statuts: [artisan, commercant,
-              gerant_debit_tabac, micro_entrepreneur]
+              gerant_debit_tabac, micro_entrepreneur,
+              liberal_non_reglemente]
     textes:
       - {reference: "arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire obligatoire d'assurance vieillesse des indépendants", id: LEGIARTI000025397326}
 
@@ -1434,18 +1436,21 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: partiel
-    statuts: [profession_liberale, auxiliaire_medical, pharmacien, expert_comptable,
-              agent_general_assurance, notaire, veterinaire, officier_ministeriel,
-              chirurgien_dentiste_ou_sage_femme, medecin_liberal]
+    statuts: [profession_liberale, liberal_non_reglemente, auxiliaire_medical, pharmacien,
+              expert_comptable, agent_general_assurance, notaire, veterinaire,
+              officier_ministeriel, chirurgien_dentiste_ou_sage_femme, medecin_liberal]
     textes:
       - {reference: "loi n° 48-101 du 17 janvier 1948", id: null}
       - {reference: "code de la sécurité sociale, L. 640-1 (professions affiliées, rédaction de la LFSS 2018)", id: LEGIARTI000036391511}
+      - {reference: "loi n° 2017-1836 du 30 décembre 2017, article 15 (les libéraux hors L. 640-1 affiliés avant le 1er janvier 2019 restent à la CNAVPL et à la Cipav)", id: JORFARTI000036339157}
       - {reference: "code de la sécurité sociale, D. 643-1", id: LEGIARTI000029825121}
     manque: >-
-      Les libéraux non réglementés qui créent leur activité depuis 2018
-      relèvent du régime général et du RCI, non de la CNAVPL et de la Cipav :
-      le routage du statut générique devrait dépendre de l'année d'entrée, et
-      ne le fait pas.
+      Le libéral non réglementé installé depuis 2019 relève du régime général
+      et du RCI, celui installé avant reste à la CNAVPL et à la Cipav : le
+      statut `liberal_non_reglemente` le route ainsi, à la date d'installation.
+      Le droit d'option de 2019 à 2023, par lequel un affilié d'avant pouvait
+      rejoindre la sécurité sociale des indépendants, n'est pas porté ; ni la
+      cotisation de la CNAVPL sur les revenus d'avant 1949, qui n'existait pas.
 
   - code: carmf_complementaire
     nom: Complémentaire des médecins (CARMF)
@@ -1599,7 +1604,8 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [profession_liberale]
+    statuts: [profession_liberale,
+              liberal_non_reglemente]
     textes:
       - {reference: "décret n° 79-262 du 21 mars 1979 instituant le complémentaire des architectes", id: null}
       - {reference: "arrêté du 9 mars 1987 portant approbation des régimes complémentaires (architectes, ingénieurs, techniciens, experts et conseils)", id: LEGIARTI000006784842}

@@ -2929,7 +2929,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 54 statuts », « 72 régimes » —, parce que ce sont des chiffres de données et
+« 55 statuts », « 72 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -3537,6 +3537,23 @@ entré à la RATP en octobre 2022 n'y avait sa première ligne qu'en 2023 — et
 `1982` quand la loi n° 84-603 maintient le régime « pour les personnels
 titulaires en fonctions à la date d'entrée en vigueur de la loi du 2 juillet
 1980 » : la borne est ramenée à 1981, l'année que la fiche retient.
+
+**Un statut peut changer de régimes sans se fermer.** Le libéral non
+réglementé — consultant, formateur, coach, développeur — est à la CNAVPL et à
+la Cipav s'il s'est installé avant 2019, au régime général et au RCI depuis :
+l'article L. 640-1 (rédaction du 1<sup>er</sup> janvier 2018,
+`LEGIARTI000036391511`) n'énumère plus que les professions que la Cipav
+conserve, l'article 50 X de la loi n° 2016-1827 l'applique aux créations
+d'activité « au plus tard le 1<sup>er</sup> janvier 2019 » hors micro-social,
+et l'article 15 de la loi n° 2017-1836 (`JORFARTI000036339157`) laisse les
+affiliés d'avant là où ils étaient. L'inventaire le signalait comme ce que
+« le routage du statut générique devrait » faire ; le statut
+`liberal_non_reglemente` le fait, par les mêmes bornes `entres_avant` et
+`entres_depuis` que la clause du grand-père — sans `releve_par`, parce que le
+métier ne cesse pas d'exister : le formulaire le propose à toute date, et un
+test exige qu'un tel statut route encore quelque chose à qui entre après la
+borne. Le statut `profession_liberale` reste celui des professions de la
+liste.
 
 **Le balayage des témoins entre dans les régimes fermés avant leur
 fermeture** — à dix-neuf ans pour l'agent des chemins de fer secondaires né en

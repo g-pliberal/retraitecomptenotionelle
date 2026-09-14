@@ -69,6 +69,7 @@ STATUTS = (
     "salarie_prive_non_cadre", "salarie_prive_cadre", "fonctionnaire_etat",
     "fonctionnaire_territorial_hospitalier", "contractuel_public", "agent_sncf",
     "agent_ratp", "agent_ieg", "artisan", "commercant", "profession_liberale",
+    "liberal_non_reglemente",
     "exploitant_agricole", "salarie_agricole", "avocat", "marin",
     "agent_banque_de_france", "clerc_de_notaire", "mineur", "ouvrier_etat",
     "personnel_opera", "personnel_comedie_francaise", "sans_activite",
