@@ -14,9 +14,9 @@ savoir de quels régimes on parle, puis, pour chacun, quelles règles il a
 appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
-L'inventaire compte **84 lignes** : 34 régimes modélisés,
+L'inventaire compte **88 lignes** : 34 régimes modélisés,
 38 calculés mais incomplets, 2 affiliations portées par un statut,
-10 hors champ — et plus aucune ligne à modéliser.
+14 hors champ — et plus aucune ligne à modéliser.
 
 | Couverture | Ce que cela veut dire |
 |---|---|
@@ -98,6 +98,9 @@ repris par un autre.
 | Retraite additionnelle de la fonction publique (`rafp`) | additionnel, capitalisé | depuis 2005 | ✅ modélisé | `fonctionnaire_etat`, `fonctionnaire_territorial_hospitalier`, `ouvrier_etat` |  |
 | Caisses de retraite des anciens députés, des anciens sénateurs et des personnels des assemblées | spécial | depuis 1904 | ✚ à modéliser | — | Régimes autonomes fixés par les bureaux des assemblées et non publiés au Journal officiel ; le dépôt n'a lu ni barème ni règlement. À modéliser par décision, avec les rapports publics des assemblées pour source. |
 | Caisse de retraite des anciens membres du Conseil économique, social et environnemental | spécial | depuis 1957 | ✚ à modéliser | — | Même situation que les assemblées parlementaires, pour quelques centaines de personnes. |
+| Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer (CRFOM) | fonction publique | depuis 1924, fermé en 1976 | ⊘ hors champ | — | Régime des cadres coloniaux fermé par la loi de finances pour 1976 : ses derniers actifs ont été affiliés d'office aux pensions civiles et militaires au 1er janvier 1976, et ses pensions sont servies par l'État. Le statut `fonctionnaire_etat` porte la carrière ; le dépôt n'a pas le règlement du décret du 21 avril 1950. |
+| Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties) | fonction publique | fermé en 1962 | ⊘ hors champ | — | Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés aux Français avec l'indépendance et dont l'État garantit les pensions depuis ; leurs textes fondateurs ne sont pas au Journal officiel de la République. Aucun cotisant depuis 1962. |
+| Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM) | fonction publique | fermé en 2010 | ⊘ hors champ | — | Caisse locale, instituée par délibération hors Journal officiel, fermée par l'intégration de ses affiliés dans les fonctions publiques au plus tard fin 2010, puis dissoute : ses pensions sont versées par la CNRACL ou par l'État (loi n° 2001-616, article 64-1 ; décrets n° 2012-1256 et 2013-255). |
 | Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française | fonction publique | depuis 1959 | ✚ à modéliser | — | Compétence locale ; la Caisse locale de retraites de Nouvelle-Calédonie et la CPS polynésienne publient leurs propres règlements, non lus. |
 
 ## Régimes spéciaux de salariés
@@ -147,6 +150,7 @@ repris par un autre.
 | Complémentaire des officiers ministériels (CAVOM) (`cavom_complementaire`) | libéral | depuis 1979 | ◐ partiel | `officier_ministeriel` | Fiche écrite à partir de 2016 seulement : le régime par classes de 1979 à 2015 n'a pas de grille publiée. |
 | Complémentaire de la Cipav (`cipav_complementaire`) | libéral | depuis 1979 | ✅ modélisé | `profession_liberale` |  |
 | Complémentaire des notaires (CPRN), section C (`cprn_complementaire`) | libéral | depuis 1949 | ◐ partiel | `notaire` | La section B, par classes, dont les bornes ne sont publiées nulle part, n'est pas portée : près de quatre dixièmes du complémentaire d'un notaire. |
+| Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA) | libéral | 1977-2004 | ⊘ hors champ | — | Section de la CNAVPL fondue dans la Cipav au 1er janvier 2004 (décret n° 2004-461, article 13 VIII), qui a repris ses affiliés et leurs points ; le statut `profession_liberale` route vers la Cipav sur toute la période, et le barème propre de la CREA n'est pas au Journal officiel. |
 | Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV) | libéral | depuis 1972 | ✚ à modéliser | — | Un troisième étage obligatoire pour les professionnels de santé conventionnés, financé aux deux tiers par l'assurance maladie, qui pèse près du tiers de la pension d'un médecin de secteur 1 ; aucun des statuts de santé ne le porte. |
 | Caisse nationale des barreaux français, régime de base (`cnbf`) | libéral | depuis 1948 | ◐ partiel | `avocat` | La progression de la cotisation forfaitaire sur les cinq premières années et la contribution équivalente aux droits de plaidoirie ne sont pas portées. |
 | Complémentaire des avocats (CNBF) (`cnbf_complementaire`) | libéral | depuis 1979 | ✅ modélisé | `avocat` |  |
@@ -158,6 +162,32 @@ repris par un autre.
 | Assurance vieillesse des non-salariés agricoles (MSA) (`msa_non_salaries`) | agricole | depuis 1952 | ◐ partiel | `exploitant_agricole` | Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février 2025, en vigueur depuis 2026, renvoie deux de ses trois paramètres à un décret absent de la base ; conjoints et aides familiaux sont sous-estimés. |
 | Retraite complémentaire obligatoire des non-salariés agricoles (`msa_rco`) | agricole | depuis 2003 | ◐ partiel | `exploitant_agricole` | Les points gratuits attribués aux conjoints et aides familiaux — 66 par an dans la limite de 17 ans — ne sont pas portés. |
 | Cotisants de solidarité agricoles | agricole | depuis 1980 | ⊘ hors champ | — | La cotisation de solidarité n'ouvre aucun droit à retraite : il n'y a rien à porter au compte. |
+
+## La liste relue contre l'échantillon interrégimes de cotisants
+
+En septembre 2026, la liste a été relue contre une énumération officielle que
+l'inventaire ne citait pas : l'article 2 de l'arrêté du 22 juillet 2003 relatif
+à l'échantillon interrégimes de cotisants, qui nomme, version après version
+(2003 : `LEGIARTI000006221466`, 2011 : `LEGIARTI000023816206`, 2023 :
+`LEGIARTI000047535084`), les organismes gestionnaires de tous les régimes de
+retraite obligatoires. Sur les trente-quatre organismes de 2003 et les
+trente-et-un de 2023, un seul manquait à l'inventaire : la **CREA**, section
+de la CNAVPL fondue dans la Cipav en 2004. La relecture des textes de
+coordination a fait remonter trois caisses de fonctionnaires fermées — la
+**CRFOM** des cadres coloniaux (loi du 14 avril 1924, article 71 ; loi de
+finances pour 1976, article 73), les caisses des fonctionnaires **d'Algérie,
+du Maroc et de Tunisie** dont l'État garantit les pensions, et la **CRFM** des
+agents publics de Mayotte (loi n° 2001-616, article 64-1) —, toutes hors champ
+faute de cotisant vivant ou de règlement publié. Deux régimes existants ont
+gagné une population : la caisse de sécurité sociale de Mayotte couvre aussi
+les **non-salariés** depuis 2012 (ordonnance n° 2011-1923, article 20), sans
+statut qui les y route ; et le **personnel au sol d'Air France** rejoint la
+ligne des régimes professionnels intégrés (règlement approuvé par arrêté du
+4 mai 1956, régime différentiel depuis l'arrêté du 1er juin 1993). Ce que la
+relecture n'a pas tranché, faute de texte au Journal officiel : les régimes
+de retraite des élus des assemblées de Polynésie française et de
+Nouvelle-Calédonie, et le « régime des médecins » de l'Ircantec, qui est une
+assiette particulière des praticiens hospitaliers plutôt qu'un régime.
 
 ## Ce qui a été cherché sans être trouvé
 
