@@ -261,3 +261,6 @@ carmf_complementaire,2023,2023,0.0476,moyenne
 carmf_complementaire,2024,2024,0.0455,moyenne
 carmf_complementaire,2025,2025,0.0453,moyenne
 carmf_complementaire,2026,2100,0.0448,moyenne
+enseignants_prive_additionnel,2005,2035,0.085,estimee
+enseignants_prive_additionnel,2036,2045,0.065,estimee
+enseignants_prive_additionnel,2046,2100,0.045,estimee

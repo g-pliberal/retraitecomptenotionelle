@@ -338,6 +338,30 @@ Ce qui reste : les montants d'avant 1998 (AMV, cotisation de référence, bornes
 classes), fixés hors index ; la section B des notaires ; la majoration de 2026 des
 libéraux ; les coupures informatives restantes de la carte (versions de rédaction).
 
+### Tranche B5a — un étage de plus sur des statuts existants
+
+Deux régimes de l'inventaire qui n'étaient prêtés à personne et dont les textes
+sont dans LEGI : l'ASV des médecins conventionnés, troisième étage financé aux
+deux tiers par l'assurance maladie, et le régime additionnel des maîtres de
+l'enseignement privé sous contrat. Le troisième candidat de la tranche, les
+complémentaires des conjoints de commerçants et du bâtiment (Organic), reste
+`a_modeliser` : la pension du régime des conjoints est un droit DU CONJOINT
+(D. 635-35, D. 635-36), que la carrière individuelle du modèle ne porte pas ; la
+ligne d'inventaire est réécrite avec les identifiants (décret n° 50-60, art. 2,
+`LEGIARTI000006781230` ; D. 635-36 `LEGIARTI000006738096`).
+
+| Régime | Ce qui manquait | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `asv_conventionnes` | aucune fiche : le médecin du modèle n'avait que la CNAVPL et la CARMF, sans le tiers de sa pension que l'ASV représente | décret n° 72-968, art. 2 (`LEGIARTI000024871109`) : 30,16 points par an de 1972 à 1993, 27 depuis, « au prorata du nombre de trimestres cotisés » — d'où `points_par_trimestre_valide` ; D. 645-2, version par version : 30 fois la consultation en 1985 (`LEGIARTI000006738371`), 45 en 1993 (`…373`), 52 en 1995 (`…375`), 60 de 1999 à 2011 (`…376` → `LEGIARTI000023380413`) ; D. 645-3 : part des caisses « au double » (`LEGIARTI000006738166`), égale du 30 mars 1993 au 8 juillet 1994 (`…167`) ; décret n° 2011-1644 : forfait 4 300 → 4 850 € de 2012 à 2016 (art. 1, `LEGIARTI000024853551`), cotisation d'ajustement 0,25 → 3,8 % sous cinq plafonds (art. 2, `LEGIARTI000033090911`), 4 % dès 2026 (`LEGIARTI000052567960`), neuf points d'ajustement au plus (art. 3, `LEGIARTI000024853554`), valeur de service 13 € puis 11,31 € pour les points liquidés dès 2017 et 11,82 € en 2025 (art. 4, `LEGIARTI000024853556`, `LEGIARTI000033090908`, `LEGIARTI000052567955`) | vingt et une périodes, la part du médecin seule (statut sans employeur) ; le médecin né en 1975 au salaire moyen gagne 1 742 € par mois de pension actuelle (+80 % : un régime forfaitaire pèse d'autant plus que le revenu est bas — à 100 000 € il pèserait un tiers), celui né en 1925 448 € ; +6 à +14 % en notionnel rétroactif, par ses propres cotisations. Niveau `estimee` : le tarif C n'est pas une série du dépôt, les points d'ajustement sont pris au plafond de neuf |
+| `enseignants_prive_additionnel` | aucune fiche, famille dite `additionnel_capitalise` quand le régime est en répartition ; cotisation dite « 1,5 % partagée » | décret n° 2005-1233, art. 2 (`LEGIARTI000006436188`, rémunération versée par l'État, sans plafond), art. 7 (`LEGIARTI000027090124` : 5, 7, 8 % des pensions de base et complémentaire, puis 8 % × part des services d'après 2005 + 2 % × part d'avant) ; arrêté du 28 juillet 2006, art. 1 : 0,75 % + 0,75 % (`LEGIARTI000006253469`), 1 % + 1 % dès 2013 (`LEGIARTI000027090163`), 1,5 % + 1,5 % dès juin 2024 par paliers de 1,2 à 1,4 % jusqu'en 2026 (`LEGIARTI000049688551`) | six périodes, famille `special`, pension par rendement (0,085 → 0,045 selon l'année de liquidation, `estimee`) faute d'asseoir un régime sur les pensions des autres ; statut nouveau `maitre_enseignement_prive`, six témoins (342) : +236 € par mois de pension actuelle pour le maître né en 1975 par rapport au non-cadre, +15 € pour celui de 1945, rien avant |
+| `organic_conjoints_batiment` | identifiant faux (l'art. 16 du décret 70-368 pris pour le régime lui-même) | décret n° 50-60 art. 2, D. 635-35, D. 635-36 (0,50 %/1,82 % 1985-1998, 1,5 %/3,5 % 1998-2003), D. 635-35-1 | rien : droit du conjoint, ligne réécrite |
+
+Ce qui reste de B5a : les barèmes ASV des chirurgiens-dentistes (décret 2007-458 :
+dix points par forfait, ajustement 1,45 %), des sages-femmes (2017-1812), des
+auxiliaires médicaux et des directeurs de laboratoire (2007-597), lus mais non
+portés ; les points d'ajustement proportionnels au revenu sous 68 000 € ; le tarif
+de la consultation de 1985 à 2011.
+
 ### Feuille de route B5 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
@@ -359,4 +383,7 @@ pour les tranches suivantes :
   absents de LEGI) et le barème de l'UNIRS restent à demander à la Caisse des
   dépôts et à la fédération.
 - **Puis B5**, les dix-huit régimes à modéliser de l'inventaire, par
-  population décroissante.
+  population décroissante — B5a ci-dessus en a porté deux ; restent les élus
+  locaux, Saint-Pierre-et-Miquelon, Mayotte, le RACD et le RACL, les débits de
+  tabac, les micro-entrepreneurs (B5b), puis les régimes sans texte dans
+  l'index, à lire sur les sites des institutions (B5c).

@@ -65,7 +65,7 @@ STATUTS = (
     "exploitant_agricole", "salarie_agricole", "avocat", "marin",
     "agent_banque_de_france", "clerc_de_notaire", "mineur", "ouvrier_etat",
     "personnel_opera", "personnel_comedie_francaise", "sans_activite",
-    "medecin_liberal", "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
+    "maitre_enseignement_prive", "medecin_liberal", "chirurgien_dentiste_ou_sage_femme", "expert_comptable",
     "pharmacien", "auxiliaire_medical", "veterinaire", "officier_ministeriel",
     "artiste_auteur", "ministre_du_culte", "personnel_navigant",
     "agent_general_assurance", "notaire",
