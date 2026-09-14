@@ -143,6 +143,9 @@ pivots:
     - {texte: "Décret n° 2011-1644", num: "1", parametres: [cotisation_forfaitaire_euros]}
     - {texte: "Décret n° 2011-1644", num: "2", parametres: [taux_cotisation_retraite, assiette]}
     - {texte: "Décret n° 2011-1644", num: "4", parametres: [valeur_point_euros]}
+  organic_conjoints_batiment:
+    - {texte: "Code de la sécurité sociale", num: "D635-36", parametres: [taux_cotisation_retraite, assiette]}
+    - {texte: "Code de la sécurité sociale", num: "D635-35", parametres: [type_calcul]}
   carcdsf_complementaire:
     hors_legi: >-
       Décret n° 2008-1490 et statuts approuvés par arrêté : les millésimes
@@ -287,6 +290,10 @@ pivots:
     hors_legi: >-
       Lois du pays et délibérations du congrès de la Nouvelle-Calédonie, hors
       JORF ; la direction de la fonction publique en publie les chiffres.
+  regimes_professionnels_integres:
+    hors_legi: >-
+      Accord professionnel de la banque du 13 septembre 1993 et règlements
+      des caisses de retraite bancaires, jamais publiés au JORF.
   seita:
     - {texte: "Décret n°62-766", num: "108", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n°62-766", num: "110", parametres: [age_ouverture]}

@@ -1364,6 +1364,12 @@ def test_l_inventaire_dit_ce_qui_manque_ou_pourquoi_on_s_en_passe(inventaire):
         if ligne.couverture in ("partiel", "a_modeliser"):
             assert len(ligne.manque.split()) >= 10, f"{ligne.code} : `manque` trop court"
             assert not ligne.raison_hors_champ, f"{ligne.code} : hors champ ET à modéliser ?"
+        elif ligne.couverture == "routage":
+            # Une affiliation, pas un régime : le statut qui la porte est
+            # nommé, et `manque` dit ce que ce statut ne lit pas encore.
+            assert ligne.statuts, f"{ligne.code} : routage sans statut"
+            assert len(ligne.manque.split()) >= 10, f"{ligne.code} : `manque` trop court"
+            assert not ligne.raison_hors_champ, f"{ligne.code} : routé ET hors champ ?"
         elif ligne.couverture == "hors_champ":
             assert len(ligne.raison_hors_champ.split()) >= 10, (
                 f"{ligne.code} : `raison_hors_champ` trop courte"
@@ -1423,7 +1429,34 @@ def test_l_inventaire_couvre_les_regimes_que_le_code_enumere(inventaire):
     par_couverture = {}
     for ligne in inventaire:
         par_couverture[ligne.couverture] = par_couverture.get(ligne.couverture, 0) + 1
-    assert set(par_couverture) == {"modelise", "partiel", "a_modeliser", "hors_champ"}
+    assert set(par_couverture) == {"modelise", "partiel", "routage", "hors_champ"}, (
+        "il ne doit plus rester de ligne `a_modeliser` : chacune a sa fiche, son "
+        "statut ou sa raison"
+    )
+
+
+def test_le_seuil_d_affiliation_de_l_elu_local_est_lu():
+    """L. 382-31 : le régime général n'est dû qu'au-dessus de la moitié du
+    plafond ; en deçà, l'élu n'a que l'Ircantec. Sans revenu, la liste des
+    régimes POSSIBLES est rendue, celle que l'inventaire attend."""
+    from retraite_notionnelle.carriere import Affiliations
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    assert affiliations.regimes("elu_local", 2020) == ("regime_general", "ircantec")
+    assert affiliations.regimes("elu_local", 2020, revenu=16_000.0, plafond=41_136.0) == (
+        "ircantec",
+    )
+    assert affiliations.regimes("elu_local", 2020, revenu=24_000.0, plafond=41_136.0) == (
+        "regime_general", "ircantec",
+    )
+    # Avant 2013, aucun seuil : l'Ircantec seule, quel que soit le revenu.
+    assert affiliations.regimes("elu_local", 2010, revenu=100_000.0, plafond=34_620.0) == (
+        "ircantec",
+    )
+    # Un statut sans seuil rend ses régimes quel que soit le revenu.
+    assert affiliations.regimes("salarie_prive_non_cadre", 2020, revenu=1.0, plafond=41_136.0) == (
+        "regime_general", "agirc_arrco",
+    )
 
 
 # ---------------------------------------------------------------------------

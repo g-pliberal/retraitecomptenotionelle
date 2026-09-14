@@ -17,6 +17,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { Contexte, Saisie, rendre } from "../../moteur/js/pages.js";
+import { Affiliations } from "../../moteur/js/regimes.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -134,3 +135,21 @@ test("les pages rendent le même HTML que le modèle Python", () => {
 function sansBlocJson(html) {
   return html.replace(/(<pre class="json">)[\s\S]*?(<\/pre>)/g, "$1$2");
 }
+
+test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
+  // L. 382-31 : le régime général n'est dû qu'au-dessus de la moitié du
+  // plafond ; en deçà, l'élu n'a que l'Ircantec. Sans revenu, la liste des
+  // régimes possibles est rendue telle quelle.
+  const affiliations = new Affiliations(paquet);
+  assert.deepEqual(affiliations.regimes("elu_local", 2020), ["regime_general", "ircantec"]);
+  assert.deepEqual(affiliations.regimes("elu_local", 2020, null, 16000, 41136), ["ircantec"]);
+  assert.deepEqual(
+    affiliations.regimes("elu_local", 2020, null, 24000, 41136),
+    ["regime_general", "ircantec"],
+  );
+  assert.deepEqual(affiliations.regimes("elu_local", 2010, null, 100000, 34620), ["ircantec"]);
+  assert.deepEqual(
+    affiliations.regimes("salarie_prive_non_cadre", 2020, null, 1, 41136),
+    ["regime_general", "agirc_arrco"],
+  );
+});

@@ -14,15 +14,16 @@ savoir de quels régimes on parle, puis, pour chacun, quelles règles il a
 appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
-L'inventaire compte **84 régimes** : 34 modélisés,
-36 calculés mais incomplets, 4 à modéliser,
-10 hors champ.
+L'inventaire compte **84 lignes** : 34 régimes modélisés,
+38 calculés mais incomplets, 2 affiliations portées par un statut,
+10 hors champ — et plus aucune ligne à modéliser.
 
 | Couverture | Ce que cela veut dire |
 |---|---|
 | ✅ modélisé | une fiche du catalogue, sur toute l'histoire connue du régime |
 | ◐ partiel | une fiche calculée, mais un étage, un barème ou une période manque — la colonne dit lequel |
 | ✚ à modéliser | aucune fiche ; la colonne dit ce qui bloque |
+| ↪ portée par un statut | pas un régime mais une affiliation (l'élu local, le micro-social), routée par un statut du catalogue ; la colonne dit ce que le statut ne lit pas |
 | ⊘ hors champ | ne sera pas modélisé ; la colonne dit pourquoi |
 
 **D'où vient la liste.** Elle est ancrée sur les textes qui énumèrent les
@@ -411,6 +412,20 @@ plafonds nationaux tiennent lieu), les barèmes d'avant 2009 à Wallis et d'avan
 2023 en Nouvelle-Calédonie, la table exacte de l'âge de la CLR, le complément
 bancaire des régimes intégrés.
 
+### Tranche B5d — les quatre dernières lignes
+
+| Ligne | Ce qui manquait | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `elus_locaux_ircantec` | le seuil de L. 382-31, « que le statut ne lit pas » | L. 382-31 (`LEGIARTI000026790815`) : l'indemnité n'est « assujettie aux cotisations de sécurité sociale [que] lorsque [son] montant total est supérieur à une fraction, fixée par décret, de la valeur du plafond » — la moitié (D. 382-34, hors index) | le routage sait lire un SEUIL : `seuil_pass: {regime_general: 0.5}` sur la période 2013- du statut, `Affiliations.regimes()` reçoit le revenu et le plafond de l'année (Python et JS, un test dans chaque langue) ; un élu à 16 000 € n'a que l'Ircantec, à 24 000 € le régime général aussi. La ligne devient « portée par un statut », couverture nouvelle `routage` (inventaire, site, tests) |
+| `micro_entrepreneurs` | « pas un régime mais une manière de cotiser » | L. 133-6-8 (`LEGIARTI000033712872`), D. 131-6-3 (`LEGIARTI000034163578`) : la cotisation micro-sociale ventilée reproduit celle du commerçant sur le revenu reconstitué (24,7 % contre 24,75 %), les trimestres se valident sur ce revenu depuis 2023 | `routage` : le statut `micro_entrepreneur` porte la ligne ; restent les seuils de chiffre d'affaires d'avant 2023 et les variantes de l'abattement |
+| `organic_conjoints_batiment` | aucune fiche ; « droit du conjoint » | D. 635-32 (`LEGIARTI000006738054`), D. 635-34 (`…056`, un droit du conjoint), D. 635-35 (`…057`, cotisation additionnelle de tous les assujettis), D. 635-36 : 0,50 %/1,82 % (`…095`), 1,5 %/3,5 % (`…096`), 2,5 %/3,95 % (`…097`) sur deux tranches au tiers du plafond (assiettes nouvelles `plafonnee_033_pass`, `tranche_033_1_pass`) ; décret n° 50-60 : articles vides, régime fermé le 25 mars 1998 (`LEGIARTI000006781229`) | une COTISATION SANS DROIT PROPRE, huit périodes de 1973 à 2003, rendement nul : le commerçant, le buraliste et le micro-entrepreneur la versent au compte notionnel (+0,9 % de pension rétroactive pour la génération 1975, +8 % pour 1945), le scénario actuel ne leur sert rien ; le volet bâtiment reste hors fiche |
+| `regimes_professionnels_integres` | aucune fiche ; « le modèle leur applique l'Arrco et l'Agirc » | IFRAP, « La réforme des retraites des banques » : « 72 à 75 % du dernier salaire pour une carrière complète de 42 ans, c'est-à-dire 1,667 % par année », Sécurité sociale comprise ; « cotisation [de] 12 à 20 % de la masse salariale » ; droits figés au 31 décembre 1993 (accord du 13 septembre 1993) | une fiche 1947-1993 portant le COMPLÉMENT (35 % du dernier salaire en 168 trimestres, 16 % de cotisation, `estimee`) pour toutes les populations intégrées ; statut `salarie_regime_professionnel_integre` (426 témoins) : +49 % de pension actuelle sur le non-cadre pour la génération 1925, +17 % pour 1945, rien pour 1975 (entré après 1993) |
+
+Ce qui reste de B5d : l'élu qui a cessé toute activité (assujetti sous le
+seuil), le complément bancaire différentiel et son rabot de 1994, les barèmes
+propres de la CPPOSS, de la CGRCE, des CCI, de l'IRREP et de la CAMARCA, la
+pension du conjoint comme droit dérivé.
+
 ### Feuille de route B5 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
@@ -432,8 +447,5 @@ pour les tranches suivantes :
   absents de LEGI) et le barème de l'UNIRS restent à demander à la Caisse des
   dépôts et à la fédération.
 - **Puis B5**, les dix-huit régimes à modéliser de l'inventaire, par
-  population décroissante — B5a, B5b et B5c ci-dessus en ont porté quatorze ;
-  restent, `a_modeliser` avec leur raison, les conjoints de commerçants et le
-  bâtiment (droit du conjoint), les élus et le micro-social (des routages, pas
-  des régimes) et les régimes professionnels intégrés (complément bancaire
-  non publié).
+  population décroissante — B5a à B5d ci-dessus les ont tous portés : plus
+  aucune ligne `a_modeliser`, deux lignes « portées par un statut ».

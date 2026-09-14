@@ -358,6 +358,8 @@ export class ConstructeurCompte {
 
     const codes = this.affiliations.regimes(
       ligne.affiliation, annee, carriere.entree(ligne.affiliation),
+      ligne.cotise ? ligne.revenu : ligne.revenu_reference,
+      this.macro.plafond_securite_sociale.valeur(annee),
     );
     const sansEmployeur = this.affiliations.sansEmployeur(ligne.affiliation);
     let cotisation = 0.0;

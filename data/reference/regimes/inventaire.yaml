@@ -17,6 +17,9 @@
 #                 partiel     : fiche calculée, mais un étage, un barème ou une
 #                               période manque — `manque` dit lequel
 #                 a_modeliser : aucune fiche — `manque` dit ce qui bloque
+#                 routage     : pas un régime, une affiliation portée par un
+#                               statut de `legislation/affiliations.yaml` —
+#                               `manque` dit ce que le statut ne lit pas
 #                 hors_champ  : ne sera pas modélisé — `raison_hors_champ`
 #   statuts       statuts de `legislation/affiliations.yaml` qui y routent
 #   textes        textes fondateurs ou de référence ; `id` est l'identifiant
@@ -66,7 +69,8 @@ inventaire:
     integre_dans: regime_general
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole,
-              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente]
+              salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
+              salarie_regime_professionnel_integre]
     textes:
       - {reference: "loi du 5 avril 1928 sur les assurances sociales", id: null}
       - {reference: "loi du 30 avril 1930 modifiant la loi du 5 avril 1928", id: null}
@@ -121,7 +125,8 @@ inventaire:
               salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
               elu_local, auteur_dramatique, auteur_lyrique, gerant_debit_tabac, micro_entrepreneur,
-              membre_cese]
+              membre_cese,
+              salarie_regime_professionnel_integre]
     textes:
       - {reference: "ordonnance n° 45-2250 du 4 octobre 1945 portant organisation de la sécurité sociale", id: null}
       - {reference: "ordonnance n° 45-2454 du 19 octobre 1945 fixant le régime des assurances sociales", id: null}
@@ -319,7 +324,8 @@ inventaire:
               salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
               salarie_saint_pierre_et_miquelon,
-              membre_cese, salarie_nouvelle_caledonie]
+              membre_cese, salarie_nouvelle_caledonie,
+              salarie_regime_professionnel_integre]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
@@ -343,7 +349,8 @@ inventaire:
               agent_chemins_fer_secondaires,
               maitre_enseignement_prive,
               salarie_saint_pierre_et_miquelon,
-              membre_cese, salarie_nouvelle_caledonie]
+              membre_cese, salarie_nouvelle_caledonie,
+              salarie_regime_professionnel_integre]
     textes:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
@@ -393,7 +400,8 @@ inventaire:
               salarie_prive_non_cadre_entreprise_recente,
               maitre_enseignement_prive,
               salarie_saint_pierre_et_miquelon,
-              membre_cese, salarie_nouvelle_caledonie]
+              membre_cese, salarie_nouvelle_caledonie,
+              salarie_regime_professionnel_integre]
     textes:
       - {reference: "accord national interprofessionnel du 17 novembre 2017 (hors JORF)", id: null}
       - {reference: "arrêté du 24 avril 2018 portant extension et élargissement de l'accord", id: JORFTEXT000036847920}
@@ -469,19 +477,19 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
+    couverture: routage
     statuts: [elu_local]
     textes:
       - {reference: "loi n° 72-1201 du 23 décembre 1972 portant affiliation des maires et adjoints au régime de retraite complémentaire des agents non titulaires, article 1", id: LEGIARTI000006338235}
       - {reference: "code général des collectivités territoriales, L. 2123-28 (affiliation des élus indemnisés à l'Ircantec)", id: LEGIARTI000006390053}
       - {reference: "loi n° 92-108 du 3 février 1992 relative aux conditions d'exercice des mandats locaux", id: null}
     manque: >-
-      Le statut `elu_local` route l'Ircantec depuis 1973, et le régime
-      général depuis 2013, sur l'indemnité entière ; ce n'est pas un régime
-      mais une affiliation, et il ne reste pas de fiche à écrire. Non portés
-      : le seuil de L. 382-31 en deçà duquel l'indemnité échappe au régime
-      général, et les régimes de retraite par rente (FONPEL, CAREL) auxquels
-      les élus peuvent adhérer.
+      Le statut `elu_local` route l'Ircantec depuis 1973 et, depuis 2013, le
+      régime général au-dessus de la moitié du plafond, le seuil de L.
+      382-31 étant lu année par année sur l'indemnité. Non portés : l'élu
+      qui a cessé toute activité professionnelle, assujetti même sous le
+      seuil ; les régimes de retraite par rente (FONPEL, CAREL),
+      facultatifs.
 
   - code: crpnpac
     nom: Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1
@@ -588,26 +596,25 @@ inventaire:
       d'industrie (régime annexé au statut de 1973), VRP (IRREP), cadres et
       salariés agricoles (CAMARCA, 1973)
     creation: 1947
-    fermeture: 2000
+    fermeture: 1993
     extinction: null
     succede_a: []
     integre_dans: agirc_arrco
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [salarie_regime_professionnel_integre]
     textes:
       - {reference: "loi n° 99-532 du 25 juin 1999, article 32 (caisses d'épargne)", id: LEGIARTI000006711574}
       - {reference: "arrêté du 13 novembre 1973 portant homologation du statut du personnel administratif des CCI, régime de retraite annexé", id: LEGIARTI000006610583}
       - {reference: "décret n° 2002-1012 du 19 juillet 2002, article 21 (affiliation à la CAMARCA)", id: LEGIARTI000006602079}
+      - {reference: "Fondation IFRAP, « La réforme des retraites des banques » (72 à 75 % du dernier salaire en 42 ans, cotisation de 12 à 20 %)", id: null}
       - {reference: "accord professionnel de la banque du 13 septembre 1993 (intégration à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993, complément bancaire différentiel), modifié par l'accord du 25 février 2005 (hors JORF)", id: null}
     manque: >-
-      Régimes à prestations définies servis jusqu'à leur intégration à
-      l'Arrco et à l'Agirc. Pour les banques, l'accord du 13 septembre 1993
-      fige les droits au 31 décembre 1993 et sert un complément égal à la
-      différence entre la pension bancaire de cette date, revalorisée, et la
-      somme des pensions Arrco, Agirc et Sécurité sociale : le modèle
-      applique l'Arrco et l'Agirc de droit commun sur toute la période, et
-      ce complément manque ; le barème bancaire d'avant 1994 n'est pas
-      publié.
+      La fiche porte le barème bancaire pour toutes les populations : le
+      complément de 35 % du dernier salaire en 42 ans, la Sécurité sociale
+      déduite, et 16 % de cotisation ; les barèmes propres de la CPPOSS, de
+      la CGRCE, des CCI, de l'IRREP et de la CAMARCA, le complément
+      différentiel de 1994 et son rabot, et l'Agirc du cadre bancaire ne le
+      sont pas.
 
   - code: enseignants_prive_additionnel
     nom: Régime additionnel de retraite des enseignants du privé sous contrat
@@ -1218,31 +1225,26 @@ inventaire:
     nom: Régimes complémentaires des conjoints de commerçants et des entrepreneurs du bâtiment (Organic)
     famille: non_salarie
     population: Conjoints des industriels et commerçants ; entrepreneurs du bâtiment et des travaux publics
-    creation: 1970
-    fermeture: 2004
+    creation: 1973
+    fermeture: 2003
     extinction: 2004
     succede_a: []
     integre_dans: nric
-    couverture: a_modeliser
-    statuts: []
+    couverture: partiel
+    statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
-      - {reference: "décret n° 50-60 du 13 janvier 1950 (régime complémentaire des entrepreneurs du bâtiment et des travaux publics), article 2", id: LEGIARTI000006781230}
-      - {reference: "décret n° 70-368 du 29 avril 1970, article 16 (prélèvement au profit du régime du bâtiment)", id: LEGIARTI000006762430}
-      - {reference: "code de la sécurité sociale, D. 635-35 (régime des conjoints, 1985-2003)", id: LEGIARTI000006738057}
-      - {reference: "code de la sécurité sociale, D. 635-36 : 0,50 % et 1,82 % (1985-1998), 1,5 % et 3,5 % (1998-2003)", id: LEGIARTI000006738096}
-      - {reference: "code de la sécurité sociale, D. 635-35-1 (coefficient de reprise des points par le NRIC en 2004)", id: LEGIARTI000006738059}
+      - {reference: "code de la sécurité sociale, D. 635-32 (institution du régime en faveur des conjoints) et D. 635-34 (objet : maintenir au conjoint les avantages d'avant 1973)", id: LEGIARTI000006738054}
+      - {reference: "code de la sécurité sociale, D. 635-35 (cotisation additionnelle à la charge de tous les assujettis du régime de base)", id: LEGIARTI000006738057}
+      - {reference: "code de la sécurité sociale, D. 635-36 : 0,50 % et 1,82 % (1985-1997), 1,5 % et 3,5 % (1998), 2,5 % et 3,95 % (1999-2003)", id: LEGIARTI000006738097}
+      - {reference: "décret n° 50-60 du 11 janvier 1950 (régime complémentaire des entrepreneurs du bâtiment), fermé et sans cotisation depuis le 25 mars 1998", id: LEGIARTI000006781229}
       - {reference: "arrêté du 9 février 2012 portant approbation du règlement du RCI, reprise des points de l'ancien régime des conjoints", id: LEGIARTI000025397326}
     manque: >-
-      Deux complémentaires obligatoires d'avant le NRIC, dont les points ont
-      été repris par le RCI. Le régime des conjoints (D. 635-35 et D.
-      635-36, LEGIARTI000006738095 à LEGIARTI000006738097) sert une pension
-      AU CONJOINT du commerçant, financée par une cotisation du chef
-      d'entreprise : c'est un droit du conjoint, que la carrière
-      individuelle du modèle ne porte pas. Le régime du bâtiment (décret n°
-      50-60, art. 2, LEGIARTI000006781230) concernait une population
-      artisanale que le statut `artisan` ne distingue pas ; le coefficient
-      de reprise de 2004 (D. 635-35-1) reste à lire pour
-      `conversions_points.csv`.
+      La fiche porte la cotisation du commerçant, qui entre au compte
+      notionnel, et rien dans le scénario actuel : la pension va au
+      conjoint, droit dérivé que la carrière individuelle ne porte pas. Le
+      volet bâtiment n'a aucun chiffre dans LEGI (articles 2 à 5 du décret
+      n° 50-60 abrogés, point fixé par la caisse) et n'est pas porté ; les
+      taux d'avant 1985 sont projetés.
 
   - code: rci
     nom: Régime complémentaire des indépendants
@@ -1268,7 +1270,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    couverture: a_modeliser
+    couverture: routage
     statuts: [micro_entrepreneur]
     textes:
       - {reference: "loi n° 2008-776 du 4 août 2008 de modernisation de l'économie, article 1er (L. 133-6-8)", id: LEGIARTI000019284945}
@@ -1276,13 +1278,14 @@ inventaire:
       - {reference: "code de la sécurité sociale, L. 133-6-8 (prestations calculées sur le chiffre d'affaires après abattement de 71 %, 50 % ou 34 %)", id: LEGIARTI000033712872}
       - {reference: "code de la sécurité sociale, D. 131-6-3 (fraction du taux pendant l'exonération de début d'activité)", id: LEGIARTI000034163578}
     manque: >-
-      Pas un régime mais une manière de cotiser : le statut
-      `micro_entrepreneur` route les régimes du commerçant sur le revenu
-      reconstitué (chiffre d'affaires après abattement), ce qui reproduit
-      les droits mais pas la cotisation réellement versée, calculée sur le
-      chiffre d'affaires par un taux global ventilé entre les branches ; les
-      seuils de chiffre d'affaires qui valident les trimestres ne sont pas
-      portés.
+      Le statut `micro_entrepreneur` route les régimes du commerçant sur le
+      revenu reconstitué (chiffre d'affaires après abattement) : la
+      cotisation micro-sociale ventilée entre les branches reproduit, par
+      construction, celle du commerçant — 12,3 % du chiffre d'affaires dont
+      58,3 % pour la retraite, sur 29 % de revenu, font 24,7 % contre 24,75
+      % —, et les trimestres se valident sur ce revenu depuis 2023. Non
+      portés : les seuils de chiffre d'affaires d'avant 2023, les variantes
+      de l'abattement (50 % services, 34 % libéral).
 
   - code: cnavpl
     nom: Caisse nationale d'assurance vieillesse des professions libérales, régime de base

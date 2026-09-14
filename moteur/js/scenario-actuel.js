@@ -189,6 +189,8 @@ export class ScenarioActuel {
       }
       if (!this.affiliations.regimes(
         ligne.affiliation, ligne.annee, carriere.entree(ligne.affiliation),
+        ligne.cotise ? ligne.revenu : ligne.revenu_reference,
+        this.macro.plafond_securite_sociale.valeur(ligne.annee),
       ).includes(code)) {
         continue;
       }
@@ -254,7 +256,8 @@ export class ScenarioActuel {
       if (derniere !== null && derniere.cotise && derniere.fraction_annee > 0
           && this.affiliations.regimes(
             derniere.affiliation, anneeLiquidation,
-            carriere.entree(derniere.affiliation))
+            carriere.entree(derniere.affiliation),
+            derniere.revenu, this.macro.plafond_securite_sociale.valeur(anneeLiquidation))
             .includes(code)) {
         let traitement = assietteDeReference(periode, derniere)
           / derniere.fraction_annee;
@@ -632,6 +635,8 @@ export class ScenarioActuel {
       }
       for (const code of this.affiliations.regimes(
         ligne.affiliation, ligne.annee, carriere.entree(ligne.affiliation),
+        ligne.cotise ? ligne.revenu : ligne.revenu_reference,
+        this.macro.plafond_securite_sociale.valeur(ligne.annee),
       )) {
         if (!this.catalogue.contient(code)) {
           continue;
@@ -685,6 +690,8 @@ export class ScenarioActuel {
       const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
       for (const code of this.affiliations.regimes(
         ligne.affiliation, ligne.annee, carriere.entree(ligne.affiliation),
+        ligne.cotise ? ligne.revenu : ligne.revenu_reference,
+        this.macro.plafond_securite_sociale.valeur(ligne.annee),
       )) {
         if (!this.catalogue.contient(code)) {
           continue;

@@ -7056,3 +7056,335 @@ regimes:
           centimes de rente par euro dans `rendements_points.csv`, appliqués à
           toute la carrière ; niveau `estimee`. Âges et décote de la fiche
           `ircec_raap`.
+
+  - code: organic_conjoints_batiment
+    nom: >-
+      Régime complémentaire obligatoire des conjoints des industriels et commerçants (Organic)
+    famille: non_salarie
+    source_id: legifrance_textes
+    fiabilite: moyenne
+    creation: 1973
+    fermeture: 2003
+    extinction: 2004
+    succede_a: []
+    integre_dans: nric
+    population: >-
+      Industriels et commerçants affiliés à l'Organic, de 1973 à 2003 : une
+      cotisation additionnelle, sur deux tranches jusqu'au plafond, qui
+      finance une pension servie à leur conjoint coexistant ou survivant.
+      Reprise par le NRIC en 2004, puis par le RCI.
+    hors_repartition: false
+    periodes:
+      - debut: 1973
+        fin: 1984
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_033_pass
+        taux_cotisation_retraite: 0.0050
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE JUSQU'AU TIERS DU PLAFOND.
+          AVANT 1985 : la codification de 1985 reprend un régime né avec la
+          loi du 3 janvier 1970 pour les « périodes d'assurance […]
+          postérieures au 31 décembre 1972 » (D. 635-34) ; le taux de 1985 est
+          projeté en arrière, niveau `estimee`.
+      - debut: 1973
+        fin: 1984
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_033_1_pass
+        taux_cotisation_retraite: 0.0182
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE DU TIERS AU PLAFOND. AVANT 1985
+          : la codification de 1985 reprend un régime né avec la loi du 3
+          janvier 1970 pour les « périodes d'assurance […] postérieures au 31
+          décembre 1972 » (D. 635-34) ; le taux de 1985 est projeté en
+          arrière, niveau `estimee`.
+      - debut: 1985
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_033_pass
+        taux_cotisation_retraite: 0.0050
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE JUSQU'AU TIERS DU PLAFOND. «
+          0,50 p. 100 des revenus ou de la part des revenus qui n'excèdent pas
+          le tiers du plafond ; 1,82 p. 100 de la part des revenus comprise
+          entre le tiers et le montant dudit plafond » (D. 635-36,
+          LEGIARTI000006738095, du 21 décembre 1985 au 1er janvier 1998).
+      - debut: 1985
+        fin: 1997
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_033_1_pass
+        taux_cotisation_retraite: 0.0182
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE DU TIERS AU PLAFOND. « 0,50 p.
+          100 des revenus ou de la part des revenus qui n'excèdent pas le
+          tiers du plafond ; 1,82 p. 100 de la part des revenus comprise entre
+          le tiers et le montant dudit plafond » (D. 635-36,
+          LEGIARTI000006738095, du 21 décembre 1985 au 1er janvier 1998).
+      - debut: 1998
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_033_pass
+        taux_cotisation_retraite: 0.0150
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE JUSQU'AU TIERS DU PLAFOND. «
+          1,5 % des revenus ou de la part des revenus qui n'excèdent pas le
+          tiers du plafond ; 3,5 % de la part […] comprise entre le tiers et
+          le montant dudit plafond » (D. 635-36, LEGIARTI000006738096, année
+          1998).
+      - debut: 1998
+        fin: 1998
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_033_1_pass
+        taux_cotisation_retraite: 0.0350
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE DU TIERS AU PLAFOND. « 1,5 %
+          des revenus ou de la part des revenus qui n'excèdent pas le tiers du
+          plafond ; 3,5 % de la part […] comprise entre le tiers et le montant
+          dudit plafond » (D. 635-36, LEGIARTI000006738096, année 1998).
+      - debut: 1999
+        fin: 2003
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_033_pass
+        taux_cotisation_retraite: 0.0250
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE JUSQU'AU TIERS DU PLAFOND. «
+          2,5 % […] jusqu'au tiers du plafond ; 3,95 % de la part […] comprise
+          entre le tiers et le montant dudit plafond » (D. 635-36,
+          LEGIARTI000006738097, de 1999 au 24 août 2004) ; le NRIC reprend les
+          points au 1er janvier 2004 (arrêté du 9 février 2012,
+          LEGIARTI000025397326).
+      - debut: 1999
+        fin: 2003
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_033_1_pass
+        taux_cotisation_retraite: 0.0395
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          UNE COTISATION SANS DROIT PROPRE. Le régime complémentaire
+          obligatoire « en faveur des conjoints coexistants et survivants des
+          travailleurs non salariés des professions industrielles et
+          commerciales » (D. 635-32, LEGIARTI000006738054) est « financé par
+          une cotisation additionnelle à la cotisation du régime de base, à la
+          charge des assujettis dudit régime de base » (D. 635-35,
+          LEGIARTI000006738057) — tous les commerçants, les célibataires,
+          veufs et divorcés pouvant en être exonérés sur demande —, et ses
+          prestations ont « pour objet de maintenir en faveur du conjoint […]
+          les avantages qui résultaient des dispositions […] en vigueur »
+          avant 1973 (D. 635-34, LEGIARTI000006738056) : un droit DU CONJOINT,
+          que la carrière individuelle du modèle ne porte pas. Comme la
+          cotisation déplafonnée du régime général, elle entre au compte
+          notionnel — l'assuré l'a versée — et n'ouvre rien dans le scénario 1
+          : `rendements_points.csv` porte un rendement nul, le moteur sert
+          zéro. Le régime des entrepreneurs du bâtiment (décret n° 50-60),
+          fermé le 25 mars 1998 (LEGIARTI000006781229), n'a que des articles
+          vides dans LEGI : non porté. TRANCHE DU TIERS AU PLAFOND. « 2,5 %
+          […] jusqu'au tiers du plafond ; 3,95 % de la part […] comprise entre
+          le tiers et le montant dudit plafond » (D. 635-36,
+          LEGIARTI000006738097, de 1999 au 24 août 2004) ; le NRIC reprend les
+          points au 1er janvier 2004 (arrêté du 9 février 2012,
+          LEGIARTI000025397326).

@@ -3495,7 +3495,7 @@ const FAMILLES_INVENTAIRE = {
 };
 
 /**
- * Les quatre couvertures, dans l'ordre d'affichage : le titre du tableau, le
+ * Les cinq couvertures, dans l'ordre d'affichage : le titre du tableau, le
  * nom au pluriel pour la phrase de compte, et l'intitulé de la dernière
  * colonne — vide pour les régimes modélisés, qui n'ont rien à expliquer.
  */
@@ -3503,6 +3503,7 @@ const COUVERTURES_INVENTAIRE = [
   ["modelise", "Régimes modélisés", "modélisés", ""],
   ["partiel", "Régimes calculés, mais incomplets", "partiels", "Ce qui manque"],
   ["a_modeliser", "Régimes à modéliser", "à modéliser", "Ce qui bloque"],
+  ["routage", "Affiliations portées par un statut", "portés par un statut", "Ce qui reste"],
   ["hors_champ", "Régimes hors champ", "hors champ", "Pourquoi"],
 ];
 
@@ -3566,7 +3567,10 @@ où chaque ligne cite son texte fondateur, et un test le tient aligné sur le
 catalogue : une fiche sans ligne d'inventaire, ou une ligne qui prétend calculer
 ce qu'aucune fiche ne calcule, fait échouer les tests. Un régime « partiel » est
 calculé, mais un étage, un barème ou une période lui manque ; un régime « à
-modéliser » n'a pas de fiche, et la colonne dit ce qui bloque.</p>
+modéliser » n'a pas de fiche, et la colonne dit ce qui bloque ; une ligne
+« portée par un statut » n'est pas un régime mais une affiliation — l'élu
+local, le micro-entrepreneur —, que le statut nommé route vers les régimes du
+catalogue.</p>
 ${tableaux.join("")}
 `;
 }

@@ -2007,7 +2007,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n’est pas un régime absent : les 70 fiches du catalogue
+Un régime « incomplet » n’est pas un régime absent : les 72 fiches du catalogue
 calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -2040,7 +2040,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **70 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **72 régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -2804,7 +2804,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 53 statuts », « 70 régimes » —, parce que ce sont des chiffres de données et
+« 54 statuts », « 72 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -3190,6 +3190,7 @@ modèle :
 | `seita` | 1935-2026 | 8 | 49 | 0 | 0 |
 | `cese_membres` | 1957-2026 | 14 | 48 | 0 | 0 |
 | `carcdsf_complementaire` | 1949-2026 | 22 | 48 | 0 | 0 |
+| `regimes_professionnels_integres` | 1947-1993 | 1 | 47 | 0 | 0 |
 | `cnracl` | 1945-2026 | 7 | 45 | 17 | 0 |
 | `mines` | 1930-2026 | 22 | 44 | 1 | 0 |
 | `cnbf_complementaire` | 1979-2026 | 2 | 40 | 0 | 0 |
@@ -3220,6 +3221,7 @@ modèle :
 | `cssm_mayotte` | 1987-2036 | 34 | 16 | 0 | 0 |
 | `assurances_sociales` | 1930-1945 | 1 | 16 | 0 | 0 |
 | `carpv_complementaire` | 1950-2026 | 10 | 15 | 0 | 0 |
+| `organic_conjoints_batiment` | 1973-2003 | 4 | 13 | 0 | 0 |
 | `cps_saint_pierre_et_miquelon` | 1987-2037 | 32 | 13 | 0 | 0 |
 | `asv_conventionnes` | 1972-2026 | 21 | 13 | 10 | 0 |
 | `agirc` | 1947-2018 | 24 | 13 | 0 | 0 |
@@ -3242,7 +3244,7 @@ modèle :
 
 **Ce tableau n'est plus écrit à la main** : c'est la sortie de
 `python scripts/calendrier_regimes.py --carte`, relevée après les tranches B1
-à B5c de la campagne « les règles à travers l'histoire » (voir
+à B5d de la campagne « les règles à travers l'histoire » (voir
 [`regimes.md`](regimes.md), journal de la campagne). Les deux dernières
 colonnes viennent de l'index LEGI et du calendrier des réformes
 (`legislation/reformes.yaml`) : une « coupure de texte non reflétée » est une
@@ -4246,7 +4248,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 579 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 580 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

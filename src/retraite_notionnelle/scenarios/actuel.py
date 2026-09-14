@@ -1234,7 +1234,9 @@ class ScenarioActuel:
                 continue
             if code not in self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
-                    carriere.entree(ligne.affiliation)):
+                    carriere.entree(ligne.affiliation),
+                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
+                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
                 continue
             if not ligne.cotise:
                 # Assurance vieillesse des parents au foyer : la CNAF cotise
@@ -1301,7 +1303,9 @@ class ScenarioActuel:
                     and derniere.fraction_annee > 0
                     and code in self.affiliations.regimes(
                         derniere.affiliation, annee_liquidation,
-                        carriere.entree(derniere.affiliation))):
+                        carriere.entree(derniere.affiliation),
+                        revenu=derniere.revenu,
+                        plafond=self.macro.plafond_securite_sociale(annee_liquidation))):
                 traitement = (_assiette_de_reference(periode, derniere)
                               / derniere.fraction_annee)
                 if plafonner:
@@ -1744,7 +1748,9 @@ class ScenarioActuel:
                 continue
             for code in self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
-                    carriere.entree(ligne.affiliation)):
+                    carriere.entree(ligne.affiliation),
+                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
+                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
                 if code not in self.catalogue:
                     continue
                 trimestres_par_regime[code] = (
@@ -1796,7 +1802,9 @@ class ScenarioActuel:
             )
             for code in self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
-                    carriere.entree(ligne.affiliation)):
+                    carriere.entree(ligne.affiliation),
+                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
+                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
                 if code not in self.catalogue:
                     continue
                 regime = self.catalogue[code]
