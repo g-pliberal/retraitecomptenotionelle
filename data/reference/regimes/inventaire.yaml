@@ -168,6 +168,7 @@ inventaire:
       - {reference: "décret n° 2024-766 du 8 juillet 2024 et décret n° 2026-345 du 7 mai 2026 (relèvement de l'âge, générations 1962 à 1969)", id: LEGIARTI000054059636}
       - {reference: "ordonnance n° 2011-1923 du 22 décembre 2011, article 20 (chapitre II « Assurance de base des travailleurs non salariés des professions artisanales, industrielles et commerciales, et agricoles », articles 23-1 à 23-4 de l'ordonnance de 2002)", id: LEGIARTI000025017034}
       - {reference: "ordonnance n° 2002-411, article 23-4 (la pension des non-salariés suit les règles du chapitre Ier, revenu annuel moyen adapté par décret)", id: LEGIARTI000025021012}
+      - {reference: "décret n° 2012-1168 du 17 octobre 2012 relatif au développement de la sécurité sociale à Mayotte, article 9 (chapitre III : dispositions relatives aux travailleurs non salariés, articles 31 et suivants du décret n° 2003-589)", id: JORFARTI000026511524}
     manque: >-
       Le SMIG mahorais, qui valide les trimestres (200 puis 150 heures par
       trimestre), n'est pas une série du dépôt : la validation se fait au
@@ -177,8 +178,8 @@ inventaire:
       Les non-salariés de Mayotte, affiliés à la même caisse depuis 2012
       avec une pension calculée selon les mêmes règles (article 23-4),
       n'ont aucun statut qui les y route : seul `salarie_mayotte` atteint
-      la fiche, et le décret d'adaptation de leur revenu annuel moyen n'est
-      pas lu.
+      la fiche, et le chapitre III du décret n° 2003-589, écrit en 2012 pour
+      adapter leur revenu annuel moyen, n'est pas lu.
 
   - code: cps_saint_pierre_et_miquelon
     nom: Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
@@ -215,6 +216,7 @@ inventaire:
     statuts: [salarie_polynesie]
     textes:
       - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » et fiche de cotisations 2026 (délibérations de l'assemblée de la Polynésie française, compétence locale, hors JORF)", id: null}
+      - {reference: "arrêté n° 1336 IT du 28 septembre 1956 portant organisation et fonctionnement de la caisse de prévoyance sociale ; délibération n° 67-110 AT du 24 août 1967 créant le régime de retraite polynésien ; délibération n° 87-11 AT du 29 janvier 1987 portant institution d'un régime de retraite des travailleurs salariés (tranche A) ; loi du pays n° 2019-6 du 1er février 2019 — cités par le rapport de l'assemblée de la Polynésie française du 14 août 2025 sur l'harmonisation des allocations familiales (hors JORF)", id: null}
     manque: >-
       Seuls les paramètres de 2026 sont lus, projetés sur toute la période ;
       le plafond de 269 000 FCFP par mois n'est pas une série du dépôt et le
@@ -234,11 +236,12 @@ inventaire:
     statuts: [salarie_polynesie]
     textes:
       - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Polynésie française » (points de la tranche B : salaire minimum horaire de référence 1 024,74 FCFP, point à 20,49 FCFP)", id: null}
+      - {reference: "délibération n° 95-180 AT du 26 octobre 1995 instituant un régime de retraite tranche B au profit des ressortissants du régime général des salariés, citée par le rapport de l'assemblée de la Polynésie française du 14 août 2025 (hors JORF)", id: null}
     manque: >-
       La tranche 269 000-525 000 FCFP est écrite comme la tranche entre un et
       deux plafonds nationaux, la borne la plus proche du catalogue ; le
-      barème de 2026 est projeté sur toute la période et la date de création
-      de la tranche est prise à 1995.
+      barème de 2026 est projeté sur toute la période, depuis la délibération
+      de 1995 qui institue la tranche.
 
   - code: cafat_nouvelle_caledonie
     nom: Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
@@ -253,11 +256,15 @@ inventaire:
     statuts: [salarie_nouvelle_caledonie]
     textes:
       - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Nouvelle-Calédonie » et fiche de cotisations 2026 ; page « Le montant de ma retraite » de la CAFAT (délibérations du congrès, compétence locale, hors JORF)", id: null}
+      - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...] soumis à titre obligatoire au régime d'assurance vieillesse de base géré par la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif, hors JORF)", id: null}
     manque: >-
       La valeur de référence qui convertit les cotisations en points n'est
       pas publiée : le rendement est estimé ; taux et barème de 2026
       projetés sur toute la période ; plafond de 548 600 FCFP remplacé par
-      le plafond national.
+      le plafond national. Les salariés du privé de Nouvelle-Calédonie
+      relèvent aussi, obligatoirement, de l'Agirc-Arrco : le statut
+      `salarie_nouvelle_caledonie` ne route pas vers la complémentaire, et
+      la date de cette extension n'est pas lue.
 
   - code: wallis_et_futuna
     nom: Retraite des salariés de Wallis-et-Futuna
@@ -465,7 +472,11 @@ inventaire:
   - code: ircantec
     nom: Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques
     famille: complementaire_prive
-    population: Agents non titulaires des trois fonctions publiques, praticiens hospitaliers, élus locaux
+    population: >-
+      Agents non titulaires des trois fonctions publiques, élus locaux,
+      praticiens hospitaliers (le « régime des médecins » de l'échantillon
+      interrégimes : une assiette aux deux tiers des émoluments, non un
+      régime distinct)
     creation: 1971
     fermeture: null
     extinction: null
@@ -477,6 +488,7 @@ inventaire:
     textes:
       - {reference: "décret n° 70-1277 du 23 décembre 1970", id: null}
       - {reference: "arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime", id: LEGITEXT000024251295}
+      - {reference: "arrêté du 18 juillet 1983 et arrêté du 7 mars 1986 relatifs à l'assiette de cotisations à l'Ircantec de certains membres du corps médical des établissements hospitaliers publics (deux tiers des émoluments hospitaliers, hors gardes et astreintes)", id: LEGITEXT000006073794}
 
   - code: elus_locaux_ircantec
     nom: Affiliation des élus locaux à l'Ircantec
@@ -835,18 +847,23 @@ inventaire:
       - {reference: "code des pensions civiles et militaires de retraite, R. 35 (coordination avec la caisse générale des retraites de l'Algérie et la caisse marocaine de retraites)", id: LEGIARTI000006362950}
       - {reference: "loi n° 75-1278 du 30 décembre 1975, article 73 I (les fonctionnaires français de ces trois caisses admis aux avantages du régime général des retraites)", id: LEGIARTI000006272976}
       - {reference: "loi n° 81-734 du 3 août 1981 de finances rectificative, article 26 (pensions garanties par l'État aux ressortissants de l'Algérie)", id: LEGIARTI000006273652}
+      - {reference: "décret du 22 janvier 1951 homologuant des décisions de l'assemblée algérienne (application de nouvelles catégories de personnels au régime de la caisse générale des retraites)", id: JORFTEXT000000670381}
+      - {reference: "loi n° 58-108 du 7 février 1958 modifiant les lois n° 56-782 du 4 août 1956 et n° 57-261 du 2 mars 1957 (reclassement en France des agents affiliés à la société de prévoyance des fonctionnaires et employés tunisiens ou à la caisse marocaine des retraites)", id: JORFTEXT000000317027}
+      - {reference: "décret n° 68-326 du 5 avril 1968 fixant les règles de validation et de coordination des services accomplis en Algérie du 1er avril 1938 au 1er juillet 1962 sous le régime de la caisse générale des retraites de l'Algérie", id: JORFTEXT000000514424}
     raison_hors_champ: >-
       Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés
       aux Français avec l'indépendance et dont l'État garantit les pensions
       depuis ; leurs textes fondateurs, décisions de l'assemblée algérienne
-      et dahirs, ne sont pas au Journal officiel de la République. Aucun
+      homologuées par décret et dahirs, ne sont pas au Journal officiel de
+      la République, qui n'en a que les homologations et les règles de
+      coordination (services du 1er avril 1938 au 1er juillet 1962). Aucun
       cotisant depuis 1962.
 
   - code: crfm_mayotte
     nom: Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM)
     famille: fonction_publique
     population: Agents titulaires de la collectivité, des communes et des établissements publics de Mayotte, avant leur intégration dans les fonctions publiques
-    creation: null
+    creation: 1977
     fermeture: 2010
     extinction: null
     succede_a: []
@@ -857,13 +874,42 @@ inventaire:
       - {reference: "loi n° 2001-616 du 11 juillet 2001 relative à Mayotte, article 64-1 (intégration des agents dans les fonctions publiques au plus tard le 31 décembre 2010 ; IX : dissolution de la caisse)", id: LEGIARTI000025950147}
       - {reference: "décret n° 2012-1256 du 13 novembre 2012 relatif au règlement des droits à pension des agents publics de Mayotte intégrés ou titularisés (préliquidation par la CRFM de la part antérieure)", id: LEGITEXT000026637100}
       - {reference: "décret n° 2013-255 du 26 mars 2013, article 2 (pensions dues par la CRFM versées par la CNRACL ou par le service des retraites de l'État)", id: LEGIARTI000027239454}
+      - {reference: "répertoire Sirene, établissement public administratif n° 200 025 260 créé le 16 mars 1977 (hors JORF)", id: null}
+      - {reference: "Outre-mer La 1ère, « La Caisse de retraite des fonctionnaires de Mayotte pourrait bientôt fermer ses portes », 17 septembre 2025 (créée en mars 1977, cotisations reprises au niveau national en 2007, trois agents, liquidation en cours)", id: null}
     raison_hors_champ: >-
-      Caisse locale, instituée par délibération hors Journal officiel,
-      fermée par l'intégration de ses affiliés dans les fonctions publiques
-      d'État, territoriale et hospitalière au plus tard fin 2010, puis
-      dissoute : ses pensions sont versées par la CNRACL ou par l'État. Les
+      Caisse locale créée en mars 1977 par délibération hors Journal
+      officiel, fermée par l'intégration de ses affiliés dans les fonctions
+      publiques d'État, territoriale et hospitalière au plus tard fin 2010,
+      en liquidation depuis : ses pensions sont versées par la CNRACL ou par
+      l'État, la caisse ne préliquidant plus que la part antérieure. Les
       statuts de fonctionnaire portent la carrière ; le règlement de la
       caisse n'est pas dans l'index.
+
+  - code: elus_pacifique
+    nom: Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie
+    famille: special
+    population: Représentants à l'assemblée et membres du gouvernement de la Polynésie française ; membres du congrès, des assemblées de province et du gouvernement de la Nouvelle-Calédonie
+    creation: null
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: hors_champ
+    statuts: []
+    textes:
+      - {reference: "loi organique n° 99-209 du 19 mars 1999 relative à la Nouvelle-Calédonie, article 78 (le congrès fixe le régime de sécurité sociale et de retraite de ses membres)", id: LEGIARTI000028213954}
+      - {reference: "loi organique n° 99-209, article 163 (même compétence de l'assemblée de province pour ses membres)", id: LEGIARTI000028213949}
+      - {reference: "Radio 1 Tahiti, « Les détails du texte qui doit faire cotiser les élus à la CPS » : proposition de loi du pays affiliant les représentants au régime de base des salariés, le régime par capitalisation existant étant maintenu à titre complémentaire (hors JORF)", id: null}
+      - {reference: "TNTV, « Les membres du gouvernement vont cotiser au régime de retraite », 24 avril 2024 : arrêté du conseil des ministres affiliant les membres du gouvernement au régime de base des salariés de la CPS au 1er juin 2024 (hors JORF)", id: null}
+    raison_hors_champ: >-
+      Régimes fixés par les assemblées elles-mêmes, hors Journal officiel de
+      la République. En Polynésie, les représentants ont un régime par
+      capitalisation auprès d'un assureur privé, exclu des comptes
+      notionnels comme toute capitalisation, et les membres du gouvernement
+      ne cotisent au régime de base de la CPS que depuis le 1er juin 2024 ;
+      en Nouvelle-Calédonie, la loi organique confie au congrès et aux
+      assemblées de province le régime de retraite de leurs membres, et le
+      dépôt n'a lu aucune de leurs délibérations. Aucun barème lu.
 
   - code: fonctionnaires_pacifique
     nom: Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
@@ -1574,7 +1620,7 @@ inventaire:
     nom: Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA)
     famille: liberal
     population: Enseignants libéraux, professeurs de musique et musiciens, artistes hors AGESSA, professions du sport et du tourisme, vendeurs-colporteurs de presse
-    creation: 1977
+    creation: 1949
     fermeture: 2004
     extinction: 2004
     succede_a: []
@@ -1582,16 +1628,20 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
+      - {reference: "décret n° 50-1089 du 2 septembre 1950 modifiant les règlements d'administration publique n° 48-1179 du 19 juillet 1948 et n° 49-456 du 30 mars 1949 (comités provisoires des sections professionnelles des artistes, des professeurs de musique et musiciens, des gens de lettres et auteurs)", id: JORFTEXT000000489029}
+      - {reference: "arrêté du 21 juillet 1952 fixant le taux des cotisations d'assurance vieillesse de la section professionnelle des professeurs de musique et des musiciens", id: JORFTEXT000000622970}
       - {reference: "arrêté du 4 juillet 1977 approuvant les statuts de la section professionnelle des artistes auteurs ne relevant pas de l'article L. 631-1, des professeurs de musique et des musiciens, qui prend le nom de « Caisse de retraite de l'enseignement et des arts appliqués »", id: JORFTEXT000000488757}
       - {reference: "décret n° 94-404 du 16 mai 1994 (rattachement des vendeurs-colporteurs de presse à la CREA)", id: JORFTEXT000000183429}
       - {reference: "arrêté du 22 juillet 2003 relatif à l'échantillon interrégimes de cotisants, article 2, 18° (régime de base et régime complémentaire de la CREA)", id: LEGIARTI000006221466}
       - {reference: "décret n° 2004-461 du 27 mai 2004, article 13 VIII (les affiliés de la CREA soumis, au 1er janvier 2004, à la Cipav)", id: LEGIARTI000006781338}
     raison_hors_champ: >-
-      Section de la CNAVPL fondue dans la Cipav au 1er janvier 2004, qui a
-      repris ses affiliés et leurs points ; le statut `profession_liberale`
-      route vers la Cipav sur toute la période, et le barème propre de la
-      CREA n'est pas au Journal officiel, qui n'a que l'arrêté d'approbation
-      de ses statuts.
+      Section de la CNAVPL dès l'organisation de 1949 (professeurs de
+      musique et musiciens, artistes hors L. 631-1), nommée CREA en 1977 et
+      fondue dans la Cipav au 1er janvier 2004, qui a repris ses affiliés et
+      leurs points ; le statut `profession_liberale` route vers la Cipav sur
+      toute la période, et le barème propre de la CREA n'est pas au Journal
+      officiel, qui n'a que l'arrêté de 1952 sur ses taux et les arrêtés
+      d'approbation de ses statuts.
 
   - code: asv_conventionnes
     nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)
