@@ -98,6 +98,7 @@ export class Carriere {
     //: Sans effet notionnel : utilisé par le seul scénario « système actuel ».
     nombre_enfants = 0,
     identifiant = "assuré",
+    dates_entree = {},
   }) {
     if (sexe !== "H" && sexe !== "F") {
       throw new Error(`sexe attendu 'H' ou 'F', reçu ${sexe}`);
@@ -114,6 +115,13 @@ export class Carriere {
     this.age_liquidation = age_liquidation;
     this.nombre_enfants = nombre_enfants;
     this.identifiant = identifiant;
+    // Mois d'entrée dans chaque statut, tel que le parcours le date. Les
+    // lignes ne connaissent que l'année, et l'année d'un changement de métier
+    // revient au métier qui en occupe le plus de mois : l'agent recruté à la
+    // RATP en octobre 2022 n'y a sa première LIGNE qu'en 2023, quand le régime
+    // est fermé aux recrutés depuis septembre 2023. C'est la date qui décide
+    // de la clause du grand-père, pas la première ligne.
+    this.dates_entree = dates_entree;
     this._parAnnee = new Map(this.lignes.map((ligne) => [ligne.annee, ligne]));
   }
 
@@ -185,6 +193,19 @@ export class Carriere {
       }
     }
     return null;
+  }
+
+  /**
+   * Mois d'entrée dans ce statut, ou null s'il n'y figure pas : celui que le
+   * parcours a daté quand il en vient ; sinon janvier de la première ligne,
+   * ce qui vaut pour une carrière construite ligne à ligne.
+   */
+  dateEntree(affiliation) {
+    if (Object.prototype.hasOwnProperty.call(this.dates_entree, affiliation)) {
+      return this.dates_entree[affiliation];
+    }
+    const annee = this.entree(affiliation);
+    return annee === null ? null : new DateMois(annee, 1);
   }
 
   get anneesCotisees() {
@@ -424,9 +445,16 @@ export class Carriere {
       }));
     }
 
+    const datesEntree = {};
+    for (const { metier, ouverture } of periodes) {
+      if (!Object.prototype.hasOwnProperty.call(datesEntree, metier.affiliation)) {
+        datesEntree[metier.affiliation] = ouverture;
+      }
+    }
+
     return new Carriere({
       annee_naissance, sexe, lignes, mois_naissance, age_liquidation,
-      nombre_enfants, identifiant,
+      nombre_enfants, identifiant, dates_entree: datesEntree,
     });
   }
 }

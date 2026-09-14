@@ -156,13 +156,31 @@ export function cache(nom, valeur) {
   return `<input type="hidden" name="${nom}" value="${echapper(String(valeur))}">`;
 }
 
+/**
+ * Un menu déroulant. Une option est `[code, texte]`, ou
+ * `[code, texte, disponible]`, ou `[code, texte, disponible, attributs]`. Une
+ * option indisponible est rendue `disabled` — grisée, et impossible à
+ * choisir — SAUF si elle est la sélection : un navigateur n'envoie pas la
+ * valeur d'une option choisie mais désactivée, et la saisie repartirait sur
+ * le statut par défaut sans que rien ne le dise. Le refus, lui, se fait au
+ * calcul.
+ */
 export function liste(nom, libelle, options, selection, aide = "", attributs = {}) {
   const supplement = Object.entries(attributs)
     .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
     .join("");
-  const choix = options.map(([code, texte]) => `<option value="${echapper(code)}"`
-    + (code === selection ? " selected" : "")
-    + `>${echapper(texte)}</option>`).join("");
+  const choix = options.map((option) => {
+    const [code, texte] = option;
+    const disponible = option.length > 2 ? option[2] : true;
+    const propres = Object.entries(option.length > 3 ? option[3] : {})
+      .map(([cle, val]) => ` ${cle}="${echapper(String(val))}"`)
+      .join("");
+    return `<option value="${echapper(code)}"`
+      + (code === selection ? " selected" : "")
+      + (disponible || code === selection ? "" : " disabled")
+      + propres
+      + `>${echapper(texte)}</option>`;
+  }).join("");
   const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
   return `<div><label for="${nom}">${echapper(libelle)}${aideHtml}</label>`
     + `<select id="${nom}" name="${nom}"${supplement}>${choix}</select></div>`;

@@ -30,7 +30,14 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
-from retraite_notionnelle.web.pages import Contexte, Saisie, rendre  # noqa: E402
+from retraite_notionnelle.carriere import Affiliations  # noqa: E402
+from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
+from retraite_notionnelle.web.pages import (  # noqa: E402
+    AGE_DEBUT_MINIMAL,
+    Contexte,
+    Saisie,
+    rendre,
+)
 
 DOSSIER = RACINE / "tests" / "temoins"
 SIMULATIONS = DOSSIER / "simulations.json"
@@ -79,14 +86,47 @@ STATUTS = (
 )
 
 
+def debut_admissible(statut: str, naissance: int,
+                     affiliations: Affiliations | None = None) -> int | None:
+    """L'âge de début du cas de base, ou le plus tardif que la fermeture admet.
+
+    Un statut fermé aux nouveaux entrants — les mines depuis septembre 2010,
+    la SEITA depuis 1981 — ne se déclare qu'à qui y est entré avant, et le
+    formulaire refuse les autres. Le balayage entre donc dans ces statuts
+    l'année qui précède la fermeture quand vingt et un ans est trop tard, et
+    renonce à la génération qui ne peut plus y entrer à quatorze ans : un
+    agent des chemins de fer secondaires né en 1975 n'est qu'un salarié du
+    privé, et son témoin ne comparerait rien.
+    """
+    affiliations = affiliations or Affiliations(RACINE_DONNEES)
+    debut = int(BASE["debut"])
+    fermeture = affiliations.fermeture_entrants(statut)
+    if fermeture is None:
+        return debut
+    dernier = fermeture.annee - 1 - naissance
+    if dernier < AGE_DEBUT_MINIMAL:
+        return None
+    return min(debut, dernier)
+
+
 def _cas() -> list[dict]:
     """Jeu de cas couvrant chaque branche du moteur au moins une fois."""
     cas: list[tuple[str, dict]] = [("base", {})]
+    affiliations = Affiliations(RACINE_DONNEES)
+
+    def cas_statut(nom: str, statut: str, naissance: int) -> None:
+        debut = debut_admissible(statut, naissance, affiliations)
+        if debut is None:
+            return
+        modifications = {"statut": statut, "naissance": str(naissance)}
+        if debut != int(BASE["debut"]):
+            modifications["debut"] = str(debut)
+        cas.append((nom, modifications))
 
     # Un statut d'affiliation après l'autre : c'est le catalogue des régimes,
     # les assiettes à tranches et les régimes en points qui sont balayés ici.
     for statut in STATUTS:
-        cas.append((f"statut_{statut}", {"statut": statut}))
+        cas_statut(f"statut_{statut}", statut, int(BASE["naissance"]))
 
     # Générations : la même carrière déplacée dans le temps traverse toutes les
     # ruptures législatives, et l'écart d'indexation entre époques.
@@ -115,8 +155,7 @@ def _cas() -> list[dict]:
     # Aucune des quatre autres ne visitait ces deux états du droit.
     for naissance in GENERATIONS_BALAYEES:
         for statut in STATUTS:
-            cas.append((f"statut_{statut}_{naissance}",
-                        {"statut": statut, "naissance": str(naissance)}))
+            cas_statut(f"statut_{statut}_{naissance}", statut, naissance)
 
     # Âges de liquidation : départ très anticipé, à l'heure, très différé.
     for age in ("52", "57", "60", "62", "64", "67", "70"):

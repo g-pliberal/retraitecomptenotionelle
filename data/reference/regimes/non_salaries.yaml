@@ -69,7 +69,10 @@ regimes:
           10,25 % en 1974, 11,15 % en octobre 1976, 12,9 % en 1979. La fiche
           portait 16,55 % de 1973 à 2006, un chiffre de synthèse qui surcomptait
           de cinq points la cotisation des années 1970 ; `verifier_donnees.py`
-          confronte désormais chaque période à la série.
+          confronte désormais chaque période à la série. ET DEPUIS 1973, C'EST
+          LE TAUX DE CHAQUE ANNÉE QUI EST APPLIQUÉ, lu dans
+          `taux_cotisation_annuels.csv` : le chargeur découpe la période année
+          par année, et la moyenne ne sert plus qu'au contrôle.
       - debut: 1983
         fin: 1993
         type_calcul: annuites
@@ -231,7 +234,10 @@ regimes:
           10,25 % en 1974, 11,15 % en octobre 1976, 12,9 % en 1979. La fiche
           portait 16,55 % de 1973 à 2006, un chiffre de synthèse qui surcomptait
           de cinq points la cotisation des années 1970 ; `verifier_donnees.py`
-          confronte désormais chaque période à la série.
+          confronte désormais chaque période à la série. ET DEPUIS 1973, C'EST
+          LE TAUX DE CHAQUE ANNÉE QUI EST APPLIQUÉ, lu dans
+          `taux_cotisation_annuels.csv` : le chargeur découpe la période année
+          par année, et la moyenne ne sert plus qu'au contrôle.
       - debut: 1983
         fin: 1993
         type_calcul: annuites

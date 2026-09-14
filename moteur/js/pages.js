@@ -6,8 +6,9 @@
  * vérifient les témoins de ``tests/temoins/pages.json``.
  */
 
-import { MOIS_PAR_AN, enMois, formaterAge } from "./calendrier.js";
+import { MOIS_PAR_AN, DateMois, enMois, formaterAge } from "./calendrier.js";
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
+import { formaterBorne } from "./regimes.js";
 import { CAS_TYPES, GENERATIONS, calculerCasTypes } from "./castypes.js";
 import {
   AgeConversionDroitsAcquis, ModeAgeReference, ModeIndexation, PARAMETRES_DEFAUT, PartCotisation,
@@ -198,6 +199,10 @@ export const ENFANTS_MAXIMUM = 12;
 export const NAISSANCE_MINIMALE = 1900;
 export const NAISSANCE_MAXIMALE = 2020;
 export const AGE_DEBUT_MINIMAL = 14;
+// L'année où le routage commence : la première période de tout statut. Un
+// statut dont le régime naît plus tard le dit dans le menu — « (depuis
+// 1977) » —, celui de 1930 n'a rien à dater.
+export const ANNEE_MODELE = 1930;
 export const AGE_DEBUT_MAXIMAL = 40;
 export const AGE_LIQUIDATION_MINIMAL = 40;
 export const AGE_LIQUIDATION_MAXIMAL = 75;
@@ -903,6 +908,7 @@ export class Contexte {
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
+    verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
     return simulateur.simuler(carriere);
   }
 }
@@ -981,10 +987,94 @@ export function rendre(contexte, chemin, parametres = null) {
   return [TITRES["/"], corps];
 }
 
+/**
+ * Un statut ne se déclare qu'aux dates où son régime recrutait.
+ *
+ * Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le régime des mines
+ * est fermé aux recrutés depuis septembre 2010. Le routage le savait déjà —
+ * il envoyait ce mineur-là au régime général, en silence, et la page
+ * affichait « Mineur » au-dessus d'une pension de salarié du privé. Le refus
+ * dit la date, et le statut de droit commun qui porte le même calcul.
+ *
+ * La date opposée est celle de l'ENTRÉE dans le statut, au mois près, telle
+ * que le parcours l'a datée : un agent entré à la RATP en octobre 2022 n'y a
+ * sa première ligne qu'en 2023, et n'est pas recruté après la fermeture pour
+ * autant.
+ */
+function verifierStatutsOuverts(affiliations, carriere, parcours) {
+  parcours.forEach((metier, index) => {
+    const fermeture = affiliations.fermetureEntrants(metier.affiliation);
+    if (fermeture === null) {
+      return;
+    }
+    const entree = carriere.dateEntree(metier.affiliation);
+    if (entree === null || entree.rang < fermeture.rang) {
+      return;
+    }
+    const releve = affiliations.relevePar(metier.affiliation);
+    throw refus(index + 1,
+      `Le statut « ${affiliations.libelle(metier.affiliation)} » est `
+      + `fermé aux recrutés depuis ${formaterBorne(fermeture)} ; ce `
+      + `métier commence en ${entree}. Depuis cette date, il relève des `
+      + `mêmes régimes que « ${affiliations.libelle(releve)} » : choisir `
+      + "ce statut.");
+  });
+}
+
+/**
+ * Le libellé d'un statut, et les dates entre lesquelles il se déclare :
+ * « (depuis 1977) » pour un régime né après 1930, l'année où le modèle
+ * commence ; « (recrutés avant septembre 2010) » pour un régime fermé.
+ */
+function libelleDate(affiliations, code) {
+  const libelle = affiliations.libelle(code);
+  const ouverture = affiliations.ouverture(code);
+  const fermeture = affiliations.fermetureEntrants(code);
+  const precisions = [];
+  if (ouverture > ANNEE_MODELE) {
+    precisions.push(`depuis ${ouverture}`);
+  }
+  if (fermeture !== null) {
+    precisions.push(`recrutés avant ${formaterBorne(fermeture)}`);
+  }
+  if (precisions.length === 0) {
+    return libelle;
+  }
+  return `${libelle} (${precisions.join(", ")})`;
+}
+
+/**
+ * Les statuts du menu, ceux que la date d'entrée ferme désactivés. `entree`
+ * est le mois où le métier commence ; sans lui — la ligne vide du
+ * formulaire —, tout est proposé. Chaque option fermée porte sa date en
+ * `data-fermeture` : c'est ce que la page lit, dans le navigateur, pour
+ * refaire ce tri quand l'année de naissance ou l'âge de début change sous ses
+ * yeux, sans attendre le calcul.
+ */
+function optionsStatuts(affiliations, entree) {
+  return affiliations.codes.map((code) => {
+    const fermeture = affiliations.fermetureEntrants(code);
+    const disponible = entree === null || fermeture === null
+      || entree.rang < fermeture.rang;
+    const attributs = fermeture === null
+      ? {}
+      : { "data-fermeture": `${fermeture.annee}-${String(fermeture.mois).padStart(2, "0")}` };
+    return [code, libelleDate(affiliations, code), disponible, attributs];
+  });
+}
+
+function borneTexte(date) {
+  return date === null ? null : `${date.annee}-${String(date.mois).padStart(2, "0")}`;
+}
+
 export function statuts(contexte) {
   const affiliations = contexte.simulateur().affiliations;
   return affiliations.codes.map((code) => ({
-    code, libelle: affiliations.libelle(code),
+    code,
+    libelle: affiliations.libelle(code),
+    ouverture: affiliations.ouverture(code),
+    fermeture_entrants: borneTexte(affiliations.fermetureEntrants(code)),
+    releve_par: affiliations.relevePar(code),
   }));
 }
 
@@ -1063,7 +1153,6 @@ notionnels — le simulateur permet de séparer les deux effets.</div>
 
 function formulaire(saisie, contexte) {
   const affiliations = contexte.simulateur().affiliations;
-  const listeStatuts = affiliations.codes.map((code) => [code, affiliations.libelle(code)]);
   const echelle = contexte.echelle(saisie);
 
   const identite = [
@@ -1144,7 +1233,7 @@ function formulaire(saisie, contexte) {
   d'un taux de cotisation et d'un barème à un autre — et c'est exactement ce
   qu'un compte notionnel enregistre. Ajouter un métier, c'est remplir la
   dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
-  ${metiersFormulaire(saisie, listeStatuts, echelle)}
+  ${metiersFormulaire(saisie, affiliations, echelle)}
   ${basculeUnite(saisie, echelle)}
   <details>
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
@@ -1254,7 +1343,14 @@ function basculeUnite(saisie, echelle) {
  * qu'on la remplit. Une ligne de plus apparaît alors à sa suite, jusqu'à
  * ``METIERS_MAXIMUM``.
  */
-function metiersFormulaire(saisie, statuts, echelle) {
+/** Le mois où un métier commence — la date que le parcours lui donnera. */
+function entreeMetier(saisie, age) {
+  return new DateMois(saisie.naissance, saisie.naissance_mois).plusMois(enMois(age));
+}
+
+function metiersFormulaire(saisie, affiliations, echelle) {
+  // Le menu des statuts de chaque ligne est daté de l'entrée dans ce métier :
+  // un statut que le droit ferme avant cette date y est grisé.
   const lignes = [ligneMetier(
     1,
     g.champ("debut", "Âge de début d'activité",
@@ -1264,7 +1360,10 @@ function metiersFormulaire(saisie, statuts, echelle) {
       })
     + g.liste("debut_mois", "…et mois", MOIS_AGE, String(saisie.debut_mois),
       "l'année d'entrée n'est complète que si l'on entre en janvier")
-    + g.liste("statut", "Statut d'affiliation", statuts, saisie.statut)
+    + g.liste("statut", "Statut d'affiliation",
+      optionsStatuts(affiliations, entreeMetier(saisie, saisie.debut)),
+      saisie.statut,
+      "proposé aux seules dates où son régime recrutait")
     + champRevenu("salaire", saisie, echelle, nombreBrut(saisie.salaire)),
   )];
 
@@ -1272,7 +1371,9 @@ function metiersFormulaire(saisie, statuts, echelle) {
     const rang = index + 2;
     lignes.push(ligneMetier(rang, champsMetier(
       rang, nombreBrut(metier.debut), metier.statut,
-      nombreBrut(metier.salaire), statuts, saisie, echelle,
+      nombreBrut(metier.salaire),
+      optionsStatuts(affiliations, entreeMetier(saisie, metier.debut)),
+      saisie, echelle,
     )));
   });
 
@@ -1282,7 +1383,8 @@ function metiersFormulaire(saisie, statuts, echelle) {
   const rang = saisie.metiers.length + 2;
   if (rang <= METIERS_MAXIMUM) {
     lignes.push(ligneMetier(
-      rang, champsMetier(rang, "", "", "", statuts, saisie, echelle), true,
+      rang, champsMetier(rang, "", "", "", optionsStatuts(affiliations, null),
+        saisie, echelle), true,
     ));
   }
 
@@ -3438,6 +3540,15 @@ l'année, les régimes liquident à l'année : l'année d'un changement revient 
 métier qui en occupe le plus de mois, et à égalité à celui qui l'ouvre, tandis
 que le revenu porté au compte reste la somme de ce que les deux ont
 réellement payé.</p>
+<p>Un statut ne se déclare qu'<strong>aux dates où son régime recrutait</strong>.
+Le menu date chacun — « depuis 1977 » pour l'artiste-auteur, « recrutés avant
+septembre 2010 » pour le mineur — et grise ceux que l'entrée saisie ferme ; le
+calcul refuse une carrière qui entrerait dans un régime fermé, en nommant le
+statut de droit commun qui porte le même calcul. La date opposée est celle de
+l'entrée dans le métier, au mois près : la loi ferme la RATP « aux recrutés à
+compter du 1<sup>er</sup> septembre 2023 », et qui y est entré en octobre 2022
+garde son régime, même si sa première année entière est 2023. Celui qui était
+déjà là le garde toujours — c'est la clause du grand-père.</p>
 
 <h3 id="unites">Brut, et pas net</h3>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,

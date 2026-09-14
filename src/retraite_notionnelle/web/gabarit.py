@@ -566,18 +566,37 @@ def cache(nom: str, valeur: str) -> str:
     return f'<input type="hidden" name="{nom}" value="{escape(str(valeur))}">'
 
 
-def liste(nom: str, libelle: str, options: list[tuple[str, str]],
+def liste(nom: str, libelle: str, options: list[tuple],
           selection: str, aide: str = "", **attributs: str) -> str:
+    """Un menu déroulant.
+
+    Une option est ``(code, texte)``, ou ``(code, texte, disponible)``, ou
+    ``(code, texte, disponible, attributs)``. Une option indisponible est
+    rendue ``disabled`` — grisée, et impossible à choisir — SAUF si elle est
+    la sélection : un navigateur n'envoie pas la valeur d'une option choisie
+    mais désactivée, et la saisie repartirait sur le statut par défaut sans
+    que rien ne le dise. Le refus, lui, se fait au calcul.
+    """
     supplement = "".join(
         f' {cle.rstrip("_").replace("_", "-")}="{escape(str(val))}"'
         for cle, val in attributs.items()
     )
-    choix = "".join(
-        f'<option value="{escape(code)}"'
-        + (" selected" if code == selection else "")
-        + f">{escape(texte)}</option>"
-        for code, texte in options
-    )
+    choix = []
+    for option in options:
+        code, texte = option[0], option[1]
+        disponible = option[2] if len(option) > 2 else True
+        propres = "".join(
+            f' {cle}="{escape(str(val))}"'
+            for cle, val in (option[3] if len(option) > 3 else {}).items()
+        )
+        choix.append(
+            f'<option value="{escape(code)}"'
+            + (" selected" if code == selection else "")
+            + ("" if disponible or code == selection else " disabled")
+            + propres
+            + f">{escape(texte)}</option>"
+        )
+    choix = "".join(choix)
     aide_html = f'<span class="aide">{escape(aide)}</span>' if aide else ""
     return (
         f'<div><label for="{nom}">{escape(libelle)}{aide_html}</label>'

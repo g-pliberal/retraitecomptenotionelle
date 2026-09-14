@@ -131,9 +131,22 @@ l'être.
   65 : aucune durée n'ouvrait le taux plein avant l'âge. La fiche ne portait
   d'ailleurs aucune minoration, et 40 % étaient servis à tout âge.
 
-**Sept erreurs d'histoire**, trouvées en relisant les décrets de chaque régime
+**Neuf erreurs d'histoire**, trouvées en relisant les décrets de chaque régime
 version par version dans la base LEGI, et en balayant le catalogue à six
 générations. Chacune est racontée en détail au §4.
+
+- **Trois régimes étaient fermés qui ne le sont pas, deux étaient ouverts qui
+  ne le sont plus.** L'article 1<sup>er</sup> de la loi n° 2023-270 ferme aux
+  recrutés du 1<sup>er</sup> septembre 2023 la RATP, les IEG, les clercs de
+  notaires, la Banque de France et le CESE — et eux seuls. Le dépôt y ajoutait
+  l'Opéra de Paris, la Comédie-Française et le port de Strasbourg, et laissait
+  les clercs et la Banque de France ouverts. Un clerc entré en 2024 est un
+  salarié du privé ; un danseur entré en 2024 est à la caisse de l'Opéra.
+- **Le compte notionnel recevait une cotisation que personne n'a payée une
+  seule année.** Les fiches du régime général, des salariés agricoles et des
+  non-salariés portaient une moyenne par période législative — 11,19 % de 1972
+  à 1982 — quand le droit cotisait 8,75 % en 1972 et 12,9 % en 1979. Le taux de
+  chaque année est lu depuis 1967 dans `taux_cotisation_annuels.csv`.
 
 - **Les régimes spéciaux décotaient de 1,25 % dès 2009.** Leur réforme de 2008
   ne donne aucune décote avant le 1<sup>er</sup> juillet 2010, puis un dixième du
@@ -3398,7 +3411,7 @@ France (alignée depuis 2007, quatre périodes) et la caisse des clercs de notai
 (trois périodes au lieu d'une depuis 2009, et le barème de décote de la fonction
 publique que son décret lui donne) ; la durée requise de l'Opéra et de la
 Comédie-Française ; les bornes d'âge de la RATP et des IEG, qui étaient celles de
-2017 dès 2009 ; et la clause du grand-père de huit régimes fermés.
+2017 dès 2009 ; et la clause du grand-père des régimes fermés.
 
 **Trois manières de se tromper, et elles reviennent.** La première est la fiche
 d'un régime ALIGNÉ qui ne suit pas l'histoire de son modèle : on la corrige en
@@ -3415,10 +3428,14 @@ fiches la servaient pleine dès 2009.
 ### La clause du grand-père : six régimes fermés l'étaient pour tout le monde
 
 Le régime de la SNCF est fermé aux agents **recrutés** depuis le 1er janvier
-2020 ; celui de la RATP, des IEG, de l'Opéra de Paris, de la Comédie-Française
-et du port autonome de Strasbourg depuis le 1er septembre 2023 ; celui des mines
-depuis le 1er septembre 2010 ; celui de la SEITA depuis 1981. Dans les huit cas,
-la fermeture ne vaut que pour les nouveaux entrants : **celui qui était déjà là
+2020 ; celui de la RATP, des IEG, des clercs et employés de notaires, de la
+Banque de France et des membres du CESE depuis le 1er septembre 2023 — les cinq
+que nomme l'article 1er de la loi n° 2023-270 (`JORFARTI000047445082`), et
+eux seuls : le dépôt a longtemps cru fermés l'Opéra de Paris, la
+Comédie-Française et le port autonome de Strasbourg, que l'article ne nomme
+pas, et laissait ouverts les clercs de notaires et la Banque de France, qu'il
+nomme ; celui des mines depuis le 1er septembre 2010 ; celui de la SEITA depuis
+1981. Dans tous ces cas, la fermeture ne vaut que pour les nouveaux entrants : **celui qui était déjà là
 garde son régime jusqu'à sa retraite.** C'est la clause du grand-père, et les
 fiches la nommaient — « Régime fermé aux agents recrutés depuis le 1er janvier
 2020 », disait le routage de la SNCF.
@@ -3444,6 +3461,87 @@ ces deux régimes sont en EXTINCTION et que les réformes de 2010, 2014 et 2023
 les ont laissés où ils étaient — le programme 195 du budget de l'État les
 finance à ce titre. Un test l'a imposé : il refuse qu'un statut route vers un
 régime dont la fiche ne porte aucune période cette année-là.
+
+### Le compte notionnel recevait une moyenne de période, et le droit changeait le taux chaque année
+
+La fiche du régime général porte huit périodes de 1945 à aujourd'hui et, dans
+chacune, un taux de cotisation qui est une **moyenne** — « moyenne OpenFisca sur
+la période », disait le commentaire, et la note de 1945 avouait « une moyenne
+de période, à affiner ». Or le droit a changé ce taux presque chaque année :
+8,5 % en 1967, 8,75 % en 1970, 10,25 % en 1974, 12,9 % en 1979, 13,9 % en 1984,
+15,8 % en 1989, 16,35 % en 1991, 17,87 % en 2024. La moyenne 1972-1982, à
+11,19 %, prêtait à 1972 deux points et demi de plus qu'il n'en cotisait, et à
+1982 un point et demi de moins ; celle de 1983-1993 portait un vingt-troisième
+de déplafonnée à des années qui n'en avaient pas. C'est la cotisation qui
+alimente le compte notionnel : les scénarios 2 à 6 recevaient un taux que
+personne n'a payé une seule année.
+
+`data/reference/regimes/taux_cotisation_annuels.csv` porte désormais, année par
+année depuis 1967, le taux plafonné, sa part salariale, le taux déplafonné et
+sa part, lus dans les barèmes datés d'OpenFisca-France — 1 074 valeurs, niveau
+`haute`, écrites par `verifier_donnees.py --appliquer` depuis
+`data/brut/openfisca_cotisations.json`. Le régime général et les salariés
+agricoles y sont, les artisans, les commerçants et le RSI depuis l'alignement
+de 1973, et les trois fiches qui recopiaient les moyennes du régime général
+— les cultes, dont R. 382-89 et R. 382-90 fixent la cotisation à celle du
+régime général, Mayotte et Saint-Pierre-et-Miquelon, dont les taux propres ne
+sont pas dans l'index : un test relisait déjà la CAVIMAC année par année
+contre le régime général, et c'est lui qui a exigé qu'elle suive la même
+série. Le chargeur des fiches découpe chaque période
+`plafonnee` de ces régimes selon la table, refond les années consécutives
+identiques et garde la borne de la fiche : le régime général passe de huit
+périodes chargées à vingt-six, sans qu'une ligne de liquidation change — la
+durée, le salaire de référence, la décote sont recopiés tels quels, seule la
+cotisation se date. Le portage JavaScript reçoit les périodes découpées dans
+le paquet de données et n'a rien à refaire. La moyenne reste écrite dans la
+fiche : elle sert aux années que la table ne couvre pas — avant 1967 au régime
+général, où « le taux de cotisation vieillesse évolue de 8 % (1946) à environ
+8,75 % (1971) » et où aucune transcription n'existe — et au contrôle de
+vraisemblance, qui la confronte à la même série.
+
+Ce que cela déplace se lit dans les témoins : moins d'un pour cent de capital
+notionnel pour les carrières balayées, dans un sens ou dans l'autre selon que
+leurs années fortes tombaient au-dessus ou au-dessous de la moyenne — un
+salarié né en 1935 gagne un pour cent au scénario 2 ; le scénario 1 ne bouge
+pas, puisqu'il liquide sur les trimestres et le salaire de référence, non sur
+la cotisation.
+
+### Un jeune d'aujourd'hui pouvait se déclarer mineur, et la page le laissait croire
+
+Le routage savait qu'un mineur recruté après septembre 2010 relève du régime
+général : il l'y envoyait, en silence, et la page affichait « Mineur » au-dessus
+d'une pension de salarié du privé. Trois choses changent.
+
+**Le formulaire date chaque statut**, dans le libellé même du menu — « Artiste-auteur
+(depuis 1977) », « Mineur (recrutés avant septembre 2010) » — et grise ceux que
+l'entrée saisie ferme, dès que l'année de naissance ou l'âge de début change.
+L'option déjà choisie n'est jamais désactivée, parce qu'un navigateur n'envoie
+pas la valeur d'une option désactivée et que la saisie repartirait sur le statut
+par défaut sans que rien ne le dise : c'est **le calcul qui refuse**, en nommant
+la date d'entrée, la date de fermeture, et le statut de droit commun qui porte
+le même calcul — un test impose que ce statut route exactement les mêmes
+régimes, sans quoi le conseil enverrait vers un autre chiffre. Le statut
+fermé se lit dans le routage lui-même (`entres_avant`), et `releve_par` nomme
+le relais ; rien n'est écrit deux fois.
+
+**La fermeture se lit au mois.** Les bornes du routage s'écrivaient en années,
+et deux conventions y cohabitaient : `2011` pour les mines, fermées au
+1<sup>er</sup> septembre 2010 — le recruté d'octobre 2010 recevait le régime —,
+`2023` pour la RATP, fermée au 1<sup>er</sup> septembre 2023 — le recruté de
+mars 2023 le perdait. Elles s'écrivent désormais `2010-09` et `2023-09`, et se
+comparent à la **date d'entrée dans le statut**, que la carrière porte depuis
+que le parcours la date. Ce n'est pas un raffinement : l'année d'un changement
+de métier revient au métier qui en occupe le plus de mois, si bien qu'un agent
+entré à la RATP en octobre 2022 n'y avait sa première ligne qu'en 2023 — et
+était traité comme recruté après la fermeture. La SEITA, elle, était bornée à
+`1982` quand la loi n° 84-603 maintient le régime « pour les personnels
+titulaires en fonctions à la date d'entrée en vigueur de la loi du 2 juillet
+1980 » : la borne est ramenée à 1981, l'année que la fiche retient.
+
+**Le balayage des témoins entre dans les régimes fermés avant leur
+fermeture** — à dix-neuf ans pour l'agent des chemins de fer secondaires né en
+1935 —, et renonce aux générations qui ne peuvent plus y entrer : leur témoin
+n'aurait comparé qu'un salarié du privé.
 
 ### L'Ircantec n'avait pas de tranche B, et ses taux étaient ceux de 2008
 
@@ -4392,7 +4490,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 594 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 600 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -2132,10 +2132,15 @@ institutions:
         cible: data/brut/openfisca_cotisations.json
         recuperation: scripts/fetch/openfisca_cotisations.py
         note: >-
-          Sert de contrôle de vraisemblance sur les taux saisis dans les fiches
-          de régime, jamais de source versée automatiquement : une fiche est
-          structurée par périodes législatives, y reporter une série annuelle
-          demande un arbitrage qui doit rester explicite. Les quatre composantes
+          Deux usages. D'abord un contrôle de vraisemblance sur les taux saisis
+          dans les fiches de régime, structurées par périodes législatives.
+          Ensuite, depuis que le compte notionnel doit recevoir le taux de
+          CHAQUE ANNÉE et non une moyenne de période, la source de
+          `regimes/taux_cotisation_annuels.csv`, que `verifier_donnees.py
+          --appliquer` écrit depuis ce fichier au niveau `haute` — une
+          transcription, pas le producteur — et que le chargeur des fiches
+          applique année par année au régime général, aux salariés agricoles,
+          à la CANCAVA, à l'ORGANIC et au RSI. Les quatre composantes
           sont récupérées séparément — salarié et employeur, plafonnée et
           déplafonnée —, et le contrôle les confronte aux fiches DEUX PAR DEUX :
           `taux_cotisation_retraite` et `part_salariale` contre la plafonnée,

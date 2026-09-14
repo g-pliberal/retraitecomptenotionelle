@@ -342,6 +342,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/contribution_employeur_public.csv",
         "employeur_public_sncf_textes":
             "legislation/contribution_employeur_public.csv",
+        "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",
         "employeur_public_texte":
             "legislation/contribution_employeur_public.csv",
     }
@@ -612,6 +613,103 @@ def test_toute_annee_routee_trouve_une_periode_de_regime(catalogue):
     assert not manquants, "années routées sans période de régime : " + "; ".join(
         manquants
     )
+
+
+def test_un_statut_ferme_dit_qui_le_releve_et_ne_route_rien_d_autre():
+    """La clause du grand-père se lit dans le routage, et le formulaire s'en sert.
+
+    Un statut dont une période porte `entres_avant` est fermé aux nouveaux
+    entrants depuis cette borne : il doit nommer `releve_par`, le statut de
+    droit commun, et router EXACTEMENT les mêmes régimes que lui pour qui
+    entre après la fermeture — sans quoi le refus du formulaire (« choisir ce
+    statut ») enverrait vers un autre calcul. Un statut ouvert ne nomme
+    personne. Les bornes s'écrivent en année ou en année-mois, et rien
+    d'autre.
+    """
+    from retraite_notionnelle.calendrier import DateMois
+    from retraite_notionnelle.carriere import rang_borne
+
+    affiliations = _affiliations()
+    ecarts = []
+    for statut in affiliations.codes:
+        fermeture = affiliations.fermeture_entrants(statut)
+        releve = affiliations.releve_par(statut)
+        for periode in affiliations.periodes(statut):
+            for cle in ("entres_avant", "entres_depuis"):
+                borne = periode.get(cle)
+                if borne is None:
+                    continue
+                if not (isinstance(borne, int)
+                        or (isinstance(borne, str)
+                            and len(borne) == 7 and borne[4] == "-")):
+                    ecarts.append(f"{statut}.{cle} : borne illisible {borne!r}")
+                rang_borne(borne)
+        if fermeture is None:
+            if releve is not None:
+                ecarts.append(f"{statut} : releve_par sans fermeture")
+            continue
+        if releve is None:
+            ecarts.append(f"{statut} : fermé depuis {fermeture}, sans releve_par")
+            continue
+        if releve not in affiliations.codes:
+            ecarts.append(f"{statut} : releve_par inconnu {releve!r}")
+            continue
+        entree = DateMois.depuis_rang(fermeture.rang)
+        for annee in range(fermeture.annee, 2027):
+            attendus = affiliations.regimes(releve, annee, entree)
+            obtenus = affiliations.regimes(statut, annee, entree)
+            if attendus != obtenus:
+                ecarts.append(
+                    f"{statut}/{annee} : entré en {entree}, route {obtenus}, "
+                    f"{releve} route {attendus}"
+                )
+                break
+    assert not ecarts, "\n".join(ecarts)
+    assert affiliations.fermeture_entrants("mineur") == DateMois(2010, 9)
+    assert affiliations.fermeture_entrants("agent_sncf") == DateMois(2020, 1)
+    assert affiliations.fermeture_entrants("salarie_prive_non_cadre") is None
+
+
+def test_la_cotisation_est_celle_de_chaque_annee_et_non_une_moyenne(catalogue):
+    """Le compte notionnel reçoit le taux de l'année, lu dans la table annuelle.
+
+    La fiche du régime général porte une moyenne par période — 11,19 % de
+    1972 à 1982 — quand le droit cotisait 8,75 % en 1972 et 12,9 % en 1979.
+    `taux_cotisation_annuels.csv` date chaque année, et le chargeur découpe
+    la période : la liquidation, elle, ne bouge pas.
+    """
+    from retraite_notionnelle.donnees.regimes import charger_taux_annuels
+
+    table = charger_taux_annuels(RACINE_DONNEES)
+    assert set(table) == {"regime_general", "msa_salaries", "cancava", "organic", "rsi",
+                          "cavimac", "cssm_mayotte", "cps_saint_pierre_et_miquelon"}
+    for regime, annees in table.items():
+        assert min(annees) >= catalogue[regime].creation, regime
+        assert all(0 < v["taux_cotisation_retraite"] < 0.5
+                   for v in annees.values() if "taux_cotisation_retraite" in v), regime
+        # Aucun trou : chaque année entre la première et la dernière est là.
+        assert set(annees) == set(range(min(annees), max(annees) + 1)), regime
+
+    general = catalogue["regime_general"]
+    assert general.periode(1972).taux_cotisation_retraite == pytest.approx(0.0875)
+    assert general.periode(1979).taux_cotisation_retraite == pytest.approx(0.129)
+    assert general.periode(1979).part_salariale == pytest.approx(0.047 / 0.129)
+    assert general.periode(1991).taux_cotisation_deplafonnee == pytest.approx(0.016)
+    assert general.periode(1985).taux_cotisation_deplafonnee == 0.0
+    # Avant 1967, aucune transcription : la moyenne de la fiche tient lieu.
+    assert general.periode(1950).taux_cotisation_retraite == pytest.approx(0.0860)
+    # La liquidation est recopiée telle quelle sur chaque tranche.
+    assert general.periode(1972).duree_requise_trimestres == 150
+    assert general.periode(1979).duree_requise_trimestres == 150
+    assert general.periode(1994).salaire_reference == "25_meilleures_annees"
+    # Une période ouverte reste ouverte, au dernier taux connu.
+    assert general.periodes[-1].fin is None
+    assert general.periode(2040) is not None
+    # Les salariés agricoles suivent le régime général, les artisans leur série.
+    assert catalogue["msa_salaries"].periode(1979).taux_cotisation_retraite == pytest.approx(0.129)
+    assert catalogue["cancava"].periode(1973).taux_cotisation_retraite == pytest.approx(0.0875)
+    assert catalogue["cancava"].periode(1960).taux_cotisation_retraite == pytest.approx(0.085)
+    assert catalogue["rsi"].periode(2015).taux_cotisation_deplafonnee == pytest.approx(0.0035)
 
 
 def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
@@ -1418,6 +1516,28 @@ def test_les_statuts_de_l_inventaire_routent_bien_vers_le_regime(catalogue, inve
             if inconnus:
                 ecarts.append(f"{ligne.code} : statuts inconnus {sorted(inconnus)}")
     assert not ecarts, "\n".join(ecarts)
+
+
+def test_le_document_des_regimes_suit_l_inventaire():
+    """`docs/regimes.md` recopiait l'inventaire à la main, et il a vieilli.
+
+    Vingt lignes y étaient encore « à modéliser » quand l'inventaire n'en
+    avait plus aucune. Les tableaux et la phrase de compte sont produits par
+    `scripts/construire_regimes_md.py` entre deux repères ; ce test refuse un
+    document qui ne serait plus ce que le script produit.
+    """
+    import importlib.util
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "construire_regimes_md.py"
+    specification = importlib.util.spec_from_file_location("construire_regimes_md", chemin)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    attendu = module.produire()
+    assert attendu == module.DOCUMENT.read_text(encoding="utf-8"), (
+        "docs/regimes.md est périmé : lancer python scripts/construire_regimes_md.py"
+    )
+    assert "✚ à modéliser" not in attendu.split("<!-- tableaux:debut -->")[1].split("<!-- tableaux:fin -->")[0]
 
 
 def test_l_inventaire_couvre_les_regimes_que_le_code_enumere(inventaire):

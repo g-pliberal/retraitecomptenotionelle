@@ -147,6 +147,13 @@ class Carriere:
     #: le seul scénario « système actuel » (majorations, MDA).
     nombre_enfants: int = 0
     identifiant: str = "assuré"
+    #: Mois d'entrée dans chaque statut, tel que le parcours le date. Les
+    #: lignes ne connaissent que l'année, et l'année d'un changement de métier
+    #: revient au métier qui en occupe le plus de mois : l'agent recruté à la
+    #: RATP en octobre 2022 n'y a sa première LIGNE qu'en 2023, quand le régime
+    #: est fermé aux recrutés depuis septembre 2023. C'est la date qui décide
+    #: de la clause du grand-père, pas la première ligne.
+    dates_entree: dict[str, DateMois] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.sexe not in ("H", "F"):
@@ -232,6 +239,17 @@ class Carriere:
     def entree(self, affiliation: str) -> int | None:
         """Année d'entrée dans ce statut, ou ``None`` s'il n'y figure pas."""
         return self._entrees.get(affiliation)
+
+    def date_entree(self, affiliation: str) -> DateMois | None:
+        """Mois d'entrée dans ce statut, ou ``None`` s'il n'y figure pas.
+
+        Celui que le parcours a daté quand il en vient ; sinon janvier de la
+        première ligne, ce qui vaut pour une carrière construite ligne à ligne.
+        """
+        if affiliation in self.dates_entree:
+            return self.dates_entree[affiliation]
+        annee = self._entrees.get(affiliation)
+        return None if annee is None else DateMois(annee, 1)
 
     @cached_property
     def annees_cotisees(self) -> tuple[int, ...]:
@@ -519,6 +537,10 @@ class Carriere:
                 )
             )
 
+        dates_entree: dict[str, DateMois] = {}
+        for metier, ouverture, _ in periodes:
+            dates_entree.setdefault(metier.affiliation, ouverture)
+
         return cls(
             annee_naissance=annee_naissance,
             sexe=sexe,
@@ -527,6 +549,7 @@ class Carriere:
             age_liquidation=age_liquidation,
             nombre_enfants=nombre_enfants,
             identifiant=identifiant,
+            dates_entree=dates_entree,
         )
 
 
@@ -606,6 +629,24 @@ def indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int,
     return valeurs
 
 
+def rang_borne(borne: int | str) -> int:
+    """Une borne d'entrée du routage, en rang de mois.
+
+    ``2020`` se lit janvier 2020 ; ``"2023-09"`` septembre 2023. Le YAML garde
+    les deux écritures parce que la loi ferme un régime « aux agents recrutés à
+    compter du 1er septembre 2023 », et non à compter d'une année.
+    """
+    if isinstance(borne, int):
+        return DateMois(borne, 1).rang
+    annee, mois = str(borne).split("-")
+    return DateMois(int(annee), int(mois)).rang
+
+
+def formater_borne(borne: DateMois) -> str:
+    """« 2020 » pour un 1er janvier, « septembre 2023 » sinon."""
+    return str(borne.annee) if borne.mois == 1 else str(borne)
+
+
 class Affiliations:
     """Correspondance statut -> régimes, année par année."""
 
@@ -635,6 +676,29 @@ class Affiliations:
         """Les tranches temporelles déclarées par ce statut, telles qu'écrites."""
         return tuple(self._profils[affiliation].get("periodes", []))
 
+    def ouverture(self, affiliation: str) -> int:
+        """Première année que le statut route — l'année où son régime naît."""
+        return min(periode["debut"] for periode in self.periodes(affiliation))
+
+    def fermeture_entrants(self, affiliation: str) -> DateMois | None:
+        """Mois depuis lequel le statut est fermé aux nouveaux entrants.
+
+        C'est la clause du grand-père lue depuis le routage lui-même : la plus
+        ancienne borne ``entres_avant`` de ses périodes. ``None`` pour un statut
+        ouvert. Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le
+        régime des mines est fermé aux recrutés depuis septembre 2010, et c'est
+        cette date que le formulaire lui oppose.
+        """
+        bornes = [periode["entres_avant"] for periode in self.periodes(affiliation)
+                  if periode.get("entres_avant") is not None]
+        if not bornes:
+            return None
+        return DateMois.depuis_rang(min(rang_borne(borne) for borne in bornes))
+
+    def releve_par(self, affiliation: str) -> str | None:
+        """Le statut de droit commun dont relève qui entre après la fermeture."""
+        return self._profils[affiliation].get("releve_par")
+
     @property
     def hors_routage(self) -> dict[str, str]:
         """Régimes qu'aucune affiliation ne route, et la raison déclarée."""
@@ -652,7 +716,7 @@ class Affiliations:
         return bool(self._profils.get(affiliation, {}).get("sans_employeur", False))
 
     def regimes(self, affiliation: str, annee: int,
-                annee_entree: int | None = None,
+                annee_entree: int | DateMois | None = None,
                 revenu: float | None = None,
                 plafond: float | None = None) -> tuple[str, ...]:
         """Régimes applicables à ce statut cette année-là.
@@ -667,10 +731,13 @@ class Affiliations:
         de régime spécial et vingt points de taux de remplacement.
 
         Une période peut donc porter `entres_avant` ou `entres_depuis`, et
-        ``annee_entree`` — la première année du statut dans la carrière — dit
-        laquelle s'applique. Sans cette année, on suppose une entrée l'année
-        demandée : c'est le comportement d'avant, et il reste juste pour qui
-        commence sa carrière cette année-là.
+        ``annee_entree`` — l'entrée dans le statut, une année ou un mois
+        (:class:`DateMois`) — dit laquelle s'applique. Les bornes s'écrivent
+        au mois quand la loi le fait — « recrutés à compter du 1er septembre
+        2023 » — et une année vaut son 1er janvier. Sans entrée, on suppose
+        une entrée en janvier de l'année demandée : c'est le comportement
+        d'avant, et il reste juste pour qui commence sa carrière cette
+        année-là.
 
         **Un régime peut n'être dû qu'au-delà d'un seuil de revenu.** L'élu
         local n'est assujetti au régime général que « lorsque le montant
@@ -687,15 +754,20 @@ class Affiliations:
                 f"affiliation inconnue : {affiliation!r}. Disponibles : "
                 + ", ".join(self.codes)
             )
-        entree = annee if annee_entree is None else annee_entree
+        if annee_entree is None:
+            entree = DateMois(annee, 1).rang
+        elif isinstance(annee_entree, DateMois):
+            entree = annee_entree.rang
+        else:
+            entree = DateMois(int(annee_entree), 1).rang
         for periode in self._profils[affiliation].get("periodes", []):
             fin = periode.get("fin")
             if not (periode["debut"] <= annee and (fin is None or annee <= fin)):
                 continue
             avant, depuis = periode.get("entres_avant"), periode.get("entres_depuis")
-            if avant is not None and entree >= avant:
+            if avant is not None and entree >= rang_borne(avant):
                 continue
-            if depuis is not None and entree < depuis:
+            if depuis is not None and entree < rang_borne(depuis):
                 continue
             regimes = tuple(periode.get("regimes") or ())
             seuils = periode.get("seuil_pass") or {}

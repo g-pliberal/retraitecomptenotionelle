@@ -303,6 +303,86 @@ def _serie_json(nom_fichier: str, script: str) -> dict[str, float]:
     return _lire_json(nom_fichier, script)["serie"]
 
 
+#: Régimes dont la cotisation se lit ANNÉE PAR ANNÉE dans les barèmes datés
+#: d'OpenFisca-France, et la série du fichier brut qui porte chacun. Le régime
+#: général et les salariés agricoles partagent la même cotisation vieillesse
+#: (L. 741-9 renvoie aux taux du régime général) ; les artisans et les
+#: commerçants ont chacun leur série jusqu'à l'absorption dans le RSI, qui
+#: reprend celle des artisans — identiques depuis l'alignement de 1973 —,
+#: puis une cotisation déplafonnée depuis 2014.
+TAUX_ANNUELS = (
+    # régime, série plafonnée, série déplafonnée, première et dernière année
+    ("regime_general", "serie", "serie", 1967, None),
+    ("msa_salaries", "serie", "serie", 1967, None),
+    # Les cultes cotisent au taux du régime général (R. 382-89 et R. 382-90),
+    # et les caisses de Mayotte et de Saint-Pierre-et-Miquelon, dont les taux
+    # propres ne sont pas dans l'index, portent ceux du régime général en
+    # tenant lieu : leurs fiches recopiaient ses moyennes, elles suivent sa
+    # série.
+    ("cavimac", "serie", "serie", 1979, None),
+    ("cssm_mayotte", "serie", "serie", 1987, None),
+    ("cps_saint_pierre_et_miquelon", "serie", "serie", 1987, None),
+    ("cancava", "artisans_base_plafonnee", None, 1973, 2005),
+    ("organic", "commercants_base_plafonnee", None, 1973, 2005),
+    ("rsi", "artisans_base_plafonnee", "independants_base_deplafonnee", 2006, 2017),
+)
+
+
+def source_taux_cotisation_annuels() -> dict[tuple, float]:
+    """Les taux de cotisation vieillesse datés d'OpenFisca-France, par régime et par année.
+
+    Les fiches de régime portaient un taux par PÉRIODE LÉGISLATIVE — une moyenne
+    de dix à vingt-sept ans, écrite comme telle dans leurs notes —, quand le
+    droit a changé ce taux presque chaque année : 8,5 % en 1967, 12,9 % en 1979,
+    16,35 % en 1991, 17,87 % en 2024 au régime général. C'est la cotisation qui
+    alimente le compte notionnel, et une moyenne de période prête à 1972 le
+    taux de 1982. Cette source écrit la série annuelle que le chargeur des
+    fiches applique année par année ; la fiche garde sa moyenne, qui ne sert
+    plus qu'aux années que la série ne couvre pas — avant 1967 pour le régime
+    général, avant 1973 pour les non-salariés.
+
+    Quatre mesures : ``taux_plafonne`` (salarié et employeur, sous plafond),
+    ``part_salariale`` (fraction du précédent supportée par le salarié),
+    ``taux_deplafonne`` et ``part_salariale_deplafonnee``. Les non-salariés
+    n'ont que les taux : ils paient tout, la fiche le sait.
+
+    OpenFisca est une transcription des décrets, pas leur producteur : le
+    niveau reste ``haute``.
+    """
+    brut = _lire_json("openfisca_cotisations.json",
+                      "scripts/fetch/openfisca_cotisations.py")
+    independants = brut.get("independants", {})
+    valeurs: dict[tuple, float] = {}
+    for regime, plafonnee, deplafonnee, premiere, derniere in TAUX_ANNUELS:
+        if plafonnee == "serie":
+            for annee, composantes in sorted(brut["serie"].items()):
+                if int(annee) < premiere or (derniere and int(annee) > derniere):
+                    continue
+                total = composantes["salarie_plafonnee"] + composantes["employeur_plafonnee"]
+                valeurs[(regime, annee, "taux_plafonne")] = total
+                valeurs[(regime, annee, "part_salariale")] = (
+                    composantes["salarie_plafonnee"] / total
+                )
+                total_deplafonne = (composantes["salarie_deplafonnee"]
+                                    + composantes["employeur_deplafonnee"])
+                valeurs[(regime, annee, "taux_deplafonne")] = total_deplafonne
+                valeurs[(regime, annee, "part_salariale_deplafonnee")] = (
+                    composantes["salarie_deplafonnee"] / total_deplafonne
+                    if total_deplafonne > 0 else 0.0
+                )
+            continue
+        for annee, taux in sorted(independants.get(plafonnee, {}).items()):
+            if int(annee) < premiere or (derniere and int(annee) > derniere):
+                continue
+            valeurs[(regime, annee, "taux_plafonne")] = taux
+        if deplafonnee:
+            for annee, taux in sorted(independants.get(deplafonnee, {}).items()):
+                if int(annee) < premiere or (derniere and int(annee) > derniere):
+                    continue
+                valeurs[(regime, annee, "taux_deplafonne")] = taux
+    return valeurs
+
+
 #: Première année où la DREES ventile le risque vieillesse-survie dans la
 #: nomenclature d'organismes encore en vigueur. De 1981 à 1989 elle en publie
 #: une autre — « Régime général de la Sécurité sociale », « Régimes spéciaux »,
@@ -2640,6 +2720,43 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         gabarit={"nature": "appelee"},
+    ),
+    Certification(
+        nom="taux_cotisation_annuels",
+        chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_taux_cotisation_annuels,
+        origine="OpenFisca-France, barèmes datés de la cotisation vieillesse "
+                "(cnav, artisans, commerçants, indépendants)",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
+        entete=(
+            "# Taux de cotisation vieillesse ANNÉE PAR ANNÉE, régime par régime",
+            "# source_id: openfisca_cotisations",
+            "#",
+            "# Les fiches de data/reference/regimes/ portent un taux par période",
+            "# législative — une moyenne de dix à vingt-sept ans, écrite comme telle",
+            "# dans leurs notes. Le droit a changé ce taux presque chaque année, et",
+            "# c'est lui qui alimente le compte notionnel. Le chargeur des fiches",
+            "# (CatalogueRegimes) découpe donc chaque période `plafonnee` de ces",
+            "# régimes selon cette table, année par année ; la moyenne de la fiche",
+            "# ne sert plus qu'aux années que la table ne couvre pas.",
+            "#",
+            "# mesure :",
+            "#   taux_plafonne              : salarié + employeur, sous plafond",
+            "#   part_salariale             : fraction du précédent supportée par le salarié",
+            "#   taux_deplafonne            : salarié + employeur, sur la totalité du salaire",
+            "#   part_salariale_deplafonnee : fraction du précédent supportée par le salarié",
+            "#",
+            "# Les non-salariés (cancava, organic, rsi) n'ont que les taux : ils",
+            "# paient tout, et la fiche le sait (part_salariale : 1).",
+            "#",
+            "# Écrit par scripts/verifier_donnees.py --appliquer depuis",
+            "# data/brut/openfisca_cotisations.json ; OpenFisca transcrit les",
+            "# décrets sans en être le producteur, d'où le niveau `haute`.",
+        ),
     ),
 )
 

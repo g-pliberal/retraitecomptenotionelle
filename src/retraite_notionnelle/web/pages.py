@@ -16,8 +16,14 @@ from dataclasses import dataclass, field, replace
 from html import escape
 from urllib.parse import urlencode
 
-from ..calendrier import MOIS_PAR_AN, en_mois, formater_age
-from ..carriere import Metier, bornes_deformation, salaire_moyen_annuel
+from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, formater_age
+from ..carriere import (
+    Affiliations,
+    Metier,
+    bornes_deformation,
+    formater_borne,
+    salaire_moyen_annuel,
+)
 from ..castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
 from ..config import (
     AgeConversionDroitsAcquis,
@@ -187,6 +193,10 @@ ENFANTS_MAXIMUM = 12
 NAISSANCE_MINIMALE = 1900
 NAISSANCE_MAXIMALE = 2020
 AGE_DEBUT_MINIMAL = 14
+#: L'année où le routage commence : la première période de tout statut. Un
+#: statut dont le régime naît plus tard le dit dans le menu — « (depuis
+#: 1977) » —, celui de 1930 n'a rien à dater.
+ANNEE_MODELE = 1930
 AGE_DEBUT_MAXIMAL = 40
 AGE_LIQUIDATION_MINIMAL = 40
 AGE_LIQUIDATION_MAXIMAL = 75
@@ -882,6 +892,7 @@ class Contexte:
             part_primes=saisie.primes,
             identifiant="assuré",
         )
+        _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
         return simulateur.simuler(carriere)
 
 
@@ -1098,10 +1109,91 @@ l'historique complet est public.</p>
 """
 
 
-def statuts(contexte: Contexte) -> list[dict[str, str]]:
+def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,
+                              parcours: list[Metier]) -> None:
+    """Un statut ne se déclare qu'aux dates où son régime recrutait.
+
+    Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le régime des
+    mines est fermé aux recrutés depuis septembre 2010. Le routage le savait
+    déjà — il envoyait ce mineur-là au régime général, en silence, et la page
+    affichait « Mineur » au-dessus d'une pension de salarié du privé. Le refus
+    dit la date, et le statut de droit commun qui porte le même calcul.
+
+    La date opposée est celle de l'ENTRÉE dans le statut, au mois près,
+    telle que le parcours l'a datée : un agent entré à la RATP en octobre
+    2022 n'y a sa première ligne qu'en 2023, et n'est pas recruté après la
+    fermeture pour autant.
+    """
+    for rang, metier in enumerate(parcours, start=1):
+        fermeture = affiliations.fermeture_entrants(metier.affiliation)
+        if fermeture is None:
+            continue
+        entree = carriere.date_entree(metier.affiliation)
+        if entree is None or entree.rang < fermeture.rang:
+            continue
+        releve = affiliations.releve_par(metier.affiliation)
+        raise _refus(rang, (
+            f"Le statut « {affiliations.libelle(metier.affiliation)} » est "
+            f"fermé aux recrutés depuis {formater_borne(fermeture)} ; ce "
+            f"métier commence en {entree}. Depuis cette date, il relève des "
+            f"mêmes régimes que « {affiliations.libelle(releve)} » : choisir "
+            "ce statut."
+        ))
+
+
+def _libelle_date(affiliations: Affiliations, code: str) -> str:
+    """Le libellé d'un statut, et les dates entre lesquelles il se déclare.
+
+    « (depuis 1977) » pour un régime né après 1930, l'année où le modèle
+    commence ; « (recrutés avant septembre 2010) » pour un régime fermé.
+    """
+    libelle = affiliations.libelle(code)
+    ouverture = affiliations.ouverture(code)
+    fermeture = affiliations.fermeture_entrants(code)
+    precisions = []
+    if ouverture > ANNEE_MODELE:
+        precisions.append(f"depuis {ouverture}")
+    if fermeture is not None:
+        precisions.append(f"recrutés avant {formater_borne(fermeture)}")
+    if not precisions:
+        return libelle
+    return f"{libelle} ({', '.join(precisions)})"
+
+
+def _options_statuts(affiliations: Affiliations,
+                     entree: DateMois | None) -> list[tuple]:
+    """Les statuts du menu, ceux que la date d'entrée ferme désactivés.
+
+    ``entree`` est le mois où le métier commence ; sans lui — la ligne vide du
+    formulaire —, tout est proposé. Chaque option fermée porte sa date en
+    ``data-fermeture`` : c'est ce que la page lit, dans le navigateur, pour
+    refaire ce tri quand l'année de naissance ou l'âge de début change sous
+    ses yeux, sans attendre le calcul.
+    """
+    options = []
+    for code in affiliations.codes:
+        fermeture = affiliations.fermeture_entrants(code)
+        disponible = (entree is None or fermeture is None
+                      or entree.rang < fermeture.rang)
+        attributs = ({} if fermeture is None
+                     else {"data-fermeture": f"{fermeture.annee}-{fermeture.mois:02d}"})
+        options.append((code, _libelle_date(affiliations, code), disponible, attributs))
+    return options
+
+
+def statuts(contexte: Contexte) -> list[dict]:
     affiliations = contexte.simulateur().affiliations
-    return [{"code": code, "libelle": affiliations.libelle(code)}
-            for code in affiliations.codes]
+    return [{
+        "code": code,
+        "libelle": affiliations.libelle(code),
+        "ouverture": affiliations.ouverture(code),
+        "fermeture_entrants": (
+            None if affiliations.fermeture_entrants(code) is None
+            else f"{affiliations.fermeture_entrants(code).annee}-"
+                 f"{affiliations.fermeture_entrants(code).mois:02d}"
+        ),
+        "releve_par": affiliations.releve_par(code),
+    } for code in affiliations.codes]
 
 
 # -- fragments ---------------------------------------------------------------
@@ -1160,7 +1252,6 @@ notionnels — le simulateur permet de séparer les deux effets.</div>
 
 def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     affiliations = contexte.simulateur().affiliations
-    statuts = [(code, affiliations.libelle(code)) for code in affiliations.codes]
     echelle = contexte.echelle(saisie)
 
     identite = "".join([
@@ -1237,7 +1328,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   d'un taux de cotisation et d'un barème à un autre — et c'est exactement ce
   qu'un compte notionnel enregistre. Ajouter un métier, c'est remplir la
   dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
-  {_metiers(saisie, statuts, echelle)}
+  {_metiers(saisie, affiliations, echelle)}
   {_bascule_unite(saisie, echelle)}
   <details>
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
@@ -1323,7 +1414,12 @@ def _bascule_unite(saisie: Saisie, echelle: "Echelle") -> str:
             "</p>")
 
 
-def _metiers(saisie: Saisie, statuts: list[tuple[str, str]],
+def _entree(saisie: Saisie, age: float) -> DateMois:
+    """Le mois où un métier commence — la date que le parcours lui donnera."""
+    return DateMois(saisie.naissance, saisie.naissance_mois).plus_mois(en_mois(age))
+
+
+def _metiers(saisie: Saisie, affiliations: Affiliations,
              echelle: "Echelle") -> str:
     """Une ligne par métier, plus une ligne vide pour en ajouter un.
 
@@ -1331,6 +1427,9 @@ def _metiers(saisie: Saisie, statuts: list[tuple[str, str]],
     la ligne vide est renvoyée avec le reste du formulaire, et devient un métier
     dès qu'on la remplit. Une ligne de plus apparaît alors à sa suite, jusqu'à
     ``METIERS_MAXIMUM``.
+
+    Le menu des statuts de chaque ligne est daté de l'entrée dans ce métier :
+    un statut que le droit ferme avant cette date y est grisé.
     """
     lignes = [_ligne_metier(
         1,
@@ -1339,15 +1438,20 @@ def _metiers(saisie: Saisie, statuts: list[tuple[str, str]],
                 max=str(AGE_DEBUT_MAXIMAL), step="1")
         + g.liste("debut_mois", "…et mois", MOIS_AGE, str(saisie.debut_mois),
                   "l'année d'entrée n'est complète que si l'on entre en janvier")
-        + g.liste("statut", "Statut d'affiliation", statuts, saisie.statut)
+        + g.liste("statut", "Statut d'affiliation",
+                  _options_statuts(affiliations, _entree(saisie, saisie.debut)),
+                  saisie.statut,
+                  "proposé aux seules dates où son régime recrutait")
         + _champ_revenu("salaire", saisie, echelle, _nombre(saisie.salaire)),
     )]
 
     for rang, metier in enumerate(saisie.metiers, start=2):
         lignes.append(_ligne_metier(
             rang, _champs_metier(rang, _nombre(metier.debut), metier.statut,
-                                 _nombre(metier.salaire), statuts, saisie,
-                                 echelle)))
+                                 _nombre(metier.salaire),
+                                 _options_statuts(affiliations,
+                                                  _entree(saisie, metier.debut)),
+                                 saisie, echelle)))
 
     # La ligne vide : elle n'existe que tant qu'il reste de la place, et son
     # statut n'est pas présélectionné — un statut choisi par défaut ferait
@@ -1355,14 +1459,16 @@ def _metiers(saisie: Saisie, statuts: list[tuple[str, str]],
     rang = len(saisie.metiers) + 2
     if rang <= METIERS_MAXIMUM:
         lignes.append(_ligne_metier(
-            rang, _champs_metier(rang, "", "", "", statuts, saisie, echelle),
+            rang, _champs_metier(rang, "", "", "",
+                                 _options_statuts(affiliations, None),
+                                 saisie, echelle),
             vide=True))
 
     return f'<div class="metiers">{"".join(lignes)}</div>'
 
 
 def _champs_metier(rang: int, debut: str, statut: str, salaire: str,
-                   statuts: list[tuple[str, str]], saisie: Saisie,
+                   statuts: list[tuple], saisie: Saisie,
                    echelle: "Echelle") -> str:
     """Les trois champs d'un métier qui suit le premier.
 
@@ -3545,6 +3651,15 @@ l'année, les régimes liquident à l'année : l'année d'un changement revient 
 métier qui en occupe le plus de mois, et à égalité à celui qui l'ouvre, tandis
 que le revenu porté au compte reste la somme de ce que les deux ont
 réellement payé.</p>
+<p>Un statut ne se déclare qu'<strong>aux dates où son régime recrutait</strong>.
+Le menu date chacun — « depuis 1977 » pour l'artiste-auteur, « recrutés avant
+septembre 2010 » pour le mineur — et grise ceux que l'entrée saisie ferme ; le
+calcul refuse une carrière qui entrerait dans un régime fermé, en nommant le
+statut de droit commun qui porte le même calcul. La date opposée est celle de
+l'entrée dans le métier, au mois près : la loi ferme la RATP « aux recrutés à
+compter du 1<sup>er</sup> septembre 2023 », et qui y est entré en octobre 2022
+garde son régime, même si sa première année entière est 2023. Celui qui était
+déjà là le garde toujours — c'est la clause du grand-père.</p>
 
 <h3 id="unites">Brut, et pas net</h3>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,

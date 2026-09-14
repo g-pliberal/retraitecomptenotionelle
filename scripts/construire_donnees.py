@@ -284,6 +284,7 @@ def _affiliations() -> dict:
         code: {
             "libelle": affiliations.libelle(code),
             "sans_employeur": affiliations.sans_employeur(code),
+            "releve_par": affiliations.releve_par(code),
             "periodes": list(affiliations.periodes(code)),
         }
         for code in affiliations.codes

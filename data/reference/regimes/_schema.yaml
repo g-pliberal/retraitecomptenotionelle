@@ -129,6 +129,15 @@ champs_periode:
       personnelle pour les non-salariés) affecté à ce régime sur cette assiette.
       C'est la grandeur utilisée pour alimenter le compte notionnel lorsque le
       paramètre `source_cotisations = taux_historiques`.
+      POUR LES RÉGIMES QUE `taux_cotisation_annuels.csv` COUVRE — le régime
+      général, les salariés agricoles, la CANCAVA, l'ORGANIC et le RSI —, ce
+      champ n'est qu'un repli : le chargeur (`CatalogueRegimes`) découpe
+      chaque période `plafonnee` année par année et y écrit le taux, la part
+      salariale, la cotisation déplafonnée et sa part que la table donne pour
+      l'année ; la valeur de la fiche ne sert qu'aux années que la table ne
+      couvre pas, et au contrôle de vraisemblance. Une fiche porte un taux par
+      période législative ; le droit l'a changé presque chaque année, et c'est
+      celui de l'année qui alimente le compte.
       ATTENTION : pour les périodes marquées `perimetre_taux: agent_seul`, ce
       champ ne porte QUE la retenue de l'agent — voir ce champ.
     unite: "fraction de l'assiette"

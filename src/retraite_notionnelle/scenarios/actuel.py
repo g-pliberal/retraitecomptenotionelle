@@ -1307,7 +1307,7 @@ class ScenarioActuel:
                 continue
             if code not in self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
-                    carriere.entree(ligne.affiliation),
+                    carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                     plafond=self.macro.plafond_securite_sociale(ligne.annee)):
                 continue
@@ -1376,7 +1376,7 @@ class ScenarioActuel:
                     and derniere.fraction_annee > 0
                     and code in self.affiliations.regimes(
                         derniere.affiliation, annee_liquidation,
-                        carriere.entree(derniere.affiliation),
+                        carriere.date_entree(derniere.affiliation),
                         revenu=derniere.revenu,
                         plafond=self.macro.plafond_securite_sociale(annee_liquidation))):
                 traitement = (_assiette_de_reference(periode, derniere)
@@ -1869,7 +1869,7 @@ class ScenarioActuel:
                 continue
             for code in self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
-                    carriere.entree(ligne.affiliation),
+                    carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                     plafond=self.macro.plafond_securite_sociale(ligne.annee)):
                 if code not in self.catalogue:
@@ -1923,7 +1923,7 @@ class ScenarioActuel:
             )
             for code in self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
-                    carriere.entree(ligne.affiliation),
+                    carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                     plafond=self.macro.plafond_securite_sociale(ligne.annee)):
                 if code not in self.catalogue:

@@ -464,7 +464,7 @@ class ConstructeurCompte:
         familles_admises = None if ligne.cotise else set(ligne.familles_cotisantes)
 
         codes = self.affiliations.regimes(
-            ligne.affiliation, annee, carriere.entree(ligne.affiliation),
+            ligne.affiliation, annee, carriere.date_entree(ligne.affiliation),
             revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
             plafond=self.macro.plafond_securite_sociale(annee),
         )
