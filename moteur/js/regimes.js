@@ -608,6 +608,7 @@ export const BORNES_ASSIETTE = Object.freeze({
   // borne la plus haute du catalogue libéral, et le décret la fixe en
   // plafonds — 384 480 € en 2026.
   plafonnee_8_pass: [0.0, 8.0],
+  tranche_1_2_pass: [1.0, 2.0],
   // CAVAMAC : le plafond des commissions, que la caisse indexe sur la
   // commission MOYENNE et non sur celui de la Sécurité sociale — 625 777 €
   // en 2026, quand treize plafonds en valent 624 780.

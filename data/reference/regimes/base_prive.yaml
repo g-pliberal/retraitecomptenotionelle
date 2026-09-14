@@ -2740,3 +2740,731 @@ regimes:
           génération jusqu'à 1,25 % dès 1973 (art. 11, LEGIARTI000033155432).
           Génération 1973 et suivantes : 172 trimestres, coefficient de 1,25
           %.
+
+  - code: cps_polynesie
+    nom: >-
+      Régime de retraite des travailleurs salariés de Polynésie française, tranche A (CPS)
+    famille: base_prive
+    source_id: sites_institutionnels
+    fiabilite: estimee
+    creation: 1968
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Salariés de Polynésie française, affiliés à la Caisse de prévoyance
+      sociale depuis 1968 (régime général des salariés, RGS) : pension de la
+      tranche A en annuités, sept dixièmes du salaire moyen des quinze
+      meilleures années pour trente-huit ans cotisés ; la tranche B, en
+      points, est une fiche à part. Les taux et plafonds de 2026 sont projetés
+      sur toute la période.
+    hors_repartition: false
+    periodes:
+      - debut: 1968
+        fin: 2022
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 140
+        taux_plein: 0.70
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.2353
+        part_salariale: 0.3332
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiche « La sécurité sociale des salariés en Polynésie
+          française » et fiche de cotisations 2026 du CLEISS (cleiss.fr, lues
+          par scripts/fetch/sites_institutionnels.py), qui résument les
+          délibérations de l'assemblée de la Polynésie française, hors JORF.
+          TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois cotisés
+          / 456 mois) », salaire moyen « des 180 meilleures rémunérations
+          mensuelles […] au cours des 240 derniers mois », droits « ouverts à
+          partir de 62 ans depuis le 1er janvier 2023 », taux plein avec « 38
+          ans soit 456 mois ou 152 trimestres depuis 2023 ». COTISATION 2026 :
+          « vieillesse tranche A : 15,69 % [employeur], 7,84 % [salarié], 269
+          000 FCFP » par mois, soit 23,53 % dont un tiers salarial ; le
+          plafond de 269 000 FCFP (2 254 €) est lu comme 0,69 plafond national
+          — la fiche prend le plafond national, plus haut. AVANT 2023 : 60 ans
+          et 35 ans cotisés (420 mois), les paramètres d'avant la réforme de
+          2023 tels que la fiche du CLEISS les oppose à ceux « depuis 2023 » ;
+          la montée en charge n'est pas lue, la fiche coupe au 1er janvier
+          2023. Salaire de référence : quinze ans, écrit ici comme les dix
+          meilleures années, la valeur la plus proche du catalogue.
+      - debut: 2023
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 62
+        age_taux_plein: 62
+        duree_requise_trimestres: 152
+        taux_plein: 0.70
+        salaire_reference: 10_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.2353
+        part_salariale: 0.3332
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiche « La sécurité sociale des salariés en Polynésie
+          française » et fiche de cotisations 2026 du CLEISS (cleiss.fr, lues
+          par scripts/fetch/sites_institutionnels.py), qui résument les
+          délibérations de l'assemblée de la Polynésie française, hors JORF.
+          TRANCHE A : « 70 % × salaire mensuel moyen × (nombre de mois cotisés
+          / 456 mois) », salaire moyen « des 180 meilleures rémunérations
+          mensuelles […] au cours des 240 derniers mois », droits « ouverts à
+          partir de 62 ans depuis le 1er janvier 2023 », taux plein avec « 38
+          ans soit 456 mois ou 152 trimestres depuis 2023 ». COTISATION 2026 :
+          « vieillesse tranche A : 15,69 % [employeur], 7,84 % [salarié], 269
+          000 FCFP » par mois, soit 23,53 % dont un tiers salarial ; le
+          plafond de 269 000 FCFP (2 254 €) est lu comme 0,69 plafond national
+          — la fiche prend le plafond national, plus haut. DEPUIS 2023 : 62
+          ans, 456 mois (152 trimestres), 70 % ; le salaire moyen de 180 mois
+          sur les 240 derniers est écrit comme les dix meilleures années, la
+          valeur la plus proche du catalogue.
+
+  - code: cps_polynesie_tranche_b
+    nom: >-
+      Régime de retraite des travailleurs salariés de Polynésie française, tranche B (CPS)
+    famille: base_prive
+    source_id: sites_institutionnels
+    fiabilite: estimee
+    creation: 1995
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Salariés de Polynésie française dont le salaire dépasse le plafond de la
+      tranche A : des points sur la fraction comprise entre 269 000 et 525 000
+      FCFP par mois (2026).
+    hors_repartition: false
+    periodes:
+      - debut: 1995
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_taux_plein: 62
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: tranche_1_2_pass
+        taux_cotisation_retraite: 0.1743
+        part_salariale: 0.3333
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiches du CLEISS (voir `cps_polynesie`). COTISATION 2026 :
+          « vieillesse tranche B : 11,62 % [employeur], 5,81 % [salarié],
+          entre 269 000 FCFP et 525 000 FCFP » par mois — 0,69 à 1,35 plafond
+          national, la fiche prend la tranche entre un et deux plafonds, la
+          borne la plus proche du catalogue. POINTS : « le total des points
+          est obtenu en divisant le salaire annuel par le salaire minimum
+          horaire de référence (1 024,74 FCFP depuis le 1er mai 2024) » et «
+          la valeur du point s'obtient en multipliant 1 024,74 FCFP par 2 %
+          soit 20,49 FCFP », pension « (total des points × valeur du point) /
+          12 » : deux pour cent du salaire de la tranche par année, soit 11,5
+          centimes de rente par euro cotisé à 17,43 %, dans
+          `rendements_points.csv`. Année de création prise à 1995, date de la
+          tranche B selon le rapport 2020 du Conseil d'orientation et de suivi
+          des retraites polynésien ; niveau `estimee`.
+
+  - code: cafat_nouvelle_caledonie
+    nom: >-
+      Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT)
+    famille: base_prive
+    source_id: sites_institutionnels
+    fiabilite: estimee
+    creation: 1958
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Salariés de Nouvelle-Calédonie, affiliés à la CAFAT : pension en points,
+      servie à taux plein à 62 ans avec trente-sept années d'activité (2026),
+      après une montée de 60 à 62 ans et de 35 à 37 ans engagée en 2023. Taux
+      et barème de 2026 projetés sur toute la période.
+    hors_repartition: false
+    periodes:
+      - debut: 1958
+        fin: 2022
+        type_calcul: points
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 140
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1400
+        part_salariale: 0.30
+        decote_par_trimestre: 0.015
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+          Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+          montant de ma retraite » de la CAFAT (cafat.nc), lues par
+          scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+          hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+          [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+          plafond national — la fiche prend le plafond national). POINTS : «
+          les cotisations que vous avez versées ont été divisées chaque année
+          par une valeur de référence dont le montant est fixé par le conseil
+          d'administration », « la valeur du point retraite est de 256,09
+          F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+          publiée nulle part de lisible : le rendement de
+          `rendements_points.csv` (10 centimes par euro) est celui
+          qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+          pour trente-sept ans, niveau `estimee`. AVANT 2023 : 60 ans et 35
+          années d'activité, « 1,5 % de réduction par trimestre d'anticipation
+          manquant », dans la limite de dix trimestres.
+      - debut: 2023
+        fin: 2023
+        type_calcul: points
+        age_ouverture: 60.5
+        age_taux_plein: 60.5
+        duree_requise_trimestres: 144
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1400
+        part_salariale: 0.30
+        decote_par_trimestre: 0.015
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+          Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+          montant de ma retraite » de la CAFAT (cafat.nc), lues par
+          scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+          hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+          [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+          plafond national — la fiche prend le plafond national). POINTS : «
+          les cotisations que vous avez versées ont été divisées chaque année
+          par une valeur de référence dont le montant est fixé par le conseil
+          d'administration », « la valeur du point retraite est de 256,09
+          F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+          publiée nulle part de lisible : le rendement de
+          `rendements_points.csv` (10 centimes par euro) est celui
+          qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+          pour trente-sept ans, niveau `estimee`. « 01/01/2023 : 60 ans 6 mois
+          » ; durée relevée d'une demi-année par an, 36 ans en 2023.
+      - debut: 2024
+        fin: 2024
+        type_calcul: points
+        age_ouverture: 61
+        age_taux_plein: 61
+        duree_requise_trimestres: 144
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1400
+        part_salariale: 0.30
+        decote_par_trimestre: 0.015
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+          Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+          montant de ma retraite » de la CAFAT (cafat.nc), lues par
+          scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+          hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+          [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+          plafond national — la fiche prend le plafond national). POINTS : «
+          les cotisations que vous avez versées ont été divisées chaque année
+          par une valeur de référence dont le montant est fixé par le conseil
+          d'administration », « la valeur du point retraite est de 256,09
+          F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+          publiée nulle part de lisible : le rendement de
+          `rendements_points.csv` (10 centimes par euro) est celui
+          qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+          pour trente-sept ans, niveau `estimee`. « 01/01/2024 : 61 ans » ; 36
+          ans.
+      - debut: 2025
+        fin: 2025
+        type_calcul: points
+        age_ouverture: 61.5
+        age_taux_plein: 61.5
+        duree_requise_trimestres: 146
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1400
+        part_salariale: 0.30
+        decote_par_trimestre: 0.015
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+          Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+          montant de ma retraite » de la CAFAT (cafat.nc), lues par
+          scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+          hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+          [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+          plafond national — la fiche prend le plafond national). POINTS : «
+          les cotisations que vous avez versées ont été divisées chaque année
+          par une valeur de référence dont le montant est fixé par le conseil
+          d'administration », « la valeur du point retraite est de 256,09
+          F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+          publiée nulle part de lisible : le rendement de
+          `rendements_points.csv` (10 centimes par euro) est celui
+          qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+          pour trente-sept ans, niveau `estimee`. « 01/01/2025 : 61 ans 6 mois
+          » ; 36 ans et demi.
+      - debut: 2026
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_taux_plein: 62
+        duree_requise_trimestres: 148
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1400
+        part_salariale: 0.30
+        decote_par_trimestre: 0.015
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : fiche « La sécurité sociale des salariés en Nouvelle-
+          Calédonie » et fiche de cotisations 2026 du CLEISS, page « Le
+          montant de ma retraite » de la CAFAT (cafat.nc), lues par
+          scripts/fetch/sites_institutionnels.py ; délibérations du congrès,
+          hors JORF. COTISATION 2026 : « retraite : 9,80 % [employeur], 4,20 %
+          [salarié], 14,00 % » jusqu'à 548 600 FCFP par mois (4 597 €, 1,17
+          plafond national — la fiche prend le plafond national). POINTS : «
+          les cotisations que vous avez versées ont été divisées chaque année
+          par une valeur de référence dont le montant est fixé par le conseil
+          d'administration », « la valeur du point retraite est de 256,09
+          F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
+          publiée nulle part de lisible : le rendement de
+          `rendements_points.csv` (10 centimes par euro) est celui
+          qu'impliquent 14 % de cotisation et une pension de moitié du salaire
+          pour trente-sept ans, niveau `estimee`. « 01/01/2026 : 62 ans », «
+          37 années d'activité » en 2026 (148 trimestres).
+
+  - code: wallis_et_futuna
+    nom: >-
+      Régime de retraite des salariés de Wallis-et-Futuna (CPSWF)
+    famille: base_prive
+    source_id: sites_institutionnels
+    fiabilite: estimee
+    creation: 1975
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Salariés de Wallis-et-Futuna, affiliés à la Caisse des prestations
+      sociales, héritière de la caisse locale de retraites : pension en
+      annuités sur les quinze meilleures années, 2,6 % par an pour quinze ans
+      puis 1,3 %, à 60 ans.
+    hors_repartition: false
+    periodes:
+      - debut: 1975
+        fin: 2008
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1710
+        part_salariale: 0.2164
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          AVANT 2009 : la caisse locale de retraites, absorbée par la CPSWF en
+          2012, n'a rien de publié ; le taux de 2009 est projeté en arrière,
+          niveau `estimee`, et la création prise à 1975 faute de date.
+      - debut: 2009
+        fin: 2009
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1710
+        part_salariale: 0.2164
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2009 : 17.10 % dont 3.70 % salarié et 13.40 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2010
+        fin: 2010
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1800
+        part_salariale: 0.2222
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2010 : 18.00 % dont 4.00 % salarié et 14.00 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2011
+        fin: 2011
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1890
+        part_salariale: 0.2275
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2011 : 18.90 % dont 4.30 % salarié et 14.60 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2012
+        fin: 2012
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.1980
+        part_salariale: 0.2323
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2012 : 19.80 % dont 4.60 % salarié et 15.20 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2013
+        fin: 2013
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2070
+        part_salariale: 0.2367
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2013 : 20.70 % dont 4.90 % salarié et 15.80 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2014
+        fin: 2014
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2160
+        part_salariale: 0.2407
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2014 : 21.60 % dont 5.20 % salarié et 16.40 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2015
+        fin: 2015
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2250
+        part_salariale: 0.2444
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2015 : 22.50 % dont 5.50 % salarié et 17.00 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2016
+        fin: 2016
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2340
+        part_salariale: 0.2479
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2016 : 23.40 % dont 5.80 % salarié et 17.60 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2017
+        fin: 2017
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2430
+        part_salariale: 0.2510
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2017 : 24.30 % dont 6.10 % salarié et 18.20 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2018
+        fin: 2018
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2520
+        part_salariale: 0.2540
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2018 : 25.20 % dont 6.40 % salarié et 18.80 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2019
+        fin: 2019
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2610
+        part_salariale: 0.2567
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION 2019 : 26.10 % dont 6.70 % salarié et 19.40 % employeur
+          (« les taux de cotisations augmentent annuellement », page des taux
+          de la CPSWF).
+      - debut: 2020
+        fin: null
+        type_calcul: annuites
+        age_ouverture: 60
+        age_taux_plein: 60
+        duree_requise_trimestres: 120
+        taux_plein: 0.585
+        salaire_reference: 10_meilleures_annees
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.2700
+        part_salariale: 0.2593
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          SOURCE : site de la Caisse des prestations sociales des îles Wallis
+          et Futuna (cpswf.wf, pages « Retraites » et « Les taux de cotisation
+          », lues par scripts/fetch/sites_institutionnels.py) ; délibérations
+          de l'assemblée territoriale, hors JORF. PENSION : « salaire moyen
+          des 15 meilleures années multiplié par le taux qui correspond au
+          nombre d'années de cotisations », « le taux est de 2,60 % pour les
+          15 premières années avec 1,30 % par année supplémentaire » — 39 % à
+          quinze ans, 58,5 % à trente ans, 71,5 % à quarante ; la fiche écrit
+          58,5 % pour 120 trimestres, proratisé, ce qui reproduit le barème
+          jusqu'à trente ans et le sous-estime au-delà. ÂGE : « être âgée de
+          60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
+          aucune décote lue. Les quinze meilleures années sont écrites comme
+          les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
+          COTISATION : « 01/01/2020 le taux sera de 27 % part salariale 7 % et
+          part patronale 20 % », dernier taux publié, reconduit.

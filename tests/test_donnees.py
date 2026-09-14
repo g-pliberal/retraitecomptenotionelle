@@ -1218,10 +1218,17 @@ def test_les_non_salaries_cotisent_seuls(catalogue):
 
 
 def test_les_parts_salariales_sont_plausibles(catalogue):
-    """Entre un quart et la totalité : aucune erreur de virgule ni d'inversion."""
+    """Entre un quart et la totalité : aucune erreur de virgule ni d'inversion.
+
+    UNE EXCEPTION LUE, PAS UNE FAUTE : à Wallis-et-Futuna la caisse publie
+    3,70 % pour le salarié et 13,40 % pour l'employeur en 2009, 7 % et 20 % en
+    2020 — moins d'un quart au salarié jusqu'en 2013. La borne reste pour
+    tous les autres.
+    """
     for regime in catalogue:
         for periode in regime.periodes:
-            assert 0.25 <= periode.part_salariale <= 1.0, (
+            plancher = 0.2 if regime.code == "wallis_et_futuna" else 0.25
+            assert plancher <= periode.part_salariale <= 1.0, (
                 f"{regime.code} {periode.debut}: {periode.part_salariale}"
             )
             assert (periode.taux_cotisation_salarie

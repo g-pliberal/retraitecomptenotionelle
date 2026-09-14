@@ -14,9 +14,9 @@ savoir de quels régimes on parle, puis, pour chacun, quelles règles il a
 appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
-L'inventaire compte **81 régimes** : 33 modélisés,
-21 calculés mais incomplets, 18 à modéliser,
-9 hors champ.
+L'inventaire compte **84 régimes** : 34 modélisés,
+36 calculés mais incomplets, 4 à modéliser,
+10 hors champ.
 
 | Couverture | Ce que cela veut dire |
 |---|---|
@@ -383,6 +383,34 @@ Ce qui reste de B5b : le seuil de L. 382-31 des élus, le SMIG mahorais et le
 plafond local des deux caisses d'outre-mer, les barèmes anciens du RACD, du RACL
 et du RAVGDT, la cotisation micro-sociale réellement versée.
 
+### Tranche B5c — les régimes sans texte dans l'index, lus sur les sites des institutions
+
+Huit lignes de l'inventaire n'avaient ni décret ni arrêté dans le JORF ou dans LEGI.
+Décision de l'utilisateur : lire les sites. `scripts/fetch/sites_institutionnels.py`
+garde la pièce — quatorze pages et PDF dans `data/brut/sites_institutionnels/`, le
+texte des PDF extrait à côté —, et chaque fiche cite la phrase qu'elle en tire ;
+rien n'est recontrôlé automatiquement, toutes ces fiches sont au niveau `estimee`.
+Sept fiches, six statuts ; l'Imprimerie nationale sort du champ (régime éteint fin
+2013 au décès du dernier pensionné, dix affiliés en 2007 selon le programme 195) ;
+les régimes professionnels intégrés restent `a_modeliser`, la ligne citant l'accord
+bancaire du 13 septembre 1993 et le complément différentiel qu'il institue.
+
+| Régime | Ce qui manquait | Ce qui est lu | Ce que ça déplace |
+|---|---|---|---|
+| `assemblees_parlementaires` | aucune fiche, « ni barème ni règlement » | règlement de la Caisse de pensions des députés au 1er janvier 2018 : retenue sur l'indemnité parlementaire, de résidence et de fonction (art. 5), 64 ans dès la génération 1969 et trois mois par génération depuis 1961 (art. 8), valeur de l'annuité de 2,11 % (jusqu'en 2008) à 1,9628 % (après 2028) et 40 à 43 annuités (art. 21), liquidation aux paramètres du soixante-quatrième anniversaire (art. 21 ter) ; arrêté des Questeurs n° 15-043 : retenue de 9,34 % (2015) à 10,85 % (2020) ; Sénat : 62 à 64 ans et 43 annuités (12 juillet 2023), assimilé | vingt-deux périodes, retenue du député seule (la part de l'Assemblée n'est pas écrite) ; statut `parlementaire` : 84,4 % de l'indemnité pour 43 annuités, 27 % de moins que le fonctionnaire de l'État au même revenu pour la génération 1975 |
+| `cese_membres` | aucune fiche | règlement de la caisse au 1er janvier 2025 : retenue « égale à 3,42 fois » celle de L. 61 sur la rémunération de base (art. 4), âge de L. 161-17-2 et cinq ans de mandat (art. 7), 2,11 % puis 1,82 % (dès le 28 octobre 2013) de « 2,06 fois la rémunération » par annuité, plafond des trois quarts (art. 17) ; fermeture aux membres désignés dès le 1er septembre 2023 | treize périodes, le revenu saisi pris pour l'assiette de référence (retenue divisée par 2,06) ; statut `membre_cese` à clause du grand-père (régime général et Arrco pour les désignés depuis 2023) : 75 % de l'indemnité en 41 annuités, 35 % de moins que le fonctionnaire pour la génération 1975 |
+| `cps_polynesie`, `cps_polynesie_tranche_b` | aucune fiche, « rien n'est lu » | CLEISS : tranche A « 70 % × salaire mensuel moyen × (nombre de mois cotisés / 456 mois) » sur les 180 meilleurs mois des 240 derniers, 62 ans et 456 mois depuis 2023, 23,53 % (15,69 + 7,84) jusqu'à 269 000 FCFP ; tranche B : 17,43 % entre 269 000 et 525 000 FCFP, points au « salaire minimum horaire de référence (1 024,74 FCFP) » valant « 1 024,74 FCFP par 2 % soit 20,49 FCFP » | deux fiches (assiette nouvelle `tranche_1_2_pass`, moteur Python et JS), rendement de 11,5 centimes pour la tranche B ; statut `salarie_polynesie` : +19 % sur le non-cadre pour la génération 1975 (70 % au lieu de 50 % de base, sans complémentaire) |
+| `cafat_nouvelle_caledonie` | aucune fiche | CLEISS et CAFAT : 14 % (9,80 + 4,20) jusqu'à 548 600 FCFP, points par division des cotisations « par une valeur de référence » non publiée, point à 256,09 FCFP, 60 ans et 6 mois en 2023 jusqu'à 62 ans en 2026, 37 années en 2026, décote de 1,5 % par trimestre dans la limite de dix | cinq périodes, rendement estimé à 10 centimes ; statut `salarie_nouvelle_caledonie` (avec l'Arrco du non-cadre) : même pension actuelle que le non-cadre pour la génération 1975 |
+| `wallis_et_futuna` | « pas de régime de retraite obligatoire […] recensé » | CPSWF : « salaire moyen des 15 meilleures années multiplié par le taux […] 2,60 % pour les 15 premières années avec 1,30 % par année supplémentaire », 60 ans, quinze ans de cotisation ; cotisation de 17,1 % (2009) à 27 % (2020), part salariale de 3,7 à 7 % | le régime existe ; treize périodes, 58,5 % pour 120 trimestres ; statut `salarie_wallis_et_futuna` : +4 % sur le non-cadre pour la génération 1975, moitié moins pour 1925 (rien avant 1975) ; borne du test des parts salariales abaissée à un cinquième pour cette seule fiche |
+| `fonctionnaires_pacifique` | aucune fiche | DRHFP de Nouvelle-Calédonie : « une annuité […] ouvre droit à 2 %, et 40 annuités […] à 80 % du traitement de base », cotisations de 10,8 % (agent) et 25,1 % (employeur) jusqu'en septembre 2023, 13 % et 28,8 % en 2027, minoration « 35 % avant 57 ans […] 10 % entre 59-60 ans », âge « de 60 à 62 ans sur 6 ans » dès 2025 | huit périodes (la fiche est la CLR ; les fonctionnaires de Polynésie relèvent de la CPS) ; statut `fonctionnaire_pacifique` : +7 % sur le fonctionnaire de l'État pour la génération 1975 (80 % au lieu de 75 %) |
+| `imprimerie_nationale` | « date de fermeture à confirmer » | programme 195 : dix affiliés en 2007, extinction fin 2013 | ligne passée `hors_champ` : aucun assuré vivant |
+
+Ce qui reste de B5c : la part des assemblées et le règlement du Sénat, la
+valeur de référence des points CAFAT, les plafonds locaux du Pacifique (les
+plafonds nationaux tiennent lieu), les barèmes d'avant 2009 à Wallis et d'avant
+2023 en Nouvelle-Calédonie, la table exacte de l'âge de la CLR, le complément
+bancaire des régimes intégrés.
+
 ### Feuille de route B5 — ce que le script montre à lire
 
 `python scripts/calendrier_regimes.py --carte` (le tableau est dans
@@ -404,6 +432,8 @@ pour les tranches suivantes :
   absents de LEGI) et le barème de l'UNIRS restent à demander à la Caisse des
   dépôts et à la fédération.
 - **Puis B5**, les dix-huit régimes à modéliser de l'inventaire, par
-  population décroissante — B5a et B5b ci-dessus en ont porté sept ; restent
-  les régimes sans texte dans l'index, à lire sur les sites des institutions
-  (B5c).
+  population décroissante — B5a, B5b et B5c ci-dessus en ont porté quatorze ;
+  restent, `a_modeliser` avec leur raison, les conjoints de commerçants et le
+  bâtiment (droit du conjoint), les élus et le micro-social (des routages, pas
+  des régimes) et les régimes professionnels intégrés (complément bancaire
+  non publié).
