@@ -1,0 +1,219 @@
+{
+  "avertissement": "Deuxième implémentation, pas une source officielle. Son barème de décote porte 0,65 % pour l'année d'ouverture 2010 là où la loi écrit 0,625 %, et son minimum garanti suit le point d'indice de l'année de liquidation là où l'article L. 17 fige la référence au 1er janvier 2004.",
+  "perimetre": "Fonction publique de l'État et CNRACL, sédentaires sans enfant ni prime, carrières continues à traitement nominal constant, liquidations de 2009 à 2020.",
+  "profils": {
+    "carriere_courte_1947": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.8607594966888428,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 136.0,
+        "minimum_garanti": 12003.244140625,
+        "pension_avant_minimum": 16268.625,
+        "pension_brute": 16268.625,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 25200.41796875
+      },
+      "profil": {
+        "code": "carriere_courte_1947",
+        "debut": 1975,
+        "liquidation": 2009,
+        "naissance": 1947,
+        "regime": "fonction_publique_etat",
+        "traitement": 25000.0
+      }
+    },
+    "cnracl_decote_14_trimestres_1956": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9156626462936401,
+        "decote_trimestres": 14.0,
+        "duree_assurance": 152.0,
+        "minimum_garanti": 0.0,
+        "pension_avant_minimum": 17098.974609375,
+        "pension_brute": 17098.974609375,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.6187499761581421,
+        "traitement_de_reference": 30180.009765625
+      },
+      "profil": {
+        "code": "cnracl_decote_14_trimestres_1956",
+        "debut": 1980,
+        "liquidation": 2018,
+        "naissance": 1956,
+        "regime": "cnracl",
+        "traitement": 30000.0
+      }
+    },
+    "cnracl_decote_2_trimestres_1950": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9876543283462524,
+        "decote_trimestres": 2.0,
+        "duree_assurance": 160.0,
+        "minimum_garanti": 0.0,
+        "pension_avant_minimum": 21933.33203125,
+        "pension_brute": 21933.33203125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7402499914169312,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "cnracl_decote_2_trimestres_1950",
+        "debut": 1972,
+        "liquidation": 2012,
+        "naissance": 1950,
+        "regime": "cnracl",
+        "traitement": 30000.0
+      }
+    },
+    "decote_17_trimestres_1955": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.7710843086242676,
+        "decote_trimestres": 17.0,
+        "duree_assurance": 128.0,
+        "minimum_garanti": 0.0,
+        "pension_avant_minimum": 12828.3232421875,
+        "pension_brute": 12828.3232421875,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5906250476837158,
+        "traitement_de_reference": 28168.009765625
+      },
+      "profil": {
+        "code": "decote_17_trimestres_1955",
+        "debut": 1985,
+        "liquidation": 2017,
+        "naissance": 1955,
+        "regime": "fonction_publique_etat",
+        "traitement": 28000.0
+      }
+    },
+    "decote_7_trimestres_1952": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9512194991111755,
+        "decote_trimestres": 7.0,
+        "duree_assurance": 156.0,
+        "minimum_garanti": 0.0,
+        "pension_avant_minimum": 23440.130859375,
+        "pension_brute": 23440.130859375,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7040625214576721,
+        "traitement_de_reference": 35000.0
+      },
+      "profil": {
+        "code": "decote_7_trimestres_1952",
+        "debut": 1975,
+        "liquidation": 2014,
+        "naissance": 1952,
+        "regime": "fonction_publique_etat",
+        "traitement": 35000.0
+      }
+    },
+    "decote_plafonnee_1958": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.8383233547210693,
+        "decote_trimestres": 20.0,
+        "duree_assurance": 140.0,
+        "minimum_garanti": 0.0,
+        "pension_avant_minimum": 15089.8193359375,
+        "pension_brute": 15089.8193359375,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.5625,
+        "traitement_de_reference": 31999.998046875
+      },
+      "profil": {
+        "code": "decote_plafonnee_1958",
+        "debut": 1985,
+        "liquidation": 2020,
+        "naissance": 1958,
+        "regime": "fonction_publique_etat",
+        "traitement": 32000.0
+      }
+    },
+    "minimum_garanti_1946": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.7692307829856873,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 120.0,
+        "minimum_garanti": 11939.42578125,
+        "pension_avant_minimum": 6978.5654296875,
+        "pension_brute": 11939.42578125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 12096.1796875
+      },
+      "profil": {
+        "code": "minimum_garanti_1946",
+        "debut": 1980,
+        "liquidation": 2010,
+        "naissance": 1946,
+        "regime": "fonction_publique_etat",
+        "traitement": 12000.0
+      }
+    },
+    "ouverture_2010_1950": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.9876543283462524,
+        "decote_trimestres": 2.0,
+        "duree_assurance": 160.0,
+        "minimum_garanti": 12501.787109375,
+        "pension_avant_minimum": 21933.33203125,
+        "pension_brute": 21933.33203125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.7402499914169312,
+        "traitement_de_reference": 30000.0
+      },
+      "profil": {
+        "code": "ouverture_2010_1950",
+        "debut": 1972,
+        "liquidation": 2012,
+        "naissance": 1950,
+        "regime": "fonction_publique_etat",
+        "traitement": 30000.0
+      }
+    },
+    "surcote_1948": {
+      "openfisca": {
+        "coefficient_de_proratisation": 1.0,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 172.0,
+        "minimum_garanti": 12446.2236328125,
+        "pension_avant_minimum": 26004.357421875,
+        "pension_brute": 26004.357421875,
+        "surcote_trimestres": 12.0,
+        "taux_de_liquidation": 0.8624999523162842,
+        "traitement_de_reference": 30149.98046875
+      },
+      "profil": {
+        "code": "surcote_1948",
+        "debut": 1968,
+        "liquidation": 2011,
+        "naissance": 1948,
+        "regime": "fonction_publique_etat",
+        "traitement": 30000.0
+      }
+    },
+    "taux_plein_1948": {
+      "openfisca": {
+        "coefficient_de_proratisation": 0.949999988079071,
+        "decote_trimestres": 0.0,
+        "duree_assurance": 152.0,
+        "minimum_garanti": 12245.185546875,
+        "pension_avant_minimum": 21546.3203125,
+        "pension_brute": 21546.3203125,
+        "surcote_trimestres": 0.0,
+        "taux_de_liquidation": 0.75,
+        "traitement_de_reference": 30240.44921875
+      },
+      "profil": {
+        "code": "taux_plein_1948",
+        "debut": 1972,
+        "liquidation": 2010,
+        "naissance": 1948,
+        "regime": "fonction_publique_etat",
+        "traitement": 30000.0
+      }
+    }
+  },
+  "recupere_le": "2026-09-14",
+  "source": "OpenFisca-France-Pension",
+  "version": "0.1.3"
+}

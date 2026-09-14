@@ -31,11 +31,11 @@
 # certifiée — si une réforme déplaçait l'âge d'ouverture sans que celui-ci
 # suive, l'écart se verrait là plutôt que dans une pension.
 generation,age,fiabilite
-1930,65,haute
-1950,65,haute
-1951,65,haute
+1930,65.00,haute
+1950,65.00,haute
+1951,65.00,haute
 1951.5,65.33,haute
 1952,65.75,haute
 1953,66.17,haute
 1954,66.58,haute
-1955,67,haute
+1955,67.00,haute

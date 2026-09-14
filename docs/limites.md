@@ -377,6 +377,7 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Quotients de mortalité par âge | 1986-1997, 95 à 104 ans | **certifiée** | INED, là où Eurostat s'arrête |
 | Quotients de mortalité par âge | après 1997, au-delà de 94 ans | absents | calibration paramétrique, dont le biais est mesuré |
 | Minimum contributif et plafond d'écrêtement | ancres de 2007 à 2014 | **certifiée** | DILA, base LEGI, code de la sécurité sociale |
+| Minimum contributif, minimum majoré et plafond | montants servis 2020 | haute | transcrits d'une réponse ministérielle, recoupés à chaque exécution contre les circulaires Cnav que transcrit OpenFisca-France-Pension — sa série s'arrête en 2023, les montants postérieurs restent sans recoupement |
 | Minimum vieillesse (ASPA) | ancres 2006, 2009-2012, 2014, 2018-2020 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 815-1` |
 | Minimum vieillesse (ASPA) | ancres 2007, 2016, 2017, depuis 2021 | haute / moyenne | publications — l'article n'est pas réécrit à chaque revalorisation |
 | Minimum garanti, traitement de référence | 2004 et année courante | **certifiée** | Service des retraites de l'État, sa page du minimum garanti |
@@ -385,7 +386,8 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Durée d'assurance requise par génération | 1958-1975 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `L. 161-17-3` |
 | Durée d'assurance requise par génération | 1953-1957 | **certifiée** | DILA, base LEGI, décrets d'application des lois de 2003 et de 2010 |
 | Durée d'assurance requise par génération | 1934-1942 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-45` II |
-| Durée d'assurance requise par génération | 1943-1952 | haute | 160 vient de la règle générale, non d'un alinéa qui les nomme ; les 161-164 sont dans des décrets absents de la base |
+| Durée d'assurance requise par génération | 1943-1952 | haute | 160 vient de la règle générale, non d'un alinéa qui les nomme ; les 161-164 sont dans des décrets absents de la base — recoupées à chaque exécution contre la table d'OpenFisca-France-Pension |
+| Durée de services de la fonction publique, droits ouverts 2004-2008 | 152 à 160 trimestres | haute | loi n° 2003-775, article 66 II, lu dans la base LEGI et mis en table ; recoupé contre OpenFisca-France-Pension |
 | Coefficient de minoration par génération | 1900-1975 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-27` |
 | Bornes de la carrière longue | 2023- | **certifiée** | DILA, base LEGI, `L. 351-1-1` et `D. 351-1-1` |
 | Bornes de la carrière longue | 2004 et 2012 | moyenne / haute | versions abrogées des mêmes articles, transcrites |
@@ -394,7 +396,7 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Années retenues au salaire annuel moyen, par génération | avant 1934 à 1948 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-29-1` |
 | Décote de la fonction publique, coefficient et âge d'annulation | 2006-2019 | **certifiée** | DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III |
 | Barème du minimum garanti, montée en charge | 2004-2013 | **certifiée** | DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V |
-| Âge d'annulation de la décote, régime général | 1930-1955 | haute | calculé — l'âge d'ouverture certifié majoré de cinq ans, comme l'écrit `L. 351-8` ; recontrôlé à chaque exécution |
+| Âge d'annulation de la décote, régime général | 1930-1955 | haute | calculé — l'âge d'ouverture certifié majoré de cinq ans, comme l'écrit `L. 351-8` ; recontrôlé à chaque exécution, et recoupé contre la table transcrite d'OpenFisca-France-Pension |
 | Point d'indice de la fonction publique | 1996-2027 | **certifiée** | DILA, base LEGI, décret n° 85-1148 du 24 octobre 1985, article 3 |
 | Point d'indice de la fonction publique | 1960-1995 | haute | OpenFisca-France, `point_indice_en_euros` — deux versions manquent au dump avant 1996 |
 | SMIC horaire | 1997-2017, sauf 2002 | **certifiée** | DILA, base LEGI, décrets portant relèvement du SMIC |
@@ -405,6 +407,8 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Revalorisation des salaires portés au compte | 10 colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux |
 | Taux de cotisation, régime général | 1967-2026 | moyenne | OpenFisca-France, recoupé à chaque exécution |
 | Taux de cotisation, complémentaires du privé | Arrco 1962-2018, Agirc 1981-2018, Agirc-Arrco 2019- | moyenne | OpenFisca-France, taux effectifs par tranche, recoupés à chaque exécution |
+| Retenue pour pension, État, CNRACL, ouvriers de l'État | 1948-2026, une période par taux | moyenne | OpenFisca-France, article L. 61 et barème de la caisse, recoupés à chaque exécution |
+| Cotisation vieillesse de base des artisans et commerçants | 1973-2018, moyennes par période | moyenne | OpenFisca-France, décrets d'application de la loi du 3 juillet 1972, recoupés à chaque exécution |
 | Taux de cotisation, autres régimes | tous | moyenne / estimée | Comptes de la Sécurité sociale |
 | Répartition salarié/employeur, régime général | 1968-2026 | haute | OpenFisca-France, recoupée à chaque exécution |
 | Répartition salarié/employeur, autres régimes de salariés | toutes | moyenne / estimée | OpenFisca et textes ; règle 40-60 pour les complémentaires |
@@ -437,7 +441,9 @@ python scripts/fetch/insee_bdm.py              # séries longues INSEE
 python scripts/fetch/oecd_esperance_vie.py     # espérance de vie à 65 ans
 python scripts/fetch/eurostat_mortalite.py     # tables de mortalité par âge
 python scripts/fetch/openfisca_plafond.py      # plafond ancien
-python scripts/fetch/openfisca_cotisations.py  # taux de cotisation du RG
+python scripts/fetch/openfisca_cotisations.py  # taux de cotisation du RG, du public, des non-salariés
+python scripts/fetch/openfisca_minimum_contributif.py  # montants du minimum contributif
+python scripts/fetch/openfisca_parametres_generation.py  # durée requise, âge d'annulation, par génération
 python scripts/fetch/openfisca_points.py       # valeurs du point, depuis 1947
 python scripts/fetch/cdc_ircantec.py           # barèmes Ircantec, par son gestionnaire
 python scripts/fetch/cnbf_baremes.py           # valeurs du point des avocats
@@ -1820,12 +1826,11 @@ génération 1965 là où l'article L. 161-17-3, lu dans la base LEGI, en donne 
 
 Trois bornes à connaître, et elles sont étroites :
 
-* **le régime général seul.** L'Arrco du paquet publié est inutilisable : son
-  code demande le paramètre `agirc_arrco.salaire_de_reference.salaire_reference_en_euros`,
-  que les barèmes livrés ne définissent pas — ils portent
+* **le régime unifié Agirc-Arrco est hors de portée.** Son code demande le
+  paramètre `agirc_arrco.salaire_de_reference.salaire_reference_en_euros`, que
+  les barèmes livrés ne définissent pas — ils portent
   `salaire_reference_prix_achat_valeur_nominale`. Toute liquidation postérieure
-  à 2019 y lève une erreur. Or c'est la complémentaire qui portait les deux plus
-  grosses erreurs de ce dépôt ;
+  à 2019 y lève une erreur. L'Arrco d'avant, lui, se confronte : voir plus bas ;
 * **les liquidations antérieures à 2025.** Ses barèmes s'arrêtent : valeur du
   point Agirc-Arrco en novembre 2024, revalorisations CNAV en 2023. Cinq des
   sept générations de la grille de cas types sont hors de portée ;
@@ -1834,6 +1839,102 @@ Trois bornes à connaître, et elles sont étroites :
   zéro, sans qu'aucune exception ne soit levée. Un oracle silencieusement nul
   valide tout : le récupérateur refuse donc d'écrire un profil dont la durée ou
   la pension serait nulle, et le test le revérifie.
+
+#### La pension civile : deux erreurs chez nous, une transcription chez lui
+
+`scripts/fetch/openfisca_fonction_publique.py` rejoue dix profils de
+sédentaires — huit à l'État, deux à la CNRACL —, sans enfant ni prime, liquidés
+de 2009 à 2020, et `tests/test_oracle.py` les rejoue à son tour. La première
+passe s'est écartée sur quatre profils, et l'enquête a trouvé, comme pour le
+régime général, des torts des deux côtés — les nôtres d'abord, et il y en avait
+deux.
+
+**Le barème de décote de l'article L. 14 était lu à l'année de liquidation.**
+Le III de l'article 66 de la loi du 21 août 2003 titre pourtant sa colonne
+« Année au cours de laquelle sont réunies les conditions mentionnées au I et au
+II de l'article L. 24 » — l'année où le droit s'ouvre, non celle du départ. Un
+sédentaire né en 1948 réunit ces conditions en 2008 et garde 0,375 % par
+trimestre et « limite d'âge moins douze trimestres » quelle que soit l'année où
+il part ; parti en 2010 à soixante-deux ans, il n'a aucun trimestre de décote.
+Le modèle lui opposait le barème de 2010 — 0,625 % et limite d'âge moins dix
+trimestres — et deux trimestres de décote que le droit ne lui retire pas. Les
+décrets de 2008 des régimes spéciaux sont écrits de même, « pour les personnes
+remplissant les conditions » entre deux dates : la correction vaut pour les
+deux barèmes en table, et `ScenarioActuel._annee_ouverture_des_droits` dit
+désormais quel millésime se lit.
+
+**La montée en charge 2004-2008 de la durée de services était ignorée.** Le II
+du même article 66 fait monter « le nombre de trimestres nécessaires pour
+obtenir le pourcentage maximum » de 150 à 160, deux par an, de 2004 à 2008 —
+là encore selon l'année où le droit s'ouvre. Le modèle lisait pour ces années
+la table du régime général, qui donne 160 à toute génération née depuis 1943 :
+un fonctionnaire dont le droit s'ouvrait en 2007 se voyait diviser ses services
+par 160 au lieu de 158, et opposer deux trimestres de décote de trop. La table
+est désormais `legislation/duree_requise_fonction_publique.csv`, lue avant la
+table par génération, qui ne vaut pour la fonction publique qu'à compter de
+2009 ; OpenFisca la recoupe.
+
+**Et le traitement de l'année d'avant le départ était ramené au départ par les
+prix.** Un fonctionnaire garde son indice : son traitement suit le POINT, et
+c'est ce que fait OpenFisca. L'écart valait de 0,5 à 0,8 % — tout ce que le
+point avait fait de moins que les prix, gel de 2010-2016 compris. Le modèle
+suit maintenant le point (`MinimumGaranti.ratio_point_indice`), et les régimes
+spéciaux à dernier salaire restent sur les prix, avec la réserve d'avant.
+
+**Chez lui, une transcription.** Son barème de décote porte 0,65 % pour un
+droit ouvert en 2010, là où la loi écrit 0,625 % — le cinquième des huit
+huitièmes de point. Le profil est gardé, et le test vérifie que chacun des deux
+modèles rend exactement le taux que son coefficient commande. Sa table de durée
+de services porte aussi, pour les générations 1944 à 1948, une seconde valeur
+datée de 2014 — 151 à 155 trimestres — qui contredit sa propre colonne de 2003
+et le texte : les profils évitent ces générations après 2013, et le
+récupérateur des paramètres lit la colonne de 2003.
+
+Le résultat, après corrections, sur dix profils :
+
+| Grandeur | Accord |
+|---|---|
+| Durée de services | **exacte** sur les dix |
+| Trimestres de décote | **exacts** sur les dix |
+| Taux de liquidation, surcote comprise | **exact** sur neuf ; le dixième est le 0,65 % de 2010, et il se retrouve en substituant son coefficient au nôtre |
+| Coefficient de proratisation | **exact** sur les dix |
+| Traitement de référence | **au centime** sur les dix |
+| Pension avant minimum garanti | **au centime** sur neuf, même réserve sur le dixième |
+| Minimum garanti | de 4,7 à 8,5 % au-dessus de lui, toujours dans le même sens |
+
+Le minimum garanti est le seul poste où l'écart demeure, et il est le sien :
+OpenFisca le calcule au point d'indice de l'année de liquidation, quand
+l'article L. 17 fige la référence au 1<sup>er</sup> janvier 2004 et la
+revalorise comme les pensions — sur les prix, qui ont fait plus que le point.
+Le test le borne à dix pour cent sans l'effacer.
+
+#### L'Arrco de 1999 à 2018 : rien à corriger, et c'est le résultat
+
+`scripts/fetch/openfisca_arrco.py` rejoue sept carrières de non-cadres qui
+commencent en 1999 au plus tôt et liquident en 2018 au plus tard. Les deux
+bornes sont les siennes : avant 1999, OpenFisca ne convertit pas les points de
+l'UNIRS — ses prix d'achat sont en unité ancienne, ses points valorisés à la
+valeur du point unifié, un facteur quatre sur toute la période — ; après 2018,
+son régime unifié lève une exception. Entre les deux, vingt ans de barèmes
+rejoués d'un bloc par un autre moteur : taux effectif par tranche, prix d'achat
+du point, taux d'appel, valeur de service.
+
+| Grandeur | Accord |
+|---|---|
+| Points acquis, tranche 2 comprise | **au millième** sur les sept |
+| Valeur de service | **à la quatrième décimale**, à une convention près : le dépôt retient la valeur au 31 décembre, OpenFisca celle du 1<sup>er</sup> janvier de la liquidation, qui est la nôtre de l'année d'avant |
+| Trimestres de décote du régime général, qui commandent l'abattement | **exacts** sur les sept |
+| Coefficient d'anticipation | **exact** quand l'anticipation tombe sur des années pleines ; ailleurs OpenFisca tronque à l'année, et ne peut que servir plus |
+
+Deux pièges de sa mécanique, à connaître pour choisir les profils : il ne lit
+son barème d'anticipation que par année entière, en tronquant les trimestres,
+quand l'Arrco l'écrit par trimestre ; et il compte l'âge à la liquidation en
+convertissant des jours en mois par une durée moyenne du mois, si bien qu'un
+assuré né le 1<sup>er</sup> janvier 1945 parti le 1<sup>er</sup> janvier 2007 a
+chez lui « 61 ans et 11 mois » et treize trimestres de décote au lieu de douze
+— un écart de soixante-deux ans traverse quinze années bissextiles quand il
+part d'une année impaire, seize quand il part d'une année bissextile. Les
+profils partent d'années bissextiles.
 
 ### La cotisation déplafonnée est portée au compte
 
@@ -3831,6 +3932,38 @@ pas — la pension du fonctionnaire ne se calcule pas sur ses cotisations — ma
 compte notionnel en dépend entièrement : le témoin du fonctionnaire né en 1935
 gagne 6,2 % de pension notionnelle rétroactive, celui né en 1955 3,4 %.
 
+### Six pour cent jusqu'en 1983, et une marche par an depuis 2011 : la retenue lue chez OpenFisca
+
+La lecture de L. 61 avait ramené le 7 % de 2003 à 1989 ; elle n'avait pas
+regardé plus haut. OpenFisca-France transcrit la retenue pour pension depuis
+1925, datée loi par loi (`cotisations_secteur_public/retraite/pension/salarie`),
+et le barème de la CNRACL depuis 1947 : **6 % jusqu'à la loi de finances pour
+1984**, 7 % ensuite, 7,7 % en août 1986, 7,9 % en juillet 1987, 8,9 % en 1989,
+7,85 % en février 1991 — puis, de 2011 à 2020, une marche par an de 8,12 % à
+11,10 %. Les fiches de l'État, de la CNRACL et des ouvriers de l'État
+portaient 7 % dès 1964 — dès 1945 pour la CNRACL — et 10,29 %, le taux de 2017,
+sur toute la période 2011-2022 : un point de trop pendant vingt ans, deux de
+trop en 2011, un de moins en 2020.
+
+Le récupérateur `openfisca_cotisations.py` lit maintenant ces séries, avec la
+cotisation de base des artisans et des commerçants depuis l'alignement de 1973,
+leurs complémentaires, le RAFP et le régime de base des professions libérales ;
+`verifier_donnees.py` les confronte aux fiches, période par période, comme il
+le fait pour le régime général. Les fiches ont été alignées : une période par
+taux pour la retenue de l'agent, et, pour la CANCAVA, l'ORGANIC et le RSI, la
+moyenne des taux datés sur chaque période législative — 11,43 % de 1973 à 1982
+là où la fiche portait 16,55 %, un chiffre de synthèse qui surcomptait de cinq
+points la cotisation des années 1970. Le scénario 1 n'en dépend pas ; le compte
+notionnel d'un fonctionnaire ou d'un artisan en dépend entièrement.
+
+Ce que le contrôle signale encore, et pourquoi on le laisse : la marche de
+8,9 % qu'OpenFisca date du 1<sup>er</sup> janvier 1989 (loi n° 89-18, article
+23) et que la fiche porte à 1990, date de la version de L. 61 que la base LEGI
+garde ; le taux 2025 de la première tranche de la CNAVPL, 8,73 % chez le
+producteur, qu'OpenFisca n'a pas encore ; et la CANCAVA de 1973 à 1982, dont la
+moyenne recouvre une montée de 8,75 % à 12,9 % que seule une période par
+décret rendrait exacte.
+
 ### La SEITA partait à cinquante-cinq ans, et son décret dit soixante
 
 Le régime des tabacs est fermé depuis 1981 et n'a jamais été réformé : ses
@@ -4248,7 +4381,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 580 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 594 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

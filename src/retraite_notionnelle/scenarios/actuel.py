@@ -47,6 +47,7 @@ import csv
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
+from ..calendrier import en_mois
 from ..carriere import Affiliations, Carriere
 from ..config import Parametres
 from ..donnees.chargement import Fiabilite
@@ -261,6 +262,42 @@ class DureesRequises(TableParGeneration):
     def trimestres(self, generation: float) -> tuple[int, Fiabilite] | None:
         valeur = self.valeur(generation)
         return None if valeur is None else (int(valeur[0]), valeur[1])
+
+
+class DureesRequisesFonctionPublique:
+    """Durée de services requise dans la fonction publique, 2004-2008.
+
+    Le II de l'article 66 de la loi du 21 août 2003 fait monter « le nombre
+    de trimestres nécessaires pour obtenir le pourcentage maximum de la
+    pension » de 150 à 160, deux par an, selon l'ANNÉE OÙ LE DROIT S'OUVRE.
+    Ce nombre commande à la fois la proratisation, le décompte de la décote et
+    le seuil de la surcote. Avant 2004, la fiche du régime porte 150 ; à
+    compter de 2009, l'article L. 13 II renvoie à la durée du régime général,
+    lue par génération. La table ne répond donc que pour les années qu'elle
+    porte, et rend ``None`` ailleurs.
+
+    Le modèle lisait ces années dans la table du régime général — 160 pour
+    toute génération née depuis 1943 —, et c'est la confrontation à
+    OpenFisca-France-Pension qui l'a fait voir.
+    """
+
+    FICHIER = "duree_requise_fonction_publique.csv"
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[int, tuple[int, Fiabilite]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                self._table[int(ligne["annee_ouverture"])] = (
+                    int(ligne["trimestres"]),
+                    Fiabilite.depuis_texte(ligne["fiabilite"]),
+                )
+
+    def trimestres(self, annee_ouverture: int) -> tuple[int, Fiabilite] | None:
+        return self._table.get(annee_ouverture)
 
 
 class DureesProratisation(TableParGeneration):
@@ -573,8 +610,17 @@ _BAREMES_DECOTE_EN_TABLE = frozenset(
 class DecoteFonctionPublique:
     """Barème de décote de l'article L. 14 du code des pensions.
 
-    Deux paramètres, lus à l'ANNÉE DE LIQUIDATION parce que la montée en charge
-    voulue par la loi du 21 août 2003 est calendaire et non générationnelle :
+    Deux paramètres, lus à l'ANNÉE OÙ LES CONDITIONS D'OUVERTURE DU DROIT SONT
+    RÉUNIES — le millésime où l'assuré atteint l'âge d'ouverture, ou celui de
+    la liquidation s'il part avant — parce que c'est ainsi que le III de
+    l'article 66 de la loi du 21 août 2003 titre sa colonne : « Année au cours
+    de laquelle sont réunies les conditions mentionnées au I et au II de
+    l'article L. 24 ». Le modèle la lisait à l'année de liquidation, et c'est
+    la confrontation à OpenFisca-France-Pension qui l'a fait voir : un
+    sédentaire né en 1948, dont le droit s'ouvre en 2008, garde le barème de
+    2008 — 0,375 % et limite d'âge moins douze trimestres — quelle que soit
+    l'année où il part. La montée en charge est calendaire et non
+    générationnelle, mais le calendrier est celui de l'ouverture du droit :
 
     * le **coefficient** de minoration par trimestre, d'un huitième de point
       par an de 0,125 % en 2006 à 1,25 % en 2015 ;
@@ -799,6 +845,19 @@ class MinimumGaranti:
                     )
         self._annees_bareme = sorted(self._bareme)
         self._annees_montants = sorted(self._montants)
+
+    def ratio_point_indice(self, depart: int, arrivee: int) -> float | None:
+        """Ce que devient un traitement indiciaire entre deux années.
+
+        Un fonctionnaire garde son indice : son traitement suit le point, et
+        c'est le point qui dit ce que vaut, l'année du départ, le traitement
+        perçu l'année d'avant. ``None`` quand la série ne couvre pas les deux
+        années, et le modèle retombe alors sur les prix.
+        """
+        de, a = self._point_indice(depart), self._point_indice(arrivee)
+        if de is None or a is None or de[0] <= 0:
+            return None
+        return a[0] / de[0]
 
     def _point_indice(self, annee: int) -> tuple[float, Fiabilite] | None:
         """Traitement annuel d'un point d'indice majoré, l'année demandée."""
@@ -1069,6 +1128,9 @@ class ScenarioActuel:
         self.annees_salaire_reference = AnneesSalaireReference(parametres.racine_donnees)
         self.majorations_enfants = MajorationsPourEnfants(parametres.racine_donnees)
         self.surcote_parentale = SurcoteParentale(parametres.racine_donnees)
+        self.durees_requises_fonction_publique = DureesRequisesFonctionPublique(
+            parametres.racine_donnees
+        )
         self.decote_fonction_publique = DecoteFonctionPublique(
             parametres.racine_donnees
         )
@@ -1203,10 +1265,17 @@ class ScenarioActuel:
         # Les coefficients des arrêtés ne valent que pour un salaire PORTÉ AU
         # COMPTE. Un régime qui liquide sur le dernier traitement ne porte rien
         # à un compte : lui appliquer les coefficients du régime général serait
-        # une erreur de catégorie, et c'est l'approximation qui y reste en
-        # vigueur — avec la réserve que `docs/limites.md` lui attache.
+        # une erreur de catégorie. Le traitement d'un FONCTIONNAIRE suit le
+        # point d'indice — l'agent garde son indice, et c'est le point de
+        # l'année du départ qui dit ce que vaut son traitement de l'année
+        # d'avant — ; les autres régimes à dernier salaire restent sur les
+        # prix, avec la réserve que `docs/limites.md` leur attache.
         porte_au_compte = periode.salaire_reference not in (
             "derniers_6_mois", "dernier_salaire"
+        )
+        suit_le_point = (
+            not porte_au_compte
+            and self.catalogue[code].famille == "fonction_publique"
         )
         # Le MOIS de la liquidation désigne la circulaire applicable : les
         # arrêtés ne prennent pas tous effet au 1er janvier, et deux d'entre
@@ -1222,6 +1291,10 @@ class ScenarioActuel:
 
         def revaloriser(perception: int, arrivee: int) -> float:
             if not porte_au_compte:
+                if suit_le_point:
+                    ratio = self.minimum_garanti.ratio_point_indice(perception, arrivee)
+                    if ratio is not None:
+                        return ratio
                 return self.macro.coefficient_revalorisation_salaires(
                     perception, arrivee
                 )
@@ -1323,8 +1396,23 @@ class ScenarioActuel:
 
     def _duree_requise(self, periode: PeriodeRegime,
                        carriere: Carriere) -> tuple[int, Fiabilite | None]:
-        """Durée requise opposable à cet assuré dans ce régime."""
+        """Durée requise opposable à cet assuré dans ce régime.
+
+        La fonction publique a sa propre montée en charge, 2004-2008, lue à
+        l'année d'ouverture du droit ; elle passe avant la table par
+        génération, qui ne vaut pour elle qu'à compter de 2009.
+        """
         requis = periode.duree_requise_trimestres or 160
+        if periode.bareme_decote == "fonction_publique":
+            transitoire = self.durees_requises_fonction_publique.trimestres(
+                self._annee_ouverture_des_droits(
+                    periode, carriere,
+                    carriere.annee_liquidation
+                    if carriere.age_liquidation is not None else 9999,
+                )
+            )
+            if transitoire is not None:
+                return transitoire
         if periode.duree_requise_par_generation:
             par_generation = self.durees_requises.trimestres(carriere.generation)
             if par_generation is not None:
@@ -1386,6 +1474,20 @@ class ScenarioActuel:
         ``None`` dans la fiche reste ``None`` ici, et le coefficient renvoyé
         est ``None``.
 
+        **Les barèmes en table se lisent à l'année d'ouverture du droit, pas à
+        celle de la liquidation.** Le III de l'article 66 de la loi du 21 août
+        2003 titre sa colonne « Année au cours de laquelle sont réunies les
+        conditions mentionnées au I et au II de l'article L. 24 », et les
+        décrets de 2008 des régimes spéciaux visent « les personnes remplissant
+        les conditions définies à l'article 6 » entre deux dates. Un
+        fonctionnaire dont le droit s'ouvre en 2008 garde donc 0,375 % et
+        « limite d'âge moins douze trimestres » quelle que soit l'année de son
+        départ ; qui part avant l'âge d'ouverture réunit les conditions à la
+        liquidation, et c'est ce millésime-là qui vaut. Le modèle lisait le
+        barème à l'année de liquidation, et c'est la confrontation à
+        OpenFisca-France-Pension qui l'a fait voir : deux trimestres de décote
+        de trop pour un sédentaire né en 1948 parti à soixante-deux ans.
+
         **La fonction publique n'a pas la décote du régime général.** L'article
         L. 14 du code des pensions lui donne la sienne, montée en charge de
         2006 à 2020, et surtout un âge d'annulation qui n'est pas un âge en
@@ -1406,7 +1508,9 @@ class ScenarioActuel:
             table = (self.decote_fonction_publique
                      if periode.bareme_decote == "fonction_publique"
                      else self.decote_regimes_speciaux)
-            parametres = table.parametres(annee_liquidation)
+            parametres = table.parametres(
+                self._annee_ouverture_des_droits(periode, carriere, annee_liquidation)
+            )
             if parametres is None:
                 return None, age_annulation, None
             trimestres_avant, coefficient, fiabilite = parametres
@@ -1428,6 +1532,23 @@ class ScenarioActuel:
             if par_generation is not None:
                 return par_generation[0], age_annulation, par_generation[1]
         return periode.decote_par_trimestre, age_annulation, None
+
+    def _annee_ouverture_des_droits(self, periode: PeriodeRegime,
+                                    carriere: Carriere,
+                                    annee_liquidation: int) -> int:
+        """Année où les conditions d'ouverture du droit sont réunies.
+
+        C'est le millésime auquel se lisent les barèmes de décote en table —
+        celui de la fonction publique (loi du 21 août 2003, article 66 III)
+        comme celui des régimes spéciaux (décrets de 2008). L'assuré les réunit
+        quand il atteint l'âge d'ouverture de son régime, au mois près ; s'il
+        liquide avant — carrière longue, catégorie active —, il les réunit au
+        plus tôt à la liquidation, et c'est cette année-là qui vaut.
+        """
+        ouverture = carriere.date_naissance.plus_mois(
+            en_mois(self._age_ouverture(periode, carriere))
+        ).annee
+        return min(annee_liquidation, ouverture)
 
     def _trimestres_de_decote(self, periode: PeriodeRegime, trimestres: int,
                               requis: int, age_liquidation: float,

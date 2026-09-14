@@ -48,6 +48,25 @@ export class DureesRequises extends TableParGeneration {
 }
 
 /**
+ * Durée de services requise dans la fonction publique, 2004-2008.
+ *
+ * Le II de l'article 66 de la loi du 21 août 2003 fait monter le nombre de
+ * trimestres du pourcentage maximum de 150 à 160, deux par an, selon l'ANNÉE
+ * OÙ LE DROIT S'OUVRE. La table ne répond que pour les années qu'elle porte :
+ * avant, la fiche porte 150 ; après, la durée du régime général vaut.
+ */
+export class DureesRequisesFonctionPublique {
+  constructor(paquet) {
+    this._table = paquet.durees_requises_fonction_publique ?? {};
+  }
+
+  /** @returns {[number, number] | null} trimestres et fiabilité. */
+  trimestres(anneeOuverture) {
+    return this._table[String(anneeOuverture)] ?? null;
+  }
+}
+
+/**
  * Durée d'assurance MAXIMALE prise en compte par la proratisation.
  *
  * Ce n'est pas la durée requise pour le taux plein, et le moteur les
@@ -225,6 +244,8 @@ export class MinimumContributif {
  * 0,125 % en 2006 à 1,25 % en 2015, et le nombre de trimestres retranchés à la
  * LIMITE D'ÂGE pour obtenir l'âge d'annulation, de seize en 2006 à zéro en
  * 2020. Rien avant 2006 : la décote n'existait pas dans la fonction publique.
+ * Les deux se lisent à l'année où le droit s'ouvre, non à celle du départ :
+ * c'est `ScenarioActuel.anneeOuvertureDesDroits` qui la fournit.
  */
 export class DecoteFonctionPublique {
   /** @param {object} paquet @param {string} cle table du paquet à lire. */
@@ -309,6 +330,20 @@ export class MinimumGaranti {
       return null;
     }
     return this._point[String(Math.max(...annees))];
+  }
+
+  /**
+   * Ce que devient un traitement indiciaire entre deux années : un
+   * fonctionnaire garde son indice, son traitement suit le point. `null` quand
+   * la série ne couvre pas les deux années.
+   */
+  ratioPointIndice(depart, arrivee) {
+    const de = this._pointIndice(depart);
+    const a = this._pointIndice(arrivee);
+    if (de === null || a === null || !(de[0] > 0)) {
+      return null;
+    }
+    return a[0] / de[0];
   }
 
   /**

@@ -1,6 +1,16 @@
 {
- "certifie_le": "2026-09-13",
+ "certifie_le": "2026-09-14",
  "series": {
+  "age_annulation_decote_openfisca": {
+   "ajoutees": 0,
+   "colonne": "age",
+   "corrigees": 0,
+   "empreinte": "f44dd24f01ee5d98",
+   "identiques": 8,
+   "niveau": "haute",
+   "source": "OpenFisca-France-Pension, aad.yaml du régime général",
+   "valeurs": 8
+  },
   "age_ouverture_requis": {
    "ajoutees": 0,
    "colonne": "age",
@@ -111,6 +121,16 @@
    "source": "DILA, base LEGI, décrets pris pour l'application de la loi du 21 août 2003 et de celle du 9 novembre 2010",
    "valeurs": 5
   },
+  "duree_assurance_requise_openfisca": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "5629f87adc5e72ba",
+   "identiques": 11,
+   "niveau": "haute",
+   "source": "OpenFisca-France-Pension, trimtp.yaml du régime général",
+   "valeurs": 11
+  },
   "duree_proratisation": {
    "ajoutees": 0,
    "colonne": "trimestres",
@@ -119,6 +139,16 @@
    "identiques": 5,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-6 II",
+   "valeurs": 5
+  },
+  "duree_requise_fonction_publique_openfisca": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "5eebe7660bb5a1db",
+   "identiques": 5,
+   "niveau": "haute",
+   "source": "OpenFisca-France-Pension, trimtp.yaml de la pension civile, colonne de 2003",
    "valeurs": 5
   },
   "employeur_public_cnracl": {

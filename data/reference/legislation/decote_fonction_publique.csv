@@ -19,8 +19,15 @@
 #      un sédentaire dont la limite d'âge est de 65 ans, l'âge d'annulation
 #      était de 61 ans en 2006 et de 63 ans en 2012 — et non de 67.
 #
-# Les deux colonnes se lisent à l'ANNÉE DE LIQUIDATION, non à la génération :
-# c'est ainsi que l'article est écrit, la montée en charge étant calendaire.
+# Les deux colonnes se lisent à l'ANNÉE OÙ LE DROIT S'OUVRE, non à la
+# génération ni à l'année de liquidation : la colonne du tableau s'intitule
+# « Année au cours de laquelle sont réunies les conditions mentionnées au I et
+# au II de l'article L. 24 », c'est-à-dire l'année où l'assuré atteint l'âge
+# d'ouverture — ou celle de son départ, s'il part avant. Un sédentaire né en
+# 1948 réunit ces conditions en 2008 et garde 0,375 % et « limite d'âge moins
+# douze trimestres » quelle que soit l'année où il liquide. Le modèle lisait
+# la table à l'année de liquidation ; c'est la confrontation à
+# OpenFisca-France-Pension qui l'a fait voir.
 # La limite d'âge, elle, suit la génération (65 -> 67 ans, loi du 9 novembre
 # 2010) : elle est lue dans `age_annulation_decote.csv`, que la fiche du
 # régime branche par `age_taux_plein_par_generation`.
