@@ -257,14 +257,16 @@ inventaire:
     textes:
       - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Nouvelle-Calédonie » et fiche de cotisations 2026 ; page « Le montant de ma retraite » de la CAFAT (délibérations du congrès, compétence locale, hors JORF)", id: null}
       - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...] soumis à titre obligatoire au régime d'assurance vieillesse de base géré par la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif, hors JORF)", id: null}
+      - {reference: "accord interprofessionnel territorial du 29 août 1994 pour la généralisation des régimes de retraite complémentaire ARRCO et AGIRC en Nouvelle-Calédonie, étendu par arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2 mai 1995), avenants des 24 août et 12 décembre 1995 (direction du travail de Nouvelle-Calédonie, hors JORF)", id: null}
     manque: >-
       La valeur de référence qui convertit les cotisations en points n'est
       pas publiée : le rendement est estimé ; taux et barème de 2026
       projetés sur toute la période ; plafond de 548 600 FCFP remplacé par
       le plafond national. Les salariés du privé de Nouvelle-Calédonie
-      relèvent aussi, obligatoirement, de l'Agirc-Arrco : le statut
-      `salarie_nouvelle_caledonie` ne route pas vers la complémentaire, et
-      la date de cette extension n'est pas lue.
+      relèvent aussi, obligatoirement, de l'Agirc-Arrco depuis l'accord
+      territorial de 1994, étendu en 1995 et généralisé au 1er janvier 1995
+      avec validation des services passés : le statut
+      `salarie_nouvelle_caledonie` ne route pas vers la complémentaire.
 
   - code: wallis_et_futuna
     nom: Retraite des salariés de Wallis-et-Futuna
@@ -835,7 +837,7 @@ inventaire:
     nom: Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties)
     famille: fonction_publique
     population: Fonctionnaires français des cadres d'Algérie, du Maroc et de Tunisie, agents des communes d'Algérie
-    creation: null
+    creation: 1903
     fermeture: 1962
     extinction: null
     succede_a: []
@@ -843,6 +845,9 @@ inventaire:
     couverture: hors_champ
     statuts: []
     textes:
+      - {reference: "loi du 30 décembre 1903 portant fixation du budget général de l'exercice 1904 (création de la caisse des retraites de l'Algérie, d'après le Journal officiel lu sur Gallica ; abrogée par la loi n° 2019-1332)", id: JORFARTI000039480075}
+      - {reference: "décret du 16 juillet 1907 relatif au fonctionnement de la caisse des retraites de l'Algérie", id: JORFTEXT000000664903}
+      - {reference: "décret du 2 février 1926 portant réforme du régime des pensions servies par la caisse des retraites de l'Algérie, puis décrets d'affiliation de nouvelles catégories de personnel jusqu'au décret du 11 mars 1937", id: JORFTEXT000000849029}
       - {reference: "loi n° 52-432 du 28 avril 1952 portant statut général du personnel des communes, article 94 C (affiliation obligatoire à la caisse générale des retraites de l'Algérie)", id: LEGIARTI000006399171}
       - {reference: "code des pensions civiles et militaires de retraite, R. 35 (coordination avec la caisse générale des retraites de l'Algérie et la caisse marocaine de retraites)", id: LEGIARTI000006362950}
       - {reference: "loi n° 75-1278 du 30 décembre 1975, article 73 I (les fonctionnaires français de ces trois caisses admis aux avantages du régime général des retraites)", id: LEGIARTI000006272976}
@@ -853,11 +858,13 @@ inventaire:
     raison_hors_champ: >-
       Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés
       aux Français avec l'indépendance et dont l'État garantit les pensions
-      depuis ; leurs textes fondateurs, décisions de l'assemblée algérienne
-      homologuées par décret et dahirs, ne sont pas au Journal officiel de
-      la République, qui n'en a que les homologations et les règles de
-      coordination (services du 1er avril 1938 au 1er juillet 1962). Aucun
-      cotisant depuis 1962.
+      depuis. La caisse des retraites de l'Algérie, créée par la loi de
+      finances du 30 décembre 1903 et organisée par le décret du 16 juillet
+      1907, a ses décrets de 1907 à 1937 dans l'index ; ses règles d'après
+      1947, décisions de l'assemblée algérienne homologuées par décret, et
+      les dahirs marocains et tunisiens n'y sont que par leurs homologations
+      et les règles de coordination (services du 1er avril 1938 au 1er
+      juillet 1962). Aucun cotisant depuis 1962.
 
   - code: crfm_mayotte
     nom: Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM)
@@ -901,6 +908,7 @@ inventaire:
       - {reference: "loi organique n° 99-209, article 163 (même compétence de l'assemblée de province pour ses membres)", id: LEGIARTI000028213949}
       - {reference: "Radio 1 Tahiti, « Les détails du texte qui doit faire cotiser les élus à la CPS » : proposition de loi du pays affiliant les représentants au régime de base des salariés, le régime par capitalisation existant étant maintenu à titre complémentaire (hors JORF)", id: null}
       - {reference: "TNTV, « Les membres du gouvernement vont cotiser au régime de retraite », 24 avril 2024 : arrêté du conseil des ministres affiliant les membres du gouvernement au régime de base des salariés de la CPS au 1er juin 2024 (hors JORF)", id: null}
+      - {reference: "Outre-mer La 1ère, « Le gouvernement va cotiser au régime de retraite de la CPS », 30 avril 2024 : « représentants et ministres souscrivent à des régimes de retraite privés », cotisation d'environ 3 % des indemnités ministérielles (hors JORF)", id: null}
     raison_hors_champ: >-
       Régimes fixés par les assemblées elles-mêmes, hors Journal officiel de
       la République. En Polynésie, les représentants ont un régime par
