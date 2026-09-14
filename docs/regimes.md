@@ -14,9 +14,9 @@ savoir de quels régimes on parle, puis, pour chacun, quelles règles il a
 appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
-L'inventaire compte **88 lignes** : 34 régimes modélisés,
+L'inventaire compte **89 lignes** : 34 régimes modélisés,
 38 calculés mais incomplets, 2 affiliations portées par un statut,
-14 hors champ — et plus aucune ligne à modéliser.
+15 hors champ — et plus aucune ligne à modéliser.
 
 | Couverture | Ce que cela veut dire |
 |---|---|
@@ -100,7 +100,8 @@ repris par un autre.
 | Caisse de retraite des anciens membres du Conseil économique, social et environnemental | spécial | depuis 1957 | ✚ à modéliser | — | Même situation que les assemblées parlementaires, pour quelques centaines de personnes. |
 | Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer (CRFOM) | fonction publique | depuis 1924, fermé en 1976 | ⊘ hors champ | — | Régime des cadres coloniaux fermé par la loi de finances pour 1976 : ses derniers actifs ont été affiliés d'office aux pensions civiles et militaires au 1er janvier 1976, et ses pensions sont servies par l'État. Le statut `fonctionnaire_etat` porte la carrière ; le dépôt n'a pas le règlement du décret du 21 avril 1950. |
 | Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties) | fonction publique | fermé en 1962 | ⊘ hors champ | — | Régimes des anciens cadres d'Algérie, du Maroc et de Tunisie, fermés aux Français avec l'indépendance et dont l'État garantit les pensions depuis ; leurs textes fondateurs ne sont pas au Journal officiel de la République. Aucun cotisant depuis 1962. |
-| Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM) | fonction publique | fermé en 2010 | ⊘ hors champ | — | Caisse locale, instituée par délibération hors Journal officiel, fermée par l'intégration de ses affiliés dans les fonctions publiques au plus tard fin 2010, puis dissoute : ses pensions sont versées par la CNRACL ou par l'État (loi n° 2001-616, article 64-1 ; décrets n° 2012-1256 et 2013-255). |
+| Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM) | fonction publique | depuis 1977, fermé en 2010 | ⊘ hors champ | — | Caisse locale créée en mars 1977 par délibération hors Journal officiel, fermée par l'intégration de ses affiliés dans les fonctions publiques au plus tard fin 2010, en liquidation depuis : ses pensions sont versées par la CNRACL ou par l'État (loi n° 2001-616, article 64-1 ; décrets n° 2012-1256 et 2013-255). |
+| Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie | spécial | — | ⊘ hors champ | — | Régimes fixés par les assemblées elles-mêmes, hors Journal officiel. En Polynésie, les représentants ont un régime par capitalisation auprès d'un assureur privé, et les membres du gouvernement ne cotisent au régime de base de la CPS que depuis le 1er juin 2024 ; en Nouvelle-Calédonie, la loi organique (articles 78 et 163) confie au congrès et aux assemblées de province le régime de retraite de leurs membres, et le dépôt n'a lu aucune de leurs délibérations. |
 | Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française | fonction publique | depuis 1959 | ✚ à modéliser | — | Compétence locale ; la Caisse locale de retraites de Nouvelle-Calédonie et la CPS polynésienne publient leurs propres règlements, non lus. |
 
 ## Régimes spéciaux de salariés
@@ -150,7 +151,7 @@ repris par un autre.
 | Complémentaire des officiers ministériels (CAVOM) (`cavom_complementaire`) | libéral | depuis 1979 | ◐ partiel | `officier_ministeriel` | Fiche écrite à partir de 2016 seulement : le régime par classes de 1979 à 2015 n'a pas de grille publiée. |
 | Complémentaire de la Cipav (`cipav_complementaire`) | libéral | depuis 1979 | ✅ modélisé | `profession_liberale` |  |
 | Complémentaire des notaires (CPRN), section C (`cprn_complementaire`) | libéral | depuis 1949 | ◐ partiel | `notaire` | La section B, par classes, dont les bornes ne sont publiées nulle part, n'est pas portée : près de quatre dixièmes du complémentaire d'un notaire. |
-| Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA) | libéral | 1977-2004 | ⊘ hors champ | — | Section de la CNAVPL fondue dans la Cipav au 1er janvier 2004 (décret n° 2004-461, article 13 VIII), qui a repris ses affiliés et leurs points ; le statut `profession_liberale` route vers la Cipav sur toute la période, et le barème propre de la CREA n'est pas au Journal officiel. |
+| Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA) | libéral | 1949-2004 | ⊘ hors champ | — | Section de la CNAVPL dès l'organisation de 1949 (professeurs de musique et musiciens, artistes hors L. 631-1), nommée CREA en 1977 et fondue dans la Cipav au 1er janvier 2004 (décret n° 2004-461, article 13 VIII), qui a repris ses affiliés et leurs points ; le statut `profession_liberale` route vers la Cipav sur toute la période, et le barème propre de la CREA n'est pas au Journal officiel. |
 | Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV) | libéral | depuis 1972 | ✚ à modéliser | — | Un troisième étage obligatoire pour les professionnels de santé conventionnés, financé aux deux tiers par l'assurance maladie, qui pèse près du tiers de la pension d'un médecin de secteur 1 ; aucun des statuts de santé ne le porte. |
 | Caisse nationale des barreaux français, régime de base (`cnbf`) | libéral | depuis 1948 | ◐ partiel | `avocat` | La progression de la cotisation forfaitaire sur les cinq premières années et la contribution équivalente aux droits de plaidoirie ne sont pas portées. |
 | Complémentaire des avocats (CNBF) (`cnbf_complementaire`) | libéral | depuis 1979 | ✅ modélisé | `avocat` |  |
@@ -183,11 +184,39 @@ gagné une population : la caisse de sécurité sociale de Mayotte couvre aussi
 les **non-salariés** depuis 2012 (ordonnance n° 2011-1923, article 20), sans
 statut qui les y route ; et le **personnel au sol d'Air France** rejoint la
 ligne des régimes professionnels intégrés (règlement approuvé par arrêté du
-4 mai 1956, régime différentiel depuis l'arrêté du 1er juin 1993). Ce que la
-relecture n'a pas tranché, faute de texte au Journal officiel : les régimes
-de retraite des élus des assemblées de Polynésie française et de
-Nouvelle-Calédonie, et le « régime des médecins » de l'Ircantec, qui est une
-assiette particulière des praticiens hospitaliers plutôt qu'un régime.
+4 mai 1956, régime différentiel depuis l'arrêté du 1er juin 1993).
+
+**Ce qu'une seconde passe a comblé.** La CREA n'est pas née en 1977 : le
+décret n° 50-1089 du 2 septembre 1950 nomme déjà, parmi les sections de
+l'organisation de 1949, celles des artistes et des professeurs de musique et
+musiciens, dont un arrêté de 1952 fixe les taux ; 1977 est l'année du nom.
+La CRFM a été créée en mars 1977 (répertoire Sirene, 16 mars 1977), ses
+cotisations sont reprises au niveau national depuis 2007 et elle est en
+liquidation avec trois agents (Outre-mer La 1ère, septembre 2025). Les caisses
+d'Algérie, du Maroc et de Tunisie ont leurs textes de coordination dans
+l'index — homologation de décisions de l'assemblée algérienne (1951), lois de
+reclassement de 1956 à 1958, décret n° 68-326 validant les services du
+1er avril 1938 au 1er juillet 1962 — mais aucun texte fondateur, et leur date
+de création reste vide. Le « régime des médecins » de l'Ircantec est une
+assiette : les arrêtés du 18 juillet 1983 et du 7 mars 1986 cotisent les
+praticiens hospitaliers sur les deux tiers de leurs émoluments, dans le même
+régime. Les non-salariés de Mayotte ont leur décret d'application (décret
+n° 2012-1168, article 9). En Polynésie, les délibérations fondatrices sont
+maintenant citées — n° 67-110 AT du 24 août 1967, n° 87-11 AT du 29 janvier
+1987 pour la tranche A, n° 95-180 AT du 26 octobre 1995 pour la tranche B —,
+lues dans un rapport de l'assemblée d'août 2025 ; le régime des non-salariés
+(RNS) n'a qu'une adhésion volontaire à la tranche A, donc rien à inventorier
+(rapport du Conseil d'orientation et de suivi des retraites, 2020). En
+Nouvelle-Calédonie, l'Agirc-Arrco est obligatoire pour les salariés du privé
+(fiche du CLEISS), ce que la ligne de la CAFAT dit désormais. Enfin les élus
+des assemblées du Pacifique ont leur ligne, hors champ : la loi organique de
+1999 confie au congrès et aux assemblées de province le régime de retraite
+de leurs membres (articles 78 et 163), les représentants polynésiens ont un
+régime par capitalisation auprès d'un assureur privé et les membres du
+gouvernement polynésien ne cotisent à la CPS que depuis le 1er juin 2024,
+d'après la presse locale. Reste vide, faute de source atteignable : la date
+de création de la caisse générale des retraites de l'Algérie, et les
+délibérations calédoniennes sur les élus.
 
 ## Ce qui a été cherché sans être trouvé
 
