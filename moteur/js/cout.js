@@ -18,9 +18,17 @@
  * Le poids d'une génération une année donnée est son EFFECTIF RÉEL, lu dans les
  * projections de population. Chaque génération de la grille en représente cinq,
  * parcourues une à une, chacune liquidant sa propre année.
+ *
+ * CE QUE CHAQUE CAS TYPE PÈSE
+ * Les douze cas types ont longtemps pesé d'un poids ÉGAL, faute de source : il y
+ * a près de cent fois moins de retraités à la SNCF qu'à la Cnav, et les départs
+ * très précoces, que le notionnel pénalise le plus, étaient surreprésentés.
+ * Chacun porte désormais l'effectif des retraités de sa caisse, publié par la
+ * DREES et lu année par année. L'ancienne convention reste disponible —
+ * ``ponderation = "egale"`` — pour dire de combien elle déplaçait les résultats.
  */
 
-import { CAS_TYPES, calculerCasTypes } from "./castypes.js";
+import { CAS_TYPES, calculerCasTypes, poidsEffectifs, poidsEgaux } from "./castypes.js";
 import { Fiabilite } from "./serie.js";
 
 /** Les six systèmes, dans l'ordre du tableau de comparaison. */
@@ -79,6 +87,13 @@ export function generations() {
 /** Demi-largeur de la tranche d'âges qu'une génération de la grille représente. */
 const DEMI_TRANCHE = Math.floor(PAS_GENERATIONS / 2);
 
+/**
+ * Les deux pondérations possibles des cas types. `effectifs` est celle des
+ * résultats affichés ; `egale` est l'ancienne convention, gardée pour mesurer ce
+ * qu'elle valait.
+ */
+export const PONDERATIONS = ["effectifs", "egale"];
+
 /** Simule la grille et en tire, pour chaque couple, sa pension par système. */
 function pensionnes(simulateur, casTypes) {
   const grille = calculerCasTypes(simulateur, casTypes, generations());
@@ -96,6 +111,9 @@ function pensionnes(simulateur, casTypes) {
     // La clé de la grille est « code|génération » : la génération en est la
     // seconde moitié, et c'est elle qui dit quel âge ce couple a chaque année.
     liste.push({
+      // Le code du cas type est la première moitié de la clé : c'est par lui
+      // que le couple reçoit son poids.
+      code: cle.slice(0, cle.indexOf("|")),
       generation: Number(cle.slice(cle.indexOf("|") + 1)),
       anneeLiquidation: comparaison.carriere.anneeLiquidation,
       pensions,
@@ -116,11 +134,16 @@ function pensionnes(simulateur, casTypes) {
  * propre année. Les faire basculer le même jour ferait avancer la trajectoire
  * par marches de cinq ans au lieu de la faire monter.
  */
-function masses(liste, population, annee) {
+function masses(liste, population, annee, poidsCas) {
   const total = {};
   for (const cle of CLES_MASSES) total[cle] = 0;
   let vivants = 0;
   for (const pensionne of liste) {
+    // Deux pondérations se composent ici : celle de la GÉNÉRATION, démographique,
+    // et celle du CAS TYPE, sociologique — combien de retraités ont eu cette
+    // carrière-là.
+    const part = poidsCas[pensionne.code] || 0;
+    if (part <= 0) continue;
     let poids = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
       if (annee < pensionne.anneeLiquidation + decalage) continue;
@@ -129,10 +152,35 @@ function masses(liste, population, annee) {
     if (poids <= 0) continue;
     vivants += 1;
     for (const cle of CLES_MASSES) {
-      total[cle] += poids * pensionne.pensions[cle];
+      total[cle] += part * poids * pensionne.pensions[cle];
     }
   }
   return { total, vivants };
+}
+
+/**
+ * Fonction qui rend le poids de chaque cas type une année donnée.
+ *
+ * Les poids d'effectifs varient d'une année à l'autre — la France de 1960
+ * comptait plus d'exploitants agricoles que de fonctionnaires —, et la fenêtre
+ * publiée par la DREES est 2004-2024 : hors d'elle, la répartition du bord est
+ * reconduite, et la série le dit en tombant au niveau `estimee`.
+ */
+function ponderation(simulateur, mode, casTypes) {
+  if (!PONDERATIONS.includes(mode)) {
+    throw new Error(`pondération inconnue : ${mode}`);
+  }
+  if (mode === "egale") {
+    const fixes = poidsEgaux(casTypes);
+    return () => fixes;
+  }
+  const memoire = new Map();
+  return (annee) => {
+    if (!memoire.has(annee)) {
+      memoire.set(annee, poidsEffectifs(simulateur.effectifs, annee, casTypes));
+    }
+    return memoire.get(annee);
+  };
 }
 
 function rapports(total) {
@@ -245,13 +293,18 @@ class Avenir {
 
 /** La série complète, et les cumuls qu'on en tire. */
 class Cout {
-  constructor(annees, avenir, anneeEuros, generationsRetenues, echecs, fiabilite) {
+  constructor(annees, avenir, anneeEuros, generationsRetenues, echecs, fiabilite,
+              ponderationRetenue = "effectifs", poids = {}) {
     this.annees = annees;
     this.avenir = avenir;
     this.anneeEuros = anneeEuros;
     this.generations = generationsRetenues;
     this.echecs = echecs;
     this.fiabilite = fiabilite;
+    // Pondération appliquée aux cas types, et poids de chacun la DERNIÈRE année
+    // observée : ce que la page affiche pour dire sur quoi ses agrégats reposent.
+    this.ponderation = ponderationRetenue;
+    this.poids = poids;
     this.premiereAnnee = annees[0].annee;
     this.derniereAnnee = annees[annees.length - 1].annee;
   }
@@ -298,12 +351,13 @@ class Cout {
  * produit, mise à l'échelle par un ancrage calculé sur cette même dernière
  * année : les deux expressions coïncident exactement à la jonction.
  */
-function construireAvenir(liste, depenses, population, simulateur) {
+function construireAvenir(liste, depenses, population, simulateur, poids) {
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
   const dernierePubliee = depenses.derniereAnnee;
 
-  const ancrageMasses = masses(liste, population, dernierePubliee).total;
+  const ancrageMasses = masses(liste, population, dernierePubliee,
+                              poids(dernierePubliee)).total;
   if (ancrageMasses.actuel <= 0) {
     return new Avenir([], 0, 0, anneeEuros, Fiabilite.ESTIMEE);
   }
@@ -328,7 +382,7 @@ function construireAvenir(liste, depenses, population, simulateur) {
 
   const lignes = [];
   for (let annee = depenses.premiereAnneeVentilee; annee <= HORIZON; annee += 1) {
-    const total = masses(liste, population, annee).total;
+    const total = masses(liste, population, annee, poids(annee)).total;
     if (total.actuel <= 0) continue;
     const projete = annee > dernierePubliee;
     const coefficient = macro.coefficientPrix(annee, anneeEuros);
@@ -367,14 +421,15 @@ function construireAvenir(liste, depenses, population, simulateur) {
  * serait une division par zéro, et non un résultat.
  */
 export function calculerCout(simulateur, depenses, population,
-                             casTypes = CAS_TYPES) {
+                             casTypes = CAS_TYPES, mode = "effectifs") {
   const { liste, motifs } = pensionnes(simulateur, casTypes);
+  const poids = ponderation(simulateur, mode, casTypes);
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
 
   const lignes = [];
   for (const annee of depenses.annees()) {
-    const { total, vivants } = masses(liste, population, annee);
+    const { total, vivants } = masses(liste, population, annee, poids(annee));
     if (total.actuel <= 0) continue;
     lignes.push(new CoutAnnuel(
       annee,
@@ -395,10 +450,12 @@ export function calculerCout(simulateur, depenses, population,
   // pas l'être.
   return new Cout(
     lignes,
-    construireAvenir(liste, depenses, population, simulateur),
+    construireAvenir(liste, depenses, population, simulateur, poids),
     anneeEuros,
     generations(),
     motifs,
     Math.min(fiabilite, Fiabilite.ESTIMEE),
+    mode,
+    poids(depenses.derniereAnnee),
   );
 }

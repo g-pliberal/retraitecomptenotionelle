@@ -45,6 +45,10 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     journal_certification,
 )
 from retraite_notionnelle.donnees.depenses import SYSTEMES  # noqa: E402
+from retraite_notionnelle.donnees.distribution import (  # noqa: E402
+    DistributionPensions,
+)
+from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
@@ -70,7 +74,7 @@ STYLE = RACINE / "moteur" / "style.css"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 9
+VERSION = 10
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -146,6 +150,36 @@ def _depenses() -> dict:
             macro / "depenses_retraite_regimes.csv", "depenses_meur",
             nom=f"depenses_{systeme.code}", filtre={"regime": systeme.code})
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
+
+
+def _effectifs_retraites() -> dict:
+    """Retraités de droit direct par caisse — la pondération des cas types.
+
+    Ces séries ne servent à AUCUNE pension : elles ne portent que les agrégats
+    de la page « Coût », où elles disent ce que chaque cas type pèse.
+    """
+    effectifs = EffectifsRetraites(DONNEES)
+    return {
+        caisse: _serie(effectifs.serie(caisse)) for caisse in effectifs.caisses()
+    }
+
+
+def _distribution_pensions() -> dict:
+    """Distribution des pensions : ce qui chiffre un plancher différentiel.
+
+    Les tranches sont écrites en trois tableaux parallèles, comme les séries :
+    la borne inférieure, la borne supérieure — ``null`` pour la tranche ouverte
+    du haut — et la part des retraités.
+    """
+    distribution = DistributionPensions(DONNEES)
+    return {
+        "millesime": distribution.millesime,
+        "sexe": distribution.sexe,
+        "fiabilite": int(distribution.fiabilite),
+        "bornes_inferieures": [t.borne_inferieure for t in distribution.tranches],
+        "bornes_superieures": [t.borne_superieure for t in distribution.tranches],
+        "parts": [t.part for t in distribution.tranches],
+    }
 
 
 def _population() -> dict:
@@ -576,6 +610,8 @@ def construire() -> bytes:
         "surcote_parentale": _surcote_parentale(),
         "depenses": _depenses(),
         "population": _population(),
+        "effectifs_retraites": _effectifs_retraites(),
+        "distribution_pensions": _distribution_pensions(),
         "certification": journal_certification(DONNEES),
     }
     texte = json.dumps(paquet, ensure_ascii=False, sort_keys=True,

@@ -15,8 +15,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from typing import TYPE_CHECKING
+
 from .carriere import Carriere
 from .simulateur import Comparaison, Simulateur
+
+if TYPE_CHECKING:  # pragma: no cover - annotation seulement
+    from .donnees.effectifs import EffectifsRetraites
 
 
 @dataclass(frozen=True)
@@ -34,6 +39,11 @@ class CasType:
     nombre_enfants: int = 0
     part_primes: float = 0.0
     interruptions_relatives: tuple[tuple[int, str], ...] = ()
+    #: Caisses de ``effectifs_retraites.csv`` dont ce cas type porte les
+    #: retraités. C'est par elles qu'il reçoit son POIDS dans les agrégats :
+    #: voir :func:`poids_effectifs`. Une caisse réclamée par plusieurs cas types
+    #: se partage entre eux.
+    caisses: tuple[str, ...] = ()
     commentaire: str = ""
 
     def construire(self, simulateur: Simulateur, generation: int) -> Carriere:
@@ -64,6 +74,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="salarie_prive_non_cadre",
         age_debut=18, age_liquidation=64, niveau_salaire=0.55,
         profil_carriere="plat",
+        caisses=("cnav",),
         commentaire="Carrière longue à bas salaire : le cas où les minima pèsent le plus.",
     ),
     CasType(
@@ -71,6 +82,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Salarié au salaire moyen",
         affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=64, niveau_salaire=1.0,
+        caisses=("cnav",),
         commentaire="Référence centrale.",
     ),
     CasType(
@@ -79,6 +91,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="salarie_prive_cadre",
         age_debut=23, age_liquidation=64, niveau_salaire=2.2,
         profil_carriere="fortement_ascendant",
+        caisses=("cnav",),
         commentaire="Forte part de rémunération au-dessus du plafond.",
     ),
     CasType(
@@ -87,6 +100,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=64, niveau_salaire=0.9,
         sexe="F", nombre_enfants=2,
+        caisses=("cnav",),
         interruptions_relatives=tuple((decalage, "education_enfant") for decalage in range(8, 13)),
         commentaire=(
             "Cinq années sans cotisation. Le système actuel les couvre par des "
@@ -105,6 +119,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="fonctionnaire_etat",
         age_debut=22, age_liquidation=64, niveau_salaire=1.2,
         part_primes=0.18,
+        caisses=("fonction_publique_etat_civile",),
         commentaire="Traitement indiciaire hors primes ; les primes relèvent du RAFP.",
     ),
     CasType(
@@ -113,6 +128,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="fonctionnaire_territorial_hospitalier",
         age_debut=22, age_liquidation=57, niveau_salaire=1.1,
         part_primes=0.22,
+        caisses=("cnracl",),
         commentaire="Départ anticipé de dix ans par rapport à l'âge de référence.",
     ),
     CasType(
@@ -120,6 +136,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Agent de conduite SNCF (départ à 52 ans)",
         affiliation="agent_sncf",
         age_debut=20, age_liquidation=52, niveau_salaire=1.1,
+        caisses=("sncf",),
         commentaire="Écart à l'âge de référence parmi les plus élevés du système.",
     ),
     CasType(
@@ -127,6 +144,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Agent des industries électriques et gazières",
         affiliation="agent_ieg",
         age_debut=21, age_liquidation=57, niveau_salaire=1.4,
+        caisses=("cnieg",),
         commentaire="Régime spécial fermé aux embauches depuis 2023.",
     ),
     CasType(
@@ -134,6 +152,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Artisan",
         affiliation="artisan",
         age_debut=24, age_liquidation=64, niveau_salaire=0.9,
+        caisses=("rci_complementaire",),
         commentaire="Assiette de cotisation plus faible que celle d'un salarié.",
     ),
     CasType(
@@ -141,6 +160,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Chef d'exploitation agricole",
         affiliation="exploitant_agricole",
         age_debut=20, age_liquidation=64, niveau_salaire=0.5,
+        caisses=("msa_exploitants",),
         commentaire=(
             "Retraite majoritairement forfaitaire aujourd'hui : la part non "
             "contributive disparaît intégralement dans les scénarios notionnels."
@@ -152,6 +172,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="profession_liberale",
         age_debut=27, age_liquidation=66, niveau_salaire=2.5,
         profil_carriere="fortement_ascendant",
+        caisses=("cnavpl",),
         commentaire="Régime de base CNAVPL et complémentaire Cipav, la section par "
                     "défaut. Un libéral d'une section spécialisée — auxiliaires "
                     "médicaux, pharmaciens, notaires — aurait un complémentaire "
@@ -162,6 +183,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Agent contractuel de la fonction publique",
         affiliation="contractuel_public",
         age_debut=24, age_liquidation=64, niveau_salaire=0.85,
+        caisses=("ircantec",),
         commentaire="Régime général + Ircantec.",
     ),
 )
@@ -169,6 +191,59 @@ CAS_TYPES: tuple[CasType, ...] = (
 #: Générations couvertes par défaut : de la première génération entièrement
 #: couverte par la Sécurité sociale aux actifs entrés récemment.
 GENERATIONS = (1940, 1950, 1960, 1970, 1980, 1990, 2000)
+
+
+def poids_effectifs(effectifs: "EffectifsRetraites", annee: int,
+                    cas_types: tuple[CasType, ...] = CAS_TYPES) -> dict[str, float]:
+    """Poids de chaque cas type une année donnée, tirés des effectifs de caisse.
+
+    La grille des cas types n'est pas un échantillon : elle couvre les
+    configurations du système, pas sa population. Rien ne s'oppose à ce qu'on
+    l'utilise pour un AGRÉGAT, à condition de rendre à chaque configuration son
+    poids réel — et c'est ce que les effectifs de la DREES donnent.
+
+    **La règle.** Chaque cas type reçoit l'effectif de ses caisses. Une caisse
+    réclamée par plusieurs cas types se partage ÉGALEMENT entre eux : la Cnav
+    est la caisse des quatre carrières du privé, et rien ne dit combien de ses
+    retraités ont été cadres, combien ont été au SMIC. C'est la seule part de
+    convention égalitaire qui subsiste, et elle ne joue plus qu'à l'intérieur du
+    salariat privé — non plus entre un agent de conduite et un salarié moyen.
+
+    **Les poids sont normalisés** : leur somme vaut un. Seul leur rapport
+    importe — la masse de pensions est de toute façon divisée par celle du
+    scénario actuel — et la normalisation rend le résultat lisible.
+
+    Un cas type sans caisse reçoit un poids nul et disparaît de l'agrégat ; ce
+    serait une erreur silencieuse, et le contrôle qui l'interdit est dans les
+    tests.
+    """
+    reclamants: dict[str, int] = {}
+    for cas in cas_types:
+        for caisse in cas.caisses:
+            reclamants[caisse] = reclamants.get(caisse, 0) + 1
+
+    bruts = {
+        cas.code: sum(
+            effectifs.effectif(caisse, annee) / reclamants[caisse]
+            for caisse in cas.caisses
+        )
+        for cas in cas_types
+    }
+    total = sum(bruts.values())
+    if total <= 0:
+        raise ValueError(f"aucun effectif connu en {annee} pour pondérer les cas types")
+    return {code: poids / total for code, poids in bruts.items()}
+
+
+def poids_egaux(cas_types: tuple[CasType, ...] = CAS_TYPES) -> dict[str, float]:
+    """L'ANCIENNE convention, gardée comme variante et non comme repli.
+
+    Elle ne sert plus à calculer les résultats affichés ; elle sert à dire de
+    combien elle les déplaçait, ce qu'aucun argument ne remplace.
+    """
+    return {cas.code: 1.0 / len(cas_types) for cas in cas_types}
+
+
 
 
 @dataclass

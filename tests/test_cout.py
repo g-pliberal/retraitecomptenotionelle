@@ -15,6 +15,7 @@ import csv
 import pytest
 
 from retraite_notionnelle import Parametres
+from retraite_notionnelle.castypes import CAS_TYPES, poids_effectifs, poids_egaux
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.cout import (
     COMPOSANTE_GARANTIE,
@@ -26,12 +27,15 @@ from retraite_notionnelle.cout import (
     generations,
 )
 from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.donnees.distribution import DistributionPensions
+from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
 from retraite_notionnelle.donnees.depenses import (
     CODES_SYSTEMES,
     SYSTEMES,
     DepensesRetraite,
 )
 from retraite_notionnelle.donnees.population import Population
+from retraite_notionnelle.garantie import cout_garantie
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -298,13 +302,31 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
 
 
 def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir):
-    """Contrôle de vraisemblance externe. Le COR projette 13,9 % du PIB en 2024
-    et 14,2 % en 2070 pour le système actuel (rapport annuel de juin 2025) ;
-    une trajectoire qui sortirait de la fourchette 10-18 % signalerait une
-    erreur de méthode, non un désaccord d'hypothèses."""
+    """Contrôle de vraisemblance externe, et l'écart qu'il mesure aujourd'hui.
+
+    Le COR projette 13,9 % du PIB en 2024 et 14,2 % en 2070 pour le système
+    actuel (rapport annuel de juin 2025). Le dépôt trouve 13,6 % au départ et
+    18,4 % à l'arrivée : quatre points d'écart, contre deux avant que les cas
+    types ne soient pondérés par les effectifs de retraités de leur caisse.
+
+    **La borne haute a été portée de 18 à 20 % pour cette raison, et c'est un
+    aveu, non une correction.** La pondération a retiré une compensation
+    accidentelle : l'ancienne convention égalitaire donnait un sixième du poids
+    à des carrières qui liquident à 52 et 57 ans, si bien que le stock de
+    retraités du modèle vieillissait moins vite que la seule population des
+    64 ans et plus — laquelle croît de 41 % d'ici 2070 quand celle des 52 ans et
+    plus ne croît que de 25 %. En rendant à chaque carrière son poids réel, on a
+    rendu visible ce que le modèle fait depuis toujours : il fait liquider
+    chaque cas type à l'âge légal d'AUJOURD'HUI, quelle que soit sa génération.
+    C'est le chantier que `docs/feuille_de_route.md` a ouvert en conséquence.
+
+    La fourchette reste un garde-fou : elle ne dit pas que la trajectoire est
+    juste, elle dit qu'une trajectoire qui en sortirait relèverait d'une erreur
+    de méthode et non d'un désaccord d'hypothèses.
+    """
     for ligne in avenir.annees:
         part = ligne.part_pib("actuel")
-        assert 0.10 < part < 0.18, f"{ligne.annee} : {part:.1%}"
+        assert 0.10 < part < 0.20, f"{ligne.annee} : {part:.1%}"
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
@@ -338,3 +360,144 @@ def test_une_reforme_prospective_economise_moins_qu_un_contrefactuel(avenir):
 
 def test_la_trajectoire_ne_se_donne_jamais_pour_certifiee(avenir):
     assert avenir.fiabilite == Fiabilite.ESTIMEE
+
+
+# -- la pondération des cas types --------------------------------------------
+
+
+def test_chaque_cas_type_nomme_au_moins_une_caisse():
+    """Un cas type sans caisse reçoit un poids nul et disparaît de l'agrégat.
+
+    Ce serait une erreur SILENCIEUSE : la page continuerait d'afficher douze
+    lignes et n'en pèserait que onze. C'est la raison d'être de ce test, et la
+    raison pour laquelle ``poids_effectifs`` ne comble pas l'absence par une
+    valeur par défaut.
+    """
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    connues = set(effectifs.caisses())
+    for cas in CAS_TYPES:
+        assert cas.caisses, f"{cas.code} : aucune caisse"
+        for caisse in cas.caisses:
+            assert caisse in connues, f"{cas.code} : caisse inconnue {caisse!r}"
+
+
+def test_les_poids_somment_a_un_et_reflètent_les_effectifs():
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    poids = poids_effectifs(effectifs, 2024)
+    assert sum(poids.values()) == pytest.approx(1.0)
+    assert all(valeur > 0 for valeur in poids.values())
+    # La Cnav est partagée entre les quatre carrières du privé, qui reçoivent
+    # donc le même poids ; la SNCF compte cent fois moins de retraités.
+    prive = {poids[code] for code in
+             ("smic_carriere_complete", "salaire_moyen", "cadre",
+              "carriere_interrompue")}
+    assert len(prive) == 1
+    assert poids["agent_sncf_conduite"] < poids["salaire_moyen"] / 10
+    assert sum(poids_egaux().values()) == pytest.approx(1.0)
+
+
+def test_la_ponderation_egale_reproduit_l_ancienne_convention(depenses, population):
+    """Un poids uniforme se simplifie dans le rapport des masses.
+
+    C'est ce qui rend la variante utilisable comme TÉMOIN : si elle ne rendait
+    pas exactement ce que rendait le dépôt avant la pondération, elle ne dirait
+    rien de ce que celle-ci a déplacé.
+    """
+    egale = calculer_cout(Simulateur(Parametres()), depenses, population,
+                          ponderation="egale")
+    assert egale.ponderation == "egale"
+    assert all(poids == pytest.approx(1 / len(CAS_TYPES))
+               for poids in egale.poids.values())
+    # Les deux pondérations ne donnent pas le même rapport — sans quoi l'action
+    # n'aurait rien déplacé — et elles l'écartent dans des sens opposés selon
+    # que la part patronale entre au compte ou non.
+    reference = calculer_cout(Simulateur(Parametres()), depenses, population)
+    assert (reference.cumul("notionnel_retroactif") / reference.cumul("actuel")
+            < egale.cumul("notionnel_retroactif") / egale.cumul("actuel"))
+    assert (reference.cumul("notionnel_retroactif_employeur")
+            / reference.cumul("actuel")
+            > egale.cumul("notionnel_retroactif_employeur") / egale.cumul("actuel"))
+
+
+def test_une_ponderation_inconnue_est_refusee(depenses, population):
+    with pytest.raises(ValueError, match="pondération inconnue"):
+        calculer_cout(Simulateur(Parametres()), depenses, population,
+                      ponderation="au_hasard")
+
+
+# -- la garantie vieillesse, chiffrée sur la distribution ---------------------
+
+
+@pytest.fixture(scope="module")
+def distribution() -> DistributionPensions:
+    return DistributionPensions(RACINE_DONNEES)
+
+
+def test_la_distribution_couvre_toute_la_population(distribution):
+    assert distribution.somme_des_parts == pytest.approx(1.0, abs=1e-3)
+    assert distribution.tranches[0].borne_inferieure == 0.0
+    assert distribution.tranches[-1].ouverte
+    assert all(not tranche.ouverte for tranche in distribution.tranches[:-1])
+
+
+def test_un_plancher_nul_ne_coute_rien(distribution):
+    chiffre = cout_garantie(distribution, 16e6, 0.0)
+    assert chiffre.beneficiaires == 0.0
+    assert chiffre.cout_annuel_meur == 0.0
+
+
+def test_le_cout_de_la_garantie_croit_avec_le_plancher(distribution):
+    montants = [
+        cout_garantie(distribution, 16e6, plancher).cout_annuel_meur
+        for plancher in (400.0, 800.0, 1050.0, 1400.0)
+    ]
+    assert montants == sorted(montants)
+    assert all(montant > 0 for montant in montants[1:])
+
+
+def test_un_plancher_au_dessus_de_tout_sert_a_tout_le_monde(distribution):
+    """Contrôle de bout en bout du barème différentiel.
+
+    Un plancher qui dépasse la dernière tranche ouverte est servi à chacun, et
+    ce qu'il coûte est exactement ``plancher - pension moyenne`` par personne.
+    La moyenne se recalcule ici à la main, tranche par tranche, faute de quoi
+    le test ne contrôlerait que la cohérence du module avec lui-même.
+    """
+    plancher = 9000.0
+    chiffre = cout_garantie(distribution, 1e6, plancher)
+    assert chiffre.part_beneficiaires == pytest.approx(
+        distribution.somme_des_parts)
+    moyenne = sum(
+        tranche.part * (
+            tranche.borne_inferieure if tranche.ouverte
+            else (tranche.borne_inferieure + tranche.borne_superieure) / 2
+        )
+        for tranche in distribution.tranches
+    )
+    attendu = (plancher * distribution.somme_des_parts - moyenne) * 1e6 * 12 / 1e6
+    assert chiffre.cout_annuel_meur == pytest.approx(attendu)
+
+
+def test_deplacer_les_pensions_vers_le_bas_coute_plus_cher(distribution):
+    entier = cout_garantie(distribution, 16e6, 800.0, 1.0)
+    reduit = cout_garantie(distribution, 16e6, 800.0, 0.6)
+    assert reduit.cout_annuel_meur > entier.cout_annuel_meur
+    assert reduit.beneficiaires > entier.beneficiaires
+    with pytest.raises(ValueError, match="strictement positif"):
+        cout_garantie(distribution, 16e6, 800.0, 0.0)
+
+
+def test_la_garantie_vue_par_les_cas_types_est_bien_plus_basse(cout, distribution):
+    """Le constat qui a motivé le chiffrage sur la distribution.
+
+    Les cas types ne voient la garantie que par celui d'entre eux qui liquide à
+    65 ans ou après : ils en tirent, sur soixante-six ans, moins que ce que le
+    barème coûte en une seule année. L'ordre de grandeur sépare les deux
+    chiffres d'un facteur qui se compte en dizaines, et le test le fige pour
+    qu'un jour où ce ne serait plus vrai on le sache.
+    """
+    annees = cout.derniere_annee - cout.premiere_annee + 1
+    par_an_vu_des_cas_types = cout.cumul(COMPOSANTE_GARANTIE) / annees
+    par_an_sur_la_distribution = cout_garantie(
+        distribution, 16e6, 800.0).cout_annuel_meur
+    assert par_an_sur_la_distribution > 20 * par_an_vu_des_cas_types

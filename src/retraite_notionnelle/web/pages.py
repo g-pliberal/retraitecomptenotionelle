@@ -35,6 +35,8 @@ from ..config import (
     TableConversion,
 )
 from ..cout import COMPOSANTE_GARANTIE, SCENARIOS, calculer_cout
+from ..donnees.distribution import DistributionPensions
+from ..garantie import cout_garantie
 from ..donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
@@ -826,6 +828,7 @@ class Contexte:
     _instances: dict[Parametres, Simulateur] = field(default_factory=dict)
     _depenses: DepensesRetraite | None = None
     _population: Population | None = None
+    _distribution: DistributionPensions | None = None
     _cout: object = None
 
     def simulateur(self, parametres: Parametres | None = None) -> Simulateur:
@@ -843,6 +846,12 @@ class Contexte:
         if self._population is None:
             self._population = Population(self.base.racine_donnees)
         return self._population
+
+    def distribution(self) -> DistributionPensions:
+        """La distribution des pensions — elle seule chiffre un plancher."""
+        if self._distribution is None:
+            self._distribution = DistributionPensions(self.base.racine_donnees)
+        return self._distribution
 
     def cout(self):
         """Le coût agrégé des six systèmes — deux secondes de calcul, une fois."""
@@ -2942,6 +2951,66 @@ def _cout(contexte: Contexte) -> str:
                       decimales=1),
     ])
 
+    # -- ce que chaque cas type pèse ---------------------------------------
+    # Les poids sont ceux de la dernière année observée ; ils viennent des
+    # effectifs de retraités que la DREES publie caisse par caisse.
+    lignes_poids = [
+        [escape(cas.libelle),
+         ", ".join(caisse.replace("_", " ") for caisse in cas.caisses),
+         g.pourcentage(cout.poids.get(cas.code, 0.0), decimales=1),
+         g.pourcentage(1 / len(CAS_TYPES), decimales=1)]
+        for cas in sorted(CAS_TYPES, key=lambda c: -cout.poids.get(c.code, 0.0))
+    ]
+
+    # -- ce que la garantie vieillesse coûte, lue sur la distribution -------
+    # Une allocation différentielle ne se chiffre pas sur douze carrières : son
+    # coût est celui de la queue basse de la distribution des pensions, que
+    # l'échantillon interrégimes de la DREES publie et que les cas types ne
+    # savent pas décrire.
+    distribution = contexte.distribution()
+    simulateur = contexte.simulateur()
+    effectif_retraites = simulateur.effectifs.effectif(
+        "tous_regimes", distribution.millesime)
+    # Le barème est écrit dans les euros de la proposition ; la distribution est
+    # dans ceux de l'enquête. C'est le barème qu'on déplace, et les coûts sont
+    # ensuite ramenés aux euros de la proposition pour être lisibles.
+    vers_enquete = simulateur.macro.coefficient_prix(
+        contexte.base.annee_euros_garantie_vieillesse, distribution.millesime)
+    rapports_liberal = cout.annee(distribution.millesime).rapports
+    facteur_contributif = (
+        rapports_liberal["notionnel_liberal"] - rapports_liberal[COMPOSANTE_GARANTIE]
+    )
+    planchers = (
+        ("Plancher de base, 800 € (vie à deux)",
+         contexte.base.garantie_vieillesse_mensuelle),
+        ("Plancher majoré, 1 050 € (personne seule)",
+         contexte.base.garantie_vieillesse_mensuelle
+         + contexte.base.allocation_isolement_mensuelle),
+    )
+    assiettes = (
+        (f"Pensions de {distribution.millesime}", 1.0),
+        ("Pensions du scénario 6", facteur_contributif),
+    )
+    lignes_garantie = []
+    for titre_assiette, facteur in assiettes:
+        for titre_plancher, mensuel in planchers:
+            chiffre = cout_garantie(
+                distribution, effectif_retraites, mensuel * vers_enquete, facteur)
+            lignes_garantie.append([
+                escape(f"{titre_assiette} — {titre_plancher}"),
+                g.pourcentage(chiffre.part_beneficiaires, decimales=1),
+                g.nombre(chiffre.beneficiaires / 1e6, 1) + " M",
+                g.euros(chiffre.complement_moyen_mensuel / vers_enquete),
+                _milliards(chiffre.cout_annuel_meur / vers_enquete, 1),
+            ])
+    garantie_basse = cout_garantie(
+        distribution, effectif_retraites,
+        contexte.base.garantie_vieillesse_mensuelle * vers_enquete, 1.0)
+    garantie_scenario = cout_garantie(
+        distribution, effectif_retraites,
+        contexte.base.garantie_vieillesse_mensuelle * vers_enquete,
+        facteur_contributif)
+
     # -- demain : la trajectoire de la répartition jusqu'à l'horizon INSEE --
     avenir = cout.avenir
     annees_avenir = tuple(ligne.annee for ligne in avenir.annees)
@@ -3116,6 +3185,31 @@ des âges de l'INSEE ; les écarts viennent des douze cas types croisés avec
 {len(cout.generations)} générations, de {cout.generations[0]} à
 {cout.generations[-1]}.</p>
 
+<p><strong>Deux pondérations se composent, et elles ne disent pas la même
+chose.</strong> Celle de la génération est démographique, et vient de l'INSEE.
+Celle du <strong>cas type</strong> est sociologique : elle dit combien de
+retraités ont eu cette carrière-là, et vient des effectifs que la DREES publie
+caisse par caisse. Cette page les a longtemps pesés à égalité faute de source :
+l'agent de conduite comptait autant que le salarié au salaire moyen, alors qu'il
+y a près de cent fois moins de retraités à la SNCF qu'à la Cnav. La colonne de
+droite rappelle ce que valait cette convention.</p>
+
+{g.tableau(
+    ["Cas type", "Caisse dont il porte les retraités",
+     f"Poids en {derniere}", "Ancienne convention"],
+    lignes_poids,
+    ["", "", "nombre", "nombre"],
+    titre=f"Ce que chaque cas type pèse dans les agrégats de cette page, en {derniere}",
+    entete_de_ligne=True,
+)}
+<p class="discret">Une caisse réclamée par plusieurs cas types se partage
+également entre eux : la Cnav est celle des quatre carrières du privé, et aucune
+source ne dit combien de ses retraités ont été cadres. C'est la seule part de
+convention égalitaire qui subsiste, et elle ne joue plus qu'à l'intérieur du
+salariat privé. Hors de la fenêtre que la DREES publie — 2004 à 2024 —, la
+répartition du bord est reconduite : la France de 1960 comptait plus
+d'exploitants agricoles que ces poids ne le disent.</p>
+
 {g.graphique(
     f"Coût annuel des six systèmes, {cout.premiere_annee}-{derniere}, "
     f"en milliards d'euros constants de {euros}",
@@ -3163,9 +3257,63 @@ dont {_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} de garantie vieillesse.
 Cette part-là est <strong>financée par l'impôt</strong> et non par les
 cotisations : la ligne en italique du tableau la redit à part, pour que l'on
 voie ce que ce scénario retire aux cotisations et ce qu'il demande au
-contribuable. C'est un ordre de grandeur bas : l'allocation n'est ouverte qu'à
-65 ans, et un seul des douze cas types liquide à cet âge ou après. C'est
-d'ici {avenir.derniere_annee} que le taux unique se voit.</p>
+contribuable. <strong>Ce chiffre-là ne vaut rien</strong>, et la section qui
+suit dit pourquoi et par quoi le remplacer. C'est d'ici
+{avenir.derniere_annee} que le taux unique se voit.</p>
+
+<h3>Ce que la garantie vieillesse coûterait vraiment</h3>
+<p>La garantie du scénario 6 est une allocation <strong>différentielle</strong> :
+elle ne verse que ce qui manque à une pension pour atteindre son plancher. Son
+coût est donc, tout entier, celui de la <strong>queue basse de la
+distribution</strong> des pensions — et douze carrières de référence ne
+décrivent pas une distribution. Le tableau ci-dessus ne voit la garantie que par
+les cas types qui liquident à 65 ans ou après, c'est-à-dire par un seul des
+douze : il l'estime à {_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} sur
+soixante-six ans, là où le barème appliqué à la vraie distribution coûte
+{_milliards(garantie_basse.cout_annuel_meur / vers_enquete, 0)} <em>par an</em>.
+Ce n'est pas une imprécision, c'est un chiffre faux, et il faut le remplacer.</p>
+
+<p>L'échantillon interrégimes de retraités de la DREES publie, par tranches de
+cent euros, combien de retraités touchent combien. On y applique le barème
+directement, sans passer par aucun cas type. Deux lectures, parce que deux
+questions : ce que la garantie coûterait <strong>aux pensions
+d'aujourd'hui</strong>, en remplacement de l'ASPA — un calcul qui ne doit rien
+au modèle —, et ce qu'elle coûterait <strong>aux pensions du scénario 6</strong>,
+toute la distribution étant alors déplacée du rapport
+{g.pourcentage(facteur_contributif, decimales=0)} que le modèle donne à sa part
+contributive. Deux planchers aussi, parce que l'enquête dit la pension et non
+avec qui l'on vit : le coût réel est entre les deux.</p>
+
+{g.tableau(
+    ["Assiette et plancher", "Part des retraités", "Bénéficiaires",
+     "Complément moyen", f"Coût annuel, milliards d'euros {contexte.base.annee_euros_garantie_vieillesse}"],
+    lignes_garantie,
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    titre=f"Coût annuel de la garantie vieillesse, barème appliqué à la "
+          f"distribution des pensions de l'EIR {distribution.millesime}",
+    entete_de_ligne=True,
+)}
+
+<p class="discret">Pensions <strong>brutes de droit direct</strong>, la seule des
+huit distributions publiées qui soit dans la même grandeur que celles du modèle.
+Les pensions d'une tranche de cent euros sont supposées y être réparties
+uniformément, et la tranche ouverte du haut est traitée comme une masse
+ponctuelle — elle est de toute façon au-dessus de tout plancher. Le déplacement
+des pensions au rapport du scénario 6 est <em>proportionnel et uniforme</em>,
+alors que le scénario ne déplace pas toutes les carrières du même rapport : les
+deux dernières lignes sont un ordre de grandeur là où les deux premières sont un
+calcul.</p>
+
+<div class="note"><strong>La garantie n'est pas l'ASPA à un autre
+montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne
+sert rien à un couple à 300 € et 1 500 € ; la garantie ne regarde que la pension
+d'une personne, et sert 500 € au premier. C'est ce changement d'assiette, plus
+encore que le montant, qui fait passer d'une allocation servie à quelques
+centaines de milliers de personnes à une allocation servie à
+{g.nombre(garantie_basse.beneficiaires / 1e6, 1)} millions de retraités aux
+pensions d'aujourd'hui, et à
+{g.nombre(garantie_scenario.beneficiaires / 1e6, 1)} millions à celles du
+scénario 6.</div>
 
 <h2>Demain : ce que chaque système coûterait d'ici {avenir.derniere_annee}</h2>
 <p class="chapeau">On ne change pas le passé. La question qui décide de quelque
@@ -3335,10 +3483,14 @@ proches des règles actuelles, et moins le compte notionnel s'en écarte.</p>
   projections de population 2026, observée jusqu'en 2023. L'hypothèse levée
   valait ce qu'on disait qu'elle valait : elle déplaçait l'écart du scénario 2
   de six dixièmes de point sur soixante-six ans.</li>
-  <li><strong>Les douze cas types pèsent d'un poids égal.</strong> Il y a moins
-  d'agents de conduite que de salariés au salaire moyen. C'est la convention de
-  la grille des <a href="{g.lien("/cas-types")}">cas types</a>, reconduite ici
-  faute d'une pondération que quelque source fixerait.</li>
+  <li><strong>Les douze cas types ne pèsent plus d'un poids égal</strong>, et
+  c'est ce qui a changé ici en dernier. Chacun porte l'effectif des retraités de
+  sa caisse, publié par la DREES et lu année par année : l'agent de conduite
+  pèse {g.pourcentage(cout.poids["agent_sncf_conduite"], decimales=1)} et non
+  {g.pourcentage(1 / len(CAS_TYPES), decimales=1)}. Ce qu'un effectif de caisse
+  n'est pas : un effectif de personnes. Un polypensionné compte dans chacune des
+  siennes, ce qui gonfle le poids des régimes dont les affiliés ont typiquement
+  aussi une carrière au régime général.</li>
   <li><strong>Avant 1975, la reconstitution est mince.</strong> La répartition
   ne commence qu'en {contexte.base.annee_debut_repartition} : les générations
   antérieures à {cout.generations[0]} n'ont, dans ce modèle, aucune pension, et

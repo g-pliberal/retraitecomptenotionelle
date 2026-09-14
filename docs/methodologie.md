@@ -1074,8 +1074,14 @@ cotisations et ce qu'il demande au contribuable.
 Deux réserves, les mêmes que pour l'ASPA du scénario 1. Le modèle liquide et
 s'arrête : un assuré parti à 62 ans avec une petite pension ne reçoit rien dans
 le scénario 6, alors qu'il recevrait la garantie trois ans plus tard. Et les
-cas types liquident presque tous avant 65 ans : la page Coût ne voit de la
-garantie qu'un ordre de grandeur bas. Sur le passé, la page Coût ne voit pas
+cas types liquident presque tous avant 65 ans : la masse de garantie qu'ils
+produisent n'est pas basse, elle est FAUSSE. Une allocation différentielle ne se
+chiffre pas sur douze carrières, parce que son coût est tout entier celui de la
+queue basse de la distribution des pensions ; la page Coût porte donc, à côté,
+le barème appliqué à la distribution que publie l'échantillon interrégimes de
+retraités de la DREES — 18,4 milliards par an aux pensions d'aujourd'hui,
+jusqu'à 59 à celles du scénario 6 selon le plancher retenu. Sur le passé, la
+page Coût ne voit pas
 non plus le taux unique — aucune pension servie avant la bascule n'a une année
 cotisée à 18 % — et la courbe du scénario 6 y est celle du scénario 4 plus la
 garantie ; c'est d'ici 2070 que le taux se voit.
@@ -1101,10 +1107,17 @@ coût du système S en t = dépense observée en t × (masse S en t / masse actu
 ```
 
 La masse d'une année est reconstituée en croisant les douze cas types avec les
-générations de 1880 à 1970, de cinq en cinq. Chaque couple pèse le produit de
-deux choses : sa pension en euros constants, et sa probabilité d'être encore en
-vie cette année-là, lue dans les tables de mortalité du dépôt — celles qui sont
-observées depuis 1899, et non une hypothèse de survie.
+générations de 1880 à 2015, de cinq en cinq. Chaque couple pèse le produit de
+trois choses : sa pension en euros constants, l'effectif réel des classes d'âge
+que sa génération représente — lu dans la pyramide des âges de l'INSEE, non
+supposé —, et le POIDS DE SON CAS TYPE.
+
+Ce troisième terme est le dernier à avoir cessé d'être une convention. Les douze
+cas types ont longtemps pesé à égalité, faute de source ; chacun porte désormais
+l'effectif des retraités de sa caisse, que l'enquête annuelle auprès des caisses
+de retraite publie de 2004 à 2024. Une caisse réclamée par plusieurs cas types
+se partage également entre eux — la Cnav est celle des quatre carrières du
+privé —, et c'est la seule part de convention égalitaire qui subsiste.
 
 **Pourquoi un rapport plutôt qu'un niveau.** Le scénario 1 est l'étalon du
 modèle, et il est une approximation du droit positif : ses erreurs de niveau
@@ -1113,9 +1126,10 @@ numérateur comme au dénominateur et s'annulent en grande partie. Un niveau
 agrégé, lui, les porterait entières et s'écarterait de la dépense publiée sans
 que rien ne le signale.
 
-**Ce que la méthode suppose**, et que `limites.md` §5 bis chiffre : des cas
-types de poids égal, et une reconstitution mince avant 1975. Ni l'une ni l'autre
-ne touche le résultat principal de cette moitié de page — l'égalité exacte des
+**Ce que la méthode suppose**, et que `limites.md` §5 bis chiffre : qu'un
+effectif de caisse vaille un effectif de personnes — un polypensionné compte
+dans chacune des siennes —, et une reconstitution mince avant 1975. Ni l'une ni
+l'autre ne touche le résultat principal de cette moitié de page — l'égalité exacte des
 scénarios prospectifs avec le système actuel sur toute la période observée —,
 qui ne tient pas à une pondération mais à la définition même d'une réforme
 prospective : les droits acquis avant la bascule sont conservés, donc aucune

@@ -396,6 +396,9 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Dépenses de vieillesse-survie, tous régimes | 1959-2024 | **certifiée** | DREES, Comptes de la protection sociale, poste E11-2 |
 | Dépenses de vieillesse-survie, par système | 1990-2024 | **certifiée** | DREES, mêmes comptes, ventilation par organisme |
 | Dépenses de vieillesse-survie, par système | 1981-1989 | absentes | nomenclature d'alors sans raccord publié — voir §5 bis |
+| Retraités de droit direct, par caisse | 2004-2024, 28 caisses | **certifiée** | DREES, enquête annuelle auprès des caisses de retraite, fichier diffusé |
+| Retraités de droit direct, par caisse | hors 2004-2024 | estimée | la répartition du bord est reconduite — voir §5 bis |
+| Distribution des pensions mensuelles brutes de droit direct | fin 2020, 46 tranches | **certifiée** | DREES, échantillon interrégimes de retraités 2020, tableau 1 |
 | Hypothèses de projection | 2026-2100 | **saisie** | COR, rapport annuel de juin 2025, jeu reconduit en juin 2026 |
 | Espérance de vie à 0 et 60 ans | 1946-2025 | **certifiée** | INSEE BDM, quatre idbanks, annuel par sexe |
 | Espérance de vie à 65 ans | 1960-2024 | **certifiée** | OCDE `DSD_HEALTH_STAT@DF_LE` |
@@ -3926,12 +3929,47 @@ l'indice des prix, comme l'ASPA entre deux ancres de son barème. Ce n'est
 qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
 indexée sur les prix depuis 1941.
 
-**La page Coût ne voit de la garantie qu'un ordre de grandeur bas.** Un seul
-des douze cas types liquide à 65 ans ou après ; la masse de la garantie, et
-donc ce que l'impôt paierait, est portée par lui seul. La ligne « dont garantie
-vieillesse » de la page dit ce que le modèle voit, pas ce que la mesure
-coûterait. Et le modèle ne dit rien de l'impôt lui-même : il compte ce qui est
-versé, jamais ce qui est prélevé.
+**La masse de garantie que produisent les cas types est un chiffre faux, et la
+page le remplace.** Un seul des douze cas types liquide à 65 ans ou après ; la
+masse de la garantie, et donc ce que l'impôt paierait, est portée par lui seul.
+La ligne « dont garantie vieillesse » du tableau dit 33 milliards sur
+soixante-six ans, là où le barème appliqué à la distribution réelle en coûte
+18,4 par an. Ce n'était pas une imprécision : une allocation DIFFÉRENTIELLE ne
+se chiffre pas sur douze carrières, parce que son coût est tout entier celui de
+la queue basse de la distribution, et que douze carrières ne décrivent pas une
+distribution.
+
+La page porte donc, à côté, le barème appliqué à la distribution des pensions
+brutes de droit direct que publie l'échantillon interrégimes de retraités de la
+DREES (fin 2020, tranches de cent euros). Quatre chiffres, parce que deux
+questions et deux planchers :
+
+| Assiette | Plancher | Retraités concernés | Coût annuel, euros de 2026 |
+|---|---|---|---|
+| Pensions de 2020 | 800 € | 22,8 %, soit 3,8 M | **18,4 Md €** |
+| Pensions de 2020 | 1 050 € | 32,7 %, soit 5,5 M | **32,2 Md €** |
+| Pensions du scénario 6 | 800 € | 44,3 %, soit 7,4 M | **33,1 Md €** |
+| Pensions du scénario 6 | 1 050 € | 60,2 %, soit 10,0 M | **59,2 Md €** |
+
+Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
+l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut
+pour qui vit à deux, la majorée pour qui vit seul, et le coût réel est entre les
+deux. **Les deux assiettes** ne répondent pas à la même question : à pensions
+inchangées, c'est ce que la garantie coûterait en remplacement de l'ASPA, et ce
+calcul-là ne doit rien au modèle ; aux pensions du scénario 6, toute la
+distribution est déplacée du rapport que le modèle donne à la part contributive
+de ce scénario — un déplacement *proportionnel et uniforme*, alors que le
+scénario ne déplace pas toutes les carrières du même rapport. Les deux dernières
+lignes sont donc un ordre de grandeur là où les deux premières sont un calcul.
+**Deux conventions de lecture** enfin : les pensions d'une tranche de cent euros
+sont supposées y être réparties uniformément, et la tranche ouverte du haut est
+traitée comme une masse ponctuelle — elle est de toute façon au-dessus de tout
+plancher. **Une réserve sans remède dans cette source** : le tableau de l'EIR
+comprend la majoration pour trois enfants, que les scénarios notionnels ne
+servent pas.
+
+Et le modèle ne dit rien de l'impôt lui-même : il compte ce qui est versé,
+jamais ce qui est prélevé.
 
 ### La décote des régimes spéciaux avait quatre ans d'avance
 
@@ -4493,13 +4531,37 @@ approximations, énoncées sur la page :
    maintenant ce que valait l'hypothèse levée : elle déplaçait l'écart cumulé du
    scénario 2 de six dixièmes de point sur soixante-six ans (−77,3 % contre
    −77,9 %). C'était peu, et c'est désormais mesuré plutôt qu'argumenté.
-2. **Les douze cas types pèsent d'un poids égal.** Ils ne décrivent pas la
-   population active : il y a moins d'agents de conduite que de salariés au
-   salaire moyen. C'est la convention de la grille des cas types, reconduite
-   ici plutôt que remplacée par une pondération qu'aucune source ne fixerait.
-   Le sens du biais est connu : les cas types à départ très précoce — SNCF,
-   catégorie active — sont ceux que le notionnel pénalise le plus, et ils sont
-   surreprésentés. Le rapport affiché est donc plutôt un PLANCHER.
+2. **Les douze cas types ne pèsent plus d'un poids égal.** Ils ont longtemps
+   pesé ainsi, faute de source, et cette page affirmait qu'« aucune source ne
+   fixerait » la pondération. C'était faux : l'enquête annuelle auprès des
+   caisses de retraite dénombre les retraités caisse par caisse et année par
+   année depuis 2004. Chaque cas type porte désormais l'effectif de sa caisse ;
+   l'agent de conduite pèse 0,7 % et non 8,3 %, et les quatre carrières du
+   privé 64 % à elles quatre.
+
+   Ce que l'ancienne convention valait est donc mesuré plutôt qu'argumenté, et
+   **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
+   affiché « plutôt un plancher », les départs très précoces que le notionnel
+   pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
+   la part patronale — le scénario 4 passe de −55,9 % à −51,9 % — et faux du
+   scénario 2, qui passe de −75,9 % à −79,5 % : la pondération donne aux
+   carrières du privé, que le compte salarial seul pénalise davantage encore,
+   les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
+   l'autre.
+
+   Trois réserves subsistent, et elles sont de nature différente de la
+   précédente. **Un effectif de caisse n'est pas un effectif de personnes** :
+   un polypensionné compte dans chacune des siennes, et la somme des caisses
+   dépasse d'un tiers la ligne « tous régimes » ; le poids des régimes dont les
+   affiliés ont typiquement aussi une carrière au régime général — Ircantec,
+   MSA salariés — en est gonflé. **Une caisse réclamée par plusieurs cas types
+   se partage également entre eux** : la Cnav est celle des quatre carrières du
+   privé, et aucune source ne dit combien de ses retraités ont été cadres ;
+   c'est la seule part de convention égalitaire qui subsiste, et elle ne joue
+   plus qu'à l'intérieur du salariat privé. **Hors de 2004-2024, la répartition
+   du bord est reconduite** : la France de 1960 comptait plus d'exploitants
+   agricoles que ces poids ne le disent, et la série tombe au niveau `estimee`
+   pour le dire.
 3. **Avant 1975, la reconstitution est mince.** La répartition ne commence
    qu'en 1941 : les générations antérieures à 1880 n'ont, dans ce modèle,
    aucune pension, et plusieurs régimes n'existaient pas encore. Les premières
@@ -4564,17 +4626,35 @@ de calcul de la page ; il ne doit pas commander la forme du résultat, et c'est
 pourquoi les cinq cohortes ne basculent pas le même jour — sans quoi la
 trajectoire avancerait par marches de cinq ans.
 
-**Le contrôle externe.** Le COR projette la même grandeur avec un modèle de
-population complet et une méthode qui n'a rien de commun avec celle-ci : il
-trouve 13,9 % du PIB en 2024 et **14,2 % en 2070** (rapport annuel de juin 2025,
-champ « ensemble des régimes légalement obligatoires, y compris FSV, hors
-RAFP »). Le dépôt trouve 13,6 % et 14,8 %. Trois dixièmes de point d'écart au
-départ — l'affaire du périmètre, la répartition obligatoire des Comptes de la
-protection sociale n'étant pas exactement celle du COR — et six dixièmes à
-l'arrivée. Deux modèles indépendants à un demi-point l'un de l'autre : c'est le
-meilleur contrôle dont cette page dispose, et il ne vaut que ce que vaut une
-concordance — elle rend une erreur grossière improbable, elle ne rend juste
-aucun des deux.
+**Le contrôle externe, et ce qu'il dit depuis la pondération des cas types.**
+Le COR projette la même grandeur avec un modèle de population complet et une
+méthode qui n'a rien de commun avec celle-ci : il trouve 13,9 % du PIB en 2024
+et **14,2 % en 2070** (rapport annuel de juin 2025, champ « ensemble des régimes
+légalement obligatoires, y compris FSV, hors RAFP »). Le dépôt trouve 13,6 % et
+**18,4 %**. Trois dixièmes de point d'écart au départ — l'affaire du périmètre,
+la répartition obligatoire des Comptes de la protection sociale n'étant pas
+exactement celle du COR — et **quatre points à l'arrivée**.
+
+L'écart d'arrivée était de deux points tant que les cas types pesaient d'un
+poids égal. Il a doublé quand chacun a reçu l'effectif de sa caisse, et il faut
+dire pourquoi, parce que ce n'est pas la pondération qui est en cause : elle a
+retiré une COMPENSATION ACCIDENTELLE. L'ancienne convention donnait un sixième
+du poids à des carrières qui liquident à 52 et 57 ans — SNCF, catégorie
+active —, si bien que le stock de retraités du modèle vieillissait moins vite
+que la seule population des 64 ans et plus, laquelle croît de 41 % d'ici 2070
+quand celle des 52 ans et plus ne croît que de 25 %. En rendant à chaque
+carrière son poids réel, on a rendu visible ce que le modèle fait depuis
+toujours : **il fait liquider chaque cas type à l'âge légal d'aujourd'hui,
+quelle que soit sa génération**, alors qu'une génération née en 1940 est partie
+à 60 ou 65 ans sous d'autres règles. Le stock de retraités du modèle est donc
+trop vieux au départ de la projection, et sa croissance trop rapide. C'est un
+défaut ancien, qu'une erreur compensait ; il est désormais nommé, et
+`docs/feuille_de_route.md` en a fait un chantier.
+
+La concordance ne vaut de toute façon que ce que vaut une concordance : elle
+rend une erreur grossière improbable, elle ne rend juste aucun des deux modèles.
+Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 à
+20 % pour cette raison, ce qui est un aveu et non une correction.
 
 ---
 
@@ -4588,7 +4668,7 @@ aucun des deux.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 605 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 618 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -21,6 +21,7 @@ export const CAS_TYPES = [
     affiliation: "salarie_prive_non_cadre",
     age_debut: 18, age_liquidation: 64, niveau_salaire: 0.55,
     profil_carriere: "plat",
+    caisses: ["cnav"],
     commentaire: "Carrière longue à bas salaire : le cas où les minima pèsent le plus.",
   },
   {
@@ -28,6 +29,7 @@ export const CAS_TYPES = [
     libelle: "Salarié au salaire moyen",
     affiliation: "salarie_prive_non_cadre",
     age_debut: 21, age_liquidation: 64, niveau_salaire: 1.0,
+    caisses: ["cnav"],
     commentaire: "Référence centrale.",
   },
   {
@@ -36,6 +38,7 @@ export const CAS_TYPES = [
     affiliation: "salarie_prive_cadre",
     age_debut: 23, age_liquidation: 64, niveau_salaire: 2.2,
     profil_carriere: "fortement_ascendant",
+    caisses: ["cnav"],
     commentaire: "Forte part de rémunération au-dessus du plafond.",
   },
   {
@@ -44,6 +47,7 @@ export const CAS_TYPES = [
     affiliation: "salarie_prive_non_cadre",
     age_debut: 21, age_liquidation: 64, niveau_salaire: 0.9,
     sexe: "F", nombre_enfants: 2,
+    caisses: ["cnav"],
     interruptions_relatives: [8, 9, 10, 11, 12].map((d) => [d, "education_enfant"]),
     commentaire: "Cinq années sans cotisation. Le système actuel les couvre par "
       + "des trimestres assimilés, par l'AVPF — qui porte au compte un salaire au "
@@ -60,6 +64,7 @@ export const CAS_TYPES = [
     affiliation: "fonctionnaire_etat",
     age_debut: 22, age_liquidation: 64, niveau_salaire: 1.2,
     part_primes: 0.18,
+    caisses: ["fonction_publique_etat_civile"],
     commentaire: "Traitement indiciaire hors primes ; les primes relèvent du RAFP.",
   },
   {
@@ -68,6 +73,7 @@ export const CAS_TYPES = [
     affiliation: "fonctionnaire_territorial_hospitalier",
     age_debut: 22, age_liquidation: 57, niveau_salaire: 1.1,
     part_primes: 0.22,
+    caisses: ["cnracl"],
     commentaire: "Départ anticipé de dix ans par rapport à l'âge de référence.",
   },
   {
@@ -75,6 +81,7 @@ export const CAS_TYPES = [
     libelle: "Agent de conduite SNCF (départ à 52 ans)",
     affiliation: "agent_sncf",
     age_debut: 20, age_liquidation: 52, niveau_salaire: 1.1,
+    caisses: ["sncf"],
     commentaire: "Écart à l'âge de référence parmi les plus élevés du système.",
   },
   {
@@ -82,6 +89,7 @@ export const CAS_TYPES = [
     libelle: "Agent des industries électriques et gazières",
     affiliation: "agent_ieg",
     age_debut: 21, age_liquidation: 57, niveau_salaire: 1.4,
+    caisses: ["cnieg"],
     commentaire: "Régime spécial fermé aux embauches depuis 2023.",
   },
   {
@@ -89,6 +97,7 @@ export const CAS_TYPES = [
     libelle: "Artisan",
     affiliation: "artisan",
     age_debut: 24, age_liquidation: 64, niveau_salaire: 0.9,
+    caisses: ["rci_complementaire"],
     commentaire: "Assiette de cotisation plus faible que celle d'un salarié.",
   },
   {
@@ -96,6 +105,7 @@ export const CAS_TYPES = [
     libelle: "Chef d'exploitation agricole",
     affiliation: "exploitant_agricole",
     age_debut: 20, age_liquidation: 64, niveau_salaire: 0.5,
+    caisses: ["msa_exploitants"],
     commentaire: "Retraite majoritairement forfaitaire aujourd'hui : la part non "
       + "contributive disparaît intégralement dans les scénarios notionnels.",
   },
@@ -105,6 +115,7 @@ export const CAS_TYPES = [
     affiliation: "profession_liberale",
     age_debut: 27, age_liquidation: 66, niveau_salaire: 2.5,
     profil_carriere: "fortement_ascendant",
+    caisses: ["cnavpl"],
     commentaire: "Régime de base CNAVPL et complémentaire Cipav, la section par "
       + "défaut. Un libéral d'une section spécialisée — auxiliaires médicaux, "
       + "pharmaciens, notaires — aurait un complémentaire différent, et celui-là "
@@ -115,6 +126,7 @@ export const CAS_TYPES = [
     libelle: "Agent contractuel de la fonction publique",
     affiliation: "contractuel_public",
     age_debut: 24, age_liquidation: 64, niveau_salaire: 0.85,
+    caisses: ["ircantec"],
     commentaire: "Régime général + Ircantec.",
   },
 ].map((cas) => ({
@@ -123,6 +135,9 @@ export const CAS_TYPES = [
   nombre_enfants: 0,
   part_primes: 0.0,
   interruptions_relatives: [],
+  // Caisses de ``effectifs_retraites.csv`` dont ce cas type porte les retraités :
+  // c'est par elles qu'il reçoit son POIDS dans les agrégats.
+  caisses: [],
   ...cas,
 }));
 
@@ -131,6 +146,56 @@ export const CAS_TYPES = [
  * couverte par la Sécurité sociale aux actifs entrés récemment.
  */
 export const GENERATIONS = [1940, 1950, 1960, 1970, 1980, 1990, 2000];
+
+/**
+ * Poids de chaque cas type une année donnée, tirés des effectifs de caisse.
+ *
+ * La grille des cas types n'est pas un échantillon : elle couvre les
+ * configurations du système, pas sa population. Rien ne s'oppose à ce qu'on
+ * l'utilise pour un AGRÉGAT, à condition de rendre à chaque configuration son
+ * poids réel — et c'est ce que les effectifs de la DREES donnent.
+ *
+ * Chaque cas type reçoit l'effectif de ses caisses ; une caisse réclamée par
+ * plusieurs cas types se partage ÉGALEMENT entre eux — la Cnav est la caisse des
+ * quatre carrières du privé, et rien ne dit combien de ses retraités ont été
+ * cadres. C'est la seule part de convention égalitaire qui subsiste. Les poids
+ * sont normalisés : seul leur rapport importe.
+ */
+export function poidsEffectifs(effectifs, annee, casTypes = CAS_TYPES) {
+  const reclamants = new Map();
+  for (const cas of casTypes) {
+    for (const caisse of cas.caisses) {
+      reclamants.set(caisse, (reclamants.get(caisse) || 0) + 1);
+    }
+  }
+  const bruts = new Map();
+  let total = 0;
+  for (const cas of casTypes) {
+    let poids = 0;
+    for (const caisse of cas.caisses) {
+      poids += effectifs.effectif(caisse, annee) / reclamants.get(caisse);
+    }
+    bruts.set(cas.code, poids);
+    total += poids;
+  }
+  if (total <= 0) {
+    throw new Error(`aucun effectif connu en ${annee} pour pondérer les cas types`);
+  }
+  const poids = {};
+  for (const [code, brut] of bruts) poids[code] = brut / total;
+  return poids;
+}
+
+/**
+ * L'ANCIENNE convention, gardée comme variante et non comme repli : elle ne sert
+ * plus à calculer les résultats affichés, mais à dire de combien elle les
+ * déplaçait, ce qu'aucun argument ne remplace.
+ */
+export function poidsEgaux(casTypes = CAS_TYPES) {
+  const poids = {};
+  for (const cas of casTypes) poids[cas.code] = 1 / casTypes.length;
+  return poids;
+}
 
 /** Construit la carrière d'un cas type pour une génération donnée. */
 export function construireCasType(cas, simulateur, generation) {
