@@ -285,6 +285,13 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/duree_assurance_requise.csv",
         "duree_assurance_requise_1993":
             "legislation/duree_assurance_requise.csv",
+        # Les recoupements OpenFisca : transcription tierce, niveau `haute`,
+        # sur les seules lignes que la base LEGI ne certifie pas.
+        "duree_assurance_requise_openfisca":
+            "legislation/duree_assurance_requise.csv",
+        "age_annulation_decote_openfisca": "legislation/age_annulation_decote.csv",
+        "duree_requise_fonction_publique_openfisca":
+            "legislation/duree_requise_fonction_publique.csv",
         "coefficient_minoration": "legislation/coefficient_minoration.csv",
         "carriere_longue": "legislation/carriere_longue.csv",
         "duree_proratisation": "legislation/duree_proratisation.csv",

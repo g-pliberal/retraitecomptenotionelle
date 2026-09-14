@@ -34,6 +34,18 @@ le même fichier, tranche par tranche et sous quatre formes : le taux EFFECTIF
 d'APPEL qui relie les deux, et la répartition salarié/employeur. OpenFisca
 transcrit deux barèmes par régime, selon la date d'adhésion de l'entreprise ;
 les deux sont récupérés, et ``VARIANTE_RETENUE`` dit lequel les fiches portent.
+
+LES RÉGIMES PUBLICS ET LES NON-SALARIÉS, dans le même fichier. Les fiches de
+la fonction publique, des artisans, des commerçants et des professions
+libérales portaient des taux SAISIS depuis des rapports — un chiffre par
+période, quand le droit en a changé chaque année ou presque. OpenFisca-France
+transcrit ces barèmes aussi, datés et sourcés : la retenue pour pension de
+l'État et de la CNRACL (article L. 61, 6 % en 1948, 11,10 % depuis 2020), le
+RAFP, la cotisation vieillesse de base des artisans et des commerçants depuis
+l'alignement de 1973, leurs complémentaires, et le régime de base des
+professions libérales. Ils sont récupérés ici sous ``public`` et
+``independants``, et ``verifier_donnees.py`` les confronte aux fiches,
+période par période, comme il le fait déjà pour le régime général.
 """
 
 from __future__ import annotations
@@ -129,6 +141,58 @@ APPELS = {
     "arrco": ("arrco/taux_appel.yaml", 1962),
     "agirc": ("agirc/taux_appel.yaml", 1948),
     "agirc_arrco": ("agirc_arrco/tx_appel.yaml", 2019),
+}
+
+#: Racine des autres barèmes de prélèvements sociaux.
+RACINE_PRELEVEMENTS = (
+    "https://raw.githubusercontent.com/openfisca/openfisca-france/master/"
+    "openfisca_france/parameters/prelevements_sociaux"
+)
+
+#: Retenue de l'agent et cotisation additionnelle des régimes publics :
+#: série -> (fichier à tranches, première année). Une seule tranche partout,
+#: sans seuil : c'est le taux qu'on lit.
+PUBLIC = {
+    "fonction_publique_etat": (
+        "cotisations_secteur_public/retraite/pension/salarie/pension.yaml", 1948),
+    "cnracl": ("cotisations_secteur_public/cnracl/salarie/cnracl_s_ti.yaml", 1948),
+    "rafp_salarie": ("cotisations_secteur_public/rafp/salarie/rafp.yaml", 2005),
+    "rafp_employeur": ("cotisations_secteur_public/rafp/employeur/rafp.yaml", 2005),
+}
+
+#: Cotisations vieillesse des non-salariés : série -> (fichier à valeurs
+#: datées, première année). Les fiches nomment leurs assiettes ; c'est le
+#: vérificateur qui apparie chaque assiette à sa série.
+INDEPENDANTS = {
+    "artisans_base_plafonnee": (
+        "cotisations_taxes_independants_artisans_commercants/ret_ac/artisans/sous_pss.yaml",
+        1973),
+    "commercants_base_plafonnee": (
+        "cotisations_taxes_independants_artisans_commercants/ret_ac/"
+        "industriels_et_commercants/sous_pss.yaml", 1973),
+    "independants_base_deplafonnee": (
+        "cotisations_taxes_independants_artisans_commercants/ret_ac/"
+        "tous_independants/tout_salaire.yaml", 2014),
+    "rco_artisans_tranche_1": (
+        "cotisations_taxes_independants_artisans_commercants/ret_comp_ac/artisans/sous_1_pss.yaml",
+        2008),
+    "rco_artisans_tranche_2": (
+        "cotisations_taxes_independants_artisans_commercants/ret_comp_ac/artisans/"
+        "entre_1_et_4_pss.yaml", 2008),
+    "rci_tranche_1": (
+        "cotisations_taxes_independants_artisans_commercants/ret_comp_ac/art_ind_com/"
+        "sous_plafond_rci.yaml", 2013),
+    "rci_tranche_2": (
+        "cotisations_taxes_independants_artisans_commercants/ret_comp_ac/art_ind_com/"
+        "entre_1_plafond_rci_et_4_plafonds_pss.yaml", 2013),
+    "cnavpl_tranche_1_085": (
+        "professions_liberales/ret_pl/assurance_vieillesse/sous_0_85_pss.yaml", 2004),
+    "cnavpl_tranche_2_085_5": (
+        "professions_liberales/ret_pl/assurance_vieillesse/entre_0_85_et_5_pss.yaml", 2004),
+    "cnavpl_tranche_1": (
+        "professions_liberales/ret_pl/assurance_vieillesse/sous_1_pss.yaml", 2015),
+    "cnavpl_tranche_2": (
+        "professions_liberales/ret_pl/assurance_vieillesse/entre_1_et_5_pss.yaml", 2015),
 }
 
 #: Barèmes salarié et employeur des taux effectifs, pour la répartition, dans
@@ -327,6 +391,39 @@ def main() -> int:
         print(f"ÉCHEC   complémentaires : {erreur}", file=sys.stderr)
         return 1
 
+    def _lire_prelevement(chemin: str) -> str:
+        demande = urllib.request.Request(
+            f"{RACINE_PRELEVEMENTS}/{chemin}",
+            headers={"User-Agent": "retraite-notionnelle/0.1"},
+        )
+        with urllib.request.urlopen(demande, timeout=120) as reponse:
+            return reponse.read().decode("utf-8")
+
+    def _serie_annuelle(bareme: dict[str, float], premiere: int) -> dict[str, float]:
+        """Taux au 1er janvier, de la première année à la dernière connue ;
+        une année sans taux — cotisation pas encore instituée, ou série
+        arrêtée à zéro — n'est pas écrite."""
+        annuel = {}
+        for annee in range(premiere, derniere + 1):
+            taux = _en_vigueur(bareme, annee)
+            if taux > 0:
+                annuel[str(annee)] = round(taux, 5)
+        return annuel
+
+    public: dict[str, dict[str, float]] = {}
+    independants: dict[str, dict[str, float]] = {}
+    try:
+        for nom, (chemin, premiere) in PUBLIC.items():
+            public[nom] = _serie_annuelle(_taux(_lire_prelevement(chemin)), premiere)
+            print(f"OK      {nom:<32} {len(public[nom])} années")
+        for nom, (chemin, premiere) in INDEPENDANTS.items():
+            independants[nom] = _serie_annuelle(
+                _valeurs(_lire_prelevement(chemin)), premiere)
+            print(f"OK      {nom:<32} {len(independants[nom])} années")
+    except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
+        print(f"ÉCHEC   régimes publics et non-salariés : {erreur}", file=sys.stderr)
+        return 1
+
     # Cohérence interne de la transcription : effectif = contractuel × appel,
     # tranche par tranche. Un écart signalerait une erreur d'OpenFisca ou
     # une année où l'appel ne s'applique pas à toutes les tranches.
@@ -362,6 +459,9 @@ def main() -> int:
             "taux_appel": appels,
             "part_salariale": repartition,
             "part_salariale_variantes": repartition_variantes,
+            "source_prelevements": RACINE_PRELEVEMENTS,
+            "public": public,
+            "independants": independants,
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )

@@ -1872,8 +1872,10 @@ def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
     Une pension civile se liquide sur le traitement des six derniers mois de
     service : rien n'y est porté à un compte, et rien n'y est donc revalorisé
     par les coefficients de la CNAV. Leur appliquer serait une erreur de
-    catégorie — le contrôle porte sur le fait que le montant liquidé reste le
-    dernier traitement, sans coefficient d'aucune sorte.
+    catégorie. Ce qui ramène le traitement de l'année d'avant à l'année du
+    départ, c'est le POINT D'INDICE : le fonctionnaire garde son indice, et
+    c'est ce que la confrontation à OpenFisca-France-Pension a fait voir — le
+    modèle passait par les prix, et s'en écartait de 0,5 à 0,8 %.
     """
     from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier
 
@@ -1892,12 +1894,16 @@ def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
         "fonction_publique_etat", carriere, periode, 2020, False, 1958, True,
     )
     # Le dernier traitement, primes exclues, ramené en euros de l'année de
-    # liquidation par l'APPROXIMATION — et non par l'arrêté de la CNAV, qui
-    # donne 1,01 là où l'approximation donne 1,0048 pour ce même passage.
+    # liquidation par le POINT D'INDICE — gelé de 2019 à 2020, donc inchangé —
+    # et non par l'arrêté de la CNAV, qui donne 1,01 pour ce même passage, ni
+    # par les prix, qui donnaient 1,0048.
     derniere = carriere.lignes[-1]
     traitement = derniere.revenu * (1.0 - derniere.part_primes)
     macro = simulateur.macro
-    assert reference == pytest.approx(
+    point = scenario.minimum_garanti.ratio_point_indice(derniere.annee, 2020)
+    assert point == pytest.approx(1.0)
+    assert reference == pytest.approx(traitement * point)
+    assert reference != pytest.approx(
         traitement * macro.coefficient_revalorisation_salaires(derniere.annee, 2020)
     )
     assert reference != pytest.approx(
@@ -2405,7 +2411,9 @@ def test_les_montants_reellement_servis_priment_sur_toute_projection(simulateur)
     minimum = simulateur.scenario_actuel.minimum_contributif
 
     # Réponse du ministère à la question écrite n° 32630 (Assemblée nationale) :
-    # 642,93 €/mois en 2020, majoré à 702,55 €, plafond 1 191,57 €.
+    # 642,93 €/mois en 2020, majoré à 702,55 €, plafond 1 191,57 € — que les
+    # circulaires Cnav transcrites par OpenFisca-France-Pension recoupent à
+    # quelques centimes près, douze mensualités arrondies contre un annuel.
     servis = {
         2020: (642.93 * 12, 702.55 * 12, 1191.57 * 12),
         2024: (733.03 * 12, 876.13 * 12, 1394.86 * 12),
@@ -2506,9 +2514,10 @@ def test_le_salaire_de_reference_ne_retient_que_les_annees_du_regime(simulateur)
     pension = {p.regime: p for p in melangee.pensions_par_regime}
     seule = {p.regime: p for p in publique_seule.pensions_par_regime}
     # Même assiette des deux côtés : la pension civile ne connaît que le
-    # traitement des années passées dans la fonction publique.
-    assert "SR 28,501.10 €" in pension["fonction_publique_etat"].detail
-    assert "SR 28,501.10 €" in seule["fonction_publique_etat"].detail
+    # traitement des années passées dans la fonction publique — celui de 1999,
+    # ramené à 2022 par le point d'indice, l'indice restant acquis.
+    assert "SR 22,361.92 €" in pension["fonction_publique_etat"].detail
+    assert "SR 22,361.92 €" in seule["fonction_publique_etat"].detail
     # Et le salaire annuel moyen du régime général ne connaît que les années
     # privées : y verser les années publiques, plus faibles, l'abaissait.
     privee_seule = simulateur.scenario_actuel.calculer(Carriere(
@@ -2623,25 +2632,39 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     2010 […] il est fixé par trimestre manquant à un dixième du taux prévu ».
     Servir 1,25 % dès 2009, comme le faisaient les fiches, c'est décoter dix
     fois trop — et retirer un quart de la pension au lieu d'un quarantième.
+
+    Et le barème se lit à l'année où l'assuré RÉUNIT LES CONDITIONS — l'âge
+    d'ouverture du régime —, non à celle du départ : c'est la lettre du texte,
+    et c'est ce que la confrontation de la pension civile à
+    OpenFisca-France-Pension a fait voir. Chaque contrôle prend donc l'agent
+    dont le droit s'ouvre l'année visée.
     """
     scenario = simulateur.scenario_actuel
-    carriere = simulateur.carriere_simple(
-        annee_naissance=1955, sexe="H", affiliation="agent_sncf",
-        age_debut=25, age_liquidation=55, niveau_salaire=1.2,
-    )
 
-    # 2009 : le régime n'a pas encore de décote.
+    def agent(annee_naissance: int):
+        return simulateur.carriere_simple(
+            annee_naissance=annee_naissance, sexe="H", affiliation="agent_sncf",
+            age_debut=25, age_liquidation=55, niveau_salaire=1.2,
+        )
+
+    # 2009 : le régime n'a pas encore de décote — droit ouvert à 50 ans en 2009.
     periode = simulateur.catalogue["sncf"].periode(2009)
-    coefficient, _, _ = scenario._decote(periode, carriere, 2009)
+    coefficient, _, _ = scenario._decote(periode, agent(1959), 2009)
     assert coefficient is None
 
-    # 2012 : deux dixièmes du taux plein, soit 0,25 % — la marche du 1er juillet
-    # 2011, que la table porte au millésime suivant pour ne jamais opposer à
-    # l'assuré plus que le droit. C'est le taux de la fonction publique quatre
-    # ans plus tôt, et le septième de celui que la fiche servait. L'âge
-    # d'annulation est l'âge de référence du régime, 55 ans, diminué de
-    # quatorze trimestres.
-    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2012)
+    # Un droit ouvert en 2005 n'en acquiert pas une parce que le départ a lieu
+    # en 2012 : les conditions étaient réunies avant le 1er juillet 2010.
+    periode = simulateur.catalogue["sncf"].periode(2012)
+    coefficient, _, _ = scenario._decote(periode, agent(1955), 2012)
+    assert coefficient is None
+
+    # Droit ouvert en 2012 : deux dixièmes du taux plein, soit 0,25 % — la
+    # marche du 1er juillet 2011, que la table porte au millésime suivant pour
+    # ne jamais opposer à l'assuré plus que le droit. C'est le taux de la
+    # fonction publique quatre ans plus tôt, et le septième de celui que la
+    # fiche servait. L'âge d'annulation est l'âge de référence du régime,
+    # 55 ans, diminué de quatorze trimestres.
+    coefficient, age_annulation, _ = scenario._decote(periode, agent(1962), 2012)
     assert coefficient == pytest.approx(0.0025)
     assert age_annulation == pytest.approx(55.0 - 14.0 / 4.0)
 
@@ -2649,9 +2672,10 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     # période — et depuis le relèvement de la loi du 14 avril 2023, étalé par
     # génération aux pensions prenant effet en 2025 (décret n° 2023-967,
     # art. 37-1), il vaut cette année-là cinquante-deux ans et trois mois
-    # d'ouverture, plus cinq ans.
+    # d'ouverture, plus cinq ans. Un agent né en janvier 1973 les atteint en
+    # avril 2025.
     periode = simulateur.catalogue["sncf"].periode(2025)
-    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2025)
+    coefficient, age_annulation, _ = scenario._decote(periode, agent(1973), 2025)
     assert coefficient == pytest.approx(0.0125)
     assert age_annulation == pytest.approx(57.25)
 

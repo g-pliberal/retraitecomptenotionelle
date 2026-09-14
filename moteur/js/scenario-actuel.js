@@ -18,11 +18,12 @@
  * façon robuste, ce sont les écarts ENTRE SCÉNARIOS.
  */
 
+import { enMois } from "./calendrier.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesOuverture, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
-  DureesProratisation, DureesRequises,
+  DureesProratisation, DureesRequises, DureesRequisesFonctionPublique,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SurcoteParentale, ValeursPoint,
 } from "./regimes.js";
@@ -55,6 +56,7 @@ export class ScenarioActuel {
     this.conversionsPoints = new ConversionsPoints(paquet);
     this.classes = new ClassesCotisation(paquet);
     this.dureesRequises = new DureesRequises(paquet);
+    this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
     this.dureesProratisation = new DureesProratisation(paquet);
     this.agesOuverture = new AgesOuverture(paquet);
     this.agesAnnulationDecote = new AgesAnnulationDecote(paquet);
@@ -165,10 +167,14 @@ export class ScenarioActuel {
     // Les coefficients des arrêtés ne valent que pour un salaire PORTÉ AU
     // COMPTE. Un régime qui liquide sur le dernier traitement ne porte rien à
     // un compte : lui appliquer les coefficients du régime général serait une
-    // erreur de catégorie, et c'est l'approximation qui y reste en vigueur —
-    // avec la réserve que `docs/limites.md` lui attache.
+    // erreur de catégorie. Le traitement d'un FONCTIONNAIRE suit le point
+    // d'indice — l'agent garde son indice — ; les autres régimes à dernier
+    // salaire restent sur les prix, avec la réserve de `docs/limites.md`.
     const porteAuCompte = periode.salaire_reference !== "derniers_6_mois"
       && periode.salaire_reference !== "dernier_salaire";
+    const suitLePoint = !porteAuCompte
+      && this.catalogue.contient(code)
+      && this.catalogue.obtenir(code).famille === "fonction_publique";
     // Le MOIS de la liquidation désigne la circulaire applicable : les arrêtés
     // ne prennent pas tous effet au 1er janvier, et deux d'entre eux portent
     // l'année 2022. Le mois ne vaut que si l'année passée est bien celle de la
@@ -181,7 +187,15 @@ export class ScenarioActuel {
     const revaloriser = porteAuCompte
       ? (depart, arrivee) => this.macro.coefficientRevalorisationPorteeAuCompte(
         depart, arrivee, moisLiquidation)
-      : (depart, arrivee) => this.macro.coefficientRevalorisationSalaires(depart, arrivee);
+      : (depart, arrivee) => {
+        if (suitLePoint) {
+          const ratio = this.minimumGaranti.ratioPointIndice(depart, arrivee);
+          if (ratio !== null) {
+            return ratio;
+          }
+        }
+        return this.macro.coefficientRevalorisationSalaires(depart, arrivee);
+      };
     const revenus = [];
     for (const ligne of carriere.lignes) {
       if (ligne.annee >= anneeLiquidation) {
@@ -290,6 +304,20 @@ export class ScenarioActuel {
    */
   /** @returns {[number, number|null]} durée requise opposable, et fiabilité. */
   dureeRequise(periode, carriere) {
+    // La fonction publique a sa propre montée en charge, 2004-2008, lue à
+    // l'année d'ouverture du droit ; elle passe avant la table par génération.
+    if (periode.bareme_decote === "fonction_publique") {
+      const transitoire = this.dureesRequisesFonctionPublique.trimestres(
+        this.anneeOuvertureDesDroits(
+          periode, carriere,
+          (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined)
+            ? carriere.anneeLiquidation : 9999,
+        ),
+      );
+      if (transitoire !== null) {
+        return transitoire;
+      }
+    }
     if (periode.duree_requise_par_generation) {
       const parGeneration = this.dureesRequises.trimestres(carriere.generation);
       if (parGeneration !== null) {
@@ -356,8 +384,16 @@ export class ScenarioActuel {
    * du code des pensions lui donne la sienne, montée en charge de 2006 à 2020,
    * et surtout un âge d'annulation qui n'est pas un âge en propre : c'est la
    * LIMITE D'ÂGE du grade, diminuée d'un nombre de trimestres décroissant. Un
-   * sédentaire liquidant en 2012 voyait sa décote s'annuler à 63 ans, pas à
-   * 67 — et chaque trimestre manquant lui coûtait 0,875 %, pas 1,25 %.
+   * sédentaire dont le droit s'ouvre en 2012 voit sa décote s'annuler à
+   * 63 ans, pas à 67 — et chaque trimestre manquant lui coûte 0,875 %, pas
+   * 1,25 %.
+   *
+   * Les barèmes en table se lisent à l'ANNÉE D'OUVERTURE DU DROIT, pas à
+   * celle de la liquidation : « Année au cours de laquelle sont réunies les
+   * conditions mentionnées au I et au II de l'article L. 24 », titre le III
+   * de l'article 66 de la loi du 21 août 2003, et les décrets de 2008 des
+   * régimes spéciaux visent de même « les personnes remplissant les
+   * conditions ». Voir `anneeOuvertureDesDroits`.
    *
    * @returns {[number|null, number, number|null]} coefficient, âge, fiabilité.
    */
@@ -367,7 +403,9 @@ export class ScenarioActuel {
       const table = periode.bareme_decote === "fonction_publique"
         ? this.decoteFonctionPublique
         : this.decoteRegimesSpeciaux;
-      const parametres = table.parametres(anneeLiquidation);
+      const parametres = table.parametres(
+        this.anneeOuvertureDesDroits(periode, carriere, anneeLiquidation),
+      );
       if (parametres === null || parametres === undefined) {
         return [null, ageAnnulation, null];
       }
@@ -393,6 +431,20 @@ export class ScenarioActuel {
       }
     }
     return [periode.decote_par_trimestre, ageAnnulation, null];
+  }
+
+  /**
+   * Année où les conditions d'ouverture du droit sont réunies.
+   *
+   * C'est le millésime auquel se lisent les barèmes de décote en table. L'assuré
+   * les réunit quand il atteint l'âge d'ouverture de son régime, au mois près ;
+   * s'il liquide avant — carrière longue, catégorie active —, il les réunit au
+   * plus tôt à la liquidation, et c'est cette année-là qui vaut.
+   */
+  anneeOuvertureDesDroits(periode, carriere, anneeLiquidation) {
+    const ouverture = carriere.dateNaissance
+      .plusMois(enMois(this.ageOuverture(periode, carriere))).annee;
+    return Math.min(anneeLiquidation, ouverture);
   }
 
   /**

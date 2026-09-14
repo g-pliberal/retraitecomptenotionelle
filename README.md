@@ -112,7 +112,7 @@ Scénario                                                          Courants   Co
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 277 Ko compressés (2218 Ko brut) et prend quelques dixièmes
+chargement transfère 284 Ko compressés (2287 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
@@ -131,7 +131,7 @@ la page.
 <details>
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
-`index.html` charge deux choses : `moteur/donnees.json` (2218 Ko — les séries, les
+`index.html` charge deux choses : `moteur/donnees.json` (2287 Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les 72 fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -284,7 +284,7 @@ print(simulateur.simuler(carriere).tableau())
 | Un revenu se saisit comme un revenu | « Revenu brut mensuel : 2 900 € », en euros d'aujourd'hui — plus un multiple du salaire moyen que personne ne connaît, resté à un lien de là pour qui raisonne en relatif, montants convertis au passage. Le champ dit **brut** et donne l'échelle chiffrée (SMIC, moyenne, plafond) ; le modèle, lui, ne connaît toujours que le multiple, et l'euro n'entre qu'à un seul endroit |
 | Une carrière, plusieurs métiers | On faisait autrefois le même métier toute sa vie, c'est devenu l'exception : la carrière se décrit comme une suite de métiers, chacun avec son statut et son niveau de revenu, et chaque changement fait passer d'un régime à un autre. L'année du changement revient au métier qui en occupe le plus de mois — les régimes liquident à l'année —, mais le revenu porté au compte reste la somme de ce que les deux ont payé |
 | Utilisable sans rien installer | Le modèle s'exécute dans le navigateur, sur une simple adresse |
-| Étalon confronté à une seconde implémentation | Le régime général du scénario 1 est rejoué par **OpenFisca-France-Pension**, écrit par d'autres à partir des mêmes textes : durée d'assurance, trimestres de décote, taux et proratisation concordent exactement sur dix profils, et la confrontation a fait trouver une erreur de chaque côté |
+| Étalon confronté à une seconde implémentation | Le régime général, la pension civile (État et CNRACL) et l'Arrco d'avant 2019 du scénario 1 sont rejoués par **OpenFisca-France-Pension**, écrit par d'autres à partir des mêmes textes : durée, décote, taux, proratisation, points et valeur du point concordent sur vingt-sept profils, et chaque confrontation a fait trouver des erreurs des deux côtés — chez nous, le barème de décote de la fonction publique lu à l'année de liquidation au lieu de l'année d'ouverture du droit, et la montée en charge 2004-2008 de sa durée de services, ignorée |
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait de 12 % sur quarante ans, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347798289 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
@@ -779,7 +779,7 @@ python scripts/fetch/insee_bdm.py               # séries longues INSEE (BDM)
 python scripts/fetch/oecd_esperance_vie.py      # espérance de vie à 65 ans
 python scripts/fetch/eurostat_mortalite.py      # tables de mortalité par âge
 python scripts/fetch/openfisca_plafond.py       # plafond ancien
-python scripts/fetch/openfisca_cotisations.py   # taux de cotisation du RG
+python scripts/fetch/openfisca_cotisations.py   # taux de cotisation du RG, du public, des non-salariés
 python scripts/fetch/openfisca_points.py        # valeurs du point, depuis 1947
 python scripts/fetch/openfisca_point_indice.py  # point d'indice, minimum garanti
 python scripts/fetch/dila_legi_point_indice.py  # point d'indice, dans son décret (lent)
@@ -801,7 +801,11 @@ python scripts/fetch/dila_legi_minimum_contributif.py   # minimum contributif (l
 python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes (lent)
 python scripts/fetch/ined_vallin_mesle.py       # quotients de mortalité d'avant 1986
 python scripts/fetch/eurostat_hicp.py           # contrôle croisé de l'inflation
-python scripts/fetch/openfisca_regime_general.py  # contre-expertise du scénario 1
+python scripts/fetch/openfisca_regime_general.py  # contre-expertise du scénario 1 : régime général
+python scripts/fetch/openfisca_fonction_publique.py  # la même, pension civile (État, CNRACL)
+python scripts/fetch/openfisca_arrco.py         # la même, Arrco 1999-2018
+python scripts/fetch/openfisca_minimum_contributif.py  # montants du minimum contributif
+python scripts/fetch/openfisca_parametres_generation.py  # durée requise, âge d'annulation, par génération
 python scripts/fetch/cnav_revalorisation_salaires.py  # revalorisation des salaires portés au compte
 python scripts/fetch/agirc_arrco_valeurs_point.py  # valeurs du point, par la fédération
 
@@ -877,7 +881,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (2218 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (2287 Ko, produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
@@ -885,10 +889,10 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          580 tests Python
+tests/                          594 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
-                                et le relevé d'OpenFisca-France-Pension qui sert
-                                de contre-expertise au scénario 1
+                                et les relevés d'OpenFisca-France-Pension qui
+                                servent de contre-expertise au scénario 1
   js/                           le portage rejoué contre ces témoins (node --test)
 ```
 

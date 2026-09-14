@@ -1079,6 +1079,101 @@ def source_minimum_garanti_seuil() -> dict[tuple, float]:
     return _minimum_garanti("trimestres_seuil")
 
 
+def _cles_non_certifiees(chemin: Path, cles: tuple[str, ...]) -> set[tuple]:
+    """Les lignes d'une table que la base LEGI n'a pas certifiées.
+
+    Une transcription tierce ne peut ni certifier ni DÉCERTIFIER : versée au
+    niveau ``haute``, elle ne doit toucher qu'aux lignes qui ne sont pas déjà
+    au-dessus. C'est la règle du plafond ancien, qui s'efface devant le
+    *Journal officiel*, écrite une fois pour toutes les sources OpenFisca.
+    """
+    if not chemin.exists():
+        return set()
+    return {
+        tuple(ligne[c] for c in cles)
+        for ligne in charger_csv(chemin)
+        if ligne.get("fiabilite") != "certifiee"
+    }
+
+
+def _tables_generation_openfisca() -> dict[str, dict[float, float]]:
+    charge = _lire_json("openfisca_parametres_generation.json",
+                        "scripts/fetch/openfisca_parametres_generation.py")
+    return {
+        serie: {float(g): float(v) for g, v in table.items()}
+        for serie, table in charge["series"].items()
+    }
+
+
+def _en_escalier(table: dict[float, float], generation: float) -> float | None:
+    """Lecture en escalier, comme ``TableParGeneration`` : la valeur du dernier
+    bloc qui commence avant la génération demandée."""
+    applicables = [g for g in table if g <= generation]
+    return table[max(applicables)] if applicables else None
+
+
+def source_duree_requise_openfisca() -> dict[tuple, float]:
+    """Durée requise des générations que la base LEGI ne certifie pas.
+
+    Les générations 1943 à 1952 — 160 « vient de la règle générale », 161 à
+    164 sont dans des décrets absents de la base — sont confrontées à la table
+    d'OpenFisca-France-Pension, transcrite des mêmes circulaires par d'autres
+    mains. Niveau ``haute``, et rien de plus ; les lignes certifiées ne sont
+    pas touchées.
+    """
+    table = _tables_generation_openfisca()["duree_requise"]
+    return {
+        cle: valeur
+        for cle in sorted(_cles_non_certifiees(
+            REFERENCE / "legislation" / "duree_assurance_requise.csv", ("generation",)),
+            key=lambda c: float(c[0]))
+        if (valeur := _en_escalier(table, float(cle[0]))) is not None
+    }
+
+
+def source_age_annulation_openfisca() -> dict[tuple, float]:
+    """Âge d'annulation de la décote, par génération, chez OpenFisca.
+
+    La table du dépôt est calculée — l'âge d'ouverture majoré de cinq ans — et
+    recontrôlée à chaque exécution par ``controle_vraisemblance_age_annulation``.
+    OpenFisca la porte transcrite : c'est un second chemin, indépendant du
+    premier, et il la verse au niveau ``haute`` où elle était déjà.
+    """
+    table = _tables_generation_openfisca()["age_annulation_decote"]
+    return {
+        cle: valeur
+        for cle in sorted(_cles_non_certifiees(
+            REFERENCE / "legislation" / "age_annulation_decote.csv", ("generation",)),
+            key=lambda c: float(c[0]))
+        if (valeur := _en_escalier(table, float(cle[0]))) is not None
+    }
+
+
+#: Âge d'ouverture d'un sédentaire de la fonction publique avant la réforme de
+#: 2010 : la table d'OpenFisca est par génération, celle du dépôt par année
+#: d'ouverture du droit, et c'est cet âge qui passe de l'une à l'autre.
+AGE_OUVERTURE_SEDENTAIRE_AVANT_2010 = 60
+
+
+def source_duree_requise_fonction_publique_openfisca() -> dict[tuple, float]:
+    """Montée en charge de la loi de 2003 dans la fonction publique, chez OpenFisca.
+
+    Le dépôt la tient du texte, par année d'ouverture du droit ; OpenFisca la
+    transcrit par génération. Pour un sédentaire les deux se correspondent à
+    soixante ans près, et c'est ce que ce contrôle vérifie — au niveau
+    ``haute``, la table étant lue dans un article, non produite par lui.
+    """
+    table = _tables_generation_openfisca()["duree_requise_fonction_publique"]
+    cles = _cles_non_certifiees(
+        REFERENCE / "legislation" / "duree_requise_fonction_publique.csv",
+        ("annee_ouverture",))
+    return {
+        (str(int(generation) + AGE_OUVERTURE_SEDENTAIRE_AVANT_2010),): valeur
+        for generation, valeur in sorted(table.items())
+        if (str(int(generation) + AGE_OUVERTURE_SEDENTAIRE_AVANT_2010),) in cles
+    }
+
+
 def source_carriere_longue() -> dict[tuple, float]:
     """Âge de départ anticipé par borne d'entrée dans la vie active.
 
@@ -2077,6 +2172,33 @@ CERTIFICATIONS = (
         tolerance=5e-7,
     ),
     Certification(
+        nom="age_annulation_decote_openfisca",
+        chemin=REFERENCE / "legislation" / "age_annulation_decote.csv",
+        cles=("generation",),
+        colonne="age",
+        source=source_age_annulation_openfisca,
+        origine="OpenFisca-France-Pension, aad.yaml du régime général",
+        decimales=2,
+        tolerance=0.01,
+        unite=" ans",
+        niveau="haute",
+        complementaire=True,
+    ),
+    Certification(
+        nom="duree_requise_fonction_publique_openfisca",
+        chemin=REFERENCE / "legislation" / "duree_requise_fonction_publique.csv",
+        cles=("annee_ouverture",),
+        colonne="trimestres",
+        source=source_duree_requise_fonction_publique_openfisca,
+        origine="OpenFisca-France-Pension, trimtp.yaml de la pension civile, "
+                "colonne de 2003",
+        decimales=0,
+        tolerance=0.5,
+        unite=" trimestres",
+        niveau="haute",
+        complementaire=True,
+    ),
+    Certification(
         nom="minimum_contributif",
         chemin=REFERENCE / "legislation" / "minimum_contributif.csv",
         cles=("mesure", "annee"),
@@ -2160,6 +2282,19 @@ CERTIFICATIONS = (
         decimales=0,
         tolerance=0.5,
         unite=" trimestres",
+    ),
+    Certification(
+        nom="duree_assurance_requise_openfisca",
+        chemin=REFERENCE / "legislation" / "duree_assurance_requise.csv",
+        cles=("generation",),
+        colonne="trimestres",
+        source=source_duree_requise_openfisca,
+        origine="OpenFisca-France-Pension, trimtp.yaml du régime général",
+        decimales=0,
+        tolerance=0.5,
+        unite=" trimestres",
+        niveau="haute",
+        complementaire=True,
     ),
     Certification(
         nom="duree_assurance_requise_decrets",
@@ -3061,7 +3196,136 @@ def controle_vraisemblance_cotisations() -> list[str]:
         f"complémentaires du privé comparées à leurs taux effectifs par tranche "
         f"et à leur répartition salarié/employeur (barème « {variante} »)"
     )
+
+    # LES RÉGIMES PUBLICS ET LES NON-SALARIÉS. Leurs fiches portaient des taux
+    # saisis depuis des rapports, un par période ; OpenFisca-France transcrit
+    # les barèmes datés — retenue pour pension de l'article L. 61, cotisation
+    # de base des artisans et des commerçants, complémentaires, professions
+    # libérales. Même confrontation que pour le régime général : une moyenne
+    # sur les années de la période, un seuil de deux dixièmes de point.
+    par_famille = {"public": brut.get("public", {}),
+                   "independants": brut.get("independants", {})}
+    publics_et_independants = 0
+    for fichier, code, assiette, famille, series, *champ in CONFRONTATIONS_TAUX:
+        champ = champ[0] if champ else "taux_cotisation_retraite"
+        fiches = yaml.safe_load(
+            (REFERENCE / "regimes" / fichier).read_text(encoding="utf-8"))
+        regime = next((r for r in fiches["regimes"] if r["code"] == code), None)
+        if regime is None:
+            continue
+        tables = [par_famille[famille].get(s) for s in series]
+        if not all(tables):
+            continue
+        couverture = set.intersection(*({int(a) for a in t} for t in tables))
+        for periode in regime["periodes"]:
+            if periode.get("assiette") != assiette:
+                continue
+            debut = max(int(periode["debut"]), min(couverture))
+            fin = min(int(periode["fin"] or max(couverture)), max(couverture))
+            annees = [a for a in range(debut, fin + 1) if a in couverture]
+            if not annees:
+                continue
+            publics_et_independants += 1
+            publie = sum(sum(t[str(a)] for t in tables) for a in annees) / len(annees)
+            saisi = float(periode.get(champ) or 0.0)
+            if abs(publie - saisi) > 0.002:
+                libelle = "cotisation déplafonnée" if "deplafonnee" in champ else "cotisations"
+                anomalies.append(
+                    f"SUSPECT {libelle} {code} {periode['debut']}-{periode['fin']} "
+                    f"{assiette} : fiche {saisi:.2%}, OpenFisca {publie:.2%} en "
+                    f"moyenne sur {annees[0]}-{annees[-1]}"
+                )
+    messages.append(
+        f"OK      vraisemblance cotisations : {publics_et_independants} périodes "
+        f"des régimes publics et des non-salariés comparées aux barèmes "
+        f"d'OpenFisca-France"
+    )
     return messages + anomalies
+
+
+#: Fiche, régime, assiette -> séries d'OpenFisca à additionner pour obtenir
+#: la grandeur que la fiche porte, et le champ de la fiche quand ce n'est pas
+#: `taux_cotisation_retraite`. La retenue de l'agent (`agent_seul`) se lit
+#: telle quelle ; le RAFP additionne ses deux parts ; les ouvriers de l'État
+#: suivent l'article L. 61 par renvoi, et donc la série de l'État.
+CONFRONTATIONS_TAUX = (
+    ("fonction_publique.yaml", "fonction_publique_etat", "hors_primes",
+     "public", ("fonction_publique_etat",)),
+    ("fonction_publique.yaml", "cnracl", "hors_primes", "public", ("cnracl",)),
+    ("fonction_publique.yaml", "fspoeie", "hors_primes",
+     "public", ("fonction_publique_etat",)),
+    ("fonction_publique.yaml", "rafp", "primes_uniquement",
+     "public", ("rafp_salarie", "rafp_employeur")),
+    ("non_salaries.yaml", "cancava", "plafonnee",
+     "independants", ("artisans_base_plafonnee",)),
+    ("non_salaries.yaml", "organic", "plafonnee",
+     "independants", ("commercants_base_plafonnee",)),
+    ("non_salaries.yaml", "rsi", "plafonnee",
+     "independants", ("artisans_base_plafonnee",)),
+    ("non_salaries.yaml", "rsi", "plafonnee",
+     "independants", ("independants_base_deplafonnee",), "taux_cotisation_deplafonnee"),
+    ("non_salaries.yaml", "rco_artisans", "plafonnee",
+     "independants", ("rco_artisans_tranche_1",)),
+    ("non_salaries.yaml", "rco_artisans", "tranche_1_4_pass",
+     "independants", ("rco_artisans_tranche_2",)),
+    ("non_salaries.yaml", "rci", "plafonnee", "independants", ("rci_tranche_1",)),
+    ("non_salaries.yaml", "rci", "tranche_1_4_pass",
+     "independants", ("rci_tranche_2",)),
+    ("non_salaries.yaml", "cnavpl", "plafonnee_085_pass",
+     "independants", ("cnavpl_tranche_1_085",)),
+    ("non_salaries.yaml", "cnavpl", "tranche_085_5_pass",
+     "independants", ("cnavpl_tranche_2_085_5",)),
+    ("non_salaries.yaml", "cnavpl", "plafonnee", "independants", ("cnavpl_tranche_1",)),
+    ("non_salaries.yaml", "cnavpl", "plafonnee_5_pass",
+     "independants", ("cnavpl_tranche_2",)),
+)
+
+
+def controle_vraisemblance_minimum_contributif() -> list[str]:
+    """Confronte les montants SERVIS du minimum contributif à OpenFisca-France-Pension.
+
+    Le fichier du dépôt est une table d'ANCRES : une ligne par montant qui
+    change, à l'année où il change. Les ancres du code sont certifiées depuis
+    la base LEGI ; les montants réellement servis entre deux ancres sont
+    transcrits de réponses ministérielles et de publications de la Cnav, au
+    niveau ``haute``. OpenFisca transcrit les mêmes circulaires : on oppose à
+    chaque ligne transcrite la dernière date d'effet qu'il porte DANS CETTE
+    ANNÉE-LÀ — et rien quand il n'en porte aucune, sa série s'arrêtant en 2023.
+
+    Un contrôle, pas une certification : les deux sont des transcriptions, à
+    quelques centimes l'une de l'autre — douze mensualités arrondies contre un
+    montant annuel —, et la ligne garde la valeur que le dépôt a transcrite.
+    """
+    try:
+        changements = _lire_json("openfisca_minimum_contributif.json",
+                                 "scripts/fetch/openfisca_minimum_contributif.py")["changements"]
+    except SourceAbsente as erreur:
+        return [f"IGNORÉ  vraisemblance minimum contributif : {erreur}"]
+    lignes = charger_csv(REFERENCE / "legislation" / "minimum_contributif.csv")
+    comparees, ecarts = 0, []
+    for ligne in lignes:
+        if ligne["fiabilite"] == "certifiee":
+            continue
+        mesure, annee = ligne["mesure"], ligne["annee"]
+        dans_l_annee = sorted(
+            (jour, montant) for jour_mesure, montant in changements.items()
+            for m, jour in [jour_mesure.split("|")]
+            if m == mesure and jour[:4] == annee
+        )
+        if not dans_l_annee:
+            continue
+        comparees += 1
+        publie, saisi = dans_l_annee[-1][1], float(ligne["valeur"])
+        if abs(publie - saisi) > 0.5:
+            ecarts.append(
+                f"SUSPECT minimum contributif {mesure} {annee} : fiche {saisi:.2f} €, "
+                f"OpenFisca {publie:.2f} € au {dans_l_annee[-1][0]}"
+            )
+    return [
+        f"OK      vraisemblance minimum contributif : {comparees} montants servis "
+        f"comparés aux circulaires transcrites par OpenFisca-France-Pension, "
+        f"{len(ecarts)} au-delà de cinquante centimes",
+    ] + ecarts
 
 
 def controle_vraisemblance_prix_anciens() -> list[str]:
@@ -3315,6 +3579,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.extend(controle_vraisemblance_minimum_garanti())
     messages.extend(controle_vraisemblance_plafond())
     messages.extend(controle_vraisemblance_cotisations())
+    messages.extend(controle_vraisemblance_minimum_contributif())
     messages.extend(controle_vraisemblance_rendements())
     messages.extend(controle_vraisemblance_ircantec())
     messages.extend(controle_vraisemblance_point_insee())

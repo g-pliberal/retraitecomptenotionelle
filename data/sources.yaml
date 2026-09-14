@@ -2018,9 +2018,75 @@ institutions:
           2023 — 169 trimestres à la génération 1965, là où l'article
           L. 161-17-3 en donne 172.
           Périmètre : régime général seul, liquidations antérieures à 2025. Son
-          Arrco est inutilisable dans la version publiée (le code demande un
-          paramètre que les barèmes livrés ne définissent pas) et ses barèmes
-          s'arrêtent en 2024.
+          régime unifié Agirc-Arrco est inutilisable dans la version publiée
+          (le code demande un paramètre que les barèmes livrés ne définissent
+          pas) et ses barèmes s'arrêtent en 2024.
+
+      - id: openfisca_fonction_publique_oracle
+        titre: Moteur de calcul de la pension civile — contre-expertise du scénario 1
+        url: https://github.com/openfisca/openfisca-france-pension
+        acces: api
+        statut_integration: automatise
+        cible: tests/temoins/openfisca_fonction_publique.json
+        recuperation: scripts/fetch/openfisca_fonction_publique.py
+        note: >-
+          Le même emprunt de MOTEUR, pour la fonction publique de l'État et la
+          CNRACL : dix profils de sédentaires sans enfant ni prime, liquidés de
+          2009 à 2020. La confrontation a trouvé deux erreurs chez nous — le
+          barème de décote de l'article L. 14 lu à l'année de liquidation au
+          lieu de l'année d'ouverture du droit, et la montée en charge
+          2004-2008 de la durée de services ignorée — et une transcription
+          chez lui, 0,65 % pour 2010 au lieu de 0,625 %. Son minimum garanti
+          suit le point d'indice de l'année de liquidation, quand l'article
+          L. 17 fige la référence en 2004 : l'écart est le sien.
+
+      - id: openfisca_arrco_oracle
+        titre: Moteur de calcul de l'Arrco 1999-2018 — contre-expertise du scénario 1
+        url: https://github.com/openfisca/openfisca-france-pension
+        acces: api
+        statut_integration: automatise
+        cible: tests/temoins/openfisca_arrco.json
+        recuperation: scripts/fetch/openfisca_arrco.py
+        note: >-
+          Le même emprunt, pour l'Arrco des non-cadres : sept carrières qui
+          commencent en 1999 au plus tôt — OpenFisca ne convertit pas les
+          points d'avant l'unification — et liquident en 2018 au plus tard.
+          Points au millième, valeur de service à la quatrième décimale, rien
+          à corriger. Son coefficient d'anticipation ne se lit que par année
+          entière, et son âge à la liquidation perd parfois un mois à la
+          conversion des jours : le témoin choisit ses dates en conséquence.
+
+      - id: openfisca_minimum_contributif
+        titre: Montants du minimum contributif, 1984-2023
+        url: https://github.com/openfisca/openfisca-france-pension/tree/master/openfisca_france_pension/parameters/retraites/secteur_prive/regime_general_cnav
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/minimum_contributif.csv
+        recuperation: scripts/fetch/openfisca_minimum_contributif.py
+        note: >-
+          Le minimum, le minimum majoré et le plafond d'écrêtement, datés
+          circulaire par circulaire. Contrôle de vraisemblance sur les seules
+          lignes que la base LEGI ne certifie pas, à la dernière date d'effet
+          de l'année de l'ancre — un contrôle et non une certification, les
+          deux étant des transcriptions à quelques centimes l'une de l'autre.
+          La série s'arrête en 2023 : les montants servis depuis restent
+          transcrits à la main, sans recoupement.
+
+      - id: openfisca_parametres_generation
+        titre: Durée requise, âge d'annulation de la décote et durée de services de la fonction publique, par génération
+        url: https://github.com/openfisca/openfisca-france-pension/tree/master/openfisca_france_pension/parameters/retraites
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/duree_assurance_requise.csv
+        recuperation: scripts/fetch/openfisca_parametres_generation.py
+        note: >-
+          Trois tables que la base LEGI ne certifie pas entièrement : les
+          générations 1943-1952 de la durée requise, l'âge d'annulation de la
+          décote — calculé chez nous, transcrit chez lui — et la montée en
+          charge 2004-2008 de la fonction publique
+          (`legislation/duree_requise_fonction_publique.csv`). Versées au
+          niveau `haute` sur les lignes non certifiées, et elles s'y sont
+          toutes retrouvées.
 
       - id: openfisca_point_indice
         titre: Point d'indice de la fonction publique et barème du minimum garanti
@@ -2059,7 +2125,7 @@ institutions:
           finançant les droits spécifiques et le déséquilibre démographique.
 
       - id: openfisca_cotisations
-        titre: Taux de cotisation vieillesse du régime général, 1967-2026
+        titre: Taux de cotisation vieillesse du régime général, 1967-2026, et des régimes publics et non salariés
         url: https://github.com/openfisca/openfisca-france/tree/master/openfisca_france/parameters/prelevements_sociaux/cotisations_securite_sociale_regime_general/cnav
         acces: api
         statut_integration: automatise

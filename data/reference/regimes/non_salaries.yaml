@@ -41,7 +41,7 @@ regimes:
         decote_par_generation: true
         salaire_reference: 10_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1143
         decote_par_trimestre: 0.025
         decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
@@ -62,6 +62,14 @@ regimes:
           et une décote de 1,25 % par trimestre quand elle était de 2,5 %.
           Les quatre périodes qui suivent sont celles du régime général, bornées
           à l'alignement de 1973 et à l'absorption dans le RSI en 2006.
+          TAUX DE COTISATION : 11.43 % est la moyenne 1973-1982 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/artisans/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 8,75 % en 1973,
+          10,25 % en 1974, 11,15 % en octobre 1976, 12,9 % en 1979. La fiche
+          portait 16,55 % de 1973 à 2006, un chiffre de synthèse qui surcomptait
+          de cinq points la cotisation des années 1970 ; `verifier_donnees.py`
+          confronte désormais chaque période à la série.
       - debut: 1983
         fin: 1993
         type_calcul: annuites
@@ -73,7 +81,7 @@ regimes:
         decote_par_generation: true
         salaire_reference: 10_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1505
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs:
@@ -82,6 +90,15 @@ regimes:
         notes: >-
           1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
           trimestre. La durée requise reste de 150 trimestres.
+          TAUX DE COTISATION : 15.05 % est la moyenne 1983-1993 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/artisans/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 12,9 % en 1983,
+          13,9 % en 1984, 14,6 % en août 1986, 14,8 % en juillet 1987, 15,8 % en
+          1989, 16,35 % en février 1991. La fiche portait 16,55 % de 1973 à
+          2006, un chiffre de synthèse qui surcomptait de cinq points la
+          cotisation des années 1970 ; `verifier_donnees.py` confronte désormais
+          chaque période à la série.
       - debut: 1994
         fin: 2003
         type_calcul: annuites
@@ -97,7 +114,7 @@ regimes:
         duree_proratisation_par_generation: true
         salaire_reference: 25_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1635
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs:
@@ -109,6 +126,13 @@ regimes:
           génération, et le salaire de référence passe des dix aux vingt-cinq
           meilleures années, là aussi par génération. Les deux montées en charge
           sont lues dans les tables du dépôt.
+          TAUX DE COTISATION : 16.35 % est la moyenne 1994-2003 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/artisans/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 16,35 % sur toute
+          la période. La fiche portait 16,55 % de 1973 à 2006, un chiffre de
+          synthèse qui surcomptait de cinq points la cotisation des années 1970
+          ; `verifier_donnees.py` confronte désormais chaque période à la série.
       - debut: 2004
         fin: 2006
         type_calcul: annuites
@@ -124,7 +148,7 @@ regimes:
         duree_proratisation_par_generation: true
         salaire_reference: 25_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1652
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs:
@@ -134,7 +158,14 @@ regimes:
           Loi Fillon de 2003 : durée requise au-delà de 160 trimestres, création
           de la surcote et de la retraite anticipée pour carrière longue. Le
           régime est absorbé par le RSI le 1er janvier 2006.
-
+          TAUX DE COTISATION : 16.52 % est la moyenne 2004-2006 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/artisans/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 16,35 % puis
+          16,45 % en juillet 2004 et 16,65 % en 2006. La fiche portait 16,55 %
+          de 1973 à 2006, un chiffre de synthèse qui surcomptait de cinq points
+          la cotisation des années 1970 ; `verifier_donnees.py` confronte
+          désormais chaque période à la série.
   - code: organic
     nom: Organisation autonome nationale de l'industrie et du commerce
     famille: non_salarie
@@ -172,7 +203,7 @@ regimes:
         decote_par_generation: true
         salaire_reference: 10_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1143
         decote_par_trimestre: 0.025
         decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
@@ -193,6 +224,14 @@ regimes:
           et une décote de 1,25 % par trimestre quand elle était de 2,5 %.
           Les quatre périodes qui suivent sont celles du régime général, bornées
           à l'alignement de 1973 et à l'absorption dans le RSI en 2006.
+          TAUX DE COTISATION : 11.43 % est la moyenne 1973-1982 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/industriels_et_commercants/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 8,75 % en 1973,
+          10,25 % en 1974, 11,15 % en octobre 1976, 12,9 % en 1979. La fiche
+          portait 16,55 % de 1973 à 2006, un chiffre de synthèse qui surcomptait
+          de cinq points la cotisation des années 1970 ; `verifier_donnees.py`
+          confronte désormais chaque période à la série.
       - debut: 1983
         fin: 1993
         type_calcul: annuites
@@ -204,7 +243,7 @@ regimes:
         decote_par_generation: true
         salaire_reference: 10_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1505
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs:
@@ -213,6 +252,15 @@ regimes:
         notes: >-
           1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
           trimestre. La durée requise reste de 150 trimestres.
+          TAUX DE COTISATION : 15.05 % est la moyenne 1983-1993 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/industriels_et_commercants/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 12,9 % en 1983,
+          13,9 % en 1984, 14,6 % en août 1986, 14,8 % en juillet 1987, 15,8 % en
+          1989, 16,35 % en février 1991. La fiche portait 16,55 % de 1973 à
+          2006, un chiffre de synthèse qui surcomptait de cinq points la
+          cotisation des années 1970 ; `verifier_donnees.py` confronte désormais
+          chaque période à la série.
       - debut: 1994
         fin: 2003
         type_calcul: annuites
@@ -228,7 +276,7 @@ regimes:
         duree_proratisation_par_generation: true
         salaire_reference: 25_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1635
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs:
@@ -240,6 +288,13 @@ regimes:
           génération, et le salaire de référence passe des dix aux vingt-cinq
           meilleures années, là aussi par génération. Les deux montées en charge
           sont lues dans les tables du dépôt.
+          TAUX DE COTISATION : 16.35 % est la moyenne 1994-2003 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/industriels_et_commercants/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 16,35 % sur toute
+          la période. La fiche portait 16,55 % de 1973 à 2006, un chiffre de
+          synthèse qui surcomptait de cinq points la cotisation des années 1970
+          ; `verifier_donnees.py` confronte désormais chaque période à la série.
       - debut: 2004
         fin: 2006
         type_calcul: annuites
@@ -255,7 +310,7 @@ regimes:
         duree_proratisation_par_generation: true
         salaire_reference: 25_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1655
+        taux_cotisation_retraite: 0.1652
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs:
@@ -265,7 +320,14 @@ regimes:
           Loi Fillon de 2003 : durée requise au-delà de 160 trimestres, création
           de la surcote et de la retraite anticipée pour carrière longue. Le
           régime est absorbé par le RSI le 1er janvier 2006.
-
+          TAUX DE COTISATION : 16.52 % est la moyenne 2004-2006 des taux datés
+          que transcrit OpenFisca-France
+          (`cotisations_taxes_independants_artisans_commercants/ret_ac/industriels_et_commercants/sous_pss`,
+          décrets d'application de la loi du 3 juillet 1972) — 16,35 % puis
+          16,45 % en juillet 2004 et 16,65 % en 2006. La fiche portait 16,55 %
+          de 1973 à 2006, un chiffre de synthèse qui surcomptait de cinq points
+          la cotisation des années 1970 ; `verifier_donnees.py` confronte
+          désormais chaque période à la série.
   - code: rsi
     nom: Régime social des indépendants
     famille: non_salarie
@@ -294,7 +356,7 @@ regimes:
         duree_proratisation_par_generation: true
         salaire_reference: 25_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1775
+        taux_cotisation_retraite: 0.1665
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
         avantages_non_contributifs:
@@ -305,7 +367,41 @@ regimes:
           (« suppression du RSI »), adossement au régime général achevé en 2020
           sous le nom de Sécurité sociale des indépendants puis intégration
           complète à la CNAV.
+          TAUX DE COTISATION : 16,65 %, taux plafonné que transcrit OpenFisca-France
+          pour 2006-2008 (`ret_ac/artisans/sous_pss`, identique pour les
+          commerçants). La fiche portait 17,75 % — le total plafonnée plus
+          déplafonnée de 2017 — sur toute la vie du régime.
       - debut: 2009
+        fin: 2013
+        type_calcul: annuites
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 0.50
+        age_taux_plein_par_generation: true
+        decote_par_generation: true
+        salaire_reference_par_generation: true
+        duree_proratisation_par_generation: true
+        salaire_reference: 25_meilleures_annees
+        assiette: plafonnee
+        taux_cotisation_retraite: 0.1673
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        avantages_non_contributifs:
+          [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
+           reversion, periodes_assimilees]
+        notes: >-
+          Loi de financement de la sécurité sociale pour 2009 : la surcote passe
+          de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
+          même barème par ailleurs — seul le taux de surcote change.
+          TAUX DE COTISATION : 16,73 % est la moyenne 2009-2013 de la cotisation
+          plafonnée que transcrit OpenFisca-France (`ret_ac/artisans/sous_pss`) —
+          16,65 % jusqu'en 2011, 16,85 % à compter de novembre 2012. La fiche
+          portait 17,75 %, le total plafonnée plus déplafonnée de 2017, sur toute
+          la période 2009-2018.
+      - debut: 2014
         fin: 2018
         type_calcul: annuites
         age_ouverture: 62
@@ -320,16 +416,23 @@ regimes:
         duree_proratisation_par_generation: true
         salaire_reference: 25_meilleures_annees
         assiette: plafonnee
-        taux_cotisation_retraite: 0.1775
+        taux_cotisation_retraite: 0.1709
+        taux_cotisation_deplafonnee: 0.0045
+        part_salariale_deplafonnee: 1.0
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
            reversion, periodes_assimilees]
         notes: >-
-          Loi de financement de la sécurité sociale pour 2009 : la surcote passe
-          de 0,75 % à 1,25 % par trimestre au 1er janvier 2009. Même période,
-          même barème par ailleurs — seul le taux de surcote change.
+          UNE COTISATION DÉPLAFONNÉE EST CRÉÉE AU 1er JANVIER 2014, et la période
+          se coupe là. 17,09 % est la moyenne 2014-2018 de la cotisation
+          plafonnée que transcrit OpenFisca-France — 16,95 % en 2014, 17,05 % en
+          2015, 17,15 % depuis 2016 — et 0,45 % celle de la cotisation
+          déplafonnée (`ret_ac/tous_independants/tout_salaire` : 0,20 %, 0,35 %,
+          0,50 %, puis 0,60 % depuis 2017), portée à part comme au régime
+          général et intégralement personnelle, l'indépendant n'ayant pas
+          d'employeur. Même barème par ailleurs.
 
   - code: rco_artisans
     nom: Régime complémentaire obligatoire des artisans

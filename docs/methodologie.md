@@ -702,8 +702,15 @@ code des pensions lui donne la sienne, et rien n'y coïncide : elle n'existe qu'
 compter de 2006, son coefficient monte d'un huitième de point par an jusqu'à
 1,25 % en 2015, et son âge d'annulation n'est pas un âge en propre mais la
 **limite d'âge du grade**, diminuée d'un nombre de trimestres décroissant
-jusqu'à s'annuler en 2020. Un sédentaire liquidant en 2012 voyait sa décote
-s'annuler à 63 ans, pas à 67.
+jusqu'à s'annuler en 2020. Et ces deux paramètres se lisent à l'année où le
+droit s'ouvre, non à celle du départ — « année au cours de laquelle sont réunies
+les conditions mentionnées au I et au II de l'article L. 24 », titre le tableau
+de la loi de 2003. Un sédentaire dont le droit s'ouvre en 2012 voit sa décote
+s'annuler à 63 ans, pas à 67, et la garde s'il part plus tard. La même loi fait
+monter la durée de services du pourcentage maximum de 150 à 160 trimestres,
+deux par an, pour les droits ouverts de 2004 à 2008
+(`legislation/duree_requise_fonction_publique.csv`) ; la durée du régime
+général, par génération, ne vaut pour la fonction publique qu'à compter de 2009.
 
 #### La cascade des avantages non contributifs, dans l'ordre du droit
 

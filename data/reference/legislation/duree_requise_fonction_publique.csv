@@ -1,0 +1,43 @@
+# Durée de services requise dans la fonction publique, PAR ANNÉE D'OUVERTURE DU DROIT
+# ------------------------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# À quoi cela sert dans ce modèle. La loi du 21 août 2003 aligne la durée de la
+# fonction publique sur celle du privé — 160 trimestres —, mais elle ne le fait
+# pas d'un coup : le II de son article 66 fait monter « le nombre de trimestres
+# nécessaires pour obtenir le pourcentage maximum de la pension civile ou
+# militaire » de 150 à 160, deux trimestres par an, de 2004 à 2008. Le décret
+# n° 2003-1306 (CNRACL, article 65) et le décret n° 2004-1056 (ouvriers de
+# l'État, article 50) portent le même tableau, aux mêmes dates.
+#
+# Le modèle lisait pour ces années la table du régime général, qui donne 160
+# trimestres à toute génération née à partir de 1943 : un fonctionnaire dont le
+# droit s'ouvrait en 2007 se voyait diviser ses services par 160 là où le texte
+# divise par 158, et opposer deux trimestres de décote de trop. C'est la
+# confrontation à OpenFisca-France-Pension qui l'a fait voir.
+#
+# CE NOMBRE COMMANDE TROIS CHOSES À LA FOIS : la proratisation (L. 13), le
+# décompte des trimestres de décote (L. 14, « nombre de trimestres nécessaire
+# pour obtenir le pourcentage maximum ») et la surcote, qui ne compte qu'au-delà.
+#
+# LA CLÉ EST L'ANNÉE OÙ LE DROIT S'OUVRE, non la génération ni l'année de
+# liquidation : la colonne du tableau s'intitule « Année au cours de laquelle
+# sont réunies les conditions mentionnées au I et au II de l'article L. 24 ».
+# Pour un sédentaire, c'est l'année de ses soixante ans ; le modèle la calcule
+# depuis l'âge d'ouverture du régime, au mois près, et la borne à l'année de
+# liquidation pour qui part avant.
+#
+# Avant 2004 : 150 trimestres, que la fiche du régime porte. À compter de 2009,
+# la table s'arrête : l'article L. 13 II renvoie à la durée du régime général
+# (L. 161-17-3), lue par génération dans `duree_assurance_requise.csv`, et c'est
+# ce que la fiche branche par `duree_requise_par_generation`.
+#
+# Niveau `haute` : ces cinq lignes sont la mise en table d'un article lu dans la
+# base LEGI (LEGIARTI000006758610, « I : 2004 ; 152 I : 2005 ; 154 I : 2006 ;
+# 156 I : 2007 ; 158 I : 2008 ; 160 »), non la sortie d'un script de collecte.
+annee_ouverture,trimestres,fiabilite
+2004,152,haute
+2005,154,haute
+2006,156,haute
+2007,158,haute
+2008,160,haute

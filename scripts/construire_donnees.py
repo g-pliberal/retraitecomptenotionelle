@@ -415,8 +415,19 @@ def _minimum_contributif() -> dict:
             for (mesure, annee), (valeur, fiabilite) in sorted(table.items())}
 
 
+def _durees_requises_fonction_publique() -> dict:
+    """Durée de services de la fonction publique, 2004-2008, par année d'ouverture."""
+    from retraite_notionnelle.scenarios.actuel import DureesRequisesFonctionPublique
+
+    return {
+        str(annee): [trimestres, int(fiabilite)]
+        for annee, (trimestres, fiabilite)
+        in sorted(DureesRequisesFonctionPublique(DONNEES)._table.items())
+    }
+
+
 def _decote_fonction_publique() -> dict:
-    """Barème de décote de l'article L. 14, par année de liquidation."""
+    """Barème de décote de l'article L. 14, par année d'ouverture du droit."""
     from retraite_notionnelle.scenarios.actuel import DecoteFonctionPublique
 
     return {
@@ -427,7 +438,7 @@ def _decote_fonction_publique() -> dict:
 
 
 def _decote_regimes_speciaux() -> dict:
-    """Barème de décote des régimes spéciaux, par année de liquidation."""
+    """Barème de décote des régimes spéciaux, par année d'ouverture du droit."""
     from retraite_notionnelle.scenarios.actuel import DecoteRegimesSpeciaux
 
     return {
@@ -541,6 +552,7 @@ def construire() -> bytes:
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),
         "minimum_vieillesse": _minimum_vieillesse(),
+        "durees_requises_fonction_publique": _durees_requises_fonction_publique(),
         "decote_fonction_publique": _decote_fonction_publique(),
         "decote_regimes_speciaux": _decote_regimes_speciaux(),
         "carriere_longue": _carriere_longue(),
