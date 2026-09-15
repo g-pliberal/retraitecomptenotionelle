@@ -1,0 +1,41 @@
+# Durée de services qui ouvre la pension militaire, PAR ANNÉE D'ATTEINTE
+# ----------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# La pension militaire ne s'ouvre pas à un ÂGE mais à une DURÉE. Le II de
+# l'article L. 24 du code des pensions civiles et militaires de retraite :
+# « La liquidation de la pension militaire intervient […] lorsqu'un officier
+# […] réunit, à la date de son admission à la retraite, vingt-sept ans de
+# services effectifs […] ; lorsqu'un militaire non officier […] réunit […]
+# dix-sept ans de services effectifs. » Vingt-cinq et quinze ans avant la loi
+# du 9 novembre 2010. C'est le départ le plus précoce du système : un engagé à
+# dix-huit ans liquide à trente-cinq.
+#
+# LA CLÉ N'EST PAS LA GÉNÉRATION, et c'est ce qui distingue cette table des
+# autres. L'article 4 du décret n° 2011-2103 du 30 décembre 2011 indexe le
+# relèvement sur « l'année au cours de laquelle sont atteintes les limites de
+# durée de services de quinze ans et de vingt-cinq ans antérieurement
+# applicables » : rien avant le 1er juillet 2011, quatre mois au second semestre
+# 2011, neuf mois en 2012, un an et deux mois en 2013, un an et sept mois en
+# 2014, deux ans à partir de 2015. La colonne `annee_atteinte` porte donc
+# l'année où le militaire réunit l'ancienne durée, `2011.5` désignant le
+# 1er juillet 2011.
+#
+# CE QUE LA TABLE NE PORTE PAS. Le même II de l'article L. 24 ouvre aussi la
+# pension à qui est radié des cadres PAR LIMITE D'ÂGE ou par limite de durée de
+# services, quelle que soit la durée accomplie. Ces deux limites tiennent au
+# GRADE (article L. 4139-16 du code de la défense), que le modèle ne connaît
+# pas : seule la condition de durée est opposée. Voir `docs/limites.md`.
+categorie,annee_atteinte,annees_requises,fiabilite
+non_officier,1900,15.00,haute
+non_officier,2011.5,15.33,haute
+non_officier,2012,15.75,haute
+non_officier,2013,16.17,haute
+non_officier,2014,16.58,haute
+non_officier,2015,17.00,haute
+officier,1900,25.00,haute
+officier,2011.5,25.33,haute
+officier,2012,25.75,haute
+officier,2013,26.17,haute
+officier,2014,26.58,haute
+officier,2015,27.00,haute

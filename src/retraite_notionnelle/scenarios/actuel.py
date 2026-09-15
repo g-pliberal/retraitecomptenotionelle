@@ -363,6 +363,171 @@ class AgesAnnulationDecote(TableParGeneration):
         return self.valeur(generation)
 
 
+@dataclass(frozen=True)
+class DerogationActive:
+    """Ce que le classement d'un emploi déplace, pour une génération."""
+
+    #: Âge anticipé (catégorie active) ou minoré (super-active) : L. 24, I, 1°.
+    age_ouverture: float
+    #: Âge d'annulation de la décote : limite d'âge du grade jusqu'en 2023,
+    #: article L. 14 bis ensuite.
+    age_annulation: float
+    #: Années de services classés sans lesquelles rien de tout cela ne vaut.
+    services_requis: float
+    fiabilite: Fiabilite
+
+
+class AgesCategorieActive:
+    """Âges de la catégorie active et de la super-active, par génération.
+
+    Le drapeau ``categorie_active`` existait dans ``config.py`` sans qu'aucun
+    statut le porte : le policier et l'aide-soignant étaient calculés comme des
+    sédentaires, et l'âge du sédentaire leur était opposé. Cette table porte les
+    trois paramètres que le classement déplace — l'âge d'ouverture, l'âge
+    d'annulation de la décote, la durée de services classés exigée — pour les
+    deux classements, lus en escalier sur la génération comme les autres.
+
+    Le classement vient du STATUT, non du régime : ``affiliations.yaml`` le
+    porte, parce qu'aucune donnée de carrière ne permet de le deviner.
+    """
+
+    FICHIER = "categorie_active.csv"
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, dict[float, DerogationActive]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if not chemin.exists():
+            self._generations: dict[str, list[float]] = {}
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                self._table.setdefault(ligne["classement"], {})[
+                    float(ligne["generation"])
+                ] = DerogationActive(
+                    age_ouverture=float(ligne["age_ouverture"]),
+                    age_annulation=float(ligne["age_annulation"]),
+                    services_requis=float(ligne["services_requis_annees"]),
+                    fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
+                )
+        self._generations = {classement: sorted(valeurs)
+                             for classement, valeurs in self._table.items()}
+
+    @property
+    def classements(self) -> tuple[str, ...]:
+        return tuple(sorted(self._table))
+
+    def derogation(self, classement: str,
+                   generation: float) -> DerogationActive | None:
+        generations = self._generations.get(classement)
+        if not generations or generation < generations[0]:
+            return None
+        applicable = generations[0]
+        for candidate in generations:
+            if candidate > generation:
+                break
+            applicable = candidate
+        return self._table[classement][applicable]
+
+
+class DureesServicesMilitaires:
+    """Durée de services qui ouvre la pension militaire, par année d'atteinte.
+
+    La pension militaire ne s'ouvre pas à un âge mais à une durée : dix-sept ans
+    de services effectifs pour un non-officier, vingt-sept pour un officier
+    (L. 24, II), quinze et vingt-cinq avant la loi du 9 novembre 2010.
+
+    **La clé n'est pas la génération.** L'article 4 du décret n° 2011-2103
+    indexe le relèvement sur « l'année au cours de laquelle sont atteintes les
+    limites de durée de services […] antérieurement applicables » : c'est donc
+    l'année où le militaire réunit quinze — ou vingt-cinq — ans qui commande la
+    durée qu'on lui oppose, et non son année de naissance.
+    """
+
+    FICHIER = "duree_services_militaires.csv"
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, dict[float, tuple[float, Fiabilite]]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if not chemin.exists():
+            self._annees: dict[str, list[float]] = {}
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                self._table.setdefault(ligne["categorie"], {})[
+                    float(ligne["annee_atteinte"])
+                ] = (float(ligne["annees_requises"]),
+                     Fiabilite.depuis_texte(ligne["fiabilite"]))
+        self._annees = {categorie: sorted(valeurs)
+                        for categorie, valeurs in self._table.items()}
+
+    @property
+    def categories(self) -> tuple[str, ...]:
+        return tuple(sorted(self._table))
+
+    def duree_de_base(self, categorie: str) -> float | None:
+        """Durée d'avant la loi de 2010 — quinze ans, ou vingt-cinq."""
+        annees = self._annees.get(categorie)
+        if not annees:
+            return None
+        return self._table[categorie][annees[0]][0]
+
+    def annees_requises(self, categorie: str,
+                        annee_atteinte: float) -> tuple[float, Fiabilite] | None:
+        annees = self._annees.get(categorie)
+        if not annees:
+            return None
+        applicable = annees[0]
+        for candidate in annees:
+            if candidate > annee_atteinte:
+                break
+            applicable = candidate
+        return self._table[categorie][applicable]
+
+
+class AgesJouissanceMilitaire(TableParGeneration):
+    """Âge auquel la pension militaire différée entre en jouissance.
+
+    Les 2° à 4° de l'article L. 25 servent une pension au militaire qui part
+    avant la durée d'ouverture, à condition qu'il ait quinze ans de services,
+    mais à « l'âge défini à l'article L. 161-17-2 […] abaissé de dix années ».
+    """
+
+    def __init__(self, racine: Path) -> None:
+        super().__init__(racine, "age_jouissance_militaire.csv", "age")
+
+    def age(self, generation: float) -> tuple[float, Fiabilite] | None:
+        return self.valeur(generation)
+
+
+#: Durée minimale de services qui ouvre une pension militaire, même différée :
+#: « lorsqu'ils ont accompli […] moins de quinze ans de services effectifs »,
+#: dit le 5° de l'article L. 25, la pension n'est due qu'à l'âge légal.
+SERVICES_MINIMAUX_MILITAIRES = 15.0
+
+#: Trimestres de services que le II de l'article L. 14 ajoute à la durée
+#: d'ouverture pour borner la décote militaire, et plafond de celle-ci.
+TRIMESTRES_DECOTE_MILITAIRE = 10
+
+
+@dataclass(frozen=True)
+class _DroitMilitaire:
+    """Ce que la pension militaire oppose à un assuré, une fois sa carrière lue."""
+
+    #: Âge auquel la pension s'ouvre : celui où la durée est atteinte, ou l'âge
+    #: de jouissance différée de l'article L. 25.
+    age_ouverture: float
+    #: Trimestres de services militaires accomplis à la liquidation.
+    trimestres_servis: int
+    #: Durée d'ouverture majorée des dix trimestres du II de l'article L. 14 :
+    #: c'est elle, et non l'âge, qui borne la décote d'un militaire.
+    trimestres_cible: int
+    #: Vrai quand la pension n'est due qu'à l'âge différé, faute de la durée.
+    jouissance_differee: bool
+    fiabilite: Fiabilite
+
+
 class CoefficientsMinoration(TableParGeneration):
     """Coefficient de minoration du taux plein par trimestre manquant."""
 
@@ -1125,6 +1290,13 @@ class ScenarioActuel:
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
         self.ages_annulation_decote = AgesAnnulationDecote(parametres.racine_donnees)
+        self.ages_categorie_active = AgesCategorieActive(parametres.racine_donnees)
+        self.durees_services_militaires = DureesServicesMilitaires(
+            parametres.racine_donnees
+        )
+        self.ages_jouissance_militaire = AgesJouissanceMilitaire(
+            parametres.racine_donnees
+        )
         self.coefficients_minoration = CoefficientsMinoration(parametres.racine_donnees)
         self.annees_salaire_reference = AnneesSalaireReference(parametres.racine_donnees)
         self.majorations_enfants = MajorationsPourEnfants(parametres.racine_donnees)
@@ -1465,8 +1637,180 @@ class ScenarioActuel:
             return requis, None
         return min(par_generation[0], requis), par_generation[1]
 
+    # -- catégorie active et pension militaire -------------------------------
+
+    def _statut_dominant(self, carriere: Carriere,
+                         classements: dict[str, str]) -> str | None:
+        """Le classement que la carrière a exercé le plus longtemps.
+
+        La règle est celle du code : quand plusieurs emplois classés se
+        succèdent, « la catégorie applicable pour bénéficier de l'âge de départ
+        minoré est celle associée à l'emploi que le fonctionnaire a occupé le
+        plus longtemps » (L. 24, I, 1°). À égalité, le classement le plus
+        favorable — la super-active — l'emporte, parce que la durée qu'elle
+        exige est la plus longue : l'assuré qui la remplit remplit l'autre.
+        """
+        durees: dict[str, float] = {}
+        borne = self._borne_carriere(carriere)
+        for statut, classement in classements.items():
+            duree = carriere.duree_de_service((statut,), borne)
+            if duree > 0:
+                durees[classement] = durees.get(classement, 0.0) + duree
+        if not durees:
+            return None
+        return max(durees, key=lambda cle: (durees[cle], cle == "super_active",
+                                            cle == "officier"))
+
+    def _derogation_active(self, periode: PeriodeRegime,
+                           carriere: Carriere) -> DerogationActive | None:
+        """L'âge anticipé que le classement de l'emploi ouvre, ou ``None``.
+
+        Quatre conditions, et la fiche en porte une : le régime doit servir la
+        catégorie active — l'avoir dans ses ``avantages_non_contributifs`` ; le
+        statut déclaré doit être classé ; le régime doit être l'un de ceux que
+        ce statut route, sans quoi la dérogation déborderait sur un régime
+        spécial que la même carrière traverserait (cf. :meth:`_regimes_routes`) ;
+        et la carrière doit porter la durée de services classés que l'article
+        L. 24 exige — dix-sept ans, vingt-sept pour la super-active. Sans cette
+        dernière, l'assuré reste au droit commun, ce qui est exactement ce que
+        le texte dit : la faculté « est ouverte à la condition que le
+        fonctionnaire puisse se prévaloir, au total, d'au moins dix-sept ans de
+        services accomplis […] dits services actifs ».
+        """
+        if "categorie_active" not in periode.avantages_non_contributifs:
+            return None
+        classements = self.affiliations.classements_actifs
+        if not classements:
+            return None
+        classement = self._statut_dominant(carriere, classements)
+        if classement is None:
+            return None
+        derogation = self.ages_categorie_active.derogation(
+            classement, carriere.generation
+        )
+        if derogation is None:
+            return None
+        statuts = [code for code, valeur in classements.items()
+                   if valeur == classement]
+        if periode.regime not in self._regimes_routes(statuts):
+            return None
+        servies = carriere.duree_de_service(statuts, self._borne_carriere(carriere))
+        if servies + 1e-9 < derogation.services_requis:
+            return None
+        return derogation
+
+    def _droit_militaire(self, periode: PeriodeRegime,
+                         carriere: Carriere) -> "_DroitMilitaire | None":
+        """Ce que la pension militaire oppose à cet assuré, ou ``None``.
+
+        Elle ne s'ouvre pas à un âge mais à une DURÉE — dix-sept ans de services
+        effectifs pour un non-officier, vingt-sept pour un officier (L. 24, II).
+        Qui la réunit liquide aussitôt, à trente-cinq ans s'il s'est engagé à
+        dix-huit ; qui ne la réunit pas mais a quinze ans de services attend
+        l'âge de jouissance différée de l'article L. 25 ; qui a moins de quinze
+        ans n'a pas de pension militaire, et c'est l'âge légal qui vaut.
+
+        La durée opposée dépend de l'ANNÉE où l'ancienne durée — quinze ou
+        vingt-cinq ans — a été atteinte, et non de la génération : c'est la clé
+        que le décret n° 2011-2103 a choisie.
+        """
+        if "categorie_active" not in periode.avantages_non_contributifs:
+            return None
+        categories = self.affiliations.categories_militaires
+        if not categories:
+            return None
+        categorie = self._statut_dominant(carriere, categories)
+        if categorie is None:
+            return None
+        statuts = [code for code, valeur in categories.items()
+                   if valeur == categorie]
+        if periode.regime not in self._regimes_routes(statuts):
+            return None
+        base = self.durees_services_militaires.duree_de_base(categorie)
+        if base is None:
+            return None
+        date_base = carriere.date_de_service(statuts, base)
+        annee_base = (9999.0 if date_base is None
+                      else date_base.annee + (date_base.mois - 1) / 12)
+        requises = self.durees_services_militaires.annees_requises(
+            categorie, annee_base
+        )
+        if requises is None:
+            return None
+        annees_requises, fiabilite = requises
+        servies = carriere.duree_de_service(statuts, self._borne_carriere(carriere))
+        age_requis = carriere.age_de_service(statuts, annees_requises)
+        if servies + 1e-9 >= annees_requises and age_requis is not None:
+            age_ouverture, differee = age_requis, False
+        elif servies + 1e-9 >= SERVICES_MINIMAUX_MILITAIRES:
+            par_generation = self.ages_jouissance_militaire.age(carriere.generation)
+            if par_generation is None:
+                return None
+            age_ouverture, differee = par_generation[0], True
+            fiabilite = min(fiabilite, par_generation[1])
+        else:
+            return None
+        return _DroitMilitaire(
+            age_ouverture=age_ouverture,
+            trimestres_servis=round(servies * 4),
+            trimestres_cible=round(annees_requises * 4) + TRIMESTRES_DECOTE_MILITAIRE,
+            jouissance_differee=differee,
+            fiabilite=fiabilite,
+        )
+
+    def _regimes_routes(self, statuts: list[str]) -> frozenset[str]:
+        """Les régimes que ces statuts atteignent, une année au moins.
+
+        C'est la seconde garde du droit dérogatoire, et elle n'est pas de
+        confort. Plusieurs régimes SPÉCIAUX servent eux aussi une catégorie
+        active — leur fiche le déclare, et c'est exact : la SNCF a ses agents
+        de conduite. Mais la catégorie active de la fonction publique n'a rien
+        à y voir : sans cette garde, un assuré ayant fait vingt ans d'emploi
+        classé après une carrière à la SNCF aurait vu son régime SNCF liquidé à
+        l'âge de la fonction publique, et décoté sur la limite d'âge d'un grade
+        qu'il n'a jamais eu.
+        """
+        return frozenset(
+            code
+            for statut in statuts
+            for periode in self.affiliations.periodes(statut)
+            for code in (periode.get("regimes") or ())
+        )
+
+    @staticmethod
+    def _borne_carriere(carriere: Carriere) -> int | None:
+        """Dernière année à compter dans les services, ``None`` si sans objet."""
+        return (carriere.annee_liquidation
+                if carriere.age_liquidation is not None else None)
+
     def _age_ouverture(self, periode: PeriodeRegime, carriere: Carriere) -> float:
-        """Âge légal opposable à cet assuré dans ce régime."""
+        """Âge légal opposable à cet assuré dans ce régime.
+
+        Trois droits se superposent, du plus particulier au plus général : la
+        pension militaire, qui s'ouvre à une durée de services ; la catégorie
+        active, qui avance l'âge de cinq ou de dix années ; le droit commun,
+        lu à la génération ou dans la fiche.
+        """
+        militaire = self._droit_militaire(periode, carriere)
+        if militaire is not None:
+            return militaire.age_ouverture
+        derogation = self._derogation_active(periode, carriere)
+        if derogation is not None:
+            return derogation.age_ouverture
+        return self._age_ouverture_commun(periode, carriere)
+
+    def _age_ouverture_commun(self, periode: PeriodeRegime,
+                              carriere: Carriere) -> float:
+        """L'âge légal de droit commun, sans égard au classement de l'emploi.
+
+        C'est lui, et non l'âge anticipé, qui commande la SURCOTE : le III de
+        l'article L. 14 ne la donne qu'« au-delà de l'âge mentionné à l'article
+        L. 161-17-2 », et le D du XXIV de l'article 10 de la loi du 14 avril
+        2023 le confirme pour les emplois classés — l'âge anticipé majoré de
+        cinq années, l'âge minoré majoré de dix, c'est-à-dire l'âge légal dans
+        les deux cas. Compter la surcote depuis cinquante-sept ans aurait payé
+        deux fois l'avantage du classement.
+        """
         if periode.age_ouverture_par_generation:
             par_generation = self.ages_ouverture.age(carriere.generation)
             if par_generation is not None:
@@ -1474,7 +1818,17 @@ class ScenarioActuel:
         return periode.age_ouverture
 
     def _age_taux_plein(self, periode: PeriodeRegime, carriere: Carriere) -> float:
-        """Âge d'annulation de la décote opposable à cet assuré."""
+        """Âge d'annulation de la décote opposable à cet assuré.
+
+        Pour un emploi classé, ce n'est pas soixante-sept ans mais la limite
+        d'âge du grade — soixante-deux ans en catégorie active, cinquante-sept
+        en super-active — puis, depuis la réforme de 2023, l'âge que l'article
+        L. 14 bis attache au classement. Le barème de la fonction publique en
+        retranche ensuite les trimestres de sa propre montée en charge.
+        """
+        derogation = self._derogation_active(periode, carriere)
+        if derogation is not None:
+            return derogation.age_annulation
         if periode.age_taux_plein_par_generation:
             par_generation = self.ages_annulation_decote.age(carriere.generation)
             if par_generation is not None:
@@ -1567,10 +1921,22 @@ class ScenarioActuel:
         ).annee
         return min(annee_liquidation, ouverture)
 
-    def _trimestres_de_decote(self, periode: PeriodeRegime, trimestres: int,
+    def _trimestres_de_decote(self, periode: PeriodeRegime, carriere: Carriere,
+                              trimestres: int,
                               requis: int, age_liquidation: float,
                               age_annulation: float) -> float:
         """Trimestres de décote opposables, plafond compris.
+
+        **Le militaire a le sien, et il ne compte pas des âges.** Le II de
+        l'article L. 14 lui oppose, non la distance à un âge d'annulation, mais
+        « le nombre de trimestres manquants […] pour atteindre […] la durée de
+        services militaires effectifs nécessaire pour pouvoir bénéficier d'une
+        liquidation de la pension […] augmentée d'une durée de services
+        effectifs de dix trimestres » — dans la limite de dix trimestres, et non
+        de vingt. Un sous-officier parti à quarante ans avec dix-sept ans de
+        services ne perd donc que les deux trimestres et demi qui le séparent de
+        dix-neuf ans et demi, quand le barème des civils lui aurait retiré le
+        quart de sa pension pour être parti vingt-deux ans avant l'âge légal.
 
         Le décompte retient le plus favorable des deux : trimestres manquants
         pour la durée requise, ou trimestres manquants jusqu'à l'âge
@@ -1586,6 +1952,14 @@ class ScenarioActuel:
         lui en oppose 14. Le barème d'anticipation de l'Agirc-Arrco, lui,
         arrondissait déjà — les deux décomptes suivent maintenant la même règle.
         """
+        militaire = self._droit_militaire(periode, carriere)
+        if militaire is not None:
+            manquants_services = max(
+                0, militaire.trimestres_cible - militaire.trimestres_servis
+            )
+            manquants_duree = max(0, requis - trimestres)
+            return float(min(manquants_services, manquants_duree,
+                             TRIMESTRES_DECOTE_MILITAIRE))
         manquants_age = float(_au_trimestre_superieur(
             (age_annulation - age_liquidation) * 4
         ))
@@ -1745,7 +2119,7 @@ class ScenarioActuel:
         if decote is None:
             return 1.0
         trimestres_decote = self._trimestres_de_decote(
-            periode, trimestres, requis, age_liquidation, age_annulation
+            periode, carriere, trimestres, requis, age_liquidation, age_annulation
         )
         return max(0.0, 1.0 - decote * trimestres_decote)
 
@@ -2392,7 +2766,8 @@ class ScenarioActuel:
                     periode, carriere, annee_liquidation
                 )
                 trimestres_decote = self._trimestres_de_decote(
-                    periode, trimestres, requis, age_liquidation, age_annulation
+                    periode, carriere, trimestres, requis, age_liquidation,
+                    age_annulation
                 )
                 if decote and trimestres_decote > 0:
                     # Les régimes sans décote (fonction publique avant 2004,
@@ -2406,9 +2781,13 @@ class ScenarioActuel:
                 # majorait la pension de qui a commencé tôt sans jamais
                 # travailler au-delà de l'âge d'ouverture.
                 supplementaires = max(0, trimestres - requis)
-                age_ouverture = self._age_ouverture(periode, carriere)
+                # La surcote se compte depuis l'âge légal DE DROIT COMMUN, même
+                # pour un emploi classé, et le militaire n'en a aucune : le III
+                # de l'article L. 14 ne la donne qu'au « fonctionnaire civil ».
+                age_ouverture = self._age_ouverture_commun(periode, carriere)
                 if (periode.surcote_par_trimestre and supplementaires > 0
-                        and age_liquidation >= age_ouverture):
+                        and age_liquidation >= age_ouverture
+                        and self._droit_militaire(periode, carriere) is None):
                     supplementaires = min(
                         supplementaires,
                         _trimestres_cotises_apres(

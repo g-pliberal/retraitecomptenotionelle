@@ -112,12 +112,12 @@ Scénario                                                          Courants   Co
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 297 Ko compressés (2469 Ko brut) et prend quelques dixièmes
+chargement transfère 301 Ko compressés (2583 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
 décomposition de l'écart règle par règle et la cascade qui mène du scénario 1 au
-scénario 3), **Cas types** (la grille 12 carrières × 7 générations),
+scénario 3), **Cas types** (la grille 13 carrières × 7 générations),
 **Coût** (ce que la retraite a coûté depuis 1959, régime par régime, ce que les
 six systèmes auraient coûté, et ce qu'ils coûteraient d'ici 2070),
 **Méthode**, **Données** (l'état de fiabilité des séries). Le pied de page
@@ -227,7 +227,7 @@ print(simulateur.simuler(simulateur.carriere_parcours(
 # Le cas général : grille cas type × génération
 print(calculer_cas_types(simulateur).tableau())
 
-# Les 55 statuts et les 72 régimes du catalogue
+# Les 62 statuts et les 72 régimes du catalogue
 for regime in simulateur.catalogue:
     print(f"{regime.code:<26} {regime.famille:<22} {regime.nom}")
 ```
@@ -264,7 +264,7 @@ print(simulateur.simuler(carriere).tableau())
 | Régimes à départ précoce traités au même étalon | SNCF à 50 ans = 15 ans d'anticipation ; Opéra à 40 ans = 25 ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
 | Six résultats comparables | Système actuel / notionnel rétroactif / notionnel prospectif sur la part salariale, puis les deux mêmes comptes notionnels part patronale comprise, puis la proposition libérale — le compte rétroactif à 18 % pour tous, avec une garantie vieillesse individualisée financée par l'impôt |
-| Cas particulier **et** cas général | Simulation individuelle + grille 12 cas types × 7 générations |
+| Cas particulier **et** cas général | Simulation individuelle + grille 13 cas types × 7 générations |
 | Fusion des régimes au cas le plus défavorable | Âge 64/67, 172 trimestres, carrière entière, assiette déplafonnée, zéro avantage |
 | Droits acquis respectés à la bascule | Conversion à l'âge de référence par défaut — le seul endroit où l'âge de départ pèse sur les droits d'avant la bascule, donc ce qui empêche de gagner à partir tôt ; l'âge de départ effectif est offert en variante, et la cascade de calcul est affichée |
 | Statuts comparables au même étalon | Les fiches publiques ne portent que la retenue de l'agent ; elle est alignée sur l'effort contributif total du privé, sans quoi on compare un demi-effort à un effort entier |
@@ -276,11 +276,12 @@ print(simulateur.simuler(carriere).tableau())
 | Motif d'interruption lu, pas seulement enregistré | Un chômage indemnisé ouvre des points complémentaires financés par l'UNEDIC ; un chômage non indemnisé n'ouvre rien |
 | Étalon fidèle au droit, minima compris | Le scénario 1 sert le minimum contributif (au taux plein, deux prorata, écrêté), le minimum garanti de la fonction publique, l'ASPA, la majoration pour enfants, les trimestres accordés au titre des enfants — MDA du régime général et des régimes alignés, bonification de la fonction publique —, la surcote parentale de 2023, l'AVPF et la garantie minimale de points de l'Agirc |
 | Décote propre à la fonction publique | Article L. 14 : coefficient et âge d'annulation montent en charge de 2006 à 2020, et cet âge est la limite d'âge du grade, non 67 ans |
+| Catégorie active et militaires, au lieu d'être traités en sédentaires | Cinq statuts classés — catégorie active et super-active de l'État et de la CNRACL, ouvriers de l'État — et deux statuts militaires. Le classement tient à l'EMPLOI, qu'aucune donnée de carrière ne révèle : il se déclare. Le modèle oppose alors l'âge anticipé ou minoré de l'article L. 24 (57 et 52 ans, 59 et 54 après 2023, avec leurs deux montées en charge), l'âge d'annulation de décote propre au classement (62 et 57 ans, non 67), et la condition de durée de services classés (17 et 27 ans) vérifiée sur la carrière. La pension militaire, elle, ne s'ouvre pas à un âge mais à une durée — 17 ans de services pour un non-officier, 27 pour un officier —, sans surcote et avec la décote du II de l'article L. 14, dix trimestres au plus |
 | Chaque régime liquide sur ses années | Le salaire de référence ne balaie plus toute la carrière : un polypensionné ne liquide pas sa pension civile sur son dernier salaire privé |
 | Le droit ouvre-t-il ce départ ? | Âge légal du régime ou carrière longue ; sinon le montant est marqué comme un contrefactuel, pas une pension servie |
 | Suppression des minima | Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite |
 | Suppression des avantages | Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits |
-| Tout le monde peut simuler | 55 statuts d’affiliation, cinq informations suffisent |
+| Tout le monde peut simuler | 62 statuts d’affiliation, cinq informations suffisent |
 | La cotisation de chaque année, pas une moyenne de période | Le compte notionnel reçoit le taux de l'année — 8,5 % en 1967, 12,9 % en 1979, 16,35 % en 1991 au régime général —, lu dans `taux_cotisation_annuels.csv` (1 074 valeurs depuis les barèmes datés d'OpenFisca-France, pour le régime général, les salariés agricoles, les cultes, Mayotte, Saint-Pierre-et-Miquelon, les artisans, les commerçants et le RSI) et appliqué année par année au chargement des fiches, qui gardent leur moyenne pour les années d'avant 1967 |
 | Le marin cotise et liquide sur le forfait de sa catégorie | Les vingt salaires forfaitaires des marins sont lus au Journal officiel, arrêté par arrêté depuis 2008 (`salaires_forfaitaires.csv`, 380 montants certifiés) ; le moteur range le marin dans la catégorie la plus proche de son revenu — convention nommée — et cotise comme il liquide sur ce forfait, dans les deux moteurs |
 | Avant 1967, la part vieillesse des assurances sociales, datée | Les taux de 1945 à 1966 viennent du tableau du COR d'après la Cnav (6 + 6 en 1945, 6 + 10 en 1947, 6 + 15 en 1966), et la part vieillesse est la convention nommée de 8,5/21 — celle de l'ordonnance de 1967 —, au niveau estimé ; la retenue des fonctionnaires est à 8,9 % dès 1989 (loi n° 89-18, art. 23), les points CARMF d'avant 1991 valent 1,33 point d'après |
@@ -292,7 +293,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait de 12 % sur quarante ans, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347798289 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue 426 simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
+| Portage vérifié, pas cru sur parole | Le site rejoue 469 simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 
@@ -597,19 +598,19 @@ n'ayant publié le raccord, ces neuf années restent une impasse, et le total,
 lui, les couvre.
 
 Sur cette dépense observée, le modèle applique le rapport des masses de pension
-entre systèmes — les douze cas types croisés avec dix-neuf générations, pondérés
+entre systèmes — les treize cas types croisés avec dix-neuf générations, pondérés
 par l'effectif réel de chaque génération et par celui des retraités de la caisse
 de chaque cas type :
 
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | 14 987 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 3 074 Md € | −79,5 % |
+| 2. Notionnel rétroactif, part salariale | 3 028 Md € | −79,8 % |
 | 3. Notionnel dès 2026, part salariale | 14 987 Md € | +0,0 % |
-| 4. Notionnel rétroactif, salariale + patronale | 7 206 Md € | −51,9 % |
+| 4. Notionnel rétroactif, salariale + patronale | 7 102 Md € | −52,6 % |
 | 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 239 Md € | −51,7 % |
-| *dont garantie vieillesse du 6, vue par les cas types* | *33 Md €* | |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 134 Md € | −52,4 % |
+| *dont garantie vieillesse du 6, vue par les cas types* | *32 Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -622,24 +623,24 @@ bascule était avancée avant la dernière année observée.
 
 L'écart du scénario 2 ne mesure pas, lui non plus, l'effet des comptes
 notionnels : il mesure la part salariale seule — le scénario 4, qui ajoute la
-part patronale, coûte 134 % de plus — et la règle d'indexation, dont le résultat
+part patronale, coûte 135 % de plus — et la règle d'indexation, dont le résultat
 1 ci-dessus montre qu'elle domine tout. Le scénario 6 est ici le scénario 4
 plus sa garantie vieillesse : aucune pension servie avant 2026 n'a une année
 cotisée à 18 %.
 
 **Les cas types ne pèsent plus d'un poids égal.** Chacun porte l'effectif des
 retraités de sa caisse, publié par la DREES et lu année par année : l'agent de
-conduite pèse 0,7 % et non 8,3 %, les quatre carrières du privé 64 % à elles
+conduite pèse 0,7 % et non 7,7 %, les quatre carrières du privé 63 % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donnait −75,9 % au scénario 2 contre −79,5 %, et −55,4 % au
-scénario 4 contre −51,9 %. Le sens du biais n'était donc pas celui qu'on
+qu'argumenté — elle donnait −77,1 % au scénario 2 contre −79,8 %, et −57,3 % au
+scénario 4 contre −52,6 %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
 **La garantie vieillesse du scénario 6 ne se chiffre pas sur des cas types.**
 C'est une allocation différentielle : son coût est celui de la queue basse de la
-distribution des pensions, et douze carrières ne décrivent pas une distribution.
-Les 33 milliards de la ligne en italique sont un chiffre faux — un seul cas type
+distribution des pensions, et treize carrières ne décrivent pas une distribution.
+Les 32 milliards de la ligne en italique sont un chiffre faux — un seul cas type
 liquide à 65 ans ou après. Le barème appliqué à la distribution que publie
 l'échantillon interrégimes de la DREES coûte **18,4 milliards par an** aux
 pensions d'aujourd'hui, 32,2 si l'on sert à tous l'allocation d'isolement, et
@@ -669,17 +670,17 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 
 | Système | Coût 2070 | Part du PIB 2070 | Cumul 2025-2070 | Écart |
 |---|---|---|---|---|
-| 1. Système actuel | 682 Md € | **18,4 %** | 25 324 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 220 Md € | 5,9 % | 7 827 Md € | −69,1 % |
-| 3. Notionnel dès 2026, part salariale | 303 Md € | **8,2 %** | 18 303 Md € | −27,7 % |
-| 4. Notionnel rétroactif, salariale + patronale | 488 Md € | 13,2 % | 18 460 Md € | −27,1 % |
-| 5. Notionnel dès 2026, salariale + patronale | 504 Md € | 13,6 % | 21 798 Md € | −13,9 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 373 Md € | 10,1 % | 16 458 Md € | −35,0 % |
+| 1. Système actuel | 678 Md € | **18,3 %** | 25 232 Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | 217 Md € | 5,9 % | 7 714 Md € | −69,4 % |
+| 3. Notionnel dès 2026, part salariale | 300 Md € | **8,1 %** | 18 222 Md € | −27,8 % |
+| 4. Notionnel rétroactif, salariale + patronale | 483 Md € | 13,0 % | 18 325 Md € | −27,4 % |
+| 5. Notionnel dès 2026, salariale + patronale | 498 Md € | 13,4 % | 21 669 Md € | −14,1 % |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 370 Md € | 10,0 % | 16 351 Md € | −35,2 % |
 
 Trois choses à lire dans ce tableau.
 
 **Le système actuel monte, et le contrôle externe s'est dégradé.** Il passe de
-13,6 % du PIB en 2024 à 18,4 % en 2070, alors que le nombre de personnes de
+13,6 % du PIB en 2024 à 18,3 % en 2070, alors que le nombre de personnes de
 65 ans ou plus rapporté aux 20-64 ans passe de 0,39 à 0,62. Le COR, qui projette
 la même grandeur avec un modèle de population complet, trouve **13,9 % en 2024
 et 14,2 % en 2070** (rapport annuel de juin 2025). L'écart d'arrivée était de
@@ -904,6 +905,7 @@ data/
                                 et l'inventaire de tous les régimes (inventaire.yaml)
     legislation/                âges et durées par génération, barèmes des
                                 minima, décote de la fonction publique,
+                                catégorie active et pension militaire,
                                 carrière longue, contribution employeur des
                                 régimes publics, profils d'affiliation
   brut/                         téléchargements bruts, non versionnés
@@ -925,7 +927,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (2469 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (2583 Ko, produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
@@ -933,7 +935,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          643 tests Python
+tests/                          657 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

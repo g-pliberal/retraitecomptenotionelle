@@ -25,6 +25,29 @@
 # artisan cotise au régime général, dont la fiche porte la répartition 41/59
 # d'un salarié. Le taux est le bon, la répartition ne l'est pas : lui, paie
 # tout. Sans ce drapeau, les scénarios 4 et 5 lui prêteraient un employeur.
+#
+# `categorie_active: active` ou `super_active` marque les statuts de la fonction
+# publique dont l'emploi est CLASSÉ, et qui liquident donc avant l'âge légal :
+# cinquante-sept ans — cinquante-deux pour la super-active — avant la réforme de
+# 2023, cinquante-neuf et cinquante-quatre après elle. Le classement tient à
+# l'emploi, pas à la personne : le modèle ne peut pas le deviner d'un revenu et
+# d'un régime, c'est donc l'assuré qui le déclare en choisissant son statut.
+# L'âge opposé, l'âge d'annulation de la décote et la durée de services actifs
+# exigée sont lus dans `legislation/categorie_active.csv` ; la condition de
+# durée — dix-sept ans de services actifs, vingt-sept de services super-actifs
+# (article L. 24, I, 1° du code des pensions) — est vérifiée sur la carrière
+# elle-même, années passées dans un statut classé.
+#
+# `pension_militaire: non_officier` ou `officier` marque les deux statuts
+# militaires. Leur pension ne s'ouvre pas à un âge mais à une DURÉE : dix-sept
+# ans de services effectifs pour un non-officier, vingt-sept pour un officier
+# (L. 24, II), quinze et vingt-cinq avant la loi du 9 novembre 2010, dont la
+# montée en charge est dans `legislation/duree_services_militaires.csv`. Qui
+# n'atteint pas cette durée attend l'âge de jouissance différée de l'article
+# L. 25, `legislation/age_jouissance_militaire.csv`. Le militaire n'a pas de
+# surcote — le III de l'article L. 14 ne la donne qu'au « fonctionnaire
+# civil » — et sa décote est celle du II du même article, dix trimestres au
+# plus.
 
 affiliations:
 
@@ -291,6 +314,108 @@ affiliations:
     periodes:
       - {debut: 1930, fin: 2004, regimes: [fspoeie]}
       - {debut: 2005, fin: null, regimes: [fspoeie, rafp]}
+
+  fonctionnaire_etat_actif:
+    libelle: Fonctionnaire de l'État, emploi de catégorie active
+    categorie_active: active
+    periodes:
+      - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
+      - {debut: 1948, fin: 2004, regimes: [fonction_publique_etat]}
+      - {debut: 2005, fin: null, regimes: [fonction_publique_etat, rafp]}
+    note: >-
+      Mêmes régimes, même barème et même retenue que le sédentaire : la
+      catégorie active ne change ni la caisse ni la formule, elle avance l'âge.
+      « Sont classés dans la catégorie active les emplois présentant un risque
+      particulier ou des fatigues exceptionnelles » (L. 24, I, 1°) — instituteur
+      jusqu'en 2011, personnel actif de la douane, agent d'exploitation des
+      travaux publics de l'État, contrôleur des affaires maritimes. Dix-sept ans
+      de services actifs ouvrent le droit à l'âge anticipé ; la carrière saisie
+      dans ce statut les compte.
+
+  fonctionnaire_etat_super_actif:
+    libelle: Fonctionnaire de l'État, emploi de catégorie super-active (police, pénitentiaire)
+    categorie_active: super_active
+    periodes:
+      - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
+      - {debut: 1948, fin: 2004, regimes: [fonction_publique_etat]}
+      - {debut: 2005, fin: null, regimes: [fonction_publique_etat, rafp]}
+    note: >-
+      « L'occupation de certains de ces emplois permet de porter l'âge anticipé
+      à un âge minoré », l'âge légal diminué de dix années (L. 24, I, 1°) :
+      services actifs de la police nationale, surveillance de l'administration
+      pénitentiaire, ingénieurs du contrôle de la navigation aérienne,
+      identificateurs de l'institut médico-légal, égoutiers. La durée exigée est
+      de vingt-sept années de services super-actifs pour les policiers et les
+      surveillants pénitentiaires, et c'est elle que porte la table : les
+      dix-sept années des contrôleurs aériens et les trente-deux des égoutiers
+      ne sont pas distinguées, faute d'un corps déclaré.
+
+  fonctionnaire_territorial_hospitalier_actif:
+    libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie active
+    categorie_active: active
+    periodes:
+      - {debut: 1945, fin: 2004, regimes: [cnracl]}
+      - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
+    note: >-
+      Aide-soignant, agent de service hospitalier, agent technique territorial,
+      agent de police municipale : la catégorie active de la CNRACL, la plus
+      nombreuse du système. L'article 25 du décret n° 2003-1306 y reprend, mot
+      pour mot, le 1° du I de l'article L. 24 du code des pensions.
+
+  fonctionnaire_territorial_hospitalier_super_actif:
+    libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (sapeur-pompier)
+    categorie_active: super_active
+    periodes:
+      - {debut: 1945, fin: 2004, regimes: [cnracl]}
+      - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
+    note: >-
+      Sapeur-pompier professionnel, agent des réseaux souterrains. La
+      bonification du cinquième du sapeur-pompier — une annuité pour cinq ans de
+      service, dans la limite de cinq — n'est pas servie : c'est une
+      bonification de SERVICE, et le modèle n'en sert aucune.
+
+  ouvrier_etat_actif:
+    libelle: Ouvrier de l'État, emploi insalubre ou de catégorie active
+    categorie_active: active
+    periodes:
+      - {debut: 1930, fin: 2004, regimes: [fspoeie]}
+      - {debut: 2005, fin: null, regimes: [fspoeie, rafp]}
+    note: >-
+      Le 1° du I de l'article 24 du décret n° 2004-1056 ouvre le droit à
+      cinquante-cinq ans — cinquante-sept depuis la loi du 9 novembre 2010 — à
+      l'ouvrier qui a accompli quinze ans, puis dix-sept, de travaux
+      insalubres ; le décret n° 2011-2103 le range dans la même table que la
+      catégorie active des fonctionnaires, et ce statut porte donc le même âge.
+
+  militaire:
+    libelle: Militaire non officier (militaire du rang, sous-officier)
+    pension_militaire: non_officier
+    periodes:
+      - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
+      - {debut: 1948, fin: 2004, regimes: [fonction_publique_etat]}
+      - {debut: 2005, fin: null, regimes: [fonction_publique_etat, rafp]}
+    note: >-
+      « La liquidation de la pension militaire intervient […] lorsqu'un
+      militaire non officier […] réunit, à la date de son admission à la
+      retraite, dix-sept ans de services effectifs » (L. 24, II, 2°) — quinze
+      avant la loi du 9 novembre 2010. Aucune condition d'âge : la pension est à
+      jouissance immédiate dès la durée atteinte, et c'est le départ le plus
+      précoce du système. Le modèle liquide toute la carrière à la date choisie ;
+      la seconde carrière que beaucoup entament après leur radiation se décrit
+      donc comme un métier de plus.
+
+  militaire_officier:
+    libelle: Officier de carrière
+    pension_militaire: officier
+    periodes:
+      - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
+      - {debut: 1948, fin: 2004, regimes: [fonction_publique_etat]}
+      - {debut: 2005, fin: null, regimes: [fonction_publique_etat, rafp]}
+    note: >-
+      Vingt-sept ans de services effectifs (L. 24, II, 1°), vingt-cinq avant la
+      loi du 9 novembre 2010. La radiation par limite d'âge ou par limite de
+      durée de services ouvre aussi le droit, quelle que soit la durée : le
+      modèle ne connaît pas le grade et ne peut donc opposer que la durée.
 
   contractuel_public:
     libelle: Agent non titulaire de la fonction publique

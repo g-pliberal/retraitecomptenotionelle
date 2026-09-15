@@ -1602,6 +1602,117 @@ def test_les_statuts_sans_employeur_sont_marques():
     assert not affiliations.sans_employeur("fonctionnaire_etat")
 
 
+def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
+    """Le classement d'un emploi ne se devine pas : il se déclare.
+
+    Un aide-soignant et un rédacteur territorial cotisent à la même CNRACL, et
+    l'un liquide cinq ans avant l'autre. Le drapeau est donc porté par le
+    STATUT, comme `sans_employeur`, et la liste ci-dessous en est le contrat :
+    l'ajouter ailleurs, ou le retirer d'ici, doit se voir.
+    """
+    from retraite_notionnelle.carriere import Affiliations
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    assert affiliations.classements_actifs == {
+        "fonctionnaire_etat_actif": "active",
+        "fonctionnaire_etat_super_actif": "super_active",
+        "fonctionnaire_territorial_hospitalier_actif": "active",
+        "fonctionnaire_territorial_hospitalier_super_actif": "super_active",
+        "ouvrier_etat_actif": "active",
+    }
+    assert affiliations.categories_militaires == {
+        "militaire": "non_officier",
+        "militaire_officier": "officier",
+    }
+    # Un statut classé route exactement les mêmes régimes que son statut de
+    # droit commun : la catégorie active ne change ni la caisse ni la formule,
+    # elle avance l'âge.
+    for classe, commun in (
+        ("fonctionnaire_etat_actif", "fonctionnaire_etat"),
+        ("fonctionnaire_etat_super_actif", "fonctionnaire_etat"),
+        ("fonctionnaire_territorial_hospitalier_actif",
+         "fonctionnaire_territorial_hospitalier"),
+        ("fonctionnaire_territorial_hospitalier_super_actif",
+         "fonctionnaire_territorial_hospitalier"),
+        ("ouvrier_etat_actif", "ouvrier_etat"),
+        ("militaire", "fonctionnaire_etat"),
+        ("militaire_officier", "fonctionnaire_etat"),
+    ):
+        for annee in (1950, 1980, 2004, 2005, 2026):
+            assert (affiliations.regimes(classe, annee)
+                    == affiliations.regimes(commun, annee)), (classe, annee)
+
+
+def test_les_statuts_classes_atteignent_un_regime_qui_sert_la_categorie_active(
+        catalogue):
+    """Le droit dérogatoire ne s'applique que là où la fiche le déclare.
+
+    `avantages_non_contributifs` porte `categorie_active` sur les régimes du
+    code des pensions, la CNRACL et le fonds des ouvriers de l'État, et nulle
+    part ailleurs : c'est la garde qui empêche un statut classé d'emporter son
+    âge anticipé dans un régime qui n'en connaît pas.
+    """
+    from retraite_notionnelle.carriere import Affiliations
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    particuliers = (set(affiliations.classements_actifs)
+                    | set(affiliations.categories_militaires))
+    for statut in sorted(particuliers):
+        codes = {code for periode in affiliations.periodes(statut)
+                 for code in periode["regimes"] or ()}
+        servants = [
+            code for code in codes
+            if any("categorie_active" in periode.avantages_non_contributifs
+                   for periode in catalogue[code].periodes)
+        ]
+        assert servants, f"{statut} : aucun régime ne sert la catégorie active"
+
+
+def test_les_tables_de_la_categorie_active_et_des_militaires_sont_completes():
+    """Deux classements, deux catégories militaires, et rien de plus.
+
+    Une table qui ne répondrait pas pour un classement déclaré rendrait le
+    statut inerte — l'assuré choisirait « catégorie active » et se verrait
+    opposer l'âge du sédentaire, sans que rien ne le dise.
+    """
+    from retraite_notionnelle.carriere import Affiliations
+    from retraite_notionnelle.scenarios.actuel import (
+        AgesCategorieActive,
+        AgesJouissanceMilitaire,
+        DureesServicesMilitaires,
+    )
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    ages = AgesCategorieActive(RACINE_DONNEES)
+    durees = DureesServicesMilitaires(RACINE_DONNEES)
+    jouissance = AgesJouissanceMilitaire(RACINE_DONNEES)
+
+    assert set(ages.classements) == set(affiliations.classements_actifs.values())
+    assert set(durees.categories) == set(affiliations.categories_militaires.values())
+
+    for classement in ages.classements:
+        for generation in (1900, 1955, 1960, 1966.75, 1975, 2005):
+            derogation = ages.derogation(classement, generation)
+            assert derogation is not None, (classement, generation)
+            # L'âge d'annulation de la décote est toujours au-dessus de l'âge
+            # d'ouverture : c'est la limite d'âge du grade, ou l'âge anticipé
+            # majoré de trois années depuis l'article L. 14 bis.
+            assert derogation.age_annulation > derogation.age_ouverture
+            assert 15 <= derogation.services_requis <= 27
+    # Les deux âges cibles de la loi du 14 avril 2023.
+    assert ages.derogation("active", 2000).age_ouverture == pytest.approx(59.0)
+    assert ages.derogation("super_active", 2000).age_ouverture == pytest.approx(54.0)
+    # Les deux durées cibles de la loi du 9 novembre 2010.
+    assert durees.annees_requises("non_officier", 2020)[0] == pytest.approx(17.0)
+    assert durees.annees_requises("officier", 2020)[0] == pytest.approx(27.0)
+    assert durees.duree_de_base("non_officier") == pytest.approx(15.0)
+    assert durees.duree_de_base("officier") == pytest.approx(25.0)
+    # La jouissance différée de l'article L. 25 : l'âge légal moins dix ans.
+    assert jouissance.age(1950)[0] == pytest.approx(50.0)
+    assert jouissance.age(1965)[0] == pytest.approx(52.0)
+    assert jouissance.age(2000)[0] == pytest.approx(54.0)
+
+
 def test_les_deux_series_de_pib_disent_la_meme_chose():
     """``pib_courant`` donne le niveau, ``pib_nominal`` la variation annuelle.
 

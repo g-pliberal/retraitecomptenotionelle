@@ -307,16 +307,35 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 - **Pension de réversion.** Elle ne concerne pas l'assuré mais son conjoint
   survivant, et suppose de connaître un ménage. Hors périmètre par
   construction : le modèle décrit une carrière, pas une famille.
-- **Bonifications de service et catégorie active.** Bonifications de
-  dépaysement, de campagne militaire, du cinquième pour les emplois de
-  sécurité ; ouverture à 57 ans, voire 52, pour les catégories actives. La
-  bonification POUR ENFANTS, elle, est désormais servie : elle ne demande que le
-  nombre d'enfants. Les autres supposent de connaître
-  le CORPS d'appartenance et le détail des services, que la saisie ne demande
-  pas. Conséquence mesurable : un fonctionnaire de catégorie active est traité
-  comme un sédentaire, ce qui lui oppose l'âge d'ouverture du sédentaire — la
-  décote, elle, est plafonnée à vingt trimestres dans les deux cas, si bien que
-  l'écart de pension reste nul dès que la durée manquante dépasse ce plafond.
+- **Bonifications de service.** Bonifications de dépaysement, de campagne
+  militaire, du cinquième pour les emplois de sécurité. La bonification POUR
+  ENFANTS, elle, est servie : elle ne demande que le nombre d'enfants. Les
+  autres supposent de connaître le CORPS d'appartenance et le détail des
+  services, que la saisie ne demande pas.
+- **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
+  de l'article L. 24 — 57 ans, 52 pour la super-active, 59 et 54 après la
+  réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
+  propre au classement (62 et 57 ans) et la condition de durée de services
+  classés (17 et 27 ans). Ce qui reste hors du modèle est le CLASSEMENT
+  lui-même : il tient à l'emploi occupé, qu'aucune donnée de carrière ne révèle,
+  et c'est donc l'assuré qui le déclare en choisissant l'un des cinq statuts
+  classés. Qui se trompe de statut se trompe d'âge. La table ne porte par
+  ailleurs qu'une durée par classement — 17 ans en active, 27 en super-active :
+  les 17 années des ingénieurs du contrôle de la navigation aérienne et les 32
+  des égoutiers et des identificateurs de l'institut médico-légal ne sont pas
+  distinguées, faute d'un corps déclaré.
+- **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
+  statuts militaires opposent la durée de services qui ouvre la pension —
+  17 ans pour un non-officier, 27 pour un officier, 15 et 25 avant la loi du
+  9 novembre 2010 —, l'âge de jouissance différée de l'article L. 25 et la
+  décote propre du II de l'article L. 14, plafonnée à dix trimestres. Restent
+  dehors : la LIMITE D'ÂGE DE GRADE, qui ouvre la pension quelle que soit la
+  durée accomplie et qui sert d'âge d'annulation de la décote au militaire
+  liquidant à 52 ans ou plus (L. 14 bis, 4°) — le modèle ne connaît pas le
+  grade et applique donc à tous le barème du II —, et la limite de durée de
+  services, qui l'ouvre de la même façon. Conséquence : un officier supérieur
+  radié par limite d'âge peut être déclaré non ouvert quand le droit l'ouvre, et
+  la décote d'un militaire parti très tôt est au plus de 12,5 %, jamais de 25 %.
 - **Pension majorée de référence (PMR)** du régime des non-salariés agricoles.
   Le régime agricole est déjà le plus approché du catalogue — sa part
   forfaitaire, sa complémentaire obligatoire et ses valeurs de point ne sont que
@@ -1355,7 +1374,8 @@ plus volontiers.
   l'effet est petit — deux cas
   types sur douze sont concernés, et de faible poids : le cumul du scénario 4
   passe de −51,9 % à −51,8 %, celui du 6 de −51,7 % à −51,6 % (la lecture des
-  taux de cotisation les a depuis ramenés à −51,9 % et −51,7 %).
+  taux de cotisation les a ensuite ramenés à −51,9 % et −51,7 %, puis la
+  catégorie active et la pension militaire à −52,6 % et −52,4 %).
 
   **L'index a remplacé le dump, et il était meilleur.** Les récupérateurs
   `dila_legi_*` plus anciens retéléchargent le dump global de la DILA — un
@@ -3258,7 +3278,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 55 statuts », « 72 régimes » —, parce que ce sont des chiffres de données et
+« 62 statuts », « 72 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -3921,7 +3941,9 @@ signalé à chaque exécution plutôt que corrigé en silence.
 
 **Ce que tout cela déplace.** 287 cas de témoin sur 427, et la page Coût à
 peine : le cumul 1959-2024 du scénario 4 passe de −51,8 % à **−51,9 %**, celui
-du scénario 6 de −51,6 % à **−51,7 %**, celui du 2 reste à −79,5 %. Le scénario
+du scénario 6 de −51,6 % à **−51,7 %**, celui du 2 reste à −79,5 % — trois
+chiffres d'alors, que la catégorie active et la pension militaire ont depuis
+portés à −52,6 %, −52,4 % et −79,8 %. Le scénario
 1 ne bouge nulle part, puisqu'il liquide sur les trimestres et le salaire de
 référence, non sur la cotisation.
 
@@ -4414,13 +4436,13 @@ qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
 indexée sur les prix depuis 1941.
 
 **La masse de garantie que produisent les cas types est un chiffre faux, et la
-page le remplace.** Un seul des douze cas types liquide à 65 ans ou après ; la
+page le remplace.** Un seul des treize cas types liquide à 65 ans ou après ; la
 masse de la garantie, et donc ce que l'impôt paierait, est portée par lui seul.
-La ligne « dont garantie vieillesse » du tableau dit 33 milliards sur
+La ligne « dont garantie vieillesse » du tableau dit 32 milliards sur
 soixante-six ans, là où le barème appliqué à la distribution réelle en coûte
 18,4 par an. Ce n'était pas une imprécision : une allocation DIFFÉRENTIELLE ne
-se chiffre pas sur douze carrières, parce que son coût est tout entier celui de
-la queue basse de la distribution, et que douze carrières ne décrivent pas une
+se chiffre pas sur treize carrières, parce que son coût est tout entier celui de
+la queue basse de la distribution, et que treize carrières ne décrivent pas une
 distribution.
 
 La page porte donc, à côté, le barème appliqué à la distribution des pensions
@@ -5015,20 +5037,20 @@ approximations, énoncées sur la page :
    maintenant ce que valait l'hypothèse levée : elle déplaçait l'écart cumulé du
    scénario 2 de six dixièmes de point sur soixante-six ans (−77,3 % contre
    −77,9 %). C'était peu, et c'est désormais mesuré plutôt qu'argumenté.
-2. **Les douze cas types ne pèsent plus d'un poids égal.** Ils ont longtemps
+2. **Les treize cas types ne pèsent plus d'un poids égal.** Ils ont longtemps
    pesé ainsi, faute de source, et cette page affirmait qu'« aucune source ne
    fixerait » la pondération. C'était faux : l'enquête annuelle auprès des
    caisses de retraite dénombre les retraités caisse par caisse et année par
    année depuis 2004. Chaque cas type porte désormais l'effectif de sa caisse ;
-   l'agent de conduite pèse 0,7 % et non 8,3 %, et les quatre carrières du
-   privé 64 % à elles quatre.
+   l'agent de conduite pèse 0,7 % et non 7,7 %, et les quatre carrières du
+   privé 63 % à elles quatre.
 
    Ce que l'ancienne convention valait est donc mesuré plutôt qu'argumenté, et
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de −55,4 % à −51,9 % — et faux du
-   scénario 2, qui passe de −75,9 % à −79,5 % : la pondération donne aux
+   la part patronale — le scénario 4 passe de −57,3 % à −52,6 % — et faux du
+   scénario 2, qui passe de −77,1 % à −79,8 % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -5115,7 +5137,7 @@ Le COR projette la même grandeur avec un modèle de population complet et une
 méthode qui n'a rien de commun avec celle-ci : il trouve 13,9 % du PIB en 2024
 et **14,2 % en 2070** (rapport annuel de juin 2025, champ « ensemble des régimes
 légalement obligatoires, y compris FSV, hors RAFP »). Le dépôt trouve 13,6 % et
-**18,4 %**. Trois dixièmes de point d'écart au départ — l'affaire du périmètre,
+**18,3 %**. Trois dixièmes de point d'écart au départ — l'affaire du périmètre,
 la répartition obligatoire des Comptes de la protection sociale n'étant pas
 exactement celle du COR — et **quatre points à l'arrivée**.
 
@@ -5152,7 +5174,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 643 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 657 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

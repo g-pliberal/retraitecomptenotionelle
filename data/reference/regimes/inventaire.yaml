@@ -675,7 +675,8 @@ inventaire:
     succede_a: []
     integre_dans: fonction_publique_etat
     couverture: modelise
-    statuts: [fonctionnaire_etat]
+    statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+              militaire, militaire_officier]
     textes:
       - {reference: "loi du 9 juin 1853 sur les pensions civiles", id: null}
       - {reference: "loi du 14 avril 1924 portant réforme du régime des pensions civiles et militaires", id: null}
@@ -690,16 +691,23 @@ inventaire:
     succede_a: [pensions_civiles_1853]
     integre_dans: null
     couverture: partiel
-    statuts: [fonctionnaire_etat]
+    statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+              militaire, militaire_officier]
     textes:
       - {reference: "loi n° 48-1450 du 20 septembre 1948 portant réforme du régime des pensions civiles et militaires", id: null}
       - {reference: "loi n° 64-1339 du 26 décembre 1964 portant réforme du code des pensions civiles et militaires de retraite", id: null}
       - {reference: "code des pensions civiles et militaires de retraite, L. 1 et suivants", id: null}
+      - {reference: "code des pensions civiles et militaires de retraite, L. 24 (catégorie active, âge anticipé et âge minoré ; pension militaire après dix-sept ou vingt-sept ans de services)", id: LEGIARTI000047452804}
+      - {reference: "code des pensions civiles et militaires de retraite, L. 14 bis (âge d'annulation de la décote, par classement)", id: LEGIARTI000047449763}
+      - {reference: "code des pensions civiles et militaires de retraite, L. 25 (jouissance différée de la pension militaire)", id: LEGIARTI000047452796}
+      - {reference: "loi n° 2023-270 du 14 avril 2023, article 10, XXIV (montée en charge des âges classés et militaires)", id: LEGIARTI000047447812}
+      - {reference: "décret n° 2011-2103 du 30 décembre 2011, articles 2 et 4 (relèvement des âges classés et des durées de services militaires)", id: LEGIARTI000025100416}
     manque: >-
-      Les militaires sont routés comme des civils : pension après quinze ou
-      dix-sept ans de services, limites d'âge de grade, bonifications de
-      campagne et du cinquième ne sont pas modélisées — un statut `militaire`
-      manque. Les fonctionnaires de La Poste et d'Orange ont la même pension
+      Les bonifications de SERVICE — dépaysement, campagne, cinquième — ne sont
+      pas servies, faute de connaître le corps et le détail des services ; la
+      radiation par limite d'âge de grade, qui ouvre la pension militaire quelle
+      que soit la durée accomplie, ne l'est pas non plus, le grade n'étant pas
+      saisi. Les fonctionnaires de La Poste et d'Orange ont la même pension
       mais une contribution employeur propre depuis 2006, non distinguée.
 
   - code: cnracl
@@ -712,7 +720,9 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [fonctionnaire_territorial_hospitalier]
+    statuts: [fonctionnaire_territorial_hospitalier,
+              fonctionnaire_territorial_hospitalier_actif,
+              fonctionnaire_territorial_hospitalier_super_actif]
     textes:
       - {reference: "ordonnance n° 45-993 du 17 mai 1945", id: null}
       - {reference: "décret n° 47-1846 du 19 septembre 1947", id: null}
@@ -746,7 +756,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [ouvrier_etat]
+    statuts: [ouvrier_etat, ouvrier_etat_actif]
     textes:
       - {reference: "loi du 21 mars 1928", id: null}
       - {reference: "décret n° 67-711 du 18 août 1967 fixant les conditions d'application du régime des pensions des ouvriers des établissements industriels de l'État", id: LEGIARTI000006767403}
@@ -762,7 +772,11 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [fonctionnaire_etat, fonctionnaire_territorial_hospitalier, ouvrier_etat]
+    statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
+              fonctionnaire_territorial_hospitalier,
+              fonctionnaire_territorial_hospitalier_actif,
+              fonctionnaire_territorial_hospitalier_super_actif,
+              militaire, militaire_officier, ouvrier_etat, ouvrier_etat_actif]
     textes:
       - {reference: "loi n° 2003-775 du 21 août 2003, article 76", id: null}
       - {reference: "décret n° 2004-569 du 18 juin 2004 relatif à la retraite additionnelle de la fonction publique", id: null}

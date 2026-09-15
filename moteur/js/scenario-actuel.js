@@ -22,9 +22,11 @@ import { enMois } from "./calendrier.js";
 import { salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
-  AgesAnnulationDecote, AgesOuverture, AnneesSalaireReference, CarriereLongue,
+  AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
+  AgesOuverture, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesFonctionPublique,
+  DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
   SurcoteParentale, ValeursPoint,
@@ -47,6 +49,26 @@ const BAREMES_DECOTE_EN_TABLE = new Set([
   "fonction_publique", "regimes_speciaux", "regimes_speciaux_age_fixe",
 ]);
 
+/**
+ * Durée minimale de services qui ouvre une pension militaire, même différée :
+ * « lorsqu'ils ont accompli […] moins de quinze ans de services effectifs »,
+ * dit le 5° de l'article L. 25, la pension n'est due qu'à l'âge légal.
+ */
+const SERVICES_MINIMAUX_MILITAIRES = 15.0;
+
+/**
+ * Trimestres de services que le II de l'article L. 14 ajoute à la durée
+ * d'ouverture pour borner la décote militaire, et plafond de celle-ci.
+ */
+const TRIMESTRES_DECOTE_MILITAIRE = 10;
+
+/** Dernière année à compter dans les services, null si sans objet. */
+function borneCarriere(carriere) {
+  return carriere.age_liquidation === null || carriere.age_liquidation === undefined
+    ? null
+    : carriere.anneeLiquidation;
+}
+
 export class ScenarioActuel {
   constructor(paquet, macro, catalogue, affiliations, parametres) {
     this.macro = macro;
@@ -63,6 +85,9 @@ export class ScenarioActuel {
     this.dureesProratisation = new DureesProratisation(paquet);
     this.agesOuverture = new AgesOuverture(paquet);
     this.agesAnnulationDecote = new AgesAnnulationDecote(paquet);
+    this.agesCategorieActive = new AgesCategorieActive(paquet);
+    this.dureesServicesMilitaires = new DureesServicesMilitaires(paquet);
+    this.agesJouissanceMilitaire = new AgesJouissanceMilitaire(paquet);
     this.coefficientsMinoration = new CoefficientsMinoration(paquet);
     this.anneesSalaireReference = new AnneesSalaireReference(paquet);
     this.minimumContributif = new MinimumContributif(paquet, macro);
@@ -377,8 +402,197 @@ export class ScenarioActuel {
     return [Math.min(parGeneration[0], requis), parGeneration[1]];
   }
 
-  /** Âge légal opposable à cet assuré dans ce régime. */
+  // -- catégorie active et pension militaire ---------------------------------
+
+  /**
+   * Le classement que la carrière a exercé le plus longtemps.
+   *
+   * La règle est celle du code : quand plusieurs emplois classés se succèdent,
+   * « la catégorie applicable pour bénéficier de l'âge de départ minoré est
+   * celle associée à l'emploi que le fonctionnaire a occupé le plus longtemps »
+   * (L. 24, I, 1°). À égalité, le classement le plus favorable l'emporte,
+   * parce que la durée qu'il exige est la plus longue.
+   */
+  statutDominant(carriere, classements) {
+    const durees = new Map();
+    const borne = borneCarriere(carriere);
+    for (const [statut, classement] of Object.entries(classements)) {
+      const duree = carriere.dureeDeService([statut], borne);
+      if (duree > 0) {
+        durees.set(classement, (durees.get(classement) ?? 0) + duree);
+      }
+    }
+    if (durees.size === 0) {
+      return null;
+    }
+    let meilleur = null;
+    let reference = [-1, 0];
+    for (const cle of [...durees.keys()].sort()) {
+      const rang = [durees.get(cle),
+        (cle === "super_active" || cle === "officier") ? 1 : 0];
+      if (rang[0] > reference[0] || (rang[0] === reference[0] && rang[1] > reference[1])) {
+        meilleur = cle;
+        reference = rang;
+      }
+    }
+    return meilleur;
+  }
+
+  /**
+   * Les régimes que ces statuts atteignent, une année au moins.
+   *
+   * C'est la seconde garde du droit dérogatoire, et elle n'est pas de confort.
+   * Plusieurs régimes SPÉCIAUX servent eux aussi une catégorie active — leur
+   * fiche le déclare, et c'est exact : la SNCF a ses agents de conduite. Mais
+   * la catégorie active de la fonction publique n'a rien à y voir : sans cette
+   * garde, un assuré ayant fait vingt ans d'emploi classé après une carrière à
+   * la SNCF aurait vu son régime SNCF liquidé à l'âge de la fonction publique.
+   */
+  regimesRoutes(statuts) {
+    const codes = new Set();
+    for (const statut of statuts) {
+      for (const periode of this.affiliations.periodes(statut)) {
+        for (const code of periode.regimes ?? []) {
+          codes.add(code);
+        }
+      }
+    }
+    return codes;
+  }
+
+  /**
+   * L'âge anticipé que le classement de l'emploi ouvre, ou null.
+   *
+   * Quatre conditions, et la fiche en porte une : le régime doit servir la
+   * catégorie active — l'avoir dans ses `avantages_non_contributifs` —, le
+   * statut déclaré doit être classé, le régime doit être l'un de ceux que ce
+   * statut route (cf. `regimesRoutes`), et la carrière doit porter la durée de
+   * services classés que l'article L. 24 exige. Sans elle, l'assuré reste au
+   * droit commun : la faculté « est ouverte à la condition que le fonctionnaire
+   * puisse se prévaloir, au total, d'au moins dix-sept ans de services […] dits
+   * services actifs ».
+   */
+  derogationActive(periode, carriere) {
+    if (!periode.avantages_non_contributifs.includes("categorie_active")) {
+      return null;
+    }
+    const classements = this.affiliations.classementsActifs;
+    const classement = this.statutDominant(carriere, classements);
+    if (classement === null) {
+      return null;
+    }
+    const derogation = this.agesCategorieActive.derogation(
+      classement, carriere.generation,
+    );
+    if (derogation === null) {
+      return null;
+    }
+    const statuts = Object.keys(classements)
+      .filter((code) => classements[code] === classement);
+    if (!this.regimesRoutes(statuts).has(periode.regime)) {
+      return null;
+    }
+    const servies = carriere.dureeDeService(statuts, borneCarriere(carriere));
+    if (servies + 1e-9 < derogation.servicesRequis) {
+      return null;
+    }
+    return derogation;
+  }
+
+  /**
+   * Ce que la pension militaire oppose à cet assuré, ou null.
+   *
+   * Elle ne s'ouvre pas à un âge mais à une DURÉE — dix-sept ans de services
+   * effectifs pour un non-officier, vingt-sept pour un officier (L. 24, II).
+   * Qui la réunit liquide aussitôt ; qui ne la réunit pas mais a quinze ans de
+   * services attend l'âge de jouissance différée de l'article L. 25 ; qui a
+   * moins de quinze ans n'a pas de pension militaire.
+   */
+  droitMilitaire(periode, carriere) {
+    if (!periode.avantages_non_contributifs.includes("categorie_active")) {
+      return null;
+    }
+    const categories = this.affiliations.categoriesMilitaires;
+    const categorie = this.statutDominant(carriere, categories);
+    if (categorie === null) {
+      return null;
+    }
+    const statuts = Object.keys(categories)
+      .filter((code) => categories[code] === categorie);
+    if (!this.regimesRoutes(statuts).has(periode.regime)) {
+      return null;
+    }
+    const base = this.dureesServicesMilitaires.dureeDeBase(categorie);
+    if (base === null) {
+      return null;
+    }
+    const dateBase = carriere.dateDeService(statuts, base);
+    const anneeBase = dateBase === null
+      ? 9999.0
+      : dateBase.annee + (dateBase.mois - 1) / 12;
+    const requises = this.dureesServicesMilitaires.anneesRequises(categorie, anneeBase);
+    if (requises === null || requises === undefined) {
+      return null;
+    }
+    const [anneesRequises] = requises;
+    let fiabilite = requises[1];
+    const servies = carriere.dureeDeService(statuts, borneCarriere(carriere));
+    const ageRequis = carriere.ageDeService(statuts, anneesRequises);
+    let ageOuverture;
+    let differee;
+    if (servies + 1e-9 >= anneesRequises && ageRequis !== null) {
+      ageOuverture = ageRequis;
+      differee = false;
+    } else if (servies + 1e-9 >= SERVICES_MINIMAUX_MILITAIRES) {
+      const parGeneration = this.agesJouissanceMilitaire.age(carriere.generation);
+      if (parGeneration === null) {
+        return null;
+      }
+      ageOuverture = parGeneration[0];
+      differee = true;
+      fiabilite = Math.min(fiabilite, parGeneration[1]);
+    } else {
+      return null;
+    }
+    return {
+      ageOuverture,
+      trimestresServis: Math.round(servies * 4),
+      trimestresCible: Math.round(anneesRequises * 4) + TRIMESTRES_DECOTE_MILITAIRE,
+      jouissanceDifferee: differee,
+      fiabilite,
+    };
+  }
+
+  /**
+   * Âge légal opposable à cet assuré dans ce régime.
+   *
+   * Trois droits se superposent, du plus particulier au plus général : la
+   * pension militaire, qui s'ouvre à une durée de services ; la catégorie
+   * active, qui avance l'âge de cinq ou de dix années ; le droit commun.
+   */
   ageOuverture(periode, carriere) {
+    const militaire = this.droitMilitaire(periode, carriere);
+    if (militaire !== null) {
+      return militaire.ageOuverture;
+    }
+    const derogation = this.derogationActive(periode, carriere);
+    if (derogation !== null) {
+      return derogation.ageOuverture;
+    }
+    return this.ageOuvertureCommun(periode, carriere);
+  }
+
+  /**
+   * L'âge légal de droit commun, sans égard au classement de l'emploi.
+   *
+   * C'est lui, et non l'âge anticipé, qui commande la SURCOTE : le III de
+   * l'article L. 14 ne la donne qu'« au-delà de l'âge mentionné à l'article
+   * L. 161-17-2 », et le D du XXIV de l'article 10 de la loi du 14 avril 2023
+   * le confirme pour les emplois classés — l'âge anticipé majoré de cinq
+   * années, l'âge minoré majoré de dix, c'est-à-dire l'âge légal dans les deux
+   * cas.
+   */
+  ageOuvertureCommun(periode, carriere) {
     if (periode.age_ouverture_par_generation) {
       const parGeneration = this.agesOuverture.age(carriere.generation);
       if (parGeneration !== null) {
@@ -388,8 +602,18 @@ export class ScenarioActuel {
     return periode.age_ouverture;
   }
 
-  /** Âge d'annulation de la décote opposable à cet assuré. */
+  /**
+   * Âge d'annulation de la décote opposable à cet assuré.
+   *
+   * Pour un emploi classé, ce n'est pas soixante-sept ans mais la limite d'âge
+   * du grade — soixante-deux ans en catégorie active, cinquante-sept en
+   * super-active —, puis l'âge que l'article L. 14 bis attache au classement.
+   */
   ageTauxPlein(periode, carriere) {
+    const derogation = this.derogationActive(periode, carriere);
+    if (derogation !== null) {
+      return derogation.ageAnnulation;
+    }
     if (periode.age_taux_plein_par_generation) {
       const parGeneration = this.agesAnnulationDecote.age(carriere.generation);
       if (parGeneration !== null) {
@@ -480,7 +704,22 @@ export class ScenarioActuel {
    * Avant l'ordonnance du 26 mars 1982, le taux ne dépendait QUE de l'âge :
    * aucune durée, si longue fût-elle, n'ouvrait le taux plein avant l'heure.
    */
-  trimestresDeDecote(periode, trimestres, requis, ageLiquidation, ageAnnulation) {
+  trimestresDeDecote(periode, carriere, trimestres, requis, ageLiquidation,
+    ageAnnulation) {
+    // LE MILITAIRE A LA SIENNE, et elle ne compte pas des âges. Le II de
+    // l'article L. 14 lui oppose « le nombre de trimestres manquants […] pour
+    // atteindre […] la durée de services militaires effectifs nécessaire pour
+    // pouvoir bénéficier d'une liquidation de la pension […] augmentée d'une
+    // durée de services effectifs de dix trimestres », dans la limite de dix
+    // trimestres et non de vingt.
+    const militaire = this.droitMilitaire(periode, carriere);
+    if (militaire !== null) {
+      const manquantsServices = Math.max(
+        0, militaire.trimestresCible - militaire.trimestresServis,
+      );
+      const manquantsDuree = Math.max(0, requis - trimestres);
+      return Math.min(manquantsServices, manquantsDuree, TRIMESTRES_DECOTE_MILITAIRE);
+    }
     // Arrondi à l'entier supérieur, comme le veut l'article R. 351-27 : les
     // âges d'annulation des générations 1951 à 1954 ne tombent pas sur un
     // trimestre entier, et l'on opposait 13,32 trimestres là où le droit en
@@ -587,7 +826,7 @@ export class ScenarioActuel {
       return 1.0;
     }
     const trimestresDecote = this.trimestresDeDecote(
-      periode, trimestres, requis, ageLiquidation, ageAnnulation,
+      periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
     );
     return Math.max(0.0, 1.0 - decote * trimestresDecote);
   }
@@ -1175,7 +1414,7 @@ export class ScenarioActuel {
           periode, carriere, anneeLiquidation,
         );
         trimestresDecote = this.trimestresDeDecote(
-          periode, trimestres, requis, ageLiquidation, ageAnnulation,
+          periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
         );
         if (decote && trimestresDecote > 0) {
           // Les régimes sans décote (fonction publique avant 2004, régimes
@@ -1187,10 +1426,14 @@ export class ScenarioActuel {
         }
         // La surcote ne récompense que les trimestres COTISÉS APRÈS l'âge
         // légal ET au-delà de la durée requise.
+        // Elle se compte depuis l'âge légal DE DROIT COMMUN, même pour un
+        // emploi classé, et le militaire n'en a aucune : le III de l'article
+        // L. 14 ne la donne qu'au « fonctionnaire civil ».
         let supplementaires = Math.max(0, trimestres - requis);
-        const ageOuverture = this.ageOuverture(periode, carriere);
+        const ageOuverture = this.ageOuvertureCommun(periode, carriere);
         if (periode.surcote_par_trimestre && supplementaires > 0
-            && ageLiquidation >= ageOuverture) {
+            && ageLiquidation >= ageOuverture
+            && this.droitMilitaire(periode, carriere) === null) {
           supplementaires = Math.min(
             supplementaires,
             trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),

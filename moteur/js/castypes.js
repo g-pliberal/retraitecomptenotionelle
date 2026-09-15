@@ -70,11 +70,28 @@ export const CAS_TYPES = [
   {
     code: "fonctionnaire_actif",
     libelle: "Fonctionnaire de catégorie active (départ à 57 ans)",
-    affiliation: "fonctionnaire_territorial_hospitalier",
+    affiliation: "fonctionnaire_territorial_hospitalier_actif",
     age_debut: 22, age_liquidation: 57, niveau_salaire: 1.1,
     part_primes: 0.22,
     caisses: ["cnracl"],
-    commentaire: "Départ anticipé de dix ans par rapport à l'âge de référence.",
+    commentaire: "Aide-soignant, agent technique territorial : l'emploi est classé, "
+      + "et le départ à cinquante-sept ans est celui que l'article L. 24 lui ouvre, "
+      + "non une anticipation sanctionnée. Le cas type était calculé comme un "
+      + "sédentaire tant qu'aucun statut ne portait le classement.",
+  },
+  {
+    code: "militaire",
+    libelle: "Militaire non officier (radiation après vingt-cinq ans de services)",
+    affiliation: "militaire",
+    age_debut: 19, age_liquidation: 44, niveau_salaire: 0.95,
+    part_primes: 0.25,
+    caisses: ["fonction_publique_etat_militaire"],
+    commentaire: "La pension militaire ne s'ouvre pas à un âge mais à une durée : "
+      + "dix-sept ans de services pour un non-officier. C'est le départ le plus "
+      + "précoce du système, et celui qu'un compte notionnel déplace le plus — "
+      + "quarante ans de rente pour vingt-cinq ans de cotisations. La solde "
+      + "indiciaire seule ouvre des droits ; les indemnités, plus lourdes que les "
+      + "primes de la fonction publique civile, relèvent du RAFP.",
   },
   {
     code: "agent_sncf_conduite",

@@ -57,6 +57,7 @@ from retraite_notionnelle.donnees.regimes import (  # noqa: E402
 )
 from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesAnnulationDecote,
+    AgesJouissanceMilitaire,
     AgesOuverture,
     AnneesSalaireReference,
     CoefficientsMinoration,
@@ -319,6 +320,8 @@ def _affiliations() -> dict:
         code: {
             "libelle": affiliations.libelle(code),
             "sans_employeur": affiliations.sans_employeur(code),
+            "categorie_active": affiliations.categorie_active(code),
+            "pension_militaire": affiliations.pension_militaire(code),
             "releve_par": affiliations.releve_par(code),
             "periodes": list(affiliations.periodes(code)),
         }
@@ -452,6 +455,39 @@ def _table_par_generation(classe) -> dict:
     return {(str(int(generation)) if float(generation).is_integer()
              else str(generation)): [valeur, int(fiabilite)]
             for generation, (valeur, fiabilite) in sorted(classe(DONNEES)._table.items())}
+
+
+def _categorie_active() -> dict:
+    """Âges de la catégorie active et de la super-active, par génération."""
+    from retraite_notionnelle.scenarios.actuel import AgesCategorieActive
+
+    table = AgesCategorieActive(DONNEES)._table
+    return {
+        classement: {
+            (str(int(generation)) if float(generation).is_integer()
+             else str(generation)): [
+                derogation.age_ouverture, derogation.age_annulation,
+                derogation.services_requis, int(derogation.fiabilite),
+            ]
+            for generation, derogation in sorted(valeurs.items())
+        }
+        for classement, valeurs in sorted(table.items())
+    }
+
+
+def _durees_services_militaires() -> dict:
+    """Durée qui ouvre la pension militaire, par année d'atteinte."""
+    from retraite_notionnelle.scenarios.actuel import DureesServicesMilitaires
+
+    table = DureesServicesMilitaires(DONNEES)._table
+    return {
+        categorie: {
+            (str(int(annee)) if float(annee).is_integer() else str(annee)):
+                [annees, int(fiabilite)]
+            for annee, (annees, fiabilite) in sorted(valeurs.items())
+        }
+        for categorie, valeurs in sorted(table.items())
+    }
 
 
 def _minimum_contributif() -> dict:
@@ -595,6 +631,9 @@ def construire() -> bytes:
         "revalorisation_salaires": _revalorisation_salaires(),
         "ages_ouverture": _table_par_generation(AgesOuverture),
         "ages_annulation_decote": _table_par_generation(AgesAnnulationDecote),
+        "categorie_active": _categorie_active(),
+        "durees_services_militaires": _durees_services_militaires(),
+        "ages_jouissance_militaire": _table_par_generation(AgesJouissanceMilitaire),
         "coefficients_minoration": _table_par_generation(CoefficientsMinoration),
         "annees_salaire_reference": _table_par_generation(AnneesSalaireReference),
         "periodes_non_travaillees": _periodes_non_travaillees(),
