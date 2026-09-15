@@ -5270,6 +5270,119 @@ n'est pas dans le dépôt.
 
 ---
 
+## 5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands
+
+Trois travaux français ont simulé le passage des retraites aux comptes
+notionnels, et **aucun ne trouve ce que trouve ce dépôt**. Un lecteur qui les
+connaît arrive ici avec une objection d'une ligne — « la CNAV dit −7 %, vous
+dites −73 % » — et cette page lui doit une réponse chiffrée. La voici.
+
+### Ce que la littérature trouve
+
+| Travail | Ce qu'il simule | Résultat |
+|---|---|---|
+| **CNAV, Albert & Oliveau, nov. 2009** (modèle PRISME, régime général, euros 2004) | bascule au prorata des générations 1952-1961, taux réel de la CNAV, **droits non contributifs conservés** | masses de prestations **−7 % en 2050** (hommes −10,5 %, femmes −3,4 %) ; besoin de financement 36 Md€ contre 49 Md€ |
+| **COR, 7e rapport, janv. 2010** | l'expertise demandée par le Parlement ; pas de chiffrage central | les dispositifs de solidarité valent **« de l'ordre d'un cinquième des retraites tous régimes »** |
+| **CEPII, Lettre n° 297, avril 2010** (OLGAMAP, équilibre général) | régime unique, **taux unique ~22 %**, transition 2015-2030 | besoin de financement **−0,7 pt de PIB** en 2050 ; en variante à actualisation nulle, **−3,2 pts** et système excédentaire |
+
+Et ce que trouve ce dépôt, pour une carrière ascendante au salaire moyen,
+entrée à 22 ans, née en 1975, liquidée à 64 ans :
+
+| | Salarié du privé non cadre | Fonctionnaire d'État |
+|---|---:|---:|
+| 2. Notionnel rétroactif, part salariale | **−73,1 %** | **−82,1 %** |
+| 3. Notionnel dès 2026, part salariale | −37,4 % | −41,1 % |
+| 4. Notionnel rétroactif, salariale + patronale | −33,5 % | **+4,5 %** |
+| 5. Notionnel dès 2026, salariale + patronale | −22,4 % | −30,5 % |
+| 6. Proposition libérale (18 % dès 2026) | −41,1 % | −0,9 % |
+
+### Ce n'est pas une contradiction : c'est la somme de quatre choix
+
+L'écart ne vient pas d'un désaccord de calcul. Il vient de quatre décisions
+prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
+
+1. **La rétroactivité.** La CNAV bascule en 1961, le CEPII entre 2015 et 2030,
+   et l'un comme l'autre **conservent les droits déjà acquis**. Les scénarios 2
+   et 4 recalculent la carrière ENTIÈRE depuis 1941. Le dépôt publie lui-même
+   la mesure de ce choix : les scénarios 3 et 5, qui figent les droits acquis
+   comme le fait la littérature, ramènent l'écart de −73,1 % à −37,4 % pour le
+   salarié du privé. **La moitié de l'écart est de la rétroactivité, rien
+   d'autre.**
+2. **Les droits non contributifs.** La CNAV les CONSERVE et les convertit en
+   cotisations fictives ; son tableau 2.1 en donne la part dans le capital
+   porté au compte — **hommes 16 % en 2020 et 13 % en 2050, femmes 36 % et
+   31 %**. Le COR donne le même ordre de grandeur tous régimes, un cinquième.
+   Le §6 de `methodologie.md` les supprime tous. C'est, à soi seul, dix à
+   trente-cinq points de capital en moins selon le sexe — et c'est aussi
+   pourquoi les écarts de ce dépôt sont, à carrière égale, plus durs pour les
+   femmes.
+3. **Le périmètre de la cotisation.** Les scénarios 2 et 3 ne portent au compte
+   que la part SALARIALE, soit 40 % du total versé pour le salarié du privé et
+   19 % pour le fonctionnaire. La littérature raisonne toujours sur la
+   cotisation entière. Le scénario 4 est la comparaison honnête, et il donne
+   −33,5 % pour le privé et **+4,5 %** pour le fonctionnaire.
+4. **L'âge de liquidation.** La CNAV suppose les âges de départ INCHANGÉS, et
+   observe malgré tout que ses perdants partent à 60 ans et ses gagnants à 65.
+   Ici, le diviseur est la seule sanction du départ précoce, et il n'est pas
+   amorti par une décote plafonnée.
+
+Additionnés, ces quatre écarts rendent compte de la distance entre −7 % et
+−73 % sans qu'aucun chiffre ait besoin d'être révisé de part ou d'autre. Ce
+qu'il faut en retenir : **les résultats de ce dépôt ne mesurent pas « le
+notionnel » en général, mais une version précise et volontairement dure du
+notionnel**, et la littérature en mesure une autre, volontairement douce.
+
+### Ce que la comparaison valide
+
+Quatre choix du modèle sont confirmés par des sources qui ne le connaissent
+pas :
+
+- **La table de génération** (§5). La CNAV calcule sur des tables
+  transversales et écrit ce que cela lui coûte : sa mortalité PRISME étant
+  longitudinale, « les pensions sont par conséquent plus élevées que celles qui
+  permettraient d'épuiser le capital notionnel ». Le biais que le dépôt évite,
+  constaté par un praticien sur son propre calcul.
+- **La table unisexe** (§5), qui est aussi celle de la CNAV.
+- **L'indexation sur la masse salariale** (§3). La maquette du secrétariat
+  général du COR : « l'équilibre à chaque date est assuré par construction […]
+  dans la mesure où le taux de revalorisation est ici supposé égal au taux de
+  croissance de la masse salariale ». Avec sa limite, en note : ce n'est pas le
+  choix suédois, qui indexe sur les salaires et non sur la masse.
+- **La part patronale de l'État en 2008.** Le CEPII écrit 55,7 % ; la ligne
+  certifiée du dépôt porte 55,71 %. Deux chaînes sans rapport, le même chiffre.
+
+### Ce qu'elle ne valide pas, et qui reste assumé
+
+- **Les droits hérités.** La CNAV redistribue les comptes de ceux qui meurent
+  avant la liquidation, ce qui relève ses coefficients de conversion de **7 %
+  en 2012 et de 4 % en 2050** ; c'est le mécanisme des *arvsvinster* suédois.
+  Le dépôt ne le fait pas, et c'est délibéré : il contredirait la prémisse
+  annoncée en tête du `README` — au franc le franc des cotisations réellement
+  versées. Conséquence à connaître : **les pensions notionnelles affichées ici
+  sont, sur ce seul point, 4 à 7 % plus basses qu'elles ne le seraient dans un
+  système notionnel réel**, dans les six scénarios et sans exception.
+- **Le bouclage macroéconomique.** Le CEPII calcule en équilibre général : ses
+  réformes déplacent le taux d'intérêt, l'emploi et la croissance, qui
+  rétroagissent sur l'équilibre des régimes. Le dépôt est comptable de bout en
+  bout. Ses trajectoires agrégées (§5 bis, §5 ter) ne doivent donc pas être
+  lues comme des projections d'économiste.
+- **Le pilotage.** Aucun des trois travaux ne laisse dormir un excédent ; le
+  dépôt, lui, calcule un coefficient d'équilibre sans l'appliquer. C'est la
+  limite déjà nommée au §5 bis.
+
+### Les limites de la comparaison elle-même
+
+Ces travaux datent de 2009 et 2010, **d'avant les réformes de 2010, 2014 et
+2023** : leur contrefactuel « système actuel » n'est plus le droit en vigueur,
+leurs montants sont en euros 2004, et la CNAV ne couvre que le régime général.
+Ils ne sont donc pas des étalons, et **aucun n'alimente une seule valeur de
+`data/reference/`** : ils figurent au manifeste en `controle`, statut réservé
+aux sources qui n'apportent aucun chiffre mais en contrôlent un autre. Ce qu'ils
+apportent, c'est une méthode déjà éprouvée et des ordres de grandeur — pas des
+barèmes.
+
+---
+
 ## 6. Reproductibilité
 
 - Aucune dépendance hors PyYAML ; tous les calculs sont déterministes.
