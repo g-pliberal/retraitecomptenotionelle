@@ -1374,8 +1374,9 @@ plus volontiers.
   l'effet est petit — deux cas
   types sur douze sont concernés, et de faible poids : le cumul du scénario 4
   passe de −51,9 % à −51,8 %, celui du 6 de −51,7 % à −51,6 % (la lecture des
-  taux de cotisation les a ensuite ramenés à −51,9 % et −51,7 %, puis la
-  catégorie active et la pension militaire à −52,6 % et −52,4 %).
+  taux de cotisation les a ensuite ramenés à −51,9 % et −51,7 %, la catégorie
+  active et la pension militaire à −52,6 % et −52,4 %, et l'âge de liquidation
+  par génération à −56,0 % et −51,8 %).
 
   **L'index a remplacé le dump, et il était meilleur.** Les récupérateurs
   `dila_legi_*` plus anciens retéléchargent le dump global de la DILA — un
@@ -3942,8 +3943,9 @@ signalé à chaque exécution plutôt que corrigé en silence.
 **Ce que tout cela déplace.** 287 cas de témoin sur 427, et la page Coût à
 peine : le cumul 1959-2024 du scénario 4 passe de −51,8 % à **−51,9 %**, celui
 du scénario 6 de −51,6 % à **−51,7 %**, celui du 2 reste à −79,5 % — trois
-chiffres d'alors, que la catégorie active et la pension militaire ont depuis
-portés à −52,6 %, −52,4 % et −79,8 %. Le scénario
+chiffres d'alors, que la catégorie active et la pension militaire ont portés à
+−52,6 %, −52,4 % et −79,8 %, puis l'âge de liquidation par génération à
+−56,0 %, −51,8 % et −81,0 %. Le scénario
 1 ne bouge nulle part, puisqu'il liquide sur les trimestres et le salaire de
 référence, non sur la cotisation.
 
@@ -4436,11 +4438,14 @@ qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
 indexée sur les prix depuis 1941.
 
 **La masse de garantie que produisent les cas types est un chiffre faux, et la
-page le remplace.** Un seul des treize cas types liquide à 65 ans ou après ; la
-masse de la garantie, et donc ce que l'impôt paierait, est portée par lui seul.
-La ligne « dont garantie vieillesse » du tableau dit 32 milliards sur
-soixante-six ans, là où le barème appliqué à la distribution réelle en coûte
-18,4 par an. Ce n'était pas une imprécision : une allocation DIFFÉRENTIELLE ne
+page le remplace.** Cinq des treize cas types liquident à 65 ans ou après aux
+générations récentes, et aucun à celles d'avant 1955 ; la masse de la garantie,
+et donc ce que l'impôt paierait, est portée par ces cinq-là seulement. La ligne
+« dont garantie vieillesse » du tableau dit 621 milliards sur soixante-six ans,
+soit 9,4 par an, là où le barème appliqué à la distribution réelle en coûte
+18,4. L'écart n'était pas de deux mais de quarante avant que les cas types ne
+liquident à l'âge de leur génération : c'est le même défaut qui les faisait
+partir trop tôt pour voir la garantie. Ce n'était pas une imprécision : une allocation DIFFÉRENTIELLE ne
 se chiffre pas sur treize carrières, parce que son coût est tout entier celui de
 la queue basse de la distribution, et que treize carrières ne décrivent pas une
 distribution.
@@ -5088,8 +5093,8 @@ approximations, énoncées sur la page :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de −57,3 % à −52,6 % — et faux du
-   scénario 2, qui passe de −77,1 % à −79,8 % : la pondération donne aux
+   la part patronale — le scénario 4 passe de −59,8 % à −56,0 % — et faux du
+   scénario 2, qui passe de −78,3 % à −81,0 % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -5149,7 +5154,8 @@ PIB, où elle prêterait à la France de 2070 douze pour cent d'actifs qu'aucune
 projection ne lui donne, et rendrait toutes les parts de PIB de la page
 flatteuses d'un point. C'est le paramètre le plus discutable de la section, et
 il joue dans un sens connu : le COR, lui, fait remonter les taux d'emploi, ce
-qui explique une partie de l'écart entre ses 14,2 % et nos 14,8 % en 2070.
+qui explique une partie de l'écart entre ses 14,2 % et les nôtres en 2070 —
+chiffrés plus bas, au paragraphe « Le contrôle externe ».
 
 **Ce qui n'est pas modélisé.** Le taux de couverture est supposé constant : le
 modèle compte des générations, non des cotisants, et suppose que la même
@@ -5174,35 +5180,93 @@ de calcul de la page ; il ne doit pas commander la forme du résultat, et c'est
 pourquoi les cinq cohortes ne basculent pas le même jour — sans quoi la
 trajectoire avancerait par marches de cinq ans.
 
-**Le contrôle externe, et ce qu'il dit depuis la pondération des cas types.**
-Le COR projette la même grandeur avec un modèle de population complet et une
-méthode qui n'a rien de commun avec celle-ci : il trouve 13,9 % du PIB en 2024
-et **14,2 % en 2070** (rapport annuel de juin 2025, champ « ensemble des régimes
-légalement obligatoires, y compris FSV, hors RAFP »). Le dépôt trouve 13,6 % et
-**18,3 %**. Trois dixièmes de point d'écart au départ — l'affaire du périmètre,
-la répartition obligatoire des Comptes de la protection sociale n'étant pas
-exactement celle du COR — et **quatre points à l'arrivée**.
+**Le contrôle externe, et ce qu'il dit.** Le COR projette la même grandeur avec
+un modèle de population complet et une méthode qui n'a rien de commun avec
+celle-ci : il trouve 13,9 % du PIB en 2024 et **14,2 % en 2070** (rapport annuel
+de juin 2025, champ « ensemble des régimes légalement obligatoires, y compris
+FSV, hors RAFP »). Le dépôt trouve 13,6 % et **19,3 %**. Trois dixièmes de point
+d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
+Comptes de la protection sociale n'étant pas exactement celle du COR — et **cinq
+points à l'arrivée**.
 
-L'écart d'arrivée était de deux points tant que les cas types pesaient d'un
-poids égal. Il a doublé quand chacun a reçu l'effectif de sa caisse, et il faut
-dire pourquoi, parce que ce n'est pas la pondération qui est en cause : elle a
-retiré une COMPENSATION ACCIDENTELLE. L'ancienne convention donnait un sixième
-du poids à des carrières qui liquident à 52 et 57 ans — SNCF, catégorie
-active —, si bien que le stock de retraités du modèle vieillissait moins vite
-que la seule population des 64 ans et plus, laquelle croît de 41 % d'ici 2070
-quand celle des 52 ans et plus ne croît que de 25 %. En rendant à chaque
-carrière son poids réel, on a rendu visible ce que le modèle fait depuis
-toujours : **il fait liquider chaque cas type à l'âge légal d'aujourd'hui,
-quelle que soit sa génération**, alors qu'une génération née en 1940 est partie
-à 60 ou 65 ans sous d'autres règles. Le stock de retraités du modèle est donc
-trop vieux au départ de la projection, et sa croissance trop rapide. C'est un
-défaut ancien, qu'une erreur compensait ; il est désormais nommé, et
-`docs/feuille_de_route.md` en a fait un chantier.
+L'écart d'arrivée a une histoire, et elle vaut d'être lue dans l'ordre : deux
+points tant que les cas types pesaient d'un poids égal, quatre quand chacun a
+reçu l'effectif de sa caisse, cinq depuis que chacun liquide à l'âge de sa
+génération. Il s'est creusé deux fois en corrigeant deux défauts, et les deux
+fois pour la même raison de fond : une erreur en cachait une autre.
+
+**Ce que la pondération a retiré.** Une COMPENSATION ACCIDENTELLE. L'ancienne
+convention égalitaire donnait un sixième du poids à des carrières qui liquident
+à 52 et 57 ans — SNCF, catégorie active —, si bien que le stock de retraités du
+modèle vieillissait moins vite que la seule population des 64 ans et plus,
+laquelle croît de 41 % d'ici 2070 quand celle des 52 ans et plus ne croît que de
+25 %. En rendant à chaque carrière son poids réel, on a rendu visible ce que le
+modèle faisait depuis toujours : il faisait liquider chaque cas type à l'âge
+légal d'aujourd'hui, quelle que soit sa génération.
+
+**Ce que l'âge de liquidation a retiré, et le diagnostic qu'il a démenti.** Ce
+défaut-là est corrigé : un cas type ne porte plus un âge mais une RÈGLE, et
+chaque génération liquide sous le droit qui était le sien — au taux plein pour
+la plupart, à l'âge que leur statut ouvre pour la catégorie active, l'agent de
+conduite et l'agent des IEG, à une durée de services pour le militaire. Une
+génération née en 1940 ne part plus à 64 ans en 2004 : le salarié au salaire
+moyen part à 60 ans et 3 mois, le cadre à 62 ans et 3 mois, l'agent de conduite
+à 50 ans — et la génération 2000, embauchée après la fermeture du statut SNCF,
+part à 64 ans au régime général comme le droit l'y oblige.
+
+**La feuille de route tenait ce défaut pour la principale cause des quatre
+points d'écart. La mesure dit le contraire, et c'est le résultat de l'action.**
+Le diagnostic était juste sur le défaut et faux sur son SENS : la trajectoire
+2070 passe de 18,3 à 19,3 % au lieu de redescendre vers 14,2. La raison est
+lisible dans la grille des âges : les générations d'après 1970 liquidaient DÉJÀ,
+sous l'ancienne convention, à peu près à l'âge que le droit leur ouvre —
+soixante-quatre ans est l'âge de la loi de 2023, écrit dans la grille parce
+qu'il est celui d'aujourd'hui. La correction a donc surtout déplacé les
+générations ANCIENNES, celles qui font 2024, et à peine celles qui font 2070.
+Elle fait même monter ces dernières, parce que les cas types dont un statut
+commande le départ partent plus tard qu'avant à mesure que les réformes relèvent
+leur âge — cinquante-neuf ans en catégorie active, cinquante-quatre à la
+conduite — et qu'une carrière plus longue donne une pension plus forte.
+
+**Ce qui reste, et où chercher.** Ce n'est donc pas l'âge de départ. Le candidat
+que le dépôt peut MESURER chez lui est le taux de remplacement : celui du
+salarié au salaire moyen, à sa liquidation, vaut 51,3 % pour la génération 1970
+et 50,9 % pour celle de 2000 — il ne bouge pas. Le COR, lui, projette un recul
+sensible du rapport entre la pension moyenne et le revenu d'activité moyen, que
+produisent l'indexation des pensions sur les prix et celle des salaires portés
+au compte. Un modèle dont le taux de remplacement ne recule pas dépense
+mécaniquement plus, à démographie identique. C'est une piste et non une
+conclusion : la vérifier demanderait de confronter la pension moyenne du modèle
+à celle que le COR projette, série contre série, ce que cette section ne fait
+pas.
 
 La concordance ne vaut de toute façon que ce que vaut une concordance : elle
 rend une erreur grossière improbable, elle ne rend juste aucun des deux modèles.
-Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 à
-20 % pour cette raison, ce qui est un aveu et non une correction.
+Un test borne la trajectoire à la fourchette 10-20 % du PIB. Cette borne n'a pas
+bougé — elle avait été élargie de 18 à 20 % lors de la pondération, et les
+19,3 % y tiennent encore de sept dixièmes de point.
+
+**Ce que la règle d'âge a déplacé ailleurs.** Deux choses, et toutes deux
+attendues une fois qu'on sait que les cas types partent plus tard. La garantie
+vieillesse du scénario 6, servie à 65 ans, n'était vue que par un cas type sur
+treize ; elle l'est maintenant par cinq aux générations récentes, et la masse
+que la grille en tire passe de 0,5 à 9,4 milliards par an — toujours la moitié
+de ce que le barème coûte sur la vraie distribution, et le § « Le scénario 6, et
+ce que sa garantie ne voit pas » dit pourquoi cet écart-là ne se comblera pas.
+Et les 469 témoins de simulation n'ont pas bougé d'un bit : la règle date un
+départ, elle ne touche à aucune formule de pension.
+
+**Ce que la règle ne sait toujours pas faire.** Elle ne connaît pas la carrière
+longue : un assuré entré à dix-huit ans peut partir avant l'âge légal, et le cas
+type au SMIC — qui commence à dix-huit ans — pourrait en relever. Le moteur sait
+la calculer (elle apparaît dans `motif_ouverture`), mais comme une DÉROGATION
+qu'on demande, non comme un âge qu'on propose ; la règle s'en tient donc à
+l'âge de droit commun. Et les âges d'entrée des cas types restent ceux de la
+grille — vingt-quatre ans pour l'artisan, vingt-sept pour le libéral —, ce qui
+suffit à les faire partir à soixante-sept ans une fois la durée requise opposée.
+La grille part donc, en moyenne, un peu plus tard que la France réelle ; l'âge
+conjoncturel de départ que publie la DREES permettrait de le chiffrer, et il
+n'est pas dans le dépôt.
 
 ---
 
@@ -5216,7 +5280,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 704 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 709 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

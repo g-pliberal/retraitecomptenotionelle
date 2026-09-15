@@ -620,12 +620,12 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | 14 987 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 3 028 Md € | −79,8 % |
+| 2. Notionnel rétroactif, part salariale | 2 842 Md € | −81,0 % |
 | 3. Notionnel dès 2026, part salariale | 14 987 Md € | +0,0 % |
-| 4. Notionnel rétroactif, salariale + patronale | 7 102 Md € | −52,6 % |
+| 4. Notionnel rétroactif, salariale + patronale | 6 598 Md € | −56,0 % |
 | 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 134 Md € | −52,4 % |
-| *dont garantie vieillesse du 6, vue par les cas types* | *32 Md €* | |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 218 Md € | −51,8 % |
+| *dont garantie vieillesse du 6, vue par les cas types* | *621 Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -638,7 +638,7 @@ bascule était avancée avant la dernière année observée.
 
 L'écart du scénario 2 ne mesure pas, lui non plus, l'effet des comptes
 notionnels : il mesure la part salariale seule — le scénario 4, qui ajoute la
-part patronale, coûte 135 % de plus — et la règle d'indexation, dont le résultat
+part patronale, coûte 132 % de plus — et la règle d'indexation, dont le résultat
 1 ci-dessus montre qu'elle domine tout. Le scénario 6 est ici le scénario 4
 plus sa garantie vieillesse : aucune pension servie avant 2026 n'a une année
 cotisée à 18 %.
@@ -647,16 +647,17 @@ cotisée à 18 %.
 retraités de sa caisse, publié par la DREES et lu année par année : l'agent de
 conduite pèse 0,7 % et non 7,7 %, les quatre carrières du privé 63 % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donnait −77,1 % au scénario 2 contre −79,8 %, et −57,3 % au
-scénario 4 contre −52,6 %. Le sens du biais n'était donc pas celui qu'on
+qu'argumenté — elle donne −78,3 % au scénario 2 contre −81,0 %, et −59,8 % au
+scénario 4 contre −56,0 %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
 **La garantie vieillesse du scénario 6 ne se chiffre pas sur des cas types.**
 C'est une allocation différentielle : son coût est celui de la queue basse de la
 distribution des pensions, et treize carrières ne décrivent pas une distribution.
-Les 32 milliards de la ligne en italique sont un chiffre faux — un seul cas type
-liquide à 65 ans ou après. Le barème appliqué à la distribution que publie
+Les 621 milliards de la ligne en italique sont un chiffre faux — cinq cas types
+sur treize liquident à 65 ans ou après, et aucun aux générations anciennes. Le
+barème appliqué à la distribution que publie
 l'échantillon interrégimes de la DREES coûte **18,4 milliards par an** aux
 pensions d'aujourd'hui, 32,2 si l'on sert à tous l'allocation d'isolement, et
 **33 à 59 milliards par an** aux pensions du scénario 6 : la page Coût donne les
@@ -685,38 +686,48 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 
 | Système | Coût 2070 | Part du PIB 2070 | Cumul 2025-2070 | Écart |
 |---|---|---|---|---|
-| 1. Système actuel | 678 Md € | **18,3 %** | 25 232 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 217 Md € | 5,9 % | 7 714 Md € | −69,4 % |
-| 3. Notionnel dès 2026, part salariale | 300 Md € | **8,1 %** | 18 222 Md € | −27,8 % |
-| 4. Notionnel rétroactif, salariale + patronale | 483 Md € | 13,0 % | 18 325 Md € | −27,4 % |
-| 5. Notionnel dès 2026, salariale + patronale | 498 Md € | 13,4 % | 21 669 Md € | −14,1 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 370 Md € | 10,0 % | 16 351 Md € | −35,2 % |
+| 1. Système actuel | 716 Md € | **19,3 %** | 25 681 Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | 225 Md € | 6,1 % | 7 710 Md € | −70,0 % |
+| 3. Notionnel dès 2026, part salariale | 312 Md € | **8,4 %** | 18 115 Md € | −29,5 % |
+| 4. Notionnel rétroactif, salariale + patronale | 502 Md € | 13,5 % | 18 298 Md € | −28,7 % |
+| 5. Notionnel dès 2026, salariale + patronale | 517 Md € | 14,0 % | 21 677 Md € | −15,6 % |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 385 Md € | 10,4 % | 16 261 Md € | −36,7 % |
 
 Trois choses à lire dans ce tableau.
 
-**Le système actuel monte, et le contrôle externe s'est dégradé.** Il passe de
-13,6 % du PIB en 2024 à 18,3 % en 2070, alors que le nombre de personnes de
-65 ans ou plus rapporté aux 20-64 ans passe de 0,39 à 0,62. Le COR, qui projette
-la même grandeur avec un modèle de population complet, trouve **13,9 % en 2024
-et 14,2 % en 2070** (rapport annuel de juin 2025). L'écart d'arrivée était de
-deux points tant que les cas types pesaient d'un poids égal ; il est de quatre
-depuis qu'ils portent les effectifs de leur caisse, et c'est **une compensation
-accidentelle qui a disparu**, non une dégradation du calcul : l'ancienne
-convention donnait un sixième du poids à des carrières qui liquident à 52 et
-57 ans, si bien que le stock de retraités du modèle vieillissait moins vite que
-la population des 64 ans et plus, qui croît de 41 % d'ici 2070 quand celle des
-52 ans et plus ne croît que de 25 %. Ce que la pondération a rendu visible est
-un défaut ancien du modèle — il fait liquider chaque cas type à l'âge légal
-d'AUJOURD'HUI, quelle que soit sa génération —, et c'est le chantier que
-[`docs/feuille_de_route.md`](docs/feuille_de_route.md) a ouvert en conséquence.
+**Le système actuel monte, et le contrôle externe s'est dégradé deux fois.** Il
+passe de 13,6 % du PIB en 2024 à 19,3 % en 2070, alors que le nombre de
+personnes de 65 ans ou plus rapporté aux 20-64 ans passe de 0,39 à 0,62. Le COR,
+qui projette la même grandeur avec un modèle de population complet, trouve
+**13,9 % en 2024 et 14,2 % en 2070** (rapport annuel de juin 2025). L'écart
+d'arrivée était de deux points tant que les cas types pesaient d'un poids égal ;
+il est passé à quatre quand ils ont porté les effectifs de leur caisse, puis à
+cinq quand chacun s'est mis à liquider à l'âge de SA génération. Les deux fois,
+ce n'est pas le calcul qui s'est dégradé : c'est **une compensation accidentelle
+qui a disparu**. L'ancienne convention égalitaire donnait un sixième du poids à
+des carrières qui liquident à 52 et 57 ans, ce qui masquait un défaut ancien —
+le modèle faisait liquider chaque cas type à l'âge légal d'AUJOURD'HUI, quelle
+que soit sa génération.
+
+**Ce défaut-là est corrigé, et il n'était pas la cause.** Un cas type ne porte
+plus un âge de départ mais une règle : la plupart partent au taux plein de leur
+génération, ceux dont un statut commande le départ à l'âge que ce statut ouvre,
+le militaire à une durée de services. La génération 1940 part désormais à 60 ans
+et non à 64, et l'agent de conduite né en 2000 — embauché après la fermeture du
+statut SNCF — part à 64 ans au régime général. La trajectoire 2070 est montée de
+18,3 à 19,3 % au lieu de revenir vers 14,2 : le diagnostic que
+[`docs/feuille_de_route.md`](docs/feuille_de_route.md) avait posé était juste sur
+le défaut et faux sur son sens, et c'est la mesure qui le dit.
+[`docs/limites.md`](docs/limites.md) §5 ter porte le chiffrage et la piste qui
+reste — le taux de remplacement du modèle ne recule pas, celui du COR recule.
 
 **Une réforme prospective met une génération à produire son effet.** Le scénario
 3 ne fait rien économiser en 2026 — les droits acquis sont conservés —, et
-10,2 points de PIB en 2070. Décider vite ne fait pas économiser vite ; cela fait
+10,9 points de PIB en 2070. Décider vite ne fait pas économiser vite ; cela fait
 économiser longtemps.
 
 **L'écart entre 3 et 5 mesure encore une seule chose** : ce que verse
-l'employeur. Le scénario 5 économise cinq points de PIB de moins que le
+l'employeur. Le scénario 5 économise cinq points et demi de PIB de moins que le
 scénario 3, parce que son compte est alimenté par la cotisation entière.
 
 Ce que la projection suppose est écrit sur la page et dans
@@ -749,11 +760,11 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +10,32 % | +8,89 % | 2,64 |
-| 3. Notionnel dès 2026, part salariale | −0,17 % | +2,69 % | **1,91** |
-| 4. Notionnel rétroactif, salariale + patronale | +5,03 % | +2,82 % | 1,18 |
-| 5. Notionnel dès 2026, salariale + patronale | −0,17 % | +0,82 % | 1,15 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +5,03 % | +3,89 % | 1,55 |
+| 2. Notionnel rétroactif, part salariale | +10,44 % | +8,98 % | 2,68 |
+| 3. Notionnel dès 2026, part salariale | −0,17 % | +2,83 % | **1,94** |
+| 4. Notionnel rétroactif, salariale + patronale | +5,30 % | +3,03 % | 1,20 |
+| 5. Notionnel dès 2026, salariale + patronale | −0,17 % | +0,98 % | 1,17 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +5,30 % | +4,09 % | 1,57 |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -762,7 +773,7 @@ par construction, donc son solde doit être le solde publié, et il l'est.
 
 **Un coefficient supérieur à un n'est pas une économie, c'est une marge.** Un
 système notionnel réel *applique* son coefficient : il ne laisse pas dormir un
-excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,91 du
+excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,94 du
 scénario 3 en 2070 comme une économie de 48 % est donc un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, mais **autrement
 réparti entre les carrières** — ce qui est exactement ce que le reste de ce dépôt
@@ -1004,7 +1015,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          704 tests Python
+tests/                          709 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

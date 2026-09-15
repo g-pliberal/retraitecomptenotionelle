@@ -611,7 +611,7 @@ que le site SAIT recevoir, et rien d'autre.
   reste au-dessus de ce que la fenêtre des âges permet — 61 années — pour
   qu'elle ne refuse jamais une carrière que le reste du formulaire accepte.
 
-### 8. Faire liquider chaque cas type à l'âge de SA génération — `à faire`
+### 8. Faire liquider chaque cas type à l'âge de SA génération — `fait`
 
 **Pourquoi.** Découvert en menant l'action 1, et c'est désormais le premier
 défaut de la page Coût. Un cas type liquide à l'âge écrit dans `castypes.py` —
@@ -644,6 +644,68 @@ qui dira si le diagnostic était bon.
 
 **Fin.** L'écart avec le COR en 2070 est mesuré avant et après, `limites.md`
 §5 ter le dit, et la borne du test de vraisemblance redescend si elle le peut.
+
+**Ce que ça a déplacé.** L'âge de liquidation d'un cas type n'est plus un
+nombre mais une RÈGLE, et les treize en portent trois. Les 469 témoins de
+simulation sont inchangés au bit près — la règle date un départ, elle ne touche
+à aucune formule de pension —, et ce sont les agrégats de la page Coût, qui
+liquident les cas types, qui bougent.
+
+- *Le contrôle a démenti le diagnostic, et c'est le résultat.* L'action était
+  fondée sur l'idée que ce défaut était « la principale cause des quatre points
+  d'écart avec le COR en 2070 ». La mesure dit le contraire : la trajectoire
+  2070 passe de **18,3 % à 19,3 % du PIB** quand le COR en projette 14,2. Le
+  défaut était réel, son sens était faux. La raison est lisible dans la grille
+  des âges : les générations d'après 1970 liquidaient DÉJÀ à peu près à l'âge
+  que le droit leur ouvre — soixante-quatre ans est l'âge d'aujourd'hui, et
+  c'est lui qui était écrit —, si bien que la correction a déplacé les
+  générations anciennes, celles qui font 2024, et non celles qui font 2070.
+  `limites.md` §5 ter porte la mesure, la raison, et la seule piste que le dépôt
+  puisse mesurer chez lui : son taux de remplacement ne recule pas — 51,3 % pour
+  la génération 1970, 50,9 % pour celle de 2000 — là où le COR fait reculer le
+  rapport de la pension moyenne au revenu d'activité moyen.
+- *Trois règles, parce que trois droits.* `taux_plein` pour les dix carrières de
+  droit commun : le premier âge auquel la pension est servie ENTIÈRE, c'est-à-dire
+  l'âge d'ouverture si la durée requise y est atteinte, l'âge auquel elle l'est
+  sinon, et jamais au-delà de l'âge d'annulation de la décote. C'est la règle des
+  cas types du COR, et l'action avait d'abord écrit `ouverture` comme la marche
+  le demandait : il a fallu la mesurer pour voir qu'elle faisait partir le cadre
+  à soixante-quatre ans avec huit trimestres de décote, ce que personne ne fait,
+  et qu'elle éloignait le résultat d'un point de plus. `ouverture` reste, mais
+  pour les trois carrières dont un STATUT commande le départ — catégorie active,
+  agent de conduite, agent des IEG —, dont le cas type existe précisément pour
+  montrer ce départ-là. `services` pour le militaire, dont la pension ne s'ouvre
+  pas à un âge mais à une durée.
+- *La fermeture d'un régime est une information, et la règle la lit.* La SNCF
+  n'embauche plus au statut depuis 2020 : l'agent de conduite né en 2000 relève
+  du régime général et liquide à soixante-quatre ans. L'âge écrit le faisait
+  partir à cinquante-deux ans — une pension que le droit n'ouvrait à personne.
+  Aucune donnée n'a été ajoutée pour cela : la fiche portait déjà la fermeture,
+  et c'est l'âge écrit qui l'ignorait.
+- *Un point fixe, et pourquoi il en faut un.* L'âge de référence dépend de la
+  carrière, laquelle dépend de l'âge de liquidation : la question tourne en rond,
+  parce que les fiches de la SNCF et des IEG indexent l'âge d'ouverture sur
+  l'ANNÉE de départ et non sur la génération. On part de l'âge écrit et on
+  itère, quatre passes au plus. Une descente n'est retenue que si l'âge plus
+  précoce est lui-même confirmé : sans cette garde, un artisan né en 1910
+  « ouvrirait » à soixante ans — le droit de 1973 — un départ que son année
+  réelle, 1970, refuse encore à soixante-cinq.
+- *Ce que la règle a rendu visible ailleurs.* La garantie vieillesse du
+  scénario 6, servie à 65 ans, n'était vue que par un cas type sur treize ; elle
+  l'est maintenant par cinq aux générations récentes, et la masse que la grille
+  en tire passe de 0,5 à 9,4 milliards par an. Le chiffre reste faux — il vaut
+  la moitié de ce que le barème coûte sur la vraie distribution — mais il l'est
+  d'un facteur deux au lieu de quarante, et deux tests qui figeaient l'ancien
+  ordre de grandeur ont été réécrits plutôt que rebornés en silence.
+- *Ce qu'elle ne sait toujours pas faire.* Elle ne connaît pas la carrière
+  longue : le moteur sait la calculer, mais comme une dérogation qu'on demande,
+  non comme un âge qu'on propose. Et les âges d'ENTRÉE des cas types restent
+  ceux de la grille — vingt-quatre ans pour l'artisan, vingt-sept pour le
+  libéral —, ce qui suffit à les faire partir à soixante-sept ans une fois la
+  durée requise opposée : la grille part donc un peu plus tard que la France
+  réelle, et l'âge conjoncturel de départ de la DREES, que l'action citait comme
+  source de comportement, permettrait de le chiffrer. Il n'est pas dans le
+  dépôt, et l'y mettre est un chantier à part.
 
 ### 9. La surcote de l'Ircantec, qu'aucun assuré ne touche — `à faire`
 
@@ -884,3 +946,22 @@ piloté — et dit laquelle répond à quelle question.
   le MOIS d'entrée dans la vie active, que nul relevé ne porte — c'est là que
   `limites.md` §5 se tient désormais. L'action 8, faire liquider chaque cas
   type à l'âge de SA génération, est la plus haute qui ne soit pas commencée.
+- **Septembre 2026, action 8.** Faite, et elle a démenti sa propre hypothèse :
+  l'écart avec le COR en 2070 se creuse au lieu de se refermer, de 18,3 à 19,3 %
+  du PIB. Le détail est sous l'action. Trois choses à en retenir pour la suite.
+  **Une action dont le contrôle échoue n'a pas échoué** : la feuille de route
+  demandait de « regarder si la trajectoire 2070 revient vers le COR » — elle
+  n'y revient pas, et savoir que l'âge de départ n'est pas la cause vaut mieux
+  que de continuer à le croire. **Une marche peut être fausse dans le détail
+  sans l'être dans le principe** : l'action prescrivait de liquider à l'âge
+  d'OUVERTURE, et c'est la mesure qui a montré qu'il fallait liquider au TAUX
+  PLEIN — un assuré qui part avec huit trimestres de décote n'existe pas, et la
+  variante « ouverture » éloignait le résultat d'un point de plus. Enfin,
+  **corriger un défaut en révèle un autre qu'il masquait** : la garantie
+  vieillesse du scénario 6 était sous-estimée d'un facteur quarante parce que
+  les cas types partaient trop tôt pour la voir ; elle ne l'est plus que d'un
+  facteur deux, et ce qui reste ne vient plus d'un âge mais de la nature d'une
+  grille. Reste, pour la suite, la piste que `limites.md` §5 ter ouvre sur
+  l'écart avec le COR : le taux de remplacement du modèle ne recule pas, celui
+  du COR recule ; c'est là qu'il faut chercher, et non dans les âges. L'action 9,
+  la surcote de l'Ircantec, est la plus haute qui ne soit pas commencée.

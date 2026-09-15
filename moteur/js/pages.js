@@ -9,7 +9,9 @@
 import { MOIS_PAR_AN, DateMois, enMois, formaterAge } from "./calendrier.js";
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
 import { formaterBorne } from "./regimes.js";
-import { CAS_TYPES, GENERATIONS, calculerCasTypes } from "./castypes.js";
+import {
+  CAS_TYPES, GENERATIONS, ageLiquidationPour, calculerCasTypes,
+} from "./castypes.js";
 import {
   AgeConversionDroitsAcquis, ModeAgeReference, ModeIndexation, PARAMETRES_DEFAUT, PartCotisation,
   SituationFoyer, TableConversion, avec, cleParametres,
@@ -939,6 +941,12 @@ function ageSaisi(parametres, nom, defaut) {
  * Le modèle date la liquidation au mois : l'écrire « 64,75 » demanderait au
  * lecteur de multiplier par douze pour retrouver ce qu'il a saisi.
  */
+// Ce que le COR projette pour le système actuel, en part du PIB : le repère
+// extérieur auquel la page se compare. Rapport annuel de juin 2025, champ
+// « ensemble des régimes légalement obligatoires, y compris FSV, hors RAFP ».
+const COR_2024 = 0.139;
+const COR_2070 = 0.142;
+
 function age(valeur) {
   return formaterAge(valeur);
 }
@@ -2935,6 +2943,34 @@ function casTypes(contexte) {
     + g.gloses(CAS_TYPES.map((cas) => [cas.libelle, cas.commentaire]))
     + "</details>";
 
+  // À QUEL ÂGE chacun part. La question ne se posait pas tant que l'âge était
+  // écrit dans la grille, le même pour toutes les générations ; elle se pose
+  // depuis qu'il est calculé, et la réponse fait partie du résultat : deux
+  // cellules d'une même ligne ne décrivent pas le même départ.
+  const tableauDesAges = g.tableau(
+    ["Cas type", ...GENERATIONS.map(String)],
+    CAS_TYPES.map((cas) => [
+      echapper(cas.libelle),
+      ...GENERATIONS.map((generation) => age(
+        ageLiquidationPour(cas, contexte.simulateur(), generation),
+      )),
+    ]),
+    ["", ...GENERATIONS.map(() => "nombre")],
+    "Âge de liquidation de chaque cas type, par génération",
+    true,
+  );
+  const agesDesCas = "<details><summary>À quel âge chacun part, et pourquoi ce "
+    + "n'est pas le même</summary>"
+    + "<p class=\"discret\">Un cas type ne porte plus un âge de départ mais une "
+    + "RÈGLE, et chaque génération liquide donc au sien. La plupart partent au "
+    + "taux plein — le premier âge auquel la pension est servie entière, qui "
+    + "dépend à la fois de l'âge légal et de la durée requise de la génération. "
+    + "Ceux dont un statut commande le départ — catégorie active, agent de "
+    + "conduite, agent des IEG — partent à l'âge que ce statut leur ouvre. Le "
+    + "militaire, lui, part à une DURÉE de services et non à un âge.</p>"
+    + tableauDesAges
+    + "</details>";
+
   let echecs = "";
   if (resultat.echecs.size > 0) {
     const elements = [...resultat.echecs.entries()]
@@ -2953,6 +2989,7 @@ function casTypes(contexte) {
 cellule est l'écart de pension par rapport au système actuel, à carrière
 identique : négatif = pension plus faible qu'aujourd'hui.</p>
 ${descriptionDesCas}
+${agesDesCas}
 
 <h3>Scénario 2 — comptes notionnels rétroactifs depuis 1941</h3>
 ${grille("notionnel_retroactif", "Scénario 2, comptes notionnels rétroactifs")}
@@ -3533,8 +3570,8 @@ elle ne verse que ce qui manque à une pension pour atteindre son plancher. Son
 coût est donc, tout entier, celui de la <strong>queue basse de la
 distribution</strong> des pensions — et treize carrières de référence ne
 décrivent pas une distribution. Le tableau ci-dessus ne voit la garantie que par
-les cas types qui liquident à 65 ans ou après, c'est-à-dire par un seul des
-treize : il l'estime à ${milliards(c.cumul(COMPOSANTE_GARANTIE), 0)} sur
+les cas types qui liquident à 65 ans ou après, c'est-à-dire par cinq des treize
+aux générations récentes et par aucun aux plus anciennes : il l'estime à ${milliards(c.cumul(COMPOSANTE_GARANTIE), 0)} sur
 soixante-six ans, là où le barème appliqué à la vraie distribution coûte
 ${milliards(garantieBasse.coutAnnuelMeur / versEnquete, 0)} <em>par an</em>.
 Ce n'est pas une imprécision, c'est un chiffre faux, et il faut le remplacer.</p>
@@ -3640,10 +3677,16 @@ ${g.pourcentage(horizon.partPib("actuel"), false, 1)} en
 ${avenir.derniereAnnee} : il ne dérape pas, il ne s'allège pas non plus. Le
 Conseil d'orientation des retraites, qui projette la même grandeur avec un
 modèle de population complet, trouve 13,9 % en 2024 et
-<strong>14,2 % en 2070</strong> (rapport annuel de juin 2025) — trois dixièmes
-de point sous notre point de départ, six dixièmes sous notre point d'arrivée.
-Deux modèles qui n'ont rien en commun, et qui tombent à un demi-point l'un de
-l'autre : c'est le meilleur contrôle externe dont cette page dispose.</p>
+<strong>14,2 % en 2070</strong> (rapport annuel de juin 2025). Notre écart à
+lui vaut ${g.nombre((depart.partPib("actuel") - COR_2024) * 100, 1)} point de
+PIB au départ et
+${g.nombre((horizon.partPib("actuel") - COR_2070) * 100, 1)} à l'arrivée.
+C'est le meilleur contrôle externe dont cette page dispose, et il
+n'est pas flatteur : l'écart d'arrivée s'est creusé deux fois en corrigeant
+deux défauts du modèle — la pondération des cas types, puis leur âge de
+départ —, chacun ayant masqué l'autre. <code>docs/limites.md</code> § 5 ter
+porte la mesure et la seule piste que ce dépôt puisse suivre chez lui : son
+taux de remplacement ne recule pas, celui du COR recule.</p>
 
 ${g.tableau(
     ["Système", `Coût ${avenir.derniereAnnee}`, `Part du PIB ${avenir.derniereAnnee}`,

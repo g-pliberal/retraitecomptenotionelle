@@ -3,9 +3,10 @@
 Le modèle calcule des pensions individuelles et les agrège par cas types. Cela
 suffit à comparer des systèmes — un rapport de masses est robuste — mais pas à
 chiffrer un PLANCHER. Une allocation différentielle ne coûte que ce que coûte la
-queue basse de la distribution, et douze carrières de référence ne la décrivent
-pas : la page « Coût » voyait la garantie vieillesse du scénario 6 par le seul
-cas type qui liquide à 65 ans ou après.
+queue basse de la distribution, et treize carrières de référence ne la décrivent
+pas : la page « Coût » voit la garantie vieillesse du scénario 6 par les seuls
+cas types qui liquident à 65 ans ou après — cinq sur treize aux générations
+récentes, aucun aux plus anciennes.
 
 L'échantillon interrégimes de retraités de la DREES apparie tous les quatre ans
 les fichiers de toutes les caisses sur un même échantillon d'individus. C'est la

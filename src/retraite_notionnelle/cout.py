@@ -103,6 +103,7 @@ from typing import Callable
 
 from .castypes import (
     CAS_TYPES,
+    VARIANTES_LIQUIDATION,
     CasType,
     calculer_cas_types,
     poids_effectifs,
@@ -171,6 +172,11 @@ def generations() -> tuple[int, ...]:
 #: résultats affichés ; ``egale`` est l'ancienne convention, gardée pour mesurer
 #: ce qu'elle valait.
 PONDERATIONS: tuple[str, ...] = ("effectifs", "egale")
+
+#: Les deux façons de dater le départ des cas types, reprises de ``castypes``.
+#: ``droit`` est celle des résultats affichés ; ``absolu`` est l'ancienne, où
+#: toutes les générations partaient à l'âge écrit dans la grille.
+LIQUIDATIONS: tuple[str, ...] = VARIANTES_LIQUIDATION
 
 
 @dataclass(frozen=True)
@@ -418,6 +424,8 @@ class Cout:
     echecs: dict[str, int] = field(default_factory=dict)
     #: Pondération appliquée aux cas types : ``effectifs`` ou ``egale``.
     ponderation: str = "effectifs"
+    #: Datation du départ des cas types : ``droit`` ou ``absolu``.
+    liquidation: str = "droit"
     #: Poids de chaque cas type la DERNIÈRE année observée — ce que la page
     #: affiche pour dire sur quoi ses agrégats reposent.
     poids: dict[str, float] = field(default_factory=dict)
@@ -469,10 +477,11 @@ class Cout:
         return None
 
 
-def _pensionnes(simulateur: Simulateur,
-                cas_types: tuple[CasType, ...]) -> tuple[list[Pensionne], dict[str, int]]:
+def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+                liquidation: str = "droit",
+                ) -> tuple[list[Pensionne], dict[str, int]]:
     """Simule la grille et en tire, pour chaque couple, sa pension par système."""
-    grille = calculer_cas_types(simulateur, cas_types, generations())
+    grille = calculer_cas_types(simulateur, cas_types, generations(), liquidation)
     pensionnes = [
         Pensionne(
             code=code,
@@ -692,7 +701,8 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   population: Population,
                   comptes: ComptesRetraite | None = None,
                   cas_types: tuple[CasType, ...] = CAS_TYPES,
-                  ponderation: str = "effectifs") -> Cout:
+                  ponderation: str = "effectifs",
+                  liquidation: str = "droit") -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
     Les années où le modèle ne sert AUCUNE pension — celles d'avant la première
@@ -703,12 +713,19 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     retraités de sa caisse publiés par la DREES, ou ``egale``, l'ancienne
     convention. Le second n'existe que pour mesurer ce que le premier a déplacé.
 
+    ``liquidation`` choisit l'âge auquel chaque cas type part : ``droit``,
+    celui que le droit de sa génération lui ouvre, ou ``absolu``, l'âge écrit
+    dans la grille — le même pour toutes les générations. Le second n'existe,
+    lui aussi, que pour mesurer ce que le premier a déplacé : c'est par lui
+    qu'on lit, sans argumenter, ce que valait un modèle qui faisait liquider
+    la génération 1940 à l'âge légal de 2023.
+
     ``comptes`` porte le second terme du bilan — les ressources. Il est
     facultatif : sans lui, tout ce qui précède est calculé à l'identique et le
     solde reste vide, ce qui est exactement l'état du dépôt avant que ces
     ressources n'existent.
     """
-    pensionnes, echecs = _pensionnes(simulateur, cas_types)
+    pensionnes, echecs = _pensionnes(simulateur, cas_types, liquidation)
     poids = _ponderation(simulateur, ponderation, cas_types)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
@@ -741,6 +758,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         generations=generations(),
         echecs=echecs,
         ponderation=ponderation,
+        liquidation=liquidation,
         poids=poids(depenses.derniere_annee),
         # Le contrefactuel ne peut jamais valoir mieux qu'« estimé » : la
         # dépense observée est certifiée, le rapport qui la corrige ne l'est

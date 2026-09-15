@@ -603,6 +603,120 @@ export class ScenarioActuel {
   }
 
   /**
+   * Les régimes que cette carrière traverse, séparés en deux paquets.
+   *
+   * Le premier est celui des régimes en ANNUITÉS, qui commandent le taux plein
+   * et l'ouverture du droit ; le second recueille les autres. C'est la même
+   * énumération que celle de `calculer`, mais tirée de la seule carrière : elle
+   * répond donc AVANT que la pension ne soit calculée, ce qu'il faut pour dater
+   * un départ.
+   *
+   * @returns {{annuites: Array, autres: Array}}
+   */
+  periodesParcourues(carriere) {
+    const anneeLiquidation = carriere.anneeLiquidation;
+    const codes = new Set();
+    for (const ligne of carriere.lignes) {
+      if (ligne.annee > anneeLiquidation) {
+        continue;
+      }
+      for (const code of this.affiliations.regimes(
+        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+        ligne.cotise ? ligne.revenu : ligne.revenu_reference,
+        this.macro.plafond_securite_sociale.valeur(ligne.annee),
+      )) {
+        codes.add(code);
+      }
+    }
+    const annuites = [];
+    const autres = [];
+    for (const code of [...codes].sort()) {
+      if (!this.catalogue.contient(code)) {
+        continue;
+      }
+      const regime = this.catalogue.obtenir(code);
+      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      if (periode === null) {
+        continue;
+      }
+      (periode.type_calcul === "annuites" ? annuites : autres).push(periode);
+    }
+    return { annuites, autres };
+  }
+
+  /**
+   * L'âge auquel le droit OUVRE la liquidation de cette carrière.
+   *
+   * C'est la même question que celle posée dans `calculer` — le plus précoce
+   * des régimes de base parcourus, chacun lisant l'âge que sa génération lui
+   * oppose —, mais posée AVANT la pension et sans la calculer. Elle a un usage
+   * propre : dater le départ d'un cas type. Une grille qui fait partir toutes
+   * les générations au même âge fait partir celle de 1940 à un âge que la loi
+   * de 2023 lui opposera soixante ans plus tard.
+   *
+   * Ce sont les régimes en ANNUITÉS qui commandent. Quand la carrière n'en a
+   * aucun — le libéral, dont le régime de base est en points —, les autres
+   * répondent. `null` quand aucun régime connu n'est parcouru.
+   */
+  ageOuvertureDroit(carriere) {
+    const { annuites, autres } = this.periodesParcourues(carriere);
+    const retenues = annuites.length > 0 ? annuites : autres;
+    if (retenues.length === 0) {
+      return null;
+    }
+    return Math.min(...retenues.map((periode) => this.ageOuverture(periode, carriere)));
+  }
+
+  /**
+   * L'âge auquel cette carrière obtient le TAUX PLEIN, et non seulement le
+   * droit de partir.
+   *
+   * Les deux âges ne se confondent pas, et l'écart entre eux est l'un des
+   * ressorts du système : la loi ouvre le droit à soixante-quatre ans, mais elle
+   * ne le sert entier qu'à qui a la durée requise — cent soixante-douze
+   * trimestres pour les générations d'après 1964. Un cadre entré à vingt-trois
+   * ans ne les a pas à soixante-quatre : partir là serait partir avec une
+   * décote de huit trimestres, ce que personne ne fait.
+   *
+   * Trois termes, et le plus tardif des deux premiers l'emporte, sous le
+   * plafond du troisième : l'âge d'ouverture ; l'âge auquel la DURÉE requise
+   * est atteinte, déduit sans simuler — il manque `requis - acquis` trimestres,
+   * et une année pleine en rend quatre, la soustraction étant signée ; l'âge
+   * d'annulation de la décote, qui donne le taux plein sans condition de durée
+   * et au-delà duquel attendre ne rapporte plus de taux.
+   */
+  ageTauxPleinDroit(carriere) {
+    const { annuites, autres } = this.periodesParcourues(carriere);
+    const retenues = annuites.length > 0 ? annuites : autres;
+    if (retenues.length === 0) {
+      return null;
+    }
+    const ouverture = Math.min(
+      ...retenues.map((periode) => this.ageOuverture(periode, carriere)),
+    );
+    if (annuites.length === 0) {
+      return ouverture;
+    }
+    const annulation = Math.min(
+      ...retenues.map((periode) => this.ageTauxPlein(periode, carriere)),
+    );
+    const requis = Math.max(
+      ...annuites.map((periode) => this.dureeRequise(periode, carriere)[0]),
+    );
+    if (!requis) {
+      return ouverture;
+    }
+    let acquis = 0;
+    for (const ligne of carriere.lignes) {
+      if (ligne.annee <= carriere.anneeLiquidation) {
+        acquis += carriere.trimestresRetenus(ligne);
+      }
+    }
+    const duree = carriere.age_liquidation + (requis - acquis) / 4.0;
+    return Math.min(annulation, Math.max(ouverture, duree));
+  }
+
+  /**
    * Âge d'annulation de la décote opposable à cet assuré.
    *
    * Pour un emploi classé, ce n'est pas soixante-sept ans mais la limite d'âge
