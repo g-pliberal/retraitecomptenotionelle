@@ -3224,13 +3224,27 @@ regimes:
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0210
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
+          L'ANTICIPATION SUIT L'ARRÊTÉ, ET C'EST UN ESCALIER. L'article 16 de
+          l'arrêté du 30 décembre 1970 (LEGIARTI000006381606, état courant
+          LEGIARTI000048065521) donne le coefficient 0,43 dix ans avant l'âge
+          normal, « majoré de 0,017 5 par trimestre » jusqu'à cinq ans avant,
+          de 0,012 5 par trimestre sur les deux années suivantes et de 0,01 sur
+          les trois dernières ; son paragraphe 2 applique le même barème à la
+          DURÉE manquante sans pouvoir descendre sous le coefficient de l'âge,
+          et son 6° c) exonère, « à compter du 1er avril 1983 », qui a le taux
+          plein au régime de base. C'est mot pour mot le barème de
+          l'Agirc-Arrco, d'où `abattement_points: ircantec`, qui le partage.
+          La fiche portait 1,1 % par trimestre, taux moyen juste aux deux
+          extrémités du barème et faux entre les deux ; `decote_par_trimestre`
+          garde la première marche, comme à l'Agirc, et n'est plus lue.
           LES TAUX SONT CEUX DU PRODUCTEUR, année par année. La fiche portait
           5,75 % sur toute la période 1971-2008 : le taux appelé sur la
           tranche A valait 2,10 % jusqu'en 1982 et n'a atteint 5,63 % qu'en
@@ -3252,13 +3266,21 @@ regimes:
           retraite est normalement liquidée à l'âge de soixante-cinq ans.
           Cependant elle peut faire l'objet d'une anticipation, au plus tôt à
           cinquante-cinq ans » ; le coefficient vaut 0,43 à cinquante-cinq
-          ans, 0,78 à soixante, 0,88 à soixante-deux, 1 à soixante-cinq — soit
-          1,1 % par trimestre manquant entre soixante et soixante-cinq ans, et
-          c'est ce coefficient que porte `decote_par_trimestre` (la fiche
-          portait 0,55 %, sans source). Depuis l'ordonnance de 1982 et la
-          version du 31 août 1983 (LEGIARTI000006381610), le coefficient n'est
-          pas appliqué à qui liquide sa pension du régime général au taux
-          plein : c'est `decote_annulee_par_la_duree`. Le décret n° 2008-996
+          ans, 0,78 à soixante, 0,88 à soixante-deux, 1 à soixante-cinq. La
+          fiche en tirait 1,1 % par trimestre, taux MOYEN sur les cinq
+          dernières années, qui tombe juste à ses deux extrémités et nulle part
+          entre les deux : l'article écrit trois marches, 0,01 par trimestre de
+          soixante-deux à soixante-cinq ans, 0,012 5 de soixante à
+          soixante-deux, 0,017 5 en dessous. Ce sont celles de l'Agirc-Arrco,
+          et c'est `abattement_points: ircantec` qui les porte désormais ;
+          `decote_par_trimestre` garde la première marche et n'est plus lue.
+          Depuis l'ordonnance de 1982 et la version du 31 août 1983
+          (LEGIARTI000006381610), le coefficient n'est pas appliqué à qui
+          liquide sa pension du régime général au taux plein — le 6° c) de
+          l'article, « à compter du 1er avril 1983 » : c'est ce que dit
+          `duree_requise_par_generation` aux périodes postérieures, la lecture
+          par la durée s'ajoutant alors à celle par l'âge, comme le veut le
+          paragraphe 2. Le décret n° 2008-996
           du 23 septembre 2008 n'a pas touché aux âges (LEGIARTI000019511923
           les répète) : la fiche faisait passer l'Ircantec à 62 et 67 ans dès
           2009, deux ans avant la loi Woerth. Depuis le 1er juillet 2011
@@ -3272,12 +3294,14 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0280
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3288,12 +3312,14 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0350
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3304,12 +3330,14 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0490
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3320,12 +3348,14 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0528
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3336,12 +3366,14 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0563
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3352,12 +3384,14 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0563
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3376,10 +3410,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0569
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3395,10 +3430,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0588
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3414,10 +3450,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0613
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3433,10 +3470,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0634
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3452,10 +3490,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0660
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3471,10 +3510,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0680
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3490,10 +3530,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0700
         part_salariale: 0.40
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3509,10 +3550,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.0711
         part_salariale: 0.399
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3525,17 +3567,27 @@ regimes:
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: tranche_2
+        abattement_points: ircantec
+        assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.0750
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          LA TRANCHE B N'EXISTAIT PAS DANS LE CATALOGUE, et c'est la plus
-          grosse omission qu'il ait portée pour le secteur public contractuel :
-          l'Ircantec cotise de un à huit plafonds à un taux appelé près de trois
-          fois celui de la tranche A. Un contractuel payé trois fois le salaire
+          L'ASSIETTE EST LUE DANS LE TEXTE : « l'assiette de cotisation ainsi
+          déterminée est toutefois limitée à 4,75 fois le plafond fixé pour
+          les cotisations de retraite du régime général », article 7 du décret
+          n° 70-1277 (LEGIARTI000006368121), borne que le décret n° 2008-996
+          du 23 septembre 2008 porte à huit (LEGIARTI000019515135) — d'où deux
+          assiettes, `tranche_2_ircantec` jusqu'en 2008 et `tranche_2` ensuite.
+          La fiche portait huit plafonds sur toute la période, et donnait donc
+          des points sur une assiette que le régime n'appelait pas ; c'est la
+          confrontation à OpenFisca qui l'a fait relire. LA TRANCHE B
+          N'EXISTAIT PAS DANS LE CATALOGUE avant la tranche B3, et c'est la
+          plus grosse omission qu'il ait portée pour le secteur public
+          contractuel : l'Ircantec cotise au-dessus du plafond à un taux appelé
+          près de trois fois celui de la tranche A. Un contractuel payé trois fois le salaire
           moyen versait 14 600 € par an au régime sans qu'aucun point ne lui
           soit porté — sa pension Ircantec ne dépassait celle d'un agent payé au
           plafond que de quinze pour cent, quand le droit la lui triple.
@@ -3545,92 +3597,104 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: tranche_2
+        abattement_points: ircantec
+        assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1000
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Tranche B de 1983 à 1987 : 10.00 % appelés, de un à huit plafonds.
+          Tranche B de 1983 à 1987 : 10.00 % appelés, de un à 4,75 plafonds.
       - debut: 1988
         fin: 1988
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: tranche_2
+        abattement_points: ircantec
+        assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1250
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Tranche B de 1988 à 1988 : 12.50 % appelés, de un à huit plafonds.
+          Tranche B de 1988 à 1988 : 12.50 % appelés, de un à 4,75 plafonds.
       - debut: 1989
         fin: 1990
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: tranche_2
+        abattement_points: ircantec
+        assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1526
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Tranche B de 1989 à 1990 : 15.26 % appelés, de un à huit plafonds.
+          Tranche B de 1989 à 1990 : 15.26 % appelés, de un à 4,75 plafonds.
       - debut: 1991
         fin: 1991
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: tranche_2
+        abattement_points: ircantec
+        assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1642
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Tranche B de 1991 à 1991 : 16.42 % appelés, de un à huit plafonds.
+          Tranche B de 1991 à 1991 : 16.42 % appelés, de un à 4,75 plafonds.
       - debut: 1992
         fin: 2008
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        assiette: tranche_2
+        abattement_points: ircantec
+        assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1750
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
-          Tranche B de 1992 à 2008 : 17.50 % appelés, de un à huit plafonds.
+          Tranche B de 1992 à 2008 : 17.50 % appelés, de un à 4,75 plafonds.
       - debut: 2009
         fin: 2010
         type_calcul: points
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1750
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3649,10 +3713,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1760
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3668,10 +3733,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1780
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3687,10 +3753,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1806
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3706,10 +3773,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1836
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3725,10 +3793,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1876
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3744,10 +3813,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1910
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3763,10 +3833,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1950
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3782,10 +3853,11 @@ regimes:
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1981
         part_salariale: 0.3564
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
@@ -3812,15 +3884,21 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_b
         taux_cotisation_retraite: 0.075   # 12,5 % contractuels × appel 60 %
         part_salariale: 0.34   # 4,25 % agent / 8,25 % employeur, décret 51-1445 art. 7
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
+          UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT D'APRÈS SA FERMETURE.
+          L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'à l'ASF de 1983, qui exonère qui a le taux plein au régime de base ; le moteur lit cette règle dans la période du régime à l'ANNÉE DE LIQUIDATION, et la dernière période d'un régime fermé avant 1983 est forcément antérieure — alors qu'aucune de ses pensions n'a été liquidée avant.
+          `duree_requise_par_generation` le dit : cette fiche est liquidée sous le droit commun, exonération comprise.
+          Sans lui, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 %.
           TAUX LUS DANS LE TEXTE : « les taux de cotisation à la charge des
           bénéficiaires et des services employeurs sont respectivement fixés à
           4,25 p. 100 et à 8,25 p. 100 » — 12,5 % en tout, dont 34 % à la
@@ -3845,8 +3923,8 @@ regimes:
           (décret, art. 5 ; arrêté du 12 décembre 1951, art. 5 et 10 ; décret
           n° 67-64, JORFTEXT000000515354) sont absents de LEGI ; la fiche
           prend le barème du successeur, seul écrit — 65 ans, anticipation
-          abattue de 1,1 % par trimestre, 0,78 à 60 ans (arrêté du 30 décembre
-          1970, art. 16, LEGIARTI000006381606). DÉCRET N° 51-1445 DU 12
+          abattue par l'escalier de l'arrêté du 30 décembre 1970 (art. 16,
+          LEGIARTI000006381606) : 0,88 à 62 ans, 0,78 à 60, 0,43 à 55. DÉCRET N° 51-1445 DU 12
           DÉCEMBRE 1951 (LEGITEXT000006060604), régime de retraites
           complémentaire des agents contractuels et temporaires de l'État,
           abrogé et remplacé par l'Ircantec au 1er janvier 1971 (décret n°
@@ -3892,15 +3970,21 @@ regimes:
         age_ouverture: 60
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
+        abattement_points: ircantec
         assiette: tranche_1
         taux_cotisation_retraite: 0.021   # 3,5 % contractuels × appel 60 %
         part_salariale: 0.40   # 1,40 % agent / 2,10 % employeur, décret 59-1569 art. 2
-        decote_par_trimestre: 0.011
+        decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
+          UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT D'APRÈS SA FERMETURE.
+          L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'à l'ASF de 1983, qui exonère qui a le taux plein au régime de base ; le moteur lit cette règle dans la période du régime à l'ANNÉE DE LIQUIDATION, et la dernière période d'un régime fermé avant 1983 est forcément antérieure — alors qu'aucune de ses pensions n'a été liquidée avant.
+          `duree_requise_par_generation` le dit : cette fiche est liquidée sous le droit commun, exonération comprise.
+          Sans lui, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 %.
           TAUX LUS DANS LE TEXTE : « les taux de cotisation à la charge des
           bénéficiaires et des services employeurs sont respectivement fixés à
           1,40 p. 100 et 2,10 p. 100 » — 3,5 % en tout, 40 % à la charge de
@@ -3913,8 +3997,8 @@ regimes:
           (regimes/valeurs_point.csv, `estimee`), effectif 3,5 % × 0,6 = 2,1
           %. Réserve : version consolidée unique ; le décret n° 68-1029
           (JORFTEXT000000869583) a modifié ce taux et n'a que son titre. Âges
-          estimés, barème du successeur (65 ans, 1,1 % par trimestre, art. 16
-          de l'arrêté du 30 décembre 1970) : l'article 5 bis ajouté par le
+          estimés, barème du successeur (65 ans, l'escalier de l'article 16 de
+          l'arrêté du 30 décembre 1970 : 0,88 à 62 ans, 0,78 à 60, 0,43 à 55) : l'article 5 bis ajouté par le
           décret n° 60-1019 (JORFTEXT000000305990, « limite d'âge ») est
           absent de LEGI. DÉCRET N° 59-1569 DU 31 DÉCEMBRE 1959
           (LEGITEXT000006060876, JORFTEXT000000486546), en vigueur en 1960,
@@ -3954,6 +4038,7 @@ regimes:
         age_ouverture: 65
         age_taux_plein: 65
         duree_requise_trimestres: null
+        duree_requise_par_generation: true
         taux_plein: 1.0
         abattement_points: agirc_arrco
         plafond_majoration_enfants: 2367
@@ -3966,6 +4051,10 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
+          UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT D'APRÈS SA FERMETURE.
+          L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'à l'ASF de 1983, qui exonère qui a le taux plein au régime de base ; le moteur lit cette règle dans la période du régime à l'ANNÉE DE LIQUIDATION, et la dernière période d'un régime fermé avant 1983 est forcément antérieure — alors qu'aucune de ses pensions n'a été liquidée avant.
+          `duree_requise_par_generation` le dit : cette fiche est liquidée sous le droit commun, exonération comprise.
+          Sans lui, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 %.
           Accord du 15 mai 1957 créant l'UNIRS, hors JORF ; l'index n'en porte
           que le nom, avant 1975, dans un arrêté d'approbation (protocole
           UNIRS-Charbonnages de France, JORFTEXT000000849607) et un décret de

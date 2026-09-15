@@ -1696,8 +1696,23 @@ class ScenarioActuel:
         trimestres manquants valent 0,88, quand la décote du régime de base
         n'en donnerait que 0,85 ; mais dix ans d'anticipation valent 0,43, là
         où elle en donnerait 0,50.
+
+        **L'Ircantec a le même barème, et son texte l'écrit.** L'article 16 de
+        l'arrêté du 30 décembre 1970 donne le coefficient 0,43 dix ans avant
+        l'âge normal, « majoré de 0,017 5 par trimestre » jusqu'à cinq ans
+        avant, de 0,012 5 par trimestre sur les deux suivantes et de 0,01 par
+        trimestre sur les trois dernières : ce sont, marche pour marche, les
+        paliers de l'Agirc-Arrco. Son paragraphe 2 est la seconde table —
+        l'assuré qui n'a pas la durée requise se voit appliquer le même
+        escalier « en assimilant à l'âge de soixante-cinq ans l'âge auquel
+        [il] aurait effectivement accompli la durée d'assurance », sans
+        pouvoir descendre sous le coefficient de son âge, ce qui est
+        exactement « la plus avantageuse des deux ». Le modèle lui opposait
+        1,1 % par trimestre, taux moyen qui tombe juste aux deux extrémités du
+        barème — 0,78 à cinq ans, 1,00 à zéro — et nulle part entre les deux :
+        à douze trimestres il retirait 13,2 % là où l'arrêté en retire 12.
         """
-        if periode.abattement_points == "agirc_arrco":
+        if periode.abattement_points in ("agirc_arrco", "ircantec"):
             # AVANT L'ASF, L'ÂGE SEUL. Jusqu'à l'accord du 4 février 1983,
             # l'Agirc et l'Arrco servaient le taux plein à soixante-cinq ans et
             # abattaient toute anticipation, quelle que soit la durée : c'est

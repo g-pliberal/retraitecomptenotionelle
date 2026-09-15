@@ -3847,6 +3847,10 @@ def controle_vraisemblance_cotisations() -> list[str]:
     tranches = {
         "tranche_1": "tranche_1", "tranche_a": "tranche_1",
         "tranche_2_arrco": "tranche_2", "tranche_2": "tranche_2",
+        # La tranche B de l'Ircantec s'arrête à 4,75 plafonds jusqu'en 2008 et
+        # à huit ensuite : deux assiettes pour une seule tranche de barème,
+        # qui se confronte à la même série.
+        "tranche_2_ircantec": "tranche_2",
         "tranche_b": "tranche_2", "tranche_c": "tranche_3",
     }
     brut = json.loads(chemin.read_text(encoding="utf-8"))

@@ -288,7 +288,7 @@ print(simulateur.simuler(carriere).tableau())
 | Un revenu se saisit comme un revenu | « Revenu brut mensuel : 2 900 € », en euros d'aujourd'hui — plus un multiple du salaire moyen que personne ne connaît, resté à un lien de là pour qui raisonne en relatif, montants convertis au passage. Le champ dit **brut** et donne l'échelle chiffrée (SMIC, moyenne, plafond) ; le modèle, lui, ne connaît toujours que le multiple, et l'euro n'entre qu'à un seul endroit |
 | Une carrière, plusieurs métiers | On faisait autrefois le même métier toute sa vie, c'est devenu l'exception : la carrière se décrit comme une suite de métiers, chacun avec son statut et son niveau de revenu, et chaque changement fait passer d'un régime à un autre. L'année du changement revient au métier qui en occupe le plus de mois — les régimes liquident à l'année —, mais le revenu porté au compte reste la somme de ce que les deux ont payé |
 | Utilisable sans rien installer | Le modèle s'exécute dans le navigateur, sur une simple adresse |
-| Étalon confronté à une seconde implémentation | Le régime général, la pension civile (État et CNRACL) et l'Arrco d'avant 2019 du scénario 1 sont rejoués par **OpenFisca-France-Pension**, écrit par d'autres à partir des mêmes textes : durée, décote, taux, proratisation, points et valeur du point concordent sur vingt-sept profils, et chaque confrontation a fait trouver des erreurs des deux côtés — chez nous, le barème de décote de la fonction publique lu à l'année de liquidation au lieu de l'année d'ouverture du droit, et la montée en charge 2004-2008 de sa durée de services, ignorée |
+| Étalon confronté à une seconde implémentation | Les cinq familles de régimes qu'expose **OpenFisca-France-Pension** — régime général, pension civile (État et CNRACL), Arrco d'avant 2019, Agirc des cadres, Ircantec — sont rejouées sur cinquante-huit profils par ce modèle écrit par d'autres à partir des mêmes textes ; les régimes alignés (MSA des salariés agricoles, artisans, commerçants), qu'il ne modélise pas, se confrontent à l'oracle du régime général, puisque la loi les calcule comme lui. Durée, décote, taux, proratisation, points, prix d'achat et valeur du point concordent, et chaque confrontation a fait trouver des erreurs des deux côtés — chez nous, le barème de décote de la fonction publique lu à l'année de liquidation au lieu de l'année d'ouverture du droit, la montée en charge 2004-2008 de sa durée de services, l'assiette de la tranche B de l'Ircantec et son coefficient d'anticipation |
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait de 12 % sur quarante ans, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347798289 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
@@ -846,6 +846,8 @@ python scripts/fetch/eurostat_hicp.py           # contrôle croisé de l'inflati
 python scripts/fetch/openfisca_regime_general.py  # contre-expertise du scénario 1 : régime général
 python scripts/fetch/openfisca_fonction_publique.py  # la même, pension civile (État, CNRACL)
 python scripts/fetch/openfisca_arrco.py         # la même, Arrco 1999-2018
+python scripts/fetch/openfisca_agirc.py        # la même, Agirc des cadres
+python scripts/fetch/openfisca_ircantec.py     # la même, Ircantec des non-titulaires
 python scripts/fetch/openfisca_minimum_contributif.py  # montants du minimum contributif
 python scripts/fetch/openfisca_parametres_generation.py  # durée requise, âge d'annulation, par génération
 python scripts/fetch/cnav_revalorisation_salaires.py  # revalorisation des salaires portés au compte
@@ -931,7 +933,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          623 tests Python
+tests/                          643 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
