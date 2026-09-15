@@ -47,6 +47,7 @@ import hashlib
 import json
 import re
 import sys
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
@@ -621,6 +622,85 @@ def source_depenses_retraite_regimes() -> dict[tuple, float]:
                 cle = (annee, code)
                 par_systeme[cle] = par_systeme.get(cle, 0.0) + valeur
     return dict(sorted(par_systeme.items()))
+
+
+#: Postes de la structure des ressources du système de retraite, du libellé que
+#: le COR leur donne au code que le dépôt leur donne. Le libellé change de
+#: ponctuation d'un rapport à l'autre ; il est donc comparé sans accents, replié
+#: sur ses espaces, et sur son DÉBUT — c'est ce que fait ``_code_poste``.
+POSTES_RESSOURCES: tuple[tuple[str, str], ...] = (
+    ("cotisations", "cotisations sociales hors contribution d'equilibre"),
+    ("contribution_equilibre_etat", "contribution d'equilibre au regime de la fpe"),
+    ("impots_et_taxes", "itaf et prises en charge etat"),
+    ("subventions_equilibre", "subventions d'equilibre versees par l'etat"),
+    ("transferts", "transferts depuis organismes exterieurs"),
+    ("autres_produits", "autres produits"),
+)
+
+
+def _cor_comptes() -> dict:
+    return _lire_json("cor_comptes_retraite.json",
+                      "scripts/fetch/cor_comptes_retraite.py")
+
+
+def _sans_accents(texte: str) -> str:
+    plie = unicodedata.normalize("NFD", texte)
+    plie = "".join(c for c in plie if unicodedata.category(c) != "Mn")
+    return re.sub(r"\s+", " ", plie).strip().lower()
+
+
+def _code_poste(libelle: str) -> str | None:
+    plie = _sans_accents(libelle)
+    for code, attendu in POSTES_RESSOURCES:
+        if plie.startswith(attendu):
+            return code
+    return None
+
+
+def _comptes_retraite(marqueur: str) -> dict[tuple, float]:
+    """Dépenses et ressources du système de retraite, en part de PIB.
+
+    ``marqueur`` vaut ``observe`` — les rapports à la Commission des comptes de
+    la Sécurité sociale, consolidés par le COR — ou ``projete``, le scénario de
+    référence de son dernier rapport. Les deux ne peuvent pas porter le même
+    niveau de fiabilité : c'est le critère 2 du manifeste, et la frontière est
+    datée par le producteur lui-même, qui marque ses colonnes.
+    """
+    comptes = _cor_comptes()["comptes"]
+    valeurs: dict[tuple, float] = {}
+    for poste in ("depenses", "ressources"):
+        for annee, part in comptes[poste][marqueur].items():
+            valeurs[(annee, poste)] = part
+    return dict(sorted(valeurs.items()))
+
+
+def source_comptes_retraite() -> dict[tuple, float]:
+    """Le compte observé du système de retraite, 2002 à la dernière année connue."""
+    return _comptes_retraite("observe")
+
+
+def source_comptes_retraite_projetes() -> dict[tuple, float]:
+    """Le même compte, projeté par le COR jusqu'à son horizon."""
+    return _comptes_retraite("projete")
+
+
+def source_structure_ressources() -> dict[tuple, float]:
+    """Part de chaque poste dans les ressources du système de retraite.
+
+    Elle dit ce que « ressources » contient : deux tiers de cotisations, mais
+    aussi la contribution d'équilibre que l'État verse au régime de ses propres
+    fonctionnaires, des impôts affectés et des transferts. Un système en comptes
+    notionnels n'est pas financé par la même chose que ces quatre postes-là, et
+    c'est ce qui borne la lecture du coefficient d'équilibre.
+    """
+    valeurs: dict[tuple, float] = {}
+    for libelle, serie in _cor_comptes()["structure"].items():
+        code = _code_poste(libelle)
+        if code is None:
+            continue
+        for annee, part in serie.items():
+            valeurs[(annee, code)] = part
+    return dict(sorted(valeurs.items()))
 
 
 def _eacr() -> dict:
@@ -2423,6 +2503,113 @@ CERTIFICATIONS = (
         ),
     ),
     Certification(
+        nom="comptes_retraite",
+        chemin=REFERENCE / "macro" / "comptes_retraite.csv",
+        cles=("annee", "poste"),
+        colonne="part_pib",
+        source=source_comptes_retraite,
+        origine="COR, rapport annuel, comptes du système de retraite "
+                "(rapports à la CCSS consolidés)",
+        decimales=6,
+        tolerance=5.1e-7,
+        # Une consolidation de comptes produits par d'autres ne peut pas être
+        # certifiée : c'est le critère 1 du manifeste, le même qui plafonne
+        # OpenFisca. Le COR est pourtant seul à l'établir, et c'est à ce titre
+        # qu'elle entre.
+        niveau="haute",
+        entete=(
+            "# Dépenses et ressources du système de retraite, en part du PIB",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: part du produit intérieur brut, en fraction",
+            "# fiabilite:",
+            "#   haute    (2002-…) : compte observé du système de retraite, consolidé",
+            "#             par le COR depuis les rapports à la Commission des comptes",
+            "#             de la Sécurité sociale, recontrôlé par",
+            "#             scripts/verifier_donnees.py contre les classeurs de données",
+            "#             du dernier rapport annuel.",
+            "#   projetee (…-2070) : scénario de référence du même rapport. Une",
+            "#             projection ne se fait pas passer pour une observation ; la",
+            "#             frontière est celle que le COR marque lui-même, colonne par",
+            "#             colonne, « Obs » puis « Sc. Ref ».",
+            "#",
+            "# POURQUOI LE COR ET NON LA DREES, QUI PUBLIE LES DÉPENSES",
+            "# ---------------------------------------------------------",
+            "# Les Comptes de la protection sociale, d'où vient depenses_retraite.csv,",
+            "# NE VENTILENT PAS LEURS RESSOURCES PAR RISQUE : le jeu 305 de la DREES",
+            "# ne porte que des prestations, et son classeur annexe donne les",
+            "# ressources de la protection sociale tout entière, maladie et famille",
+            "# comprises. Il n'existe donc pas de « recettes du risque vieillesse »",
+            "# chez le producteur des dépenses. Le compte du SYSTÈME DE RETRAITE,",
+            "# lui, est publié — dépenses, ressources et solde du même périmètre,",
+            "# sous la même convention — et par le seul COR.",
+            "#",
+            "# CE N'EST PAS LE PÉRIMÈTRE DE depenses_retraite.csv",
+            "# ---------------------------------------------------",
+            "# Champ : ensemble des régimes de retraite français légalement",
+            "# obligatoires, y compris le FSV, hors RAFP. C'est plus étroit que le",
+            "# risque vieillesse-survie de la DREES — ni dépendance, ni",
+            "# capitalisation — et un peu plus large que sa « répartition",
+            "# obligatoire » : 13,86 % du PIB en 2024 contre 13,59 %. Les deux séries",
+            "# ne se soustraient donc pas l'une de l'autre, et le solde de ce fichier",
+            "# est celui de SES DEUX colonnes, jamais d'une colonne empruntée ailleurs.",
+            "#",
+            "# Convention EPR, hors produits et charges financières, hors dotations et",
+            "# reprises sur provisions — celle sous laquelle le COR suit l'objectif de",
+            "# pérennité financière.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="comptes_retraite_projetes",
+        chemin=REFERENCE / "macro" / "comptes_retraite.csv",
+        cles=("annee", "poste"),
+        colonne="part_pib",
+        source=source_comptes_retraite_projetes,
+        origine="COR, rapport annuel, scénario de référence",
+        decimales=6,
+        tolerance=5.1e-7,
+        niveau="projetee",
+    ),
+    Certification(
+        nom="structure_ressources_retraite",
+        chemin=REFERENCE / "macro" / "structure_ressources_retraite.csv",
+        cles=("annee", "poste"),
+        colonne="part",
+        source=source_structure_ressources,
+        origine="COR, rapport annuel, structure des ressources du système de retraite",
+        decimales=5,
+        tolerance=5.1e-6,
+        niveau="haute",
+        entete=(
+            "# Structure des ressources du système de retraite, par poste",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: part des ressources de l'année, en fraction",
+            "# fiabilite:",
+            "#   haute (2004-…) : parts publiées par le COR dans son rapport annuel,",
+            "#             calculées par le SG-COR sur les rapports à la Commission",
+            "#             des comptes de la Sécurité sociale, et recontrôlées par",
+            "#             scripts/verifier_donnees.py contre le classeur du rapport.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire ce que « ressources » contient. Deux tiers sont des cotisations",
+            "# assises sur des revenus d'activité, c'est-à-dire la seule chose qu'un",
+            "# compte notionnel sache créditer. Le reste ne l'est pas : la",
+            "# contribution d'équilibre que l'État verse au régime de ses propres",
+            "# fonctionnaires — dont le taux est fixé pour ÉQUILIBRER et non pour",
+            "# acquérir —, des impôts et taxes affectés, des subventions d'équilibre",
+            "# aux régimes spéciaux, des transferts de la branche famille et de",
+            "# l'Unédic. Le coefficient d'équilibre de la page « Coût » suppose ces",
+            "# ressources-là inchangées ; ces parts disent de quoi cette hypothèse",
+            "# est faite.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
         nom="effectifs_retraites",
         chemin=REFERENCE / "regimes" / "effectifs_retraites.csv",
         cles=("annee", "caisse"),
@@ -3517,6 +3704,90 @@ def controle_ventilation_depenses() -> list[str]:
     return messages
 
 
+def controle_solde_retraite() -> list[str]:
+    """Le solde publié par le COR doit être la différence de ses deux colonnes.
+
+    Le dépôt n'écrit pas le solde : il l'obtient en retranchant les dépenses des
+    ressources. Ce contrôle confronte ce calcul au solde que le COR publie à
+    part, dans une autre figure du même rapport. Deux choses s'y vérifient d'un
+    coup : que les deux séries écrites viennent bien du même compte — un
+    millésime mélangé à un autre se verrait ici —, et que l'arrondi à six
+    décimales de part de PIB ne mange pas le solde, qui vaut deux millièmes.
+
+    Le second contrôle porte sur la structure des ressources, dont les parts
+    doivent sommer à un : c'est le même contrôle que celui de la ventilation
+    des dépenses, et il dit la même chose — rien d'oublié, rien compté deux fois.
+    """
+    messages: list[str] = []
+    try:
+        publie = _cor_comptes()["comptes"]["solde"]
+    except SourceAbsente as erreur:
+        return [f"IGNORÉ  solde du système de retraite : {erreur}"]
+
+    attendu = {int(a): v for marqueur in publie.values() for a, v in marqueur.items()}
+    ecrit: dict[int, dict[str, float]] = {}
+    for ligne in charger_csv(REFERENCE / "macro" / "comptes_retraite.csv"):
+        ecrit.setdefault(int(ligne["annee"]), {})[ligne["poste"]] = float(
+            ligne["part_pib"])
+
+    if not ecrit:
+        return ["ABSENT  solde du système de retraite : aucune ligne"]
+
+    # Deux séries arrondies au millionième : leur différence est juste au
+    # deux-millionièmes près, et rien au-delà ne serait de l'arrondi.
+    marge = 2e-6
+    ecarts = 0
+    for annee in sorted(ecrit):
+        compte = ecrit[annee]
+        if set(compte) != {"depenses", "ressources"}:
+            messages.append(
+                f"SUSPECT comptes du système de retraite {annee} : "
+                f"{sorted(compte)} au lieu des deux postes attendus"
+            )
+            continue
+        calcule = compte["ressources"] - compte["depenses"]
+        reference = attendu.get(annee)
+        if reference is None:
+            messages.append(
+                f"SUSPECT solde du système de retraite {annee} : année écrite "
+                f"mais absente du solde publié"
+            )
+        elif abs(calcule - reference) > marge:
+            ecarts += 1
+            messages.append(
+                f"ÉCART   solde du système de retraite {annee} : ressources "
+                f"moins dépenses {calcule:+.6f}, solde publié {reference:+.6f}"
+            )
+    annees = sorted(ecrit)
+    if not ecarts:
+        messages.append(
+            f"OK      solde du système de retraite : {annees[0]}-{annees[-1]}, "
+            f"ressources moins dépenses conformes au solde publié"
+        )
+
+    parts: dict[int, float] = {}
+    postes: set[str] = set()
+    for ligne in charger_csv(REFERENCE / "macro" / "structure_ressources_retraite.csv"):
+        annee = int(ligne["annee"])
+        parts[annee] = parts.get(annee, 0.0) + float(ligne["part"])
+        postes.add(ligne["poste"])
+    if not parts:
+        return [*messages, "ABSENT  structure des ressources : aucune ligne"]
+    marge_parts = 1e-5 * len(postes)
+    for annee in sorted(parts):
+        if abs(parts[annee] - 1.0) > marge_parts:
+            messages.append(
+                f"ÉCART   structure des ressources {annee} : les parts somment "
+                f"à {parts[annee]:.5f} et non à 1"
+            )
+    annees = sorted(parts)
+    messages.append(
+        f"OK      structure des ressources : {len(postes)} postes, "
+        f"{annees[0]}-{annees[-1]}, parts sommant à un"
+    )
+    return messages
+
+
 def controle_part_salariale() -> list[str]:
     """Aucune période de salariés ne doit oublier sa répartition.
 
@@ -4408,6 +4679,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.append("")
     messages.extend(controle_coherence_interne())
     messages.extend(controle_ventilation_depenses())
+    messages.extend(controle_solde_retraite())
     messages.extend(controle_part_salariale())
     messages.append("")
     messages.extend(controle_vraisemblance_inflation())

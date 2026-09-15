@@ -112,7 +112,7 @@ Scénario                                                          Courants   Co
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 301 Ko compressés (2583 Ko brut) et prend quelques dixièmes
+chargement transfère 303 Ko compressés (2588 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
@@ -297,7 +297,7 @@ print(simulateur.simuler(carriere).tableau())
 
 ---
 
-## Cinq résultats à connaître avant de lire les chiffres
+## Six résultats à connaître avant de lire les chiffres
 
 ### 1. La règle d'indexation domine tout le reste
 
@@ -712,16 +712,68 @@ de couverture constant, et aucune règle de pilotage. Rien de tout cela n'est
 certifié et ne peut l'être : une projection est une hypothèse, et la page
 l'affiche parce qu'un ordre de grandeur documenté vaut mieux qu'un silence.
 
+### 6. Un coût n'est pas un solde, et le coefficient d'équilibre le dit
+
+Les cinq résultats qui précèdent disent ce qui SORT. Un système de répartition
+se juge pourtant à son solde. La page Coût pose donc le second terme, et en tire
+le **coefficient d'équilibre** de chaque système : le facteur par lequel il
+faudrait multiplier toutes ses pensions pour que l'année tombe juste.
+
+Les ressources ne viennent pas de la DREES, et ce n'est pas un choix : **les
+Comptes de la protection sociale ne ventilent pas leurs ressources par risque.**
+Une « recette du risque vieillesse » n'a pas de définition comptable, les
+cotisations d'un régime polyvalent n'étant affectées à aucun risque. Ce qui
+existe est le compte du *système de retraite*, que le COR consolide chaque année
+depuis les rapports à la Commission des comptes de la Sécurité sociale. On lui
+prend les **deux** colonnes, dépenses et ressources : un solde ne se fabrique pas
+en soustrayant deux périmètres. Le sien — régimes légalement obligatoires, FSV
+compris — vaut 13,86 % du PIB en 2024 contre 13,59 % pour la répartition
+obligatoire de la DREES ; les deux se recoupent à 0,28 point, ce qui vaut
+contrôle et non identité.
+
+| Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
+|---|---|---|---|
+| 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
+| 2. Notionnel rétroactif, part salariale | +10,32 % | +8,89 % | 2,64 |
+| 3. Notionnel dès 2026, part salariale | −0,17 % | +2,69 % | **1,91** |
+| 4. Notionnel rétroactif, salariale + patronale | +5,03 % | +2,82 % | 1,18 |
+| 5. Notionnel dès 2026, salariale + patronale | −0,17 % | +0,82 % | 1,15 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +5,03 % | +3,89 % | 1,55 |
+
+**Le solde du système actuel est celui que le COR publie**, au dixième près :
+5,1 milliards de besoin de financement en 2025. C'est la vérification que le
+raccord entre deux périmètres ne triche pas — le rapport du scénario 1 vaut un
+par construction, donc son solde doit être le solde publié, et il l'est.
+
+**Un coefficient supérieur à un n'est pas une économie, c'est une marge.** Un
+système notionnel réel *applique* son coefficient : il ne laisse pas dormir un
+excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,91 du
+scénario 3 en 2070 comme une économie de 48 % est donc un contresens : à
+prélèvement inchangé, ce système servirait autant que le nôtre, mais **autrement
+réparti entre les carrières** — ce qui est exactement ce que le reste de ce dépôt
+mesure. Le modèle calcule ce facteur ; il ne l'applique jamais, et toutes les
+courbes de coût des sections précédentes sont celles d'un système qui ne se
+pilote pas.
+
+**Un quart des ressources n'est pas cotisé, et cette part grandit.** 77 % des
+ressources de 2025 sont des cotisations — en comptant la contribution
+d'équilibre que l'État verse au régime de ses fonctionnaires, que le modèle
+porte déjà au compte des scénarios 4 et 5 — contre 80 % en 2004 ; les impôts et
+taxes affectés passent de 7 % à 15 %. Un compte notionnel ne sait créditer que
+la part cotisée, et c'est ce qui borne la lecture de tout ce tableau.
+
 ---
 
 ## Les données
 
-Vingt-six institutions sont recensées dans [`data/sources.yaml`](data/sources.yaml) :
+Vingt-huit institutions sont recensées dans [`data/sources.yaml`](data/sources.yaml) :
 INSEE, COR, Comité de suivi des retraites, DREES, CNAV, Service des retraites de
 l'État, Caisse des dépôts, Direction de la Sécurité sociale, Cour des comptes,
 Agirc-Arrco, Assemblée nationale, Union Retraite, CCMSA, CNAVPL, CNBF, DGAFP,
 Direction du Budget, ERAFP, Ircantec, caisses des régimes spéciaux, Urssaf,
-Légifrance, INED, Eurostat, OCDE, OpenFisca-France.
+Légifrance, INED, Eurostat, OCDE, OpenFisca-France, Institut des politiques
+publiques, et les sites des institutions dont le régime n'est dans aucun texte
+de l'index.
 
 **Chaque valeur porte son niveau de fiabilité** — `certifiee`, `haute`,
 `moyenne`, `estimee` — et la fiabilité d'un résultat est celle de son maillon le
@@ -898,7 +950,8 @@ data/
   sources.yaml                  manifeste des sources institutionnelles
   reference/
     macro/                      inflation, salaire moyen, productivité, plafond, PIB,
-                                dépenses de retraite observées, pyramide des âges,
+                                dépenses de retraite observées, ressources et solde
+                                du système de retraite, pyramide des âges,
                                 projections
     mortalite/                  espérances de vie et quotients par âge observés
     regimes/                    72 fiches de régime + schéma + valeurs du point,
@@ -919,7 +972,8 @@ src/retraite_notionnelle/
   scenarios/                    système actuel, comptes notionnels
   simulateur.py                 façade et restitution
   castypes.py                   cas général
-  cout.py                       ce que chaque système a coûté, et coûterait
+  cout.py                       ce que chaque système a coûté, coûterait,
+                                et le solde qu'il laisserait
   web/
     pages.py                    contenu des pages — sans autre dépendance que le moteur
     gabarit.py                  rendu HTML et feuille de style
@@ -927,7 +981,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (2583 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (2588 Ko, produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
@@ -935,7 +989,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          657 tests Python
+tests/                          674 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

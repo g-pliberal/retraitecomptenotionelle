@@ -1,0 +1,180 @@
+# Dépenses et ressources du système de retraite, en part du PIB
+# source_id: cor_comptes_systeme_retraite
+# unite: part du produit intérieur brut, en fraction
+# fiabilite:
+#   haute    (2002-…) : compte observé du système de retraite, consolidé
+#             par le COR depuis les rapports à la Commission des comptes
+#             de la Sécurité sociale, recontrôlé par
+#             scripts/verifier_donnees.py contre les classeurs de données
+#             du dernier rapport annuel.
+#   projetee (…-2070) : scénario de référence du même rapport. Une
+#             projection ne se fait pas passer pour une observation ; la
+#             frontière est celle que le COR marque lui-même, colonne par
+#             colonne, « Obs » puis « Sc. Ref ».
+#
+# POURQUOI LE COR ET NON LA DREES, QUI PUBLIE LES DÉPENSES
+# ---------------------------------------------------------
+# Les Comptes de la protection sociale, d'où vient depenses_retraite.csv,
+# NE VENTILENT PAS LEURS RESSOURCES PAR RISQUE : le jeu 305 de la DREES
+# ne porte que des prestations, et son classeur annexe donne les
+# ressources de la protection sociale tout entière, maladie et famille
+# comprises. Il n'existe donc pas de « recettes du risque vieillesse »
+# chez le producteur des dépenses. Le compte du SYSTÈME DE RETRAITE,
+# lui, est publié — dépenses, ressources et solde du même périmètre,
+# sous la même convention — et par le seul COR.
+#
+# CE N'EST PAS LE PÉRIMÈTRE DE depenses_retraite.csv
+# ---------------------------------------------------
+# Champ : ensemble des régimes de retraite français légalement
+# obligatoires, y compris le FSV, hors RAFP. C'est plus étroit que le
+# risque vieillesse-survie de la DREES — ni dépendance, ni
+# capitalisation — et un peu plus large que sa « répartition
+# obligatoire » : 13,86 % du PIB en 2024 contre 13,59 %. Les deux séries
+# ne se soustraient donc pas l'une de l'autre, et le solde de ce fichier
+# est celui de SES DEUX colonnes, jamais d'une colonne empruntée ailleurs.
+#
+# Convention EPR, hors produits et charges financières, hors dotations et
+# reprises sur provisions — celle sous laquelle le COR suit l'objectif de
+# pérennité financière.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,poste,part_pib,fiabilite
+2002,depenses,0.117761,haute
+2002,ressources,0.120479,haute
+2003,depenses,0.118774,haute
+2003,ressources,0.123120,haute
+2004,depenses,0.119571,haute
+2004,ressources,0.123276,haute
+2005,depenses,0.121331,haute
+2005,ressources,0.122600,haute
+2006,depenses,0.121535,haute
+2006,ressources,0.122954,haute
+2007,depenses,0.123052,haute
+2007,ressources,0.123380,haute
+2008,depenses,0.124264,haute
+2008,ressources,0.123382,haute
+2009,depenses,0.133176,haute
+2009,ressources,0.128035,haute
+2010,depenses,0.133576,haute
+2010,ressources,0.125938,haute
+2011,depenses,0.134865,haute
+2011,ressources,0.127921,haute
+2012,depenses,0.137936,haute
+2012,ressources,0.131984,haute
+2013,depenses,0.139591,haute
+2013,ressources,0.135569,haute
+2014,depenses,0.140719,haute
+2014,ressources,0.137469,haute
+2015,depenses,0.139960,haute
+2015,ressources,0.137044,haute
+2016,depenses,0.139910,haute
+2016,ressources,0.137742,haute
+2017,depenses,0.138792,haute
+2017,ressources,0.138377,haute
+2018,depenses,0.138395,haute
+2018,ressources,0.137206,haute
+2019,depenses,0.136622,haute
+2019,ressources,0.136237,haute
+2020,depenses,0.147013,haute
+2020,ressources,0.140635,haute
+2021,depenses,0.137860,haute
+2021,ressources,0.137745,haute
+2022,depenses,0.136312,haute
+2022,ressources,0.137688,haute
+2023,depenses,0.135328,haute
+2023,ressources,0.135328,haute
+2024,depenses,0.138640,haute
+2024,ressources,0.138058,haute
+2025,depenses,0.141164,haute
+2025,ressources,0.139470,haute
+2026,depenses,0.141262,projetee
+2026,ressources,0.139645,projetee
+2027,depenses,0.142247,projetee
+2027,ressources,0.140007,projetee
+2028,depenses,0.142294,projetee
+2028,ressources,0.139901,projetee
+2029,depenses,0.141018,projetee
+2029,ressources,0.139301,projetee
+2030,depenses,0.140744,projetee
+2030,ressources,0.138750,projetee
+2031,depenses,0.140327,projetee
+2031,ressources,0.137892,projetee
+2032,depenses,0.139997,projetee
+2032,ressources,0.137380,projetee
+2033,depenses,0.139583,projetee
+2033,ressources,0.136857,projetee
+2034,depenses,0.139741,projetee
+2034,ressources,0.136346,projetee
+2035,depenses,0.139888,projetee
+2035,ressources,0.136055,projetee
+2036,depenses,0.140024,projetee
+2036,ressources,0.135742,projetee
+2037,depenses,0.140278,projetee
+2037,ressources,0.135411,projetee
+2038,depenses,0.140372,projetee
+2038,ressources,0.135072,projetee
+2039,depenses,0.140427,projetee
+2039,ressources,0.134699,projetee
+2040,depenses,0.140439,projetee
+2040,ressources,0.134344,projetee
+2041,depenses,0.140548,projetee
+2041,ressources,0.134017,projetee
+2042,depenses,0.140693,projetee
+2042,ressources,0.133685,projetee
+2043,depenses,0.140976,projetee
+2043,ressources,0.133390,projetee
+2044,depenses,0.141327,projetee
+2044,ressources,0.133083,projetee
+2045,depenses,0.141647,projetee
+2045,ressources,0.132795,projetee
+2046,depenses,0.141967,projetee
+2046,ressources,0.132504,projetee
+2047,depenses,0.142242,projetee
+2047,ressources,0.132210,projetee
+2048,depenses,0.142664,projetee
+2048,ressources,0.131956,projetee
+2049,depenses,0.143154,projetee
+2049,ressources,0.131710,projetee
+2050,depenses,0.143652,projetee
+2050,ressources,0.131470,projetee
+2051,depenses,0.144147,projetee
+2051,ressources,0.131256,projetee
+2052,depenses,0.144570,projetee
+2052,ressources,0.131015,projetee
+2053,depenses,0.145054,projetee
+2053,ressources,0.130828,projetee
+2054,depenses,0.145514,projetee
+2054,ressources,0.130644,projetee
+2055,depenses,0.145846,projetee
+2055,ressources,0.130463,projetee
+2056,depenses,0.146209,projetee
+2056,ressources,0.130297,projetee
+2057,depenses,0.146508,projetee
+2057,ressources,0.130121,projetee
+2058,depenses,0.146808,projetee
+2058,ressources,0.129976,projetee
+2059,depenses,0.147042,projetee
+2059,ressources,0.129812,projetee
+2060,depenses,0.147366,projetee
+2060,ressources,0.129676,projetee
+2061,depenses,0.147787,projetee
+2061,ressources,0.129575,projetee
+2062,depenses,0.148232,projetee
+2062,ressources,0.129479,projetee
+2063,depenses,0.148782,projetee
+2063,ressources,0.129396,projetee
+2064,depenses,0.149537,projetee
+2064,ressources,0.129333,projetee
+2065,depenses,0.150374,projetee
+2065,ressources,0.129309,projetee
+2066,depenses,0.151089,projetee
+2066,ressources,0.129256,projetee
+2067,depenses,0.151682,projetee
+2067,ressources,0.129224,projetee
+2068,depenses,0.152235,projetee
+2068,ressources,0.129199,projetee
+2069,depenses,0.152678,projetee
+2069,ressources,0.129165,projetee
+2070,depenses,0.153000,projetee
+2070,ressources,0.129105,projetee

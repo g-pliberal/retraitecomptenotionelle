@@ -1295,13 +1295,56 @@ mettrait de la démographie d'un côté et pas de l'autre.
 Ce que la projection suppose, et ce qu'elle vaut face au COR, est écrit dans
 `limites.md` §5 ter.
 
+### Et de là, le solde
+
+Un coût n'est pas un solde. La dernière section de la page pose le second terme
+du bilan — ce qui est ENCAISSÉ — et en tire, pour chaque système, le facteur qui
+l'équilibrerait :
+
+```
+solde du système S en t     = ressources en t − dépenses du COR en t × rapport S en t
+coefficient d'équilibre de S = ressources en t ÷ (dépenses du COR en t × rapport S en t)
+```
+
+**Ces ressources ne viennent pas de la DREES, et c'était le premier obstacle.**
+Les Comptes de la protection sociale ne ventilent pas leurs ressources par
+risque : ils publient la dépense risque par risque et le financement de
+l'ensemble, maladie et famille comprises. Une « recette du risque vieillesse »
+n'a pas de définition comptable, les cotisations d'un régime polyvalent n'étant
+affectées à aucun risque. Le compte du SYSTÈME DE RETRAITE, lui, est publié —
+dépenses, ressources et solde du même ensemble de régimes, sous la même
+convention — et par le seul COR, qui consolide chaque année les rapports à la
+Commission des comptes de la Sécurité sociale. Le critère 1 s'y applique en deux
+temps : le COR n'est pas producteur des comptes de chaque régime, mais il est
+le seul à les consolider, si bien que ces valeurs entrent au niveau `haute`.
+
+**On lui prend les DEUX colonnes**, et non les seules ressources. Son périmètre
+— régimes légalement obligatoires, FSV compris, RAFP exclu — n'est pas celui de
+la dépense affichée plus haut : 13,86 % du PIB en 2024 contre 13,59 % pour la
+répartition obligatoire de la DREES et 14,54 % pour le risque vieillesse-survie
+entier. Soustraire l'une de l'autre fabriquerait un solde de deux périmètres ;
+en gardant la dépense du COR au dénominateur, le solde du scénario 1 redonne
+exactement celui qu'il publie, et le voisinage des deux séries devient un
+contrôle externe au lieu d'être un risque. Du modèle, cette section n'emprunte
+que le RAPPORT des masses, qui est sans dimension et passe donc d'un périmètre
+à l'autre sans rien supposer.
+
+**Le coefficient est calculé, jamais appliqué.** C'est la distinction à tenir :
+un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
+abaisserait, par un facteur commun à toutes les pensions de l'année. Un
+coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
+les 1,91 du scénario 3 en 2070 comme une économie de 48 % est un contresens : à
+prélèvement inchangé, ce système servirait autant que le nôtre, autrement
+réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
+les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
+
 ---
 
 ## 9. Les données
 
 ### Sources
 
-`data/sources.yaml` recense les quatre-vingt-quatre jeux de données des vingt-six
+`data/sources.yaml` recense les cent vingt jeux de données des vingt-huit
 institutions, avec pour chacun l'URL, le mode d'accès et l'état d'intégration.
 
 ### Quelle source l'emporte

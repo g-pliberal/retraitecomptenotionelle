@@ -2440,7 +2440,7 @@ distingue le scénario 3 du scénario 2** : le prospectif respecte les droits
 liquidés et accepte donc les « passagers clandestins » ; le rétroactif ne
 respecte rien et n'en laisse aucun — un retraité de 2010 y passe de 20 211 € à
 3 048 €. Supprimer l'exemption ferait fondre le troisième scénario dans le
-second, et le dépôt perdrait un de ses cinq résultats.
+second, et le dépôt perdrait un de ses six résultats.
 
 **La conversion des droits figés, ensuite.** Ils sont valorisés au diviseur de
 l'ÂGE DE RÉFÉRENCE, pas de l'âge réel de départ. Pour un départ à 64 ans en
@@ -4910,20 +4910,44 @@ Ce qui suit n'est pas une liste de manques mais un **périmètre**, et chaque
 ligne dit ce qu'elle coûte et dans quel sens. Une limite qu'on sait mesurer
 n'est plus une limite : c'est un paramètre connu du résultat.
 
-- **L'équilibre financier du système.** Le modèle calcule des droits
-  individuels. Il ne vérifie pas que la somme des pensions servies égale la
-  somme des cotisations encaissées. Il porte désormais une pyramide des âges —
-  celle de l'INSEE, observée puis projetée —, ce qui lui permet de dire ce que
-  chaque système COÛTERAIT ; il lui manque encore, pour un solde, l'assiette des
-  cotisations et une règle de pilotage. Un système notionnel réel
-  exige en outre un **coefficient d'équilibre** et un fonds de réserve, qui
-  ajusteraient à la baisse ou à la hausse toutes les pensions du scénario 2 par
-  un même facteur. Ce facteur étant commun, il déplacerait les niveaux sans
-  toucher aux ÉCARTS ENTRE CARRIÈRES, qui sont l'objet du modèle.
-  La page **Coût** donne le premier terme de ce bilan — ce qui a été VERSÉ,
-  observé et certifié de 1959 à 2024 — et jamais le second. Un coût n'est pas
-  un solde : un système qui coûterait quatre fois moins servirait quatre fois
-  moins, ce qui est une autre affaire.
+- **Le pilotage, et non plus le solde.** Le modèle calcule des droits
+  individuels ; il porte une pyramide des âges, qui lui dit ce que chaque
+  système COÛTERAIT ; il porte depuis peu les RESSOURCES, et donc le solde et le
+  **coefficient d'équilibre** de chaque système, année par année, de 2002 à
+  2070. Ce qui lui manque encore est le cran suivant : APPLIQUER ce
+  coefficient. Un système notionnel réel ne laisse pas dormir un excédent — il
+  relève les pensions jusqu'à l'équilibre, ou les abaisse, par un fonds de
+  réserve et un facteur commun à toutes les pensions de l'année. Le modèle
+  calcule ce facteur et ne l'applique jamais : toutes les courbes de coût de la
+  page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
+  commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
+  CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
+  niveaux, et un coefficient de 1,91 en 2070 pour le scénario 3 ne se lit donc
+  pas comme une économie de 48 % : il se lit comme la marge dont ce système
+  disposerait pour servir davantage à prélèvement inchangé.
+
+- **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
+  l'être.** Les Comptes de la protection sociale, d'où vient toute la dépense du
+  dépôt, NE VENTILENT PAS LEURS RESSOURCES PAR RISQUE : ils publient la dépense
+  risque par risque et le financement de l'ensemble, maladie et famille
+  comprises. Une « recette du risque vieillesse » n'a pas de définition
+  comptable, les cotisations d'un régime polyvalent n'étant affectées à aucun
+  risque. Le solde vient donc d'un autre compte et d'un autre périmètre : celui
+  du COR — régimes légalement obligatoires, FSV compris, RAFP exclu —, dont on
+  prend les DEUX colonnes, dépenses et ressources, pour ne pas soustraire deux
+  périmètres. Les deux se recoupent à moins de trois dixièmes de point de PIB
+  (13,86 % contre 13,59 % en 2024), ce qui vaut contrôle et non identité ; seul
+  le RAPPORT des masses, qui est sans dimension, passe de l'une à l'autre. Ce
+  compte vaut `haute` et jamais `certifiee` : le COR consolide des comptes
+  produits par les régimes, c'est le critère 1 du manifeste des sources.
+
+- **Les recettes ne réagissent à aucun scénario.** Le coefficient d'équilibre
+  confronte le coût de chaque système aux ressources RÉELLEMENT encaissées,
+  celles du système actuel. Le contrefactuel est donc « à prélèvement inchangé,
+  ce système tiendrait-il ? » — une question bien posée, et pas la seule : le
+  scénario 6, qui pose un taux unique de 18 % pour tous, déplacerait aussi les
+  recettes. Les réserves financières des régimes, que le COR chiffre à part, ne
+  sont pas comptées non plus : le solde dit le flux, jamais le stock.
 
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
@@ -5119,7 +5143,10 @@ Un recul de l'âge effectif de départ, une carrière plus longue ou plus haché
 déplaceraient la trajectoire. Aucune règle de pilotage n'est appliquée non plus :
 un système notionnel réel porte un coefficient d'équilibre qui ajusterait toutes
 ses pensions par un même facteur — commun, donc sans effet sur les écarts entre
-carrières, mais avec effet sur les courbes de cette page.
+carrières, mais avec effet sur les courbes de cette page. Ce coefficient est
+désormais CALCULÉ, section « Le solde, et non le coût » de la même page, à
+partir des ressources que le COR publie ; il n'est toujours pas appliqué, et le
+§ 5 dit ce que cette distinction coûte.
 
 **Ce que le pas de la grille laisse passer.** Une génération sur cinq est
 simulée, et chacune représente les cinq classes d'âge qui l'entourent, décalées
@@ -5174,7 +5201,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 657 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 674 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

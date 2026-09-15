@@ -62,9 +62,38 @@ CE QUE CE MODULE NE FAIT TOUJOURS PAS
    c'est vers le passé que l'hypothèse est la plus fausse.
 3. **Aucune règle de pilotage.** Un système notionnel réel porte un coefficient
    d'équilibre qui ajusterait toutes les pensions par un même facteur. Ce
-   facteur étant commun, il déplacerait les niveaux sans toucher aux écarts.
-4. **Le coût n'est pas le solde.** Ce module dit ce qui est versé, jamais ce
-   qui est encaissé.
+   module CALCULE désormais ce facteur — voir ci-dessous —, mais il ne
+   l'APPLIQUE pas : les courbes de coût restent celles d'un système qui ne se
+   pilote pas. Le facteur étant commun, l'appliquer déplacerait les niveaux
+   sans toucher aux écarts entre carrières.
+4. **Les recettes ne réagissent à rien.** Le solde ci-dessous confronte le coût
+   de chaque système aux ressources RÉELLEMENT encaissées, celles du système
+   actuel. C'est le bon contrefactuel — « à prélèvement inchangé, ce système
+   tiendrait-il ? » — et ce n'est pas le seul : le scénario 6, qui pose un taux
+   unique de 18 %, changerait aussi les recettes, et le coefficient d'équilibre
+   ne le dit pas.
+
+LE SOLDE, ET NON LE COÛT
+-------------------------
+Un coût n'est pas un solde : un système qui coûterait quatre fois moins
+servirait quatre fois moins, ce qui est une autre affaire. Le second terme du
+bilan vient du COR, seul à consolider dépenses ET ressources du système de
+retraite sur un même périmètre (``donnees/equilibre.py`` dit pourquoi ce n'est
+pas la DREES). De là, deux grandeurs par système et par année :
+
+    solde du système S = ressources observées − dépenses du COR × rapport S
+    coefficient d'équilibre de S = ressources observées ÷ (dépenses × rapport S)
+
+Le coefficient est le facteur par lequel il faudrait multiplier TOUTES les
+pensions du système S pour que l'année tombe juste. Il vaut un quand le système
+s'équilibre, moins de un quand il faut rogner. Pour le système actuel, dont le
+rapport vaut un par construction, il redonne exactement le solde publié par le
+COR : c'est ce qui dit que le raccord ne triche pas.
+
+Le périmètre du COR n'est pas celui de la dépense observée plus haut — 13,86 %
+du PIB en 2024 contre 13,59 % pour la répartition obligatoire de la DREES. Rien
+n'est mélangé pour autant : le RAPPORT du modèle est sans dimension, et c'est
+la seule chose qu'on emprunte à une série pour l'appliquer à l'autre.
 """
 
 from __future__ import annotations
@@ -81,6 +110,7 @@ from .castypes import (
 )
 from .donnees.chargement import Fiabilite
 from .donnees.depenses import DepensesRetraite
+from .donnees.equilibre import ComptesRetraite
 from .donnees.population import Population
 from .simulateur import Simulateur
 
@@ -266,12 +296,120 @@ class Avenir:
 
 
 @dataclass
+class SoldeAnnuel:
+    """Une année du bilan : ce qui rentre, ce que chaque système ferait sortir.
+
+    Tout y est en PART DE PIB — l'unité du COR, et la seule où une recette de
+    2002 et une projection de 2070 se comparent sans convention d'actualisation.
+    ``pib`` porte le produit intérieur brut en millions d'euros courants quand
+    il est PUBLIÉ, et zéro sinon : au-delà, un montant en milliards ne serait
+    qu'une hypothèse de croissance déguisée en observation.
+    """
+
+    annee: int
+    #: Le compte est-il projeté par le COR plutôt qu'observé ?
+    projete: bool
+    #: Ressources du système de retraite, en part de PIB.
+    ressources: float
+    #: Dépenses du système de retraite, en part de PIB, système actuel.
+    depenses: float
+    rapports: dict[str, float]
+    #: PIB en millions d'euros courants, ou zéro hors de la fenêtre publiée.
+    pib: float
+
+    def depense(self, scenario: str) -> float:
+        """Ce que le système coûterait cette année-là, en part de PIB."""
+        return self.depenses * self.rapports[scenario]
+
+    def solde(self, scenario: str) -> float:
+        """Ressources moins dépenses, en part de PIB. Négatif : besoin de financement."""
+        return self.ressources - self.depense(scenario)
+
+    def coefficient(self, scenario: str) -> float:
+        """Facteur par lequel multiplier toutes les pensions pour tomber juste.
+
+        Un quand le système s'équilibre, moins de un quand il faut rogner. Zéro
+        rendu — plutôt qu'une division par zéro — si le système ne sert rien.
+        """
+        depense = self.depense(scenario)
+        return self.ressources / depense if depense > 0.0 else 0.0
+
+    def solde_meur(self, scenario: str) -> float:
+        """Le même solde en millions d'euros courants, et zéro si le PIB manque."""
+        return self.solde(scenario) * self.pib
+
+
+@dataclass
+class Solde:
+    """Le bilan du système de retraite, de la première année du COR à son horizon."""
+
+    annees: list[SoldeAnnuel] = field(default_factory=list)
+    #: Première année que le COR projette plutôt qu'il n'observe.
+    premiere_annee_projetee: int = 0
+    #: Niveau du COMPTE observé — ce qui rentre et ce qui sort, sans modèle.
+    fiabilite_observee: Fiabilite = Fiabilite.ESTIMEE
+    #: Niveau de tout ce qui passe par un rapport de masses, c'est-à-dire de
+    #: toutes les colonnes des cinq contrefactuels. Jamais mieux qu'estimé :
+    #: aucune institution ne publie le solde d'un système qui n'a pas existé.
+    fiabilite: Fiabilite = Fiabilite.ESTIMEE
+
+    @property
+    def premiere_annee(self) -> int:
+        return self.annees[0].annee
+
+    @property
+    def derniere_annee(self) -> int:
+        return self.annees[-1].annee
+
+    @property
+    def derniere_annee_observee(self) -> int:
+        return self.premiere_annee_projetee - 1
+
+    def observees(self) -> list[SoldeAnnuel]:
+        return [ligne for ligne in self.annees if not ligne.projete]
+
+    def projetees(self) -> list[SoldeAnnuel]:
+        return [ligne for ligne in self.annees if ligne.projete]
+
+    def annee(self, millesime: int) -> SoldeAnnuel | None:
+        for ligne in self.annees:
+            if ligne.annee == millesime:
+                return ligne
+        return None
+
+    def solde_moyen(self, scenario: str, debut: int, fin: int) -> float:
+        """Solde moyen sur une fenêtre, en part de PIB.
+
+        C'est l'indicateur par lequel le COR juge la pérennité financière : un
+        solde négatif une année donnée ne dit rien, une moyenne négative sur
+        quarante ans dit tout.
+        """
+        lignes = [l for l in self.annees if debut <= l.annee <= fin]
+        if not lignes:
+            return 0.0
+        return sum(ligne.solde(scenario) for ligne in lignes) / len(lignes)
+
+    def premiere_annee_equilibree(self, scenario: str) -> int | None:
+        """Première année PROJETÉE où le système cesse d'être en déficit.
+
+        ``None`` quand il ne l'est jamais sur la fenêtre. La question ne se pose
+        que sur l'avenir : le passé est ce qu'il a été.
+        """
+        for ligne in self.projetees():
+            if ligne.solde(scenario) >= 0.0:
+                return ligne.annee
+        return None
+
+
+@dataclass
 class Cout:
     """La série complète, et les cumuls qu'on en tire."""
 
     annees: list[CoutAnnuel] = field(default_factory=list)
     #: La trajectoire de la répartition, passé récent et avenir.
     avenir: Avenir = field(default_factory=Avenir)
+    #: Le bilan : ce qui rentre face à ce que chaque système ferait sortir.
+    solde: Solde = field(default_factory=Solde)
     #: Année d'expression des euros constants.
     annee_euros: int = 0
     #: Générations effectivement simulées.
@@ -509,8 +647,50 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     )
 
 
+def _solde(avenir: Avenir, comptes: ComptesRetraite,
+           derniere_annee_pib: int) -> Solde:
+    """Le bilan, obtenu en croisant le compte du COR et les rapports du modèle.
+
+    Aucune pension n'est resimulée ici : les rapports de masses sont ceux que
+    ``_avenir`` a déjà calculés, année par année, et cette fonction ne fait que
+    les appliquer à une autre série de dépenses. C'est ce qui rend la section
+    gratuite en temps de calcul — et c'est aussi ce qui la borne : elle ne
+    couvre que les années où les deux fenêtres se recouvrent.
+
+    Le RAPPORT est la seule chose empruntée au modèle. Il est sans dimension,
+    et c'est pourquoi on peut l'appliquer à une dépense dont le périmètre n'est
+    pas celui sur lequel il a été calculé. La dépense du système actuel, elle,
+    reste celle du COR de bout en bout : c'est ce qui fait que le solde du
+    scénario 1 est exactement le solde publié, et non une reconstitution.
+    """
+    par_annee = {ligne.annee: ligne for ligne in avenir.annees}
+    lignes = [
+        SoldeAnnuel(
+            annee=annee,
+            projete=annee > comptes.derniere_annee_observee,
+            ressources=comptes.ressource(annee),
+            depenses=comptes.depense(annee),
+            rapports=par_annee[annee].rapports,
+            pib=par_annee[annee].pib if annee <= derniere_annee_pib else 0.0,
+        )
+        for annee in comptes.annees() if annee in par_annee
+    ]
+    if not lignes:
+        return Solde()
+    return Solde(
+        annees=lignes,
+        premiere_annee_projetee=comptes.derniere_annee_observee + 1,
+        fiabilite_observee=min(
+            (comptes.fiabilite(ligne.annee) for ligne in lignes if not ligne.projete),
+            default=Fiabilite.ESTIMEE,
+        ),
+        fiabilite=Fiabilite.ESTIMEE,
+    )
+
+
 def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   population: Population,
+                  comptes: ComptesRetraite | None = None,
                   cas_types: tuple[CasType, ...] = CAS_TYPES,
                   ponderation: str = "effectifs") -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
@@ -522,6 +702,11 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     ``ponderation`` choisit ce que chaque cas type pèse : ``effectifs``, les
     retraités de sa caisse publiés par la DREES, ou ``egale``, l'ancienne
     convention. Le second n'existe que pour mesurer ce que le premier a déplacé.
+
+    ``comptes`` porte le second terme du bilan — les ressources. Il est
+    facultatif : sans lui, tout ce qui précède est calculé à l'identique et le
+    solde reste vide, ce qui est exactement l'état du dépôt avant que ces
+    ressources n'existent.
     """
     pensionnes, echecs = _pensionnes(simulateur, cas_types)
     poids = _ponderation(simulateur, ponderation, cas_types)
@@ -546,9 +731,12 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         (depenses.fiabilite(ligne.annee) for ligne in lignes),
         default=Fiabilite.ESTIMEE,
     )
+    avenir = _avenir(pensionnes, depenses, population, simulateur, poids)
     return Cout(
         annees=lignes,
-        avenir=_avenir(pensionnes, depenses, population, simulateur, poids),
+        avenir=avenir,
+        solde=_solde(avenir, comptes, depenses.pib.derniere_annee)
+        if comptes is not None and avenir.annees else Solde(),
         annee_euros=annee_euros,
         generations=generations(),
         echecs=echecs,

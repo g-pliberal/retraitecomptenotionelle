@@ -26,6 +26,16 @@
  * Chacun porte désormais l'effectif des retraités de sa caisse, publié par la
  * DREES et lu année par année. L'ancienne convention reste disponible —
  * ``ponderation = "egale"`` — pour dire de combien elle déplaçait les résultats.
+ *
+ * LE SOLDE, ET NON LE COÛT
+ * Un coût n'est pas un solde. Le second terme du bilan vient du COR, seul à
+ * consolider dépenses ET ressources du système de retraite sur un même
+ * périmètre (``equilibre.js`` dit pourquoi ce n'est pas la DREES) :
+ *     solde du système S = ressources observées − dépenses du COR × rapport S
+ *     coefficient d'équilibre de S = ressources ÷ (dépenses × rapport S)
+ * Le coefficient est le facteur par lequel multiplier TOUTES les pensions du
+ * système S pour que l'année tombe juste. Le modèle le calcule ; il ne
+ * l'applique jamais.
  */
 
 import { CAS_TYPES, calculerCasTypes, poidsEffectifs, poidsEgaux } from "./castypes.js";
@@ -291,12 +301,115 @@ class Avenir {
   }
 }
 
+/**
+ * Une année du bilan : ce qui rentre, ce que chaque système ferait sortir.
+ *
+ * Tout y est en PART DE PIB — l'unité du COR, et la seule où une recette de
+ * 2002 et une projection de 2070 se comparent sans convention d'actualisation.
+ * `pib` porte le produit intérieur brut en millions d'euros courants quand il
+ * est PUBLIÉ, et zéro sinon : au-delà, un montant en milliards ne serait
+ * qu'une hypothèse de croissance déguisée en observation.
+ */
+class SoldeAnnuel {
+  constructor(annee, projete, ressources, depenses, rapportsAnnee, pib) {
+    this.annee = annee;
+    this.projete = projete;
+    this.ressources = ressources;
+    this.depenses = depenses;
+    this.rapports = rapportsAnnee;
+    this.pib = pib;
+  }
+
+  /** Ce que le système coûterait cette année-là, en part de PIB. */
+  depense(scenario) {
+    return this.depenses * this.rapports[scenario];
+  }
+
+  /** Ressources moins dépenses. Négatif : besoin de financement. */
+  solde(scenario) {
+    return this.ressources - this.depense(scenario);
+  }
+
+  /**
+   * Facteur par lequel multiplier toutes les pensions pour tomber juste. Un
+   * quand le système s'équilibre, moins de un quand il faut rogner.
+   */
+  coefficient(scenario) {
+    const depense = this.depense(scenario);
+    return depense > 0 ? this.ressources / depense : 0.0;
+  }
+
+  /** Le même solde en millions d'euros courants, et zéro si le PIB manque. */
+  soldeMeur(scenario) {
+    return this.solde(scenario) * this.pib;
+  }
+}
+
+/** Le bilan du système de retraite, de la première année du COR à son horizon. */
+class Solde {
+  constructor(annees, premiereAnneeProjetee, fiabiliteObservee, fiabilite) {
+    this.annees = annees;
+    this.premiereAnneeProjetee = premiereAnneeProjetee;
+    // Niveau du COMPTE observé — ce qui rentre et ce qui sort, sans modèle —
+    // puis celui de tout ce qui passe par un rapport de masses, c'est-à-dire de
+    // toutes les colonnes des cinq contrefactuels. Le second n'est jamais mieux
+    // qu'estimé : aucune institution ne publie le solde d'un système qui n'a
+    // pas existé.
+    this.fiabiliteObservee = fiabiliteObservee;
+    this.fiabilite = fiabilite;
+    this.premiereAnnee = annees.length ? annees[0].annee : 0;
+    this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
+    this.derniereAnneeObservee = premiereAnneeProjetee - 1;
+  }
+
+  observees() {
+    return this.annees.filter((ligne) => !ligne.projete);
+  }
+
+  projetees() {
+    return this.annees.filter((ligne) => ligne.projete);
+  }
+
+  annee(millesime) {
+    for (const ligne of this.annees) {
+      if (ligne.annee === millesime) return ligne;
+    }
+    return null;
+  }
+
+  /**
+   * Solde moyen sur une fenêtre, en part de PIB — l'indicateur par lequel le
+   * COR juge la pérennité financière. Un solde négatif une année donnée ne dit
+   * rien ; une moyenne négative sur quarante ans dit tout.
+   */
+  soldeMoyen(scenario, debut, fin) {
+    const lignes = this.annees.filter((l) => l.annee >= debut && l.annee <= fin);
+    if (!lignes.length) return 0.0;
+    let somme = 0;
+    for (const ligne of lignes) somme += ligne.solde(scenario);
+    return somme / lignes.length;
+  }
+
+  /**
+   * Première année PROJETÉE où le système cesse d'être en déficit, `null`
+   * quand il ne l'est jamais. La question ne se pose que sur l'avenir : le
+   * passé est ce qu'il a été.
+   */
+  premiereAnneeEquilibree(scenario) {
+    for (const ligne of this.projetees()) {
+      if (ligne.solde(scenario) >= 0) return ligne.annee;
+    }
+    return null;
+  }
+}
+
 /** La série complète, et les cumuls qu'on en tire. */
 class Cout {
-  constructor(annees, avenir, anneeEuros, generationsRetenues, echecs, fiabilite,
-              ponderationRetenue = "effectifs", poids = {}) {
+  constructor(annees, avenir, solde, anneeEuros, generationsRetenues, echecs,
+              fiabilite, ponderationRetenue = "effectifs", poids = {}) {
     this.annees = annees;
     this.avenir = avenir;
+    this.solde = solde;
     this.anneeEuros = anneeEuros;
     this.generations = generationsRetenues;
     this.echecs = echecs;
@@ -416,11 +529,58 @@ function construireAvenir(liste, depenses, population, simulateur, poids) {
 }
 
 /**
+ * Le bilan, obtenu en croisant le compte du COR et les rapports du modèle.
+ *
+ * Aucune pension n'est resimulée ici : les rapports de masses sont ceux que
+ * `construireAvenir` a déjà calculés, année par année, et cette fonction ne
+ * fait que les appliquer à une autre série de dépenses. Le RAPPORT est la
+ * seule chose empruntée au modèle ; il est sans dimension, et c'est pourquoi
+ * on peut l'appliquer à une dépense dont le périmètre n'est pas celui sur
+ * lequel il a été calculé. La dépense du système actuel, elle, reste celle du
+ * COR de bout en bout : c'est ce qui fait que le solde du scénario 1 est
+ * exactement le solde publié, et non une reconstitution.
+ */
+function construireSolde(avenir, comptes, derniereAnneePib) {
+  const parAnnee = new Map(avenir.annees.map((ligne) => [ligne.annee, ligne]));
+  const lignes = [];
+  for (const annee of comptes.annees()) {
+    const ligne = parAnnee.get(annee);
+    if (!ligne) continue;
+    lignes.push(new SoldeAnnuel(
+      annee,
+      annee > comptes.derniereAnneeObservee,
+      comptes.ressource(annee),
+      comptes.depense(annee),
+      ligne.rapports,
+      annee <= derniereAnneePib ? ligne.pib : 0.0,
+    ));
+  }
+  if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
+  let observee = Fiabilite.CERTIFIEE;
+  let vues = 0;
+  for (const ligne of lignes) {
+    if (ligne.projete) continue;
+    observee = Math.min(observee, comptes.fiabilite(ligne.annee));
+    vues += 1;
+  }
+  return new Solde(
+    lignes,
+    comptes.derniereAnneeObservee + 1,
+    vues ? observee : Fiabilite.ESTIMEE,
+    Fiabilite.ESTIMEE,
+  );
+}
+
+/**
  * Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
  * Les années où le modèle ne sert aucune pension sont écartées : un rapport y
  * serait une division par zéro, et non un résultat.
+ *
+ * `comptes` porte le second terme du bilan — les ressources. Il est
+ * facultatif : sans lui, tout ce qui précède est calculé à l'identique et le
+ * solde reste vide.
  */
-export function calculerCout(simulateur, depenses, population,
+export function calculerCout(simulateur, depenses, population, comptes = null,
                              casTypes = CAS_TYPES, mode = "effectifs") {
   const { liste, motifs } = pensionnes(simulateur, casTypes);
   const poids = ponderation(simulateur, mode, casTypes);
@@ -448,9 +608,13 @@ export function calculerCout(simulateur, depenses, population,
   // Le contrefactuel ne peut jamais valoir mieux qu'« estimé » : la dépense
   // observée est certifiée, le rapport qui la corrige ne l'est pas et ne peut
   // pas l'être.
+  const avenir = construireAvenir(liste, depenses, population, simulateur, poids);
   return new Cout(
     lignes,
-    construireAvenir(liste, depenses, population, simulateur, poids),
+    avenir,
+    comptes && avenir.annees.length
+      ? construireSolde(avenir, comptes, depenses.pib.derniereAnnee)
+      : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE),
     anneeEuros,
     generations(),
     motifs,

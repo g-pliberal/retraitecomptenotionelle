@@ -34,6 +34,11 @@ from retraite_notionnelle.donnees.depenses import (
     SYSTEMES,
     DepensesRetraite,
 )
+from retraite_notionnelle.donnees.equilibre import (
+    CODES_POSTES,
+    POSTES,
+    ComptesRetraite,
+)
 from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.garantie import cout_garantie
 from retraite_notionnelle.simulateur import Simulateur
@@ -50,13 +55,24 @@ def population() -> Population:
 
 
 @pytest.fixture(scope="module")
-def cout(depenses: DepensesRetraite, population: Population):
-    return calculer_cout(Simulateur(Parametres()), depenses, population)
+def comptes() -> ComptesRetraite:
+    return ComptesRetraite(RACINE_DONNEES)
+
+
+@pytest.fixture(scope="module")
+def cout(depenses: DepensesRetraite, population: Population,
+         comptes: ComptesRetraite):
+    return calculer_cout(Simulateur(Parametres()), depenses, population, comptes)
 
 
 @pytest.fixture(scope="module")
 def avenir(cout):
     return cout.avenir
+
+
+@pytest.fixture(scope="module")
+def solde(cout):
+    return cout.solde
 
 
 # -- les données -------------------------------------------------------------
@@ -501,3 +517,182 @@ def test_la_garantie_vue_par_les_cas_types_est_bien_plus_basse(cout, distributio
     par_an_sur_la_distribution = cout_garantie(
         distribution, 16e6, 800.0).cout_annuel_meur
     assert par_an_sur_la_distribution > 20 * par_an_vu_des_cas_types
+
+
+# -- le solde : ce qui rentre, face à ce qui sort ----------------------------
+
+
+def test_le_compte_du_cor_couvre_2002_a_l_horizon(comptes: ComptesRetraite):
+    """La fenêtre est celle de la source, et rien d'autre ne la borne.
+
+    Elle commence en 2002 parce que c'est le premier rapport à la Commission
+    des comptes de la Sécurité sociale que le COR consolide, et finit à son
+    horizon de projection.
+    """
+    assert comptes.premiere_annee == 2002
+    assert comptes.derniere_annee >= 2070
+    assert comptes.annees() == list(
+        range(comptes.premiere_annee, comptes.derniere_annee + 1))
+    for annee in comptes.annees():
+        assert comptes.depense(annee) > 0.0, annee
+        assert comptes.ressource(annee) > 0.0, annee
+
+
+def test_le_compte_observe_vaut_haute_et_le_projete_estime(comptes: ComptesRetraite):
+    """Le critère 1 plafonne une consolidation ; le critère 2 dégrade une projection.
+
+    Le COR n'est pas producteur des comptes de chaque régime — ce sont ceux des
+    rapports à la CCSS — mais il est le seul à les consolider : c'est exactement
+    la position d'OpenFisca, et elle vaut `haute`, jamais `certifiee`.
+    """
+    observee = comptes.derniere_annee_observee
+    assert observee >= 2024
+    assert comptes.fiabilite(observee) == Fiabilite.HAUTE
+    assert comptes.fiabilite(comptes.premiere_annee) == Fiabilite.HAUTE
+    assert comptes.fiabilite(observee + 1) == Fiabilite.ESTIMEE
+    assert comptes.fiabilite(comptes.derniere_annee) == Fiabilite.ESTIMEE
+
+
+def test_les_deux_perimetres_se_recoupent(comptes: ComptesRetraite,
+                                          depenses: DepensesRetraite):
+    """Le contrôle externe de cette section, et le seul dont elle dispose.
+
+    Le COR compte les régimes légalement obligatoires, FSV compris ; la DREES
+    compte la répartition obligatoire du risque vieillesse-survie. Deux
+    comptabilités indépendantes, deux périmètres voisins : si l'écart dépassait
+    le point de PIB, l'une des deux séries serait mal lue. Le COR est un peu
+    au-dessus — le FSV, que la ventilation de la DREES range hors répartition.
+    """
+    for annee in range(2002, depenses.derniere_annee + 1):
+        drees = depenses.repartition(annee) / depenses.pib(annee)
+        cor = comptes.depense(annee)
+        assert cor - drees == pytest.approx(0.0, abs=0.01), annee
+        assert cor > drees, annee
+        # Et le risque entier, lui, est toujours au-dessus des deux.
+        assert depenses.part_pib(annee) > cor, annee
+
+
+def test_le_solde_du_systeme_actuel_est_celui_que_le_cor_publie(solde, comptes):
+    """Le rapport du scénario 1 vaut un : son solde doit être le solde publié.
+
+    C'est ce qui dit que le raccord entre deux périmètres ne triche pas — la
+    dépense du système actuel reste celle du COR de bout en bout, et le modèle
+    ne s'y glisse nulle part.
+    """
+    for ligne in solde.annees:
+        assert ligne.rapports["actuel"] == 1.0, ligne.annee
+        assert ligne.solde("actuel") == pytest.approx(
+            comptes.solde(ligne.annee)), ligne.annee
+    # 2025 : le COR annonce un besoin de financement de 5,1 milliards d'euros.
+    dernier = solde.annee(solde.derniere_annee_observee)
+    assert dernier.solde_meur("actuel") / 1000 == pytest.approx(-5.1, abs=0.2)
+
+
+def test_le_coefficient_dit_exactement_ce_que_dit_le_solde(solde):
+    """Deux écritures d'une même chose : un coefficient sous un signe.
+
+    Le coefficient vaut un quand le solde est nul, moins de un quand il est
+    négatif. Un test d'équivalence vaut mieux qu'un test de valeur : il tient
+    quel que soit le millésime du rapport.
+    """
+    for ligne in solde.annees:
+        for scenario, _ in SCENARIOS:
+            excedent = ligne.solde(scenario) > 0.0
+            assert (ligne.coefficient(scenario) > 1.0) is excedent, (
+                ligne.annee, scenario)
+            # Et le coefficient ramène bien la dépense sur les ressources.
+            assert ligne.depense(scenario) * ligne.coefficient(scenario) == (
+                pytest.approx(ligne.ressources))
+
+
+def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
+    """Le résultat de fond de cette section, et il tient en une ligne.
+
+    Le système actuel reste déficitaire sur toute la fenêtre projetée du COR ;
+    les deux réformes applicables — droits acquis conservés, règles nouvelles
+    ensuite — repassent à l'équilibre, et le font d'autant plus vite que la
+    part patronale entre au compte.
+    """
+    assert solde.premiere_annee_equilibree("actuel") is None
+    assert solde.solde_moyen("actuel", solde.premiere_annee_projetee,
+                             solde.derniere_annee) < 0.0
+    for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
+        annee = solde.premiere_annee_equilibree(scenario)
+        assert annee is not None and annee >= solde.premiere_annee_projetee
+        assert solde.solde_moyen(scenario, solde.premiere_annee_projetee,
+                                 solde.derniere_annee) > 0.0
+    # Le scénario 5 porte plus de droits que le 3 : il s'équilibre plus tard.
+    assert (solde.premiere_annee_equilibree("notionnel_prospectif_employeur")
+            >= solde.premiere_annee_equilibree("notionnel_prospectif"))
+
+
+def test_le_solde_en_euros_s_arrete_ou_le_pib_publie_s_arrete(solde, depenses):
+    """Au-delà, un montant en milliards serait une hypothèse de croissance.
+
+    La part de PIB, elle, court jusqu'à l'horizon : c'est l'unité du COR, et
+    c'est la seule qui ne suppose rien.
+    """
+    for ligne in solde.annees:
+        if ligne.annee <= depenses.pib.derniere_annee:
+            assert ligne.pib == pytest.approx(depenses.pib(ligne.annee))
+            assert ligne.solde_meur("actuel") == pytest.approx(
+                ligne.solde("actuel") * depenses.pib(ligne.annee))
+        else:
+            assert ligne.pib == 0.0, ligne.annee
+            assert ligne.solde_meur("actuel") == 0.0, ligne.annee
+    # Un solde en euros n'est jamais nul par accident de fenêtre : 2023 l'est
+    # parce que le COR y trouve l'équilibre au milliardième de PIB près.
+    assert abs(solde.annee(2010).solde_meur("actuel")) > 1000.0
+
+
+def test_le_solde_ne_se_donne_jamais_pour_certifie(solde):
+    """Le compte observé vaut « haute » ; tout ce qui passe par un rapport, non."""
+    assert solde.fiabilite_observee == Fiabilite.HAUTE
+    assert solde.fiabilite == Fiabilite.ESTIMEE
+
+
+def test_sans_comptes_le_cout_est_calcule_a_l_identique(depenses, population,
+                                                        comptes, cout):
+    """Les ressources sont un ajout, jamais une correction de ce qui précède."""
+    sans = calculer_cout(Simulateur(Parametres()), depenses, population)
+    assert sans.solde.annees == []
+    assert sans.cumul("notionnel_retroactif") == pytest.approx(
+        cout.cumul("notionnel_retroactif"))
+    assert sans.avenir.cumul("actuel") == pytest.approx(cout.avenir.cumul("actuel"))
+
+
+def test_les_postes_couvrent_la_structure_des_ressources():
+    """Les codes du modèle et ceux qu'écrit le vérificateur ne peuvent pas diverger."""
+    chemin = (RACINE_DONNEES / "reference" / "macro"
+              / "structure_ressources_retraite.csv")
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        codes = {ligne["poste"] for ligne in csv.DictReader(lignes)}
+    assert codes == set(CODES_POSTES)
+    assert len(CODES_POSTES) == len(set(CODES_POSTES))
+
+
+def test_les_parts_des_ressources_somment_a_un(comptes: ComptesRetraite):
+    """Le seul contrôle qui vaille sur une décomposition : rien d'oublié."""
+    premiere = max(comptes.structure[p.code].premiere_annee for p in POSTES)
+    for annee in range(premiere, comptes.derniere_annee_observee + 1):
+        somme = sum(comptes.part(poste.code, annee) for poste in POSTES)
+        assert somme == pytest.approx(1.0, abs=1e-5 * len(POSTES)), annee
+
+
+def test_la_part_cotisee_domine_mais_recule(comptes: ComptesRetraite):
+    """Les trois quarts des ressources sont cotisées, et cette part diminue.
+
+    L'impôt a pris le relais des cotisations patronales allégées : c'est ce que
+    la page doit pouvoir dire, et c'est ce qui borne la lecture du coefficient
+    d'équilibre — un compte notionnel ne sait créditer que la part cotisée.
+    """
+    premiere = max(comptes.structure[p.code].premiere_annee for p in POSTES)
+    derniere = comptes.derniere_annee_observee
+    assert 0.70 < comptes.part_contributive(derniere) < 0.85
+    assert comptes.part_contributive(derniere) < comptes.part_contributive(premiere)
+    assert comptes.part("impots_et_taxes", derniere) > comptes.part(
+        "impots_et_taxes", premiere)
+    # Deux postes seulement sont cotisés, et ce sont les deux premiers.
+    assert [poste.code for poste in POSTES if poste.contributive] == [
+        "cotisations", "contribution_equilibre_etat"]
