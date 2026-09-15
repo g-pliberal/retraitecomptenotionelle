@@ -1208,3 +1208,111 @@ def test_une_page_reecrite_ne_passe_pas_en_silence():
     module = _sre_mg()
     with pytest.raises(module.PageIllisible):
         module.montants("Le minimum garanti est calculé selon un barème.")
+
+
+# -- les comptes du système de retraite, lus dans le rapport du COR ----------
+
+#: Une feuille du COR réduite à son squelette : un en-tête d'années, deux
+#: séries dont l'intitulé ne s'écrit qu'une fois, un marqueur « Obs » puis
+#: « Sc. Ref », et — comme dans le vrai classeur — un SECOND bloc de données
+#: complémentaires plus bas, sous une autre convention. Les indices sont ceux
+#: que ``lecture_xlsx.feuilles`` rend : ``(ligne, colonne)``, à partir de zéro.
+def _feuille_cor():
+    grille = {
+        (0, 0): "Figure 2.13 - Dépenses et ressources du système de retraite",
+        (3, 3): 2002.0, (3, 4): 2003.0, (3, 5): 2004.0, (3, 6): 2005.0,
+        (3, 7): 2006.0, (3, 8): 2007.0, (3, 9): 2008.0, (3, 10): 2009.0,
+        (4, 1): "Dépenses", (4, 2): "Obs",
+        (5, 2): "Sc. Ref",
+        (6, 1): "Ressources", (6, 2): "Obs",
+        (7, 2): "Sc. Ref",
+        (9, 1): "Champ : ensemble des régimes légalement obligatoires.",
+        # Second bloc, à ne jamais lire : son en-tête est plus bas.
+        (12, 3): 2002.0, (12, 4): 2003.0, (12, 5): 2004.0, (12, 6): 2005.0,
+        (12, 7): 2006.0, (12, 8): 2007.0, (12, 9): 2008.0, (12, 10): 2009.0,
+        (13, 1): "Convention EEC", (13, 2): "Obs",
+    }
+    # Observé jusqu'en 2005, projeté ensuite ; 2005 est porté des deux côtés,
+    # comme le fait le COR pour que sa courbe se raccorde sans trou.
+    for colonne, valeur in zip(range(3, 7), (0.1178, 0.1188, 0.1196, 0.1213)):
+        grille[(4, colonne)] = valeur
+        grille[(6, colonne)] = valeur + 0.003
+    for colonne, valeur in zip(range(6, 11), (0.1213, 0.1215, 0.1231, 0.1243,
+                                              0.1332)):
+        grille[(5, colonne)] = valeur
+        grille[(7, colonne)] = valeur + 0.003
+    for colonne in range(3, 11):
+        grille[(13, colonne)] = 9.99
+    return grille
+
+
+def _cor():
+    return _charger_script("cor_comptes_retraite", "scripts", "fetch",
+                           "cor_comptes_retraite.py")
+
+
+def test_l_intitule_du_cor_se_reporte_d_une_ligne_a_la_suivante():
+    """« Dépenses » est écrit une fois, « Obs » et « Sc. Ref » sont dessous.
+
+    Sans report, la ligne projetée n'aurait pas d'intitulé et la moitié de la
+    série disparaîtrait — sans que rien ne le signale, puisque l'autre moitié
+    serait complète.
+    """
+    series = _cor().lire_bloc(_feuille_cor())
+    assert [(s["intitule"], s["marqueur"]) for s in series] == [
+        ("Dépenses", "observe"), ("Dépenses", "projete"),
+        ("Ressources", "observe"), ("Ressources", "projete"),
+    ]
+
+
+def test_le_second_bloc_d_une_feuille_du_cor_n_est_pas_lu():
+    """Une feuille porte parfois des « données complémentaires » sous une autre
+    convention, avec leur propre en-tête d'années. Seul le premier bloc est
+    rendu : c'est celui que la figure trace, et celui dont les notes de bas de
+    feuille disent le champ."""
+    series = _cor().lire_bloc(_feuille_cor())
+    assert len(series) == 4
+    assert all(9.99 not in s["valeurs"].values() for s in series)
+
+
+def test_l_annee_de_jonction_revient_a_l_observe():
+    """Le COR porte l'année de jonction des DEUX côtés, pour que sa courbe se
+    raccorde. Le critère 2 du manifeste tranche : l'observé prime, et il prime
+    d'autant plus que le producteur donne la même valeur des deux côtés."""
+    cor = _cor()
+    rangees = cor._par_marqueur(cor.lire_bloc(_feuille_cor()), "Dépenses")
+    assert max(rangees["observe"]) == "2005"
+    assert min(rangees["projete"]) == "2006"
+    assert set(rangees["observe"]) & set(rangees["projete"]) == set()
+    assert rangees["observe"]["2005"] == pytest.approx(0.1213)
+
+
+def test_la_serie_du_solde_se_prend_sans_la_nommer():
+    """La figure du solde ne porte qu'une série marquée, sous un intitulé —
+    « Convention EPR » — qui nomme une convention comptable et non la grandeur.
+    On la prend donc comme la seule marquée de la feuille, et une feuille qui
+    en porterait deux doit lever plutôt que d'en choisir une au hasard."""
+    cor = _cor()
+    seule = [s for s in cor.lire_bloc(_feuille_cor())
+             if s["intitule"] == "Dépenses"]
+    assert set(cor._par_marqueur(seule)["observe"]) == {
+        "2002", "2003", "2004", "2005"}
+    with pytest.raises(LookupError, match="ambigu"):
+        cor._par_marqueur(cor.lire_bloc(_feuille_cor()))
+
+
+def test_les_postes_du_cor_se_reconnaissent_sans_accent_ni_ponctuation():
+    """Le COR reponctue ses libellés d'un rapport à l'autre — double espace,
+    parenthèse ajoutée, accent perdu. Le code du poste se lit donc sur le début
+    du libellé replié, et un libellé inconnu n'est pas deviné : il est écarté,
+    et le contrôle de somme à un s'en apercevra."""
+    verificateur = _verificateur()
+    assert verificateur._code_poste(
+        "Cotisations sociales hors contribution d'équilibre") == "cotisations"
+    assert verificateur._code_poste(
+        "Cotisations  sociales hors contribution d'equilibre (nouveau)"
+    ) == "cotisations"
+    assert verificateur._code_poste(
+        "Subventions d'équilibre versées par l'État aux régimes spéciaux"
+    ) == "subventions_equilibre"
+    assert verificateur._code_poste("Produits exceptionnels") is None

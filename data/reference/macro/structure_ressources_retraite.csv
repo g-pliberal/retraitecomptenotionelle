@@ -1,0 +1,157 @@
+# Structure des ressources du système de retraite, par poste
+# source_id: cor_comptes_systeme_retraite
+# unite: part des ressources de l'année, en fraction
+# fiabilite:
+#   haute (2004-…) : parts publiées par le COR dans son rapport annuel,
+#             calculées par le SG-COR sur les rapports à la Commission
+#             des comptes de la Sécurité sociale, et recontrôlées par
+#             scripts/verifier_donnees.py contre le classeur du rapport.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À dire ce que « ressources » contient. Deux tiers sont des cotisations
+# assises sur des revenus d'activité, c'est-à-dire la seule chose qu'un
+# compte notionnel sache créditer. Le reste ne l'est pas : la
+# contribution d'équilibre que l'État verse au régime de ses propres
+# fonctionnaires — dont le taux est fixé pour ÉQUILIBRER et non pour
+# acquérir —, des impôts et taxes affectés, des subventions d'équilibre
+# aux régimes spéciaux, des transferts de la branche famille et de
+# l'Unédic. Le coefficient d'équilibre de la page « Coût » suppose ces
+# ressources-là inchangées ; ces parts disent de quoi cette hypothèse
+# est faite.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,poste,part,fiabilite
+2004,autres_produits,0.02422,haute
+2004,contribution_equilibre_etat,0.14010,haute
+2004,cotisations,0.65593,haute
+2004,impots_et_taxes,0.07125,haute
+2004,subventions_equilibre,0.02365,haute
+2004,transferts,0.08485,haute
+2005,autres_produits,0.02759,haute
+2005,contribution_equilibre_etat,0.14117,haute
+2005,cotisations,0.65226,haute
+2005,impots_et_taxes,0.07737,haute
+2005,subventions_equilibre,0.01988,haute
+2005,transferts,0.08173,haute
+2006,autres_produits,0.03118,haute
+2006,contribution_equilibre_etat,0.14261,haute
+2006,cotisations,0.64669,haute
+2006,impots_et_taxes,0.09859,haute
+2006,subventions_equilibre,0.02377,haute
+2006,transferts,0.05716,haute
+2007,autres_produits,0.03711,haute
+2007,contribution_equilibre_etat,0.14237,haute
+2007,cotisations,0.64345,haute
+2007,impots_et_taxes,0.10174,haute
+2007,subventions_equilibre,0.02420,haute
+2007,transferts,0.05114,haute
+2008,autres_produits,0.01935,haute
+2008,contribution_equilibre_etat,0.12650,haute
+2008,cotisations,0.66358,haute
+2008,impots_et_taxes,0.10984,haute
+2008,subventions_equilibre,0.02507,haute
+2008,transferts,0.05566,haute
+2009,autres_produits,0.02694,haute
+2009,contribution_equilibre_etat,0.12785,haute
+2009,cotisations,0.66412,haute
+2009,impots_et_taxes,0.10267,haute
+2009,subventions_equilibre,0.02435,haute
+2009,transferts,0.05407,haute
+2010,autres_produits,0.01754,haute
+2010,contribution_equilibre_etat,0.12943,haute
+2010,cotisations,0.67550,haute
+2010,impots_et_taxes,0.09985,haute
+2010,subventions_equilibre,0.02637,haute
+2010,transferts,0.05132,haute
+2011,autres_produits,0.00693,haute
+2011,contribution_equilibre_etat,0.13097,haute
+2011,cotisations,0.66872,haute
+2011,impots_et_taxes,0.11655,haute
+2011,subventions_equilibre,0.02734,haute
+2011,transferts,0.04949,haute
+2012,autres_produits,0.02096,haute
+2012,contribution_equilibre_etat,0.13012,haute
+2012,cotisations,0.65150,haute
+2012,impots_et_taxes,0.11549,haute
+2012,subventions_equilibre,0.02763,haute
+2012,transferts,0.05430,haute
+2013,autres_produits,0.02210,haute
+2013,contribution_equilibre_etat,0.12617,haute
+2013,cotisations,0.64675,haute
+2013,impots_et_taxes,0.12066,haute
+2013,subventions_equilibre,0.02669,haute
+2013,transferts,0.05763,haute
+2014,autres_produits,0.01649,haute
+2014,contribution_equilibre_etat,0.12518,haute
+2014,cotisations,0.65036,haute
+2014,impots_et_taxes,0.12141,haute
+2014,subventions_equilibre,0.02593,haute
+2014,transferts,0.06064,haute
+2015,autres_produits,0.01670,haute
+2015,contribution_equilibre_etat,0.12325,haute
+2015,cotisations,0.65110,haute
+2015,impots_et_taxes,0.11936,haute
+2015,subventions_equilibre,0.02576,haute
+2015,transferts,0.06382,haute
+2016,autres_produits,0.01244,haute
+2016,contribution_equilibre_etat,0.12334,haute
+2016,cotisations,0.65615,haute
+2016,impots_et_taxes,0.11964,haute
+2016,subventions_equilibre,0.02523,haute
+2016,transferts,0.06319,haute
+2017,autres_produits,0.00801,haute
+2017,contribution_equilibre_etat,0.12027,haute
+2017,cotisations,0.66656,haute
+2017,impots_et_taxes,0.11459,haute
+2017,subventions_equilibre,0.02429,haute
+2017,transferts,0.06627,haute
+2018,autres_produits,0.01989,haute
+2018,contribution_equilibre_etat,0.11925,haute
+2018,cotisations,0.65828,haute
+2018,impots_et_taxes,0.11343,haute
+2018,subventions_equilibre,0.02392,haute
+2018,transferts,0.06522,haute
+2019,autres_produits,0.02499,haute
+2019,contribution_equilibre_etat,0.11792,haute
+2019,cotisations,0.65655,haute
+2019,impots_et_taxes,0.13002,haute
+2019,subventions_equilibre,0.02271,haute
+2019,transferts,0.04781,haute
+2020,autres_produits,0.00076,haute
+2020,contribution_equilibre_etat,0.12596,haute
+2020,cotisations,0.65749,haute
+2020,impots_et_taxes,0.13846,haute
+2020,subventions_equilibre,0.02432,haute
+2020,transferts,0.05302,haute
+2021,autres_produits,0.01672,haute
+2021,contribution_equilibre_etat,0.11718,haute
+2021,cotisations,0.65815,haute
+2021,impots_et_taxes,0.13385,haute
+2021,subventions_equilibre,0.02196,haute
+2021,transferts,0.05213,haute
+2022,autres_produits,0.01289,haute
+2022,contribution_equilibre_etat,0.11659,haute
+2022,cotisations,0.66045,haute
+2022,impots_et_taxes,0.14033,haute
+2022,subventions_equilibre,0.02074,haute
+2022,transferts,0.04899,haute
+2023,autres_produits,0.02196,haute
+2023,contribution_equilibre_etat,0.11457,haute
+2023,cotisations,0.65461,haute
+2023,impots_et_taxes,0.14081,haute
+2023,subventions_equilibre,0.01988,haute
+2023,transferts,0.04817,haute
+2024,autres_produits,0.02196,haute
+2024,contribution_equilibre_etat,0.11457,haute
+2024,cotisations,0.65461,haute
+2024,impots_et_taxes,0.14081,haute
+2024,subventions_equilibre,0.01988,haute
+2024,transferts,0.04817,haute
+2025,autres_produits,0.01669,haute
+2025,contribution_equilibre_etat,0.11676,haute
+2025,cotisations,0.65614,haute
+2025,impots_et_taxes,0.15322,haute
+2025,subventions_equilibre,0.01820,haute
+2025,transferts,0.03898,haute

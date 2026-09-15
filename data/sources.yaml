@@ -311,6 +311,38 @@ institutions:
           supposé constant. L'inflation de long terme à 1,75 % est une
           convention reconduite des rapports antérieurs : les documents publics
           de juin 2025 et juin 2026 ne la restatent pas.
+      - id: cor_comptes_systeme_retraite
+        titre: >-
+          Comptes du système de retraite — dépenses, ressources et solde, en
+          part de PIB (classeurs de données du rapport annuel)
+        url: https://www.cor-retraites.fr/rapports-du-cor/rapport-annuel-cor-juin-2026-evolutions-perspectives-retraites-france
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/cor_comptes_retraite.py
+        cible: >-
+          data/reference/macro/comptes_retraite.csv,
+          data/reference/macro/structure_ressources_retraite.csv
+        millesime: juin 2026
+        note: >-
+          Le seul compte français où DÉPENSES ET RESSOURCES de la retraite
+          soient publiées ensemble, sur un même périmètre et sous une même
+          convention. Il fallait le chercher ici parce que les Comptes de la
+          protection sociale de la DREES, qui donnent la dépense depuis 1959,
+          NE VENTILENT PAS LEURS RESSOURCES PAR RISQUE : une « recette du risque
+          vieillesse » n'a pas de définition comptable, les cotisations d'un
+          régime polyvalent n'étant affectées à aucun risque. Le critère 1 du
+          manifeste s'applique en deux temps : le COR n'est pas producteur des
+          comptes de chaque régime — ce sont ceux des rapports à la Commission
+          des comptes de la Sécurité sociale — mais il est le seul à les
+          CONSOLIDER, comme il est le seul à publier la description consolidée
+          des régimes. Les valeurs entrent donc au niveau `haute`, jamais
+          `certifiee`, et les années projetées au niveau `projetee`, la
+          frontière étant celle que le COR marque lui-même colonne par colonne.
+          Champ : régimes légalement obligatoires, FSV compris, RAFP exclu ;
+          convention EPR, hors produits et charges financières. Le récupérateur
+          ne connaît aucune adresse de fichier : il suit le lien du rapport
+          annuel depuis la page d'accueil et cherche les figures par leur
+          titre, un rapport changeant chaque année de numérotation de parties.
       - id: cor_cas_types
         titre: Cas types du COR (carrières de référence)
         url: https://www.cor-retraites.fr/simulateurs

@@ -43,6 +43,7 @@ from ..donnees.chargement import (
     journal_certification,
 )
 from ..donnees.depenses import SYSTEMES, DepensesRetraite
+from ..donnees.equilibre import POSTES, ComptesRetraite
 from ..donnees.regimes import charger_inventaire
 from ..donnees.population import Population
 from ..simulateur import Comparaison, Simulateur
@@ -827,6 +828,7 @@ class Contexte:
     base: Parametres = field(default_factory=Parametres)
     _instances: dict[Parametres, Simulateur] = field(default_factory=dict)
     _depenses: DepensesRetraite | None = None
+    _comptes: ComptesRetraite | None = None
     _population: Population | None = None
     _distribution: DistributionPensions | None = None
     _cout: object = None
@@ -841,6 +843,12 @@ class Contexte:
         if self._depenses is None:
             self._depenses = DepensesRetraite(self.base.racine_donnees)
         return self._depenses
+
+    def comptes(self) -> ComptesRetraite:
+        """Le second terme du bilan : ce que le système de retraite encaisse."""
+        if self._comptes is None:
+            self._comptes = ComptesRetraite(self.base.racine_donnees)
+        return self._comptes
 
     def population(self) -> Population:
         if self._population is None:
@@ -857,7 +865,8 @@ class Contexte:
         """Le coût agrégé des six systèmes — deux secondes de calcul, une fois."""
         if self._cout is None:
             self._cout = calculer_cout(
-                self.simulateur(), self.depenses(), self.population())
+                self.simulateur(), self.depenses(), self.population(),
+                self.comptes())
         return self._cout
 
     def echelle(self, saisie: Saisie) -> Echelle:
@@ -3071,6 +3080,60 @@ def _cout(contexte: Contexte) -> str:
             g.pourcentage(ligne.part_pib("notionnel_prospectif_employeur"), decimales=1),
         ])
 
+    # -- le solde : ce qui rentre, face à ce que chaque système ferait sortir --
+    # Le périmètre n'est plus celui des sections précédentes. Il est celui du
+    # COR — les seuls comptes où dépenses et ressources soient publiées
+    # ensemble —, et c'est ce qui permet de soustraire sans mélanger.
+    comptes = contexte.comptes()
+    solde = cout.solde
+    annees_solde = tuple(ligne.annee for ligne in solde.annees)
+    derniere_observee = solde.derniere_annee_observee
+    compte_observe = solde.annee(derniere_observee)
+    horizon_solde = solde.annee(solde.derniere_annee)
+    courbes_solde = (
+        g.Serie(
+            "Ressources du système de retraite",
+            tuple(ligne.ressources * 100 for ligne in solde.annees),
+            "var(--serie-5)",
+        ),
+        *(
+            g.Serie(
+                libelle,
+                tuple(ligne.depense(scenario) * 100 for ligne in solde.annees),
+                COULEURS_SCENARIOS[scenario],
+                tirets=scenario.startswith("notionnel_prospectif"),
+            )
+            for scenario, libelle in SCENARIOS
+            if scenario in ("actuel", "notionnel_prospectif",
+                            "notionnel_prospectif_employeur")
+        ),
+    )
+    lignes_solde = []
+    for scenario, libelle in SCENARIOS:
+        equilibre = solde.premiere_annee_equilibree(scenario)
+        lignes_solde.append([
+            escape(libelle),
+            g.pourcentage(compte_observe.solde(scenario), signe=True, decimales=2),
+            g.pourcentage(
+                solde.solde_moyen(scenario, solde.premiere_annee_projetee,
+                                  solde.derniere_annee),
+                signe=True, decimales=2),
+            g.nombre(compte_observe.coefficient(scenario), 2),
+            g.nombre(horizon_solde.coefficient(scenario), 2),
+            str(equilibre) if equilibre else "jamais",
+        ])
+
+    premiere_structure = max(
+        comptes.structure[poste.code].premiere_annee for poste in POSTES)
+    lignes_structure = [
+        [escape(poste.libelle),
+         g.pourcentage(comptes.part(poste.code, premiere_structure), decimales=1),
+         g.pourcentage(comptes.part(poste.code, derniere_observee), decimales=1),
+         "oui" if poste.contributive else "non"]
+        for poste in POSTES
+    ]
+    part_cotisee = comptes.part_contributive(derniere_observee)
+
     decennies = []
     for debut in range(1960, derniere + 1, 10):
         fin = min(debut + 9, derniere)
@@ -3471,6 +3534,178 @@ réellement engagée la même décennie. Elles remontent : plus on approche du
 présent, plus les carrières prises en compte ont été cotisées sous des règles
 proches des règles actuelles, et moins le compte notionnel s'en écarte.</p>
 
+<h2>Le solde, et non le coût</h2>
+<p class="chapeau">Tout ce qui précède dit ce qui SORT. Un système de
+répartition ne se juge pourtant pas à sa dépense mais à son solde : ce qui sort
+moins ce qui rentre. Cette section pose le second terme, et en tire la grandeur
+qui manquait — le <strong>coefficient d'équilibre</strong>, c'est-à-dire le
+facteur par lequel il faudrait multiplier toutes les pensions d'un système pour
+que son année tombe juste.</p>
+
+<div class="fiches">
+{g.fiche(f"Ressources du système de retraite, {derniere_observee}",
+         g.pourcentage(compte_observe.ressources, decimales=1))}
+{g.fiche(f"Solde {derniere_observee}",
+         _milliards(compte_observe.solde_meur("actuel"), 1))}
+{g.fiche(f"Part cotisée des ressources, {derniere_observee}",
+         g.pourcentage(part_cotisee, decimales=0))}
+{g.fiche(f"Solde moyen {solde.premiere_annee_projetee}-{solde.derniere_annee}, "
+         f"système actuel",
+         g.pourcentage(
+             solde.solde_moyen("actuel", solde.premiere_annee_projetee,
+                               solde.derniere_annee),
+             signe=True, decimales=1))}
+</div>
+
+<div class="note"><strong>Ces ressources ne viennent pas de la DREES, et ce
+n'est pas un choix.</strong> Les Comptes de la protection sociale, d'où sort
+toute la dépense de cette page, <strong>ne ventilent pas leurs ressources par
+risque</strong> : ils publient la dépense risque par risque et le financement de
+l'ensemble, maladie et famille comprises. Une « recette du risque vieillesse »
+n'est pas une donnée que quelqu'un aurait omis de produire — c'est une donnée
+sans définition comptable, les cotisations d'un régime polyvalent n'étant
+affectées à aucun risque. Ce qui existe, c'est le compte du <em>système de
+retraite</em> : dépenses et ressources du même ensemble de régimes, sous la même
+convention, que le COR consolide chaque année depuis les rapports à la
+Commission des comptes de la Sécurité sociale. On lui prend les deux colonnes,
+jamais une seule : un solde ne se fabrique pas en soustrayant deux
+périmètres.</div>
+
+<p>Ce périmètre — régimes légalement obligatoires, FSV compris, RAFP exclu —
+n'est ni celui du risque vieillesse-survie ni tout à fait celui de la
+répartition obligatoire :
+{g.pourcentage(comptes.depense(derniere), decimales=2)} du PIB en {derniere},
+contre {g.pourcentage(depenses.repartition(derniere) / depenses.pib(derniere),
+                      decimales=2)} pour la seconde et
+{g.pourcentage(depenses.part_pib(derniere), decimales=2)} pour le premier. Moins
+de trois dixièmes de point séparent les deux premières : c'est le meilleur
+recoupement dont ces séries disposent, et il vaut contrôle. Rien n'est mélangé
+pour autant — du modèle, cette section n'emprunte que le
+<strong>rapport</strong> des masses de pension, qui est sans dimension.</p>
+
+{g.graphique(
+    f"Ressources du système de retraite et coût de trois systèmes, "
+    f"{solde.premiere_annee}-{solde.derniere_annee}, en part du PIB",
+    annees_solde, courbes_solde, unite="% du PIB", decimales=1,
+    repere=derniere_observee, libelle_repere="projection")}
+<p class="discret">L'écart entre la courbe verte et celle d'un système EST son
+solde. Le système actuel a encaissé
+{_milliards(abs(compte_observe.solde_meur("actuel")), 1)} de moins qu'il n'a
+versé en {derniere_observee} — le COR, qui publie ce chiffre à part, dit la
+même chose —,
+et son déficit se creuse jusqu'à
+{g.pourcentage(horizon_solde.solde("actuel"), signe=True, decimales=1)} du PIB
+en {solde.derniere_annee}. Les deux scénarios tracés à côté sont les seuls qui
+décrivent une réforme applicable : leurs courbes quittent celle du système
+actuel après la bascule de {bascule}, et passent sous la courbe des ressources
+— c'est-à-dire à l'équilibre — en
+{solde.premiere_annee_equilibree("notionnel_prospectif") or "jamais"} et
+{solde.premiere_annee_equilibree("notionnel_prospectif_employeur") or "jamais"}.
+Les trois scénarios rétroactifs ne sont pas tracés : ils supposent recalculées
+des pensions servies depuis trente ans, et leur courbe, trois fois plus basse,
+écraserait tout le reste.</p>
+
+{g.tableau(
+    ["Système", f"Solde {derniere_observee}",
+     f"Solde moyen {solde.premiere_annee_projetee}-{solde.derniere_annee}",
+     f"Coefficient {derniere_observee}", f"Coefficient {solde.derniere_annee}",
+     "Équilibre atteint en"],
+    lignes_solde,
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    titre="Solde et coefficient d'équilibre de chaque système, en part du PIB",
+    entete_de_ligne=True,
+)}
+<p class="discret">Les deux premières colonnes sont en part du PIB. Le
+<strong>coefficient d'équilibre</strong> est sans unité : c'est le facteur par
+lequel il faudrait multiplier toutes les pensions du système pour que l'année
+tombe juste. Il vaut {g.nombre(compte_observe.coefficient("actuel"), 2)} pour le
+système actuel en {derniere_observee} — il faudrait rogner de
+{g.pourcentage(1 - compte_observe.coefficient("actuel"), decimales=1)} —, et
+{g.nombre(horizon_solde.coefficient("actuel"), 2)} en {solde.derniere_annee}.
+Au-dessus de un, le système encaisse plus qu'il ne verse et pourrait servir
+davantage. La dernière colonne ne regarde que les années projetées : le passé
+est ce qu'il a été.</p>
+
+<div class="note"><strong>Un coefficient supérieur à un n'est pas une économie,
+c'est une marge.</strong> Un système notionnel réel <em>applique</em> son
+coefficient : il ne laisse pas d'excédent dormir, il relève les pensions
+jusqu'à l'équilibre — ou les abaisse. Lire les
+{g.nombre(horizon_solde.coefficient("notionnel_prospectif"), 2)} du scénario 3
+comme une économie de {g.pourcentage(
+    1 - 1 / horizon_solde.coefficient("notionnel_prospectif"), decimales=0)}
+serait donc un contresens : à prélèvement inchangé, ce système-là servirait
+autant que le nôtre, mais <em>autrement réparti entre les carrières</em> — et
+c'est cette répartition, et elle seule, que le reste du site mesure. Le modèle
+calcule ce facteur ; il ne l'applique jamais, et toutes les courbes de coût de
+cette page sont celles d'un système qui ne se pilote pas.</div>
+
+<h3>De quoi ces ressources sont faites</h3>
+<p>Un compte notionnel ne sait créditer qu'une chose : une cotisation assise sur
+un revenu d'activité. Les ressources du système de retraite ne sont pas toutes
+de cette nature, et il faut le savoir avant de lire un coefficient
+d'équilibre.</p>
+
+{g.tableau(
+    ["Poste", f"Part en {premiere_structure}", f"Part en {derniere_observee}",
+     "Cotisée"],
+    lignes_structure,
+    ["", "nombre", "nombre", ""],
+    titre=f"Structure des ressources du système de retraite, "
+          f"{premiere_structure} et {derniere_observee}",
+    entete_de_ligne=True,
+)}
+{g.gloses([(poste.libelle, poste.glose) for poste in POSTES])}
+<p class="discret">{g.pourcentage(part_cotisee, decimales=0)} des ressources de
+{derniere_observee} sont cotisées, en comptant la contribution d'équilibre de
+l'État à ses propres fonctionnaires — le modèle la porte déjà au compte des
+scénarios 4 et 5, et c'est à ce titre qu'elle est ici comptée cotisée, malgré un
+taux fixé pour équilibrer plutôt que pour acquérir. Le reste est de l'impôt
+affecté, des transferts de la branche famille et de l'Unédic, des subventions
+d'équilibre à des régimes dont les cotisants ont disparu avant les pensionnés.
+La part cotisée <em>recule</em> : elle était de
+{g.pourcentage(comptes.part_contributive(premiere_structure), decimales=0)} en
+{premiere_structure}, l'impôt ayant pris le relais des cotisations patronales
+allégées.</p>
+
+<h3>Ce que ce solde ne dit pas</h3>
+<ul class="serree">
+  <li><strong>Les recettes ne réagissent à rien.</strong> Elles sont celles du
+  système actuel, encaissées ou projetées telles quelles. Le contrefactuel est
+  donc « à prélèvement inchangé, ce système tiendrait-il ? », ce qui est une
+  question bien posée — mais ce n'est pas la seule : le scénario 6, qui pose un
+  taux unique de 18 % pour tous, déplacerait aussi les recettes, et le
+  coefficient ne le dit pas.</li>
+  <li><strong>Le coefficient n'est pas appliqué.</strong> L'appliquer
+  changerait toutes les pensions par un même facteur, donc tous les niveaux de
+  cette page, sans toucher aux écarts entre carrières — qui sont l'objet du
+  modèle.</li>
+  <li><strong>L'année du retour à l'équilibre est fragile.</strong> Le déficit
+  actuel vaut {g.pourcentage(abs(compte_observe.solde("actuel")), decimales=2)}
+  du PIB, c'est-à-dire l'ordre de grandeur de l'écart que le pas de la grille
+  des générations introduit à lui seul autour de la bascule. La date à laquelle
+  un scénario prospectif croise la courbe des ressources se lit donc à quelques
+  années près, jamais à l'année.</li>
+  <li><strong>La garantie vieillesse du scénario 6 est comptée dans son
+  coût.</strong> Elle est pourtant financée par l'impôt et non par la
+  cotisation, comme l'est déjà une part des ressources actuelles ; son
+  coefficient mêle donc les deux financements, là où le tableau des coûts les
+  sépare.</li>
+  <li><strong>Les réserves ne sont pas comptées.</strong> Le système de retraite
+  détient des réserves financières que le COR chiffre à part ; un solde annuel
+  négatif peut être couvert par elles pendant des années. Le solde dit le flux,
+  jamais le stock.</li>
+  <li><strong>La projection est celle du COR</strong>, scénario de référence,
+  et elle porte les hypothèses de ce scénario — démographie de l'INSEE,
+  productivité, chômage. Ses ressources en part de PIB reculent parce que
+  l'assiette des cotisations progresse moins vite que le PIB : c'est une
+  hypothèse, écrite par lui, et non une mesure.</li>
+  <li><strong>Le compte observé vaut « haute », jamais « certifiée ».</strong>
+  Le COR consolide des comptes produits par d'autres — les régimes, via les
+  rapports à la Commission des comptes de la Sécurité sociale. C'est le
+  critère 1 du manifeste des sources, le même qui plafonne OpenFisca. Tout ce
+  qui passe ensuite par un rapport de masses reste <strong>estimé</strong>.</li>
+</ul>
+
 <h3>Ce que cette page ne dit pas</h3>
 <ul class="serree">
   <li><strong>Elle ne projette rien.</strong> La série s'arrête à {derniere},
@@ -3496,10 +3731,12 @@ proches des règles actuelles, et moins le compte notionnel s'en écarte.</p>
   antérieures à {cout.generations[0]} n'ont, dans ce modèle, aucune pension, et
   plusieurs régimes n'existaient pas encore. Les premières années reposent donc
   sur deux ou trois générations et la moitié des cas types.</li>
-  <li><strong>Le coût n'est pas le solde.</strong> Cette page dit ce qui a été
-  versé, jamais ce qui a été encaissé. Un système notionnel qui coûterait quatre
-  fois moins ne serait pas quatre fois plus « soutenable » : il servirait
-  quatre fois moins, ce qui est une autre affaire.</li>
+  <li><strong>Le coût n'est toujours pas le solde</strong>, même si la page
+  donne désormais les deux. Un système notionnel qui coûterait quatre fois moins
+  n'est pas quatre fois plus « soutenable » : il servirait quatre fois moins,
+  et un système piloté relèverait ses pensions jusqu'à l'équilibre. Le
+  coefficient de la section précédente dit exactement de combien ; les courbes
+  de coût, elles, ne l'appliquent jamais.</li>
 </ul>
 <p class="discret">Fiabilité de l'ensemble : la dépense observée est
 <strong>certifiée</strong> — recontrôlée contre l'API de la DREES à chaque

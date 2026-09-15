@@ -45,6 +45,7 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     journal_certification,
 )
 from retraite_notionnelle.donnees.depenses import SYSTEMES  # noqa: E402
+from retraite_notionnelle.donnees.equilibre import POSTES  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
@@ -75,7 +76,7 @@ STYLE = RACINE / "moteur" / "style.css"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 10
+VERSION = 11
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -150,6 +151,29 @@ def _depenses() -> dict:
         series[systeme.code] = charger_serie_annuelle(
             macro / "depenses_retraite_regimes.csv", "depenses_meur",
             nom=f"depenses_{systeme.code}", filtre={"regime": systeme.code})
+    return {nom: _serie(serie) for nom, serie in sorted(series.items())}
+
+
+def _comptes_retraite() -> dict:
+    """Le compte du système de retraite : dépenses, ressources, structure.
+
+    Ces séries ne servent à AUCUN calcul de pension non plus. Elles portent la
+    section « solde » de la page « Coût », et elles passent par le paquet et par
+    les mêmes chargeurs que tout le reste : le site ne lit jamais data/
+    directement.
+    """
+    macro = DONNEES / "reference" / "macro"
+    comptes = macro / "comptes_retraite.csv"
+    series = {
+        poste: charger_serie_annuelle(
+            comptes, "part_pib", nom=f"comptes_retraite_{poste}",
+            filtre={"poste": poste})
+        for poste in ("depenses", "ressources")
+    }
+    for poste in POSTES:
+        series[poste.code] = charger_serie_annuelle(
+            macro / "structure_ressources_retraite.csv", "part",
+            nom=f"structure_{poste.code}", filtre={"poste": poste.code})
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
 
 
@@ -648,6 +672,7 @@ def construire() -> bytes:
         "majorations_enfants": _majorations_enfants(),
         "surcote_parentale": _surcote_parentale(),
         "depenses": _depenses(),
+        "comptes_retraite": _comptes_retraite(),
         "population": _population(),
         "effectifs_retraites": _effectifs_retraites(),
         "distribution_pensions": _distribution_pensions(),

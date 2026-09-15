@@ -24,9 +24,9 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py` (plus de trois mille
 lignes) et dans le portage `moteur/js/` (douze mille lignes), puis dans les
-témoins. Les actions 1 à 3 ne touchent que les données et la page Coût ; les
-actions 7, 9 et 10 touchent les deux moteurs, comme l'a fait l'action 5, et
-l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
+témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
+les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
+et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
 
 ---
 
@@ -482,7 +482,7 @@ population la plus nombreuse. Et les bonifications de SERVICE — dépaysement,
 campagne, cinquième du sapeur-pompier —, qui étaient hors champ avant cette
 action et le restent. `limites.md` porte les trois.
 
-### 6. Le solde, et non le coût — `à faire`
+### 6. Le solde, et non le coût — `fait`
 
 **Pourquoi.** La page Coût dit ce qui est versé, jamais ce qui est encaissé
 (`cout.py`, réserve 4). Un système notionnel réel se définit par son
@@ -495,6 +495,66 @@ sont calculables, et `limites.md` §5 le signale comme hors champ.
 **Marche.** Une série de recettes à côté de `data/reference/macro/depenses_retraite.csv`,
 le solde observé, puis le coefficient d'équilibre qu'exigerait chaque scénario
 année par année. Ne touche pas les moteurs de pension.
+
+**Ce que ça a déplacé.** Une source de plus — les classeurs de données du
+rapport annuel du COR —, 270 valeurs versées au niveau `haute` ou `projetee`,
+deux fichiers de référence, un module de chargement de chaque côté du portage,
+une section entière de la page Coût, et vingt-cinq tests. Aucun chiffre existant
+ne bouge : pas une pension, pas un coût, pas un témoin. C'est un ajout pur, et
+c'était la condition pour que ce qui précède reste comparable.
+
+- *La source que l'action annonçait n'existe pas, et c'est le premier
+  résultat.* « DREES, Comptes de la protection sociale, ressources par risque » :
+  il n'y a pas de ressources par risque. Le jeu 305 ne porte que des postes `E`,
+  c'est-à-dire des prestations ; son classeur annexe donne bien les ressources,
+  mais de la protection sociale TOUT ENTIÈRE, maladie et famille comprises. Ce
+  n'est pas un oubli du producteur : une « recette du risque vieillesse » n'a
+  pas de définition comptable, les cotisations d'un régime polyvalent n'étant
+  affectées à aucun risque. La leçon vaut au-delà de cette action — une source
+  inscrite dans une feuille de route n'a pas été vérifiée du seul fait qu'elle a
+  été nommée.
+- *Ce qui existe est un autre compte, et il fallait en prendre les DEUX
+  colonnes.* Le COR consolide chaque année, depuis les rapports à la CCSS,
+  dépenses et ressources du système de retraite sur un même périmètre — régimes
+  légalement obligatoires, FSV compris, RAFP exclu. Prendre ses ressources et
+  les retrancher de la dépense DREES aurait fabriqué un solde en soustrayant
+  deux périmètres ; on prend donc sa dépense aussi, et le solde du scénario 1
+  redonne alors EXACTEMENT le solde publié — 5,1 milliards de besoin de
+  financement en 2025, au dixième près. Les deux périmètres se recoupent à
+  0,28 point de PIB en 2024 (0,61 en 2002) : c'est un contrôle externe, pas une
+  identité, et seul le RAPPORT des masses, sans dimension, passe de l'un à
+  l'autre.
+- *Le coefficient d'équilibre renverse la lecture des scénarios prospectifs.*
+  Il vaut 0,99 pour le système actuel en 2025 — il faudrait rogner de 1,2 % —
+  et 0,84 en 2070. Il vaut 1,91 pour le scénario 3 en 2070. Lire ces 1,91 comme
+  une économie de 48 % est un contresens : un système notionnel réel APPLIQUE
+  son coefficient, il ne laisse pas dormir un excédent. À prélèvement inchangé,
+  le scénario 3 servirait donc autant que le système actuel, autrement réparti
+  entre les carrières — ce qui est exactement ce que le reste du site mesure, et
+  ce que la page ne disait pas. Le modèle calcule ce facteur ; il ne l'applique
+  toujours pas, et c'est désormais le seul cran qui manque.
+- *Le système actuel ne repasse jamais à l'équilibre sur la fenêtre du COR* —
+  solde moyen de −1,13 % du PIB de 2026 à 2070 —, là où les deux réformes
+  applicables y repassent, d'autant plus tard que la part patronale entre au
+  compte. L'année du croisement, elle, ne vaut pas mieux que « quelques années
+  près » : le déficit actuel fait 0,17 point de PIB, c'est-à-dire l'ordre de
+  grandeur de l'écart que le pas de la grille des générations introduit à lui
+  seul autour de la bascule. Le dire était plus utile que de l'arrondir.
+- *Un quart des ressources n'est pas cotisé, et cette part grandit.* 77,3 % des
+  ressources de 2025 sont des cotisations — en comptant la contribution
+  d'équilibre de l'État à ses fonctionnaires, que le modèle porte déjà au compte
+  des scénarios 4 et 5 —, contre 79,6 % en 2004. Les impôts et taxes affectés
+  passent de 7,1 % à 15,3 % : l'État a exonéré des cotisations patronales, puis
+  remboursé par l'impôt. Un compte notionnel ne sait créditer que la part
+  cotisée ; c'est ce qui borne la lecture du coefficient, et il fallait le
+  chiffrer pour pouvoir le dire.
+
+**Ce qui reste dehors, et pourquoi.** L'APPLICATION du coefficient, qui est le
+chantier suivant et qui touche, lui, les deux moteurs. Les RÉSERVES financières
+des régimes, que le COR chiffre à part : le solde dit le flux, jamais le stock.
+Et la RÉACTION des recettes aux scénarios — le 6, qui pose un taux unique de
+18 %, déplacerait aussi les ressources, et le coefficient suppose celles du
+système actuel. `limites.md` §5 porte les trois.
 
 ### 7. Saisir un relevé de carrière réel sur le site — `à faire`
 
@@ -612,6 +672,40 @@ alignés DISTINCTS (proratisation croisée, LURA), qui reste hors du modèle.
 les dix profils de l'oracle, comme la MSA, et `limites.md` §3 dit ce que la
 correction a déplacé.
 
+### 11. Appliquer le coefficient d'équilibre — `à faire`
+
+**Pourquoi.** Ouverte par l'action 6, qui s'arrête juste avant. Le coefficient
+d'équilibre de chaque système est désormais CALCULÉ, année par année, de 2002 à
+2070 ; il n'est pas APPLIQUÉ. Un système notionnel réel ne laisse pas dormir un
+excédent : il relève les pensions jusqu'à l'équilibre, ou les abaisse, par un
+facteur commun à toutes les pensions de l'année et un fonds de réserve qui
+lisse. Tant que ce facteur n'est pas appliqué, les courbes de la page Coût sont
+celles d'un système qui ne se pilote pas, et le coefficient de 1,91 du
+scénario 3 en 2070 se lit trop facilement comme une économie de 48 %.
+
+**Sources.** Aucune à récupérer : tout est là. Le mécanisme, en revanche, se
+décrit — le coefficient suédois (`balansindex`), qui n'ajuste que le
+dénominateur du ratio actif/passif, et le coefficient italien, qui indexe le
+capital notionnel sur le PIB, ne font pas la même chose. Le COR décrit les deux
+dans ses fiches ; `hypotheses_projection.yaml` est déjà la trace d'un emprunt de
+cette nature.
+
+**Fichiers.** `src/retraite_notionnelle/cout.py` (la trajectoire et le solde) ;
+`src/retraite_notionnelle/scenarios/` si l'ajustement doit porter sur la pension
+individuelle et non seulement sur l'agrégat ; `moteur/js/` en regard ; les
+témoins ; `limites.md` §5.
+
+**Marche.** D'abord au seul niveau de l'AGRÉGAT — une variante de la page Coût
+où chaque système est ramené à l'équilibre —, ce qui ne touche pas les moteurs
+de pension et se mesure aussitôt. Ensuite seulement, si l'écart le justifie,
+l'ajustement porté à la pension individuelle, qui les touche tous les deux. Le
+piège à nommer d'avance : un facteur commun ne déplace AUCUN écart entre
+carrières, si bien qu'appliquer le coefficient ne change rien à ce que le site
+mesure page par page — et change tout à ce que la page Coût affiche.
+
+**Fin.** La page Coût porte les deux lectures — système piloté, système non
+piloté — et dit laquelle répond à quelle question.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -710,3 +804,25 @@ correction a déplacé.
   génération : celle des durées militaires se lit à l'année où l'ancienne durée
   est atteinte, et le supposer aurait valu un an et demi d'erreur. L'action 6,
   le solde plutôt que le coût, est la plus haute qui ne soit pas commencée.
+- **Septembre 2026, action 6.** Faite. Une source de plus — les classeurs de
+  données du rapport annuel du COR —, 270 valeurs, deux fichiers de référence,
+  une section de la page Coût, vingt-cinq tests, et aucun chiffre existant
+  déplacé. Le détail est sous l'action. Quatre choses à en retenir pour la
+  suite. **La source qu'une action annonce n'a pas été vérifiée du seul fait
+  qu'elle a été nommée** : celle-ci n'existe pas, les Comptes de la protection
+  sociale ne ventilant pas leurs ressources par risque, et l'action n'a
+  commencé qu'une fois ce constat fait. Quand on change de compte, **on en
+  prend toutes les colonnes** : prendre les ressources du COR et les retrancher
+  de la dépense DREES aurait fabriqué un solde en soustrayant deux périmètres,
+  alors qu'en prenant aussi sa dépense, le solde du scénario 1 redonne
+  exactement le solde publié — et le voisinage des deux périmètres devient un
+  contrôle au lieu d'être un risque. **Une grandeur nouvelle peut renverser la
+  lecture des anciennes sans en changer un chiffre** : le coefficient
+  d'équilibre ne déplace aucune courbe de coût, et il interdit pourtant de lire
+  celles des scénarios prospectifs comme des économies. Enfin, **un chiffre
+  dont on connaît la marge se publie avec sa marge** : l'année du retour à
+  l'équilibre est du même ordre de grandeur que l'artefact du pas de la grille,
+  et le dire valait mieux que de l'arrondir ou de la taire. L'action 7, la
+  saisie d'un relevé de carrière réel, est la plus haute qui ne soit pas
+  commencée ; elle ouvre aussi, à côté d'elle, un chantier que celle-ci laisse :
+  APPLIQUER le coefficient d'équilibre, qui touche les deux moteurs.

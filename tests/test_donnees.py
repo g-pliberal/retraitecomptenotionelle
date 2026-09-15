@@ -269,6 +269,11 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "population_active_projetee": "macro/population_active.csv",
         "depenses_retraite": "macro/depenses_retraite.csv",
         "depenses_retraite_regimes": "macro/depenses_retraite_regimes.csv",
+        # Les deux moitiés du compte du système de retraite, observées puis
+        # projetées : un même fichier, deux niveaux, comme la pyramide des âges.
+        "comptes_retraite": "macro/comptes_retraite.csv",
+        "comptes_retraite_projetes": "macro/comptes_retraite.csv",
+        "structure_ressources_retraite": "macro/structure_ressources_retraite.csv",
         "productivite": "macro/productivite.csv",
         "plafond": "macro/plafond_securite_sociale.csv",
         "plafond_ancien": "macro/plafond_securite_sociale.csv",

@@ -51,6 +51,26 @@
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-27",
    "valeurs": 76
   },
+  "comptes_retraite": {
+   "ajoutees": 48,
+   "colonne": "part_pib",
+   "corrigees": 0,
+   "empreinte": "ec20cca8112cb3b5",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "COR, rapport annuel, comptes du système de retraite (rapports à la CCSS consolidés)",
+   "valeurs": 48
+  },
+  "comptes_retraite_projetes": {
+   "ajoutees": 90,
+   "colonne": "part_pib",
+   "corrigees": 0,
+   "empreinte": "c44a6b03a69ad80a",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "COR, rapport annuel, scénario de référence",
+   "valeurs": 90
+  },
   "decote_fonction_publique_coefficient": {
    "ajoutees": 0,
    "colonne": "coefficient",
@@ -590,6 +610,16 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
    "valeurs": 20
+  },
+  "structure_ressources_retraite": {
+   "ajoutees": 132,
+   "colonne": "part",
+   "corrigees": 0,
+   "empreinte": "22f206f06f991dc0",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "COR, rapport annuel, structure des ressources du système de retraite",
+   "valeurs": 132
   },
   "taux_cotisation_alignes": {
    "ajoutees": 0,
