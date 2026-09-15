@@ -5353,14 +5353,6 @@ pas :
 
 ### Ce qu'elle ne valide pas, et qui reste assumé
 
-- **Les droits hérités.** La CNAV redistribue les comptes de ceux qui meurent
-  avant la liquidation, ce qui relève ses coefficients de conversion de **7 %
-  en 2012 et de 4 % en 2050** ; c'est le mécanisme des *arvsvinster* suédois.
-  Le dépôt ne le fait pas, et c'est délibéré : il contredirait la prémisse
-  annoncée en tête du `README` — au franc le franc des cotisations réellement
-  versées. Conséquence à connaître : **les pensions notionnelles affichées ici
-  sont, sur ce seul point, 4 à 7 % plus basses qu'elles ne le seraient dans un
-  système notionnel réel**, dans les six scénarios et sans exception.
 - **Le bouclage macroéconomique.** Le CEPII calcule en équilibre général : ses
   réformes déplacent le taux d'intérêt, l'emploi et la croissance, qui
   rétroagissent sur l'équilibre des régimes. Le dépôt est comptable de bout en
