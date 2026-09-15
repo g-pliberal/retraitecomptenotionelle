@@ -1400,6 +1400,65 @@ institutions:
           son numéro : chercher le seul numéro perdait le contrôle même qui rend
           la lacune démontrable.
 
+      - id: dila_legi_contribution_employeur
+        titre: >-
+          Contribution employeur de la RATP, des IEG, de la SNCF d'avant 2007,
+          des mines, de l'Opéra et de la Comédie-Française
+        url: https://echanges.dila.gouv.fr/OPENDATA/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/contribution_employeur_public.csv
+        recuperation: scripts/fetch/dila_legi_contribution_employeur.py
+        note: >-
+          Six régimes que docs/limites.md rangeait sous une seule ligne — « rien
+          / tout, aucune série de taux employeur publiée sous une forme
+          exploitable » — et dont le Journal officiel portait la contribution.
+          163 valeurs, toutes au niveau certifiee, là où la part patronale était
+          celle d'un salarié du privé de la même année.
+          DEUX FORMES DE TEXTE. L'ARRÊTÉ ANNUEL, pour la RATP (2007-2025,
+          article 2 du décret n° 2005-1637) et les IEG (2005-2020, article 3 du
+          décret n° 2005-278) : ces deux régimes ont été adossés au régime
+          général, l'employeur verse ce que les mêmes salariés y coûteraient, et
+          un arrêté l'arrête chaque année. C'est la mécanique de la composante
+          T1 de la SNCF, et la même convention de date — le taux DÉFINITIF de
+          l'exercice, non le provisionnel appelé d'avance —, à quoi s'ajoute la
+          règle du texte le plus récent : l'arrêté du 23 juin 2020 ramène le
+          taux 2019 de la RATP de 19,20 % à 19,18 %.
+          LA VERSION DATÉE D'UN ARTICLE, pour la SNCF d'avant 2007 (28,44 %,
+          II de l'article 8 du décret n° 91-613, abrogé le 29 juin 2007), les
+          mines (7,75 %, article 52 du décret n° 46-2769 puis article 90 du même
+          décret depuis 1993), l'Opéra et la Comédie-Française (II des articles
+          6 et 7 du décret n° 91-613). Là, la règle du dépôt s'applique : le
+          taux en vigueur au 1er janvier, chaque taux daté par ce qui le suit,
+          comme pour la CNRACL.
+          OÙ CHAQUE SÉRIE S'ARRÊTE, ET POURQUOI. La RATP n'a pas de taux avant
+          2007 : elle payait les pensions sans qu'un texte en fixe un. Les IEG
+          s'arrêtent en 2020 parce que le texte cesse de chiffrer — l'arrêté du
+          29 décembre 2021 remplace la fixation annuelle par une formule que la
+          caisse applique sans la publier, même mur que la composante T2. La
+          SNCF s'arrête à 2006 : 2007 appartient déjà à la somme T1 + T2, que
+          son arrêté date « pour l'année 2007 ».
+          CE QUE CES TAUX LAISSENT DEHORS. Ce que verse l'EMPLOYEUR, et rien
+          d'autre : les droits spécifiques que l'État finance pour la RATP
+          jusqu'à 45 000 agents, les 22 % des salaires qu'il verse aux mines,
+          la subvention de l'Opéra n'y sont pas. Même convention que pour la
+          SNCF, dont T1 + T2 laisse dehors la subvention d'équilibre.
+          L'ASSIETTE EST CELLE DE LA RETENUE dans les six cas — « 15,60 %, soit
+          7,75 % à la charge des employeurs et 7,85 % à la charge des
+          salariés » —, ce qui rend leur somme lisible.
+          IL LIT L'INDEX ET NON LE DUMP. Le dump global de la DILA n'a pas été
+          régénéré depuis juillet 2025 ; l'arrêté RATP du 13 mars 2026, qui
+          porte l'année 2025, n'est que dans les incréments dont l'index publié
+          par le dépôt est tenu à jour. Lire le dump serait ici plus lent ET
+          moins complet.
+          CE QU'ON NE PEUT PAS AFFIRMER. Que la base garde toutes les versions :
+          la version de l'Opéra court vingt ans sans coupure, et rien ne prouve
+          qu'aucun décret n'a été perdu. Les deux bouts de chaque chaîne, eux,
+          sont tenus par un texte — le décret n° 91-159 du 12 février 1991 porte
+          déjà 8,80 %, celui du 27 février 1991 déjà 28,44 %, l'article 8 est
+          explicitement abrogé en 2007 et l'article 52 explicitement repris par
+          l'article 90 en 1993.
+
       - id: dila_legi_decote_fonction_publique
         titre: Décote de la fonction publique, montée en charge 2006-2019
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/

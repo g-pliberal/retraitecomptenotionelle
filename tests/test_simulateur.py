@@ -662,14 +662,14 @@ def test_le_regime_unique_herite_de_la_repartition_de_ses_pivots(simulateur):
 
 
 def test_le_repli_est_compte_quand_aucune_serie_n_existe(simulateur):
-    """Aucun taux employeur SNCF avant 2007 : le modèle estime, et il le dit.
+    """Aucun taux employeur SNCF avant 1992 : le modèle estime, et il le dit.
 
     La part patronale est alors celle d'un salarié du privé de la même année.
     C'est une estimation, pas une somme retrouvée : elle est comptée comme telle
     dans le décompte des années, et la fiabilité du scénario retombe.
     """
     carriere = simulateur.carriere_simple(
-        annee_naissance=1955, sexe="H", affiliation="agent_sncf",
+        annee_naissance=1940, sexe="H", affiliation="agent_sncf",
         age_debut=20, age_liquidation=50,
     )
     comparaison = simulateur.simuler(carriere)
@@ -679,6 +679,24 @@ def test_le_repli_est_compte_quand_aucune_serie_n_existe(simulateur):
     assert employeur.a_un_employeur
     assert (comparaison.notionnel_retroactif_employeur.fiabilite
             < comparaison.notionnel_retroactif.fiabilite)
+
+
+def test_une_carriere_sncf_a_cheval_sur_1992_melange_les_deux(simulateur):
+    """Le II de l'article 8 du décret de 1991 coupe cette carrière en deux.
+
+    Elle était entièrement en repli tant que le dépôt n'avait pas lu ce texte.
+    La moitié qui l'a quitté vaut 28,44 % de contribution employeur là où le
+    repli lui prêtait l'effort d'un salarié du privé.
+    """
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1955, sexe="H", affiliation="agent_sncf",
+        age_debut=20, age_liquidation=50,
+    )
+    employeur = simulateur.simuler(carriere).contribution_employeur
+    assert set(employeur.annees_par_origine) == {"repli", "appelee"}
+    # 1975-1991 estimées, 1992-2004 lues dans le décret.
+    assert employeur.annees_par_origine["repli"] == 17
+    assert employeur.annees_trouvees == 13
 
 
 def test_la_part_employeur_est_decomposee(simulateur):

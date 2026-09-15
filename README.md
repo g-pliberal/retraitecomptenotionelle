@@ -269,7 +269,7 @@ print(simulateur.simuler(carriere).tableau())
 | Droits acquis respectés à la bascule | Conversion à l'âge de référence par défaut — le seul endroit où l'âge de départ pèse sur les droits d'avant la bascule, donc ce qui empêche de gagner à partir tôt ; l'âge de départ effectif est offert en variante, et la cascade de calcul est affichée |
 | Statuts comparables au même étalon | Les fiches publiques ne portent que la retenue de l'agent ; elle est alignée sur l'effort contributif total du privé, sans quoi on compare un demi-effort à un effort entier |
 | Part salariale et part patronale distinguées, pour tous | `part_salariale` dans chaque fiche de salariés — 40,87 % au régime général en 2023, 40 % à l'Agirc-Arrco —, et `sans_employeur` sur les statuts qui cotisent seuls |
-| Part employeur du public, quand elle est publiée | Taux implicite de l'État 1995-2005, taux appelé par le CAS « Pensions » 2006-2026, CNRACL depuis 1948, SNCF 2007-2018 — portés au compte par les scénarios 4 et 5, et le modèle dit sur combien d'années il a dû s'en passer |
+| Part employeur du public, quand elle est publiée | Neuf régimes : taux implicite de l'État 1995-2005, taux appelé par le CAS « Pensions » 2006-2026, CNRACL depuis 1948, SNCF 1992-2018, RATP 2007-2025, IEG 2005-2020, mines depuis 1984, Opéra de Paris et Comédie-Française depuis 1992 — portés au compte par les scénarios 4 et 5, et le modèle dit sur combien d'années il a dû s'en passer |
 | Capitalisation hors comparaison | Le RAFP et les assurances sociales de 1930 sont PROVISIONNÉS : leur rente sort d'un placement, non de la cotisation des actifs. Une réforme de la répartition ne les atteint pas — ils sont donc retirés des **six** totaux et servis à l'identique, à leur propre barème, affichés à côté |
 | Le mois, là où le droit le date | Date de liquidation, année d'entrée et année de départ portées au compte au prorata de leurs mois, trimestres bornés aux trimestres civils écoulés, diviseur lu à l'âge exact, circulaire de revalorisation en vigueur à la date, générations que la loi coupe au 1<sup>er</sup> juillet 1951 et au 1<sup>er</sup> septembre 1961. Le pas du moteur reste l'année, parce que les séries le sont — voir [« Le mois, là où le droit le date »](docs/limites.md#le-mois-là-où-le-droit-le-date) |
 | Trimestres acquis par le revenu, pas par le temps | 150 SMIC horaires depuis 2014, 200 avant : un temps très partiel valide moins de quatre trimestres |
@@ -494,7 +494,14 @@ séries l'en dispensent :
   caisse depuis 1947 et publie son taux depuis 1948 ; l'État a un taux
   *implicite* reconstitué par le PLF 2011 depuis 1995 ; depuis 2006 le taux est
   appelé par décret — 49,90 %, puis 74,28 % de 2013 à 2024, 78,28 % en 2025 et
-  **82,28 % en 2026** ; la SNCF publie ses composantes T1 et T2 de 2007 à 2018.
+  **82,28 % en 2026** ; la SNCF publie ses composantes T1 et T2 de 2007 à 2018,
+  et son taux d'avant est dans le décret qui fixe les cotisations des régimes
+  spéciaux — 28,44 % de 1992 à 2006. **Six régimes s'y sont ajoutés**, tous lus
+  au *Journal officiel* : la RATP (2007-2025) et les IEG (2005-2020), dont
+  l'employeur verse depuis l'adossement ce que les mêmes salariés coûteraient
+  au régime général et à l'Agirc-Arrco, arrêté par arrêté ; les mines, 7,75 % à
+  la charge de l'exploitant sans bouger depuis 1984 ; l'Opéra de Paris et la
+  Comédie-Française, 8,80 % en 1992 et 9,56 % en 2026.
 
 ```python
 comparaison = simulateur.simuler(simulateur.carriere_simple(
@@ -542,13 +549,19 @@ qu'un fonctionnaire acquiert 82 % de son traitement en droits nouveaux, mais
 qu'il faut aujourd'hui cette contribution pour payer les pensions
 d'aujourd'hui — démographie et engagements hérités compris.
 
-Trois limites à connaître. Pour le public, la série n'existe que pour trois
-régimes : douze autres voient leur part patronale **estimée** par l'effort d'un
-salarié du privé, et le modèle affiche sur combien d'années. L'État n'est
-couvert qu'à partir de 1995. Enfin, à compter de la bascule le régime unique
-remplace tous les régimes : après 2026 la part patronale est celle du statut
-pivot privé, et non celle d'un employeur public qui, par construction, n'existe
-plus.
+Quatre limites à connaître. Pour le public, la série couvre neuf régimes :
+sept autres — FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg,
+SEITA, chemins de fer secondaires — voient leur part patronale **estimée** par
+l'effort d'un salarié du privé, et le modèle affiche sur combien d'années.
+Aucun des neuf n'est couvert sur toute sa durée : l'État commence en 1995, la
+RATP en 2007, les mines en 1984, et les IEG s'arrêtent en 2020, où le texte
+cesse de chiffrer. Ces taux sont ceux de l'**employeur**, non ceux de
+l'équilibre — la contribution que l'État verse par ailleurs à la RATP, aux
+mines et à l'Opéra n'y est pas —, à la seule exception de la ligne de l'État,
+dont le taux est précisément un taux d'équilibre. Enfin, à compter de la
+bascule le régime unique remplace tous les régimes : après 2026 la part
+patronale est celle du statut pivot privé, et non celle d'un employeur public
+qui, par construction, n'existe plus.
 
 Un quatrième réglage conserve l'ancienne convention, comme contrefactuel :
 `part_cotisation=totale_alignee` prête au public la part employeur du privé,
@@ -593,9 +606,9 @@ de chaque cas type :
 | 1. Système actuel | 14 987 Md € | réf. |
 | 2. Notionnel rétroactif, part salariale | 3 077 Md € | −79,5 % |
 | 3. Notionnel dès 2026, part salariale | 14 987 Md € | +0,0 % |
-| 4. Notionnel rétroactif, salariale + patronale | 7 211 Md € | −51,9 % |
+| 4. Notionnel rétroactif, salariale + patronale | 7 221 Md € | −51,8 % |
 | 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 244 Md € | −51,7 % |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 254 Md € | −51,6 % |
 | *dont garantie vieillesse du 6, vue par les cas types* | *33 Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
@@ -619,7 +632,7 @@ retraités de sa caisse, publié par la DREES et lu année par année : l'agent 
 conduite pèse 0,7 % et non 8,3 %, les quatre carrières du privé 64 % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
 qu'argumenté — elle donnait −75,9 % au scénario 2 contre −79,5 %, et −55,9 % au
-scénario 4 contre −51,9 %. Le sens du biais n'était donc pas celui qu'on
+scénario 4 contre −51,8 %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
@@ -918,7 +931,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          618 tests Python
+tests/                          620 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

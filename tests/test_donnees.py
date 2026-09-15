@@ -342,6 +342,20 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/contribution_employeur_public.csv",
         "employeur_public_sncf_textes":
             "legislation/contribution_employeur_public.csv",
+        # Les six régimes que le Journal officiel portait sans qu'on l'ait lu :
+        # RATP, IEG, SNCF d'avant 2007, mines, Opéra, Comédie-Française.
+        "employeur_public_sncf_avant_2007":
+            "legislation/contribution_employeur_public.csv",
+        "employeur_public_ratp":
+            "legislation/contribution_employeur_public.csv",
+        "employeur_public_ieg":
+            "legislation/contribution_employeur_public.csv",
+        "employeur_public_mines":
+            "legislation/contribution_employeur_public.csv",
+        "employeur_public_opera":
+            "legislation/contribution_employeur_public.csv",
+        "employeur_public_comedie_francaise":
+            "legislation/contribution_employeur_public.csv",
         "effectifs_retraites": "regimes/effectifs_retraites.csv",
         "distribution_pensions": "macro/distribution_pensions.csv",
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",
@@ -1278,8 +1292,49 @@ def employeurs() -> ContributionsEmployeurPubliques:
     return ContributionsEmployeurPubliques(RACINE_DONNEES)
 
 
-def test_les_trois_regimes_publies_sont_charges(employeurs):
-    assert employeurs.regimes == ("cnracl", "fonction_publique_etat", "sncf")
+def test_les_regimes_publies_sont_charges(employeurs):
+    """Trois régimes hier, neuf aujourd'hui : six sont venus du Journal officiel."""
+    assert employeurs.regimes == (
+        "cnracl", "comedie_francaise", "fonction_publique_etat", "ieg", "mines",
+        "opera_de_paris", "ratp", "sncf",
+    )
+
+
+def test_les_six_series_lues_au_journal_officiel_sont_certifiees(employeurs):
+    """Repères tirés des textes eux-mêmes, un par série.
+
+    Ils tiennent lieu de recette : si un récupérateur se met à lire le taux
+    provisionnel au lieu du définitif, ou la part salariale au lieu de la part
+    patronale, c'est ici que cela se voit — les deux erreurs sont arrivées en
+    écrivant ``dila_legi_contribution_employeur.py``.
+    """
+    reperes = (
+        # RATP : arrêté du 21 février 2024, taux DÉFINITIF de l'exercice 2023.
+        # Le même arrêté porte 19,19 % en provisionnel pour 2024.
+        ("ratp", 2023, 0.1902),
+        # RATP : l'arrêté du 23 juin 2020 corrige celui du 3 mars, qui disait
+        # 19,20 % — c'est le plus récent qui l'emporte.
+        ("ratp", 2019, 0.1918),
+        # IEG : arrêté du 9 avril 2021, délibération de la caisse pour 2020.
+        ("ieg", 2020, 0.2970),
+        # SNCF : II de l'article 8 du décret n° 91-613, « 36,29 p. 100, soit
+        # 28,44 p. 100 à la charge de l'employeur ».
+        ("sncf", 2000, 0.2844),
+        # Mines : « 7,75 % à la charge des employeurs et 7,85 % à la charge des
+        # salariés » — c'est le premier des deux qu'on veut.
+        ("mines", 1990, 0.0775),
+        ("mines", 2020, 0.0775),
+        # Opéra et Comédie-Française : II des articles 6 et 7 du même décret.
+        ("opera_de_paris", 1995, 0.0880),
+        ("opera_de_paris", 2026, 0.0956),
+        ("comedie_francaise", 2019, 0.0930),
+    )
+    for regime, annee, attendu in reperes:
+        contribution = employeurs.taux(regime, annee)
+        assert contribution.taux == pytest.approx(attendu), (regime, annee)
+        assert contribution.nature == "appelee", (regime, annee)
+        assert contribution.fiabilite is Fiabilite.CERTIFIEE, (regime, annee)
+        assert not contribution.projetee, (regime, annee)
 
 
 def test_les_taux_appeles_par_l_etat_sont_ceux_des_decrets(employeurs):
@@ -1304,8 +1359,15 @@ def test_avant_la_premiere_annee_rien_n_est_invente(employeurs):
     """L'État ne versait aucune cotisation en 1960 : ne pas lui en prêter une."""
     assert employeurs.taux("fonction_publique_etat", 1994) is None
     assert employeurs.taux("cnracl", 1947) is None
-    assert employeurs.taux("sncf", 2006) is None
-    assert employeurs.taux("ratp", 2020) is None
+    # La SNCF est couverte depuis 1992 seulement : avant, le taux employeur
+    # n'est dans aucun texte que la base garde.
+    assert employeurs.taux("sncf", 1991) is None
+    # La RATP payait les pensions sans qu'aucun texte fixe un taux, jusqu'à
+    # l'adossement de 2006 — le cas de l'État avant son compte d'affectation.
+    assert employeurs.taux("ratp", 2006) is None
+    # Les IEG s'arrêtent en 2020, où le texte cesse de chiffrer ; mais un taux
+    # prolongé n'est pas rien, et c'est le contrôle d'à côté qui le dit.
+    assert employeurs.taux("ieg", 2004) is None
 
 
 def test_au_dela_de_la_serie_le_dernier_taux_est_prolonge(employeurs):
