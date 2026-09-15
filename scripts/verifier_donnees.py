@@ -305,27 +305,35 @@ def _serie_json(nom_fichier: str, script: str) -> dict[str, float]:
 
 
 #: Régimes dont la cotisation se lit ANNÉE PAR ANNÉE dans les barèmes datés
-#: d'OpenFisca-France, et la série du fichier brut qui porte chacun. Le régime
-#: général et les salariés agricoles partagent la même cotisation vieillesse
-#: (L. 741-9 renvoie aux taux du régime général) ; les artisans et les
-#: commerçants ont chacun leur série jusqu'à l'absorption dans le RSI, qui
+#: d'OpenFisca-France, et la série du fichier brut qui porte chacun. Les
+#: salariés agricoles y portent la série du régime général, faute de mieux :
+#: c'est vrai depuis 2014, où le II de l'article D. 741-35 du code rural renvoie
+#: à l'article D. 242-4, et faux avant — leur employeur payait un point de moins,
+#: ce que la lecture du Journal officiel a montré. Ces lignes ne servent donc
+#: plus qu'aux années que cette lecture ne couvre pas, d'avant 1980. Les artisans
+#: et les commerçants ont chacun leur série jusqu'à l'absorption dans le RSI, qui
 #: reprend celle des artisans — identiques depuis l'alignement de 1973 —,
 #: puis une cotisation déplafonnée depuis 2014.
 TAUX_ANNUELS = (
     # régime, série plafonnée, série déplafonnée, première et dernière année
     ("regime_general", "serie", "serie", 1967, None),
     ("msa_salaries", "serie", "serie", 1967, None),
-    # Les cultes cotisent au taux du régime général (R. 382-89 et R. 382-90),
-    # et les caisses de Mayotte et de Saint-Pierre-et-Miquelon, dont les taux
-    # propres ne sont pas dans l'index, portent ceux du régime général en
-    # tenant lieu : leurs fiches recopiaient ses moyennes, elles suivent sa
-    # série.
-    ("cavimac", "serie", "serie", 1979, None),
-    ("cssm_mayotte", "serie", "serie", 1987, None),
-    ("cps_saint_pierre_et_miquelon", "serie", "serie", 1987, None),
     ("cancava", "artisans_base_plafonnee", None, 1973, 2005),
     ("organic", "commercants_base_plafonnee", None, 1973, 2005),
     ("rsi", "artisans_base_plafonnee", "independants_base_deplafonnee", 2006, 2017),
+)
+
+#: Régimes qui n'ont pas de barème propre et portent celui du régime général :
+#: les cultes, dont la cotisation est celle du droit commun sur une assiette
+#: forfaitaire, et les caisses de Mayotte et de Saint-Pierre-et-Miquelon, dont
+#: les taux sont fixés localement et ne sont pas dans l'index. Ils suivent la
+#: série que le dépôt tient pour le régime général — celle qu'il a certifiée
+#: depuis 1982 comprise —, et non une transcription qui s'en écarterait ; la
+#: SUBSTITUTION reste une décision de modélisation, d'où le niveau `haute`.
+TAUX_ALIGNES = (
+    ("cavimac", 1979),
+    ("cssm_mayotte", 1987),
+    ("cps_saint_pierre_et_miquelon", 1987),
 )
 
 
@@ -348,11 +356,16 @@ def source_taux_cotisation_annuels() -> dict[tuple, float]:
     n'ont que les taux : ils paient tout, la fiche le sait.
 
     OpenFisca est une transcription des décrets, pas leur producteur : le
-    niveau reste ``haute``.
+    niveau reste ``haute``, et elle ne touche pas aux lignes que la lecture du
+    *Journal officiel* a certifiées — la règle du plafond ancien, où une
+    transcription tierce ne peut ni certifier ni décertifier.
     """
     brut = _lire_json("openfisca_cotisations.json",
                       "scripts/fetch/openfisca_cotisations.py")
     independants = brut.get("independants", {})
+    libres = _cles_non_certifiees(
+        REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        ("regime", "annee", "mesure"))
     valeurs: dict[tuple, float] = {}
     for regime, plafonnee, deplafonnee, premiere, derniere in TAUX_ANNUELS:
         if plafonnee == "serie":
@@ -381,7 +394,82 @@ def source_taux_cotisation_annuels() -> dict[tuple, float]:
                 if int(annee) < premiere or (derniere and int(annee) > derniere):
                     continue
                 valeurs[(regime, annee, "taux_deplafonne")] = taux
+    # Le fichier n'existe pas encore au tout premier passage : rien n'y est
+    # certifié, et tout est donc à écrire.
+    if libres:
+        valeurs = {cle: v for cle, v in valeurs.items() if cle in libres}
     return valeurs
+
+
+def source_taux_cotisation_jorf() -> dict[tuple, float]:
+    """Les taux de cotisation vieillesse lus dans les textes qui les fixent.
+
+    Régime général depuis 1982 — article 2 du décret n° 81-1013 du 13 novembre
+    1981, puis article D. 242-4 du code de la sécurité sociale — et salariés
+    agricoles depuis 1980 — article 2 du décret n° 50-444 du 20 avril 1950, puis
+    article D. 741-35 du code rural, qui renvoie au premier depuis 2014. Le taux
+    retenu est celui en vigueur au 1er JANVIER, comme partout ailleurs dans le
+    dépôt.
+
+    Les quinze premières années du régime général, 1967 à 1981, ne sont pas ici,
+    et c'est la base qui le dit : l'article 3 du décret n° 67-803 n'y a qu'une
+    version, datée de 1967 et portant l'état de 1979. Elles restent transcrites
+    d'OpenFisca, au niveau ``haute``.
+
+    Le récupérateur refuse de rendre une série dès qu'un décret du *Journal
+    officiel* annonce des taux de cotisation vieillesse de ces régimes sans que
+    la chaîne des versions ou une surcharge déclarée l'explique ; la
+    certification s'arrête alors avec lui.
+    """
+    charge = _lire_json("dila_taux_cotisation.json",
+                        "scripts/fetch/dila_legi_taux_cotisation.py")
+    inexpliques = charge.get("decrets_inexpliques") or []
+    if inexpliques:
+        raise SourceAbsente(
+            f"{len(inexpliques)} décret(s) du JORF touchant ces taux ne sont "
+            "expliqués ni par la chaîne des versions ni par une surcharge "
+            f"déclarée — le premier est {inexpliques[0]}")
+    valeurs: dict[tuple, float] = {}
+    for regime, annees in sorted(charge["series"].items()):
+        for annee, taux in sorted(annees.items()):
+            plafonne = taux["employeur_plafonne"] + taux["salarie_plafonne"]
+            deplafonne = taux["employeur_deplafonne"] + taux["salarie_deplafonne"]
+            valeurs[(regime, annee, "taux_plafonne")] = plafonne
+            valeurs[(regime, annee, "part_salariale")] = (
+                taux["salarie_plafonne"] / plafonne if plafonne else 0.0)
+            valeurs[(regime, annee, "taux_deplafonne")] = deplafonne
+            valeurs[(regime, annee, "part_salariale_deplafonnee")] = (
+                taux["salarie_deplafonne"] / deplafonne if deplafonne else 0.0)
+    return valeurs
+
+
+def source_taux_cotisation_alignes() -> dict[tuple, float]:
+    """Les régimes qui portent la série du régime général, faute d'en publier une.
+
+    Les cultes, Mayotte et Saint-Pierre-et-Miquelon n'ont pas de barème lisible :
+    leurs fiches recopiaient la moyenne du régime général, et cette source leur
+    donne sa série ANNÉE PAR ANNÉE, telle que le dépôt la tient — certifiée
+    depuis 1982, transcrite avant. Elle la lit dans le fichier de référence
+    lui-même, et non chez OpenFisca : deux copies du régime général qui
+    divergeraient seraient pire qu'une approximation nommée.
+
+    Niveau ``haute`` : la valeur est celle du régime général, mais la
+    SUBSTITUTION est une décision de modélisation, comme l'UNIRS tenant lieu
+    d'Arrco avant 1999.
+    """
+    chemin = REFERENCE / "regimes" / "taux_cotisation_annuels.csv"
+    if not chemin.exists():
+        return {}
+    modele = {
+        (ligne["annee"], ligne["mesure"]): float(ligne["valeur"])
+        for ligne in charger_csv(chemin) if ligne["regime"] == "regime_general"
+    }
+    return {
+        (regime, annee, mesure): valeur
+        for regime, premiere in TAUX_ALIGNES
+        for (annee, mesure), valeur in sorted(modele.items())
+        if int(annee) >= premiere
+    }
 
 
 #: Première année où la DREES ventile le risque vieillesse-survie dans la
@@ -3223,6 +3311,21 @@ CERTIFICATIONS = (
             "# data/brut/jorf_salaires_forfaitaires_marins.json.",
         ),
     ),
+    # La lecture du Journal officiel PASSE EN PREMIER : les deux sources qui
+    # suivent ne touchent qu'aux lignes qu'elle ne couvre pas, l'une parce
+    # qu'une transcription tierce ne décertifie pas, l'autre parce qu'elle
+    # recopie la série du régime général telle que celle-ci vient d'être écrite.
+    Certification(
+        nom="taux_cotisation_journal_officiel",
+        chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_taux_cotisation_jorf,
+        origine="DILA, base LEGI, code de la sécurité sociale D. 242-4 et "
+                "décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444",
+        decimales=6,
+        tolerance=5e-7,
+    ),
     Certification(
         nom="taux_cotisation_annuels",
         chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
@@ -3236,7 +3339,7 @@ CERTIFICATIONS = (
         niveau="haute",
         entete=(
             "# Taux de cotisation vieillesse ANNÉE PAR ANNÉE, régime par régime",
-            "# source_id: openfisca_cotisations",
+            "# source_id: dila_legi_taux_cotisation",
             "#",
             "# Les fiches de data/reference/regimes/ portent un taux par période",
             "# législative — une moyenne de dix à vingt-sept ans, écrite comme telle",
@@ -3255,10 +3358,27 @@ CERTIFICATIONS = (
             "# Les non-salariés (cancava, organic, rsi) n'ont que les taux : ils",
             "# paient tout, et la fiche le sait (part_salariale : 1).",
             "#",
-            "# Écrit par scripts/verifier_donnees.py --appliquer depuis",
-            "# data/brut/openfisca_cotisations.json ; OpenFisca transcrit les",
-            "# décrets sans en être le producteur, d'où le niveau `haute`.",
+            "# Les articles qui fixent le taux sont lus par",
+            "# scripts/fetch/dila_legi_taux_cotisation.py et versés `certifiee` ;",
+            "# data/brut/openfisca_cotisations.json ne comble que le reste, au",
+            "# niveau `haute` — OpenFisca transcrit les décrets sans en être le",
+            "# producteur. Les cultes, Mayotte et Saint-Pierre-et-Miquelon",
+            "# portent la série du régime général, faute d'un barème propre.",
+            "#",
+            "# Écrit par scripts/verifier_donnees.py --appliquer.",
         ),
+    ),
+    Certification(
+        nom="taux_cotisation_alignes",
+        chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_taux_cotisation_alignes,
+        origine="la série du régime général du dépôt, que les cultes, Mayotte "
+                "et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
     ),
 )
 

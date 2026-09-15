@@ -437,7 +437,11 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Plafond Sécurité sociale | 1963, 1965-1981, 1984, 1987, 1988, 1990-1993, 1996-2001 | **certifiée** | DILA, base JORF, décrets portant fixation du plafond |
 | Plafond Sécurité sociale | le reste de 1931-2001 | haute | OpenFisca-France, daté décret par décret — la notice ancienne du JORF n'a pas d'écriture stable |
 | Revalorisation des salaires portés au compte | 10 colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux |
-| Taux de cotisation, régime général | 1967-2026 | moyenne | OpenFisca-France, recoupé à chaque exécution |
+| Taux de cotisation, régime général | 1982-2026 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 242-4` et décret n° 81-1013 du 13 novembre 1981, article 2 ; la hausse temporaire de 1987-1988, qui n'a pas réécrit l'article, est lue dans la base JORF |
+| Taux de cotisation, régime général | 1967-1981 | moyenne | OpenFisca-France, recoupé à chaque exécution — l'article 3 du décret n° 67-803 n'a qu'une version dans LEGI, datée de 1967 et portant l'état de 1979 |
+| Taux de cotisation, salariés agricoles | 1980-2026 | **certifiée** | DILA, base LEGI, décret n° 50-444 du 20 avril 1950, article 2, puis code rural `D. 741-35`, qui renvoie à `D. 242-4` depuis 2014 |
+| Taux de cotisation, salariés agricoles | 1967-1979 | moyenne | la série du régime général tenant lieu, faute d'une version antérieure de l'article 2 |
+| Taux de cotisation, cultes, Mayotte, Saint-Pierre-et-Miquelon | depuis 1979 et 1987 | haute | la série du régime général du dépôt, que ces trois régimes portent faute d'un barème propre : la valeur est certifiée, la substitution est une décision de modélisation |
 | Taux de cotisation, complémentaires du privé | Arrco 1962-2018, Agirc 1981-2018, Agirc-Arrco 2019- | moyenne | OpenFisca-France, taux effectifs par tranche, recoupés à chaque exécution |
 | Retenue pour pension, État, CNRACL, ouvriers de l'État | 1948-2026, une période par taux | moyenne | OpenFisca-France, article L. 61 et barème de la caisse, recoupés à chaque exécution |
 | Cotisation vieillesse de base des artisans et commerçants | 1973-2018, moyennes par période | moyenne | OpenFisca-France, décrets d'application de la loi du 3 juillet 1972, recoupés à chaque exécution |
@@ -823,16 +827,31 @@ plus volontiers.
   que son régime y prélevait. La tranche est ajoutée, avec sa borne propre :
   trois plafonds, et non huit comme dans le régime unifié d'après 2019.
 
-* *Taux de cotisation d'avant octobre 1967, et des régimes autres que ceux du
-  privé* — **la seule limite de cette liste qui reste ouverte**, et la seule
-  dont on puisse dire par où elle passe sans pouvoir la refermer. Aucune
-  transcription machine n'existe : ces taux viennent des ordonnances de 1945 et
-  de leurs modificatifs, saisis à la main. Ont été essayés sans succès, pour
-  éviter de refaire le trajet : les barèmes IPP, qui sont la source amont
-  d'OpenFisca et ne commencent pas plus tôt que lui pour la CNAV (1967) ; et la
-  Banque de données macroéconomiques de l'INSEE, dont la série de taux de
-  cotisation vieillesse (idbank 000483633) ne porte que la part salariale et ne
-  débute qu'en juillet 1993.
+* *Taux de cotisation du régime général et des salariés agricoles depuis 1982*
+  — **lus dans les textes qui les fixent, et certifiés.** Ces taux venaient
+  d'OpenFisca-France, transcription tierce plafonnée à `haute` ; ils sont
+  désormais lus dans l'article D. 242-4 du code de la sécurité sociale et dans
+  l'article D. 741-35 du code rural, avec leurs rédactions successives, par
+  `scripts/fetch/dila_legi_taux_cotisation.py`. Ce que la lecture a déplacé est
+  sous « La lecture des taux de cotisation » plus bas.
+
+* *Taux de cotisation d'avant 1982, et des régimes autres que ceux du privé* —
+  **la seule limite de cette liste qui reste ouverte**, et la seule dont on
+  puisse dire par où elle passe sans pouvoir la refermer. Pour 1967-1981, ce
+  n'est plus faute d'article : l'article 3 du décret n° 67-803 est dans la base
+  LEGI, mais avec UNE seule version, datée du 1er octobre 1967 et valable
+  jusqu'au 14 novembre 1981, portant 12,9 % — l'état de 1979, alors que le taux
+  valait 8,5 % en 1967. La base a gardé la photographie finale et non le film,
+  comme pour la CNRACL ; les décrets modificatifs sont bien au *Journal
+  officiel* — 73-1209, 75-1273, 76-894, 78-1213 — mais la base JORF n'en garde
+  avant 1990 que la notice, et aucune de ces notices n'écrit de taux. Avant
+  1967, aucune transcription machine n'existe : ces taux viennent des
+  ordonnances de 1945 et de leurs modificatifs, saisis à la main. Ont été
+  essayés sans succès, pour éviter de refaire le trajet : les barèmes IPP, qui
+  sont la source amont d'OpenFisca et ne commencent pas plus tôt que lui pour la
+  CNAV (1967) ; et la Banque de données macroéconomiques de l'INSEE, dont la
+  série de taux de cotisation vieillesse (idbank 000483633) ne porte que la part
+  salariale et ne débute qu'en juillet 1993.
 
   **Ce que cette incertitude déplace, et de combien.** Un taux de cotisation
   n'entre nulle part dans le calcul d'une pension du système ACTUEL : les
@@ -1330,7 +1349,8 @@ plus volontiers.
   77 000 €, ses années 1992-2006 ayant quitté le repli. Sur la page Coût,
   l'effet est petit — deux cas
   types sur douze sont concernés, et de faible poids : le cumul du scénario 4
-  passe de −51,9 % à −51,8 %, celui du 6 de −51,7 % à −51,6 %.
+  passe de −51,9 % à −51,8 %, celui du 6 de −51,7 % à −51,6 % (la lecture des
+  taux de cotisation les a depuis ramenés à −51,9 % et −51,7 %).
 
   **L'index a remplacé le dump, et il était meilleur.** Les récupérateurs
   `dila_legi_*` plus anciens retéléchargent le dump global de la DILA — un
@@ -3608,6 +3628,84 @@ salarié né en 1935 gagne un pour cent au scénario 2 ; le scénario 1 ne bouge
 pas, puisqu'il liquide sur les trimestres et le salaire de référence, non sur
 la cotisation.
 
+### La lecture des taux de cotisation, et les quatre choses qu'elle a trouvées
+
+La table annuelle ci-dessus venait d'OpenFisca-France : une transcription, et
+donc `haute` au mieux. Un taux de cotisation n'est pourtant pas une
+statistique, c'est un article de code, et la base LEGI en garde les rédactions
+successives. `scripts/fetch/dila_legi_taux_cotisation.py` les lit : article 2
+du décret n° 81-1013 du 13 novembre 1981 puis article **D. 242-4** du code de
+la sécurité sociale pour le régime général, article 2 du décret n° 50-444 du
+20 avril 1950 puis article **D. 741-35** du code rural pour les salariés
+agricoles. **368 valeurs certifiées** — 45 années pour le premier (1982-2026),
+47 pour le second (1980-2026), quatre mesures chacune —, dont **112 corrigeaient
+la transcription**.
+
+**1. La règle du 1er janvier n'était pas appliquée.** Le dépôt retient, pour
+une année, le taux en vigueur au 1er JANVIER ; `docs/methodologie.md` l'écrit,
+et le récupérateur d'OpenFisca le disait dans sa propre docstring. Son filtre
+comparait pourtant les ANNÉES et non les dates : un relèvement du 1er juillet
+commandait l'année entière, et c'était donc le taux du 31 décembre qui sortait.
+Six années du régime général en portaient la marque — 1970, 1976, 1986, 1987,
+1991 et 2012. 1986 recevait les 14,6 % du 30 juillet au lieu de 13,9 %, 1976
+les 11,15 % d'octobre au lieu de 10,75 %,
+et surtout **1991 recevait la réforme du 1er février** — 14,75 % plafonné plus
+1,60 % déplafonné — quand le 1er janvier de cette année-là le régime prélevait
+encore 15,8 % sous le seul plafond. Le même filtre datait la retenue des
+fonctionnaires, et les fiches de la fonction publique s'étaient alignées sur
+lui : leur note disait « le millésime porte le taux en vigueur en fin d'année,
+comme les autres séries de taux du dépôt », ce qui était faux du dépôt et vrai
+seulement du filtre. Les deux sont corrigés ensemble ; la retenue de l'agent
+vaut 7 % en 1986, 7,7 % en 1987, 8,9 % en 1991, et ne tombe à 7,85 % qu'en 1992.
+
+**2. Un taux que l'article ne portait pas.** Lire la seule chaîne des versions
+donnerait 6,40 % de part salariale au 1er janvier 1988 : c'est ce que D. 242-4
+disait alors. Le *Journal officiel* dit 6,60 %. Le décret n° 87-453 du 29 juin
+1987 avait relevé la cotisation salariale de 0,2 point « à titre exceptionnel
+et temporaire » du 1er juillet 1987 au 30 juin 1988 **sans réécrire l'article**,
+que le décret du 22 juin 1988 n'a rattrapé qu'en pérennisant la hausse. Un
+article codifié ne dit donc pas tout, et le récupérateur ne s'en remet pas à
+lui seul : il interroge la base JORF pour tout décret publié depuis 1982 qui
+annonce dans son titre des taux de cotisation de ces régimes, et **arrête la
+certification** si l'un d'eux n'est expliqué ni par une version de la chaîne,
+ni par une surcharge déclarée, ni par une ligne qui dit pourquoi il ne touche
+pas à ce taux. La surcharge de 1987 est elle-même relue à chaque exécution —
+période et taux dans la notice, corroboration par la version qui pérennise.
+
+**3. Les salariés agricoles n'avaient pas les taux du régime général.** Le
+dépôt leur donnait sa série, et écrivait que « L. 741-9 renvoie aux taux du
+régime général ». C'est vrai depuis le 1er janvier 2014, où le II de l'article
+D. 741-35 dispose que leur taux « est fixé selon les dispositions prévues à
+l'article D. 242-4 » ; c'est faux avant. De 1980 à 2013, **l'employeur agricole
+a payé un point de moins** que celui du privé — 7,20 % contre 8,20 % de 1980 à
+2005, 7,30 puis 7,31 et 7,41 % contre 8,30, 8,40 et 8,45 % ensuite — quand la
+part du salarié, elle, était la même. Un salarié agricole né en 1945 voit donc
+la part patronale de sa carrière tomber de 87 276 à 79 909 €, et sa pension du
+scénario 4 de **5 %**. C'est le plus gros déplacement de cette lecture, et il
+ne concerne qu'un régime : les quatre carrières du privé bougent de deux
+dixièmes de pour cent.
+
+**4. Ce que la base ne permet pas de dater, et comment elle le dit.** Avant
+1982, l'article 3 du décret n° 67-803 est bien dans LEGI, avec ses quatre
+composantes en toutes lettres — mais avec UNE version, du 1er octobre 1967 au
+14 novembre 1981, portant 12,9 %, c'est-à-dire l'état de 1979. Le récupérateur
+lit cet article comme les autres et le refuse par une règle écrite : un article
+qui n'a qu'une version et couvre plus de dix ans n'a pas de chronologie. Ces
+quinze années restent transcrites d'OpenFisca, au niveau `haute`.
+
+Une dernière chose, trouvée par un contrôle et laissée telle quelle : l'article
+D. 741-35, dans sa rédaction du 22 avril 2005, annonce 15,15 % puis détaille
+7,20 + 6,55 + 1,40 + 0,10, soit 15,25 %. La recodification a gardé le total
+d'avant 2004, quand il ne comptait pas encore la part salariale déplafonnée.
+Ce sont les composantes qui sont écrites et le dépôt les retient ; l'écart est
+signalé à chaque exécution plutôt que corrigé en silence.
+
+**Ce que tout cela déplace.** 287 cas de témoin sur 427, et la page Coût à
+peine : le cumul 1959-2024 du scénario 4 passe de −51,8 % à **−51,9 %**, celui
+du scénario 6 de −51,6 % à **−51,7 %**, celui du 2 reste à −79,5 %. Le scénario
+1 ne bouge nulle part, puisqu'il liquide sur les trimestres et le salaire de
+référence, non sur la cotisation.
+
 ### Avant 1967, la cotisation vieillesse n'existait pas séparément — et le dépôt lui prêtait 8,6 %
 
 La fiche du régime général portait, de 1945 à 1966, une moyenne de 8,6 % sans
@@ -4639,7 +4737,7 @@ approximations, énoncées sur la page :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de −55,9 % à −51,9 % — et faux du
+   la part patronale — le scénario 4 passe de −55,4 % à −51,9 % — et faux du
    scénario 2, qui passe de −75,9 % à −79,5 % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
@@ -4764,7 +4862,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 620 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 621 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

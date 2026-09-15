@@ -904,6 +904,24 @@ appliqués au chargement des fiches, période découpée année par année (voir
 période »). Les lignes du tableau ci-dessus restent celles des fiches ; le
 compte, lui, reçoit 35,3 % de part salariale en 1967 et 44,7 % en 2024.
 
+**D'où vient chaque année de cette table.** Le régime général depuis 1982 et
+les salariés agricoles depuis 1980 sont **certifiés** : leurs quatre mesures
+sont lues dans l'article qui les fixe — article 2 du décret n° 81-1013 puis
+`D. 242-4` du code de la sécurité sociale ; article 2 du décret n° 50-444 puis
+`D. 741-35` du code rural —, rédaction par rédaction, par
+`scripts/fetch/dila_legi_taux_cotisation.py`. Trois conventions les
+accompagnent. Le **taux retenu est celui du 1er janvier**, comme partout
+ailleurs dans le dépôt : un relèvement du 30 juillet 1986 ne commande que 1987,
+et la réforme du 1er février 1991 que 1992. Le **renvoi d'un article à un autre
+est suivi** et non recopié : c'est le II de `D. 741-35`, et non une convention
+du dépôt, qui aligne les salariés agricoles sur le régime général depuis 2014 —
+avant cette date, leur employeur payait un point de moins. Et un **décret qui
+fixe le taux sans réécrire l'article** est lu dans la base JORF, à condition
+d'être nommé et corroboré : c'est le cas du relèvement temporaire de 0,2 point
+du 1er juillet 1987 au 30 juin 1988. Les années d'avant 1982 restent
+transcrites d'OpenFisca-France, au niveau `haute` ; `limites.md` dit pourquoi
+la base ne permet pas de les dater.
+
 **Le drapeau porte sur le STATUT, pas seulement sur le régime.** Un artisan
 cotise au régime général, dont la fiche porte la répartition 41/59 d'un salarié.
 Le taux y est le bon — un artisan verse à peu près ce que verse le couple

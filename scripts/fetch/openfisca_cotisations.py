@@ -288,10 +288,27 @@ def _en_vigueur(bareme: dict[str, float], annee: int) -> float:
 
     Les revalorisations de milieu d'année sont ignorées : le modèle raisonne en
     années pleines, et retenir le taux du 1er janvier est le choix le plus
-    lisible — il est explicité ici plutôt que caché dans un calcul.
+    lisible — c'est la règle du dépôt, écrite dans `docs/methodologie.md`.
+
+    Elle l'était déjà ici, mais seulement dans cette phrase : le filtre
+    comparait les ANNÉES et non les dates, si bien qu'un relèvement du 1er
+    juillet commandait l'année entière. C'était le taux du 31 décembre qui
+    sortait, l'exact contraire de ce qui est écrit, et six années du régime
+    général en portaient la marque — 1970, 1976, 1986, 1987, 1991 et 2012. La
+    lecture du *Journal officiel* l'a montré en les recoupant une à une.
+
+    Une exception, et elle est nommée : l'année où le barème COMMENCE. La
+    cotisation vieillesse du régime général chez OpenFisca ouvre au 1er octobre
+    1967 ; exiger une date antérieure au 1er janvier reviendrait à n'écrire
+    aucun taux pour 1967, alors que le barème en donne un. L'année d'ouverture
+    prend donc le premier taux daté, et c'est la seule qui l'ait.
     """
-    anterieures = [cle for cle in sorted(bareme) if cle[:4] <= str(annee)]
-    return bareme[anterieures[-1]] if anterieures else 0.0
+    premier_janvier = f"{annee}-01-01"
+    anterieures = [cle for cle in sorted(bareme) if cle <= premier_janvier]
+    if anterieures:
+        return bareme[anterieures[-1]]
+    ouverture = [cle for cle in sorted(bareme) if cle[:4] == str(annee)]
+    return bareme[ouverture[0]] if ouverture else 0.0
 
 
 def main() -> int:

@@ -360,6 +360,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "distribution_pensions": "macro/distribution_pensions.csv",
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_avant_1967": "regimes/taux_cotisation_annuels.csv",
+        "taux_cotisation_journal_officiel": "regimes/taux_cotisation_annuels.csv",
+        "taux_cotisation_alignes": "regimes/taux_cotisation_annuels.csv",
         "salaires_forfaitaires_marins": "regimes/salaires_forfaitaires.csv",
         "employeur_public_texte":
             "legislation/contribution_employeur_public.csv",
@@ -729,7 +731,13 @@ def test_la_cotisation_est_celle_de_chaque_annee_et_non_une_moyenne(catalogue):
     assert general.periode(1972).taux_cotisation_retraite == pytest.approx(0.0875)
     assert general.periode(1979).taux_cotisation_retraite == pytest.approx(0.129)
     assert general.periode(1979).part_salariale == pytest.approx(0.047 / 0.129)
-    assert general.periode(1991).taux_cotisation_deplafonnee == pytest.approx(0.016)
+    # La cotisation déplafonnée naît le 1er février 1991 (décret n° 91-91) :
+    # au 1er janvier de cette année-là elle n'existe pas encore, et 1991 porte
+    # donc les 15,8 % plafonnés d'avant la réforme.
+    assert general.periode(1991).taux_cotisation_deplafonnee == 0.0
+    assert general.periode(1991).taux_cotisation_retraite == pytest.approx(0.158)
+    assert general.periode(1992).taux_cotisation_deplafonnee == pytest.approx(0.016)
+    assert general.periode(1992).taux_cotisation_retraite == pytest.approx(0.1475)
     assert general.periode(1985).taux_cotisation_deplafonnee == 0.0
     # Avant 1967, la part vieillesse conventionnelle des assurances sociales,
     # datée d'après le COR : 6 + 10 de 1947 à 1958, dont 8,5/21 pour la vieillesse.
@@ -741,7 +749,8 @@ def test_la_cotisation_est_celle_de_chaque_annee_et_non_une_moyenne(catalogue):
     # Une période ouverte reste ouverte, au dernier taux connu.
     assert general.periodes[-1].fin is None
     assert general.periode(2040) is not None
-    # Les salariés agricoles suivent le régime général, les artisans leur série.
+    # Avant 1980, les salariés agricoles n'ont que la série du régime général
+    # faute de mieux ; à partir de 1980, ils ont la leur, lue dans leur décret.
     assert catalogue["msa_salaries"].periode(1979).taux_cotisation_retraite == pytest.approx(0.129)
     assert catalogue["cancava"].periode(1973).taux_cotisation_retraite == pytest.approx(0.0875)
     assert catalogue["cancava"].periode(1960).taux_cotisation_retraite == pytest.approx(0.085)
@@ -790,12 +799,72 @@ def test_les_taux_d_avant_1967_sont_dates_par_convention_nommee(catalogue):
 
 def test_la_retenue_des_fonctionnaires_passe_a_8_9_pour_cent_en_1989(catalogue):
     """Loi n° 89-18, article 23 : « majoré d'un point » pour les traitements
-    perçus après le 31 décembre 1988."""
+    perçus après le 31 décembre 1988.
+
+    Et les quatre autres marches de l'article L. 61 sont datées AU 1er JANVIER,
+    comme le reste du dépôt : 7,7 % au 1er août 1986 commande 1987, 7,9 % au
+    1er juillet 1987 commande 1988, et la baisse à 7,85 % du 1er février 1991
+    ne commande que 1992. Seule celle de 1989 tombe un 1er janvier.
+    """
     for code in ("fonction_publique_etat", "cnracl", "fspoeie"):
+        assert catalogue[code].periode(1986).taux_cotisation_retraite == pytest.approx(0.07), code
+        assert catalogue[code].periode(1987).taux_cotisation_retraite == pytest.approx(0.077), code
         assert catalogue[code].periode(1988).taux_cotisation_retraite == pytest.approx(0.079), code
         assert catalogue[code].periode(1989).taux_cotisation_retraite == pytest.approx(0.089), code
         assert catalogue[code].periode(1990).taux_cotisation_retraite == pytest.approx(0.089), code
-        assert catalogue[code].periode(1991).taux_cotisation_retraite == pytest.approx(0.0785), code
+        assert catalogue[code].periode(1991).taux_cotisation_retraite == pytest.approx(0.089), code
+        assert catalogue[code].periode(1992).taux_cotisation_retraite == pytest.approx(0.0785), code
+
+
+def test_les_taux_du_journal_officiel_sont_certifies_et_dates_au_1er_janvier(catalogue):
+    """Ce que la lecture des décrets a mis dans la table annuelle.
+
+    Article D. 242-4 du code de la sécurité sociale pour le régime général
+    depuis 1982, article D. 741-35 du code rural pour les salariés agricoles
+    depuis 1980 — et, avant la codification de chacun, l'article 2 des décrets
+    n° 81-1013 et n° 50-444. Trois choses s'y vérifient : la date, le régime,
+    et le taux qui n'est pas dans l'article.
+    """
+    import csv
+
+    lignes = [
+        l for l in csv.DictReader(
+            ligne for ligne in
+            (RACINE_DONNEES / "reference" / "regimes" / "taux_cotisation_annuels.csv")
+            .read_text(encoding="utf-8").splitlines()
+            if not ligne.startswith("#"))
+    ]
+    certifiees = {
+        (l["regime"], int(l["annee"]), l["mesure"]): float(l["valeur"])
+        for l in lignes if l["fiabilite"] == "certifiee"
+    }
+    # Les bornes de ce que la base LEGI sait dater, et rien de plus : avant
+    # 1982, l'article 3 du décret n° 67-803 n'a qu'une version de quatorze ans.
+    annees = {regime: sorted(a for r, a, _ in certifiees if r == regime)
+              for regime in ("regime_general", "msa_salaries")}
+    assert (min(annees["regime_general"]), max(annees["regime_general"])) == (1982, 2026)
+    assert (min(annees["msa_salaries"]), max(annees["msa_salaries"])) == (1980, 2026)
+    assert not [a for r, a, _ in certifiees if r not in ("regime_general", "msa_salaries")]
+
+    # LA DATE. La hausse du 30 juillet 1986 ne commande que 1987.
+    assert certifiees[("regime_general", 1986, "taux_plafonne")] == pytest.approx(0.139)
+    assert certifiees[("regime_general", 1987, "taux_plafonne")] == pytest.approx(0.146)
+    # LE TAUX QUI N'EST PAS DANS L'ARTICLE. Le décret n° 87-453 du 29 juin 1987
+    # a relevé la part salariale de 0,2 point du 1er juillet 1987 au 30 juin
+    # 1988 sans réécrire D. 242-4 : au 1er janvier 1988 elle vaut 6,6 %.
+    assert certifiees[("regime_general", 1988, "taux_plafonne")] == pytest.approx(0.148)
+    assert certifiees[("msa_salaries", 1988, "taux_plafonne")] == pytest.approx(0.138)
+    # LE RÉGIME. L'employeur agricole a payé un point de moins que celui du
+    # privé jusqu'en 2013 ; depuis 2014, D. 741-35 renvoie à D. 242-4.
+    assert certifiees[("msa_salaries", 1984, "taux_plafonne")] == pytest.approx(0.129)
+    assert certifiees[("regime_general", 1984, "taux_plafonne")] == pytest.approx(0.139)
+    assert certifiees[("msa_salaries", 2013, "taux_plafonne")] == pytest.approx(0.1416)
+    for annee in range(2014, 2027):
+        assert (certifiees[("msa_salaries", annee, "taux_plafonne")]
+                == certifiees[("regime_general", annee, "taux_plafonne")]), annee
+    # Et le catalogue sert bien ces taux-là.
+    assert catalogue["msa_salaries"].periode(1984).taux_cotisation_retraite == pytest.approx(0.129)
+    assert catalogue["msa_salaries"].periode(2020).taux_cotisation_retraite == pytest.approx(0.1545)
 
 
 def test_tout_regime_du_catalogue_est_route_ou_declare(catalogue):
