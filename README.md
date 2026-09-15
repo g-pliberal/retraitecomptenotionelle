@@ -115,19 +115,23 @@ quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère 303 Ko compressés (2588 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
-Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers, ou bien
-**lue sur votre relevé** année par année —, avec le détail du calcul, la
-décomposition de l'écart règle par règle et la cascade qui mène du scénario 1 au
-scénario 3), **Cas types** (la grille 13 carrières × 7 générations),
-**Coût** (ce que la retraite a coûté depuis 1959, régime par régime, ce que les
-six systèmes auraient coûté, et ce qu'ils coûteraient d'ici 2070),
-**Méthode**, **Données** (l'état de fiabilité des séries). Le pied de page
-renvoie aux **Mentions légales**, qui disent qui édite, qui héberge, ce que le
-site fait des données saisies — rien — et où en est son accessibilité.
+Six pages. **Programme** est l'accueil : la proposition du Parti libéral
+français pour les retraites — ce qu'est le système actuel, ce qu'est un compte
+notionnel, en quoi il est plus juste et plus lisible, ce qu'il change à la
+justice entre générations, ce que devient la garantie vieillesse, et les étapes
+qui mènent de l'un à l'autre. Puis **Simuler** (une carrière — en un ou
+plusieurs métiers, ou bien **lue sur votre relevé** année par année —, avec le
+détail du calcul, la décomposition de l'écart règle par règle et la cascade qui
+mène du scénario 1 au scénario 3), **Cas types** (la grille 13 carrières ×
+7 générations), **Coût** (ce que la retraite a coûté depuis 1959, régime par
+régime, ce que les six systèmes auraient coûté, et ce qu'ils coûteraient d'ici
+2070), **Méthode**, **Données** (l'état de fiabilité des séries). Le pied de
+page renvoie aux **Mentions légales**, qui disent qui édite, qui héberge, ce que
+le site fait des données saisies — rien — et où en est son accessibilité.
 
-L'adresse d'une simulation contient tous ses paramètres — elle peut être citée
-ou partagée telle quelle — et chaque résultat est consultable en JSON au bas de
-la page.
+La simulation vit sous `#/simuler`, et son adresse contient tous ses
+paramètres — elle peut être citée ou partagée telle quelle. Chaque résultat est
+consultable en JSON au bas de la page.
 
 <details>
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
@@ -1015,7 +1019,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          709 tests Python
+tests/                          715 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

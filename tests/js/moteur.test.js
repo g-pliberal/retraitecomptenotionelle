@@ -100,7 +100,7 @@ test("une faute de programme n'est pas présentée comme une faute de saisie", (
   // faute de programme doit remonter jusqu'à la page, qui dit « Le calcul a
   // échoué » sans mettre la faute sur personne.
   const contexte = new Contexte(paquet);
-  const [, refus] = rendre(contexte, "/", { liquidation: "12" });
+  const [, refus] = rendre(contexte, "/simuler", { liquidation: "12" });
   assert.match(refus, /Saisie refusée/, "une saisie invalide garde sa phrase");
 
   const prototype = Object.getPrototypeOf(contexte);
@@ -108,7 +108,7 @@ test("une faute de programme n'est pas présentée comme une faute de saisie", (
   prototype.simuler = () => { throw new TypeError("bug interne simulé"); };
   try {
     assert.throws(
-      () => rendre(contexte, "/", { naissance: "1975", liquidation: "64" }),
+      () => rendre(contexte, "/simuler", { naissance: "1975", liquidation: "64" }),
       TypeError,
       "une faute de programme doit remonter, non être déguisée en refus",
     );

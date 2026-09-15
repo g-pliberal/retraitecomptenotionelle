@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Retraite à comptes notionnels — simulateur</title>
-<meta name="description" content="Simulateur d'un système de retraite français en comptes notionnels, appliqué rétroactivement depuis 1941. Le calcul s'exécute dans votre navigateur.">
+<title>Retraite à comptes notionnels — programme et simulateur</title>
+<meta name="description" content="Le programme du Parti libéral français pour les retraites : un régime unique en comptes notionnels, un taux de 18 % pour tous, une garantie vieillesse individualisée — et le simulateur qui le chiffre, carrière par carrière, dans votre navigateur.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📈</text></svg>">
 
 <!-- La feuille de style est extraite du module Python par
@@ -83,8 +83,8 @@
 
 <div id="amorce">
   <h1>Retraite à comptes notionnels</h1>
-  <p>Le simulateur se prépare. Le modèle et les données de référence s'exécutent
-  dans votre navigateur : rien n'est envoyé à un serveur, et il n'y a rien à
+  <p>Le site se prépare. Le modèle et les données de référence s'exécutent dans
+  votre navigateur : rien n'est envoyé à un serveur, et il n'y a rien à
   installer.</p>
   <div class="jauge"><span></span></div>
   <noscript>
@@ -188,13 +188,20 @@ function adresse() {
   const requete = separation === -1 ? "" : brut.slice(separation + 1);
   const parametres = {};
   new URLSearchParams(requete).forEach((valeur, cle) => { parametres[cle] = valeur; });
-  return { chemin: chemin || "/", parametres };
+  // Les adresses partagées avant que l'accueil ne devienne le programme
+  // portaient la simulation sur « #/ » ; leur rendre le formulaire coûte une
+  // ligne, et les perdre coûterait la simulation qu'elles décrivent.
+  const route = chemin || "/";
+  const ancienne = route === "/" && Object.keys(parametres).length > 0;
+  return { chemin: ancienne ? "/simuler" : route, parametres };
 }
 
 // Ce qu'annonce l'écran d'attente des pages qui calculent longtemps : mieux
 // vaut dire ce qui prend du temps que laisser une jauge tourner sans motif.
 const MESSAGES_ATTENTE = {
   "/cas-types": "Calcul des 12 cas types sur 7 générations…",
+  // L'accueil ne calcule rien : annoncer un « calcul en cours » y serait faux.
+  "/": "Ouverture…",
   "/cout": "Calcul des 12 cas types sur 28 générations, puis de cent onze "
     + "années de dépense, observées puis projetées…",
 };
@@ -336,14 +343,18 @@ document.addEventListener("submit", (evenement) => {
   new FormData(formulaire).forEach((valeur, cle) => {
     if (String(valeur).trim() !== "") { parametres.set(cle, valeur); }
   });
-  const cible = `#/?${parametres.toString()}`;
+  // La route vient de l'action du formulaire, jamais d'une constante écrite
+  // ici : le simulateur a changé d'adresse le jour où l'accueil est devenu le
+  // programme, et une route figée aurait renvoyé chaque calcul sur l'accueil.
+  const route = (formulaire.getAttribute("action") || "#/simuler").replace(/^#/, "");
+  const cible = `#${route}?${parametres.toString()}`;
   if (location.hash === cible) { afficher(); } else { location.hash = cible; }
 });
 
 // Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici
 // l'adresse EST la route, et y écrire une ancre de section renverrait le
-// simulateur à sa page d'accueil, perdant la simulation en cours. Il déplace
-// donc le focus lui-même, sans toucher à l'adresse.
+// lecteur à l'accueil, perdant la simulation en cours. Il déplace donc le
+// focus lui-même, sans toucher à l'adresse.
 document.addEventListener("click", (evenement) => {
   if (!evenement.target.closest("a.evitement")) { return; }
   evenement.preventDefault();

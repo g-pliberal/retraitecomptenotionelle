@@ -430,7 +430,8 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
 DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle"
 
 LIENS = (
-    ("/", "Simuler"),
+    ("/", "Programme"),
+    ("/simuler", "Simuler"),
     ("/cas-types", "Cas types"),
     ("/cout", "Coût"),
     ("/methode", "Méthode"),
@@ -482,9 +483,8 @@ def pied() -> str:
     """
     return f"""<footer>
   <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
-  d'aucune caisse de retraite et ne vaut ni relevé de carrière, ni estimation
-  de vos droits : c'est un modèle, appliqué à ce que vous saisissez.
-  Pour vos droits réels, seule fait foi votre caisse
+  d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
+  Seule votre caisse fait foi
   (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
   <p>Modèle ouvert, code et données sur <a href="{DEPOT}">GitHub</a> (licence MIT).
   Les montants sont bruts, exprimés en euros constants de l'année de référence.

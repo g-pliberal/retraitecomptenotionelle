@@ -494,64 +494,64 @@ def sans_bloc_json(html: str) -> str:
 
 def _pages(contexte: Contexte) -> dict:
     demandes = [
-        ("accueil", "/", {}),
-        ("accueil_calcul", "/", BASE),
-        ("accueil_femme_interrompue", "/", {
+        ("simuler", "/simuler", {}),
+        ("simuler_calcul", "/simuler", BASE),
+        ("simuler_femme_interrompue", "/simuler", {
             **BASE, "sexe": "F", "naissance": "1968", "statut": "salarie_prive_non_cadre",
             "interruptions": "1995:1999:education_enfant", "enfants": "2",
             "salaire": "0.9",
         }),
-        ("accueil_regime_special", "/", {
+        ("simuler_regime_special", "/simuler", {
             **BASE, "statut": "agent_sncf", "naissance": "1960", "liquidation": "52",
         }),
-        ("accueil_indexation_prix", "/", {**BASE, "indexation": "prix"}),
-        ("accueil_conversion_acquis", "/", {
+        ("simuler_indexation_prix", "/simuler", {**BASE, "indexation": "prix"}),
+        ("simuler_conversion_acquis", "/simuler", {
             **BASE, "conversion_acquis": "liquidation",
         }),
         # Carrière entièrement interrompue : capital notionnel nul, donc aucune
         # cascade à afficher — et surtout aucune division par zéro.
-        ("accueil_carriere_vide", "/", {
+        ("simuler_carriere_vide", "/simuler", {
             **BASE, "interruptions": "1996:2038:chomage_indemnise",
         }),
-        ("accueil_saisie_refusee", "/", {**BASE, "liquidation": "12"}),
+        ("simuler_saisie_refusee", "/simuler", {**BASE, "liquidation": "12"}),
         # Un refus alors qu'on saisissait en multiples : le formulaire repart de
         # ses valeurs par défaut, mais dans l'unité où l'on travaillait.
-        ("accueil_saisie_refusee_en_multiples", "/", {
+        ("simuler_saisie_refusee_en_multiples", "/simuler", {
             **BASE, "liquidation": "12", "unite_revenu": "moyen", "salaire": "1.2",
         }),
         # Bornes que seul le formulaire opposait autrefois : une adresse forgée
         # à la main les franchissait, et la page affichait sans broncher des
         # pensions à soixante chiffres. Les trois cas figent, côté Python
         # comme côté JavaScript, le refus qui les arrête.
-        ("accueil_euros_hors_bornes", "/", {**BASE, "euros": "9999"}),
-        ("accueil_bascule_hors_bornes", "/", {**BASE, "bascule": "1900"}),
-        ("accueil_enfants_hors_bornes", "/", {**BASE, "enfants": "999"}),
+        ("simuler_euros_hors_bornes", "/simuler", {**BASE, "euros": "9999"}),
+        ("simuler_bascule_hors_bornes", "/simuler", {**BASE, "bascule": "1900"}),
+        ("simuler_enfants_hors_bornes", "/simuler", {**BASE, "enfants": "999"}),
         # Ni la bascule ni l'année des euros ne valent leur défaut : c'est le
         # cas qui débusque un texte citant une année écrite en dur — le chapeau
         # annonçait « à compter de 2026 » quand le scénario 3 partait de 2035.
         # Le scénario 2 AU-DESSUS du scénario 1 : la trajectoire annonçait
         # « l'écart se creuse » en affichant un montant négatif.
-        ("accueil_notionnel_plus_genereux", "/", {
+        ("simuler_notionnel_plus_genereux", "/simuler", {
             **BASE, "statut": "profession_liberale", "liquidation": "70",
             "salaire": "4", "unite_revenu": "moyen",
         }),
         # Liquidation en cours d'année : la trajectoire ne doit rien tracer
         # avant le départ, quand elle partait de l'âge entier précédent.
-        ("accueil_depart_en_cours_d_annee", "/", {
+        ("simuler_depart_en_cours_d_annee", "/simuler", {
             **BASE, "liquidation_mois": "6",
         }),
-        ("accueil_annees_deplacees", "/", {
+        ("simuler_annees_deplacees", "/simuler", {
             **BASE, "bascule": "2035", "euros": "2000",
         }),
         # Départ dans l'année de référence : les deux unités se confondent et
         # chaque scénario n'affiche qu'un chiffre. C'est la branche que les
         # textes d'unité doivent traiter à part.
-        ("accueil_depart_annee_reference", "/", {
+        ("simuler_depart_annee_reference", "/simuler", {
             **BASE, "naissance": "1962", "liquidation": "64", "euros": "2026",
         }),
         # Une carrière en trois métiers : le formulaire porte alors trois lignes
         # remplies et une quatrième vide, et la page récapitule le parcours.
-        ("accueil_plusieurs_metiers", "/", {
+        ("simuler_plusieurs_metiers", "/simuler", {
             **BASE, "naissance": "1968", "liquidation": "64",
             "metier2_debut": "34", "metier2_statut": "contractuel_public",
             "metier2_salaire": "0.8",
@@ -560,17 +560,17 @@ def _pages(contexte: Contexte) -> dict:
         }),
         # Une ligne de métier laissée à moitié remplie : la page doit le dire,
         # et dire ce qui manque.
-        ("accueil_metier_incomplet", "/", {**BASE, "metier2_debut": "40"}),
+        ("simuler_metier_incomplet", "/simuler", {**BASE, "metier2_debut": "40"}),
         # Une carrière LUE sur un relevé : le dépliant s'ouvre, la zone de
         # saisie porte les lignes, et le récapitulatif dit que les métiers du
         # formulaire n'ont pas servi.
-        ("accueil_releve", "/", {
+        ("simuler_releve", "/simuler", {
             **BASE, "releve": lignes_releve(1998, 2038,
                                             "salarie_prive_non_cadre", 14000),
         }),
         # Un relevé refusé : la phrase cite la ligne fautive, et le formulaire
         # doit repartir sans elle.
-        ("accueil_releve_refuse", "/", {
+        ("simuler_releve_refuse", "/simuler", {
             **BASE, "releve": "2005:salarie_prive_non_cadre:24000:9",
         }),
         # Quatre blocs de la page de résultats qu'aucun témoin n'atteignait —
@@ -579,38 +579,39 @@ def _pages(contexte: Contexte) -> dict:
         # ne paraît que sur la règle par défaut, la rente RAFP que pour un
         # fonctionnaire à primes, le minimum contributif que sous son plafond,
         # et l'avertissement d'ouverture que sur un départ que le droit refuse.
-        ("accueil_indexation_par_defaut", "/", {**BASE, "indexation": "masse_salariale"}),
-        ("accueil_rafp", "/", {
+        ("simuler_indexation_par_defaut", "/simuler", {**BASE, "indexation": "masse_salariale"}),
+        ("simuler_rafp", "/simuler", {
             **BASE, "statut": "fonctionnaire_etat", "primes": "0.2",
         }),
-        ("accueil_minimum_contributif", "/", {
+        ("simuler_minimum_contributif", "/simuler", {
             **BASE, "salaire": "0.35", "debut": "20", "liquidation": "67",
         }),
-        ("accueil_liquidation_non_ouverte", "/", {
+        ("simuler_liquidation_non_ouverte", "/simuler", {
             **BASE, "liquidation": "55", "debut": "30",
         }),
         # Le salaire saisi en euros : le formulaire change de libellé et donne
         # l'échelle chiffrée, au lieu du multiple que personne ne connaît.
-        ("accueil_revenu_en_euros", "/", {
+        ("simuler_revenu_en_euros", "/simuler", {
             **BASE, "unite_revenu": "euros_mois", "salaire": "2500",
         }),
         # Un salaire qui, converti, sort des bornes du modèle : le refus doit
         # redire ces bornes en euros, pas en multiples du salaire moyen.
-        ("accueil_revenu_hors_bornes", "/", {
+        ("simuler_revenu_hors_bornes", "/simuler", {
             **BASE, "unite_revenu": "euros_mois", "salaire": "200",
         }),
         # L'autre unité : libellés, aide et lien de bascule changent tous les
         # trois, et le lien doit porter les montants déjà convertis.
-        ("accueil_revenu_en_multiples", "/", {
+        ("simuler_revenu_en_multiples", "/simuler", {
             **BASE, "unite_revenu": "moyen", "salaire": "1.2",
         }),
         # La bascule avec plusieurs métiers : le lien convertit chacun d'eux,
         # et c'est le seul endroit du site qui écrive une adresse complète.
-        ("accueil_bascule_plusieurs_metiers", "/", {
+        ("simuler_bascule_plusieurs_metiers", "/simuler", {
             **BASE, "unite_revenu": "euros_mois", "salaire": "2900",
             "metier2_debut": "40", "metier2_statut": "artisan",
             "metier2_salaire": "4200",
         }),
+        ("programme", "/", {}),
         ("cas_types", "/cas-types", {}),
         ("cout", "/cout", {}),
         ("methode", "/methode", {}),
