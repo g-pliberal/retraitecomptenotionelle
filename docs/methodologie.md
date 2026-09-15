@@ -920,7 +920,12 @@ fixe le taux sans réécrire l'article** est lu dans la base JORF, à condition
 d'être nommé et corroboré : c'est le cas du relèvement temporaire de 0,2 point
 du 1er juillet 1987 au 30 juin 1988. Les années d'avant 1982 restent
 transcrites d'OpenFisca-France, au niveau `haute` ; `limites.md` dit pourquoi
-la base ne permet pas de les dater.
+la base ne permet pas de les dater, et **ce qu'elles valent malgré tout** : la
+DATE de chacune de leurs marches est vérifiée contre le *Journal officiel*, par
+le décret que l'IPP — source amont d'OpenFisca — nomme en regard. Deux années y
+font exception et sont tenues pour fausses, 1980 et 1981 : un décret du
+30 juillet 1979 a relevé ces taux « à titre exceptionnel » sur une fenêtre qui
+les couvre, et aucune source ne porte la hausse.
 
 **Le drapeau porte sur le STATUT, pas seulement sur le régime.** Un artisan
 cotise au régime général, dont la fiche porte la répartition 41/59 d'un salarié.

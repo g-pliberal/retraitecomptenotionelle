@@ -3982,6 +3982,101 @@ def controle_vraisemblance_cotisations() -> list[str]:
     return messages + anomalies
 
 
+def controle_ancrage_taux_cotisation() -> list[str]:
+    """Ce que valent les taux que le dépôt ne peut PAS certifier.
+
+    Deux séries restent transcrites : le régime général d'avant 1982, que la
+    base LEGI ne date pas, et les complémentaires du privé, dont les taux ne
+    sont dans aucun texte réglementaire. Elles viennent d'OpenFisca-France, qui
+    transcrit lui-même les barèmes de l'Institut des politiques publiques.
+
+    Ce contrôle ne les certifie pas et ne le prétend pas : l'IPP est l'AMONT
+    d'OpenFisca, et les confronter vérifie une copie contre son original. Ce
+    qu'il ajoute tient en trois lignes.
+
+    * l'IPP et OpenFisca doivent dire la même chose, année par année, à la règle
+      du 1er janvier — un écart est une erreur de transcription, et il en avait
+      déjà été trouvé ;
+    * chaque marche de l'IPP nomme un texte et sa date au *Journal officiel* :
+      ``ipp_taux_cotisation.py`` vérifie que ce texte y est, ce jour-là, sous ce
+      numéro. La CHRONOLOGIE devient vérifiable même quand la VALEUR ne l'est
+      pas, et c'est la chronologie dont dépend la règle du 1er janvier ;
+    * pour l'Agirc et l'Arrco, l'IPP laisse lui-même la colonne du *Journal
+      officiel* vide et cite des accords collectifs. C'est la démonstration,
+      mécanique et non affirmée, que ces taux ne se certifieront pas.
+
+    Et il compte les décrets que la série IGNORE. Il en reste un, et il est
+    lourd : le décret n° 79-650 du 30 juillet 1979 a relevé les taux du régime
+    général du 1er août 1979 au 31 janvier 1981, donc au 1er janvier 1980 ET au
+    1er janvier 1981, sans qu'aucune source ne porte la hausse.
+    """
+    try:
+        ipp = _lire_json("ipp_taux_cotisation.json",
+                         "scripts/fetch/ipp_taux_cotisation.py")
+        openfisca = _lire_json("openfisca_cotisations.json",
+                               "scripts/fetch/openfisca_cotisations.py")
+    except SourceAbsente as erreur:
+        return [f"IGNORÉ  ancrage des taux de cotisation : {erreur}"]
+
+    messages, anomalies = [], []
+
+    # 1. La copie contre son original, année par année.
+    compares = 0
+    for annee, composantes in sorted(ipp["serie_cnav"].items()):
+        chez_openfisca = openfisca["serie"].get(annee)
+        if chez_openfisca is None:
+            continue
+        compares += 1
+        for champ, valeur in composantes.items():
+            autre = chez_openfisca.get(champ, 0.0)
+            if abs(autre - valeur) > 5e-6:
+                anomalies.append(
+                    f"SUSPECT taux de cotisation {annee} {champ} : IPP "
+                    f"{valeur:.4%}, OpenFisca {autre:.4%} — OpenFisca transcrit "
+                    "l'IPP, un écart est une erreur de recopie")
+    messages.append(
+        f"OK      ancrage des taux de cotisation : {compares} années du régime "
+        "général confrontées à la source AMONT d'OpenFisca (l'IPP) — c'est une "
+        "copie vérifiée, non une seconde lecture")
+
+    # 2. L'ancrage de chaque marche au Journal officiel.
+    for nom, marches in sorted(ipp["baremes"].items()):
+        ancrees = [m for m in marches if m.get("ancrage") == "ancrée"]
+        if len(ancrees) == len(marches):
+            messages.append(
+                f"OK      ancrage {nom} : {len(marches)}/{len(marches)} marches "
+                "retrouvées au Journal officiel, au numéro et à la date que "
+                "l'IPP annonce")
+            continue
+        manquantes = [m for m in marches if m.get("ancrage") != "ancrée"]
+        raisons = sorted({m.get("ancrage", "?") for m in manquantes})
+        citee = next((m["reference"] for m in manquantes if m["reference"]), "")
+        messages.append(
+            f"OK      ancrage {nom} : {len(ancrees)}/{len(marches)} marches "
+            f"ancrées — pour les autres, {' ; '.join(raisons)}"
+            + (f" (« {citee[:60]} »)" if citee else ""))
+
+    # 3. Ce que la corroboration de 1981 dit, et ce que la série ignore.
+    corroboration = ipp.get("corroboration_1981") or {}
+    verdict = corroboration.get("verdict", "non vérifiée")
+    if verdict.startswith("le Journal officiel confirme"):
+        messages.append(
+            "OK      corroboration 1981 : la notice du décret n° 81-1013, seule "
+            "du JORF ancien à porter les chiffres, donne le niveau que la série "
+            "porte — 8,20 % employeur, 4,70 % salarié")
+    else:
+        anomalies.append(f"SUSPECT corroboration 1981 : {verdict}")
+
+    ignores = ipp.get("decrets_ignores") or []
+    if ignores:
+        messages.append(
+            f"        {len(ignores)} décret(s) du Journal officiel qu'aucune "
+            "marche ne rejoint, sur 1967-1981 — les années qu'ils couvrent sont "
+            "donc FAUSSES et non seulement incertaines :")
+        messages.extend(f"        {ligne}" for ligne in ignores)
+    return messages + anomalies
+
+
 #: Fiche, régime, assiette -> séries d'OpenFisca à additionner pour obtenir
 #: la grandeur que la fiche porte, et le champ de la fiche quand ce n'est pas
 #: `taux_cotisation_retraite`. La retenue de l'agent (`agent_seul`) se lit
@@ -4318,6 +4413,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.extend(controle_vraisemblance_minimum_garanti())
     messages.extend(controle_vraisemblance_plafond())
     messages.extend(controle_vraisemblance_cotisations())
+    messages.extend(controle_ancrage_taux_cotisation())
     messages.extend(controle_vraisemblance_minimum_contributif())
     messages.extend(controle_vraisemblance_rendements())
     messages.extend(controle_vraisemblance_ircantec())

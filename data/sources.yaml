@@ -14,7 +14,10 @@
 #                 scripts/verifier_donnees.py, qui appose le niveau `certifiee`
 #   automatise -> data/reference/ est régénéré par un script
 #   saisi      -> valeurs saisies à la main depuis la source, à certifier
+#   controle   -> la source n'alimente aucune valeur : elle en CONTRÔLE une
+#                 autre, et ce qu'elle démontre est dans sa note
 #   a_faire    -> source identifiée, données pas encore intégrées
+#   sans_objet -> la source est citée pour mémoire, sans donnée à en tirer
 #
 # Champ `idbank` : identifiant de série dans la Banque de données
 # macroéconomiques de l'INSEE, interrogeable sans clé d'accès à l'adresse
@@ -2553,6 +2556,55 @@ institutions:
           11, 12 et 13 fois une unité de 1 527 € qui vaut 3,71 % du plafond.
           Restent, au même mécanisme et avec des données qui existent : la
           CAVEC, la part répartie de la CAVP, le RAAP d'avant 2017.
+
+      - id: ipp_taux_cotisation
+        titre: >-
+          Taux de cotisation retraite chez l'IPP, et l'ancrage de chaque marche
+          au Journal officiel
+        url: https://baremes.ipp.eu/parameters/prelevements-sociaux/
+        acces: fichier
+        statut_integration: controle
+        cible: data/brut/ipp_taux_cotisation.json
+        recuperation: scripts/fetch/ipp_taux_cotisation.py
+        note: >-
+          CETTE SOURCE NE CERTIFIE RIEN, ET C'EST SON OBJET. Deux séries du
+          dépôt ne peuvent pas l'être : le régime général d'avant 1982, que la
+          base LEGI ne date pas, et les complémentaires du privé, dont les taux
+          ne sont dans aucun texte réglementaire. Elles viennent
+          d'OpenFisca-France, qui transcrit lui-même les barèmes de l'Institut
+          des politiques publiques. Confronter les deux vérifie une copie contre
+          son original, non deux lectures indépendantes, et le contrôle le dit à
+          chaque exécution.
+          CE QU'ELLE AJOUTE. Les barèmes IPP portent deux colonnes que la
+          transcription perd — `reference`, qui nomme le texte, et
+          `official_journal_date`, qui donne sa publication. Le récupérateur
+          cherche chaque texte dans l'index JORF du dépôt, au numéro et à la
+          date annoncés : 35 des 36 marches de la CNAV y sont, seul le décret
+          n° 70-680 du 30 juillet 1970 manque à l'index. La CHRONOLOGIE de la
+          série devient donc vérifiable là où sa VALEUR ne l'est pas — et c'est
+          la chronologie dont dépend la règle du 1er janvier.
+          CE QU'ELLE DÉMONTRE SUR LES COMPLÉMENTAIRES. Pour l'Agirc et l'Arrco,
+          l'IPP laisse lui-même la colonne du Journal officiel VIDE et cite
+          « Convention AGIRC du 14/03/1947 », « Accords ARRCO du 12/11/86 »,
+          « Lettre-circulaire ARRCO 82-28 ». Ces taux sont fixés par accord
+          collectif, et le Journal officiel n'en publie que l'avis d'extension,
+          qui renvoie au Bulletin officiel Conventions collectives sans jamais
+          écrire le chiffre. La source amont dit donc elle-même qu'il n'y a pas
+          de texte officiel à lire : la démonstration est mécanique et non
+          affirmée.
+          CE QU'ELLE A TROUVÉ. Un décret que la série IGNORE : le n° 79-650 du
+          30 juillet 1979, qui a relevé « à titre exceptionnel » les taux du
+          régime général du 1er août 1979 au 31 janvier 1981 — donc au
+          1er janvier 1980 ET au 1er janvier 1981 — sans qu'aucune source ne
+          porte la hausse, et sans nommer de risque. Et une erreur de recopie :
+          OpenFisca servait 0,1 % de part salariale déplafonnée dès le
+          1er janvier 2004 quand elle naît le 1er juillet.
+          LA CORROBORATION DE 1981. La notice du décret n° 81-1013 du
+          13 novembre 1981 est la seule du JORF ancien à porter les chiffres —
+          « VIEILLESSE : 12,9 % (8,2 % POUR L'EMPLOYEUR, 4,7 % POUR LES
+          SALARIES) » — et le récupérateur vérifie qu'ils sont ceux que la série
+          porte. Ce n'est pas une certification : le décret dit ce qui vaut à
+          partir du 14 novembre 1981, non ce qui valait avant.
 
       - id: ipp_points_independants
         titre: >-

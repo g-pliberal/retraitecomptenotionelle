@@ -438,11 +438,12 @@ La page **Données** du site affiche l'état exact. En résumé :
 | Plafond Sécurité sociale | le reste de 1931-2001 | haute | OpenFisca-France, daté décret par décret — la notice ancienne du JORF n'a pas d'écriture stable |
 | Revalorisation des salaires portés au compte | 10 colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux |
 | Taux de cotisation, régime général | 1982-2026 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 242-4` et décret n° 81-1013 du 13 novembre 1981, article 2 ; la hausse temporaire de 1987-1988, qui n'a pas réécrit l'article, est lue dans la base JORF |
-| Taux de cotisation, régime général | 1967-1981 | moyenne | OpenFisca-France, recoupé à chaque exécution — l'article 3 du décret n° 67-803 n'a qu'une version dans LEGI, datée de 1967 et portant l'état de 1979 |
+| Taux de cotisation, régime général | 1967-1979 | haute | OpenFisca-France, transcrit des barèmes IPP — l'article 3 du décret n° 67-803 n'a qu'une version dans LEGI, datée de 1967 et portant l'état de 1979. Chaque marche est **ancrée** à son décret, retrouvé au JORF au numéro et à la date que l'IPP annonce (35 sur 36 ; le n° 70-680 manque à l'index) |
+| Taux de cotisation, régime général | 1980 et 1981 | **fausses** | le décret n° 79-650 du 30 juillet 1979 a relevé ces taux « à titre exceptionnel » du 1er août 1979 au 31 janvier 1981, sans qu'aucune source ne porte la hausse et sans que sa notice l'écrive |
 | Taux de cotisation, salariés agricoles | 1980-2026 | **certifiée** | DILA, base LEGI, décret n° 50-444 du 20 avril 1950, article 2, puis code rural `D. 741-35`, qui renvoie à `D. 242-4` depuis 2014 |
 | Taux de cotisation, salariés agricoles | 1967-1979 | moyenne | la série du régime général tenant lieu, faute d'une version antérieure de l'article 2 |
 | Taux de cotisation, cultes, Mayotte, Saint-Pierre-et-Miquelon | depuis 1979 et 1987 | haute | la série du régime général du dépôt, que ces trois régimes portent faute d'un barème propre : la valeur est certifiée, la substitution est une décision de modélisation |
-| Taux de cotisation, complémentaires du privé | Arrco 1962-2018, Agirc 1981-2018, Agirc-Arrco 2019- | moyenne | OpenFisca-France, taux effectifs par tranche, recoupés à chaque exécution |
+| Taux de cotisation, complémentaires du privé | Arrco 1962-2018, Agirc 1981-2018, Agirc-Arrco 2019- | moyenne | OpenFisca-France, taux effectifs par tranche, recoupés à chaque exécution. **Ne se certifieront pas** : ces taux sont fixés par accord collectif, l'IPP — source amont d'OpenFisca — laisse lui-même la colonne du *Journal officiel* vide pour chacune de leurs 25 marches, et le JO ne publie que l'avis d'extension, qui renvoie au Bulletin officiel sans écrire le chiffre |
 | Retenue pour pension, État, CNRACL, ouvriers de l'État | 1948-2026, une période par taux | moyenne | OpenFisca-France, article L. 61 et barème de la caisse, recoupés à chaque exécution |
 | Cotisation vieillesse de base des artisans et commerçants | 1973-2018, moyennes par période | moyenne | OpenFisca-France, décrets d'application de la loi du 3 juillet 1972, recoupés à chaque exécution |
 | Taux de cotisation, autres régimes | tous | moyenne / estimée | Comptes de la Sécurité sociale |
@@ -847,11 +848,15 @@ plus volontiers.
   avant 1990 que la notice, et aucune de ces notices n'écrit de taux. Avant
   1967, aucune transcription machine n'existe : ces taux viennent des
   ordonnances de 1945 et de leurs modificatifs, saisis à la main. Ont été
-  essayés sans succès, pour éviter de refaire le trajet : les barèmes IPP, qui
-  sont la source amont d'OpenFisca et ne commencent pas plus tôt que lui pour la
-  CNAV (1967) ; et la Banque de données macroéconomiques de l'INSEE, dont la
-  série de taux de cotisation vieillesse (idbank 000483633) ne porte que la part
-  salariale et ne débute qu'en juillet 1993.
+  essayés sans succès, pour éviter de refaire le trajet : la Banque de données
+  macroéconomiques de l'INSEE, dont la série de taux de cotisation vieillesse
+  (idbank 000483633) ne porte que la part salariale et ne débute qu'en juillet
+  1993 ; et une lecture EXHAUSTIVE de la base JORF, de 1967 à 1982, de tout
+  document dont le texte ou le titre porte un pourcentage à moins de cent
+  vingt caractères du mot « vieillesse » — sept documents, dont un seul écrit
+  un taux du régime général, et c'est celui de novembre 1981. Ce que ces
+  quinze années valent malgré tout est dit plus bas, « Ce que vaut une série
+  qu'on ne peut pas certifier ».
 
   **Ce que cette incertitude déplace, et de combien.** Un taux de cotisation
   n'entre nulle part dans le calcul d'une pension du système ACTUEL : les
@@ -3706,6 +3711,77 @@ du scénario 6 de −51,6 % à **−51,7 %**, celui du 2 reste à −79,5 %. Le 
 1 ne bouge nulle part, puisqu'il liquide sur les trimestres et le salaire de
 référence, non sur la cotisation.
 
+### Ce que vaut une série qu'on ne peut pas certifier
+
+Deux séries de taux ne se certifieront pas, et il fallait dire mieux que « pas
+certifiées ». Le régime général d'avant 1982, que la base LEGI ne date pas ; et
+les complémentaires du privé, dont les taux ne sont dans aucun texte
+réglementaire. Les deux venaient d'OpenFisca-France.
+
+**OpenFisca n'est pas la source.** Il transcrit les barèmes de l'Institut des
+politiques publiques, qui sont l'amont — la page qui précède l'écrivait déjà,
+pour dire que l'IPP « ne commence pas plus tôt que lui ». C'était vrai, et à
+côté de la question : ce que l'IPP a et qu'OpenFisca perd en route, ce sont deux
+colonnes. `reference` nomme le texte de chaque marche ; `official_journal_date`
+donne sa publication. `scripts/fetch/ipp_taux_cotisation.py` les lit, et
+`verifier_donnees.py` en tire trois constats à chaque exécution.
+
+**Un : la confrontation vérifie une copie, pas une lecture.** Les soixante
+années du régime général sont confrontées à l'IPP, et un écart y est une erreur
+de recopie d'OpenFisca — non un désaccord entre deux témoins. Le contrôle le dit
+dans ses propres mots, pour que personne ne prenne son « OK » pour une seconde
+source. Il en a déjà trouvé une : OpenFisca servait 0,1 % de part salariale
+déplafonnée **dès le 1er janvier 2004** quand elle naît le 1er juillet. La cause
+était la même que celle du filtre de l'année, et au même endroit : l'exception
+« année d'ouverture » s'appliquait à chaque composante au lieu de la seule année
+où la série commence.
+
+**Deux : la chronologie, elle, se vérifie.** Pour chaque marche, le récupérateur
+cherche dans l'index JORF le texte que l'IPP nomme, au numéro et à la date
+annoncés. **Trente-cinq des trente-six marches de la CNAV y sont** ; la seule qui
+manque est le décret n° 70-680 du 30 juillet 1970, absent de l'index. Une valeur
+transcrite reste une valeur transcrite, mais la DATE de chaque marche est
+désormais vérifiée contre le *Journal officiel* — et c'est la date dont dépend
+la règle du 1er janvier, celle qui déplaçait six années à elle seule.
+
+**Trois : les complémentaires ne se certifieront pas, et c'est l'IPP qui le
+dit.** Pour l'Agirc, l'Arrco et le régime unifié, il laisse lui-même la colonne
+du *Journal officiel* VIDE sur ses vingt-cinq marches, et cite « Convention
+AGIRC du 14 mars 1947 », « Accords ARRCO du 12 novembre 1986 »,
+« Lettre-circulaire ARRCO 82-28 ». Ces taux sont fixés par accord collectif ; le
+*Journal officiel* n'en publie que l'**avis d'extension**, qui renvoie au
+Bulletin officiel Conventions collectives sans jamais écrire le chiffre — on
+peut le lire dans la base, avis par avis, de 2006 à 2015. La fédération
+Agirc-Arrco publie la compilation de ses valeurs de point, que le dépôt lit déjà,
+mais aucun historique de taux : sa page « Paramètres » n'affiche que l'année
+courante, et ses circulaires ne remontent qu'à 2003. La démonstration est
+mécanique, et c'est ce qui la rend utile : si l'IPP se met un jour à remplir
+cette colonne, le contrôle le dira.
+
+**Et il a trouvé ce que personne ne cherchait.** Sur 1967-1981, le récupérateur
+demande au JORF les décrets qui annoncent dans leur titre des taux de cotisation
+du régime général, et compte ceux qu'aucune marche ne rejoint. Il en reste **un**,
+et il est lourd : le **décret n° 79-650 du 30 juillet 1979** a relevé « à titre
+exceptionnel, par dérogation aux dispositions du décret n° 78-1213 » les taux du
+régime général « du 01-08 au 31-12-1979 et du 01-01-1980 au 31-01-1981 ». La
+fenêtre couvre **deux premiers janvier**, 1980 et 1981. Ni l'IPP ni OpenFisca ne
+la portent : les taux que le dépôt sert pour ces deux années sont donc **trop
+bas**, d'un montant que la notice n'écrit pas — elle ne nomme même aucun risque,
+et le décret lui-même a disparu de LEGI avec sa date d'expiration. Le tableau de
+certification porte ces deux années comme *fausses* et non comme incertaines.
+
+C'est de là que vient une règle du récupérateur qui lit les textes : son
+garde-fou **n'exige pas le mot « vieillesse »**. Un décret de la forme du
+n° 79-650 ne doit pas pouvoir traverser la période certifiée sans être vu.
+
+**Une corroboration, et ce qu'elle ne prouve pas.** La notice du décret
+n° 81-1013 du 13 novembre 1981 est la seule du JORF ancien à porter les chiffres
+— « VIEILLESSE : 12,9 % (8,2 % POUR L'EMPLOYEUR, 4,7 % POUR LES SALARIES) » —
+et le récupérateur vérifie qu'ils sont ceux que la série porte à cette date. Ils
+le sont. Ce n'est pas une certification : un décret dit ce qui vaut à partir de
+sa publication, non ce qui valait avant. Il confirme le niveau qu'il trouve, et
+rien de plus.
+
 ### Avant 1967, la cotisation vieillesse n'existait pas séparément — et le dépôt lui prêtait 8,6 %
 
 La fiche du régime général portait, de 1945 à 1966, une moyenne de 8,6 % sans
@@ -4862,7 +4938,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 621 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 623 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

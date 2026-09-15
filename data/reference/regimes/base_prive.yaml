@@ -238,7 +238,7 @@ regimes:
         assiette: plafonnee
         taux_cotisation_retraite: 0.1487   # part PLAFONNÉE seule, moyenne OpenFisca sur la période
         taux_cotisation_deplafonnee: 0.0170   # prélevée sur la TOTALITÉ du salaire, n'ouvre aucun droit
-        part_salariale_deplafonnee: 0.0588
+        part_salariale_deplafonnee: 0.0471   # moyenne : la part salariale déplafonnée naît le 1er juillet 2004, et 2004 vaut donc zéro
         part_salariale: 0.4445   # du taux plafonné
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
@@ -1449,7 +1449,7 @@ regimes:
         taux_cotisation_retraite: 0.1487
         part_salariale: 0.4445
         taux_cotisation_deplafonnee: 0.0170
-        part_salariale_deplafonnee: 0.0588
+        part_salariale_deplafonnee: 0.0   # la part salariale déplafonnée naît le 1er juillet 2004 : au 1er janvier elle n'existe pas
         decote_par_trimestre: 0.0250
         surcote_par_trimestre: null
         avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]

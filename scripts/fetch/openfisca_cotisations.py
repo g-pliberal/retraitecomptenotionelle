@@ -283,7 +283,8 @@ def _tranches(texte: str) -> list[dict[str, float]]:
     return tranches
 
 
-def _en_vigueur(bareme: dict[str, float], annee: int) -> float:
+def _en_vigueur(bareme: dict[str, float], annee: int,
+                ouverture: int | None = None) -> float:
     """Taux applicable au 1er janvier de l'année.
 
     Les revalorisations de milieu d'année sont ignorées : le modèle raisonne en
@@ -297,18 +298,26 @@ def _en_vigueur(bareme: dict[str, float], annee: int) -> float:
     général en portaient la marque — 1970, 1976, 1986, 1987, 1991 et 2012. La
     lecture du *Journal officiel* l'a montré en les recoupant une à une.
 
-    Une exception, et elle est nommée : l'année où le barème COMMENCE. La
+    Une exception, et elle est nommée : l'année où la SÉRIE commence. La
     cotisation vieillesse du régime général chez OpenFisca ouvre au 1er octobre
     1967 ; exiger une date antérieure au 1er janvier reviendrait à n'écrire
-    aucun taux pour 1967, alors que le barème en donne un. L'année d'ouverture
-    prend donc le premier taux daté, et c'est la seule qui l'ait.
+    aucun taux pour 1967, alors que le barème en donne un. Cette année-là prend
+    donc le premier taux daté, et elle seule : la règle vaut pour l'ouverture de
+    la série, jamais pour celle d'une composante qui apparaît plus tard. La
+    cotisation DÉPLAFONNÉE du salarié naît le 1er juillet 2004 — au 1er janvier
+    de cette année-là elle vaut zéro, non 0,1 %, et c'est ce que dit l'article
+    D. 242-4 dans sa rédaction du 25 août 2004. Le contrôle d'ancrage a trouvé
+    l'écart en confrontant cette série à celle de l'IPP, qui en est la source.
     """
     premier_janvier = f"{annee}-01-01"
     anterieures = [cle for cle in sorted(bareme) if cle <= premier_janvier]
     if anterieures:
         return bareme[anterieures[-1]]
-    ouverture = [cle for cle in sorted(bareme) if cle[:4] == str(annee)]
-    return bareme[ouverture[0]] if ouverture else 0.0
+    if ouverture is not None and annee == ouverture:
+        premieres = [cle for cle in sorted(bareme) if cle[:4] == str(annee)]
+        if premieres:
+            return bareme[premieres[0]]
+    return 0.0
 
 
 def main() -> int:
@@ -328,7 +337,8 @@ def main() -> int:
     derniere = max(int(cle[:4]) for bareme in baremes.values() for cle in bareme)
     serie = {}
     for annee in range(PREMIERE_ANNEE, derniere + 1):
-        parts = {nom: _en_vigueur(bareme, annee) for nom, bareme in baremes.items()}
+        parts = {nom: _en_vigueur(bareme, annee, PREMIERE_ANNEE)
+                 for nom, bareme in baremes.items()}
         serie[str(annee)] = {
             **{nom: round(valeur, 5) for nom, valeur in parts.items()},
             "total": round(sum(parts.values()), 5),
@@ -346,7 +356,7 @@ def main() -> int:
                 ) -> dict[str, dict[str, float]]:
         annuel: dict[str, dict[str, float]] = {}
         for annee in range(premiere, derniere + 1):
-            valeurs = {f"tranche_{i + 1}": round(_en_vigueur(t, annee), 5)
+            valeurs = {f"tranche_{i + 1}": round(_en_vigueur(t, annee, premiere), 5)
                        for i, t in enumerate(tranches)}
             if any(valeurs.values()):
                 annuel[str(annee)] = valeurs
@@ -376,9 +386,9 @@ def main() -> int:
         for regime, (chemin, premiere) in APPELS.items():
             bareme = _valeurs(_lire(chemin))
             appels[regime] = {
-                str(a): round(_en_vigueur(bareme, a), 5)
+                str(a): round(_en_vigueur(bareme, a, premiere), 5)
                 for a in range(premiere, derniere + 1)
-                if _en_vigueur(bareme, a) > 0
+                if _en_vigueur(bareme, a, premiere) > 0
             }
             print(f"OK      {regime:<24} taux d'appel, {len(appels[regime])} années")
         def _parts(cotes: dict[str, str]) -> dict[str, dict[str, float]]:
@@ -389,7 +399,8 @@ def main() -> int:
             for annee in range(premiere, derniere + 1):
                 par_tranche = {}
                 for i, (ts, te) in enumerate(zip(salarie, employeur)):
-                    s_, e_ = _en_vigueur(ts, annee), _en_vigueur(te, annee)
+                    s_, e_ = (_en_vigueur(ts, annee, premiere),
+                              _en_vigueur(te, annee, premiere))
                     if s_ + e_ > 0:
                         par_tranche[f"tranche_{i + 1}"] = round(s_ / (s_ + e_), 5)
                 if par_tranche:
@@ -422,7 +433,7 @@ def main() -> int:
         arrêtée à zéro — n'est pas écrite."""
         annuel = {}
         for annee in range(premiere, derniere + 1):
-            taux = _en_vigueur(bareme, annee)
+            taux = _en_vigueur(bareme, annee, premiere)
             if taux > 0:
                 annuel[str(annee)] = round(taux, 5)
         return annuel

@@ -797,6 +797,38 @@ def test_les_taux_d_avant_1967_sont_dates_par_convention_nommee(catalogue):
     assert catalogue["msa_salaries"].periode(1950).taux_cotisation_retraite == pytest.approx(0.16 * 8.5 / 21, abs=1e-6)
 
 
+def test_le_manifeste_dit_pourquoi_deux_series_ne_se_certifient_pas():
+    """Ce que le dépôt affirme de ses deux séries non certifiées doit être écrit.
+
+    Le régime général d'avant 1982 et les complémentaires du privé restent
+    transcrits. Une session qui relit ce dépôt doit trouver, sans refaire la
+    recherche, POURQUOI : l'article d'avant 1982 n'a qu'une version dans LEGI, et
+    les taux des complémentaires sont dans des accords que le Journal officiel
+    n'imprime pas. Les deux raisons sont dans `data/sources.yaml`, et ce test
+    refuse qu'elles disparaissent.
+    """
+    import yaml
+
+    manifeste = yaml.safe_load(
+        (RACINE_DONNEES / "sources.yaml").read_text(encoding="utf-8"))
+    par_id = {
+        jeu["id"]: jeu
+        for institution in manifeste["institutions"].values()
+        for jeu in institution.get("jeux", [])
+    }
+
+    ancrage = par_id["ipp_taux_cotisation"]
+    assert ancrage["statut_integration"] == "controle", (
+        "cette source ne verse aucune valeur : elle en contrôle une autre")
+    for attendu in ("79-650", "avis d'extension", "81-1013", "70-680"):
+        assert attendu in ancrage["note"], attendu
+
+    lecture = par_id["dila_legi_taux_cotisation"]
+    assert lecture["statut_integration"] == "certifie"
+    for attendu in ("67-803", "D. 242-4", "D. 741-35", "87-453"):
+        assert attendu in lecture["note"], attendu
+
+
 def test_la_retenue_des_fonctionnaires_passe_a_8_9_pour_cent_en_1989(catalogue):
     """Loi n° 89-18, article 23 : « majoré d'un point » pour les traitements
     perçus après le 31 décembre 1988.

@@ -2559,6 +2559,43 @@ def test_le_README_dit_le_vrai_nombre_de_tests():
             )
 
 
+def test_le_README_montre_la_simulation_que_le_modele_calcule_vraiment():
+    """Le bloc d'exemple du README doit être le résultat, pas son souvenir.
+
+    Le §3 du README colle la sortie de ``comparaison.tableau()`` pour une
+    fonctionnaire née en 1975. C'est la pièce la plus lue du dépôt, et rien ne
+    l'obligeait à suivre le modèle : elle avait dérivé de 1,7 % sur la pension du
+    scénario 1 sans que personne ne s'en aperçoive, et l'écart du scénario 4 y
+    valait +7,0 % quand le modèle en servait +9,0 %. Ce test la recalcule.
+    """
+    from pathlib import Path
+
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
+        age_debut=22, age_liquidation=64,
+        part_primes=0.2, profil_carriere="ascendant",
+    ))
+    readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
+    # Le README ne colle pas tout le tableau : il garde les six scénarios, la
+    # ligne hors répartition et le bloc « qui verse la cotisation ». Ce sont
+    # exactement les lignes qui portent des chiffres, et donc celles qui dérivent.
+    portees = re.compile(r"^(?:\d\. |   hors répartition|  (?:part |total|contribution))")
+    verifiees = 0
+    for ligne in comparaison.tableau().split("\n"):
+        if not portees.match(ligne):
+            continue
+        verifiees += 1
+        assert ligne in readme, (
+            "le bloc d'exemple du README a dérivé : le modèle écrit\n"
+            f"  {ligne}\net le README ne le porte pas"
+        )
+    assert verifiees >= 10, "le tableau n'a plus la forme que le README colle"
+
+
 def test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes():
     """Deux comptes annoncés en quatre endroits, et rien ne les recoupait.
 
