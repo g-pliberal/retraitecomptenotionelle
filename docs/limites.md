@@ -488,6 +488,7 @@ python scripts/fetch/dila_legi_point_indice.py # point d'indice, dans son décre
 python scripts/fetch/dila_legi_smic.py         # SMIC, dans ses décrets de relèvement (lent)
 python scripts/fetch/dila_legi_duree_requise.py # durée requise des générations 1953-1957 (lent)
 python scripts/fetch/dila_legi_cnracl.py       # contribution employeur de la CNRACL (lent)
+python scripts/fetch/dila_legi_contribution_employeur.py  # part patronale de six régimes spéciaux (index, rapide)
 python scripts/fetch/dila_legi_decote_fonction_publique.py  # décote de la fonction publique (lent)
 python scripts/fetch/dila_legi_minimum_garanti.py  # barème du minimum garanti (lent)
 python scripts/fetch/erafp_valeurs_point.py    # valeurs du point du RAFP, par l'ERAFP
@@ -1268,6 +1269,76 @@ plus volontiers.
   décret de relèvement paraît fin janvier avec effet au 1er janvier, quand la
   version consolidée s'ouvre au 1er février — sans quoi 2024 porterait le taux
   de 2023.
+
+* *Part patronale de six régimes spéciaux* — **cherchée chez le producteur,
+  écrite au Journal officiel.** Cette page rangeait douze régimes sous une
+  seule ligne du tableau de la part patronale : « rien / tout — aucune série de
+  taux employeur publiée sous une forme exploitable ». C'était vrai des sources
+  qu'on avait interrogées, et faux des textes. Six d'entre eux sont tombés en
+  une session, et sans télécharger un seul dump :
+
+  > « Le taux définitif de la cotisation à la charge de la Régie autonome des
+  > transports parisiens […] est fixé à 19,43 % pour l'exercice 2024. »
+
+  **163 valeurs, toutes certifiées** : la RATP de 2007 à 2025, les IEG de 2005
+  à 2020, la SNCF de 1992 à 2006, les mines de 1984 à 2026, l'Opéra de Paris et
+  la Comédie-Française de 1992 à 2026.
+
+  **Ce que la recherche avait manqué, c'est qu'il y a deux formes de texte.**
+  La RATP et les IEG ont été adossés au régime général en 2005-2006 : depuis,
+  l'employeur y verse ce que les mêmes salariés coûteraient à la CNAV et à
+  l'Agirc-Arrco, et un ARRÊTÉ ANNUEL l'arrête, exactement comme la composante
+  T1 de la SNCF que le dépôt lisait déjà. Les quatre autres sont dans la
+  VERSION DATÉE d'un article, comme la CNRACL : le II de l'article 8 du décret
+  n° 91-613 pour la SNCF d'avant 2007, l'article 52 puis l'article 90 du décret
+  de 1946 pour les mines, les articles 6 et 7 du décret de 1991 pour les deux
+  théâtres. Aucune de ces deux mécaniques n'était nouvelle pour le dépôt ; ce
+  qui manquait, c'était de les chercher ailleurs que là où elles avaient déjà
+  servi.
+
+  **Deux pièges, et ils se ressemblent.** Un arrêté porte DEUX taux, le
+  provisionnel appelé d'avance et le définitif arrêté après coup, souvent dans
+  la même phrase ; un article en porte TROIS, le total, la part de l'employeur
+  et celle de l'agent — « à hauteur de 15,60 %, soit 7,75 % à la charge des
+  employeurs et 7,85 % à la charge des salariés ». Dans les deux cas, prendre
+  le premier nombre venu donne une valeur plausible et fausse. Les deux erreurs
+  ont été commises en écrivant le récupérateur, et un test porte désormais un
+  repère de chaque série pour qu'elles ne reviennent pas.
+
+  **Un troisième, plus discret** : un arrêté en corrige parfois un autre. Celui
+  du 23 juin 2020 ramène le taux 2019 de la RATP de 19,20 % à 19,18 %. C'est le
+  texte le plus récent qui l'emporte, et l'écart est conservé au fichier brut.
+
+  **Ce que cela ne donne pas.** Les IEG s'arrêtent en 2020 et la SNCF en 2018,
+  pour la même raison : le texte cesse de chiffrer et renvoie à une formule que
+  la caisse applique sans la publier. Un taux qui évolue par renvoi n'est écrit
+  nulle part, et le calculer serait le reconstituer. Sept régimes restent sans
+  série — FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg, SEITA,
+  chemins de fer secondaires. Pour le dernier, la lecture est faite et
+  inutilisable : l'article 12 du même décret de 1991 donne 14,60 % à la charge
+  des exploitants, mais la fiche du régime s'arrête en 1954 et aucune année ne
+  se rencontrerait.
+
+  **Ce que cela a déplacé.** Trente cas de témoin sur 427, et pas un de plus :
+  les six régimes, et eux seuls. L'écart va dans les deux sens, ce qui est la
+  vraie leçon. Un agent des IEG voit la part patronale de sa carrière passer de
+  224 000 à 316 000 €, soit **+41 %** — le repli lui prêtait 27,75 % quand
+  l'employeur en verse 29,70 ; un mineur la voit tomber de 247 000 à
+  177 000 €, soit **−28 %**, parce que l'exploitant ne verse que 7,75 %. Un
+  agent de l'Opéra en perd 17 %, un agent SNCF en gagne 6 %, et une génération
+  plus ancienne bouge davantage : un cheminot né en 1935 passe de 51 000 à
+  77 000 €, ses années 1992-2006 ayant quitté le repli. Sur la page Coût,
+  l'effet est petit — deux cas
+  types sur douze sont concernés, et de faible poids : le cumul du scénario 4
+  passe de −51,9 % à −51,8 %, celui du 6 de −51,7 % à −51,6 %.
+
+  **L'index a remplacé le dump, et il était meilleur.** Les récupérateurs
+  `dila_legi_*` plus anciens retéléchargent le dump global de la DILA — un
+  quart d'heure pour LEGI, une heure pour les deux bases. Celui-ci lit l'index
+  publié par le dépôt, en quelques secondes, et il y trouve plus : le dump n'a
+  pas été régénéré depuis juillet 2025, quand l'index reçoit les incréments
+  quotidiens. L'arrêté RATP du 13 mars 2026, qui porte l'année 2025, n'est que
+  là.
 
 * *Décote de la fonction publique, et âge d'annulation de la décote* — **l'une
   lue dans la loi, l'autre calculée et désormais recontrôlée.** Ces deux tables
@@ -3882,25 +3953,50 @@ Les scénarios 4 et 5 ajoutent à la part salariale ce que verse l'employeur. Po
 un salarié du privé, la fiche du régime le porte — `part_salariale` en donne la
 répartition, recoupée à OpenFisca année par année. Pour un agent public, elle
 n'est dans aucune fiche : le modèle la lit dans
-`legislation/contribution_employeur_public.csv`, qui ne couvre que trois régimes
-et pas sur toute leur durée. Partout ailleurs, la part patronale est **estimée**
-par l'effort d'un salarié du privé de la même année — jamais laissée à zéro, qui
-ferait retomber les scénarios 4 et 5 sur les 2 et 3 sans le dire — la fiabilité
-de l'année retombe à `estimee`, et le nombre d'années concernées est affiché
-sous la simulation.
+`legislation/contribution_employeur_public.csv`, qui couvre aujourd'hui neuf
+régimes, mais aucun sur toute sa durée. Partout ailleurs, la part patronale est
+**estimée** par l'effort d'un salarié du privé de la même année — jamais laissée
+à zéro, qui ferait retomber les scénarios 4 et 5 sur les 2 et 3 sans le dire —
+la fiabilité de l'année retombe à `estimee`, et le nombre d'années concernées
+est affiché sous la simulation.
 
 | Régime | Couvert | Découvert | Ce qui manque |
 |---|---|---|---|
 | Fonction publique d'État | 1995-2026 | 1930-1994 | rien à retrouver : l'État ne versait aucune cotisation, les pensions étaient payées sur crédits budgétaires, et le plus ancien chiffrage a posteriori — le jaune « pensions » — s'arrête à 1995 |
 | CNRACL | 1948-2025 | 1945-1947 | le décret fondateur date du 19 septembre 1947 ; la convention « taux au 1er janvier » fait donc commencer la série en 1948 |
-| SNCF | 2007-2018 | 1930-2006, 2019- | les composantes T1 et T2 datent du décret du 28 juin 2007 ; OpenFisca cesse de les suivre après la fermeture du régime aux nouveaux entrants |
-| FSPOEIE, RATP, IEG, marins, mines, CRPCEN, Banque de France, Opéra, Comédie-Française, port de Strasbourg, SEITA, chemins de fer secondaires | rien | tout | aucune série de taux employeur publiée sous une forme exploitable. Pour ces douze régimes, la part patronale des scénarios 4 et 5 est celle d'un salarié du privé de la même année, et le modèle le dit |
+| SNCF | 1992-2018 | 1930-1991, 2019- | avant 1992, aucun texte de la base LEGI ne porte le taux ; après 2018, le décret cesse de chiffrer la composante T2, qui évolue par formule |
+| RATP | 2007-2025 | 1930-2006 | rien à retrouver : avant l'adossement de 2006, la RATP payait les pensions sans qu'aucun texte fixe un taux, exactement comme l'État avant son compte d'affectation spéciale |
+| IEG | 2005-2020 | 1946-2004, 2021- | avant 2005, EDF et GDF payaient les pensions directement ; après 2020, l'arrêté du 29 décembre 2021 remplace la fixation annuelle par une formule que la caisse applique sans la publier |
+| Mines | 1984-2026 | 1930-1983 | la base LEGI ne garde aucune version de l'article 52 du décret de 1946 avant le 1er janvier 1984 |
+| Opéra de Paris, Comédie-Française | 1992-2026 | 1930-1991 | même mur : les versions datées du décret qui fixe ces taux commencent au 1er juillet 1991 |
+| FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer secondaires | rien | tout | aucune série de taux employeur trouvée sous une forme exploitable. Pour ces sept régimes, la part patronale des scénarios 4 et 5 est celle d'un salarié du privé de la même année, et le modèle le dit |
 
-Deux conséquences à garder en tête.
+**Ces taux sont ceux de l'employeur, non ceux de l'équilibre**, et c'est une
+convention qui se défend mais qui se paie. Trois de ces régimes reçoivent aussi
+de l'État une contribution que la série ne porte pas, parce qu'elle n'est pas
+une cotisation d'employeur : les droits spécifiques de la RATP jusqu'à 45 000
+agents, « une cotisation correspondant à 22 % des salaires » plus un complément
+d'équilibre pour les mines — près de trois fois ce que verse l'exploitant —, la
+subvention de l'Opéra. Pour la SNCF d'après 2007, la somme T1 + T2 laisse de
+même dehors la subvention d'équilibre. La ligne de l'État est la seule exception
+du tableau : son taux EST un taux d'équilibre. Un agent minier et un
+fonctionnaire d'État ne sont donc pas mesurés à la même aune, et la différence
+joue contre le mineur.
+
+Trois conséquences à garder en tête.
 
 **Plus une carrière publique est ancienne, moins le scénario 4 s'écarte du
 scénario 2** — non parce que le financement d'alors ressemblait à celui du
 privé, mais parce qu'on ne le connaît pas.
+
+**Le repli n'est pas neutre, et il ne l'était pas dans le sens qu'on croyait.**
+Là où la série manquait, le modèle prêtait au régime l'effort d'un salarié du
+privé — de l'ordre de 27,75 % en 2026. Les taux lus sont tantôt plus élevés (la
+RATP et ses 12,29 % de retenue portent le total à près de 32 %), tantôt bien
+plus bas (les mines et leurs 7,75 %, l'Opéra et ses 9,56 %). Le repli
+surestimait donc la part patronale des régimes à faible cotisation d'employeur
+et la sous-estimait pour les régimes adossés : ce n'était ni un plancher ni un
+plafond, mais un brouillage.
 
 **Le scénario 5 ne voit presque jamais la contribution publique.** Il n'ouvre
 son compte qu'à la bascule, et à compter de la bascule le régime unique remplace
@@ -4668,7 +4764,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 618 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 620 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

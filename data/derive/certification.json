@@ -1,5 +1,5 @@
 {
- "certifie_le": "2026-09-14",
+ "certifie_le": "2026-09-15",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -191,6 +191,16 @@
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 5 II, et décret n° 47-1846 du 19 septembre 1947, article 3",
    "valeurs": 41
   },
+  "employeur_public_comedie_francaise": {
+   "ajoutees": 35,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "8216396ec705630f",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 7 II",
+   "valeurs": 35
+  },
   "employeur_public_etat": {
    "ajoutees": 0,
    "colonne": "taux",
@@ -211,6 +221,46 @@
    "source": "OpenFisca-France, taux implicite du jaune « pensions » du PLF 2011",
    "valeurs": 11
   },
+  "employeur_public_ieg": {
+   "ajoutees": 16,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "a43043673f6c8639",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, arrêtés annuels pris pour l'article 3 du décret n° 2005-278 du 24 mars 2005",
+   "valeurs": 16
+  },
+  "employeur_public_mines": {
+   "ajoutees": 43,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "aa83653a18554a82",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décret n° 46-2769 du 27 novembre 1946, articles 52 puis 90",
+   "valeurs": 43
+  },
+  "employeur_public_opera": {
+   "ajoutees": 35,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "78f83f9466b8dda2",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 6 II",
+   "valeurs": 35
+  },
+  "employeur_public_ratp": {
+   "ajoutees": 19,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "6ec2dee310929770",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, arrêtés annuels pris pour l'article 2 du décret n° 2005-1637 du 26 décembre 2005",
+   "valeurs": 19
+  },
   "employeur_public_sncf": {
    "ajoutees": 0,
    "colonne": "taux",
@@ -220,6 +270,16 @@
    "niveau": "haute",
    "source": "OpenFisca-France, arrêtés annuels fixant les composantes T1 et T2",
    "valeurs": 7
+  },
+  "employeur_public_sncf_avant_2007": {
+   "ajoutees": 15,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "f093d49ffbf5ef09",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 8 II",
+   "valeurs": 15
   },
   "employeur_public_sncf_textes": {
    "ajoutees": 0,

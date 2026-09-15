@@ -927,19 +927,52 @@ pas avant 2006. C'était vrai de l'État, et faux du reste.
   l'État en publie l'historique : 49,90 %, puis 74,28 % de 2013 à 2024, 78,28 %
   en 2025, 82,28 % en 2026.
 - La **SNCF** publie par arrêté les composantes T1 et T2 de la contribution de
-  l'entreprise, de 2007 à 2018.
+  l'entreprise, de 2007 à 2018 ; et avant 2007 son taux est dans le décret qui
+  fixe les cotisations des régimes spéciaux — 28,44 % de 1992 à 2006.
+- La **RATP** et les **IEG** ont été adossés au régime général en 2005-2006 :
+  l'employeur y verse ce que les mêmes salariés coûteraient à la CNAV et à
+  l'Agirc-Arrco, et un arrêté annuel l'arrête — 17,94 % à 19,43 % pour la RATP
+  de 2007 à 2025, 24,25 % à 30,42 % pour les IEG de 2005 à 2020.
+- Les **mines** : 7,75 % à la charge de l'exploitant, inchangé de 1984 à
+  aujourd'hui, dans le décret d'organisation de la sécurité sociale minière.
+- L'**Opéra national de Paris** et la **Comédie-Française** : 8,80 % en 1992,
+  9,56 % en 2026, dans le même décret que la SNCF d'avant 2007.
 
-La série est dans `legislation/contribution_employeur_public.csv`. Trois
+La série est dans `legislation/contribution_employeur_public.csv`. Quatre
 conventions à connaître. L'**assiette ne change pas** : le taux du CAS porte sur
 le traitement indiciaire brut et la NBI, à l'exclusion des primes — exactement
-l'assiette `hors_primes` des fiches. Le **taux retenu est celui du 1er
-janvier**, comme partout ailleurs dans le dépôt ; deux abattements d'un mois y
-échappent volontairement, décembre 2009 et décembre 2013, qui soldent l'exercice
-budgétaire. Enfin, **là où la série n'existe pas, le modèle le dit** : avant 1995
-pour l'État, avant 1948 pour la CNRACL, hors 2007-2018 pour la SNCF, et pour les
-douze régimes spéciaux qui n'en publient aucune, la part patronale est estimée
-par l'effort d'un salarié du privé de la même année, la fiabilité retombe à
-`estimee`, et le nombre d'années concernées est affiché sous la simulation.
+l'assiette `hors_primes` des fiches ; et pour les six régimes lus au *Journal
+officiel*, c'est le même texte qui fixe la retenue de l'agent et la contribution
+de l'employeur, sur la même assiette, ce qui rend leur somme lisible. Le **taux
+retenu est celui du 1er janvier**, comme partout ailleurs dans le dépôt ; deux
+abattements d'un mois y échappent volontairement, décembre 2009 et décembre
+2013, qui soldent l'exercice budgétaire, et les arrêtés annuels de la RATP, des
+IEG et de la SNCF y échappent aussi, parce qu'ils datent leur taux par
+l'EXERCICE — « fixé à 19,43 % pour l'exercice 2024 » — et non par une date
+d'effet. Pour ceux-là, **c'est le taux définitif qui compte**, non le
+provisionnel appelé d'avance : les deux diffèrent de six dixièmes de point pour
+la SNCF en 2018. Enfin, **là où la série n'existe pas, le modèle le dit** :
+avant 1992 pour la SNCF, avant 1995 pour l'État, avant 1948 pour la CNRACL,
+avant 2007 pour la RATP, après 2020 pour les IEG, et pour les sept régimes
+spéciaux qui n'en publient aucune, la part patronale est estimée par l'effort
+d'un salarié du privé de la même année, la fiabilité retombe à `estimee`, et le
+nombre d'années concernées est affiché sous la simulation.
+
+**Ces taux sont ceux de l'employeur, non ceux de l'équilibre.** Trois de ces
+régimes reçoivent aussi de l'État une contribution qui n'est pas une cotisation
+d'employeur et n'entre donc pas dans la série : les droits spécifiques que
+l'État finance pour la RATP jusqu'à 45 000 agents, les 22 % des salaires qu'il
+verse au régime minier — près de trois fois ce que verse l'exploitant —, la
+subvention de l'Opéra. C'est la convention déjà retenue pour la SNCF, dont la
+somme T1 + T2 laisse dehors la subvention d'équilibre. La ligne de l'État est la
+seule exception : son taux est fixé pour équilibrer le compte d'affectation
+spéciale, et il est donc l'un et l'autre.
+
+**Une réserve propre aux mines.** Depuis 1991, l'exploitant doit aussi 1,6 % sur
+la TOTALITÉ des rémunérations, en plus des 7,75 % dus dans la limite du plafond.
+La fiche du régime minier a une assiette plafonnée, où ces 1,6 % n'ont pas de
+place : ils ne sont pas portés, et la contribution de l'employeur minier est
+donc, après 1991, un plancher.
 
 La marche 2005 → 2006, où le taux de l'État passe de 59,4 % à 49,9 %, n'est pas
 une baisse du coût des droits : c'est un changement de mesure, le périmètre du

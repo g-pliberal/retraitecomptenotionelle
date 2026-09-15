@@ -1752,6 +1752,106 @@ def _annees_sncf_des_textes() -> set[tuple]:
         return set()
 
 
+def _employeur_du_journal_officiel(regime: str) -> dict[tuple, float]:
+    """Une des six séries lues dans les textes par ``dila_legi_contribution_employeur``."""
+    charge = _lire_json("dila_contribution_employeur.json",
+                        "scripts/fetch/dila_legi_contribution_employeur.py")
+    return {
+        (annee, regime): taux
+        for annee, taux in sorted(charge["series"].get(regime, {}).items())
+    }
+
+
+def source_employeur_ratp() -> dict[tuple, float]:
+    """Contribution de la RATP à la caisse de son personnel, 2007-2025.
+
+    Arrêtés annuels pris pour l'article 2 du décret n° 2005-1637 du 26 décembre
+    2005 : « le taux définitif de la cotisation à la charge de la Régie autonome
+    des transports parisiens […] est fixé à 19,43 % pour l'exercice 2024 ». Le
+    taux retenu est le DÉFINITIF de l'exercice, non le provisionnel appelé
+    d'avance, et l'arrêté modificatif du 23 juin 2020 l'emporte sur celui qu'il
+    corrige.
+
+    Ce que ce taux n'est pas : les droits spécifiques du régime, que l'État
+    finance jusqu'à 45 000 agents (article 4 du même décret), n'y sont pas. Un
+    taux d'employeur, non un taux d'équilibre.
+    """
+    return _employeur_du_journal_officiel("ratp")
+
+
+def source_employeur_ieg() -> dict[tuple, float]:
+    """Contribution des employeurs à la CNIEG, 2005-2020.
+
+    Arrêtés annuels pris pour l'article 3 du décret n° 2005-278 du 24 mars
+    2005, qui approuvent la délibération du conseil d'administration de la
+    caisse « établissant à 29,70 % le taux définitif de la cotisation à la
+    charge des employeurs […] pour l'exercice 2020 ».
+
+    La série s'arrête à 2020 parce que le texte cesse de chiffrer : l'arrêté du
+    29 décembre 2021 remplace la fixation annuelle par une formule, et un taux
+    qui évolue par renvoi n'est écrit nulle part. Même mur que la composante T2
+    de la SNCF.
+    """
+    return _employeur_du_journal_officiel("ieg")
+
+
+def source_employeur_sncf_avant_2007() -> dict[tuple, float]:
+    """Contribution employeur de la SNCF avant la réforme de 2007, 1992-2006.
+
+    « Le taux de la cotisation d'assurance vieillesse due pour le personnel en
+    activité relevant du régime spécial […] est fixé à 36,29 p. 100, soit
+    28,44 p. 100 à la charge de l'employeur et 7,85 p. 100 à la charge de
+    l'agent » — II de l'article 8 du décret n° 91-613 du 28 juin 1991, abrogé
+    le 29 juin 2007 par le décret qui institue les composantes T1 et T2.
+
+    2007 n'est pas rendue : l'arrêté qui fixe T1 « pour l'année 2007 » date
+    l'exercice entier, et le dépôt porte déjà cette année-là au titre de la
+    somme T1 + T2.
+    """
+    return _employeur_du_journal_officiel("sncf")
+
+
+def source_employeur_mines() -> dict[tuple, float]:
+    """Cotisation de l'exploitant au régime minier, 1984-2026.
+
+    Article 52 du décret n° 46-2769 du 27 novembre 1946 jusqu'en 1992 — « la
+    cotisation de l'exploitant est fixée à 7,75 p. 100 des salaires » —, puis
+    article 90 du même décret, qui reprend le 1er janvier 1993 : « à hauteur de
+    15,60 %, soit 7,75 % à la charge des employeurs et 7,85 % à la charge des
+    salariés ». Le taux n'a pas bougé en quarante-trois ans.
+
+    Deux choses n'y sont pas. La contribution de l'État, « une cotisation
+    correspondant à 22 % des salaires » plus un complément d'équilibre, qui
+    pèse près de trois fois celle de l'exploitant mais n'est pas une cotisation
+    d'employeur. Et les 1,6 % dus depuis 1991 sur la TOTALITÉ des rémunérations :
+    la fiche du régime a une assiette plafonnée, où ils ne trouveraient pas leur
+    place.
+    """
+    return _employeur_du_journal_officiel("mines")
+
+
+def source_employeur_opera() -> dict[tuple, float]:
+    """Contribution de l'Opéra national de Paris à sa caisse, 1992-2026.
+
+    II de l'article 6 du décret n° 91-613 du 28 juin 1991, qui fixe « le taux de
+    la contribution mentionnée au 2° de l'article 4 du décret du 5 avril 1968 ».
+    Cette contribution est, aux termes de l'article qu'il vise, « égale à un
+    pourcentage des rémunérations soumises à retenues pour pension » : la même
+    assiette que la retenue de l'agent, ce qui rend leur somme lisible.
+    """
+    return _employeur_du_journal_officiel("opera_de_paris")
+
+
+def source_employeur_comedie_francaise() -> dict[tuple, float]:
+    """Contribution de la Comédie-Française à sa caisse, 1992-2026.
+
+    II de l'article 7 du décret n° 91-613 du 28 juin 1991, jumeau de l'article 6
+    et renvoyant de la même façon au 2° de l'article 4 du décret n° 68-960 du
+    11 octobre 1968.
+    """
+    return _employeur_du_journal_officiel("comedie_francaise")
+
+
 def source_employeur_sncf() -> dict[tuple, float]:
     """Contribution employeur de la SNCF, T1 + T2, 2007-2018.
 
@@ -2999,6 +3099,81 @@ CERTIFICATIONS = (
         source=source_employeur_sncf_textes,
         origine="DILA, arrêtés annuels du taux T1 (base JORF) et décret "
                 "n° 2007-1056 du 28 juin 2007, article 2 IV (base LEGI)",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    # -- les six régimes que le Journal officiel portait sans qu'on l'ait lu --
+    # Ils étaient rangés ensemble sous la ligne « rien / tout » de limites.md,
+    # et leur part patronale était celle d'un salarié du privé. Deux formes de
+    # texte les portent : l'arrêté annuel, pour les deux régimes adossés au
+    # régime général en 2005-2006, et la version datée d'un article, pour les
+    # quatre autres. Voir scripts/fetch/dila_legi_contribution_employeur.py.
+    Certification(
+        nom="employeur_public_ratp",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_ratp,
+        origine="DILA, arrêtés annuels pris pour l'article 2 du décret "
+                "n° 2005-1637 du 26 décembre 2005",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    Certification(
+        nom="employeur_public_ieg",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_ieg,
+        origine="DILA, arrêtés annuels pris pour l'article 3 du décret "
+                "n° 2005-278 du 24 mars 2005",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    Certification(
+        nom="employeur_public_sncf_avant_2007",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_sncf_avant_2007,
+        origine="DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 8 II",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    Certification(
+        nom="employeur_public_mines",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_mines,
+        origine="DILA, base LEGI, décret n° 46-2769 du 27 novembre 1946, "
+                "articles 52 puis 90",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    Certification(
+        nom="employeur_public_opera",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_opera,
+        origine="DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 6 II",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    Certification(
+        nom="employeur_public_comedie_francaise",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_comedie_francaise,
+        origine="DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 7 II",
         decimales=6,
         tolerance=5e-7,
         gabarit={"nature": "appelee"},

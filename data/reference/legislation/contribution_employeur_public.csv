@@ -1,6 +1,6 @@
 # Contribution EMPLOYEUR des régimes publics et spéciaux, par année
 # source_id: sre_historique_taux, dila_legi_cnracl,
-#            sncf_contribution_employeur,
+#            sncf_contribution_employeur, dila_legi_contribution_employeur,
 #            openfisca_contribution_employeur_public
 # unite: fraction de l'assiette de la retenue pour pension (traitement
 #        indiciaire brut et NBI ; les primes en sont exclues, elles relèvent
@@ -39,6 +39,22 @@
 #                          fixé à 23,81 % pour l'année 2022 » —, T2 au IV de
 #                          l'article 2 du décret n° 2007-1056, dans la base
 #                          LEGI. `certifiee`.
+#   RATP, 2007-2025        arrêtés annuels pris pour l'article 2 du décret
+#                          n° 2005-1637 du 26 décembre 2005, lus dans l'index
+#                          DILA des bases LEGI et JORF. `certifiee`.
+#   IEG, 2005-2020         arrêtés annuels pris pour l'article 3 du décret
+#                          n° 2005-278 du 24 mars 2005, qui approuvent la
+#                          délibération de la caisse. `certifiee`.
+#   SNCF, 1992-2006        II de l'article 8 du décret n° 91-613 du 28 juin
+#                          1991 : « fixé à 36,29 p. 100, soit 28,44 p. 100 à
+#                          la charge de l'employeur ». `certifiee`.
+#   mines, 1984-2026       article 52 du décret n° 46-2769 du 27 novembre 1946
+#                          jusqu'en 1992, article 90 du même décret ensuite :
+#                          7,75 %, inchangé depuis quarante-trois ans.
+#                          `certifiee`.
+#   Opéra, 1992-2026       II de l'article 6 du décret n° 91-613, renvoyant au
+#   Comédie-Française      2° de l'article 4 des décrets du 5 avril 1968 et du
+#                          11 octobre 1968. `certifiee`.
 #   CNRACL hors 1984-1988, transcription d'OpenFisca-France — `haute`.
 #   État 1995-2005,
 #   SNCF 2012-2018
@@ -62,6 +78,43 @@
 # DÉFINITIF de l'année écoulée et le PROVISIONNEL de l'année qui vient. Le taux
 # d'une année est le définitif — celui qui est dû, arrêté une fois l'exercice
 # connu. Les deux diffèrent : 23,87 % et 23,25 % pour 2018.
+#
+# LA MÊME CONVENTION DE DATE POUR LA RATP ET LES IEG. Leurs arrêtés portent
+# aussi deux taux, le PROVISIONNEL appelé d'avance et le DÉFINITIF arrêté une
+# fois l'exercice connu, et c'est le définitif qui est retenu. Un arrêté en
+# corrige parfois un autre : celui du 23 juin 2020 ramène le taux 2019 de la
+# RATP de 19,20 % à 19,18 %, et c'est le plus récent qui l'emporte.
+#
+# OÙ S'ARRÊTENT CES DEUX SÉRIES, ET POURQUOI. La RATP n'a pas de taux avant
+# 2007 : elle payait les pensions sans qu'aucun texte en fixe un, comme l'État
+# avant son compte d'affectation spéciale. Les IEG s'arrêtent en 2020, non
+# faute de source mais parce que le texte cesse de chiffrer : l'arrêté du
+# 29 décembre 2021 remplace la fixation annuelle par une formule
+# T = [(a) + (b) - (c)] / (d) que la caisse applique sans la publier. Même mur
+# que la composante T2 de la SNCF.
+#
+# CE QUE CES SIX TAUX LAISSENT DEHORS. Ils disent ce que verse l'EMPLOYEUR, et
+# rien d'autre. Trois de ces régimes reçoivent aussi de l'État une contribution
+# qui n'est pas une cotisation d'employeur et n'entre donc pas ici : les droits
+# spécifiques de la RATP jusqu'à 45 000 agents (article 4 du décret
+# n° 2005-1637), « une cotisation correspondant à 22 % des salaires » plus un
+# complément d'équilibre pour les mines (article 52 du décret de 1946), un
+# droit sur les places et une subvention pour l'Opéra. C'est la convention déjà
+# retenue pour la SNCF, dont la somme T1 + T2 laisse dehors la subvention
+# d'équilibre. La ligne de l'État est la seule exception : son taux EST un taux
+# d'équilibre, et le fichier le dit plus bas.
+#
+# L'ASSIETTE EST CELLE DE LA RETENUE, ET C'EST CE QUI REND LA SOMME LISIBLE.
+# Pour ces six régimes, le texte qui fixe la contribution de l'employeur est
+# celui qui fixe la retenue de l'agent, sur la même assiette : « 15,60 %, soit
+# 7,75 % à la charge des employeurs et 7,85 % à la charge des salariés » pour
+# les mines, « un pourcentage des rémunérations soumises à retenues pour
+# pension » pour l'Opéra. Les additionner ne mélange donc pas deux grandeurs.
+#
+# LES MINES : LA PART PLAFONNÉE SEULE. Depuis 1991, l'exploitant doit aussi
+# 1,6 % sur la TOTALITÉ des rémunérations. La fiche du régime a une assiette
+# plafonnée, où ces 1,6 % n'ont pas de place : ils ne sont pas portés, et la
+# contribution de l'employeur minier est donc un plancher après 1991.
 #
 # POURQUOI LE TAUX IMPLICITE DE L'ÉTAT NE SE CERTIFIERA PAS. Ces onze taux sont
 # une RECONSTITUTION faite a posteriori par l'annexe « pensions » au projet de
@@ -97,12 +150,15 @@
 # actifs ? », et à elle seule.
 #
 # Régimes couverts. fonction_publique_etat (implicite 1995-2005, appelée
-# depuis 2006), cnracl (appelée depuis 1948), sncf (T1 + T2, 2007-2018). Les
-# autres régimes à `perimetre_taux: agent_seul` — FSPOEIE, RATP, IEG, marins,
-# mines, CRPCEN, Banque de France, Opéra, Comédie-Française, SEITA — n'ont pas
-# de série publiée exploitable : la part patronale y est ESTIMÉE par l'effort
-# d'un salarié du privé de la même année, la fiabilité retombe à `estimee`, et
-# le nombre d'années concernées est affiché sous la simulation.
+# depuis 2006), cnracl (depuis 1948), sncf (28,44 % de 1992 à 2006, puis
+# T1 + T2 de 2007 à 2018), ratp (2007-2025), ieg (2005-2020), mines
+# (1984-2026), opera_de_paris et comedie_francaise (1992-2026).
+#
+# Les régimes à `perimetre_taux: agent_seul` qui restent sans série — FSPOEIE,
+# marins, CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer
+# secondaires — gardent la convention d'avant : la part patronale y est ESTIMÉE
+# par l'effort d'un salarié du privé de la même année, la fiabilité retombe à
+# `estimee`, et le nombre d'années concernées est affiché sous la simulation.
 # Voir docs/limites.md.
 #
 # Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas
@@ -145,91 +201,254 @@ annee,regime,taux,nature,fiabilite
 1982,cnracl,0.130000,appelee,haute
 1983,cnracl,0.125000,appelee,haute
 1984,cnracl,0.102000,appelee,certifiee
+1984,mines,0.077500,appelee,certifiee
 1985,cnracl,0.102000,appelee,certifiee
+1985,mines,0.077500,appelee,certifiee
 1986,cnracl,0.102000,appelee,certifiee
+1986,mines,0.077500,appelee,certifiee
 1987,cnracl,0.152000,appelee,certifiee
+1987,mines,0.077500,appelee,certifiee
 1988,cnracl,0.182000,appelee,certifiee
+1988,mines,0.077500,appelee,certifiee
 1989,cnracl,0.197000,appelee,haute
+1989,mines,0.077500,appelee,certifiee
 1990,cnracl,0.197000,appelee,haute
+1990,mines,0.077500,appelee,certifiee
 1991,cnracl,0.197000,appelee,haute
+1991,mines,0.077500,appelee,certifiee
 1992,cnracl,0.213000,appelee,haute
+1992,comedie_francaise,0.088000,appelee,certifiee
+1992,mines,0.077500,appelee,certifiee
+1992,opera_de_paris,0.088000,appelee,certifiee
+1992,sncf,0.284400,appelee,certifiee
 1993,cnracl,0.213000,appelee,certifiee
+1993,comedie_francaise,0.088000,appelee,certifiee
+1993,mines,0.077500,appelee,certifiee
+1993,opera_de_paris,0.088000,appelee,certifiee
+1993,sncf,0.284400,appelee,certifiee
 1994,cnracl,0.213000,appelee,certifiee
+1994,comedie_francaise,0.088000,appelee,certifiee
+1994,mines,0.077500,appelee,certifiee
+1994,opera_de_paris,0.088000,appelee,certifiee
+1994,sncf,0.284400,appelee,certifiee
 1995,cnracl,0.251000,appelee,certifiee
+1995,comedie_francaise,0.088000,appelee,certifiee
 1995,fonction_publique_etat,0.486000,implicite,haute
+1995,mines,0.077500,appelee,certifiee
+1995,opera_de_paris,0.088000,appelee,certifiee
+1995,sncf,0.284400,appelee,certifiee
 1996,cnracl,0.251000,appelee,certifiee
+1996,comedie_francaise,0.088000,appelee,certifiee
 1996,fonction_publique_etat,0.462000,implicite,haute
+1996,mines,0.077500,appelee,certifiee
+1996,opera_de_paris,0.088000,appelee,certifiee
+1996,sncf,0.284400,appelee,certifiee
 1997,cnracl,0.251000,appelee,certifiee
+1997,comedie_francaise,0.088000,appelee,certifiee
 1997,fonction_publique_etat,0.474000,implicite,haute
+1997,mines,0.077500,appelee,certifiee
+1997,opera_de_paris,0.088000,appelee,certifiee
+1997,sncf,0.284400,appelee,certifiee
 1998,cnracl,0.251000,appelee,certifiee
+1998,comedie_francaise,0.088000,appelee,certifiee
 1998,fonction_publique_etat,0.474000,implicite,haute
+1998,mines,0.077500,appelee,certifiee
+1998,opera_de_paris,0.088000,appelee,certifiee
+1998,sncf,0.284400,appelee,certifiee
 1999,cnracl,0.251000,appelee,certifiee
+1999,comedie_francaise,0.088000,appelee,certifiee
 1999,fonction_publique_etat,0.486000,implicite,haute
+1999,mines,0.077500,appelee,certifiee
+1999,opera_de_paris,0.088000,appelee,certifiee
+1999,sncf,0.284400,appelee,certifiee
 2000,cnracl,0.256000,appelee,certifiee
+2000,comedie_francaise,0.088000,appelee,certifiee
 2000,fonction_publique_etat,0.492000,implicite,haute
+2000,mines,0.077500,appelee,certifiee
+2000,opera_de_paris,0.088000,appelee,certifiee
+2000,sncf,0.284400,appelee,certifiee
 2001,cnracl,0.261000,appelee,certifiee
+2001,comedie_francaise,0.088000,appelee,certifiee
 2001,fonction_publique_etat,0.487000,implicite,haute
+2001,mines,0.077500,appelee,certifiee
+2001,opera_de_paris,0.088000,appelee,certifiee
+2001,sncf,0.284400,appelee,certifiee
 2002,cnracl,0.261000,appelee,certifiee
+2002,comedie_francaise,0.088000,appelee,certifiee
 2002,fonction_publique_etat,0.523000,implicite,haute
+2002,mines,0.077500,appelee,certifiee
+2002,opera_de_paris,0.088000,appelee,certifiee
+2002,sncf,0.284400,appelee,certifiee
 2003,cnracl,0.265000,appelee,certifiee
+2003,comedie_francaise,0.088000,appelee,certifiee
 2003,fonction_publique_etat,0.527000,implicite,haute
+2003,mines,0.077500,appelee,certifiee
+2003,opera_de_paris,0.088000,appelee,certifiee
+2003,sncf,0.284400,appelee,certifiee
 2004,cnracl,0.269000,appelee,certifiee
+2004,comedie_francaise,0.088000,appelee,certifiee
 2004,fonction_publique_etat,0.568000,implicite,haute
+2004,mines,0.077500,appelee,certifiee
+2004,opera_de_paris,0.088000,appelee,certifiee
+2004,sncf,0.284400,appelee,certifiee
 2005,cnracl,0.273000,appelee,certifiee
+2005,comedie_francaise,0.088000,appelee,certifiee
 2005,fonction_publique_etat,0.594000,implicite,haute
+2005,ieg,0.244100,appelee,certifiee
+2005,mines,0.077500,appelee,certifiee
+2005,opera_de_paris,0.088000,appelee,certifiee
+2005,sncf,0.284400,appelee,certifiee
 2006,cnracl,0.273000,appelee,certifiee
+2006,comedie_francaise,0.088000,appelee,certifiee
 2006,fonction_publique_etat,0.499000,appelee,certifiee
+2006,ieg,0.250700,appelee,certifiee
+2006,mines,0.077500,appelee,certifiee
+2006,opera_de_paris,0.088000,appelee,certifiee
+2006,sncf,0.284400,appelee,certifiee
 2007,cnracl,0.273000,appelee,certifiee
+2007,comedie_francaise,0.088000,appelee,certifiee
 2007,fonction_publique_etat,0.507400,appelee,certifiee
+2007,ieg,0.245400,appelee,certifiee
+2007,mines,0.077500,appelee,certifiee
+2007,opera_de_paris,0.088000,appelee,certifiee
+2007,ratp,0.179400,appelee,certifiee
 2007,sncf,0.344800,appelee,certifiee
 2008,cnracl,0.273000,appelee,certifiee
+2008,comedie_francaise,0.088000,appelee,certifiee
 2008,fonction_publique_etat,0.557100,appelee,certifiee
+2008,ieg,0.242500,appelee,certifiee
+2008,mines,0.077500,appelee,certifiee
+2008,opera_de_paris,0.088000,appelee,certifiee
+2008,ratp,0.180200,appelee,certifiee
 2008,sncf,0.348300,appelee,certifiee
 2009,cnracl,0.273000,appelee,certifiee
+2009,comedie_francaise,0.088000,appelee,certifiee
 2009,fonction_publique_etat,0.601400,appelee,certifiee
+2009,ieg,0.245300,appelee,certifiee
+2009,mines,0.077500,appelee,certifiee
+2009,opera_de_paris,0.088000,appelee,certifiee
+2009,ratp,0.181000,appelee,certifiee
 2009,sncf,0.350600,appelee,certifiee
 2010,cnracl,0.273000,appelee,certifiee
+2010,comedie_francaise,0.088000,appelee,certifiee
 2010,fonction_publique_etat,0.621400,appelee,certifiee
+2010,ieg,0.246800,appelee,certifiee
+2010,mines,0.077500,appelee,certifiee
+2010,opera_de_paris,0.088000,appelee,certifiee
+2010,ratp,0.179500,appelee,certifiee
 2010,sncf,0.348900,appelee,certifiee
 2011,cnracl,0.273000,appelee,certifiee
+2011,comedie_francaise,0.088000,appelee,certifiee
 2011,fonction_publique_etat,0.653900,appelee,certifiee
+2011,ieg,0.245700,appelee,certifiee
+2011,mines,0.077500,appelee,certifiee
+2011,opera_de_paris,0.088000,appelee,certifiee
+2011,ratp,0.180300,appelee,certifiee
 2011,sncf,0.337200,appelee,certifiee
 2012,cnracl,0.273000,appelee,certifiee
+2012,comedie_francaise,0.088000,appelee,certifiee
 2012,fonction_publique_etat,0.685900,appelee,certifiee
+2012,ieg,0.251500,appelee,certifiee
+2012,mines,0.077500,appelee,certifiee
+2012,opera_de_paris,0.088000,appelee,certifiee
+2012,ratp,0.180100,appelee,certifiee
 2012,sncf,0.341700,appelee,haute
 2013,cnracl,0.288500,appelee,certifiee
+2013,comedie_francaise,0.088000,appelee,certifiee
 2013,fonction_publique_etat,0.742800,appelee,certifiee
+2013,ieg,0.257200,appelee,certifiee
+2013,mines,0.077500,appelee,certifiee
+2013,opera_de_paris,0.088000,appelee,certifiee
+2013,ratp,0.180600,appelee,certifiee
 2013,sncf,0.345400,appelee,haute
 2014,cnracl,0.304000,appelee,certifiee
+2014,comedie_francaise,0.089500,appelee,certifiee
 2014,fonction_publique_etat,0.742800,appelee,certifiee
+2014,ieg,0.266700,appelee,certifiee
+2014,mines,0.077500,appelee,certifiee
+2014,opera_de_paris,0.089500,appelee,certifiee
+2014,ratp,0.183900,appelee,certifiee
 2014,sncf,0.351800,appelee,haute
 2015,cnracl,0.305000,appelee,certifiee
+2015,comedie_francaise,0.090000,appelee,certifiee
 2015,fonction_publique_etat,0.742800,appelee,certifiee
+2015,ieg,0.273700,appelee,certifiee
+2015,mines,0.077500,appelee,certifiee
+2015,opera_de_paris,0.090000,appelee,certifiee
+2015,ratp,0.185600,appelee,certifiee
 2015,sncf,0.351400,appelee,haute
 2016,cnracl,0.306000,appelee,certifiee
+2016,comedie_francaise,0.090500,appelee,certifiee
 2016,fonction_publique_etat,0.742800,appelee,certifiee
+2016,ieg,0.282400,appelee,certifiee
+2016,mines,0.077500,appelee,certifiee
+2016,opera_de_paris,0.090500,appelee,certifiee
+2016,ratp,0.190000,appelee,certifiee
 2016,sncf,0.355400,appelee,haute
 2017,cnracl,0.306500,appelee,certifiee
+2017,comedie_francaise,0.092000,appelee,certifiee
 2017,fonction_publique_etat,0.742800,appelee,certifiee
+2017,ieg,0.299000,appelee,certifiee
+2017,mines,0.077500,appelee,certifiee
+2017,opera_de_paris,0.092000,appelee,certifiee
+2017,ratp,0.190600,appelee,certifiee
 2017,sncf,0.353700,appelee,haute
 2018,cnracl,0.306500,appelee,certifiee
+2018,comedie_francaise,0.092500,appelee,certifiee
 2018,fonction_publique_etat,0.742800,appelee,certifiee
+2018,ieg,0.299700,appelee,certifiee
+2018,mines,0.077500,appelee,certifiee
+2018,opera_de_paris,0.092500,appelee,certifiee
+2018,ratp,0.192900,appelee,certifiee
 2018,sncf,0.371000,appelee,haute
 2019,cnracl,0.306500,appelee,certifiee
+2019,comedie_francaise,0.093000,appelee,certifiee
 2019,fonction_publique_etat,0.742800,appelee,certifiee
+2019,ieg,0.304200,appelee,certifiee
+2019,mines,0.077500,appelee,certifiee
+2019,opera_de_paris,0.093000,appelee,certifiee
+2019,ratp,0.191800,appelee,certifiee
 2020,cnracl,0.306500,appelee,certifiee
+2020,comedie_francaise,0.093500,appelee,certifiee
 2020,fonction_publique_etat,0.742800,appelee,certifiee
+2020,ieg,0.297000,appelee,certifiee
+2020,mines,0.077500,appelee,certifiee
+2020,opera_de_paris,0.093500,appelee,certifiee
+2020,ratp,0.188400,appelee,certifiee
 2021,cnracl,0.306500,appelee,certifiee
+2021,comedie_francaise,0.093500,appelee,certifiee
 2021,fonction_publique_etat,0.742800,appelee,certifiee
+2021,mines,0.077500,appelee,certifiee
+2021,opera_de_paris,0.093500,appelee,certifiee
+2021,ratp,0.191300,appelee,certifiee
 2022,cnracl,0.306500,appelee,certifiee
+2022,comedie_francaise,0.093500,appelee,certifiee
 2022,fonction_publique_etat,0.742800,appelee,certifiee
+2022,mines,0.077500,appelee,certifiee
+2022,opera_de_paris,0.093500,appelee,certifiee
+2022,ratp,0.191900,appelee,certifiee
 2023,cnracl,0.306500,appelee,certifiee
+2023,comedie_francaise,0.093500,appelee,certifiee
 2023,fonction_publique_etat,0.742800,appelee,certifiee
+2023,mines,0.077500,appelee,certifiee
+2023,opera_de_paris,0.093500,appelee,certifiee
+2023,ratp,0.190200,appelee,certifiee
 2024,cnracl,0.316500,appelee,certifiee
+2024,comedie_francaise,0.094700,appelee,certifiee
 2024,fonction_publique_etat,0.742800,appelee,certifiee
+2024,mines,0.077500,appelee,certifiee
+2024,opera_de_paris,0.094700,appelee,certifiee
+2024,ratp,0.194300,appelee,certifiee
 2025,cnracl,0.346500,appelee,certifiee
+2025,comedie_francaise,0.094700,appelee,certifiee
 2025,fonction_publique_etat,0.782800,appelee,certifiee
+2025,mines,0.077500,appelee,certifiee
+2025,opera_de_paris,0.094700,appelee,certifiee
+2025,ratp,0.191300,appelee,certifiee
 2026,cnracl,0.376500,appelee,certifiee
+2026,comedie_francaise,0.095600,appelee,certifiee
 2026,fonction_publique_etat,0.822800,appelee,certifiee
+2026,mines,0.077500,appelee,certifiee
+2026,opera_de_paris,0.095600,appelee,certifiee
 2027,cnracl,0.406500,appelee,certifiee
 2028,cnracl,0.436500,appelee,certifiee

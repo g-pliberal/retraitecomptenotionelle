@@ -92,7 +92,7 @@ fin 2020).
   pour cette raison. La borne du test de vraisemblance a été portée de 18 à
   20 %, et son texte dit que c'est un aveu.
 
-### 2. La part patronale du public, lue dans les comptes des régimes — `à faire`
+### 2. La part patronale du public, lue dans les comptes des régimes — `fait`
 
 **Pourquoi.** Le résultat « la part patronale pèse plus lourd que la part
 salariale » (README §3) repose sur une estimation pour l'État avant 1995 et
@@ -119,6 +119,56 @@ taux calculé depuis un compte est marqué comme tel.
 **Fin.** Le tableau de `limites.md` n'a plus de ligne « rien / tout » pour les
 quatre grands régimes spéciaux, et le nombre d'années estimées affiché sous la
 simulation d'un agent SNCF ou RATP a chuté.
+
+**Ce que ça a déplacé.** Une source nouvelle,
+`scripts/fetch/dila_legi_contribution_employeur.py`, et **163 valeurs
+certifiées** là où la part patronale était celle d'un salarié du privé : la
+RATP de 2007 à 2025, les IEG de 2005 à 2020, la SNCF de 1992 à 2006, les mines
+de 1984 à 2026, l'Opéra de Paris et la Comédie-Française de 1992 à 2026. Le
+fichier passe de trois régimes à neuf, et la ligne « rien / tout » du tableau
+de `limites.md` de douze régimes à sept.
+
+- *Les sources n'étaient pas celles que l'action annonçait.* Elle envoyait vers
+  les rapports de la CCSS, les programmes 195 et 198 et le jaune « pensions ».
+  Rien de tout cela n'a servi : les six taux sont au **Journal officiel**, sous
+  deux formes que le dépôt savait déjà lire. L'arrêté annuel, pour la RATP et
+  les IEG — adossés au régime général en 2005-2006, ils versent ce que les
+  mêmes salariés coûteraient à la CNAV et à l'Agirc-Arrco, exactement la
+  composante T1 de la SNCF. La version datée d'un article, pour les quatre
+  autres, exactement la CNRACL. Ce qui manquait n'était pas une technique,
+  c'était de chercher ailleurs que là où elle avait déjà servi.
+- *Et l'index a remplacé le dump.* Les récupérateurs `dila_legi_*` plus anciens
+  téléchargent 1,1 à 2,8 Go et mettent d'un quart d'heure à une heure ; celui-ci
+  lit l'index publié, en quelques secondes, et il y trouve **plus** : le dump
+  global n'a pas été régénéré depuis juillet 2025, et l'arrêté RATP du 13 mars
+  2026 qui porte l'année 2025 n'est que dans les incréments.
+- *Le repli n'était ni un plancher ni un plafond.* Là où la série manquait, le
+  modèle prêtait au régime l'effort d'un salarié du privé. Les taux lus sont
+  tantôt bien plus hauts, tantôt bien plus bas : un agent des IEG voit la part
+  patronale de sa carrière passer de 224 000 à 316 000 €, un mineur la voit
+  tomber de 247 000 à 177 000 €. Trente cas de témoin sur 427 bougent, et ce
+  sont exactement les six régimes.
+- *Sur la page Coût, l'effet est petit*, et c'est attendu : deux cas types sur
+  douze sont concernés, et de faible poids. Le cumul du scénario 4 passe de
+  −51,9 % à **−51,8 %**, celui du 6 de −51,7 % à **−51,6 %**.
+- *Ce qui reste, et pourquoi.* Les IEG s'arrêtent en 2020 et la SNCF en 2018
+  pour la même raison : le texte cesse de chiffrer et renvoie à une formule que
+  la caisse applique sans la publier. L'État d'avant 1995 n'a pas été cherché —
+  l'action proposait de le reconstituer par le rapport charge de pensions sur
+  masse des traitements, ce que le dépôt refuse de faire depuis qu'il a écrit
+  pourquoi le taux implicite ne se certifiera pas. Sept régimes restent sans
+  série : FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg, SEITA,
+  chemins de fer secondaires. Pour le dernier, la lecture est faite et
+  inutilisable — l'article 12 du décret de 1991 donne 14,60 % à la charge des
+  exploitants, mais la fiche du régime s'arrête en 1954.
+- *Une convention à garder en tête.* Ces taux sont ceux de l'**employeur**, non
+  ceux de l'équilibre : les droits spécifiques que l'État finance pour la RATP,
+  les 22 % des salaires qu'il verse aux mines, la subvention de l'Opéra n'y sont
+  pas. C'est la convention de la SNCF, dont T1 + T2 laisse dehors la subvention
+  d'équilibre — mais pas celle de l'État, dont le taux EST un taux d'équilibre.
+  Un mineur et un fonctionnaire d'État ne sont donc pas mesurés à la même aune,
+  et la différence joue contre le mineur. C'est écrit dans `limites.md` ; ce
+  serait un chantier à part que de l'égaliser.
 
 ### 3. Certifier les taux de cotisation, matière des scénarios 2 à 6 — `à faire`
 
@@ -280,4 +330,13 @@ qui dira si le diagnostic était bon.
   vieillesse chiffrée sur la distribution des pensions. Le détail de ce qu'elle
   a déplacé est sous l'action. Elle a ouvert l'action 8, qui est le défaut
   qu'elle a rendu visible : l'âge de liquidation des cas types ne suit pas leur
-  génération. L'action 2 reste la plus haute qui ne soit pas commencée.
+  génération.
+- **Septembre 2026, action 2.** Faite. Six régimes spéciaux quittent la ligne
+  « rien / tout » de la part patronale, 163 valeurs certifiées, une source
+  nouvelle qui lit l'index DILA au lieu des dumps. Le détail est sous l'action.
+  Deux choses à en retenir pour la suite : les sources que l'action annonçait
+  n'ont pas servi — tout était au Journal officiel —, et l'index rend une
+  lecture de texte assez bon marché pour qu'on la tente avant de conclure
+  qu'une série n'existe pas. L'action 3, qui porte sur les taux de cotisation,
+  est la plus haute qui ne soit pas commencée, et c'est le même outil qui
+  l'attend.
