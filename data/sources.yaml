@@ -643,13 +643,7 @@ institutions:
           plafond et 1,7 % au-dessus là où le dépôt lit les taux réels de chaque
           régime ; capital indexé sur prix + 1,7 % et pension sur les prix, là
           où le dépôt revalorise l'un et l'autre au même taux ; transition par
-          prorata des générations 1952 à 1961 et non par gel des droits acquis ;
-          et une correction pour DÉCÈS PRÉMATURÉS qui relève ses coefficients de
-          7 % en 2012 et de 4 % en 2050, en redistribuant les comptes de ceux
-          qui meurent avant la liquidation. Le dépôt ne la fait pas, et ne la
-          fera pas : elle contredit la prémisse du modèle, « au franc le franc
-          des cotisations réellement versées ». L'écart est nommé dans
-          `docs/limites.md` §5 quater, pas corrigé.
+          prorata des générations 1952 à 1961 et non par gel des droits acquis.
           SES RÉSULTATS, pour mémoire : masses de prestations inférieures de
           12,8 Md€ soit 7 % en 2050 (hommes −10,5 %, femmes −3,4 %), besoin de
           financement de 36 Md€ contre 49 Md€, et surtout — les hommes dont la
