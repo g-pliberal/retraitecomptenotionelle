@@ -791,8 +791,13 @@ scénario 3 en 2070 se lit trop facilement comme une économie de 48 %.
 décrit — le coefficient suédois (`balansindex`), qui n'ajuste que le
 dénominateur du ratio actif/passif, et le coefficient italien, qui indexe le
 capital notionnel sur le PIB, ne font pas la même chose. Le COR décrit les deux
-dans ses fiches ; `hypotheses_projection.yaml` est déjà la trace d'un emprunt de
-cette nature.
+dans ses fiches, et elles sont désormais au manifeste sous
+`cor_retour_septieme_rapport` : les documents 5 à 7 de la séance du 5 juillet
+2017 — Suède, Suède (complément), Italie — avec, au document 4, la maquette du
+secrétariat général qui chiffre ce que le mécanisme évite (sur un choc
+démographique permanent, des déficits transitoires de l'ordre de 10 % de la
+masse des cotisations contre près de 90 % en annuités et en points).
+`hypotheses_projection.yaml` est déjà la trace d'un emprunt de cette nature.
 
 **Fichiers.** `src/retraite_notionnelle/cout.py` (la trajectoire et le solde) ;
 `src/retraite_notionnelle/scenarios/` si l'ajustement doit porter sur la pension
@@ -1024,3 +1029,20 @@ naturel, et suppose l'action 11.
   solde, jamais `cout()` ni une simulation, et s'affiche donc sans attente.
   L'action 9, la surcote de l'Ircantec, reste la plus haute qui ne soit pas
   commencée.
+- **Septembre 2026, hors action.** Dépouillement de quatre travaux publiés sur
+  les comptes notionnels — CNAV/PRISME 2009, 7e rapport du COR de janvier 2010
+  et la séance du 5 juillet 2017 qui y revient, Lettre du CEPII n° 297. Ils
+  entrent au manifeste en `controle`, statut qui n'avait encore jamais servi :
+  aucun n'apporte un chiffre à `data/reference/`, tous en contrôlent un. Et
+  `limites.md` gagne un §5 quater qui répond à l'objection que ces travaux
+  fondent — la CNAV trouve −7 %, ce dépôt trouve −73 % — en décomposant l'écart
+  en quatre choix déjà chiffrés par le modèle lui-même. Trois choses à en
+  retenir. **La rétroactivité pèse la moitié de l'écart** : les scénarios 3 et 5
+  figent les droits acquis comme le fait toute la littérature, et l'écart tombe
+  de −73,1 % à −37,4 %. **Le CEPII recontrôle une valeur certifiée du dépôt**
+  sans le savoir : sa part patronale implicite de l'État en 2008, 55,7 %, est le
+  0,5571 de `contribution_employeur_public.csv`. Et **les fiches que l'action 11
+  cherchait existent** : la maquette du SG-COR et les descriptions des
+  mécanismes suédois et italien sont attachées à la séance de 2017, référencées
+  sous `cor_retour_septieme_rapport`. L'action 9, la surcote de l'Ircantec,
+  reste la plus haute qui ne soit pas commencée.

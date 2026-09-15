@@ -4812,13 +4812,13 @@ au-delà de la dernière année observée, la fiabilité retombe à « estimée 
            entete_de_ligne=True)}
 {_inventaire_section(macro.racine)}
 <h3>Sources</h3>
-<p>Vingt-six institutions sont recensées dans
+<p>Vingt-huit institutions sont recensées dans
 <a href="{g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a> : INSEE,
 COR, Comité de suivi des retraites, DREES, CNAV, Service des retraites de l'État,
 Caisse des dépôts, Direction de la Sécurité sociale, Cour des comptes,
 Agirc-Arrco, Assemblée nationale, Union Retraite, CCMSA, CNAVPL, CNBF, DGAFP,
 Direction du Budget, ERAFP, Ircantec, caisses des régimes spéciaux, Urssaf,
-Légifrance, INED, Eurostat, OCDE, OpenFisca-France.</p>
+Légifrance, INED, Eurostat, OCDE, OpenFisca-France, IPP, CEPII.</p>
 <p>Chaque valeur porte son niveau de fiabilité — <code>certifiee</code>,
 <code>haute</code>, <code>moyenne</code>, <code>estimee</code> — et la fiabilité
 d'un résultat est celle de son maillon le plus faible.</p>

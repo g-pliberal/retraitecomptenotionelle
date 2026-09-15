@@ -84,7 +84,7 @@
 # impose, `estimee` ou `moyenne`, et en nommant le millésime de la publication
 # d'où elles sortent. Le champ `note` de l'entrée sert à ça.
 
-version_manifeste: "2026-09-14"
+version_manifeste: "2026-09-15"
 
 institutions:
 
@@ -355,6 +355,76 @@ institutions:
         acces: document
         statut_integration: saisi
 
+      - id: cor_septieme_rapport
+        titre: >-
+          Septième rapport du COR — « Retraites : annuités, points ou comptes
+          notionnels ? Options et modalités techniques », 27 janvier 2010
+        url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1775.pdf
+        acces: document
+        statut_integration: controle
+        millesime: 27 janvier 2010
+        note: >-
+          Le rapport que l'article 75 de la LFSS 2009 a commandé au COR : la
+          seule expertise publique française du passage des régimes de base aux
+          comptes notionnels. Il n'alimente AUCUNE valeur du dépôt et n'en
+          alimentera aucune — il date d'avant les réformes de 2010, 2014 et
+          2023, et son contrefactuel « système actuel » est périmé.
+          CE QU'IL CONTRÔLE, et c'est un chiffre que le dépôt fabrique par
+          soustraction : les droits versés au titre de la solidarité — droits
+          familiaux, chômage, maladie, invalidité, minimum contributif ou
+          garanti — représentent « de l'ordre d'un cinquième des retraites tous
+          régimes ». C'est l'ordre de grandeur de ce que le §6 de
+          `methodologie.md` retire dans les scénarios notionnels, mesuré par
+          quelqu'un d'autre. Voir aussi `docs/limites.md` §5 quater.
+          IL DONNE AUSSI SON NOM À NOTRE TRANSITION : le rapport classe les
+          modes de passage en immédiat, progressif par affiliation SUCCESSIVE,
+          progressif par affiliation SIMULTANÉE. Les scénarios 3 et 5, qui
+          figent les droits acquis à la bascule, sont une affiliation
+          successive ; la CNAV, elle, simule une affiliation simultanée
+          (cf. `cnav_comptes_notionnels_2009`).
+          L'URL est celle du dossier de presse, seule pièce du rapport
+          directement téléchargeable ; le rapport complet est en librairie à la
+          Documentation française.
+
+      - id: cor_retour_septieme_rapport
+        titre: >-
+          Séance plénière du 5 juillet 2017 — retour sur le 7e rapport : maquette
+          simplifiée du SG-COR, fiches Suède et Italie
+        url: https://www.cor-retraites.fr/reunions-du-cor/retour-sur-7e-rapport-cor-retraites-annuites-points-comptes-notionnels
+        acces: document
+        statut_integration: controle
+        millesime: 5 juillet 2017
+        note: >-
+          Dix documents, dont trois comptent pour ce dépôt. Le document n° 4
+          (`doc-4018.pdf`) est la MAQUETTE SIMPLIFIÉE du secrétariat général :
+          un système en répartition stylisé, soumis à des chocs, calculé en
+          annuités, en points et en comptes notionnels. Les documents n° 5, 6
+          (`doc-4019`, `doc-4020`) décrivent la Suède, le n° 7 (`doc-4021`)
+          l'Italie.
+          CE QUE LA MAQUETTE CONTRÔLE : la règle d'indexation par défaut du
+          dépôt. « Dans un régime en comptes notionnels, l'équilibre à chaque
+          date est assuré par construction […] dans la mesure où le taux de
+          revalorisation est ici supposé égal au taux de croissance de la masse
+          salariale. » C'est mot pour mot la justification du §3 de
+          `methodologie.md`, écrite par le COR et non par ce dépôt. Sa note de
+          bas de page 5 en donne la limite, et elle vaut d'être connue : « Ce
+          n'est pas le cas en Suède, où le taux de revalorisation est fixé en
+          fonction du taux de croissance des salaires. »
+          ELLE CONTRÔLE AUSSI LA COHÉRENCE DU COEFFICIENT DE CONVERSION : quand
+          les pensions liquidées sont revalorisées sur les prix et le capital
+          sur la masse salariale, le coefficient DOIT intégrer la croissance
+          anticipée de la masse salariale. Le ν = 0 du §5 est l'autre branche de
+          la même règle — pension revalorisée au taux qui l'actualise — et non
+          une simplification.
+          CHIFFRE À RETENIR pour l'action 11 de la feuille de route : sur un
+          choc démographique permanent, les déficits transitoires du régime
+          notionnel sont « de l'ordre de 10 % de la masse des cotisations,
+          contre près de 90 % pour les régimes en points et en annuités », avec
+          retour spontané à l'équilibre en une quarantaine d'années. Les fiches
+          Suède et Italie sont la description que cette action cherche : le
+          `balansindex` suédois et l'indexation italienne sur le PIB ne font pas
+          la même chose.
+
   csr:
     nom: Comité de suivi des retraites
     role: Avis annuels sur le pilotage, indicateurs de suivi.
@@ -535,6 +605,57 @@ institutions:
         url: https://www.statistiques-recherches.cnav.fr/
         acces: fichier
         statut_integration: a_faire
+
+      - id: cnav_comptes_notionnels_2009
+        titre: >-
+          Albert & Oliveau, « Simulations des effets du passage du calcul des
+          pensions au régime général à un système en comptes notionnels »
+          (modèle PRISME), novembre 2009
+        url: https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2009/11/simulations-effets-passage-calcul-pensions-rg-a-systeme-en-comptes-notionnels_evolution.pdf
+        acces: document
+        statut_integration: controle
+        millesime: novembre 2009
+        note: >-
+          LE SEUL TRAVAIL FRANÇAIS PUBLIÉ QUI FASSE LA MÊME OPÉRATION QUE CE
+          DÉPÔT : convertir des carrières réelles en capital notionnel, et
+          publier tous ses paramètres. Présenté au COR le 24 juin 2009, il a
+          nourri le 7e rapport (`cor_septieme_rapport`). Montants en euros 2004,
+          régime général seul. Il n'alimente aucune valeur d'ici.
+          CE QU'IL CONTRÔLE, en trois points.
+          1. LA TABLE DE MORTALITÉ. La CNAV calcule ses coefficients sur des
+          tables TRANSVERSALES et écrit elle-même ce que cela coûte : la
+          mortalité de PRISME suit des tables longitudinales plus favorables,
+          « les pensions sont par conséquent plus élevées que celles qui
+          permettraient d'épuiser le capital notionnel ». C'est exactement le
+          biais que le §5 de `methodologie.md` évite en lisant une table de
+          GÉNÉRATION, constaté par un praticien sur son propre calcul.
+          2. LA TABLE UNISEXE. Elle l'est aussi (« hommes et femmes
+          confondus »), comme le défaut du dépôt.
+          3. LE POIDS DE CE QUE NOS NEUTRALISATIONS RETIRENT. La CNAV, elle,
+          CONSERVE les droits non contributifs et les convertit en cotisations
+          fictives ; son tableau 2.1 en donne la part dans le total porté au
+          compte : hommes 16 % en 2020 et 13 % en 2050, femmes 36 % et 31 %
+          (chômage 6 %, maladie 4 à 5 %, AVPF 9 à 10 % pour les femmes, MDA 5 à
+          7 %, minimum contributif 3 % puis 1 % chez les hommes et 7 % puis 1 %
+          chez les femmes, avantages complémentaires 3 %). C'est la mesure
+          externe de ce que le §6 supprime, et de son asymétrie entre les sexes.
+          SES ÉCARTS AVEC LE DÉPÔT, ASSUMÉS : taux constant de 16,65 % sous
+          plafond et 1,7 % au-dessus là où le dépôt lit les taux réels de chaque
+          régime ; capital indexé sur prix + 1,7 % et pension sur les prix, là
+          où le dépôt revalorise l'un et l'autre au même taux ; transition par
+          prorata des générations 1952 à 1961 et non par gel des droits acquis ;
+          et une correction pour DÉCÈS PRÉMATURÉS qui relève ses coefficients de
+          7 % en 2012 et de 4 % en 2050, en redistribuant les comptes de ceux
+          qui meurent avant la liquidation. Le dépôt ne la fait pas, et ne la
+          fera pas : elle contredit la prémisse du modèle, « au franc le franc
+          des cotisations réellement versées ». L'écart est nommé dans
+          `docs/limites.md` §5 quater, pas corrigé.
+          SES RÉSULTATS, pour mémoire : masses de prestations inférieures de
+          12,8 Md€ soit 7 % en 2050 (hommes −10,5 %, femmes −3,4 %), besoin de
+          financement de 36 Md€ contre 49 Md€, et surtout — les hommes dont la
+          pension baisse partent à 60 ans, ceux dont elle monte à 65. Le
+          diviseur qui sanctionne le départ précoce, mesuré sur une population
+          réelle.
 
   sre:
     nom: Service des retraites de l'État
@@ -2697,6 +2818,53 @@ institutions:
           2026, des auxiliaires médicaux (CARPIMKO) depuis 1996 et des notaires
           (CPRN) depuis 1949. Ces trois sections n'ont pas de fiche, faute non
           pas du taux mais du PRIX DU POINT — voir la note de `cnavpl`.
+
+  cepii:
+    nom: Centre d'études prospectives et d'informations internationales
+    role: >-
+      Modèle d'équilibre général à générations imbriquées OLGAMAP — la seule
+      évaluation française des comptes notionnels qui boucle sur la
+      macroéconomie.
+    jeux:
+      - id: cepii_lettre_297
+        titre: >-
+          Chojnicki & Magnani, « Les comptes notionnels à la rescousse de la
+          répartition ? », La Lettre du CEPII n° 297, 7 avril 2010
+        url: https://www.cepii.fr/CEPII/fr/publications/lettre/abstract.asp?NoDoc=2389
+        acces: document
+        statut_integration: controle
+        millesime: 7 avril 2010
+        note: >-
+          Le pendant macroéconomique de `cnav_comptes_notionnels_2009` : là où
+          la CNAV suit des individus, le CEPII fait tourner un régime unique en
+          comptes notionnels dans un modèle d'équilibre général, taux unique
+          d'environ 22 %, cotisations non plafonnées, transition de 2015 à 2030.
+          Sa conclusion est une thèse et non une mesure : « ce n'est pas le
+          système de comptes notionnels qui permet en soi de réduire les besoins
+          de financement mais bien le choix des paramètres du système ».
+          CE QU'IL CONTRÔLE, ET C'EST INATTENDU : la lettre chiffre la
+          cotisation retraite implicite de la fonction publique en 2008 à
+          « 7,85 % » de part salariale et « 55,7 % » de part patronale. La ligne
+          `2008,fonction_publique_etat` de
+          `data/reference/legislation/contribution_employeur_public.csv` porte
+          0,5571, certifiée contre le Service des retraites de l'État. Deux
+          chaînes de production sans rapport, le même chiffre à la décimale :
+          c'est le recontrôle par un tiers d'une valeur qui pèse lourd dans les
+          scénarios 4 et 5.
+          CE QU'IL DONNE ET QUE LE DÉPÔT NE CALCULE PAS : l'ordre de grandeur
+          agrégé. Son scénario A — capital revalorisé sur la masse salariale,
+          pensions actualisées à 1,8 % — réduit le besoin de financement de
+          0,7 point de PIB à l'horizon 2050. Son scénario C pousse le taux
+          d'actualisation à ZÉRO, « ce qui revient simplement à déterminer la
+          valeur de la pension en divisant la valeur capitalisée des cotisations
+          individuelles par la durée anticipée de la période de retraite » —
+          soit littéralement la formule du §5 de `methodologie.md` — et trouve
+          3,2 points de PIB de moins qu'en A, avec un système excédentaire sur
+          toute la période.
+          LA RÉSERVE, QUI COMPTE : leur ν = 0 s'applique à des pensions indexées
+          sur les PRIX, le nôtre à des pensions revalorisées au taux qui les
+          actualise. Ce n'est pas le même objet, et l'écart va dans le sens
+          d'une sévérité plus grande chez eux. Voir `docs/limites.md` §5 quater.
 
   institutions:
     nom: Sites des institutions dont le régime n'est dans aucun texte de l'index
