@@ -27,6 +27,8 @@ lignes) et dans le portage `moteur/js/` (douze mille lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
+L'action 13 ne touche pas le modèle du tout : un script de certification, le
+format de son journal, et une phrase de la page Données en deux exemplaires.
 
 ---
 
@@ -864,6 +866,58 @@ naturel, et suppose l'action 11.
 
 ---
 
+### 13. Dater la certification série par série — `à faire`
+
+**Pourquoi.** La page Données affirme : « le tout recontrôlé automatiquement
+contre les sources, le 2026-09-15 ». Elle n'en sait rien. Cette date est un
+horodatage GLOBAL, que `verifier_donnees.py` écrase avec `date.today()` à chaque
+`--appliquer`, fût-il partiel :
+
+```python
+if arguments.appliquer and (journal or retires):   # UNE série suffit
+```
+
+Or le journal est conçu pour se COMPLÉTER et non se remplacer — c'est ce que
+son propre commentaire revendique, et `limites.md` §6 avec lui : « on ne lance
+presque jamais les dix-sept d'un coup ». Les deux dispositions se contredisent.
+Recertifier une seule série dans six mois fera dire à la page que les
+soixante-dix-neuf l'ont été ce jour-là.
+
+**Ce que le fichier ne sait pas dire.** Les fiches de séries ne portent aucune
+date : `ajoutees`, `colonne`, `corrigees`, `empreinte`, `identiques`, `niveau`,
+`source`, `valeurs`, rien d'autre. En datant chaque série par le dernier commit
+où sa fiche a CHANGÉ, on trouve 60 séries au 13 septembre, 7 au 14 et 12 au 15
+— mais ce décompte ne prouve rien, et c'est tout le sujet : une série
+recontrôlée sans changement réécrit une fiche identique, donc ne laisse aucune
+trace. **Le journal est incapable de distinguer « recontrôlé le 15, inchangé »
+de « pas regardé depuis le 13 ».** L'écart est de deux jours aujourd'hui, donc
+inoffensif ; le mécanisme, lui, ne dérive que dans un sens.
+
+**Sources.** Aucune à récupérer : le défaut est entièrement dans le dépôt.
+
+**Fichiers.** `scripts/verifier_donnees.py` (l'écriture du journal, vers la
+ligne 4716) ; `data/derive/certification.json` ;
+`src/retraite_notionnelle/web/pages.py` et `moteur/js/pages.js` (la phrase, en
+deux exemplaires) ; les témoins ; `tests/test_verification.py`
+(`test_journal_de_certification_est_lisible`, qui n'exige aujourd'hui que la
+présence du champ global) ; `limites.md` §1 et §6.
+
+**Marche.** Écrire une date DANS chaque fiche de série, posée à chaque passage
+du récupérateur que les valeurs bougent ou non — c'est la condition pour que
+l'absence de diff cesse d'être une perte d'information. Puis faire dire à la
+page le MINIMUM et non le maximum : « la plus ancienne vérification remontant
+au … », qui est la seule affirmation que les données soutiennent. Garder
+`certifie_le` comme date du dernier passage, en le nommant pour ce qu'il est.
+Le piège à nommer d'avance : une date par série rend le fichier bruyant en
+diff — chaque exécution le réécrit en entier — et il faudra choisir entre cette
+gêne et une granularité plus grossière, par exemple la date du récupérateur et
+non de la série.
+
+**Fin.** La page Données ne promet plus que ce qu'elle peut tenir, et le test
+du journal échoue si une fiche de série arrive sans date.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -1046,3 +1100,12 @@ naturel, et suppose l'action 11.
   mécanismes suédois et italien sont attachées à la séance de 2017, référencées
   sous `cor_retour_septieme_rapport`. L'action 9, la surcote de l'Ircantec,
   reste la plus haute qui ne soit pas commencée.
+- **Septembre 2026, hors action (suite).** La vérification du rendu de la page
+  Données, après l'entrée des quatre travaux au manifeste, a ouvert l'action 13.
+  Elle n'était pas cherchée : la phrase contrôlée était celle des institutions
+  recensées, et c'est le bandeau au-dessus qui s'est révélé plus affirmatif que
+  ses données. **Un horodatage global sur un fichier qui se complète par
+  morceaux ment dès le premier passage partiel**, et le dépôt avait les deux
+  dispositions écrites côte à côte sans voir qu'elles se contredisaient. La
+  leçon vaut au-delà de ce fichier : ce qui n'est pas daté à la granularité où
+  il est produit finit par emprunter la date du dernier venu.
