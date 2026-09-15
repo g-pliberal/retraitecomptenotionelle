@@ -812,6 +812,53 @@ piloté — et dit laquelle répond à quelle question.
 
 ---
 
+### 12. Mettre le programme du PLF sur l'accueil, et élaguer le site — `fait`
+
+**Pourquoi.** Le site est le livrable d'un parti politique, et il s'ouvrait sur
+un formulaire. Rien n'y disait ce qu'est le système actuel, ce qu'est un compte
+notionnel, ni pourquoi le second vaudrait mieux que le premier ; la proposition
+du PLF — le scénario 6 — n'existait qu'en note de bas de page de la Méthode.
+L'autre moitié du défaut est de ton : les pages portaient l'historique du dépôt
+et le récit de ses propres corrections, là où un programme doit tenir en
+phrases courtes.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py` ;
+`moteur/js/pages.js` et `moteur/js/gabarit.js` en regard ; `index.html` pour le
+routage ; `scripts/construire_temoins.py` ; `tests/test_web.py` et
+`tests/js/` ; `README.md`.
+
+**Marche.** Une page `/` — l'accueil — qui expose le programme, le simulateur
+déplacé sous `/simuler`, et une relecture d'élagage de toutes les pages.
+
+**Ce que ça a déplacé.**
+
+- *L'accueil est le programme.* Six onglets au lieu de cinq, « Programme » en
+  tête. La page dit le système actuel, le compte notionnel, la différence terme
+  à terme, pourquoi il est plus juste et plus lisible, la justice entre
+  générations, les minima sociaux et la garantie vieillesse, les six étapes de
+  la transition, et renvoie à chacune des cinq autres pages. Elle ne calcule
+  aucune carrière : elle lit les régimes, la dépense et le solde, et rien de ce
+  qui coûte des secondes.
+- *Le simulateur a changé d'adresse.* `#/simuler`, et non plus `#/`. Toute
+  adresse inconnue retombe sur l'accueil, des deux côtés du portage.
+- *Élagage.* Près de mille mots de prose en moins sur l'ensemble du site,
+  presque tous du commentaire sur le dépôt lui-même — ce qu'une page a
+  « longtemps » affiché, ce qui « a changé ici en dernier », ce qu'une hypothèse
+  levée « valait ce qu'on disait qu'elle valait ». Aucun chiffre, aucune réserve
+  méthodologique et aucune mention légale n'a été retirée.
+- *Deux points de routage.* Le formulaire lit sa route dans son propre attribut
+  `action` plutôt que dans une constante d'`index.html` — la constante aurait
+  renvoyé chaque calcul sur l'accueil. Et une adresse `#/` porteuse de
+  paramètres, c'est-à-dire un lien de simulation partagé avant ce changement,
+  est reconnue et rendue au simulateur.
+
+**Ce qui reste.** La page Programme ne chiffre pas ce que la transition coûte
+année par année : elle renvoie à la page Coût, qui le fait pour les scénarios 3
+et 5. Un tableau propre au scénario 6 sur cette page serait le prolongement
+naturel, et suppose l'action 11.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -965,3 +1012,15 @@ piloté — et dit laquelle répond à quelle question.
   l'écart avec le COR : le taux de remplacement du modèle ne recule pas, celui
   du COR recule ; c'est là qu'il faut chercher, et non dans les âges. L'action 9,
   la surcote de l'Ircantec, est la plus haute qui ne soit pas commencée.
+- **Septembre 2026, action 12.** Faite. L'accueil du site est désormais le
+  programme du Parti libéral français, le simulateur vit sous `#/simuler`, et
+  les pages ont perdu près de mille mots de commentaire. Le détail est sous
+  l'action. Deux choses à en retenir pour la suite. **Un dépôt finit par écrire
+  son propre journal dans ses pages** : la moitié de ce qui a été retiré
+  racontait ce que le modèle avait cru avant de se corriger — c'est une chose
+  qui a sa place dans `limites.md` et dans ce fichier, pas devant un lecteur qui
+  vient lire une proposition. Et **une page d'accueil qui calcule est une page
+  d'accueil lente** : celle-ci lit le catalogue des régimes, la dépense et le
+  solde, jamais `cout()` ni une simulation, et s'affiche donc sans attente.
+  L'action 9, la surcote de l'Ircantec, reste la plus haute qui ne soit pas
+  commencée.

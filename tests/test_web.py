@@ -74,7 +74,7 @@ def page(contexte):
 
     Le site n'assemble jamais autre chose : l'en-tête, le corps rendu, le pied.
     """
-    def rendu(chemin: str = "/", **parametres: object) -> str:
+    def rendu(chemin: str = "/simuler", **parametres: object) -> str:
         _, corps = rendre(contexte, chemin,
                           {nom: str(valeur) for nom, valeur in parametres.items()})
         return g.entete(chemin) + corps + g.pied()
@@ -85,7 +85,7 @@ def page(contexte):
 # -- pages -------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("chemin", ["/", "/cas-types", "/methode", "/donnees"])
+@pytest.mark.parametrize("chemin", ["/", "/simuler", "/cas-types", "/methode", "/donnees"])
 def test_les_pages_repondent(page, chemin):
     texte = page(chemin)
     assert "Retraite à comptes notionnels" in texte
@@ -93,13 +93,13 @@ def test_les_pages_repondent(page, chemin):
 
 def test_accueil_sans_parametres_ne_calcule_rien(page):
     """Une visite nue montre le formulaire, pas des résultats surgis de nulle part."""
-    texte = page("/")
+    texte = page("/simuler")
     assert "Simuler une carrière" in texte
     assert "Résultats" not in texte
 
 
 def test_simulation_affiche_les_trois_scenarios(page):
-    texte = page("/", naissance=1960, statut="agent_sncf",
+    texte = page("/simuler", naissance=1960, statut="agent_sncf",
                  debut=20, liquidation=52)
     for attendu in ("Système actuel", "rétroactifs depuis 1941",
                     "à compter de 2026", "Résultats"):
@@ -108,27 +108,27 @@ def test_simulation_affiche_les_trois_scenarios(page):
 
 def test_la_saisie_est_reinjectee_dans_le_formulaire(page):
     """L'adresse porte les paramètres : la page doit être rechargeable telle quelle."""
-    texte = page("/", naissance=1955, statut="mineur",
+    texte = page("/simuler", naissance=1955, statut="mineur",
                  debut=18, liquidation=55)
     assert 'value="1955"' in texte
     assert '<option value="mineur" selected data-fermeture="2010-09">' in texte
 
 
 def test_saisie_invalide_affiche_un_message_et_pas_de_trace(page):
-    texte = page("/", naissance=1700)
+    texte = page("/simuler", naissance=1700)
     assert "Saisie refusée" in texte
     assert "Traceback" not in texte
 
 
 def test_carriere_impossible_est_signalee_sans_planter(page):
-    texte = page("/", naissance=1990, statut="salarie_prive_non_cadre",
+    texte = page("/simuler", naissance=1990, statut="salarie_prive_non_cadre",
                  debut=30, liquidation=45)
     assert "Traceback" not in texte
 
 
 def test_la_decomposition_par_regle_d_indexation_est_presente(page):
     """Le point le plus contre-intuitif du modèle doit être exposé, pas caché."""
-    texte = page("/", naissance=1960, statut="salarie_prive_non_cadre",
+    texte = page("/simuler", naissance=1960, statut="salarie_prive_non_cadre",
                  debut=20, liquidation=62)
     assert "D'où vient l'écart" in texte
     assert "Triple lock inversé, tout en nominal" in texte
@@ -136,7 +136,7 @@ def test_la_decomposition_par_regle_d_indexation_est_presente(page):
 
 
 def test_pas_de_decomposition_si_l_indexation_est_deja_choisie(page):
-    texte = page("/", naissance=1960, statut="salarie_prive_non_cadre",
+    texte = page("/simuler", naissance=1960, statut="salarie_prive_non_cadre",
                  debut=20, liquidation=62, indexation="prix")
     assert "D'où vient l'écart" not in texte
 
@@ -227,7 +227,7 @@ def test_le_menu_des_statuts_est_date(page, contexte):
     """Chaque statut dit entre quelles dates il se déclare, et le menu grise
     ceux que l'entrée saisie ferme — sauf la sélection, qu'un navigateur
     n'enverrait pas si elle était désactivée."""
-    texte = page("/", naissance=1975, statut="salarie_prive_non_cadre",
+    texte = page("/simuler", naissance=1975, statut="salarie_prive_non_cadre",
                  debut=21, liquidation=64)
     assert ">Mineur (recrutés avant septembre 2010)<" in texte
     assert ">Artiste-auteur (écrivain, illustrateur, photographe…) (depuis 1977)<" in texte
@@ -236,7 +236,7 @@ def test_le_menu_des_statuts_est_date(page, contexte):
     assert '<option value="agent_seita" disabled data-fermeture="1981-01">' in texte
     assert '<option value="mineur" data-fermeture="2010-09">' in texte
     # La sélection reste choisissable, même fermée à cette date.
-    texte = page("/", naissance=1975, statut="agent_seita", debut=21, liquidation=64)
+    texte = page("/simuler", naissance=1975, statut="agent_seita", debut=21, liquidation=64)
     assert '<option value="agent_seita" selected data-fermeture="1981-01">' in texte
     assert "Saisie refusée" in texte
 
@@ -329,7 +329,7 @@ def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur(contexte):
     respecte, une adresse partagée non. Ce test relit le formulaire rendu et
     vérifie que chaque borne déclarée est bien refusée par le modèle.
     """
-    formulaire = rendre(contexte, "/", {})[1]
+    formulaire = rendre(contexte, "/simuler", {})[1]
     champs = re.findall(
         r'<input type="number" id="([a-z_0-9]+)" name="[^"]*" value="[^"]*"'
         r'(?: min="(-?[0-9.]+)")?(?: max="(-?[0-9.]+)")?',
@@ -530,8 +530,8 @@ def test_l_unite_vaut_pour_tous_les_metiers():
 
 def _lien_de_bascule(contexte, parametres):
     """L'adresse que porte le lien « saisir plutôt … », lue comme une requête."""
-    corps = rendre(contexte, "/", parametres)[1]
-    lien = re.search(r'<a href="#/\?([^"]*)">([^<]*)</a></p>', corps)
+    corps = rendre(contexte, "/simuler", parametres)[1]
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">([^<]*)</a></p>', corps)
     assert lien, "le formulaire ne porte plus de lien de bascule d'unité"
     return dict(parse_qsl(html.unescape(lien.group(1)))), html.unescape(lien.group(2))
 
@@ -550,7 +550,7 @@ def test_la_bascule_d_unite_convertit_les_montants(contexte):
     # 3 500 € par mois, à l'échelle d'un salaire moyen de 3 475 € : environ 1.
     assert float(suite["salaire"]) == pytest.approx(1.0, abs=0.05)
     # Et la page qui suit ce lien calcule, au lieu de refuser.
-    corps = rendre(contexte, "/", suite)[1]
+    corps = rendre(contexte, "/simuler", suite)[1]
     assert "Saisie refusée" not in corps
 
 
@@ -627,7 +627,7 @@ def test_les_valeurs_du_lien_tombent_sur_le_pas_des_champs(contexte):
     for parametres in ({"naissance": "1975"},
                        {"naissance": "1975", "unite_revenu": "moyen", "salaire": "1.2"}):
         suite, _ = _lien_de_bascule(contexte, parametres)
-        corps = rendre(contexte, "/", suite)[1]
+        corps = rendre(contexte, "/simuler", suite)[1]
         champ = re.search(r'id="salaire"[^>]*value="([^"]*)"[^>]*step="([^"]*)"', corps)
         valeur, pas = float(champ.group(1)), float(champ.group(2))
         assert round(valeur / pas) == pytest.approx(valeur / pas, abs=1e-9)
@@ -641,13 +641,13 @@ def test_le_formulaire_renvoie_l_unite_qu_il_affiche(contexte):
     """
     for unite in ("euros_mois", "moyen"):
         salaire = "3500" if unite == "euros_mois" else "1"
-        corps = rendre(contexte, "/", {"unite_revenu": unite, "salaire": salaire})[1]
+        corps = rendre(contexte, "/simuler", {"unite_revenu": unite, "salaire": salaire})[1]
         assert f'<input type="hidden" name="unite_revenu" value="{unite}">' in corps
 
 
 def test_un_refus_garde_l_unite_de_saisie(contexte):
     """Une faute de frappe ailleurs ne doit pas changer d'unité sous les doigts."""
-    corps = rendre(contexte, "/", {
+    corps = rendre(contexte, "/simuler", {
         "naissance": "1700", "unite_revenu": "moyen", "salaire": "1.2",
     })[1]
     assert "Saisie refusée" in corps
@@ -657,7 +657,7 @@ def test_un_refus_garde_l_unite_de_saisie(contexte):
 
 def test_le_formulaire_dit_brut_et_donne_l_echelle(contexte):
     """La question posée — « brut ou net ? » — trouve sa réponse sur le champ."""
-    _, corps = rendre(contexte, "/", {})
+    _, corps = rendre(contexte, "/simuler", {})
     assert "Revenu brut mensuel" in corps
     assert "la ligne « brut » de la fiche de paie" in corps
     # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
@@ -665,7 +665,7 @@ def test_le_formulaire_dit_brut_et_donne_l_echelle(contexte):
 
 
 def test_le_multiple_est_traduit_en_euros(contexte):
-    _, corps = rendre(contexte, "/", {"unite_revenu": "moyen", "salaire": "1"})
+    _, corps = rendre(contexte, "/simuler", {"unite_revenu": "moyen", "salaire": "1"})
     assert "1 = salaire moyen, soit" in corps
 
 
@@ -840,7 +840,7 @@ def test_le_releve_voyage_dans_l_adresse():
 
 
 def test_la_page_dit_que_la_carriere_a_ete_lue(page):
-    texte = page("/", naissance=1975, liquidation=64, releve=_releve(1998, 2038))
+    texte = page("/simuler", naissance=1975, liquidation=64, releve=_releve(1998, 2038))
     assert "lue sur un relevé" in texte
     assert "41 années de 1998 à 2038" in texte
     # Le dépliant est ouvert : sinon l'adresse porterait une carrière que la
@@ -926,12 +926,12 @@ def test_changer_de_metier_change_le_resultat(contexte):
 
 def test_le_formulaire_offre_toujours_une_ligne_de_metier_de_plus(page):
     """C'est ainsi qu'on ajoute un métier : sans une ligne de JavaScript."""
-    vierge = page("/")
+    vierge = page("/simuler")
     # Chaque métier est un groupe de champs, et son rang en est la légende.
     assert vierge.count('<legend class="rang">') == 2
     assert 'name="metier2_debut" value=""' in vierge
 
-    rempli = page("/", naissance=1975, metier2_debut=40, metier2_statut="artisan")
+    rempli = page("/simuler", naissance=1975, metier2_debut=40, metier2_statut="artisan")
     assert rempli.count('<legend class="rang">') == 3
     assert 'name="metier3_debut" value=""' in rempli
 
@@ -941,13 +941,13 @@ def test_le_formulaire_s_arrete_au_nombre_maximal_de_metiers(page):
     for rang in range(2, METIERS_MAXIMUM + 1):
         champs[f"metier{rang}_debut"] = 30 + rang
         champs[f"metier{rang}_statut"] = "artisan"
-    texte = page("/", **champs)
+    texte = page("/simuler", **champs)
     assert texte.count('<legend class="rang">') == METIERS_MAXIMUM
     assert f'name="metier{METIERS_MAXIMUM + 1}_debut"' not in texte
 
 
 def test_la_page_recapitule_le_parcours(page):
-    texte = page("/", naissance=1975, debut=21, liquidation=64,
+    texte = page("/simuler", naissance=1975, debut=21, liquidation=64,
                  metier2_debut=42, metier2_statut="artisan")
     assert "Carrière en 2 métiers" in texte
     assert "Artisan de 42 ans à 64 ans" in texte
@@ -985,13 +985,13 @@ def test_la_situation_de_foyer_traverse_l_adresse_et_le_modele():
 def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
     """À 65 ans et à petit salaire, la garantie est servie et la page dit
     combien l'impôt en finance ; à 62 ans, elle dit pourquoi rien n'est servi."""
-    texte = page("/", naissance=1958, liquidation=65, salaire=1500,
+    texte = page("/simuler", naissance=1958, liquidation=65, salaire=1500,
                  unite_revenu="euros_mois")
     assert "Le scénario 6 : un taux pour tous" in texte
     assert "Garantie vieillesse servie" in texte
     assert "l'impôt en finance" in texte
     assert "personne seule, 300 €" in texte
-    texte = page("/", naissance=1958, liquidation=62, salaire=1500,
+    texte = page("/simuler", naissance=1958, liquidation=62, salaire=1500,
                  unite_revenu="euros_mois")
     assert "avant les 65 ans" in texte
 
@@ -1012,7 +1012,7 @@ def test_franciser_les_libelles_du_moteur():
 
 
 def test_l_echappement_protege_des_injections(page):
-    texte = page("/", interruptions="<script>alert(1)</script>")
+    texte = page("/simuler", interruptions="<script>alert(1)</script>")
     assert "<script>alert(1)</script>" not in texte
     assert "&lt;script&gt;" in texte
 
@@ -1027,14 +1027,14 @@ def test_cellule_teintee_selon_la_valeur():
 # -- rendu commun aux deux modes ---------------------------------------------
 
 
-@pytest.mark.parametrize("chemin", ["/", "/cas-types", "/methode", "/donnees"])
+@pytest.mark.parametrize("chemin", ["/", "/simuler", "/cas-types", "/methode", "/donnees"])
 def test_rendre_produit_un_corps_pour_chaque_page(contexte, chemin):
     titre, corps = rendre(contexte, chemin)
     assert titre
     assert len(corps) > 500
 
 
-@pytest.mark.parametrize("chemin", ["/", "/cas-types", "/methode"])
+@pytest.mark.parametrize("chemin", ["/simuler", "/cas-types", "/methode"])
 def test_les_ages_rendus_ne_doublent_pas_leur_unite(contexte, chemin):
     """« 64 ans ans ».
 
@@ -1054,17 +1054,17 @@ def test_les_ages_rendus_ne_doublent_pas_leur_unite(contexte, chemin):
     for faute in ("ans ans", "mois mois", "ans et ans"):
         assert faute not in corps, f"{faute!r} dans {chemin}"
     # Et l'âge s'y lit bien en ans et en mois.
-    if chemin == "/":
+    if chemin == "/simuler":
         assert re.search(r"64 ans et 7 mois", corps)
 
 
 def test_rendre_ignore_un_chemin_inconnu(contexte):
     titre, _ = rendre(contexte, "/n-importe-quoi")
-    assert titre == "Simuler"
+    assert titre == "Programme"
 
 
 def test_rendre_ne_leve_jamais_sur_une_saisie_invalide(contexte):
-    _, corps = rendre(contexte, "/", {"naissance": "1700"})
+    _, corps = rendre(contexte, "/simuler", {"naissance": "1700"})
     assert "Saisie refusée" in corps
 
 
@@ -1078,16 +1078,16 @@ def test_statuts(contexte):
 
 def test_les_liens_passent_par_l_ancre(contexte):
     """Sur GitHub Pages le site est servi dans un sous-chemin : pas de lien absolu."""
-    _, corps = rendre(contexte, "/")
+    _, corps = rendre(contexte, "/simuler")
     entete = g.entete("/")
     assert 'href="#/cas-types"' in entete
     assert 'href="/cas-types"' not in entete
-    assert 'action="#/"' in corps
+    assert 'action="#/simuler"' in corps
 
 
 def test_aucun_renvoi_vers_un_service_qui_n_existe_pas(contexte):
     """Il n'y a pas de serveur : proposer une adresse d'API serait un lien mort."""
-    _, corps = rendre(contexte, "/", {"naissance": "1960",
+    _, corps = rendre(contexte, "/simuler", {"naissance": "1960",
                                       "statut": "salarie_prive_non_cadre",
                                       "debut": "20", "liquidation": "62"})
     assert "/api/" not in corps
@@ -1339,7 +1339,7 @@ def test_le_tableau_du_detail_s_additionne_a_l_ecran(contexte, nom, champs):
     porte donc sur le HTML rendu, lignes de régime d'un côté, total de l'autre,
     la ligne « hors total » exclue puisqu'elle s'annonce comme telle.
     """
-    corps = rendre(contexte, "/", champs)[1]
+    corps = rendre(contexte, "/simuler", champs)[1]
     debut = corps.index("de quoi votre pension actuelle est faite")
     tableau = corps[debut:corps.index("</table>", debut)]
     lignes = re.findall(r"<tr>(.*?)</tr>", tableau, re.S)
@@ -1407,7 +1407,7 @@ def test_les_chaines_de_calcul_se_refont_depuis_l_ecran(contexte, nom, champs):
     raison. Les bornes ne sont pas choisies : elles se déduisent des précisions
     d'affichage, et suivront si celles-ci changent.
     """
-    corps = rendre(contexte, "/", champs)[1]
+    corps = rendre(contexte, "/simuler", champs)[1]
     pas_diviseur = 0.5 * 10 ** -DECIMALES_DIVISEUR
     pas_facteur = 0.5 * 10 ** -DECIMALES_FACTEUR
 
@@ -1455,7 +1455,7 @@ def _verifier_cascade(nom, corps, pas_diviseur, pas_facteur):
 
 def test_les_six_scenarios_donnent_le_meme_montant_au_mois_et_a_l_annee(contexte):
     """Mensuel × 12 = annuel, sur les nombres affichés, pour les six blocs."""
-    corps = rendre(contexte, "/", {"naissance": "1975"})[1]
+    corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 6, f"{len(blocs)} scénarios affichés, six attendus"
     for bloc in blocs:
@@ -1707,7 +1707,7 @@ def test_les_selecteurs_du_resume_vocal_existent_dans_le_html(contexte):
     classes = set()
     for champs in ({"naissance": "1975"}, {"naissance": "1700"}):
         for attribut in re.findall(r'class="([^"]*)"',
-                                   rendre(contexte, "/", champs)[1]):
+                                   rendre(contexte, "/simuler", champs)[1]):
             classes.update(attribut.split())
     for selecteur in selecteurs:
         for classe in re.findall(r"\.([a-z-]+)", selecteur):
@@ -1718,7 +1718,7 @@ def test_les_selecteurs_du_resume_vocal_existent_dans_le_html(contexte):
 
 def test_le_resume_vocal_annonce_bien_les_montants(contexte):
     """Et le sélecteur doit trouver quelque chose, pas seulement exister."""
-    corps = rendre(contexte, "/", {"naissance": "1975"})[1]
+    corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 6
     for bloc in blocs:
@@ -1845,7 +1845,7 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
         cas.append({
             "nom": f"page_{numero}",
             "requete": requete,
-            "corps": temoins.sans_bloc_json(rendre(contexte, "/", requete)[1]),
+            "corps": temoins.sans_bloc_json(rendre(contexte, "/simuler", requete)[1]),
         })
 
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
@@ -1929,7 +1929,7 @@ def test_les_refus_de_saisie_sont_ecrits_a_l_identique_par_les_deux_moteurs():
                                      ("accepte", acceptees, False)):
         for numero, champs in enumerate(champs_):
             requete = {"naissance": "1975", **champs}
-            corps = temoins.sans_bloc_json(rendre(contexte, "/", requete)[1])
+            corps = temoins.sans_bloc_json(rendre(contexte, "/simuler", requete)[1])
             # Le test ne vaut que si chaque saisie tombe du côté attendu : une
             # borne relâchée les ferait toutes calculer, et la comparaison
             # passerait sans rien couvrir.
@@ -2370,7 +2370,7 @@ def test_chaque_champ_du_formulaire_porte_une_etiquette(page):
     Le contrôle vaut aussi pour les listes déroulantes, et ignore les champs
     cachés, qui ne sont pas saisis.
     """
-    texte = page("/")
+    texte = page("/simuler")
     etiquetes = set(re.findall(r'<label for="([^"]+)"', texte))
     for balise in re.findall(r"<(?:input|select)\b[^>]*>", texte):
         if 'type="hidden"' in balise:
@@ -2389,7 +2389,7 @@ def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
     est énoncée avec chacun des champs qu'elle couvre, et non un intertitre, qui
     ne se voit qu'à l'œil. WCAG 3.3.2.
     """
-    texte = page("/")
+    texte = page("/simuler")
     groupes = re.findall(r'<fieldset class="metier[^"]*">(.{0,80})', texte, re.S)
     assert len(groupes) >= 2, "les métiers ne forment plus des groupes de champs"
     for debut in groupes:
@@ -2402,7 +2402,7 @@ def test_les_champs_qui_decrivent_la_personne_sont_reconnaissables(page):
     """WCAG 1.3.5 : un champ qui demande une information sur l'utilisateur doit
     dire laquelle, pour que le navigateur et les aides à la saisie la
     reconnaissent."""
-    texte = page("/")
+    texte = page("/simuler")
     assert 'id="naissance"' in texte and 'autocomplete="bday-year"' in texte
     assert 'id="sexe"' in texte and 'autocomplete="sex"' in texte
 
@@ -2557,7 +2557,7 @@ def test_aucun_graphique_n_est_livre_sans_ses_chiffres(contexte, chemin):
 
 def test_le_graphique_de_la_trajectoire_porte_ses_ages(contexte):
     """Sur la page de résultats, le seul graphique qui ne se lit pas en années."""
-    corps = rendre(contexte, "/", {
+    corps = rendre(contexte, "/simuler", {
         "naissance": "1975", "statut": "salarie_prive_non_cadre",
         "debut": "21", "liquidation": "64", "salaire": "3500",
         "unite_revenu": "euros_mois",

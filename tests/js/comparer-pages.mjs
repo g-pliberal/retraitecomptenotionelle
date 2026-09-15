@@ -33,7 +33,7 @@ const contexte = new Contexte(JSON.parse(readFileSync(fichierPaquet, "utf8")));
 
 const divergences = [];
 for (const { nom, requete, corps } of cas) {
-  const obtenu = sansBlocJson(rendre(contexte, "/", requete)[1]);
+  const obtenu = sansBlocJson(rendre(contexte, "/simuler", requete)[1]);
   if (obtenu === corps) {
     continue;
   }
