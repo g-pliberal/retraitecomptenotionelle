@@ -15,7 +15,12 @@ import csv
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.castypes import CAS_TYPES, poids_effectifs, poids_egaux
+from retraite_notionnelle.castypes import (
+    CAS_TYPES,
+    GENERATIONS,
+    poids_effectifs,
+    poids_egaux,
+)
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.cout import (
     COMPOSANTE_GARANTIE,
@@ -211,13 +216,22 @@ def test_chaque_scenario_a_une_courbe_et_un_libelle(cout):
 
 
 def test_la_garantie_vieillesse_est_comptee_dans_le_6_et_redite_a_part(cout, avenir):
-    """La part que l'impôt finance est une composante du scénario 6, jamais
-    plus grosse que lui, et jamais négative ; sur la fenêtre observée elle ne
-    se voit presque pas, parce qu'un seul cas type liquide à 65 ans ou après."""
+    """La part que l'impôt finance est une composante du scénario 6, jamais plus
+    grosse que lui, et jamais négative.
+
+    Sur la fenêtre observée elle reste une fraction du scénario, parce que seuls
+    les cas types qui liquident à 65 ans ou après la touchent : cinq des treize
+    aux générations récentes, aucun à celles d'avant 1955. La borne était à 5 %
+    tant que les cas types partaient tous à l'âge écrit dans la grille — ils
+    partaient alors trop tôt pour voir la garantie, et un seul la voyait. Elle
+    est à 15 % depuis qu'ils partent au taux plein de leur génération : le
+    chiffre lu est 8,6 %, et il vient d'un défaut corrigé, non d'un défaut
+    introduit.
+    """
     for ligne in cout.annees + avenir.annees:
         assert 0.0 <= ligne.rapports[COMPOSANTE_GARANTIE] <= ligne.rapports["notionnel_liberal"]
     assert cout.cumul(COMPOSANTE_GARANTIE) > 0.0
-    assert cout.cumul(COMPOSANTE_GARANTIE) < 0.05 * cout.cumul("notionnel_liberal")
+    assert cout.cumul(COMPOSANTE_GARANTIE) < 0.15 * cout.cumul("notionnel_liberal")
 
 
 # -- la pyramide des âges ----------------------------------------------------
@@ -322,23 +336,33 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir):
 
     Le COR projette 13,9 % du PIB en 2024 et 14,2 % en 2070 pour le système
     actuel (rapport annuel de juin 2025). Le dépôt trouve 13,6 % au départ et
-    18,4 % à l'arrivée : quatre points d'écart, contre deux avant que les cas
-    types ne soient pondérés par les effectifs de retraités de leur caisse.
+    19,3 % à l'arrivée : cinq points d'écart, contre quatre avant que chaque cas
+    type ne liquide à l'âge de SA génération, et deux avant que les cas types ne
+    soient pondérés par les effectifs de retraités de leur caisse.
 
-    **La borne haute a été portée de 18 à 20 % pour cette raison, et c'est un
-    aveu, non une correction.** La pondération a retiré une compensation
-    accidentelle : l'ancienne convention égalitaire donnait un sixième du poids
-    à des carrières qui liquident à 52 et 57 ans, si bien que le stock de
-    retraités du modèle vieillissait moins vite que la seule population des
-    64 ans et plus — laquelle croît de 41 % d'ici 2070 quand celle des 52 ans et
-    plus ne croît que de 25 %. En rendant à chaque carrière son poids réel, on a
-    rendu visible ce que le modèle fait depuis toujours : il fait liquider
-    chaque cas type à l'âge légal d'AUJOURD'HUI, quelle que soit sa génération.
-    C'est le chantier que `docs/feuille_de_route.md` a ouvert en conséquence.
+    **L'écart s'est creusé en corrigeant un défaut, et c'est le résultat de
+    l'action 8, non son échec.** La feuille de route tenait l'âge de liquidation
+    écrit dans la grille pour la principale cause de cet écart : un cas type
+    liquidait à 64 ans quelle que soit sa génération, si bien que le stock de
+    retraités du modèle suivait la population des 64 ans et plus, laquelle croît
+    de 41 % d'ici 2070 quand celle des 52 ans et plus n'en gagne que 25. Le
+    diagnostic était juste sur le défaut et faux sur son SENS : en faisant
+    liquider chaque génération sous son propre droit, la trajectoire 2070 monte
+    de 18,3 à 19,3 % au lieu de redescendre vers 14,2.
+
+    Ce que la mesure apprend, et que `docs/limites.md` §5 ter développe : ce qui
+    sépare le dépôt du COR n'est pas l'âge de départ. Les générations d'après
+    1970 liquidaient déjà, dans l'ancienne grille, à peu près à l'âge que le
+    droit leur ouvre ; la correction a surtout déplacé les anciennes, et ce sont
+    les récentes qui font 2070. L'écart restant tient à ce que le modèle ne
+    porte pas : le recul du taux de remplacement que le COR projette, produit
+    d'une indexation des pensions sur les prix quand les salaires montent plus
+    vite.
 
     La fourchette reste un garde-fou : elle ne dit pas que la trajectoire est
     juste, elle dit qu'une trajectoire qui en sortirait relèverait d'une erreur
-    de méthode et non d'un désaccord d'hypothèses.
+    de méthode et non d'un désaccord d'hypothèses. Elle n'a pas bougé — la
+    borne haute de 20 % tient encore, de sept dixièmes de point.
     """
     for ligne in avenir.annees:
         part = ligne.part_pib("actuel")
@@ -441,6 +465,101 @@ def test_une_ponderation_inconnue_est_refusee(depenses, population):
                       ponderation="au_hasard")
 
 
+# -- l'âge auquel chaque cas type liquide ------------------------------------
+
+
+def test_chaque_generation_liquide_sous_son_propre_droit():
+    """Le défaut que l'action 8 corrige, et ce qu'il faut pour qu'il le reste.
+
+    Un cas type ne porte plus un âge mais une RÈGLE. Le contrôle est celui
+    qu'aucun nombre écrit à la main ne passerait : l'âge du salarié au salaire
+    moyen doit MONTER d'une génération à la suivante, parce que les deux lois
+    qui l'ont déplacé — 2010 puis 2023 — n'ont fait que le relever, et il doit
+    rester sous celui du cadre, qui entre deux ans plus tard dans la vie active
+    et met donc deux ans de plus à réunir sa durée.
+    """
+    simulateur = Simulateur(Parametres())
+    par_code = {cas.code: cas for cas in CAS_TYPES}
+    ages = {
+        code: [par_code[code].age_liquidation_pour(simulateur, generation)
+               for generation in GENERATIONS]
+        for code in ("salaire_moyen", "cadre", "fonctionnaire_actif")
+    }
+    for code, serie in ages.items():
+        assert serie == sorted(serie), f"{code} : {serie}"
+        assert serie[0] < serie[-1], f"{code} : {serie}"
+    for moyen, cadre in zip(ages["salaire_moyen"], ages["cadre"]):
+        assert moyen < cadre
+    # La catégorie active part avant le droit commun, à toutes les générations :
+    # c'est ce que le classement de l'emploi lui ouvre, et le cas type n'existe
+    # que pour le montrer.
+    for actif, moyen in zip(ages["fonctionnaire_actif"], ages["salaire_moyen"]):
+        assert actif < moyen
+
+
+def test_le_militaire_part_a_une_duree_et_non_a_un_age():
+    """L. 24, II : la pension militaire s'ouvre à une durée de services. Son âge
+    de départ ne bouge donc d'aucune génération, et c'est un résultat et non un
+    oubli — la règle du cas type le dit en toutes lettres."""
+    simulateur = Simulateur(Parametres())
+    militaire = next(cas for cas in CAS_TYPES if cas.code == "militaire")
+    assert militaire.regle_liquidation == "services"
+    ages = {militaire.age_liquidation_pour(simulateur, generation)
+            for generation in GENERATIONS}
+    assert ages == {militaire.age_debut + militaire.ecart_liquidation}
+
+
+def test_un_regime_ferme_rend_ses_generations_au_droit_commun():
+    """La conséquence la moins attendue de la règle, et la plus juste.
+
+    La SNCF n'embauche plus au statut depuis 2020 : la génération 2000, entrée
+    après, n'a pas de régime spécial et ne peut donc pas partir à cinquante-deux
+    ans. L'âge écrit l'y faisait partir quand même — une pension que le droit
+    n'ouvrait à personne. La règle lit la fermeture dans le catalogue et rend
+    cette génération au régime général.
+    """
+    simulateur = Simulateur(Parametres())
+    sncf = next(cas for cas in CAS_TYPES if cas.code == "agent_sncf_conduite")
+    moyen = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen")
+    assert sncf.age_liquidation_pour(simulateur, 1960) < 55
+    assert (sncf.age_liquidation_pour(simulateur, 2000)
+            == moyen.age_liquidation_pour(simulateur, 2000))
+    # La variante garde l'ancien comportement intact : c'est à cela qu'elle sert.
+    assert sncf.age_liquidation_pour(simulateur, 2000, "absolu") == 52
+
+
+def test_la_variante_absolue_reproduit_l_ancienne_grille(depenses, population):
+    """L'âge écrit reste disponible, non comme repli mais comme témoin.
+
+    Sans lui, ce que la règle déplace ne se mesurerait pas : il faudrait le
+    croire. Le contrôle fige les deux bouts — la variante rend exactement les
+    âges écrits, et la trajectoire qu'elle produit n'est pas celle de la règle.
+    """
+    simulateur = Simulateur(Parametres())
+    for cas in CAS_TYPES:
+        for generation in GENERATIONS:
+            assert (cas.age_liquidation_pour(simulateur, generation, "absolu")
+                    == cas.age_liquidation)
+    absolu = calculer_cout(simulateur, depenses, population, liquidation="absolu")
+    droit = calculer_cout(simulateur, depenses, population)
+    assert absolu.liquidation == "absolu"
+    assert droit.liquidation == "droit"
+    # La dépense OBSERVÉE est la même des deux côtés — c'est la série de la
+    # DREES, que rien du modèle ne déplace. Ce que la règle déplace est la
+    # projection, qui est celle du modèle : elle finit un point de PIB plus
+    # haut, et `limites.md` §5 ter dit pourquoi.
+    assert absolu.cumul("actuel") == droit.cumul("actuel")
+    fin_absolu = absolu.avenir.annee(absolu.avenir.derniere_annee)
+    fin_droit = droit.avenir.annee(droit.avenir.derniere_annee)
+    assert fin_droit.part_pib("actuel") > fin_absolu.part_pib("actuel")
+
+
+def test_une_variante_de_liquidation_inconnue_est_refusee(depenses, population):
+    with pytest.raises(ValueError, match="variante de liquidation inconnue"):
+        calculer_cout(Simulateur(Parametres()), depenses, population,
+                      liquidation="au_hasard")
+
+
 # -- la garantie vieillesse, chiffrée sur la distribution ---------------------
 
 
@@ -504,19 +623,24 @@ def test_deplacer_les_pensions_vers_le_bas_coute_plus_cher(distribution):
 
 
 def test_la_garantie_vue_par_les_cas_types_est_bien_plus_basse(cout, distribution):
-    """Le constat qui a motivé le chiffrage sur la distribution.
+    """Le constat qui a motivé le chiffrage sur la distribution, et ce qu'il est
+    devenu.
 
-    Les cas types ne voient la garantie que par celui d'entre eux qui liquide à
-    65 ans ou après : ils en tirent, sur soixante-six ans, moins que ce que le
-    barème coûte en une seule année. L'ordre de grandeur sépare les deux
-    chiffres d'un facteur qui se compte en dizaines, et le test le fige pour
-    qu'un jour où ce ne serait plus vrai on le sache.
+    Les cas types ne voient la garantie que par ceux d'entre eux qui liquident à
+    65 ans ou après. Le facteur qui séparait les deux chiffres se comptait en
+    dizaines tant qu'un seul y parvenait ; il est de deux depuis que chaque cas
+    type liquide à l'âge de SA génération, cinq des treize atteignant alors
+    soixante-cinq ans. La correction a donc retiré l'essentiel de l'écart — et
+    ce qui reste ne se comblera pas, parce qu'il ne vient plus d'un âge mais de
+    la nature d'une grille : une allocation différentielle ne coûte que ce que
+    coûte la queue basse de la distribution, et treize carrières choisies pour
+    couvrir les configurations du système n'en ont pas.
     """
     annees = cout.derniere_annee - cout.premiere_annee + 1
     par_an_vu_des_cas_types = cout.cumul(COMPOSANTE_GARANTIE) / annees
     par_an_sur_la_distribution = cout_garantie(
         distribution, 16e6, 800.0).cout_annuel_meur
-    assert par_an_sur_la_distribution > 20 * par_an_vu_des_cas_types
+    assert par_an_sur_la_distribution > 1.8 * par_an_vu_des_cas_types
 
 
 # -- le solde : ce qui rentre, face à ce qui sort ----------------------------

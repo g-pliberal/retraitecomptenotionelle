@@ -926,6 +926,13 @@ def _nombre(valeur: float) -> str:
     return f"{valeur:g}"
 
 
+#: Ce que le COR projette pour le système actuel, en part du PIB : le repère
+#: extérieur auquel la page se compare. Rapport annuel de juin 2025, champ
+#: « ensemble des régimes légalement obligatoires, y compris FSV, hors RAFP ».
+COR_2024 = 0.139
+COR_2070 = 0.142
+
+
 def _age(valeur: float) -> str:
     """Âge à la française, en ans et en mois : « 64 ans », « 64 ans et 9 mois ».
 
@@ -3040,6 +3047,38 @@ def _cas_types(contexte: Contexte) -> str:
         + "</details>"
     )
 
+    # À QUEL ÂGE chacun part. La question ne se posait pas tant que l'âge était
+    # écrit dans la grille, le même pour toutes les générations ; elle se pose
+    # depuis qu'il est calculé, et la réponse fait partie du résultat : deux
+    # cellules d'une même ligne ne décrivent pas le même départ.
+    ages = g.tableau(
+        ["Cas type"] + [str(generation) for generation in GENERATIONS],
+        [
+            [escape(cas.libelle)] + [
+                _age(cas.age_liquidation_pour(contexte.simulateur(), generation))
+                for generation in GENERATIONS
+            ]
+            for cas in CAS_TYPES
+        ],
+        [""] + ["nombre"] * len(GENERATIONS),
+        titre="Âge de liquidation de chaque cas type, par génération",
+        entete_de_ligne=True,
+    )
+    ages_des_cas = (
+        "<details><summary>À quel âge chacun part, et pourquoi ce n'est pas "
+        "le même</summary>"
+        "<p class=\"discret\">Un cas type ne porte plus un âge de départ mais "
+        "une RÈGLE, et chaque génération liquide donc au sien. La plupart "
+        "partent au taux plein — le premier âge auquel la pension est servie "
+        "entière, qui dépend à la fois de l'âge légal et de la durée requise de "
+        "la génération. Ceux dont un statut commande le départ — catégorie "
+        "active, agent de conduite, agent des IEG — partent à l'âge que ce "
+        "statut leur ouvre. Le militaire, lui, part à une DURÉE de services et "
+        "non à un âge.</p>"
+        + ages
+        + "</details>"
+    )
+
     echecs = ""
     if resultat.echecs:
         elements = "".join(
@@ -3054,6 +3093,7 @@ def _cas_types(contexte: Contexte) -> str:
 cellule est l'écart de pension par rapport au système actuel, à carrière
 identique : négatif = pension plus faible qu'aujourd'hui.</p>
 {description_des_cas}
+{ages_des_cas}
 
 <h3>Scénario 2 — comptes notionnels rétroactifs depuis 1941</h3>
 {grille("notionnel_retroactif", "Scénario 2, comptes notionnels rétroactifs")}
@@ -3633,8 +3673,8 @@ elle ne verse que ce qui manque à une pension pour atteindre son plancher. Son
 coût est donc, tout entier, celui de la <strong>queue basse de la
 distribution</strong> des pensions — et treize carrières de référence ne
 décrivent pas une distribution. Le tableau ci-dessus ne voit la garantie que par
-les cas types qui liquident à 65 ans ou après, c'est-à-dire par un seul des
-treize : il l'estime à {_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} sur
+les cas types qui liquident à 65 ans ou après, c'est-à-dire par cinq des treize
+aux générations récentes et par aucun aux plus anciennes : il l'estime à {_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} sur
 soixante-six ans, là où le barème appliqué à la vraie distribution coûte
 {_milliards(garantie_basse.cout_annuel_meur / vers_enquete, 0)} <em>par an</em>.
 Ce n'est pas une imprécision, c'est un chiffre faux, et il faut le remplacer.</p>
@@ -3739,10 +3779,16 @@ dépense à ce qui la finance. Le système actuel passe de
 {avenir.derniere_annee} : il ne dérape pas, il ne s'allège pas non plus. Le
 Conseil d'orientation des retraites, qui projette la même grandeur avec un
 modèle de population complet, trouve 13,9 % en 2024 et
-<strong>14,2 % en 2070</strong> (rapport annuel de juin 2025) — trois dixièmes
-de point sous notre point de départ, six dixièmes sous notre point d'arrivée.
-Deux modèles qui n'ont rien en commun, et qui tombent à un demi-point l'un de
-l'autre : c'est le meilleur contrôle externe dont cette page dispose.</p>
+<strong>14,2 % en 2070</strong> (rapport annuel de juin 2025). Notre écart à
+lui vaut {g.nombre((depart.part_pib("actuel") - COR_2024) * 100, 1)} point de
+PIB au départ et
+{g.nombre((horizon.part_pib("actuel") - COR_2070) * 100, 1)} à l'arrivée.
+C'est le meilleur contrôle externe dont cette page dispose, et il
+n'est pas flatteur : l'écart d'arrivée s'est creusé deux fois en corrigeant
+deux défauts du modèle — la pondération des cas types, puis leur âge de
+départ —, chacun ayant masqué l'autre. <code>docs/limites.md</code> § 5 ter
+porte la mesure et la seule piste que ce dépôt puisse suivre chez lui : son
+taux de remplacement ne recule pas, celui du COR recule.</p>
 
 {g.tableau(
     ["Système", f"Coût {avenir.derniere_annee}", f"Part du PIB {avenir.derniere_annee}",

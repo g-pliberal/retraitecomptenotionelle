@@ -4,9 +4,10 @@ La garantie vieillesse du scénario 6 est une allocation DIFFÉRENTIELLE : elle 
 verse que ce qui manque à la pension pour atteindre un plancher — 800 € par mois,
 plus 250 € d'allocation d'isolement pour qui vit seul. Son coût est donc
 entièrement celui de la queue basse de la distribution des pensions, et c'est
-précisément ce qu'une grille de douze cas types ne sait pas décrire : la page
-« Coût » ne la voyait que par le seul cas type qui liquide à 65 ans ou après, ce
-qui revenait à lire un plancher sur un échantillon de douze personnes.
+précisément ce qu'une grille de treize cas types ne sait pas décrire : la page
+« Coût » ne la voit que par ceux d'entre eux qui liquident à 65 ans ou après —
+cinq pour les générations récentes, aucun pour celles d'avant 1955 —, ce qui
+revient à lire un plancher sur un échantillon de cinq personnes.
 
 Ce module applique le barème à la distribution publiée par la DREES. Il ne
 simule rien : il additionne, tranche par tranche, ce qui manque à chacune.

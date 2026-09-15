@@ -1817,6 +1817,114 @@ class ScenarioActuel:
                 return par_generation[0]
         return periode.age_ouverture
 
+    def _periodes_parcourues(
+            self, carriere: Carriere) -> tuple[list[PeriodeRegime], list[PeriodeRegime]]:
+        """Les régimes que cette carrière traverse, séparés en deux paquets.
+
+        Le premier est celui des régimes en ANNUITÉS, qui commandent le taux
+        plein et l'ouverture du droit ; le second recueille les autres. C'est
+        la même énumération que celle de :meth:`calculer`, mais tirée de la
+        seule carrière : elle répond donc AVANT que la pension ne soit
+        calculée, ce qu'il faut pour dater un départ.
+        """
+        annee_liquidation = carriere.annee_liquidation
+        codes: set[str] = set()
+        for ligne in carriere.lignes:
+            if ligne.annee > annee_liquidation:
+                continue
+            codes.update(self.affiliations.regimes(
+                ligne.affiliation, ligne.annee,
+                carriere.date_entree(ligne.affiliation),
+                revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
+                plafond=self.macro.plafond_securite_sociale(ligne.annee),
+            ))
+        annuites: list[PeriodeRegime] = []
+        autres: list[PeriodeRegime] = []
+        for code in sorted(codes):
+            if code not in self.catalogue:
+                continue
+            regime = self.catalogue[code]
+            periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
+            if periode is None:
+                continue
+            (annuites if periode.type_calcul == "annuites" else autres).append(periode)
+        return annuites, autres
+
+    def age_ouverture_droit(self, carriere: Carriere) -> float | None:
+        """L'âge auquel le droit OUVRE la liquidation de cette carrière.
+
+        C'est la même question que celle posée dans :meth:`calculer` — le plus
+        précoce des régimes de base parcourus, chacun lisant l'âge que sa
+        génération lui oppose —, mais posée AVANT la pension et sans la
+        calculer. Elle a un usage propre : dater le départ d'un cas type. Une
+        grille qui fait partir toutes les générations au même âge fait partir
+        celle de 1940 à un âge que la loi de 2023 lui opposera soixante ans
+        plus tard ; c'est par cette méthode-ci qu'elle cesse de le faire.
+
+        Ce sont les régimes en ANNUITÉS qui commandent, comme dans la
+        liquidation. Quand la carrière n'en a aucun — le libéral, dont le
+        régime de base est en points —, les autres répondent : sans cela la
+        question resterait sans réponse pour lui seul, et il serait le seul à
+        garder un âge écrit à la main.
+
+        ``None`` quand aucun régime connu n'est parcouru, ce qui arrive avant
+        que le premier ne soit créé. L'appelant décide alors : il n'y a pas
+        d'âge à proposer, et non un âge de zéro.
+        """
+        annuites, autres = self._periodes_parcourues(carriere)
+        retenues = annuites or autres
+        if not retenues:
+            return None
+        return min(self._age_ouverture(periode, carriere) for periode in retenues)
+
+    def age_taux_plein_droit(self, carriere: Carriere) -> float | None:
+        """L'âge auquel cette carrière obtient le TAUX PLEIN, et non seulement
+        le droit de partir.
+
+        Les deux âges ne se confondent pas, et l'écart entre eux est l'un des
+        ressorts du système : la loi ouvre le droit à soixante-quatre ans, mais
+        elle ne le sert entier qu'à qui a la durée requise — cent soixante-douze
+        trimestres pour les générations d'après 1964. Un cadre entré à
+        vingt-trois ans ne les a pas à soixante-quatre : partir là serait partir
+        avec une décote de huit trimestres, ce que personne ne fait. Les cas
+        types partent donc au taux plein, comme ceux du Conseil d'orientation
+        des retraites.
+
+        Trois termes, et le plus tardif des deux premiers l'emporte, sous le
+        plafond du troisième :
+
+        * l'âge d'ouverture, qui n'ouvre rien avant lui ;
+        * l'âge auquel la DURÉE requise est atteinte. Il se déduit sans
+          simuler : il manque à cette carrière ``requis - acquis`` trimestres,
+          et une année pleine en rend quatre. La soustraction est signée — une
+          carrière qui a déjà trop de trimestres l'avait donc atteinte plus
+          tôt, et la règle le lit dans le même calcul ;
+        * l'âge d'annulation de la décote, qui donne le taux plein sans
+          condition de durée. C'est lui qui borne : au-delà, attendre ne
+          rapporte plus de taux, et les cas types ne surcotent pas.
+
+        ``None`` dans le même cas que :meth:`age_ouverture_droit`.
+        """
+        annuites, autres = self._periodes_parcourues(carriere)
+        retenues = annuites or autres
+        if not retenues:
+            return None
+        ouverture = min(self._age_ouverture(periode, carriere) for periode in retenues)
+        if not annuites:
+            return ouverture
+        annulation = min(self._age_taux_plein(periode, carriere)
+                         for periode in retenues)
+        requis = max(self._duree_requise(periode, carriere)[0]
+                     for periode in annuites)
+        if not requis:
+            return ouverture
+        acquis = sum(
+            carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
+            if ligne.annee <= carriere.annee_liquidation
+        )
+        duree = carriere.age_liquidation + (requis - acquis) / 4.0
+        return min(annulation, max(ouverture, duree))
+
     def _age_taux_plein(self, periode: PeriodeRegime, carriere: Carriere) -> float:
         """Âge d'annulation de la décote opposable à cet assuré.
 

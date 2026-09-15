@@ -38,7 +38,9 @@
  * l'applique jamais.
  */
 
-import { CAS_TYPES, calculerCasTypes, poidsEffectifs, poidsEgaux } from "./castypes.js";
+import {
+  CAS_TYPES, VARIANTES_LIQUIDATION, calculerCasTypes, poidsEffectifs, poidsEgaux,
+} from "./castypes.js";
 import { Fiabilite } from "./serie.js";
 
 /** Les six systèmes, dans l'ordre du tableau de comparaison. */
@@ -104,9 +106,16 @@ const DEMI_TRANCHE = Math.floor(PAS_GENERATIONS / 2);
  */
 export const PONDERATIONS = ["effectifs", "egale"];
 
+/**
+ * Les deux façons de dater le départ des cas types, reprises de `castypes.js`.
+ * `droit` est celle des résultats affichés ; `absolu` est l'ancienne, où toutes
+ * les générations partaient à l'âge écrit dans la grille.
+ */
+export const LIQUIDATIONS = VARIANTES_LIQUIDATION;
+
 /** Simule la grille et en tire, pour chaque couple, sa pension par système. */
-function pensionnes(simulateur, casTypes) {
-  const grille = calculerCasTypes(simulateur, casTypes, generations());
+function pensionnes(simulateur, casTypes, liquidation = "droit") {
+  const grille = calculerCasTypes(simulateur, casTypes, generations(), liquidation);
   const liste = [];
   for (const [cle, comparaison] of grille.resultats) {
     const pensions = {};
@@ -406,7 +415,8 @@ class Solde {
 /** La série complète, et les cumuls qu'on en tire. */
 class Cout {
   constructor(annees, avenir, solde, anneeEuros, generationsRetenues, echecs,
-              fiabilite, ponderationRetenue = "effectifs", poids = {}) {
+              fiabilite, ponderationRetenue = "effectifs", poids = {},
+              liquidationRetenue = "droit") {
     this.annees = annees;
     this.avenir = avenir;
     this.solde = solde;
@@ -418,6 +428,8 @@ class Cout {
     // observée : ce que la page affiche pour dire sur quoi ses agrégats reposent.
     this.ponderation = ponderationRetenue;
     this.poids = poids;
+    // Datation du départ des cas types : `droit` ou `absolu`.
+    this.liquidation = liquidationRetenue;
     this.premiereAnnee = annees[0].annee;
     this.derniereAnnee = annees[annees.length - 1].annee;
   }
@@ -581,8 +593,9 @@ function construireSolde(avenir, comptes, derniereAnneePib) {
  * solde reste vide.
  */
 export function calculerCout(simulateur, depenses, population, comptes = null,
-                             casTypes = CAS_TYPES, mode = "effectifs") {
-  const { liste, motifs } = pensionnes(simulateur, casTypes);
+                             casTypes = CAS_TYPES, mode = "effectifs",
+                             liquidation = "droit") {
+  const { liste, motifs } = pensionnes(simulateur, casTypes, liquidation);
   const poids = ponderation(simulateur, mode, casTypes);
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
@@ -621,5 +634,6 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     Math.min(fiabilite, Fiabilite.ESTIMEE),
     mode,
     poids(depenses.derniereAnnee),
+    liquidation,
   );
 }

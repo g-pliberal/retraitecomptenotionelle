@@ -13,9 +13,9 @@ par tranches de cent euros.
 -----------------------
 À chiffrer la garantie vieillesse du scénario 6. Une allocation différentielle
 qui porte toute pension à 800 € — 1 050 € pour qui vit seul — ne se chiffre pas
-sur douze cas types : elle se chiffre sur la queue basse de la distribution, et
+sur treize cas types : elle se chiffre sur la queue basse de la distribution, et
 c'est celle-ci. La page « Coût » donnait jusqu'ici le coût de la garantie tel
-que le voyait le seul cas type qui liquide à 65 ans ou après ; elle donne
+que le voyaient les seuls cas types qui liquident à 65 ans ou après ; elle donne
 désormais aussi ce que le barème coûte appliqué à la distribution réelle.
 
 CE QU'ON RETIENT, ET POURQUOI

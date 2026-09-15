@@ -24,6 +24,23 @@ if TYPE_CHECKING:  # pragma: no cover - annotation seulement
     from .donnees.effectifs import EffectifsRetraites
 
 
+#: Les deux façons de dater le départ d'un cas type.
+#:
+#: ``droit`` est celle des résultats affichés : chaque génération liquide à
+#: l'âge que SON droit lui ouvre. ``absolu`` est l'ancienne, gardée non comme
+#: repli mais comme variante — l'âge écrit dans la grille, le même pour toutes
+#: les générations, qui faisait partir la génération 1940 à soixante-quatre ans
+#: en 2004 alors que la loi ne les lui a jamais demandés.
+VARIANTES_LIQUIDATION: tuple[str, ...] = ("droit", "absolu")
+
+#: Nombre de fois que l'âge de liquidation est rapproché de l'âge d'ouverture.
+#: Il en faut plus d'une : l'âge qu'une fiche de régime oppose dépend de
+#: l'ANNÉE de liquidation — celle de la SNCF et celle des IEG montent d'un
+#: trimestre par millésime —, si bien que déplacer l'âge déplace la réponse.
+#: Deux passes suffisent partout dans la grille ; les deux autres sont la marge.
+PASSES_LIQUIDATION = 4
+
+
 @dataclass(frozen=True)
 class CasType:
     """Une carrière de référence, indépendante de la génération."""
@@ -32,6 +49,11 @@ class CasType:
     libelle: str
     affiliation: str
     age_debut: float
+    #: L'âge de départ ÉCRIT. Il ne commande plus les résultats affichés : la
+    #: règle ci-dessous le fait. Il reste parce que la variante ``absolu`` le
+    #: lit, et parce qu'il est le point de départ de la recherche du point
+    #: fixe — ce qui n'engage rien, la recherche ne s'arrêtant que sur un âge
+    #: que le droit de la génération confirme.
     age_liquidation: float
     niveau_salaire: float
     profil_carriere: str = "ascendant"
@@ -44,9 +66,111 @@ class CasType:
     #: voir :func:`poids_effectifs`. Une caisse réclamée par plusieurs cas types
     #: se partage entre eux.
     caisses: tuple[str, ...] = ()
+    #: Ce qui DATE le départ, quand ce n'est pas un nombre. Trois règles, et
+    #: chacune répond à la question « qu'est-ce qui, pour cette carrière-là,
+    #: commande le départ ? ».
+    #:
+    #: ``taux_plein`` — le premier âge auquel la pension est SERVIE ENTIÈRE :
+    #: l'âge d'ouverture si la durée requise y est atteinte, l'âge auquel elle
+    #: l'est sinon, et de toute façon pas au-delà de l'âge d'annulation de la
+    #: décote. C'est la règle du plus grand nombre, et celle des cas types du
+    #: Conseil d'orientation des retraites : personne ne liquide volontairement
+    #: avec huit trimestres de décote.
+    #:
+    #: ``ouverture`` — l'âge auquel le droit OUVRE la liquidation, sans égard
+    #: à la durée. C'est celle des carrières dont un STATUT commande le départ :
+    #: la catégorie active, l'agent de conduite, l'agent des IEG. Leur cas type
+    #: existe pour montrer ce départ-là ; les faire attendre le taux plein
+    #: reviendrait à les calculer en sédentaires, ce dont le dépôt vient de
+    #: sortir. Elle suit tout ce que le droit fait varier — l'âge légal par
+    #: génération, l'anticipation du classement, l'âge propre d'un régime
+    #: spécial, et jusqu'à sa FERMETURE : l'agent de conduite né en 2000 est
+    #: embauché après 2020, relève du régime général, et liquide donc à l'âge
+    #: de celui-ci et non à cinquante-deux ans.
+    #:
+    #: ``services`` — l'âge d'entrée augmenté de :attr:`ecart_liquidation`
+    #: années de services. La pension militaire ne s'ouvre pas à un âge mais à
+    #: une durée : lui opposer un âge légal serait lui opposer ce que le droit
+    #: ne lui oppose pas.
+    regle_liquidation: str = "taux_plein"
+    #: Le décalage que la règle applique à son âge de référence. Il vaut zéro
+    #: partout sauf chez le libéral, qui part deux ans après l'ouverture, et
+    #: chez le militaire, où il porte la durée de services elle-même.
+    ecart_liquidation: float = 0.0
     commentaire: str = ""
 
-    def construire(self, simulateur: Simulateur, generation: int) -> Carriere:
+    def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
+                             variante: str = "droit") -> float:
+        """L'âge auquel ce cas type liquide, étant née en ``generation``.
+
+        **Pourquoi ce n'est pas un nombre.** Un cas type décrit une carrière,
+        pas une date : « le salarié au salaire moyen » n'est pas « celui qui
+        part à soixante-quatre ans », c'est celui qui part quand la loi le lui
+        permet. Écrire l'âge revenait à faire partir à soixante-quatre ans une
+        génération née en 1940 — c'est-à-dire en 2004, sous un droit qui en
+        demandait soixante —, et à donner au modèle un stock de retraités trop
+        vieux au départ de la projection, donc trop rapide à croître.
+
+        **Comment la réponse est trouvée.** L'âge d'ouverture dépend de la
+        carrière, laquelle dépend de l'âge de liquidation : la question tourne
+        en rond, et on la résout par un POINT FIXE. On part de l'âge écrit, on
+        demande au scénario 1 ce que le droit oppose à cette liquidation-là, on
+        recommence. Deux garde-fous : le nombre de passes est borné, et une
+        descente n'est retenue que si l'âge plus précoce est lui-même ouvert.
+        Le second n'est pas décoratif — la CANCAVA ouvrait à soixante-cinq ans
+        jusqu'en 1972 et à soixante à partir de 1973, si bien qu'un artisan né
+        en 1910 « ouvre » à soixante ans un droit que son année de départ lui
+        refuse. Dans ce cas la règle ne descend pas, et le dit en restant où
+        elle est.
+        """
+        if variante not in VARIANTES_LIQUIDATION:
+            raise ValueError(
+                f"variante de liquidation inconnue : {variante!r} "
+                f"(attendu : {VARIANTES_LIQUIDATION})"
+            )
+        if variante == "absolu":
+            return self.age_liquidation
+        if self.regle_liquidation == "services":
+            return self.age_debut + self.ecart_liquidation
+        if self.regle_liquidation not in ("ouverture", "taux_plein"):
+            raise ValueError(
+                f"règle de liquidation inconnue : {self.regle_liquidation!r}"
+            )
+        age = self.age_liquidation
+        for _ in range(PASSES_LIQUIDATION):
+            propose = self._age_propose(simulateur, generation, age)
+            if propose is None or abs(propose - age) < 1e-9:
+                break
+            if propose > age:
+                age = propose
+                continue
+            confirme = self._age_propose(simulateur, generation, propose)
+            if confirme is None or confirme > propose + 1e-9:
+                break
+            age = propose
+        return age
+
+    def _age_propose(self, simulateur: Simulateur, generation: int,
+                     age: float) -> float | None:
+        """Ce que la règle oppose à cette carrière liquidée à ``age``, décalé."""
+        actuel = simulateur.scenario_actuel
+        carriere = self._carriere(simulateur, generation, age)
+        reference = (
+            actuel.age_taux_plein_droit(carriere)
+            if self.regle_liquidation == "taux_plein"
+            else actuel.age_ouverture_droit(carriere)
+        )
+        return None if reference is None else reference + self.ecart_liquidation
+
+    def construire(self, simulateur: Simulateur, generation: int,
+                   variante: str = "droit") -> Carriere:
+        return self._carriere(
+            simulateur, generation,
+            self.age_liquidation_pour(simulateur, generation, variante),
+        )
+
+    def _carriere(self, simulateur: Simulateur, generation: int,
+                  age_liquidation: float) -> Carriere:
         interruptions = {
             int(generation + self.age_debut + decalage): motif
             for decalage, motif in self.interruptions_relatives
@@ -56,7 +180,7 @@ class CasType:
             sexe=self.sexe,
             affiliation=self.affiliation,
             age_debut=self.age_debut,
-            age_liquidation=self.age_liquidation,
+            age_liquidation=age_liquidation,
             niveau_salaire=self.niveau_salaire,
             profil_carriere=self.profil_carriere,
             interruptions=interruptions,
@@ -124,16 +248,20 @@ CAS_TYPES: tuple[CasType, ...] = (
     ),
     CasType(
         code="fonctionnaire_actif",
-        libelle="Fonctionnaire de catégorie active (départ à 57 ans)",
+        libelle="Fonctionnaire de catégorie active (départ anticipé)",
         affiliation="fonctionnaire_territorial_hospitalier_actif",
         age_debut=22, age_liquidation=57, niveau_salaire=1.1,
         part_primes=0.22,
         caisses=("cnracl",),
+        regle_liquidation="ouverture",
         commentaire=(
             "Aide-soignant, agent technique territorial : l'emploi est classé, "
-            "et le départ à cinquante-sept ans est celui que l'article L. 24 lui "
-            "ouvre, non une anticipation sanctionnée. Le cas type était calculé "
-            "comme un sédentaire tant qu'aucun statut ne portait le classement."
+            "et le départ anticipé de cinq années est celui que l'article L. 24 "
+            "lui ouvre, non une anticipation sanctionnée. Le cas type était "
+            "calculé comme un sédentaire tant qu'aucun statut ne portait le "
+            "classement. L'âge suit sa génération : cinquante-cinq ans jusqu'à "
+            "celle de 1956, cinquante-sept ensuite, cinquante-neuf pour celles "
+            "que la réforme de 2023 atteint."
         ),
     ),
     CasType(
@@ -143,6 +271,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         age_debut=19, age_liquidation=44, niveau_salaire=0.95,
         part_primes=0.25,
         caisses=("fonction_publique_etat_militaire",),
+        regle_liquidation="services", ecart_liquidation=25,
         commentaire=(
             "La pension militaire ne s'ouvre pas à un âge mais à une durée : "
             "dix-sept ans de services pour un non-officier. C'est le départ le "
@@ -155,11 +284,19 @@ CAS_TYPES: tuple[CasType, ...] = (
     ),
     CasType(
         code="agent_sncf_conduite",
-        libelle="Agent de conduite SNCF (départ à 52 ans)",
+        libelle="Agent de conduite SNCF",
         affiliation="agent_sncf",
         age_debut=20, age_liquidation=52, niveau_salaire=1.1,
         caisses=("sncf",),
-        commentaire="Écart à l'âge de référence parmi les plus élevés du système.",
+        regle_liquidation="ouverture",
+        commentaire=(
+            "Écart à l'âge de référence parmi les plus élevés du système : "
+            "cinquante ans jusqu'aux départs de 2016, cinquante-quatre au terme "
+            "de la montée en charge. Le régime est fermé aux embauches depuis "
+            "2020, et la règle en tire la conséquence : la génération 2000, "
+            "entrée après la fermeture, relève du régime général et liquide à "
+            "l'âge de celui-ci."
+        ),
     ),
     CasType(
         code="agent_ieg",
@@ -167,7 +304,12 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="agent_ieg",
         age_debut=21, age_liquidation=57, niveau_salaire=1.4,
         caisses=("cnieg",),
-        commentaire="Régime spécial fermé aux embauches depuis 2023.",
+        regle_liquidation="ouverture",
+        commentaire=(
+            "Régime spécial fermé aux embauches depuis 2023. L'âge d'ouverture "
+            "y est celui du millésime de départ : cinquante-cinq ans jusqu'en "
+            "2016, cinquante-neuf à compter de 2027."
+        ),
     ),
     CasType(
         code="artisan",
@@ -195,10 +337,13 @@ CAS_TYPES: tuple[CasType, ...] = (
         age_debut=27, age_liquidation=66, niveau_salaire=2.5,
         profil_carriere="fortement_ascendant",
         caisses=("cnavpl",),
+        ecart_liquidation=2,
         commentaire="Régime de base CNAVPL et complémentaire Cipav, la section par "
                     "défaut. Un libéral d'une section spécialisée — auxiliaires "
                     "médicaux, pharmaciens, notaires — aurait un complémentaire "
-                    "différent, et celui-là n'est pas paramétré.",
+                    "différent, et celui-là n'est pas paramétré. Seul cas type à "
+                    "partir APRÈS l'âge d'ouverture : deux ans, l'écart que la "
+                    "grille lui donnait déjà quand les âges étaient écrits.",
     ),
     CasType(
         code="contractuel_public",
@@ -329,19 +474,29 @@ def calculer_cas_types(
     simulateur: Simulateur,
     cas_types: tuple[CasType, ...] = CAS_TYPES,
     generations: tuple[int, ...] = GENERATIONS,
+    liquidation: str = "droit",
 ) -> ResultatCasTypes:
     """Calcule la grille complète cas type × génération.
 
     Les combinaisons impossibles — un régime qui n'existait pas encore, une
     liquidation avant l'origine de la répartition — sont écartées avec leur
     motif plutôt que de faire échouer l'ensemble.
+
+    ``liquidation`` choisit à quel âge chaque cas type part : ``droit``, celui
+    que le droit de sa génération lui ouvre, ou ``absolu``, l'âge écrit dans la
+    grille. Le second n'existe que pour mesurer ce que le premier a déplacé.
     """
+    if liquidation not in VARIANTES_LIQUIDATION:
+        raise ValueError(
+            f"variante de liquidation inconnue : {liquidation!r} "
+            f"(attendu : {VARIANTES_LIQUIDATION})"
+        )
     resultat = ResultatCasTypes()
     for cas in cas_types:
         for generation in generations:
             cle = (cas.code, generation)
             try:
-                carriere = cas.construire(simulateur, generation)
+                carriere = cas.construire(simulateur, generation, liquidation)
                 if carriere.annee_liquidation <= simulateur.parametres.annee_debut_repartition:
                     resultat.echecs[cle] = "liquidation antérieure à la répartition"
                     continue
