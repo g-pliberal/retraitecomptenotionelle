@@ -91,12 +91,12 @@ regimes:
           décembre 1983, article 33), puis 7,7 % au 1er août 1986, 7,9 % au 1er
           juillet 1987, 8,9 % au 1er janvier 1989 (loi n° 89-18 du 13 janvier
           1989, article 23) et 7,85 % au 1er février 1991. Les périodes qui
-          suivent la reprennent, une par taux, et `verifier_donnees.py` la
-          confronte aux fiches à chaque exécution ; la marche de 1989 reste
-          portée à 1990, date de la version de L. 61 que la base LEGI garde, et
-          le contrôle le signale.
+          suivent la reprennent, une par taux, DATÉES AU 1er JANVIER comme le
+          reste du dépôt : trois de ces cinq marches tombent en cours d'année
+          et ne commandent donc que l'année suivante. `verifier_donnees.py` le
+          confronte aux fiches à chaque exécution.
       - debut: 1984
-        fin: 1985
+        fin: 1986
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -112,9 +112,11 @@ regimes:
         notes: >-
           Loi de finances pour 1984 (loi n° 83-1179 du 29 décembre 1983, article
           33) : retenue portée de 6 % à 7 %. Taux lu chez OpenFisca-France ;
-          même barème par ailleurs.
-      - debut: 1986
-        fin: 1986
+          même barème par ailleurs. La période court jusqu'en 1986 comprise :
+          la hausse du 1er août 1986 ne commande que l'année suivante, le taux
+          retenu pour une année étant celui du 1er JANVIER.
+      - debut: 1987
+        fin: 1987
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -129,10 +131,15 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,7 % à compter du 1er août 1986 (loi n° 86-966 du 18 août 1986,
-          article 9), lu chez OpenFisca-France. Le millésime porte le taux en
-          vigueur en fin d'année, comme les autres séries de taux du dépôt ;
-          même barème par ailleurs.
-      - debut: 1987
+          article 9), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+          1987 et non 1986. Cette fiche portait 7,7 % dès 1986, au motif que
+          « le millésime porte le taux en vigueur en fin d'année, comme les
+          autres séries de taux du dépôt » : c'était faux du dépôt, dont la
+          règle est le 1er janvier, et vrai seulement de la série annuelle que
+          le récupérateur d'OpenFisca tirait de ces mêmes barèmes — il comparait
+          les années et non les dates. Les deux sont corrigés ensemble ; même
+          barème par ailleurs.
+      - debut: 1988
         fin: 1988
         type_calcul: annuites
         age_ouverture: 60
@@ -148,7 +155,8 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
-          article 4), lu chez OpenFisca-France. L'article 23 de la loi n° 89-18
+          article 4), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+          1988 et non 1987. L'article 23 de la loi n° 89-18
           du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
           taux de la retenue prévu à l'article L. 61 […] est majoré d'un
           point », applicable « aux traitements et soldes perçus au titre de la
@@ -157,7 +165,7 @@ regimes:
           L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
           trop ; le contrôle de vraisemblance ne signale plus d'écart.
       - debut: 1989
-        fin: 1990
+        fin: 1991
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -179,10 +187,12 @@ regimes:
           LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
           février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
           2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
-          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
-          compte notionnel en dépend entièrement.
-      - debut: 1991
+          au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+          1991 porte encore 8,9 %, comme le régime général porte encore ses
+          15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+          huitième de la cotisation pendant douze ans : le scénario 1 n'en
+          dépend pas, le compte notionnel en dépend entièrement.
+      - debut: 1992
         fin: 2003
         type_calcul: annuites
         age_ouverture: 60
@@ -205,9 +215,11 @@ regimes:
           LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
           février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
           2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
-          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
-          compte notionnel en dépend entièrement.
+          au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+          1991 porte encore 8,9 %, comme le régime général porte encore ses
+          15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+          huitième de la cotisation pendant douze ans : le scénario 1 n'en
+          dépend pas, le compte notionnel en dépend entièrement.
       - debut: 2004
         fin: 2008
         type_calcul: annuites
@@ -549,14 +561,14 @@ regimes:
           d'OpenFisca-France du barème de la caisse
           (`cotisations_secteur_public/cnracl/salarie/cnracl_s_ti`) suit, marche
           pour marche, la retenue de l'article L. 61 — 6 % en 1947, 7 % en 1984,
-          7,7 % en 1986, 7,9 % en 1987, 8,9 % en 1989, 7,85 % en 1991 — ; le
-          décret du 7 février 2007 ne fait que constater cet alignement. Les
-          périodes qui suivent la reprennent, une par taux, et
-          `verifier_donnees.py` la confronte aux fiches à chaque exécution ; la
-          marche de 1989 reste portée à 1990, comme à l'État, et le contrôle le
-          signale.
+          7,7 % au 1er août 1986, 7,9 % au 1er juillet 1987, 8,9 % au 1er
+          janvier 1989, 7,85 % au 1er février 1991 — ; le décret du 7 février
+          2007 ne fait que constater cet alignement. Les périodes qui suivent
+          la reprennent, une par taux, DATÉES AU 1er JANVIER comme à l'État :
+          une marche de milieu d'année ne commande que l'année suivante.
+          `verifier_donnees.py` le confronte aux fiches à chaque exécution.
       - debut: 1984
-        fin: 1985
+        fin: 1986
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -572,9 +584,11 @@ regimes:
         notes: >-
           Loi de finances pour 1984 (loi n° 83-1179 du 29 décembre 1983, article
           33) : retenue portée de 6 % à 7 %. Taux lu chez OpenFisca-France ;
-          même barème par ailleurs.
-      - debut: 1986
-        fin: 1986
+          même barème par ailleurs. La période court jusqu'en 1986 comprise :
+          la hausse du 1er août 1986 ne commande que l'année suivante, le taux
+          retenu pour une année étant celui du 1er JANVIER.
+      - debut: 1987
+        fin: 1987
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -589,10 +603,15 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,7 % à compter du 1er août 1986 (loi n° 86-966 du 18 août 1986,
-          article 9), lu chez OpenFisca-France. Le millésime porte le taux en
-          vigueur en fin d'année, comme les autres séries de taux du dépôt ;
-          même barème par ailleurs.
-      - debut: 1987
+          article 9), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+          1987 et non 1986. Cette fiche portait 7,7 % dès 1986, au motif que
+          « le millésime porte le taux en vigueur en fin d'année, comme les
+          autres séries de taux du dépôt » : c'était faux du dépôt, dont la
+          règle est le 1er janvier, et vrai seulement de la série annuelle que
+          le récupérateur d'OpenFisca tirait de ces mêmes barèmes — il comparait
+          les années et non les dates. Les deux sont corrigés ensemble ; même
+          barème par ailleurs.
+      - debut: 1988
         fin: 1988
         type_calcul: annuites
         age_ouverture: 60
@@ -608,7 +627,8 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
-          article 4), lu chez OpenFisca-France. L'article 23 de la loi n° 89-18
+          article 4), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+          1988 et non 1987. L'article 23 de la loi n° 89-18
           du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
           taux de la retenue prévu à l'article L. 61 […] est majoré d'un
           point », applicable « aux traitements et soldes perçus au titre de la
@@ -617,7 +637,7 @@ regimes:
           L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
           trop ; le contrôle de vraisemblance ne signale plus d'écart.
       - debut: 1989
-        fin: 1990
+        fin: 1991
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -639,12 +659,14 @@ regimes:
           LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
           février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
           2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
-          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
-          compte notionnel en dépend entièrement. La CNRACL ne fixe pas son
+          au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+          1991 porte encore 8,9 %, comme le régime général porte encore ses
+          15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+          huitième de la cotisation pendant douze ans : le scénario 1 n'en
+          dépend pas, le compte notionnel en dépend entièrement. La CNRACL ne fixe pas son
           taux : le décret du 7 février 2007 le cale sur celui de l'État, et
           la fiche le suit depuis toujours.
-      - debut: 1991
+      - debut: 1992
         fin: 2003
         type_calcul: annuites
         age_ouverture: 60
@@ -667,9 +689,11 @@ regimes:
           LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
           février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
           2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
-          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
-          compte notionnel en dépend entièrement. La CNRACL ne fixe pas son
+          au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+          1991 porte encore 8,9 %, comme le régime général porte encore ses
+          15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+          huitième de la cotisation pendant douze ans : le scénario 1 n'en
+          dépend pas, le compte notionnel en dépend entièrement. La CNRACL ne fixe pas son
           taux : le décret du 7 février 2007 le cale sur celui de l'État, et
           la fiche le suit depuis toujours.
       - debut: 2004
@@ -1059,12 +1083,12 @@ regimes:
           décembre 1983, article 33), puis 7,7 % au 1er août 1986, 7,9 % au 1er
           juillet 1987, 8,9 % au 1er janvier 1989 (loi n° 89-18 du 13 janvier
           1989, article 23) et 7,85 % au 1er février 1991. Les périodes qui
-          suivent la reprennent, une par taux, et `verifier_donnees.py` la
-          confronte aux fiches à chaque exécution ; la marche de 1989 reste
-          portée à 1990, date de la version de L. 61 que la base LEGI garde, et
-          le contrôle le signale.
+          suivent la reprennent, une par taux, DATÉES AU 1er JANVIER comme le
+          reste du dépôt : trois de ces cinq marches tombent en cours d'année
+          et ne commandent donc que l'année suivante. `verifier_donnees.py` le
+          confronte aux fiches à chaque exécution.
       - debut: 1984
-        fin: 1985
+        fin: 1986
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -1081,9 +1105,11 @@ regimes:
         notes: >-
           Loi de finances pour 1984 (loi n° 83-1179 du 29 décembre 1983, article
           33) : retenue portée de 6 % à 7 %. Taux lu chez OpenFisca-France ;
-          même barème par ailleurs.
-      - debut: 1986
-        fin: 1986
+          même barème par ailleurs. La période court jusqu'en 1986 comprise :
+          la hausse du 1er août 1986 ne commande que l'année suivante, le taux
+          retenu pour une année étant celui du 1er JANVIER.
+      - debut: 1987
+        fin: 1987
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -1099,10 +1125,15 @@ regimes:
           [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,7 % à compter du 1er août 1986 (loi n° 86-966 du 18 août 1986,
-          article 9), lu chez OpenFisca-France. Le millésime porte le taux en
-          vigueur en fin d'année, comme les autres séries de taux du dépôt ;
-          même barème par ailleurs.
-      - debut: 1987
+          article 9), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+          1987 et non 1986. Cette fiche portait 7,7 % dès 1986, au motif que
+          « le millésime porte le taux en vigueur en fin d'année, comme les
+          autres séries de taux du dépôt » : c'était faux du dépôt, dont la
+          règle est le 1er janvier, et vrai seulement de la série annuelle que
+          le récupérateur d'OpenFisca tirait de ces mêmes barèmes — il comparait
+          les années et non les dates. Les deux sont corrigés ensemble ; même
+          barème par ailleurs.
+      - debut: 1988
         fin: 1988
         type_calcul: annuites
         age_ouverture: 60
@@ -1119,7 +1150,8 @@ regimes:
           [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           7,9 % à compter du 1er juillet 1987 (loi n° 87-516 du 10 juillet 1987,
-          article 4), lu chez OpenFisca-France. L'article 23 de la loi n° 89-18
+          article 4), lu chez OpenFisca-France, donc en vigueur au 1er janvier
+          1988 et non 1987. L'article 23 de la loi n° 89-18
           du 13 janvier 1989, lu sur Légifrance (JORFTEXT000000321867) : « le
           taux de la retenue prévu à l'article L. 61 […] est majoré d'un
           point », applicable « aux traitements et soldes perçus au titre de la
@@ -1128,7 +1160,7 @@ regimes:
           L. 61 que LEGI date du 30 décembre 1989, et servait 7,9 % un an de
           trop ; le contrôle de vraisemblance ne signale plus d'écart.
       - debut: 1989
-        fin: 1990
+        fin: 1991
         type_calcul: annuites
         age_ouverture: 60
         age_taux_plein: 60
@@ -1150,10 +1182,12 @@ regimes:
           LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
           février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
           2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
-          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
-          compte notionnel en dépend entièrement.
-      - debut: 1991
+          au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+          1991 porte encore 8,9 %, comme le régime général porte encore ses
+          15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+          huitième de la cotisation pendant douze ans : le scénario 1 n'en
+          dépend pas, le compte notionnel en dépend entièrement.
+      - debut: 1992
         fin: 2003
         type_calcul: annuites
         age_ouverture: 60
@@ -1176,9 +1210,11 @@ regimes:
           LEGI, porte « une retenue de 8,9 % » du 30 décembre 1989 au 1er
           février 1991, puis « une retenue de 7,85 % » jusqu'au 1er janvier
           2006 — date à laquelle l'article cesse d'écrire un taux et renvoie
-          au décret. Compter 7 % de 1991 à 2003, c'est oublier un huitième de
-          la cotisation pendant treize ans : le scénario 1 n'en dépend pas, le
-          compte notionnel en dépend entièrement.
+          au décret. La baisse du 1er février 1991 ne commande donc que 1992 :
+          1991 porte encore 8,9 %, comme le régime général porte encore ses
+          15,8 % cette année-là. Compter 7 % de 1992 à 2003, c'est oublier un
+          huitième de la cotisation pendant douze ans : le scénario 1 n'en
+          dépend pas, le compte notionnel en dépend entièrement.
       - debut: 2004
         fin: 2008
         type_calcul: annuites

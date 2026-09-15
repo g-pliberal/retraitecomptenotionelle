@@ -1459,6 +1459,65 @@ institutions:
           explicitement abrogé en 2007 et l'article 52 explicitement repris par
           l'article 90 en 1993.
 
+      - id: dila_legi_taux_cotisation
+        titre: >-
+          Taux de cotisation vieillesse du régime général et des salariés
+          agricoles, lus dans les articles qui les fixent
+        url: https://echanges.dila.gouv.fr/OPENDATA/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/taux_cotisation_annuels.csv
+        recuperation: scripts/fetch/dila_legi_taux_cotisation.py
+        note: >-
+          Le compte notionnel ne connaît que la cotisation : c'est, avec le
+          salaire, la seule grandeur qui détermine le capital accumulé. Cette
+          série venait d'OpenFisca-France, transcription tierce plafonnée à
+          haute. Elle est désormais lue dans le droit : 368 valeurs certifiées,
+          régime général de 1982 à 2026 et salariés agricoles de 1980 à 2026,
+          quatre mesures chacune — taux plafonné, part salariale, taux
+          déplafonné, sa part. 112 corrigeaient la transcription.
+          DEUX ARTICLES PAR RÉGIME. Article 2 du décret n° 81-1013 du
+          13 novembre 1981 puis article D. 242-4 du code de la sécurité sociale
+          depuis la codification de décembre 1985 ; article 2 du décret
+          n° 50-444 du 20 avril 1950 puis article D. 741-35 du code rural depuis
+          la recodification d'avril 2005.
+          TROIS ÉCRITURES. LA PHRASE, qui nomme les quatre composantes et
+          annonce leur total — le récupérateur refait l'addition et signale
+          l'écart, ce qui a trouvé la rédaction de 2005 de D. 741-35, qui annonce
+          15,15 % pour des composantes qui font 15,25 %. LE TABLEAU, depuis le
+          décret du 2 juillet 2012, qui date ses lignes lui-même et porte donc
+          plusieurs années dans une seule version. LE RENVOI : depuis le
+          1er janvier 2014, le II de D. 741-35 renvoie à D. 242-4, et c'est lui,
+          non une convention du dépôt, qui aligne les salariés agricoles sur le
+          régime général — avant cette date leur employeur payait un point de
+          moins, 7,20 % contre 8,20 %.
+          LA RÈGLE DE DATE EST CELLE DU DÉPÔT : le taux d'une année est celui du
+          1er janvier. Une version qui prend effet le 30 juillet ne commande que
+          l'année suivante.
+          UN TAUX QUI N'EST PAS DANS L'ARTICLE. Le décret n° 87-453 du 29 juin
+          1987 a relevé la part salariale de 0,2 point du 1er juillet 1987 au
+          30 juin 1988 sans réécrire D. 242-4, que le décret du 22 juin 1988 n'a
+          rattrapé qu'en pérennisant la hausse. Ce décret est déclaré, sa notice
+          relue à chaque exécution, et la surcharge n'est appliquée que si la
+          version qui pérennise porte le même taux.
+          LE GARDE-FOU. Tout décret publié depuis 1982 dont le titre porte
+          « taux » et « cotisation » avec le régime général ou les assurances
+          sociales agricoles, et dont le texte parle de vieillesse, doit être
+          expliqué : par une version de la chaîne, par la surcharge déclarée, ou
+          par une ligne qui dit pourquoi il ne touche pas à ce taux. Un décret
+          qui n'entre dans aucune case arrête la certification.
+          OÙ LA SÉRIE S'ARRÊTE, ET POURQUOI. Avant 1982, l'article 3 du décret
+          n° 67-803 est dans la base avec ses quatre composantes, mais avec UNE
+          version, du 1er octobre 1967 au 14 novembre 1981, portant 12,9 % —
+          l'état de 1979 quand le taux valait 8,5 % en 1967. Le récupérateur le
+          lit et le refuse par une règle écrite : un article qui n'a qu'une
+          version et couvre plus de dix ans n'a pas de chronologie. Les décrets
+          modificatifs sont au JORF, mais la base n'en garde avant 1990 que la
+          notice, et aucune n'écrit de taux.
+          IL LIT L'INDEX ET NON LE DUMP, comme dila_legi_contribution_employeur :
+          la version de D. 242-4 qui porte 2026, celle du décret n° 2025-1446
+          du 31 décembre 2025, n'est que dans les incréments.
+
       - id: dila_legi_decote_fonction_publique
         titre: Décote de la fonction publique, montée en charge 2006-2019
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/

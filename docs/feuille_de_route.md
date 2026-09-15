@@ -170,7 +170,7 @@ de `limites.md` de douze régimes à sept.
   et la différence joue contre le mineur. C'est écrit dans `limites.md` ; ce
   serait un chantier à part que de l'égaliser.
 
-### 3. Certifier les taux de cotisation, matière des scénarios 2 à 6 — `à faire`
+### 3. Certifier les taux de cotisation, matière des scénarios 2 à 6 — `fait`
 
 **Pourquoi.** Le compte notionnel ne connaît que la cotisation. Or les taux du
 régime général ne sont qu'au niveau `moyenne` depuis 1967 (OpenFisca), `estimee`
@@ -197,6 +197,66 @@ là où le décret manque ou ne chiffre pas, l'année reste à la transcription 
 **Fin.** La ligne « Taux de cotisation, régime général » du tableau de
 certification est `certifiee` sur 1967-2026, et les témoins montrent ce que la
 lecture a déplacé.
+
+**Ce que ça a déplacé.** Une source nouvelle,
+`scripts/fetch/dila_legi_taux_cotisation.py`, et **368 valeurs certifiées** là
+où il n'y avait qu'une transcription : le régime général de 1982 à 2026, les
+salariés agricoles de 1980 à 2026, quatre mesures chacune — taux plafonné, part
+salariale, taux déplafonné, sa part. **112 de ces valeurs corrigeaient la
+transcription.** Le taux n'est pas une statistique mais un article de code :
+article 2 du décret n° 81-1013 puis `D. 242-4` du code de la sécurité sociale,
+article 2 du décret n° 50-444 puis `D. 741-35` du code rural.
+
+- *La règle du dépôt n'était pas appliquée.* Le taux d'une année est celui du
+  1er JANVIER — `methodologie.md` l'écrit, et le récupérateur d'OpenFisca le
+  disait dans sa propre docstring. Son filtre comparait pourtant les ANNÉES et
+  non les dates : c'était le taux du **31 décembre** qui sortait. Six années du
+  régime général en portaient la marque, dont **1991**, qui recevait la réforme
+  du 1er février quand au 1er janvier le régime prélevait encore 15,8 % sous le
+  seul plafond. Les fiches de la fonction publique s'étaient alignées sur ce
+  filtre, en écrivant que « le millésime porte le taux en vigueur en fin
+  d'année, comme les autres séries de taux du dépôt » — faux du dépôt, vrai du
+  seul filtre. Les deux sont corrigés ensemble.
+- *L'article codifié ne dit pas tout.* Au 1er janvier 1988, `D. 242-4` portait
+  6,40 % de part salariale et le *Journal officiel* 6,60 % : le décret
+  n° 87-453 du 29 juin 1987 avait relevé le taux « à titre exceptionnel et
+  temporaire » **sans réécrire l'article**. D'où un garde-fou qui n'existait pas
+  pour la part patronale : tout décret du JORF qui annonce des taux de ces
+  régimes doit être expliqué — par une version de la chaîne, par une surcharge
+  déclarée et relue, ou par une ligne qui dit pourquoi il ne touche pas à ce
+  taux. Un décret qui n'entre dans aucune case arrête la certification.
+- *Les salariés agricoles n'avaient pas les taux du régime général.* Le dépôt
+  leur donnait sa série et écrivait que « L. 741-9 renvoie aux taux du régime
+  général ». C'est vrai depuis 2014, où le II de `D. 741-35` renvoie à
+  `D. 242-4` ; c'est faux avant. De 1980 à 2013, **l'employeur agricole payait
+  un point de moins** que celui du privé. Un salarié agricole né en 1945 voit
+  la part patronale de sa carrière tomber de 87 276 à 79 909 €, et sa pension
+  du scénario 4 de **5 %** — le plus gros déplacement de cette lecture.
+- *Le mur est avant 1982, et la base le démontre.* L'article 3 du décret
+  n° 67-803 est dans LEGI, avec ses quatre composantes en toutes lettres — mais
+  avec UNE version, du 1er octobre 1967 au 14 novembre 1981, portant 12,9 %,
+  c'est-à-dire l'état de 1979 quand le taux valait 8,5 % en 1967. Le
+  récupérateur le lit comme les autres et le refuse par une règle écrite : un
+  article qui n'a qu'une version et couvre plus de dix ans n'a pas de
+  chronologie. Les décrets modificatifs sont au JORF, mais la base n'en garde
+  avant 1990 que la notice, et aucune n'écrit de taux. La ligne du tableau de
+  certification est donc `certifiee` sur **1982**-2026 et non 1967-2026 : c'est
+  moins que ce que l'action annonçait, et la raison est vérifiable.
+- *Sur la page Coût, l'effet est petit*, et c'est attendu : le cumul du scénario
+  4 passe de −51,8 % à **−51,9 %**, celui du 6 de −51,6 % à **−51,7 %**, celui
+  du 2 reste à −79,5 %. 287 cas de témoin sur 427 bougent, et le scénario 1 ne
+  bouge nulle part.
+- *Ce qui reste, et pourquoi.* L'**Agirc-Arrco** n'a pas été certifiée, et les
+  deux chemins que l'action désignait sont fermés. La fédération publie la
+  compilation de ses valeurs de point, que le dépôt lit déjà, mais aucun
+  historique de taux à une adresse trouvable : sa page « Paramètres et chiffres
+  du régime » ne rend plus rien et sa documentation institutionnelle ne porte
+  qu'une brochure. Et le *Journal officiel* ne porte que les **avis
+  d'extension** des accords, qui renvoient au Bulletin officiel Conventions
+  collectives pour le texte — donc pour les taux. Ces séries restent
+  transcrites d'OpenFisca. Il reste aussi une découverte non corrigée : le
+  bloc d'exemple du README (§3, la fonctionnaire née en 1975) est périmé
+  depuis une modification antérieure, et l'était déjà avant cette action.
 
 ### 4. Étendre la contre-expertise du scénario 1 — `à faire`
 
@@ -340,3 +400,17 @@ qui dira si le diagnostic était bon.
   qu'une série n'existe pas. L'action 3, qui porte sur les taux de cotisation,
   est la plus haute qui ne soit pas commencée, et c'est le même outil qui
   l'attend.
+- **Septembre 2026, action 3.** Faite, mais moins largement que l'action ne
+  l'annonçait : 368 valeurs certifiées sur le régime général depuis 1982 et les
+  salariés agricoles depuis 1980, et rien avant, parce que la base LEGI ne garde
+  de l'article d'avant 1982 qu'une version de quatorze ans. Le détail est sous
+  l'action. Trois choses à en retenir pour la suite. Une règle écrite dans la
+  documentation n'est pas une règle appliquée : celle du 1er janvier ne l'était
+  pas, et une fiche s'était alignée sur le défaut plutôt que sur la règle — ce
+  qui est un mode de panne à chercher ailleurs. Un article codifié ne porte pas
+  toujours le droit en vigueur, et il faut donc un garde-fou qui interroge le
+  JORF sur ce que la chaîne des versions ne montre pas. Enfin, un renvoi d'un
+  article à un autre est une information : c'est lui qui datait l'alignement des
+  salariés agricoles sur le régime général, que le dépôt supposait éternel.
+  L'action 4, la contre-expertise du scénario 1, est la plus haute qui ne soit
+  pas commencée.

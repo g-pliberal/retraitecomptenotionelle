@@ -591,15 +591,25 @@
    "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
    "valeurs": 20
   },
+  "taux_cotisation_alignes": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "788c0e4df2673be1",
+   "identiques": 512,
+   "niveau": "haute",
+   "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
+   "valeurs": 512
+  },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "5e6442e558c33ffb",
-   "identiques": 1074,
+   "empreinte": "221f749af3a0886c",
+   "identiques": 194,
    "niveau": "haute",
    "source": "OpenFisca-France, barèmes datés de la cotisation vieillesse (cnav, artisans, commerçants, indépendants)",
-   "valeurs": 1074
+   "valeurs": 194
   },
   "taux_cotisation_avant_1967": {
    "ajoutees": 132,
@@ -610,6 +620,16 @@
    "niveau": "estimee",
    "source": "COR d'après la Cnav, taux des assurances sociales 1945-1967 ; part vieillesse conventionnelle de 8,5/21",
    "valeurs": 132
+  },
+  "taux_cotisation_journal_officiel": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "9c16ff1ba3178b7c",
+   "identiques": 368,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale D. 242-4 et décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444",
+   "valeurs": 368
   },
   "valeurs_point": {
    "ajoutees": 0,

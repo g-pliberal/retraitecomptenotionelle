@@ -604,11 +604,11 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | 14 987 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 3 077 Md € | −79,5 % |
+| 2. Notionnel rétroactif, part salariale | 3 074 Md € | −79,5 % |
 | 3. Notionnel dès 2026, part salariale | 14 987 Md € | +0,0 % |
-| 4. Notionnel rétroactif, salariale + patronale | 7 221 Md € | −51,8 % |
+| 4. Notionnel rétroactif, salariale + patronale | 7 206 Md € | −51,9 % |
 | 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 254 Md € | −51,6 % |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 239 Md € | −51,7 % |
 | *dont garantie vieillesse du 6, vue par les cas types* | *33 Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
@@ -631,8 +631,8 @@ cotisée à 18 %.
 retraités de sa caisse, publié par la DREES et lu année par année : l'agent de
 conduite pèse 0,7 % et non 8,3 %, les quatre carrières du privé 64 % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donnait −75,9 % au scénario 2 contre −79,5 %, et −55,9 % au
-scénario 4 contre −51,8 %. Le sens du biais n'était donc pas celui qu'on
+qu'argumenté — elle donnait −75,9 % au scénario 2 contre −79,5 %, et −55,4 % au
+scénario 4 contre −51,9 %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
@@ -931,7 +931,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          620 tests Python
+tests/                          621 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
