@@ -246,17 +246,43 @@ article 2 du décret n° 50-444 puis `D. 741-35` du code rural.
   4 passe de −51,8 % à **−51,9 %**, celui du 6 de −51,6 % à **−51,7 %**, celui
   du 2 reste à −79,5 %. 287 cas de témoin sur 427 bougent, et le scénario 1 ne
   bouge nulle part.
-- *Ce qui reste, et pourquoi.* L'**Agirc-Arrco** n'a pas été certifiée, et les
-  deux chemins que l'action désignait sont fermés. La fédération publie la
-  compilation de ses valeurs de point, que le dépôt lit déjà, mais aucun
-  historique de taux à une adresse trouvable : sa page « Paramètres et chiffres
-  du régime » ne rend plus rien et sa documentation institutionnelle ne porte
-  qu'une brochure. Et le *Journal officiel* ne porte que les **avis
-  d'extension** des accords, qui renvoient au Bulletin officiel Conventions
-  collectives pour le texte — donc pour les taux. Ces séries restent
-  transcrites d'OpenFisca. Il reste aussi une découverte non corrigée : le
-  bloc d'exemple du README (§3, la fonctionnaire née en 1975) est périmé
-  depuis une modification antérieure, et l'était déjà avant cette action.
+- *Ce qui ne se certifiera pas, et la démonstration plutôt que l'aveu.* Deux
+  séries restent transcrites : le régime général d'avant 1982 et les
+  complémentaires du privé. Une seconde passe leur a donné ce qu'elles peuvent
+  avoir — une source nouvelle, `scripts/fetch/ipp_taux_cotisation.py`, qui lit
+  les barèmes de l'IPP, source AMONT d'OpenFisca, et surtout les deux colonnes
+  que la transcription perd en route : le texte de chaque marche, et sa date de
+  publication au *Journal officiel*.
+
+  * *La confrontation est une copie vérifiée, et le contrôle le dit.* IPP contre
+    OpenFisca n'est pas deux lectures : c'est l'original contre sa copie. Elle a
+    quand même trouvé une erreur — OpenFisca servait 0,1 % de part salariale
+    déplafonnée dès le 1er janvier 2004 quand elle naît le 1er juillet, même
+    cause que le filtre de l'année et au même endroit.
+  * *La chronologie, elle, est vérifiée.* **Trente-cinq des trente-six marches**
+    de la CNAV sont retrouvées au JORF, au numéro et à la date que l'IPP annonce
+    — seul le décret n° 70-680 manque à l'index. La valeur reste transcrite, la
+    DATE ne l'est plus, et c'est la date dont dépend la règle du 1er janvier.
+  * *Les complémentaires ne se certifieront pas, et c'est l'IPP qui le dit.* Il
+    laisse lui-même la colonne du *Journal officiel* VIDE sur ses vingt-cinq
+    marches Agirc et Arrco, et cite des accords collectifs. Le JO ne publie que
+    l'avis d'extension, qui renvoie au Bulletin officiel sans écrire le chiffre ;
+    la fédération publie la compilation de ses valeurs de point, que le dépôt lit
+    déjà, mais aucun historique de taux — sa page « Paramètres » n'affiche que
+    l'année courante, ses circulaires ne remontent qu'à 2003. La démonstration
+    est mécanique : si l'IPP remplit un jour cette colonne, le contrôle le dira.
+  * *Et une trouvaille qui change un chiffre.* Le **décret n° 79-650 du
+    30 juillet 1979** a relevé « à titre exceptionnel » les taux du régime
+    général du 1er août 1979 au 31 janvier 1981 : la fenêtre couvre DEUX
+    premiers janvier, et aucune source ne porte la hausse. **1980 et 1981 sont
+    donc fausses**, et non seulement incertaines ; le tableau de certification
+    l'écrit. C'est de là que vient une règle du garde-fou : il n'exige pas le
+    mot « vieillesse », parce que ce décret ne nomme aucun risque.
+- *Le bloc d'exemple du README ne dérivera plus.* Le §3 collait une sortie de
+  `comparaison.tableau()` périmée — 1,7 % d'écart sur la pension du scénario 1,
+  et +7,0 % au lieu de +9,0 % au scénario 4 — depuis une modification
+  antérieure à cette action. Il est régénéré, et un test le recalcule à chaque
+  exécution.
 
 ### 4. Étendre la contre-expertise du scénario 1 — `à faire`
 
@@ -414,3 +440,13 @@ qui dira si le diagnostic était bon.
   salariés agricoles sur le régime général, que le dépôt supposait éternel.
   L'action 4, la contre-expertise du scénario 1, est la plus haute qui ne soit
   pas commencée.
+- **Septembre 2026, action 3, seconde passe.** Les deux réserves de la première
+  ont été reprises. Aucune des deux ne se referme par une certification — les
+  sources n'existent pas —, mais les deux cessent d'être des aveux : une source
+  nouvelle ancre chaque marche des séries transcrites au décret qui la porte, et
+  démontre, par la source amont elle-même, que les taux des complémentaires ne
+  sont dans aucun texte officiel. La leçon à retenir est celle-là : quand une
+  série ne se certifie pas, il reste à dire de quoi elle est faite, et la
+  DATE d'une marche se vérifie même quand sa valeur ne se vérifie pas. La
+  recherche a rapporté au passage ce que personne ne cherchait — un décret de
+  1979 qui rend fausses deux années de la série.

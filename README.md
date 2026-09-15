@@ -521,19 +521,19 @@ Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
-1. Système actuel                                                  41,065€     32,773€    2,731€     réf.
-2. Notionnel rétroactif, part salariale                             7,956€      6,349€      529€   -80.6%
-3. Notionnel dès 2026, part salariale                              24,862€     19,842€    1,654€   -39.5%
-4. Notionnel rétroactif, salariale + patronale                     43,933€     35,062€    2,922€    +7.0%
-5. Notionnel dès 2026, salariale + patronale                       30,158€     24,069€    2,006€   -26.6%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        41,254€     32,925€    2,744€    +0.5%
+1. Système actuel                                                  40,358€     32,210€    2,684€     réf.
+2. Notionnel rétroactif, part salariale                             7,963€      6,355€      530€   -80.3%
+3. Notionnel dès 2026, part salariale                              24,497€     19,551€    1,629€   -39.3%
+4. Notionnel rétroactif, salariale + patronale                     43,975€     35,096€    2,925€    +9.0%
+5. Notionnel dès 2026, salariale + patronale                       29,827€     23,805€    1,984€   -26.1%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        41,262€     32,931€    2,744€    +2.2%
 --------------------------------------------------------------------------------------------------------
    hors répartition (RAFP), servi à part, identique aux 6           1,424€      1,137€       95€     réf.
 
 Qui verse la cotisation, en euros courants cumulés :
-  part salariale           136,530 €   scénarios 2 et 3
-  part patronale           521,583 €   soit 79% du total
-  total                    658,113 €   scénarios 4 et 5
+  part salariale           136,434 €   scénarios 2 et 3
+  part patronale           522,341 €   soit 79% du total
+  total                    658,775 €   scénarios 4 et 5
   contribution employeur publique trouvée sur 29 année(s)
 ```
 
@@ -931,7 +931,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          621 tests Python
+tests/                          623 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

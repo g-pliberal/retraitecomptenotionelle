@@ -94,12 +94,19 @@ CE QUI MONTE LA GARDE, ET POURQUOI IL FAUT UN GARDE-FOU DE PLUS
 Un décret peut donc changer ces taux sans que la chaîne des versions le montre.
 Le récupérateur interroge pour cela la base JORF : tout décret publié depuis
 1982 dont le titre porte « taux » et « cotisation » avec le régime général ou
-les assurances sociales agricoles, et dont le texte parle de vieillesse, doit
-être expliqué — soit il ouvre une version de la chaîne, soit il est déclaré dans
-``HORS_CODE``, soit il est nommé dans ``SANS_EFFET`` avec la raison pour
-laquelle il ne touche pas à ce taux. Un décret qui n'entre dans aucune de ces
-trois cases **arrête la certification** : le dépôt ne sait plus si sa série est
-complète, et le dire est le seul comportement honnête.
+les assurances sociales agricoles doit être expliqué — soit il ouvre une version
+de la chaîne, soit il est déclaré dans ``HORS_CODE``, soit il est nommé dans
+``SANS_EFFET`` avec la raison pour laquelle il ne touche pas à ce taux. Un décret
+qui n'entre dans aucune de ces trois cases **arrête la certification** : le dépôt
+ne sait plus si sa série est complète, et le dire est le seul comportement
+honnête.
+
+La requête **ne demande pas le mot « vieillesse »**, et c'est une leçon prise
+sur la période que ce récupérateur ne couvre pas : le décret n° 79-650 du
+30 juillet 1979 a relevé « à titre exceptionnel » les taux du régime général du
+1er août 1979 au 31 janvier 1981 sans nommer un seul risque, ni dans son titre
+ni dans sa notice. Un garde-fou qui aurait exigé le mot l'aurait laissé passer.
+Le prix est une trentaine de candidats au lieu d'une douzaine, tous nommés.
 
 POURQUOI IL LIT L'INDEX ET NON LE DUMP
 
@@ -234,10 +241,15 @@ HORS_CODE: tuple[dict, ...] = (
 
 #: La requête du garde-fou : tout décret publié depuis 1982 qui annonce dans son
 #: titre des taux de cotisation du régime général ou des assurances sociales
-#: agricoles, et qui parle de vieillesse.
+#: agricoles. Elle n'exige PAS le mot « vieillesse », et c'est délibéré : le
+#: décret n° 79-650 du 30 juillet 1979, qui a relevé « à titre exceptionnel »
+#: les taux du régime général du 1er août 1979 au 31 janvier 1981, ne nomme
+#: aucun risque — ni dans son titre, ni dans sa notice. Un garde-fou qui aurait
+#: demandé le mot l'aurait laissé passer. Le prix est une trentaine de candidats
+#: au lieu d'une douzaine, tous nommés dans ``SANS_EFFET`` ci-dessous.
 PREMIERE_ANNEE_GARDE = 1982
 REQUETE_GARDE = (
-    'titre:taux AND (titre:cotisation OR titre:cotisations) AND vieillesse AND '
+    'titre:taux AND (titre:cotisation OR titre:cotisations) AND '
     '(titre:"regime general" OR titre:"assurances sociales agricoles" '
     'OR titre:"salaries agricoles")'
 )
@@ -250,6 +262,38 @@ TOLERANCE_OUVERTURE = 15
 #: raison. Un décret qui n'est ni ici, ni dans ``HORS_CODE``, ni à l'ouverture
 #: d'une version arrête la certification.
 SANS_EFFET: dict[str, str] = {
+    "JORFTEXT000000880483":
+        "décret n° 82-445 du 28 mai 1982 : taux et conditions d'exonération de "
+        "la cotisation d'assurance MALADIE",
+    "JORFTEXT000000883619":
+        "décret n° 82-1082 du 20 décembre 1982 : pénalités et majorations de "
+        "retard du recouvrement, aucun taux de cotisation",
+    "JORFTEXT000000690640":
+        "décret n° 83-1196 du 30 décembre 1983 : tableau de l'article 1er du "
+        "décret n° 67-804, branche MALADIE des salariés partiellement rattachés",
+    "JORFTEXT000000509383":
+        "décret n° 88-334 du 6 avril 1988 : cotisation d'assurance maladie des "
+        "assurés en situation de PRÉRETRAITE, 5,50 %",
+    "JORFTEXT000000719897":
+        "décret n° 91-614 du 28 juin 1991 : taux des cotisations d'assurance "
+        "MALADIE du régime général",
+    "JORFTEXT000000719893":
+        "décret n° 91-615 du 28 juin 1991 : même objet, salariés agricoles",
+    "JORFTEXT000000539214":
+        "décret n° 91-1388 du 31 décembre 1991 : cotisations d'assurance maladie",
+    "JORFTEXT000000540784":
+        "décret n° 92-572 du 25 juin 1992 : cotisations d'assurance maladie",
+    "JORFTEXT000000528933":
+        "décret n° 93-275 du 26 février 1993 : assiette et taux des cotisations "
+        "des JEUNES AGRICULTEURS STAGIAIRES",
+    "JORFTEXT000000881424":
+        "décret n° 93-275 du 26 février 1993, seconde fiche du même texte",
+    "JORFTEXT000000556674":
+        "décret n° 95-1401 du 30 décembre 1995 : cotisation d'assurance maladie "
+        "sur les avantages de retraite des salariés agricoles",
+    "JORFTEXT000028968045":
+        "décret n° 2014-517 du 22 mai 2014 : taux et calcul de la cotisation "
+        "MALADIE",
     "JORFTEXT000000332799":
         "décret n° 87-470 du 30 juin 1987 : relèvement temporaire de la seule "
         "cotisation MALADIE des fonctionnaires, ouvriers de l'État et assurés "
