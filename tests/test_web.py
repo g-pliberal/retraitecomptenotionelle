@@ -26,6 +26,8 @@ from retraite_notionnelle.donnees.chargement import (
     charger_periodes_non_travaillees,
 )
 from retraite_notionnelle.web.pages import (
+    AGE_DEBUT_MINIMAL,
+    AGE_LIQUIDATION_MAXIMAL,
     AGES_REFERENCE,
     ANNEE_CARRIERE_MAXIMALE,
     ANNEE_CARRIERE_MINIMALE,
@@ -41,6 +43,7 @@ from retraite_notionnelle.web.pages import (
     PAS_MULTIPLE,
     PROFILS,
     PROJECTIONS,
+    RELEVE_MAXIMUM,
     TABLES,
     TITRES,
     Contexte,
@@ -664,6 +667,185 @@ def test_le_formulaire_dit_brut_et_donne_l_echelle(contexte):
 def test_le_multiple_est_traduit_en_euros(contexte):
     _, corps = rendre(contexte, "/", {"unite_revenu": "moyen", "salaire": "1"})
     assert "1 = salaire moyen, soit" in corps
+
+
+# -- le relevé de carrière ---------------------------------------------------
+
+
+def _releve(premiere: int, derniere: int,
+            statut: str = "salarie_prive_non_cadre") -> str:
+    """Un relevé plausible, une ligne par année, quatre trimestres chacune."""
+    return ",".join(
+        f"{annee}:{statut}:{14000 + 500 * (annee - premiere)}:4"
+        for annee in range(premiere, derniere + 1)
+    )
+
+
+def test_le_releve_est_lu_ligne_a_ligne():
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64",
+        "releve": "1998:salarie_prive_non_cadre:14200:4\n"
+                  "1999:salarie_prive_cadre:19800",
+    })
+    assert saisie.releve_actif
+    lignes = saisie.releve_analyse()
+    assert [(l.annee, l.affiliation, l.revenu, l.trimestres) for l in lignes] == [
+        (1998, "salarie_prive_non_cadre", 14200.0, 4),
+        # Le quatrième champ manque : le modèle déduira les trimestres du
+        # montant cotisé, comme il le fait d'une carrière paramétrique.
+        (1999, "salarie_prive_cadre", 19800.0, None),
+    ]
+
+
+def test_le_releve_remplace_la_carriere_parametrique(contexte):
+    """Deux simulations, mêmes bornes : le relevé n'emprunte rien au profil."""
+    commun = {"naissance": "1975", "liquidation": "64", "debut": "23",
+              "statut": "salarie_prive_non_cadre", "unite_revenu": "moyen",
+              "salaire": "1"}
+    lue = contexte.simuler(Saisie.depuis_requete({
+        **commun, "releve": _releve(1998, 2038)}))
+    reconstituee = contexte.simuler(Saisie.depuis_requete(commun))
+    assert lue.carriere.annee_liquidation == reconstituee.carriere.annee_liquidation
+    assert [ligne.annee for ligne in lue.carriere.lignes] == list(range(1998, 2039))
+    # Les revenus sont ceux du relevé, en euros de chaque année, et non ceux
+    # qu'un niveau relatif et un profil auraient fabriqués.
+    assert lue.carriere.ligne(1998).revenu == 14000.0
+    assert lue.carriere.ligne(1998).revenu != reconstituee.carriere.ligne(1998).revenu
+
+
+def test_les_trimestres_declares_l_emportent_sur_le_montant(contexte):
+    """Le relevé fait foi : un temps partiel ne se lit sur aucun salaire."""
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64",
+        "releve": "2000:salarie_prive_non_cadre:30000:2",
+    })
+    carriere = contexte.simuler(saisie).carriere
+    assert carriere.ligne(2000).trimestres_valides == 2
+
+
+def test_l_annee_du_depart_est_tronquee_par_la_liquidation(contexte):
+    """Le relevé donne l'année ; la date de liquidation dit jusqu'où elle compte."""
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64", "liquidation_mois": "7",
+        "releve": _releve(1998, 2039),
+    })
+    carriere = contexte.simuler(saisie).carriere
+    assert carriere.ligne(2038).fraction_annee == 1.0
+    # Départ à 64 ans et 7 mois, donc au 1er août 2039 : sept mois travaillés.
+    assert carriere.ligne(2039).fraction_annee == 7 / 12
+    # Sept mois : deux trimestres civils au plus, quoi qu'en dise la ligne du
+    # relevé, qui en déclare quatre.
+    assert carriere.ligne(2039).trimestres_valides == 2
+
+
+def test_les_interruptions_valent_encore_sur_un_releve(contexte):
+    """Le relevé ne dit pas la NATURE de l'année ; le champ des motifs, si."""
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64",
+        "releve": _releve(1998, 2038),
+        "interruptions": "2005:2006:chomage_indemnise",
+    })
+    carriere = contexte.simuler(saisie).carriere
+    chomage = carriere.ligne(2005)
+    assert chomage.type_periode == "chomage_indemnise"
+    assert not chomage.cotisations_versees
+    assert chomage.revenu == 0.0
+    # Le revenu de la ligne devient le salaire de référence sur lequel les
+    # régimes complémentaires continuent d'acquérir des points.
+    assert chomage.revenu_reference == 17500.0
+    assert carriere.ligne(2007).cotisations_versees
+
+
+def test_un_releve_vide_laisse_la_carriere_parametrique():
+    assert not Saisie.depuis_requete({"releve": "   "}).releve_actif
+
+
+@pytest.mark.parametrize("ligne", [
+    "2005:salarie_prive_non_cadre",          # trois champs exigés
+    "2005:salarie_prive_non_cadre:1:2:3",    # quatre au plus
+    "deux-mille:salarie_prive_non_cadre:1:4",
+    "2005::24000:4",                         # statut manquant
+    "2005:salarie_prive_non_cadre:abc:4",
+    "2005:salarie_prive_non_cadre:-1:4",
+    "2005:salarie_prive_non_cadre:24000:5",
+    "2005:salarie_prive_non_cadre:24000:-1",
+    "2005:salarie_prive_non_cadre:24000:4, 2005:artisan:9000:4",
+    f"{ANNEE_CARRIERE_MINIMALE - 1}:salarie_prive_non_cadre:1:4",
+    f"{ANNEE_CARRIERE_MAXIMALE + 1}:salarie_prive_non_cadre:1:4",
+    "1970:salarie_prive_non_cadre:1:4",      # avant les quatorze ans de l'assuré
+    "2039:salarie_prive_non_cadre:1:4",      # après le départ à la retraite
+])
+def test_une_ligne_de_releve_fautive_est_refusee(ligne):
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64", "releve": ligne,
+    })
+    with pytest.raises(ErreurSaisie):
+        saisie.releve_analyse()
+
+
+def test_un_releve_demesure_est_refuse():
+    """L'adresse EST la saisie : un relevé forgé dans un lien figeait l'onglet.
+
+    Le refus tombe sur le NOMBRE de lignes, avant que la première ne soit lue :
+    c'est ce qui le rend gratuit. Compter les lignes analysées ferait payer au
+    lecteur tout le relevé qu'on voulait justement lui épargner.
+    """
+    lignes = ",".join(
+        f"{annee}:salarie_prive_non_cadre:100:4"
+        for annee in range(1930, 1930 + RELEVE_MAXIMUM + 1)
+    )
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64", "releve": lignes,
+    })
+    with pytest.raises(ErreurSaisie, match="au plus"):
+        saisie.releve_analyse()
+
+
+def test_aucune_carriere_n_atteint_la_borne_du_releve():
+    """La borne du relevé est au-dessus de ce que la fenêtre des âges permet.
+
+    Une carrière tient entre l'âge de début minimal et l'âge de liquidation
+    maximal ; une année ne s'y déclare qu'une fois. La borne doit rester
+    au-dessus de ce compte, faute de quoi elle refuserait une carrière que le
+    reste du formulaire accepte.
+    """
+    assert RELEVE_MAXIMUM > AGE_LIQUIDATION_MAXIMAL - AGE_DEBUT_MINIMAL
+
+
+def test_un_statut_ferme_est_refuse_aussi_sur_un_releve(contexte):
+    """Le refus parle d'années déclarées, non d'un « métier n° 2 » inexistant."""
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64",
+        "releve": "2015:mineur:24000:4",
+    })
+    with pytest.raises(ErreurSaisie, match="première année déclarée"):
+        contexte.simuler(saisie)
+
+
+def test_un_statut_inconnu_du_releve_est_refuse(contexte):
+    saisie = Saisie.depuis_requete({
+        "naissance": "1975", "liquidation": "64",
+        "releve": "2005:cosmonaute:24000:4",
+    })
+    with pytest.raises(ErreurSaisie, match="cosmonaute"):
+        contexte.simuler(saisie)
+
+
+def test_le_releve_voyage_dans_l_adresse():
+    """Il est un paramètre comme les autres : un lien décrit la carrière entière."""
+    saisie = Saisie.depuis_requete({"releve": _releve(2000, 2002)})
+    parametres = dict(parse_qsl(saisie.requete()))
+    assert parametres["releve"] == _releve(2000, 2002)
+    assert Saisie.depuis_requete(parametres).releve == saisie.releve
+
+
+def test_la_page_dit_que_la_carriere_a_ete_lue(page):
+    texte = page("/", naissance=1975, liquidation=64, releve=_releve(1998, 2038))
+    assert "lue sur un relevé" in texte
+    assert "41 années de 1998 à 2038" in texte
+    # Le dépliant est ouvert : sinon l'adresse porterait une carrière que la
+    # page ne montrerait pas.
+    assert '<details class="releve" open>' in texte
 
 
 # -- plusieurs métiers -------------------------------------------------------

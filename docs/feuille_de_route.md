@@ -556,7 +556,7 @@ Et la RÉACTION des recettes aux scénarios — le 6, qui pose un taux unique de
 18 %, déplacerait aussi les ressources, et le coefficient suppose celles du
 système actuel. `limites.md` §5 porte les trois.
 
-### 7. Saisir un relevé de carrière réel sur le site — `à faire`
+### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est
 accessible qu'en Python. Le site plafonne à six métiers et des interruptions
@@ -568,6 +568,48 @@ le plus fort du projet.
 analysé dans `moteur/js/pages.js` et dans `web/pages.py` à l'identique, porté
 dans l'adresse comme le reste des paramètres, avec des témoins. L'import
 automatique reste impossible (`limites.md` §5, « Les carrières réelles »).
+
+**Ce que ça a déplacé.** Aucun chiffre : les **469 témoins de simulation** sont
+inchangés au bit près, et les neuf qui s'y ajoutent sont ceux du chemin neuf.
+Les 31 témoins de page bougent, mais d'une seule façon et pour une seule raison
+— le champ ajouté au formulaire, et le `releve=` vide que toute adresse porte
+désormais, comme elle portait déjà `interruptions=`. Ce qui change est donc ce
+que le site SAIT recevoir, et rien d'autre.
+
+- *Un champ, et un format.* `releve` est un paramètre comme les autres — il
+  voyage dans l'adresse, donc un lien décrit une carrière réelle entière. Une
+  ligne par année, `année:régime:revenu[:trimestres]`, séparées par des retours
+  à la ligne, des virgules ou des points-virgules : c'est la convention que les
+  interruptions avaient déjà posée, et non une seconde grammaire à apprendre.
+  Rempli, il remplace les métiers, le profil et le niveau de revenu ; l'année de
+  naissance, l'âge de départ, les enfants, la part de primes et les
+  interruptions continuent de valoir, parce qu'aucun relevé ne les porte.
+- *Le seul chemin où l'euro n'est converti par rien.* Le formulaire
+  paramétrique saisit un revenu d'AUJOURD'HUI, que le modèle ramène à un
+  multiple du salaire moyen puis promène le long de sa série ; le relevé donne
+  déjà les euros de chaque année, l'unité même d'`AnneeCarriere`. C'est ce qui
+  fait de ce chemin le plus exact, et c'est aussi ce qui rendait le tableau des
+  arrondis de `methodologie.md` caduc sur une ligne : la conversion des francs
+  se fait désormais avant le modèle, et hors de lui.
+- *Une règle écrite une fois pour deux chemins.* Ce que le droit fait d'une
+  année non cotisée — les trimestres qu'elle assimile, les points
+  complémentaires que l'UNEDIC finance, l'AVPF que la CNAF cotise — a été
+  extrait de `depuis_parcours` dans `_ligne_annuelle`, des deux côtés du
+  portage. Les deux constructeurs y passent, et c'est le témoin qui l'a
+  prouvé : aucune des 469 simulations figées n'a bougé d'une décimale.
+- *Ce que le relevé ne dit pas, et que rien ne devine.* Le MOIS. Chaque ligne
+  vaut une année civile pleine, sauf celle du départ, que la date de
+  liquidation tronque — celle-là, le modèle la connaît. L'année d'entrée dans
+  la vie active reste donc comptée pour une année entière alors qu'elle est
+  presque toujours partielle ; `limites.md` §5 le dit, et c'est la seule
+  approximation qui subsiste sur ce chemin.
+- *Un refus qui coûte le découpage, et rien de plus.* Les lignes sont comptées
+  AVANT d'être lues. Le calcul se fait chez le lecteur et l'adresse est la
+  saisie : un relevé de cent mille lignes forgé dans un lien aurait figé
+  l'onglet de celui qui le suit, exactement comme la plage d'interruption sans
+  borne l'avait fait. La borne est de 63 lignes, et un test vérifie qu'elle
+  reste au-dessus de ce que la fenêtre des âges permet — 61 années — pour
+  qu'elle ne refuse jamais une carrière que le reste du formulaire accepte.
 
 ### 8. Faire liquider chaque cas type à l'âge de SA génération — `à faire`
 
@@ -826,3 +868,19 @@ piloté — et dit laquelle répond à quelle question.
   saisie d'un relevé de carrière réel, est la plus haute qui ne soit pas
   commencée ; elle ouvre aussi, à côté d'elle, un chantier que celle-ci laisse :
   APPLIQUER le coefficient d'équilibre, qui touche les deux moteurs.
+- **Septembre 2026, action 7.** Faite. Un paramètre de plus, un constructeur de
+  carrière de chaque côté du portage, onze témoins ajoutés, dix-huit tests, et
+  aucune des 469 simulations témoins déplacée. Le détail est sous l'action.
+  Trois choses à en retenir pour la suite. **Une action qui n'ajoute aucune
+  donnée peut quand même se vérifier par les témoins** : le seul fait que ces
+  469 valeurs figées n'aient pas bougé prouve que l'extraction de
+  `_ligne_annuelle` n'a rien changé au chemin existant, et c'est le contrôle qui
+  manquerait à une réécriture faite sans eux. **Un chemin neuf hérite des fautes déjà commises
+  sur l'ancien** : la plage d'interruption sans borne avait appris que l'adresse
+  EST la saisie, et le relevé a reçu son garde-fou — le comptage avant la
+  lecture — le jour où il a été écrit, plutôt qu'après un incident. Enfin,
+  **une limite qui tombe en déplace une autre d'un cran** : le modèle ne
+  reconstitue plus le revenu de qui saisit son relevé, mais il ignore toujours
+  le MOIS d'entrée dans la vie active, que nul relevé ne porte — c'est là que
+  `limites.md` §5 se tient désormais. L'action 8, faire liquider chaque cas
+  type à l'âge de SA génération, est la plus haute qui ne soit pas commencée.

@@ -115,6 +115,91 @@ def debut_admissible(statut: str, naissance: int,
     return min(debut, dernier)
 
 
+def lignes_releve(premiere: int, derniere: int, statut: str, revenu: float,
+                  progression: float = 1.025,
+                  trimestres: int | None = 4) -> str:
+    """Un relevé de carrière écrit ligne à ligne, dans le format du formulaire.
+
+    Les montants sont ceux de CHAQUE ANNÉE, en euros de cette année-là : c'est
+    l'unité du relevé, et la seule du modèle qui ne passe par aucune conversion.
+    La progression géométrique n'imite aucune carrière réelle — elle fabrique
+    des montants distincts d'une année à l'autre, ce qu'il faut pour que le
+    témoin voie bouger un salaire annuel moyen.
+    """
+    lignes = []
+    for rang, annee in enumerate(range(premiere, derniere + 1)):
+        montant = round(revenu * progression ** rang)
+        suffixe = "" if trimestres is None else f":{trimestres}"
+        lignes.append(f"{annee}:{statut}:{montant}{suffixe}")
+    return ",".join(lignes)
+
+
+def _cas_releve() -> list[tuple[str, dict]]:
+    """Les carrières LUES, celles que le relevé décrit au lieu de les déduire.
+
+    Ce chemin ne partage avec la carrière paramétrique que la construction de
+    l'année — ``_ligne_annuelle`` — et tout le reste lui est propre : le format
+    du relevé, ses refus, la fraction de l'année du départ, les trimestres
+    déclarés qui l'emportent sur ceux que le montant commanderait. Sans ces cas,
+    le portage JavaScript de tout cela ne serait comparé à rien.
+    """
+    prive = lignes_releve(1998, 2038, "salarie_prive_non_cadre", 14000)
+    return [
+        # Le cas nu : quarante et une années pleines, quatre trimestres chacune.
+        ("releve_prive", {"releve": prive}),
+        # Sans les trimestres : le modèle les déduit du montant cotisé, comme
+        # il le fait d'une carrière paramétrique.
+        ("releve_sans_trimestres", {
+            "releve": lignes_releve(1998, 2038, "salarie_prive_non_cadre",
+                                    14000, trimestres=None),
+        }),
+        # Les trimestres DÉCLARÉS l'emportent : deux par an sur un salaire qui
+        # en vaudrait quatre, c'est le temps partiel qu'aucun montant ne dit.
+        ("releve_trimestres_declares", {
+            "releve": lignes_releve(1998, 2038, "salarie_prive_non_cadre",
+                                    14000, trimestres=2),
+        }),
+        # Deux régimes dans une vie, la coupure au 1er janvier : le relevé ne
+        # connaît que l'année, il n'a donc pas d'année partagée.
+        ("releve_deux_statuts", {
+            "releve": lignes_releve(1998, 2015, "salarie_prive_non_cadre", 14000)
+            + "," + lignes_releve(2016, 2038, "fonctionnaire_etat", 26000),
+        }),
+        # Le champ « Interruptions » reste lu : il donne à l'année son motif, ce
+        # que le relevé ne sait pas dire. Le revenu de la ligne devient alors le
+        # salaire de référence des régimes complémentaires.
+        ("releve_avec_interruption", {
+            "releve": prive, "interruptions": "2005:2008:chomage_indemnise",
+        }),
+        # L'année du départ, tronquée par la date de liquidation : sept mois
+        # travaillés, deux trimestres civils au plus, et un revenu que la
+        # fraction annualise.
+        ("releve_annee_du_depart_tronquee", {
+            "releve": lignes_releve(1998, 2039, "salarie_prive_non_cadre", 14000),
+            "liquidation": "64", "liquidation_mois": "8",
+        }),
+        # La fonction publique et son assiette de primes, qui ne se lit sur
+        # aucun relevé et reste donc un paramètre.
+        ("releve_fonction_publique", {
+            "releve": lignes_releve(1998, 2038, "fonctionnaire_etat", 22000),
+            "primes": "0.22",
+        }),
+        # Une carrière achevée, en euros d'avant l'euro : le relevé d'un assuré
+        # né en 1950 porte des montants de 1970, et le modèle ne les convertit
+        # pas — il les prend pour ce qu'ils sont, les euros de leur année.
+        ("releve_generation_1950", {
+            "naissance": "1950", "liquidation": "60",
+            "releve": lignes_releve(1970, 2009, "salarie_prive_cadre", 3500),
+        }),
+        # Un trou dans la carrière : le relevé saute les années où rien n'a été
+        # gagné, et rien ne les remplace — c'est ce qu'un relevé fait.
+        ("releve_annees_manquantes", {
+            "releve": lignes_releve(1998, 2010, "salarie_prive_non_cadre", 14000)
+            + "," + lignes_releve(2018, 2038, "artisan", 25000),
+        }),
+    ]
+
+
 def _cas() -> list[dict]:
     """Jeu de cas couvrant chaque branche du moteur au moins une fois."""
     cas: list[tuple[str, dict]] = [("base", {})]
@@ -357,6 +442,9 @@ def _cas() -> list[dict]:
         **parentale, "liquidation": "67",
     }))
 
+    # Les carrières LUES sur un relevé, plutôt que reconstituées.
+    cas.extend(_cas_releve())
+
     # Retraité de longue date : la bascule est postérieure à sa liquidation.
     cas.append(("deja_liquide", {"naissance": "1935", "liquidation": "60"}))
     cas.append(("liquidation_a_la_bascule", {"naissance": "1962", "liquidation": "64"}))
@@ -473,6 +561,18 @@ def _pages(contexte: Contexte) -> dict:
         # Une ligne de métier laissée à moitié remplie : la page doit le dire,
         # et dire ce qui manque.
         ("accueil_metier_incomplet", "/", {**BASE, "metier2_debut": "40"}),
+        # Une carrière LUE sur un relevé : le dépliant s'ouvre, la zone de
+        # saisie porte les lignes, et le récapitulatif dit que les métiers du
+        # formulaire n'ont pas servi.
+        ("accueil_releve", "/", {
+            **BASE, "releve": lignes_releve(1998, 2038,
+                                            "salarie_prive_non_cadre", 14000),
+        }),
+        # Un relevé refusé : la phrase cite la ligne fautive, et le formulaire
+        # doit repartir sans elle.
+        ("accueil_releve_refuse", "/", {
+            **BASE, "releve": "2005:salarie_prive_non_cadre:24000:9",
+        }),
         # Quatre blocs de la page de résultats qu'aucun témoin n'atteignait —
         # le portage y était comparé par le seul tirage au hasard, qui ne dit
         # pas en diff ce qu'un changement déplace. Le tableau des indexations

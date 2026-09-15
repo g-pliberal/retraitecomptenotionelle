@@ -2,9 +2,11 @@
  * Description d'une carrière individuelle.
  *
  * Portage de ``src/retraite_notionnelle/carriere.py``. Deux niveaux d'entrée :
- * une ligne par année, telle qu'on la lit sur un relevé de carrière, ou la suite
- * des métiers exercés — statut, âge de début et niveau de rémunération pour
- * chacun. Une carrière d'un seul métier en est le cas particulier.
+ * une ligne par année, telle qu'on la lit sur un relevé de carrière
+ * ({@link Carriere.depuisReleve} — le chemin le plus exact, le seul qui ne
+ * suppose ni profil ni progression), ou la suite des métiers exercés — statut,
+ * âge de début et niveau de rémunération pour chacun. Une carrière d'un seul
+ * métier en est le cas particulier.
  */
 
 import {
@@ -81,6 +83,68 @@ export class AnneeCarriere {
   get revenuAnnualise() {
     return this.fraction_annee <= 0 ? 0.0 : this.revenu / this.fraction_annee;
   }
+}
+
+/**
+ * Une année de carrière, une fois connus son revenu et sa nature.
+ *
+ * Les deux constructeurs de {@link Carriere} y passent : celui qui déduit le
+ * revenu d'un profil ({@link Carriere.depuisParcours}) et celui qui le lit sur
+ * un relevé ({@link Carriere.depuisReleve}). Ce que le droit fait d'une période
+ * non cotisée — combien de trimestres elle assimile, si elle ouvre des points
+ * complémentaires, si la CNAF cotise l'AVPF — ne s'écrit donc qu'une fois.
+ *
+ * `trimestresDeclares` est le seul point où les deux chemins se séparent : un
+ * relevé dit combien de trimestres l'année a validés, et ce chiffre-là fait
+ * foi ; une carrière paramétrique les déduit du montant cotisé.
+ */
+function ligneAnnuelle({
+  annee,
+  revenu,
+  affiliation,
+  type_periode: typePeriode,
+  macro,
+  part,
+  part_primes: partPrimes,
+  trimestresMaximum,
+  trimestresDeclares = null,
+}) {
+  const cotise = typePeriode === "emploi";
+  const motifs = macro.paquet.periodes_non_travaillees ?? {};
+  const regle = cotise ? null : (motifs[typePeriode] ?? motifs.sans_activite ?? null);
+  const ouvreComplementaires = regle !== null && regle[1] === true;
+  const ouvreAvpf = regle !== null && regle[3] === true;
+  const trimestres = trimestresDeclares === null
+    ? (cotise ? macro.trimestresValides(revenu, annee)
+      : (regle !== null ? regle[0] : 4))
+    : trimestresDeclares;
+  return new AnneeCarriere({
+    annee,
+    revenu: cotise ? revenu : 0.0,
+    affiliation,
+    type_periode: typePeriode,
+    // Un trimestre s'acquiert par un montant cotisé — 150 fois le SMIC horaire
+    // depuis 2014, 200 avant. Les périodes assimilées en valident quatre sans
+    // condition de montant : c'est tout leur objet.
+    // Le montant commande le nombre de trimestres, les mois en commandent le
+    // plafond : on ne valide pas quatre trimestres en sept mois, si gros que
+    // soit le salaire.
+    trimestres_valides: Math.min(trimestresMaximum, trimestres),
+    // Pendant une période indemnisée, l'UNEDIC ou la Sécurité sociale versent
+    // de vraies cotisations aux régimes complémentaires, assises sur le
+    // salaire d'avant.
+    revenu_reference: ouvreComplementaires ? revenu : 0.0,
+    familles_cotisantes: ouvreComplementaires ? ["complementaire_prive"] : [],
+    cotisations_versees: cotise,
+    fraction_annee: part,
+    part_primes: partPrimes,
+    // Assurance vieillesse des parents au foyer : la CNAF cotise au régime
+    // général sur une assiette forfaitaire égale au SMIC — 1 820 heures, soit
+    // le SMIC mensuel multiplié par douze.
+    revenu_avpf: (!cotise && ouvreAvpf)
+      ? 1820.0 * macro.smic_horaire.valeur(annee) * part
+      : 0.0,
+  });
 }
 
 /** Carrière complète d'un assuré. */
@@ -352,6 +416,74 @@ export class Carriere {
   // -- constructeurs ---------------------------------------------------------
 
   /**
+   * Construit une carrière à partir d'un relevé, ligne par ligne.
+   *
+   * C'est le chemin le plus exact, et le seul qui ne suppose rien : les deux
+   * autres reconstituent un revenu à partir d'un niveau relatif et d'un profil
+   * de progression, celui-ci le lit. Une ligne — `{ annee, affiliation,
+   * revenu, trimestres, type_periode }` — par année civile, l'unité à laquelle
+   * les régimes liquident.
+   *
+   * **Ce qui est lu, et ce qui ne l'est pas.** Le relevé donne l'année ; il ne
+   * donne pas le mois. Chaque ligne vaut donc une année civile PLEINE, sauf
+   * celle de la liquidation, dont la pension coupe le millésime à une date que
+   * le modèle, lui, connaît. L'année d'entrée dans la vie active reste comptée
+   * pour une année entière alors qu'elle est presque toujours tronquée : le
+   * relevé n'en porte que ce qui a été gagné, et le modèle ne peut pas
+   * l'annualiser sans savoir en quel mois elle a commencé.
+   *
+   * **Les années non cotisées** se déclarent par `type_periode`, ligne par
+   * ligne, et non par les plages d'une carrière paramétrique : le relevé porte
+   * des années, pas des intervalles. Le revenu d'une telle ligne n'est plus un
+   * revenu perçu mais le salaire de référence d'avant l'interruption, celui sur
+   * lequel les régimes complémentaires continuent d'acquérir des points.
+   */
+  static depuisReleve({
+    annee_naissance,
+    sexe,
+    releve,
+    age_liquidation,
+    macro,
+    mois_naissance = 1,
+    nombre_enfants = 0,
+    part_primes = 0.0,
+    identifiant = "assuré",
+  }) {
+    if (!releve || releve.length === 0) {
+      throw new Error("un relevé compte au moins une ligne");
+    }
+    const dateNaissance = new DateMois(annee_naissance, mois_naissance);
+    // La pension prend effet ce mois-là : il n'est plus travaillé.
+    const fin = dateNaissance.plusMois(enMois(age_liquidation));
+
+    const lignes = releve.map((ligne) => {
+      const mois = ligne.annee < fin.annee ? MOIS_PAR_AN : fin.mois - 1;
+      if (ligne.annee > fin.annee || mois <= 0) {
+        throw new Error(
+          `${identifiant} : l'année ${ligne.annee} du relevé est postérieure `
+          + `au départ à la retraite (${fin})`,
+        );
+      }
+      return ligneAnnuelle({
+        annee: ligne.annee,
+        revenu: ligne.revenu,
+        affiliation: ligne.affiliation,
+        type_periode: ligne.type_periode ?? "emploi",
+        macro,
+        part: mois / MOIS_PAR_AN,
+        part_primes,
+        trimestresMaximum: trimestresCivils(mois),
+        trimestresDeclares: ligne.trimestres ?? null,
+      });
+    });
+
+    return new Carriere({
+      annee_naissance, sexe, lignes, mois_naissance, age_liquidation,
+      nombre_enfants, identifiant,
+    });
+  }
+
+  /**
    * Carrière d'un seul métier, exercé du premier au dernier jour. C'est le cas
    * particulier de {@link depuisParcours} à un métier, et il se construit par
    * elle : les deux chemins ne peuvent donc pas diverger.
@@ -482,43 +614,15 @@ export class Carriere {
       });
       const affiliation = periodes[dominant].metier.affiliation;
 
-      const typePeriode = plages.get(annee) ?? "emploi";
-      const cotise = typePeriode === "emploi";
-      const motifs = macro.paquet.periodes_non_travaillees ?? {};
-      const regle = cotise ? null : (motifs[typePeriode] ?? motifs.sans_activite ?? null);
-      const ouvreComplementaires = regle !== null && regle[1] === true;
-      const ouvreAvpf = regle !== null && regle[3] === true;
-      lignes.push(new AnneeCarriere({
+      lignes.push(ligneAnnuelle({
         annee,
-        revenu: cotise ? revenu : 0.0,
+        revenu,
         affiliation,
-        type_periode: typePeriode,
-        // Un trimestre s'acquiert par un montant cotisé — 150 fois le SMIC
-        // horaire depuis 2014, 200 avant. Les périodes assimilées en valident
-        // quatre sans condition de montant : c'est tout leur objet.
-        // Le montant commande le nombre de trimestres, les mois en commandent
-        // le plafond : on ne valide pas quatre trimestres en sept mois, si
-        // gros que soit le salaire.
-        trimestres_valides: Math.min(
-          trimestresMaximum,
-          cotise
-            ? macro.trimestresValides(revenu, annee)
-            : (regle !== null ? regle[0] : 4),
-        ),
-        // Pendant une période indemnisée, l'UNEDIC ou la Sécurité sociale
-        // versent de vraies cotisations aux régimes complémentaires, assises
-        // sur le salaire d'avant.
-        revenu_reference: ouvreComplementaires ? revenu : 0.0,
-        familles_cotisantes: ouvreComplementaires ? ["complementaire_prive"] : [],
-        cotisations_versees: cotise,
-        fraction_annee: part,
+        type_periode: plages.get(annee) ?? "emploi",
+        macro,
+        part,
         part_primes,
-        // Assurance vieillesse des parents au foyer : la CNAF cotise au régime
-        // général sur une assiette forfaitaire égale au SMIC — 1 820 heures,
-        // soit le SMIC mensuel multiplié par douze.
-        revenu_avpf: (!cotise && ouvreAvpf)
-          ? 1820.0 * macro.smic_horaire.valeur(annee) * part
-          : 0.0,
+        trimestresMaximum,
       }));
     }
 

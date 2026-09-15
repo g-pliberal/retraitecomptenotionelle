@@ -394,6 +394,18 @@ export class Simulateur {
     return Carriere.depuisParcours({ ...options, macro: this.macro });
   }
 
+  /**
+   * Construit une carrière lue sur un relevé, année par année. La forme la plus
+   * exacte : rien n'y est reconstitué, ni le revenu de chaque année ni les
+   * trimestres qu'elle a validés — l'assuré les recopie de son relevé.
+   */
+  carriereReleve(options) {
+    for (const ligne of options.releve) {
+      this._verifierAffiliation(ligne.affiliation);
+    }
+    return Carriere.depuisReleve({ ...options, macro: this.macro });
+  }
+
   _verifierAffiliation(affiliation) {
     if (!this.affiliations.contient(affiliation)) {
       throw new Error(

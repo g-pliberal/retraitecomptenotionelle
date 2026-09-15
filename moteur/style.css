@@ -157,10 +157,17 @@ label { display: block; font-size: 0.88rem; color: var(--texte-doux); margin-bot
    La couleur pleine la remonte à 6,88:1, et la taille suffit à la distinguer du
    libellé. */
 label .aide { display: block; font-size: 0.8rem; }
-input, select {
+input, select, textarea {
   width: 100%; padding: 0.45rem 0.6rem; font: inherit; font-size: 0.95rem;
   color: var(--texte); background: var(--fond); border: 1px solid var(--trait-champ);
   border-radius: 4px;
+}
+/* Le relevé de carrière se lit en colonnes : une police à chasse fixe aligne
+   les années les unes sous les autres, et une faute de frappe s'y voit. Le
+   redimensionnement reste vertical — l'élargir déborderait de la carte. */
+textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88rem; line-height: 1.45; resize: vertical;
 }
 /* Un seul indicateur de focus pour tout ce qui se parcourt au clavier — champs,
    liens, bouton, dépliants, tableaux défilants. Le contour du navigateur varie
@@ -169,7 +176,9 @@ input, select {
 :focus-visible {
   outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px;
 }
-input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--accent); outline-offset: 1px;
+}
 button {
   font: inherit; font-size: 0.98rem; padding: 0.55rem 1.4rem; cursor: pointer;
   color: var(--fond-carte); background: var(--accent);

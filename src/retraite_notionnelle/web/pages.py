@@ -19,6 +19,7 @@ from urllib.parse import urlencode
 from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, formater_age
 from ..carriere import (
     Affiliations,
+    LigneRelevee,
     Metier,
     bornes_deformation,
     formater_borne,
@@ -172,8 +173,18 @@ HEURES_SMIC_PAR_MOIS = 151.67
 #: qu'on en ajoute un, sans une ligne de JavaScript. La borne n'est pas une
 #: limite du moteur — il en accepterait autant qu'on veut — mais celle du
 #: formulaire : au-delà, ce n'est plus une suite de métiers qu'on décrit, c'est
-#: un relevé de carrière année par année, et il se saisit autrement.
+#: un relevé de carrière année par année — et celui-là a son propre champ,
+#: borné par ``RELEVE_MAXIMUM``.
 METIERS_MAXIMUM = 6
+
+#: Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
+#: entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
+#: soixante et une années civiles au plus ; la borne laisse deux lignes de
+#: marge et ferme surtout la porte que les interruptions avaient ouverte : le
+#: calcul se fait chez le lecteur et l'adresse EST la saisie, si bien qu'un
+#: relevé de cent mille lignes forgé dans un lien figeait l'onglet de celui qui
+#: le suivait.
+RELEVE_MAXIMUM = 63
 
 #: Bornes des deux années que l'utilisateur peut choisir : celle de la bascule
 #: au régime unique, et celle des euros constants dans lesquels les montants
@@ -307,6 +318,11 @@ class Saisie:
     #: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
     #: multiples reste donc valide, et décrit la carrière d'un seul métier.
     metiers: list[MetierSaisi] = field(default_factory=list)
+    #: Le relevé de carrière, une ligne par année : « année:régime:revenu » et,
+    #: si le relevé les porte, « :trimestres ». Non vide, il REMPLACE la
+    #: carrière paramétrique — les métiers, le profil et le niveau de revenu ne
+    #: servent plus à rien : plus rien n'est reconstitué, tout est lu.
+    releve: str = ""
     profil: str = "ascendant"
     primes: float = 0.0
     enfants: int = 0
@@ -356,6 +372,7 @@ class Saisie:
             liquidation=_age_saisi(parametres, "liquidation", defauts.liquidation),
             salaire=salaire,
             metiers=_metiers_saisis(parametres, salaire),
+            releve=(parametres.get("releve") or "").strip(),
             profil=_parmi(parametres, "profil", PROFILS, defauts.profil),
             primes=_reel(parametres, "primes", defauts.primes),
             enfants=_entier(parametres, "enfants", defauts.enfants),
@@ -623,6 +640,136 @@ class Saisie:
                 plages[annee] = motif
         return plages
 
+    @property
+    def releve_actif(self) -> bool:
+        """Vrai si la carrière est LUE plutôt que reconstituée."""
+        return bool(self.releve.strip())
+
+    @property
+    def date_liquidation(self) -> DateMois:
+        """Le mois où la pension prend effet — la borne du relevé.
+
+        La même arithmétique que :attr:`Carriere.date_liquidation`, en amont du
+        modèle : le refus d'une année postérieure au départ doit se prononcer
+        sur la saisie, avec le vocabulaire du formulaire, et non remonter du
+        moteur sous la forme d'une exception.
+        """
+        return DateMois(self.naissance, self.naissance_mois).plus_mois(
+            en_mois(self.liquidation)
+        )
+
+    def releve_analyse(
+        self, motifs_connus: Iterable[str] | None = None,
+    ) -> list[LigneRelevee]:
+        """« 2005:salarie_prive_non_cadre:24000:4, … » -> lignes de relevé.
+
+        Le format est celui du relevé lui-même, dans l'ordre où il l'imprime :
+        l'année, le régime, le revenu de l'année, les trimestres qu'elle a
+        validés. Les trois premiers champs sont exigés ; le quatrième est
+        facultatif — sans lui, le modèle déduit les trimestres du montant
+        cotisé, comme il le fait d'une carrière paramétrique.
+
+        **Le revenu est celui de l'année, en euros de cette année-là**, et non
+        un multiple du salaire moyen ni un montant mensuel : c'est ce que le
+        relevé porte, et l'unité du modèle. Un relevé antérieur à 2002 est en
+        francs, à diviser par 6,55957.
+
+        **Les années non cotisées** se déclarent dans le champ
+        « Interruptions », qui reste lu quand un relevé est saisi : il associe
+        une année à un motif, ce que le relevé ne sait pas dire. La ligne de
+        l'année garde alors ses trimestres — le relevé fait foi — et son revenu
+        devient le salaire de référence d'avant l'interruption.
+
+        Les refus sont ceux qu'``interruptions_analysees`` a appris à
+        prononcer : une année hors de toute carrière possible, une ligne mal
+        formée, un doublon. S'y ajoute la seule borne que le relevé rende
+        nécessaire — le nombre de lignes : le calcul se fait chez le lecteur, et
+        un relevé forgé dans un lien figerait l'onglet de celui qui le suit.
+        """
+        interruptions = self.interruptions_analysees(motifs_connus)
+        depart = self.date_liquidation
+        # Les lignes sont COMPTÉES avant d'être lues : le refus doit coûter le
+        # découpage du texte, et rien de plus. Les analyser d'abord pour les
+        # compter ensuite ferait payer au lecteur le relevé de cent mille
+        # lignes qu'un lien lui aurait tendu — c'est la faute que les plages
+        # d'interruption avaient déjà commise.
+        morceaux = [morceau.strip() for morceau
+                    in self.releve.replace("\n", ",").replace(";", ",").split(",")]
+        morceaux = [morceau for morceau in morceaux if morceau]
+        if not morceaux:
+            raise ErreurSaisie(
+                "Relevé de carrière vide : le laisser entièrement vide pour "
+                "décrire la carrière par ses métiers."
+            )
+        if len(morceaux) > RELEVE_MAXIMUM:
+            raise ErreurSaisie(
+                f"Relevé de {len(morceaux)} lignes : le modèle en accepte "
+                f"{RELEVE_MAXIMUM} au plus, ce qu'aucune carrière ne dépasse."
+            )
+        lignes: list[LigneRelevee] = []
+        vues: set[int] = set()
+        for morceau in morceaux:
+            parties = [partie.strip() for partie in morceau.split(":")]
+            if not 3 <= len(parties) <= 4 or not _est_entier(parties[0]):
+                raise ErreurSaisie(
+                    f"Ligne de relevé mal formée : « {morceau} ». Attendu "
+                    "« année:régime:revenu » ou « année:régime:revenu:trimestres », "
+                    "par exemple 2005:salarie_prive_non_cadre:24000:4."
+                )
+            annee = int(parties[0])
+            # L'année est citée TELLE QU'ELLE A ÉTÉ ÉCRITE, comme pour les
+            # interruptions : « 999999999999999999999 » reste un entier en
+            # Python et devient « 1e+21 » en JavaScript, et les deux moteurs
+            # refuseraient la même saisie par deux phrases différentes.
+            if not ANNEE_CARRIERE_MINIMALE <= annee <= ANNEE_CARRIERE_MAXIMALE:
+                raise ErreurSaisie(
+                    f"Relevé « {morceau} » : {parties[0]} ne tombe dans aucune "
+                    f"carrière possible. Attendu entre {ANNEE_CARRIERE_MINIMALE} "
+                    f"et {ANNEE_CARRIERE_MAXIMALE}."
+                )
+            if annee in vues:
+                raise ErreurSaisie(
+                    f"Relevé : l'année {annee} est déclarée deux fois. Une "
+                    "année civile ne porte qu'une ligne — les régimes liquident "
+                    "à l'année."
+                )
+            vues.add(annee)
+            if annee < self.naissance + AGE_DEBUT_MINIMAL:
+                raise ErreurSaisie(
+                    f"Relevé « {morceau} » : l'assuré, né en {self.naissance}, "
+                    f"n'a pas {AGE_DEBUT_MINIMAL} ans en {annee}."
+                )
+            if annee > depart.annee or (annee == depart.annee and depart.mois == 1):
+                raise ErreurSaisie(
+                    f"Relevé « {morceau} » : l'année {annee} est postérieure au "
+                    f"départ à la retraite, fixé au {depart}."
+                )
+            if not parties[1]:
+                raise ErreurSaisie(
+                    f"Relevé « {morceau} » : indiquer le statut d'affiliation."
+                )
+            revenu = _vers_flottant(parties[2])
+            if revenu is None or revenu < 0:
+                raise ErreurSaisie(
+                    f"Relevé « {morceau} » : revenu de l'année attendu positif "
+                    "ou nul, en euros de cette année-là."
+                )
+            trimestres = None
+            if len(parties) == 4 and parties[3]:
+                if not _est_entier(parties[3]) or not 0 <= int(parties[3]) <= 4:
+                    raise ErreurSaisie(
+                        f"Relevé « {morceau} » : trimestres attendus entre 0 et 4."
+                    )
+                trimestres = int(parties[3])
+            lignes.append(LigneRelevee(
+                annee=annee,
+                affiliation=parties[1],
+                revenu=revenu,
+                trimestres=trimestres,
+                type_periode=interruptions.get(annee, "emploi"),
+            ))
+        return lignes
+
     def requete(self, **remplacements) -> str:
         champs = {
             "naissance": self.naissance, "naissance_mois": self.naissance_mois,
@@ -634,6 +781,7 @@ class Saisie:
             "liquidation": en_mois(self.liquidation) // 12,
             "liquidation_mois": self.liquidation_mois,
             "salaire": _nombre(self.salaire), "profil": self.profil,
+            "releve": self.releve,
             "primes": _nombre(self.primes), "enfants": self.enfants,
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
@@ -887,6 +1035,13 @@ class Contexte:
 
     def simuler(self, saisie: Saisie) -> Comparaison:
         simulateur = self.simulateur(saisie.parametres(self.base))
+        # Les motifs viennent des données, pas d'une liste écrite ici : le
+        # moteur y lit ce que chaque période ouvre, et une saisie refusée doit
+        # l'être sur la même table que celle qui calcule.
+        motifs = charger_periodes_non_travaillees(simulateur.macro.racine)
+        if saisie.releve_actif:
+            return simulateur.simuler(self._carriere_relevee(
+                simulateur, saisie, motifs))
         parcours = saisie.parcours(self.echelle(saisie))
         for metier in parcours:
             if metier.affiliation not in simulateur.affiliations:
@@ -900,18 +1055,43 @@ class Contexte:
             mois_naissance=saisie.naissance_mois,
             age_liquidation=saisie.liquidation,
             profil_carriere=saisie.profil,
-            # Les motifs viennent des données, pas d'une liste écrite ici :
-            # le moteur y lit ce que chaque période ouvre, et une saisie
-            # refusée doit l'être sur la même table que celle qui calcule.
-            interruptions=saisie.interruptions_analysees(
-                charger_periodes_non_travaillees(simulateur.macro.racine)
-            ),
+            interruptions=saisie.interruptions_analysees(motifs),
             nombre_enfants=saisie.enfants,
             part_primes=saisie.primes,
             identifiant="assuré",
         )
         _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
         return simulateur.simuler(carriere)
+
+    def _carriere_relevee(self, simulateur: Simulateur, saisie: Saisie,
+                          motifs) -> "Carriere":
+        """La carrière telle que le relevé la donne, sans rien reconstituer.
+
+        Aucune échelle des salaires n'intervient : le relevé est déjà en euros
+        de chaque année, quand le formulaire paramétrique saisit un revenu
+        d'aujourd'hui que le modèle promène ensuite le long du salaire moyen.
+        C'est ce qui fait de ce chemin le plus exact — et le seul où l'euro
+        n'est pas converti.
+        """
+        releve = saisie.releve_analyse(motifs)
+        for ligne in releve:
+            if ligne.affiliation not in simulateur.affiliations:
+                raise ErreurSaisie(
+                    f"Relevé, année {ligne.annee} : statut d'affiliation "
+                    f"inconnu « {ligne.affiliation} »."
+                )
+        carriere = simulateur.carriere_releve(
+            annee_naissance=saisie.naissance,
+            sexe=saisie.sexe,
+            releve=releve,
+            mois_naissance=saisie.naissance_mois,
+            age_liquidation=saisie.liquidation,
+            nombre_enfants=saisie.enfants,
+            part_primes=saisie.primes,
+            identifiant="assuré",
+        )
+        _verifier_statuts_releve(simulateur.affiliations, carriere)
+        return carriere
 
 
 #: Titre de chaque page, dans l'ordre de la navigation.
@@ -1143,20 +1323,63 @@ def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,
     fermeture pour autant.
     """
     for rang, metier in enumerate(parcours, start=1):
-        fermeture = affiliations.fermeture_entrants(metier.affiliation)
-        if fermeture is None:
+        ferme = _statut_ferme(affiliations, carriere, metier.affiliation)
+        if ferme is None:
             continue
-        entree = carriere.date_entree(metier.affiliation)
-        if entree is None or entree.rang < fermeture.rang:
-            continue
-        releve = affiliations.releve_par(metier.affiliation)
-        raise _refus(rang, (
-            f"Le statut « {affiliations.libelle(metier.affiliation)} » est "
-            f"fermé aux recrutés depuis {formater_borne(fermeture)} ; ce "
-            f"métier commence en {entree}. Depuis cette date, il relève des "
-            f"mêmes régimes que « {affiliations.libelle(releve)} » : choisir "
-            "ce statut."
+        fermeture, entree = ferme
+        raise _refus(rang, _phrase_statut_ferme(
+            affiliations, metier.affiliation, fermeture,
+            f"ce métier commence en {entree}",
         ))
+
+
+def _verifier_statuts_releve(affiliations: Affiliations, carriere) -> None:
+    """Le même refus, opposé à un relevé de carrière.
+
+    Le relevé ne compte pas de métiers : il porte des ANNÉES, dont chacune
+    nomme son statut. La date opposée à la fermeture est donc la première
+    année déclarée sous ce statut — janvier, faute d'un mois que le relevé ne
+    donne pas —, et la phrase le dit plutôt que de parler d'un « métier n° 2 »
+    qui n'existe nulle part sur la page.
+    """
+    for code in carriere.affiliations_utilisees():
+        ferme = _statut_ferme(affiliations, carriere, code)
+        if ferme is None:
+            continue
+        fermeture, entree = ferme
+        raise ErreurSaisie(_phrase_statut_ferme(
+            affiliations, code, fermeture,
+            f"la première année déclarée sous ce statut est {entree.annee}",
+        ))
+
+
+def _statut_ferme(affiliations: Affiliations, carriere,
+                  code: str) -> tuple[DateMois, DateMois] | None:
+    """``(fermeture, entrée)`` si ce statut se déclare trop tard, sinon ``None``."""
+    fermeture = affiliations.fermeture_entrants(code)
+    if fermeture is None:
+        return None
+    entree = carriere.date_entree(code)
+    if entree is None or entree.rang < fermeture.rang:
+        return None
+    return fermeture, entree
+
+
+def _phrase_statut_ferme(affiliations: Affiliations, code: str,
+                         fermeture: DateMois, quand: str) -> str:
+    """Le refus, écrit une fois pour les deux formes de saisie.
+
+    ``quand`` est la seule chose qui les sépare : un métier commence à un mois,
+    une ligne de relevé n'a qu'une année. Écrire les deux phrases en entier les
+    laisserait diverger — c'est la raison d'être de ``_refus`` juste au-dessus.
+    """
+    releve = affiliations.releve_par(code)
+    return (
+        f"Le statut « {affiliations.libelle(code)} » est fermé aux recrutés "
+        f"depuis {formater_borne(fermeture)} ; {quand}. Depuis cette date, "
+        f"il relève des mêmes régimes que « {affiliations.libelle(releve)} » : "
+        "choisir ce statut."
+    )
 
 
 def _libelle_date(affiliations: Affiliations, code: str) -> str:
@@ -1348,12 +1571,57 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
   {_metiers(saisie, affiliations, echelle)}
   {_bascule_unite(saisie, echelle)}
-  <details>
+  {_releve(saisie)}
+  <details class="options">
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
     <div class="grille">{avance}</div>
   </details>
   <p style="margin-top:1.4rem"><button type="submit">Calculer les six scénarios</button></p>
 </form>
+"""
+
+
+#: Les trois premières lignes d'un relevé, montrées dans le formulaire. Elles
+#: disent le format mieux qu'une phrase : une année, un statut, ce qui a été
+#: gagné cette année-là, et les trimestres que le relevé porte en face.
+EXEMPLE_RELEVE = (
+    "1998:salarie_prive_non_cadre:14200:4\n"
+    "1999:salarie_prive_non_cadre:15100:4\n"
+    "2000:salarie_prive_cadre:19800:4"
+)
+
+
+def _releve(saisie: Saisie) -> str:
+    """Le relevé de carrière : la saisie exacte, celle qui ne suppose rien.
+
+    Elle est repliée sous un dépliant, et non offerte d'emblée : la carrière
+    paramétrique reste la porte d'entrée — on la remplit en trente secondes,
+    sans rien avoir sous les yeux. Le relevé, lui, demande d'avoir ouvert son
+    compte Info-Retraite, et il s'adresse à qui veut confronter le simulateur à
+    SON estimation plutôt qu'à une carrière type. Le dépliant s'ouvre de
+    lui-même quand un relevé est saisi : sinon, l'adresse porterait une carrière
+    que la page ne montrerait pas.
+    """
+    return f"""
+<details class="releve"{' open' if saisie.releve_actif else ''}>
+  <summary>Coller un relevé de carrière — la saisie exacte</summary>
+  <p class="discret">Une ligne par année, comme sur le relevé :
+  <strong>année:régime:revenu</strong>, et
+  <strong>:trimestres</strong> si le relevé les porte — sinon le modèle les
+  déduit du montant. Le revenu est celui de l'ANNÉE ENTIÈRE, en euros de
+  cette année-là, tel que le relevé l'imprime ; un relevé antérieur à 2002 est
+  en francs, à diviser par 6,55957. Les codes de régime sont ceux du menu des
+  métiers ci-dessus.</p>
+  <p class="discret">Rempli, ce champ <strong>remplace</strong> les métiers, le
+  profil de carrière et le niveau de revenu : plus rien n'est reconstitué, tout
+  est lu. L'année de naissance, l'âge de départ, les enfants, la part de primes
+  et les interruptions continuent de valoir — le relevé dit ce qui a été gagné,
+  il ne dit ni quand on est né ni quand on part.</p>
+  {g.zone("releve", "Relevé de carrière", saisie.releve,
+          f"au plus {RELEVE_MAXIMUM} lignes ; vide, la carrière est celle des "
+          "métiers ci-dessus", lignes=10, placeholder=EXEMPLE_RELEVE,
+          spellcheck="false")}
+</details>
 """
 
 
@@ -1528,6 +1796,8 @@ def _resume_parcours(contexte: Contexte, saisie: Saisie) -> str:
     Muet pour une carrière d'un seul métier : il n'y a rien à récapituler, le
     formulaire juste au-dessus le dit déjà.
     """
+    if saisie.releve_actif:
+        return _resume_releve(contexte, saisie)
     parcours = saisie.parcours(contexte.echelle(saisie))
     if len(parcours) < 2:
         return ""
@@ -1545,6 +1815,39 @@ def _resume_parcours(contexte: Contexte, saisie: Saisie) -> str:
         "qui en occupe le plus de mois — les régimes liquident à l'année, et une "
         "année n'a qu'un statut — mais le revenu porté au compte reste la somme "
         "de ce que les deux ont payé.</p>"
+    )
+
+
+def _resume_releve(contexte: Contexte, saisie: Saisie) -> str:
+    """Ce que le relevé a remplacé, et ce qu'il n'a pas remplacé.
+
+    La phrase importe plus que le décompte : les champs du formulaire restent
+    affichés au-dessus, avec le statut et le revenu qu'ils portaient, et rien
+    ne dirait qu'ils n'ont pas servi. La lecture du relevé se termine donc par
+    ce qu'aucun relevé ne donne — le mois d'entrée dans la vie active —, parce
+    que c'est la seule approximation que ce chemin conserve.
+    """
+    releve = saisie.releve_analyse(
+        charger_periodes_non_travaillees(contexte.simulateur().macro.racine)
+    )
+    affiliations = contexte.simulateur().affiliations
+    statuts_lus = list(dict.fromkeys(ligne.affiliation for ligne in releve))
+    cotisees = [ligne for ligne in releve if ligne.type_periode == "emploi"]
+    libelles = ", ".join(
+        escape(affiliations.libelle(code)) for code in statuts_lus
+    )
+    return (
+        f'<p class="discret">Carrière <strong>lue sur un relevé</strong> : '
+        f"{len(releve)} années de {min(ligne.annee for ligne in releve)} à "
+        f"{max(ligne.annee for ligne in releve)}, "
+        f"dont {len(cotisees)} cotisées, sous "
+        f"{len(statuts_lus)} statut{'s' if len(statuts_lus) > 1 else ''} — "
+        f"{libelles}. Les métiers, le profil de carrière et le niveau de revenu "
+        "du formulaire n'ont pas servi : aucun revenu n'est reconstitué, ils "
+        "sont lus un par un. Une ligne vaut une année civile entière, sauf "
+        "celle du départ, que la date de liquidation tronque : le relevé donne "
+        "l'année, jamais le mois, et l'année d'entrée dans la vie active reste "
+        "donc comptée pour une année pleine.</p>"
     )
 
 

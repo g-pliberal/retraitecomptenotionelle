@@ -5001,13 +5001,28 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   la répartition est en cause — et il rend le RAFP comparable au reste plutôt
   que de le faire dépendre d'hypothèses de marché.
 
-- **Les carrières réelles.** Les carrières sont reconstituées à partir d'un
-  profil paramétrique. Une simulation à partir d'un relevé de carrière réel est
-  possible par `Carriere.depuis_lignes`, et c'est le chemin le plus exact ; mais
-  l'IMPORT AUTOMATIQUE du relevé Info-Retraite n'est pas implémenté, et ne peut
-  pas l'être : le répertoire de gestion des carrières uniques n'est pas ouvert
-  au public, et son accès passe par une authentification personnelle qu'un
-  script ne saurait porter sans détenir les identifiants de l'assuré.
+- **Les carrières réelles.** Une carrière se décrit de deux façons, et la
+  seconde n'est plus réservée au Python : le **profil paramétrique** — des
+  métiers, un niveau de revenu relatif, une progression —, ou le **relevé**
+  saisi année par année dans le champ prévu du simulateur, qui n'en reconstitue
+  rien. Il reste à ce chemin une approximation et une impossibilité.
+
+  L'approximation est le MOIS. Un relevé donne l'année, jamais le mois : chaque
+  ligne vaut donc une année civile pleine, sauf celle du départ, que la date de
+  liquidation tronque parce que le modèle la connaît. L'année d'entrée dans la
+  vie active reste comptée pour une année entière alors qu'elle est presque
+  toujours partielle — son revenu est celui des mois travaillés, et le modèle ne
+  peut pas l'annualiser sans savoir lesquels. Un régime liquidant sur les six
+  derniers mois de service n'en souffre pas, cette année-là n'étant pas la
+  dernière ; un régime qui prend les vingt-cinq meilleures années y voit une
+  année faible de plus, exactement comme le droit.
+
+  L'impossibilité est l'IMPORT AUTOMATIQUE du relevé Info-Retraite, qui n'est
+  pas implémenté et ne peut pas l'être : le répertoire de gestion des carrières
+  uniques n'est pas ouvert au public, et son accès passe par une
+  authentification personnelle qu'un script ne saurait porter sans détenir les
+  identifiants de l'assuré. Le relevé se recopie donc à la main, dans un format
+  d'une ligne par année — `année:régime:revenu:trimestres`.
 
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le
@@ -5201,7 +5216,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 674 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 704 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

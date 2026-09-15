@@ -146,6 +146,24 @@ export function champ(nom, libelle, valeur, aide = "", type = "text", attributs 
 }
 
 /**
+ * Un champ de plusieurs lignes — le relevé de carrière, et lui seul.
+ *
+ * Une ligne par année : un `<input>` en donnerait une seule, où le relevé se
+ * replierait en un ruban illisible. Le contenu est ÉCHAPPÉ comme partout
+ * ailleurs, et posé sans espace autour : un `<textarea>` rend tout ce qu'il
+ * contient, jusqu'au retour à la ligne qui suivrait la balise ouvrante.
+ */
+export function zone(nom, libelle, valeur, aide = "", lignes = 8, attributs = {}) {
+  const supplement = Object.entries(attributs)
+    .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
+    .join("");
+  const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
+  return `<div><label for="${nom}">${echapper(libelle)}${aideHtml}</label>`
+    + `<textarea id="${nom}" name="${nom}" rows="${lignes}"${supplement}>`
+    + `${echapper(String(valeur))}</textarea></div>`;
+}
+
+/**
  * Un champ que le formulaire porte sans le montrer.
  *
  * Sert à ce que le formulaire renvoie un réglage qui ne se change pas dans le

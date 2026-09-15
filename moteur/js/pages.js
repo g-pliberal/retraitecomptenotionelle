@@ -143,9 +143,20 @@ export const HEURES_SMIC_PAR_MOIS = 151.67;
  * affiche toujours une ligne vide de plus que les métiers saisis : c'est ainsi
  * qu'on en ajoute un, sans une ligne de JavaScript. La borne n'est pas une
  * limite du moteur mais celle du formulaire : au-delà, ce n'est plus une suite
- * de métiers qu'on décrit, c'est un relevé de carrière année par année.
+ * de métiers qu'on décrit, c'est un relevé de carrière année par année — et
+ * celui-là a son propre champ, borné par `RELEVE_MAXIMUM`.
  */
 export const METIERS_MAXIMUM = 6;
+
+/**
+ * Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
+ * entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
+ * soixante et une années civiles au plus ; la borne laisse deux lignes de marge
+ * et ferme surtout la porte que les interruptions avaient ouverte : le calcul
+ * se fait chez le lecteur et l'adresse EST la saisie, si bien qu'un relevé de
+ * cent mille lignes forgé dans un lien figeait l'onglet de celui qui le suivait.
+ */
+export const RELEVE_MAXIMUM = 63;
 
 /**
  * Âge auquel s'arrête la trajectoire individuelle. Les tables de mortalité du
@@ -264,6 +275,11 @@ const DEFAUTS = Object.freeze({
   //: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
   //: multiples reste donc valide, et décrit la carrière d'un seul métier.
   metiers: Object.freeze([]),
+  //: Le relevé de carrière, une ligne par année : « année:régime:revenu » et,
+  //: si le relevé les porte, « :trimestres ». Non vide, il REMPLACE la carrière
+  //: paramétrique — les métiers, le profil et le niveau de revenu ne servent
+  //: plus à rien : plus rien n'est reconstitué, tout est lu.
+  releve: "",
   profil: "ascendant",
   primes: 0.0,
   enfants: 0,
@@ -314,6 +330,7 @@ export class Saisie {
       liquidation: ageSaisi(parametres, "liquidation", DEFAUTS.liquidation),
       salaire,
       metiers: metiersSaisis(parametres, salaire),
+      releve: (parametres.releve || "").trim(),
       profil: parmi(parametres, "profil", PROFILS, DEFAUTS.profil),
       primes: reel(parametres, "primes", DEFAUTS.primes),
       enfants: entier(parametres, "enfants", DEFAUTS.enfants),
@@ -596,6 +613,142 @@ export class Saisie {
     return plages;
   }
 
+  /** Vrai si la carrière est LUE plutôt que reconstituée. */
+  get releveActif() {
+    return this.releve.trim().length > 0;
+  }
+
+  /**
+   * Le mois où la pension prend effet — la borne du relevé.
+   *
+   * La même arithmétique que `Carriere.dateLiquidation`, en amont du modèle :
+   * le refus d'une année postérieure au départ doit se prononcer sur la saisie,
+   * avec le vocabulaire du formulaire, et non remonter du moteur sous la forme
+   * d'une exception.
+   */
+  get dateLiquidation() {
+    return new DateMois(this.naissance, this.naissance_mois)
+      .plusMois(enMois(this.liquidation));
+  }
+
+  /**
+   * « 2005:salarie_prive_non_cadre:24000:4, … » -> lignes de relevé.
+   *
+   * Le format est celui du relevé lui-même, dans l'ordre où il l'imprime :
+   * l'année, le régime, le revenu de l'année, les trimestres qu'elle a validés.
+   * Les trois premiers champs sont exigés ; le quatrième est facultatif — sans
+   * lui, le modèle déduit les trimestres du montant cotisé, comme il le fait
+   * d'une carrière paramétrique.
+   *
+   * **Le revenu est celui de l'année, en euros de cette année-là**, et non un
+   * multiple du salaire moyen ni un montant mensuel : c'est ce que le relevé
+   * porte, et l'unité du modèle. Un relevé antérieur à 2002 est en francs, à
+   * diviser par 6,55957.
+   *
+   * **Les années non cotisées** se déclarent dans le champ « Interruptions »,
+   * qui reste lu quand un relevé est saisi : il associe une année à un motif,
+   * ce que le relevé ne sait pas dire. La ligne de l'année garde alors ses
+   * trimestres — le relevé fait foi — et son revenu devient le salaire de
+   * référence d'avant l'interruption.
+   */
+  releveAnalyse(motifsConnus = null) {
+    const interruptions = this.interruptionsAnalysees(motifsConnus);
+    const depart = this.dateLiquidation;
+    // Les lignes sont COMPTÉES avant d'être lues : le refus doit coûter le
+    // découpage du texte, et rien de plus. Les analyser d'abord pour les
+    // compter ensuite ferait payer au lecteur le relevé de cent mille lignes
+    // qu'un lien lui aurait tendu — c'est la faute que les plages
+    // d'interruption avaient déjà commise.
+    const morceaux = this.releve.replace(/\n/g, ",").replace(/;/g, ",").split(",")
+      .map((brut) => brut.trim())
+      .filter((brut) => brut.length > 0);
+    if (morceaux.length === 0) {
+      throw new ErreurSaisie(
+        "Relevé de carrière vide : le laisser entièrement vide pour décrire la "
+        + "carrière par ses métiers.",
+      );
+    }
+    if (morceaux.length > RELEVE_MAXIMUM) {
+      throw new ErreurSaisie(
+        `Relevé de ${morceaux.length} lignes : le modèle en accepte `
+        + `${RELEVE_MAXIMUM} au plus, ce qu'aucune carrière ne dépasse.`,
+      );
+    }
+    const lignes = [];
+    const vues = new Set();
+    for (const morceau of morceaux) {
+      const parties = morceau.split(":").map((partie) => partie.trim());
+      if (parties.length < 3 || parties.length > 4 || !estEntier(parties[0])) {
+        throw new ErreurSaisie(
+          `Ligne de relevé mal formée : « ${morceau} ». Attendu `
+          + "« année:régime:revenu » ou « année:régime:revenu:trimestres », "
+          + "par exemple 2005:salarie_prive_non_cadre:24000:4.",
+        );
+      }
+      const annee = Number(parties[0]);
+      // L'année est citée TELLE QU'ELLE A ÉTÉ ÉCRITE, comme pour les
+      // interruptions : « 999999999999999999999 » s'écrit « 1e+21 » une fois
+      // passé par `Number`, et reste un entier côté Python, si bien que les deux
+      // moteurs refuseraient la même saisie par deux phrases différentes.
+      if (!(annee >= ANNEE_CARRIERE_MINIMALE && annee <= ANNEE_CARRIERE_MAXIMALE)) {
+        throw new ErreurSaisie(
+          `Relevé « ${morceau} » : ${parties[0]} ne tombe dans aucune carrière `
+          + `possible. Attendu entre ${ANNEE_CARRIERE_MINIMALE} et `
+          + `${ANNEE_CARRIERE_MAXIMALE}.`,
+        );
+      }
+      if (vues.has(annee)) {
+        throw new ErreurSaisie(
+          `Relevé : l'année ${annee} est déclarée deux fois. Une année civile `
+          + "ne porte qu'une ligne — les régimes liquident à l'année.",
+        );
+      }
+      vues.add(annee);
+      if (annee < this.naissance + AGE_DEBUT_MINIMAL) {
+        throw new ErreurSaisie(
+          `Relevé « ${morceau} » : l'assuré, né en ${this.naissance}, n'a pas `
+          + `${AGE_DEBUT_MINIMAL} ans en ${annee}.`,
+        );
+      }
+      if (annee > depart.annee || (annee === depart.annee && depart.mois === 1)) {
+        throw new ErreurSaisie(
+          `Relevé « ${morceau} » : l'année ${annee} est postérieure au départ `
+          + `à la retraite, fixé au ${depart}.`,
+        );
+      }
+      if (!parties[1]) {
+        throw new ErreurSaisie(
+          `Relevé « ${morceau} » : indiquer le statut d'affiliation.`,
+        );
+      }
+      const revenu = versFlottant(parties[2]);
+      if (revenu === null || revenu < 0) {
+        throw new ErreurSaisie(
+          `Relevé « ${morceau} » : revenu de l'année attendu positif ou nul, `
+          + "en euros de cette année-là.",
+        );
+      }
+      let trimestres = null;
+      if (parties.length === 4 && parties[3]) {
+        if (!estEntier(parties[3])
+            || !(Number(parties[3]) >= 0 && Number(parties[3]) <= 4)) {
+          throw new ErreurSaisie(
+            `Relevé « ${morceau} » : trimestres attendus entre 0 et 4.`,
+          );
+        }
+        trimestres = Number(parties[3]);
+      }
+      lignes.push({
+        annee,
+        affiliation: parties[1],
+        revenu,
+        trimestres,
+        type_periode: interruptions.get(annee) ?? "emploi",
+      });
+    }
+    return lignes;
+  }
+
   /** Mois qui s'ajoutent aux années entières de l'âge de départ. */
   get liquidation_mois() {
     return enMois(this.liquidation) % 12;
@@ -616,6 +769,7 @@ export class Saisie {
       liquidation: Math.floor(enMois(this.liquidation) / 12),
       liquidation_mois: this.liquidation_mois,
       salaire: nombreBrut(this.salaire), profil: this.profil,
+      releve: this.releve,
       primes: nombreBrut(this.primes), enfants: this.enfants,
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
@@ -904,6 +1058,13 @@ export class Contexte {
 
   simuler(saisie) {
     const simulateur = this.simulateur(saisie.parametres(this.base));
+    // Les motifs viennent des données, pas d'une liste écrite ici : le moteur y
+    // lit ce que chaque période ouvre, et une saisie refusée doit l'être sur la
+    // même table que celle qui calcule.
+    const motifs = Object.keys(this.paquet.periodes_non_travaillees ?? {});
+    if (saisie.releveActif) {
+      return simulateur.simuler(this.carriereRelevee(simulateur, saisie, motifs));
+    }
     const parcours = saisie.parcours(this.echelle(saisie));
     for (const metier of parcours) {
       if (!simulateur.affiliations.contient(metier.affiliation)) {
@@ -919,18 +1080,46 @@ export class Contexte {
       metiers: parcours,
       age_liquidation: saisie.liquidation,
       profil_carriere: saisie.profil,
-      // Les motifs viennent des données, pas d'une liste écrite ici : le
-      // moteur y lit ce que chaque période ouvre, et une saisie refusée doit
-      // l'être sur la même table que celle qui calcule.
-      interruptions: saisie.interruptionsAnalysees(
-        Object.keys(this.paquet.periodes_non_travaillees ?? {}),
-      ),
+      interruptions: saisie.interruptionsAnalysees(motifs),
       nombre_enfants: saisie.enfants,
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
     verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
     return simulateur.simuler(carriere);
+  }
+
+  /**
+   * La carrière telle que le relevé la donne, sans rien reconstituer.
+   *
+   * Aucune échelle des salaires n'intervient : le relevé est déjà en euros de
+   * chaque année, quand le formulaire paramétrique saisit un revenu
+   * d'aujourd'hui que le modèle promène ensuite le long du salaire moyen. C'est
+   * ce qui fait de ce chemin le plus exact — et le seul où l'euro n'est pas
+   * converti.
+   */
+  carriereRelevee(simulateur, saisie, motifs) {
+    const releve = saisie.releveAnalyse(motifs);
+    for (const ligne of releve) {
+      if (!simulateur.affiliations.contient(ligne.affiliation)) {
+        throw new ErreurSaisie(
+          `Relevé, année ${ligne.annee} : statut d'affiliation inconnu `
+          + `« ${ligne.affiliation} ».`,
+        );
+      }
+    }
+    const carriere = simulateur.carriereReleve({
+      annee_naissance: saisie.naissance,
+      mois_naissance: saisie.naissance_mois,
+      sexe: saisie.sexe,
+      releve,
+      age_liquidation: saisie.liquidation,
+      nombre_enfants: saisie.enfants,
+      part_primes: saisie.primes,
+      identifiant: "assuré",
+    });
+    verifierStatutsReleve(simulateur.affiliations, carriere);
+    return carriere;
   }
 }
 
@@ -1024,22 +1213,65 @@ export function rendre(contexte, chemin, parametres = null) {
  */
 function verifierStatutsOuverts(affiliations, carriere, parcours) {
   parcours.forEach((metier, index) => {
-    const fermeture = affiliations.fermetureEntrants(metier.affiliation);
-    if (fermeture === null) {
+    const ferme = statutFerme(affiliations, carriere, metier.affiliation);
+    if (ferme === null) {
       return;
     }
-    const entree = carriere.dateEntree(metier.affiliation);
-    if (entree === null || entree.rang < fermeture.rang) {
-      return;
-    }
-    const releve = affiliations.relevePar(metier.affiliation);
-    throw refus(index + 1,
-      `Le statut « ${affiliations.libelle(metier.affiliation)} » est `
-      + `fermé aux recrutés depuis ${formaterBorne(fermeture)} ; ce `
-      + `métier commence en ${entree}. Depuis cette date, il relève des `
-      + `mêmes régimes que « ${affiliations.libelle(releve)} » : choisir `
-      + "ce statut.");
+    const [fermeture, entree] = ferme;
+    throw refus(index + 1, phraseStatutFerme(
+      affiliations, metier.affiliation, fermeture,
+      `ce métier commence en ${entree}`,
+    ));
   });
+}
+
+/**
+ * Le même refus, opposé à un relevé de carrière.
+ *
+ * Le relevé ne compte pas de métiers : il porte des ANNÉES, dont chacune nomme
+ * son statut. La date opposée à la fermeture est donc la première année
+ * déclarée sous ce statut — janvier, faute d'un mois que le relevé ne donne
+ * pas —, et la phrase le dit plutôt que de parler d'un « métier n° 2 » qui
+ * n'existe nulle part sur la page.
+ */
+function verifierStatutsReleve(affiliations, carriere) {
+  for (const code of carriere.affiliationsUtilisees()) {
+    const ferme = statutFerme(affiliations, carriere, code);
+    if (ferme === null) {
+      continue;
+    }
+    const [fermeture, entree] = ferme;
+    throw new ErreurSaisie(phraseStatutFerme(
+      affiliations, code, fermeture,
+      `la première année déclarée sous ce statut est ${entree.annee}`,
+    ));
+  }
+}
+
+/** `[fermeture, entrée]` si ce statut se déclare trop tard, sinon `null`. */
+function statutFerme(affiliations, carriere, code) {
+  const fermeture = affiliations.fermetureEntrants(code);
+  if (fermeture === null) {
+    return null;
+  }
+  const entree = carriere.dateEntree(code);
+  if (entree === null || entree.rang < fermeture.rang) {
+    return null;
+  }
+  return [fermeture, entree];
+}
+
+/**
+ * Le refus, écrit une fois pour les deux formes de saisie. `quand` est la seule
+ * chose qui les sépare : un métier commence à un mois, une ligne de relevé n'a
+ * qu'une année. Écrire les deux phrases en entier les laisserait diverger.
+ */
+function phraseStatutFerme(affiliations, code, fermeture, quand) {
+  const releve = affiliations.relevePar(code);
+  return `Le statut « ${affiliations.libelle(code)} » est `
+    + `fermé aux recrutés depuis ${formaterBorne(fermeture)} ; ${quand}. `
+    + `Depuis cette date, il relève des mêmes régimes que `
+    + `« ${affiliations.libelle(releve)} » : choisir ce statut.`;
 }
 
 /**
@@ -1256,12 +1488,57 @@ function formulaire(saisie, contexte) {
   dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
   ${metiersFormulaire(saisie, affiliations, echelle)}
   ${basculeUnite(saisie, echelle)}
-  <details>
+  ${releveFormulaire(saisie)}
+  <details class="options">
     <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
     <div class="grille">${avance}</div>
   </details>
   <p style="margin-top:1.4rem"><button type="submit">Calculer les six scénarios</button></p>
 </form>
+`;
+}
+
+/**
+ * Les trois premières lignes d'un relevé, montrées dans le formulaire. Elles
+ * disent le format mieux qu'une phrase : une année, un statut, ce qui a été
+ * gagné cette année-là, et les trimestres que le relevé porte en face.
+ */
+export const EXEMPLE_RELEVE = "1998:salarie_prive_non_cadre:14200:4\n"
+  + "1999:salarie_prive_non_cadre:15100:4\n"
+  + "2000:salarie_prive_cadre:19800:4";
+
+/**
+ * Le relevé de carrière : la saisie exacte, celle qui ne suppose rien.
+ *
+ * Elle est repliée sous un dépliant, et non offerte d'emblée : la carrière
+ * paramétrique reste la porte d'entrée — on la remplit en trente secondes, sans
+ * rien avoir sous les yeux. Le relevé, lui, demande d'avoir ouvert son compte
+ * Info-Retraite, et il s'adresse à qui veut confronter le simulateur à SON
+ * estimation plutôt qu'à une carrière type. Le dépliant s'ouvre de lui-même
+ * quand un relevé est saisi : sinon, l'adresse porterait une carrière que la
+ * page ne montrerait pas.
+ */
+function releveFormulaire(saisie) {
+  return `
+<details class="releve"${saisie.releveActif ? " open" : ""}>
+  <summary>Coller un relevé de carrière — la saisie exacte</summary>
+  <p class="discret">Une ligne par année, comme sur le relevé :
+  <strong>année:régime:revenu</strong>, et
+  <strong>:trimestres</strong> si le relevé les porte — sinon le modèle les
+  déduit du montant. Le revenu est celui de l'ANNÉE ENTIÈRE, en euros de
+  cette année-là, tel que le relevé l'imprime ; un relevé antérieur à 2002 est
+  en francs, à diviser par 6,55957. Les codes de régime sont ceux du menu des
+  métiers ci-dessus.</p>
+  <p class="discret">Rempli, ce champ <strong>remplace</strong> les métiers, le
+  profil de carrière et le niveau de revenu : plus rien n'est reconstitué, tout
+  est lu. L'année de naissance, l'âge de départ, les enfants, la part de primes
+  et les interruptions continuent de valoir — le relevé dit ce qui a été gagné,
+  il ne dit ni quand on est né ni quand on part.</p>
+  ${g.zone("releve", "Relevé de carrière", saisie.releve,
+    `au plus ${RELEVE_MAXIMUM} lignes ; vide, la carrière est celle des `
+    + "métiers ci-dessus", 10,
+    { placeholder: EXEMPLE_RELEVE, spellcheck: "false" })}
+</details>
 `;
 }
 
@@ -1459,6 +1736,9 @@ function majuscule(texte) {
  * formulaire juste au-dessus le dit déjà.
  */
 function resumeParcours(contexte, saisie) {
+  if (saisie.releveActif) {
+    return resumeReleve(contexte, saisie);
+  }
   const parcours = saisie.parcours(contexte.echelle(saisie));
   if (parcours.length < 2) {
     return "";
@@ -1475,6 +1755,37 @@ function resumeParcours(contexte, saisie) {
     + "mois — les régimes liquident à l'année, et une année n'a qu'un statut — "
     + "mais le revenu porté au compte reste la somme de ce que les deux ont "
     + "payé.</p>";
+}
+
+/**
+ * Ce que le relevé a remplacé, et ce qu'il n'a pas remplacé.
+ *
+ * La phrase importe plus que le décompte : les champs du formulaire restent
+ * affichés au-dessus, avec le statut et le revenu qu'ils portaient, et rien ne
+ * dirait qu'ils n'ont pas servi. La lecture du relevé se termine donc par ce
+ * qu'aucun relevé ne donne — le mois d'entrée dans la vie active —, parce que
+ * c'est la seule approximation que ce chemin conserve.
+ */
+function resumeReleve(contexte, saisie) {
+  const releve = saisie.releveAnalyse(
+    Object.keys(contexte.paquet.periodes_non_travaillees ?? {}),
+  );
+  const affiliations = contexte.simulateur().affiliations;
+  const statutsLus = [...new Set(releve.map((ligne) => ligne.affiliation))];
+  const cotisees = releve.filter((ligne) => ligne.type_periode === "emploi");
+  const libelles = statutsLus
+    .map((code) => echapper(affiliations.libelle(code))).join(", ");
+  const annees = releve.map((ligne) => ligne.annee);
+  return '<p class="discret">Carrière <strong>lue sur un relevé</strong> : '
+    + `${releve.length} années de ${Math.min(...annees)} à `
+    + `${Math.max(...annees)}, dont ${cotisees.length} cotisées, sous `
+    + `${statutsLus.length} statut${statutsLus.length > 1 ? "s" : ""} — `
+    + `${libelles}. Les métiers, le profil de carrière et le niveau de revenu `
+    + "du formulaire n'ont pas servi : aucun revenu n'est reconstitué, ils "
+    + "sont lus un par un. Une ligne vaut une année civile entière, sauf "
+    + "celle du départ, que la date de liquidation tronque : le relevé donne "
+    + "l'année, jamais le mois, et l'année d'entrée dans la vie active reste "
+    + "donc comptée pour une année pleine.</p>";
 }
 
 /**
