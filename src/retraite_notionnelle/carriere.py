@@ -4,8 +4,10 @@ Objectif : que n'importe qui puisse décrire sa situation, qu'il dispose de son
 relevé de carrière année par année ou seulement de grandes lignes. Trois
 niveaux d'entrée sont proposés, du plus précis au plus sommaire :
 
-1. :meth:`Carriere.depuis_lignes` — une ligne par année, telle qu'on la lit sur
-   un relevé de carrière Info-Retraite ;
+1. :meth:`Carriere.depuis_releve` — une ligne par année, telle qu'on la lit
+   sur un relevé de carrière Info-Retraite : c'est le chemin le plus exact, le
+   seul qui ne suppose ni profil ni progression (:meth:`Carriere.depuis_lignes`
+   en est la forme brute, où l'appelant a déjà construit les années) ;
 2. :meth:`Carriere.depuis_parcours` — la suite des métiers exercés, chacun avec
    son statut et son niveau de revenu ;
 3. :meth:`Carriere.depuis_profil` — le cas d'un seul métier, exercé de bout en
@@ -127,6 +129,103 @@ class Metier:
     age_debut: float
     #: Niveau de revenu, en multiples du salaire moyen par tête de l'année.
     niveau_salaire: float = 1.0
+
+
+@dataclass(frozen=True)
+class LigneRelevee:
+    """Une ligne de relevé de carrière, telle que l'assuré la recopie.
+
+    C'est la saisie la plus exacte que le modèle accepte : elle ne suppose
+    aucun profil de rémunération, aucune progression, aucun niveau de revenu
+    relatif. L'assuré dit ce qu'il a gagné, année par année, et sous quel
+    statut ; le modèle n'a plus rien à deviner.
+
+    Le revenu est celui de l'année, EN EUROS COURANTS DE CETTE ANNÉE-LÀ —
+    l'unité du relevé, et celle d':class:`AnneeCarriere`. Sur une année non
+    cotisée, il ne s'agit plus d'un revenu perçu mais du salaire de référence
+    d'avant l'interruption, sur lequel les régimes complémentaires continuent
+    d'acquérir des points : la ligne elle-même ne cotise rien.
+    """
+
+    annee: int
+    affiliation: str
+    revenu: float
+    #: Trimestres validés cette année-là, tels que le relevé les porte.
+    #: ``None`` laisse le modèle les recalculer du revenu, comme il le fait
+    #: d'une carrière paramétrique.
+    trimestres: int | None = None
+    #: Nature de la période, au sens de ``PERIODES_NON_COTISEES``.
+    type_periode: str = "emploi"
+
+
+def _ligne_annuelle(
+    annee: int,
+    revenu: float,
+    affiliation: str,
+    type_periode: str,
+    macro: DonneesMacro,
+    motifs: dict,
+    part: float,
+    part_primes: float,
+    trimestres_maximum: int,
+    trimestres_declares: int | None = None,
+) -> AnneeCarriere:
+    """Une année de carrière, une fois connus son revenu et sa nature.
+
+    Les deux constructeurs de :class:`Carriere` y passent : celui qui déduit
+    le revenu d'un profil (:meth:`Carriere.depuis_parcours`) et celui qui le
+    lit sur un relevé (:meth:`Carriere.depuis_releve`). Ce que le droit fait
+    d'une période non cotisée — combien de trimestres elle assimile, si elle
+    ouvre des points complémentaires, si la CNAF cotise l'AVPF — ne s'écrit
+    donc qu'une fois, et les deux chemins ne peuvent pas en diverger.
+
+    ``trimestres_declares`` est le seul point où ils se séparent : un relevé
+    dit combien de trimestres l'année a validés, et ce chiffre-là fait foi ;
+    une carrière paramétrique les déduit du montant cotisé.
+    """
+    cotise = type_periode == "emploi"
+    regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
+    if trimestres_declares is None:
+        trimestres = (macro.trimestres_valides(revenu, annee) if cotise
+                      else (regle.trimestres_assimiles if regle else 4))
+    else:
+        trimestres = trimestres_declares
+    return AnneeCarriere(
+        annee=annee,
+        revenu=revenu if cotise else 0.0,
+        affiliation=affiliation,
+        type_periode=type_periode,
+        # Un trimestre s'acquiert par un montant cotisé — 150 fois le SMIC
+        # horaire depuis 2014, 200 avant. Une année à temps très partiel en
+        # valide donc moins de quatre. Les périodes assimilées, elles, en
+        # valident quatre sans condition de montant : c'est tout leur objet.
+        # Le montant commande le nombre de trimestres, les mois en commandent
+        # le plafond : on ne valide pas quatre trimestres en sept mois, si gros
+        # que soit le salaire.
+        trimestres_valides=min(trimestres_maximum, trimestres),
+        cotisations_versees=cotise,
+        # Pendant une période indemnisée, l'UNEDIC ou la Sécurité sociale
+        # versent de vraies cotisations aux régimes complémentaires, assises
+        # sur le salaire d'avant.
+        revenu_reference=(
+            0.0 if cotise or regle is None
+            or not regle.ouvre_droits_complementaires else revenu
+        ),
+        familles_cotisantes=(
+            () if cotise or regle is None
+            or not regle.ouvre_droits_complementaires
+            else ("complementaire_prive",)
+        ),
+        fraction_annee=part,
+        part_primes=part_primes,
+        # Assurance vieillesse des parents au foyer : la CNAF cotise au régime
+        # général sur une assiette forfaitaire égale au SMIC — 1 820 heures,
+        # soit le SMIC mensuel multiplié par douze.
+        revenu_avpf=(
+            0.0 if cotise or regle is None or not regle.avpf
+            else 1820.0 * macro.smic_horaire(annee) * part
+        ),
+    )
 
 
 @dataclass
@@ -403,6 +502,83 @@ class Carriere:
         return cls(annee_naissance=annee_naissance, sexe=sexe, lignes=list(lignes), **kwargs)
 
     @classmethod
+    def depuis_releve(
+        cls,
+        annee_naissance: int,
+        sexe: str,
+        releve: list[LigneRelevee],
+        age_liquidation: float,
+        macro: DonneesMacro,
+        mois_naissance: int = 1,
+        nombre_enfants: int = 0,
+        part_primes: float = 0.0,
+        identifiant: str = "assuré",
+    ) -> "Carriere":
+        """Construit une carrière à partir d'un relevé, ligne par ligne.
+
+        C'est le chemin le plus exact, et le seul qui ne suppose rien : les
+        deux autres reconstituent un revenu à partir d'un niveau relatif et
+        d'un profil de progression, celui-ci le lit. Une ligne par année
+        civile — l'unité à laquelle les régimes liquident —, avec son statut,
+        son revenu de l'année et les trimestres qu'elle a validés.
+
+        **Ce qui est lu, et ce qui ne l'est pas.** Le relevé donne l'année ; il
+        ne donne pas le mois. Chaque ligne vaut donc une année civile PLEINE,
+        sauf celle de la liquidation, dont la pension coupe le millésime à une
+        date que le modèle, lui, connaît. L'année d'entrée dans la vie active
+        reste comptée pour une année entière alors qu'elle est presque toujours
+        tronquée : le relevé n'en porte que ce qui a été gagné, et le modèle ne
+        peut pas l'annualiser sans savoir en quel mois elle a commencé.
+
+        **Les années non cotisées** — chômage, maladie, éducation d'un enfant —
+        se déclarent par ``type_periode``, ligne par ligne, et non par les
+        plages d'une carrière paramétrique : le relevé porte des années, pas
+        des intervalles. C'est à l'appelant de dire la nature de chacune ; le
+        site la lit dans son champ « Interruptions », qui associe justement une
+        année à un motif. Le revenu d'une telle ligne n'est plus un revenu
+        perçu mais le salaire de référence d'avant l'interruption, celui sur
+        lequel les régimes complémentaires continuent d'acquérir des points.
+        """
+        if not releve:
+            raise ValueError("un relevé compte au moins une ligne")
+
+        date_naissance = DateMois(annee_naissance, mois_naissance)
+        # La pension prend effet ce mois-là : il n'est plus travaillé.
+        fin = date_naissance.plus_mois(en_mois(age_liquidation))
+        motifs = charger_periodes_non_travaillees(macro.racine)
+
+        lignes: list[AnneeCarriere] = []
+        for ligne in releve:
+            mois = MOIS_PAR_AN if ligne.annee < fin.annee else fin.mois - 1
+            if ligne.annee > fin.annee or mois <= 0:
+                raise ValueError(
+                    f"{identifiant} : l'année {ligne.annee} du relevé est "
+                    f"postérieure au départ à la retraite ({fin})"
+                )
+            lignes.append(_ligne_annuelle(
+                annee=ligne.annee,
+                revenu=ligne.revenu,
+                affiliation=ligne.affiliation,
+                type_periode=ligne.type_periode,
+                macro=macro,
+                motifs=motifs,
+                part=mois / MOIS_PAR_AN,
+                part_primes=part_primes,
+                trimestres_maximum=trimestres_civils(mois),
+                trimestres_declares=ligne.trimestres,
+            ))
+
+        return cls(
+            annee_naissance=annee_naissance,
+            sexe=sexe,
+            lignes=lignes,
+            mois_naissance=mois_naissance,
+            age_liquidation=age_liquidation,
+            nombre_enfants=nombre_enfants,
+            identifiant=identifiant,
+        )
+
+    @classmethod
     def depuis_profil(
         cls,
         annee_naissance: int,
@@ -564,55 +740,17 @@ class Carriere:
                 max(range(len(periodes)), key=mois_par_metier.__getitem__)
             ][0].affiliation
 
-            type_periode = interruptions.get(annee, "emploi")
-            cotise = type_periode == "emploi"
-            regle = None if cotise else motifs.get(
-                type_periode, motifs.get("sans_activite")
-            )
-            lignes.append(
-                AnneeCarriere(
-                    annee=annee,
-                    revenu=revenu if cotise else 0.0,
-                    affiliation=affiliation,
-                    type_periode=type_periode,
-                    # Un trimestre s'acquiert par un montant cotisé — 150 fois
-                    # le SMIC horaire depuis 2014, 200 avant. Une année à temps
-                    # très partiel en valide donc moins de quatre. Les périodes
-                    # assimilées, elles, en valident quatre sans condition de
-                    # montant : c'est tout leur objet.
-                    # Le montant commande le nombre de trimestres, les mois en
-                    # commandent le plafond : on ne valide pas quatre trimestres
-                    # en sept mois, si gros que soit le salaire.
-                    trimestres_valides=min(
-                        trimestres_maximum,
-                        macro.trimestres_valides(revenu, annee) if cotise
-                        else (regle.trimestres_assimiles if regle else 4),
-                    ),
-                    cotisations_versees=cotise,
-                    # Pendant une période indemnisée, l'UNEDIC ou la Sécurité
-                    # sociale versent de vraies cotisations aux régimes
-                    # complémentaires, assises sur le salaire d'avant.
-                    revenu_reference=(
-                        0.0 if cotise or regle is None
-                        or not regle.ouvre_droits_complementaires else revenu
-                    ),
-                    familles_cotisantes=(
-                        () if cotise or regle is None
-                        or not regle.ouvre_droits_complementaires
-                        else ("complementaire_prive",)
-                    ),
-                    fraction_annee=part,
-                    part_primes=part_primes,
-                    # Assurance vieillesse des parents au foyer : la CNAF
-                    # cotise au régime général sur une assiette forfaitaire
-                    # égale au SMIC — 1 820 heures, soit le SMIC mensuel
-                    # multiplié par douze.
-                    revenu_avpf=(
-                        0.0 if cotise or regle is None or not regle.avpf
-                        else 1820.0 * macro.smic_horaire(annee) * part
-                    ),
-                )
-            )
+            lignes.append(_ligne_annuelle(
+                annee=annee,
+                revenu=revenu,
+                affiliation=affiliation,
+                type_periode=interruptions.get(annee, "emploi"),
+                macro=macro,
+                motifs=motifs,
+                part=part,
+                part_primes=part_primes,
+                trimestres_maximum=trimestres_maximum,
+            ))
 
         dates_entree: dict[str, DateMois] = {}
         for metier, ouverture, _ in periodes:

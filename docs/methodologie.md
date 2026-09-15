@@ -1522,7 +1522,7 @@ Trois arrondis subsistent en droit, et voici ce que le modèle en fait :
 |---|---|---|
 | Trimestres, à l'entier supérieur | CSS art. R. 351-27 | **appliqué** — et il pèse : un trimestre vaut environ 0,6 % de la pension |
 | Revenus portés au compte, à l'euro le plus proche (la fraction de 0,50 comptée pour 1) | CSS art. L. 133-10, section « Règles d'arrondis » | **non appliqué** — voir `limites.md` |
-| Montants anciens en francs, convertis puis arrondis au centime | doctrine Cnav, *Revenu annuel moyen* | sans objet : le modèle ne lit pas de relevé de carrière réel |
+| Montants anciens en francs, convertis puis arrondis au centime | doctrine Cnav, *Revenu annuel moyen* | **non appliqué** — le relevé se saisit déjà en euros, la conversion se fait donc avant le modèle et hors de lui |
 
 Le revenu annuel moyen lui-même n'est arrondi par aucun texte : il est la somme
 des revenus revalorisés des meilleures années divisée par leur nombre, calculée
@@ -1615,4 +1615,10 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
 
 Le formulaire du site en accepte six, ce qui n'est pas une limite du moteur :
 au-delà, ce n'est plus une suite de métiers qu'on décrit mais un relevé de
-carrière année par année, et celui-ci se saisit par `Carriere.depuis_lignes`.
+carrière année par année. Celui-ci a son propre champ dans le formulaire — une
+ligne par année, `année:régime:revenu:trimestres` — et son propre constructeur,
+`Carriere.depuis_releve`. Rempli, il remplace la suite des métiers : plus rien
+n'est reconstitué, ni le revenu de chaque année ni les trimestres qu'elle a
+validés. C'est le seul chemin où l'euro n'est converti par rien — le formulaire
+paramétrique saisit un revenu d'aujourd'hui que le modèle promène ensuite le
+long du salaire moyen, quand le relevé donne déjà les euros de chaque année.

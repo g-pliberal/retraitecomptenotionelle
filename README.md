@@ -115,7 +115,8 @@ quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère 303 Ko compressés (2588 Ko brut) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
-Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers —, avec le détail du calcul, la
+Cinq pages : **Simuler** (une carrière — en un ou plusieurs métiers, ou bien
+**lue sur votre relevé** année par année —, avec le détail du calcul, la
 décomposition de l'écart règle par règle et la cascade qui mène du scénario 1 au
 scénario 3), **Cas types** (la grille 13 carrières × 7 générations),
 **Coût** (ce que la retraite a coûté depuis 1959, régime par régime, ce que les
@@ -221,6 +222,20 @@ print(simulateur.simuler(simulateur.carriere_parcours(
         Metier("salarie_prive_non_cadre", age_debut=21, niveau_salaire=0.9),
         Metier("contractuel_public", age_debut=34, niveau_salaire=0.8),
         Metier("artisan", age_debut=47, niveau_salaire=1.5),
+    ],
+)).tableau())
+
+# Le chemin le plus exact : le relevé de carrière, année par année. Rien n'y est
+# reconstitué — ni le revenu, en euros de chaque année, ni les trimestres validés.
+# C'est ce que le champ « Relevé de carrière » du simulateur reçoit.
+from retraite_notionnelle.carriere import LigneRelevee
+
+print(simulateur.simuler(simulateur.carriere_releve(
+    annee_naissance=1960, sexe="H", age_liquidation=62,
+    releve=[
+        LigneRelevee(annee=annee, affiliation="salarie_prive_non_cadre",
+                     revenu=20000.0 + 500 * (annee - 1985), trimestres=4)
+        for annee in range(1985, 2022)
     ],
 )).tableau())
 
@@ -989,7 +1004,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          674 tests Python
+tests/                          704 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

@@ -209,7 +209,11 @@ let premierRendu = true;
 async function afficher() {
   const cible = adresse();
   const contenu = document.getElementById("contenu");
-  const details = contenu.querySelector("form details");
+  // `details.options`, et non le premier `<details>` venu : le formulaire en
+  // porte deux depuis qu'on peut y coller un relevé de carrière, et le relevé
+  // vient AVANT les options. Un sélecteur de position aurait fait rouvrir le
+  // relevé à qui avait déplié les options.
+  const details = contenu.querySelector("form details.options");
   if (details) { optionsDepliees = details.open; }
 
   document.body.classList.add("calcul-en-cours");
@@ -238,7 +242,7 @@ async function afficher() {
   document.body.classList.remove("calcul-en-cours");
   annoncer(resume(titre, contenu));
 
-  const nouveauDetails = contenu.querySelector("form details");
+  const nouveauDetails = contenu.querySelector("form details.options");
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
   daterStatuts(contenu);
   reprendre(contenu);

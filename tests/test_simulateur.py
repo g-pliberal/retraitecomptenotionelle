@@ -6,7 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier
+from retraite_notionnelle.carriere import (
+    AnneeCarriere,
+    Carriere,
+    LigneRelevee,
+    Metier,
+)
 from retraite_notionnelle.config import (
     AgeConversionDroitsAcquis,
     PartCotisation,
@@ -206,6 +211,83 @@ def test_carriere_sans_age_de_liquidation_est_signalee():
     )
     with pytest.raises(ValueError, match="âge de liquidation"):
         _ = carriere.annee_liquidation
+
+
+# -- la carrière lue sur un relevé -------------------------------------------
+
+
+def _releve(premiere: int, derniere: int,
+            statut: str = "salarie_prive_non_cadre") -> list[LigneRelevee]:
+    return [LigneRelevee(annee=annee, affiliation=statut,
+                         revenu=20000.0 + 500 * (annee - premiere), trimestres=4)
+            for annee in range(premiere, derniere + 1)]
+
+
+def test_le_releve_porte_les_revenus_tels_qu_ils_sont_declares(simulateur):
+    """Rien n'est reconstitué : ni le revenu, ni les trimestres de l'année."""
+    carriere = simulateur.carriere_releve(
+        annee_naissance=1960, sexe="H", releve=_releve(1985, 2021),
+        age_liquidation=62,
+    )
+    assert carriere.premiere_annee == 1985
+    assert carriere.derniere_annee == 2021
+    assert carriere.ligne(1985).revenu == 20000.0
+    assert carriere.ligne(2000).revenu == 27500.0
+    assert all(ligne.trimestres_valides == 4 for ligne in carriere.lignes)
+    # Une ligne vaut une année civile pleine : le relevé donne l'année, pas le
+    # mois, et le modèle ne peut rien annualiser qu'il ne sache pas.
+    assert all(ligne.fraction_annee == 1.0 for ligne in carriere.lignes)
+
+
+def test_les_trimestres_omis_se_deduisent_du_montant(simulateur):
+    """Sans quatrième champ, le relevé retombe sur la règle du montant cotisé.
+
+    Un revenu dérisoire ne valide pas quatre trimestres — 150 fois le SMIC
+    horaire en vaut un —, et c'est ce que le modèle recalcule quand le relevé
+    se tait.
+    """
+    carriere = simulateur.carriere_releve(
+        annee_naissance=1960, sexe="H", age_liquidation=62,
+        releve=[LigneRelevee(annee=2000, affiliation="salarie_prive_non_cadre",
+                             revenu=1500.0)],
+    )
+    assert carriere.ligne(2000).trimestres_valides < 4
+
+
+def test_une_annee_posterieure_au_depart_est_rejetee(simulateur):
+    with pytest.raises(ValueError, match="postérieure au départ"):
+        simulateur.carriere_releve(
+            annee_naissance=1960, sexe="H", age_liquidation=62,
+            releve=_releve(1985, 2023),
+        )
+
+
+def test_un_releve_vide_est_rejete(simulateur):
+    with pytest.raises(ValueError, match="au moins une ligne"):
+        simulateur.carriere_releve(
+            annee_naissance=1960, sexe="H", age_liquidation=62, releve=[],
+        )
+
+
+def test_la_periode_non_cotisee_du_releve_suit_les_memes_regles(simulateur):
+    """Le chemin lu et le chemin paramétrique partagent la règle, pas le code.
+
+    Ce qu'une période assimilée ouvre — des trimestres gratuits, des points
+    complémentaires financés par l'UNEDIC — est écrit une seule fois : une
+    ligne de relevé déclarée au chômage doit donc en sortir comme l'année
+    qu'une plage d'interruption aurait produite.
+    """
+    carriere = simulateur.carriere_releve(
+        annee_naissance=1960, sexe="H", age_liquidation=62,
+        releve=[LigneRelevee(annee=2000, affiliation="salarie_prive_non_cadre",
+                             revenu=30000.0, trimestres=4,
+                             type_periode="chomage_indemnise")],
+    )
+    ligne = carriere.ligne(2000)
+    assert not ligne.cotisations_versees
+    assert ligne.revenu == 0.0
+    assert ligne.revenu_reference == 30000.0
+    assert ligne.familles_cotisantes == ("complementaire_prive",)
 
 
 # -- les trois scénarios -----------------------------------------------------
@@ -1896,7 +1978,12 @@ def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
     c'est ce que la confrontation à OpenFisca-France-Pension a fait voir — le
     modèle passait par les prix, et s'en écartait de 0,5 à 0,8 %.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier
+    from retraite_notionnelle.carriere import (
+    AnneeCarriere,
+    Carriere,
+    LigneRelevee,
+    Metier,
+)
 
     lignes = [
         AnneeCarriere(annee=annee, revenu=30000.0,
@@ -2513,7 +2600,12 @@ def test_le_salaire_de_reference_ne_retient_que_les_annees_du_regime(simulateur)
     prorata de durée, lui, restait celui du régime. Le modèle rapportait donc
     une part de carrière publique à une assiette qui ne l'était pas.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier
+    from retraite_notionnelle.carriere import (
+    AnneeCarriere,
+    Carriere,
+    LigneRelevee,
+    Metier,
+)
 
     publiques = [AnneeCarriere(annee=a, revenu=20_000.0,
                                affiliation="fonctionnaire_etat")
@@ -2554,7 +2646,12 @@ def test_les_annees_posterieures_a_la_liquidation_n_ouvrent_rien(simulateur):
     années postérieures achetaient des points et validaient des trimestres,
     ce qui annulait jusqu'à la décote de qui, précisément, part tôt.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier
+    from retraite_notionnelle.carriere import (
+    AnneeCarriere,
+    Carriere,
+    LigneRelevee,
+    Metier,
+)
 
     avant = [AnneeCarriere(annee=a, revenu=40_000.0,
                            affiliation="salarie_prive_non_cadre")

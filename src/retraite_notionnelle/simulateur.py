@@ -20,7 +20,13 @@ from dataclasses import dataclass
 from functools import cached_property
 
 from .calendrier import formater_age
-from .carriere import Affiliations, Carriere, Metier, salaire_moyen_annuel
+from .carriere import (
+    Affiliations,
+    Carriere,
+    LigneRelevee,
+    Metier,
+    salaire_moyen_annuel,
+)
 from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.effectifs import EffectifsRetraites
@@ -649,6 +655,26 @@ class Simulateur:
             annee_naissance=annee_naissance,
             sexe=sexe,
             metiers=list(metiers),
+            age_liquidation=age_liquidation,
+            macro=self.macro,
+            **kwargs,
+        )
+
+    def carriere_releve(self, annee_naissance: int, sexe: str,
+                        releve: list[LigneRelevee], age_liquidation: float,
+                        **kwargs) -> Carriere:
+        """Construit une carrière lue sur un relevé, année par année.
+
+        La forme la plus exacte : rien n'y est reconstitué, ni le revenu de
+        chaque année ni les trimestres qu'elle a validés — l'assuré les recopie
+        de son relevé.
+        """
+        for ligne in releve:
+            self._verifier_affiliation(ligne.affiliation)
+        return Carriere.depuis_releve(
+            annee_naissance=annee_naissance,
+            sexe=sexe,
+            releve=list(releve),
             age_liquidation=age_liquidation,
             macro=self.macro,
             **kwargs,
