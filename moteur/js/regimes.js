@@ -622,6 +622,10 @@ export const BORNES_ASSIETTE = Object.freeze({
   // Tranche 2 de l'Arrco d'AVANT la fusion : elle s'arrêtait à trois plafonds,
   // là où celle de l'Agirc-Arrco va jusqu'à huit.
   tranche_2_arrco: [1.0, 3.0],
+  // Tranche B de l'Ircantec, et de l'IPACTE avant elle : l'article 7 du décret
+  // n° 70-1277 limite l'assiette à 4,75 plafonds, et le décret n° 2008-996 du
+  // 23 septembre 2008 la porte à huit.
+  tranche_2_ircantec: [1.0, 4.75],
   tranche_b: [1.0, 4.0],
   tranche_c: [4.0, 8.0],
   // Tranches propres au régime de base des professions libérales : la première

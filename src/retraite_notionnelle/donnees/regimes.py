@@ -33,6 +33,13 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     # là où celle de l'Agirc-Arrco va jusqu'à huit. Les confondre donnait à un
     # non-cadre des droits sur une assiette que son régime n'a jamais couverte.
     "tranche_2_arrco": (1.0, 3.0),
+    # Tranche B de l'Ircantec, et de l'IPACTE avant elle : l'article 7 du
+    # décret n° 70-1277 limite l'assiette à « 4,75 fois le plafond fixé pour
+    # les cotisations de retraite du régime général », et le décret
+    # n° 2008-996 du 23 septembre 2008 la porte à huit — elle prend alors la
+    # borne commune. Lui prêter huit plafonds dès 1971 donnait des points sur
+    # une assiette que le régime n'appelait pas.
+    "tranche_2_ircantec": (1.0, 4.75),
     "tranche_b": (1.0, 4.0),
     "tranche_c": (4.0, 8.0),
     # Tranches propres au régime de base des professions libérales : la

@@ -555,7 +555,11 @@ export class ScenarioActuel {
 
   abattementPoints(periode, carriere, trimestres, requis, ageLiquidation,
     anneeLiquidation) {
-    if (periode.abattement_points === "agirc_arrco") {
+    // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
+    // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
+    // lectures. Voir le docstring du modèle Python.
+    if (periode.abattement_points === "agirc_arrco"
+      || periode.abattement_points === "ircantec") {
       // Avant l'ASF de 1983, l'âge seul : une période sans durée requise — ni
       // en dur, ni lue à la génération — abat toute anticipation avant
       // l'âge du taux plein, et la table par durée ne s'y consulte pas.

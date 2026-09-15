@@ -1803,7 +1803,11 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   avant 1972. Restent hors du modèle les avantages familiaux des régimes que
   leur fiche ne déclare pas, faute de barème sourcé : le régime de base des
   professions libérales, celui des avocats, et celui des exploitants
-  agricoles ;
+  agricoles ; et la SURCOTE de l'Ircantec, que le paragraphe 4 de l'article 16
+  de l'arrêté du 30 décembre 1970 fixe depuis le 1er janvier 2010 à 0,75 % par
+  trimestre au-delà de soixante-cinq ans, trouvée par la confrontation à
+  OpenFisca et non corrigée — l'abattement d'un régime en points est un
+  coefficient qui ne dépasse jamais un, des deux côtés du portage ;
 - **revalorisation des salaires portés au compte** — le modèle ne les
   reconstitue plus, il les LIT dans la circulaire annuelle de la Cnav
   (`legislation/revalorisation_salaires.csv`, perceptions 1930-2025). Il les
@@ -1838,7 +1842,23 @@ il est écrit par d'autres à partir des mêmes textes.
 nominal constant et fige le relevé dans `tests/temoins/`, que `tests/test_oracle.py`
 rejoue sans avoir à installer le paquet.
 
-Le résultat, sur dix profils :
+**Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
+qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
+l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
+titulaires — cinquante-huit profils en tout. Les régimes alignés — MSA des
+salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
+n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
+l'oracle du régime général qu'ils se confrontent. Restent hors de portée le
+régime unifié Agirc-Arrco, dont son code lève une exception, et tout ce qui
+n'est ni salarié ni fonctionnaire : les régimes spéciaux, les libéraux, les
+exploitants agricoles, que personne d'autre ne modélise. Les exploitants sont
+le seul trou qui porte plus d'un million d'assurés — 1 023 064 retraités de
+droit direct en 2024 —, et il ne se comblera pas par cette voie : leur régime
+est MIXTE, une retraite forfaitaire plus une proportionnelle en points, sans
+équivalent au régime général auquel l'opposer.
+
+Le résultat, sur dix profils — et les régimes alignés le partagent, puisque
+leur pension est celle du régime général :
 
 | Grandeur | Accord |
 |---|---|
@@ -1952,7 +1972,7 @@ antérieure à la réforme du 14 avril 2023, qui oppose 169 trimestres à la
 génération 1965 là où l'article L. 161-17-3, lu dans la base LEGI, en donne 172.
 **Un désaccord ne désigne donc pas d'office le coupable.**
 
-Trois bornes à connaître, et elles sont étroites :
+Quatre bornes à connaître, et elles sont étroites :
 
 * **le régime unifié Agirc-Arrco est hors de portée.** Son code demande le
   paramètre `agirc_arrco.salaire_de_reference.salaire_reference_en_euros`, que
@@ -1966,7 +1986,19 @@ Trois bornes à connaître, et elles sont étroites :
   durée d'assurance, le coefficient de proratisation et la pension valent tous
   zéro, sans qu'aucune exception ne soit levée. Un oracle silencieusement nul
   valide tout : le récupérateur refuse donc d'écrire un profil dont la durée ou
-  la pension serait nulle, et le test le revérifie.
+  la pension serait nulle, et le test le revérifie ;
+* **et ce même réglage a une borne HAUTE**, découverte en écrivant les oracles
+  de l'Agirc et de l'Ircantec. Le total de points d'un régime en points lit le
+  total de l'année précédente et remonte ainsi jusqu'à ce que
+  `max_spiral_loops` l'arrête. Laissé à cent, il atteint 1947 à l'Agirc, dont
+  la formule de points commence au 1<sup>er</sup> janvier quand son prix
+  d'achat commence au 1<sup>er</sup> avril, et 1910 à l'Ircantec, dont la
+  cotisation lit un plafond de la Sécurité sociale qu'OpenFisca ne définit pas
+  avant 1931 : `ParameterNotFoundError` dans les deux cas. Le nombre de
+  reprises est donc calculé pour que la remontée s'arrête à la première année
+  sûre, et le récupérateur vérifie qu'il couvre encore la carrière. Trop peu de
+  reprises tronque la carrière en silence, trop lève une exception : la fenêtre
+  est étroite des deux côtés.
 
 #### La pension civile : deux erreurs chez nous, une transcription chez lui
 
@@ -2063,6 +2095,188 @@ chez lui « 61 ans et 11 mois » et treize trimestres de décote au lieu de douz
 — un écart de soixante-deux ans traverse quinze années bissextiles quand il
 part d'une année impaire, seize quand il part d'une année bissextile. Les
 profils partent d'années bissextiles.
+
+#### L'Agirc des cadres, 1983-2012 : trois écarts, tous chez lui
+
+`scripts/fetch/openfisca_agirc.py` rejoue dix carrières de cadres. L'Agirc n'a
+pas la mécanique de l'Arrco : elle ne cotise qu'**au-dessus du plafond** de la
+Sécurité sociale — la tranche B, d'un à quatre plafonds —, y ajoute la
+tranche C au-dessus de quatre plafonds à compter de 1991, et garantit depuis
+1989 un nombre minimal de points à tout cadre cotisant. Trois règles que la
+confrontation précédente ne mettait pas à l'épreuve.
+
+Le témoin porte les points de **chaque année**, et le test les oppose un à un.
+C'est ce qui permet de ne pas s'arrêter à « les deux modèles s'écartent de
+0,06 % » : sur la carrière la plus longue du lot, ils s'accordent sur
+dix-huit années sur vingt, et les deux qui manquent ont un nom.
+
+| Grandeur | Accord |
+|---|---|
+| Prix d'achat du point et taux d'appel, année par année | **exacts** jusqu'en 2003, puis un millésime de retard chez lui |
+| Cotisation de la tranche B, année par année | **exacte**, sauf 1989 et 1994 |
+| Tranche C avant 1991 | il la cotise, l'Agirc non |
+| Trimestres de décote du régime général | **exacts** sur les dix |
+| Coefficient d'anticipation | **exact** sur les dix |
+| Valeur de service | **exacte**, à la date de revalorisation près |
+
+**Son barème salarié saute deux marches.** En 1989, le taux d'appel de l'Agirc
+passe à 1,134 : son barème employeur suit — 6 % × 1,134 = 6,804 % — et son
+barème salarié reste à 2,2 %, la valeur de 1987, au lieu de 2,268 %. En 1994,
+son couple 8,43 / 3,63 donne 12,06 % là où le contractuel de 10 % appelé à 1,21
+en fait 12,10. Le test substitue ces deux taux et l'accord redevient exact.
+
+**Sa tranche C est cotisée par le salarié dès 1948**, quarante-trois ans avant
+que l'Agirc ne l'ouvre. La cause est une case vide : son fichier de barème
+EMPLOYEUR écrit `0` sur la tranche 4-8 plafonds avant 1991, son fichier SALARIÉ
+y écrit `null`. OpenFisca lit le premier comme un taux nul et le second comme
+une tranche ABSENTE — le taux de la tranche B s'étend alors jusqu'à huit
+plafonds. Un cadre payé 150 000 € en 1983 y verse une cotisation salariale sur
+une assiette que le régime n'appelle pas, et reçoit un tiers de points de trop.
+Un profil est gardé pour le montrer, et le test reconstitue exactement cette
+cotisation fantôme.
+
+**Son prix d'achat se lit trois mois trop tôt.** L'Agirc a déplacé la
+revalorisation de sa valeur de service du 1<sup>er</sup> janvier au
+1<sup>er</sup> avril en 2001, et celle de son salaire de référence en 2004. Le
+dépôt retient la valeur en vigueur au 31 décembre — celle qui vaut pour les
+salaires de l'année —, OpenFisca lit le paramètre au 1<sup>er</sup> janvier,
+donc le millésime précédent. C'est la même convention de date que la valeur de
+service de l'Arrco, déjà documentée ; ici elle joue sur l'ACQUISITION, et donne
+de 1,3 à 3,7 % de points de trop par année. Les profils s'arrêtent donc en
+2003, sauf un, gardé pour la montrer.
+
+#### L'Ircantec : deux corrections chez nous, deux transcriptions chez lui
+
+`scripts/fetch/openfisca_ircantec.py` rejoue onze carrières d'agents non
+titulaires. C'est le premier oracle du dépôt sur le secteur public
+contractuel — 2 108 941 retraités de droit direct en 2024, la série certifiée
+du dépôt —, et il a trouvé chez
+nous deux règles que personne ne relisait. Les deux se lisent dans les textes,
+que l'index LEGI rend accessibles en quelques secondes.
+
+**L'assiette de la tranche B allait de un à huit plafonds depuis 1971.**
+L'article 7 du décret n° 70-1277 écrit l'inverse : « l'assiette de cotisation
+ainsi déterminée est toutefois limitée à **4,75 fois le plafond** fixé pour les
+cotisations de retraite du régime général ». C'est le décret n° 2008-996 du
+23 septembre 2008 qui la porte à huit — et la limite de 4,75 est plus vieille
+que l'Ircantec elle-même : l'article 7 du décret n° 51-1445 la fixe déjà pour
+l'IPACTE, à compter du 1<sup>er</sup> janvier 1961. Le modèle donnait donc des
+points sur une assiette que le régime n'appelait pas, à tout contractuel payé
+plus de 4,75 plafonds avant 2009. L'assiette `tranche_2_ircantec` porte
+désormais cette borne, et les fiches la prennent jusqu'en 2008.
+
+**Le coefficient d'anticipation était linéaire.** La fiche abattait 1,1 % par
+trimestre. L'article 16 de l'arrêté du 30 décembre 1970 écrit un ESCALIER :
+coefficient 0,43 dix ans avant l'âge normal, « majoré de 0,017 5 par trimestre »
+jusqu'à cinq ans avant, de 0,012 5 par trimestre sur les deux années suivantes,
+de 0,01 par trimestre sur les trois dernières. Ce sont, marche pour marche, les
+paliers de l'Agirc-Arrco — et son paragraphe 2 est la seconde table de
+l'Agirc-Arrco, qui applique le même escalier « en assimilant à l'âge de
+soixante-cinq ans l'âge auquel [l'assuré] aurait effectivement accompli la durée
+d'assurance », sans pouvoir descendre sous le coefficient de son âge : c'est
+mot pour mot « la plus avantageuse des deux ». Le taux moyen de 1,1 % tombait
+juste aux deux bouts du barème — 0,78 à cinq ans d'anticipation, 1,00 à zéro —
+et nulle part entre les deux : à douze trimestres il retirait 13,2 % quand
+l'arrêté en retire 12, et il ne descendait jamais à 0,43. La fiche porte
+maintenant `abattement_points: ircantec`, qui est le barème de l'Agirc-Arrco
+sous un autre nom, et l'exonération au taux plein que le 6° c) de l'article
+accorde « à compter du 1<sup>er</sup> avril 1983 » — la date de l'ASF, la même
+réforme.
+
+Chez lui, deux transcriptions qui comptent, et deux arrondis qui ne comptent
+pas.
+
+| Grandeur | Accord |
+|---|---|
+| Salaire de référence et taux d'appel, année par année | **exacts**, sauf le taux d'appel de 1991 |
+| Cotisation des deux tranches | **exacte** à l'arrondi du producteur près |
+| Assiette de la tranche B | 4,75 plafonds chez nous et dans le décret, huit chez lui à partir de 1992 |
+| Coefficient d'anticipation | **exact** sur les onze, escalier compris |
+| Surcote | 7,5 % par trimestre chez lui, 0,75 % dans l'arrêté, rien chez nous |
+
+**Sa tranche B passe à huit plafonds en 1992**, seize ans avant le décret qui
+l'y porte. Le test reconstitue exactement ce qu'il cotise en trop, et vérifie
+qu'avant 1992 et depuis 2009 les deux barèmes tombent d'accord au centime.
+
+**Sa surcote est dix fois trop forte.** Le paragraphe 4 de l'article 16 majore
+le total des points « de 0,75 % par trimestre entier écoulé entre le
+soixante-cinquième anniversaire de l'assuré et la date d'entrée en jouissance » ;
+son paramètre porte 0,075. Une année de surcote y vaut +30 % de pension, deux
+ans +60 %. **Et le modèle, lui, n'en sert aucune** : la fiche de l'Ircantec
+n'a pas de surcote, si bien qu'un agent qui liquide après soixante-cinq ans
+perd les 0,75 % par trimestre que l'arrêté lui donne, et les 0,625 % par
+trimestre cotisé entre l'âge du taux plein et soixante-cinq ans. C'est un droit
+manquant, mesuré et non corrigé : voir l'action 9 de la feuille de route.
+
+Le reste de l'écart tient à un arrondi, et il est du côté du producteur : la
+Caisse des dépôts publie le taux appelé arrondi au dix-millième — 5,63 % de
+1992 à 2010 —, OpenFisca sert le produit exact du contractuel par le taux
+d'appel, 4,5 % × 1,25 = 5,625 %. Cinq cent-millièmes de taux, un millième et
+demi de cotisation. Une seule année échappe à cette règle : **1991**, où sa
+table prolonge les taux de 1989 quand la Caisse des dépôts donne 5,28 % et
+16,42 %, et où son taux d'appel vaut 1,09 contre 1,173 — le désaccord que
+`scripts/fetch/cdc_ircantec.py` avait déjà relevé, et que le producteur tranche.
+
+**Ce que ces deux corrections déplacent : rien, et c'est mesuré.** Aucun des
+427 témoins ne porte un contractuel payé plus de 4,75 plafonds, ni une
+liquidation Ircantec avec décote. Elles ne changent donc aucun chiffre publié ;
+elles changent ce que le simulateur servira à qui saisira l'une ou l'autre de
+ces situations.
+
+**Une troisième correction est sortie de là, et celle-là déplace des témoins.**
+Le barème d'anticipation de l'Agirc-Arrco, comme celui de l'Ircantec, ne
+s'applique « à l'âge seul » que jusqu'à l'ASF de 1983 : après, qui a le taux
+plein au régime de base est exonéré. Le moteur lit cette règle dans la période
+du régime **à l'année de liquidation** — ce qui est juste tant que le régime
+est ouvert, et faux dès qu'il est fermé : la dernière période de l'UNIRS est
+celle de 1957-1961, de l'IPACTE celle de 1951-1970, et toutes deux sont
+antérieures à 1983, alors qu'aucune de leurs pensions n'a été liquidée avant.
+Un salarié du privé au taux plein se voyait donc abattre sa ligne UNIRS de 4 à
+22 %. Les trois fiches fermées portent désormais la lecture par génération, et
+douze témoins remontent — de +4,2 % à +28,2 % sur la ligne du régime fermé,
+soit +0,02 % à +0,16 % sur la pension totale, la ligne étant petite.
+
+#### Les régimes alignés : la MSA passe, les indépendants sont coupés en deux
+
+OpenFisca-France-Pension n'a **aucun module** pour les régimes alignés : ni MSA,
+ni artisans, ni commerçants. Il n'en a pas besoin, et le dépôt non plus :
+« aligné » n'est pas une image, c'est un RENVOI d'article à article. L'article
+L. 742-3 du code rural rend au régime des assurances sociales agricoles « le
+titre V du livre III du code de la sécurité sociale », qui est l'assurance
+vieillesse du régime général ; l'article L. 634-2 du code de la sécurité
+sociale calcule, liquide et sert les pensions des artisans et des commerçants
+« dans les conditions définies […] du premier au quatrième alinéas de l'article
+L. 351-1 », et énumère ensuite les quinze articles du régime général qui les
+gouvernent. Leur pension se confronte donc à l'oracle du régime général, sur la
+même carrière, et c'est l'alignement lui-même qui est mis à l'épreuve.
+
+Rien ne garantissait qu'il fût dans le modèle : l'action 3 de la feuille de
+route a montré que les TAUX DE COTISATION agricoles, eux, n'ont été alignés
+qu'en 2014, alors que le dépôt les croyait alignés depuis toujours.
+
+**La MSA des salariés agricoles passe.** Sur les dix profils de l'oracle, elle
+rend exactement la pension du régime général — même salaire de référence, même
+taux, même coefficient de proratisation. Sa confrontation à OpenFisca est celle
+du régime général, à la virgule près : 1 678 770 retraités de droit direct en
+2024 entrent dans le périmètre contrôlé sans qu'aucun module n'existe pour eux.
+
+**L'artisan et le commerçant, non — et la cause n'est pas le barème.** Le taux
+de liquidation et le décompte des trimestres tombent juste ; ce qui ne tombe
+pas juste, c'est le salaire de référence, parce que la carrière est coupée à
+chaque changement de CAISSE. La CANCAVA devient le RSI en 2006, le RSI est
+absorbé par le régime général en 2018 : le modèle liquide ces trois régimes
+séparément, chacun sur ses seules années, et calcule donc deux salaires annuels
+moyens là où la caisse n'en calculerait qu'un. Un artisan payé 60 000 € de 1976
+à 2015 reçoit « 30 077 € × 120/165 » plus « 36 778 € × 40/165 » au lieu de
+« 34 152 € × 160/165 ».
+
+La césure joue dans les deux sens — les vingt-cinq meilleures années de chaque
+morceau peuvent être meilleures que celles de la carrière entière — et l'écart
+mesuré va de **−7,2 % à +0,3 %** sur les dix profils. C'est la limite
+« coordination interrégimes » ci-dessus, mais elle est plus large qu'un
+polypensionnat : **un régime et celui qui lui succède ne sont pas deux
+régimes**, et le catalogue le sait déjà, puisqu'il porte `succede_a`. Voir
+l'action 10 de la feuille de route.
 
 ### La cotisation déplafonnée est portée au compte
 
@@ -4938,7 +5152,7 @@ Un test borne la trajectoire à la fourchette 10-20 % du PIB — élargie de 18 
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 623 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 643 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

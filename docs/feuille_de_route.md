@@ -25,7 +25,8 @@ Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie de
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py` (plus de trois mille
 lignes) et dans le portage `moteur/js/` (douze mille lignes), puis dans les
 témoins. Les actions 1 à 3 ne touchent que les données et la page Coût ; les
-actions 5 et 7 touchent les deux moteurs.
+actions 5, 7, 9 et 10 touchent les deux moteurs, et l'action 4 ne les a touchés
+qu'en surface — deux lignes de chaque côté.
 
 ---
 
@@ -284,7 +285,7 @@ article 2 du décret n° 50-444 puis `D. 741-35` du code rural.
   antérieure à cette action. Il est régénéré, et un test le recalcule à chaque
   exécution.
 
-### 4. Étendre la contre-expertise du scénario 1 — `à faire`
+### 4. Étendre la contre-expertise du scénario 1 — `fait`
 
 **Pourquoi.** Le scénario 1 est le dénominateur de tous les écarts affichés.
 L'oracle OpenFisca-France-Pension (`tests/test_oracle.py`) ne couvre que le
@@ -306,6 +307,90 @@ le taux de remplacement, avec la tolérance que justifie l'écart de convention.
 **Fin.** Chaque famille de régimes de plus d'un million d'assurés a une
 contre-expertise, et `limites.md` §3 dit pour chacune ce qui concorde et ce qui
 diverge.
+
+**Ce que ça a déplacé.** Deux oracles nouveaux —
+`scripts/fetch/openfisca_agirc.py` et `scripts/fetch/openfisca_ircantec.py`,
+vingt et un profils figés dans les témoins — et un troisième qui ne demandait
+aucun code de récupération. **Vingt tests de plus**, et **cinq écarts trouvés,
+trois chez nous.** Le détail est dans `limites.md` §3 ; ce qui suit est ce
+qu'il faut en retenir.
+
+- *Le périmètre est atteint, et il est plus petit que l'action ne le croyait.*
+  OpenFisca-France-Pension n'expose que cinq régimes : le régime général, la
+  pension civile, l'Arrco, l'**Agirc** et l'**Ircantec**. Il n'a **aucun
+  module** pour les régimes alignés — ni MSA, ni artisans, ni commerçants — et
+  son Agirc-Arrco unifié lève toujours une exception. L'action demandait « un
+  module de plus à la fois » : il n'en restait que deux, et ils sont faits.
+- *Les régimes alignés n'avaient pas besoin d'un module, et c'est la loi qui le
+  dit.* L. 742-3 du code rural et L. 634-2 du code de la sécurité sociale
+  calculent la MSA, l'artisan et le commerçant comme le régime général : leur
+  pension se confronte donc à l'oracle du régime général, sur la même carrière,
+  sans qu'aucune récupération soit nécessaire. **La MSA passe** — elle rend
+  exactement la pension du régime général sur les dix profils, et 1 678 770
+  retraités de droit direct entrent ainsi dans le périmètre contrôlé. **L'artisan et
+  le commerçant, non**, et la découverte est là : le modèle coupe leur carrière
+  à chaque changement de CAISSE — CANCAVA en 2006, RSI en 2018 — et calcule
+  deux salaires de référence là où la loi n'en veut qu'un. De −7,2 % à +0,3 %
+  sur les dix profils. C'est l'action 10, ouverte pour cette raison.
+- *L'Ircantec ne relisait personne, et deux de ses règles étaient fausses.*
+  L'assiette de sa tranche B allait de un à huit plafonds depuis 1971 quand
+  l'article 7 du décret n° 70-1277 la limite à **4,75 plafonds** jusqu'au
+  décret de septembre 2008 ; son coefficient d'anticipation abattait 1,1 % par
+  trimestre quand l'article 16 de l'arrêté du 30 décembre 1970 écrit un
+  **escalier** — 1 %, 1,25 %, 1,75 % — qui est, marche pour marche, celui de
+  l'Agirc-Arrco. Les deux se lisent dans l'index LEGI en quelques secondes ;
+  personne ne les avait cherchées, parce que rien ne les contredisait.
+- *Et ces deux corrections ne déplacent aucun témoin.* Aucun des 427 cas ne
+  porte un contractuel payé plus de 4,75 plafonds, ni une liquidation Ircantec
+  avec décote. Une correction qui ne déplace rien n'est pas une correction
+  inutile : c'est le droit que le simulateur servira à qui saisira l'une de ces
+  situations. Le mesurer et le dire vaut mieux que de le supposer.
+- *Une troisième correction est sortie de là, et celle-là déplace douze
+  témoins.* Le barème d'anticipation de l'Agirc-Arrco ne s'applique « à l'âge
+  seul » que jusqu'à l'ASF de 1983 ; le moteur lit cette règle dans la période
+  du régime à l'année de liquidation, ce qui est juste tant que le régime est
+  ouvert et faux dès qu'il est FERMÉ — la dernière période de l'UNIRS est celle
+  de 1957-1961, et aucune de ses pensions n'a été liquidée avant 1983. Un
+  salarié du privé au taux plein se voyait abattre sa ligne UNIRS de 4 à 22 %.
+  Trois fiches fermées corrigées, douze témoins qui remontent de +0,02 % à
+  +0,16 % sur la pension totale.
+- *Chez lui, deux transcriptions et une case vide.* L'écart le plus instructif
+  n'est pas un chiffre faux mais un `null` : son barème EMPLOYEUR de la tranche
+  C de l'Agirc écrit `0` avant 1991, son barème SALARIÉ écrit `null`, et
+  OpenFisca lit le premier comme un taux nul et le second comme une tranche
+  ABSENTE — si bien que le taux de la tranche B s'étend jusqu'à huit plafonds
+  et qu'un cadre de 1983 cotise sur une assiette que l'Agirc n'ouvrira que huit
+  ans plus tard. Une donnée manquante n'est pas une donnée nulle, et le dépôt
+  écrit ses zéros.
+- *Ce que l'oracle ne corrige pas, et qu'il a rendu visible.* L'Ircantec ne
+  sert aucune SURCOTE quand l'arrêté lui en donne une depuis 2010 — 0,75 % par
+  trimestre au-delà de soixante-cinq ans. OpenFisca, lui, en sert dix fois
+  trop : son paramètre porte 0,075 au lieu de 0,0075, et deux ans de surcote y
+  valent +60 % de pension. Les deux lectures sont figées dans un test, et la
+  correction est l'action 9.
+- *Un piège de mécanique, à connaître avant d'écrire le sixième oracle.* Le
+  réglage `max_spiral_loops` d'OpenFisca a une borne HAUTE autant qu'une borne
+  basse : trop peu de reprises tronque la carrière en silence, trop en fait
+  remonter le déroulage récursif jusqu'à des années où ses propres paramètres
+  n'existent pas — 1947 à l'Agirc, 1910 à l'Ircantec. Les deux récupérateurs
+  calculent ce nombre et vérifient qu'il couvre la carrière.
+- *Ce qui reste sans contre-expertise, et pourquoi.* Le critère de l'action
+  était « chaque famille de plus d'un million d'assurés ». Il est tenu sauf
+  pour UNE : les exploitants agricoles, 1 023 064 retraités de droit direct en
+  2024. OpenFisca n'en a pas de module, et ils ne sont pas alignés — leur
+  régime est MIXTE, une retraite forfaitaire plus une proportionnelle en
+  points, sans équivalent au régime général. Rien ne les contrôle, et rien ne
+  peut les contrôler par cette voie. En dessous du million, il ne reste que les
+  libéraux et les régimes spéciaux, que personne d'autre ne modélise non plus.
+- *Ce que l'action annonçait et qui n'est pas fait : l'oracle « cas types
+  publiés ».* Le COR et la DREES publient des taux de remplacement par cas
+  type, et c'eût été une seconde source INDÉPENDANTE d'OpenFisca. Elle ne l'est
+  qu'en apparence : leurs cas types sont définis par une carrière type que le
+  dépôt ne sait pas reconstituer — salaire à un ou deux SMIC « en moyenne de
+  carrière », avec des hypothèses de progression que les rapports décrivent en
+  prose —, si bien que l'écart mesuré serait celui des carrières et non celui
+  des modèles. Le faire suppose d'abord le chantier de la carrière saisie
+  (action 7). La ligne reste à prendre ; elle n'est pas dans cette action.
 
 ---
 
@@ -388,6 +473,75 @@ qui dira si le diagnostic était bon.
 **Fin.** L'écart avec le COR en 2070 est mesuré avant et après, `limites.md`
 §5 ter le dit, et la borne du test de vraisemblance redescend si elle le peut.
 
+### 9. La surcote de l'Ircantec, qu'aucun assuré ne touche — `à faire`
+
+**Pourquoi.** Découvert en menant l'action 4. Le paragraphe 4 de l'article 16
+de l'arrêté du 30 décembre 1970 majore le total des points « de 0,75 % par
+trimestre entier écoulé entre le soixante-cinquième anniversaire de l'assuré et
+la date d'entrée en jouissance », et de 0,625 % par trimestre cotisé entre
+l'âge du taux plein et soixante-cinq ans, depuis le 1er janvier 2010. Le modèle
+n'en sert rien : la fiche de l'Ircantec porte `surcote_par_trimestre: null`, et
+`_abattement_points` ne rend jamais plus de 1. Un agent non titulaire qui
+travaille jusqu'à soixante-sept ans y perd 6 % de sa complémentaire. Le
+contrôle est écrit : `test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui`
+fige les deux lectures, la sienne (0,075 par trimestre, dix fois le texte) et
+la nôtre (aucune).
+
+**Sources à lire.** Rien à récupérer : l'arrêté est dans l'index LEGI
+(`LEGIARTI000019511923` pour la version qui crée la surcote,
+`LEGIARTI000048065521` pour l'état courant). Vérifier au passage si d'autres
+régimes en points du catalogue sont dans le même cas.
+
+**Fichiers.** `data/reference/regimes/complementaires_prive.yaml` (fiche
+Ircantec), `src/retraite_notionnelle/scenarios/actuel.py`
+(`_abattement_points`, qui doit pouvoir dépasser 1),
+`moteur/js/scenario-actuel.js`, les témoins, `tests/test_oracle.py`.
+
+**Marche.** Un coefficient de majoration lu à la fiche, comme l'abattement,
+avec ses deux taux et ses deux bornes d'âge. Touche les deux moteurs.
+
+**Fin.** Le test d'oracle compare la surcote servie à celle de l'arrêté plutôt
+qu'à zéro, et `limites.md` §3 retire l'Ircantec de la liste des avantages
+manquants.
+
+### 10. Liquider ensemble un régime et celui qui lui succède — `à faire`
+
+**Pourquoi.** Découvert en menant l'action 4, et c'est le plus gros écart
+qu'elle ait mesuré. Le modèle liquide chaque régime sur ses seules années, ce
+qui est juste d'un polypensionné — mais la CANCAVA, le RSI et le régime général
+ne sont pas trois régimes pour un artisan : ce sont trois NOMS du même droit,
+et le catalogue le sait, puisqu'il porte `succede_a` et `integre_dans`. Un
+artisan payé 60 000 € de 1976 à 2015 reçoit « 30 077 € × 120/165 » plus
+« 36 778 € × 40/165 » là où la caisse calculerait « 34 152 € × 160/165 ».
+Mesuré contre l'oracle du régime général, l'écart va de −7,2 % à +0,3 % — il
+joue dans les deux sens, les vingt-cinq meilleures années de chaque morceau
+pouvant être meilleures que celles de la carrière entière.
+
+**Qui est touché.** Les artisans et les commerçants d'abord (CANCAVA/ORGANIC →
+RSI en 2006 → régime général en 2018), et toute carrière qui traverse
+1945 (assurances sociales → régime général). Les régimes en POINTS ne le sont
+pas : leurs points se convertissent et s'additionnent déjà
+(`regimes/conversions_points.csv`).
+
+**Sources à lire.** Rien à récupérer. La règle est dans le catalogue ; ce qui
+manque est son emploi par le moteur.
+
+**Fichiers.** `src/retraite_notionnelle/scenarios/actuel.py` (la boucle par
+régime, le salaire de référence et la proratisation),
+`moteur/js/scenario-actuel.js`, les témoins, `tests/test_oracle.py`
+(`test_les_regimes_alignes_des_independants_sont_coupes_a_la_succession`, qui
+mesure l'écart aujourd'hui et devra le voir disparaître), `limites.md` §3.
+
+**Marche.** Grouper les régimes d'ANNUITÉS par chaîne de succession avant de
+liquider : un seul salaire de référence, une seule proratisation, la fiche de
+la dernière période active donnant les règles. Garder le découpage actuel comme
+variante, pour mesurer. Ne pas confondre avec la coordination entre régimes
+alignés DISTINCTS (proratisation croisée, LURA), qui reste hors du modèle.
+
+**Fin.** L'artisan et le commerçant rendent la pension du régime général sur
+les dix profils de l'oracle, comme la MSA, et `limites.md` §3 dit ce que la
+correction a déplacé.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -450,3 +604,22 @@ qui dira si le diagnostic était bon.
   DATE d'une marche se vérifie même quand sa valeur ne se vérifie pas. La
   recherche a rapporté au passage ce que personne ne cherchait — un décret de
   1979 qui rend fausses deux années de la série.
+- **Septembre 2026, action 4.** Faite. Deux oracles nouveaux — l'Agirc des
+  cadres et l'Ircantec des agents non titulaires —, un troisième qui n'a
+  demandé aucun code, vingt tests de plus et cinq écarts trouvés, trois chez
+  nous. Le détail est sous l'action. Quatre choses à en retenir pour la suite.
+  Le périmètre d'OpenFisca-France-Pension est ATTEINT : il n'expose que cinq
+  régimes, ils y sont tous, et son Agirc-Arrco unifié reste cassé — la prochaine
+  contre-expertise, quelle qu'elle soit, ne viendra pas de lui. Un régime que
+  la loi déclare ALIGNÉ n'a pas besoin de son propre oracle : la MSA, l'artisan
+  et le commerçant se confrontent à celui du régime général, et c'est
+  l'alignement lui-même qu'on met alors à l'épreuve — la MSA le passe, l'artisan
+  non. Une donnée MANQUANTE n'est pas une donnée nulle : l'écart le plus
+  instructif de cette campagne n'est pas un chiffre faux mais un `null` lu comme
+  une tranche absente. Et une correction qui ne déplace aucun témoin n'est pas
+  une correction inutile : les deux règles de l'Ircantec corrigées ici ne
+  changent aucun chiffre publié, parce qu'aucun cas type n'est dans la situation
+  qu'elles gouvernent ; elles changent ce que le simulateur servira à qui l'est.
+  Les actions 9 et 10 sont ouvertes par ce qu'elle a rendu visible. L'action 5,
+  la catégorie active et les militaires, est la plus haute qui ne soit pas
+  commencée.

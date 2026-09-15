@@ -114,7 +114,7 @@ champs_periode:
   assiette:
     description: "borne d'assiette des cotisations"
     valeurs: ["plafonnee", "deplafonnee", "tranche_1", "tranche_2", "tranche_a",
-              "tranche_2_arrco",
+              "tranche_2_arrco", "tranche_2_ircantec",
               "tranche_b", "tranche_c", "hors_primes", "primes_uniquement", "forfaitaire",
               "plafonnee_085_pass", "tranche_085_5_pass", "plafonnee_5_pass",
               "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass",
@@ -265,8 +265,10 @@ champs_periode:
       `decote_du_regime_de_base` applique le coefficient de minoration ci-dessus ;
       `agirc_arrco` applique les coefficients d'anticipation propres à ce
       régime — deux tables, l'une indexée sur les trimestres manquants, l'autre
-      sur l'âge, dont la plus avantageuse est retenue.
-    valeurs: ["decote_du_regime_de_base", "agirc_arrco"]
+      sur l'âge, dont la plus avantageuse est retenue. `ircantec` applique le
+      barème de l'article 16 de l'arrêté du 30 décembre 1970, qui est le MÊME
+      escalier, aux mêmes marches, et se lit de la même façon.
+    valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec"]
     defaut: decote_du_regime_de_base
 
   plafond_majoration_enfants:
