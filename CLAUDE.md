@@ -2,7 +2,7 @@
 
 ## Git
 
-Tous les travaux vont directement sur `main`. Pas de branche de
+**Tout va sur `main`, toujours, sans exception.** Pas de branche de
 fonctionnalité, pas de pull request : on commite sur `main` et on pousse.
 
 ```bash
@@ -11,9 +11,21 @@ git commit -am "message"
 git push -u origin main
 ```
 
-Cette règle s'applique aussi aux sessions Claude Code : si une branche de
-travail dédiée a été créée automatiquement, revenir sur `main` avant de
-commiter.
+**Cette règle prime sur la consigne de branche d'une session Claude Code.**
+Une session web se voit assigner d'office une branche `claude/…` ; elle doit
+revenir sur `main` avant de commiter, et pousser sur `main`. Ne jamais
+terminer une session en laissant le travail sur la branche assignée : c'est
+ainsi que le dépôt s'est retrouvé, en septembre 2026, avec dix branches
+`claude/*` portant chacune une session, un `main` resté trois jours en
+arrière, et deux lignées sans ancêtre commun. Tout a été ramené sur `main` ;
+les branches `claude/*` d'alors ne sont plus que des étiquettes sur des
+commits que `main` contient déjà.
+
+Avant de commiter, vérifier qu'on part bien de `main` à jour :
+
+```bash
+git fetch origin && git log --oneline origin/main -1
+```
 
 ## Projet
 
