@@ -123,6 +123,125 @@ export class AgesAnnulationDecote extends TableParGeneration {
   }
 }
 
+/**
+ * Âges de la catégorie active et de la super-active, par génération.
+ *
+ * Le drapeau `categorie_active` existait dans la configuration sans qu'aucun
+ * statut le porte : le policier et l'aide-soignant étaient calculés comme des
+ * sédentaires, et l'âge du sédentaire leur était opposé. Cette table porte les
+ * trois paramètres que le classement déplace — l'âge d'ouverture (l'âge
+ * anticipé ou minoré de L. 24, I, 1°), l'âge d'annulation de la décote (la
+ * limite d'âge du grade, puis l'article L. 14 bis), la durée de services
+ * classés exigée — pour les deux classements, lus en escalier sur la
+ * génération.
+ */
+export class AgesCategorieActive {
+  constructor(paquet) {
+    this._table = paquet.categorie_active ?? {};
+    this._generations = {};
+    for (const [classement, valeurs] of Object.entries(this._table)) {
+      this._generations[classement] = Object.keys(valeurs).map(Number)
+        .sort((a, b) => a - b);
+    }
+  }
+
+  get classements() {
+    return Object.keys(this._table).sort();
+  }
+
+  /**
+   * @returns {{ageOuverture: number, ageAnnulation: number,
+   *            servicesRequis: number, fiabilite: number} | null}
+   */
+  derogation(classement, generation) {
+    const generations = this._generations[classement];
+    if (generations === undefined || generations.length === 0
+        || generation < generations[0]) {
+      return null;
+    }
+    let applicable = generations[0];
+    for (const candidate of generations) {
+      if (candidate > generation) {
+        break;
+      }
+      applicable = candidate;
+    }
+    const ligne = this._table[classement][String(applicable)];
+    return {
+      ageOuverture: ligne[0],
+      ageAnnulation: ligne[1],
+      servicesRequis: ligne[2],
+      fiabilite: ligne[3],
+    };
+  }
+}
+
+/**
+ * Durée de services qui ouvre la pension militaire, PAR ANNÉE D'ATTEINTE.
+ *
+ * La pension militaire ne s'ouvre pas à un âge mais à une durée : dix-sept ans
+ * de services effectifs pour un non-officier, vingt-sept pour un officier
+ * (L. 24, II), quinze et vingt-cinq avant la loi du 9 novembre 2010. La clé
+ * n'est pas la génération : l'article 4 du décret n° 2011-2103 indexe le
+ * relèvement sur l'année où l'ancienne durée est atteinte.
+ */
+export class DureesServicesMilitaires {
+  constructor(paquet) {
+    this._table = paquet.durees_services_militaires ?? {};
+    this._annees = {};
+    for (const [categorie, valeurs] of Object.entries(this._table)) {
+      this._annees[categorie] = Object.keys(valeurs).map(Number).sort((a, b) => a - b);
+    }
+  }
+
+  get categories() {
+    return Object.keys(this._table).sort();
+  }
+
+  /** Durée d'avant la loi de 2010 — quinze ans, ou vingt-cinq. */
+  dureeDeBase(categorie) {
+    const annees = this._annees[categorie];
+    if (annees === undefined || annees.length === 0) {
+      return null;
+    }
+    return this._table[categorie][String(annees[0])][0];
+  }
+
+  /** @returns {[number, number] | null} années requises et fiabilité. */
+  anneesRequises(categorie, anneeAtteinte) {
+    const annees = this._annees[categorie];
+    if (annees === undefined || annees.length === 0) {
+      return null;
+    }
+    let applicable = annees[0];
+    for (const candidate of annees) {
+      if (candidate > anneeAtteinte) {
+        break;
+      }
+      applicable = candidate;
+    }
+    return this._table[categorie][String(applicable)];
+  }
+}
+
+/**
+ * Âge auquel la pension militaire différée entre en jouissance.
+ *
+ * Les 2° à 4° de l'article L. 25 servent une pension au militaire qui part
+ * avant la durée d'ouverture, à condition qu'il ait quinze ans de services,
+ * mais à « l'âge défini à l'article L. 161-17-2 […] abaissé de dix années ».
+ */
+export class AgesJouissanceMilitaire extends TableParGeneration {
+  constructor(paquet) {
+    super(paquet.ages_jouissance_militaire);
+  }
+
+  /** @returns {[number, number] | null} âge et fiabilité. */
+  age(generation) {
+    return this.valeur(generation);
+  }
+}
+
 /** Coefficient de minoration du taux plein par trimestre manquant. */
 export class CoefficientsMinoration extends TableParGeneration {
   constructor(paquet) {
@@ -720,7 +839,14 @@ export class PeriodeRegime {
 export class Regime {
   constructor(fiche) {
     Object.assign(this, fiche);
-    this.periodes = fiche.periodes.map((p) => new PeriodeRegime(p));
+    // Le code du régime est ESTAMPILLÉ sur chaque période, comme le fait le
+    // chargeur Python, plutôt que porté par le paquet : une période circule
+    // seule dans le moteur — `ageOuverture(periode, carriere)` ne reçoit
+    // qu'elle — et certaines règles ont besoin de savoir de quel régime elle
+    // vient. Le répéter dans le paquet coûtait cent trente kilo-octets.
+    this.periodes = fiche.periodes.map(
+      (p) => new PeriodeRegime({ ...p, regime: fiche.code }),
+    );
   }
 
   /**
@@ -899,6 +1025,71 @@ export class Affiliations {
    */
   sansEmployeur(affiliation) {
     return Boolean((this._profils[affiliation] ?? {}).sans_employeur);
+  }
+
+  /**
+   * Classement de l'emploi : "active", "super_active" ou null.
+   *
+   * Le classement tient à l'EMPLOI, pas à la personne ni au régime : un
+   * aide-soignant et un rédacteur territorial cotisent à la même CNRACL, et
+   * l'un liquide cinq ans avant l'autre. Aucune donnée de carrière ne permet de
+   * le deviner ; c'est donc le statut déclaré qui le porte.
+   */
+  categorieActive(affiliation) {
+    const classement = (this._profils[affiliation] ?? {}).categorie_active ?? null;
+    if (classement === null) {
+      return null;
+    }
+    if (classement !== "active" && classement !== "super_active") {
+      throw new Error(
+        `${affiliation} : classement inconnu ${classement} `
+        + "(attendu 'active' ou 'super_active')",
+      );
+    }
+    return classement;
+  }
+
+  /**
+   * Catégorie militaire : "non_officier", "officier" ou null. Les militaires
+   * relèvent du même régime que les fonctionnaires civils de l'État, mais leur
+   * pension ne s'ouvre pas à un âge : elle s'ouvre à une durée de services.
+   */
+  pensionMilitaire(affiliation) {
+    const categorie = (this._profils[affiliation] ?? {}).pension_militaire ?? null;
+    if (categorie === null) {
+      return null;
+    }
+    if (categorie !== "non_officier" && categorie !== "officier") {
+      throw new Error(
+        `${affiliation} : catégorie militaire inconnue ${categorie} `
+        + "(attendu 'non_officier' ou 'officier')",
+      );
+    }
+    return categorie;
+  }
+
+  /** Statuts classés en catégorie active, et leur classement. */
+  get classementsActifs() {
+    const table = {};
+    for (const code of this.codes) {
+      const classement = this.categorieActive(code);
+      if (classement !== null) {
+        table[code] = classement;
+      }
+    }
+    return table;
+  }
+
+  /** Statuts militaires, et leur catégorie. */
+  get categoriesMilitaires() {
+    const table = {};
+    for (const code of this.codes) {
+      const categorie = this.pensionMilitaire(code);
+      if (categorie !== null) {
+        table[code] = categorie;
+      }
+    }
+    return table;
   }
 
   /** Régimes applicables à ce statut cette année-là.

@@ -15,6 +15,7 @@ niveaux d'entrée sont proposés, du plus précis au plus sommaire :
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
@@ -254,6 +255,82 @@ class Carriere:
     @cached_property
     def annees_cotisees(self) -> tuple[int, ...]:
         return tuple(ligne.annee for ligne in self.lignes if ligne.cotise)
+
+    def _lignes_de_service(self, affiliations: Iterable[str],
+                           jusqu_a: int | None = None
+                           ) -> list[AnneeCarriere]:
+        """Les années effectivement servies dans l'un de ces statuts.
+
+        « Services effectifs » au sens du code des pensions : les années
+        travaillées, non les années validées. Une interruption — chômage,
+        maladie, éducation d'un enfant — ne sert pas, et ``cotise`` la range
+        déjà du bon côté.
+        """
+        codes = set(affiliations)
+        return [ligne for ligne in self.lignes
+                if ligne.affiliation in codes and ligne.cotise
+                and (jusqu_a is None or ligne.annee <= jusqu_a)]
+
+    def duree_de_service(self, affiliations: Iterable[str],
+                         jusqu_a: int | None = None) -> float:
+        """Années de service accomplies dans ces statuts, bornes comprises.
+
+        C'est la grandeur que le code des pensions oppose deux fois : dix-sept
+        ans de services ACTIFS pour ouvrir l'âge anticipé de la catégorie
+        active (L. 24, I, 1°), dix-sept ou vingt-sept ans de services EFFECTIFS
+        pour ouvrir la pension militaire (L. 24, II). Les années tronquées —
+        l'entrée dans la vie active, l'année de liquidation — comptent pour ce
+        qu'elles couvrent, comme partout ailleurs dans le modèle.
+        """
+        return sum(ligne.fraction_annee
+                   for ligne in self._lignes_de_service(affiliations, jusqu_a))
+
+    def date_de_service(self, affiliations: Iterable[str],
+                        annees: float) -> DateMois | None:
+        """Mois où la durée de service demandée est atteinte, ``None`` sinon.
+
+        La durée commande un ÂGE — celui auquel le militaire peut liquider —
+        et une ANNÉE — celle à laquelle se lit le relèvement de la durée
+        requise. Les deux se lisent sur cette date.
+
+        **Convention de placement dans l'année.** Une année pleine sert de
+        janvier à décembre ; une année tronquée sert à partir de son mois
+        d'entrée quand elle ouvre le statut — c'est le mois que le parcours a
+        daté —, et à partir de janvier sinon, l'année de liquidation étant
+        tronquée par la fin. Le modèle ne connaît la carrière qu'à l'année :
+        cette convention est ce qui en tire un mois, et elle ne peut se
+        tromper que sur l'année d'entrée.
+        """
+        if annees <= 0:
+            return None
+        lignes = self._lignes_de_service(affiliations)
+        if not lignes:
+            return None
+        premiere = lignes[0].annee
+        cumul = 0.0
+        for ligne in lignes:
+            mois_servis = round(ligne.fraction_annee * MOIS_PAR_AN)
+            if mois_servis <= 0:
+                continue
+            if ligne.annee == premiere and mois_servis < MOIS_PAR_AN:
+                entree = self.date_entree(ligne.affiliation)
+                debut = entree.mois if entree is not None and entree.annee == ligne.annee \
+                    else MOIS_PAR_AN - mois_servis + 1
+            else:
+                debut = 1
+            if cumul + ligne.fraction_annee >= annees - 1e-9:
+                manque = max(1, en_mois(annees - cumul))
+                return DateMois(ligne.annee, 1).plus_mois(debut - 1 + manque - 1)
+            cumul += ligne.fraction_annee
+        return None
+
+    def age_de_service(self, affiliations: Iterable[str],
+                       annees: float) -> float | None:
+        """Âge auquel la durée de service demandée est atteinte."""
+        date = self.date_de_service(affiliations, annees)
+        if date is None:
+            return None
+        return (date.rang - self.date_naissance.rang) / MOIS_PAR_AN
 
     @cached_property
     def trimestres_actuels(self) -> int:
@@ -721,6 +798,55 @@ class Affiliations:
         répartition d'un salarié. Le taux y est le bon ; la répartition, non.
         """
         return bool(self._profils.get(affiliation, {}).get("sans_employeur", False))
+
+    def categorie_active(self, affiliation: str) -> str | None:
+        """Classement de l'emploi : ``active``, ``super_active`` ou rien.
+
+        Le classement tient à l'EMPLOI, pas à la personne ni au régime : un
+        aide-soignant et un rédacteur territorial cotisent à la même CNRACL, et
+        l'un liquide cinq ans avant l'autre. Aucune donnée de carrière — revenu,
+        régime, âge — ne permet de le deviner ; c'est donc le statut déclaré qui
+        le porte, comme il porte déjà l'absence d'employeur.
+        """
+        classement = self._profils.get(affiliation, {}).get("categorie_active")
+        if classement is None:
+            return None
+        if classement not in ("active", "super_active"):
+            raise ValueError(
+                f"{affiliation} : classement inconnu {classement!r} "
+                "(attendu 'active' ou 'super_active')"
+            )
+        return classement
+
+    def pension_militaire(self, affiliation: str) -> str | None:
+        """Catégorie militaire : ``non_officier``, ``officier`` ou rien.
+
+        Les militaires relèvent du même régime que les fonctionnaires civils de
+        l'État — le code s'appelle « des pensions civiles ET MILITAIRES » — mais
+        leur pension ne s'ouvre pas à un âge : elle s'ouvre à une durée de
+        services, différente selon qu'ils sont officiers ou non.
+        """
+        categorie = self._profils.get(affiliation, {}).get("pension_militaire")
+        if categorie is None:
+            return None
+        if categorie not in ("non_officier", "officier"):
+            raise ValueError(
+                f"{affiliation} : catégorie militaire inconnue {categorie!r} "
+                "(attendu 'non_officier' ou 'officier')"
+            )
+        return categorie
+
+    @property
+    def classements_actifs(self) -> dict[str, str]:
+        """Statuts classés en catégorie active, et leur classement."""
+        return {code: self.categorie_active(code) for code in self.codes
+                if self.categorie_active(code) is not None}
+
+    @property
+    def categories_militaires(self) -> dict[str, str]:
+        """Statuts militaires, et leur catégorie."""
+        return {code: self.pension_militaire(code) for code in self.codes
+                if self.pension_militaire(code) is not None}
 
     def regimes(self, affiliation: str, annee: int,
                 annee_entree: int | DateMois | None = None,

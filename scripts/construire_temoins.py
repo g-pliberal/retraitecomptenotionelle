@@ -67,7 +67,12 @@ GENERATIONS_BALAYEES = (1925, 1935, 1945, 1955, 1965)
 
 STATUTS = (
     "salarie_prive_non_cadre", "salarie_prive_cadre", "fonctionnaire_etat",
-    "fonctionnaire_territorial_hospitalier", "contractuel_public", "agent_sncf",
+    "fonctionnaire_etat_actif", "fonctionnaire_etat_super_actif",
+    "fonctionnaire_territorial_hospitalier",
+    "fonctionnaire_territorial_hospitalier_actif",
+    "fonctionnaire_territorial_hospitalier_super_actif",
+    "ouvrier_etat_actif", "militaire", "militaire_officier",
+    "contractuel_public", "agent_sncf",
     "agent_ratp", "agent_ieg", "artisan", "commercant", "profession_liberale",
     "liberal_non_reglemente",
     "exploitant_agricole", "salarie_agricole", "avocat", "marin",

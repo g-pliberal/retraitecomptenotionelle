@@ -213,6 +213,83 @@ export class Carriere {
   }
 
   /**
+   * Les années effectivement servies dans l'un de ces statuts.
+   *
+   * « Services effectifs » au sens du code des pensions : les années
+   * travaillées, non les années validées. Une interruption ne sert pas, et
+   * `cotise` la range déjà du bon côté.
+   */
+  _lignesDeService(affiliations, jusquA = null) {
+    const codes = new Set(affiliations);
+    return this.lignes.filter(
+      (ligne) => codes.has(ligne.affiliation) && ligne.cotise
+        && (jusquA === null || ligne.annee <= jusquA),
+    );
+  }
+
+  /**
+   * Années de service accomplies dans ces statuts, bornes comprises.
+   *
+   * C'est la grandeur que le code des pensions oppose deux fois : dix-sept ans
+   * de services ACTIFS pour ouvrir l'âge anticipé de la catégorie active
+   * (L. 24, I, 1°), dix-sept ou vingt-sept ans de services EFFECTIFS pour
+   * ouvrir la pension militaire (L. 24, II).
+   */
+  dureeDeService(affiliations, jusquA = null) {
+    return this._lignesDeService(affiliations, jusquA).reduce(
+      (total, ligne) => total + ligne.fraction_annee,
+      0,
+    );
+  }
+
+  /**
+   * Mois où la durée de service demandée est atteinte, null sinon.
+   *
+   * CONVENTION DE PLACEMENT DANS L'ANNÉE : une année pleine sert de janvier à
+   * décembre ; une année tronquée sert à partir de son mois d'entrée quand elle
+   * ouvre le statut, et à partir de janvier sinon — l'année de liquidation
+   * étant tronquée par la fin.
+   */
+  dateDeService(affiliations, annees) {
+    if (annees <= 0) {
+      return null;
+    }
+    const lignes = this._lignesDeService(affiliations);
+    if (lignes.length === 0) {
+      return null;
+    }
+    const premiere = lignes[0].annee;
+    let cumul = 0;
+    for (const ligne of lignes) {
+      const moisServis = Math.round(ligne.fraction_annee * MOIS_PAR_AN);
+      if (moisServis <= 0) {
+        continue;
+      }
+      let debut = 1;
+      if (ligne.annee === premiere && moisServis < MOIS_PAR_AN) {
+        const entree = this.dateEntree(ligne.affiliation);
+        debut = entree !== null && entree.annee === ligne.annee
+          ? entree.mois
+          : MOIS_PAR_AN - moisServis + 1;
+      }
+      if (cumul + ligne.fraction_annee >= annees - 1e-9) {
+        const manque = Math.max(1, enMois(annees - cumul));
+        return new DateMois(ligne.annee, 1).plusMois(debut - 1 + manque - 1);
+      }
+      cumul += ligne.fraction_annee;
+    }
+    return null;
+  }
+
+  /** Âge auquel la durée de service demandée est atteinte. */
+  ageDeService(affiliations, annees) {
+    const date = this.dateDeService(affiliations, annees);
+    return date === null
+      ? null
+      : (date.rang - this.dateNaissance.rang) / MOIS_PAR_AN;
+  }
+
+  /**
    * Trimestres validés au sens du droit en vigueur, tous régimes.
    *
    * Bornés à l'année de liquidation : une ligne postérieure décrit une activité

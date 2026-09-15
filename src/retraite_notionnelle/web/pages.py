@@ -1087,7 +1087,7 @@ chaque modification par les contrôles automatiques du dépôt :</p>
   courbe, le moment où deux d'entre elles se croisent — ne se lit qu'à l'œil.
   Le tableau de ses points en donne toutes les valeurs, mais lire une forme
   dans une colonne de nombres demande un effort que voir n'exige pas ;</li>
-  <li>certaines grilles — douze cas types sur sept générations, ou les cent onze
+  <li>certaines grilles — treize cas types sur sept générations, ou les cent onze
   lignes d'un tableau de graphique — restent larges et demandent un défilement
   sur petit écran ;</li>
   <li>le site exige JavaScript : le calcul se fait dans le navigateur, faute de
@@ -2719,11 +2719,11 @@ def _cas_types(contexte: Contexte) -> str:
             entete_de_ligne=True,
         )
 
-    # Les douze cas types, décrits une fois. Repliés, parce que la page se lit
+    # Les treize cas types, décrits une fois. Repliés, parce que la page se lit
     # d'abord par ses grilles ; dépliables, parce que la description est
     # nécessaire pour les comprendre.
     description_des_cas = (
-        "<details><summary>Ce que recouvre chacun des douze cas types</summary>"
+        "<details><summary>Ce que recouvre chacun des treize cas types</summary>"
         + g.gloses([(cas.libelle, cas.commentaire) for cas in CAS_TYPES])
         + "</details>"
     )
@@ -2738,7 +2738,7 @@ def _cas_types(contexte: Contexte) -> str:
 
     return f"""
 <h2 style="margin-top:0">Le cas général</h2>
-<p class="chapeau">Douze carrières représentatives × sept générations. Chaque
+<p class="chapeau">Treize carrières représentatives × sept générations. Chaque
 cellule est l'écart de pension par rapport au système actuel, à carrière
 identique : négatif = pension plus faible qu'aujourd'hui.</p>
 {description_des_cas}
@@ -2963,7 +2963,7 @@ def _cout(contexte: Contexte) -> str:
     ]
 
     # -- ce que la garantie vieillesse coûte, lue sur la distribution -------
-    # Une allocation différentielle ne se chiffre pas sur douze carrières : son
+    # Une allocation différentielle ne se chiffre pas sur treize carrières : son
     # coût est celui de la queue basse de la distribution des pensions, que
     # l'échantillon interrégimes de la DREES publie et que les cas types ne
     # savent pas décrire.
@@ -3181,7 +3181,7 @@ modélisé, c'est le <strong>rapport</strong> entre ce qui a été versé et ce 
 chaque système aurait versé aux mêmes retraités — la moyenne des écarts de
 pension, pondérée par le poids de chaque génération dans la masse de l'année.
 Les poids sont les effectifs réels de chaque génération, lus dans la pyramide
-des âges de l'INSEE ; les écarts viennent des douze cas types croisés avec
+des âges de l'INSEE ; les écarts viennent des treize cas types croisés avec
 {len(cout.generations)} générations, de {cout.generations[0]} à
 {cout.generations[-1]}.</p>
 
@@ -3265,10 +3265,10 @@ suit dit pourquoi et par quoi le remplacer. C'est d'ici
 <p>La garantie du scénario 6 est une allocation <strong>différentielle</strong> :
 elle ne verse que ce qui manque à une pension pour atteindre son plancher. Son
 coût est donc, tout entier, celui de la <strong>queue basse de la
-distribution</strong> des pensions — et douze carrières de référence ne
+distribution</strong> des pensions — et treize carrières de référence ne
 décrivent pas une distribution. Le tableau ci-dessus ne voit la garantie que par
 les cas types qui liquident à 65 ans ou après, c'est-à-dire par un seul des
-douze : il l'estime à {_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} sur
+treize : il l'estime à {_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} sur
 soixante-six ans, là où le barème appliqué à la vraie distribution coûte
 {_milliards(garantie_basse.cout_annuel_meur / vers_enquete, 0)} <em>par an</em>.
 Ce n'est pas une imprécision, c'est un chiffre faux, et il faut le remplacer.</p>
@@ -3483,7 +3483,7 @@ proches des règles actuelles, et moins le compte notionnel s'en écarte.</p>
   projections de population 2026, observée jusqu'en 2023. L'hypothèse levée
   valait ce qu'on disait qu'elle valait : elle déplaçait l'écart du scénario 2
   de six dixièmes de point sur soixante-six ans.</li>
-  <li><strong>Les douze cas types ne pèsent plus d'un poids égal</strong>, et
+  <li><strong>Les treize cas types ne pèsent plus d'un poids égal</strong>, et
   c'est ce qui a changé ici en dernier. Chacun porte l'effectif des retraités de
   sa caisse, publié par la DREES et lu année par année : l'agent de conduite
   pèse {g.pourcentage(cout.poids["agent_sncf_conduite"], decimales=1)} et non

@@ -96,6 +96,13 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
 class PeriodeRegime:
     """Jeu de paramètres d'un régime sur une plage d'années."""
 
+    #: Code du régime dont cette période vient. Une période circule seule dans
+    #: le moteur — `_age_ouverture(periode, carriere)` ne reçoit qu'elle —, et
+    #: certaines règles ont besoin de savoir DE QUEL RÉGIME elle est : la
+    #: catégorie active et la pension militaire n'avancent l'âge que dans les
+    #: régimes que leur statut route, non dans un régime spécial que la même
+    #: carrière traverserait par ailleurs.
+    regime: str
     debut: int
     fin: int | None
     type_calcul: str
@@ -790,6 +797,7 @@ class CatalogueRegimes:
             )
         periodes = tuple(
             PeriodeRegime(
+                regime=fiche["code"],
                 debut=int(p["debut"]),
                 fin=None if p.get("fin") is None else int(p["fin"]),
                 type_calcul=p["type_calcul"],

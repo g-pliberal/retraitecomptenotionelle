@@ -284,15 +284,28 @@ class Neutralisations:
     fonction publique, AVPF, périodes assimilées, garantie minimale de points,
     carrière longue, décote et surcote.
 
+    **La catégorie active est désormais servie**, et les âges de la pension
+    militaire avec elle : le classement de l'emploi ne se devine pas d'un revenu
+    et d'un régime, mais il se DÉCLARE, et sept statuts de
+    ``legislation/affiliations.yaml`` le portent — catégorie active et
+    super-active des trois fonctions publiques, ouvriers de l'État, militaires
+    officiers et non officiers. Le scénario 1 leur oppose l'âge anticipé ou
+    minoré de l'article L. 24, l'âge d'annulation de décote de l'article
+    L. 14 bis et, pour les militaires, la durée de services qui ouvre leur
+    pension. La ligne ``categorie_active`` ci-dessous dit donc, comme les
+    autres, ce que les scénarios notionnels retirent à un droit que l'étalon,
+    lui, sert.
+
     **Ce qu'il ne sert pas**, et qu'il ne peut donc pas retirer : la réversion,
     qui concerne le conjoint survivant et non l'assuré ; les bonifications de
-    SERVICE — dépaysement, campagne militaire, cinquième — et la catégorie
-    active, qui supposent de connaître le corps d'appartenance, la bonification
-    pour ENFANTS étant, elle, servie depuis qu'elle est datée ; la
-    pension majorée de référence du régime agricole ; les coefficients de
-    solidarité et majorants de l'Agirc-Arrco, dispositif éteint dont l'effet
-    temporaire serait représenté faussement par un modèle qui ne calcule qu'une
-    pension annuelle unique. Voir ``docs/limites.md``.
+    SERVICE — dépaysement, campagne militaire, cinquième —, qui supposent de
+    connaître le corps d'appartenance et le détail des services, la bonification
+    pour ENFANTS étant, elle, servie depuis qu'elle est datée ; la limite d'âge
+    de grade, qui ouvre la pension militaire quelle que soit la durée
+    accomplie ; la pension majorée de référence du régime agricole ; les
+    coefficients de solidarité et majorants de l'Agirc-Arrco, dispositif éteint
+    dont l'effet temporaire serait représenté faussement par un modèle qui ne
+    calcule qu'une pension annuelle unique. Voir ``docs/limites.md``.
     """
 
     minimum_contributif: bool = True

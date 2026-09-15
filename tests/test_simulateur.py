@@ -1329,7 +1329,8 @@ def test_les_trimestres_de_decote_sont_des_entiers(simulateur):
                 periode, carriere, carriere.annee_liquidation
             )
             retenus = scenario._trimestres_de_decote(
-                periode, carriere.trimestres_actuels, 168, age_depart, age_annulation
+                periode, carriere, carriere.trimestres_actuels, 168, age_depart,
+                age_annulation,
             )
             assert retenus == int(retenus), (generation, age_depart, retenus)
 
@@ -2759,7 +2760,7 @@ def test_l_age_d_annulation_du_ballet_de_l_opera_est_quarante_deux_ans(simulateu
     assert age_annulation == pytest.approx(42.0)
 
     trimestres = scenario._trimestres_de_decote(
-        periode, trimestres=88, requis=172, age_liquidation=40.0,
+        periode, carriere, trimestres=88, requis=172, age_liquidation=40.0,
         age_annulation=age_annulation,
     )
     assert trimestres == 8
@@ -3119,3 +3120,262 @@ def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
     assert apres.duree_requise_par_generation
     assert scenario._abattement_points(
         apres, carriere, 168, 150, 62.0, 1984) == pytest.approx(1.0)
+
+
+# -- catégorie active et pension militaire -----------------------------------
+
+
+def _pension_actuelle(simulateur, statut, generation, age, age_debut=22):
+    carriere = simulateur.carriere_simple(
+        annee_naissance=generation, sexe="H", affiliation=statut,
+        age_debut=age_debut, age_liquidation=age, niveau_salaire=1.1,
+        part_primes=0.22,
+    )
+    return simulateur.scenario_actuel.calculer(carriere)
+
+
+def test_la_categorie_active_oppose_l_age_anticipe_et_non_l_age_legal(simulateur):
+    """« Cinquante-sept ans s'il a accompli dix-sept ans de services dans des
+    emplois classés dans la catégorie active » (L. 24, I, 1°), et cinquante-deux
+    pour la super-active. Le drapeau existait dans `config.py` sans qu'aucun
+    statut le porte : l'aide-soignant et le policier étaient calculés comme des
+    sédentaires, et le modèle déclarait leur départ NON OUVERT.
+    """
+    sedentaire = _pension_actuelle(
+        simulateur, "fonctionnaire_territorial_hospitalier", 1965, 57)
+    assert sedentaire.motif_ouverture == "non_ouverte"
+
+    actif = _pension_actuelle(
+        simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 57)
+    assert actif.motif_ouverture == "age_legal"
+    assert actif.age_ouverture_opposable == pytest.approx(57.0)
+
+    super_actif = _pension_actuelle(
+        simulateur, "fonctionnaire_etat_super_actif", 1965, 52)
+    assert super_actif.motif_ouverture == "age_legal"
+    assert super_actif.age_ouverture_opposable == pytest.approx(52.0)
+
+
+def test_les_ages_classes_suivent_les_deux_montees_en_charge(simulateur):
+    """Loi du 9 novembre 2010 : 55 -> 57 ans à compter du 1er juillet 1956,
+    quatre mois puis cinq par génération (décret n° 2011-2103, article 2). Loi
+    du 14 avril 2023 : 57 -> 59 ans à compter du 1er septembre 1966, trois mois
+    par génération (article 10, XXIV, F).
+    """
+    def age(generation, mois=1):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=generation, mois_naissance=mois, sexe="H",
+            affiliation="fonctionnaire_etat_actif",
+            age_debut=22, age_liquidation=62,
+        )
+        periode = simulateur.catalogue["fonction_publique_etat"].periode(2023)
+        return simulateur.scenario_actuel._age_ouverture(periode, carriere)
+
+    assert age(1950) == pytest.approx(55.0)
+    assert age(1956, 3) == pytest.approx(55.0)
+    assert age(1956, 9) == pytest.approx(55.33)
+    assert age(1957) == pytest.approx(55.75)
+    assert age(1960) == pytest.approx(57.0)
+    assert age(1966, 3) == pytest.approx(57.0)
+    assert age(1966, 10) == pytest.approx(57.25)
+    assert age(1970) == pytest.approx(58.25)
+    assert age(1980) == pytest.approx(59.0)
+
+
+def test_sans_la_duree_de_services_classes_le_droit_commun_reprend(simulateur):
+    """« Cette faculté est ouverte à la condition que le fonctionnaire puisse se
+    prévaloir, au total, d'au moins dix-sept ans de services accomplis […] dits
+    services actifs. » Dix ans d'emploi classé en fin de carrière ne l'ouvrent
+    donc pas, et le statut déclaré n'y change rien.
+    """
+    def ouverture(age_bascule):
+        carriere = simulateur.carriere_parcours(
+            annee_naissance=1965, sexe="H", age_liquidation=57,
+            metiers=[
+                Metier("salarie_prive_non_cadre", 22, 1.1),
+                Metier("fonctionnaire_territorial_hospitalier_actif",
+                       age_bascule, 1.1),
+            ],
+        )
+        return simulateur.scenario_actuel.calculer(carriere).motif_ouverture
+
+    assert ouverture(47) == "non_ouverte"   # dix ans de services actifs
+    assert ouverture(37) == "age_legal"     # vingt ans
+
+
+def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulateur):
+    """L'article L. 14 retranche ses trimestres de la LIMITE D'ÂGE du grade :
+    soixante-deux ans en catégorie active, non soixante-sept. Un agent classé
+    parti à soixante ans subit huit trimestres de décote quand un sédentaire du
+    même âge en subit vingt — vingt pour cent de pension d'écart, là où le
+    plafond de vingt trimestres annulait l'écart à cinquante-sept ans.
+    """
+    periode = simulateur.catalogue["cnracl"].periode(2023)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H",
+        affiliation="fonctionnaire_territorial_hospitalier_actif",
+        age_debut=22, age_liquidation=60,
+    )
+    assert simulateur.scenario_actuel._age_taux_plein(periode, carriere) == (
+        pytest.approx(62.0))
+
+    sedentaire = _pension_actuelle(
+        simulateur, "fonctionnaire_territorial_hospitalier", 1965, 60)
+    actif = _pension_actuelle(
+        simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 60)
+    assert actif.pension_annuelle / sedentaire.pension_annuelle == (
+        pytest.approx(1.20, abs=0.01))
+    # À cinquante-sept ans, les deux décotes butent sur le plafond de vingt
+    # trimestres et l'écart de pension redevient nul : c'est ce que
+    # `docs/limites.md` disait du modèle d'avant, et qui reste vrai là.
+    assert (_pension_actuelle(simulateur,
+                              "fonctionnaire_territorial_hospitalier_actif",
+                              1965, 57).pension_annuelle
+            == pytest.approx(_pension_actuelle(
+                simulateur, "fonctionnaire_territorial_hospitalier",
+                1965, 57).pension_annuelle))
+
+
+def test_la_surcote_d_un_actif_se_compte_depuis_l_age_legal_de_droit_commun(simulateur):
+    """Le III de l'article L. 14 ne donne la majoration qu'« au-delà de l'âge
+    mentionné à l'article L. 161-17-2 », et le D du XXIV de l'article 10 de la
+    loi de 2023 le confirme pour les emplois classés : l'âge anticipé majoré de
+    cinq années, c'est-à-dire l'âge légal. La compter depuis cinquante-sept ans
+    paierait deux fois l'avantage du classement.
+    """
+    periode = simulateur.catalogue["cnracl"].periode(2023)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H",
+        affiliation="fonctionnaire_territorial_hospitalier_actif",
+        age_debut=22, age_liquidation=60,
+    )
+    scenario = simulateur.scenario_actuel
+    assert scenario._age_ouverture(periode, carriere) == pytest.approx(57.0)
+    assert scenario._age_ouverture_commun(periode, carriere) == pytest.approx(63.25)
+
+
+def test_la_pension_militaire_s_ouvre_a_une_duree_et_non_a_un_age(simulateur):
+    """« Lorsqu'un militaire non officier […] réunit, à la date de son admission
+    à la retraite, dix-sept ans de services effectifs » (L. 24, II, 2°), et
+    vingt-sept ans pour un officier. C'est le départ le plus précoce du
+    système : un engagé à dix-huit ans liquide à trente-cinq.
+    """
+    non_officier = _pension_actuelle(simulateur, "militaire", 1990, 40,
+                                     age_debut=18)
+    assert non_officier.motif_ouverture == "age_legal"
+    assert non_officier.age_ouverture_opposable == pytest.approx(34.92, abs=0.1)
+
+    officier = _pension_actuelle(simulateur, "militaire_officier", 1990, 50,
+                                 age_debut=22)
+    assert officier.age_ouverture_opposable == pytest.approx(48.92, abs=0.1)
+    # Le même officier parti avant ses vingt-sept ans de services n'a pas la
+    # jouissance immédiate : l'article L. 25 la lui diffère.
+    tot = _pension_actuelle(simulateur, "militaire_officier", 1990, 45,
+                            age_debut=22)
+    assert tot.age_ouverture_opposable == pytest.approx(54.0)
+    assert tot.motif_ouverture == "non_ouverte"
+
+
+def test_la_duree_militaire_se_lit_a_l_annee_ou_l_ancienne_est_atteinte(simulateur):
+    """Le relèvement de quinze à dix-sept ans est indexé sur « l'année au cours
+    de laquelle sont atteintes les limites de durée de services […]
+    antérieurement applicables » (décret n° 2011-2103, article 4), non sur la
+    génération. Un engagé à dix-huit ans en 1990 réunit ses quinze ans en 2004
+    et les garde ; engagé en 2000, il les réunit fin 2014 et en doit seize ans
+    et sept mois ; engagé en 2003, fin 2017, et il en doit dix-sept.
+    """
+    def ouverture(generation):
+        return _pension_actuelle(
+            simulateur, "militaire", generation, 45, age_debut=18,
+        ).age_ouverture_opposable
+
+    assert ouverture(1972) == pytest.approx(32.92, abs=0.02)   # quinze ans
+    assert ouverture(1982) == pytest.approx(34.50, abs=0.02)   # seize ans sept
+    assert ouverture(1985) == pytest.approx(34.92, abs=0.02)   # dix-sept ans
+
+
+def test_le_militaire_de_moins_de_quinze_ans_reste_au_droit_commun(simulateur):
+    """Le 5° de l'article L. 25 : « lorsqu'ils ont accompli […] moins de quinze
+    ans de services effectifs », la pension n'est due qu'à l'âge légal. Le
+    militaire qui repart dans le privé après dix ans est alors un assuré comme
+    un autre.
+    """
+    carriere = simulateur.carriere_parcours(
+        annee_naissance=1975, sexe="H", age_liquidation=64,
+        metiers=[Metier("militaire", 19, 1.0),
+                 Metier("salarie_prive_non_cadre", 29, 1.0)],
+    )
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    assert resultat.age_ouverture_opposable == pytest.approx(64.0)
+
+
+def test_la_decote_du_militaire_est_celle_du_II_de_l_article_L_14(simulateur):
+    """Elle ne compte pas des âges mais des SERVICES : les trimestres manquants
+    pour atteindre la durée d'ouverture augmentée de dix trimestres, dans la
+    limite de dix. Un sous-officier parti à quarante ans avec dix-sept ans de
+    services perd dix trimestres, non les vingt du barème des civils.
+    """
+    scenario = simulateur.scenario_actuel
+    periode = simulateur.catalogue["fonction_publique_etat"].periode(2023)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1990, sexe="H", affiliation="militaire",
+        age_debut=18, age_liquidation=35,
+    )
+    _, age_annulation, _ = scenario._decote(periode, carriere,
+                                            carriere.annee_liquidation)
+    trimestres = scenario._trimestres_de_decote(
+        periode, carriere, trimestres=68, requis=172, age_liquidation=35.0,
+        age_annulation=age_annulation,
+    )
+    assert trimestres == 10
+
+    # Dix-neuf ans et demi de services : plus aucun trimestre manquant.
+    longue = simulateur.carriere_simple(
+        annee_naissance=1990, sexe="H", affiliation="militaire",
+        age_debut=18, age_liquidation=38,
+    )
+    assert scenario._trimestres_de_decote(
+        periode, longue, trimestres=80, requis=172, age_liquidation=38.0,
+        age_annulation=age_annulation,
+    ) == 0
+
+
+def test_le_militaire_n_a_pas_de_surcote(simulateur):
+    """Le III de l'article L. 14 ne la donne qu'au « fonctionnaire civil ». Sans
+    cette réserve, l'âge d'ouverture très bas d'un militaire aurait fait
+    surcoter chaque trimestre passé au-delà de trente-cinq ans.
+    """
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1990, sexe="H", affiliation="militaire",
+        age_debut=18, age_liquidation=55,
+    )
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    civile = next(pension for pension in resultat.pensions_par_regime
+                  if pension.regime == "fonction_publique_etat")
+    # Le taux plein de la fonction publique est de 75 % : une surcote le
+    # dépasserait, et c'est ce que l'âge d'ouverture très bas d'un militaire
+    # aurait produit sur chaque trimestre passé au-delà de trente-cinq ans.
+    assert "taux 75.000%" in civile.detail
+
+
+def test_la_derogation_ne_deborde_pas_sur_un_regime_special(simulateur):
+    """Plusieurs régimes SPÉCIAUX servent eux aussi une catégorie active, et
+    leur fiche le déclare — la SNCF a ses agents de conduite. Ce n'est pas la
+    même : le droit dérogatoire ne vaut que dans les régimes que le statut
+    classé route. Sans cette garde, un cheminot devenu agent territorial classé
+    aurait vu sa pension SNCF liquidée à l'âge de la fonction publique et
+    décotée sur une limite d'âge de grade qu'il n'a jamais eue.
+    """
+    carriere = simulateur.carriere_parcours(
+        annee_naissance=1965, sexe="H", age_liquidation=57,
+        metiers=[Metier("agent_sncf", 20, 1.1),
+                 Metier("fonctionnaire_territorial_hospitalier_actif", 35, 1.1)],
+    )
+    scenario = simulateur.scenario_actuel
+    sncf = simulateur.catalogue["sncf"].periode(2023)
+    cnracl = simulateur.catalogue["cnracl"].periode(2023)
+    assert "categorie_active" in sncf.avantages_non_contributifs
+    assert scenario._age_ouverture(sncf, carriere) == pytest.approx(51.67, abs=0.01)
+    assert scenario._age_ouverture(cnracl, carriere) == pytest.approx(57.0)
+    assert scenario._age_taux_plein(sncf, carriere) == pytest.approx(56.67, abs=0.01)
+    assert scenario._age_taux_plein(cnracl, carriere) == pytest.approx(62.0)

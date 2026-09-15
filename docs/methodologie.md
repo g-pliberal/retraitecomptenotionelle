@@ -712,6 +712,80 @@ deux par an, pour les droits ouverts de 2004 à 2008
 (`legislation/duree_requise_fonction_publique.csv`) ; la durée du régime
 général, par génération, ne vaut pour la fonction publique qu'à compter de 2009.
 
+#### La catégorie active et la pension militaire
+
+Le drapeau `categorie_active` a longtemps existé dans la configuration sans
+qu'aucun statut le porte : un policier, un aide-soignant, un surveillant
+pénitentiaire étaient calculés comme des sédentaires, et l'âge du sédentaire
+leur était opposé. Ils ne le sont plus.
+
+**Ce qui ne peut pas se déduire, se déclare.** Le classement d'un emploi en
+catégorie active tient à l'EMPLOI, non à la personne ni au régime : un
+aide-soignant et un rédacteur territorial cotisent à la même CNRACL, et l'un
+liquide cinq ans avant l'autre. Aucune donnée de carrière — revenu, régime,
+âge — ne permet de le deviner. C'est donc le STATUT qui le porte, comme il
+porte déjà l'absence d'employeur : `legislation/affiliations.yaml` compte cinq
+statuts classés — catégorie active et super-active de l'État et de la CNRACL,
+ouvriers de l'État — et deux statuts militaires.
+
+**Ce que le classement déplace**, et qui est lu dans
+`legislation/categorie_active.csv` :
+
+* l'**âge d'ouverture** — l'âge anticipé de l'article L. 24, I, 1°, « l'âge
+  mentionné au premier alinéa de l'article L. 161-17-2 du code de la sécurité
+  sociale diminué de cinq années », et l'âge minoré, le même diminué de dix :
+  57 et 52 ans avant la réforme de 2023, 59 et 54 après elle, avec les deux
+  montées en charge — celle de la loi du 9 novembre 2010, qui part de 55 et
+  50 ans, et celle du F du XXIV de l'article 10 de la loi du 14 avril 2023,
+  trois mois par génération à compter du 1<sup>er</sup> septembre 1966 et du
+  1<sup>er</sup> septembre 1971 ;
+* l'**âge d'annulation de la décote** — 62 et 57 ans, la limite d'âge du grade,
+  que l'article L. 14 bis a reprise depuis 2023 sous la forme « âge anticipé
+  majoré de trois années ». C'est là que le classement pèse le plus : le barème
+  de l'article L. 14 retranche ses trimestres de cette limite-là et non de
+  67 ans, si bien qu'un agent classé parti à 60 ans subit huit trimestres de
+  décote quand un sédentaire du même âge en subit vingt ;
+* la **condition de durée** — dix-sept ans de services actifs, vingt-sept de
+  services super-actifs. Sans elle, l'assuré reste au droit commun : le texte
+  écrit que la faculté « est ouverte à la condition que le fonctionnaire puisse
+  se prévaloir, au total, d'au moins dix-sept ans de services accomplis […] dits
+  services actifs », et le modèle compte ces années sur la carrière elle-même.
+
+La **surcote**, elle, se compte toujours depuis l'âge légal de droit commun : le
+III de l'article L. 14 ne la donne qu'« au-delà de l'âge mentionné à l'article
+L. 161-17-2 », et le D du XXIV de l'article 10 de la loi de 2023 le confirme
+pour les emplois classés — l'âge anticipé majoré de cinq années, l'âge minoré
+majoré de dix, c'est-à-dire l'âge légal dans les deux cas. La compter depuis
+57 ans aurait payé deux fois l'avantage du classement.
+
+**La pension militaire ne s'ouvre pas à un âge mais à une durée.** Le II de
+l'article L. 24 : elle est liquidée « lorsqu'un officier […] réunit, à la date
+de son admission à la retraite, vingt-sept ans de services effectifs » et
+« lorsqu'un militaire non officier […] réunit […] dix-sept ans de services
+effectifs » — vingt-cinq et quinze ans avant la loi du 9 novembre 2010, dont le
+relèvement est indexé sur l'ANNÉE où l'ancienne durée est atteinte et non sur la
+génération (`legislation/duree_services_militaires.csv`, article 4 du décret
+n° 2011-2103). C'est le départ le plus précoce du système : un engagé à
+dix-huit ans liquide à trente-cinq. Qui n'atteint pas cette durée mais a quinze
+ans de services attend l'âge de jouissance différée de l'article L. 25
+(`legislation/age_jouissance_militaire.csv`) ; en deçà de quinze ans, il n'y a
+pas de pension militaire et c'est l'âge légal qui vaut.
+
+Deux règles suivent le militaire. Il n'a **pas de surcote** — le III de
+l'article L. 14 ne la donne qu'au « fonctionnaire civil ». Et sa **décote** est
+celle du II du même article, qui ne compte pas des âges : elle oppose « le
+nombre de trimestres manquants […] pour atteindre […] la durée de services
+militaires effectifs nécessaire pour pouvoir bénéficier d'une liquidation de la
+pension […] augmentée d'une durée de services effectifs de dix trimestres »,
+dans la limite de dix trimestres et non de vingt. Un sous-officier parti à
+quarante ans avec dix-sept ans de services perd les dix trimestres qui le
+séparent de dix-neuf ans et demi, non le quart de sa pension.
+
+Ce qui reste dehors est écrit dans `limites.md` : la LIMITE D'ÂGE DE GRADE, qui
+ouvre la pension militaire quelle que soit la durée accomplie et qui sert d'âge
+d'annulation de la décote au militaire liquidant à cinquante-deux ans ou plus
+(L. 14 bis, 4°), suppose de connaître le grade, que la saisie ne demande pas.
+
 #### La cascade des avantages non contributifs, dans l'ordre du droit
 
 L'ordre n'est pas indifférent : chaque étage se calcule sur le résultat du
@@ -1132,7 +1206,7 @@ s'arrête : un assuré parti à 62 ans avec une petite pension ne reçoit rien d
 le scénario 6, alors qu'il recevrait la garantie trois ans plus tard. Et les
 cas types liquident presque tous avant 65 ans : la masse de garantie qu'ils
 produisent n'est pas basse, elle est FAUSSE. Une allocation différentielle ne se
-chiffre pas sur douze carrières, parce que son coût est tout entier celui de la
+chiffre pas sur treize carrières, parce que son coût est tout entier celui de la
 queue basse de la distribution des pensions ; la page Coût porte donc, à côté,
 le barème appliqué à la distribution que publie l'échantillon interrégimes de
 retraités de la DREES — 18,4 milliards par an aux pensions d'aujourd'hui,
@@ -1162,14 +1236,14 @@ retraités :
 coût du système S en t = dépense observée en t × (masse S en t / masse actuelle en t)
 ```
 
-La masse d'une année est reconstituée en croisant les douze cas types avec les
+La masse d'une année est reconstituée en croisant les treize cas types avec les
 générations de 1880 à 2015, de cinq en cinq. Chaque couple pèse le produit de
 trois choses : sa pension en euros constants, l'effectif réel des classes d'âge
 que sa génération représente — lu dans la pyramide des âges de l'INSEE, non
 supposé —, et le POIDS DE SON CAS TYPE.
 
-Ce troisième terme est le dernier à avoir cessé d'être une convention. Les douze
-cas types ont longtemps pesé à égalité, faute de source ; chacun porte désormais
+Ce troisième terme est le dernier à avoir cessé d'être une convention. Les cas
+types ont longtemps pesé à égalité, faute de source ; chacun porte désormais
 l'effectif des retraités de sa caisse, que l'enquête annuelle auprès des caisses
 de retraite publie de 2004 à 2024. Une caisse réclamée par plusieurs cas types
 se partage également entre eux — la Cnav est celle des quatre carrières du

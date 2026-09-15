@@ -141,7 +141,7 @@ def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict[str, float]:
             min(resultat.trimestres_valides, proratisation) / proratisation
         ),
         "decote_trimestres": float(scenario._trimestres_de_decote(
-            periode, resultat.trimestres_valides, requis,
+            periode, carriere, resultat.trimestres_valides, requis,
             profil["liquidation"] - profil["naissance"], age_annulation,
         )),
         "taux_de_liquidation": resultat.taux_liquidation,
@@ -320,7 +320,7 @@ def _notre_calcul_fonction_publique(simulateur: Simulateur, profil: dict
             min(resultat.trimestres_valides, proratisation) / proratisation
         ),
         "decote_trimestres": float(scenario._trimestres_de_decote(
-            periode, resultat.trimestres_valides, requis,
+            periode, carriere, resultat.trimestres_valides, requis,
             profil["liquidation"] - profil["naissance"], age_annulation,
         )),
         "taux_de_liquidation": resultat.taux_liquidation,

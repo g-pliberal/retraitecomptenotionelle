@@ -25,8 +25,8 @@ Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie de
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py` (plus de trois mille
 lignes) et dans le portage `moteur/js/` (douze mille lignes), puis dans les
 témoins. Les actions 1 à 3 ne touchent que les données et la page Coût ; les
-actions 5, 7, 9 et 10 touchent les deux moteurs, et l'action 4 ne les a touchés
-qu'en surface — deux lignes de chaque côté.
+actions 7, 9 et 10 touchent les deux moteurs, comme l'a fait l'action 5, et
+l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
 
 ---
 
@@ -396,7 +396,7 @@ qu'il faut en retenir.
 
 ## Second rang — réel, mais plus cher ou plus étroit
 
-### 5. Catégorie active et militaires — `à faire`
+### 5. Catégorie active et militaires — `fait`
 
 **Pourquoi.** Policiers, hospitaliers, militaires : des populations larges, et
 précisément les départs précoces au cœur de la thèse. Le drapeau
@@ -411,6 +411,76 @@ super-active), âge d'annulation propre, condition de durée de services actifs
 à lire dans le code des pensions. Puis un statut `militaire` : pension après
 quinze ou dix-sept ans, limite d'âge de grade. Touche les deux moteurs et les
 témoins.
+
+**Ce que ça a déplacé.** Sept statuts de plus — cinq classés (catégorie active
+et super-active de l'État et de la CNRACL, ouvriers de l'État), deux militaires
+—, trois tables de législation lues dans les textes par l'index LEGI, un cas
+type de plus, et quatorze tests. Aucun des 427 cas de témoin existants ne
+bouge : le changement est strictement additif pour les statuts de droit commun,
+et c'est ce qui dit qu'il n'a rien cassé chez le sédentaire.
+
+- *Le classement ne se devine pas, il se déclare — et c'était le nœud.* Un
+  aide-soignant et un rédacteur territorial cotisent à la même CNRACL, dans la
+  même fiche, au même taux, et l'un liquide cinq ans avant l'autre. Aucune
+  donnée de carrière ne les distingue. Le classement est donc porté par le
+  STATUT, comme `sans_employeur` l'est depuis les non-salariés : c'est
+  l'assuré qui choisit « catégorie active », et le modèle vérifie ensuite sur
+  la carrière la condition de durée que l'article L. 24 exige — dix-sept ans de
+  services actifs, vingt-sept de services super-actifs. Dix ans d'emploi classé
+  en fin de carrière ne l'ouvrent pas.
+- *L'âge d'ouverture n'était que la moitié du sujet ; l'âge d'ANNULATION était
+  l'autre.* `limites.md` disait que l'écart de pension restait nul, la décote
+  étant plafonnée à vingt trimestres dans les deux cas. C'est vrai au seul âge
+  anticipé, et faux partout ailleurs : l'article L. 14 retranche ses trimestres
+  de la LIMITE D'ÂGE du grade — soixante-deux ans en catégorie active, non
+  soixante-sept —, si bien qu'un agent classé né en 1965 parti à soixante ans
+  touche **20 % de plus** que le sédentaire de même carrière, 13 % à
+  cinquante-neuf ans, 18 % à soixante et un. Le cas type
+  `fonctionnaire_actif`, qui liquide à cinquante-sept, gagne 7,4 % à la
+  génération 1950 et 5 % à 1960 ; aux générations récentes sa pension ne bouge
+  pas, mais son départ cesse d'être déclaré **non ouvert**, ce qu'il était
+  depuis toujours.
+- *La pension militaire ne s'ouvre pas à un âge, et le modèle n'avait pas
+  d'autre horloge.* Le II de l'article L. 24 la liquide à la DURÉE :
+  dix-sept ans de services effectifs pour un non-officier, vingt-sept pour un
+  officier. Un engagé à dix-huit ans liquide à trente-cinq — le départ le plus
+  précoce du système, plus précoce que l'Opéra. Le relèvement de quinze à
+  dix-sept ans est en outre indexé sur l'ANNÉE où l'ancienne durée est atteinte
+  (décret n° 2011-2103, article 4), et non sur la génération : c'est la seule
+  table du dépôt à porter cette clé-là, et elle vaut un an et demi d'écart
+  entre deux militaires nés à trois ans d'intervalle.
+- *Deux règles suivent le militaire, et sans elles le résultat aurait été
+  absurde.* Il n'a pas de surcote — le III de l'article L. 14 ne la donne qu'au
+  « fonctionnaire civil » —, sans quoi son âge d'ouverture à trente-cinq ans
+  aurait fait surcoter vingt années de carrière. Et sa décote est celle du II
+  du même article, qui ne compte pas des âges mais des services manquants pour
+  atteindre la durée d'ouverture majorée de dix trimestres, dans la limite de
+  dix : un sous-officier parti à quarante ans perd 12,5 % au plus, non les 25 %
+  du barème des civils. Symétriquement, la surcote d'un fonctionnaire CLASSÉ se
+  compte depuis l'âge légal de droit commun et non depuis son âge anticipé (D
+  du XXIV de l'article 10 de la loi de 2023) — la compter depuis cinquante-sept
+  ans aurait payé deux fois l'avantage du classement.
+- *La page Coût bouge, et c'est le cas type militaire qui la bouge.* Les
+  376 810 retraités de `fonction_publique_etat_militaire` n'étaient réclamés
+  par aucun cas type : ils entrent, avec 1,6 % du poids. Le cumul 1959-2024 du
+  scénario 2 passe de −79,5 % à **−79,8 %**, celui du 4 de −51,9 % à
+  **−52,6 %**, celui du 6 de −51,7 % à **−52,4 %** ; à l'horizon 2070 le
+  système actuel passe de 18,4 % à **18,3 %** du PIB. Le militaire est le cas
+  type que le compte notionnel déplace le plus — jusqu'à −94 % au scénario 2 —,
+  ce qui est la thèse du dépôt vue à l'état pur : quarante ans de rente pour
+  vingt-cinq ans de cotisations.
+
+**Ce qui reste dehors, et pourquoi.** La LIMITE D'ÂGE DE GRADE, qui ouvre la
+pension militaire quelle que soit la durée accomplie et qui sert d'âge
+d'annulation de décote au militaire liquidant à cinquante-deux ans ou plus
+(L. 14 bis, 4°) : elle suppose de connaître le grade, que la saisie ne demande
+pas. Les durées super-actives atypiques — dix-sept ans pour les ingénieurs du
+contrôle de la navigation aérienne, trente-deux pour les égoutiers et les
+identificateurs de l'institut médico-légal — pour la même raison : la table
+porte les vingt-sept ans de la police et de l'administration pénitentiaire, la
+population la plus nombreuse. Et les bonifications de SERVICE — dépaysement,
+campagne, cinquième du sapeur-pompier —, qui étaient hors champ avant cette
+action et le restent. `limites.md` porte les trois.
 
 ### 6. Le solde, et non le coût — `à faire`
 
@@ -623,3 +693,20 @@ correction a déplacé.
   Les actions 9 et 10 sont ouvertes par ce qu'elle a rendu visible. L'action 5,
   la catégorie active et les militaires, est la plus haute qui ne soit pas
   commencée.
+- **Septembre 2026, action 5.** Faite. Sept statuts de plus, trois tables de
+  législation lues dans les textes, un cas type militaire, quatorze tests, et
+  aucun des 427 témoins existants déplacé. Le détail est sous l'action. Quatre
+  choses à en retenir pour la suite. Un paramètre qui ne se déduit d'aucune
+  donnée de carrière n'est pas pour autant hors du modèle : il peut se
+  DÉCLARER, et `sans_employeur` avait déjà ouvert cette voie — c'est la forme
+  que prendra tout ce qui dépend d'un corps, d'un grade ou d'un emploi. Une
+  limite écrite dans `limites.md` peut être vraie et trompeuse à la fois :
+  « l'écart de pension reste nul » l'était au seul âge anticipé, et cachait
+  20 % d'écart à soixante ans, parce que le plafond de vingt trimestres masquait
+  l'âge d'annulation. Une règle dérogatoire en appelle d'autres, en sens
+  inverse : ouvrir la pension militaire à trente-cinq ans obligeait à lui
+  retirer la surcote et à lui donner sa décote propre, faute de quoi le résultat
+  aurait été absurde. Enfin, toutes les tables du droit ne s'indexent pas sur la
+  génération : celle des durées militaires se lit à l'année où l'ancienne durée
+  est atteinte, et le supposer aurait valu un an et demi d'erreur. L'action 6,
+  le solde plutôt que le coût, est la plus haute qui ne soit pas commencée.

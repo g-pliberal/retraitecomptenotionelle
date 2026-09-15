@@ -1,0 +1,43 @@
+# Âge de jouissance différée de la pension militaire, PAR GÉNÉRATION
+# -------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# Le militaire qui quitte l'institution AVANT la durée de services qui ouvre la
+# jouissance immédiate — `duree_services_militaires.csv` — n'est pas pour autant
+# sans pension : les 2° à 4° de l'article L. 25 du code des pensions la lui
+# servent, à condition qu'il ait quinze ans de services, mais à un âge différé :
+# « l'âge défini à l'article L. 161-17-2 du code de la sécurité sociale abaissé
+# de dix années », soit cinquante-deux ans avant la réforme de 2023 et
+# cinquante-quatre après elle. En deçà de quinze ans de services (5° du même
+# article), il n'y a pas de pension militaire, et c'est l'âge légal qui vaut.
+#
+# LES DEUX MONTÉES EN CHARGE
+#   - loi du 9 novembre 2010 : 50 -> 52 ans. Le décret n° 2011-2103 ne
+#     transcrit pas de tableau propre aux militaires pour cette borne ; la table
+#     applique le pas que son article 8 donne aux autres — quatre mois pour la
+#     génération qui atteint l'ancien âge au second semestre 2011, cinq mois par
+#     génération ensuite. D'où la fiabilité `estimee` de ces cinq lignes.
+#   - loi du 14 avril 2023, article 10, XXIV, G : rien pour les militaires nés
+#     avant le 1er septembre 1971 ; pour les autres, l'âge est « rehaussé de
+#     trois mois à compter du 1er septembre 2023 et augmenté de trois mois par
+#     an à partir du 1er janvier 2024 jusqu'à atteindre l'âge de cinquante-quatre
+#     ans ». LA LOI INDEXE ICI SUR LA DATE, non sur la génération : les valeurs
+#     ci-dessous sont celles qu'on obtient en cherchant, pour chaque génération,
+#     le premier âge qu'elle atteint alors qu'il lui est déjà opposable — d'où,
+#     là aussi, `estimee`. La génération 1974 saute ainsi de 53 à 53,25 ans,
+#     parce qu'elle atteint 53 ans en 2027, année où l'âge opposable est déjà de
+#     53 ans et trois mois.
+generation,age,fiabilite
+1900,50.00,haute
+1961.5,50.33,estimee
+1962,50.75,estimee
+1963,51.17,estimee
+1964,51.58,estimee
+1965,52.00,haute
+1971.667,52.25,estimee
+1972,52.50,estimee
+1973,52.75,estimee
+1974,53.25,estimee
+1975,53.50,estimee
+1976,53.75,estimee
+1977,54.00,estimee
