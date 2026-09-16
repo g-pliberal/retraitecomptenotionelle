@@ -335,6 +335,28 @@ export function mot(terme, definition) {
  * calcul ne sait pas faire — doit être là, sans quoi la page n'est pas honnête ;
  * mais rien n'oblige à le lui faire traverser pour atteindre le résultat.
  */
+/**
+ * Quelques idées, une par bloc, titre puis phrase.
+ *
+ * C'est la forme que prend une proposition quand elle doit se lire en dix
+ * secondes : quatre blocs de deux lignes, tous de même poids, à côté les uns des
+ * autres. Une liste à puces dirait la même chose, mais elle se lit de haut en
+ * bas et donne au premier point une importance que les autres n'ont pas.
+ *
+ * Les titres sont de vrais `<h3>` : c'est par eux qu'une synthèse vocale
+ * parcourt une page. `texte` est du HTML.
+ */
+export function points(entrees) {
+  if (!entrees.length) {
+    return "";
+  }
+  const corps = entrees
+    .map(([titre, texte]) => `<div class="point"><h3>${echapper(titre)}</h3>`
+      + `<p>${texte}</p></div>`)
+    .join("");
+  return `<div class="points">${corps}</div>`;
+}
+
 export function depliant(titre, corps) {
   return `<details class="section"><summary>${echapper(titre)}</summary>`
     + `<div class="dedans">${corps}</div></details>`;
@@ -360,8 +382,12 @@ export function cle(question, reponse, corps, source = "") {
   // qu'un bloc de page. Il compose, dans le navigateur, une image qui porte la
   // question, la réponse, le tracé, sa source et la signature du compte. Le
   // comportement est dans `index.html`, en écoute déléguée.
-  const partage = '<p class="partage"><button type="button" class="partager">'
-    + "Télécharger l'image</button></p>";
+  // Il n'apparaît que si la carte porte un TRACÉ : c'est lui que l'image
+  // compose, et une carte qui n'en a pas donnerait un bouton qui échoue.
+  const partage = corps.includes('<figure class="graphique"')
+    ? '<p class="partage"><button type="button" class="partager">'
+      + "Télécharger l'image</button></p>"
+    : "";
   return `<section class="cle"><h3>${echapper(question)}</h3>`
     + `<p class="reponse">${reponse}</p>${corps}${fin}${partage}</section>`;
 }

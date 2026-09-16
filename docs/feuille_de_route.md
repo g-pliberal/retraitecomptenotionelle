@@ -980,7 +980,7 @@ l'objection au lieu de la nourrir.
 
 ---
 
-### 15. Rendre les pages longues parcourables — `en cours`
+### 15. Rendre les pages longues parcourables — `fait`
 
 **Pourquoi.** Deux des six pages ne sont plus des pages mais des documents :
 Coût pèse 8 516 mots, seize tableaux et treize titres ; Données, 5 851 mots et
@@ -1100,9 +1100,32 @@ un coup d'œil et un clic, et voit du premier regard ce que la page contient
 d'autre. Le dépôt cesse de faire payer au lecteur la densité qu'il a mis un an à
 accumuler.
 
-**Où ça en est.** La plus lourde des deux pages est faite : l'action 16 la
-refait entièrement, et en tire ce que les procédés valent en pratique. Restent
-Données (5 851 mots, huit tableaux) et, plus bas, Cas types et le Programme.
+**Ce que ça a déplacé.** Les six pages sont faites. L'action 16 a servi de
+banc d'essai sur la plus lourde, puis la même forme a été appliquée aux cinq
+autres : ce qui répond à la question en tête de page, et tout ce qui la
+justifie dans des sections repliées qui se parcourent comme un sommaire.
+
+| Page | Mots à traverser, avant | Après | Tableaux ouverts | Après |
+|---|---|---|---|---|
+| Coût | 5 652 | **530** | 9 | **0** |
+| Données | 5 851 | **149** | 8 | **0** |
+| Méthode | 2 375 | **339** | 1 | **1** |
+| Cas types | 1 768 | **479** | 5 | **1** |
+| Programme | 1 745 | **448** | 3 | **1** |
+| Simuler | 1 318 | **281** (hors menus) | 0 | **0** |
+
+Rien n'a été retiré : les pages pèsent toujours ce qu'elles pesaient, à deux
+graphiques et deux tableaux près qui redisaient une série déjà tracée. Ce qui a
+changé est ce qu'elles imposent avant qu'on ait choisi de lire, et
+`BUDGETS_DE_LECTURE` le tient page par page dans `tests/test_web.py`.
+
+Des vingt-cinq procédés ci-dessus, six ont porté l'essentiel : le résumé
+d'abord (7), les blocs « à retenir » (8), l'affichage essentiel / tout afficher
+(9), la séparation du principal et de la référence (12), les cartes
+hiérarchisées (21) et la hiérarchie typographique (25). Deux ont été
+inutiles : les procédés 1 à 4 — une pile de sections repliées EST un sommaire,
+et elle évite l'obstacle de l'adresse-route — et les procédés 13 à 17, filtres
+et recherche, qu'aucune page ne justifie plus une fois son détail rangé.
 
 ---
 
@@ -1449,3 +1472,18 @@ l'assiette comme les pensions, et c'est l'action 11 qui ouvrirait cette porte.
   précision** : un axe qui gradue de quatre en quatre se lit mieux en nombres
   ronds, mais l'écart entre deux courbes s'y perdait à l'arrondi, et il fallait
   séparer les deux réglages pour que la lecture au survol serve à quelque chose.
+- **Septembre 2026, action 15.** Faite, sur les six pages. La forme mise au
+  point sur la page Coût — ce qui répond à la question en tête, le reste dans
+  des sections repliées — a été portée au Programme, aux Cas types, à la
+  Méthode, aux Données et au formulaire de simulation. Le tableau des mots est
+  sous l'action. Trois choses à en retenir. **Le catalogue était trop large de
+  moitié** : six procédés sur vingt-cinq ont tout fait, et les deux familles
+  qui semblaient les plus ambitieuses — le sommaire ancré, les filtres — se
+  sont révélées inutiles une fois le détail rangé. **Une page de référence se
+  replie comme une autre** : Données passe de 5 851 mots à 149 sans qu'une
+  ligne disparaisse, et c'est la page où le gain est le plus net, parce que
+  tout y était une pièce justificative et rien n'y était une réponse. Enfin,
+  **une seule grille vaut mieux que cinq** : les Cas types en alignaient cinq
+  de quatre-vingt-onze cellules, et personne ne compare cinq tableaux — celle
+  qui reste est accompagnée des trois chiffres qui la résument, ce qu'aucune
+  des cinq ne donnait.

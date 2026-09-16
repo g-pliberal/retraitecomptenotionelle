@@ -275,6 +275,11 @@ th:first-child, td:first-child { text-align: left; }
 thead th { font-size: 0.82rem; color: var(--texte-doux); font-weight: 600; }
 tbody tr:last-child td { border-bottom: none; }
 td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
+/* Une colonne de PHRASES, et non de nombres : elle se lit alignée à gauche,
+   comme tout texte. Les cellules d'un tableau sont alignées à droite par
+   défaut, ce qui convient aux chiffres qu'on compare colonne par colonne, et
+   pas du tout à « des trimestres, et 72 barèmes différents ». */
+td.texte, th.texte { text-align: left; }
 .scenario { margin: 1.4rem 0; }
 /* Le bloc des montants passe sous l'intitulé D'UN SEUL TENANT quand la place
    manque : c'est l'entête qui se replie, pas le montant. Depuis que les sommes
@@ -330,6 +335,15 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
   order: 1; font-size: 0.86rem; margin-bottom: 0.25rem;
 }
 .fiches.reperes .fiche .precision { order: 3; margin-top: 0.35rem; }
+/* Quelques idées, une par bloc. Elles se lisent côte à côte, de même poids :
+   c'est ce qui les distingue d'une liste, où la première l'emporte. */
+.points { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+          gap: 1rem; margin: 1.5rem 0; }
+.points .point { background: var(--fond-carte); border: 1px solid var(--trait);
+                 border-radius: 8px; padding: 1rem 1.1rem; }
+.points .point > h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+.points .point > p { margin: 0; font-size: 0.95rem; color: var(--texte-doux); }
+
 /* Une question, sa réponse, le tracé qui la montre. Encadrée pour se découper :
    une capture de ce bloc se comprend hors du site. */
 section.cle {
@@ -968,6 +982,28 @@ def mot(terme: str, definition: str) -> str:
     )
 
 
+def points(entrees: list[tuple[str, str]]) -> str:
+    """Quelques idées, une par bloc, titre puis phrase.
+
+    C'est la forme que prend une proposition quand elle doit se lire en dix
+    secondes : quatre blocs de deux lignes, tous de même poids, à côté les uns
+    des autres. Une liste à puces dirait la même chose, mais elle se lit de haut
+    en bas et donne au premier point une importance que les autres n'ont pas.
+
+    Les titres sont de vrais ``<h3>``, et non des paragraphes en gras : c'est par
+    eux qu'une synthèse vocale parcourt une page, et quatre propositions qui
+    n'apparaîtraient pas dans ce plan seraient, pour elle, quatre paragraphes de
+    plus. ``texte`` est du HTML — il porte des mots du glossaire et des liens.
+    """
+    if not entrees:
+        return ""
+    corps = "".join(
+        f'<div class="point"><h3>{escape(titre)}</h3><p>{texte}</p></div>'
+        for titre, texte in entrees
+    )
+    return f'<div class="points">{corps}</div>'
+
+
 def depliant(titre: str, corps: str) -> str:
     """Une section repliée : son titre se lit, son contenu s'ouvre si on veut.
 
@@ -1007,9 +1043,16 @@ def cle(question: str, reponse: str, corps: str, source: str = "") -> str:
     # compte — et rien d'autre à faire pour la poster. Le comportement est dans
     # `index.html`, en écoute déléguée ; sans lui, le bouton ne ferait rien, et
     # c'est pourquoi un test tient l'accord entre les deux.
+    #
+    # Il n'apparaît que si la carte porte un TRACÉ : c'est lui que l'image
+    # compose, et une carte qui n'en a pas — celle qui porte un tableau, ou une
+    # liste — donnerait un bouton qui échoue. Le savoir se lit dans le corps de
+    # la carte plutôt que de se déclarer en paramètre : un appelant n'a pas à
+    # redire ce que son propre contenu dit déjà.
     partage = (
         '<p class="partage"><button type="button" class="partager">'
         "Télécharger l'image</button></p>"
+        if '<figure class="graphique"' in corps else ""
     )
     return (
         f'<section class="cle"><h3>{escape(question)}</h3>'
