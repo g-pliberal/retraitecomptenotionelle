@@ -1446,6 +1446,21 @@ inchangés au bit près, et ceux des pages ne bougent que de la structure.
   0,88 rem et resserrent leurs marges — un cinquième de hauteur en moins, une
   colonne de plus avant que la zone ne défile —, et le retrait d'une section
   repliée leur rend 26 points de largeur.
+- *Seconde passe : ce que le téléphone ne dit pas à la page.* La première
+  passe avait été mesurée dans un navigateur de bureau réduit à 390 points, où
+  les deux montants d'un scénario tiennent côte à côte. Sur un vrai téléphone,
+  ils n'y tenaient pas : aucun des empattements de la charte n'existe sur
+  Android, qui leur substitue un serif plus large, et le réglage « taille du
+  texte » du système grossit le tout par-dessus sans que les requêtes média le
+  voient — elles restent calées sur 16 px. Une somme insécable dans une rangée
+  qui ne se replie pas : « par mois, en euros de 2039 » sortait de la carte, et
+  la page entière défilait horizontalement. Les libellés se replient désormais,
+  les sommes jamais, et la rangée passe à la ligne en dernier recours ; le trait
+  qui séparait les deux montants disparaît sur téléphone, faute de sélecteur qui
+  dise qu'une rangée s'est repliée. Vérifié sans aucun débordement de 320 à
+  1 280 points, jusqu'à 150 % de grossissement et avec deux serifs de
+  substitution — la règle « écran très étroit » de 22 rem, qui traitait le même
+  défaut trop tard, disparaît.
 - *La cible tactile d'un appel de bulle.* La feuille de style promettait 24 px
   de côté (WCAG 2.5.8) ; le padding seul la dimensionnait en proportion du
   texte, et elle tombait à 19 px dans une glose ou une note — où se trouvent
@@ -1775,3 +1790,11 @@ inchangés au bit près, et ceux des pages ne bougent que de la structure.
   discipline ne vaut que sur la page qu'on ouvre vraiment** : le budget de
   lecture tenait les six pages, mais rendait « /simuler » sans paramètres,
   c'est-à-dire tout sauf la page que le visiteur vient voir.
+- **Septembre 2026, action 21, seconde passe.** « J'ai toujours des soucis »,
+  avec une capture d'écran : les deux montants d'un scénario débordaient de la
+  carte, et la page défilait horizontalement. La leçon vaut pour tout ce qui
+  suivra : **une page mesurée dans un navigateur de bureau réduit n'est pas une
+  page mesurée sur un téléphone.** La police demandée n'y existe pas, le système
+  grossit le texte sans que les requêtes média l'apprennent, et une largeur qui
+  tient au point près chez soi déborde chez l'autre. Ce qui se replie ne déborde
+  jamais ; ce qui est insécable doit être court, et rien d'autre.
