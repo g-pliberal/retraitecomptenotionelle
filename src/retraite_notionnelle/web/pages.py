@@ -4460,8 +4460,9 @@ def _cout_detail_transferts(contexte: Contexte) -> str:
     part_supprimee = supprime / ligne_solde.ressources
     horizon = solde.annee(solde.derniere_annee)
 
-    def sans(ligne, scenario: str) -> float:
-        return ligne.coefficient(scenario) * (1.0 - part_supprimee)
+    def sans_retrait(ligne, scenario: str) -> float:
+        """Le coefficient qu'on lirait si la recette restait comptée."""
+        return ligne.ressources / ligne.depense(scenario)
     return g.depliant("Ce que la branche famille et l'assurance chômage versent", f"""
 <p>Le poste « transferts d'organismes extérieurs » du tableau précédent est un
 agrégat. Le voici ventilé par celui qui paie, lu dans les rapports à la
@@ -4493,20 +4494,22 @@ ressources qu'ils supposent inchangées, les
 {_milliards(comptes.transfert_organisme("famille", derniere), 1)} de la branche
 famille et les {_milliards(comptes.transfert_organisme("chomage", derniere), 1)}
 de l'assurance chômage de {derniere} — {g.pourcentage(supprime, decimales=2)}
-du PIB, {g.pourcentage(part_supprimee, decimales=1)} des ressources. Retirées à
-part constante, ces recettes ramènent le coefficient d'équilibre de
-{solde.derniere_annee} de
-{g.nombre(horizon.coefficient("notionnel_prospectif"), 2)} à
-{g.nombre(sans(horizon, "notionnel_prospectif"), 2)} pour le scénario 3, et de
-{g.nombre(horizon.coefficient("notionnel_prospectif_employeur"), 2)} à
-{g.nombre(sans(horizon, "notionnel_prospectif_employeur"), 2)} pour le
-scénario 5 ; en {derniere}, où ces deux scénarios sont encore le système
+du PIB, {g.pourcentage(part_supprimee, decimales=1)} des ressources. <strong>Le
+coefficient d'équilibre du dépliant suivant les leur retire</strong> : année
+par année là où on les connaît, à part constante des ressources avant et
+après, jusqu'à l'horizon du COR. Sans ce retrait, le scénario 3 afficherait
+{g.nombre(sans_retrait(horizon, "notionnel_prospectif"), 2)} en
+{solde.derniere_annee} au lieu de
+{g.nombre(horizon.coefficient("notionnel_prospectif"), 2)}, et le scénario 5
+{g.nombre(sans_retrait(horizon, "notionnel_prospectif_employeur"), 2)} au lieu
+de {g.nombre(horizon.coefficient("notionnel_prospectif_employeur"), 2)} ; en
+{derniere}, où ces deux scénarios servent encore les pensions du système
 actuel, l'écart est le même :
-{g.nombre(ligne_solde.coefficient("notionnel_prospectif"), 2)} contre
-{g.nombre(sans(ligne_solde, "notionnel_prospectif"), 2)}. Ce que la branche
-famille cesserait de verser à la retraite ne disparaît pas : il lui reste, et
-ce qu'elle en fait est une décision de programme, pas un résultat de ce
-modèle.</div>
+{g.nombre(sans_retrait(ligne_solde, "notionnel_prospectif"), 2)} contre
+{g.nombre(ligne_solde.coefficient("notionnel_prospectif"), 2)}. Ce que la
+branche famille cesserait de verser à la retraite ne disparaît pas : il lui
+reste, et ce qu'elle en fait est une décision de programme, pas un résultat de
+ce modèle.</div>
 """)
 
 
@@ -4746,7 +4749,13 @@ actuel en {obs} — il faudrait rogner de
 dernière colonne ne regarde que les années projetées : le passé est ce qu'il a
 été. Pour le système actuel, dont le rapport vaut un par construction, ces
 colonnes redonnent exactement le solde publié par le COR — c'est ce qui dit que
-le raccord ne triche pas.</p>
+le raccord ne triche pas. Les cinq autres systèmes ne comptent pas tout ce que
+le système actuel encaisse : ce que la branche famille et l'assurance chômage
+versent pour des droits qu'ils ne servent pas —
+{g.pourcentage(observe.retrait, decimales=2)} du PIB en {obs} — leur est
+retiré, à part constante des ressources sur les années projetées. C'est
+pourquoi les scénarios 3 et 5 sont déjà en déficit en {obs}, alors qu'ils y
+servent encore les pensions du système actuel.</p>
 
 <div class="note"><strong>Un coefficient supérieur à un n'est pas une économie,
 c'est une marge.</strong> Lire les
@@ -4971,10 +4980,11 @@ def _cout_detail_limites(contexte: Contexte) -> str:
   système actuel, encaissées ou projetées telles quelles : la question posée
   est « à prélèvement inchangé, ce système tiendrait-il ? ». Le scénario 6, qui
   pose un taux unique de 18 % pour tous, déplacerait aussi les recettes, et
-  rien ici ne le dit. Et elles comptent ce que la branche famille et
-  l'assurance chômage versent pour des droits que les scénarios notionnels ne
-  servent pas — le dépliant « Ce que la branche famille et l'assurance chômage
-  versent » dit ce que cela vaut, et ce qu'en devient le coefficient.</li>
+  rien ici ne le dit. Une seule recette suit le droit : ce que la branche
+  famille et l'assurance chômage versent pour des droits que les scénarios
+  notionnels ne servent pas leur est retiré, à part constante des ressources
+  sur les années projetées — le dépliant « Ce que la branche famille et
+  l'assurance chômage versent » dit ce que cela vaut.</li>
   <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
   L'appliquer changerait toutes les pensions par un même facteur, donc tous les
   niveaux de cette page, sans toucher aux écarts entre carrières — qui sont la

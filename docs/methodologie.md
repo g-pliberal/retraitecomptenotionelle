@@ -1329,11 +1329,21 @@ contrôle externe au lieu d'être un risque. Du modèle, cette section n'emprunt
 que le RAPPORT des masses, qui est sans dimension et passe donc d'un périmètre
 à l'autre sans rien supposer.
 
+**La recette suit le droit.** Une part des ressources du système actuel paie
+des droits qu'aucun scénario notionnel ne sert : ce que la branche famille
+verse pour l'assurance vieillesse des parents au foyer et les majorations pour
+enfants, ce que l'assurance chômage verse pour les points des chômeurs — un
+demi-point de PIB, 3,7 % des ressources en 2024, lus chez celui qui paie dans
+les rapports à la Commission des comptes de la Sécurité sociale. Les scénarios
+2 à 6 se la voient retirer, année par année de 2013 à 2024, à part constante
+des ressources avant et sur tout l'horizon projeté. Le système actuel encaisse
+tout, et son solde reste celui du COR.
+
 **Le coefficient est calculé, jamais appliqué.** C'est la distinction à tenir :
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les 1,91 du scénario 3 en 2070 comme une économie de 48 % est un contresens : à
+les 1,87 du scénario 3 en 2070 comme une économie de 46 % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.

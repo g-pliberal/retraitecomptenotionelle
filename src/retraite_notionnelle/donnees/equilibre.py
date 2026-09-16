@@ -443,6 +443,23 @@ class ComptesRetraite:
         return sum(self.transfert_part_pib(organisme.code, annee)
                    for organisme in ORGANISMES if organisme.droit_supprime)
 
+    def recette_non_acquise(self, annee: int) -> float:
+        """Ce qu'un scénario notionnel doit retirer de ses ressources, en part du PIB.
+
+        Dans la fenêtre où les quatre lignes sont connues, c'est ce que la
+        branche famille et l'assurance chômage ont réellement versé. En dehors
+        — avant 2013, et sur tout l'horizon projeté du COR —, c'est la même
+        chose à PART CONSTANTE des ressources, celle de l'année connue la plus
+        proche : personne ne projette ce que la CNAF versera en 2070, et une
+        part constante est l'hypothèse qui n'en ajoute aucune autre.
+        """
+        premiere, derniere = self.premiere_annee_transferts, self.derniere_annee_transferts
+        if premiere <= annee <= derniere:
+            return self.transfert_supprime_part_pib(annee)
+        reference = min(max(annee, premiere), derniere)
+        part = self.transfert_supprime_part_pib(reference) / self.ressource(reference)
+        return part * self.ressource(annee)
+
     # -- fenêtre des transferts --------------------------------------------------
     #
     # Les quatre lignes ne commencent ni ne finissent la même année : les

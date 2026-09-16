@@ -367,6 +367,24 @@ export class ComptesRetraite {
   }
 
   /**
+   * Ce qu'un scénario notionnel doit retirer de ses ressources, en part du
+   * PIB. Dans la fenêtre où les quatre lignes sont connues, c'est ce que la
+   * branche famille et l'assurance chômage ont réellement versé. En dehors —
+   * avant 2013, et sur tout l'horizon projeté du COR —, c'est la même chose à
+   * PART CONSTANTE des ressources, celle de l'année connue la plus proche :
+   * personne ne projette ce que la CNAF versera en 2070, et une part constante
+   * est l'hypothèse qui n'en ajoute aucune autre.
+   */
+  recetteNonAcquise(annee) {
+    const premiere = this.premiereAnneeTransferts;
+    const derniere = this.derniereAnneeTransferts;
+    if (annee >= premiere && annee <= derniere) return this.transfertSupprimePartPib(annee);
+    const reference = Math.min(Math.max(annee, premiere), derniere);
+    const part = this.transfertSupprimePartPib(reference) / this.ressource(reference);
+    return part * this.ressource(annee);
+  }
+
+  /**
    * La fenêtre où les QUATRE lignes sont connues. Elles ne commencent ni ne
    * finissent la même année : l'Ircantec n'est détaillée que depuis 2013, et le
    * rapport de printemps qui arrête la dernière année ne porte pas les fiches

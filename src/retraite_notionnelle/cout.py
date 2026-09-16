@@ -66,12 +66,17 @@ CE QUE CE MODULE NE FAIT TOUJOURS PAS
    l'APPLIQUE pas : les courbes de coût restent celles d'un système qui ne se
    pilote pas. Le facteur étant commun, l'appliquer déplacerait les niveaux
    sans toucher aux écarts entre carrières.
-4. **Les recettes ne réagissent à rien.** Le solde ci-dessous confronte le coût
-   de chaque système aux ressources RÉELLEMENT encaissées, celles du système
-   actuel. C'est le bon contrefactuel — « à prélèvement inchangé, ce système
-   tiendrait-il ? » — et ce n'est pas le seul : le scénario 6, qui pose un taux
-   unique de 18 %, changerait aussi les recettes, et le coefficient d'équilibre
-   ne le dit pas.
+4. **Les recettes ne réagissent à rien, sauf sur un point.** Le solde
+   ci-dessous confronte le coût de chaque système aux ressources RÉELLEMENT
+   encaissées, celles du système actuel. C'est le bon contrefactuel — « à
+   prélèvement inchangé, ce système tiendrait-il ? » — et ce n'est pas le
+   seul : le scénario 6, qui pose un taux unique de 18 %, changerait aussi les
+   recettes, et le coefficient d'équilibre ne le dit pas. Le point où elles
+   réagissent : ce que la branche famille et l'assurance chômage versent pour
+   des droits que les scénarios notionnels ne servent pas — AVPF, majorations
+   pour enfants, points des chômeurs — leur est RETIRÉ, année par année là où
+   on le connaît (2013-2024), à part constante des ressources ailleurs. La
+   recette suit le droit.
 
 LE SOLDE, ET NON LE COÛT
 -------------------------
@@ -81,14 +86,18 @@ bilan vient du COR, seul à consolider dépenses ET ressources du système de
 retraite sur un même périmètre (``donnees/equilibre.py`` dit pourquoi ce n'est
 pas la DREES). De là, deux grandeurs par système et par année :
 
-    solde du système S = ressources observées − dépenses du COR × rapport S
-    coefficient d'équilibre de S = ressources observées ÷ (dépenses × rapport S)
+    ressources de S = ressources observées − recette non acquise (S notionnel)
+    solde du système S = ressources de S − dépenses du COR × rapport S
+    coefficient d'équilibre de S = ressources de S ÷ (dépenses × rapport S)
 
 Le coefficient est le facteur par lequel il faudrait multiplier TOUTES les
 pensions du système S pour que l'année tombe juste. Il vaut un quand le système
 s'équilibre, moins de un quand il faut rogner. Pour le système actuel, dont le
-rapport vaut un par construction, il redonne exactement le solde publié par le
-COR : c'est ce qui dit que le raccord ne triche pas.
+rapport vaut un par construction et qui encaisse tout, il redonne exactement le
+solde publié par le COR : c'est ce qui dit que le raccord ne triche pas. La
+recette non acquise est ce que ``donnees/equilibre.py`` appelle ainsi : un
+demi-point de PIB que la CNAF et l'Unédic versent pour des droits qu'aucun
+scénario notionnel ne sert.
 
 Le périmètre du COR n'est pas celui de la dépense observée plus haut — 13,86 %
 du PIB en 2024 contre 13,59 % pour la répartition obligatoire de la DREES. Rien
@@ -322,14 +331,28 @@ class SoldeAnnuel:
     rapports: dict[str, float]
     #: PIB en millions d'euros courants, ou zéro hors de la fenêtre publiée.
     pib: float
+    #: Ce que la branche famille et l'assurance chômage versent pour des droits
+    #: que les scénarios notionnels ne servent pas, en part de PIB : une recette
+    #: du système actuel, jamais la leur.
+    retrait: float = 0.0
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB."""
         return self.depenses * self.rapports[scenario]
 
+    def ressources_de(self, scenario: str) -> float:
+        """Ce qu'un système peut compter comme ressources, en part de PIB.
+
+        Le système actuel encaisse tout. Un scénario notionnel ne sert ni
+        l'AVPF, ni les majorations pour enfants, ni rien pendant une année de
+        chômage : il ne peut pas compter ce que la CNAF et l'Unédic versent
+        pour ces droits-là. LA RECETTE SUIT LE DROIT.
+        """
+        return self.ressources if scenario == "actuel" else self.ressources - self.retrait
+
     def solde(self, scenario: str) -> float:
         """Ressources moins dépenses, en part de PIB. Négatif : besoin de financement."""
-        return self.ressources - self.depense(scenario)
+        return self.ressources_de(scenario) - self.depense(scenario)
 
     def coefficient(self, scenario: str) -> float:
         """Facteur par lequel multiplier toutes les pensions pour tomber juste.
@@ -338,7 +361,7 @@ class SoldeAnnuel:
         rendu — plutôt qu'une division par zéro — si le système ne sert rien.
         """
         depense = self.depense(scenario)
-        return self.ressources / depense if depense > 0.0 else 0.0
+        return self.ressources_de(scenario) / depense if depense > 0.0 else 0.0
 
     def solde_meur(self, scenario: str) -> float:
         """Le même solde en millions d'euros courants, et zéro si le PIB manque."""
@@ -694,6 +717,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             depenses=comptes.depense(annee),
             rapports=par_annee[annee].rapports,
             pib=par_annee[annee].pib if annee <= derniere_annee_pib else 0.0,
+            retrait=comptes.recette_non_acquise(annee),
         )
         for annee in comptes.annees() if annee in par_annee
     ]

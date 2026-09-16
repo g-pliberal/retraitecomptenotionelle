@@ -768,11 +768,11 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +10,44 % | +8,98 % | 2,68 |
-| 3. Notionnel dès 2026, part salariale | −0,17 % | +2,83 % | **1,94** |
-| 4. Notionnel rétroactif, salariale + patronale | +5,30 % | +3,03 % | 1,20 |
-| 5. Notionnel dès 2026, salariale + patronale | −0,17 % | +0,98 % | 1,17 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +5,30 % | +4,09 % | 1,57 |
+| 2. Notionnel rétroactif, part salariale | +9,93 % | +8,50 % | 2,59 |
+| 3. Notionnel dès 2026, part salariale | −0,68 % | +2,35 % | **1,87** |
+| 4. Notionnel rétroactif, salariale + patronale | +4,79 % | +2,54 % | 1,16 |
+| 5. Notionnel dès 2026, salariale + patronale | −0,68 % | +0,49 % | 1,13 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,79 % | +3,61 % | 1,51 |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -781,8 +781,8 @@ par construction, donc son solde doit être le solde publié, et il l'est.
 
 **Un coefficient supérieur à un n'est pas une économie, c'est une marge.** Un
 système notionnel réel *applique* son coefficient : il ne laisse pas dormir un
-excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,94 du
-scénario 3 en 2070 comme une économie de 48 % est donc un contresens : à
+excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,87 du
+scénario 3 en 2070 comme une économie de 46 % est donc un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, mais **autrement
 réparti entre les carrières** — ce qui est exactement ce que le reste de ce dépôt
 mesure. Le modèle calcule ce facteur ; il ne l'applique jamais, et toutes les
@@ -796,16 +796,19 @@ porte déjà au compte des scénarios 4 et 5 — contre 80 % en 2004 ; les impô
 taxes affectés passent de 7 % à 15 %. Un compte notionnel ne sait créditer que
 la part cotisée, et c'est ce qui borne la lecture de tout ce tableau.
 
-**La recette suit le droit, et 3,7 % des ressources ne suivent pas.** Le poste
+**La recette suit le droit.** Le poste
 « transferts d'organismes extérieurs » est ventilé par celui qui paie, lu dans
 les rapports à la Commission des comptes de la Sécurité sociale : la branche
 famille verse 10,9 milliards en 2024 pour l'assurance vieillesse des parents au
 foyer et les majorations pour enfants, l'assurance chômage 3,9 milliards pour
 les points de retraite complémentaire des chômeurs. Les scénarios notionnels
 suppriment les premiers droits et ne portent rien au compte pendant une année
-de chômage ; ils comptent pourtant ces recettes. Retirées à part constante,
-elles ramènent le coefficient du scénario 3 en 2070 de 1,94 à 1,87 — la page
-Coût le dit, sans encore corriger le coefficient.
+de chômage ; leur coefficient ne compte donc pas ces recettes : elles leur
+sont retirées, année par année de 2013 à 2024, à part constante des ressources
+avant et sur tout l'horizon projeté. C'est pourquoi les scénarios 3 et 5 sont
+déjà en déficit en 2025, où ils servent encore les pensions du système actuel,
+et pourquoi le scénario 3 vaut 1,87 en 2070 et non 1,94. Le système actuel,
+lui, encaisse tout, et son solde reste celui du COR.
 
 ---
 
@@ -1034,7 +1037,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          790 tests Python
+tests/                          792 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

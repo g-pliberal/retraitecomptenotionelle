@@ -572,10 +572,14 @@ système actuel. `limites.md` §5 porte les trois.
   scénarios notionnels suppriment l'AVPF et les majorations, et ne portent
   rien au compte pendant une année de chômage, mais comptaient jusqu'ici la
   recette qui finance ces droits — 10,9 milliards de la branche famille et
-  3,9 de l'assurance chômage en 2024, 3,7 % des ressources. Retirée à part
-  constante, elle ramène le coefficient du scénario 3 en 2070 de 1,94 à 1,87.
-  La page Coût le dit dans un dépliant ; le coefficient lui-même n'est pas
-  corrigé, ce qui est le pas suivant de l'action 11. Deux choses que le
+  3,9 de l'assurance chômage en 2024, 3,7 % des ressources. Le coefficient la
+  RETIRE désormais aux cinq scénarios notionnels : année par année de 2013 à
+  2024, à part constante des ressources avant et sur tout l'horizon projeté.
+  Le scénario 3 en 2070 passe de 1,94 à 1,87, le 5 de 1,17 à 1,13, et les
+  deux sont en déficit dès 2025, où ils servent encore les pensions du système
+  actuel ; le système actuel encaisse tout et garde le solde du COR. Le solde
+  annuel porte un `retrait`, et `ressources_de(scenario)` dit ce que chaque
+  système peut compter. Deux choses que le
   chantier a coûtées au passage : le lecteur PDF du dépôt ne séparait pas les
   cellules d'un tableau posées chacune par leur propre `Tm` — « 4 929 5 002 »
   se lisait « 49295002 » — et tombait sur une table de correspondance hors du
@@ -847,8 +851,8 @@ d'équilibre de chaque système est désormais CALCULÉ, année par année, de 2
 excédent : il relève les pensions jusqu'à l'équilibre, ou les abaisse, par un
 facteur commun à toutes les pensions de l'année et un fonds de réserve qui
 lisse. Tant que ce facteur n'est pas appliqué, les courbes de la page Coût sont
-celles d'un système qui ne se pilote pas, et le coefficient de 1,91 du
-scénario 3 en 2070 se lit trop facilement comme une économie de 48 %.
+celles d'un système qui ne se pilote pas, et le coefficient de 1,87 du
+scénario 3 en 2070 se lit trop facilement comme une économie de 46 %.
 
 **Sources.** Aucune à récupérer : tout est là. Le mécanisme, en revanche, se
 décrit — le coefficient suédois (`balansindex`), qui n'ajuste que le
@@ -867,11 +871,10 @@ masse des cotisations contre près de 90 % en annuités et en points).
 individuelle et non seulement sur l'agrégat ; `moteur/js/` en regard ; les
 témoins ; `limites.md` §5.
 
-**Marche.** D'abord retirer des ressources ce que la branche famille et
-l'assurance chômage versent pour des droits que les scénarios ne servent pas —
-la série est là depuis l'action 6, seconde passe, et le dépliant de la page
-Coût en calcule déjà l'effet à part constante. Ensuite au seul niveau de
-l'AGRÉGAT — une variante de la page Coût où chaque système est ramené à
+**Marche.** Le premier pas est fait : les ressources des scénarios notionnels
+sont diminuées de ce que la branche famille et l'assurance chômage versent pour
+des droits qu'ils ne servent pas (action 6, seconde passe). Ensuite au seul
+niveau de l'AGRÉGAT — une variante de la page Coût où chaque système est ramené à
 l'équilibre —, ce qui ne touche pas les moteurs de pension et se mesure
 aussitôt. Ensuite seulement, si l'écart le justifie,
 l'ajustement porté à la pension individuelle, qui les touche tous les deux. Le

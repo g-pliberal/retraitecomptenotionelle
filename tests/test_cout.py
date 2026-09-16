@@ -728,9 +728,11 @@ def test_le_coefficient_dit_exactement_ce_que_dit_le_solde(solde):
             excedent = ligne.solde(scenario) > 0.0
             assert (ligne.coefficient(scenario) > 1.0) is excedent, (
                 ligne.annee, scenario)
-            # Et le coefficient ramène bien la dépense sur les ressources.
+            # Et le coefficient ramène bien la dépense sur les ressources QUE
+            # CE SYSTÈME PEUT COMPTER : tout pour le système actuel, moins la
+            # recette non acquise pour les autres.
             assert ligne.depense(scenario) * ligne.coefficient(scenario) == (
-                pytest.approx(ligne.ressources))
+                pytest.approx(ligne.ressources_de(scenario)))
 
 
 def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
@@ -945,6 +947,52 @@ def test_la_fenetre_des_transferts_est_observee(comptes: ComptesRetraite):
     # Dix ans au moins : sans série, la part constante que la page reporte à
     # l'horizon du COR ne serait qu'un chiffre.
     assert len(comptes.annees_transferts()) >= 10
+
+
+def test_la_recette_suit_le_droit(cout: Cout, comptes: ComptesRetraite):
+    """Les scénarios notionnels ne comptent pas ce que la CNAF et l'Unédic versent.
+
+    Le système actuel encaisse tout, et son solde reste celui du COR. Un
+    scénario notionnel se voit retirer, année par année, ce que la branche
+    famille et l'assurance chômage versent pour des droits qu'il ne sert pas ;
+    avant la bascule, où il sert encore les pensions du système actuel, son
+    solde est donc celui du COR MOINS cette recette, et rien d'autre.
+    """
+    solde = cout.solde
+    for annee in comptes.annees_transferts():
+        ligne = solde.annee(annee)
+        assert ligne.retrait == pytest.approx(comptes.transfert_supprime_part_pib(annee))
+        assert ligne.ressources_de("actuel") == ligne.ressources
+        assert ligne.solde("actuel") == pytest.approx(ligne.ressources - ligne.depenses)
+        for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
+            assert ligne.rapports[scenario] == pytest.approx(1.0)
+            assert ligne.solde(scenario) == pytest.approx(
+                ligne.solde("actuel") - ligne.retrait)
+            assert ligne.coefficient(scenario) < ligne.coefficient("actuel")
+    # Un demi-point de PIB, toutes les années connues.
+    for annee in comptes.annees_transferts():
+        assert 0.004 < solde.annee(annee).retrait < 0.007, annee
+
+
+def test_le_retrait_est_a_part_constante_hors_de_la_fenetre(
+        cout: Cout, comptes: ComptesRetraite):
+    """Avant 2013 et après la dernière année connue, la part des ressources ne bouge pas.
+
+    Personne ne projette ce que la CNAF versera en 2070 ; une part constante
+    des ressources est l'hypothèse qui n'en ajoute aucune autre, et elle se
+    raccorde sans marche à l'année connue la plus proche.
+    """
+    solde = cout.solde
+    premiere, derniere = comptes.premiere_annee_transferts, comptes.derniere_annee_transferts
+    part_debut = comptes.transfert_supprime_part_pib(premiere) / comptes.ressource(premiere)
+    part_fin = comptes.transfert_supprime_part_pib(derniere) / comptes.ressource(derniere)
+    for ligne in solde.annees:
+        part = ligne.retrait / ligne.ressources
+        if ligne.annee < premiere:
+            assert part == pytest.approx(part_debut), ligne.annee
+        elif ligne.annee > derniere:
+            assert part == pytest.approx(part_fin), ligne.annee
+    assert solde.annee(solde.derniere_annee).retrait > 0.0
 
 
 def test_le_bilan_se_dit_aussi_en_euros(cout: Cout):
