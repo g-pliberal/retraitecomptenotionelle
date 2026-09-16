@@ -7,7 +7,7 @@
  */
 
 import {
-  MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge,
+  MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge, moisTravailles,
 } from "./calendrier.js";
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
 import { formaterBorne } from "./regimes.js";
@@ -239,6 +239,56 @@ export const ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXI
 /** Rang de chaque métier, tel que le formulaire l'annonce. */
 export const RANGS_METIER = ["premier", "deuxième", "troisième", "quatrième",
   "cinquième", "sixième", "septième", "huitième"];
+
+/**
+ * Ce qu'une ligne de carrière peut décrire à la place d'un métier.
+ *
+ * Une carrière n'est pas faite que d'emplois, et le formulaire ne demandait que
+ * ceux-là : entre le dernier métier et le départ, il supposait qu'on
+ * travaillait. Qui s'arrête à 58 ans pour liquider à 64 voyait donc six années
+ * cotisées qu'il n'avait pas vécues. Une ligne dont le statut est l'un de ces
+ * motifs dit l'inverse : à partir de cette date, et jusqu'à la ligne suivante
+ * ou jusqu'au départ, l'activité s'arrête. La DERNIÈRE ligne dit donc la date
+ * de fin d'activité, quand elle est antérieure au départ.
+ *
+ * Les codes sont ceux de `legislation/periodes_non_travaillees.csv`, qui dit ce
+ * que chacun ouvre — trimestres assimilés, points complémentaires financés par
+ * l'UNEDIC ou la Sécurité sociale, AVPF. Un test vérifie qu'aucun code d'ici
+ * n'est absent de là-bas : le menu ne peut pas proposer un motif que le moteur
+ * traiterait en « sans activité » sans le dire.
+ *
+ * Les libellés sont des groupes nominaux : le menu les fait précéder de « Sans
+ * emploi : », le résumé de carrière les emploie tels quels — « chômage
+ * indemnisé de 58 ans à 62 ans ».
+ */
+export const SANS_EMPLOI = [
+  ["chomage_indemnise", "chômage indemnisé"],
+  ["chomage_non_indemnise", "chômage non indemnisé"],
+  ["maladie", "arrêt maladie"],
+  ["accident_travail", "accident du travail"],
+  ["maternite", "congé de maternité"],
+  ["invalidite", "invalidité"],
+  ["education_enfant", "élever un enfant"],
+  ["service_militaire", "service militaire"],
+  ["sans_activite", "sans activité, ni chômage"],
+];
+
+/**
+ * Les seuls codes de `SANS_EMPLOI`, pour reconnaître une ligne sans emploi.
+ *
+ * Ces codes ne valent que pour une ligne qui SUIT la première : une carrière
+ * commence quand on commence à travailler, et la première ligne ne porte donc
+ * qu'une affiliation. « sans_activite » fait exception d'un côté — c'est aussi
+ * une affiliation, « Sans activité professionnelle », qui ne route vers aucun
+ * régime, et une adresse qui la porte en premier métier décrit quelqu'un qui
+ * n'a jamais travaillé. Les deux chemins donnent le même résultat au bit près :
+ * une ligne suivante la lit comme un motif, la première comme l'affiliation
+ * qu'elle a toujours été.
+ */
+export const CODES_SANS_EMPLOI = new Set(SANS_EMPLOI.map(([code]) => code));
+
+/** Le libellé d'un motif, pour le résumé de carrière. */
+const LIBELLES_SANS_EMPLOI = Object.fromEntries(SANS_EMPLOI);
 
 /** Saisie inexploitable, à afficher telle quelle à l'utilisateur. */
 export class ErreurSaisie extends Error {}
@@ -481,6 +531,24 @@ export class Saisie {
    * multiple du salaire moyen : il garde son sens sur quatre-vingts ans, quand
    * un montant n'en a que rapporté à son année.
    */
+  /**
+   * Toutes les lignes du formulaire, la première comprise.
+   *
+   * Le premier métier vit dans des champs à part — `statut`, `debut`,
+   * `salaire` —, parce que l'adresse les portait ainsi avant qu'une carrière
+   * puisse en compter plusieurs. Il n'y a pourtant aucune raison de le traiter
+   * autrement que les suivants, et tout ce qui parcourt la carrière passe ici.
+   */
+  get lignesCarriere() {
+    return [
+      {
+        debut: this.debut, statut: this.statut, salaire: this.salaire,
+        sans_emploi: false,
+      },
+      ...this.metiers,
+    ];
+  }
+
   niveaux(echelle) {
     const saisis = [this.salaire, ...this.metiers.map((metier) => metier.salaire)];
     if (!this.revenu_en_euros) {
@@ -490,20 +558,65 @@ export class Saisie {
   }
 
   /**
-   * La carrière comme suite de métiers, le premier compris. C'est sous cette
+   * La carrière comme suite de MÉTIERS, le premier compris. C'est sous cette
    * forme que le modèle la reçoit ; le formulaire, lui, garde le premier métier
    * dans ses champs historiques.
+   *
+   * Les périodes sans emploi n'en sont pas : elles ne portent ni régime ni
+   * cotisation, et le métier qui les précède court, pour le modèle, jusqu'au
+   * métier suivant. Ce qu'elles changent — l'année ne cotise pas — passe par
+   * `interruptionsDeCarriere`, qui est le seul chemin que le moteur connaisse
+   * pour une année non travaillée.
    */
   parcours(echelle) {
     const niveaux = this.niveaux(echelle);
-    niveaux.forEach((niveau, index) => this.verifierNiveau(niveau, index + 1, echelle));
-    const statuts_ = [this.statut, ...this.metiers.map((metier) => metier.statut)];
-    const debuts = [this.debut, ...this.metiers.map((metier) => metier.debut)];
-    return niveaux.map((niveau, index) => ({
-      affiliation: statuts_[index],
-      age_debut: debuts[index],
-      niveau_salaire: niveau,
-    }));
+    const metiers = [];
+    this.lignesCarriere.forEach((ligne, index) => {
+      if (ligne.sans_emploi) { return; }
+      this.verifierNiveau(niveaux[index], index + 1, echelle);
+      metiers.push({
+        affiliation: ligne.statut,
+        age_debut: ligne.debut,
+        niveau_salaire: niveaux[index],
+      });
+    });
+    return metiers;
+  }
+
+  /**
+   * Les années non cotisées : celles des lignes, et celles du champ.
+   *
+   * Une période sans emploi est bornée au MOIS sur le formulaire ; le modèle,
+   * lui, ne connaît qu'un statut par année civile — les régimes liquident à
+   * l'année. L'année où l'activité s'arrête revient donc à ce qui en occupe le
+   * plus de mois, exactement comme l'année d'un changement de métier revient au
+   * métier qui en occupe le plus ; à égalité, elle reste travaillée.
+   *
+   * Le champ « Interruptions » garde le dernier mot : il désigne des années une
+   * à une, et c'est l'outil le plus fin des deux.
+   */
+  interruptionsDeCarriere(motifsConnus = null) {
+    const annees = new Map();
+    const debut = this.dateDe(this.debut);
+    const fin = this.dateDe(this.liquidation);
+    const lignes = this.lignesCarriere;
+    lignes.forEach((ligne, index) => {
+      if (!ligne.sans_emploi) { return; }
+      const ouverture = this.dateDe(ligne.debut);
+      const cloture = index + 1 < lignes.length
+        ? this.dateDe(lignes[index + 1].debut) : fin;
+      for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
+        const creux = moisTravailles(annee, ouverture, cloture);
+        const portee = moisTravailles(annee, debut, fin);
+        if (portee && creux * 2 > portee) {
+          annees.set(annee, ligne.statut);
+        }
+      }
+    });
+    this.interruptionsAnalysees(motifsConnus).forEach((motif, annee) => {
+      annees.set(annee, motif);
+    });
+    return annees;
   }
 
   /**
@@ -890,12 +1003,24 @@ function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois) {
     if (!statut) {
       throw new ErreurSaisie(`Métier n° ${rang} : indiquer le statut d'affiliation.`);
     }
-    salaire = reel(parametres, `metier${rang}_salaire`, salaire);
+    // Une période sans emploi ne lit pas le champ de revenu : elle hérite de
+    // celui d'avant, et la ligne suivante en hérite à son tour. Ce n'est pas ce
+    // qu'elle paie — elle ne paie rien — mais le salaire de référence sur
+    // lequel l'UNEDIC cotise aux régimes complémentaires.
+    const sansEmploi = CODES_SANS_EMPLOI.has(statut);
+    if (!sansEmploi) {
+      salaire = reel(parametres, `metier${rang}_salaire`, salaire);
+    }
     metiers.push({
       debut: ageSaisi(parametres, `metier${rang}_debut`, 0.0,
         naissance, naissanceMois),
       statut,
       salaire,
+      // Vrai si `statut` est un motif de `SANS_EMPLOI` et non une affiliation.
+      // Décidé à la LECTURE, et non déduit plus tard du statut : la première
+      // ligne de la carrière n'est jamais une période sans emploi, et
+      // « sans_activite » y garde le sens d'affiliation qu'il a toujours eu.
+      sans_emploi: sansEmploi,
     });
   }
   return metiers;
@@ -1215,7 +1340,7 @@ export class Contexte {
       metiers: parcours,
       age_liquidation: saisie.liquidation,
       profil_carriere: saisie.profil,
-      interruptions: saisie.interruptionsAnalysees(motifs),
+      interruptions: saisie.interruptionsDeCarriere(motifs),
       nombre_enfants: saisie.enfants,
       part_primes: saisie.primes,
       identifiant: "assuré",
@@ -1440,22 +1565,38 @@ function libelleDate(affiliations, code) {
 
 /**
  * Les statuts du menu, ceux que la date d'entrée ferme désactivés. `entree`
- * est le mois où le métier commence ; sans lui — la ligne vide du
+ * est le mois où la période commence ; sans lui — la ligne vide du
  * formulaire —, tout est proposé. Chaque option fermée porte sa date en
  * `data-fermeture` : c'est ce que la page lit, dans le navigateur, pour
- * refaire ce tri quand l'année de naissance ou l'âge de début change sous ses
+ * refaire ce tri quand la date de naissance ou celle du début change sous ses
  * yeux, sans attendre le calcul.
+ *
+ * `sansEmploi` ajoute, à la suite des métiers, les motifs de `SANS_EMPLOI` :
+ * ce sont les lignes qui ne décrivent pas un emploi. La première ligne ne les
+ * reçoit pas — une carrière commence quand on commence à travailler —, et
+ * aucune date ne les ferme : on peut être au chômage en 1950 comme en 2050.
  */
-function optionsStatuts(affiliations, entree) {
-  return affiliations.codes.map((code) => {
-    const fermeture = affiliations.fermetureEntrants(code);
-    const disponible = entree === null || fermeture === null
-      || entree.rang < fermeture.rang;
-    const attributs = fermeture === null
-      ? {}
-      : { "data-fermeture": `${fermeture.annee}-${String(fermeture.mois).padStart(2, "0")}` };
-    return [code, libelleDate(affiliations, code), disponible, attributs];
-  });
+function optionsStatuts(affiliations, entree, sansEmploi = false) {
+  const options = affiliations.codes
+    // « Sans activité professionnelle » est une affiliation, mais c'est la même
+    // chose que le motif du même nom : elle rejoint le groupe plutôt que d'y
+    // figurer deux fois, sous deux libellés, pour le même résultat.
+    .filter((code) => !(sansEmploi && CODES_SANS_EMPLOI.has(code)))
+    .map((code) => {
+      const fermeture = affiliations.fermetureEntrants(code);
+      const disponible = entree === null || fermeture === null
+        || entree.rang < fermeture.rang;
+      const attributs = fermeture === null
+        ? {}
+        : { "data-fermeture": `${fermeture.annee}-${String(fermeture.mois).padStart(2, "0")}` };
+      return [code, libelleDate(affiliations, code), disponible, attributs];
+    });
+  if (!sansEmploi) {
+    return options;
+  }
+  return options.concat(
+    SANS_EMPLOI.map(([code, libelle]) => [code, `Sans emploi : ${libelle}`]),
+  );
 }
 
 function borneTexte(date) {
@@ -1632,10 +1773,17 @@ function formulaire(saisie, contexte) {
   ${g.cache("unite_revenu", saisie.unite_revenu)}
   <h2 style="margin-top:0">Simuler une carrière</h2>
   <div class="grille">${identite}</div>
-  <h3>Les métiers exercés</h3>
+  <h3>La carrière, période par période</h3>
   <p class="discret">Chaque changement de métier fait passer d'un régime à un
-  autre, donc d'un taux et d'un barème à un autre. Ajouter un métier, c'est
+  autre, donc d'un taux et d'un barème à un autre. Ajouter une période, c'est
   remplir la dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
+  <p class="discret">Une période sans emploi — chômage, maladie, élever un
+  enfant, rien du tout — se décrit de la même façon : la date à laquelle elle
+  commence, et ce qu'elle est. Elle ne demande pas de revenu : elle n'en paie
+  aucun, et c'est celui d'avant qui sert de référence là où le droit ouvre
+  malgré tout des points. <strong>La dernière ligne dit donc aussi quand
+  l'activité s'arrête</strong>, si elle s'arrête avant le départ — sans quoi le
+  calcul suppose qu'on a travaillé jusqu'au dernier mois.</p>
   ${metiersFormulaire(saisie, affiliations, echelle)}
   ${basculeUnite(saisie, echelle)}
   ${releveFormulaire(saisie)}
@@ -1780,16 +1928,20 @@ function basculeUnite(saisie, echelle) {
 }
 
 /**
- * Une ligne par métier, plus une ligne vide pour en ajouter un.
+ * Une ligne par période, plus une ligne vide pour en ajouter une.
  *
  * C'est ce qui permet d'allonger la carrière sans une ligne de JavaScript : la
- * ligne vide est renvoyée avec le reste du formulaire, et devient un métier dès
- * qu'on la remplit. Une ligne de plus apparaît alors à sa suite, jusqu'à
+ * ligne vide est renvoyée avec le reste du formulaire, et devient une période
+ * dès qu'on la remplit. Une ligne de plus apparaît alors à sa suite, jusqu'à
  * ``METIERS_MAXIMUM``.
+ *
+ * Une période est un métier, ou une période sans emploi : le menu de chaque
+ * ligne suivante propose les deux, et la dernière dit donc, quand elle est sans
+ * emploi, la date à laquelle l'activité s'arrête.
  */
 function metiersFormulaire(saisie, affiliations, echelle) {
-  // Le menu des statuts de chaque ligne est daté de l'entrée dans ce métier :
-  // un statut que le droit ferme avant cette date y est grisé.
+  // Le menu des statuts de chaque ligne est daté de l'entrée dans cette
+  // période : un statut que le droit ferme avant cette date y est grisé.
   const lignes = [ligneMetier(
     1,
     g.champDate("debut", "Début d'activité", saisie.jourDe(saisie.debut),
@@ -1814,9 +1966,9 @@ function metiersFormulaire(saisie, affiliations, echelle) {
     lignes.push(ligneMetier(rang, champsMetier(
       rang, saisie.jourDe(metier.debut), saisie.calculDe(metier.debut),
       metier.statut, nombreBrut(metier.salaire),
-      optionsStatuts(affiliations, saisie.dateDe(metier.debut)),
+      optionsStatuts(affiliations, saisie.dateDe(metier.debut), true),
       saisie, echelle,
-    )));
+    ), false, metier.sans_emploi));
   });
 
   // La ligne vide : elle n'existe que tant qu'il reste de la place, et son
@@ -1825,8 +1977,10 @@ function metiersFormulaire(saisie, affiliations, echelle) {
   const rang = saisie.metiers.length + 2;
   if (rang <= METIERS_MAXIMUM) {
     lignes.push(ligneMetier(
-      rang, champsMetier(rang, "", "", "", "", optionsStatuts(affiliations, null),
-        saisie, echelle), true,
+      rang,
+      champsMetier(rang, "", "", "", "", optionsStatuts(affiliations, null, true),
+        saisie, echelle),
+      true,
     ));
   }
 
@@ -1841,31 +1995,42 @@ function metiersFormulaire(saisie, affiliations, echelle) {
  * change de régime en cours d'année se décrit telle qu'elle a eu lieu.
  */
 function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, echelle) {
-  return g.champDate(`metier${rang}_debut`, "Début de ce métier", debut,
-    "le mois où ce métier commence", calcul,
+  // Une période sans emploi n'a que deux champs : elle ne paie aucun revenu, et
+  // celui d'avant lui sert de référence là où le droit lui ouvre des points. Le
+  // champ disparaît donc plutôt que de demander un nombre dont rien ne serait
+  // fait.
+  const revenu = CODES_SANS_EMPLOI.has(statut)
+    ? ""
+    : champRevenu(`metier${rang}_salaire`, saisie, echelle, salaire, true);
+  return g.champDate(`metier${rang}_debut`, "Début de cette période", debut,
+    "le mois où elle commence", calcul,
     {
       min: saisie.jourDe(AGE_DEBUT_MINIMAL),
       max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
       data_age_min: String(AGE_DEBUT_MINIMAL),
       data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
     })
-    + g.liste(`metier${rang}_statut`, "Statut d'affiliation",
+    + g.liste(`metier${rang}_statut`, "Métier, ou période sans emploi",
       [["", "— aucun —"], ...statuts], statut)
-    + champRevenu(`metier${rang}_salaire`, saisie, echelle, salaire, true);
+    + revenu;
 }
 
 /**
- * Un métier : un `<fieldset>`, et son rang en `<legend>`.
+ * Une période : un `<fieldset>`, et son rang en `<legend>`.
  *
- * « Revenu brut mensuel » et « Statut d'affiliation » sont les mêmes libellés
- * dans chaque bloc ; seul le rang les distingue. Un intertitre ordinaire le
- * montrerait à l'œil sans le dire à personne d'autre : la légende d'un groupe,
- * elle, est énoncée avec chacun des champs qu'elle couvre.
+ * « Revenu brut mensuel » et « Métier, ou période sans emploi » sont les mêmes
+ * libellés dans chaque bloc ; seul le rang les distingue. Un intertitre
+ * ordinaire le montrerait à l'œil sans le dire à personne d'autre : la légende
+ * d'un groupe, elle, est énoncée avec chacun des champs qu'elle couvre.
  */
-function ligneMetier(rang, champs, vide = false) {
-  const titre = vide
-    ? "Un autre métier ?"
-    : `${majuscule(RANGS_METIER[rang - 1])} métier`;
+function ligneMetier(rang, champs, vide = false, sansEmploi = false) {
+  const rangs = majuscule(RANGS_METIER[rang - 1]);
+  let titre = `${rangs} métier`;
+  if (vide) {
+    titre = "Un autre métier, une interruption ?";
+  } else if (sansEmploi) {
+    titre = `${rangs} période, sans emploi`;
+  }
   const classe = vide ? "metier facultatif" : "metier";
   return `<fieldset class="${classe}"><legend class="rang">${echapper(titre)}</legend>`
     + `<div class="grille">${champs}</div></fieldset>`;
@@ -1884,22 +2049,31 @@ function resumeParcours(contexte, saisie) {
   if (saisie.releveActif) {
     return resumeReleve(contexte, saisie);
   }
-  const parcours = saisie.parcours(contexte.echelle(saisie));
-  if (parcours.length < 2) {
+  const lignes = saisie.lignesCarriere;
+  if (lignes.length < 2) {
     return "";
   }
+  // Le parcours est calculé pour ses refus : un revenu hors bornes doit être
+  // signalé ici comme il l'est ailleurs, avant que la page ne le résume.
+  saisie.parcours(contexte.echelle(saisie));
   const affiliations = contexte.simulateur().affiliations;
-  const bornes = [...parcours.map((metier) => metier.age_debut), saisie.liquidation];
-  const etapes = parcours.map((metier, rang) => (
-    `${echapper(affiliations.libelle(metier.affiliation))} de ${age(bornes[rang])} `
-    + `à ${age(bornes[rang + 1])}`
+  const bornes = [...lignes.map((ligne) => ligne.debut), saisie.liquidation];
+  const etapes = lignes.map((ligne, rang) => (
+    (ligne.sans_emploi
+      ? LIBELLES_SANS_EMPLOI[ligne.statut]
+      : echapper(affiliations.libelle(ligne.statut)))
+    + ` de ${age(bornes[rang])} à ${age(bornes[rang + 1])}`
   ));
-  return `<p class="discret">Carrière en ${parcours.length} métiers : `
-    + etapes.join(", puis ")
-    + ". L'année d'un changement revient au métier qui en occupe le plus de "
-    + "mois — les régimes liquident à l'année, et une année n'a qu'un statut — "
-    + "mais le revenu porté au compte reste la somme de ce que les deux ont "
-    + "payé.</p>";
+  const convention = lignes.some((ligne) => ligne.sans_emploi)
+    ? "L'année d'un changement revient à ce qui en occupe le plus de mois "
+      + "— les régimes liquident à l'année, et une année n'a qu'un statut — "
+      + "mais le revenu porté au compte reste la somme de ce qui a été payé."
+    : "L'année d'un changement revient au métier qui en occupe le plus de "
+      + "mois — les régimes liquident à l'année, et une année n'a qu'un "
+      + "statut — mais le revenu porté au compte reste la somme de ce que les "
+      + "deux ont payé.";
+  return `<p class="discret">Carrière en ${lignes.length} périodes : `
+    + etapes.join(", puis ") + ". " + convention + "</p>";
 }
 
 /**

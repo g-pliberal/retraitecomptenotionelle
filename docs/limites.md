@@ -299,6 +299,18 @@ séparer demanderait de scinder l'année en deux lignes, ce que le reste du
 modèle — salaire de référence, plafond, trimestres, proratisation — ne sait pas
 lire, et ce que le relevé de carrière lui-même ne porte pas.
 
+**L'année où l'activité s'arrête relève de la même convention.** Une carrière
+ne s'arrête pas toujours au mois du départ : on peut cesser de travailler à
+58 ans et liquider à 64. Le formulaire le dit par une ligne de carrière qui
+n'est pas un emploi — chômage indemnisé ou non, maladie, invalidité, élever un
+enfant, service militaire, inactivité —, bornée au mois comme les autres. Le
+moteur, lui, ne connaît qu'un statut par année civile : l'année où l'activité
+s'arrête revient donc à ce qui en occupe le plus de mois, et à égalité elle
+reste travaillée. Une interruption de moins de la moitié d'une année civile
+n'est ainsi pas vue si elle ne déborde pas sur la suivante ; le champ
+« Interruptions » des options de modélisation, qui désigne les années une à
+une, reste l'outil fin, et il garde le dernier mot sur les lignes.
+
 ### Ce qui reste hors du modèle, et pourquoi
 
 Ces lignes ne sont pas des oublis : chacune demande une information que le
@@ -5385,7 +5397,7 @@ barèmes.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 759 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 769 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

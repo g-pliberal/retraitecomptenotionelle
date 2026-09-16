@@ -17,7 +17,7 @@ from html import escape
 from urllib.parse import urlencode
 
 from ..calendrier import (
-    MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, en_mois, formater_age,
+    MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, en_mois, formater_age, mois_travailles,
 )
 from ..carriere import (
     Affiliations,
@@ -250,9 +250,55 @@ TRAJECTOIRE = (
     ("notionnel_liberal", "--liberal", "6"),
 )
 
-#: Rang de chaque métier, tel que le formulaire l'annonce.
+#: Rang de chaque période, tel que le formulaire l'annonce.
 RANGS_METIER = ("premier", "deuxième", "troisième", "quatrième", "cinquième",
                 "sixième", "septième", "huitième")
+
+
+#: Ce qu'une ligne de carrière peut décrire à la place d'un métier.
+#:
+#: Une carrière n'est pas faite que d'emplois, et le formulaire ne demandait
+#: que ceux-là : entre le dernier métier et le départ, il supposait qu'on
+#: travaillait. Qui s'arrête à 58 ans pour liquider à 64 voyait donc six années
+#: cotisées qu'il n'avait pas vécues. Une ligne dont le statut est l'un de ces
+#: motifs dit l'inverse : à partir de cette date, et jusqu'à la ligne suivante
+#: ou jusqu'au départ, l'activité s'arrête. La DERNIÈRE ligne dit donc la date
+#: de fin d'activité, quand elle est antérieure au départ.
+#:
+#: Les codes sont ceux de ``legislation/periodes_non_travaillees.csv``, qui dit
+#: ce que chacun ouvre — trimestres assimilés, points complémentaires financés
+#: par l'UNEDIC ou la Sécurité sociale, AVPF. Un test vérifie qu'aucun code
+#: d'ici n'est absent de là-bas : le menu ne peut pas proposer un motif que le
+#: moteur traiterait en « sans activité » sans le dire.
+#: Les libellés sont des groupes nominaux : le menu les fait précéder de
+#: « Sans emploi : », le résumé de carrière les emploie tels quels — « chômage
+#: indemnisé de 58 ans à 62 ans ».
+SANS_EMPLOI = [
+    ("chomage_indemnise", "chômage indemnisé"),
+    ("chomage_non_indemnise", "chômage non indemnisé"),
+    ("maladie", "arrêt maladie"),
+    ("accident_travail", "accident du travail"),
+    ("maternite", "congé de maternité"),
+    ("invalidite", "invalidité"),
+    ("education_enfant", "élever un enfant"),
+    ("service_militaire", "service militaire"),
+    ("sans_activite", "sans activité, ni chômage"),
+]
+
+#: Les seuls codes de ``SANS_EMPLOI``, pour reconnaître une ligne sans emploi.
+#:
+#: Ces codes ne valent que pour une ligne qui SUIT la première : une carrière
+#: commence quand on commence à travailler, et la première ligne ne porte donc
+#: qu'une affiliation. « sans_activite » fait exception d'un côté — c'est aussi
+#: une affiliation, « Sans activité professionnelle », qui ne route vers aucun
+#: régime, et une adresse qui la porte en premier métier décrit quelqu'un qui
+#: n'a jamais travaillé. Les deux chemins donnent le même résultat au bit près :
+#: une ligne suivante la lit comme un motif, la première comme l'affiliation
+#: qu'elle a toujours été.
+CODES_SANS_EMPLOI = frozenset(code for code, _ in SANS_EMPLOI)
+
+#: Le libellé d'un motif, pour le résumé de carrière.
+LIBELLES_SANS_EMPLOI = dict(SANS_EMPLOI)
 
 
 class ErreurSaisie(ValueError):
@@ -273,15 +319,29 @@ def _refus(rang: int, phrase: str) -> ErreurSaisie:
 
 @dataclass
 class MetierSaisi:
-    """Un métier tel que le formulaire le porte : un âge, un statut, un niveau."""
+    """Une ligne de carrière : une date, un statut, un niveau de revenu.
 
-    #: Âge auquel ce métier commence.
+    C'est un métier quand le statut est une affiliation, et une période SANS
+    EMPLOI quand c'est l'un des motifs de :data:`SANS_EMPLOI` — chômage,
+    maladie, élever un enfant, rien du tout. Les deux se décrivent de la même
+    façon, parce que ce sont les mêmes renseignements : à partir de quand, et
+    quoi.
+    """
+
+    #: Âge auquel cette période commence.
     debut: float
-    #: Statut d'affiliation sous lequel il est exercé.
+    #: Statut d'affiliation, ou motif de :data:`SANS_EMPLOI`.
     statut: str
     #: Revenu, dans l'unité que ``Saisie.unite_revenu`` désigne : euros bruts
-    #: par mois, ou multiple du salaire moyen brut.
+    #: par mois, ou multiple du salaire moyen brut. Une période sans emploi
+    #: n'en porte pas : elle hérite de celui d'avant, qui est le salaire de
+    #: référence sur lequel l'UNEDIC cotise aux complémentaires.
     salaire: float
+    #: Vrai si ``statut`` est un motif de :data:`SANS_EMPLOI` et non une
+    #: affiliation. Décidé à la LECTURE, et non déduit ici du statut : la
+    #: première ligne de la carrière n'est jamais une période sans emploi, et
+    #: « sans_activite » y garde le sens d'affiliation qu'il a toujours eu.
+    sans_emploi: bool = False
 
 
 @dataclass
@@ -475,7 +535,12 @@ class Saisie:
                     f"Métier n° {rang} : il doit commencer avant le départ à la "
                     f"retraite, fixé en {self.date_de(self.liquidation)}."
                 )
-            self._verifier_revenu(metier.salaire, rang=rang)
+            # Une période sans emploi ne porte pas de revenu : elle hérite de
+            # celui d'avant, qui n'est pas ce qu'elle paie — elle ne paie
+            # rien — mais le salaire de référence sur lequel l'UNEDIC cotise
+            # aux régimes complémentaires.
+            if not metier.sans_emploi:
+                self._verifier_revenu(metier.salaire, rang=rang)
             precedent = metier.debut
 
     # -- l'unité des revenus -------------------------------------------------
@@ -501,6 +566,18 @@ class Saisie:
                 "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen.",
             )
 
+    @property
+    def lignes_carriere(self) -> list[MetierSaisi]:
+        """Toutes les lignes du formulaire, la première comprise.
+
+        Le premier métier vit dans des champs à part — ``statut``, ``debut``,
+        ``salaire`` —, parce que l'adresse les portait ainsi avant qu'une
+        carrière puisse en compter plusieurs. Il n'y a pourtant aucune raison
+        de le traiter autrement que les suivants, et tout ce qui parcourt la
+        carrière passe par ici.
+        """
+        return [MetierSaisi(self.debut, self.statut, self.salaire), *self.metiers]
+
     def niveaux(self, echelle: "Echelle") -> list[float]:
         """Le revenu de chaque métier, ramené à l'unité du modèle.
 
@@ -515,20 +592,60 @@ class Saisie:
         return [echelle.niveau(valeur) for valeur in saisis]
 
     def parcours(self, echelle: "Echelle") -> list[Metier]:
-        """La carrière comme suite de métiers, le premier compris.
+        """La carrière comme suite de MÉTIERS, le premier compris.
 
         C'est sous cette forme que le modèle la reçoit ; le formulaire, lui,
         garde le premier métier dans ses champs historiques.
+
+        Les périodes sans emploi n'en sont pas : elles ne portent ni régime ni
+        cotisation, et le métier qui les précède court, pour le modèle, jusqu'au
+        métier suivant. Ce qu'elles changent — l'année ne cotise pas — passe
+        par :meth:`interruptions_de_carriere`, qui est le seul chemin que le
+        moteur connaisse pour une année non travaillée.
         """
         niveaux = self.niveaux(echelle)
-        for rang, niveau in enumerate(niveaux, start=1):
+        metiers = []
+        for rang, (ligne, niveau) in enumerate(
+            zip(self.lignes_carriere, niveaux), start=1,
+        ):
+            if ligne.sans_emploi:
+                continue
             self._verifier_niveau(niveau, rang, echelle)
-        statuts = [self.statut] + [metier.statut for metier in self.metiers]
-        debuts = [self.debut] + [metier.debut for metier in self.metiers]
-        return [
-            Metier(affiliation=statut, age_debut=debut, niveau_salaire=niveau)
-            for statut, debut, niveau in zip(statuts, debuts, niveaux)
-        ]
+            metiers.append(Metier(affiliation=ligne.statut, age_debut=ligne.debut,
+                                  niveau_salaire=niveau))
+        return metiers
+
+    def interruptions_de_carriere(
+        self, motifs_connus: Iterable[str] | None = None,
+    ) -> dict[int, str]:
+        """Les années non cotisées : celles des lignes, et celles du champ.
+
+        Une période sans emploi est bornée au MOIS sur le formulaire ; le
+        modèle, lui, ne connaît qu'un statut par année civile — les régimes
+        liquident à l'année. L'année où l'activité s'arrête revient donc à ce
+        qui en occupe le plus de mois, exactement comme l'année d'un changement
+        de métier revient au métier qui en occupe le plus ; à égalité, elle
+        reste travaillée.
+
+        Le champ « Interruptions » garde le dernier mot : il désigne des années
+        une à une, et c'est l'outil le plus fin des deux.
+        """
+        annees: dict[int, str] = {}
+        debut, fin = self.date_de(self.debut), self.date_de(self.liquidation)
+        lignes = self.lignes_carriere
+        for rang, ligne in enumerate(lignes):
+            if not ligne.sans_emploi:
+                continue
+            ouverture = self.date_de(ligne.debut)
+            cloture = (self.date_de(lignes[rang + 1].debut)
+                       if rang + 1 < len(lignes) else fin)
+            for annee in range(ouverture.annee, cloture.annee + 1):
+                creux = mois_travailles(annee, ouverture, cloture)
+                portee = mois_travailles(annee, debut, fin)
+                if portee and creux * 2 > portee:
+                    annees[annee] = ligne.statut
+        annees.update(self.interruptions_analysees(motifs_connus))
+        return annees
 
     def _verifier_niveau(self, niveau: float, rang: int,
                          echelle: "Echelle") -> None:
@@ -888,14 +1005,21 @@ def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
             raise ErreurSaisie(
                 f"Métier n° {rang} : indiquer le statut d'affiliation."
             )
-        salaire_precedent = _reel(
-            parametres, f"metier{rang}_salaire", salaire_precedent
-        )
+        # Une période sans emploi ne lit pas le champ de revenu : elle hérite
+        # de celui d'avant, et la ligne suivante en hérite à son tour. Ce n'est
+        # pas ce qu'elle paie — elle ne paie rien — mais le salaire de
+        # référence sur lequel l'UNEDIC cotise aux complémentaires.
+        sans_emploi = statut in CODES_SANS_EMPLOI
+        if not sans_emploi:
+            salaire_precedent = _reel(
+                parametres, f"metier{rang}_salaire", salaire_precedent
+            )
         metiers.append(MetierSaisi(
             debut=_age_saisi(parametres, f"metier{rang}_debut", 0.0,
                              naissance, naissance_mois),
             statut=statut,
             salaire=salaire_precedent,
+            sans_emploi=sans_emploi,
         ))
     return metiers
 
@@ -1171,7 +1295,7 @@ class Contexte:
             mois_naissance=saisie.naissance_mois,
             age_liquidation=saisie.liquidation,
             profil_carriere=saisie.profil,
-            interruptions=saisie.interruptions_analysees(motifs),
+            interruptions=saisie.interruptions_de_carriere(motifs),
             nombre_enfants=saisie.enfants,
             part_primes=saisie.primes,
             identifiant="assuré",
@@ -1855,9 +1979,15 @@ def _libelle_date(affiliations: Affiliations, code: str) -> str:
     return f"{libelle} ({', '.join(precisions)})"
 
 
-def _options_statuts(affiliations: Affiliations,
-                     entree: DateMois | None) -> list[tuple]:
+def _options_statuts(affiliations: Affiliations, entree: DateMois | None,
+                     sans_emploi: bool = False) -> list[tuple]:
     """Les statuts du menu, ceux que la date d'entrée ferme désactivés.
+
+    ``sans_emploi`` ajoute, à la suite des métiers, les motifs de
+    :data:`SANS_EMPLOI` : ce sont les lignes qui ne décrivent pas un emploi.
+    La première ligne ne les reçoit pas — une carrière commence quand on
+    commence à travailler —, et aucune date ne les ferme : on peut être au
+    chômage en 1950 comme en 2050.
 
     ``entree`` est le mois où le métier commence ; sans lui — la ligne vide du
     formulaire —, tout est proposé. Chaque option fermée porte sa date en
@@ -1867,12 +1997,19 @@ def _options_statuts(affiliations: Affiliations,
     """
     options = []
     for code in affiliations.codes:
+        # « Sans activité professionnelle » est une affiliation, mais c'est la
+        # même chose que le motif du même nom : elle rejoint le groupe plutôt
+        # que d'y figurer deux fois, sous deux libellés, pour le même résultat.
+        if sans_emploi and code in CODES_SANS_EMPLOI:
+            continue
         fermeture = affiliations.fermeture_entrants(code)
         disponible = (entree is None or fermeture is None
                       or entree.rang < fermeture.rang)
         attributs = ({} if fermeture is None
                      else {"data-fermeture": f"{fermeture.annee}-{fermeture.mois:02d}"})
         options.append((code, _libelle_date(affiliations, code), disponible, attributs))
+    if sans_emploi:
+        options += [(code, f"Sans emploi : {libelle}") for code, libelle in SANS_EMPLOI]
     return options
 
 
@@ -2018,10 +2155,17 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   {g.cache("unite_revenu", saisie.unite_revenu)}
   <h2 style="margin-top:0">Simuler une carrière</h2>
   <div class="grille">{identite}</div>
-  <h3>Les métiers exercés</h3>
+  <h3>La carrière, période par période</h3>
   <p class="discret">Chaque changement de métier fait passer d'un régime à un
-  autre, donc d'un taux et d'un barème à un autre. Ajouter un métier, c'est
+  autre, donc d'un taux et d'un barème à un autre. Ajouter une période, c'est
   remplir la dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
+  <p class="discret">Une période sans emploi — chômage, maladie, élever un
+  enfant, rien du tout — se décrit de la même façon : la date à laquelle elle
+  commence, et ce qu'elle est. Elle ne demande pas de revenu : elle n'en paie
+  aucun, et c'est celui d'avant qui sert de référence là où le droit ouvre
+  malgré tout des points. <strong>La dernière ligne dit donc aussi quand
+  l'activité s'arrête</strong>, si elle s'arrête avant le départ — sans quoi le
+  calcul suppose qu'on a travaillé jusqu'au dernier mois.</p>
   {_metiers(saisie, affiliations, echelle)}
   {_bascule_unite(saisie, echelle)}
   {_releve(saisie)}
@@ -2151,15 +2295,19 @@ def _bascule_unite(saisie: Saisie, echelle: "Echelle") -> str:
 
 def _metiers(saisie: Saisie, affiliations: Affiliations,
              echelle: "Echelle") -> str:
-    """Une ligne par métier, plus une ligne vide pour en ajouter un.
+    """Une ligne par période, plus une ligne vide pour en ajouter une.
 
     C'est ce qui permet d'allonger la carrière sans une ligne de JavaScript :
-    la ligne vide est renvoyée avec le reste du formulaire, et devient un métier
-    dès qu'on la remplit. Une ligne de plus apparaît alors à sa suite, jusqu'à
-    ``METIERS_MAXIMUM``.
+    la ligne vide est renvoyée avec le reste du formulaire, et devient une
+    période dès qu'on la remplit. Une ligne de plus apparaît alors à sa suite,
+    jusqu'à ``METIERS_MAXIMUM``.
 
-    Le menu des statuts de chaque ligne est daté de l'entrée dans ce métier :
-    un statut que le droit ferme avant cette date y est grisé.
+    Une période est un métier, ou une période sans emploi : le menu de chaque
+    ligne suivante propose les deux, et la dernière dit donc, quand elle est
+    sans emploi, la date à laquelle l'activité s'arrête.
+
+    Le menu des statuts de chaque ligne est daté de l'entrée dans cette
+    période : un statut que le droit ferme avant cette date y est grisé.
     """
     lignes = [_ligne_metier(
         1,
@@ -2184,8 +2332,10 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
                                  saisie.calcul_de(metier.debut), metier.statut,
                                  _nombre(metier.salaire),
                                  _options_statuts(affiliations,
-                                                  saisie.date_de(metier.debut)),
-                                 saisie, echelle)))
+                                                  saisie.date_de(metier.debut),
+                                                  sans_emploi=True),
+                                 saisie, echelle),
+            sans_emploi=metier.sans_emploi))
 
     # La ligne vide : elle n'existe que tant qu'il reste de la place, et son
     # statut n'est pas présélectionné — un statut choisi par défaut ferait
@@ -2194,7 +2344,8 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
     if rang <= METIERS_MAXIMUM:
         lignes.append(_ligne_metier(
             rang, _champs_metier(rang, "", "", "", "",
-                                 _options_statuts(affiliations, None),
+                                 _options_statuts(affiliations, None,
+                                                  sans_emploi=True),
                                  saisie, echelle),
             vide=True))
 
@@ -2204,66 +2355,91 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
 def _champs_metier(rang: int, debut: str, calcul: str, statut: str,
                    salaire: str, statuts: list[tuple], saisie: Saisie,
                    echelle: "Echelle") -> str:
-    """Les trois champs d'un métier qui suit le premier.
+    """Les champs d'une période qui suit la première.
 
-    Le changement se date au mois comme le reste, depuis que le calendrier a
+    La période se date au mois comme le reste, depuis que le calendrier a
     remplacé les âges : il n'en coûte pas un champ de plus, et une carrière qui
     change de régime en cours d'année se décrit telle qu'elle a eu lieu.
+
+    Une période sans emploi n'a que deux champs : elle ne paie aucun revenu, et
+    celui d'avant lui sert de référence là où le droit lui ouvre des points.
+    Le champ disparaît donc plutôt que de demander un nombre dont rien ne
+    serait fait.
     """
+    revenu = "" if statut in CODES_SANS_EMPLOI else _champ_revenu(
+        f"metier{rang}_salaire", saisie, echelle, salaire, bref=True,
+    )
     return (
-        g.champ_date(f"metier{rang}_debut", "Début de ce métier", debut,
-                     "le mois où ce métier commence", calcul,
+        g.champ_date(f"metier{rang}_debut", "Début de cette période", debut,
+                     "le mois où elle commence", calcul,
                      min=saisie.jour_de(AGE_DEBUT_MINIMAL),
                      max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL),
                      data_age_min=str(AGE_DEBUT_MINIMAL),
                      data_age_max=str(AGE_LIQUIDATION_MAXIMAL))
-        + g.liste(f"metier{rang}_statut", "Statut d'affiliation",
+        + g.liste(f"metier{rang}_statut", "Métier, ou période sans emploi",
                   [("", "— aucun —")] + statuts, statut)
-        + _champ_revenu(f"metier{rang}_salaire", saisie, echelle, salaire,
-                        bref=True)
+        + revenu
     )
 
 
-def _ligne_metier(rang: int, champs: str, vide: bool = False) -> str:
-    """Un métier : un ``<fieldset>``, et son rang en ``<legend>``.
+def _ligne_metier(rang: int, champs: str, vide: bool = False,
+                  sans_emploi: bool = False) -> str:
+    """Une période : un ``<fieldset>``, et son rang en ``<legend>``.
 
-    « Revenu brut mensuel » et « Statut d'affiliation » sont les mêmes libellés
-    dans chaque bloc ; seul le rang les distingue. Un intertitre ordinaire le
-    montrerait à l'œil sans le dire à personne d'autre : la légende d'un groupe,
-    elle, est énoncée avec chacun des champs qu'elle couvre.
+    « Revenu brut mensuel » et « Métier, ou période sans emploi » sont les mêmes
+    libellés dans chaque bloc ; seul le rang les distingue. Un intertitre
+    ordinaire le montrerait à l'œil sans le dire à personne d'autre : la légende
+    d'un groupe, elle, est énoncée avec chacun des champs qu'elle couvre.
     """
-    titre = (f"{RANGS_METIER[rang - 1].capitalize()} métier" if not vide
-             else "Un autre métier ?")
+    rangs = RANGS_METIER[rang - 1].capitalize()
+    if vide:
+        titre = "Un autre métier, une interruption ?"
+    elif sans_emploi:
+        titre = f"{rangs} période, sans emploi"
+    else:
+        titre = f"{rangs} métier"
     classe = "metier facultatif" if vide else "metier"
     return (f'<fieldset class="{classe}"><legend class="rang">{escape(titre)}</legend>'
             f'<div class="grille">{champs}</div></fieldset>')
 
 
 def _resume_parcours(contexte: Contexte, saisie: Saisie) -> str:
-    """La suite des métiers, en une phrase — et la convention qui la borne.
+    """La suite des périodes, en une phrase — et la convention qui les borne.
 
-    Muet pour une carrière d'un seul métier : il n'y a rien à récapituler, le
-    formulaire juste au-dessus le dit déjà.
+    Muet pour une carrière d'une seule période : il n'y a rien à récapituler,
+    le formulaire juste au-dessus le dit déjà.
     """
     if saisie.releve_actif:
         return _resume_releve(contexte, saisie)
-    parcours = saisie.parcours(contexte.echelle(saisie))
-    if len(parcours) < 2:
+    lignes = saisie.lignes_carriere
+    if len(lignes) < 2:
         return ""
+    # Le parcours est calculé pour ses refus : un revenu hors bornes doit être
+    # signalé ici comme il l'est ailleurs, avant que la page ne le résume.
+    saisie.parcours(contexte.echelle(saisie))
 
     affiliations = contexte.simulateur().affiliations
-    bornes = [metier.age_debut for metier in parcours] + [saisie.liquidation]
+    bornes = [ligne.debut for ligne in lignes] + [saisie.liquidation]
     etapes = [
-        f"{escape(affiliations.libelle(metier.affiliation))} de {_age(bornes[rang])} "
-        f"à {_age(bornes[rang + 1])}"
-        for rang, metier in enumerate(parcours)
+        (LIBELLES_SANS_EMPLOI[ligne.statut] if ligne.sans_emploi
+         else escape(affiliations.libelle(ligne.statut)))
+        + f" de {_age(bornes[rang])} à {_age(bornes[rang + 1])}"
+        for rang, ligne in enumerate(lignes)
     ]
+    creux = any(ligne.sans_emploi for ligne in lignes)
+    convention = (
+        "L'année d'un changement revient à ce qui en occupe le plus de mois "
+        "— les régimes liquident à l'année, et une année n'a qu'un statut — "
+        "mais le revenu porté au compte reste la somme de ce qui a été payé."
+        if creux else
+        "L'année d'un changement revient au métier qui en occupe le plus de "
+        "mois — les régimes liquident à l'année, et une année n'a qu'un "
+        "statut — mais le revenu porté au compte reste la somme de ce que les "
+        "deux ont payé."
+    )
     return (
-        f'<p class="discret">Carrière en {len(parcours)} métiers : '
-        + ", puis ".join(etapes) + ". L'année d'un changement revient au métier "
-        "qui en occupe le plus de mois — les régimes liquident à l'année, et une "
-        "année n'a qu'un statut — mais le revenu porté au compte reste la somme "
-        "de ce que les deux ont payé.</p>"
+        f'<p class="discret">Carrière en {len(lignes)} périodes : '
+        + ", puis ".join(etapes) + ". " + convention + "</p>"
     )
 
 

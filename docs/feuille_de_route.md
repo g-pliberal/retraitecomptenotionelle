@@ -1265,6 +1265,53 @@ façon — le formulaire, et les adresses qu'il écrit.
   numériques, un test vérifie que le mois d'à côté est refusé par le modèle :
   une adresse forgée à la main ne passe par aucun calendrier.
 
+### 18. La carrière peut s'arrêter avant le départ — `fait`
+
+**Pourquoi.** Découvert en relisant l'action 17 : le formulaire demandait une
+date de début d'activité et une date de départ, et supposait qu'on avait
+travaillé entre les deux. Qui cesse à 58 ans pour liquider à 64 voyait donc six
+années cotisées qu'il n'a pas vécues. Le champ « Interruptions » permettait bien
+de les retirer — « 2020:2026:chomage_indemnise » —, mais il est enfoui dans les
+options de modélisation, il demande d'écrire une syntaxe, et rien sur la page ne
+laissait deviner qu'il fallait s'en servir. Le défaut silencieux est le pire de
+tous : il donne un chiffre, et il est faux.
+
+**Marche.** Aucune date de fin d'activité en plus : une ligne de carrière peut
+n'être pas un emploi. Le menu des statuts de chaque ligne suivante propose, à la
+suite des métiers, les neuf motifs de `periodes_non_travaillees.csv`. La
+dernière ligne dit alors quand l'activité s'arrête.
+
+**Ce que ça a déplacé.** *Aucun chiffre.* Les 480 témoins de simulation sont
+inchangés au bit près, et les quatre qui s'y ajoutent sont ceux du chemin neuf.
+Ce qui change est ce que le formulaire SAIT recevoir — et, pour qui s'arrête
+avant de partir, un chiffre qui devient vrai.
+
+- *Une ligne, et non un champ.* « À partir de quand, et quoi » : c'est ce que
+  demandait déjà une ligne de métier, et une période sans emploi ne demande rien
+  d'autre. Le formulaire ne gagne donc aucun champ — il en perd un sur ces
+  lignes-là, le revenu, qu'une période sans emploi ne paie pas. Une date de fin
+  d'activité séparée aurait coûté deux champs à tout le monde (la date et le
+  motif) pour couvrir moins de cas : celle-ci décrit aussi les creux au MILIEU
+  d'une carrière.
+- *Le motif n'est pas un détail.* Carrière type arrêtée à 57 ans, départ à 64 :
+  chômage indemnisé 1 975 €, chômage non indemnisé 1 819 €, inactivité 1 396 €
+  au scénario 1. Le premier valide des trimestres ET fait cotiser l'UNEDIC aux
+  complémentaires — d'où 326 € contre 276 € au scénario 2, où seule la
+  cotisation réellement versée compte. Le troisième n'ouvre rien : c'est la
+  réponse du modèle à qui n'est ni en emploi ni au chômage.
+- *Un statut qui existait en double.* « Sans activité professionnelle » est à la
+  fois une affiliation sans régime et un motif de la table des périodes. Les
+  deux donnent le même résultat au bit près — c'est vérifié —, mais deux options
+  de même valeur dans un menu, c'est une saisie qui ne revient pas : la première
+  ligne garde l'affiliation qu'elle a toujours eue, les suivantes lisent le
+  motif, et un test interdit désormais à tout menu du site de proposer deux fois
+  la même valeur.
+- *La maille reste l'année.* Une période sans emploi est bornée au mois, le
+  moteur ne connaît qu'un statut par année civile : l'année où l'activité
+  s'arrête revient à ce qui en occupe le plus de mois, à égalité elle reste
+  travaillée. C'est la convention déjà retenue pour l'année d'un changement de
+  métier ; `limites.md` la redit pour celle-ci.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -1543,3 +1590,13 @@ façon — le formulaire, et les adresses qu'il écrit.
   qui donne un calendrier à tout le monde. Et **une simplification en ouvre une
   autre** : demander une date plutôt qu'un âge a donné au changement de métier
   la précision au mois qu'il n'avait jamais eue, sans un champ de plus.
+- **Septembre 2026, action 18.** Faite, dans la foulée de la 17 et à la
+  demande qui l'a suivie : « il faut aussi indiquer la date de fin d'activité ».
+  Oui — et elle ne valait pas un champ de plus. Une ligne de carrière peut
+  désormais n'être pas un emploi, et la dernière dit quand l'activité s'arrête.
+  Deux choses à en retenir. **Le défaut le plus coûteux ne refuse rien** : le
+  formulaire ne demandait pas quand on s'arrête, il supposait la réponse, et
+  affichait un chiffre faux sans rien signaler — les refus, eux, se voient.
+  Et **une liste de choix se paie en unicité** : ajouter les motifs au menu des
+  statuts y a mis « sans activité » deux fois, sous deux libellés, pour le même
+  résultat ; un test l'interdit maintenant à tous les menus du site.

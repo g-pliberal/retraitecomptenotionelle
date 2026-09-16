@@ -44,6 +44,7 @@ from retraite_notionnelle.web.pages import (
     PROFILS,
     PROJECTIONS,
     RELEVE_MAXIMUM,
+    SANS_EMPLOI,
     TABLES,
     TITRES,
     Contexte,
@@ -1017,8 +1018,126 @@ def test_le_formulaire_s_arrete_au_nombre_maximal_de_metiers(page):
 def test_la_page_recapitule_le_parcours(page):
     texte = page("/simuler", naissance=1975, debut=21, liquidation=64,
                  metier2_debut=42, metier2_statut="artisan")
-    assert "Carrière en 2 métiers" in texte
+    assert "Carrière en 2 périodes" in texte
     assert "Artisan de 42 ans à 64 ans" in texte
+
+
+def test_les_motifs_du_menu_existent_dans_la_table_des_periodes():
+    """Le menu ne peut pas proposer un motif que le moteur ne connaîtrait pas.
+
+    ``_ligne_annuelle`` rabat tout motif inconnu sur « sans activité » : un code
+    mal orthographié dans le formulaire validerait zéro trimestre au lieu de
+    quatre, et changerait la pension sans un mot.
+    """
+    table = charger_periodes_non_travaillees(Contexte().base.racine_donnees)
+    for code, _ in SANS_EMPLOI:
+        assert code in table, f"motif proposé par le formulaire et absent de la table : {code}"
+
+
+def test_une_periode_sans_emploi_vaut_l_interruption_qu_elle_decrit(contexte):
+    """Une ligne « sans emploi » et le champ « Interruptions » disent la même
+    chose : c'est le même chemin dans le moteur, et les chiffres doivent l'être
+    aussi, jusqu'au dernier."""
+    base = {"naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
+            "unite_revenu": "euros_mois", "salaire": "2600"}
+    par_ligne = contexte.simuler(Saisie.depuis_requete({
+        **base, "metier2_debut": "2020-03", "metier2_statut": "chomage_indemnise",
+    })).dictionnaire()
+    par_champ = contexte.simuler(Saisie.depuis_requete({
+        **base, "interruptions": "2020:2026:chomage_indemnise",
+    })).dictionnaire()
+    assert par_ligne == par_champ
+
+
+def test_la_fin_d_activite_retire_les_annees_qu_elle_couvre(contexte):
+    """Le défaut que la ligne comble : sans elle, le calcul suppose qu'on a
+    travaillé jusqu'au mois du départ."""
+    base = {"naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
+            "unite_revenu": "euros_mois", "salaire": "2600"}
+    continu = contexte.simuler(Saisie.depuis_requete(base))
+    arrete = contexte.simuler(Saisie.depuis_requete({
+        **base, "metier2_debut": "2020-03", "metier2_statut": "sans_activite",
+    }))
+    assert arrete.actuel.pension_mensuelle < continu.actuel.pension_mensuelle
+    assert (arrete.notionnel_retroactif.pension_mensuelle
+            < continu.notionnel_retroactif.pension_mensuelle)
+    # Six années de moins au compte : celles que la ligne couvre.
+    cotisees = lambda comparaison: sum(  # noqa: E731
+        1 for ligne in comparaison.carriere.lignes if ligne.cotise
+    )
+    assert cotisees(continu) - cotisees(arrete) == 7
+
+
+@pytest.mark.parametrize("debut, premiere_annee_creuse", [
+    # Sept mois sans emploi sur douze : l'année revient à ce qui l'occupe le
+    # plus, c'est-à-dire au creux.
+    ("2020-06", 2020),
+    # Six mois partout : à égalité, l'année reste travaillée.
+    ("2020-07", 2021),
+    ("2020-08", 2021),
+])
+def test_l_annee_ou_l_activite_s_arrete_revient_au_plus_grand_nombre_de_mois(
+    debut, premiere_annee_creuse,
+):
+    """La même convention que pour un changement de métier : le moteur ne
+    connaît qu'un statut par année civile, et c'est le plus long qui l'emporte."""
+    saisie = Saisie.depuis_requete({
+        "naissance": "1962-01-01", "debut": "1984-09", "liquidation": "2026-07",
+        "metier2_debut": debut, "metier2_statut": "sans_activite",
+    })
+    assert min(saisie.interruptions_de_carriere()) == premiere_annee_creuse
+
+
+def test_une_periode_sans_emploi_ne_demande_pas_de_revenu(page):
+    """Elle n'en paie aucun : le champ disparaît plutôt que de demander un
+    nombre dont rien ne serait fait."""
+    avec_metier = page("/simuler", naissance="1975-01-01", debut="1996-01",
+                       liquidation="2039-01", metier2_debut="2020-01",
+                       metier2_statut="artisan")
+    assert 'name="metier2_salaire"' in avec_metier
+    sans_emploi = page("/simuler", naissance="1975-01-01", debut="1996-01",
+                       liquidation="2039-01", metier2_debut="2020-01",
+                       metier2_statut="chomage_indemnise")
+    assert 'name="metier2_salaire"' not in sans_emploi
+    assert "Deuxième période, sans emploi" in sans_emploi
+
+
+def test_aucun_menu_ne_propose_deux_fois_la_meme_valeur(page):
+    """Deux options de même valeur dans un menu, c'est une saisie qui ne revient
+    pas : le navigateur choisit la première, et la seconde est inatteignable.
+    Le risque est né avec les périodes sans emploi, dont « sans activité » est
+    AUSSI une affiliation."""
+    texte = page("/simuler")
+    for menu in re.findall(r"<select\b.*?</select>", texte, re.S):
+        valeurs = re.findall(r'<option value="([^"]*)"', menu)
+        doublons = {valeur for valeur in valeurs if valeurs.count(valeur) > 1}
+        assert not doublons, f"valeurs proposées deux fois : {doublons}"
+
+
+def test_le_premier_metier_reste_une_affiliation(contexte):
+    """« sans_activite » est aussi une affiliation — celle de qui n'a jamais
+    travaillé —, et les adresses qui la portent en premier métier ne doivent pas
+    changer de sens."""
+    saisie = Saisie.depuis_requete({"statut": "sans_activite"})
+    assert [ligne.sans_emploi for ligne in saisie.lignes_carriere] == [False]
+    assert saisie.interruptions_de_carriere() == {}
+    assert [metier.affiliation for metier in saisie.parcours(_echelle())] == [
+        "sans_activite"
+    ]
+    # Et le menu de la première ligne la propose toujours sous son nom de
+    # statut, quand celui des lignes suivantes la range avec les creux.
+    texte = rendre(contexte, "/simuler", {})[1]
+    premier = texte.split('name="metier2_statut"')[0]
+    assert '<option value="sans_activite">Sans activité professionnelle' in premier
+
+
+def test_la_page_recapitule_une_periode_sans_emploi(page):
+    """Une ligne peut ne pas être un métier : le résumé la nomme comme les
+    autres, et dit à quel âge l'activité s'est arrêtée."""
+    texte = page("/simuler", naissance=1975, debut=21, liquidation=64,
+                 metier2_debut=58, metier2_statut="chomage_indemnise")
+    assert "Carrière en 2 périodes" in texte
+    assert "chômage indemnisé de 58 ans à 64 ans" in texte
 
 
 def test_requete_reconstruit_les_metiers():

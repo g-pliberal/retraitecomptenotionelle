@@ -94,7 +94,7 @@
 </div>
 
 <script type="module">
-import { Contexte, TITRES, rendre } from "./moteur/js/pages.js";
+import { CODES_SANS_EMPLOI, Contexte, TITRES, rendre } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
 // La signature des images composées ici vient du gabarit, comme tout ce
@@ -301,6 +301,16 @@ function daterStatuts(contenu) {
     const naissance = lire("naissance");
     for (const menu of formulaire.querySelectorAll("select[name$='statut']")) {
       const rang = menu.name === "statut" ? 1 : Number(menu.name.replace(/\D/g, ""));
+      // Une période sans emploi ne paie aucun revenu : son champ s'en va dès
+      // que le motif est choisi, plutôt qu'au rendu suivant. Désactivé autant
+      // que masqué — un champ caché mais soumis reste une saisie invisible.
+      const revenu = rang === 1
+        ? null : formulaire.elements[`metier${rang}_salaire`];
+      if (revenu) {
+        const creux = CODES_SANS_EMPLOI.has(menu.value);
+        revenu.disabled = creux;
+        revenu.closest("div").hidden = creux;
+      }
       const debut = rang === 1 ? lire("debut") : lire(`metier${rang}_debut`);
       const entree = naissance !== null && debut !== null && debut > naissance
         ? debut

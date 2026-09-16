@@ -296,6 +296,7 @@ print(simulateur.simuler(carriere).tableau())
 | Le mois, là où le droit le date | Date de liquidation, année d'entrée et année de départ portées au compte au prorata de leurs mois, trimestres bornés aux trimestres civils écoulés, diviseur lu à l'âge exact, circulaire de revalorisation en vigueur à la date, générations que la loi coupe au 1<sup>er</sup> juillet 1951 et au 1<sup>er</sup> septembre 1961. Le pas du moteur reste l'année, parce que les séries le sont — voir [« Le mois, là où le droit le date »](docs/limites.md#le-mois-là-où-le-droit-le-date) |
 | Trimestres acquis par le revenu, pas par le temps | 150 SMIC horaires depuis 2014, 200 avant : un temps très partiel valide moins de quatre trimestres |
 | Motif d'interruption lu, pas seulement enregistré | Un chômage indemnisé ouvre des points complémentaires financés par l'UNEDIC ; un chômage non indemnisé n'ouvre rien |
+| La carrière peut s'arrêter avant le départ | Une ligne de carrière peut n'être pas un emploi — chômage indemnisé ou non, maladie, accident du travail, maternité, invalidité, élever un enfant, service militaire, inactivité. Sans elle, le calcul supposerait qu'on a travaillé jusqu'au mois du départ |
 | Étalon fidèle au droit, minima compris | Le scénario 1 sert le minimum contributif (au taux plein, deux prorata, écrêté), le minimum garanti de la fonction publique, l'ASPA, la majoration pour enfants, les trimestres accordés au titre des enfants — MDA du régime général et des régimes alignés, bonification de la fonction publique —, la surcote parentale de 2023, l'AVPF et la garantie minimale de points de l'Agirc |
 | Décote propre à la fonction publique | Article L. 14 : coefficient et âge d'annulation montent en charge de 2006 à 2020, et cet âge est la limite d'âge du grade, non 67 ans |
 | Catégorie active et militaires, au lieu d'être traités en sédentaires | Cinq statuts classés — catégorie active et super-active de l'État et de la CNRACL, ouvriers de l'État — et deux statuts militaires. Le classement tient à l'EMPLOI, qu'aucune donnée de carrière ne révèle : il se déclare. Le modèle oppose alors l'âge anticipé ou minoré de l'article L. 24 (57 et 52 ans, 59 et 54 après 2023, avec leurs deux montées en charge), l'âge d'annulation de décote propre au classement (62 et 57 ans, non 67), et la condition de durée de services classés (17 et 27 ans) vérifiée sur la carrière. La pension militaire, elle, ne s'ouvre pas à un âge mais à une durée — 17 ans de services pour un non-officier, 27 pour un officier —, sans surcote et avec la décote du II de l'article L. 14, dix trimestres au plus |
@@ -1022,7 +1023,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          759 tests Python
+tests/                          769 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
