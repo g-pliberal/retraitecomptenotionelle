@@ -916,6 +916,68 @@ non de la série.
 **Fin.** La page Données ne promet plus que ce qu'elle peut tenir, et le test
 du journal échoue si une fiche de série arrive sans date.
 
+### 14. La mortalité différentielle par revenu, que le diviseur ignore — `à faire`
+
+**Pourquoi.** Le diviseur du §5 de `methodologie.md` est une espérance de vie de
+population générale : la même pour l'ouvrier et pour le cadre. À capital
+notionnel égal, deux liquidants reçoivent donc la même pension annuelle, servie
+treize ans de plus à l'un qu'à l'autre — c'est l'écart que l'INSEE mesure chez
+les hommes entre les 5 % les plus aisés et les 5 % les plus modestes. La
+promesse du README, « au franc le franc des cotisations réellement versées »,
+est alors tenue sur le flux annuel et non sur le total perçu : à cotisation
+identique, le notionnel verse plus à qui vit longtemps, et qui vit longtemps est
+aussi celui qui a le plus cotisé. Le dépôt sait déjà chiffrer l'effet sur l'axe
+du sexe — `--table par_sexe`, 5 à 10 % d'écart, assumé au §5 — et n'a rien sur
+l'axe du revenu, qui est le plus grand des deux et le seul que personne n'ait
+choisi : la table unisexe est une décision de non-discrimination, la table
+commune par niveau de vie n'est qu'un défaut d'observation.
+
+**Ce qui l'a ouverte.** Une lecture proposée de l'extérieur : Sylvain Catherine,
+Max Miller et Natasha Sarin, « Social Security and Trends in Wealth Inequality »,
+*Journal of Finance* 80-3, juin 2025. Ils valorisent les droits à retraite
+américains en stock, et le font avec une mortalité par revenu, faute de quoi le
+calcul se trompe de bénéficiaire. Le résultat n'est pas transportable — la
+Social Security est progressive par sa formule, un compte notionnel ne l'est par
+rien — mais la précaution l'est.
+
+**Sources à lire.** L'INSEE publie ce qu'il faut, et récemment : « De 2012-2016 à
+2020-2024, l'écart d'espérance de vie entre les personnes modestes et aisées
+s'est accru », *Insee Première* n° 2085 (2025), dont l'*Insee Résultats* attaché
+donne des **tables de mortalité par vingtile de niveau de vie, par sexe et par
+âge détaillé** ; le document de travail 2025-24 en décrit la méthode ; le
+n° 1687 (2018) est la livraison précédente. Vérifier d'abord ce qu'on cherche
+vraiment : non pas l'écart à la naissance, qui est le chiffre de presse, mais
+les quotients à partir de soixante ans, seuls utiles à un diviseur — et la
+profondeur historique, qui ne remonte pas avant 2012 quand le modèle liquide
+depuis 1941.
+
+**Fichiers.** `data/reference/mortalite/` (série nouvelle, `source_id` dans
+`data/sources.yaml`, fiche de certification) ;
+`src/retraite_notionnelle/donnees/mortalite.py`, dont les lois sont clés par
+`(annee, sexe)` et qu'il faut ouvrir à une troisième clé ;
+`src/retraite_notionnelle/config.py` (`TableConversion`) ; `moteur/js/mortalite.js`
+et `moteur/js/conversion.js` ; `src/retraite_notionnelle/castypes.py`, où
+`niveau_salaire` est le rattachement tout trouvé ; les témoins ;
+`methodologie.md` §5 et `limites.md` §5.
+
+**Marche.** Ne pas chercher des tables complètes par décile et par génération :
+elles n'existent pour aucune des années que le modèle traverse. Caler un
+décalage sur la table existante — facteur sur la force de mortalité, ou
+translation d'âge — qui reproduise l'écart d'espérance publié, comme le dépôt
+calibre déjà ses grands âges, et le tenir constant hors de la fenêtre observée
+en le disant. Puis en faire une variante et non le défaut : le diviseur servi
+reste commun — un système qui trierait ses rentes par revenu ne serait pas
+défendable —, et la variante mesure ce que ce choix transfère, en euros et en
+années de rente, cas type par cas type.
+
+**Fin.** Le dépôt répond par un chiffre, et non par un silence, à l'objection
+« le notionnel fait payer les carrières courtes pour la longévité des autres ».
+Un garde-fou à poser d'avance, sans quoi la mesure serait malhonnête : le défaut
+n'appartient pas au notionnel. Toute rente viagère à taux commun le porte, le
+système actuel le premier, et le calcul doit donc porter sur les six scénarios ;
+si l'écart s'y retrouve du même ordre, c'est un résultat, et il coupe
+l'objection au lieu de la nourrir.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -1109,3 +1171,18 @@ du journal échoue si une fiche de série arrive sans date.
   dispositions écrites côte à côte sans voir qu'elles se contredisaient. La
   leçon vaut au-delà de ce fichier : ce qui n'est pas daté à la granularité où
   il est produit finit par emprunter la date du dernier venu.
+- **Septembre 2026, hors action (suite).** Lecture d'un travail proposé de
+  l'extérieur : Catherine, Miller et Sarin, *Social Security and Trends in
+  Wealth Inequality* (*Journal of Finance*, juin 2025). Rien à en tirer côté
+  données — il est américain et travaille sur la *Survey of Consumer Finances* —
+  et son résultat de tête ne se transporte pas, la Social Security tenant sa
+  progressivité d'une formule qu'un compte notionnel n'a pas. Mais une de ses
+  précautions a ouvert l'action 14 : il valorise les droits à retraite avec une
+  mortalité par revenu, là où le diviseur d'ici ignore que cet axe existe. **Le
+  dépôt avait chiffré l'écart de longévité entre les sexes et oublié celui entre
+  les niveaux de vie**, qui est le plus grand des deux et le seul qui ne résulte
+  d'aucun choix. L'action est notée, pas menée : rien du modèle n'a bougé, et la
+  leçon vaut au-delà d'elle — une lecture extérieure trouve les angles morts que
+  le dépôt ne peut pas voir, puisqu'il ne cherche que là où il a déjà regardé.
+  L'action 9, la surcote de l'Ircantec, reste la plus haute qui ne soit pas
+  commencée.
