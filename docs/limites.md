@@ -1861,10 +1861,12 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   droit ouvre la liquidation demandée. La pénibilité, l'invalidité, l'inaptitude
   et le handicap ne le sont pas : ils demandent des informations médicales ou
   professionnelles que le modèle ne collecte pas ;
-- **polypensionnés** — chaque régime liquide désormais sur ses seules années,
-  et la durée acquise dans chacun est comptée séparément. Restent hors du
-  modèle les règles de COORDINATION interrégimes : proratisation croisée du
-  salaire annuel moyen entre régimes alignés, et liquidation unique (LURA).
+- **polypensionnés** — chaque régime liquide sur ses seules années, et la
+  durée acquise dans chacun est comptée séparément ; mais un régime et celui
+  qui lui succède ne sont pas deux régimes, et liquident ensemble (voir « Les
+  régimes alignés » ci-dessous). Restent hors du modèle les règles de
+  COORDINATION entre régimes alignés DISTINCTS : proratisation croisée du
+  salaire annuel moyen, et liquidation unique (LURA).
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 
@@ -2290,7 +2292,7 @@ Un salarié du privé au taux plein se voyait donc abattre sa ligne UNIRS de 4 �
 douze témoins remontent — de +4,2 % à +28,2 % sur la ligne du régime fermé,
 soit +0,02 % à +0,16 % sur la pension totale, la ligne étant petite.
 
-#### Les régimes alignés : la MSA passe, les indépendants sont coupés en deux
+#### Les régimes alignés : la MSA passe, et les indépendants depuis qu'ils ne sont plus coupés en deux
 
 OpenFisca-France-Pension n'a **aucun module** pour les régimes alignés : ni MSA,
 ni artisans, ni commerçants. Il n'en a pas besoin, et le dépôt non plus :
@@ -2314,23 +2316,40 @@ taux, même coefficient de proratisation. Sa confrontation à OpenFisca est cell
 du régime général, à la virgule près : 1 678 770 retraités de droit direct en
 2024 entrent dans le périmètre contrôlé sans qu'aucun module n'existe pour eux.
 
-**L'artisan et le commerçant, non — et la cause n'est pas le barème.** Le taux
-de liquidation et le décompte des trimestres tombent juste ; ce qui ne tombe
-pas juste, c'est le salaire de référence, parce que la carrière est coupée à
-chaque changement de CAISSE. La CANCAVA devient le RSI en 2006, le RSI est
-absorbé par le régime général en 2018 : le modèle liquide ces trois régimes
-séparément, chacun sur ses seules années, et calcule donc deux salaires annuels
-moyens là où la caisse n'en calculerait qu'un. Un artisan payé 60 000 € de 1976
-à 2015 reçoit « 30 077 € × 120/165 » plus « 36 778 € × 40/165 » au lieu de
-« 34 152 € × 160/165 ».
+**L'artisan et le commerçant passent aussi, depuis l'action 10 de la feuille
+de route — et ce qui les faisait échouer n'était pas le barème.** Le taux de
+liquidation et le décompte des trimestres tombaient juste ; ce qui ne tombait
+pas juste, c'était le salaire de référence, parce que la carrière était coupée
+à chaque changement de CAISSE. La CANCAVA devient le RSI en 2006, le RSI est
+absorbé par le régime général en 2018 : le modèle liquidait ces trois régimes
+séparément, chacun sur ses seules années, et calculait donc deux salaires
+annuels moyens là où la caisse n'en calcule qu'un. Un artisan payé 60 000 € de
+1976 à 2015 recevait « 30 077 € × 120/165 » plus « 36 778 € × 40/165 » au lieu
+de « 34 152 € × 160/165 ».
 
-La césure joue dans les deux sens — les vingt-cinq meilleures années de chaque
-morceau peuvent être meilleures que celles de la carrière entière — et l'écart
-mesuré va de **−7,2 % à +0,3 %** sur les dix profils. C'est la limite
-« coordination interrégimes » ci-dessus, mais elle est plus large qu'un
-polypensionnat : **un régime et celui qui lui succède ne sont pas deux
-régimes**, et le catalogue le sait déjà, puisqu'il porte `succede_a`. Voir
-l'action 10 de la feuille de route.
+La césure jouait dans les deux sens — les vingt-cinq meilleures années de
+chaque morceau peuvent être meilleures que celles de la carrière entière — et
+l'écart mesuré allait de **−7,2 % à +0,3 %** sur les dix profils. Ce n'était
+pas la limite « coordination interrégimes » ci-dessus, mais quelque chose de
+plus large qu'un polypensionnat : **un régime et celui qui lui succède ne sont
+pas deux régimes**, et le catalogue le savait déjà, puisqu'il porte
+`succede_a` et `integre_dans`.
+
+Le moteur groupe maintenant les régimes d'ANNUITÉS par chaîne d'absorption
+avant de liquider : un seul salaire de référence sur les années de tous les
+membres, une seule proratisation, une seule ligne, sous le nom de la caisse de
+la dernière période active — celle qui aurait le dossier —, dont la fiche donne
+les règles. La chaîne ne se suit qu'à partir de l'année où le régime absorbé
+FERME à ses affiliés : avant 2018, le régime général et le RSI sont deux
+régimes, et un salarié devenu artisan qui liquide en 2010 a bien deux
+pensions ; en 2020, il n'en a qu'une. Les régimes en points n'entrent pas dans
+un groupe — leurs points se convertissent et s'additionnent déjà — et la
+carrière qui traverse 1948 dans la fonction publique est l'autre chaîne
+touchée. Sur les dix profils de l'oracle, l'artisan et le commerçant rendent
+désormais exactement la pension du régime général, comme la MSA. Le
+découpage d'avant reste disponible comme variante
+(`calculer(..., liquider_successions=False)`), et un test le garde mesuré :
+c'est de là que viennent les −7,2 % et +0,3 %.
 
 ### La cotisation déplafonnée est portée au compte
 
@@ -5087,7 +5106,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le
-  droit. Restent dehors la **proratisation croisée** du salaire annuel moyen
+  droit, et un régime et celui qui lui succède comptent pour un seul (voir
+  §3). Restent dehors la **proratisation croisée** du salaire annuel moyen
   entre régimes alignés et la **liquidation unique** (LURA), qui, depuis 2017,
   fait calculer par une seule caisse la retraite d'un polypensionné des trois
   régimes alignés. L'effet est de second ordre pour une carrière
@@ -5441,7 +5461,7 @@ barèmes.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 792 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 797 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

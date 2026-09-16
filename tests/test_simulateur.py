@@ -3578,3 +3578,115 @@ def test_la_derogation_ne_deborde_pas_sur_un_regime_special(simulateur):
     assert scenario._age_ouverture(cnracl, carriere) == pytest.approx(57.0)
     assert scenario._age_taux_plein(sncf, carriere) == pytest.approx(56.67, abs=0.01)
     assert scenario._age_taux_plein(cnracl, carriere) == pytest.approx(62.0)
+
+
+# -- un régime et celui qui lui succède (action 10 de la feuille de route) ------
+
+
+def _carriere_par_statuts(*tranches: tuple[int, int, str], naissance: int,
+                          liquidation: int, revenu: float = 40000.0) -> Carriere:
+    lignes = [
+        AnneeCarriere(annee=annee, revenu=revenu, affiliation=affiliation,
+                      trimestres_valides=4)
+        for debut, fin, affiliation in tranches
+        for annee in range(debut, fin + 1)
+    ]
+    return Carriere(annee_naissance=naissance, sexe="H", lignes=lignes,
+                    age_liquidation=float(liquidation - naissance))
+
+
+def _pensions_de_base(resultat) -> dict[str, object]:
+    return {p.regime: p for p in resultat.pensions_par_regime
+            if p.regime in ("cancava", "organic", "rsi", "regime_general")}
+
+
+def test_les_trois_noms_du_regime_de_l_artisan_liquident_ensemble(simulateur):
+    """CANCAVA, RSI, régime général : trois noms, une pension.
+
+    Un artisan de 1976 à 2020, parti en 2021, a cotisé sous trois caisses ;
+    sa pension de base est UNE ligne, sous le nom de la dernière — le régime
+    général, qui a le dossier —, avec un seul salaire de référence sur toute
+    la carrière et une seule proratisation, et la ligne dit la succession.
+    """
+    carriere = _carriere_par_statuts(
+        (1976, 2020, "artisan"), naissance=1956, liquidation=2021,
+    )
+    pensions = _pensions_de_base(simulateur.scenario_actuel.calculer(carriere))
+    assert list(pensions) == ["regime_general"], list(pensions)
+    ligne = pensions["regime_general"]
+    assert "3 caisses liquidées ensemble (cancava, rsi puis regime_general)" in ligne.detail
+    # 45 années validées, plafonnées à la durée de proratisation de la
+    # génération 1956 : 166 trimestres, et non 40 + 48 + 12 en trois morceaux.
+    assert "× 166/166" in ligne.detail, ligne.detail
+    # Le salarié du privé payé pareil touche la même pension de base : c'est
+    # l'alignement de l'article L. 634-2, et il ne tient qu'à cette fusion.
+    salarie = simulateur.scenario_actuel.calculer(_carriere_par_statuts(
+        (1976, 2020, "salarie_prive_non_cadre"), naissance=1956, liquidation=2021,
+    ))
+    assert ligne.montant == pytest.approx(
+        _pensions_de_base(salarie)["regime_general"].montant, rel=1e-9
+    )
+
+
+def test_la_variante_coupee_garde_un_morceau_par_caisse(simulateur):
+    """``liquider_successions=False`` retrouve le découpage d'avant, pour mesurer."""
+    carriere = _carriere_par_statuts(
+        (1976, 2020, "artisan"), naissance=1956, liquidation=2021,
+    )
+    entier = simulateur.scenario_actuel.calculer(carriere)
+    coupe = simulateur.scenario_actuel.calculer(carriere, liquider_successions=False)
+    assert sorted(_pensions_de_base(coupe)) == ["cancava", "regime_general", "rsi"]
+    assert all("liquidées ensemble" not in p.detail
+               for p in _pensions_de_base(coupe).values())
+    # Trois morceaux de quarante, quarante-huit et douze trimestres sur 166.
+    assert "× 120/166" in _pensions_de_base(coupe)["cancava"].detail
+    assert "× 48/166" in _pensions_de_base(coupe)["rsi"].detail
+    assert "× 12/166" in _pensions_de_base(coupe)["regime_general"].detail
+    # Et la somme des morceaux n'est pas la pension entière : c'est l'écart
+    # que la correction a fermé.
+    somme = sum(p.montant for p in _pensions_de_base(coupe).values())
+    assert somme != pytest.approx(entier.pension_annuelle, rel=1e-3)
+    assert entier.trimestres_valides == coupe.trimestres_valides
+
+
+def test_la_succession_ne_se_suit_qu_a_partir_de_la_fermeture(simulateur):
+    """Un salarié devenu artisan a deux pensions en 2010, une seule en 2021.
+
+    Le RSI ne ferme à ses affiliés qu'en 2018 : avant, le régime général et
+    lui sont deux régimes distincts, et un polypensionné a une pension de
+    chacun — la coordination entre régimes alignés distincts reste hors du
+    modèle. Après, le RSI EST le régime général, et la carrière entière est
+    liquidée d'un seul tenant. La CANCAVA, fermée en 2006, suit le RSI dans
+    les deux cas.
+    """
+    tot = simulateur.scenario_actuel.calculer(_carriere_par_statuts(
+        (1970, 1989, "salarie_prive_non_cadre"), (1990, 2009, "artisan"),
+        naissance=1948, liquidation=2010,
+    ))
+    pensions = _pensions_de_base(tot)
+    assert sorted(pensions) == ["regime_general", "rsi"], sorted(pensions)
+    assert "2 caisses liquidées ensemble (cancava puis rsi)" in pensions["rsi"].detail
+    assert "liquidées ensemble" not in pensions["regime_general"].detail
+    assert "× 80/160" in pensions["regime_general"].detail
+    assert "× 80/160" in pensions["rsi"].detail
+
+    tard = simulateur.scenario_actuel.calculer(_carriere_par_statuts(
+        (1981, 2000, "salarie_prive_non_cadre"), (2001, 2020, "artisan"),
+        naissance=1959, liquidation=2021,
+    ))
+    pensions = _pensions_de_base(tard)
+    assert list(pensions) == ["regime_general"], list(pensions)
+    assert "3 caisses liquidées ensemble (cancava, rsi puis regime_general)" in (
+        pensions["regime_general"].detail
+    )
+    assert "× 160/167" in pensions["regime_general"].detail, pensions["regime_general"].detail
+
+
+def test_un_artisan_d_une_seule_caisse_n_est_pas_touche(simulateur):
+    """Qui n'a connu qu'un nom garde sa ligne, sans mention de succession."""
+    resultat = simulateur.scenario_actuel.calculer(_carriere_par_statuts(
+        (1965, 2004, "artisan"), naissance=1945, liquidation=2005,
+    ))
+    pensions = _pensions_de_base(resultat)
+    assert list(pensions) == ["cancava"]
+    assert "liquidées ensemble" not in pensions["cancava"].detail

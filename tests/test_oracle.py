@@ -1308,7 +1308,8 @@ AFFILIATIONS_ALIGNEES = {
 
 
 def _notre_pension_alignee(simulateur: Simulateur, profil: dict,
-                           affiliation: str) -> dict[str, float]:
+                           affiliation: str,
+                           liquider_successions: bool = True) -> dict[str, float]:
     """La pension de base d'un statut aligné, tous régimes de base confondus."""
     lignes = [
         AnneeCarriere(
@@ -1322,7 +1323,9 @@ def _notre_pension_alignee(simulateur: Simulateur, profil: dict,
         age_liquidation=float(profil["liquidation"] - profil["naissance"]),
         identifiant=profil["code"],
     )
-    resultat = simulateur.scenario_actuel.calculer(carriere)
+    resultat = simulateur.scenario_actuel.calculer(
+        carriere, liquider_successions=liquider_successions
+    )
     codes = set(AFFILIATIONS_ALIGNEES[affiliation])
     parts = [p for p in resultat.pensions_par_regime
              if p.regime in codes and p.montant > 0]
@@ -1366,43 +1369,63 @@ def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
         assert nous["montant"] <= entree["openfisca"]["pension_brute"], code
 
 
-def test_les_regimes_alignes_des_independants_sont_coupes_a_la_succession(
+def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
         oracle, simulateur):
-    """Ce que la confrontation trouve chez l'artisan, et qui n'est pas aligné.
+    """L'artisan et le commerçant rendent la pension du régime général.
 
-    L'artisan et le commerçant relèvent d'un régime aligné, eux aussi : leur
-    pension devrait donc, à carrière identique, être celle du régime général.
-    Elle ne l'est pas, et la cause n'est pas le barème — le taux de
-    liquidation et le décompte des trimestres tombent juste — mais la
-    SUCCESSION des caisses. La CANCAVA devient le RSI en 2006, le RSI est
-    absorbé par le régime général en 2018 : le modèle liquide ces trois
-    régimes séparément, chacun sur ses seules années, et calcule donc DEUX
-    salaires de référence là où la caisse n'en calculerait qu'un.
+    Ils relèvent d'un régime aligné, eux aussi : leur pension doit donc, à
+    carrière identique, être celle du régime général. Elle ne l'était pas, et
+    la cause n'était pas le barème — le taux de liquidation et le décompte des
+    trimestres tombaient juste — mais la SUCCESSION des caisses. La CANCAVA
+    devient le RSI en 2006, le RSI est absorbé par le régime général en 2018 :
+    le modèle liquidait ces trois régimes séparément, chacun sur ses seules
+    années, et calculait donc DEUX salaires de référence là où la caisse n'en
+    calcule qu'un.
 
-    Le test mesure ce que cela coûte plutôt que de le taire : la césure joue
-    dans les deux sens — les vingt-cinq meilleures années de chaque morceau
-    peuvent être meilleures que celles de la carrière entière — et l'écart va
-    de −7,2 % à +0,3 %. C'est la limite « coordination interrégimes » de
-    `limites.md` §3, et elle est plus large qu'un polypensionnat : un régime
-    et celui qui lui succède ne sont pas deux régimes.
+    Le moteur liquide maintenant ensemble un régime d'annuités et celui qui
+    lui succède, sous les règles de la caisse qui aurait le dossier : un seul
+    salaire de référence, une seule proratisation, une seule ligne. Sur les
+    dix profils de l'oracle, l'artisan et le commerçant rendent exactement la
+    pension du régime général, comme la MSA — et donc, à la tolérance près,
+    celle d'OpenFisca.
     """
-    coupes, ecarts = 0, []
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
         reference = _notre_calcul(simulateur, profil)
         for affiliation in ("artisan", "commercant"):
             nous = _notre_pension_alignee(simulateur, profil, affiliation)
-            # Ce qui n'est pas perdu : la durée et le taux.
+            assert nous["morceaux"] == 1, (code, affiliation)
+            assert nous["montant"] == pytest.approx(
+                reference["pension_brute"], rel=1e-9), (code, affiliation)
             assert nous["trimestres"] == reference["duree_assurance"], (code, affiliation)
             assert nous["taux_de_liquidation"] == pytest.approx(
                 entree["openfisca"]["taux_de_liquidation"],
                 abs=TOLERANCE_EXACTE), (code, affiliation)
-            if nous["morceaux"] > 1:
-                coupes += 1
-                ecarts.append(nous["montant"] / entree["openfisca"]["pension_brute"])
-            else:
-                assert nous["montant"] == pytest.approx(
-                    reference["pension_brute"], rel=1e-9), (code, affiliation)
-    assert coupes >= 10, "aucune carrière ne traverse une succession de caisses"
-    assert min(ecarts) > 0.90, min(ecarts)
-    assert max(ecarts) < 1.02, max(ecarts)
+            assert nous["montant"] == pytest.approx(
+                entree["openfisca"]["pension_brute"], rel=TOLERANCE_SALAIRE
+            ), (code, affiliation)
+
+
+def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
+    """Ce que la correction a déplacé, gardé comme variante pour le mesurer.
+
+    À ``liquider_successions=False``, chaque nom de caisse est liquidé sur ses
+    seules années, comme avant. La césure joue dans les deux sens — les
+    vingt-cinq meilleures années de chaque morceau peuvent être meilleures que
+    celles de la carrière entière — et l'écart va de −7,2 % à +0,3 % contre
+    OpenFisca. C'est la mesure que `limites.md` §3 cite ; si elle bouge, c'est
+    la phrase qu'il faut changer.
+    """
+    coupes, ecarts = 0, []
+    for code, entree in oracle["profils"].items():
+        profil = entree["profil"]
+        for affiliation in ("artisan", "commercant"):
+            nous = _notre_pension_alignee(
+                simulateur, profil, affiliation, liquider_successions=False
+            )
+            assert nous["morceaux"] == 2, (code, affiliation)
+            coupes += 1
+            ecarts.append(nous["montant"] / entree["openfisca"]["pension_brute"])
+    assert coupes == 20
+    assert 0.925 < min(ecarts) < 0.930, min(ecarts)
+    assert 1.000 < max(ecarts) < 1.005, max(ecarts)

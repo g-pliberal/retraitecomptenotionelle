@@ -805,7 +805,7 @@ manquants.
   d'âge, n'en est pas : son article 8 renvoie à « un barème actuariel […] établi
   par le conseil d'administration », qu'aucun texte ne chiffre.
 
-### 10. Liquider ensemble un régime et celui qui lui succède — `à faire`
+### 10. Liquider ensemble un régime et celui qui lui succède — `fait`
 
 **Pourquoi.** Découvert en menant l'action 4, et c'est le plus gros écart
 qu'elle ait mesuré. Le modèle liquide chaque régime sur ses seules années, ce
@@ -842,6 +842,61 @@ alignés DISTINCTS (proratisation croisée, LURA), qui reste hors du modèle.
 **Fin.** L'artisan et le commerçant rendent la pension du régime général sur
 les dix profils de l'oracle, comme la MSA, et `limites.md` §3 dit ce que la
 correction a déplacé.
+
+**Ce que ça a déplacé.**
+- *Le regroupement, et sa règle de date.* Avant de liquider, le moteur suit
+  `integre_dans` de chaque régime d'annuités que la carrière a traversé, tant
+  que la chaîne reste en annuités, et groupe ce qui aboutit au même bout :
+  un seul salaire de référence sur les années de tous les membres, une seule
+  proratisation, une seule ligne, sous le nom de la caisse de la dernière
+  période active — celle qui aurait le dossier —, dont la fiche donne les
+  règles, et la ligne dit la succession (« 3 caisses liquidées ensemble »).
+  La chaîne ne se suit qu'à partir de l'année où le régime absorbé FERME à
+  ses affiliés : avant 2018, le régime général et le RSI sont deux régimes,
+  et un salarié devenu artisan qui liquide en 2010 garde deux pensions ;
+  en 2020 il n'en a qu'une. Les régimes en points n'entrent dans aucun
+  groupe. Le découpage d'avant reste une variante
+  (`calculer(..., liquider_successions=False)`), qu'un test garde mesurée.
+  Les deux moteurs sont touchés, et les témoins.
+- *L'oracle.* Sur les dix profils, l'artisan et le commerçant rendent
+  maintenant EXACTEMENT la pension du régime général, comme la MSA — vingt
+  cas à 10⁻⁹ près —, et donc celle d'OpenFisca à la tolérance près. La
+  variante coupée retrouve les −7,2 % à +0,3 % d'avant.
+- *Les cas types du site, bien plus que l'oracle ne le laissait voir.* Les
+  profils de l'oracle sont à salaire constant ; ceux du site montent avec
+  l'âge, et c'est là que la césure coûtait : chaque morceau de moins de
+  vingt-cinq ans liquidait sur la moyenne de TOUTES ses années, quand la
+  carrière entière liquide sur ses vingt-cinq meilleures, qui sont les
+  dernières. Artisan, commerçant, micro-entrepreneur et gérant de débit de
+  tabac des générations 1955 et 1965 : de +8 % à +17 % de pension actuelle ;
+  génération 1945, qui ne traverse qu'une succession sur ses dernières
+  années : +1 % à +1,6 % ; les carrières mixtes privé puis indépendant :
+  +2,5 % à +5 %, et +16 % pour « creux en milieu de carrière », dont les
+  années d'indépendant, mieux payées, entrent maintenant dans les
+  vingt-cinq meilleures. Le modèle sous-estimait les pensions des
+  indépendants d'un ordre de grandeur que rien n'avait mesuré, faute d'un
+  oracle à salaire croissant.
+- *L'autre chaîne : la fonction publique de 1948.* Le fonctionnaire de la
+  génération 1925, entré sous la loi de 1853, empilait « 10 345 € × 60 % ×
+  8/120 » SUR une pension civile déjà à 150/150 : la pension dépassait les
+  75 % que le code plafonne. Groupé, il rend 16 467 € au lieu de 16 881,
+  soit −2,45 %, et c'est la correction d'un cumul que le droit n'a jamais
+  permis. Cinq cas types 1925 — État, actif, super-actif, militaire,
+  officier — bougent d'autant.
+- *La liquidation unique, de fait, pour la chaîne du régime général.* Depuis
+  2018, un salarié devenu artisan liquide chez nous une seule pension sur
+  ses meilleures années tous régimes confondus : c'est ce que fait la LURA
+  depuis juillet 2017 pour les générations 1953 et suivantes, et ce que
+  l'absorption du RSI produit de toute façon. Restent hors du modèle la
+  LURA entre le régime général et la MSA des salariés, qui sont deux
+  régimes distincts sans lien d'absorption, et la proratisation croisée
+  d'avant elle ; et pour les générations d'avant 1953, que la LURA ne
+  couvre pas, la caisse calcule encore deux pensions coordonnées là où le
+  modèle n'en calcule qu'une.
+- *La page Coût.* La courbe « ce qui sortirait en comptes notionnels dès
+  2026 » baisse de 0,1 point de PIB sur neuf des années 2044-2067 : la
+  pension actuelle des indépendants monte, le rapport notionnel/actuel de
+  leurs cas types baisse d'autant.
 
 ### 11. Appliquer le coefficient d'équilibre — `à faire`
 
@@ -1798,6 +1853,20 @@ passe, disant quelles pages ont bougé et de combien de mots.
   salariés agricoles sur le régime général, que le dépôt supposait éternel.
   L'action 4, la contre-expertise du scénario 1, est la plus haute qui ne soit
   pas commencée.
+- **Septembre 2026, action 10.** Faite. Un régime d'annuités et celui qui lui
+  succède liquident ensemble, sous le nom de la caisse qui aurait le dossier ;
+  l'artisan et le commerçant rendent exactement la pension du régime général
+  sur les dix profils de l'oracle, et le découpage d'avant reste une variante
+  mesurée. Le détail est sous l'action. Deux choses à en retenir. La mesure de
+  l'action 4 — de −7,2 % à +0,3 % — était faite sur des profils à salaire
+  constant, et disait dix fois moins que le défaut : sur les cas types du
+  site, dont le salaire monte avec l'âge, la césure coûtait jusqu'à 17 % aux
+  indépendants, parce qu'un morceau de moins de vingt-cinq ans liquide sur
+  toutes ses années et non sur ses meilleures. **Un oracle à salaire constant
+  ne voit pas ce qui tient à la sélection des années.** Et un lien du
+  catalogue que le moteur ne lit pas est une règle qui n'existe pas :
+  `integre_dans` était porté par dix-huit fiches et n'était employé que pour
+  convertir des points.
 - **Septembre 2026, action 3, seconde passe.** Les deux réserves de la première
   ont été reprises. Aucune des deux ne se referme par une certification — les
   sources n'existent pas —, mais les deux cessent d'être des aveux : une source
