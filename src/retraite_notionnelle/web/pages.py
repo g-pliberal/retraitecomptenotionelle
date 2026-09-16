@@ -2801,11 +2801,50 @@ def _part_vivante(survie: tuple[float, ...], duree: float) -> float:
     return survie[rang] * (1 - fraction) + survie[rang + 1] * fraction
 
 
+def _fiche_age_reference(comparaison, saisie: Saisie) -> str:
+    """L'âge de référence, affiché seulement là où il agit.
+
+    Ce chiffre n'entre dans AUCUNE des six pensions par lui-même. Il sert à une
+    seule opération : convertir en capital les droits acquis avant la bascule,
+    donc les scénarios 3 et 5 et eux seuls. Les scénarios 1, 2, 4 et 6 ne le
+    lisent jamais — en comptes notionnels, l'âge de départ est déjà payé par le
+    coefficient de conversion et par les années non cotisées.
+
+    Deux conséquences, et c'est pourquoi la fiche ne se contente pas de lire
+    ``ecart_age`` :
+
+    * l'âge montré doit être celui de l'année de BASCULE, celui que la
+      conversion emploie, et non celui de l'année de liquidation. Les deux ne
+      coïncident que depuis 2017, où le cliquet est à 67 ans quelle que soit
+      l'année ; une bascule antérieure les sépare, et la fiche affichait alors
+      un âge que le calcul n'utilisait pas ;
+    * quand rien n'a été acquis avant la bascule, ou que l'utilisateur a
+      demandé la conversion à l'âge de départ effectif, l'âge de référence ne
+      sert à rien et la fiche disparaît plutôt que d'annoncer un chiffre inerte.
+    """
+    acquis = comparaison.notionnel_prospectif.droits_acquis
+    if acquis is None or saisie.conversion_acquis != "reference":
+        return ""
+    return g.fiche(
+        "âge de référence — scénarios 3 et 5 seulement",
+        f"{_age(acquis.age_conversion)}"
+        + g.bulle(
+            "D'où vient l'âge de référence et ce qu'il fait",
+            f"<strong>{_age(acquis.age_conversion)}</strong> est l'âge du "
+            "<strong>taux plein</strong> du régime général : celui où la décote "
+            "s'annule, quelle que soit la durée cotisée. La loi du 9 novembre "
+            "2010 l'a porté de 65 à 67 ans, cible atteinte en 2017 : c'est "
+            "l'âge en vigueur pour les dernières générations. Il ne sert ici "
+            "qu'à convertir les droits acquis avant la bascule ; les scénarios "
+            "1, 2, 4 et 6 n'en dépendent pas. Détail ligne à ligne plus bas.",
+        ),
+    )
+
+
 def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     comparaison = contexte.simuler(saisie)
     carriere = comparaison.carriere
     retro = comparaison.notionnel_retroactif
-    ecart = retro.ecart_age
     conversion = retro.conversion
 
     # Le moteur ne calcule qu'un montant, en euros de l'année de liquidation.
@@ -2901,18 +2940,13 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                comparaison.taux_remplacement("notionnel_liberal"))
     )
 
-    anticipation = (
-        f"départ {g.nombre(abs(ecart.ecart), 2).rstrip('0').rstrip(',')} ans "
-        + ("plus tôt" if ecart.anticipe else "plus tard")
-    )
     fiches = "".join([
         g.fiche("années cotisées", str(len(carriere.annees_cotisees))),
         # La date, et pas seulement l'année : la pension prend effet le premier
         # du mois, et c'est ce mois que l'utilisateur vient de choisir.
         g.fiche("liquidation", f"{_age(carriere.age_liquidation)} "
                 f'<span class="discret">en {carriere.date_liquidation}</span>'),
-        g.fiche(f"âge de référence — {anticipation}",
-                f"{_age(ecart.age_reference)}"),
+        _fiche_age_reference(comparaison, saisie),
         # Deux décimales, et non une : le lecteur qui refait la division
         # « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7
         # au lieu de 25,67 il tombait un euro à côté, et doutait du reste.
@@ -3496,16 +3530,46 @@ def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
     ]
 
     part_acquis = acquis.capital / prospectif.capital_notionnel
+    # Le seul endroit du site où l'âge de référence agit, donc le seul où son
+    # histoire a sa place : la fiche des résultats se borne à dire ce qu'il est,
+    # le budget de lecture de la page ne lui laissant pas davantage.
+    #
+    # Les DEUX sens sont écrits. La version d'avant ne parlait que de
+    # l'anticipation, ce qui laissait croire à une sanction ; c'est un PIVOT, et
+    # un départ postérieur à l'âge de référence est bonifié par le même
+    # mécanisme. Taire cette moitié-là aurait été présenter une convention de
+    # modélisation comme une règle de justice.
     neutralite = ""
-    if saisie.conversion_acquis == "reference" and acquis.age_conversion > age_liquidation:
+    if saisie.conversion_acquis == "reference" and acquis.age_conversion != age_liquidation:
+        anticipe = acquis.age_conversion > age_liquidation
+        effet = (
+            "L'anticipation est donc payée une seconde fois, sur le passé."
+            if anticipe else
+            "Le report est donc récompensé une seconde fois, sur le passé."
+        )
         neutralite = (
             f"<p>Ligne b) : les droits déjà ouverts sont convertis au diviseur de "
             f"l'âge de référence ({_age(acquis.age_conversion)}), alors que la "
-            f"rente sera servie depuis {_age(age_liquidation)}. L'anticipation "
-            f"est donc payée une seconde fois, sur le passé. L'option « conversion "
-            f"des droits acquis à l'âge de départ effectif » supprime cet "
-            f"abattement, et c'est la convention qu'une réforme réelle "
-            f"retiendrait.</p>"
+            f"rente sera servie depuis {_age(age_liquidation)}. {effet} "
+            f"L'option « conversion des droits acquis à l'âge de départ "
+            f"effectif » supprime cet écart, et c'est la convention qu'une "
+            f"réforme réelle retiendrait.</p>"
+            f"<p>D'où vient ce chiffre : {_age(acquis.age_conversion)} est l'âge "
+            f"du <strong>taux plein</strong> du régime général, celui auquel la "
+            f"décote s'annule quelle que soit la durée cotisée. La loi "
+            f"n° 2010-1330 du 9 novembre 2010 l'a porté de 65 à 67 ans par "
+            f"paliers, cible atteinte en 2017 ; la réforme du 14 avril 2023 l'y "
+            f"a laissé. Le modèle le tient à <strong>cliquet</strong> — il ne "
+            f"redescend jamais —, de sorte que l'abaissement à 60 ans de 1982 ne "
+            f"le fasse pas baisser et qu'un départ à 60 ans en 1990 se lise bien "
+            f"comme une anticipation de cinq ans.</p>"
+            f"<p>C'est le <strong>seul</strong> usage de cet âge dans tout le "
+            f"site : il n'entre que dans les scénarios 3 et 5, par cette ligne b). "
+            f"Les scénarios 1, 2, 4 et 6 ne le lisent jamais — en comptes "
+            f"notionnels, partir tôt est déjà payé deux fois, par les années non "
+            f"cotisées et par un coefficient de conversion plus élevé. Et c'est "
+            f"un <strong>pivot</strong>, non une sanction : partir avant lui "
+            f"réduit la part acquise, partir après l'augmente.</p>"
         )
 
     return g.depliant("Du scénario 1 au scénario 3, ligne à ligne", f"""
