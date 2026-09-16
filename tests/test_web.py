@@ -994,14 +994,20 @@ def test_changer_de_metier_change_le_resultat(contexte):
 
 
 def test_le_formulaire_offre_toujours_une_ligne_de_metier_de_plus(page):
-    """C'est ainsi qu'on ajoute un métier : sans une ligne de JavaScript."""
+    """C'est ainsi qu'on ajoute un métier : sans une ligne de JavaScript.
+
+    La ligne de plus est REPLIÉE : elle ne coûte qu'un résumé tant qu'on ne
+    veut pas s'en servir. Les périodes déjà décrites, elles, restent des
+    groupes de champs, et leur rang en est la légende.
+    """
     vierge = page("/simuler")
-    # Chaque métier est un groupe de champs, et son rang en est la légende.
-    assert vierge.count('<legend class="rang">') == 2
+    assert vierge.count('<legend class="rang">') == 1
+    assert vierge.count("<summary>Ajouter une période") == 1
     assert 'name="metier2_debut" value=""' in vierge
 
     rempli = page("/simuler", naissance=1975, metier2_debut=40, metier2_statut="artisan")
-    assert rempli.count('<legend class="rang">') == 3
+    assert rempli.count('<legend class="rang">') == 2
+    assert rempli.count("<summary>Ajouter une période") == 1
     assert 'name="metier3_debut" value=""' in rempli
 
 
@@ -1012,6 +1018,7 @@ def test_le_formulaire_s_arrete_au_nombre_maximal_de_metiers(page):
         champs[f"metier{rang}_statut"] = "artisan"
     texte = page("/simuler", **champs)
     assert texte.count('<legend class="rang">') == METIERS_MAXIMUM
+    assert "<summary>Ajouter une période" not in texte
     assert f'name="metier{METIERS_MAXIMUM + 1}_debut"' not in texte
 
 
@@ -2578,13 +2585,89 @@ def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
     est énoncée avec chacun des champs qu'elle couvre, et non un intertitre, qui
     ne se voit qu'à l'œil. WCAG 3.3.2.
     """
-    texte = page("/simuler")
+    texte = page("/simuler", naissance=1975, metier2_debut=40,
+                 metier2_statut="artisan")
     groupes = re.findall(r'<fieldset class="metier[^"]*">(.{0,80})', texte, re.S)
     assert len(groupes) >= 2, "les métiers ne forment plus des groupes de champs"
     for debut in groupes:
         assert debut.startswith('<legend class="rang">'), (
             f"un groupe de métier n'a pas de légende : {debut!r}"
         )
+    # La ligne encore vide, elle, est un dépliant : c'est son résumé qui la
+    # nomme, et la nommer deux fois ferait lire deux titres pour une période
+    # qui n'existe pas.
+    vide = re.search(r'<details class="metier facultatif">(.{0,80})', texte, re.S)
+    assert vide and vide.group(1).startswith("<summary>Ajouter une période"), (
+        "la ligne à remplir n'annonce plus ce qu'elle ajoute"
+    )
+
+
+#: Ce qu'on LIT à l'ouverture d'une page : bulles fermées, dépliants fermés,
+#: menus repliés. C'est la mesure qui compte pour le texte d'un formulaire —
+#: tout le reste attend qu'on le demande.
+def _mots_visibles(corps: str) -> int:
+    texte = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps, flags=re.S)
+    texte = re.sub(r"<option\b.*?</option>", " ", texte, flags=re.S)
+
+    def replie(trouve: re.Match) -> str:
+        bloc = trouve.group(0)
+        if re.match(r"<details[^>]*\bopen", bloc):
+            return bloc
+        resume = re.search(r"<summary>.*?</summary>", bloc, re.S)
+        return resume.group(0) if resume else " "
+
+    texte = re.sub(r"<details\b.*?</details>", replie, texte, flags=re.S)
+    return len(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", texte)).split())
+
+
+def test_le_simulateur_tient_en_peu_de_mots(contexte):
+    """Le formulaire s'ouvrait sur quatre-vingt-dix mots avant le premier champ.
+
+    Ce qui est nécessaire pour remplir un champ ou lire un chiffre reste écrit ;
+    tout ce qui explique, nuance ou justifie s'ouvre sous un point
+    d'interrogation. Ce test tient la porte fermée : la prose revient toujours,
+    une phrase à la fois.
+    """
+    vierge = rendre(contexte, "/simuler", {})[1]
+    assert _mots_visibles(vierge) <= 160, "le formulaire reprend de la prose"
+
+    resultats = rendre(contexte, "/simuler", {
+        "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
+        "unite_revenu": "euros_mois", "salaire": "2600",
+    })[1]
+    assert _mots_visibles(resultats) <= 1700, "les résultats reprennent de la prose"
+
+
+def test_le_sexe_ne_change_rien_par_defaut(contexte):
+    """C'est ce qui justifie sa place dans les options de modélisation.
+
+    Il ne compte que de deux façons — table de conversion par sexe, majoration
+    de durée d'assurance réservée à la mère —, et les deux réglages qui les
+    commandent sont eux-mêmes dans les options.
+    """
+    base = {"naissance": "1962-03-15", "debut": "1984-09",
+            "liquidation": "2026-07", "unite_revenu": "euros_mois",
+            "salaire": "2600"}
+
+    def resultat(**champs) -> str:
+        import json
+        dictionnaire = contexte.simuler(
+            Saisie.depuis_requete({**base, **champs})
+        ).dictionnaire()
+        # Le résultat REDIT le sexe saisi : c'est ce qui a servi à calculer,
+        # et le comparer reviendrait à comparer la saisie à elle-même.
+        dictionnaire["assure"].pop("sexe")
+        return json.dumps(dictionnaire, sort_keys=True)
+
+    assert resultat(sexe="H") == resultat(sexe="F")
+    assert resultat(sexe="H", table="par_sexe") != resultat(sexe="F", table="par_sexe")
+    assert resultat(sexe="H", enfants="2") != resultat(sexe="F", enfants="2")
+    # Et le champ n'est plus dans la grille d'identité : il est dans le
+    # dépliant des options, avec la table et les enfants.
+    corps = rendre(contexte, "/simuler", {})[1]
+    avant_options = corps.split('<details class="options">')[0]
+    assert 'id="sexe"' not in avant_options
+    assert 'id="sexe"' in corps
 
 
 def test_les_champs_qui_decrivent_la_personne_sont_reconnaissables(page):
@@ -3234,8 +3317,14 @@ def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
         f"{chemin} : un mot du glossaire est mal formé"
     )
     for mot in mots:
+        # Deux ancres possibles : le mot de jargon, souligné dans la phrase, et
+        # l'appel — un point d'interrogation posé après un titre ou un libellé
+        # de champ, qui n'a pas de texte et doit donc porter son nom.
         assert mot.startswith(
             '<button type="button" class="terme" aria-expanded="false">'
+        ) or re.match(
+            r'<button type="button" class="terme appel" aria-expanded="false" '
+            r'aria-label="[^"]+">\?</button>', mot,
         ), mot[:90]
         bulle = re.search(r'<span class="bulle" role="note" hidden>(.*)', mot, re.S)
         assert bulle and bulle.group(1).strip(), f"{chemin} : mot sans définition"

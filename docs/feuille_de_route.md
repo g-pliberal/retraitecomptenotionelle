@@ -1312,6 +1312,56 @@ avant de partir, un chiffre qui devient vrai.
   travaillée. C'est la convention déjà retenue pour l'année d'un changement de
   métier ; `limites.md` la redit pour celle-ci.
 
+### 19. Le simulateur, réduit à ses champs et à ses chiffres — `fait`
+
+**Pourquoi.** Le formulaire s'ouvrait sur quatre-vingt-dix mots — un chapeau, un
+encadré, un dépliant — avant le premier champ, et la page de résultats faisait
+suivre chaque tableau de cent à cent soixante-cinq mots de commentaire. Rien de
+tout cela n'est faux, et rien n'est nécessaire pour remplir un champ ou lire un
+chiffre. Or on vient ici pour remplir des champs : le reste est du temps pris à
+quelqu'un qui a déjà décidé.
+
+**Marche.** Ce qui est nécessaire reste écrit ; ce qui explique, nuance ou
+justifie passe derrière un point d'interrogation, dans la bulle que le glossaire
+utilisait déjà pour ses mots de jargon. La ligne de métier vide se replie, et le
+sexe rejoint les options de modélisation.
+
+**Ce que ça a déplacé.** *Aucun chiffre* : les 484 témoins de simulation sont
+inchangés au bit près. Ce qui change est ce qu'on lit à l'ouverture.
+
+| | Avant | Après |
+|---|---|---|
+| Formulaire vierge | 424 mots | **115** |
+| Page de résultats | 3 351 mots | **1 484** |
+
+- *Une bulle, et non un dépliant.* `g.bulle` reprend le bouton, la bulle et le
+  basculement en écoute déléguée que `g.mot` avait déjà : même mécanique, même
+  accessibilité — `aria-expanded`, pas d'attribut `title`, ouverture au clavier
+  —, autre ancre. Un mot de jargon est souligné dans la phrase ; un appel est un
+  point d'interrogation posé après un titre ou un libellé de champ, et son
+  `aria-label` est son seul nom. Vingt-deux appels sur la page de résultats.
+- *Ce qui reste visible est ce qui porte un chiffre.* Un montant, une date, un
+  âge, une unité, un refus, un avertissement. Ce qui explique d'où vient le
+  chiffre s'ouvre à côté de lui. La règle a tranché tous les cas : « la
+  fourchette ne fait varier que la productivité » est du commentaire, « le
+  scénario 2 passe de 467,21 € à 467,21 € » est un résultat.
+- *Le clic d'un appel ne fait plus deux choses.* Un `<button>` dans un `<label>`
+  active aussi le champ que le libellé désigne : sur un champ date, le
+  calendrier s'ouvrait par-dessus la bulle. `preventDefault` sur l'écouteur
+  délégué le règle une fois pour tous les appels.
+- *La ligne de métier vide coûtait un tiers du formulaire.* Trois champs offerts
+  à qui n'en veut pas, alors que la plupart des carrières n'ont qu'un métier.
+  Il n'en reste que la demande — « Ajouter une période » —, et les champs
+  paraissent si on la suit. Un `<details>` et non un `<fieldset>` : c'est le
+  résumé qui nomme le groupe, et le nommer deux fois ferait lire deux titres
+  pour une période qui n'existe pas encore.
+- *Le sexe est sans effet par défaut, et il était en tête.* Il ne compte que de
+  deux façons : si la table de conversion est « par sexe », et si la carrière
+  porte des enfants — le système actuel réserve à la mère la majoration de durée
+  d'assurance. Les deux réglages qui le font compter vivent dans les options ; il
+  les rejoint. Sur la carrière type, `sexe=H` et `sexe=F` donnent la même pension
+  au centime près tant qu'on n'y a pas touché, et c'est vérifié.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -1600,3 +1650,12 @@ avant de partir, un chiffre qui devient vrai.
   Et **une liste de choix se paie en unicité** : ajouter les motifs au menu des
   statuts y a mis « sans activité » deux fois, sous deux libellés, pour le même
   résultat ; un test l'interdit maintenant à tous les menus du site.
+- **Septembre 2026, action 19.** Faite, à la demande qui a suivi l'action 18 :
+  « garde seulement le nécessaire et utilise des infobulles ». Le formulaire
+  vierge passe de 424 mots visibles à 115, la page de résultats de 3 351 à
+  1 484, et aucun chiffre ne bouge. Deux choses à en retenir. **Le tri se fait
+  sur une règle, pas au jugé** : reste visible ce qui porte un chiffre — un
+  montant, une date, une unité, un refus —, s'ouvre en bulle ce qui explique
+  d'où ce chiffre vient. Et **un mécanisme déjà là valait mieux qu'un
+  nouveau** : la bulle du glossaire, écrite pour les mots de jargon, tenait déjà
+  l'accessibilité et le basculement délégué ; il n'a fallu qu'une autre ancre.

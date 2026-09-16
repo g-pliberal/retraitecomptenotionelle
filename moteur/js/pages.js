@@ -1444,11 +1444,11 @@ export function rendre(contexte, chemin, parametres = null) {
     saisie = new Saisie({
       demandee: false, unite_revenu: unite, salaire: SALAIRE_DEFAUT[unite],
     });
-    return [TITRES["/simuler"], presentation(saisie)
-      + messageErreur(erreur.message) + formulaire(saisie, contexte)];
+    return [TITRES["/simuler"],
+      messageErreur(erreur.message) + formulaire(saisie, contexte)];
   }
 
-  let corps = presentation(saisie) + formulaire(saisie, contexte);
+  let corps = formulaire(saisie, contexte);
   if (saisie.demandee) {
     try {
       corps += resultats(contexte, saisie);
@@ -1658,39 +1658,46 @@ function messageErreur(message) {
  * scénario 3 était calculé, à la demande du lecteur, à compter de 2035.
  */
 /**
- * Ce que le simulateur calcule, et ce que ses nombres sont.
+ * Ce que le simulateur calcule, sous le titre du formulaire.
  *
- * TROIS PHRASES AVANT LE FORMULAIRE, ET PAS UNE DE PLUS. Ce qu'on vient faire
- * ici, c'est remplir des champs ; tout ce qui s'interpose entre la page et eux
- * est du temps pris à quelqu'un qui a déjà décidé. La réserve sur les
- * contrefactuels attend donc dans un dépliant.
+ * C'était un chapeau, un encadré et un dépliant — quatre-vingt-dix mots avant
+ * le premier champ. Or on vient ici remplir des champs : tout ce qui s'y
+ * interpose est du temps pris à quelqu'un qui a déjà décidé, et rien de ce qui
+ * était écrit là n'est nécessaire pour remplir le formulaire. Ce qui compte
+ * n'est pas perdu pour autant — il s'ouvre sous le point d'interrogation, et
+ * les réserves qui pèsent sur un chiffre sont répétées à côté de ce chiffre, là
+ * où elles servent.
  */
-function presentation(saisie) {
-  const contrefactuels = g.depliant(
-    "Pourquoi trois de ces six scénarios ne sont pas des propositions",
-    `<p>Les scénarios <strong>rétroactifs</strong> recalculent toute une
-carrière comme si les comptes notionnels avaient toujours existé. Personne ne
-propose cela : ils servent à mesurer, pas à réformer.</p>
-<p>Et l'essentiel de l'écart qu'ils affichent ne vient pas des comptes
-notionnels : il vient de la
-<a href="${g.lien("/methode", "indexation")}">règle de revalorisation</a>
-appliquée aux cotisations anciennes. Le tableau « d'où vient l'écart », sous les
-résultats, sépare les deux effets. La proposition, elle, c'est le
-<a href="${g.lien("/")}">scénario 6</a>.</p>`,
+function bulleDuTitre(saisie) {
+  return g.bulle(
+    "Ce que ce formulaire calcule",
+    "Votre carrière, calculée de six façons : le système actuel, et les "
+    + `<a href="${g.lien("/")}">comptes notionnels</a> — appliqués depuis 1941, `
+    + `ou à partir de ${saisie.bascule}. Tout se calcule dans votre navigateur : `
+    + "rien n'est envoyé nulle part.",
   );
-  return `
-<p class="chapeau">Votre carrière, calculée de six façons : le système actuel,
-et les <a href="${g.lien("/")}">comptes notionnels</a> — appliqués depuis 1941,
-ou à partir de ${saisie.bascule}. Tout se calcule dans votre navigateur : rien
-n'est envoyé nulle part.</p>
+}
 
-<div class="note"><strong>Vous obtiendrez la pension du premier mois</strong>,
-et elle seule — jamais ce qu'elle devient ensuite. Elle est écrite deux fois :
-la somme versée le mois du départ, et la même somme en euros de
-${saisie.euros}, la seule qui se compare à un salaire d'aujourd'hui.</div>
-
-${contrefactuels}
-`;
+/**
+ * Ce qu'une ligne de carrière peut décrire, sous le titre de la section.
+ *
+ * Deux paragraphes tenaient là ce que la section montre déjà : des lignes qu'on
+ * remplit. Ce qui ne se voit pas — qu'une ligne peut n'être pas un emploi, et
+ * que la dernière dit alors quand l'activité s'arrête — est la seule chose qui
+ * méritait d'être écrite, et elle est ici.
+ */
+function bulleDesPeriodes() {
+  return g.bulle(
+    "Ce qu'une période peut être",
+    "Un métier : chaque changement fait passer d'un régime à un autre, donc "
+    + "d'un taux et d'un barème à un autre. Ou une période <strong>sans "
+    + "emploi</strong> — chômage, maladie, élever un enfant, rien du tout —, "
+    + "qui ne demande pas de revenu : c'est celui d'avant qui sert de "
+    + "référence là où le droit ouvre malgré tout des points. La dernière "
+    + "ligne dit donc aussi quand l'activité s'arrête, si elle s'arrête avant "
+    + "le départ : sans elle, le calcul suppose qu'on a travaillé jusqu'au "
+    + "dernier mois.",
+  );
 }
 
 function formulaire(saisie, contexte) {
@@ -1707,29 +1714,41 @@ function formulaire(saisie, contexte) {
     // navigateur — et aux outils qui s'appuient sur lui, dont les aides à la
     // saisie — le moyen de reconnaître ce que le champ demande.
     g.champDate("naissance", "Date de naissance", saisie.naissanceIso,
-      "le calcul n'en retient que le mois : deux générations sont coupées en "
-      + "cours d'année par les textes", saisie.naissanceEnClair,
+      "seul le mois compte", saisie.naissanceEnClair,
       {
         min: `${NAISSANCE_MINIMALE}-01-01`, max: `${NAISSANCE_MAXIMALE}-12-31`,
         autocomplete: "bday",
-      }),
-    g.liste("sexe", "Sexe", [["H", "Homme"], ["F", "Femme"]], saisie.sexe,
-      "table de mortalité unisexe par défaut", { autocomplete: "sex" }),
+      },
+      "Le calcul n'en retient que le mois : c'est la maille du droit, qui coupe "
+      + "deux générations en cours d'année — au 1<sup>er</sup> juillet 1951 et "
+      + "au 1<sup>er</sup> septembre 1961."),
     g.champDate("liquidation", "Départ à la retraite",
       saisie.jourDe(saisie.liquidation),
-      "effectif si vous êtes déjà retraité, souhaité sinon : c'est la date "
-      + "à laquelle tout le calcul se place, et la pension prend effet le "
-      + "premier du mois",
+      "effectif, ou souhaité",
       saisie.calculDe(saisie.liquidation),
       {
         min: saisie.jourDe(AGE_LIQUIDATION_MINIMAL),
         max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
         data_age_min: String(AGE_LIQUIDATION_MINIMAL),
         data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
-      }),
+      },
+      "C'est la date à laquelle tout le calcul se place. La pension prend effet "
+      + "le premier du mois, et c'est celle du premier mois que vous "
+      + "obtiendrez — jamais ce qu'elle devient ensuite."),
   ].join("");
 
   const avance = [
+    // Le sexe ne change RIEN par défaut : la table de conversion est unisexe,
+    // et les majorations pour enfants — les seules du scénario 1 qui
+    // distinguent le père de la mère — ne jouent qu'à partir d'un enfant. Or
+    // ces deux réglages sont ici. Le champ les rejoint : il est sans effet tant
+    // qu'on n'y a pas touché, et à côté d'eux dès qu'on y touche.
+    g.liste("sexe", "Sexe", [["H", "Homme"], ["F", "Femme"]], saisie.sexe,
+      "sans effet par défaut", { autocomplete: "sex" },
+      "Il ne compte que de deux façons, toutes deux réglées ici : si la table "
+      + "de conversion est « par sexe », et si la carrière porte des enfants — "
+      + "le système actuel réserve à la mère la majoration de durée "
+      + "d'assurance."),
     g.liste("profil", "Profil de carrière", PROFILS, saisie.profil,
       aideProfil(saisie.profil)),
     g.champ("primes", "Part de primes", nombreBrut(saisie.primes),
@@ -1743,9 +1762,10 @@ function formulaire(saisie, contexte) {
     g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
       "revalorisation des comptes et des pensions"),
     g.champ("lissage", "Lissage de l'indexation", saisie.lissage,
-      "moyenne glissante sur la règle choisie, en années : 1 = aucun, "
-      + "5 = comme l'Italie",
-      "number", { min: "1", max: String(LISSAGE_MAXIMUM), step: "1" }),
+      "en années : 1 = aucun",
+      "number", { min: "1", max: String(LISSAGE_MAXIMUM), step: "1" },
+      "Une moyenne glissante appliquée à la règle choisie, quelle qu'elle "
+      + "soit : 5 ans, c'est la fenêtre italienne."),
     g.liste("age_reference", "Âge de référence", AGES_REFERENCE, saisie.age_reference),
     g.liste("table", "Table de conversion", TABLES, saisie.table),
     g.liste("part_cotisation", "Part de la cotisation portée au compte",
@@ -1756,8 +1776,10 @@ function formulaire(saisie, contexte) {
       "âge auquel les droits figés à la bascule sont convertis"),
     g.liste("foyer", "Situation de foyer (scénario 6)",
       SITUATIONS_FOYER, saisie.foyer,
-      "ne joue que sur l'allocation d'isolement de la garantie "
-      + "vieillesse : 1 050 € seul, 800 € par personne à deux"),
+      "scénario 6 seulement", {},
+      "Elle ne joue que sur l'allocation d'isolement de la garantie "
+      + "vieillesse : 1 050 € par mois pour qui vit seul, 800 € par personne "
+      + "à deux."),
     g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
       "au-delà de la dernière observation"),
     g.champ("bascule", "Année de bascule", saisie.bascule,
@@ -1771,24 +1793,14 @@ function formulaire(saisie, contexte) {
   return `
 <form class="carte" method="get" action="${g.lien("/simuler")}">
   ${g.cache("unite_revenu", saisie.unite_revenu)}
-  <h2 style="margin-top:0">Simuler une carrière</h2>
+  <h2 style="margin-top:0">Simuler une carrière${bulleDuTitre(saisie)}</h2>
   <div class="grille">${identite}</div>
-  <h3>La carrière, période par période</h3>
-  <p class="discret">Chaque changement de métier fait passer d'un régime à un
-  autre, donc d'un taux et d'un barème à un autre. Ajouter une période, c'est
-  remplir la dernière ligne ; une carrière d'un seul métier la laisse vide.</p>
-  <p class="discret">Une période sans emploi — chômage, maladie, élever un
-  enfant, rien du tout — se décrit de la même façon : la date à laquelle elle
-  commence, et ce qu'elle est. Elle ne demande pas de revenu : elle n'en paie
-  aucun, et c'est celui d'avant qui sert de référence là où le droit ouvre
-  malgré tout des points. <strong>La dernière ligne dit donc aussi quand
-  l'activité s'arrête</strong>, si elle s'arrête avant le départ — sans quoi le
-  calcul suppose qu'on a travaillé jusqu'au dernier mois.</p>
+  <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
   ${metiersFormulaire(saisie, affiliations, echelle)}
   ${basculeUnite(saisie, echelle)}
   ${releveFormulaire(saisie)}
   <details class="options">
-    <summary>Options de modélisation (profil, indexation, âge de référence, projection)</summary>
+    <summary>Options de modélisation (sexe, profil, indexation, âge de référence, projection)</summary>
     <div class="grille">${avance}</div>
   </details>
   <p style="margin-top:1.4rem"><button type="submit">Calculer les six scénarios</button></p>
@@ -1817,17 +1829,21 @@ export const EXEMPLE_RELEVE = "1998:salarie_prive_non_cadre:14200:4\n"
  * page ne montrerait pas.
  */
 function releveFormulaire(saisie) {
+  const bulle = g.bulle(
+    "Ce que le relevé remplace, et comment il se lit",
+    "Sans les trimestres, le modèle les déduit du montant. Le revenu est celui "
+    + "de l'année entière, en euros de cette année-là ; un relevé antérieur à "
+    + "2002 est en francs, à diviser par 6,55957. Les codes de régime sont ceux "
+    + "du menu ci-dessus. Rempli, ce champ <strong>remplace</strong> les "
+    + "métiers, le profil et le niveau de revenu : rien n'est plus reconstitué. "
+    + "Naissance, date de départ, enfants, primes et interruptions continuent "
+    + "de valoir.",
+  );
   return `
 <details class="releve"${saisie.releveActif ? " open" : ""}>
   <summary>Coller un relevé de carrière — la saisie exacte</summary>
   <p class="discret">Une ligne par année : <strong>année:régime:revenu</strong>,
-  et <strong>:trimestres</strong> si le relevé les porte — sinon le modèle les
-  déduit du montant. Le revenu est celui de l'année entière, en euros de cette
-  année-là ; un relevé antérieur à 2002 est en francs, à diviser par 6,55957.
-  Les codes de régime sont ceux du menu ci-dessus.</p>
-  <p class="discret">Rempli, ce champ <strong>remplace</strong> les métiers, le
-  profil et le niveau de revenu : rien n'est plus reconstitué. Naissance, âge de
-  départ, enfants, primes et interruptions continuent de valoir.</p>
+  et <strong>:trimestres</strong> si le relevé les porte.${bulle}</p>
   ${g.zone("releve", "Relevé de carrière", saisie.releve,
     `au plus ${RELEVE_MAXIMUM} lignes ; vide, la carrière est celle des `
     + "métiers ci-dessus", 10,
@@ -1863,7 +1879,11 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
       ? "en multiples du salaire moyen brut"
       : `1 = salaire moyen, soit ${g.euros(echelle.mensuel(1))} bruts par mois`;
     return g.champ(nom, "Niveau de revenu", valeur, aideMultiple, "number",
-      { min: "0.1", max: "10", step: nombreBrut(PAS_MULTIPLE) });
+      { min: "0.1", max: "10", step: nombreBrut(PAS_MULTIPLE) },
+      bref ? ""
+        : "Le modèle raisonne en multiples du salaire moyen par tête : c'est "
+          + "l'unité qui garde son sens sur quatre-vingts ans, quand un montant "
+          + "n'en a que rapporté à son année.");
   }
   // « Revenu » et non « salaire » : douze des vingt-deux statuts ne sont pas
   // salariés, et un artisan n'a ni salaire ni fiche de paie. Le brut garde le
@@ -1871,11 +1891,14 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
   // fiche de paie n'est plus donnée que comme l'exemple qu'elle est.
   const aide = bref
     ? "en euros bruts par mois"
-    : "en euros d'aujourd'hui, avant cotisations et impôt — pour un salarié, "
-      + `la ligne « brut » de la fiche de paie · SMIC ${g.euros(echelle.smic)}, `
-      + `moyenne ${g.euros(echelle.mensuel(1))}, plafond ${g.euros(echelle.plafond)}`;
+    : `SMIC ${g.euros(echelle.smic)}, moyenne ${g.euros(echelle.mensuel(1))}, `
+      + `plafond ${g.euros(echelle.plafond)}`;
   return g.champ(nom, "Revenu brut mensuel", valeur, aide, "number",
-    { min: "0", step: "1" });
+    { min: "0", step: "1" },
+    bref ? ""
+      : "En euros d'aujourd'hui, avant cotisations et impôt — pour un salarié, "
+        + "la ligne « brut » de la fiche de paie. Le modèle le suit ensuite le "
+        + "long du salaire moyen, année après année.");
 }
 
 /**
@@ -1945,15 +1968,16 @@ function metiersFormulaire(saisie, affiliations, echelle) {
   const lignes = [ligneMetier(
     1,
     g.champDate("debut", "Début d'activité", saisie.jourDe(saisie.debut),
-      "le premier mois cotisé : l'année d'entrée n'est complète que si l'on "
-      + "entre en janvier",
+      "le premier mois cotisé",
       saisie.calculDe(saisie.debut),
       {
         min: saisie.jourDe(AGE_DEBUT_MINIMAL),
         max: saisie.jourDe(AGE_DEBUT_MAXIMAL),
         data_age_min: String(AGE_DEBUT_MINIMAL),
         data_age_max: String(AGE_DEBUT_MAXIMAL),
-      })
+      },
+      "L'année d'entrée n'est complète que si l'on entre en janvier : elle est "
+      + "portée au compte au prorata de ses mois, comme celle du départ.")
     + g.liste("statut", "Statut d'affiliation",
       optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
       saisie.statut,
@@ -2022,17 +2046,23 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
  * libellés dans chaque bloc ; seul le rang les distingue. Un intertitre
  * ordinaire le montrerait à l'œil sans le dire à personne d'autre : la légende
  * d'un groupe, elle, est énoncée avec chacun des champs qu'elle couvre.
+ *
+ * La ligne VIDE, elle, est repliée : trois champs offerts à qui n'en veut pas
+ * occupaient un tiers du formulaire pour la plupart des carrières, qui n'ont
+ * qu'un métier. Il n'en reste que la demande — « Ajouter une période » —, et
+ * les champs ne paraissent que si on la suit. Un `<details>` plutôt qu'un
+ * `<fieldset>` : c'est le résumé qui nomme le groupe, et le nommer deux fois
+ * ferait lire deux titres pour une ligne qui n'existe pas encore.
  */
 function ligneMetier(rang, champs, vide = false, sansEmploi = false) {
   const rangs = majuscule(RANGS_METIER[rang - 1]);
-  let titre = `${rangs} métier`;
   if (vide) {
-    titre = "Un autre métier, une interruption ?";
-  } else if (sansEmploi) {
-    titre = `${rangs} période, sans emploi`;
+    return '<details class="metier facultatif">'
+      + "<summary>Ajouter une période — un métier, une interruption</summary>"
+      + `<div class="grille">${champs}</div></details>`;
   }
-  const classe = vide ? "metier facultatif" : "metier";
-  return `<fieldset class="${classe}"><legend class="rang">${echapper(titre)}</legend>`
+  const titre = sansEmploi ? `${rangs} période, sans emploi` : `${rangs} métier`;
+  return `<fieldset class="metier"><legend class="rang">${echapper(titre)}</legend>`
     + `<div class="grille">${champs}</div></fieldset>`;
 }
 
@@ -2171,28 +2201,16 @@ function lectureDesMontants(comparaison, saisie) {
       + "qu'un chiffre.";
   }
 
-  return `
-<div class="note"><strong>De quand sont ces chiffres ?</strong> ${quand}
-${unites}
-Ce que compare cette page, ce sont six façons de CALCULER une pension de
-départ, pas six façons de la revaloriser ensuite : le premier mois de retraite
-est le seul instant où les six scénarios se laissent mettre côte à côte, et
-c'est donc à cet instant que tous les six sont calculés.</div>
-<p class="discret" style="margin-top:1.5rem">Montants <strong>bruts</strong>
-mensuels et <strong>au centime</strong>, comme la caisse les verse — depuis le
-1<sup>er</sup> décembre 1986 les prestations de vieillesse sont payées sans
-arrondi, centimes compris. Avant CSG, CRDS et prélèvements sociaux, avant impôt
-sur le revenu, comme le revenu d'activité saisi plus haut : le <strong>taux de
-remplacement</strong>, qui
-rapporte la pension annuelle au dernier revenu d'activité ramené à l'année
-pleine, compare donc un brut à un brut, et il est plus bas qu'un taux calculé
-sur des nets, la pension étant moins prélevée que le salaire. Ses deux termes
-étant pris dans les euros de leur propre année, il ne dépend pas de l'unité
-d'affichage. Le chiffre mis en avant, lui, est en euros constants de
-${saisie.euros}, c'est-à-dire au pouvoir d'achat de ${saisie.euros} : seule unité
-qui permette de comparer des liquidations d'années différentes.
-Fiabilité du résultat :
-<span class="etiquette-fiabilite">${echapper(nomFiabilite(comparaison.fiabilite))}</span></p>`;
+  return g.bulle(
+    "De quand sont ces chiffres, et en quels euros",
+    `${quand} ${unites} Ce que compare cette page, ce sont six façons de `
+    + "CALCULER une pension de départ, pas six façons de la revaloriser "
+    + "ensuite. Montants <strong>bruts</strong> et au centime, comme la caisse "
+    + "les verse : avant CSG, CRDS et impôt, comme le revenu d'activité saisi "
+    + "plus haut. Le <strong>taux de remplacement</strong> rapporte la pension "
+    + "annuelle au dernier revenu d'activité ramené à l'année pleine — un brut "
+    + "sur un brut, donc plus bas qu'un taux calculé sur des nets.",
+  );
 }
 
 /**
@@ -2217,10 +2235,14 @@ function legendeDesUnites(comparaison, saisie) {
       + "là comprise"
     : "la somme réellement versée le mois du départ, en euros de l'époque — "
       + `${date}`;
-  return '<p class="discret" style="margin:0 0 1.4rem">Deux fois le même montant, '
-    + `dans deux unités : le <strong>grand chiffre</strong> est ${valeur} — le `
-    + "seul qui se compare à un salaire ou à un loyer que vous connaissez ; "
-    + `celui d'à côté est ${autre}.</p>`;
+  return '<p class="discret" style="margin:0 0 1.4rem">Deux fois le même '
+    + `montant : le <strong>grand chiffre</strong> est ${valeur}`
+    + g.bulle(
+      "Les deux unités",
+      `Le grand chiffre est ${valeur} — le seul qui se compare à un salaire ou `
+      + `à un loyer que vous connaissez ; celui d'à côté est ${autre}.`,
+    )
+    + "</p>";
 }
 
 /**
@@ -2289,38 +2311,40 @@ function trajectoire(contexte, comparaison, saisie) {
   // sous le graphique dit ce que « k€ » désigne, et de quelle année.
   const unite = "k€";
   return `
-<h2>Ce que chaque scénario finit par verser</h2>
-<p>Les six montants ci-dessus sont ceux d'<strong>un seul mois</strong>, le
-premier. Ce graphique les additionne, année après année, à mesure que le
-retraité vieillit. C'est là que la durée entre dans le calcul : une pension
-notionnelle vaut le capital divisé par l'espérance de vie, donc
-<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce que la
-carrière a financé</strong> — et mourir avant, moins.</p>
+<h2>Ce que chaque scénario finit par verser${g.bulle(
+    "Ce que ce graphique ajoute aux six montants",
+    "Les six montants ci-dessus sont ceux d'un seul mois, le premier. Ce "
+    + "graphique les additionne, année après année, à mesure que le retraité "
+    + "vieillit : c'est là que la durée entre dans le calcul. Une pension "
+    + "notionnelle vaut le capital divisé par l'espérance de vie, donc "
+    + "<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce "
+    + "que la carrière a financé</strong> — et mourir avant, moins. Cumuls "
+    + `bruts, en milliers d'euros constants de ${saisie.euros} : ils supposent `
+    + "que la pension garde son pouvoir d'achat après le départ, le moteur ne "
+    + "simulant aucune revalorisation postérieure à la liquidation. Une "
+    + "indexation qui décrocherait des prix ferait fléchir les six courbes à "
+    + "la fois, sans changer leur ordre.",
+  )}</h2>
 ${g.graphique(
     "Cumul versé par chaque scénario, du départ à "
     + `${AGE_MAXIMUM_TRAJECTOIRE} ans`,
     ages, series, unite, false, 0, true, ageEsperance,
     `espérance de vie : ${g.nombre(ageEsperance, 1)} ans`, etiquettes, "Âge",
   )}
-<p>Le trait vertical est l'espérance de vie que la table donne à
-${age(depart)} : <strong>${g.nombre(esperance, 1)} ans</strong>, soit
-${g.nombre(ageEsperance, 1)} ans d'âge. C'est le nombre par lequel le capital
-notionnel est divisé — et c'est une <strong>moyenne</strong>, pas une échéance.
-D'après la même table, <strong>${vivants(ageEsperance)}</strong> de ceux qui
-partent à ${age(depart)} sont encore en vie à cet âge : ils dépassent donc le
-nombre qui a servi à calculer leur pension, et touchent plus que ce que leur
-carrière a financé. Plus loin encore, ${vivants(100)} atteignent 100 ans et
-${vivants(AGE_MAXIMUM_TRAJECTOIRE)} atteignent ${AGE_MAXIMUM_TRAJECTOIRE} ans, où
-le graphique s'arrête — c'est pour eux qu'il va si loin.</p>
-<p class="discret">Cumuls bruts, en <strong>milliers</strong> d'euros constants
-de ${saisie.euros} — c'est ce que « k€ » désigne sur l'axe. Ils
-supposent que la pension <strong>garde son pouvoir d'achat</strong> après le
-départ : le moteur ne simule aucune revalorisation postérieure à la
-liquidation, et additionner en euros constants est la convention la plus neutre
-dont on dispose — ce n'est pas une prévision. Une indexation qui décrocherait
-des prix ferait fléchir les six courbes à la fois, sans changer leur ordre.
-${phraseEcart} : c'est ce que la comparaison des six barres, prises au premier
-mois, ne pouvait pas montrer.</p>
+<p>Trait vertical : l'espérance de vie à ${age(depart)} —
+<strong>${g.nombre(esperance, 1)} ans</strong>, soit ${g.nombre(ageEsperance, 1)}
+ans d'âge, le nombre par lequel le capital notionnel est divisé.
+${phraseEcart}.${g.bulle(
+    "Une moyenne, et non une échéance",
+    "D'après la même table, "
+    + `<strong>${vivants(ageEsperance)}</strong> de ceux qui partent à `
+    + `${age(depart)} sont encore en vie à cet âge : ils dépassent donc le `
+    + "nombre qui a servi à calculer leur pension, et touchent plus que ce que "
+    + `leur carrière a financé. Plus loin encore, ${vivants(100)} atteignent `
+    + `100 ans et ${vivants(AGE_MAXIMUM_TRAJECTOIRE)} atteignent `
+    + `${AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête — c'est pour `
+    + "eux qu'il va si loin.",
+  )}</p>
 `;
 }
 
@@ -2499,11 +2523,16 @@ function resultats(contexte, saisie) {
     );
     capitalisation = '<p class="discret">Hors répartition, servi à part : '
       + `${g.eurosCentimes(montant / 12)} par mois de RAFP, en euros de ${saisie.euros} `
-      + "comme les six montants ci-dessus. Ce régime est PROVISIONNÉ "
-      + "— sa rente sort d'un placement, non de la cotisation des actifs —, si "
-      + "bien qu'une réforme de la répartition ne l'atteint pas. Il est donc "
-      + "retiré des six totaux et servi à l'identique dans les six "
-      + "scénarios : c'est la seule façon de comparer ce qui est comparable.</p>";
+      + "comme les six montants ci-dessus."
+      + g.bulle(
+        "Pourquoi le RAFP est servi à part",
+        "Ce régime est PROVISIONNÉ — sa rente sort d'un placement, non de la "
+        + "cotisation des actifs —, si bien qu'une réforme de la répartition "
+        + "ne l'atteint pas. Il est donc retiré des six totaux et servi à "
+        + "l'identique dans les six scénarios : c'est la seule façon de "
+        + "comparer ce qui est comparable.",
+      )
+      + "</p>";
   }
 
   let minimum = "";
@@ -2526,8 +2555,12 @@ function resultats(contexte, saisie) {
       + "ne décrit aucune pension que le système actuel servirait.</p>";
   }
 
+  const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
+    + 'résultat : <span class="etiquette-fiabilite">'
+    + `${echapper(nomFiabilite(comparaison.fiabilite))}</span></p>`;
   return `
-<h2 id="resultats" tabindex="-1">Résultats</h2>
+<h2 id="resultats" tabindex="-1">Résultats\
+${lectureDesMontants(comparaison, saisie)}</h2>
 <div class="carte">
   <div class="fiches">${fiches}</div>
   ${resumeParcours(contexte, saisie)}
@@ -2535,7 +2568,7 @@ function resultats(contexte, saisie) {
 <div class="carte">
   ${legendeDesUnites(comparaison, saisie)}
   ${scenarios}
-  ${lectureDesMontants(comparaison, saisie)}
+  ${fiabilite}
   ${capitalisation}
   ${minimum}
   ${ouverture}
@@ -2644,12 +2677,19 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     : NaN;
 
   return `
-<h2>Ce que l'hypothèse pèse</h2>
-<p>Le compte est revalorisé chaque année de ${debut} à ${liquidation}, soit
-${total} années — dont <strong>${projetees} après ${derniereObservee}</strong>,
-la dernière année observée. Ces ${g.pourcentage(projetees / total)} du calcul ne
-reposent sur aucune mesure : elles reposent sur l'hypothèse de croissance de la
-productivité, celle que le Conseil d'orientation des retraites fixe et révise.</p>
+<h2>Ce que l'hypothèse pèse${g.bulle(
+    "Ce que la fourchette fait varier, et ce qu'elle laisse fixe",
+    `Le compte est revalorisé chaque année de ${debut} à ${liquidation}, soit `
+    + `${total} années — dont <strong>${projetees} après ${derniereObservee}`
+    + "</strong>, la dernière année observée. Ces "
+    + `${g.pourcentage(projetees / total)} du calcul ne reposent sur aucune `
+    + "mesure, mais sur l'hypothèse de croissance de la productivité que le "
+    + "Conseil d'orientation des retraites fixe et révise : 0,4 %, 0,7 % et "
+    + "1,0 % par an, le jeu retenu depuis juin 2025. La fourchette laisse "
+    + "fixes les autres hypothèses — inflation à 1,75 %, emploi salarié "
+    + "constant, législation inchangée : c'est une mesure de sensibilité à un "
+    + "paramètre, non un intervalle de confiance, et l'avenir peut en sortir.",
+  )}</h2>
 <p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
 passe de ${g.eurosCentimes(basse.notionnel_retroactif / 12)} à
 ${g.eurosCentimes(haute.notionnel_retroactif / 12)} par mois, soit
@@ -2664,13 +2704,8 @@ ${g.tableau(
       + "productivité du COR",
     true,
   )}
-<p class="discret">Montants mensuels bruts, en euros constants de ${saisie.euros}.
-La fourchette ne fait varier que la <strong>productivité</strong> — 0,4 %, 0,7 %
-et 1,0 % par an, le jeu que le COR retient depuis juin 2025. Elle laisse fixes
-les autres hypothèses de la projection, et n'est donc pas un intervalle de
-confiance : l'inflation y reste à 1,75 %, l'emploi salarié constant, et la
-législation inchangée. C'est une mesure de sensibilité à un paramètre, pas une
-borne sur l'avenir — l'avenir peut sortir de cette fourchette.</p>`;
+<p class="discret">Montants mensuels bruts, en euros constants de
+${saisie.euros}.</p>`;
 }
 
 const NATURES_PART_EMPLOYEUR = {
@@ -2735,10 +2770,13 @@ actifs ? » — et à elle seule.</p>`;
   }
 
   return `
-<h2>Qui verse la cotisation</h2>
-<p>Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce que
-son employeur verse. Les scénarios 2 et 3 ne portent au compte que la première ;
-les scénarios 4 et 5 y ajoutent la seconde, et ne changent rien d'autre.</p>
+<h2>Qui verse la cotisation${g.bulle(
+    "Ce que les scénarios portent au compte",
+    "Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce "
+    + "que son employeur verse. Les scénarios 2 et 3 ne portent au compte que "
+    + "la première ; les scénarios 4 et 5 y ajoutent la seconde, et ne "
+    + "changent rien d'autre.",
+  )}</h2>
 ${partage}${public_}`;
 }
 
@@ -2857,18 +2895,20 @@ function garantieVieillesse(comparaison, saisie) {
   });
 
   return `
-<h2>Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt</h2>
-<p>Le scénario 6 est le scénario 4 — même compte rétroactif, cotisation
-salariale et patronale confondues, mêmes âges, même indexation, même
-liquidation — à deux différences près. La première : à compter de
-${bascule}, un <strong>taux unique de ${taux}</strong>, parts salariale et
-patronale additionnées, le même pour tous les statuts, prélevé une fois sur
-la rémunération. Ce qui a été cotisé avant ${bascule} sous le système actuel
-reste porté au compte tel qu'il a été prélevé, aux taux réels de chaque
-régime : sur ces années-là, le 6 est le 4.
-${tauxUnique} La seconde : une <strong>garantie
-vieillesse</strong> qui remplace l'ASPA, et que le tableau suivant détaille en
-euros de ${annee}, l'année du départ.</p>
+<h2>Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt${g.bulle(
+    "Ce que le scénario 6 change au scénario 4",
+    "Il est le scénario 4 — même compte rétroactif, cotisation salariale et "
+    + "patronale confondues, mêmes âges, même indexation, même liquidation — à "
+    + `deux différences près. La première : à compter de ${bascule}, un taux `
+    + `unique de ${taux}, parts salariale et patronale additionnées, le même `
+    + "pour tous les statuts, prélevé une fois sur la rémunération. Ce qui a "
+    + `été cotisé avant ${bascule} reste porté au compte tel qu'il a été `
+    + "prélevé, aux taux réels de chaque régime : sur ces années-là, le 6 est "
+    + `le 4. ${tauxUnique} La seconde : une garantie vieillesse qui remplace `
+    + "l'ASPA.",
+  )}</h2>
+<p>La garantie vieillesse, étape par étape, en euros de ${annee} — l'année du
+départ.</p>
 ${g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
@@ -2877,14 +2917,16 @@ ${g.tableau(
     true,
   )}
 ${lecture}
-<p>Ce qui la sépare de l'ASPA tient en un mot : elle est
-<strong>individualisée</strong>. L'ASPA regarde les ressources du foyer, et son
-plafond de couple n'est pas le double de celui d'une personne seule ; la
-garantie compare chacun à son propre plancher — ${g.euros(baseMensuelle)} par
-mois, plus ${g.euros(isolementMensuel)} d'allocation d'isolement pour qui vit
-seul — sans jamais regarder la pension du conjoint. Le tableau de la
-proposition, recalculé par la règle que ce scénario applique, en euros de
-${parametres.annee_euros_garantie_vieillesse} et par mois :</p>
+<p>Ce que la garantie sert à un foyer, en euros de
+${parametres.annee_euros_garantie_vieillesse} et par mois.${g.bulle(
+    "Ce qui la sépare de l'ASPA",
+    "Un mot : elle est <strong>individualisée</strong>. L'ASPA regarde les "
+    + "ressources du foyer, et son plafond de couple n'est pas le double de "
+    + "celui d'une personne seule ; la garantie compare chacun à son propre "
+    + `plancher — ${g.euros(baseMensuelle)} par mois, plus `
+    + `${g.euros(isolementMensuel)} d'allocation d'isolement pour qui vit seul `
+    + "— sans jamais regarder la pension du conjoint.",
+  )}</p>
 ${g.tableau(
     ["Pensions des deux personnes", "Aide totale du foyer", "Détail"],
     exemples,
@@ -2892,12 +2934,14 @@ ${g.tableau(
     "Ce que la garantie individualisée sert à un foyer, selon les deux pensions",
     true,
   )}
-<p class="discret">La garantie est <strong>financée par l'impôt</strong>, non
-par les cotisations : la page Coût la sort du compte des cotisants et la
-compte à part. Elle garde de l'ASPA son âge — 65 ans — et sa place, une ligne
-servie en dernier, après la pension contributive. L'option « situation de
-foyer » du formulaire ne change qu'une chose, l'allocation d'isolement ; elle
-vaut ici pour ${situation}.</p>`;
+<p class="discret">Garantie calculée ici pour ${situation}.${g.bulle(
+    "Comment la garantie est financée",
+    "Par l'<strong>impôt</strong>, non par les cotisations : la page Coût la "
+    + "sort du compte des cotisants et la compte à part. Elle garde de l'ASPA "
+    + "son âge — 65 ans — et sa place, une ligne servie en dernier, après la "
+    + "pension contributive. L'option « situation de foyer » du formulaire ne "
+    + "change qu'une chose : l'allocation d'isolement.",
+  )}</p>`;
 }
 
 
@@ -2932,18 +2976,29 @@ function decomposition(contexte, saisie, comparaison) {
   }
 
   return `
-<h2>D'où vient l'écart</h2>
-<p>La même carrière, le même calcul notionnel rétroactif, avec neuf règles de
-revalorisation des comptes. La <strong>première ligne est celle que la
-simulation applique</strong> : la croissance de la masse salariale, c'est-à-dire
-le rendement qu'un système en répartition peut servir sans changer son taux de
-cotisation. La deuxième n'est pas une hypothèse mais un relevé : le coefficient
-que les arrêtés ont réellement appliqué aux salaires portés au compte, celui-là
-même dont le scénario 1 se sert. Les quatre suivantes sont le triple lock
-inversé et ses variantes — mêmes trois séries, inflation, salaire moyen,
-productivité, seul change ce qu'on en retient. La colonne « rendement » est le
-facteur par lequel les cotisations ont été multipliées entre leur versement et
-la liquidation.</p>
+<h2>D'où vient l'écart${g.bulle(
+    "Ce que chaque règle de revalorisation vaut",
+    "La <strong>première ligne est celle que la simulation applique</strong> : "
+    + "la croissance de la masse salariale, c'est-à-dire le rendement qu'un "
+    + "système en répartition peut servir sans changer son taux de cotisation. "
+    + "C'est la seule règle du tableau qui repose sur un argument théorique et "
+    + "non sur un choix, et la plus généreuse — elle vaut salaire moyen + "
+    + "emploi salarié, et l'emploi salarié a doublé depuis 1950. Son "
+    + "incohérence, à garder en tête : elle crédite le compte du rendement que "
+    + "le système ENTIER dégage, quand les scénarios 2 et 3 n'y versent que la "
+    + "part salariale ; c'est aux scénarios 4 et 5 qu'elle se compare sans "
+    + "biais. La deuxième ligne n'est pas une hypothèse mais un relevé — le "
+    + "coefficient que les arrêtés ont réellement appliqué, celui dont le "
+    + "scénario 1 se sert : l'écart entre elle et le système actuel mesure "
+    + "l'effet propre des comptes notionnels, et tout ce qui sépare les autres "
+    + "lignes de celle-là mesure l'effet de la règle. Le triple lock inversé "
+    + "compare deux taux nominaux à un taux réel : dès que l'inflation dépasse "
+    + "la productivité — presque toute la période 1945-1985 — c'est la "
+    + "productivité qui l'emporte, et la valeur réelle des comptes s'effondre.",
+  )}</h2>
+<p>La même carrière, le même calcul notionnel rétroactif, sous neuf règles de
+revalorisation. La colonne « rendement » est le facteur par lequel les
+cotisations ont été multipliées entre leur versement et la liquidation.</p>
 ${g.tableau(
     ["Règle d'indexation", "Rendement cumulé",
       `Pension mensuelle, en euros de ${saisie.euros}`,
@@ -2953,40 +3008,20 @@ ${g.tableau(
     "Ce que la même carrière donne sous chaque règle d'indexation",
     true,
   )}
-<p class="discret">La ligne de repère est la <strong>revalorisation réellement
-pratiquée</strong> : c'est celle du droit positif. L'écart entre elle et le
-système actuel mesure l'effet propre des comptes notionnels ; tout ce qui sépare
-les autres lignes de celle-là mesure l'effet de la règle d'indexation. La ligne
-« Prix » ne joue pas ce rôle, contrairement à ce que cette page a longtemps dit :
-le régime général ne revalorise sur les prix que depuis 1987, et suivait les
-salaires avant. Le triple lock inversé, lui, compare deux taux nominaux
-(inflation, salaire moyen) à un taux réel (productivité) : dès que l'inflation
-dépasse la productivité — soit presque toute la période 1945-1985 — c'est la
-productivité qui l'emporte, et la valeur réelle des comptes s'effondre. Les
-lignes « médiane » et « moyenne » gardent ses trois séries et n'en changent que
-la statistique.</p>
-<p class="discret">La première ligne, la <strong>masse salariale</strong>, est
-la seule qui repose sur un argument théorique et non sur un choix : c'est
-l'assiette des cotisations, donc le taux de rendement qu'un système en
-répartition peut servir sans toucher à son taux de cotisation. C'est pourquoi
-elle est le défaut du simulateur. Elle vaut salaire moyen + emploi salarié, et
-l'emploi salarié a doublé depuis 1950 : c'est la règle la plus généreuse du
-tableau, et de loin. Elle a sa propre incohérence, à
-garder en tête : elle crédite le compte du rendement que le système ENTIER
-dégage, alors que les scénarios 2 et 3 n'y versent que la part salariale de la
-cotisation. C'est aux scénarios 4 et 5, qui portent la cotisation entière,
-qu'elle se compare sans biais. La ligne « PIB nominal » est la même idée poussée
-à l'assiette la plus large : elle capte le déplacement de la valeur ajoutée vers
-les revenus non salariaux, que la masse salariale subit.</p>
-<p class="discret">Le <strong>lissage</strong>, dans les options, est
-indépendant de la règle : il applique une moyenne glissante au taux que la règle
-produit, quelle qu'elle soit, et s'applique donc à toutes les lignes de ce
-tableau à la fois. Ce qu'il vise n'est pas le niveau mais la loterie de cohorte :
-sur le PIB nominal brut, une cotisation de ${ANNEE_COTISATION_LOTERIE} vaut ${loterie.get("1|2019")} à une liquidation de
-2019 et ${loterie.get("1|2020")} en 2020 — attendre un an fait perdre, parce que l'année traversée
-s'est mal passée. Lissée sur cinq ans, la même cotisation vaut ${loterie.get("5|2019")} puis ${loterie.get("5|2020")},
-et le recul disparaît. « PIB nominal » lissé sur cinq ans, c'est la règle
-italienne ; le modèle en reprend le taux, pas le reste du système italien.</p>
+<p class="discret">Le <strong>lissage</strong>, dans les options, s'applique à
+toutes ces lignes à la fois.${g.bulle(
+    "Ce que le lissage vise",
+    "Il applique une moyenne glissante au taux que la règle produit, quelle "
+    + "qu'elle soit. Ce qu'il vise n'est pas le niveau mais la loterie de "
+    + "cohorte : sur le PIB nominal brut, une cotisation de "
+    + `${ANNEE_COTISATION_LOTERIE} vaut ${loterie.get("1|2019")} à une `
+    + `liquidation de 2019 et ${loterie.get("1|2020")} en 2020 — attendre un an `
+    + "fait perdre, parce que l'année traversée s'est mal passée. Lissée sur "
+    + `cinq ans, la même cotisation vaut ${loterie.get("5|2019")} puis `
+    + `${loterie.get("5|2020")}, et le recul disparaît. « PIB nominal » lissé `
+    + "sur cinq ans, c'est la règle italienne ; le modèle en reprend le taux, "
+    + "pas le reste du système italien.",
+  )}</p>
 `;
 }
 
@@ -3056,12 +3091,14 @@ function cascade(comparaison, saisie) {
   }
 
   return `
-<h2>Du scénario 1 au scénario 3, ligne à ligne</h2>
-<p>Le scénario 3 n'est pas le scénario 1 diminué d'un pourcentage : c'est une
-autre formule appliquée à la même carrière. Montants en <strong>euros de
-${liquidation}</strong>, l'année du départ — la chaîne de calcul est
-arithmétique, la convertir ligne à ligne au pouvoir d'achat d'une autre année la
-rendrait fausse. ${renvoiCascade}</p>
+<h2>Du scénario 1 au scénario 3, ligne à ligne${g.bulle(
+    "Pourquoi cette section est en euros de l'année du départ",
+    "Le scénario 3 n'est pas le scénario 1 diminué d'un pourcentage : c'est "
+    + "une autre formule appliquée à la même carrière, et la chaîne de calcul "
+    + "est arithmétique — la convertir ligne à ligne au pouvoir d'achat d'une "
+    + `autre année la rendrait fausse. ${renvoiCascade}`,
+  )}</h2>
+<p>Montants en <strong>euros de ${liquidation}</strong>, l'année du départ.</p>
 ${g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
@@ -3069,16 +3106,20 @@ ${g.tableau(
     `Du scénario 1 au scénario 3, étape par étape, en euros de ${liquidation}`,
     true,
   )}
-<p>À comparer aux ${g.eurosCentimes(actuel)} par an du système actuel. L'écart ne vient
-d'aucun abattement appliqué au scénario 1 : il vient de ce que le capital
-réellement constitué, ${g.euros(prospectif.capital_notionnel)}, ne finance pas
-les ${g.euros(actuel * diviseur)} que le droit en vigueur promet sur
-${g.nombre(diviseur, 1)} années de retraite.</p>
+<p>À comparer aux ${g.eurosCentimes(actuel)} par an du système actuel.${g.bulle(
+    "D'où vient l'écart",
+    "D'aucun abattement appliqué au scénario 1 : de ce que le capital "
+    + `réellement constitué, ${g.euros(prospectif.capital_notionnel)}, ne `
+    + `finance pas les ${g.euros(actuel * diviseur)} que le droit en vigueur `
+    + `promet sur ${g.nombre(diviseur, 1)} années de retraite.`,
+  )}</p>
 ${neutralite}
 <p class="discret">Les droits acquis avant ${saisie.bascule} pèsent
-${g.pourcentage(partAcquis)} du capital final. Cette part décroît de génération
-en génération : c'est elle qui étale la réforme dans le temps, et non un
-dispositif transitoire.</p>
+${g.pourcentage(partAcquis)} du capital final.${g.bulle(
+    "Ce que cette part devient",
+    "Elle décroît de génération en génération : c'est elle qui étale la "
+    + "réforme dans le temps, et non un dispositif transitoire.",
+  )}</p>
 `;
 }
 
@@ -3192,17 +3233,21 @@ function detail(contexte, comparaison) {
   );
 
   return `
-<h2>Le détail du calcul</h2>
-<p class="note">Toute cette section est en <strong>euros de ${annee}</strong>,
-l'année du départ. ${renvoi} C'est la seule unité dans laquelle une chaîne de
-calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une autre
-année ferait des totaux faux.</p>
-<h3>Scénario 1 — de quoi votre pension actuelle est faite</h3>
-<p>Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute
-par-dessus. Le total est la pension du scénario 1. Un minimum, lui, est déjà
-compris dans la ligne du régime qui le sert : le sous-total contributif l'en
-retire, et la ligne suivante le rend visible — c'est la même somme, comptée une
-fois.</p>
+<h2>Le détail du calcul${g.bulle(
+    "L'unité de cette section",
+    `Toute cette section est en <strong>euros de ${annee}</strong>, l'année du `
+    + `départ. ${renvoi} C'est la seule unité dans laquelle une chaîne de `
+    + "calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une "
+    + "autre année ferait des totaux faux.",
+  )}</h2>
+<h3>Scénario 1 — de quoi votre pension actuelle est faite${g.bulle(
+    "Comment lire ce tableau",
+    "Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute "
+    + "par-dessus ; le total est la pension du scénario 1. Un minimum est déjà "
+    + "compris dans la ligne du régime qui le sert : le sous-total contributif "
+    + "l'en retire, et la ligne suivante le rend visible — c'est la même "
+    + "somme, comptée une fois.",
+  )}</h3>
 ${regimes}
 ${part}
 <h3>Scénario 2 — construction du compte notionnel rétroactif</h3>

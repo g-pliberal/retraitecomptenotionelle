@@ -482,6 +482,10 @@ document.addEventListener("click", (evenement) => {
   const terme = evenement.target.closest(".mot > .terme");
   fermerLesMots(terme);
   if (!terme) { return; }
+  // Un appel de bulle posé dans un <label> ferait, sans cela, DEUX choses d'un
+  // seul clic : ouvrir la bulle, et donner le focus au champ que le libellé
+  // désigne — sur un champ date, le calendrier s'ouvrirait par-dessus la bulle.
+  evenement.preventDefault();
   const ouvrir = terme.getAttribute("aria-expanded") !== "true";
   terme.setAttribute("aria-expanded", String(ouvrir));
   terme.nextElementSibling.hidden = !ouvrir;
