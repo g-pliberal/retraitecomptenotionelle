@@ -1874,7 +1874,7 @@ Défenseur des droits peut être saisi :
 
 <h3>Code, données et réutilisation</h3>
 <p>Le code du modèle et du site est publié sous
-<a href="{g.DEPOT}/blob/main/LICENSE">licence MIT</a> : réutilisable, y compris
+<a href="{g.DEPOT}/blob/main/LICENSE">licence Apache 2.0</a> : réutilisable, y compris
 commercialement, à condition d'en conserver la mention. Les pictogrammes
 viennent de <a href="https://lucide.dev">Lucide</a> (licence ISC) ; ils sont
 recopiés dans le dépôt, et le site ne les charge donc chez personne.</p>

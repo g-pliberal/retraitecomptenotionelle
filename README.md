@@ -1110,7 +1110,7 @@ node --test tests/js/moteur.test.js
 
 ## Licence
 
-MIT — voir [LICENSE](LICENSE). Les données publiques référencées restent
+Apache 2.0 — voir [LICENSE](LICENSE). Les données publiques référencées restent
 soumises aux licences de leurs producteurs respectifs (licence ouverte Etalab
 pour la plupart), qui imposent toutes la citation de la source : elle est dans
 [`data/sources.yaml`](data/sources.yaml), valeur par valeur.
