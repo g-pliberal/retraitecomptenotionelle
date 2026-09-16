@@ -1800,7 +1800,8 @@ function formulaire(saisie, contexte) {
   ${basculeUnite(saisie, echelle)}
   ${releveFormulaire(saisie)}
   <details class="options">
-    <summary>Options de modélisation (sexe, profil, indexation, âge de référence, projection)</summary>
+    ${g.sommaire("Options de modélisation (sexe, profil, indexation, âge de "
+    + "référence, projection)")}
     <div class="grille">${avance}</div>
   </details>
   <p style="margin-top:1.4rem"><button type="submit">Calculer les six scénarios</button></p>
@@ -1841,7 +1842,7 @@ function releveFormulaire(saisie) {
   );
   return `
 <details class="releve"${saisie.releveActif ? " open" : ""}>
-  <summary>Coller un relevé de carrière — la saisie exacte</summary>
+  ${g.sommaire("Coller un relevé de carrière — la saisie exacte")}
   <p class="discret">Une ligne par année : <strong>année:régime:revenu</strong>,
   et <strong>:trimestres</strong> si le relevé les porte.${bulle}</p>
   ${g.zone("releve", "Relevé de carrière", saisie.releve,
@@ -2058,7 +2059,7 @@ function ligneMetier(rang, champs, vide = false, sansEmploi = false) {
   const rangs = majuscule(RANGS_METIER[rang - 1]);
   if (vide) {
     return '<details class="metier facultatif">'
-      + "<summary>Ajouter une période — un métier, une interruption</summary>"
+      + g.sommaire("Ajouter une période — un métier, une interruption")
       + `<div class="grille">${champs}</div></details>`;
   }
   const titre = sansEmploi ? `${rangs} période, sans emploi` : `${rangs} métier`;
@@ -2546,13 +2547,15 @@ function resultats(contexte, saisie) {
   if (!comparaison.actuel.liquidation_ouverte) {
     const age = comparaison.actuel.age_ouverture_opposable;
     const attente = age === null ? "" : ` — il faut attendre ${g.nombre(age, 2)} ans`;
-    ouverture = '<p class="note avertissement">Le droit en vigueur <strong>n\'ouvre pas'
+    ouverture = '<p class="note avertissement">'
+      + g.icone("triangle-alert", "Avertissement")
+      + "<span>Le droit en vigueur <strong>n'ouvre pas"
       + "</strong> cette liquidation à "
       + `${g.nombre(comparaison.carriere.age_liquidation, 2)} ans${attente}. `
       + "Ni l'âge légal du régime, ni le départ anticipé pour carrière longue "
       + "ne le permettent. Le montant du scénario 1 reste calculé, parce qu'il "
       + "faut bien comparer les six scénarios sur la même carrière, mais il "
-      + "ne décrit aucune pension que le système actuel servirait.</p>";
+      + "ne décrit aucune pension que le système actuel servirait.</span></p>";
   }
 
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
@@ -3253,7 +3256,7 @@ ${part}
 <h3>Scénario 2 — construction du compte notionnel rétroactif</h3>
 ${compte}
 <details>
-  <summary>Les résultats complets en JSON</summary>
+  ${g.sommaire("Les résultats complets en JSON")}
   <pre class="json">${echapper(JSON.stringify(comparaison.dictionnaire(), null, 2))}</pre>
 </details>
 <p class="discret">L'adresse de cette page contient tous les paramètres :
@@ -5503,7 +5506,9 @@ Défenseur des droits peut être saisi :
 <h3>Code, données et réutilisation</h3>
 <p>Le code du modèle et du site est publié sous
 <a href="${g.DEPOT}/blob/main/LICENSE">licence MIT</a> : réutilisable, y compris
-commercialement, à condition d'en conserver la mention.</p>
+commercialement, à condition d'en conserver la mention. Les pictogrammes
+viennent de <a href="https://lucide.dev">Lucide</a> (licence ISC) ; ils sont
+recopiés dans le dépôt, et le site ne les charge donc chez personne.</p>
 <p>Les données, elles, ne sont pas la propriété de l'éditeur. Les séries
 françaises reprises ici — INSEE, DREES, DILA et Légifrance, Service des
 retraites de l'État, caisses — sont des informations publiques, réutilisables

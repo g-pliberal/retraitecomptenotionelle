@@ -121,7 +121,11 @@ header.bandeau .interieur {
   align-items: baseline; justify-content: space-between;
 }
 header.bandeau h1 { font-size: 1.2rem; margin: 0; letter-spacing: 0.01em; }
-header.bandeau h1 a { color: inherit; text-decoration: none; }
+header.bandeau h1 a {
+  color: inherit; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+}
+header.bandeau h1 .icone { color: var(--accent); width: 1.15em; height: 1.15em; }
 nav a {
   color: var(--texte-doux); text-decoration: none;
   margin-left: 1.1rem; font-size: 0.92rem;
@@ -144,7 +148,15 @@ a { color: var(--accent); }
   padding: 0.85rem 1.1rem; margin: 1.5rem 0; font-size: 0.95rem;
   border-radius: 0 4px 4px 0;
 }
-.note.avertissement { border-left-color: var(--alerte); }
+.note.avertissement {
+  border-left-color: var(--alerte);
+  display: flex; align-items: flex-start; gap: 0.6rem;
+}
+/* Le pictogramme garde sa taille quand le texte passe à la ligne, et se pose
+   sur la première ligne plutôt qu'au milieu du bloc. */
+.note.avertissement > .icone {
+  color: var(--alerte); width: 1.15em; height: 1.15em; margin-top: 0.12em;
+}
 .discret { color: var(--texte-doux); font-size: 0.9rem; }
 /* Un champ des mentions légales que l'éditeur n'a pas encore renseigné. Il est
    marqué, et non masqué : un trou visible se comble, un trou discret reste. */
@@ -236,8 +248,25 @@ a.bouton:hover { opacity: 0.9; }
   margin: 0; padding: 0 0.35rem; font-size: 0.78rem; letter-spacing: 0.05em;
   text-transform: uppercase; color: var(--texte-doux);
 }
+/* Les pictogrammes. Un seul jeu — Lucide, grille de 24, trait de 2 —, une
+   seule règle : ils prennent la taille et la couleur du texte qui les porte.
+   C'est ce qui les fait tenir ensemble partout, du titre du site au chevron
+   d'un dépliant, sans qu'aucune taille soit écrite deux fois. */
+.icone {
+  width: 1.05em; height: 1.05em; flex: none; vertical-align: -0.16em;
+}
 details { margin-top: 1.25rem; }
-summary { cursor: pointer; color: var(--texte-doux); font-size: 0.92rem; }
+/* Le résumé d'un dépliant porte SON chevron, et non celui du navigateur : le
+   marqueur natif n'a ni la même forme ni la même taille d'un moteur à l'autre,
+   et ne suit aucune de nos grilles. Il est donc masqué partout, une fois. */
+summary {
+  cursor: pointer; color: var(--texte-doux); font-size: 0.92rem;
+  display: flex; align-items: center; gap: 0.45rem; list-style: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::marker { content: ""; }
+summary > .icone { color: var(--accent); transition: transform 0.15s; }
+details[open] > summary > .icone { transform: rotate(180deg); }
 summary:hover { color: var(--accent); }
 details > .grille { margin-top: 1rem; }
 /* Une section repliée. Son titre a le poids d'un intertitre, parce qu'il en
@@ -248,21 +277,10 @@ details.section { margin: 0; border-top: 1px solid var(--trait); }
 details.section:last-of-type { border-bottom: 1px solid var(--trait); }
 details.section > summary {
   color: var(--texte); font-size: 1rem; font-weight: 600;
-  padding: 0.85rem 0.2rem 0.85rem 1.6rem; list-style: none; position: relative;
+  padding: 0.85rem 0.2rem; gap: 0.6rem;
 }
-details.section > summary::-webkit-details-marker { display: none; }
-details.section > summary::marker { content: ""; }
-/* Le chevron, dessiné au trait : il dit dans quel sens la section s'ouvre, ce
-   qu'un titre seul ne dit pas. */
-details.section > summary::before {
-  content: ""; position: absolute; left: 0.35rem; top: 1.25rem;
-  width: 0.42rem; height: 0.42rem; border-right: 2px solid var(--accent);
-  border-bottom: 2px solid var(--accent); transform: rotate(-45deg);
-  transition: transform 0.15s;
-}
-details.section[open] > summary::before { transform: rotate(45deg); top: 1.1rem; }
 details.section > summary:hover { color: var(--accent); }
-details.section > .dedans { padding: 0 0 1.2rem 1.6rem; }
+details.section > .dedans { padding: 0 0 1.2rem 1.65rem; }
 details.section > .dedans > :first-child { margin-top: 0; }
 details.section > .dedans > h4 {
   font-size: 0.98rem; font-weight: 600; margin: 1.5rem 0 0.4rem;
@@ -376,6 +394,7 @@ section.cle > .partage > .partager {
   color: var(--accent); background: none;
   border: 1px solid var(--trait-champ); border-radius: 4px;
   padding: 0.35rem 0.8rem;
+  display: inline-flex; align-items: center; gap: 0.4rem;
 }
 section.cle > .partage > .partager:hover {
   border-color: var(--accent); background: var(--accent-doux);
@@ -400,14 +419,11 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
    au moins 24 px de côté (WCAG 2.5.8), marge comprise. */
 .mot > .terme.appel {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 1.25em; height: 1.25em; margin-left: 0.3em; padding: 0.2em;
-  box-sizing: content-box; font-size: 0.85em; line-height: 1;
-  color: var(--texte-doux);
-  border: 1px solid currentColor; border-radius: 50%;
+  margin-left: 0.25em; padding: 0.2em; font-size: 0.95em; line-height: 1;
+  color: var(--texte-doux); border-bottom: none; vertical-align: -0.1em;
 }
 .mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--accent); }
 .mot > .terme[aria-expanded="true"] { border-bottom-style: solid; }
-.mot > .terme.appel[aria-expanded="true"] { border-style: solid; }
 .mot > .bulle {
   display: block; position: absolute; left: 0; top: calc(100% + 0.4rem);
   z-index: 5; width: max(14rem, min(22rem, 70vw));
@@ -710,7 +726,7 @@ def entete(chemin_actif: str = "/") -> str:
     """
     return f"""<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
-  <h1><a href="{lien('/')}">Retraite à comptes notionnels</a></h1>
+  <h1><a href="{lien('/')}">{icone('trending-up')}<span>Retraite à comptes notionnels</span></a></h1>
   <nav aria-label="Navigation principale">{navigation(chemin_actif)}</nav>
 </div></header>"""
 
@@ -1021,6 +1037,75 @@ def fiche(etiquette: str, valeur: str, precision: str = "") -> str:
     )
 
 
+#: Les pictogrammes du site, et rien qu'eux.
+#:
+#: Ils viennent tous de Lucide 1.46.0, sous licence ISC : une seule grille —
+#: 24 × 24, trait de 2, extrémités et jointures arrondies —, si bien qu'ils
+#: tiennent ensemble à toutes les tailles. Le site n'affichait jusque-là aucun
+#: dessin : un emoji en guise d'icône de page, un chevron tracé à coups de
+#: bordures CSS, le triangle que chaque navigateur donne à ses ``<details>``, un
+#: point d'interrogation en caractère. Trois dessins, trois grilles, trois
+#: épaisseurs, et un emoji dont le rendu change avec le système.
+#:
+#: Le tracé est écrit ICI, et non chargé : le portage JavaScript n'utilise
+#: aucune bibliothèque, et la page ne demande aucune ressource tierce — c'est
+#: ce que les mentions légales promettent. Les originaux sont recopiés sans
+#: retouche dans ``moteur/icones/``, et un test vérifie que cette table dit
+#: exactement ce qu'ils disent, des deux côtés du portage.
+#:
+#: Les clés sont les noms de Lucide, en anglais comme les fichiers : c'est ce
+#: qui permet de retrouver l'original d'un coup d'œil, et au test de l'ouvrir.
+ICONES = {
+    "chevron-down": '<path d="m6 9 6 6 6-6" />',
+    "circle-help": '<circle cx="12" cy="12" r="10" />'
+                   '<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />'
+                   '<path d="M12 17h.01" />',
+    "download": '<path d="M12 15V3" />'
+                '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />'
+                '<path d="m7 10 5 5 5-5" />',
+    "trending-up": '<path d="M16 7h6v6" /><path d="m22 7-8.5 8.5-5-5L2 17" />',
+    "triangle-alert":
+        '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 '
+        '0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" />',
+}
+
+#: L'enveloppe commune : c'est elle qui fait la grille, et elle ne varie pas
+#: d'un pictogramme à l'autre. ``currentColor`` les met à la couleur du texte
+#: qui les porte, et ``1em`` à sa taille : un pictogramme suit son voisin.
+ENVELOPPE_ICONE = (
+    'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round"'
+)
+
+
+def icone(nom: str, titre: str = "") -> str:
+    """Un pictogramme de la bibliothèque, écrit dans la page.
+
+    Sans ``titre``, il est DÉCORATIF : le texte à côté dit déjà ce qu'il dit, et
+    le répéter ferait entendre deux fois la même chose à une synthèse vocale.
+    Avec ``titre``, il porte à lui seul une information — un avertissement, un
+    état — et devient une image nommée.
+    """
+    if nom not in ICONES:
+        raise KeyError(f"pictogramme inconnu : {nom}")
+    if titre:
+        return (f'<svg class="icone" {ENVELOPPE_ICONE} role="img">'
+                f"<title>{escape(titre)}</title>{ICONES[nom]}</svg>")
+    return (f'<svg class="icone" {ENVELOPPE_ICONE} aria-hidden="true" '
+            f'focusable="false">{ICONES[nom]}</svg>')
+
+
+def sommaire(texte: str) -> str:
+    """Le résumé d'un dépliant, chevron compris.
+
+    Tous les dépliants du site passent par ici : c'est ce qui leur donne le même
+    chevron, au même endroit, tournant dans le même sens. Le marqueur du
+    navigateur est masqué en CSS — il n'a pas deux fois la même forme sur deux
+    moteurs, et aucune taille commune avec le reste.
+    """
+    return f"<summary>{icone('chevron-down')}<span>{texte}</span></summary>"
+
+
 def mot(terme: str, definition: str) -> str:
     """Un mot de jargon, et sa définition dépliable sur place.
 
@@ -1066,7 +1151,8 @@ def bulle(sujet: str, texte: str) -> str:
     """
     return (
         f'<span class="mot"><button type="button" class="terme appel" '
-        f'aria-expanded="false" aria-label="{escape(sujet)}">?</button>'
+        f'aria-expanded="false" aria-label="{escape(sujet)}">'
+        f"{icone('circle-help')}</button>"
         f'<span class="bulle" role="note" hidden>{texte}</span></span>'
     )
 
@@ -1104,7 +1190,7 @@ def depliant(titre: str, corps: str) -> str:
     qu'il y a dedans, et c'est le lecteur qui décide.
     """
     return (
-        f'<details class="section"><summary>{escape(titre)}</summary>'
+        f'<details class="section">{sommaire(escape(titre))}'
         f'<div class="dedans">{corps}</div></details>'
     )
 
@@ -1140,7 +1226,7 @@ def cle(question: str, reponse: str, corps: str, source: str = "") -> str:
     # redire ce que son propre contenu dit déjà.
     partage = (
         '<p class="partage"><button type="button" class="partager">'
-        "Télécharger l'image</button></p>"
+        f"{icone('download')}<span>Télécharger l'image</span></button></p>"
         if '<figure class="graphique"' in corps else ""
     )
     return (
@@ -1682,8 +1768,9 @@ def donnees_du_graphique(titre: str, annees: tuple[int, ...],
     pas = nom_abscisse.lower()
     return (
         '<details class="donnees-graphique">'
-        f"<summary>Les chiffres de ce graphique, {pas} par {pas} "
-        f"({len(annees)} lignes)</summary>{grille}</details>"
+        + sommaire(f"Les chiffres de ce graphique, {pas} par {pas} "
+                   f"({len(annees)} lignes)")
+        + f"{grille}</details>"
     )
 
 

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Retraite à comptes notionnels">
+  <!-- L'icône du site : le carré de la charte, et le tracé « trending-up » de
+       Lucide 1.46.0 (ISC, voir icones/LICENSE), posé sur la même grille de 24
+       et au même trait de 2. Elle remplace un emoji, dont le dessin changeait
+       d'un système à l'autre et dont la taille ne suivait aucune grille. -->
+  <rect width="32" height="32" rx="7" fill="#7a2e1e"/>
+  <g transform="translate(4 4)" fill="none" stroke="#fbfaf7" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 7h6v6" />
+    <path d="m22 7-8.5 8.5-5-5L2 17" />
+  </g>
+</svg>
