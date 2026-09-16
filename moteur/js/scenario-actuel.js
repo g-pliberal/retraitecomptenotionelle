@@ -911,6 +911,7 @@ export class ScenarioActuel {
     // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
     // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
     // lectures. Voir le docstring du modèle Python.
+    let abattement;
     if (periode.abattement_points === "agirc_arrco"
       || periode.abattement_points === "ircantec") {
       // Avant l'ASF de 1983, l'âge seul : une période sans durée requise — ni
@@ -920,29 +921,85 @@ export class ScenarioActuel {
         || periode.duree_requise_trimestres === undefined)
         && !periode.duree_requise_par_generation;
       if (!parAgeSeul && trimestres >= requis) {
-        return 1.0;
+        abattement = 1.0;
+      } else {
+        const parDuree = parAgeSeul
+          ? null : coefficientAnticipation(requis - trimestres, 20);
+        const ecartAge = Math.max(
+          0.0, (this.ageTauxPlein(periode, carriere) - ageLiquidation) * 4,
+        );
+        let parAge = coefficientAnticipation(ecartAge, 40);
+        if (parAge === null) {
+          parAge = COEFFICIENT_ANTICIPATION_PLANCHER;
+        }
+        const candidats = [parDuree, parAge].filter((c) => c !== null);
+        abattement = candidats.length ? Math.max(...candidats) : 1.0;
       }
-      const parDuree = parAgeSeul
-        ? null : coefficientAnticipation(requis - trimestres, 20);
-      const ecartAge = Math.max(
-        0.0, (this.ageTauxPlein(periode, carriere) - ageLiquidation) * 4,
-      );
-      let parAge = coefficientAnticipation(ecartAge, 40);
-      if (parAge === null) {
-        parAge = COEFFICIENT_ANTICIPATION_PLANCHER;
+    } else {
+      const [decote, ageAnnulation] = this.decote(periode, carriere, anneeLiquidation);
+      if (decote === null) {
+        abattement = 1.0;
+      } else {
+        const trimestresDecote = this.trimestresDeDecote(
+          periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
+        );
+        abattement = Math.max(0.0, 1.0 - decote * trimestresDecote);
       }
-      const candidats = [parDuree, parAge].filter((c) => c !== null);
-      return candidats.length ? Math.max(...candidats) : 1.0;
     }
 
-    const [decote, ageAnnulation] = this.decote(periode, carriere, anneeLiquidation);
-    if (decote === null) {
+    // Abattu et majoré ne se rencontrent pas : les deux majorations de
+    // l'arrêté supposent l'âge du taux plein ou la durée requise dépassés,
+    // c'est-à-dire un coefficient d'anticipation déjà revenu à 1.
+    if (abattement < 1.0) {
+      return abattement;
+    }
+    return this.surcotePoints(
+      periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
+    );
+  }
+
+  /**
+   * Majoration d'un régime en points liquidé APRÈS le taux plein.
+   *
+   * Un seul régime du catalogue en sert une. Le IV de l'article 16 de l'arrêté
+   * du 30 décembre 1970, en vigueur « à compter du 1er janvier 2010 », majore
+   * le total des points de deux façons qui ne se recouvrent pas : son 1° de
+   * 0,75 % par trimestre ENTIER écoulé entre l'âge du taux plein et l'entrée
+   * en jouissance, sans condition de durée ni de cotisation ; son 2° de
+   * 0,625 % par trimestre COTISÉ au-delà de la durée requise et de l'âge légal,
+   * en deçà de l'âge du taux plein. Voir le docstring du modèle Python.
+   */
+  surcotePoints(periode, carriere, trimestres, requis, ageLiquidation,
+    anneeLiquidation) {
+    if (periode.surcote_points !== "ircantec") {
       return 1.0;
     }
-    const trimestresDecote = this.trimestresDeDecote(
-      periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
+    const ageTauxPlein = this.ageTauxPlein(periode, carriere);
+    // 1° — le temps écoulé, en trimestres ENTIERS.
+    const ecoules = Math.floor(
+      (Math.max(0.0, ageLiquidation - ageTauxPlein) + 1e-9) * 4,
     );
-    return Math.max(0.0, 1.0 - decote * trimestresDecote);
+    // 2° — la durée cotisée en deçà. Les trimestres au-delà de la durée
+    // requise sont les DERNIERS de la carrière : les compter ici suppose que
+    // la durée requise était atteinte avant l'âge du taux plein, sans quoi ils
+    // tombent dans la fenêtre du 1° et y sont déjà payés.
+    let supplementaires = 0;
+    const ageOuverture = this.ageOuvertureCommun(periode, carriere);
+    if (ageLiquidation >= ageOuverture) {
+      const avant = Math.min(
+        trimestres,
+        trimestresValidesAvant(carriere, ageTauxPlein, anneeLiquidation),
+      );
+      supplementaires = Math.max(0, avant - requis);
+      if (supplementaires > 0) {
+        supplementaires = Math.min(supplementaires, trimestresCotisesEntre(
+          carriere, ageOuverture, ageTauxPlein, anneeLiquidation,
+        ));
+      }
+    }
+    return 1.0
+      + SURCOTE_IRCANTEC_AGE * ecoules
+      + SURCOTE_IRCANTEC_DUREE * supplementaires;
   }
 
   /**
@@ -1980,6 +2037,20 @@ const PALIERS_ANTICIPATION = [[12, 0.01], [20, 0.0125], [40, 0.0175]];
 const COEFFICIENT_ANTICIPATION_PLANCHER = 0.43;
 
 /**
+ * Majoration par trimestre ENTIER écoulé entre l'âge du taux plein et la
+ * liquidation — le 1° du IV de l'article 16 de l'arrêté du 30 décembre 1970.
+ * Aucune condition de durée : c'est le temps qui compte.
+ */
+const SURCOTE_IRCANTEC_AGE = 0.0075;
+
+/**
+ * Majoration par trimestre COTISÉ au-delà de la durée requise, entre l'âge
+ * légal et l'âge du taux plein — le 2° du même IV. « En aucun cas une même
+ * période ne peut donner lieu à la fois » aux deux.
+ */
+const SURCOTE_IRCANTEC_DUREE = 0.00625;
+
+/**
  * Coefficient d'anticipation pour un nombre de trimestres manquants.
  *
  * ``maximum`` est la dernière ligne du barème : vingt trimestres pour la table
@@ -2013,19 +2084,25 @@ function sansZerosInutiles(valeur, decimales) {
 /**
  * La formule d'un régime en points, telle qu'on doit pouvoir la refaire.
  *
- * Le coefficient d'anticipation multiplie la SOMME des termes, il ne s'y ajoute
- * pas : il vient donc après, et la somme prend ses parenthèses dès qu'elle en
- * compte plusieurs. Sans lui, la formule affichée ne retrouvait pas le montant
- * de la ligne — à dix ans d'anticipation elle en donnait 2,3 fois trop, sans
- * que rien à l'écran ne dise pourquoi.
+ * Le coefficient multiplie la SOMME des termes, il ne s'y ajoute pas : il
+ * vient donc après, et la somme prend ses parenthèses dès qu'elle en compte
+ * plusieurs. Sans lui, la formule affichée ne retrouvait pas le montant de la
+ * ligne — à dix ans d'anticipation elle en donnait 2,3 fois trop, sans que
+ * rien à l'écran ne dise pourquoi.
+ *
+ * Il se nomme par ce qu'il fait : « coefficient d'anticipation » quand il
+ * retire, « coefficient de majoration » quand il ajoute. Un seul régime
+ * ajoute — l'Ircantec, dont le IV de l'article 16 de l'arrêté du 30 décembre
+ * 1970 majore les points d'une liquidation tardive.
  */
-function formulePoints(termes, abattement) {
+function formulePoints(termes, coefficient) {
   const formule = termes.join(" + ") || "aucun droit";
-  if (abattement === 1.0 || termes.length === 0) {
+  if (coefficient === 1.0 || termes.length === 0) {
     return formule;
   }
   const somme = termes.length > 1 ? `(${formule})` : formule;
-  return `${somme} × coefficient d'anticipation ${formatFixe(abattement, 4)}`;
+  const nom = coefficient > 1.0 ? "de majoration" : "d'anticipation";
+  return `${somme} × coefficient ${nom} ${formatFixe(coefficient, 4)}`;
 }
 
 export function auTrimestreSuperieur(trimestres) {

@@ -1836,11 +1836,19 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   avant 1972. Restent hors du modèle les avantages familiaux des régimes que
   leur fiche ne déclare pas, faute de barème sourcé : le régime de base des
   professions libérales, celui des avocats, et celui des exploitants
-  agricoles ; et la SURCOTE de l'Ircantec, que le paragraphe 4 de l'article 16
-  de l'arrêté du 30 décembre 1970 fixe depuis le 1er janvier 2010 à 0,75 % par
-  trimestre au-delà de soixante-cinq ans, trouvée par la confrontation à
-  OpenFisca et non corrigée — l'abattement d'un régime en points est un
-  coefficient qui ne dépasse jamais un, des deux côtés du portage ;
+  agricoles. La SURCOTE de l'Ircantec, elle, en est sortie : le IV de
+  l'article 16 de l'arrêté du 30 décembre 1970 est servi depuis le
+  1er janvier 2010, à ses deux taux — 0,75 % par trimestre entier écoulé
+  au-delà de l'âge du taux plein, 0,625 % par trimestre cotisé au-delà de la
+  durée requise en deçà de cet âge —, et le coefficient d'un régime en points
+  peut désormais dépasser un, des deux côtés du portage. Il reste que les
+  autres régimes EN POINTS du catalogue portent, eux aussi, une surcote que
+  leur fiche écrit et que le moteur ne lit pas : `surcote_par_trimestre` n'est
+  consulté que par la branche en annuités, et neuf régimes de non-salariés —
+  la CNAVPL, la MSA des non-salariés, la CARMF, la CAVP, la CARPIMKO, la
+  CAVEC, la CIPAV, la CPRN et l'ASV des conventionnés — en portent une de
+  0,5 à 1,25 % par trimestre qui n'est jamais servie. C'est l'action 22 de la
+  feuille de route ;
 - **revalorisation des salaires portés au compte** — le modèle ne les
   reconstitue plus, il les LIT dans la circulaire annuelle de la Cnav
   (`legislation/revalorisation_salaires.csv`, perceptions 1930-2025). Il les
@@ -2225,7 +2233,7 @@ pas.
 | Cotisation des deux tranches | **exacte** à l'arrondi du producteur près |
 | Assiette de la tranche B | 4,75 plafonds chez nous et dans le décret, huit chez lui à partir de 1992 |
 | Coefficient d'anticipation | **exact** sur les onze, escalier compris |
-| Surcote | 7,5 % par trimestre chez lui, 0,75 % dans l'arrêté, rien chez nous |
+| Surcote | 7,5 % par trimestre chez lui, 0,75 % dans l'arrêté et chez nous |
 
 **Sa tranche B passe à huit plafonds en 1992**, seize ans avant le décret qui
 l'y porte. Le test reconstitue exactement ce qu'il cotise en trop, et vérifie
@@ -2235,11 +2243,24 @@ qu'avant 1992 et depuis 2009 les deux barèmes tombent d'accord au centime.
 le total des points « de 0,75 % par trimestre entier écoulé entre le
 soixante-cinquième anniversaire de l'assuré et la date d'entrée en jouissance » ;
 son paramètre porte 0,075. Une année de surcote y vaut +30 % de pension, deux
-ans +60 %. **Et le modèle, lui, n'en sert aucune** : la fiche de l'Ircantec
-n'a pas de surcote, si bien qu'un agent qui liquide après soixante-cinq ans
-perd les 0,75 % par trimestre que l'arrêté lui donne, et les 0,625 % par
-trimestre cotisé entre l'âge du taux plein et soixante-cinq ans. C'est un droit
-manquant, mesuré et non corrigé : voir l'action 9 de la feuille de route.
+ans +60 %. **Le modèle, lui, n'en servait aucune, et sert maintenant
+l'arrêté** — c'est l'action 9 de la feuille de route, faite. La fiche porte
+`surcote_points: ircantec` à partir de 2010, et le coefficient d'un régime en
+points, qui ne pouvait pas dépasser un, le peut désormais : 0,75 % par
+trimestre ENTIER écoulé au-delà de l'âge du taux plein — l'âge de l'article
+L. 351-8, lu à la génération, et non soixante-cinq ans en dur depuis 2011 —,
+et 0,625 % par trimestre COTISÉ au-delà de la durée requise entre l'âge légal
+et cet âge, sans qu'une même période soit payée deux fois. Sur le seul profil
+surcoté du témoin, un agent né en 1945 parti à soixante-sept ans, il servait
+1,00 et sert 1,06 ; OpenFisca lui sert 1,30.
+
+Les deux lectures ne comptent d'ailleurs pas les mêmes trimestres. OpenFisca
+reprend ceux de la surcote du régime général — cotisés, au-delà de la durée
+requise —, et leur applique son taux ; l'arrêté paie d'abord le TEMPS écoulé,
+que ni cotisation ni durée ne conditionnent, et ne réserve l'assiette du
+régime général qu'à son 2°, moins bien payé. Un agent qui cesse de travailler
+à l'âge du taux plein et ne liquide que deux ans plus tard ne reçoit rien chez
+lui et huit trimestres de majoration ici.
 
 Le reste de l'écart tient à un arrondi, et il est du côté du producteur : la
 Caisse des dépôts publie le taux appelé arrondi au dix-millième — 5,63 % de
@@ -5397,7 +5418,7 @@ barèmes.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 780 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 784 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

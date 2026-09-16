@@ -709,7 +709,7 @@ liquident les cas types, qui bougent.
   source de comportement, permettrait de le chiffrer. Il n'est pas dans le
   dépôt, et l'y mettre est un chantier à part.
 
-### 9. La surcote de l'Ircantec, qu'aucun assuré ne touche — `à faire`
+### 9. La surcote de l'Ircantec, qu'aucun assuré ne touche — `fait`
 
 **Pourquoi.** Découvert en menant l'action 4. Le paragraphe 4 de l'article 16
 de l'arrêté du 30 décembre 1970 majore le total des points « de 0,75 % par
@@ -739,6 +739,43 @@ avec ses deux taux et ses deux bornes d'âge. Touche les deux moteurs.
 **Fin.** Le test d'oracle compare la surcote servie à celle de l'arrêté plutôt
 qu'à zéro, et `limites.md` §3 retire l'Ircantec de la liste des avantages
 manquants.
+
+**Ce que ça a déplacé.**
+
+- *Le droit, à ses deux taux.* La fiche porte `surcote_points: ircantec` à
+  partir de 2010, et `_abattement_points` rend un coefficient qui peut dépasser
+  un. Le 1° paie 0,75 % par trimestre ENTIER écoulé entre l'âge du taux plein
+  et l'entrée en jouissance ; le 2° paie 0,625 % par trimestre COTISÉ au-delà
+  de la durée requise entre l'âge légal et ce même âge. Les deux assiettes sont
+  disjointes par construction, ce que le texte exige : « en aucun cas une même
+  période ne peut donner lieu à la fois » aux deux.
+- *Le chiffre.* Sur le seul profil surcoté de l'oracle — un agent né en 1945
+  parti à soixante-sept ans — le modèle servait 1,00 et sert 1,06 ; OpenFisca
+  lui sert 1,30. Dans les témoins, deux cas types bougent, `contractuel_public`
+  et `elu_local` de la génération 1955 : leur pension Ircantec monte de 3,75 %,
+  leur pension totale de 1,1 %. Aucun autre chiffre du dépôt ne bouge, et c'est
+  la mesure de ce que valait le droit manquant.
+- *Une coupure de fiche, pour une date qu'aucune version de texte ne porte.*
+  Le paragraphe 4 vit dans la version du 25 septembre 2008 mais ne s'applique
+  qu'« à compter du 1er janvier 2010 » : la période 2009-2010 est donc coupée
+  en deux, alors que `calendrier_regimes.py` ne pouvait pas la réclamer — il
+  compare les DÉBUTS de version, et celui-ci est dans le corps du texte. **Une
+  version de texte n'est pas une date d'effet**, et c'est un mode de panne à
+  chercher ailleurs.
+- *Le coefficient se nomme par ce qu'il fait.* « Coefficient d'anticipation »
+  quand il retire, « coefficient de majoration » quand il ajoute : l'ancien
+  libellé aurait écrit le contraire de sa valeur sous chaque pension majorée.
+  Le lecteur de formule de `test_web.py`, qui refait chaque ligne affichée à la
+  main, lit les deux.
+- *Ce que la vérification demandée a trouvé, et qui n'est pas corrigé ici.*
+  L'action demandait de regarder si d'autres régimes en points sont dans le
+  même cas. Ils le sont, et pour une autre raison : la branche en points ne lit
+  PAS `surcote_par_trimestre`, que seule la branche en annuités consulte. Neuf
+  fiches de non-salariés portent une surcote sourcée — 0,5 à 1,25 % par
+  trimestre — que le moteur laisse tomber. C'est l'action 22, ouverte plus bas.
+  La RAFP, seul autre régime en points dont on pouvait attendre une majoration
+  d'âge, n'en est pas : son article 8 renvoie à « un barème actuariel […] établi
+  par le conseil d'administration », qu'aucun texte ne chiffre.
 
 ### 10. Liquider ensemble un régime et celui qui lui succède — `à faire`
 
@@ -1474,6 +1511,55 @@ inchangés au bit près, et ceux des pages ne bougent que de la structure.
 
 ---
 
+### 22. La surcote que les régimes en points écrivent et que le moteur laisse tomber — `à faire`
+
+**Pourquoi.** Découvert en menant l'action 9, qui demandait de vérifier si
+d'autres régimes en points étaient dans le même cas. Ils le sont, et pour une
+raison plus bête que la sienne : la branche en POINTS de `calculer` ne lit pas
+`surcote_par_trimestre`. Ce champ n'est consulté que par la branche en
+annuités, si bien qu'une surcote écrite dans une fiche de régime en points n'a
+aucun effet — elle est chargée, portée par la période, transportée jusque dans
+`moteur/donnees.json`, et jamais servie. Le catalogue distingue pourtant
+soigneusement les régimes qui en ont une de ceux qui n'en ont pas : la CARCDSF
+porte `null` parce que « il n'existe pas de surcote dans le régime
+complémentaire au-delà du taux plein », la CNBF aussi pour la même raison
+citée à sa source. Ces `null`-là ne servent à rien tant que les autres ne
+servent à rien.
+
+**Qui est touché.** Neuf fiches, toutes chez les non-salariés : la CNAVPL
+(0,75 %), la MSA des non-salariés (0,75 % puis 1,25 %), la CARMF, la CAVEC, la
+CIPAV et l'ASV des conventionnés (1,25 %), la CARPIMKO (0,75 %), la CPRN (1 %)
+et la CAVP (0,5 %). C'est le régime de BASE des professions libérales qui pèse
+le plus : la CNAVPL est un régime en points, et sa surcote est celle de
+l'article L. 643-1-1, la même que celle du régime général.
+
+**Ce qui n'est pas une simple ligne à ajouter.** Les neuf ne comptent pas leurs
+trimestres de la même façon, et c'est tout le travail. La CNAVPL et la MSA
+suivent la règle du régime général — cotisés, au-delà de l'âge légal, au-delà
+de la durée requise —, et leur fiche porte une durée requise. Les sept
+complémentaires de sections libérales n'en portent aucune : « sur la base de
+l'âge légal de départ à la retraite est appliqué un coefficient correspondant à
+l'âge de l'affilié », écrit la CPRN, « aucune durée d'assurance n'y entre ».
+Leur surcote se compte donc en trimestres ÉCOULÉS au-delà du taux plein, comme
+le 1° de l'arrêté de l'Ircantec. C'est la distinction que `_abattement_points`
+fait déjà sous le nom de `par_age_seul`, et c'est elle qu'il faut reprendre.
+
+**Un plafond à ne pas oublier.** La CPRN borne sa surcote « jusqu'au
+soixante-dixième anniversaire ». Aucun champ ne porte cette borne aujourd'hui,
+et aucune carrière simulée ne l'atteint — mais l'écrire est moins cher que de
+découvrir un jour qu'on sert au-delà.
+
+**Fichiers.** `src/retraite_notionnelle/scenarios/actuel.py` (la branche en
+points de `calculer`, et `_surcote_points` que l'action 9 y a laissé),
+`moteur/js/scenario-actuel.js`, `data/reference/regimes/non_salaries.yaml`,
+`data/reference/regimes/_schema.yaml`, les témoins, `limites.md` §3.
+
+**Fin.** Un test interdit qu'une période en points porte un
+`surcote_par_trimestre` que personne ne lit — c'est le garde-fou qui manquait,
+et qui aurait signalé le défaut sans qu'on le cherche.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -1798,3 +1884,19 @@ inchangés au bit près, et ceux des pages ne bougent que de la structure.
   grossit le texte sans que les requêtes média l'apprennent, et une largeur qui
   tient au point près chez soi déborde chez l'autre. Ce qui se replie ne déborde
   jamais ; ce qui est insécable doit être court, et rien d'autre.
+- **Septembre 2026, action 9.** Faite. L'Ircantec sert la surcote de l'arrêté
+  du 30 décembre 1970 à ses deux taux ; le coefficient d'un régime en points,
+  qui ne pouvait pas dépasser un, le peut. Deux cas types bougent, de 1,1 % sur
+  la pension totale, et rien d'autre dans le dépôt. Le détail est sous
+  l'action. Trois choses à en retenir. **Une version de texte n'est pas une
+  date d'effet** : le paragraphe qui crée la surcote vit dans la version du
+  25 septembre 2008 et ne s'applique qu'au 1er janvier 2010, si bien que la
+  coupure de fiche qu'il faut est une date que `calendrier_regimes.py` ne sait
+  pas réclamer — il compare les débuts de version, pas ce qu'elles disent
+  d'elles-mêmes. **Deux sources peuvent être fausses de deux façons
+  opposées** : OpenFisca servait dix fois trop, le dépôt ne servait rien, et
+  lire le texte était le seul moyen de ne pas choisir entre les deux. Enfin, la vérification
+  que l'action demandait « au passage » a trouvé un défaut plus large qu'elle —
+  neuf régimes en points dont la surcote, pourtant sourcée et chargée, n'est
+  lue par aucune branche du moteur — et c'est l'action 22, ouverte plutôt que
+  glissée dans celle-ci.

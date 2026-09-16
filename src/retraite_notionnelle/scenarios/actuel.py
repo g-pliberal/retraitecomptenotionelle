@@ -567,6 +567,21 @@ _PALIERS_ANTICIPATION: tuple[tuple[int, float], ...] = (
 #: barème ne descend plus.
 _COEFFICIENT_ANTICIPATION_PLANCHER = 0.43
 
+#: Majoration par trimestre ENTIER écoulé entre l'âge du taux plein et la
+#: liquidation — le 1° du IV de l'article 16 de l'arrêté du 30 décembre 1970,
+#: « 0,75 % par trimestre entier écoulé entre le soixante-cinquième
+#: anniversaire de l'assuré et la date d'entrée en jouissance de la pension ».
+#: Aucune condition de durée ne s'y attache : c'est le temps qui compte.
+_SURCOTE_IRCANTEC_AGE = 0.0075
+
+#: Majoration par trimestre COTISÉ au-delà de la durée requise, entre l'âge
+#: légal et l'âge du taux plein — le 2° du même IV, « 0,625 % par trimestre
+#: accompli ». Son assiette est celle de la surcote du régime général, bornée
+#: en haut par l'âge où le 1° prend le relais : « en aucun cas une même période
+#: ne peut donner lieu à la fois à l'attribution de la majoration prévue au 1°
+#: et à celle prévue au 2° ».
+_SURCOTE_IRCANTEC_DUREE = 0.00625
+
 
 def _sans_zeros_inutiles(valeur: float, decimales: int) -> str:
     """Un nombre à ``decimales`` chiffres au plus, sans les zéros de fin.
@@ -581,21 +596,28 @@ def _sans_zeros_inutiles(valeur: float, decimales: int) -> str:
     return f"{valeur:.{decimales}f}".rstrip("0").rstrip(".")
 
 
-def _formule_points(termes: list[str], abattement: float) -> str:
+def _formule_points(termes: list[str], coefficient: float) -> str:
     """La formule d'un régime en points, telle qu'on doit pouvoir la refaire.
 
-    Le coefficient d'anticipation multiplie la SOMME des termes, il ne s'y
-    ajoute pas : il vient donc après, et la somme prend ses parenthèses dès
-    qu'elle en compte plusieurs. Sans lui, la formule affichée ne retrouvait pas
-    le montant de la ligne — à dix ans d'anticipation elle en donnait 2,3 fois
-    trop, sans que rien à l'écran ne dise pourquoi.
+    Le coefficient multiplie la SOMME des termes, il ne s'y ajoute pas : il
+    vient donc après, et la somme prend ses parenthèses dès qu'elle en compte
+    plusieurs. Sans lui, la formule affichée ne retrouvait pas le montant de la
+    ligne — à dix ans d'anticipation elle en donnait 2,3 fois trop, sans que
+    rien à l'écran ne dise pourquoi.
+
+    Il se nomme par ce qu'il fait : « coefficient d'anticipation » quand il
+    retire, « coefficient de majoration » quand il ajoute. Un seul régime
+    ajoute — l'Ircantec, dont le IV de l'article 16 de l'arrêté du 30 décembre
+    1970 majore les points d'une liquidation tardive —, et l'appeler
+    « anticipation » aurait écrit le contraire de ce qu'il vaut.
     """
     formule = " + ".join(termes) or "aucun droit"
-    if abattement == 1.0 or not termes:
+    if coefficient == 1.0 or not termes:
         return formule
     if len(termes) > 1:
         formule = f"({formule})"
-    return f"{formule} × coefficient d'anticipation {abattement:.4f}"
+    nom = "de majoration" if coefficient > 1.0 else "d'anticipation"
+    return f"{formule} × coefficient {nom} {coefficient:.4f}"
 
 
 def _au_trimestre_superieur(trimestres: float) -> int:
@@ -2164,7 +2186,12 @@ class ScenarioActuel:
                            trimestres: int, requis: int,
                            age_liquidation: float,
                            annee_liquidation: int) -> float:
-        """Abattement d'un régime en points liquidé avant le taux plein.
+        """Coefficient d'un régime en points : abattu avant le taux plein,
+        majoré après.
+
+        Il ne dépassait jamais un, et c'était un droit manquant : voir
+        :meth:`_surcote_points`, qui rend la majoration de l'Ircantec quand
+        l'abattement est revenu à un.
 
         « Avant le taux plein » est une condition de DURÉE autant que d'âge :
         une complémentaire est servie sans abattement dès que l'assuré a le
@@ -2207,29 +2234,114 @@ class ScenarioActuel:
                 and not periode.duree_requise_par_generation
             )
             if not par_age_seul and trimestres >= requis:
-                return 1.0
-            par_duree = (
-                None if par_age_seul
-                else _coefficient_anticipation(requis - trimestres, 20)
+                abattement = 1.0
+            else:
+                par_duree = (
+                    None if par_age_seul
+                    else _coefficient_anticipation(requis - trimestres, 20)
+                )
+                ecart_age = max(
+                    0.0,
+                    (self._age_taux_plein(periode, carriere) - age_liquidation) * 4,
+                )
+                par_age = _coefficient_anticipation(ecart_age, 40)
+                if par_age is None:
+                    par_age = _COEFFICIENT_ANTICIPATION_PLANCHER
+                candidats = [c for c in (par_duree, par_age) if c is not None]
+                abattement = max(candidats) if candidats else 1.0
+        else:
+            decote, age_annulation, _ = self._decote(
+                periode, carriere, annee_liquidation
             )
-            ecart_age = max(
-                0.0, (self._age_taux_plein(periode, carriere) - age_liquidation) * 4
-            )
-            par_age = _coefficient_anticipation(ecart_age, 40)
-            if par_age is None:
-                par_age = _COEFFICIENT_ANTICIPATION_PLANCHER
-            candidats = [c for c in (par_duree, par_age) if c is not None]
-            return max(candidats) if candidats else 1.0
+            if decote is None:
+                abattement = 1.0
+            else:
+                trimestres_decote = self._trimestres_de_decote(
+                    periode, carriere, trimestres, requis, age_liquidation,
+                    age_annulation
+                )
+                abattement = max(0.0, 1.0 - decote * trimestres_decote)
 
-        decote, age_annulation, _ = self._decote(
-            periode, carriere, annee_liquidation
+        if abattement < 1.0:
+            # ABATTU ET MAJORÉ NE SE RENCONTRENT PAS. Les deux majorations de
+            # l'arrêté supposent l'une l'âge du taux plein dépassé, l'autre la
+            # durée requise dépassée — c'est-à-dire, dans les deux cas, un
+            # coefficient d'anticipation déjà revenu à 1. L'écrire coûte une
+            # ligne et dispense de s'en convaincre à chaque lecture.
+            return abattement
+        return self._surcote_points(
+            periode, carriere, trimestres, requis,
+            age_liquidation, annee_liquidation,
         )
-        if decote is None:
+
+    def _surcote_points(self, periode: PeriodeRegime, carriere: Carriere,
+                        trimestres: int, requis: int,
+                        age_liquidation: float,
+                        annee_liquidation: int) -> float:
+        """Majoration d'un régime en points liquidé APRÈS le taux plein.
+
+        Un seul régime du catalogue en sert une, et son texte l'écrit. Le IV de
+        l'article 16 de l'arrêté du 30 décembre 1970 — paragraphe 4 dans la
+        version que le décret du 23 septembre 2008 a introduite, « à compter du
+        1er janvier 2010 » — majore le total des points de DEUX façons, qui ne
+        se recouvrent pas :
+
+        1° « 0,75 % par trimestre entier écoulé entre le soixante-cinquième
+        anniversaire de l'assuré et la date d'entrée en jouissance de la
+        pension ». C'est du TEMPS ÉCOULÉ : ni durée d'assurance, ni cotisation
+        ne s'y ajoutent en condition, et un agent qui cesse de travailler à
+        soixante-cinq ans mais ne liquide qu'à soixante-sept en reçoit huit
+        trimestres. Depuis 2011 le texte ne dit plus « soixante-cinq ans » mais
+        « l'âge prévu au 1° de l'article L. 351-8 », qui est l'âge
+        d'annulation de la décote, lu à la génération.
+
+        2° « 0,625 % par trimestre accompli » de durée « ayant donné lieu à
+        cotisations à la charge de l'assuré accomplie après l'âge et la limite
+        prévus à l'article L. 351-1 » et avant ce même âge. C'est, mot pour
+        mot, l'assiette de la surcote du régime général — cotisée, au-delà de
+        l'âge légal, au-delà de la durée requise — bornée en haut par l'âge où
+        le 1° prend le relais, car « en aucun cas une même période ne peut
+        donner lieu à la fois » aux deux.
+
+        Le modèle n'en servait rien : la fiche portait
+        ``surcote_par_trimestre: null``, que la branche en points ne lit de
+        toute façon pas, et un agent non titulaire parti à soixante-sept ans y
+        perdait 6 % de sa complémentaire.
+        """
+        if periode.surcote_points != "ircantec":
             return 1.0
-        trimestres_decote = self._trimestres_de_decote(
-            periode, carriere, trimestres, requis, age_liquidation, age_annulation
-        )
-        return max(0.0, 1.0 - decote * trimestres_decote)
+        age_taux_plein = self._age_taux_plein(periode, carriere)
+
+        # 1° — LE TEMPS ÉCOULÉ, en trimestres ENTIERS : l'arrêté le dit, et
+        # deux mois de plus ne valent rien.
+        ecoules = int((max(0.0, age_liquidation - age_taux_plein) + 1e-9) * 4)
+
+        # 2° — LA DURÉE COTISÉE EN DEÇÀ. Les trimestres au-delà de la durée
+        # requise sont les DERNIERS de la carrière : les compter ici suppose
+        # donc que la durée requise était déjà atteinte avant l'âge du taux
+        # plein, sans quoi ils tombent dans la fenêtre du 1° et y sont déjà
+        # payés.
+        supplementaires = 0
+        age_ouverture = self._age_ouverture_commun(periode, carriere)
+        if age_liquidation >= age_ouverture:
+            avant = min(
+                trimestres,
+                _trimestres_valides_avant(
+                    carriere, age_taux_plein, annee_liquidation
+                ),
+            )
+            supplementaires = max(0, avant - requis)
+            if supplementaires > 0:
+                supplementaires = min(
+                    supplementaires,
+                    _trimestres_cotises_entre(
+                        carriere, age_ouverture, age_taux_plein,
+                        annee_liquidation,
+                    ),
+                )
+        return (1.0
+                + _SURCOTE_IRCANTEC_AGE * ecoules
+                + _SURCOTE_IRCANTEC_DUREE * supplementaires)
 
     def _plafond_majoration(self, code: str, periode: PeriodeRegime,
                             carriere: Carriere,

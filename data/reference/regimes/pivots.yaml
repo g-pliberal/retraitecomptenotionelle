@@ -83,7 +83,7 @@ pivots:
     # L'article 2 porte l'assiette ET le taux (1,40 / 2,10 %) ; aucun article d'âge.
     - {texte: "Décret n° 59-1569", num: "2", parametres: [assiette, taux_cotisation_retraite]}
   ircantec:
-    - {texte: "Arrêté du 30 décembre 1970", num: "16", parametres: [age_ouverture, age_taux_plein, decote_par_trimestre]}
+    - {texte: "Arrêté du 30 décembre 1970", num: "16", parametres: [age_ouverture, age_taux_plein, decote_par_trimestre, surcote_points]}
     - {texte: "Décret n°70-1277", num: "5", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n°70-1277", num: "7", parametres: [taux_cotisation_retraite]}
     - {texte: "Décret n° 2008-996", num: "", parametres: [taux_cotisation_retraite, valeur_point]}
