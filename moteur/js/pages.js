@@ -2311,12 +2311,11 @@ function trajectoire(contexte, comparaison, saisie) {
   // son « k » sur téléphone, où les textes du repère sont grossis. Le texte
   // sous le graphique dit ce que « k€ » désigne, et de quelle année.
   const unite = "k€";
-  return `
-<h2>Ce que chaque scénario finit par verser${g.bulle(
+  return g.depliant("Ce que chaque scénario finit par verser", `
+<p>Les six montants du haut sont ceux d'un seul mois, le premier. Ce graphique
+les additionne, année après année, à mesure que le retraité vieillit.${g.bulle(
     "Ce que ce graphique ajoute aux six montants",
-    "Les six montants ci-dessus sont ceux d'un seul mois, le premier. Ce "
-    + "graphique les additionne, année après année, à mesure que le retraité "
-    + "vieillit : c'est là que la durée entre dans le calcul. Une pension "
+    "C'est là que la durée entre dans le calcul. Une pension "
     + "notionnelle vaut le capital divisé par l'espérance de vie, donc "
     + "<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce "
     + "que la carrière a financé</strong> — et mourir avant, moins. Cumuls "
@@ -2325,7 +2324,7 @@ function trajectoire(contexte, comparaison, saisie) {
     + "simulant aucune revalorisation postérieure à la liquidation. Une "
     + "indexation qui décrocherait des prix ferait fléchir les six courbes à "
     + "la fois, sans changer leur ordre.",
-  )}</h2>
+  )}</p>
 ${g.graphique(
     "Cumul versé par chaque scénario, du départ à "
     + `${AGE_MAXIMUM_TRAJECTOIRE} ans`,
@@ -2346,7 +2345,7 @@ ${phraseEcart}.${g.bulle(
     + `${AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête — c'est pour `
     + "eux qu'il va si loin.",
   )}</p>
-`;
+`);
 }
 
 /** Le libellé de chaque scénario, dans l'ordre des barres. */
@@ -2576,6 +2575,10 @@ ${lectureDesMontants(comparaison, saisie)}</h2>
   ${minimum}
   ${ouverture}
 </div>
+<h2>Pour aller plus loin</h2>
+<p class="chapeau">Les six montants ci-dessus sont le résultat ; tout ce qui
+suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
+voir.</p>
 ${trajectoire(contexte, comparaison, saisie)}
 ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
@@ -2622,12 +2625,11 @@ function fourchette(contexte, saisie, comparaison) {
   const projetees = Math.max(0, liquidation - Math.max(debut - 1, derniereObservee));
 
   if (!projetees) {
-    return `
-<h2>Ce que l'hypothèse pèse</h2>
+    return g.depliant("Ce que l'hypothèse pèse", `
 <p class="note">Rien, ici : la carrière s'achève en ${liquidation}, et les séries
 sont observées jusqu'en ${derniereObservee}. <strong>Aucune année projetée
 n'entre dans ce calcul</strong> — les montants ci-dessus sont identiques dans
-les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p>`;
+les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p>`);
   }
 
   const montants = new Map();
@@ -2679,8 +2681,12 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     ? haute.notionnel_retroactif / basse.notionnel_retroactif - 1
     : NaN;
 
-  return `
-<h2>Ce que l'hypothèse pèse${g.bulle(
+  return g.depliant("Ce que l'hypothèse pèse", `
+<p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
+passe de ${g.eurosCentimes(basse.notionnel_retroactif / 12)} à
+${g.eurosCentimes(haute.notionnel_retroactif / 12)} par mois, soit
+<strong>${g.pourcentage(ecart2)} d'amplitude</strong> autour des
+${g.eurosCentimes(reference)} affichés plus haut.${g.bulle(
     "Ce que la fourchette fait varier, et ce qu'elle laisse fixe",
     `Le compte est revalorisé chaque année de ${debut} à ${liquidation}, soit `
     + `${total} années — dont <strong>${projetees} après ${derniereObservee}`
@@ -2692,12 +2698,7 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     + "fixes les autres hypothèses — inflation à 1,75 %, emploi salarié "
     + "constant, législation inchangée : c'est une mesure de sensibilité à un "
     + "paramètre, non un intervalle de confiance, et l'avenir peut en sortir.",
-  )}</h2>
-<p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
-passe de ${g.eurosCentimes(basse.notionnel_retroactif / 12)} à
-${g.eurosCentimes(haute.notionnel_retroactif / 12)} par mois, soit
-<strong>${g.pourcentage(ecart2)} d'amplitude</strong> autour des
-${g.eurosCentimes(reference)} affichés plus haut.</p>
+  )}</p>
 ${g.tableau(
     ["Scénario", "Productivité 0,4 %", echapper(retenu), "Productivité 1,0 %",
       "Amplitude"],
@@ -2708,7 +2709,7 @@ ${g.tableau(
     true,
   )}
 <p class="discret">Montants mensuels bruts, en euros constants de
-${saisie.euros}.</p>`;
+${saisie.euros}.</p>`);
 }
 
 const NATURES_PART_EMPLOYEUR = {
@@ -2772,15 +2773,14 @@ pensions d'aujourd'hui. Le porter au compte répond à une question précise —
 actifs ? » — et à elle seule.</p>`;
   }
 
-  return `
-<h2>Qui verse la cotisation${g.bulle(
+  return g.depliant("Qui verse la cotisation", `
+<p>Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce que
+son employeur verse.${g.bulle(
     "Ce que les scénarios portent au compte",
-    "Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce "
-    + "que son employeur verse. Les scénarios 2 et 3 ne portent au compte que "
-    + "la première ; les scénarios 4 et 5 y ajoutent la seconde, et ne "
-    + "changent rien d'autre.",
-  )}</h2>
-${partage}${public_}`;
+    "Les scénarios 2 et 3 ne portent au compte que la première ; les "
+    + "scénarios 4 et 5 y ajoutent la seconde, et ne changent rien d'autre.",
+  )}</p>
+${partage}${public_}`);
 }
 
 /** Sépare l'effet de la règle d'indexation de celui des comptes notionnels. */
@@ -2897,8 +2897,11 @@ function garantieVieillesse(comparaison, saisie) {
     ];
   });
 
-  return `
-<h2>Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt${g.bulle(
+  return g.depliant(
+    "Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt",
+    `
+<p>La garantie vieillesse, étape par étape, en euros de ${annee} — l'année du
+départ.${g.bulle(
     "Ce que le scénario 6 change au scénario 4",
     "Il est le scénario 4 — même compte rétroactif, cotisation salariale et "
     + "patronale confondues, mêmes âges, même indexation, même liquidation — à "
@@ -2909,9 +2912,7 @@ function garantieVieillesse(comparaison, saisie) {
     + "prélevé, aux taux réels de chaque régime : sur ces années-là, le 6 est "
     + `le 4. ${tauxUnique} La seconde : une garantie vieillesse qui remplace `
     + "l'ASPA.",
-  )}</h2>
-<p>La garantie vieillesse, étape par étape, en euros de ${annee} — l'année du
-départ.</p>
+  )}</p>
 ${g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
@@ -2944,7 +2945,8 @@ ${g.tableau(
     + "son âge — 65 ans — et sa place, une ligne servie en dernier, après la "
     + "pension contributive. L'option « situation de foyer » du formulaire ne "
     + "change qu'une chose : l'allocation d'isolement.",
-  )}</p>`;
+  )}</p>`,
+  );
 }
 
 
@@ -2978,8 +2980,10 @@ function decomposition(contexte, saisie, comparaison) {
     ]);
   }
 
-  return `
-<h2>D'où vient l'écart${g.bulle(
+  return g.depliant("D'où vient l'écart", `
+<p>La même carrière, le même calcul notionnel rétroactif, sous neuf règles de
+revalorisation. La colonne « rendement » est le facteur par lequel les
+cotisations ont été multipliées entre leur versement et la liquidation.${g.bulle(
     "Ce que chaque règle de revalorisation vaut",
     "La <strong>première ligne est celle que la simulation applique</strong> : "
     + "la croissance de la masse salariale, c'est-à-dire le rendement qu'un "
@@ -2998,10 +3002,7 @@ function decomposition(contexte, saisie, comparaison) {
     + "compare deux taux nominaux à un taux réel : dès que l'inflation dépasse "
     + "la productivité — presque toute la période 1945-1985 — c'est la "
     + "productivité qui l'emporte, et la valeur réelle des comptes s'effondre.",
-  )}</h2>
-<p>La même carrière, le même calcul notionnel rétroactif, sous neuf règles de
-revalorisation. La colonne « rendement » est le facteur par lequel les
-cotisations ont été multipliées entre leur versement et la liquidation.</p>
+  )}</p>
 ${g.tableau(
     ["Règle d'indexation", "Rendement cumulé",
       `Pension mensuelle, en euros de ${saisie.euros}`,
@@ -3025,7 +3026,7 @@ toutes ces lignes à la fois.${g.bulle(
     + "sur cinq ans, c'est la règle italienne ; le modèle en reprend le taux, "
     + "pas le reste du système italien.",
   )}</p>
-`;
+`);
 }
 
 /**
@@ -3093,15 +3094,14 @@ function cascade(comparaison, saisie) {
       + `retiendrait.</p>`;
   }
 
-  return `
-<h2>Du scénario 1 au scénario 3, ligne à ligne${g.bulle(
+  return g.depliant("Du scénario 1 au scénario 3, ligne à ligne", `
+<p>Montants en <strong>euros de ${liquidation}</strong>, l'année du départ.${g.bulle(
     "Pourquoi cette section est en euros de l'année du départ",
     "Le scénario 3 n'est pas le scénario 1 diminué d'un pourcentage : c'est "
     + "une autre formule appliquée à la même carrière, et la chaîne de calcul "
     + "est arithmétique — la convertir ligne à ligne au pouvoir d'achat d'une "
     + `autre année la rendrait fausse. ${renvoiCascade}`,
-  )}</h2>
-<p>Montants en <strong>euros de ${liquidation}</strong>, l'année du départ.</p>
+  )}</p>
 ${g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
@@ -3123,7 +3123,7 @@ ${g.pourcentage(partAcquis)} du capital final.${g.bulle(
     "Elle décroît de génération en génération : c'est elle qui étale la "
     + "réforme dans le temps, et non un dispositif transitoire.",
   )}</p>
-`;
+`);
 }
 
 function detail(contexte, comparaison) {
@@ -3235,25 +3235,25 @@ function detail(contexte, comparaison) {
     true,
   );
 
-  return `
-<h2>Le détail du calcul${g.bulle(
+  return g.depliant("Le détail du calcul", `
+<p>Tous les montants de cette section sont en <strong>euros de ${annee}</strong>,
+l'année du départ.${g.bulle(
     "L'unité de cette section",
-    `Toute cette section est en <strong>euros de ${annee}</strong>, l'année du `
-    + `départ. ${renvoi} C'est la seule unité dans laquelle une chaîne de `
+    `${renvoi} C'est la seule unité dans laquelle une chaîne de `
     + "calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une "
     + "autre année ferait des totaux faux.",
-  )}</h2>
-<h3>Scénario 1 — de quoi votre pension actuelle est faite${g.bulle(
+  )}</p>
+<h4>Scénario 1 — de quoi votre pension actuelle est faite${g.bulle(
     "Comment lire ce tableau",
     "Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute "
     + "par-dessus ; le total est la pension du scénario 1. Un minimum est déjà "
     + "compris dans la ligne du régime qui le sert : le sous-total contributif "
     + "l'en retire, et la ligne suivante le rend visible — c'est la même "
     + "somme, comptée une fois.",
-  )}</h3>
+  )}</h4>
 ${regimes}
 ${part}
-<h3>Scénario 2 — construction du compte notionnel rétroactif</h3>
+<h4>Scénario 2 — construction du compte notionnel rétroactif</h4>
 ${compte}
 <details>
   ${g.sommaire("Les résultats complets en JSON")}
@@ -3261,7 +3261,7 @@ ${compte}
 </details>
 <p class="discret">L'adresse de cette page contient tous les paramètres :
 elle peut être citée ou partagée telle quelle.</p>
-`;
+`);
 }
 /**
  * Les six scénarios de la page Cas types, dans l'ordre d'affichage : le code du

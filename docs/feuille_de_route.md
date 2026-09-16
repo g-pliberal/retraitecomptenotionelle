@@ -1402,6 +1402,61 @@ non ouverte, `trending-up` pour la marque du site — dans le bandeau et dans
   rendu des six pages, ni dans `index.html`, ni dans la feuille de style : c'est
   par là que celui-ci était entré.
 
+### 21. Les résultats sur un téléphone : le chiffre d'abord, le reste replié — `fait`
+
+**Pourquoi.** Deux défauts se cumulaient sous les six montants, et le second
+n'apparaissait qu'à cause du premier.
+
+Un bug d'affichage, d'abord. Sous 34 rem, l'entête d'un scénario passe en
+colonne pour que le montant tombe sous son intitulé ; mais `flex: 1 1 14rem`,
+écrit pour la disposition en ligne, ne réserve plus une largeur en colonne — il
+réserve une **hauteur**. Chaque scénario portait donc 224 px de vide entre son
+titre et son chiffre, six fois de suite : sur un écran de 390 points, le premier
+montant de la page tombait sous la ligne de flottaison, et lire les six en
+demandait cinq.
+
+Une question d'édition, ensuite. L'action 19 avait réduit la page à ses champs
+et à ses chiffres, l'action 15 avait rangé les pages longues en sections
+repliées — mais la page de résultats faisait toujours suivre ses six montants de
+sept sections dépliées : un graphique, neuf tableaux, 2 958 mots. Dix écrans de
+téléphone à traverser après le résultat, pour quelqu'un qui n'a pas fait
+d'économie et qui est venu chercher un chiffre.
+
+**Marche.** La règle CSS qui rend au titre sa hauteur de texte, et les sept
+sections derrière `g.depliant` — le même procédé que la page Coût, sous le même
+titre « Pour aller plus loin ». Chaque section garde son nom en résumé, et
+l'appel qui portait son titre passe dans la phrase de tête de son contenu.
+
+**Ce que ça a déplacé.** *Aucun chiffre* : les témoins de simulation sont
+inchangés au bit près, et ceux des pages ne bougent que de la structure.
+
+| | Avant | Après |
+|---|---|---|
+| Mots à traverser, formulaire et résultats | 3 744 | **1 407** |
+| Tableaux ouverts | 8 | **0** |
+| Graphiques ouverts | 1 | **0** |
+| Hauteur de la page, écran de 390 points | 11 871 px | **4 085 px** |
+
+- *Le détail est rangé, pas retiré.* Sept sections nommées — ce que chaque
+  scénario finit par verser, ce que l'hypothèse pèse, d'où vient l'écart, qui
+  verse la cotisation, le scénario 6, la cascade du 1 au 3, le détail du calcul
+  —, qui se parcourent du regard et s'ouvrent une par une. Les 4 200 mots qu'on
+  ne lit plus d'office sont toujours là, à un doigt.
+- *Ce que le téléphone gagne encore.* Les tableaux du détail passent à
+  0,88 rem et resserrent leurs marges — un cinquième de hauteur en moins, une
+  colonne de plus avant que la zone ne défile —, et le retrait d'une section
+  repliée leur rend 26 points de largeur.
+- *La cible tactile d'un appel de bulle.* La feuille de style promettait 24 px
+  de côté (WCAG 2.5.8) ; le padding seul la dimensionnait en proportion du
+  texte, et elle tombait à 19 px dans une glose ou une note — où se trouvent
+  justement la plupart des appels. Un minimum l'y tient.
+- *Trois tests tiennent l'ensemble.* Le budget de lecture couvrait « /simuler »
+  sans paramètres, c'est-à-dire le formulaire seul : il couvre maintenant la
+  page de résultats, avec la même borne de mots, aucun tableau ni graphique
+  ouvert, et le détail plus lourd que ce qui reste visible. Les deux autres
+  gardent les règles CSS elles-mêmes, faute de quoi le trou de 224 px
+  reviendrait sans que rien ne le dise.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -1707,3 +1762,16 @@ non ouverte, `trending-up` pour la marque du site — dans le bandeau et dans
   dans le dépôt ne peut la tenir. Et **une copie se surveille** : le tracé écrit
   dans le code n'est juste que tant qu'un test le confronte à son original, et
   qu'un second confronte les deux portages l'un à l'autre.
+- **Septembre 2026, action 21.** Faite, à la demande : « réparer l'affichage
+  des résultats sur mobile, et enlever beaucoup de texte à la suite des
+  résultats — le site est destiné à quelqu'un qui ne connaît pas l'économie et
+  qui veut surtout les résultats ». La page passe de 11 871 px à 4 085 px sur un
+  écran de téléphone, et de 3 744 mots ouverts à 1 407, sans qu'un chiffre
+  bouge. Deux choses à en retenir. **Un raccourci flex change de sens avec la
+  direction** : `flex-basis` est une largeur en ligne et une hauteur en colonne,
+  si bien qu'une règle juste dans la requête média du bureau creusait six trous
+  d'un tiers d'écran dans celle du téléphone — un défaut qu'aucun test de HTML
+  ne pouvait voir, et qu'il a fallu mesurer dans un navigateur. Et **une
+  discipline ne vaut que sur la page qu'on ouvre vraiment** : le budget de
+  lecture tenait les six pages, mais rendait « /simuler » sans paramètres,
+  c'est-à-dire tout sauf la page que le visiteur vient voir.
