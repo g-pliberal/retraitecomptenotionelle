@@ -2708,12 +2708,11 @@ def _trajectoire(contexte: Contexte, comparaison: Comparaison,
     # encore son « k » sur téléphone, où les textes du repère sont grossis. Le
     # texte sous le graphique dit ce que « k€ » désigne, et de quelle année.
     unite = "k€"
-    return f"""
-<h2>Ce que chaque scénario finit par verser{g.bulle(
+    return g.depliant("Ce que chaque scénario finit par verser", f"""
+<p>Les six montants du haut sont ceux d'un seul mois, le premier. Ce graphique
+les additionne, année après année, à mesure que le retraité vieillit.{g.bulle(
     "Ce que ce graphique ajoute aux six montants",
-    "Les six montants ci-dessus sont ceux d'un seul mois, le premier. Ce "
-    "graphique les additionne, année après année, à mesure que le retraité "
-    "vieillit : c'est là que la durée entre dans le calcul. Une pension "
+    "C'est là que la durée entre dans le calcul. Une pension "
     "notionnelle vaut le capital divisé par l'espérance de vie, donc "
     "<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce "
     "que la carrière a financé</strong> — et mourir avant, moins. Cumuls "
@@ -2722,7 +2721,7 @@ def _trajectoire(contexte: Contexte, comparaison: Comparaison,
     "simulant aucune revalorisation postérieure à la liquidation. Une "
     "indexation qui décrocherait des prix ferait fléchir les six courbes à la "
     "fois, sans changer leur ordre.",
-)}</h2>
+)}</p>
 {g.graphique(
     "Cumul versé par chaque scénario, du départ à "
     f"{AGE_MAXIMUM_TRAJECTOIRE} ans",
@@ -2747,7 +2746,7 @@ ans d'âge, le nombre par lequel le capital notionnel est divisé.
     f"{AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête — c'est pour eux "
     "qu'il va si loin.",
 )}</p>
-"""
+""")
 
 
 def _titres_scenarios(saisie: Saisie) -> tuple[tuple[str, str], ...]:
@@ -2993,6 +2992,10 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
   {minimum}
   {ouverture}
 </div>
+<h2>Pour aller plus loin</h2>
+<p class="chapeau">Les six montants ci-dessus sont le résultat ; tout ce qui
+suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
+voir.</p>
 {_trajectoire(contexte, comparaison, saisie)}
 {_fourchette(contexte, saisie, comparaison)}
 {_decomposition(contexte, saisie, comparaison)}
@@ -3045,12 +3048,11 @@ def _fourchette(contexte: Contexte, saisie: Saisie,
     projetees = max(0, liquidation - max(debut - 1, derniere_observee))
 
     if not projetees:
-        return f"""
-<h2>Ce que l'hypothèse pèse</h2>
+        return g.depliant("Ce que l'hypothèse pèse", f"""
 <p class="note">Rien, ici : la carrière s'achève en {liquidation}, et les séries
 sont observées jusqu'en {derniere_observee}. <strong>Aucune année projetée
 n'entre dans ce calcul</strong> — les montants ci-dessus sont identiques dans
-les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p>"""
+les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p>""")
 
     montants: dict[str, dict[str, float]] = {}
     for code, _ in PROJECTIONS:
@@ -3090,8 +3092,12 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     ecart_2 = (haute["notionnel_retroactif"] / basse["notionnel_retroactif"] - 1.0
                if basse["notionnel_retroactif"] > 0 else float("nan"))
 
-    return f"""
-<h2>Ce que l'hypothèse pèse{g.bulle(
+    return g.depliant("Ce que l'hypothèse pèse", f"""
+<p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
+passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
+{g.euros_centimes(haute["notionnel_retroactif"] / 12)} par mois, soit
+<strong>{g.pourcentage(ecart_2)} d'amplitude</strong> autour des
+{g.euros_centimes(reference)} affichés plus haut.{g.bulle(
     "Ce que la fourchette fait varier, et ce qu'elle laisse fixe",
     f"Le compte est revalorisé chaque année de {debut} à {liquidation}, soit "
     f"{total} années — dont <strong>{projetees} après {derniere_observee}"
@@ -3103,12 +3109,7 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     "les autres hypothèses — inflation à 1,75 %, emploi salarié constant, "
     "législation inchangée : c'est une mesure de sensibilité à un paramètre, "
     "non un intervalle de confiance, et l'avenir peut en sortir.",
-)}</h2>
-<p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
-passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
-{g.euros_centimes(haute["notionnel_retroactif"] / 12)} par mois, soit
-<strong>{g.pourcentage(ecart_2)} d'amplitude</strong> autour des
-{g.euros_centimes(reference)} affichés plus haut.</p>
+)}</p>
 {g.tableau(
     ["Scénario", "Productivité 0,4 %", escape(retenu), "Productivité 1,0 %",
      "Amplitude"],
@@ -3119,7 +3120,7 @@ passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
     entete_de_ligne=True,
 )}
 <p class="discret">Montants mensuels bruts, en euros constants de
-{saisie.euros}.</p>"""
+{saisie.euros}.</p>""")
 
 
 def _contribution_employeur(comparaison: Comparaison) -> str:
@@ -3178,15 +3179,14 @@ pensions d'aujourd'hui. Le porter au compte répond à une question précise —
 « et si tout ce qui a été consacré aux pensions avait été porté au compte des
 actifs ? » — et à elle seule.</p>"""
 
-    return f"""
-<h2>Qui verse la cotisation{g.bulle(
+    return g.depliant("Qui verse la cotisation", f"""
+<p>Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce que
+son employeur verse.{g.bulle(
     "Ce que les scénarios portent au compte",
-    "Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce "
-    "que son employeur verse. Les scénarios 2 et 3 ne portent au compte que la "
-    "première ; les scénarios 4 et 5 y ajoutent la seconde, et ne changent "
-    "rien d'autre.",
-)}</h2>
-{partage}{public}"""
+    "Les scénarios 2 et 3 ne portent au compte que la première ; les "
+    "scénarios 4 et 5 y ajoutent la seconde, et ne changent rien d'autre.",
+)}</p>
+{partage}{public}""")
 
 
 #: Les couples du tableau de la proposition, en euros mensuels : deux pensions,
@@ -3311,8 +3311,11 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
             detail if detail else "—",
         ])
 
-    return f"""
-<h2>Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt{g.bulle(
+    return g.depliant(
+        "Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt",
+        f"""
+<p>La garantie vieillesse, étape par étape, en euros de {annee} — l'année du
+départ.{g.bulle(
     "Ce que le scénario 6 change au scénario 4",
     "Il est le scénario 4 — même compte rétroactif, cotisation salariale et "
     "patronale confondues, mêmes âges, même indexation, même liquidation — à "
@@ -3323,9 +3326,7 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
     "aux taux réels de chaque régime : sur ces années-là, le 6 est le 4. "
     + taux_unique.format(taux=taux) +
     " La seconde : une garantie vieillesse qui remplace l'ASPA.",
-)}</h2>
-<p>La garantie vieillesse, étape par étape, en euros de {annee} — l'année du
-départ.</p>
+)}</p>
 {g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
@@ -3358,7 +3359,7 @@ départ.</p>
     "son âge — 65 ans — et sa place, une ligne servie en dernier, après la "
     "pension contributive. L'option « situation de foyer » du formulaire ne "
     "change qu'une chose : l'allocation d'isolement.",
-)}</p>"""
+)}</p>""")
 
 
 def _decomposition(contexte: Contexte, saisie: Saisie,
@@ -3393,8 +3394,10 @@ def _decomposition(contexte: Contexte, saisie: Saisie,
             g.pourcentage(variante.variation("notionnel_retroactif"), signe=True),
         ])
 
-    return f"""
-<h2>D'où vient l'écart{g.bulle(
+    return g.depliant("D'où vient l'écart", f"""
+<p>La même carrière, le même calcul notionnel rétroactif, sous neuf règles de
+revalorisation. La colonne « rendement » est le facteur par lequel les
+cotisations ont été multipliées entre leur versement et la liquidation.{g.bulle(
     "Ce que chaque règle de revalorisation vaut",
     "La <strong>première ligne est celle que la simulation applique</strong> : "
     "la croissance de la masse salariale, c'est-à-dire le rendement qu'un "
@@ -3413,10 +3416,7 @@ def _decomposition(contexte: Contexte, saisie: Saisie,
     "nominaux à un taux réel : dès que l'inflation dépasse la productivité — "
     "presque toute la période 1945-1985 — c'est la productivité qui l'emporte, "
     "et la valeur réelle des comptes s'effondre.",
-)}</h2>
-<p>La même carrière, le même calcul notionnel rétroactif, sous neuf règles de
-revalorisation. La colonne « rendement » est le facteur par lequel les
-cotisations ont été multipliées entre leur versement et la liquidation.</p>
+)}</p>
 {g.tableau(
     ["Règle d'indexation", "Rendement cumulé",
      f"Pension mensuelle, en euros de {saisie.euros}",
@@ -3440,7 +3440,7 @@ toutes ces lignes à la fois.{g.bulle(
     "italienne ; le modèle en reprend le taux, pas le reste du système "
     "italien.",
 )}</p>
-"""
+""")
 
 
 def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
@@ -3508,15 +3508,14 @@ def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
             f"retiendrait.</p>"
         )
 
-    return f"""
-<h2>Du scénario 1 au scénario 3, ligne à ligne{g.bulle(
+    return g.depliant("Du scénario 1 au scénario 3, ligne à ligne", f"""
+<p>Montants en <strong>euros de {liquidation}</strong>, l'année du départ.{g.bulle(
     "Pourquoi cette section est en euros de l'année du départ",
     "Le scénario 3 n'est pas le scénario 1 diminué d'un pourcentage : c'est "
     "une autre formule appliquée à la même carrière, et la chaîne de calcul "
     "est arithmétique — la convertir ligne à ligne au pouvoir d'achat d'une "
     f"autre année la rendrait fausse. {renvoi_cascade}",
-)}</h2>
-<p>Montants en <strong>euros de {liquidation}</strong>, l'année du départ.</p>
+)}</p>
 {g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
@@ -3538,7 +3537,7 @@ def _cascade(comparaison: Comparaison, saisie: Saisie) -> str:
     "Elle décroît de génération en génération : c'est elle qui étale la "
     "réforme dans le temps, et non un dispositif transitoire.",
 )}</p>
-"""
+""")
 
 
 def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
@@ -3652,25 +3651,25 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
         entete_de_ligne=True,
     )
 
-    return f"""
-<h2>Le détail du calcul{g.bulle(
+    return g.depliant("Le détail du calcul", f"""
+<p>Tous les montants de cette section sont en <strong>euros de {annee}</strong>,
+l'année du départ.{g.bulle(
     "L'unité de cette section",
-    f"Toute cette section est en <strong>euros de {annee}</strong>, l'année du "
-    f"départ. {renvoi} C'est la seule unité dans laquelle une chaîne de calcul "
+    f"{renvoi} C'est la seule unité dans laquelle une chaîne de calcul "
     "s'additionne : convertir chaque ligne au pouvoir d'achat d'une autre "
     "année ferait des totaux faux.",
-)}</h2>
-<h3>Scénario 1 — de quoi votre pension actuelle est faite{g.bulle(
+)}</p>
+<h4>Scénario 1 — de quoi votre pension actuelle est faite{g.bulle(
     "Comment lire ce tableau",
     "Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute "
     "par-dessus ; le total est la pension du scénario 1. Un minimum est déjà "
     "compris dans la ligne du régime qui le sert : le sous-total contributif "
     "l'en retire, et la ligne suivante le rend visible — c'est la même somme, "
     "comptée une fois.",
-)}</h3>
+)}</h4>
 {regimes}
 {part}
-<h3>Scénario 2 — construction du compte notionnel rétroactif</h3>
+<h4>Scénario 2 — construction du compte notionnel rétroactif</h4>
 {compte}
 <details>
   {g.sommaire("Les résultats complets en JSON")}
@@ -3678,7 +3677,7 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
 </details>
 <p class="discret">L'adresse de cette page contient tous les paramètres :
 elle peut être citée ou partagée telle quelle.</p>
-"""
+""")
 
 #: Les six scénarios de la page Cas types, dans l'ordre d'affichage : le code
 #: du scénario, le titre de sa section, le titre accessible de sa grille, et la

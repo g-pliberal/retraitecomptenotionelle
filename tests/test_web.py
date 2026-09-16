@@ -146,11 +146,16 @@ def test_carriere_impossible_est_signalee_sans_planter(page):
     assert "Traceback" not in texte
 
 
+#: Le titre de la décomposition tel qu'il s'écrit dans la page : il y est le
+#: résumé d'une section repliée, où les apostrophes sont échappées.
+DECOMPOSITION = html.escape("D'où vient l'écart")
+
+
 def test_la_decomposition_par_regle_d_indexation_est_presente(page):
     """Le point le plus contre-intuitif du modèle doit être exposé, pas caché."""
     texte = page("/simuler", naissance=1960, statut="salarie_prive_non_cadre",
                  debut=20, liquidation=62)
-    assert "D'où vient l'écart" in texte
+    assert DECOMPOSITION in texte
     assert "Triple lock inversé, tout en nominal" in texte
     assert texte.count("Rendement cumulé") >= 1
 
@@ -158,7 +163,7 @@ def test_la_decomposition_par_regle_d_indexation_est_presente(page):
 def test_pas_de_decomposition_si_l_indexation_est_deja_choisie(page):
     texte = page("/simuler", naissance=1960, statut="salarie_prive_non_cadre",
                  debut=20, liquidation=62, indexation="prix")
-    assert "D'où vient l'écart" not in texte
+    assert DECOMPOSITION not in texte
 
 
 # -- résultats bruts ---------------------------------------------------------
@@ -3429,6 +3434,36 @@ def test_l_icone_du_site_est_un_fichier_de_la_meme_grille():
     assert 'stroke-width="2"' in icone
 
 
+def _regles_du_telephone() -> str:
+    """Le contenu de la requête média des écrans étroits."""
+    return g.FEUILLE_DE_STYLE.split("@media (max-width: 34rem)")[1].split("\n}\n")[0]
+
+
+def test_le_titre_d_un_scenario_ne_reserve_pas_de_hauteur_sur_telephone():
+    """``flex: 1 1 14rem`` donne une largeur en ligne, une HAUTEUR en colonne.
+
+    L'entête d'un scénario passe en colonne sous 34 rem, et le raccourci écrit
+    pour la disposition en ligne y réservait 224 px sous chaque intitulé : six
+    trous d'un tiers d'écran entre les six titres et leurs montants, si bien
+    que le premier chiffre de la page tombait sous la ligne de flottaison. La
+    règle qui rend au titre sa hauteur de texte est dans cette requête média,
+    et doit y rester.
+    """
+    telephone = _regles_du_telephone()
+    assert ".scenario .entete { flex-direction: column;" in telephone
+    assert ".scenario .titre { flex: 0 0 auto; }" in telephone
+
+
+def test_l_appel_d_une_bulle_tient_la_cible_tactile():
+    """24 px de côté, au doigt comme au pouce (WCAG 2.5.8).
+
+    Le padding seul dimensionnait l'appel en proportion du texte qui le porte :
+    dans une glose ou une note, il tombait à 19 px. Les minima l'en empêchent.
+    """
+    regle = g.FEUILLE_DE_STYLE.split(".mot > .terme.appel {")[1].split("}")[0]
+    assert "min-width: 1.5rem" in regle and "min-height: 1.5rem" in regle
+
+
 def test_tous_les_depliants_portent_le_meme_chevron(contexte):
     """Le marqueur natif d'un ``<details>`` n'a ni la même forme ni la même
     taille d'un navigateur à l'autre : chaque résumé porte donc le chevron du
@@ -3540,6 +3575,52 @@ def test_aucune_page_ne_depasse_son_budget_de_lecture(contexte, chemin):
     assert traces <= traces_max, f"{chemin} : {traces} graphiques ouverts"
     tableaux = visible.count("<table")
     assert tableaux <= tableaux_max, f"{chemin} : {tableaux} tableaux ouverts"
+
+
+#: Une carrière ordinaire, qui déclenche les sept sections de détail de la page
+#: de résultats : salarié du privé, départ après la bascule, indexation par
+#: défaut. C'est la simulation sur laquelle se mesure la discipline de cette
+#: page, que le budget de lecture ci-dessus ne voit pas — il rend « /simuler »
+#: sans paramètres, donc sans résultats.
+SIMULATION_TEMOIN = {
+    "naissance": "1975-01-01",
+    "debut": "1996-01-01",
+    "liquidation": "2039-01-01",
+    "statut": "salarie_prive_non_cadre",
+    "unite_revenu": "euros_mois",
+    "salaire": "3500",
+}
+
+
+def test_la_page_de_resultats_replie_son_detail(contexte):
+    """Qui vient de calculer sa pension veut son chiffre, pas une leçon.
+
+    La page alignait sous ses six montants sept sections ouvertes — un
+    graphique, neuf tableaux, quatre mille mots —, soit dix écrans de téléphone
+    à traverser après le résultat. Tout y est encore, rangé dans des sections
+    nommées qu'on ouvre une par une ; ce test tient la discipline, et la même
+    borne de mots que le formulaire : les résultats n'ajoutent rien à ce qu'il
+    faut traverser.
+    """
+    mots_max = BUDGETS_DE_LECTURE["/simuler"][0]
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    assert "Résultats" in corps, "la simulation témoin ne calcule rien"
+
+    visible = _hors_depliants(corps)
+    mots = len(re.sub(r"<[^>]+>", " ", visible).split())
+    assert mots <= mots_max, (
+        f"{mots} mots à traverser sur la page de résultats, {mots_max} au plus"
+    )
+    assert visible.count("<table") == 0, "un tableau de détail reste ouvert"
+    assert visible.count('<figure class="graphique"') == 0, (
+        "un graphique reste ouvert"
+    )
+    # Et le détail est là, replié : sept sections, plus lourdes à elles seules
+    # que tout ce qui reste ouvert.
+    assert corps.count('<details class="section">') >= 7
+    assert len(visible) < len(corps) / 2, (
+        "le détail replié pèse moins que ce qui reste ouvert"
+    )
 
 
 @pytest.mark.parametrize("chemin", ["/", "/cas-types", "/cout", "/methode",

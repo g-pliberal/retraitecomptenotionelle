@@ -416,10 +416,14 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 /* L'appel d'une bulle : un point d'interrogation, et non un mot souligné. Il
    suit un titre ou un libellé de champ, et ouvre ce qui n'est nécessaire ni
    pour remplir le formulaire, ni pour lire un résultat. La cible tactile fait
-   au moins 24 px de côté (WCAG 2.5.8), marge comprise. */
+   au moins 24 px de côté (WCAG 2.5.8) : le `min-width`/`min-height` l'impose,
+   là où le seul padding la laissait à 19 px au doigt dans un texte réduit —
+   celui d'une glose ou d'une note, où se trouvent justement la plupart des
+   appels. */
 .mot > .terme.appel {
   display: inline-flex; align-items: center; justify-content: center;
   margin-left: 0.25em; padding: 0.2em; font-size: 0.95em; line-height: 1;
+  min-width: 1.5rem; min-height: 1.5rem;
   color: var(--texte-doux); border-bottom: none; vertical-align: -0.1em;
 }
 .mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--accent); }
@@ -594,11 +598,27 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   header.bandeau .interieur { gap: 0.4rem 1rem; }
   nav a { margin: 0 1.1rem 0 0; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
+  /* L'intitulé reprend sa hauteur de texte. En colonne, `flex: 1 1 14rem` ne
+     réserve plus une largeur mais une HAUTEUR : chaque scénario portait donc
+     224 px de vide entre son titre et son montant, six fois de suite, et le
+     premier chiffre de la page tombait sous la ligne de flottaison. */
+  .scenario .titre { flex: 0 0 auto; }
   /* Le montant passe sous l'intitulé : les deux chiffres s'alignent alors sur
      le bord gauche, comme lui, et restent l'un à côté de l'autre. */
   .scenario .montant { justify-content: flex-start; gap: 0.9rem; }
   .scenario .chiffre { align-items: flex-start; }
   .scenario .depart { padding-left: 0.9rem; }
+  /* Les tableaux du détail portent jusqu'à six colonnes, et un téléphone leur
+     donne 358 points : chaque cellule y tombait sur trois lignes de deux mots.
+     Un demi-point de moins et des marges plus serrées leur rendent un
+     cinquième de leur hauteur, et font tenir une colonne de plus avant que la
+     zone ne défile. */
+  table { font-size: 0.88rem; }
+  th, td { padding: 0.4rem 0.45rem; }
+  /* Le retrait d'une section repliée coûte 26 points de largeur à ce qu'elle
+     contient : de quoi couper une colonne de chiffres. Il reste marqué, en
+     tenant sur le quart de la place. */
+  details.section > .dedans { padding-left: 0.6rem; }
   .fiches { grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); }
   /* Les trois chiffres d'ouverture se mettent les uns sous les autres plutôt
      que de se serrer à trois de front : à 8 rem de large, « 422 Md € » se
