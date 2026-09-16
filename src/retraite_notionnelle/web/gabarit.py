@@ -169,6 +169,12 @@ label { display: block; font-size: 0.88rem; color: var(--texte-doux); margin-bot
    La couleur pleine la remonte à 6,88:1, et la taille suffit à la distinguer du
    libellé. */
 label .aide { display: block; font-size: 0.8rem; }
+/* Ce qu'une date saisie vaut en âge, sous le champ qui la porte : « soit
+   64 ans et 7 mois ». Le calendrier a remplacé les champs d'âge ; cette ligne
+   rend l'âge qu'ils disaient, et la page le recalcule à chaque frappe. */
+.calcul {
+  display: block; font-size: 0.8rem; color: var(--texte-doux); margin-top: 0.3rem;
+}
 input, select, textarea {
   width: 100%; padding: 0.45rem 0.6rem; font: inherit; font-size: 0.95rem;
   color: var(--texte); background: var(--fond); border: 1px solid var(--trait-champ);
@@ -782,6 +788,43 @@ def champ(nom: str, libelle: str, valeur: str, aide: str = "",
         f'<div><label for="{nom}">{escape(libelle)}{aide_html}</label>'
         f'<input type="{type_}" id="{nom}" name="{nom}" '
         f'value="{escape(str(valeur))}"{supplement}></div>'
+    )
+
+
+def champ_date(nom: str, libelle: str, valeur: str, aide: str = "",
+               calcul: str = "", **attributs: str) -> str:
+    """Une date, saisie au calendrier du navigateur.
+
+    ``type="date"`` et non ``type="month"`` : le modèle ne descend pas sous le
+    mois, et « month » serait donc le champ juste — mais Firefox et Safari ne
+    savent pas l'ouvrir, ils le rendent en texte brut où il faut écrire
+    « 1975-03 » à la main. « date » ouvre le même calendrier partout, et le
+    navigateur l'écrit dans la langue du lecteur : « 15/03/1975 » ici.
+
+    Le jour ne sert à rien au calcul, qui compte en mois : celui de la
+    naissance est gardé tel qu'il est saisi, parce qu'une date de naissance
+    est une date et non un mois ; ceux des dates de carrière sont ramenés au
+    premier du mois, où le droit place toute prise d'effet.
+
+    ``calcul`` est ce que la date vaut en âge — « soit 64 ans et 7 mois » : ce
+    que disaient les champs d'âge qu'elle remplace. Il est écrit au rendu et
+    refait à chaque frappe par le script de la page ; ``aria-describedby`` le
+    rattache au champ, faute de quoi il ne serait lu par personne.
+    """
+    supplement = "".join(
+        f' {cle.rstrip("_").replace("_", "-")}="{escape(str(val))}"'
+        for cle, val in attributs.items()
+    )
+    aide_html = f'<span class="aide">{escape(aide)}</span>' if aide else ""
+    decrit = f' aria-describedby="{nom}-calcul"' if calcul else ""
+    calcul_html = (
+        f'<span class="calcul" id="{nom}-calcul" aria-live="polite">'
+        f"{escape(calcul)}</span>" if calcul else ""
+    )
+    return (
+        f'<div><label for="{nom}">{escape(libelle)}{aide_html}</label>'
+        f'<input type="date" id="{nom}" name="{nom}" '
+        f'value="{escape(str(valeur))}"{decrit}{supplement}>{calcul_html}</div>'
     )
 
 

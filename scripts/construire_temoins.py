@@ -268,10 +268,27 @@ def _cas() -> list[dict]:
             "liquidation": "64", "liquidation_mois": str(mois),
         }))
     # Une année d'entrée elle aussi incomplète, et un mois de naissance qui
-    # décale tout : la carrière ne commence ni ne finit au 1er janvier.
+    # décale tout : la carrière ne commence ni ne finit au 1er janvier. La
+    # requête est écrite à l'ancienne — un âge, un mois —, et c'est ce qui la
+    # rend utile : toute adresse partagée avant le calendrier doit continuer de
+    # donner les mêmes chiffres.
     cas.append(("mois_carriere_decalee", {
         "naissance_mois": "9", "debut": "22", "debut_mois": "3",
         "liquidation": "64", "liquidation_mois": "7",
+    }))
+    # La même carrière, écrite comme le formulaire l'écrit désormais : des
+    # dates. Née en septembre 1975, entrée en décembre 1997, partie en avril
+    # 2040 — soit vingt-deux ans et trois mois, puis soixante-quatre et sept.
+    # Les deux témoins doivent porter les mêmes chiffres.
+    cas.append(("mois_carriere_decalee_au_calendrier", {
+        "naissance": "1975-09-01", "debut": "1997-12", "liquidation": "2040-04",
+    }))
+    # Un changement de métier daté au mois : ce que les âges entiers ne
+    # savaient pas dire, et que le calendrier donne sans un champ de plus.
+    cas.append(("metier_change_en_cours_d_annee", {
+        "naissance": "1975-03-15", "debut": "1996-10", "liquidation": "2040-06",
+        "metier2_debut": "2011-05", "metier2_statut": "artisan",
+        "metier2_salaire": "1.4",
     }))
     # Les deux générations que les textes coupent en cours d'année, de part et
     # d'autre de la coupure : 1er juillet 1951, 1er septembre 1961.

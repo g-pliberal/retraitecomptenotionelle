@@ -96,6 +96,7 @@
 <script type="module">
 import { Contexte, TITRES, rendre } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
+import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
 // La signature des images composées ici vient du gabarit, comme tout ce
 // que le site écrit : elle ne doit exister qu'à un seul endroit.
 const { SIGNATURE, SIGNATURE_SITE } = gabarit;
@@ -255,6 +256,7 @@ async function afficher() {
   const nouveauDetails = contenu.querySelector("form details.options");
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
   daterStatuts(contenu);
+  suivreLesDates(contenu);
   reprendre(contenu);
 }
 
@@ -271,22 +273,37 @@ async function afficher() {
 // le statut par défaut sans que rien ne le dise — c'est le calcul qui refuse.
 function rangMois(annee, mois) { return annee * 12 + (mois - 1); }
 
+// Le rang du mois qu'une date de formulaire porte : « 1996-09-01 » -> le mois
+// de septembre 1996. Les champs date renvoient TOUJOURS cette forme, quelle que
+// soit celle — « 01/09/1996 » en français — sous laquelle ils l'affichent ; le
+// jour ne sert à rien, le modèle comptant en mois.
+const MOIS_ISO = /^(\d{4})-(\d{2})/;
+
+function rangDeDate(valeur) {
+  const trouve = MOIS_ISO.exec(String(valeur || ""));
+  return trouve ? rangMois(Number(trouve[1]), Number(trouve[2])) : null;
+}
+
+function dateDeRang(rang) {
+  const annee = String(Math.floor(rang / 12)).padStart(4, "0");
+  const mois = String((rang % 12) + 1).padStart(2, "0");
+  return `${annee}-${mois}-01`;
+}
+
 function daterStatuts(contenu) {
   const formulaire = contenu.querySelector("form");
   if (!formulaire) { return; }
   const lire = (nom) => {
     const champ = formulaire.elements[nom];
-    return champ ? Number(champ.value) : NaN;
+    return champ ? rangDeDate(champ.value) : null;
   };
   const trier = () => {
     const naissance = lire("naissance");
-    const naissanceMois = lire("naissance_mois") || 1;
     for (const menu of formulaire.querySelectorAll("select[name$='statut']")) {
       const rang = menu.name === "statut" ? 1 : Number(menu.name.replace(/\D/g, ""));
-      const age = rang === 1 ? lire("debut") : lire(`metier${rang}_debut`);
-      const mois = rang === 1 ? (lire("debut_mois") || 0) : 0;
-      const entree = Number.isFinite(naissance) && Number.isFinite(age) && age > 0
-        ? rangMois(naissance, naissanceMois) + Math.floor(age) * 12 + mois
+      const debut = rang === 1 ? lire("debut") : lire(`metier${rang}_debut`);
+      const entree = naissance !== null && debut !== null && debut > naissance
+        ? debut
         : null;
       for (const option of menu.options) {
         const fermeture = option.dataset.fermeture;
@@ -299,6 +316,84 @@ function daterStatuts(contenu) {
   };
   formulaire.addEventListener("input", trier);
   formulaire.addEventListener("change", trier);
+}
+
+// -- ce qu'une date vaut en âge ----------------------------------------------
+//
+// Le formulaire ne demande plus d'âges : il demande des dates — on sait quand
+// on est né, quand on a commencé, quand on veut partir —, et dit sous chaque
+// champ l'âge qu'elles font. Le rendu l'a écrit une fois ; il se refait ici à
+// chaque frappe, parce que rien de tout cela n'attend un calcul : c'est une
+// soustraction de mois.
+//
+// Les bornes des calendriers se refont de même. Elles sont des ÂGES dans le
+// modèle — on entre dans la vie active entre 14 et 40 ans, on part entre 40 et
+// 75 —, que chaque champ porte en `data-age-min` et `data-age-max` ; changer la
+// date de naissance les déplace toutes, et le calendrier n'ouvre plus alors que
+// sur des dates que le calcul acceptera.
+function moisEnClair(rang) {
+  return `${NOMS_DE_MOIS[rang % 12]} ${Math.floor(rang / 12)}`;
+}
+
+function ageEnClair(mois) {
+  const annees = Math.floor(mois / 12);
+  const reste = mois % 12;
+  return reste === 0 ? `${annees} ans` : `${annees} ans et ${reste} mois`;
+}
+
+// Les mêmes phrases que le rendu, au mot près : `Saisie.calculDe` et
+// `Saisie.naissanceEnClair`, dans `moteur/js/pages.js`. Deux formulations pour
+// la même chose donneraient l'impression que le texte change de sens quand il
+// ne fait que se rafraîchir.
+function calculEnClair(rang, naissance) {
+  const mois = rang - naissance;
+  return mois < 0
+    ? `en ${moisEnClair(rang)}, avant la date de naissance`
+    : `en ${moisEnClair(rang)}, soit ${ageEnClair(mois)}`;
+}
+
+function naissanceEnClair(champ) {
+  const trouve = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(champ.value || ""));
+  if (!trouve) { return ""; }
+  const jour = Number(trouve[3]);
+  return `le ${jour === 1 ? "1er" : jour} ${NOMS_DE_MOIS[Number(trouve[2]) - 1]} `
+    + `${Number(trouve[1])}`;
+}
+
+function suivreLesDates(contenu) {
+  const formulaire = contenu.querySelector("form");
+  if (!formulaire) { return; }
+  const champs = [...formulaire.querySelectorAll("input[type=date][data-age-min]")];
+  if (!champs.length) { return; }
+  const suivre = () => {
+    const acte = formulaire.elements.naissance;
+    const naissance = rangDeDate(acte?.value);
+    if (naissance === null) { return; }
+    const dateDite = document.getElementById("naissance-calcul");
+    if (dateDite) { dateDite.textContent = naissanceEnClair(acte); }
+    for (const champ of champs) {
+      champ.min = dateDeRang(naissance + Number(champ.dataset.ageMin) * 12);
+      champ.max = dateDeRang(naissance + Number(champ.dataset.ageMax) * 12);
+      const rang = rangDeDate(champ.value);
+      // La ligne de métier vide n'a pas d'âge à afficher tant qu'elle est
+      // vide : sa ligne de calcul n'est donc pas rendue, et naît ici le jour
+      // où une date y est posée.
+      let calcul = document.getElementById(`${champ.id}-calcul`);
+      if (!calcul && rang !== null) {
+        calcul = document.createElement("span");
+        calcul.className = "calcul";
+        calcul.id = `${champ.id}-calcul`;
+        calcul.setAttribute("aria-live", "polite");
+        champ.after(calcul);
+        champ.setAttribute("aria-describedby", calcul.id);
+      }
+      if (calcul) {
+        calcul.textContent = rang === null ? "" : calculEnClair(rang, naissance);
+      }
+    }
+  };
+  formulaire.addEventListener("input", suivre);
+  formulaire.addEventListener("change", suivre);
 }
 
 // Où reprend la lecture après un rendu.

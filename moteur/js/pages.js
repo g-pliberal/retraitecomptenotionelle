@@ -6,7 +6,9 @@
  * vérifient les témoins de ``tests/temoins/pages.json``.
  */
 
-import { MOIS_PAR_AN, DateMois, enMois, formaterAge } from "./calendrier.js";
+import {
+  MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge,
+} from "./calendrier.js";
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
 import { formaterBorne } from "./regimes.js";
 import {
@@ -238,28 +240,17 @@ export const ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXI
 export const RANGS_METIER = ["premier", "deuxième", "troisième", "quatrième",
   "cinquième", "sixième", "septième", "huitième"];
 
-/**
- * Mois de naissance. Le droit coupe deux générations en cours d'année — au
- * 1er juillet 1951, au 1er septembre 1961 — et l'âge à la liquidation ne se lit
- * qu'à partir de lui.
- */
-export const MOIS_NAISSANCE = [
-  ["1", "janvier"], ["2", "février"], ["3", "mars"], ["4", "avril"],
-  ["5", "mai"], ["6", "juin"], ["7", "juillet"], ["8", "août"],
-  ["9", "septembre"], ["10", "octobre"], ["11", "novembre"], ["12", "décembre"],
-];
-
-/** Mois qui s'ajoutent aux années entières d'un âge. */
-export const MOIS_AGE = Array.from({ length: 12 }, (unused, m) => [
-  String(m), m === 0 ? "0 mois" : `${m} mois`,
-]);
-
 /** Saisie inexploitable, à afficher telle quelle à l'utilisateur. */
 export class ErreurSaisie extends Error {}
 
 const DEFAUTS = Object.freeze({
   naissance: 1975,
   naissance_mois: 1,
+  //: Jour de naissance. Il n'entre dans aucun calcul — le modèle compte en
+  //: mois, et le droit coupe ses générations au mois. Il est gardé parce que le
+  //: calendrier en demande un : sans lui, le formulaire répondrait « 1er mars »
+  //: à qui est né le 15, et ferait douter de ce qu'il a compris.
+  naissance_jour: 1,
   sexe: "H",
   statut: "salarie_prive_non_cadre",
   debut: 21,
@@ -322,16 +313,26 @@ export class Saisie {
     const unite = parmi(parametres, "unite_revenu", UNITES_REVENU,
       ancienne ? "moyen" : DEFAUTS.unite_revenu);
     const salaire = reel(parametres, "salaire", SALAIRE_DEFAUT[unite]);
+    // La naissance se lit avant tout le reste : les dates de carrière ne valent
+    // un âge que rapportées à elle.
+    const naissance = dateSaisie(parametres, "naissance");
+    const anneeNaissance = naissance
+      ? naissance.annee : entier(parametres, "naissance", DEFAUTS.naissance);
+    const moisNaissance = naissance
+      ? naissance.mois : entier(parametres, "naissance_mois", DEFAUTS.naissance_mois);
     const saisie = new Saisie({
       unite_revenu: unite,
-      naissance: entier(parametres, "naissance", DEFAUTS.naissance),
-      naissance_mois: entier(parametres, "naissance_mois", DEFAUTS.naissance_mois),
+      naissance: anneeNaissance,
+      naissance_mois: moisNaissance,
+      naissance_jour: naissance ? naissance.jour : DEFAUTS.naissance_jour,
       sexe: parametres.sexe === "F" ? "F" : "H",
       statut,
-      debut: ageSaisi(parametres, "debut", DEFAUTS.debut),
-      liquidation: ageSaisi(parametres, "liquidation", DEFAUTS.liquidation),
+      debut: ageSaisi(parametres, "debut", DEFAUTS.debut,
+        anneeNaissance, moisNaissance),
+      liquidation: ageSaisi(parametres, "liquidation", DEFAUTS.liquidation,
+        anneeNaissance, moisNaissance),
       salaire,
-      metiers: metiersSaisis(parametres, salaire),
+      metiers: metiersSaisis(parametres, salaire, anneeNaissance, moisNaissance),
       releve: (parametres.releve || "").trim(),
       profil: parmi(parametres, "profil", PROFILS, DEFAUTS.profil),
       primes: reel(parametres, "primes", DEFAUTS.primes),
@@ -362,6 +363,9 @@ export class Saisie {
     if (!(this.naissance_mois >= 1 && this.naissance_mois <= 12)) {
       throw new ErreurSaisie("Mois de naissance attendu entre 1 et 12.");
     }
+    if (!(this.naissance_jour >= 1 && this.naissance_jour <= 31)) {
+      throw new ErreurSaisie("Jour de naissance attendu entre 1 et 31.");
+    }
     if (!(this.naissance >= NAISSANCE_MINIMALE && this.naissance <= NAISSANCE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de naissance hors du champ du modèle : ${this.naissance}. `
@@ -370,20 +374,23 @@ export class Saisie {
     }
     if (!(this.debut >= AGE_DEBUT_MINIMAL && this.debut <= AGE_DEBUT_MAXIMAL)) {
       throw new ErreurSaisie(
-        `Âge de début d'activité attendu entre ${AGE_DEBUT_MINIMAL} et `
-        + `${AGE_DEBUT_MAXIMAL} ans.`,
+        "Début d'activité : le modèle l'accepte de "
+        + `${AGE_DEBUT_MINIMAL} à ${AGE_DEBUT_MAXIMAL} ans, soit `
+        + `${this.fenetre(AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL)}.`,
       );
     }
     if (!(this.liquidation >= AGE_LIQUIDATION_MINIMAL
           && this.liquidation <= AGE_LIQUIDATION_MAXIMAL)) {
       throw new ErreurSaisie(
-        `Âge de liquidation attendu entre ${AGE_LIQUIDATION_MINIMAL} et `
-        + `${AGE_LIQUIDATION_MAXIMAL} ans.`,
+        "Départ à la retraite : le modèle l'accepte de "
+        + `${AGE_LIQUIDATION_MINIMAL} à ${AGE_LIQUIDATION_MAXIMAL} ans, soit `
+        + `${this.fenetre(AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}.`,
       );
     }
     if (this.liquidation <= this.debut) {
       throw new ErreurSaisie(
-        "L'âge de liquidation doit être postérieur à l'âge de début d'activité.",
+        "Le départ à la retraite doit suivre le début d'activité, "
+        + `fixé en ${this.dateDe(this.debut)}.`,
       );
     }
     this.verifierRevenu(this.salaire, 1);
@@ -421,20 +428,21 @@ export class Saisie {
       if (!(metier.debut >= AGE_DEBUT_MINIMAL
             && metier.debut <= AGE_LIQUIDATION_MAXIMAL)) {
         throw new ErreurSaisie(
-          `Métier n° ${rang} : âge de début attendu entre ${AGE_DEBUT_MINIMAL} et `
-          + `${AGE_LIQUIDATION_MAXIMAL} ans.`,
+          `Métier n° ${rang} : il doit commencer `
+          + `${this.fenetre(AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}, `
+          + `soit de ${AGE_DEBUT_MINIMAL} à ${AGE_LIQUIDATION_MAXIMAL} ans.`,
         );
       }
       if (metier.debut <= precedent) {
         throw new ErreurSaisie(
-          `Métier n° ${rang} : il doit commencer après le précédent, qui débute `
-          + `à ${age(precedent)}.`,
+          `Métier n° ${rang} : il doit commencer après le précédent, qui `
+          + `commence en ${this.dateDe(precedent)}.`,
         );
       }
       if (metier.debut >= this.liquidation) {
         throw new ErreurSaisie(
           `Métier n° ${rang} : il doit commencer avant le départ à la retraite, `
-          + `fixé à ${age(this.liquidation)}.`,
+          + `fixé en ${this.dateDe(this.liquidation)}.`,
         );
       }
       this.verifierRevenu(metier.salaire, rang);
@@ -629,8 +637,7 @@ export class Saisie {
    * d'une exception.
    */
   get dateLiquidation() {
-    return new DateMois(this.naissance, this.naissance_mois)
-      .plusMois(enMois(this.liquidation));
+    return this.dateDe(this.liquidation);
   }
 
   /**
@@ -751,25 +758,80 @@ export class Saisie {
     return lignes;
   }
 
-  /** Mois qui s'ajoutent aux années entières de l'âge de départ. */
-  get liquidation_mois() {
-    return enMois(this.liquidation) % 12;
+  // -- les dates --------------------------------------------------------------
+  //
+  // Le formulaire ne demande plus d'âges mais des dates : c'est la même
+  // information — un âge est une date rapportée à la naissance —, mais celle
+  // que le lecteur connaît sans la calculer. Le modèle, lui, continue de
+  // recevoir des âges : la conversion tient dans les méthodes qui suivent, et
+  // nulle part ailleurs.
+
+  /** Le mois où la carrière atteint cet âge. */
+  dateDe(age_) {
+    return new DateMois(this.naissance, this.naissance_mois).plusMois(enMois(age_));
   }
 
-  get debut_mois() {
-    return enMois(this.debut) % 12;
+  /** Le même mois, tel que l'adresse le porte : « 1996-09 ». */
+  moisDe(age_) {
+    const date = this.dateDe(age_);
+    return `${cadrer(date.annee, 4)}-${cadrer(date.mois, 2)}`;
+  }
+
+  /** Le même mois au premier jour : ce qu'un champ date, lui, exige. */
+  jourDe(age_) {
+    return `${this.moisDe(age_)}-01`;
+  }
+
+  /**
+   * « de septembre 1989 à septembre 2015 » : deux bornes d'âge, en dates.
+   *
+   * Un refus qui ne parlerait que d'âges laisserait au lecteur la soustraction
+   * à faire, alors que le champ qu'il vient de remplir porte une date.
+   */
+  fenetre(ageMinimal, ageMaximal) {
+    return `de ${this.dateDe(ageMinimal)} à ${this.dateDe(ageMaximal)}`;
+  }
+
+  /** La naissance telle qu'un champ date la porte : « 1975-03-15 ». */
+  get naissanceIso() {
+    return `${cadrer(this.naissance, 4)}-${cadrer(this.naissance_mois, 2)}`
+      + `-${cadrer(this.naissance_jour, 2)}`;
+  }
+
+  // -- ce qu'on écrit sous un calendrier ---------------------------------------
+  //
+  // Un champ date s'affiche dans l'ordre de la langue du NAVIGATEUR, que la page
+  // ne choisit pas : « 15/03/1962 » ici, « 03/15/1962 » sur un navigateur
+  // anglophone, et rien ne dit lequel des deux nombres est le mois. La date est
+  // donc redite en toutes lettres sous le champ, où aucun ordre ne se devine —
+  // et, pour une date de carrière, avec l'âge qu'elle fait, qui est ce que le
+  // formulaire demandait avant elle.
+
+  /** « le 15 mars 1962 » : la date de naissance, sans ordre à deviner. */
+  get naissanceEnClair() {
+    return `le ${jourEnClair(this.naissance_jour)} `
+      + `${NOMS_DE_MOIS[this.naissance_mois - 1]} ${this.naissance}`;
+  }
+
+  /** « en septembre 1984, soit 22 ans et 6 mois » : une date de carrière. */
+  calculDe(age_) {
+    if (age_ < 0) {
+      return `en ${this.dateDe(age_)}, avant la date de naissance`;
+    }
+    return `en ${this.dateDe(age_)}, soit ${age(age_)}`;
   }
 
   requete(remplacements = {}) {
     const champs = {
-      naissance: this.naissance, naissance_mois: this.naissance_mois,
+      naissance: this.naissanceIso,
       sexe: this.sexe, statut: this.statut,
-      // L'âge s'écrit en années ENTIÈRES et en mois : « 64 ans et sept mois »
-      // plutôt que « 64,583333 ». L'adresse reste lisible, et une ancienne
-      // adresse portant un âge décimal reste comprise.
-      debut: Math.floor(enMois(this.debut) / 12), debut_mois: this.debut_mois,
-      liquidation: Math.floor(enMois(this.liquidation) / 12),
-      liquidation_mois: this.liquidation_mois,
+      // Les dates remplacent les âges, et l'adresse y perd trois paramètres :
+      // « debut=1996-09 » dit d'un coup ce que « debut=21 » et « debut_mois=8 »
+      // disaient à deux, sans que personne ait à refaire l'addition. Une
+      // adresse d'ancienne forme reste lue — les âges y sont reconnus tels
+      // quels, voir `ageSaisi`.
+      debut: this.moisDe(this.debut),
+      liquidation: this.moisDe(this.liquidation),
       salaire: nombreBrut(this.salaire), profil: this.profil,
       releve: this.releve,
       primes: nombreBrut(this.primes), enfants: this.enfants,
@@ -790,7 +852,7 @@ export class Saisie {
     // qui a été saisi.
     this.metiers.forEach((metier, index) => {
       const rang = index + 2;
-      champs[`metier${rang}_debut`] = nombreBrut(metier.debut);
+      champs[`metier${rang}_debut`] = this.moisDe(metier.debut);
       champs[`metier${rang}_statut`] = metier.statut;
       champs[`metier${rang}_salaire`] = nombreBrut(metier.salaire);
     });
@@ -809,7 +871,7 @@ export class Saisie {
  * qu'elle reste vide, elle ne décrit rien. Une ligne partiellement remplie, en
  * revanche, est une intention manquée — elle est refusée, avec ce qui lui manque.
  */
-function metiersSaisis(parametres, salairePrecedent) {
+function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois) {
   const metiers = [];
   let salaire = salairePrecedent;
   for (let rang = 2; rang <= METIERS_MAXIMUM; rang += 1) {
@@ -821,8 +883,8 @@ function metiersSaisis(parametres, salairePrecedent) {
     }
     if (!debutBrut) {
       throw new ErreurSaisie(
-        `Métier n° ${rang} : indiquer l'âge auquel il commence, ou laisser sa `
-        + "ligne entièrement vide.",
+        `Métier n° ${rang} : indiquer la date à laquelle il commence, ou `
+        + "laisser sa ligne entièrement vide.",
       );
     }
     if (!statut) {
@@ -830,7 +892,8 @@ function metiersSaisis(parametres, salairePrecedent) {
     }
     salaire = reel(parametres, `metier${rang}_salaire`, salaire);
     metiers.push({
-      debut: reel(parametres, `metier${rang}_debut`, 0.0),
+      debut: ageSaisi(parametres, `metier${rang}_debut`, 0.0,
+        naissance, naissanceMois),
       statut,
       salaire,
     });
@@ -847,6 +910,18 @@ function cleEnum(enumeration, valeur) {
 }
 
 const NOMBRE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
+
+/**
+ * Une date de formulaire ou d'adresse : « 1975-03-15 », ou « 1996-09 » quand le
+ * jour ne sert à rien. Rien d'autre n'en est une — un âge nu, « 64 », est une
+ * adresse d'avant le calendrier, et se lit comme tel.
+ */
+const DATE = /^\s*(\d{4})-(\d{2})(?:-(\d{2}))?\s*$/;
+
+/** Un nombre cadré à droite sur autant de chiffres : « 3 » -> « 03 ». */
+function cadrer(valeur, chiffres) {
+  return String(valeur).padStart(chiffres, "0");
+}
 
 /**
  * Le nombre écrit dans ce texte, ou `null` s'il n'y en a pas.
@@ -904,6 +979,11 @@ function nombreBrut(valeur) {
   return formatG(valeur);
 }
 
+/** Le premier du mois est un ORDINAL en français : « 1er », et non « 1 ». */
+function jourEnClair(jour) {
+  return jour === 1 ? "1er" : String(jour);
+}
+
 /**
  * Ce que `round(valeur, decimales)` fait en Python : l'arrondi au pair, sur le
  * développement décimal exact du flottant. `Math.round` monterait les demis,
@@ -915,13 +995,60 @@ function arrondir(valeur, decimales) {
 }
 
 /**
- * Âge lu en années entières plus un nombre de mois.
+ * La date écrite dans ce champ, ou `null` s'il n'en porte pas.
  *
- * Le formulaire envoie deux champs — `liquidation` et `liquidation_mois` —, et
- * l'adresse les porte tous deux. Une adresse ancienne ne portant qu'un âge
- * décimal reste valide et vaut ce qu'elle a toujours valu.
+ * Le formulaire envoie « 1975-03-15 » : c'est la forme qu'un `<input
+ * type="date">` renvoie partout, quelle que soit celle — « 15/03/1975 » en
+ * français — sous laquelle le navigateur l'a affichée. L'adresse, elle, s'en
+ * tient au mois pour les dates de carrière : « debut=1996-09 », le jour n'y
+ * ayant aucun rôle.
+ *
+ * Une adresse d'avant le calendrier porte des âges et une année nus —
+ * « naissance=1975 », « liquidation=64 » : rien ici ne les reconnaît, et `null`
+ * renvoie le lecteur aux champs numériques d'alors.
  */
-function ageSaisi(parametres, nom, defaut) {
+function dateSaisie(parametres, nom) {
+  const brut = parametres[nom];
+  if (brut === undefined || brut === null || brut === "") {
+    return null;
+  }
+  const trouve = DATE.exec(String(brut));
+  if (trouve === null) {
+    return null;
+  }
+  const [annee, mois] = [Number(trouve[1]), Number(trouve[2])];
+  const jour = trouve[3] === undefined ? 1 : Number(trouve[3]);
+  if (!(mois >= 1 && mois <= 12)) {
+    throw new ErreurSaisie(`« ${nom} » : mois attendu entre 01 et 12 (reçu : ${brut}).`);
+  }
+  // Le jour n'est borné que grossièrement : il ne sert à aucun calcul, et le
+  // refuser au calendrier près — un 31 février — n'épargnerait rien à personne,
+  // puisque aucun champ date ne le propose.
+  if (!(jour >= 1 && jour <= 31)) {
+    throw new ErreurSaisie(`« ${nom} » : jour attendu entre 01 et 31 (reçu : ${brut}).`);
+  }
+  return { annee, mois, jour };
+}
+
+/**
+ * L'âge qu'une date de carrière vaut, rapportée à la naissance.
+ *
+ * Le formulaire demande une date — celle du premier mois cotisé, celle du
+ * départ —, parce que c'est ce dont on se souvient ; le modèle, lui, ne connaît
+ * que des âges. La soustraction se fait ici, en mois, et le résultat est l'âge
+ * en années décimales que le moteur attend.
+ *
+ * Les adresses d'avant le calendrier continuent d'être lues telles quelles :
+ * `liquidation=64` et `liquidation_mois=7` valent soixante-quatre ans et sept
+ * mois, `liquidation=64.5` vaut ce qu'il a toujours valu.
+ */
+function ageSaisi(parametres, nom, defaut, naissance, naissanceMois) {
+  const date = dateSaisie(parametres, nom);
+  if (date !== null) {
+    const rang = new DateMois(date.annee, date.mois).rang
+      - new DateMois(naissance, naissanceMois).rang;
+    return rang / MOIS_PAR_AN;
+  }
   const annees = reel(parametres, nom, defaut);
   const cle = `${nom}_mois`;
   const brut = parametres[cle];
@@ -1429,32 +1556,36 @@ function formulaire(saisie, contexte) {
   const affiliations = contexte.simulateur().affiliations;
   const echelle = contexte.echelle(saisie);
 
+  // Trois champs là où il en fallait cinq : une date de naissance porte son
+  // mois, une date de départ porte l'âge qu'on écrivait en deux fois. Les
+  // bornes des calendriers sont celles du modèle, comptées depuis la naissance
+  // saisie ; le script de la page les refait à chaque frappe, sans attendre le
+  // calcul.
   const identite = [
     // `autocomplete` n'est pas là pour épargner une frappe : il donne au
     // navigateur — et aux outils qui s'appuient sur lui, dont les aides à la
     // saisie — le moyen de reconnaître ce que le champ demande.
-    g.champ("naissance", "Année de naissance", saisie.naissance, "", "number",
+    g.champDate("naissance", "Date de naissance", saisie.naissanceIso,
+      "le calcul n'en retient que le mois : deux générations sont coupées en "
+      + "cours d'année par les textes", saisie.naissanceEnClair,
       {
-        min: String(NAISSANCE_MINIMALE), max: String(NAISSANCE_MAXIMALE),
-        step: "1", autocomplete: "bday-year",
+        min: `${NAISSANCE_MINIMALE}-01-01`, max: `${NAISSANCE_MAXIMALE}-12-31`,
+        autocomplete: "bday",
       }),
-    g.liste("naissance_mois", "Mois de naissance", MOIS_NAISSANCE,
-      String(saisie.naissance_mois),
-      "deux générations sont coupées en cours d'année par les textes"),
     g.liste("sexe", "Sexe", [["H", "Homme"], ["F", "Femme"]], saisie.sexe,
       "table de mortalité unisexe par défaut", { autocomplete: "sex" }),
-    g.champ("liquidation", "Âge de départ à la retraite",
-      Math.floor(enMois(saisie.liquidation) / 12),
+    g.champDate("liquidation", "Départ à la retraite",
+      saisie.jourDe(saisie.liquidation),
       "effectif si vous êtes déjà retraité, souhaité sinon : c'est la date "
-      + "à laquelle tout le calcul se place", "number",
+      + "à laquelle tout le calcul se place, et la pension prend effet le "
+      + "premier du mois",
+      saisie.calculDe(saisie.liquidation),
       {
-        min: String(AGE_LIQUIDATION_MINIMAL),
-        max: String(AGE_LIQUIDATION_MAXIMAL),
-        step: "1",
+        min: saisie.jourDe(AGE_LIQUIDATION_MINIMAL),
+        max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
+        data_age_min: String(AGE_LIQUIDATION_MINIMAL),
+        data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
       }),
-    g.liste("liquidation_mois", "…et mois", MOIS_AGE,
-      String(saisie.liquidation_mois),
-      "la pension prend effet le premier du mois"),
   ].join("");
 
   const avance = [
@@ -1656,25 +1787,23 @@ function basculeUnite(saisie, echelle) {
  * qu'on la remplit. Une ligne de plus apparaît alors à sa suite, jusqu'à
  * ``METIERS_MAXIMUM``.
  */
-/** Le mois où un métier commence — la date que le parcours lui donnera. */
-function entreeMetier(saisie, age) {
-  return new DateMois(saisie.naissance, saisie.naissance_mois).plusMois(enMois(age));
-}
-
 function metiersFormulaire(saisie, affiliations, echelle) {
   // Le menu des statuts de chaque ligne est daté de l'entrée dans ce métier :
   // un statut que le droit ferme avant cette date y est grisé.
   const lignes = [ligneMetier(
     1,
-    g.champ("debut", "Âge de début d'activité",
-      Math.floor(enMois(saisie.debut) / 12), "", "number",
+    g.champDate("debut", "Début d'activité", saisie.jourDe(saisie.debut),
+      "le premier mois cotisé : l'année d'entrée n'est complète que si l'on "
+      + "entre en janvier",
+      saisie.calculDe(saisie.debut),
       {
-        min: String(AGE_DEBUT_MINIMAL), max: String(AGE_DEBUT_MAXIMAL), step: "1",
+        min: saisie.jourDe(AGE_DEBUT_MINIMAL),
+        max: saisie.jourDe(AGE_DEBUT_MAXIMAL),
+        data_age_min: String(AGE_DEBUT_MINIMAL),
+        data_age_max: String(AGE_DEBUT_MAXIMAL),
       })
-    + g.liste("debut_mois", "…et mois", MOIS_AGE, String(saisie.debut_mois),
-      "l'année d'entrée n'est complète que si l'on entre en janvier")
     + g.liste("statut", "Statut d'affiliation",
-      optionsStatuts(affiliations, entreeMetier(saisie, saisie.debut)),
+      optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
       saisie.statut,
       "proposé aux seules dates où son régime recrutait")
     + champRevenu("salaire", saisie, echelle, nombreBrut(saisie.salaire)),
@@ -1683,9 +1812,9 @@ function metiersFormulaire(saisie, affiliations, echelle) {
   saisie.metiers.forEach((metier, index) => {
     const rang = index + 2;
     lignes.push(ligneMetier(rang, champsMetier(
-      rang, nombreBrut(metier.debut), metier.statut,
-      nombreBrut(metier.salaire),
-      optionsStatuts(affiliations, entreeMetier(saisie, metier.debut)),
+      rang, saisie.jourDe(metier.debut), saisie.calculDe(metier.debut),
+      metier.statut, nombreBrut(metier.salaire),
+      optionsStatuts(affiliations, saisie.dateDe(metier.debut)),
       saisie, echelle,
     )));
   });
@@ -1696,7 +1825,7 @@ function metiersFormulaire(saisie, affiliations, echelle) {
   const rang = saisie.metiers.length + 2;
   if (rang <= METIERS_MAXIMUM) {
     lignes.push(ligneMetier(
-      rang, champsMetier(rang, "", "", "", optionsStatuts(affiliations, null),
+      rang, champsMetier(rang, "", "", "", "", optionsStatuts(affiliations, null),
         saisie, echelle), true,
     ));
   }
@@ -1707,17 +1836,18 @@ function metiersFormulaire(saisie, affiliations, echelle) {
 /**
  * Les trois champs d'un métier qui suit le premier.
  *
- * Le mois du changement n'est pas demandé : ce qui se date au mois, c'est
- * l'entrée dans la vie active et le départ à la retraite, parce que ces deux
- * bornes tronquent une année civile. Un changement de métier, lui, ne fait que
- * déplacer des mois d'un statut à l'autre à l'intérieur de la carrière.
+ * Le changement se date au mois comme le reste, depuis que le calendrier a
+ * remplacé les âges : il n'en coûte pas un champ de plus, et une carrière qui
+ * change de régime en cours d'année se décrit telle qu'elle a eu lieu.
  */
-function champsMetier(rang, debut, statut, salaire, statuts, saisie, echelle) {
-  return g.champ(`metier${rang}_debut`, "Âge du changement", debut,
-    "âge auquel ce métier commence", "number",
+function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, echelle) {
+  return g.champDate(`metier${rang}_debut`, "Début de ce métier", debut,
+    "le mois où ce métier commence", calcul,
     {
-      min: String(AGE_DEBUT_MINIMAL), max: String(AGE_LIQUIDATION_MAXIMAL),
-      step: "1",
+      min: saisie.jourDe(AGE_DEBUT_MINIMAL),
+      max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
+      data_age_min: String(AGE_DEBUT_MINIMAL),
+      data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
     })
     + g.liste(`metier${rang}_statut`, "Statut d'affiliation",
       [["", "— aucun —"], ...statuts], statut)
@@ -5079,8 +5209,8 @@ page <a href="${g.lien("/donnees")}">Données</a>.</p>
 <h3>Données personnelles</h3>
 <p><strong>Ce site ne collecte rien.</strong> Il n'a pas de serveur de calcul :
 le modèle, ses tables et ses séries sont téléchargés une fois, puis tout
-s'exécute dans votre navigateur. Ce que vous saisissez — année de naissance,
-sexe, âge de départ, revenu — n'est envoyé nulle part, n'est enregistré nulle
+s'exécute dans votre navigateur. Ce que vous saisissez — date de naissance,
+sexe, date de départ, revenu — n'est envoyé nulle part, n'est enregistré nulle
 part, et disparaît quand vous fermez l'onglet.</p>
 <ul class="serree">
   <li><strong>Aucun cookie, aucun traceur, aucune mesure d'audience.</strong>
@@ -5125,6 +5255,9 @@ chaque modification par les contrôles automatiques du dépôt :</p>
   courbe est une image, et ce tableau en est la description détaillée ;</li>
   <li>formulaire entièrement étiqueté, groupé par métier, utilisable au
   clavier ;</li>
+  <li>dates saisies au calendrier du navigateur — celui que le lecteur connaît
+  déjà, dans sa langue et au clavier —, et l'âge qu'elles font écrit sous le
+  champ, rattaché à lui pour être lu avec ;</li>
   <li>résultat du calcul annoncé aux synthèses vocales, qui ne verraient
   autrement rien changer ;</li>
   <li>lien d'évitement, repères de page, et respect du réglage système
