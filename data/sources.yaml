@@ -743,6 +743,39 @@ institutions:
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/taux_cotisation.csv
+      - id: dss_ccss_transferts_retraite
+        titre: >-
+          Rapports à la Commission des comptes de la Sécurité sociale — ce que
+          la CNAF et l'Unédic versent à la retraite (fiches CNAF, Agirc-Arrco,
+          Ircantec)
+        url: https://www.securite-sociale.fr/home/la-secu-en-detail/comptes-statistiques-et-etudes-de-la-sécurité-sociale/rapports-a-la-commission-des-comptes-de-la-securite-sociale.html
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/ccss_transferts_retraite.py
+        cible: data/reference/macro/transferts_retraite.csv
+        millesime: rapports de septembre 2013 à mai 2026
+        note: >-
+          La ventilation du poste « transferts d'organismes extérieurs » du
+          compte du COR, lue du côté de celui qui PAIE. La fiche de la CNAF
+          distingue la prise en charge de cotisations au titre de l'AVPF et les
+          majorations de pension pour enfants ; les fiches de l'Agirc-Arrco
+          (Agirc et Arrco séparément avant 2019) et de l'Ircantec portent les
+          points des chômeurs que l'Unédic paie. Le critère 1 du manifeste
+          désigne la CNAF et l'Unédic comme producteurs ; la DSS, qui
+          consolide leurs comptes dans son rapport, est le repreneur le mieux
+          placé, et les valeurs entrent au niveau `haute`. Le COR ventile le
+          même poste pour la dernière année de chaque rapport depuis 2023 :
+          son « dont Unédic » est EXACTEMENT la somme des deux lignes de la
+          CCSS, son « dont CNAF » s'en écarte de quelques pour cent dans un
+          sens ou dans l'autre, consolidé du côté des régimes qui reçoivent ;
+          scripts/verifier_donnees.py confronte les deux. Un rapport n'est
+          retenu que pour ses comptes ARRÊTÉS, les années antérieures à sa
+          parution, et le premier qui arrête une année l'emporte ; les rapports de
+          2007 à 2012 sont chiffrés et ceux de 2004 à 2006 compressent leurs
+          objets, que le lecteur PDF du dépôt n'ouvre pas : la série commence
+          en 2011. Le site présente une chaîne de certificats que le niveau
+          de sécurité par défaut d'OpenSSL refuse ; le récupérateur abaisse ce
+          niveau sans rien désactiver de la vérification.
 
   cour_des_comptes:
     nom: Cour des comptes

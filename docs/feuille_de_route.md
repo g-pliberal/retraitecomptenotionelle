@@ -558,6 +558,30 @@ Et la RÉACTION des recettes aux scénarios — le 6, qui pose un taux unique de
 18 %, déplacerait aussi les ressources, et le coefficient suppose celles du
 système actuel. `limites.md` §5 porte les trois.
 
+- **Septembre 2026, seconde passe : la recette suit le droit.** Le poste
+  « transferts d'organismes extérieurs » est désormais ventilé par celui qui
+  paie, lu dans les rapports à la Commission des comptes de la Sécurité
+  sociale — fiche de la CNAF pour l'AVPF et les majorations pour enfants,
+  fiches de l'Agirc-Arrco et de l'Ircantec pour les points des chômeurs que
+  l'Unédic paie — par `scripts/fetch/ccss_transferts_retraite.py`, dans
+  `transferts_retraite.csv`, au niveau `haute`, de 2011 à 2025. Le COR ventile
+  le même poste pour la dernière année de chaque rapport depuis 2023 : son
+  « dont Unédic » est EXACTEMENT la somme des deux lignes de la CCSS, son
+  « dont CNAF » s'en écarte de quelques pour cent dans un sens ou dans
+  l'autre, et le vérificateur confronte les deux. Ce que cela dit : les
+  scénarios notionnels suppriment l'AVPF et les majorations, et ne portent
+  rien au compte pendant une année de chômage, mais comptaient jusqu'ici la
+  recette qui finance ces droits — 10,9 milliards de la branche famille et
+  3,9 de l'assurance chômage en 2024, 3,7 % des ressources. Retirée à part
+  constante, elle ramène le coefficient du scénario 3 en 2070 de 1,94 à 1,87.
+  La page Coût le dit dans un dépliant ; le coefficient lui-même n'est pas
+  corrigé, ce qui est le pas suivant de l'action 11. Deux choses que le
+  chantier a coûtées au passage : le lecteur PDF du dépôt ne séparait pas les
+  cellules d'un tableau posées chacune par leur propre `Tm` — « 4 929 5 002 »
+  se lisait « 49295002 » — et tombait sur une table de correspondance hors du
+  plan Unicode ; il lit désormais les rapports à la CCSS de 2013 à 2026, et
+  toujours pas ceux d'avant, chiffrés ou compressés en flux d'objets.
+
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est
@@ -843,9 +867,13 @@ masse des cotisations contre près de 90 % en annuités et en points).
 individuelle et non seulement sur l'agrégat ; `moteur/js/` en regard ; les
 témoins ; `limites.md` §5.
 
-**Marche.** D'abord au seul niveau de l'AGRÉGAT — une variante de la page Coût
-où chaque système est ramené à l'équilibre —, ce qui ne touche pas les moteurs
-de pension et se mesure aussitôt. Ensuite seulement, si l'écart le justifie,
+**Marche.** D'abord retirer des ressources ce que la branche famille et
+l'assurance chômage versent pour des droits que les scénarios ne servent pas —
+la série est là depuis l'action 6, seconde passe, et le dépliant de la page
+Coût en calcule déjà l'effet à part constante. Ensuite au seul niveau de
+l'AGRÉGAT — une variante de la page Coût où chaque système est ramené à
+l'équilibre —, ce qui ne touche pas les moteurs de pension et se mesure
+aussitôt. Ensuite seulement, si l'écart le justifie,
 l'ajustement porté à la pension individuelle, qui les touche tous les deux. Le
 piège à nommer d'avance : un facteur commun ne déplace AUCUN écart entre
 carrières, si bien qu'appliquer le coefficient ne change rien à ce que le site

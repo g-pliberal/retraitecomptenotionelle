@@ -139,6 +139,78 @@ export const GROUPES = [
   },
 ];
 
+/**
+ * Ce qu'un organisme extérieur verse à la retraite, ligne par ligne, au
+ * découpage des rapports à la Commission des comptes de la Sécurité sociale —
+ * du côté de celui qui paie. La fiche de la CNAF distingue l'AVPF des
+ * majorations, les fiches de l'Agirc-Arrco et de l'Ircantec portent chacune ce
+ * que l'Unédic leur verse.
+ */
+export const POSTES_TRANSFERTS = [
+  {
+    code: "cnaf_avpf",
+    organisme: "famille",
+    libelle: "Assurance vieillesse des parents au foyer",
+    glose: "Les cotisations que la branche famille verse à la Cnav pour les "
+      + "parents qui ont réduit ou cessé leur activité pour élever un enfant : "
+      + "des trimestres et un salaire portés au compte, sans cotisation de "
+      + "l'assuré.",
+  },
+  {
+    code: "cnaf_majorations",
+    organisme: "famille",
+    libelle: "Majorations de pension pour enfants",
+    glose: "Les 10 % de pension en plus des parents de trois enfants, que la "
+      + "branche famille rembourse en totalité aux régimes depuis 2011.",
+  },
+  {
+    code: "unedic_agirc_arrco",
+    organisme: "chomage",
+    libelle: "Points Agirc-Arrco des chômeurs",
+    glose: "Ce que l'assurance chômage verse à l'Agirc-Arrco pour que les "
+      + "périodes de chômage indemnisé ouvrent des points de retraite "
+      + "complémentaire — l'Agirc et l'Arrco séparément avant 2019.",
+  },
+  {
+    code: "unedic_ircantec",
+    organisme: "chomage",
+    libelle: "Points Ircantec des chômeurs",
+    glose: "La même chose, pour les contractuels de la fonction publique.",
+  },
+];
+
+export const CODES_TRANSFERTS = POSTES_TRANSFERTS.map((poste) => poste.code);
+
+/**
+ * Qui paie, et si le compte notionnel du dépôt supprime ce qu'il finance.
+ *
+ * `droitSupprime` : oui pour la branche famille — ni AVPF ni majorations dans
+ * les scénarios 2 à 6. Oui aussi pour l'assurance chômage, mais pour une autre
+ * raison : une année de chômage indemnisé ne verse rien au compte, alors qu'un
+ * système notionnel réel pourrait créditer ce que l'Unédic paie, qui est une
+ * cotisation assise sur l'allocation. Tant que le modèle ne le fait pas, la
+ * recette suit le droit.
+ */
+export const ORGANISMES = [
+  {
+    code: "famille",
+    libelle: "Branche famille",
+    explication: "La CNAF paie les droits à retraite liés aux enfants. Le "
+      + "compte notionnel du dépôt ne sert plus ces droits : il ne peut pas "
+      + "compter cette recette comme la sienne.",
+    droitSupprime: true,
+  },
+  {
+    code: "chomage",
+    libelle: "Assurance chômage",
+    explication: "L'Unédic paie les points de retraite complémentaire des "
+      + "chômeurs indemnisés. Le compte notionnel du dépôt ne porte rien au "
+      + "compte pendant une année de chômage : cette recette non plus n'est "
+      + "pas la sienne, tant qu'il ne crédite pas ce que l'Unédic verse.",
+    droitSupprime: true,
+  },
+];
+
 /** Le compte du système de retraite : dépenses, ressources, solde, structure. */
 export class ComptesRetraite {
   constructor(paquet) {
@@ -153,6 +225,16 @@ export class ComptesRetraite {
         SerieAnnuelle.depuisPaquet(`structure_${poste.code}`, brut[poste.code]),
       ]),
     );
+    // En MILLIONS d'euros, l'unité des rapports à la CCSS : c'est le PIB qui
+    // les ramène à l'unité du reste du compte.
+    this.transferts = new Map(
+      POSTES_TRANSFERTS.map((poste) => [
+        poste.code,
+        SerieAnnuelle.depuisPaquet(`transferts_${poste.code}`,
+                                   brut[`transferts_${poste.code}`]),
+      ]),
+    );
+    this.pib = SerieAnnuelle.depuisPaquet("pib_courant", paquet.depenses.pib_courant);
     this.premiereAnnee = this.depenses.premiereAnnee;
     this.derniereAnnee = this.depenses.derniereAnnee;
     // La frontière entre observé et projeté se lit dans la FIABILITÉ et non
@@ -237,6 +319,72 @@ export class ComptesRetraite {
     }
     const liste = [];
     for (let a = premiere; a <= derniere; a += 1) liste.push(a);
+    return liste;
+  }
+
+  // -- ce que d'autres caisses versent ---------------------------------------
+
+  /** Ce qu'une ligne de transfert a rapporté, en millions d'euros. */
+  transfert(code, annee) {
+    return this.transferts.get(code).valeur(annee);
+  }
+
+  /** Ce qu'un organisme a versé, en millions d'euros. */
+  transfertOrganisme(organisme, annee) {
+    let somme = 0;
+    for (const poste of POSTES_TRANSFERTS) {
+      if (poste.organisme === organisme) somme += this.transfert(poste.code, annee);
+    }
+    return somme;
+  }
+
+  /** Le même versement, en part du PIB — l'unité du reste du compte. */
+  transfertPartPib(organisme, annee) {
+    return this.transfertOrganisme(organisme, annee) / this.pib.valeur(annee);
+  }
+
+  /**
+   * Le même versement, en part des ressources de l'année : l'unité de la
+   * structure des ressources, et ce qui permet de dire quelle fraction du
+   * poste « transferts » un organisme explique.
+   */
+  transfertPartRessources(organisme, annee) {
+    return this.transfertPartPib(organisme, annee) / this.ressource(annee);
+  }
+
+  /**
+   * Ce que le compte notionnel ne peut pas compter, en part du PIB : la somme
+   * des versements qui financent un droit que les scénarios notionnels ne
+   * servent pas. C'est ce qu'il faudrait retirer des ressources avant de lire
+   * leur coefficient d'équilibre.
+   */
+  transfertSupprimePartPib(annee) {
+    let somme = 0;
+    for (const organisme of ORGANISMES) {
+      if (organisme.droitSupprime) somme += this.transfertPartPib(organisme.code, annee);
+    }
+    return somme;
+  }
+
+  /**
+   * La fenêtre où les QUATRE lignes sont connues. Elles ne commencent ni ne
+   * finissent la même année : l'Ircantec n'est détaillée que depuis 2013, et le
+   * rapport de printemps qui arrête la dernière année ne porte pas les fiches
+   * des régimes complémentaires.
+   */
+  get premiereAnneeTransferts() {
+    return Math.max(...[...this.transferts.values()].map((s) => s.premiereAnnee));
+  }
+
+  get derniereAnneeTransferts() {
+    return Math.min(...[...this.transferts.values()].map((s) => s.derniereAnnee));
+  }
+
+  anneesTransferts() {
+    const liste = [];
+    for (let a = this.premiereAnneeTransferts; a <= this.derniereAnneeTransferts; a += 1) {
+      liste.push(a);
+    }
     return liste;
   }
 

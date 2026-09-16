@@ -46,7 +46,13 @@ from ..donnees.chargement import (
     journal_certification,
 )
 from ..donnees.depenses import SYSTEMES, DepensesRetraite
-from ..donnees.equilibre import GROUPES, POSTES, ComptesRetraite
+from ..donnees.equilibre import (
+    GROUPES,
+    ORGANISMES,
+    POSTES,
+    POSTES_TRANSFERTS,
+    ComptesRetraite,
+)
 from ..donnees.regimes import charger_inventaire
 from ..donnees.population import Population
 from ..simulateur import Comparaison, Simulateur
@@ -4221,6 +4227,7 @@ retraite</a><a href="{g.lien("/cas-types")}">Voir treize carrières types</a></p
 
 {_cout_detail_depense(contexte)}
 {_cout_detail_ressources(contexte)}
+{_cout_detail_transferts(contexte)}
 {_cout_detail_scenarios(contexte)}
 {_cout_detail_equilibre(contexte)}
 {_cout_detail_garantie(contexte)}
@@ -4393,6 +4400,106 @@ déjà au compte des scénarios 4 et 5, et c'est à ce titre qu'elle est compté
 ici, malgré un taux fixé pour équilibrer plutôt que pour acquérir. La part
 cotisée <em>recule</em> : elle était de
 {g.pourcentage(comptes.part_contributive(premiere), decimales=0)} en {premiere}.</p>
+""")
+
+
+def _cout_detail_transferts(contexte: Contexte) -> str:
+    """Ce que la branche famille et l'assurance chômage versent, et à qui cela revient.
+
+    Le poste « transferts » de la structure des ressources est un agrégat.
+    Ce dépliant le ventile par celui qui paie, et dit la chose que le
+    coefficient d'équilibre ne dit pas : les scénarios notionnels suppriment
+    les droits que la branche famille finance, et comptent pourtant sa recette.
+    """
+    comptes = contexte.comptes()
+    solde = contexte.cout().solde
+    premiere = comptes.premiere_annee_transferts
+    # La dernière année où tout est connu : les quatre lignes de transfert,
+    # et le compte observé qui leur donne un coefficient.
+    derniere = min(comptes.derniere_annee_transferts, solde.derniere_annee_observee)
+    ligne_solde = solde.annee(derniere)
+
+    def montant(code: str, annee: int) -> str:
+        return _milliards(comptes.transfert(code, annee), 1)
+
+    lignes = []
+    for organisme in ORGANISMES:
+        for poste in POSTES_TRANSFERTS:
+            if poste.organisme != organisme.code:
+                continue
+            lignes.append([
+                escape(poste.libelle), montant(poste.code, premiere),
+                montant(poste.code, derniere),
+                g.pourcentage(comptes.transfert(poste.code, derniere)
+                              / comptes.pib(derniere) / comptes.ressource(derniere),
+                              decimales=1),
+            ])
+        lignes.append([
+            f"<strong>{escape(organisme.libelle)}, ensemble</strong>",
+            _milliards(comptes.transfert_organisme(organisme.code, premiere), 1),
+            _milliards(comptes.transfert_organisme(organisme.code, derniere), 1),
+            g.pourcentage(comptes.transfert_part_ressources(organisme.code, derniere),
+                          decimales=1),
+        ])
+
+    part_poste = comptes.part("transferts", derniere)
+    part_ventilee = sum(comptes.transfert_part_ressources(o.code, derniere)
+                        for o in ORGANISMES)
+    supprime = comptes.transfert_supprime_part_pib(derniere)
+    # Ce que la recette vaut en part des ressources, l'année où on la connaît ;
+    # retirée à part CONSTANTE, elle multiplie tout coefficient par le même
+    # facteur, et c'est la seule façon de la porter jusqu'à l'horizon du COR
+    # sans projeter ce que personne ne projette.
+    part_supprimee = supprime / ligne_solde.ressources
+    horizon = solde.annee(solde.derniere_annee)
+
+    def sans(ligne, scenario: str) -> float:
+        return ligne.coefficient(scenario) * (1.0 - part_supprimee)
+    return g.depliant("Ce que la branche famille et l'assurance chômage versent", f"""
+<p>Le poste « transferts d'organismes extérieurs » du tableau précédent est un
+agrégat. Le voici ventilé par celui qui paie, lu dans les rapports à la
+Commission des comptes de la Sécurité sociale, du côté de la caisse qui verse.</p>
+
+{g.tableau(
+    ["Ce qui est versé", f"En {premiere}", f"En {derniere}",
+     f"Part des ressources {derniere}"],
+    lignes, ["", "nombre", "nombre", "nombre"],
+    titre=f"Ce que d'autres caisses versent à la retraite, {premiere} et {derniere}",
+    entete_de_ligne=True,
+)}
+{g.gloses([(poste.libelle, poste.glose) for poste in POSTES_TRANSFERTS])}
+<p class="discret">Les deux caisses expliquent
+{g.pourcentage(part_ventilee, decimales=1)} des ressources de {derniere}, sur les
+{g.pourcentage(part_poste, decimales=1)} du poste « transferts » ; le reste est
+fait de versements plus petits, de l'assurance maladie et de l'État pour
+l'essentiel. Le COR ventile ce poste pour la dernière année de chaque rapport
+depuis 2023 : son « dont Unédic » est exactement la somme des deux lignes de
+l'assurance chômage, son « dont CNAF » s'écarte de quelques pour cent de ce que
+la branche famille déclare verser, consolidé du côté des régimes qui
+reçoivent.</p>
+
+<div class="note"><strong>Ces recettes financent des droits que les scénarios
+notionnels ne servent pas.</strong> Les scénarios 2 à 6 suppriment l'assurance
+vieillesse des parents au foyer et les majorations pour enfants, et ne portent
+rien au compte pendant une année de chômage. Ils comptent pourtant, dans les
+ressources qu'ils supposent inchangées, les
+{_milliards(comptes.transfert_organisme("famille", derniere), 1)} de la branche
+famille et les {_milliards(comptes.transfert_organisme("chomage", derniere), 1)}
+de l'assurance chômage de {derniere} — {g.pourcentage(supprime, decimales=2)}
+du PIB, {g.pourcentage(part_supprimee, decimales=1)} des ressources. Retirées à
+part constante, ces recettes ramènent le coefficient d'équilibre de
+{solde.derniere_annee} de
+{g.nombre(horizon.coefficient("notionnel_prospectif"), 2)} à
+{g.nombre(sans(horizon, "notionnel_prospectif"), 2)} pour le scénario 3, et de
+{g.nombre(horizon.coefficient("notionnel_prospectif_employeur"), 2)} à
+{g.nombre(sans(horizon, "notionnel_prospectif_employeur"), 2)} pour le
+scénario 5 ; en {derniere}, où ces deux scénarios sont encore le système
+actuel, l'écart est le même :
+{g.nombre(ligne_solde.coefficient("notionnel_prospectif"), 2)} contre
+{g.nombre(sans(ligne_solde, "notionnel_prospectif"), 2)}. Ce que la branche
+famille cesserait de verser à la retraite ne disparaît pas : il lui reste, et
+ce qu'elle en fait est une décision de programme, pas un résultat de ce
+modèle.</div>
 """)
 
 
@@ -4804,6 +4911,19 @@ ressources par risque</strong> — une « recette du risque vieillesse » est un
 donnée sans définition comptable, les cotisations d'un régime polyvalent
 n'étant affectées à aucun risque.</p>
 
+<h4>Ce que d'autres caisses versent — rapports à la Commission des comptes de
+la Sécurité sociale</h4>
+<p>Le poste « transferts » du compte du COR, ventilé par celui qui paie, de
+{comptes.premiere_annee_transferts} à {comptes.derniere_annee_transferts} :
+la fiche de la CNAF pour l'assurance vieillesse des parents au foyer et les
+majorations pour enfants, celles de l'Agirc-Arrco et de l'Ircantec pour les
+points des chômeurs que l'Unédic paie. C'est la source du dépliant « Ce que la
+branche famille et l'assurance chômage versent ».</p>
+<p class="discret">Un rapport n'est lu que pour ses comptes arrêtés, et le
+premier qui arrête une année l'emporte. Les rapports d'avant 2013 sont chiffrés
+ou compressés d'une façon que le lecteur du dépôt n'ouvre pas : la série
+commence là.</p>
+
 <h4>Les comptes de la protection sociale — DREES</h4>
 <p>La dépense, risque par risque, depuis {cout.premiere_annee}. Le risque
 <strong>vieillesse-survie</strong> entier vaut
@@ -4844,7 +4964,10 @@ def _cout_detail_limites(contexte: Contexte) -> str:
   système actuel, encaissées ou projetées telles quelles : la question posée
   est « à prélèvement inchangé, ce système tiendrait-il ? ». Le scénario 6, qui
   pose un taux unique de 18 % pour tous, déplacerait aussi les recettes, et
-  rien ici ne le dit.</li>
+  rien ici ne le dit. Et elles comptent ce que la branche famille et
+  l'assurance chômage versent pour des droits que les scénarios notionnels ne
+  servent pas — le dépliant « Ce que la branche famille et l'assurance chômage
+  versent » dit ce que cela vaut, et ce qu'en devient le coefficient.</li>
   <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
   L'appliquer changerait toutes les pensions par un même facteur, donc tous les
   niveaux de cette page, sans toucher aux écarts entre carrières — qui sont la

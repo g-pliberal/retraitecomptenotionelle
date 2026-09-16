@@ -796,6 +796,17 @@ porte déjà au compte des scénarios 4 et 5 — contre 80 % en 2004 ; les impô
 taxes affectés passent de 7 % à 15 %. Un compte notionnel ne sait créditer que
 la part cotisée, et c'est ce qui borne la lecture de tout ce tableau.
 
+**La recette suit le droit, et 3,7 % des ressources ne suivent pas.** Le poste
+« transferts d'organismes extérieurs » est ventilé par celui qui paie, lu dans
+les rapports à la Commission des comptes de la Sécurité sociale : la branche
+famille verse 10,9 milliards en 2024 pour l'assurance vieillesse des parents au
+foyer et les majorations pour enfants, l'assurance chômage 3,9 milliards pour
+les points de retraite complémentaire des chômeurs. Les scénarios notionnels
+suppriment les premiers droits et ne portent rien au compte pendant une année
+de chômage ; ils comptent pourtant ces recettes. Retirées à part constante,
+elles ramènent le coefficient du scénario 3 en 2070 de 1,94 à 1,87 — la page
+Coût le dit, sans encore corriger le coefficient.
+
 ---
 
 ## Les données
@@ -1023,7 +1034,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          784 tests Python
+tests/                          790 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

@@ -4987,6 +4987,24 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   recettes. Les réserves financières des régimes, que le COR chiffre à part, ne
   sont pas comptées non plus : le solde dit le flux, jamais le stock.
 
+  Une part de ces recettes est désormais NOMMÉE, et c'est la moins défendable :
+  le poste « transferts d'organismes extérieurs » du COR contient ce que la
+  branche famille verse pour l'assurance vieillesse des parents au foyer et les
+  majorations pour enfants — 10,9 milliards en 2024 — et ce que l'Unédic verse
+  pour les points de retraite complémentaire des chômeurs — 3,9 milliards. Les
+  scénarios notionnels suppriment les premiers droits et ne portent rien au
+  compte pendant une année de chômage ; ils comptent pourtant ces recettes,
+  0,50 % du PIB et 3,7 % des ressources en 2024. La série
+  `transferts_retraite.csv` les lit chez celui qui paie, dans les rapports à
+  la Commission des comptes de la Sécurité sociale, de 2013 à 2024 (l'Unédic)
+  ou 2025 (la CNAF) ; les rapports d'avant 2013 sont chiffrés ou compressés
+  d'une façon que le lecteur PDF du dépôt n'ouvre pas. Retirées à part
+  constante, ces recettes ramènent le coefficient du scénario 3 en 2070 de
+  1,94 à 1,87, celui du scénario 5 de 1,17 à 1,13. La page **Coût** le dit
+  dans un dépliant ; le coefficient lui-même n'est pas corrigé, pas plus qu'il
+  n'est appliqué, et ce que la branche famille ferait de ce qu'elle cesserait
+  de verser est une décision de programme, pas un résultat du modèle.
+
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni
@@ -5418,7 +5436,7 @@ barèmes.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 784 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 790 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

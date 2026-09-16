@@ -274,6 +274,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "comptes_retraite": "macro/comptes_retraite.csv",
         "comptes_retraite_projetes": "macro/comptes_retraite.csv",
         "structure_ressources_retraite": "macro/structure_ressources_retraite.csv",
+        # La ventilation du poste « transferts » de ce compte, lue chez celui
+        # qui paie : rapports à la CCSS, fiches CNAF, Agirc-Arrco, Ircantec.
+        "transferts_retraite": "macro/transferts_retraite.csv",
         "productivite": "macro/productivite.csv",
         "plafond": "macro/plafond_securite_sociale.csv",
         "plafond_ancien": "macro/plafond_securite_sociale.csv",

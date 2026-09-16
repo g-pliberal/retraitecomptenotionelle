@@ -703,6 +703,35 @@ def source_structure_ressources() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Postes de la ventilation des transferts, tels que ``ccss_transferts_retraite.py``
+#: les écrit : deux lignes de la CNAF, deux de l'Unédic.
+POSTES_TRANSFERTS: tuple[str, ...] = (
+    "cnaf_avpf", "cnaf_majorations", "unedic_agirc_arrco", "unedic_ircantec",
+)
+
+
+def _ccss_transferts() -> dict:
+    return _lire_json("ccss_transferts_retraite.json",
+                      "scripts/fetch/ccss_transferts_retraite.py")
+
+
+def source_transferts_retraite() -> dict[tuple, float]:
+    """Ce que la CNAF et l'Unédic versent à la retraite, en millions d'euros.
+
+    Lu du côté de celui qui paie, dans les rapports à la Commission des comptes
+    de la Sécurité sociale : la fiche de la CNAF pour l'AVPF et les majorations
+    pour enfants, celles de l'Agirc-Arrco et de l'Ircantec pour les points de
+    retraite complémentaire des chômeurs. C'est la part du poste « transferts »
+    du COR que le compte notionnel ne peut pas supposer acquise, puisqu'il
+    supprime les droits qu'elle finance.
+    """
+    valeurs: dict[tuple, float] = {}
+    for poste in POSTES_TRANSFERTS:
+        for annee, montant in _ccss_transferts()["series"].get(poste, {}).items():
+            valeurs[(annee, poste)] = montant
+    return dict(sorted(valeurs.items()))
+
+
 def _eacr() -> dict:
     return _lire_json("drees_eacr.json", "scripts/fetch/drees_eacr.py")
 
@@ -2610,6 +2639,46 @@ CERTIFICATIONS = (
         ),
     ),
     Certification(
+        nom="transferts_retraite",
+        chemin=REFERENCE / "macro" / "transferts_retraite.csv",
+        cles=("annee", "poste"),
+        colonne="montant_meur",
+        source=source_transferts_retraite,
+        origine="rapports à la Commission des comptes de la Sécurité sociale, "
+                "fiches CNAF, Agirc-Arrco et Ircantec",
+        decimales=1,
+        tolerance=0.06,
+        unite=" M€",
+        niveau="haute",
+        entete=(
+            "# Ce que la branche famille et l'assurance chômage versent à la retraite",
+            "# source_id: dss_ccss_transferts_retraite",
+            "# unite: millions d'euros courants de l'année",
+            "# fiabilite:",
+            "#   haute (2011-…) : comptes arrêtés, lus dans les rapports à la",
+            "#             Commission des comptes de la Sécurité sociale — fiche de",
+            "#             la CNAF (AVPF, majorations pour enfants), fiches de",
+            "#             l'Agirc-Arrco et de l'Ircantec (points des chômeurs payés",
+            "#             par l'Unédic) —, recontrôlés par scripts/verifier_donnees.py",
+            "#             contre le rapport de l'année suivante, et confrontés au",
+            "#             « dont CNAF, dont Unédic » du COR là où il existe.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Le poste « transferts d'organismes extérieurs » du compte du système",
+            "# de retraite est un agrégat. Cette série le ventile par celui qui paie :",
+            "# la CNAF finance les droits liés aux enfants — cotisations d'assurance",
+            "# vieillesse des parents au foyer, majorations de pension pour trois",
+            "# enfants —, l'Unédic les points de retraite complémentaire des",
+            "# chômeurs. Le compte notionnel du dépôt SUPPRIME les droits que la",
+            "# CNAF finance ; il ne peut pas compter comme acquise la recette qui",
+            "# les paie, et c'est ici qu'on lit ce qu'elle vaut.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
         nom="effectifs_retraites",
         chemin=REFERENCE / "regimes" / "effectifs_retraites.csv",
         cles=("annee", "caisse"),
@@ -3788,6 +3857,67 @@ def controle_solde_retraite() -> list[str]:
     return messages
 
 
+def controle_transferts_retraite() -> list[str]:
+    """Ce que la CNAF et l'Unédic versent doit recouper ce que le COR en dit.
+
+    Le COR ventile le poste « transferts » de la dernière année de chaque
+    rapport annuel — « dont CNAF », « dont Unédic » — depuis 2023. Le dépôt lit
+    la même chose chez celui qui paie, dans les rapports à la CCSS, et sur plus
+    d'années. Les deux lectures doivent se recouper : EXACTEMENT pour l'Unédic,
+    dont le « dont » du COR est la somme des lignes Agirc-Arrco et Ircantec ; à
+    quelques pour cent pour la CNAF, dont le COR consolide les versements du
+    côté des régimes qui les reçoivent et n'attrape pas tout ce qu'elle verse.
+    Un écart plus grand dirait qu'une des deux lectures a changé de périmètre.
+    """
+    try:
+        cor = _cor_comptes().get("ventilation_transferts", {})
+    except SourceAbsente as erreur:
+        return [f"IGNORÉ  ventilation des transferts : {erreur}"]
+    if not cor:
+        return ["IGNORÉ  ventilation des transferts : le COR n'en publie aucune"]
+
+    ecrit: dict[int, dict[str, float]] = {}
+    chemin = REFERENCE / "macro" / "transferts_retraite.csv"
+    if chemin.exists():
+        for ligne in charger_csv(chemin):
+            ecrit.setdefault(int(ligne["annee"]), {})[ligne["poste"]] = float(
+                ligne["montant_meur"])
+    if not ecrit:
+        return ["ABSENT  ventilation des transferts : aucune ligne"]
+
+    marges = {"cnaf": 0.05, "unedic": 0.005}
+    sommes = {
+        "cnaf": ("cnaf_avpf", "cnaf_majorations"),
+        "unedic": ("unedic_agirc_arrco", "unedic_ircantec"),
+    }
+    messages: list[str] = []
+    ecarts = 0
+    communes = sorted(int(a) for a in cor if int(a) in ecrit)
+    for annee in communes:
+        for organisme, postes in sommes.items():
+            if any(poste not in ecrit[annee] for poste in postes):
+                continue
+            lu = sum(ecrit[annee][poste] for poste in postes)
+            publie = cor[str(annee)][organisme]
+            if abs(lu - publie) > marges[organisme] * publie:
+                ecarts += 1
+                messages.append(
+                    f"ÉCART   ventilation des transferts {annee} {organisme} : "
+                    f"CCSS {lu:.1f} M€, COR {publie:.1f} M€"
+                )
+    if not communes:
+        messages.append(
+            "SUSPECT ventilation des transferts : aucune année commune entre la "
+            "série et le COR"
+        )
+    elif not ecarts:
+        messages.append(
+            f"OK      ventilation des transferts : {communes[0]}-{communes[-1]}, "
+            "CNAF et Unédic conformes au « dont » du COR"
+        )
+    return messages
+
+
 def controle_part_salariale() -> list[str]:
     """Aucune période de salariés ne doit oublier sa répartition.
 
@@ -4680,6 +4810,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.extend(controle_coherence_interne())
     messages.extend(controle_ventilation_depenses())
     messages.extend(controle_solde_retraite())
+    messages.extend(controle_transferts_retraite())
     messages.extend(controle_part_salariale())
     messages.append("")
     messages.extend(controle_vraisemblance_inflation())

@@ -3675,6 +3675,21 @@ def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
         assert len(titre.split()) >= 3, f"{chemin} : section mal nommée — {titre}"
 
 
+def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent(contexte):
+    """Le poste « transferts » est ventilé par celui qui paie, et la page en tire
+    la seule chose que le coefficient ne dit pas : la recette suit le droit."""
+    corps = rendre(contexte, "/cout", {})[1]
+    texte = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", corps)))
+    assert "Ce que la branche famille et l'assurance chômage versent" in texte
+    assert "Assurance vieillesse des parents au foyer" in texte
+    assert "Points Agirc-Arrco des chômeurs" in texte
+    assert "Ces recettes financent des droits que les scénarios" in texte
+    # Le dépliant reporte l'effet à l'horizon du COR, à part constante, et
+    # nomme les deux scénarios applicables.
+    assert re.search(r"ramènent le coefficient d'équilibre de 20\d\d", texte)
+    assert "pour le scénario 3" in texte and "pour le scénario 5" in texte
+
+
 def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
     """Le temps du lecteur n'est pas gratuit, et cette page le dépensait.
 
