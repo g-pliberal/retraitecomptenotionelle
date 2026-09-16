@@ -1002,12 +1002,12 @@ def test_le_formulaire_offre_toujours_une_ligne_de_metier_de_plus(page):
     """
     vierge = page("/simuler")
     assert vierge.count('<legend class="rang">') == 1
-    assert vierge.count("<summary>Ajouter une période") == 1
+    assert vierge.count("<span>Ajouter une période") == 1
     assert 'name="metier2_debut" value=""' in vierge
 
     rempli = page("/simuler", naissance=1975, metier2_debut=40, metier2_statut="artisan")
     assert rempli.count('<legend class="rang">') == 2
-    assert rempli.count("<summary>Ajouter une période") == 1
+    assert rempli.count("<span>Ajouter une période") == 1
     assert 'name="metier3_debut" value=""' in rempli
 
 
@@ -1018,7 +1018,7 @@ def test_le_formulaire_s_arrete_au_nombre_maximal_de_metiers(page):
         champs[f"metier{rang}_statut"] = "artisan"
     texte = page("/simuler", **champs)
     assert texte.count('<legend class="rang">') == METIERS_MAXIMUM
-    assert "<summary>Ajouter une période" not in texte
+    assert "<span>Ajouter une période" not in texte
     assert f'name="metier{METIERS_MAXIMUM + 1}_debut"' not in texte
 
 
@@ -2596,8 +2596,9 @@ def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
     # La ligne encore vide, elle, est un dépliant : c'est son résumé qui la
     # nomme, et la nommer deux fois ferait lire deux titres pour une période
     # qui n'existe pas.
-    vide = re.search(r'<details class="metier facultatif">(.{0,80})', texte, re.S)
-    assert vide and vide.group(1).startswith("<summary>Ajouter une période"), (
+    vide = re.search(r'<details class="metier facultatif">(.*?)</summary>',
+                     texte, re.S)
+    assert vide and "<span>Ajouter une période" in vide.group(1), (
         "la ligne à remplir n'annonce plus ce qu'elle ajoute"
     )
 
@@ -3324,10 +3325,124 @@ def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
             '<button type="button" class="terme" aria-expanded="false">'
         ) or re.match(
             r'<button type="button" class="terme appel" aria-expanded="false" '
-            r'aria-label="[^"]+">\?</button>', mot,
+            r'aria-label="[^"]+"><svg class="icone" ', mot,
         ), mot[:90]
         bulle = re.search(r'<span class="bulle" role="note" hidden>(.*)', mot, re.S)
         assert bulle and bulle.group(1).strip(), f"{chemin} : mot sans définition"
+
+
+# -- la bibliothèque de pictogrammes -----------------------------------------
+
+
+def _icones_vendues() -> dict[str, str]:
+    """Les originaux de ``moteur/icones/``, réduits à leur tracé.
+
+    Le fichier est celui de Lucide, recopié sans retouche : la table du gabarit
+    doit en dire exactement le contenu, sans quoi le site dessinerait autre
+    chose que ce que le dossier prétend contenir.
+    """
+    from pathlib import Path
+
+    dossier = Path(__file__).resolve().parents[1] / "moteur" / "icones"
+    trace = {}
+    for fichier in sorted(dossier.glob("*.svg")):
+        dedans = re.search(r"<svg\b[^>]*>(.*?)</svg>", fichier.read_text(
+            encoding="utf-8"), re.S).group(1)
+        trace[fichier.stem] = "".join(
+            ligne.strip() for ligne in dedans.splitlines()
+        )
+    return trace
+
+
+def test_les_pictogrammes_disent_ce_que_leurs_fichiers_disent():
+    """La table du gabarit est une COPIE, et doit le rester.
+
+    Elle existe parce que le portage JavaScript n'utilise aucune bibliothèque et
+    que la page ne charge aucune ressource tierce : le tracé est donc écrit dans
+    le code. Rien ne garantirait alors qu'il soit celui de Lucide — sinon ce
+    test, qui rouvre les originaux.
+    """
+    vendus = _icones_vendues()
+    assert vendus, "le dossier des pictogrammes est vide"
+    assert set(g.ICONES) == set(vendus), (
+        "la table et le dossier ne portent pas les mêmes pictogrammes : "
+        f"{set(g.ICONES) ^ set(vendus)}"
+    )
+    for nom, trace in vendus.items():
+        assert g.ICONES[nom] == trace, f"le tracé de « {nom} » s'écarte de son fichier"
+
+
+def test_les_deux_portages_dessinent_les_memes_pictogrammes():
+    """Un chevron qui différerait d'un moteur à l'autre ne se verrait pas dans
+    les témoins de page — ils sont rendus par les deux, mais comparés entre
+    eux. La table est donc LUE dans le portage, et non relue à l'œil."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    lecture = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'import { ICONES } from "./moteur/js/gabarit.js";'
+         "process.stdout.write(JSON.stringify(ICONES));"],
+        cwd=racine, capture_output=True, text=True, check=True,
+    )
+    assert json.loads(lecture.stdout) == dict(g.ICONES)
+
+
+def test_le_site_ne_dessine_plus_aucun_pictogramme_a_la_main(contexte):
+    """Ni emoji, ni caractère détourné en icône.
+
+    C'est ce qui rendait l'ancienne icône de page laide et instable : un emoji
+    n'a pas le même dessin d'un système à l'autre, et aucune grille commune avec
+    le reste. La règle vaut pour le HTML rendu, la page qui le porte et la
+    feuille de style.
+    """
+    from pathlib import Path
+
+    racine = Path(__file__).resolve().parents[1]
+    emoji = re.compile(r"[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B00-\u2BFF\uFE0F]")
+    for chemin in TITRES:
+        corps = rendre(contexte, chemin, {})[1]
+        assert not emoji.findall(corps), f"{chemin} porte un emoji"
+    for fichier in ("index.html", "moteur/style.css"):
+        texte = (racine / fichier).read_text(encoding="utf-8")
+        assert not emoji.findall(texte), f"{fichier} porte un emoji"
+
+
+def test_l_icone_du_site_est_un_fichier_de_la_meme_grille():
+    """L'icône de page est le seul pictogramme que le navigateur charge : elle
+    doit être un dessin, du même jeu que les autres, et non un caractère."""
+    from pathlib import Path
+
+    racine = Path(__file__).resolve().parents[1]
+    icone = (racine / "moteur" / "icone.svg").read_text(encoding="utf-8")
+    page = (racine / "index.html").read_text(encoding="utf-8")
+    assert 'href="moteur/icone.svg"' in page, "la page ne charge plus son icône"
+    assert "<text" not in icone, "l'icône du site est redevenue un caractère"
+    # Le même tracé que le pictogramme de la bibliothèque, au trait près.
+    for trace in re.findall(r'd="([^"]+)"', g.ICONES["trending-up"]):
+        assert trace in icone, "l'icône du site s'écarte du jeu de pictogrammes"
+    assert 'stroke-width="2"' in icone
+
+
+def test_tous_les_depliants_portent_le_meme_chevron(contexte):
+    """Le marqueur natif d'un ``<details>`` n'a ni la même forme ni la même
+    taille d'un navigateur à l'autre : chaque résumé porte donc le chevron du
+    jeu, et la feuille de style masque celui du navigateur."""
+    for chemin in TITRES:
+        corps = rendre(contexte, chemin, {})[1]
+        resumes = re.findall(r"<summary>(.{0,40})", corps, re.S)
+        for debut in resumes:
+            assert debut.startswith('<svg class="icone" '), (
+                f"{chemin} : un dépliant sans chevron — {debut!r}"
+            )
+    style = g.FEUILLE_DE_STYLE
+    assert 'summary::marker { content: ""; }' in style
+    assert "details[open] > summary > .icone { transform: rotate(180deg); }" in style
 
 
 def test_le_script_du_site_sait_ouvrir_les_mots_du_glossaire():

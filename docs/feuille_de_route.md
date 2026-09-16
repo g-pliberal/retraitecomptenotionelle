@@ -1362,6 +1362,46 @@ inchangés au bit près. Ce qui change est ce qu'on lit à l'ouverture.
   les rejoint. Sur la carrière type, `sexe=H` et `sexe=F` donnent la même pension
   au centime près tant qu'on n'y a pas touché, et c'est vérifié.
 
+### 20. Une bibliothèque de pictogrammes, au lieu de trois dessins — `fait`
+
+**Pourquoi.** Le site n'avait pas d'icônes : il avait trois façons d'en faire
+semblant. Un emoji 📈 posé dans un `<text>` SVG servait d'icône de page — son
+dessin change avec le système, et il se brouillait en petit ; un chevron était
+tracé à coups de bordures CSS tournées à 45° ; les autres dépliants gardaient le
+triangle du navigateur, qui n'a pas deux fois la même forme sur deux moteurs ;
+l'appel d'une bulle était un point d'interrogation typographique dans un cercle
+dessiné en CSS. Trois grilles, trois épaisseurs, aucune échelle commune.
+
+**Marche.** Un seul jeu, **Lucide 1.46.0** (licence ISC) : grille de 24, trait
+de 2, extrémités et jointures arrondies. Les originaux sont recopiés sans
+retouche dans `moteur/icones/`, le tracé est écrit dans les deux gabarits — le
+portage n'utilise aucune bibliothèque, et la page ne charge aucune ressource
+tierce —, et un test rouvre les fichiers pour vérifier que les tables disent
+exactement ce qu'ils disent.
+
+**Ce que ça a déplacé.** *Aucun chiffre*, et cinq pictogrammes : `chevron-down`
+sur tous les dépliants, `circle-help` sur l'appel d'une bulle, `download` sur le
+bouton qui compose l'image, `triangle-alert` sur l'avertissement de liquidation
+non ouverte, `trending-up` pour la marque du site — dans le bandeau et dans
+`moteur/icone.svg`, l'icône de page.
+
+- *Le tracé est dans le code, l'original dans le dépôt.* C'est la seule façon de
+  tenir ensemble deux promesses du site : aucune ressource tierce chargée, aucun
+  paquet dans le portage. Le risque — une table qui dérive de son original, ou
+  qui diverge d'un moteur à l'autre — est tenu par deux tests : l'un compare la
+  table aux fichiers de `moteur/icones/`, l'autre demande au portage JavaScript
+  d'imprimer la sienne et la compare à celle de Python, entrée par entrée.
+- *Un dépliant n'a plus le chevron de son navigateur.* `summary::marker` est
+  masqué une fois pour tout le site, et chaque résumé passe par `g.sommaire` :
+  même chevron, même place, même rotation à l'ouverture. Un test parcourt les
+  six pages et refuse un `<summary>` qui ne commencerait pas par lui.
+- *L'icône de page est un fichier, et elle tient à toutes les tailles.* Le carré
+  de la charte, le tracé de `trending-up`, la même grille : vérifiée à 16, 32,
+  64 et 128 px, elle garde sa forme et son poids là où l'emoji se brouillait.
+- *Un test interdit le retour des faux pictogrammes.* Aucun emoji dans le HTML
+  rendu des six pages, ni dans `index.html`, ni dans la feuille de style : c'est
+  par là que celui-ci était entré.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -1659,3 +1699,11 @@ inchangés au bit près. Ce qui change est ce qu'on lit à l'ouverture.
   d'où ce chiffre vient. Et **un mécanisme déjà là valait mieux qu'un
   nouveau** : la bulle du glossaire, écrite pour les mots de jargon, tenait déjà
   l'accessibilité et le basculement délégué ; il n'a fallu qu'une autre ancre.
+- **Septembre 2026, action 20.** Faite, à la demande : « je veux une
+  bibliothèque de logos uniforme et propre ». C'est Lucide, recopié dans le
+  dépôt plutôt qu'appelé à un CDN — le site ne charge rien chez personne, et le
+  portage n'a toujours aucune dépendance. Deux choses à en retenir. **Un emoji
+  n'est pas un dessin** : sa forme appartient au système qui l'affiche, et rien
+  dans le dépôt ne peut la tenir. Et **une copie se surveille** : le tracé écrit
+  dans le code n'est juste que tant qu'un test le confronte à son original, et
+  qu'un second confronte les deux portages l'un à l'autre.

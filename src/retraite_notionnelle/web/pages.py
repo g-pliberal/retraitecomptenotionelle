@@ -1869,7 +1869,9 @@ Défenseur des droits peut être saisi :
 <h3>Code, données et réutilisation</h3>
 <p>Le code du modèle et du site est publié sous
 <a href="{g.DEPOT}/blob/main/LICENSE">licence MIT</a> : réutilisable, y compris
-commercialement, à condition d'en conserver la mention.</p>
+commercialement, à condition d'en conserver la mention. Les pictogrammes
+viennent de <a href="https://lucide.dev">Lucide</a> (licence ISC) ; ils sont
+recopiés dans le dépôt, et le site ne les charge donc chez personne.</p>
 <p>Les données, elles, ne sont pas la propriété de l'éditeur. Les séries
 françaises reprises ici — INSEE, DREES, DILA et Légifrance, Service des
 retraites de l'État, caisses — sont des informations publiques, réutilisables
@@ -2182,7 +2184,8 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   {_bascule_unite(saisie, echelle)}
   {_releve(saisie)}
   <details class="options">
-    <summary>Options de modélisation (sexe, profil, indexation, âge de référence, projection)</summary>
+    {g.sommaire("Options de modélisation (sexe, profil, indexation, âge de "
+                "référence, projection)")}
     <div class="grille">{avance}</div>
   </details>
   <p style="margin-top:1.4rem"><button type="submit">Calculer les six scénarios</button></p>
@@ -2223,7 +2226,7 @@ def _releve(saisie: Saisie) -> str:
     )
     return f"""
 <details class="releve"{' open' if saisie.releve_actif else ''}>
-  <summary>Coller un relevé de carrière — la saisie exacte</summary>
+  {g.sommaire("Coller un relevé de carrière — la saisie exacte")}
   <p class="discret">Une ligne par année : <strong>année:régime:revenu</strong>,
   et <strong>:trimestres</strong> si le relevé les porte.{bulle}</p>
   {g.zone("releve", "Relevé de carrière", saisie.releve,
@@ -2427,9 +2430,9 @@ def _ligne_metier(rang: int, champs: str, vide: bool = False,
     rangs = RANGS_METIER[rang - 1].capitalize()
     if vide:
         return ('<details class="metier facultatif">'
-                "<summary>Ajouter une période — un métier, une interruption"
-                "</summary>"
-                f'<div class="grille">{champs}</div></details>')
+                + g.sommaire("Ajouter une période — un métier, une "
+                             "interruption")
+                + f'<div class="grille">{champs}</div></details>')
     titre = f"{rangs} période, sans emploi" if sans_emploi else f"{rangs} métier"
     return (f'<fieldset class="metier"><legend class="rang">{escape(titre)}</legend>'
             f'<div class="grille">{champs}</div></fieldset>')
@@ -2958,14 +2961,16 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         attente = (f" — il faut attendre {g.nombre(age, 2)} ans"
                    if age is not None else "")
         ouverture = (
-            '<p class="note avertissement">Le droit en vigueur <strong>n\'ouvre pas'
+            '<p class="note avertissement">'
+            + g.icone("triangle-alert", "Avertissement")
+            + '<span>Le droit en vigueur <strong>n\'ouvre pas'
             "</strong> cette liquidation à "
             f"{g.nombre(comparaison.carriere.age_liquidation, 2)} ans{attente}. "
             "Ni l'âge légal du régime, ni le départ anticipé pour carrière "
             "longue ne le permettent. Le montant du scénario 1 reste calculé, "
             "parce qu'il faut bien comparer les six scénarios sur la même "
             "carrière, mais il ne décrit aucune pension que le système actuel "
-            "servirait.</p>"
+            "servirait.</span></p>"
         )
 
     fiabilite = (
@@ -3668,7 +3673,7 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
 <h3>Scénario 2 — construction du compte notionnel rétroactif</h3>
 {compte}
 <details>
-  <summary>Les résultats complets en JSON</summary>
+  {g.sommaire("Les résultats complets en JSON")}
   <pre class="json">{escape(json.dumps(comparaison.dictionnaire(), ensure_ascii=False, indent=2))}</pre>
 </details>
 <p class="discret">L'adresse de cette page contient tous les paramètres :
