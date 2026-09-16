@@ -590,12 +590,32 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
      réserve plus une largeur mais une HAUTEUR : chaque scénario portait donc
      224 px de vide entre son titre et son montant, six fois de suite, et le
      premier chiffre de la page tombait sous la ligne de flottaison. */
-  .scenario .titre { flex: 0 0 auto; }
-  /* Le montant passe sous l'intitulé : les deux chiffres s'alignent alors sur
-     le bord gauche, comme lui, et restent l'un à côté de l'autre. */
-  .scenario .montant { justify-content: flex-start; gap: 0.9rem; }
-  .scenario .chiffre { align-items: flex-start; }
-  .scenario .depart { padding-left: 0.9rem; }
+  .scenario .titre { flex: 0 1 auto; max-width: 100%; }
+  /* Les deux montants passent sous l'intitulé, alignés à gauche comme lui :
+     côte à côte tant qu'ils tiennent, l'un sous l'autre sinon.
+
+     Ils ne tenaient pas toujours, et la page n'avait aucun moyen de le savoir
+     à l'avance : elle ignore la police que le téléphone substitue à la sienne
+     — aucun des empattements demandés n'existe sur Android, et le serif de
+     remplacement est plus large —, comme elle ignore le grossissement du texte
+     que le système applique par-dessus. Une somme qui ne se coupe pas dans une
+     rangée qui ne se replie pas : « par mois, en euros de 2039 » sortait de la
+     carte, et emportait la page entière dans un défilement horizontal.
+
+     Trois règles le tiennent, quelle que soit la police et quel que soit le
+     grossissement : les libellés se replient, les sommes jamais — un montant
+     coupé en deux lignes ne se lit plus —, et la rangée passe à la ligne quand
+     même cela ne suffit pas. */
+  .scenario .montant { justify-content: flex-start; flex-wrap: wrap;
+                       column-gap: 0.9rem; row-gap: 0.3rem; max-width: 100%; }
+  .scenario .chiffre { align-items: flex-start; white-space: normal;
+                       min-width: 0; max-width: 100%; }
+  .scenario .chiffre .somme, .scenario .chiffre .annuel { white-space: nowrap; }
+  /* Le trait qui sépare les deux montants ne sépare plus rien dès qu'ils
+     passent l'un sous l'autre, et aucun sélecteur ne dit qu'une rangée s'est
+     repliée : il ne s'affiche donc sur aucun téléphone. Les deux libellés
+     disent lequel est lequel, et la taille dit lequel prime. */
+  .scenario .depart { padding-left: 0; border-left: none; }
   /* Les tableaux du détail portent jusqu'à six colonnes, et un téléphone leur
      donne 358 points : chaque cellule y tombait sur trois lignes de deux mots.
      Un demi-point de moins et des marges plus serrées leur rendent un
@@ -635,15 +655,6 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .graphique .graduation { font-size: 24px; }
 }
 
-/* Écran très étroit : les deux chiffres ne tiennent plus l'un à côté de
-   l'autre et passent l'un sous l'autre. Le trait qui les sépare n'a alors plus
-   rien à séparer, et pendrait dans le vide. */
-@media (max-width: 22rem) {
-  /* Les deux chiffres ne tiennent plus l'un à côté de l'autre : ils passent
-     l'un sous l'autre, et le trait qui les sépare n'a plus rien à séparer. */
-  .scenario .montant { flex-wrap: wrap; }
-  .scenario .depart { padding-left: 0; border-left: none; }
-}
 
 /* Mouvement réduit : la jauge d'attente glisse sans fin, et une animation qui
    ne s'arrête jamais déclenche nausées et migraines chez qui y est sensible

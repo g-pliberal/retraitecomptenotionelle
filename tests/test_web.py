@@ -3451,7 +3451,28 @@ def test_le_titre_d_un_scenario_ne_reserve_pas_de_hauteur_sur_telephone():
     """
     telephone = _regles_du_telephone()
     assert ".scenario .entete { flex-direction: column;" in telephone
-    assert ".scenario .titre { flex: 0 0 auto; }" in telephone
+    assert ".scenario .titre { flex: 0 1 auto; max-width: 100%; }" in telephone
+
+
+def test_les_deux_montants_se_replient_plutot_que_de_deborder():
+    """Le téléphone ne rend pas la page avec la police ni la taille demandées.
+
+    Aucun des empattements de la charte n'existe sur Android, qui y substitue
+    un serif plus large, et le système grossit le texte par-dessus. Une somme
+    qui ne se coupe pas dans une rangée qui ne se replie pas finissait donc
+    hors de la carte : « par mois, en euros de 2039 » sortait de l'écran, et
+    emportait la page entière dans un défilement horizontal. Les libellés se
+    replient, les sommes non, la rangée passe à la ligne en dernier recours —
+    et le trait qui séparait les deux montants ne pend plus dans le vide.
+    """
+    telephone = _regles_du_telephone()
+    montant = telephone.split(".scenario .montant {")[1].split("}")[0]
+    assert "flex-wrap: wrap" in montant
+    chiffre = telephone.split(".scenario .chiffre {")[1].split("}")[0]
+    assert "white-space: normal" in chiffre and "min-width: 0" in chiffre
+    assert (".scenario .chiffre .somme, .scenario .chiffre .annuel "
+            "{ white-space: nowrap; }") in telephone
+    assert ".scenario .depart { padding-left: 0; border-left: none; }" in telephone
 
 
 def test_l_appel_d_une_bulle_tient_la_cible_tactile():
