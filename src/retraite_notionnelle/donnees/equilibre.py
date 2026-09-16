@@ -35,6 +35,19 @@ Ce périmètre n'est pas celui de ``depenses.py`` :
   disposent, et c'est le test ``test_les_deux_perimetres_se_recoupent`` qui le
   tient.
 
+CE QUE LA VENTILATION DES TRANSFERTS SERT À DIRE
+-------------------------------------------------
+Le poste « transferts d'organismes extérieurs » est un agrégat, et ce qu'il
+contient importe au compte notionnel plus qu'aucun autre : la CNAF y paie les
+droits liés aux enfants — les cotisations d'assurance vieillesse des parents au
+foyer et les majorations de pension pour trois enfants —, que les scénarios
+notionnels du dépôt SUPPRIMENT. Compter cette recette comme acquise à un
+système qui ne sert plus ces droits, c'est lui prêter dix milliards par an qui
+ne lui reviennent pas. La série ``transferts_retraite.csv`` dit ce que la CNAF
+et l'Unédic versent, année par année, lue chez celui qui paie (rapports à la
+Commission des comptes de la Sécurité sociale), et ``ORGANISMES`` dit lequel
+des deux finance un droit que le compte notionnel supprime.
+
 CE QUE LA STRUCTURE DES RESSOURCES SERT À DIRE
 -----------------------------------------------
 Deux tiers des ressources sont des cotisations assises sur des revenus
@@ -188,6 +201,86 @@ GROUPES: tuple[GroupeRessources, ...] = (
 )
 
 
+@dataclass(frozen=True)
+class PosteTransfert:
+    """Une ligne de ce qu'un organisme extérieur verse à la retraite.
+
+    Au découpage des rapports à la Commission des comptes de la Sécurité
+    sociale, du côté de celui qui paie : la fiche de la CNAF distingue l'AVPF
+    des majorations, les fiches de l'Agirc-Arrco et de l'Ircantec portent
+    chacune ce que l'Unédic leur verse.
+    """
+
+    code: str
+    organisme: str
+    libelle: str
+    glose: str
+
+
+@dataclass(frozen=True)
+class Organisme:
+    """Qui paie, et si le compte notionnel du dépôt supprime ce qu'il finance."""
+
+    code: str
+    libelle: str
+    explication: str
+    #: Le compte notionnel du dépôt supprime-t-il les droits que ce transfert
+    #: paie ? Oui pour la branche famille : ni AVPF ni majorations dans les
+    #: scénarios 2 à 6. Oui aussi pour l'assurance chômage, mais pour une autre
+    #: raison : une année de chômage indemnisé ne verse rien au compte
+    #: (``carriere.PERIODES_NON_COTISEES``), alors qu'un système notionnel réel
+    #: pourrait créditer ce que l'Unédic paie, qui est une cotisation assise
+    #: sur l'allocation. Tant que le modèle ne le fait pas, la recette suit le
+    #: droit.
+    droit_supprime: bool
+
+
+POSTES_TRANSFERTS: tuple[PosteTransfert, ...] = (
+    PosteTransfert(
+        "cnaf_avpf", "famille", "Assurance vieillesse des parents au foyer",
+        "Les cotisations que la branche famille verse à la Cnav pour les "
+        "parents qui ont réduit ou cessé leur activité pour élever un enfant : "
+        "des trimestres et un salaire portés au compte, sans cotisation de "
+        "l'assuré.",
+    ),
+    PosteTransfert(
+        "cnaf_majorations", "famille", "Majorations de pension pour enfants",
+        "Les 10 % de pension en plus des parents de trois enfants, que la "
+        "branche famille rembourse en totalité aux régimes depuis 2011.",
+    ),
+    PosteTransfert(
+        "unedic_agirc_arrco", "chomage", "Points Agirc-Arrco des chômeurs",
+        "Ce que l'assurance chômage verse à l'Agirc-Arrco pour que les "
+        "périodes de chômage indemnisé ouvrent des points de retraite "
+        "complémentaire — l'Agirc et l'Arrco séparément avant 2019.",
+    ),
+    PosteTransfert(
+        "unedic_ircantec", "chomage", "Points Ircantec des chômeurs",
+        "La même chose, pour les contractuels de la fonction publique.",
+    ),
+)
+
+CODES_TRANSFERTS = tuple(poste.code for poste in POSTES_TRANSFERTS)
+
+ORGANISMES: tuple[Organisme, ...] = (
+    Organisme(
+        "famille", "Branche famille",
+        "La CNAF paie les droits à retraite liés aux enfants. Le compte "
+        "notionnel du dépôt ne sert plus ces droits : il ne peut pas compter "
+        "cette recette comme la sienne.",
+        True,
+    ),
+    Organisme(
+        "chomage", "Assurance chômage",
+        "L'Unédic paie les points de retraite complémentaire des chômeurs "
+        "indemnisés. Le compte notionnel du dépôt ne porte rien au compte "
+        "pendant une année de chômage : cette recette non plus n'est pas la "
+        "sienne, tant qu'il ne crédite pas ce que l'Unédic verse.",
+        True,
+    ),
+)
+
+
 class ComptesRetraite:
     """Le compte du système de retraite : dépenses, ressources, solde, structure.
 
@@ -217,6 +310,17 @@ class ComptesRetraite:
             )
             for poste in POSTES
         }
+        # En MILLIONS d'euros, l'unité des rapports à la CCSS : c'est le PIB
+        # qui les ramène à l'unité du reste du compte.
+        self.transferts: dict[str, SerieAnnuelle] = {
+            poste.code: charger_serie_annuelle(
+                macro / "transferts_retraite.csv", "montant_meur",
+                nom=f"transferts_{poste.code}", filtre={"poste": poste.code},
+            )
+            for poste in POSTES_TRANSFERTS
+        }
+        self.pib = charger_serie_annuelle(
+            macro / "pib_courant.csv", "pib_meur", nom="pib_courant")
 
     # -- bornes --------------------------------------------------------------
 
@@ -305,6 +409,59 @@ class ComptesRetraite:
     def annees_ventilees(self) -> list[int]:
         return list(range(self.premiere_annee_ventilee,
                           self.derniere_annee_ventilee + 1))
+
+    # -- ce que d'autres caisses versent ----------------------------------------
+
+    def transfert(self, code: str, annee: int) -> float:
+        """Ce qu'une ligne de transfert a rapporté, en millions d'euros."""
+        return self.transferts[code](annee)
+
+    def transfert_organisme(self, organisme: str, annee: int) -> float:
+        """Ce qu'un organisme a versé, en millions d'euros."""
+        return sum(self.transfert(poste.code, annee)
+                   for poste in POSTES_TRANSFERTS if poste.organisme == organisme)
+
+    def transfert_part_pib(self, organisme: str, annee: int) -> float:
+        """Le même versement, en part du PIB — l'unité du reste du compte."""
+        return self.transfert_organisme(organisme, annee) / self.pib(annee)
+
+    def transfert_part_ressources(self, organisme: str, annee: int) -> float:
+        """Le même versement, en part des ressources de l'année.
+
+        C'est l'unité de la structure des ressources, et ce qui permet de dire
+        quelle fraction du poste « transferts » un organisme explique.
+        """
+        return self.transfert_part_pib(organisme, annee) / self.ressource(annee)
+
+    def transfert_supprime_part_pib(self, annee: int) -> float:
+        """Ce que le compte notionnel ne peut pas compter, en part du PIB.
+
+        La somme des versements qui financent un droit que les scénarios
+        notionnels ne servent pas. C'est ce qu'il faudrait retirer des
+        ressources avant de lire leur coefficient d'équilibre.
+        """
+        return sum(self.transfert_part_pib(organisme.code, annee)
+                   for organisme in ORGANISMES if organisme.droit_supprime)
+
+    # -- fenêtre des transferts --------------------------------------------------
+    #
+    # Les quatre lignes ne commencent ni ne finissent la même année : les
+    # rapports à la CCSS ne détaillent l'Ircantec que depuis 2013, et le rapport
+    # de printemps qui arrête la dernière année ne porte pas les fiches des
+    # régimes complémentaires. La fenêtre commune est celle où les QUATRE sont
+    # connues, et elle se lit dans les séries.
+
+    @property
+    def premiere_annee_transferts(self) -> int:
+        return max(serie.premiere_annee for serie in self.transferts.values())
+
+    @property
+    def derniere_annee_transferts(self) -> int:
+        return min(serie.derniere_annee for serie in self.transferts.values())
+
+    def annees_transferts(self) -> list[int]:
+        return list(range(self.premiere_annee_transferts,
+                          self.derniere_annee_transferts + 1))
 
     def fiabilite(self, annee: int) -> Fiabilite:
         return min(self.depenses.fiabilite(annee), self.ressources.fiabilite(annee))

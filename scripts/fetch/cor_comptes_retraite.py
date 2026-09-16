@@ -45,6 +45,14 @@ assises sur des revenus ; ces parts-là disent quelle fraction des ressources
 actuelles porte ce nom, et donc ce qu'un coefficient d'équilibre supposerait
 de reconduire.
 
+Et une cinquième, depuis le rapport de 2023 seulement : la VENTILATION du
+poste « transferts d'organismes extérieurs » de la dernière année de chaque
+rapport — « dont CNAF », « dont Unédic », autres —, en milliards d'euros. Elle
+ne fait pas série à elle seule, quatre années au plus ; elle CONTRÔLE la série
+que ``ccss_transferts_retraite.py`` va chercher chez le producteur, et c'est
+pour cela qu'on la lit dans chaque rapport annuel encore en ligne, et non dans
+le seul dernier.
+
 POURQUOI LE SCRIPT CHERCHE LE RAPPORT AU LIEU DE L'ADRESSER
 ------------------------------------------------------------
 Le COR republie son rapport chaque année, sous une adresse neuve et des noms de
@@ -77,6 +85,25 @@ SORTIE = Path("data/brut/cor_comptes_retraite.json")
 
 #: Lien du rapport annuel sur la page d'accueil du COR.
 LIEN_RAPPORT = re.compile(r'href="(/rapports-du-cor/rapport-annuel[^"]*)"')
+
+#: La page qui liste tous les rapports du COR, et les rapports annuels qu'on y
+#: reconnaît à leur adresse — « évolutions et perspectives des retraites en
+#: France », depuis 2014.
+LISTE_RAPPORTS = RACINE_SITE + "/documents/rapports-du-cor?page={page}"
+LIEN_ANNUEL = re.compile(
+    r'href="(/rapports-du-cor/[^"]*evolutions-perspectives-retraites-france[^"]*)"'
+)
+
+#: Lignes de la ventilation des transferts, du libellé du COR au code du dépôt.
+#: Le tableau porte le total des ressources en dernière ligne, sous deux noms.
+LIGNES_VENTILATION: tuple[tuple[str, str], ...] = (
+    ("transferts", "transferts externes"),
+    ("cnaf", "dont cnaf"),
+    ("unedic", "dont unedic"),
+    ("autres", "autres transferts externes"),
+    ("total_ressources", "total ressources"),
+    ("total_ressources", "total financement"),
+)
 
 #: Classeurs de données attachés à la page du rapport.
 LIEN_CLASSEUR = re.compile(r'href="(/sites/default/files/[^"]+\.xlsx)"')
@@ -249,10 +276,92 @@ def blocs(adresses: list[str]) -> dict[str, list[dict]]:
     return trouves
 
 
+def pages_annuelles() -> list[str]:
+    """Les pages des rapports annuels, du plus récent au plus ancien.
+
+    L'ordre se lit dans l'adresse, qui porte l'année du rapport ; la liste du
+    site n'en garantit aucun.
+    """
+    pages: dict[str, None] = {}
+    for numero in range(8):
+        try:
+            html = _recuperer(LISTE_RAPPORTS.format(page=numero)).decode("utf-8", "replace")
+        except urllib.error.HTTPError:
+            break
+        liens = LIEN_ANNUEL.findall(html)
+        if not liens:
+            break
+        for lien in liens:
+            pages[RACINE_SITE + lien] = None
+
+    def annee(page: str) -> int:
+        m = re.search(r"(20\d\d)", page)
+        return int(m.group(1)) if m else 0
+
+    return sorted(pages, key=annee, reverse=True)
+
+
+def lire_ventilation(grille: dict) -> dict[str, float] | None:
+    """Les lignes de la ventilation des transferts, en millions d'euros.
+
+    Le tableau du COR est en milliards ; on le porte en millions, l'unité des
+    rapports à la CCSS avec lesquels ``verifier_donnees.py`` le confronte.
+    """
+    valeurs: dict[str, float] = {}
+    for (ligne, colonne), cellule in grille.items():
+        if colonne != 1 or not isinstance(cellule, str):
+            continue
+        plie = _sans_accents(cellule)
+        for code, attendu in LIGNES_VENTILATION:
+            if plie.startswith(attendu) and code not in valeurs:
+                montant = grille.get((ligne, 2))
+                if isinstance(montant, float):
+                    valeurs[code] = round(montant * 1000.0, 1)
+    if {"transferts", "cnaf", "unedic"} <= set(valeurs):
+        return valeurs
+    return None
+
+
+def ventilations(pages: list[str]) -> dict[str, dict[str, float]]:
+    """La ventilation des transferts de chaque rapport annuel qui la publie.
+
+    Les rapports sont pris du plus récent au plus ancien, et la lecture
+    s'arrête au premier qui ne porte pas le tableau : le COR ne le publie que
+    depuis 2023, et rien ne justifie de télécharger les classeurs des neuf
+    rapports d'avant pour le vérifier à chaque fois.
+    """
+    trouvees: dict[str, dict[str, float]] = {}
+    for page in pages:
+        annee_lue = None
+        for adresse in classeurs(page):
+            try:
+                classeur = feuilles(_recuperer(adresse))
+            except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
+                continue
+            for grille in classeur.values():
+                titre = grille.get((0, 0)) or grille.get((0, 1)) or ""
+                if not isinstance(titre, str):
+                    continue
+                m = re.search(r"systeme de retraite en (20\d\d)", _sans_accents(titre))
+                if not m or "structure" not in _sans_accents(titre):
+                    continue
+                valeurs = lire_ventilation(grille)
+                if valeurs:
+                    annee_lue = m.group(1)
+                    trouvees[annee_lue] = valeurs
+                    break
+            if annee_lue:
+                break
+        if annee_lue is None:
+            break
+    return trouvees
+
+
 def main() -> int:
     try:
         page = page_du_rapport()
         lus = blocs(classeurs(page))
+        ventilation = ventilations(pages_annuelles())
     except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
         print(f"COR indisponible : {erreur}", file=sys.stderr)
         return 1
@@ -275,6 +384,9 @@ def main() -> int:
             serie["intitule"]: serie["valeurs"] for serie in lus["structure"]
             if serie["intitule"]
         },
+        # En MILLIONS d'euros, contrairement au reste : c'est un contrôle de la
+        # série des rapports à la CCSS, qui sont écrits dans cette unité.
+        "ventilation_transferts": ventilation,
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
@@ -288,6 +400,7 @@ def main() -> int:
     print(f"Observé : {min(observe)}-{max(observe)} ; "
           f"projeté : {min(projete)}-{max(projete)}")
     print(f"Structure des ressources : {len(charge['structure'])} postes")
+    print(f"Ventilation des transferts : {', '.join(sorted(ventilation)) or 'aucune'}")
     return 0
 
 

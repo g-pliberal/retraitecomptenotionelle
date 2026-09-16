@@ -41,8 +41,11 @@ from retraite_notionnelle.donnees.depenses import (
 )
 from retraite_notionnelle.donnees.equilibre import (
     CODES_POSTES,
+    CODES_TRANSFERTS,
     GROUPES,
+    ORGANISMES,
     POSTES,
+    POSTES_TRANSFERTS,
     ComptesRetraite,
 )
 from retraite_notionnelle.donnees.population import Population
@@ -859,6 +862,89 @@ def test_la_ventilation_couvre_moins_d_annees_que_le_total(comptes: ComptesRetra
     # La ventilation est observée, jamais projetée : le COR ne publie pas la
     # structure de ressources qu'il projette.
     assert comptes.derniere_annee_ventilee <= comptes.derniere_annee_observee
+
+
+def test_les_postes_de_transfert_couvrent_la_serie():
+    """Les codes du modèle et ceux qu'écrit le vérificateur ne peuvent pas diverger."""
+    chemin = RACINE_DONNEES / "reference" / "macro" / "transferts_retraite.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        codes = {ligne["poste"] for ligne in csv.DictReader(lignes)}
+    assert codes == set(CODES_TRANSFERTS)
+    assert len(CODES_TRANSFERTS) == len(set(CODES_TRANSFERTS))
+    # Chaque ligne a un payeur, et chaque payeur a au moins une ligne.
+    organismes = {organisme.code for organisme in ORGANISMES}
+    assert {poste.organisme for poste in POSTES_TRANSFERTS} == organismes
+
+
+def test_la_branche_famille_verse_dix_milliards(comptes: ComptesRetraite):
+    """L'ordre de grandeur que la page doit pouvoir dire, et qui borne le coefficient.
+
+    La CNAF verse une dizaine de milliards par an — AVPF et majorations, à
+    parts presque égales —, l'Unédic trois à quatre. Ensemble, un demi-point
+    de PIB que les scénarios notionnels comptent sans servir les droits que
+    cela paie.
+    """
+    annee = comptes.derniere_annee_transferts
+    assert 9_000 < comptes.transfert_organisme("famille", annee) < 13_000
+    assert 2_500 < comptes.transfert_organisme("chomage", annee) < 5_000
+    avpf = comptes.transfert("cnaf_avpf", annee)
+    majorations = comptes.transfert("cnaf_majorations", annee)
+    assert 0.7 < avpf / majorations < 1.3
+    assert 0.004 < comptes.transfert_supprime_part_pib(annee) < 0.007
+    # Les deux caisses ont un droit supprimé : la recette suit le droit.
+    assert all(organisme.droit_supprime for organisme in ORGANISMES)
+
+
+def test_les_deux_caisses_n_expliquent_pas_tout_le_poste_transferts(
+        comptes: ComptesRetraite):
+    """La ventilation est une partie du poste, jamais plus, et plus de la moitié.
+
+    Le poste « transferts » du COR contient aussi l'assurance maladie, l'État
+    et quelques versements plus petits : la branche famille et l'assurance
+    chômage doivent en expliquer l'essentiel sans le dépasser. Un dépassement
+    dirait que les deux séries n'ont plus le même périmètre.
+    """
+    for annee in comptes.annees_transferts():
+        if annee > comptes.derniere_annee_ventilee:
+            continue
+        ventilee = sum(comptes.transfert_part_ressources(o.code, annee)
+                       for o in ORGANISMES)
+        poste = comptes.part("transferts", annee)
+        assert 0.5 * poste < ventilee < poste, annee
+
+
+def test_la_ventilation_recoupe_le_dont_du_cor(comptes: ComptesRetraite):
+    """Ce que le COR publie depuis 2023 doit se retrouver, chez celui qui paie.
+
+    Le « dont Unédic » du COR est exactement la somme des lignes Agirc-Arrco et
+    Ircantec des rapports à la CCSS ; son « dont CNAF » s'écarte de quelques
+    pour cent de ce que la CNAF déclare verser, dans un sens ou dans l'autre —
+    consolidé du côté des régimes qui reçoivent. Les valeurs sont celles des
+    tableaux 2.2 des rapports annuels de 2023 à 2025, en millions d'euros, et
+    figées ici : ``data/brut/`` n'est pas versionné.
+    """
+    publie = {
+        2022: (9961.8, 3346.5),
+        2023: (10290.1, 3730.3),
+        2024: (11300.7, 3949.2),
+    }
+    for annee, (cnaf, unedic) in publie.items():
+        assert comptes.transfert_organisme("chomage", annee) == pytest.approx(
+            unedic, rel=0.005), annee
+        assert comptes.transfert_organisme("famille", annee) == pytest.approx(
+            cnaf, rel=0.05), annee
+
+
+def test_la_fenetre_des_transferts_est_observee(comptes: ComptesRetraite):
+    """Les quatre lignes se lisent sur des années arrêtées, jamais projetées."""
+    assert comptes.premiere_annee_transferts >= comptes.premiere_annee_ventilee
+    assert comptes.derniere_annee_transferts <= comptes.derniere_annee_observee
+    assert comptes.annees_transferts()[0] == comptes.premiere_annee_transferts
+    assert comptes.annees_transferts()[-1] == comptes.derniere_annee_transferts
+    # Dix ans au moins : sans série, la part constante que la page reporte à
+    # l'horizon du COR ne serait qu'un chiffre.
+    assert len(comptes.annees_transferts()) >= 10
 
 
 def test_le_bilan_se_dit_aussi_en_euros(cout: Cout):

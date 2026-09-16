@@ -1,0 +1,83 @@
+# Ce que la branche famille et l'assurance chômage versent à la retraite
+# source_id: dss_ccss_transferts_retraite
+# unite: millions d'euros courants de l'année
+# fiabilite:
+#   haute (2011-…) : comptes arrêtés, lus dans les rapports à la
+#             Commission des comptes de la Sécurité sociale — fiche de
+#             la CNAF (AVPF, majorations pour enfants), fiches de
+#             l'Agirc-Arrco et de l'Ircantec (points des chômeurs payés
+#             par l'Unédic) —, recontrôlés par scripts/verifier_donnees.py
+#             contre le rapport de l'année suivante, et confrontés au
+#             « dont CNAF, dont Unédic » du COR là où il existe.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# Le poste « transferts d'organismes extérieurs » du compte du système
+# de retraite est un agrégat. Cette série le ventile par celui qui paie :
+# la CNAF finance les droits liés aux enfants — cotisations d'assurance
+# vieillesse des parents au foyer, majorations de pension pour trois
+# enfants —, l'Unédic les points de retraite complémentaire des
+# chômeurs. Le compte notionnel du dépôt SUPPRIME les droits que la
+# CNAF finance ; il ne peut pas compter comme acquise la recette qui
+# les paie, et c'est ici qu'on lit ce qu'elle vaut.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,poste,montant_meur,fiabilite
+2010,unedic_agirc_arrco,2846.0,haute
+2011,cnaf_avpf,4432.0,haute
+2011,cnaf_majorations,4381.0,haute
+2011,unedic_agirc_arrco,2505.0,haute
+2012,cnaf_avpf,4516.0,haute
+2012,cnaf_majorations,4498.0,haute
+2012,unedic_agirc_arrco,2885.0,haute
+2013,cnaf_avpf,4866.0,haute
+2013,cnaf_majorations,4605.0,haute
+2013,unedic_agirc_arrco,3007.0,haute
+2013,unedic_ircantec,147.0,haute
+2014,cnaf_avpf,4910.9,haute
+2014,cnaf_majorations,4660.5,haute
+2014,unedic_agirc_arrco,3092.0,haute
+2014,unedic_ircantec,117.0,haute
+2015,cnaf_avpf,5077.0,haute
+2015,cnaf_majorations,4704.0,haute
+2015,unedic_agirc_arrco,3255.0,haute
+2015,unedic_ircantec,107.0,haute
+2016,cnaf_avpf,5068.0,haute
+2016,cnaf_majorations,4746.0,haute
+2016,unedic_agirc_arrco,3259.0,haute
+2016,unedic_ircantec,117.0,haute
+2017,cnaf_avpf,5092.0,haute
+2017,cnaf_majorations,4778.0,haute
+2017,unedic_agirc_arrco,3326.0,haute
+2017,unedic_ircantec,143.0,haute
+2018,cnaf_avpf,5006.0,haute
+2018,cnaf_majorations,4864.0,haute
+2018,unedic_agirc_arrco,3322.0,haute
+2018,unedic_ircantec,131.0,haute
+2019,cnaf_avpf,4992.0,haute
+2019,cnaf_majorations,4927.0,haute
+2019,unedic_agirc_arrco,3387.0,haute
+2019,unedic_ircantec,132.0,haute
+2020,cnaf_avpf,4947.0,haute
+2020,cnaf_majorations,4994.0,haute
+2020,unedic_agirc_arrco,3971.0,haute
+2020,unedic_ircantec,137.0,haute
+2021,cnaf_avpf,4929.0,haute
+2021,cnaf_majorations,5041.0,haute
+2021,unedic_agirc_arrco,4318.0,haute
+2021,unedic_ircantec,110.0,haute
+2022,cnaf_avpf,5002.0,haute
+2022,cnaf_majorations,5238.0,haute
+2022,unedic_agirc_arrco,3266.0,haute
+2022,unedic_ircantec,80.0,haute
+2023,cnaf_avpf,4984.0,haute
+2023,cnaf_majorations,5441.0,haute
+2023,unedic_agirc_arrco,3630.0,haute
+2023,unedic_ircantec,100.0,haute
+2024,cnaf_avpf,5096.0,haute
+2024,cnaf_majorations,5768.0,haute
+2024,unedic_agirc_arrco,3840.0,haute
+2024,unedic_ircantec,109.0,haute
+2025,cnaf_avpf,5040.0,haute
+2025,cnaf_majorations,5945.0,haute

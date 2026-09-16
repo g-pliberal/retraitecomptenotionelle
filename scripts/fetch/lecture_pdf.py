@@ -67,6 +67,11 @@ def _cmap(contenu: bytes) -> dict[int, str]:
         ):
             premier = int(dst, 16)
             for i, code in enumerate(range(int(debut, 16), int(fin, 16) + 1)):
+                # Une destination hors du plan Unicode — les rapports à la CCSS
+                # en portent, dans des plages que rien n'utilise — ne doit pas
+                # faire tomber la lecture de tout le document.
+                if premier + i > 0x10FFFF:
+                    break
                 table[code] = chr(premier + i)
     return table
 
@@ -187,15 +192,26 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
     courante: list[str] = []
     ordonnee = None
     feuille = None
-    for page, y, _, morceau in fragments:
+    abscisse = None
+    for page, y, x, morceau in fragments:
         meme_ligne = (ordonnee is not None and page == feuille
                       and abs(y - ordonnee) <= tolerance)
         if meme_ligne or ordonnee is None:
+            # DEUX FRAGMENTS POSÉS À DES ABSCISSES DIFFÉRENTES SONT SÉPARÉS
+            # PAR UNE ESPACE. Word n'écrit pas les espaces d'un tableau : il
+            # pose chaque cellule, et souvent chaque mot, par son propre
+            # ``Tm``. Les coller rendait « Prise en charge de cotisations »
+            # comme « Priseenchargedecotisations », et surtout « 4 929 5 002 »
+            # comme « 49295002 » — un nombre qui n'existe pas. Les glyphes
+            # d'un même tableau ``TJ``, eux, gardent la même abscisse et
+            # restent collés : « 2023 » ne devient pas « 2 0 2 3 ».
+            if meme_ligne and abscisse is not None and abs(x - abscisse) > 0.01:
+                courante.append(" ")
             courante.append(morceau)
         else:
             lignes.append(re.sub(r"\s+", " ", "".join(courante)).strip())
             courante = [morceau]
-        ordonnee, feuille = y, page
+        ordonnee, feuille, abscisse = y, page, x
     if courante:
         lignes.append(re.sub(r"\s+", " ", "".join(courante)).strip())
     return [l for l in lignes if l]

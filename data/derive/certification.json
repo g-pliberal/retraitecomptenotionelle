@@ -1,5 +1,5 @@
 {
- "certifie_le": "2026-09-15",
+ "certifie_le": "2026-09-16",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -52,21 +52,21 @@
    "valeurs": 76
   },
   "comptes_retraite": {
-   "ajoutees": 48,
+   "ajoutees": 0,
    "colonne": "part_pib",
    "corrigees": 0,
    "empreinte": "ec20cca8112cb3b5",
-   "identiques": 0,
+   "identiques": 48,
    "niveau": "haute",
    "source": "COR, rapport annuel, comptes du système de retraite (rapports à la CCSS consolidés)",
    "valeurs": 48
   },
   "comptes_retraite_projetes": {
-   "ajoutees": 90,
+   "ajoutees": 0,
    "colonne": "part_pib",
    "corrigees": 0,
    "empreinte": "c44a6b03a69ad80a",
-   "identiques": 0,
+   "identiques": 90,
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 90
@@ -612,11 +612,11 @@
    "valeurs": 20
   },
   "structure_ressources_retraite": {
-   "ajoutees": 132,
+   "ajoutees": 0,
    "colonne": "part",
    "corrigees": 0,
    "empreinte": "22f206f06f991dc0",
-   "identiques": 0,
+   "identiques": 132,
    "niveau": "haute",
    "source": "COR, rapport annuel, structure des ressources du système de retraite",
    "valeurs": 132
@@ -660,6 +660,16 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale D. 242-4 et décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444",
    "valeurs": 368
+  },
+  "transferts_retraite": {
+   "ajoutees": 57,
+   "colonne": "montant_meur",
+   "corrigees": 0,
+   "empreinte": "2579bef08d9699f2",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "rapports à la Commission des comptes de la Sécurité sociale, fiches CNAF, Agirc-Arrco et Ircantec",
+   "valeurs": 57
   },
   "valeurs_point": {
    "ajoutees": 0,

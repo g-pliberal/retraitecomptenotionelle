@@ -45,7 +45,7 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     journal_certification,
 )
 from retraite_notionnelle.donnees.depenses import SYSTEMES  # noqa: E402
-from retraite_notionnelle.donnees.equilibre import POSTES  # noqa: E402
+from retraite_notionnelle.donnees.equilibre import POSTES, POSTES_TRANSFERTS  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
@@ -76,7 +76,7 @@ STYLE = RACINE / "moteur" / "style.css"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 11
+VERSION = 12
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -174,6 +174,12 @@ def _comptes_retraite() -> dict:
         series[poste.code] = charger_serie_annuelle(
             macro / "structure_ressources_retraite.csv", "part",
             nom=f"structure_{poste.code}", filtre={"poste": poste.code})
+    # Ce que la branche famille et l'assurance chômage versent, en millions
+    # d'euros : la ventilation du poste « transferts », lue chez celui qui paie.
+    for poste in POSTES_TRANSFERTS:
+        series[f"transferts_{poste.code}"] = charger_serie_annuelle(
+            macro / "transferts_retraite.csv", "montant_meur",
+            nom=f"transferts_{poste.code}", filtre={"poste": poste.code})
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
 
 
