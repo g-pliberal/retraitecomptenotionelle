@@ -144,12 +144,40 @@ export function franciser(texte) {
     .replace(AVANT_POURCENT, `$1${FINE}%`);
 }
 
-export function champ(nom, libelle, valeur, aide = "", type = "text", attributs = {}) {
+/**
+ * Un complément d'information, sous un point d'interrogation.
+ *
+ * Même mécanique que `mot` — un bouton, une bulle, le basculement en écoute
+ * déléguée dans `index.html` —, mais l'ancre n'est pas un mot de la phrase :
+ * c'est un appel, posé après un titre ou un libellé de champ. Ce qui est
+ * nécessaire pour remplir un champ ou lire un chiffre reste écrit ; ce qui
+ * explique, nuance ou justifie tient ici, et ne s'ouvre que si on le demande.
+ *
+ * `sujet` nomme le bouton pour qui ne voit pas le point d'interrogation : c'est
+ * son seul nom accessible. `texte` est du HTML, mais du HTML de PHRASE — la
+ * bulle est un `<span>`, où un `<p>` ne serait pas valide.
+ */
+export function bulle(sujet, texte) {
+  return '<span class="mot"><button type="button" class="terme appel" '
+    + `aria-expanded="false" aria-label="${echapper(sujet)}">?</button>`
+    + `<span class="bulle" role="note" hidden>${texte}</span></span>`;
+}
+
+/**
+ * Un champ, son libellé, son aide courte et, s'il en faut, sa bulle.
+ *
+ * `aide` tient en une ligne sous le libellé : c'est ce qu'il faut savoir pour
+ * remplir le champ. `complement` est tout le reste — la raison, la nuance, la
+ * source —, qui s'ouvre sous un point d'interrogation.
+ */
+export function champ(nom, libelle, valeur, aide = "", type = "text", attributs = {},
+  complement = "") {
   const supplement = Object.entries(attributs)
     .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
     .join("");
   const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
-  return `<div><label for="${nom}">${echapper(libelle)}${aideHtml}</label>`
+  const appel = complement ? bulle(`${libelle} : en savoir plus`, complement) : "";
+  return `<div><label for="${nom}">${echapper(libelle)}${appel}${aideHtml}</label>`
     + `<input type="${type}" id="${nom}" name="${nom}" `
     + `value="${echapper(valeur)}"${supplement}></div>`;
 }
@@ -173,17 +201,19 @@ export function champ(nom, libelle, valeur, aide = "", type = "text", attributs 
  * à chaque frappe par le script de la page ; `aria-describedby` le rattache au
  * champ, faute de quoi il ne serait lu par personne.
  */
-export function champDate(nom, libelle, valeur, aide = "", calcul = "", attributs = {}) {
+export function champDate(nom, libelle, valeur, aide = "", calcul = "", attributs = {},
+  complement = "") {
   const supplement = Object.entries(attributs)
     .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
     .join("");
   const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
+  const appel = complement ? bulle(`${libelle} : en savoir plus`, complement) : "";
   const decrit = calcul ? ` aria-describedby="${nom}-calcul"` : "";
   const calculHtml = calcul
     ? `<span class="calcul" id="${nom}-calcul" aria-live="polite">`
       + `${echapper(calcul)}</span>`
     : "";
-  return `<div><label for="${nom}">${echapper(libelle)}${aideHtml}</label>`
+  return `<div><label for="${nom}">${echapper(libelle)}${appel}${aideHtml}</label>`
     + `<input type="date" id="${nom}" name="${nom}" `
     + `value="${echapper(valeur)}"${decrit}${supplement}>${calculHtml}</div>`;
 }
@@ -226,7 +256,8 @@ export function cache(nom, valeur) {
  * le statut par défaut sans que rien ne le dise. Le refus, lui, se fait au
  * calcul.
  */
-export function liste(nom, libelle, options, selection, aide = "", attributs = {}) {
+export function liste(nom, libelle, options, selection, aide = "", attributs = {},
+  complement = "") {
   const supplement = Object.entries(attributs)
     .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
     .join("");
@@ -243,7 +274,8 @@ export function liste(nom, libelle, options, selection, aide = "", attributs = {
       + `>${echapper(texte)}</option>`;
   }).join("");
   const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
-  return `<div><label for="${nom}">${echapper(libelle)}${aideHtml}</label>`
+  const appel = complement ? bulle(`${libelle} : en savoir plus`, complement) : "";
+  return `<div><label for="${nom}">${echapper(libelle)}${appel}${aideHtml}</label>`
     + `<select id="${nom}" name="${nom}"${supplement}>${choix}</select></div>`;
 }
 

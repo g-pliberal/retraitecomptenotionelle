@@ -394,8 +394,20 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
   border-bottom: 1px dotted var(--accent); border-radius: 0;
   padding: 0; margin: 0; cursor: help;
 }
+/* L'appel d'une bulle : un point d'interrogation, et non un mot souligné. Il
+   suit un titre ou un libellé de champ, et ouvre ce qui n'est nécessaire ni
+   pour remplir le formulaire, ni pour lire un résultat. La cible tactile fait
+   au moins 24 px de côté (WCAG 2.5.8), marge comprise. */
+.mot > .terme.appel {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.25em; height: 1.25em; margin-left: 0.3em; padding: 0.2em;
+  box-sizing: content-box; font-size: 0.85em; line-height: 1;
+  color: var(--texte-doux);
+  border: 1px solid currentColor; border-radius: 50%;
+}
 .mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--accent); }
 .mot > .terme[aria-expanded="true"] { border-bottom-style: solid; }
+.mot > .terme.appel[aria-expanded="true"] { border-style: solid; }
 .mot > .bulle {
   display: block; position: absolute; left: 0; top: calc(100% + 0.4rem);
   z-index: 5; width: max(14rem, min(22rem, 70vw));
@@ -782,21 +794,28 @@ def franciser(texte: str) -> str:
 
 
 def champ(nom: str, libelle: str, valeur: str, aide: str = "",
-          type_: str = "text", **attributs: str) -> str:
+          type_: str = "text", complement: str = "", **attributs: str) -> str:
+    """Un champ, son libellé, son aide courte et, s'il en faut, sa bulle.
+
+    ``aide`` tient en une ligne sous le libellé : c'est ce qu'il faut savoir
+    pour remplir le champ. ``complement`` est tout le reste — la raison, la
+    nuance, la source —, qui s'ouvre sous un point d'interrogation.
+    """
     supplement = "".join(
         f' {cle.rstrip("_").replace("_", "-")}="{escape(str(val))}"'
         for cle, val in attributs.items()
     )
     aide_html = f'<span class="aide">{escape(aide)}</span>' if aide else ""
+    appel = bulle(f"{libelle} : en savoir plus", complement) if complement else ""
     return (
-        f'<div><label for="{nom}">{escape(libelle)}{aide_html}</label>'
+        f'<div><label for="{nom}">{escape(libelle)}{appel}{aide_html}</label>'
         f'<input type="{type_}" id="{nom}" name="{nom}" '
         f'value="{escape(str(valeur))}"{supplement}></div>'
     )
 
 
 def champ_date(nom: str, libelle: str, valeur: str, aide: str = "",
-               calcul: str = "", **attributs: str) -> str:
+               calcul: str = "", complement: str = "", **attributs: str) -> str:
     """Une date, saisie au calendrier du navigateur.
 
     ``type="date"`` et non ``type="month"`` : le modèle ne descend pas sous le
@@ -820,13 +839,14 @@ def champ_date(nom: str, libelle: str, valeur: str, aide: str = "",
         for cle, val in attributs.items()
     )
     aide_html = f'<span class="aide">{escape(aide)}</span>' if aide else ""
+    appel = bulle(f"{libelle} : en savoir plus", complement) if complement else ""
     decrit = f' aria-describedby="{nom}-calcul"' if calcul else ""
     calcul_html = (
         f'<span class="calcul" id="{nom}-calcul" aria-live="polite">'
         f"{escape(calcul)}</span>" if calcul else ""
     )
     return (
-        f'<div><label for="{nom}">{escape(libelle)}{aide_html}</label>'
+        f'<div><label for="{nom}">{escape(libelle)}{appel}{aide_html}</label>'
         f'<input type="date" id="{nom}" name="{nom}" '
         f'value="{escape(str(valeur))}"{decrit}{supplement}>{calcul_html}</div>'
     )
@@ -864,7 +884,8 @@ def cache(nom: str, valeur: str) -> str:
 
 
 def liste(nom: str, libelle: str, options: list[tuple],
-          selection: str, aide: str = "", **attributs: str) -> str:
+          selection: str, aide: str = "", complement: str = "",
+          **attributs: str) -> str:
     """Un menu déroulant.
 
     Une option est ``(code, texte)``, ou ``(code, texte, disponible)``, ou
@@ -895,8 +916,9 @@ def liste(nom: str, libelle: str, options: list[tuple],
         )
     choix = "".join(choix)
     aide_html = f'<span class="aide">{escape(aide)}</span>' if aide else ""
+    appel = bulle(f"{libelle} : en savoir plus", complement) if complement else ""
     return (
-        f'<div><label for="{nom}">{escape(libelle)}{aide_html}</label>'
+        f'<div><label for="{nom}">{escape(libelle)}{appel}{aide_html}</label>'
         f'<select id="{nom}" name="{nom}"{supplement}>{choix}</select></div>'
     )
 
@@ -1026,6 +1048,26 @@ def mot(terme: str, definition: str) -> str:
         f'<span class="mot"><button type="button" class="terme" '
         f'aria-expanded="false">{escape(terme)}</button>'
         f'<span class="bulle" role="note" hidden>{escape(definition)}</span></span>'
+    )
+
+
+def bulle(sujet: str, texte: str) -> str:
+    """Un complément d'information, sous un point d'interrogation.
+
+    Même mécanique que :func:`mot` — un bouton, une bulle, le basculement en
+    écoute déléguée dans ``index.html`` —, mais l'ancre n'est pas un mot de la
+    phrase : c'est un appel, posé après un titre ou un libellé de champ. Ce qui
+    est nécessaire pour remplir un champ ou lire un chiffre reste écrit ; ce qui
+    explique, nuance ou justifie tient ici, et ne s'ouvre que si on le demande.
+
+    ``sujet`` nomme le bouton pour qui ne voit pas le point d'interrogation :
+    c'est son seul nom accessible. ``texte`` est du HTML, mais du HTML de
+    PHRASE — la bulle est un ``<span>``, où un ``<p>`` ne serait pas valide.
+    """
+    return (
+        f'<span class="mot"><button type="button" class="terme appel" '
+        f'aria-expanded="false" aria-label="{escape(sujet)}">?</button>'
+        f'<span class="bulle" role="note" hidden>{texte}</span></span>'
     )
 
 
