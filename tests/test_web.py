@@ -3098,6 +3098,78 @@ def _hors_depliants(corps: str) -> str:
     return "".join(morceaux)
 
 
+#: Ce que chaque page peut imposer à qui l'ouvre : mots à traverser, tracés
+#: ouverts, tableaux ouverts. Les bornes sont celles de la refonte, arrondies
+#: vers le haut d'environ un tiers : elles n'interdisent pas d'écrire, elles
+#: interdisent de revenir à une page qu'on ne lit pas.
+#:
+#: Deux pages échappent à la règle des mots, et pour des raisons opposées.
+#: « /simuler » EST un formulaire : ce qu'on y compte est fait de libellés de
+#: champs et de deux cents options de menus, que personne ne lit à la suite.
+#: « /mentions » est une page légale : ses informations doivent être lisibles
+#: sans qu'on ait à déplier quoi que ce soit, et la replier serait la cacher.
+BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
+    "/": (650, 0, 1),
+    "/simuler": (1500, 0, 0),
+    "/cas-types": (650, 0, 1),
+    "/cout": (700, 2, 0),
+    "/methode": (500, 0, 1),
+    "/donnees": (250, 0, 0),
+    "/mentions": (1400, 0, 0),
+}
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_aucune_page_ne_depasse_son_budget_de_lecture(contexte, chemin):
+    """Le temps du lecteur n'est pas gratuit, et le site le dépensait.
+
+    Les six pages alignaient de mille à six mille mots dépliés, seize tableaux
+    et sept graphiques, sans qu'aucune ne dise par où commencer. Tout ce
+    qu'elles doivent pouvoir justifier est toujours là — rien n'a été retiré —,
+    mais replié : une pile de titres qui se parcourt du regard, et qui s'ouvre
+    là où l'on veut savoir.
+
+    Ce test tient la discipline page par page. Il ne dit pas quoi écrire ; il
+    dit combien on peut en imposer avant que le lecteur ait choisi de lire.
+    """
+    mots_max, traces_max, tableaux_max = BUDGETS_DE_LECTURE[chemin]
+    visible = _hors_depliants(rendre(contexte, chemin, {})[1])
+
+    mots = len(re.sub(r"<[^>]+>", " ", visible).split())
+    assert mots <= mots_max, (
+        f"{chemin} : {mots} mots à traverser avant d'avoir rien déplié, "
+        f"{mots_max} au plus"
+    )
+    traces = visible.count('<figure class="graphique"')
+    assert traces <= traces_max, f"{chemin} : {traces} graphiques ouverts"
+    tableaux = visible.count("<table")
+    assert tableaux <= tableaux_max, f"{chemin} : {tableaux} tableaux ouverts"
+
+
+@pytest.mark.parametrize("chemin", ["/", "/cas-types", "/cout", "/methode",
+                                    "/donnees"])
+def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
+    """Replier n'est pas supprimer : ce qui sort du chemin doit y être rangé.
+
+    Une page qui tiendrait son budget de lecture en ayant simplement perdu la
+    moitié de son contenu passerait le test précédent. Celui-ci vérifie
+    l'autre moitié du marché : le détail est là, dans des sections nommées, et
+    il pèse plus que ce qui reste ouvert.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    sections = corps.count('<details class="section">')
+    assert sections >= 3, f"{chemin} : {sections} sections repliées"
+    visible = _hors_depliants(corps)
+    assert len(visible) < len(corps) / 2, (
+        f"{chemin} : le détail replié pèse moins que ce qui reste ouvert"
+    )
+    # Et chaque section porte un titre qui dit ce qu'elle contient : c'est lui
+    # qui tient lieu de sommaire.
+    for titre in re.findall(r'<details class="section"><summary>(.*?)</summary>',
+                            corps):
+        assert len(titre.split()) >= 3, f"{chemin} : section mal nommée — {titre}"
+
+
 def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
     """Le temps du lecteur n'est pas gratuit, et cette page le dépensait.
 

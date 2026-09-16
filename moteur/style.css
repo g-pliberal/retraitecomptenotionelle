@@ -263,6 +263,11 @@ th:first-child, td:first-child { text-align: left; }
 thead th { font-size: 0.82rem; color: var(--texte-doux); font-weight: 600; }
 tbody tr:last-child td { border-bottom: none; }
 td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
+/* Une colonne de PHRASES, et non de nombres : elle se lit alignée à gauche,
+   comme tout texte. Les cellules d'un tableau sont alignées à droite par
+   défaut, ce qui convient aux chiffres qu'on compare colonne par colonne, et
+   pas du tout à « des trimestres, et 72 barèmes différents ». */
+td.texte, th.texte { text-align: left; }
 .scenario { margin: 1.4rem 0; }
 /* Le bloc des montants passe sous l'intitulé D'UN SEUL TENANT quand la place
    manque : c'est l'entête qui se replie, pas le montant. Depuis que les sommes
@@ -318,6 +323,15 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
   order: 1; font-size: 0.86rem; margin-bottom: 0.25rem;
 }
 .fiches.reperes .fiche .precision { order: 3; margin-top: 0.35rem; }
+/* Quelques idées, une par bloc. Elles se lisent côte à côte, de même poids :
+   c'est ce qui les distingue d'une liste, où la première l'emporte. */
+.points { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+          gap: 1rem; margin: 1.5rem 0; }
+.points .point { background: var(--fond-carte); border: 1px solid var(--trait);
+                 border-radius: 8px; padding: 1rem 1.1rem; }
+.points .point > h3 { margin: 0 0 0.3rem; font-size: 1rem; }
+.points .point > p { margin: 0; font-size: 0.95rem; color: var(--texte-doux); }
+
 /* Une question, sa réponse, le tracé qui la montre. Encadrée pour se découper :
    une capture de ce bloc se comprend hors du site. */
 section.cle {
