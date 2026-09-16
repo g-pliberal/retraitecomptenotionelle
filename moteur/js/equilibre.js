@@ -89,6 +89,56 @@ export const POSTES = [
 
 export const CODES_POSTES = POSTES.map((poste) => poste.code);
 
+/**
+ * Les quatre groupes de postes, dits dans les mots de tout le monde.
+ *
+ * Les six postes du COR sont ceux d'un comptable. « Contribution d'équilibre de
+ * l'État », « impôts et taxes affectés », « transferts d'organismes extérieurs »
+ * ne disent rien à qui n'a pas fait d'économie, et un graphique à six bandes est
+ * de toute façon illisible. Quatre groupes suffisent à porter la seule chose que
+ * cette ventilation a à dire : les trois quarts de l'argent viennent des
+ * salaires, le reste vient d'ailleurs. L'ordre est celui des bandes du
+ * graphique, de bas en haut : le socle des salaires d'abord.
+ */
+export const GROUPES = [
+  {
+    code: "salaires",
+    libelle: "Cotisations sur les salaires",
+    explication: "Prélevées sur chaque fiche de paie, une part par le salarié, "
+      + "une part par l'employeur. C'est la seule ressource qu'un compte "
+      + "notionnel sache porter au crédit de quelqu'un.",
+    postes: ["cotisations", "contribution_equilibre_etat"],
+    couleur: "var(--serie-5)",
+  },
+  {
+    code: "impots",
+    libelle: "Impôts",
+    explication: "CSG, TVA, taxe sur les salaires. L'État a allégé les "
+      + "cotisations des employeurs pour baisser le coût du travail, puis "
+      + "remboursé la retraite par l'impôt.",
+    postes: ["impots_et_taxes"],
+    couleur: "var(--serie-6)",
+  },
+  {
+    code: "transferts",
+    libelle: "Versements d'autres caisses",
+    explication: "La branche famille paie les droits liés aux enfants, "
+      + "l'assurance chômage ceux des périodes sans emploi : des droits acquis "
+      + "sans cotisation de l'assuré, que quelqu'un paie quand même.",
+    postes: ["transferts"],
+    couleur: "var(--serie-7)",
+  },
+  {
+    code: "reste",
+    libelle: "Le reste",
+    explication: "Ce que l'État comble à la SNCF, aux mines, aux marins — des "
+      + "régimes dont les cotisants ont disparu avant les retraités —, plus les "
+      + "produits financiers et les recettes diverses des caisses.",
+    postes: ["subventions_equilibre", "autres_produits"],
+    couleur: "var(--serie-9)",
+  },
+];
+
 /** Le compte du système de retraite : dépenses, ressources, solde, structure. */
 export class ComptesRetraite {
   constructor(paquet) {
@@ -151,6 +201,43 @@ export class ComptesRetraite {
       if (poste.contributive) somme += this.part(poste.code, annee);
     }
     return somme;
+  }
+
+  /** Part d'un groupe de postes dans les ressources de l'année. */
+  partGroupe(code, annee) {
+    const groupe = GROUPES.find((entree) => entree.code === code);
+    let somme = 0;
+    for (const poste of groupe.postes) somme += this.part(poste, annee);
+    return somme;
+  }
+
+  /**
+   * Ce qu'un groupe rapporte, en part du PIB.
+   *
+   * C'est la grandeur que le graphique empile : les parts d'un même total ne se
+   * lisent qu'en pourcentages les unes des autres, alors que les parts de PIB se
+   * lisent aussi dans le temps — et c'est le temps qui dit que l'impôt a doublé
+   * pendant que les cotisations ne bougeaient pas.
+   */
+  ressourceGroupe(code, annee) {
+    return this.partGroupe(code, annee) * this.ressource(annee);
+  }
+
+  /**
+   * Les années où la VENTILATION est publiée. Le total des ressources remonte
+   * plus haut et va plus loin ; les deux bornes se lisent donc dans les séries,
+   * jamais dans une constante écrite ici.
+   */
+  anneesVentilees() {
+    let premiere = -Infinity;
+    let derniere = Infinity;
+    for (const serie of this.structure.values()) {
+      if (serie.premiereAnnee > premiere) premiere = serie.premiereAnnee;
+      if (serie.derniereAnnee < derniere) derniere = serie.derniereAnnee;
+    }
+    const liste = [];
+    for (let a = premiere; a <= derniere; a += 1) liste.push(a);
+    return liste;
   }
 
   fiabilite(annee) {

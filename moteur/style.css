@@ -185,6 +185,19 @@ button {
   border: 1px solid var(--accent); border-radius: 4px;
 }
 button:hover { opacity: 0.9; }
+/* Un lien qui a le poids d'un bouton : il ouvre le simulateur, c'est-à-dire
+   la seule chose que la page Coût invite à faire. Il reste un lien — il mène à
+   une autre adresse, se copie et s'ouvre dans un onglet —, seul son habit
+   change. */
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1.4rem; align-items: center;
+           margin: 1.1rem 0 0; }
+a.bouton {
+  display: inline-block; text-decoration: none;
+  color: var(--fond-carte); background: var(--accent);
+  border: 1px solid var(--accent); border-radius: 4px;
+  padding: 0.55rem 1.4rem; font-size: 0.98rem;
+}
+a.bouton:hover { opacity: 0.9; }
 /* Les métiers de la carrière : une boîte par métier, la dernière en pointillé
    parce qu'elle n'en décrit encore aucun — c'est celle qui sert à en ajouter. */
 .metiers { display: grid; gap: 0.9rem; margin: 0.9rem 0 0; }
@@ -205,6 +218,33 @@ details { margin-top: 1.25rem; }
 summary { cursor: pointer; color: var(--texte-doux); font-size: 0.92rem; }
 summary:hover { color: var(--accent); }
 details > .grille { margin-top: 1rem; }
+/* Une section repliée. Son titre a le poids d'un intertitre, parce qu'il en
+   tient lieu : c'est lui qu'on parcourt pour savoir ce que la page contient
+   encore. Les sections se suivent sans espace entre elles, séparées par un
+   filet, pour qu'une pile de dix se lise comme un sommaire. */
+details.section { margin: 0; border-top: 1px solid var(--trait); }
+details.section:last-of-type { border-bottom: 1px solid var(--trait); }
+details.section > summary {
+  color: var(--texte); font-size: 1rem; font-weight: 600;
+  padding: 0.85rem 0.2rem 0.85rem 1.6rem; list-style: none; position: relative;
+}
+details.section > summary::-webkit-details-marker { display: none; }
+details.section > summary::marker { content: ""; }
+/* Le chevron, dessiné au trait : il dit dans quel sens la section s'ouvre, ce
+   qu'un titre seul ne dit pas. */
+details.section > summary::before {
+  content: ""; position: absolute; left: 0.35rem; top: 1.25rem;
+  width: 0.42rem; height: 0.42rem; border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent); transform: rotate(-45deg);
+  transition: transform 0.15s;
+}
+details.section[open] > summary::before { transform: rotate(45deg); top: 1.1rem; }
+details.section > summary:hover { color: var(--accent); }
+details.section > .dedans { padding: 0 0 1.2rem 1.6rem; }
+details.section > .dedans > :first-child { margin-top: 0; }
+details.section > .dedans > h4 {
+  font-size: 0.98rem; font-weight: 600; margin: 1.5rem 0 0.4rem;
+}
 /* Un tableau plus large que l'écran défile horizontalement. La zone qui défile
    doit pouvoir recevoir le focus, sinon elle est inatteignable au clavier chez
    les moteurs qui ne rendent pas focusables les boîtes défilantes (WCAG 2.1.1)
@@ -260,6 +300,65 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 .fiches { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; }
 .fiche .valeur { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
 .fiche .etiquette { font-size: 0.82rem; color: var(--texte-doux); }
+.fiche .precision { font-size: 0.82rem; color: var(--texte-doux); margin-top: 0.3rem; }
+/* Les trois chiffres d'ouverture d'une page : ce sont eux qu'on emporte si on
+   ne lit rien d'autre, et ils doivent donc se lire de loin, avant le texte.
+   L'étiquette passe AU-DESSUS du nombre — on lit « ce qui rentre » puis
+   « 417 Md € », dans cet ordre, et non un nombre dont on cherche le sens. */
+.fiches.reperes { gap: 0.9rem; margin: 1.5rem 0; }
+.fiches.reperes .fiche {
+  background: var(--fond-carte); border: 1px solid var(--trait);
+  border-radius: 8px; padding: 1rem 1.1rem;
+  display: flex; flex-direction: column;
+}
+.fiches.reperes .fiche .valeur {
+  font-size: 1.9rem; line-height: 1.15; font-weight: 600; order: 2;
+}
+.fiches.reperes .fiche .etiquette {
+  order: 1; font-size: 0.86rem; margin-bottom: 0.25rem;
+}
+.fiches.reperes .fiche .precision { order: 3; margin-top: 0.35rem; }
+/* Une question, sa réponse, le tracé qui la montre. Encadrée pour se découper :
+   une capture de ce bloc se comprend hors du site. */
+section.cle {
+  background: var(--fond-carte); border: 1px solid var(--trait);
+  border-radius: 8px; padding: 1.3rem 1.4rem 1rem; margin: 1.75rem 0;
+}
+section.cle > h3 { margin: 0; font-size: 1.15rem; }
+section.cle > .reponse {
+  font-size: 1.1rem; line-height: 1.5; max-width: 46rem; margin: 0.4rem 0 0.2rem;
+}
+section.cle > .source {
+  font-size: 0.82rem; color: var(--texte-doux); margin: 0.2rem 0 0;
+}
+section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
+/* Le mot de jargon et sa définition. Tout est en ligne — le mot doit couler
+   dans sa phrase comme n'importe quel autre —, et l'enveloppe est simplement
+   `relative` pour servir de repère à la bulle posée dessous. */
+.mot { position: relative; }
+.mot > .terme {
+  /* Le bouton hérite de la phrase qui le porte, taille et graisse comprises :
+     sans cela un mot du glossaire se serait vu d'abord comme un bouton, et
+     seulement ensuite comme un mot. Seul le pointillé le signale. */
+  font: inherit; color: inherit; background: none; border: none;
+  border-bottom: 1px dotted var(--accent); border-radius: 0;
+  padding: 0; margin: 0; cursor: help;
+}
+.mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--accent); }
+.mot > .terme[aria-expanded="true"] { border-bottom-style: solid; }
+.mot > .bulle {
+  display: block; position: absolute; left: 0; top: calc(100% + 0.4rem);
+  z-index: 5; width: max(14rem, min(22rem, 70vw));
+  background: var(--fond-carte); color: var(--texte);
+  border: 1px solid var(--trait-champ); border-radius: 6px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.14);
+  padding: 0.6rem 0.8rem; font-size: 0.88rem; line-height: 1.45;
+  /* Le texte de la bulle est un texte courant, quelle que soit la phrase qui
+     porte le mot : sans cela une définition posée dans un chapeau en héritait
+     la couleur et la taille. */
+  font-weight: 400; font-style: normal; text-align: left; white-space: normal;
+}
+.mot > .bulle[hidden] { display: none; }
 .etiquette-fiabilite {
   display: inline-block; font-size: 0.78rem; letter-spacing: 0.04em;
   text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 3px;
@@ -279,6 +378,18 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
   stroke-linejoin: round; stroke-linecap: round;
 }
 .graphique .bande { stroke: none; }
+/* Le ruban entre deux courbes : vert quand la première passe au-dessus, rouge
+   quand elle passe dessous. Il est peint sous les courbes, assez pâle pour les
+   laisser lisibles, assez franc pour se voir d'un coup d'œil — c'est lui qui
+   dit, sans un mot, s'il rentre plus qu'il ne sort. */
+.graphique .ecart { stroke: none; }
+.graphique .ecart.plus { fill: var(--prospectif-employeur); opacity: 0.22; }
+.graphique .ecart.moins { fill: var(--retroactif); opacity: 0.22; }
+/* Ses deux pastilles de légende, accolées : une seule couleur ne dirait que la
+   moitié de ce que le ruban montre. */
+.pastille.ecart-plus { background: var(--prospectif-employeur); opacity: 0.45; }
+.pastille.ecart-moins { background: var(--retroactif); opacity: 0.45;
+                        margin-left: -0.15rem; }
 .graphique .graduation {
   fill: var(--texte-doux); font-family: inherit; font-size: 12px;
   font-variant-numeric: tabular-nums;
@@ -368,11 +479,26 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .scenario .chiffre { align-items: flex-start; }
   .scenario .depart { padding-left: 0.9rem; }
   .fiches { grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); }
+  /* Les trois chiffres d'ouverture se mettent les uns sous les autres plutôt
+     que de se serrer à trois de front : à 8 rem de large, « 422 Md € » se
+     coupait en deux. */
+  .fiches.reperes { grid-template-columns: 1fr; }
+  .fiches.reperes .fiche .valeur { font-size: 1.6rem; }
+  section.cle { padding: 1rem 1rem 0.8rem; }
+  /* La bulle du glossaire ne flotte plus : elle pousse le texte. Une boîte
+     posée par-dessus, ancrée sur un mot qui peut se trouver au bord de
+     l'écran, déborderait de la page ou sortirait de la vue. */
+  .mot { position: static; }
+  .mot > .bulle {
+    position: static; width: auto; margin: 0.4rem 0; box-shadow: none;
+  }
   form .grille { gap: 0.9rem; }
   /* Le SVG se réduit avec la page : ses textes, exprimés en unités du viewBox,
      se réduiraient d'autant et deviendraient illisibles. On les grossit donc
-     dans le repère pour qu'ils gardent leur taille à l'écran. */
-  .graphique .graduation { font-size: 20px; }
+     dans le repère pour qu'ils gardent leur taille à l'écran. Vingt-quatre et
+     non vingt : sur un écran de 375 points, le tracé est réduit de moitié, et
+     vingt unités y faisaient neuf pixels — sous le plancher de lisibilité. */
+  .graphique .graduation { font-size: 24px; }
 }
 
 /* Écran très étroit : les deux chiffres ne tiennent plus l'un à côté de
@@ -410,6 +536,12 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   header.bandeau nav, .evitement { display: none; }
   body { background: #fff; color: #000; font-size: 11pt; }
   .defilant { overflow: visible; }
-  .carte, .note, table, .graphique, .scenario { break-inside: avoid; }
+  .carte, .note, table, .graphique, .scenario, section.cle { break-inside: avoid; }
+  /* Le mot du glossaire s'imprime comme le reste de la phrase : ni bouton, ni
+     soulignement pointillé, qui ne renverraient sur le papier à rien qu'on
+     puisse ouvrir. Sa définition ne s'imprime pas : sur une page de chiffres
+     elle ferait une incise de trois lignes au milieu d'un paragraphe. */
+  .mot > .terme { border-bottom: none; }
+  .mot > .bulle { display: none; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
 }

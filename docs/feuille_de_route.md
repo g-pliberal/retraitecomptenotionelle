@@ -980,7 +980,7 @@ l'objection au lieu de la nourrir.
 
 ---
 
-### 15. Rendre les pages longues parcourables — `à faire`
+### 15. Rendre les pages longues parcourables — `en cours`
 
 **Pourquoi.** Deux des six pages ne sont plus des pages mais des documents :
 Coût pèse 8 516 mots, seize tableaux et treize titres ; Données, 5 851 mots et
@@ -1099,6 +1099,82 @@ la transition, qui paie la part patronale, ce que vaut tel chiffre — l'atteint
 un coup d'œil et un clic, et voit du premier regard ce que la page contient
 d'autre. Le dépôt cesse de faire payer au lecteur la densité qu'il a mis un an à
 accumuler.
+
+**Où ça en est.** La plus lourde des deux pages est faite : l'action 16 la
+refait entièrement, et en tire ce que les procédés valent en pratique. Restent
+Données (5 851 mots, huit tableaux) et, plus bas, Cas types et le Programme.
+
+---
+
+### 16. Refaire la page Coût : les recettes, et une page qu'on lit en trois minutes — `fait`
+
+**Pourquoi.** Deux défauts d'un coup, et ils tenaient ensemble.
+
+Le premier est un trou : la page montrait la DÉPENSE — d'où son nom — et les
+RESSOURCES n'y existaient que par une courbe et un tableau de structure, en fin
+de page, après tout le reste. Un système de répartition ne se juge pourtant pas
+à sa dépense mais à son solde, et la question que tout le monde pose — « est-ce
+que ça rapporte plus que ça ne coûte ? » — n'avait pas de réponse en tête de
+page. L'action 6 avait posé les données ; personne n'en avait fait une lecture.
+
+Le second est celui que l'action 15 décrit : 8 516 mots, seize tableaux, treize
+titres, quinze mille pixels de haut. Rien n'y était faux ; tout y était au même
+niveau d'importance, ce qui revient à n'en donner aucun. Une page qu'on ne lit
+pas ne dit rien, si documentée soit-elle.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py` ;
+`moteur/js/pages.js`, `moteur/js/gabarit.js`, `moteur/js/equilibre.js` et
+`moteur/js/cout.js` en regard ; `src/retraite_notionnelle/donnees/equilibre.py`
+et `cout.py` ; `index.html` ; `tests/test_web.py`, `tests/test_cout.py` et
+`tests/js/moteur.test.js`.
+
+**Ce que ça a déplacé.**
+
+- *Les recettes passent au même rang que les dépenses.* La page s'ouvre sur
+  trois chiffres en euros — ce qui est sorti, ce qui est rentré, ce qui a
+  manqué — et sur le graphique qui les tient : ressources et dépenses du système
+  de retraite de 2002 à 2070, avec le ruban qui les sépare peint en vert quand
+  il en reste et en rouge quand il en manque. Un second graphique, nouveau, dit
+  d'où vient l'argent année par année : les quatre parts de `GROUPES`
+  (`donnees/equilibre.py`), empilées en part de PIB, de 2004 à 2025. C'est le
+  tableau 2.2 du rapport du COR rendu à sa dimension temporelle, et il montre ce
+  qu'un tableau d'une seule année ne peut pas montrer — la part de l'impôt qui
+  passe de 7 % à 15 % pendant que celle des cotisations ne bouge pas.
+- *Le périmètre des cartes de tête est celui du COR, et uniquement.* Le modèle
+  n'y intervient que par un rapport sans dimension. C'est ce qui a fait
+  disparaître le graphique qui portait le niveau de dépense du modèle lui-même —
+  19,3 % du PIB en 2070 contre 14,2 % au COR, écart que la page annonçait sous
+  une phrase qui disait le contraire (« il ne dérape pas »). L'écart est
+  maintenant écrit là où il se mesure, dans le dépliant des six scénarios, et
+  nulle part ailleurs.
+- *Quatre graphiques ouverts au lieu de sept, aucun tableau ouvert au lieu de
+  neuf, 953 mots à traverser au lieu de 5 652.* La page en contient toujours
+  7 160 et quinze tableaux : rien n'a été retiré, sauf deux graphiques et deux
+  tableaux qui redisaient une série déjà tracée. Tout le reste est dans huit
+  sections repliées qui se lisent comme un sommaire — ce qui est, du catalogue
+  de l'action 15, les procédés 7, 8, 9, 10, 12, 21 et 25 appliqués ensemble, et
+  l'aveu que les procédés 1 à 4 n'étaient pas nécessaires ici : une pile de
+  titres repliés EST un sommaire, et elle ne se heurte pas à l'obstacle de
+  l'adresse-route.
+- *Quatre briques nouvelles dans le gabarit*, portées des deux côtés :
+  `cle(question, réponse, tracé, source)`, la carte encadrée qui se découpe et
+  se comprend hors du site ; `depliant(titre, corps)`, la section repliée ;
+  `mot(terme, définition)`, le mot de spécialiste qui porte sa définition ; et
+  le paramètre `ecart` de `graphique()`, qui peint le ruban entre deux courbes
+  en changeant de teinte à l'intersection exacte, interpolée.
+- *Un piège du HTML, qui vaut d'être noté.* Le mot du glossaire a d'abord été un
+  `<details>`. `<details>` fait partie des balises dont l'analyseur FERME un
+  `<p>` ouvert : chaque mot coupait son paragraphe en deux, silencieusement, et
+  la fin de la phrase tombait à la ligne. Le mot est désormais un `<button>`,
+  qui est du contenu de phrase, et un test interdit à toute balise de bloc de se
+  trouver dans un `<p>`, sur toutes les pages.
+
+**Ce qui reste.** *Les quatre autres pages*, et l'action 15 les liste. *Le ruban
+d'écart sur un axe qui descend sous zéro* : `_sommet` ne connaît que des valeurs
+positives, ce qui interdit pour l'instant de tracer un solde directement, et
+oblige à le lire comme l'écart de deux courbes. *Les recettes ne réagissent
+toujours à rien* : le scénario 6, qui pose un taux unique de 18 %, déplacerait
+l'assiette comme les pensions, et c'est l'action 11 qui ouvrirait cette porte.
 
 ---
 
@@ -1322,3 +1398,18 @@ accumuler.
   vaut d'être connu avant de commencer, pas découvert au premier clic.
   L'action 9, la surcote de l'Ircantec, reste la plus haute qui ne soit pas
   commencée.
+- **Septembre 2026, action 16.** Faite. La page Coût est refaite : les
+  ressources ouvrent la page à égalité avec les dépenses, leur ventilation est
+  tracée dans le temps, et ce qu'on traverse avant d'avoir une réponse passe de
+  5 652 mots, sept graphiques et neuf tableaux à 953 mots, quatre graphiques et
+  aucun tableau — sans qu'aucun chiffre ni aucune réserve ne soit retiré. Le
+  détail est sous l'action ; l'action 15, dont elle est la première application,
+  passe en cours. Trois choses à en retenir. **Une page trop longue cache ses
+  propres démentis** : un graphique y portait le niveau du modèle plutôt qu'un
+  rapport, et la phrase qui le commentait affirmait le contraire des chiffres
+  au-dessus d'elle, depuis assez longtemps pour que personne ne s'en souvienne.
+  **Le sommaire ancré n'était pas nécessaire** : une pile de sections repliées
+  en tient lieu, se parcourt du regard, et évite l'obstacle de l'adresse-route
+  que l'action 15 signalait. Enfin, **le ruban peint entre deux courbes fait
+  plus pour la lisibilité d'un solde que n'importe quelle légende** : c'est la
+  seule brique de cette action qui mériterait d'être reprise ailleurs.

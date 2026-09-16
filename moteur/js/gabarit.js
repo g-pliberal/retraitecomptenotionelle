@@ -279,9 +279,76 @@ export function gloses(entrees) {
   return `<dl class="gloses">${corps}</dl>`;
 }
 
-export function fiche(etiquette, valeur) {
+/**
+ * Un chiffre, ce qu'il mesure, et au besoin la phrase qui le situe.
+ *
+ * `precision` est du HTML : elle porte parfois un lien ou un mot du glossaire.
+ * Elle est facultative, et l'immense majorité des fiches du site s'en passent —
+ * elle n'existe que pour les trois chiffres d'ouverture de la page Coût, où
+ * « 422 milliards » ne veut rien dire tant qu'on n'a pas dit « en un an, pour
+ * 17 millions de retraités ».
+ */
+export function fiche(etiquette, valeur, precision = "") {
+  const suite = precision ? `<div class="precision">${precision}</div>` : "";
   return `<div class="fiche"><div class="valeur">${valeur}</div>`
-    + `<div class="etiquette">${echapper(etiquette)}</div></div>`;
+    + `<div class="etiquette">${echapper(etiquette)}</div>${suite}</div>`;
+}
+
+/**
+ * Un mot de jargon, et sa définition dépliable sur place.
+ *
+ * Le site s'adresse à des gens qui n'ont pas fait d'économie. « Part du PIB »,
+ * « cotisation », « répartition » sont pour eux des mots opaques, et les
+ * définir dans le corps du texte l'allonge d'autant pour tous les autres. La
+ * définition est donc posée SOUS le mot, et ne s'ouvre que si on la demande.
+ *
+ * Ce n'est PAS un attribut `title` : une infobulle de survol ne s'ouvre ni au
+ * clavier, ni au doigt, ni sous une synthèse vocale, et un test du dépôt
+ * l'interdit d'ailleurs sur tout le site.
+ *
+ * Ce n'est pas non plus un `<details>` : celui-ci fait partie des balises dont
+ * l'analyseur HTML FERME un `<p>` ouvert, et un mot du glossaire posé au milieu
+ * d'une phrase coupait donc le paragraphe en deux. Un `<button>` est du contenu
+ * de phrase — il ne ferme rien —, et il porte en plus le bon état. Le
+ * basculement est dans `index.html`, en écoute déléguée.
+ */
+export function mot(terme, definition) {
+  return '<span class="mot"><button type="button" class="terme" '
+    + `aria-expanded="false">${echapper(terme)}</button>`
+    + `<span class="bulle" role="note" hidden>${echapper(definition)}</span></span>`;
+}
+
+/**
+ * Une section repliée : son titre se lit, son contenu s'ouvre si on veut.
+ *
+ * Le temps du lecteur n'est pas gratuit. Tout ce qu'une page doit pouvoir
+ * justifier — le détail d'un tableau, le périmètre d'une source, ce que le
+ * calcul ne sait pas faire — doit être là, sans quoi la page n'est pas honnête ;
+ * mais rien n'oblige à le lui faire traverser pour atteindre le résultat.
+ */
+export function depliant(titre, corps) {
+  return `<details class="section"><summary>${echapper(titre)}</summary>`
+    + `<div class="dedans">${corps}</div></details>`;
+}
+
+/**
+ * Une question, sa réponse en une phrase, et l'image qui la montre.
+ *
+ * C'est l'unité de lecture de la page Coût, et elle est faite pour deux
+ * lecteurs à la fois. Celui qui n'a pas le temps lit la question et la réponse,
+ * et s'arrête là. Celui qui veut voir descend d'un cran et trouve le tracé,
+ * puis ses chiffres.
+ *
+ * La carte est encadrée pour une troisième raison : elle doit se découper. Une
+ * capture d'écran de ce bloc porte la question, la réponse, le graphique et sa
+ * source — elle se comprend hors du site.
+ *
+ * `reponse` et `source` sont du HTML ; `question` est du texte.
+ */
+export function cle(question, reponse, corps, source = "") {
+  const fin = source ? `<p class="source">${source}</p>` : "";
+  return `<section class="cle"><h3>${echapper(question)}</h3>`
+    + `<p class="reponse">${reponse}</p>${corps}${fin}</section>`;
 }
 
 
@@ -442,6 +509,92 @@ function bande(basses, hautes, annees, sommet) {
   return `${aller.concat(retour).join(" ")} Z`;
 }
 
+/**
+ * Le ruban entre deux courbes, coloré selon celle qui est au-dessus.
+ *
+ * C'est ce qui fait qu'un graphique de ressources et de dépenses se lit sans
+ * savoir lire un graphique : l'écart entre les deux courbes n'est plus à
+ * mesurer à l'œil, il est peint. Vert quand il rentre plus qu'il ne sort, rouge
+ * quand c'est l'inverse.
+ *
+ * Le ruban change donc de couleur en cours de route, et il en change À
+ * L'ENDROIT EXACT où les courbes se croisent — pas à l'année suivante. Le
+ * croisement est interpolé linéairement sur le segment, exactement comme le
+ * tracé lui-même interpole entre deux points. Les segments de même signe qui se
+ * suivent forment un seul polygone : sans ce regroupement, soixante-neuf
+ * quadrilatères se toucheraient bord à bord et leurs jointures se verraient.
+ *
+ * Rien ne sort si l'une des deux séries a un trou : un ruban interpolé par-
+ * dessus une année manquante affirmerait un écart que personne n'a mesuré.
+ */
+function airesEcart(haute, basse, annees, sommet) {
+  const absente = (valeur) => valeur === null || valeur === undefined;
+  if (haute.valeurs.some(absente) || basse.valeurs.some(absente)) {
+    return "";
+  }
+  if (haute.valeurs.length !== annees.length
+      || basse.valeurs.length !== annees.length) {
+    return "";
+  }
+  const derniere = annees[annees.length - 1];
+  const point = (annee, dessus, dessous) => ({
+    x: abscisse(annee, annees[0], derniere),
+    dessus: ordonnee(dessus, sommet),
+    dessous: ordonnee(dessous, sommet),
+  });
+
+  // La chaîne des sommets du ruban : les années, plus les croisements qui
+  // tombent entre deux d'entre elles. `signes` porte le signe de l'écart sur
+  // chaque intervalle, et compte donc un élément de moins.
+  const chaine = [point(annees[0], haute.valeurs[0], basse.valeurs[0])];
+  const signes = [];
+  for (let rang = 1; rang < annees.length; rang += 1) {
+    const avant = haute.valeurs[rang - 1] - basse.valeurs[rang - 1];
+    const apres = haute.valeurs[rang] - basse.valeurs[rang];
+    const courant = point(annees[rang], haute.valeurs[rang], basse.valeurs[rang]);
+    if (avant * apres < 0.0) {
+      const part = avant / (avant - apres);
+      const precedent = chaine[chaine.length - 1];
+      const x = precedent.x + part * (courant.x - precedent.x);
+      // Au croisement les deux courbes se touchent : le ruban y est
+      // d'épaisseur nulle, et ses deux bords doivent porter la MÊME ordonnée.
+      const y = precedent.dessus + part * (courant.dessus - precedent.dessus);
+      chaine.push({ x, dessus: y, dessous: y });
+      signes.push(avant > 0.0 ? 1 : -1);
+      chaine.push(courant);
+      signes.push(apres > 0.0 ? 1 : -1);
+      continue;
+    }
+    chaine.push(courant);
+    const somme = avant + apres;
+    signes.push(somme > 0.0 ? 1 : (somme < 0.0 ? -1 : 0));
+  }
+
+  const morceaux = [];
+  let debut = 0;
+  while (debut < signes.length) {
+    let fin = debut;
+    while (fin + 1 < signes.length && signes[fin + 1] === signes[debut]) {
+      fin += 1;
+    }
+    if (signes[debut] !== 0) {
+      const bornes = chaine.slice(debut, fin + 2);
+      const aller = bornes.map((borne, rang) => `${rang === 0 ? "M" : "L"}`
+        + `${nombreBrut(borne.x)} ${nombreBrut(borne.dessus)}`).join(" ");
+      const retour = [];
+      for (let rang = bornes.length - 1; rang >= 0; rang -= 1) {
+        retour.push(`L${nombreBrut(bornes[rang].x)} `
+          + `${nombreBrut(bornes[rang].dessous)}`);
+      }
+      const teinte = signes[debut] > 0 ? "plus" : "moins";
+      morceaux.push(`<path class="ecart ${teinte}" `
+        + `d="${aller} ${retour.join(" ")} Z"/>`);
+    }
+    debut = fin + 1;
+  }
+  return morceaux.join("");
+}
+
 /** Sommet de l'axe vertical et pas de graduation. */
 function sommetEchelle(series, empile) {
   let maximum = 0.0;
@@ -522,7 +675,8 @@ function etiquettesDeFin(series, sommet, etiquettes) {
 export function graphique(titre, annees, series, unite = "", empile = false,
                           decimales = 0, legendeVisible = true, repere = null,
                           libelleRepere = "", etiquettes = [],
-                          nomAbscisse = "Année") {
+                          nomAbscisse = "Année", ecart = null,
+                          libelleEcart = "") {
   if (!annees.length || !series.length) {
     return "";
   }
@@ -548,6 +702,11 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   }
 
   const traces = [];
+  // Le ruban d'abord : il est un fond, et une courbe posée par-dessus reste
+  // visible là où les deux se croisent.
+  if (ecart !== null && series.length > Math.max(ecart[0], ecart[1])) {
+    traces.push(airesEcart(series[ecart[0]], series[ecart[1]], annees, sommet));
+  }
   if (empile) {
     // La PREMIÈRE série est la bande du BAS : la légende se lit alors dans
     // l'ordre du graphique, de bas en haut, et non à l'envers.
@@ -595,7 +754,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     + `<line class="axe" x1="${gauche}" y1="${base}" x2="${droite}" y2="${base}"/>`
     + repereHtml + uniteHtml
     + (etiquettes.length ? etiquettesDeFin(series, sommet, etiquettes) : "")
-    + `</svg>${legendeVisible ? legende(series) : ""}</figure>`
+    + `</svg>${legendeVisible ? legende(series, libelleEcart) : ""}</figure>`
     + donneesDuGraphique(titre, annees, series, unite, decimales, nomAbscisse);
 }
 
@@ -647,11 +806,19 @@ export function donneesDuGraphique(titre, annees, series, unite = "",
  * la figure, elle en devient le nom accessible ; hors d'elle, elle n'était
  * qu'une liste flottant sous un dessin.
  */
-function legende(series) {
-  const entrees = series.map((serie) => '<li><span class="pastille" '
+function legende(series, libelleEcart = "") {
+  let entrees = series.map((serie) => '<li><span class="pastille" '
     + `style="background:${serie.couleur}"></span>`
     + `<span>${echapper(serie.libelle)}`
     + (serie.glose ? ` <span class="discret">${echapper(serie.glose)}</span>` : "")
     + "</span></li>").join("");
+  // Le ruban d'écart prend une entrée de plus, à deux pastilles : sans elle, le
+  // rouge et le vert du fond ne voudraient rien dire pour qui ne les a pas
+  // devinés.
+  if (libelleEcart) {
+    entrees += '<li><span class="pastille ecart-plus"></span>'
+      + '<span class="pastille ecart-moins"></span>'
+      + `<span>${echapper(libelleEcart)}</span></li>`;
+  }
   return `<figcaption><ul class="legende">${entrees}</ul></figcaption>`;
 }

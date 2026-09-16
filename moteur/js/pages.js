@@ -20,7 +20,7 @@ import { COMPOSANTE_GARANTIE, SCENARIOS, calculerCout } from "./cout.js";
 import { DistributionPensions } from "./distribution.js";
 import { coutGarantie } from "./garantie.js";
 import { SYSTEMES, DepensesRetraite } from "./depenses.js";
-import { POSTES, ComptesRetraite } from "./equilibre.js";
+import { GROUPES, POSTES, ComptesRetraite } from "./equilibre.js";
 import { Indexation } from "./indexation.js";
 import { Population } from "./population.js";
 import { echapper, formatFixe, formatG } from "./format.js";
@@ -3058,14 +3058,288 @@ function milliards(millions, decimales = 0) {
   return `${g.nombre(millions / 1000, decimales)} Md €`;
 }
 
+/**
+ * Ce que la retraite coûte, d'où vient l'argent, et ce qui manque.
+ *
+ * CETTE PAGE S'ADRESSE À QUELQU'UN QUI N'A PAS FAIT D'ÉCONOMIE ET QUI N'A PAS LE
+ * TEMPS. C'est une contrainte de construction, pas un vœu, et elle décide de
+ * tout ce qui suit :
+ *
+ *  * **Une question par carte, une réponse par carte.** Chaque bloc porte une
+ *    question en français courant, sa réponse en une phrase, puis le tracé qui
+ *    la montre. Une capture de la carte se comprend toute seule, hors du site.
+ *  * **Quatre graphiques, et pas un de plus.** La page en portait sept, dont
+ *    deux disaient la même chose dans deux unités.
+ *  * **Tout le reste est replié.** Rien n'est retiré — une page qui ne peut pas
+ *    se justifier n'est pas honnête —, mais rien n'oblige à le traverser.
+ *  * **Les mots de spécialiste portent leur définition**, ouvrable sur place.
+ *
+ * LE PÉRIMÈTRE DES DEUX PREMIÈRES CARTES EST CELUI DU COR : c'est le seul jeu de
+ * comptes où les dépenses ET les ressources du même ensemble de régimes soient
+ * publiées sous la même convention. Le modèle n'y intervient que par un RAPPORT
+ * sans dimension, jamais par un niveau.
+ */
 function cout(contexte) {
+  const comptes = contexte.comptes();
+  const c = contexte.cout();
+  const solde = c.solde;
+  const depenses = contexte.depenses();
+  const bascule = contexte.base.annee_bascule;
+
+  const obs = solde.derniereAnneeObservee;
+  const observe = solde.annee(obs);
+  const horizon = solde.annee(solde.derniereAnnee);
+  const effectifs = contexte.simulateur().effectifs;
+  // La dernière année que la DREES publie, et non celle du compte : le nombre
+  // de retraités n'a pas la même fenêtre que les comptes du COR, et inventer un
+  // effectif pour l'année manquante ne vaudrait rien.
+  const anneeEffectifs = effectifs.serie("tous_regimes").derniereAnnee;
+  const retraites = effectifs.effectif("tous_regimes", anneeEffectifs);
+
+  // -- les trois chiffres d'ouverture --------------------------------------
+  //
+  // Ce qu'on emporte si on ne lit rien d'autre. En EUROS et non en part de
+  // PIB : une part de PIB ne parle qu'à qui sait déjà ce qu'est le PIB, et
+  // c'est précisément le lecteur que cette page ne suppose pas.
+  const manque = -observe.soldeMeur("actuel");
+  const partManquante = -observe.solde("actuel") / observe.depense("actuel");
+  const reperes = g.fiche(
+    `Ce qui est sorti en ${obs}`,
+    milliards(observe.depenseMeur("actuel"), 0),
+    `de pensions, pour ${g.nombre(retraites / 1e6, 1)} millions de retraités`,
+  ) + g.fiche(
+    "Ce qui est rentré pour les payer",
+    milliards(observe.ressourcesMeur(), 0),
+    "de cotisations, d'impôts et de versements d'autres caisses",
+  ) + g.fiche(
+    manque > 0 ? "Ce qui a manqué" : "Ce qui est resté",
+    milliards(Math.abs(manque), 1),
+    `soit ${g.pourcentage(Math.abs(partManquante), false, 1)} de ce qui a été versé`,
+  );
+
+  // -- carte 1 : ce qui rentre, ce qui sort --------------------------------
+  const anneesSolde = solde.annees.map((ligne) => ligne.annee);
+  const courbeRentre = new g.Serie(
+    "Ce qui rentre : cotisations, impôts, transferts",
+    solde.annees.map((ligne) => ligne.ressources * 100),
+    "var(--serie-5)",
+  );
+  const courbeSort = new g.Serie(
+    "Ce qui sort : les pensions versées",
+    solde.annees.map((ligne) => ligne.depense("actuel") * 100),
+    "var(--serie-2)",
+  );
+  const bilan = g.graphique(
+    "Ce que le système de retraite encaisse et ce qu'il verse, de "
+    + `${solde.premiereAnnee} à ${solde.derniereAnnee}, en part du PIB`,
+    anneesSolde, [courbeRentre, courbeSort], "% du PIB", false, 0, true,
+    obs, "projection", [], "Année", [0, 1],
+    "L'écart entre les deux : vert s'il en reste, rouge s'il en manque",
+  );
+
+  // -- carte 2 : d'où vient l'argent ---------------------------------------
+  const anneesVentilees = comptes.anneesVentilees();
+  const premiereVentileeRessources = anneesVentilees[0];
+  const derniereVentilee = anneesVentilees[anneesVentilees.length - 1];
+  const bandesRessources = GROUPES.map((groupe) => new g.Serie(
+    groupe.libelle,
+    anneesVentilees.map((annee) => comptes.ressourceGroupe(groupe.code, annee) * 100),
+    groupe.couleur,
+  ));
+  const provenance = g.graphique(
+    "D'où viennent les ressources du système de retraite, de "
+    + `${premiereVentileeRessources} à ${derniereVentilee}, en part du PIB`,
+    anneesVentilees, bandesRessources, "% du PIB", true,
+  );
+  const partSalaires = comptes.partGroupe("salaires", derniereVentilee);
+  const partImpotsDebut = comptes.partGroupe("impots", premiereVentileeRessources);
+  const partImpotsFin = comptes.partGroupe("impots", derniereVentilee);
+
+  // -- carte 3 : depuis quand ça coûte autant ------------------------------
+  const anneesDepense = c.annees.map((ligne) => ligne.annee);
+  const premiereDepense = c.premiereAnnee;
+  const derniereDepense = c.derniereAnnee;
+  const courbePib = new g.Serie(
+    "Ce que la France consacre à ses retraités",
+    c.annees.map((ligne) => ligne.partPib * 100),
+    "var(--serie-1)",
+  );
+  const histoire = g.graphique(
+    "Part des dépenses de vieillesse dans le produit intérieur brut, "
+    + `${premiereDepense}-${derniereDepense}`,
+    anneesDepense, [courbePib], "% du PIB",
+  );
+
+  // -- carte 4 : ce que la réforme change ----------------------------------
+  //
+  // La fenêtre s'ouvre à la dernière année observée : c'est celle où la décision
+  // se prend, et tracer quarante ans de passé par-dessus n'aiderait personne à la
+  // lire. Le scénario montré est le 5 — comptes notionnels à compter de la
+  // bascule, cotisations salariales ET patronales portées au compte : le seul qui
+  // décrive une réforme applicable et qui crédite la même chose que ce que le
+  // système actuel prélève.
+  const lignesFutur = solde.annees.filter((ligne) => ligne.annee >= obs);
+  const anneesFutur = lignesFutur.map((ligne) => ligne.annee);
+  const reforme = "notionnel_prospectif_employeur";
+  const courbesReforme = [
+    new g.Serie("Ce qui rentre",
+      lignesFutur.map((ligne) => ligne.ressources * 100), "var(--serie-5)"),
+    new g.Serie("Ce qui sort, si rien ne change",
+      lignesFutur.map((ligne) => ligne.depense("actuel") * 100), "var(--serie-2)"),
+    // Ni la couleur du scénario 5 ailleurs sur le site — un vert que celui de
+    // « ce qui rentre » ne laisserait pas distinguer —, ni celle d'aucune des
+    // deux autres courbes : trois teintes franchement séparées, plus le trait
+    // discontinu qui dit « ceci n'existe pas encore ».
+    new g.Serie(`Ce qui sortirait en comptes notionnels à partir de ${bascule}`,
+      lignesFutur.map((ligne) => ligne.depense(reforme) * 100),
+      "var(--serie-4)", true),
+  ];
+  const effet = g.graphique(
+    `Ressources, dépenses et dépenses en comptes notionnels, de ${obs} à `
+    + `${solde.derniereAnnee}, en part du PIB`,
+    anneesFutur, courbesReforme, "% du PIB", false, 0, true, null, "", [],
+    "Année", [0, 1], "Ce qui manque au système actuel",
+  );
+  const equilibre = solde.premiereAnneeEquilibree(reforme);
+  const ecart2070 = horizon.depense("actuel") - horizon.depense(reforme);
+
+  // -- les quatre cartes ---------------------------------------------------
+  const carteBilan = g.cle(
+    "Est-ce que la retraite coûte plus qu'elle ne rapporte ?",
+    `Oui, depuis une quinzaine d'années — mais de peu. En ${obs}, il a
+manqué ${milliards(Math.abs(manque), 1)} sur
+${milliards(observe.depenseMeur("actuel"), 0)} versés.
+<strong>Le problème n'est pas là où on en est, c'est là où on va</strong> : si
+rien ne change, il manquerait
+${g.pourcentage(Math.abs(horizon.solde("actuel") / horizon.depense("actuel")), false, 0)}
+de ce qu'il faudrait verser en ${solde.derniereAnnee}.`,
+    bilan,
+    `Source : Conseil d'orientation des retraites, comptes du système de
+retraite. Observé jusqu'en ${obs}, projeté ensuite — la projection est la
+sienne, pas la nôtre. Les deux courbes sont en ${g.mot("part du PIB",
+      "Le PIB est la valeur de tout ce que la France produit en un an. Rapporter une "
+      + "dépense au PIB, c'est demander quelle part de son travail un pays consacre à "
+      + "quelque chose. C'est la seule unité où une dépense de 2002 et une projection "
+      + "de 2070 se comparent : l'euro de 2070 ne vaudra pas celui d'aujourd'hui.")}.`,
+  );
+
+  const carteProvenance = g.cle(
+    "D'où vient cet argent ?",
+    `Des salaires, pour ${g.pourcentage(partSalaires, false, 0)}. Le
+reste est surtout de l'impôt, et <strong>cette part a doublé en vingt
+ans</strong> : l'État a allégé les cotisations des employeurs pour baisser le
+coût du travail, puis remboursé la retraite avec la TVA et la CSG — de
+${g.pourcentage(partImpotsDebut, false, 0)} des ressources en
+${premiereVentileeRessources} à ${g.pourcentage(partImpotsFin, false, 0)}
+en ${derniereVentilee}.`,
+    provenance + g.depliant(
+      "Ce que contient chacune de ces quatre parts",
+      g.gloses(GROUPES.map((groupe) => [groupe.libelle, groupe.explication])),
+    ),
+    `Source : Conseil d'orientation des retraites. La ventilation n'est
+publiée que de ${premiereVentileeRessources} à ${derniereVentilee} ; le total,
+lui, remonte à ${solde.premiereAnnee} et va jusqu'à ${solde.derniereAnnee}. Les
+six postes du COR, tels qu'il les publie, sont plus bas.`,
+  );
+
+  const carteHistoire = g.cle(
+    "Est-ce que ça a toujours coûté autant ?",
+    `Non : c'est près de trois fois plus qu'en ${premiereDepense}, et
+<strong>presque toute la hausse est derrière nous</strong>. La France y
+consacrait alors
+${g.pourcentage(depenses.partPib(premiereDepense), false, 1)} de ce qu'elle
+produisait, contre ${g.pourcentage(depenses.partPib(derniereDepense), false, 1)}
+aujourd'hui. La montée s'est faite entre 1960 et 2000, quand la retraite est
+devenue générale et que les pensions ont rattrapé les salaires ; depuis, la
+courbe ne monte plus que par à-coups de crise, et redescend.`,
+    histoire,
+    `Source : DREES, comptes de la protection sociale. Le périmètre est un
+peu plus large que celui des deux cartes précédentes — il compte aussi la
+dépendance et l'épargne retraite —, ce qui explique l'écart d'un demi-point. Le
+détail est plus bas.`,
+  );
+
+  const carteEffet = g.cle(
+    "Qu'est-ce que la réforme changerait, et quand ?",
+    `<strong>Rien avant ${bascule}, et pas grand-chose avant 2040.</strong>
+Les droits déjà acquis sont conservés : personne ne voit sa pension recalculée,
+et il faut attendre que des carrières entières se soient déroulées sous la
+nouvelle règle. Les comptes repasseraient à l'équilibre en
+${equilibre || "jamais"}, et l'écart avec le système actuel atteindrait
+${g.pourcentage(ecart2070, false, 1)} du PIB en ${solde.derniereAnnee}.`,
+    effet,
+    `Scénario 5 : comptes notionnels à compter de ${bascule}, cotisations
+du salarié et de l'employeur portées au compte. C'est, des six que le modèle
+calcule, celui qui décrit une réforme applicable en créditant ce qui est
+réellement prélevé aujourd'hui. Les cinq autres sont plus bas.`,
+  );
+
+  return `
+<h2 style="margin-top:0">L'argent de la retraite</h2>
+<p class="chapeau">Les cotisations prélevées sur les salaires ne sont pas mises
+de côté : elles partent aussitôt payer les pensions de ceux qui sont déjà
+retraités. C'est ce qu'on appelle la ${g.mot("répartition",
+    "Les cotisations d'aujourd'hui paient les pensions d'aujourd'hui. Rien n'est "
+    + "placé, rien n'est épargné : chaque euro prélevé sur une fiche de paie est "
+    + "reversé aussitôt à un retraité.")}. Cette page montre ce qui rentre, ce qui
+sort, et ce qui manque.</p>
+
+<div class="fiches reperes">${reperes}</div>
+
+${carteBilan}
+
+${carteProvenance}
+
+${carteHistoire}
+
+<h2>Et si on changeait de système ?</h2>
+<p class="chapeau">Le programme de ce site propose de remplacer la règle de
+calcul actuelle par des ${g.mot("comptes notionnels",
+    "Un compte virtuel par personne, où l'on inscrit chaque cotisation versée. Au "
+    + "départ en retraite, le total est divisé par le nombre d'années qu'il reste "
+    + "statistiquement à vivre, et cela donne la pension. Rien n'est placé : c'est "
+    + "toujours la répartition, mais la règle de calcul change.")}. Voici ce que cela
+déplacerait — et ce que cela ne déplacerait pas.</p>
+
+${carteEffet}
+
+<div class="note"><strong>Une dépense plus basse n'est pas une économie.</strong>
+Un système en comptes notionnels ne laisse pas d'argent dormir : il relève les
+pensions jusqu'à l'équilibre, ou les abaisse. Ce graphique ne dit donc pas
+« on dépenserait moins » — il dit « avec le même argent, on servirait autant,
+<em>réparti autrement entre les carrières</em> ». C'est cette répartition, et
+elle seule, que le reste de ce site mesure.</div>
+
+<h2>Et pour vous ?</h2>
+<p>Tout ce qui précède est un total national. Ce que chaque règle donne sur une
+carrière — la vôtre — se calcule en quelques secondes, dans votre navigateur.</p>
+<p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer ma
+retraite</a><a href="${g.lien("/cas-types")}">Voir treize carrières types</a></p>
+
+<h2>Pour aller plus loin</h2>
+<p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici, et
+rien n'oblige à le lire.</p>
+
+${coutDetailDepense(contexte)}
+${coutDetailRessources(contexte)}
+${coutDetailScenarios(contexte)}
+${coutDetailEquilibre(contexte)}
+${coutDetailGarantie(contexte)}
+${coutDetailPoids(contexte)}
+${coutDetailSources(contexte)}
+${coutDetailLimites(contexte)}
+`;
+}
+
+/** Le détail de la dépense : en euros, puis système par système. */
+function coutDetailDepense(contexte) {
   const depenses = contexte.depenses();
   const c = contexte.cout();
-  const annees = depenses.annees();
-  const ventilees = depenses.anneesVentilees();
-  const derniere = depenses.derniereAnnee;
   const euros = c.anneeEuros;
-
+  const derniere = depenses.derniereAnnee;
+  const annees = c.annees.map((ligne) => ligne.annee);
+  const ventilees = depenses.anneesVentilees();
+  const premiereVentilee = ventilees[0];
   const total = depenses.depense(derniere);
   const repartition = depenses.repartition(derniere);
   const autres = {};
@@ -3075,7 +3349,6 @@ function cout(contexte) {
     }
   }
 
-  // -- ce que la dépense a été, en euros courants et constants --------------
   const courbeConstants = new g.Serie(
     `En euros constants de ${euros}`,
     c.annees.map((ligne) => ligne.observeeConstants / 1000),
@@ -3086,13 +3359,7 @@ function cout(contexte) {
     c.annees.map((ligne) => ligne.observee / 1000),
     "var(--serie-2)", true,
   );
-  const courbePib = new g.Serie(
-    "Part du produit intérieur brut",
-    c.annees.map((ligne) => ligne.partPib * 100),
-    "var(--serie-3)",
-  );
 
-  // -- ce que chaque système pèse ------------------------------------------
   const reunies = BANDES_COUT.map(([code]) => code);
   const bandes = BANDES_COUT.map(([code, couleur]) => new g.Serie(
     SYSTEMES.find((s) => s.code === code).libelle,
@@ -3101,45 +3368,32 @@ function cout(contexte) {
   ));
   bandes.push(new g.Serie(
     "Autres régimes par répartition",
-    ventilees.map((annee) => {
-      let somme = 0;
-      for (const s of SYSTEMES) {
-        if (s.repartition && !reunies.includes(s.code)) {
-          somme += depenses.depenseSysteme(s.code, annee);
-        }
-      }
-      return somme / 1000;
-    }),
+    ventilees.map((annee) => SYSTEMES
+      .filter((s) => s.repartition && !reunies.includes(s.code))
+      .reduce((somme, s) => somme + depenses.depenseSysteme(s.code, annee), 0) / 1000),
     "var(--serie-7)",
   ));
   bandes.push(new g.Serie(
     "Hors répartition obligatoire",
-    ventilees.map((annee) => {
-      let somme = 0;
-      for (const s of SYSTEMES) {
-        if (!s.repartition) somme += depenses.depenseSysteme(s.code, annee);
-      }
-      return somme / 1000;
-    }),
-    "var(--serie-9)", false, "capitalisation, dépendance, minimum vieillesse",
+    ventilees.map((annee) => SYSTEMES
+      .filter((s) => !s.repartition)
+      .reduce((somme, s) => somme + depenses.depenseSysteme(s.code, annee), 0) / 1000),
+    "var(--serie-9)", false,
+    "capitalisation, dépendance, minimum vieillesse",
   ));
 
-  const premiereVentilee = ventilees[0];
   const duree = derniere - premiereVentilee;
+  const macro = contexte.simulateur().macro;
   const lignesSystemes = SYSTEMES.map((systeme) => {
     const debut = depenses.depenseSysteme(systeme.code, premiereVentilee);
     const fin = depenses.depenseSysteme(systeme.code, derniere);
-    const coefficient = contexte.simulateur().macro.coefficientPrix(
-      premiereVentilee, derniere,
-    );
+    const coefficient = macro.coefficientPrix(premiereVentilee, derniere);
     const croissance = debut > 0
       ? (fin / (debut * coefficient)) ** (1 / duree) - 1
       : 0.0;
-    let cumul = 0;
-    for (const annee of ventilees) {
-      cumul += depenses.depenseSysteme(systeme.code, annee)
-        * contexte.simulateur().macro.coefficientPrix(annee, euros);
-    }
+    const cumul = ventilees.reduce((somme, annee) => somme
+      + depenses.depenseSysteme(systeme.code, annee)
+        * macro.coefficientPrix(annee, euros), 0);
     return [
       echapper(systeme.libelle),
       milliards(fin, 1),
@@ -3150,19 +3404,117 @@ function cout(contexte) {
     ];
   });
 
-  // -- ce que les six systèmes auraient coûté ------------------------------
+  return g.depliant(`Le détail des dépenses, de ${c.premiereAnnee} à ${derniere}`, `
+<p>Les ${milliards(total, 1)} de ${derniere} sont le risque
+<strong>vieillesse-survie tout entier</strong> : les pensions, mais aussi le
+minimum vieillesse, l'aide sociale aux personnes âgées et la retraite
+supplémentaire par capitalisation. La <strong>répartition obligatoire</strong>
+seule en fait ${milliards(repartition, 1)} — c'est cette grandeur-là qu'il faut
+rapprocher des quelque 420 milliards que l'on cite d'ordinaire. Le reste est
+${milliards(autres.aide_sociale_locale, 1)} de dépendance,
+${milliards(autres.supplementaire, 1)} de capitalisation et
+${milliards(autres.solidarite_etat, 1)} de solidarité de l'État.</p>
+
+<h4>La même dépense, en euros</h4>
+${g.graphique(
+    `Dépenses du risque vieillesse-survie de ${c.premiereAnnee} à ${derniere}, `
+    + "en milliards d'euros",
+    annees, [courbeConstants, courbeCourants], "Md €")}
+<p class="discret">Deux lectures de la même série. En euros courants, la
+dépense est multipliée par cent quatre-vingt-treize depuis
+${c.premiereAnnee} — mais les prix aussi ont été multipliés par treize. En
+euros constants, la multiplication est par quinze : c'est celle-là qui est
+réelle. C'est pour éviter ce genre de piège que les cartes du haut sont en part
+du PIB.</p>
+
+<h4>Système par système</h4>
+${g.graphique(
+    `Dépenses de vieillesse-survie par système, ${premiereVentilee}-${derniere}, `
+    + "en milliards d'euros courants",
+    ventilees, bandes, "Md €", true)}
+<p class="discret">La ventilation ne commence qu'en ${premiereVentilee} : de 1981
+à 1989 la DREES publie une autre nomenclature, dont les périmètres ne se
+raccordent pas à ceux-ci, et personne n'a publié le raccord. Le total, lui,
+remonte à ${c.premiereAnnee}.</p>
+
+${g.tableau(
+    ["Système", `${derniere}`, "Part", `Cumul ${premiereVentilee}-${derniere}`,
+      "Croissance réelle", "Répartition"],
+    lignesSystemes,
+    ["", "nombre", "nombre", "nombre", "nombre", ""],
+    `Dépense de vieillesse-survie par système en ${derniere}, et cumul `
+    + `depuis ${premiereVentilee}`,
+    true,
+  )}
+${g.gloses(SYSTEMES.map((systeme) => [systeme.libelle, systeme.glose]))}
+<p class="discret">Le cumul est en euros constants de ${euros} : additionner des
+euros de 1990 et de ${derniere} n'aurait aucun sens. La croissance réelle est
+celle de la dépense annuelle, déflatée, de ${premiereVentilee} à ${derniere}.
+Deux chiffres se lisent en connaissant le découpage : le régime général absorbe
+en 2020 les artisans et les commerçants, dont le régime a été adossé à la Cnav,
+et les « régimes spéciaux » de la comptabilité nationale contiennent la CNRACL,
+c'est-à-dire la fonction publique territoriale et hospitalière.</p>
+`);
+}
+
+/** La ventilation des ressources au découpage du COR, poste par poste. */
+function coutDetailRessources(contexte) {
+  const comptes = contexte.comptes();
+  const ventilees = comptes.anneesVentilees();
+  const premiere = ventilees[0];
+  const derniere = ventilees[ventilees.length - 1];
+  const lignes = POSTES.map((poste) => [
+    echapper(poste.libelle),
+    g.pourcentage(comptes.part(poste.code, premiere), false, 1),
+    g.pourcentage(comptes.part(poste.code, derniere), false, 1),
+    poste.contributive ? "oui" : "non",
+  ]);
+  const partCotisee = comptes.partContributive(derniere);
+  return g.depliant("D'où vient l'argent, poste par poste", `
+<p>Le graphique du haut regroupe les six postes du COR en quatre parts, parce
+qu'un empilement à six bandes ne se lit pas. Les voici tels qu'ils sont
+publiés.</p>
+
+${g.tableau(
+    ["Poste", `Part en ${premiere}`, `Part en ${derniere}`, "Cotisée"],
+    lignes, ["", "nombre", "nombre", ""],
+    `Structure des ressources du système de retraite, ${premiere} et ${derniere}`,
+    true,
+  )}
+${g.gloses(POSTES.map((poste) => [poste.libelle, poste.glose]))}
+<p class="discret">La colonne « cotisée » dit si le poste est un prélèvement
+assis sur un revenu d'activité — la seule ressource qu'un compte notionnel
+sache porter au crédit de quelqu'un. ${g.pourcentage(partCotisee, false, 0)}
+des ressources de ${derniere} le sont, en comptant la contribution d'équilibre
+que l'État verse au régime de ses propres fonctionnaires : le modèle la porte
+déjà au compte des scénarios 4 et 5, et c'est à ce titre qu'elle est comptée
+ici, malgré un taux fixé pour équilibrer plutôt que pour acquérir. La part
+cotisée <em>recule</em> : elle était de
+${g.pourcentage(comptes.partContributive(premiere), false, 0)} en ${premiere}.</p>
+`);
+}
+
+/** Les six systèmes : ce qu'ils auraient coûté, ce qu'ils coûteraient. */
+function coutDetailScenarios(contexte) {
+  const c = contexte.cout();
+  const avenir = c.avenir;
+  const depenses = contexte.depenses();
+  const euros = c.anneeEuros;
+  const derniere = depenses.derniereAnnee;
+  const annees = c.annees.map((ligne) => ligne.annee);
+  const bascule = contexte.base.annee_bascule;
+
   // Un scénario dont la courbe est exactement celle du système actuel serait
   // tracé PAR-DESSUS elle et la ferait disparaître : le graphique montrerait
   // alors une seule courbe en prétendant en montrer trois. On ne trace donc que
   // les scénarios qui s'en écartent, et la légende nomme les autres.
   const confondus = c.confondusAvecActuel();
-  const numeros = SCENARIOS
-    .filter(([scenario]) => confondus.includes(scenario))
+  const numeros = SCENARIOS.filter(([scenario]) => confondus.includes(scenario))
     .map(([, libelle]) => libelle.split(".")[0]);
   const gloseActuel = numeros.length
     ? `et les scénarios ${numeros.join(" et ")}, qui lui sont confondus`
     : "";
-  const courbesScenarios = SCENARIOS
+  const courbes = SCENARIOS
     .filter(([scenario]) => !confondus.includes(scenario))
     .map(([scenario, libelle]) => new g.Serie(
       libelle,
@@ -3172,9 +3524,9 @@ function cout(contexte) {
       scenario === "actuel" ? gloseActuel : "",
     ));
   const reference = c.cumul("actuel");
-  const lignesScenarios = SCENARIOS.map(([scenario, libelle]) => {
+  const dernier = c.annee(derniere);
+  const lignesPasse = SCENARIOS.map(([scenario, libelle]) => {
     const cumul = c.cumul(scenario);
-    const dernier = c.annee(derniere);
     return [
       echapper(libelle),
       milliards(cumul, 0),
@@ -3185,45 +3537,218 @@ function cout(contexte) {
       g.pourcentage(dernier.partPib * dernier.rapports[scenario], false, 1),
     ];
   });
-  // La garantie vieillesse du scénario 6 est financée par l'impôt : elle est
-  // comptée dans sa ligne, puisqu'elle est versée, et redite à part, pour que
-  // l'on voie ce que ce scénario retire aux cotisations et ce qu'il demande au
-  // contribuable.
-  const dernierObserve = c.annee(derniere);
-  lignesScenarios.push([
+  lignesPasse.push([
     "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
     milliards(c.cumul(COMPOSANTE_GARANTIE), 0),
     "—",
-    milliards(dernierObserve.cout(COMPOSANTE_GARANTIE), 1),
-    g.pourcentage(
-      dernierObserve.partPib * dernierObserve.rapports[COMPOSANTE_GARANTIE], false, 1,
-    ),
+    milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
+    g.pourcentage(dernier.partPib * dernier.rapports[COMPOSANTE_GARANTIE], false, 1),
   ]);
 
-  // -- ce que chaque cas type pèse -----------------------------------------
-  // Les poids viennent des effectifs de retraités que la DREES publie caisse
-  // par caisse ; ils sont ceux de la dernière année observée.
-  const lignesPoids = [...CAS_TYPES]
-    .sort((a, b) => (c.poids[b.code] || 0) - (c.poids[a.code] || 0))
-    .map((cas) => [
-      echapper(cas.libelle),
-      cas.caisses.map((caisse) => caisse.replace(/_/g, " ")).join(", "),
-      g.pourcentage(c.poids[cas.code] || 0, false, 1),
-      g.pourcentage(1 / CAS_TYPES.length, false, 1),
-    ]);
+  const horizon = avenir.annee(avenir.derniereAnnee);
+  const depart = avenir.annee(derniere);
+  const referenceAvenir = avenir.cumul("actuel");
+  const lignesAvenir = SCENARIOS.map(([scenario, libelle]) => {
+    const cumul = avenir.cumul(scenario);
+    return [
+      echapper(libelle),
+      milliards(horizon.coutConstants(scenario), 0),
+      g.pourcentage(horizon.partPib(scenario), false, 1),
+      milliards(cumul, 0),
+      scenario === "actuel" ? "réf."
+        : g.pourcentage(cumul / referenceAvenir - 1, true, 1),
+      scenario === "actuel" ? "—" : milliards(avenir.ecartCumule(scenario), 0),
+    ];
+  });
+  lignesAvenir.push([
+    "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
+    milliards(horizon.coutConstants(COMPOSANTE_GARANTIE), 0),
+    g.pourcentage(horizon.partPib(COMPOSANTE_GARANTIE), false, 1),
+    milliards(avenir.cumul(COMPOSANTE_GARANTIE), 0),
+    "—",
+    "—",
+  ]);
 
-  // -- ce que la garantie vieillesse coûte, lue sur la distribution ---------
-  // Une allocation différentielle ne se chiffre pas sur treize carrières : son
-  // coût est celui de la queue basse de la distribution des pensions.
+  const horizons = [];
+  for (let millesime = 2030; millesime <= avenir.derniereAnnee; millesime += 10) {
+    const ligne = avenir.annee(millesime);
+    if (!ligne) continue;
+    horizons.push([
+      String(millesime),
+      g.nombre(ligne.dependance, 2),
+      g.pourcentage(ligne.partPib("actuel"), false, 1),
+      g.pourcentage(ligne.partPib("notionnel_prospectif"), false, 1),
+      g.pourcentage(ligne.partPib("notionnel_prospectif_employeur"), false, 1),
+    ]);
+  }
+
+  return g.depliant("Les six systèmes comparés, du passé jusqu'à 2070", `
+<p>Le modèle calcule six systèmes pour une même carrière. La carte du haut n'en
+montre qu'un — le seul qui décrive une réforme applicable en créditant ce qui
+est réellement prélevé. Voici les six, sur le passé puis sur l'avenir.</p>
+
+<h4>Ce qu'ils auraient coûté depuis ${c.premiereAnnee}</h4>
+<p>La dépense observée n'est pas modélisée : elle est ce qu'elle est. Ce qui est
+modélisé, c'est le <strong>rapport</strong> entre ce qui a été versé et ce que
+chaque système aurait versé aux mêmes retraités — la moyenne des écarts de
+pension, pondérée par le poids de chaque génération dans la masse de l'année.
+Les poids sont les effectifs réels de chaque génération, lus dans la pyramide
+des âges de l'INSEE ; les écarts viennent des treize cas types croisés avec
+${c.generations.length} générations, de ${c.generations[0]} à
+${c.generations[c.generations.length - 1]}.</p>
+
+${g.graphique(
+    `Coût annuel des six systèmes, ${c.premiereAnnee}-${derniere}, `
+    + `en milliards d'euros constants de ${euros}`,
+    annees, courbes, `Md € ${euros}`)}
+
+${g.tableau(
+    ["Système", `Cumul ${c.premiereAnnee}-${derniere}`, "Écart",
+      `Coût ${derniere}`, `Part du PIB ${derniere}`],
+    lignesPasse,
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    `Ce que les six systèmes auraient coûté de ${c.premiereAnnee} à ${derniere}`,
+    true,
+  )}
+
+<div class="note"><strong>Les scénarios 3 et 5 coûtent exactement ce que coûte
+le système actuel, et ce n'est pas un défaut du calcul.</strong> Leur bascule est
+fixée à ${bascule} : aucune pension servie avant cette date n'en est modifiée,
+puisque les droits déjà acquis sont conservés. Une réforme prospective ne fait
+rien économiser sur le passé — elle ne commence à compter qu'au premier assuré
+qui liquide après elle. C'est vrai de toute réforme des retraites qui respecte
+les droits acquis.</div>
+
+<p>Le scénario 2 aurait coûté ${milliards(c.cumul("notionnel_retroactif"), 0)}
+au lieu de ${milliards(reference, 0)}. Cet écart ne mesure PAS l'effet des
+comptes notionnels : il mesure deux choses qui n'ont rien à voir avec eux — ce
+scénario ne porte au compte que la <strong>part salariale</strong> de la
+cotisation, là où le scénario 4 y ajoute la part patronale et coûte
+${milliards(c.cumul("notionnel_retroactif_employeur"), 0)}, et il applique une
+<a href="${g.lien("/methode", "indexation")}">règle d'indexation</a> dont la page
+Méthode montre qu'elle domine tout le reste.</p>
+
+<h4>Ce qu'ils coûteraient d'ici ${avenir.derniereAnnee}</h4>
+<div class="note">L'assiette de cette section n'est pas celle des cartes du
+haut. Le modèle décrit ici des <strong>pensions de répartition obligatoire</strong>
+— ${milliards(depenses.repartition(derniere), 1)} en ${derniere} —, il porte son
+propre niveau de dépense, et ce niveau <strong>s'écarte de celui du COR</strong> :
+il donne ${g.pourcentage(horizon.partPib("actuel"), false, 1)} du PIB pour le
+système actuel en ${avenir.derniereAnnee}, quand le COR en projette
+${g.pourcentage(COR_2070, false, 1)}. L'écart est de
+${g.nombre((horizon.partPib("actuel") - COR_2070) * 100, 1)} points, et il n'est
+pas flatteur : notre taux de remplacement ne recule pas, celui du COR recule.
+<code>docs/limites.md</code> § 5 ter porte la mesure. C'est pourquoi les cartes
+du haut n'utilisent du modèle que son <strong>rapport</strong> entre systèmes,
+sans dimension, appliqué aux dépenses du COR.</div>
+
+${g.tableau(
+    ["Système", `Coût ${avenir.derniereAnnee}`,
+      `Part du PIB ${avenir.derniereAnnee}`,
+      `Cumul ${avenir.premiereAnneeProjetee}-${avenir.derniereAnnee}`, "Écart",
+      "Dont économie"],
+    lignesAvenir,
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    `Ce que chaque système coûterait d'ici ${avenir.derniereAnnee}`,
+    true,
+  )}
+<p class="discret">Le cumul porte sur les seules années projetées, en euros
+constants de ${euros}. Les scénarios 2, 4 et 6 restent des contrefactuels et non
+des réformes : ils supposent recalculées les pensions de gens qui les perçoivent
+depuis trente ans, ce qu'aucun droit ne permettrait. Les scénarios 3 et 5, eux,
+décrivent une réforme applicable — droits acquis conservés, règles nouvelles
+pour la suite.</p>
+
+<h4>Ce qui pousse la dépense, et ce qui la retient</h4>
+${g.tableau(
+    ["Horizon", "65 ans et plus par 20-64 ans", "Système actuel",
+      `Notionnel dès ${bascule}`, `Notionnel dès ${bascule}, avec l'employeur`],
+    horizons,
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    "Dépendance démographique et part de la dépense dans le PIB, par horizon",
+    true,
+  )}
+<p class="discret">La première colonne est le rapport de dépendance
+démographique de l'INSEE : ${g.nombre(depart.dependance, 2)} personne de 65 ans
+ou plus par personne de 20 à 64 ans en ${derniere},
+${g.nombre(horizon.dependance, 2)} en ${avenir.derniereAnnee}. C'est lui qui
+pousse la dépense, et il n'est l'objet d'aucun choix. Ce qui la retient, dans le
+système actuel, est l'indexation sur les prix : elle fait décrocher les pensions
+des salaires, génération après génération. Les comptes notionnels font la même
+chose autrement — par le diviseur d'espérance de vie —, mais ils le font
+<em>explicitement</em>, et à l'acquisition plutôt qu'au versement.</p>
+`);
+}
+
+/** Le coefficient d'équilibre : de combien il faudrait rogner, ou pouvoir servir. */
+function coutDetailEquilibre(contexte) {
+  const c = contexte.cout();
+  const solde = c.solde;
+  const obs = solde.derniereAnneeObservee;
+  const observe = solde.annee(obs);
+  const horizon = solde.annee(solde.derniereAnnee);
+  const lignes = SCENARIOS.map(([scenario, libelle]) => {
+    const equilibre = solde.premiereAnneeEquilibree(scenario);
+    return [
+      echapper(libelle),
+      g.pourcentage(observe.solde(scenario), true, 2),
+      g.pourcentage(
+        solde.soldeMoyen(scenario, solde.premiereAnneeProjetee, solde.derniereAnnee),
+        true, 2,
+      ),
+      g.nombre(observe.coefficient(scenario), 2),
+      g.nombre(horizon.coefficient(scenario), 2),
+      equilibre ? String(equilibre) : "jamais",
+    ];
+  });
+  return g.depliant(
+    "Le coefficient d'équilibre : de combien faudrait-il rogner ?", `
+<p>Un système en comptes notionnels se pilote par un seul chiffre : le facteur
+par lequel il faut multiplier <em>toutes</em> les pensions pour que l'année
+tombe juste. Il vaut un quand le système s'équilibre, moins de un quand il faut
+rogner, plus de un quand il pourrait servir davantage.</p>
+
+${g.tableau(
+      ["Système", `Solde ${obs}`,
+        `Solde moyen ${solde.premiereAnneeProjetee}-${solde.derniereAnnee}`,
+        `Coefficient ${obs}`, `Coefficient ${solde.derniereAnnee}`,
+        "Équilibre atteint en"],
+      lignes,
+      ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+      "Solde et coefficient d'équilibre de chaque système, en part du PIB",
+      true,
+    )}
+<p class="discret">Les deux premières colonnes sont en part du PIB. Le
+coefficient vaut ${g.nombre(observe.coefficient("actuel"), 2)} pour le système
+actuel en ${obs} — il faudrait rogner de
+${g.pourcentage(1 - observe.coefficient("actuel"), false, 1)} —, et
+${g.nombre(horizon.coefficient("actuel"), 2)} en ${solde.derniereAnnee}. La
+dernière colonne ne regarde que les années projetées : le passé est ce qu'il a
+été. Pour le système actuel, dont le rapport vaut un par construction, ces
+colonnes redonnent exactement le solde publié par le COR — c'est ce qui dit que
+le raccord ne triche pas.</p>
+
+<div class="note"><strong>Un coefficient supérieur à un n'est pas une économie,
+c'est une marge.</strong> Lire les
+${g.nombre(horizon.coefficient("notionnel_prospectif"), 2)} du scénario 3 comme
+une économie de ${g.pourcentage(
+      1 - 1 / horizon.coefficient("notionnel_prospectif"), false, 0)} serait un
+contresens : à prélèvement inchangé, ce système-là servirait autant que le
+nôtre, mais autrement réparti entre les carrières. Le modèle calcule ce
+facteur ; il ne l'applique jamais, et toutes les courbes de coût de cette page
+sont celles d'un système qui ne se pilote pas.</div>
+`);
+}
+
+/** Ce que la garantie vieillesse coûterait, lue sur la vraie distribution. */
+function coutDetailGarantie(contexte) {
+  const c = contexte.cout();
   const distribution = contexte.distribution();
-  const simulateurCout = contexte.simulateur();
-  const effectifRetraites = simulateurCout.effectifs.effectif(
+  const simulateur = contexte.simulateur();
+  const effectifRetraites = simulateur.effectifs.effectif(
     "tous_regimes", distribution.millesime,
   );
-  // Le barème est écrit dans les euros de la proposition ; la distribution est
-  // dans ceux de l'enquête. C'est le barème qu'on déplace, et les coûts sont
-  // ensuite ramenés aux euros de la proposition pour être lisibles.
-  const versEnquete = simulateurCout.macro.coefficientPrix(
+  const versEnquete = simulateur.macro.coefficientPrix(
     contexte.base.annee_euros_garantie_vieillesse, distribution.millesime,
   );
   const rapportsLiberal = c.annee(distribution.millesime).rapports;
@@ -3240,13 +3765,13 @@ function cout(contexte) {
     [`Pensions de ${distribution.millesime}`, 1.0],
     ["Pensions du scénario 6", facteurContributif],
   ];
-  const lignesGarantie = [];
+  const lignes = [];
   for (const [titreAssiette, facteur] of assiettes) {
     for (const [titrePlancher, mensuel] of planchers) {
       const chiffre = coutGarantie(
         distribution, effectifRetraites, mensuel * versEnquete, facteur,
       );
-      lignesGarantie.push([
+      lignes.push([
         echapper(`${titreAssiette} — ${titrePlancher}`),
         g.pourcentage(chiffre.partBeneficiaires, false, 1),
         `${g.nombre(chiffre.beneficiaires / 1e6, 1)} M`,
@@ -3264,323 +3789,34 @@ function cout(contexte) {
     contexte.base.garantie_vieillesse_mensuelle * versEnquete, facteurContributif,
   );
 
-  // -- demain : la trajectoire de la répartition jusqu'à l'horizon INSEE ----
-  const avenir = c.avenir;
-  const anneesAvenir = avenir.annees.map((ligne) => ligne.annee);
-  const bascule = contexte.base.annee_bascule;
-  const courbesAvenir = SCENARIOS.map(([scenario, libelle]) => new g.Serie(
-    libelle,
-    avenir.annees.map((ligne) => ligne.coutConstants(scenario) / 1000),
-    COULEURS_SCENARIOS[scenario],
-    scenario.startsWith("notionnel_prospectif"),
-  ));
-  const partsAvenir = SCENARIOS.map(([scenario, libelle]) => new g.Serie(
-    libelle,
-    avenir.annees.map((ligne) => ligne.partPib(scenario) * 100),
-    COULEURS_SCENARIOS[scenario],
-    scenario.startsWith("notionnel_prospectif"),
-  ));
-  const horizon = avenir.annee(avenir.derniereAnnee);
-  const depart = avenir.annee(derniere);
-  const referenceAvenir = avenir.cumul("actuel");
-  const lignesAvenir = SCENARIOS.map(([scenario, libelle]) => {
-    const cumul = avenir.cumul(scenario);
-    return [
-      echapper(libelle),
-      milliards(horizon.coutConstants(scenario), 0),
-      g.pourcentage(horizon.partPib(scenario), false, 1),
-      milliards(cumul, 0),
-      scenario === "actuel"
-        ? "réf."
-        : g.pourcentage(cumul / referenceAvenir - 1, true, 1),
-      scenario === "actuel" ? "—" : milliards(avenir.ecartCumule(scenario), 0),
-    ];
-  });
-  lignesAvenir.push([
-    "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
-    milliards(horizon.coutConstants(COMPOSANTE_GARANTIE), 0),
-    g.pourcentage(horizon.partPib(COMPOSANTE_GARANTIE), false, 1),
-    milliards(avenir.cumul(COMPOSANTE_GARANTIE), 0),
-    "—",
-    "—",
-  ]);
-
-  const horizons = [];
-  for (let millesime = 2030; millesime <= avenir.derniereAnnee; millesime += 10) {
-    const ligne = avenir.annee(millesime);
-    if (ligne === null) continue;
-    horizons.push([
-      String(millesime),
-      g.nombre(ligne.dependance, 2),
-      g.pourcentage(ligne.partPib("actuel"), false, 1),
-      g.pourcentage(ligne.partPib("notionnel_prospectif"), false, 1),
-      g.pourcentage(ligne.partPib("notionnel_prospectif_employeur"), false, 1),
-    ]);
-  }
-
-  // -- le solde : ce qui rentre, face à ce que chaque système ferait sortir --
-  // Le périmètre n'est plus celui des sections précédentes. Il est celui du
-  // COR — les seuls comptes où dépenses et ressources soient publiées
-  // ensemble —, et c'est ce qui permet de soustraire sans mélanger.
-  const comptes = contexte.comptes();
-  const solde = c.solde;
-  const anneesSolde = solde.annees.map((ligne) => ligne.annee);
-  const derniereObservee = solde.derniereAnneeObservee;
-  const compteObserve = solde.annee(derniereObservee);
-  const horizonSolde = solde.annee(solde.derniereAnnee);
-  const TRACES_SOLDE = [
-    "actuel", "notionnel_prospectif", "notionnel_prospectif_employeur",
-  ];
-  const courbesSolde = [
-    new g.Serie(
-      "Ressources du système de retraite",
-      solde.annees.map((ligne) => ligne.ressources * 100),
-      "var(--serie-5)",
-    ),
-    ...SCENARIOS
-      .filter(([scenario]) => TRACES_SOLDE.includes(scenario))
-      .map(([scenario, libelle]) => new g.Serie(
-        libelle,
-        solde.annees.map((ligne) => ligne.depense(scenario) * 100),
-        COULEURS_SCENARIOS[scenario],
-        scenario.startsWith("notionnel_prospectif"),
-      )),
-  ];
-  const lignesSolde = SCENARIOS.map(([scenario, libelle]) => {
-    const equilibre = solde.premiereAnneeEquilibree(scenario);
-    return [
-      echapper(libelle),
-      g.pourcentage(compteObserve.solde(scenario), true, 2),
-      g.pourcentage(
-        solde.soldeMoyen(scenario, solde.premiereAnneeProjetee,
-                         solde.derniereAnnee), true, 2,
-      ),
-      g.nombre(compteObserve.coefficient(scenario), 2),
-      g.nombre(horizonSolde.coefficient(scenario), 2),
-      equilibre ? String(equilibre) : "jamais",
-    ];
-  });
-
-  const premiereStructure = Math.max(
-    ...POSTES.map((poste) => comptes.structure.get(poste.code).premiereAnnee),
-  );
-  const lignesStructure = POSTES.map((poste) => [
-    echapper(poste.libelle),
-    g.pourcentage(comptes.part(poste.code, premiereStructure), false, 1),
-    g.pourcentage(comptes.part(poste.code, derniereObservee), false, 1),
-    poste.contributive ? "oui" : "non",
-  ]);
-  const partCotisee = comptes.partContributive(derniereObservee);
-
-  const decennies = [];
-  for (let debut = 1960; debut <= derniere; debut += 10) {
-    const fin = Math.min(debut + 9, derniere);
-    const lignesDecennie = c.annees.filter(
-      (l) => l.annee >= debut && l.annee <= fin,
-    );
-    if (!lignesDecennie.length) continue;
-    const moyenne = (extraire) => lignesDecennie.reduce(
-      (somme, l) => somme + extraire(l), 0,
-    ) / lignesDecennie.length;
-    decennies.push([
-      `${debut}-${fin}`,
-      milliards(lignesDecennie.reduce((s, l) => s + l.observeeConstants, 0), 0),
-      g.pourcentage(moyenne((l) => l.partPib), false, 1),
-      g.pourcentage(moyenne((l) => l.rapports.notionnel_retroactif), false, 1),
-      g.pourcentage(
-        moyenne((l) => l.rapports.notionnel_retroactif_employeur), false, 1,
-      ),
-    ]);
-  }
-
-  return `
-<h2 style="margin-top:0">Ce que la retraite a coûté</h2>
-<p class="chapeau">Ce que la retraite a payé depuis ${c.premiereAnnee},
-système par système ; ce que les cinq autres systèmes auraient coûté sur la même
-période ; et ce qu'ils coûteraient d'ici ${avenir.derniereAnnee}. On ne change
-pas le passé : c'est la dernière question qui décide de quelque chose.</p>
-
-<div class="fiches">
-${g.fiche(`Dépense ${derniere}, risque vieillesse-survie`, milliards(total, 1))}
-${g.fiche("Dont répartition obligatoire", milliards(repartition, 1))}
-${g.fiche(`Part du PIB en ${derniere}`,
-    g.pourcentage(depenses.partPib(derniere), false, 1))}
-${g.fiche(`Cumul ${c.premiereAnnee}-${derniere}, euros de ${euros}`,
-    milliards(c.cumulObserve(), 0))}
-</div>
-
-<p>Les ${milliards(total, 1)} de ${derniere} sont le risque
-<strong>vieillesse-survie tout entier</strong> : les pensions, mais aussi le
-minimum vieillesse, l'aide sociale aux personnes âgées et la retraite
-supplémentaire par capitalisation. La <strong>répartition obligatoire</strong>
-seule en fait ${milliards(repartition, 1)} — c'est cette grandeur-là, et non le
-total, qu'il faut rapprocher des quelque 420 milliards que l'on cite d'ordinaire
-pour l'année en cours. Le reste est
-${milliards(autres.aide_sociale_locale, 1)} de dépendance,
-${milliards(autres.supplementaire, 1)} de capitalisation et
-${milliards(autres.solidarite_etat, 1)} de solidarité de l'État.</p>
-
-<h3>Soixante-six ans de dépense</h3>
-${g.graphique(
-    `Dépenses du risque vieillesse-survie de ${c.premiereAnnee} à ${derniere}, `
-    + "en milliards d'euros",
-    annees, [courbeConstants, courbeCourants], "Md €")}
-<p class="discret">Deux lectures de la même série. En euros courants, la
-dépense est multipliée par cent quatre-vingt-treize depuis
-${c.premiereAnnee} — mais les prix aussi ont été multipliés par treize.
-En euros constants, la multiplication est par quinze : c'est celle-là qui est
-réelle, et elle reste considérable.</p>
-
-${g.graphique(
-    "Part des dépenses de vieillesse-survie dans le produit intérieur brut, "
-    + `${c.premiereAnnee}-${derniere}`,
-    annees, [courbePib], "% du PIB", false, 1)}
-<p class="discret">Rapportée à la richesse produite, la dépense passe de
-${g.pourcentage(depenses.partPib(c.premiereAnnee), false, 1)} à
-${g.pourcentage(depenses.partPib(derniere), false, 1)}. La courbe monte par
-paliers — chaque crise fait un décrochage du dénominateur avant que le
-numérateur ne rattrape — et le palier des années 2020 n'a pas encore été
-refermé.</p>
-
-<h3>Système par système</h3>
-${g.graphique(
-    `Dépenses de vieillesse-survie par système, ${premiereVentilee}-${derniere}, `
-    + "en milliards d'euros courants",
-    ventilees, bandes, "Md €", true)}
-<p class="discret">La ventilation ne commence qu'en ${premiereVentilee} : de 1981
-à 1989 la DREES publie une autre nomenclature, dont les périmètres ne se
-raccordent pas à ceux-ci, et personne n'a publié le raccord. Le total, lui,
-remonte à ${c.premiereAnnee}.</p>
-
-${g.tableau(
-    ["Système", `${derniere}`, "Part", `Cumul ${premiereVentilee}-${derniere}`,
-      "Croissance réelle", "Répartition"],
-    lignesSystemes,
-    ["", "nombre", "nombre", "nombre", "nombre", ""],
-    `Dépense de vieillesse-survie par système en ${derniere}, et cumul depuis `
-      + `${premiereVentilee}`,
-    true,
-)}
-${g.gloses(SYSTEMES.map((systeme) => [systeme.libelle, systeme.glose]))}
-<p class="discret">Le cumul est en euros constants de ${euros} : additionner des
-euros de 1990 et de ${derniere} n'aurait aucun sens. La croissance réelle est
-celle de la dépense annuelle, déflatée, de ${premiereVentilee} à ${derniere}.
-Deux chiffres se lisent en connaissant le découpage : le régime général absorbe
-en 2020 les artisans et les commerçants, dont le régime a été adossé à la Cnav,
-et les « régimes spéciaux » de la comptabilité nationale contiennent la CNRACL,
-c'est-à-dire la fonction publique territoriale et hospitalière.</p>
-
-<h3>Ce que les six systèmes auraient coûté</h3>
-<p>La dépense observée n'est pas modélisée : elle est ce qu'elle est. Ce qui est
-modélisé, c'est le <strong>rapport</strong> entre ce qui a été versé et ce que
-chaque système aurait versé aux mêmes retraités — la moyenne des écarts de
-pension, pondérée par le poids de chaque génération dans la masse de l'année.
-Les poids sont les effectifs réels de chaque génération, lus dans la pyramide
-des âges de l'INSEE ; les écarts viennent des treize cas types croisés avec
-${c.generations.length} générations, de ${c.generations[0]} à
-${c.generations[c.generations.length - 1]}.</p>
-
-<p><strong>Deux pondérations se composent.</strong> Celle de la génération est
-démographique, et vient de l'INSEE. Celle du <strong>cas type</strong> est
-sociologique — combien de retraités ont eu cette carrière-là —, et vient des
-effectifs que la DREES publie caisse par caisse. La colonne de droite rappelle
-ce que valait la convention antérieure, qui les pesait à égalité.</p>
-
-${g.tableau(
-    ["Cas type", "Caisse dont il porte les retraités",
-      `Poids en ${derniere}`, "Ancienne convention"],
-    lignesPoids,
-    ["", "", "nombre", "nombre"],
-    `Ce que chaque cas type pèse dans les agrégats de cette page, en ${derniere}`,
-    true,
-  )}
-<p class="discret">Une caisse réclamée par plusieurs cas types se partage
-également entre eux : la Cnav est celle des quatre carrières du privé, et aucune
-source ne dit combien de ses retraités ont été cadres. C'est la seule part de
-convention égalitaire qui subsiste, et elle ne joue plus qu'à l'intérieur du
-salariat privé. Hors de la fenêtre que la DREES publie — 2004 à 2024 —, la
-répartition du bord est reconduite : la France de 1960 comptait plus
-d'exploitants agricoles que ces poids ne le disent.</p>
-
-${g.graphique(
-    `Coût annuel des six systèmes, ${c.premiereAnnee}-${derniere}, `
-    + `en milliards d'euros constants de ${euros}`,
-    annees, courbesScenarios, `Md € ${euros}`)}
-
-${g.tableau(
-    ["Système", `Cumul ${c.premiereAnnee}-${derniere}`, "Écart",
-      `Coût ${derniere}`, `Part du PIB ${derniere}`],
-    lignesScenarios,
-    ["", "nombre", "nombre", "nombre", "nombre"],
-    `Ce que les six systèmes auraient coûté de ${c.premiereAnnee} à ${derniere}`,
-    true,
-  )}
-
-<div class="note"><strong>Les scénarios 3 et 5 coûtent exactement ce que coûte
-le système actuel, et ce n'est pas un défaut du calcul.</strong> Leur bascule est
-fixée à ${contexte.base.annee_bascule} : aucune pension servie avant cette date
-n'en est modifiée, puisque les droits déjà acquis sont conservés. Une réforme
-prospective ne fait rien économiser sur le passé — elle ne commence à compter
-qu'au premier assuré qui liquide après elle. C'est le principal résultat de
-cette page, et il est vrai de toute réforme des retraites qui respecte les
-droits acquis.</div>
-
-<p>Le scénario 2, lui, aurait coûté ${milliards(c.cumul("notionnel_retroactif"), 0)}
-au lieu de ${milliards(reference, 0)} : la retraite française aurait servi
-${g.pourcentage(1 - c.cumul("notionnel_retroactif") / reference, false, 0)}
-de moins sur soixante-six ans. Cet écart ne mesure PAS l'effet des comptes
-notionnels. Il mesure deux choses qui n'ont rien à voir avec eux : ce scénario
-ne porte au compte que la <strong>part salariale</strong> de la cotisation — le
-scénario 4, qui y ajoute la part patronale, coûte
-${milliards(c.cumul("notionnel_retroactif_employeur"), 0)}, soit
-${g.pourcentage(
-    c.cumul("notionnel_retroactif_employeur")
-    / c.cumul("notionnel_retroactif") - 1, true, 0)}
-de plus —, et il applique une <a href="${g.lien("/methode", "indexation")}">règle
-d'indexation</a> dont la page Méthode montre qu'elle domine tout le reste.</p>
-
-<p>Le scénario 6 est le scénario 4 jusqu'à la bascule, puis un taux unique de
-18 % pour tous, avec une garantie vieillesse par-dessus. Sur le passé, ses
-18 % ne comptent pas encore — aucune pension servie avant ${bascule} n'a une
-année cotisée à ce taux —, et sa courbe est celle du scénario 4 plus la
-garantie : il aurait coûté ${milliards(c.cumul("notionnel_liberal"), 0)},
-dont ${milliards(c.cumul(COMPOSANTE_GARANTIE), 0)} de garantie vieillesse.
-Cette part-là est <strong>financée par l'impôt</strong> et non par les
-cotisations : la ligne en italique du tableau la redit à part, pour que l'on
-voie ce que ce scénario retire aux cotisations et ce qu'il demande au
-contribuable. <strong>Ce chiffre-là ne vaut rien</strong>, et la section qui
-suit dit pourquoi et par quoi le remplacer. C'est d'ici
-${avenir.derniereAnnee} que le taux unique se voit.</p>
-
-<h3>Ce que la garantie vieillesse coûterait vraiment</h3>
-<p>La garantie du scénario 6 est <strong>différentielle</strong> : elle ne
-verse que ce qui manque à une pension pour atteindre son plancher. Son coût est
-donc tout entier celui de la <strong>queue basse de la distribution</strong> des
-pensions, et treize carrières de référence ne décrivent pas une distribution. Le
-tableau ci-dessus l'estime à ${milliards(c.cumul(COMPOSANTE_GARANTIE), 0)} sur
-soixante-six ans, là où le barème appliqué à la vraie distribution coûte
-${milliards(garantieBasse.coutAnnuelMeur / versEnquete, 0)} <em>par an</em>.
-Ce n'est pas une imprécision, c'est un chiffre faux, et il faut le remplacer.</p>
+  return g.depliant("Ce que coûterait la garantie vieillesse", `
+<p>La garantie du scénario 6 est <strong>différentielle</strong> : elle ne verse
+que ce qui manque à une pension pour atteindre son plancher. Son coût est donc
+tout entier celui de la <strong>queue basse de la distribution</strong> des
+pensions, et treize carrières de référence ne décrivent pas une distribution :
+le chiffre que le tableau des six scénarios en tire —
+${milliards(c.cumul(COMPOSANTE_GARANTIE), 0)} sur soixante-six ans — est
+faux, et il faut le remplacer.</p>
 
 <p>L'échantillon interrégimes de retraités de la DREES publie, par tranches de
 cent euros, combien de retraités touchent combien. Le barème s'y applique
 directement, sans passer par aucun cas type. Deux lectures : ce que la garantie
 coûterait <strong>aux pensions d'aujourd'hui</strong>, en remplacement de
 l'ASPA — un calcul qui ne doit rien au modèle —, et ce qu'elle coûterait
-<strong>aux pensions du scénario 6</strong>,
-toute la distribution étant alors déplacée du rapport
-${g.pourcentage(facteurContributif, false, 0)} que le modèle donne à sa part
-contributive. Deux planchers aussi, parce que l'enquête dit la pension et non
-avec qui l'on vit : le coût réel est entre les deux.</p>
+<strong>aux pensions du scénario 6</strong>, toute la distribution étant alors
+déplacée du rapport ${g.pourcentage(facteurContributif, false, 0)} que le
+modèle donne à sa part contributive. Deux planchers aussi, parce que l'enquête
+dit la pension et non avec qui l'on vit : le coût réel est entre les deux.</p>
 
 ${g.tableau(
     ["Assiette et plancher", "Part des retraités", "Bénéficiaires",
       "Complément moyen",
-      `Coût annuel, milliards d'euros ${contexte.base.annee_euros_garantie_vieillesse}`],
-    lignesGarantie,
+      "Coût annuel, milliards d'euros "
+      + `${contexte.base.annee_euros_garantie_vieillesse}`],
+    lignes,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    "Coût annuel de la garantie vieillesse, barème appliqué à la distribution "
-    + `des pensions de l'EIR ${distribution.millesime}`,
+    "Coût annuel de la garantie vieillesse, barème appliqué à la "
+    + `distribution des pensions de l'EIR ${distribution.millesime}`,
     true,
   )}
 
@@ -3588,11 +3824,10 @@ ${g.tableau(
 huit distributions publiées qui soit dans la même grandeur que celles du modèle.
 Les pensions d'une tranche de cent euros sont supposées y être réparties
 uniformément, et la tranche ouverte du haut est traitée comme une masse
-ponctuelle — elle est de toute façon au-dessus de tout plancher. Le déplacement
-des pensions au rapport du scénario 6 est <em>proportionnel et uniforme</em>,
-alors que le scénario ne déplace pas toutes les carrières du même rapport : les
-deux dernières lignes sont un ordre de grandeur là où les deux premières sont un
-calcul.</p>
+ponctuelle. Le déplacement des pensions au rapport du scénario 6 est
+<em>proportionnel et uniforme</em>, alors que le scénario ne déplace pas toutes
+les carrières du même rapport : les deux dernières lignes sont un ordre de
+grandeur là où les deux premières sont un calcul.</p>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne
@@ -3604,353 +3839,161 @@ ${g.nombre(garantieBasse.beneficiaires / 1e6, 1)} millions de retraités aux
 pensions d'aujourd'hui, et à
 ${g.nombre(garantieScenario.beneficiaires / 1e6, 1)} millions à celles du
 scénario 6.</div>
+`);
+}
 
-<h2>Demain : ce que chaque système coûterait d'ici ${avenir.derniereAnnee}</h2>
-<p class="chapeau">On ne change pas le passé. La question qui décide de quelque
-chose est celle-ci : à partir d'aujourd'hui, que coûte chaque système ? La
-réponse tient à deux choses, et à deux seulement — combien de retraités, et
-combien chacun perçoit.</p>
-
-<div class="fiches">
-${g.fiche(`Système actuel en ${avenir.derniereAnnee}`,
-    g.pourcentage(horizon.partPib("actuel"), false, 1))}
-${g.fiche(`Notionnel dès ${bascule} en ${avenir.derniereAnnee}`,
-    g.pourcentage(horizon.partPib("notionnel_prospectif"), false, 1))}
-${g.fiche(`Écart cumulé ${avenir.premiereAnneeProjetee}-${avenir.derniereAnnee}`,
-    milliards(avenir.ecartCumule("notionnel_prospectif"), 0))}
-${g.fiche(`65 ans et plus par 20-64 ans, en ${avenir.derniereAnnee}`,
-    g.nombre(horizon.dependance, 2))}
-</div>
-
-<p>La méthode ne change pas d'un mot : le coût d'un système reste la dépense du
-système actuel multipliée par le rapport des masses de pension. Ce qui change,
-c'est d'où vient cette dépense. Jusqu'en ${derniere} elle est <strong>observée</strong> ;
-au-delà, c'est le modèle qui la produit, <strong>ancré</strong> sur cette
-dernière année publiée — les deux expressions coïncident exactement à la
-jonction, si bien qu'aucune courbe ne saute. Ce qui les fait bouger ensuite est
-ce qui doit les faire bouger : la <strong>pyramide des âges</strong> de l'INSEE,
-et les pensions que chaque génération acquiert sous chaque système.</p>
-
-<div class="note">L'assiette de cette section n'est pas celle de la précédente.
-Le modèle décrit des <strong>pensions de répartition obligatoire</strong> —
-${milliards(repartition, 1)} en ${derniere} — et non le risque vieillesse-survie
-entier, qui porte en plus la dépendance et la capitalisation. C'est donc de la
-répartition seule qu'il s'agit ici, de ${avenir.premiereAnnee} à
-${avenir.derniereAnnee}.</div>
-
-${g.graphique(
-    `Coût annuel des six systèmes de ${avenir.premiereAnnee} à `
-    + `${avenir.derniereAnnee}, en milliards d'euros constants de ${euros}`,
-    anneesAvenir, courbesAvenir, `Md € ${euros}`, false, 0, true,
-    derniere, "projection")}
-<p class="discret">À gauche du trait, la dépense est publiée par la DREES ; à
-droite, elle est projetée. Les courbes des scénarios 1, 3 et 5 se suivent jusqu'à la bascule de
-${bascule} — les droits déjà acquis sont conservés — puis les deux scénarios
-prospectifs s'en détachent, d'abord imperceptiblement, ensuite pour de bon. Une
-réforme des retraites met une génération entière à produire son effet, et c'est
-là le vrai enseignement de ce graphique : décider en ${bascule} n'économise rien
-en ${bascule}, et beaucoup en ${avenir.derniereAnnee}.</p>
-
-${g.graphique(
-    `Part du produit intérieur brut, ${avenir.premiereAnnee}-`
-    + `${avenir.derniereAnnee}, par système`,
-    anneesAvenir, partsAvenir, "% du PIB", false, 1, true,
-    derniere, "projection")}
-<p class="discret">C'est la lecture qui compte, parce qu'elle rapporte la
-dépense à ce qui la finance. Le système actuel passe de
-${g.pourcentage(depart.partPib("actuel"), false, 1)} en ${derniere} à
-${g.pourcentage(horizon.partPib("actuel"), false, 1)} en
-${avenir.derniereAnnee} : il ne dérape pas, il ne s'allège pas non plus. Le
-Conseil d'orientation des retraites, qui projette la même grandeur avec un
-modèle de population complet, trouve 13,9 % en 2024 et
-<strong>14,2 % en 2070</strong> (rapport annuel de juin 2025). Notre écart à
-lui vaut ${g.nombre((depart.partPib("actuel") - COR_2024) * 100, 1)} point de
-PIB au départ et
-${g.nombre((horizon.partPib("actuel") - COR_2070) * 100, 1)} à l'arrivée.
-C'est le meilleur contrôle externe dont cette page dispose, et il n'est pas
-flatteur : notre taux de remplacement ne recule pas, celui du COR recule.
-<code>docs/limites.md</code> § 5 ter porte la mesure.</p>
+/** Ce que chaque carrière type pèse dans les agrégats de la page. */
+function coutDetailPoids(contexte) {
+  const c = contexte.cout();
+  const derniere = contexte.depenses().derniereAnnee;
+  const lignes = [...CAS_TYPES]
+    .sort((a, b) => (c.poids[b.code] || 0) - (c.poids[a.code] || 0))
+    .map((cas) => [
+      echapper(cas.libelle),
+      cas.caisses.map((caisse) => caisse.replace(/_/g, " ")).join(", "),
+      g.pourcentage(c.poids[cas.code] || 0, false, 1),
+      g.pourcentage(1 / CAS_TYPES.length, false, 1),
+    ]);
+  return g.depliant("Ce que chaque carrière type pèse dans ces chiffres", `
+<p><strong>Deux pondérations se composent.</strong> Celle de la génération est
+démographique, et vient de l'INSEE. Celle du <strong>cas type</strong> est
+sociologique — combien de retraités ont eu cette carrière-là —, et vient des
+effectifs que la DREES publie caisse par caisse. La colonne de droite rappelle
+ce que valait la convention antérieure, qui les pesait à égalité.</p>
 
 ${g.tableau(
-    ["Système", `Coût ${avenir.derniereAnnee}`, `Part du PIB ${avenir.derniereAnnee}`,
-      `Cumul ${avenir.premiereAnneeProjetee}-${avenir.derniereAnnee}`, "Écart",
-      "Dont économie"],
-    lignesAvenir,
-    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
-    `Ce que chaque système coûterait d'ici ${avenir.derniereAnnee}`,
+    ["Cas type", "Caisse dont il porte les retraités",
+      `Poids en ${derniere}`, "Ancienne convention"],
+    lignes,
+    ["", "", "nombre", "nombre"],
+    `Ce que chaque cas type pèse dans les agrégats de cette page, en ${derniere}`,
     true,
   )}
-<p class="discret">Le cumul porte sur les seules années projetées, en euros
-constants de ${euros}. Les scénarios 2, 4 et 6 restent des contrefactuels et non
-des réformes : ils supposent recalculées les pensions de gens qui les perçoivent
-depuis trente ans, ce qu'aucun droit ne permettrait. Les scénarios 3 et 5, eux,
-décrivent une réforme applicable — droits acquis conservés, règles nouvelles
-pour la suite. La ligne en italique redit la part du scénario 6 que l'impôt
-finance, la garantie vieillesse, déjà comptée dans sa ligne.</p>
+<p class="discret">Une caisse réclamée par plusieurs cas types se partage
+également entre eux : la Cnav est celle des quatre carrières du privé, et aucune
+source ne dit combien de ses retraités ont été cadres. Hors de la fenêtre que la
+DREES publie — 2004 à 2024 —, la répartition du bord est reconduite : la France
+de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent.</p>
+`);
+}
 
-<h3>Ce qui pousse la dépense, et ce qui la retient</h3>
-${g.tableau(
-    ["Horizon", "65 ans et plus par 20-64 ans", "Système actuel",
-      `Notionnel dès ${bascule}`, `Notionnel dès ${bascule}, avec l'employeur`],
-    horizons,
-    ["", "nombre", "nombre", "nombre", "nombre"],
-    "Dépendance démographique et part de la dépense dans le PIB, par horizon",
-    true,
-  )}
-<p class="discret">La première colonne est le rapport de dépendance
-démographique de l'INSEE : ${g.nombre(depart.dependance, 2)} personne de 65 ans
-ou plus par personne de 20 à 64 ans en ${derniere},
-${g.nombre(horizon.dependance, 2)} en ${avenir.derniereAnnee}. C'est lui qui
-pousse la dépense, et il n'est l'objet d'aucun choix. Ce qui la retient, dans le
-système actuel, est l'indexation sur les prix : elle fait décrocher les pensions
-des salaires, génération après génération, et c'est ainsi que la dépense reste à
-peu près stable dans le PIB pendant que le nombre de retraités augmente de
-moitié. Les comptes notionnels font la même chose autrement — par le diviseur
-d'espérance de vie —, mais ils le font <em>explicitement</em>, et à
-l'acquisition plutôt qu'au versement.</p>
+/** Trois séries, trois périmètres, et pourquoi ils ne se confondent pas. */
+function coutDetailSources(contexte) {
+  const comptes = contexte.comptes();
+  const depenses = contexte.depenses();
+  const c = contexte.cout();
+  const solde = c.solde;
+  const derniere = depenses.derniereAnnee;
+  return g.depliant("D'où viennent ces chiffres", `
+<p>Cette page croise deux producteurs de comptes, et ils ne comptent pas la
+même chose. Rien n'est mélangé pour autant : du modèle, les deux premières
+cartes n'empruntent qu'un <strong>rapport</strong> entre systèmes, qui est sans
+dimension.</p>
 
-<h3>Ce que cette projection suppose</h3>
-<ul class="serree">
-  <li><strong>La démographie n'est pas de nous.</strong> Effectifs par âge du
-  scénario central des projections de population 2026 de l'INSEE, jusqu'en
-  ${avenir.derniereAnnee} — c'est cet horizon-là, et non une décision du dépôt,
-  qui borne la page. Seize autres scénarios existent ; leur écart mesurerait
-  l'incertitude démographique, que cette page ne montre pas.</li>
-  <li><strong>Le PIB projeté corrige l'emploi.</strong> Il croît au rythme
-  nominal des hypothèses du COR — ${g.pourcentage(
-      contexte.simulateur().macro.projection.pib_nominal, false, 2)} par an —,
-  corrigé de l'évolution de la population d'âge actif, qui recule de
-  ${g.pourcentage(
-      1 - contexte.population().actifs.valeur(avenir.derniereAnnee)
-      / contexte.population().actifs.valeur(derniere), false, 0)} d'ici
-  ${avenir.derniereAnnee}. Sans cette correction, la France de
-  ${avenir.derniereAnnee} produirait avec des actifs qu'aucune projection ne lui
-  donne, et toutes les parts de PIB de cette page seraient flatteuses d'un point.</li>
-  <li><strong>La grille échantillonne une génération sur cinq.</strong> Une
-  cohorte qui part juste avant la bascule est donc représentée par une
-  génération qui part juste après : les courbes prospectives s'écartent de la
-  courbe actuelle d'un ou deux dixièmes de point avant même la bascule. C'est le
-  prix du pas de la grille, et un test le borne à un demi-point.</li>
-  <li><strong>Le taux de couverture est supposé constant.</strong> Le modèle
-  compte des générations, non des cotisants : il suppose que la même proportion
-  de chaque génération perçoit une pension, et que la carrière type ne change
-  pas. Un recul de l'âge de départ, une carrière plus longue ou plus hachée
-  déplaceraient la trajectoire, et la page ne les simule pas.</li>
-  <li><strong>Aucune règle de pilotage.</strong> Un système notionnel réel
-  ajusterait toutes ses pensions par un coefficient d'équilibre commun, année
-  après année. Il déplacerait les niveaux de cette page sans toucher aux écarts
-  entre carrières.</li>
-  <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
-  projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
-  COR pour la macroéconomie, celle du modèle pour les pensions.</li>
-</ul>
+<h4>Le compte du système de retraite — Conseil d'orientation des retraites</h4>
+<p>Dépenses, ressources et solde du même ensemble de régimes, sous la même
+convention, de ${solde.premiereAnnee} à ${solde.derniereAnnee}. Champ : régimes
+légalement obligatoires, FSV compris, RAFP exclu — ni dépendance, ni
+capitalisation. ${g.pourcentage(comptes.depense(derniere), false, 2)} du PIB
+en ${derniere}. C'est la source des deux premières cartes et de celle sur la
+réforme.</p>
+<p class="discret">On lui prend les DEUX colonnes, jamais une seule : un solde
+ne se fabrique pas en soustrayant deux périmètres. On aurait voulu les
+ressources du même producteur que la dépense ci-dessous ; elles n'existent
+pas. <strong>Les comptes de la protection sociale ne ventilent pas leurs
+ressources par risque</strong> — une « recette du risque vieillesse » est une
+donnée sans définition comptable, les cotisations d'un régime polyvalent
+n'étant affectées à aucun risque.</p>
 
-<h3>Décennie par décennie</h3>
-${g.tableau(
-    ["Décennie", `Dépense cumulée, euros de ${euros}`, "Part du PIB",
-      "Coût du scénario 2", "Coût du scénario 4"],
-    decennies,
-    ["", "nombre", "nombre", "nombre", "nombre"],
-    "Dépense de retraite, décennie par décennie",
-    true,
-  )}
-<p class="discret">Les deux dernières colonnes sont en pourcentage de la dépense
-réellement engagée la même décennie. Elles remontent : plus on approche du
-présent, plus les carrières prises en compte ont été cotisées sous des règles
-proches des règles actuelles, et moins le compte notionnel s'en écarte.</p>
+<h4>Les comptes de la protection sociale — DREES</h4>
+<p>La dépense, risque par risque, depuis ${c.premiereAnnee}. Le risque
+<strong>vieillesse-survie</strong> entier vaut
+${g.pourcentage(depenses.partPib(derniere), false, 2)} du PIB en ${derniere},
+et la <strong>répartition obligatoire</strong> seule
+${g.pourcentage(depenses.repartition(derniere) / depenses.pib.valeur(derniere), false, 2)}.
+C'est la source de la carte « est-ce que ça a toujours coûté autant ».</p>
+<p class="discret">Moins de trois dixièmes de point séparent cette répartition
+obligatoire du périmètre du COR : c'est le meilleur recoupement dont ces deux
+séries disposent, et un test du dépôt le tient.</p>
 
-<h2>Le solde, et non le coût</h2>
-<p class="chapeau">Tout ce qui précède dit ce qui SORT. Un système de
-répartition ne se juge pourtant pas à sa dépense mais à son solde : ce qui sort
-moins ce qui rentre. Cette section pose le second terme, et en tire la grandeur
-qui manquait — le <strong>coefficient d'équilibre</strong>, c'est-à-dire le
-facteur par lequel il faudrait multiplier toutes les pensions d'un système pour
-que son année tombe juste.</p>
+<h4>Le modèle du dépôt</h4>
+<p>Treize carrières types croisées avec ${c.generations.length} générations, de
+${c.generations[0]} à ${c.generations[c.generations.length - 1]}, pesées par les effectifs réels
+de l'INSEE et par les effectifs de retraités que la DREES publie caisse par
+caisse. Il ne produit qu'un rapport de masses de pension — jamais un niveau de
+dépense dans les cartes du haut.</p>
+<p class="discret">Fiabilité : la dépense observée est
+<strong>certifiée</strong>, recontrôlée contre l'API de la DREES à chaque
+exécution ; le compte du COR est <strong>de niveau haut</strong>, consolidé par
+lui depuis les rapports à la Commission des comptes de la Sécurité sociale ; et
+tout ce qui passe par un rapport de masses est <strong>estimé</strong>, sans
+pouvoir être autre chose — aucune institution ne publie ce qu'aurait coûté un
+système qui n'a pas existé. Tout est détaillé sur la page
+<a href="${g.lien("/donnees")}">Données</a>.</p>
+`);
+}
 
-<div class="fiches">
-${g.fiche(`Ressources du système de retraite, ${derniereObservee}`,
-          g.pourcentage(compteObserve.ressources, false, 1))}
-${g.fiche(`Solde ${derniereObservee}`,
-          milliards(compteObserve.soldeMeur("actuel"), 1))}
-${g.fiche(`Part cotisée des ressources, ${derniereObservee}`,
-          g.pourcentage(partCotisee, false, 0))}
-${g.fiche(`Solde moyen ${solde.premiereAnneeProjetee}-${solde.derniereAnnee}, `
-          + "système actuel",
-          g.pourcentage(
-            solde.soldeMoyen("actuel", solde.premiereAnneeProjetee,
-                             solde.derniereAnnee), true, 1))}
-</div>
-
-<div class="note"><strong>Ces ressources ne viennent pas de la DREES, et ce
-n'est pas un choix.</strong> Les Comptes de la protection sociale, d'où sort
-toute la dépense de cette page, <strong>ne ventilent pas leurs ressources par
-risque</strong> : une « recette du risque vieillesse » est une donnée sans
-définition comptable, les cotisations d'un régime polyvalent n'étant affectées à
-aucun risque. Ce qui existe, c'est le compte du <em>système de retraite</em> —
-dépenses et ressources du même ensemble de régimes —, que le COR consolide
-chaque année. On lui prend les deux colonnes, jamais une seule : un solde ne se
-fabrique pas en soustrayant deux périmètres.</div>
-
-<p>Ce périmètre — régimes légalement obligatoires, FSV compris, RAFP exclu —
-n'est ni celui du risque vieillesse-survie ni tout à fait celui de la
-répartition obligatoire :
-${g.pourcentage(comptes.depense(derniere), false, 2)} du PIB en ${derniere},
-contre ${g.pourcentage(
-  depenses.repartition(derniere) / depenses.pib.valeur(derniere), false, 2,
-)} pour la seconde et
-${g.pourcentage(depenses.partPib(derniere), false, 2)} pour le premier. Moins
-de trois dixièmes de point séparent les deux premières : c'est le meilleur
-recoupement dont ces séries disposent. Du modèle, cette section n'emprunte que
-le <strong>rapport</strong> des masses de pension, qui est sans dimension.</p>
-
-${g.graphique(
-    `Ressources du système de retraite et coût de trois systèmes, `
-    + `${solde.premiereAnnee}-${solde.derniereAnnee}, en part du PIB`,
-    anneesSolde, courbesSolde, "% du PIB", false, 1, true,
-    derniereObservee, "projection")}
-<p class="discret">L'écart entre la courbe verte et celle d'un système EST son
-solde. Le système actuel a encaissé
-${milliards(Math.abs(compteObserve.soldeMeur("actuel")), 1)} de moins qu'il n'a
-versé en ${derniereObservee} — le COR, qui publie ce chiffre à part, dit la
-même chose —,
-et son déficit se creuse jusqu'à
-${g.pourcentage(horizonSolde.solde("actuel"), true, 1)} du PIB
-en ${solde.derniereAnnee}. Les deux scénarios tracés à côté sont les seuls qui
-décrivent une réforme applicable : leurs courbes quittent celle du système
-actuel après la bascule de ${bascule}, et passent sous la courbe des ressources
-— c'est-à-dire à l'équilibre — en
-${solde.premiereAnneeEquilibree("notionnel_prospectif") || "jamais"} et
-${solde.premiereAnneeEquilibree("notionnel_prospectif_employeur") || "jamais"}.
-Les trois scénarios rétroactifs ne sont pas tracés : ils supposent recalculées
-des pensions servies depuis trente ans, et leur courbe, trois fois plus basse,
-écraserait tout le reste.</p>
-
-${g.tableau(
-    ["Système", `Solde ${derniereObservee}`,
-     `Solde moyen ${solde.premiereAnneeProjetee}-${solde.derniereAnnee}`,
-     `Coefficient ${derniereObservee}`, `Coefficient ${solde.derniereAnnee}`,
-     "Équilibre atteint en"],
-    lignesSolde,
-    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
-    "Solde et coefficient d'équilibre de chaque système, en part du PIB",
-    true)}
-<p class="discret">Les deux premières colonnes sont en part du PIB. Le
-<strong>coefficient d'équilibre</strong> est sans unité : c'est le facteur par
-lequel il faudrait multiplier toutes les pensions du système pour que l'année
-tombe juste. Il vaut ${g.nombre(compteObserve.coefficient("actuel"), 2)} pour le
-système actuel en ${derniereObservee} — il faudrait rogner de
-${g.pourcentage(1 - compteObserve.coefficient("actuel"), false, 1)} —, et
-${g.nombre(horizonSolde.coefficient("actuel"), 2)} en ${solde.derniereAnnee}.
-Au-dessus de un, le système encaisse plus qu'il ne verse et pourrait servir
-davantage. La dernière colonne ne regarde que les années projetées : le passé
-est ce qu'il a été.</p>
-
-<div class="note"><strong>Un coefficient supérieur à un n'est pas une économie,
-c'est une marge.</strong> Un système notionnel réel <em>applique</em> son
-coefficient : il ne laisse pas d'excédent dormir, il relève les pensions
-jusqu'à l'équilibre — ou les abaisse. Lire les
-${g.nombre(horizonSolde.coefficient("notionnel_prospectif"), 2)} du scénario 3
-comme une économie de ${g.pourcentage(
-    1 - 1 / horizonSolde.coefficient("notionnel_prospectif"), false, 0)}
-serait donc un contresens : à prélèvement inchangé, ce système-là servirait
-autant que le nôtre, mais <em>autrement réparti entre les carrières</em> — et
-c'est cette répartition, et elle seule, que le reste du site mesure. Le modèle
-calcule ce facteur ; il ne l'applique jamais, et toutes les courbes de coût de
-cette page sont celles d'un système qui ne se pilote pas.</div>
-
-<h3>De quoi ces ressources sont faites</h3>
-<p>Un compte notionnel ne sait créditer qu'une chose : une cotisation assise sur
-un revenu d'activité. Les ressources du système de retraite ne sont pas toutes
-de cette nature, et il faut le savoir avant de lire un coefficient
-d'équilibre.</p>
-
-${g.tableau(
-    ["Poste", `Part en ${premiereStructure}`, `Part en ${derniereObservee}`,
-     "Cotisée"],
-    lignesStructure,
-    ["", "nombre", "nombre", ""],
-    `Structure des ressources du système de retraite, `
-    + `${premiereStructure} et ${derniereObservee}`,
-    true)}
-${g.gloses(POSTES.map((poste) => [poste.libelle, poste.glose]))}
-<p class="discret">${g.pourcentage(partCotisee, false, 0)} des ressources de
-${derniereObservee} sont cotisées, en comptant la contribution d'équilibre de
-l'État à ses propres fonctionnaires — le modèle la porte déjà au compte des
-scénarios 4 et 5, et c'est à ce titre qu'elle est ici comptée cotisée, malgré un
-taux fixé pour équilibrer plutôt que pour acquérir. Le reste est de l'impôt
-affecté, des transferts de la branche famille et de l'Unédic, des subventions
-d'équilibre à des régimes dont les cotisants ont disparu avant les pensionnés.
-La part cotisée <em>recule</em> : elle était de
-${g.pourcentage(comptes.partContributive(premiereStructure), false, 0)} en
-${premiereStructure}, l'impôt ayant pris le relais des cotisations patronales
-allégées.</p>
-
-<h3>Ce que ce solde ne dit pas</h3>
+/** Tout ce que cette page ne dit pas, en une seule liste. */
+function coutDetailLimites(contexte) {
+  const c = contexte.cout();
+  const solde = c.solde;
+  const avenir = c.avenir;
+  const observe = solde.annee(solde.derniereAnneeObservee);
+  return g.depliant("Ce que cette page ne dit pas", `
 <ul class="serree">
   <li><strong>Les recettes ne réagissent à rien.</strong> Elles sont celles du
-  système actuel, encaissées ou projetées telles quelles : le contrefactuel est
-  « à prélèvement inchangé, ce système tiendrait-il ? ». Le scénario 6, qui pose
-  un taux unique de 18 % pour tous, déplacerait aussi les recettes, et le
-  coefficient ne le dit pas.</li>
-  <li><strong>Le coefficient n'est pas appliqué.</strong> L'appliquer
-  changerait toutes les pensions par un même facteur, donc tous les niveaux de
-  cette page, sans toucher aux écarts entre carrières.</li>
-  <li><strong>L'année du retour à l'équilibre est fragile.</strong> Le déficit
-  actuel vaut ${g.pourcentage(Math.abs(compteObserve.solde("actuel")), false, 2)}
-  du PIB, c'est-à-dire l'ordre de grandeur de l'écart que le pas de la grille
-  des générations introduit à lui seul autour de la bascule. La date à laquelle
-  un scénario prospectif croise la courbe des ressources se lit donc à quelques
-  années près, jamais à l'année.</li>
-  <li><strong>La garantie vieillesse du scénario 6 est comptée dans son
-  coût.</strong> Elle est pourtant financée par l'impôt et non par la
-  cotisation, comme l'est déjà une part des ressources actuelles ; son
-  coefficient mêle donc les deux financements, là où le tableau des coûts les
-  sépare.</li>
+  système actuel, encaissées ou projetées telles quelles : la question posée
+  est « à prélèvement inchangé, ce système tiendrait-il ? ». Le scénario 6, qui
+  pose un taux unique de 18 % pour tous, déplacerait aussi les recettes, et
+  rien ici ne le dit.</li>
+  <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
+  L'appliquer changerait toutes les pensions par un même facteur, donc tous les
+  niveaux de cette page, sans toucher aux écarts entre carrières — qui sont la
+  seule chose que ce site mesure.</li>
+  <li><strong>L'année du retour à l'équilibre se lit à quelques années
+  près.</strong> Le déficit actuel vaut
+  ${g.pourcentage(Math.abs(observe.solde("actuel")), false, 2)} du PIB, c'est-à-dire
+  l'ordre de grandeur de l'écart que le pas de la grille des générations
+  introduit à lui seul autour de la bascule.</li>
   <li><strong>Les réserves ne sont pas comptées.</strong> Le système de retraite
   détient des réserves financières que le COR chiffre à part ; un solde annuel
   négatif peut être couvert par elles pendant des années. Le solde dit le flux,
   jamais le stock.</li>
   <li><strong>La projection est celle du COR</strong>, scénario de référence,
-  et elle porte les hypothèses de ce scénario — démographie de l'INSEE,
-  productivité, chômage. Ses ressources en part de PIB reculent parce que
-  l'assiette des cotisations progresse moins vite que le PIB : c'est une
-  hypothèse, écrite par lui, et non une mesure.</li>
-  <li><strong>Le compte observé vaut « haute », jamais « certifiée ».</strong>
-  Le COR consolide des comptes produits par d'autres — les régimes, via les
-  rapports à la Commission des comptes de la Sécurité sociale. Tout ce qui passe
-  ensuite par un rapport de masses reste <strong>estimé</strong>.</li>
-</ul>
-
-<h3>Ce que cette page ne dit pas</h3>
-<ul class="serree">
-  <li><strong>Elle ne projette rien.</strong> La série s'arrête à ${derniere},
-  dernière année publiée par la DREES. Prolonger demanderait une pyramide des
-  âges et un taux d'emploi, c'est-à-dire un modèle de population — que ce dépôt
-  n'a pas et ne prétend pas avoir.</li>
+  avec ses hypothèses — démographie de l'INSEE, productivité, chômage. Ses
+  ressources reculent en part de PIB parce que l'assiette des cotisations y
+  progresse moins vite que le PIB : c'est une hypothèse, écrite par lui, et non
+  une mesure. Seize autres scénarios démographiques existent, dont l'écart
+  mesurerait l'incertitude ; cette page n'en montre aucun.</li>
+  <li><strong>Le taux de couverture est supposé constant.</strong> Le modèle
+  compte des générations, non des cotisants : il suppose que la même proportion
+  de chaque génération perçoit une pension, et que la carrière type ne change
+  pas. Un recul de l'âge de départ, une carrière plus longue ou plus hachée
+  déplaceraient la trajectoire.</li>
   <li><strong>Un effectif de caisse n'est pas un effectif de personnes.</strong>
-  Chaque cas type porte celui des retraités de sa caisse, lu année par année :
-  l'agent de conduite pèse
-  ${g.pourcentage(c.poids.agent_sncf_conduite, false, 1)} et non
-  ${g.pourcentage(1 / CAS_TYPES.length, false, 1)}. Mais un polypensionné compte
-  dans chacune de ses caisses, ce qui gonfle le poids des régimes dont les
-  affiliés ont typiquement aussi une carrière au régime général.</li>
+  Un polypensionné compte dans chacune de ses caisses, ce qui gonfle le poids
+  des régimes dont les affiliés ont typiquement aussi une carrière au régime
+  général.</li>
   <li><strong>Avant 1975, la reconstitution est mince.</strong> La répartition
   ne commence qu'en ${contexte.base.annee_debut_repartition} : les générations
   antérieures à ${c.generations[0]} n'ont, dans ce modèle, aucune pension, et
   plusieurs régimes n'existaient pas encore. Les premières années reposent donc
   sur deux ou trois générations et la moitié des cas types.</li>
-  <li><strong>Le coût n'est pas le solde.</strong> Un système qui coûterait
-  quatre fois moins n'est pas quatre fois plus « soutenable » : il servirait
-  quatre fois moins, et un système piloté relèverait ses pensions jusqu'à
-  l'équilibre. Le coefficient de la section précédente dit de combien ; les
-  courbes de coût ne l'appliquent jamais.</li>
+  <li><strong>La grille échantillonne une génération sur cinq.</strong> Une
+  cohorte qui part juste avant la bascule est donc représentée par une
+  génération qui part juste après : les courbes de réforme s'écartent d'un ou
+  deux dixièmes de point avant même la bascule. Un test borne l'effet à un
+  demi-point.</li>
+  <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
+  projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
+  COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en
+  ${avenir.derniereAnnee}, horizon des projections de population, et pas un an
+  de plus.</li>
 </ul>
-<p class="discret">Fiabilité de l'ensemble : la dépense observée est
-<strong>certifiée</strong> — recontrôlée contre l'API de la DREES à chaque
-exécution —, le rapport qui en tire les cinq contrefactuels est
-<strong>estimé</strong>, et ne peut pas être autre chose : aucune institution ne
-publie ce qu'aurait coûté un système qui n'a pas existé.</p>
-`;
+<p class="discret">Les limites du modèle dans son ensemble sont dans
+<code>docs/limites.md</code>, et la méthode sur la page
+<a href="${g.lien("/methode")}">Méthode</a>.</p>
+`);
 }
 
 /**

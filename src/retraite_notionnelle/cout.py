@@ -344,6 +344,19 @@ class SoldeAnnuel:
         """Le même solde en millions d'euros courants, et zéro si le PIB manque."""
         return self.solde(scenario) * self.pib
 
+    def ressources_meur(self) -> float:
+        """Ce qui rentre, en millions d'euros courants, et zéro si le PIB manque.
+
+        Une part de PIB ne parle qu'à qui sait ce qu'est le PIB. Les euros, si —
+        et c'est en euros que la page ouvre, avant de passer aux parts, qui sont
+        la seule unité où 1959 et 2070 se comparent.
+        """
+        return self.ressources * self.pib
+
+    def depense_meur(self, scenario: str) -> float:
+        """Ce qui sort, en millions d'euros courants, et zéro si le PIB manque."""
+        return self.depense(scenario) * self.pib
+
 
 @dataclass
 class Solde:

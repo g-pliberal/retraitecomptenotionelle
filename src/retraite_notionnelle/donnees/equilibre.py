@@ -126,6 +126,68 @@ POSTES: tuple[PosteRessources, ...] = (
 CODES_POSTES = tuple(poste.code for poste in POSTES)
 
 
+@dataclass(frozen=True)
+class GroupeRessources:
+    """Un regroupement de postes, dit dans les mots de tout le monde.
+
+    Les six postes du COR sont ceux d'un comptable. « Contribution d'équilibre
+    de l'État », « impôts et taxes affectés », « transferts d'organismes
+    extérieurs » ne disent rien à qui n'a pas fait d'économie, et un graphique à
+    six bandes est de toute façon illisible. Quatre groupes suffisent à porter
+    la seule chose que cette ventilation a à dire : les trois quarts de l'argent
+    viennent des salaires, le reste vient d'ailleurs.
+
+    Le découpage détaillé n'est pas perdu pour autant — la page le montre en
+    entier, poste par poste, dans son dépliant.
+    """
+
+    code: str
+    libelle: str
+    #: Une phrase, sans jargon, qui dit ce que le groupe contient.
+    explication: str
+    postes: tuple[str, ...]
+    #: Couleur de la bande dans le graphique empilé.
+    couleur: str
+
+
+#: Les quatre groupes, du plus cotisé au moins cotisé. L'ordre est celui des
+#: bandes du graphique, de bas en haut : le socle des salaires d'abord.
+GROUPES: tuple[GroupeRessources, ...] = (
+    GroupeRessources(
+        "salaires", "Cotisations sur les salaires",
+        "Prélevées sur chaque fiche de paie, une part par le salarié, une part "
+        "par l'employeur. C'est la seule ressource qu'un compte notionnel sache "
+        "porter au crédit de quelqu'un.",
+        ("cotisations", "contribution_equilibre_etat"),
+        "var(--serie-5)",
+    ),
+    GroupeRessources(
+        "impots", "Impôts",
+        "CSG, TVA, taxe sur les salaires. L'État a allégé les cotisations des "
+        "employeurs pour baisser le coût du travail, puis remboursé la retraite "
+        "par l'impôt.",
+        ("impots_et_taxes",),
+        "var(--serie-6)",
+    ),
+    GroupeRessources(
+        "transferts", "Versements d'autres caisses",
+        "La branche famille paie les droits liés aux enfants, l'assurance "
+        "chômage ceux des périodes sans emploi : des droits acquis sans "
+        "cotisation de l'assuré, que quelqu'un paie quand même.",
+        ("transferts",),
+        "var(--serie-7)",
+    ),
+    GroupeRessources(
+        "reste", "Le reste",
+        "Ce que l'État comble à la SNCF, aux mines, aux marins — des régimes "
+        "dont les cotisants ont disparu avant les retraités —, plus les "
+        "produits financiers et les recettes diverses des caisses.",
+        ("subventions_equilibre", "autres_produits"),
+        "var(--serie-9)",
+    ),
+)
+
+
 class ComptesRetraite:
     """Le compte du système de retraite : dépenses, ressources, solde, structure.
 
@@ -209,6 +271,40 @@ class ComptesRetraite:
         """Part des ressources qui est une cotisation sur un revenu d'activité."""
         return sum(self.part(poste.code, annee)
                    for poste in POSTES if poste.contributive)
+
+    def part_groupe(self, code: str, annee: int) -> float:
+        """Part d'un groupe de postes dans les ressources de l'année."""
+        groupe = next(g for g in GROUPES if g.code == code)
+        return sum(self.part(poste, annee) for poste in groupe.postes)
+
+    def ressource_groupe(self, code: str, annee: int) -> float:
+        """Ce qu'un groupe rapporte, en part du PIB.
+
+        C'est la grandeur que le graphique empile : les parts d'un même total
+        ne se lisent qu'en pourcentages les unes des autres, alors que les
+        parts de PIB se lisent aussi dans le temps — et c'est le temps qui dit
+        que l'impôt a doublé pendant que les cotisations ne bougeaient pas.
+        """
+        return self.part_groupe(code, annee) * self.ressource(annee)
+
+    # -- fenêtre de la ventilation -------------------------------------------
+    #
+    # Le total des ressources remonte à 2002 et va jusqu'à l'horizon du COR ; sa
+    # VENTILATION ne couvre que les années où le COR l'a publiée. Les deux
+    # bornes se lisent donc dans les séries, jamais dans une constante écrite
+    # ici : le rapport suivant les décalera d'un an.
+
+    @property
+    def premiere_annee_ventilee(self) -> int:
+        return max(serie.premiere_annee for serie in self.structure.values())
+
+    @property
+    def derniere_annee_ventilee(self) -> int:
+        return min(serie.derniere_annee for serie in self.structure.values())
+
+    def annees_ventilees(self) -> list[int]:
+        return list(range(self.premiere_annee_ventilee,
+                          self.derniere_annee_ventilee + 1))
 
     def fiabilite(self, annee: int) -> Fiabilite:
         return min(self.depenses.fiabilite(annee), self.ressources.fiabilite(annee))

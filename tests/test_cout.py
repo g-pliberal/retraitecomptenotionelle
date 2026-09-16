@@ -41,6 +41,7 @@ from retraite_notionnelle.donnees.depenses import (
 )
 from retraite_notionnelle.donnees.equilibre import (
     CODES_POSTES,
+    GROUPES,
     POSTES,
     ComptesRetraite,
 )
@@ -820,3 +821,59 @@ def test_la_part_cotisee_domine_mais_recule(comptes: ComptesRetraite):
     # Deux postes seulement sont cotisés, et ce sont les deux premiers.
     assert [poste.code for poste in POSTES if poste.contributive] == [
         "cotisations", "contribution_equilibre_etat"]
+
+
+def test_les_quatre_groupes_repartissent_les_six_postes_sans_reste(
+        comptes: ComptesRetraite):
+    """La page montre quatre parts là où le COR en publie six : rien ne se perd.
+
+    Un empilement à six bandes ne se lit pas, et « contribution d'équilibre de
+    l'État » ne dit rien à qui n'a pas fait d'économie. Le regroupement est donc
+    une affaire de lecture — jamais de comptabilité : chaque poste est dans un
+    groupe et un seul, et la somme des quatre est la somme des six.
+    """
+    dans_un_groupe = [poste for groupe in GROUPES for poste in groupe.postes]
+    assert sorted(dans_un_groupe) == sorted(CODES_POSTES), (
+        "un poste manque à l'appel, ou compte deux fois"
+    )
+    for annee in (comptes.premiere_annee_ventilee, comptes.derniere_annee_ventilee):
+        parts = sum(comptes.part_groupe(groupe.code, annee) for groupe in GROUPES)
+        assert parts == pytest.approx(1.0, abs=1e-5 * len(POSTES)), annee
+        # Et la même chose une fois rapportée au PIB, ce que le graphique empile.
+        pib = sum(comptes.ressource_groupe(groupe.code, annee) for groupe in GROUPES)
+        assert pib == pytest.approx(comptes.ressource(annee), rel=1e-4), annee
+
+
+def test_la_ventilation_couvre_moins_d_annees_que_le_total(comptes: ComptesRetraite):
+    """Le total des ressources remonte plus haut et va plus loin que son détail.
+
+    C'est pourquoi la carte « d'où vient cet argent » s'arrête là où la carte
+    du bilan continue, et pourquoi les deux bornes se lisent dans les séries
+    plutôt que dans une constante écrite dans le code : le rapport suivant du
+    COR les décalera d'un an.
+    """
+    assert comptes.premiere_annee_ventilee >= comptes.premiere_annee
+    assert comptes.derniere_annee_ventilee <= comptes.derniere_annee
+    assert comptes.annees_ventilees()[0] == comptes.premiere_annee_ventilee
+    assert comptes.annees_ventilees()[-1] == comptes.derniere_annee_ventilee
+    # La ventilation est observée, jamais projetée : le COR ne publie pas la
+    # structure de ressources qu'il projette.
+    assert comptes.derniere_annee_ventilee <= comptes.derniere_annee_observee
+
+
+def test_le_bilan_se_dit_aussi_en_euros(cout: Cout):
+    """« Part du PIB » ne parle qu'à qui sait ce qu'est le PIB.
+
+    Les trois chiffres d'ouverture de la page sont donc en euros, et ils
+    doivent se recomposer : ce qui rentre moins ce qui sort est le solde, et le
+    PIB manquant rend zéro plutôt qu'un montant inventé.
+    """
+    observe = cout.solde.annee(cout.solde.derniere_annee_observee)
+    assert observe.ressources_meur() == pytest.approx(observe.ressources * observe.pib)
+    assert observe.depense_meur("actuel") - observe.ressources_meur() == pytest.approx(
+        -observe.solde_meur("actuel"))
+    # Le dernier millésime projeté est hors de la fenêtre où le PIB est publié.
+    horizon = cout.solde.annee(cout.solde.derniere_annee)
+    assert horizon.pib == 0.0
+    assert horizon.ressources_meur() == 0.0
+    assert horizon.depense_meur("actuel") == 0.0
