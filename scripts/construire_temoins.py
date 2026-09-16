@@ -283,6 +283,26 @@ def _cas() -> list[dict]:
     cas.append(("mois_carriere_decalee_au_calendrier", {
         "naissance": "1975-09-01", "debut": "1997-12", "liquidation": "2040-04",
     }))
+    # LA FIN D'ACTIVITÉ. Le formulaire supposait qu'on travaillait jusqu'au
+    # mois du départ : une ligne sans emploi dit l'inverse, et c'est là que
+    # l'écart se mesure. Trois façons de ne pas travailler, qui n'ouvrent pas
+    # les mêmes droits — le chômage indemnisé valide des trimestres et fait
+    # cotiser l'UNEDIC aux complémentaires, l'inactivité n'ouvre rien.
+    for motif in ("sans_activite", "chomage_indemnise", "chomage_non_indemnise"):
+        cas.append((f"fin_activite_{motif}", {
+            "naissance": "1962-03-15", "debut": "1984-09",
+            "liquidation": "2026-07", "metier2_debut": "2019-04",
+            "metier2_statut": motif,
+        }))
+    # Un creux AU MILIEU, entre deux métiers : les années qu'il couvre ne
+    # cotisent pas, mais le métier d'avant continue de les affilier — c'est à
+    # son régime complémentaire que l'UNEDIC verse.
+    cas.append(("creux_en_milieu_de_carriere", {
+        "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
+        "metier2_debut": "2000-02", "metier2_statut": "chomage_indemnise",
+        "metier3_debut": "2003-09", "metier3_statut": "artisan",
+        "metier3_salaire": "1.2",
+    }))
     # Un changement de métier daté au mois : ce que les âges entiers ne
     # savaient pas dire, et que le calendrier donne sans un champ de plus.
     cas.append(("metier_change_en_cours_d_annee", {
@@ -574,6 +594,14 @@ def _pages(contexte: Contexte) -> dict:
             "metier2_salaire": "0.8",
             "metier3_debut": "47", "metier3_statut": "artisan",
             "metier3_salaire": "1.5",
+        }),
+        # Une ligne qui n'est pas un métier : la légende la nomme « période,
+        # sans emploi », le champ de revenu disparaît, et le résumé dit à quel
+        # âge l'activité s'arrête.
+        ("simuler_periode_sans_emploi", "/simuler", {
+            **BASE, "naissance": "1962-03-15", "debut": "1984-09",
+            "liquidation": "2026-07", "metier2_debut": "2019-04",
+            "metier2_statut": "chomage_indemnise",
         }),
         # Une ligne de métier laissée à moitié remplie : la page doit le dire,
         # et dire ce qui manque.

@@ -150,6 +150,10 @@ form .grille {
    libellé absorbe la hauteur en trop ; les champs se posent alors sur la même
    ligne, quelle que soit l'aide au-dessus. */
 form .grille > div { display: flex; flex-direction: column; }
+/* `hidden` seul ne masque rien ici : `display: flex` ci-dessus l'emporte sur la
+   feuille du navigateur. La règle est écrite pour le champ de revenu d'une
+   période sans emploi, que la page retire dès que le motif est choisi. */
+form .grille > div[hidden] { display: none; }
 form .grille > div > label { flex: 1 0 auto; }
 label { display: block; font-size: 0.88rem; color: var(--texte-doux); margin-bottom: 0.25rem; }
 /* Pas d'`opacity` ici : à 0,8 sur `--texte-doux`, l'aide tombait à 4,23:1 sur
