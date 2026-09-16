@@ -2399,11 +2399,53 @@ function partVivante(survie, duree) {
   return survie[rang] * (1 - fraction) + survie[rang + 1] * fraction;
 }
 
+/**
+ * L'âge de référence, affiché seulement là où il agit.
+ *
+ * Ce chiffre n'entre dans AUCUNE des six pensions par lui-même. Il sert à une
+ * seule opération : convertir en capital les droits acquis avant la bascule,
+ * donc les scénarios 3 et 5 et eux seuls. Les scénarios 1, 2, 4 et 6 ne le
+ * lisent jamais — en comptes notionnels, l'âge de départ est déjà payé par le
+ * coefficient de conversion et par les années non cotisées.
+ *
+ * Deux conséquences, et c'est pourquoi la fiche ne se contente pas de lire
+ * `ecart_age` :
+ *
+ * - l'âge montré doit être celui de l'année de BASCULE, celui que la conversion
+ *   emploie, et non celui de l'année de liquidation. Les deux ne coïncident que
+ *   depuis 2017, où le cliquet est à 67 ans quelle que soit l'année ; une
+ *   bascule antérieure les sépare, et la fiche affichait alors un âge que le
+ *   calcul n'utilisait pas ;
+ * - quand rien n'a été acquis avant la bascule, ou que l'utilisateur a demandé
+ *   la conversion à l'âge de départ effectif, l'âge de référence ne sert à rien
+ *   et la fiche disparaît plutôt que d'annoncer un chiffre inerte.
+ */
+function ficheAgeReference(comparaison, saisie) {
+  const acquis = comparaison.notionnel_prospectif.droits_acquis;
+  if (acquis === null || acquis === undefined
+      || saisie.conversion_acquis !== "reference") {
+    return "";
+  }
+  return g.fiche(
+    "âge de référence — scénarios 3 et 5 seulement",
+    `${age(acquis.age_conversion)}`
+    + g.bulle(
+      "D'où vient l'âge de référence et ce qu'il fait",
+      `<strong>${age(acquis.age_conversion)}</strong> est l'âge du `
+      + "<strong>taux plein</strong> du régime général : celui où la décote "
+      + "s'annule, quelle que soit la durée cotisée. La loi du 9 novembre "
+      + "2010 l'a porté de 65 à 67 ans, cible atteinte en 2017 : c'est "
+      + "l'âge en vigueur pour les dernières générations. Il ne sert ici "
+      + "qu'à convertir les droits acquis avant la bascule ; les scénarios "
+      + "1, 2, 4 et 6 n'en dépendent pas. Détail ligne à ligne plus bas.",
+    ),
+  );
+}
+
 function resultats(contexte, saisie) {
   const comparaison = contexte.simuler(saisie);
   const carriere = comparaison.carriere;
   const retro = comparaison.notionnel_retroactif;
-  const ecart = retro.ecart_age;
   const conversion = retro.conversion;
 
   // Le moteur ne calcule qu'un montant, en euros de l'année de liquidation. La
@@ -2494,15 +2536,13 @@ function resultats(contexte, saisie) {
       comparaison.variation("notionnel_liberal"),
       comparaison.tauxRemplacement("notionnel_liberal"));
 
-  const anticipation = `départ ${g.nombre(Math.abs(ecart.ecart), 2).replace(/0+$/, "").replace(/,$/, "")} ans `
-    + (ecart.anticipe ? "plus tôt" : "plus tard");
   const fiches = [
     g.fiche("années cotisées", String(carriere.anneesCotisees.length)),
     // La date, et pas seulement l'année : la pension prend effet le premier du
     // mois, et c'est ce mois que l'utilisateur vient de choisir.
     g.fiche("liquidation", `${age(carriere.age_liquidation)} `
       + `<span class="discret">en ${carriere.dateLiquidation}</span>`),
-    g.fiche(`âge de référence — ${anticipation}`, `${age(ecart.age_reference)}`),
+    ficheAgeReference(comparaison, saisie),
     // Deux décimales, et non une : le lecteur qui refait la division
     // « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7 au
     // lieu de 25,67 il tombait un euro à côté, et doutait du reste.
@@ -3082,16 +3122,43 @@ function cascade(comparaison, saisie) {
   ];
 
   const partAcquis = acquis.capital / prospectif.capital_notionnel;
+  // Le seul endroit du site où l'âge de référence agit, donc le seul où son
+  // histoire a sa place : la fiche des résultats se borne à dire ce qu'il est,
+  // le budget de lecture de la page ne lui laissant pas davantage.
+  //
+  // Les DEUX sens sont écrits. La version d'avant ne parlait que de
+  // l'anticipation, ce qui laissait croire à une sanction ; c'est un PIVOT, et
+  // un départ postérieur à l'âge de référence est bonifié par le même
+  // mécanisme. Taire cette moitié-là aurait été présenter une convention de
+  // modélisation comme une règle de justice.
   let neutralite = "";
   if (saisie.conversion_acquis === "reference"
-      && acquis.age_conversion > ageLiquidation) {
+      && acquis.age_conversion !== ageLiquidation) {
+    const effet = acquis.age_conversion > ageLiquidation
+      ? "L'anticipation est donc payée une seconde fois, sur le passé."
+      : "Le report est donc récompensé une seconde fois, sur le passé.";
     neutralite = `<p>Ligne b) : les droits déjà ouverts sont convertis au diviseur de `
       + `l'âge de référence (${age(acquis.age_conversion)}), alors que la `
-      + `rente sera servie depuis ${age(ageLiquidation)}. L'anticipation `
-      + `est donc payée une seconde fois, sur le passé. L'option « conversion `
-      + `des droits acquis à l'âge de départ effectif » supprime cet `
-      + `abattement, et c'est la convention qu'une réforme réelle `
-      + `retiendrait.</p>`;
+      + `rente sera servie depuis ${age(ageLiquidation)}. ${effet} `
+      + `L'option « conversion des droits acquis à l'âge de départ `
+      + `effectif » supprime cet écart, et c'est la convention qu'une `
+      + `réforme réelle retiendrait.</p>`
+      + `<p>D'où vient ce chiffre : ${age(acquis.age_conversion)} est l'âge `
+      + `du <strong>taux plein</strong> du régime général, celui auquel la `
+      + `décote s'annule quelle que soit la durée cotisée. La loi `
+      + `n° 2010-1330 du 9 novembre 2010 l'a porté de 65 à 67 ans par `
+      + `paliers, cible atteinte en 2017 ; la réforme du 14 avril 2023 l'y `
+      + `a laissé. Le modèle le tient à <strong>cliquet</strong> — il ne `
+      + `redescend jamais —, de sorte que l'abaissement à 60 ans de 1982 ne `
+      + `le fasse pas baisser et qu'un départ à 60 ans en 1990 se lise bien `
+      + `comme une anticipation de cinq ans.</p>`
+      + `<p>C'est le <strong>seul</strong> usage de cet âge dans tout le `
+      + `site : il n'entre que dans les scénarios 3 et 5, par cette ligne b). `
+      + `Les scénarios 1, 2, 4 et 6 ne le lisent jamais — en comptes `
+      + `notionnels, partir tôt est déjà payé deux fois, par les années non `
+      + `cotisées et par un coefficient de conversion plus élevé. Et c'est `
+      + `un <strong>pivot</strong>, non une sanction : partir avant lui `
+      + `réduit la part acquise, partir après l'augmente.</p>`;
   }
 
   return g.depliant("Du scénario 1 au scénario 3, ligne à ligne", `
