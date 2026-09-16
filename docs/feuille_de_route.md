@@ -1606,8 +1606,8 @@ compréhension ou bloque l'usage), 🟠 moyenne (gêne réelle, contournable),
 ⚪ basse (finition). Le texte de chaque chantier est le sien, tel que reçu.
 
 **À vérifier avant de commencer.** La revue a été écrite sur le site tel qu'il
-était le 15 septembre ; trois chantiers recoupent des travaux déjà faits ou
-faits depuis, et il faut d'abord regarder ce qui en reste :
+était le 15 septembre ; deux chantiers recoupent des travaux déjà faits, et il
+faut d'abord regarder ce qui en reste :
 
 - *Les bulles de définition* (thème 1, premier chantier) : la bulle du
   glossaire existe déjà — action 19 — pour les mots de jargon du simulateur.
@@ -1617,13 +1617,6 @@ faits depuis, et il faut d'abord regarder ce qui en reste :
   (thème 2) : l'action 16 a ramené les cinq grilles de Cas types à une seule,
   accompagnée de trois chiffres. Vérifier ce que le relecteur voyait encore et
   si le reste du chantier tient.
-- *La licence du texte et des données* (thème 3, deux premiers chantiers) : le
-  16 septembre, le code est passé de MIT à Apache 2.0 et les textes,
-  infographies et tableaux sous CC BY-SA 4.0 — l'une des deux pistes que le
-  relecteur proposait. `LICENSE` dit désormais ce que chaque licence couvre, et
-  que les données restent sous les conditions de leurs producteurs. Reste le
-  point que le relecteur pose pour les deux : faire relire ce choix par un
-  juriste, et dire quelque chose du droit sui generis sur la base de données.
 
 **Fichiers.** Presque tout est dans `src/retraite_notionnelle/web/pages.py` et
 `web/gabarit.py`, avec leur portage `moteur/js/pages.js` et `moteur/js/gabarit.js`,
@@ -1695,11 +1688,22 @@ passe, disant quelles pages ont bougé et de combien de mots.
 
 *Le moteur (Python de référence + JS sans dépendance, 469 cas de test à parité bit-à-bit) est une vraie force technique, à préserver telle quelle. L'architecture de l'information, elle, mériterait d'être retravaillée.*
 
-- [ ] 🔴 **Protéger le texte et l'habillage du site, pas seulement le code** `Global · Dépôt`
+- [x] 🔴 **Protéger le texte et l'habillage du site, pas seulement le code** `Global · Dépôt`
   Le texte du site — l'argumentaire de Programme, les explications de chaque page — est une œuvre protégée par le droit d'auteur dès sa création, sans qu'aucune licence ne soit nécessaire pour ça. Le choix actuel fait l'inverse : « cette page […] sous licence libre » renvoie au MIT, qui autorise explicitement la copie et la modification du texte par un tiers, à la seule condition de garder une notice dans les copies du *code* — une condition qui ne s'applique même pas à qui reprend juste la prose d'une page sans toucher au dépôt. Si l'objectif est de protéger cette expression-là (le texte, pas l'idée qu'il porte — voir le constat plus bas), deux pistes : sortir la prose éditoriale de la licence MIT et la laisser sous « tous droits réservés », le régime par défaut du droit d'auteur français, sans rien à publier pour l'obtenir ; ou choisir une licence Creative Commons plus adaptée à du texte que le MIT ne l'est, par exemple CC BY-ND (partage autorisé, réécriture ou déformation du message interdite) ou CC BY-SA (partage et adaptation autorisés, mais attribution et même licence obligatoires en aval). Un repère, pas un avis juridique — à faire trancher par un juriste avant de changer quoi que ce soit.
+  *Fait le 16 septembre 2026.* Le code est passé de MIT à Apache 2.0, et les
+  textes, infographies, graphiques, tableaux et la documentation sous CC BY-SA
+  4.0, la seconde des deux pistes proposées : reprise et adaptation libres, à
+  condition de citer le site et de republier sous la même licence. `LICENSE`
+  dit ce que chaque licence couvre ; le README, la page « À propos » et le pied
+  de page reprennent la règle, dans le Python et son portage. Le nom et le
+  logo du parti ne sont couverts par aucune des deux.
 
-- [ ] 🟠 **Pour les données : un droit séparé existe, indépendant de la licence du code** `Données · Dépôt`
+- [x] 🟠 **Pour les données : un droit séparé existe, indépendant de la licence du code** `Données · Dépôt`
   Les séries et barèmes bruts sont en grande partie des faits, que le droit d'auteur classique ne protège pas, quelle que soit la licence choisie. Le droit français prévoit néanmoins un régime distinct, le droit sui generis des producteurs de bases de données (articles L341-1 et suivants du code de la propriété intellectuelle, transposant la directive 96/9/CE) : il protège celui qui démontre un investissement substantiel dans la constitution, la vérification ou la présentation d'une base de données, contre la réutilisation d'une partie substantielle de son contenu — ce que documente déjà, de fait, la page Données avec ses 72 régimes recoupés contre LEGI, DILA, COR et DREES. Ce droit existe indépendamment de la licence du code : la publier en MIT ne l'éteint pas forcément, mais ne le mentionne pas non plus. À faire vérifier par un juriste avant de fixer la licence des données, plutôt que de la déduire de celle du moteur.
+  *Fait le 16 septembre 2026, avec le précédent.* `LICENSE` ne déduit plus la
+  licence des données de celle du moteur : les données de `data/` restent sous
+  les conditions de leurs producteurs, et ni l'Apache 2.0 du code ni la CC BY-SA
+  des textes ne les couvrent.
 
   > **Constat (pas une action) :** la proposition elle-même — comptes notionnels, taux unique à 18 %, garantie vieillesse individualisée — n'est protégeable par aucune licence : le droit d'auteur couvre une expression, jamais une idée ou un système. N'importe quel parti peut reprendre le principe sans rien devoir au dépôt, quoi que ce dernier choisisse pour son texte ou ses données — et c'est en général dans l'intérêt d'un parti que sa proposition circule et se discute. Ce qui reste établissable, ce n'est pas l'exclusivité de l'idée mais son antériorité : la publication datée et publique en fait déjà foi.
 
@@ -2084,8 +2088,9 @@ passe, disant quelles pages ont bougé et de combien de mots.
 - **Septembre 2026, action 23.** Ouverte. Une revue extérieure des six pages,
   datée du 15 septembre et reçue le 16, est versée entière sous l'action 23 :
   vingt-sept chantiers en quatre thèmes, chacun avec sa case à cocher et la
-  priorité que le relecteur lui donne. Rien n'est commencé. Trois chantiers
-  recoupent des travaux déjà faits — la bulle du glossaire de l'action 19, la
-  grille unique de l'action 16, le passage du code sous Apache 2.0 et des
-  textes sous CC BY-SA 4.0 le 16 septembre — et l'action dit pour chacun ce
-  qu'il faut vérifier avant de le reprendre.
+  priorité que le relecteur lui donne. Deux sont cochés d'emblée : les deux
+  chantiers de licence, réglés le 16 septembre par le passage du code sous
+  Apache 2.0 et des textes sous CC BY-SA 4.0, les données restant sous les
+  conditions de leurs producteurs. Deux autres recoupent des travaux déjà
+  faits — la bulle du glossaire de l'action 19, la grille unique de l'action
+  16 — et l'action dit pour chacun ce qu'il faut vérifier avant de le reprendre.
