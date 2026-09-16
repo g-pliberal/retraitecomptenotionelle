@@ -331,6 +331,20 @@ section.cle > .reponse {
 section.cle > .source {
   font-size: 0.82rem; color: var(--texte-doux); margin: 0.2rem 0 0;
 }
+/* Le bouton qui compose l'image. Discret — il ne dispute pas la place au
+   graphique —, mais toujours au même endroit : en bas à droite de la carte,
+   là où se trouve ce qu'on fait d'un contenu qu'on vient de lire. */
+section.cle > .partage { margin: 0.6rem 0 0; text-align: right; }
+section.cle > .partage > .partager {
+  font: inherit; font-size: 0.85rem; cursor: pointer;
+  color: var(--accent); background: none;
+  border: 1px solid var(--trait-champ); border-radius: 4px;
+  padding: 0.35rem 0.8rem;
+}
+section.cle > .partage > .partager:hover {
+  border-color: var(--accent); background: var(--accent-doux);
+}
+section.cle > .partage > .partager[disabled] { opacity: 0.6; cursor: progress; }
 section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 /* Le mot de jargon et sa définition. Tout est en ligne — le mot doit couler
    dans sa phrase comme n'importe quel autre —, et l'enveloppe est simplement
@@ -366,8 +380,51 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 }
 /* Graphiques : du SVG écrit à la main, dont seules les couleurs et les tailles
    de texte sont ici. Le tracé lui-même est dans `graphique()`. */
-.graphique { margin: 1.3rem 0 1.7rem; }
+.graphique { margin: 1.3rem 0 1.7rem; position: relative; }
 .graphique svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* La figure se parcourt au clavier : les flèches y déplacent l'année lue. Le
+   contour du focus est celui de tout le site, posé sur la figure entière parce
+   que c'est elle qui reçoit les touches. */
+.graphique:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px;
+                           border-radius: 4px; }
+/* Le trait vertical de l'année lue, et les points posés sur chaque courbe. Ils
+   sont dessinés par `index.html` dans le `<g class="survol">` que le tracé
+   laisse vide : rien de tout cela n'est dans le HTML servi, et la page reste
+   lisible sans une ligne de script. */
+.graphique .survol .guide { stroke: var(--texte-doux); stroke-width: 1;
+                            stroke-dasharray: 2 3; }
+.graphique .survol .point { stroke: var(--fond-carte); stroke-width: 2; }
+/* La lecture de l'année survolée. Elle flotte au-dessus du tracé, du côté où il
+   reste de la place : `index.html` bascule `.a-droite` quand le pointeur passe
+   la moitié du cadre, sans quoi la boîte sortirait de l'écran sur la fin de la
+   série — c'est-à-dire là où l'on regarde le plus. */
+.graphique .lecture {
+  position: absolute; top: 0.2rem; left: 0; z-index: 4; pointer-events: none;
+  min-width: 11rem; max-width: 19rem;
+  background: var(--fond-carte); border: 1px solid var(--trait-champ);
+  border-radius: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 0.5rem 0.7rem; font-size: 0.85rem; line-height: 1.4;
+}
+.graphique .lecture[hidden] { display: none; }
+.graphique .lecture.a-droite { left: auto; right: 0; }
+.graphique .lecture .annee { font-weight: 600; display: block;
+                             margin-bottom: 0.25rem; }
+.graphique .lecture ul { list-style: none; margin: 0; padding: 0; }
+/* Les libellés sont raccourcis par `index.html`, mais « Ce qui sortirait en
+   comptes notionnels dès 2026 » reste long : la ligne passe à la ligne plutôt
+   que de sortir de la boîte. */
+.graphique .lecture li { display: flex; align-items: baseline; gap: 0.4rem;
+                         margin-bottom: 0.1rem; }
+.graphique .lecture .valeur { margin-left: auto; padding-left: 0.7rem;
+                              white-space: nowrap;
+                              font-variant-numeric: tabular-nums; }
+/* L'aide qui dit que les flèches marchent. Elle n'apparaît qu'au focus clavier :
+   à la souris, elle n'apprendrait rien et prendrait une ligne. */
+.graphique .aide-clavier {
+  font-size: 0.8rem; color: var(--texte-doux); margin: 0.3rem 0 0;
+  visibility: hidden;
+}
+.graphique:focus-visible .aide-clavier { visibility: visible; }
 .graphique .grille { stroke: var(--trait); stroke-width: 1; }
 .graphique .axe { stroke: var(--texte-doux); stroke-width: 1; }
 .graphique .repere {
@@ -485,12 +542,17 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .fiches.reperes { grid-template-columns: 1fr; }
   .fiches.reperes .fiche .valeur { font-size: 1.6rem; }
   section.cle { padding: 1rem 1rem 0.8rem; }
-  /* La bulle du glossaire ne flotte plus : elle pousse le texte. Une boîte
-     posée par-dessus, ancrée sur un mot qui peut se trouver au bord de
-     l'écran, déborderait de la page ou sortirait de la vue. */
+  /* La bulle du glossaire quitte le fil du texte et se pose en bas de l'écran,
+     sur toute la largeur. Deux raisons. Une boîte flottante ancrée sur un mot
+     qui peut se trouver au bord de l'écran en déborderait ; et une boîte posée
+     DANS le fil coupait la phrase en deux, laissant le point qui suit le mot
+     orphelin sur sa propre ligne. Fixée en bas, elle ne déplace rien et reste
+     dans la vue quel que soit l'endroit où l'on a touché. */
   .mot { position: static; }
   .mot > .bulle {
-    position: static; width: auto; margin: 0.4rem 0; box-shadow: none;
+    position: fixed; left: 0.75rem; right: 0.75rem; bottom: 0.75rem;
+    top: auto; width: auto; max-width: none; z-index: 20;
+    font-size: 0.95rem; padding: 0.9rem 1rem;
   }
   form .grille { gap: 0.9rem; }
   /* Le SVG se réduit avec la page : ses textes, exprimés en unités du viewBox,
@@ -534,6 +596,11 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
    pas suivre. */
 @media print {
   header.bandeau nav, .evitement { display: none; }
+  /* Ni la lecture au survol — il n'y a pas de pointeur sur du papier —, ni le
+     bouton qui compose une image : la page imprimée EST déjà l'image. */
+  .graphique .lecture, .graphique .aide-clavier, section.cle > .partage {
+    display: none;
+  }
   body { background: #fff; color: #000; font-size: 11pt; }
   .defilant { overflow: visible; }
   .carte, .note, table, .graphique, .scenario, section.cle { break-inside: avoid; }

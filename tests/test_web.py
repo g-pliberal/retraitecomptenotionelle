@@ -2548,7 +2548,7 @@ def test_aucun_graphique_n_est_livre_sans_ses_chiffres(contexte, chemin):
     qui en produit la description.
     """
     corps = rendre(contexte, chemin, {})[1]
-    traces = corps.count('<figure class="graphique">')
+    traces = corps.count('<figure class="graphique"')
     tableaux = corps.count('<details class="donnees-graphique">')
     assert traces == tableaux, (
         f"{chemin} : {traces} graphiques pour {tableaux} tableaux de données"
@@ -3098,14 +3098,13 @@ def _hors_depliants(corps: str) -> str:
     return "".join(morceaux)
 
 
-def test_la_page_cout_tient_en_quatre_graphiques_et_sans_tableau_ouvert(contexte):
+def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
     """Le temps du lecteur n'est pas gratuit, et cette page le dépensait.
 
     Elle portait sept graphiques et neuf tableaux dépliés, huit mille mots à
     traverser avant d'atteindre un résultat. Ce qu'elle doit pouvoir justifier
-    est toujours là — rien n'a été retiré —, mais replié. Ce test tient la
-    discipline : quatre tracés ouverts, aucun tableau ouvert, et de quoi lire la
-    page en quelques minutes.
+    est toujours là — rien n'a été retiré —, mais replié, et les trois tracés
+    qui suivaient la même grandeur sur trois fenêtres n'en font plus qu'un.
 
     Les bornes sont larges à dessein : elles n'interdisent pas d'écrire, elles
     interdisent de revenir à une page qu'on ne lit pas.
@@ -3113,18 +3112,18 @@ def test_la_page_cout_tient_en_quatre_graphiques_et_sans_tableau_ouvert(contexte
     corps = rendre(contexte, "/cout", {})[1]
     visible = _hors_depliants(corps)
 
-    traces = visible.count('<figure class="graphique">')
-    assert traces <= 4, f"{traces} graphiques ouverts sur la page Coût"
+    traces = visible.count('<figure class="graphique"')
+    assert traces <= 2, f"{traces} graphiques ouverts sur la page Coût"
     assert visible.count("<table") == 0, (
         "un tableau déplié sur la page Coût : les chiffres se rangent sous le "
         "graphique qu'ils décrivent, ou dans une section repliée"
     )
     mots = len(re.sub(r"<[^>]+>", " ", visible).split())
-    assert mots <= 1200, f"{mots} mots à lire avant d'avoir rien déplié"
+    assert mots <= 650, f"{mots} mots à lire avant d'avoir rien déplié"
 
     # Et tout le reste est bien là, rangé.
     assert corps.count('<details class="section">') >= 8
-    assert corps.count('<figure class="graphique">') > traces
+    assert corps.count('<figure class="graphique"') > traces
 
 
 def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
@@ -3135,7 +3134,7 @@ def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
     """
     corps = rendre(contexte, "/cout", {})[1]
     cartes = re.findall(r'<section class="cle">(.*?)</section>', corps, re.S)
-    assert len(cartes) == 4, f"{len(cartes)} cartes, quatre attendues"
+    assert len(cartes) == 2, f"{len(cartes)} cartes, deux attendues"
     for carte in cartes:
         titre = re.match(r"<h3>(.*?)</h3>", carte, re.S)
         assert titre, carte[:80]
@@ -3152,3 +3151,103 @@ def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
         assert '<p class="source">' in carte, (
             "une carte qui se partage hors du site doit porter sa source"
         )
+        assert '<button type="button" class="partager">' in carte, (
+            "une carte doit pouvoir sortir du site en image"
+        )
+
+
+# -- lire un graphique, et le faire sortir en image ----------------------------
+
+
+def test_un_graphique_porte_de_quoi_se_lire_au_survol():
+    """Ce qu'il faut pour retrouver une année depuis une position de pointeur.
+
+    Deux abscisses, et rien d'autre : les VALEURS ne sont pas redites dans le
+    SVG. Elles sont déjà dans le tableau de points que la même fonction pose
+    juste dessous, mises en forme exactement comme la page les écrit. Les
+    réécrire en attribut ferait deux vérités là où il en faut une — et les
+    flottants de Python et de JavaScript ne s'écrivent pas pareil, si bien que
+    les deux portages divergeraient sur un contenu qu'aucun œil ne lit.
+    """
+    series = (g.Serie("A", (1.0, 2.0, 3.0), "var(--serie-1)"),)
+    html = g.graphique("Un essai", (2000, 2001, 2002), series)
+
+    figure = re.search(r"<figure[^>]*>", html).group(0)
+    assert f'data-gauche="{g.nombre_brut(g.MARGE_GAUCHE)}"' in figure
+    assert f'data-droite="{g.nombre_brut(g.LARGEUR_TRACE - g.MARGE_DROITE)}"' in figure
+    # Focusable, et annoncée comme un groupe : les flèches y parcourent les
+    # années, ce qu'une image ne saurait pas faire.
+    assert 'tabindex="0"' in figure and 'role="group"' in figure
+    # La place où le script dessine, et celle où il écrit. Vides dans le HTML
+    # servi : la page reste lisible sans une ligne de script.
+    assert '<g class="survol"></g>' in html
+    assert '<div class="lecture" role="status" aria-live="polite" hidden></div>' in html
+    assert "Flèches gauche et droite" in html
+    # Aucune valeur n'est recopiée hors du tableau de points.
+    avant_details = html[:html.index('<details class="donnees-graphique">')]
+    assert "data-valeurs" not in avant_details
+
+
+def test_la_precision_des_chiffres_se_regle_a_part_de_celle_de_l_axe():
+    """Un axe qui gradue de quatre en quatre ne doit pas arrondir les séries.
+
+    C'est tout le sujet du graphique de tête de la page Coût : l'écart entre ce
+    qui rentre et ce qui sort vaut un point et demi de PIB, et il disparaîtrait
+    si la lecture au survol annonçait « 14 » contre « 13 ».
+    """
+    series = (g.Serie("A", (14.12, 13.95), "var(--serie-1)"),)
+    grossier = g.graphique("Essai", (2024, 2025), series, decimales=0)
+    fin = g.graphique("Essai", (2024, 2025), series, decimales=0, decimales_donnees=1)
+    assert ">14<" in grossier and ">14,1<" not in grossier
+    assert ">14,1<" in fin and ">13,9<" in fin
+    # L'axe, lui, n'a pas bougé d'un caractère : seuls les chiffres changent.
+    avant = grossier[:grossier.index('<details class="donnees-graphique">')]
+    apres = fin[:fin.index('<details class="donnees-graphique">')]
+    assert avant == apres
+
+
+def test_le_script_du_site_sait_lire_et_exporter_un_graphique():
+    """Le comportement vit dans ``index.html``, en écoute déléguée.
+
+    Le gabarit écrit les prises — un bouton, deux abscisses, une zone vide — et
+    la page les anime. Rien ne relie les deux que ces noms : ce test les tient
+    ensemble, faute de quoi un bouton pourrait rester sans effet sans qu'aucun
+    autre contrôle ne s'en aperçoive.
+    """
+    from pathlib import Path
+
+    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(
+        encoding="utf-8")
+    # La lecture au survol, au doigt et au clavier.
+    assert '.closest("figure.graphique")' in page
+    assert "dataset.gauche" in page and "dataset.droite" in page
+    assert '"pointermove"' in page and "ArrowLeft" in page
+    # Les chiffres viennent du tableau de points, et de nulle part ailleurs.
+    assert 'nextElementSibling?.querySelector("table")' in page
+    # La composition de l'image, et sa signature.
+    assert '.closest("button.partager")' in page
+    assert "toBlob" in page and "navigator.share" in page
+    assert "SIGNATURE" in page and "SIGNATURE_SITE" in page
+    # La signature n'est pas écrite deux fois : elle vient du gabarit.
+    assert "@pliberal" not in page, (
+        "la signature est écrite en dur dans index.html — elle doit venir de "
+        "gabarit.SIGNATURE, comme tout ce que le site écrit"
+    )
+
+
+def test_la_signature_des_images_nomme_le_compte_et_le_site():
+    """Une image qui circule n'a plus de barre d'adresse ni de pied de page.
+
+    Sans ces deux lignes, elle sort du site sans dire d'où elle vient, et le
+    premier qui la republie en devient la source.
+    """
+    assert g.SIGNATURE.startswith("@")
+    assert "libéral" in g.SIGNATURE_SITE.lower()
+    # Et les deux portages disent la même chose : le JavaScript est la seule
+    # copie, et c'est celle que la page lit.
+    from pathlib import Path
+
+    js = (Path(__file__).resolve().parents[1] / "moteur" / "js" / "gabarit.js"
+          ).read_text(encoding="utf-8")
+    assert f'export const SIGNATURE = "{g.SIGNATURE}";' in js
+    assert f'export const SIGNATURE_SITE = "{g.SIGNATURE_SITE}";' in js

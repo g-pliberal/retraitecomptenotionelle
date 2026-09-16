@@ -96,6 +96,9 @@
 <script type="module">
 import { Contexte, TITRES, rendre } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
+// La signature des images composées ici vient du gabarit, comme tout ce
+// que le site écrit : elle ne doit exister qu'à un seul endroit.
+const { SIGNATURE, SIGNATURE_SITE } = gabarit;
 
 const amorce = document.getElementById("amorce");
 let contexte = null;
@@ -388,6 +391,413 @@ document.addEventListener("keydown", (evenement) => {
   if (!ouvert) { return; }
   fermerLesMots(null);
   ouvert.focus();
+});
+
+// -- lire un graphique à la souris, au doigt et au clavier --------------------
+//
+// Un tracé dit une forme ; il ne dit pas un chiffre. Jusqu'ici, qui voulait la
+// valeur d'une année devait déplier le tableau de points sous le graphique et
+// l'y chercher. Elle s'affiche maintenant là où le doigt se pose.
+//
+// D'OÙ VIENNENT LES CHIFFRES. De ce tableau, et de nulle part ailleurs. Il est
+// produit par la fonction qui trace, à partir des mêmes séries, et déjà mis en
+// forme comme la page écrit ses nombres. Les redire dans un attribut du SVG
+// ferait deux vérités là où il en faut une — et Python et JavaScript n'écrivent
+// pas les flottants de la même façon, ce qui ferait diverger les deux portages
+// sur un contenu qu'aucun œil ne lit.
+//
+// La figure porte `data-gauche` et `data-droite` : les abscisses du premier et
+// du dernier point, en unités du repère du SVG. C'est tout ce qu'il faut pour
+// passer d'une position de pointeur au rang d'une année.
+
+const LARGEUR_REPERE = 720;
+
+/** Le tableau de points d'un graphique, lu une fois puis gardé. */
+function pointsDuGraphique(figure) {
+  if (figure._points) { return figure._points; }
+  const grille = figure.nextElementSibling?.querySelector("table");
+  if (!grille) { return null; }
+  // Le nom court d'une série : « Ce qui sort : les pensions versées (% du PIB) »
+  // devient « Ce qui sort ». Une boîte de lecture porte quatre lignes ; les
+  // libellés entiers, qui sont écrits pour une légende, y déborderaient, et
+  // l'unité y serait répétée à chaque ligne alors qu'elle vaut pour toutes.
+  const court = (libelle) => libelle
+    .replace(/\s*\([^)]*\)\s*$/, "").split(" : ")[0].trim();
+  const entetes = [...grille.querySelectorAll("thead th")]
+    .slice(1).map((cellule) => court(cellule.textContent));
+  // L'unité, elle, est dite une fois, à côté de l'année.
+  const premiere = grille.querySelector("thead th:nth-child(2)")?.textContent || "";
+  const unite = (premiere.match(/\(([^)]*)\)\s*$/) || [, ""])[1];
+  const lignes = [...grille.querySelectorAll("tbody tr")].map((ligne) => {
+    const cellules = [...ligne.children].map((c) => c.textContent.trim());
+    return { abscisse: cellules[0], valeurs: cellules.slice(1) };
+  });
+  // Les couleurs viennent de la légende, dans le même ordre que les colonnes :
+  // c'est la même liste de séries qui a produit les deux.
+  const couleurs = [...figure.querySelectorAll("figcaption .pastille")]
+    .map((pastille) => getComputedStyle(pastille).backgroundColor);
+  figure._points = { entetes, lignes, couleurs, unite };
+  return figure._points;
+}
+
+/** Le rang de l'année la plus proche d'une position, en fraction de largeur. */
+function rangVise(figure, part, total) {
+  const gauche = Number(figure.dataset.gauche) / LARGEUR_REPERE;
+  const droite = Number(figure.dataset.droite) / LARGEUR_REPERE;
+  if (!(droite > gauche) || total < 2) { return 0; }
+  const position = (part - gauche) / (droite - gauche);
+  return Math.max(0, Math.min(total - 1, Math.round(position * (total - 1))));
+}
+
+function effacerLecture(figure) {
+  const survol = figure.querySelector(".survol");
+  if (survol) { survol.replaceChildren(); }
+  const lecture = figure.querySelector(".lecture");
+  if (lecture) { lecture.hidden = true; }
+  figure._rang = null;
+}
+
+function montrerLecture(figure, rang) {
+  const points = pointsDuGraphique(figure);
+  const svg = figure.querySelector("svg");
+  const survol = figure.querySelector(".survol");
+  const lecture = figure.querySelector(".lecture");
+  if (!points || !svg || !survol || !lecture) { return; }
+  const ligne = points.lignes[rang];
+  if (!ligne) { return; }
+  figure._rang = rang;
+
+  const gauche = Number(figure.dataset.gauche);
+  const droite = Number(figure.dataset.droite);
+  const total = points.lignes.length;
+  const x = total < 2 ? gauche
+    : gauche + (droite - gauche) * (rang / (total - 1));
+
+  // Le trait de repère, puis un point sur chaque courbe qui a une valeur cette
+  // année-là. Les ordonnées sont relues dans le tracé lui-même : les chemins
+  // portent déjà les coordonnées, et les recalculer supposerait de connaître
+  // l'échelle, que le SVG ne dit pas.
+  const dessins = [`<line class="guide" x1="${x}" y1="14" x2="${x}" y2="272"/>`];
+  const courbes = [...svg.querySelectorAll("path.courbe")];
+  ligne.valeurs.forEach((valeur, colonne) => {
+    const courbe = courbes[colonne];
+    if (!courbe || valeur === "—") { return; }
+    const y = ordonneeSurLaCourbe(courbe, x);
+    if (y === null) { return; }
+    dessins.push(`<circle class="point" cx="${x}" cy="${y}" r="4" `
+      + `fill="${points.couleurs[colonne] || "currentColor"}"/>`);
+  });
+  survol.innerHTML = dessins.join("");
+
+  const items = ligne.valeurs.map((valeur, colonne) => {
+    if (valeur === "—") { return ""; }
+    const pastille = `<span class="pastille" style="background:`
+      + `${points.couleurs[colonne] || "currentColor"}"></span>`;
+    return `<li>${pastille}<span>${neutraliser(points.entetes[colonne])}</span>`
+      + `<span class="valeur">${neutraliser(valeur)}</span></li>`;
+  }).join("");
+  const unite = points.unite ? ` · ${neutraliser(points.unite)}` : "";
+  lecture.innerHTML = '<span class="annee">'
+    + `${neutraliser(ligne.abscisse)}${unite}</span><ul>${items}</ul>`;
+  lecture.classList.toggle("a-droite", x > (gauche + droite) / 2);
+  lecture.hidden = false;
+}
+
+// L'ordonnée d'une courbe à une abscisse donnée, lue dans son propre chemin.
+// Le tracé est une suite de segments droits : on cherche celui qui encadre `x`
+// et on y interpole, exactement comme le trait le fait à l'écran.
+function ordonneeSurLaCourbe(courbe, x) {
+  const sommets = [...courbe.getAttribute("d").matchAll(/[ML](-?[\d.]+) (-?[\d.]+)/g)]
+    .map((trouve) => [Number(trouve[1]), Number(trouve[2])]);
+  if (!sommets.length) { return null; }
+  for (let rang = 1; rang < sommets.length; rang += 1) {
+    const [x0, y0] = sommets[rang - 1];
+    const [x1, y1] = sommets[rang];
+    if (x >= x0 - 0.01 && x <= x1 + 0.01 && x1 > x0) {
+      return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
+    }
+  }
+  // Hors du tracé de cette courbe — une série qui s'arrête avant la fin, ou qui
+  // commence après le début. Aucun point à poser : c'est le cas de la courbe
+  // d'avant 2002 sur le graphique de tête.
+  const [premierX, premierY] = sommets[0];
+  const [dernierX, dernierY] = sommets[sommets.length - 1];
+  if (Math.abs(x - premierX) < 0.01) { return premierY; }
+  if (Math.abs(x - dernierX) < 0.01) { return dernierY; }
+  return null;
+}
+
+document.addEventListener("pointermove", (evenement) => {
+  const figure = evenement.target.closest("figure.graphique");
+  if (!figure) { return; }
+  const points = pointsDuGraphique(figure);
+  if (!points) { return; }
+  const cadre = figure.querySelector("svg").getBoundingClientRect();
+  if (!cadre.width) { return; }
+  const part = (evenement.clientX - cadre.left) / cadre.width;
+  montrerLecture(figure, rangVise(figure, part, points.lignes.length));
+});
+
+document.addEventListener("pointerleave", (evenement) => {
+  const figure = evenement.target.closest?.("figure.graphique");
+  if (figure) { effacerLecture(figure); }
+}, true);
+
+// Le clavier : les flèches parcourent les années, Échap referme. C'est ce qui
+// rend le graphique lisible sans pointeur — et la lecture sort dans une région
+// `aria-live`, donc elle est aussi énoncée.
+document.addEventListener("keydown", (evenement) => {
+  const figure = document.activeElement?.closest?.("figure.graphique");
+  if (!figure) { return; }
+  const points = pointsDuGraphique(figure);
+  if (!points) { return; }
+  const total = points.lignes.length;
+  const courant = figure._rang === null || figure._rang === undefined
+    ? total - 1 : figure._rang;
+  const pas = { ArrowLeft: -1, ArrowRight: 1, Home: -total, End: total };
+  if (evenement.key === "Escape") {
+    effacerLecture(figure);
+    return;
+  }
+  if (!(evenement.key in pas)) { return; }
+  evenement.preventDefault();
+  montrerLecture(figure, Math.max(0, Math.min(total - 1, courant + pas[evenement.key])));
+});
+
+document.addEventListener("focusout", (evenement) => {
+  const figure = evenement.target.closest?.("figure.graphique");
+  if (figure && !figure.contains(evenement.relatedTarget)) {
+    effacerLecture(figure);
+  }
+});
+
+// -- composer l'image d'une carte --------------------------------------------
+//
+// Une carte du site se lit dans une page ; une image se lit dans un fil. Ce qui
+// suit compose la seconde à partir de la première, dans le navigateur, sans
+// serveur et sans bibliothèque : la question, la réponse, le tracé, sa légende,
+// sa source, et la signature du compte.
+//
+// LE TRACÉ EST UN SVG QUI TIENT SES COULEURS DE LA FEUILLE DE STYLE. Sorti de
+// la page, il les perdrait toutes et sortirait noir sur transparent. On recopie
+// donc, sur chaque nœud du clone, les quelques propriétés calculées qui le
+// dessinent — c'est plus sûr que de rejouer les règles CSS, qui changeront.
+
+const PROPRIETES_TRACE = [
+  "fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linecap",
+  "stroke-linejoin", "opacity", "font-size", "font-family", "font-weight",
+  "text-anchor",
+];
+
+const LARGEUR_IMAGE = 1200;
+const MARGE_IMAGE = 52;
+
+function svgAutonome(svg) {
+  const clone = svg.cloneNode(true);
+  // Le clone a exactement la structure de l'original : c'est ce qui permet de
+  // lire le style calculé sur l'un et de l'écrire sur l'autre en les parcourant
+  // de front. La zone de survol n'est donc retirée qu'APRÈS ce parcours — la
+  // retirer avant décalerait les deux listes d'un nœud, et le style de chaque
+  // élément irait au suivant.
+  const originaux = [svg, ...svg.querySelectorAll("*")];
+  const copies = [clone, ...clone.querySelectorAll("*")];
+  originaux.forEach((noeud, rang) => {
+    const calcule = getComputedStyle(noeud);
+    const style = PROPRIETES_TRACE
+      .map((propriete) => `${propriete}:${calcule.getPropertyValue(propriete)}`)
+      .join(";");
+    copies[rang].setAttribute("style", style);
+    copies[rang].removeAttribute("class");
+  });
+  // Elle décrit un geste, pas une donnée : une image n'a pas de pointeur.
+  copies[originaux.indexOf(svg.querySelector(".survol"))]?.remove();
+  clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  clone.setAttribute("width", "1440");
+  clone.setAttribute("height", "600");
+  return "data:image/svg+xml;charset=utf-8,"
+    + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+}
+
+/** Découpe un texte en lignes qui tiennent dans une largeur donnée. */
+function enLignes(contexte, texte, largeur) {
+  const lignes = [];
+  let courante = "";
+  for (const mot of texte.split(/\s+/).filter(Boolean)) {
+    const essai = courante ? `${courante} ${mot}` : mot;
+    if (courante && contexte.measureText(essai).width > largeur) {
+      lignes.push(courante);
+      courante = mot;
+    } else {
+      courante = essai;
+    }
+  }
+  if (courante) { lignes.push(courante); }
+  return lignes;
+}
+
+const SERIF = '"Iowan Old Style", Palatino, Georgia, serif';
+
+async function imageDeLaCarte(carte) {
+  const figure = carte.querySelector("figure.graphique");
+  const svg = figure?.querySelector("svg");
+  if (!svg) { return null; }
+  // Le texte d'un élément, SANS les définitions du glossaire qu'il contient.
+  // Elles sont dans le HTML même repliées — c'est ce qui permet de les ouvrir
+  // sans rien recharger —, et `textContent` les rend comme le reste : sans ce
+  // tri, la source d'une carte se lisait « En part du PIBLe PIB, c'est tout ce
+  // que la France produit… ».
+  const texte = (selecteur) => {
+    const trouve = carte.querySelector(selecteur);
+    if (!trouve) { return ""; }
+    const sans = trouve.cloneNode(true);
+    sans.querySelectorAll(".mot > .bulle").forEach((bulle) => bulle.remove());
+    return sans.textContent.replace(/\s+/g, " ").trim();
+  };
+
+  const image = new Image();
+  image.src = svgAutonome(svg);
+  await image.decode();
+
+  const style = getComputedStyle(document.body);
+  const fond = style.backgroundColor;
+  const encre = style.color;
+  const doux = getComputedStyle(carte.querySelector(".source") || carte).color;
+  const accent = getComputedStyle(document.documentElement)
+    .getPropertyValue("--accent").trim() || encre;
+
+  const mesure = document.createElement("canvas").getContext("2d");
+  const largeurTexte = LARGEUR_IMAGE - 2 * MARGE_IMAGE;
+  mesure.font = `600 38px ${SERIF}`;
+  const titre = enLignes(mesure, texte("h3"), largeurTexte);
+  mesure.font = `28px ${SERIF}`;
+  const reponse = enLignes(mesure, texte(".reponse"), largeurTexte);
+  mesure.font = `19px ${SERIF}`;
+  const source = enLignes(mesure, texte(".source"), largeurTexte);
+
+  // Une entrée de légende porte une pastille, sauf celle du ruban d'écart, qui
+  // en porte deux — une par teinte. Les dessiner toutes est la seule façon de
+  // rendre lisible « vert s'il en reste, rouge s'il en manque ».
+  const legendes = [...figure.querySelectorAll("figcaption li")].map((item) => ({
+    texte: [...item.children].filter((enfant) => !enfant.classList.contains("pastille"))
+      .map((enfant) => enfant.textContent).join(" ").replace(/\s+/g, " ").trim(),
+    couleurs: [...item.querySelectorAll(".pastille")].map((pastille) => {
+      const calcule = getComputedStyle(pastille);
+      return { fond: calcule.backgroundColor, voile: Number(calcule.opacity) };
+    }),
+  }));
+
+  const hauteurTrace = Math.round(largeurTexte * 300 / 720);
+  const hauteurLegende = legendes.length * 30;
+  const hauteur = MARGE_IMAGE + titre.length * 48 + 14 + reponse.length * 40
+    + 22 + hauteurTrace + 16 + hauteurLegende + 26 + source.length * 28
+    + 30 + 58 + MARGE_IMAGE;
+
+  const toile = document.createElement("canvas");
+  toile.width = LARGEUR_IMAGE * 2;
+  toile.height = hauteur * 2;
+  const dessin = toile.getContext("2d");
+  dessin.scale(2, 2);
+  dessin.fillStyle = fond;
+  dessin.fillRect(0, 0, LARGEUR_IMAGE, hauteur);
+  dessin.textBaseline = "alphabetic";
+
+  let y = MARGE_IMAGE + 38;
+  dessin.fillStyle = encre;
+  dessin.font = `600 38px ${SERIF}`;
+  for (const ligne of titre) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 48; }
+  y += 14;
+  dessin.font = `28px ${SERIF}`;
+  for (const ligne of reponse) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 40; }
+
+  y += 22;
+  dessin.drawImage(image, MARGE_IMAGE, y - 30, largeurTexte, hauteurTrace);
+  y += hauteurTrace - 14;
+
+  dessin.font = `20px ${SERIF}`;
+  for (const entree of legendes) {
+    entree.couleurs.forEach((pastille, position) => {
+      dessin.globalAlpha = Number.isFinite(pastille.voile) ? pastille.voile : 1;
+      dessin.fillStyle = pastille.fond;
+      dessin.fillRect(MARGE_IMAGE + position * 16, y - 11, 13, 13);
+    });
+    dessin.globalAlpha = 1;
+    dessin.fillStyle = doux;
+    dessin.fillText(entree.texte, MARGE_IMAGE + entree.couleurs.length * 16 + 8, y);
+    y += 30;
+  }
+
+  y += 26;
+  dessin.font = `19px ${SERIF}`;
+  dessin.fillStyle = doux;
+  for (const ligne of source) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 28; }
+
+  // La signature. Deux lignes et un filet : le compte, et ce qu'est le site.
+  // Une image qui circule n'a plus de barre d'adresse.
+  y += 18;
+  dessin.strokeStyle = doux;
+  dessin.globalAlpha = 0.35;
+  dessin.beginPath();
+  dessin.moveTo(MARGE_IMAGE, y);
+  dessin.lineTo(LARGEUR_IMAGE - MARGE_IMAGE, y);
+  dessin.stroke();
+  dessin.globalAlpha = 1;
+  y += 34;
+  dessin.font = `600 27px ${SERIF}`;
+  dessin.fillStyle = accent;
+  dessin.fillText(SIGNATURE, MARGE_IMAGE, y);
+  dessin.font = `19px ${SERIF}`;
+  dessin.fillStyle = doux;
+  dessin.textAlign = "right";
+  dessin.fillText(SIGNATURE_SITE, LARGEUR_IMAGE - MARGE_IMAGE, y);
+  dessin.textAlign = "left";
+
+  return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
+}
+
+function nomDeFichier(carte) {
+  const question = (carte.querySelector("h3")?.textContent || "graphique")
+    .toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+  return `retraite-${question || "graphique"}.png`;
+}
+
+document.addEventListener("click", async (evenement) => {
+  const bouton = evenement.target.closest("button.partager");
+  if (!bouton) { return; }
+  const carte = bouton.closest("section.cle");
+  if (!carte) { return; }
+  const libelle = bouton.textContent;
+  bouton.disabled = true;
+  bouton.textContent = "Composition…";
+  try {
+    const image = await imageDeLaCarte(carte);
+    if (!image) { throw new Error("aucun graphique à composer"); }
+    const nom = nomDeFichier(carte);
+    const fichier = new File([image], nom, { type: "image/png" });
+    // Sur téléphone, la feuille de partage du système évite un aller-retour par
+    // le dossier des téléchargements. Ailleurs, on télécharge.
+    if (navigator.canShare?.({ files: [fichier] })) {
+      await navigator.share({ files: [fichier] });
+    } else {
+      const adresse = URL.createObjectURL(image);
+      const lien = document.createElement("a");
+      lien.href = adresse;
+      lien.download = nom;
+      lien.click();
+      URL.revokeObjectURL(adresse);
+    }
+  } catch (erreur) {
+    // Un partage refusé par l'utilisateur n'est pas une erreur.
+    if (erreur?.name !== "AbortError") {
+      bouton.textContent = "Image impossible ici";
+      setTimeout(() => { bouton.textContent = libelle; }, 3000);
+      bouton.disabled = false;
+      return;
+    }
+  }
+  bouton.textContent = libelle;
+  bouton.disabled = false;
 });
 
 // Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici

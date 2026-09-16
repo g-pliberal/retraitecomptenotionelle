@@ -124,8 +124,9 @@ plusieurs métiers, ou bien **lue sur votre relevé** année par année —, ave
 détail du calcul, la décomposition de l'écart règle par règle et la cascade qui
 mène du scénario 1 au scénario 3), **Cas types** (la grille 13 carrières ×
 7 générations), **Coût** (ce qui rentre, ce qui sort et ce qui manque —
-quatre graphiques et trois chiffres en tête de page, le détail par régime, les
-six systèmes et les limites rangés dessous, dans des sections repliées), **Méthode**, **Données** (l'état de fiabilité des séries). Le pied de
+trois chiffres et deux graphiques en tête de page, qui se lisent au survol et se
+téléchargent en image ; le détail par régime, les six systèmes et les limites
+rangés dessous, dans des sections repliées), **Méthode**, **Données** (l'état de fiabilité des séries). Le pied de
 page renvoie aux **Mentions légales**, qui disent qui édite, qui héberge, ce que
 le site fait des données saisies — rien — et où en est son accessibilité.
 
@@ -1019,7 +1020,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          740 tests Python
+tests/                          744 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

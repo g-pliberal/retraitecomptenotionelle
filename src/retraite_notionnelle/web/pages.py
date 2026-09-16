@@ -3436,29 +3436,35 @@ def _cout(contexte: Contexte) -> str:
     de tout ce qui suit :
 
     * **Une question par carte, une réponse par carte.** Chaque bloc porte une
-      question en français courant, sa réponse en une phrase, puis le tracé qui
-      la montre. Qui s'arrête à la réponse a déjà le résultat ; qui veut voir
-      descend d'un cran. Une capture de la carte se comprend toute seule, hors
-      du site — c'est ce qui la rend partageable.
-    * **Quatre graphiques, et pas un de plus.** La page en portait sept, dont
-      deux disaient la même chose dans deux unités et deux autres traçaient une
-      série que le tableau juste au-dessous répétait. Ce qui reste est ce qui ne
-      se déduit d'aucun autre.
+      question en français courant, sa réponse en deux phrases courtes, puis le
+      tracé qui la montre. Qui s'arrête à la réponse a déjà le résultat. La
+      carte se télécharge en image, signée, pour être postée telle quelle.
+    * **Deux graphiques, et pas un de plus.** La page en portait sept, puis
+      quatre. Les trois qui traçaient une part du PIB dans le temps — l'histoire
+      depuis 1959, le bilan jusqu'en 2070, l'effet de la réforme — n'en font
+      plus qu'un : ils répondaient à la même question sur trois fenêtres, et
+      obligeaient à recomposer de tête ce qu'un seul cadre montre d'un coup.
     * **Tout le reste est replié.** Le détail par régime, les six
       contrefactuels, les périmètres, les limites : rien n'est retiré — une page
       qui ne peut pas se justifier n'est pas honnête —, mais rien n'oblige à le
       traverser pour atteindre le résultat.
-    * **Les mots de spécialiste portent leur définition.** « Part du PIB »,
-      « répartition », « cotisation » s'ouvrent sur place, d'un clic, sans
-      quitter la phrase.
+    * **Les phrases sont courtes, et les mots de spécialiste portent leur
+      définition**, ouvrable sur place sans quitter la phrase.
 
-    LE PÉRIMÈTRE DES DEUX PREMIÈRES CARTES EST CELUI DU COR, et ce n'est pas un
+    LE PÉRIMÈTRE DU GRAPHIQUE DE TÊTE EST CELUI DU COR, et ce n'est pas un
     détail de comptable : c'est le seul jeu de comptes où les dépenses ET les
     ressources du même ensemble de régimes soient publiées sous la même
     convention. Un solde ne se fabrique pas en soustrayant deux périmètres. Le
     modèle du dépôt n'y intervient que par un RAPPORT sans dimension — de
     combien la masse des pensions serait multipliée sous tel autre système —,
     jamais par un niveau.
+
+    LA COURBE D'AVANT 2002 VIENT D'AILLEURS, et c'est pourquoi elle s'arrête là
+    où celle du COR commence, au lieu de se prolonger sous elle. Les deux ne se
+    raccordent pas : un demi-point de PIB les sépare, celui de la dépendance et
+    de l'épargne retraite que la DREES compte et que le COR ne compte pas. Ce
+    décrochement est visible sur le tracé, et c'est bien ainsi — le masquer
+    reviendrait à coller deux séries qui ne mesurent pas la même chose.
     """
     comptes = contexte.comptes()
     cout = contexte.cout()
@@ -3484,46 +3490,80 @@ def _cout(contexte: Contexte) -> str:
     manque = -observe.solde_meur("actuel")
     part_manquante = -observe.solde("actuel") / observe.depense("actuel")
     reperes = g.fiche(
-        f"Ce qui est sorti en {obs}",
+        f"Versé aux retraités en {obs}",
         _milliards(observe.depense_meur("actuel"), 0),
-        f"de pensions, pour {g.nombre(retraites / 1e6, 1)} millions de retraités",
+        f"à {g.nombre(retraites / 1e6, 1)} millions de personnes",
     ) + g.fiche(
-        "Ce qui est rentré pour les payer",
+        "Encaissé pour le payer",
         _milliards(observe.ressources_meur(), 0),
-        "de cotisations, d'impôts et de versements d'autres caisses",
+        "cotisations et impôts",
     ) + g.fiche(
-        "Ce qui a manqué" if manque > 0 else "Ce qui est resté",
+        "Manquant" if manque > 0 else "Reste",
         _milliards(abs(manque), 1),
-        "soit " + g.pourcentage(abs(part_manquante), decimales=1)
-        + " de ce qui a été versé",
+        g.pourcentage(abs(part_manquante), decimales=1) + " de la facture",
     )
 
-    # -- carte 1 : ce qui rentre, ce qui sort --------------------------------
-    annees_solde = tuple(ligne.annee for ligne in solde.annees)
-    courbe_rentre = g.Serie(
-        "Ce qui rentre : cotisations, impôts, transferts",
-        tuple(ligne.ressources * 100 for ligne in solde.annees),
-        "var(--serie-5)",
-    )
-    courbe_sort = g.Serie(
-        "Ce qui sort : les pensions versées",
-        tuple(ligne.depense("actuel") * 100 for ligne in solde.annees),
-        "var(--serie-2)",
+    # -- le graphique de tête : cent onze ans en un seul cadre ----------------
+    #
+    # Il en remplace trois. Les fenêtres se recouvraient — 1959-2024 pour
+    # l'histoire, 2002-2070 pour le bilan, 2025-2070 pour la réforme — et la
+    # même grandeur y était tracée trois fois, à trois échelles différentes.
+    # Les séries ne se recouvrent pas, elles : chacune vaut `None` hors de la
+    # plage que sa source publie, et la courbe s'y interrompt plutôt que de
+    # prolonger une mesure que personne n'a faite.
+    annees_toutes = tuple(range(cout.premiere_annee, solde.derniere_annee + 1))
+    rang = {annee: position for position, annee in enumerate(annees_toutes)}
+
+    def _serie(libelle: str, couleur: str, valeurs: dict[int, float],
+               tirets: bool = False, glose: str = "") -> g.Serie:
+        colonne: list[float | None] = [None] * len(annees_toutes)
+        for annee, valeur in valeurs.items():
+            colonne[rang[annee]] = valeur
+        return g.Serie(libelle, tuple(colonne), couleur, tirets, glose)
+
+    # Avant 2002, le COR n'a rien : c'est la DREES qui porte l'histoire, sur un
+    # périmètre un peu plus large. La courbe s'arrête à 2001, là où l'autre
+    # commence, et le décrochement entre les deux se voit — il vaut le
+    # demi-point que les deux comptes ne comptent pas pareil.
+    avant = {annee: depenses.part_pib(annee) * 100
+             for annee in range(cout.premiere_annee, solde.premiere_annee)}
+    sortie = {ligne.annee: ligne.depense("actuel") * 100 for ligne in solde.annees}
+    entree = {ligne.annee: ligne.ressources * 100 for ligne in solde.annees}
+    # La réforme ne change rien avant sa bascule : sa courbe ne commence donc
+    # qu'à l'année observée la plus récente, d'où la décision se prend.
+    reforme = "notionnel_prospectif_employeur"
+    apres = {ligne.annee: ligne.depense(reforme) * 100
+             for ligne in solde.annees if ligne.annee >= obs}
+
+    # L'ordre est celui de la lecture, de gauche à droite : la légende se
+    # parcourt alors dans l'ordre où l'œil rencontre les courbes.
+    courbes = (
+        _serie(f"Avant {solde.premiere_annee}", "var(--serie-1)", avant,
+               glose="autre source, périmètre un peu plus large"),
+        _serie("Ce qui sort : les pensions versées", "var(--serie-2)", sortie),
+        _serie("Ce qui rentre : cotisations et impôts", "var(--serie-5)", entree),
+        _serie(f"Ce qui sortirait en comptes notionnels dès {bascule}",
+               "var(--serie-4)", apres, tirets=True),
     )
     bilan = g.graphique(
-        f"Ce que le système de retraite encaisse et ce qu'il verse, de "
-        f"{solde.premiere_annee} à {solde.derniere_annee}, en part du PIB",
-        annees_solde, (courbe_rentre, courbe_sort),
-        unite="% du PIB", repere=obs, libelle_repere="projection",
-        ecart=(0, 1),
-        libelle_ecart="L'écart entre les deux : vert s'il en reste, rouge s'il en manque",
+        f"Ce que la retraite verse et ce qu'elle encaisse, de "
+        f"{cout.premiere_annee} à {solde.derniere_annee}, en part du PIB",
+        annees_toutes, courbes, unite="% du PIB",
+        repere=obs, libelle_repere="projection",
+        ecart=(2, 1),
+        libelle_ecart="L'écart : vert s'il en reste, rouge s'il en manque",
+        # L'axe gradue de quatre en quatre ; les chiffres, eux, portent le
+        # dixième. Sans lui, l'écart entre les deux courbes — un point et demi
+        # de PIB, tout le sujet de la carte — se lirait « 14 » contre « 13 ».
+        decimales_donnees=1,
     )
+    equilibre = solde.premiere_annee_equilibree(reforme)
 
-    # -- carte 2 : d'où vient l'argent ---------------------------------------
+    # -- le second graphique : d'où vient l'argent ---------------------------
     annees_ventilees = tuple(comptes.annees_ventilees())
-    premiere_ventilee_ressources = annees_ventilees[0]
+    premiere_ventilee = annees_ventilees[0]
     derniere_ventilee = annees_ventilees[-1]
-    bandes_ressources = tuple(
+    bandes = tuple(
         g.Serie(
             groupe.libelle,
             tuple(comptes.ressource_groupe(groupe.code, annee) * 100
@@ -3534,150 +3574,62 @@ def _cout(contexte: Contexte) -> str:
     )
     provenance = g.graphique(
         f"D'où viennent les ressources du système de retraite, de "
-        f"{premiere_ventilee_ressources} à {derniere_ventilee}, en part du PIB",
-        annees_ventilees, bandes_ressources, unite="% du PIB", empile=True,
+        f"{premiere_ventilee} à {derniere_ventilee}, en part du PIB",
+        annees_ventilees, bandes, unite="% du PIB", empile=True,
+        decimales_donnees=1,
     )
     part_salaires = comptes.part_groupe("salaires", derniere_ventilee)
-    part_impots_debut = comptes.part_groupe("impots", premiere_ventilee_ressources)
+    part_impots_debut = comptes.part_groupe("impots", premiere_ventilee)
     part_impots_fin = comptes.part_groupe("impots", derniere_ventilee)
 
-    # -- carte 3 : depuis quand ça coûte autant ------------------------------
-    annees_depense = tuple(ligne.annee for ligne in cout.annees)
-    premiere_depense = cout.premiere_annee
-    derniere_depense = cout.derniere_annee
-    courbe_pib = g.Serie(
-        "Ce que la France consacre à ses retraités",
-        tuple(ligne.part_pib * 100 for ligne in cout.annees),
-        "var(--serie-1)",
-    )
-    histoire = g.graphique(
-        f"Part des dépenses de vieillesse dans le produit intérieur brut, "
-        f"{premiere_depense}-{derniere_depense}",
-        annees_depense, (courbe_pib,), unite="% du PIB",
-    )
-
-    # -- carte 4 : ce que la réforme change ----------------------------------
+    # -- les deux cartes -----------------------------------------------------
     #
-    # La fenêtre s'ouvre à la dernière année observée : c'est celle où la
-    # décision se prend, et tracer quarante ans de passé par-dessus n'aiderait
-    # personne à la lire. Le scénario montré est le 5 — comptes notionnels à
-    # compter de la bascule, cotisations salariales ET patronales portées au
-    # compte : le seul qui décrive une réforme applicable et qui crédite la
-    # même chose que ce que le système actuel prélève.
-    lignes_futur = [ligne for ligne in solde.annees if ligne.annee >= obs]
-    annees_futur = tuple(ligne.annee for ligne in lignes_futur)
-    reforme = "notionnel_prospectif_employeur"
-    courbes_reforme = (
-        g.Serie("Ce qui rentre",
-                tuple(ligne.ressources * 100 for ligne in lignes_futur),
-                "var(--serie-5)"),
-        g.Serie("Ce qui sort, si rien ne change",
-                tuple(ligne.depense("actuel") * 100 for ligne in lignes_futur),
-                "var(--serie-2)"),
-        # Ni la couleur du scénario 5 ailleurs sur le site — un vert que
-        # celui de « ce qui rentre » ne laisserait pas distinguer —, ni celle
-        # d'aucune des deux autres courbes : trois teintes franchement
-        # séparées, plus le trait discontinu qui dit « ceci n'existe pas
-        # encore ».
-        g.Serie(f"Ce qui sortirait en comptes notionnels à partir de {bascule}",
-                tuple(ligne.depense(reforme) * 100 for ligne in lignes_futur),
-                "var(--serie-4)", tirets=True),
-    )
-    effet = g.graphique(
-        f"Ressources, dépenses et dépenses en comptes notionnels, de {obs} à "
-        f"{solde.derniere_annee}, en part du PIB",
-        annees_futur, courbes_reforme, unite="% du PIB", decimales=0,
-        ecart=(0, 1),
-        libelle_ecart="Ce qui manque au système actuel",
-    )
-    equilibre = solde.premiere_annee_equilibree(reforme)
-    ecart_2070 = horizon.depense("actuel") - horizon.depense(reforme)
-
-
-    # -- les quatre cartes ----------------------------------------------------
-    #
-    # Chacune est bâtie à part et non dans le gabarit final : une réponse et une
-    # source sont elles-mêmes des textes à trous, et Python n'accepte pas un
-    # bloc entre triples guillemets à l'intérieur d'un autre.
+    # Bâties à part et non dans le gabarit final : une réponse et une source
+    # sont elles-mêmes des textes à trous, et Python n'accepte pas un bloc entre
+    # triples guillemets à l'intérieur d'un autre.
     carte_bilan = g.cle(
-        "Est-ce que la retraite coûte plus qu'elle ne rapporte ?",
-        f"""Oui, depuis une quinzaine d'années — mais de peu. En {obs}, il a
-manqué {_milliards(abs(manque), 1)} sur
-{_milliards(observe.depense_meur("actuel"), 0)} versés.
-<strong>Le problème n'est pas là où on en est, c'est là où on va</strong> : si
-rien ne change, il manquerait
+        "La retraite coûte-t-elle plus qu'elle ne rapporte ?",
+        f"""Oui, un peu : {_milliards(abs(manque), 1)} de trop en {obs}.
+<strong>L'écart va se creuser</strong> : en {solde.derniere_annee} il
+manquerait
 {g.pourcentage(abs(horizon.solde("actuel") / horizon.depense("actuel")), decimales=0)}
-de ce qu'il faudrait verser en {solde.derniere_annee}.""",
+de la facture. En comptes notionnels dès {bascule}, les comptes se
+rééquilibrent en {equilibre or "jamais"}.""",
         bilan,
-        f"""Source : Conseil d'orientation des retraites, comptes du système de
-retraite. Observé jusqu'en {obs}, projeté ensuite — la projection est la
-sienne, pas la nôtre. Les deux courbes sont en {g.mot("part du PIB",
-"Le PIB est la valeur de tout ce que la France produit en un an. Rapporter une "
-"dépense au PIB, c'est demander quelle part de son travail un pays consacre à "
-"quelque chose. C'est la seule unité où une dépense de 2002 et une projection "
-"de 2070 se comparent : l'euro de 2070 ne vaudra pas celui d'aujourd'hui.")}.""",
+        f"""Sources : DREES jusqu'en {solde.premiere_annee - 1}, Conseil
+d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
+{g.mot("part du PIB",
+       "Le PIB, c'est tout ce que la France produit en un an. En « part du "
+       "PIB », on demande : sur 100 € produits, combien vont aux retraites ? "
+       "C'est la seule façon de comparer 1959 et 2070, l'euro n'ayant pas la "
+       "même valeur.")} : sur 100 € produits en France, combien vont aux
+retraites.""",
     )
 
     carte_provenance = g.cle(
-        "D'où vient cet argent ?",
-        f"""Des salaires, pour {g.pourcentage(part_salaires, decimales=0)}. Le
-reste est surtout de l'impôt, et <strong>cette part a doublé en vingt
-ans</strong> : l'État a allégé les cotisations des employeurs pour baisser le
-coût du travail, puis remboursé la retraite avec la TVA et la CSG — de
-{g.pourcentage(part_impots_debut, decimales=0)} des ressources en
-{premiere_ventilee_ressources} à {g.pourcentage(part_impots_fin, decimales=0)}
-en {derniere_ventilee}.""",
+        "Qui paie ?",
+        f"""Les salaires, pour {g.pourcentage(part_salaires, decimales=0)} :
+c'est ce qui est prélevé sur chaque fiche de paie. Le reste vient surtout de
+l'impôt, et <strong>cette part a doublé en vingt ans</strong> —
+{g.pourcentage(part_impots_debut, decimales=0)} en {premiere_ventilee},
+{g.pourcentage(part_impots_fin, decimales=0)} en {derniere_ventilee}.""",
         provenance + g.depliant(
-            "Ce que contient chacune de ces quatre parts",
+            "Ce que contient chaque part",
             g.gloses([(groupe.libelle, groupe.explication) for groupe in GROUPES]),
         ),
-        f"""Source : Conseil d'orientation des retraites. La ventilation n'est
-publiée que de {premiere_ventilee_ressources} à {derniere_ventilee} ; le total,
-lui, remonte à {solde.premiere_annee} et va jusqu'à {solde.derniere_annee}. Les
-six postes du COR, tels qu'il les publie, sont plus bas.""",
-    )
-
-    carte_histoire = g.cle(
-        "Est-ce que ça a toujours coûté autant ?",
-        f"""Non : c'est près de trois fois plus qu'en {premiere_depense}, et
-<strong>presque toute la hausse est derrière nous</strong>. La France y
-consacrait alors
-{g.pourcentage(depenses.part_pib(premiere_depense), decimales=1)} de ce qu'elle
-produisait, contre {g.pourcentage(depenses.part_pib(derniere_depense), decimales=1)}
-aujourd'hui. La montée s'est faite entre 1960 et 2000, quand la retraite est
-devenue générale et que les pensions ont rattrapé les salaires ; depuis, la
-courbe ne monte plus que par à-coups de crise, et redescend.""",
-        histoire,
-        """Source : DREES, comptes de la protection sociale. Le périmètre est un
-peu plus large que celui des deux cartes précédentes — il compte aussi la
-dépendance et l'épargne retraite —, ce qui explique l'écart d'un demi-point. Le
-détail est plus bas.""",
-    )
-
-    carte_effet = g.cle(
-        "Qu'est-ce que la réforme changerait, et quand ?",
-        f"""<strong>Rien avant {bascule}, et pas grand-chose avant 2040.</strong>
-Les droits déjà acquis sont conservés : personne ne voit sa pension recalculée,
-et il faut attendre que des carrières entières se soient déroulées sous la
-nouvelle règle. Les comptes repasseraient à l'équilibre en
-{equilibre or "jamais"}, et l'écart avec le système actuel atteindrait
-{g.pourcentage(ecart_2070, decimales=1)} du PIB en {solde.derniere_annee}.""",
-        effet,
-        f"""Scénario 5 : comptes notionnels à compter de {bascule}, cotisations
-du salarié et de l'employeur portées au compte. C'est, des six que le modèle
-calcule, celui qui décrit une réforme applicable en créditant ce qui est
-réellement prélevé aujourd'hui. Les cinq autres sont plus bas.""",
+        f"""Source : Conseil d'orientation des retraites. Ce détail n'est publié
+que de {premiere_ventilee} à {derniere_ventilee}.""",
     )
 
     return f"""
 <h2 style="margin-top:0">L'argent de la retraite</h2>
-<p class="chapeau">Les cotisations prélevées sur les salaires ne sont pas mises
-de côté : elles partent aussitôt payer les pensions de ceux qui sont déjà
-retraités. C'est ce qu'on appelle la {g.mot("répartition",
+<p class="chapeau">Vos cotisations ne sont pas mises de côté. Elles paient
+aussitôt les pensions de ceux qui sont déjà retraités : c'est la
+{g.mot("répartition",
 "Les cotisations d'aujourd'hui paient les pensions d'aujourd'hui. Rien n'est "
 "placé, rien n'est épargné : chaque euro prélevé sur une fiche de paie est "
-"reversé aussitôt à un retraité.")}. Cette page montre ce qui rentre, ce qui
-sort, et ce qui manque.</p>
+"reversé aussitôt à un retraité.")}. Voici ce qui rentre, ce qui sort, et ce
+qui manque.</p>
 
 <div class="fiches reperes">{reperes}</div>
 
@@ -3685,35 +3637,24 @@ sort, et ce qui manque.</p>
 
 {carte_provenance}
 
-{carte_histoire}
-
-<h2>Et si on changeait de système ?</h2>
-<p class="chapeau">Le programme de ce site propose de remplacer la règle de
-calcul actuelle par des {g.mot("comptes notionnels",
-"Un compte virtuel par personne, où l'on inscrit chaque cotisation versée. Au "
-"départ en retraite, le total est divisé par le nombre d'années qu'il reste "
-"statistiquement à vivre, et cela donne la pension. Rien n'est placé : c'est "
-"toujours la répartition, mais la règle de calcul change.")}. Voici ce que cela
-déplacerait — et ce que cela ne déplacerait pas.</p>
-
-{carte_effet}
-
-<div class="note"><strong>Une dépense plus basse n'est pas une économie.</strong>
-Un système en comptes notionnels ne laisse pas d'argent dormir : il relève les
-pensions jusqu'à l'équilibre, ou les abaisse. Ce graphique ne dit donc pas
-« on dépenserait moins » — il dit « avec le même argent, on servirait autant,
-<em>réparti autrement entre les carrières</em> ». C'est cette répartition, et
-elle seule, que le reste de ce site mesure.</div>
+<div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
+système en {g.mot("comptes notionnels",
+"Un compte virtuel par personne, où chaque cotisation versée est inscrite. Au "
+"départ en retraite, le total est divisé par le nombre d'années qu'il reste à "
+"vivre en moyenne : cela donne la pension. Rien n'est placé — c'est toujours "
+"la répartition, mais la règle de calcul change.")} ne laisse pas d'argent
+dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
+ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
+on servirait autant, mais réparti autrement entre les carrières</em>.</div>
 
 <h2>Et pour vous ?</h2>
-<p>Tout ce qui précède est un total national. Ce que chaque règle donne sur une
-carrière — la vôtre — se calcule en quelques secondes, dans votre navigateur.</p>
+<p>Tout cela est un total national. Ce que chaque règle donne sur votre
+carrière se calcule en quelques secondes, dans votre navigateur.</p>
 <p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer ma
 retraite</a><a href="{g.lien("/cas-types")}">Voir treize carrières types</a></p>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici, et
-rien n'oblige à le lire.</p>
+<p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici.</p>
 
 {_cout_detail_depense(contexte)}
 {_cout_detail_ressources(contexte)}
