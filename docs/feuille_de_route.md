@@ -1588,6 +1588,159 @@ et qui aurait signalé le défaut sans qu'on le cherche.
 
 ---
 
+### 23. La revue extérieure du 15 septembre 2026 : vingt-sept chantiers sur le site — `à faire`
+
+**Pourquoi.** Une relecture des six pages publiées (Programme, Simuler, Cas
+types, Coût, Méthode, Données), faite par un lecteur extérieur au dépôt le
+15 septembre 2026 et transmise le 16. Elle ne porte pas sur le modèle mais sur
+ce qu'un visiteur en voit : le parcours, la clarté des arguments, l'architecture
+de l'information, et les tics d'écriture qui signalent un texte généré. C'est
+la première revue du site qui ne vienne pas d'une session de travail, et elle
+vaut d'être gardée entière plutôt que dispersée dans les actions existantes.
+
+**Comment la tenir.** Chaque chantier a sa case, à cocher quand il est fait ;
+on y ajoute alors une ligne « ce que ça a déplacé », comme partout ailleurs
+dans ce fichier. Un chantier qu'on écarte reste dans la liste, barré, avec la
+raison. Les priorités sont celles du relecteur : 🔴 haute (change la
+compréhension ou bloque l'usage), 🟠 moyenne (gêne réelle, contournable),
+⚪ basse (finition). Le texte de chaque chantier est le sien, tel que reçu.
+
+**À vérifier avant de commencer.** La revue a été écrite sur le site tel qu'il
+était le 15 septembre ; trois chantiers recoupent des travaux déjà faits ou
+faits depuis, et il faut d'abord regarder ce qui en reste :
+
+- *Les bulles de définition* (thème 1, premier chantier) : la bulle du
+  glossaire existe déjà — action 19 — pour les mots de jargon du simulateur.
+  Le chantier devient : vérifier quels termes de la liste du relecteur n'en ont
+  pas encore, et étendre la bulle aux autres pages.
+- *Le scénario 6 en avant* (thème 1) et *la clé de lecture avant les tableaux*
+  (thème 2) : l'action 16 a ramené les cinq grilles de Cas types à une seule,
+  accompagnée de trois chiffres. Vérifier ce que le relecteur voyait encore et
+  si le reste du chantier tient.
+- *La licence du texte et des données* (thème 3, deux premiers chantiers) : le
+  16 septembre, le code est passé de MIT à Apache 2.0 et les textes,
+  infographies et tableaux sous CC BY-SA 4.0 — l'une des deux pistes que le
+  relecteur proposait. `LICENSE` dit désormais ce que chaque licence couvre, et
+  que les données restent sous les conditions de leurs producteurs. Reste le
+  point que le relecteur pose pour les deux : faire relire ce choix par un
+  juriste, et dire quelque chose du droit sui generis sur la base de données.
+
+**Fichiers.** Presque tout est dans `src/retraite_notionnelle/web/pages.py` et
+`web/gabarit.py`, avec leur portage `moteur/js/pages.js` et `moteur/js/gabarit.js`,
+et les témoins `tests/temoins/pages.json` à régénérer après chaque passe. Les
+chantiers du thème 4 ne touchent que le texte ; ceux du thème 1 qui ajoutent un
+composant (recherche dans le menu des statuts, table filtrable) se heurtent à
+la contrainte relevée par l'action 15 : rien qui ne se prenne qu'à la souris,
+et rien qui défasse ce que la route affiche.
+
+**Fin.** Les vingt-sept cases cochées ou barrées, et une ligne au Journal par
+passe, disant quelles pages ont bougé et de combien de mots.
+
+---
+
+#### 1. Expérience utilisateur
+
+*Le design visuel est déjà sobre et cohérent (thème sombre, pas de fioritures) ; les frictions viennent surtout de la densité du contenu et de l'absence d'outils pour la traverser.*
+
+- [ ] 🔴 **Des bulles de définition sur le vocabulaire technique** `Simuler · Global`
+  Le simulateur est le point d'entrée le plus concret du site — celui où « le commun des mortels » vient voir sa propre pension, pas seulement un lecteur déjà averti. Il concentre pourtant du jargon non défini : « compte notionnel », « trimestres » / « durée d'assurance », « décote » / « surcote », « salaire de référence », « table de mortalité unisexe », « taux de remplacement », « assiette déplafonnée », « statut d'affiliation ». Souligner ces termes en pointillé et afficher, au clic ou au survol, une définition d'une ou deux phrases en langage courant — sans jargon économique, sans renvoi obligé vers Méthode. Un seul petit composant de bulle, réutilisé partout où le terme reparaît (Programme, Cas types, Coût), évite d'avoir à choisir entre simplifier le texte et perdre la précision : la précision reste dans la bulle, la phrase principale reste lisible.
+
+- [ ] 🔴 **Expliquer l'âge de référence, pas seulement l'afficher** `Simuler`
+  Après calcul, les résultats ouvrent sur cinq pastilles chiffrées (43 années cotisées, 64 ans liquidation, **67 ans — âge de référence — départ 3 ans plus tôt**, 25,667 coefficient de conversion, 252 025 € capital notionnel) sans un mot sur ce que chacune change. L'âge de référence n'est pourtant pas cosmétique : sur l'exemple testé, le scénario 3 convertit les droits acquis au diviseur de 67 ans alors que la pension part à 64 — l'anticipation est payée une seconde fois, ce que la page reconnaît elle-même (« l'anticipation est donc payée une seconde fois, sur le passé »). Le réglage qui corrige ça (« Conversion des droits acquis » → « à l'âge de départ effectif », présenté comme ce qu'« une réforme réelle retiendrait ») est enterré dans les options repliées, en bas de formulaire, et n'est pas la valeur par défaut. Trois choses à faire : une bulle de définition sur « âge de référence » (voir le chantier ci-dessus) ; une phrase explicite dès que l'âge de départ saisi est inférieur à l'âge de référence, qui nomme la pénalité et pointe vers le réglage qui l'enlève ; et réexaminer si « à l'âge de départ effectif » ne devrait pas être le défaut plutôt qu'une option cachée.
+
+- [ ] 🔴 **Rendre cherchable la liste des statuts d'affiliation** `Simuler`
+  Le menu « Statut d'affiliation » aligne plus de 60 entrées dans un `<select>` natif sans recherche, répété à l'identique pour le second métier. Trouver « SNCF » ou « artisan » suppose de tout parcourir. Ajouter un champ de recherche/autocomplétion, ou grouper les options par famille (privé, public, agricole, libéral, spécial) avec des `<optgroup>`.
+
+- [ ] 🔴 **Mettre le scénario 6 (la proposition) en avant, pas en dernier** `Cas types`
+  Cinq tableaux de 13 lignes × 7 générations s'enchaînent (scénarios 2 à 6) avant d'atteindre la proposition réelle. Un lecteur pressé s'arrête souvent au premier — un contrefactuel, pas la proposition. Ajouter des onglets ou un sélecteur de scénario, avec le scénario 6 affiché par défaut.
+
+- [ ] 🟠 **Transformer la page Données en table filtrable** `Données`
+  72 régimes (35 modélisés, 37 partiels, 15 hors champ) listés en prose continue avec leur niveau de fiabilité. Impossible de vérifier un régime précis sans faire Ctrl+F. Le contenu est intrinsèquement tabulaire : en faire un tableau triable et filtrable (par famille, statut, fiabilité).
+
+- [ ] 🟠 **Ajouter un sommaire aux pages longues** `Coût · Données`
+  Coût et Données déroulent plusieurs dizaines d'écrans (graphiques, tableaux, encarts « ce que ça ne dit pas ») sans ancre ni retour en haut. Une table des matières collante en tête de page rendrait la navigation praticable.
+
+- [ ] ⚪ **Généraliser les sections repliables** `Toutes`
+  Cas types propose déjà des triangles ▸ dépliables (« Ce que recouvre chacun des treize cas types »). Données, tout aussi dense, n'en a aucun. Généraliser le pattern à chaque page à forte densité de texte.
+
+- [ ] 🟠 **Vérifier le rendu mobile des tableaux à 7 colonnes** `Cas types · Coût`
+  Non testé durant cette revue : à confirmer explicitement. Les tableaux « écart par génération » (7 colonnes de 1940 à 2000) et ceux de la page Coût risquent de déborder sur petit écran. Prévoir un conteneur à défilement horizontal borné, ou une vue empilée en dessous d'un certain seuil.
+
+- [ ] ⚪ **Transformer les chemins de fichiers cités en liens** `Coût`
+  La page Coût cite « docs/limites.md § 5 ter » comme une référence en texte brut plutôt qu'un lien cliquable. Chaque renvoi à un document du dépôt devrait pointer directement vers ce document.
+
+#### 2. Clarté des arguments
+
+*L'argumentaire de la page Programme est solide et bien construit (constat → alternative → comparaison → transition). Le point faible est ailleurs : ce que les pages de preuve montrent peut contredire, en apparence, ce que Programme promet.*
+
+- [ ] 🔴 **Expliquer la baisse affichée avant les tableaux, pas après** `Cas types`
+  Le scénario 6 — la proposition réelle — affiche entre -28 % et -76 % de pension par rapport à aujourd'hui pour la plupart des carrières. La clé de lecture existe (« un coefficient supérieur à un n'est pas une économie, c'est une marge »), mais elle est sur la page Coût, pas sur Cas types. Un lecteur qui saute directement aux tableaux peut comprendre l'inverse du message. Mettre cette clé de lecture en tête de Cas types, avant les chiffres.
+
+- [ ] 🔴 **Rappeler que le système actuel n'est pas stable, dans les tableaux eux-mêmes** `Cas types · Coût`
+  Programme insiste sur le déficit (-0,17 % du PIB en 2025, 19,3 % du PIB projeté en 2070). Les tableaux de Cas types comparent pourtant chaque scénario à « aujourd'hui » comme s'il s'agissait d'un point fixe. Le vrai choix n'est pas « notionnel contre système stable » mais « notionnel contre système qui dérive ». Rappeler la trajectoire du système actuel à côté de chaque comparaison.
+
+- [ ] 🟠 **Distinguer visuellement « contrefactuel » et « proposition »** `Cas types · Coût`
+  Que les scénarios 2 à 5 soient des exercices théoriques et que seul le 6 soit la proposition du parti est expliqué en préambule, mais jamais rappelé au niveau de chaque tableau. Un badge « proposition » sur le scénario 6 et « contrefactuel » sur les autres évite l'erreur de lecture au moment où elle se produit.
+
+- [ ] 🟠 **Ajouter un résumé en langage courant aux pages techniques** `Coût · Méthode · Données`
+  Ces pages sont rigoureuses mais écrites pour un lecteur déjà convaincu ou technicien (« coefficient d'équilibre », « assiette déplafonnée », « EIR 2020 »). Trois ou quatre phrases en langage simple avant le détail donneraient un point d'entrée à un lecteur non spécialiste, sans rien retirer à la rigueur qui suit.
+
+- [ ] ⚪ **Sortir l'autocritique méthodologique de la masse de texte** `Coût`
+  La comparaison à la projection du COR (« notre écart vaut -0,3 point de PIB au départ et 5,1 à l'arrivée […] il n'est pas flatteur ») est un vrai gage de sérieux, mais elle est noyée dans un paragraphe. En faire un encart « point de vigilance » à part la transforme en argument de crédibilité au lieu de la laisser passer inaperçue.
+
+- [ ] ⚪ **Remonter le tableau de la garantie vieillesse** `Programme`
+  Le tableau « 300 € et 1 500 € → 0 € aujourd'hui, 500 € avec la garantie » est l'argument le plus immédiatement parlant du site pour un lecteur non spécialiste. Il arrive tard, après plusieurs tableaux denses. Le rapprocher du haut de page renforcerait l'accroche.
+
+#### 3. Architecture
+
+*Le moteur (Python de référence + JS sans dépendance, 469 cas de test à parité bit-à-bit) est une vraie force technique, à préserver telle quelle. L'architecture de l'information, elle, mériterait d'être retravaillée.*
+
+- [ ] 🔴 **Protéger le texte et l'habillage du site, pas seulement le code** `Global · Dépôt`
+  Le texte du site — l'argumentaire de Programme, les explications de chaque page — est une œuvre protégée par le droit d'auteur dès sa création, sans qu'aucune licence ne soit nécessaire pour ça. Le choix actuel fait l'inverse : « cette page […] sous licence libre » renvoie au MIT, qui autorise explicitement la copie et la modification du texte par un tiers, à la seule condition de garder une notice dans les copies du *code* — une condition qui ne s'applique même pas à qui reprend juste la prose d'une page sans toucher au dépôt. Si l'objectif est de protéger cette expression-là (le texte, pas l'idée qu'il porte — voir le constat plus bas), deux pistes : sortir la prose éditoriale de la licence MIT et la laisser sous « tous droits réservés », le régime par défaut du droit d'auteur français, sans rien à publier pour l'obtenir ; ou choisir une licence Creative Commons plus adaptée à du texte que le MIT ne l'est, par exemple CC BY-ND (partage autorisé, réécriture ou déformation du message interdite) ou CC BY-SA (partage et adaptation autorisés, mais attribution et même licence obligatoires en aval). Un repère, pas un avis juridique — à faire trancher par un juriste avant de changer quoi que ce soit.
+
+- [ ] 🟠 **Pour les données : un droit séparé existe, indépendant de la licence du code** `Données · Dépôt`
+  Les séries et barèmes bruts sont en grande partie des faits, que le droit d'auteur classique ne protège pas, quelle que soit la licence choisie. Le droit français prévoit néanmoins un régime distinct, le droit sui generis des producteurs de bases de données (articles L341-1 et suivants du code de la propriété intellectuelle, transposant la directive 96/9/CE) : il protège celui qui démontre un investissement substantiel dans la constitution, la vérification ou la présentation d'une base de données, contre la réutilisation d'une partie substantielle de son contenu — ce que documente déjà, de fait, la page Données avec ses 72 régimes recoupés contre LEGI, DILA, COR et DREES. Ce droit existe indépendamment de la licence du code : la publier en MIT ne l'éteint pas forcément, mais ne le mentionne pas non plus. À faire vérifier par un juriste avant de fixer la licence des données, plutôt que de la déduire de celle du moteur.
+
+  > **Constat (pas une action) :** la proposition elle-même — comptes notionnels, taux unique à 18 %, garantie vieillesse individualisée — n'est protégeable par aucune licence : le droit d'auteur couvre une expression, jamais une idée ou un système. N'importe quel parti peut reprendre le principe sans rien devoir au dépôt, quoi que ce dernier choisisse pour son texte ou ses données — et c'est en général dans l'intérêt d'un parti que sa proposition circule et se discute. Ce qui reste établissable, ce n'est pas l'exclusivité de l'idée mais son antériorité : la publication datée et publique en fait déjà foi.
+
+- [ ] 🔴 **Regrouper la navigation par fonction, pas juste par page** `Global`
+  Les six entrées (Programme, Simuler, Cas types, Coût, Méthode, Données) ne distinguent pas le message (Programme), la preuve (Simuler, Cas types, Coût) et la confiance (Méthode, Données). Un visiteur ne sait pas où aller après Programme. Regrouper visuellement la nav en blocs, ou ajouter une micro-description sous chaque lien.
+
+- [ ] 🟠 **Traiter Données comme une base, pas comme un article** `Données`
+  La taxonomie (certifiée / haute / moyenne / estimée × modélisé / partiel / hors champ) est un vrai jeu de données. La rendre en tableaux HTML statiques dans une page de prose sous-exploite sa structure. C'est la page qui justifierait le plus un vrai composant de table interactive.
+
+- [ ] 🟠 **Créer des renvois croisés entre pages complémentaires** `Programme · Méthode · Cas types`
+  Programme renvoie vers Méthode (« le détail du calcul »), mais rien ne relie Méthode aux cas concrets qui l'illustrent en retour. Ajouter des renvois contextuels dans les deux sens entre Programme, Méthode et Cas types.
+
+- [ ] ⚪ **Donner plus de visibilité à la rigueur technique du dépôt** `Méthode`
+  Le moteur JS sans framework, validé contre le modèle Python sur 469 cas à la précision du flottant, est un vrai argument de confiance auprès d'un public technique — actuellement seulement accessible via le lien GitHub en bas de Programme. Un lien « comment c'est construit » depuis Méthode le mettrait en valeur là où le lecteur est déjà dans le détail.
+
+- [ ] ⚪ **Vérifier les méta-descriptions par route** `Global`
+  Le routage en hash (#/) n'est pas un problème pour un site statique GitHub Pages, mais chaque route doit avoir sa propre balise `<title>` (déjà le cas, vérifié) et sa propre méta-description, pour un partage et un référencement corrects.
+
+#### 4. Gommer la touche IA
+
+*Le design visuel n'a pas ce problème : pas de dégradés, pas d'icônes génériques, pas d'emoji. La « touche IA » à corriger est dans le texte — des procédés rhétoriques efficaces isolément, mais reconnaissables à force d'être répétés à l'identique.*
+
+- [ ] 🔴 **Varier le procédé « Ce n'est pas X, c'est Y »** `Global`
+  Répété des dizaines de fois sur l'ensemble du site (« ce n'est pas une économie, c'est une marge » ; « ce n'est pas l'ASPA à un autre montant » ; « non du passage aux comptes notionnels »…). Efficace isolément, systématique à l'échelle du site, ce qui le rend reconnaissable comme procédé. Relire chaque page en variant : comparaison implicite, exemple concret, question rhétorique.
+
+- [ ] 🟠 **Sortir les rubriques « Ce que cette page ne dit pas » du gabarit** `Coût · Données`
+  Bon réflexe de transparence, mais le titre quasi identique d'une page à l'autre (« Ce que cette page ne dit pas », « Ce que ce solde ne dit pas ») accentue l'effet de patron répété. Varier les titres et intégrer ces réserves plus naturellement dans le texte plutôt qu'en rubrique systématique.
+
+- [ ] 🟠 **Alléger les incises en tiret cadratin** `Global`
+  Usage très dense du tiret cadratin en incise (« — c'est-à-dire […] — », « — et c'est […], — »). C'est l'un des tics de ponctuation les plus souvent associés à un texte généré. Remplacer une partie de ces incises par des phrases séparées, des parenthèses, ou des notes de bas de page.
+
+- [ ] ⚪ **Casser la symétrie des triades rhétoriques** `Programme`
+  Des groupes de trois membres parallèles reviennent régulièrement (« Il est illisible. Il est inégal. Il n'est pas piloté. »). Élégant isolément, répétitif à l'échelle du site. Casser le motif par endroits avec deux points, ou quatre, ou une liste asymétrique.
+
+- [ ] ⚪ **Ajouter une voix incarnée** `Programme`
+  Aucun « nous avons choisi », aucun nom, aucune note personnelle sur pourquoi ce site existe : tout reste à la troisième personne impersonnelle. Une courte note signée — qui, pourquoi ce projet, quelles réserves — sur Programme ou dans une page « À propos » ferait contrepoint humain à la rigueur méthodologique.
+
+> **Constat (pas une action) :** le design visuel — thème sombre sobre, sans dégradé ni icône générique — n'a pas la « touche IA » habituelle des sites générés. Le travail porte sur le texte, pas sur l'interface.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -1928,3 +2081,11 @@ et qui aurait signalé le défaut sans qu'on le cherche.
   neuf régimes en points dont la surcote, pourtant sourcée et chargée, n'est
   lue par aucune branche du moteur — et c'est l'action 22, ouverte plutôt que
   glissée dans celle-ci.
+- **Septembre 2026, action 23.** Ouverte. Une revue extérieure des six pages,
+  datée du 15 septembre et reçue le 16, est versée entière sous l'action 23 :
+  vingt-sept chantiers en quatre thèmes, chacun avec sa case à cocher et la
+  priorité que le relecteur lui donne. Rien n'est commencé. Trois chantiers
+  recoupent des travaux déjà faits — la bulle du glossaire de l'action 19, la
+  grille unique de l'action 16, le passage du code sous Apache 2.0 et des
+  textes sous CC BY-SA 4.0 le 16 septembre — et l'action dit pour chacun ce
+  qu'il faut vérifier avant de le reprendre.
