@@ -83,7 +83,9 @@ export function pied() {
   d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
   Seule votre caisse fait foi
   (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
-  <p>Modèle ouvert, code et données sur <a href="${DEPOT}">GitHub</a> (licence Apache 2.0).
+  <p>Modèle ouvert, code et données sur <a href="${DEPOT}">GitHub</a> (code sous licence
+  Apache 2.0, infographies et textes sous
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).
   Les montants sont bruts, exprimés en euros constants de l'année de référence.
   Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
   <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>

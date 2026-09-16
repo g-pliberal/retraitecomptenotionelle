@@ -1872,12 +1872,19 @@ chaque modification par les contrôles automatiques du dépôt :</p>
 Défenseur des droits peut être saisi :
 <a href="https://formulaire.defenseurdesdroits.fr/">formulaire.defenseurdesdroits.fr</a>.</p>
 
-<h3>Code, données et réutilisation</h3>
+<h3>Code, infographies, données et réutilisation</h3>
 <p>Le code du modèle et du site est publié sous
 <a href="{g.DEPOT}/blob/main/LICENSE">licence Apache 2.0</a> : réutilisable, y compris
 commercialement, à condition d'en conserver la mention. Les pictogrammes
 viennent de <a href="https://lucide.dev">Lucide</a> (licence ISC) ; ils sont
 recopiés dans le dépôt, et le site ne les charge donc chez personne.</p>
+<p>Les infographies, graphiques, tableaux et textes que le site affiche sont
+sous licence <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">Creative
+Commons Attribution – Partage dans les mêmes conditions 4.0</a> (CC BY-SA) :
+libres de reprise et d'adaptation, à condition de citer ce site et d'en
+indiquer l'adresse, de signaler les modifications, et de republier toute version
+modifiée sous la même licence. Le nom et le logo du Parti Libéral Français ne
+sont couverts par aucune de ces licences.</p>
 <p>Les données, elles, ne sont pas la propriété de l'éditeur. Les séries
 françaises reprises ici — INSEE, DREES, DILA et Légifrance, Service des
 retraites de l'État, caisses — sont des informations publiques, réutilisables

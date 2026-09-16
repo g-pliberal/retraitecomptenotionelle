@@ -1110,7 +1110,12 @@ node --test tests/js/moteur.test.js
 
 ## Licence
 
-Apache 2.0 — voir [LICENSE](LICENSE). Les données publiques référencées restent
+Le code est sous licence Apache 2.0 ; les infographies, graphiques, tableaux
+et textes que le site affiche sont sous [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr)
+(reprise et adaptation libres, à condition de citer le site et de republier
+toute version modifiée sous la même licence) ; le nom et le logo du Parti
+Libéral Français ne sont couverts par aucune des deux — voir [LICENSE](LICENSE).
+Les données publiques référencées restent
 soumises aux licences de leurs producteurs respectifs (licence ouverte Etalab
 pour la plupart), qui imposent toutes la citation de la source : elle est dans
 [`data/sources.yaml`](data/sources.yaml), valeur par valeur.
