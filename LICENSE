@@ -202,9 +202,26 @@
 
 ---
 
-Les DONNÉES du dépôt (data/) ne sont pas couvertes par cette licence : ce sont
-des informations publiques reprises de leurs producteurs — INSEE, DREES, DILA
-et Légifrance, Service des retraites de l'État, caisses de retraite, INED,
-Eurostat, OCDE —, réutilisables sous leurs propres conditions, qui imposent
-toutes la citation de la source. Chaque valeur porte la sienne dans
-data/sources.yaml.
+La licence Apache 2.0 ci-dessus couvre le CODE : le modèle (src/), son portage
+(moteur/js/), les scripts, la feuille de style et les gabarits.
+
+Les INFOGRAPHIES, graphiques, tableaux et textes que le site affiche, ainsi que
+la documentation (README.md, docs/), sont publiés sous licence Creative Commons
+Attribution – Partage dans les mêmes conditions 4.0 International (CC BY-SA
+4.0) : https://creativecommons.org/licenses/by-sa/4.0/deed.fr
+
+Ils peuvent être reproduits, diffusés et adaptés, y compris à des fins
+commerciales, à trois conditions : citer la source (« Parti Libéral Français »
+et l'adresse du site ou du dépôt), signaler les modifications apportées, et
+publier toute version modifiée sous cette même licence CC BY-SA 4.0.
+
+Le NOM et le LOGO du Parti Libéral Français ne sont couverts par aucune de ces
+licences : ils restent réservés, et leur reprise ne peut ni suggérer un
+soutien du parti ni faire passer un contenu modifié pour un contenu original.
+
+Les DONNÉES du dépôt (data/) ne sont couvertes par aucune de ces licences :
+ce sont des informations publiques reprises de leurs producteurs — INSEE,
+DREES, DILA et Légifrance, Service des retraites de l'État, caisses de
+retraite, INED, Eurostat, OCDE —, réutilisables sous leurs propres conditions,
+qui imposent toutes la citation de la source. Chaque valeur porte la sienne
+dans data/sources.yaml.
