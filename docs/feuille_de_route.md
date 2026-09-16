@@ -980,6 +980,128 @@ l'objection au lieu de la nourrir.
 
 ---
 
+### 15. Rendre les pages longues parcourables — `à faire`
+
+**Pourquoi.** Deux des six pages ne sont plus des pages mais des documents :
+Coût pèse 8 516 mots, seize tableaux et treize titres ; Données, 5 851 mots et
+huit tableaux. Aucune des deux ne porte de sommaire, et aucun de leurs titres ne
+porte d'ancre — qui cherche la part patronale, ou la date de certification d'une
+série, fait défiler jusqu'à la trouver. L'action 12 a réglé le ton des pages et
+leur ordre ; elle n'a rien réglé du parcours À L'INTÉRIEUR d'une page. Le
+livrable est un programme politique : il est lu par quelqu'un qui cherche une
+réponse, rarement par quelqu'un qui lit de haut en bas.
+
+**Ce qui l'a ouverte.** Une consigne de septembre 2026 : tenir la liste des
+procédés à employer désormais, chaque fois qu'une page s'allonge. Elle est
+ci-dessous en entier, classée par ce que chaque procédé résout. C'est un
+catalogue où l'on pioche page par page, pas un programme à exécuter d'un bloc :
+une page de 1 700 mots n'a besoin d'aucun d'eux.
+
+**Les vingt-cinq procédés.**
+
+*Se repérer dans une page longue.*
+
+1. Sommaire / navigation interne ancrée.
+2. Sommaire contextuel avec progression (la section où l'on est, marquée).
+3. Navigation latérale fixe.
+4. Ancres contextuelles (un lien vers une section depuis le corps du texte).
+5. Liens d'évitement dans le contenu, et non plus seulement en tête de page.
+6. Résumés de section.
+
+*Doser ce qu'on donne d'abord.*
+
+7. Résumé d'abord, détail ensuite.
+8. Blocs « À retenir ».
+9. Affichage « Essentiel / Tout afficher ».
+10. Regroupement par niveaux de lecture.
+11. Mise en avant des informations prioritaires.
+12. Séparation du contenu principal et du contenu de référence.
+
+*Trouver sans lire.*
+
+13. Recherche locale dans la page.
+14. Filtres et facettes.
+15. Filtres intelligents préremplis.
+16. Tri et filtrage dynamique.
+17. Navigation par catégories.
+
+*Les tableaux et les grands ensembles.*
+
+18. Tableaux optimisés.
+19. En-têtes et colonnes fixes.
+20. Pagination ou chargement progressif.
+21. Cartes avec contenu hiérarchisé.
+22. Comparateur.
+
+*Changer de forme sans changer de page.*
+
+23. Onglets.
+24. Vues alternatives.
+25. Hiérarchie typographique forte.
+
+**Ce que le dépôt fait déjà, et qu'il ne faut pas refaire.** Le lien d'évitement
+existe, mais global et unique (`a.evitement`, posé par `gabarit.entete`, servi
+par un écouteur d'`index.html`) : le procédé 5 est son extension au corps des
+pages, pas sa création. Le procédé 7 a un embryon — onze `<details>` répartis sur
+quatre pages. Le procédé 24 en a un aussi, et le meilleur du lot :
+`gabarit.donnees_du_graphique` rend en tableau ce que le graphique montre en
+courbes, ce qui est exactement la vue alternative demandée ; il est à généraliser,
+non à inventer. Le procédé 25 a ses outils — `tableau`, `fiche`, `gloses` — mais
+pas son usage : la page Coût n'a que trois `<h2>` pour huit mille mots, et
+l'accueil, un seul pour huit `<h3>`. Les procédés 1 à 4 n'existent nulle part :
+deux ancres sur toute la Méthode (`#indexation`, `#unites`), aucune ailleurs.
+
+**L'obstacle technique, à connaître avant d'écrire une ligne.** Le site tient
+dans une seule page et L'ADRESSE EST LA ROUTE : `#/cout` désigne la page Coût.
+La place de l'ancre est donc prise, et un `href="#une-section"` ne défilerait pas
+vers la section — il renverrait le lecteur à l'accueil, en perdant au passage la
+simulation en cours (c'est écrit dans la docstring de `gabarit.lien`). Tout
+sommaire, toute ancre contextuelle passe par le mécanisme déjà employé pour le
+lien d'évitement : un écouteur délégué qui appelle `focus()` et
+`scrollIntoView()` sans toucher à l'adresse. Deux conséquences. La première est
+qu'une section visée doit porter un `tabindex="-1"`, comme le fait déjà
+`id="resultats"`, sans quoi le focus ne s'y pose pas. La seconde est qu'un lien
+de section n'est pas partageable tant que le routeur ne sait pas lire
+`#/cout/part-patronale` ; le décider avant, plutôt que de le regretter après.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py`, et en
+regard `moteur/js/pages.js` et `moteur/js/gabarit.js` — tout fragment HTML
+existe deux fois, et le Python fait foi. Le style s'écrit une seule fois, dans
+`gabarit.py`, d'où `scripts/construire_donnees.py` l'extrait vers
+`moteur/style.css` ; à reconstruire après coup. Le comportement — replier,
+filtrer, trier, chercher — va dans `index.html`, en écouteurs délégués : c'est là
+que vit déjà celui du lien d'évitement et celui qui grise les statuts fermés.
+Tests : `tests/test_web.py` et `tests/js/comparer-pages.mjs`, qui compare les
+deux portages page à page.
+
+**Marche.** Par page, et de la plus lourde à la plus légère — Coût, Données, Cas
+types —, pas par procédé : un sommaire posé partout d'un coup ajoute du bruit aux
+pages courtes. Pour chacune : donner d'abord aux titres leur niveau juste
+(procédé 25), qui est la condition de tous les autres puisqu'un sommaire se
+déduit des titres ; poser les ancres et le sommaire (1, 4) ; sortir de la prose
+ce qui est référence et non lecture (12, 6, 8) ; alors seulement, là où le volume
+le justifie encore, les filtres et la recherche (13 à 17), qui sont les seuls à
+coûter du code de comportement. Les procédés 18 à 20 valent pour l'inventaire des
+régimes et les tableaux de la page Coût ; le 22, pour la comparaison des six
+scénarios, qui est le seul endroit du site où un comparateur a un sens.
+
+**Garde-fous.** Aucune bibliothèque, ici pas plus qu'ailleurs. Rien qui rende un
+chiffre inatteignable : replier n'est pas supprimer, et un filtre doit toujours
+pouvoir être rendu à « tout afficher » — une réserve méthodologique masquée par
+défaut est une réserve retirée. Le clavier d'abord, comme pour le focus des
+résultats : un onglet, un filtre, un tri qui ne se prennent qu'à la souris ne
+passeront pas la page Mentions, où le dépôt s'engage sur l'accessibilité. Et rien
+qui calcule à l'affichage : l'accueil a été rendu rapide en ne lisant que ce
+qu'il montre, un sommaire ne doit pas le défaire.
+
+**Fin.** Un lecteur qui arrive sur la page Coût avec une question — combien coûte
+la transition, qui paie la part patronale, ce que vaut tel chiffre — l'atteint en
+un coup d'œil et un clic, et voit du premier regard ce que la page contient
+d'autre. Le dépôt cesse de faire payer au lecteur la densité qu'il a mis un an à
+accumuler.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -1184,5 +1306,19 @@ l'objection au lieu de la nourrir.
   d'aucun choix. L'action est notée, pas menée : rien du modèle n'a bougé, et la
   leçon vaut au-delà d'elle — une lecture extérieure trouve les angles morts que
   le dépôt ne peut pas voir, puisqu'il ne cherche que là où il a déjà regardé.
+  L'action 9, la surcote de l'Ircantec, reste la plus haute qui ne soit pas
+  commencée.
+- **Septembre 2026, action 15 notée.** Une consigne demande de tenir la liste
+  des procédés d'ergonomie à employer quand une page s'allonge : elle est
+  entière sous l'action 15, avec ce que le dépôt en fait déjà. Rien n'a bougé
+  du site. Deux choses relevées en la classant. **Le dépôt a les outils et pas
+  l'usage** : `donnees_du_graphique` rend déjà en tableau ce que le graphique
+  montre en courbes, onze `<details>` replient déjà du détail — les procédés
+  existent, mais posés une fois, jamais généralisés ; et la page Coût aligne
+  huit mille mots sous trois titres de second niveau. **Et l'adresse est la
+  route**, ce qui interdit le sommaire ancré tel qu'on l'écrit partout
+  ailleurs : la place du `#` est prise par la navigation, et toute ancre doit
+  passer par l'écouteur délégué qui sert déjà le lien d'évitement. Ce point
+  vaut d'être connu avant de commencer, pas découvert au premier clic.
   L'action 9, la surcote de l'Ircantec, reste la plus haute qui ne soit pas
   commencée.
