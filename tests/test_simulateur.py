@@ -3219,6 +3219,108 @@ def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
         apres, carriere, 168, 150, 62.0, 1984) == pytest.approx(1.0)
 
 
+def test_la_surcote_ircantec_suit_les_deux_taux_de_l_arrete(simulateur):
+    """Le IV de l'article 16, taux par taux, sur une carrière écrite à la main.
+
+    Son 1° majore de 0,75 % « par trimestre entier écoulé entre le
+    soixante-cinquième anniversaire de l'assuré et la date d'entrée en
+    jouissance » : du TEMPS, que rien ne conditionne. Son 2° majore de 0,625 %
+    « par trimestre accompli » de durée cotisée au-delà de l'âge légal et de
+    la durée requise, en deçà de ce même âge — et « en aucun cas une même
+    période ne peut donner lieu à la fois » aux deux.
+    """
+    scenario = simulateur.scenario_actuel
+    periode = simulateur.catalogue["ircantec"].periode(2012)
+    assert periode.surcote_points == "ircantec"
+
+    # Un agent né en 1945 — âge du taux plein 65 ans — qui liquide à 67 ans :
+    # huit trimestres écoulés, et rien d'autre.
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1945, sexe="H", affiliation="contractuel_public",
+        age_debut=26, age_liquidation=67,
+    )
+    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(65.0)
+    assert scenario._abattement_points(
+        periode, carriere, 164, 160, 67.0, 2012) == pytest.approx(1.06)
+
+    # Le même, liquidé À l'âge du taux plein : le 1° ne donne rien, et le 2°
+    # non plus — ses quatre trimestres de trop sont postérieurs à cet âge.
+    assert scenario._abattement_points(
+        periode, carriere, 164, 160, 65.0, 2010) == pytest.approx(1.0)
+
+
+def test_la_surcote_ircantec_ne_paie_pas_deux_fois_la_meme_periode(simulateur):
+    """Le 2° ne compte que ce que le 1° ne compte pas.
+
+    Une carrière commencée à vingt ans atteint ses 160 trimestres à soixante,
+    et tout ce qu'elle cotise ensuite est « accompli après l'âge et la limite
+    prévus à l'article L. 351-1 ». Liquidée à soixante-cinq ans, elle reçoit
+    vingt trimestres au 2° et rien au 1° ; liquidée deux ans plus tard, elle
+    garde ces vingt trimestres — bornés par l'âge du taux plein — et reçoit
+    huit trimestres de plus au 1°, non vingt-huit.
+    """
+    scenario = simulateur.scenario_actuel
+    periode = simulateur.catalogue["ircantec"].periode(2012)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1945, sexe="H", affiliation="contractuel_public",
+        age_debut=20, age_liquidation=67,
+    )
+    a_l_age_du_taux_plein = scenario._abattement_points(
+        periode, carriere, 180, 160, 65.0, 2010)
+    assert a_l_age_du_taux_plein == pytest.approx(1.0 + 0.00625 * 20)
+    deux_ans_plus_tard = scenario._abattement_points(
+        periode, carriere, 188, 160, 67.0, 2012)
+    assert deux_ans_plus_tard == pytest.approx(1.0 + 0.00625 * 20 + 0.0075 * 8)
+
+
+def test_la_surcote_ircantec_n_existe_pas_avant_2010(simulateur):
+    """« À compter du 1er janvier 2010 », dit le paragraphe 4, et c'est ce qui
+    coupe la fiche en deux au milieu de sa période 2009-2010. Une liquidation
+    de 2009 ne reçoit rien ; la même, un an plus tard, reçoit la majoration
+    entière. Aucun autre régime en points du catalogue ne porte le barème.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1944, sexe="H", affiliation="contractuel_public",
+        age_debut=26, age_liquidation=66,
+    )
+    avant = simulateur.catalogue["ircantec"].periode(2009)
+    assert avant.surcote_points == "aucune"
+    assert scenario._abattement_points(
+        avant, carriere, 160, 160, 66.0, 2009) == pytest.approx(1.0)
+
+    apres = simulateur.catalogue["ircantec"].periode(2010)
+    assert apres.surcote_points == "ircantec"
+    assert scenario._abattement_points(
+        apres, carriere, 160, 160, 66.0, 2010) == pytest.approx(1.03)
+
+    porteurs = {
+        regime.code
+        for regime in simulateur.catalogue
+        for p in regime.periodes
+        if p.surcote_points != "aucune"
+    }
+    assert porteurs == {"ircantec"}, porteurs
+
+
+def test_un_abattement_ircantec_ne_se_transforme_jamais_en_majoration(simulateur):
+    """Abattu et majoré ne se rencontrent pas.
+
+    Les deux majorations supposent l'une l'âge du taux plein dépassé, l'autre
+    la durée requise dépassée : dans les deux cas, le coefficient
+    d'anticipation est déjà revenu à 1. Une liquidation anticipée et
+    incomplète reste donc abattue, et le barème de l'arrêté n'y ajoute rien.
+    """
+    scenario = simulateur.scenario_actuel
+    periode = simulateur.catalogue["ircantec"].periode(2012)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1950, sexe="H", affiliation="contractuel_public",
+        age_debut=30, age_liquidation=62,
+    )
+    assert scenario._abattement_points(
+        periode, carriere, 128, 162, 62.0, 2012) < 1.0
+
+
 # -- catégorie active et pension militaire -----------------------------------
 
 

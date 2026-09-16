@@ -271,6 +271,20 @@ champs_periode:
     valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec"]
     defaut: decote_du_regime_de_base
 
+  surcote_points:
+    description: >-
+      Barème de MAJORATION d'un régime en points liquidé après le taux plein,
+      pendant du champ précédent. `aucune` : le régime n'en sert pas, et c'est
+      le cas de tous les régimes en points du catalogue sauf un. `ircantec`
+      applique le IV de l'article 16 de l'arrêté du 30 décembre 1970, entré en
+      vigueur le 1er janvier 2010 : deux taux et deux bornes d'âge — 0,75 % par
+      trimestre ENTIER écoulé entre l'âge du taux plein et la liquidation
+      (son 1°), 0,625 % par trimestre COTISÉ au-delà de la durée requise entre
+      l'âge légal et l'âge du taux plein (son 2°), sans qu'une même période
+      puisse être comptée deux fois.
+    valeurs: ["aucune", "ircantec"]
+    defaut: aucune
+
   plafond_majoration_enfants:
     description: >-
       Plafond en euros par an de la majoration pour enfants, et année à

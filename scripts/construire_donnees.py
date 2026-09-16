@@ -308,6 +308,7 @@ def _regimes() -> list[dict]:
                     "decote_trimestres_maximum": p.decote_trimestres_maximum,
                     "surcote_par_trimestre": p.surcote_par_trimestre,
                     "abattement_points": p.abattement_points,
+                    "surcote_points": p.surcote_points,
                     "plafond_majoration_enfants": p.plafond_majoration_enfants,
                     "plafond_majoration_annee": p.plafond_majoration_annee,
                     "points_maximum": p.points_maximum,

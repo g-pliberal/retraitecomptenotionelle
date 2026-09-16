@@ -532,7 +532,8 @@ def _nos_points_arrco(simulateur: Simulateur, profil: dict) -> dict[str, float]:
         lecture = _POINTS.match(pension.detail)
         assert lecture, pension.detail
         points += float(lecture.group(1).replace(",", ""))
-        if "coefficient d'anticipation" in pension.detail:
+        if ("coefficient d'anticipation" in pension.detail
+                or "coefficient de majoration" in pension.detail):
             coefficient = float(pension.detail.rsplit(" ", 1)[1])
     service = scenario.valeurs_point.service("arrco", profil["liquidation"] - 1)
     return {
@@ -720,7 +721,8 @@ def _nos_points(simulateur: Simulateur, profil: dict, regime: str,
         lecture = _POINTS.match(pension.detail)
         assert lecture, pension.detail
         points += float(lecture.group(1).replace(",", ""))
-        if "coefficient d'anticipation" in pension.detail:
+        if ("coefficient d'anticipation" in pension.detail
+                or "coefficient de majoration" in pension.detail):
             coefficient = float(pension.detail.rsplit(" ", 1)[1])
     return {"points": points, "coefficient_de_minoration": coefficient}
 
@@ -968,7 +970,7 @@ ANNEE_DES_HUIT_PLAFONDS_DECRET = 2009
 #: Majoration par trimestre de surcote que sert OpenFisca, et celle que
 #: l'arrêté écrit : « le nombre total de points est majoré de 0,75 % par
 #: trimestre entier » (article 16, paragraphe 4). Son paramètre porte dix fois
-#: cela. Le modèle, lui, n'en sert aucune — voir `limites.md` §3.
+#: cela, et c'est le seul poste où il sert plus que le droit.
 SURCOTE_IRCANTEC_OPENFISCA = 0.075
 SURCOTE_IRCANTEC_ARRETE = 0.0075
 
@@ -1215,9 +1217,13 @@ def test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui(
     l'assuré et la date d'entrée en jouissance » ; son paramètre porte 0,075.
     Une année de surcote y vaut +30 % de pension.
 
-    Le modèle, lui, n'en sert AUCUNE : la fiche de l'Ircantec ne porte pas de
-    surcote, et `limites.md` §3 dit ce que cela coûte. Le test fige les deux
-    lectures pour que la première correction se voie.
+    **Ce que le modèle sert désormais, c'est l'arrêté.** Il n'en servait rien,
+    et c'est ce test qui figeait les deux lectures ; il oppose maintenant la
+    troisième, qui est le droit. La majoration ne se compte pas sur les mêmes
+    trimestres des deux côtés : OpenFisca reprend ceux de la surcote du régime
+    général — cotisés, au-delà de la durée requise —, l'arrêté compte au 1° le
+    TEMPS ÉCOULÉ depuis l'âge du taux plein, sans condition de cotisation, et
+    ne réserve la seconde assiette qu'à son 2°, moins bien payé.
     """
     surcotes = [
         (code, entree) for code, entree in oracle_ircantec["profils"].items()
@@ -1225,17 +1231,25 @@ def test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui(
     ]
     assert surcotes, "aucun profil surcoté"
     for code, entree in surcotes:
-        eux = entree["openfisca"]
+        profil, eux = entree["profil"], entree["openfisca"]
         trimestres = eux["surcote_trimestres_regime_general"]
         assert eux["decote_trimestres_regime_general"] == 0, code
         assert eux["coefficient_de_minoration"] == pytest.approx(
             1 + SURCOTE_IRCANTEC_OPENFISCA * trimestres, abs=TOLERANCE_EXACTE), code
-        nous = _nos_points(simulateur, entree["profil"], "ircantec",
-                           "contractuel_public")
-        assert nous["coefficient_de_minoration"] == 1.0, code
-        # Ce que l'arrêté donnerait, et que ni l'un ni l'autre ne sert.
-        assert 1 + SURCOTE_IRCANTEC_ARRETE * trimestres < (
-            eux["coefficient_de_minoration"]), code
+        nous = _nos_points(simulateur, profil, "ircantec", "contractuel_public")
+        # Le 1° de l'arrêté, trimestre par trimestre : l'âge du taux plein de
+        # la génération, et l'âge de la liquidation. Le 2° ne joue pas ici —
+        # les trimestres au-delà de la durée requise sont postérieurs à
+        # soixante-cinq ans, et le texte interdit de les payer deux fois.
+        age_taux_plein = simulateur.scenario_actuel.ages_annulation_decote.age(
+            profil["naissance"])[0]
+        ecoules = round(
+            (profil["liquidation"] - profil["naissance"] - age_taux_plein) * 4)
+        assert ecoules > 0, code
+        assert nous["coefficient_de_minoration"] == pytest.approx(
+            1 + SURCOTE_IRCANTEC_ARRETE * ecoules, abs=TOLERANCE_EXACTE), code
+        # Et il reste, comme avant, très en deçà de ce que lui sert.
+        assert nous["coefficient_de_minoration"] < eux["coefficient_de_minoration"], code
 
 
 def test_la_valeur_de_service_ircantec_suit_la_date_de_revalorisation(

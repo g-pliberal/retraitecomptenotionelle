@@ -186,6 +186,12 @@ class PeriodeRegime:
     #: applique le coefficient de minoration ci-dessus ; ``agirc_arrco``
     #: applique les coefficients d'anticipation propres à ce régime.
     abattement_points: str
+    #: Barème de MAJORATION des régimes en points liquidés APRÈS le taux
+    #: plein. ``aucune`` partout sauf à l'Ircantec, dont le IV de l'article 16
+    #: de l'arrêté du 30 décembre 1970 sert deux taux depuis le 1er janvier
+    #: 2010 — 0,75 % par trimestre écoulé au-delà de l'âge du taux plein,
+    #: 0,625 % par trimestre cotisé au-delà de la durée requise en deçà.
+    surcote_points: str
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -861,6 +867,7 @@ class CatalogueRegimes:
                     else float(p["surcote_par_trimestre"])
                 ),
                 abattement_points=p.get("abattement_points", "decote_du_regime_de_base"),
+                surcote_points=p.get("surcote_points", "aucune"),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])

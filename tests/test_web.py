@@ -1795,9 +1795,13 @@ def _refaire_la_formule(detail: str) -> float | None:
         r"cotisations revalorisées ([\d,]+) € × rendement ([\d.]+)%", detail)
     if cotisations:
         montant += sans_virgules(cotisations.group(1)) * float(cotisations.group(2)) / 100
-    anticipation = re.search(r"coefficient d'anticipation ([\d.]+)", detail)
-    if anticipation:
-        montant *= float(anticipation.group(1))
+    # Le coefficient d'un régime en points se nomme par ce qu'il fait :
+    # « anticipation » quand il retire, « majoration » quand il ajoute — c'est
+    # le cas de l'Ircantec liquidée après le taux plein, et lui seul.
+    coefficient = re.search(
+        r"coefficient (?:d'anticipation|de majoration) ([\d.]+)", detail)
+    if coefficient:
+        montant *= float(coefficient.group(1))
     return montant
 
 
@@ -1848,7 +1852,8 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                     continue
                 controlees += 1
                 for marqueur in ("minimum contributif", "minimum garanti",
-                                 "coefficient d'anticipation", "surcote parentale"):
+                                 "coefficient d'anticipation",
+                                 "coefficient de majoration", "surcote parentale"):
                     if marqueur in pension.detail:
                         branches.add(marqueur)
                 # Les grandeurs de la formule sont arrondies pour l'affichage :
@@ -1867,7 +1872,8 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                 continue
             controlees += 1
             for marqueur in ("minimum contributif", "minimum garanti",
-                             "coefficient d'anticipation", "surcote parentale"):
+                             "coefficient d'anticipation",
+                             "coefficient de majoration", "surcote parentale"):
                 if marqueur in pension.detail:
                     branches.add(marqueur)
             if abs(refait - pension.montant) > 0.25:
@@ -1882,7 +1888,8 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
     # mal les statuts et contrôlait ZÉRO formule, en vert.
     assert controlees > 150, f"{controlees} formules seulement ont été refaites"
     assert branches == {"minimum contributif", "minimum garanti",
-                        "coefficient d'anticipation", "surcote parentale"}, (
+                        "coefficient d'anticipation",
+                        "coefficient de majoration", "surcote parentale"}, (
         f"branches non exercées : {branches}"
     )
 
