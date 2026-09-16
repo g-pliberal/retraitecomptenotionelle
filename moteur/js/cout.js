@@ -320,13 +320,17 @@ class Avenir {
  * qu'une hypothèse de croissance déguisée en observation.
  */
 class SoldeAnnuel {
-  constructor(annee, projete, ressources, depenses, rapportsAnnee, pib) {
+  constructor(annee, projete, ressources, depenses, rapportsAnnee, pib, retrait = 0.0) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
     this.depenses = depenses;
     this.rapports = rapportsAnnee;
     this.pib = pib;
+    // Ce que la branche famille et l'assurance chômage versent pour des droits
+    // que les scénarios notionnels ne servent pas, en part de PIB : une
+    // recette du système actuel, jamais la leur.
+    this.retrait = retrait;
   }
 
   /** Ce que le système coûterait cette année-là, en part de PIB. */
@@ -334,9 +338,20 @@ class SoldeAnnuel {
     return this.depenses * this.rapports[scenario];
   }
 
+  /**
+   * Ce qu'un système peut compter comme ressources, en part de PIB. Le système
+   * actuel encaisse tout ; un scénario notionnel ne sert ni l'AVPF, ni les
+   * majorations pour enfants, ni rien pendant une année de chômage, et ne peut
+   * pas compter ce que la CNAF et l'Unédic versent pour ces droits-là. LA
+   * RECETTE SUIT LE DROIT.
+   */
+  ressourcesDe(scenario) {
+    return scenario === "actuel" ? this.ressources : this.ressources - this.retrait;
+  }
+
   /** Ressources moins dépenses. Négatif : besoin de financement. */
   solde(scenario) {
-    return this.ressources - this.depense(scenario);
+    return this.ressourcesDe(scenario) - this.depense(scenario);
   }
 
   /**
@@ -345,7 +360,7 @@ class SoldeAnnuel {
    */
   coefficient(scenario) {
     const depense = this.depense(scenario);
-    return depense > 0 ? this.ressources / depense : 0.0;
+    return depense > 0 ? this.ressourcesDe(scenario) / depense : 0.0;
   }
 
   /** Le même solde en millions d'euros courants, et zéro si le PIB manque. */
@@ -581,6 +596,7 @@ function construireSolde(avenir, comptes, derniereAnneePib) {
       comptes.depense(annee),
       ligne.rapports,
       annee <= derniereAnneePib ? ligne.pib : 0.0,
+      comptes.recetteNonAcquise(annee),
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);

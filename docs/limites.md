@@ -4960,8 +4960,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de 1,91 en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de 48 % : il se lit comme la marge dont ce système
+  niveaux, et un coefficient de 1,87 en 2070 pour le scénario 3 ne se lit donc
+  pas comme une économie de 46 % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -4998,12 +4998,17 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   `transferts_retraite.csv` les lit chez celui qui paie, dans les rapports à
   la Commission des comptes de la Sécurité sociale, de 2013 à 2024 (l'Unédic)
   ou 2025 (la CNAF) ; les rapports d'avant 2013 sont chiffrés ou compressés
-  d'une façon que le lecteur PDF du dépôt n'ouvre pas. Retirées à part
-  constante, ces recettes ramènent le coefficient du scénario 3 en 2070 de
-  1,94 à 1,87, celui du scénario 5 de 1,17 à 1,13. La page **Coût** le dit
-  dans un dépliant ; le coefficient lui-même n'est pas corrigé, pas plus qu'il
-  n'est appliqué, et ce que la branche famille ferait de ce qu'elle cesserait
-  de verser est une décision de programme, pas un résultat du modèle.
+  d'une façon que le lecteur PDF du dépôt n'ouvre pas. Le coefficient
+  d'équilibre des scénarios notionnels les RETIRE : année par année là où on
+  les connaît, à part constante des ressources avant 2013 et sur tout
+  l'horizon projeté — personne ne projette ce que la CNAF versera en 2070, et
+  une part constante est l'hypothèse qui n'en ajoute aucune autre. Cela
+  ramène le scénario 3 en 2070 de 1,94 à 1,87, le scénario 5 de 1,17 à 1,13,
+  et met les deux en déficit dès 2025, où ils servent encore les pensions du
+  système actuel. Le système actuel encaisse tout et garde le solde du COR.
+  Le coefficient n'est toujours pas appliqué, et ce que la branche famille
+  ferait de ce qu'elle cesserait de verser est une décision de programme, pas
+  un résultat du modèle.
 
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
@@ -5436,7 +5441,7 @@ barèmes.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 790 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 792 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

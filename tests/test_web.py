@@ -3684,10 +3684,11 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent(contexte):
     assert "Assurance vieillesse des parents au foyer" in texte
     assert "Points Agirc-Arrco des chômeurs" in texte
     assert "Ces recettes financent des droits que les scénarios" in texte
-    # Le dépliant reporte l'effet à l'horizon du COR, à part constante, et
-    # nomme les deux scénarios applicables.
-    assert re.search(r"ramènent le coefficient d'équilibre de 20\d\d", texte)
-    assert "pour le scénario 3" in texte and "pour le scénario 5" in texte
+    # Le dépliant dit que le coefficient retire la recette, et ce qu'on lirait
+    # sans ce retrait, pour les deux scénarios applicables.
+    assert "Le coefficient d'équilibre du dépliant suivant les leur retire" in texte
+    assert re.search(r"le scénario 3 afficherait \d,\d\d en 20\d\d au lieu de \d,\d\d", texte)
+    assert "et le scénario 5" in texte
 
 
 def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
