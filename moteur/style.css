@@ -157,6 +157,12 @@ label { display: block; font-size: 0.88rem; color: var(--texte-doux); margin-bot
    La couleur pleine la remonte à 6,88:1, et la taille suffit à la distinguer du
    libellé. */
 label .aide { display: block; font-size: 0.8rem; }
+/* Ce qu'une date saisie vaut en âge, sous le champ qui la porte : « soit
+   64 ans et 7 mois ». Le calendrier a remplacé les champs d'âge ; cette ligne
+   rend l'âge qu'ils disaient, et la page le recalcule à chaque frappe. */
+.calcul {
+  display: block; font-size: 0.8rem; color: var(--texte-doux); margin-top: 0.3rem;
+}
 input, select, textarea {
   width: 100%; padding: 0.45rem 0.6rem; font: inherit; font-size: 0.95rem;
   color: var(--texte); background: var(--fond); border: 1px solid var(--trait-champ);

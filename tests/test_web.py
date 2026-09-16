@@ -107,11 +107,30 @@ def test_simulation_affiche_les_trois_scenarios(page):
 
 
 def test_la_saisie_est_reinjectee_dans_le_formulaire(page):
-    """L'adresse porte les paramètres : la page doit être rechargeable telle quelle."""
+    """L'adresse porte les paramètres : la page doit être rechargeable telle quelle.
+
+    Les âges d'une adresse ancienne reviennent en dates, puisque c'est ce que le
+    formulaire demande depuis qu'il porte des calendriers : né en 1955, entré à
+    dix-huit ans, parti à cinquante-cinq.
+    """
     texte = page("/simuler", naissance=1955, statut="mineur",
                  debut=18, liquidation=55)
-    assert 'value="1955"' in texte
+    assert 'id="naissance" name="naissance" value="1955-01-01"' in texte
+    assert 'id="debut" name="debut" value="1973-01-01"' in texte
+    assert 'id="liquidation" name="liquidation" value="2010-01-01"' in texte
     assert '<option value="mineur" selected data-fermeture="2010-09">' in texte
+
+
+def test_le_calendrier_se_lit_et_se_rend(page):
+    """Une carrière datée au mois : le formulaire la rend telle qu'elle a été
+    saisie, et l'âge qu'elle fait s'écrit sous le champ."""
+    texte = page("/simuler", naissance="1962-03-15", debut="1984-09",
+                 liquidation="2026-07")
+    assert 'id="naissance" name="naissance" value="1962-03-15"' in texte
+    assert 'id="debut" name="debut" value="1984-09-01"' in texte
+    assert 'id="liquidation" name="liquidation" value="2026-07-01"' in texte
+    assert "soit 22 ans et 6 mois" in texte
+    assert "soit 64 ans et 4 mois" in texte
 
 
 def test_saisie_invalide_affiche_un_message_et_pas_de_trace(page):
@@ -344,6 +363,55 @@ def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur(contexte):
             valeur = str(int(dehors)) if float(borne).is_integer() else str(dehors)
             with pytest.raises(ErreurSaisie, match=r"."):
                 Saisie.depuis_requete({nom: valeur})
+
+
+def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur(contexte):
+    """Même exigence pour les dates que pour les nombres.
+
+    Un calendrier s'ouvre sur les seules dates que le modèle accepte — « min »
+    et « max » sont posés depuis la date de naissance saisie —, mais une adresse
+    forgée à la main ne passe par aucun calendrier. Ce test relit les champs
+    date du formulaire rendu et vérifie que le mois d'à côté est refusé.
+    """
+    formulaire = rendre(contexte, "/simuler", {})[1]
+    champs = re.findall(
+        r'<input type="date" id="([a-z_0-9]+)"[^>]*?'
+        r' min="(\d{4}-\d{2})-\d{2}" max="(\d{4}-\d{2})-\d{2}"',
+        formulaire,
+    )
+    assert champs, "le formulaire ne déclare plus aucun calendrier"
+    for nom, minimum, maximum in champs:
+        for borne, pas in ((minimum, -1), (maximum, +1)):
+            annee, mois = (int(part) for part in borne.split("-"))
+            rang = annee * 12 + mois - 1 + pas
+            dehors = f"{rang // 12:04d}-{rang % 12 + 1:02d}"
+            # Une ligne de métier ne se lit qu'entière : sans statut, elle est
+            # refusée pour cette raison-là, et ne dirait rien de sa borne.
+            requete = {nom: dehors}
+            if nom.startswith("metier"):
+                requete[f"{nom.split('_')[0]}_statut"] = "artisan"
+            with pytest.raises(ErreurSaisie, match=r"."):
+                Saisie.depuis_requete(requete)
+
+
+def test_les_adresses_d_avant_le_calendrier_valent_toujours():
+    """Le formulaire demande des dates ; les adresses déjà partagées portaient
+    des âges, en deux champs. Les deux doivent décrire la même carrière, et se
+    réécrire de la même façon — sans quoi tout lien envoyé mentirait."""
+    ancienne = Saisie.depuis_requete({
+        "naissance": "1975", "naissance_mois": "9",
+        "debut": "22", "debut_mois": "3",
+        "liquidation": "64", "liquidation_mois": "7",
+    })
+    nouvelle = Saisie.depuis_requete({
+        "naissance": "1975-09-01", "debut": "1997-12", "liquidation": "2040-04",
+    })
+    assert ancienne.requete() == nouvelle.requete()
+    assert nouvelle.mois_de(nouvelle.debut) == "1997-12"
+    assert nouvelle.mois_de(nouvelle.liquidation) == "2040-04"
+    # Et l'âge décimal d'avant les mois, que personne n'écrit plus mais que
+    # certaines adresses portent encore.
+    assert Saisie.depuis_requete({"liquidation": "64.5"}).liquidation == 64.5
 
 
 def test_valeur_non_numerique_est_refusee_proprement():
@@ -880,7 +948,7 @@ def test_une_adresse_sans_metier_decrit_une_carriere_d_un_seul_metier():
 
 def test_une_ligne_de_metier_a_moitie_remplie_est_refusee():
     """La ligne vide du formulaire ne décrit rien ; à moitié remplie, elle ment."""
-    with pytest.raises(ErreurSaisie, match="âge auquel il commence"):
+    with pytest.raises(ErreurSaisie, match="date à laquelle il commence"):
         Saisie.depuis_requete({"metier2_statut": "artisan"})
     with pytest.raises(ErreurSaisie, match="statut d'affiliation"):
         Saisie.depuis_requete({"metier2_debut": "40"})
@@ -958,7 +1026,9 @@ def test_requete_reconstruit_les_metiers():
         "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "1.5",
     }).requete()
-    assert "metier2_debut=40" in requete
+    # Quarante ans, pour qui est né en janvier 1975, c'est janvier 2015 :
+    # l'adresse porte la date, le formulaire la rend au calendrier.
+    assert "metier2_debut=2015-01" in requete
     assert "metier2_statut=artisan" in requete
     assert "metier2_salaire=1.5" in requete
     assert "metier3_debut" not in requete
@@ -2403,7 +2473,10 @@ def test_les_champs_qui_decrivent_la_personne_sont_reconnaissables(page):
     dire laquelle, pour que le navigateur et les aides à la saisie la
     reconnaissent."""
     texte = page("/simuler")
-    assert 'id="naissance"' in texte and 'autocomplete="bday-year"' in texte
+    # « bday » et non « bday-year » : le champ demande la date entière depuis
+    # qu'il ouvre un calendrier, et c'est cette date que le navigateur sait
+    # remplir.
+    assert 'id="naissance"' in texte and 'autocomplete="bday"' in texte
     assert 'id="sexe"' in texte and 'autocomplete="sex"' in texte
 
 

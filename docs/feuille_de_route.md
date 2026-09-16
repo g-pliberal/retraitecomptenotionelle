@@ -1220,6 +1220,51 @@ oblige à le lire comme l'écart de deux courbes. *Les recettes ne réagissent
 toujours à rien* : le scénario 6, qui pose un taux unique de 18 %, déplacerait
 l'assiette comme les pensions, et c'est l'action 11 qui ouvrirait cette porte.
 
+### 17. Un calendrier à la place des champs d'âge — `fait`
+
+**Pourquoi.** Le formulaire demandait cinq champs pour dire deux dates : une
+année de naissance, un menu de douze mois, un âge de départ, un second menu de
+douze mois, et, par métier, un âge d'entrée doublé d'un troisième menu. Or
+personne ne connaît son âge de départ au mois près : on connaît une date. La
+soustraction était demandée au lecteur, alors que c'est exactement ce qu'un
+navigateur sait faire.
+
+**Marche.** Trois champs date là où il en fallait cinq, et un calendrier —
+celui du navigateur — partout où un âge était demandé. L'âge que la date fait
+s'écrit sous le champ et se refait à chaque frappe.
+
+**Ce que ça a déplacé.** *Aucun chiffre.* Les 478 témoins de simulation sont
+inchangés au bit près, et les deux qui s'y ajoutent décrivent au calendrier une
+carrière qu'un témoin décrivait déjà par des âges : ils portent les mêmes
+chiffres, ligne à ligne. Les témoins de page bougent tous, et d'une seule
+façon — le formulaire, et les adresses qu'il écrit.
+
+- *Un champ date, et non un champ mois.* `type="month"` serait le champ juste :
+  le modèle ne descend pas sous le mois, et le jour n'entre dans aucun calcul.
+  Mais Firefox et Safari de bureau ne savent pas l'ouvrir — ils le rendent en
+  texte brut, où il faut écrire « 1975-03 » à la main. `type="date"` ouvre le
+  même calendrier partout, dans la langue du lecteur. Le jour de naissance est
+  donc gardé tel qu'il est saisi — répondre « 1er mars » à qui est né le 15
+  ferait douter de ce que la page a compris —, et les dates de carrière sont
+  ramenées au premier du mois, où le droit place toute prise d'effet.
+- *L'adresse perd trois paramètres.* `debut=1996-09` dit d'un coup ce que
+  `debut=21` et `debut_mois=8` disaient à deux. Les adresses d'ancienne forme
+  restent lues telles quelles, y compris l'âge décimal d'avant les mois
+  (`liquidation=64.5`) : un témoin figé le vérifie des deux côtés du portage,
+  et un test compare les deux écritures de la même carrière.
+- *Un gain qu'on n'était pas allé chercher.* Le changement de métier se date au
+  mois, ce qu'il ne savait pas faire : l'âge entier était tout ce que le champ
+  acceptait, et un métier commencé en mai commençait en janvier. Le calendrier
+  le donne sans un champ de plus.
+- *Les bornes sont des âges, et le calendrier les porte.* On entre dans la vie
+  active entre 14 et 40 ans, on part entre 40 et 75 : ce sont des âges, que le
+  champ porte en `data-age-min` et `data-age-max` et que la page retraduit en
+  dates à chaque frappe, sans attendre un calcul. Un refus les redit en dates
+  — « de septembre 2015 à septembre 2050 » —, faute de quoi il laisserait la
+  soustraction à faire à qui vient d'écrire une date. Et, comme pour les champs
+  numériques, un test vérifie que le mois d'à côté est refusé par le modèle :
+  une adresse forgée à la main ne passe par aucun calendrier.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -1487,3 +1532,14 @@ l'assiette comme les pensions, et c'est l'action 11 qui ouvrirait cette porte.
   de quatre-vingt-onze cellules, et personne ne compare cinq tableaux — celle
   qui reste est accompagnée des trois chiffres qui la résument, ce qu'aucune
   des cinq ne donnait.
+- **Septembre 2026, action 17.** Faite. Le simulateur demandait cinq champs
+  pour deux dates ; il en demande trois, et chaque date se prend au calendrier
+  du navigateur. Rien n'a bougé dans les chiffres : la conversion d'une date en
+  âge tient en une soustraction de mois, et elle a été écrite une fois de chaque
+  côté du portage, là où les âges entraient déjà. Deux choses à en retenir. **Le
+  champ le plus juste n'est pas toujours celui qu'on peut poser** : `type="month"`
+  décrit exactement ce que le modèle sait lire, et deux navigateurs de bureau sur
+  trois ne l'ouvrent pas — c'est `type="date"`, moins juste d'un jour inutile,
+  qui donne un calendrier à tout le monde. Et **une simplification en ouvre une
+  autre** : demander une date plutôt qu'un âge a donné au changement de métier
+  la précision au mois qu'il n'avait jamais eue, sans un champ de plus.

@@ -16,7 +16,9 @@ from dataclasses import dataclass, field, replace
 from html import escape
 from urllib.parse import urlencode
 
-from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, formater_age
+from ..calendrier import (
+    MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, en_mois, formater_age,
+)
 from ..carriere import (
     Affiliations,
     LigneRelevee,
@@ -253,19 +255,6 @@ RANGS_METIER = ("premier", "deuxième", "troisième", "quatrième", "cinquième"
                 "sixième", "septième", "huitième")
 
 
-#: Mois de naissance. Le droit coupe deux générations en cours d'année — au
-#: 1er juillet 1951, au 1er septembre 1961 — et l'âge à la liquidation ne se
-#: lit qu'à partir de lui.
-MOIS_NAISSANCE = [
-    ("1", "janvier"), ("2", "février"), ("3", "mars"), ("4", "avril"),
-    ("5", "mai"), ("6", "juin"), ("7", "juillet"), ("8", "août"),
-    ("9", "septembre"), ("10", "octobre"), ("11", "novembre"), ("12", "décembre"),
-]
-
-#: Mois qui s'ajoutent aux années entières d'un âge.
-MOIS_AGE = [(str(m), "0 mois" if m == 0 else f"{m} mois") for m in range(12)]
-
-
 class ErreurSaisie(ValueError):
     """Saisie inexploitable, à afficher telle quelle à l'utilisateur."""
 
@@ -301,6 +290,11 @@ class Saisie:
 
     naissance: int = 1975
     naissance_mois: int = 1
+    #: Jour de naissance. Il n'entre dans aucun calcul — le modèle compte en
+    #: mois, et le droit coupe ses générations au mois. Il est gardé parce que
+    #: le calendrier en demande un : sans lui, le formulaire répondrait « 1er
+    #: mars » à qui est né le 15, et ferait douter de ce qu'il a compris.
+    naissance_jour: int = 1
     sexe: str = "H"
     statut: str = "salarie_prive_non_cadre"
     debut: float = 21
@@ -360,18 +354,28 @@ class Saisie:
         unite = _parmi(parametres, "unite_revenu", UNITES_REVENU,
                        "moyen" if ancienne else defauts.unite_revenu)
         salaire = _reel(parametres, "salaire", SALAIRE_DEFAUT[unite])
+        # La naissance se lit avant tout le reste : les dates de carrière ne
+        # valent un âge que rapportées à elle.
+        naissance = _date_saisie(parametres, "naissance")
+        annee_naissance = (naissance[0] if naissance
+                           else _entier(parametres, "naissance", defauts.naissance))
+        mois_naissance = (naissance[1] if naissance else _entier(
+            parametres, "naissance_mois", defauts.naissance_mois
+        ))
         saisie = cls(
             unite_revenu=unite,
-            naissance=_entier(parametres, "naissance", defauts.naissance),
-            naissance_mois=_entier(
-                parametres, "naissance_mois", defauts.naissance_mois
-            ),
+            naissance=annee_naissance,
+            naissance_mois=mois_naissance,
+            naissance_jour=naissance[2] if naissance else defauts.naissance_jour,
             sexe="F" if parametres.get("sexe") == "F" else "H",
             statut=statut,
-            debut=_age_saisi(parametres, "debut", defauts.debut),
-            liquidation=_age_saisi(parametres, "liquidation", defauts.liquidation),
+            debut=_age_saisi(parametres, "debut", defauts.debut,
+                             annee_naissance, mois_naissance),
+            liquidation=_age_saisi(parametres, "liquidation", defauts.liquidation,
+                                   annee_naissance, mois_naissance),
             salaire=salaire,
-            metiers=_metiers_saisis(parametres, salaire),
+            metiers=_metiers_saisis(parametres, salaire,
+                                    annee_naissance, mois_naissance),
             releve=(parametres.get("releve") or "").strip(),
             profil=_parmi(parametres, "profil", PROFILS, defauts.profil),
             primes=_reel(parametres, "primes", defauts.primes),
@@ -403,6 +407,8 @@ class Saisie:
     def verifier(self) -> None:
         if not 1 <= self.naissance_mois <= 12:
             raise ErreurSaisie("Mois de naissance attendu entre 1 et 12.")
+        if not 1 <= self.naissance_jour <= 31:
+            raise ErreurSaisie("Jour de naissance attendu entre 1 et 31.")
         if not NAISSANCE_MINIMALE <= self.naissance <= NAISSANCE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de naissance hors du champ du modèle : {self.naissance}. "
@@ -410,17 +416,20 @@ class Saisie:
             )
         if not AGE_DEBUT_MINIMAL <= self.debut <= AGE_DEBUT_MAXIMAL:
             raise ErreurSaisie(
-                f"Âge de début d'activité attendu entre {AGE_DEBUT_MINIMAL} et "
-                f"{AGE_DEBUT_MAXIMAL} ans."
+                "Début d'activité : le modèle l'accepte de "
+                f"{AGE_DEBUT_MINIMAL} à {AGE_DEBUT_MAXIMAL} ans, soit "
+                f"{self.fenetre(AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL)}."
             )
         if not AGE_LIQUIDATION_MINIMAL <= self.liquidation <= AGE_LIQUIDATION_MAXIMAL:
             raise ErreurSaisie(
-                f"Âge de liquidation attendu entre {AGE_LIQUIDATION_MINIMAL} et "
-                f"{AGE_LIQUIDATION_MAXIMAL} ans."
+                "Départ à la retraite : le modèle l'accepte de "
+                f"{AGE_LIQUIDATION_MINIMAL} à {AGE_LIQUIDATION_MAXIMAL} ans, soit "
+                f"{self.fenetre(AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}."
             )
         if self.liquidation <= self.debut:
             raise ErreurSaisie(
-                "L'âge de liquidation doit être postérieur à l'âge de début d'activité."
+                "Le départ à la retraite doit suivre le début d'activité, "
+                f"fixé en {self.date_de(self.debut)}."
             )
         self._verifier_revenu(self.salaire, rang=1)
         if not 0 <= self.primes <= 0.6:
@@ -452,18 +461,19 @@ class Saisie:
         for rang, metier in enumerate(self.metiers, start=2):
             if not AGE_DEBUT_MINIMAL <= metier.debut <= AGE_LIQUIDATION_MAXIMAL:
                 raise ErreurSaisie(
-                    f"Métier n° {rang} : âge de début attendu entre "
-                    f"{AGE_DEBUT_MINIMAL} et {AGE_LIQUIDATION_MAXIMAL} ans."
+                    f"Métier n° {rang} : il doit commencer "
+                    f"{self.fenetre(AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL)}, "
+                    f"soit de {AGE_DEBUT_MINIMAL} à {AGE_LIQUIDATION_MAXIMAL} ans."
                 )
             if metier.debut <= precedent:
                 raise ErreurSaisie(
                     f"Métier n° {rang} : il doit commencer après le précédent, "
-                    f"qui débute à {_age(precedent)}."
+                    f"qui commence en {self.date_de(precedent)}."
                 )
             if metier.debut >= self.liquidation:
                 raise ErreurSaisie(
                     f"Métier n° {rang} : il doit commencer avant le départ à la "
-                    f"retraite, fixé à {_age(self.liquidation)}."
+                    f"retraite, fixé en {self.date_de(self.liquidation)}."
                 )
             self._verifier_revenu(metier.salaire, rang=rang)
             precedent = metier.debut
@@ -544,14 +554,62 @@ class Saisie:
             f"{g.euros(echelle.mensuel(10))} bruts par mois.",
         )
 
-    @property
-    def liquidation_mois(self) -> int:
-        """Mois qui s'ajoutent aux années entières de l'âge de départ."""
-        return en_mois(self.liquidation) % 12
+    # -- les dates ------------------------------------------------------------
+    #
+    # Le formulaire ne demande plus d'âges mais des dates : c'est la même
+    # information — un âge est une date rapportée à la naissance —, mais celle
+    # que le lecteur connaît sans la calculer. Le modèle, lui, continue de
+    # recevoir des âges : la conversion tient dans les méthodes qui suivent, et
+    # nulle part ailleurs.
+
+    def date_de(self, age: float) -> DateMois:
+        """Le mois où la carrière atteint cet âge."""
+        return DateMois(self.naissance, self.naissance_mois).plus_mois(en_mois(age))
+
+    def mois_de(self, age: float) -> str:
+        """Le même mois, tel que l'adresse le porte : « 1996-09 »."""
+        date = self.date_de(age)
+        return f"{date.annee:04d}-{date.mois:02d}"
+
+    def jour_de(self, age: float) -> str:
+        """Le même mois au premier jour : ce qu'un champ date, lui, exige."""
+        return f"{self.mois_de(age)}-01"
+
+    def fenetre(self, age_minimal: float, age_maximal: float) -> str:
+        """« de septembre 1989 à septembre 2015 » : deux bornes d'âge, en dates.
+
+        Un refus qui ne parlerait que d'âges laisserait au lecteur la
+        soustraction à faire, alors que le champ qu'il vient de remplir porte
+        une date.
+        """
+        return f"de {self.date_de(age_minimal)} à {self.date_de(age_maximal)}"
 
     @property
-    def debut_mois(self) -> int:
-        return en_mois(self.debut) % 12
+    def naissance_iso(self) -> str:
+        """La naissance telle qu'un champ date la porte : « 1975-03-15 »."""
+        return (f"{self.naissance:04d}-{self.naissance_mois:02d}"
+                f"-{self.naissance_jour:02d}")
+
+    # -- ce qu'on écrit sous un calendrier ------------------------------------
+    #
+    # Un champ date s'affiche dans l'ordre de la langue du NAVIGATEUR, que la
+    # page ne choisit pas : « 15/03/1962 » ici, « 03/15/1962 » sur un
+    # navigateur anglophone, et rien ne dit lequel des deux nombres est le
+    # mois. La date est donc redite en toutes lettres sous le champ, où aucun
+    # ordre ne se devine — et, pour une date de carrière, avec l'âge qu'elle
+    # fait, qui est ce que le formulaire demandait avant elle.
+
+    @property
+    def naissance_en_clair(self) -> str:
+        """« le 15 mars 1962 » : la date de naissance, sans ordre à deviner."""
+        return f"le {_jour_en_clair(self.naissance_jour)} " \
+               f"{NOMS_DE_MOIS[self.naissance_mois - 1]} {self.naissance}"
+
+    def calcul_de(self, age: float) -> str:
+        """« en septembre 1984, soit 22 ans et 6 mois » : une date de carrière."""
+        if age < 0:
+            return f"en {self.date_de(age)}, avant la date de naissance"
+        return f"en {self.date_de(age)}, soit {_age(age)}"
 
     def parametres(self, base: Parametres) -> Parametres:
         return base.avec(
@@ -654,9 +712,7 @@ class Saisie:
         sur la saisie, avec le vocabulaire du formulaire, et non remonter du
         moteur sous la forme d'une exception.
         """
-        return DateMois(self.naissance, self.naissance_mois).plus_mois(
-            en_mois(self.liquidation)
-        )
+        return self.date_de(self.liquidation)
 
     def releve_analyse(
         self, motifs_connus: Iterable[str] | None = None,
@@ -772,14 +828,15 @@ class Saisie:
 
     def requete(self, **remplacements) -> str:
         champs = {
-            "naissance": self.naissance, "naissance_mois": self.naissance_mois,
+            "naissance": self.naissance_iso,
             "sexe": self.sexe, "statut": self.statut,
-            # L'âge s'écrit en années ENTIÈRES et en mois : « 64 ans et sept
-            # mois » plutôt que « 64,583333 ». L'adresse reste lisible, et une
-            # ancienne adresse portant un âge décimal reste comprise.
-            "debut": en_mois(self.debut) // 12, "debut_mois": self.debut_mois,
-            "liquidation": en_mois(self.liquidation) // 12,
-            "liquidation_mois": self.liquidation_mois,
+            # Les dates remplacent les âges, et l'adresse y perd trois
+            # paramètres : « debut=1996-09 » dit d'un coup ce que « debut=21 »
+            # et « debut_mois=8 » disaient à deux, sans que personne ait à
+            # refaire l'addition. Une adresse d'ancienne forme reste lue — les
+            # âges y sont reconnus tels quels, voir ``_age_saisi``.
+            "debut": self.mois_de(self.debut),
+            "liquidation": self.mois_de(self.liquidation),
             "salaire": _nombre(self.salaire), "profil": self.profil,
             "releve": self.releve,
             "primes": _nombre(self.primes), "enfants": self.enfants,
@@ -799,15 +856,15 @@ class Saisie:
         # Une ligne vide du formulaire n'en produit aucun : l'adresse ne porte
         # que ce qui a été saisi.
         for rang, metier in enumerate(self.metiers, start=2):
-            champs[f"metier{rang}_debut"] = _nombre(metier.debut)
+            champs[f"metier{rang}_debut"] = self.mois_de(metier.debut)
             champs[f"metier{rang}_statut"] = metier.statut
             champs[f"metier{rang}_salaire"] = _nombre(metier.salaire)
         champs.update(remplacements)
         return urlencode(champs)
 
 
-def _metiers_saisis(parametres: dict[str, str],
-                    salaire_precedent: float) -> list[MetierSaisi]:
+def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
+                    naissance: int, naissance_mois: int) -> list[MetierSaisi]:
     """Les métiers qui suivent le premier, lus dans « metier2_… », « metier3_… ».
 
     Le formulaire affiche toujours une ligne de plus qu'il n'y a de métiers :
@@ -824,8 +881,8 @@ def _metiers_saisis(parametres: dict[str, str],
             continue
         if not debut:
             raise ErreurSaisie(
-                f"Métier n° {rang} : indiquer l'âge auquel il commence, ou "
-                "laisser sa ligne entièrement vide."
+                f"Métier n° {rang} : indiquer la date à laquelle il commence, "
+                "ou laisser sa ligne entièrement vide."
             )
         if not statut:
             raise ErreurSaisie(
@@ -835,7 +892,8 @@ def _metiers_saisis(parametres: dict[str, str],
             parametres, f"metier{rang}_salaire", salaire_precedent
         )
         metiers.append(MetierSaisi(
-            debut=_reel(parametres, f"metier{rang}_debut", 0.0),
+            debut=_age_saisi(parametres, f"metier{rang}_debut", 0.0,
+                             naissance, naissance_mois),
             statut=statut,
             salaire=salaire_precedent,
         ))
@@ -854,6 +912,11 @@ _NOMBRE = re.compile(r"^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$")
 #: Un entier saisi, bornes d'une plage d'interruption comprises. Même
 #: expression que ``EST_ENTIER`` du portage : « 1995 » oui, « 1995,0 » non.
 _ENTIER = re.compile(r"^\s*[+-]?\d+\s*$")
+
+#: Une date de formulaire ou d'adresse : « 1975-03-15 », ou « 1996-09 » quand
+#: le jour ne sert à rien. Rien d'autre n'en est une — un âge nu, « 64 », est
+#: une adresse d'avant le calendrier, et se lit comme tel.
+_DATE = re.compile(r"^\s*(\d{4})-(\d{2})(?:-(\d{2}))?\s*$")
 
 
 def _est_entier(texte: str) -> bool:
@@ -895,15 +958,56 @@ def _reel(parametres: dict[str, str], nom: str, defaut: float) -> float:
     return flottant
 
 
-def _age_saisi(parametres: dict[str, str], nom: str, defaut: float) -> float:
-    """Âge lu en années entières plus un nombre de mois.
+def _date_saisie(parametres: dict[str, str],
+                 nom: str) -> tuple[int, int, int] | None:
+    """La date écrite dans ce champ, ou ``None`` s'il n'en porte pas.
 
-    Le formulaire envoie deux champs — ``liquidation`` et ``liquidation_mois``
-    —, et l'adresse les porte tous deux : « 64 ans et sept mois » s'y lit tel
-    quel. Une adresse ancienne ne portant qu'un âge décimal — ``liquidation=64.5``
-    — reste valide et vaut ce qu'elle a toujours valu : le champ des mois est
-    alors absent, et la partie décimale fait foi.
+    Le formulaire envoie « 1975-03-15 » : c'est la forme qu'un ``<input
+    type="date">`` renvoie partout, quelle que soit celle — « 15/03/1975 » en
+    français — sous laquelle le navigateur l'a affichée. L'adresse, elle, s'en
+    tient au mois pour les dates de carrière : « debut=1996-09 », le jour n'y
+    ayant aucun rôle.
+
+    Une adresse d'avant le calendrier porte des âges et une année nus —
+    « naissance=1975 », « liquidation=64 » : rien ici ne les reconnaît, et
+    ``None`` renvoie le lecteur aux champs numériques d'alors.
     """
+    brut = parametres.get(nom)
+    if brut in (None, ""):
+        return None
+    trouve = _DATE.match(str(brut))
+    if trouve is None:
+        return None
+    annee, mois = int(trouve.group(1)), int(trouve.group(2))
+    jour = int(trouve.group(3) or 1)
+    if not 1 <= mois <= 12:
+        raise ErreurSaisie(f"« {nom} » : mois attendu entre 01 et 12 (reçu : {brut}).")
+    # Le jour n'est borné que grossièrement : il ne sert à aucun calcul, et le
+    # refuser au calendrier près — un 31 février — n'épargnerait rien à
+    # personne, puisque aucun champ date ne le propose.
+    if not 1 <= jour <= 31:
+        raise ErreurSaisie(f"« {nom} » : jour attendu entre 01 et 31 (reçu : {brut}).")
+    return annee, mois, jour
+
+
+def _age_saisi(parametres: dict[str, str], nom: str, defaut: float,
+               naissance: int, naissance_mois: int) -> float:
+    """L'âge qu'une date de carrière vaut, rapportée à la naissance.
+
+    Le formulaire demande une date — celle du premier mois cotisé, celle du
+    départ —, parce que c'est ce dont on se souvient ; le modèle, lui, ne
+    connaît que des âges. La soustraction se fait ici, en mois, et le résultat
+    est l'âge en années décimales que le moteur attend.
+
+    Les adresses d'avant le calendrier continuent d'être lues telles quelles :
+    ``liquidation=64`` et ``liquidation_mois=7`` valent soixante-quatre ans et
+    sept mois, ``liquidation=64.5`` vaut ce qu'il a toujours valu.
+    """
+    date = _date_saisie(parametres, nom)
+    if date is not None:
+        rang = (DateMois(date[0], date[1]).rang
+                - DateMois(naissance, naissance_mois).rang)
+        return rang / MOIS_PAR_AN
     annees = _reel(parametres, nom, defaut)
     cle = f"{nom}_mois"
     if parametres.get(cle) in (None, ""):
@@ -924,6 +1028,11 @@ def _parmi(parametres: dict[str, str], nom: str,
 def _nombre(valeur: float) -> str:
     """Valeur telle qu'elle est réinjectée dans un champ de formulaire."""
     return f"{valeur:g}"
+
+
+def _jour_en_clair(jour: int) -> str:
+    """Le premier du mois est un ORDINAL en français : « 1er », et non « 1 »."""
+    return "1er" if jour == 1 else str(jour)
 
 
 #: Ce que le COR projette pour le système actuel, en part du PIB : le repère
@@ -1561,8 +1670,8 @@ page <a href="{g.lien('/donnees')}">Données</a>.</p>
 <h3>Données personnelles</h3>
 <p><strong>Ce site ne collecte rien.</strong> Il n'a pas de serveur de calcul :
 le modèle, ses tables et ses séries sont téléchargés une fois, puis tout
-s'exécute dans votre navigateur. Ce que vous saisissez — année de naissance,
-sexe, âge de départ, revenu — n'est envoyé nulle part, n'est enregistré nulle
+s'exécute dans votre navigateur. Ce que vous saisissez — date de naissance,
+sexe, date de départ, revenu — n'est envoyé nulle part, n'est enregistré nulle
 part, et disparaît quand vous fermez l'onglet.</p>
 <ul class="serree">
   <li><strong>Aucun cookie, aucun traceur, aucune mesure d'audience.</strong>
@@ -1607,6 +1716,9 @@ chaque modification par les contrôles automatiques du dépôt :</p>
   courbe est une image, et ce tableau en est la description détaillée ;</li>
   <li>formulaire entièrement étiqueté, groupé par métier, utilisable au
   clavier ;</li>
+  <li>dates saisies au calendrier du navigateur — celui que le lecteur connaît
+  déjà, dans sa langue et au clavier —, et l'âge qu'elles font écrit sous le
+  champ, rattaché à lui pour être lu avec ;</li>
   <li>résultat du calcul annoncé aux synthèses vocales, qui ne verraient
   autrement rien changer ;</li>
   <li>lien d'évitement, repères de page, et respect du réglage système
@@ -1832,28 +1944,34 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     affiliations = contexte.simulateur().affiliations
     echelle = contexte.echelle(saisie)
 
+    # Trois champs là où il en fallait cinq : une date de naissance porte son
+    # mois, une date de départ porte l'âge qu'on avait écrit en deux fois. Les
+    # bornes des calendriers sont celles du modèle, comptées depuis la
+    # naissance saisie ; le script de la page les refait à chaque frappe, sans
+    # attendre le calcul.
     identite = "".join([
         # ``autocomplete`` n'est pas là pour épargner une frappe : il donne au
         # navigateur — et aux outils qui s'appuient sur lui, dont les aides à la
         # saisie — le moyen de reconnaître ce que le champ demande.
-        g.champ("naissance", "Année de naissance", saisie.naissance,
-                type_="number", min=str(NAISSANCE_MINIMALE),
-                max=str(NAISSANCE_MAXIMALE), step="1",
-                autocomplete="bday-year"),
-        g.liste("naissance_mois", "Mois de naissance", MOIS_NAISSANCE,
-                str(saisie.naissance_mois),
-                "deux générations sont coupées en cours d'année par les textes"),
+        g.champ_date("naissance", "Date de naissance", saisie.naissance_iso,
+                     "le calcul n'en retient que le mois : deux générations "
+                     "sont coupées en cours d'année par les textes",
+                     saisie.naissance_en_clair,
+                     min=f"{NAISSANCE_MINIMALE}-01-01",
+                     max=f"{NAISSANCE_MAXIMALE}-12-31",
+                     autocomplete="bday"),
         g.liste("sexe", "Sexe", [("H", "Homme"), ("F", "Femme")], saisie.sexe,
                 "table de mortalité unisexe par défaut", autocomplete="sex"),
-        g.champ("liquidation", "Âge de départ à la retraite",
-                en_mois(saisie.liquidation) // 12,
-                "effectif si vous êtes déjà retraité, souhaité sinon : "
-                "c'est la date à laquelle tout le calcul se place",
-                type_="number", min=str(AGE_LIQUIDATION_MINIMAL),
-                max=str(AGE_LIQUIDATION_MAXIMAL), step="1"),
-        g.liste("liquidation_mois", "…et mois", MOIS_AGE,
-                str(saisie.liquidation_mois),
-                "la pension prend effet le premier du mois"),
+        g.champ_date("liquidation", "Départ à la retraite",
+                     saisie.jour_de(saisie.liquidation),
+                     "effectif si vous êtes déjà retraité, souhaité sinon : "
+                     "c'est la date à laquelle tout le calcul se place, et la "
+                     "pension prend effet le premier du mois",
+                     saisie.calcul_de(saisie.liquidation),
+                     min=saisie.jour_de(AGE_LIQUIDATION_MINIMAL),
+                     max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL),
+                     data_age_min=str(AGE_LIQUIDATION_MINIMAL),
+                     data_age_max=str(AGE_LIQUIDATION_MAXIMAL)),
     ])
 
     avance = "".join([
@@ -2031,11 +2149,6 @@ def _bascule_unite(saisie: Saisie, echelle: "Echelle") -> str:
             "</p>")
 
 
-def _entree(saisie: Saisie, age: float) -> DateMois:
-    """Le mois où un métier commence — la date que le parcours lui donnera."""
-    return DateMois(saisie.naissance, saisie.naissance_mois).plus_mois(en_mois(age))
-
-
 def _metiers(saisie: Saisie, affiliations: Affiliations,
              echelle: "Echelle") -> str:
     """Une ligne par métier, plus une ligne vide pour en ajouter un.
@@ -2050,13 +2163,16 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
     """
     lignes = [_ligne_metier(
         1,
-        g.champ("debut", "Âge de début d'activité", en_mois(saisie.debut) // 12,
-                type_="number", min=str(AGE_DEBUT_MINIMAL),
-                max=str(AGE_DEBUT_MAXIMAL), step="1")
-        + g.liste("debut_mois", "…et mois", MOIS_AGE, str(saisie.debut_mois),
-                  "l'année d'entrée n'est complète que si l'on entre en janvier")
+        g.champ_date("debut", "Début d'activité", saisie.jour_de(saisie.debut),
+                     "le premier mois cotisé : l'année d'entrée n'est complète "
+                     "que si l'on entre en janvier",
+                     saisie.calcul_de(saisie.debut),
+                     min=saisie.jour_de(AGE_DEBUT_MINIMAL),
+                     max=saisie.jour_de(AGE_DEBUT_MAXIMAL),
+                     data_age_min=str(AGE_DEBUT_MINIMAL),
+                     data_age_max=str(AGE_DEBUT_MAXIMAL))
         + g.liste("statut", "Statut d'affiliation",
-                  _options_statuts(affiliations, _entree(saisie, saisie.debut)),
+                  _options_statuts(affiliations, saisie.date_de(saisie.debut)),
                   saisie.statut,
                   "proposé aux seules dates où son régime recrutait")
         + _champ_revenu("salaire", saisie, echelle, _nombre(saisie.salaire)),
@@ -2064,10 +2180,11 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
 
     for rang, metier in enumerate(saisie.metiers, start=2):
         lignes.append(_ligne_metier(
-            rang, _champs_metier(rang, _nombre(metier.debut), metier.statut,
+            rang, _champs_metier(rang, saisie.jour_de(metier.debut),
+                                 saisie.calcul_de(metier.debut), metier.statut,
                                  _nombre(metier.salaire),
                                  _options_statuts(affiliations,
-                                                  _entree(saisie, metier.debut)),
+                                                  saisie.date_de(metier.debut)),
                                  saisie, echelle)))
 
     # La ligne vide : elle n'existe que tant qu'il reste de la place, et son
@@ -2076,7 +2193,7 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
     rang = len(saisie.metiers) + 2
     if rang <= METIERS_MAXIMUM:
         lignes.append(_ligne_metier(
-            rang, _champs_metier(rang, "", "", "",
+            rang, _champs_metier(rang, "", "", "", "",
                                  _options_statuts(affiliations, None),
                                  saisie, echelle),
             vide=True))
@@ -2084,21 +2201,22 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
     return f'<div class="metiers">{"".join(lignes)}</div>'
 
 
-def _champs_metier(rang: int, debut: str, statut: str, salaire: str,
-                   statuts: list[tuple], saisie: Saisie,
+def _champs_metier(rang: int, debut: str, calcul: str, statut: str,
+                   salaire: str, statuts: list[tuple], saisie: Saisie,
                    echelle: "Echelle") -> str:
     """Les trois champs d'un métier qui suit le premier.
 
-    Le mois du changement n'est pas demandé : ce qui se date au mois, c'est
-    l'entrée dans la vie active et le départ à la retraite, parce que ces deux
-    bornes tronquent une année civile. Un changement de métier, lui, ne fait que
-    déplacer des mois d'un statut à l'autre à l'intérieur de la carrière.
+    Le changement se date au mois comme le reste, depuis que le calendrier a
+    remplacé les âges : il n'en coûte pas un champ de plus, et une carrière qui
+    change de régime en cours d'année se décrit telle qu'elle a eu lieu.
     """
     return (
-        g.champ(f"metier{rang}_debut", "Âge du changement", debut,
-                "âge auquel ce métier commence", type_="number",
-                min=str(AGE_DEBUT_MINIMAL), max=str(AGE_LIQUIDATION_MAXIMAL),
-                step="1")
+        g.champ_date(f"metier{rang}_debut", "Début de ce métier", debut,
+                     "le mois où ce métier commence", calcul,
+                     min=saisie.jour_de(AGE_DEBUT_MINIMAL),
+                     max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL),
+                     data_age_min=str(AGE_DEBUT_MINIMAL),
+                     data_age_max=str(AGE_LIQUIDATION_MAXIMAL))
         + g.liste(f"metier{rang}_statut", "Statut d'affiliation",
                   [("", "— aucun —")] + statuts, statut)
         + _champ_revenu(f"metier{rang}_salaire", saisie, echelle, salaire,

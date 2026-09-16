@@ -155,6 +155,40 @@ export function champ(nom, libelle, valeur, aide = "", type = "text", attributs 
 }
 
 /**
+ * Une date, saisie au calendrier du navigateur.
+ *
+ * `type="date"` et non `type="month"` : le modèle ne descend pas sous le mois,
+ * et « month » serait donc le champ juste — mais Firefox et Safari ne savent
+ * pas l'ouvrir, ils le rendent en texte brut où il faut écrire « 1975-03 » à
+ * la main. « date » ouvre le même calendrier partout, et le navigateur l'écrit
+ * dans la langue du lecteur : « 15/03/1975 » ici.
+ *
+ * Le jour ne sert à rien au calcul, qui compte en mois : celui de la naissance
+ * est gardé tel qu'il est saisi, parce qu'une date de naissance est une date
+ * et non un mois ; ceux des dates de carrière sont ramenés au premier du mois,
+ * où le droit place toute prise d'effet.
+ *
+ * `calcul` est ce que la date vaut en âge — « soit 64 ans et 7 mois » : ce que
+ * disaient les champs d'âge qu'elle remplace. Il est écrit au rendu et refait
+ * à chaque frappe par le script de la page ; `aria-describedby` le rattache au
+ * champ, faute de quoi il ne serait lu par personne.
+ */
+export function champDate(nom, libelle, valeur, aide = "", calcul = "", attributs = {}) {
+  const supplement = Object.entries(attributs)
+    .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
+    .join("");
+  const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
+  const decrit = calcul ? ` aria-describedby="${nom}-calcul"` : "";
+  const calculHtml = calcul
+    ? `<span class="calcul" id="${nom}-calcul" aria-live="polite">`
+      + `${echapper(calcul)}</span>`
+    : "";
+  return `<div><label for="${nom}">${echapper(libelle)}${aideHtml}</label>`
+    + `<input type="date" id="${nom}" name="${nom}" `
+    + `value="${echapper(valeur)}"${decrit}${supplement}>${calculHtml}</div>`;
+}
+
+/**
  * Un champ de plusieurs lignes — le relevé de carrière, et lui seul.
  *
  * Une ligne par année : un `<input>` en donnerait une seule, où le relevé se
