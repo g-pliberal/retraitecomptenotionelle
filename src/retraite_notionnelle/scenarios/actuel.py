@@ -1429,10 +1429,17 @@ class ScenarioActuel:
                              periode: PeriodeRegime,
                              annee_liquidation: int, plafonner: bool,
                              generation: int | None = None,
-                             avpf: bool = True) -> float:
+                             avpf: bool = True,
+                             membres: tuple[str, ...] | None = None) -> float:
         """Salaire de référence, exprimé en euros de l'année de liquidation.
 
-        **Il porte sur les seules années passées DANS CE régime.** Un régime ne
+        **Il porte sur les seules années passées DANS CE régime** — ou dans
+        l'un des ``membres`` de sa chaîne de succession, quand ``code`` liquide
+        pour un régime qu'il a absorbé : les années CANCAVA d'un artisan sont
+        des années du RSI, puis du régime général, et n'entrent qu'une fois
+        dans un seul salaire annuel moyen. Voir :meth:`_groupes_de_succession`.
+
+        Un régime ne
         liquide que ce qui lui a été déclaré : la pension civile se calcule sur
         le traitement des six derniers mois de service, pas sur le dernier
         salaire d'une carrière poursuivie ailleurs, et le salaire annuel moyen
@@ -1512,15 +1519,16 @@ class ScenarioActuel:
             return self.macro.coefficient_revalorisation_portee_au_compte(
                 perception, arrivee, mois_liquidation
             )
+        codes_admis = frozenset(membres) if membres else frozenset((code,))
         revenus: list[float] = []
         for ligne in carriere.lignes:
             if ligne.annee >= annee_liquidation:
                 continue
-            if code not in self.affiliations.regimes(
+            if codes_admis.isdisjoint(self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
-                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
+                    plafond=self.macro.plafond_securite_sociale(ligne.annee))):
                 continue
             if not ligne.cotise:
                 # Assurance vieillesse des parents au foyer : la CNAF cotise
@@ -1585,11 +1593,11 @@ class ScenarioActuel:
             derniere = carriere.ligne(annee_liquidation)
             if (derniere is not None and derniere.cotise
                     and derniere.fraction_annee > 0
-                    and code in self.affiliations.regimes(
+                    and not codes_admis.isdisjoint(self.affiliations.regimes(
                         derniere.affiliation, annee_liquidation,
                         carriere.date_entree(derniere.affiliation),
                         revenu=derniere.revenu,
-                        plafond=self.macro.plafond_securite_sociale(annee_liquidation))):
+                        plafond=self.macro.plafond_securite_sociale(annee_liquidation)))):
                 traitement = (self._assiette_de_reference(periode, derniere)
                               / derniere.fraction_annee)
                 if plafonner:
@@ -1658,6 +1666,111 @@ class ScenarioActuel:
         if par_generation is None:
             return requis, None
         return min(par_generation[0], requis), par_generation[1]
+
+    def _tete_de_succession(self, code: str, annee_liquidation: int) -> str:
+        """Le régime au bout de la chaîne d'absorption de ``code``, tant que
+        la chaîne reste en annuités : ``cancava`` et ``rsi`` rendent
+        ``regime_general``, ``pensions_civiles_1853`` rend
+        ``fonction_publique_etat``. Un régime en points au bout de la chaîne
+        l'arrête — les annuités des régimes professionnels intégrés ne se
+        fondent pas dans les points de l'Agirc-Arrco —, et un régime en points
+        n'y entre jamais : ses points se convertissent et s'additionnent déjà
+        (voir :meth:`valeur_du_point`).
+
+        L'absorption ne se suit qu'à partir de l'année où le régime FERME à
+        ses affiliés — celle où l'absorbant commence à recevoir leurs années.
+        Avant, ce sont deux régimes distincts, et un polypensionné en a deux :
+        un salarié devenu artisan qui liquide en 2010 a une pension du régime
+        général et une du RSI, comme le droit d'alors ; s'il liquide en 2020,
+        le RSI est le régime général, et il n'en a qu'une.
+        """
+        vu = {code}
+        courant = code
+        while True:
+            regime = self.catalogue[courant]
+            suivant = regime.integre_dans
+            borne = (regime.fermeture if regime.fermeture is not None
+                     else regime.extinction)
+            if (suivant is None or borne is None or annee_liquidation < borne
+                    or suivant not in self.catalogue or suivant in vu):
+                return courant
+            absorbant = self.catalogue[suivant]
+            periode = absorbant.periode(
+                min(annee_liquidation, _derniere_annee(absorbant))
+            )
+            if periode is None or periode.type_calcul != "annuites":
+                return courant
+            vu.add(suivant)
+            courant = suivant
+
+    def _groupes_de_succession(
+            self, codes: list[str], annee_liquidation: int,
+            derniere_annee_par_regime: dict[str, int],
+    ) -> dict[str, tuple[str, ...]]:
+        """Les régimes d'annuités que la carrière a traversés, groupés par
+        chaîne de succession : pour chaque code d'un groupe d'au moins deux,
+        les membres du groupe, LE PREMIER ÉTANT CELUI QUI LIQUIDE.
+
+        **Un régime et celui qui lui succède ne sont pas deux régimes.** La
+        CANCAVA, le RSI et le régime général sont trois NOMS du même droit
+        pour un artisan : sa caisse calcule un seul salaire annuel moyen sur
+        toute la carrière et un seul coefficient de proratisation, et le
+        catalogue le sait, puisqu'il porte ``succede_a`` et ``integre_dans``.
+        Liquider chaque nom sur ses seules années — ce que le modèle faisait,
+        et qui est juste d'un polypensionné passé d'un régime à un AUTRE —
+        calculait deux salaires de référence là où la caisse n'en calcule
+        qu'un : un artisan payé 60 000 € de 1976 à 2015 recevait
+        « 30 077 € × 120/165 » plus « 36 778 € × 40/165 » au lieu de
+        « 34 152 € × 160/165 ». Mesuré contre l'oracle du régime général,
+        l'écart allait de −7,2 % à +0,3 %, dans les deux sens, les meilleures
+        années de chaque morceau pouvant être meilleures que celles de la
+        carrière entière.
+
+        Le groupe est liquidé par le membre de la DERNIÈRE période active de
+        la carrière — à égalité, par l'absorbant —, dont la fiche donne les
+        règles : c'est la caisse qui aurait le dossier. Un assuré qui n'a
+        connu qu'un seul nom n'est pas touché, et la coordination entre
+        régimes alignés DISTINCTS — proratisation croisée, liquidation
+        unique — reste hors du modèle (``docs/limites.md`` §3).
+        """
+        par_tete: dict[str, list[str]] = {}
+        for code in codes:
+            regime = self.catalogue[code]
+            periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
+            if periode is None or periode.type_calcul != "annuites":
+                continue
+            par_tete.setdefault(
+                self._tete_de_succession(code, annee_liquidation), []
+            ).append(code)
+        groupes: dict[str, tuple[str, ...]] = {}
+        for membres in par_tete.values():
+            if len(membres) < 2:
+                continue
+            rang = {code: i for i, code in enumerate(self._chaine_depuis(membres))}
+            liquidateur = max(
+                membres,
+                key=lambda code: (derniere_annee_par_regime.get(code, 0), rang[code]),
+            )
+            ordonnes = (liquidateur,) + tuple(
+                code for code in sorted(membres, key=rang.get) if code != liquidateur
+            )
+            for code in membres:
+                groupes[code] = ordonnes
+        return groupes
+
+    def _chaine_depuis(self, membres: list[str]) -> list[str]:
+        """Les membres dans l'ordre de la chaîne, du plus ancien à l'absorbant."""
+        restants = set(membres)
+        ordre: list[str] = []
+        for depart in sorted(membres):
+            courant = depart
+            chaine = []
+            while courant in restants and courant not in ordre:
+                chaine.append(courant)
+                courant = self.catalogue[courant].integre_dans
+            if len(chaine) > len(ordre):
+                ordre = chaine
+        return ordre + sorted(restants - set(ordre))
 
     # -- catégorie active et pension militaire -------------------------------
 
@@ -2432,7 +2545,8 @@ class ScenarioActuel:
     def calculer(self, carriere: Carriere,
                  ignorer_penalite_age: bool = False,
                  avantages_non_contributifs: bool = True,
-                 avpf: bool = True) -> ResultatActuel:
+                 avpf: bool = True,
+                 liquider_successions: bool = True) -> ResultatActuel:
         """Pension servie par le système en vigueur.
 
         ``ignorer_penalite_age`` neutralise la décote et la surcote liées à
@@ -2455,6 +2569,12 @@ class ScenarioActuel:
         Les drapeaux :class:`Neutralisations` ne sont PAS lus ici : ils
         décrivent ce que les scénarios notionnels retirent, pas ce que le droit
         en vigueur accorde.
+
+        ``liquider_successions`` fait liquider ensemble un régime d'annuités et
+        celui qui lui succède (voir :meth:`_groupes_de_succession`). C'est le
+        droit, et le défaut ; à FAUX, chaque nom de caisse est liquidé sur ses
+        seules années, comme le modèle le faisait, et la variante ne sert qu'à
+        mesurer ce que la correction déplace.
         """
         annee_liquidation = carriere.annee_liquidation
         age_liquidation = carriere.age_liquidation or 0.0
@@ -2488,6 +2608,9 @@ class ScenarioActuel:
         # d'assurance, qui proratise la majoration du minimum contributif au
         # titre des périodes cotisées (D. 351-2-2).
         trimestres_cotises_par_regime: dict[str, int] = {}
+        # Dernière année cotisée dans chaque régime : elle désigne, dans une
+        # chaîne de succession, la caisse qui liquide.
+        derniere_annee_par_regime: dict[str, int] = {}
 
         for ligne in carriere.lignes:
             retenus_ligne = carriere.trimestres_retenus(ligne)
@@ -2558,6 +2681,9 @@ class ScenarioActuel:
                 if (familles_admises is not None
                         and regime.famille not in familles_admises):
                     continue
+                derniere_annee_par_regime[code] = max(
+                    derniere_annee_par_regime.get(code, 0), ligne.annee
+                )
                 for periode in regime.periodes_actives(ligne.annee):
                     # BARÈME D'UN AUTRE RÉGIME : une tranche que tous les
                     # affiliés ne cotisent pas forme une fiche à part, dont les
@@ -2763,7 +2889,18 @@ class ScenarioActuel:
         #: donc l'âge du régime le plus précoce — celui d'un régime spécial,
         #: quand il y en a un.
         age_ouverture_reference: float | None = None
-        for code in sorted(set(cumul_cotisations) | set(points_acquis)):
+        codes = sorted(set(cumul_cotisations) | set(points_acquis))
+        # Un régime et celui qui lui succède liquident ensemble, sous les règles
+        # de la caisse qui aurait le dossier : les autres membres du groupe
+        # sont sautés partout où un régime liquide.
+        groupes = (
+            self._groupes_de_succession(
+                codes, annee_liquidation, derniere_annee_par_regime
+            ) if liquider_successions else {}
+        )
+        for code in codes:
+            if groupes.get(code, (code,))[0] != code:
+                continue
             regime = self.catalogue[code]
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
             if periode is None or periode.type_calcul != "annuites":
@@ -2803,13 +2940,17 @@ class ScenarioActuel:
                 motif_ouverture = "non_ouverte"
                 liquidation_ouverte = False
 
-        for code in sorted(set(cumul_cotisations) | set(points_acquis)):
+        for code in codes:
             cumul = cumul_cotisations.get(code, 0.0)
             regime = self.catalogue[code]
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
             if periode is None:
                 continue
             fiabilite_globale = min(fiabilite_globale, regime.fiabilite)
+            membres = groupes.get(code, (code,))
+            if membres[0] != code:
+                # Liquidé par le régime qui lui a succédé.
+                continue
 
             if periode.type_calcul in ("points", "mixte"):
                 montant = 0.0
@@ -2941,7 +3082,7 @@ class ScenarioActuel:
             else:
                 salaire_reference = self.salaire_de_reference(
                     code, carriere, periode, annee_liquidation, plafonner,
-                    carriere.annee_naissance, avpf,
+                    carriere.annee_naissance, avpf, membres,
                 )
             requis, fiabilite_duree = self._duree_requise(periode, carriere)
             if fiabilite_duree is not None:
@@ -2957,7 +3098,9 @@ class ScenarioActuel:
             )
             if fiabilite_proratisation is not None:
                 fiabilite_globale = min(fiabilite_globale, fiabilite_proratisation)
-            trimestres_regime = min(trimestres_par_regime.get(code, 0), proratisation)
+            trimestres_regime = min(
+                sum(trimestres_par_regime.get(m, 0) for m in membres), proratisation
+            )
             if (periode.duree_maximum_avant_age is not None
                     and periode.duree_maximum_avant_age_trimestres is not None
                     and age_liquidation < periode.duree_maximum_avant_age):
@@ -3038,7 +3181,8 @@ class ScenarioActuel:
                 # pension » : c'est donc la durée de proratisation, et non la
                 # durée requise, qui fait office ici aussi.
                 cotises_regime = min(
-                    trimestres_cotises_par_regime.get(code, 0), proratisation
+                    sum(trimestres_cotises_par_regime.get(m, 0) for m in membres),
+                    proratisation,
                 )
                 eligibles_minimum.append(_EligibleMinimum(
                     indice=len(pensions),
@@ -3058,7 +3202,9 @@ class ScenarioActuel:
                 age_ouverture = self._age_ouverture(periode, carriere)
                 eligibles_garanti.append(_EligibleMinimumGaranti(
                     indice=len(pensions),
-                    trimestres_services=trimestres_par_regime.get(code, 0),
+                    trimestres_services=sum(
+                        trimestres_par_regime.get(m, 0) for m in membres
+                    ),
                     ouvert=(
                         carriere.annee_naissance + age_ouverture < 2011
                         or trimestres_decote <= 0
@@ -3075,8 +3221,13 @@ class ScenarioActuel:
                     # taux arrondi pesant à lui seul 0,89 €.
                     f"{salaire_reference:,.2f} € × taux {taux:.3%} "
                     f"× {trimestres_regime}/{proratisation}"
+                    # La succession est DITE : sans elle, le lecteur cherche
+                    # la ligne de la CANCAVA et ne la trouve pas.
+                    + ("" if len(membres) == 1 else
+                       f", {len(membres)} caisses liquidées ensemble "
+                       f"({', '.join(membres[1:])} puis {membres[0]})")
                 ),
-                fiabilite=regime.fiabilite,
+                fiabilite=min(self.catalogue[m].fiabilite for m in membres),
             ))
 
         total = sum(p.montant for p in pensions)
@@ -3123,7 +3274,7 @@ class ScenarioActuel:
             # proratisation.
             sans_mda = self.calculer(
                 carriere, ignorer_penalite_age, avantages_non_contributifs=False,
-                avpf=avpf,
+                avpf=avpf, liquider_successions=liquider_successions,
             )
             # Les deux termes doivent porter sur le même périmètre : celui
             # d'en face est déjà net de la capitalisation.
@@ -3155,6 +3306,7 @@ class ScenarioActuel:
             sans_avpf = self.calculer(
                 carriere, ignorer_penalite_age,
                 avantages_non_contributifs=False, avpf=False,
+                liquider_successions=liquider_successions,
             )
             effet_avpf = total_contributif - sans_avpf.total_contributif
             total_contributif = sans_avpf.total_contributif

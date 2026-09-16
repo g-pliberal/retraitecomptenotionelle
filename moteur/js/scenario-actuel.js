@@ -207,8 +207,17 @@ export class ScenarioActuel {
     return assietteDeReference(periode, ligne);
   }
 
+  /**
+   * Salaire de référence, en euros de l'année de liquidation. Il porte sur les
+   * seules années passées dans ce régime — ou dans l'un des `membres` de sa
+   * chaîne de succession, quand `code` liquide pour un régime qu'il a
+   * absorbé : les années CANCAVA d'un artisan sont des années du RSI, puis du
+   * régime général, et n'entrent qu'une fois dans un seul salaire annuel
+   * moyen. Voir `groupesDeSuccession`.
+   */
   salaireDeReference(code, carriere, periode, anneeLiquidation, plafonner,
-    generation = null, avpf = true) {
+    generation = null, avpf = true, membres = null) {
+    const codesAdmis = new Set(membres && membres.length > 0 ? membres : [code]);
     const avpfOuvert = avpf
       && periode.avantages_non_contributifs.includes("avpf");
     // Les coefficients des arrêtés ne valent que pour un salaire PORTÉ AU
@@ -252,7 +261,7 @@ export class ScenarioActuel {
         ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
-      ).includes(code)) {
+      ).some((c) => codesAdmis.has(c))) {
         continue;
       }
       let revenu;
@@ -319,7 +328,7 @@ export class ScenarioActuel {
             derniere.affiliation, anneeLiquidation,
             carriere.dateEntree(derniere.affiliation),
             derniere.revenu, this.macro.plafond_securite_sociale.valeur(anneeLiquidation))
-            .includes(code)) {
+            .some((c) => codesAdmis.has(c))) {
         let traitement = this.assietteDeReference(periode, derniere)
           / derniere.fraction_annee;
         if (plafonner) {
@@ -400,6 +409,123 @@ export class ScenarioActuel {
     // Elle ne dépasse jamais la durée requise : les périodes anciennes, dont la
     // durée maximale est plus courte que 150 trimestres, gardent la leur.
     return [Math.min(parGeneration[0], requis), parGeneration[1]];
+  }
+
+  // -- succession de régimes -------------------------------------------------
+
+  /**
+   * Le régime au bout de la chaîne d'absorption de `code`, tant que la chaîne
+   * reste en annuités : `cancava` et `rsi` rendent `regime_general`,
+   * `pensions_civiles_1853` rend `fonction_publique_etat`. Un régime en points
+   * au bout de la chaîne l'arrête, et un régime en points n'y entre jamais :
+   * ses points se convertissent et s'additionnent déjà (voir `valeurDuPoint`).
+   *
+   * L'absorption ne se suit qu'à partir de l'année où le régime FERME à ses
+   * affiliés — celle où l'absorbant commence à recevoir leurs années. Avant,
+   * ce sont deux régimes distincts, et un polypensionné en a deux.
+   */
+  teteDeSuccession(code, anneeLiquidation) {
+    const vu = new Set([code]);
+    let courant = code;
+    for (;;) {
+      const regime = this.catalogue.obtenir(courant);
+      const suivant = regime.integre_dans;
+      const borne = regime.fermeture !== null && regime.fermeture !== undefined
+        ? regime.fermeture
+        : regime.extinction;
+      if (suivant === null || suivant === undefined
+          || borne === null || borne === undefined || anneeLiquidation < borne
+          || !this.catalogue.contient(suivant) || vu.has(suivant)) {
+        return courant;
+      }
+      const absorbant = this.catalogue.obtenir(suivant);
+      const periode = absorbant.periode(
+        Math.min(anneeLiquidation, derniereAnnee(absorbant)),
+      );
+      if (periode === null || periode.type_calcul !== "annuites") {
+        return courant;
+      }
+      vu.add(suivant);
+      courant = suivant;
+    }
+  }
+
+  /**
+   * Les régimes d'annuités que la carrière a traversés, groupés par chaîne de
+   * succession : pour chaque code d'un groupe d'au moins deux, les membres du
+   * groupe, LE PREMIER ÉTANT CELUI QUI LIQUIDE.
+   *
+   * Un régime et celui qui lui succède ne sont pas deux régimes. La CANCAVA,
+   * le RSI et le régime général sont trois NOMS du même droit pour un
+   * artisan : sa caisse calcule un seul salaire annuel moyen sur toute la
+   * carrière et un seul coefficient de proratisation. Liquider chaque nom sur
+   * ses seules années calculait deux salaires de référence là où la caisse
+   * n'en calcule qu'un : « 30 077 € × 120/165 » plus « 36 778 € × 40/165 » au
+   * lieu de « 34 152 € × 160/165 », de −7,2 % à +0,3 % contre l'oracle du
+   * régime général.
+   *
+   * Le groupe est liquidé par le membre de la DERNIÈRE période active de la
+   * carrière — à égalité, par l'absorbant —, dont la fiche donne les règles.
+   *
+   * @returns {Map<string, string[]>}
+   */
+  groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime) {
+    const parTete = new Map();
+    for (const code of codes) {
+      const regime = this.catalogue.obtenir(code);
+      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      if (periode === null || periode.type_calcul !== "annuites") {
+        continue;
+      }
+      const tete = this.teteDeSuccession(code, anneeLiquidation);
+      if (!parTete.has(tete)) {
+        parTete.set(tete, []);
+      }
+      parTete.get(tete).push(code);
+    }
+    const groupes = new Map();
+    for (const membres of parTete.values()) {
+      if (membres.length < 2) {
+        continue;
+      }
+      const rang = new Map(this.chaineDepuis(membres).map((code, i) => [code, i]));
+      let liquidateur = membres[0];
+      for (const code of membres) {
+        const derniere = derniereAnneeParRegime.get(code) ?? 0;
+        const reference = derniereAnneeParRegime.get(liquidateur) ?? 0;
+        if (derniere > reference
+            || (derniere === reference && rang.get(code) > rang.get(liquidateur))) {
+          liquidateur = code;
+        }
+      }
+      const ordonnes = [
+        liquidateur,
+        ...[...membres].sort((a, b) => rang.get(a) - rang.get(b))
+          .filter((code) => code !== liquidateur),
+      ];
+      for (const code of membres) {
+        groupes.set(code, ordonnes);
+      }
+    }
+    return groupes;
+  }
+
+  /** Les membres dans l'ordre de la chaîne, du plus ancien à l'absorbant. */
+  chaineDepuis(membres) {
+    const restants = new Set(membres);
+    let ordre = [];
+    for (const depart of [...membres].sort()) {
+      let courant = depart;
+      const chaine = [];
+      while (restants.has(courant) && !ordre.includes(courant)) {
+        chaine.push(courant);
+        courant = this.catalogue.obtenir(courant).integre_dans;
+      }
+      if (chaine.length > ordre.length) {
+        ordre = chaine;
+      }
+    }
+    return [...ordre, ...[...restants].filter((c) => !ordre.includes(c)).sort()];
   }
 
   // -- catégorie active et pension militaire ---------------------------------
@@ -1085,7 +1211,7 @@ export class ScenarioActuel {
   }
 
   calculer(carriere, ignorerPenaliteAge = false, avantagesNonContributifs = true,
-    avpf = true) {
+    avpf = true, liquiderSuccessions = true) {
     const anneeLiquidation = carriere.anneeLiquidation;
     const ageLiquidation = carriere.age_liquidation || 0.0;
 
@@ -1116,6 +1242,9 @@ export class ScenarioActuel {
     // d'assurance, qui proratise la majoration du minimum contributif au titre
     // des périodes cotisées (D. 351-2-2).
     const trimestresCotisesParRegime = new Map();
+    // Dernière année cotisée dans chaque régime : elle désigne, dans une
+    // chaîne de succession, la caisse qui liquide.
+    const derniereAnneeParRegime = new Map();
     for (const ligne of carriere.lignes) {
       const retenusLigne = carriere.trimestresRetenus(ligne);
       if (retenusLigne <= 0) {
@@ -1188,6 +1317,9 @@ export class ScenarioActuel {
         if (famillesAdmises !== null && !famillesAdmises.has(regime.famille)) {
           continue;
         }
+        derniereAnneeParRegime.set(
+          code, Math.max(derniereAnneeParRegime.get(code) ?? 0, ligne.annee),
+        );
         for (const periode of regime.periodesActives(ligne.annee)) {
           // BARÈME D'UN AUTRE RÉGIME : une tranche que tous les affiliés ne
           // cotisent pas forme une fiche à part, dont les points restent ceux
@@ -1369,7 +1501,17 @@ export class ScenarioActuel {
     // de son régime ; le modèle liquide tout à la fois, et retient donc l'âge
     // du régime le plus précoce.
     let ageOuvertureReference = null;
+    // Un régime et celui qui lui succède liquident ensemble, sous les règles
+    // de la caisse qui aurait le dossier : les autres membres du groupe sont
+    // sautés partout où un régime liquide. À FAUX, chaque nom de caisse est
+    // liquidé sur ses seules années — variante qui ne sert qu'à mesurer.
+    const groupes = liquiderSuccessions
+      ? this.groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime)
+      : new Map();
     for (const code of codes) {
+      if ((groupes.get(code) ?? [code])[0] !== code) {
+        continue;
+      }
       const regime = this.catalogue.obtenir(code);
       const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
       if (periode === null || periode.type_calcul !== "annuites") {
@@ -1419,6 +1561,11 @@ export class ScenarioActuel {
         continue;
       }
       fiabiliteGlobale = Math.min(fiabiliteGlobale, regime.fiabilite);
+      const membres = groupes.get(code) ?? [code];
+      if (membres[0] !== code) {
+        // Liquidé par le régime qui lui a succédé.
+        continue;
+      }
 
       if (periode.type_calcul === "points" || periode.type_calcul === "mixte") {
         let montant = 0.0;
@@ -1540,7 +1687,7 @@ export class ScenarioActuel {
         )
         : this.salaireDeReference(
           code, carriere, periode, anneeLiquidation, plafonner,
-          carriere.annee_naissance, avpf,
+          carriere.annee_naissance, avpf, membres,
         );
       const [requis, fiabiliteDuree] = this.dureeRequise(periode, carriere);
       if (fiabiliteDuree !== null) {
@@ -1558,7 +1705,10 @@ export class ScenarioActuel {
       if (fiabiliteProratisation !== null) {
         fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteProratisation);
       }
-      let trimestresRegime = Math.min(trimestresParRegime.get(code) ?? 0, proratisation);
+      const sommeMembres = (table) => membres.reduce(
+        (somme, m) => somme + (table.get(m) ?? 0), 0,
+      );
+      let trimestresRegime = Math.min(sommeMembres(trimestresParRegime), proratisation);
       if (periode.duree_maximum_avant_age !== null
           && periode.duree_maximum_avant_age !== undefined
           && periode.duree_maximum_avant_age_trimestres !== null
@@ -1625,7 +1775,7 @@ export class ScenarioActuel {
         // Le minimum se proratise « dans les mêmes conditions que la pension » :
         // c'est donc la durée de proratisation qui fait office ici aussi.
         const cotisesRegime = Math.min(
-          trimestresCotisesParRegime.get(code) ?? 0, proratisation,
+          sommeMembres(trimestresCotisesParRegime), proratisation,
         );
         eligiblesMinimum.push({
           indice: indicePension,
@@ -1643,7 +1793,7 @@ export class ScenarioActuel {
         const ageOuverturePeriode = this.ageOuverture(periode, carriere);
         eligiblesGaranti.push({
           indice: indicePension,
-          trimestresServices: trimestresParRegime.get(code) ?? 0,
+          trimestresServices: sommeMembres(trimestresParRegime),
           ouvert: carriere.annee_naissance + ageOuverturePeriode < 2011
             || trimestresDecote <= 0
             || trimestres >= requis,
@@ -1658,8 +1808,12 @@ export class ScenarioActuel {
         // sur un régime spécial, le taux arrondi pesant à lui seul 0,89 €.
         detail: `${forfaitaire ? "forfait" : "SR"} `
           + `${formatFixe(salaireReference, 2, true)} € `
-          + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`,
-        fiabilite: regime.fiabilite,
+          + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`
+          // La succession est DITE : sans elle, le lecteur cherche la ligne
+          // de la CANCAVA et ne la trouve pas.
+          + (membres.length === 1 ? "" : `, ${membres.length} caisses liquidées ensemble `
+            + `(${membres.slice(1).join(", ")} puis ${membres[0]})`),
+        fiabilite: Math.min(...membres.map((m) => this.catalogue.obtenir(m).fiabilite)),
       });
     }
 
@@ -1697,7 +1851,9 @@ export class ScenarioActuel {
     if (avantagesNonContributifs && majorationEnfants !== null) {
       // Effet des trimestres accordés au titre des enfants : la même carrière
       // sans eux, tout le reste égal.
-      const sansMda = this.calculer(carriere, ignorerPenaliteAge, false, avpf);
+      const sansMda = this.calculer(
+        carriere, ignorerPenaliteAge, false, avpf, liquiderSuccessions,
+      );
       // Les deux termes doivent porter sur le même périmètre : celui d'en
       // face est déjà net de la capitalisation.
       const effet = (total - horsRepartition) - sansMda.total_contributif;
@@ -1724,7 +1880,9 @@ export class ScenarioActuel {
       // reste, et peut jouer dans les deux sens — il relève une carrière longue
       // à bas salaire, il abaisse la moyenne d'une carrière courte et bien
       // payée, où les années au SMIC s'ajoutent aux années retenues.
-      const sansAvpf = this.calculer(carriere, ignorerPenaliteAge, false, false);
+      const sansAvpf = this.calculer(
+        carriere, ignorerPenaliteAge, false, false, liquiderSuccessions,
+      );
       const effetAvpf = totalContributif - sansAvpf.total_contributif;
       totalContributif = sansAvpf.total_contributif;
       if (Math.abs(effetAvpf) > 1e-9) {
