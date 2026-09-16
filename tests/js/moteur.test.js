@@ -18,6 +18,7 @@ import { dirname, join } from "node:path";
 
 import { Contexte, Saisie, rendre } from "../../moteur/js/pages.js";
 import { Affiliations } from "../../moteur/js/regimes.js";
+import * as gabarit from "../../moteur/js/gabarit.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -152,4 +153,29 @@ test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
     affiliations.regimes("salarie_prive_non_cadre", 2020, null, 1, 41136),
     ["regime_general", "agirc_arrco"],
   );
+});
+
+/**
+ * Le ruban d'écart sur un trou de série.
+ *
+ * Les témoins de pages couvrent déjà tout ce que le ruban fait quand les deux
+ * séries sont pleines — la page Coût en trace deux, dont les courbes se
+ * croisent quatre fois, et le HTML est comparé caractère par caractère. Le
+ * chemin qu'ils n'atteignent pas est celui d'une année manquante : là, le
+ * ruban ne doit RIEN peindre, un écart interpolé par-dessus un trou affirmant
+ * quelque chose que personne n'a mesuré.
+ */
+test("le ruban d'écart se tait sur une année manquante", () => {
+  const pleine = new gabarit.Serie("A", [12.0, 11.0, 10.0], "var(--serie-5)");
+  const trouee = new gabarit.Serie("B", [10.0, null, 12.0], "var(--serie-2)");
+  const avec = gabarit.graphique("Essai", [2000, 2001, 2002], [pleine, trouee],
+    "", false, 0, true, null, "", [], "Année", [0, 1]);
+  assert.equal(avec.includes('class="ecart'), false);
+
+  // Et, série pleine, il peint bien des deux côtés du croisement.
+  const seconde = new gabarit.Serie("B", [10.0, 11.0, 12.0], "var(--serie-2)");
+  const peint = gabarit.graphique("Essai", [2000, 2001, 2002], [pleine, seconde],
+    "", false, 0, true, null, "", [], "Année", [0, 1]);
+  assert.equal((peint.match(/class="ecart plus"/g) || []).length, 1);
+  assert.equal((peint.match(/class="ecart moins"/g) || []).length, 1);
 });

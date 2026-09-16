@@ -2912,3 +2912,243 @@ def test_le_balayage_des_temoins_visite_six_generations():
     assert module.debut_admissible("agent_chemins_fer_secondaires", 1975) is None
     assert module.debut_admissible("agent_chemins_fer_secondaires", 1935) == 19
     assert module.debut_admissible("mineur", 1975) == 21
+
+
+# -- le ruban entre deux courbes ----------------------------------------------
+
+
+def _rubans(html: str) -> list[tuple[str, str]]:
+    """Les rubans d'écart d'un graphique : leur teinte et leur chemin."""
+    return re.findall(r'<path class="ecart (plus|moins)" d="([^"]+)"/>', html)
+
+
+def test_le_ruban_d_ecart_se_peint_du_cote_de_celle_qui_est_au_dessus():
+    """Vert là où la première série passe au-dessus, rouge là où elle passe dessous.
+
+    C'est ce qui fait qu'un graphique de ressources et de dépenses se lit sans
+    savoir lire un graphique : l'écart n'est plus à mesurer à l'œil, il est
+    peint. Encore faut-il qu'il le soit du bon côté, et sur la bonne portion.
+    """
+    haute = g.Serie("Ce qui rentre", (12.0, 10.0), "var(--serie-5)")
+    basse = g.Serie("Ce qui sort", (10.0, 12.0), "var(--serie-2)")
+    html = g.graphique("Un essai", (2000, 2001), (haute, basse), ecart=(0, 1))
+    rubans = _rubans(html)
+    assert [teinte for teinte, _ in rubans] == ["plus", "moins"], (
+        "le ruban doit changer de teinte au croisement"
+    )
+
+
+def test_le_ruban_d_ecart_change_de_teinte_a_l_intersection_exacte():
+    """Et non à l'année suivante.
+
+    Les deux courbes se croisent au milieu du segment : le ruban vert doit
+    s'arrêter là, le rouge y commencer, et les deux s'y rejoindre en un point —
+    même abscisse, même ordonnée. Sans cette interpolation, une moitié de
+    l'année serait peinte de la mauvaise couleur, ce qui se voit.
+    """
+    haute = g.Serie("Ce qui rentre", (12.0, 10.0), "var(--serie-5)")
+    basse = g.Serie("Ce qui sort", (10.0, 12.0), "var(--serie-2)")
+    html = g.graphique("Un essai", (2000, 2001), (haute, basse), ecart=(0, 1))
+    rubans = _rubans(html)
+
+    def sommets(chemin: str) -> list[tuple[float, float]]:
+        return [(float(x), float(y))
+                for x, y in re.findall(r"[ML](-?[\d.]+) (-?[\d.]+)", chemin)]
+
+    fin_du_vert = sommets(rubans[0][1])
+    debut_du_rouge = sommets(rubans[1][1])
+    # Le dernier point du bord supérieur du vert et le premier du rouge : c'est
+    # le croisement, et il est le même des deux côtés.
+    croisement = fin_du_vert[1]
+    assert croisement == debut_du_rouge[0], (
+        f"les deux rubans ne se rejoignent pas : {croisement} ≠ {debut_du_rouge[0]}"
+    )
+    # Le croisement est à mi-chemin des deux années — les deux courbes sont
+    # symétriques — et le ruban y est d'épaisseur nulle.
+    milieu = (g.MARGE_GAUCHE + g.LARGEUR_TRACE - g.MARGE_DROITE) / 2
+    assert abs(croisement[0] - milieu) < 0.2, croisement
+    epaisseur = [point for point in fin_du_vert if point[0] == croisement[0]]
+    assert len({point[1] for point in epaisseur}) == 1, (
+        "au croisement, les deux bords du ruban doivent porter la même ordonnée"
+    )
+
+
+def test_le_ruban_d_ecart_se_tait_sur_une_annee_manquante():
+    """Un ruban interpolé par-dessus un trou affirmerait un écart que personne
+    n'a mesuré. La courbe, elle, s'y interrompt déjà."""
+    haute = g.Serie("Ce qui rentre", (12.0, None, 10.0), "var(--serie-5)")
+    basse = g.Serie("Ce qui sort", (10.0, 11.0, 12.0), "var(--serie-2)")
+    html = g.graphique("Un essai", (2000, 2001, 2002), (haute, basse), ecart=(0, 1))
+    assert _rubans(html) == [], "un trou dans la série ne doit rien peindre"
+
+
+def test_le_ruban_d_ecart_se_nomme_dans_la_legende():
+    """La couleur seule ne porte jamais de sens : WCAG 1.4.1."""
+    series = (g.Serie("A", (2.0, 3.0), "var(--serie-5)"),
+              g.Serie("B", (1.0, 4.0), "var(--serie-2)"))
+    html = g.graphique("Un essai", (2000, 2001), series, ecart=(0, 1),
+                       libelle_ecart="L'écart entre les deux")
+    assert "L&#x27;écart entre les deux" in html
+    assert '<span class="pastille ecart-plus">' in html
+    assert '<span class="pastille ecart-moins">' in html
+
+
+# -- les mots du glossaire -----------------------------------------------------
+
+
+def test_un_mot_du_glossaire_ne_coupe_pas_son_paragraphe():
+    """Le piège dans lequel ce dépliant est tombé une fois.
+
+    ``<details>`` fait partie des balises dont l'analyseur HTML FERME un ``<p>``
+    ouvert : un mot du glossaire posé au milieu d'une phrase coupait le
+    paragraphe en deux, et la fin de la phrase tombait à la ligne, hors du
+    paragraphe. Le mot est donc un ``<button>``, qui est du contenu de phrase.
+    """
+    assert "<details" not in g.mot("répartition", "Les cotisations d'aujourd'hui…")
+    assert "<button" in g.mot("répartition", "Les cotisations d'aujourd'hui…")
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_aucun_depliant_ne_coupe_un_paragraphe(contexte, chemin):
+    """Et la règle vaut pour toute la page, pas seulement pour le glossaire.
+
+    ``<details>``, ``<div>``, ``<ul>``, ``<h2>`` ferment un ``<p>`` ouvert. Le
+    navigateur ne s'en plaint pas : il referme et continue, et la mise en page
+    se décale sans que rien ne le dise. Ce contrôle regarde ce que le gabarit
+    écrit, avant que l'analyseur ne le corrige.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    for paragraphe in re.findall(r"<p\b[^>]*>(.*?)</p>", corps, re.S):
+        for balise in ("<details", "<div", "<ul", "<ol", "<h2", "<h3", "<h4",
+                       "<table", "<figure", "<section"):
+            assert balise not in paragraphe, (
+                f"{chemin} : {balise} dans un paragraphe — l'analyseur HTML y "
+                f"fermera le <p>, et la suite de la phrase tombera hors de lui"
+            )
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
+    """Un mot signalé sans définition serait un bouton qui n'ouvre rien.
+
+    Le bouton porte ``aria-expanded`` — sans quoi une synthèse vocale l'annonce
+    comme un bouton ordinaire, sans dire qu'il déplie quelque chose — et la
+    bulle le suit immédiatement, repliée : c'est sur cette adjacence que le
+    script d'``index.html`` s'appuie pour la trouver.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    mots = re.findall(r'<span class="mot">(.*?)</span></span>', corps, re.S)
+    assert len(mots) == corps.count('<span class="mot">'), (
+        f"{chemin} : un mot du glossaire est mal formé"
+    )
+    for mot in mots:
+        assert mot.startswith(
+            '<button type="button" class="terme" aria-expanded="false">'
+        ), mot[:90]
+        bulle = re.search(r'<span class="bulle" role="note" hidden>(.*)', mot, re.S)
+        assert bulle and bulle.group(1).strip(), f"{chemin} : mot sans définition"
+
+
+def test_le_script_du_site_sait_ouvrir_les_mots_du_glossaire():
+    """Le basculement vit dans ``index.html``, en écoute déléguée.
+
+    Posé sur chaque bouton, il disparaîtrait avec lui : le contenu de ``<main>``
+    est remplacé en bloc à chaque rendu. Ce test tient l'accord entre ce que le
+    gabarit écrit et ce que la page sait ouvrir.
+    """
+    from pathlib import Path
+
+    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(
+        encoding="utf-8")
+    assert '.closest(".mot > .terme")' in page
+    assert 'setAttribute("aria-expanded"' in page
+    # Échap referme, et rend le focus au mot : sans cela le clavier n'a aucun
+    # moyen de refermer une bulle ouverte (WCAG 1.4.13).
+    assert 'evenement.key !== "Escape"' in page
+
+
+# -- la discipline de la page Coût ---------------------------------------------
+
+
+def _hors_depliants(corps: str) -> str:
+    """Ce que la page montre sans qu'on ait rien déplié.
+
+    Les ``<details>`` s'imbriquent — le tableau de points d'un graphique vit
+    dans une carte, elle-même parfois dans une section repliée —, et une
+    expression régulière non gourmande s'arrêterait à la première fermeture. On
+    apparie donc les balises.
+    """
+    morceaux = []
+    position = 0
+    while position < len(corps):
+        ouverture = re.compile(r"<details\b").search(corps, position)
+        if not ouverture:
+            morceaux.append(corps[position:])
+            break
+        morceaux.append(corps[position:ouverture.start()])
+        profondeur = 0
+        fin = len(corps)
+        for balise in re.finditer(r"<details\b|</details>",
+                                  corps[ouverture.start():]):
+            profondeur += -1 if balise.group(0).startswith("</") else 1
+            if profondeur == 0:
+                fin = ouverture.start() + balise.end()
+                break
+        position = fin
+    return "".join(morceaux)
+
+
+def test_la_page_cout_tient_en_quatre_graphiques_et_sans_tableau_ouvert(contexte):
+    """Le temps du lecteur n'est pas gratuit, et cette page le dépensait.
+
+    Elle portait sept graphiques et neuf tableaux dépliés, huit mille mots à
+    traverser avant d'atteindre un résultat. Ce qu'elle doit pouvoir justifier
+    est toujours là — rien n'a été retiré —, mais replié. Ce test tient la
+    discipline : quatre tracés ouverts, aucun tableau ouvert, et de quoi lire la
+    page en quelques minutes.
+
+    Les bornes sont larges à dessein : elles n'interdisent pas d'écrire, elles
+    interdisent de revenir à une page qu'on ne lit pas.
+    """
+    corps = rendre(contexte, "/cout", {})[1]
+    visible = _hors_depliants(corps)
+
+    traces = visible.count('<figure class="graphique">')
+    assert traces <= 4, f"{traces} graphiques ouverts sur la page Coût"
+    assert visible.count("<table") == 0, (
+        "un tableau déplié sur la page Coût : les chiffres se rangent sous le "
+        "graphique qu'ils décrivent, ou dans une section repliée"
+    )
+    mots = len(re.sub(r"<[^>]+>", " ", visible).split())
+    assert mots <= 1200, f"{mots} mots à lire avant d'avoir rien déplié"
+
+    # Et tout le reste est bien là, rangé.
+    assert corps.count('<details class="section">') >= 8
+    assert corps.count('<figure class="graphique">') > traces
+
+
+def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
+    """Une carte sans réponse est un graphique nu : le lecteur doit le lire.
+
+    L'ordre compte autant que la présence — question, réponse, tracé — parce
+    que c'est lui qui permet de s'arrêter à la deuxième ligne.
+    """
+    corps = rendre(contexte, "/cout", {})[1]
+    cartes = re.findall(r'<section class="cle">(.*?)</section>', corps, re.S)
+    assert len(cartes) == 4, f"{len(cartes)} cartes, quatre attendues"
+    for carte in cartes:
+        titre = re.match(r"<h3>(.*?)</h3>", carte, re.S)
+        assert titre, carte[:80]
+        assert titre.group(1).endswith("?"), (
+            f"une carte ne pose pas de question : {titre.group(1)}"
+        )
+        reponse = re.search(r'<p class="reponse">(.*?)</p>', carte, re.S)
+        assert reponse and len(reponse.group(1).split()) >= 15, (
+            "la réponse doit tenir seule, sans le graphique"
+        )
+        assert carte.index('class="reponse"') < carte.index("<figure"), (
+            "la réponse vient avant le tracé : c'est ce qui permet de s'arrêter"
+        )
+        assert '<p class="source">' in carte, (
+            "une carte qui se partage hors du site doit porter sa source"
+        )

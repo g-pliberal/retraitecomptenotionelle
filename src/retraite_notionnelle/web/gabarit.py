@@ -197,6 +197,19 @@ button {
   border: 1px solid var(--accent); border-radius: 4px;
 }
 button:hover { opacity: 0.9; }
+/* Un lien qui a le poids d'un bouton : il ouvre le simulateur, c'est-à-dire
+   la seule chose que la page Coût invite à faire. Il reste un lien — il mène à
+   une autre adresse, se copie et s'ouvre dans un onglet —, seul son habit
+   change. */
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1.4rem; align-items: center;
+           margin: 1.1rem 0 0; }
+a.bouton {
+  display: inline-block; text-decoration: none;
+  color: var(--fond-carte); background: var(--accent);
+  border: 1px solid var(--accent); border-radius: 4px;
+  padding: 0.55rem 1.4rem; font-size: 0.98rem;
+}
+a.bouton:hover { opacity: 0.9; }
 /* Les métiers de la carrière : une boîte par métier, la dernière en pointillé
    parce qu'elle n'en décrit encore aucun — c'est celle qui sert à en ajouter. */
 .metiers { display: grid; gap: 0.9rem; margin: 0.9rem 0 0; }
@@ -217,6 +230,33 @@ details { margin-top: 1.25rem; }
 summary { cursor: pointer; color: var(--texte-doux); font-size: 0.92rem; }
 summary:hover { color: var(--accent); }
 details > .grille { margin-top: 1rem; }
+/* Une section repliée. Son titre a le poids d'un intertitre, parce qu'il en
+   tient lieu : c'est lui qu'on parcourt pour savoir ce que la page contient
+   encore. Les sections se suivent sans espace entre elles, séparées par un
+   filet, pour qu'une pile de dix se lise comme un sommaire. */
+details.section { margin: 0; border-top: 1px solid var(--trait); }
+details.section:last-of-type { border-bottom: 1px solid var(--trait); }
+details.section > summary {
+  color: var(--texte); font-size: 1rem; font-weight: 600;
+  padding: 0.85rem 0.2rem 0.85rem 1.6rem; list-style: none; position: relative;
+}
+details.section > summary::-webkit-details-marker { display: none; }
+details.section > summary::marker { content: ""; }
+/* Le chevron, dessiné au trait : il dit dans quel sens la section s'ouvre, ce
+   qu'un titre seul ne dit pas. */
+details.section > summary::before {
+  content: ""; position: absolute; left: 0.35rem; top: 1.25rem;
+  width: 0.42rem; height: 0.42rem; border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent); transform: rotate(-45deg);
+  transition: transform 0.15s;
+}
+details.section[open] > summary::before { transform: rotate(45deg); top: 1.1rem; }
+details.section > summary:hover { color: var(--accent); }
+details.section > .dedans { padding: 0 0 1.2rem 1.6rem; }
+details.section > .dedans > :first-child { margin-top: 0; }
+details.section > .dedans > h4 {
+  font-size: 0.98rem; font-weight: 600; margin: 1.5rem 0 0.4rem;
+}
 /* Un tableau plus large que l'écran défile horizontalement. La zone qui défile
    doit pouvoir recevoir le focus, sinon elle est inatteignable au clavier chez
    les moteurs qui ne rendent pas focusables les boîtes défilantes (WCAG 2.1.1)
@@ -272,6 +312,65 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 .fiches { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; }
 .fiche .valeur { font-size: 1.2rem; font-variant-numeric: tabular-nums; }
 .fiche .etiquette { font-size: 0.82rem; color: var(--texte-doux); }
+.fiche .precision { font-size: 0.82rem; color: var(--texte-doux); margin-top: 0.3rem; }
+/* Les trois chiffres d'ouverture d'une page : ce sont eux qu'on emporte si on
+   ne lit rien d'autre, et ils doivent donc se lire de loin, avant le texte.
+   L'étiquette passe AU-DESSUS du nombre — on lit « ce qui rentre » puis
+   « 417 Md € », dans cet ordre, et non un nombre dont on cherche le sens. */
+.fiches.reperes { gap: 0.9rem; margin: 1.5rem 0; }
+.fiches.reperes .fiche {
+  background: var(--fond-carte); border: 1px solid var(--trait);
+  border-radius: 8px; padding: 1rem 1.1rem;
+  display: flex; flex-direction: column;
+}
+.fiches.reperes .fiche .valeur {
+  font-size: 1.9rem; line-height: 1.15; font-weight: 600; order: 2;
+}
+.fiches.reperes .fiche .etiquette {
+  order: 1; font-size: 0.86rem; margin-bottom: 0.25rem;
+}
+.fiches.reperes .fiche .precision { order: 3; margin-top: 0.35rem; }
+/* Une question, sa réponse, le tracé qui la montre. Encadrée pour se découper :
+   une capture de ce bloc se comprend hors du site. */
+section.cle {
+  background: var(--fond-carte); border: 1px solid var(--trait);
+  border-radius: 8px; padding: 1.3rem 1.4rem 1rem; margin: 1.75rem 0;
+}
+section.cle > h3 { margin: 0; font-size: 1.15rem; }
+section.cle > .reponse {
+  font-size: 1.1rem; line-height: 1.5; max-width: 46rem; margin: 0.4rem 0 0.2rem;
+}
+section.cle > .source {
+  font-size: 0.82rem; color: var(--texte-doux); margin: 0.2rem 0 0;
+}
+section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
+/* Le mot de jargon et sa définition. Tout est en ligne — le mot doit couler
+   dans sa phrase comme n'importe quel autre —, et l'enveloppe est simplement
+   `relative` pour servir de repère à la bulle posée dessous. */
+.mot { position: relative; }
+.mot > .terme {
+  /* Le bouton hérite de la phrase qui le porte, taille et graisse comprises :
+     sans cela un mot du glossaire se serait vu d'abord comme un bouton, et
+     seulement ensuite comme un mot. Seul le pointillé le signale. */
+  font: inherit; color: inherit; background: none; border: none;
+  border-bottom: 1px dotted var(--accent); border-radius: 0;
+  padding: 0; margin: 0; cursor: help;
+}
+.mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--accent); }
+.mot > .terme[aria-expanded="true"] { border-bottom-style: solid; }
+.mot > .bulle {
+  display: block; position: absolute; left: 0; top: calc(100% + 0.4rem);
+  z-index: 5; width: max(14rem, min(22rem, 70vw));
+  background: var(--fond-carte); color: var(--texte);
+  border: 1px solid var(--trait-champ); border-radius: 6px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.14);
+  padding: 0.6rem 0.8rem; font-size: 0.88rem; line-height: 1.45;
+  /* Le texte de la bulle est un texte courant, quelle que soit la phrase qui
+     porte le mot : sans cela une définition posée dans un chapeau en héritait
+     la couleur et la taille. */
+  font-weight: 400; font-style: normal; text-align: left; white-space: normal;
+}
+.mot > .bulle[hidden] { display: none; }
 .etiquette-fiabilite {
   display: inline-block; font-size: 0.78rem; letter-spacing: 0.04em;
   text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 3px;
@@ -291,6 +390,18 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
   stroke-linejoin: round; stroke-linecap: round;
 }
 .graphique .bande { stroke: none; }
+/* Le ruban entre deux courbes : vert quand la première passe au-dessus, rouge
+   quand elle passe dessous. Il est peint sous les courbes, assez pâle pour les
+   laisser lisibles, assez franc pour se voir d'un coup d'œil — c'est lui qui
+   dit, sans un mot, s'il rentre plus qu'il ne sort. */
+.graphique .ecart { stroke: none; }
+.graphique .ecart.plus { fill: var(--prospectif-employeur); opacity: 0.22; }
+.graphique .ecart.moins { fill: var(--retroactif); opacity: 0.22; }
+/* Ses deux pastilles de légende, accolées : une seule couleur ne dirait que la
+   moitié de ce que le ruban montre. */
+.pastille.ecart-plus { background: var(--prospectif-employeur); opacity: 0.45; }
+.pastille.ecart-moins { background: var(--retroactif); opacity: 0.45;
+                        margin-left: -0.15rem; }
 .graphique .graduation {
   fill: var(--texte-doux); font-family: inherit; font-size: 12px;
   font-variant-numeric: tabular-nums;
@@ -380,11 +491,26 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .scenario .chiffre { align-items: flex-start; }
   .scenario .depart { padding-left: 0.9rem; }
   .fiches { grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); }
+  /* Les trois chiffres d'ouverture se mettent les uns sous les autres plutôt
+     que de se serrer à trois de front : à 8 rem de large, « 422 Md € » se
+     coupait en deux. */
+  .fiches.reperes { grid-template-columns: 1fr; }
+  .fiches.reperes .fiche .valeur { font-size: 1.6rem; }
+  section.cle { padding: 1rem 1rem 0.8rem; }
+  /* La bulle du glossaire ne flotte plus : elle pousse le texte. Une boîte
+     posée par-dessus, ancrée sur un mot qui peut se trouver au bord de
+     l'écran, déborderait de la page ou sortirait de la vue. */
+  .mot { position: static; }
+  .mot > .bulle {
+    position: static; width: auto; margin: 0.4rem 0; box-shadow: none;
+  }
   form .grille { gap: 0.9rem; }
   /* Le SVG se réduit avec la page : ses textes, exprimés en unités du viewBox,
      se réduiraient d'autant et deviendraient illisibles. On les grossit donc
-     dans le repère pour qu'ils gardent leur taille à l'écran. */
-  .graphique .graduation { font-size: 20px; }
+     dans le repère pour qu'ils gardent leur taille à l'écran. Vingt-quatre et
+     non vingt : sur un écran de 375 points, le tracé est réduit de moitié, et
+     vingt unités y faisaient neuf pixels — sous le plancher de lisibilité. */
+  .graphique .graduation { font-size: 24px; }
 }
 
 /* Écran très étroit : les deux chiffres ne tiennent plus l'un à côté de
@@ -422,7 +548,13 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   header.bandeau nav, .evitement { display: none; }
   body { background: #fff; color: #000; font-size: 11pt; }
   .defilant { overflow: visible; }
-  .carte, .note, table, .graphique, .scenario { break-inside: avoid; }
+  .carte, .note, table, .graphique, .scenario, section.cle { break-inside: avoid; }
+  /* Le mot du glossaire s'imprime comme le reste de la phrase : ni bouton, ni
+     soulignement pointillé, qui ne renverraient sur le papier à rien qu'on
+     puisse ouvrir. Sa définition ne s'imprime pas : sur une page de chiffres
+     elle ferait une incise de trois lignes au milieu d'un paragraphe. */
+  .mot > .terme { border-bottom: none; }
+  .mot > .bulle { display: none; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
 }
 """
@@ -716,10 +848,88 @@ def gloses(entrees: list[tuple[str, str]]) -> str:
     return f'<dl class="gloses">{corps}</dl>'
 
 
-def fiche(etiquette: str, valeur: str) -> str:
+def fiche(etiquette: str, valeur: str, precision: str = "") -> str:
+    """Un chiffre, ce qu'il mesure, et au besoin la phrase qui le situe.
+
+    ``precision`` est du HTML : elle porte parfois un lien ou un mot du
+    glossaire. Elle est facultative, et l'immense majorité des fiches du site
+    s'en passent — elle n'existe que pour les trois chiffres d'ouverture de la
+    page Coût, où « 422 milliards » ne veut rien dire tant qu'on n'a pas dit
+    « en un an, pour 17 millions de retraités ».
+    """
+    suite = f'<div class="precision">{precision}</div>' if precision else ""
     return (
         f'<div class="fiche"><div class="valeur">{valeur}</div>'
-        f'<div class="etiquette">{escape(etiquette)}</div></div>'
+        f'<div class="etiquette">{escape(etiquette)}</div>{suite}</div>'
+    )
+
+
+def mot(terme: str, definition: str) -> str:
+    """Un mot de jargon, et sa définition dépliable sur place.
+
+    Le site s'adresse à des gens qui n'ont pas fait d'économie. « Part du PIB »,
+    « cotisation », « répartition » sont pour eux des mots opaques, et les
+    définir dans le corps du texte l'allonge d'autant pour tous les autres. La
+    définition est donc posée SOUS le mot, et ne s'ouvre que si on la demande.
+
+    Ce n'est PAS un attribut ``title`` : une infobulle de survol ne s'ouvre ni
+    au clavier, ni au doigt, ni sous une synthèse vocale, et un test du dépôt
+    l'interdit d'ailleurs sur tout le site.
+
+    Ce n'est pas non plus un ``<details>``, et il a fallu s'y reprendre à deux
+    fois pour le comprendre : ``<details>`` fait partie des balises dont
+    l'analyseur HTML FERME un ``<p>`` ouvert. Un mot du glossaire posé au milieu
+    d'une phrase coupait donc le paragraphe en deux, et la fin de la phrase
+    tombait à la ligne, hors du paragraphe. Un ``<button>`` est du contenu de
+    phrase : il ne ferme rien, et il porte en plus le bon état — ``aria-expanded``
+    dit si la définition est ouverte, ce qu'un dépliant bricolé ne dirait pas.
+    Le basculement est dans ``index.html``, en écoute déléguée : le contenu de
+    la page est remplacé en bloc à chaque rendu, et un écouteur posé sur chaque
+    mot disparaîtrait avec lui.
+    """
+    return (
+        f'<span class="mot"><button type="button" class="terme" '
+        f'aria-expanded="false">{escape(terme)}</button>'
+        f'<span class="bulle" role="note" hidden>{escape(definition)}</span></span>'
+    )
+
+
+def depliant(titre: str, corps: str) -> str:
+    """Une section repliée : son titre se lit, son contenu s'ouvre si on veut.
+
+    Le temps du lecteur n'est pas gratuit. Tout ce qu'une page doit pouvoir
+    justifier — le détail d'un tableau, le périmètre d'une source, ce que le
+    calcul ne sait pas faire — doit être là, sans quoi la page n'est pas
+    honnête ; mais rien n'oblige à le lui faire traverser pour atteindre le
+    résultat. Un dépliant met les deux exigences d'accord : le titre annonce ce
+    qu'il y a dedans, et c'est le lecteur qui décide.
+    """
+    return (
+        f'<details class="section"><summary>{escape(titre)}</summary>'
+        f'<div class="dedans">{corps}</div></details>'
+    )
+
+
+def cle(question: str, reponse: str, corps: str, source: str = "") -> str:
+    """Une question, sa réponse en une phrase, et l'image qui la montre.
+
+    C'est l'unité de lecture de la page Coût, et elle est faite pour deux
+    lecteurs à la fois. Celui qui n'a pas le temps lit la question et la
+    réponse, et s'arrête là : deux lignes lui ont donné le résultat. Celui qui
+    veut voir descend d'un cran et trouve le tracé, puis ses chiffres.
+
+    La carte est encadrée pour une troisième raison : elle doit se découper.
+    Une capture d'écran de ce bloc porte la question, la réponse, le graphique
+    et sa source — elle se comprend hors du site, ce qu'un graphique nu ne fait
+    jamais.
+
+    ``reponse`` et ``source`` sont du HTML : elles portent des mises en
+    évidence, des liens et des mots du glossaire. ``question`` est du texte.
+    """
+    fin = f'<p class="source">{source}</p>' if source else ""
+    return (
+        f'<section class="cle"><h3>{escape(question)}</h3>'
+        f'<p class="reponse">{reponse}</p>{corps}{fin}</section>'
     )
 
 
@@ -879,6 +1089,91 @@ def _bande(basses: list[float], hautes: list[float],
     return " ".join(aller + retour) + " Z"
 
 
+def _aires_ecart(haute: Serie, basse: Serie, annees: tuple[int, ...],
+                 sommet: float) -> str:
+    """Le ruban entre deux courbes, coloré selon celle qui est au-dessus.
+
+    C'est ce qui fait qu'un graphique de ressources et de dépenses se lit sans
+    savoir lire un graphique : l'écart entre les deux courbes n'est plus à
+    mesurer à l'œil, il est peint. Vert quand il rentre plus qu'il ne sort,
+    rouge quand c'est l'inverse.
+
+    Le ruban change donc de couleur en cours de route, et il change de couleur
+    À L'ENDROIT EXACT où les courbes se croisent — pas à l'année suivante. Le
+    croisement est interpolé linéairement sur le segment, exactement comme le
+    tracé lui-même interpole entre deux points, si bien que le changement de
+    teinte tombe sur l'intersection dessinée. Les segments de même signe qui se
+    suivent forment un seul polygone : sans ce regroupement, soixante-neuf
+    quadrilatères se toucheraient bord à bord et leurs jointures se verraient.
+
+    Rien ici ne sort si l'une des deux séries a un trou : un ruban interpolé
+    par-dessus une année manquante affirmerait un écart que personne n'a
+    mesuré.
+    """
+    if any(valeur is None for valeur in haute.valeurs + basse.valeurs):
+        return ""
+    if len(haute.valeurs) != len(annees) or len(basse.valeurs) != len(annees):
+        return ""
+
+    def point(annee: int, dessus: float, dessous: float) -> tuple[float, float, float]:
+        return (_abscisse(annee, annees[0], annees[-1]),
+                _ordonnee(dessus, sommet), _ordonnee(dessous, sommet))
+
+    # La chaîne des sommets du ruban : les années, plus les croisements qui
+    # tombent entre deux d'entre elles. `signes` porte le signe de l'écart sur
+    # chaque intervalle, et compte donc un élément de moins.
+    chaine = [point(annees[0], haute.valeurs[0], basse.valeurs[0])]
+    signes: list[int] = []
+    for rang in range(1, len(annees)):
+        avant = haute.valeurs[rang - 1] - basse.valeurs[rang - 1]
+        apres = haute.valeurs[rang] - basse.valeurs[rang]
+        courant = point(annees[rang], haute.valeurs[rang], basse.valeurs[rang])
+        if avant * apres < 0.0:
+            part = avant / (avant - apres)
+            precedent = chaine[-1]
+            croisement = (
+                precedent[0] + part * (courant[0] - precedent[0]),
+                precedent[1] + part * (courant[1] - precedent[1]),
+                precedent[2] + part * (courant[2] - precedent[2]),
+            )
+            # Au croisement les deux courbes se touchent : le ruban y est
+            # d'épaisseur nulle, et ses deux bords doivent porter la MÊME
+            # ordonnée. L'interpolation des deux les y amène au même point à
+            # l'arrondi près ; on impose le dessus aux deux pour que le
+            # polygone se referme exactement.
+            chaine.append((croisement[0], croisement[1], croisement[1]))
+            signes.append(1 if avant > 0.0 else -1)
+            chaine.append(courant)
+            signes.append(1 if apres > 0.0 else -1)
+            continue
+        chaine.append(courant)
+        somme = avant + apres
+        signes.append(1 if somme > 0.0 else (-1 if somme < 0.0 else 0))
+
+    morceaux = []
+    debut = 0
+    while debut < len(signes):
+        fin = debut
+        while fin + 1 < len(signes) and signes[fin + 1] == signes[debut]:
+            fin += 1
+        if signes[debut] != 0:
+            bornes = chaine[debut:fin + 2]
+            aller = " ".join(
+                f"{'M' if rang == 0 else 'L'}{nombre_brut(x)} {nombre_brut(dessus)}"
+                for rang, (x, dessus, _) in enumerate(bornes)
+            )
+            retour = " ".join(
+                f"L{nombre_brut(x)} {nombre_brut(dessous)}"
+                for x, _, dessous in reversed(bornes)
+            )
+            teinte = "plus" if signes[debut] > 0 else "moins"
+            morceaux.append(
+                f'<path class="ecart {teinte}" d="{aller} {retour} Z"/>'
+            )
+        debut = fin + 1
+    return "".join(morceaux)
+
+
 def _sommet(series: tuple[Serie, ...], empile: bool) -> tuple[float, float]:
     """Sommet de l'axe vertical et pas de graduation."""
     if empile:
@@ -944,7 +1239,9 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
               legende: bool = True, repere: float | None = None,
               libelle_repere: str = "",
               etiquettes: tuple[str, ...] = (),
-              nom_abscisse: str = "Année") -> str:
+              nom_abscisse: str = "Année",
+              ecart: tuple[int, int] | None = None,
+              libelle_ecart: str = "") -> str:
     """Graphique en courbes, ou en bandes empilées si ``empile``.
 
     ``titre`` n'est pas affiché : il est le texte alternatif du SVG, c'est-à-dire
@@ -960,6 +1257,13 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     la trajectoire d'un retraité, qui se lit en âges. Ce nom sert au tableau de
     données : une colonne intitulée « Année » pour une suite d'âges serait un
     contresens, et c'est la seule chose que le tracé ne dit pas de lui-même.
+
+    ``ecart`` désigne deux séries par leur rang et peint le ruban qui les
+    sépare : vert là où la première passe au-dessus de la seconde, rouge là où
+    elle passe dessous. C'est ce qui rend lisible, sans savoir lire un
+    graphique, la seule chose qui compte entre des recettes et des dépenses —
+    laquelle des deux l'emporte, et de combien. ``libelle_ecart`` en dit un mot
+    dans la légende, faute de quoi la couleur serait seule à porter le sens.
     """
     if not annees or not series:
         return ""
@@ -987,6 +1291,11 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
         )
 
     traces = []
+    # Le ruban d'abord : il est un fond, et une courbe posée par-dessus reste
+    # visible là où les deux se croisent.
+    if ecart is not None and len(series) > max(ecart):
+        traces.append(_aires_ecart(series[ecart[0]], series[ecart[1]],
+                                   annees, sommet))
     if empile:
         # La PREMIÈRE série est la bande du BAS : la légende se lit alors dans
         # l'ordre du graphique, de bas en haut, et non à l'envers.
@@ -1026,7 +1335,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
             f'<line class="repere" x1="{x}" y1="{nombre_brut(MARGE_HAUT)}" '
             f'x2="{x}" y2="{base}"/>{etiquette}'
         )
-    legende_html = _legende(series) if legende else ""
+    legende_html = _legende(series, libelle_ecart) if legende else ""
     etiquettes_html = (
         _etiquettes_de_fin(series, annees, sommet, etiquettes) if etiquettes else ""
     )
@@ -1090,13 +1399,17 @@ def donnees_du_graphique(titre: str, annees: tuple[int, ...],
     )
 
 
-def _legende(series: tuple[Serie, ...]) -> str:
+def _legende(series: tuple[Serie, ...], libelle_ecart: str = "") -> str:
     """Légende du graphique, posée en ``<figcaption>``.
 
     Ce n'est pas un ornement : le SVG est annoncé comme une image, et la légende
     est la seule chose qui dise, en texte, ce que chaque couleur représente.
     Dans la figure, elle en devient le nom accessible ; hors d'elle, elle
     n'était qu'une liste flottant sous un dessin.
+
+    Le ruban d'écart y prend une entrée de plus, à deux pastilles : sans elle,
+    le rouge et le vert du fond ne voudraient rien dire pour qui ne les a pas
+    devinés.
     """
     entrees = "".join(
         f'<li><span class="pastille" style="background:{serie.couleur}"></span>'
@@ -1105,4 +1418,10 @@ def _legende(series: tuple[Serie, ...]) -> str:
         + "</span></li>"
         for serie in series
     )
+    if libelle_ecart:
+        entrees += (
+            '<li><span class="pastille ecart-plus"></span>'
+            '<span class="pastille ecart-moins"></span>'
+            f"<span>{escape(libelle_ecart)}</span></li>"
+        )
     return f'<figcaption><ul class="legende">{entrees}</ul></figcaption>'

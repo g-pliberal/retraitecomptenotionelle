@@ -352,6 +352,22 @@ class SoldeAnnuel {
   soldeMeur(scenario) {
     return this.solde(scenario) * this.pib;
   }
+
+  /**
+   * Ce qui rentre, en millions d'euros courants, et zéro si le PIB manque.
+   *
+   * Une part de PIB ne parle qu'à qui sait ce qu'est le PIB. Les euros, si — et
+   * c'est en euros que la page Coût ouvre, avant de passer aux parts, qui sont
+   * la seule unité où 1959 et 2070 se comparent.
+   */
+  ressourcesMeur() {
+    return this.ressources * this.pib;
+  }
+
+  /** Ce qui sort, en millions d'euros courants, et zéro si le PIB manque. */
+  depenseMeur(scenario) {
+    return this.depense(scenario) * this.pib;
+  }
 }
 
 /** Le bilan du système de retraite, de la première année du COR à son horizon. */

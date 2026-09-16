@@ -351,6 +351,45 @@ document.addEventListener("submit", (evenement) => {
   if (location.hash === cible) { afficher(); } else { location.hash = cible; }
 });
 
+// -- les mots du glossaire ---------------------------------------------------
+//
+// Un mot de spécialiste porte sa définition, et elle s'ouvre sur place. Le
+// gabarit écrit pour cela un `<button class="terme" aria-expanded>` suivi de sa
+// bulle : c'est ici que le bouton se met à basculer.
+//
+// En écoute DÉLÉGUÉE, sur le document, et non sur chaque bouton : le contenu de
+// <main> est remplacé en bloc à chaque rendu, et des écouteurs posés un par un
+// disparaîtraient avec les boutons qui les portaient. Un clic n'importe où
+// ailleurs referme la bulle ouverte — c'est ce qu'on attend d'une bulle, et
+// sans cela deux définitions se recouvriraient.
+function fermerLesMots(sauf) {
+  for (const bouton of document.querySelectorAll('.mot > .terme[aria-expanded="true"]')) {
+    if (bouton === sauf) { continue; }
+    bouton.setAttribute("aria-expanded", "false");
+    bouton.nextElementSibling.hidden = true;
+  }
+}
+
+document.addEventListener("click", (evenement) => {
+  const terme = evenement.target.closest(".mot > .terme");
+  fermerLesMots(terme);
+  if (!terme) { return; }
+  const ouvrir = terme.getAttribute("aria-expanded") !== "true";
+  terme.setAttribute("aria-expanded", String(ouvrir));
+  terme.nextElementSibling.hidden = !ouvrir;
+});
+
+// Échap referme, et rend le focus au mot : c'est ce que fait toute fenêtre
+// surgissante, et sans cela le clavier n'a aucun moyen de refermer celle-ci
+// (WCAG 1.4.13).
+document.addEventListener("keydown", (evenement) => {
+  if (evenement.key !== "Escape") { return; }
+  const ouvert = document.querySelector('.mot > .terme[aria-expanded="true"]');
+  if (!ouvert) { return; }
+  fermerLesMots(null);
+  ouvert.focus();
+});
+
 // Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici
 // l'adresse EST la route, et y écrire une ancre de section renverrait le
 // lecteur à l'accueil, perdant la simulation en cours. Il déplace donc le
