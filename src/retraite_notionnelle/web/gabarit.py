@@ -343,6 +343,20 @@ section.cle > .reponse {
 section.cle > .source {
   font-size: 0.82rem; color: var(--texte-doux); margin: 0.2rem 0 0;
 }
+/* Le bouton qui compose l'image. Discret — il ne dispute pas la place au
+   graphique —, mais toujours au même endroit : en bas à droite de la carte,
+   là où se trouve ce qu'on fait d'un contenu qu'on vient de lire. */
+section.cle > .partage { margin: 0.6rem 0 0; text-align: right; }
+section.cle > .partage > .partager {
+  font: inherit; font-size: 0.85rem; cursor: pointer;
+  color: var(--accent); background: none;
+  border: 1px solid var(--trait-champ); border-radius: 4px;
+  padding: 0.35rem 0.8rem;
+}
+section.cle > .partage > .partager:hover {
+  border-color: var(--accent); background: var(--accent-doux);
+}
+section.cle > .partage > .partager[disabled] { opacity: 0.6; cursor: progress; }
 section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 /* Le mot de jargon et sa définition. Tout est en ligne — le mot doit couler
    dans sa phrase comme n'importe quel autre —, et l'enveloppe est simplement
@@ -378,8 +392,51 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 }
 /* Graphiques : du SVG écrit à la main, dont seules les couleurs et les tailles
    de texte sont ici. Le tracé lui-même est dans `graphique()`. */
-.graphique { margin: 1.3rem 0 1.7rem; }
+.graphique { margin: 1.3rem 0 1.7rem; position: relative; }
 .graphique svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* La figure se parcourt au clavier : les flèches y déplacent l'année lue. Le
+   contour du focus est celui de tout le site, posé sur la figure entière parce
+   que c'est elle qui reçoit les touches. */
+.graphique:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px;
+                           border-radius: 4px; }
+/* Le trait vertical de l'année lue, et les points posés sur chaque courbe. Ils
+   sont dessinés par `index.html` dans le `<g class="survol">` que le tracé
+   laisse vide : rien de tout cela n'est dans le HTML servi, et la page reste
+   lisible sans une ligne de script. */
+.graphique .survol .guide { stroke: var(--texte-doux); stroke-width: 1;
+                            stroke-dasharray: 2 3; }
+.graphique .survol .point { stroke: var(--fond-carte); stroke-width: 2; }
+/* La lecture de l'année survolée. Elle flotte au-dessus du tracé, du côté où il
+   reste de la place : `index.html` bascule `.a-droite` quand le pointeur passe
+   la moitié du cadre, sans quoi la boîte sortirait de l'écran sur la fin de la
+   série — c'est-à-dire là où l'on regarde le plus. */
+.graphique .lecture {
+  position: absolute; top: 0.2rem; left: 0; z-index: 4; pointer-events: none;
+  min-width: 11rem; max-width: 19rem;
+  background: var(--fond-carte); border: 1px solid var(--trait-champ);
+  border-radius: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 0.5rem 0.7rem; font-size: 0.85rem; line-height: 1.4;
+}
+.graphique .lecture[hidden] { display: none; }
+.graphique .lecture.a-droite { left: auto; right: 0; }
+.graphique .lecture .annee { font-weight: 600; display: block;
+                             margin-bottom: 0.25rem; }
+.graphique .lecture ul { list-style: none; margin: 0; padding: 0; }
+/* Les libellés sont raccourcis par `index.html`, mais « Ce qui sortirait en
+   comptes notionnels dès 2026 » reste long : la ligne passe à la ligne plutôt
+   que de sortir de la boîte. */
+.graphique .lecture li { display: flex; align-items: baseline; gap: 0.4rem;
+                         margin-bottom: 0.1rem; }
+.graphique .lecture .valeur { margin-left: auto; padding-left: 0.7rem;
+                              white-space: nowrap;
+                              font-variant-numeric: tabular-nums; }
+/* L'aide qui dit que les flèches marchent. Elle n'apparaît qu'au focus clavier :
+   à la souris, elle n'apprendrait rien et prendrait une ligne. */
+.graphique .aide-clavier {
+  font-size: 0.8rem; color: var(--texte-doux); margin: 0.3rem 0 0;
+  visibility: hidden;
+}
+.graphique:focus-visible .aide-clavier { visibility: visible; }
 .graphique .grille { stroke: var(--trait); stroke-width: 1; }
 .graphique .axe { stroke: var(--texte-doux); stroke-width: 1; }
 .graphique .repere {
@@ -497,12 +554,17 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .fiches.reperes { grid-template-columns: 1fr; }
   .fiches.reperes .fiche .valeur { font-size: 1.6rem; }
   section.cle { padding: 1rem 1rem 0.8rem; }
-  /* La bulle du glossaire ne flotte plus : elle pousse le texte. Une boîte
-     posée par-dessus, ancrée sur un mot qui peut se trouver au bord de
-     l'écran, déborderait de la page ou sortirait de la vue. */
+  /* La bulle du glossaire quitte le fil du texte et se pose en bas de l'écran,
+     sur toute la largeur. Deux raisons. Une boîte flottante ancrée sur un mot
+     qui peut se trouver au bord de l'écran en déborderait ; et une boîte posée
+     DANS le fil coupait la phrase en deux, laissant le point qui suit le mot
+     orphelin sur sa propre ligne. Fixée en bas, elle ne déplace rien et reste
+     dans la vue quel que soit l'endroit où l'on a touché. */
   .mot { position: static; }
   .mot > .bulle {
-    position: static; width: auto; margin: 0.4rem 0; box-shadow: none;
+    position: fixed; left: 0.75rem; right: 0.75rem; bottom: 0.75rem;
+    top: auto; width: auto; max-width: none; z-index: 20;
+    font-size: 0.95rem; padding: 0.9rem 1rem;
   }
   form .grille { gap: 0.9rem; }
   /* Le SVG se réduit avec la page : ses textes, exprimés en unités du viewBox,
@@ -546,6 +608,11 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
    pas suivre. */
 @media print {
   header.bandeau nav, .evitement { display: none; }
+  /* Ni la lecture au survol — il n'y a pas de pointeur sur du papier —, ni le
+     bouton qui compose une image : la page imprimée EST déjà l'image. */
+  .graphique .lecture, .graphique .aide-clavier, section.cle > .partage {
+    display: none;
+  }
   body { background: #fff; color: #000; font-size: 11pt; }
   .defilant { overflow: visible; }
   .carte, .note, table, .graphique, .scenario, section.cle { break-inside: avoid; }
@@ -560,6 +627,13 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
 """
 
 DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle"
+
+#: Ce qui signe une carte exportée en image. Une image quittant le site n'a plus
+#: ni barre d'adresse ni pied de page : sans ces deux lignes, elle circule sans
+#: dire d'où elle vient ni qui l'a produite, et le premier qui la republie en
+#: devient la source.
+SIGNATURE = "@pliberal"
+SIGNATURE_SITE = "Parti libéral français — le simulateur de retraite"
 
 LIENS = (
     ("/", "Programme"),
@@ -927,9 +1001,19 @@ def cle(question: str, reponse: str, corps: str, source: str = "") -> str:
     évidence, des liens et des mots du glossaire. ``question`` est du texte.
     """
     fin = f'<p class="source">{source}</p>' if source else ""
+    # Le bouton n'est pas un ornement : c'est lui qui fait de la carte autre
+    # chose qu'un bloc de page. Il compose, dans le navigateur, une image qui
+    # porte la question, la réponse, le tracé, sa source et la signature du
+    # compte — et rien d'autre à faire pour la poster. Le comportement est dans
+    # `index.html`, en écoute déléguée ; sans lui, le bouton ne ferait rien, et
+    # c'est pourquoi un test tient l'accord entre les deux.
+    partage = (
+        '<p class="partage"><button type="button" class="partager">'
+        "Télécharger l'image</button></p>"
+    )
     return (
         f'<section class="cle"><h3>{escape(question)}</h3>'
-        f'<p class="reponse">{reponse}</p>{corps}{fin}</section>'
+        f'<p class="reponse">{reponse}</p>{corps}{fin}{partage}</section>'
     )
 
 
@@ -972,6 +1056,17 @@ DIVISIONS_Y = 5
 #: maximale : aucune fonction transcendante n'intervient, donc aucun écart
 #: possible entre les deux portages.
 PAS_RONDS = (1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0)
+
+#: Pas admissibles de l'axe des abscisses, du plus fin au plus large. Ce sont
+#: des durées qu'un lecteur reconnaît : on gradue de dix ans en dix ans, ou de
+#: vingt, jamais de treize.
+PAS_GRADUATIONS_X = (10, 20, 25, 50, 100)
+
+#: Au-delà, les étiquettes se chevauchent sur un écran de téléphone, où le tracé
+#: est réduit de moitié et ses textes grossis pour rester lisibles. Huit : c'est
+#: ce que porte une plage de soixante-six ans graduée par décennies, celle qui
+#: tenait déjà.
+GRADUATIONS_X_MAXIMUM = 8
 
 #: Écart minimal, en années, entre une décennie graduée et une borne de l'axe.
 #: Les bornes sont graduées d'office — ce sont elles qui datent la série —, et
@@ -1041,8 +1136,23 @@ def _ordonnee(valeur: float, sommet: float) -> float:
 
 
 def _graduations_x(premiere: int, derniere: int) -> list[int]:
-    """Décennies comprises dans la plage, plus les deux bornes."""
-    annees = [a for a in range(premiere, derniere + 1) if a % 10 == 0]
+    """Graduations rondes comprises dans la plage, plus les deux bornes.
+
+    La décennie est le pas naturel, et il suffit tant que la plage est courte.
+    Cent onze ans en donneraient douze, plus les deux bornes : sur l'écran d'un
+    téléphone, où le tracé est réduit de moitié et ses textes grossis d'autant,
+    les étiquettes se chevauchent. Le pas s'élargit donc jusqu'à ce que le
+    compte tienne, en s'arrêtant à des valeurs qu'un lecteur reconnaît — vingt,
+    vingt-cinq, cinquante ans —, jamais à un pas calculé qui tomberait sur 1963
+    et 1994.
+    """
+    pas = next(
+        (candidat for candidat in PAS_GRADUATIONS_X
+         if sum(1 for a in range(premiere, derniere + 1) if a % candidat == 0)
+         <= GRADUATIONS_X_MAXIMUM),
+        PAS_GRADUATIONS_X[-1],
+    )
+    annees = [a for a in range(premiere, derniere + 1) if a % pas == 0]
     if premiere not in annees:
         annees.insert(0, premiere)
     if derniere not in annees:
@@ -1106,28 +1216,42 @@ def _aires_ecart(haute: Serie, basse: Serie, annees: tuple[int, ...],
     suivent forment un seul polygone : sans ce regroupement, soixante-neuf
     quadrilatères se toucheraient bord à bord et leurs jointures se verraient.
 
-    Rien ici ne sort si l'une des deux séries a un trou : un ruban interpolé
-    par-dessus une année manquante affirmerait un écart que personne n'a
-    mesuré.
+    Deux séries peuvent ne pas couvrir la même plage — le graphique de tête en
+    porte une qui remonte à 1959 et deux qui commencent en 2002. Le ruban se
+    peint alors sur la SEULE PLAGE CONTINUE où les deux sont définies, et il se
+    tait si l'une d'elles a un trou À L'INTÉRIEUR de cette plage : un ruban
+    interpolé par-dessus une année manquante affirmerait un écart que personne
+    n'a mesuré.
     """
-    if any(valeur is None for valeur in haute.valeurs + basse.valeurs):
-        return ""
     if len(haute.valeurs) != len(annees) or len(basse.valeurs) != len(annees):
         return ""
+    communs = [rang for rang in range(len(annees))
+               if haute.valeurs[rang] is not None and basse.valeurs[rang] is not None]
+    if len(communs) < 2:
+        return ""
+    if communs != list(range(communs[0], communs[-1] + 1)):
+        return ""
+    # Les abscisses restent celles du graphique ENTIER : c'est le cadre qui les
+    # fixe, pas la plage du ruban. Ses bornes sont donc retenues avant que la
+    # plage ne soit restreinte.
+    premiere, derniere = annees[0], annees[-1]
+    annees = tuple(annees[rang] for rang in communs)
+    hautes = [haute.valeurs[rang] for rang in communs]
+    basses = [basse.valeurs[rang] for rang in communs]
 
     def point(annee: int, dessus: float, dessous: float) -> tuple[float, float, float]:
-        return (_abscisse(annee, annees[0], annees[-1]),
+        return (_abscisse(annee, premiere, derniere),
                 _ordonnee(dessus, sommet), _ordonnee(dessous, sommet))
 
     # La chaîne des sommets du ruban : les années, plus les croisements qui
     # tombent entre deux d'entre elles. `signes` porte le signe de l'écart sur
     # chaque intervalle, et compte donc un élément de moins.
-    chaine = [point(annees[0], haute.valeurs[0], basse.valeurs[0])]
+    chaine = [point(annees[0], hautes[0], basses[0])]
     signes: list[int] = []
     for rang in range(1, len(annees)):
-        avant = haute.valeurs[rang - 1] - basse.valeurs[rang - 1]
-        apres = haute.valeurs[rang] - basse.valeurs[rang]
-        courant = point(annees[rang], haute.valeurs[rang], basse.valeurs[rang])
+        avant = hautes[rang - 1] - basses[rang - 1]
+        apres = hautes[rang] - basses[rang]
+        courant = point(annees[rang], hautes[rang], basses[rang])
         if avant * apres < 0.0:
             part = avant / (avant - apres)
             precedent = chaine[-1]
@@ -1241,7 +1365,8 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
               etiquettes: tuple[str, ...] = (),
               nom_abscisse: str = "Année",
               ecart: tuple[int, int] | None = None,
-              libelle_ecart: str = "") -> str:
+              libelle_ecart: str = "",
+              decimales_donnees: int | None = None) -> str:
     """Graphique en courbes, ou en bandes empilées si ``empile``.
 
     ``titre`` n'est pas affiché : il est le texte alternatif du SVG, c'est-à-dire
@@ -1257,6 +1382,14 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     la trajectoire d'un retraité, qui se lit en âges. Ce nom sert au tableau de
     données : une colonne intitulée « Année » pour une suite d'âges serait un
     contresens, et c'est la seule chose que le tracé ne dit pas de lui-même.
+
+    ``decimales_donnees`` sépare la précision des CHIFFRES de celle de l'AXE.
+    Elles n'ont pas le même travail : l'axe gradue, et cinq nombres ronds s'y
+    lisent mieux que cinq nombres à virgule ; les chiffres, eux, sont ce qu'on
+    vient chercher quand on survole une année, et un axe qui monte à 20 ne doit
+    pas faire lire « 14 » là où la série dit 14,1 — c'est justement l'écart
+    entre deux courbes qui se perdrait. Sans elle, les deux précisions restent
+    liées, comme partout ailleurs sur le site.
 
     ``ecart`` désigne deux séries par leur rang et peint le ruban qui les
     sépare : vert là où la première passe au-dessus de la seconde, rouge là où
@@ -1339,15 +1472,38 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     etiquettes_html = (
         _etiquettes_de_fin(series, annees, sommet, etiquettes) if etiquettes else ""
     )
+    # Ce dont la lecture au survol a besoin, et rien de plus.
+    #
+    # `data-gauche` et `data-droite` sont les abscisses du premier et du dernier
+    # point, en unités du repère : de quoi retrouver, d'une position de pointeur,
+    # le rang de l'année visée. Les VALEURS, elles, ne sont pas redites ici —
+    # elles sont déjà dans le tableau de points que `donnees_du_graphique` pose
+    # juste dessous, mises en forme exactement comme la page les écrit. Les
+    # réécrire en attribut ferait deux vérités là où il en faut une, et les
+    # flottants de Python et de JavaScript ne s'écrivent pas pareil.
+    #
+    # La figure est focusable et porte un `role="group"` : les flèches y
+    # parcourent les années, ce qu'une image ne saurait pas faire. La lecture
+    # sort dans une région `aria-live`, faute de quoi elle ne serait qu'un
+    # dessin de plus.
     return (
-        f'<figure class="graphique">'
+        f'<figure class="graphique" tabindex="0" role="group" '
+        f'aria-label="{escape(titre)}" '
+        f'data-gauche="{gauche}" data-droite="{droite}">'
         f'<svg viewBox="0 0 {LARGEUR_TRACE} {HAUTEUR_TRACE}" role="img" '
         f'aria-label="{escape(titre)}">'
         f"{''.join(lignes)}{''.join(traces)}"
         f'<line class="axe" x1="{gauche}" y1="{base}" x2="{droite}" y2="{base}"/>'
         f"{repere_html}{unite_html}{etiquettes_html}"
-        f"</svg>{legende_html}</figure>"
-        + donnees_du_graphique(titre, annees, series, unite, decimales, nom_abscisse)
+        f'<g class="survol"></g></svg>'
+        f'<div class="lecture" role="status" aria-live="polite" hidden></div>'
+        f"{legende_html}"
+        '<p class="aide-clavier">Flèches gauche et droite : parcourir les '
+        "années. Échap : quitter.</p></figure>"
+        + donnees_du_graphique(
+            titre, annees, series, unite,
+            decimales if decimales_donnees is None else decimales_donnees,
+            nom_abscisse)
     )
 
 

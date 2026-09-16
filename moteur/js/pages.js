@@ -3057,7 +3057,6 @@ const COULEURS_SCENARIOS = {
 function milliards(millions, decimales = 0) {
   return `${g.nombre(millions / 1000, decimales)} Md €`;
 }
-
 /**
  * Ce que la retraite coûte, d'où vient l'argent, et ce qui manque.
  *
@@ -3065,19 +3064,26 @@ function milliards(millions, decimales = 0) {
  * TEMPS. C'est une contrainte de construction, pas un vœu, et elle décide de
  * tout ce qui suit :
  *
- *  * **Une question par carte, une réponse par carte.** Chaque bloc porte une
- *    question en français courant, sa réponse en une phrase, puis le tracé qui
- *    la montre. Une capture de la carte se comprend toute seule, hors du site.
- *  * **Quatre graphiques, et pas un de plus.** La page en portait sept, dont
- *    deux disaient la même chose dans deux unités.
+ *  * **Une question par carte, une réponse par carte**, en deux phrases courtes,
+ *    avant le tracé. La carte se télécharge en image, signée, pour être postée.
+ *  * **Deux graphiques, et pas un de plus.** Les trois qui traçaient une part du
+ *    PIB dans le temps — l'histoire depuis 1959, le bilan jusqu'en 2070, l'effet
+ *    de la réforme — n'en font plus qu'un : ils répondaient à la même question
+ *    sur trois fenêtres.
  *  * **Tout le reste est replié.** Rien n'est retiré — une page qui ne peut pas
  *    se justifier n'est pas honnête —, mais rien n'oblige à le traverser.
- *  * **Les mots de spécialiste portent leur définition**, ouvrable sur place.
+ *  * **Les phrases sont courtes**, et les mots de spécialiste portent leur
+ *    définition, ouvrable sur place.
  *
- * LE PÉRIMÈTRE DES DEUX PREMIÈRES CARTES EST CELUI DU COR : c'est le seul jeu de
+ * LE PÉRIMÈTRE DU GRAPHIQUE DE TÊTE EST CELUI DU COR : c'est le seul jeu de
  * comptes où les dépenses ET les ressources du même ensemble de régimes soient
  * publiées sous la même convention. Le modèle n'y intervient que par un RAPPORT
  * sans dimension, jamais par un niveau.
+ *
+ * LA COURBE D'AVANT 2002 VIENT D'AILLEURS, et c'est pourquoi elle s'arrête là où
+ * celle du COR commence : un demi-point de PIB les sépare, celui de la
+ * dépendance et de l'épargne retraite. Le décrochement se voit, et c'est bien
+ * ainsi — le masquer collerait deux séries qui ne mesurent pas la même chose.
  */
 function cout(contexte) {
   const comptes = contexte.comptes();
@@ -3104,185 +3110,140 @@ function cout(contexte) {
   const manque = -observe.soldeMeur("actuel");
   const partManquante = -observe.solde("actuel") / observe.depense("actuel");
   const reperes = g.fiche(
-    `Ce qui est sorti en ${obs}`,
+    `Versé aux retraités en ${obs}`,
     milliards(observe.depenseMeur("actuel"), 0),
-    `de pensions, pour ${g.nombre(retraites / 1e6, 1)} millions de retraités`,
+    `à ${g.nombre(retraites / 1e6, 1)} millions de personnes`,
   ) + g.fiche(
-    "Ce qui est rentré pour les payer",
+    "Encaissé pour le payer",
     milliards(observe.ressourcesMeur(), 0),
-    "de cotisations, d'impôts et de versements d'autres caisses",
+    "cotisations et impôts",
   ) + g.fiche(
-    manque > 0 ? "Ce qui a manqué" : "Ce qui est resté",
+    manque > 0 ? "Manquant" : "Reste",
     milliards(Math.abs(manque), 1),
-    `soit ${g.pourcentage(Math.abs(partManquante), false, 1)} de ce qui a été versé`,
+    `${g.pourcentage(Math.abs(partManquante), false, 1)} de la facture`,
   );
 
-  // -- carte 1 : ce qui rentre, ce qui sort --------------------------------
-  const anneesSolde = solde.annees.map((ligne) => ligne.annee);
-  const courbeRentre = new g.Serie(
-    "Ce qui rentre : cotisations, impôts, transferts",
-    solde.annees.map((ligne) => ligne.ressources * 100),
-    "var(--serie-5)",
-  );
-  const courbeSort = new g.Serie(
-    "Ce qui sort : les pensions versées",
-    solde.annees.map((ligne) => ligne.depense("actuel") * 100),
-    "var(--serie-2)",
-  );
+  // -- le graphique de tête : cent onze ans en un seul cadre ----------------
+  //
+  // Il en remplace trois. Les fenêtres se recouvraient — 1959-2024 pour
+  // l'histoire, 2002-2070 pour le bilan, 2025-2070 pour la réforme — et la même
+  // grandeur y était tracée trois fois, à trois échelles différentes. Les séries
+  // ne se recouvrent pas, elles : chacune vaut `null` hors de la plage que sa
+  // source publie, et la courbe s'y interrompt plutôt que de prolonger une
+  // mesure que personne n'a faite.
+  const anneesToutes = [];
+  for (let a = c.premiereAnnee; a <= solde.derniereAnnee; a += 1) {
+    anneesToutes.push(a);
+  }
+  const rang = new Map(anneesToutes.map((annee, position) => [annee, position]));
+
+  const serie = (libelle, couleur, valeurs, tirets = false, glose = "") => {
+    const colonne = anneesToutes.map(() => null);
+    for (const [annee, valeur] of valeurs) { colonne[rang.get(annee)] = valeur; }
+    return new g.Serie(libelle, colonne, couleur, tirets, glose);
+  };
+
+  // Avant 2002, le COR n'a rien : c'est la DREES qui porte l'histoire, sur un
+  // périmètre un peu plus large. La courbe s'arrête à 2001, là où l'autre
+  // commence, et le décrochement entre les deux se voit — il vaut le demi-point
+  // que les deux comptes ne comptent pas pareil.
+  const avant = [];
+  for (let a = c.premiereAnnee; a < solde.premiereAnnee; a += 1) {
+    avant.push([a, depenses.partPib(a) * 100]);
+  }
+  const sortie = solde.annees.map((ligne) => [ligne.annee, ligne.depense("actuel") * 100]);
+  const entree = solde.annees.map((ligne) => [ligne.annee, ligne.ressources * 100]);
+  // La réforme ne change rien avant sa bascule : sa courbe ne commence donc qu'à
+  // l'année observée la plus récente, d'où la décision se prend.
+  const reforme = "notionnel_prospectif_employeur";
+  const apres = solde.annees.filter((ligne) => ligne.annee >= obs)
+    .map((ligne) => [ligne.annee, ligne.depense(reforme) * 100]);
+
+  // L'ordre est celui de la lecture, de gauche à droite : la légende se
+  // parcourt alors dans l'ordre où l'œil rencontre les courbes.
+  const courbes = [
+    serie(`Avant ${solde.premiereAnnee}`, "var(--serie-1)", avant, false,
+      "autre source, périmètre un peu plus large"),
+    serie("Ce qui sort : les pensions versées", "var(--serie-2)", sortie),
+    serie("Ce qui rentre : cotisations et impôts", "var(--serie-5)", entree),
+    serie(`Ce qui sortirait en comptes notionnels dès ${bascule}`,
+      "var(--serie-4)", apres, true),
+  ];
   const bilan = g.graphique(
-    "Ce que le système de retraite encaisse et ce qu'il verse, de "
-    + `${solde.premiereAnnee} à ${solde.derniereAnnee}, en part du PIB`,
-    anneesSolde, [courbeRentre, courbeSort], "% du PIB", false, 0, true,
-    obs, "projection", [], "Année", [0, 1],
-    "L'écart entre les deux : vert s'il en reste, rouge s'il en manque",
+    "Ce que la retraite verse et ce qu'elle encaisse, de "
+    + `${c.premiereAnnee} à ${solde.derniereAnnee}, en part du PIB`,
+    anneesToutes, courbes, "% du PIB", false, 0, true, obs, "projection", [],
+    "Année", [2, 1], "L'écart : vert s'il en reste, rouge s'il en manque",
+    // L'axe gradue de quatre en quatre ; les chiffres, eux, portent le dixième.
+    // Sans lui, l'écart entre les deux courbes — un point et demi de PIB, tout
+    // le sujet de la carte — se lirait « 14 » contre « 13 ».
+    1,
   );
+  const equilibre = solde.premiereAnneeEquilibree(reforme);
 
-  // -- carte 2 : d'où vient l'argent ---------------------------------------
+  // -- le second graphique : d'où vient l'argent ---------------------------
   const anneesVentilees = comptes.anneesVentilees();
-  const premiereVentileeRessources = anneesVentilees[0];
+  const premiereVentilee = anneesVentilees[0];
   const derniereVentilee = anneesVentilees[anneesVentilees.length - 1];
-  const bandesRessources = GROUPES.map((groupe) => new g.Serie(
+  const bandes = GROUPES.map((groupe) => new g.Serie(
     groupe.libelle,
     anneesVentilees.map((annee) => comptes.ressourceGroupe(groupe.code, annee) * 100),
     groupe.couleur,
   ));
   const provenance = g.graphique(
     "D'où viennent les ressources du système de retraite, de "
-    + `${premiereVentileeRessources} à ${derniereVentilee}, en part du PIB`,
-    anneesVentilees, bandesRessources, "% du PIB", true,
+    + `${premiereVentilee} à ${derniereVentilee}, en part du PIB`,
+    anneesVentilees, bandes, "% du PIB", true, 0, true, null, "", [], "Année",
+    null, "", 1,
   );
   const partSalaires = comptes.partGroupe("salaires", derniereVentilee);
-  const partImpotsDebut = comptes.partGroupe("impots", premiereVentileeRessources);
+  const partImpotsDebut = comptes.partGroupe("impots", premiereVentilee);
   const partImpotsFin = comptes.partGroupe("impots", derniereVentilee);
 
-  // -- carte 3 : depuis quand ça coûte autant ------------------------------
-  const anneesDepense = c.annees.map((ligne) => ligne.annee);
-  const premiereDepense = c.premiereAnnee;
-  const derniereDepense = c.derniereAnnee;
-  const courbePib = new g.Serie(
-    "Ce que la France consacre à ses retraités",
-    c.annees.map((ligne) => ligne.partPib * 100),
-    "var(--serie-1)",
-  );
-  const histoire = g.graphique(
-    "Part des dépenses de vieillesse dans le produit intérieur brut, "
-    + `${premiereDepense}-${derniereDepense}`,
-    anneesDepense, [courbePib], "% du PIB",
-  );
-
-  // -- carte 4 : ce que la réforme change ----------------------------------
-  //
-  // La fenêtre s'ouvre à la dernière année observée : c'est celle où la décision
-  // se prend, et tracer quarante ans de passé par-dessus n'aiderait personne à la
-  // lire. Le scénario montré est le 5 — comptes notionnels à compter de la
-  // bascule, cotisations salariales ET patronales portées au compte : le seul qui
-  // décrive une réforme applicable et qui crédite la même chose que ce que le
-  // système actuel prélève.
-  const lignesFutur = solde.annees.filter((ligne) => ligne.annee >= obs);
-  const anneesFutur = lignesFutur.map((ligne) => ligne.annee);
-  const reforme = "notionnel_prospectif_employeur";
-  const courbesReforme = [
-    new g.Serie("Ce qui rentre",
-      lignesFutur.map((ligne) => ligne.ressources * 100), "var(--serie-5)"),
-    new g.Serie("Ce qui sort, si rien ne change",
-      lignesFutur.map((ligne) => ligne.depense("actuel") * 100), "var(--serie-2)"),
-    // Ni la couleur du scénario 5 ailleurs sur le site — un vert que celui de
-    // « ce qui rentre » ne laisserait pas distinguer —, ni celle d'aucune des
-    // deux autres courbes : trois teintes franchement séparées, plus le trait
-    // discontinu qui dit « ceci n'existe pas encore ».
-    new g.Serie(`Ce qui sortirait en comptes notionnels à partir de ${bascule}`,
-      lignesFutur.map((ligne) => ligne.depense(reforme) * 100),
-      "var(--serie-4)", true),
-  ];
-  const effet = g.graphique(
-    `Ressources, dépenses et dépenses en comptes notionnels, de ${obs} à `
-    + `${solde.derniereAnnee}, en part du PIB`,
-    anneesFutur, courbesReforme, "% du PIB", false, 0, true, null, "", [],
-    "Année", [0, 1], "Ce qui manque au système actuel",
-  );
-  const equilibre = solde.premiereAnneeEquilibree(reforme);
-  const ecart2070 = horizon.depense("actuel") - horizon.depense(reforme);
-
-  // -- les quatre cartes ---------------------------------------------------
+  // -- les deux cartes -----------------------------------------------------
   const carteBilan = g.cle(
-    "Est-ce que la retraite coûte plus qu'elle ne rapporte ?",
-    `Oui, depuis une quinzaine d'années — mais de peu. En ${obs}, il a
-manqué ${milliards(Math.abs(manque), 1)} sur
-${milliards(observe.depenseMeur("actuel"), 0)} versés.
-<strong>Le problème n'est pas là où on en est, c'est là où on va</strong> : si
-rien ne change, il manquerait
+    "La retraite coûte-t-elle plus qu'elle ne rapporte ?",
+    `Oui, un peu : ${milliards(Math.abs(manque), 1)} de trop en ${obs}.
+<strong>L'écart va se creuser</strong> : en ${solde.derniereAnnee} il
+manquerait
 ${g.pourcentage(Math.abs(horizon.solde("actuel") / horizon.depense("actuel")), false, 0)}
-de ce qu'il faudrait verser en ${solde.derniereAnnee}.`,
+de la facture. En comptes notionnels dès ${bascule}, les comptes se
+rééquilibrent en ${equilibre || "jamais"}.`,
     bilan,
-    `Source : Conseil d'orientation des retraites, comptes du système de
-retraite. Observé jusqu'en ${obs}, projeté ensuite — la projection est la
-sienne, pas la nôtre. Les deux courbes sont en ${g.mot("part du PIB",
-      "Le PIB est la valeur de tout ce que la France produit en un an. Rapporter une "
-      + "dépense au PIB, c'est demander quelle part de son travail un pays consacre à "
-      + "quelque chose. C'est la seule unité où une dépense de 2002 et une projection "
-      + "de 2070 se comparent : l'euro de 2070 ne vaudra pas celui d'aujourd'hui.")}.`,
+    `Sources : DREES jusqu'en ${solde.premiereAnnee - 1}, Conseil
+d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
+${g.mot("part du PIB",
+      "Le PIB, c'est tout ce que la France produit en un an. En « part du "
+      + "PIB », on demande : sur 100 € produits, combien vont aux retraites ? "
+      + "C'est la seule façon de comparer 1959 et 2070, l'euro n'ayant pas la "
+      + "même valeur.")} : sur 100 € produits en France, combien vont aux
+retraites.`,
   );
 
   const carteProvenance = g.cle(
-    "D'où vient cet argent ?",
-    `Des salaires, pour ${g.pourcentage(partSalaires, false, 0)}. Le
-reste est surtout de l'impôt, et <strong>cette part a doublé en vingt
-ans</strong> : l'État a allégé les cotisations des employeurs pour baisser le
-coût du travail, puis remboursé la retraite avec la TVA et la CSG — de
-${g.pourcentage(partImpotsDebut, false, 0)} des ressources en
-${premiereVentileeRessources} à ${g.pourcentage(partImpotsFin, false, 0)}
-en ${derniereVentilee}.`,
+    "Qui paie ?",
+    `Les salaires, pour ${g.pourcentage(partSalaires, false, 0)} :
+c'est ce qui est prélevé sur chaque fiche de paie. Le reste vient surtout de
+l'impôt, et <strong>cette part a doublé en vingt ans</strong> —
+${g.pourcentage(partImpotsDebut, false, 0)} en ${premiereVentilee},
+${g.pourcentage(partImpotsFin, false, 0)} en ${derniereVentilee}.`,
     provenance + g.depliant(
-      "Ce que contient chacune de ces quatre parts",
+      "Ce que contient chaque part",
       g.gloses(GROUPES.map((groupe) => [groupe.libelle, groupe.explication])),
     ),
-    `Source : Conseil d'orientation des retraites. La ventilation n'est
-publiée que de ${premiereVentileeRessources} à ${derniereVentilee} ; le total,
-lui, remonte à ${solde.premiereAnnee} et va jusqu'à ${solde.derniereAnnee}. Les
-six postes du COR, tels qu'il les publie, sont plus bas.`,
-  );
-
-  const carteHistoire = g.cle(
-    "Est-ce que ça a toujours coûté autant ?",
-    `Non : c'est près de trois fois plus qu'en ${premiereDepense}, et
-<strong>presque toute la hausse est derrière nous</strong>. La France y
-consacrait alors
-${g.pourcentage(depenses.partPib(premiereDepense), false, 1)} de ce qu'elle
-produisait, contre ${g.pourcentage(depenses.partPib(derniereDepense), false, 1)}
-aujourd'hui. La montée s'est faite entre 1960 et 2000, quand la retraite est
-devenue générale et que les pensions ont rattrapé les salaires ; depuis, la
-courbe ne monte plus que par à-coups de crise, et redescend.`,
-    histoire,
-    `Source : DREES, comptes de la protection sociale. Le périmètre est un
-peu plus large que celui des deux cartes précédentes — il compte aussi la
-dépendance et l'épargne retraite —, ce qui explique l'écart d'un demi-point. Le
-détail est plus bas.`,
-  );
-
-  const carteEffet = g.cle(
-    "Qu'est-ce que la réforme changerait, et quand ?",
-    `<strong>Rien avant ${bascule}, et pas grand-chose avant 2040.</strong>
-Les droits déjà acquis sont conservés : personne ne voit sa pension recalculée,
-et il faut attendre que des carrières entières se soient déroulées sous la
-nouvelle règle. Les comptes repasseraient à l'équilibre en
-${equilibre || "jamais"}, et l'écart avec le système actuel atteindrait
-${g.pourcentage(ecart2070, false, 1)} du PIB en ${solde.derniereAnnee}.`,
-    effet,
-    `Scénario 5 : comptes notionnels à compter de ${bascule}, cotisations
-du salarié et de l'employeur portées au compte. C'est, des six que le modèle
-calcule, celui qui décrit une réforme applicable en créditant ce qui est
-réellement prélevé aujourd'hui. Les cinq autres sont plus bas.`,
+    `Source : Conseil d'orientation des retraites. Ce détail n'est publié
+que de ${premiereVentilee} à ${derniereVentilee}.`,
   );
 
   return `
 <h2 style="margin-top:0">L'argent de la retraite</h2>
-<p class="chapeau">Les cotisations prélevées sur les salaires ne sont pas mises
-de côté : elles partent aussitôt payer les pensions de ceux qui sont déjà
-retraités. C'est ce qu'on appelle la ${g.mot("répartition",
+<p class="chapeau">Vos cotisations ne sont pas mises de côté. Elles paient
+aussitôt les pensions de ceux qui sont déjà retraités : c'est la
+${g.mot("répartition",
     "Les cotisations d'aujourd'hui paient les pensions d'aujourd'hui. Rien n'est "
     + "placé, rien n'est épargné : chaque euro prélevé sur une fiche de paie est "
-    + "reversé aussitôt à un retraité.")}. Cette page montre ce qui rentre, ce qui
-sort, et ce qui manque.</p>
+    + "reversé aussitôt à un retraité.")}. Voici ce qui rentre, ce qui sort, et ce
+qui manque.</p>
 
 <div class="fiches reperes">${reperes}</div>
 
@@ -3290,35 +3251,24 @@ ${carteBilan}
 
 ${carteProvenance}
 
-${carteHistoire}
-
-<h2>Et si on changeait de système ?</h2>
-<p class="chapeau">Le programme de ce site propose de remplacer la règle de
-calcul actuelle par des ${g.mot("comptes notionnels",
-    "Un compte virtuel par personne, où l'on inscrit chaque cotisation versée. Au "
-    + "départ en retraite, le total est divisé par le nombre d'années qu'il reste "
-    + "statistiquement à vivre, et cela donne la pension. Rien n'est placé : c'est "
-    + "toujours la répartition, mais la règle de calcul change.")}. Voici ce que cela
-déplacerait — et ce que cela ne déplacerait pas.</p>
-
-${carteEffet}
-
-<div class="note"><strong>Une dépense plus basse n'est pas une économie.</strong>
-Un système en comptes notionnels ne laisse pas d'argent dormir : il relève les
-pensions jusqu'à l'équilibre, ou les abaisse. Ce graphique ne dit donc pas
-« on dépenserait moins » — il dit « avec le même argent, on servirait autant,
-<em>réparti autrement entre les carrières</em> ». C'est cette répartition, et
-elle seule, que le reste de ce site mesure.</div>
+<div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
+système en ${g.mot("comptes notionnels",
+    "Un compte virtuel par personne, où chaque cotisation versée est inscrite. Au "
+    + "départ en retraite, le total est divisé par le nombre d'années qu'il reste à "
+    + "vivre en moyenne : cela donne la pension. Rien n'est placé — c'est toujours "
+    + "la répartition, mais la règle de calcul change.")} ne laisse pas d'argent
+dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
+ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
+on servirait autant, mais réparti autrement entre les carrières</em>.</div>
 
 <h2>Et pour vous ?</h2>
-<p>Tout ce qui précède est un total national. Ce que chaque règle donne sur une
-carrière — la vôtre — se calcule en quelques secondes, dans votre navigateur.</p>
+<p>Tout cela est un total national. Ce que chaque règle donne sur votre
+carrière se calcule en quelques secondes, dans votre navigateur.</p>
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer ma
 retraite</a><a href="${g.lien("/cas-types")}">Voir treize carrières types</a></p>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici, et
-rien n'oblige à le lire.</p>
+<p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici.</p>
 
 ${coutDetailDepense(contexte)}
 ${coutDetailRessources(contexte)}

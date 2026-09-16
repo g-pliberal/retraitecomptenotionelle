@@ -15,6 +15,15 @@ import { echapper, formatFixe } from "./format.js";
 
 export const DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle";
 
+/**
+ * Ce qui signe une carte exportée en image. Une image quittant le site n'a plus
+ * ni barre d'adresse ni pied de page : sans ces deux lignes, elle circule sans
+ * dire d'où elle vient ni qui l'a produite, et le premier qui la republie en
+ * devient la source.
+ */
+export const SIGNATURE = "@pliberal";
+export const SIGNATURE_SITE = "Parti libéral français — le simulateur de retraite";
+
 /** Espace insécable fin, séparateur de milliers à la française. */
 const FINE = "\u202f";
 
@@ -347,8 +356,14 @@ export function depliant(titre, corps) {
  */
 export function cle(question, reponse, corps, source = "") {
   const fin = source ? `<p class="source">${source}</p>` : "";
+  // Le bouton n'est pas un ornement : c'est lui qui fait de la carte autre chose
+  // qu'un bloc de page. Il compose, dans le navigateur, une image qui porte la
+  // question, la réponse, le tracé, sa source et la signature du compte. Le
+  // comportement est dans `index.html`, en écoute déléguée.
+  const partage = '<p class="partage"><button type="button" class="partager">'
+    + "Télécharger l'image</button></p>";
   return `<section class="cle"><h3>${echapper(question)}</h3>`
-    + `<p class="reponse">${reponse}</p>${corps}${fin}</section>`;
+    + `<p class="reponse">${reponse}</p>${corps}${fin}${partage}</section>`;
 }
 
 
@@ -410,6 +425,19 @@ const PAS_RONDS = [1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0];
  */
 const ECART_MINIMAL_GRADUATIONS = 6;
 
+/**
+ * Pas admissibles de l'axe des abscisses, du plus fin au plus large. Ce sont des
+ * durées qu'un lecteur reconnaît : on gradue de dix ans en dix ans, ou de vingt,
+ * jamais de treize.
+ */
+const PAS_GRADUATIONS_X = [10, 20, 25, 50, 100];
+
+/**
+ * Au-delà, les étiquettes se chevauchent sur un écran de téléphone, où le tracé
+ * est réduit de moitié et ses textes grossis pour rester lisibles.
+ */
+const GRADUATIONS_X_MAXIMUM = 8;
+
 /** Une courbe ou une bande d'un graphique. */
 export class Serie {
   constructor(libelle, valeurs, couleur, tirets = false, glose = "") {
@@ -462,9 +490,19 @@ function ordonnee(valeur, sommet) {
 
 /** Décennies comprises dans la plage, plus les deux bornes. */
 function graduationsX(premiere, derniere) {
+  // La décennie est le pas naturel, et il suffit tant que la plage est courte.
+  // Cent onze ans en donneraient douze : le pas s'élargit jusqu'à ce que le
+  // compte tienne.
+  const compte = (candidat) => {
+    let total = 0;
+    for (let a = premiere; a <= derniere; a += 1) { if (a % candidat === 0) total += 1; }
+    return total;
+  };
+  const pas = PAS_GRADUATIONS_X.find((candidat) => compte(candidat) <= GRADUATIONS_X_MAXIMUM)
+    ?? PAS_GRADUATIONS_X[PAS_GRADUATIONS_X.length - 1];
   const annees = [];
   for (let a = premiere; a <= derniere; a += 1) {
-    if (a % 10 === 0) annees.push(a);
+    if (a % pas === 0) annees.push(a);
   }
   if (!annees.includes(premiere)) annees.unshift(premiere);
   if (!annees.includes(derniere)) annees.push(derniere);
@@ -524,21 +562,38 @@ function bande(basses, hautes, annees, sommet) {
  * suivent forment un seul polygone : sans ce regroupement, soixante-neuf
  * quadrilatères se toucheraient bord à bord et leurs jointures se verraient.
  *
- * Rien ne sort si l'une des deux séries a un trou : un ruban interpolé par-
- * dessus une année manquante affirmerait un écart que personne n'a mesuré.
+ * Deux séries peuvent ne pas couvrir la même plage — le graphique de tête en
+ * porte une qui remonte à 1959 et deux qui commencent en 2002. Le ruban se peint
+ * alors sur la SEULE PLAGE CONTINUE où les deux sont définies, et il se tait si
+ * l'une d'elles a un trou À L'INTÉRIEUR de cette plage : un ruban interpolé
+ * par-dessus une année manquante affirmerait un écart que personne n'a mesuré.
  */
 function airesEcart(haute, basse, annees, sommet) {
-  const absente = (valeur) => valeur === null || valeur === undefined;
-  if (haute.valeurs.some(absente) || basse.valeurs.some(absente)) {
-    return "";
-  }
+  const presente = (valeur) => valeur !== null && valeur !== undefined;
   if (haute.valeurs.length !== annees.length
       || basse.valeurs.length !== annees.length) {
     return "";
   }
+  const communs = [];
+  for (let rang = 0; rang < annees.length; rang += 1) {
+    if (presente(haute.valeurs[rang]) && presente(basse.valeurs[rang])) {
+      communs.push(rang);
+    }
+  }
+  if (communs.length < 2
+      || communs[communs.length - 1] - communs[0] !== communs.length - 1) {
+    return "";
+  }
+  // Les abscisses restent celles du graphique ENTIER : c'est le cadre qui les
+  // fixe, pas la plage du ruban. Ses bornes sont donc retenues avant que la
+  // plage ne soit restreinte.
+  const premiere = annees[0];
   const derniere = annees[annees.length - 1];
+  const bornees = communs.map((rang) => annees[rang]);
+  const hautes = communs.map((rang) => haute.valeurs[rang]);
+  const basses = communs.map((rang) => basse.valeurs[rang]);
   const point = (annee, dessus, dessous) => ({
-    x: abscisse(annee, annees[0], derniere),
+    x: abscisse(annee, premiere, derniere),
     dessus: ordonnee(dessus, sommet),
     dessous: ordonnee(dessous, sommet),
   });
@@ -546,12 +601,12 @@ function airesEcart(haute, basse, annees, sommet) {
   // La chaîne des sommets du ruban : les années, plus les croisements qui
   // tombent entre deux d'entre elles. `signes` porte le signe de l'écart sur
   // chaque intervalle, et compte donc un élément de moins.
-  const chaine = [point(annees[0], haute.valeurs[0], basse.valeurs[0])];
+  const chaine = [point(bornees[0], hautes[0], basses[0])];
   const signes = [];
-  for (let rang = 1; rang < annees.length; rang += 1) {
-    const avant = haute.valeurs[rang - 1] - basse.valeurs[rang - 1];
-    const apres = haute.valeurs[rang] - basse.valeurs[rang];
-    const courant = point(annees[rang], haute.valeurs[rang], basse.valeurs[rang]);
+  for (let rang = 1; rang < bornees.length; rang += 1) {
+    const avant = hautes[rang - 1] - basses[rang - 1];
+    const apres = hautes[rang] - basses[rang];
+    const courant = point(bornees[rang], hautes[rang], basses[rang]);
     if (avant * apres < 0.0) {
       const part = avant / (avant - apres);
       const precedent = chaine[chaine.length - 1];
@@ -676,7 +731,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
                           decimales = 0, legendeVisible = true, repere = null,
                           libelleRepere = "", etiquettes = [],
                           nomAbscisse = "Année", ecart = null,
-                          libelleEcart = "") {
+                          libelleEcart = "", decimalesDonnees = null) {
   if (!annees.length || !series.length) {
     return "";
   }
@@ -747,15 +802,32 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     repereHtml = `<line class="repere" x1="${x}" y1="${nombreBrut(MARGE_HAUT)}" `
       + `x2="${x}" y2="${base}"/>${etiquette}`;
   }
-  return '<figure class="graphique">'
+  // Ce dont la lecture au survol a besoin, et rien de plus.
+  //
+  // `data-gauche` et `data-droite` sont les abscisses du premier et du dernier
+  // point, en unités du repère : de quoi retrouver, d'une position de pointeur,
+  // le rang de l'année visée. Les VALEURS ne sont pas redites ici — elles sont
+  // dans le tableau de points posé juste dessous, mises en forme exactement
+  // comme la page les écrit.
+  //
+  // La figure est focusable et porte un `role="group"` : les flèches y
+  // parcourent les années, ce qu'une image ne saurait pas faire.
+  return '<figure class="graphique" tabindex="0" role="group" '
+    + `aria-label="${echapper(titre)}" `
+    + `data-gauche="${gauche}" data-droite="${droite}">`
     + `<svg viewBox="0 0 ${LARGEUR_TRACE} ${HAUTEUR_TRACE}" role="img" `
     + `aria-label="${echapper(titre)}">`
     + lignes.join("") + traces.join("")
     + `<line class="axe" x1="${gauche}" y1="${base}" x2="${droite}" y2="${base}"/>`
     + repereHtml + uniteHtml
     + (etiquettes.length ? etiquettesDeFin(series, sommet, etiquettes) : "")
-    + `</svg>${legendeVisible ? legende(series, libelleEcart) : ""}</figure>`
-    + donneesDuGraphique(titre, annees, series, unite, decimales, nomAbscisse);
+    + '<g class="survol"></g></svg>'
+    + '<div class="lecture" role="status" aria-live="polite" hidden></div>'
+    + `${legendeVisible ? legende(series, libelleEcart) : ""}`
+    + '<p class="aide-clavier">Flèches gauche et droite : parcourir les '
+    + 'années. Échap : quitter.</p></figure>'
+    + donneesDuGraphique(titre, annees, series, unite,
+      decimalesDonnees === null ? decimales : decimalesDonnees, nomAbscisse);
 }
 
 /**

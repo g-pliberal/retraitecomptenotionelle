@@ -1147,15 +1147,33 @@ et `cout.py` ; `index.html` ; `tests/test_web.py`, `tests/test_cout.py` et
   une phrase qui disait le contraire (« il ne dérape pas »). L'écart est
   maintenant écrit là où il se mesure, dans le dépliant des six scénarios, et
   nulle part ailleurs.
-- *Quatre graphiques ouverts au lieu de sept, aucun tableau ouvert au lieu de
-  neuf, 953 mots à traverser au lieu de 5 652.* La page en contient toujours
-  7 160 et quinze tableaux : rien n'a été retiré, sauf deux graphiques et deux
-  tableaux qui redisaient une série déjà tracée. Tout le reste est dans huit
-  sections repliées qui se lisent comme un sommaire — ce qui est, du catalogue
-  de l'action 15, les procédés 7, 8, 9, 10, 12, 21 et 25 appliqués ensemble, et
-  l'aveu que les procédés 1 à 4 n'étaient pas nécessaires ici : une pile de
-  titres repliés EST un sommaire, et elle ne se heurte pas à l'obstacle de
-  l'adresse-route.
+- *Deux graphiques ouverts au lieu de sept, aucun tableau ouvert au lieu de
+  neuf, 535 mots à traverser au lieu de 5 652.* La page en contient toujours
+  près de sept mille et quinze tableaux : rien n'a été retiré, sauf ce qui
+  redisait une série déjà tracée. Tout le reste est dans huit sections repliées
+  qui se lisent comme un sommaire — ce qui est, du catalogue de l'action 15, les
+  procédés 7, 8, 9, 10, 12, 21 et 25 appliqués ensemble, et l'aveu que les
+  procédés 1 à 4 n'étaient pas nécessaires ici : une pile de titres repliés EST
+  un sommaire, et elle ne se heurte pas à l'obstacle de l'adresse-route.
+- *Les trois tracés d'une part de PIB n'en font plus qu'un.* L'histoire depuis
+  1959, le bilan jusqu'en 2070 et l'effet de la réforme suivaient la même
+  grandeur sur trois fenêtres qui se recouvraient, à trois échelles verticales
+  différentes : les comparer supposait de recomposer de tête ce qu'un seul cadre
+  montre d'un coup. Les séries, elles, ne se recouvrent pas — chacune vaut
+  `None` hors de la plage que sa source publie, et la courbe s'y interrompt.
+  Le décrochement d'un demi-point entre la DREES et le COR, en 2002, se voit :
+  c'est ce que les deux comptes ne comptent pas pareil, et le masquer aurait
+  collé deux séries qui ne mesurent pas la même chose.
+- *Les graphiques se lisent, et ils sortent du site.* Survol, doigt et flèches
+  du clavier posent un trait de repère, un point sur chaque courbe et la valeur
+  de l'année — lue dans le tableau de points que le tracé porte déjà, et non
+  dans un attribut qui ferait une seconde vérité. Et un bouton compose, dans le
+  navigateur, une image de la carte entière : question, réponse, tracé, légende,
+  source, signature `@pliberal`. Sans bibliothèque et sans serveur — le SVG est
+  cloné, ses styles calculés recopiés nœud à nœud, puis dessiné sur une toile
+  où le texte est composé au trait. C'est, du catalogue de l'action 15, le
+  procédé 24 poussé jusqu'à sa conséquence : la vue alternative d'un graphique
+  n'est pas seulement un tableau, c'est aussi une image qui se poste.
 - *Quatre briques nouvelles dans le gabarit*, portées des deux côtés :
   `cle(question, réponse, tracé, source)`, la carte encadrée qui se découpe et
   se comprend hors du site ; `depliant(titre, corps)`, la section repliée ;
@@ -1169,8 +1187,11 @@ et `cout.py` ; `index.html` ; `tests/test_web.py`, `tests/test_cout.py` et
   qui est du contenu de phrase, et un test interdit à toute balise de bloc de se
   trouver dans un `<p>`, sur toutes les pages.
 
-**Ce qui reste.** *Les quatre autres pages*, et l'action 15 les liste. *Le ruban
-d'écart sur un axe qui descend sous zéro* : `_sommet` ne connaît que des valeurs
+**Ce qui reste.** *Les quatre autres pages*, et l'action 15 les liste. Les
+briques y sont réutilisables telles quelles : la carte, la section repliée, le
+mot du glossaire, la lecture au survol et la composition d'image valent pour
+tout graphique du site, et rien n'y est propre à la page Coût. *Le ruban d'écart
+sur un axe qui descend sous zéro* : `_sommet` ne connaît que des valeurs
 positives, ce qui interdit pour l'instant de tracer un solde directement, et
 oblige à le lire comme l'écart de deux courbes. *Les recettes ne réagissent
 toujours à rien* : le scénario 6, qui pose un taux unique de 18 %, déplacerait
@@ -1413,3 +1434,18 @@ l'assiette comme les pensions, et c'est l'action 11 qui ouvrirait cette porte.
   que l'action 15 signalait. Enfin, **le ruban peint entre deux courbes fait
   plus pour la lisibilité d'un solde que n'importe quelle légende** : c'est la
   seule brique de cette action qui mériterait d'être reprise ailleurs.
+- **Septembre 2026, action 16, seconde passe.** Trois demandes, toutes tenues.
+  Les graphiques qui traitaient du même sujet sur deux fenêtres sont regroupés :
+  la page passe de quatre tracés ouverts à deux, et de 953 mots à 535. Les
+  graphiques se lisent au survol, au doigt et aux flèches — la valeur de l'année
+  vient du tableau de points que le tracé porte déjà, ce qui évite d'écrire deux
+  fois les mêmes chiffres dans deux portages qui ne formatent pas les flottants
+  pareil. Et chaque carte se télécharge en image signée `@pliberal`, composée
+  dans le navigateur sans bibliothèque. Deux choses à en retenir. **Un tracé
+  porte déjà sa propre description** : le tableau de points, écrit pour
+  l'accessibilité, s'est trouvé être exactement la source de données dont
+  l'interaction avait besoin — une contrainte tenue pour une raison en a servi
+  une autre, sans rien ajouter. Et **l'axe et les chiffres n'ont pas la même
+  précision** : un axe qui gradue de quatre en quatre se lit mieux en nombres
+  ronds, mais l'écart entre deux courbes s'y perdait à l'arrondi, et il fallait
+  séparer les deux réglages pour que la lecture au survol serve à quelque chose.
