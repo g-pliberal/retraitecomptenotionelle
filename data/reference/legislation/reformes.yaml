@@ -356,7 +356,12 @@ reformes:
               arrco, arrco_tranche_2, agirc_entreprises_nouvelles,
               arrco_tranche_2_entreprises_nouvelles]
     absorbee_par: [duree_requise_par_generation]
-    non_appliquee: {}
+    non_appliquee:
+      cavec_complementaire: >-
+        Aucune durée d'assurance n'entre dans le complémentaire des
+        experts-comptables : ses statuts (arrêté du 22 février 2008, article
+        3.13) servent le taux plein « à 65 ans » et abattent l'anticipation
+        « entre 60 et 65 ans » à l'âge seul.
 
   - code: ircec_2016
     date: 2016-01-01
@@ -764,5 +769,79 @@ reformes:
     texte: {reference: "accord professionnel de la banque du 13 septembre 1993 : intégration à l'Arrco et à l'Agirc au 1er janvier 1994, droits figés au 31 décembre 1993, complément bancaire différentiel (hors JORF)", id: null}
     parametres: [fermeture]
     regimes: [regimes_professionnels_integres]
+    absorbee_par: []
+    non_appliquee: {}
+
+  # Les majorations de report des régimes en points, servies depuis
+  # l'action 22 : chaque texte date une coupure de fiche.
+  - code: cavec_report_2008
+    date: 2008-03-01
+    texte: {reference: "arrêté du 22 février 2008 portant approbation des modifications apportées aux statuts de la caisse d'assurance vieillesse des experts-comptables et des commissaires aux comptes, articles 3.13 et 3.14", id: JORFARTI000018197778}
+    parametres: [age_taux_plein, decote_par_trimestre, surcote_par_trimestre, surcote_points]
+    regimes: [cavec_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cavp_report_2011
+    date: 2011-06-29
+    texte: {reference: "arrêté du 23 juin 2011 portant approbation des modifications apportées aux statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des pharmaciens (CAVP), article 12", id: JORFARTI000024270214}
+    parametres: [surcote_par_trimestre, surcote_points]
+    regimes: [cavp_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cprn_report_2014
+    date: 2014-01-01
+    texte: {reference: "arrêté du 16 décembre 2013 portant approbation des modifications apportées aux statuts de la section professionnelle des notaires, article 16", id: JORFARTI000028387445}
+    parametres: [surcote_par_trimestre, surcote_points]
+    regimes: [cprn_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: carpimko_report_2015
+    date: 2015-10-02
+    texte: {reference: "arrêté du 31 juillet 2015 portant approbation des modifications apportées aux statuts de la section professionnelle des auxiliaires médicaux (CARPIMKO), article 12 ter", id: JORFARTI000031255547}
+    parametres: [surcote_par_trimestre, surcote_points]
+    regimes: [carpimko_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: carmf_temps_choisi_2017
+    date: 2017-01-01
+    texte: {reference: "arrêtés du 30 novembre 2016 et du 1er décembre 2016 portant approbation des modifications apportées aux statuts de la section professionnelle des médecins (CARMF), retraite en temps choisi", id: JORFARTI000033521562}
+    parametres: [age_taux_plein, decote_par_trimestre, surcote_par_trimestre, surcote_points]
+    regimes: [carmf_complementaire, asv_conventionnes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cavec_report_2018
+    date: 2018-09-04
+    texte: {reference: "arrêté du 20 août 2018 portant approbation des modifications apportées aux statuts de la section professionnelle des experts-comptables et commissaires aux comptes, article 13", id: JORFARTI000037363871}
+    parametres: [surcote_par_trimestre]
+    regimes: [cavec_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cnavpl_surcote_2023
+    date: 2023-09-01
+    texte: {reference: "code de la sécurité sociale, R. 643-8 dans sa rédaction du décret n° 2023-799 du 21 août 2023 : 1,25 % par trimestre accompli à compter du 1er septembre 2023", id: LEGIARTI000047985850}
+    parametres: [surcote_par_trimestre]
+    regimes: [cnavpl]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cprn_report_2024
+    date: 2024-01-01
+    texte: {reference: "arrêté du 29 novembre 2023 portant approbation des modifications apportées aux statuts de la section professionnelle des notaires (CPRN), article 23 : 1 % par trimestre jusqu'à la fin d'activité", id: JORFARTI000048679350}
+    parametres: [surcote_par_trimestre, surcote_age_maximum]
+    regimes: [cprn_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cavec_report_2026
+    date: 2026-07-17
+    texte: {reference: "arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire et d'assurance invalidité-décès de la section professionnelle des experts-comptables et des commissaires aux comptes (CAVEC)", id: LEGIARTI000054437585}
+    parametres: [surcote_par_trimestre]
+    regimes: [cavec_complementaire]
     absorbee_par: []
     non_appliquee: {}

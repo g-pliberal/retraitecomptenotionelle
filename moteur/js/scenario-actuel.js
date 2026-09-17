@@ -1033,10 +1033,11 @@ export class ScenarioActuel {
   }
 
   abattementPoints(periode, carriere, trimestres, requis, ageLiquidation,
-    anneeLiquidation) {
+    anneeLiquidation, trimestresRegime = 0) {
     // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
     // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
-    // lectures. Voir le docstring du modèle Python.
+    // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
+    // durée d'affiliation à CE régime, que la CIPAV oppose à sa surcote.
     let abattement;
     if (periode.abattement_points === "agirc_arrco"
       || periode.abattement_points === "ircantec") {
@@ -1081,25 +1082,96 @@ export class ScenarioActuel {
     }
     return this.surcotePoints(
       periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
+      trimestresRegime,
     );
   }
 
   /**
    * Majoration d'un régime en points liquidé APRÈS le taux plein.
    *
-   * Un seul régime du catalogue en sert une. Le IV de l'article 16 de l'arrêté
-   * du 30 décembre 1970, en vigueur « à compter du 1er janvier 2010 », majore
-   * le total des points de deux façons qui ne se recouvrent pas : son 1° de
-   * 0,75 % par trimestre ENTIER écoulé entre l'âge du taux plein et l'entrée
-   * en jouissance, sans condition de durée ni de cotisation ; son 2° de
-   * 0,625 % par trimestre COTISÉ au-delà de la durée requise et de l'âge légal,
-   * en deçà de l'âge du taux plein. Voir le docstring du modèle Python.
+   * Trois façons de compter, et la fiche dit laquelle par `surcote_points` :
+   * `regime_general`, les trimestres COTISÉS après l'âge légal et au-delà de
+   * la durée requise, comme la branche en annuités (CNAVPL, R. 643-8 ; MSA
+   * des non-salariés, D. 732-42) ; `par_age_seul`, les trimestres civils
+   * ENTIERS écoulés depuis `surcote_age_debut` — l'âge du taux plein à
+   * défaut —, sans condition de durée, bornés par `surcote_age_maximum` et
+   * `surcote_trimestres_maximum`, comptés par `surcote_pas_trimestres`, à un
+   * second taux après `surcote_palier_age`, et dus seulement au-delà de
+   * `surcote_affiliation_minimale_trimestres` d'affiliation au régime, comme
+   * l'écrivent les statuts des sections libérales ; `ircantec`, le IV de
+   * l'article 16 de l'arrêté du 30 décembre 1970 et ses deux taux. Voir le
+   * docstring du modèle Python.
    */
   surcotePoints(periode, carriere, trimestres, requis, ageLiquidation,
-    anneeLiquidation) {
-    if (periode.surcote_points !== "ircantec") {
+    anneeLiquidation, trimestresRegime = 0) {
+    const mode = periode.surcote_points;
+    if (mode === "aucune") {
       return 1.0;
     }
+    if (mode === "ircantec") {
+      return this.surcoteIrcantec(
+        periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
+      );
+    }
+    const taux = periode.surcote_par_trimestre;
+    if (!taux) {
+      return 1.0;
+    }
+    if (mode === "regime_general") {
+      let supplementaires = Math.max(0, trimestres - requis);
+      const ageOuverture = this.ageOuvertureCommun(periode, carriere);
+      if (supplementaires <= 0 || ageLiquidation < ageOuverture
+          || this.droitMilitaire(periode, carriere) !== null) {
+        return 1.0;
+      }
+      supplementaires = Math.min(
+        supplementaires,
+        trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),
+      );
+      return 1.0 + taux * supplementaires;
+    }
+    if (mode !== "par_age_seul") {
+      throw new Error(`surcote_points inconnu : ${mode}`);
+    }
+
+    const minimum = periode.surcote_affiliation_minimale_trimestres;
+    if (minimum !== null && minimum !== undefined && trimestresRegime < minimum) {
+      return 1.0;
+    }
+    let debut = periode.surcote_age_debut;
+    if (debut === null || debut === undefined) {
+      debut = this.ageTauxPlein(periode, carriere);
+    }
+    let fin = ageLiquidation;
+    if (periode.surcote_age_maximum !== null && periode.surcote_age_maximum !== undefined) {
+      fin = Math.min(fin, periode.surcote_age_maximum);
+    }
+    // Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
+    let ecoules = Math.floor((Math.max(0.0, fin - debut) + 1e-9) * 4);
+    if (periode.surcote_trimestres_maximum !== null
+        && periode.surcote_trimestres_maximum !== undefined) {
+      ecoules = Math.min(ecoules, periode.surcote_trimestres_maximum);
+    }
+    const pas = Math.max(1, periode.surcote_pas_trimestres ?? 1);
+    ecoules -= ecoules % pas;
+    if (ecoules <= 0) {
+      return 1.0;
+    }
+    const palier = periode.surcote_palier_age;
+    const tauxApres = periode.surcote_par_trimestre_apres_palier;
+    if (palier === null || palier === undefined
+        || tauxApres === null || tauxApres === undefined) {
+      return 1.0 + taux * ecoules;
+    }
+    const avantPalier = Math.min(
+      ecoules, Math.max(0, Math.floor((palier - debut + 1e-9) * 4)),
+    );
+    return 1.0 + taux * avantPalier + tauxApres * (ecoules - avantPalier);
+  }
+
+  /** Les deux taux du IV de l'article 16 — voir `surcotePoints`. */
+  surcoteIrcantec(periode, carriere, trimestres, requis, ageLiquidation,
+    anneeLiquidation) {
     const ageTauxPlein = this.ageTauxPlein(periode, carriere);
     // 1° — le temps écoulé, en trimestres ENTIERS.
     const ecoules = Math.floor(
@@ -1657,7 +1729,7 @@ export class ScenarioActuel {
         if (!ignorerPenaliteAge) {
           abattement = this.abattementPoints(
             periode, carriere, trimestres, requisReference, ageLiquidation,
-            anneeLiquidation,
+            anneeLiquidation, trimestresParRegime.get(code) ?? 0,
           );
           montant *= abattement;
         }

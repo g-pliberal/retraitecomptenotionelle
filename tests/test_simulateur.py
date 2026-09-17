@@ -3277,7 +3277,9 @@ def test_la_surcote_ircantec_n_existe_pas_avant_2010(simulateur):
     """« À compter du 1er janvier 2010 », dit le paragraphe 4, et c'est ce qui
     coupe la fiche en deux au milieu de sa période 2009-2010. Une liquidation
     de 2009 ne reçoit rien ; la même, un an plus tard, reçoit la majoration
-    entière. Aucun autre régime en points du catalogue ne porte le barème.
+    entière. Aucun autre régime en points du catalogue ne porte CE barème-là :
+    les neuf autres qui servent une majoration ont le leur, `regime_general`
+    ou `par_age_seul`.
     """
     scenario = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(
@@ -3298,7 +3300,7 @@ def test_la_surcote_ircantec_n_existe_pas_avant_2010(simulateur):
         regime.code
         for regime in simulateur.catalogue
         for p in regime.periodes
-        if p.surcote_points != "aucune"
+        if p.surcote_points == "ircantec"
     }
     assert porteurs == {"ircantec"}, porteurs
 
@@ -3319,6 +3321,238 @@ def test_un_abattement_ircantec_ne_se_transforme_jamais_en_majoration(simulateur
     )
     assert scenario._abattement_points(
         periode, carriere, 128, 162, 62.0, 2012) < 1.0
+
+
+# -- action 22 : la surcote des régimes en points ----------------------------
+
+
+def _periode(simulateur, code, annee):
+    return simulateur.catalogue[code].periode(annee)
+
+
+def test_la_cnavpl_sert_la_surcote_du_regime_general(simulateur):
+    """R. 643-8 : « au titre des périodes d'activité ayant donné lieu à
+    cotisations à la charge de l'assuré accomplies à compter du 1er janvier
+    2004 après l'âge prévu au premier alinéa de l'article L. 351-1 et au-delà
+    de la limite mentionnée au deuxième alinéa du même article », 0,75 % par
+    trimestre — et 1,25 % pour les trimestres accomplis à compter du
+    1er septembre 2023, que la fiche applique aux liquidations de 2024.
+    """
+    scenario = simulateur.scenario_actuel
+    periode = _periode(simulateur, "cnavpl", 2015)
+    assert periode.surcote_points == "regime_general"
+    # Né en 1953, entré à vingt-deux ans, parti à soixante-quatre : huit
+    # trimestres cotisés au-delà de l'âge légal ET de la durée requise.
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1953, sexe="H", affiliation="profession_liberale",
+        age_debut=22, age_liquidation=64,
+    )
+    assert scenario._abattement_points(
+        periode, carriere, 173, 165, 64.0, 2017) == pytest.approx(1.0 + 0.0075 * 8)
+    # Le même, sans excédent de durée : rien.
+    assert scenario._abattement_points(
+        periode, carriere, 165, 165, 64.0, 2017) == pytest.approx(1.0)
+    apres = _periode(simulateur, "cnavpl", 2024)
+    assert apres.surcote_par_trimestre == pytest.approx(0.0125)
+
+
+def test_la_carmf_majore_des_62_ans_puis_moins_apres_65_et_plus_rien_a_70(simulateur):
+    """Article 15 des statuts depuis le 1er janvier 2017 : « 1,25 % par
+    trimestre séparant le premier jour du trimestre civil suivant celui où le
+    médecin atteint cet âge de la date d'effet de la retraite », « réduit à
+    0,75 % par trimestre » après soixante-cinq ans, « sans pouvoir s'appliquer
+    au-delà du premier jour du trimestre civil suivant le soixante-dixième
+    anniversaire ». Ni durée ni cotisation : le temps seul.
+    """
+    scenario = simulateur.scenario_actuel
+    periode = _periode(simulateur, "carmf_complementaire", 2020)
+    assert periode.surcote_points == "par_age_seul"
+    assert periode.decote_par_trimestre is None
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1954, sexe="H", affiliation="medecin_liberal",
+        age_debut=30, age_liquidation=66,
+    )
+    # Douze trimestres à 1,25 % de 62 à 65 ans, quatre à 0,75 % ensuite.
+    assert scenario._abattement_points(
+        periode, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 4)
+    # À soixante-douze ans, le compte s'arrête à soixante-dix : 15 % + 15 %.
+    assert scenario._abattement_points(
+        periode, carriere, 168, 165, 72.0, 2026) == pytest.approx(1.30)
+    # À soixante-deux ans, rien — et pas de décote non plus, quelle que soit
+    # la durée : c'est la retraite en temps choisi.
+    assert scenario._abattement_points(
+        periode, carriere, 100, 165, 62.0, 2016 + 1) == pytest.approx(1.0)
+    # Avant 2017, le taux plein est à soixante-cinq ans, l'anticipation abat
+    # 1,25 % par trimestre, et le différé se compte par années PLEINES.
+    avant = _periode(simulateur, "carmf_complementaire", 2015)
+    assert avant.surcote_pas_trimestres == 4
+    assert scenario._abattement_points(
+        avant, carriere, 140, 165, 66.5, 2015) == pytest.approx(1.05)
+    assert scenario._abattement_points(
+        avant, carriere, 140, 165, 63.0, 2015) == pytest.approx(0.90)
+    # L'ASV suit les mêmes mots.
+    asv = _periode(simulateur, "asv_conventionnes", 2020)
+    assert scenario._abattement_points(
+        asv, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 4)
+
+
+def test_la_cavec_majore_vingt_trimestres_au_plus_apres_65_ans(simulateur):
+    """Article 13 des statuts : « une majoration de 0,75 % par trimestre plein
+    de prorogation au-delà de cet âge, dans la limite maximale de 15 % » de
+    2019 à 2025 ; 1,25 % et 25 % avant 2019 et depuis 2026. Le taux plein est
+    « à 65 ans », sans durée.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1953, sexe="H", affiliation="expert_comptable",
+        age_debut=25, age_liquidation=67,
+    )
+    periode = _periode(simulateur, "cavec_complementaire", 2020)
+    assert periode.age_taux_plein == 65.0 and periode.duree_requise_trimestres is None
+    assert scenario._abattement_points(
+        periode, carriere, 120, 165, 67.0, 2020) == pytest.approx(1.06)
+    assert scenario._abattement_points(
+        periode, carriere, 120, 165, 71.0, 2024) == pytest.approx(1.15)
+    assert scenario._abattement_points(
+        _periode(simulateur, "cavec_complementaire", 2027), carriere, 120, 165, 67.0, 2027,
+    ) == pytest.approx(1.10)
+    assert scenario._abattement_points(
+        _periode(simulateur, "cavec_complementaire", 2000), carriere, 120, 165, 67.0, 2000,
+    ) == pytest.approx(1.0)
+
+
+def test_la_carpimko_majore_depuis_l_age_du_taux_plein_lu_a_la_generation(simulateur):
+    """Article 12 ter, inséré par l'arrêté du 31 juillet 2015 : « 1,25 % par
+    trimestre civil entier d'ajournement postérieur à l'âge du taux plein dans
+    la limite de vingt trimestres ». Rien avant l'arrêté.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1956, sexe="F", affiliation="auxiliaire_medical",
+        age_debut=25, age_liquidation=68,
+    )
+    periode = _periode(simulateur, "carpimko_complementaire", 2024)
+    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(67.0)
+    assert scenario._abattement_points(
+        periode, carriere, 172, 169, 68.0, 2024) == pytest.approx(1.05)
+    assert scenario._abattement_points(
+        periode, carriere, 172, 169, 73.0, 2029) == pytest.approx(1.25)
+    assert scenario._abattement_points(
+        _periode(simulateur, "carpimko_complementaire", 2014), carriere, 172, 169, 68.0, 2014,
+    ) == pytest.approx(1.0)
+
+
+def test_la_cavp_majore_trois_ans_au_plus_a_un_demi_pour_cent(simulateur):
+    """Article 12 des statuts (arrêté du 23 juin 2011) : « majorée lorsqu'elle
+    est liquidée au-delà de l'âge permettant d'obtenir une retraite à taux
+    plein et jusqu'à cet âge augmenté de 3 ans […]. Cette majoration est égale
+    à 0,5 % par trimestre. »
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1956, sexe="H", affiliation="pharmacien",
+        age_debut=25, age_liquidation=69,
+    )
+    periode = _periode(simulateur, "cavp_complementaire", 2025)
+    assert scenario._abattement_points(
+        periode, carriere, 176, 169, 69.0, 2025) == pytest.approx(1.04)
+    assert scenario._abattement_points(
+        periode, carriere, 176, 169, 72.0, 2028) == pytest.approx(1.06)
+
+
+def test_la_cprn_majore_un_demi_pour_cent_jusqu_a_70_ans_puis_un_pour_cent_sans_borne(simulateur):
+    """Arrêté du 16 décembre 2013 : « 0,5 % par trimestre au-delà de l'âge du
+    taux plein, jusqu'à l'âge de 70 ans » ; arrêté du 29 novembre 2023, en
+    vigueur le 1er janvier 2024 : « 1 % » et « fin d'activité ».
+    """
+    scenario = simulateur.scenario_actuel
+    # Né en 1956 : l'âge du taux plein, lu à la génération, est 67 ans.
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1956, sexe="H", affiliation="notaire",
+        age_debut=28, age_liquidation=72,
+    )
+    avant = _periode(simulateur, "cprn_complementaire", 2020)
+    assert avant.surcote_age_maximum == 70.0
+    assert scenario._abattement_points(
+        avant, carriere, 176, 169, 68.0, 2023) == pytest.approx(1.02)
+    assert scenario._abattement_points(
+        avant, carriere, 176, 169, 72.0, 2023) == pytest.approx(1.06)
+    apres = _periode(simulateur, "cprn_complementaire", 2025)
+    assert apres.surcote_age_maximum is None
+    assert scenario._abattement_points(
+        apres, carriere, 176, 169, 72.0, 2028) == pytest.approx(1.20)
+    assert scenario._abattement_points(
+        _periode(simulateur, "cprn_complementaire", 2010), carriere, 176, 165, 72.0, 2010,
+    ) == pytest.approx(1.0)
+
+
+def test_la_cipav_majore_par_annees_pleines_a_qui_a_trente_ans_de_caisse(simulateur):
+    """Fiche pratique 2022 : « 5 % par année pleine de différé si, à 67 ans,
+    vous réunissez 30 années d'affiliation à la Cipav ». Une année et demie
+    vaut une année ; vingt-neuf ans de caisse ne valent rien.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1956, sexe="F", affiliation="profession_liberale",
+        age_debut=25, age_liquidation=68,
+    )
+    periode = _periode(simulateur, "cipav_complementaire", 2024)
+    assert periode.surcote_affiliation_minimale_trimestres == 120
+    assert scenario._abattement_points(
+        periode, carriere, 172, 169, 68.5, 2024, trimestres_regime=160,
+    ) == pytest.approx(1.05)
+    assert scenario._abattement_points(
+        periode, carriere, 172, 169, 69.0, 2025, trimestres_regime=160,
+    ) == pytest.approx(1.10)
+    assert scenario._abattement_points(
+        periode, carriere, 172, 169, 69.0, 2025, trimestres_regime=116,
+    ) == pytest.approx(1.0)
+
+
+def test_les_exploitants_agricoles_ont_la_surcote_du_regime_general(simulateur):
+    """D. 732-42 : la durée « accomplie à compter du 1er janvier 2004, au-delà
+    de l'âge fixé à l'article L. 732-18 et au-delà de la durée minimale prévue
+    à l'article L. 732-25 », 1,25 % par trimestre depuis 2009 — servie, enfin,
+    par la branche en points qui liquide ce régime mixte.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1953, sexe="H", affiliation="exploitant_agricole",
+        age_debut=22, age_liquidation=64,
+    )
+    periode = _periode(simulateur, "msa_non_salaries", 2017)
+    assert periode.type_calcul == "mixte" and periode.surcote_points == "regime_general"
+    assert scenario._abattement_points(
+        periode, carriere, 173, 165, 64.0, 2017) == pytest.approx(1.0 + 0.0125 * 8)
+
+
+def test_toute_surcote_ecrite_par_une_fiche_en_points_est_servie(simulateur):
+    """Le garde-fou qui manquait : une période en points qui porte un taux de
+    surcote porte aussi le barème qui le lit, et réciproquement. C'est ce
+    test qui aurait signalé, sans qu'on le cherche, les neuf fiches dont la
+    surcote n'était jamais servie.
+    """
+    orphelines = [
+        (regime.code, p.debut)
+        for regime in simulateur.catalogue
+        for p in regime.periodes
+        if p.type_calcul in ("points", "mixte")
+        and bool(p.surcote_par_trimestre) != (p.surcote_points not in ("aucune", "ircantec"))
+        and not (p.surcote_points == "ircantec" and not p.surcote_par_trimestre)
+    ]
+    assert not orphelines, orphelines
+    servies = {
+        regime.code
+        for regime in simulateur.catalogue
+        for p in regime.periodes
+        if p.surcote_points in ("regime_general", "par_age_seul")
+    }
+    assert servies == {
+        "cnavpl", "msa_non_salaries", "carmf_complementaire", "asv_conventionnes",
+        "cavec_complementaire", "cipav_complementaire", "carpimko_complementaire",
+        "cavp_complementaire", "cprn_complementaire",
+    }, servies
+
 
 
 # -- catégorie active et pension militaire -----------------------------------

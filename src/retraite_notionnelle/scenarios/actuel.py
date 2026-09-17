@@ -2298,13 +2298,15 @@ class ScenarioActuel:
     def _abattement_points(self, periode: PeriodeRegime, carriere: Carriere,
                            trimestres: int, requis: int,
                            age_liquidation: float,
-                           annee_liquidation: int) -> float:
+                           annee_liquidation: int,
+                           trimestres_regime: int = 0) -> float:
         """Coefficient d'un régime en points : abattu avant le taux plein,
         majoré après.
 
         Il ne dépassait jamais un, et c'était un droit manquant : voir
-        :meth:`_surcote_points`, qui rend la majoration de l'Ircantec quand
-        l'abattement est revenu à un.
+        :meth:`_surcote_points`, qui rend la majoration que la fiche écrit
+        quand l'abattement est revenu à un. ``trimestres_regime`` est la durée
+        d'affiliation à ce régime-là, que la CIPAV oppose à sa surcote.
 
         « Avant le taux plein » est une condition de DURÉE autant que d'âge :
         une complémentaire est servie sans abattement dès que l'assuré a le
@@ -2384,45 +2386,120 @@ class ScenarioActuel:
             return abattement
         return self._surcote_points(
             periode, carriere, trimestres, requis,
-            age_liquidation, annee_liquidation,
+            age_liquidation, annee_liquidation, trimestres_regime,
         )
 
     def _surcote_points(self, periode: PeriodeRegime, carriere: Carriere,
                         trimestres: int, requis: int,
                         age_liquidation: float,
-                        annee_liquidation: int) -> float:
+                        annee_liquidation: int,
+                        trimestres_regime: int = 0) -> float:
         """Majoration d'un régime en points liquidé APRÈS le taux plein.
 
-        Un seul régime du catalogue en sert une, et son texte l'écrit. Le IV de
-        l'article 16 de l'arrêté du 30 décembre 1970 — paragraphe 4 dans la
-        version que le décret du 23 septembre 2008 a introduite, « à compter du
-        1er janvier 2010 » — majore le total des points de DEUX façons, qui ne
-        se recouvrent pas :
+        Trois façons de compter, parce que les textes en écrivent trois, et la
+        fiche dit laquelle par ``surcote_points`` :
 
-        1° « 0,75 % par trimestre entier écoulé entre le soixante-cinquième
-        anniversaire de l'assuré et la date d'entrée en jouissance de la
-        pension ». C'est du TEMPS ÉCOULÉ : ni durée d'assurance, ni cotisation
-        ne s'y ajoutent en condition, et un agent qui cesse de travailler à
-        soixante-cinq ans mais ne liquide qu'à soixante-sept en reçoit huit
-        trimestres. Depuis 2011 le texte ne dit plus « soixante-cinq ans » mais
-        « l'âge prévu au 1° de l'article L. 351-8 », qui est l'âge
-        d'annulation de la décote, lu à la génération.
+        ``regime_general`` — la règle de l'article L. 351-1-2, mot pour mot
+        celle que la branche en annuités sert : trimestres COTISÉS « après
+        l'âge prévu au premier alinéa de l'article L. 351-1 et au-delà de la
+        limite mentionnée au deuxième alinéa du même article ». C'est celle du
+        régime de base des professions libérales — R. 643-8, 0,75 % par
+        trimestre depuis 2004, 1,25 % pour les trimestres accomplis à compter
+        du 1er septembre 2023 — et celle des exploitants agricoles (D. 732-42).
+        Le militaire n'en a aucune, et le décompte part de l'âge légal de droit
+        commun, comme là-bas.
 
-        2° « 0,625 % par trimestre accompli » de durée « ayant donné lieu à
-        cotisations à la charge de l'assuré accomplie après l'âge et la limite
-        prévus à l'article L. 351-1 » et avant ce même âge. C'est, mot pour
-        mot, l'assiette de la surcote du régime général — cotisée, au-delà de
-        l'âge légal, au-delà de la durée requise — bornée en haut par l'âge où
-        le 1° prend le relais, car « en aucun cas une même période ne peut
-        donner lieu à la fois » aux deux.
+        ``par_age_seul`` — les statuts des sections libérales ne comptent ni
+        durée ni cotisation, seulement le TEMPS : « 1,25 % par trimestre
+        séparant le premier jour du trimestre civil suivant celui où le médecin
+        atteint cet âge de la date d'effet de la retraite » (CARMF, art. 15),
+        « par trimestre civil entier d'ajournement postérieur à l'âge du taux
+        plein dans la limite de vingt trimestres » (CARPIMKO, art. 12 ter),
+        « par trimestre plein de prorogation au-delà de cet âge, dans la limite
+        maximale de 25 % » (CAVEC, art. 13). Le décompte part de
+        ``surcote_age_debut``, ou de l'âge du taux plein lu à la génération ;
+        il s'arrête à ``surcote_age_maximum`` — le soixante-dixième
+        anniversaire, chez les médecins et les notaires — et à
+        ``surcote_trimestres_maximum`` ; il ne retient que des multiples de
+        ``surcote_pas_trimestres`` quand le texte dit « par année pleine » ;
+        il change de taux à ``surcote_palier_age`` — 0,75 % au lieu de 1,25 %
+        après soixante-cinq ans, à la CARMF et à l'ASV — ; et il n'est dû
+        qu'au-delà de ``surcote_affiliation_minimale_trimestres`` d'affiliation
+        au régime, « si, à 67 ans, vous réunissez 30 années d'affiliation à la
+        Cipav ».
 
-        Le modèle n'en servait rien : la fiche portait
-        ``surcote_par_trimestre: null``, que la branche en points ne lit de
-        toute façon pas, et un agent non titulaire parti à soixante-sept ans y
-        perdait 6 % de sa complémentaire.
+        ``ircantec`` — le IV de l'article 16 de l'arrêté du 30 décembre 1970,
+        paragraphe 4 dans la version que le décret du 23 septembre 2008 a
+        introduite « à compter du 1er janvier 2010 », majore le total des
+        points de DEUX façons qui ne se recouvrent pas : 1° « 0,75 % par
+        trimestre entier écoulé entre le soixante-cinquième anniversaire de
+        l'assuré et la date d'entrée en jouissance de la pension » — du temps
+        écoulé, comme ``par_age_seul`` ; 2° « 0,625 % par trimestre accompli »
+        de durée cotisée au-delà de l'âge légal et de la durée requise, en deçà
+        de ce même âge — l'assiette de ``regime_general``, bornée en haut par
+        l'âge où le 1° prend le relais, car « en aucun cas une même période ne
+        peut donner lieu à la fois » aux deux.
+
+        Le modèle ne servait que la troisième : la branche en points ne lisait
+        pas ``surcote_par_trimestre``, et neuf fiches de non-salariés en
+        écrivaient une pour rien.
         """
-        if periode.surcote_points != "ircantec":
+        mode = periode.surcote_points
+        if mode == "aucune":
             return 1.0
+        if mode == "ircantec":
+            return self._surcote_ircantec(
+                periode, carriere, trimestres, requis,
+                age_liquidation, annee_liquidation,
+            )
+        taux = periode.surcote_par_trimestre
+        if not taux:
+            return 1.0
+        if mode == "regime_general":
+            supplementaires = max(0, trimestres - requis)
+            age_ouverture = self._age_ouverture_commun(periode, carriere)
+            if (supplementaires <= 0 or age_liquidation < age_ouverture
+                    or self._droit_militaire(periode, carriere) is not None):
+                return 1.0
+            supplementaires = min(
+                supplementaires,
+                _trimestres_cotises_apres(carriere, age_ouverture, annee_liquidation),
+            )
+            return 1.0 + taux * supplementaires
+        if mode != "par_age_seul":
+            raise ValueError(f"surcote_points inconnu : {mode!r}")
+
+        minimum = periode.surcote_affiliation_minimale_trimestres
+        if minimum is not None and trimestres_regime < minimum:
+            return 1.0
+        debut = periode.surcote_age_debut
+        if debut is None:
+            debut = self._age_taux_plein(periode, carriere)
+        fin = age_liquidation
+        if periode.surcote_age_maximum is not None:
+            fin = min(fin, periode.surcote_age_maximum)
+        # Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
+        ecoules = int((max(0.0, fin - debut) + 1e-9) * 4)
+        if periode.surcote_trimestres_maximum is not None:
+            ecoules = min(ecoules, periode.surcote_trimestres_maximum)
+        pas = max(1, periode.surcote_pas_trimestres)
+        ecoules -= ecoules % pas
+        if ecoules <= 0:
+            return 1.0
+        palier = periode.surcote_palier_age
+        if palier is None or periode.surcote_par_trimestre_apres_palier is None:
+            return 1.0 + taux * ecoules
+        avant_palier = min(ecoules, max(0, int((palier - debut + 1e-9) * 4)))
+        return (1.0
+                + taux * avant_palier
+                + periode.surcote_par_trimestre_apres_palier
+                * (ecoules - avant_palier))
+
+    def _surcote_ircantec(self, periode: PeriodeRegime, carriere: Carriere,
+                          trimestres: int, requis: int,
+                          age_liquidation: float,
+                          annee_liquidation: int) -> float:
+        """Les deux taux du IV de l'article 16 — voir :meth:`_surcote_points`."""
         age_taux_plein = self._age_taux_plein(periode, carriere)
 
         # 1° — LE TEMPS ÉCOULÉ, en trimestres ENTIERS : l'arrêté le dit, et
@@ -3054,6 +3131,7 @@ class ScenarioActuel:
                     abattement = self._abattement_points(
                         periode, carriere, trimestres, requis_reference,
                         age_liquidation, annee_liquidation,
+                        trimestres_par_regime.get(code, 0),
                     )
                     montant *= abattement
                 pensions.append(PensionRegime(

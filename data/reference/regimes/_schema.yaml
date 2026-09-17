@@ -274,16 +274,79 @@ champs_periode:
   surcote_points:
     description: >-
       Barème de MAJORATION d'un régime en points liquidé après le taux plein,
-      pendant du champ précédent. `aucune` : le régime n'en sert pas, et c'est
-      le cas de tous les régimes en points du catalogue sauf un. `ircantec`
-      applique le IV de l'article 16 de l'arrêté du 30 décembre 1970, entré en
-      vigueur le 1er janvier 2010 : deux taux et deux bornes d'âge — 0,75 % par
-      trimestre ENTIER écoulé entre l'âge du taux plein et la liquidation
-      (son 1°), 0,625 % par trimestre COTISÉ au-delà de la durée requise entre
-      l'âge légal et l'âge du taux plein (son 2°), sans qu'une même période
-      puisse être comptée deux fois.
-    valeurs: ["aucune", "ircantec"]
+      pendant du champ précédent. `aucune` : le régime n'en sert pas — et c'est
+      ce que doit porter toute période en points dont `surcote_par_trimestre`
+      est nul, un test l'exige dans les deux sens. `regime_general` : la règle
+      de l'article L. 351-1-2, telle que la branche en annuités la sert —
+      trimestres COTISÉS après l'âge légal et au-delà de la durée requise, au
+      taux `surcote_par_trimestre` ; c'est celle de la CNAVPL (R. 643-8) et de
+      la MSA des non-salariés (D. 732-42). `par_age_seul` : trimestres civils
+      ENTIERS écoulés entre `surcote_age_debut` — l'âge du taux plein de la
+      fiche, lu à la génération, si le champ est nul — et la liquidation, sans
+      condition de durée ni de cotisation, au taux `surcote_par_trimestre` ;
+      c'est la forme qu'écrivent les statuts des sections libérales, bornée
+      par les champs qui suivent. `ircantec` applique le IV de l'article 16 de
+      l'arrêté du 30 décembre 1970, entré en vigueur le 1er janvier 2010 :
+      deux taux et deux bornes d'âge — 0,75 % par trimestre ENTIER écoulé
+      entre l'âge du taux plein et la liquidation (son 1°), 0,625 % par
+      trimestre COTISÉ au-delà de la durée requise entre l'âge légal et l'âge
+      du taux plein (son 2°), sans qu'une même période puisse être comptée
+      deux fois.
+    valeurs: ["aucune", "regime_general", "par_age_seul", "ircantec"]
     defaut: aucune
+
+  surcote_age_debut:
+    description: >-
+      `par_age_seul` seulement : âge à partir duquel les trimestres écoulés
+      comptent. `null` prend l'âge du taux plein de la fiche, lu à la
+      génération quand `age_taux_plein_par_generation` l'est. La CARMF et l'ASV
+      comptent dès 62 ans (statuts du 30 novembre et du 1er décembre 2016), la
+      CAVEC dès 65 ans, la CARPIMKO, la CAVP et la CPRN dès l'âge du taux
+      plein.
+    defaut: null
+
+  surcote_age_maximum:
+    description: >-
+      `par_age_seul` seulement : âge au-delà duquel plus aucun trimestre ne
+      compte — « sans pouvoir s'appliquer au-delà du premier jour du trimestre
+      civil suivant le soixante-dixième anniversaire » (CARMF), « jusqu'à
+      l'âge de 70 ans » (CPRN jusqu'en 2023). `null` : pas de borne d'âge.
+    defaut: null
+
+  surcote_trimestres_maximum:
+    description: >-
+      `par_age_seul` seulement : nombre maximal de trimestres majorés — « dans
+      la limite de vingt trimestres » (CARPIMKO), « dans la limite maximale de
+      25 % » à 1,25 % (CAVEC), « jusqu'à cet âge augmenté de trois ans »
+      (CAVP). `null` : pas de plafond.
+    defaut: null
+
+  surcote_pas_trimestres:
+    description: >-
+      `par_age_seul` seulement : granularité du décompte. 1 compte chaque
+      trimestre civil entier ; 4 ne compte que les ANNÉES PLEINES — « 5 % par
+      année pleine de différé », CARMF avant 2017 et CIPAV.
+    defaut: 1
+
+  surcote_palier_age:
+    description: >-
+      `par_age_seul` seulement : âge à partir duquel le taux devient
+      `surcote_par_trimestre_apres_palier`. La CARMF et l'ASV majorent de
+      1,25 % par trimestre de 62 à 65 ans, puis de 0,75 % de 65 à 70 ans.
+      `null` : un seul taux.
+    defaut: null
+
+  surcote_par_trimestre_apres_palier:
+    description: "taux par trimestre au-delà de `surcote_palier_age` (fraction, null sans palier)"
+    defaut: null
+
+  surcote_affiliation_minimale_trimestres:
+    description: >-
+      `par_age_seul` seulement : durée d'affiliation À CE RÉGIME, en
+      trimestres, sans laquelle la majoration n'est pas due — « si, à 67 ans,
+      vous réunissez 30 années d'affiliation à la Cipav ». `null` : aucune
+      condition.
+    defaut: null
 
   plafond_majoration_enfants:
     description: >-

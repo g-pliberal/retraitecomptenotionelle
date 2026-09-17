@@ -1843,14 +1843,26 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   1er janvier 2010, à ses deux taux — 0,75 % par trimestre entier écoulé
   au-delà de l'âge du taux plein, 0,625 % par trimestre cotisé au-delà de la
   durée requise en deçà de cet âge —, et le coefficient d'un régime en points
-  peut désormais dépasser un, des deux côtés du portage. Il reste que les
-  autres régimes EN POINTS du catalogue portent, eux aussi, une surcote que
-  leur fiche écrit et que le moteur ne lit pas : `surcote_par_trimestre` n'est
-  consulté que par la branche en annuités, et neuf régimes de non-salariés —
-  la CNAVPL, la MSA des non-salariés, la CARMF, la CAVP, la CARPIMKO, la
-  CAVEC, la CIPAV, la CPRN et l'ASV des conventionnés — en portent une de
-  0,5 à 1,25 % par trimestre qui n'est jamais servie. C'est l'action 22 de la
-  feuille de route ;
+  peut désormais dépasser un, des deux côtés du portage. Les neuf autres
+  régimes en points dont la fiche écrit une surcote la servent aussi depuis
+  l'action 22, chacun à sa règle, lue dans son texte : la CNAVPL et la MSA des
+  non-salariés à celle du régime général — trimestres cotisés au-delà de l'âge
+  légal et de la durée requise, R. 643-8 et D. 732-42 —, les sept
+  complémentaires de sections libérales À L'ÂGE SEUL, en trimestres civils
+  entiers écoulés depuis l'âge que leurs statuts nomment — soixante-deux ans à
+  la CARMF et à l'ASV, soixante-cinq à la CAVEC, l'âge du taux plein à la
+  CARPIMKO, à la CAVP, à la CPRN et à la CIPAV —, et bornés comme ils le
+  sont : soixante-dix ans chez les médecins et, jusqu'en 2023, les notaires,
+  vingt trimestres à la CAVEC et à la CARPIMKO, douze à la CAVP, années
+  pleines seulement à la CIPAV et à la CARMF d'avant 2017. Rien n'est servi
+  avant le texte qui date chaque règle, et les taux que les fiches
+  reportaient en arrière sans texte — 0,75 % à la CARPIMKO, 1 % à la CPRN —
+  sont ceux des arrêtés. Ce que la fiche ne porte pas est dit dans ses
+  notes : la CIPAV ne majore que les points des trente premières années, la
+  CAVP borne les générations 1951 à 1955 à un ou deux ans, la CNAVPL sert
+  1,25 % aux liquidations de 2024 et non aux trimestres accomplis depuis
+  septembre 2023, la MSA ramène à 0,75 % l'escalier de 3, 4 et 5 % d'avant
+  2009 ;
 - **revalorisation des salaires portés au compte** — le modèle ne les
   reconstitue plus, il les LIT dans la circulaire annuelle de la Cnav
   (`legislation/revalorisation_salaires.csv`, perceptions 1930-2025). Il les
@@ -5471,7 +5483,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 834 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 843 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

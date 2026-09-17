@@ -131,6 +131,7 @@ pivots:
     - {texte: "Code de la sécurité sociale", num: D643-1, parametres: [points_maximum, points_par_trimestre_valide]}
     - {texte: "Code de la sécurité sociale", num: D642-3, parametres: [taux_cotisation_retraite, assiette]}
     - {texte: "Code de la sécurité sociale", num: D643-3, parametres: [decote_par_trimestre]}
+    - {texte: "Code de la sécurité sociale", num: R643-8, parametres: [surcote_par_trimestre]}
   ircec_raap:
     - {texte: "Décret n°62-420", num: "1", parametres: [creation]}
     - {texte: "Arrêté du 21 novembre 2013", num: "", parametres: [taux_cotisation_retraite, valeur_point]}
