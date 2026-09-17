@@ -1586,11 +1586,25 @@ licence libre : <a href="{g.DEPOT}">le dépôt</a>. Solde du système de retrait
 en {annee_solde} :
 {g.pourcentage(comptes.solde(annee_solde), signe=True, decimales=2)} du PIB.</p>""")
 
+    # L'entrée. Le site est un simulateur, et rien sur le premier écran ne le
+    # disait : le mot n'était que dans un onglet, et le seul bouton arrivait au
+    # troisième écran — au cinquième sur un téléphone. Dans le cadre que le site
+    # du parti ouvre sur cette page, le titre du simulateur est masqué par
+    # l'hôte, et ce bloc est la seule chose qui dise « simulez ». Deux lignes,
+    # pas trois : à la troisième, le bouton passe sous le pli du téléphone.
+    entree = f"""
+<div class="note entree">
+<p><strong>Ce que ça donnerait pour vous ? Simulez votre carrière.</strong><br>
+Six montants côte à côte : les règles d'aujourd'hui, et cinq autres.</p>
+<p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Simuler ma
+retraite</a></p>
+</div>"""
+
     return f"""
 <h2 style="margin-top:0">Notre programme pour les retraites</h2>
 <p class="chapeau">Un seul régime. Un compte par personne. {taux} de cotisation
 pour tout le monde. Et un plancher de {plancher} par mois, payé par l'impôt.</p>
-
+{entree}
 <div class="fiches reperes">{reperes}</div>
 
 {propositions}
@@ -2266,6 +2280,8 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
 <form class="carte" method="get" action="{g.lien('/simuler')}">
   {g.cache("unite_revenu", saisie.unite_revenu)}
   <h2 style="margin-top:0">Simuler une carrière{_bulle_du_titre(saisie)}</h2>
+  <p class="chapeau" style="margin-top:0.3rem">L'exemple est déjà rempli.
+  Calculez-le tel quel, ou saisissez votre carrière.</p>
   <div class="grille">{identite}</div>
   <h3>La carrière, période par période{_bulle_des_periodes()}</h3>
   {_metiers(saisie, affiliations, echelle)}
@@ -3135,14 +3151,24 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         f'<span class="etiquette-fiabilite">{escape(str(comparaison.fiabilite))}'
         "</span></p>"
     )
+    # La clé de lecture, avant les chiffres. Les six blocs portent des titres
+    # exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le premier
+    # est la référence des cinq autres. Cinq phrases, en clair.
+    chiffre = "grand chiffre" if deux_unites else "chiffre"
+    lecture = f"""
+<p class="note resume"><strong>Six calculs pour votre carrière.</strong>
+Le scénario 1 applique les règles d'aujourd'hui. C'est la référence.
+Les scénarios 2 à 6 appliquent chacun d'autres règles à la même carrière.
+Le {chiffre} : votre pension brute, {unite_reference}.
+Le pourcentage en fin de ligne : l'écart avec le scénario 1.</p>"""
+
+    # Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
+    # un téléphone montrait après le calcul un coefficient de conversion, un
+    # capital et une note sur l'âge de référence, et pas un euro de pension.
     return f"""
 <h2 id="resultats" tabindex="-1">Résultats\
 {_lecture_des_montants(comparaison, saisie)}</h2>
-<div class="carte">
-  <div class="fiches">{fiches}</div>
-  {_note_age_reference(comparaison, saisie)}
-  {_resume_parcours(contexte, saisie)}
-</div>
+{lecture}
 <div class="carte">
   {_legende_des_unites(comparaison, saisie)}
   {scenarios}
@@ -3150,6 +3176,11 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
   {capitalisation}
   {minimum}
   {ouverture}
+</div>
+<div class="carte">
+  <div class="fiches">{fiches}</div>
+  {_note_age_reference(comparaison, saisie)}
+  {_resume_parcours(contexte, saisie)}
 </div>
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Les six montants ci-dessus sont le résultat ; tout ce qui

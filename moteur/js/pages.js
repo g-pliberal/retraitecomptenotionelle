@@ -1848,6 +1848,8 @@ function formulaire(saisie, contexte) {
 <form class="carte" method="get" action="${g.lien("/simuler")}">
   ${g.cache("unite_revenu", saisie.unite_revenu)}
   <h2 style="margin-top:0">Simuler une carrière${bulleDuTitre(saisie)}</h2>
+  <p class="chapeau" style="margin-top:0.3rem">L'exemple est déjà rempli.
+  Calculez-le tel quel, ou saisissez votre carrière.</p>
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
   ${metiersFormulaire(saisie, affiliations, echelle)}
@@ -2685,14 +2687,24 @@ function resultats(contexte, saisie) {
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
     + `${echapper(nomFiabilite(comparaison.fiabilite))}</span></p>`;
+  // La clé de lecture, avant les chiffres. Les six blocs portent des titres
+  // exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le premier
+  // est la référence des cinq autres. Cinq phrases, en clair.
+  const chiffre = deuxUnites ? "grand chiffre" : "chiffre";
+  const lecture = `
+<p class="note resume"><strong>Six calculs pour votre carrière.</strong>
+Le scénario 1 applique les règles d'aujourd'hui. C'est la référence.
+Les scénarios 2 à 6 appliquent chacun d'autres règles à la même carrière.
+Le ${chiffre} : votre pension brute, ${uniteReference}.
+Le pourcentage en fin de ligne : l'écart avec le scénario 1.</p>`;
+
+  // Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
+  // un téléphone montrait après le calcul un coefficient de conversion, un
+  // capital et une note sur l'âge de référence, et pas un euro de pension.
   return `
 <h2 id="resultats" tabindex="-1">Résultats\
 ${lectureDesMontants(comparaison, saisie)}</h2>
-<div class="carte">
-  <div class="fiches">${fiches}</div>
-  ${noteAgeReference(comparaison, saisie)}
-  ${resumeParcours(contexte, saisie)}
-</div>
+${lecture}
 <div class="carte">
   ${legendeDesUnites(comparaison, saisie)}
   ${scenarios}
@@ -2700,6 +2712,11 @@ ${lectureDesMontants(comparaison, saisie)}</h2>
   ${capitalisation}
   ${minimum}
   ${ouverture}
+</div>
+<div class="carte">
+  <div class="fiches">${fiches}</div>
+  ${noteAgeReference(comparaison, saisie)}
+  ${resumeParcours(contexte, saisie)}
 </div>
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Les six montants ci-dessus sont le résultat ; tout ce qui
@@ -5677,11 +5694,25 @@ licence libre : <a href="${g.DEPOT}">le dépôt</a>. Solde du système de retrai
 en ${anneeSolde} :
 ${g.pourcentage(comptes.solde(anneeSolde), true, 2)} du PIB.</p>`);
 
+  // L'entrée. Le site est un simulateur, et rien sur le premier écran ne le
+  // disait : le mot n'était que dans un onglet, et le seul bouton arrivait au
+  // troisième écran — au cinquième sur un téléphone. Dans le cadre que le site
+  // du parti ouvre sur cette page, le titre du simulateur est masqué par
+  // l'hôte, et ce bloc est la seule chose qui dise « simulez ». Deux lignes,
+  // pas trois : à la troisième, le bouton passe sous le pli du téléphone.
+  const entree = `
+<div class="note entree">
+<p><strong>Ce que ça donnerait pour vous ? Simulez votre carrière.</strong><br>
+Six montants côte à côte : les règles d'aujourd'hui, et cinq autres.</p>
+<p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Simuler ma
+retraite</a></p>
+</div>`;
+
   return `
 <h2 style="margin-top:0">Notre programme pour les retraites</h2>
 <p class="chapeau">Un seul régime. Un compte par personne. ${taux} de cotisation
 pour tout le monde. Et un plancher de ${plancher} par mois, payé par l'impôt.</p>
-
+${entree}
 <div class="fiches reperes">${reperes}</div>
 
 ${propositions}
