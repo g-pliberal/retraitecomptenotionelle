@@ -1476,7 +1476,7 @@ def _programme(contexte: Contexte) -> str:
     propositions = g.points([
         ("Un compte, pas des trimestres",
          "Chaque euro cotisé est inscrit sur votre compte. Vous le suivez "
-         "toute votre vie, comme un compte en banque — sauf que rien n'est "
+         "toute votre vie, comme un compte en banque. Sauf que rien n'est "
          "placé : c'est toujours la " + g.terme("répartition") + "."),
         ("Le même taux pour tous",
          f"{taux} du salaire, part du salarié et part de l'employeur "
@@ -1524,20 +1524,20 @@ def _programme(contexte: Contexte) -> str:
     # trous, et Python n'accepte pas un bloc entre triples guillemets à
     # l'intérieur d'un autre.
     depliant_actuel = g.depliant("Pourquoi le système actuel ne va pas", f"""
-<p>La retraite française n'est pas un système : c'est un empilement de régimes.
+<p>La retraite française ? Un empilement de régimes, plus qu'un système.
 Ce site en <a href="{g.lien("/donnees")}">recense {inventaire}</a>, actuels et
 disparus, et en calcule {regimes}. Chacun a son âge de départ, son assiette, son
 taux, sa durée exigée et son minimum.</p>
 <ul class="serree">
-  <li><strong>Il est illisible.</strong> Le montant dépend de sept règles qui ne
-  se lisent sur aucune fiche de paie. Personne — pas même les caisses — ne sait
+  <li><strong>Illisible, d'abord.</strong> Le montant dépend de sept règles qui ne
+  se lisent sur aucune fiche de paie. Personne, pas même les caisses, ne sait
   dire à un actif ce qu'il a acquis, autrement qu'en trimestres et en points.</li>
-  <li><strong>Il est inégal.</strong> À salaire et à durée égaux, la pension
+  <li><strong>Inégal, ensuite.</strong> À salaire et à durée égaux, la pension
   change selon le statut, et l'écart ne vient d'aucune différence de cotisation.
   <a href="{g.lien("/cas-types")}">Treize carrières le mesurent</a>.</li>
-  <li><strong>Il n'est pas piloté.</strong> L'équilibre se rattrape par des
-  réformes — 1993, 2003, 2010, 2014, 2023 — qui déplacent chaque fois l'effort
-  sur ceux qui n'ont pas encore pris leur retraite.
+  <li><strong>Et personne ne le pilote.</strong> L'équilibre se rattrape par
+  des réformes (1993, 2003, 2010, 2014, 2023), qui déplacent chaque fois
+  l'effort sur ceux qui n'ont pas encore pris leur retraite.
   <a href="{g.lien("/cout")}">Le solde est ici</a>.</li>
 </ul>""")
 
@@ -1549,13 +1549,13 @@ de la répartition. Ce qui change, c'est le calcul du droit.</p>
   <li><strong>On inscrit</strong> chaque cotisation versée sur le compte, au
   premier euro et sans plafond.</li>
   <li><strong>On revalorise</strong> le compte chaque année, au rythme auquel
-  progresse la masse des salaires — c'est-à-dire au rendement que la
+  progresse la masse des salaires, c'est-à-dire au rendement que la
   répartition peut servir sans changer son taux.</li>
   <li><strong>On divise</strong>, au départ en retraite, le solde du compte par
   le nombre d'années qu'il reste statistiquement à vivre, lu sur la table de
   votre propre génération. Le résultat est la pension.</li>
 </ol>
-<p>Un âge minimum subsiste — on ne part pas à trente ans —, mais il n'y a plus
+<p>Un âge minimum subsiste, on ne part pas à trente ans. Mais il n'y a plus
 d'âge du {g.terme("taux plein")}, ni {g.terme("décote")}, ni
 {g.terme("surcote")} : partir plus tôt donne une pension
 plus faible, partir plus tard une pension plus forte, dans le rapport exact de
@@ -1564,15 +1564,15 @@ ce que l'un et l'autre coûtent.
 
     depliant_verifier = g.depliant("Tout vérifier, page par page", f"""
 <ul class="serree">
-  <li><a href="{g.lien("/simuler")}">Simuler</a> — votre carrière, ou votre
+  <li><a href="{g.lien("/simuler")}">Simuler</a> : votre carrière, ou votre
   relevé collé tel quel, sous les six scénarios.</li>
-  <li><a href="{g.lien("/cas-types")}">Cas types</a> — treize carrières sur sept
+  <li><a href="{g.lien("/cas-types")}">Cas types</a> : treize carrières sur sept
   générations.</li>
-  <li><a href="{g.lien("/cout")}">Coût</a> — ce qui rentre, ce qui sort, et ce
+  <li><a href="{g.lien("/cout")}">Coût</a> : ce qui rentre, ce qui sort, et ce
   qui manque, de 1959 à 2070.</li>
-  <li><a href="{g.lien("/methode")}">Méthode</a> — ce que le modèle calcule, et
+  <li><a href="{g.lien("/methode")}">Méthode</a> : ce que le modèle calcule, et
   ce qu'il supprime.</li>
-  <li><a href="{g.lien("/donnees")}">Données</a> — l'état de fiabilité de chaque
+  <li><a href="{g.lien("/donnees")}">Données</a> : l'état de fiabilité de chaque
   série, source par source.</li>
 </ul>
 <p class="discret">Le modèle, les données et cette page sont publiés sous
@@ -1608,6 +1608,16 @@ que des carrières entières se déroulent sous la nouvelle règle. Qui promet u
 
 <h2>Vérifiez plutôt que de nous croire</h2>
 <p>Tout est calculé, sur des données publiques et un modèle ouvert.</p>
+<div class="note signee">
+<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
+plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
+à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
+puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par page : le modèle reste un modèle, ses
+séries d'avant 1950 sont fragiles, et le niveau des pensions notionnelles
+dépend d'un réglage annuel qu'il calcule sans l'appliquer. Nous préférons un
+chiffre discutable à une promesse qu'on ne peut pas discuter.</p>
+<p class="discret">Le Parti libéral français, septembre 2026.</p>
+</div>
 <p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer ma
 retraite</a><a href="{g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
 
@@ -1653,7 +1663,7 @@ def _programme_justice(contexte: Contexte) -> str:
 <h4>Entre deux générations</h4>
 <p>C'est ce que le système actuel tient le plus mal. Une pension y est promise
 par une règle et payée par la génération suivante ; quand le compte n'y est pas,
-c'est la règle qui change — toujours au détriment de ceux qui n'ont pas encore
+la règle change, toujours au détriment de ceux qui n'ont pas encore
 liquidé. Ce qu'un euro cotisé rapporte dépend ainsi de l'année de naissance,
 sans que personne ne l'ait voté.</p>
 <ul class="serree">
@@ -1711,7 +1721,7 @@ les majorations de durée et la majoration pour trois enfants. Chacun a son
 barème, son âge et sa condition. Ensemble, ils rendent toute pension modeste
 impossible à prévoir.</p>
 <p>Nous les remplaçons par <strong>une seule prestation</strong> : différentielle
-comme l'ASPA, servie à partir de 65 ans comme elle, financée par l'impôt — mais
+comme l'ASPA, servie à partir de 65 ans comme elle, financée par l'impôt. Mais
 <strong>individualisée</strong>. Chacun est comparé à son propre plancher, sans
 que la pension du conjoint entre dans le calcul.</p>
 <ul class="serree">
@@ -4075,12 +4085,10 @@ def _cas_types(contexte: Contexte) -> str:
         "À quel âge chacun part, et pourquoi ce n'est pas le même",
         '<p class="discret">Un cas type ne porte pas un âge de départ mais une '
         "RÈGLE, et chaque génération liquide donc au sien. La plupart partent "
-        "au taux plein — le premier âge auquel la pension est servie entière, "
+        "au taux plein, le premier âge auquel la pension est servie entière, "
         "qui dépend à la fois de l'âge légal et de la durée requise de la "
-        "génération. Ceux dont un statut commande le départ — catégorie active, "
-        "agent de conduite, agent des IEG — partent à l'âge que ce statut leur "
-        "ouvre. Le militaire, lui, part à une DURÉE de services et non à un "
-        "âge.</p>" + ages,
+        "génération. Ceux dont un statut commande le départ (catégorie active, agent de conduite, agent des IEG) partent à l'âge que ce statut leur "
+        "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge.</p>" + ages,
     )
 
     return f"""
@@ -4091,22 +4099,22 @@ que la pension deviendrait, par rapport à aujourd'hui, pour la même carrière.
 
 <div class="note"><strong>Ces pourcentages ne sont pas des baisses de
 pension.</strong> Chaque case compare deux carrières calculées sous la même
-règle, et ce que la grille mesure est l'écart entre ses lignes — ce qu'un
+règle, et ce que la grille mesure est l'écart entre ses lignes : ce qu'un
 militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
 niveau général, lui, dépend d'un
 {g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
 mais n'applique jamais : il multiplierait toutes les cases par le même facteur.
-Pour la proposition, ce facteur est supérieur à un chaque année — à
+Pour la proposition, ce facteur est supérieur à un chaque année : à
 prélèvement égal, le système aurait de quoi servir davantage que ces cases
-n'affichent —, et <strong>un coefficient supérieur à un n'est pas une
-économie, c'est une marge</strong>.
+n'affichent. <strong>Un coefficient supérieur à un est une marge</strong>,
+de quoi relever toutes les cases d'autant.
 <a href="{g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le chiffre</a>.</div>
 
 <div class="fiches reperes">{reperes}</div>
 
 <p class="discret">Le modèle calcule six scénarios. Le <strong>scénario 6</strong>
 est <a href="{g.lien("/")}">la proposition</a> ; les scénarios 2 à 5 sont des
-contrefactuels, qui mesurent ce que chaque ingrédient déplace — la
+contrefactuels, qui mesurent ce que chaque ingrédient déplace : la
 rétroactivité, la part patronale, le taux unique.</p>
 <fieldset class="onglets"><legend>Scénario affiché</legend>{onglets}</fieldset>
 <div class="panneaux">{panneaux}</div>
@@ -4115,8 +4123,8 @@ colonne de référence de ces grilles, manque déjà de
 {g.pourcentage(-comptes.solde(obs), decimales=2)} du PIB en {obs}, et le
 Conseil d'orientation des retraites projette qu'il en manquera
 {g.pourcentage(-comptes.solde(horizon), decimales=2)} en {horizon}. Le choix
-n'est pas « notionnel contre système stable », mais « notionnel contre système
-qui dérive ».</p>
+réel se joue entre le notionnel et un système
+qui dérive ; le système stable, lui, n'existe pas.</p>
 
 <p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer sur ma
 carrière</a><a href="{g.lien("/methode")}">Comment c'est calculé</a></p>
@@ -4337,7 +4345,8 @@ retraites.""",
         "Qui paie ?",
         f"""Les salaires, pour {g.pourcentage(part_salaires, decimales=0)} :
 c'est ce qui est prélevé sur chaque fiche de paie. Le reste vient surtout de
-l'impôt, et <strong>cette part a doublé en vingt ans</strong> —
+l'impôt, et <strong>cette part a doublé en vingt ans</strong> :
+
 {g.pourcentage(part_impots_debut, decimales=0)} en {premiere_ventilee},
 {g.pourcentage(part_impots_fin, decimales=0)} en {derniere_ventilee}.""",
         provenance + g.depliant(
@@ -4489,7 +4498,7 @@ def _cout_detail_depense(contexte: Contexte) -> str:
 <strong>vieillesse-survie tout entier</strong> : les pensions, mais aussi le
 minimum vieillesse, l'aide sociale aux personnes âgées et la retraite
 supplémentaire par capitalisation. La <strong>répartition obligatoire</strong>
-seule en fait {_milliards(repartition, 1)} — c'est cette grandeur-là qu'il faut
+seule en fait {_milliards(repartition, 1)} : c'est cette grandeur-là qu'il faut
 rapprocher des quelque 420 milliards que l'on cite d'ordinaire. Le reste est
 {_milliards(autres["aide_sociale_locale"], 1)} de dépendance,
 {_milliards(autres["supplementaire"], 1)} de capitalisation et
@@ -4502,7 +4511,7 @@ rapprocher des quelque 420 milliards que l'on cite d'ordinaire. Le reste est
     annees, (courbe_constants, courbe_courants), unite="Md €")}
 <p class="discret">Deux lectures de la même série. En euros courants, la
 dépense est multipliée par cent quatre-vingt-treize depuis
-{cout.premiere_annee} — mais les prix aussi ont été multipliés par treize. En
+{cout.premiere_annee} . Mais les prix aussi ont été multipliés par treize. En
 euros constants, la multiplication est par quinze : c'est celle-là qui est
 réelle. C'est pour éviter ce genre de piège que les cartes du haut sont en part
 du PIB.</p>
@@ -4772,7 +4781,7 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
 
     return g.depliant("Les six systèmes comparés, du passé jusqu'à 2070", f"""
 <p>Le modèle calcule six systèmes pour une même carrière. La carte du haut n'en
-montre qu'un — le seul qui décrive une réforme applicable en créditant ce qui
+montre qu'un, le seul qui décrive une réforme applicable en créditant ce qui
 est réellement prélevé. Voici les six, sur le passé puis sur l'avenir. Le
 « système actuel » de ces tableaux est la ligne de référence, pas un
 équilibre : il manque de
@@ -4811,13 +4820,13 @@ des âges de l'INSEE ; les écarts viennent des treize cas types croisés avec
 le système actuel, et ce n'est pas un défaut du calcul.</strong> Leur bascule est
 fixée à {bascule} : aucune pension servie avant cette date n'en est modifiée,
 puisque les droits déjà acquis sont conservés. Une réforme prospective ne fait
-rien économiser sur le passé — elle ne commence à compter qu'au premier assuré
+rien économiser sur le passé : elle ne commence à compter qu'au premier assuré
 qui liquide après elle. C'est vrai de toute réforme des retraites qui respecte
 les droits acquis.</div>
 
 <p>Le scénario 2 aurait coûté {_milliards(cout.cumul("notionnel_retroactif"), 0)}
-au lieu de {_milliards(reference, 0)}. Cet écart ne mesure PAS l'effet des
-comptes notionnels : il mesure deux choses qui n'ont rien à voir avec eux — ce
+au lieu de {_milliards(reference, 0)}. Cet écart mesure tout autre chose que l'effet des
+comptes notionnels. Il mesure deux choses qui n'ont rien à voir avec eux : ce
 scénario ne porte au compte que la <strong>part salariale</strong> de la
 cotisation, là où le scénario 4 y ajoute la part patronale et coûte
 {_milliards(cout.cumul("notionnel_retroactif_employeur"), 0)}, et il applique une
@@ -4853,7 +4862,7 @@ sans dimension, appliqué aux dépenses du COR.</div>
 constants de {euros}. Les scénarios 2, 4 et 6 restent des contrefactuels et non
 des réformes : ils supposent recalculées les pensions de gens qui les perçoivent
 depuis trente ans, ce qu'aucun droit ne permettrait. Les scénarios 3 et 5, eux,
-décrivent une réforme applicable — droits acquis conservés, règles nouvelles
+décrivent une réforme applicable, droits acquis conservés et règles nouvelles
 pour la suite.</p>
 
 <h4>Ce qui pousse la dépense, et ce qui la retient</h4>
@@ -4872,7 +4881,7 @@ ou plus par personne de 20 à 64 ans en {derniere},
 pousse la dépense, et il n'est l'objet d'aucun choix. Ce qui la retient, dans le
 système actuel, est l'indexation sur les prix : elle fait décrocher les pensions
 des salaires, génération après génération. Les comptes notionnels font la même
-chose autrement — par le diviseur d'espérance de vie —, mais ils le font
+chose autrement, par le diviseur d'espérance de vie, mais ils le font
 <em>explicitement</em>, et à l'acquisition plutôt qu'au versement.</p>
 """, identifiant="cout-scenarios")
 
@@ -4917,22 +4926,24 @@ rogner, plus de un quand il pourrait servir davantage.</p>
 )}
 <p class="discret">Les deux premières colonnes sont en part du PIB. Le
 coefficient vaut {g.nombre(observe.coefficient("actuel"), 2)} pour le système
-actuel en {obs} — il faudrait rogner de
-{g.pourcentage(1 - observe.coefficient("actuel"), decimales=1)} —, et
+actuel en {obs} (il faudrait rogner de
+
+{g.pourcentage(1 - observe.coefficient("actuel"), decimales=1)}), et
 {g.nombre(horizon.coefficient("actuel"), 2)} en {solde.derniere_annee}. La
 dernière colonne ne regarde que les années projetées : le passé est ce qu'il a
 été. Pour le système actuel, dont le rapport vaut un par construction, ces
-colonnes redonnent exactement le solde publié par le COR — c'est ce qui dit que
+colonnes redonnent exactement le solde publié par le COR, ce qui dit que
 le raccord ne triche pas. Les cinq autres systèmes ne comptent pas tout ce que
 le système actuel encaisse : ce que la branche famille et l'assurance chômage
-versent pour des droits qu'ils ne servent pas —
-{g.pourcentage(observe.retrait, decimales=2)} du PIB en {obs} — leur est
+versent pour des droits qu'ils ne servent pas, soit
+
+{g.pourcentage(observe.retrait, decimales=2)} du PIB en {obs}, leur est
 retiré, à part constante des ressources sur les années projetées. C'est
 pourquoi les scénarios 3 et 5 sont déjà en déficit en {obs}, alors qu'ils y
 servent encore les pensions du système actuel.</p>
 
-<div class="note"><strong>Un coefficient supérieur à un n'est pas une économie,
-c'est une marge.</strong> Lire les
+<div class="note"><strong>Un coefficient supérieur à un est une marge, et
+une marge se sert.</strong> Lire les
 {g.nombre(horizon.coefficient("notionnel_prospectif"), 2)} du scénario 3 comme
 une économie de {g.pourcentage(
     1 - 1 / horizon.coefficient("notionnel_prospectif"), decimales=0)} serait un
@@ -5000,11 +5011,11 @@ faux, et il faut le remplacer.</p>
 cent euros, combien de retraités touchent combien. Le barème s'y applique
 directement, sans passer par aucun cas type. Deux lectures : ce que la garantie
 coûterait <strong>aux pensions d'aujourd'hui</strong>, en remplacement de
-l'ASPA — un calcul qui ne doit rien au modèle —, et ce qu'elle coûterait
+l'ASPA (un calcul qui ne doit rien au modèle), et ce qu'elle coûterait
 <strong>aux pensions du scénario 6</strong>, toute la distribution étant alors
 déplacée du rapport {g.pourcentage(facteur_contributif, decimales=0)} que le
 modèle donne à sa part contributive. Deux planchers aussi, parce que l'enquête
-dit la pension et non avec qui l'on vit : le coût réel est entre les deux.</p>
+dit la pension sans dire avec qui l'on vit : le coût réel est entre les deux.</p>
 
 {g.tableau(
     ["Assiette et plancher", "Part des retraités", "Bénéficiaires",
@@ -5053,7 +5064,7 @@ def _cout_detail_poids(contexte: Contexte) -> str:
     return g.depliant("Ce que chaque carrière type pèse dans ces chiffres", f"""
 <p><strong>Deux pondérations se composent.</strong> Celle de la génération est
 démographique, et vient de l'INSEE. Celle du <strong>cas type</strong> est
-sociologique — combien de retraités ont eu cette carrière-là —, et vient des
+sociologique (combien de retraités ont eu cette carrière-là), et vient des
 effectifs que la DREES publie caisse par caisse. La colonne de droite rappelle
 ce que valait la convention antérieure, qui les pesait à égalité.</p>
 
@@ -5068,7 +5079,7 @@ ce que valait la convention antérieure, qui les pesait à égalité.</p>
 <p class="discret">Une caisse réclamée par plusieurs cas types se partage
 également entre eux : la Cnav est celle des quatre carrières du privé, et aucune
 source ne dit combien de ses retraités ont été cadres. Hors de la fenêtre que la
-DREES publie — 2004 à 2024 —, la répartition du bord est reconduite : la France
+DREES publie (2004 à 2024), la répartition du bord est reconduite : la France
 de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent.</p>
 """, identifiant="cout-poids")
 
@@ -5148,7 +5159,9 @@ def _cout_detail_limites(contexte: Contexte) -> str:
     solde = cout.solde
     avenir = cout.avenir
     observe = solde.annee(solde.derniere_annee_observee)
-    return g.depliant("Ce que cette page ne dit pas", f"""
+    return g.depliant("Dix réserves à lire avant de citer ces chiffres",  f"""
+<p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
+laisse dix, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
   <li><strong>Les recettes ne réagissent à rien.</strong> Elles sont celles du
   système actuel, encaissées ou projetées telles quelles : la question posée
@@ -5157,11 +5170,11 @@ def _cout_detail_limites(contexte: Contexte) -> str:
   rien ici ne le dit. Une seule recette suit le droit : ce que la branche
   famille et l'assurance chômage versent pour des droits que les scénarios
   notionnels ne servent pas leur est retiré, à part constante des ressources
-  sur les années projetées — le dépliant « Ce que la branche famille et
+  sur les années projetées. Le dépliant « Ce que la branche famille et
   l'assurance chômage versent » dit ce que cela vaut.</li>
   <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
   L'appliquer changerait toutes les pensions par un même facteur, donc tous les
-  niveaux de cette page, sans toucher aux écarts entre carrières — qui sont la
+  niveaux de cette page, sans toucher aux écarts entre carrières, qui sont la
   seule chose que ce site mesure.</li>
   <li><strong>L'année du retour à l'équilibre se lit à quelques années
   près.</strong> Le déficit actuel vaut
@@ -5173,10 +5186,10 @@ def _cout_detail_limites(contexte: Contexte) -> str:
   négatif peut être couvert par elles pendant des années. Le solde dit le flux,
   jamais le stock.</li>
   <li><strong>La projection est celle du COR</strong>, scénario de référence,
-  avec ses hypothèses — démographie de l'INSEE, productivité, chômage. Ses
+  avec ses hypothèses : démographie de l'INSEE, productivité, chômage. Ses
   ressources reculent en part de PIB parce que l'assiette des cotisations y
-  progresse moins vite que le PIB : c'est une hypothèse, écrite par lui, et non
-  une mesure. Seize autres scénarios démographiques existent, dont l'écart
+  progresse moins vite que le PIB : cette hypothèse est la sienne, et personne
+  ne l'a mesurée. Seize autres scénarios démographiques existent, dont l'écart
   mesurerait l'incertitude ; cette page n'en montre aucun.</li>
   <li><strong>Le taux de couverture est supposé constant.</strong> Le modèle
   compte des générations, non des cotisants : il suppose que la même proportion
@@ -5324,7 +5337,7 @@ def _methode(contexte: Contexte) -> str:
          "au premier euro et sans plafond."),
         ("2. On revalorise",
          "Le solde est augmenté chaque année d'un taux fixé par la règle "
-         "collective — par défaut, le rythme auquel progresse la masse des "
+         "collective : par défaut, le rythme auquel progresse la masse des "
          "salaires."),
         ("3. On divise",
          "Au départ, <code>pension = solde ÷ espérance de vie restante</code>, "
@@ -5346,7 +5359,7 @@ def _methode(contexte: Contexte) -> str:
         f"""La règle de revalorisation, et de très loin. Selon celle qu'on
 retient, une cotisation de 1950 conserve {conserve_litteral} de sa valeur, ou
 onze fois plus. <strong>C'est de là que vient l'essentiel de l'écart affiché par
-les scénarios rétroactifs</strong>, et non du passage aux comptes notionnels.""",
+les scénarios rétroactifs</strong>, bien plus que du passage aux comptes notionnels.""",
         tableau_indexation,
         """La règle appliquée par défaut est la croissance de la masse des
 salaires : ce qu'un système en répartition peut servir sans toucher à son taux.
@@ -5357,7 +5370,7 @@ Les huit autres restent à un clic, dans les options du simulateur.""",
 <h2 style="margin-top:0">Comment c'est calculé</h2>
 <p class="chapeau">Un compte notionnel est un compte <em>virtuel</em> : rien
 n'est placé, les cotisations de l'année paient les pensions de l'année. Ce qui
-change, c'est le calcul du droit — en trois opérations.</p>
+change, c'est le calcul du droit, en trois opérations.</p>
 
 <div class="note resume"><strong>En clair.</strong> Votre pension serait votre
 compte divisé par le nombre d'années qu'il vous reste à vivre, en moyenne.
@@ -5416,17 +5429,17 @@ appliqué aux salaires portés au compte, celui dont le scénario 1 se sert pour
 calculer le {g.terme("salaire de référence")}. Il vaut
 <strong>×{g.nombre(reval_pratiquee, 0)}</strong> sur la période, près de cinq
 fois les prix, parce que le régime général a revalorisé sur les SALAIRES
-jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, et non
+jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, plutôt que
 « Indexation sur les prix », qui neutralise la question de l'indexation quand on
-veut isoler l'effet propre des comptes notionnels. Sur une carrière —
-un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
-à 62 —, la correction reste modeste : +5,2 points pour la génération 1920,
+veut isoler l'effet propre des comptes notionnels. Sur une carrière
+(un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
+à 62), la correction reste modeste : +5,2 points pour la génération 1920,
 +0,0 pour 1945, -0,4 pour 1958. Les cotisations se concentrent sur les dernières années, là où
 les deux règles coïncident.</p>
 
 <p><strong>« Masse salariale » est ce que la théorie désigne.</strong> En
 répartition, le rendement qu'un système peut servir sans changer son taux est la
-croissance de son assiette — le salaire moyen multiplié par l'emploi salarié
+croissance de son assiette, le salaire moyen multiplié par l'emploi salarié
 (Samuelson 1958, Aaron 1966). C'est le taux d'indexation des comptes notionnels
 suédois, italiens, polonais et lettons, à des variantes près. Sur 1941-2025 il
 vaut ×{g.nombre(masse_salariale, 0)}, onze fois les prix : l'emploi salarié a
@@ -5440,12 +5453,12 @@ large : il gagne ce que la masse salariale perd quand la valeur ajoutée se
 déplace vers les revenus non salariaux. La dernière ligne y ajoute un
 <strong>lissage sur cinq ans</strong>, comme le fait l'Italie.</p>
 
-<p><strong>Le lissage n'est pas une règle</strong> : c'est un réglage à part, qui
-applique une moyenne glissante au taux que la règle produit — n'importe
-laquelle. Ce qu'il vise n'est pas le niveau mais la <strong>loterie de
+<p><strong>Le lissage est un réglage à part</strong>, qui s'ajoute à n'importe
+quelle règle : une moyenne glissante du taux qu'elle produit. Il vise moins
+le niveau que la <strong>loterie de
 cohorte</strong> : sur le PIB nominal brut, une cotisation de
 {ANNEE_COTISATION_LOTERIE} vaut {loterie["1|2019"]} à une liquidation de 2019 et
-{loterie["1|2020"]} en 2020 — attendre un an fait <em>perdre</em>, parce que
+{loterie["1|2020"]} en 2020 : attendre un an fait <em>perdre</em>, parce que
 l'année traversée s'est mal passée. Lissée sur cinq ans, elle vaut
 {loterie["5|2019"]} puis {loterie["5|2020"]} : le trou de 2020 est absorbé par
 les quatre années qui l'entourent au lieu d'être porté en entier par qui a eu le
@@ -5476,8 +5489,8 @@ def _methode_droit_positif() -> str:
 <p>L'étalon ne vaut que par ce qu'il reproduit. Il applique la
 {g.terme("décote")} et la {g.terme("surcote")}, la proratisation par la
 {g.terme("durée", "durée d'assurance")}, le {g.terme("salaire de référence")}
-de chaque régime — sur ses seules années, jamais sur toute la carrière —, et cinq
-paramètres lus à la GÉNÉRATION et non à l'année de liquidation : durée requise,
+de chaque régime (sur ses seules années, jamais sur toute la carrière), et cinq
+paramètres lus à la génération plutôt qu'à l'année de liquidation : durée requise,
 âge légal, âge d'annulation de la décote, coefficient de minoration, nombre
 d'années retenues au salaire de référence.</p>
 <p>Il applique aussi, dans l'ordre où le droit les applique, les avantages non
@@ -5492,7 +5505,7 @@ contributifs que la carrière suffit à déterminer :</p>
   en 1972 à un an par enfant, passe à deux ans en 1975 et va à la mère ; la
   fonction publique et les régimes spéciaux servent leur bonification, un an par
   enfant né avant 2004 et deux trimestres pour les enfants nés depuis. Ils sont
-  attribués DANS un régime et non au-dessus d'eux : ils comptent donc aussi dans
+  attribués à l'intérieur d'un régime, jamais au-dessus des régimes : ils comptent donc aussi dans
   sa proratisation ;</li>
   <li><strong>le minimum contributif</strong>, réservé aux pensions liquidées au
   taux plein, proratisé par la durée d'assurance acquise dans le régime, et sa
@@ -5519,7 +5532,7 @@ publique, dont le coefficient et l'âge d'annulation montent en charge de 2006 �
 la garantie minimale de points de l'Agirc, 120 points par an de 1989 à 2018
 même quand la tranche B est nulle.</p>
 <p>Enfin, le scénario dit si le droit <strong>ouvre</strong> la liquidation
-demandée — âge légal du régime, ou départ anticipé pour carrière longue. Quand
+demandée : âge légal du régime, ou départ anticipé pour carrière longue. Quand
 il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les six
 scénarios sur la même carrière, mais la page le signale : il ne décrit alors
 aucune pension que le système actuel servirait.</p>""")
@@ -5535,7 +5548,7 @@ active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le scén
 1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
 <p>Une exception : le <strong>scénario 6</strong>, la
 <a href="{g.lien("/")}">proposition du Parti libéral français</a>, remet un
-plancher — et un seul. C'est le scénario 4, à deux différences près : un taux
+plancher, et un seul. C'est le scénario 4, à deux différences près : un taux
 unique de 18 % pour tous à compter de la bascule, salariale et patronale
 additionnées, les années antérieures restant portées au compte aux taux réels ;
 et une garantie vieillesse, différentielle et servie à 65 ans comme l'ASPA, mais
@@ -5562,17 +5575,17 @@ déplafonnée.</p>
 <p>Une carrière se décrit comme une <strong>suite de métiers</strong> : chacun
 porte un statut d'affiliation, un âge de début et un niveau de revenu, et court
 jusqu'au début du suivant. Chaque changement fait passer d'un régime à un
-autre — donc d'un taux, d'une assiette et d'un barème à un autre.</p>
+autre, donc d'un taux, d'une assiette et d'un barème à un autre.</p>
 <p>Deux conventions le bornent, imposées par la maille des données. Le
 <strong>profil de carrière</strong> vaut pour la vie active entière : c'est une
-progression de carrière et non d'emploi, et le niveau propre à chaque métier s'y
+progression de carrière, quel que soit l'emploi, et le niveau propre à chaque métier s'y
 superpose au lieu de la remettre à zéro. Et une <strong>année civile n'a qu'un
 statut</strong> : l'année d'un changement revient au métier qui en occupe le
 plus de mois, et à égalité à celui qui l'ouvre, tandis que le revenu porté au
 compte reste la somme de ce que les deux ont réellement payé.</p>
 <p>Un statut ne se déclare qu'<strong>aux dates où son régime recrutait</strong>.
-Le menu date chacun — « depuis 1977 » pour l'artiste-auteur, « recrutés avant
-septembre 2010 » pour le mineur — et grise ceux que l'entrée saisie ferme. La
+Le menu date chacun (« depuis 1977 » pour l'artiste-auteur, « recrutés avant
+septembre 2010 » pour le mineur) et grise ceux que l'entrée saisie ferme. La
 date opposée est celle de l'entrée dans le métier, au mois près : qui est entré
 à la RATP en octobre 2022 garde son régime, fermé aux recrutés du
 1<sup>er</sup> septembre 2023. C'est la clause du grand-père.</p>""")
@@ -5598,7 +5611,7 @@ d'oracle au scénario 1.</p>
 modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateur
 : rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte
 pas du modèle, et ce n'est pas une promesse : des centaines de carrières
-témoins — chaque statut d'affiliation, à six générations — sont calculées par
+témoins (chaque statut d'affiliation, à six générations) sont calculées par
 les deux, et comparées nombre par nombre ; chaque page du site est rendue par
 les deux, et comparée caractère par caractère. Toute divergence fait échouer
 les tests.</p>
@@ -5618,7 +5631,7 @@ def _methode_unites() -> str:
 <h4 id="unites">Brut, et pas net</h4>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,
 les cotisations versées, le capital notionnel, les six pensions. « Brut » a ici
-le sens des comptes nationaux — <em>salaires et traitements bruts</em> (D11)
+le sens des comptes nationaux : <em>salaires et traitements bruts</em> (D11)
 rapportés à l'emploi salarié intérieur. C'est-à-dire <strong>avant</strong>
 cotisations salariales, CSG, CRDS et impôt sur le revenu, et <strong>hors</strong>
 cotisations patronales. C'est l'assiette sur laquelle les régimes appellent leurs
@@ -5781,8 +5794,8 @@ catalogue : une fiche sans ligne d'inventaire, ou une ligne qui prétend calcule
 ce qu'aucune fiche ne calcule, fait échouer les tests. Un régime « partiel » est
 calculé, mais un étage, un barème ou une période lui manque, et la dernière
 colonne dit lequel ; un régime « à modéliser » n'a pas de fiche ; une ligne
-« portée par un statut » n'est pas un régime mais une affiliation — l'élu
-local, le micro-entrepreneur —, que le statut nommé route vers les régimes du
+« portée par un statut » n'est pas un régime mais une affiliation (l'élu
+local, le micro-entrepreneur), que le statut nommé route vers les régimes du
 catalogue. La fiabilité est celle de la fiche du catalogue, quand il y en a
 une. Cherchez, filtrez, ou triez en cliquant un en-tête de colonne.</p>
 {filtres}
@@ -5935,8 +5948,8 @@ Caisse des dépôts, Direction de la Sécurité sociale, Cour des comptes,
 Agirc-Arrco, Assemblée nationale, Union Retraite, CCMSA, CNAVPL, CNBF, DGAFP,
 Direction du Budget, ERAFP, Ircantec, caisses des régimes spéciaux, Urssaf,
 Légifrance, INED, Eurostat, OCDE, OpenFisca-France, IPP, CEPII.</p>
-<p>Chaque valeur porte son niveau de fiabilité — <code>certifiee</code>,
-<code>haute</code>, <code>moyenne</code>, <code>estimee</code> — et la fiabilité
+<p>Chaque valeur porte son niveau de fiabilité, <code>certifiee</code>,
+<code>haute</code>, <code>moyenne</code> ou <code>estimee</code>, et la fiabilité
 d'un résultat est celle de son maillon le plus faible.</p>
 <p>Quand deux institutions publient le même chiffre, quatre critères disent
 laquelle aller chercher : le <strong>producteur</strong> prime sur le repreneur,
@@ -5955,7 +5968,7 @@ détaillées</a></p>""", identifiant="donnees-sources")
 <h2 style="margin-top:0">Ce que valent les chiffres</h2>
 <p class="chapeau">Rien ici n'est à croire sur parole. Chaque série est
 recontrôlée, automatiquement, contre le fichier de l'institution qui la
-produit — et ce qui ne l'est pas est dit.</p>
+produit. Ce qui ne l'est pas est dit.</p>
 
 <div class="note resume"><strong>En clair.</strong> Les chiffres de ce site
 viennent des institutions qui les produisent : l'INSEE pour les prix et les

@@ -4128,7 +4128,7 @@ def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres(contexte):
     cle = corps.index("Ces pourcentages ne sont pas des baisses de")
     assert cle < corps.index('<div class="fiches reperes">')
     assert cle < corps.index('<div class="panneaux">')
-    assert "un coefficient supérieur à un n'est pas une\néconomie, c'est une marge" in corps
+    assert "Un coefficient supérieur à un est une marge" in corps
     assert 'data-vers="cout-equilibre"' in corps
     assert "Ces pourcentages ne sont pas des baisses" in _hors_depliants(corps)
 
@@ -4352,3 +4352,78 @@ def test_chaque_route_porte_sa_description():
         cwd=racine, capture_output=True, text=True, check=True,
     )
     assert json.loads(lecture.stdout) == DESCRIPTIONS
+
+
+# -- la revue du 15 septembre 2026 : le thème « gommer la touche IA » ----------
+
+
+def _prose(corps: str) -> str:
+    """Le texte d'une page hors de ses tableaux, où « — » est une case vide."""
+    sans_tables = re.sub(r"<table.*?</table>", " ", corps, flags=re.S)
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", sans_tables)))
+
+
+#: Le nombre de phrases portant une incise en tiret cadratin que chaque page
+#: peut encore compter, hors tableaux. Les bornes sont celles de la relecture
+#: de septembre 2026, où le site en comptait de deux à quatre fois plus : elles
+#: n'interdisent pas l'incise, qui est une ponctuation française, elles
+#: interdisent d'y revenir comme à un tic.
+INCISES_MAXIMUM = {
+    "/": 3, "/simuler": 14, "/cas-types": 9, "/cout": 22, "/methode": 9,
+    "/donnees": 4, "/mentions": 9,
+}
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_les_incises_en_tiret_restent_rares(contexte, chemin):
+    """Le tiret cadratin en incise — « — c'est-à-dire […] — » — est le tic de
+    ponctuation le plus reconnaissable d'un texte généré, et le site en
+    faisait un usage dense : quatorze phrases sur l'accueil, une quarantaine
+    sur Coût. La plupart sont devenues des parenthèses, des deux-points ou des
+    phrases séparées ; ce test tient le compte."""
+    prose = _prose(rendre(contexte, chemin, {})[1])
+    phrases = [p for p in re.split(r"(?<=[.!?])\s+", prose) if " — " in p]
+    assert len(phrases) <= INCISES_MAXIMUM[chemin], (
+        f"{chemin} : {len(phrases)} phrases avec une incise en tiret, "
+        f"{INCISES_MAXIMUM[chemin]} au plus — " + " | ".join(p[:80] for p in phrases)
+    )
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_le_procede_ce_n_est_pas_x_c_est_y_a_disparu(contexte, chemin):
+    """« Ce n'est pas une économie, c'est une marge » : efficace une fois,
+    reconnaissable comme procédé à la dixième. Le site le répétait sur chaque
+    page ; il n'en reste aucun, et les contrastes se disent autrement — une
+    comparaison, un exemple, une question."""
+    prose = _prose(rendre(contexte, chemin, {})[1])
+    procede = re.compile(r"(?:n'est pas|ne sont pas)[^.;]{0,80}?(?:, c'est|: c'est)|, et non |\bnon pas ")
+    trouves = procede.findall(prose)
+    assert not trouves, f"{chemin} : {trouves}"
+
+
+def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
+    """« Il est illisible. Il est inégal. Il n'est pas piloté. » est devenu une
+    liste asymétrique, et l'accueil porte une note signée : qui publie ce
+    site, pourquoi, et avec quelles réserves."""
+    corps = rendre(contexte, "/", {})[1]
+    assert "Il est illisible." not in corps and "Il n'est pas piloté." not in corps
+    assert "Illisible, d'abord." in corps and "Et personne ne le pilote." in corps
+    note = re.search(r'<div class="note signee">(.*?)</div>', corps, re.S)
+    assert note, "la note signée manque"
+    assert "Nous avons choisi" in note.group(1)
+    assert "Nos réserves sont écrites" in note.group(1)
+    assert "Le Parti libéral français, septembre 2026." in note.group(1)
+    assert "Pourquoi ce site." in _hors_depliants(corps)
+
+
+def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(contexte):
+    """« Ce que cette page ne dit pas » était un titre de gabarit, le même
+    d'une page à l'autre ; celui de Coût dit ce qu'il contient, et une phrase
+    d'entrée dit pourquoi il est là."""
+    for chemin in TITRES:
+        corps = rendre(contexte, chemin, {})[1]
+        assert "<span>Ce que cette page ne dit pas</span>" not in corps, chemin
+        assert "ne dit pas</span>" not in corps, chemin
+    cout = rendre(contexte, "/cout", {})[1]
+    assert "<span>Dix réserves à lire avant de citer ces chiffres</span>" in cout
+    assert "Une page de chiffres vaut par ce qu'elle laisse de côté" in cout

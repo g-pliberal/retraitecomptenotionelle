@@ -1646,7 +1646,7 @@ et qui aurait signalé le défaut sans qu'on le cherche.
 
 ---
 
-### 23. La revue extérieure du 15 septembre 2026 : vingt-sept chantiers sur le site — `à faire`
+### 23. La revue extérieure du 15 septembre 2026 : vingt-sept chantiers sur le site — `fait`
 
 **Pourquoi.** Une relecture des six pages publiées (Programme, Simuler, Cas
 types, Coût, Méthode, Données), faite par un lecteur extérieur au dépôt le
@@ -1686,6 +1686,19 @@ et rien qui défasse ce que la route affiche.
 
 **Fin.** Les vingt-sept cases cochées ou barrées, et une ligne au Journal par
 passe, disant quelles pages ont bougé et de combien de mots.
+
+**Ce que ça a déplacé.** Les vingt-sept cases sont cochées, en quatre passes
+les 16 et 17 septembre 2026, une par thème, chacune avec sa ligne au Journal ;
+aucune n'a été barrée. *Aucun chiffre du modèle n'a bougé* : les témoins de
+simulation sont identiques au bit près d'un bout à l'autre, et seuls les
+témoins de page ont changé. Ce qui a changé est ce qu'un visiteur voit : un
+glossaire, un menu groupé, des onglets, des tables qui se filtrent, un plan de
+page, une navigation en trois groupes, une clé de lecture avant les chiffres,
+des badges, une note signée, et une prose sans ses tics — le tout tenu par
+une trentaine de tests nouveaux, dont ceux qui plafonnent les incises et
+interdisent le retour du procédé. Une seule question a été renvoyée au modèle
+plutôt que tranchée ici : le défaut de conversion des droits acquis, mesuré et
+versé à l'action 24.
 
 ---
 
@@ -1957,20 +1970,60 @@ passe, disant quelles pages ont bougé et de combien de mots.
 
 *Le design visuel n'a pas ce problème : pas de dégradés, pas d'icônes génériques, pas d'emoji. La « touche IA » à corriger est dans le texte — des procédés rhétoriques efficaces isolément, mais reconnaissables à force d'être répétés à l'identique.*
 
-- [ ] 🔴 **Varier le procédé « Ce n'est pas X, c'est Y »** `Global`
+- [x] 🔴 **Varier le procédé « Ce n'est pas X, c'est Y »** `Global`
   Répété des dizaines de fois sur l'ensemble du site (« ce n'est pas une économie, c'est une marge » ; « ce n'est pas l'ASPA à un autre montant » ; « non du passage aux comptes notionnels »…). Efficace isolément, systématique à l'échelle du site, ce qui le rend reconnaissable comme procédé. Relire chaque page en variant : comparaison implicite, exemple concret, question rhétorique.
+  *Fait le 17 septembre 2026.* Mesuré avant d'écrire : le procédé, sous ses
+  formes « n'est pas X : c'est Y », « X, et non Y », « non pas X », apparaissait
+  sur chaque page — de deux (Cas types) à neuf fois (Coût, Méthode) dans la
+  prose hors tableaux. Il n'en reste aucun. Les contrastes se disent autrement
+  : une question (« La retraite française ? Un empilement de régimes, plus
+  qu'un système »), une comparaison (« bien plus que du passage aux comptes
+  notionnels »), un renversement (« Un coefficient supérieur à un est une
+  marge, et une marge se sert »), ou une phrase séparée. Un test tient
+  désormais le compte à zéro sur les sept pages, dans la prose hors tableaux,
+  des deux côtés du portage.
 
-- [ ] 🟠 **Sortir les rubriques « Ce que cette page ne dit pas » du gabarit** `Coût · Données`
+- [x] 🟠 **Sortir les rubriques « Ce que cette page ne dit pas » du gabarit** `Coût · Données`
   Bon réflexe de transparence, mais le titre quasi identique d'une page à l'autre (« Ce que cette page ne dit pas », « Ce que ce solde ne dit pas ») accentue l'effet de patron répété. Varier les titres et intégrer ces réserves plus naturellement dans le texte plutôt qu'en rubrique systématique.
+  *Fait le 17 septembre 2026.* Il n'en restait qu'une, sur Coût — « Ce que ce
+  solde ne dit pas » avait disparu avec la refonte de l'action 16. Elle
+  s'appelle « Dix réserves à lire avant de citer ces chiffres », dit ce qu'elle
+  contient, et s'ouvre sur une phrase qui dit pourquoi elle est là. Un test
+  refuse tout titre de section en « ne dit pas ».
 
-- [ ] 🟠 **Alléger les incises en tiret cadratin** `Global`
+- [x] 🟠 **Alléger les incises en tiret cadratin** `Global`
   Usage très dense du tiret cadratin en incise (« — c'est-à-dire […] — », « — et c'est […], — »). C'est l'un des tics de ponctuation les plus souvent associés à un texte généré. Remplacer une partie de ces incises par des phrases séparées, des parenthèses, ou des notes de bas de page.
+  *Fait le 17 septembre 2026.* Compté dans la prose hors tableaux, où le tiret
+  est une case vide : l'accueil en avait quatorze phrases, Cas types vingt,
+  Méthode vingt-quatre, Coût une quarantaine. Après la passe : zéro, sept,
+  sept et dix-neuf — des parenthèses là où l'incise nommait des exemples ou
+  des dates, des deux-points là où elle expliquait, des phrases séparées là
+  où elle prolongeait. Une cinquantaine de phrases réécrites en tout, dans les
+  deux portages et dans les gloses des données (cas types, postes de
+  ressources, systèmes de dépense). Le tiret n'est pas banni, c'est une
+  ponctuation française ; un test plafonne son emploi page par page, à un peu
+  au-dessus du compte d'aujourd'hui.
 
-- [ ] ⚪ **Casser la symétrie des triades rhétoriques** `Programme`
+- [x] ⚪ **Casser la symétrie des triades rhétoriques** `Programme`
   Des groupes de trois membres parallèles reviennent régulièrement (« Il est illisible. Il est inégal. Il n'est pas piloté. »). Élégant isolément, répétitif à l'échelle du site. Casser le motif par endroits avec deux points, ou quatre, ou une liste asymétrique.
+  *Fait le 17 septembre 2026.* « Il est illisible. Il est inégal. Il n'est pas
+  piloté. » est devenu « Illisible, d'abord. Inégal, ensuite. Et personne ne
+  le pilote. » — trois membres encore, mais qui ne se répondent plus mot pour
+  mot. Le chapeau de l'accueil, lui, comptait déjà quatre membres et un
+  « Et » ; il reste tel quel.
 
-- [ ] ⚪ **Ajouter une voix incarnée** `Programme`
+- [x] ⚪ **Ajouter une voix incarnée** `Programme`
   Aucun « nous avons choisi », aucun nom, aucune note personnelle sur pourquoi ce site existe : tout reste à la troisième personne impersonnelle. Une courte note signée — qui, pourquoi ce projet, quelles réserves — sur Programme ou dans une page « À propos » ferait contrepoint humain à la rigueur méthodologique.
+  *Fait le 17 septembre 2026, à la première personne du pluriel.* Une note
+  signée sous « Vérifiez plutôt que de nous croire » : pourquoi un modèle
+  plutôt qu'un slogan, ce que nous avons choisi, ce que nous réservons — le
+  modèle reste un modèle, les séries d'avant 1950 sont fragiles, le niveau des
+  pensions notionnelles dépend d'un réglage que le modèle calcule sans
+  l'appliquer —, et la phrase qui dit le pari : « nous préférons un chiffre
+  discutable à une promesse qu'on ne peut pas discuter ». Signée « Le Parti
+  libéral français, septembre 2026 » : le relecteur demandait un nom, et le
+  choix d'une signature personnelle appartient au parti, comme les champs de
+  l'éditeur encore à compléter sur la page des mentions légales.
 
 > **Constat (pas une action) :** le design visuel — thème sombre sobre, sans dégradé ni icône générique — n'a pas la « touche IA » habituelle des sites générés. Le travail porte sur le texte, pas sur l'interface.
 
@@ -2431,3 +2484,17 @@ défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouve
   moitié** — la méta-description par route est posée par le navigateur, ce
   qui sert au partage et non au référencement, et la case le dit plutôt que
   de compter le chantier pour fait sans réserve.
+- **Septembre 2026, action 23, quatrième et dernière passe : le thème « gommer
+  la touche IA ».** Cinq chantiers, cinq cases cochées, le 17 septembre ; les
+  vingt-sept cases de l'action sont cochées. Une passe d'écriture, mesurée
+  avant et après dans le HTML rendu, hors tableaux : plus aucun « ce n'est pas
+  X, c'est Y », deux à quatre fois moins d'incises en tiret, la rubrique des
+  réserves de Coût renommée pour ce qu'elle contient, la triade de l'accueil
+  cassée, une note signée. Aucun chiffre n'a changé ; les gloses des données
+  ont bougé dans les deux portages, et les témoins de page le montrent. Deux
+  leçons. **Un tic se compte avant de se corriger, et se garde par un test
+  après** : sans plafond, la prochaine session réécrira avec les mêmes
+  réflexes. Et **une réécriture à l'identique dans deux portages passe par la
+  phrase, pas par le fichier** : le script cherche la phrase en tolérant les
+  coupures de ligne et les coutures de chaînes, et refuse toute phrase qu'il
+  ne trouve pas exactement une fois de chaque côté.
