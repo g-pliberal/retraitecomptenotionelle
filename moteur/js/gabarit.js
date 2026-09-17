@@ -27,14 +27,18 @@ export const SIGNATURE_SITE = "Parti libéral français — le simulateur de ret
 /** Espace insécable fin, séparateur de milliers à la française. */
 const FINE = "\u202f";
 
-export const LIENS = [
-  ["/", "Programme"],
-  ["/simuler", "Simuler"],
-  ["/cas-types", "Cas types"],
-  ["/cout", "Coût"],
-  ["/methode", "Méthode"],
-  ["/donnees", "Données"],
+/**
+ * La navigation, par FONCTION et non par page : le message, la preuve, la
+ * confiance. Copie de `GROUPES_NAVIGATION` dans `web/gabarit.py`.
+ */
+export const GROUPES_NAVIGATION = [
+  ["Le programme", [["/", "Programme"]]],
+  ["La preuve", [["/simuler", "Simuler"], ["/cas-types", "Cas types"],
+    ["/cout", "Coût"]]],
+  ["La confiance", [["/methode", "Méthode"], ["/donnees", "Données"]]],
 ];
+
+export const LIENS = GROUPES_NAVIGATION.flatMap(([, liens]) => liens);
 
 /**
  * Adresse d'une page interne.
@@ -49,9 +53,14 @@ export function lien(chemin, ancre = "") {
 }
 
 export function navigation(cheminActif = "/") {
-  return LIENS.map(([chemin, libelle]) => `<a href="${lien(chemin)}"`
+  // Les liens du bandeau, par groupe : une étiquette, puis les pages.
+  const liensDuGroupe = (liens) => liens.map(([chemin, libelle]) => `<a href="${lien(chemin)}"`
     + (chemin === cheminActif ? ' aria-current="page"' : "")
     + `>${echapper(libelle)}</a>`).join("");
+  return GROUPES_NAVIGATION.map(([etiquette, liens]) => (
+    `<span class="groupe"><span class="etiquette">${echapper(etiquette)}</span>`
+    + `<span class="liens">${liensDuGroupe(liens)}</span></span>`
+  )).join("");
 }
 
 /**

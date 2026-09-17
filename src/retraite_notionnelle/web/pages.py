@@ -1356,6 +1356,35 @@ TITRES = {
 }
 
 
+#: La description de chaque page, pour la balise ``<meta name="description">``
+#: que le routeur d'``index.html`` réécrit à chaque rendu — comme il réécrit le
+#: titre. Une phrase par page, qui dit ce qu'on y trouve. Le site tient dans
+#: une seule page servie une fois : c'est le navigateur, et non le serveur, qui
+#: pose cette description, ce qui vaut pour qui partage ou enregistre la page,
+#: et moins pour un robot qui n'exécute pas le script.
+DESCRIPTIONS = {
+    "/": "Le programme du Parti libéral français pour les retraites : un régime "
+         "unique en comptes notionnels, un taux de 18 % pour tous, une garantie "
+         "vieillesse individualisée — et le simulateur qui le chiffre, carrière "
+         "par carrière, dans votre navigateur.",
+    "/simuler": "Votre carrière calculée de six façons : le système actuel, et "
+                "les comptes notionnels appliqués depuis 1941 ou à partir de la "
+                "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
+    "/cas-types": "Treize carrières types sur sept générations : ce que chaque "
+                  "pension deviendrait, par rapport à aujourd'hui, sous la "
+                  "proposition et sous quatre contrefactuels.",
+    "/cout": "Ce que la retraite coûte, d'où vient l'argent, et ce qui manque, "
+             "de 1959 à 2070 — et ce que chacun des six systèmes coûterait.",
+    "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
+                "opérations, et pourquoi la règle de revalorisation décide de "
+                "presque tout.",
+    "/donnees": "D'où viennent les chiffres du site, série par série et régime "
+                "par régime, et ce qui a été recontrôlé contre sa source.",
+    "/mentions": "Mentions légales, données personnelles et accessibilité du "
+                 "simulateur de retraite en comptes notionnels.",
+}
+
+
 def rendre(contexte: Contexte, chemin: str,
            parametres: dict[str, str] | None = None) -> tuple[str, str]:
     """Contenu d'une page : ``(titre, corps HTML)``.
@@ -4076,9 +4105,9 @@ n'affichent —, et <strong>un coefficient supérieur à un n'est pas une
 <div class="fiches reperes">{reperes}</div>
 
 <p class="discret">Le modèle calcule six scénarios. Le <strong>scénario 6</strong>
-est la proposition ; les scénarios 2 à 5 sont des contrefactuels, qui mesurent
-ce que chaque ingrédient déplace — la rétroactivité, la part patronale, le taux
-unique.</p>
+est <a href="{g.lien("/")}">la proposition</a> ; les scénarios 2 à 5 sont des
+contrefactuels, qui mesurent ce que chaque ingrédient déplace — la
+rétroactivité, la part patronale, le taux unique.</p>
 <fieldset class="onglets"><legend>Scénario affiché</legend>{onglets}</fieldset>
 <div class="panneaux">{panneaux}</div>
 <p class="discret">« Aujourd'hui » n'est pas un point fixe. Le système actuel,
@@ -5343,7 +5372,9 @@ pour servir de point de comparaison.</div>
 <p>Trois conséquences. La pension est exactement proportionnelle aux
 cotisations. Partir tôt coûte deux fois : moins de cotisations, et une pension à
 servir plus longtemps. Et aucun droit qu'une cotisation n'a pas financé
-n'existe.</p>
+n'existe. C'est la règle que <a href="{g.lien("/")}">le programme</a> propose,
+et <a href="{g.lien("/cas-types")}">treize carrières types</a> montrent ce
+qu'elle déplace, génération par génération.</p>
 
 {carte}
 
@@ -5358,6 +5389,7 @@ méthodologie complète</a></p>
 {_methode_suppressions()}
 {_methode_carriere(contexte)}
 {_methode_unites()}
+{_methode_construction()}
 """
 
 
@@ -5546,6 +5578,40 @@ date opposée est celle de l'entrée dans le métier, au mois près : qui est en
 1<sup>er</sup> septembre 2023. C'est la clause du grand-père.</p>""")
 
 
+def _methode_construction() -> str:
+    """Comment ce site est construit, et comment on le vérifie.
+
+    C'est l'argument de confiance d'un public technique — un modèle de
+    référence, un portage sans bibliothèque, des témoins comparés au bit
+    près —, et il n'était accessible que par le lien GitHub en bas de
+    l'accueil. Il est ici, là où le lecteur est déjà dans le détail. Aucun
+    nombre de tests ni de témoins n'y est écrit : ils bougent à chaque
+    session, et le README les porte, recalculés par un test.
+    """
+    return g.depliant("Comment ce site est construit, et comment on le vérifie", f"""
+<p>Le modèle de référence est écrit en Python, dans
+<a href="{g.DEPOT}/tree/main/src">le dossier <code>src/</code> du dépôt</a> : c'est
+lui qui fait foi, et c'est lui qui est testé contre les sources — les textes,
+les barèmes, et des calculateurs extérieurs comme OpenFisca, qui servent
+d'oracle au scénario 1.</p>
+<p>Ce que vous lisez ici est un <strong>portage en JavaScript</strong> de ce
+modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateur
+: rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte
+pas du modèle, et ce n'est pas une promesse : des centaines de carrières
+témoins — chaque statut d'affiliation, à six générations — sont calculées par
+les deux, et comparées nombre par nombre ; chaque page du site est rendue par
+les deux, et comparée caractère par caractère. Toute divergence fait échouer
+les tests.</p>
+<p>Les données que le site charge sont produites par un script à partir des
+mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
+sont recontrôlées contre le fichier de l'institution qui les produit — la
+page <a href="{g.lien("/donnees")}">Données</a> dit lesquelles, et à quelle
+date.</p>
+<p class="discret"><a href="{g.DEPOT}">Le dépôt</a> ·
+<a href="{g.DEPOT}/blob/main/README.md">ce qu'il contient, et combien de tests
+le tiennent</a> · <a href="{g.DEPOT}/tree/main/tests">les tests</a></p>""")
+
+
 def _methode_unites() -> str:
     """Brut et pas net, multiples du salaire moyen, et le périmètre."""
     return g.depliant("En quelles unités, et sur quel périmètre", f"""
@@ -5594,6 +5660,10 @@ FAMILLES_INVENTAIRE = {
     "liberal": "libéral",
     "additionnel_capitalise": "additionnel, capitalisé",
 }
+
+#: Les quatre niveaux de fiabilité, du meilleur au moins bon, tels que les
+#: fiches et les séries les écrivent.
+NIVEAUX_FIABILITE = ("certifiee", "haute", "moyenne", "estimee")
 
 #: Les cinq couvertures, dans l'ordre du menu de filtre : la clé de
 #: l'inventaire, ce qu'on lit dans la cellule, et le pluriel de la phrase de
@@ -5666,7 +5736,8 @@ def _inventaire_section(racine, catalogue) -> str:
                     else ligne.manque),
         ])
         attributs.append({"data-famille": ligne.famille,
-                          "data-couverture": ligne.couverture})
+                          "data-couverture": ligne.couverture,
+                          "data-fiabilite": fiabilites.get(ligne.code, "")})
 
     filtres = (
         '<div class="filtres" role="group" aria-label="Filtrer les régimes" '
@@ -5682,9 +5753,13 @@ def _inventaire_section(racine, catalogue) -> str:
                                     for cle, singulier, _ in COUVERTURES_INVENTAIRE
                                     if comptes[cle]], "",
                   data_filtre="couverture")
+        + g.liste("inventaire-fiabilite", "Fiabilité de la fiche",
+                  [("", "Toutes")] + [(niveau, niveau) for niveau in NIVEAUX_FIABILITE
+                                      if niveau in fiabilites.values()], "",
+                  data_filtre="fiabilite")
         + "</div>"
-        + f'<p class="compte discret" aria-live="polite" data-compte-de="inventaire">'
-        f"{len(lignes)} régimes</p>"
+        + f'<p class="compte discret" aria-live="polite" data-compte-de="inventaire" '
+        f'data-unite="régimes">{len(lignes)} régimes</p>'
     )
     table = g.tableau(
         ["Régime", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
@@ -5759,6 +5834,26 @@ def _donnees(contexte: Contexte) -> str:
          escape(trace["source"])]
         for nom, trace in sorted(series.items())
     ]
+    # La table des séries se cherche et se trie comme l'inventaire : c'est
+    # une base, pas un article, et quatre-vingts lignes se parcourent mieux
+    # par leur niveau ou leur source que dans l'ordre alphabétique.
+    niveaux_series = {trace.get("niveau", "certifiee") for trace in series.values()}
+    attributs_series = [{"data-niveau": trace.get("niveau", "certifiee")}
+                        for _, trace in sorted(series.items())]
+    filtres_series = (
+        '<div class="filtres" role="group" aria-label="Filtrer les séries" '
+        'data-cible="series">'
+        + g.champ("series-recherche", "Chercher une série", "",
+                  "un nom, une source…", type_="search",
+                  data_filtre="texte", autocomplete="off")
+        + g.liste("series-niveau", "Niveau",
+                  [("", "Tous")] + [(niveau, niveau) for niveau in NIVEAUX_FIABILITE
+                                    if niveau in niveaux_series], "",
+                  data_filtre="niveau")
+        + "</div>"
+        + f'<p class="compte discret" aria-live="polite" data-compte-de="series" '
+        f'data-unite="séries">{len(certifications)} séries</p>'
+    ) if certifications else ""
     valeurs_certifiees = sum(int(trace["valeurs"]) for trace in series.values())
     inventaire = len(charger_inventaire(macro.racine))
 
@@ -5799,10 +5894,12 @@ encore été recontrôlée contre sa source.</strong> Lancer <code>scripts/fetch
 puis <code>scripts/verifier_donnees.py --appliquer</code>.</div>"""
 
     depliant_series = g.depliant("Quelles séries, et contre quelle source", f"""
+{filtres_series}
 {g.tableau(["Série", "Valeurs", "Niveau", "Source"], certifications,
            ["", "nombre", "", "texte"],
            titre="Séries recontrôlées contre la source qui les produit",
-           entete_de_ligne=True)}
+           entete_de_ligne=True, attributs_lignes=attributs_series,
+           triable=True, identifiant="series")}
 <p class="discret">Une valeur n'est « certifiée » que si elle a été confrontée au
 fichier téléchargé depuis le <em>producteur</em> de la donnée. Une transcription
 tierce, même sourcée et reprise automatiquement, plafonne à « haute ». Hors de

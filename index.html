@@ -98,7 +98,7 @@
 </div>
 
 <script type="module">
-import { CODES_SANS_EMPLOI, Contexte, TITRES, rendre } from "./moteur/js/pages.js";
+import { CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS, TITRES, rendre } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
 // La signature des images composées ici vient du gabarit, comme tout ce
@@ -254,6 +254,12 @@ async function afficher() {
   document.getElementById("entete").innerHTML = gabarit.entete(cible.chemin);
   contenu.innerHTML = corps;
   document.title = `${titre} — Retraite en comptes notionnels`;
+  // La description suit la route, comme le titre : c'est ce qu'un partage ou
+  // un enregistrement de la page reprend. Le gabarit la porte, une par page.
+  const description = document.querySelector('meta[name="description"]');
+  if (description && DESCRIPTIONS[cible.chemin]) {
+    description.content = DESCRIPTIONS[cible.chemin];
+  }
   document.body.classList.remove("calcul-en-cours");
   annoncer(resume(titre, contenu));
 
@@ -981,8 +987,9 @@ function filtrer(groupe) {
   }
   const compte = document.querySelector(`[data-compte-de="${groupe.dataset.cible}"]`);
   if (compte) {
+    const unite = compte.dataset.unite || "lignes";
     compte.textContent = visibles === total
-      ? `${total} régimes` : `${visibles} régimes sur ${total}`;
+      ? `${total} ${unite}` : `${visibles} ${unite} sur ${total}`;
   }
 }
 
