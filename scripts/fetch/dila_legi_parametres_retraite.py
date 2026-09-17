@@ -349,6 +349,10 @@ def _mois_des_segments(table: dict[float, float]) -> dict[int, dict[int, float]]
     Un segment court jusqu'au suivant, ou jusqu'à la fin de son année : une
     version n'écrit une clé qu'aux générations qu'elle nomme, et c'est cette
     étendue-là qu'elle recouvre — pas ce qui vient après sa dernière ligne.
+    Pour les tables par ANNÉE — la montée en charge de 1993, la proratisation,
+    l'assiette du trimestre. Une table lue au mois ne repasse pas par ici :
+    une clé de janvier ne dit pas si la version nomme l'année entière ou ses
+    premiers mois seulement, et le mois le sait.
     """
     par_mois: dict[int, dict[int, float]] = {}
     cles = sorted(table)
@@ -382,13 +386,19 @@ def _par_version(versions: list[tuple[str, str]],
     par_mois: dict[int, dict[int, float]] = {}
     ordre = sorted(versions, key=lambda v: (date_effet(v[0], v[1]), v[0]))
     for _, texte in ordre:
-        for annee, mois in _mois_des_segments(lire(texte)).items():
+        lu = lire(texte)
+        # ``lire`` rend soit une valeur par mois — la forme de
+        # ``table_par_generation(..., mois=True)``, qui sait quels mois la
+        # version nomme —, soit une table par année entière.
+        couverture = (lu if any(isinstance(v, dict) for v in lu.values())
+                      else _mois_des_segments(lu))
+        for annee, mois in couverture.items():
             par_mois.setdefault(annee, {}).update(mois)
     return _segments(par_mois)
 
 
 def table_par_generation(alineas: list[tuple[float, str]],
-                         par_annee: bool = True) -> dict[float, float]:
+                         par_annee: bool = True, mois: bool = False) -> dict:
     """Valeur opposable à chaque génération, coupures comprises.
 
     La table était annuelle : une génération que le texte coupe en cours
@@ -405,13 +415,19 @@ def table_par_generation(alineas: list[tuple[float, str]],
     À valeurs concurrentes sur un même mois — deux alinéas qui se recouvrent —
     c'est la PLUS EXIGEANTE qui l'emporte : le modèle ne prête jamais à
     personne le régime le plus favorable quand il ne sait pas trancher.
+
+    ``mois=True`` rend la valeur mois par mois, sans la ramener en escalier :
+    c'est la forme que ``_par_version`` attend pour savoir exactement quels
+    mois une version recouvre.
     """
     par_mois: dict[int, dict[int, float]] = {}
     for valeur, alinea in alineas:
-        for annee, mois in _mois_couverts(alinea).items():
+        for annee, couverts in _mois_couverts(alinea).items():
             cible = par_mois.setdefault(annee, {})
-            for m in mois:
+            for m in couverts:
                 cible[m] = max(cible[m], valeur) if m in cible else valeur
+    if mois:
+        return par_mois
     return _segments(par_mois, par_annee)
 
 
@@ -441,8 +457,8 @@ def age_ouverture(versions: list[tuple[str, str]]) -> dict[float, float]:
     def lire(texte: str) -> dict[float, float]:
         alineas = [(age_en_lettres(a), a) for a in _alineas(texte)]
         return table_par_generation(
-            [(v, a) for v, a in alineas if v is not None and 55.0 <= v <= 70.0]
-        )
+            [(v, a) for v, a in alineas if v is not None and 55.0 <= v <= 70.0],
+            mois=True)
     return _par_version(versions, lire)
 
 
@@ -454,7 +470,7 @@ def duree_requise(versions: list[tuple[str, str]]) -> dict[float, float]:
             trouve = re.search(r"\b(1[5-7]\d)\s*trimestres", alinea)
             if trouve:
                 alineas.append((float(trouve.group(1)), alinea))
-        return table_par_generation(alineas)
+        return table_par_generation(alineas, mois=True)
     return _par_version(versions, lire)
 
 
@@ -525,7 +541,7 @@ def coefficient_minoration(versions: list[tuple[str, str]]) -> dict[float, float
             valeur = float(trouve.group(1).replace(",", "."))
             if 1.0 <= valeur <= 3.0:
                 alineas.append((valeur / 100.0, alinea))
-        return table_par_generation(alineas)
+        return table_par_generation(alineas, mois=True)
     return _par_version(versions, lire)
 
 
