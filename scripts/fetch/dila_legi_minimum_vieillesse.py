@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Montant de l'ASPA, lu dans l'article du code qui le fixe.
 
-    python scripts/fetch/dila_legi_minimum_vieillesse.py
+    python scripts/fetch/dila_index.py legi --recuperer   # l'index, une fois
+    python scripts/fetch/dila_legi_minimum_vieillesse.py         # quelques minutes
+    python scripts/fetch/dila_legi_minimum_vieillesse.py --dump   # le dump global, 1,1 Go
 
-**Ce script télécharge environ 1,1 Go et met un quart d'heure.**
-
+Le script lit l'index LEGI du dépôt — le dump global plus les incréments
+quotidiens de la DILA, qui n'a pas régénéré ce dump depuis juillet 2025 : le
+dump seul ignore tout texte paru depuis. ``--dump`` garde l'ancienne voie.
 Le minimum vieillesse est le dernier plancher du système, et le seul qui ne
 suppose aucune cotisation. Ses montants venaient d'une saisie — `source_id:
 legifrance_textes` —, c'est-à-dire d'une lecture humaine de Légifrance, non d'un
@@ -42,6 +45,7 @@ l'année de sa date d'effet, ce qui est déjà la convention des lignes en place
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
@@ -50,6 +54,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import filtrer_index  # noqa: E402
 
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
 SORTIE = Path("data/brut/dila_legi_minimum_vieillesse.json")
@@ -183,24 +190,49 @@ def depouiller(url: str) -> list[str]:
             f"curl s'est interrompu (code {lecture.returncode}) : le dump n'a "
             "pas été lu en entier, et la série qu'on en tirerait serait muette "
             "sur ce qui manque")
+    return _analyser(sortie)
+
+
+def _analyser(sortie: str):
     return [re.sub(r"\s+", " ", bloc.partition("\n")[2]).strip()
             for bloc in sortie.split("@@@ ")[1:]]
 
 
-def main() -> int:
-    try:
-        url = dernier_dump()
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
-        return 1
+def depouiller_index(chemin: str | None = None):
+    """Le même filtre, passé sur l'index du dépôt au lieu du dump."""
+    sortie, source = filtrer_index("legi", FILTRE, chemin)
+    return _analyser(sortie), source
 
-    print(f"Dump      {url.rsplit('/', 1)[-1]}")
-    print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
-    try:
-        textes = depouiller(url)
-    except TransfertIncomplet as erreur:
-        print(f"ÉCHEC   {erreur}", file=sys.stderr)
-        return 1
+
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire le dump global de la DILA (1,1 Go) au lieu de l'index")
+    analyseur.add_argument("--index", help="chemin de l'index LEGI")
+    options = analyseur.parse_args(arguments)
+
+    if options.dump:
+        try:
+            url = dernier_dump()
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump      {url.rsplit('/', 1)[-1]}")
+        print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
+        try:
+            lu = depouiller(url)
+        except TransfertIncomplet as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        source = url
+    else:
+        try:
+            lu, source = depouiller_index(options.index)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Source    {source}\n")
+    textes = lu
     par_date, griefs = montants_dates(textes)
     for grief in griefs:
         print(f"ÉCHEC   {grief}", file=sys.stderr)
@@ -233,7 +265,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": url,
+            "source": source,
             "article": f"code de la sécurité sociale, article {ARTICLE}",
             "recupere_le": date.today().isoformat(),
             "versions_lues": len(textes),

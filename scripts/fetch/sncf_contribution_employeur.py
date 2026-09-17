@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Contribution employeur de la SNCF, lue dans ses deux textes.
 
-    python scripts/fetch/sncf_contribution_employeur.py
+    python scripts/fetch/dila_index.py jorf --recuperer   # les deux index, une fois
+    python scripts/fetch/dila_index.py legi --recuperer
+    python scripts/fetch/sncf_contribution_employeur.py           # quelques minutes
+    python scripts/fetch/sncf_contribution_employeur.py --dump    # les deux dumps, 2,8 Go
 
-**Ce script télécharge environ 2,8 Go et met une heure** : il lit les deux
-dumps de la DILA, JORF puis LEGI, car la grandeur cherchée est écrite dans deux
-textes de nature différente.
+Le script lit les deux index du dépôt, JORF puis LEGI — chacun le dump global
+plus les incréments quotidiens de la DILA, qui n'a pas régénéré ces dumps
+depuis juillet 2025 —, car la grandeur cherchée est écrite dans deux textes de
+nature différente. ``--dump`` garde l'ancienne voie, une heure et 2,8 Go.
 
 Ce qu'il referme. `docs/limites.md` rangeait ce taux parmi les limites
 « localisées, pas encore lues » : « le travail est écrit ici plutôt que fait,
@@ -60,6 +64,7 @@ Les autres restent `haute`, et l'on sait maintenant pourquoi.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
@@ -68,6 +73,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import filtrer_index  # noqa: E402
 
 JORF = "https://echanges.dila.gouv.fr/OPENDATA/JORF/"
 LEGI = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
@@ -244,34 +252,59 @@ def depouiller(url: str, filtre: str) -> list[str]:
             f"curl s'est interrompu (code {lecture.returncode}) : le dump n'a "
             "pas été lu en entier, et la série qu'on en tirerait serait muette "
             "sur ce qui manque")
+    return _analyser(sortie)
+
+
+def _analyser(sortie: str) -> list[str]:
     return [re.sub(r"\s+", " ", bloc).strip()
             for bloc in sortie.split("@@@\n")[1:] if bloc.strip()]
 
 
-def main() -> int:
-    try:
-        url_jorf = dernier_dump(JORF, "Freemium_jorf_global_")
-        url_legi = dernier_dump(LEGI, "Freemium_legi_global_")
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"ÉCHEC   répertoires de la DILA : {erreur}", file=sys.stderr)
-        return 1
+def depouiller_index(base: str, filtre: str, chemin: str | None = None
+                     ) -> tuple[list[str], str]:
+    """Le même filtre, passé sur l'index du dépôt au lieu du dump."""
+    sortie, source = filtrer_index(base, filtre, chemin)
+    return _analyser(sortie), source
 
-    print(f"Dump JORF {url_jorf.rsplit('/', 1)[-1]}")
-    print("Arrêtés annuels du taux T1 : comptez une demi-heure.\n")
-    try:
-        textes_jorf = depouiller(url_jorf, FILTRE_JORF)
-    except TransfertIncomplet as erreur:
-        print(f"ÉCHEC   {erreur}", file=sys.stderr)
-        return 1
+
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire les dumps globaux de la DILA (2,8 Go) au lieu des index")
+    options = analyseur.parse_args(arguments)
+
+    if options.dump:
+        try:
+            url_jorf = dernier_dump(JORF, "Freemium_jorf_global_")
+            url_legi = dernier_dump(LEGI, "Freemium_legi_global_")
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"ÉCHEC   répertoires de la DILA : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump JORF {url_jorf.rsplit('/', 1)[-1]}")
+        print("Arrêtés annuels du taux T1 : comptez une demi-heure.\n")
+        try:
+            textes_jorf = depouiller(url_jorf, FILTRE_JORF)
+        except TransfertIncomplet as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump LEGI {url_legi.rsplit('/', 1)[-1]}")
+        print("Article 2 IV du décret de 2007 : autant.\n")
+        try:
+            textes_legi = depouiller(url_legi, FILTRE_LEGI)
+        except TransfertIncomplet as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        source = f"{url_jorf} (arrêtés T1), {url_legi} (décret, T2)"
+    else:
+        try:
+            textes_jorf, source_jorf = depouiller_index("jorf", FILTRE_JORF)
+            textes_legi, source_legi = depouiller_index("legi", FILTRE_LEGI)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        source = f"{source_jorf} (arrêtés T1) ; {source_legi} (décret, T2)"
+        print(f"Source    {source}\n")
     definitif, provisionnel, griefs = composantes_t1(textes_jorf)
-
-    print(f"Dump LEGI {url_legi.rsplit('/', 1)[-1]}")
-    print("Article 2 IV du décret de 2007 : autant.\n")
-    try:
-        textes_legi = depouiller(url_legi, FILTRE_LEGI)
-    except TransfertIncomplet as erreur:
-        print(f"ÉCHEC   {erreur}", file=sys.stderr)
-        return 1
     t2, autres = composante_t2(textes_legi)
     griefs += autres
 
@@ -311,7 +344,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": f"{url_jorf} (arrêtés T1), {url_legi} (décret, T2)",
+            "source": source,
             "article": f"décret n° {DECRET} du 28 juin 2007, article {ARTICLE}",
             "recupere_le": date.today().isoformat(),
             "note": "contribution employeur de la SNCF, somme des composantes T1 "

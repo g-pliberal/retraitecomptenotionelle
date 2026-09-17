@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Minimum contributif et plafond d'écrêtement, dans le code de la sécurité sociale.
 
-    python scripts/fetch/dila_legi_minimum_contributif.py
+    python scripts/fetch/dila_index.py legi --recuperer   # l'index, une fois
+    python scripts/fetch/dila_legi_minimum_contributif.py        # une minute
+    python scripts/fetch/dila_legi_minimum_contributif.py --dump   # le dump global, 1,1 Go
 
-**Ce script télécharge environ 1,1 Go et met un quart d'heure.** Comme celui de
-la MSA, dont il reprend la mécanique, il n'a pas à être lancé souvent.
+Le script lit l'index LEGI du dépôt — le dump global plus les incréments
+quotidiens de la DILA, qui n'a pas régénéré ce dump depuis juillet 2025 : le
+dump seul ignore tout texte paru depuis. ``--dump`` garde l'ancienne voie.
 
 `docs/limites.md` a longtemps écrit que le minimum contributif ne figurait
 « dans aucune source machine ouverte », que ses montants n'étaient publiés que
@@ -38,6 +41,7 @@ au mois, est donc multiplié par douze.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
@@ -46,6 +50,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import filtrer_index  # noqa: E402
 
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
 
@@ -158,7 +165,10 @@ def depouiller(url: str) -> list[tuple[str, str, str]]:
     detar.stdout.close()
     sortie, _ = filtre.communicate()
     lecture.wait()
+    return _analyser(sortie)
 
+
+def _analyser(sortie: str):
     versions = []
     for bloc in sortie.split("@@@ ")[1:]:
         entete, _, corps = bloc.partition("\n")
@@ -167,16 +177,38 @@ def depouiller(url: str) -> list[tuple[str, str, str]]:
     return versions
 
 
-def main() -> int:
-    try:
-        url = dernier_dump()
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
-        return 1
+def depouiller_index(chemin: str | None = None):
+    """Le même filtre, passé sur l'index du dépôt au lieu du dump."""
+    motif = "|".join(re.escape(a) for a in ARTICLES)
+    sortie, source = filtrer_index("legi", FILTRE % motif, chemin)
+    return _analyser(sortie), source
 
-    print(f"Dump      {url.rsplit('/', 1)[-1]}")
-    print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
-    versions = depouiller(url)
+
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire le dump global de la DILA (1,1 Go) au lieu de l'index")
+    analyseur.add_argument("--index", help="chemin de l'index LEGI")
+    options = analyseur.parse_args(arguments)
+
+    if options.dump:
+        try:
+            url = dernier_dump()
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump      {url.rsplit('/', 1)[-1]}")
+        print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
+        lu = depouiller(url)
+        source = url
+    else:
+        try:
+            lu, source = depouiller_index(options.index)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Source    {source}\n")
+    versions = lu
     if not versions:
         print("ÉCHEC   aucune version des articles "
               f"{', '.join(ARTICLES)} dans le dump", file=sys.stderr)
@@ -230,7 +262,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": url,
+            "source": source,
             "articles": "code de la sécurité sociale, D. 351-2-1 et D. 173-21-0-0-1",
             "recupere_le": date.today().isoformat(),
             "versions_lues": len(versions),

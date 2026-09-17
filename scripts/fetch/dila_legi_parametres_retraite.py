@@ -169,7 +169,7 @@ JOUR = r"(\d{1,2})\s*(?:er)?"
 #: omet l'année de la première date quand c'est celle de la seconde.
 AVANT = re.compile(rf"n[ée]s?\s+avant\s+le\s+{JOUR}\s+(\w+)\s+(\d{{4}})", re.I)
 ENTRE = re.compile(
-    rf"n[ée]s?\s+entre\s+le\s+{JOUR}\s+(\w+)\s+(?:(\d{{4}})\s+)?et\s+(?:le\s+)?"
+    rf"n[ée]s?\s+entre\s+le\s+{JOUR}\s+(\w+)\s+(?:(\d{{4}})\s+)?(?:inclus\s+)?et\s+(?:le\s+)?"
     rf"{JOUR}\s+(\w+)\s+(\d{{4}})", re.I)
 EN_ANNEE = re.compile(r"n[ée]s?\s+en\s+(\d{4})", re.I)
 A_COMPTER = re.compile(
@@ -549,10 +549,10 @@ def coefficient_minoration(versions: list[tuple[str, str]]) -> dict[float, float
 #: de vingt ans » — le décret de 2023 a perdu le mot « ans » à son 3°. On
 #: tolère l'omission plutôt que de manquer une porte.
 PORTE = re.compile(
-    r"[Aa]\s+((?:cinquante|soixante)(?:[- ](?:et[- ])?"
+    r"\b[Aaà]\s+((?:cinquante|soixante)(?:[- ](?:et[- ])?"
     r"(?:un|deux|trois|quatre|cinq|six|sept|huit|neuf))?)"
     r"(?:\s*ans?)?(?:\s*et\s*(un|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze)"
-    r"\s*mois)?[^.;]*?"
+    r"\s*mois)?[^;]*?"
     r"avant\s+l['’]?\s*âge\s+de\s+((?:seize|dix-sept|dix-huit|dix-neuf|vingt|"
     r"vingt[- ]et[- ]un))\s*ans",
     re.I)
@@ -569,11 +569,17 @@ MINORE = re.compile(
 #: des portes le II adapte.
 PORTE_ADAPTEE = re.compile(r"du\s+(\d)°\s+du\s+I\b", re.I)
 
-#: Première version de D. 351-1-1 dont la forme se lit — un I de règle
-#: générale, un II d'adaptations par génération. Les rédactions antérieures
-#: (2003, 2012) empilent des portes par génération dans un autre ordre, et
-#: restent des transcriptions confrontées à la main.
-PREMIERE_VERSION_LUE = "2023-09-01"
+#: Une version dont la base ne porte pas la note d'application, et dont le
+#: décret la fixe pourtant : le décret n° 2003-1036 du 30 octobre 2003, qui
+#: crée l'article, « est applicable aux pensions prenant effet postérieurement
+#: au 31 décembre 2003 » (article 7, JORFARTI000001667141). La clé est la date
+#: de début de la version dans la base.
+EFFET_CONNU = {"2003-10-31": "2004-01-01"}
+
+#: « I. ― Pour les assurés nés avant le 1er juillet 1951 : », « B.-Pour les
+#: assurés nés en 1953 : » — les rédactions de 2011 et de 2012 groupent les
+#: portes par génération sous de tels en-têtes.
+EN_TETE = re.compile(r"Pour les assur[ée]s n[ée]s[^:]{0,120}?:", re.I)
 
 
 def _age_cite(texte: str) -> float | None:
@@ -643,45 +649,62 @@ def _adaptations(partie: str, age_general: float, age_debut: int,
     return _segments(par_mois, par_annee=False)
 
 
-def carriere_longue(versions: list[tuple[str, str]],
-                    versions_age: list[tuple[str, str]] | None = None) -> list[dict]:
-    """Portes du départ anticipé — D. 351-1-1, version par version depuis 2023.
+def _supplement(item: str, chapeau: int) -> int:
+    """Trimestres cotisés exigés au-delà de la durée requise, pour une porte.
 
-    Chaque porte associe un âge de départ à un âge de début d'activité : « A
-    cinquante-huit ans pour les assurés […] ayant débuté leur activité avant
-    l'âge de seize ans ». La condition de durée cotisée se lit dans le chapeau,
-    en trimestres ajoutés à la durée requise.
-
-    La RÈGLE GÉNÉRALE est le I ; le II adapte la borne des vingt ans génération
-    par génération, et se lit par substitution (voir ``_adaptations``) contre
-    la table d'âge en vigueur à la date d'effet de la version — c'est pour
-    cela qu'il faut ``versions_age``, celles de L. 161-17-2 et D. 161-2-1-9.
-    Une version qui ne change aucune porte — le décret n° 2025-1410, qui
-    réécrit le I sans en changer une valeur — n'ouvre pas de date d'effet : la
-    table est indexée sur les dates où quelque chose change.
-
-    Les rédactions d'avant septembre 2023 ne sont pas lues : le décret de 2012,
-    modifié six fois en onze ans, empile les portes par génération sans règle
-    générale, et un dépouillement automatique ne saurait y démêler la règle du
-    transitoire. Les portes de 2004 et de 2012 restent donc saisies.
+    Le chapeau de l'article majore la durée requise (« majorée de huit
+    trimestres ») ; chaque porte y renvoie (« la durée minimale mentionnée au
+    premier alinéa »), la minore (« minorée de quatre trimestres »), porte sa
+    propre majoration (2012 : « majorée de huit trimestres » dans la porte),
+    ou demande la durée requise nue (« la limite fixée en application du
+    deuxième alinéa », « celle prévue au deuxième alinéa »).
     """
-    portes: list[dict] = []
-    precedentes: list[tuple] | None = None
-    ordre = sorted(versions, key=lambda v: (date_effet(v[0], v[1]), v[0]))
-    for date_debut, texte in ordre:
-        effet = date_effet(date_debut, texte)
-        if effet < PREMIERE_VERSION_LUE:
+    minoree = re.search(r"minor[ée]e?\s+de\s+(\w+)\s+trimestres", item, re.I)
+    if minoree:
+        return max(0, chapeau - (nombre_en_lettres(minoree.group(1)) or 0))
+    majoree = re.search(r"major[ée]e?\s+de\s+(\w+)\s+trimestres", item, re.I)
+    if majoree:
+        return nombre_en_lettres(majoree.group(1)) or 0
+    if re.search(r"limite fixée en application|prévue au deuxième alinéa", item, re.I):
+        return 0
+    return chapeau
+
+
+def _portes(texte: str, effet: str) -> list[dict]:
+    """Les portes qu'une version écrit en toutes lettres, avec leur génération.
+
+    Le texte est coupé en blocs par génération là où il en a — « Pour les
+    assurés nés en 1953 : » — et ce qui précède le premier bloc, ou le II,
+    est la règle générale (génération ``1900``). Dans chaque bloc, chaque
+    point-virgule sépare une porte : un âge de départ, un âge de début
+    d'activité, un supplément de trimestres. Les blocs qui n'écrivent pas de
+    porte — les substitutions de 2023 — ne rendent rien ici.
+    """
+    general = re.split(r"\sII\s*\.?\s*[-―]", texte, maxsplit=1)[0]
+    chapeau = re.split(r"\s1°\s", general, maxsplit=1)[0]
+    chapeau = EN_TETE.split(chapeau, maxsplit=1)[0]
+    trouve = re.search(r"major[ée]e?\s+de\s+(\w+)\s+trimestres", chapeau, re.I)
+    supplement_chapeau = (nombre_en_lettres(trouve.group(1)) or 0) if trouve else 0
+
+    blocs: list[tuple[float, str]] = []
+    en_tetes = list(EN_TETE.finditer(texte))
+    premier = en_tetes[0].start() if en_tetes else len(texte)
+    blocs.append((PREMIERE_GENERATION, general[:min(len(general), premier)]))
+    for rang, en_tete in enumerate(en_tetes):
+        fin = en_tetes[rang + 1].start() if rang + 1 < len(en_tetes) else len(texte)
+        couverture = _mois_couverts(en_tete.group(0))
+        if not couverture:
             continue
-        morceaux = re.split(r"\sII\s*\.?\s*-", texte, maxsplit=1)
-        general = morceaux[0]
-        supplement_chapeau = 0
-        chapeau = re.split(r"\s1°\s", general, maxsplit=1)[0]
-        trouve = re.search(r"major[ée]e?\s+de\s+(\w+)\s+trimestres", chapeau, re.I)
-        if trouve:
-            supplement_chapeau = nombre_en_lettres(trouve.group(1)) or 0
-        lignes: list[dict] = []
-        for morceau in re.split(r";", general):
-            trouve = PORTE.search(morceau)
+        annee = min(couverture)
+        blocs.append((generation_decimale(annee, min(couverture[annee])),
+                      texte[en_tete.end():fin]))
+
+    portes: list[dict] = []
+    for generation, bloc in blocs:
+        # Un point-virgule sépare les portes — sauf dans le décret de 2010,
+        # dont le 3° finit sur un point avant le 4°.
+        for item in re.split(r";|\.\s+(?=\d°\s)", bloc):
+            trouve = PORTE.search(item)
             if trouve is None:
                 continue
             annees = nombre_en_lettres(trouve.group(1))
@@ -689,25 +712,52 @@ def carriere_longue(versions: list[tuple[str, str]],
             age_debut = nombre_en_lettres(trouve.group(3))
             if annees is None or mois is None or age_debut is None:
                 continue
-            supplement = supplement_chapeau
-            minoree = re.search(r"minor[ée]e?\s+de\s+(\w+)\s+trimestres", morceau, re.I)
-            if minoree:
-                supplement -= nombre_en_lettres(minoree.group(1)) or 0
-            elif re.search(r"limite fixée en application|prévue au deuxième alinéa",
-                           morceau, re.I):
-                supplement = 0
-            lignes.append({
+            portes.append({
                 "entree_en_vigueur": effet,
-                "generation": PREMIERE_GENERATION,
+                "generation": generation,
                 "age_debut_maximum": age_debut,
                 "age_depart": round(annees + mois / 12.0, 2),
-                "trimestres_supplementaires": max(0, supplement),
+                "trimestres_supplementaires": _supplement(item, supplement_chapeau),
             })
+    return portes
+
+
+def carriere_longue(versions: list[tuple[str, str]],
+                    versions_age: list[tuple[str, str]] | None = None) -> list[dict]:
+    """Portes du départ anticipé — D. 351-1-1, version par version.
+
+    Chaque porte associe un âge de départ à un âge de début d'activité : « A
+    cinquante-huit ans pour les assurés […] ayant débuté leur activité avant
+    l'âge de seize ans ». La condition de durée cotisée se lit dans le chapeau,
+    en trimestres ajoutés à la durée requise, ou dans la porte elle-même.
+
+    Quatre rédactions se succèdent, et le script les lit toutes. 2003 : trois
+    portes, sans génération. 2011 (loi du 9 novembre 2010) et 2012 (décret du
+    2 juillet 2012) : les portes sont groupées par génération sous des
+    en-têtes « Pour les assurés nés en 1953 : », et la règle générale de 2012
+    — soixante ans pour qui a débuté avant vingt ans — précède le II. Depuis
+    2023 : un I de règle générale, un II qui adapte la borne des vingt ans
+    génération par génération PAR SUBSTITUTION (voir ``_adaptations``),
+    résolue contre la table d'âge en vigueur à la date d'effet de la version
+    — c'est pour cela qu'il faut ``versions_age``, celles de L. 161-17-2 et
+    D. 161-2-1-9. Une version qui ne change aucune porte — le décret
+    n° 2025-1410, qui réécrit le I sans en changer une valeur — n'ouvre pas
+    de date d'effet : la table est indexée sur les dates où quelque chose
+    change.
+    """
+    portes: list[dict] = []
+    precedentes: list[tuple] | None = None
+    ordre = sorted(versions, key=lambda v: (date_effet(v[0], v[1]), v[0]))
+    for date_debut, texte in ordre:
+        effet = EFFET_CONNU.get(date_debut) or date_effet(date_debut, texte)
+        lignes = _portes(texte, effet)
+        morceaux = re.split(r"\sII\s*\.?\s*[-―]", texte, maxsplit=1)
         if len(morceaux) > 1 and versions_age:
             adaptee = PORTE_ADAPTEE.search(morceaux[1])
             rang = int(adaptee.group(1)) - 1 if adaptee else -1
-            if 0 <= rang < len(lignes):
-                porte = lignes[rang]
+            generales = [l for l in lignes if l["generation"] == PREMIERE_GENERATION]
+            if 0 <= rang < len(generales):
+                porte = generales[rang]
                 ages = _mois_des_segments(age_ouverture(
                     [v for v in versions_age if date_effet(v[0], v[1]) <= effet]))
                 for generation, age in _adaptations(
@@ -722,7 +772,7 @@ def carriere_longue(versions: list[tuple[str, str]],
                     })
         empreinte = [tuple(sorted((k, v) for k, v in l.items()
                                   if k != "entree_en_vigueur")) for l in lignes]
-        if empreinte == precedentes:
+        if not lignes or empreinte == precedentes:
             continue
         precedentes = empreinte
         portes.extend(lignes)
@@ -1034,7 +1084,7 @@ def main(arguments: list[str] | None = None) -> int:
         return 1
     portes = tables["carriere_longue"]
     generales = {p["age_debut_maximum"] for p in portes if p["generation"] == PREMIERE_GENERATION}
-    if generales != {16, 18, 20, 21}:
+    if not {16, 18, 20, 21} <= generales:
         print(f"\nÉCHEC   portes de carrière longue invraisemblables : "
               f"{sorted(generales)}", file=sys.stderr)
         return 1

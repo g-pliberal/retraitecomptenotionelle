@@ -444,6 +444,78 @@ def texte_comme_le_dump(doc: Document) -> str:
     return " ".join(morceau for morceau in (doc.titre, doc.num, doc.texte) if morceau)
 
 
+def flux_pseudo_xml(db: sqlite3.Connection) -> Iterator[bytes]:
+    """L'index rejoué sous la forme que les filtres du dump attendent.
+
+    Les récupérateurs ont chacun un FILTRE, un programme qui lit le dump en
+    flux, coupe aux « <?xml », regarde ``<NUM>``, ``<DATE_DEBUT>``,
+    ``<DATE_FIN>`` et le texte débarrassé de ses balises, et imprime ce qu'il
+    retient. Plutôt que de réécrire chaque filtre pour l'index, on lui rend un
+    flux de la même forme : un document par « <?xml », les mêmes balises, le
+    titre devant le corps comme dans le dump. Le filtre ne voit pas la
+    différence, et la certification non plus.
+    """
+    for doc in parcourir(db):
+        article = doc.nature.startswith("Article")
+        if article:
+            # La forme d'un article dans le dump, balises ôtées : « Article 3
+            # MODIFIE 1955-01-21 1962-01-01 AUTONOME Décret n°47-1846 … » —
+            # certains filtres lisent cet ordre-là.
+            etat = "VIGUEUR" if doc.fin in ("", "2999-01-01") else "MODIFIE"
+            meta = (f"<ORIGINE>LEGI</ORIGINE><NATURE>Article</NATURE>"
+                    f"<NUM>{doc.num}</NUM><ETAT>{etat}</ETAT>"
+                    f"<DATE_DEBUT>{doc.date}</DATE_DEBUT><DATE_FIN>{doc.fin}</DATE_FIN>"
+                    f"<TYPE>AUTONOME</TYPE><TITRE_TXT>{doc.titre}</TITRE_TXT>")
+        else:
+            meta = (f"<NATURE>{doc.nature}</NATURE>"
+                    f"<DATE_DEBUT>{doc.date}</DATE_DEBUT><DATE_FIN>{doc.fin}</DATE_FIN>"
+                    f"<DATE_PUBLI>{doc.date}</DATE_PUBLI><NUM></NUM>"
+                    f"<TITRE>{doc.titre}</TITRE><TITREFULL>{doc.titre}</TITREFULL>")
+        yield (
+            f'<?xml version="1.0"?><DOC><ID>{doc.id}</ID>{meta}'
+            f"<CONTENU>{doc.texte}</CONTENU></DOC>\n"
+        ).encode("utf-8", errors="replace")
+
+
+def filtrer_index(base: str, filtre: str, explicite: str | None = None
+                  ) -> tuple[str, str]:
+    """Fait passer l'index par un FILTRE écrit pour le dump.
+
+    Rend ce que le filtre a imprimé — à dépouiller exactement comme la sortie
+    du dump — et la phrase qui dit jusqu'où l'index est à jour, à écrire dans
+    le fichier de sortie du récupérateur.
+    """
+    import threading
+
+    db, source = ouvrir_lecture(base, explicite)
+    sonde = subprocess.Popen([sys.executable, "-c", filtre],
+                             stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    # SQLite ne se lit que du fil qui l'a ouvert : c'est donc ce fil-ci qui
+    # alimente le filtre, et un second qui recueille ce qu'il imprime.
+    recueilli: list[bytes] = []
+    lecteur = threading.Thread(target=lambda: recueilli.append(sonde.stdout.read()),
+                               daemon=True)
+    lecteur.start()
+    try:
+        for morceau in flux_pseudo_xml(db):
+            sonde.stdin.write(morceau)
+        # Les filtres coupent aux « <?xml » et gardent le dernier morceau en
+        # attente du suivant : sans un « <?xml » de clôture, le dernier
+        # document du flux ne serait jamais lu.
+        sonde.stdin.write(b'<?xml version="1.0"?>\n')
+    except BrokenPipeError:
+        pass
+    finally:
+        sonde.stdin.close()
+    sonde.wait()
+    lecteur.join()
+    db.close()
+    sortie = b"".join(recueilli).decode("utf-8", errors="replace")
+    if sonde.returncode != 0:
+        raise RuntimeError(f"le filtre a échoué (code {sonde.returncode})")
+    return sortie, source
+
+
 def url_publiee(base: str) -> str:
     return f"https://github.com/{DEPOT}/releases/download/{ETIQUETTE}/{base}.sqlite.gz"
 

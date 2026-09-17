@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Valeur de service du point de la retraite complémentaire agricole, chez DILA.
 
-    python scripts/fetch/dila_legi_msa.py
+    python scripts/fetch/dila_index.py legi --recuperer   # l'index, une fois
+    python scripts/fetch/dila_legi_msa.py                        # une minute
+    python scripts/fetch/dila_legi_msa.py --dump   # le dump global, 1,1 Go
 
-**Ce script télécharge environ 1,1 Go et met un quart d'heure.** Il n'a pas à
-être lancé souvent — une fois par an suffit — mais il est le seul chemin
+Le script lit l'index LEGI du dépôt — le dump global plus les incréments
+quotidiens de la DILA, qui n'a pas régénéré ce dump depuis juillet 2025 : le
+dump seul ignore tout texte paru depuis. ``--dump`` garde l'ancienne voie.
 reproductible vers cette série, et c'est pourquoi il existe.
 
 La MSA a longtemps été le dernier régime en points dont le dépôt n'avait aucune
@@ -52,6 +55,7 @@ second gonflerait la complémentaire et ferait disparaître la base.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
@@ -60,6 +64,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import filtrer_index  # noqa: E402
 
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
 
@@ -150,7 +157,10 @@ def depouiller(url: str) -> list[tuple[str, str]]:
     detar.stdout.close()
     sortie, _ = filtre.communicate()
     lecture.wait()
+    return _analyser(sortie)
 
+
+def _analyser(sortie: str):
     versions = []
     for bloc in sortie.split("@@@ ")[1:]:
         entete, _, corps = bloc.partition("\n")
@@ -158,16 +168,37 @@ def depouiller(url: str) -> list[tuple[str, str]]:
     return versions
 
 
-def main() -> int:
-    try:
-        url = dernier_dump()
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
-        return 1
+def depouiller_index(chemin: str | None = None):
+    """Le même filtre, passé sur l'index du dépôt au lieu du dump."""
+    sortie, source = filtrer_index("legi", FILTRE % ARTICLE, chemin)
+    return _analyser(sortie), source
 
-    print(f"Dump      {url.rsplit('/', 1)[-1]}")
-    print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
-    versions = depouiller(url)
+
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire le dump global de la DILA (1,1 Go) au lieu de l'index")
+    analyseur.add_argument("--index", help="chemin de l'index LEGI")
+    options = analyseur.parse_args(arguments)
+
+    if options.dump:
+        try:
+            url = dernier_dump()
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump      {url.rsplit('/', 1)[-1]}")
+        print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
+        lu = depouiller(url)
+        source = url
+    else:
+        try:
+            lu, source = depouiller_index(options.index)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Source    {source}\n")
+    versions = lu
     if not versions:
         print(f"ÉCHEC   aucune version de l'article {ARTICLE} dans le dump",
               file=sys.stderr)
@@ -199,7 +230,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": url,
+            "source": source,
             "article": f"code rural, {ARTICLE}",
             "recupere_le": date.today().isoformat(),
             "versions_lues": len(versions),

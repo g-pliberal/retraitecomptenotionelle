@@ -977,8 +977,17 @@ class CarriereLongue:
     def _portes(self, carriere: Carriere
                 ) -> list[tuple[int, int, float, int, Fiabilite]] | None:
         """Les portes opposables à cette carrière : celles du texte en vigueur
-        à sa date d'effet, et pour chaque borne d'entrée la ligne de la plus
-        haute génération qui ne dépasse pas la sienne."""
+        à sa date d'effet, et pour chaque porte — borne d'entrée ET supplément
+        de trimestres — la ligne de la plus haute génération qui ne dépasse
+        pas la sienne.
+
+        Une borne d'entrée peut ouvrir DEUX portes : avant 2023, qui avait
+        débuté avant seize ans partait à cinquante-six ans avec huit
+        trimestres cotisés de plus que la durée requise, ou à cinquante-huit
+        avec quatre. Retenir une ligne par borne d'entrée en perdait une, au
+        hasard de l'ordre du fichier ; c'est le couple (borne, supplément)
+        qui identifie une porte.
+        """
         if not self._dates:
             return None
         effet = self._annee_decimale(carriere.date_liquidation)
@@ -990,14 +999,15 @@ class CarriereLongue:
                 break
             applicable = candidate
         generation = carriere.generation
-        retenues: dict[int, tuple[float, tuple[int, int, float, int, Fiabilite]]] = {}
+        retenues: dict[tuple[int, int],
+                       tuple[float, tuple[int, int, float, int, Fiabilite]]] = {}
         for gen, age_max, trimestres_debut, age_depart, supplement, fiabilite in \
                 self._table[applicable]:
             if gen > generation + 1e-9:
                 continue
-            actuelle = retenues.get(age_max)
+            actuelle = retenues.get((age_max, supplement))
             if actuelle is None or gen > actuelle[0]:
-                retenues[age_max] = (
+                retenues[(age_max, supplement)] = (
                     gen, (age_max, trimestres_debut, age_depart, supplement, fiabilite)
                 )
         return [porte for _, porte in sorted(retenues.values())]

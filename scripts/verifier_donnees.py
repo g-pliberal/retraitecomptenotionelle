@@ -1570,9 +1570,9 @@ def source_carriere_longue() -> dict[tuple, float]:
     début d'activité. Le récupérateur lit les versions depuis celle du
     1er septembre 2023 — le I et le II, celui-ci résolu contre la table d'âge
     en vigueur à la date d'effet — et n'ouvre pas de date d'effet à une
-    version qui ne change aucune porte. Les portes de 2004 et de 2012 sont dans
-    des rédactions d'une autre forme, que le récupérateur ne lit pas : elles
-    restent des transcriptions.
+    version qui ne change aucune porte. Depuis l'action 27 bis, il lit aussi
+    les rédactions de 2003, de 2011 et de 2012, dont les portes sont groupées
+    par génération sous des en-têtes « Pour les assurés nés en 1953 : ».
     """
     brut = _lire_json("dila_legi_parametres_retraite.json",
                       "scripts/fetch/dila_legi_parametres_retraite.py")
@@ -1588,7 +1588,8 @@ def source_carriere_longue() -> dict[tuple, float]:
         cle_generation = decimale(int(generation),
                                   int(round((generation - int(generation)) * 12)) + 1)
         portes[(decimale(annee, mois), cle_generation,
-                str(int(porte["age_debut_maximum"])))] = float(porte["age_depart"])
+                str(int(porte["age_debut_maximum"])),
+                str(int(porte["trimestres_supplementaires"])))] = float(porte["age_depart"])
     return portes
 
 
@@ -3168,7 +3169,11 @@ CERTIFICATIONS = (
     Certification(
         nom="carriere_longue",
         chemin=REFERENCE / "legislation" / "carriere_longue.csv",
-        cles=("date_effet", "generation", "age_debut_maximum"),
+        # Deux portes de 2004 partagent date, génération et âge de début —
+        # 56 ans avec huit trimestres de plus, 58 ans avec quatre : le
+        # supplément fait partie de la clé.
+        cles=("date_effet", "generation", "age_debut_maximum",
+              "trimestres_supplementaires"),
         colonne="age_depart",
         source=source_carriere_longue,
         origine="DILA, base LEGI, code de la sécurité sociale L. 351-1-1 "

@@ -1466,8 +1466,8 @@ institutions:
           années pour l'assuré né en 1944 » —, avec sa cible au I, « les durées
           de vingt-cinq années […] applicables aux assurés nés après 1947 ».
           Seize valeurs, elles aussi identiques à la saisie.
-          Même coût que les autres passes LEGI : 9 Go décompressés en flux, un
-          quart d'heure, une exécution par an.
+          Lu dans l'index LEGI du dépôt, en une minute, comme toutes les
+          passes LEGI depuis le 17 septembre 2026 ; `--dump` garde le dump.
 
       - id: dila_legi_smic
         titre: SMIC horaire, décrets de relèvement, 1997-2017
@@ -2007,8 +2007,8 @@ institutions:
           elle-même. Les taux sont saisis dans les fiches de régime au niveau
           `haute` : rien ne les recontrôle encore automatiquement, faute
           d'entrée dans `controle_vraisemblance_cotisations`, et c'est ce qui
-          les sépare de `certifiee`. Le récupérateur lit le dump en flux, comme
-          celui de la MSA, et met un quart d'heure. Le plus ancien état de
+          les sépare de `certifiee`. Le récupérateur lit l'index LEGI du
+          dépôt, comme celui de la MSA. Le plus ancien état de
           l'article est du 21 décembre 1985 : les six premières années du
           régime des artisans, 1979-1984, ne sont couvertes par aucune version
           datée et restent à certifier.
@@ -2026,11 +2026,11 @@ institutions:
           non une transcription, d'où le niveau certifiee. Légifrance sert le
           même article mais refuse les requêtes automatisées (403) et son API
           demande une clé : le dump est le seul chemin reproductible.
-          Le récupérateur lit environ 1,1 Go compressés en flux et met un quart
-          d'heure ; une exécution par an suffit. Le dump global de la DILA étant
-          rafraîchi rarement, la dernière année peut manquer — au 13 août 2026
-          il datait de juillet 2025 et s'arrêtait à 2024, alors que le décret
-          n° 2026-78 du 11 février 2026 a fixé 0,3919 € pour 2025.
+          Le récupérateur lit l'index LEGI du dépôt — le dump global plus les
+          incréments quotidiens — depuis le 17 septembre 2026. Le dump global
+          seul, de juillet 2025, s'arrêtait à 2024 ; l'index porte le décret
+          n° 2026-78 du 11 février 2026, 0,3919 € pour 2025, lu et certifié ce
+          jour-là.
 
       - id: jorf_decrets_rco_artisans
         titre: >-
@@ -2088,8 +2088,9 @@ institutions:
           Le plafond n'est pas une statistique mais un décret : le chercher chez
           les diffuseurs de séries — l'INSEE ne le publie qu'à partir de 2001,
           l'Urssaf pas du tout — était chercher au mauvais endroit. Il est dans
-          le JOURNAL OFFICIEL, dont la DILA ouvre un dump distinct de LEGI :
-          1,7 Go, une demi-heure de lecture en flux. La chaîne des décrets y est
+          le JOURNAL OFFICIEL, dont la DILA ouvre une base distincte de LEGI,
+          lue dans l'index JORF du dépôt (le dump global, 1,7 Go, reste la
+          voie de contrôle avec `--dump`). La chaîne des décrets y est
           COMPLÈTE DEPUIS 1963 — un texte par année, aucun ne manque — et trente
           et une années d'avant 2002 en sont lues, qui passent de la
           transcription au producteur : 1963, 1965-1981, 1984, 1987, 1988,
@@ -2123,8 +2124,10 @@ institutions:
         recuperation: scripts/fetch/sncf_contribution_employeur.py
         note: >-
           La seule grandeur du dépôt dont les deux termes sont dans deux textes
-          de nature différente, et qui demande donc les DEUX dumps de la DILA :
-          2,8 Go, une heure. L'article 2 du décret n° 2007-1056 du 28 juin 2007
+          de nature différente, et qui demande donc les DEUX bases de la DILA,
+          lues dans les index du dépôt — les deux dumps, 2,8 Go et une heure,
+          restant la voie de contrôle. L'article 2 du décret n° 2007-1056 du
+          28 juin 2007
           définit le taux comme « la somme de deux composantes, ci-après
           désignées T1 et T2 ». T1 est arrêté chaque année et publié au JORF ;
           T2 est au IV du même article, que LEGI garde daté.

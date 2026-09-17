@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """Cotisations des complémentaires libéraux, décret par décret, chez DILA.
 
-    python scripts/fetch/jorf_cotisations_liberales.py
+    python scripts/fetch/dila_index.py jorf --recuperer          # l'index, une fois
+    python scripts/fetch/jorf_cotisations_liberales.py           # quelques secondes
+    python scripts/fetch/jorf_cotisations_liberales.py --dump    # le dump global, 1,7 Go
     python scripts/fetch/jorf_cotisations_liberales.py --dump /chemin/JORF.tar.gz
 
-**Ce script télécharge environ 1,7 Go et met une vingtaine de minutes.**
+Le script lit l'index JORF du dépôt — le dump global plus les incréments
+quotidiens de la DILA, qui n'a pas régénéré ce dump depuis juillet 2025 : le
+dump seul ignore les décrets parus depuis. ``--dump`` garde l'ancienne voie.
 
 POURQUOI IL EXISTE.
 
@@ -61,6 +65,9 @@ import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import ouvrir_lecture, parcourir, texte_comme_le_dump  # noqa: E402
+
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/JORF/"
 SORTIE = (Path(__file__).resolve().parents[2] / "data" / "brut"
           / "jorf_cotisations_liberales.json")
@@ -109,7 +116,14 @@ ANNEE = re.compile(
 #: « classe A : 2 262 € » en 2008, puis « classe A : 549 € » en 2012. La lettre
 #: A ne désigne plus la même classe de part et d'autre de 2009 — ce n'est pas
 #: une cotisation divisée par quatre, c'est une grille renumérotée.
-RUPTURES_CONNUES = {("cavec", "classe a")}
+#: La CARPIMKO a REFONDU sa cotisation pour 2026 (décret n° 2025-1076 du
+#: 10 novembre 2025, article 3, JORFARTI000052565558) : la cotisation
+#: forfaitaire de 2 312 € et le taux de 3 % sur une assiette en euros laissent
+#: place à un taux unique de 8,7 % entre la moitié et trois fois le plafond de
+#: la sécurité sociale. Le taux qui triple est le même nom pour une autre
+#: règle, lu dans le texte.
+RUPTURES_CONNUES = {("cavec", "classe a"),
+                    ("carpimko", "taux de la cotisation proportionnelle")}
 
 
 def _nombre(brut: str) -> float:
@@ -164,6 +178,22 @@ def decrets(archive: Path) -> dict[int, str]:
             # le plus complet, celui qui porte l'énumération entière.
             if annee not in par_annee or len(corps) > len(par_annee[annee]):
                 par_annee[annee] = corps
+    return par_annee
+
+
+def decrets_index(db) -> dict[int, str]:
+    """La même sélection, sur les articles de l'index JORF."""
+    par_annee: dict[int, str] = {}
+    for doc in parcourir(db, nature="Article%"):
+        if "Section professionnelle des" not in doc.texte:
+            continue
+        texte = re.sub(r"\s+", " ", texte_comme_le_dump(doc))
+        trouve = ANNEE.search(texte)
+        if not trouve:
+            continue
+        annee, corps = int(trouve.group(1)), texte[trouve.start():]
+        if annee not in par_annee or len(corps) > len(par_annee[annee]):
+            par_annee[annee] = corps
     return par_annee
 
 
@@ -226,24 +256,35 @@ def verifier(releve: dict[int, dict]) -> list[str]:
 def main() -> int:
     analyseur = argparse.ArgumentParser(description=__doc__)
     analyseur.add_argument(
-        "--dump", type=Path,
-        help="dump JORF déjà téléchargé, pour ne pas reprendre 1,7 Go",
+        "--dump", nargs="?", const=True, metavar="ARCHIVE",
+        help="lire le dump JORF global (1,7 Go), ou une archive déjà téléchargée, "
+             "au lieu de l'index",
     )
     arguments = analyseur.parse_args()
 
-    archive = arguments.dump
     temporaire = None
-    if archive is None:
-        temporaire = SORTIE.parent / "_jorf_global.tar.gz"
-        temporaire.parent.mkdir(parents=True, exist_ok=True)
+    if arguments.dump is None:
         try:
-            telecharger(dernier_dump(), temporaire)
-        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-            print(f"ÉCHEC   téléchargement : {erreur}", file=sys.stderr)
+            db, source = ouvrir_lecture("jorf")
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
             return 1
-        archive = temporaire
-
-    par_annee = decrets(archive)
+        print(f"Source    {source}\n")
+        par_annee = decrets_index(db)
+        db.close()
+    else:
+        archive = None if arguments.dump is True else Path(arguments.dump)
+        if archive is None:
+            temporaire = SORTIE.parent / "_jorf_global.tar.gz"
+            temporaire.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                telecharger(dernier_dump(), temporaire)
+            except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+                print(f"ÉCHEC   téléchargement : {erreur}", file=sys.stderr)
+                return 1
+            archive = temporaire
+        source = RACINE
+        par_annee = decrets(archive)
     releve = {annee: depouiller(corps) for annee, corps in par_annee.items()}
     releve = {annee: sections for annee, sections in releve.items() if sections}
     if not releve:
@@ -266,7 +307,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": RACINE,
+            "source": source,
             "recupere_le": date.today().isoformat(),
             "note": "décrets annuels fixant les cotisations des régimes "
                     "complémentaires des sections professionnelles libérales",

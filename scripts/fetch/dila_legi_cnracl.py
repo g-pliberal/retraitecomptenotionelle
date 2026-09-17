@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Contribution employeur de la CNRACL, dans le décret qui la fixe.
 
-    python scripts/fetch/dila_legi_cnracl.py
+    python scripts/fetch/dila_index.py legi --recuperer   # l'index, une fois
+    python scripts/fetch/dila_legi_cnracl.py                     # quelques minutes
+    python scripts/fetch/dila_legi_cnracl.py --dump   # le dump global, 1,1 Go
 
-**Ce script télécharge environ 1,1 Go et met un quart d'heure.**
-
+Le script lit l'index LEGI du dépôt — le dump global plus les incréments
+quotidiens de la DILA, qui n'a pas régénéré ce dump depuis juillet 2025 : le
+dump seul ignore tout texte paru depuis. ``--dump`` garde l'ancienne voie.
 À quoi elle sert. Les fiches de régime ne portent, pour les régimes publics,
 que la RETENUE DE L'AGENT — 7,85 % hier, 11,10 % aujourd'hui. La contribution
 de l'employeur est l'autre moitié de l'effort contributif, celle que les
@@ -78,6 +81,7 @@ manque, mais que la base est trouée, et où.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
@@ -86,6 +90,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import filtrer_index  # noqa: E402
 
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
 SORTIE = Path("data/brut/dila_legi_cnracl.json")
@@ -435,7 +442,10 @@ def depouiller(url: str) -> list[tuple[str, str, str]]:
             f"curl s'est interrompu (code {lecture.returncode}) : le dump n'a "
             "pas été lu en entier, et la série qu'on en tirerait serait muette "
             "sur ce qui manque")
+    return _analyser(sortie)
 
+
+def _analyser(sortie: str):
     versions = []
     for bloc in sortie.split("@@@ ")[1:]:
         entete, _, corps = bloc.partition("\n")
@@ -444,20 +454,41 @@ def depouiller(url: str) -> list[tuple[str, str, str]]:
     return versions
 
 
-def main() -> int:
-    try:
-        url = dernier_dump()
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
-        return 1
+def depouiller_index(chemin: str | None = None):
+    """Le même filtre, passé sur l'index du dépôt au lieu du dump."""
+    sortie, source = filtrer_index("legi", FILTRE, chemin)
+    return _analyser(sortie), source
 
-    print(f"Dump      {url.rsplit('/', 1)[-1]}")
-    print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
-    try:
-        versions = depouiller(url)
-    except TransfertIncomplet as erreur:
-        print(f"ÉCHEC   {erreur}", file=sys.stderr)
-        return 1
+
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire le dump global de la DILA (1,1 Go) au lieu de l'index")
+    analyseur.add_argument("--index", help="chemin de l'index LEGI")
+    options = analyseur.parse_args(arguments)
+
+    if options.dump:
+        try:
+            url = dernier_dump()
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump      {url.rsplit('/', 1)[-1]}")
+        print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
+        try:
+            lu = depouiller(url)
+        except TransfertIncomplet as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        source = url
+    else:
+        try:
+            lu, source = depouiller_index(options.index)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Source    {source}\n")
+    versions = lu
     par_date = taux_par_date(versions)
     serie = serie_annuelle(par_date)
     if not serie:
@@ -491,7 +522,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": url,
+            "source": source,
             "article": f"décret n° {DECRET} du 28 juin 1991, article {ARTICLE}, II ; "
                        f"décret n° {DECRET_1947} du 19 septembre 1947, "
                        f"article {ARTICLE_1947}",

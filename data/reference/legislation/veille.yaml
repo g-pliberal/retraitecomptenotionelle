@@ -336,8 +336,8 @@ entrees:
     temoins: [cnav_2026_17_racl_1964, cnav_2026_17_racl_1965_premier_trimestre, cnav_2026_17_racl_1965_apres_avril, cnav_2026_17_racl_1967, cnav_2026_17_racl_1970, cnav_2026_17_racl_1971]
     reformes: [reforme_2023, lfss_2026_suspension]
     etat: conforme
-    effet: "Tout départ avant l'âge légal. Les vingt-huit portes de 2023 et de 2026, règle générale et borne des vingt ans par génération, sont certifiées (action 27) ; celles de 2004 et 2012 restent des transcriptions anciennes (niveau moyenne / haute)."
-    a_faire: "Relire les portes de 2004 et 2012 dans les versions abrogées de D. 351-1-1, que l'index expose désormais (LEGIARTI000006736521, LEGIARTI000026139949) : la forme de 2012 empile les portes par génération sans règle générale."
+    effet: "Tout départ avant l'âge légal. Les quatre-vingts portes de 2004 à 2026 sont lues et certifiées (action 27) : celles de 2011 et de 2012 génération par génération dans les versions abrogées (LEGIARTI000023397567, LEGIARTI000026139949), celles de 2004 dans LEGIARTI000006736521. Le moteur retient désormais une porte par couple (borne d'entrée, supplément) et non plus par borne seule."
+    a_faire: null
     prochaine_veille: "2026-12-31"
 
   - id: carriere_longue_enfants_reputes_cotises
@@ -562,11 +562,33 @@ entrees:
     temoins: []
     reformes: []
     etat: conforme
-    effet: "Les tables d'âge légal, de durée requise, de carrière longue, de coefficient, de proratisation et de validation des trimestres sont certifiées sur le droit consolidé au 16 septembre 2026. Les autres récupérateurs dila_legi_* lisent encore le dump global de juillet 2025."
-    a_faire: "À chaque session qui touche au scénario 1 : `dila_index.py legi --mettre-a-jour` puis relancer le récupérateur et `verifier_donnees.py --appliquer` ; porter les autres récupérateurs dila_legi_* sur l'index."
+    effet: "Toutes les séries lues dans LEGI ou dans le JORF le sont sur l'index à jour : les seize récupérateurs dila_legi_*, jorf_* et sncf_contribution_employeur.py y passent leur filtre, et --dump garde le dump global pour contrôle."
+    a_faire: "À chaque session qui touche au scénario 1 : `dila_index.py legi --mettre-a-jour` et `jorf --mettre-a-jour`, relancer les récupérateurs, puis `verifier_donnees.py --appliquer`."
     prochaine_veille: "2026-12-31"
 
 journal:
+  - date: "2026-09-17"
+    session: "action 27 bis, tout ce que le dump de juillet 2025 laissait dans l'ombre"
+    consulte: >-
+      Index LEGI et JORF du dépôt à jour au 16 et au 17 septembre 2026,
+      passés au filtre de chacun des seize récupérateurs ; D. 351-1-1 dans
+      ses versions de 2003, 2011 et 2012 ; décret n° 2003-1036 (article 7) ;
+      décret n° 2025-1076 du 10 novembre 2025 (JORFARTI000052565558, CARPIMKO
+      2026).
+    trouve: >-
+      Valeurs identiques partout, sauf ce que le dump ignorait : point
+      agricole 2025 (0,3919 €), cotisations libérales 2026 (refonte de la
+      CARPIMKO en un taux unique de 8,7 %), contribution CNRACL jusqu'en
+      2028 ; et les portes de carrière longue de 2004, 2011 et 2012, lues par
+      génération — la table opposait à toutes les générations sous 2012 deux
+      portes que le texte n'écrit que génération par génération, et le
+      moteur retenait une porte par borne d'entrée quand une borne en ouvre
+      deux. Une version qui ne nommait que les premiers mois d'une
+      génération en réécrivait l'année : corrigé, sans effet sur les tables.
+    reste: >-
+      Catégories actives (décret n° 2026-344, article non codifié, lu à la
+      main) ; fin de la suspension en 2028 ; les lignes « manque » et
+      « a_verifier » du registre.
   - date: "2026-09-17"
     session: "action 27, relecture dans LEGI de ce que la suspension a réécrit"
     consulte: >-

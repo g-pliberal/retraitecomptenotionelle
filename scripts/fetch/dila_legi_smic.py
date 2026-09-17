@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """SMIC horaire, lu dans les décrets qui le relèvent, chez la DILA.
 
-    python scripts/fetch/dila_legi_smic.py
+    python scripts/fetch/dila_index.py legi --recuperer   # l'index, une fois
+    python scripts/fetch/dila_legi_smic.py                # une minute
+    python scripts/fetch/dila_legi_smic.py --dump         # le dump global, 1,1 Go
 
-**Ce script télécharge environ 1,1 Go et met un quart d'heure.** Une exécution
-par an suffit.
+Le script lit l'index LEGI du dépôt — le dump global plus les incréments
+quotidiens de la DILA, qui n'a pas régénéré ce dump depuis juillet 2025 : le
+dump seul ignore tout relèvement paru depuis. ``--dump`` garde l'ancienne voie.
 
 À quoi le SMIC sert ici, et pourquoi il mérite mieux qu'une transcription. Il
 n'entre dans le modèle qu'à un seul endroit, mais cet endroit décide de la
@@ -67,6 +70,7 @@ fois.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
@@ -75,6 +79,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import filtrer_index  # noqa: E402
 
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
 SORTIE = Path("data/brut/dila_legi_smic.json")
@@ -243,7 +250,10 @@ def depouiller(url: str) -> list[tuple[str, str]]:
     detar.stdout.close()
     sortie, _ = filtre.communicate()
     lecture.wait()
+    return _analyser(sortie)
 
+
+def _analyser(sortie: str) -> list[tuple[str, str]]:
     versions = []
     for bloc in sortie.split("@@@ ")[1:]:
         entete, _, corps = bloc.partition("\n")
@@ -251,16 +261,35 @@ def depouiller(url: str) -> list[tuple[str, str]]:
     return versions
 
 
-def main() -> int:
-    try:
-        url = dernier_dump()
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
-        return 1
+def depouiller_index(chemin: str | None = None) -> tuple[list[tuple[str, str]], str]:
+    """Le même filtre, passé sur l'index du dépôt au lieu du dump."""
+    sortie, source = filtrer_index("legi", FILTRE, chemin)
+    return _analyser(sortie), source
 
-    print(f"Dump      {url.rsplit('/', 1)[-1]}")
-    print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
-    versions = depouiller(url)
+
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire le dump global de la DILA (1,1 Go) au lieu de l'index")
+    analyseur.add_argument("--index", help="chemin de l'index LEGI")
+    options = analyseur.parse_args(arguments)
+
+    if options.dump:
+        try:
+            url = dernier_dump()
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump      {url.rsplit('/', 1)[-1]}")
+        print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
+        versions, source = depouiller(url), url
+    else:
+        try:
+            versions, source = depouiller_index(options.index)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Source    {source}\n")
     par_date = relevements(versions)
     serie = serie_annuelle(par_date)
     if not serie:
@@ -283,7 +312,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": url,
+            "source": source,
             "recupere_le": date.today().isoformat(),
             "versions_lues": len(versions),
             "relevements_lus": len(par_date),
