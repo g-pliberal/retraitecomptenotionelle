@@ -465,6 +465,24 @@ def test_la_loi_de_2025_recouvre_le_decret_de_2023_au_mois_pres():
     assert seul[1964] == 63.0 and seul[1968] == 64.0 and 1965.25 not in seul
 
 
+def test_une_version_ne_recouvre_que_les_mois_qu_elle_nomme():
+    """Une version qui ne parle que de janvier-février ne réécrit pas l'année.
+
+    La clé de janvier d'une table en escalier ne dit pas si la version nomme
+    l'année entière ou ses premiers mois : lue au mois, elle le sait, et une
+    coupure posée par une version antérieure sur le reste de l'année survit.
+    """
+    module = _charger_script("dila_legi_parametres_retraite", "scripts", "fetch",
+                             "dila_legi_parametres_retraite.py")
+    ancienne = ("1° Soixante ans pour les assurés nés avant le 1er juillet 1951 ; "
+                "2° Soixante ans et quatre mois pour les assurés nés entre le "
+                "1er juillet 1951 et le 31 décembre 1951 inclus ;")
+    partielle = ("1° Soixante ans et deux mois pour les assurés nés entre le "
+                 "1er janvier 1951 et le 28 février 1951 ;")
+    table = module.age_ouverture([("2011-07-01", ancienne), ("2012-01-01", partielle)])
+    assert table[1951] == 60.17 and table[1951.167] == 60.0 and table[1951.5] == 60.33
+
+
 def test_une_version_s_applique_a_sa_date_d_effet():
     """Consolidée au 31 décembre 2025, la loi vaut au 1er septembre 2026."""
     module = _charger_script("dila_legi_parametres_retraite", "scripts", "fetch",

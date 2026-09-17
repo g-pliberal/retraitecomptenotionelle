@@ -381,6 +381,69 @@ def mettre_a_jour(base: str, chemin: Path, tout: bool | None = None) -> int:
 # La release GitHub
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Lecture par les récupérateurs
+# ---------------------------------------------------------------------------
+
+
+def ouvrir_lecture(base: str, explicite: str | None = None
+                   ) -> tuple[sqlite3.Connection, str]:
+    """L'index en lecture seule, et la phrase qui dit jusqu'où il est à jour.
+
+    C'est par ici que les récupérateurs ``dila_legi_*`` et ``jorf_*`` lisent
+    désormais la base, au lieu de retélécharger le dump global — que la DILA
+    n'a pas régénéré depuis juillet 2025, si bien que le dump seul ignore tout
+    ce qui a paru depuis. La phrase rendue va dans le fichier de sortie du
+    récupérateur, puis dans le journal de certification : une certification
+    l'est à une date, et cette date est celle du dernier incrément appliqué.
+    """
+    chemin = chemin_index(base, explicite)
+    if not chemin.exists():
+        raise FileNotFoundError(
+            f"{chemin} absent : lancer `python scripts/fetch/dila_index.py {base} "
+            "--recuperer`, puis `--mettre-a-jour`")
+    db = sqlite3.connect(f"file:{chemin}?mode=ro", uri=True)
+    source = (f"index {base.upper()} du dépôt : {meta(db, 'dump') or '?'}, "
+              f"incréments appliqués jusqu'au {meta(db, 'dernier_increment') or '?'}")
+    return db, source
+
+
+def parcourir(db: sqlite3.Connection, titre: str | None = None,
+              nature: str | None = None) -> Iterator[Document]:
+    """Les documents de l'index, un par un, dans l'ordre de leur date.
+
+    ``titre`` et ``nature`` sont des motifs SQL ``LIKE`` qui restreignent le
+    parcours ; sans eux, c'est toute la base — quelques secondes. Le texte
+    rendu est le corps seul : les récupérateurs qui cherchaient le numéro du
+    décret dans les six cents premiers caractères du dump — où les
+    métadonnées précédaient le corps — lisent ``titre`` à part, ou le
+    recollent devant (``texte_comme_le_dump``).
+    """
+    clauses, valeurs = [], []
+    if titre:
+        clauses.append("titre LIKE ?")
+        valeurs.append(titre)
+    if nature:
+        clauses.append("nature LIKE ?")
+        valeurs.append(nature)
+    ou = (" WHERE " + " AND ".join(clauses)) if clauses else ""
+    requete = ("SELECT id, date, fin, nature, num, titre, texte FROM doc"
+               + ou + " ORDER BY date, id")
+    for ligne in db.execute(requete, valeurs):
+        yield Document(*(champ or "" for champ in ligne))
+
+
+def texte_comme_le_dump(doc: Document) -> str:
+    """Le titre devant le corps, comme le dump dépouillé en flux le donnait.
+
+    Les filtres écrits pour le dump lisaient un XML débarrassé de ses balises,
+    où le titre du texte et le numéro de l'article précédaient le corps : les
+    motifs qui cherchent « décret n° 91-613 » ou « 2003-775 » en tête de texte
+    continuent de porter si on leur rend cet ordre.
+    """
+    return " ".join(morceau for morceau in (doc.titre, doc.num, doc.texte) if morceau)
+
+
 def url_publiee(base: str) -> str:
     return f"https://github.com/{DEPOT}/releases/download/{ETIQUETTE}/{base}.sqlite.gz"
 
