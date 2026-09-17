@@ -1560,6 +1560,12 @@ pour tout le monde. Et un plancher de {plancher} par mois, payé par l'impôt.</
 
 {propositions}
 
+<h2>Le plancher, concrètement</h2>
+<p>Aujourd'hui, l'ASPA regarde les ressources du couple : à 300 € et 1 500 €
+de pension, il ne reçoit rien. La garantie regarde chacun. Ce que cela verse,
+par mois, à quatre couples et à une personne seule :</p>
+{_tableau_garantie()}
+
 <h2>Ce que cela change</h2>
 {differences}
 <p class="discret">C'est le système de la Suède, de l'Italie, de la Pologne et
@@ -1636,17 +1642,16 @@ sans que personne ne l'ait voté.</p>
 </ul>""")
 
 
-def _programme_garantie(contexte: Contexte) -> str:
-    """Le plancher, et le seul changement qui compte : il regarde une personne.
+def _tableau_garantie() -> str:
+    """Ce que le plancher individualisé change, en cinq lignes.
 
     Le tableau fait le travail que trois paragraphes faisaient mal. Quatre
     couples, deux colonnes : ce que l'ASPA sert aujourd'hui, ce que la garantie
-    servirait. La ligne « 300 € et 1 500 € » dit tout.
+    servirait. La ligne « 300 € et 1 500 € » dit tout — c'est l'argument le
+    plus immédiatement parlant du site, et il est en haut de l'accueil, non
+    plus dans un dépliant après trois tableaux denses.
     """
-    base = contexte.base
-    plancher_seul = (base.garantie_vieillesse_mensuelle
-                     + base.allocation_isolement_mensuelle)
-    couples = g.tableau(
+    return g.tableau(
         ["Pensions des deux personnes", "Aujourd'hui (ASPA)", "Avec la garantie"],
         [
             ["300 € et 300 €", "1 000 €", "1 000 €"],
@@ -1659,6 +1664,17 @@ def _programme_garantie(contexte: Contexte) -> str:
         titre="Ce que le plancher individualisé change, par mois",
         entete_de_ligne=True,
     )
+
+
+def _programme_garantie(contexte: Contexte) -> str:
+    """Le plancher, et le seul changement qui compte : il regarde une personne.
+
+    Le tableau, lui, est en haut de page (:func:`_tableau_garantie`) : ce
+    dépliant dit ce qu'il remplace et comment il est financé.
+    """
+    base = contexte.base
+    plancher_seul = (base.garantie_vieillesse_mensuelle
+                     + base.allocation_isolement_mensuelle)
     return g.depliant("Le plancher, et ce qu'il change pour les petites pensions", f"""
 <p>Le système actuel superpose l'ASPA, le minimum contributif, le minimum
 garanti de la fonction publique, l'assurance vieillesse des parents au foyer,
@@ -1676,11 +1692,11 @@ que la pension du conjoint entre dans le calcul.</p>
   <li>en euros de {base.annee_euros_garantie_vieillesse}, revalorisés sur les
   prix.</li>
 </ul>
-{couples}
-<p>L'ASPA regarde les ressources du foyer : à 300 € et 1 500 €, le couple dépasse
-son plafond et ne reçoit rien. La garantie regarde chacun, et sert 500 € au
-premier. C'est ce changement d'assiette, plus que le montant, qui fait la
-différence pour les femmes aux pensions les plus faibles.
+<p>Le tableau du haut de page le montre : l'ASPA regarde les ressources du
+foyer, et à 300 € et 1 500 € le couple dépasse son plafond et ne reçoit rien.
+La garantie regarde chacun, et sert 500 € au premier. C'est ce changement
+d'assiette, plus que le montant, qui fait la différence pour les femmes aux
+pensions les plus faibles.
 <a href="{g.lien("/cout")}">Ce qu'elle coûterait</a> est calculé sur la
 distribution réelle des pensions, non sur des cas types.</p>""")
 
@@ -3871,6 +3887,27 @@ GRILLES_CAS_TYPES: tuple[tuple[str, str, str, str, str], ...] = (
 )
 
 
+def _badge_scenario(scenario: str) -> str:
+    """« proposition » sur le scénario 6, « contrefactuel » sur les autres.
+
+    Que les scénarios 2 à 5 soient des exercices et que seul le 6 soit la
+    proposition est dit en préambule, mais un tableau se lit sans son
+    préambule : le badge le redit là où l'erreur de lecture se produit. Le
+    système actuel n'en porte pas — c'est la référence, ni l'un ni l'autre.
+    """
+    if scenario == "actuel":
+        return ""
+    if scenario == "notionnel_liberal":
+        return '<span class="badge proposition">proposition</span>'
+    return '<span class="badge contrefactuel">contrefactuel</span>'
+
+
+def _nom_scenario(scenario: str, libelle: str) -> str:
+    """Le libellé d'un scénario en tête de ligne, avec son badge."""
+    badge = _badge_scenario(scenario)
+    return escape(libelle) + (f" {badge}" if badge else "")
+
+
 def _cas_types(contexte: Contexte) -> str:
     """Treize carrières types croisées avec sept générations.
 
@@ -3898,6 +3935,12 @@ def _cas_types(contexte: Contexte) -> str:
     simulateur = contexte.simulateur()
     resultat = calculer_cas_types(simulateur)
     montre = GRILLES_CAS_TYPES[0][0]
+    # Le solde du système actuel, observé puis projeté par le COR : il est
+    # dans les comptes, et ne coûte rien — à la différence du coût agrégé,
+    # que cette page ne calcule pas.
+    comptes = contexte.comptes()
+    obs = comptes.derniere_annee_observee
+    horizon = comptes.derniere_annee
 
     def grille(scenario: str, intitule: str) -> str:
         lignes = []
@@ -3965,7 +4008,7 @@ def _cas_types(contexte: Contexte) -> str:
     panneaux = "".join(
         f'<div class="panneau" data-onglet="{scenario}"'
         + ("" if rang == 0 else " hidden") + ">"
-        + f"<h3>{escape(titre)}</h3>{grille(scenario, alt)}"
+        + f"<h3>{escape(titre)} {_badge_scenario(scenario)}</h3>{grille(scenario, alt)}"
         + f'<p class="discret">{escape(lecture)}</p></div>'
         for rang, (scenario, _, titre, alt, lecture) in enumerate(GRILLES_CAS_TYPES)
     )
@@ -4017,15 +4060,20 @@ def _cas_types(contexte: Contexte) -> str:
 que la pension deviendrait, par rapport à aujourd'hui, pour la même carrière.
 <strong>Rouge : moins qu'aujourd'hui. Vert : plus.</strong></p>
 
-<div class="fiches reperes">{reperes}</div>
-
-<div class="note"><strong>Comparez les lignes entre elles, pas leur
-niveau.</strong> Ce que la grille mesure, c'est l'écart entre deux carrières —
-ce qu'un militaire touche de plus ou de moins qu'un artisan, à cotisation
-égale. Le niveau général, lui, dépend d'un
+<div class="note"><strong>Ces pourcentages ne sont pas des baisses de
+pension.</strong> Chaque case compare deux carrières calculées sous la même
+règle, et ce que la grille mesure est l'écart entre ses lignes — ce qu'un
+militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
+niveau général, lui, dépend d'un
 {g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
-mais n'applique jamais : il déplacerait toutes les cases du même facteur.
-<a href="{g.lien("/cout")}">Ce réglage est sur la page Coût</a>.</div>
+mais n'applique jamais : il multiplierait toutes les cases par le même facteur.
+Pour la proposition, ce facteur est supérieur à un chaque année — à
+prélèvement égal, le système aurait de quoi servir davantage que ces cases
+n'affichent —, et <strong>un coefficient supérieur à un n'est pas une
+économie, c'est une marge</strong>.
+<a href="{g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le chiffre</a>.</div>
+
+<div class="fiches reperes">{reperes}</div>
 
 <p class="discret">Le modèle calcule six scénarios. Le <strong>scénario 6</strong>
 est la proposition ; les scénarios 2 à 5 sont des contrefactuels, qui mesurent
@@ -4033,6 +4081,13 @@ ce que chaque ingrédient déplace — la rétroactivité, la part patronale, le
 unique.</p>
 <fieldset class="onglets"><legend>Scénario affiché</legend>{onglets}</fieldset>
 <div class="panneaux">{panneaux}</div>
+<p class="discret">« Aujourd'hui » n'est pas un point fixe. Le système actuel,
+colonne de référence de ces grilles, manque déjà de
+{g.pourcentage(-comptes.solde(obs), decimales=2)} du PIB en {obs}, et le
+Conseil d'orientation des retraites projette qu'il en manquera
+{g.pourcentage(-comptes.solde(horizon), decimales=2)} en {horizon}. Le choix
+n'est pas « notionnel contre système stable », mais « notionnel contre système
+qui dérive ».</p>
 
 <p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer sur ma
 carrière</a><a href="{g.lien("/methode")}">Comment c'est calculé</a></p>
@@ -4286,6 +4341,16 @@ que de {premiere_ventilee} à {derniere_ventilee}.""",
 aussitôt les pensions de ceux qui sont déjà retraités : c'est la
 {g.terme("répartition")}. Voici ce qui rentre, ce qui sort, et ce
 qui manque.</p>
+
+<div class="note resume"><strong>En clair.</strong> En {obs}, les retraites
+ont coûté un peu plus qu'elles n'ont rapporté : il a manqué
+{_milliards(manque, 1)}, soit {g.pourcentage(part_manquante, decimales=1)} de la
+facture. L'argent vient des cotisations pour l'essentiel, et de plus en plus
+de l'impôt. Sans rien changer, il manquerait en {solde.derniere_annee}
+{g.pourcentage(abs(horizon.solde("actuel") / horizon.depense("actuel")), decimales=0)}
+de la facture. Un système en comptes notionnels ne dépenserait pas moins : il
+servirait le même argent, réparti autrement, et se réglerait chaque année au
+lieu d'attendre une réforme.</div>
 
 <div class="fiches reperes">{reperes}</div>
 
@@ -4587,6 +4652,7 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
     """Les six systèmes : ce qu'ils auraient coûté, ce qu'ils coûteraient."""
     cout = contexte.cout()
     avenir = cout.avenir
+    solde_actuel = cout.solde
     depenses = contexte.depenses()
     euros = cout.annee_euros
     derniere = depenses.derniere_annee
@@ -4621,7 +4687,7 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
     for scenario, libelle in SCENARIOS:
         cumul = cout.cumul(scenario)
         lignes_passe.append([
-            escape(libelle),
+            _nom_scenario(scenario, libelle),
             _milliards(cumul, 0),
             g.pourcentage(cumul / reference - 1, signe=True, decimales=1)
             if scenario != "actuel" else "réf.",
@@ -4644,7 +4710,7 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
     for scenario, libelle in SCENARIOS:
         cumul = avenir.cumul(scenario)
         lignes_avenir.append([
-            escape(libelle),
+            _nom_scenario(scenario, libelle),
             _milliards(horizon.cout_constants(scenario), 0),
             g.pourcentage(horizon.part_pib(scenario), decimales=1),
             _milliards(cumul, 0),
@@ -4678,7 +4744,14 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
     return g.depliant("Les six systèmes comparés, du passé jusqu'à 2070", f"""
 <p>Le modèle calcule six systèmes pour une même carrière. La carte du haut n'en
 montre qu'un — le seul qui décrive une réforme applicable en créditant ce qui
-est réellement prélevé. Voici les six, sur le passé puis sur l'avenir.</p>
+est réellement prélevé. Voici les six, sur le passé puis sur l'avenir. Le
+« système actuel » de ces tableaux est la ligne de référence, pas un
+équilibre : il manque de
+{g.pourcentage(-solde_actuel.annee(solde_actuel.derniere_annee_observee).solde("actuel"), decimales=2)}
+du PIB en {solde_actuel.derniere_annee_observee}, et de
+{g.pourcentage(-solde_actuel.annee(solde_actuel.derniere_annee).solde("actuel"), decimales=2)}
+en {solde_actuel.derniere_annee} — comparer un scénario à lui, c'est le
+comparer à un système qui dérive.</p>
 
 <h4>Ce qu'ils auraient coûté depuis {cout.premiere_annee}</h4>
 <p>La dépense observée n'est pas modélisée : elle est ce qu'elle est. Ce qui est
@@ -4723,11 +4796,12 @@ cotisation, là où le scénario 4 y ajoute la part patronale et coûte
 Méthode montre qu'elle domine tout le reste.</p>
 
 <h4>Ce qu'ils coûteraient d'ici {avenir.derniere_annee}</h4>
-<div class="note">L'assiette de cette section n'est pas celle des cartes du
-haut. Le modèle décrit ici des <strong>pensions de répartition obligatoire</strong>
-— {_milliards(depenses.repartition(derniere), 1)} en {derniere} —, il porte son
-propre niveau de dépense, et ce niveau <strong>s'écarte de celui du COR</strong> :
-il donne {g.pourcentage(horizon.part_pib("actuel"), decimales=1)} du PIB pour le
+<div class="note vigilance"><strong>Point de vigilance : notre projection
+s'écarte de celle du COR.</strong> L'assiette de cette section n'est pas celle
+des cartes du haut. Le modèle décrit ici des <strong>pensions de répartition
+obligatoire</strong> — {_milliards(depenses.repartition(derniere), 1)} en
+{derniere} —, il porte son propre niveau de dépense, et ce niveau s'écarte de
+celui du COR : il donne {g.pourcentage(horizon.part_pib("actuel"), decimales=1)} du PIB pour le
 système actuel en {avenir.derniere_annee}, quand le COR en projette
 {g.pourcentage(COR_2070, decimales=1)}. L'écart est de
 {g.nombre((horizon.part_pib("actuel") - COR_2070) * 100, 1)} points, et il n'est
@@ -4785,7 +4859,7 @@ def _cout_detail_equilibre(contexte: Contexte) -> str:
     for scenario, libelle in SCENARIOS:
         equilibre = solde.premiere_annee_equilibree(scenario)
         lignes.append([
-            escape(libelle),
+            _nom_scenario(scenario, libelle),
             g.pourcentage(observe.solde(scenario), signe=True, decimales=2),
             g.pourcentage(
                 solde.solde_moyen(scenario, solde.premiere_annee_projetee,
@@ -5255,6 +5329,14 @@ Les huit autres restent à un clic, dans les options du simulateur.""",
 <p class="chapeau">Un compte notionnel est un compte <em>virtuel</em> : rien
 n'est placé, les cotisations de l'année paient les pensions de l'année. Ce qui
 change, c'est le calcul du droit — en trois opérations.</p>
+
+<div class="note resume"><strong>En clair.</strong> Votre pension serait votre
+compte divisé par le nombre d'années qu'il vous reste à vivre, en moyenne.
+Chaque euro cotisé compte, et rien d'autre : ni trimestres, ni minimum, ni
+majoration. Le compte grossit chaque année au rythme de la masse des
+salaires, c'est-à-dire de ce que la répartition peut promettre sans mentir.
+Le système actuel, lui, est recalculé règle par règle sur la même carrière,
+pour servir de point de comparaison.</div>
 
 {calcul}
 
@@ -5777,6 +5859,15 @@ détaillées</a></p>""", identifiant="donnees-sources")
 <p class="chapeau">Rien ici n'est à croire sur parole. Chaque série est
 recontrôlée, automatiquement, contre le fichier de l'institution qui la
 produit — et ce qui ne l'est pas est dit.</p>
+
+<div class="note resume"><strong>En clair.</strong> Les chiffres de ce site
+viennent des institutions qui les produisent : l'INSEE pour les prix et les
+salaires, le Conseil d'orientation des retraites pour les comptes, les caisses
+pour leurs barèmes. Un programme les retélécharge et les compare, valeur par
+valeur, à ce que le site utilise. Ce qui n'a pas pu être vérifié ainsi est
+marqué comme tel, et les règles de chaque régime sont lues dans les textes.
+Cette page dit, série par série et régime par régime, ce qui est vérifié et ce
+qui ne l'est pas.</div>
 
 <div class="fiches reperes">{reperes}</div>
 

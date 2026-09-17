@@ -3586,12 +3586,19 @@ def _hors_depliants(corps: str) -> str:
 #: « /mentions » est une page légale : ses informations doivent être lisibles
 #: sans qu'on ait à déplier quoi que ce soit, et la replier serait la cacher.
 BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
-    "/": (650, 0, 1),
+    # Deux tableaux sur l'accueil : celui qui oppose les deux systèmes terme à
+    # terme, et celui du plancher — l'argument le plus parlant du site, remonté
+    # en haut de page par la revue de septembre 2026.
+    "/": (650, 0, 2),
     "/simuler": (1500, 0, 0),
-    "/cas-types": (650, 0, 1),
+    # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
+    # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
+    # la trajectoire du système actuel pour l'une, le résumé en langage
+    # courant pour l'autre. Les bornes suivent, d'un paragraphe chacune.
+    "/cas-types": (750, 0, 1),
     "/cout": (700, 2, 0),
     "/methode": (500, 0, 1),
-    "/donnees": (250, 0, 0),
+    "/donnees": (300, 0, 0),
     "/mentions": (1400, 0, 0),
 }
 
@@ -4104,3 +4111,123 @@ def test_aucun_chemin_de_fichier_n_est_cite_en_texte_brut(contexte):
         corps = rendre(contexte, chemin, {})[1]
         for cite in re.findall(r"<code>(docs/[^<]+|scripts/[^<]+|data/[^<]+)</code>", corps):
             assert False, f"{chemin} : « {cite} » cité en texte brut"
+
+
+# -- la revue du 15 septembre 2026 : le thème « clarté des arguments » ----------
+
+
+def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres(contexte):
+    """Le scénario 6 affiche −28 % à −76 % : sans la clé, on lit une baisse.
+
+    La clé était sur la page Coût ; elle est en tête de Cas types, AVANT les
+    trois chiffres d'ouverture et les grilles, et dit la phrase qui compte : un
+    coefficient supérieur à un n'est pas une économie, c'est une marge. Elle
+    renvoie à la section de Coût qui le chiffre.
+    """
+    corps = rendre(contexte, "/cas-types", {})[1]
+    cle = corps.index("Ces pourcentages ne sont pas des baisses de")
+    assert cle < corps.index('<div class="fiches reperes">')
+    assert cle < corps.index('<div class="panneaux">')
+    assert "un coefficient supérieur à un n'est pas une\néconomie, c'est une marge" in corps
+    assert 'data-vers="cout-equilibre"' in corps
+    assert "Ces pourcentages ne sont pas des baisses" in _hors_depliants(corps)
+
+
+def test_les_comparaisons_rappellent_que_le_systeme_actuel_derive(contexte):
+    """« Aujourd'hui » n'est pas un point fixe, et les tableaux le disent.
+
+    Cas types sous ses grilles, Coût dans la section des six systèmes : le
+    solde du système actuel, observé puis projeté par le COR, est écrit à côté
+    de la comparaison, avec les deux années. Les nombres viennent des comptes,
+    pas d'une constante.
+    """
+    comptes = contexte.comptes()
+    obs = comptes.derniere_annee_observee
+    horizon = comptes.derniere_annee
+    attendu_obs = g.pourcentage(-comptes.solde(obs), decimales=2)
+    attendu_horizon = g.pourcentage(-comptes.solde(horizon), decimales=2)
+    assert horizon > obs + 20, "les comptes ne portent plus la projection"
+
+    cas_types = rendre(contexte, "/cas-types", {})[1]
+    rappel = re.search(r"« Aujourd'hui » n'est pas un point fixe.*?</p>",
+                       cas_types, re.S)
+    assert rappel, "Cas types ne rappelle plus la trajectoire du système actuel"
+    assert f"{attendu_obs} du PIB en {obs}" in rappel.group(0)
+    assert f"{attendu_horizon} en {horizon}" in rappel.group(0)
+    assert "système\nqui dérive" in rappel.group(0)
+    assert rappel.start() > cas_types.index('<div class="panneaux">')
+
+    cout = rendre(contexte, "/cout", {})[1]
+    assert "comparer un scénario à lui, c'est le\ncomparer à un système qui dérive" in cout
+    assert f"{attendu_obs}\ndu PIB en {obs}" in cout
+
+
+def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel(contexte):
+    """Un badge là où l'erreur de lecture se produit, non dans un préambule.
+
+    Sur Cas types, chaque panneau porte le sien dans son titre ; sur Coût, les
+    trois tableaux qui alignent les six systèmes le portent en tête de ligne.
+    Le système actuel n'en a pas : c'est la référence.
+    """
+    cas_types = rendre(contexte, "/cas-types", {})[1]
+    titres = re.findall(r'<div class="panneau" data-onglet="([^"]+)"[^>]*><h3>.*?'
+                        r'<span class="badge (\w+)">', cas_types)
+    assert titres == [("notionnel_liberal", "proposition")] + [
+        (code, "contrefactuel") for code in ("notionnel_retroactif", "notionnel_prospectif",
+                                             "notionnel_retroactif_employeur",
+                                             "notionnel_prospectif_employeur")]
+
+    cout = rendre(contexte, "/cout", {})[1]
+    lignes = re.findall(r'<th class="" scope="row">(\d)\. [^<]*(?:<span class="badge (\w+)">)?',
+                        cout)
+    # Trois tableaux à six lignes : le passé, l'avenir, l'équilibre.
+    assert lignes.count(("1", "")) == 3, lignes
+    assert lignes.count(("6", "proposition")) == 3
+    for numero in "2345":
+        assert lignes.count((numero, "contrefactuel")) == 3, numero
+    assert ".badge.proposition" in g.FEUILLE_DE_STYLE
+
+
+def test_les_pages_techniques_s_ouvrent_en_langage_courant(contexte):
+    """Trois ou quatre phrases simples avant le détail, sur Coût, Méthode et
+    Données — et elles se lisent sans rien déplier."""
+    for chemin, phrase in (
+        ("/cout", "ont coûté un peu plus qu&#x27;elles n&#x27;ont rapporté"),
+        ("/methode", "Votre pension serait votre\ncompte divisé par le nombre d&#x27;années"),
+        ("/donnees", "viennent des institutions qui les produisent"),
+    ):
+        corps = rendre(contexte, chemin, {})[1]
+        resume = re.search(r'<div class="note resume"><strong>En clair\.</strong>(.*?)</div>',
+                           corps, re.S)
+        assert resume, f"{chemin} : pas de résumé en langage courant"
+        assert phrase in resume.group(0).replace("'", "&#x27;"), chemin
+        texte = re.sub(r"<[^>]+>", "", resume.group(1))
+        phrases = [p for p in re.split(r"(?<=[.!?])\s", texte.strip()) if p]
+        assert 3 <= len(phrases) <= 5, f"{chemin} : {len(phrases)} phrases"
+        if '<div class="fiches reperes">' in corps:
+            assert resume.start() < corps.index('<div class="fiches reperes">'), chemin
+        assert "En clair." in _hors_depliants(corps)
+
+
+def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance(contexte):
+    """La comparaison à la projection du COR est un gage de sérieux : elle est
+    marquée comme un point de vigilance, non noyée dans un paragraphe."""
+    corps = rendre(contexte, "/cout", {})[1]
+    encart = re.search(r'<div class="note vigilance"><strong>Point de vigilance : notre '
+                       r"projection\ns'écarte de celle du COR\.</strong>(.*?)</div>",
+                       corps, re.S)
+    assert encart, "le point de vigilance a disparu"
+    assert "celui du COR recule" in re.sub(r"\s+", " ", encart.group(1))
+    assert ".note.vigilance" in g.FEUILLE_DE_STYLE
+
+
+def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
+    """L'argument le plus parlant du site — « 300 € et 1 500 € : 0 € aujourd'hui,
+    500 € avec la garantie » — se lit sans rien déplier, avant le tableau qui
+    oppose les deux systèmes, et n'est plus répété dans le dépliant."""
+    corps = rendre(contexte, "/", {})[1]
+    visible = _hors_depliants(corps)
+    assert "Ce que le plancher individualisé change, par mois" in visible
+    assert visible.index("300 € et 1 500 €") < visible.index("Le système actuel et notre programme")
+    assert corps.count("<caption>Ce que le plancher individualisé change, par mois</caption>") == 1
+    assert "Le tableau du haut de page le montre" in corps

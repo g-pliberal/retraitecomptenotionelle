@@ -157,6 +157,24 @@ a { color: var(--accent); }
 .note.avertissement > .icone {
   color: var(--alerte); width: 1.15em; height: 1.15em; margin-top: 0.12em;
 }
+/* Le badge d'un scénario : « proposition » ou « contrefactuel », redit à côté
+   de chaque tableau ce que le préambule a dit une fois. Petit, en capitales
+   espacées, sans couleur porteuse de sens à elle seule : le mot suffit. */
+.badge {
+  display: inline-block; font-size: 0.68rem; letter-spacing: 0.06em;
+  text-transform: uppercase; font-weight: 600; line-height: 1.4;
+  padding: 0.05em 0.45em; border-radius: 3px; vertical-align: 0.15em;
+  border: 1px solid var(--trait-champ); color: var(--texte-doux);
+  white-space: nowrap;
+}
+.badge.proposition { color: var(--accent); border-color: var(--accent); }
+/* Le point de vigilance : la réserve que la page fait sur elle-même, sortie de
+   la prose et marquée comme un avertissement — c'est un gage de sérieux, pas
+   une note de bas de page. */
+.note.vigilance { border-left-color: var(--alerte); }
+/* Le résumé en langage courant d'une page technique : trois ou quatre phrases
+   avant le détail, dans le même encart qu'une note, un peu plus grand. */
+.note.resume { font-size: 1rem; }
 .discret { color: var(--texte-doux); font-size: 0.9rem; }
 /* Un champ des mentions légales que l'éditeur n'a pas encore renseigné. Il est
    marqué, et non masqué : un trou visible se comble, un trou discret reste. */
