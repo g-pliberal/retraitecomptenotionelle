@@ -1,0 +1,13 @@
+# Provenance de guidelines.md : copie conforme, octet pour octet, du fichier
+# amont ci-dessous, figée à un commit précis pour que chaque audit lise les
+# mêmes règles. Ne pas retoucher guidelines.md ; pour le rafraîchir
+# volontairement, suivre docs/outillage_interface.md et mettre à jour ces champs.
+# scripts/setup_ui_tools.sh recalcule la somme et signale tout écart.
+upstream_repository: https://github.com/vercel-labs/web-interface-guidelines
+upstream_file: command.md
+upstream_commit: e3d624baaf29dc1fc645aff3e38f03e564d2d6b1
+upstream_commit_date: 2026-08-17T17:21:06-07:00
+upstream_blob: e1e8e3460db7c1440e34642c4f7b885185ca5366
+retrieved_from: https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/e3d624baaf29dc1fc645aff3e38f03e564d2d6b1/command.md
+retrieved_on: 2026-09-17
+sha256: 5a775e6411f790f518dbc9c1fa7c50a89e6873502d9a3530a6eb223a590bcfe8
