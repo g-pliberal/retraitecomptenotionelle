@@ -393,6 +393,165 @@ def test_une_version_plus_recente_efface_les_coupures_qu_elle_recouvre():
     ) == {1961: 62.0}
 
 
+#: L'article L. 161-17-2 tel que la loi n° 2025-1403 l'a réécrit, avec sa
+#: note d'application, ses « 1 er » espacés, une période sans année à sa
+#: première date, et le renvoi final à la rédaction antérieure.
+L161_17_2_DE_2025 = (
+    "Conformément au VI de l'article 105 de la loi n° 2025-1403 du 30 décembre "
+    "2025, ces dispositions, dans leur rédaction résultant de l'article précité, "
+    "s'appliquent aux pensions prenant effet à compter du 1 er septembre 2026. "
+    "L'âge d'ouverture du droit à une pension de retraite mentionné au premier "
+    "alinéa de l'article L. 351-1 du présent code, au 1° du I de l'article L. 24 "
+    "et au 1° de l'article L. 25 du code des pensions civiles et militaires de "
+    "retraite est fixé à soixante-quatre ans pour les assurés nés à compter du "
+    "1 er janvier 1969. Cet âge est fixé à : 1° Soixante-deux ans et trois mois, "
+    "pour les assurés nés entre le 1 er septembre 1961 et le 31 décembre 1961 ; "
+    "2° Soixante-deux ans et six mois, pour les assurés nés en 1962 ; "
+    "3° Soixante-deux ans et neuf mois, pour les assurés nés entre le 1 er "
+    "janvier 1963 et le 31 mars 1965 ; 4° Soixante-trois ans, pour les assurés "
+    "nés entre le 1 er avril et le 31 décembre 1965 ; 5° Soixante-trois ans et "
+    "trois mois, pour les assurés nés en 1966 ; 6° Soixante-trois ans et six "
+    "mois, pour les assurés nés en 1967 ; 7° Soixante-trois ans et neuf mois, "
+    "pour les assurés nés en 1968. Pour les assurés nés avant le 1 er septembre "
+    "1961, il est celui applicable en application du présent article dans sa "
+    "rédaction antérieure à la loi n° 2025-1403 du 30 décembre 2025 de "
+    "financement de la sécurité sociale pour 2026."
+)
+
+#: Le décret D. 161-2-1-9 de 2023, resserré : il porte encore les âges de 2023.
+D161_2_1_9_DE_2023 = (
+    "Conformément à l'article 9 du décret n° 2023-436 du 3 juin 2023, ces "
+    "dispositions s'appliquent aux pensions prenant effet à compter du "
+    "1er septembre 2023. L'âge prévu au second alinéa de l'article L. 161-17-2 "
+    "est fixé à : 1° Soixante ans pour les assurés nés avant le 1er juillet "
+    "1951 ; 6° Soixante-deux ans pour les assurés nés entre le 1er janvier 1955 "
+    "et le 31 août 1961 inclus ; 7° Soixante-deux ans et trois mois pour les "
+    "assurés nés entre le 1er septembre 1961 et le 31 décembre 1961 inclus ; "
+    "9° Soixante-deux ans et neuf mois pour les assurés nés en 1963 ; "
+    "10° Soixante-trois ans pour les assurés nés en 1964 ; 11° Soixante-trois "
+    "ans et trois mois pour les assurés nés en 1965 ; 14° Soixante-quatre ans "
+    "pour les assurés nés à compter du 1er janvier 1968."
+)
+
+
+def test_la_loi_de_2025_recouvre_le_decret_de_2023_au_mois_pres():
+    """La suspension de 2026 est dans la loi, pas dans le décret.
+
+    L. 161-17-2 réécrit porte la table des nés à compter du 1er septembre
+    1961 et renvoie les autres à « la rédaction antérieure » ; D. 161-2-1-9,
+    que la loi n'a pas réécrit, dit encore 63 ans pour la génération 1964. Lus
+    ensemble, dans l'ordre de leur date d'effet et mois par mois, ils donnent
+    la table du dépôt : janvier-août 1961 restent au décret, 1964 passe à
+    62 ans et 9 mois, la génération 1965 se coupe au 1er avril. Les « 1 er »
+    espacés de la loi, sa période sans année à la première date (« entre le
+    1 er avril et le 31 décembre 1965 ») et son renvoi final — qui, lu dans
+    l'alinéa du 7°, aurait opposé 63 ans et 9 mois à tous les nés d'avant
+    1961 — sont chacun une raison pour laquelle l'ancien récupérateur ne
+    pouvait pas la lire.
+    """
+    module = _charger_script("dila_legi_parametres_retraite", "scripts", "fetch",
+                             "dila_legi_parametres_retraite.py")
+    versions = [("2025-12-31", L161_17_2_DE_2025), ("2023-09-01", D161_2_1_9_DE_2023)]
+    table = module.age_ouverture(versions)
+    assert table[1951] == 60.0 and table[1960] == 62.0 and table[1961] == 62.0
+    assert table[1961.667] == 62.25 and table[1962] == 62.5
+    assert table[1963] == 62.75 and table[1964] == 62.75 and table[1965] == 62.75
+    assert table[1965.25] == 63.0 and table[1966] == 63.25
+    assert table[1968] == 63.75 and table[1969] == 64.0 and table[1975] == 64.0
+    # Le renvoi n'a rien écrit : aucune génération d'avant 1951 ne porte 63,75.
+    assert all(v == 60.0 for g, v in table.items() if g < 1951)
+    # Sans la loi, le décret seul dit 2023.
+    seul = module.age_ouverture([("2023-09-01", D161_2_1_9_DE_2023)])
+    assert seul[1964] == 63.0 and seul[1968] == 64.0 and 1965.25 not in seul
+
+
+def test_une_version_s_applique_a_sa_date_d_effet():
+    """Consolidée au 31 décembre 2025, la loi vaut au 1er septembre 2026."""
+    module = _charger_script("dila_legi_parametres_retraite", "scripts", "fetch",
+                             "dila_legi_parametres_retraite.py")
+    assert module.date_effet("2025-12-31", L161_17_2_DE_2025) == "2026-09-01"
+    assert module.date_effet("2023-09-01", D161_2_1_9_DE_2023) == "2023-09-01"
+    # Sans note, la date de début ; une note antérieure ne recule jamais.
+    assert module.date_effet("2007-04-27", "II.-Pour les pensions") == "2007-04-27"
+    assert module.date_effet(
+        "2026-01-01", "s'appliquent aux pensions prenant effet à compter du "
+        "1er janvier 2004.") == "2026-01-01"
+
+
+def test_la_carriere_longue_se_lit_par_generation_dans_le_ii():
+    """Le II de D. 351-1-1 écrit la borne des vingt ans par substitution.
+
+    « le nombre : “ soixante-deux ” est remplacé par le nombre : “ soixante ” »,
+    « les mots : “ soixante-deux ans ” sont remplacés par les mots : “ l'âge
+    prévu à l'article L. 161-17-2 minoré de deux ans et six mois ” »,
+    « remplacés respectivement par les mots : “soixante ans et neuf mois” et
+    “soixante ans et huit mois” » — trois formes, résolues contre la table
+    d'âge en vigueur à la date d'effet du décret. Après la dernière génération
+    adaptée, la règle générale reprend.
+    """
+    module = _charger_script("dila_legi_parametres_retraite", "scripts", "fetch",
+                             "dila_legi_parametres_retraite.py")
+    decret_2026 = (
+        "Conformément à l'article 4 du décret n° 2026-345 du 7 mai 2026, ces "
+        "dispositions s'appliquent aux pensions prenant effet à compter du 1 er "
+        "septembre 2026. I. - Pour les assurés qui justifient d'une durée "
+        "d'assurance cotisée au moins égale à celle prévue au deuxième alinéa "
+        "de l'article L. 351-1, l'âge prévu au premier alinéa de l'article "
+        "L. 351-1 est abaissé : 1° A cinquante-huit ans pour les assurés qui "
+        "ont débuté leur activité avant l'âge de seize ans ; 2° A soixante ans "
+        "pour les assurés qui ont débuté leur activité avant l'âge de dix-huit "
+        "ans ; 3° A soixante-deux pour les assurés qui ont débuté leur activité "
+        "avant l'âge de vingt ans ; 4° A soixante-trois ans pour les assurés "
+        "qui ont débuté leur activité avant l'âge de vingt-et-un ans. II. - Les "
+        "dispositions du 3° du I s'appliquent aux assurés nés entre le "
+        "1er septembre 1961 et le 31 décembre 1970 sous réserve des adaptations "
+        "suivantes : 1° Pour les assurés nés entre le 1er septembre 1961 et "
+        "31 août 1963 inclus, le nombre : “ soixante-deux ” est remplacé par le "
+        "nombre : “ soixante ” ; 2° Pour les assurés nés entre le 1er septembre "
+        "1963 et le 31 décembre 1963 inclus et pour les assurés nés entre le "
+        "1 er janvier 1966 et le 31 décembre 1969 inclus, les mots : “ "
+        "soixante-deux ans ” sont remplacés par les mots : “ l'âge prévu à "
+        "l'article L. 161-17-2 minoré de deux ans et six mois ” ; 3° Pour les "
+        "assurés nés en 1964, les mots : “soixante-deux ans” sont remplacés par "
+        "les mots : “soixante ans et six mois” ; 4° Pour les assurés nés entre "
+        "le 1 er janvier 1965 et le 30 novembre 1965 inclus et pour les assurés "
+        "nés entre le 1 er décembre et le 31 décembre 1965 inclus, les mots : "
+        "“soixante-deux ans” sont remplacés respectivement par les mots : "
+        "“soixante ans et neuf mois” et “soixante ans et huit mois” ; 5° Pour "
+        "les assurés nés en 1970, les mots : “ soixante-deux ans ” sont "
+        "remplacés par les mots : “ soixante-et-un ans et neuf mois ”."
+    )
+    versions_age = [("2025-12-31", L161_17_2_DE_2025), ("2023-09-01", D161_2_1_9_DE_2023)]
+    portes = module.carriere_longue([("2026-09-01", decret_2026)], versions_age)
+    assert all(p["entree_en_vigueur"] == "2026-09-01" for p in portes)
+    generales = {p["age_debut_maximum"]: p["age_depart"]
+                 for p in portes if p["generation"] == 1900}
+    assert generales == {16: 58.0, 18: 60.0, 20: 62.0, 21: 63.0}
+    par_generation = {p["generation"]: p["age_depart"]
+                      for p in portes if p["generation"] != 1900}
+    assert par_generation == {
+        1961.667: 60.0,    # « soixante »
+        1963.667: 60.25,   # 62 ans 9 mois − 2 ans 6 mois
+        1964: 60.5,        # « soixante ans et six mois »
+        1965: 60.75, 1965.917: 60.67,   # « respectivement »
+        1966: 60.75, 1967: 61.0, 1968: 61.25, 1969: 61.5,   # âge suspendu − 2,5
+        1970: 61.75,       # « soixante-et-un ans et neuf mois »
+        1971: 62.0,        # la règle générale reprend
+    }
+    assert all(p["age_debut_maximum"] == 20 for p in portes if p["generation"] != 1900)
+
+    # Une version qui ne change aucune porte n'ouvre pas de date d'effet.
+    portes = module.carriere_longue(
+        [("2026-09-01", decret_2026),
+         ("2026-10-01", decret_2026.replace("1 er septembre 2026", "1er octobre 2026"))],
+        versions_age)
+    assert {p["entree_en_vigueur"] for p in portes} == {"2026-09-01"}
+    # Les rédactions d'avant septembre 2023 ne sont pas lues — à leur date
+    # d'effet, qui est celle de la note quand elle en porte une.
+    ancienne = decret_2026.replace("1 er septembre 2026", "1er novembre 2012")
+    assert module.carriere_longue([("2012-11-01", ancienne)], versions_age) == []
+
+
 def test_lecture_d_un_classeur_excel_97():
     """Le lecteur BIFF doit rendre les nombres, et rien d'autre.
 

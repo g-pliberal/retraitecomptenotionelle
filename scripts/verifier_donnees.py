@@ -1295,7 +1295,13 @@ def _table_legi(prefixe: str) -> dict[tuple, float]:
 
 
 def source_age_ouverture() -> dict[tuple, float]:
-    """Âge d'ouverture des droits par génération — D. 161-2-1-9.
+    """Âge d'ouverture des droits par génération — L. 161-17-2 et D. 161-2-1-9.
+
+    Depuis la loi n° 2025-1403 (suspension de la réforme de 2023), la loi
+    porte elle-même la table des nés à compter du 1er septembre 1961 ; le
+    décret, qu'elle n'a pas réécrit, ne vaut plus que pour les autres. Le
+    récupérateur lit les deux, chaque version recouvrant les mois qu'elle
+    nomme à compter de sa date d'effet.
 
     `docs/limites.md` tenait ces tables pour hors de portée : « Légifrance
     expose une API, mais elle demande une clé et renvoie du texte juridique, non
@@ -1556,27 +1562,33 @@ def source_duree_requise_fonction_publique_openfisca() -> dict[tuple, float]:
 
 
 def source_carriere_longue() -> dict[tuple, float]:
-    """Âge de départ anticipé par borne d'entrée dans la vie active.
+    """Portes du départ anticipé pour carrière longue — D. 351-1-1.
 
-    Articles L. 351-1-1 et D. 351-1-1, DERNIÈRE VERSION seulement : les portes
-    de 2004 et de 2012 sont dans des versions abrogées que le récupérateur ne
-    remonte pas, et restent des transcriptions. Ne sont donc confrontées que les
-    quatre bornes de la RÈGLE GÉNÉRALE (génération `1900`) en vigueur depuis le
-    1er septembre 2023 — 16, 18, 20 et 21 ans pour 58, 60, 62 et 63 ans. Les
-    lignes par génération du II de l'article, et celles du 1er septembre 2026,
-    restent des transcriptions de la circulaire Cnav 2026-17.
+    Clé : date d'effet de la version en année décimale (`2023.667` pour le
+    1er septembre 2023), génération (`1900` pour la règle générale du I,
+    `1963.667` pour une adaptation du II ouverte au 1er septembre 1963), âge de
+    début d'activité. Le récupérateur lit les versions depuis celle du
+    1er septembre 2023 — le I et le II, celui-ci résolu contre la table d'âge
+    en vigueur à la date d'effet — et n'ouvre pas de date d'effet à une
+    version qui ne change aucune porte. Les portes de 2004 et de 2012 sont dans
+    des rédactions d'une autre forme, que le récupérateur ne lit pas : elles
+    restent des transcriptions.
     """
     brut = _lire_json("dila_legi_parametres_retraite.json",
                       "scripts/fetch/dila_legi_parametres_retraite.py")
+
+    def decimale(annee: int, mois: int) -> str:
+        return f"{annee + (mois - 1) / 12.0:.3f}".rstrip("0").rstrip(".")
+
     portes = {}
     for porte in brut.get("carriere_longue", []):
         texte = str(porte["entree_en_vigueur"])
         annee, mois = int(texte[:4]), int(texte[5:7]) if len(texte) >= 7 else 1
-        # La clé est la date d'effet en année décimale, écrite comme dans la
-        # table : `2023.667` pour le 1er septembre 2023, `2004` pour janvier.
-        date_effet = f"{annee + (mois - 1) / 12.0:.3f}".rstrip("0").rstrip(".")
-        portes[(date_effet, "1900", str(int(porte["age_debut_maximum"])))] = \
-            float(porte["age_depart"])
+        generation = float(porte.get("generation", 1900))
+        cle_generation = decimale(int(generation),
+                                  int(round((generation - int(generation)) * 12)) + 1)
+        portes[(decimale(annee, mois), cle_generation,
+                str(int(porte["age_debut_maximum"])))] = float(porte["age_depart"])
     return portes
 
 
@@ -3090,7 +3102,8 @@ CERTIFICATIONS = (
         cles=("generation",),
         colonne="age",
         source=source_age_ouverture,
-        origine="DILA, base LEGI, code de la sécurité sociale D. 161-2-1-9",
+        origine="DILA, base LEGI, code de la sécurité sociale L. 161-17-2 "
+                "et D. 161-2-1-9",
         decimales=2,
         tolerance=0.005,
         unite=" ans",
@@ -3159,10 +3172,11 @@ CERTIFICATIONS = (
         colonne="age_depart",
         source=source_carriere_longue,
         origine="DILA, base LEGI, code de la sécurité sociale L. 351-1-1 "
-                "et D. 351-1-1",
-        decimales=0,
-        tolerance=0.5,
+                "et D. 351-1-1 (I et II)",
+        decimales=2,
+        tolerance=0.005,
         unite=" ans",
+        gabarit={"trimestres_debut": "5", "trimestres_supplementaires": "0"},
     ),
     Certification(
         nom="duree_proratisation",

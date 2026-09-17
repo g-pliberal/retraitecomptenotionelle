@@ -59,15 +59,22 @@
 # LUES dans les articles L. 351-1-1 et D. 351-1-1 du code de la sécurité
 # sociale, tels que la DILA les publie dans la base LEGI
 # (`scripts/fetch/dila_legi_parametres_retraite.py`) : niveau `certifiee`, les
-# quatre valeurs saisies s'y sont retrouvées à l'identique. Les lignes par
-# génération et celles de 2026 sont transcrites du II de l'article et de la
-# circulaire Cnav 2026-17 : niveau `haute`, jusqu'à ce que le récupérateur
-# relise l'article dans un dump LEGI postérieur au 8 mai 2026. Les portes de 2004 et de 2012 restent des transcriptions — le
-# récupérateur ne lit que la version EN VIGUEUR de l'article, les versions
-# abrogées demandant de rejouer l'historique complet des modifications, ce que
-# la structure du dump ne donne pas sans risque d'erreur. Une porte de 2004
-# fausse ne se verrait que sur une liquidation d'avant 2012, cas que le modèle
-# rencontre peu et qui ne pèse pas sur les écarts entre scénarios.
+# quatre valeurs saisies s'y sont retrouvées à l'identique. Les lignes PAR
+# GÉNÉRATION le sont aussi, depuis l'action 27 : le récupérateur lit le II de
+# D. 351-1-1 version par version (1er septembre 2023, LEGIARTI000047634571 ;
+# 1er septembre 2026, LEGIARTI000054059621, décret n° 2026-345) et résout ses
+# substitutions — « soixante », « l'âge prévu à l'article L. 161-17-2 minoré
+# de deux ans et six mois », « soixante ans et neuf mois » et « huit mois »
+# respectivement — contre la table d'âge en vigueur à la date d'effet de
+# chaque version. Vingt-huit portes, toutes identiques aux lignes de 2023 et
+# de 2026 de ce fichier, qui avaient été transcrites de la circulaire Cnav
+# 2026-17. La version du 1er janvier 2026 (décret n° 2025-1410) réécrit le I
+# sans changer une valeur : elle n'ouvre pas de date d'effet. Les portes de
+# 2004 et de 2012 restent des transcriptions — ces rédactions empilent les
+# portes par génération sans règle générale, et le récupérateur ne lit
+# l'article que depuis sa forme de 2023. Une porte de 2004 fausse ne se
+# verrait que sur une liquidation d'avant 2012, cas que le modèle rencontre
+# peu et qui ne pèse pas sur les écarts entre scénarios.
 #
 # Ce qui n'est PAS modélisé : la distinction entre trimestres cotisés et
 # trimestres « réputés cotisés » que la loi du 20 janvier 2014 a élargie
@@ -86,27 +93,27 @@ date_effet,generation,age_debut_maximum,trimestres_debut,age_depart,trimestres_s
 2023.667,1900,18,5,60.00,0,certifiee
 2023.667,1900,20,5,62.00,0,certifiee
 2023.667,1900,21,5,63.00,0,certifiee
-2023.667,1961.667,20,5,60.00,0,haute
-2023.667,1963.667,20,5,60.25,0,haute
-2023.667,1964,20,5,60.50,0,haute
-2023.667,1965,20,5,60.75,0,haute
-2023.667,1966,20,5,61.00,0,haute
-2023.667,1967,20,5,61.25,0,haute
-2023.667,1968,20,5,61.50,0,haute
-2023.667,1969,20,5,61.75,0,haute
-2023.667,1970,20,5,62.00,0,haute
-2026.667,1900,16,5,58.00,0,haute
-2026.667,1900,18,5,60.00,0,haute
-2026.667,1900,20,5,62.00,0,haute
-2026.667,1900,21,5,63.00,0,haute
-2026.667,1961.667,20,5,60.00,0,haute
-2026.667,1963.667,20,5,60.25,0,haute
-2026.667,1964,20,5,60.50,0,haute
-2026.667,1965,20,5,60.75,0,haute
-2026.667,1965.917,20,5,60.67,0,haute
-2026.667,1966,20,5,60.75,0,haute
-2026.667,1967,20,5,61.00,0,haute
-2026.667,1968,20,5,61.25,0,haute
-2026.667,1969,20,5,61.50,0,haute
-2026.667,1970,20,5,61.75,0,haute
-2026.667,1971,20,5,62.00,0,haute
+2023.667,1961.667,20,5,60.00,0,certifiee
+2023.667,1963.667,20,5,60.25,0,certifiee
+2023.667,1964,20,5,60.50,0,certifiee
+2023.667,1965,20,5,60.75,0,certifiee
+2023.667,1966,20,5,61.00,0,certifiee
+2023.667,1967,20,5,61.25,0,certifiee
+2023.667,1968,20,5,61.50,0,certifiee
+2023.667,1969,20,5,61.75,0,certifiee
+2023.667,1970,20,5,62.00,0,certifiee
+2026.667,1900,16,5,58.00,0,certifiee
+2026.667,1900,18,5,60.00,0,certifiee
+2026.667,1900,20,5,62.00,0,certifiee
+2026.667,1900,21,5,63.00,0,certifiee
+2026.667,1961.667,20,5,60.00,0,certifiee
+2026.667,1963.667,20,5,60.25,0,certifiee
+2026.667,1964,20,5,60.50,0,certifiee
+2026.667,1965,20,5,60.75,0,certifiee
+2026.667,1965.917,20,5,60.67,0,certifiee
+2026.667,1966,20,5,60.75,0,certifiee
+2026.667,1967,20,5,61.00,0,certifiee
+2026.667,1968,20,5,61.25,0,certifiee
+2026.667,1969,20,5,61.50,0,certifiee
+2026.667,1970,20,5,61.75,0,certifiee
+2026.667,1971,20,5,62.00,0,certifiee

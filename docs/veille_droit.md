@@ -102,6 +102,11 @@ commiter sur `main`.
 
 Le 17 septembre 2026 : 35 lignes. Ce qui est `conforme` a été lu dans le
 texte et dans son application, et rejoué par vingt-deux exemples publiés.
+Le même jour, l'action 27 a fait relire au récupérateur, dans l'index LEGI
+du dépôt tenu à jour des incréments de la DILA, les articles que la
+suspension a réécrits : les lignes redescendues au niveau `moyenne` sont
+toutes redevenues `certifiee`, sans qu'un chiffre bouge, et le récupérateur
+ne lit plus le dump global de juillet 2025.
 Ce qui est `transcrit` attend son exemple. Ce qui est `manque` ou
 `approximation` est mesuré dans `limites.md`. Ce qui est `a_verifier` est ce
 que la session n'a pas pu finir de lire, et c'est par là que la suivante

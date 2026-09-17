@@ -82,8 +82,10 @@ entrees:
   # ---- Ouverture du droit et taux -------------------------------------
   - id: age_legal_par_generation
     regle: "Âge d'ouverture du droit par génération, coupures au mois (1er juillet 1951, 1er septembre 1961, 1er avril 1965)."
-    textes: ["L. 161-17-2 CSS (réécrit par la loi n° 2025-1403, article 105)", "D. 161-2-1-9 CSS (version 2023, désormais dépassée par la loi elle-même)"]
+    textes: ["L. 161-17-2 CSS (réécrit par la loi n° 2025-1403, article 105)", "D. 161-2-1-9 CSS (version 2023, que la loi laisse valoir pour les nés avant le 1er septembre 1961)"]
     sources:
+      - {type: legifrance, reference: "L. 161-17-2 CSS, LEGIARTI000053280889, version du 31 décembre 2025, lue par le récupérateur dans l'index LEGI à jour au 16 septembre 2026", date: "2026-09-17"}
+      - {type: legifrance, reference: "D. 161-2-1-9 CSS, LEGIARTI000047634502, version du 1er septembre 2023", date: "2026-09-17"}
       - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 1.1 et annexe 1", date: "2026-03-05"}
       - {type: service_public, reference: "fiches F14043 et F14044", date: "2026-08-14"}
       - {type: service_public, reference: "actualité A18825, suspension de la réforme", date: "2026-02-27"}
@@ -91,24 +93,23 @@ entrees:
     temoins: [cnav_2026_07_age_legal_1964, cnav_2026_07_age_legal_1965_premier_trimestre, cnav_2026_07_age_legal_1965_apres_avril, sp_f19643_surcote, sp_f16494_surcote_fonction_publique]
     reformes: [reforme_2023, lfss_2026_suspension]
     etat: conforme
-    effet: "Toute liquidation. Les six lignes de 1964 à 1968 sont au niveau « moyenne » : transcrites, non recontrôlées par le récupérateur LEGI."
-    a_faire: >-
-      Action 27 : le récupérateur lit D. 161-2-1-9, qui ne porte plus les
-      âges ; il doit lire L. 161-17-2 dans un dump postérieur au 8 mai 2026.
+    effet: "Toute liquidation. Les soixante-dix-neuf segments de la table sont certifiés : lus dans L. 161-17-2 et D. 161-2-1-9, chaque version à sa date d'effet (action 27)."
+    a_faire: null
     prochaine_veille: "2026-12-31"
 
   - id: duree_requise_par_generation
     regle: "Durée d'assurance requise pour le taux plein et dénominateur du prorata, par génération."
     textes: ["L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)", "L. 351-1 CSS"]
     sources:
+      - {type: legifrance, reference: "L. 161-17-3 CSS, LEGIARTI000053280903, version du 31 décembre 2025, lue par le récupérateur dans l'index LEGI à jour au 16 septembre 2026", date: "2026-09-17"}
       - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 2.1", date: "2026-03-05"}
       - {type: service_public, reference: "fiche F14044", date: "2026-08-14"}
     verifie_le: "2026-09-17"
     temoins: [cnav_2026_07_age_legal_1964, cnav_2026_07_age_legal_1965_apres_avril, sp_f19666_decote, sp_f21552_taux_plein_170]
     reformes: [reforme_2023, lfss_2026_suspension]
     etat: conforme
-    effet: "Taux et proratisation de toute liquidation. Lignes 1964, 1965 et 1965.25 au niveau « moyenne »."
-    a_faire: "Action 27."
+    effet: "Taux et proratisation de toute liquidation. Les vingt segments depuis 1958 sont certifiés (action 27)."
+    a_faire: null
     prochaine_veille: "2026-12-31"
 
   - id: age_annulation_decote
@@ -127,15 +128,16 @@ entrees:
 
   - id: decote_regime_general
     regle: "1,25 % du taux plein par trimestre manquant, le plus petit des deux décomptes (durée, âge), arrondi au trimestre supérieur, vingt trimestres au plus."
-    textes: ["R. 351-27 CSS", "L. 351-1 CSS"]
+    textes: ["R. 351-27 CSS (II par génération abrogé au 1er janvier 2026 par le décret n° 2025-1409, article 2, 29° : 1,25 % pour tous)", "L. 351-1 CSS"]
     sources:
+      - {type: legifrance, reference: "R. 351-27 CSS, LEGIARTI000054589995, version du 1er août 2026 ; décret n° 2025-1409, JORFTEXT000053227462, article 2, 29° e", date: "2026-09-17"}
       - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 4.1.1", date: "2026-03-05"}
       - {type: service_public, reference: "fiche F19666", date: "2026-01-01"}
     verifie_le: "2026-09-17"
     temoins: [sp_f19666_decote, cnav_2026_07_decote_1961, sp_f21552_65_ans_158]
     reformes: []
     etat: conforme
-    effet: "Toute liquidation avant le taux plein."
+    effet: "Toute liquidation avant le taux plein. Le coefficient par génération de la table (2,5 % à 1,375 % pour les nés avant 1953) ne concerne plus personne : ces générations ont passé l'âge du taux plein d'office, et le droit ne l'écrit plus."
     a_faire: null
     prochaine_veille: "2027-06-30"
 
@@ -328,14 +330,14 @@ entrees:
     textes: ["L. 351-1-1 CSS", "D. 351-1-1 CSS (décret n° 2026-345 du 7 mai 2026)"]
     sources:
       - {type: circulaire_cnav, reference: "2026-17 du 12 juin 2026, point 1.1 et annexe 3 (remplacée par 2026-29 du 4 septembre 2026)", date: "2026-09-04"}
-      - {type: legifrance, reference: "D. 351-1-1 CSS, LEGIARTI000047634571, versions du 1er septembre 2023 et du 1er septembre 2026", date: "2026-09-01"}
+      - {type: legifrance, reference: "D. 351-1-1 CSS, versions du 1er septembre 2023 (LEGIARTI000047634571), du 1er janvier 2026 (LEGIARTI000053356023, sans changement de valeur) et du 1er septembre 2026 (LEGIARTI000054059621), lues par le récupérateur dans l'index LEGI, I et II", date: "2026-09-17"}
       - {type: service_public, reference: "fiche F13845", date: "2026-09-01"}
     verifie_le: "2026-09-17"
     temoins: [cnav_2026_17_racl_1964, cnav_2026_17_racl_1965_premier_trimestre, cnav_2026_17_racl_1965_apres_avril, cnav_2026_17_racl_1967, cnav_2026_17_racl_1970, cnav_2026_17_racl_1971]
     reformes: [reforme_2023, lfss_2026_suspension]
     etat: conforme
-    effet: "Tout départ avant l'âge légal. Les portes de 2004 et 2012 restent des transcriptions anciennes (niveau moyenne / haute)."
-    a_faire: "Action 27 pour les lignes par génération ; relire les portes de 2004 et 2012 dans les versions abrogées de D. 351-1-1."
+    effet: "Tout départ avant l'âge légal. Les vingt-huit portes de 2023 et de 2026, règle générale et borne des vingt ans par génération, sont certifiées (action 27) ; celles de 2004 et 2012 restent des transcriptions anciennes (niveau moyenne / haute)."
+    a_faire: "Relire les portes de 2004 et 2012 dans les versions abrogées de D. 351-1-1, que l'index expose désormais (LEGIARTI000006736521, LEGIARTI000026139949) : la forme de 2012 empile les portes par génération sans règle générale."
     prochaine_veille: "2026-12-31"
 
   - id: carriere_longue_enfants_reputes_cotises
@@ -547,24 +549,54 @@ entrees:
     temoins: []
     reformes: [lfss_2026_suspension]
     etat: a_verifier
-    effet: "Tout changement de calendrier touche les générations 1965 et suivantes."
-    a_faire: "À chaque session : chercher sur Légifrance et dans le JORF un texte modifiant L. 161-17-2 ou L. 161-17-3 postérieur au 30 décembre 2025."
+    effet: "Tout changement de calendrier touche les générations 1965 et suivantes. Au 16 septembre 2026 (index LEGI), la version du 31 décembre 2025 de L. 161-17-2 et de L. 161-17-3 est la dernière, sans date de fin."
+    a_faire: "À chaque session : `python scripts/fetch/dila_index.py legi --mettre-a-jour`, puis vérifier que L. 161-17-2 et L. 161-17-3 n'ont pas de version postérieure au 31 décembre 2025 (`dila_cherche.py legi --num L161-17-2`)."
     prochaine_veille: "2027-01-31"
 
   - id: certification_legi_perimee
-    regle: "Le récupérateur LEGI a lu le dump du 13 juillet 2025 ; tout ce qu'il certifie l'est à cette date."
-    textes: ["scripts/fetch/dila_legi_parametres_retraite.py", "data/derive/certification.json"]
+    regle: "Le récupérateur des paramètres du scénario 1 lit l'index LEGI du dépôt (dump global du 13 juillet 2025 plus les incréments quotidiens de la DILA) ; tout ce qu'il certifie l'est à la date du dernier incrément appliqué, que le fichier source et le journal de certification écrivent."
+    textes: ["scripts/fetch/dila_legi_parametres_retraite.py", "scripts/fetch/dila_index.py", "data/derive/certification.json"]
     sources:
-      - {type: autre, reference: "journal de certification, dates de vérification par série", date: "2026-09-14"}
+      - {type: autre, reference: "index LEGI, incréments appliqués jusqu'au 20260916-214544 ; journal de certification du 17 septembre 2026", date: "2026-09-17"}
     verifie_le: "2026-09-17"
     temoins: []
     reformes: []
-    etat: a_verifier
-    effet: "Toute table certifiée peut être dépassée par un texte postérieur à juillet 2025 : c'est ce qui est arrivé aux âges légaux."
-    a_faire: "Action 27 : relancer le récupérateur sur un dump postérieur au 8 mai 2026, et lui faire lire L. 161-17-2 au lieu de D. 161-2-1-9."
+    etat: conforme
+    effet: "Les tables d'âge légal, de durée requise, de carrière longue, de coefficient, de proratisation et de validation des trimestres sont certifiées sur le droit consolidé au 16 septembre 2026. Les autres récupérateurs dila_legi_* lisent encore le dump global de juillet 2025."
+    a_faire: "À chaque session qui touche au scénario 1 : `dila_index.py legi --mettre-a-jour` puis relancer le récupérateur et `verifier_donnees.py --appliquer` ; porter les autres récupérateurs dila_legi_* sur l'index."
     prochaine_veille: "2026-12-31"
 
 journal:
+  - date: "2026-09-17"
+    session: "action 27, relecture dans LEGI de ce que la suspension a réécrit"
+    consulte: >-
+      Index LEGI du dépôt mis à jour des incréments DILA jusqu'au
+      16 septembre 2026 : toutes les versions de L. 161-17-2, D. 161-2-1-9,
+      L. 161-17-3, D. 351-1-1, R. 351-27, R. 351-6, R. 351-9, R. 351-29-1 ;
+      index JORF : décrets n° 2025-1409 et 2025-1410 du 30 décembre 2025
+      (JORFTEXT000053227462, JORFTEXT000053227603), n° 2026-344 et 2026-345
+      du 7 mai 2026.
+    trouve: >-
+      La loi n° 2025-1403 a mis la table des âges dans L. 161-17-2 lui-même
+      (version du 31 décembre 2025, applicable au 1er septembre 2026) sans
+      réécrire D. 161-2-1-9 ; L. 161-17-3 réécrit de même ; D. 351-1-1 en
+      trois versions (2023, janvier 2026 sans changement de valeur,
+      septembre 2026). Le récupérateur les lit toutes, à leur date d'effet et
+      au mois près : 79 âges, 20 durées, 28 portes de carrière longue,
+      IDENTIQUES aux lignes transcrites de la loi et des circulaires
+      2026-07 et 2026-17 — plus une ligne « moyenne » ni « haute » sur ces
+      tables depuis 2023. Aucune version de L. 161-17-2 ni de L. 161-17-3
+      postérieure au 30 décembre 2025. Le décret n° 2025-1409 a abrogé au
+      1er janvier 2026 le II de R. 351-27 (coefficient par génération), le
+      II de R. 351-6 (proratisation par génération) et R. 351-29-1 (années du
+      SAM, passées à R. 173-3-2) : textes morts pour les générations qu'ils
+      nommaient, sans effet sur le modèle, documenté dans les tables.
+    reste: >-
+      Portes de carrière longue de 2004 et 2012 (versions abrogées, forme
+      différente) ; les autres récupérateurs dila_legi_* lisent encore le
+      dump global de juillet 2025 ; catégories actives : le décret
+      n° 2026-344 modifie l'article 10 XXIV de la loi de 2023, non codifié,
+      que seul l'index JORF porte — lues à la main, niveau haute.
   - date: "2026-09-17"
     session: "action 26, exemples publiés par les caisses"
     consulte: >-

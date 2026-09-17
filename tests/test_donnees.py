@@ -415,9 +415,10 @@ def test_les_tables_par_generation_disent_le_droit_en_vigueur():
 
     Ces trois tables sont désormais lues dans la base LEGI et non plus saisies
     (`scripts/fetch/dila_legi_parametres_retraite.py`). Le récupérateur n'étant
-    pas rejoué à chaque exécution des tests — il lit 9 Go en flux — c'est ici
-    qu'on fige ce qu'il a trouvé : si un jour une passe le contredit, l'écart
-    apparaîtra sur une borne connue et non au milieu d'une série.
+    pas rejoué à chaque exécution des tests — il lit l'index DILA du dépôt,
+    qu'il faut avoir récupéré — c'est ici qu'on fige ce qu'il a trouvé : si un
+    jour une passe le contredit, l'écart apparaîtra sur une borne connue et non
+    au milieu d'une série.
     """
     import csv
 
@@ -445,14 +446,14 @@ def test_les_tables_par_generation_disent_le_droit_en_vigueur():
     # pour le 1er juillet 1951, `1961.667` pour le 1er septembre 1961.
     assert ages[1951][0] == 60.0 and ages[1951.5][0] == 60.33
     assert ages[1961][0] == 62.0 and ages[1961.667][0] == 62.25
-    # Les deux fractions viennent du texte au même titre : le récupérateur rend
+    # Les trois fractions viennent du texte au même titre : le récupérateur rend
     # un segment par valeur, et la confrontation les a trouvées identiques.
-    # Sauf les six lignes que la suspension de 2026 a réécrites : transcrites
-    # de la loi et de la circulaire Cnav 2026-07, elles attendent un dump LEGI
-    # postérieur au 8 mai 2026 pour redevenir certifiées.
-    suspendues = {1964.0, 1965.0, 1965.25, 1966.0, 1967.0, 1968.0}
-    for generation, (_, niveau) in ages.items():
-        assert niveau == ("moyenne" if generation in suspendues else "certifiee"), generation
+    # Les six lignes que la suspension de 2026 a réécrites (1964 à 1968) ont
+    # été transcrites de la loi et de la circulaire Cnav 2026-07 le
+    # 17 septembre 2026, au niveau « moyenne », puis relues le même jour dans
+    # l'article L. 161-17-2 tel que l'index LEGI le porte depuis le
+    # 31 décembre 2025 (action 27) : toute la table est certifiée.
+    assert all(niveau == "certifiee" for _, niveau in ages.values())
 
     annulation = table("age_annulation_decote.csv", "age")
     assert annulation[1950][0] == 65.0
@@ -465,7 +466,8 @@ def test_les_tables_par_generation_disent_le_droit_en_vigueur():
     # du 1er avril 1965, la cible de 172 à compter de 1966 (au lieu de 1965).
     assert durees[1964][0] == 170 and durees[1965][0] == 170
     assert durees[1965.25][0] == 171 and durees[1966][0] == 172
-    assert durees[1965][1] == "moyenne"   # transcrite, en attente d'un dump LEGI
+    assert durees[1965][1] == "certifiee"  # L. 161-17-3 réécrit, relu (action 27)
+    assert durees[1965.25][1] == "certifiee"
     assert durees[1943][1] == "haute"      # décrets non codifiés
     assert durees[1958][1] == "certifiee"  # article L. 161-17-3
     # Même coupure au 1er septembre 1961 : 168 trimestres avant, 169 après.
