@@ -228,8 +228,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         interruptions_relatives=tuple((decalage, "education_enfant") for decalage in range(8, 13)),
         commentaire=(
             "Cinq années sans cotisation. Le système actuel les couvre par des "
-            "trimestres assimilés, par l'AVPF — qui porte au compte un salaire "
-            "au SMIC — et par la majoration de durée d'assurance ; le compte "
+            "trimestres assimilés, par l'AVPF (qui porte au compte un salaire au SMIC) et par la majoration de durée d'assurance ; le compte "
             "notionnel ne couvre rien. Les deux premiers ne se voient guère ici : "
             "sur une carrière de plus de vingt-cinq années portées au compte, "
             "les années au SMIC n'entrent pas dans les vingt-cinq meilleures, et "
@@ -275,8 +274,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         commentaire=(
             "La pension militaire ne s'ouvre pas à un âge mais à une durée : "
             "dix-sept ans de services pour un non-officier. C'est le départ le "
-            "plus précoce du système, et celui qu'un compte notionnel déplace le "
-            "plus — quarante ans de rente pour vingt-cinq ans de cotisations. "
+            "plus précoce du système, et celui qu'un compte notionnel déplace le plus : quarante ans de rente pour vingt-cinq ans de cotisations. "
             "La solde indiciaire seule ouvre des droits ; les indemnités, plus "
             "lourdes que les primes de la fonction publique civile, relèvent du "
             "RAFP."

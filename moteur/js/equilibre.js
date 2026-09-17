@@ -131,8 +131,7 @@ export const GROUPES = [
   {
     code: "reste",
     libelle: "Le reste",
-    explication: "Ce que l'État comble à la SNCF, aux mines, aux marins — des "
-      + "régimes dont les cotisants ont disparu avant les retraités —, plus les "
+    explication: "Ce que l'État comble à la SNCF, aux mines, aux marins (des régimes dont les cotisants ont disparu avant les retraités), plus les "
       + "produits financiers et les recettes diverses des caisses.",
     postes: ["subventions_equilibre", "autres_produits"],
     couleur: "var(--serie-9)",
@@ -169,7 +168,7 @@ export const POSTES_TRANSFERTS = [
     libelle: "Points Agirc-Arrco des chômeurs",
     glose: "Ce que l'assurance chômage verse à l'Agirc-Arrco pour que les "
       + "périodes de chômage indemnisé ouvrent des points de retraite "
-      + "complémentaire — l'Agirc et l'Arrco séparément avant 2019.",
+      + "complémentaire (l'Agirc et l'Arrco séparément avant 2019).",
   },
   {
     code: "unedic_ircantec",

@@ -50,8 +50,7 @@ export const CAS_TYPES = [
     caisses: ["cnav"],
     interruptions_relatives: [8, 9, 10, 11, 12].map((d) => [d, "education_enfant"]),
     commentaire: "Cinq années sans cotisation. Le système actuel les couvre par "
-      + "des trimestres assimilés, par l'AVPF — qui porte au compte un salaire au "
-      + "SMIC — et par la majoration de durée d'assurance ; le compte notionnel ne "
+      + "des trimestres assimilés, par l'AVPF (qui porte au compte un salaire au SMIC) et par la majoration de durée d'assurance ; le compte notionnel ne "
       + "couvre rien. Les deux premiers ne se voient guère ici : sur une carrière "
       + "de plus de vingt-cinq années portées au compte, les années au SMIC "
       + "n'entrent pas dans les vingt-cinq meilleures, et les trimestres assimilés "
@@ -92,8 +91,7 @@ export const CAS_TYPES = [
     regle_liquidation: "services", ecart_liquidation: 25,
     commentaire: "La pension militaire ne s'ouvre pas à un âge mais à une durée : "
       + "dix-sept ans de services pour un non-officier. C'est le départ le plus "
-      + "précoce du système, et celui qu'un compte notionnel déplace le plus — "
-      + "quarante ans de rente pour vingt-cinq ans de cotisations. La solde "
+      + "précoce du système, et celui qu'un compte notionnel déplace le plus : quarante ans de rente pour vingt-cinq ans de cotisations. La solde "
       + "indiciaire seule ouvre des droits ; les indemnités, plus lourdes que les "
       + "primes de la fonction publique civile, relèvent du RAFP.",
   },

@@ -121,15 +121,13 @@ SYSTEMES: tuple[Systeme, ...] = (
     Systeme(
         "aide_sociale_locale", "Aide sociale des collectivités",
         "Allocation personnalisée d'autonomie, hébergement des personnes âgées "
-        "dépendantes. Ce n'est pas de la retraite : c'est de la dépendance, que "
-        "le risque vieillesse-survie loge au même endroit.",
+        "dépendantes. De la dépendance plutôt que de la retraite, mais le risque vieillesse-survie les loge au même endroit.",
         False,
     ),
     Systeme(
         "supplementaire", "Retraite supplémentaire",
         "Capitalisation : RAFP, contrats collectifs d'assurance, de prévoyance "
-        "et de mutuelle, régimes d'entreprise. Un capital est placé — c'est ce "
-        "qui la sépare de tout le reste de ce tableau.",
+        "et de mutuelle, régimes d'entreprise. Un capital est placé : c'est ce qui la sépare de tout le reste de ce tableau.",
         False,
     ),
 )
