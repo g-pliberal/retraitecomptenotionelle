@@ -22,9 +22,10 @@
 #     requise de sa génération, augmentée de `trimestres_supplementaires`.
 #
 # Le texte demande cinq trimestres avant la fin de l'année civile, ou quatre
-# pour les personnes nées entre le 1er octobre et le 31 décembre. Le modèle ne
-# connaît que l'année de naissance : il retient cinq, valeur de la fraction la
-# plus nombreuse, comme il le fait des autres bornes coupées en cours d'année.
+# pour les personnes nées entre le 1er octobre et le 31 décembre. La table
+# porte cinq ; c'est le moteur qui en retire un quand le mois de naissance est
+# octobre, novembre ou décembre. Il retenait cinq pour tout le monde tant qu'il
+# ne connaissait que l'année de naissance.
 #
 # Étapes retenues :
 #

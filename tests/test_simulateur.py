@@ -3924,3 +3924,30 @@ def test_un_artisan_d_une_seule_caisse_n_est_pas_touche(simulateur):
     pensions = _pensions_de_base(resultat)
     assert list(pensions) == ["cancava"]
     assert "liquidées ensemble" not in pensions["cancava"].detail
+
+
+def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(simulateur):
+    """D. 351-1-1 : cinq trimestres avant la fin de l'année civile des dix-huit
+    ans, ou QUATRE pour qui est né entre le 1er octobre et le 31 décembre. Le
+    modèle retenait cinq pour tout le monde tant qu'il ne connaissait que
+    l'année de naissance. Deux assurés entrés le même mois de janvier 1983 avec
+    quatre trimestres cette année-là : né en septembre, la porte des dix-huit
+    ans reste fermée ; né en novembre, elle s'ouvre, et c'est le droit."""
+    actuel = simulateur.scenario_actuel
+
+    def carriere(mois, age_debut):
+        return simulateur.carriere_simple(
+            annee_naissance=1965, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_debut=age_debut, age_liquidation=60.25, niveau_salaire=1.0,
+            mois_naissance=mois,
+        )
+
+    septembre = carriere(9, 17 + 4 / 12)
+    novembre = carriere(11, 17 + 2 / 12)
+    for c in (septembre, novembre):
+        assert min(ligne.annee for ligne in c.lignes) == 1983
+        assert sum(l.trimestres_valides for l in c.lignes if l.annee == 1983) == 4
+    assert actuel.calculer(septembre).motif_ouverture == "non_ouverte"
+    assert actuel.calculer(novembre).motif_ouverture == "carriere_longue"
+    assert actuel.age_ouverture_droit(septembre) == pytest.approx(62.0)
+    assert actuel.age_ouverture_droit(novembre) == pytest.approx(60.25)

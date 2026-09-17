@@ -937,6 +937,44 @@ class CarriereLongue:
                 ))
         self._annees = sorted(self._table)
 
+    #: Premier mois du dernier trimestre civil : qui est né à compter de lui
+    #: doit un trimestre de moins à la condition d'entrée précoce.
+    MOIS_DERNIER_TRIMESTRE = 10
+
+    def _portes(self, annee_liquidation: int
+                ) -> list[tuple[int, int, float, int, Fiabilite]] | None:
+        """Les portes du dispositif en vigueur à l'année de liquidation."""
+        if not self._table or annee_liquidation < self._annees[0]:
+            return None
+        applicable = self._annees[0]
+        for candidate in self._annees:
+            if candidate > annee_liquidation:
+                break
+            applicable = candidate
+        return self._table[applicable]
+
+    def _entree_precoce(self, carriere: Carriere, annee_liquidation: int,
+                        age_max: int, trimestres_debut: int) -> bool:
+        """La condition d'entrée précoce est-elle remplie pour cette porte ?
+
+        Elle se lit sur les trimestres COTISÉS validés avant la fin de l'année
+        civile des seize, dix-huit, vingt ou vingt et un ans. L'article
+        D. 351-1-1 en demande cinq, **ou quatre à qui est né au cours du
+        dernier trimestre de l'année civile** : né en novembre, on n'a pu
+        travailler que deux mois de l'année de ses seize ans, et le texte en
+        tient compte. Le modèle retenait cinq pour tout le monde tant qu'il ne
+        connaissait que l'année de naissance ; il lit le mois depuis.
+        """
+        if carriere.mois_naissance >= self.MOIS_DERNIER_TRIMESTRE:
+            trimestres_debut -= 1
+        acquis = sum(
+            ligne.trimestres_valides for ligne in carriere.lignes
+            if ligne.cotise
+            and ligne.annee <= carriere.annee_naissance + age_max
+            and ligne.annee < annee_liquidation
+        )
+        return acquis >= trimestres_debut
+
     def age_de_depart(self, carriere: Carriere, annee_liquidation: int,
                       trimestres_cotises: int,
                       requis: int) -> tuple[float, Fiabilite] | None:
@@ -948,29 +986,46 @@ class CarriereLongue:
         cotisés — c'est ce qui distingue ce dispositif de la durée d'assurance
         qui commande la décote.
         """
-        if not self._table or annee_liquidation < self._annees[0]:
+        portes = self._portes(annee_liquidation)
+        if portes is None:
             return None
-        applicable = self._annees[0]
-        for candidate in self._annees:
-            if candidate > annee_liquidation:
-                break
-            applicable = candidate
-
         ouvertures = []
-        for age_max, trimestres_debut, age_depart, supplement, fiabilite in \
-                self._table[applicable]:
-            acquis = sum(
-                ligne.trimestres_valides for ligne in carriere.lignes
-                if ligne.cotise
-                and ligne.annee <= carriere.annee_naissance + age_max
-                and ligne.annee < annee_liquidation
-            )
-            if acquis < trimestres_debut:
+        for age_max, trimestres_debut, age_depart, supplement, fiabilite in portes:
+            if not self._entree_precoce(
+                    carriere, annee_liquidation, age_max, trimestres_debut):
                 continue
             if trimestres_cotises < requis + supplement:
                 continue
             ouvertures.append((age_depart, fiabilite))
         return min(ouvertures) if ouvertures else None
+
+    def age_propose(self, carriere: Carriere, annee_liquidation: int,
+                    trimestres_cotises: int, requis: int,
+                    age_liquidation: float) -> float | None:
+        """Âge le plus précoce que le dispositif ouvrirait à qui continue de
+        cotiser jusqu'à son départ, ou ``None``.
+
+        :meth:`age_de_depart` répond à une liquidation DATÉE : le droit
+        ouvre-t-il ce départ-là ? Ici la question est celle qui date un cas
+        type — à quel âge partir ? — et elle se pose avant que la carrière ne
+        soit arrêtée. La condition d'entrée précoce se lit telle quelle, elle
+        ne dépend que du début de la carrière. La condition de durée, elle, se
+        projette : il manque ``requis + supplément − cotisés`` trimestres, et
+        une année de cotisation en rend quatre, la soustraction étant signée.
+        Chaque porte ouvre donc au plus tardif de son âge et de l'âge où la
+        durée cotisée est réunie, et la plus précoce l'emporte.
+        """
+        portes = self._portes(annee_liquidation)
+        if portes is None:
+            return None
+        candidats = []
+        for age_max, trimestres_debut, age_depart, supplement, _ in portes:
+            if not self._entree_precoce(
+                    carriere, annee_liquidation, age_max, trimestres_debut):
+                continue
+            atteint = age_liquidation + (requis + supplement - trimestres_cotises) / 4.0
+            candidats.append(max(age_depart, atteint))
+        return min(candidats) if candidats else None
 
 
 class MinimumGaranti:
@@ -1953,14 +2008,17 @@ class ScenarioActuel:
         return periode.age_ouverture
 
     def _periodes_parcourues(
-            self, carriere: Carriere) -> tuple[list[PeriodeRegime], list[PeriodeRegime]]:
+            self, carriere: Carriere
+    ) -> tuple[list[tuple[str, PeriodeRegime]], list[tuple[str, PeriodeRegime]]]:
         """Les régimes que cette carrière traverse, séparés en deux paquets.
 
         Le premier est celui des régimes en ANNUITÉS, qui commandent le taux
         plein et l'ouverture du droit ; le second recueille les autres. C'est
         la même énumération que celle de :meth:`calculer`, mais tirée de la
         seule carrière : elle répond donc AVANT que la pension ne soit
-        calculée, ce qu'il faut pour dater un départ.
+        calculée, ce qu'il faut pour dater un départ. Chaque entrée porte le
+        code du régime avec sa période, parce que la majoration pour enfants
+        se demande à un régime nommé.
         """
         annee_liquidation = carriere.annee_liquidation
         codes: set[str] = set()
@@ -1973,8 +2031,8 @@ class ScenarioActuel:
                 revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                 plafond=self.macro.plafond_securite_sociale(ligne.annee),
             ))
-        annuites: list[PeriodeRegime] = []
-        autres: list[PeriodeRegime] = []
+        annuites: list[tuple[str, PeriodeRegime]] = []
+        autres: list[tuple[str, PeriodeRegime]] = []
         for code in sorted(codes):
             if code not in self.catalogue:
                 continue
@@ -1982,7 +2040,9 @@ class ScenarioActuel:
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
             if periode is None:
                 continue
-            (annuites if periode.type_calcul == "annuites" else autres).append(periode)
+            (annuites if periode.type_calcul == "annuites" else autres).append(
+                (code, periode)
+            )
         return annuites, autres
 
     def age_ouverture_droit(self, carriere: Carriere) -> float | None:
@@ -2010,7 +2070,41 @@ class ScenarioActuel:
         retenues = annuites or autres
         if not retenues:
             return None
-        return min(self._age_ouverture(periode, carriere) for periode in retenues)
+        ouverture = min(self._age_ouverture(periode, carriere)
+                        for _, periode in retenues)
+        anticipe = self._age_carriere_longue(carriere, annuites)
+        if anticipe is not None and anticipe < ouverture:
+            return anticipe
+        return ouverture
+
+    def _age_carriere_longue(self, carriere: Carriere,
+                             annuites: list[tuple[str, PeriodeRegime]]
+                             ) -> float | None:
+        """L'âge que le départ anticipé pour carrière longue proposerait à
+        cette carrière, ou ``None`` s'il ne lui ouvre rien.
+
+        C'est la seule porte avant l'âge légal qui se déduise de la carrière
+        elle-même, et :meth:`calculer` la connaissait déjà — mais comme une
+        dérogation qu'on lui demande à un âge donné, pas comme un âge qu'il
+        propose. Un salarié entré à dix-huit ans et né en 1965 partait donc, en
+        cas type, à soixante-trois ans et trois mois, quand le droit lui ouvre
+        soixante-deux ans au taux plein : la grille faisait attendre l'âge
+        légal à ceux-là mêmes que la loi en dispense. La durée requise et les
+        trimestres cotisés sont ceux que :meth:`calculer` oppose au même
+        départ.
+        """
+        if not annuites:
+            return None
+        requis = max(self._duree_requise(periode, carriere)[0]
+                     for _, periode in annuites) or 160
+        annee_liquidation = carriere.annee_liquidation
+        cotises = sum(
+            carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
+            if ligne.cotise and ligne.annee <= annee_liquidation
+        )
+        return self.carriere_longue.age_propose(
+            carriere, annee_liquidation, cotises, requis, carriere.age_liquidation
+        )
 
     def age_taux_plein_droit(self, carriere: Carriere) -> float | None:
         """L'âge auquel cette carrière obtient le TAUX PLEIN, et non seulement
@@ -2038,27 +2132,48 @@ class ScenarioActuel:
           condition de durée. C'est lui qui borne : au-delà, attendre ne
           rapporte plus de taux, et les cas types ne surcotent pas.
 
+        La durée acquise compte les trimestres que le droit accorde au titre
+        des enfants — majoration de durée d'assurance du régime général,
+        bonification de la fonction publique —, lus au régime qui les porte
+        comme :meth:`calculer` le fait. Sans eux, une mère de deux enfants
+        était datée trois ans après l'âge où sa pension est entière, et partait
+        en surcote quand le droit la servait déjà en entier.
+
+        Et le départ anticipé pour carrière longue passe avant les trois
+        termes : il n'ouvre qu'à qui a sa durée COTISÉE, donc au taux plein.
+
         ``None`` dans le même cas que :meth:`age_ouverture_droit`.
         """
         annuites, autres = self._periodes_parcourues(carriere)
         retenues = annuites or autres
         if not retenues:
             return None
-        ouverture = min(self._age_ouverture(periode, carriere) for periode in retenues)
+        ouverture = min(self._age_ouverture(periode, carriere)
+                        for _, periode in retenues)
         if not annuites:
             return ouverture
         annulation = min(self._age_taux_plein(periode, carriere)
-                         for periode in retenues)
+                         for _, periode in retenues)
         requis = max(self._duree_requise(periode, carriere)[0]
-                     for periode in annuites)
+                     for _, periode in annuites)
         if not requis:
             return ouverture
+        annee_liquidation = carriere.annee_liquidation
         acquis = sum(
             carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
-            if ligne.annee <= carriere.annee_liquidation
+            if ligne.annee <= annee_liquidation
         )
+        majoration = self._majoration_pour_enfants(
+            carriere, {code: acquis for code, _ in annuites}, annee_liquidation
+        )
+        if majoration is not None:
+            acquis += majoration.trimestres
         duree = carriere.age_liquidation + (requis - acquis) / 4.0
-        return min(annulation, max(ouverture, duree))
+        taux_plein = min(annulation, max(ouverture, duree))
+        anticipe = self._age_carriere_longue(carriere, annuites)
+        if anticipe is not None and anticipe < taux_plein:
+            return anticipe
+        return taux_plein
 
     def _age_taux_plein(self, periode: PeriodeRegime, carriere: Carriere) -> float:
         """Âge d'annulation de la décote opposable à cet assuré.

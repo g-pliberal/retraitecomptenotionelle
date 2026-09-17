@@ -727,10 +727,12 @@ liquident les cas types, qui bougent.
   la moitié de ce que le barème coûte sur la vraie distribution — mais il l'est
   d'un facteur deux au lieu de quarante, et deux tests qui figeaient l'ancien
   ordre de grandeur ont été réécrits plutôt que rebornés en silence.
-- *Ce qu'elle ne sait toujours pas faire.* Elle ne connaît pas la carrière
-  longue : le moteur sait la calculer, mais comme une dérogation qu'on demande,
-  non comme un âge qu'on propose. Et les âges d'ENTRÉE des cas types restent
-  ceux de la grille — vingt-quatre ans pour l'artisan, vingt-sept pour le
+- *Ce qu'elle ne savait pas faire, et qu'elle sait depuis le 17 septembre
+  2026.* Elle ne connaissait ni la carrière longue — le moteur savait la
+  calculer, mais comme une dérogation qu'on demande, non comme un âge qu'on
+  propose — ni les trimestres pour enfants, que `calculer` ajoute à la durée et
+  qu'elle ne comptait pas : voir le Journal à cette date. Les âges d'ENTRÉE des
+  cas types restent ceux de la grille — vingt-quatre ans pour l'artisan, vingt-sept pour le
   libéral —, ce qui suffit à les faire partir à soixante-sept ans une fois la
   durée requise opposée : la grille part donc un peu plus tard que la France
   réelle, et l'âge conjoncturel de départ de la DREES, que l'action citait comme
@@ -2158,6 +2160,92 @@ dans une passe sur le site.
 retiendrait, `limites.md` §3 et `methodologie.md` §5 disent ce que l'ancien
 défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouver.
 
+### 25. Le barème de la surcote de 2004 à 2008, trimestre par trimestre — `à faire`
+
+**Pourquoi.** Le scénario 1 sert la surcote au taux de la fiche en vigueur
+l'année de la liquidation, à tous les trimestres. Le droit la sert au taux en
+vigueur l'année où chaque trimestre a été ACCOMPLI : 0,75 % pour les trimestres
+de 2004 à 2006 ; à compter de 2007, 0,75 % pour les quatre premiers, 1 %
+au-delà, 1,25 % pour ceux accomplis après soixante-cinq ans (décret
+n° 2006-1611) ; 1,25 % pour tous ceux accomplis depuis le 1er janvier 2009
+(LFSS 2009), les trimestres antérieurs gardant leur taux. La fonction publique
+suit le même calendrier, avec son plafond de vingt trimestres jusqu'en 2008.
+`limites.md` le range parmi les écarts connus du scénario 1 depuis longtemps.
+Ce que ça touche : toute liquidation de 2004 à 2008, et toute liquidation
+postérieure dont des trimestres de surcote ont été accomplis avant 2009 — les
+générations 1944 à 1948. Aucun assuré qui simule aujourd'hui son départ n'est
+concerné ; les cas types des générations 1940 et 1950 le sont, donc la page
+Coût, et c'est le dernier écart daté que l'étalon garde sur le régime général.
+
+**Sources à lire.** Article D. 351-1-4 du code de la sécurité sociale dans ses
+versions successives — l'index LEGI les rend en une requête,
+`python scripts/fetch/dila_cherche.py legi 'surcote' --num D351-1-4` —, décret
+n° 2006-1611 du 19 décembre 2006, décret n° 2008-1509 du 30 décembre 2008,
+article L. 14 III du code des pensions civiles et militaires.
+
+**Fichiers.** `data/reference/regimes/base_prive.yaml` et
+`fonction_publique.yaml` (couper la période 2004-2008 en 2007 et porter les
+trois taux), `data/reference/regimes/pivots.yaml` et
+`legislation/reformes.yaml` (la coupure doit y être déclarée, un test l'exige),
+`src/retraite_notionnelle/scenarios/actuel.py` (`_trimestres_cotises_apres`
+rend un compte, il doit rendre des trimestres datés), `moteur/js/scenario-actuel.js`,
+les témoins.
+
+**Marche.** Dater les trimestres de surcote — ce sont les derniers accomplis,
+ceux qui suivent à la fois la durée requise et l'âge légal —, lire le taux de
+chacun à la fiche de SON année et non de l'année du départ, avec le rang cumulé
+depuis 2004 pour le palier de quatre. Puis confronter à l'oracle OpenFisca sur
+un profil né en 1945 parti à 63 ans, si son module suit ce barème ; sinon à un
+exemple de circulaire Cnav (action 26).
+
+**Fin.** La ligne « Barème de la surcote entre 2004 et 2008 » quitte la liste
+des écarts connus de `limites.md`, et le diff des témoins dit ce que valent les
+surcotes des générations 1940 et 1950.
+
+### 26. Confronter le scénario 1 aux exemples chiffrés officiels — `à faire`
+
+**Pourquoi.** L'étalon a une contre-expertise, OpenFisca-France-Pension
+(action 4), et c'est un autre modèle, pas une source. Aucun simulateur officiel
+n'est automatisable : « Mon estimation retraite » d'info-retraite.fr (M@rel),
+le simulateur de l'Assurance retraite, celui de l'Agirc-Arrco et l'ENSAP des
+fonctionnaires exigent FranceConnect et le relevé de carrière réel de la
+personne connectée, sans mode anonyme ni API ; les modèles des administrations
+— TRAJECTOiRE à la DREES, DESTINIE à l'INSEE, celui de la Cnav — ne sont pas
+publiés. Ce qui est officiel ET reproductible, ce sont les EXEMPLES CHIFFRÉS
+que les caisses et l'administration publient : les circulaires Cnav — décote,
+surcote, minimum contributif, majoration pour enfants, salaire annuel moyen,
+carrière longue, chacune avec un ou plusieurs cas résolus —, les fiches de
+service-public.fr, le guide de l'Agirc-Arrco, les fiches de calcul du Service
+des retraites de l'État, et les cas types du COR, dont chaque rapport annuel
+publie l'âge de départ et le taux de remplacement par génération. Chaque
+exemple est une carrière minuscule dont la réponse est écrite par la caisse qui
+applique la règle : c'est la seule confrontation qui ne soit ni une relecture
+ni un autre modèle.
+
+**Sources à lire.** La base documentaire de la Cnav (circulaires et lettres
+ministérielles, accessible sans compte) ; service-public.fr, fiches « Décote »,
+« Surcote », « Retraite anticipée pour carrière longue », « Minimum
+contributif » ; COR, rapport annuel, annexe des cas types ; Service des
+retraites de l'État, fiches de calcul de la pension civile.
+
+**Fichiers.** `tests/temoins/exemples_officiels.yaml` (nouveau : chaque exemple
+avec sa source datée, sa carrière, le résultat publié et la grandeur comparée),
+`tests/test_oracle.py` (une confrontation de plus, qui rejoue chaque exemple par
+`carriere_parcours` et compare la grandeur nommée), `docs/limites.md` §3 (ce
+que la confrontation a trouvé, de chaque côté).
+
+**Marche.** Commencer par les exemples qui ne demandent qu'une carrière simple
+et une seule règle — décote, surcote, carrière longue, majoration pour
+enfants —, transcrits tels que la source les écrit, sans convention de
+traduction qui deviendrait l'objet du test ; puis les cas types du COR, qui
+demandent une hypothèse de salaire. Chaque désaccord se tranche par le texte,
+jamais par l'exemple seul : une circulaire peut être antérieure à la règle
+qu'on applique.
+
+**Fin.** Trente exemples officiels au moins rejoués par un test, et
+`limites.md` §3 dit, pour chaque famille de règle du scénario 1, laquelle a été
+confrontée à un exemple publié par la caisse qui l'applique.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -2606,3 +2694,21 @@ défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouve
   **l'action qui décrit un défaut peut se tromper sur les fiches** : les
   complémentaires « sans durée requise » en portaient une, copiée de la base,
   qu'il a fallu retirer là où les statuts servent le taux plein à l'âge seul.
+- **17 septembre 2026, la datation des cas types.** Trois écarts au droit
+  refermés, deux dans la règle qui date le départ des cas types et un dans le
+  moteur : la carrière longue est PROPOSÉE et non plus seulement accordée, les
+  trimestres pour enfants entrent dans la durée qui date le taux plein, et la
+  condition d'entrée précoce demande quatre trimestres à qui est né au dernier
+  trimestre de l'année civile. Aucun témoin de simulation ne bouge ; les pages
+  Cas types et Coût bougent, et la trajectoire 2070 passe de 19,3 à 19,5 % du
+  PIB. Deux leçons. **Une règle qui appelle le moteur doit lui poser la même
+  question que lui** : `age_taux_plein_droit` recomptait la durée à sa façon,
+  sans la majoration que `calculer` ajoute trois cents lignes plus loin, et
+  rien ne les comparait — deux tests le font maintenant. Et **une approximation
+  notée dans le commentaire d'une table survit à la donnée qui la justifiait** :
+  la table de carrière longue disait « le modèle ne connaît que l'année de
+  naissance » alors que le mois y était entré depuis. Ouvre les actions 25 et
+  26 : le barème daté de la surcote de 2004 à 2008, dernier écart connu de
+  l'étalon sur le régime général, et la confrontation aux exemples chiffrés
+  que les caisses publient, seule contre-expertise officielle qui soit
+  reproductible.

@@ -765,7 +765,7 @@ export class ScenarioActuel {
       if (periode === null) {
         continue;
       }
-      (periode.type_calcul === "annuites" ? annuites : autres).push(periode);
+      (periode.type_calcul === "annuites" ? annuites : autres).push([code, periode]);
     }
     return { annuites, autres };
   }
@@ -790,7 +790,43 @@ export class ScenarioActuel {
     if (retenues.length === 0) {
       return null;
     }
-    return Math.min(...retenues.map((periode) => this.ageOuverture(periode, carriere)));
+    const ouverture = Math.min(
+      ...retenues.map(([, periode]) => this.ageOuverture(periode, carriere)),
+    );
+    const anticipe = this.ageCarriereLongue(carriere, annuites);
+    if (anticipe !== null && anticipe < ouverture) {
+      return anticipe;
+    }
+    return ouverture;
+  }
+
+  /**
+   * L'âge que le départ anticipé pour carrière longue proposerait à cette
+   * carrière, ou `null` s'il ne lui ouvre rien.
+   *
+   * `calculer` la connaissait déjà, mais comme une dérogation qu'on lui
+   * demande à un âge donné, pas comme un âge qu'il propose : un salarié entré à
+   * dix-huit ans et né en 1965 partait, en cas type, à l'âge légal quand le
+   * droit lui ouvre soixante-deux ans au taux plein. La durée requise et les
+   * trimestres cotisés sont ceux que `calculer` oppose au même départ.
+   */
+  ageCarriereLongue(carriere, annuites) {
+    if (annuites.length === 0) {
+      return null;
+    }
+    const requis = Math.max(
+      ...annuites.map(([, periode]) => this.dureeRequise(periode, carriere)[0]),
+    ) || 160;
+    const anneeLiquidation = carriere.anneeLiquidation;
+    let cotises = 0;
+    for (const ligne of carriere.lignes) {
+      if (ligne.cotise && ligne.annee <= anneeLiquidation) {
+        cotises += carriere.trimestresRetenus(ligne);
+      }
+    }
+    return this.carriereLongue.agePropose(
+      carriere, anneeLiquidation, cotises, requis, carriere.age_liquidation,
+    );
   }
 
   /**
@@ -809,7 +845,8 @@ export class ScenarioActuel {
    * est atteinte, déduit sans simuler — il manque `requis - acquis` trimestres,
    * et une année pleine en rend quatre, la soustraction étant signée ; l'âge
    * d'annulation de la décote, qui donne le taux plein sans condition de durée
-   * et au-delà duquel attendre ne rapporte plus de taux.
+   * et au-delà duquel attendre ne rapporte plus de taux. La durée acquise
+   * compte les trimestres pour enfants, et la carrière longue passe avant.
    */
   ageTauxPleinDroit(carriere) {
     const { annuites, autres } = this.periodesParcourues(carriere);
@@ -818,28 +855,46 @@ export class ScenarioActuel {
       return null;
     }
     const ouverture = Math.min(
-      ...retenues.map((periode) => this.ageOuverture(periode, carriere)),
+      ...retenues.map(([, periode]) => this.ageOuverture(periode, carriere)),
     );
     if (annuites.length === 0) {
       return ouverture;
     }
     const annulation = Math.min(
-      ...retenues.map((periode) => this.ageTauxPlein(periode, carriere)),
+      ...retenues.map(([, periode]) => this.ageTauxPlein(periode, carriere)),
     );
     const requis = Math.max(
-      ...annuites.map((periode) => this.dureeRequise(periode, carriere)[0]),
+      ...annuites.map(([, periode]) => this.dureeRequise(periode, carriere)[0]),
     );
     if (!requis) {
       return ouverture;
     }
+    const anneeLiquidation = carriere.anneeLiquidation;
     let acquis = 0;
     for (const ligne of carriere.lignes) {
-      if (ligne.annee <= carriere.anneeLiquidation) {
+      if (ligne.annee <= anneeLiquidation) {
         acquis += carriere.trimestresRetenus(ligne);
       }
     }
+    // Les trimestres accordés au titre des enfants comptent dans la durée,
+    // lus au régime qui les porte comme `calculer` le fait : sans eux, une
+    // mère de deux enfants était datée trois ans après l'âge où sa pension
+    // est entière.
+    const majoration = this.majorationPourEnfants(
+      carriere, new Map(annuites.map(([code]) => [code, acquis])), anneeLiquidation,
+    );
+    if (majoration !== null) {
+      acquis += majoration.trimestres;
+    }
     const duree = carriere.age_liquidation + (requis - acquis) / 4.0;
-    return Math.min(annulation, Math.max(ouverture, duree));
+    const tauxPlein = Math.min(annulation, Math.max(ouverture, duree));
+    // Le départ anticipé pour carrière longue passe avant les trois termes :
+    // il n'ouvre qu'à qui a sa durée COTISÉE, donc au taux plein.
+    const anticipe = this.ageCarriereLongue(carriere, annuites);
+    if (anticipe !== null && anticipe < tauxPlein) {
+      return anticipe;
+    }
+    return tauxPlein;
   }
 
   /**

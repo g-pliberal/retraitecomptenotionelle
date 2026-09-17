@@ -11,6 +11,7 @@ prospective ne déplace rien avant sa bascule.
 from __future__ import annotations
 
 import csv
+from dataclasses import replace
 
 import pytest
 
@@ -526,10 +527,55 @@ def test_un_regime_ferme_rend_ses_generations_au_droit_commun():
     sncf = next(cas for cas in CAS_TYPES if cas.code == "agent_sncf_conduite")
     moyen = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen")
     assert sncf.age_liquidation_pour(simulateur, 1960) < 55
+    # Même âge qu'un salarié du privé entré comme lui à vingt ans : c'est
+    # soixante-trois ans, par la porte des vingt et un ans de la carrière
+    # longue, et non les soixante-quatre du salarié entré à vingt et un.
+    entre_a_vingt = replace(moyen, age_debut=sncf.age_debut)
     assert (sncf.age_liquidation_pour(simulateur, 2000)
-            == moyen.age_liquidation_pour(simulateur, 2000))
+            == entre_a_vingt.age_liquidation_pour(simulateur, 2000)
+            == pytest.approx(63.0))
+    assert moyen.age_liquidation_pour(simulateur, 2000) == pytest.approx(64.0)
     # La variante garde l'ancien comportement intact : c'est à cela qu'elle sert.
     assert sncf.age_liquidation_pour(simulateur, 2000, "absolu") == 52
+
+
+def test_la_carriere_longue_date_le_depart_du_cas_type_qui_y_a_droit():
+    """Le salarié au SMIC entre à dix-huit ans : le droit lui ouvre un départ
+    anticipé AU TAUX PLEIN, à soixante ans sous le décret de 2012 et à
+    soixante-deux sous la loi de 2023. La règle le lui proposait à l'âge légal,
+    faisant attendre celui-là même que la loi en dispense ; elle propose
+    maintenant l'âge que `calculer` confirme, et sous le motif qui le dit."""
+    simulateur = Simulateur(Parametres())
+    actuel = simulateur.scenario_actuel
+    smic = next(cas for cas in CAS_TYPES if cas.code == "smic_carriere_complete")
+    for generation, attendu in ((1955, 60.0), (1960, 60.0), (1965, 62.0), (1975, 62.0)):
+        assert smic.age_liquidation_pour(simulateur, generation) == pytest.approx(attendu)
+        resultat = actuel.calculer(smic.construire(simulateur, generation))
+        assert resultat.liquidation_ouverte
+        assert resultat.motif_ouverture == "carriere_longue"
+        assert resultat.taux_liquidation == pytest.approx(0.5)
+
+
+def test_les_trimestres_pour_enfants_datent_le_taux_plein():
+    """La mère de deux enfants a sa durée dès l'âge légal grâce à la majoration
+    de durée d'assurance. La règle ne comptait que les trimestres des lignes de
+    carrière et la datait jusqu'à trois ans plus tard, en surcote : elle part
+    maintenant à l'âge d'ouverture, au taux plein exactement — ni décote, ni
+    surcote —, et un trimestre plus tôt le droit ne l'ouvrirait pas."""
+    simulateur = Simulateur(Parametres())
+    actuel = simulateur.scenario_actuel
+    cas = next(c for c in CAS_TYPES if c.code == "carriere_interrompue")
+    assert cas.nombre_enfants == 2
+    for generation in (1950, 1960, 1965, 1975):
+        age = cas.age_liquidation_pour(simulateur, generation)
+        carriere = cas.construire(simulateur, generation)
+        assert age == pytest.approx(actuel.age_ouverture_droit(carriere))
+        resultat = actuel.calculer(carriere)
+        assert resultat.liquidation_ouverte
+        assert resultat.taux_liquidation == pytest.approx(0.5)
+        assert resultat.trimestres_valides >= resultat.trimestres_requis
+        plus_tot = actuel.calculer(cas._carriere(simulateur, generation, age - 0.25))
+        assert not plus_tot.liquidation_ouverte
 
 
 def test_la_variante_absolue_reproduit_l_ancienne_grille(depenses, population):
