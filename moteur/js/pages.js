@@ -10,7 +10,7 @@ import {
   MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge, moisTravailles,
 } from "./calendrier.js";
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
-import { formaterBorne } from "./regimes.js";
+import { FAMILLES_STATUT, formaterBorne } from "./regimes.js";
 import {
   CAS_TYPES, GENERATIONS, ageLiquidationPour, calculerCasTypes,
 } from "./castypes.js";
@@ -1583,26 +1583,37 @@ function libelleDate(affiliations, code) {
  * aucune date ne les ferme : on peut être au chômage en 1950 comme en 2050.
  */
 function optionsStatuts(affiliations, entree, sansEmploi = false) {
-  const options = affiliations.codes
+  // Les statuts sont rendus PAR FAMILLE — un `<optgroup>` par valeur de
+  // FAMILLES_STATUT, dans l'ordre de cette table — : soixante-deux options à
+  // la file ne se parcourent pas. Les périodes sans emploi forment le
+  // dernier groupe.
+  const parFamille = Object.fromEntries(
+    Object.keys(FAMILLES_STATUT).map((famille) => [famille, []]),
+  );
+  for (const code of affiliations.codes) {
     // « Sans activité professionnelle » est une affiliation, mais c'est la même
     // chose que le motif du même nom : elle rejoint le groupe plutôt que d'y
     // figurer deux fois, sous deux libellés, pour le même résultat.
-    .filter((code) => !(sansEmploi && CODES_SANS_EMPLOI.has(code)))
-    .map((code) => {
-      const fermeture = affiliations.fermetureEntrants(code);
-      const disponible = entree === null || fermeture === null
-        || entree.rang < fermeture.rang;
-      const attributs = fermeture === null
-        ? {}
-        : { "data-fermeture": `${fermeture.annee}-${String(fermeture.mois).padStart(2, "0")}` };
-      return [code, libelleDate(affiliations, code), disponible, attributs];
-    });
-  if (!sansEmploi) {
-    return options;
+    if (sansEmploi && CODES_SANS_EMPLOI.has(code)) {
+      continue;
+    }
+    const fermeture = affiliations.fermetureEntrants(code);
+    const disponible = entree === null || fermeture === null
+      || entree.rang < fermeture.rang;
+    const attributs = fermeture === null
+      ? {}
+      : { "data-fermeture": `${fermeture.annee}-${String(fermeture.mois).padStart(2, "0")}` };
+    parFamille[affiliations.famille(code)].push(
+      [code, libelleDate(affiliations, code), disponible, attributs],
+    );
   }
-  return options.concat(
-    SANS_EMPLOI.map(([code, libelle]) => [code, `Sans emploi : ${libelle}`]),
-  );
+  const groupes = Object.entries(FAMILLES_STATUT)
+    .filter(([famille]) => parFamille[famille].length)
+    .map(([famille, libelle]) => [libelle, parFamille[famille]]);
+  if (sansEmploi) {
+    groupes.push(["Sans emploi", SANS_EMPLOI.map(([code, libelle]) => [code, libelle])]);
+  }
+  return groupes;
 }
 
 function borneTexte(date) {
@@ -1766,17 +1777,21 @@ function formulaire(saisie, contexte) {
     g.champ("interruptions", "Interruptions", saisie.interruptions,
       "« 1995:1999:education_enfant », séparées par des virgules"),
     g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
-      "revalorisation des comptes et des pensions"),
+      "revalorisation des comptes et des pensions", {},
+      g.GLOSSAIRE["indexation"]),
     g.champ("lissage", "Lissage de l'indexation", saisie.lissage,
       "en années : 1 = aucun",
       "number", { min: "1", max: String(LISSAGE_MAXIMUM), step: "1" },
       "Une moyenne glissante appliquée à la règle choisie, quelle qu'elle "
       + "soit : 5 ans, c'est la fenêtre italienne."),
-    g.liste("age_reference", "Âge de référence", AGES_REFERENCE, saisie.age_reference),
-    g.liste("table", "Table de conversion", TABLES, saisie.table),
+    g.liste("age_reference", "Âge de référence", AGES_REFERENCE, saisie.age_reference,
+      "", {}, g.GLOSSAIRE["âge de référence"]),
+    g.liste("table", "Table de conversion", TABLES, saisie.table,
+      "", {}, g.GLOSSAIRE["table de conversion"]),
     g.liste("part_cotisation", "Part de la cotisation portée au compte",
       PARTS_COTISATION, saisie.part_cotisation,
-      "salariale seule, ou salariale et patronale"),
+      "salariale seule, ou salariale et patronale", {},
+      g.GLOSSAIRE["part patronale"]),
     g.liste("conversion_acquis", "Conversion des droits acquis",
       CONVERSIONS_ACQUIS, saisie.conversion_acquis,
       "âge auquel les droits figés à la bascule sont convertis"),
@@ -1988,7 +2003,8 @@ function metiersFormulaire(saisie, affiliations, echelle) {
     + g.liste("statut", "Statut d'affiliation",
       optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
       saisie.statut,
-      "proposé aux seules dates où son régime recrutait")
+      "proposé aux seules dates où son régime recrutait", {},
+      g.GLOSSAIRE["statut d'affiliation"])
     + champRevenu("salaire", saisie, echelle, nombreBrut(saisie.salaire)),
   )];
 
@@ -2432,20 +2448,48 @@ function ficheAgeReference(comparaison, saisie) {
       || saisie.conversion_acquis !== "reference") {
     return "";
   }
+  // L'étiquette est un mot du glossaire ; ce que l'âge COÛTE sur cette
+  // carrière-ci est dit sous les fiches, par `noteAgeReference`.
   return g.fiche(
-    "âge de référence — scénarios 3 et 5 seulement",
-    `${age(acquis.age_conversion)}`
-    + g.bulle(
-      "D'où vient l'âge de référence et ce qu'il fait",
-      `<strong>${age(acquis.age_conversion)}</strong> est l'âge du `
-      + "<strong>taux plein</strong> du régime général : celui où la décote "
-      + "s'annule, quelle que soit la durée cotisée. La loi du 9 novembre "
-      + "2010 l'a porté de 65 à 67 ans, cible atteinte en 2017 : c'est "
-      + "l'âge en vigueur pour les dernières générations. Il ne sert ici "
-      + "qu'à convertir les droits acquis avant la bascule ; les scénarios "
-      + "1, 2, 4 et 6 n'en dépendent pas. Détail ligne à ligne plus bas.",
-    ),
+    "âge de référence", age(acquis.age_conversion),
+    "scénarios 3 et 5 seulement",
+    g.GLOSSAIRE["âge de référence"],
   );
+}
+
+/**
+ * Ce que l'âge de référence coûte, dit en clair dès qu'il coûte — la pénalité
+ * nommée, et le réglage qui la retire. Voir `_note_age_reference` dans
+ * `web/pages.py`.
+ */
+function noteAgeReference(comparaison, saisie) {
+  const acquis = comparaison.notionnel_prospectif.droits_acquis;
+  if (acquis === null || acquis === undefined
+      || saisie.conversion_acquis !== "reference") {
+    return "";
+  }
+  const depart = comparaison.carriere.age_liquidation || 0.0;
+  const reference = acquis.age_conversion;
+  if (reference === depart) {
+    return "";
+  }
+  let quand;
+  let effet;
+  if (reference > depart) {
+    quand = `${age(reference - depart)} avant`;
+    effet = "l'anticipation est payée une seconde fois, sur le passé";
+  } else {
+    quand = `${age(depart - reference)} après`;
+    effet = "le report est récompensé une seconde fois, sur le passé";
+  }
+  return `<p class="note"><strong>Vous partez ${quand} l'âge de référence.`
+    + "</strong> Dans les scénarios 3 et 5, les droits acquis avant "
+    + `${saisie.bascule} sont convertis en capital comme si vous partiez à `
+    + `${age(reference)}, puis servis à partir de ${age(depart)} : ${effet}. `
+    + "Le réglage « Conversion des droits acquis : à l'âge de départ "
+    + "effectif », dans les options de modélisation du formulaire, retire "
+    + "cet écart — c'est la convention qu'une réforme réelle retiendrait. "
+    + "Les scénarios 1, 2, 4 et 6 n'en dépendent pas.</p>";
 }
 
 function resultats(contexte, saisie) {
@@ -2508,7 +2552,7 @@ function resultats(contexte, saisie) {
     </span>
   </div>
   <div class="barre ${cle}"><span style="width:${formatFixe(montant / reference * 100, 1)}%"></span></div>
-  <div class="glose">${glose} · taux de remplacement
+  <div class="glose">${glose} · ${g.terme("taux de remplacement")}
     ${g.pourcentage(tauxRemplacement)} · écart au système actuel : ${variationHtml}</div>
 </div>`;
   };
@@ -2553,13 +2597,15 @@ function resultats(contexte, saisie) {
     // « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7 au
     // lieu de 25,67 il tombait un euro à côté, et doutait du reste.
     g.fiche("coefficient de conversion",
-      g.nombre(conversion.diviseur, DECIMALES_DIVISEUR)),
+      g.nombre(conversion.diviseur, DECIMALES_DIVISEUR), "",
+      g.GLOSSAIRE["coefficient de conversion"]),
     // Le capital est un montant de l'année de liquidation, quand les six
     // pensions ci-dessous sont mises en avant en euros de l'année de
     // référence : sans l'unité, deux grandeurs de nature différente se
     // touchaient sans que rien ne les distingue.
     g.fiche(`capital notionnel rétroactif, en euros de ${anneeDepart}`,
-      g.euros(retro.capital_notionnel)),
+      g.euros(retro.capital_notionnel), "",
+      g.GLOSSAIRE["capital notionnel"]),
   ].join("");
 
   let capitalisation = "";
@@ -2611,6 +2657,7 @@ function resultats(contexte, saisie) {
 ${lectureDesMontants(comparaison, saisie)}</h2>
 <div class="carte">
   <div class="fiches">${fiches}</div>
+  ${noteAgeReference(comparaison, saisie)}
   ${resumeParcours(contexte, saisie)}
 </div>
 <div class="carte">
@@ -3343,46 +3390,16 @@ elle peut être citée ou partagée telle quelle.</p>
  * réforme applicable qui crédite ce qui est réellement prélevé —, les cinq
  * autres sont repliés ensemble.
  */
+/**
+ * Les cinq grilles de la page Cas types, dans l'ordre des onglets : le code du
+ * scénario, le libellé de son onglet, le titre de sa section, le titre
+ * accessible de sa grille, et la phrase qui dit ce qu'on y voit. Le premier
+ * est celui qui s'affiche à l'ouverture — le scénario 6, la proposition.
+ */
 const GRILLES_CAS_TYPES = [
   [
-    "notionnel_prospectif_employeur",
-    "Scénario 5 — comptes notionnels dès la bascule, employeur compris",
-    "Scénario 5, scénario 3 part patronale comprise",
-    "Les droits acquis avant la bascule sont conservés : les générations "
-    + "déjà retraitées ne bougent pas, et plus une carrière est récente, plus "
-    + "elle est calculée sous la règle nouvelle. À compter de la bascule il "
-    + "n'y a plus qu'un régime, et les écarts entre statuts s'y referment.",
-  ],
-  [
-    "notionnel_retroactif",
-    "Scénario 2 — comptes notionnels rétroactifs depuis 1941",
-    "Scénario 2, comptes notionnels rétroactifs",
-    "Les générations anciennes sont les plus touchées : leurs cotisations, "
-    + "versées quand l'inflation dépassait la productivité, ont été "
-    + "revalorisées à un taux très inférieur à la hausse des prix.",
-  ],
-  [
-    "notionnel_prospectif",
-    "Scénario 3 — comptes notionnels dès la bascule, part salariale seule",
-    "Scénario 3, comptes notionnels à compter de la bascule",
-    "Les générations déjà retraitées sont inchangées : leurs droits sont "
-    + "intégralement acquis avant la bascule. Les indépendants et professions "
-    + "libérales progressent parce que le régime unique relève leur taux de "
-    + "cotisation et déplafonne leur assiette — un effort contributif accru, "
-    + "pas un avantage accordé.",
-  ],
-  [
-    "notionnel_retroactif_employeur",
-    "Scénario 4 — le scénario 2, part patronale comprise",
-    "Scénario 4, scénario 2 part patronale comprise",
-    "Toutes les lignes bougent, sauf celles des non-salariés — artisan, "
-    + "exploitant agricole, profession libérale — qui n'ont pas d'employeur "
-    + "et pour qui ce scénario est le scénario 2. Les lignes publiques "
-    + "bougent le plus : la contribution de leur employeur est un taux "
-    + "d'équilibre, sans commune mesure avec la part patronale d'un salarié.",
-  ],
-  [
     "notionnel_liberal",
+    "Scénario 6, la proposition",
     "Scénario 6 — le scénario 4, puis 18 % pour tous et une garantie",
     "Scénario 6, scénario 4 à taux unique dès la bascule et garantie vieillesse",
     "Le même compte rétroactif que le scénario 4 jusqu'à la bascule, puis "
@@ -3393,15 +3410,56 @@ const GRILLES_CAS_TYPES = [
     + "voit que sur les cas dont la pension reste sous le plancher, à partir "
     + "de 65 ans.",
   ],
+  [
+    "notionnel_retroactif",
+    "Scénario 2",
+    "Scénario 2 — comptes notionnels rétroactifs depuis 1941",
+    "Scénario 2, comptes notionnels rétroactifs",
+    "Les générations anciennes sont les plus touchées : leurs cotisations, "
+    + "versées quand l'inflation dépassait la productivité, ont été "
+    + "revalorisées à un taux très inférieur à la hausse des prix.",
+  ],
+  [
+    "notionnel_prospectif",
+    "Scénario 3",
+    "Scénario 3 — comptes notionnels dès la bascule, part salariale seule",
+    "Scénario 3, comptes notionnels à compter de la bascule",
+    "Les générations déjà retraitées sont inchangées : leurs droits sont "
+    + "intégralement acquis avant la bascule. Les indépendants et professions "
+    + "libérales progressent parce que le régime unique relève leur taux de "
+    + "cotisation et déplafonne leur assiette — un effort contributif accru, "
+    + "pas un avantage accordé.",
+  ],
+  [
+    "notionnel_retroactif_employeur",
+    "Scénario 4",
+    "Scénario 4 — le scénario 2, part patronale comprise",
+    "Scénario 4, scénario 2 part patronale comprise",
+    "Toutes les lignes bougent, sauf celles des non-salariés — artisan, "
+    + "exploitant agricole, profession libérale — qui n'ont pas d'employeur "
+    + "et pour qui ce scénario est le scénario 2. Les lignes publiques "
+    + "bougent le plus : la contribution de leur employeur est un taux "
+    + "d'équilibre, sans commune mesure avec la part patronale d'un salarié.",
+  ],
+  [
+    "notionnel_prospectif_employeur",
+    "Scénario 5",
+    "Scénario 5 — comptes notionnels dès la bascule, employeur compris",
+    "Scénario 5, scénario 3 part patronale comprise",
+    "Les droits acquis avant la bascule sont conservés : les générations "
+    + "déjà retraitées ne bougent pas, et plus une carrière est récente, plus "
+    + "elle est calculée sous la règle nouvelle. À compter de la bascule il "
+    + "n'y a plus qu'un régime, et les écarts entre statuts s'y referment.",
+  ],
 ];
 
 /**
  * Treize carrières types croisées avec sept générations.
  *
- * LA PAGE NE MONTRE QU'UNE GRILLE. Elle en montrait cinq, soit quatre cent
- * cinquante-cinq cellules à la file. Celle qui reste est le scénario 5 — la
- * seule réforme applicable qui crédite au compte ce qui est réellement prélevé
- * aujourd'hui ; les quatre autres sont dans un dépliant, avec leur lecture.
+ * LA PAGE NE MONTRE QU'UNE GRILLE À LA FOIS, ET C'EST LA PROPOSITION : les
+ * cinq grilles sont derrière des onglets — des boutons radio, dont le panneau
+ * suit en CSS —, et l'onglet ouvert est le scénario 6. Voir `_cas_types` dans
+ * `web/pages.py`.
  *
  * CE QU'ELLE DIT EST UN ÉCART ENTRE LIGNES, JAMAIS UN NIVEAU. Le modèle calcule
  * ce que chaque carrière acquiert ; il n'applique pas le coefficient
@@ -3411,7 +3469,7 @@ const GRILLES_CAS_TYPES = [
 function casTypes(contexte) {
   const simulateur = contexte.simulateur();
   const resultat = calculerCasTypes(simulateur);
-  const [montre, titreMontre, altMontre, lectureMontre] = GRILLES_CAS_TYPES[0];
+  const montre = GRILLES_CAS_TYPES[0][0];
 
   const grille = (scenario, intitule) => {
     const lignes = CAS_TYPES.map((cas) => {
@@ -3443,8 +3501,8 @@ function casTypes(contexte) {
 
   // Les trois chiffres d'ouverture : l'ÉCART entre les carrières, qui est ce
   // que la grille mesure, et non son niveau, qu'elle ne mesure pas. Ils sont
-  // lus sur la dernière génération, la seule dont la carrière entière tombe
-  // sous la règle nouvelle.
+  // lus sur la dernière génération, et sur la grille qui s'affiche à
+  // l'ouverture.
   const derniere = GENERATIONS[GENERATIONS.length - 1];
   const ecarts = [];
   for (const cas of CAS_TYPES) {
@@ -3461,22 +3519,31 @@ function casTypes(contexte) {
     reperes = g.fiche(
       "La carrière la mieux traitée", echapper(haut[1].split(" (")[0]),
       `${g.pourcentage(haut[0], true, 0)} par rapport à aujourd'hui, `
-      + `génération ${derniere}`,
+      + `génération ${derniere}, scénario 6`,
     ) + g.fiche(
       "La moins bien traitée", echapper(bas[1].split(" (")[0]),
       `${g.pourcentage(bas[0], true, 0)} par rapport à aujourd'hui, `
-      + `génération ${derniere}`,
+      + `génération ${derniere}, scénario 6`,
     ) + g.fiche(
       "Ce qui les sépare",
-      `${g.nombre((haut[0] - bas[0]) * 100, 0)} points`,
+      `${g.nombre((haut[0] - bas[0]) * 100, 0)} points`,
       "à carrière et à durée identiques",
     );
   }
 
-  const autres = GRILLES_CAS_TYPES.slice(1)
-    .map(([scenario, titre, alt, lecture]) => `<h4>${echapper(titre)}</h4>`
-      + `${grille(scenario, alt)}<p class="discret">${echapper(lecture)}</p>`)
-    .join("");
+  // Les onglets, puis les panneaux : deux frères, pour que la feuille de
+  // style lise l'onglet coché et montre le panneau qui lui répond.
+  const onglets = GRILLES_CAS_TYPES.map(([scenario, onglet], rang) => (
+    `<input type="radio" name="grille" id="grille-${scenario}"`
+    + (rang === 0 ? " checked" : "")
+    + `><label for="grille-${scenario}">${echapper(onglet)}</label>`
+  )).join("");
+  const panneaux = GRILLES_CAS_TYPES.map(([scenario, , titre, alt, lecture], rang) => (
+    `<div class="panneau" data-onglet="${scenario}"`
+    + (rang === 0 ? "" : " hidden") + ">"
+    + `<h3>${echapper(titre)}</h3>${grille(scenario, alt)}`
+    + `<p class="discret">${echapper(lecture)}</p></div>`
+  )).join("");
 
   const ages = g.tableau(
     ["Cas type"].concat(GENERATIONS.map(String)),
@@ -3504,14 +3571,6 @@ function casTypes(contexte) {
     );
   }
 
-  const depliantAutres = g.depliant(
-    "Les quatre autres scénarios",
-    "<p>Le modèle en calcule six. Celui du haut est le seul qui décrive une "
-    + "réforme applicable en créditant ce qui est réellement prélevé "
-    + "aujourd'hui ; les autres servent à mesurer ce que chaque ingrédient "
-    + "déplace — la rétroactivité, la part patronale, le taux unique.</p>"
-    + autres,
-  );
   const depliantCas = g.depliant(
     "Qui sont ces treize carrières",
     g.gloses(CAS_TYPES.map((cas) => [cas.libelle, cas.commentaire])),
@@ -3539,13 +3598,17 @@ que la pension deviendrait, par rapport à aujourd'hui, pour la même carrière.
 <div class="note"><strong>Comparez les lignes entre elles, pas leur
 niveau.</strong> Ce que la grille mesure, c'est l'écart entre deux carrières —
 ce qu'un militaire touche de plus ou de moins qu'un artisan, à cotisation
-égale. Le niveau général, lui, dépend d'un réglage annuel que le modèle calcule
+égale. Le niveau général, lui, dépend d'un
+${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
 mais n'applique jamais : il déplacerait toutes les cases du même facteur.
 <a href="${g.lien("/cout")}">Ce réglage est sur la page Coût</a>.</div>
 
-<h3>${echapper(titreMontre)}</h3>
-${grille(montre, altMontre)}
-<p class="discret">${echapper(lectureMontre)}</p>
+<p class="discret">Le modèle calcule six scénarios. Le <strong>scénario 6</strong>
+est la proposition ; les scénarios 2 à 5 sont des contrefactuels, qui mesurent
+ce que chaque ingrédient déplace — la rétroactivité, la part patronale, le taux
+unique.</p>
+<fieldset class="onglets"><legend>Scénario affiché</legend>${onglets}</fieldset>
+<div class="panneaux">${panneaux}</div>
 
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer sur ma
 carrière</a><a href="${g.lien("/methode")}">Comment c'est calculé</a></p>
@@ -3554,7 +3617,6 @@ carrière</a><a href="${g.lien("/methode")}">Comment c'est calculé</a></p>
 
 ${depliantCas}
 ${depliantAges}
-${depliantAutres}
 ${echecs}
 `;
 }
@@ -3741,12 +3803,9 @@ rééquilibrent en ${equilibre || "jamais"}.`,
     bilan,
     `Sources : DREES jusqu'en ${solde.premiereAnnee - 1}, Conseil
 d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
-${g.mot("part du PIB",
-      "Le PIB, c'est tout ce que la France produit en un an. En « part du "
-      + "PIB », on demande : sur 100 € produits, combien vont aux retraites ? "
-      + "C'est la seule façon de comparer 1959 et 2070, l'euro n'ayant pas la "
-      + "même valeur.")} : sur 100 € produits en France, combien vont aux
+${g.terme("part du PIB")} : sur 100 € produits en France, combien vont aux
 retraites.`,
+    "cout-bilan",
   );
 
   const carteProvenance = g.cle(
@@ -3762,30 +3821,41 @@ ${g.pourcentage(partImpotsFin, false, 0)} en ${derniereVentilee}.`,
     ),
     `Source : Conseil d'orientation des retraites. Ce détail n'est publié
 que de ${premiereVentilee} à ${derniereVentilee}.`,
+    "cout-provenance",
   );
+
+  // Le détail est rendu AVANT le gabarit final : c'est de lui, et des deux
+  // cartes, que le plan de la page se déduit.
+  const detail = [
+    coutDetailDepense(contexte),
+    coutDetailRessources(contexte),
+    coutDetailTransferts(contexte),
+    coutDetailScenarios(contexte),
+    coutDetailEquilibre(contexte),
+    coutDetailGarantie(contexte),
+    coutDetailPoids(contexte),
+    coutDetailSources(contexte),
+    coutDetailLimites(contexte),
+  ].join("");
+  const plan = g.plan(carteBilan + carteProvenance + detail, "/cout");
 
   return `
 <h2 style="margin-top:0">L'argent de la retraite</h2>
 <p class="chapeau">Vos cotisations ne sont pas mises de côté. Elles paient
 aussitôt les pensions de ceux qui sont déjà retraités : c'est la
-${g.mot("répartition",
-    "Les cotisations d'aujourd'hui paient les pensions d'aujourd'hui. Rien n'est "
-    + "placé, rien n'est épargné : chaque euro prélevé sur une fiche de paie est "
-    + "reversé aussitôt à un retraité.")}. Voici ce qui rentre, ce qui sort, et ce
+${g.terme("répartition")}. Voici ce qui rentre, ce qui sort, et ce
 qui manque.</p>
 
 <div class="fiches reperes">${reperes}</div>
+
+${plan}
 
 ${carteBilan}
 
 ${carteProvenance}
 
 <div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
-système en ${g.mot("comptes notionnels",
-    "Un compte virtuel par personne, où chaque cotisation versée est inscrite. Au "
-    + "départ en retraite, le total est divisé par le nombre d'années qu'il reste à "
-    + "vivre en moyenne : cela donne la pension. Rien n'est placé — c'est toujours "
-    + "la répartition, mais la règle de calcul change.")} ne laisse pas d'argent
+système en ${g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
 dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
 ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
 on servirait autant, mais réparti autrement entre les carrières</em>.</div>
@@ -3799,15 +3869,7 @@ retraite</a><a href="${g.lien("/cas-types")}">Voir treize carrières types</a></
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici.</p>
 
-${coutDetailDepense(contexte)}
-${coutDetailRessources(contexte)}
-${coutDetailTransferts(contexte)}
-${coutDetailScenarios(contexte)}
-${coutDetailEquilibre(contexte)}
-${coutDetailGarantie(contexte)}
-${coutDetailPoids(contexte)}
-${coutDetailSources(contexte)}
-${coutDetailLimites(contexte)}
+${detail}
 `;
 }
 
@@ -3934,7 +3996,7 @@ Deux chiffres se lisent en connaissant le découpage : le régime général abso
 en 2020 les artisans et les commerçants, dont le régime a été adossé à la Cnav,
 et les « régimes spéciaux » de la comptabilité nationale contiennent la CNRACL,
 c'est-à-dire la fonction publique territoriale et hospitalière.</p>
-`);
+`, "cout-depenses");
 }
 
 /** La ventilation des ressources au découpage du COR, poste par poste. */
@@ -3971,7 +4033,7 @@ déjà au compte des scénarios 4 et 5, et c'est à ce titre qu'elle est compté
 ici, malgré un taux fixé pour équilibrer plutôt que pour acquérir. La part
 cotisée <em>recule</em> : elle était de
 ${g.pourcentage(comptes.partContributive(premiere), false, 0)} en ${premiere}.</p>
-`);
+`, "cout-ressources");
 }
 
 /**
@@ -4071,7 +4133,7 @@ ${g.nombre(ligneSolde.coefficient("notionnel_prospectif"), 2)}. Ce que la
 branche famille cesserait de verser à la retraite ne disparaît pas : il lui
 reste, et ce qu'elle en fait est une décision de programme, pas un résultat de
 ce modèle.</div>
-`);
+`, "cout-transferts");
 }
 
 /** Les six systèmes : ce qu'ils auraient coûté, ce qu'ils coûteraient. */
@@ -4217,8 +4279,9 @@ il donne ${g.pourcentage(horizon.partPib("actuel"), false, 1)} du PIB pour le
 système actuel en ${avenir.derniereAnnee}, quand le COR en projette
 ${g.pourcentage(COR_2070, false, 1)}. L'écart est de
 ${g.nombre((horizon.partPib("actuel") - COR_2070) * 100, 1)} points, et il n'est
-pas flatteur : notre taux de remplacement ne recule pas, celui du COR recule.
-<code>docs/limites.md</code> § 5 ter porte la mesure. C'est pourquoi les cartes
+pas flatteur : notre ${g.terme("taux de remplacement")} ne recule pas, celui du
+COR recule. <a href="${g.DEPOT}/blob/main/docs/limites.md">Le § 5 ter des
+limites</a> porte la mesure. C'est pourquoi les cartes
 du haut n'utilisent du modèle que son <strong>rapport</strong> entre systèmes,
 sans dimension, appliqué aux dépenses du COR.</div>
 
@@ -4257,7 +4320,7 @@ système actuel, est l'indexation sur les prix : elle fait décrocher les pensio
 des salaires, génération après génération. Les comptes notionnels font la même
 chose autrement — par le diviseur d'espérance de vie —, mais ils le font
 <em>explicitement</em>, et à l'acquisition plutôt qu'au versement.</p>
-`);
+`, "cout-scenarios");
 }
 
 /** Le coefficient d'équilibre : de combien il faudrait rogner, ou pouvoir servir. */
@@ -4323,7 +4386,7 @@ contresens : à prélèvement inchangé, ce système-là servirait autant que le
 nôtre, mais autrement réparti entre les carrières. Le modèle calcule ce
 facteur ; il ne l'applique jamais, et toutes les courbes de coût de cette page
 sont celles d'un système qui ne se pilote pas.</div>
-`);
+`, "cout-equilibre");
 }
 
 /** Ce que la garantie vieillesse coûterait, lue sur la vraie distribution. */
@@ -4425,7 +4488,7 @@ ${g.nombre(garantieBasse.beneficiaires / 1e6, 1)} millions de retraités aux
 pensions d'aujourd'hui, et à
 ${g.nombre(garantieScenario.beneficiaires / 1e6, 1)} millions à celles du
 scénario 6.</div>
-`);
+`, "cout-garantie");
 }
 
 /** Ce que chaque carrière type pèse dans les agrégats de la page. */
@@ -4460,7 +4523,7 @@ ${g.tableau(
 source ne dit combien de ses retraités ont été cadres. Hors de la fenêtre que la
 DREES publie — 2004 à 2024 —, la répartition du bord est reconduite : la France
 de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent.</p>
-`);
+`, "cout-poids");
 }
 
 /** Trois séries, trois périmètres, et pourquoi ils ne se confondent pas. */
@@ -4529,7 +4592,7 @@ tout ce qui passe par un rapport de masses est <strong>estimé</strong>, sans
 pouvoir être autre chose — aucune institution ne publie ce qu'aurait coûté un
 système qui n'a pas existé. Tout est détaillé sur la page
 <a href="${g.lien("/donnees")}">Données</a>.</p>
-`);
+`, "cout-sources");
 }
 
 /** Tout ce que cette page ne dit pas, en une seule liste. */
@@ -4594,9 +4657,9 @@ function coutDetailLimites(contexte) {
   de plus.</li>
 </ul>
 <p class="discret">Les limites du modèle dans son ensemble sont dans
-<code>docs/limites.md</code>, et la méthode sur la page
-<a href="${g.lien("/methode")}">Méthode</a>.</p>
-`);
+<a href="${g.DEPOT}/blob/main/docs/limites.md">docs/limites.md</a>, et la
+méthode sur la page <a href="${g.lien("/methode")}">Méthode</a>.</p>
+`, "cout-limites");
 }
 
 /**
@@ -4791,7 +4854,7 @@ si sévère.</p>
 <p><strong>« Revalorisation réellement pratiquée » est la seule ligne qui ne soit
 pas une hypothèse</strong> : c'est le coefficient que les arrêtés annuels ont
 appliqué aux salaires portés au compte, celui dont le scénario 1 se sert pour
-calculer le salaire de référence. Il vaut
+calculer le ${g.terme("salaire de référence")}. Il vaut
 <strong>×${g.nombre(revalPratiquee, 0)}</strong> sur la période, près de cinq
 fois les prix, parce que le régime général a revalorisé sur les SALAIRES
 jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, et non
@@ -4847,9 +4910,10 @@ réelle <em>chaque</em> année. Les deux sont dans les options.</p>`);
 /** Ce que l'étalon reproduit du droit en vigueur. */
 function methodeDroitPositif() {
   return g.depliant("Ce que le scénario 1 applique du droit en vigueur", `
-<p>L'étalon ne vaut que par ce qu'il reproduit. Il applique la décote et la
-surcote, la proratisation par la durée, le salaire de référence de chaque
-régime — sur ses seules années, jamais sur toute la carrière —, et cinq
+<p>L'étalon ne vaut que par ce qu'il reproduit. Il applique la
+${g.terme("décote")} et la ${g.terme("surcote")}, la proratisation par la
+${g.terme("durée", "durée d'assurance")}, le ${g.terme("salaire de référence")}
+de chaque régime — sur ses seules années, jamais sur toute la carrière —, et cinq
 paramètres lus à la GÉNÉRATION et non à l'année de liquidation : durée requise,
 âge légal, âge d'annulation de la décote, coefficient de minoration, nombre
 d'années retenues au salaire de référence.</p>
@@ -5001,16 +5065,16 @@ const FAMILLES_INVENTAIRE = {
 };
 
 /**
- * Les cinq couvertures, dans l'ordre d'affichage : le titre du tableau, le
- * nom au pluriel pour la phrase de compte, et l'intitulé de la dernière
- * colonne — vide pour les régimes modélisés, qui n'ont rien à expliquer.
+ * Les cinq couvertures, dans l'ordre du menu de filtre : la clé de
+ * l'inventaire, ce qu'on lit dans la cellule, et le pluriel de la phrase de
+ * compte. Une couverture qu'aucune ligne ne porte ne s'affiche nulle part.
  */
 const COUVERTURES_INVENTAIRE = [
-  ["modelise", "Régimes modélisés", "modélisés", ""],
-  ["partiel", "Régimes calculés, mais incomplets", "partiels", "Ce qui manque"],
-  ["a_modeliser", "Régimes à modéliser", "à modéliser", "Ce qui bloque"],
-  ["routage", "Affiliations portées par un statut", "portés par un statut", "Ce qui reste"],
-  ["hors_champ", "Régimes hors champ", "hors champ", "Pourquoi"],
+  ["modelise", "modélisé", "modélisés"],
+  ["partiel", "partiel", "partiels"],
+  ["a_modeliser", "à modéliser", "à modéliser"],
+  ["routage", "porté par un statut", "portés par un statut"],
+  ["hors_champ", "hors champ", "hors champ"],
 ];
 
 function periodeInventaire(creation, fermeture, extinction) {
@@ -5025,44 +5089,74 @@ function periodeInventaire(creation, fermeture, extinction) {
   }
   return `depuis ${creation}`;
 }
+
 /**
  * Tous les régimes, calculés ou non — la liste qui manquait au dépôt.
  *
- * Cinq tableaux, quatre-vingt-neuf lignes : c'est une annexe, et elle se replie
- * comme telle. Elle reste entière — c'est elle qui rend vérifiable la phrase
- * « le dépôt les recense tous » —, mais elle ne s'impose plus à qui vient
- * seulement savoir ce que valent les chiffres.
+ * UNE SEULE TABLE, et non cinq, qui se filtre et se trie sur place : le
+ * comportement est dans `index.html`, en écoute déléguée ; sans lui, la table
+ * se lit entière, dans l'ordre du fichier. Voir `_inventaire_section` dans
+ * `web/pages.py`. `catalogue` donne la fiabilité des fiches calculées.
  */
-function inventaireSection(lignes) {
+function inventaireSection(lignes, catalogue) {
+  const fiabilites = new Map();
+  for (const regime of catalogue) {
+    fiabilites.set(regime.code, nomFiabilite(regime.fiabilite));
+  }
   const comptes = {};
   for (const [cle] of COUVERTURES_INVENTAIRE) {
     comptes[cle] = lignes.filter((l) => l.couverture === cle).length;
   }
   const phrase = COUVERTURES_INVENTAIRE
+    .filter(([cle]) => comptes[cle])
     .map(([cle, , pluriel]) => `${comptes[cle]} ${pluriel}`).join(", ");
-  const tableaux = COUVERTURES_INVENTAIRE.map(([cle, titre, , derniere]) => {
-    const entetes = ["Régime", "Famille", "Période", "Statuts"];
-    const classes = ["", "texte", "texte", "texte"];
-    if (derniere) {
-      entetes.push(derniere);
-      classes.push("texte");
-    }
-    const corps = lignes.filter((ligne) => ligne.couverture === cle).map((ligne) => {
-      const rang = [
-        echapper(ligne.nom),
-        echapper(FAMILLES_INVENTAIRE[ligne.famille]),
-        echapper(periodeInventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
-        ligne.statuts && ligne.statuts.length ? echapper(ligne.statuts.join(", ")) : "—",
-      ];
-      if (derniere) {
-        rang.push(echapper(cle === "hors_champ" ? ligne.raison_hors_champ : ligne.manque));
-      }
-      return rang;
-    });
-    return `<h4>${echapper(titre)} (${comptes[cle]})</h4>` + g.tableau(
-      entetes, corps, classes, `${titre}, ${comptes[cle]} régimes`, true,
-    );
-  });
+  const lecture = Object.fromEntries(
+    COUVERTURES_INVENTAIRE.map(([cle, singulier]) => [cle, singulier]),
+  );
+  const cellule = (texte) => (texte ? echapper(texte) : "—");
+
+  const corps = [];
+  const attributs = [];
+  for (const ligne of lignes) {
+    corps.push([
+      echapper(ligne.nom),
+      echapper(FAMILLES_INVENTAIRE[ligne.famille]),
+      echapper(lecture[ligne.couverture]),
+      cellule(fiabilites.get(ligne.code) ?? ""),
+      echapper(periodeInventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
+      cellule((ligne.statuts || []).join(", ")),
+      cellule(ligne.couverture === "hors_champ" ? ligne.raison_hors_champ : ligne.manque),
+    ]);
+    attributs.push({ "data-famille": ligne.famille, "data-couverture": ligne.couverture });
+  }
+
+  const filtres = '<div class="filtres" role="group" aria-label="Filtrer les régimes" '
+    + 'data-cible="inventaire">'
+    + g.champ("inventaire-recherche", "Chercher un régime", "",
+      "un nom, un statut, une caisse…", "search",
+      { data_filtre: "texte", autocomplete: "off" })
+    + g.liste("inventaire-famille", "Famille",
+      [["", "Toutes"]].concat(Object.entries(FAMILLES_INVENTAIRE)), "",
+      "", { data_filtre: "famille" })
+    + g.liste("inventaire-couverture", "Dans le modèle",
+      [["", "Tous"]].concat(COUVERTURES_INVENTAIRE
+        .filter(([cle]) => comptes[cle])
+        .map(([cle, singulier]) => [cle, singulier])), "",
+      "", { data_filtre: "couverture" })
+    + "</div>"
+    + '<p class="compte discret" aria-live="polite" data-compte-de="inventaire">'
+    + `${lignes.length} régimes</p>`;
+  const table = g.tableau(
+    ["Régime", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
+      "Ce qui manque, ou pourquoi"],
+    corps,
+    ["", "texte", "texte", "texte", "texte", "texte", "texte"],
+    `Les ${lignes.length} régimes de l'inventaire`,
+    true,
+    attributs,
+    true,
+    "inventaire",
+  );
   return g.depliant(`Les ${lignes.length} régimes, un par un`, `
 <p>L'inventaire compte ${lignes.length} régimes de retraite obligatoires, actuels
 et disparus : ${phrase}. Il fait foi dans
@@ -5070,12 +5164,14 @@ et disparus : ${phrase}. Il fait foi dans
 où chaque ligne cite son texte fondateur, et un test le tient aligné sur le
 catalogue : une fiche sans ligne d'inventaire, ou une ligne qui prétend calculer
 ce qu'aucune fiche ne calcule, fait échouer les tests. Un régime « partiel » est
-calculé, mais un étage, un barème ou une période lui manque ; un régime « à
-modéliser » n'a pas de fiche, et la colonne dit ce qui bloque ; une ligne
+calculé, mais un étage, un barème ou une période lui manque, et la dernière
+colonne dit lequel ; un régime « à modéliser » n'a pas de fiche ; une ligne
 « portée par un statut » n'est pas un régime mais une affiliation — l'élu
 local, le micro-entrepreneur —, que le statut nommé route vers les régimes du
-catalogue.</p>
-${tableaux.join("")}`);
+catalogue. La fiabilité est celle de la fiche du catalogue, quand il y en a
+une. Cherchez, filtrez, ou triez en cliquant un en-tête de colonne.</p>
+${filtres}
+${table}`, "donnees-inventaire");
 }
 
 /**
@@ -5184,7 +5280,7 @@ plafond d'avant 2002 et le point d'indice de la fonction publique, repris
 d'OpenFisca, les montants servis du minimum contributif, du minimum garanti et
 du minimum vieillesse — transcrits de leur publication, et préférés à toute
 projection parce qu'ils disent ce qui a été payé —, et les âges, durées et
-coefficients propres à chaque régime, repris des textes.</p>`);
+coefficients propres à chaque régime, repris des textes.</p>`, "donnees-series");
 
   const depliantFiabilite = g.depliant("Ce que vaut chaque décennie, et chaque régime", `
 <h4>Les séries macroéconomiques, décennie par décennie</h4>
@@ -5200,7 +5296,7 @@ au-delà de la dernière année observée, la fiabilité retombe à « estimée 
 
 <h4>Les ${simulateur.catalogue.taille} régimes calculés</h4>
 ${g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", "texte"],
-    "Nombre de régimes par niveau de fiabilité", true)}`);
+    "Nombre de régimes par niveau de fiabilité", true)}`, "donnees-fiabilite");
 
   const depliantSources = g.depliant("D'où viennent les chiffres, et comment on arbitre", `
 <p>Vingt-huit institutions sont recensées dans
@@ -5220,7 +5316,11 @@ le montant calculé, le <strong>recontrôlable</strong> sur le saisi. Ce n'est p
 un classement d'institutions mais de natures de données : l'INSEE pour ce qu'il
 mesure, le COR pour ce qu'il décide.</p>
 <p class="discret"><a href="${g.DEPOT}/blob/main/docs/limites.md">Limites
-détaillées</a></p>`);
+détaillées</a></p>`, "donnees-sources");
+
+  const detail = depliantSeries + depliantFiabilite
+    + inventaireSection(contexte.paquet.inventaire || [], simulateur.catalogue)
+    + depliantSources;
 
   return `
 <h2 style="margin-top:0">Ce que valent les chiffres</h2>
@@ -5230,14 +5330,13 @@ produit — et ce qui ne l'est pas est dit.</p>
 
 <div class="fiches reperes">${reperes}</div>
 
+${g.plan(detail, "/donnees")}
+
 ${bandeau}
 
 <h2>Le détail</h2>
 
-${depliantSeries}
-${depliantFiabilite}
-${inventaireSection(contexte.paquet.inventaire || [])}
-${depliantSources}
+${detail}
 `;
 }
 
@@ -5292,11 +5391,7 @@ function programme(contexte) {
     ["Un compte, pas des trimestres",
       "Chaque euro cotisé est inscrit sur votre compte. Vous le suivez "
       + "toute votre vie, comme un compte en banque — sauf que rien n'est "
-      + "placé : c'est toujours la "
-      + g.mot("répartition",
-        "Les cotisations d'aujourd'hui paient les pensions "
-        + "d'aujourd'hui. Rien n'est mis de côté.")
-      + "."],
+      + "placé : c'est toujours la " + g.terme("répartition") + "."],
     ["Le même taux pour tous",
       `${taux} du salaire, part du salarié et part de l'employeur `
       + "additionnées, quel que soit le métier. Aujourd'hui le taux dépend du "
@@ -5315,13 +5410,14 @@ function programme(contexte) {
     ["", "Aujourd'hui", "Avec notre programme"],
     [
       ["Ce qui ouvre un droit",
-        `des trimestres, et ${regimes} barèmes différents`,
+        `des ${g.terme("trimestres")}, et ${regimes} barèmes différents`,
         "une cotisation versée, et elle seule"],
       ["Ce qui fait le montant",
-        "vos 25 meilleures années, un taux, une durée",
+        `vos ${g.terme("25 meilleures années", "salaire de référence")}, `
+        + "un taux, une durée",
         "votre compte, divisé par votre espérance de vie"],
       ["Partir un an plus tôt",
-        "une décote, dont le barème change à chaque réforme",
+        `une ${g.terme("décote")}, dont le barème change à chaque réforme`,
         "un an de cotisation en moins, un an de pension en plus"],
       ["Changer de métier",
         "changer de régime, et de règle de calcul",
@@ -5373,7 +5469,8 @@ de la répartition. Ce qui change, c'est le calcul du droit.</p>
   votre propre génération. Le résultat est la pension.</li>
 </ol>
 <p>Un âge minimum subsiste — on ne part pas à trente ans —, mais il n'y a plus
-d'âge du taux plein, ni décote, ni surcote : partir plus tôt donne une pension
+d'âge du ${g.terme("taux plein")}, ni ${g.terme("décote")}, ni
+${g.terme("surcote")} : partir plus tôt donne une pension
 plus faible, partir plus tard une pension plus forte, dans le rapport exact de
 ce que l'un et l'autre coûtent.
 <a href="${g.lien("/methode")}">Le détail du calcul</a>.</p>`);

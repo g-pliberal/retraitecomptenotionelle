@@ -20,6 +20,7 @@ from ..calendrier import (
     MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, en_mois, formater_age, mois_travailles,
 )
 from ..carriere import (
+    FAMILLES_STATUT,
     Affiliations,
     LigneRelevee,
     Metier,
@@ -276,8 +277,8 @@ RANGS_METIER = ("premier", "deuxième", "troisième", "quatrième", "cinquième"
 #: par l'UNEDIC ou la Sécurité sociale, AVPF. Un test vérifie qu'aucun code
 #: d'ici n'est absent de là-bas : le menu ne peut pas proposer un motif que le
 #: moteur traiterait en « sans activité » sans le dire.
-#: Les libellés sont des groupes nominaux : le menu les fait précéder de
-#: « Sans emploi : », le résumé de carrière les emploie tels quels — « chômage
+#: Les libellés sont des groupes nominaux : le menu les range sous le groupe
+#: « Sans emploi », le résumé de carrière les emploie tels quels — « chômage
 #: indemnisé de 58 ans à 62 ans ».
 SANS_EMPLOI = [
     ("chomage_indemnise", "chômage indemnisé"),
@@ -1447,11 +1448,7 @@ def _programme(contexte: Contexte) -> str:
         ("Un compte, pas des trimestres",
          "Chaque euro cotisé est inscrit sur votre compte. Vous le suivez "
          "toute votre vie, comme un compte en banque — sauf que rien n'est "
-         "placé : c'est toujours la "
-         + g.mot("répartition",
-                 "Les cotisations d'aujourd'hui paient les pensions "
-                 "d'aujourd'hui. Rien n'est mis de côté.")
-         + "."),
+         "placé : c'est toujours la " + g.terme("répartition") + "."),
         ("Le même taux pour tous",
          f"{taux} du salaire, part du salarié et part de l'employeur "
          "additionnées, quel que soit le métier. Aujourd'hui le taux dépend du "
@@ -1470,13 +1467,14 @@ def _programme(contexte: Contexte) -> str:
         ["", "Aujourd'hui", "Avec notre programme"],
         [
             ["Ce qui ouvre un droit",
-             f"des trimestres, et {regimes} barèmes différents",
+             f"des {g.terme('trimestres')}, et {regimes} barèmes différents",
              "une cotisation versée, et elle seule"],
             ["Ce qui fait le montant",
-             "vos 25 meilleures années, un taux, une durée",
+             f"vos {g.terme('25 meilleures années', 'salaire de référence')}, "
+             "un taux, une durée",
              "votre compte, divisé par votre espérance de vie"],
             ["Partir un an plus tôt",
-             "une décote, dont le barème change à chaque réforme",
+             f"une {g.terme('décote')}, dont le barème change à chaque réforme",
              "un an de cotisation en moins, un an de pension en plus"],
             ["Changer de métier",
              "changer de régime, et de règle de calcul",
@@ -1529,7 +1527,8 @@ de la répartition. Ce qui change, c'est le calcul du droit.</p>
   votre propre génération. Le résultat est la pension.</li>
 </ol>
 <p>Un âge minimum subsiste — on ne part pas à trente ans —, mais il n'y a plus
-d'âge du taux plein, ni décote, ni surcote : partir plus tôt donne une pension
+d'âge du {g.terme("taux plein")}, ni {g.terme("décote")}, ni
+{g.terme("surcote")} : partir plus tôt donne une pension
 plus faible, partir plus tard une pension plus forte, dans le rapport exact de
 ce que l'un et l'autre coûtent.
 <a href="{g.lien("/methode")}">Le détail du calcul</a>.</p>""")
@@ -2009,8 +2008,14 @@ def _options_statuts(affiliations: Affiliations, entree: DateMois | None,
     ``data-fermeture`` : c'est ce que la page lit, dans le navigateur, pour
     refaire ce tri quand l'année de naissance ou l'âge de début change sous
     ses yeux, sans attendre le calcul.
+
+    Les statuts sont rendus PAR FAMILLE — un ``<optgroup>`` par valeur de
+    :data:`FAMILLES_STATUT`, dans l'ordre de cette table —, parce que
+    soixante-deux options à la file ne se parcourent pas : qui cherche
+    « SNCF » ou « artisan » devait tout lire. Dans un groupe, l'ordre reste
+    celui des codes. Les périodes sans emploi forment le dernier groupe.
     """
-    options = []
+    par_famille: dict[str, list[tuple]] = {famille: [] for famille in FAMILLES_STATUT}
     for code in affiliations.codes:
         # « Sans activité professionnelle » est une affiliation, mais c'est la
         # même chose que le motif du même nom : elle rejoint le groupe plutôt
@@ -2022,10 +2027,15 @@ def _options_statuts(affiliations: Affiliations, entree: DateMois | None,
                       or entree.rang < fermeture.rang)
         attributs = ({} if fermeture is None
                      else {"data-fermeture": f"{fermeture.annee}-{fermeture.mois:02d}"})
-        options.append((code, _libelle_date(affiliations, code), disponible, attributs))
+        par_famille[affiliations.famille(code)].append(
+            (code, _libelle_date(affiliations, code), disponible, attributs)
+        )
+    groupes = [(libelle, par_famille[famille])
+               for famille, libelle in FAMILLES_STATUT.items()
+               if par_famille[famille]]
     if sans_emploi:
-        options += [(code, f"Sans emploi : {libelle}") for code, libelle in SANS_EMPLOI]
-    return options
+        groupes.append(("Sans emploi", [(code, libelle) for code, libelle in SANS_EMPLOI]))
+    return groupes
 
 
 def statuts(contexte: Contexte) -> list[dict]:
@@ -2156,18 +2166,22 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
         g.champ("interruptions", "Interruptions", saisie.interruptions,
                 "« 1995:1999:education_enfant », séparées par des virgules"),
         g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
-                "revalorisation des comptes et des pensions"),
+                "revalorisation des comptes et des pensions",
+                complement=g.GLOSSAIRE["indexation"]),
         g.champ("lissage", "Lissage de l'indexation", saisie.lissage,
                 "en années : 1 = aucun",
                 complement="Une moyenne glissante appliquée à la règle "
                 "choisie, quelle qu'elle soit : 5 ans, c'est la fenêtre "
                 "italienne.",
                 type_="number", min="1", max=str(LISSAGE_MAXIMUM), step="1"),
-        g.liste("age_reference", "Âge de référence", AGES_REFERENCE, saisie.age_reference),
-        g.liste("table", "Table de conversion", TABLES, saisie.table),
+        g.liste("age_reference", "Âge de référence", AGES_REFERENCE, saisie.age_reference,
+                complement=g.GLOSSAIRE["âge de référence"]),
+        g.liste("table", "Table de conversion", TABLES, saisie.table,
+                complement=g.GLOSSAIRE["table de conversion"]),
         g.liste("part_cotisation", "Part de la cotisation portée au compte",
                 PARTS_COTISATION, saisie.part_cotisation,
-                "salariale seule, ou salariale et patronale"),
+                "salariale seule, ou salariale et patronale",
+                complement=g.GLOSSAIRE["part patronale"]),
         g.liste("conversion_acquis", "Conversion des droits acquis",
                 CONVERSIONS_ACQUIS, saisie.conversion_acquis,
                 "âge auquel les droits figés à la bascule sont convertis"),
@@ -2364,7 +2378,8 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
         + g.liste("statut", "Statut d'affiliation",
                   _options_statuts(affiliations, saisie.date_de(saisie.debut)),
                   saisie.statut,
-                  "proposé aux seules dates où son régime recrutait")
+                  "proposé aux seules dates où son régime recrutait",
+                  complement=g.GLOSSAIRE["statut d'affiliation"])
         + _champ_revenu("salaire", saisie, echelle, _nombre(saisie.salaire)),
     )]
 
@@ -2838,19 +2853,52 @@ def _fiche_age_reference(comparaison, saisie: Saisie) -> str:
     acquis = comparaison.notionnel_prospectif.droits_acquis
     if acquis is None or saisie.conversion_acquis != "reference":
         return ""
+    # L'étiquette est un mot du glossaire : la définition dit ce qu'est cet
+    # âge et à quoi il sert. Ce qu'il COÛTE sur cette carrière-ci est dit
+    # sous les fiches, par :func:`_note_age_reference`, là où on le lit.
     return g.fiche(
-        "âge de référence — scénarios 3 et 5 seulement",
-        f"{_age(acquis.age_conversion)}"
-        + g.bulle(
-            "D'où vient l'âge de référence et ce qu'il fait",
-            f"<strong>{_age(acquis.age_conversion)}</strong> est l'âge du "
-            "<strong>taux plein</strong> du régime général : celui où la décote "
-            "s'annule, quelle que soit la durée cotisée. La loi du 9 novembre "
-            "2010 l'a porté de 65 à 67 ans, cible atteinte en 2017 : c'est "
-            "l'âge en vigueur pour les dernières générations. Il ne sert ici "
-            "qu'à convertir les droits acquis avant la bascule ; les scénarios "
-            "1, 2, 4 et 6 n'en dépendent pas. Détail ligne à ligne plus bas.",
-        ),
+        "âge de référence", _age(acquis.age_conversion),
+        "scénarios 3 et 5 seulement",
+        definition=g.GLOSSAIRE["âge de référence"],
+    )
+
+
+def _note_age_reference(comparaison, saisie: Saisie) -> str:
+    """Ce que l'âge de référence coûte, dit en clair dès qu'il coûte.
+
+    La fiche affichait « 67 ans » sans un mot sur ce que ce chiffre changeait,
+    et le lecteur qui partait à 64 ans ne pouvait pas deviner que ses droits
+    acquis étaient convertis comme s'il partait à 67 — l'anticipation payée une
+    seconde fois, sur le passé. Le réglage qui retire cet écart existe, mais
+    dans les options repliées, en bas du formulaire : rien ne le désignait.
+    Cette note nomme la pénalité et le réglage, et ne s'affiche que quand
+    l'écart existe : à l'âge de référence, il n'y a rien à dire.
+
+    Les DEUX sens sont écrits, comme dans la cascade : c'est un pivot, et un
+    départ après l'âge de référence est bonifié par le même mécanisme.
+    """
+    acquis = comparaison.notionnel_prospectif.droits_acquis
+    if acquis is None or saisie.conversion_acquis != "reference":
+        return ""
+    depart = comparaison.carriere.age_liquidation or 0.0
+    reference = acquis.age_conversion
+    if reference == depart:
+        return ""
+    if reference > depart:
+        quand = f"{_age(reference - depart)} avant"
+        effet = "l'anticipation est payée une seconde fois, sur le passé"
+    else:
+        quand = f"{_age(depart - reference)} après"
+        effet = "le report est récompensé une seconde fois, sur le passé"
+    return (
+        f'<p class="note"><strong>Vous partez {quand} l\'âge de référence.'
+        f"</strong> Dans les scénarios 3 et 5, les droits acquis avant "
+        f"{saisie.bascule} sont convertis en capital comme si vous partiez à "
+        f"{_age(reference)}, puis servis à partir de {_age(depart)} : {effet}. "
+        "Le réglage « Conversion des droits acquis : à l'âge de départ "
+        "effectif », dans les options de modélisation du formulaire, retire "
+        "cet écart — c'est la convention qu'une réforme réelle retiendrait. "
+        "Les scénarios 1, 2, 4 et 6 n'en dépendent pas.</p>"
     )
 
 
@@ -2917,7 +2965,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     </span>
   </div>
   <div class="barre {cle}"><span style="width:{montant / reference * 100:.1f}%"></span></div>
-  <div class="glose">{glose} · taux de remplacement
+  <div class="glose">{glose} · {g.terme("taux de remplacement")}
     {g.pourcentage(taux_remplacement)} · écart au système actuel : {variation_html}</div>
 </div>"""
 
@@ -2964,13 +3012,15 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         # « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7
         # au lieu de 25,67 il tombait un euro à côté, et doutait du reste.
         g.fiche("coefficient de conversion",
-                g.nombre(conversion.diviseur, DECIMALES_DIVISEUR)),
+                g.nombre(conversion.diviseur, DECIMALES_DIVISEUR),
+                definition=g.GLOSSAIRE["coefficient de conversion"]),
         # Le capital est un montant de l'année de liquidation, quand les six
         # pensions ci-dessous sont mises en avant en euros de l'année de
         # référence : sans l'unité, deux grandeurs de nature différente se
         # touchaient sans que rien ne les distingue.
         g.fiche(f"capital notionnel rétroactif, en euros de {annee_depart}",
-                g.euros(retro.capital_notionnel)),
+                g.euros(retro.capital_notionnel),
+                definition=g.GLOSSAIRE["capital notionnel"]),
     ])
 
     capitalisation = ""
@@ -3029,6 +3079,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
 {_lecture_des_montants(comparaison, saisie)}</h2>
 <div class="carte">
   <div class="fiches">{fiches}</div>
+  {_note_age_reference(comparaison, saisie)}
   {_resume_parcours(contexte, saisie)}
 </div>
 <div class="carte">
@@ -3756,51 +3807,16 @@ l'année du départ.{g.bulle(
 elle peut être citée ou partagée telle quelle.</p>
 """)
 
-#: Les six scénarios de la page Cas types, dans l'ordre d'affichage : le code
-#: du scénario, le titre de sa section, le titre accessible de sa grille, et la
-#: phrase qui dit ce qu'on y voit. Le premier est CELUI QUI S'AFFICHE — la seule
-#: réforme applicable qui crédite ce qui est réellement prélevé —, les cinq
-#: autres sont repliés ensemble.
-GRILLES_CAS_TYPES: tuple[tuple[str, str, str, str], ...] = (
-    (
-        "notionnel_prospectif_employeur",
-        "Scénario 5 — comptes notionnels dès la bascule, employeur compris",
-        "Scénario 5, scénario 3 part patronale comprise",
-        "Les droits acquis avant la bascule sont conservés : les générations "
-        "déjà retraitées ne bougent pas, et plus une carrière est récente, plus "
-        "elle est calculée sous la règle nouvelle. À compter de la bascule il "
-        "n'y a plus qu'un régime, et les écarts entre statuts s'y referment.",
-    ),
-    (
-        "notionnel_retroactif",
-        "Scénario 2 — comptes notionnels rétroactifs depuis 1941",
-        "Scénario 2, comptes notionnels rétroactifs",
-        "Les générations anciennes sont les plus touchées : leurs cotisations, "
-        "versées quand l'inflation dépassait la productivité, ont été "
-        "revalorisées à un taux très inférieur à la hausse des prix.",
-    ),
-    (
-        "notionnel_prospectif",
-        "Scénario 3 — comptes notionnels dès la bascule, part salariale seule",
-        "Scénario 3, comptes notionnels à compter de la bascule",
-        "Les générations déjà retraitées sont inchangées : leurs droits sont "
-        "intégralement acquis avant la bascule. Les indépendants et professions "
-        "libérales progressent parce que le régime unique relève leur taux de "
-        "cotisation et déplafonne leur assiette — un effort contributif accru, "
-        "pas un avantage accordé.",
-    ),
-    (
-        "notionnel_retroactif_employeur",
-        "Scénario 4 — le scénario 2, part patronale comprise",
-        "Scénario 4, scénario 2 part patronale comprise",
-        "Toutes les lignes bougent, sauf celles des non-salariés — artisan, "
-        "exploitant agricole, profession libérale — qui n'ont pas d'employeur "
-        "et pour qui ce scénario est le scénario 2. Les lignes publiques "
-        "bougent le plus : la contribution de leur employeur est un taux "
-        "d'équilibre, sans commune mesure avec la part patronale d'un salarié.",
-    ),
+#: Les cinq grilles de la page Cas types, dans l'ordre des onglets : le code du
+#: scénario, le libellé de son onglet, le titre de sa section, le titre
+#: accessible de sa grille, et la phrase qui dit ce qu'on y voit. Le premier
+#: est CELUI QUI S'AFFICHE À L'OUVERTURE — le scénario 6, la proposition que
+#: le site existe pour montrer ; les quatre autres sont les contrefactuels
+#: qui mesurent ce que chaque ingrédient déplace, dans l'ordre de leur numéro.
+GRILLES_CAS_TYPES: tuple[tuple[str, str, str, str, str], ...] = (
     (
         "notionnel_liberal",
+        "Scénario 6, la proposition",
         "Scénario 6 — le scénario 4, puis 18 % pour tous et une garantie",
         "Scénario 6, scénario 4 à taux unique dès la bascule et garantie vieillesse",
         "Le même compte rétroactif que le scénario 4 jusqu'à la bascule, puis "
@@ -3811,17 +3827,66 @@ GRILLES_CAS_TYPES: tuple[tuple[str, str, str, str], ...] = (
         "voit que sur les cas dont la pension reste sous le plancher, à partir "
         "de 65 ans.",
     ),
+    (
+        "notionnel_retroactif",
+        "Scénario 2",
+        "Scénario 2 — comptes notionnels rétroactifs depuis 1941",
+        "Scénario 2, comptes notionnels rétroactifs",
+        "Les générations anciennes sont les plus touchées : leurs cotisations, "
+        "versées quand l'inflation dépassait la productivité, ont été "
+        "revalorisées à un taux très inférieur à la hausse des prix.",
+    ),
+    (
+        "notionnel_prospectif",
+        "Scénario 3",
+        "Scénario 3 — comptes notionnels dès la bascule, part salariale seule",
+        "Scénario 3, comptes notionnels à compter de la bascule",
+        "Les générations déjà retraitées sont inchangées : leurs droits sont "
+        "intégralement acquis avant la bascule. Les indépendants et professions "
+        "libérales progressent parce que le régime unique relève leur taux de "
+        "cotisation et déplafonne leur assiette — un effort contributif accru, "
+        "pas un avantage accordé.",
+    ),
+    (
+        "notionnel_retroactif_employeur",
+        "Scénario 4",
+        "Scénario 4 — le scénario 2, part patronale comprise",
+        "Scénario 4, scénario 2 part patronale comprise",
+        "Toutes les lignes bougent, sauf celles des non-salariés — artisan, "
+        "exploitant agricole, profession libérale — qui n'ont pas d'employeur "
+        "et pour qui ce scénario est le scénario 2. Les lignes publiques "
+        "bougent le plus : la contribution de leur employeur est un taux "
+        "d'équilibre, sans commune mesure avec la part patronale d'un salarié.",
+    ),
+    (
+        "notionnel_prospectif_employeur",
+        "Scénario 5",
+        "Scénario 5 — comptes notionnels dès la bascule, employeur compris",
+        "Scénario 5, scénario 3 part patronale comprise",
+        "Les droits acquis avant la bascule sont conservés : les générations "
+        "déjà retraitées ne bougent pas, et plus une carrière est récente, plus "
+        "elle est calculée sous la règle nouvelle. À compter de la bascule il "
+        "n'y a plus qu'un régime, et les écarts entre statuts s'y referment.",
+    ),
 )
 
 
 def _cas_types(contexte: Contexte) -> str:
     """Treize carrières types croisées avec sept générations.
 
-    LA PAGE NE MONTRE QU'UNE GRILLE. Elle en montrait cinq, soit quatre cent
-    cinquante-cinq cellules à la file, et personne ne compare cinq tableaux de
-    quatre-vingt-onze cases. Celle qui reste est le scénario 5 — la seule
-    réforme applicable qui crédite au compte ce qui est réellement prélevé
-    aujourd'hui ; les quatre autres sont dans un dépliant, avec leur lecture.
+    LA PAGE NE MONTRE QU'UNE GRILLE À LA FOIS, ET C'EST LA PROPOSITION. Elle en
+    montrait cinq à la file, puis une seule — le scénario 5 — avec les quatre
+    autres dans un dépliant ; un lecteur pressé s'arrêtait donc sur un
+    contrefactuel, et repartait en croyant avoir vu la proposition. Les cinq
+    grilles sont désormais derrière des onglets, et l'onglet ouvert est le
+    scénario 6 : c'est lui que le site existe pour montrer.
+
+    Les onglets sont des boutons radio, et le panneau suit en CSS (``:has()``)
+    : le clavier les parcourt aux flèches comme tout groupe de radios, aucun
+    script ne tourne, et l'adresse ne change pas — ce que la route affiche
+    reste ce que la route affiche. Les panneaux repliés sont dans la page,
+    ``hidden`` : là où ``:has()`` n'existe pas, le premier reste visible et
+    les autres restent cachés, ce qui dit moins mais rien de faux.
 
     CE QU'ELLE DIT EST UN ÉCART ENTRE LIGNES, JAMAIS UN NIVEAU. Le modèle
     calcule ce que chaque carrière acquiert ; il n'applique pas le coefficient
@@ -3832,7 +3897,7 @@ def _cas_types(contexte: Contexte) -> str:
     """
     simulateur = contexte.simulateur()
     resultat = calculer_cas_types(simulateur)
-    montre, titre_montre, alt_montre, lecture_montre = GRILLES_CAS_TYPES[0]
+    montre = GRILLES_CAS_TYPES[0][0]
 
     def grille(scenario: str, intitule: str) -> str:
         lignes = []
@@ -3864,7 +3929,7 @@ def _cas_types(contexte: Contexte) -> str:
     # Les trois chiffres d'ouverture : l'ÉCART entre les carrières, qui est ce
     # que la grille mesure, et non son niveau, qu'elle ne mesure pas. Ils sont
     # lus sur la dernière génération, la seule dont la carrière entière tombe
-    # sous la règle nouvelle.
+    # sous la règle nouvelle, et sur la grille qui s'affiche à l'ouverture.
     derniere = GENERATIONS[-1]
     ecarts = sorted(
         (comparaison.variation(montre), cas.libelle)
@@ -3878,21 +3943,31 @@ def _cas_types(contexte: Contexte) -> str:
         reperes = g.fiche(
             "La carrière la mieux traitée", escape(haut[1].split(" (")[0]),
             g.pourcentage(haut[0], signe=True, decimales=0)
-            + f" par rapport à aujourd'hui, génération {derniere}",
+            + f" par rapport à aujourd'hui, génération {derniere}, scénario 6",
         ) + g.fiche(
             "La moins bien traitée", escape(bas[1].split(" (")[0]),
             g.pourcentage(bas[0], signe=True, decimales=0)
-            + f" par rapport à aujourd'hui, génération {derniere}",
+            + f" par rapport à aujourd'hui, génération {derniere}, scénario 6",
         ) + g.fiche(
             "Ce qui les sépare",
-            g.nombre((haut[0] - bas[0]) * 100, 0) + " points",
+            g.nombre((haut[0] - bas[0]) * 100, 0) + " points",
             "à carrière et à durée identiques",
         )
 
-    autres = "".join(
-        f"<h4>{escape(titre)}</h4>{grille(scenario, alt)}"
-        f'<p class="discret">{escape(lecture)}</p>'
-        for scenario, titre, alt, lecture in GRILLES_CAS_TYPES[1:]
+    # Les onglets, puis les panneaux : deux frères, pour que la feuille de
+    # style lise l'onglet coché et montre le panneau qui lui répond.
+    onglets = "".join(
+        f'<input type="radio" name="grille" id="grille-{scenario}"'
+        + (" checked" if rang == 0 else "")
+        + f'><label for="grille-{scenario}">{escape(onglet)}</label>'
+        for rang, (scenario, onglet, _, _, _) in enumerate(GRILLES_CAS_TYPES)
+    )
+    panneaux = "".join(
+        f'<div class="panneau" data-onglet="{scenario}"'
+        + ("" if rang == 0 else " hidden") + ">"
+        + f"<h3>{escape(titre)}</h3>{grille(scenario, alt)}"
+        + f'<p class="discret">{escape(lecture)}</p></div>'
+        for rang, (scenario, _, titre, alt, lecture) in enumerate(GRILLES_CAS_TYPES)
     )
 
     ages = g.tableau(
@@ -3920,14 +3995,6 @@ def _cas_types(contexte: Contexte) -> str:
             f"<ul class='serree'>{elements}</ul>",
         )
 
-    depliant_autres = g.depliant(
-        "Les quatre autres scénarios",
-        "<p>Le modèle en calcule six. Celui du haut est le seul qui décrive une "
-        "réforme applicable en créditant ce qui est réellement prélevé "
-        "aujourd'hui ; les autres servent à mesurer ce que chaque ingrédient "
-        "déplace — la rétroactivité, la part patronale, le taux unique.</p>"
-        + autres,
-    )
     depliant_cas = g.depliant(
         "Qui sont ces treize carrières",
         g.gloses([(cas.libelle, cas.commentaire) for cas in CAS_TYPES]),
@@ -3955,13 +4022,17 @@ que la pension deviendrait, par rapport à aujourd'hui, pour la même carrière.
 <div class="note"><strong>Comparez les lignes entre elles, pas leur
 niveau.</strong> Ce que la grille mesure, c'est l'écart entre deux carrières —
 ce qu'un militaire touche de plus ou de moins qu'un artisan, à cotisation
-égale. Le niveau général, lui, dépend d'un réglage annuel que le modèle calcule
+égale. Le niveau général, lui, dépend d'un
+{g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
 mais n'applique jamais : il déplacerait toutes les cases du même facteur.
 <a href="{g.lien("/cout")}">Ce réglage est sur la page Coût</a>.</div>
 
-<h3>{escape(titre_montre)}</h3>
-{grille(montre, alt_montre)}
-<p class="discret">{escape(lecture_montre)}</p>
+<p class="discret">Le modèle calcule six scénarios. Le <strong>scénario 6</strong>
+est la proposition ; les scénarios 2 à 5 sont des contrefactuels, qui mesurent
+ce que chaque ingrédient déplace — la rétroactivité, la part patronale, le taux
+unique.</p>
+<fieldset class="onglets"><legend>Scénario affiché</legend>{onglets}</fieldset>
+<div class="panneaux">{panneaux}</div>
 
 <p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer sur ma
 carrière</a><a href="{g.lien("/methode")}">Comment c'est calculé</a></p>
@@ -3970,7 +4041,6 @@ carrière</a><a href="{g.lien("/methode")}">Comment c'est calculé</a></p>
 
 {depliant_cas}
 {depliant_ages}
-{depliant_autres}
 {echecs}
 """
 
@@ -4174,12 +4244,9 @@ rééquilibrent en {equilibre or "jamais"}.""",
         bilan,
         f"""Sources : DREES jusqu'en {solde.premiere_annee - 1}, Conseil
 d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
-{g.mot("part du PIB",
-       "Le PIB, c'est tout ce que la France produit en un an. En « part du "
-       "PIB », on demande : sur 100 € produits, combien vont aux retraites ? "
-       "C'est la seule façon de comparer 1959 et 2070, l'euro n'ayant pas la "
-       "même valeur.")} : sur 100 € produits en France, combien vont aux
+{g.terme("part du PIB")} : sur 100 € produits en France, combien vont aux
 retraites.""",
+        identifiant="cout-bilan",
     )
 
     carte_provenance = g.cle(
@@ -4195,30 +4262,41 @@ l'impôt, et <strong>cette part a doublé en vingt ans</strong> —
         ),
         f"""Source : Conseil d'orientation des retraites. Ce détail n'est publié
 que de {premiere_ventilee} à {derniere_ventilee}.""",
+        identifiant="cout-provenance",
     )
+
+    # Le détail est rendu AVANT le gabarit final : c'est de lui, et des deux
+    # cartes, que le plan de la page se déduit.
+    detail = "".join([
+        _cout_detail_depense(contexte),
+        _cout_detail_ressources(contexte),
+        _cout_detail_transferts(contexte),
+        _cout_detail_scenarios(contexte),
+        _cout_detail_equilibre(contexte),
+        _cout_detail_garantie(contexte),
+        _cout_detail_poids(contexte),
+        _cout_detail_sources(contexte),
+        _cout_detail_limites(contexte),
+    ])
+    plan = g.plan(carte_bilan + carte_provenance + detail, "/cout")
 
     return f"""
 <h2 style="margin-top:0">L'argent de la retraite</h2>
 <p class="chapeau">Vos cotisations ne sont pas mises de côté. Elles paient
 aussitôt les pensions de ceux qui sont déjà retraités : c'est la
-{g.mot("répartition",
-"Les cotisations d'aujourd'hui paient les pensions d'aujourd'hui. Rien n'est "
-"placé, rien n'est épargné : chaque euro prélevé sur une fiche de paie est "
-"reversé aussitôt à un retraité.")}. Voici ce qui rentre, ce qui sort, et ce
+{g.terme("répartition")}. Voici ce qui rentre, ce qui sort, et ce
 qui manque.</p>
 
 <div class="fiches reperes">{reperes}</div>
+
+{plan}
 
 {carte_bilan}
 
 {carte_provenance}
 
 <div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
-système en {g.mot("comptes notionnels",
-"Un compte virtuel par personne, où chaque cotisation versée est inscrite. Au "
-"départ en retraite, le total est divisé par le nombre d'années qu'il reste à "
-"vivre en moyenne : cela donne la pension. Rien n'est placé — c'est toujours "
-"la répartition, mais la règle de calcul change.")} ne laisse pas d'argent
+système en {g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
 dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
 ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
 on servirait autant, mais réparti autrement entre les carrières</em>.</div>
@@ -4232,15 +4310,7 @@ retraite</a><a href="{g.lien("/cas-types")}">Voir treize carrières types</a></p
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici.</p>
 
-{_cout_detail_depense(contexte)}
-{_cout_detail_ressources(contexte)}
-{_cout_detail_transferts(contexte)}
-{_cout_detail_scenarios(contexte)}
-{_cout_detail_equilibre(contexte)}
-{_cout_detail_garantie(contexte)}
-{_cout_detail_poids(contexte)}
-{_cout_detail_sources(contexte)}
-{_cout_detail_limites(contexte)}
+{detail}
 """
 
 
@@ -4370,7 +4440,7 @@ Deux chiffres se lisent en connaissant le découpage : le régime général abso
 en 2020 les artisans et les commerçants, dont le régime a été adossé à la Cnav,
 et les « régimes spéciaux » de la comptabilité nationale contiennent la CNRACL,
 c'est-à-dire la fonction publique territoriale et hospitalière.</p>
-""")
+""", identifiant="cout-depenses")
 
 
 def _cout_detail_ressources(contexte: Contexte) -> str:
@@ -4407,7 +4477,7 @@ déjà au compte des scénarios 4 et 5, et c'est à ce titre qu'elle est compté
 ici, malgré un taux fixé pour équilibrer plutôt que pour acquérir. La part
 cotisée <em>recule</em> : elle était de
 {g.pourcentage(comptes.part_contributive(premiere), decimales=0)} en {premiere}.</p>
-""")
+""", identifiant="cout-ressources")
 
 
 def _cout_detail_transferts(contexte: Contexte) -> str:
@@ -4510,7 +4580,7 @@ actuel, l'écart est le même :
 branche famille cesserait de verser à la retraite ne disparaît pas : il lui
 reste, et ce qu'elle en fait est une décision de programme, pas un résultat de
 ce modèle.</div>
-""")
+""", identifiant="cout-transferts")
 
 
 def _cout_detail_scenarios(contexte: Contexte) -> str:
@@ -4661,8 +4731,9 @@ il donne {g.pourcentage(horizon.part_pib("actuel"), decimales=1)} du PIB pour le
 système actuel en {avenir.derniere_annee}, quand le COR en projette
 {g.pourcentage(COR_2070, decimales=1)}. L'écart est de
 {g.nombre((horizon.part_pib("actuel") - COR_2070) * 100, 1)} points, et il n'est
-pas flatteur : notre taux de remplacement ne recule pas, celui du COR recule.
-<code>docs/limites.md</code> § 5 ter porte la mesure. C'est pourquoi les cartes
+pas flatteur : notre {g.terme("taux de remplacement")} ne recule pas, celui du
+COR recule. <a href="{g.DEPOT}/blob/main/docs/limites.md">Le § 5 ter des
+limites</a> porte la mesure. C'est pourquoi les cartes
 du haut n'utilisent du modèle que son <strong>rapport</strong> entre systèmes,
 sans dimension, appliqué aux dépenses du COR.</div>
 
@@ -4700,7 +4771,7 @@ système actuel, est l'indexation sur les prix : elle fait décrocher les pensio
 des salaires, génération après génération. Les comptes notionnels font la même
 chose autrement — par le diviseur d'espérance de vie —, mais ils le font
 <em>explicitement</em>, et à l'acquisition plutôt qu'au versement.</p>
-""")
+""", identifiant="cout-scenarios")
 
 
 def _cout_detail_equilibre(contexte: Contexte) -> str:
@@ -4766,7 +4837,7 @@ contresens : à prélèvement inchangé, ce système-là servirait autant que le
 nôtre, mais autrement réparti entre les carrières. Le modèle calcule ce
 facteur ; il ne l'applique jamais, et toutes les courbes de coût de cette page
 sont celles d'un système qui ne se pilote pas.</div>
-""")
+""", identifiant="cout-equilibre")
 
 
 def _cout_detail_garantie(contexte: Contexte) -> str:
@@ -4862,7 +4933,7 @@ centaines de milliers de personnes à une allocation servie à
 pensions d'aujourd'hui, et à
 {g.nombre(garantie_scenario.beneficiaires / 1e6, 1)} millions à celles du
 scénario 6.</div>
-""")
+""", identifiant="cout-garantie")
 
 
 def _cout_detail_poids(contexte: Contexte) -> str:
@@ -4896,7 +4967,7 @@ ce que valait la convention antérieure, qui les pesait à égalité.</p>
 source ne dit combien de ses retraités ont été cadres. Hors de la fenêtre que la
 DREES publie — 2004 à 2024 —, la répartition du bord est reconduite : la France
 de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent.</p>
-""")
+""", identifiant="cout-poids")
 
 
 def _cout_detail_sources(contexte: Contexte) -> str:
@@ -4965,7 +5036,7 @@ tout ce qui passe par un rapport de masses est <strong>estimé</strong>, sans
 pouvoir être autre chose — aucune institution ne publie ce qu'aurait coûté un
 système qui n'a pas existé. Tout est détaillé sur la page
 <a href="{g.lien("/donnees")}">Données</a>.</p>
-""")
+""", identifiant="cout-sources")
 
 
 def _cout_detail_limites(contexte: Contexte) -> str:
@@ -5030,9 +5101,9 @@ def _cout_detail_limites(contexte: Contexte) -> str:
   de plus.</li>
 </ul>
 <p class="discret">Les limites du modèle dans son ensemble sont dans
-<code>docs/limites.md</code>, et la méthode sur la page
-<a href="{g.lien("/methode")}">Méthode</a>.</p>
-""")
+<a href="{g.DEPOT}/blob/main/docs/limites.md">docs/limites.md</a>, et la
+méthode sur la page <a href="{g.lien("/methode")}">Méthode</a>.</p>
+""", identifiant="cout-limites")
 
 
 #: Les neuf règles que compare la page Méthode, dans l'ordre d'affichage :
@@ -5228,7 +5299,7 @@ si sévère.</p>
 <p><strong>« Revalorisation réellement pratiquée » est la seule ligne qui ne soit
 pas une hypothèse</strong> : c'est le coefficient que les arrêtés annuels ont
 appliqué aux salaires portés au compte, celui dont le scénario 1 se sert pour
-calculer le salaire de référence. Il vaut
+calculer le {g.terme("salaire de référence")}. Il vaut
 <strong>×{g.nombre(reval_pratiquee, 0)}</strong> sur la période, près de cinq
 fois les prix, parce que le régime général a revalorisé sur les SALAIRES
 jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, et non
@@ -5287,10 +5358,11 @@ def _methode_droit_positif() -> str:
     L'étalon ne vaut que par ce qu'il reproduit : c'est le seul argument qui
     rende lisible un écart de pension, et il tient dans une liste.
     """
-    return g.depliant("Ce que le scénario 1 applique du droit en vigueur", """
-<p>L'étalon ne vaut que par ce qu'il reproduit. Il applique la décote et la
-surcote, la proratisation par la durée, le salaire de référence de chaque
-régime — sur ses seules années, jamais sur toute la carrière —, et cinq
+    return g.depliant("Ce que le scénario 1 applique du droit en vigueur", f"""
+<p>L'étalon ne vaut que par ce qu'il reproduit. Il applique la
+{g.terme("décote")} et la {g.terme("surcote")}, la proratisation par la
+{g.terme("durée", "durée d'assurance")}, le {g.terme("salaire de référence")}
+de chaque régime — sur ses seules années, jamais sur toute la carrière —, et cinq
 paramètres lus à la GÉNÉRATION et non à l'année de liquidation : durée requise,
 âge légal, âge d'annulation de la décote, coefficient de minoration, nombre
 d'années retenues au salaire de référence.</p>
@@ -5441,15 +5513,15 @@ FAMILLES_INVENTAIRE = {
     "additionnel_capitalise": "additionnel, capitalisé",
 }
 
-#: Les cinq couvertures, dans l'ordre d'affichage : le titre du tableau, le
-#: nom au pluriel pour la phrase de compte, et l'intitulé de la dernière
-#: colonne — vide pour les régimes modélisés, qui n'ont rien à expliquer.
+#: Les cinq couvertures, dans l'ordre du menu de filtre : la clé de
+#: l'inventaire, ce qu'on lit dans la cellule, et le pluriel de la phrase de
+#: compte. Une couverture qu'aucune ligne ne porte ne s'affiche nulle part.
 COUVERTURES_INVENTAIRE = (
-    ("modelise", "Régimes modélisés", "modélisés", ""),
-    ("partiel", "Régimes calculés, mais incomplets", "partiels", "Ce qui manque"),
-    ("a_modeliser", "Régimes à modéliser", "à modéliser", "Ce qui bloque"),
-    ("routage", "Affiliations portées par un statut", "portés par un statut", "Ce qui reste"),
-    ("hors_champ", "Régimes hors champ", "hors champ", "Pourquoi"),
+    ("modelise", "modélisé", "modélisés"),
+    ("partiel", "partiel", "partiels"),
+    ("a_modeliser", "à modéliser", "à modéliser"),
+    ("routage", "porté par un statut", "portés par un statut"),
+    ("hors_champ", "hors champ", "hors champ"),
 )
 
 
@@ -5462,45 +5534,87 @@ def _periode_inventaire(creation, fermeture, extinction) -> str:
         return f"depuis {creation}, fermé en {fermeture}"
     return f"depuis {creation}"
 
-def _inventaire_section(racine) -> str:
+
+def _inventaire_section(racine, catalogue) -> str:
     """Tous les régimes, calculés ou non — la liste qui manquait au dépôt.
 
-    Cinq tableaux, quatre-vingt-neuf lignes : c'est une annexe, et elle se
-    replie comme telle. Elle reste entière — c'est elle qui rend vérifiable la
-    phrase « le dépôt les recense tous » —, mais elle ne s'impose plus à qui
-    vient seulement savoir ce que valent les chiffres.
+    UNE SEULE TABLE, et non cinq : quatre-vingt-neuf lignes en cinq tableaux
+    de prose ne se cherchaient qu'au Ctrl+F. La table porte tout ce que
+    l'inventaire sait d'un régime — sa famille, ce qu'il est dans le modèle,
+    la fiabilité de sa fiche quand il en a une, ses dates, ses statuts, ce qui
+    lui manque —, et elle se filtre et se trie sur place : un champ de
+    recherche, un menu par famille, un menu par couverture, et chaque en-tête
+    de colonne est un bouton de tri. Le comportement est dans ``index.html``,
+    en écoute déléguée ; sans lui, la table se lit entière, dans l'ordre du
+    fichier, ce qui est exactement ce qu'elle était.
+
+    Deux garde-fous. Un filtre se remet à « tout » d'un geste, et une ligne
+    filtrée n'est que masquée : rien de ce que l'inventaire dit ne devient
+    inatteignable. Et la table reste dans sa section repliée — c'est une
+    annexe, qui ne s'impose pas à qui vient seulement savoir ce que valent
+    les chiffres.
+
+    ``catalogue`` donne la fiabilité des fiches calculées : l'inventaire ne la
+    connaît pas, le catalogue si, et c'est ici que les deux se rejoignent.
     """
     lignes = charger_inventaire(racine)
+    fiabilites = {regime.code: str(regime.fiabilite) for regime in catalogue}
     comptes = {cle: sum(1 for l in lignes if l.couverture == cle)
-               for cle, _, _, _ in COUVERTURES_INVENTAIRE}
+               for cle, _, _ in COUVERTURES_INVENTAIRE}
     phrase = ", ".join(
-        f"{comptes[cle]} {pluriel}" for cle, _, pluriel, _ in COUVERTURES_INVENTAIRE
+        f"{comptes[cle]} {pluriel}" for cle, _, pluriel in COUVERTURES_INVENTAIRE
+        if comptes[cle]
     )
-    tableaux = []
-    for cle, titre, _, derniere in COUVERTURES_INVENTAIRE:
-        entetes = ["Régime", "Famille", "Période", "Statuts"]
-        classes = ["", "texte", "texte", "texte"]
-        if derniere:
-            entetes.append(derniere)
-            classes.append("texte")
-        corps = []
-        for ligne in lignes:
-            if ligne.couverture != cle:
-                continue
-            rang = [
-                escape(ligne.nom),
-                escape(FAMILLES_INVENTAIRE[ligne.famille]),
-                escape(_periode_inventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
-                escape(", ".join(ligne.statuts)) if ligne.statuts else "—",
-            ]
-            if derniere:
-                rang.append(escape(ligne.raison_hors_champ if cle == "hors_champ" else ligne.manque))
-            corps.append(rang)
-        tableaux.append(f"<h4>{escape(titre)} ({comptes[cle]})</h4>" + g.tableau(
-            entetes, corps, classes,
-            titre=f"{titre}, {comptes[cle]} régimes",
-            entete_de_ligne=True,
-        ))
+    lecture = dict((cle, singulier) for cle, singulier, _ in COUVERTURES_INVENTAIRE)
+
+    def cellule(texte: str) -> str:
+        return escape(texte) if texte else "—"
+
+    corps = []
+    attributs = []
+    for ligne in lignes:
+        corps.append([
+            escape(ligne.nom),
+            escape(FAMILLES_INVENTAIRE[ligne.famille]),
+            escape(lecture[ligne.couverture]),
+            cellule(fiabilites.get(ligne.code, "")),
+            escape(_periode_inventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
+            cellule(", ".join(ligne.statuts)),
+            cellule(ligne.raison_hors_champ if ligne.couverture == "hors_champ"
+                    else ligne.manque),
+        ])
+        attributs.append({"data-famille": ligne.famille,
+                          "data-couverture": ligne.couverture})
+
+    filtres = (
+        '<div class="filtres" role="group" aria-label="Filtrer les régimes" '
+        'data-cible="inventaire">'
+        + g.champ("inventaire-recherche", "Chercher un régime", "",
+                  "un nom, un statut, une caisse…", type_="search",
+                  data_filtre="texte", autocomplete="off")
+        + g.liste("inventaire-famille", "Famille",
+                  [("", "Toutes")] + list(FAMILLES_INVENTAIRE.items()), "",
+                  data_filtre="famille")
+        + g.liste("inventaire-couverture", "Dans le modèle",
+                  [("", "Tous")] + [(cle, singulier)
+                                    for cle, singulier, _ in COUVERTURES_INVENTAIRE
+                                    if comptes[cle]], "",
+                  data_filtre="couverture")
+        + "</div>"
+        + f'<p class="compte discret" aria-live="polite" data-compte-de="inventaire">'
+        f"{len(lignes)} régimes</p>"
+    )
+    table = g.tableau(
+        ["Régime", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
+         "Ce qui manque, ou pourquoi"],
+        corps,
+        ["", "texte", "texte", "texte", "texte", "texte", "texte"],
+        titre=f"Les {len(lignes)} régimes de l'inventaire",
+        entete_de_ligne=True,
+        attributs_lignes=attributs,
+        triable=True,
+        identifiant="inventaire",
+    )
     return g.depliant(f"Les {len(lignes)} régimes, un par un", f"""
 <p>L'inventaire compte {len(lignes)} régimes de retraite obligatoires, actuels
 et disparus : {phrase}. Il fait foi dans
@@ -5508,12 +5622,14 @@ et disparus : {phrase}. Il fait foi dans
 où chaque ligne cite son texte fondateur, et un test le tient aligné sur le
 catalogue : une fiche sans ligne d'inventaire, ou une ligne qui prétend calculer
 ce qu'aucune fiche ne calcule, fait échouer les tests. Un régime « partiel » est
-calculé, mais un étage, un barème ou une période lui manque ; un régime « à
-modéliser » n'a pas de fiche, et la colonne dit ce qui bloque ; une ligne
+calculé, mais un étage, un barème ou une période lui manque, et la dernière
+colonne dit lequel ; un régime « à modéliser » n'a pas de fiche ; une ligne
 « portée par un statut » n'est pas un régime mais une affiliation — l'élu
 local, le micro-entrepreneur —, que le statut nommé route vers les régimes du
-catalogue.</p>
-{"".join(tableaux)}""")
+catalogue. La fiabilité est celle de la fiche du catalogue, quand il y en a
+une. Cherchez, filtrez, ou triez en cliquant un en-tête de colonne.</p>
+{filtres}
+{table}""", identifiant="donnees-inventaire")
 
 
 def _donnees(contexte: Contexte) -> str:
@@ -5613,7 +5729,7 @@ plafond d'avant 2002 et le point d'indice de la fonction publique, repris
 d'OpenFisca, les montants servis du minimum contributif, du minimum garanti et
 du minimum vieillesse — transcrits de leur publication, et préférés à toute
 projection parce qu'ils disent ce qui a été payé —, et les âges, durées et
-coefficients propres à chaque régime, repris des textes.</p>""")
+coefficients propres à chaque régime, repris des textes.</p>""", identifiant="donnees-series")
 
     depliant_fiabilite = g.depliant("Ce que vaut chaque décennie, et chaque régime", f"""
 <h4>Les séries macroéconomiques, décennie par décennie</h4>
@@ -5630,7 +5746,7 @@ au-delà de la dernière année observée, la fiabilité retombe à « estimée 
 <h4>Les {len(simulateur.catalogue)} régimes calculés</h4>
 {g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", "texte"],
            titre="Nombre de régimes par niveau de fiabilité",
-           entete_de_ligne=True)}""")
+           entete_de_ligne=True)}""", identifiant="donnees-fiabilite")
 
     depliant_sources = g.depliant("D'où viennent les chiffres, et comment on arbitre", f"""
 <p>Vingt-huit institutions sont recensées dans
@@ -5650,7 +5766,11 @@ le montant calculé, le <strong>recontrôlable</strong> sur le saisi. Ce n'est p
 un classement d'institutions mais de natures de données : l'INSEE pour ce qu'il
 mesure, le COR pour ce qu'il décide.</p>
 <p class="discret"><a href="{g.DEPOT}/blob/main/docs/limites.md">Limites
-détaillées</a></p>""")
+détaillées</a></p>""", identifiant="donnees-sources")
+
+    detail = (depliant_series + depliant_fiabilite
+              + _inventaire_section(macro.racine, simulateur.catalogue)
+              + depliant_sources)
 
     return f"""
 <h2 style="margin-top:0">Ce que valent les chiffres</h2>
@@ -5660,12 +5780,11 @@ produit — et ce qui ne l'est pas est dit.</p>
 
 <div class="fiches reperes">{reperes}</div>
 
+{g.plan(detail, "/donnees")}
+
 {bandeau}
 
 <h2>Le détail</h2>
 
-{depliant_series}
-{depliant_fiabilite}
-{_inventaire_section(macro.racine)}
-{depliant_sources}
+{detail}
 """

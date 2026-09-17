@@ -2532,12 +2532,12 @@ def test_chaque_tableau_porte_un_titre_et_des_en_tetes_de_ligne(contexte, chemin
     quelle génération. RGAA 4.1, critères 5.4 et 5.7.
     """
     corps = rendre(contexte, chemin, {})[1]
-    tableaux = re.findall(r"<table>(.*?)</table>", corps, re.S)
+    tableaux = re.findall(r"<table[^>]*>(.*?)</table>", corps, re.S)
     for rang, tableau_html in enumerate(tableaux, start=1):
         assert tableau_html.startswith("<caption>"), (
             f"{chemin} : le tableau n° {rang} n'a pas de titre"
         )
-        lignes = re.findall(r"<tr>(.*?)</tr>", tableau_html, re.S)
+        lignes = re.findall(r"<tr[^>]*>(.*?)</tr>", tableau_html, re.S)
         for ligne in lignes[1:]:
             assert ligne.startswith("<th ") and 'scope="row"' in ligne, (
                 f"{chemin} : une ligne du tableau n° {rang} n'a pas d'en-tête"
@@ -2621,6 +2621,7 @@ def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
 def _mots_visibles(corps: str) -> int:
     texte = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps, flags=re.S)
     texte = re.sub(r"<option\b.*?</option>", " ", texte, flags=re.S)
+    texte = _sans_blocs(texte, "div", r'<div class="panneau"[^>]*\bhidden>')
 
     def replie(trouve: re.Match) -> str:
         bloc = trouve.group(0)
@@ -3529,32 +3530,49 @@ def test_le_script_du_site_sait_ouvrir_les_mots_du_glossaire():
 # -- la discipline de la page Coût ---------------------------------------------
 
 
-def _hors_depliants(corps: str) -> str:
-    """Ce que la page montre sans qu'on ait rien déplié.
+def _sans_blocs(corps: str, balise: str, ouverture: str) -> str:
+    """``corps`` sans les blocs ``<balise …>`` reconnus par ``ouverture``.
 
-    Les ``<details>`` s'imbriquent — le tableau de points d'un graphique vit
-    dans une carte, elle-même parfois dans une section repliée —, et une
-    expression régulière non gourmande s'arrêterait à la première fermeture. On
-    apparie donc les balises.
+    Les blocs s'imbriquent — le tableau de points d'un graphique vit dans une
+    carte, elle-même parfois dans une section repliée —, et une expression
+    régulière non gourmande s'arrêterait à la première fermeture. On apparie
+    donc les balises, en comptant chaque ``<balise`` ouverte dans le bloc.
     """
     morceaux = []
     position = 0
+    debut = re.compile(ouverture)
+    bornes = re.compile(rf"<{balise}\b|</{balise}>")
     while position < len(corps):
-        ouverture = re.compile(r"<details\b").search(corps, position)
-        if not ouverture:
+        trouve = debut.search(corps, position)
+        if not trouve:
             morceaux.append(corps[position:])
             break
-        morceaux.append(corps[position:ouverture.start()])
+        morceaux.append(corps[position:trouve.start()])
         profondeur = 0
         fin = len(corps)
-        for balise in re.finditer(r"<details\b|</details>",
-                                  corps[ouverture.start():]):
-            profondeur += -1 if balise.group(0).startswith("</") else 1
+        for borne in bornes.finditer(corps, trouve.start()):
+            profondeur += -1 if borne.group(0).startswith("</") else 1
             if profondeur == 0:
-                fin = ouverture.start() + balise.end()
+                fin = borne.end()
                 break
         position = fin
     return "".join(morceaux)
+
+
+def _hors_depliants(corps: str) -> str:
+    """Ce que la page montre sans qu'on ait rien déplié.
+
+    Les sections repliées, les panneaux d'onglets que la feuille de style
+    cache tant que leur onglet n'est pas choisi, et les bulles du glossaire,
+    fermées tant qu'on ne les demande pas : rien de tout cela ne se lit à
+    l'ouverture de la page.
+    """
+    sans_bulles = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps,
+                         flags=re.S)
+    return _sans_blocs(
+        _sans_blocs(sans_bulles, "details", r"<details\b"),
+        "div", r'<div class="panneau"[^>]*\bhidden>',
+    )
 
 
 #: Ce que chaque page peut imposer à qui l'ouvre : mots à traverser, tracés
@@ -3645,7 +3663,7 @@ def test_la_page_de_resultats_replie_son_detail(contexte):
     )
     # Et le détail est là, replié : sept sections, plus lourdes à elles seules
     # que tout ce qui reste ouvert.
-    assert corps.count('<details class="section">') >= 7
+    assert len(re.findall(r'<details class="section"[ >]', corps)) >= 7
     assert len(visible) < len(corps) / 2, (
         "le détail replié pèse moins que ce qui reste ouvert"
     )
@@ -3662,7 +3680,10 @@ def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
     il pèse plus que ce qui reste ouvert.
     """
     corps = rendre(contexte, chemin, {})[1]
-    sections = corps.count('<details class="section">')
+    # Un panneau d'onglet replié est une section nommée qu'on ouvre à la
+    # demande, comme un dépliant : la page Cas types en range quatre.
+    sections = (len(re.findall(r'<details class="section"[ >]', corps))
+                + len(re.findall(r'<div class="panneau"[^>]*\bhidden>', corps)))
     assert sections >= 3, f"{chemin} : {sections} sections repliées"
     visible = _hors_depliants(corps)
     assert len(visible) < len(corps) / 2, (
@@ -3670,7 +3691,7 @@ def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
     )
     # Et chaque section porte un titre qui dit ce qu'elle contient : c'est lui
     # qui tient lieu de sommaire.
-    for titre in re.findall(r'<details class="section"><summary>(.*?)</summary>',
+    for titre in re.findall(r'<details class="section"(?: id="[^"]+")?><summary>(.*?)</summary>',
                             corps):
         assert len(titre.split()) >= 3, f"{chemin} : section mal nommée — {titre}"
 
@@ -3715,7 +3736,7 @@ def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
     assert mots <= 650, f"{mots} mots à lire avant d'avoir rien déplié"
 
     # Et tout le reste est bien là, rangé.
-    assert corps.count('<details class="section">') >= 8
+    assert len(re.findall(r'<details class="section"[ >]', corps)) >= 8
     assert corps.count('<figure class="graphique"') > traces
 
 
@@ -3726,7 +3747,7 @@ def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
     que c'est lui qui permet de s'arrêter à la deuxième ligne.
     """
     corps = rendre(contexte, "/cout", {})[1]
-    cartes = re.findall(r'<section class="cle">(.*?)</section>', corps, re.S)
+    cartes = re.findall(r'<section class="cle"[^>]*>(.*?)</section>', corps, re.S)
     assert len(cartes) == 2, f"{len(cartes)} cartes, deux attendues"
     for carte in cartes:
         titre = re.match(r"<h3>(.*?)</h3>", carte, re.S)
@@ -3844,3 +3865,242 @@ def test_la_signature_des_images_nomme_le_compte_et_le_site():
           ).read_text(encoding="utf-8")
     assert f'export const SIGNATURE = "{g.SIGNATURE}";' in js
     assert f'export const SIGNATURE_SITE = "{g.SIGNATURE_SITE}";' in js
+
+
+# -- la revue du 15 septembre 2026 : le thème « expérience utilisateur » --------
+
+
+def test_le_glossaire_est_le_meme_des_deux_cotes_du_portage():
+    """Un mot défini deux fois, de deux façons, n'est plus un glossaire.
+
+    La table est écrite dans le gabarit Python et recopiée dans le portage ;
+    ce test lit la copie et la compare entrée pour entrée, comme pour les
+    pictogrammes. Les témoins de page l'auraient vu aussi, mais seulement pour
+    les mots qu'une page emploie.
+    """
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    lecture = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'import { GLOSSAIRE } from "./moteur/js/gabarit.js";'
+         "process.stdout.write(JSON.stringify(GLOSSAIRE));"],
+        cwd=racine, capture_output=True, text=True, check=True,
+    )
+    assert json.loads(lecture.stdout) == dict(g.GLOSSAIRE)
+    # Et aucune définition ne porte un chiffre qui bouge : un plafond, une
+    # durée requise, un taux de décote y dériveraient sans que rien ne les
+    # recoupe. Les seuls nombres admis sont ceux d'un exemple ou d'une date.
+    for terme, definition in g.GLOSSAIRE.items():
+        assert not re.search(r"\d[\d\u202f]{3,}\s*€", definition), (
+            f"« {terme} » : un montant en euros dans une définition"
+        )
+
+
+def test_le_jargon_du_relecteur_porte_sa_definition(contexte):
+    """Les mots que la revue extérieure relevait comme non définis.
+
+    Chacun est un mot du glossaire là où il paraît : sur les résultats du
+    simulateur pour le taux de remplacement, le coefficient de conversion, le
+    capital notionnel et l'âge de référence ; dans le formulaire, sous un
+    point d'interrogation, pour le statut d'affiliation, la table de
+    conversion et l'âge de référence ; sur l'accueil pour les trimestres, la
+    décote, la surcote et le salaire de référence.
+    """
+    def termes(corps: str) -> set[str]:
+        return set(re.findall(
+            r'<button type="button" class="terme" aria-expanded="false">(.*?)</button>',
+            corps,
+        ))
+
+    def bulles(corps: str) -> str:
+        return " ".join(re.findall(r'<span class="bulle" role="note" hidden>(.*?)</span>',
+                                   corps))
+
+    resultats = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    assert {"taux de remplacement", "coefficient de conversion",
+            "âge de référence"} <= termes(resultats)
+    assert any(mot.startswith("capital notionnel") for mot in termes(resultats))
+    # L'appel d'une bulle porte son texte tel quel — c'est du HTML de phrase —,
+    # là où le mot du glossaire échappe le sien.
+    for cle in ("statut d'affiliation", "table de conversion", "âge de référence",
+                "part patronale", "indexation"):
+        assert g.GLOSSAIRE[cle] in bulles(resultats), cle
+
+    accueil = rendre(contexte, "/", {})[1]
+    assert {"trimestres", "décote", "surcote", "taux plein", "répartition",
+            "25 meilleures années"} <= termes(accueil)
+    cout = rendre(contexte, "/cout", {})[1]
+    assert {"répartition", "part du PIB", "comptes notionnels",
+            "taux de remplacement"} <= termes(cout)
+    assert "réglage annuel" in termes(rendre(contexte, "/cas-types", {})[1])
+
+
+def test_l_age_de_reference_dit_ce_qu_il_coute_et_ou_le_regler(contexte):
+    """Partir avant l'âge de référence coûte une seconde fois, sur le passé.
+
+    La fiche affichait « 67 ans » sans un mot ; la note nomme l'écart, la
+    pénalité, et le réglage qui la retire. Elle disparaît quand il n'y a rien
+    à dire : départ à l'âge de référence, ou conversion à l'âge effectif.
+    """
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    assert "Vous partez 3 ans avant l'âge de référence." in corps
+    assert "payée une seconde fois" in corps
+    assert "Conversion des droits acquis : à l'âge de départ effectif" in corps
+    # La note est en clair, pas dans une bulle ni un dépliant.
+    assert "Vous partez 3 ans avant" in _hors_depliants(corps)
+
+    neutre = rendre(contexte, "/simuler",
+                    {**SIMULATION_TEMOIN, "conversion_acquis": "liquidation"})[1]
+    assert "l'âge de référence.</strong>" not in neutre
+    a_l_heure = rendre(contexte, "/simuler",
+                       {**SIMULATION_TEMOIN, "liquidation": "2042-01-01"})[1]
+    assert "Vous partez" not in a_l_heure
+    tard = rendre(contexte, "/simuler",
+                  {**SIMULATION_TEMOIN, "liquidation": "2044-01-01"})[1]
+    assert "Vous partez 2 ans après" in tard and "récompensé une seconde fois" in tard
+
+
+def test_le_menu_des_statuts_est_groupe_par_famille(page):
+    """Soixante-deux options à la file ne se parcourent pas.
+
+    Le menu du premier métier range les statuts sous un ``<optgroup>`` par
+    famille, dans l'ordre de ``FAMILLES_STATUT`` ; celui des périodes
+    suivantes y ajoute le groupe des périodes sans emploi, en dernier. Chaque
+    option reste une option : le script qui grise les statuts fermés les
+    parcourt par ``menu.options``, que les groupes ne cachent pas.
+    """
+    from retraite_notionnelle.carriere import FAMILLES_STATUT
+
+    texte = page("/simuler")
+    premier = re.search(r'<select id="statut".*?</select>', texte, re.S).group(0)
+    groupes = re.findall(r'<optgroup label="([^"]+)">', premier)
+    assert groupes == list(FAMILLES_STATUT.values())
+    assert premier.count("<option") == 62
+    sncf = re.search(r'<optgroup label="Régimes spéciaux">(.*?)</optgroup>', premier).group(1)
+    assert 'value="agent_sncf"' in sncf
+    prive = re.search(r'<optgroup label="Salariés du privé">(.*?)</optgroup>', premier).group(1)
+    assert 'value="salarie_prive_non_cadre"' in prive
+
+    second = re.search(r'<select id="metier2_statut".*?</select>', texte, re.S).group(0)
+    assert re.findall(r'<optgroup label="([^"]+)">', second)[-1] == "Sans emploi"
+    assert second.startswith('<select id="metier2_statut" name="metier2_statut">'
+                             '<option value="" selected>— aucun —</option><optgroup')
+
+
+def test_la_page_cas_types_ouvre_sur_la_proposition(contexte):
+    """Le lecteur pressé s'arrêtait sur un contrefactuel.
+
+    Les cinq grilles sont derrière des onglets — des boutons radio, un
+    panneau par scénario —, et l'onglet coché à l'ouverture est le scénario
+    6. Les quatre autres panneaux sont dans la page, ``hidden`` : là où
+    ``:has()`` manque, la page montre le premier et cache les autres.
+    """
+    corps = rendre(contexte, "/cas-types", {})[1]
+    radios = re.findall(r'<input type="radio" name="grille" id="grille-([^"]+)"( checked)?>',
+                        corps)
+    assert [code for code, _ in radios] == [
+        "notionnel_liberal", "notionnel_retroactif", "notionnel_prospectif",
+        "notionnel_retroactif_employeur", "notionnel_prospectif_employeur",
+    ]
+    assert [bool(coche) for _, coche in radios] == [True, False, False, False, False]
+    panneaux = re.findall(r'<div class="panneau" data-onglet="([^"]+)"( hidden)?>', corps)
+    assert [code for code, _ in panneaux] == [code for code, _ in radios]
+    assert [bool(cache) for _, cache in panneaux] == [False, True, True, True, True]
+    # Chaque radio porte son libellé, et le premier dit ce qu'il est.
+    assert '<label for="grille-notionnel_liberal">Scénario 6, la proposition</label>' in corps
+    # La feuille de style sait montrer chacun des cinq panneaux.
+    for code, _ in radios:
+        assert f'.onglets:has(#grille-{code}:checked) ~ .panneaux > .panneau[data-onglet="{code}"]' in g.FEUILLE_DE_STYLE, code
+    # Et les trois chiffres d'ouverture sont lus sur cette grille-là.
+    assert "génération 2000, scénario 6" in corps
+
+
+def test_les_pages_longues_portent_leur_plan(contexte):
+    """Un plan déduit des sections, et qui les ouvre sans toucher à la route.
+
+    Coût et Données listent, sous leurs trois chiffres, chaque carte et chaque
+    section repliée qu'elles contiennent ; chaque lien porte la route de la
+    page et l'identifiant de la section, et la section porte cet identifiant.
+    Les autres pages, courtes, n'ont pas de plan.
+    """
+    for chemin, attendus in (
+        ("/cout", ["cout-bilan", "cout-provenance", "cout-depenses", "cout-ressources",
+                   "cout-transferts", "cout-scenarios", "cout-equilibre", "cout-garantie",
+                   "cout-poids", "cout-sources", "cout-limites"]),
+        ("/donnees", ["donnees-series", "donnees-fiabilite", "donnees-inventaire",
+                      "donnees-sources"]),
+    ):
+        corps = rendre(contexte, chemin, {})[1]
+        plan = re.search(r'<nav class="plan" aria-label="Dans cette page">.*?</nav>', corps, re.S)
+        assert plan, f"{chemin} : pas de plan"
+        liens = re.findall(r'<a href="([^"]+)" data-vers="([^"]+)">', plan.group(0))
+        assert [vers for _, vers in liens] == attendus
+        assert {href for href, _ in liens} == {g.lien(chemin)}
+        for identifiant in attendus:
+            assert f' id="{identifiant}"' in corps, identifiant
+        # Le plan vient APRÈS les trois chiffres : le résultat d'abord, la
+        # carte ensuite.
+        assert corps.index('<div class="fiches reperes">') < corps.index('<nav class="plan"')
+    for chemin in ("/", "/cas-types", "/methode", "/simuler", "/mentions"):
+        assert '<nav class="plan"' not in rendre(contexte, chemin, {})[1], chemin
+
+    from pathlib import Path
+
+    page_html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    assert 'closest("a[data-vers]")' in page_html and "noeud.open = true" in page_html
+
+
+def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
+    """Quatre-vingt-neuf régimes en cinq tableaux de prose ne se cherchaient
+    qu'au Ctrl+F.
+
+    Une seule table, chaque ligne portant sa famille et sa couverture en
+    ``data-``, un champ de recherche et deux menus devant elle, des en-têtes
+    qui sont des boutons de tri. Sans script, elle se lit entière.
+    """
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.regimes import charger_inventaire
+
+    corps = rendre(contexte, "/donnees", {})[1]
+    lignes = charger_inventaire(RACINE_DONNEES)
+    table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
+    rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)">', table)
+    assert len(rangs) == len(lignes)
+    assert [famille for famille, _ in rangs] == [l.famille for l in lignes]
+    assert table.count('<button type="button" class="tri"') == 7
+    assert 'data-cible="inventaire"' in corps
+    assert 'id="inventaire-recherche"' in corps and 'data-filtre="texte"' in corps
+    assert 'id="inventaire-famille"' in corps and 'id="inventaire-couverture"' in corps
+    assert 'data-compte-de="inventaire">89 régimes</p>' in corps.replace(
+        f"{len(lignes)} régimes</p>", "89 régimes</p>")
+    # Une couverture qu'aucune ligne ne porte n'est pas proposée au filtre.
+    assert 'value="a_modeliser"' not in corps
+    # La fiabilité de chaque fiche calculée est dans la ligne du régime.
+    catalogue = {r.code: str(r.fiabilite) for r in contexte.simulateur().catalogue}
+    for ligne in lignes:
+        if ligne.couverture in ("modelise", "partiel"):
+            assert ligne.code in catalogue, ligne.code
+    assert ">certifiee<" in table or ">haute<" in table
+    # Et l'inventaire ne s'impose toujours pas : il reste replié.
+    assert "<table" not in _hors_depliants(corps)
+
+    from pathlib import Path
+
+    page_html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    assert 'closest?.(".filtres[data-cible]")' in page_html
+    assert 'closest("th > button.tri")' in page_html and 'setAttribute("aria-sort"' in page_html
+
+
+def test_aucun_chemin_de_fichier_n_est_cite_en_texte_brut(contexte):
+    """« docs/limites.md » se lisait sans qu'on puisse l'ouvrir : chaque renvoi
+    à un document du dépôt est un lien vers ce document."""
+    for chemin in TITRES:
+        corps = rendre(contexte, chemin, {})[1]
+        for cite in re.findall(r"<code>(docs/[^<]+|scripts/[^<]+|data/[^<]+)</code>", corps):
+            assert False, f"{chemin} : « {cite} » cité en texte brut"

@@ -167,6 +167,116 @@ export function bulle(sujet, texte) {
 }
 
 /**
+ * Le glossaire du site : un mot de spécialiste, sa définition en une ou deux
+ * phrases de français courant. Copie de `GLOSSAIRE` dans `web/gabarit.py`,
+ * entrée pour entrée — les témoins des pages le vérifient.
+ */
+export const GLOSSAIRE = Object.freeze({
+  "compte notionnel":
+    "Un compte virtuel à votre nom, où chaque cotisation versée est "
+    + "inscrite. Au départ en retraite, le total est divisé par le nombre "
+    + "d'années qu'il vous reste à vivre en moyenne : c'est la pension. Rien "
+    + "n'est placé — c'est toujours la répartition, mais la règle de calcul "
+    + "change.",
+  "répartition":
+    "Les cotisations d'aujourd'hui paient les pensions d'aujourd'hui. Rien "
+    + "n'est mis de côté : chaque euro prélevé sur une fiche de paie est "
+    + "reversé aussitôt à un retraité.",
+  "part du PIB":
+    "Le PIB, c'est tout ce que la France produit en un an. En « part du "
+    + "PIB », on demande : sur 100 € produits, combien vont aux retraites ? "
+    + "C'est la seule façon de comparer 1959 et 2070, l'euro n'ayant pas la "
+    + "même valeur.",
+  "trimestres":
+    "L'unité dans laquelle le système actuel compte une carrière : quatre "
+    + "par année pleine, et un trimestre est acquis dès qu'on a gagné dans "
+    + "l'année l'équivalent de 150 heures au SMIC. Il en faut un nombre fixé "
+    + "par génération pour partir sans décote.",
+  "durée d'assurance":
+    "Le nombre de trimestres qu'une carrière a validés, cotisés ou non : "
+    + "c'est elle que le système actuel compare à la durée exigée de votre "
+    + "génération pour servir la pension entière.",
+  "décote":
+    "La réduction appliquée à toute la pension quand on part avant "
+    + "d'avoir la durée exigée, tant qu'on n'a pas atteint l'âge du taux "
+    + "plein. Elle se compte par trimestre manquant.",
+  "surcote":
+    "La majoration accordée pour chaque trimestre travaillé au-delà de "
+    + "l'âge légal, une fois la durée exigée atteinte.",
+  "taux plein":
+    "Le taux de pension entier, sans décote : on l'obtient avec la durée "
+    + "exigée, ou à l'âge où la décote s'annule quelle que soit la durée.",
+  "salaire de référence":
+    "Le salaire sur lequel le système actuel calcule la pension : la "
+    + "moyenne des 25 meilleures années au régime général, le dernier "
+    + "traitement dans la fonction publique.",
+  "table de conversion":
+    "La table qui dit combien d'années il reste à vivre, en moyenne, à un "
+    + "retraité de votre génération à l'âge du départ. Unisexe : la même "
+    + "pour les femmes et les hommes, bien qu'elles vivent plus longtemps — "
+    + "un choix de non-discrimination, comme dans le système actuel.",
+  "taux de remplacement":
+    "La première pension rapportée au dernier revenu d'activité : 60 % "
+    + "veut dire que la pension vaut 60 % de ce que vous gagniez juste avant "
+    + "de partir. Ici, un brut sur un brut.",
+  "assiette déplafonnée":
+    "L'assiette est la part du revenu sur laquelle on cotise. Déplafonnée "
+    + ": on cotise sur tout le revenu, sans le plafond au-delà duquel le "
+    + "régime général cesse de compter.",
+  "statut d'affiliation":
+    "Ce que vous êtes aux yeux des caisses — salarié du privé, "
+    + "fonctionnaire, artisan, agent de la SNCF… — et qui décide à quels "
+    + "régimes vous cotisez, donc à quel taux et sous quelle règle. Vous ne "
+    + "choisissez pas vos régimes : ils découlent de ce statut.",
+  "âge de référence":
+    "L'âge auquel la pension du régime général est servie entière quelle "
+    + "que soit la durée cotisée. Le simulateur ne s'en sert que pour "
+    + "convertir en capital les droits acquis avant la bascule, dans les "
+    + "scénarios 3 et 5 : partir avant, c'est convertir ces droits comme si "
+    + "l'on partait à cet âge.",
+  "coefficient de conversion":
+    "Le nombre par lequel le capital du compte est divisé pour obtenir la "
+    + "pension annuelle : le nombre d'années qu'il reste à vivre en moyenne "
+    + "à votre âge de départ, corrigé de la revalorisation à venir des "
+    + "pensions. Plus on part tard, plus il est petit, plus la pension est "
+    + "forte.",
+  "capital notionnel":
+    "Le total du compte au jour du départ : toutes les cotisations "
+    + "inscrites, revalorisées année après année. Virtuel : aucune somme "
+    + "n'est placée, le chiffre ne sert qu'au calcul de la pension.",
+  "coefficient d'équilibre":
+    "Le facteur commun qui, chaque année, ramènerait toutes les pensions "
+    + "à ce que les cotisations permettent de payer : au-dessus de 1 il en "
+    + "reste, en dessous il en manque. Le modèle le calcule mais ne "
+    + "l'applique pas aux pensions affichées.",
+  "part patronale":
+    "La cotisation que l'employeur verse pour vous, en plus de celle "
+    + "retenue sur votre salaire. Elle ne figure pas sur le net, mais elle "
+    + "est bien prélevée sur votre travail.",
+  "indexation":
+    "La règle qui revalorise chaque année le compte, puis la pension : sur "
+    + "les prix, sur les salaires, sur la masse des salaires… Le choix pèse "
+    + "lourd sur quarante ans de carrière.",
+  "garantie vieillesse":
+    "Le plancher de la proposition : à partir de 65 ans, ce qui manque "
+    + "pour l'atteindre est versé, payé par l'impôt. Il regarde votre seule "
+    + "pension, jamais celle du conjoint.",
+});
+
+/**
+ * Un mot du glossaire, tel qu'il se lit dans la phrase. `cle` est l'entrée du
+ * glossaire quand le mot s'écrit autrement ; un mot absent est une faute de
+ * programme, et lève.
+ */
+export function terme(motAffiche, cle = "") {
+  const entree = cle || motAffiche;
+  if (!(entree in GLOSSAIRE)) {
+    throw new Error(`mot absent du glossaire : ${entree}`);
+  }
+  return mot(motAffiche, GLOSSAIRE[entree]);
+}
+
+/**
  * Un champ, son libellé, son aide courte et, s'il en faut, sa bulle.
  *
  * `aide` tient en une ligne sous le libellé : c'est ce qu'il faut savoir pour
@@ -264,7 +374,7 @@ export function liste(nom, libelle, options, selection, aide = "", attributs = {
   const supplement = Object.entries(attributs)
     .map(([cle, val]) => ` ${cle.replace(/_+$/, "").replace(/_/g, "-")}="${echapper(val)}"`)
     .join("");
-  const choix = options.map((option) => {
+  const optionHtml = (option) => {
     const [code, texte] = option;
     const disponible = option.length > 2 ? option[2] : true;
     const propres = Object.entries(option.length > 3 ? option[3] : {})
@@ -275,7 +385,15 @@ export function liste(nom, libelle, options, selection, aide = "", attributs = {
       + (disponible || code === selection ? "" : " disabled")
       + propres
       + `>${echapper(texte)}</option>`;
-  }).join("");
+  };
+  // Une entrée `[libelle, [options]]` — dont le second élément est une LISTE
+  // et non un texte — est un groupe, rendu sous un `<optgroup>`.
+  const choix = options.map((option) => (
+    Array.isArray(option[1])
+      ? `<optgroup label="${echapper(option[0])}">`
+        + option[1].map(optionHtml).join("") + "</optgroup>"
+      : optionHtml(option)
+  )).join("");
   const aideHtml = aide ? `<span class="aide">${echapper(aide)}</span>` : "";
   const appel = complement ? bulle(`${libelle} : en savoir plus`, complement) : "";
   return `<div><label for="${nom}">${echapper(libelle)}${appel}${aideHtml}</label>`
@@ -316,10 +434,17 @@ export class Cellule {
  * une cellule lue au hasard dans la grille n'est rattachée à rien.
  */
 export function tableau(entetes, lignes, classesColonnes = null, titre = "",
-                        enteteDeLigne = false) {
+                        enteteDeLigne = false, attributsLignes = null,
+                        triable = false, identifiant = "") {
   const classes = classesColonnes || entetes.map(() => "");
+  // `triable` fait de chaque en-tête un bouton que le script d'`index.html`
+  // écoute ; `attributsLignes` pose sur chaque `<tr>` ce que le filtre lit.
   const tete = entetes.map((intitule, i) => `<th class="${classes[i]}" scope="col">`
-    + `${echapper(intitule)}</th>`).join("");
+    + (triable
+      ? `<button type="button" class="tri" data-colonne="${i}">${echapper(intitule)}</button>`
+      : echapper(intitule))
+    + "</th>").join("");
+  const attributs = attributsLignes || lignes.map(() => ({}));
   const cellule = (valeur, classe, premiere) => {
     const balise = premiere && enteteDeLigne ? "th" : "td";
     const portee = balise === "th" ? ' scope="row"' : "";
@@ -329,13 +454,17 @@ export function tableau(entetes, lignes, classesColonnes = null, titre = "",
       + (valeur instanceof Cellule ? valeur.html : valeur)
       + `</${balise}>`;
   };
-  const corps = lignes.map((ligne) => `<tr>${
-    ligne.slice(0, classes.length)
-      .map((valeur, i) => cellule(valeur, classes[i], i === 0)).join("")
-  }</tr>`).join("");
+  const corps = lignes.map((ligne, rang) => "<tr"
+    + Object.entries(attributs[rang])
+      .map(([cle, val]) => ` ${cle}="${echapper(String(val))}"`).join("")
+    + `>${
+      ligne.slice(0, classes.length)
+        .map((valeur, i) => cellule(valeur, classes[i], i === 0)).join("")
+    }</tr>`).join("");
   const legendeHtml = titre ? `<caption>${echapper(titre)}</caption>` : "";
   const nom = titre ? ` role="region" aria-label="${echapper(titre)}"` : "";
-  return `<div class="defilant" tabindex="0"${nom}><table>${legendeHtml}`
+  const cible = identifiant ? ` id="${echapper(identifiant)}"` : "";
+  return `<div class="defilant" tabindex="0"${nom}><table${cible}>${legendeHtml}`
     + `<thead><tr>${tete}</tr></thead>`
     + `<tbody>${corps}</tbody></table></div>`;
 }
@@ -366,10 +495,13 @@ export function gloses(entrees) {
  * « 422 milliards » ne veut rien dire tant qu'on n'a pas dit « en un an, pour
  * 17 millions de retraités ».
  */
-export function fiche(etiquette, valeur, precision = "") {
+export function fiche(etiquette, valeur, precision = "", definition = "") {
   const suite = precision ? `<div class="precision">${precision}</div>` : "";
+  // `definition` fait de l'étiquette un mot du glossaire : la définition
+  // s'ouvre sous elle, comme partout ailleurs sur le site.
+  const nom = definition ? mot(etiquette, definition) : echapper(etiquette);
   return `<div class="fiche"><div class="valeur">${valeur}</div>`
-    + `<div class="etiquette">${echapper(etiquette)}</div>${suite}</div>`;
+    + `<div class="etiquette">${nom}</div>${suite}</div>`;
 }
 
 /**
@@ -500,9 +632,45 @@ export function points(entrees) {
   return `<div class="points">${corps}</div>`;
 }
 
-export function depliant(titre, corps) {
-  return `<details class="section">${sommaire(echapper(titre))}`
+export function depliant(titre, corps, identifiant = "") {
+  // `identifiant` le rend joignable depuis le plan de la page.
+  const cible = identifiant ? ` id="${echapper(identifiant)}"` : "";
+  return `<details class="section"${cible}>${sommaire(echapper(titre))}`
     + `<div class="dedans">${corps}</div></details>`;
+}
+
+/**
+ * Ce qu'un plan de page sait retrouver : un dépliant identifié et son titre,
+ * ou une carte identifiée et sa question. Les deux formes dans une seule
+ * expression, pour que le plan les liste dans l'ordre de la page.
+ */
+const SECTION_DU_PLAN = new RegExp(
+  '<details class="section" id="([^"]+)"><summary>.*?<span>(.*?)</span></summary>'
+  + '|<section class="cle" id="([^"]+)" tabindex="-1"><h3>(.*?)</h3>',
+  "g",
+);
+
+/**
+ * Le sommaire d'une page longue, DÉDUIT de ses sections.
+ *
+ * Il est lu dans le HTML déjà rendu, où chaque dépliant identifié porte son
+ * titre : il ne peut donc pas dériver, et il est identique des deux côtés du
+ * portage. Les liens ne touchent pas à l'adresse — ici l'adresse EST la route —
+ * : `data-vers` désigne la section, et le script d'`index.html` l'ouvre, y
+ * pose le focus et y fait défiler. Voir `plan` dans `web/gabarit.py`.
+ */
+export function plan(corps, chemin, etiquette = "Dans cette page") {
+  const entrees = [...corps.matchAll(SECTION_DU_PLAN)]
+    .map((trouve) => [trouve[1] || trouve[3], trouve[2] || trouve[4]]);
+  if (!entrees.length) {
+    return "";
+  }
+  const liens = entrees
+    .map(([identifiant, titre]) => `<li><a href="${lien(chemin)}" `
+      + `data-vers="${identifiant}">${titre}</a></li>`)
+    .join("");
+  return `<nav class="plan" aria-label="${echapper(etiquette)}">`
+    + `<p class="etiquette">${echapper(etiquette)}</p><ol>${liens}</ol></nav>`;
 }
 
 /**
@@ -519,7 +687,7 @@ export function depliant(titre, corps) {
  *
  * `reponse` et `source` sont du HTML ; `question` est du texte.
  */
-export function cle(question, reponse, corps, source = "") {
+export function cle(question, reponse, corps, source = "", identifiant = "") {
   const fin = source ? `<p class="source">${source}</p>` : "";
   // Le bouton n'est pas un ornement : c'est lui qui fait de la carte autre chose
   // qu'un bloc de page. Il compose, dans le navigateur, une image qui porte la
@@ -531,7 +699,10 @@ export function cle(question, reponse, corps, source = "") {
     ? '<p class="partage"><button type="button" class="partager">'
       + `${icone("download")}<span>Télécharger l'image</span></button></p>`
     : "";
-  return `<section class="cle"><h3>${echapper(question)}</h3>`
+  // Identifiée, la carte est joignable depuis le plan de la page ; le
+  // `tabindex` lui permet de recevoir le focus quand on y arrive par lui.
+  const cible = identifiant ? ` id="${echapper(identifiant)}" tabindex="-1"` : "";
+  return `<section class="cle"${cible}><h3>${echapper(question)}</h3>`
     + `<p class="reponse">${reponse}</p>${corps}${fin}${partage}</section>`;
 }
 

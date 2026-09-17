@@ -611,6 +611,32 @@ def _affiliations():
     return Affiliations(RACINE_DONNEES)
 
 
+def test_chaque_statut_a_sa_famille_dans_le_menu():
+    """Soixante-deux statuts à la file ne se parcourent pas ; sept groupes, si.
+
+    Chaque statut du routage porte une ``famille`` — une clé de
+    ``FAMILLES_STATUT`` —, et c'est elle qui le range dans le menu du
+    simulateur. Un statut sans famille tomberait hors du menu, ce que le
+    chargement refuse ; ce test dit en plus qu'aucune famille n'est vide, et
+    que la table des libellés n'a pas de clé que le YAML n'emploie pas.
+    """
+    from retraite_notionnelle.carriere import FAMILLES_STATUT
+
+    affiliations = _affiliations()
+    par_famille = {famille: [] for famille in FAMILLES_STATUT}
+    for statut in affiliations.codes:
+        assert affiliations.famille(statut) in FAMILLES_STATUT, statut
+        par_famille[affiliations.famille(statut)].append(statut)
+    vides = [famille for famille, statuts in par_famille.items() if not statuts]
+    assert not vides, f"familles sans statut : {vides}"
+    # Les deux statuts les plus communs sont dans le premier groupe : c'est
+    # celui qu'on voit en ouvrant le menu.
+    assert par_famille["prive"][:1] and "salarie_prive_non_cadre" in par_famille["prive"]
+    assert "fonctionnaire_etat" in par_famille["public"]
+    assert "artisan" in par_famille["independant"]
+    assert "agent_sncf" in par_famille["special"]
+
+
 def test_toute_annee_routee_trouve_une_periode_de_regime(catalogue):
     """Un statut ne peut pas router vers un régime qui ne tourne pas encore.
 

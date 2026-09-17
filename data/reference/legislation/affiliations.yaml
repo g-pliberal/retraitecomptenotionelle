@@ -19,6 +19,11 @@
 # commun dont relève qui l'embrasse après la fermeture — c'est ce que le
 # formulaire oppose à qui se déclarerait mineur en 2015.
 #
+# `famille` range le statut dans le menu du simulateur : soixante statuts à la
+# file ne se parcourent pas, sept groupes se parcourent. Les valeurs admises
+# et leur libellé sont dans `FAMILLES_STATUT` (`carriere.py`), et un test
+# refuse un statut sans famille ou d'une famille inconnue.
+#
 # `sans_employeur: true` marque les statuts qui n'ont PAS d'employeur : la
 # cotisation y est intégralement personnelle. Le drapeau est nécessaire parce
 # qu'un non-salarié relève souvent d'un régime partagé avec des salariés — un
@@ -53,6 +58,7 @@ affiliations:
 
   salarie_prive_non_cadre:
     libelle: Salarié du secteur privé, non cadre
+    famille: prive
     periodes:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
       - {debut: 1945, fin: 1956, regimes: [regime_general]}
@@ -62,6 +68,7 @@ affiliations:
 
   salarie_prive_cadre:
     libelle: Salarié du secteur privé, cadre
+    famille: prive
     periodes:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
       - {debut: 1945, fin: 1946, regimes: [regime_general]}
@@ -71,6 +78,7 @@ affiliations:
 
   salarie_prive_non_cadre_entreprise_recente:
     libelle: Salarié du secteur privé, non cadre, entreprise créée après 1997
+    famille: prive
     periodes:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
       - {debut: 1945, fin: 1956, regimes: [regime_general]}
@@ -88,6 +96,7 @@ affiliations:
 
   salarie_prive_cadre_entreprise_recente:
     libelle: Salarié du secteur privé, cadre, entreprise créée après 1981
+    famille: prive
     periodes:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
       - {debut: 1945, fin: 1946, regimes: [regime_general]}
@@ -104,6 +113,7 @@ affiliations:
 
   maitre_enseignement_prive:
     libelle: Maître de l'enseignement privé sous contrat
+    famille: prive
     periodes:
       - {debut: 1945, fin: 1956, regimes: [regime_general]}
       - {debut: 1957, fin: 1960, regimes: [regime_general, unirs]}
@@ -120,6 +130,7 @@ affiliations:
 
   elu_local:
     libelle: Élu local indemnisé (maire, adjoint, conseiller)
+    famille: elus
     periodes:
       - {debut: 1973, fin: 2012, regimes: [ircantec]}
       - {debut: 2013, fin: null, regimes: [regime_general, ircantec],
@@ -140,6 +151,7 @@ affiliations:
 
   salarie_saint_pierre_et_miquelon:
     libelle: Salarié de Saint-Pierre-et-Miquelon
+    famille: outre_mer
     periodes:
       - {debut: 1987, fin: 2018, regimes: [cps_saint_pierre_et_miquelon, arrco, arrco_tranche_2]}
       - {debut: 2019, fin: null, regimes: [cps_saint_pierre_et_miquelon, agirc_arrco]}
@@ -151,6 +163,7 @@ affiliations:
 
   salarie_mayotte:
     libelle: Salarié de Mayotte
+    famille: outre_mer
     periodes:
       - {debut: 1987, fin: null, regimes: [cssm_mayotte]}
     note: >-
@@ -160,6 +173,7 @@ affiliations:
 
   auteur_dramatique:
     libelle: Auteur ou compositeur dramatique, auteur de l'audiovisuel (SACD)
+    famille: prive
     periodes:
       - {debut: 1964, fin: 1976, regimes: [ircec_racd]}
       - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap, ircec_racd]}
@@ -171,6 +185,7 @@ affiliations:
 
   auteur_lyrique:
     libelle: Auteur ou compositeur de musique (SACEM)
+    famille: prive
     periodes:
       - {debut: 1962, fin: 1976, regimes: [ircec_racl]}
       - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap, ircec_racl]}
@@ -181,6 +196,7 @@ affiliations:
 
   gerant_debit_tabac:
     libelle: Gérant de débit de tabac (buraliste)
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1962, regimes: [organic]}
@@ -198,6 +214,7 @@ affiliations:
 
   micro_entrepreneur:
     libelle: Micro-entrepreneur (commerçant, artisan ou libéral non réglementé)
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1972, regimes: [organic]}
@@ -219,6 +236,7 @@ affiliations:
 
   parlementaire:
     libelle: Député ou sénateur (indemnité parlementaire)
+    famille: elus
     periodes:
       - {debut: 1930, fin: null, regimes: [assemblees_parlementaires]}
     note: >-
@@ -230,6 +248,7 @@ affiliations:
 
   membre_cese:
     libelle: Membre du Conseil économique, social et environnemental
+    famille: elus
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1957, fin: null, regimes: [cese_membres], entres_avant: 2023-09}
@@ -243,6 +262,7 @@ affiliations:
 
   salarie_polynesie:
     libelle: Salarié de Polynésie française
+    famille: outre_mer
     periodes:
       - {debut: 1968, fin: 1994, regimes: [cps_polynesie]}
       - {debut: 1995, fin: null, regimes: [cps_polynesie, cps_polynesie_tranche_b]}
@@ -253,6 +273,7 @@ affiliations:
 
   salarie_nouvelle_caledonie:
     libelle: Salarié de Nouvelle-Calédonie
+    famille: outre_mer
     periodes:
       - {debut: 1958, fin: 1960, regimes: [cafat_nouvelle_caledonie]}
       - {debut: 1961, fin: 2018, regimes: [cafat_nouvelle_caledonie, arrco, arrco_tranche_2]}
@@ -264,6 +285,7 @@ affiliations:
 
   salarie_wallis_et_futuna:
     libelle: Salarié de Wallis-et-Futuna
+    famille: outre_mer
     periodes:
       - {debut: 1975, fin: null, regimes: [wallis_et_futuna]}
     note: >-
@@ -272,6 +294,7 @@ affiliations:
 
   fonctionnaire_pacifique:
     libelle: Fonctionnaire de Nouvelle-Calédonie (CLR)
+    famille: outre_mer
     periodes:
       - {debut: 1959, fin: null, regimes: [fonctionnaires_pacifique]}
     note: >-
@@ -280,6 +303,7 @@ affiliations:
 
   salarie_regime_professionnel_integre:
     libelle: Salarié d'une banque AFB, d'un organisme de sécurité sociale ou d'une caisse d'épargne, entré avant l'intégration à l'Agirc-Arrco
+    famille: prive
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
@@ -298,6 +322,7 @@ affiliations:
 
   fonctionnaire_etat:
     libelle: Fonctionnaire titulaire de l'État (civil ou militaire)
+    famille: public
     periodes:
       - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
       - {debut: 1948, fin: 2004, regimes: [fonction_publique_etat]}
@@ -305,18 +330,21 @@ affiliations:
 
   fonctionnaire_territorial_hospitalier:
     libelle: Fonctionnaire territorial ou hospitalier
+    famille: public
     periodes:
       - {debut: 1945, fin: 2004, regimes: [cnracl]}
       - {debut: 2005, fin: null, regimes: [cnracl, rafp]}
 
   ouvrier_etat:
     libelle: Ouvrier des établissements industriels de l'État
+    famille: public
     periodes:
       - {debut: 1930, fin: 2004, regimes: [fspoeie]}
       - {debut: 2005, fin: null, regimes: [fspoeie, rafp]}
 
   fonctionnaire_etat_actif:
     libelle: Fonctionnaire de l'État, emploi de catégorie active
+    famille: public
     categorie_active: active
     periodes:
       - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
@@ -334,6 +362,7 @@ affiliations:
 
   fonctionnaire_etat_super_actif:
     libelle: Fonctionnaire de l'État, emploi de catégorie super-active (police, pénitentiaire)
+    famille: public
     categorie_active: super_active
     periodes:
       - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
@@ -352,6 +381,7 @@ affiliations:
 
   fonctionnaire_territorial_hospitalier_actif:
     libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie active
+    famille: public
     categorie_active: active
     periodes:
       - {debut: 1945, fin: 2004, regimes: [cnracl]}
@@ -364,6 +394,7 @@ affiliations:
 
   fonctionnaire_territorial_hospitalier_super_actif:
     libelle: Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (sapeur-pompier)
+    famille: public
     categorie_active: super_active
     periodes:
       - {debut: 1945, fin: 2004, regimes: [cnracl]}
@@ -376,6 +407,7 @@ affiliations:
 
   ouvrier_etat_actif:
     libelle: Ouvrier de l'État, emploi insalubre ou de catégorie active
+    famille: public
     categorie_active: active
     periodes:
       - {debut: 1930, fin: 2004, regimes: [fspoeie]}
@@ -389,6 +421,7 @@ affiliations:
 
   militaire:
     libelle: Militaire non officier (militaire du rang, sous-officier)
+    famille: public
     pension_militaire: non_officier
     periodes:
       - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
@@ -406,6 +439,7 @@ affiliations:
 
   militaire_officier:
     libelle: Officier de carrière
+    famille: public
     pension_militaire: officier
     periodes:
       - {debut: 1930, fin: 1947, regimes: [pensions_civiles_1853]}
@@ -419,6 +453,7 @@ affiliations:
 
   contractuel_public:
     libelle: Agent non titulaire de la fonction publique
+    famille: public
     periodes:
       - {debut: 1945, fin: 1950, regimes: [regime_general]}
       - {debut: 1951, fin: 1959, regimes: [regime_general, ipacte]}
@@ -434,6 +469,7 @@ affiliations:
 
   artisan:
     libelle: Artisan
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1978, regimes: [cancava]}
@@ -444,6 +480,7 @@ affiliations:
 
   commercant:
     libelle: Commerçant ou industriel
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1972, regimes: [organic]}
@@ -455,6 +492,7 @@ affiliations:
 
   profession_liberale:
     libelle: Profession libérale (CNAVPL et CIPAV)
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1978, regimes: [cnavpl]}
@@ -482,6 +520,7 @@ affiliations:
 
   liberal_non_reglemente:
     libelle: Profession libérale non réglementée (consultant, formateur, coach, développeur…)
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1978, regimes: [cnavpl]}
@@ -516,6 +555,7 @@ affiliations:
     libelle: >-
       Auxiliaire médical libéral (infirmier, masseur-kinésithérapeute,
       orthophoniste)
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1983, regimes: [cnavpl]}
@@ -532,6 +572,7 @@ affiliations:
 
   pharmacien:
     libelle: Pharmacien ou biologiste libéral
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: null, regimes: [cnavpl, cavp_complementaire]}
@@ -547,6 +588,7 @@ affiliations:
 
   expert_comptable:
     libelle: Expert-comptable ou commissaire aux comptes
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1952, regimes: [cnavpl]}
@@ -560,6 +602,7 @@ affiliations:
 
   agent_general_assurance:
     libelle: Agent général d'assurance
+    famille: independant
     periodes:
       - {debut: 1949, fin: 1967, regimes: [cnavpl]}
       - {debut: 1968, fin: null, regimes: [cnavpl, cavamac_complementaire]}
@@ -582,6 +625,7 @@ affiliations:
 
   notaire:
     libelle: Notaire libéral
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: null, regimes: [cnavpl, cprn_complementaire]}
@@ -596,6 +640,7 @@ affiliations:
 
   veterinaire:
     libelle: Vétérinaire libéral
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1949, regimes: [cnavpl]}
@@ -613,6 +658,7 @@ affiliations:
     libelle: >-
       Officier ministériel ou public (commissaire de justice, greffier de
       tribunal de commerce, avocat aux Conseils)
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1978, regimes: [cnavpl]}
@@ -628,6 +674,7 @@ affiliations:
 
   avocat:
     libelle: Avocat
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1948, fin: 1978, regimes: [cnbf]}
@@ -635,6 +682,7 @@ affiliations:
 
   salarie_agricole:
     libelle: Salarié agricole
+    famille: agricole
     periodes:
       - {debut: 1930, fin: 1944, regimes: [assurances_sociales]}
       - {debut: 1945, fin: 1960, regimes: [msa_salaries]}
@@ -643,6 +691,7 @@ affiliations:
 
   exploitant_agricole:
     libelle: Chef d'exploitation ou d'entreprise agricole
+    famille: agricole
     sans_employeur: true
     periodes:
       - {debut: 1952, fin: 2002, regimes: [msa_non_salaries]}
@@ -650,6 +699,7 @@ affiliations:
 
   agent_sncf:
     libelle: Agent du cadre permanent de la SNCF
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: null, regimes: [sncf], entres_avant: 2020}
@@ -663,6 +713,7 @@ affiliations:
 
   agent_ratp:
     libelle: Agent statutaire de la RATP
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: null, regimes: [ratp], entres_avant: 2023-09}
@@ -676,6 +727,7 @@ affiliations:
 
   agent_ieg:
     libelle: Agent des industries électriques et gazières
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1946, fin: null, regimes: [ieg], entres_avant: 2023-09}
@@ -688,11 +740,13 @@ affiliations:
 
   marin:
     libelle: Marin professionnel
+    famille: special
     periodes:
       - {debut: 1930, fin: null, regimes: [marins]}
 
   mineur:
     libelle: Mineur
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: null, regimes: [mines], entres_avant: 2010-09}
@@ -709,6 +763,7 @@ affiliations:
 
   clerc_de_notaire:
     libelle: Clerc ou employé de notaire
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1937, fin: null, regimes: [crpcen], entres_avant: 2023-09}
@@ -726,6 +781,7 @@ affiliations:
 
   agent_banque_de_france:
     libelle: Agent titulaire de la Banque de France
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: null, regimes: [banque_de_france], entres_avant: 2023-09}
@@ -741,6 +797,7 @@ affiliations:
 
   personnel_opera:
     libelle: Personnel de l'Opéra national de Paris
+    famille: special
     periodes:
       - {debut: 1930, fin: null, regimes: [opera_de_paris]}
     note: >-
@@ -751,6 +808,7 @@ affiliations:
 
   personnel_comedie_francaise:
     libelle: Personnel de la Comédie-Française
+    famille: special
     periodes:
       - {debut: 1930, fin: null, regimes: [comedie_francaise]}
     note: >-
@@ -759,6 +817,7 @@ affiliations:
 
   agent_seita:
     libelle: Agent du personnel de la SEITA
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1935, fin: null, regimes: [seita], entres_avant: 1981}
@@ -781,6 +840,7 @@ affiliations:
 
   agent_port_strasbourg:
     libelle: Agent du Port autonome de Strasbourg
+    famille: special
     periodes:
       - {debut: 1930, fin: null, regimes: [port_strasbourg]}
     note: >-
@@ -789,6 +849,7 @@ affiliations:
 
   agent_chemins_fer_secondaires:
     libelle: Agent des chemins de fer secondaires d'intérêt général
+    famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
       - {debut: 1930, fin: 1954, regimes: [chemins_fer_secondaires], entres_avant: 1955}
@@ -806,6 +867,7 @@ affiliations:
 
   artiste_auteur:
     libelle: Artiste-auteur (écrivain, illustrateur, photographe…)
+    famille: prive
     periodes:
       - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap]}
     note: >-
@@ -817,6 +879,7 @@ affiliations:
 
   chirurgien_dentiste_ou_sage_femme:
     libelle: Chirurgien-dentiste ou sage-femme libéral
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: null, regimes: [cnavpl, carcdsf_complementaire]}
@@ -828,6 +891,7 @@ affiliations:
 
   medecin_liberal:
     libelle: Médecin libéral
+    famille: independant
     sans_employeur: true
     periodes:
       - {debut: 1949, fin: 1971, regimes: [cnavpl, carmf_complementaire]}
@@ -844,6 +908,7 @@ affiliations:
 
   personnel_navigant:
     libelle: Personnel navigant professionnel de l'aéronautique civile
+    famille: special
     periodes:
       - {debut: 1945, fin: 1946, regimes: [regime_general]}
       - {debut: 1947, fin: 1962, regimes: [regime_general, agirc]}
@@ -858,6 +923,7 @@ affiliations:
 
   ministre_du_culte:
     libelle: Ministre du culte ou membre d'une congrégation religieuse
+    famille: special
     periodes:
       - {debut: 1979, fin: null, regimes: [cavimac]}
     note: >-
@@ -871,6 +937,7 @@ affiliations:
 
   sans_activite:
     libelle: Sans activité professionnelle
+    famille: hors_emploi
     periodes:
       - {debut: 1930, fin: null, regimes: []}
     note: >-
