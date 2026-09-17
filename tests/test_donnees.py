@@ -435,7 +435,11 @@ def test_les_tables_par_generation_disent_le_droit_en_vigueur():
     # Loi du 9 novembre 2010, puis loi du 14 avril 2023.
     assert ages[1950][0] == 60.0
     assert ages[1955][0] == 62.0
-    assert ages[1968][0] == 64.0
+    # Loi du 30 décembre 2025 (suspension) : 64 ans à compter de 1969, et la
+    # génération 1965 coupée au 1er avril.
+    assert ages[1964][0] == 62.75 and ages[1965][0] == 62.75
+    assert ages[1965.25][0] == 63.0 and ages[1968][0] == 63.75
+    assert ages[1969][0] == 64.0
     # LES DEUX GÉNÉRATIONS QUE LES TEXTES COUPENT EN COURS D'ANNÉE. Elles
     # portent deux lignes chacune, et la clé décimale dit le mois : `1951.5`
     # pour le 1er juillet 1951, `1961.667` pour le 1er septembre 1961.
@@ -443,7 +447,12 @@ def test_les_tables_par_generation_disent_le_droit_en_vigueur():
     assert ages[1961][0] == 62.0 and ages[1961.667][0] == 62.25
     # Les deux fractions viennent du texte au même titre : le récupérateur rend
     # un segment par valeur, et la confrontation les a trouvées identiques.
-    assert all(niveau == "certifiee" for _, niveau in ages.values())
+    # Sauf les six lignes que la suspension de 2026 a réécrites : transcrites
+    # de la loi et de la circulaire Cnav 2026-07, elles attendent un dump LEGI
+    # postérieur au 8 mai 2026 pour redevenir certifiées.
+    suspendues = {1964.0, 1965.0, 1965.25, 1966.0, 1967.0, 1968.0}
+    for generation, (_, niveau) in ages.items():
+        assert niveau == ("moyenne" if generation in suspendues else "certifiee"), generation
 
     annulation = table("age_annulation_decote.csv", "age")
     assert annulation[1950][0] == 65.0
@@ -452,7 +461,11 @@ def test_les_tables_par_generation_disent_le_droit_en_vigueur():
     durees = table("duree_assurance_requise.csv", "trimestres")
     assert durees[1943][0] == 160          # fin de la montée en charge Balladur
     assert durees[1958][0] == 167          # loi Touraine
-    assert durees[1965][0] == 172          # cible atteinte, loi de 2023
+    # Suspension de 2026 : 170 pour 1964 et le premier trimestre 1965, 171
+    # du 1er avril 1965, la cible de 172 à compter de 1966 (au lieu de 1965).
+    assert durees[1964][0] == 170 and durees[1965][0] == 170
+    assert durees[1965.25][0] == 171 and durees[1966][0] == 172
+    assert durees[1965][1] == "moyenne"   # transcrite, en attente d'un dump LEGI
     assert durees[1943][1] == "haute"      # décrets non codifiés
     assert durees[1958][1] == "certifiee"  # article L. 161-17-3
     # Même coupure au 1er septembre 1961 : 168 trimestres avant, 169 après.

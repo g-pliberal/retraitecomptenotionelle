@@ -378,6 +378,26 @@ def test_la_decote_de_la_pension_civile_se_lit_a_l_annee_d_ouverture_du_droit(
         assert nous["decote_trimestres"] == eux["decote_trimestres"], code
 
 
+#: Profils où OpenFisca sert la surcote au taux de l'année du départ à tous
+#: les trimestres, quand l'article L. 14 III donne à chacun le taux en vigueur
+#: quand il a été accompli — 0,75 % jusqu'en 2008, 1,25 % depuis (LFSS 2009).
+#: Né en janvier 1948, à l'âge légal en janvier 2008, parti en janvier 2011 :
+#: trois trimestres de 2008 à 0,75 % et huit de 2009-2010 à 1,25 %, onze en
+#: tout depuis le trimestre civil qui suit l'âge légal ; OpenFisca en compte
+#: douze, tous à 1,25 %. Le test vérifie que chacun rend exactement ce que SA
+#: règle commande.
+SURCOTE_CIVILE_DATEE = {"surcote_1948": ((3, 0.0075), (8, 0.0125))}
+
+
+def _coefficient_surcote_civile(code: str, eux: dict) -> tuple[float, float]:
+    """(notre coefficient, celui d'OpenFisca) pour un profil surcoté."""
+    leur = 1 + 0.0125 * eux["surcote_trimestres"]
+    if code not in SURCOTE_CIVILE_DATEE:
+        return leur, leur
+    notre = 1 + sum(n * taux for n, taux in SURCOTE_CIVILE_DATEE[code])
+    return notre, leur
+
+
 def test_le_taux_de_la_pension_civile_concorde_sauf_la_transcription_de_2010(
         oracle_fonction_publique, simulateur):
     """Décote et surcote ensemble : le taux de liquidation.
@@ -400,12 +420,21 @@ def test_le_taux_de_la_pension_civile_concorde_sauf_la_transcription_de_2010(
                 TAUX_PLEIN_PENSION_CIVILE * (1 - COEFFICIENT_2010_OPENFISCA * manquants),
                 abs=TOLERANCE_EXACTE), code
             continue
+        if code in SURCOTE_CIVILE_DATEE:
+            notre, leur = _coefficient_surcote_civile(code, eux)
+            assert nous["taux_de_liquidation"] == pytest.approx(
+                TAUX_PLEIN_PENSION_CIVILE * notre, abs=TOLERANCE_EXACTE), code
+            assert eux["taux_de_liquidation"] == pytest.approx(
+                TAUX_PLEIN_PENSION_CIVILE * leur, abs=TOLERANCE_EXACTE), code
+            continue
         assert nous["taux_de_liquidation"] == pytest.approx(
             eux["taux_de_liquidation"], abs=TOLERANCE_EXACTE), code
 
 
 def test_la_surcote_de_la_pension_civile_concorde(oracle_fonction_publique, simulateur):
-    """Le témoin porte au moins un profil surcoté, et les deux la servent."""
+    """Le témoin porte au moins un profil surcoté, et les deux la servent —
+    OpenFisca au taux du départ pour tous les trimestres, nous au taux de
+    chacun (voir ``SURCOTE_CIVILE_DATEE``)."""
     surcotes = [
         (code, entree) for code, entree in oracle_fonction_publique["profils"].items()
         if entree["openfisca"]["surcote_trimestres"] > 0
@@ -414,10 +443,12 @@ def test_la_surcote_de_la_pension_civile_concorde(oracle_fonction_publique, simu
     for code, entree in surcotes:
         eux = entree["openfisca"]
         nous = _notre_calcul_fonction_publique(simulateur, entree["profil"])
-        attendu = TAUX_PLEIN_PENSION_CIVILE * (1 + 0.0125 * eux["surcote_trimestres"])
+        notre, leur = _coefficient_surcote_civile(code, eux)
         assert eux["decote_trimestres"] == 0, code
-        assert nous["taux_de_liquidation"] == pytest.approx(attendu, abs=TOLERANCE_EXACTE), code
-        assert eux["taux_de_liquidation"] == pytest.approx(attendu, abs=TOLERANCE_EXACTE), code
+        assert nous["taux_de_liquidation"] == pytest.approx(
+            TAUX_PLEIN_PENSION_CIVILE * notre, abs=TOLERANCE_EXACTE), code
+        assert eux["taux_de_liquidation"] == pytest.approx(
+            TAUX_PLEIN_PENSION_CIVILE * leur, abs=TOLERANCE_EXACTE), code
 
 
 def test_la_proratisation_de_la_pension_civile_concorde(
@@ -461,6 +492,9 @@ def test_la_pension_civile_concorde_au_centime(oracle_fonction_publique, simulat
             manquants = eux["decote_trimestres"]
             notre_pension *= ((1 - COEFFICIENT_2010_OPENFISCA * manquants)
                               / (1 - COEFFICIENT_2010_LOI * manquants))
+        if code in SURCOTE_CIVILE_DATEE:
+            notre, leur = _coefficient_surcote_civile(code, eux)
+            notre_pension *= leur / notre
         assert notre_pension == pytest.approx(eux["pension_avant_minimum"], rel=1e-6), code
 
 
@@ -1412,9 +1446,13 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
     À ``liquider_successions=False``, chaque nom de caisse est liquidé sur ses
     seules années, comme avant. La césure joue dans les deux sens — les
     vingt-cinq meilleures années de chaque morceau peuvent être meilleures que
-    celles de la carrière entière — et l'écart va de −7,2 % à +0,3 % contre
-    OpenFisca. C'est la mesure que `limites.md` §3 cite ; si elle bouge, c'est
-    la phrase qu'il faut changer.
+    celles de la carrière entière — et l'écart va de −7,5 % à +6,7 % contre
+    OpenFisca. Le haut de la fourchette vient du barème DATÉ de la surcote :
+    coupé, le morceau CANCAVA d'un artisan parti tard servait la surcote au
+    taux plat de sa fiche de 2006 (0,75 %) à des trimestres accomplis de 2011
+    à 2015, qui valent 1,25 % — la césure cumulait deux erreurs, et l'une
+    compensait l'autre. C'est la mesure que `limites.md` §3 cite ; si elle
+    bouge, c'est la phrase qu'il faut changer.
     """
     coupes, ecarts = 0, []
     for code, entree in oracle["profils"].items():
@@ -1428,4 +1466,125 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
             ecarts.append(nous["montant"] / entree["openfisca"]["pension_brute"])
     assert coupes == 20
     assert 0.925 < min(ecarts) < 0.930, min(ecarts)
-    assert 1.000 < max(ecarts) < 1.005, max(ecarts)
+    assert 1.060 < max(ecarts) < 1.070, max(ecarts)
+
+
+# ---------------------------------------------------------------------------
+# Les exemples chiffrés publiés par les caisses et par service-public.gouv.fr
+# ---------------------------------------------------------------------------
+
+EXEMPLES_OFFICIELS = TEMOIN.parent / "exemples_officiels.yaml"
+
+
+def _charger_exemples() -> list[dict]:
+    import yaml
+
+    return yaml.safe_load(EXEMPLES_OFFICIELS.read_text(encoding="utf-8"))["exemples"]
+
+
+def _mois(texte: str):
+    from retraite_notionnelle.calendrier import DateMois
+
+    annee, mois = texte.split("-")
+    return DateMois(int(annee), int(mois))
+
+
+def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int = 0):
+    """La carrière que l'exemple décrit, liquidée au mois voulu.
+
+    Une seule affiliation, un salaire constant ou un profil, et — quand
+    l'exemple ne donne que son nombre de trimestres — l'âge d'entrée qui rend
+    exactement ce nombre à la liquidation, cherché au mois près.
+    """
+    c = exemple["carriere"]
+    naissance = _mois(c["naissance"])
+    liquidation = _mois(c["liquidation"]).plus_mois(decalage_mois)
+    age = (liquidation.rang - naissance.rang) / 12.0
+    communs = dict(
+        annee_naissance=naissance.annee, sexe=c.get("sexe", "H"),
+        affiliation=c["affiliation"], age_liquidation=age,
+        mois_naissance=naissance.mois,
+        niveau_salaire=float(c.get("niveau_salaire", 1.0)),
+        profil_carriere=c.get("profil_carriere", "ascendant"),
+        nombre_enfants=int(c.get("nombre_enfants", 0)),
+        interruptions={int(k): v for k, v in (c.get("interruptions") or {}).items()},
+    )
+    actuel = simulateur.scenario_actuel
+    if "age_debut" in c:
+        carriere = simulateur.carriere_simple(age_debut=float(c["age_debut"]), **communs)
+        return carriere, actuel.calculer(carriere)
+    cible = int(c["trimestres_valides"])
+    base = age - cible / 4.0
+    for k in range(-16, 17):
+        debut = round(base + k / 12.0, 6)
+        if debut < 14:
+            continue
+        carriere = simulateur.carriere_simple(age_debut=debut, **communs)
+        resultat = actuel.calculer(carriere)
+        if resultat.trimestres_valides == cible:
+            return carriere, resultat
+    raise AssertionError(f"{exemple['id']} : aucune carrière ne donne {cible} trimestres")
+
+
+@pytest.mark.parametrize("exemple", _charger_exemples(), ids=lambda e: e["id"])
+def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exemple):
+    """Chaque exemple est une carrière minuscule dont la réponse est écrite
+    par l'organisme qui applique la règle : service-public.gouv.fr, la Cnav
+    dans ses circulaires. C'est la seule confrontation qui ne soit ni une
+    relecture du même code ni un autre modèle. Le témoin dit d'où vient chaque
+    exemple et ce qu'il attend ; `docs/limites.md` dit ce que la confrontation
+    a trouvé.
+    """
+    from retraite_notionnelle.calendrier import en_mois
+
+    actuel = simulateur.scenario_actuel
+    carriere, resultat = _carriere_exemple(simulateur, exemple)
+    attendu = exemple["attendu"]
+    for cle, valeur in attendu.items():
+        if cle == "trimestres_requis":
+            assert resultat.trimestres_requis == valeur, (cle, resultat.trimestres_requis)
+        elif cle == "trimestres_valides":
+            assert resultat.trimestres_valides == valeur, (cle, resultat.trimestres_valides)
+        elif cle == "taux_liquidation":
+            assert resultat.taux_liquidation == pytest.approx(valeur, abs=1e-6), (
+                cle, resultat.taux_liquidation)
+        elif cle == "motif_ouverture":
+            assert resultat.motif_ouverture == valeur, (cle, resultat.motif_ouverture)
+        elif cle == "liquidation_ouverte":
+            assert resultat.liquidation_ouverte is bool(valeur)
+        elif cle == "age_ouverture":
+            assert actuel.age_ouverture_droit(carriere) == pytest.approx(valeur)
+        elif cle == "date_age_legal":
+            atteint = carriere.date_naissance.plus_mois(
+                en_mois(actuel.age_ouverture_droit(carriere)))
+            assert (atteint.annee, atteint.mois) == (
+                _mois(valeur).annee, _mois(valeur).mois), (cle, str(atteint))
+        elif cle == "non_ouverte_un_trimestre_plus_tot":
+            _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
+            assert plus_tot.motif_ouverture == "non_ouverte", plus_tot.motif_ouverture
+        elif cle == "pension_base_sur_sam":
+            periode = simulateur.catalogue["regime_general"].periode(
+                carriere.annee_liquidation)
+            sam = actuel.salaire_de_reference(
+                "regime_general", carriere, periode, carriere.annee_liquidation,
+                True, carriere.annee_naissance)
+            base = next(p.montant for p in resultat.pensions_par_regime
+                        if p.regime == "regime_general")
+            assert base / sam == pytest.approx(valeur, abs=1e-9)
+        elif cle == "pension_regime_general_mensuelle":
+            base = next(p.montant for p in resultat.pensions_par_regime
+                        if p.regime == "regime_general")
+            assert base / 12 == pytest.approx(valeur, abs=0.05), base / 12
+        else:
+            raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
+
+
+def test_le_temoin_des_exemples_officiels_est_source():
+    """Chaque exemple dit qui l'a publié, où, et quand il a été vérifié."""
+    for exemple in _charger_exemples():
+        source = exemple["source"]
+        assert source["editeur"] in ("service-public.gouv.fr", "Cnav"), exemple["id"]
+        assert len(source["reference"].split()) >= 4, exemple["id"]
+        assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]
+        assert len(exemple["enonce"].split()) >= 12, exemple["id"]
+        assert exemple["attendu"], exemple["id"]

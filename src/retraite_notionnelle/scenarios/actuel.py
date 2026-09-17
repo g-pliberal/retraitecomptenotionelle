@@ -47,7 +47,7 @@ import csv
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
-from ..calendrier import en_mois
+from ..calendrier import DateMois, en_mois
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import Parametres
 from ..donnees.chargement import Fiabilite
@@ -918,40 +918,85 @@ class CarriereLongue:
     La principale porte d'entrée avant l'âge légal, et la seule qui se déduise
     de la carrière elle-même : la pénibilité, l'invalidité et l'inaptitude
     demandent des informations que le modèle n'a pas.
+
+    **Les portes se lisent à la DATE D'EFFET de la pension, et par
+    GÉNÉRATION.** Le décret du 2 juillet 2012 vaut pour les pensions prenant
+    effet à compter du 1er novembre 2012, celui du 3 juin 2023 à compter du
+    1er septembre 2023, celui du 7 mai 2026 à compter du 1er septembre 2026 :
+    la table porte l'année décimale du premier mois d'application. Et depuis
+    2023 la borne des vingt ans monte avec l'âge légal de la génération
+    (D. 351-1-1, II) : soixante ans pour les nés d'avant septembre 1963, puis
+    l'âge légal diminué de deux ans et six mois, jusqu'à soixante-deux ans.
+    Le modèle lisait la règle générale seule et opposait soixante-deux ans à
+    une génération 1965 à qui le droit ouvre soixante ans et neuf mois.
     """
 
+    #: Premier mois du dernier trimestre civil : qui est né à compter de lui
+    #: doit un trimestre de moins à la condition d'entrée précoce.
+    MOIS_DERNIER_TRIMESTRE = 10
+
+    #: Génération de la règle générale, celle qui vaut à défaut d'une ligne
+    #: plus précise.
+    GENERATION_GENERALE = 1900.0
+
+    #: Depuis les pensions prenant effet au 1er septembre 2026, les trimestres
+    #: de majoration de durée d'assurance pour enfants sont réputés cotisés
+    #: pour la carrière longue, dans la limite de deux (article 104 de la loi
+    #: n° 2025-1403 du 30 décembre 2025, décret n° 2026-699 ; circulaire Cnav
+    #: 2026-17, point 1.2.3.6).
+    ENFANTS_REPUTES_COTISES_DEPUIS = DateMois(2026, 9)
+    ENFANTS_REPUTES_COTISES_MAXIMUM = 2
+
     def __init__(self, racine: Path) -> None:
-        self._table: dict[int, list[tuple[int, int, float, int, Fiabilite]]] = {}
+        self._table: dict[float, list[tuple[float, int, int, float, int, Fiabilite]]] = {}
         chemin = racine / "reference" / "legislation" / "carriere_longue.csv"
         if not chemin.exists():
+            self._dates: list[float] = []
             return
         with chemin.open(encoding="utf-8") as flux:
             lignes = (l for l in flux if not l.lstrip().startswith("#"))
             for ligne in csv.DictReader(lignes):
-                self._table.setdefault(int(ligne["annee"]), []).append((
+                self._table.setdefault(float(ligne["date_effet"]), []).append((
+                    float(ligne["generation"]),
                     int(ligne["age_debut_maximum"]),
                     int(ligne["trimestres_debut"]),
                     float(ligne["age_depart"]),
                     int(ligne["trimestres_supplementaires"]),
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
                 ))
-        self._annees = sorted(self._table)
+        self._dates = sorted(self._table)
 
-    #: Premier mois du dernier trimestre civil : qui est né à compter de lui
-    #: doit un trimestre de moins à la condition d'entrée précoce.
-    MOIS_DERNIER_TRIMESTRE = 10
+    @staticmethod
+    def _annee_decimale(date: DateMois) -> float:
+        return date.annee + (date.mois - 1) / 12.0
 
-    def _portes(self, annee_liquidation: int
+    def _portes(self, carriere: Carriere
                 ) -> list[tuple[int, int, float, int, Fiabilite]] | None:
-        """Les portes du dispositif en vigueur à l'année de liquidation."""
-        if not self._table or annee_liquidation < self._annees[0]:
+        """Les portes opposables à cette carrière : celles du texte en vigueur
+        à sa date d'effet, et pour chaque borne d'entrée la ligne de la plus
+        haute génération qui ne dépasse pas la sienne."""
+        if not self._dates:
             return None
-        applicable = self._annees[0]
-        for candidate in self._annees:
-            if candidate > annee_liquidation:
+        effet = self._annee_decimale(carriere.date_liquidation)
+        if effet < self._dates[0]:
+            return None
+        applicable = self._dates[0]
+        for candidate in self._dates:
+            if candidate > effet + 1e-9:
                 break
             applicable = candidate
-        return self._table[applicable]
+        generation = carriere.generation
+        retenues: dict[int, tuple[float, tuple[int, int, float, int, Fiabilite]]] = {}
+        for gen, age_max, trimestres_debut, age_depart, supplement, fiabilite in \
+                self._table[applicable]:
+            if gen > generation + 1e-9:
+                continue
+            actuelle = retenues.get(age_max)
+            if actuelle is None or gen > actuelle[0]:
+                retenues[age_max] = (
+                    gen, (age_max, trimestres_debut, age_depart, supplement, fiabilite)
+                )
+        return [porte for _, porte in sorted(retenues.values())]
 
     def _entree_precoce(self, carriere: Carriere, annee_liquidation: int,
                         age_max: int, trimestres_debut: int) -> bool:
@@ -975,6 +1020,25 @@ class CarriereLongue:
         )
         return acquis >= trimestres_debut
 
+    def cotises_reputes(self, carriere: Carriere, trimestres_cotises: int,
+                        trimestres_enfants: int) -> int:
+        """La durée cotisée que le dispositif oppose, enfants compris.
+
+        Les trimestres réellement cotisés, plus — pour les pensions prenant
+        effet depuis le 1er septembre 2026 — jusqu'à deux trimestres de la
+        majoration pour enfants, que la loi de financement pour 2026 répute
+        cotisés. Les autres périodes réputées cotisées (chômage, maladie,
+        maternité, invalidité) restent hors du modèle, qui ne compte que les
+        trimestres réellement cotisés : voir ``docs/limites.md``.
+        """
+        if trimestres_enfants <= 0 or carriere.age_liquidation is None:
+            return trimestres_cotises
+        if carriere.date_liquidation.rang < self.ENFANTS_REPUTES_COTISES_DEPUIS.rang:
+            return trimestres_cotises
+        return trimestres_cotises + min(
+            self.ENFANTS_REPUTES_COTISES_MAXIMUM, trimestres_enfants
+        )
+
     def age_de_depart(self, carriere: Carriere, annee_liquidation: int,
                       trimestres_cotises: int,
                       requis: int) -> tuple[float, Fiabilite] | None:
@@ -984,9 +1048,10 @@ class CarriereLongue:
         avant la fin de l'année civile des seize, dix-huit, vingt ou vingt et un
         ans. La condition de durée porte, elle aussi, sur les seuls trimestres
         cotisés — c'est ce qui distingue ce dispositif de la durée d'assurance
-        qui commande la décote.
+        qui commande la décote. ``trimestres_cotises`` est la durée que
+        :meth:`cotises_reputes` a déjà complétée.
         """
-        portes = self._portes(annee_liquidation)
+        portes = self._portes(carriere)
         if portes is None:
             return None
         ouvertures = []
@@ -1015,7 +1080,7 @@ class CarriereLongue:
         Chaque porte ouvre donc au plus tardif de son âge et de l'âge où la
         durée cotisée est réunie, et la plus précoce l'emporte.
         """
-        portes = self._portes(annee_liquidation)
+        portes = self._portes(carriere)
         if portes is None:
             return None
         candidats = []
@@ -1026,6 +1091,80 @@ class CarriereLongue:
             atteint = age_liquidation + (requis + supplement - trimestres_cotises) / 4.0
             candidats.append(max(age_depart, atteint))
         return min(candidats) if candidats else None
+
+
+class SurcoteBaremes:
+    """Barème DATÉ de la surcote — article D. 351-1-4 du code de la sécurité
+    sociale, article L. 14 III du code des pensions.
+
+    Chaque trimestre de surcote garde le taux en vigueur à la date où il a été
+    ACCOMPLI : 0,75 % de 2004 à 2006 ; en 2007 et 2008, 0,75 % pour les
+    quatre premiers trimestres, 1 % à compter du cinquième et 1,25 % pour les
+    trimestres postérieurs au soixante-cinquième anniversaire ; 1,25 % pour
+    tout trimestre accompli depuis le 1er janvier 2009. La fonction publique
+    servait 0,75 % dans la limite de vingt trimestres jusqu'en 2008. Le
+    modèle appliquait à tous les trimestres le taux de l'année du départ,
+    ce qui servait 1,25 % à des trimestres de 2005 et 0,75 % à un cinquième
+    trimestre de 2008. La circulaire Cnav 2018-04 (point 3) en donne trois
+    exemples, que ``tests/temoins/exemples_officiels.yaml`` rejoue.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        self._lignes: list[tuple[str, float, float, int, bool, float,
+                                 int | None, Fiabilite]] = []
+        chemin = racine / "reference" / "legislation" / "surcote_baremes.csv"
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                self._lignes.append((
+                    ligne["bareme"],
+                    float(ligne["debut"]),
+                    float(ligne["fin"]),
+                    int(ligne["rang_minimum"]),
+                    ligne["apres_65_ans"].strip() in ("1", "true", "oui"),
+                    float(ligne["taux"]),
+                    int(ligne["trimestres_maximum"]) if ligne["trimestres_maximum"].strip() else None,
+                    Fiabilite.depuis_texte(ligne["fiabilite"]),
+                ))
+
+    def connait(self, bareme: str) -> bool:
+        return any(ligne[0] == bareme for ligne in self._lignes)
+
+    def coefficient(self, bareme: str,
+                    trimestres: list[tuple[DateMois, bool]]) -> tuple[float, Fiabilite | None]:
+        """Coefficient de majoration pour ces trimestres de surcote, datés.
+
+        ``trimestres`` donne, dans l'ordre chronologique, le premier mois de
+        chaque trimestre civil de surcote et s'il est postérieur au
+        soixante-cinquième anniversaire. Pour chaque trimestre, la ligne la
+        plus favorable qui lui convient l'emporte, sous le plafond de
+        trimestres qu'elle porte le cas échéant.
+        """
+        servis: dict[int, int] = {}
+        total = 0.0
+        fiabilite: Fiabilite | None = None
+        for rang, (date, apres_65) in enumerate(trimestres, start=1):
+            valeur = date.annee + (date.mois - 1) / 12.0
+            meilleure = None
+            for indice, (code, debut, fin, rang_minimum, condition_65, taux,
+                         maximum, fiab) in enumerate(self._lignes):
+                if code != bareme or not debut - 1e-9 <= valeur <= fin + 1e-9:
+                    continue
+                if rang < rang_minimum or (condition_65 and not apres_65):
+                    continue
+                if maximum is not None and servis.get(indice, 0) >= maximum:
+                    continue
+                if meilleure is None or taux > meilleure[1]:
+                    meilleure = (indice, taux, fiab)
+            if meilleure is None:
+                continue
+            servis[meilleure[0]] = servis.get(meilleure[0], 0) + 1
+            total += meilleure[1]
+            fiabilite = (meilleure[2] if fiabilite is None
+                         else min(fiabilite, meilleure[2]))
+        return 1.0 + total, fiabilite
 
 
 class MinimumGaranti:
@@ -1390,6 +1529,7 @@ class ScenarioActuel:
         self.minimum_contributif = MinimumContributif(parametres.racine_donnees, macro)
         self.minimum_garanti = MinimumGaranti(parametres.racine_donnees, macro)
         self.carriere_longue = CarriereLongue(parametres.racine_donnees)
+        self.surcote_baremes = SurcoteBaremes(parametres.racine_donnees)
         self.minimum_vieillesse = MinimumVieillesse(parametres.racine_donnees, macro)
 
     # -- valorisation des points ---------------------------------------------
@@ -1480,12 +1620,17 @@ class ScenarioActuel:
                 return forfait_grille[0] * ligne.fraction_annee
         return _assiette_de_reference(periode, ligne)
 
+    #: Pensions à compter desquelles le salaire annuel moyen des parents porte
+    #: sur vingt-quatre ou vingt-trois années au lieu de vingt-cinq.
+    PARENTS_MEILLEURES_ANNEES_DEPUIS = DateMois(2026, 9)
+
     def salaire_de_reference(self, code: str, carriere: Carriere,
                              periode: PeriodeRegime,
                              annee_liquidation: int, plafonner: bool,
                              generation: int | None = None,
                              avpf: bool = True,
-                             membres: tuple[str, ...] | None = None) -> float:
+                             membres: tuple[str, ...] | None = None,
+                             enfants_majores: int = 0) -> float:
         """Salaire de référence, exprimé en euros de l'année de liquidation.
 
         **Il porte sur les seules années passées DANS CE régime** — ou dans
@@ -1639,6 +1784,19 @@ class ScenarioActuel:
                 par_generation = self.annees_salaire_reference.annees(generation)
                 if par_generation is not None:
                     annees = par_generation[0]
+                # LES PARENTS : vingt-quatre années pour qui bénéficie d'une
+                # majoration ou d'une bonification au titre d'un enfant,
+                # vingt-trois pour deux enfants et plus, pour les pensions
+                # prenant effet à compter du 1er septembre 2026 (article
+                # R. 173-3-2, décret n° 2026-699 du 29 juillet 2026, pris pour
+                # l'article 103 de la loi de financement pour 2026). La moyenne
+                # porte sur moins d'années, donc sur de meilleures : c'est la
+                # mesure « mères de famille » de cette loi, et elle vaut à qui
+                # détient les trimestres, la mère par défaut dans ce modèle.
+                if (enfants_majores > 0 and carriere.age_liquidation is not None
+                        and carriere.date_liquidation.rang
+                        >= self.PARENTS_MEILLEURES_ANNEES_DEPUIS.rang):
+                    annees = max(1, annees - (1 if enfants_majores == 1 else 2))
             retenus = sorted(revenus, reverse=True)[:annees]
         elif reference in ("derniers_6_mois", "dernier_salaire"):
             # Le traitement des six derniers mois est celui EN VIGUEUR au
@@ -2102,6 +2260,12 @@ class ScenarioActuel:
             carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
             if ligne.cotise and ligne.annee <= annee_liquidation
         )
+        majoration = self._majoration_pour_enfants(
+            carriere, {code: cotises for code, _ in annuites}, annee_liquidation
+        )
+        cotises = self.carriere_longue.cotises_reputes(
+            carriere, cotises, majoration.trimestres if majoration is not None else 0
+        )
         return self.carriere_longue.age_propose(
             carriere, annee_liquidation, cotises, requis, carriere.age_liquidation
         )
@@ -2503,6 +2667,92 @@ class ScenarioActuel:
             periode, carriere, trimestres, requis,
             age_liquidation, annee_liquidation, trimestres_regime,
         )
+
+    #: Premier trimestre que la surcote puisse compter : les dispositions de
+    #: la loi du 21 août 2003 valent pour les périodes cotisées accomplies à
+    #: compter du 1er janvier 2004.
+    SURCOTE_DEPUIS = DateMois(2004, 1)
+    #: Âge au-delà duquel le barème de 2007-2008 sert 1,25 %.
+    SURCOTE_AGE_MAJORE = 65
+
+    def _coefficient_surcote_datee(self, periode: PeriodeRegime, carriere: Carriere,
+                                   trimestres: int, requis: int,
+                                   supplementaires: int, age_ouverture: float
+                                   ) -> tuple[float, Fiabilite | None]:
+        """Coefficient de surcote, trimestre civil par trimestre civil.
+
+        La règle est celle de la circulaire Cnav 2018-04 (point 2), que le
+        modèle suivait à l'année près : la PÉRIODE DE RÉFÉRENCE commence au
+        plus tard des trois — le premier jour du trimestre civil qui suit
+        l'âge légal, le premier jour du mois qui suit l'acquisition de la
+        durée requise, le 1er janvier 2004 — et s'achève au dernier jour du
+        trimestre civil qui précède la date d'effet. Chaque trimestre civil de
+        cette période compte, dans la limite des trimestres cotisés reportés
+        au compte pour l'année, et au plus ``supplementaires`` en tout ; puis
+        chacun prend le taux du barème à sa date. Un assuré né le 15 avril, à
+        l'âge légal en avril, ne surcote qu'à partir de juillet : le modèle
+        comptait avril, et servait un trimestre de trop.
+
+        La durée acquise se lit dans l'ordre des années. Les trimestres qui ne
+        tiennent à aucune année — la majoration pour enfants — sont réputés
+        acquis d'emblée : ils sont dus quelle que soit la date du départ, et la
+        caisse ne les date pas davantage.
+        """
+        annee_liquidation = carriere.annee_liquidation
+        date_legal = carriere.date_naissance.plus_mois(en_mois(age_ouverture))
+        trimestre_legal = (date_legal.mois - 1) // 3
+        debut_age = DateMois(date_legal.annee, 1).plus_mois(3 * (trimestre_legal + 1))
+
+        par_annee = {
+            ligne.annee: carriere.trimestres_retenus(ligne)
+            for ligne in carriere.lignes if ligne.annee <= annee_liquidation
+        }
+        cotises_par_annee = {
+            ligne.annee: carriere.trimestres_retenus(ligne)
+            for ligne in carriere.lignes
+            if ligne.cotise and ligne.annee <= annee_liquidation
+        }
+        acquis = trimestres - sum(par_annee.values())
+        debut_duree = None
+        if acquis >= requis:
+            debut_duree = self.SURCOTE_DEPUIS
+        for annee in sorted(par_annee):
+            if debut_duree is not None:
+                break
+            valides = par_annee[annee]
+            if acquis + valides >= requis:
+                manquants = requis - acquis
+                debut_duree = DateMois(annee, 1).plus_mois(3 * manquants)
+            acquis += valides
+        if debut_duree is None:
+            return 1.0, None
+        debut = DateMois.depuis_rang(max(
+            debut_age.rang, debut_duree.rang, self.SURCOTE_DEPUIS.rang
+        ))
+        # Le trimestre de départ est ramené au trimestre civil qui le
+        # contient s'il commence en cours de trimestre : la durée acquise au
+        # 30 juin ouvre la période au 1er juillet, celle acquise au 31 mai
+        # l'ouvre au 1er juin, mais un trimestre civil ne se compte qu'entier.
+        if (debut.mois - 1) % 3:
+            debut = DateMois(debut.annee, 1).plus_mois(3 * ((debut.mois - 1) // 3 + 1))
+        fin = carriere.date_liquidation
+        date_65 = carriere.date_naissance.plus_mois(12 * self.SURCOTE_AGE_MAJORE)
+        trimestre_65 = (date_65.annee, (date_65.mois - 1) // 3)
+
+        dates: list[tuple[DateMois, bool]] = []
+        restants_par_annee = dict(cotises_par_annee)
+        courant = debut
+        while courant.rang + 2 < fin.rang and len(dates) < supplementaires:
+            if restants_par_annee.get(courant.annee, 0) > 0:
+                restants_par_annee[courant.annee] -= 1
+                apres_65 = (courant.annee, (courant.mois - 1) // 3) > trimestre_65
+                dates.append((courant, apres_65))
+            courant = courant.plus_mois(3)
+        if not dates:
+            return 1.0, None
+        if not self.surcote_baremes.connait(periode.surcote_bareme or ""):
+            return 1.0 + (periode.surcote_par_trimestre or 0.0) * len(dates), None
+        return self.surcote_baremes.coefficient(periode.surcote_bareme, dates)
 
     def _surcote_points(self, periode: PeriodeRegime, carriere: Carriere,
                         trimestres: int, requis: int,
@@ -3122,7 +3372,12 @@ class ScenarioActuel:
         liquidation_ouverte = True
         if age_ouverture_reference is not None and age_liquidation < age_ouverture_reference:
             anticipe = self.carriere_longue.age_de_depart(
-                carriere, annee_liquidation, trimestres_cotises, requis_reference
+                carriere, annee_liquidation,
+                self.carriere_longue.cotises_reputes(
+                    carriere, trimestres_cotises,
+                    majoration_enfants.trimestres if majoration_enfants is not None else 0,
+                ),
+                requis_reference,
             )
             if anticipe is not None and age_liquidation >= anticipe[0]:
                 motif_ouverture = "carriere_longue"
@@ -3276,6 +3531,8 @@ class ScenarioActuel:
                 salaire_reference = self.salaire_de_reference(
                     code, carriere, periode, annee_liquidation, plafonner,
                     carriere.annee_naissance, avpf, membres,
+                    enfants_majores=(carriere.nombre_enfants
+                                     if majoration_enfants is not None else 0),
                 )
             requis, fiabilite_duree = self._duree_requise(periode, carriere)
             if fiabilite_duree is not None:
@@ -3344,17 +3601,30 @@ class ScenarioActuel:
                 if (periode.surcote_par_trimestre and supplementaires > 0
                         and age_liquidation >= age_ouverture
                         and self._droit_militaire(periode, carriere) is None):
-                    supplementaires = min(
-                        supplementaires,
-                        _trimestres_cotises_apres(
-                            carriere, age_ouverture, annee_liquidation
-                        ),
-                    )
-                    if supplementaires > 0:
-                        coefficient_surcote = (
-                            1.0 + periode.surcote_par_trimestre * supplementaires
+                    if periode.surcote_bareme:
+                        # Barème DATÉ : chaque trimestre civil de surcote au
+                        # taux en vigueur quand il a été accompli, depuis le
+                        # trimestre qui suit l'âge légal (D. 351-1-4).
+                        coefficient_surcote, fiabilite_surcote = (
+                            self._coefficient_surcote_datee(
+                                periode, carriere, trimestres, requis,
+                                supplementaires, age_ouverture,
+                            )
                         )
-                        taux *= coefficient_surcote
+                        if fiabilite_surcote is not None:
+                            fiabilite_globale = min(fiabilite_globale, fiabilite_surcote)
+                    else:
+                        supplementaires = min(
+                            supplementaires,
+                            _trimestres_cotises_apres(
+                                carriere, age_ouverture, annee_liquidation
+                            ),
+                        )
+                        if supplementaires > 0:
+                            coefficient_surcote = (
+                                1.0 + periode.surcote_par_trimestre * supplementaires
+                            )
+                    taux *= coefficient_surcote
 
             taux_retenu = max(taux_retenu, taux)
             montant = salaire_reference * taux * (trimestres_regime / proratisation)

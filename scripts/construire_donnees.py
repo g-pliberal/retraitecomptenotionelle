@@ -313,6 +313,7 @@ def _regimes() -> list[dict]:
                     "decote_annulee_par_la_duree": p.decote_annulee_par_la_duree,
                     "decote_trimestres_maximum": p.decote_trimestres_maximum,
                     "surcote_par_trimestre": p.surcote_par_trimestre,
+                    "surcote_bareme": p.surcote_bareme,
                     "abattement_points": p.abattement_points,
                     "surcote_points": p.surcote_points,
                     "surcote_age_debut": p.surcote_age_debut,
@@ -625,15 +626,38 @@ def _surcote_parentale() -> list:
 
 
 def _carriere_longue() -> dict:
-    """Portes du départ anticipé pour carrière longue, par année."""
+    """Portes du départ anticipé pour carrière longue, par date d'effet.
+
+    La clé est l'année décimale du premier mois d'application ; chaque porte
+    porte la génération à partir de laquelle elle vaut, ``1900`` pour la
+    règle générale.
+    """
     from retraite_notionnelle.scenarios.actuel import CarriereLongue
 
     return {
-        str(annee): [[age_max, trimestres, age_depart, supplement, int(fiabilite)]
-                     for age_max, trimestres, age_depart, supplement, fiabilite
-                     in portes]
-        for annee, portes in sorted(CarriereLongue(DONNEES)._table.items())
+        _sans_zeros(date_effet): [
+            [generation, age_max, trimestres, age_depart, supplement, int(fiabilite)]
+            for generation, age_max, trimestres, age_depart, supplement, fiabilite
+            in portes
+        ]
+        for date_effet, portes in sorted(CarriereLongue(DONNEES)._table.items())
     }
+
+
+def _sans_zeros(valeur: float) -> str:
+    texte = f"{valeur:.3f}".rstrip("0").rstrip(".")
+    return texte
+
+
+def _surcote_baremes() -> list:
+    """Barème daté de la surcote : une ligne par taux, par barème."""
+    from retraite_notionnelle.scenarios.actuel import SurcoteBaremes
+
+    return [
+        [bareme, debut, fin, rang, int(apres_65), taux, maximum, int(fiabilite)]
+        for bareme, debut, fin, rang, apres_65, taux, maximum, fiabilite
+        in SurcoteBaremes(DONNEES)._lignes
+    ]
 
 
 def _hypotheses() -> dict:
@@ -688,6 +712,7 @@ def construire() -> bytes:
         "carriere_longue": _carriere_longue(),
         "majorations_enfants": _majorations_enfants(),
         "surcote_parentale": _surcote_parentale(),
+        "surcote_baremes": _surcote_baremes(),
         "depenses": _depenses(),
         "comptes_retraite": _comptes_retraite(),
         "population": _population(),

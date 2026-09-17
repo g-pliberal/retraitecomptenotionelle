@@ -18,7 +18,7 @@
  * façon robuste, ce sont les écarts ENTRE SCÉNARIOS.
  */
 
-import { enMois } from "./calendrier.js";
+import { DateMois, enMois } from "./calendrier.js";
 import { salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
@@ -29,9 +29,16 @@ import {
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
-  SurcoteParentale, ValeursPoint,
+  SurcoteBaremes, SurcoteParentale, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
+
+/** Premier trimestre que la surcote puisse compter (loi du 21 août 2003). */
+const SURCOTE_DEPUIS = new DateMois(2004, 1);
+/** Âge au-delà duquel le barème de 2007-2008 sert 1,25 %. */
+const SURCOTE_AGE_MAJORE = 65;
+/** Rang du mois de septembre 2026 : premières pensions des parents à 24/23 ans. */
+const PARENTS_MEILLEURES_ANNEES_DEPUIS = 2026 * 12 + 8;
 
 /** Ce que chaque dispositif s'appelle dans la cascade des avantages. */
 const LIBELLE_MAJORATION = {
@@ -96,6 +103,7 @@ export class ScenarioActuel {
     this.minimumGaranti = new MinimumGaranti(paquet, macro);
     this.minimumVieillesse = new MinimumVieillesse(paquet, macro);
     this.carriereLongue = new CarriereLongue(paquet);
+    this.surcoteBaremes = new SurcoteBaremes(paquet);
     this.majorationsEnfants = new MajorationsPourEnfants(paquet);
     this.surcoteParentale = new SurcoteParentale(paquet);
   }
@@ -216,7 +224,7 @@ export class ScenarioActuel {
    * moyen. Voir `groupesDeSuccession`.
    */
   salaireDeReference(code, carriere, periode, anneeLiquidation, plafonner,
-    generation = null, avpf = true, membres = null) {
+    generation = null, avpf = true, membres = null, enfantsMajores = 0) {
     const codesAdmis = new Set(membres && membres.length > 0 ? membres : [code]);
     const avpfOuvert = avpf
       && periode.avantages_non_contributifs.includes("avpf");
@@ -314,6 +322,14 @@ export class ScenarioActuel {
         const parGeneration = this.anneesSalaireReference.annees(generation);
         if (parGeneration !== null) {
           annees = parGeneration[0];
+        }
+        // LES PARENTS : vingt-quatre années pour qui bénéficie d'une
+        // majoration ou d'une bonification au titre d'un enfant, vingt-trois
+        // pour deux enfants et plus, pensions prenant effet à compter du
+        // 1er septembre 2026 (R. 173-3-2, décret n° 2026-699).
+        if (enfantsMajores > 0 && carriere.age_liquidation !== null
+            && carriere.dateLiquidation.rang >= PARENTS_MEILLEURES_ANNEES_DEPUIS) {
+          annees = Math.max(1, annees - (enfantsMajores === 1 ? 1 : 2));
         }
       }
       retenus = [...revenus].sort((a, b) => b - a).slice(0, annees);
@@ -824,6 +840,12 @@ export class ScenarioActuel {
         cotises += carriere.trimestresRetenus(ligne);
       }
     }
+    const majoration = this.majorationPourEnfants(
+      carriere, new Map(annuites.map(([code]) => [code, cotises])), anneeLiquidation,
+    );
+    cotises = this.carriereLongue.cotisesReputes(
+      carriere, cotises, majoration !== null ? majoration.trimestres : 0,
+    );
     return this.carriereLongue.agePropose(
       carriere, anneeLiquidation, cotises, requis, carriere.age_liquidation,
     );
@@ -1157,6 +1179,89 @@ export class ScenarioActuel {
    * l'article 16 de l'arrêté du 30 décembre 1970 et ses deux taux. Voir le
    * docstring du modèle Python.
    */
+  /**
+   * Coefficient de surcote, trimestre civil par trimestre civil.
+   *
+   * Règle de la circulaire Cnav 2018-04 (point 2) : la PÉRIODE DE RÉFÉRENCE
+   * commence au plus tard des trois — premier jour du trimestre civil qui
+   * suit l'âge légal, premier jour du mois qui suit l'acquisition de la durée
+   * requise, 1er janvier 2004 — et s'achève au dernier jour du trimestre
+   * civil qui précède la date d'effet. Chaque trimestre civil compte dans la
+   * limite des trimestres cotisés de l'année, et au plus `supplementaires` en
+   * tout ; chacun prend le taux du barème à sa date. Les trimestres qui ne
+   * tiennent à aucune année (majoration pour enfants) sont réputés acquis
+   * d'emblée.
+   *
+   * @returns {[number, number|null]} coefficient et fiabilité.
+   */
+  coefficientSurcoteDatee(periode, carriere, trimestres, requis, supplementaires,
+    ageOuverture) {
+    const anneeLiquidation = carriere.anneeLiquidation;
+    const dateLegal = carriere.dateNaissance.plusMois(enMois(ageOuverture));
+    const trimestreLegal = Math.floor((dateLegal.mois - 1) / 3);
+    const debutAge = new DateMois(dateLegal.annee, 1).plusMois(3 * (trimestreLegal + 1));
+
+    const parAnnee = new Map();
+    const cotisesParAnnee = new Map();
+    for (const ligne of carriere.lignes) {
+      if (ligne.annee <= anneeLiquidation) {
+        const retenus = carriere.trimestresRetenus(ligne);
+        parAnnee.set(ligne.annee, retenus);
+        if (ligne.cotise) {
+          cotisesParAnnee.set(ligne.annee, retenus);
+        }
+      }
+    }
+    let acquis = trimestres;
+    for (const valides of parAnnee.values()) {
+      acquis -= valides;
+    }
+    let debutDuree = null;
+    if (acquis >= requis) {
+      debutDuree = SURCOTE_DEPUIS;
+    }
+    for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
+      if (debutDuree !== null) {
+        break;
+      }
+      const valides = parAnnee.get(annee);
+      if (acquis + valides >= requis) {
+        const manquants = requis - acquis;
+        debutDuree = new DateMois(annee, 1).plusMois(3 * manquants);
+      }
+      acquis += valides;
+    }
+    if (debutDuree === null) {
+      return [1.0, null];
+    }
+    let debut = DateMois.depuisRang(Math.max(debutAge.rang, debutDuree.rang, SURCOTE_DEPUIS.rang));
+    if ((debut.mois - 1) % 3) {
+      debut = new DateMois(debut.annee, 1).plusMois(3 * (Math.floor((debut.mois - 1) / 3) + 1));
+    }
+    const fin = carriere.dateLiquidation;
+    const date65 = carriere.dateNaissance.plusMois(12 * SURCOTE_AGE_MAJORE);
+    const trimestre65 = date65.annee * 4 + Math.floor((date65.mois - 1) / 3);
+
+    const dates = [];
+    const restants = new Map(cotisesParAnnee);
+    let courant = debut;
+    while (courant.rang + 2 < fin.rang && dates.length < supplementaires) {
+      if ((restants.get(courant.annee) ?? 0) > 0) {
+        restants.set(courant.annee, restants.get(courant.annee) - 1);
+        const apres65 = courant.annee * 4 + Math.floor((courant.mois - 1) / 3) > trimestre65;
+        dates.push([courant, apres65]);
+      }
+      courant = courant.plusMois(3);
+    }
+    if (dates.length === 0) {
+      return [1.0, null];
+    }
+    if (!this.surcoteBaremes.connait(periode.surcote_bareme ?? "")) {
+      return [1.0 + (periode.surcote_par_trimestre ?? 0.0) * dates.length, null];
+    }
+    return this.surcoteBaremes.coefficient(periode.surcote_bareme, dates);
+  }
+
   surcotePoints(periode, carriere, trimestres, requis, ageLiquidation,
     anneeLiquidation, trimestresRegime = 0) {
     const mode = periode.surcote_points;
@@ -1668,7 +1773,12 @@ export class ScenarioActuel {
     let liquidationOuverte = true;
     if (ageOuvertureReference !== null && ageLiquidation < ageOuvertureReference) {
       const anticipe = this.carriereLongue.ageDeDepart(
-        carriere, anneeLiquidation, trimestresCotises, requisReference,
+        carriere, anneeLiquidation,
+        this.carriereLongue.cotisesReputes(
+          carriere, trimestresCotises,
+          majorationEnfants !== null ? majorationEnfants.trimestres : 0,
+        ),
+        requisReference,
       );
       if (anticipe !== null && ageLiquidation >= anticipe[0]) {
         motifOuverture = "carriere_longue";
@@ -1815,6 +1925,7 @@ export class ScenarioActuel {
         : this.salaireDeReference(
           code, carriere, periode, anneeLiquidation, plafonner,
           carriere.annee_naissance, avpf, membres,
+          majorationEnfants !== null ? carriere.nombre_enfants : 0,
         );
       const [requis, fiabiliteDuree] = this.dureeRequise(periode, carriere);
       if (fiabiliteDuree !== null) {
@@ -1882,14 +1993,27 @@ export class ScenarioActuel {
         if (periode.surcote_par_trimestre && supplementaires > 0
             && ageLiquidation >= ageOuverture
             && this.droitMilitaire(periode, carriere) === null) {
-          supplementaires = Math.min(
-            supplementaires,
-            trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),
-          );
-          if (supplementaires > 0) {
-            coefficientSurcote = 1.0 + periode.surcote_par_trimestre * supplementaires;
-            taux *= coefficientSurcote;
+          if (periode.surcote_bareme) {
+            // Barème DATÉ : chaque trimestre civil de surcote au taux en
+            // vigueur quand il a été accompli, depuis le trimestre qui suit
+            // l'âge légal (D. 351-1-4).
+            const [coefficient, fiabiliteSurcote] = this.coefficientSurcoteDatee(
+              periode, carriere, trimestres, requis, supplementaires, ageOuverture,
+            );
+            coefficientSurcote = coefficient;
+            if (fiabiliteSurcote !== null) {
+              fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteSurcote);
+            }
+          } else {
+            supplementaires = Math.min(
+              supplementaires,
+              trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),
+            );
+            if (supplementaires > 0) {
+              coefficientSurcote = 1.0 + periode.surcote_par_trimestre * supplementaires;
+            }
           }
+          taux *= coefficientSurcote;
         }
       }
 

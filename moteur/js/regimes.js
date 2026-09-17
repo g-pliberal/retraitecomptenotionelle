@@ -673,8 +673,64 @@ export class SurcoteParentale {
  */
 export class CarriereLongue {
   constructor(paquet) {
+    // { date d'effet (année décimale) : [[génération, âge de début maximum,
+    //   trimestres de début, âge de départ, trimestres supplémentaires,
+    //   fiabilité], …] }
     this._table = paquet.carriere_longue ?? {};
-    this._annees = Object.keys(this._table).map(Number).sort((a, b) => a - b);
+    this._dates = Object.keys(this._table).map(Number).sort((a, b) => a - b);
+  }
+
+  /**
+   * Les portes opposables à cette carrière : celles du texte en vigueur à sa
+   * date d'effet, et pour chaque borne d'entrée la ligne de la plus haute
+   * génération qui ne dépasse pas la sienne (D. 351-1-1, II).
+   */
+  portes(carriere) {
+    if (this._dates.length === 0) {
+      return null;
+    }
+    const date = carriere.dateLiquidation;
+    const effet = date.annee + (date.mois - 1) / 12.0;
+    if (effet < this._dates[0]) {
+      return null;
+    }
+    let applicable = this._dates[0];
+    for (const candidate of this._dates) {
+      if (candidate > effet + 1e-9) {
+        break;
+      }
+      applicable = candidate;
+    }
+    const cle = Object.keys(this._table).find((k) => Number(k) === applicable);
+    const generation = carriere.generation;
+    const retenues = new Map();
+    for (const [gen, ageMax, trimestresDebut, ageDepart, supplement, fiabilite]
+      of this._table[cle]) {
+      if (gen > generation + 1e-9) {
+        continue;
+      }
+      const actuelle = retenues.get(ageMax);
+      if (actuelle === undefined || gen > actuelle[0]) {
+        retenues.set(ageMax, [gen, [ageMax, trimestresDebut, ageDepart, supplement, fiabilite]]);
+      }
+    }
+    return [...retenues.values()].sort((a, b) => a[1][0] - b[1][0]).map(([, porte]) => porte);
+  }
+
+  /**
+   * La durée cotisée que le dispositif oppose, enfants compris : depuis les
+   * pensions prenant effet au 1er septembre 2026, jusqu'à deux trimestres de
+   * la majoration pour enfants sont réputés cotisés (LFSS 2026, article 104).
+   */
+  cotisesReputes(carriere, trimestresCotises, trimestresEnfants) {
+    if (trimestresEnfants <= 0 || carriere.age_liquidation === null) {
+      return trimestresCotises;
+    }
+    if (carriere.dateLiquidation.rang < CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS) {
+      return trimestresCotises;
+    }
+    return trimestresCotises
+      + Math.min(CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM, trimestresEnfants);
   }
 
   /**
@@ -683,7 +739,7 @@ export class CarriereLongue {
    * @returns {[number, number]|null} âge de départ et fiabilité.
    */
   ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis) {
-    const portes = this.portes(anneeLiquidation);
+    const portes = this.portes(carriere);
     if (portes === null) {
       return null;
     }
@@ -716,7 +772,7 @@ export class CarriereLongue {
    * de l'âge où la durée cotisée est réunie, et la plus précoce l'emporte.
    */
   agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation) {
-    const portes = this.portes(anneeLiquidation);
+    const portes = this.portes(carriere);
     if (portes === null) {
       return null;
     }
@@ -732,21 +788,6 @@ export class CarriereLongue {
       }
     }
     return meilleur;
-  }
-
-  /** Les portes du dispositif en vigueur à l'année de liquidation. */
-  portes(anneeLiquidation) {
-    if (this._annees.length === 0 || anneeLiquidation < this._annees[0]) {
-      return null;
-    }
-    let applicable = this._annees[0];
-    for (const candidate of this._annees) {
-      if (candidate > anneeLiquidation) {
-        break;
-      }
-      applicable = candidate;
-    }
-    return this._table[String(applicable)];
   }
 
   /**
@@ -772,6 +813,67 @@ export class CarriereLongue {
 
 /** Premier mois du dernier trimestre civil : un trimestre de moins est dû. */
 CarriereLongue.MOIS_DERNIER_TRIMESTRE = 10;
+/** Rang du mois de septembre 2026 : premières pensions où les enfants comptent. */
+CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS = 2026 * 12 + 8;
+CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM = 2;
+
+/**
+ * Barème DATÉ de la surcote — D. 351-1-4 du code de la sécurité sociale,
+ * L. 14 III du code des pensions. Chaque trimestre de surcote garde le taux en
+ * vigueur à la date où il a été accompli ; voir
+ * `legislation/surcote_baremes.csv`.
+ */
+export class SurcoteBaremes {
+  constructor(paquet) {
+    // [barème, début, fin, rang minimum, après 65 ans, taux, plafond, fiabilité]
+    this._lignes = paquet.surcote_baremes ?? [];
+  }
+
+  connait(bareme) {
+    return this._lignes.some((ligne) => ligne[0] === bareme);
+  }
+
+  /**
+   * Coefficient de majoration pour ces trimestres de surcote, datés.
+   *
+   * @param {Array<[DateMois, boolean]>} trimestres premier mois de chaque
+   *   trimestre civil de surcote, dans l'ordre, et s'il suit le
+   *   soixante-cinquième anniversaire.
+   * @returns {[number, number|null]} coefficient et fiabilité.
+   */
+  coefficient(bareme, trimestres) {
+    const servis = new Map();
+    let total = 0.0;
+    let fiabilite = null;
+    trimestres.forEach(([date, apres65], indice) => {
+      const rang = indice + 1;
+      const valeur = date.annee + (date.mois - 1) / 12.0;
+      let meilleure = null;
+      this._lignes.forEach((ligne, numero) => {
+        const [code, debut, fin, rangMinimum, condition65, taux, maximum, fiab] = ligne;
+        if (code !== bareme || !(debut - 1e-9 <= valeur && valeur <= fin + 1e-9)) {
+          return;
+        }
+        if (rang < rangMinimum || (condition65 && !apres65)) {
+          return;
+        }
+        if (maximum !== null && (servis.get(numero) ?? 0) >= maximum) {
+          return;
+        }
+        if (meilleure === null || taux > meilleure[1]) {
+          meilleure = [numero, taux, fiab];
+        }
+      });
+      if (meilleure === null) {
+        return;
+      }
+      servis.set(meilleure[0], (servis.get(meilleure[0]) ?? 0) + 1);
+      total += meilleure[1];
+      fiabilite = fiabilite === null ? meilleure[2] : Math.min(fiabilite, meilleure[2]);
+    });
+    return [1.0 + total, fiabilite];
+  }
+}
 
 /**
  * Catalogue des régimes, profils d'affiliation et barèmes du point.
