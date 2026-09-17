@@ -170,18 +170,34 @@ Ce qui est garanti côté simulateur si l'hôte garde ce mode :
   la poser. Le titre de la page reste visible : il dit quelle page du
   simulateur est ouverte.
 - Le lien de retour ressort du cadre (`target="_top"`).
+- **Le défilement après un clic.** Dans un cadre de même origine, le
+  simulateur règle lui-même la hauteur du cadre à chaque rendu, puis fait
+  défiler la page hôte : jusqu'aux résultats après « Calculer », jusqu'au haut
+  du cadre après un changement de page. Sans cela, mesuré le 17 septembre 2026
+  sur le site : « Calculer » laissait le lecteur sur le haut du formulaire,
+  sans un résultat en vue, parce que le cadre gardait la hauteur de la page
+  d'avant jusqu'à la remesure suivante ; et le bouton du bas du programme le
+  laissait sur la fin du formulaire et le pied du site. La remesure
+  périodique de l'hôte reste utile pour les sections dépliées, et n'entre pas
+  en conflit : elle mesure la même chose. Depuis une autre origine,
+  `frameElement` est nul et le simulateur fait défiler son propre document,
+  comme hors cadre.
 - Aucun en-tête `X-Frame-Options` ni `frame-ancestors` n'est posé par le
   dépôt ; c'est à l'hébergeur d'en poser un s'il veut interdire les autres
   origines.
 
 Ce qui reste à la charge de l'hôte, et n'est pas garanti d'ici : la mesure de
-hauteur (le simulateur grandit à chaque calcul et à chaque section dépliée),
-la position de défilement après un calcul (le simulateur fait défiler **son**
-document vers les résultats, ce qui, dans un cadre déjà agrandi à la hauteur
-du contenu, ne fait rien de visible), et la synchronisation de l'adresse (une
-simulation faite dans le cadre n'est pas dans la barre d'adresse du site,
-donc pas partageable depuis là). Pour ces trois raisons, **le lien simple est
-préférable au cadre** ; le cadre reste supporté.
+hauteur quand une section est dépliée (le simulateur grandit sans que rien ne
+soit rendu), et la synchronisation de l'adresse (une simulation faite dans le
+cadre n'est pas dans la barre d'adresse du site, donc pas partageable depuis
+là). Pour ces deux raisons, **le lien simple est préférable au cadre** ; le
+cadre reste supporté.
+
+Ce que le lecteur voit en arrivant par `/#simulateur`, l'hôte masquant le
+titre du simulateur : la navigation du simulateur, puis « Notre programme
+pour les retraites », son chapeau, et un bloc d'entrée — « Simulez votre
+carrière », un bouton « Simuler ma retraite ». C'est ce bloc qui dit qu'il
+s'agit d'un simulateur ; il tient dans le premier écran d'un téléphone.
 
 Ce qui n'existe pas, et n'a pas été inventé : de paramètre `?embed=`, de
 `postMessage`, de script partagé. Si un jour l'hôte en a besoin, c'est un

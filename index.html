@@ -433,6 +433,43 @@ function suivreLesDates(contenu) {
 // vient de demander, et les faire défiler sous les yeux plutôt que renvoyer au
 // formulaire épargne la moitié d'un écran de retour en arrière. Une page
 // simplement ouverte, elle, se lit depuis son début.
+// Le cadre qui contient cette page, quand elle est ouverte dans un cadre de
+// même origine — c'est ainsi que le site partiliberalfrancais.fr la sert sur
+// son accueil. Nul hors cadre ; nul aussi depuis une autre origine, où le
+// navigateur refuse l'accès.
+function cadreHote() {
+  try { return window.frameElement || null; } catch (erreur) { return null; }
+}
+
+// Faire voir `cible` quand la page est dans un cadre.
+//
+// L'hôte donne au cadre la hauteur de son contenu, et le remesure après coup,
+// toutes les demi-secondes. Ce document n'a donc pas d'ascenseur : c'est la
+// page hôte qui défile, et y faire défiler ce document ne montre rien. Pire,
+// juste après un rendu, le cadre a encore la hauteur de la page d'AVANT : un
+// clic en bas du programme laissait le lecteur sur la fin du formulaire et le
+// pied du site, et « Calculer » le laissait sur le haut du formulaire, sans un
+// résultat en vue. On règle donc soi-même la hauteur du cadre, puis on fait
+// défiler la page hôte jusqu'à la cible. Vrai si c'est fait ; faux hors cadre,
+// et l'appelant fait défiler ce document comme d'habitude.
+function montrerDansHote(cible) {
+  const cadre = cadreHote();
+  if (!cadre) { return false; }
+  try {
+    const style = getComputedStyle(document.body);
+    const hauteur = document.body.getBoundingClientRect().height
+      + parseFloat(style.marginTop || 0) + parseFloat(style.marginBottom || 0);
+    if (hauteur > 0) { cadre.style.height = `${Math.ceil(hauteur) + 2}px`; }
+    const hote = cadre.ownerDocument.defaultView;
+    const haut = cadre.getBoundingClientRect().top + hote.scrollY
+      + cible.getBoundingClientRect().top + window.scrollY;
+    hote.scrollTo({ top: Math.max(0, haut) });
+    return true;
+  } catch (erreur) {
+    return false;
+  }
+}
+
 function reprendre(contenu) {
   // Sauf au tout premier rendu : personne n'a encore rien demandé, le focus
   // est là où le navigateur l'a laissé — au début du document —, et le lien
@@ -447,10 +484,14 @@ function reprendre(contenu) {
   const resultats = contenu.querySelector("#resultats");
   if (resultats) {
     resultats.focus({ preventScroll: true });
-    resultats.scrollIntoView({ block: "start" });
+    if (!montrerDansHote(resultats)) {
+      resultats.scrollIntoView({ block: "start" });
+    }
     return;
   }
-  window.scrollTo({ top: 0 });
+  if (!montrerDansHote(document.body)) {
+    window.scrollTo({ top: 0 });
+  }
   contenu.focus({ preventScroll: true });
 }
 

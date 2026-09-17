@@ -2455,6 +2455,67 @@ page sont inchangés. Ce qui change est l'habillage et le pont.
   Mentions nomme GitHub comme hébergeur, ce qui est vrai de l'adresse GitHub
   Pages et à compléter pour la copie : c'est à l'éditeur.
 
+### 29. L'entrée : dire « simulateur » en dix secondes, et dans le cadre du site — `fait`
+
+**Pourquoi.** Un visiteur qui n'a jamais entendu parler de comptes notionnels
+doit comprendre en dix secondes qu'il s'agit d'un simulateur, qu'il peut y
+mettre sa carrière, que six règles seront comparées, et où cliquer. Le
+premier écran ne le disait pas : un titre de programme, un slogan, trois
+chiffres, quatre propositions ; le mot « simuler » dans un onglet, et le seul
+bouton au troisième écran — au cinquième sur un téléphone. Sur le site du
+parti, qui ouvre cette page dans un cadre en masquant son titre, c'était pire :
+rien ne disait « simulateur » ; « Calculer les six scénarios » laissait le
+lecteur sur le haut du formulaire sans un résultat en vue, parce que le cadre
+gardait la hauteur de la page d'avant jusqu'à la remesure de l'hôte ; et le
+bouton du bas le laissait sur la fin du formulaire et le pied du site. Après
+le calcul, un téléphone montrait d'abord un coefficient de conversion, un
+capital et une note sur l'âge de référence, et pas un euro de pension.
+
+**Marche.** Le site rendu a été lu dans un navigateur, sur ordinateur et sur
+téléphone, seul puis dans le cadre du site parent (`/#simulateur`), avec les
+positions mesurées de chaque élément après chaque clic. Puis le plus petit jeu
+de changements qui réponde aux quatre questions, sans rien déplacer d'autre.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py`,
+`moteur/js/pages.js` en regard, `index.html`, `tests/test_web.py`,
+`tests/temoins/pages.json`, `docs/integration-partiliberalfrancais.md`.
+
+**Ce que ça a déplacé.** *Aucun chiffre* : les témoins de simulation sont
+inchangés, seuls ceux des pages ont bougé.
+
+- *L'accueil.* Sous le chapeau, un bloc de deux lignes et un bouton : « Ce
+  que ça donnerait pour vous ? Simulez votre carrière. Six montants côte à
+  côte : les règles d'aujourd'hui, et cinq autres. — Simuler ma retraite ».
+  Dans le premier écran, sur ordinateur comme sur téléphone, seul comme dans
+  le cadre. Rien d'autre ne bouge : titre, chapeau, repères, propositions,
+  tableaux et bouton du bas sont là où ils étaient. Le budget de lecture de
+  la page passe de 650 à 670 mots.
+- *Le formulaire.* Une ligne sous le titre : « L'exemple est déjà rempli.
+  Calculez-le tel quel, ou saisissez votre carrière. »
+- *Les résultats.* Cinq phrases sous « Résultats », avant les chiffres : le
+  scénario 1 est la référence, les cinq autres sont d'autres règles sur la
+  même carrière, le grand chiffre est la pension brute mensuelle, le
+  pourcentage l'écart avec le scénario 1. Et les deux cartes sont
+  interverties : les six montants d'abord, les repères techniques ensuite.
+  Leur contenu est inchangé.
+- *Le cadre.* `index.html` : quand la page est dans un cadre de même origine,
+  elle règle elle-même la hauteur du cadre après chaque rendu, puis fait
+  défiler la page hôte — jusqu'aux résultats après un calcul, jusqu'au haut
+  du cadre après un changement de page. Hors cadre, rien ne change. Vérifié
+  sur un hôte de test qui reproduit le cadre du site : après « Calculer », le
+  premier montant est à l'écran ; après le bouton du bas, le titre du
+  formulaire aussi.
+- *Ce qui n'a pas bougé, à dessein.* Les routes, le bandeau et ses trois
+  groupes, les six scénarios et leur ordre, les bulles, les dépliants, le
+  formulaire et ses options, l'accessibilité, les mentions.
+
+**Ce qui reste.** L'onglet du site parent s'appelle « Retraites
+notionnelles » et est masqué ; le titre du simulateur, masqué par l'hôte dans
+le cadre, est encore « Retraite à comptes notionnels ». Ni l'un ni l'autre ne
+se change d'ici.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -2973,3 +3034,10 @@ page sont inchangés. Ce qui change est l'habillage et le pont.
   La leçon, qui vaut pour tout ce qui sera servi ailleurs qu'ici : **ce qu'un
   hôte doit connaître d'une page pour l'héberger doit tenir en une adresse et
   une liste de noms** — tout ce qu'il cite de plus est ce qui cassera.
+- **17 septembre 2026, action 29.** Faite. L'accueil dit en deux lignes et
+  un bouton qu'il est un simulateur, le formulaire dit qu'on peut calculer
+  l'exemple tel quel, les résultats s'ouvrent sur leur clé de lecture puis sur
+  les montants, et la page fait défiler la page hôte quand elle est dans le
+  cadre du site du parti. Aucun chiffre déplacé. La leçon : **ce qu'une page
+  fait après un clic doit se vérifier là où elle est servie**, et un cadre
+  qui n'a pas d'ascenseur change tout ce que « faire défiler » veut dire.

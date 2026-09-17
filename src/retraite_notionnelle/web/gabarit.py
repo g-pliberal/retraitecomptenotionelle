@@ -246,6 +246,12 @@ a { color: var(--accent); }
 /* Le résumé en langage courant d'une page technique : trois ou quatre phrases
    avant le détail, dans le même encart qu'une note, un peu plus grand. */
 .note.resume { font-size: 1rem; }
+/* L'entrée de l'accueil : deux lignes qui disent que le site est un
+   simulateur, et le bouton qui l'ouvre. Serré, pour tenir dans le premier
+   écran d'un téléphone sous le titre et le chapeau. */
+.note.entree { font-size: 1rem; margin: 1.2rem 0; }
+.note.entree p { margin: 0; }
+.note.entree .actions { margin-top: 0.7rem; }
 .discret { color: var(--texte-doux); font-size: 0.9rem; }
 /* Un champ des mentions légales que l'éditeur n'a pas encore renseigné. Il est
    marqué, et non masqué : un trou visible se comble, un trou discret reste. */

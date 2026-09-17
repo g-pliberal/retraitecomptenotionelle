@@ -3644,8 +3644,9 @@ def _hors_depliants(corps: str) -> str:
 BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Deux tableaux sur l'accueil : celui qui oppose les deux systèmes terme à
     # terme, et celui du plancher — l'argument le plus parlant du site, remonté
-    # en haut de page par la revue de septembre 2026.
-    "/": (650, 0, 2),
+    # en haut de page par la revue de septembre 2026. Plus l'entrée, deux
+    # lignes et un bouton qui disent que le site est un simulateur.
+    "/": (670, 0, 2),
     "/simuler": (1500, 0, 0),
     # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
@@ -4275,6 +4276,52 @@ def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance(contexte):
     assert encart, "le point de vigilance a disparu"
     assert "celui du COR recule" in re.sub(r"\s+", " ", encart.group(1))
     assert ".note.vigilance" in g.FEUILLE_DE_STYLE
+
+
+# -- action 29 : l'entrée, pour qui arrive du site du parti --------------------
+
+
+def test_l_accueil_dit_simulez_avant_les_reperes(contexte):
+    """Un visiteur doit savoir en dix secondes que le site est un simulateur,
+    et où cliquer. Le mot et le bouton viennent avant les trois chiffres
+    repères, hors de tout dépliant ; le bouton du bas de page reste. Dans le
+    cadre que le site du parti ouvre sur cette page, le titre du simulateur est
+    masqué par l'hôte : ce bloc est alors la seule chose qui dise « simulez »."""
+    corps = rendre(contexte, "/", {})[1]
+    visible = _hors_depliants(corps)
+    entree = visible.index('<div class="note entree">')
+    reperes = visible.index('<div class="fiches reperes">')
+    assert entree < reperes
+    assert "Simulez votre carrière" in visible[entree:reperes]
+    bouton = f'<a class="bouton" href="{g.lien("/simuler")}">'
+    assert visible.index(bouton) < reperes
+    assert visible.count(bouton) == 2, "le bouton du bas de page a disparu"
+    assert ".note.entree" in g.FEUILLE_DE_STYLE
+
+
+def test_le_formulaire_dit_que_l_exemple_est_rempli(page):
+    """Qui arrive sur le formulaire peut calculer tout de suite : une ligne
+    visible le dit, avant le premier champ, et sans rien annoncer de plus."""
+    texte = page("/simuler")
+    assert "L'exemple est déjà rempli" in texte
+    assert texte.index("L'exemple est déjà rempli") < texte.index("Date de naissance")
+    assert "Résultats" not in texte
+
+
+def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(contexte):
+    """Sous « Résultats » : cinq phrases qui disent ce qu'on regarde, puis les
+    six montants, puis seulement les repères techniques. Dans l'ordre inverse,
+    un téléphone montrait un coefficient de conversion et pas un euro."""
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    visible = _hors_depliants(corps)
+    resultats = visible.index('id="resultats"')
+    lecture = visible.index("Six calculs pour votre carrière", resultats)
+    premier = visible.index('<div class="scenario">', lecture)
+    reperes = visible.index('<div class="fiches">', resultats)
+    assert lecture < premier < reperes
+    cle = visible[lecture:premier]
+    assert "C'est la référence." in cle
+    assert "grand chiffre : votre pension brute, par mois, en euros d'aujourd'hui" in cle
 
 
 def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
