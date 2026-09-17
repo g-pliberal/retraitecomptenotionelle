@@ -131,6 +131,10 @@ def test_appliquer_aligne_complete_et_certifie(verificateur, tmp_path):
         origine="test", decimales=5, tolerance=5e-4,
     )
     messages, journal = controle.confronter(appliquer=True)
+    # La fiche porte le jour du passage, valeurs changées ou non.
+    from datetime import date
+
+    assert journal["verifiee_le"] == date.today().isoformat()
 
     with cible.open(encoding="utf-8") as flux:
         lignes = {l["annee"]: l for l in csv.DictReader(
@@ -262,14 +266,27 @@ def test_manifeste_des_series_et_controles_se_correspondent():
 
 
 def test_journal_de_certification_est_lisible():
+    """Chaque fiche de série porte le jour où elle a été relue.
+
+    Le champ global ne datait qu'un passage, fût-il partiel : recertifier une
+    seule série faisait dire à la page que toutes l'avaient été ce jour-là.
+    Une fiche sans date est refusée, et aucune date de fiche ne peut être
+    postérieure au dernier passage, qui les couvre toutes.
+    """
+    import re
+
     racine = Path(__file__).resolve().parents[1]
     journal = json.loads(
         (racine / "data" / "derive" / "certification.json").read_text(encoding="utf-8")
     )
-    assert journal["certifie_le"]
+    iso = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    assert iso.match(journal["dernier_passage_le"])
+    assert "certifie_le" not in journal, "l'ancien horodatage global a été renommé"
     for nom, trace in journal["series"].items():
         assert trace["valeurs"] > 0, nom
         assert len(trace["empreinte"]) == 16, nom
+        assert iso.match(trace.get("verifiee_le", "")), f"{nom} : fiche sans date"
+        assert trace["verifiee_le"] <= journal["dernier_passage_le"], nom
 
 
 def test_les_deux_montants_du_minimum_se_lisent_sans_verbe():

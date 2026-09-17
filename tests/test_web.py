@@ -26,6 +26,7 @@ from retraite_notionnelle.donnees.chargement import (
     charger_periodes_non_travaillees,
 )
 from retraite_notionnelle.web.pages import (
+    _date_en_clair,
     AGE_DEBUT_MINIMAL,
     AGE_LIQUIDATION_MAXIMAL,
     AGES_REFERENCE,
@@ -4311,7 +4312,7 @@ def test_la_page_donnees_se_lit_comme_une_base(contexte):
     assert series, "la table des séries n'est plus filtrable"
     assert 'data-cible="series"' in corps and 'id="series-recherche"' in corps
     assert 'data-filtre="niveau"' in corps
-    assert series.group(0).count('<button type="button" class="tri"') == 4
+    assert series.group(0).count('<button type="button" class="tri"') == 5
     assert len(re.findall(r'<tr data-niveau="', series.group(0))) == series.group(0).count("<tr ")
     assert 'data-compte-de="series" data-unite="séries">' in corps
 
@@ -4427,3 +4428,30 @@ def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(context
     cout = rendre(contexte, "/cout", {})[1]
     assert "<span>Dix réserves à lire avant de citer ces chiffres</span>" in cout
     assert "Une page de chiffres vaut par ce qu'elle laisse de côté" in cout
+
+
+
+# -- action 13 : la certification datée série par série -------------------------
+
+
+def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification(contexte):
+    """« Recontrôlé le 16 septembre » était la date du dernier passage, fût-il
+    partiel. La page dit désormais le MINIMUM des dates de fiche — la seule
+    affirmation que le journal soutient —, et la table date chaque série."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.chargement import journal_certification
+
+    journal = journal_certification(RACINE_DONNEES)
+    dates = sorted(trace["verifiee_le"] for trace in journal["series"].values())
+    corps = rendre(contexte, "/donnees", {})[1]
+    ancienne = _date_en_clair(dates[0])
+    recente = _date_en_clair(dates[-1])
+    assert f"la vérification la plus ancienne remonte au {ancienne}" in re.sub(
+        r"\s+", " ", corps)
+    assert f"la plus récente au {recente}" in re.sub(r"\s+", " ", corps)
+    assert journal["dernier_passage_le"] not in corps.split("<table")[0], (
+        "la date du dernier passage ne doit plus être présentée comme celle de tout"
+    )
+    table = re.search(r'<table id="series">.*?</table>', corps, re.S).group(0)
+    assert '<th class="texte" scope="col"><button type="button" class="tri" data-colonne="3">Vérifiée le</button></th>' in table
+    assert table.count(f">{dates[0]}<") >= 1

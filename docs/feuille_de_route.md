@@ -989,7 +989,7 @@ naturel, et suppose l'action 11.
 
 ---
 
-### 13. Dater la certification série par série — `à faire`
+### 13. Dater la certification série par série — `fait`
 
 **Pourquoi.** La page Données affirme : « le tout recontrôlé automatiquement
 contre les sources, le 2026-09-15 ». Elle n'en sait rien. Cette date est un
@@ -1038,6 +1038,31 @@ non de la série.
 
 **Fin.** La page Données ne promet plus que ce qu'elle peut tenir, et le test
 du journal échoue si une fiche de série arrive sans date.
+
+**Ce que ça a déplacé.** *Aucun chiffre*, et une affirmation. Fait le
+17 septembre 2026.
+
+- *Une date dans chaque fiche.* `confronter` écrit `verifiee_le` dans la
+  trace de chaque série, à chaque passage, que les valeurs bougent ou non ;
+  c'est ce qui rend l'absence de diff lisible. Le champ global est renommé
+  `dernier_passage_le`, pour ce qu'il est : la date du dernier `--appliquer`,
+  fût-il partiel. Un test refuse une fiche sans date, et une date de fiche
+  postérieure au dernier passage.
+- *La page dit le minimum.* « La vérification la plus ancienne remonte au
+  13 septembre 2026, la plus récente au 16 septembre 2026 », au lieu de
+  « recontrôlé le 16 septembre » ; la fiche d'ouverture dit la plus ancienne,
+  et la table des séries gagne une colonne « Vérifiée le », triable comme les
+  autres. Un test vérifie que les deux dates sont le minimum et le maximum du
+  journal, et que la date du dernier passage n'est plus présentée comme celle
+  de tout.
+- *Les dates d'avant sont rétablies depuis l'historique.* Aucune source n'a
+  été retéléchargée : les fiches existantes sont datées du dernier commit où
+  chacune a changé — 60 au 13 septembre, 7 au 14, 9 au 15, 4 au 16 —, ce qui
+  est une borne basse, dite comme telle dans `limites.md` §6. Le prochain
+  passage des récupérateurs les remplacera par des dates vraies.
+- *Le bruit de diff redouté n'a pas lieu.* Le journal se complète : un passage
+  ne réécrit que les fiches des séries qu'il a atteintes, et le diff montre
+  exactement lesquelles — c'est même devenu sa vertu.
 
 ### 14. La mortalité différentielle par revenu, que le diviseur ignore — `à faire`
 
@@ -2498,3 +2523,12 @@ défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouve
   phrase, pas par le fichier** : le script cherche la phrase en tolérant les
   coupures de ligne et les coutures de chaînes, et refuse toute phrase qu'il
   ne trouve pas exactement une fois de chaque côté.
+- **Septembre 2026, action 13.** Faite. Le journal de certification date chaque
+  fiche de série du jour où elle a été relue, et la page Données dit la
+  vérification la plus ancienne au lieu de la date du dernier passage. Aucun
+  chiffre n'a bougé. La leçon tient en une ligne : **un horodatage global sur
+  un journal qui se complète est un mensonge en devenir**, exact le jour où
+  tout est relancé et faux dès le premier passage partiel ; la date appartient
+  à la fiche, et la page ne doit affirmer que ce que la plus ancienne soutient.
+  Les dates rétablies depuis l'historique du dépôt sont une borne basse, dite
+  comme telle, que le prochain passage des récupérateurs remplacera.

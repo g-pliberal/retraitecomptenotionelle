@@ -1111,6 +1111,12 @@ function nombreBrut(valeur) {
 }
 
 /** Le premier du mois est un ORDINAL en français : « 1er », et non « 1 ». */
+/** « 2026-09-13 » -> « 13 septembre 2026 », la date telle qu'on la lit. */
+function dateEnClair(iso) {
+  const [annee, mois, jour] = iso.split("-").map(Number);
+  return `${jourEnClair(jour)} ${NOMS_DE_MOIS[mois - 1]} ${annee}`;
+}
+
 function jourEnClair(jour) {
   return jour === 1 ? "1er" : String(jour);
 }
@@ -5363,7 +5369,8 @@ function donnees(contexte) {
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([nom, trace]) => [
       echapper(nom), String(trace.valeurs),
-      echapper(trace.niveau ?? "certifiee"), echapper(trace.source),
+      echapper(trace.niveau ?? "certifiee"), echapper(trace.verifiee_le),
+      echapper(trace.source),
     ]);
   // La table des séries se cherche et se trie comme l'inventaire : c'est une
   // base, pas un article.
@@ -5389,6 +5396,8 @@ function donnees(contexte) {
   const valeursCertifiees = Object.values(series)
     .reduce((somme, trace) => somme + Number(trace.valeurs), 0);
   const inventaire = (contexte.paquet.inventaire || []).length;
+  // Ce que les fiches SOUTIENNENT : la plus ancienne relecture, la plus récente.
+  const datesVerification = Object.values(series).map((trace) => trace.verifiee_le).sort();
 
   let reperes;
   let bandeau;
@@ -5396,7 +5405,8 @@ function donnees(contexte) {
     reperes = g.fiche(
       "Valeurs recontrôlées contre leur source",
       g.nombre(valeursCertifiees, 0),
-      `sur ${certifications.length} séries, le ${echapper(journal.certifie_le)}`,
+      `sur ${certifications.length} séries ; la vérification la plus ancienne `
+      + `remonte au ${dateEnClair(datesVerification[0])}`,
     ) + g.fiche(
       "Régimes recensés", String(inventaire),
       `dont ${simulateur.catalogue.taille} calculés`,
@@ -5407,8 +5417,10 @@ function donnees(contexte) {
     bandeau = `<div class="note"><strong>Les séries macroéconomiques sont
 certifiées de 1950 à 2025</strong>, les tables de mortalité sont celles
 réellement observées depuis 1986, et le plafond de la Sécurité sociale remonte à
-1931 daté décret par décret — le tout recontrôlé automatiquement contre les
-sources, le ${echapper(journal.certifie_le)}. Ce qui précède 1950 et les
+1931 daté décret par décret. Le tout est recontrôlé contre les sources, série
+par série : la vérification la plus ancienne remonte au
+${dateEnClair(datesVerification[0])}, la plus récente au
+${dateEnClair(datesVerification[datesVerification.length - 1])}. Ce qui précède 1950 et les
 paramètres propres à chaque régime restent saisis à la main : les
 <em>niveaux</em> de pension des carrières les plus anciennes gardent une marge,
 les <em>écarts entre scénarios</em>, qui sont l'objet du modèle, sont plus
@@ -5431,8 +5443,8 @@ puis <code>scripts/verifier_donnees.py --appliquer</code>.</div>`;
 
   const depliantSeries = g.depliant("Quelles séries, et contre quelle source", `
 ${filtresSeries}
-${g.tableau(["Série", "Valeurs", "Niveau", "Source"], certifications,
-    ["", "nombre", "", "texte"],
+${g.tableau(["Série", "Valeurs", "Niveau", "Vérifiée le", "Source"], certifications,
+    ["", "nombre", "", "texte", "texte"],
     "Séries recontrôlées contre la source qui les produit", true,
     attributsSeries, true, "series")}
 <p class="discret">Une valeur n'est « certifiée » que si elle a été confrontée au

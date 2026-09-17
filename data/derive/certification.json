@@ -1,5 +1,5 @@
 {
- "certifie_le": "2026-09-16",
+ "dernier_passage_le": "2026-09-16",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -9,7 +9,8 @@
    "identiques": 8,
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, aad.yaml du régime général",
-   "valeurs": 8
+   "valeurs": 8,
+   "verifiee_le": "2026-09-14"
   },
   "age_ouverture_requis": {
    "ajoutees": 0,
@@ -19,7 +20,8 @@
    "identiques": 78,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale D. 161-2-1-9",
-   "valeurs": 78
+   "valeurs": 78,
+   "verifiee_le": "2026-09-13"
   },
   "annees_salaire_reference": {
    "ajoutees": 0,
@@ -29,7 +31,8 @@
    "identiques": 16,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-29-1",
-   "valeurs": 16
+   "valeurs": 16,
+   "verifiee_le": "2026-09-13"
   },
   "carriere_longue": {
    "ajoutees": 0,
@@ -39,7 +42,8 @@
    "identiques": 4,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 351-1-1 et D. 351-1-1",
-   "valeurs": 4
+   "valeurs": 4,
+   "verifiee_le": "2026-09-13"
   },
   "coefficient_minoration": {
    "ajoutees": 0,
@@ -49,7 +53,8 @@
    "identiques": 76,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-27",
-   "valeurs": 76
+   "valeurs": 76,
+   "verifiee_le": "2026-09-13"
   },
   "comptes_retraite": {
    "ajoutees": 0,
@@ -59,7 +64,8 @@
    "identiques": 48,
    "niveau": "haute",
    "source": "COR, rapport annuel, comptes du système de retraite (rapports à la CCSS consolidés)",
-   "valeurs": 48
+   "valeurs": 48,
+   "verifiee_le": "2026-09-16"
   },
   "comptes_retraite_projetes": {
    "ajoutees": 0,
@@ -69,7 +75,8 @@
    "identiques": 90,
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
-   "valeurs": 90
+   "valeurs": 90,
+   "verifiee_le": "2026-09-16"
   },
   "decote_fonction_publique_coefficient": {
    "ajoutees": 0,
@@ -79,7 +86,8 @@
    "identiques": 14,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III",
-   "valeurs": 14
+   "valeurs": 14,
+   "verifiee_le": "2026-09-13"
   },
   "decote_fonction_publique_trimestres": {
    "ajoutees": 0,
@@ -89,7 +97,8 @@
    "identiques": 14,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III",
-   "valeurs": 14
+   "valeurs": 14,
+   "verifiee_le": "2026-09-13"
   },
   "depenses_retraite": {
    "ajoutees": 0,
@@ -99,7 +108,8 @@
    "identiques": 66,
    "niveau": "certifiee",
    "source": "DREES, Comptes de la protection sociale, risque vieillesse-survie",
-   "valeurs": 66
+   "valeurs": 66,
+   "verifiee_le": "2026-09-13"
   },
   "depenses_retraite_regimes": {
    "ajoutees": 0,
@@ -109,7 +119,8 @@
    "identiques": 455,
    "niveau": "certifiee",
    "source": "DREES, Comptes de la protection sociale, risque vieillesse-survie par organisme",
-   "valeurs": 455
+   "valeurs": 455,
+   "verifiee_le": "2026-09-13"
   },
   "distribution_pensions": {
    "ajoutees": 138,
@@ -119,7 +130,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
-   "valeurs": 138
+   "valeurs": 138,
+   "verifiee_le": "2026-09-14"
   },
   "duree_assurance_requise": {
    "ajoutees": 0,
@@ -129,7 +141,8 @@
    "identiques": 19,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-3",
-   "valeurs": 19
+   "valeurs": 19,
+   "verifiee_le": "2026-09-13"
   },
   "duree_assurance_requise_1993": {
    "ajoutees": 0,
@@ -139,7 +152,8 @@
    "identiques": 9,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-45 II",
-   "valeurs": 9
+   "valeurs": 9,
+   "verifiee_le": "2026-09-13"
   },
   "duree_assurance_requise_decrets": {
    "ajoutees": 0,
@@ -149,7 +163,8 @@
    "identiques": 5,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décrets pris pour l'application de la loi du 21 août 2003 et de celle du 9 novembre 2010",
-   "valeurs": 5
+   "valeurs": 5,
+   "verifiee_le": "2026-09-13"
   },
   "duree_assurance_requise_openfisca": {
    "ajoutees": 0,
@@ -159,7 +174,8 @@
    "identiques": 11,
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, trimtp.yaml du régime général",
-   "valeurs": 11
+   "valeurs": 11,
+   "verifiee_le": "2026-09-14"
   },
   "duree_proratisation": {
    "ajoutees": 0,
@@ -169,7 +185,8 @@
    "identiques": 5,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-6 II",
-   "valeurs": 5
+   "valeurs": 5,
+   "verifiee_le": "2026-09-13"
   },
   "duree_requise_fonction_publique_openfisca": {
    "ajoutees": 0,
@@ -179,7 +196,8 @@
    "identiques": 5,
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, trimtp.yaml de la pension civile, colonne de 2003",
-   "valeurs": 5
+   "valeurs": 5,
+   "verifiee_le": "2026-09-14"
   },
   "effectifs_retraites": {
    "ajoutees": 0,
@@ -189,7 +207,8 @@
    "identiques": 334,
    "niveau": "certifiee",
    "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
-   "valeurs": 334
+   "valeurs": 334,
+   "verifiee_le": "2026-09-14"
   },
   "employeur_public_cnracl": {
    "ajoutees": 0,
@@ -199,7 +218,8 @@
    "identiques": 40,
    "niveau": "haute",
    "source": "OpenFisca-France, décrets CNRACL et barèmes de la Caisse des dépôts",
-   "valeurs": 40
+   "valeurs": 40,
+   "verifiee_le": "2026-09-13"
   },
   "employeur_public_cnracl_journal_officiel": {
    "ajoutees": 0,
@@ -209,7 +229,8 @@
    "identiques": 41,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 5 II, et décret n° 47-1846 du 19 septembre 1947, article 3",
-   "valeurs": 41
+   "valeurs": 41,
+   "verifiee_le": "2026-09-13"
   },
   "employeur_public_comedie_francaise": {
    "ajoutees": 35,
@@ -219,7 +240,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 7 II",
-   "valeurs": 35
+   "valeurs": 35,
+   "verifiee_le": "2026-09-15"
   },
   "employeur_public_etat": {
    "ajoutees": 0,
@@ -229,7 +251,8 @@
    "identiques": 21,
    "niveau": "certifiee",
    "source": "Service des retraites de l'État, fiche « Historique des taux de cotisations »",
-   "valeurs": 21
+   "valeurs": 21,
+   "verifiee_le": "2026-09-13"
   },
   "employeur_public_etat_implicite": {
    "ajoutees": 0,
@@ -239,7 +262,8 @@
    "identiques": 11,
    "niveau": "haute",
    "source": "OpenFisca-France, taux implicite du jaune « pensions » du PLF 2011",
-   "valeurs": 11
+   "valeurs": 11,
+   "verifiee_le": "2026-09-13"
   },
   "employeur_public_ieg": {
    "ajoutees": 16,
@@ -249,7 +273,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DILA, arrêtés annuels pris pour l'article 3 du décret n° 2005-278 du 24 mars 2005",
-   "valeurs": 16
+   "valeurs": 16,
+   "verifiee_le": "2026-09-15"
   },
   "employeur_public_mines": {
    "ajoutees": 43,
@@ -259,7 +284,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 46-2769 du 27 novembre 1946, articles 52 puis 90",
-   "valeurs": 43
+   "valeurs": 43,
+   "verifiee_le": "2026-09-15"
   },
   "employeur_public_opera": {
    "ajoutees": 35,
@@ -269,7 +295,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 6 II",
-   "valeurs": 35
+   "valeurs": 35,
+   "verifiee_le": "2026-09-15"
   },
   "employeur_public_ratp": {
    "ajoutees": 19,
@@ -279,7 +306,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DILA, arrêtés annuels pris pour l'article 2 du décret n° 2005-1637 du 26 décembre 2005",
-   "valeurs": 19
+   "valeurs": 19,
+   "verifiee_le": "2026-09-15"
   },
   "employeur_public_sncf": {
    "ajoutees": 0,
@@ -289,7 +317,8 @@
    "identiques": 7,
    "niveau": "haute",
    "source": "OpenFisca-France, arrêtés annuels fixant les composantes T1 et T2",
-   "valeurs": 7
+   "valeurs": 7,
+   "verifiee_le": "2026-09-13"
   },
   "employeur_public_sncf_avant_2007": {
    "ajoutees": 15,
@@ -299,7 +328,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 8 II",
-   "valeurs": 15
+   "valeurs": 15,
+   "verifiee_le": "2026-09-15"
   },
   "employeur_public_sncf_textes": {
    "ajoutees": 0,
@@ -309,7 +339,8 @@
    "identiques": 5,
    "niveau": "certifiee",
    "source": "DILA, arrêtés annuels du taux T1 (base JORF) et décret n° 2007-1056 du 28 juin 2007, article 2 IV (base LEGI)",
-   "valeurs": 5
+   "valeurs": 5,
+   "verifiee_le": "2026-09-13"
   },
   "esperance_65_derivee": {
    "ajoutees": 0,
@@ -319,7 +350,8 @@
    "identiques": 28,
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
-   "valeurs": 28
+   "valeurs": 28,
+   "verifiee_le": "2026-09-13"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -329,7 +361,8 @@
    "identiques": 600,
    "niveau": "projetee",
    "source": "dérivée des quotients projetés de l'INSEE, projections 2026",
-   "valeurs": 600
+   "valeurs": 600,
+   "verifiee_le": "2026-09-13"
   },
   "esperances_vie": {
    "ajoutees": 0,
@@ -339,7 +372,8 @@
    "identiques": 450,
    "niveau": "certifiee",
    "source": "INSEE BDM (e0, e60) et OCDE DSD_HEALTH_STAT@DF_LE (e65)",
-   "valeurs": 450
+   "valeurs": 450,
+   "verifiee_le": "2026-09-13"
   },
   "inflation": {
    "ajoutees": 0,
@@ -349,7 +383,8 @@
    "identiques": 76,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbanks 000008965 et 001764363",
-   "valeurs": 76
+   "valeurs": 76,
+   "verifiee_le": "2026-09-13"
   },
   "masse_salariale": {
    "ajoutees": 0,
@@ -359,7 +394,8 @@
    "identiques": 76,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011785411",
-   "valeurs": 76
+   "valeurs": 76,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_contributif": {
    "ajoutees": 0,
@@ -369,7 +405,8 @@
    "identiques": 6,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale D. 351-2-1 et D. 173-21-0-0-1",
-   "valeurs": 6
+   "valeurs": 6,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_garanti_indice": {
    "ajoutees": 0,
@@ -379,7 +416,8 @@
    "identiques": 10,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
-   "valeurs": 10
+   "valeurs": 10,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_garanti_part": {
    "ajoutees": 0,
@@ -389,7 +427,8 @@
    "identiques": 10,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
-   "valeurs": 10
+   "valeurs": 10,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_garanti_points_15_30": {
    "ajoutees": 0,
@@ -399,7 +438,8 @@
    "identiques": 10,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
-   "valeurs": 10
+   "valeurs": 10,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_garanti_points_30_40": {
    "ajoutees": 0,
@@ -409,7 +449,8 @@
    "identiques": 10,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
-   "valeurs": 10
+   "valeurs": 10,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_garanti_reference": {
    "ajoutees": 0,
@@ -419,7 +460,8 @@
    "identiques": 2,
    "niveau": "certifiee",
    "source": "Service des retraites de l'État, page du minimum garanti",
-   "valeurs": 2
+   "valeurs": 2,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_garanti_seuil": {
    "ajoutees": 0,
@@ -429,7 +471,8 @@
    "identiques": 10,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
-   "valeurs": 10
+   "valeurs": 10,
+   "verifiee_le": "2026-09-13"
   },
   "minimum_vieillesse": {
    "ajoutees": 0,
@@ -439,7 +482,8 @@
    "identiques": 9,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale, article D. 815-1",
-   "valeurs": 9
+   "valeurs": 9,
+   "verifiee_le": "2026-09-13"
   },
   "pib_courant": {
    "ajoutees": 0,
@@ -449,7 +493,8 @@
    "identiques": 77,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011779992",
-   "valeurs": 77
+   "valeurs": 77,
+   "verifiee_le": "2026-09-13"
   },
   "pib_nominal": {
    "ajoutees": 0,
@@ -459,7 +504,8 @@
    "identiques": 76,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011779992",
-   "valeurs": 76
+   "valeurs": 76,
+   "verifiee_le": "2026-09-13"
   },
   "plafond": {
    "ajoutees": 0,
@@ -469,7 +515,8 @@
    "identiques": 25,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 000822494",
-   "valeurs": 25
+   "valeurs": 25,
+   "verifiee_le": "2026-09-13"
   },
   "plafond_ancien": {
    "ajoutees": 0,
@@ -479,7 +526,8 @@
    "identiques": 40,
    "niveau": "haute",
    "source": "OpenFisca-France, plafond_securite_sociale_annuel.yaml",
-   "valeurs": 40
+   "valeurs": 40,
+   "verifiee_le": "2026-09-13"
   },
   "plafond_journal_officiel": {
    "ajoutees": 0,
@@ -489,7 +537,8 @@
    "identiques": 31,
    "niveau": "certifiee",
    "source": "DILA, base JORF, décrets portant fixation du plafond de la sécurité sociale",
-   "valeurs": 31
+   "valeurs": 31,
+   "verifiee_le": "2026-09-13"
   },
   "point_indice_fonction_publique": {
    "ajoutees": 0,
@@ -499,7 +548,8 @@
    "identiques": 36,
    "niveau": "haute",
    "source": "OpenFisca-France, point_indice_en_euros.yaml",
-   "valeurs": 36
+   "valeurs": 36,
+   "verifiee_le": "2026-09-13"
   },
   "point_indice_journal_officiel": {
    "ajoutees": 0,
@@ -509,7 +559,8 @@
    "identiques": 32,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 85-1148 du 24 octobre 1985, article 3",
-   "valeurs": 32
+   "valeurs": 32,
+   "verifiee_le": "2026-09-13"
   },
   "population_active": {
    "ajoutees": 62,
@@ -519,7 +570,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "INSEE, estimations de population, scénario central des projections 2026",
-   "valeurs": 62
+   "valeurs": 62,
+   "verifiee_le": "2026-09-13"
   },
   "population_active_projetee": {
    "ajoutees": 47,
@@ -529,7 +581,8 @@
    "identiques": 0,
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénario central",
-   "valeurs": 47
+   "valeurs": 47,
+   "verifiee_le": "2026-09-13"
   },
   "population_par_age": {
    "ajoutees": 3410,
@@ -539,7 +592,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "INSEE, estimations de population, scénario central des projections 2026",
-   "valeurs": 3410
+   "valeurs": 3410,
+   "verifiee_le": "2026-09-13"
   },
   "population_par_age_projetee": {
    "ajoutees": 2585,
@@ -549,7 +603,8 @@
    "identiques": 0,
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénario central",
-   "valeurs": 2585
+   "valeurs": 2585,
+   "verifiee_le": "2026-09-13"
   },
   "productivite": {
    "ajoutees": 0,
@@ -559,7 +614,8 @@
    "identiques": 76,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbanks 011785223 et 011793334",
-   "valeurs": 76
+   "valeurs": 76,
+   "verifiee_le": "2026-09-13"
   },
   "quotients_mortalite": {
    "ajoutees": 0,
@@ -569,7 +625,8 @@
    "identiques": 6850,
    "niveau": "certifiee",
    "source": "Eurostat demo_mlifetable, quotients de mortalité par âge",
-   "valeurs": 6850
+   "valeurs": 6850,
+   "verifiee_le": "2026-09-13"
   },
   "quotients_mortalite_anciens": {
    "ajoutees": 0,
@@ -579,7 +636,8 @@
    "identiques": 18466,
    "niveau": "certifiee",
    "source": "INED, tables de Vallin et Meslé, quotients du moment par âge",
-   "valeurs": 18466
+   "valeurs": 18466,
+   "verifiee_le": "2026-09-13"
   },
   "salaire_moyen": {
    "ajoutees": 0,
@@ -589,7 +647,8 @@
    "identiques": 76,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbanks 011785411 et 011793486",
-   "valeurs": 76
+   "valeurs": 76,
+   "verifiee_le": "2026-09-13"
   },
   "salaires_forfaitaires_marins": {
    "ajoutees": 380,
@@ -599,7 +658,8 @@
    "identiques": 0,
    "niveau": "certifiee",
    "source": "DILA, base JORF, arrêtés annuels portant majoration des salaires forfaitaires des marins",
-   "valeurs": 380
+   "valeurs": 380,
+   "verifiee_le": "2026-09-14"
   },
   "smic_horaire": {
    "ajoutees": 0,
@@ -609,7 +669,8 @@
    "identiques": 20,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
-   "valeurs": 20
+   "valeurs": 20,
+   "verifiee_le": "2026-09-13"
   },
   "structure_ressources_retraite": {
    "ajoutees": 0,
@@ -619,7 +680,8 @@
    "identiques": 132,
    "niveau": "haute",
    "source": "COR, rapport annuel, structure des ressources du système de retraite",
-   "valeurs": 132
+   "valeurs": 132,
+   "verifiee_le": "2026-09-16"
   },
   "taux_cotisation_alignes": {
    "ajoutees": 0,
@@ -629,7 +691,8 @@
    "identiques": 512,
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
-   "valeurs": 512
+   "valeurs": 512,
+   "verifiee_le": "2026-09-15"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -639,7 +702,8 @@
    "identiques": 194,
    "niveau": "haute",
    "source": "OpenFisca-France, barèmes datés de la cotisation vieillesse (cnav, artisans, commerçants, indépendants)",
-   "valeurs": 194
+   "valeurs": 194,
+   "verifiee_le": "2026-09-15"
   },
   "taux_cotisation_avant_1967": {
    "ajoutees": 132,
@@ -649,7 +713,8 @@
    "identiques": 0,
    "niveau": "estimee",
    "source": "COR d'après la Cnav, taux des assurances sociales 1945-1967 ; part vieillesse conventionnelle de 8,5/21",
-   "valeurs": 132
+   "valeurs": 132,
+   "verifiee_le": "2026-09-14"
   },
   "taux_cotisation_journal_officiel": {
    "ajoutees": 0,
@@ -659,7 +724,8 @@
    "identiques": 368,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale D. 242-4 et décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444",
-   "valeurs": 368
+   "valeurs": 368,
+   "verifiee_le": "2026-09-15"
   },
   "transferts_retraite": {
    "ajoutees": 57,
@@ -669,7 +735,8 @@
    "identiques": 0,
    "niveau": "haute",
    "source": "rapports à la Commission des comptes de la Sécurité sociale, fiches CNAF, Agirc-Arrco et Ircantec",
-   "valeurs": 57
+   "valeurs": 57,
+   "verifiee_le": "2026-09-16"
   },
   "valeurs_point": {
    "ajoutees": 0,
@@ -679,7 +746,8 @@
    "identiques": 304,
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, paramètres des régimes en points",
-   "valeurs": 304
+   "valeurs": 304,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_agirc_arrco": {
    "ajoutees": 0,
@@ -689,7 +757,8 @@
    "identiques": 275,
    "niveau": "certifiee",
    "source": "Fédération Agirc-Arrco, compilation des valeurs de point (régime unifié, Agirc, Arrco et UNIRS)",
-   "valeurs": 275
+   "valeurs": 275,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_agirc_arrco_en_cours": {
    "ajoutees": 0,
@@ -699,7 +768,8 @@
    "identiques": 1,
    "niveau": "haute",
    "source": "Fédération Agirc-Arrco, valeur en vigueur dans l'année en cours",
-   "valeurs": 1
+   "valeurs": 1,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_cnavpl": {
    "ajoutees": 0,
@@ -709,7 +779,8 @@
    "identiques": 19,
    "niveau": "certifiee",
    "source": "CNAVPL, recueils statistiques annuels",
-   "valeurs": 19
+   "valeurs": 19,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_cnbf": {
    "ajoutees": 0,
@@ -719,7 +790,8 @@
    "identiques": 18,
    "niveau": "certifiee",
    "source": "CNBF, barèmes annuels des cotisations et prestations",
-   "valeurs": 18
+   "valeurs": 18,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_estimees": {
    "ajoutees": 40,
@@ -729,7 +801,8 @@
    "identiques": 0,
    "niveau": "estimee",
    "source": "Taux d'appel de l'Ircantec 1971 prolongé sur l'IPACTE et l'IGRANTE (décret 70-1277, art. 7, LEGIARTI000006368121)",
-   "valeurs": 40
+   "valeurs": 40,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -739,7 +812,8 @@
    "identiques": 85,
    "niveau": "haute",
    "source": "IPP, barèmes des régimes de retraite des indépendants",
-   "valeurs": 85
+   "valeurs": 85,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_ircantec": {
    "ajoutees": 0,
@@ -749,7 +823,8 @@
    "identiques": 153,
    "niveau": "certifiee",
    "source": "Caisse des dépôts, barèmes Ircantec (IRC_BAR_01 et IRC_BAR_02)",
-   "valeurs": 153
+   "valeurs": 153,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,
@@ -759,7 +834,8 @@
    "identiques": 20,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code rural D. 732-166",
-   "valeurs": 20
+   "valeurs": 20,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_rafp": {
    "ajoutees": 0,
@@ -769,7 +845,8 @@
    "identiques": 44,
    "niveau": "certifiee",
    "source": "ERAFP, évolution des valeurs du point depuis la création du RAFP",
-   "valeurs": 44
+   "valeurs": 44,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_texte": {
    "ajoutees": 0,
@@ -779,7 +856,8 @@
    "identiques": 1,
    "niveau": "moyenne",
    "source": "Valeurs saisies dans le texte : ANI du 17 novembre 2017, art. 3 ; arrêté du 12 décembre 1951, art. 8 (LEGIARTI000006381673)",
-   "valeurs": 3
+   "valeurs": 3,
+   "verifiee_le": "2026-09-13"
   },
   "valeurs_point_unirs": {
    "ajoutees": 0,
@@ -789,7 +867,8 @@
    "identiques": 123,
    "niveau": "moyenne",
    "source": "UNIRS tenant lieu de point Arrco avant 1999 — barème de la fédération Agirc-Arrco, substitution du dépôt",
-   "valeurs": 123
+   "valeurs": 123,
+   "verifiee_le": "2026-09-13"
   },
   "validation_trimestres": {
    "ajoutees": 0,
@@ -799,7 +878,8 @@
    "identiques": 2,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-9",
-   "valeurs": 2
+   "valeurs": 2,
+   "verifiee_le": "2026-09-13"
   }
  }
 }

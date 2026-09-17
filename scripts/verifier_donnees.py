@@ -89,6 +89,14 @@ ANNEE_CHAINAGE_IPC = 1990
 #: Trace de la dernière certification, écrite par ``--appliquer``. Le répertoire
 #: data/brut/ n'étant pas versionné, c'est ce fichier qui rend la certification
 #: vérifiable après coup : il dit quelle source, quel jour, combien de valeurs.
+#:
+#: Le jour est écrit DANS chaque fiche de série (``verifiee_le``), à chaque
+#: passage du récupérateur, que les valeurs bougent ou non : une série
+#: recontrôlée sans changement réécrivait une fiche identique, donc ne laissait
+#: aucune trace, et le journal ne savait plus distinguer « recontrôlé hier,
+#: inchangé » de « pas regardé depuis un mois ». Le champ global
+#: ``dernier_passage_le`` n'est que la date du dernier ``--appliquer``, fût-il
+#: partiel : c'est le maximum, et la page Données dit le minimum.
 JOURNAL = DONNEES / "derive" / "certification.json"
 
 
@@ -2193,6 +2201,9 @@ class Certification:
         journal = {
             "source": self.origine,
             "niveau": self.niveau,
+            # Le jour du passage, valeurs changées ou non : c'est ce qui rend
+            # l'absence de diff lisible — la fiche a été relue ce jour-là.
+            "verifiee_le": date.today().isoformat(),
             # Deux contrôles peuvent porter sur les mêmes LIGNES et des COLONNES
             # différentes — la décote de la fonction publique, dont un article
             # fixe le coefficient et l'âge d'annulation dans le même tableau.
@@ -4844,7 +4855,8 @@ def main(argv: list[str] | None = None) -> int:
         for nom in retires:
             consigne.pop(nom, None)
         JOURNAL.write_text(
-            json.dumps({"certifie_le": date.today().isoformat(), "series": consigne},
+            json.dumps({"dernier_passage_le": date.today().isoformat(),
+                        "series": consigne},
                        ensure_ascii=False, indent=1, sort_keys=True),
             encoding="utf-8",
         )
