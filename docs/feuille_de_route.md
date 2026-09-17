@@ -1818,23 +1818,65 @@ passe, disant quelles pages ont bougé et de combien de mots.
 
 *L'argumentaire de la page Programme est solide et bien construit (constat → alternative → comparaison → transition). Le point faible est ailleurs : ce que les pages de preuve montrent peut contredire, en apparence, ce que Programme promet.*
 
-- [ ] 🔴 **Expliquer la baisse affichée avant les tableaux, pas après** `Cas types`
+- [x] 🔴 **Expliquer la baisse affichée avant les tableaux, pas après** `Cas types`
   Le scénario 6 — la proposition réelle — affiche entre -28 % et -76 % de pension par rapport à aujourd'hui pour la plupart des carrières. La clé de lecture existe (« un coefficient supérieur à un n'est pas une économie, c'est une marge »), mais elle est sur la page Coût, pas sur Cas types. Un lecteur qui saute directement aux tableaux peut comprendre l'inverse du message. Mettre cette clé de lecture en tête de Cas types, avant les chiffres.
+  *Fait le 17 septembre 2026.* La clé de lecture ouvre la page Cas types,
+  AVANT les trois chiffres et les grilles : « Ces pourcentages ne sont pas des
+  baisses de pension », l'écart entre lignes et non le niveau, le coefficient
+  que le modèle calcule sans l'appliquer, et la phrase qui compte — « un
+  coefficient supérieur à un n'est pas une économie, c'est une marge ». Elle
+  affirme que ce coefficient est supérieur à un pour la proposition chaque
+  année, ce qui est vérifié sur la trajectoire (1,33 au plus bas, 1,52 en
+  2070), et renvoie à la section de Coût qui le chiffre. La page ne calcule
+  pas le coût agrégé pour le dire : quatre secondes de plus à l'ouverture,
+  pour un chiffre que Coût porte déjà.
 
-- [ ] 🔴 **Rappeler que le système actuel n'est pas stable, dans les tableaux eux-mêmes** `Cas types · Coût`
+- [x] 🔴 **Rappeler que le système actuel n'est pas stable, dans les tableaux eux-mêmes** `Cas types · Coût`
   Programme insiste sur le déficit (-0,17 % du PIB en 2025, 19,3 % du PIB projeté en 2070). Les tableaux de Cas types comparent pourtant chaque scénario à « aujourd'hui » comme s'il s'agissait d'un point fixe. Le vrai choix n'est pas « notionnel contre système stable » mais « notionnel contre système qui dérive ». Rappeler la trajectoire du système actuel à côté de chaque comparaison.
+  *Fait le 17 septembre 2026.* Sous les grilles de Cas types et dans la section
+  des six systèmes de Coût : « le système actuel manque de 0,17 % du PIB en
+  2025, et le COR projette 2,39 % en 2070 — le choix n'est pas notionnel contre
+  système stable, mais notionnel contre système qui dérive ». Les deux nombres
+  sont lus dans les comptes du COR, qui portent la projection jusqu'en 2070 et
+  ne coûtent rien à ouvrir ; un test les recalcule. Le « 19,3 % du PIB » cité
+  par le relecteur était la DÉPENSE projetée par le modèle, pas le solde : la
+  page dit le solde, qui est ce que « dérive » veut dire.
 
-- [ ] 🟠 **Distinguer visuellement « contrefactuel » et « proposition »** `Cas types · Coût`
+- [x] 🟠 **Distinguer visuellement « contrefactuel » et « proposition »** `Cas types · Coût`
   Que les scénarios 2 à 5 soient des exercices théoriques et que seul le 6 soit la proposition du parti est expliqué en préambule, mais jamais rappelé au niveau de chaque tableau. Un badge « proposition » sur le scénario 6 et « contrefactuel » sur les autres évite l'erreur de lecture au moment où elle se produit.
+  *Fait le 17 septembre 2026.* Un badge — « proposition » sur le scénario 6,
+  « contrefactuel » sur les 2 à 5, rien sur le système actuel, qui est la
+  référence — dans le titre de chaque panneau de Cas types et en tête de ligne
+  des trois tableaux de Coût qui alignent les six systèmes (le passé, l'avenir,
+  l'équilibre). Un mot en capitales espacées, pas une couleur porteuse de sens
+  à elle seule.
 
-- [ ] 🟠 **Ajouter un résumé en langage courant aux pages techniques** `Coût · Méthode · Données`
+- [x] 🟠 **Ajouter un résumé en langage courant aux pages techniques** `Coût · Méthode · Données`
   Ces pages sont rigoureuses mais écrites pour un lecteur déjà convaincu ou technicien (« coefficient d'équilibre », « assiette déplafonnée », « EIR 2020 »). Trois ou quatre phrases en langage simple avant le détail donneraient un point d'entrée à un lecteur non spécialiste, sans rien retirer à la rigueur qui suit.
+  *Fait le 17 septembre 2026.* Un encart « En clair », trois à quatre phrases
+  sans un mot de spécialiste, sous le chapeau de Coût, de Méthode et de
+  Données. Celui de Coût dit avec les chiffres de la page ce qui a manqué en
+  2025, d'où vient l'argent, ce qui manquerait en 2070 et ce qu'un système
+  notionnel changerait ; celui de Méthode dit la règle en une phrase et le rôle
+  du système actuel comme étalon ; celui de Données dit d'où viennent les
+  chiffres et ce que « vérifié » veut dire. Un test exige les trois, visibles
+  sans rien déplier, de trois à cinq phrases.
 
-- [ ] ⚪ **Sortir l'autocritique méthodologique de la masse de texte** `Coût`
+- [x] ⚪ **Sortir l'autocritique méthodologique de la masse de texte** `Coût`
   La comparaison à la projection du COR (« notre écart vaut -0,3 point de PIB au départ et 5,1 à l'arrivée […] il n'est pas flatteur ») est un vrai gage de sérieux, mais elle est noyée dans un paragraphe. En faire un encart « point de vigilance » à part la transforme en argument de crédibilité au lieu de la laisser passer inaperçue.
+  *Fait le 17 septembre 2026.* La comparaison à la projection du COR est un
+  encart « Point de vigilance : notre projection s'écarte de celle du COR »,
+  marqué comme un avertissement (`.note.vigilance`), dans la section des six
+  systèmes. Le texte n'a pas changé ; ce qui a changé est qu'on le voit.
 
-- [ ] ⚪ **Remonter le tableau de la garantie vieillesse** `Programme`
+- [x] ⚪ **Remonter le tableau de la garantie vieillesse** `Programme`
   Le tableau « 300 € et 1 500 € → 0 € aujourd'hui, 500 € avec la garantie » est l'argument le plus immédiatement parlant du site pour un lecteur non spécialiste. Il arrive tard, après plusieurs tableaux denses. Le rapprocher du haut de page renforcerait l'accroche.
+  *Fait le 17 septembre 2026.* Le tableau « 300 € et 1 500 € : 0 € aujourd'hui,
+  500 € avec la garantie » est sous les quatre propositions, en haut de
+  l'accueil, avec une phrase d'introduction — avant le tableau qui oppose les
+  deux systèmes terme à terme. Le dépliant du plancher y renvoie au lieu de le
+  répéter. Le budget de lecture de l'accueil passe à deux tableaux visibles,
+  pour cette raison et elle seule.
 
 #### 3. Architecture
 
@@ -2326,3 +2368,18 @@ défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouve
   du site** : la question du relecteur sur l'âge de conversion des droits
   acquis a été mesurée — 40 cellules sur 91 bougent sur Cas types — et versée
   à l'action 24 plutôt que tranchée au passage.
+- **Septembre 2026, action 23, seconde passe : le thème « clarté des
+  arguments ».** Six chantiers, six cases cochées, le 17 septembre. Ce qui a
+  bougé : la clé de lecture de Cas types passe avant les chiffres et dit que
+  le coefficient de la proposition est une marge ; les comparaisons de Cas
+  types et de Coût rappellent le solde du système actuel, observé et
+  projeté ; un badge « proposition » ou « contrefactuel » sur chaque grille et
+  chaque ligne de scénario ; un encart « En clair » sur Coût, Méthode et
+  Données ; un « point de vigilance » pour l'écart au COR ; le tableau du
+  plancher en haut de l'accueil. Aucun chiffre n'a changé. Deux leçons. **Un
+  chiffre qu'une page cite doit venir de ce qu'elle charge déjà** : Cas types
+  dit la trajectoire du système actuel en lisant les comptes du COR, qu'elle
+  a sous la main, et non le coût agrégé, qui lui coûterait quatre secondes.
+  Et **une clé de lecture affirmée se vérifie** : « supérieur à un chaque
+  année » a été mesuré sur la trajectoire avant d'être écrit, et le test qui
+  garde la phrase garde aussi les nombres qui l'entourent.
