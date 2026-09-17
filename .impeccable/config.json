@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "marquee",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-09-17T19:27:26.530Z",
+        "reason": "Jauge d'attente du chargement, pas un défilement de contenu : mouvement voulu, coupé sous prefers-reduced-motion ; déjà documentée comme voulue à l'action 28 de docs/feuille_de_route.md"
+      }
+    ]
+  }
+}
