@@ -1561,15 +1561,21 @@ def source_carriere_longue() -> dict[tuple, float]:
     Articles L. 351-1-1 et D. 351-1-1, DERNIÈRE VERSION seulement : les portes
     de 2004 et de 2012 sont dans des versions abrogées que le récupérateur ne
     remonte pas, et restent des transcriptions. Ne sont donc confrontées que les
-    quatre bornes en vigueur depuis le 1er septembre 2023 — 16, 18, 20 et 21
-    ans pour 58, 60, 62 et 63 ans.
+    quatre bornes de la RÈGLE GÉNÉRALE (génération `1900`) en vigueur depuis le
+    1er septembre 2023 — 16, 18, 20 et 21 ans pour 58, 60, 62 et 63 ans. Les
+    lignes par génération du II de l'article, et celles du 1er septembre 2026,
+    restent des transcriptions de la circulaire Cnav 2026-17.
     """
     brut = _lire_json("dila_legi_parametres_retraite.json",
                       "scripts/fetch/dila_legi_parametres_retraite.py")
     portes = {}
     for porte in brut.get("carriere_longue", []):
-        annee = int(str(porte["entree_en_vigueur"])[:4])
-        portes[(str(annee), str(int(porte["age_debut_maximum"])))] = \
+        texte = str(porte["entree_en_vigueur"])
+        annee, mois = int(texte[:4]), int(texte[5:7]) if len(texte) >= 7 else 1
+        # La clé est la date d'effet en année décimale, écrite comme dans la
+        # table : `2023.667` pour le 1er septembre 2023, `2004` pour janvier.
+        date_effet = f"{annee + (mois - 1) / 12.0:.3f}".rstrip("0").rstrip(".")
+        portes[(date_effet, "1900", str(int(porte["age_debut_maximum"])))] = \
             float(porte["age_depart"])
     return portes
 
@@ -2082,7 +2088,7 @@ def source_employeur_sncf() -> dict[tuple, float]:
 
 #: Colonnes-clés qui se trient en NOMBRE et non en texte. Sans elles, la borne
 #: « 1000 » d'une tranche de pension tomberait entre « 100 » et « 200 ».
-CLES_NUMERIQUES = frozenset({"annee", "generation", "borne_mensuelle"})
+CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuelle"})
 
 
 @dataclass(frozen=True)
@@ -3149,7 +3155,7 @@ CERTIFICATIONS = (
     Certification(
         nom="carriere_longue",
         chemin=REFERENCE / "legislation" / "carriere_longue.csv",
-        cles=("annee", "age_debut_maximum"),
+        cles=("date_effet", "generation", "age_debut_maximum"),
         colonne="age_depart",
         source=source_carriere_longue,
         origine="DILA, base LEGI, code de la sécurité sociale L. 351-1-1 "

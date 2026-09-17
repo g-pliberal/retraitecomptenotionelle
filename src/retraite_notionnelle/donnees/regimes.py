@@ -182,6 +182,10 @@ class PeriodeRegime:
     #: ``None`` lève le plafond.
     decote_trimestres_maximum: int | None
     surcote_par_trimestre: float | None
+    #: Barème DATÉ de la surcote — ``regime_general`` ou ``fonction_publique`` —,
+    #: lu dans ``legislation/surcote_baremes.csv`` trimestre par trimestre ;
+    #: ``None`` applique le taux plat ci-dessus à tous les trimestres.
+    surcote_bareme: str | None
     #: Barème d'abattement des régimes en points. ``decote_du_regime_de_base``
     #: applique le coefficient de minoration ci-dessus ; ``agirc_arrco``
     #: applique les coefficients d'anticipation propres à ce régime.
@@ -882,6 +886,7 @@ class CatalogueRegimes:
                     None if p.get("surcote_par_trimestre") is None
                     else float(p["surcote_par_trimestre"])
                 ),
+                surcote_bareme=p.get("surcote_bareme"),
                 abattement_points=p.get("abattement_points", "decote_du_regime_de_base"),
                 surcote_points=p.get("surcote_points", "aucune"),
                 surcote_age_debut=(
@@ -1176,6 +1181,10 @@ DRAPEAUX_PAR_GENERATION = (
     "decote_par_generation",
     "duree_proratisation_par_generation",
     "salaire_reference_par_generation",
+    # Pas un drapeau par génération, mais un barème DATÉ : une période qui le
+    # porte lit le taux de chaque trimestre de surcote à sa date, et absorbe
+    # donc les changements de taux sans coupure.
+    "surcote_bareme",
 )
 
 

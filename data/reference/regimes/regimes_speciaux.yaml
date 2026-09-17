@@ -2734,6 +2734,7 @@ regimes:
         part_salariale: 0.4445
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, reversion]
         notes: >-
@@ -2772,6 +2773,7 @@ regimes:
         part_salariale: 0.4448
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, reversion]
         notes: >-
@@ -2802,6 +2804,7 @@ regimes:
         part_salariale: 0.4463
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, reversion]
         notes: >-
@@ -2832,6 +2835,7 @@ regimes:
         part_salariale: 0.4466
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, reversion]
         notes: >-

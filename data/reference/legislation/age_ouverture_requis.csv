@@ -43,6 +43,24 @@
 # seule approximation qui subsistait sur ces tables, et elle valait un
 # trimestre d'âge légal : elle est levée.
 #
+# LA SUSPENSION DE 2026. L'article 105 de la loi n° 2025-1403 du 30 décembre
+# 2025 de financement de la sécurité sociale pour 2026 décale d'un trimestre la
+# montée en charge de la loi de 2023 pour les pensions prenant effet à compter
+# du 1er septembre 2026 : 62 ans et 9 mois pour les assurés nés du 1er janvier
+# 1963 au 31 mars 1965, puis 63 ans (nés du 1er avril au 31 décembre 1965),
+# 63 ans et 3 mois (1966), 63 ans et 6 mois (1967), 63 ans et 9 mois (1968),
+# 64 ans à compter de la génération 1969. La coupure au 1er avril 1965 s'écrit
+# `1965.25`. Ces six lignes sont transcrites de l'article L. 161-17-2 tel que
+# la loi le réécrit et de la circulaire Cnav 2026-07 du 5 mars 2026 (tableau
+# du point 1.1) : niveau `moyenne`, et non `certifiee`, tant que le récupérateur
+# n'a pas relu l'article dans un dump LEGI postérieur au 8 mai 2026 — celui
+# du 13 juillet 2025 porte encore les âges de 2023. C'est le niveau d'une
+# valeur publiée que rien n'a recontrôlée ici, et il remonte au résultat de
+# toute simulation d'un assuré né de 1964 à 1968 : à dessein. Un assuré né en 1964 ne
+# pouvant atteindre 62 ans et 9 mois avant octobre 2026, la table par
+# génération suffit : aucune liquidation de ces générations n'a pu prendre
+# effet sous l'ancien calendrier.
+#
 # Cet âge commande l'ouverture des droits et la surcote — laquelle ne
 # récompense que les trimestres cotisés AU-DELÀ de cet âge.
 generation,age,fiabilite
@@ -112,11 +130,12 @@ generation,age,fiabilite
 1961.667,62.25,certifiee
 1962,62.50,certifiee
 1963,62.75,certifiee
-1964,63.00,certifiee
-1965,63.25,certifiee
-1966,63.50,certifiee
-1967,63.75,certifiee
-1968,64.00,certifiee
+1964,62.75,moyenne
+1965,62.75,moyenne
+1965.25,63.00,moyenne
+1966,63.25,moyenne
+1967,63.50,moyenne
+1968,63.75,moyenne
 1969,64.00,certifiee
 1970,64.00,certifiee
 1971,64.00,certifiee

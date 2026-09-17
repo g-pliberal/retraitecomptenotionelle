@@ -1,0 +1,234 @@
+# Exemples chiffrés publiés par les organismes qui appliquent les règles,
+# rejoués par `tests/test_oracle.py` contre le scénario 1.
+# ------------------------------------------------------------------------
+# Aucun simulateur officiel n'est automatisable : « Mon estimation retraite »
+# d'info-retraite.fr, le simulateur de l'Assurance retraite et l'ENSAP des
+# fonctionnaires exigent FranceConnect et le relevé de carrière réel de la
+# personne connectée, sans mode anonyme ni API. Ce qui est officiel ET
+# reproductible, ce sont les EXEMPLES que ces mêmes organismes publient : une
+# carrière minuscule dont la réponse est écrite par la caisse. Chacun est
+# transcrit ici tel que la source l'écrit, avec sa date de vérification ; le
+# test construit la carrière — une seule affiliation, un salaire constant, le
+# nombre de trimestres de l'exemple — et compare la grandeur nommée.
+#
+# Les grandeurs comparées (`attendu`) :
+#   trimestres_requis, trimestres_valides, taux_liquidation, motif_ouverture,
+#   liquidation_ouverte — lus dans le résultat du scénario 1 ;
+#   age_ouverture — l'âge légal opposable, par `age_ouverture_droit` ;
+#   date_age_legal — le mois où cet âge est atteint (année-mois) ;
+#   non_ouverte_un_trimestre_plus_tot — la même carrière liquidée trois mois
+#     plus tôt doit être refusée (`motif_ouverture: non_ouverte`) ;
+#   pension_base_sur_sam — pension du régime général rapportée au salaire
+#     annuel moyen (taux × prorata) ;
+#   pension_regime_general_mensuelle — pension du régime général après
+#     minimum, en euros par mois.
+#
+# `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
+# donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
+# l'impose. Les dates s'écrivent année-mois : le modèle ne connaît pas le jour,
+# et la pension prend effet le premier du mois.
+#
+# Ce que la confrontation a trouvé, et quand, est raconté dans
+# docs/limites.md, § « Ce que disent les exemples publiés par les caisses ».
+
+exemples:
+
+  # ---- service-public.gouv.fr ------------------------------------------
+  - id: sp_f19666_decote
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F19666, Retraite du salarié : qu'est-ce que la décote ?", verifie_le: "2026-01-01"}
+    enonce: >-
+      Né le 1er juillet 1964, départ le 1er juillet 2027 à 63 ans avec 159
+      trimestres tous régimes, 170 exigés. Il manque 16 trimestres jusqu'à
+      67 ans et 11 jusqu'à 170 : 11 retenus, 0,625 point par trimestre,
+      taux 43,125 %.
+    carriere: {naissance: "1964-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-07", trimestres_valides: 159}
+    attendu: {trimestres_requis: 170, taux_liquidation: 0.43125, motif_ouverture: age_legal}
+
+  - id: sp_f20349_decote_fonction_publique
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F20349, Retraite d'un agent public : qu'est-ce que la décote ?", verifie_le: "2026-01-01"}
+    enonce: >-
+      Fonctionnaire sédentaire né le 1er juillet 1964, départ le 1er juillet
+      2027 à 63 ans avec 159 trimestres au lieu de 170 : la pension est
+      réduite de 13,75 % (11 trimestres × 1,25 %).
+    carriere: {naissance: "1964-07", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2027-07", trimestres_valides: 159}
+    attendu: {trimestres_requis: 170, taux_liquidation: 0.646875}
+
+  - id: sp_f19643_surcote
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F19643, Retraite du salarié du secteur privé : qu'est-ce que la surcote ?", verifie_le: "2026-01-01"}
+    enonce: >-
+      Né le 15 avril 1965, il a à 63 ans les 171 trimestres requis. S'il
+      travaille jusqu'au 30 juin 2029, il lui est compté 2 trimestres du
+      1er juillet au 31 décembre 2028 et 2 en 2029 : pension majorée de 5 %.
+    carriere: {naissance: "1965-04", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-07", trimestres_valides: 176}
+    attendu: {trimestres_requis: 171, age_ouverture: 63.0, taux_liquidation: 0.525}
+
+  - id: sp_f16494_surcote_fonction_publique
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F16494, Retraite d'un agent public : qu'est-ce que la surcote ?", verifie_le: "2026-05-18"}
+    enonce: >-
+      Fonctionnaire sédentaire né le 9 octobre 1964, taux plein à 62 ans et
+      9 mois (1er août 2027) avec 170 trimestres ; s'il part au 1er octobre
+      2028, soit 4 trimestres entiers après celui de ses 62 ans et 9 mois, la
+      pension est majorée de 5 % (4 × 1,25 %).
+    carriere: {naissance: "1964-10", sexe: H, affiliation: fonctionnaire_etat, liquidation: "2028-10", trimestres_valides: 175}
+    attendu: {trimestres_requis: 170, age_ouverture: 62.75, taux_liquidation: 0.7875}
+
+  - id: sp_f21552_taux_plein_170
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F21552, Montant de la pension de retraite du salarié du secteur privé", verifie_le: "2026-09-01"}
+    enonce: >-
+      Né en 1964, 170 trimestres exigés ; départ avant 67 ans avec 170
+      trimestres validés : pension = revenu annuel moyen × 50 % × 170/170.
+    carriere: {naissance: "1964-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2027-01", trimestres_valides: 170, niveau_salaire: 1.5}
+    attendu: {trimestres_requis: 170, taux_liquidation: 0.5, pension_base_sur_sam: 0.5}
+
+  - id: sp_f21552_67_ans_158
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F21552 et fiche F36464 (taux plein et taux maximum)", verifie_le: "2026-09-01"}
+    enonce: >-
+      Né en 1964, départ à 67 ans avec 158 trimestres : taux plein sans
+      décote, pension = revenu annuel moyen × 50 % × 158/170.
+    carriere: {naissance: "1964-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-01", trimestres_valides: 158, niveau_salaire: 1.5}
+    attendu: {taux_liquidation: 0.5, pension_base_sur_sam: 0.4647058823529412}
+
+  - id: sp_f21552_65_ans_158
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F21552, Montant de la pension de retraite du salarié du secteur privé", verifie_le: "2026-09-01"}
+    enonce: >-
+      Né en 1964, départ à 65 ans avec 158 trimestres : 12 trimestres
+      manquent jusqu'à 170, 8 jusqu'à 67 ans ; taux réduit à 45 %, pension =
+      revenu annuel moyen × 45 % × 158/170.
+    carriere: {naissance: "1964-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-01", trimestres_valides: 158, niveau_salaire: 1.5}
+    attendu: {taux_liquidation: 0.45, pension_base_sur_sam: 0.41823529411764704}
+
+  - id: sp_a15703_minimum_contributif_2026
+    source: {editeur: "service-public.gouv.fr", reference: "actualité A15703, Pensions de retraite : quel est le montant du minimum contributif en 2026 ?", verifie_le: "2026-02-12"}
+    enonce: >-
+      Né en 1964, départ avant 67 ans avec 135 trimestres cotisés (170
+      exigés) : la pension ne peut être inférieure à 756,29 € +
+      [(903,93 € − 756,29 €) × 135 / 170] = 873,53 € brut par mois.
+      La carrière construite a 170 trimestres validés dont 135 cotisés, à un
+      salaire assez bas pour que le minimum s'applique.
+    carriere:
+      naissance: "1964-01"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2026-11"
+      age_debut: 20.25
+      niveau_salaire: 0.45
+      profil_carriere: plat
+      interruptions: {2000: chomage_indemnise, 2001: chomage_indemnise, 2002: chomage_indemnise, 2003: chomage_indemnise, 2004: chomage_indemnise, 2005: chomage_indemnise, 2006: chomage_indemnise, 2007: chomage_indemnise, 2026: chomage_indemnise}
+    attendu: {trimestres_valides: 170, trimestres_requis: 170, taux_liquidation: 0.5, pension_regime_general_mensuelle: 873.53}
+
+  # ---- Cnav, circulaire 2026-07 du 5 mars 2026 --------------------------
+  - id: cnav_2026_07_age_legal_1964
+    source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, Âge légal de la retraite et durée d'assurance, point 1.1 exemple 1 et point 2.1 exemple 1", verifie_le: "2026-03-05"}
+    enonce: >-
+      Né le 16/05/1964 : condition d'âge de 62 ans et 9 mois remplie le
+      16/02/2027, retraite à effet du 01/03/2027 au plus tôt ; 170 trimestres
+      pour le taux plein, prorata en 170e.
+    carriere: {naissance: "1964-05", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-05", age_debut: 22}
+    attendu: {age_ouverture: 62.75, date_age_legal: "2027-02", trimestres_requis: 170}
+
+  - id: cnav_2026_07_age_legal_1965_premier_trimestre
+    source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, point 1.1 exemple 2 et point 2.1 exemple 2", verifie_le: "2026-03-05"}
+    enonce: >-
+      Né le 24/02/1965 : 62 ans et 9 mois le 24/11/2027, retraite à effet du
+      01/12/2027 au plus tôt ; 170 trimestres.
+    carriere: {naissance: "1965-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-02", age_debut: 22}
+    attendu: {age_ouverture: 62.75, date_age_legal: "2027-11", trimestres_requis: 170}
+
+  - id: cnav_2026_07_age_legal_1965_apres_avril
+    source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, point 1.1 exemple 3 et point 2.1 exemple 3", verifie_le: "2026-03-05"}
+    enonce: >-
+      Né le 08/07/1965 : 63 ans le 08/07/2028, retraite à effet du
+      01/08/2028 au plus tôt ; 171 trimestres, prorata en 171e.
+    carriere: {naissance: "1965-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2029-07", age_debut: 22}
+    attendu: {age_ouverture: 63.0, date_age_legal: "2028-07", trimestres_requis: 171}
+
+  - id: cnav_2026_07_decote_1961
+    source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, point 4.1.1 exemple 1", verifie_le: "2026-03-05"}
+    enonce: >-
+      Né le 8 novembre 1961, âge légal 62 ans et 3 mois le 8 février 2024,
+      taux plein automatique à 67 ans ; retraite au 1er avril 2024 avec 160
+      trimestres (169 requis). Manquants : 19 par rapport à 67 ans (56 mois /
+      3 = 18,66 arrondis à 19), 9 par rapport à 169 ; minoration 9 × 0,625 =
+      5,625 ; taux minoré 44,375 %.
+    carriere: {naissance: "1961-11", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-04", trimestres_valides: 160}
+    attendu: {age_ouverture: 62.25, trimestres_requis: 169, taux_liquidation: 0.44375}
+
+  # ---- Cnav, circulaire 2026-17 du 12 juin 2026 (carrière longue) --------
+  - id: cnav_2026_17_racl_1964
+    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, Retraite anticipée pour carrière longue à compter du 1er septembre 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+    enonce: >-
+      Nés en 1964, début d'activité avant 20 ans : départ anticipé à
+      compter de 60 ans et 6 mois, 170 trimestres cotisés.
+    carriere: {naissance: "1964-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-09", age_debut: 17.75}
+    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: cnav_2026_17_racl_1965_premier_trimestre
+    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+    enonce: >-
+      Nés du 1er janvier au 31 mars 1965, début avant 20 ans : 60 ans et
+      9 mois, 170 trimestres cotisés.
+    carriere: {naissance: "1965-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2025-11", age_debut: 17.75}
+    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: cnav_2026_17_racl_1965_apres_avril
+    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+    enonce: >-
+      Nés du 1er avril au 30 novembre 1965, début avant 20 ans : 60 ans et
+      9 mois, 171 trimestres cotisés.
+    carriere: {naissance: "1965-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-04", age_debut: 17.75}
+    attendu: {trimestres_requis: 171, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: cnav_2026_17_racl_1967
+    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+    enonce: >-
+      Nés de 1966 à 1969, début avant 20 ans : deux ans et six mois avant
+      l'âge légal — 61 ans pour 1967 —, 172 trimestres cotisés.
+    carriere: {naissance: "1967-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-03", age_debut: 17.75}
+    attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: cnav_2026_17_racl_1970
+    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+    enonce: >-
+      Nés en 1970, début avant 20 ans : 61 ans et 9 mois, 172 trimestres
+      cotisés.
+    carriere: {naissance: "1970-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-12", age_debut: 17.75}
+    attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
+
+  - id: cnav_2026_17_racl_1971
+    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1", verifie_le: "2026-06-12"}
+    enonce: >-
+      Nés à compter de 1971, début avant 20 ans : 62 ans, durée du taux
+      plein cotisée.
+    carriere: {naissance: "1971-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2033-03", age_debut: 17.75}
+    attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
+
+  # ---- Cnav, circulaire 2018-04 du 1er février 2018 (surcote) ------------
+  - id: cnav_2018_04_surcote_un_taux
+    source: {editeur: "Cnav", reference: "circulaire 2018-04 du 1er février 2018, Majoration de la retraite dite « surcote », point 3.2 exemple 1", verifie_le: "2018-02-01"}
+    enonce: >-
+      Né en 1955, 62 ans en août 2017, taux maximum acquis le 30/09/2017 avec
+      166 trimestres, départ le 01/04/2018 : période de référence du
+      01/10/2017 au 31/03/2018, 2 trimestres de surcote à 1,25 %, soit 2,50 %.
+    carriere: {naissance: "1955-08", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2018-04", trimestres_valides: 168}
+    attendu: {trimestres_requis: 166, taux_liquidation: 0.5125}
+
+  - id: cnav_2018_04_surcote_deux_taux
+    source: {editeur: "Cnav", reference: "circulaire 2018-04 du 1er février 2018, point 3.2 exemple 2", verifie_le: "2018-02-01"}
+    enonce: >-
+      Né en 1948, 60 ans en février 2008, taux maximum acquis le 31/03/2008
+      (160 trimestres), départ le 1er août 2009 avec 165 trimestres : 5
+      trimestres de surcote, 3 × 0,75 % (avril à décembre 2008) + 2 × 1,25 %
+      (janvier à juin 2009) = 4,75 %.
+    carriere: {naissance: "1948-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2009-08", trimestres_valides: 165}
+    attendu: {trimestres_requis: 160, taux_liquidation: 0.52375}
+
+  - id: cnav_2018_04_surcote_trois_taux
+    source: {editeur: "Cnav", reference: "circulaire 2018-04 du 1er février 2018, point 3.2 exemple 3", verifie_le: "2018-02-01"}
+    enonce: >-
+      Né en 1944, 65 ans en février 2009, taux maximum acquis le 30/06/2006
+      (160 trimestres), départ le 1er mai 2009 avec 171 trimestres : 11
+      trimestres de surcote, 4 × 0,75 % (juillet 2006 à juin 2007) + 6 × 1 %
+      (juillet 2007 à décembre 2008) + 1 × 1,25 % (janvier à mars 2009) =
+      10,25 %.
+    carriere: {naissance: "1944-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2009-05", trimestres_valides: 171}
+    attendu: {trimestres_requis: 160, taux_liquidation: 0.55125}

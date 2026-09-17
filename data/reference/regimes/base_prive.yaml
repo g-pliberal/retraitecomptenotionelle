@@ -242,6 +242,7 @@ regimes:
         part_salariale: 0.4445   # du taux plafonné
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
            avpf, reversion, periodes_assimilees, carriere_longue]
@@ -270,6 +271,7 @@ regimes:
         part_salariale: 0.4448   # du taux plafonné
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
            avpf, reversion, periodes_assimilees, carriere_longue]
@@ -299,6 +301,7 @@ regimes:
         part_salariale: 0.4463   # du taux plafonné
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
            avpf, reversion, periodes_assimilees, carriere_longue, penibilite]
@@ -328,6 +331,7 @@ regimes:
         part_salariale: 0.4466   # du taux plafonné
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        surcote_bareme: regime_general
         avantages_non_contributifs:
           [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
            avpf, reversion, periodes_assimilees, carriere_longue, penibilite,

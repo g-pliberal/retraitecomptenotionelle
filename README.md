@@ -694,17 +694,17 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 
 | Système | Coût 2070 | Part du PIB 2070 | Cumul 2025-2070 | Écart |
 |---|---|---|---|---|
-| 1. Système actuel | 723 Md € | **19,5 %** | 25 967 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 225 Md € | 6,1 % | 7 706 Md € | −70,3 % |
-| 3. Notionnel dès 2026, part salariale | 311 Md € | **8,4 %** | 18 180 Md € | −30,0 % |
-| 4. Notionnel rétroactif, salariale + patronale | 502 Md € | 13,5 % | 18 286 Md € | −29,6 % |
-| 5. Notionnel dès 2026, salariale + patronale | 517 Md € | 14,0 % | 21 742 Md € | −16,3 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 384 Md € | 10,4 % | 16 248 Md € | −37,4 % |
+| 1. Système actuel | 718 Md € | **19,4 %** | 25 864 Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | 223 Md € | 6,0 % | 7 640 Md € | −70,5 % |
+| 3. Notionnel dès 2026, part salariale | 309 Md € | **8,3 %** | 18 128 Md € | −29,9 % |
+| 4. Notionnel rétroactif, salariale + patronale | 497 Md € | 13,4 % | 18 135 Md € | −29,9 % |
+| 5. Notionnel dès 2026, salariale + patronale | 512 Md € | 13,8 % | 21 642 Md € | −16,3 % |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 381 Md € | 10,3 % | 16 125 Md € | −37,7 % |
 
 Trois choses à lire dans ce tableau.
 
 **Le système actuel monte, et le contrôle externe s'est dégradé deux fois.** Il
-passe de 13,6 % du PIB en 2024 à 19,5 % en 2070, alors que le nombre de
+passe de 13,6 % du PIB en 2024 à 19,4 % en 2070, alors que le nombre de
 personnes de 65 ans ou plus rapporté aux 20-64 ans passe de 0,39 à 0,62. Le COR,
 qui projette la même grandeur avec un modèle de population complet, trouve
 **13,9 % en 2024 et 14,2 % en 2070** (rapport annuel de juin 2025). L'écart
@@ -725,7 +725,8 @@ et non à 64, et l'agent de conduite né en 2000 — embauché après la fermetu
 statut SNCF — part à 63 ans au régime général, par la porte de la carrière
 longue. La trajectoire 2070 est montée de 18,3 à 19,3 % au lieu de revenir vers
 14,2, puis à 19,5 quand la règle a appris la carrière longue et les trimestres
-pour enfants : le diagnostic que
+pour enfants, et redescend à 19,4 avec la suspension de la réforme de 2023
+(LFSS 2026), qui fait partir plus tôt les générations 1964 à 1970 : le diagnostic que
 [`docs/feuille_de_route.md`](docs/feuille_de_route.md) avait posé était juste sur
 le défaut et faux sur son sens, et c'est la mesure qui le dit.
 [`docs/limites.md`](docs/limites.md) §5 ter porte le chiffrage et la piste qui
@@ -770,11 +771,11 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +9,96 % | +8,55 % | 2,61 |
-| 3. Notionnel dès 2026, part salariale | −0,67 % | +2,42 % | **1,89** |
-| 4. Notionnel rétroactif, salariale + patronale | +4,87 % | +2,67 % | 1,17 |
-| 5. Notionnel dès 2026, salariale + patronale | −0,67 % | +0,59 % | 1,14 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,87 % | +3,71 % | 1,53 |
+| 2. Notionnel rétroactif, part salariale | +9,96 % | +8,57 % | 2,62 |
+| 3. Notionnel dès 2026, part salariale | −0,65 % | +2,43 % | **1,89** |
+| 4. Notionnel rétroactif, salariale + patronale | +4,87 % | +2,70 % | 1,17 |
+| 5. Notionnel dès 2026, salariale + patronale | −0,65 % | +0,61 % | 1,14 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,87 % | +3,75 % | 1,53 |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -1039,7 +1040,7 @@ docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
 
-tests/                          846 tests Python
+tests/                          868 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

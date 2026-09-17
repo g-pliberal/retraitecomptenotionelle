@@ -2160,7 +2160,7 @@ dans une passe sur le site.
 retiendrait, `limites.md` §3 et `methodologie.md` §5 disent ce que l'ancien
 défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouver.
 
-### 25. Le barème de la surcote de 2004 à 2008, trimestre par trimestre — `à faire`
+### 25. Le barème de la surcote de 2004 à 2008, trimestre par trimestre — `fait`
 
 **Pourquoi.** Le scénario 1 sert la surcote au taux de la fiche en vigueur
 l'année de la liquidation, à tous les trimestres. Le droit la sert au taux en
@@ -2202,7 +2202,21 @@ exemple de circulaire Cnav (action 26).
 des écarts connus de `limites.md`, et le diff des témoins dit ce que valent les
 surcotes des générations 1940 et 1950.
 
-### 26. Confronter le scénario 1 aux exemples chiffrés officiels — `à faire`
+**Ce que ça a déplacé.** Fait le 17 septembre 2026, et plus largement que
+l'action ne l'écrivait : non pas une coupure de fiche en 2007, mais une table
+`legislation/surcote_baremes.csv` et un champ de fiche `surcote_bareme` qui
+donnent à chaque trimestre civil de surcote le taux en vigueur à sa date, avec
+la période de référence de la circulaire Cnav 2018-04 — depuis le trimestre
+civil qui suit l'âge légal, ou le mois qui suit la durée requise. Les trois
+exemples de la circulaire se rejouent au centième (2,5 %, 4,75 %, 10,25 %), et
+deux fiches de service-public aussi, qui ne se rejouaient pas avant : le modèle
+comptait le trimestre de l'anniversaire et servait 6,25 % là où la caisse en
+sert 5. La fonction publique suit avec son plafond de vingt trimestres. La
+confrontation à OpenFisca en garde une trace : sur le profil surcoté de 1948,
+OpenFisca sert douze trimestres à 1,25 %, le modèle trois à 0,75 % et huit à
+1,25 %, et le test vérifie que chacun rend ce que sa règle commande.
+
+### 26. Confronter le scénario 1 aux exemples chiffrés officiels — `fait`
 
 **Pourquoi.** L'étalon a une contre-expertise, OpenFisca-France-Pension
 (action 4), et c'est un autre modèle, pas une source. Aucun simulateur officiel
@@ -2245,6 +2259,61 @@ qu'on applique.
 **Fin.** Trente exemples officiels au moins rejoués par un test, et
 `limites.md` §3 dit, pour chaque famille de règle du scénario 1, laquelle a été
 confrontée à un exemple publié par la caisse qui l'applique.
+
+**Ce que ça a déplacé.** Fait le 17 septembre 2026, avec vingt-deux exemples
+et non trente — les fiches de service-public en portent moins qu'espéré, et le
+COR n'en publie pas qui se rejouent sans ses hypothèses de salaire. Le premier
+exemple lu a fait voir que le droit avait changé depuis le dump LEGI du dépôt :
+la SUSPENSION de la réforme de 2023 (loi n° 2025-1403, article 105, décrets
+du 7 mai 2026) manquait, avec la carrière longue par génération, les
+vingt-quatre et vingt-trois meilleures années des parents (décret
+n° 2026-699) et les deux trimestres d'enfants réputés cotisés. Tout cela est
+porté : tables réécrites au niveau `moyenne` en attendant un dump LEGI
+postérieur au 8 mai 2026 (action 27), carrière longue datée au mois et lue par
+génération, barème daté de la surcote (action 25). Les vingt-deux exemples
+tombent justes, dans le privé et dans la fonction publique. Ce que ça déplace
+dans les témoins : aucun chiffre de simulation ne bouge pour les générations
+d'avant 1963 hors surcote d'avant 2009 ; les générations 1964 à 1968 partent
+un trimestre plus tôt avec un ou deux trimestres de moins à réunir ; les
+cas types au SMIC et le trajet de la page Coût suivent. Trois leçons. **Une
+table certifiée l'est à une date**, et le journal de certification doit dire
+laquelle — c'était déjà sa règle, c'est ce qui a permis de voir que juillet
+2025 ne pouvait pas porter décembre 2025. **Un exemple publié vaut plus qu'une
+relecture** : cinq règles sont tombées justes du premier coup, quatre ne le
+sont devenues qu'en lisant le texte que l'exemple cite. Et **la surcote est la
+règle la plus mal comptée du système** : trois barèmes en cinq ans, une
+période de référence au trimestre civil, un rang qui court depuis 2004 — il
+fallait trois exemples pour la tenir.
+
+### 27. Relire dans LEGI ce que la suspension de 2026 a réécrit — `à faire`
+
+**Pourquoi.** Les tables d'âge légal, de durée requise, de carrière longue et
+des catégories actives portent depuis le 17 septembre 2026 les valeurs de la
+loi n° 2025-1403 et de ses décrets du 7 mai 2026, transcrites de la loi et
+des circulaires Cnav 2026-07 et 2026-17 : niveau `moyenne` ou `haute`, parce
+que le récupérateur `scripts/fetch/dila_legi_parametres_retraite.py` a lu le
+dump LEGI du 13 juillet 2025, antérieur à la réforme. Ce niveau remonte au
+résultat affiché à tout assuré né de 1964 à 1968, c'est-à-dire à la plupart de
+ceux qui simulent leur départ.
+
+**Sources à lire.** Un dump LEGI postérieur au 8 mai 2026 (échanges de la
+DILA), et pour la carrière longue le II de l'article D. 351-1-1, que le
+récupérateur ne lit pas — il ne prend que la règle générale — et qu'il faudra
+lui apprendre à lire par génération, ou confronter à la main à la circulaire.
+
+**Fichiers.** `data/brut/dila_legi_parametres_retraite.json` (à régénérer),
+`scripts/verifier_donnees.py --appliquer`, `data/derive/certification.json`,
+les quatre tables de `data/reference/legislation/`, `tests/test_donnees.py`
+(les lignes « moyenne » redeviennent « certifiee »).
+
+**Marche.** Relancer le récupérateur sur le dump récent, vérifier que les
+seize segments d'âge et les durées qu'il rend sont ceux de la circulaire,
+appliquer, et retirer des tests la liste des générations suspendues. Pour les
+catégories actives, lire le décret n° 2026-344 alinéa par alinéa : les lignes
+intermédiaires sont déduites du calendrier de droit commun décalé, non lues.
+
+**Fin.** Plus aucune ligne `moyenne` dans ces tables, et le journal de
+certification daté d'après le 8 mai 2026.
 
 ---
 
@@ -2712,3 +2781,12 @@ confrontée à un exemple publié par la caisse qui l'applique.
   l'étalon sur le régime général, et la confrontation aux exemples chiffrés
   que les caisses publient, seule contre-expertise officielle qui soit
   reproductible.
+- **17 septembre 2026, actions 25 et 26.** Faites ensemble, parce que la
+  seconde a rendu la première nécessaire. Vingt-deux exemples publiés par
+  service-public et par la Cnav sont rejoués contre le scénario 1, et le
+  premier lu a montré que les tables certifiées du dépôt dataient d'avant la
+  suspension de la réforme (LFSS 2026) : âge légal, durée requise, carrière
+  longue et catégories actives réécrites, salaire moyen des parents sur
+  vingt-quatre ou vingt-trois années, surcote datée trimestre par trimestre.
+  Le détail et les leçons sont sous les deux actions ; l'action 27 est ce qui
+  reste : faire relire ces tables au récupérateur sur un dump LEGI récent.

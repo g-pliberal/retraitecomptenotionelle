@@ -14,7 +14,9 @@
 # seule qui se déduise de la carrière elle-même — la pénibilité, l'invalidité
 # et l'inaptitude demandent des informations que le modèle n'a pas.
 #
-# DEUX CONDITIONS, ET ELLES SE LISENT À L'ANNÉE DE LIQUIDATION :
+# DEUX CONDITIONS, ET ELLES SE LISENT À LA DATE D'EFFET DE LA PENSION —
+# `date_effet` est l'année décimale du premier mois d'application, `2012.833`
+# pour le 1er novembre 2012, `2023.667` pour le 1er septembre 2023 :
 #
 #   * avoir validé `trimestres_debut` trimestres avant la fin de l'année civile
 #     des `age_debut_maximum` ans ;
@@ -36,13 +38,31 @@
 #         60 ans pour une entrée avant 20 ans, sans durée supplémentaire. C'est
 #         cette étape qui a fait du dispositif un départ de masse.
 #   2023  loi du 14 avril 2023, applicable au 1er septembre : quatre bornes,
-#         16, 18, 20 et 21 ans, pour 58, 60, 62 et 63 ans.
+#         16, 18, 20 et 21 ans, pour 58, 60, 62 et 63 ans. La borne des vingt
+#         ans monte PAR GÉNÉRATION (D. 351-1-1, II) : 60 ans pour les nés du
+#         1er septembre 1961 au 31 août 1963, puis l'âge légal de la génération
+#         diminué de deux ans et six mois, jusqu'à 62 ans à compter de 1970.
+#   2026  loi du 30 décembre 2025 (LFSS 2026, article 105) et décret
+#         n° 2026-345 du 7 mai 2026, applicables aux pensions prenant effet à
+#         compter du 1er septembre 2026 : la borne des vingt ans suit l'âge
+#         légal suspendu — 60 ans et 6 mois pour 1964, 60 ans et 9 mois pour
+#         1965 (60 ans et 8 mois pour les nés en décembre 1965) et 1966, puis
+#         un trimestre par génération jusqu'à 62 ans à compter de 1971.
+#         Circulaire Cnav 2026-17 du 12 juin 2026, point 1.1 et annexe 3.
 #
-# D'OÙ VIENNENT CES VALEURS. Les quatre bornes de 2023 sont LUES dans les
-# articles L. 351-1-1 et D. 351-1-1 du code de la sécurité sociale, tels que la
-# DILA les publie dans la base LEGI (`scripts/fetch/dila_legi_parametres_retraite.py`) :
-# niveau `certifiee`, les quatre valeurs saisies s'y sont retrouvées à
-# l'identique. Les portes de 2004 et de 2012 restent des transcriptions — le
+# LA COLONNE `generation` porte la première génération (année décimale, mois
+# compris) à laquelle la ligne s'applique ; `1900` est la règle générale. Pour
+# une porte donnée, la ligne retenue est celle de la plus haute génération qui
+# ne dépasse pas celle de l'assuré.
+#
+# D'OÙ VIENNENT CES VALEURS. Les quatre bornes de 2023 (règle générale) sont
+# LUES dans les articles L. 351-1-1 et D. 351-1-1 du code de la sécurité
+# sociale, tels que la DILA les publie dans la base LEGI
+# (`scripts/fetch/dila_legi_parametres_retraite.py`) : niveau `certifiee`, les
+# quatre valeurs saisies s'y sont retrouvées à l'identique. Les lignes par
+# génération et celles de 2026 sont transcrites du II de l'article et de la
+# circulaire Cnav 2026-17 : niveau `haute`, jusqu'à ce que le récupérateur
+# relise l'article dans un dump LEGI postérieur au 8 mai 2026. Les portes de 2004 et de 2012 restent des transcriptions — le
 # récupérateur ne lit que la version EN VIGUEUR de l'article, les versions
 # abrogées demandant de rejouer l'historique complet des modifications, ce que
 # la structure du dump ne donne pas sans risque d'erreur. Une porte de 2004
@@ -55,14 +75,38 @@
 # ne retient ici que les trimestres réellement cotisés, ce qui rend la condition
 # plus dure qu'elle ne l'est : quelques carrières hachées sont donc déclarées
 # non ouvertes alors que le droit les ouvrirait.
-annee,age_debut_maximum,trimestres_debut,age_depart,trimestres_supplementaires,fiabilite
-2004,16,5,56,8,moyenne
-2004,16,5,58,4,moyenne
-2004,17,5,59,0,moyenne
-2012,16,5,56,8,moyenne
-2012,16,5,58,4,moyenne
-2012,20,5,60,0,haute
-2023,16,5,58,0,certifiee
-2023,18,5,60,0,certifiee
-2023,20,5,62,0,certifiee
-2023,21,5,63,0,certifiee
+date_effet,generation,age_debut_maximum,trimestres_debut,age_depart,trimestres_supplementaires,fiabilite
+2004,1900,16,5,56.00,8,moyenne
+2004,1900,16,5,58.00,4,moyenne
+2004,1900,17,5,59.00,0,moyenne
+2012.833,1900,16,5,56.00,8,moyenne
+2012.833,1900,16,5,58.00,4,moyenne
+2012.833,1900,20,5,60.00,0,haute
+2023.667,1900,16,5,58.00,0,certifiee
+2023.667,1900,18,5,60.00,0,certifiee
+2023.667,1900,20,5,62.00,0,certifiee
+2023.667,1900,21,5,63.00,0,certifiee
+2023.667,1961.667,20,5,60.00,0,haute
+2023.667,1963.667,20,5,60.25,0,haute
+2023.667,1964,20,5,60.50,0,haute
+2023.667,1965,20,5,60.75,0,haute
+2023.667,1966,20,5,61.00,0,haute
+2023.667,1967,20,5,61.25,0,haute
+2023.667,1968,20,5,61.50,0,haute
+2023.667,1969,20,5,61.75,0,haute
+2023.667,1970,20,5,62.00,0,haute
+2026.667,1900,16,5,58.00,0,haute
+2026.667,1900,18,5,60.00,0,haute
+2026.667,1900,20,5,62.00,0,haute
+2026.667,1900,21,5,63.00,0,haute
+2026.667,1961.667,20,5,60.00,0,haute
+2026.667,1963.667,20,5,60.25,0,haute
+2026.667,1964,20,5,60.50,0,haute
+2026.667,1965,20,5,60.75,0,haute
+2026.667,1965.917,20,5,60.67,0,haute
+2026.667,1966,20,5,60.75,0,haute
+2026.667,1967,20,5,61.00,0,haute
+2026.667,1968,20,5,61.25,0,haute
+2026.667,1969,20,5,61.50,0,haute
+2026.667,1970,20,5,61.75,0,haute
+2026.667,1971,20,5,62.00,0,haute

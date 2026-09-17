@@ -1,0 +1,48 @@
+# Barème DATÉ de la surcote — taux de chaque trimestre selon la date où il a
+# été accompli
+# --------------------------------------------------------------------------
+# source_id: legifrance_textes, cnav_circulaires
+#
+# La surcote ne se lit pas à l'année du départ mais TRIMESTRE PAR TRIMESTRE :
+# chaque trimestre de surcote garde le taux en vigueur à la date où il a été
+# accompli (article D. 351-1-4 du code de la sécurité sociale dans ses versions
+# successives ; circulaire Cnav 2018-04 du 1er février 2018, point 3). Le
+# modèle appliquait à tous les trimestres le taux de la fiche en vigueur
+# l'année de la liquidation : 0,75 % à tout le monde jusqu'en 2008, 1,25 % à
+# tout le monde ensuite, y compris aux trimestres accomplis sous l'ancien
+# barème.
+#
+# Régime général et régimes alignés (`regime_general`) :
+#   2004-2006  0,75 % par trimestre (décret n° 2003-1306 du 26 décembre 2003)
+#   2007-2008  0,75 % pour les quatre premiers trimestres, 1 % à compter du
+#              cinquième, 1,25 % pour les trimestres accomplis après le
+#              soixante-cinquième anniversaire (décret n° 2006-1611 du
+#              19 décembre 2006) — le RANG se compte depuis le premier
+#              trimestre de surcote, ceux de 2004 à 2006 compris
+#   2009-      1,25 % pour tout trimestre accompli à compter du 1er janvier
+#              2009 (loi n° 2008-1330 du 17 décembre 2008, décret n° 2008-1509)
+# Fonction publique (`fonction_publique`, article L. 14 III du code des
+# pensions civiles et militaires) :
+#   2004-2008  0,75 % par trimestre, vingt trimestres au plus
+#   2009-      1,25 %, sans plafond pour les trimestres accomplis depuis 2009
+#
+# Colonnes : `debut` et `fin` sont des années décimales du premier mois du
+# trimestre (2008.917 = trimestre commençant en décembre 2008, c'est-à-dire
+# tout trimestre civil de 2008) ; `rang_minimum` est le rang du trimestre
+# dans la surcote à partir duquel la ligne vaut ; `apres_65_ans` vaut 1 quand
+# la ligne ne s'applique qu'aux trimestres postérieurs au soixante-cinquième
+# anniversaire ; `trimestres_maximum` plafonne le nombre de trimestres servis
+# à ce barème. Quand plusieurs lignes valent pour un trimestre, la plus
+# favorable l'emporte — c'est l'ordre du texte : « en priorité » les 1,25 %
+# de l'âge, dit la circulaire.
+#
+# Les trois exemples de la circulaire 2018-04 (point 3.2) rejouent ce barème
+# dans `tests/temoins/exemples_officiels.yaml`.
+bareme,debut,fin,rang_minimum,apres_65_ans,taux,trimestres_maximum,fiabilite
+regime_general,2004,2006.917,1,0,0.0075,,haute
+regime_general,2007,2008.917,1,0,0.0075,,haute
+regime_general,2007,2008.917,5,0,0.0100,,haute
+regime_general,2007,2008.917,1,1,0.0125,,haute
+regime_general,2009,2100,1,0,0.0125,,haute
+fonction_publique,2004,2008.917,1,0,0.0075,20,haute
+fonction_publique,2009,2100,1,0,0.0125,,haute

@@ -2326,7 +2326,7 @@ def test_la_surcote_parentale_recompense_l_annee_imposee_par_la_reforme_de_2023(
     détient un trimestre de majoration de durée d'assurance pour enfants.
     """
     def surcote(**kw):
-        reglages = dict(annee_naissance=1968, sexe="F",
+        reglages = dict(annee_naissance=1969, sexe="F",
                         affiliation="salarie_prive_non_cadre",
                         age_debut=18, age_liquidation=64, nombre_enfants=2)
         reglages.update(kw)
@@ -2335,10 +2335,13 @@ def test_la_surcote_parentale_recompense_l_annee_imposee_par_la_reforme_de_2023(
         return next((a for a in resultat.avantages_appliques
                      if a.code == "surcote_parentale"), None)
 
-    # Génération 1968 : âge légal 64 ans, donc quatre trimestres entre 63 et 64.
+    # Génération 1969 : âge légal 64 ans, donc quatre trimestres entre 63 et 64.
+    # (C'était la génération 1968 avant la suspension de 2026, qui lui laisse
+    # 63 ans et 9 mois, donc trois trimestres.)
     acquise = surcote()
     assert acquise is not None
     assert "4 trimestres" in acquise.detail and "5.00%" in acquise.detail
+    assert "3 trimestres" in surcote(annee_naissance=1968).detail
 
     # Sans trimestre pour enfants, pas de surcote parentale : c'est ce trimestre
     # qui ouvre le droit, et il va par défaut à la mère.
@@ -2357,11 +2360,14 @@ def test_la_surcote_parentale_recompense_l_annee_imposee_par_la_reforme_de_2023(
 
 
 def test_la_surcote_est_passee_a_1_25_pour_cent_au_1er_janvier_2009(simulateur):
-    """La fiche servait 0,75 % jusqu'en 2010, la loi 1,25 % depuis 2009.
+    """La fiche servait 0,75 % jusqu'en 2010, la loi 1,25 % depuis 2009 — pour
+    les trimestres accomplis depuis 2009, les autres gardant leur taux.
 
     Le taux de la loi Fillon a été relevé par la loi de financement de la
     sécurité sociale pour 2009 : deux années de liquidations recevaient ici une
-    surcote deux tiers trop faible.
+    surcote deux tiers trop faible. Puis le modèle a appliqué le taux de
+    l'année du départ à tous les trimestres ; il lit maintenant le taux à la
+    date de chacun.
     """
     def taux(annee_liquidation):
         carriere = simulateur.carriere_simple(
@@ -2373,25 +2379,33 @@ def test_la_surcote_est_passee_a_1_25_pour_cent_au_1er_janvier_2009(simulateur):
         return next(p.detail for p in resultat.pensions_par_regime
                     if p.regime == "regime_general")
 
-    # Huit trimestres cotisés au-delà de l'âge légal et de la durée requise :
-    # 50 % × (1 + 8 × 0,75 %) en 2008, 50 % × (1 + 8 × 1,25 %) en 2009.
+    # Le barème est DATÉ, trimestre par trimestre (D. 351-1-4, circulaire Cnav
+    # 2018-04) : la période de référence part du trimestre civil qui suit
+    # l'âge légal — sept trimestres pour qui part à soixante-deux ans, né en
+    # janvier —, et chaque trimestre garde le taux en vigueur quand il a été
+    # accompli. Parti en janvier 2009 : quatre trimestres à 0,75 % puis trois
+    # à 1 % (barème de 2007-2008), 6 %. Parti en janvier 2010 : trois de 2008
+    # à 0,75 % et quatre de 2009 à 1,25 %, 7,25 %. Le modèle servait 8 × 0,75 %
+    # jusqu'en 2010 ; puis 8 × 1,25 % à tous, y compris aux trimestres de 2008.
     assert "taux 53.000%" in taux(2008)
-    assert "taux 55.000%" in taux(2009)
+    assert "taux 53.000%" in taux(2009)
+    assert "taux 53.625%" in taux(2010)
 
 
 def test_la_surcote_parentale_se_cumule_avec_la_surcote_ordinaire(simulateur):
     """Les deux ne comptent pas les mêmes trimestres : l'une entre 63 ans et
     l'âge légal, l'autre au-delà. Elles s'ajoutent sans se recouvrir."""
-    commun = dict(annee_naissance=1968, sexe="F",
+    commun = dict(annee_naissance=1969, sexe="F",
                   affiliation="salarie_prive_non_cadre",
                   age_debut=18, nombre_enfants=2)
     tardive = simulateur.scenario_actuel.calculer(
         simulateur.carriere_simple(**commun, age_liquidation=67))
     base = next(p for p in tardive.pensions_par_regime
                 if p.regime == "regime_general")
-    # Taux plein majoré de la surcote ordinaire (douze trimestres au-delà de
-    # 64 ans), puis surcote parentale de 5 % par-dessus.
-    assert "taux 57.500%" in base.detail
+    # Taux plein majoré de la surcote ordinaire — onze trimestres civils
+    # entiers entre 64 et 67 ans, celui de l'anniversaire ne comptant pas
+    # (D. 351-1-4) —, puis surcote parentale de 5 % par-dessus.
+    assert "taux 56.875%" in base.detail
     assert "surcote parentale 5.00%" in base.detail
 
 
@@ -2961,7 +2975,8 @@ def test_le_droit_dit_si_la_liquidation_est_ouverte(simulateur):
     tardif = ouverture(23, 60)
     assert tardif.liquidation_ouverte is False
     assert tardif.motif_ouverture == "non_ouverte"
-    assert tardif.age_ouverture_opposable == pytest.approx(63.25)
+    # 62 ans et 9 mois depuis la suspension de la réforme (LFSS 2026).
+    assert tardif.age_ouverture_opposable == pytest.approx(62.75)
 
     # À l'âge légal de sa génération, elle l'est.
     legal = ouverture(23, 64)
@@ -3611,7 +3626,13 @@ def test_les_ages_classes_suivent_les_deux_montees_en_charge(simulateur):
     assert age(1960) == pytest.approx(57.0)
     assert age(1966, 3) == pytest.approx(57.0)
     assert age(1966, 10) == pytest.approx(57.25)
-    assert age(1970) == pytest.approx(58.25)
+    # Suspension de 2026 (décret n° 2026-344, art. 3 D) : un trimestre de
+    # moins des nés de septembre 1968 au 31 mars 1970, 59 ans à compter de 1974.
+    assert age(1969) == pytest.approx(57.75)
+    assert age(1970, 2) == pytest.approx(57.75)
+    assert age(1970, 6) == pytest.approx(58.0)
+    assert age(1973) == pytest.approx(58.75)
+    assert age(1974) == pytest.approx(59.0)
     assert age(1980) == pytest.approx(59.0)
 
 
@@ -3640,8 +3661,10 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     """L'article L. 14 retranche ses trimestres de la LIMITE D'ÂGE du grade :
     soixante-deux ans en catégorie active, non soixante-sept. Un agent classé
     parti à soixante ans subit huit trimestres de décote quand un sédentaire du
-    même âge en subit vingt — vingt pour cent de pension d'écart, là où le
-    plafond de vingt trimestres annulait l'écart à cinquante-sept ans.
+    même âge en subit dix-huit — seize pour cent de pension d'écart (c'était
+    vingt trimestres et vingt pour cent avant que la suspension de 2026 ne
+    ramène la durée requise de la génération 1965 à cent soixante-dix), là où
+    le plafond de vingt trimestres annulait l'écart à cinquante-sept ans.
     """
     periode = simulateur.catalogue["cnracl"].periode(2023)
     carriere = simulateur.carriere_simple(
@@ -3657,7 +3680,7 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     actif = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 60)
     assert actif.pension_annuelle / sedentaire.pension_annuelle == (
-        pytest.approx(1.20, abs=0.01))
+        pytest.approx(0.9 / 0.775, abs=0.01))
     # À cinquante-sept ans, les deux décotes butent sur le plafond de vingt
     # trimestres et l'écart de pension redevient nul : c'est ce que
     # `docs/limites.md` disait du modèle d'avant, et qui reste vrai là.
@@ -3684,7 +3707,7 @@ def test_la_surcote_d_un_actif_se_compte_depuis_l_age_legal_de_droit_commun(simu
     )
     scenario = simulateur.scenario_actuel
     assert scenario._age_ouverture(periode, carriere) == pytest.approx(57.0)
-    assert scenario._age_ouverture_commun(periode, carriere) == pytest.approx(63.25)
+    assert scenario._age_ouverture_commun(periode, carriere) == pytest.approx(62.75)
 
 
 def test_la_pension_militaire_s_ouvre_a_une_duree_et_non_a_un_age(simulateur):
@@ -3949,5 +3972,9 @@ def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(
         assert sum(l.trimestres_valides for l in c.lignes if l.annee == 1983) == 4
     assert actuel.calculer(septembre).motif_ouverture == "non_ouverte"
     assert actuel.calculer(novembre).motif_ouverture == "carriere_longue"
-    assert actuel.age_ouverture_droit(septembre) == pytest.approx(62.0)
-    assert actuel.age_ouverture_droit(novembre) == pytest.approx(60.25)
+    # Né en septembre, la porte des vingt ans reste la seule : 60 ans et
+    # 9 mois pour la génération 1965 (D. 351-1-1, II). Né en novembre, celle
+    # des dix-huit ans s'ouvre, à soixante ans, et la durée cotisée y est
+    # (171 trimestres pour un né après mars 1965, suspension comprise).
+    assert actuel.age_ouverture_droit(septembre) == pytest.approx(60.75)
+    assert actuel.age_ouverture_droit(novembre) == pytest.approx(60.0)

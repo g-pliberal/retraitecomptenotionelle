@@ -29,14 +29,16 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Point d'indice de la fonction publique | série datée 1960-2027 | OpenFisca-France, **recontrôlé à chaque exécution** |
 | Minimum vieillesse (ASPA) | montants servis 2007, 2010, 2016-2026 | transcrit des publications |
 | Décote de la fonction publique | article L. 14, montée en charge 2006-2020 | **certifiée** (loi de 2003, article 66 III) jusqu'à 2019 ; la ligne 2020 est la jonction avec L. 14 |
-| Carrière longue | trois étapes, 2004, 2012, 2023 | **certifiée** pour 2023 (L. 351-1-1, D. 351-1-1) ; 2004 et 2012 transcrites |
+| Carrière longue | quatre étapes datées au mois, 2004, novembre 2012, septembre 2023, septembre 2026 ; la borne des vingt ans par génération | **certifiée** pour la règle générale de 2023 (L. 351-1-1, D. 351-1-1) ; les lignes par génération et celles de 2026 transcrites du II de l'article et de la circulaire Cnav 2026-17 |
 | Trimestres accordés au titre des enfants | MDA à 4 puis 8 trimestres par enfant (1972, 1975) ; bonification de la fonction publique à 4 puis 2 (2004) | reprise des textes, non recontrôlée |
 | Surcote parentale | 1,25 % par trimestre entre 63 ans et l'âge légal, quatre au plus | reprise des textes (L. 351-1-2-1), non recontrôlée |
-| Durée requise par génération | table 1934-1975, 151 → 172 trimestres | **certifiée** depuis 1958 (L. 161-17-3) ; 1934-1957 transcrite |
+| Durée requise par génération | table 1934-1975, 151 → 172 trimestres, suspension de 2026 comprise (170 pour 1964 et le premier trimestre 1965, 171 jusqu'à fin 1965, 172 dès 1966) | **certifiée** depuis 1958 (L. 161-17-3) sauf les trois lignes réécrites par la loi de financement pour 2026, transcrites de la loi et de la circulaire Cnav 2026-07 en attendant un dump LEGI postérieur au 8 mai 2026 ; 1934-1957 transcrite |
 | Durée de proratisation par génération | table 1900-1948, 150 → 160 trimestres | **certifiée** (R. 351-6 II) jusqu'à 1947 ; la ligne 1948 est la jonction avec la durée requise, que l'article ne fixe pas |
 | Heures de SMIC pour valider un trimestre | 200 depuis 1972, 150 depuis 2014 | **certifiée** (R. 351-9) |
 | Revalorisation des salaires portés au compte | 10 colonnes publiées, effets d'octobre 2017 à janvier 2026 | circulaires de la Cnav ; ailleurs, ancrage sur la plus proche |
-| Âge légal par génération | table 1900-1975, 60 → 64 ans | **certifié** (D. 161-2-1-9), recontrôlé à chaque exécution |
+| Âge légal par génération | table 1900-1975, 60 → 64 ans, suspension de 2026 comprise (62 ans et 9 mois de 1963 au premier trimestre 1965, un trimestre par génération ensuite, 64 ans dès 1969) | **certifié** (D. 161-2-1-9), recontrôlé à chaque exécution, sauf les six lignes réécrites par la loi de financement pour 2026 — transcrites de la loi et de la circulaire Cnav 2026-07, niveau moyenne jusqu'à relecture dans un dump LEGI postérieur au 8 mai 2026 |
+| Surcote | barème daté trimestre par trimestre : 0,75 % (2004-2006), 0,75 % puis 1 % à compter du cinquième et 1,25 % après 65 ans (2007-2008), 1,25 % (depuis 2009) ; fonction publique 0,75 % plafonné à vingt trimestres puis 1,25 % ; période de référence au trimestre civil | transcrit de D. 351-1-4 et de L. 14 III, rejoué contre les trois exemples de la circulaire Cnav 2018-04 et deux fiches de service-public |
+| Salaire annuel moyen des parents | 24 meilleures années pour un enfant, 23 pour deux et plus, pensions dès septembre 2026 | transcrit de R. 173-3-2 (décret n° 2026-699), non recontrôlé |
 | Âge d'annulation de la décote par génération | table 1930-1955, 65 → 67 ans | calculée depuis l'âge d'ouverture certifié, selon la règle de `L. 351-8` ; recontrôlée à chaque exécution |
 | Coefficient de minoration par génération | table 1900-1975, 2,5 → 1,25 % | **certifié** (R. 351-27 II), recoupé à la DREES |
 | Années retenues au salaire de référence | table 1934-1948, 10 → 25 années | **certifiée** (R. 351-29-1) |
@@ -235,7 +237,59 @@ pour les générations 1950 à 1960 et à 62 ans à partir de 1962, la carrière
 interrompue à l'âge légal de sa génération, l'agent de conduite né en 2000 —
 rendu au régime général par la fermeture du statut — à 63 ans par la porte des
 vingt et un ans ; la trajectoire du système actuel en 2070 passe de 19,3 % à
-19,5 % du PIB, l'écart avec le COR de 5,1 à 5,3 points.
+19,5 % du PIB, l'écart avec le COR de 5,1 à 5,3 points — puis à 19,4 % et
+5,2 points une fois la suspension de 2026 portée, ci-dessous.
+
+**Et ce que les exemples publiés par les caisses ont fait voir, le même
+jour.** L'action 26 de la feuille de route rejoue contre le scénario 1 les
+exemples chiffrés que service-public.gouv.fr et les circulaires de la Cnav
+publient — la seule confrontation qui soit officielle et reproductible,
+puisqu'aucun simulateur officiel ne se laisse interroger sans FranceConnect.
+Le premier exemple lu disait « né en 1964, 62 ans et 9 mois, 170 trimestres »
+là où les tables du dépôt, certifiées sur le dump LEGI du 13 juillet 2025,
+portaient 63 ans et 171. Cinq écarts, tous refermés :
+
+- **La suspension de la réforme de 2023** (loi n° 2025-1403 du 30 décembre
+  2025, article 105, décrets n° 2026-344 et n° 2026-345 du 7 mai 2026,
+  pensions prenant effet à compter du 1er septembre 2026) manquait : 62 ans et
+  9 mois et 170 trimestres des nés du 1er janvier 1963 au 31 mars 1965, puis
+  un trimestre de moins que la loi de 2023 pour chaque génération jusqu'à
+  64 ans à compter de 1969 et 172 trimestres à compter de 1966. C'est le
+  droit de tous ceux qui simulent aujourd'hui leur départ. Les âges de la
+  catégorie active et de la super-active suivent (décret n° 2026-344,
+  article 3, D), comme la carrière longue.
+- **La carrière longue se lisait à l'année et à la règle générale.** La borne
+  des vingt ans monte par génération depuis 2023 (D. 351-1-1, II) — 60 ans
+  et 9 mois pour la génération 1965, non 62 —, et chaque décret s'applique
+  aux pensions prenant effet à compter d'une date, novembre 2012, septembre
+  2023, septembre 2026 : la table porte maintenant la date et la génération.
+  Et depuis septembre 2026 deux trimestres de majoration pour enfants sont
+  réputés cotisés (article 104 de la même loi).
+- **Le salaire annuel moyen des parents** porte sur les vingt-quatre
+  meilleures années pour un enfant, vingt-trois pour deux et plus (R. 173-3-2,
+  décret n° 2026-699 du 29 juillet 2026, pensions dès septembre 2026). Le
+  modèle en prenait vingt-cinq à tout le monde.
+- **La surcote était servie au taux de l'année du départ, à tous les
+  trimestres, et comptée à l'année.** Le droit donne à chaque trimestre le
+  taux en vigueur quand il a été accompli — 0,75 % de 2004 à 2006, 0,75 %
+  puis 1 % à compter du cinquième et 1,25 % après soixante-cinq ans en 2007
+  et 2008, 1,25 % depuis 2009 (D. 351-1-4 ; fonction publique : 0,75 % dans la
+  limite de vingt trimestres puis 1,25 %, L. 14 III) —, et il ne compte que
+  les trimestres civils entiers depuis celui qui suit l'âge légal (circulaire
+  Cnav 2018-04, point 2). Né le 15 avril, à l'âge légal en avril, on ne
+  surcote qu'à partir de juillet : le modèle comptait avril, et servait un
+  trimestre de trop à qui n'est pas né le premier jour d'un trimestre. Le
+  barème vit dans `legislation/surcote_baremes.csv`.
+- **Le même jour, la datation des cas types ignorait encore la génération
+  de la carrière longue** : c'est la table ci-dessus qui la lui donne.
+
+Vingt-deux exemples sont rejoués à l'identique par `tests/test_oracle.py`
+depuis `tests/temoins/exemples_officiels.yaml` : décote, surcote, taux plein
+et proratisation, minimum contributif de 2026, âges légaux et durées de la
+circulaire Cnav 2026-07, carrière longue de la circulaire 2026-17, les trois
+barèmes de surcote de la circulaire 2018-04, dans le privé comme dans la
+fonction publique. Ce que ça déplace, et pourquoi, est au § 3, « Ce que disent
+les exemples publiés par les caisses ».
 
 ### Le mois, là où le droit le date
 
@@ -391,9 +445,23 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   décote dont le droit le dispenserait.
 - **Trimestres « réputés cotisés » de la carrière longue.** La loi du 20 janvier
   2014 en a élargi la liste (chômage, maladie, maternité, dans des limites
-  propres à chacun). Le modèle ne compte que les trimestres réellement cotisés,
+  propres à chacun). Le modèle ne compte que les trimestres réellement cotisés
+  — et, depuis les pensions de septembre 2026, les deux trimestres de
+  majoration pour enfants que la loi de financement pour 2026 répute cotisés —,
   ce qui rend la condition plus dure qu'elle ne l'est : quelques carrières
   hachées sont déclarées non ouvertes alors que le droit les ouvrirait.
+- **La date d'effet est le mois de l'anniversaire.** Le modèle liquide au mois
+  où l'âge demandé est atteint ; la caisse fait prendre effet la pension le
+  premier jour du mois SUIVANT, sauf pour qui est né un premier. Un mois
+  d'écart, qui se voit là où un texte coupe au mois : la borne de la carrière
+  longue des nés en décembre 1965, fixée à 60 ans et 8 mois pour que la
+  pension prenne effet le 1er septembre 2026, tombe ici en août 2026, sous le
+  décret précédent, qui demande 60 ans et 9 mois.
+- **La durée requise des emplois classés.** Le décret n° 2026-344 (article 3,
+  B) donne aux catégories actives leur propre calendrier de durée — 169
+  trimestres des nés de septembre 1966 à 1967, 172 dès 1971 —, l'âge anticipé
+  ayant cinq ans d'avance sur l'âge légal ; le modèle leur oppose la durée de
+  leur génération, comme aux sédentaires.
 - **Montée en charge propre aux régimes spéciaux.** La décote créée par la
   réforme de 2008 y monte en charge comme celle de la fonction publique, mais
   selon un calendrier qui lui est propre, régime par régime. Le modèle applique
@@ -417,10 +485,6 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   2004 comme dans la fonction publique. Trois calendriers pour trois régimes,
   qu'aucune source ne donne en série : le modèle retient le seul qui soit
   documenté article par article, celui de la fonction publique.
-- **Barème de la surcote entre 2004 et 2008.** Le taux n'était pas plat :
-  0,75 % pour les quatre premiers trimestres, 1 % au-delà, 1,25 % pour les
-  trimestres accomplis après 65 ans. Le modèle applique 0,75 % à tous, ce qui
-  minore la surcote des liquidations de cette période — cinq années.
 - **Majorations pour enfants des non-salariés agricoles.** La MSA sert bien une
   majoration de durée d'assurance à ses non-salariés, mais elle s'y convertit en
   POINTS et non en trimestres, selon une règle qui change au 1er janvier 2026.
@@ -2367,7 +2431,10 @@ de « 34 152 € × 160/165 ».
 
 La césure jouait dans les deux sens — les vingt-cinq meilleures années de
 chaque morceau peuvent être meilleures que celles de la carrière entière — et
-l'écart mesuré allait de **−7,2 % à +0,3 %** sur les dix profils. Ce n'était
+l'écart mesuré allait de **−7,2 % à +0,3 %** sur les dix profils (de −7,2 % à
++6,7 % depuis que la surcote est datée : coupé, le morceau CANCAVA d'un artisan
+parti tard servait le taux plat de sa fiche de 2006 à des trimestres de 2011 à
+2015, et cette erreur en compensait une autre). Ce n'était
 pas la limite « coordination interrégimes » ci-dessus, mais quelque chose de
 plus large qu'un polypensionnat : **un régime et celui qui lui succède ne sont
 pas deux régimes**, et le catalogue le savait déjà, puisqu'il porte
@@ -2388,6 +2455,56 @@ désormais exactement la pension du régime général, comme la MSA. Le
 découpage d'avant reste disponible comme variante
 (`calculer(..., liquider_successions=False)`), et un test le garde mesuré :
 c'est de là que viennent les −7,2 % et +0,3 %.
+
+### Ce que disent les exemples publiés par les caisses
+
+OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
+une carrière de trois lignes dont la réponse est écrite par l'organisme qui
+applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
+vingt-deux, chacun avec sa source et sa date de vérification, et
+`tests/test_oracle.py` les rejoue : le test construit la carrière — une
+affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
+d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
+
+| Source | Ce qu'elle fait rejouer | Accord |
+|---|---|---|
+| service-public.gouv.fr, fiches F19666 et F20349 | décote du privé et de la fonction publique, né en 1964, 159 trimestres sur 170 : taux 43,125 %, réduction de 13,75 % | **exact** |
+| fiches F19643 et F16494 | surcote du privé et de la fonction publique, 4 trimestres civils après l'âge légal : +5 % | **exact**, une fois la période de référence comptée au trimestre civil |
+| fiches F21552 et F36464 | taux plein à 170, taux plein à 67 ans avec 158, taux minoré à 65 ans (45 %), proratisation 158/170 | **exact** |
+| actualité A15703 | minimum contributif 2026 : 170 trimestres dont 135 cotisés, 873,53 € par mois | **exact** au centime |
+| circulaire Cnav 2026-07 | âges légaux et durées de la suspension pour trois dates de naissance, décote d'un né en novembre 1961 (44,375 %) | **exact**, une fois les tables réécrites |
+| circulaire Cnav 2026-17 | carrière longue par génération, 1964 à 1971, ouverte à la borne et refusée un trimestre plus tôt | **exact**, une fois la borne lue par génération |
+| circulaire Cnav 2018-04 | surcote à un, deux et trois taux (2,5 %, 4,75 %, 10,25 %) | **exact**, une fois le barème daté |
+
+**Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
+contredisait les tables certifiées du dépôt : non que le récupérateur se soit
+trompé, mais parce que le droit avait changé depuis le dump qu'il avait lu —
+la suspension de la réforme est de décembre 2025, ses décrets de mai 2026, et
+le dump LEGI du dépôt de juillet 2025. Une table certifiée est certifiée à une
+date ; c'est pourquoi les lignes réécrites sont redescendues au niveau
+`moyenne` plutôt que de porter un `certifiee` que rien ne soutient plus, et
+pourquoi ce niveau remonte jusqu'au résultat affiché à qui est né de 1964 à
+1968. Puis la surcote : 5 % dans les deux fiches quand le modèle en servait
+6,25, parce qu'il comptait le trimestre de l'anniversaire ; et les trois
+exemples de 2018, qui ne se rejouent qu'avec le taux de chaque trimestre à sa
+date. Puis la carrière longue, dont la borne des vingt ans n'avait jamais été
+lue par génération. Le minimum contributif, la décote, la proratisation, le
+taux plein sont tombés justes du premier coup — c'est aussi un résultat.
+
+**Ce que les exemples ne couvrent pas.** Ils sont courts par construction :
+une affiliation, pas de polypension, pas d'enfant sauf pour le minimum, pas
+de carrière hachée. Les vingt-quatre et vingt-trois années des parents, les
+deux trimestres d'enfants réputés cotisés, les âges des catégories actives
+n'ont pas d'exemple publié que le dépôt ait trouvé : ils sont transcrits du
+texte, et attendent le leur.
+
+**Ce que cette source vaut, et ce qu'elle ne vaut pas.** Un exemple de
+circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
+droit de 2018 — et une fiche de service-public est réécrite sans que son
+exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
+par l'exemple seul. Mais quand les vingt-deux tombent justes ensemble, sur
+sept sources et cinq règles, c'est le droit que le modèle applique, et non une
+lecture qu'il aurait de lui.
 
 ### La cotisation déplafonnée est portée au compte
 
@@ -5298,7 +5415,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve 13,9 % du PIB en 2024 et **14,2 % en 2070** (rapport annuel
 de juin 2025, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve 13,6 % et **19,5 %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve 13,6 % et **19,4 %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **cinq
 points à l'arrivée**.
@@ -5358,7 +5475,7 @@ La concordance ne vaut de toute façon que ce que vaut une concordance : elle
 rend une erreur grossière improbable, elle ne rend juste aucun des deux modèles.
 Un test borne la trajectoire à la fourchette 10-20 % du PIB. Cette borne n'a pas
 bougé — elle avait été élargie de 18 à 20 % lors de la pondération, et les
-19,5 % y tiennent encore de cinq dixièmes de point.
+19,4 % y tiennent encore de six dixièmes de point.
 
 **Ce que la règle d'âge a déplacé ailleurs.** Deux choses, et toutes deux
 attendues une fois qu'on sait que les cas types partent plus tard. La garantie
@@ -5377,7 +5494,9 @@ depuis la loi de 2023, et le moteur confirme le motif — et les trimestres pour
 enfants, qui datent la carrière interrompue à l'âge légal de sa génération au
 lieu d'un départ en surcote (§ « Écarts avec le droit positif »). La
 trajectoire 2070 en est montée de 19,3 à 19,5 % : deux cas types partent plus
-tôt, et c'est le droit. Ce qu'elle ne sait toujours pas faire : les âges
+tôt, et c'est le droit. La suspension de 2026 la ramène ensuite à 19,4 % : les
+générations 1964 à 1970 partent un trimestre plus tôt, avec un ou deux
+trimestres de moins à réunir. Ce qu'elle ne sait toujours pas faire : les âges
 d'entrée des cas types restent ceux de la grille — vingt-quatre ans pour
 l'artisan, vingt-sept pour le libéral —, ce qui suffit à les faire partir à
 soixante-sept ans une fois la durée requise opposée. La grille part donc, en
@@ -5509,7 +5628,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 846 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 868 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

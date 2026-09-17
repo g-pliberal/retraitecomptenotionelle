@@ -541,14 +541,16 @@ def test_un_regime_ferme_rend_ses_generations_au_droit_commun():
 
 def test_la_carriere_longue_date_le_depart_du_cas_type_qui_y_a_droit():
     """Le salarié au SMIC entre à dix-huit ans : le droit lui ouvre un départ
-    anticipé AU TAUX PLEIN, à soixante ans sous le décret de 2012 et à
-    soixante-deux sous la loi de 2023. La règle le lui proposait à l'âge légal,
+    anticipé AU TAUX PLEIN, à soixante ans sous le décret de 2012, puis à l'âge
+    que sa génération tire de l'article D. 351-1-1. La règle le lui proposait à l'âge légal,
     faisant attendre celui-là même que la loi en dispense ; elle propose
     maintenant l'âge que `calculer` confirme, et sous le motif qui le dit."""
     simulateur = Simulateur(Parametres())
     actuel = simulateur.scenario_actuel
     smic = next(cas for cas in CAS_TYPES if cas.code == "smic_carriere_complete")
-    for generation, attendu in ((1955, 60.0), (1960, 60.0), (1965, 62.0), (1975, 62.0)):
+    # 60 ans sous le décret de 2012, 60 ans et 9 mois pour la génération 1965
+    # (D. 351-1-1, II, suspension de 2026 comprise), 62 ans à compter de 1971.
+    for generation, attendu in ((1955, 60.0), (1960, 60.0), (1965, 60.75), (1975, 62.0)):
         assert smic.age_liquidation_pour(simulateur, generation) == pytest.approx(attendu)
         resultat = actuel.calculer(smic.construire(simulateur, generation))
         assert resultat.liquidation_ouverte

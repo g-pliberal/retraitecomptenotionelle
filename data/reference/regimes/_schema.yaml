@@ -259,6 +259,20 @@ champs_periode:
 
   surcote_par_trimestre: "majoration par trimestre supplémentaire (fraction, null si aucune)"
 
+  surcote_bareme:
+    description: >-
+      Barème DATÉ de la surcote, quand le taux dépend de la date à laquelle
+      chaque trimestre a été accompli et non de l'année du départ.
+      `regime_general` : 0,75 % de 2004 à 2006 ; en 2007 et 2008, 0,75 % les
+      quatre premiers trimestres puis 1 %, et 1,25 % après soixante-cinq ans ;
+      1,25 % depuis 2009 (D. 351-1-4). `fonction_publique` : 0,75 % dans la
+      limite de vingt trimestres jusqu'en 2008, 1,25 % depuis (L. 14 III).
+      Les trimestres se comptent par trimestres civils depuis celui qui suit
+      l'âge légal, ou le mois qui suit la durée requise ;
+      `legislation/surcote_baremes.csv` porte les taux. `null` : le taux plat
+      `surcote_par_trimestre` de la période, appliqué à tous les trimestres.
+    defaut: null
+
   abattement_points:
     description: >-
       Barème d'abattement d'un régime EN POINTS liquidé avant le taux plein.

@@ -1826,7 +1826,10 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
         ("fonctionnaire_etat", {"naissance": "1950", "statut": "fonctionnaire_etat",
                                 "debut": "40", "liquidation": "62",
                                 "unite_revenu": "moyen", "salaire": "0.3"}),
-        ("surcote parentale", {"naissance": "1965", "sexe": "F", "enfants": "3",
+        # Génération 1969 : la première dont l'âge légal est 64 ans depuis la
+        # suspension de 2026, donc quatre trimestres entre 63 ans et l'âge
+        # légal — pour 1965, la fenêtre s'est refermée avec la suspension.
+        ("surcote parentale", {"naissance": "1969", "sexe": "F", "enfants": "3",
                                "debut": "20", "liquidation": "64",
                                "unite_revenu": "moyen", "salaire": "1"}),
     ]
