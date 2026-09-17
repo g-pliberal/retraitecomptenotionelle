@@ -17,3 +17,7 @@ data/brut/*
 # Moteur Impeccable : binaire de 16 Mo par plateforme, retéléchargé et vérifié
 # par .claude/skills/impeccable/scripts/impeccable au premier appel
 .claude/skills/impeccable/scripts/bin/
+# Impeccable : cache du hook et consentement local, propres à la machine
+# (le hook les inscrit aussi dans .git/info/exclude, qui ne se clone pas)
+.impeccable/hook.cache.json
+.impeccable/config.local.json

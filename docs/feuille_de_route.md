@@ -2897,3 +2897,12 @@ article de loi non codifié, que seul l'index JORF porte : lues à la main,
   et trois manques mesurés. La leçon est dans `docs/veille_droit.md` : **une
   valeur n'est pas juste parce qu'elle est certifiée, elle est juste à la
   date de sa certification**, et cette date doit être visible.
+- **17 septembre 2026, l'outillage d'interface rendu reproductible.** Hors
+  modèle. Le hook Impeccable passe de `.claude/settings.local.json`, ignoré,
+  à `.claude/settings.json`, commité, sans chemin de machine ; les règles
+  Web Interface Guidelines sont figées à un commit amont dans la compétence
+  au lieu d'être lues sur `main` à chaque audit ; `scripts/setup_ui_tools.sh`
+  installe ou vérifie, autant de fois qu'on veut, le moteur Impeccable,
+  `@playwright/cli` 0.1.20 et son Chromium. Ce qu'une machine neuve doit
+  encore télécharger est dans `docs/outillage_interface.md`. Aucun audit
+  n'a été fait : l'action qui s'en servira reste à ouvrir.
