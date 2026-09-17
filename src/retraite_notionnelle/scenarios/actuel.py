@@ -939,11 +939,15 @@ class CarriereLongue:
     #: plus précise.
     GENERATION_GENERALE = 1900.0
 
-    #: Depuis les pensions prenant effet au 1er septembre 2026, les trimestres
-    #: de majoration de durée d'assurance pour enfants sont réputés cotisés
-    #: pour la carrière longue, dans la limite de deux (article 104 de la loi
-    #: n° 2025-1403 du 30 décembre 2025, décret n° 2026-699 ; circulaire Cnav
-    #: 2026-17, point 1.2.3.6).
+    #: Depuis les pensions prenant effet au 1er septembre 2026, les majorations
+    #: de durée d'assurance pour enfants — maternité, adoption, éducation, congé
+    #: parental — et les bonifications de la fonction publique sont réputées
+    #: cotisées pour la carrière longue, dans la limite de DEUX trimestres sur
+    #: l'ensemble de la carrière : 3° de l'article L. 351-1-1 (article 104 de
+    #: la loi n° 2025-1403 du 30 décembre 2025), article D. 351-1-2-1 créé par
+    #: le décret n° 2026-700 du 29 juillet 2026 ; circulaire Cnav 2026-29 du
+    #: 4 septembre 2026, point 1.2.3.8 et annexe 4. La majoration pour enfant
+    #: handicapé, que le modèle ne sert pas, en est exclue.
     ENFANTS_REPUTES_COTISES_DEPUIS = DateMois(2026, 9)
     ENFANTS_REPUTES_COTISES_MAXIMUM = 2
 
