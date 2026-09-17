@@ -1,0 +1,587 @@
+# Registre de conformité du scénario 1 au droit applicable
+# =========================================================
+# Ce fichier est la liste de tout ce que le scénario 1 applique, approche,
+# omet ou n'a pas encore lu — règle par règle —, avec pour chaque ligne le
+# texte qui la fonde, la source OFFICIELLE où elle a été lue, la date de cette
+# lecture, l'exemple publié qui la rejoue quand il en existe un, et l'état.
+# `scripts/veille_droit.py` le lit ; `tests/test_donnees.py` en impose la
+# forme et exige que toute réforme du calendrier (reformes.yaml) datée de 2023
+# ou après y ait sa ligne. `docs/veille_droit.md` dit comment le tenir.
+#
+# Il existe parce qu'une table certifiée l'est à une DATE : le 17 septembre
+# 2026, les âges légaux du dépôt, lus dans un dump LEGI de juillet 2025,
+# étaient faux pour tout assuré né de 1964 à 1968 depuis la loi du
+# 30 décembre 2025 — et rien ne le disait. Le premier exemple publié lu l'a
+# fait voir. Ce registre est la réponse : chaque ligne porte la date de sa
+# dernière confrontation à une source officielle, et le script dit lesquelles
+# ont vieilli.
+#
+# ÉTATS
+#   conforme       lu dans le texte ET dans une source d'application
+#                  (circulaire, fiche service-public), rejoué par un exemple
+#                  publié quand il en existe un
+#   transcrit      lu dans le texte, appliqué, mais sans exemple publié ni
+#                  recontrôle automatique
+#   approximation  la règle est appliquée à une maille plus grossière que le
+#                  droit (l'année, le mois de l'anniversaire) ; l'effet est
+#                  mesuré et dit dans limites.md
+#   manque         règle du droit non appliquée, dont l'effet est connu
+#   hors_modele    hors périmètre par construction (ménage, information
+#                  médicale, dispositif temporaire)
+#   a_verifier     texte ou règle signalé, pas encore lu à la source
+#
+# CHAMPS D'UNE LIGNE
+#   id, regle, textes (articles et lois), sources (chacune : type, reference,
+#   date — la date de vérification de la fiche ou de la circulaire, ou celle
+#   de la version lue sur Légifrance —, url facultative), verifie_le (date de
+#   la lecture par le dépôt), temoins (identifiants de
+#   tests/temoins/exemples_officiels.yaml), reformes (codes de reformes.yaml),
+#   etat, effet, a_faire, prochaine_veille.
+#
+# LA RÈGLE : aucune valeur n'entre dans le scénario 1 sans sa ligne ici, et
+# aucune ligne sans source officielle lue — Légifrance pour le texte, la
+# circulaire de la caisse ou la fiche service-public pour l'application, un
+# exemple chiffré publié quand il en existe. Une déduction n'est pas une
+# lecture ; une mémoire n'est pas une source.
+
+sources_a_consulter:
+  - nom: "Légifrance, loi de financement de la sécurité sociale de l'année"
+    quoi: >-
+      Chaque LFSS (votée en décembre) touche les retraites : âges, durées,
+      minima, majorations, revalorisation. Lire les articles retraite du
+      titre « assurance vieillesse » et leurs décrets d'application (JORF,
+      généralement de mars à juillet).
+    url: "https://www.legifrance.gouv.fr/"
+  - nom: "Cnav, base documentaire des circulaires"
+    quoi: >-
+      Une circulaire par mesure, avec exemples chiffrés. Lister les
+      circulaires parues depuis la dernière veille et lire celles dont l'objet
+      touche une règle du scénario 1.
+    url: "https://legislation.lassuranceretraite.fr/"
+  - nom: "service-public.gouv.fr, fiches retraite du salarié et de l'agent public"
+    quoi: >-
+      Les fiches portent une date « Vérifié le » et des encadrés « Exemple ».
+      Une date postérieure à la dernière veille signale une règle à relire ;
+      un exemple nouveau entre dans exemples_officiels.yaml.
+    url: "https://www.service-public.gouv.fr/particuliers/vosdroits/N381"
+  - nom: "Journal officiel, par l'index DILA du dépôt"
+    quoi: >-
+      `python scripts/fetch/dila_index.py jorf --mettre-a-jour`, puis
+      `python scripts/fetch/dila_cherche.py jorf 'retraite' --depuis AAAA
+      --nature DECRET` : les décrets retraite parus depuis la dernière veille.
+    url: "https://echanges.dila.gouv.fr/OPENDATA/"
+  - nom: "Service des retraites de l'État et CNRACL (juris-cnracl)"
+    quoi: "Règles de la pension civile : décote, surcote, catégories actives, minimum garanti."
+    url: "https://www.juris-cnracl.retraites.fr/"
+  - nom: "Agirc-Arrco, paramètres annuels"
+    quoi: "Valeur du point au 1er novembre, salaire de référence au 1er janvier, taux d'appel."
+    url: "https://www.agirc-arrco.fr/"
+
+entrees:
+
+  # ---- Ouverture du droit et taux -------------------------------------
+  - id: age_legal_par_generation
+    regle: "Âge d'ouverture du droit par génération, coupures au mois (1er juillet 1951, 1er septembre 1961, 1er avril 1965)."
+    textes: ["L. 161-17-2 CSS (réécrit par la loi n° 2025-1403, article 105)", "D. 161-2-1-9 CSS (version 2023, désormais dépassée par la loi elle-même)"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 1.1 et annexe 1", date: "2026-03-05"}
+      - {type: service_public, reference: "fiches F14043 et F14044", date: "2026-08-14"}
+      - {type: service_public, reference: "actualité A18825, suspension de la réforme", date: "2026-02-27"}
+    verifie_le: "2026-09-17"
+    temoins: [cnav_2026_07_age_legal_1964, cnav_2026_07_age_legal_1965_premier_trimestre, cnav_2026_07_age_legal_1965_apres_avril, sp_f19643_surcote, sp_f16494_surcote_fonction_publique]
+    reformes: [reforme_2023, lfss_2026_suspension]
+    etat: conforme
+    effet: "Toute liquidation. Les six lignes de 1964 à 1968 sont au niveau « moyenne » : transcrites, non recontrôlées par le récupérateur LEGI."
+    a_faire: >-
+      Action 27 : le récupérateur lit D. 161-2-1-9, qui ne porte plus les
+      âges ; il doit lire L. 161-17-2 dans un dump postérieur au 8 mai 2026.
+    prochaine_veille: "2026-12-31"
+
+  - id: duree_requise_par_generation
+    regle: "Durée d'assurance requise pour le taux plein et dénominateur du prorata, par génération."
+    textes: ["L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)", "L. 351-1 CSS"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 2.1", date: "2026-03-05"}
+      - {type: service_public, reference: "fiche F14044", date: "2026-08-14"}
+    verifie_le: "2026-09-17"
+    temoins: [cnav_2026_07_age_legal_1964, cnav_2026_07_age_legal_1965_apres_avril, sp_f19666_decote, sp_f21552_taux_plein_170]
+    reformes: [reforme_2023, lfss_2026_suspension]
+    etat: conforme
+    effet: "Taux et proratisation de toute liquidation. Lignes 1964, 1965 et 1965.25 au niveau « moyenne »."
+    a_faire: "Action 27."
+    prochaine_veille: "2026-12-31"
+
+  - id: age_annulation_decote
+    regle: "Taux plein sans condition de durée à l'âge légal de droit commun augmenté de trois ans : 67 ans depuis la génération 1955, inchangé par la suspension."
+    textes: ["L. 351-8 1° CSS"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 3", date: "2026-03-05"}
+      - {type: service_public, reference: "fiche F19666", date: "2026-01-01"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_f19666_decote, sp_f21552_67_ans_158, cnav_2026_07_decote_1961]
+    reformes: [reforme_2023]
+    etat: conforme
+    effet: "Décote et taux plein d'office."
+    a_faire: null
+    prochaine_veille: "2027-06-30"
+
+  - id: decote_regime_general
+    regle: "1,25 % du taux plein par trimestre manquant, le plus petit des deux décomptes (durée, âge), arrondi au trimestre supérieur, vingt trimestres au plus."
+    textes: ["R. 351-27 CSS", "L. 351-1 CSS"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 4.1.1", date: "2026-03-05"}
+      - {type: service_public, reference: "fiche F19666", date: "2026-01-01"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_f19666_decote, cnav_2026_07_decote_1961, sp_f21552_65_ans_158]
+    reformes: []
+    etat: conforme
+    effet: "Toute liquidation avant le taux plein."
+    a_faire: null
+    prochaine_veille: "2027-06-30"
+
+  - id: decote_fonction_publique
+    regle: "Décote propre de la pension civile : coefficient et âge d'annulation lus à l'année d'ouverture du droit, montée en charge 2006-2020, limite d'âge du grade."
+    textes: ["L. 14 I et II CPCMR", "loi n° 2003-775, article 66 III"]
+    sources:
+      - {type: service_public, reference: "fiche F20349", date: "2026-01-01"}
+      - {type: autre, reference: "OpenFisca-France-Pension, témoins de la pension civile (tests/test_oracle.py)", date: "2026-09-13"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_f20349_decote_fonction_publique]
+    reformes: [reforme_2023]
+    etat: conforme
+    effet: "Fonctionnaires liquidant avant le taux plein."
+    a_faire: null
+    prochaine_veille: "2027-06-30"
+
+  - id: surcote_regime_general
+    regle: "Trimestres civils entiers cotisés après l'âge légal et au-delà de la durée requise, depuis le trimestre qui suit l'âge légal ou le mois qui suit la durée ; taux à la date de chaque trimestre (0,75 %, 1 %, 1,25 % après 65 ans, 1,25 % depuis 2009)."
+    textes: ["L. 351-1-2 CSS", "D. 351-1-4 CSS (versions 2004, 2007, 2009)"]
+    sources:
+      - {type: circulaire_cnav, reference: "2018-04 du 1er février 2018, points 2 et 3", date: "2018-02-01"}
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 4.2", date: "2026-03-05"}
+      - {type: service_public, reference: "fiche F19643", date: "2026-01-01"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_f19643_surcote, cnav_2018_04_surcote_un_taux, cnav_2018_04_surcote_deux_taux, cnav_2018_04_surcote_trois_taux]
+    reformes: [surcote_2007, lfss_2009_surcote]
+    etat: conforme
+    effet: "Toute liquidation après l'âge légal avec la durée requise."
+    a_faire: null
+    prochaine_veille: "2027-06-30"
+
+  - id: surcote_fonction_publique
+    regle: "1,25 % par trimestre depuis 2009 sans plafond ; 0,75 % dans la limite de vingt trimestres pour ceux d'avant 2009 ; décompte depuis l'âge légal de droit commun, jamais depuis l'âge anticipé."
+    textes: ["L. 14 III CPCMR (version du 31 décembre 2023)", "loi n° 2008-1330, article 89"]
+    sources:
+      - {type: legifrance, reference: "L. 14 CPCMR, LEGIARTI000048844775", date: "2023-12-31"}
+      - {type: service_public, reference: "fiche F16494", date: "2026-05-18"}
+      - {type: autre, reference: "CNRACL, juris-cnracl, calcul de la surcote", date: "2026-09-17"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_f16494_surcote_fonction_publique]
+    reformes: [lfss_2009_surcote]
+    etat: conforme
+    effet: "Fonctionnaires liquidant après l'âge légal avec la durée."
+    a_faire: "La version de 2009 de L. 14 III (plafond de vingt trimestres) n'a pas été lue sur Légifrance, seulement rapportée : la lire."
+    prochaine_veille: "2027-03-31"
+
+  - id: surcote_parentale
+    regle: "1,25 % par trimestre acquis entre 63 ans et l'âge légal, quatre au plus, à qui détient un trimestre de majoration pour enfants."
+    textes: ["L. 351-1-2-1 CSS"]
+    sources:
+      - {type: legifrance, reference: "L. 351-1-2-1 CSS, loi n° 2023-270", date: "2023-09-01"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [reforme_2023]
+    etat: transcrit
+    effet: "Parents nés à partir de 1965 ; la suspension de 2026 réduit la fenêtre d'un trimestre pour 1964-1968."
+    a_faire: "Chercher un exemple publié (fiche service-public ou circulaire Cnav) et l'ajouter au témoin."
+    prochaine_veille: "2027-03-31"
+
+  - id: taux_plein_et_proratisation
+    regle: "Pension = salaire annuel moyen × taux × durée dans le régime / durée requise ; durée de proratisation propre aux générations 1944-1948."
+    textes: ["L. 351-1 CSS", "R. 351-6 CSS"]
+    sources:
+      - {type: service_public, reference: "fiches F21552 et F36464", date: "2026-09-01"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_f21552_taux_plein_170, sp_f21552_67_ans_158, sp_f21552_65_ans_158]
+    reformes: []
+    etat: conforme
+    effet: "Toute pension du régime général et des régimes alignés."
+    a_faire: null
+    prochaine_veille: "2027-06-30"
+
+  # ---- Salaire de référence -------------------------------------------
+  - id: salaire_annuel_moyen
+    regle: "Vingt-cinq meilleures années (dix à vingt-cinq par génération de 1934 à 1948), salaires revalorisés par les coefficients de la circulaire annuelle, année du départ exclue, plafond proratisé."
+    textes: ["R. 351-29 CSS", "R. 173-3-2 CSS (nombre d'années, depuis le décret n° 2025-1409)", "R. 351-29-1 CSS (générations d'avant 1948)"]
+    sources:
+      - {type: circulaire_cnav, reference: "circulaire de revalorisation des salaires, colonne au 1er janvier 2026", date: "2026-01-01"}
+      - {type: legifrance, reference: "R. 173-3-2 CSS, LEGIARTI000054059837", date: "2026-09-01"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_f21552_taux_plein_170]
+    reformes: []
+    etat: conforme
+    effet: "Toute pension en annuités du privé."
+    a_faire: "Relire la colonne de revalorisation à chaque 1er janvier (cnav_revalorisation_salaires.py)."
+    prochaine_veille: "2027-01-31"
+
+  - id: sam_parents_24_23
+    regle: "Vingt-quatre meilleures années pour qui bénéficie d'une majoration ou bonification au titre d'un enfant, vingt-trois pour deux et plus, pensions prenant effet à compter du 1er septembre 2026."
+    textes: ["R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026, article 1er)", "loi n° 2025-1403, article 103"]
+    sources:
+      - {type: legifrance, reference: "décret n° 2026-699, JORFTEXT000054569098", date: "2026-07-29"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [parents_2026]
+    etat: transcrit
+    effet: "Mères (par défaut dans le modèle) liquidant depuis septembre 2026 : +1 à +2 % de salaire de référence."
+    a_faire: "Attendre la circulaire Cnav d'application et son exemple ; vérifier le sort des pères qui détiennent la majoration."
+    prochaine_veille: "2026-12-31"
+
+  # ---- Minima et majorations -------------------------------------------
+  - id: minimum_contributif
+    regle: "Montant de base et montant majoré (120 trimestres cotisés), au prorata de la durée d'assurance et de la durée cotisée, réservés au taux plein, écrêtement de l'ensemble des pensions."
+    textes: ["L. 351-10 CSS", "D. 351-2-1 CSS", "L. 173-2 CSS"]
+    sources:
+      - {type: service_public, reference: "actualité A15703, montants 2026", date: "2026-02-12"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_a15703_minimum_contributif_2026]
+    reformes: []
+    etat: conforme
+    effet: "Petites pensions au taux plein."
+    a_faire: "Relire les montants à chaque revalorisation de janvier."
+    prochaine_veille: "2027-01-31"
+
+  - id: majoration_duree_assurance_enfants
+    regle: "Huit trimestres par enfant au régime général (quatre avant 1975, un an de 1972 à 1974, à la mère), bonification de la fonction publique (quatre trimestres avant 2004, deux depuis)."
+    textes: ["L. 351-4 CSS", "L. 351-5 CSS", "L. 12 b et L. 12 bis CPCMR"]
+    sources:
+      - {type: legifrance, reference: "L. 351-4 CSS", date: "2023-09-01"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [parents_2026]
+    etat: a_verifier
+    effet: "Toute mère ; commande la décote, la proratisation, la surcote parentale et le SAM des parents."
+    a_faire: >-
+      Le décret n° 2026-699 (articles 3 et 4) crée « une bonification d'un
+      trimestre pour chacun de leurs enfants nés depuis le 1er janvier 2004 »
+      aux femmes fonctionnaires de la CNRACL et du FSPOEIE ayant accouché après
+      leur recrutement : lire l'article et dire si c'est un ajout aux deux
+      trimestres de L. 12 bis. L'attribution au père (partage des trimestres
+      d'éducation depuis 2010) reste une convention.
+    prochaine_veille: "2026-12-31"
+
+  - id: majoration_dix_pour_cent
+    regle: "Majoration de 10 % pour trois enfants, plafonnée à l'Agirc-Arrco."
+    textes: ["L. 351-12 CSS", "accord national interprofessionnel Agirc-Arrco"]
+    sources:
+      - {type: autre, reference: "Agirc-Arrco, plafond de la majoration familiale (novembre 2025)", date: "2025-11-01"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: "Parents de trois enfants."
+    a_faire: "Chercher un exemple publié ; relire le plafond Agirc-Arrco chaque novembre."
+    prochaine_veille: "2026-11-30"
+
+  - id: minimum_garanti
+    regle: "Plancher de la pension civile, barème en escalier sur la durée de services, référence gelée en 2004 puis indexée sur les prix."
+    textes: ["L. 17 CPCMR", "loi n° 2003-775, article 66 V"]
+    sources:
+      - {type: autre, reference: "Service des retraites de l'État, référence du minimum garanti (sre_minimum_garanti.py)", date: "2026-09-13"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: "Fonctionnaires à carrière courte."
+    a_faire: "Chercher une fiche de calcul publiée par le SRE."
+    prochaine_veille: "2027-03-31"
+
+  - id: minimum_vieillesse
+    regle: "ASPA servie au barème d'une personne seule sans autre ressource, à tous, en ligne séparée."
+    textes: ["L. 815-1 CSS et suivants"]
+    sources:
+      - {type: service_public, reference: "montants de l'ASPA 2026", date: "2026-01-01"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: approximation
+    effet: "Les plus petites pensions ; la condition de ressources et le ménage sont ignorés, ce que limites.md dit."
+    a_faire: null
+    prochaine_veille: "2027-01-31"
+
+  - id: avpf
+    regle: "Assurance vieillesse des parents au foyer : salaire au SMIC porté au compte pendant l'interruption pour enfant."
+    textes: ["L. 381-1 CSS"]
+    sources:
+      - {type: legifrance, reference: "L. 381-1 CSS", date: "2023-09-01"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: "Carrières interrompues pour enfant."
+    a_faire: null
+    prochaine_veille: "2027-06-30"
+
+  # ---- Départs anticipés ----------------------------------------------
+  - id: carriere_longue
+    regle: "Quatre bornes d'entrée (16, 18, 20, 21 ans), cinq trimestres avant la fin de l'année civile — quatre pour les nés au dernier trimestre —, durée requise cotisée ; la borne des vingt ans par génération ; portes lues à la date d'effet."
+    textes: ["L. 351-1-1 CSS", "D. 351-1-1 CSS (décret n° 2026-345 du 7 mai 2026)"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-17 du 12 juin 2026, point 1.1 et annexe 3 (remplacée par 2026-29 du 4 septembre 2026)", date: "2026-09-04"}
+      - {type: legifrance, reference: "D. 351-1-1 CSS, LEGIARTI000047634571, versions du 1er septembre 2023 et du 1er septembre 2026", date: "2026-09-01"}
+      - {type: service_public, reference: "fiche F13845", date: "2026-09-01"}
+    verifie_le: "2026-09-17"
+    temoins: [cnav_2026_17_racl_1964, cnav_2026_17_racl_1965_premier_trimestre, cnav_2026_17_racl_1965_apres_avril, cnav_2026_17_racl_1967, cnav_2026_17_racl_1970, cnav_2026_17_racl_1971]
+    reformes: [reforme_2023, lfss_2026_suspension]
+    etat: conforme
+    effet: "Tout départ avant l'âge légal. Les portes de 2004 et 2012 restent des transcriptions anciennes (niveau moyenne / haute)."
+    a_faire: "Action 27 pour les lignes par génération ; relire les portes de 2004 et 2012 dans les versions abrogées de D. 351-1-1."
+    prochaine_veille: "2026-12-31"
+
+  - id: carriere_longue_enfants_reputes_cotises
+    regle: "Deux trimestres au plus de majoration pour enfants (maternité, adoption, éducation, congé parental, bonifications de la fonction publique) réputés cotisés pour la carrière longue, pensions dès le 1er septembre 2026."
+    textes: ["L. 351-1-1 3° CSS (loi n° 2025-1403, article 104)", "D. 351-1-2-1 CSS (décret n° 2026-700 du 29 juillet 2026)"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-29 du 4 septembre 2026, point 1.2.3.8 et annexe 4", date: "2026-09-04"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [lfss_2026_suspension]
+    etat: transcrit
+    effet: "Mères à carrière longue à qui il manque un ou deux trimestres cotisés."
+    a_faire: "Chercher un exemple publié."
+    prochaine_veille: "2027-03-31"
+
+  - id: carriere_longue_reputes_cotises_autres
+    regle: "Trimestres réputés cotisés : chômage, maladie et accidents du travail, maternité, invalidité (deux), service national, compte professionnel de prévention, AVPF (quatre), dans des limites propres à chacun."
+    textes: ["D. 351-1-1 CSS", "D. 351-1-2-1 CSS"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-29 du 4 septembre 2026, points 1.2.3.1 à 1.2.3.7", date: "2026-09-04"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: manque
+    effet: "Le modèle ne compte que les trimestres réellement cotisés et ceux des enfants : quelques carrières hachées sont déclarées non ouvertes alors que le droit les ouvre."
+    a_faire: "Porter les limites par nature de période, la circulaire 2026-29 les donne toutes."
+    prochaine_veille: "2027-03-31"
+
+  - id: categorie_active_super_active
+    regle: "Âge anticipé et minoré des emplois classés, par génération, décalé d'un trimestre par la suspension ; âge d'annulation propre ; dix-sept et vingt-sept ans de services classés."
+    textes: ["L. 24 I 1° CPCMR", "L. 14 bis CPCMR", "décret n° 2026-344 du 7 mai 2026, article 3 D"]
+    sources:
+      - {type: legifrance, reference: "décret n° 2026-344, JORFTEXT000054047709, article 3 D lu alinéa par alinéa", date: "2026-05-07"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [reforme_2023, lfss_2026_suspension]
+    etat: transcrit
+    effet: "Fonctionnaires déclarés en catégorie active ou super-active."
+    a_faire: "Chercher un exemple publié (SRE ou CNRACL)."
+    prochaine_veille: "2027-03-31"
+
+  - id: categorie_active_duree_requise
+    regle: "Durée requise propre aux emplois classés : 169 trimestres des nés de septembre 1966 à 1967, 170 de 1968 à mars 1970, 171 jusqu'à fin 1970, 172 dès 1971 (super-active cinq ans plus tard)."
+    textes: ["décret n° 2026-344 du 7 mai 2026, article 3 B"]
+    sources:
+      - {type: legifrance, reference: "décret n° 2026-344, article 3 B", date: "2026-05-07"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [lfss_2026_suspension]
+    etat: manque
+    effet: "Un actif né en 1969 se voit opposer 172 trimestres au lieu de 170 : décote ou surcote décalée de deux trimestres."
+    a_faire: "Ajouter une table de durée requise par classement et par génération, lue par _duree_requise quand une dérogation active s'applique."
+    prochaine_veille: "2027-03-31"
+
+  - id: retraite_anticipee_handicap
+    regle: "Départ anticipé des assurés handicapés, de 55 à 59 ans selon la durée et le taux d'incapacité, calendrier propre revu par la suspension."
+    textes: ["L. 351-1-3 CSS", "D. 351-1-5 CSS (décret n° 2026-345)", "décret n° 2026-344, article 3 C et G"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-18 du 15 juin 2026", date: "2026-06-15"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [lfss_2026_suspension]
+    etat: hors_modele
+    effet: "Demande une information médicale que le modèle ne collecte pas : l'assuré est déclaré non ouvert."
+    a_faire: null
+    prochaine_veille: "2027-09-30"
+
+  - id: inaptitude_invalidite_penibilite_amiante
+    regle: "Taux plein à l'âge légal pour inaptitude ou invalidité, départ anticipé pour incapacité permanente, compte professionnel de prévention, amiante."
+    textes: ["L. 351-1-4 CSS", "L. 351-8 1° bis et 6° CSS", "L. 4163-1 code du travail"]
+    sources: []
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: hors_modele
+    effet: "Assurés concernés déclarés non ouverts ou décotés à tort."
+    a_faire: null
+    prochaine_veille: "2027-09-30"
+
+  # ---- Approximations de structure ------------------------------------
+  - id: date_effet_mois_suivant
+    regle: "La pension prend effet le premier jour du mois suivant celui où l'âge est atteint, sauf pour qui est né un premier."
+    textes: ["R. 351-37 CSS"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, exemples du point 1.1", date: "2026-03-05"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: approximation
+    effet: "Le modèle liquide au mois de l'anniversaire : un mois d'écart, visible là où un texte coupe au mois (nés en décembre 1965, carrière longue)."
+    a_faire: "Décider si date_liquidation devient le mois suivant ; mesurer sur les témoins."
+    prochaine_veille: "2027-03-31"
+
+  - id: un_statut_par_annee
+    regle: "Un seul statut et une seule ligne de carrière par année civile ; trimestres validés par le salaire (150 heures de SMIC) et plafonnés aux trimestres civils de l'année du départ."
+    textes: ["R. 351-9 CSS"]
+    sources:
+      - {type: legifrance, reference: "R. 351-9 CSS, certifié par le récupérateur", date: "2026-09-13"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: approximation
+    effet: "L'année d'un changement de métier ou d'arrêt d'activité relève d'un seul régime ; limites.md le mesure."
+    a_faire: null
+    prochaine_veille: "2027-09-30"
+
+  - id: liquidation_unique_regimes_alignes
+    regle: "Liquidation unique des régimes alignés (LURA) depuis le 1er juillet 2017 : un seul salaire annuel moyen, une seule durée, pour le régime général, la MSA des salariés et la sécurité sociale des indépendants."
+    textes: ["L. 173-1-2 CSS", "R. 173-3-2 CSS"]
+    sources:
+      - {type: legifrance, reference: "L. 173-1-2 CSS", date: "2017-07-01"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: a_verifier
+    effet: "Le modèle réunit un régime et son successeur (artisan devenu régime général) ; un salarié devenu artisan la même année, ou l'inverse, n'a pas été vérifié contre la LURA."
+    a_faire: "Construire un profil salarié puis artisan et le confronter à l'oracle OpenFisca ou à un exemple Cnav de LURA."
+    prochaine_veille: "2027-03-31"
+
+  # ---- Hors périmètre, à dire ---------------------------------------
+  - id: reversion
+    regle: "Pension de réversion, 54 % de la pension du défunt sous conditions de ressources ; réforme annoncée pour 2026-2027."
+    textes: ["L. 353-1 CSS"]
+    sources: []
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: hors_modele
+    effet: "Le modèle décrit une carrière, pas un ménage."
+    a_faire: "Surveiller la réforme de la réversion : si elle touche le calcul du droit direct, elle entre ici."
+    prochaine_veille: "2027-03-31"
+
+  - id: cumul_emploi_retraite_et_retraite_progressive
+    regle: "Cumul emploi-retraite (trois régimes selon l'âge, seconde pension depuis 2023) et retraite progressive (dès 60 ans depuis septembre 2025)."
+    textes: ["L. 161-22 CSS et suivants", "L. 351-15 CSS"]
+    sources:
+      - {type: autre, reference: "L'Assurance retraite, mesures de la LFSS 2026", date: "2026-01-01"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: hors_modele
+    effet: "Le modèle liquide une fois, à une date ; il n'a pas de seconde pension ni de fraction."
+    a_faire: null
+    prochaine_veille: "2027-09-30"
+
+  - id: rachats_et_versements
+    regle: "Rachats de trimestres (années d'études, années incomplètes), versements pour la retraite."
+    textes: ["L. 351-14-1 CSS"]
+    sources: []
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: hors_modele
+    effet: "Non saisissables dans le simulateur."
+    a_faire: null
+    prochaine_veille: "2027-09-30"
+
+  # ---- Paramètres annuels ---------------------------------------------
+  - id: parametres_annuels_2026
+    regle: "Plafond de la sécurité sociale, SMIC horaire (trimestres), coefficients de revalorisation des salaires, montants des minima, valeur du point et salaire de référence Agirc-Arrco, pour l'année en cours."
+    textes: ["arrêtés annuels", "circulaires Cnav", "délibérations Agirc-Arrco"]
+    sources:
+      - {type: autre, reference: "plafond 2026 (48 060 €) certifié, SMIC 2026 (12,02 €), colonne de revalorisation au 1er janvier 2026, point Agirc-Arrco 2026", date: "2026-09-13"}
+    verifie_le: "2026-09-17"
+    temoins: [sp_a15703_minimum_contributif_2026]
+    reformes: []
+    etat: conforme
+    effet: "Toute liquidation de l'année."
+    a_faire: "Chaque janvier et chaque novembre : relancer les récupérateurs, lire les circulaires de revalorisation."
+    prochaine_veille: "2027-01-31"
+
+  - id: revalorisation_des_pensions
+    regle: "Revalorisation annuelle des pensions liquidées (1er janvier), y compris ce que la LFSS 2026 a décidé pour 2026."
+    textes: ["L. 161-25 CSS", "loi n° 2025-1403"]
+    sources: []
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: a_verifier
+    effet: "N'entre pas dans la pension à la liquidation ; entre dans les trajectoires de la page Coût. Vérifier que la série de revalorisation des pensions porte le taux réellement appliqué au 1er janvier 2026."
+    a_faire: "Lire l'article de la LFSS 2026 sur la revalorisation 2026 et confronter à la série macro."
+    prochaine_veille: "2026-12-31"
+
+  # ---- Régimes autres que le régime général et la fonction publique -----
+  - id: regimes_speciaux_et_non_salaries
+    regle: "Fermetures de 2023 (RATP, IEG, clercs, Banque de France, CESE), réformes 2023-2026 des sections libérales, de la MSA, de Mayotte, de Saint-Pierre-et-Miquelon, des collectivités du Pacifique."
+    textes: ["voir data/reference/legislation/reformes.yaml, entrées datées de 2023 et après"]
+    sources:
+      - {type: autre, reference: "docs/regimes.md, journal de la campagne sur les régimes", date: "2026-09-16"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [polynesie_2023, caledonie_2023, cese_2023, cnavpl_surcote_2023, clr_2023, avenant_17_2024, cprn_report_2024, rafep_2024, mayotte_2024, agricole_2025, assiette_liberaux_2026, asv_2026, cavec_report_2026, spm_2026]
+    etat: transcrit
+    effet: "Populations petites ; chaque fiche dit ce qu'elle ne porte pas (regimes.md, limites.md § 4)."
+    a_faire: >-
+      Mayotte : la fiche est indexée par année, non par génération ; relire le
+      décret n° 2026-345, article 3 (62 ans et 6 mois de 1963 à 1965 jusqu'à
+      63 ans et 9 mois pour 1969) et vérifier les dernières périodes. La
+      réforme agricole de 2026 reste non calculable.
+    prochaine_veille: "2027-03-31"
+
+  # ---- Ce qui peut changer le droit avant la prochaine session -----------
+  - id: fin_de_la_suspension_2028
+    regle: "La suspension court jusqu'au 1er janvier 2028 ; l'élection présidentielle de 2027 peut abroger, prolonger ou refaire le calendrier."
+    textes: ["loi n° 2025-1403, article 105 VI"]
+    sources:
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 1.1", date: "2026-03-05"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: [lfss_2026_suspension]
+    etat: a_verifier
+    effet: "Tout changement de calendrier touche les générations 1965 et suivantes."
+    a_faire: "À chaque session : chercher sur Légifrance et dans le JORF un texte modifiant L. 161-17-2 ou L. 161-17-3 postérieur au 30 décembre 2025."
+    prochaine_veille: "2027-01-31"
+
+  - id: certification_legi_perimee
+    regle: "Le récupérateur LEGI a lu le dump du 13 juillet 2025 ; tout ce qu'il certifie l'est à cette date."
+    textes: ["scripts/fetch/dila_legi_parametres_retraite.py", "data/derive/certification.json"]
+    sources:
+      - {type: autre, reference: "journal de certification, dates de vérification par série", date: "2026-09-14"}
+    verifie_le: "2026-09-17"
+    temoins: []
+    reformes: []
+    etat: a_verifier
+    effet: "Toute table certifiée peut être dépassée par un texte postérieur à juillet 2025 : c'est ce qui est arrivé aux âges légaux."
+    a_faire: "Action 27 : relancer le récupérateur sur un dump postérieur au 8 mai 2026, et lui faire lire L. 161-17-2 au lieu de D. 161-2-1-9."
+    prochaine_veille: "2026-12-31"
+
+journal:
+  - date: "2026-09-17"
+    session: "action 26, exemples publiés par les caisses"
+    consulte: >-
+      service-public.gouv.fr (F14043, F14044, F19666, F19643, F13845, F21552,
+      F36464, F20349, F16494, A15703, A18825) ; circulaires Cnav 2026-07,
+      2026-17, 2026-18, 2026-29, 2018-04 ; Légifrance : loi n° 2025-1403,
+      décrets n° 2026-344, 2026-345, 2026-699, articles D. 351-1-1, L. 351-1-1,
+      R. 173-3-2, L. 14 CPCMR ; L'Assurance retraite, mesures LFSS 2026 et
+      carrière longue ; CNRACL, calcul de la surcote.
+    trouve: >-
+      La suspension de la réforme de 2023 (LFSS 2026) manquait ; carrière
+      longue lue à la règle générale et à l'année ; surcote au taux du départ
+      et comptée à l'année ; SAM des parents à vingt-cinq années. Tout porté.
+      Vingt-deux exemples rejoués à l'identique.
+    reste: >-
+      Recertification LEGI (action 27) ; durée requise des emplois classés ;
+      réputés cotisés autres que les enfants ; date d'effet au mois suivant ;
+      LURA en cas de statuts simultanés ; revalorisation des pensions 2026 ;
+      bonification d'un trimestre CNRACL/FSPOEIE du décret n° 2026-699 ;
+      Mayotte.

@@ -57,6 +57,29 @@ Le Python de `src/` fait foi. Toute modification du modèle doit être portée d
 `python scripts/construire_temoins.py` : leur diff montre, chiffre par chiffre,
 ce que le changement déplace.
 
+## Le scénario 1 est le droit applicable, et rien d'autre
+
+Le scénario 1 est l'étalon : il doit être le droit EN VIGUEUR à la date
+d'effet de la pension, tel que la caisse l'applique. Le 17 septembre 2026,
+ses âges légaux certifiés dataient d'un dump LEGI antérieur à la loi qui les
+avait changés, et rien ne le disait. D'où trois obligations, décrites dans
+`docs/veille_droit.md` :
+
+- **Au début de toute session qui touche au scénario 1**, lancer
+  `python scripts/veille_droit.py` et consulter les sources qu'il liste pour
+  tout texte paru depuis la dernière date du journal (LFSS de l'année et ses
+  décrets, circulaires Cnav, fiches service-public, JORF par l'index DILA).
+- **Toute règle écrite ou modifiée** a été lue sur Légifrance (version en
+  vigueur, identifiant) ET dans la circulaire ou la fiche qui l'applique, a
+  son exemple chiffré publié dans `tests/temoins/exemples_officiels.yaml`
+  quand il en existe un, et sa ligne dans
+  `data/reference/legislation/veille.yaml` avec la date de lecture et l'état.
+  Une déduction n'est pas une lecture ; une mémoire n'est pas une source ; une
+  table certifiée l'est à une date.
+- **À la fin**, consigner dans le `journal` de `veille.yaml` ce qui a été
+  consulté, trouvé et laissé. Un test refuse toute réforme du calendrier
+  sans sa ligne de veille.
+
 ## Chercher dans le JORF ou LEGI
 
 Ne pas retélécharger les dumps de la DILA pour une recherche : l'index plein

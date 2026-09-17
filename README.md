@@ -947,6 +947,7 @@ python scripts/fetch/dila_legi_minimum_contributif.py   # minimum contributif (l
 python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes (lent)
 python scripts/fetch/ined_vallin_mesle.py       # quotients de mortalité d'avant 1986
 python scripts/fetch/eurostat_hicp.py           # contrôle croisé de l'inflation
+python scripts/veille_droit.py                  # d'abord : ce qui a vieilli dans le registre du droit (veille.yaml)
 python scripts/fetch/openfisca_regime_general.py  # contre-expertise du scénario 1 : régime général
 python scripts/fetch/openfisca_fonction_publique.py  # la même, pension civile (État, CNRACL)
 python scripts/fetch/openfisca_arrco.py         # la même, Arrco 1999-2018
@@ -1039,8 +1040,9 @@ moteur/                         ce que le navigateur charge, et rien d'autre
 docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
+  veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          868 tests Python
+tests/                          870 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
