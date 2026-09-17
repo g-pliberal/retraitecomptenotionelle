@@ -2287,7 +2287,7 @@ règle la plus mal comptée du système** : trois barèmes en cinq ans, une
 période de référence au trimestre civil, un rang qui court depuis 2004 — il
 fallait trois exemples pour la tenir.
 
-### 27. Relire dans LEGI ce que la suspension de 2026 a réécrit — `à faire`
+### 27. Relire dans LEGI ce que la suspension de 2026 a réécrit — `fait`
 
 **Pourquoi.** Les tables d'âge légal, de durée requise, de carrière longue et
 des catégories actives portent depuis le 17 septembre 2026 les valeurs de la
@@ -2316,6 +2316,59 @@ n° 2026-344 (niveau `haute`) ; reste à les faire relire par le récupérateur.
 
 **Fin.** Plus aucune ligne `moyenne` dans ces tables, et le journal de
 certification daté d'après le 8 mai 2026.
+
+**Ce que ça a déplacé.** Fait le 17 septembre 2026, le jour même de l'action
+26. Aucun chiffre : les 79 segments d'âge, les 20 de durée requise et les 28
+portes de carrière longue que le récupérateur rend sont IDENTIQUES aux lignes
+transcrites de la loi et des circulaires — c'est le résultat attendu, et
+c'est un résultat. Ce qui a changé, c'est d'où il les lit et ce qu'il sait
+lire.
+
+- **Il n'y a pas de dump récent, et il n'y en aura pas.** La DILA n'a pas
+  régénéré son dump global depuis le 13 juillet 2025 ; tout ce qui a paru
+  depuis n'est que dans ses incréments quotidiens. Le récupérateur lit donc
+  l'index LEGI du dépôt (`dila_index.py legi`, dump plus incréments, tenu à
+  jour chaque lundi par le workflow), en quelques secondes au lieu d'un quart
+  d'heure et 1,1 Go ; `--dump` garde l'ancienne voie, qui rendra les âges de
+  2023 tant que le dump ne bougera pas. Le fichier de sortie et le journal de
+  certification écrivent jusqu'à quel incrément l'index était à jour.
+- **La table des âges est dans la loi, plus dans le décret.** La loi
+  n° 2025-1403 a réécrit L. 161-17-2 avec la table génération par génération
+  (version du 31 décembre 2025, applicable au 1er septembre 2026) et a laissé
+  D. 161-2-1-9 dire 63 ans pour 1964. Le récupérateur lit les deux articles,
+  ordonne les versions par leur DATE D'EFFET — lue dans la note « s'appliquent
+  aux pensions prenant effet à compter du » — et les fait se recouvrir AU MOIS
+  près : la loi de 2025 prend les nés à compter du 1er septembre 1961, le
+  décret garde ce qu'elle renvoie à « sa rédaction antérieure », janvier-août
+  1961 compris. Trois formes que l'ancien récupérateur ne lisait pas :
+  « 1 er » espacé, « entre le 1er avril et le 31 décembre 1965 » sans année à
+  la première date, et un renvoi en fin d'alinéa qui, lu d'un bloc, aurait
+  opposé 63 ans et 9 mois à tous les nés d'avant 1961 — d'où la lecture par
+  phrase.
+- **La carrière longue par génération est lue, plus transcrite.** Le II de
+  D. 351-1-1 écrit la borne des vingt ans par substitution — « soixante »,
+  « l'âge prévu à l'article L. 161-17-2 minoré de deux ans et six mois »,
+  « soixante ans et neuf mois » et « huit mois » respectivement — et le
+  récupérateur la résout contre la table d'âge en vigueur à la date d'effet
+  de chaque version : 63 ans moins 2,5 pour 1964 au 1er septembre 2023,
+  60 ans et 6 mois écrits en toutes lettres au 1er septembre 2026. La version
+  du 1er janvier 2026 (décret n° 2025-1410) réécrit le I sans changer une
+  valeur : elle n'ouvre pas de date d'effet.
+- **Trois textes morts, découverts en passant.** Le décret n° 2025-1409 du
+  30 décembre 2025 a abrogé au 1er janvier 2026 le II de R. 351-27
+  (coefficient par génération : « 1,25 % » pour tous désormais), le II de
+  R. 351-6 (proratisation par génération) et R. 351-29-1 (années du salaire
+  de référence, passées à R. 173-3-2). Aucun ne touche personne — les
+  générations nommées ont passé l'âge du taux plein d'office — et la base les
+  consolide en tronquant plutôt qu'en effaçant. Les trois lectures sont
+  désormais version par version, chacune ne recouvrant que les générations
+  qu'elle nomme, et les tables le disent.
+
+Ce qui reste : les portes de 2004 et 2012 (rédactions d'une autre forme, que
+l'index expose désormais), les catégories actives (le décret n° 2026-344
+modifie un article de loi non codifié, que seul l'index JORF porte : lues à
+la main, `haute`), et les autres récupérateurs `dila_legi_*`, qui lisent
+encore le dump global de juillet 2025 — le même piège, ouvert.
 
 ---
 
@@ -2792,6 +2845,19 @@ certification daté d'après le 8 mai 2026.
   vingt-quatre ou vingt-trois années, surcote datée trimestre par trimestre.
   Le détail et les leçons sont sous les deux actions ; l'action 27 est ce qui
   reste : faire relire ces tables au récupérateur sur un dump LEGI récent.
+
+- **17 septembre 2026, action 27.** Le récupérateur des paramètres du
+  scénario 1 lit l'index LEGI du dépôt — dump plus incréments quotidiens de
+  la DILA, qui ne régénère plus son dump global — au lieu du dump de juillet
+  2025 ; il lit L. 161-17-2, où la loi de 2025 a mis la table des âges, à
+  côté de D. 161-2-1-9 ; chaque version s'applique à sa date d'effet et
+  recouvre la précédente au mois près ; la carrière longue par génération est
+  résolue depuis le II de D. 351-1-1. Aucun chiffre ne bouge : 127 valeurs
+  identiques, et plus une ligne `moyenne` ni `haute` sur ces tables depuis
+  2023. La leçon est celle de l'action 26, tenue jusqu'au bout : **une
+  certification l'est à une date, et cette date doit être celle du droit,
+  pas celle d'un dump** — le fichier source et le journal l'écrivent
+  désormais au jour de l'incrément.
 
 - **17 septembre 2026, le registre de veille.** Après l'action 26, la
   question « qu'est-ce qui pourrait encore manquer ? » a reçu une réponse qui

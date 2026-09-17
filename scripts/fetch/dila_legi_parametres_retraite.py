@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Les paramètres du scénario 1, lus dans la loi elle-même.
 
-    python scripts/fetch/dila_legi_parametres_retraite.py
+    python scripts/fetch/dila_index.py legi --recuperer       # l'index, une fois
+    python scripts/fetch/dila_index.py legi --mettre-a-jour   # les incréments parus
+    python scripts/fetch/dila_legi_parametres_retraite.py     # quelques secondes
 
-**Ce script télécharge environ 1,1 Go et met un quart d'heure.** Il n'a pas à
-être relancé souvent : ces tables ne bougent qu'à la faveur d'une réforme.
+    python scripts/fetch/dila_legi_parametres_retraite.py --dump   # 1,1 Go, un quart d'heure
 
 Quatre tables commandent le scénario « système actuel », et donc l'écart que le
 modèle affiche pour les deux autres. Elles étaient saisies depuis les textes,
@@ -17,16 +18,34 @@ base **LEGI** de la DILA est en accès libre et garde chaque version datée de
 chaque article codifié ; et si elle renvoie bien du texte juridique, ce texte
 est une TABLE, écrite en toutes lettres, article par article :
 
-* `D. 161-2-1-9` du code de la sécurité sociale — l'âge d'ouverture des droits,
-  génération par génération : « Soixante-deux ans et trois mois pour les
-  assurés nés entre le 1er septembre 1961 et le 31 décembre 1961 inclus » ;
+* `L. 161-17-2` du code de la sécurité sociale — l'âge d'ouverture des droits.
+  Jusqu'en 2025, l'article ne fixait que la cible (« soixante-quatre ans pour
+  les assurés nés à compter du 1er janvier 1968 ») et renvoyait la montée en
+  charge à un décret, `D. 161-2-1-9` : « Soixante-deux ans et trois mois pour
+  les assurés nés entre le 1er septembre 1961 et le 31 décembre 1961 inclus ».
+  Depuis la loi n° 2025-1403 du 30 décembre 2025 (article 105, la SUSPENSION
+  de la réforme de 2023), c'est la loi elle-même qui écrit la table, génération
+  par génération, pour les nés à compter du 1er septembre 1961 — et le décret,
+  qu'elle n'a pas réécrit, porte encore les âges de 2023. Le script lit donc
+  les DEUX articles, chaque version s'appliquant aux générations qu'elle nomme
+  à compter de sa date d'effet : la loi de 2025 recouvre le décret de 2023 sur
+  les générations 1961 (septembre) à 1968, et le laisse intact avant ;
 * `L. 161-17-3` — la durée d'assurance requise : « 169 trimestres, pour les
   assurés nés entre le 1er septembre 1961 et le 31 décembre 1962 » ;
 * `R. 351-27` II — le coefficient de minoration : « 2,375 % pour l'assuré né en
-  1944 […] 1,25 % pour l'assuré né après 1952 » ;
+  1944 […] 1,25 % pour l'assuré né après 1952 ». Ce II est ABROGÉ depuis le
+  1er janvier 2026 (décret n° 2025-1409 du 30 décembre 2025, article 2, 29°) :
+  l'article en vigueur ne porte plus que « 1,25 % », sans génération. Il ne
+  change rien à personne — les générations qui avaient un coefficient plus
+  lourd sont toutes au-delà de l'âge du taux plein d'office —, et la table par
+  génération du dépôt reste ce que ses versions successives ont dit ;
 * `D. 351-1-1` — les portes du départ anticipé pour carrière longue : « A
   cinquante-huit ans pour les assurés qui ont débuté leur activité avant l'âge
-  de seize ans » ;
+  de seize ans » ; et, au II, la borne des vingt ans PAR GÉNÉRATION, écrite en
+  substitutions — « les mots : “ soixante-deux ans ” sont remplacés par les
+  mots : “ l'âge prévu à l'article L. 161-17-2 minoré de deux ans et six
+  mois ” » —, que le script résout contre la table d'âge en vigueur à la date
+  d'effet de la version ;
 * `R. 351-6` II — la durée maximale d'assurance prise en compte par la
   PRORATISATION, qu'il ne faut pas confondre avec la durée requise pour le taux
   plein : « 152 trimestres pour les assurés nés en 1944 » ;
@@ -35,39 +54,61 @@ est une TABLE, écrite en toutes lettres, article par article :
   période postérieure au 31 décembre 2013 ;
 * `R. 351-29-1` — le nombre d'années retenues au salaire annuel moyen,
   génération par génération : « Vingt et une années pour l'assuré né en 1944 ».
-
-Ces deux dernières étaient saisies, et c'est la même leçon une fois de plus :
-elles étaient réputées hors de portée parce qu'elles ne ressemblent pas à des
-paramètres, alors qu'elles sont écrites en toutes lettres dans l'article. Elles
-commandent pourtant, la première le dénominateur de toute carrière incomplète
-liquidée par les générations 1944-1948, la seconde le nombre de trimestres que
-valide une année de petit salaire — deux endroits où une erreur ne se voit pas
-et se paie en pension.
+  Abrogé lui aussi au 1er janvier 2026 par le même décret, qui renvoie la
+  règle à l'article R. 173-3-2 : la table par génération est celle de sa
+  dernière version, et le dépôt porte à part les vingt-quatre et vingt-trois
+  années des parents.
 
 Il n'y avait donc rien à demander à personne : il fallait lire. La leçon est la
 même que pour la valeur du point agricole et pour le minimum contributif —
 *chercher par le NUMÉRO D'ARTICLE*, LEGI étant organisée par version d'article
 et non par thème.
 
+**Où lire.** Le dump global de la DILA date du 13 juillet 2025, et elle ne l'a
+pas régénéré depuis : tout ce qui a paru après — la suspension de 2026 en
+premier — n'est que dans ses incréments quotidiens. C'est ce qui a fait, le
+17 septembre 2026, des tables certifiées sur ce dump des tables fausses pour
+tout assuré né de 1964 à 1968, sans que rien le dise. Le script lit donc
+désormais l'INDEX du dépôt (`scripts/fetch/dila_index.py legi`), qui est le
+dump global plus tous les incréments parus, tenu à jour chaque lundi par le
+workflow `index-dila.yml` ; `--mettre-a-jour` y applique les derniers en
+quelques secondes. `--dump` garde l'ancienne voie, qui ne connaît que le dump
+global : elle ne sert plus qu'à contrôler l'index, et elle rendra les âges
+de 2023 tant que la DILA n'aura pas régénéré son dump.
+
+**Une version s'applique à une date d'effet, pas à sa date de publication.**
+La loi de 2025 est consolidée au 31 décembre 2025 et ne s'applique qu'aux
+pensions prenant effet à compter du 1er septembre 2026 ; sa note le dit. Le
+script lit cette date dans la note (« s'appliquent aux pensions prenant effet à
+compter du ») et ordonne les versions par elle : c'est ce qui permet de
+résoudre « l'âge prévu à l'article L. 161-17-2 minoré de deux ans et six
+mois » contre l'âge que la version du décret avait sous les yeux — 63 ans
+pour la génération 1964 au 1er septembre 2023, 62 ans et 9 mois au
+1er septembre 2026.
+
 **Un article porte plusieurs codes.** `R. 351-27` existe aussi au code du
 travail, à celui de la construction et de l'habitation, à celui de l'action
 sociale ; `L. 14` existe au code forestier comme au code électoral. Le script
-retient donc, pour chaque article, le code attendu, qu'il lit dans l'en-tête de
-la version.
+retient donc, pour chaque article, le code attendu.
 
 **Une génération coupée en cours d'année.** La loi coupe parfois une génération
-à une date — le 1er juillet 1951, le 1er septembre 1961. Le script rendait alors
-la valeur couvrant le plus de mois, à égalité la plus exigeante : le modèle ne
-connaissait que l'année de naissance, et l'approximation valait un trimestre
-d'âge légal. Il rend désormais UN SEGMENT PAR VALEUR, la clé portant le mois de
-la coupure — `1951.5` pour le 1er juillet 1951, `1961.667` pour le 1er septembre
-1961 —, et le modèle lit ces tables au mois de naissance.
+à une date — le 1er juillet 1951, le 1er septembre 1961, le 1er avril 1965. Le
+script rend UN SEGMENT PAR VALEUR, la clé portant le mois de la coupure —
+`1951.5` pour le 1er juillet 1951, `1965.25` pour le 1er avril 1965 —, et le
+modèle lit ces tables au mois de naissance. Les versions successives d'un
+article se recouvrent au MOIS près : une version remplace ce qu'elle dit des
+mois qu'elle nomme, et laisse le reste à la précédente. C'est ainsi que la loi
+de 2025, muette sur les nés avant septembre 1961 (« il est celui applicable en
+application du présent article dans sa rédaction antérieure »), ne touche pas
+à ce que le décret de 2011 en disait.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
+import sqlite3
 import subprocess
 import sys
 import urllib.error
@@ -77,9 +118,11 @@ from pathlib import Path
 
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
 SORTIE = Path("data/brut/dila_legi_parametres_retraite.json")
+INDEX = Path("data/brut/dila/legi.sqlite")
 
 #: Article -> code qui le porte. Un même numéro sert dans plusieurs codes.
 ARTICLES = {
+    "L161-17-2": "sécurité sociale",
     "D161-2-1-9": "sécurité sociale",
     "L161-17-3": "sécurité sociale",
     "R351-27": "sécurité sociale",
@@ -116,16 +159,37 @@ AGE = re.compile(
     re.I,
 )
 
-#: Les trois formes par lesquelles un alinéa désigne les générations qu'il vise.
-AVANT = re.compile(r"n[ée]s?\s+avant\s+le\s+(\d{1,2})e?r?\s+(\w+)\s+(\d{4})", re.I)
+#: Un jour du mois : « 1er », « 31 », et « 1 er » — la loi de 2025 espace le
+#: « er », et le décret de 2023 le colle. Suivi du mois, puis de l'année.
+JOUR = r"(\d{1,2})\s*(?:er)?"
+
+#: Les formes par lesquelles un alinéa désigne les générations qu'il vise.
+#: « entre le 1er septembre 1961 et 31 août 1963 » : le « le » manque au décret
+#: de 2023 ; « entre le 1er avril et le 31 décembre 1965 » : la loi de 2025
+#: omet l'année de la première date quand c'est celle de la seconde.
+AVANT = re.compile(rf"n[ée]s?\s+avant\s+le\s+{JOUR}\s+(\w+)\s+(\d{{4}})", re.I)
 ENTRE = re.compile(
-    r"n[ée]s?\s+entre\s+le\s+(\d{1,2})e?r?\s+(\w+)\s+(\d{4})\s+et\s+le\s+"
-    r"(\d{1,2})e?r?\s+(\w+)\s+(\d{4})", re.I)
+    rf"n[ée]s?\s+entre\s+le\s+{JOUR}\s+(\w+)\s+(?:(\d{{4}})\s+)?et\s+(?:le\s+)?"
+    rf"{JOUR}\s+(\w+)\s+(\d{{4}})", re.I)
 EN_ANNEE = re.compile(r"n[ée]s?\s+en\s+(\d{4})", re.I)
 A_COMPTER = re.compile(
-    r"n[ée]s?\s+(?:à\s+compter\s+du|à\s+partir\s+du)\s+(\d{1,2})e?r?\s+(\w+)\s+(\d{4})",
+    rf"n[ée]s?\s+(?:à\s+compter\s+du|à\s+partir\s+du)\s+{JOUR}\s+(\w+)\s+(\d{{4}})",
     re.I)
 APRES_ANNEE = re.compile(r"n[ée]\s+apr[èe]s\s+(\d{4})", re.I)
+
+#: Chaque mention de générations d'une phrase, dans l'ordre, jusqu'à la
+#: suivante : « nés entre le 1er janvier 1965 et le 30 novembre 1965 inclus et
+#: pour les assurés nés entre le 1er décembre et le 31 décembre 1965 inclus ».
+MENTION = re.compile(
+    r"n[ée]s?\s+(?:entre|en|avant|à\s+compter|à\s+partir|apr[èe]s)\b"
+    r"(?:(?!n[ée]s?\s+(?:entre|en|avant|à\s+compter|à\s+partir|apr[èe]s)\b).)*",
+    re.I | re.S)
+
+#: « s'appliquent aux pensions prenant effet à compter du 1er septembre 2026 » —
+#: la note qui ouvre une version consolidée avant sa date d'application.
+PRISE_D_EFFET = re.compile(
+    rf"pensions\s+prenant\s+effet\s+à\s+compter\s+du\s+{JOUR}\s+(\w+)\s+(\d{{4}})",
+    re.I)
 
 #: Bornes de génération que le modèle couvre. Au-delà, la table est constante.
 PREMIERE_GENERATION, DERNIERE_GENERATION = 1900, 1975
@@ -156,6 +220,30 @@ def age_en_lettres(texte: str) -> float | None:
     return round(annees + mois / 12.0, 2)
 
 
+def _date(jour: str, mois: str, annee: str) -> str | None:
+    numero = MOIS.get(mois.lower())
+    if numero is None:
+        return None
+    return f"{int(annee):04d}-{numero:02d}-{int(jour):02d}"
+
+
+def date_effet(date_debut: str, texte: str) -> str:
+    """Date à laquelle la version s'oppose aux pensions.
+
+    La base consolide une version à la date de publication du texte qui la
+    fait, quand ce texte ne s'applique qu'aux pensions prenant effet plus
+    tard — la loi de 2025 est du 31 décembre, sa table vaut au 1er septembre
+    2026 — et le dit dans une note en tête de la version. C'est la plus
+    tardive de ces dates qui compte, et jamais moins que la date de début.
+    """
+    dates = [date_debut]
+    for jour, mois, annee in PRISE_D_EFFET.findall(texte):
+        trouvee = _date(jour, mois, annee)
+        if trouvee:
+            dates.append(trouvee)
+    return max(dates)
+
+
 def _mois_couverts(alinea: str) -> dict[int, set[int]]:
     """MOIS de chaque génération que cet alinéa vise, un par un.
 
@@ -178,6 +266,7 @@ def _mois_couverts(alinea: str) -> dict[int, set[int]]:
     trouve = ENTRE.search(alinea)
     if trouve:
         j1, m1, a1, j2, m2, a2 = trouve.groups()
+        a1 = a1 or a2
         debut_mois, fin_mois = MOIS.get(m1.lower()), MOIS.get(m2.lower())
         if debut_mois is None or fin_mois is None:
             return {}
@@ -221,35 +310,85 @@ def _mois_couverts(alinea: str) -> dict[int, set[int]]:
     return couverts
 
 
-def _par_version(versions: list[tuple[str, str]],
-                 lire: "callable") -> dict[int, float]:
-    """Applique ``lire`` version par version, la plus récente l'emportant.
-
-    Une version d'article REMPLACE la précédente, elle ne s'y ajoute pas : les
-    fusionner reviendrait à opposer à une même génération deux états du droit.
-    On les parcourt donc dans l'ordre chronologique, chaque version écrasant ce
-    que la précédente disait des générations qu'elle couvre — et laissant
-    intact ce dont elle ne parle pas.
-    """
-    valeurs: dict[float, float] = {}
-    for _, texte in sorted(versions):
-        nouvelles = lire(texte)
-        # Une version REMPLACE ce que la précédente disait des générations
-        # qu'elle couvre — y compris les coupures : on retire d'abord toutes
-        # les clés de ces générations, sans quoi une coupure abandonnée par un
-        # texte plus récent survivrait à son abrogation.
-        annees = {int(cle) for cle in nouvelles}
-        valeurs = {cle: v for cle, v in valeurs.items() if int(cle) not in annees}
-        valeurs.update(nouvelles)
-    return valeurs
-
-
 def generation_decimale(annee: int, mois: int) -> float:
     """Génération et mois -> clé de table. Janvier donne l'année toute nue."""
     return annee if mois == 1 else round(annee + (mois - 1) / 12.0, 3)
 
 
-def table_par_generation(alineas: list[tuple[float, str]]) -> dict[float, float]:
+def _annee_mois(cle: float) -> tuple[int, int]:
+    """Clé de table -> (année, mois) : ``1961.667`` -> (1961, 9)."""
+    annee = int(cle)
+    return annee, int(round((cle - annee) * 12.0)) + 1
+
+
+def _segments(par_mois: dict[int, dict[int, float]],
+              par_annee: bool = True) -> dict[float, float]:
+    """Table en escalier depuis une valeur par mois.
+
+    Un segment s'ouvre là où la valeur change. ``par_annee`` en ouvre aussi un
+    à chaque janvier, même sans changement : c'est la forme des tables d'âge
+    et de durée, une ligne par génération. Sans lui, seules les coupures
+    restent — la forme des portes de carrière longue.
+    """
+    table: dict[float, float] = {}
+    precedente = None
+    for annee, mois in sorted(par_mois.items()):
+        if par_annee:
+            precedente = None
+        for m in sorted(mois):
+            valeur = mois[m]
+            if valeur != precedente:
+                table[generation_decimale(annee, m)] = valeur
+                precedente = valeur
+    return table
+
+
+def _mois_des_segments(table: dict[float, float]) -> dict[int, dict[int, float]]:
+    """L'inverse : une table en escalier rendue mois par mois.
+
+    Un segment court jusqu'au suivant, ou jusqu'à la fin de son année : une
+    version n'écrit une clé qu'aux générations qu'elle nomme, et c'est cette
+    étendue-là qu'elle recouvre — pas ce qui vient après sa dernière ligne.
+    """
+    par_mois: dict[int, dict[int, float]] = {}
+    cles = sorted(table)
+    for cle, suivante in zip(cles, cles[1:] + [None]):
+        annee, mois = _annee_mois(cle)
+        fin = (annee, 13)
+        if suivante is not None:
+            a2, m2 = _annee_mois(suivante)
+            if a2 == annee:
+                fin = (annee, m2)
+        for m in range(mois, fin[1]):
+            par_mois.setdefault(annee, {})[m] = table[cle]
+    return par_mois
+
+
+def _par_version(versions: list[tuple[str, str]],
+                 lire: "callable") -> dict[float, float]:
+    """Applique ``lire`` version par version, la plus récente l'emportant.
+
+    Une version d'article REMPLACE la précédente, elle ne s'y ajoute pas : les
+    fusionner reviendrait à opposer à une même génération deux états du droit.
+    On les parcourt donc dans l'ordre de leur DATE D'EFFET, chaque version
+    écrasant, MOIS PAR MOIS, ce que la précédente disait des générations
+    qu'elle nomme — et laissant intact ce dont elle ne parle pas. Au mois et
+    non à l'année : la loi de 2025 réécrit l'âge des nés à compter du
+    1er septembre 1961 et renvoie les autres à « la rédaction antérieure »,
+    janvier-août 1961 compris. Une coupure abandonnée par un texte plus récent
+    ne survit pas pour autant : le texte qui la lève nomme les mois qu'elle
+    coupait, et les recouvre.
+    """
+    par_mois: dict[int, dict[int, float]] = {}
+    ordre = sorted(versions, key=lambda v: (date_effet(v[0], v[1]), v[0]))
+    for _, texte in ordre:
+        for annee, mois in _mois_des_segments(lire(texte)).items():
+            par_mois.setdefault(annee, {}).update(mois)
+    return _segments(par_mois)
+
+
+def table_par_generation(alineas: list[tuple[float, str]],
+                         par_annee: bool = True) -> dict[float, float]:
     """Valeur opposable à chaque génération, coupures comprises.
 
     La table était annuelle : une génération que le texte coupe en cours
@@ -273,27 +412,33 @@ def table_par_generation(alineas: list[tuple[float, str]]) -> dict[float, float]
             cible = par_mois.setdefault(annee, {})
             for m in mois:
                 cible[m] = max(cible[m], valeur) if m in cible else valeur
-
-    table: dict[float, float] = {}
-    for annee, mois in sorted(par_mois.items()):
-        precedente = None
-        for m in sorted(mois):
-            valeur = mois[m]
-            if valeur != precedente:
-                table[generation_decimale(annee, m)] = valeur
-                precedente = valeur
-    return table
+    return _segments(par_mois, par_annee)
 
 
 def _alineas(texte: str) -> list[str]:
-    """Découpe un article en ses alinéas numérotés, plus le corps qui précède."""
-    morceaux = re.split(r"\s\d{1,2}°\s*[-.]?\s*", texte)
-    return [m.strip() for m in morceaux if m.strip()]
+    """Découpe un article en ses alinéas numérotés, puis en phrases.
+
+    En phrases, parce qu'un alinéa peut en porter deux qui ne parlent pas des
+    mêmes générations : « Soixante-trois ans et neuf mois, pour les assurés
+    nés en 1968. Pour les assurés nés avant le 1er septembre 1961, il est
+    celui applicable […] dans sa rédaction antérieure » — lu d'un bloc, le
+    renvoi aurait opposé 63 ans et 9 mois à tous les nés d'avant 1961.
+    """
+    phrases = []
+    for morceau in re.split(r"\s\d{1,2}°\s*[-.]?\s*", texte):
+        phrases.extend(re.split(r"(?<=[.;])\s+(?=[A-ZÀ-Ý«“])", morceau))
+    return [p.strip() for p in phrases if p.strip()]
 
 
-def age_ouverture(versions: list[tuple[str, str]]) -> dict[int, float]:
-    """Âge d'ouverture des droits, par génération — D. 161-2-1-9."""
-    def lire(texte: str) -> dict[int, float]:
+def age_ouverture(versions: list[tuple[str, str]]) -> dict[float, float]:
+    """Âge d'ouverture des droits, par génération — L. 161-17-2 et D. 161-2-1-9.
+
+    Les versions des deux articles sont lues ensemble, dans l'ordre de leur
+    date d'effet : la loi ne portait que la cible et le décret la montée en
+    charge jusqu'en 2025 ; depuis, la loi porte la table et le décret n'est
+    plus lu que pour les générations qu'elle ne nomme pas.
+    """
+    def lire(texte: str) -> dict[float, float]:
         alineas = [(age_en_lettres(a), a) for a in _alineas(texte)]
         return table_par_generation(
             [(v, a) for v, a in alineas if v is not None and 55.0 <= v <= 70.0]
@@ -301,9 +446,9 @@ def age_ouverture(versions: list[tuple[str, str]]) -> dict[int, float]:
     return _par_version(versions, lire)
 
 
-def duree_requise(versions: list[tuple[str, str]]) -> dict[int, float]:
+def duree_requise(versions: list[tuple[str, str]]) -> dict[float, float]:
     """Durée d'assurance requise, par génération — L. 161-17-3."""
-    def lire(texte: str) -> dict[int, float]:
+    def lire(texte: str) -> dict[float, float]:
         alineas = []
         for alinea in _alineas(texte):
             trouve = re.search(r"\b(1[5-7]\d)\s*trimestres", alinea)
@@ -326,7 +471,7 @@ DUREE_1993 = re.compile(
 GENERATIONS_1993 = (1934, 1942)
 
 
-def duree_requise_1993(versions: list[tuple[str, str]]) -> dict[int, float]:
+def duree_requise_1993(versions: list[tuple[str, str]]) -> dict[float, float]:
     """Durée requise des générations 1934-1942 — R. 351-45 II.
 
     `docs/limites.md` tenait ces générations pour hors de portée : « leur montée
@@ -344,8 +489,8 @@ def duree_requise_1993(versions: list[tuple[str, str]]) -> dict[int, float]:
     2002 — donc à plus de soixante ans, à une époque où l'âge légal en était
     soixante. C'est écrit ici parce que l'écart existe, non parce qu'il pèse.
     """
-    def lire(texte: str) -> dict[int, float]:
-        table: dict[int, float] = {}
+    def lire(texte: str) -> dict[float, float]:
+        table: dict[float, float] = {}
         for trimestres, generation in DUREE_1993.findall(texte):
             annee = int(generation)
             if GENERATIONS_1993[0] <= annee <= GENERATIONS_1993[1]:
@@ -354,14 +499,21 @@ def duree_requise_1993(versions: list[tuple[str, str]]) -> dict[int, float]:
     return _par_version(versions, lire)
 
 
-def coefficient_minoration(versions: list[tuple[str, str]]) -> dict[int, float]:
+def coefficient_minoration(versions: list[tuple[str, str]]) -> dict[float, float]:
     """Coefficient de minoration, par génération — R. 351-27 II.
 
     L'article n'écrit pas ses alinéas en numéros mais en phrases séparées par
     des points-virgules, et il ne parle pas des « assurés nés » mais de
     « l'assuré né » : le découpage lui est propre.
+
+    Les versions en vigueur depuis le 1er janvier 2026 n'ont plus de II — le
+    décret n° 2025-1409 l'a abrogé, et l'article ne dit plus que « 1,25 % ».
+    Elles ne nomment donc aucune génération et ne recouvrent rien : la table
+    reste celle de la dernière version qui les nommait, ce qui est exactement
+    ce que ces générations-là — toutes au-delà de l'âge du taux plein
+    d'office — se sont vu opposer.
     """
-    def lire(texte: str) -> dict[int, float]:
+    def lire(texte: str) -> dict[float, float]:
         partie = texte.split("II.-", 1)
         if len(partie) < 2:
             return {}
@@ -388,6 +540,177 @@ PORTE = re.compile(
     r"avant\s+l['’]?\s*âge\s+de\s+((?:seize|dix-sept|dix-huit|dix-neuf|vingt|"
     r"vingt[- ]et[- ]un))\s*ans",
     re.I)
+
+#: Ce que le II de D. 351-1-1 cite entre guillemets : le texte remplacé, puis
+#: le ou les textes de remplacement.
+CITATION = re.compile(r"[“«\"]\s*([^”»\"]+?)\s*[”»\"]")
+
+#: « l'âge prévu à l'article L. 161-17-2 minoré de deux ans et six mois ».
+MINORE = re.compile(
+    r"minor[ée]e?\s+de\s+(\w+)\s+ans?(?:\s+et\s+(\w+)\s+mois)?", re.I)
+
+#: « Les dispositions du 3° du I s'appliquent aux assurés nés … » — laquelle
+#: des portes le II adapte.
+PORTE_ADAPTEE = re.compile(r"du\s+(\d)°\s+du\s+I\b", re.I)
+
+#: Première version de D. 351-1-1 dont la forme se lit — un I de règle
+#: générale, un II d'adaptations par génération. Les rédactions antérieures
+#: (2003, 2012) empilent des portes par génération dans un autre ordre, et
+#: restent des transcriptions confrontées à la main.
+PREMIERE_VERSION_LUE = "2023-09-01"
+
+
+def _age_cite(texte: str) -> float | None:
+    """« soixante », « soixante ans et six mois », « soixante-et-un ans et neuf
+    mois » -> années décimales. ``None`` si ce n'est pas un âge en lettres."""
+    trouve = re.match(
+        r"^([a-zéè\- ]+?)\s*(?:ans?)?(?:\s*et\s+(\w+)\s+mois)?\s*$",
+        texte.strip().lower())
+    if trouve is None:
+        return None
+    annees = nombre_en_lettres(trouve.group(1))
+    mois = nombre_en_lettres(trouve.group(2))
+    if annees is None or mois is None or not 50 <= annees <= 70:
+        return None
+    return round(annees + mois / 12.0, 2)
+
+
+def _adaptations(partie: str, age_general: float, age_debut: int,
+                 ages: dict[int, dict[int, float]]) -> dict[float, float]:
+    """La borne des vingt ans par génération, résolue depuis le II.
+
+    Chaque alinéa nomme une ou deux périodes de naissance et ce qui remplace
+    « soixante-deux ans » pour elles : un âge en lettres, ou l'âge légal
+    « minoré de deux ans et six mois », que l'on résout mois par mois contre
+    la table d'âge en vigueur à la date d'effet de la version. Après la
+    dernière génération que le II adapte, la règle générale reprend, et la
+    table le dit d'une ligne.
+    """
+    del age_debut  # la porte adaptée est identifiée par l'appelant
+    par_mois: dict[int, dict[int, float]] = {}
+    # Le chapeau cite « le 3° du I » : on ne coupe qu'aux numéros qui ouvrent
+    # une adaptation, « 1° Pour les assurés nés … ».
+    morceaux = re.split(r"\s\d°\s(?=Pour\b)", partie)
+    chapeau, alineas = morceaux[0], morceaux[1:]
+    for alinea in alineas:
+        remplacements = CITATION.findall(alinea)[1:]
+        periodes = [_mois_couverts(m.group(0)) for m in MENTION.finditer(alinea)]
+        periodes = [p for p in periodes if p]
+        if not remplacements or not periodes:
+            continue
+        if len(remplacements) == 1:
+            remplacements = remplacements * len(periodes)
+        if len(remplacements) != len(periodes):
+            continue
+        for periode, remplacement in zip(periodes, remplacements):
+            fixe = _age_cite(remplacement)
+            minore = MINORE.search(remplacement)
+            for annee, mois in periode.items():
+                for m in mois:
+                    if fixe is not None:
+                        valeur = fixe
+                    elif minore and annee in ages and m in ages[annee]:
+                        offset = (nombre_en_lettres(minore.group(1)) or 0) \
+                            + (nombre_en_lettres(minore.group(2)) or 0) / 12.0
+                        valeur = round(ages[annee][m] - offset, 2)
+                    else:
+                        continue
+                    par_mois.setdefault(annee, {})[m] = valeur
+    # La règle générale reprend le mois qui suit la dernière génération adaptée.
+    couverture = _mois_couverts(chapeau)
+    if couverture and par_mois:
+        annee = max(couverture)
+        mois = max(couverture[annee])
+        annee, mois = (annee + 1, 1) if mois == 12 else (annee, mois + 1)
+        if annee <= DERNIERE_GENERATION:
+            par_mois.setdefault(annee, {})[mois] = age_general
+    return _segments(par_mois, par_annee=False)
+
+
+def carriere_longue(versions: list[tuple[str, str]],
+                    versions_age: list[tuple[str, str]] | None = None) -> list[dict]:
+    """Portes du départ anticipé — D. 351-1-1, version par version depuis 2023.
+
+    Chaque porte associe un âge de départ à un âge de début d'activité : « A
+    cinquante-huit ans pour les assurés […] ayant débuté leur activité avant
+    l'âge de seize ans ». La condition de durée cotisée se lit dans le chapeau,
+    en trimestres ajoutés à la durée requise.
+
+    La RÈGLE GÉNÉRALE est le I ; le II adapte la borne des vingt ans génération
+    par génération, et se lit par substitution (voir ``_adaptations``) contre
+    la table d'âge en vigueur à la date d'effet de la version — c'est pour
+    cela qu'il faut ``versions_age``, celles de L. 161-17-2 et D. 161-2-1-9.
+    Une version qui ne change aucune porte — le décret n° 2025-1410, qui
+    réécrit le I sans en changer une valeur — n'ouvre pas de date d'effet : la
+    table est indexée sur les dates où quelque chose change.
+
+    Les rédactions d'avant septembre 2023 ne sont pas lues : le décret de 2012,
+    modifié six fois en onze ans, empile les portes par génération sans règle
+    générale, et un dépouillement automatique ne saurait y démêler la règle du
+    transitoire. Les portes de 2004 et de 2012 restent donc saisies.
+    """
+    portes: list[dict] = []
+    precedentes: list[tuple] | None = None
+    ordre = sorted(versions, key=lambda v: (date_effet(v[0], v[1]), v[0]))
+    for date_debut, texte in ordre:
+        effet = date_effet(date_debut, texte)
+        if effet < PREMIERE_VERSION_LUE:
+            continue
+        morceaux = re.split(r"\sII\s*\.?\s*-", texte, maxsplit=1)
+        general = morceaux[0]
+        supplement_chapeau = 0
+        chapeau = re.split(r"\s1°\s", general, maxsplit=1)[0]
+        trouve = re.search(r"major[ée]e?\s+de\s+(\w+)\s+trimestres", chapeau, re.I)
+        if trouve:
+            supplement_chapeau = nombre_en_lettres(trouve.group(1)) or 0
+        lignes: list[dict] = []
+        for morceau in re.split(r";", general):
+            trouve = PORTE.search(morceau)
+            if trouve is None:
+                continue
+            annees = nombre_en_lettres(trouve.group(1))
+            mois = nombre_en_lettres(trouve.group(2))
+            age_debut = nombre_en_lettres(trouve.group(3))
+            if annees is None or mois is None or age_debut is None:
+                continue
+            supplement = supplement_chapeau
+            minoree = re.search(r"minor[ée]e?\s+de\s+(\w+)\s+trimestres", morceau, re.I)
+            if minoree:
+                supplement -= nombre_en_lettres(minoree.group(1)) or 0
+            elif re.search(r"limite fixée en application|prévue au deuxième alinéa",
+                           morceau, re.I):
+                supplement = 0
+            lignes.append({
+                "entree_en_vigueur": effet,
+                "generation": PREMIERE_GENERATION,
+                "age_debut_maximum": age_debut,
+                "age_depart": round(annees + mois / 12.0, 2),
+                "trimestres_supplementaires": max(0, supplement),
+            })
+        if len(morceaux) > 1 and versions_age:
+            adaptee = PORTE_ADAPTEE.search(morceaux[1])
+            rang = int(adaptee.group(1)) - 1 if adaptee else -1
+            if 0 <= rang < len(lignes):
+                porte = lignes[rang]
+                ages = _mois_des_segments(age_ouverture(
+                    [v for v in versions_age if date_effet(v[0], v[1]) <= effet]))
+                for generation, age in _adaptations(
+                        morceaux[1], porte["age_depart"],
+                        porte["age_debut_maximum"], ages).items():
+                    lignes.append({
+                        "entree_en_vigueur": effet,
+                        "generation": generation,
+                        "age_debut_maximum": porte["age_debut_maximum"],
+                        "age_depart": age,
+                        "trimestres_supplementaires": porte["trimestres_supplementaires"],
+                    })
+        empreinte = [tuple(sorted((k, v) for k, v in l.items()
+                                  if k != "entree_en_vigueur")) for l in lignes]
+        if empreinte == precedentes:
+            continue
+        precedentes = empreinte
+        portes.extend(lignes)
+    return portes
 
 
 #: « 152 trimestres pour les assurés nés en 1944 », « 150 trimestres pour les
@@ -421,15 +744,21 @@ def duree_proratisation(versions: list[tuple[str, str]]) -> dict[int, float]:
     dernière ligne, pour 1948, que cet article-ci ne fixe pas et que la
     certification ne touche pas.
 
-    Version en vigueur seulement : les rédactions antérieures à 2004 ne
-    portaient pas de table par génération, mais une durée unique.
+    Les rédactions antérieures à 2004 ne portaient pas de table par génération
+    mais une durée unique, et ne nomment donc aucune génération. Celle du
+    1er janvier 2026 (décret n° 2025-1409, article 2, 21°) SUPPRIME le II :
+    ces générations ont toutes plus de soixante-dix-huit ans, et le texte était
+    mort. La base le consolide en tronquant la table plutôt qu'en l'effaçant ;
+    lue version par version, chacune ne recouvrant que les générations qu'elle
+    nomme, la table reste ce que ces générations se sont vu opposer.
     """
-    table: dict[int, float] = {}
-    for _, texte in sorted(versions)[-1:]:
+    def lire(texte: str) -> dict[float, float]:
+        table: dict[float, float] = {}
         for trimestres, portee, generation in PRORATISATION.findall(texte):
             debut = PREMIERE_GENERATION if portee.lower() == "avant" else int(generation)
             table[debut] = float(trimestres)
-    return table
+        return table
+    return _par_version(versions, lire)
 
 
 def heures_par_trimestre(versions: list[tuple[str, str]]) -> dict[int, float]:
@@ -441,10 +770,13 @@ def heures_par_trimestre(versions: list[tuple[str, str]]) -> dict[int, float]:
     aux temps très partiels et aux carrières hachées.
 
     Chaque alinéa porte sa période, et la clé est l'année où elle s'ouvre : une
-    période « postérieure au 31 décembre 2013 » commence en 2014.
+    période « postérieure au 31 décembre 2013 » commence en 2014. Lu version
+    par version, chacune ne recouvrant que les périodes qu'elle nomme : le
+    décret n° 2025-1409 (article 2, 24°) supprime au 1er janvier 2026 les
+    alinéas des périodes closes, que la base ne consolide pas tous.
     """
-    table: dict[int, float] = {}
-    for _, texte in sorted(versions)[-1:]:
+    def lire(texte: str) -> dict[float, float]:
+        table: dict[float, float] = {}
         for alinea in re.split(r"(?=Pour la période)", texte):
             heures = ASSIETTE.search(alinea)
             if heures is None:
@@ -455,7 +787,8 @@ def heures_par_trimestre(versions: list[tuple[str, str]]) -> dict[int, float]:
                 table[int(entre.group(1))] = float(heures.group(1))
             elif apres is not None:
                 table[int(apres.group(1)) + 1] = float(heures.group(1))
-    return table
+        return table
+    return _par_version(versions, lire)
 
 
 #: « Vingt et une années pour l'assuré né en 1944 », « Dix années pour l'assuré
@@ -488,6 +821,10 @@ def annees_salaire_reference(versions: list[tuple[str, str]]) -> dict[int, float
 
     Le II donne les générations 1934 à 1947 et le plancher d'avant 1934 ; le I
     donne la cible et la première génération qu'elle vise, « nés après 1947 ».
+
+    L'article est abrogé depuis le 1er janvier 2026 (décret n° 2025-1409), la
+    règle étant passée à l'article R. 173-3-2 avec les vingt-quatre et
+    vingt-trois années des parents : sa dernière version reste la table.
     """
     table: dict[int, float] = {}
     for _, texte in sorted(versions)[-1:]:
@@ -505,57 +842,37 @@ def annees_salaire_reference(versions: list[tuple[str, str]]) -> dict[int, float
     return table
 
 
-def carriere_longue(versions: list[tuple[str, str]]) -> list[dict]:
-    """Portes du départ anticipé — D. 351-1-1.
+# ---------------------------------------------------------------------------
+# Lecture de l'index
+# ---------------------------------------------------------------------------
 
-    Chaque porte associe un âge de départ à un âge de début d'activité : « A
-    cinquante-huit ans pour les assurés […] ayant débuté leur activité avant
-    l'âge de seize ans ». La condition de durée cotisée se lit dans le chapeau,
-    en trimestres ajoutés à la durée requise.
 
-    **Seules la RÈGLE GÉNÉRALE et la VERSION EN VIGUEUR sont lues.** La règle
-    générale, c'est le texte qui précède le « II », où le décret loge ses
-    adaptations transitoires génération par génération : les reprendre
-    reviendrait à opposer à une même année de liquidation autant de portes qu'il
-    y a de générations concernées, quand le modèle ne connaît que l'année de
-    liquidation. La version en vigueur, parce que les rédactions successives se
-    chevauchent — le décret de 2012 a été modifié six fois en onze ans, chaque
-    modification ne portant que sur une génération — et qu'un dépouillement
-    automatique ne saurait démêler la règle du transitoire sur ces versions-là.
-    Les portes d'avant 2023 restent donc saisies, et confrontées à la main aux
-    mêmes articles.
+def depouiller_index(chemin: Path) -> tuple[dict[str, list[tuple[str, str]]], str]:
+    """Versions datées de chaque article, lues dans l'index du dépôt.
+
+    L'index (`dila_index.py legi`) est le dump global plus tous les incréments
+    quotidiens parus depuis : c'est la seule voie qui connaisse un texte
+    postérieur à juillet 2025 tant que la DILA ne régénère pas son dump. Sa
+    table ``meta`` dit jusqu'où il est à jour, et la source écrite dans le
+    fichier de sortie le répète : une certification l'est à une date.
     """
-    portes = []
-    for entree_en_vigueur, texte in sorted(versions)[-1:]:
-        general = re.split(r"\sII\s*\.?\s*-", texte, maxsplit=1)[0]
-        supplement_chapeau = 0
-        chapeau = re.split(r"\s1°\s", general, maxsplit=1)[0]
-        trouve = re.search(r"major[ée]e?\s+de\s+(\w+)\s+trimestres", chapeau, re.I)
-        if trouve:
-            supplement_chapeau = nombre_en_lettres(trouve.group(1)) or 0
-        for morceau in re.split(r";", general):
-            trouve = PORTE.search(morceau)
-            if trouve is None:
-                continue
-            annees = nombre_en_lettres(trouve.group(1))
-            mois = nombre_en_lettres(trouve.group(2))
-            age_debut = nombre_en_lettres(trouve.group(3))
-            if annees is None or mois is None or age_debut is None:
-                continue
-            supplement = supplement_chapeau
-            minoree = re.search(r"minor[ée]e?\s+de\s+(\w+)\s+trimestres", morceau, re.I)
-            if minoree:
-                supplement -= nombre_en_lettres(minoree.group(1)) or 0
-            elif re.search(r"limite fixée en application|prévue au deuxième alinéa",
-                           morceau, re.I):
-                supplement = 0
-            portes.append({
-                "entree_en_vigueur": entree_en_vigueur,
-                "age_debut_maximum": age_debut,
-                "age_depart": round(annees + mois / 12.0, 2),
-                "trimestres_supplementaires": max(0, supplement),
-            })
-    return portes
+    if not chemin.exists():
+        raise FileNotFoundError(
+            f"{chemin} absent : lancer `python scripts/fetch/dila_index.py legi "
+            "--recuperer`, puis `--mettre-a-jour`")
+    db = sqlite3.connect(chemin)
+    meta = dict(db.execute("SELECT cle, valeur FROM meta"))
+    trouvees: dict[str, list[tuple[str, str]]] = {}
+    for article, code in ARTICLES.items():
+        trouvees[article] = [
+            (debut, texte) for debut, texte in db.execute(
+                "SELECT date, texte FROM doc WHERE num = ? AND titre LIKE ? "
+                "ORDER BY date", (article, f"%{code}%"))
+        ]
+    db.close()
+    source = (f"index LEGI du dépôt : {meta.get('dump', '?')}, incréments "
+              f"appliqués jusqu'au {meta.get('dernier_increment', '?')}")
+    return trouvees, source
 
 
 # ---------------------------------------------------------------------------
@@ -633,32 +950,50 @@ def depouiller(url: str) -> dict[str, list[tuple[str, str]]]:
     return trouvees
 
 
-def main() -> int:
-    try:
-        url = dernier_dump()
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"Base LEGI indisponible : {erreur}", file=sys.stderr)
-        return 1
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire le dump global de la DILA (1,1 Go) au lieu de l'index")
+    analyseur.add_argument("--index", type=Path, default=INDEX,
+                           help=f"chemin de l'index LEGI (défaut : {INDEX})")
+    options = analyseur.parse_args(arguments)
 
-    print(f"Dump    {url}")
-    print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
-    try:
-        versions = depouiller(url)
-    except TransfertIncomplet as erreur:
-        print(f"\nÉCHEC   {erreur}", file=sys.stderr)
-        return 1
+    if options.dump:
+        try:
+            url = dernier_dump()
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"Base LEGI indisponible : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump    {url}")
+        print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
+        try:
+            versions = depouiller(url)
+        except TransfertIncomplet as erreur:
+            print(f"\nÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        source = url
+    else:
+        try:
+            versions, source = depouiller_index(options.index)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Source  {source}\n")
     for article, trouvees in versions.items():
-        print(f"  {article:12} {len(trouvees):3} version(s) au {ARTICLES[article]}")
+        vigueur = max((debut for debut, _ in trouvees), default="-")
+        print(f"  {article:12} {len(trouvees):3} version(s) au {ARTICLES[article]},"
+              f" la dernière du {vigueur}")
     if not all(versions.values()):
-        print("\nÉCHEC   un article n'a pas été trouvé dans le dump", file=sys.stderr)
+        print("\nÉCHEC   un article n'a pas été trouvé", file=sys.stderr)
         return 1
 
+    versions_age = versions["L161-17-2"] + versions["D161-2-1-9"]
     tables = {
-        "age_ouverture": age_ouverture(versions["D161-2-1-9"]),
+        "age_ouverture": age_ouverture(versions_age),
         "duree_requise": duree_requise(versions["L161-17-3"]),
         "duree_requise_1993": duree_requise_1993(versions["R351-45"]),
         "coefficient_minoration": coefficient_minoration(versions["R351-27"]),
-        "carriere_longue": carriere_longue(versions["D351-1-1"]),
+        "carriere_longue": carriere_longue(versions["D351-1-1"], versions_age),
         "duree_proratisation": duree_proratisation(versions["R351-6"]),
         "heures_par_trimestre": heures_par_trimestre(versions["R351-9"]),
         "annees_salaire_reference": annees_salaire_reference(versions["R351-29-1"]),
@@ -680,6 +1015,12 @@ def main() -> int:
             and min(coefficients.values()) == 0.0125):
         print(f"\nÉCHEC   coefficients invraisemblables : "
               f"{sorted(set(coefficients.values()))}", file=sys.stderr)
+        return 1
+    portes = tables["carriere_longue"]
+    generales = {p["age_debut_maximum"] for p in portes if p["generation"] == PREMIERE_GENERATION}
+    if generales != {16, 18, 20, 21}:
+        print(f"\nÉCHEC   portes de carrière longue invraisemblables : "
+              f"{sorted(generales)}", file=sys.stderr)
         return 1
 
     # La montée en charge de 1993 : un trimestre par génération, de 151 à 159.
@@ -713,15 +1054,18 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": url,
+            "source": source,
             "articles": ARTICLES,
             "recupere_le": date.today().isoformat(),
             "note": "tables par génération lues dans le texte des articles, "
-                    "une génération coupée en cours d'année étant rendue en "
-                    "deux segments — la clé porte alors le mois de la coupure, "
-                    "1951.5 pour le 1er juillet 1951 — et deux alinéas qui se "
-                    "recouvrent étant départagés par la valeur la plus "
-                    "exigeante",
+                    "chaque version s'appliquant à sa date d'effet aux mois de "
+                    "naissance qu'elle nomme ; une génération coupée en cours "
+                    "d'année est rendue en deux segments — la clé porte alors "
+                    "le mois de la coupure, 1951.5 pour le 1er juillet 1951 — "
+                    "et deux alinéas qui se recouvrent sont départagés par la "
+                    "valeur la plus exigeante ; les portes de carrière longue "
+                    "portent la génération (1900 : règle générale) et la date "
+                    "d'effet de la version qui les fixe",
             "serie": {
                 f"{nom}|{cle}": valeur
                 for nom in ("age_ouverture", "duree_requise",
@@ -730,18 +1074,20 @@ def main() -> int:
                             "heures_par_trimestre", "annees_salaire_reference")
                 for cle, valeur in tables[nom].items()
             },
-            "carriere_longue": tables["carriere_longue"],
+            "carriere_longue": portes,
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )
 
+    dates_portes = sorted({p["entree_en_vigueur"] for p in portes})
     print(f"\nÂge d'ouverture        {len(ages)} segments, "
           f"{min(ages.values()):g} -> {max(ages.values()):g} ans")
     print(f"Durée requise          {len(durees)} segments, "
           f"{min(durees.values()):g} -> {max(durees.values()):g} trimestres")
     print(f"Coefficient minoration {len(coefficients)} segments, "
           f"{max(coefficients.values()):.3%} -> {min(coefficients.values()):.3%}")
-    print(f"Carrière longue        {len(tables['carriere_longue'])} portes")
+    print(f"Carrière longue        {len(portes)} portes, "
+          f"aux dates d'effet {', '.join(dates_portes)}")
     print(f"Montée en charge 1993  {len(montee)} générations, "
           f"{min(montee.values()):g} -> {max(montee.values()):g} trimestres")
     print(f"Durée proratisation    {len(proratisation)} segments, "

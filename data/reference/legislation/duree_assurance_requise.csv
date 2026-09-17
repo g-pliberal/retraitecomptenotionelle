@@ -37,10 +37,11 @@
 #     moins pour la génération 1964 (170) et pour les nés du 1er avril au
 #     31 décembre 1965 (171), deux de moins pour les nés du 1er janvier au
 #     31 mars 1965 (170) ; les 172 trimestres à compter de la génération 1966.
-#     Transcrit de l'article L. 161-17-3 réécrit et de la circulaire Cnav
-#     2026-07 du 5 mars 2026 : niveau `moyenne` jusqu'à relecture dans un dump
-#     LEGI postérieur au 8 mai 2026 — une valeur publiée que rien n'a
-#     recontrôlée ici, et le niveau remonte au résultat des simulations.
+#     D'abord transcrit de la loi et de la circulaire Cnav 2026-07 du 5 mars
+#     2026 au niveau `moyenne`, puis, le même jour (action 27), relu par le
+#     récupérateur dans l'article L. 161-17-3 réécrit (version du 31 décembre
+#     2025, LEGIARTI000053280903), tel que l'index LEGI du dépôt le porte :
+#     vingt segments identiques, `certifiee`.
 #
 # LA GÉNÉRATION 1900 EST LA CLEF DE VOÛTE, et elle manquait. Une table par
 # génération ne répond pas en deçà de sa première ligne : les générations
@@ -125,9 +126,9 @@ generation,trimestres,fiabilite
 1961.667,169,certifiee
 1962,169,certifiee
 1963,170,certifiee
-1964,170,moyenne
-1965,170,moyenne
-1965.25,171,moyenne
+1964,170,certifiee
+1965,170,certifiee
+1965.25,171,certifiee
 1966,172,certifiee
 1967,172,certifiee
 1968,172,certifiee

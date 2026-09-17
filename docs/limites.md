@@ -32,11 +32,11 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Carrière longue | quatre étapes datées au mois, 2004, novembre 2012, septembre 2023, septembre 2026 ; la borne des vingt ans par génération | **certifiée** pour la règle générale de 2023 (L. 351-1-1, D. 351-1-1) ; les lignes par génération et celles de 2026 transcrites du II de l'article et de la circulaire Cnav 2026-17 |
 | Trimestres accordés au titre des enfants | MDA à 4 puis 8 trimestres par enfant (1972, 1975) ; bonification de la fonction publique à 4 puis 2 (2004) | reprise des textes, non recontrôlée |
 | Surcote parentale | 1,25 % par trimestre entre 63 ans et l'âge légal, quatre au plus | reprise des textes (L. 351-1-2-1), non recontrôlée |
-| Durée requise par génération | table 1934-1975, 151 → 172 trimestres, suspension de 2026 comprise (170 pour 1964 et le premier trimestre 1965, 171 jusqu'à fin 1965, 172 dès 1966) | **certifiée** depuis 1958 (L. 161-17-3) sauf les trois lignes réécrites par la loi de financement pour 2026, transcrites de la loi et de la circulaire Cnav 2026-07 en attendant un dump LEGI postérieur au 8 mai 2026 ; 1934-1957 transcrite |
+| Durée requise par génération | table 1934-1975, 151 → 172 trimestres, suspension de 2026 comprise (170 pour 1964 et le premier trimestre 1965, 171 jusqu'à fin 1965, 172 dès 1966) | **certifiée** depuis 1953 (L. 161-17-3 réécrit par la loi de financement pour 2026, relu dans l'index LEGI à jour ; décrets pour 1953-1957) et pour 1934-1942 (R. 351-45) ; 1943-1952 transcrite |
 | Durée de proratisation par génération | table 1900-1948, 150 → 160 trimestres | **certifiée** (R. 351-6 II) jusqu'à 1947 ; la ligne 1948 est la jonction avec la durée requise, que l'article ne fixe pas |
 | Heures de SMIC pour valider un trimestre | 200 depuis 1972, 150 depuis 2014 | **certifiée** (R. 351-9) |
 | Revalorisation des salaires portés au compte | 10 colonnes publiées, effets d'octobre 2017 à janvier 2026 | circulaires de la Cnav ; ailleurs, ancrage sur la plus proche |
-| Âge légal par génération | table 1900-1975, 60 → 64 ans, suspension de 2026 comprise (62 ans et 9 mois de 1963 au premier trimestre 1965, un trimestre par génération ensuite, 64 ans dès 1969) | **certifié** (D. 161-2-1-9), recontrôlé à chaque exécution, sauf les six lignes réécrites par la loi de financement pour 2026 — transcrites de la loi et de la circulaire Cnav 2026-07, niveau moyenne jusqu'à relecture dans un dump LEGI postérieur au 8 mai 2026 |
+| Âge légal par génération | table 1900-1975, 60 → 64 ans, suspension de 2026 comprise (62 ans et 9 mois de 1963 au premier trimestre 1965, un trimestre par génération ensuite, 64 ans dès 1969) | **certifié** (L. 161-17-2, qui porte la table depuis la loi de financement pour 2026, et D. 161-2-1-9 pour les générations qu'elle renvoie à sa rédaction antérieure), recontrôlé à chaque exécution sur l'index LEGI du dépôt, à jour des incréments quotidiens de la DILA |
 | Surcote | barème daté trimestre par trimestre : 0,75 % (2004-2006), 0,75 % puis 1 % à compter du cinquième et 1,25 % après 65 ans (2007-2008), 1,25 % (depuis 2009) ; fonction publique 0,75 % plafonné à vingt trimestres puis 1,25 % ; période de référence au trimestre civil | transcrit de D. 351-1-4 et de L. 14 III, rejoué contre les trois exemples de la circulaire Cnav 2018-04 et deux fiches de service-public |
 | Salaire annuel moyen des parents | 24 meilleures années pour un enfant, 23 pour deux et plus, pensions dès septembre 2026 | transcrit de R. 173-3-2 (décret n° 2026-699), non recontrôlé |
 | Âge d'annulation de la décote par génération | table 1930-1955, 65 → 67 ans | calculée depuis l'âge d'ouverture certifié, selon la règle de `L. 351-8` ; recontrôlée à chaque exécution |
@@ -544,7 +544,7 @@ résumé :
 | Durée d'assurance requise par génération | 1943-1952 | haute | 160 vient de la règle générale, non d'un alinéa qui les nomme ; les 161-164 sont dans des décrets absents de la base — recoupées à chaque exécution contre la table d'OpenFisca-France-Pension |
 | Durée de services de la fonction publique, droits ouverts 2004-2008 | 152 à 160 trimestres | haute | loi n° 2003-775, article 66 II, lu dans la base LEGI et mis en table ; recoupé contre OpenFisca-France-Pension |
 | Coefficient de minoration par génération | 1900-1975 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-27` |
-| Bornes de la carrière longue | 2023- | **certifiée** | DILA, base LEGI, `L. 351-1-1` et `D. 351-1-1` |
+| Bornes de la carrière longue | 2023-, règle générale et borne des vingt ans par génération | **certifiée** | DILA, base LEGI, `L. 351-1-1` et `D. 351-1-1` (I et II, versions de 2023 et de 2026, lues à leur date d'effet) |
 | Bornes de la carrière longue | 2004 et 2012 | moyenne / haute | versions abrogées des mêmes articles, transcrites |
 | Durée maximale prise en compte par la proratisation | avant 1944 à 1947 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-6` II |
 | Heures de SMIC à cotiser pour valider un trimestre | 1972 et 2014 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-9` |
@@ -610,7 +610,7 @@ python scripts/fetch/cnbf_baremes.py           # valeurs du point des avocats
 python scripts/fetch/cnavpl_recueils.py        # valeur du point des professions libérales
 python scripts/fetch/dila_legi_msa.py          # point de la complémentaire agricole (lent : 1,1 Go)
 python scripts/fetch/dila_legi_minimum_contributif.py  # minimum contributif et plafond (lent aussi)
-python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes par génération (lent aussi)
+python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes par génération : lit l'index LEGI, en secondes
 python scripts/fetch/openfisca_point_indice.py  # point d'indice et barème du minimum garanti
 python scripts/fetch/dila_legi_point_indice.py # point d'indice, dans son décret (lent)
 python scripts/fetch/dila_legi_smic.py         # SMIC, dans ses décrets de relèvement (lent)
@@ -2486,7 +2486,10 @@ le dump LEGI du dépôt de juillet 2025. Une table certifiée est certifiée à 
 date ; c'est pourquoi les lignes réécrites sont redescendues au niveau
 `moyenne` plutôt que de porter un `certifiee` que rien ne soutient plus, et
 pourquoi ce niveau remonte jusqu'au résultat affiché à qui est né de 1964 à
-1968. Puis la surcote : 5 % dans les deux fiches quand le modèle en servait
+1968 — jusqu'à ce que l'action 27, le même jour, fasse relire les articles
+réécrits au récupérateur dans l'index LEGI du dépôt, qui porte les
+incréments quotidiens de la DILA : toutes les lignes sont redevenues
+`certifiee`, sans qu'un chiffre bouge. Puis la surcote : 5 % dans les deux fiches quand le modèle en servait
 6,25, parce qu'il comptait le trimestre de l'anniversaire ; et les trois
 exemples de 2018, qui ne se rejouent qu'avec le taux de chaque trimestre à sa
 date. Puis la carrière longue, dont la borne des vingt ans n'avait jamais été
@@ -5630,7 +5633,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 870 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 873 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -50,16 +50,22 @@
 # 1963 au 31 mars 1965, puis 63 ans (nés du 1er avril au 31 décembre 1965),
 # 63 ans et 3 mois (1966), 63 ans et 6 mois (1967), 63 ans et 9 mois (1968),
 # 64 ans à compter de la génération 1969. La coupure au 1er avril 1965 s'écrit
-# `1965.25`. Ces six lignes sont transcrites de l'article L. 161-17-2 tel que
-# la loi le réécrit et de la circulaire Cnav 2026-07 du 5 mars 2026 (tableau
-# du point 1.1) : niveau `moyenne`, et non `certifiee`, tant que le récupérateur
-# n'a pas relu l'article dans un dump LEGI postérieur au 8 mai 2026 — celui
-# du 13 juillet 2025 porte encore les âges de 2023. C'est le niveau d'une
-# valeur publiée que rien n'a recontrôlée ici, et il remonte au résultat de
-# toute simulation d'un assuré né de 1964 à 1968 : à dessein. Un assuré né en 1964 ne
-# pouvant atteindre 62 ans et 9 mois avant octobre 2026, la table par
-# génération suffit : aucune liquidation de ces générations n'a pu prendre
-# effet sous l'ancien calendrier.
+# `1965.25`. Ces six lignes ont d'abord été transcrites de la loi et de la
+# circulaire Cnav 2026-07 du 5 mars 2026 (tableau du point 1.1), au niveau
+# `moyenne`, parce que le récupérateur lisait le dump LEGI du 13 juillet 2025,
+# antérieur à la loi. Le même jour (action 27), il a relu les deux articles
+# dans l'index LEGI du dépôt, à jour des incréments du 16 septembre 2026 :
+# LA LOI PORTE DÉSORMAIS LA TABLE ELLE-MÊME — L. 161-17-2, version du
+# 31 décembre 2025, LEGIARTI000053280889, applicable aux pensions prenant
+# effet à compter du 1er septembre 2026 — et le décret D. 161-2-1-9, qu'elle
+# n'a pas réécrit, dit encore 63 ans pour 1964. Le récupérateur lit les deux,
+# chaque version recouvrant, à sa date d'effet, les mois de naissance qu'elle
+# nomme : la loi de 2025 les nés à compter du 1er septembre 1961, le décret
+# tout ce qu'elle renvoie à « sa rédaction antérieure ». SOIXANTE-DIX-NEUF
+# segments, tous IDENTIQUES aux lignes de ce fichier : toute la table est
+# `certifiee`. Un assuré né en 1964 ne pouvant atteindre 62 ans et 9 mois
+# avant octobre 2026, la table par génération suffit : aucune liquidation de
+# ces générations n'a pu prendre effet sous l'ancien calendrier.
 #
 # Cet âge commande l'ouverture des droits et la surcote — laquelle ne
 # récompense que les trimestres cotisés AU-DELÀ de cet âge.
@@ -130,12 +136,12 @@ generation,age,fiabilite
 1961.667,62.25,certifiee
 1962,62.50,certifiee
 1963,62.75,certifiee
-1964,62.75,moyenne
-1965,62.75,moyenne
-1965.25,63.00,moyenne
-1966,63.25,moyenne
-1967,63.50,moyenne
-1968,63.75,moyenne
+1964,62.75,certifiee
+1965,62.75,certifiee
+1965.25,63.00,certifiee
+1966,63.25,certifiee
+1967,63.50,certifiee
+1968,63.75,certifiee
 1969,64.00,certifiee
 1970,64.00,certifiee
 1971,64.00,certifiee

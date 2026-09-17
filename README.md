@@ -944,7 +944,7 @@ python scripts/fetch/cnbf_baremes.py            # valeurs du point des avocats
 python scripts/fetch/cnavpl_recueils.py         # valeur du point des libéraux
 python scripts/fetch/dila_legi_msa.py           # point agricole (lent : 1,1 Go)
 python scripts/fetch/dila_legi_minimum_contributif.py   # minimum contributif (lent)
-python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes (lent)
+python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes : lit l'index LEGI (dila_index.py legi --recuperer)
 python scripts/fetch/ined_vallin_mesle.py       # quotients de mortalité d'avant 1986
 python scripts/fetch/eurostat_hicp.py           # contrôle croisé de l'inflation
 python scripts/veille_droit.py                  # d'abord : ce qui a vieilli dans le registre du droit (veille.yaml)
@@ -1042,7 +1042,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          870 tests Python
+tests/                          873 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
