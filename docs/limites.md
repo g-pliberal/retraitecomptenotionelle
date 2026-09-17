@@ -410,7 +410,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 
 ## 1. État de certification des données
 
-La page **Données** du site affiche l'état exact. En résumé :
+La page **Données** du site affiche l'état exact, et date chaque série du jour
+où elle a été relue contre sa source (`verifiee_le` dans le journal, §6). En
+résumé :
 
 | Donnée | Période | Niveau | Source |
 |---|---|---|---|
@@ -5461,7 +5463,15 @@ barèmes.
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
   presque jamais les dix-sept d'un coup, et réécrire le journal à partir des
   seules sources présentes ce jour-là effaçait la trace de toutes les autres.
-- 833 tests couvrent le chargement, la fiabilité, la règle de certification, la
+  Chaque fiche de série porte `verifiee_le`, le jour où elle a été relue contre
+  sa source, valeurs changées ou non ; `dernier_passage_le` n'est que la date
+  du dernier `--appliquer`, fût-il partiel. La page Données dit le minimum des
+  dates de fiche, seule affirmation que le journal soutient, et un test refuse
+  une fiche sans date. Les dates antérieures au 17 septembre 2026 ont été
+  rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
+  changé —, ce qui est une borne basse : une série relue sans changement avant
+  cette date n'a laissé aucune trace.
+- 834 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

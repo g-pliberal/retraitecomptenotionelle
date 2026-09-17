@@ -1161,6 +1161,12 @@ def _nombre(valeur: float) -> str:
     return f"{valeur:g}"
 
 
+def _date_en_clair(iso: str) -> str:
+    """« 2026-09-13 » -> « 13 septembre 2026 », la date telle qu'on la lit."""
+    annee, mois, jour = (int(morceau) for morceau in iso.split("-"))
+    return f"{_jour_en_clair(jour)} {NOMS_DE_MOIS[mois - 1]} {annee}"
+
+
 def _jour_en_clair(jour: int) -> str:
     """Le premier du mois est un ORDINAL en français : « 1er », et non « 1 »."""
     return "1er" if jour == 1 else str(jour)
@@ -5844,7 +5850,7 @@ def _donnees(contexte: Contexte) -> str:
     series = journal.get("series", {})
     certifications = [
         [escape(nom), f"{trace['valeurs']}", escape(trace.get("niveau", "certifiee")),
-         escape(trace["source"])]
+         escape(trace["verifiee_le"]), escape(trace["source"])]
         for nom, trace in sorted(series.items())
     ]
     # La table des séries se cherche et se trie comme l'inventaire : c'est
@@ -5869,12 +5875,18 @@ def _donnees(contexte: Contexte) -> str:
     ) if certifications else ""
     valeurs_certifiees = sum(int(trace["valeurs"]) for trace in series.values())
     inventaire = len(charger_inventaire(macro.racine))
+    # Ce que les fiches SOUTIENNENT : la plus ancienne relecture et la plus
+    # récente. La page dit le minimum — « la vérification la plus ancienne
+    # remonte au … » — et non la date du dernier passage, qui ne vaut que pour
+    # les séries que ce passage a atteintes.
+    dates_verification = sorted(trace["verifiee_le"] for trace in series.values())
 
     if certifications:
         reperes = g.fiche(
             "Valeurs recontrôlées contre leur source",
             g.nombre(valeurs_certifiees, 0),
-            f"sur {len(certifications)} séries, le {escape(journal['certifie_le'])}",
+            f"sur {len(certifications)} séries ; la vérification la plus ancienne "
+            f"remonte au {_date_en_clair(dates_verification[0])}",
         ) + g.fiche(
             "Régimes recensés", str(inventaire),
             f"dont {len(simulateur.catalogue)} calculés",
@@ -5885,8 +5897,10 @@ def _donnees(contexte: Contexte) -> str:
         bandeau = f"""<div class="note"><strong>Les séries macroéconomiques sont
 certifiées de 1950 à 2025</strong>, les tables de mortalité sont celles
 réellement observées depuis 1986, et le plafond de la Sécurité sociale remonte à
-1931 daté décret par décret — le tout recontrôlé automatiquement contre les
-sources, le {escape(journal['certifie_le'])}. Ce qui précède 1950 et les
+1931 daté décret par décret. Le tout est recontrôlé contre les sources, série
+par série : la vérification la plus ancienne remonte au
+{_date_en_clair(dates_verification[0])}, la plus récente au
+{_date_en_clair(dates_verification[-1])}. Ce qui précède 1950 et les
 paramètres propres à chaque régime restent saisis à la main : les
 <em>niveaux</em> de pension des carrières les plus anciennes gardent une marge,
 les <em>écarts entre scénarios</em>, qui sont l'objet du modèle, sont plus
@@ -5908,8 +5922,8 @@ puis <code>scripts/verifier_donnees.py --appliquer</code>.</div>"""
 
     depliant_series = g.depliant("Quelles séries, et contre quelle source", f"""
 {filtres_series}
-{g.tableau(["Série", "Valeurs", "Niveau", "Source"], certifications,
-           ["", "nombre", "", "texte"],
+{g.tableau(["Série", "Valeurs", "Niveau", "Vérifiée le", "Source"], certifications,
+           ["", "nombre", "", "texte", "texte"],
            titre="Séries recontrôlées contre la source qui les produit",
            entete_de_ligne=True, attributs_lignes=attributs_series,
            triable=True, identifiant="series")}

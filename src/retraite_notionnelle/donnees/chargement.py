@@ -201,6 +201,10 @@ def journal_certification(racine: Path) -> dict:
     dépôt cloné, dise d'où viennent les valeurs marquées ``certifiee``. Son
     absence n'est pas une erreur — elle signifie qu'aucune certification n'a
     encore eu lieu.
+
+    Chaque fiche de série porte ``verifiee_le``, le jour où elle a été relue
+    contre sa source ; ``dernier_passage_le`` est la date du dernier passage
+    du vérificateur, quelles que soient les séries qu'il a atteintes.
     """
     chemin = racine / "derive" / "certification.json"
     if not chemin.exists():
