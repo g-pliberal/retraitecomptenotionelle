@@ -928,23 +928,23 @@ python scripts/fetch/openfisca_plafond.py       # plafond ancien
 python scripts/fetch/openfisca_cotisations.py   # taux de cotisation du RG, du public, des non-salariés
 python scripts/fetch/openfisca_points.py        # valeurs du point, depuis 1947
 python scripts/fetch/openfisca_point_indice.py  # point d'indice, minimum garanti
-python scripts/fetch/dila_legi_point_indice.py  # point d'indice, dans son décret (lent)
-python scripts/fetch/dila_legi_smic.py          # SMIC, dans ses décrets (lent)
-python scripts/fetch/dila_legi_duree_requise.py # durée requise 1953-1957 (lent)
-python scripts/fetch/dila_legi_cnracl.py        # contribution employeur CNRACL (lent)
-python scripts/fetch/dila_legi_decote_fonction_publique.py  # décote FP (lent)
-python scripts/fetch/dila_legi_minimum_garanti.py  # barème du minimum garanti (lent)
+python scripts/fetch/dila_legi_point_indice.py  # point d'indice, dans son décret (index LEGI)
+python scripts/fetch/dila_legi_smic.py          # SMIC, dans ses décrets (index LEGI)
+python scripts/fetch/dila_legi_duree_requise.py # durée requise 1953-1957 (index LEGI)
+python scripts/fetch/dila_legi_cnracl.py        # contribution employeur CNRACL (index LEGI)
+python scripts/fetch/dila_legi_decote_fonction_publique.py  # décote FP (index LEGI)
+python scripts/fetch/dila_legi_minimum_garanti.py  # barème du minimum garanti, dans l'index LEGI
 python scripts/fetch/erafp_valeurs_point.py     # valeurs du point du RAFP, par l'ERAFP
-python scripts/fetch/jorf_plafond_securite_sociale.py  # plafond ancien, dans son décret (1,7 Go)
-python scripts/fetch/sncf_contribution_employeur.py  # contribution SNCF, deux dumps (2,8 Go)
-python scripts/fetch/dila_legi_minimum_vieillesse.py  # montant de l'ASPA, dans le code (lent)
+python scripts/fetch/jorf_plafond_securite_sociale.py  # plafond ancien, dans ses décrets (index JORF)
+python scripts/fetch/sncf_contribution_employeur.py  # contribution SNCF, dans les deux index
+python scripts/fetch/dila_legi_minimum_vieillesse.py  # montant de l'ASPA, dans le code (index LEGI)
 python scripts/fetch/sre_minimum_garanti.py     # référence du minimum garanti, par le service qui la sert
 python scripts/fetch/cdc_ircantec.py            # barèmes Ircantec, par son gestionnaire
 python scripts/fetch/cnbf_baremes.py            # valeurs du point des avocats
 python scripts/fetch/cnavpl_recueils.py         # valeur du point des libéraux
-python scripts/fetch/dila_legi_msa.py           # point agricole (lent : 1,1 Go)
-python scripts/fetch/dila_legi_minimum_contributif.py   # minimum contributif (lent)
-python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes : lit l'index LEGI (dila_index.py legi --recuperer)
+python scripts/fetch/dila_legi_msa.py           # point agricole (index LEGI)
+python scripts/fetch/dila_legi_minimum_contributif.py   # minimum contributif (index LEGI)
+python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes, carrière longue (index LEGI)
 python scripts/fetch/ined_vallin_mesle.py       # quotients de mortalité d'avant 1986
 python scripts/fetch/eurostat_hicp.py           # contrôle croisé de l'inflation
 python scripts/veille_droit.py                  # d'abord : ce qui a vieilli dans le registre du droit (veille.yaml)
@@ -967,9 +967,10 @@ python scripts/verifier_donnees.py --appliquer  # aligne sur la source et certif
 ```
 
 > **Chercher dans le Journal officiel sans le retélécharger.** Les scripts
-> `dila_legi_*` et `jorf_*` lisent le dump global de la DILA en flux — 1,1 à
+> `dila_legi_*` et `jorf_*` lisaient le dump global de la DILA en flux — 1,1 à
 > 1,7 Go, une demi-heure par passe, pour un dump qui n'a pas changé depuis
-> juillet 2025. Pour EXPLORER, `scripts/fetch/dila_index.py` construit une fois
+> juillet 2025 ; ils lisent l'index depuis le 17 septembre 2026, `--dump`
+> gardant l'ancienne voie. `scripts/fetch/dila_index.py` construit une fois
 > une base SQLite FTS5 du champ social du JORF et de LEGI (titres et textes,
 > tenue à jour par les incréments quotidiens), publiée comme fichier de la
 > release `index-dila` du dépôt par le workflow GitHub Actions `index-dila.yml`
@@ -1042,7 +1043,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          873 tests Python
+tests/                          877 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Montée en charge de la décote de la fonction publique, dans la loi de 2003.
 
-    python scripts/fetch/dila_legi_decote_fonction_publique.py
+    python scripts/fetch/dila_index.py legi --recuperer   # l'index, une fois
+    python scripts/fetch/dila_legi_decote_fonction_publique.py   # une minute
+    python scripts/fetch/dila_legi_decote_fonction_publique.py --dump   # le dump global, 1,1 Go
 
-**Ce script télécharge environ 1,1 Go et met un quart d'heure.**
-
+Le script lit l'index LEGI du dépôt — le dump global plus les incréments
+quotidiens de la DILA, qui n'a pas régénéré ce dump depuis juillet 2025 : le
+dump seul ignore tout texte paru depuis. ``--dump`` garde l'ancienne voie.
 Ce qu'il referme. La fonction publique n'a pas la décote du régime général :
 l'article L. 14 du code des pensions lui donne la sienne, qui n'existe qu'à
 compter de 2006 et monte en charge d'un huitième de point par an jusqu'en 2015.
@@ -40,6 +43,7 @@ limite d'âge, et le motif de lecture les écarte de lui-même.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import subprocess
@@ -48,6 +52,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dila_index import filtrer_index  # noqa: E402
 
 RACINE = "https://echanges.dila.gouv.fr/OPENDATA/LEGI/"
 SORTIE = Path("data/brut/dila_legi_decote_fonction_publique.json")
@@ -132,7 +139,10 @@ def depouiller(url: str) -> list[tuple[str, str]]:
     detar.stdout.close()
     sortie, _ = filtre.communicate()
     lecture.wait()
+    return _analyser(sortie)
 
+
+def _analyser(sortie: str):
     versions = []
     for bloc in sortie.split("@@@ ")[1:]:
         entete, _, corps = bloc.partition("\n")
@@ -140,16 +150,37 @@ def depouiller(url: str) -> list[tuple[str, str]]:
     return versions
 
 
-def main() -> int:
-    try:
-        url = dernier_dump()
-    except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
-        print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
-        return 1
+def depouiller_index(chemin: str | None = None):
+    """Le même filtre, passé sur l'index du dépôt au lieu du dump."""
+    sortie, source = filtrer_index("legi", FILTRE, chemin)
+    return _analyser(sortie), source
 
-    print(f"Dump      {url.rsplit('/', 1)[-1]}")
-    print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
-    table = montee_en_charge(depouiller(url))
+
+def main(arguments: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    analyseur.add_argument("--dump", action="store_true",
+                           help="lire le dump global de la DILA (1,1 Go) au lieu de l'index")
+    analyseur.add_argument("--index", help="chemin de l'index LEGI")
+    options = analyseur.parse_args(arguments)
+
+    if options.dump:
+        try:
+            url = dernier_dump()
+        except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
+            print(f"ÉCHEC   répertoire LEGI : {erreur}", file=sys.stderr)
+            return 1
+        print(f"Dump      {url.rsplit('/', 1)[-1]}")
+        print("Lecture en flux d'environ 9 Go décompressés : comptez un quart d'heure.\n")
+        lu = depouiller(url)
+        source = url
+    else:
+        try:
+            lu, source = depouiller_index(options.index)
+        except FileNotFoundError as erreur:
+            print(f"ÉCHEC   {erreur}", file=sys.stderr)
+            return 1
+        print(f"Source    {source}\n")
+    table = montee_en_charge(lu)
     annees = sorted(table)
     if not annees or (annees[0], annees[-1]) != ANNEES:
         print(f"ÉCHEC   le tableau couvre "
@@ -181,7 +212,7 @@ def main() -> int:
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
         json.dumps({
-            "source": url,
+            "source": source,
             "article": f"loi n° {LOI} du 21 août 2003, article {ARTICLE} III",
             "recupere_le": date.today().isoformat(),
             "note": "montée en charge de la décote de la fonction publique, lue à "

@@ -545,7 +545,7 @@ résumé :
 | Durée de services de la fonction publique, droits ouverts 2004-2008 | 152 à 160 trimestres | haute | loi n° 2003-775, article 66 II, lu dans la base LEGI et mis en table ; recoupé contre OpenFisca-France-Pension |
 | Coefficient de minoration par génération | 1900-1975 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-27` |
 | Bornes de la carrière longue | 2023-, règle générale et borne des vingt ans par génération | **certifiée** | DILA, base LEGI, `L. 351-1-1` et `D. 351-1-1` (I et II, versions de 2023 et de 2026, lues à leur date d'effet) |
-| Bornes de la carrière longue | 2004 et 2012 | moyenne / haute | versions abrogées des mêmes articles, transcrites |
+| Bornes de la carrière longue | 2004, 2011 et 2012, par génération | **certifiée** | DILA, base LEGI, versions abrogées de `D. 351-1-1` que l'index expose |
 | Durée maximale prise en compte par la proratisation | avant 1944 à 1947 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-6` II |
 | Heures de SMIC à cotiser pour valider un trimestre | 1972 et 2014 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-9` |
 | Années retenues au salaire annuel moyen, par génération | avant 1934 à 1948 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-29-1` |
@@ -608,21 +608,21 @@ python scripts/fetch/openfisca_points.py       # valeurs du point, depuis 1947
 python scripts/fetch/cdc_ircantec.py           # barèmes Ircantec, par son gestionnaire
 python scripts/fetch/cnbf_baremes.py           # valeurs du point des avocats
 python scripts/fetch/cnavpl_recueils.py        # valeur du point des professions libérales
-python scripts/fetch/dila_legi_msa.py          # point de la complémentaire agricole (lent : 1,1 Go)
-python scripts/fetch/dila_legi_minimum_contributif.py  # minimum contributif et plafond (lent aussi)
+python scripts/fetch/dila_legi_msa.py          # point de la complémentaire agricole (index LEGI)
+python scripts/fetch/dila_legi_minimum_contributif.py  # minimum contributif et plafond (index LEGI)
 python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes par génération : lit l'index LEGI, en secondes
 python scripts/fetch/openfisca_point_indice.py  # point d'indice et barème du minimum garanti
-python scripts/fetch/dila_legi_point_indice.py # point d'indice, dans son décret (lent)
-python scripts/fetch/dila_legi_smic.py         # SMIC, dans ses décrets de relèvement (lent)
-python scripts/fetch/dila_legi_duree_requise.py # durée requise des générations 1953-1957 (lent)
-python scripts/fetch/dila_legi_cnracl.py       # contribution employeur de la CNRACL (lent)
+python scripts/fetch/dila_legi_point_indice.py # point d'indice, dans son décret (index LEGI)
+python scripts/fetch/dila_legi_smic.py         # SMIC, dans ses décrets de relèvement (index LEGI)
+python scripts/fetch/dila_legi_duree_requise.py # durée requise des générations 1953-1957 (index LEGI)
+python scripts/fetch/dila_legi_cnracl.py       # contribution employeur de la CNRACL (index LEGI)
 python scripts/fetch/dila_legi_contribution_employeur.py  # part patronale de six régimes spéciaux (index, rapide)
-python scripts/fetch/dila_legi_decote_fonction_publique.py  # décote de la fonction publique (lent)
-python scripts/fetch/dila_legi_minimum_garanti.py  # barème du minimum garanti (lent)
+python scripts/fetch/dila_legi_decote_fonction_publique.py  # décote de la fonction publique (index LEGI)
+python scripts/fetch/dila_legi_minimum_garanti.py  # barème du minimum garanti (index LEGI)
 python scripts/fetch/erafp_valeurs_point.py    # valeurs du point du RAFP, par l'ERAFP
-python scripts/fetch/jorf_plafond_securite_sociale.py  # plafond ancien, dans son décret (1,7 Go)
-python scripts/fetch/sncf_contribution_employeur.py  # contribution SNCF, deux dumps (2,8 Go)
-python scripts/fetch/dila_legi_minimum_vieillesse.py  # montant de l'ASPA, dans le code (lent)
+python scripts/fetch/jorf_plafond_securite_sociale.py  # plafond ancien, dans ses décrets (index JORF)
+python scripts/fetch/sncf_contribution_employeur.py  # contribution SNCF, dans les deux index
+python scripts/fetch/dila_legi_minimum_vieillesse.py  # montant de l'ASPA, dans le code (index LEGI)
 python scripts/fetch/sre_minimum_garanti.py     # référence du minimum garanti, par le service qui la sert
 python scripts/fetch/ined_vallin_mesle.py      # quotients de mortalité d'avant 1986
 python scripts/fetch/insee_projections_mortalite.py  # espérances de vie projetées, jusqu'en 2125
@@ -1483,8 +1483,9 @@ plus volontiers.
   par génération à −56,0 % et −51,8 %).
 
   **L'index a remplacé le dump, et il était meilleur.** Les récupérateurs
-  `dila_legi_*` plus anciens retéléchargent le dump global de la DILA — un
-  quart d'heure pour LEGI, une heure pour les deux bases. Celui-ci lit l'index
+  `dila_legi_*` plus anciens retéléchargeaient le dump global de la DILA — un
+  quart d'heure pour LEGI, une heure pour les deux bases — jusqu'au
+  17 septembre 2026, où tous sont passés à l'index. Celui-ci a lu l'index
   publié par le dépôt, en quelques secondes, et il y trouve plus : le dump n'a
   pas été régénéré depuis juillet 2025, quand l'index reçoit les incréments
   quotidiens. L'arrêté RATP du 13 mars 2026, qui porte l'année 2025, n'est que
@@ -5114,10 +5115,22 @@ Tout le JORF fait quatre millions de documents et 6,5 Go en SQLite : trop pour
 touche au champ social — retraite, pension, cotisation, Sécurité sociale,
 plafond, SMIC, point d'indice, minima, régimes, sections professionnelles…,
 le motif exact est inscrit dans sa table `meta` — soit un quart d'entre eux.
-Ne rien y trouver ne dit rien du reste du Journal officiel, et la
-certification continue de lire le dump : les scripts `jorf_*` et
-`dila_legi_*` n'ont pas changé, l'index sert à savoir où chercher avant de
-les écrire.
+Ne rien y trouver ne dit rien du reste du Journal officiel.
+
+**Depuis le 17 septembre 2026, la certification lit l'index aussi.** Les
+scripts `jorf_*`, `dila_legi_*` et `sncf_contribution_employeur.py`
+retéléchargeaient le dump global — celui de juillet 2025, que la DILA n'a
+pas régénéré depuis —, et c'est ainsi que les âges légaux certifiés sont
+restés ceux d'avant la suspension de la réforme. Chacun lit désormais
+l'index par défaut, et son propre filtre, écrit pour le dump, est rejoué tel
+quel sur un flux qui en reprend la forme (`dila_index.filtrer_index`) ;
+`--dump` garde l'ancienne voie. Le fichier de sortie et le journal de
+certification disent jusqu'à quel incrément l'index était à jour. Ce que la
+relecture a rendu, à valeurs identiques partout ailleurs : la valeur du point
+agricole de 2025, le décret des cotisations libérales pour 2026 — dont la
+refonte de la CARPIMKO —, la contribution employeur de la CNRACL jusqu'en
+2028, et les portes de carrière longue de 2004, 2011 et 2012 lues par
+génération dans les versions abrogées de D. 351-1-1.
 
 ---
 
@@ -5633,7 +5646,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 873 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 877 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

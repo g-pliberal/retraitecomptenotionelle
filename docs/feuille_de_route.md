@@ -143,8 +143,9 @@ de `limites.md` de douze régimes à sept.
   autres, exactement la CNRACL. Ce qui manquait n'était pas une technique,
   c'était de chercher ailleurs que là où elle avait déjà servi.
 - *Et l'index a remplacé le dump.* Les récupérateurs `dila_legi_*` plus anciens
-  téléchargent 1,1 à 2,8 Go et mettent d'un quart d'heure à une heure ; celui-ci
-  lit l'index publié, en quelques secondes, et il y trouve **plus** : le dump
+  téléchargeaient 1,1 à 2,8 Go et mettaient d'un quart d'heure à une heure —
+  jusqu'au 17 septembre 2026, où tous sont passés à l'index ; celui-ci
+  lisait l'index publié le premier, en quelques secondes, et il y trouvait **plus** : le dump
   global n'a pas été régénéré depuis juillet 2025, et l'arrêté RATP du 13 mars
   2026 qui porte l'année 2025 n'est que dans les incréments.
 - *Le repli n'était ni un plancher ni un plafond.* Là où la série manquait, le
@@ -2364,11 +2365,34 @@ lire.
   désormais version par version, chacune ne recouvrant que les générations
   qu'elle nomme, et les tables le disent.
 
-Ce qui reste : les portes de 2004 et 2012 (rédactions d'une autre forme, que
-l'index expose désormais), les catégories actives (le décret n° 2026-344
-modifie un article de loi non codifié, que seul l'index JORF porte : lues à
-la main, `haute`), et les autres récupérateurs `dila_legi_*`, qui lisent
-encore le dump global de juillet 2025 — le même piège, ouvert.
+**Le même jour, la suite — tout ce que le dump de juillet 2025 laissait dans
+l'ombre.** Les quinze autres récupérateurs de la DILA (`dila_legi_*`,
+`jorf_*`, `sncf_contribution_employeur.py`) retéléchargeaient le dump global
+et tombaient dans le même piège. Chacun lit désormais l'index par défaut :
+son filtre, écrit pour le dump, est rejoué tel quel sur un flux qui en reprend
+la forme balise par balise (`dila_index.filtrer_index`) — l'ordre compte, le
+filtre de la CNRACL cherche « Article 3 MODIFIE » là où le dump l'écrit —,
+et `--dump` garde l'ancienne voie pour contrôle. Ce que la relecture a
+rendu, tout le reste étant identique : le point agricole de 2025, le décret
+des cotisations libérales pour 2026 — avec la refonte de la CARPIMKO en un
+taux unique de 8,7 %, lue dans le texte et inscrite comme rupture connue —,
+la contribution CNRACL jusqu'en 2028. Et la carrière longue d'avant 2023 :
+les rédactions de 2003, 2011 et 2012 de D. 351-1-1 se lisent, génération par
+génération, et les quatre-vingts portes de la table sont certifiées. Ce que
+cela a fait voir : la table opposait sous 2012 deux portes (56 et 58 ans pour
+un début avant seize ans) à toutes les générations, quand le texte ne les
+écrit que génération par génération jusqu'à 1960 ; et **le moteur retenait
+une porte par borne d'entrée** quand une borne en ouvre deux — 56 ans avec
+huit trimestres de plus ou 58 avec quatre —, si bien que l'une des deux
+tombait au hasard de l'ordre du fichier. Il retient une porte par couple
+(borne, supplément), en Python comme en JavaScript. Enfin la relecture de
+l'action 27 elle-même : une version qui ne nommait que les premiers mois
+d'une génération en réécrivait l'année entière ; les tables lues au mois
+passent mois par mois, un test le fige, aucune valeur ne bouge.
+
+Ce qui reste : les catégories actives (le décret n° 2026-344 modifie un
+article de loi non codifié, que seul l'index JORF porte : lues à la main,
+`haute`).
 
 ---
 
@@ -2857,7 +2881,10 @@ encore le dump global de juillet 2025 — le même piège, ouvert.
   2023. La leçon est celle de l'action 26, tenue jusqu'au bout : **une
   certification l'est à une date, et cette date doit être celle du droit,
   pas celle d'un dump** — le fichier source et le journal l'écrivent
-  désormais au jour de l'incrément.
+  désormais au jour de l'incrément. Puis la même chose pour les quinze
+  autres récupérateurs de la DILA, et la carrière longue de 2004 à 2012 lue
+  par génération : quatre-vingts portes certifiées, une porte que le moteur
+  perdait retrouvée.
 
 - **17 septembre 2026, le registre de veille.** Après l'action 26, la
   question « qu'est-ce qui pourrait encore manquer ? » a reçu une réponse qui

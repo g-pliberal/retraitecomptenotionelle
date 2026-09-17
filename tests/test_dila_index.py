@@ -357,3 +357,44 @@ def test_cli_recherche_et_texte(base: Path, capsys):
 
     assert cherche.main(["jorf", "--index", str(base / "absente.sqlite"), "plafond"]) == 1
     assert "--recuperer" in capsys.readouterr().err
+
+
+# -- l'index rejoué sous la forme du dump, pour les filtres des récupérateurs --
+
+
+def test_le_flux_pseudo_xml_reprend_l_ordre_du_dump(base: Path):
+    """« Article 3 MODIFIE 1955-01-21 1962-01-01 AUTONOME Décret … » : les
+    filtres écrits pour le dump lisent cet ordre-là, balises ôtées."""
+    import re
+
+    db = sqlite3.connect(base)
+    texte = " ".join(
+        re.sub(r"<[^>]+>", " ", morceau.decode("utf-8"))
+        for morceau in index.flux_pseudo_xml(db)
+    )
+    texte = re.sub(r"\s+", " ", texte)
+    assert re.search(
+        r"Article \S+ (?:VIGUEUR|MODIFIE) \d{4}-\d{2}-\d{2} \d{4}-\d{2}-\d{2} AUTONOME ",
+        texte), texte[:300]
+    # Chaque document ouvre sur « <?xml », comme un fichier du dump.
+    assert all(m.startswith(b"<?xml") for m in index.flux_pseudo_xml(db))
+
+
+def test_filtrer_index_rejoue_un_filtre_ecrit_pour_le_dump(base: Path):
+    filtre = r"""
+import re, sys
+tampon = ""
+for bloc in iter(lambda: sys.stdin.buffer.read(1 << 20), b""):
+    tampon += bloc.decode("utf-8", errors="replace")
+    morceaux = tampon.split("<?xml")
+    tampon = morceaux.pop()
+    for morceau in morceaux:
+        ident = re.search(r"<ID>(.*?)</ID>", morceau)
+        if ident:
+            print("@@@ " + ident.group(1))
+"""
+    sortie, source = index.filtrer_index("jorf", filtre, str(base))
+    db = sqlite3.connect(base)
+    attendus = {ligne[0] for ligne in db.execute("SELECT id FROM doc")}
+    assert {l[4:] for l in sortie.splitlines() if l.startswith("@@@ ")} == attendus
+    assert source.startswith("index JORF du dépôt")

@@ -682,8 +682,11 @@ export class CarriereLongue {
 
   /**
    * Les portes opposables à cette carrière : celles du texte en vigueur à sa
-   * date d'effet, et pour chaque borne d'entrée la ligne de la plus haute
-   * génération qui ne dépasse pas la sienne (D. 351-1-1, II).
+   * date d'effet, et pour chaque porte — borne d'entrée ET supplément de
+   * trimestres — la ligne de la plus haute génération qui ne dépasse pas la
+   * sienne (D. 351-1-1, II). Une borne d'entrée peut ouvrir deux portes :
+   * avant 2023, débuter avant seize ans ouvrait cinquante-six ans avec huit
+   * trimestres de plus, ou cinquante-huit avec quatre.
    */
   portes(carriere) {
     if (this._dates.length === 0) {
@@ -709,9 +712,10 @@ export class CarriereLongue {
       if (gen > generation + 1e-9) {
         continue;
       }
-      const actuelle = retenues.get(ageMax);
+      const clePorte = `${ageMax}|${supplement}`;
+      const actuelle = retenues.get(clePorte);
       if (actuelle === undefined || gen > actuelle[0]) {
-        retenues.set(ageMax, [gen, [ageMax, trimestresDebut, ageDepart, supplement, fiabilite]]);
+        retenues.set(clePorte, [gen, [ageMax, trimestresDebut, ageDepart, supplement, fiabilite]]);
       }
     }
     return [...retenues.values()].sort((a, b) => a[1][0] - b[1][0]).map(([, porte]) => porte);

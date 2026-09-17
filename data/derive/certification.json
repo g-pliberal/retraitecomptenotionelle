@@ -38,11 +38,11 @@
    "ajoutees": 0,
    "colonne": "age_depart",
    "corrigees": 0,
-   "empreinte": "f5f115f5b91ece4d",
-   "identiques": 28,
+   "empreinte": "3874767d2af11938",
+   "identiques": 80,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 351-1-1 et D. 351-1-1 (I et II)",
-   "valeurs": 28,
+   "valeurs": 80,
    "verifiee_le": "2026-09-17"
   },
   "coefficient_minoration": {
@@ -87,7 +87,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III",
    "valeurs": 14,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "decote_fonction_publique_trimestres": {
    "ajoutees": 0,
@@ -98,7 +98,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III",
    "valeurs": 14,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "depenses_retraite": {
    "ajoutees": 0,
@@ -164,7 +164,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décrets pris pour l'application de la loi du 21 août 2003 et de celle du 9 novembre 2010",
    "valeurs": 5,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "duree_assurance_requise_openfisca": {
    "ajoutees": 0,
@@ -230,7 +230,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 5 II, et décret n° 47-1846 du 19 septembre 1947, article 3",
    "valeurs": 41,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "employeur_public_comedie_francaise": {
    "ajoutees": 35,
@@ -340,7 +340,7 @@
    "niveau": "certifiee",
    "source": "DILA, arrêtés annuels du taux T1 (base JORF) et décret n° 2007-1056 du 28 juin 2007, article 2 IV (base LEGI)",
    "valeurs": 5,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "esperance_65_derivee": {
    "ajoutees": 0,
@@ -406,7 +406,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale D. 351-2-1 et D. 173-21-0-0-1",
    "valeurs": 6,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "minimum_garanti_indice": {
    "ajoutees": 0,
@@ -417,7 +417,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
    "valeurs": 10,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "minimum_garanti_part": {
    "ajoutees": 0,
@@ -428,7 +428,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
    "valeurs": 10,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "minimum_garanti_points_15_30": {
    "ajoutees": 0,
@@ -439,7 +439,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
    "valeurs": 10,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "minimum_garanti_points_30_40": {
    "ajoutees": 0,
@@ -450,7 +450,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
    "valeurs": 10,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "minimum_garanti_reference": {
    "ajoutees": 0,
@@ -472,7 +472,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 V",
    "valeurs": 10,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "minimum_vieillesse": {
    "ajoutees": 0,
@@ -483,7 +483,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale, article D. 815-1",
    "valeurs": 9,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "pib_courant": {
    "ajoutees": 0,
@@ -538,7 +538,7 @@
    "niveau": "certifiee",
    "source": "DILA, base JORF, décrets portant fixation du plafond de la sécurité sociale",
    "valeurs": 31,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "point_indice_fonction_publique": {
    "ajoutees": 0,
@@ -560,7 +560,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 85-1148 du 24 octobre 1985, article 3",
    "valeurs": 32,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "population_active": {
    "ajoutees": 62,
@@ -670,7 +670,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
    "valeurs": 20,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-17"
   },
   "structure_ressources_retraite": {
    "ajoutees": 0,
@@ -830,12 +830,12 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "fcfafd64be80c849",
-   "identiques": 20,
+   "empreinte": "6b9c64c70e7af64e",
+   "identiques": 21,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code rural D. 732-166",
-   "valeurs": 20,
-   "verifiee_le": "2026-09-13"
+   "valeurs": 21,
+   "verifiee_le": "2026-09-17"
   },
   "valeurs_point_rafp": {
    "ajoutees": 0,
