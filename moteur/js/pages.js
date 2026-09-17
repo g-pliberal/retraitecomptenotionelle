@@ -1390,6 +1390,33 @@ export class Contexte {
 }
 
 /** Titre de chaque page, dans l'ordre de la navigation. */
+/**
+ * La description de chaque page, pour la balise `<meta name="description">`
+ * que le routeur d'`index.html` réécrit à chaque rendu. Copie de
+ * `DESCRIPTIONS` dans `web/pages.py`.
+ */
+export const DESCRIPTIONS = {
+  "/": "Le programme du Parti libéral français pour les retraites : un régime "
+    + "unique en comptes notionnels, un taux de 18 % pour tous, une garantie "
+    + "vieillesse individualisée — et le simulateur qui le chiffre, carrière "
+    + "par carrière, dans votre navigateur.",
+  "/simuler": "Votre carrière calculée de six façons : le système actuel, et "
+    + "les comptes notionnels appliqués depuis 1941 ou à partir de la "
+    + "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
+  "/cas-types": "Treize carrières types sur sept générations : ce que chaque "
+    + "pension deviendrait, par rapport à aujourd'hui, sous la "
+    + "proposition et sous quatre contrefactuels.",
+  "/cout": "Ce que la retraite coûte, d'où vient l'argent, et ce qui manque, "
+    + "de 1959 à 2070 — et ce que chacun des six systèmes coûterait.",
+  "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
+    + "opérations, et pourquoi la règle de revalorisation décide de "
+    + "presque tout.",
+  "/donnees": "D'où viennent les chiffres du site, série par série et régime "
+    + "par régime, et ce qui a été recontrôlé contre sa source.",
+  "/mentions": "Mentions légales, données personnelles et accessibilité du "
+    + "simulateur de retraite en comptes notionnels.",
+};
+
 export const TITRES = {
   "/": "Programme",
   "/simuler": "Simuler",
@@ -3635,9 +3662,9 @@ n'affichent —, et <strong>un coefficient supérieur à un n'est pas une
 <div class="fiches reperes">${reperes}</div>
 
 <p class="discret">Le modèle calcule six scénarios. Le <strong>scénario 6</strong>
-est la proposition ; les scénarios 2 à 5 sont des contrefactuels, qui mesurent
-ce que chaque ingrédient déplace — la rétroactivité, la part patronale, le taux
-unique.</p>
+est <a href="${g.lien("/")}">la proposition</a> ; les scénarios 2 à 5 sont des
+contrefactuels, qui mesurent ce que chaque ingrédient déplace — la
+rétroactivité, la part patronale, le taux unique.</p>
 <fieldset class="onglets"><legend>Scénario affiché</legend>${onglets}</fieldset>
 <div class="panneaux">${panneaux}</div>
 <p class="discret">« Aujourd'hui » n'est pas un point fixe. Le système actuel,
@@ -4884,7 +4911,9 @@ ${calcul}
 <p>Trois conséquences. La pension est exactement proportionnelle aux
 cotisations. Partir tôt coûte deux fois : moins de cotisations, et une pension à
 servir plus longtemps. Et aucun droit qu'une cotisation n'a pas financé
-n'existe.</p>
+n'existe. C'est la règle que <a href="${g.lien("/")}">le programme</a> propose,
+et <a href="${g.lien("/cas-types")}">treize carrières types</a> montrent ce
+qu'elle déplace, génération par génération.</p>
 
 ${carte}
 
@@ -4899,6 +4928,7 @@ ${methodeDroitPositif()}
 ${methodeSuppressions()}
 ${methodeCarriere(contexte)}
 ${methodeUnites()}
+${methodeConstruction()}
 `;
 }
 
@@ -5081,6 +5111,36 @@ date opposée est celle de l'entrée dans le métier, au mois près : qui est en
 }
 
 /** Brut et pas net, multiples du salaire moyen, et le périmètre. */
+/**
+ * Comment ce site est construit, et comment on le vérifie : l'argument de
+ * confiance d'un public technique, là où le lecteur est déjà dans le détail.
+ * Voir `_methode_construction` dans `web/pages.py`.
+ */
+function methodeConstruction() {
+  return g.depliant("Comment ce site est construit, et comment on le vérifie", `
+<p>Le modèle de référence est écrit en Python, dans
+<a href="${g.DEPOT}/tree/main/src">le dossier <code>src/</code> du dépôt</a> : c'est
+lui qui fait foi, et c'est lui qui est testé contre les sources — les textes,
+les barèmes, et des calculateurs extérieurs comme OpenFisca, qui servent
+d'oracle au scénario 1.</p>
+<p>Ce que vous lisez ici est un <strong>portage en JavaScript</strong> de ce
+modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateur
+: rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte
+pas du modèle, et ce n'est pas une promesse : des centaines de carrières
+témoins — chaque statut d'affiliation, à six générations — sont calculées par
+les deux, et comparées nombre par nombre ; chaque page du site est rendue par
+les deux, et comparée caractère par caractère. Toute divergence fait échouer
+les tests.</p>
+<p>Les données que le site charge sont produites par un script à partir des
+mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
+sont recontrôlées contre le fichier de l'institution qui les produit — la
+page <a href="${g.lien("/donnees")}">Données</a> dit lesquelles, et à quelle
+date.</p>
+<p class="discret"><a href="${g.DEPOT}">Le dépôt</a> ·
+<a href="${g.DEPOT}/blob/main/README.md">ce qu'il contient, et combien de tests
+le tiennent</a> · <a href="${g.DEPOT}/tree/main/tests">les tests</a></p>`);
+}
+
 function methodeUnites() {
   return g.depliant("En quelles unités, et sur quel périmètre", `
 <h4 id="unites">Brut, et pas net</h4>
@@ -5134,6 +5194,9 @@ const FAMILLES_INVENTAIRE = {
  * l'inventaire, ce qu'on lit dans la cellule, et le pluriel de la phrase de
  * compte. Une couverture qu'aucune ligne ne porte ne s'affiche nulle part.
  */
+/** Les quatre niveaux de fiabilité, du meilleur au moins bon. */
+const NIVEAUX_FIABILITE = ["certifiee", "haute", "moyenne", "estimee"];
+
 const COUVERTURES_INVENTAIRE = [
   ["modelise", "modélisé", "modélisés"],
   ["partiel", "partiel", "partiels"],
@@ -5192,7 +5255,11 @@ function inventaireSection(lignes, catalogue) {
       cellule((ligne.statuts || []).join(", ")),
       cellule(ligne.couverture === "hors_champ" ? ligne.raison_hors_champ : ligne.manque),
     ]);
-    attributs.push({ "data-famille": ligne.famille, "data-couverture": ligne.couverture });
+    attributs.push({
+      "data-famille": ligne.famille,
+      "data-couverture": ligne.couverture,
+      "data-fiabilite": fiabilites.get(ligne.code) ?? "",
+    });
   }
 
   const filtres = '<div class="filtres" role="group" aria-label="Filtrer les régimes" '
@@ -5208,9 +5275,14 @@ function inventaireSection(lignes, catalogue) {
         .filter(([cle]) => comptes[cle])
         .map(([cle, singulier]) => [cle, singulier])), "",
       "", { data_filtre: "couverture" })
+    + g.liste("inventaire-fiabilite", "Fiabilité de la fiche",
+      [["", "Toutes"]].concat(NIVEAUX_FIABILITE
+        .filter((niveau) => [...fiabilites.values()].includes(niveau))
+        .map((niveau) => [niveau, niveau])), "",
+      "", { data_filtre: "fiabilite" })
     + "</div>"
-    + '<p class="compte discret" aria-live="polite" data-compte-de="inventaire">'
-    + `${lignes.length} régimes</p>`;
+    + '<p class="compte discret" aria-live="polite" data-compte-de="inventaire" '
+    + `data-unite="régimes">${lignes.length} régimes</p>`;
   const table = g.tableau(
     ["Régime", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
       "Ce qui manque, ou pourquoi"],
@@ -5290,6 +5362,27 @@ function donnees(contexte) {
       echapper(nom), String(trace.valeurs),
       echapper(trace.niveau ?? "certifiee"), echapper(trace.source),
     ]);
+  // La table des séries se cherche et se trie comme l'inventaire : c'est une
+  // base, pas un article.
+  const niveauxSeries = new Set(Object.values(series).map((trace) => trace.niveau ?? "certifiee"));
+  const attributsSeries = Object.entries(series)
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([, trace]) => ({ "data-niveau": trace.niveau ?? "certifiee" }));
+  const filtresSeries = certifications.length
+    ? '<div class="filtres" role="group" aria-label="Filtrer les séries" '
+      + 'data-cible="series">'
+      + g.champ("series-recherche", "Chercher une série", "",
+        "un nom, une source…", "search",
+        { data_filtre: "texte", autocomplete: "off" })
+      + g.liste("series-niveau", "Niveau",
+        [["", "Tous"]].concat(NIVEAUX_FIABILITE
+          .filter((niveau) => niveauxSeries.has(niveau))
+          .map((niveau) => [niveau, niveau])), "",
+        "", { data_filtre: "niveau" })
+      + "</div>"
+      + '<p class="compte discret" aria-live="polite" data-compte-de="series" '
+      + `data-unite="séries">${certifications.length} séries</p>`
+    : "";
   const valeursCertifiees = Object.values(series)
     .reduce((somme, trace) => somme + Number(trace.valeurs), 0);
   const inventaire = (contexte.paquet.inventaire || []).length;
@@ -5334,9 +5427,11 @@ puis <code>scripts/verifier_donnees.py --appliquer</code>.</div>`;
   }
 
   const depliantSeries = g.depliant("Quelles séries, et contre quelle source", `
+${filtresSeries}
 ${g.tableau(["Série", "Valeurs", "Niveau", "Source"], certifications,
     ["", "nombre", "", "texte"],
-    "Séries recontrôlées contre la source qui les produit", true)}
+    "Séries recontrôlées contre la source qui les produit", true,
+    attributsSeries, true, "series")}
 <p class="discret">Une valeur n'est « certifiée » que si elle a été confrontée au
 fichier téléchargé depuis le <em>producteur</em> de la donnée. Une transcription
 tierce, même sourcée et reprise automatiquement, plafonne à « haute ». Hors de

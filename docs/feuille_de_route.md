@@ -1901,20 +1901,57 @@ passe, disant quelles pages ont bougé et de combien de mots.
 
   > **Constat (pas une action) :** la proposition elle-même — comptes notionnels, taux unique à 18 %, garantie vieillesse individualisée — n'est protégeable par aucune licence : le droit d'auteur couvre une expression, jamais une idée ou un système. N'importe quel parti peut reprendre le principe sans rien devoir au dépôt, quoi que ce dernier choisisse pour son texte ou ses données — et c'est en général dans l'intérêt d'un parti que sa proposition circule et se discute. Ce qui reste établissable, ce n'est pas l'exclusivité de l'idée mais son antériorité : la publication datée et publique en fait déjà foi.
 
-- [ ] 🔴 **Regrouper la navigation par fonction, pas juste par page** `Global`
+- [x] 🔴 **Regrouper la navigation par fonction, pas juste par page** `Global`
   Les six entrées (Programme, Simuler, Cas types, Coût, Méthode, Données) ne distinguent pas le message (Programme), la preuve (Simuler, Cas types, Coût) et la confiance (Méthode, Données). Un visiteur ne sait pas où aller après Programme. Regrouper visuellement la nav en blocs, ou ajouter une micro-description sous chaque lien.
+  *Fait le 17 septembre 2026.* Le bandeau range ses six liens en trois
+  groupes, chacun sous une étiquette en clair : « Le programme » (Programme),
+  « La preuve » (Simuler, Cas types, Coût), « La confiance » (Méthode,
+  Données). La table `GROUPES_NAVIGATION` du gabarit porte les groupes, et
+  `LIENS` en reste la liste à plat. L'étiquette est du texte, pas un
+  `aria-label` : tout le monde la lit. Sur téléphone, les groupes passent à
+  la ligne, l'étiquette au-dessus de ses liens.
 
-- [ ] 🟠 **Traiter Données comme une base, pas comme un article** `Données`
+- [x] 🟠 **Traiter Données comme une base, pas comme un article** `Données`
   La taxonomie (certifiée / haute / moyenne / estimée × modélisé / partiel / hors champ) est un vrai jeu de données. La rendre en tableaux HTML statiques dans une page de prose sous-exploite sa structure. C'est la page qui justifierait le plus un vrai composant de table interactive.
+  *Fait le 17 septembre 2026, avec le chantier du thème 1.* L'inventaire est
+  une table filtrable et triable depuis la première passe ; il gagne ici le
+  filtre par fiabilité de la fiche, ce qui donne au relecteur sa taxonomie
+  croisée — famille × couverture × fiabilité — en trois menus. Et la table des
+  séries certifiées, quatre-vingts lignes, se cherche et se trie de même, par
+  niveau et par source. Même mécanisme, mêmes attributs, aucune ligne de
+  script en plus : le comportement d'`index.html` lit `data-cible` et
+  `data-unite`, et ne sait pas quelle table il filtre.
 
-- [ ] 🟠 **Créer des renvois croisés entre pages complémentaires** `Programme · Méthode · Cas types`
+- [x] 🟠 **Créer des renvois croisés entre pages complémentaires** `Programme · Méthode · Cas types`
   Programme renvoie vers Méthode (« le détail du calcul »), mais rien ne relie Méthode aux cas concrets qui l'illustrent en retour. Ajouter des renvois contextuels dans les deux sens entre Programme, Méthode et Cas types.
+  *Fait le 17 septembre 2026.* Les six sens existent : Programme renvoyait
+  déjà à Méthode et à Cas types ; Méthode renvoie au programme et aux treize
+  carrières dès sa quatrième phrase, et Cas types nomme « la proposition » en
+  lien vers l'accueil. Un test parcourt les six sens.
 
-- [ ] ⚪ **Donner plus de visibilité à la rigueur technique du dépôt** `Méthode`
+- [x] ⚪ **Donner plus de visibilité à la rigueur technique du dépôt** `Méthode`
   Le moteur JS sans framework, validé contre le modèle Python sur 469 cas à la précision du flottant, est un vrai argument de confiance auprès d'un public technique — actuellement seulement accessible via le lien GitHub en bas de Programme. Un lien « comment c'est construit » depuis Méthode le mettrait en valeur là où le lecteur est déjà dans le détail.
+  *Fait le 17 septembre 2026.* Un dépliant sur Méthode, « Comment ce site est
+  construit, et comment on le vérifie » : le modèle de référence en Python, le
+  portage JavaScript sans bibliothèque qui tourne dans le navigateur, les
+  carrières témoins comparées nombre par nombre et les pages comparées
+  caractère par caractère, le paquet de données qu'un test refuse périmé, avec
+  les liens vers le dépôt, le README et les tests. Aucun nombre de tests ni de
+  témoins n'y est écrit — le relecteur citait « 469 cas », le dépôt en compte
+  484 ce jour et davantage demain — : le README les porte, et un test les
+  recalcule.
 
-- [ ] ⚪ **Vérifier les méta-descriptions par route** `Global`
+- [x] ⚪ **Vérifier les méta-descriptions par route** `Global`
   Le routage en hash (#/) n'est pas un problème pour un site statique GitHub Pages, mais chaque route doit avoir sa propre balise `<title>` (déjà le cas, vérifié) et sa propre méta-description, pour un partage et un référencement corrects.
+  *Fait le 17 septembre 2026.* Chaque route a sa description, dans
+  `DESCRIPTIONS` (`pages.py`, recopié dans le portage, comparé par un test),
+  et le routeur d'`index.html` la pose à chaque rendu comme il pose le titre.
+  Ce que cela vaut, dit sans le surestimer : le site est une seule page servie
+  une fois, et c'est le navigateur qui réécrit la balise. Un partage ou un
+  enregistrement la reprend ; un robot qui n'exécute pas le script lit celle
+  de l'accueil, qui est aussi celle du HTML servi. Des descriptions par route
+  lues sans script demanderaient un fichier par page, ce que le routage en
+  ancre ne permet pas sans changer d'architecture.
 
 #### 4. Gommer la touche IA
 
@@ -2383,3 +2420,14 @@ défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouve
   Et **une clé de lecture affirmée se vérifie** : « supérieur à un chaque
   année » a été mesuré sur la trajectoire avant d'être écrit, et le test qui
   garde la phrase garde aussi les nombres qui l'entourent.
+- **Septembre 2026, action 23, troisième passe : le thème « architecture ».**
+  Cinq chantiers, cinq cases cochées, le 17 septembre. La navigation en trois
+  groupes nommés — le programme, la preuve, la confiance —, les renvois
+  croisés dans les six sens entre Programme, Méthode et Cas types, un
+  dépliant sur Méthode qui dit comment le site est construit et vérifié, la
+  table des séries filtrable et triable comme l'inventaire, un filtre de
+  fiabilité sur celui-ci, et une méta-description par route. Aucun chiffre
+  n'a changé. Une leçon : **ce qui ne peut être fait qu'à moitié se dit à
+  moitié** — la méta-description par route est posée par le navigateur, ce
+  qui sert au partage et non au référencement, et la case le dit plutôt que
+  de compter le chantier pour fait sans réserve.

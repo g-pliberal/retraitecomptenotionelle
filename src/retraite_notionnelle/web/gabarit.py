@@ -126,9 +126,21 @@ header.bandeau h1 a {
   display: inline-flex; align-items: center; gap: 0.5rem;
 }
 header.bandeau h1 .icone { color: var(--accent); width: 1.15em; height: 1.15em; }
+/* La navigation, en trois groupes — le programme, la preuve, la confiance —,
+   chacun sous une étiquette minuscule qui dit à quoi servent ses pages. Le
+   groupe est une colonne : l'étiquette au-dessus, les liens en ligne dessous,
+   et les groupes se suivent en ligne, séparés d'un blanc plus large que celui
+   qui sépare deux liens. */
+header.bandeau nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; }
+nav .groupe { display: inline-flex; flex-direction: column; gap: 0.1rem; }
+nav .etiquette {
+  font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--texte-doux); line-height: 1.2;
+}
+nav .liens { display: flex; gap: 1.1rem; }
 nav a {
   color: var(--texte-doux); text-decoration: none;
-  margin-left: 1.1rem; font-size: 0.92rem;
+  font-size: 0.92rem;
   border-bottom: 1px solid transparent;
 }
 nav a:hover, nav a[aria-current="page"] {
@@ -686,7 +698,8 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   footer { width: calc(100% - 2rem); padding: 1.25rem 0 4rem; }
   .carte { padding: 1rem 1.1rem; }
   header.bandeau .interieur { gap: 0.4rem 1rem; }
-  nav a { margin: 0 1.1rem 0 0; }
+  header.bandeau nav { gap: 0.4rem 1.2rem; }
+  nav .liens { gap: 0.9rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
   /* L'intitulé reprend sa hauteur de texte. En colonne, `flex: 1 1 14rem` ne
      réserve plus une largeur mais une HAUTEUR : chaque scénario portait donc
@@ -808,14 +821,19 @@ DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle"
 SIGNATURE = "@pliberal"
 SIGNATURE_SITE = "Parti libéral français — le simulateur de retraite"
 
-LIENS = (
-    ("/", "Programme"),
-    ("/simuler", "Simuler"),
-    ("/cas-types", "Cas types"),
-    ("/cout", "Coût"),
-    ("/methode", "Méthode"),
-    ("/donnees", "Données"),
+#: La navigation, par FONCTION et non par page : le message, la preuve, la
+#: confiance. Six liens à la file ne disaient pas où aller après le programme ;
+#: trois groupes le disent — ce qu'on propose, ce qui le montre, ce qui permet
+#: de le croire. ``LIENS`` en est la liste à plat, pour qui n'a besoin que des
+#: pages.
+GROUPES_NAVIGATION = (
+    ("Le programme", (("/", "Programme"),)),
+    ("La preuve", (("/simuler", "Simuler"), ("/cas-types", "Cas types"),
+                   ("/cout", "Coût"))),
+    ("La confiance", (("/methode", "Méthode"), ("/donnees", "Données"))),
 )
+
+LIENS = tuple(lien_ for _, liens in GROUPES_NAVIGATION for lien_ in liens)
 
 
 def lien(chemin: str, ancre: str = "") -> str:
@@ -830,11 +848,23 @@ def lien(chemin: str, ancre: str = "") -> str:
 
 
 def navigation(chemin_actif: str = "/") -> str:
+    """Les liens du bandeau, par groupe : une étiquette, puis les pages.
+
+    L'étiquette est du texte, lu par tout le monde — pas un ``aria-label``
+    qu'une synthèse vocale serait seule à entendre. Elle est petite, et se
+    lit comme un intertitre de menu.
+    """
+    def liens_du_groupe(liens: tuple) -> str:
+        return "".join(
+            f'<a href="{lien(chemin)}"'
+            + (' aria-current="page"' if chemin == chemin_actif else "")
+            + f">{escape(libelle)}</a>"
+            for chemin, libelle in liens
+        )
     return "".join(
-        f'<a href="{lien(chemin)}"'
-        + (' aria-current="page"' if chemin == chemin_actif else "")
-        + f">{escape(libelle)}</a>"
-        for chemin, libelle in LIENS
+        f'<span class="groupe"><span class="etiquette">{escape(etiquette)}</span>'
+        f'<span class="liens">{liens_du_groupe(liens)}</span></span>'
+        for etiquette, liens in GROUPES_NAVIGATION
     )
 
 

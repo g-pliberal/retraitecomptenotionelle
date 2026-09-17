@@ -4077,15 +4077,15 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
     corps = rendre(contexte, "/donnees", {})[1]
     lignes = charger_inventaire(RACINE_DONNEES)
     table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
-    rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)">', table)
+    rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)" data-fiabilite="[^"]*">', table)
     assert len(rangs) == len(lignes)
     assert [famille for famille, _ in rangs] == [l.famille for l in lignes]
     assert table.count('<button type="button" class="tri"') == 7
     assert 'data-cible="inventaire"' in corps
     assert 'id="inventaire-recherche"' in corps and 'data-filtre="texte"' in corps
     assert 'id="inventaire-famille"' in corps and 'id="inventaire-couverture"' in corps
-    assert 'data-compte-de="inventaire">89 régimes</p>' in corps.replace(
-        f"{len(lignes)} régimes</p>", "89 régimes</p>")
+    assert (f'data-compte-de="inventaire" data-unite="régimes">{len(lignes)} régimes</p>'
+            in corps)
     # Une couverture qu'aucune ligne ne porte n'est pas proposée au filtre.
     assert 'value="a_modeliser"' not in corps
     # La fiabilité de chaque fiche calculée est dans la ligne du régime.
@@ -4231,3 +4231,124 @@ def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
     assert visible.index("300 € et 1 500 €") < visible.index("Le système actuel et notre programme")
     assert corps.count("<caption>Ce que le plancher individualisé change, par mois</caption>") == 1
     assert "Le tableau du haut de page le montre" in corps
+
+
+# -- la revue du 15 septembre 2026 : le thème « architecture » -----------------
+
+
+def test_la_navigation_est_groupee_par_fonction():
+    """Le message, la preuve, la confiance : trois groupes, et non six liens.
+
+    Chaque groupe porte une étiquette en clair — lue par tout le monde, pas
+    seulement par une synthèse vocale —, et les six pages restent des liens
+    par l'ancre, dans l'ordre. ``LIENS`` est la liste à plat des mêmes pages.
+    """
+    entete = g.entete("/cout")
+    groupes = re.findall(r'<span class="groupe"><span class="etiquette">(.*?)</span>'
+                         r'<span class="liens">(.*?)</span></span>', entete)
+    assert [etiquette for etiquette, _ in groupes] == [
+        "Le programme", "La preuve", "La confiance"]
+    pages = [re.findall(r'href="([^"]+)"', liens) for _, liens in groupes]
+    assert pages == [["#/"], ["#/simuler", "#/cas-types", "#/cout"],
+                     ["#/methode", "#/donnees"]]
+    assert 'href="#/cout" aria-current="page"' in entete
+    assert [chemin for chemin, _ in g.LIENS] == [
+        "/", "/simuler", "/cas-types", "/cout", "/methode", "/donnees"]
+    assert "nav .etiquette" in g.FEUILLE_DE_STYLE
+
+
+def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre(contexte):
+    """Programme, Méthode et Cas types se renvoient dans les deux sens.
+
+    Programme renvoyait à Méthode et à Cas types ; rien ne revenait. Méthode
+    renvoie désormais au programme et aux treize carrières, Cas types à la
+    proposition. Le contrôle porte sur les six sens.
+    """
+    pages = {chemin: rendre(contexte, chemin, {})[1]
+             for chemin in ("/", "/methode", "/cas-types")}
+    for depuis, vers in (("/", "/methode"), ("/", "/cas-types"),
+                         ("/methode", "/"), ("/methode", "/cas-types"),
+                         ("/cas-types", "/methode"), ("/cas-types", "/")):
+        assert f'href="{g.lien(vers)}"' in pages[depuis], f"{depuis} ne renvoie pas vers {vers}"
+    assert "treize carrières types</a> montrent ce\nqu'elle déplace" in pages["/methode"]
+    assert 'est <a href="#/">la proposition</a>' in pages["/cas-types"]
+
+
+def test_la_methode_dit_comment_le_site_est_construit(contexte):
+    """L'argument de confiance d'un public technique, sur la page Méthode.
+
+    Un dépliant dit le modèle de référence, le portage sans bibliothèque, les
+    témoins comparés, le paquet de données — sans un nombre de tests ni de
+    témoins, qui dériveraient : le README les porte, et un test les recalcule.
+    """
+    corps = rendre(contexte, "/methode", {})[1]
+    section = re.search(r'<details class="section"><summary>.*?<span>Comment ce site est '
+                        r'construit, et comment on le vérifie</span></summary>(.*?)</details>',
+                        corps, re.S)
+    assert section, "le dépliant de construction manque"
+    dedans = section.group(1)
+    for attendu in (f'href="{g.DEPOT}/tree/main/src"', "portage en JavaScript",
+                    "comparée caractère par caractère", f'href="{g.DEPOT}/tree/main/tests"',
+                    'href="#/donnees"'):
+        assert attendu in dedans, attendu
+    assert not re.search(r"\b\d{3,} (?:tests|témoins|carrières)", dedans), (
+        "un nombre de tests ou de témoins écrit à la main dériverait"
+    )
+
+
+def test_la_page_donnees_se_lit_comme_une_base(contexte):
+    """Deux tables filtrables et triables : l'inventaire, croisé par famille,
+    couverture et fiabilité, et les séries certifiées, par niveau."""
+    corps = rendre(contexte, "/donnees", {})[1]
+    inventaire = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
+    assert 'id="inventaire-fiabilite"' in corps and 'data-filtre="fiabilite"' in corps
+    fiabilites = re.findall(r'data-fiabilite="([^"]*)"', inventaire)
+    assert len(fiabilites) == inventaire.count("<tr ")
+    assert {f for f in fiabilites if f} <= {"certifiee", "haute", "moyenne", "estimee"}
+    assert any(fiabilites), "aucune fiche calculée ne porte sa fiabilité"
+
+    series = re.search(r'<table id="series">.*?</table>', corps, re.S)
+    assert series, "la table des séries n'est plus filtrable"
+    assert 'data-cible="series"' in corps and 'id="series-recherche"' in corps
+    assert 'data-filtre="niveau"' in corps
+    assert series.group(0).count('<button type="button" class="tri"') == 4
+    assert len(re.findall(r'<tr data-niveau="', series.group(0))) == series.group(0).count("<tr ")
+    assert 'data-compte-de="series" data-unite="séries">' in corps
+
+    from pathlib import Path
+
+    page_html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    assert 'compte.dataset.unite' in page_html
+
+
+def test_chaque_route_porte_sa_description():
+    """Une méta-description par page, que le routeur pose comme il pose le
+    titre — et la même table des deux côtés du portage."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from retraite_notionnelle.web.pages import DESCRIPTIONS
+
+    assert set(DESCRIPTIONS) == set(TITRES)
+    for chemin, description in DESCRIPTIONS.items():
+        assert 60 <= len(description) <= 250, f"{chemin} : {len(description)} caractères"
+        assert description.endswith("."), chemin
+    racine = Path(__file__).resolve().parents[1]
+    page = (racine / "index.html").read_text(encoding="utf-8")
+    assert "DESCRIPTIONS[cible.chemin]" in page
+    assert "description.content = " in page
+    # La description de l'accueil est celle que le HTML servi porte déjà : la
+    # première page ne doit pas changer de description en s'ouvrant.
+    assert f'<meta name="description" content="{DESCRIPTIONS["/"]}">' in page
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    lecture = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'import { DESCRIPTIONS } from "./moteur/js/pages.js";'
+         "process.stdout.write(JSON.stringify(DESCRIPTIONS));"],
+        cwd=racine, capture_output=True, text=True, check=True,
+    )
+    assert json.loads(lecture.stdout) == DESCRIPTIONS
