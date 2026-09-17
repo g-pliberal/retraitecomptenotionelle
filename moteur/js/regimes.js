@@ -683,28 +683,15 @@ export class CarriereLongue {
    * @returns {[number, number]|null} âge de départ et fiabilité.
    */
   ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis) {
-    if (this._annees.length === 0 || anneeLiquidation < this._annees[0]) {
+    const portes = this.portes(anneeLiquidation);
+    if (portes === null) {
       return null;
-    }
-    let applicable = this._annees[0];
-    for (const candidate of this._annees) {
-      if (candidate > anneeLiquidation) {
-        break;
-      }
-      applicable = candidate;
     }
 
     let meilleur = null;
-    for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite]
-      of this._table[String(applicable)]) {
-      let acquis = 0;
-      for (const ligne of carriere.lignes) {
-        if (ligne.cotise && ligne.annee <= carriere.annee_naissance + ageMax
-            && ligne.annee < anneeLiquidation) {
-          acquis += ligne.trimestres_valides;
-        }
-      }
-      if (acquis < trimestresDebut || trimestresCotises < requis + supplement) {
+    for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite] of portes) {
+      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut)
+          || trimestresCotises < requis + supplement) {
         continue;
       }
       // Départage identique à celui de Python, qui compare des couples
@@ -716,7 +703,75 @@ export class CarriereLongue {
     }
     return meilleur;
   }
+
+  /**
+   * Âge le plus précoce que le dispositif ouvrirait à qui continue de cotiser
+   * jusqu'à son départ, ou `null`.
+   *
+   * `ageDeDepart` répond à une liquidation DATÉE ; ici la question est celle
+   * qui date un cas type. La condition d'entrée précoce se lit telle quelle ;
+   * la condition de durée se projette : il manque `requis + supplément −
+   * cotisés` trimestres, et une année de cotisation en rend quatre, la
+   * soustraction étant signée. Chaque porte ouvre au plus tardif de son âge et
+   * de l'âge où la durée cotisée est réunie, et la plus précoce l'emporte.
+   */
+  agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation) {
+    const portes = this.portes(anneeLiquidation);
+    if (portes === null) {
+      return null;
+    }
+    let meilleur = null;
+    for (const [ageMax, trimestresDebut, ageDepart, supplement] of portes) {
+      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut)) {
+        continue;
+      }
+      const atteint = ageLiquidation + (requis + supplement - trimestresCotises) / 4.0;
+      const candidat = Math.max(ageDepart, atteint);
+      if (meilleur === null || candidat < meilleur) {
+        meilleur = candidat;
+      }
+    }
+    return meilleur;
+  }
+
+  /** Les portes du dispositif en vigueur à l'année de liquidation. */
+  portes(anneeLiquidation) {
+    if (this._annees.length === 0 || anneeLiquidation < this._annees[0]) {
+      return null;
+    }
+    let applicable = this._annees[0];
+    for (const candidate of this._annees) {
+      if (candidate > anneeLiquidation) {
+        break;
+      }
+      applicable = candidate;
+    }
+    return this._table[String(applicable)];
+  }
+
+  /**
+   * La condition d'entrée précoce est-elle remplie pour cette porte ?
+   *
+   * Cinq trimestres cotisés avant la fin de l'année civile des `ageMax` ans,
+   * ou quatre à qui est né au cours du dernier trimestre de l'année civile
+   * (D. 351-1-1) : le modèle lit le mois de naissance.
+   */
+  entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut) {
+    const requis = carriere.mois_naissance >= CarriereLongue.MOIS_DERNIER_TRIMESTRE
+      ? trimestresDebut - 1 : trimestresDebut;
+    let acquis = 0;
+    for (const ligne of carriere.lignes) {
+      if (ligne.cotise && ligne.annee <= carriere.annee_naissance + ageMax
+          && ligne.annee < anneeLiquidation) {
+        acquis += ligne.trimestres_valides;
+      }
+    }
+    return acquis >= requis;
+  }
 }
+
+/** Premier mois du dernier trimestre civil : un trimestre de moins est dû. */
+CarriereLongue.MOIS_DERNIER_TRIMESTRE = 10;
 
 /**
  * Catalogue des régimes, profils d'affiliation et barèmes du point.

@@ -213,6 +213,30 @@ scénarios sur la même carrière — mais le résultat porte désormais un drap
 `liquidation_ouverte`, et la restitution dit que ce montant ne décrit aucune
 pension servie.
 
+**Et trois choses que la datation des cas types ne lisait pas.** Un cas type
+part à l'âge que sa règle propose (§5 ter), et la règle lisait le droit à
+moitié. Elle comptait la durée sans les trimestres pour enfants : la mère de
+deux enfants, qui a sa durée dès l'âge légal grâce à la majoration, était datée
+jusqu'à un an et demi plus tard et partait en surcote — 61 ans et 6 mois pour la
+génération 1950, 64 ans pour 1965, quand le droit sert la pension entière à 60
+ans et à 63 ans et 3 mois. Elle ignorait la carrière longue, que le moteur
+savait calculer comme une dérogation qu'on lui demande et non comme un âge
+qu'il propose : le salarié au SMIC entré à dix-huit ans attendait l'âge légal —
+62 ans pour 1955, 63 ans et 3 mois pour 1965 — alors que la loi lui ouvre 60
+puis 62 ans au taux plein. Et la condition d'entrée précoce de la carrière
+longue demandait cinq trimestres à tout le monde, quand l'article D. 351-1-1
+n'en demande que quatre à qui est né au dernier trimestre de l'année civile :
+le modèle ne connaissait que l'année de naissance quand la table a été écrite,
+il lit le mois depuis. Les deux premières ne touchent que la datation, donc les
+pages Cas types et Coût ; la troisième touche `motif_ouverture` lui-même, mais
+aucun des 484 témoins de simulation ne porte une carrière née d'octobre à
+décembre dont la porte en dépende. Ce que ça déplace : le SMIC part à 60 ans
+pour les générations 1950 à 1960 et à 62 ans à partir de 1962, la carrière
+interrompue à l'âge légal de sa génération, l'agent de conduite né en 2000 —
+rendu au régime général par la fermeture du statut — à 63 ans par la porte des
+vingt et un ans ; la trajectoire du système actuel en 2070 passe de 19,3 % à
+19,5 % du PIB, l'écart avec le COR de 5,1 à 5,3 points.
+
 ### Le mois, là où le droit le date
 
 Le modèle travaillait à l'année, et arrondissait l'âge de liquidation à l'année
@@ -5274,7 +5298,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve 13,9 % du PIB en 2024 et **14,2 % en 2070** (rapport annuel
 de juin 2025, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve 13,6 % et **19,3 %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve 13,6 % et **19,5 %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **cinq
 points à l'arrivée**.
@@ -5334,7 +5358,7 @@ La concordance ne vaut de toute façon que ce que vaut une concordance : elle
 rend une erreur grossière improbable, elle ne rend juste aucun des deux modèles.
 Un test borne la trajectoire à la fourchette 10-20 % du PIB. Cette borne n'a pas
 bougé — elle avait été élargie de 18 à 20 % lors de la pondération, et les
-19,3 % y tiennent encore de sept dixièmes de point.
+19,5 % y tiennent encore de cinq dixièmes de point.
 
 **Ce que la règle d'âge a déplacé ailleurs.** Deux choses, et toutes deux
 attendues une fois qu'on sait que les cas types partent plus tard. La garantie
@@ -5346,17 +5370,19 @@ ce que sa garantie ne voit pas » dit pourquoi cet écart-là ne se comblera pas
 Et les 469 témoins de simulation n'ont pas bougé d'un bit : la règle date un
 départ, elle ne touche à aucune formule de pension.
 
-**Ce que la règle ne sait toujours pas faire.** Elle ne connaît pas la carrière
-longue : un assuré entré à dix-huit ans peut partir avant l'âge légal, et le cas
-type au SMIC — qui commence à dix-huit ans — pourrait en relever. Le moteur sait
-la calculer (elle apparaît dans `motif_ouverture`), mais comme une DÉROGATION
-qu'on demande, non comme un âge qu'on propose ; la règle s'en tient donc à
-l'âge de droit commun. Et les âges d'entrée des cas types restent ceux de la
-grille — vingt-quatre ans pour l'artisan, vingt-sept pour le libéral —, ce qui
-suffit à les faire partir à soixante-sept ans une fois la durée requise opposée.
-La grille part donc, en moyenne, un peu plus tard que la France réelle ; l'âge
-conjoncturel de départ que publie la DREES permettrait de le chiffrer, et il
-n'est pas dans le dépôt.
+**Ce que la règle a appris depuis, et ce qu'elle ne sait toujours pas faire.**
+Elle connaît maintenant la carrière longue — le salarié au SMIC, entré à
+dix-huit ans, part à 60 ans pour les générations 1955 et 1960 et à 62 ans
+depuis la loi de 2023, et le moteur confirme le motif — et les trimestres pour
+enfants, qui datent la carrière interrompue à l'âge légal de sa génération au
+lieu d'un départ en surcote (§ « Écarts avec le droit positif »). La
+trajectoire 2070 en est montée de 19,3 à 19,5 % : deux cas types partent plus
+tôt, et c'est le droit. Ce qu'elle ne sait toujours pas faire : les âges
+d'entrée des cas types restent ceux de la grille — vingt-quatre ans pour
+l'artisan, vingt-sept pour le libéral —, ce qui suffit à les faire partir à
+soixante-sept ans une fois la durée requise opposée. La grille part donc, en
+moyenne, un peu plus tard que la France réelle ; l'âge conjoncturel de départ
+que publie la DREES permettrait de le chiffrer, et il n'est pas dans le dépôt.
 
 ---
 
@@ -5483,7 +5509,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 843 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 846 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
