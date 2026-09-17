@@ -187,11 +187,27 @@ class PeriodeRegime:
     #: applique les coefficients d'anticipation propres à ce régime.
     abattement_points: str
     #: Barème de MAJORATION des régimes en points liquidés APRÈS le taux
-    #: plein. ``aucune`` partout sauf à l'Ircantec, dont le IV de l'article 16
-    #: de l'arrêté du 30 décembre 1970 sert deux taux depuis le 1er janvier
-    #: 2010 — 0,75 % par trimestre écoulé au-delà de l'âge du taux plein,
+    #: plein. ``aucune`` quand la fiche n'en écrit pas ; ``regime_general``
+    #: compte les trimestres COTISÉS après l'âge légal et au-delà de la durée
+    #: requise, comme la branche en annuités (CNAVPL, MSA des non-salariés) ;
+    #: ``par_age_seul`` compte les trimestres civils ENTIERS écoulés depuis
+    #: ``surcote_age_debut`` — l'âge du taux plein à défaut —, sans condition
+    #: de durée, comme l'écrivent les statuts des sections libérales ;
+    #: ``ircantec`` applique le IV de l'article 16 de l'arrêté du 30 décembre
+    #: 1970 — 0,75 % par trimestre écoulé au-delà de l'âge du taux plein,
     #: 0,625 % par trimestre cotisé au-delà de la durée requise en deçà.
     surcote_points: str
+    #: Bornes du décompte ``par_age_seul`` : âge de départ (``None`` : l'âge
+    #: du taux plein), âge au-delà duquel plus rien ne compte, nombre maximal
+    #: de trimestres, pas du décompte (4 : années pleines seulement), âge
+    #: d'un second taux et ce taux, durée d'affiliation au régime exigée.
+    surcote_age_debut: float | None
+    surcote_age_maximum: float | None
+    surcote_trimestres_maximum: int | None
+    surcote_pas_trimestres: int
+    surcote_palier_age: float | None
+    surcote_par_trimestre_apres_palier: float | None
+    surcote_affiliation_minimale_trimestres: int | None
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -868,6 +884,31 @@ class CatalogueRegimes:
                 ),
                 abattement_points=p.get("abattement_points", "decote_du_regime_de_base"),
                 surcote_points=p.get("surcote_points", "aucune"),
+                surcote_age_debut=(
+                    None if p.get("surcote_age_debut") is None
+                    else float(p["surcote_age_debut"])
+                ),
+                surcote_age_maximum=(
+                    None if p.get("surcote_age_maximum") is None
+                    else float(p["surcote_age_maximum"])
+                ),
+                surcote_trimestres_maximum=(
+                    None if p.get("surcote_trimestres_maximum") is None
+                    else int(p["surcote_trimestres_maximum"])
+                ),
+                surcote_pas_trimestres=int(p.get("surcote_pas_trimestres") or 1),
+                surcote_palier_age=(
+                    None if p.get("surcote_palier_age") is None
+                    else float(p["surcote_palier_age"])
+                ),
+                surcote_par_trimestre_apres_palier=(
+                    None if p.get("surcote_par_trimestre_apres_palier") is None
+                    else float(p["surcote_par_trimestre_apres_palier"])
+                ),
+                surcote_affiliation_minimale_trimestres=(
+                    None if p.get("surcote_affiliation_minimale_trimestres") is None
+                    else int(p["surcote_affiliation_minimale_trimestres"])
+                ),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])

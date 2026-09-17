@@ -1622,7 +1622,7 @@ inchangés au bit près, et ceux des pages ne bougent que de la structure.
 
 ---
 
-### 22. La surcote que les régimes en points écrivent et que le moteur laisse tomber — `à faire`
+### 22. La surcote que les régimes en points écrivent et que le moteur laisse tomber — `fait`
 
 **Pourquoi.** Découvert en menant l'action 9, qui demandait de vérifier si
 d'autres régimes en points étaient dans le même cas. Ils le sont, et pour une
@@ -1668,6 +1668,66 @@ points de `calculer`, et `_surcote_points` que l'action 9 y a laissé),
 **Fin.** Un test interdit qu'une période en points porte un
 `surcote_par_trimestre` que personne ne lit — c'est le garde-fou qui manquait,
 et qui aurait signalé le défaut sans qu'on le cherche.
+
+**Ce que ça a déplacé.** Fait le 17 septembre 2026, sur les textes et non sur
+le texte de cette action — qui se trompait sur un point : les sept
+complémentaires de sections portaient bien une durée requise, celle du régime
+de base copiée dans la fiche, et c'est elle qu'il a fallu retirer là où les
+statuts n'en connaissent aucune.
+
+- *Trois barèmes au lieu d'un.* `surcote_points` prend quatre valeurs.
+  `regime_general` compte, comme la branche en annuités, les trimestres cotisés
+  au-delà de l'âge légal et de la durée requise : c'est la CNAVPL (R. 643-8,
+  LEGIARTI000006751834 — 0,75 % ; puis LEGIARTI000047985850, 1,25 % pour les
+  trimestres accomplis à compter du 1er septembre 2023, que la fiche applique
+  aux liquidations de 2024) et la MSA des non-salariés (D. 732-42, dont
+  l'escalier de 3, 4 et 5 % d'avant 2009 est ramené à 0,75 % comme au régime
+  général). `par_age_seul` compte les trimestres civils ENTIERS écoulés depuis
+  un âge, sans durée ni cotisation, bornés par un âge maximal, un nombre de
+  trimestres, un pas (« par année pleine ») et un palier de taux, sous
+  condition d'une durée d'affiliation au régime : c'est la forme des sept
+  statuts de sections. `ircantec` ne change pas.
+- *Sept statuts lus dans l'index LEGI et JORF*, tous approuvés par arrêté, et
+  chacun date sa règle. CARMF (arrêté du 30 novembre 2016, retraite en temps
+  choisi depuis 2017) : 1,25 % par trimestre dès 62 ans, 0,75 % après 65,
+  rien après 70 ; avant 2017, taux plein à 65 ans, anticipation abattue de
+  1,25 % par trimestre à l'âge seul, différé majoré « de 5 % par année
+  pleine ». ASV (arrêté du 1er décembre 2016) : les mêmes mots, et rien
+  d'attesté avant. CAVEC (arrêtés du 22 février 2008, du 20 août 2018 et du
+  10 juillet 2026) : taux plein à 65 ans sans durée, 1,25 % par trimestre
+  plein dans la limite de 25 %, ramené à 0,75 % et 15 % de 2019 à 2025.
+  CARPIMKO (arrêté du 31 juillet 2015) : 1,25 % par trimestre civil entier
+  après l'âge du taux plein, vingt au plus — la fiche portait 0,75 %, le taux
+  du régime de base. CAVP (arrêté du 23 juin 2011) : 0,5 % par trimestre
+  jusqu'à l'âge du taux plein augmenté de trois ans. CPRN (arrêtés du
+  16 décembre 2013 et du 29 novembre 2023) : 0,5 % jusqu'à 70 ans, puis 1 %
+  jusqu'à la fin d'activité depuis 2024 — la fiche portait 1 % depuis 1949.
+  CIPAV (fiche pratique 2022, seul texte trouvé) : 5 % par année pleine
+  depuis l'âge du taux plein, à qui a trente ans de caisse.
+- *Ce que les fiches ne servent plus.* Rien avant le texte qui date la règle :
+  la CARMF avant 2000, l'ASV avant 2017, la CAVEC avant 2008, la CIPAV avant
+  2013, la CARPIMKO avant 2016, la CAVP avant 2012, la CPRN avant 2014 — leur
+  `surcote_par_trimestre` est nul, et la note de la période dit pourquoi.
+- *Les témoins.* 26 cas sur 484 bougent, tous libéraux ou exploitants
+  agricoles, sur 530 cellules ; par régime, la CNAVPL sur 22 lignes, la CARMF
+  et l'ASV sur 3, la MSA sur 2. Les plus grands écarts sur le scénario
+  actuel : l'exploitant agricole né en 1945, 11 078 → 12 671 € (+14,4 %),
+  celui de 1955 +9,2 %, le médecin de 1955 +8,7 %, l'officier ministériel de
+  1945 +9,0 %. Les cinq autres complémentaires ne déplacent aucun témoin :
+  aucun profil témoin ne liquide au-delà de leur âge de départ du compte.
+  Python et JavaScript rendent les mêmes chiffres, au bit près.
+- *Deux tests de plus qui gardent la porte.* Le garde-fou annoncé — une
+  période en points qui porte un taux porte un barème, et réciproquement — et
+  un test par régime qui refait, à la main, le décompte de son texte. Neuf
+  entrées au calendrier des réformes datent les coupures ; R. 643-8 rejoint
+  les pivots de la CNAVPL.
+- *Ce qui reste hors des fiches, et se lit dans leurs notes.* La CIPAV ne
+  majore que les points des trente premières années, que rien ne distingue
+  ici ; la CAVP borne les générations 1951 à 1955 à un ou deux ans ; la
+  CARPIMKO monte de 65 à 67 ans sur les générations 1956 à 1961 quand la
+  table du régime général le fait sur 1951 à 1955 ; la CARMF a compté depuis
+  64 ans entre septembre 2023 et 2025 ; les règlements de juillet 2026 valent
+  ici pour l'année entière.
 
 ---
 
@@ -2532,3 +2592,17 @@ défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouve
   à la fiche, et la page ne doit affirmer que ce que la plus ancienne soutient.
   Les dates rétablies depuis l'historique du dépôt sont une borne basse, dite
   comme telle, que le prochain passage des récupérateurs remplacera.
+- **Septembre 2026, action 22.** Faite, et pas comme l'action l'écrivait.
+  Neuf fiches en points servent enfin la surcote qu'elles portaient, à trois
+  barèmes — celui du régime général pour la CNAVPL et la MSA, l'âge seul pour
+  les sept sections libérales, l'Ircantec inchangé —, et chaque règle vient
+  d'un texte de l'index, arrêté d'approbation des statuts ou article du code,
+  qui la date. 26 témoins sur 484 bougent, jusqu'à +14 % pour un exploitant
+  agricole parti tard. Deux leçons. **Une fiche qui reporte un taux en arrière
+  sans texte ment deux fois** : la CARPIMKO portait le taux du régime de base,
+  la CPRN celui d'aujourd'hui sur toute sa période, et rien ne l'aurait
+  signalé tant que personne ne lisait le champ ; les statuts approuvés par
+  arrêté sont dans LEGI et JORF, et l'index les rend en une requête. Et
+  **l'action qui décrit un défaut peut se tromper sur les fiches** : les
+  complémentaires « sans durée requise » en portaient une, copiée de la base,
+  qu'il a fallu retirer là où les statuts servent le taux plein à l'âge seul.

@@ -315,6 +315,15 @@ def _regimes() -> list[dict]:
                     "surcote_par_trimestre": p.surcote_par_trimestre,
                     "abattement_points": p.abattement_points,
                     "surcote_points": p.surcote_points,
+                    "surcote_age_debut": p.surcote_age_debut,
+                    "surcote_age_maximum": p.surcote_age_maximum,
+                    "surcote_trimestres_maximum": p.surcote_trimestres_maximum,
+                    "surcote_pas_trimestres": p.surcote_pas_trimestres,
+                    "surcote_palier_age": p.surcote_palier_age,
+                    "surcote_par_trimestre_apres_palier":
+                        p.surcote_par_trimestre_apres_palier,
+                    "surcote_affiliation_minimale_trimestres":
+                        p.surcote_affiliation_minimale_trimestres,
                     "plafond_majoration_enfants": p.plafond_majoration_enfants,
                     "plafond_majoration_annee": p.plafond_majoration_annee,
                     "points_maximum": p.points_maximum,
