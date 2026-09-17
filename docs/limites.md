@@ -264,7 +264,8 @@ portaient 63 ans et 171. Cinq écarts, tous refermés :
   aux pensions prenant effet à compter d'une date, novembre 2012, septembre
   2023, septembre 2026 : la table porte maintenant la date et la génération.
   Et depuis septembre 2026 deux trimestres de majoration pour enfants sont
-  réputés cotisés (article 104 de la même loi).
+  réputés cotisés (3° de l'article L. 351-1-1, article 104 de la même loi,
+  décret n° 2026-700 du 29 juillet 2026, circulaire Cnav 2026-29).
 - **Le salaire annuel moyen des parents** porte sur les vingt-quatre
   meilleures années pour un enfant, vingt-trois pour deux et plus (R. 173-3-2,
   décret n° 2026-699 du 29 juillet 2026, pensions dès septembre 2026). Le
@@ -461,7 +462,8 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   B) donne aux catégories actives leur propre calendrier de durée — 169
   trimestres des nés de septembre 1966 à 1967, 172 dès 1971 —, l'âge anticipé
   ayant cinq ans d'avance sur l'âge légal ; le modèle leur oppose la durée de
-  leur génération, comme aux sédentaires.
+  leur génération, comme aux sédentaires. Les âges eux-mêmes sont lus alinéa
+  par alinéa dans le D du même article.
 - **Montée en charge propre aux régimes spéciaux.** La décote créée par la
   réforme de 2008 y monte en charge comme celle de la fonction publique, mais
   selon un calendrier qui lui est propre, régime par régime. Le modèle applique

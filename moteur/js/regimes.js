@@ -720,7 +720,9 @@ export class CarriereLongue {
   /**
    * La durée cotisée que le dispositif oppose, enfants compris : depuis les
    * pensions prenant effet au 1er septembre 2026, jusqu'à deux trimestres de
-   * la majoration pour enfants sont réputés cotisés (LFSS 2026, article 104).
+   * la majoration pour enfants sont réputés cotisés (L. 351-1-1, 3°, LFSS
+   * 2026 article 104 ; D. 351-1-2-1, décret n° 2026-700 ; circulaire Cnav
+   * 2026-29, point 1.2.3.8).
    */
   cotisesReputes(carriere, trimestresCotises, trimestresEnfants) {
     if (trimestresEnfants <= 0 || carriere.age_liquidation === null) {

@@ -42,9 +42,14 @@
 #     d'un trimestre à compter de la génération qui atteint l'âge anticipé en
 #     2027 — l'âge majoré de cinq ans reste à 62 ans et 9 mois des nés du
 #     1er septembre 1968 au 31 mars 1970, et 64 ans n'est atteint qu'à la
-#     génération 1974 (super-active : 1979). Le texte du décret ne donne que
-#     les deux bornes ; les lignes intermédiaires sont DÉDUITES du calendrier
-#     de droit commun décalé de cinq et de dix ans, d'où leur niveau `moyenne`.
+#     génération 1974 (super-active : 1979). Les huit alinéas du 2° et du 3°
+#     du D ont été lus un à un sur Légifrance (JORFTEXT000054047709) : 62 ans
+#     et 9 mois « pour ceux nés entre le 1er janvier 1968 et le 31 mars 1970 »,
+#     63 ans « entre le 1er avril 1970 et le 31 décembre 1970 », puis un
+#     trimestre par génération, 64 ans « à compter du 1er janvier 1974 » ;
+#     mêmes marches cinq ans plus tard pour la super-active, 64 ans dès 1979.
+#     Ces âges majorés moins cinq ou dix années donnent les lignes ci-dessous,
+#     niveau `haute` : lues, non recontrôlées par le récupérateur.
 #     Le B du même article décale de même la durée requise des emplois classés
 #     (169 trimestres des nés de septembre 1966 à 1967, 172 dès 1971) ; le
 #     modèle leur oppose la durée de leur génération, comme avant.
@@ -72,12 +77,12 @@ active,1960,57.00,62.00,17,haute
 active,1966.667,57.25,62.00,17,haute
 active,1967,57.50,62.00,17,haute
 active,1968,57.75,62.00,17,haute
-active,1969,57.75,62.00,17,moyenne
-active,1970.25,58.00,62.00,17,moyenne
-active,1971,58.25,62.00,17,moyenne
-active,1972,58.50,62.00,17,moyenne
-active,1973,58.75,62.00,17,moyenne
-active,1974,59.00,62.00,17,moyenne
+active,1969,57.75,62.00,17,haute
+active,1970.25,58.00,62.00,17,haute
+active,1971,58.25,62.00,17,haute
+active,1972,58.50,62.00,17,haute
+active,1973,58.75,62.00,17,haute
+active,1974,59.00,62.00,17,haute
 super_active,1900,50.00,55.00,25,moyenne
 super_active,1961.5,50.33,55.33,27,haute
 super_active,1962,50.75,55.75,27,haute
@@ -87,9 +92,9 @@ super_active,1965,52.00,57.00,27,haute
 super_active,1971.667,52.25,57.00,27,haute
 super_active,1972,52.50,57.00,27,haute
 super_active,1973,52.75,57.00,27,haute
-super_active,1974,52.75,57.00,27,moyenne
-super_active,1975.25,53.00,57.00,27,moyenne
-super_active,1976,53.25,57.00,27,moyenne
-super_active,1977,53.50,57.00,27,moyenne
-super_active,1978,53.75,57.00,27,moyenne
-super_active,1979,54.00,57.00,27,moyenne
+super_active,1974,52.75,57.00,27,haute
+super_active,1975.25,53.00,57.00,27,haute
+super_active,1976,53.25,57.00,27,haute
+super_active,1977,53.50,57.00,27,haute
+super_active,1978,53.75,57.00,27,haute
+super_active,1979,54.00,57.00,27,haute

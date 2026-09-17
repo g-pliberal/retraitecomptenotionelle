@@ -2308,9 +2308,9 @@ les quatre tables de `data/reference/legislation/`, `tests/test_donnees.py`
 
 **Marche.** Relancer le récupérateur sur le dump récent, vérifier que les
 seize segments d'âge et les durées qu'il rend sont ceux de la circulaire,
-appliquer, et retirer des tests la liste des générations suspendues. Pour les
-catégories actives, lire le décret n° 2026-344 alinéa par alinéa : les lignes
-intermédiaires sont déduites du calendrier de droit commun décalé, non lues.
+appliquer, et retirer des tests la liste des générations suspendues. Les
+catégories actives sont déjà lues alinéa par alinéa dans le décret
+n° 2026-344 (niveau `haute`) ; reste à les faire relire par le récupérateur.
 
 **Fin.** Plus aucune ligne `moyenne` dans ces tables, et le journal de
 certification daté d'après le 8 mai 2026.
