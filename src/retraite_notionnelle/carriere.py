@@ -862,6 +862,22 @@ def formater_borne(borne: DateMois) -> str:
     return str(borne.annee) if borne.mois == 1 else str(borne)
 
 
+#: Les familles de statuts, dans l'ordre où le menu du simulateur les range :
+#: code du YAML -> libellé du groupe. Sept groupes de deux à seize statuts se
+#: parcourent ; soixante-deux à la file ne se parcouraient pas. L'ordre va du
+#: plus commun au plus rare, et « hors emploi » ferme la marche.
+FAMILLES_STATUT: dict[str, str] = {
+    "prive": "Salariés du privé",
+    "public": "Fonction publique et militaires",
+    "independant": "Indépendants et professions libérales",
+    "agricole": "Agriculture",
+    "special": "Régimes spéciaux",
+    "outre_mer": "Outre-mer",
+    "elus": "Élus et assemblées",
+    "hors_emploi": "Hors emploi",
+}
+
+
 class Affiliations:
     """Correspondance statut -> régimes, année par année."""
 
@@ -870,6 +886,13 @@ class Affiliations:
         self._profils: dict[str, dict] = contenu.get("affiliations", {})
         if not self._profils:
             raise ValueError("aucun profil d'affiliation chargé")
+        for code, profil in self._profils.items():
+            if profil.get("famille") not in FAMILLES_STATUT:
+                raise ValueError(
+                    f"affiliations.yaml / {code} : famille manquante ou inconnue "
+                    f"{profil.get('famille')!r} — attendue parmi "
+                    f"{sorted(FAMILLES_STATUT)}"
+                )
         #: Régimes du catalogue que le fichier déclare volontairement hors
         #: routage, avec leur raison. Le moteur ne s'en sert pas ; la cohérence
         #: entre catalogue et routage, si — cf. `tests/test_donnees.py`.
@@ -886,6 +909,10 @@ class Affiliations:
 
     def libelle(self, code: str) -> str:
         return self._profils[code].get("libelle", code)
+
+    def famille(self, code: str) -> str:
+        """Le groupe du menu où ce statut se range — une clé de FAMILLES_STATUT."""
+        return self._profils[code]["famille"]
 
     def periodes(self, affiliation: str) -> tuple[dict, ...]:
         """Les tranches temporelles déclarées par ce statut, telles qu'écrites."""

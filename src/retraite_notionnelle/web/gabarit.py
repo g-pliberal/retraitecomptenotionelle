@@ -308,6 +308,78 @@ td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
    défaut, ce qui convient aux chiffres qu'on compare colonne par colonne, et
    pas du tout à « des trimestres, et 72 barèmes différents ». */
 td.texte, th.texte { text-align: left; }
+/* L'en-tête d'une colonne triable est un bouton : il hérite de la police et
+   de la couleur de l'en-tête, et seul le trait pointillé le signale — comme
+   un mot du glossaire. Le sens du tri se lit dans `aria-sort`, et une flèche
+   le redit à l'œil. */
+th > .tri {
+  font: inherit; color: inherit; background: none; border: none; padding: 0;
+  cursor: pointer; border-bottom: 1px dotted currentColor;
+}
+th > .tri:hover { color: var(--accent); }
+th[aria-sort="ascending"] > .tri::after { content: " \\2191"; }
+th[aria-sort="descending"] > .tri::after { content: " \\2193"; }
+/* Les filtres d'un tableau : un champ de recherche et deux menus, sur une
+   ligne, et le compte de ce qui reste en dessous. Une ligne masquée par le
+   filtre ne l'est que pour l'affichage — le HTML la porte toujours, et le
+   filtre se remet à « tout » d'un seul geste. */
+.filtres {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.8rem 1.2rem; margin: 1rem 0 0.5rem;
+}
+.filtres + .compte { margin: 0.2rem 0 0.8rem; }
+tbody tr[hidden] { display: none; }
+/* Le plan d'une page longue : ce qu'elle contient, en une liste de liens qui
+   se parcourt du regard avant de lire. Il tient dans une carte discrète, et
+   ne colle pas à l'écran : sur un téléphone, une barre fixe mangerait le
+   tiers de la hauteur que le lecteur vient chercher. */
+.plan {
+  background: var(--fond-appui); border-radius: 6px;
+  padding: 0.85rem 1.1rem; margin: 1.25rem 0; font-size: 0.92rem;
+}
+.plan .etiquette {
+  margin: 0 0 0.35rem; font-size: 0.78rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--texte-doux);
+}
+.plan ol {
+  margin: 0; padding: 0; list-style: none;
+  display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem;
+}
+.plan a { color: var(--texte); text-decoration: none;
+          border-bottom: 1px solid var(--trait-champ); }
+.plan a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+/* Les onglets d'une grille : des boutons radio, dont le libellé fait
+   l'onglet. Le clavier les parcourt aux flèches, comme tout groupe de radios,
+   et le panneau suit sans une ligne de script : `:has()` lit lequel est
+   coché. Là où `:has()` n'existe pas, le premier panneau reste visible et les
+   autres restent repliés — la page dit moins, mais ne dit rien de faux. */
+.onglets { border: none; padding: 0; margin: 1.25rem 0 0.75rem;
+           display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.onglets legend { float: left; font-size: 0.88rem; color: var(--texte-doux);
+                  padding: 0; margin-right: 0.4rem; }
+.onglets input {
+  position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0;
+  overflow: hidden; clip-path: inset(50%);
+}
+.onglets label {
+  display: inline-block; margin: 0; font-size: 0.92rem; color: var(--texte);
+  padding: 0.3rem 0.8rem; border: 1px solid var(--trait-champ);
+  border-radius: 999px; cursor: pointer;
+}
+.onglets input:checked + label {
+  background: var(--accent); color: var(--fond); border-color: var(--accent);
+}
+.onglets input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+.onglets label:hover { border-color: var(--accent); }
+.panneaux > .panneau[hidden] { display: none; }
+.onglets:has(input:checked) ~ .panneaux > .panneau { display: none; }
+.onglets:has(#grille-notionnel_liberal:checked) ~ .panneaux > .panneau[data-onglet="notionnel_liberal"],
+.onglets:has(#grille-notionnel_prospectif_employeur:checked) ~ .panneaux > .panneau[data-onglet="notionnel_prospectif_employeur"],
+.onglets:has(#grille-notionnel_retroactif:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif"],
+.onglets:has(#grille-notionnel_prospectif:checked) ~ .panneaux > .panneau[data-onglet="notionnel_prospectif"],
+.onglets:has(#grille-notionnel_retroactif_employeur:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif_employeur"] {
+  display: block;
+}
 .scenario { margin: 1.4rem 0; }
 /* Le bloc des montants passe sous l'intitulé D'UN SEUL TENANT quand la place
    manque : c'est l'entête qui se replie, pas le montant. Depuis que les sommes
@@ -943,26 +1015,44 @@ def liste(nom: str, libelle: str, options: list[tuple],
     la sélection : un navigateur n'envoie pas la valeur d'une option choisie
     mais désactivée, et la saisie repartirait sur le statut par défaut sans
     que rien ne le dise. Le refus, lui, se fait au calcul.
+
+    Une entrée ``(libelle, [options])`` — dont le second élément est une LISTE
+    et non un texte — est un groupe : ses options sont rendues sous un
+    ``<optgroup>`` qui porte ce libellé. C'est ce qui rend un menu de soixante
+    statuts parcourable : on cherche « SNCF » sous « Régimes spéciaux », et
+    non dans une colonne de soixante lignes. Un groupe et des options nues
+    peuvent se suivre dans le même menu.
     """
     supplement = "".join(
         f' {cle.rstrip("_").replace("_", "-")}="{escape(str(val))}"'
         for cle, val in attributs.items()
     )
-    choix = []
-    for option in options:
+
+    def option_html(option: tuple) -> str:
         code, texte = option[0], option[1]
         disponible = option[2] if len(option) > 2 else True
         propres = "".join(
             f' {cle}="{escape(str(val))}"'
             for cle, val in (option[3] if len(option) > 3 else {}).items()
         )
-        choix.append(
+        return (
             f'<option value="{escape(code)}"'
             + (" selected" if code == selection else "")
             + ("" if disponible or code == selection else " disabled")
             + propres
             + f">{escape(texte)}</option>"
         )
+
+    choix = []
+    for option in options:
+        if isinstance(option[1], list):
+            choix.append(
+                f'<optgroup label="{escape(option[0])}">'
+                + "".join(option_html(membre) for membre in option[1])
+                + "</optgroup>"
+            )
+        else:
+            choix.append(option_html(option))
     choix = "".join(choix)
     aide_html = f'<span class="aide">{escape(aide)}</span>' if aide else ""
     appel = bulle(f"{libelle} : en savoir plus", complement) if complement else ""
@@ -991,7 +1081,9 @@ class Cellule:
 
 def tableau(entetes: list[str], lignes: list[list[str | Cellule]],
             classes_colonnes: list[str] | None = None, titre: str = "",
-            entete_de_ligne: bool = False) -> str:
+            entete_de_ligne: bool = False,
+            attributs_lignes: list[dict[str, str]] | None = None,
+            triable: bool = False, identifiant: str = "") -> str:
     """Tableau de données.
 
     ``titre`` devient le ``<caption>``. Sans lui, un lecteur d'écran qui arrive
@@ -1004,12 +1096,24 @@ def tableau(entetes: list[str], lignes: list[list[str | Cellule]],
     ``<th scope="row">``. C'est ce qui permet à la synthèse vocale d'annoncer
     « Cnav, 2019, 89,4 » plutôt que trois nombres nus : sans en-tête de ligne,
     une cellule lue au hasard dans la grille n'est rattachée à rien.
+
+    ``attributs_lignes`` pose sur chaque ``<tr>`` les attributs donnés — des
+    ``data-`` que le filtre de la page lit pour montrer ou cacher la ligne.
+    ``triable`` fait de chaque en-tête de colonne un bouton : le script
+    d'``index.html`` trie alors les lignes sur cette colonne, et l'en-tête dit
+    par ``aria-sort`` dans quel sens. Sans script, le bouton ne fait rien et le
+    tableau se lit dans l'ordre où il est écrit. ``identifiant`` nomme la
+    grille pour que ses filtres la désignent.
     """
     classes = classes_colonnes or ["" for _ in entetes]
     tete = "".join(
-        f'<th class="{cls}" scope="col">{escape(intitule)}</th>'
-        for intitule, cls in zip(entetes, classes)
+        f'<th class="{cls}" scope="col">'
+        + (f'<button type="button" class="tri" data-colonne="{rang}">'
+           f"{escape(intitule)}</button>" if triable else escape(intitule))
+        + "</th>"
+        for rang, (intitule, cls) in enumerate(zip(entetes, classes))
     )
+    attributs = attributs_lignes or [{} for _ in lignes]
 
     def _cellule(cellule: str | Cellule, cls: str, premiere: bool) -> str:
         balise = "th" if premiere and entete_de_ligne else "td"
@@ -1023,16 +1127,19 @@ def tableau(entetes: list[str], lignes: list[list[str | Cellule]],
         )
 
     corps = "".join(
-        "<tr>" + "".join(
+        "<tr"
+        + "".join(f' {cle}="{escape(str(val))}"' for cle, val in propres.items())
+        + ">" + "".join(
             _cellule(cellule, cls, rang == 0)
             for rang, (cellule, cls) in enumerate(zip(ligne, classes))
         ) + "</tr>"
-        for ligne in lignes
+        for ligne, propres in zip(lignes, attributs)
     )
     legende = f"<caption>{escape(titre)}</caption>" if titre else ""
     nom = f' role="region" aria-label="{escape(titre)}"' if titre else ""
+    cible = f' id="{escape(identifiant)}"' if identifiant else ""
     return (
-        f'<div class="defilant" tabindex="0"{nom}><table>{legende}'
+        f'<div class="defilant" tabindex="0"{nom}><table{cible}>{legende}'
         f"<thead><tr>{tete}</tr></thead>"
         f"<tbody>{corps}</tbody></table></div>"
     )
@@ -1054,7 +1161,8 @@ def gloses(entrees: list[tuple[str, str]]) -> str:
     return f'<dl class="gloses">{corps}</dl>'
 
 
-def fiche(etiquette: str, valeur: str, precision: str = "") -> str:
+def fiche(etiquette: str, valeur: str, precision: str = "",
+          definition: str = "") -> str:
     """Un chiffre, ce qu'il mesure, et au besoin la phrase qui le situe.
 
     ``precision`` est du HTML : elle porte parfois un lien ou un mot du
@@ -1062,11 +1170,18 @@ def fiche(etiquette: str, valeur: str, precision: str = "") -> str:
     s'en passent — elle n'existe que pour les trois chiffres d'ouverture de la
     page Coût, où « 422 milliards » ne veut rien dire tant qu'on n'a pas dit
     « en un an, pour 17 millions de retraités ».
+
+    ``definition`` fait de l'étiquette un mot du glossaire : « coefficient de
+    conversion » ou « capital notionnel » sont des termes de spécialiste, et
+    une fiche qui les affiche sans les définir laisse le lecteur devant un
+    chiffre dont il ne sait pas ce qu'il mesure. La définition s'ouvre sous
+    l'étiquette, comme partout ailleurs sur le site.
     """
     suite = f'<div class="precision">{precision}</div>' if precision else ""
+    nom = mot(etiquette, definition) if definition else escape(etiquette)
     return (
         f'<div class="fiche"><div class="valeur">{valeur}</div>'
-        f'<div class="etiquette">{escape(etiquette)}</div>{suite}</div>'
+        f'<div class="etiquette">{nom}</div>{suite}</div>'
     )
 
 
@@ -1190,6 +1305,123 @@ def bulle(sujet: str, texte: str) -> str:
     )
 
 
+#: Le glossaire du site : un mot de spécialiste, sa définition en une ou deux
+#: phrases de français courant, sans renvoi obligé vers la page Méthode.
+#:
+#: Il existe pour qu'un terme soit défini UNE fois et de la même façon partout
+#: où il reparaît — « répartition » se définissait en deux endroits, avec deux
+#: textes. Un mot qui manque ici ne peut pas être posé par :func:`terme`, et
+#: le portage JavaScript porte la même table, entrée pour entrée, ce que les
+#: témoins des pages vérifient.
+#:
+#: Aucun chiffre qui bouge n'y figure : un plafond, une durée requise ou un
+#: taux de décote écrit ici dériverait sans que rien ne le recoupe.
+GLOSSAIRE = {
+    "compte notionnel":
+        "Un compte virtuel à votre nom, où chaque cotisation versée est "
+        "inscrite. Au départ en retraite, le total est divisé par le nombre "
+        "d'années qu'il vous reste à vivre en moyenne : c'est la pension. Rien "
+        "n'est placé — c'est toujours la répartition, mais la règle de calcul "
+        "change.",
+    "répartition":
+        "Les cotisations d'aujourd'hui paient les pensions d'aujourd'hui. Rien "
+        "n'est mis de côté : chaque euro prélevé sur une fiche de paie est "
+        "reversé aussitôt à un retraité.",
+    "part du PIB":
+        "Le PIB, c'est tout ce que la France produit en un an. En « part du "
+        "PIB », on demande : sur 100 € produits, combien vont aux retraites ? "
+        "C'est la seule façon de comparer 1959 et 2070, l'euro n'ayant pas la "
+        "même valeur.",
+    "trimestres":
+        "L'unité dans laquelle le système actuel compte une carrière : quatre "
+        "par année pleine, et un trimestre est acquis dès qu'on a gagné dans "
+        "l'année l'équivalent de 150 heures au SMIC. Il en faut un nombre fixé "
+        "par génération pour partir sans décote.",
+    "durée d'assurance":
+        "Le nombre de trimestres qu'une carrière a validés, cotisés ou non : "
+        "c'est elle que le système actuel compare à la durée exigée de votre "
+        "génération pour servir la pension entière.",
+    "décote":
+        "La réduction appliquée à toute la pension quand on part avant "
+        "d'avoir la durée exigée, tant qu'on n'a pas atteint l'âge du taux "
+        "plein. Elle se compte par trimestre manquant.",
+    "surcote":
+        "La majoration accordée pour chaque trimestre travaillé au-delà de "
+        "l'âge légal, une fois la durée exigée atteinte.",
+    "taux plein":
+        "Le taux de pension entier, sans décote : on l'obtient avec la durée "
+        "exigée, ou à l'âge où la décote s'annule quelle que soit la durée.",
+    "salaire de référence":
+        "Le salaire sur lequel le système actuel calcule la pension : la "
+        "moyenne des 25 meilleures années au régime général, le dernier "
+        "traitement dans la fonction publique.",
+    "table de conversion":
+        "La table qui dit combien d'années il reste à vivre, en moyenne, à un "
+        "retraité de votre génération à l'âge du départ. Unisexe : la même "
+        "pour les femmes et les hommes, bien qu'elles vivent plus longtemps — "
+        "un choix de non-discrimination, comme dans le système actuel.",
+    "taux de remplacement":
+        "La première pension rapportée au dernier revenu d'activité : 60 % "
+        "veut dire que la pension vaut 60 % de ce que vous gagniez juste avant "
+        "de partir. Ici, un brut sur un brut.",
+    "assiette déplafonnée":
+        "L'assiette est la part du revenu sur laquelle on cotise. Déplafonnée "
+        ": on cotise sur tout le revenu, sans le plafond au-delà duquel le "
+        "régime général cesse de compter.",
+    "statut d'affiliation":
+        "Ce que vous êtes aux yeux des caisses — salarié du privé, "
+        "fonctionnaire, artisan, agent de la SNCF… — et qui décide à quels "
+        "régimes vous cotisez, donc à quel taux et sous quelle règle. Vous ne "
+        "choisissez pas vos régimes : ils découlent de ce statut.",
+    "âge de référence":
+        "L'âge auquel la pension du régime général est servie entière quelle "
+        "que soit la durée cotisée. Le simulateur ne s'en sert que pour "
+        "convertir en capital les droits acquis avant la bascule, dans les "
+        "scénarios 3 et 5 : partir avant, c'est convertir ces droits comme si "
+        "l'on partait à cet âge.",
+    "coefficient de conversion":
+        "Le nombre par lequel le capital du compte est divisé pour obtenir la "
+        "pension annuelle : le nombre d'années qu'il reste à vivre en moyenne "
+        "à votre âge de départ, corrigé de la revalorisation à venir des "
+        "pensions. Plus on part tard, plus il est petit, plus la pension est "
+        "forte.",
+    "capital notionnel":
+        "Le total du compte au jour du départ : toutes les cotisations "
+        "inscrites, revalorisées année après année. Virtuel : aucune somme "
+        "n'est placée, le chiffre ne sert qu'au calcul de la pension.",
+    "coefficient d'équilibre":
+        "Le facteur commun qui, chaque année, ramènerait toutes les pensions "
+        "à ce que les cotisations permettent de payer : au-dessus de 1 il en "
+        "reste, en dessous il en manque. Le modèle le calcule mais ne "
+        "l'applique pas aux pensions affichées.",
+    "part patronale":
+        "La cotisation que l'employeur verse pour vous, en plus de celle "
+        "retenue sur votre salaire. Elle ne figure pas sur le net, mais elle "
+        "est bien prélevée sur votre travail.",
+    "indexation":
+        "La règle qui revalorise chaque année le compte, puis la pension : sur "
+        "les prix, sur les salaires, sur la masse des salaires… Le choix pèse "
+        "lourd sur quarante ans de carrière.",
+    "garantie vieillesse":
+        "Le plancher de la proposition : à partir de 65 ans, ce qui manque "
+        "pour l'atteindre est versé, payé par l'impôt. Il regarde votre seule "
+        "pension, jamais celle du conjoint.",
+}
+
+
+def terme(mot_affiche: str, cle: str = "") -> str:
+    """Un mot du glossaire, tel qu'il se lit dans la phrase.
+
+    ``mot_affiche`` est le mot tel que la phrase l'écrit — au pluriel, avec
+    sa majuscule —, ``cle`` l'entrée du glossaire quand elle s'écrit autrement
+    : ``terme("trimestres manquants", "trimestres")``. Sans clé, le mot est sa
+    propre entrée. Un mot absent du glossaire est une faute de programme, pas
+    un mot sans définition : il vaut mieux échouer au rendu que livrer un
+    bouton qui n'ouvre rien.
+    """
+    return mot(mot_affiche, GLOSSAIRE[cle or mot_affiche])
+
+
 def points(entrees: list[tuple[str, str]]) -> str:
     """Quelques idées, une par bloc, titre puis phrase.
 
@@ -1212,7 +1444,7 @@ def points(entrees: list[tuple[str, str]]) -> str:
     return f'<div class="points">{corps}</div>'
 
 
-def depliant(titre: str, corps: str) -> str:
+def depliant(titre: str, corps: str, identifiant: str = "") -> str:
     """Une section repliée : son titre se lit, son contenu s'ouvre si on veut.
 
     Le temps du lecteur n'est pas gratuit. Tout ce qu'une page doit pouvoir
@@ -1221,14 +1453,67 @@ def depliant(titre: str, corps: str) -> str:
     honnête ; mais rien n'oblige à le lui faire traverser pour atteindre le
     résultat. Un dépliant met les deux exigences d'accord : le titre annonce ce
     qu'il y a dedans, et c'est le lecteur qui décide.
+
+    ``identifiant`` le rend joignable depuis le plan de la page (:func:`plan`)
+    : le lien du plan l'ouvre et y fait défiler. Sans identifiant, le dépliant
+    n'est pas dans le plan — c'est le cas des sections d'une page courte, qui
+    n'en a pas.
     """
+    cible = f' id="{escape(identifiant)}"' if identifiant else ""
     return (
-        f'<details class="section">{sommaire(escape(titre))}'
+        f'<details class="section"{cible}>{sommaire(escape(titre))}'
         f'<div class="dedans">{corps}</div></details>'
     )
 
 
-def cle(question: str, reponse: str, corps: str, source: str = "") -> str:
+#: Ce qu'un plan de page sait retrouver : un dépliant identifié et son titre,
+#: ou une carte identifiée et sa question. Les deux formes dans une seule
+#: expression, pour que le plan les liste dans l'ordre de la page.
+_SECTION_DU_PLAN = re.compile(
+    r'<details class="section" id="([^"]+)"><summary>.*?<span>(.*?)</span></summary>'
+    r'|<section class="cle" id="([^"]+)" tabindex="-1"><h3>(.*?)</h3>'
+)
+
+
+def plan(corps: str, chemin: str, etiquette: str = "Dans cette page") -> str:
+    """Le sommaire d'une page longue, DÉDUIT de ses sections.
+
+    Il n'est pas écrit à la main : il est lu dans le HTML déjà rendu, où
+    chaque dépliant identifié porte son titre. C'est ce qui garantit qu'il ne
+    peut pas dériver — un titre changé, une section ajoutée, et le plan suit
+    sans qu'on y pense —, et c'est aussi ce qui le rend identique des deux
+    côtés du portage : les deux lisent le même HTML.
+
+    Les liens ne touchent pas à l'adresse. Ici l'adresse EST la route
+    (``#/cout``), et un ``href="#une-section"`` renverrait le lecteur à
+    l'accueil ; le lien porte donc la route de la page, qui ne change rien, et
+    ``data-vers`` désigne la section. Le script d'``index.html`` l'ouvre, y
+    pose le focus et y fait défiler — c'est le mécanisme du lien d'évitement,
+    étendu au corps de la page. Sans script, le lien ne fait rien, et le
+    plan reste ce qu'il est : la liste de ce que la page contient.
+
+    Une page sans section identifiée n'a pas de plan : le vide, plutôt qu'une
+    liste vide.
+    """
+    entrees = [
+        (depliant_id or carte_id, titre_depliant or titre_carte)
+        for depliant_id, titre_depliant, carte_id, titre_carte
+        in _SECTION_DU_PLAN.findall(corps)
+    ]
+    if not entrees:
+        return ""
+    liens = "".join(
+        f'<li><a href="{lien(chemin)}" data-vers="{identifiant}">{titre}</a></li>'
+        for identifiant, titre in entrees
+    )
+    return (
+        f'<nav class="plan" aria-label="{escape(etiquette)}">'
+        f'<p class="etiquette">{escape(etiquette)}</p><ol>{liens}</ol></nav>'
+    )
+
+
+def cle(question: str, reponse: str, corps: str, source: str = "",
+        identifiant: str = "") -> str:
     """Une question, sa réponse en une phrase, et l'image qui la montre.
 
     C'est l'unité de lecture de la page Coût, et elle est faite pour deux
@@ -1262,8 +1547,11 @@ def cle(question: str, reponse: str, corps: str, source: str = "") -> str:
         f"{icone('download')}<span>Télécharger l'image</span></button></p>"
         if '<figure class="graphique"' in corps else ""
     )
+    # Identifiée, la carte est joignable depuis le plan de la page ; le
+    # `tabindex` lui permet de recevoir le focus quand on y arrive par lui.
+    cible = f' id="{escape(identifiant)}" tabindex="-1"' if identifiant else ""
     return (
-        f'<section class="cle"><h3>{escape(question)}</h3>'
+        f'<section class="cle"{cible}><h3>{escape(question)}</h3>'
         f'<p class="reponse">{reponse}</p>{corps}{fin}{partage}</section>'
     )
 

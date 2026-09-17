@@ -958,6 +958,21 @@ export function formaterBorne(borne) {
   return borne.mois === 1 ? String(borne.annee) : String(borne);
 }
 
+/**
+ * Les familles de statuts, dans l'ordre où le menu du simulateur les range.
+ * Copie de `FAMILLES_STATUT` dans `carriere.py`.
+ */
+export const FAMILLES_STATUT = Object.freeze({
+  prive: "Salariés du privé",
+  public: "Fonction publique et militaires",
+  independant: "Indépendants et professions libérales",
+  agricole: "Agriculture",
+  special: "Régimes spéciaux",
+  outre_mer: "Outre-mer",
+  elus: "Élus et assemblées",
+  hors_emploi: "Hors emploi",
+});
+
 /** Correspondance statut -> régimes, année par année. */
 export class Affiliations {
   constructor(paquet) {
@@ -974,6 +989,11 @@ export class Affiliations {
 
   libelle(code) {
     return this._profils[code].libelle ?? code;
+  }
+
+  /** Le groupe du menu où ce statut se range — une clé de FAMILLES_STATUT. */
+  famille(code) {
+    return this._profils[code].famille;
   }
 
   /** Les tranches temporelles déclarées par ce statut, telles qu'écrites. */

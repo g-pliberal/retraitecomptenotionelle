@@ -350,6 +350,7 @@ def _affiliations() -> dict:
     return {
         code: {
             "libelle": affiliations.libelle(code),
+            "famille": affiliations.famille(code),
             "sans_employeur": affiliations.sans_employeur(code),
             "categorie_active": affiliations.categorie_active(code),
             "pension_militaire": affiliations.pension_militaire(code),

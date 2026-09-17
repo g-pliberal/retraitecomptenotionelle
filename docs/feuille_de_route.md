@@ -1693,32 +1693,126 @@ passe, disant quelles pages ont bougé et de combien de mots.
 
 *Le design visuel est déjà sobre et cohérent (thème sombre, pas de fioritures) ; les frictions viennent surtout de la densité du contenu et de l'absence d'outils pour la traverser.*
 
-- [ ] 🔴 **Des bulles de définition sur le vocabulaire technique** `Simuler · Global`
+- [x] 🔴 **Des bulles de définition sur le vocabulaire technique** `Simuler · Global`
   Le simulateur est le point d'entrée le plus concret du site — celui où « le commun des mortels » vient voir sa propre pension, pas seulement un lecteur déjà averti. Il concentre pourtant du jargon non défini : « compte notionnel », « trimestres » / « durée d'assurance », « décote » / « surcote », « salaire de référence », « table de mortalité unisexe », « taux de remplacement », « assiette déplafonnée », « statut d'affiliation ». Souligner ces termes en pointillé et afficher, au clic ou au survol, une définition d'une ou deux phrases en langage courant — sans jargon économique, sans renvoi obligé vers Méthode. Un seul petit composant de bulle, réutilisé partout où le terme reparaît (Programme, Cas types, Coût), évite d'avoir à choisir entre simplifier le texte et perdre la précision : la précision reste dans la bulle, la phrase principale reste lisible.
+  *Fait le 16 septembre 2026.* Le site a désormais un GLOSSAIRE, écrit une
+  fois dans `gabarit.py` (vingt entrées) et recopié dans le portage, où un
+  test le compare entrée pour entrée. Chaque mot de la liste du relecteur y
+  est, en une ou deux phrases sans jargon : compte notionnel, trimestres,
+  durée d'assurance, décote, surcote, salaire de référence, table de
+  conversion, taux de remplacement, assiette déplafonnée, statut
+  d'affiliation, âge de référence — plus coefficient de conversion, capital
+  notionnel, coefficient d'équilibre, part patronale, indexation, taux plein,
+  garantie vieillesse, répartition, part du PIB. Le composant est celui de
+  l'action 19 (`g.mot`), posé par `g.terme` : sur les résultats du simulateur
+  (le taux de remplacement de chaque scénario, les fiches « coefficient de
+  conversion », « capital notionnel » et « âge de référence »), sous un
+  point d'interrogation dans le formulaire (statut, table, âge de référence,
+  part de la cotisation, indexation), sur Programme (trimestres, décote,
+  surcote, taux plein, les 25 meilleures années), Cas types (le réglage
+  annuel), Coût et Méthode. « Répartition » se définissait en deux endroits
+  avec deux textes : il n'y en a plus qu'un. Aucun chiffre qui bouge dans une
+  définition — un test l'interdit —, sans quoi un plafond y dériverait.
 
-- [ ] 🔴 **Expliquer l'âge de référence, pas seulement l'afficher** `Simuler`
+- [x] 🔴 **Expliquer l'âge de référence, pas seulement l'afficher** `Simuler`
   Après calcul, les résultats ouvrent sur cinq pastilles chiffrées (43 années cotisées, 64 ans liquidation, **67 ans — âge de référence — départ 3 ans plus tôt**, 25,667 coefficient de conversion, 252 025 € capital notionnel) sans un mot sur ce que chacune change. L'âge de référence n'est pourtant pas cosmétique : sur l'exemple testé, le scénario 3 convertit les droits acquis au diviseur de 67 ans alors que la pension part à 64 — l'anticipation est payée une seconde fois, ce que la page reconnaît elle-même (« l'anticipation est donc payée une seconde fois, sur le passé »). Le réglage qui corrige ça (« Conversion des droits acquis » → « à l'âge de départ effectif », présenté comme ce qu'« une réforme réelle retiendrait ») est enterré dans les options repliées, en bas de formulaire, et n'est pas la valeur par défaut. Trois choses à faire : une bulle de définition sur « âge de référence » (voir le chantier ci-dessus) ; une phrase explicite dès que l'âge de départ saisi est inférieur à l'âge de référence, qui nomme la pénalité et pointe vers le réglage qui l'enlève ; et réexaminer si « à l'âge de départ effectif » ne devrait pas être le défaut plutôt qu'une option cachée.
+  *Fait le 16 septembre 2026, aux deux tiers.* La fiche « âge de référence »
+  est un mot du glossaire, et une NOTE en clair paraît sous les fiches dès
+  que l'âge de départ s'en écarte : « Vous partez 3 ans avant l'âge de
+  référence. Dans les scénarios 3 et 5, les droits acquis avant 2026 sont
+  convertis en capital comme si vous partiez à 67 ans, puis servis à partir
+  de 64 ans : l'anticipation est payée une seconde fois, sur le passé. Le
+  réglage « Conversion des droits acquis : à l'âge de départ effectif », dans
+  les options de modélisation du formulaire, retire cet écart. » Les deux
+  sens sont écrits — un départ après l'âge de référence est bonifié par le
+  même pivot —, et la note se tait quand il n'y a rien à dire. Le troisième
+  point, faire de « à l'âge de départ effectif » le défaut, a été RÉEXAMINÉ
+  et non tranché ici : c'est un changement du modèle, pas du site, et il
+  déplace des chiffres de tête — voir l'action 24, qui porte la mesure.
 
-- [ ] 🔴 **Rendre cherchable la liste des statuts d'affiliation** `Simuler`
+- [x] 🔴 **Rendre cherchable la liste des statuts d'affiliation** `Simuler`
   Le menu « Statut d'affiliation » aligne plus de 60 entrées dans un `<select>` natif sans recherche, répété à l'identique pour le second métier. Trouver « SNCF » ou « artisan » suppose de tout parcourir. Ajouter un champ de recherche/autocomplétion, ou grouper les options par famille (privé, public, agricole, libéral, spécial) avec des `<optgroup>`.
+  *Fait le 16 septembre 2026.* Le menu est GROUPÉ : un `<optgroup>` par
+  famille — salariés du privé, fonction publique et militaires, indépendants
+  et professions libérales, agriculture, régimes spéciaux, outre-mer, élus et
+  assemblées, hors emploi —, et les périodes sans emploi forment le dernier
+  groupe des lignes suivantes. La famille est une donnée, pas un choix du
+  gabarit : chaque statut la porte dans `affiliations.yaml` (`famille`), le
+  chargement refuse un statut sans famille, et un test dit qu'aucune famille
+  n'est vide. Pas de champ de recherche : un `<select>` natif groupé se
+  parcourt au clavier, au doigt et sous synthèse vocale sans une ligne de
+  script, et sept groupes de deux à seize entrées se lisent d'un coup d'œil
+  là où soixante-deux lignes ne se lisaient pas. Le script qui grise les
+  statuts fermés n'a pas bougé : il parcourt `menu.options`, que les groupes
+  ne cachent pas.
 
-- [ ] 🔴 **Mettre le scénario 6 (la proposition) en avant, pas en dernier** `Cas types`
+- [x] 🔴 **Mettre le scénario 6 (la proposition) en avant, pas en dernier** `Cas types`
   Cinq tableaux de 13 lignes × 7 générations s'enchaînent (scénarios 2 à 6) avant d'atteindre la proposition réelle. Un lecteur pressé s'arrête souvent au premier — un contrefactuel, pas la proposition. Ajouter des onglets ou un sélecteur de scénario, avec le scénario 6 affiché par défaut.
+  *Fait le 16 septembre 2026.* Ce que le relecteur voyait encore : l'action
+  16 avait laissé UNE grille, mais celle du scénario 5, avec les quatre
+  autres dans un dépliant — le lecteur pressé s'arrêtait donc sur un
+  contrefactuel. Les cinq grilles sont désormais derrière des ONGLETS, et
+  l'onglet ouvert est le scénario 6, « la proposition ». Les onglets sont des
+  boutons radio dont le panneau suit en CSS (`:has()`) : le clavier les
+  parcourt aux flèches, aucun script ne tourne, l'adresse ne change pas. Les
+  panneaux repliés sont dans la page, `hidden` — là où `:has()` manque, le
+  premier reste visible. Les trois chiffres d'ouverture sont lus sur cette
+  grille-là, et une phrase avant les onglets dit que le 6 est la proposition
+  et les 2 à 5 des contrefactuels. Aucun témoin de simulation ne bouge.
 
-- [ ] 🟠 **Transformer la page Données en table filtrable** `Données`
+- [x] 🟠 **Transformer la page Données en table filtrable** `Données`
   72 régimes (35 modélisés, 37 partiels, 15 hors champ) listés en prose continue avec leur niveau de fiabilité. Impossible de vérifier un régime précis sans faire Ctrl+F. Le contenu est intrinsèquement tabulaire : en faire un tableau triable et filtrable (par famille, statut, fiabilité).
+  *Fait le 16 septembre 2026.* Cinq tableaux de prose sont devenus UNE table
+  de 89 lignes et sept colonnes — régime, famille, ce qu'il est dans le
+  modèle, fiabilité de sa fiche, période, statuts, ce qui manque —, précédée
+  d'un champ de recherche et de deux menus (famille, couverture), et dont
+  chaque en-tête est un bouton de tri (`aria-sort` dit le sens). Le
+  comportement tient en soixante lignes d'`index.html`, en écoute déléguée ;
+  sans script, la table se lit entière dans l'ordre du fichier, ce qu'elle
+  était. Une ligne filtrée n'est que masquée, le compte de ce qui reste est
+  dans une région `aria-live`, et la table reste repliée dans sa section : le
+  budget de lecture de la page n'a pas bougé. Mesuré au navigateur : « sncf »
+  donne 3 régimes sur 89, « hors champ » 15, le tri sur le nom va de
+  l'Ircantec des élus à l'Unirs et revient.
 
-- [ ] 🟠 **Ajouter un sommaire aux pages longues** `Coût · Données`
+- [x] 🟠 **Ajouter un sommaire aux pages longues** `Coût · Données`
   Coût et Données déroulent plusieurs dizaines d'écrans (graphiques, tableaux, encarts « ce que ça ne dit pas ») sans ancre ni retour en haut. Une table des matières collante en tête de page rendrait la navigation praticable.
+  *Fait le 16 septembre 2026.* Coût et Données portent un PLAN — « Dans cette
+  page » — sous leurs trois chiffres : la liste de leurs cartes et de leurs
+  sections repliées, onze sur Coût, quatre sur Données. Il n'est pas écrit à
+  la main : `g.plan` le DÉDUIT du HTML rendu, où chaque section identifiée
+  porte son titre, si bien qu'il ne peut pas dériver et qu'il est le même
+  des deux côtés du portage. Un lien porte la route de la page et
+  `data-vers` ; le script l'ouvre, y pose le focus et y fait défiler sans
+  toucher à l'adresse — c'est l'obstacle relevé par l'action 15 : ici
+  l'adresse est la route. Pas collant : sur un téléphone, une barre fixe
+  mangerait le tiers de la hauteur que le lecteur vient chercher ; et posé
+  sous les chiffres, non au-dessus, pour que le résultat vienne d'abord.
 
-- [ ] ⚪ **Généraliser les sections repliables** `Toutes`
+- [x] ⚪ **Généraliser les sections repliables** `Toutes`
   Cas types propose déjà des triangles ▸ dépliables (« Ce que recouvre chacun des treize cas types »). Données, tout aussi dense, n'en a aucun. Généraliser le pattern à chaque page à forte densité de texte.
+  *Fait le 16 septembre 2026, par l'action 15.* Données a quatre sections
+  repliées, Coût neuf, Programme six, Méthode et Cas types trois et plus ; un
+  test exige au moins trois sections par page et un détail replié plus lourd
+  que ce qui reste ouvert. Rien à ajouter ici.
 
-- [ ] 🟠 **Vérifier le rendu mobile des tableaux à 7 colonnes** `Cas types · Coût`
+- [x] 🟠 **Vérifier le rendu mobile des tableaux à 7 colonnes** `Cas types · Coût`
   Non testé durant cette revue : à confirmer explicitement. Les tableaux « écart par génération » (7 colonnes de 1940 à 2000) et ceux de la page Coût risquent de déborder sur petit écran. Prévoir un conteneur à défilement horizontal borné, ou une vue empilée en dessous d'un certain seuil.
+  *Vérifié le 16 septembre 2026.* Mesuré dans Chromium à 360 et 390 points,
+  toutes les sections dépliées, sur Programme, Cas types, Coût, Données et
+  une page de résultats : aucune page ne déborde (`scrollWidth` égal à la
+  largeur de l'écran partout), et les tableaux plus larges que l'écran — les
+  grilles à 8 colonnes de Cas types, jusqu'à 9 sur Coût, 7 sur Données —
+  défilent dans leur boîte `.defilant`, qui porte `tabindex="0"` et se prend
+  donc au clavier. C'est le conteneur à défilement borné que le relecteur
+  demandait, et il existait ; ce qui manquait était la mesure.
 
-- [ ] ⚪ **Transformer les chemins de fichiers cités en liens** `Coût`
+- [x] ⚪ **Transformer les chemins de fichiers cités en liens** `Coût`
   La page Coût cite « docs/limites.md § 5 ter » comme une référence en texte brut plutôt qu'un lien cliquable. Chaque renvoi à un document du dépôt devrait pointer directement vers ce document.
+  *Fait le 16 septembre 2026.* Les deux `<code>docs/limites.md</code>` de la
+  page Coût sont des liens vers le fichier sur GitHub, et un test refuse tout
+  chemin `docs/`, `scripts/` ou `data/` cité en texte brut sur les sept
+  pages.
 
 #### 2. Clarté des arguments
 
@@ -1800,6 +1894,52 @@ passe, disant quelles pages ont bougé et de combien de mots.
   Aucun « nous avons choisi », aucun nom, aucune note personnelle sur pourquoi ce site existe : tout reste à la troisième personne impersonnelle. Une courte note signée — qui, pourquoi ce projet, quelles réserves — sur Programme ou dans une page « À propos » ferait contrepoint humain à la rigueur méthodologique.
 
 > **Constat (pas une action) :** le design visuel — thème sombre sobre, sans dégradé ni icône générique — n'a pas la « touche IA » habituelle des sites générés. Le travail porte sur le texte, pas sur l'interface.
+
+---
+
+### 24. Convertir les droits acquis à l'âge de départ effectif, par défaut — `à faire`
+
+**Pourquoi.** Ouverte par l'action 23 : le relecteur demandait de « réexaminer
+si "à l'âge de départ effectif" ne devrait pas être le défaut plutôt qu'une
+option cachée ». Le défaut actuel (`reference`) convertit les droits acquis
+avant la bascule au diviseur de l'âge de référence — 67 ans — puis les sert
+au diviseur de l'âge réel : qui part à 64 ans paie son anticipation une
+seconde fois, sur des droits que le système actuel aurait servis sans décote.
+`methodologie.md` §5 le dit lui-même : « `liquidation` est la convention qu'une
+réforme réelle retiendrait, puisqu'elle seule respecte véritablement les droits
+acquis ». Le site l'écrit désormais sous les fiches du simulateur (action 23),
+mais un défaut que la page doit expliquer à chaque calcul est un défaut qui
+pose question.
+
+**Ce que ça déplacerait, mesuré le 16 septembre 2026.** Sur la carrière témoin
+(né en 1975, salarié non cadre à 3 500 € par mois, départ à 64 ans en 2039), le
+scénario 3 passe de 23 074 € à 25 334 € par an (+9,8 %), le scénario 5 de
+28 452 € à 30 712 €. Sur Cas types, 40 des 91 cellules des scénarios 3 et 5
+bougent, de +0,1 à +30,8 points d'écart au système actuel, médiane +3,9 points ;
+les 51 autres — départs à l'âge de référence ou après, générations déjà
+retraitées — ne bougent pas. Les scénarios 1, 2, 4 et 6 sont indifférents. La
+page Coût bouge sur les seuls scénarios 3 et 5 de sa section « six systèmes ».
+
+**Fichiers.** `src/retraite_notionnelle/config.py` (`age_conversion_droits_acquis`),
+`src/retraite_notionnelle/web/pages.py` (`CONVERSIONS_ACQUIS`, la note et la
+cascade qui présentent le défaut comme tel), `moteur/js/config.js` et
+`moteur/js/pages.js`, `docs/methodologie.md` §5, `README.md` (le tableau
+d'exemple, qu'un test recalcule), les témoins.
+
+**Marche.** Changer le défaut des deux moteurs, régénérer les témoins et lire
+leur diff — c'est lui qui dit, cellule par cellule, ce que la convention
+coûtait. Garder `reference` comme variante, pour que la mesure reste
+reproductible. Réécrire la note et la cascade : elles décrivent aujourd'hui le
+défaut comme une pénalité à retirer ; elles décriront la variante comme une
+lecture stricte du cahier des charges. Le piège à nommer d'avance : le
+scénario 3 est l'étalon d'une réforme applicable, et le relever de dix pour
+cent sur une carrière courante déplace la lecture de tout le site — c'est
+précisément pourquoi la décision se prend en connaissance des témoins, et non
+dans une passe sur le site.
+
+**Fin.** Le défaut du simulateur est la convention qu'une réforme réelle
+retiendrait, `limites.md` §3 et `methodologie.md` §5 disent ce que l'ancien
+défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouver.
 
 ---
 
@@ -2166,3 +2306,23 @@ passe, disant quelles pages ont bougé et de combien de mots.
   conditions de leurs producteurs. Deux autres recoupent des travaux déjà
   faits — la bulle du glossaire de l'action 19, la grille unique de l'action
   16 — et l'action dit pour chacun ce qu'il faut vérifier avant de le reprendre.
+- **Septembre 2026, action 23, première passe : le thème « expérience
+  utilisateur ».** Neuf chantiers, neuf cases cochées — sept faits, un déjà
+  fait par l'action 15, un vérifié au navigateur. Ce qui a bougé : un
+  glossaire de vingt entrées commun aux deux portages ; une note sous les
+  fiches du simulateur qui dit ce que l'âge de référence coûte et où le
+  régler ; le menu des statuts groupé par famille, la famille étant une
+  donnée du routage ; Cas types ouvre sur le scénario 6 derrière des onglets
+  en boutons radio ; l'inventaire des régimes est une table qui se cherche,
+  se filtre et se trie ; Coût et Données portent un plan déduit de leurs
+  sections. Pages touchées : les sept ; `pages.json` bouge sur 34 lignes,
+  `simulations.json` sur aucune — aucun chiffre n'a changé. Trois leçons.
+  **Un comportement se pose une fois, en écoute déléguée dans `index.html`**,
+  et le gabarit n'écrit que ce que ce comportement lit (`data-vers`,
+  `data-filtre`, `button.tri`) : trois mécanismes pour soixante lignes, et
+  rien qui ne se prenne qu'à la souris. **Ce qui peut se déduire ne s'écrit
+  pas** : le plan est lu dans le HTML des sections, et ne peut donc pas
+  dériver. Enfin **le réexamen d'un défaut du modèle n'est pas un chantier
+  du site** : la question du relecteur sur l'âge de conversion des droits
+  acquis a été mesurée — 40 cellules sur 91 bougent sur Cas types — et versée
+  à l'action 24 plutôt que tranchée au passage.

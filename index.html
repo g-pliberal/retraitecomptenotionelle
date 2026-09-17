@@ -926,6 +926,109 @@ document.addEventListener("click", (evenement) => {
   contenu.scrollIntoView({ block: "start" });
 });
 
+// -- le plan d'une page longue ------------------------------------------------
+//
+// Le gabarit écrit, en tête des pages Coût et Données, la liste de leurs
+// sections ; chaque lien porte la route de la page (qui ne change rien) et
+// `data-vers`, l'identifiant de la section. C'est le mécanisme du lien
+// d'évitement, étendu au corps de la page : ouvrir la section si elle est
+// repliée — et celles qui l'enveloppent —, y poser le focus, y faire défiler,
+// sans toucher à l'adresse.
+document.addEventListener("click", (evenement) => {
+  const lien = evenement.target.closest("a[data-vers]");
+  if (!lien) { return; }
+  const cible = document.getElementById(lien.dataset.vers);
+  if (!cible) { return; }
+  evenement.preventDefault();
+  for (let noeud = cible; noeud; noeud = noeud.parentElement) {
+    if (noeud.tagName === "DETAILS") { noeud.open = true; }
+  }
+  // Le résumé d'un dépliant est focusable de naissance ; une carte porte
+  // `tabindex="-1"` pour l'être. C'est là que la lecture reprend.
+  const foyer = cible.tagName === "DETAILS" ? cible.querySelector("summary") : cible;
+  foyer.focus({ preventScroll: true });
+  cible.scrollIntoView({ block: "start" });
+});
+
+// -- filtrer et trier un tableau ----------------------------------------------
+//
+// Le gabarit écrit un groupe de filtres (`.filtres[data-cible]`) devant la
+// table qu'il désigne, et chaque ligne de cette table porte en `data-` ce
+// que les menus comparent ; le champ de recherche, lui, cherche dans le texte
+// de la ligne. Une ligne écartée n'est que masquée — le HTML la porte
+// toujours —, et vider les filtres rend tout. Le compte de ce qui reste est
+// écrit dans une région `aria-live`, pour qu'une synthèse vocale l'entende.
+function filtrer(groupe) {
+  const table = document.getElementById(groupe.dataset.cible);
+  if (!table || !table.tBodies.length) { return; }
+  const criteres = {};
+  for (const champ of groupe.querySelectorAll("[data-filtre]")) {
+    criteres[champ.dataset.filtre] = champ.value.trim().toLowerCase();
+  }
+  let total = 0;
+  let visibles = 0;
+  for (const ligne of table.tBodies[0].rows) {
+    total += 1;
+    let gardee = true;
+    for (const [nom, valeur] of Object.entries(criteres)) {
+      if (!valeur) { continue; }
+      gardee = gardee && (nom === "texte"
+        ? ligne.textContent.toLowerCase().includes(valeur)
+        : (ligne.dataset[nom] || "").toLowerCase() === valeur);
+    }
+    ligne.hidden = !gardee;
+    if (gardee) { visibles += 1; }
+  }
+  const compte = document.querySelector(`[data-compte-de="${groupe.dataset.cible}"]`);
+  if (compte) {
+    compte.textContent = visibles === total
+      ? `${total} régimes` : `${visibles} régimes sur ${total}`;
+  }
+}
+
+for (const type of ["input", "change"]) {
+  document.addEventListener(type, (evenement) => {
+    const groupe = evenement.target.closest?.(".filtres[data-cible]");
+    if (groupe) { filtrer(groupe); }
+  });
+}
+
+// Le tri : l'en-tête d'une colonne triable est un bouton. Un clic trie sur
+// cette colonne, un second inverse le sens, et `aria-sort` sur l'en-tête dit
+// où l'on en est. Les nombres se comparent en nombres — « 1 245 » avant
+// « 987 » serait un tri de dictionnaire —, le reste en français.
+function nombreEnTete(texte) {
+  const trouve = /^[+-]?\d[\d \s]*(?:[.,]\d+)?/.exec(texte);
+  return trouve
+    ? Number(trouve[0].replace(/[ \s]/g, "").replace(",", "."))
+    : null;
+}
+
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest("th > button.tri");
+  if (!bouton) { return; }
+  const entete = bouton.parentElement;
+  const table = entete.closest("table");
+  if (!table || !table.tBodies.length) { return; }
+  const colonne = Number(bouton.dataset.colonne);
+  const sens = entete.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending";
+  for (const autre of table.tHead.querySelectorAll("th[aria-sort]")) {
+    autre.removeAttribute("aria-sort");
+  }
+  entete.setAttribute("aria-sort", sens);
+  const corps = table.tBodies[0];
+  const texte = (ligne) => ligne.cells[colonne]?.textContent.trim() ?? "";
+  const lignes = [...corps.rows].sort((a, b) => {
+    const [ta, tb] = [texte(a), texte(b)];
+    const [na, nb] = [nombreEnTete(ta), nombreEnTete(tb)];
+    const ordre = na !== null && nb !== null && na !== nb
+      ? na - nb
+      : ta.localeCompare(tb, "fr", { numeric: true, sensitivity: "base" });
+    return sens === "ascending" ? ordre : -ordre;
+  });
+  corps.append(...lignes);
+});
+
 window.addEventListener("hashchange", afficher);
 
 preparer().then(() => {
