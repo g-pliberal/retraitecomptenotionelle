@@ -2396,6 +2396,65 @@ article de loi non codifié, que seul l'index JORF porte : lues à la main,
 
 ---
 
+### 28. Le simulateur, outil du site partiliberalfrancais.fr — `fait`
+
+**Pourquoi.** Le site du parti sert une copie de ce dépôt sous `/retraite/`,
+et l'avait habillée de son côté : une feuille `plf-theme.css` chargée après
+`moteur/style.css`, qui redéfinissait toutes les variables de couleur, forçait
+le thème sombre aux deux préférences système, imposait sa police et un plancher
+de taille à une vingtaine de sélecteurs INTERNES du simulateur ; et un bandeau
+« retour au site » inséré dans `index.html`. Chaque mise à jour de la copie
+pouvait casser cet habillage sans que rien ne le dise — et la copie avait déjà
+deux blocs de retard sur `main`. Ce dépôt ne contrôle pas ce site : la seule
+réponse tenable est que le simulateur porte lui-même l'air de famille et le
+pont, et que l'hôte n'ait plus qu'un lien à poser.
+
+**Marche.** Le site parent a été lu en lecture seule, dans un navigateur, à
+quatre largeurs : fond bleu-vert, texte blanc, titres en police de marque, liens
+turquoise, focus doré, corps dans la pile du système. Le simulateur en reprend
+la FAMILLE, pas le dessin : un bandeau sombre bleu-vert souligné d'or, le même
+dans les deux thèmes, qui porte au-dessus du titre le lien vers le site ; un
+accent de la même teinte, assombri en clair (6,7:1 au plus bas) et éclairci en
+sombre (7,3:1) ; la pile de polices du système, qui est aussi celle du site et
+la seule qui existe sur tous les téléphones ; des boutons et des champs aux
+angles de 6 px. Le reste — cartes claires, tableaux, tracés, dépliants — est ce
+qu'un outil de calcul doit à ses chiffres, et n'a pas bougé. Le thème sombre
+tire vers le bleu-vert au lieu du gris. Rien n'est chargé du site : ni police,
+ni feuille, ni script, ni logo.
+
+**Ce que ça a déplacé.** *Aucun chiffre* : les témoins de simulation et de
+page sont inchangés. Ce qui change est l'habillage et le pont.
+
+- *Le pont.* Un lien « Parti libéral français » en tête, une ligne en pied,
+  tous deux `target="_top"` : ouvert dans le cadre que la page d'accueil du
+  site ouvre sur `/retraite/`, un lien ordinaire aurait chargé le site DANS le
+  cadre. C'est la seule adresse extérieure de l'en-tête, et un test l'impose :
+  la navigation du site n'est pas recopiée, elle se périmerait à sa prochaine
+  mise en page. Quand l'hôte pose `plf-embedded` sur `<body>` — ce qu'il fait
+  déjà —, le pont se masque de lui-même.
+- *Le contrat.* `docs/integration-partiliberalfrancais.md` dit à l'hôte ce
+  qu'il doit savoir : un lien suffit ; les adresses stables ; ce qu'un
+  hébergement doit servir ; que rien n'est chargé d'ailleurs ; que les NOMS des
+  variables de `:root` sont stables et que rien d'autre ne l'est ; et que
+  `plf-theme.css` comme `plf-back-link` sont désormais des doublons à retirer.
+  Avec la comparaison `/retraite/` contre `/retraite/#/simuler` pour un lien
+  nommé « simulateur » : le second, un geste avant le premier résultat, aucun
+  contexte perdu.
+- *Vérifié.* Contrastes retenus par les tests (textes, contours, palette des
+  scénarios) dans les deux thèmes ; l'en-tête et le pied comparés entre les
+  deux portages par un test nouveau ; ordre de tabulation lien d'évitement →
+  pont → titre → navigation → formulaire, contour doré sur le bandeau ; aucun
+  défilement horizontal de 320 à 1 440 px ; le focus des résultats après
+  calcul inchangé. Impeccable ne relève que ce qui est voulu (le filet
+  latéral des notes, la jauge d'attente, coupée en mouvement réduit) ; les Web
+  Interface Guidelines ont donné `text-wrap: balance` sur les titres et
+  `theme-color` sur la page, et rien de leurs préférences de copie anglaise.
+- *Ce qui reste à l'hôte.* Retirer ses deux modifications et recopier `main`
+  tel quel ; poser un lien visible — l'onglet « Retraites notionnelles » est
+  masqué depuis que le site a jugé le simulateur « pas encore prêt ». La page
+  Mentions nomme GitHub comme hébergeur, ce qui est vrai de l'adresse GitHub
+  Pages et à compléter pour la copie : c'est à l'éditeur.
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -2906,3 +2965,11 @@ article de loi non codifié, que seul l'index JORF porte : lues à la main,
   `@playwright/cli` 0.1.20 et son Chromium. Ce qu'une machine neuve doit
   encore télécharger est dans `docs/outillage_interface.md`. Aucun audit
   n'a été fait : l'action qui s'en servira reste à ouvrir.
+- **17 septembre 2026, action 28.** Faite. Le simulateur ressemble au site
+  qui le sert sans rien lui emprunter — bandeau bleu-vert souligné d'or,
+  accent de la même teinte, polices du système —, porte lui-même le lien de
+  retour vers lui, et `docs/integration-partiliberalfrancais.md` dit à l'hôte
+  ce qu'il doit savoir : un lien, et rien d'autre. Aucun chiffre déplacé.
+  La leçon, qui vaut pour tout ce qui sera servi ailleurs qu'ici : **ce qu'un
+  hôte doit connaître d'une page pour l'héberger doit tenir en une adresse et
+  une liste de noms** — tout ce qu'il cite de plus est ce qui cassera.

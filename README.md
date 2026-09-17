@@ -109,6 +109,11 @@ Scénario                                                          Courants   Co
 
 ### 👉 [g-pliberal.github.io/retraitecomptenotionelle](https://g-pliberal.github.io/retraitecomptenotionelle/)
 
+Le site du Parti libéral français le sert aussi, sous
+[partiliberalfrancais.fr/retraite/](https://partiliberalfrancais.fr/retraite/) :
+la même page, copiée telle quelle. Ce que ce site doit savoir du simulateur —
+peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
+
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
@@ -1043,7 +1048,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          877 tests Python
+tests/                          879 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

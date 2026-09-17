@@ -16,6 +16,12 @@ import { echapper, formatFixe } from "./format.js";
 export const DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle";
 
 /**
+ * Le site dont cette page est un outil. Il la sert sous `/retraite/` ; elle ne
+ * charge rien de lui, et n'y renvoie que par ce lien — en tête et en pied.
+ */
+export const SITE_PARENT = "https://partiliberalfrancais.fr/";
+
+/**
  * Ce qui signe une carte exportée en image. Une image quittant le site n'a plus
  * ni barre d'adresse ni pied de page : sans ces deux lignes, elle circule sans
  * dire d'où elle vient ni qui l'a produite, et le premier qui la republie en
@@ -73,7 +79,10 @@ export function navigation(cheminActif = "/") {
 export function entete(cheminActif = "/") {
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
-  <h1><a href="${lien("/")}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></h1>
+  <div class="marque">
+    <a class="retour" href="${SITE_PARENT}" target="_top">${icone("arrow-left")}<span>Parti libéral français</span></a>
+    <h1><a href="${lien("/")}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></h1>
+  </div>
   <nav aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
 }
@@ -99,6 +108,7 @@ export function pied() {
   Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
   <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
   <p><a href="${lien("/mentions")}">Mentions légales, données personnelles et accessibilité</a></p>
+  <p class="retour-site">Un outil du <a href="${SITE_PARENT}" target="_top">Parti libéral français</a>.</p>
 </footer>`;
 }
 
@@ -534,6 +544,7 @@ export function fiche(etiquette, valeur, precision = "", definition = "") {
  * qui permet de retrouver l'original d'un coup d'œil, et au test de l'ouvrir.
  */
 export const ICONES = {
+  "arrow-left": '<path d="m12 19-7-7 7-7" /><path d="M19 12H5" />',
   "chevron-down": '<path d="m6 9 6 6 6-6" />',
   "circle-help": '<circle cx="12" cy="12" r="10" />'
     + '<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />'

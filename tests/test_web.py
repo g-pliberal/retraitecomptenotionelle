@@ -3410,6 +3410,58 @@ def test_les_deux_portages_dessinent_les_memes_pictogrammes():
     assert json.loads(lecture.stdout) == dict(g.ICONES)
 
 
+# -- le pont vers le site parent ---------------------------------------------
+#
+# La page est servie sous partiliberalfrancais.fr/retraite/, et parfois dans un
+# cadre de la page d'accueil de ce site. Elle n'en charge rien ; elle n'y
+# renvoie que par un lien, et ce lien doit ressortir de tout cadre.
+
+
+def test_le_pont_vers_le_site_parent_ressort_de_tout_cadre():
+    """Un seul pont, en tête et en pied, et rien d'autre du site parent.
+
+    ``target="_top"`` : ouvert dans le cadre que la page d'accueil du site
+    ouvre sur le simulateur, un lien ordinaire chargerait le site DANS le
+    cadre. Hors cadre, l'attribut ne change rien. Le lien est la seule adresse
+    extérieure de l'en-tête : la navigation du site n'est pas recopiée, elle
+    se périmerait à sa prochaine mise en page.
+    """
+    import re
+
+    pont = (f'href="{g.SITE_PARENT}" target="_top"')
+    entete = g.entete("/")
+    assert pont in entete
+    assert pont in g.pied()
+    exterieures = set(re.findall(r'href="(https?://[^"]+)"', entete))
+    assert exterieures == {g.SITE_PARENT}, exterieures
+    # Dans le cadre, le site pose ``plf-embedded`` sur ``<body>`` ; sa propre
+    # navigation est alors juste au-dessus, et le pont ferait doublon.
+    assert "body.plf-embedded .marque .retour" in g.FEUILLE_DE_STYLE
+
+
+def test_la_coquille_est_la_meme_des_deux_cotes_du_portage():
+    """L'en-tête et le pied sont écrits deux fois, en Python et en JavaScript.
+
+    Les témoins de page ne comparent que le corps : c'est ici, et seulement
+    ici, qu'un lien ajouté d'un seul côté se verrait.
+    """
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    lecture = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'import { entete, pied } from "./moteur/js/gabarit.js";'
+         'process.stdout.write(JSON.stringify([entete("/cout"), pied()]));'],
+        cwd=racine, capture_output=True, text=True, check=True,
+    )
+    assert json.loads(lecture.stdout) == [g.entete("/cout"), g.pied()]
+
+
 def test_le_site_ne_dessine_plus_aucun_pictogramme_a_la_main(contexte):
     """Ni emoji, ni caractère détourné en icône.
 

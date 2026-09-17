@@ -1,21 +1,41 @@
 /* Extrait de src/retraite_notionnelle/web/gabarit.py par
    scripts/construire_donnees.py — ne pas modifier ici. */
+/* La page est un outil du site partiliberalfrancais.fr, servi sous /retraite/.
+   Elle ne charge rien de ce site — ni feuille, ni police, ni script — et n'a
+   pas à lui ressembler trait pour trait : elle en reprend la FAMILLE. Un
+   bandeau sombre bleu-vert souligné d'or, un accent de la même teinte, la
+   pile de polices du système ; le reste — cartes claires, tableaux, tracés —
+   est ce qu'un outil de calcul doit à ses chiffres. Les variables ci-dessous
+   sont le seul point de contact : un hôte qui voudrait ajuster une couleur
+   les redéfinit dans une feuille chargée après celle-ci, et n'a besoin de
+   connaître ni un sélecteur, ni un fichier. Leurs noms sont donc stables. */
 :root {
   color-scheme: light dark;
-  --fond: #fbfaf7;
+  --fond: #f5f8f8;
   --fond-carte: #ffffff;
-  --fond-appui: #f2efe9;
-  --texte: #1b1a17;
-  --texte-doux: #5c574d;
-  --trait: #ddd7cb;
+  --fond-appui: #e9f0f1;
+  --texte: #142229;
+  --texte-doux: #4e6169;
+  --trait: #d3dddf;
   /* Bordure des CHAMPS, distincte du filet décoratif : un contour de champ est
      ce qui dit où l'on peut écrire, et doit donc atteindre 3:1 sur les deux
      fonds qu'il sépare — celui du champ et celui de la carte qui le porte
      (WCAG 2.1, 1.4.11). Le filet `--trait` plafonne à 1,4:1 ; mesuré ici :
-     3,38:1 sur le fond, 3,53:1 sur la carte. */
-  --trait-champ: #8e887a;
-  --accent: #7a2e1e;
-  --accent-doux: #f0e2dd;
+     3,45:1 sur le fond, 3,69:1 sur la carte. */
+  --trait-champ: #77888e;
+  /* L'accent : la teinte bleu-vert du site, assombrie jusqu'à tenir 4,5:1 en
+     texte sur les trois fonds (6,73:1 sur le fond, 7,19:1 sur la carte) et à
+     porter du blanc lisible sur un bouton (7,19:1). */
+  --accent: #0b6167;
+  --accent-doux: #ddeeee;
+  /* Le bandeau de tête, le même dans les deux thèmes : c'est lui qui dit à qui
+     arrive du site qu'il n'en est pas sorti. Blanc sur ce fond : 13,6:1 ; le
+     texte atténué : 9,6:1 ; le filet d'or qui le souligne : 8,1:1. */
+  --bandeau: #003340;
+  --bandeau-texte: #ffffff;
+  --bandeau-doux: #c9dde2;
+  --bandeau-vif: #3ad4c4;
+  --or: #e9c53d;
   --actuel: #03729a;
   --retroactif: #9e4334;
   --prospectif: #817f2a;
@@ -37,15 +57,20 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fond: #16151a;
-    --fond-carte: #1e1d23;
-    --fond-appui: #26252c;
-    --texte: #ece9e3;
-    --texte-doux: #a5a099;
-    --trait: #35333c;
-    --trait-champ: #787581;
-    --accent: #e08b6f;
-    --accent-doux: #3a2820;
+    /* Le sombre tire vers le bleu-vert du bandeau plutôt que vers le gris
+       neutre : la page reste de la même famille éteinte. Mesuré : le texte
+       14,8:1 sur le fond, 11,4:1 sur l'appui ; le texte atténué 6,8:1 au
+       plus bas ; l'accent 7,3:1 au plus bas, et le fond de carte sur l'accent
+       — un bouton — 8,5:1. */
+    --fond: #0f1c21;
+    --fond-carte: #16262c;
+    --fond-appui: #1e323a;
+    --texte: #e8eef0;
+    --texte-doux: #a9bcc2;
+    --trait: #29414a;
+    --trait-champ: #7d8c92;
+    --accent: #4fd3c6;
+    --accent-doux: #163d42;
     --actuel: #3d9bc2;
     --retroactif: #cb745f;
     --prospectif: #837118;
@@ -69,7 +94,12 @@ body {
   margin: 0;
   background: var(--fond);
   color: var(--texte);
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  /* La pile du système, sans police chargée : c'est celle que le site parent
+     compose pour son texte courant, et c'est la seule qui existe partout — les
+     empattements demandés avant n'avaient d'équivalent sur aucun téléphone
+     Android, qui leur substituait un serif plus large. */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
   /* En `rem` et non en pixels : une taille en pixels ignore la préférence de
      taille de police du navigateur, sur laquelle comptent ceux qui l'ont
      agrandie une fois pour toutes. 1,0625rem vaut les 17px d'origine quand la
@@ -97,23 +127,49 @@ main { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem; }
    tout entier n'apprendrait rien. */
 main:focus { outline: none; }
 
+/* Le bandeau : sombre, souligné d'or, dans les deux thèmes. Il porte, au-dessus
+   du titre, le lien vers le site dont cette page est un outil — c'est le seul
+   pont vers lui, et il suffit : reproduire ici la navigation du site en ferait
+   une copie qui se périme à sa prochaine mise en page. `target="_top"` sur ce
+   lien : si la page est ouverte dans un cadre, on ressort du cadre au lieu
+   d'ouvrir le site dedans ; hors cadre, l'attribut ne change rien. */
 header.bandeau {
-  border-bottom: 1px solid var(--trait);
-  background: var(--fond-carte);
-  padding: 1.25rem 0 1rem;
+  border-bottom: 3px solid var(--or);
+  background: var(--bandeau);
+  color: var(--bandeau-texte);
+  padding: 0.85rem 0 0.8rem;
   margin-bottom: 2rem;
 }
 header.bandeau .interieur {
   max-width: 60rem; margin: 0 auto; padding: 0 1.25rem;
   display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem;
-  align-items: baseline; justify-content: space-between;
+  align-items: flex-end; justify-content: space-between;
 }
+.marque { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.marque .retour {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 0.35rem;
+  color: var(--bandeau-doux); text-decoration: none;
+  font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase;
+  line-height: 1.4;
+}
+.marque .retour:hover { color: var(--bandeau-texte); }
+.marque .retour .icone { width: 1em; height: 1em; }
 header.bandeau h1 { font-size: 1.2rem; margin: 0; letter-spacing: 0.01em; }
 header.bandeau h1 a {
   color: inherit; text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.5rem;
 }
-header.bandeau h1 .icone { color: var(--accent); width: 1.15em; height: 1.15em; }
+header.bandeau h1 .icone { color: var(--bandeau-vif); width: 1.15em; height: 1.15em; }
+/* Sur le fond sombre du bandeau, le contour de focus est d'or : l'accent, fait
+   pour les fonds clairs, s'y perdrait (or sur bandeau : 8,1:1). */
+header.bandeau :focus-visible { outline-color: var(--or); }
+/* Dans le cadre que le site parent ouvre sur sa page d'accueil — même
+   origine, classe posée par lui sur `<body>` —, sa navigation est juste
+   au-dessus, et le lien de retour ferait doublon. C'est la seule chose que la
+   page sache de son hôte, et elle ne coûte rien s'il cesse de la poser. */
+body.plf-embedded .marque .retour, body.plf-embedded footer .retour-site {
+  display: none;
+}
 /* La navigation, en trois groupes — le programme, la preuve, la confiance —,
    chacun sous une étiquette minuscule qui dit à quoi servent ses pages. Le
    groupe est une colonne : l'étiquette au-dessus, les liens en ligne dessous,
@@ -123,19 +179,22 @@ header.bandeau nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; }
 nav .groupe { display: inline-flex; flex-direction: column; gap: 0.1rem; }
 nav .etiquette {
   font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--texte-doux); line-height: 1.2;
+  color: var(--bandeau-doux); line-height: 1.2;
 }
 nav .liens { display: flex; gap: 1.1rem; }
 nav a {
-  color: var(--texte-doux); text-decoration: none;
-  font-size: 0.92rem;
-  border-bottom: 1px solid transparent;
+  color: var(--bandeau-doux); text-decoration: none;
+  font-size: 0.92rem; padding-bottom: 0.1rem;
+  border-bottom: 2px solid transparent;
 }
 nav a:hover, nav a[aria-current="page"] {
-  color: var(--accent); border-bottom-color: var(--accent);
+  color: var(--bandeau-texte); border-bottom-color: var(--or);
 }
-h2 { font-size: 1.35rem; margin: 2.5rem 0 0.75rem; font-weight: 600; }
-h3 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; font-weight: 600; }
+/* Un titre de deux lignes se coupe à égalité plutôt que de laisser un mot seul
+   sur la seconde ; là où `text-wrap` n'existe pas, il se coupe comme avant. */
+h1, h2, h3, h4 { letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font-size: 1.35rem; margin: 2.5rem 0 0.75rem; font-weight: 700; }
+h3 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; font-weight: 700; }
 p { margin: 0.7rem 0; }
 a { color: var(--accent); }
 .chapeau { font-size: 1.08rem; color: var(--texte-doux); max-width: 44rem; }
@@ -212,7 +271,7 @@ label .aide { display: block; font-size: 0.8rem; }
 input, select, textarea {
   width: 100%; padding: 0.45rem 0.6rem; font: inherit; font-size: 0.95rem;
   color: var(--texte); background: var(--fond); border: 1px solid var(--trait-champ);
-  border-radius: 4px;
+  border-radius: 6px;
 }
 /* Le relevé de carrière se lit en colonnes : une police à chasse fixe aligne
    les années les unes sous les autres, et une faute de frappe s'y voit. Le
@@ -232,9 +291,10 @@ input:focus, select:focus, textarea:focus {
   outline: 2px solid var(--accent); outline-offset: 1px;
 }
 button {
-  font: inherit; font-size: 0.98rem; padding: 0.55rem 1.4rem; cursor: pointer;
+  font: inherit; font-size: 0.98rem; font-weight: 600;
+  padding: 0.55rem 1.4rem; cursor: pointer;
   color: var(--fond-carte); background: var(--accent);
-  border: 1px solid var(--accent); border-radius: 4px;
+  border: 1px solid var(--accent); border-radius: 6px;
 }
 button:hover { opacity: 0.9; }
 /* Un lien qui a le poids d'un bouton : il ouvre le simulateur, c'est-à-dire
@@ -246,8 +306,8 @@ button:hover { opacity: 0.9; }
 a.bouton {
   display: inline-block; text-decoration: none;
   color: var(--fond-carte); background: var(--accent);
-  border: 1px solid var(--accent); border-radius: 4px;
-  padding: 0.55rem 1.4rem; font-size: 0.98rem;
+  border: 1px solid var(--accent); border-radius: 6px;
+  padding: 0.55rem 1.4rem; font-size: 0.98rem; font-weight: 600;
 }
 a.bouton:hover { opacity: 0.9; }
 /* Les métiers de la carrière : une boîte par métier, la dernière en pointillé
@@ -685,7 +745,11 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   main { padding: 0 1rem; }
   footer { width: calc(100% - 2rem); padding: 1.25rem 0 4rem; }
   .carte { padding: 1rem 1.1rem; }
-  header.bandeau .interieur { gap: 0.4rem 1rem; }
+  header.bandeau .interieur { gap: 0.6rem 1rem; }
+  /* Le titre prend toute la largeur et la navigation passe dessous : côte à
+     côte, les deux se partageaient 358 points et le titre se coupait en deux. */
+  .marque { flex: 1 1 100%; }
+  header.bandeau h1 { font-size: 1.1rem; }
   header.bandeau nav { gap: 0.4rem 1.2rem; }
   nav .liens { gap: 0.9rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
@@ -781,7 +845,12 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
    dépliées, faute de quoi une page imprimée renvoie à des liens qu'on ne peut
    pas suivre. */
 @media print {
-  header.bandeau nav, .evitement { display: none; }
+  header.bandeau nav, .evitement, .marque .retour { display: none; }
+  /* Le bandeau s'imprime en noir sur blanc : une bande bleu-vert pleine page
+     coûterait de l'encre pour ne rien dire de plus que le titre. */
+  header.bandeau {
+    background: #fff; color: #000; border-bottom: 1px solid #000; margin-bottom: 1rem;
+  }
   /* Ni la lecture au survol — il n'y a pas de pointeur sur du papier —, ni le
      bouton qui compose une image : la page imprimée EST déjà l'image. */
   .graphique .lecture, .graphique .aide-clavier, section.cle > .partage {
