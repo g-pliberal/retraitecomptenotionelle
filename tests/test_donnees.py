@@ -2209,3 +2209,79 @@ def test_la_distribution_des_pensions_est_une_partition():
         for precedente, suivante in zip(tranches, tranches[1:]):
             assert precedente.borne_superieure == suivante.borne_inferieure
             assert suivante.borne_inferieure - precedente.borne_inferieure == 100.0
+
+
+# -- le registre de conformité du scénario 1 au droit ---------------------------
+
+
+def _registre_de_veille() -> dict:
+    import yaml
+
+    chemin = RACINE_DONNEES / "reference" / "legislation" / "veille.yaml"
+    return yaml.safe_load(chemin.read_text(encoding="utf-8"))
+
+
+def test_le_registre_de_veille_est_tenu():
+    """Chaque règle du scénario 1 a sa ligne, sourcée et datée.
+
+    Le 17 septembre 2026, les âges légaux certifiés du dépôt dataient d'un
+    dump LEGI antérieur à la loi qui les avait changés, et rien ne le disait.
+    Ce registre est la réponse : une ligne par règle, avec le texte, la source
+    officielle lue, la date de la lecture, l'exemple publié qui la rejoue et
+    l'état. Le test en impose la forme ; `scripts/veille_droit.py` dit ce qui
+    a vieilli ; `docs/veille_droit.md` dit la règle.
+    """
+    import re
+    import yaml
+
+    registre = _registre_de_veille()
+    etats = {"conforme", "transcrit", "approximation", "manque", "hors_modele", "a_verifier"}
+    types = {"legifrance", "circulaire_cnav", "service_public", "jorf", "autre"}
+    exemples = yaml.safe_load(
+        (RACINE_DONNEES.parent / "tests" / "temoins" / "exemples_officiels.yaml")
+        .read_text(encoding="utf-8"))
+    temoins = {exemple["id"] for exemple in exemples["exemples"]}
+    date = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+    identifiants = [entree["id"] for entree in registre["entrees"]]
+    assert len(identifiants) == len(set(identifiants)), "identifiants en double"
+    assert registre["sources_a_consulter"], "aucune source à consulter"
+    assert registre["journal"], "journal vide"
+    for consigne in registre["journal"]:
+        assert date.fullmatch(str(consigne["date"])), consigne
+        for champ in ("session", "consulte", "trouve", "reste"):
+            assert len(str(consigne[champ]).split()) >= 3, (consigne["date"], champ)
+
+    for entree in registre["entrees"]:
+        code = entree["id"]
+        assert entree["etat"] in etats, (code, entree["etat"])
+        assert len(str(entree["regle"]).split()) >= 6, code
+        assert entree["textes"], code
+        assert date.fullmatch(str(entree["verifie_le"])), code
+        assert date.fullmatch(str(entree["prochaine_veille"])), code
+        assert str(entree["prochaine_veille"]) > str(entree["verifie_le"]), code
+        for source in entree.get("sources") or []:
+            assert source["type"] in types, (code, source)
+            assert date.fullmatch(str(source["date"])), (code, source)
+            assert len(str(source["reference"]).split()) >= 2, (code, source)
+        # Une règle conforme a été lue à la source : au moins une, et une
+        # circulaire ou une fiche d'application quand un témoin la rejoue.
+        if entree["etat"] == "conforme":
+            assert entree.get("sources"), (code, "conforme sans source")
+        inconnus = set(entree.get("temoins") or []) - temoins
+        assert not inconnus, (code, sorted(inconnus))
+        assert len(str(entree["effet"]).split()) >= 3, code
+
+
+def test_toute_reforme_recente_a_sa_ligne_de_veille(reformes):
+    """Une réforme entrée au calendrier depuis 2023 sans ligne de veille est une
+    réforme qu'on a portée sans dire où on l'a lue ni quand."""
+    registre = _registre_de_veille()
+    couvertes = {code for entree in registre["entrees"]
+                 for code in (entree.get("reformes") or [])}
+    recentes = {reforme.code for reforme in reformes if reforme.date >= "2023-01-01"}
+    manquantes = recentes - couvertes
+    assert not manquantes, sorted(manquantes)
+    codes = {reforme.code for reforme in reformes}
+    inconnues = couvertes - codes
+    assert not inconnues, sorted(inconnues)

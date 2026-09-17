@@ -8,7 +8,9 @@ chaque chiffre, ni `regimes.md`, journal de la campagne sur les régimes.
 
 **Comment le tenir.** Une action a un état — `à faire`, `en cours`, `fait` — et
 une ligne « ce que ça a déplacé » quand elle est faite, comme les tranches de
-`regimes.md`. Une action qu'on abandonne ne disparaît pas : elle passe en bas,
+`regimes.md`. Toute session qui touche au scénario 1 commence par
+`python scripts/veille_droit.py` et finit par une entrée au journal de
+`data/reference/legislation/veille.yaml` : voir `docs/veille_droit.md`. Une action qu'on abandonne ne disparaît pas : elle passe en bas,
 avec la raison. Une découverte faite en chemin qui mérite un chantier se note
 ici, pas dans un commentaire de code.
 
@@ -2790,3 +2792,15 @@ certification daté d'après le 8 mai 2026.
   vingt-quatre ou vingt-trois années, surcote datée trimestre par trimestre.
   Le détail et les leçons sont sous les deux actions ; l'action 27 est ce qui
   reste : faire relire ces tables au récupérateur sur un dump LEGI récent.
+
+- **17 septembre 2026, le registre de veille.** Après l'action 26, la
+  question « qu'est-ce qui pourrait encore manquer ? » a reçu une réponse qui
+  se tient à jour toute seule : `data/reference/legislation/veille.yaml`, une
+  ligne par règle du scénario 1 — appliquée, approchée, omise ou pas encore
+  lue — avec le texte, la source officielle lue, la date, l'exemple publié
+  et l'état ; `scripts/veille_droit.py` dit ce qui a vieilli ; un test refuse
+  toute réforme sans sa ligne ; `CLAUDE.md` en fait le premier et le dernier
+  geste de toute session. Trente-cinq lignes au départ, dont sept à vérifier
+  et trois manques mesurés. La leçon est dans `docs/veille_droit.md` : **une
+  valeur n'est pas juste parce qu'elle est certifiée, elle est juste à la
+  date de sa certification**, et cette date doit être visible.
