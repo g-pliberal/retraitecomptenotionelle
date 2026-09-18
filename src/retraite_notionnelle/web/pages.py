@@ -3313,7 +3313,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             barre += (f'<span class="capitalise" '
                       f'style="width:{part_capitalisee / reference * 100:.1f}%"></span>')
             partage = f"""
-      <span class="partage">{g.euros_centimes(repartition / 12)} de pension
+      <span class="composition">{g.euros_centimes(repartition / 12)} de pension
         par répartition + {g.euros_centimes(part_capitalisee / 12)} de rente
         capitalisée, par mois</span>"""
         return f"""

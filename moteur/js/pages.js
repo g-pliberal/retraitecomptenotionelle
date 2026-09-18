@@ -2794,7 +2794,7 @@ function resultats(contexte, saisie) {
     if (partCapitalisee > 0) {
       barre += `<span class="capitalise" style="width:${formatFixe(partCapitalisee / reference * 100, 1)}%"></span>`;
       partage = `
-      <span class="partage">${g.eurosCentimes(repartition / 12)} de pension
+      <span class="composition">${g.eurosCentimes(repartition / 12)} de pension
         par répartition + ${g.eurosCentimes(partCapitalisee / 12)} de rente
         capitalisée, par mois</span>`;
     }

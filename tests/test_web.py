@@ -4372,6 +4372,39 @@ def test_aucune_page_ne_compte_plus_de_quatre_systemes(contexte, chemin):
 
 
 
+def test_une_classe_du_bloc_scenario_ne_reprend_pas_un_composant():
+    """Une classe du bloc des scénarios ne doit pas être stylée SANS ANCÊTRE.
+
+    La ligne qui décompose le montant de la proposition s'était appelée
+    `partage`. Ce nom était déjà celui de la barre de boutons de partage, dont
+    la règle — sans ancêtre, donc applicable partout — porte un filet or de
+    3 px sur toute la largeur : le filet est venu se tirer en travers du bloc,
+    entre le montant et sa barre, et rien dans le HTML ne l'expliquait. La
+    règle était à six cents lignes de là, dans un composant sans rapport.
+
+    Le discriminant est exactement celui-là : une classe stylée sous un ancêtre
+    (`.engagements .chiffre`) ne peut pas descendre ici, une classe stylée nue
+    (`.partage`) le peut. `barre` fait exception, et c'est voulu : c'est le
+    composant que le bloc emploie, pas un nom qu'il lui reprend.
+    """
+    import re
+
+    feuille = re.sub(r"/\*.*?\*/", "", g.FEUILLE_DE_STYLE, flags=re.S)
+    selecteurs = [
+        " ".join(morceau.split())
+        for tete in re.findall(r"(?:^|\})\s*([^{}@][^{}]*?)\{", feuille, re.S)
+        for morceau in tete.split(",")
+    ]
+    for classe in ("entete", "titre", "montant", "chiffre", "somme", "unite",
+                   "annuel", "glose", "composition", "capitalise"):
+        nues = [s for s in selecteurs if re.match(rf"^\.{classe}\b", s)]
+        assert not nues, (
+            f".{classe} est stylée sans ancêtre par {nues} : la règle "
+            "s'appliquera aussi dans le bloc des scénarios, qui pose cette "
+            "classe, sans que rien ne le montre à la lecture du HTML"
+        )
+
+
 def test_les_pages_longues_portent_leur_plan(contexte):
     """Un plan déduit des sections, et qui les ouvre sans toucher à la route.
 
