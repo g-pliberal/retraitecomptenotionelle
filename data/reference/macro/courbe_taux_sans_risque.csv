@@ -1,0 +1,55 @@
+# Courbe des taux sans risque de la zone euro — zéro-coupon par maturité
+# source_id: bce_courbe_taux_aaa
+# unite: taux zéro-coupon à COMPOSITION CONTINUE, en fraction. Le taux
+#        annuel équivalent est exp(taux_continu) - 1 ; la conversion est
+#        faite par le modèle, pas à la saisie.
+# fiabilite:
+#   certifiee : valeurs relevées sur le portail de données de la BCE, qui
+#               estime et publie cette courbe, et recontrôlées par
+#               scripts/verifier_donnees.py.
+#
+# Une courbe est un INSTANTANÉ : chaque ligne porte sa date d'observation,
+# et le modèle lit la plus récente. Les courbes passées restent ici pour
+# que l'on puisse refaire un calcul tel qu'il a été publié.
+#
+# Ces taux servent au seul pilier de capitalisation obligatoire de la
+# proposition : ils disent à quel taux un versement se place pour une durée
+# donnée, et, par leurs forwards implicites, à quel taux les versements des
+# années suivantes se placeront. La courbe AAA rend moins que l'OAT
+# française — 51 points de base au 10 ans en septembre 2026 — et c'est
+# voulu : cet écart rémunère un risque de crédit, qu'un régime obligatoire
+# ne peut pas promettre. Voir docs/methodologie.md.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+date,maturite,taux_continu,fiabilite
+2026-09-17,1,0.02968537,certifiee
+2026-09-17,2,0.03148194,certifiee
+2026-09-17,3,0.03189669,certifiee
+2026-09-17,4,0.03209784,certifiee
+2026-09-17,5,0.03238692,certifiee
+2026-09-17,6,0.03279556,certifiee
+2026-09-17,7,0.03328691,certifiee
+2026-09-17,8,0.03381789,certifiee
+2026-09-17,9,0.03435491,certifiee
+2026-09-17,10,0.03487506,certifiee
+2026-09-17,11,0.03536398,certifiee
+2026-09-17,12,0.03581328,certifiee
+2026-09-17,13,0.03621861,certifiee
+2026-09-17,14,0.03657824,certifiee
+2026-09-17,15,0.03689218,certifiee
+2026-09-17,16,0.03716151,certifiee
+2026-09-17,17,0.03738802,certifiee
+2026-09-17,18,0.03757386,certifiee
+2026-09-17,19,0.03772145,certifiee
+2026-09-17,20,0.03783327,certifiee
+2026-09-17,21,0.03791185,certifiee
+2026-09-17,22,0.03795967,certifiee
+2026-09-17,23,0.03797915,certifiee
+2026-09-17,24,0.03797259,certifiee
+2026-09-17,25,0.03794221,certifiee
+2026-09-17,26,0.03789009,certifiee
+2026-09-17,27,0.03781822,certifiee
+2026-09-17,28,0.03772842,certifiee
+2026-09-17,29,0.03762245,certifiee
+2026-09-17,30,0.03750190,certifiee

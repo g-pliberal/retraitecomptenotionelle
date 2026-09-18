@@ -50,8 +50,10 @@ from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
+from retraite_notionnelle.donnees.frais import FraisEpargneRetraite  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
+from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
     charger_inventaire,
@@ -76,7 +78,7 @@ STYLE = RACINE / "moteur" / "style.css"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 12
+VERSION = 13
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -670,6 +672,41 @@ def _hypotheses() -> dict:
     }
 
 
+def _courbe_taux_sans_risque() -> dict:
+    """La dernière courbe publiée, telle que le pilier capitalisé la lit.
+
+    Une seule date — la plus récente : le paquet sert le calcul, pas l'archive.
+    Les courbes antérieures restent dans le fichier de référence, pour qui veut
+    refaire un chiffre tel qu'il a été publié.
+    """
+    courbe = CourbeTauxSansRisque(DONNEES)
+    return {
+        "date": courbe.date,
+        "maturites": list(courbe.maturites),
+        "taux_continus": [courbe.zero_continu(m) for m in courbe.maturites],
+        "fiabilite": int(courbe.fiabilite_publiee),
+    }
+
+
+def _frais_epargne_retraite() -> dict:
+    """Le barème de frais du PER, avec de quoi le citer sur la page Données."""
+    frais = FraisEpargneRetraite(DONNEES)
+    return {
+        "annee_reference": frais.annee_reference,
+        "publication": frais.publication,
+        "fiabilite": int(frais.fiabilite),
+        "postes": {
+            cle: {
+                "valeur": poste.valeur,
+                "assiette": poste.assiette,
+                "libelle": poste.libelle,
+                "note": poste.note,
+            }
+            for cle, poste in sorted(frais.postes.items())
+        },
+    }
+
+
 def _inventaire() -> list:
     """Tous les régimes, calculés ou non, tels que la page « Données » les liste."""
     return [ligne.dictionnaire() for ligne in charger_inventaire(DONNEES)]
@@ -681,6 +718,8 @@ def construire() -> bytes:
         "version": VERSION,
         "series": _series(),
         "hypotheses": _hypotheses(),
+        "courbe_taux_sans_risque": _courbe_taux_sans_risque(),
+        "frais_epargne_retraite": _frais_epargne_retraite(),
         "quotients": _quotients(),
         "calibrations": _calibrations(),
         "regimes": _regimes(),

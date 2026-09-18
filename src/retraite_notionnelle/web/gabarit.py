@@ -871,6 +871,23 @@ tbody tr[hidden] { display: none; }
 .barre.retroactif > span { background: var(--retroactif); }
 .barre.retroactif-employeur > span { background: var(--retroactif-employeur); }
 .barre.liberal > span { background: var(--liberal); height: 14px; }
+/* Le pilier capitalisé, dans la barre de la proposition : la même couleur,
+   hachurée. Même système, autre nature — un capital placé, pas une pension
+   mutualisée. Une seconde teinte l'aurait rangé ailleurs ; une hachure dit
+   « ceci n'est pas de la répartition » sans quitter la famille, et se voit
+   aussi en noir et blanc et sous une deutéranopie. */
+.barre.liberal > span.capitalise {
+  background: repeating-linear-gradient(135deg, var(--liberal) 0 3px,
+                                        var(--fond-carte) 3px 6px);
+}
+/* Le partage du montant de la proposition, sous le chiffre et aligné sur lui :
+   le total se lit d'abord, ce qui le compose juste après. Sur un téléphone, la
+   ligne repasse à gauche avec le reste du bloc. */
+.scenario .partage {
+  display: block; text-align: right; font-size: 0.9rem;
+  color: var(--texte-doux); margin-top: 0.2rem;
+}
+@media (max-width: 40rem) { .scenario .partage { text-align: left; } }
 .fiches { display: grid;
           grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
           gap: 1rem; }

@@ -3546,3 +3546,42 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
   second tracé —, l'angle pris sur la diagonale, une part minimale de cette
   diagonale, une opacité bornée PAR LE HAUT autant que par le bas, et la pose
   en dernier par les deux composeurs.
+
+- **Septembre 2026, le pilier de capitalisation obligatoire.** Demandé hors
+  feuille de route, et ajouté au scénario 6 : 5 % de la même assiette que la
+  cotisation notionnelle, prélevés **en plus** d'elle à compter de la bascule,
+  placés sur des titres sans risque, servis en rente viagère, et transmissibles
+  tant qu'ils ne sont pas liquidés. Le compartiment est tenu à part de bout en
+  bout — `moteur/capitalisation.py`, `ResultatNotionnel.capitalisation`, deux
+  lignes nommées partout où le site affiche un total —, et un test exige que la
+  pension de répartition du scénario 6 ne bouge pas d'un centime quand on le
+  retire.
+
+  Deux sources nouvelles, et elles n'ont rien coûté à chercher : la BCE publie
+  chaque jour ouvré la courbe zéro-coupon des souverains AAA de la zone euro
+  (récupération automatique, trente maturités, certifiée), et l'Observatoire
+  des produits d'épargne financière mesure les frais du PER individuel (saisis,
+  donc `haute`). **La courbe donne les taux futurs sans qu'on ait à les
+  prévoir** : les forwards implicites sont arbitrés, et un test vérifie qu'ils
+  se chaînent exactement — dix ans puis dix ans valent vingt ans.
+
+  Trois choses à en retenir. **Une convention de date se vérifie par une forme
+  close** : sur une courbe plate, le capital vaut
+  `Σ V_a (1 − f_v) [(1 + r)(1 − f_g)]^(L − a)`, et ce seul test a tenu lieu de
+  relecture pour la symétrie avec `Indexation.coefficient` — un versement ne
+  rapporte pas l'année de son versement, exactement comme au compte notionnel.
+  **Un NaN n'est pas un résultat** : le taux de rendement interne n'existe pas
+  quand tous les versements tombent l'année du départ, et le rendre en NaN
+  cassait à la fois l'égalité de deux carrières identiques et la validité du
+  JSON des témoins. Et **le tiret cadratin se paie** : les tests de prose du
+  dépôt ont refusé deux pages sur trois à la première écriture, ce qui a
+  amélioré le texte.
+
+  Ce que ça déplace : rien sur les scénarios 1 à 5, rien sur la pension de
+  répartition du 6. Sur le total servi par le 6, la rente capitalisée pèse de
+  0 % pour qui liquide avant 2026 à près d'un quart pour une carrière entière
+  cotisée après la bascule. Reste ouvert : le barème de frais, qu'un pilier
+  obligatoire ferait vraisemblablement baisser et que le modèle retient comme
+  borne haute ; la prime de terme, non retirée des forwards ; et la question de
+  droit que le modèle ne tranche pas, celle de savoir si cette rente doit
+  entrer dans les ressources examinées par la garantie vieillesse.

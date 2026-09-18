@@ -246,6 +246,32 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: la personne seule, comme pour l'ASPA du scénario 1.
   situation_foyer: SituationFoyer.SEUL,
 
+  // --- Pilier de capitalisation obligatoire (proposition) --------------------
+  //: La troisième pièce de la proposition : une cotisation OBLIGATOIRE, placée
+  //: et non mutualisée, qui S'AJOUTE au compte notionnel au lieu de s'y
+  //: substituer. Elle ne change rien à ce que la répartition sert — le compte
+  //: notionnel est calculé sans elle et affiché sans elle —, d'où le
+  //: compartiment distinct de `capitalisation.js`. La mettre à `false` retire
+  //: le pilier sans toucher au reste.
+  capitalisation_obligatoire: true,
+  //: Prélevé sur la MÊME assiette que la cotisation notionnelle de l'année, EN
+  //: PLUS d'elle : l'effort monte de cinq points à compter de la bascule.
+  taux_capitalisation_obligatoire: 0.05,
+  //: Première année de cotisation au pilier. Les années antérieures gardent
+  //: leurs taux et ne versent rien : qui a liquidé avant n'a pas de pilier.
+  annee_debut_capitalisation: 2026,
+  //: Les trois frais du PER, mesurés par l'Observatoire des produits d'épargne
+  //: financière pour 2025 sur le support en euros — le seul qui corresponde à
+  //: un placement sans risque. Ce sont les frais d'un produit vendu à des
+  //: volontaires : une borne haute, assumée comme telle.
+  frais_versement_capitalisation: 0.0109,
+  frais_gestion_capitalisation: 0.0076,
+  frais_arrerages_capitalisation: 0.0220,
+  //: Taux technique de la rente, nul par défaut comme dans la plupart des PER :
+  //: le diviseur de la rente est alors EXACTEMENT celui de la pension
+  //: notionnelle, et les deux compartiments deviennent comparables au centime.
+  taux_technique_rente_capitalisation: 0.0,
+
   // --- Neutralisations ------------------------------------------------------
   neutralisations: NEUTRALISATIONS_DEFAUT,
 

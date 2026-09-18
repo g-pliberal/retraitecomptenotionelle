@@ -17,6 +17,8 @@ import { Indexation } from "./indexation.js";
 import { ScenarioActuel } from "./scenario-actuel.js";
 import { ScenarioNotionnel } from "./scenario-notionnel.js";
 import { Affiliations, CatalogueRegimes } from "./regimes.js";
+import { ConstructeurCapitalisation } from "./capitalisation.js";
+import { CourbeTauxSansRisque } from "./taux.js";
 import { EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
 import {
@@ -147,6 +149,36 @@ export class Comparaison {
     return this._taux(this[scenario].pension_annuelle);
   }
 
+  // -- avec le pilier capitalisé ---------------------------------------------
+  //
+  // Ces quatre méthodes ne servent qu'à la PROPOSITION : elle seule porte un
+  // pilier capitalisé, et pour tous les autres scénarios elles rendent, au
+  // centime près, les valeurs d'au-dessus. Les séparer n'est pas une précaution
+  // de style : une pension de répartition et une rente issue d'un capital ne se
+  // revalorisent pas de la même façon, ne se transmettent pas de la même façon,
+  // et ne sont pas exposées aux mêmes risques.
+
+  /** Ce que le pilier obligatoire sert, en plus de la répartition. */
+  renteCapitalisee(scenario) {
+    return this[scenario].rente_capitalisation_obligatoire;
+  }
+
+  /** Répartition et capitalisation réunies. */
+  pensionTotale(scenario) {
+    return this[scenario].pension_totale;
+  }
+
+  /** Écart au système actuel, pilier capitalisé compris. */
+  variationTotale(scenario) {
+    const reference = this.actuel.pension_annuelle;
+    if (reference <= 0) return Number.NaN;
+    return this.pensionTotale(scenario) / reference - 1.0;
+  }
+
+  tauxRemplacementTotal(scenario) {
+    return this._taux(this.pensionTotale(scenario));
+  }
+
   /** Forme sérialisable, pour un export ou une comparaison. */
   dictionnaire() {
     const carriere = this.carriere;
@@ -260,6 +292,33 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
       ),
     ),
     rente_capitalisation: resultat.rente_capitalisation_annuelle,
+    capitalisation: resultat.capitalisation === undefined
+      || resultat.capitalisation === null ? null : {
+        annee_ouverture: resultat.capitalisation.annee_ouverture,
+        taux_cotisation: resultat.capitalisation.taux_cotisation,
+        annees_cotisees: resultat.capitalisation.annees_cotisees,
+        versements: resultat.capitalisation.versements,
+        interets: resultat.capitalisation.interets,
+        frais_preleves: resultat.capitalisation.frais_preleves,
+        cout_des_frais: resultat.capitalisation.cout_des_frais,
+        capital: resultat.capitalisation.capital,
+        capital_hors_frais: resultat.capitalisation.capital_hors_frais,
+        diviseur: resultat.capitalisation.conversion.diviseur,
+        frais_arrerages: resultat.capitalisation.frais_arrerages,
+        rente_annuelle: resultat.capitalisation.rente_annuelle,
+        rente_mensuelle: resultat.capitalisation.rente_mensuelle,
+        taux_rendement_annuel: resultat.capitalisation.taux_rendement_annuel,
+        rendement_cumule: resultat.capitalisation.rendement_cumule,
+        probabilite_deces_avant_liquidation:
+          resultat.capitalisation.probabilite_deces_avant_liquidation,
+        esperance_capital_transmis:
+          resultat.capitalisation.esperance_capital_transmis,
+        fiabilite: nomFiabilite(resultat.capitalisation.fiabilite),
+      },
+    rente_capitalisation_obligatoire: resultat.rente_capitalisation_obligatoire,
+    pension_totale: resultat.pension_totale,
+    pension_totale_euros_constants: resultat.pension_totale * coefficient,
+    pension_totale_mensuelle: resultat.pension_totale_mensuelle,
     garantie_vieillesse: resultat.garantie_vieillesse === null ? null : {
       situation: resultat.garantie_vieillesse.situation,
       age_atteint: resultat.garantie_vieillesse.age_atteint,
@@ -346,9 +405,23 @@ export class Simulateur {
       ),
       this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
     );
+    // Le pilier de capitalisation obligatoire, et la courbe sans risque qui
+    // l'alimente : ils n'entrent que dans la proposition. Son convertisseur est
+    // celui du TAUX TECHNIQUE de la rente — nul par défaut, donc le même
+    // diviseur que la pension notionnelle, ce qui rend les deux comparables.
+    this.courbeTaux = new CourbeTauxSansRisque(paquet);
+    this.constructeurCapitalisation = new ConstructeurCapitalisation(
+      this.courbeTaux, this.mortalite,
+      new Convertisseur(this.mortalite, {
+        ...parametres,
+        taux_anticipe_conversion: parametres.taux_technique_rente_capitalisation,
+      }),
+      parametres,
+    );
     // Scénario 6 : le constructeur du scénario 4 jusqu'à la bascule — taux
     // réels, salariale et patronale confondues —, puis le taux unique de la
-    // proposition, prélevé une fois sur la rémunération, à compter d'elle.
+    // proposition, prélevé une fois sur la rémunération, à compter d'elle, et
+    // le pilier capitalisé par-dessus.
     this.scenarioLiberal = new ScenarioNotionnel(
       new ConstructeurCompte(
         this.macro, this.catalogue, this.affiliations, this.indexation,
@@ -360,6 +433,7 @@ export class Simulateur {
         },
       ),
       this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
+      this.constructeurCapitalisation,
     );
     this._regimeFusionne = null;
   }

@@ -1,0 +1,68 @@
+# Frais des plans d'épargne retraite individuels (PER assurantiels)
+# -----------------------------------------------------------------
+# source_id: opef_rapport_annuel
+#
+# À QUOI CES FRAIS SERVENT. Le pilier de capitalisation obligatoire de la
+# proposition est logé dans l'enveloppe qui existe déjà — le PER, articles
+# L. 224-1 et suivants du code monétaire et financier. Une enveloppe a un prix,
+# et une simulation qui l'oublierait surestimerait la rente : trois postes la
+# grèvent, et ce sont ceux que l'Observatoire des produits d'épargne financière
+# mesure chaque année sur les remises de l'ACPR.
+#
+# QUELS FRAIS, ET POURQUOI CEUX-LÀ. Le pilier est placé en titres sans risque,
+# c'est-à-dire sur l'équivalent d'un fonds en euros. Ce sont donc les lignes
+# « support en euros » qui s'appliquent, et non celles des unités de compte ou
+# de la gestion pilotée, plus chères. Les frais d'arbitrage (0,07 % en 2025) ne
+# figurent pas : il n'y a pas d'arbitrage dans une allocation qui suit une règle
+# d'horizon, et aucun versement n'est arbitré d'un support à l'autre.
+#
+# CE QUE CES VALEURS NE SONT PAS. Ce sont les frais du PER TEL QU'IL EST VENDU
+# AUJOURD'HUI, à des souscripteurs volontaires, contrat par contrat. Un pilier
+# obligatoire n'aurait ni la même collecte, ni les mêmes coûts d'acquisition —
+# la commission du réseau qui place le contrat est l'essentiel du frais sur
+# versement, et elle n'a pas d'objet quand la cotisation est obligatoire. Les
+# retenir tels quels est donc une borne HAUTE, assumée comme telle : elle dit ce
+# que la proposition coûterait si rien ne bougeait dans la tarification. La page
+# Méthode le dit, et le paramètre se change en un endroit.
+#
+# NIVEAU DE FIABILITÉ. `haute`, et non `certifiee` : le rapport de l'OPEF est un
+# PDF que le dépôt ne sait pas récupérer automatiquement (le serveur de la
+# Banque de France refuse les requêtes non navigateur), et ces trois valeurs
+# sont donc SAISIES depuis sa reprise par la presse spécialisée. Le producteur
+# est l'OPEF, la transcription ne l'est pas : la règle du manifeste plafonne à
+# `haute` ce qui n'a pas été confronté au document lui-même.
+
+source_id: opef_rapport_annuel
+annee_reference: 2025
+publication: Rapport annuel 2026 de l'Observatoire des produits d'épargne financière
+fiabilite: haute
+
+# Tous en fraction de l'assiette indiquée.
+frais:
+
+  versement:
+    valeur: 0.0109
+    assiette: chaque versement
+    libelle: Frais sur versement, support en euros
+    note: >-
+      Moyenne des PER individuels assurantiels en 2025, en repli de 7 points de
+      base sur 2024. L'assurance vie, à barème comparable, est à 0,55 % : l'écart
+      tient au mode de commercialisation, non au produit.
+
+  gestion:
+    valeur: 0.0076
+    assiette: encours, par an
+    libelle: Frais de gestion annuels sur encours, support en euros
+    note: >-
+      Moyenne 2025, en repli d'un point de base. Les unités de compte sont à
+      0,91 % en moyenne, la gestion pilotée à 0,92 % : le pilier étant placé en
+      titres sans risque, c'est la ligne « euros » qui s'applique.
+
+  arrerages:
+    valeur: 0.0220
+    assiette: chaque arrérage de rente
+    libelle: Frais sur arrérages de la rente viagère
+    note: >-
+      Moyenne 2025, en hausse d'un point de base. C'est le prélèvement de
+      l'assureur sur chaque versement de rente ; il réduit la rente servie
+      d'autant, et non le capital qui la constitue.

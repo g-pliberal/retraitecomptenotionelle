@@ -98,6 +98,7 @@ from ..carriere import Carriere
 from ..config import AgeConversionDroitsAcquis, Parametres, SituationFoyer
 from ..donnees.chargement import Fiabilite
 from ..moteur.age_reference import AgeReference, EcartAge
+from ..moteur.capitalisation import Capitalisation, ConstructeurCapitalisation
 from ..moteur.compte import CompteNotionnel, ConstructeurCompte
 from ..moteur.conversion import CoefficientConversion, Convertisseur
 from ..moteur.fusion import RegimeFusionne
@@ -182,10 +183,38 @@ class ResultatNotionnel:
     #: La garantie vieillesse et ses étapes — seulement dans le scénario 6, où
     #: ``pension_annuelle`` la comprend.
     garantie_vieillesse: GarantieVieillesse | None = None
+    #: Le pilier de capitalisation obligatoire — seulement dans le scénario 6.
+    #: ``pension_annuelle`` ne le comprend PAS : la rente qu'il sert n'est pas
+    #: une pension de répartition, elle ne se revalorise pas comme elle, elle
+    #: se transmet là où l'autre ne se transmet pas, et les confondre ferait
+    #: passer pour un rendement de la répartition ce qui vient d'un marché
+    #: obligataire. Le total est à :attr:`pension_totale`, et il est toujours
+    #: affiché comme une somme de deux lignes nommées.
+    capitalisation: Capitalisation | None = None
 
     @property
     def pension_mensuelle(self) -> float:
         return self.pension_annuelle / 12.0
+
+    @property
+    def rente_capitalisation_obligatoire(self) -> float:
+        """Rente annuelle servie par le pilier capitalisé, nulle sans lui."""
+        return self.capitalisation.rente_annuelle if self.capitalisation else 0.0
+
+    @property
+    def pension_totale(self) -> float:
+        """Répartition et capitalisation réunies — les deux lignes du scénario.
+
+        À n'employer que là où le total a un sens, et jamais sans dire de quoi
+        il est fait : l'une des deux lignes est une pension mutualisée qu'aucun
+        héritier ne touchera, l'autre une rente issue d'un capital qui, lui, se
+        serait transmis.
+        """
+        return self.pension_annuelle + self.rente_capitalisation_obligatoire
+
+    @property
+    def pension_totale_mensuelle(self) -> float:
+        return self.pension_totale / 12.0
 
     @property
     def rente_capitalisation_annuelle(self) -> float:
@@ -218,12 +247,17 @@ class ScenarioNotionnel:
         age_reference: AgeReference,
         scenario_actuel: ScenarioActuel,
         parametres: Parametres,
+        capitalisation: ConstructeurCapitalisation | None = None,
     ) -> None:
         self.constructeur = constructeur
         self.convertisseur = convertisseur
         self.age_reference = age_reference
         self.scenario_actuel = scenario_actuel
         self.parametres = parametres
+        #: Le pilier capitalisé n'est construit que pour la proposition : les
+        #: autres scénarios ne le reçoivent pas, et ne peuvent donc pas le
+        #: servir par inadvertance.
+        self.capitalisation = capitalisation
 
     def _sexe(self, carriere: Carriere) -> str | None:
         from ..config import TableConversion
@@ -290,7 +324,37 @@ class ScenarioNotionnel:
         garantie = self._garantie_vieillesse(carriere, resultat.pension_annuelle)
         resultat.pension_annuelle += garantie.complement
         resultat.garantie_vieillesse = garantie
+        resultat.capitalisation = self._pilier_capitalise(carriere, resultat)
         return resultat
+
+    def _pilier_capitalise(self, carriere: Carriere,
+                           resultat: ResultatNotionnel) -> Capitalisation | None:
+        """Le pilier obligatoire, bâti sur les assiettes du compte notionnel.
+
+        Il n'en construit pas d'autre : la cotisation capitalisée est prélevée
+        sur la MÊME assiette, la même année, que la cotisation notionnelle. Les
+        deux ne peuvent donc pas diverger — ni sur le plafonnement, ni sur les
+        années d'interruption, ni sur l'année du départ, qui n'est pleine pour
+        personne.
+
+        La garantie vieillesse, elle, ne regarde pas cette rente : elle est
+        servie sur la pension CONTRIBUTIVE de répartition. La question de
+        savoir si un pilier capitalisé doit réduire une allocation
+        différentielle est une question de droit, pas de modèle ; la laisser
+        hors du calcul est le choix qui n'invente rien, et
+        ``docs/limites.md`` le dit.
+        """
+        if self.capitalisation is None:
+            return None
+        assiettes = {c.annee: c.assiette_retenue for c in resultat.compte.cotisations}
+        return self.capitalisation.construire(
+            assiettes=assiettes,
+            annee_naissance=carriere.annee_naissance,
+            age_liquidation=carriere.age_liquidation or 0.0,
+            annee_liquidation=carriere.annee_liquidation,
+            mois_liquidation=carriere.mois_liquidation,
+            sexe=carriere.sexe,
+        )
 
     def _garantie_vieillesse(self, carriere: Carriere,
                              pension_contributive: float) -> GarantieVieillesse:

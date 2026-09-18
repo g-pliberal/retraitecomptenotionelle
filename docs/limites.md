@@ -5290,6 +5290,69 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
 ---
 
+## 5 ante. Le pilier capitalisé : ce que sa rente suppose
+
+Le compartiment de capitalisation obligatoire du scénario 6 est le seul endroit
+du modèle où de l'argent est placé, et il porte donc des incertitudes que le
+reste n'a pas. Six, et la première est de loin la plus lourde.
+
+**1. La prime de terme n'est pas retirée des forwards.** Les versements futurs
+se placent aux taux forward implicites de la courbe du jour. Sous l'hypothèse
+des anticipations pures, le forward est le taux futur attendu ; en pratique, il
+le dépasse d'une prime de terme que la littérature situe entre 0,3 et 1 point
+sur les maturités longues quand la courbe est ascendante. **Le pilier est donc
+flatté**, et d'autant plus que la carrière est longue. L'alternative — retirer
+une prime estimée — supposerait davantage et se vérifierait moins ; le choix
+est dit plutôt que corrigé. Ordre de grandeur : un demi-point de rendement sur
+quarante ans vaut une dizaine de pour cent de capital final.
+
+**2. La courbe est celle d'un jour.** Elle est datée, publiée, recontrôlée,
+mais elle est un instantané : le 17 septembre 2026 et non un mois plus tôt. Un
+déplacement général de la courbe déplace tout le pilier, et rien dans le modèle
+ne lisse cette dépendance. C'est assumé — une moyenne de courbes n'est la
+courbe de personne — et c'est la raison pour laquelle le fichier de référence
+garde les courbes successives : un chiffre publié doit pouvoir être refait tel
+qu'il a été publié.
+
+**3. Les frais sont ceux d'un produit vendu à des volontaires.** 1,09 % sur
+versement, 0,76 % par an sur encours, 2,20 % sur arrérages : ce sont les
+moyennes du PER individuel tel qu'il est commercialisé, et la commission du
+réseau distributeur en est l'essentiel. Une cotisation obligatoire n'a pas de
+réseau à rémunérer, et les frais d'un pilier obligatoire seraient
+vraisemblablement inférieurs. Le modèle retient donc une **borne haute**, qui
+sous-estime la rente. Le sens du biais est connu, sa taille ne l'est pas : à
+titre de repère, ramener les frais de gestion à 0,20 % relèverait le capital
+d'environ 10 % sur une carrière complète.
+
+**4. Aucun risque n'est simulé.** Le pilier est sans risque par construction,
+et c'est un choix de proposition autant que de modèle : un régime obligatoire
+qui promet une rente ne peut pas la gager sur des actions. Mais le modèle ne
+dit rien de ce qu'un panachage aurait donné, ni de la volatilité qu'il aurait
+fallu accepter pour cela. Il ne dit rien non plus du risque de crédit : la
+courbe retenue est celle des souverains les mieux notés, pas celle de la dette
+française, qui rendait 51 points de base de plus au dix ans.
+
+**5. Aucune fiscalité.** Les versements au PER sont déductibles du revenu
+imposable, la rente est imposable à la sortie, et le capital transmis au décès
+relève d'un régime successoral propre. Tous les montants du dépôt sont bruts,
+et l'avantage fiscal à l'entrée — qui est une part réelle du rendement d'un PER
+pour un contribuable imposé — n'est pas compté. Il joue en sens inverse des
+points 1 et 2 : il minore la rente affichée.
+
+**6. La garantie vieillesse ignore la rente capitalisée.** Elle est servie sur
+la seule pension contributive de répartition. Si le droit décidait de compter
+la rente du pilier dans les ressources examinées, la garantie coûterait moins
+et servirait moins ; le modèle ne tranche pas une question qui n'est pas la
+sienne, et la page Coût chiffre la garantie sans ce pilier.
+
+Une dernière chose, qui n'est pas une limite mais une convention à connaître :
+**l'espérance de capital transmis n'est pas conditionnée à la survie**. Elle se
+lit de l'ouverture du pilier, et se rapporte donc à quelqu'un qui peut mourir
+avant son départ, quand la rente affichée, elle, suppose qu'il l'atteint. Les
+deux chiffres décrivent deux futurs, et leur somme n'a pas de sens.
+
+---
+
 ## 5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé
 
 La page **Coût** superpose deux natures de chiffres, et il faut les séparer pour
@@ -5646,7 +5709,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 899 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 927 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-09-17",
+ "dernier_passage_le": "2026-09-18",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -77,6 +77,17 @@
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 90,
    "verifiee_le": "2026-09-16"
+  },
+  "courbe_taux_sans_risque": {
+   "ajoutees": 30,
+   "colonne": "taux_continu",
+   "corrigees": 0,
+   "empreinte": "c3c0709a0059d26f",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "BCE, portail de données, jeu YC (souverains AAA, Svensson)",
+   "valeurs": 30,
+   "verifiee_le": "2026-09-18"
   },
   "decote_fonction_publique_coefficient": {
    "ajoutees": 0,
@@ -351,7 +362,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-09-18"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -692,7 +703,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-09-18"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,

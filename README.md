@@ -28,7 +28,7 @@ comparables :
 | **3** | Notionnel **à compter de 2026** | Réforme prospective : les droits déjà acquis sont figés — au contributif seul, avantages non contributifs retirés — puis convertis en capital, et les règles notionnelles s'appliquent ensuite. Qui a liquidé avant la bascule garde sa pension telle quelle : c'est ce qui distingue ce scénario du **2**. |
 | **4** | Le scénario **2**, part patronale comprise | Le même compte rétroactif, la cotisation de l'employeur en plus : celle de la fiche pour le privé, celle réellement versée — jusqu'à 82,28 % du traitement en 2026 — pour le public. |
 | **5** | Le scénario **3**, part patronale comprise | Le même compte prospectif, droits acquis conservés, avec la même part patronale en plus. |
-| **6** | La **proposition libérale** : le scénario **4** jusqu'à 2026, 18 % pour tous ensuite, avec une garantie vieillesse | Le même compte rétroactif, cotisation entière aux taux réels jusqu'à la bascule, puis un **taux unique de 18 %** à compter de 2026 — salariale et patronale additionnées, le même pour tous les statuts — et, par-dessus, une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
+| **6** | La **proposition libérale** : le scénario **4** jusqu'à 2026, puis 18 % pour tous en répartition, 5 % capitalisés, et une garantie vieillesse | Le même compte rétroactif, cotisation entière aux taux réels jusqu'à la bascule, puis un **taux unique de 18 %** à compter de 2026 — salariale et patronale additionnées, le même pour tous les statuts. Par-dessus, deux ajouts. Une **cotisation capitalisée de 5 %**, prélevée sur la même assiette **en plus** de la répartition, placée sur des titres sans risque à des maturités qui raccourcissent à l'approche du départ, servie en rente viagère selon la table du modèle, et **transmissible** aux héritiers tant qu'elle n'est pas liquidée : elle est tenue dans un compartiment distinct, jamais confondue avec la pension notionnelle. Et une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
 
 Les comptes sont revalorisés, par défaut, sur la croissance de la **masse
 salariale** — l'assiette des cotisations, donc le rendement qu'un système en
@@ -80,18 +80,28 @@ Scénario                                                          Courants   Co
 
 > **Le scénario 6 est la proposition du Parti libéral français**, et il se lit
 > contre le scénario 4 : même compte rétroactif, cotisation salariale et
-> patronale confondues, mêmes âges, même indexation, même liquidation. Deux
+> patronale confondues, mêmes âges, même indexation, même liquidation. Trois
 > choses changent. Le taux — 18 % pour tous à compter de 2026, là où le
 > scénario 4 porte les taux réellement en vigueur de chaque régime ; ce qui a
 > été cotisé avant 2026 sous le système actuel reste porté au compte tel quel,
 > et qui a liquidé avant n'a aucune année à 18 %. Pour les années d'après, les
 > statuts qui cotisaient plus descendent, ceux qui cotisaient moins remontent.
-> Et un plancher — la seule
+> Un plancher — la seule
 > ligne des scénarios notionnels qui ne vienne pas d'une cotisation —, servi à
 > partir de 65 ans comme l'ASPA, mais **individualisé** : à 300 € et 1 500 €
 > dans un couple, l'ASPA ne sert rien, la garantie sert 500 € au premier. La
 > page de simulation détaille la garantie étape par étape, et la page Coût
 > compte à part ce que l'impôt en finance.
+>
+> Et un **pilier capitalisé obligatoire** : 5 % de la même assiette, prélevés
+> en plus des 18 %, à compter de 2026. Ils ne passent pas par le compte
+> notionnel ; ils constituent un capital, placé sur des titres sans risque et
+> logé dans l'enveloppe du PER. Le total prélevé reste inférieur à celui
+> d'aujourd'hui : 18 + 5 = 23 %, contre 28 % pour un salarié du privé. Le
+> modèle le tient dans un compartiment à part, et les six sorties — tableau,
+> page, JSON — affichent toujours deux lignes nommées plutôt qu'une somme.
+> Ce qui les sépare n'est pas un détail de présentation : une pension de
+> répartition s'éteint avec son titulaire, un capital se transmet.
 
 > **Le scénario 2 n'est pas une proposition de réforme**, et l'écart qu'il
 > affiche ne mesure pas l'effet des comptes notionnels. Deux raisons, et aucune
@@ -560,7 +570,10 @@ Scénario                                                          Courants   Co
 5. Notionnel dès 2026, salariale + patronale                       29,827€     23,805€    1,984€   -26.1%
 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        41,262€     32,931€    2,744€    +2.2%
 --------------------------------------------------------------------------------------------------------
-   hors répartition (RAFP), servi à part, identique aux 6           1,424€      1,137€       95€     réf.
+   hors répartition (RAFP), servi à part, identique aux 6           1,424€      1,137€       95€         
+--------------------------------------------------------------------------------------------------------
+   + rente du pilier capitalisé, scénario 6 seul                    1,750€      1,396€      116€         
+   = total servi par le scénario 6                                 43,011€     34,327€    2,861€    +6.6%
 
 Qui verse la cotisation, en euros courants cumulés :
   part salariale           136,434 €   scénarios 2 et 3
@@ -569,11 +582,15 @@ Qui verse la cotisation, en euros courants cumulés :
   contribution employeur publique trouvée sur 29 année(s)
 ```
 
-Le scénario 6 reste ici un peu sous le scénario 4, et c'est le taux, pas la
-garantie : jusqu'en 2025 son compte est celui du 4, aux taux réels, et ce n'est
-que sur les années 2026-2038, cotisées à 18 % au lieu des 82,28 % que l'État
-verse, qu'il s'en écarte. La pension contributive dépasse de toute façon le
-plancher.
+Le scénario 6 reste ici un peu sous le scénario 4 sur sa ligne de répartition,
+et c'est le taux, pas la garantie : jusqu'en 2025 son compte est celui du 4, aux
+taux réels, et ce n'est que sur les années 2026-2038, cotisées à 18 % au lieu
+des 82,28 % que l'État verse, qu'il s'en écarte. La pension contributive dépasse
+de toute façon le plancher. Les treize années cotisées au pilier capitalisé
+ajoutent 1 750 € par an, servis à part : le total du scénario 6 repasse ainsi
+au-dessus du scénario 4, mais les deux lignes ne promettent pas la même chose —
+la seconde s'éteint avec sa titulaire, le capital de la première se serait
+transmis.
 
 L'employeur verse ici 79 % du total. C'est l'ordre de grandeur d'un taux
 d'**équilibre**, et c'est la limite du scénario 4 : 82,28 % ne signifie pas
@@ -1028,8 +1045,10 @@ data/
 src/retraite_notionnelle/
   config.py                     toutes les décisions de modélisation, en un seul endroit
   carriere.py                   description d'une carrière, trois niveaux de précision
-  donnees/                      chargement, fiabilité, macro, mortalité, régimes
-  moteur/                       indexation, âge de référence, conversion, fusion, compte
+  donnees/                      chargement, fiabilité, macro, mortalité, régimes,
+                                courbe des taux sans risque et frais d'épargne retraite
+  moteur/                       indexation, âge de référence, conversion, fusion, compte,
+                                pilier de capitalisation obligatoire
   scenarios/                    système actuel, comptes notionnels
   simulateur.py                 façade et restitution
   castypes.py                   cas général
@@ -1051,7 +1070,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          899 tests Python
+tests/                          927 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

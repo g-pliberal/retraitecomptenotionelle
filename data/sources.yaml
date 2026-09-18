@@ -2896,6 +2896,84 @@ institutions:
           actualise. Ce n'est pas le même objet, et l'écart va dans le sens
           d'une sévérité plus grande chez eux. Voir `docs/limites.md` §5 quater.
 
+  bce:
+    nom: Banque centrale européenne
+    role: >-
+      Courbe des taux sans risque de la zone euro, et rendement de l'emprunt
+      d'État français à dix ans : ce qui rémunère le pilier de capitalisation
+      obligatoire de la proposition, et ce qui mesure l'écart entre la courbe
+      retenue et celle que la France paie.
+    jeux:
+      - id: bce_courbe_taux_aaa
+        titre: >-
+          Courbe des taux zéro-coupon des souverains AAA de la zone euro
+          (jeu YC, estimation de Svensson, composition continue)
+        url: https://data-api.ecb.europa.eu/service/data/YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/courbe_taux_sans_risque.csv
+        recuperation: scripts/fetch/bce_courbe_taux.py
+        note: >-
+          Trente maturités, de 1 à 30 ans, à la date du relevé. La BCE estime
+          et publie cette courbe : c'est le producteur, et non un repreneur.
+          Elle donne le taux auquel un versement se place aujourd'hui pour une
+          durée donnée ; les taux des versements futurs s'en déduisent par les
+          FORWARDS implicites, sans hypothèse ajoutée. Le fichier de référence
+          garde les courbes successives, une ligne par date et par maturité, et
+          le modèle lit la plus récente.
+          POURQUOI LA COURBE AAA ET NON L'OAT. La courbe « tous émetteurs »
+          inclut la France et rend davantage — 51 points de base au 10 ans en
+          septembre 2026, contre le rendement de l'OAT relevé en regard. Cet
+          écart rémunère un risque de crédit ; un régime obligatoire qui promet
+          une rente ne peut pas le compter comme un rendement acquis. La courbe
+          AAA est donc retenue, et l'écart est chiffré dans la méthodologie.
+
+      - id: bce_taux_oat_10_ans
+        titre: >-
+          Rendement de l'emprunt d'État français à dix ans, critère de
+          convergence (jeu IRS)
+        url: https://data-api.ecb.europa.eu/service/data/IRS/M.FR.L.L40.CI.0000.EUR.N.Z
+        acces: api
+        statut_integration: controle
+        cible: data/brut/bce_courbe_taux.json
+        recuperation: scripts/fetch/bce_courbe_taux.py
+        note: >-
+          Aucune valeur du modèle n'en sort : cette série CONTRÔLE la
+          précédente, en chiffrant ce que coûterait — et ce que rapporterait —
+          le choix de la dette française plutôt que de la courbe sans risque.
+
+  opef:
+    nom: >-
+      Observatoire des produits d'épargne financière (CCSF, Banque de France)
+    role: >-
+      Frais réellement pratiqués sur les plans d'épargne retraite, mesurés sur
+      les remises de l'ACPR : le prix de l'enveloppe dans laquelle la
+      proposition loge son pilier capitalisé.
+    jeux:
+      - id: opef_rapport_annuel
+        titre: >-
+          Rapport annuel de l'Observatoire des produits d'épargne financière —
+          frais des PER individuels, exercice 2025
+        url: https://www.banque-france.fr/fr/publications-et-statistiques/publications/rapport-annuel-2026-de-lobservatoire-des-produits-depargne-financiere-opef
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/macro/frais_epargne_retraite.yaml
+        note: >-
+          Trois valeurs, moyennes 2025 des PER individuels assurantiels sur le
+          support en euros : 1,09 % sur chaque versement, 0,76 % par an sur
+          l'encours, 2,20 % sur chaque arrérage de rente. Ce sont les seules
+          lignes qui s'appliquent à un pilier placé en titres sans risque ; les
+          unités de compte (0,91 %), la gestion pilotée (0,92 %) et l'arbitrage
+          (0,07 %) n'ont pas d'objet ici.
+          NIVEAU `haute`, ET NON `certifiee` : le rapport est un PDF que le
+          serveur de la Banque de France refuse aux requêtes non navigateur, si
+          bien que le dépôt ne sait pas le confronter automatiquement. Les
+          valeurs sont saisies depuis sa reprise par la presse spécialisée
+          (Meilleurtaux Placement, 4 juillet 2026, citant les données ACPR de
+          l'OPEF), et la règle du manifeste plafonne à `haute` ce qui n'a pas
+          été lu sur le document du producteur. À recontrôler sur le rapport
+          lui-même dès qu'une session peut l'ouvrir.
+
   institutions:
     nom: Sites des institutions dont le régime n'est dans aucun texte de l'index
     role: >-

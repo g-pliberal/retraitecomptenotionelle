@@ -1134,13 +1134,13 @@ pas parmi les scénarios 2 à 5 parce qu'elle ne répond pas à la même questio
 elle ne mesure plus ce qui a été versé, mais ce qu'une réforme choisirait de
 reconnaître. C'est précisément la question que pose le scénario 6.
 
-### Scénario 6 — la proposition libérale : 18 % pour tous dès la bascule, et une garantie vieillesse
+### Scénario 6 — la proposition libérale : 18 % pour tous dès la bascule, 5 % capitalisés, et une garantie vieillesse
 
 Le scénario 6 est la proposition du Parti libéral français. C'est **exactement
 le scénario 4** — compte rétroactif depuis l'origine de la répartition,
 cotisation salariale et patronale confondues, mêmes âges de départ et de
-référence, même indexation, même coefficient de conversion — à deux différences
-près, qui sont les deux termes de la proposition.
+référence, même indexation, même coefficient de conversion — à trois différences
+près, qui sont les trois termes de la proposition.
 
 **Un taux unique de 18 %, à compter de la bascule.** Parts salariale et
 patronale additionnées, le même pour tous les statuts, prélevé une fois sur la
@@ -1215,6 +1215,170 @@ page Coût ne voit pas
 non plus le taux unique — aucune pension servie avant la bascule n'a une année
 cotisée à 18 % — et la courbe du scénario 6 y est celle du scénario 4 plus la
 garantie ; c'est d'ici 2070 que le taux se voit.
+
+
+#### Le pilier de capitalisation obligatoire
+
+C'est le troisième terme de la proposition, et le seul endroit du modèle où de
+l'argent est réellement placé. Tout ce qui suit décrit un compartiment
+**distinct** du compte notionnel : il n'entre pas dans le capital notionnel, il
+n'est pas divisé par le même capital, il n'apparaît jamais additionné en
+silence à une pension de répartition. Le code le tient à part
+(`moteur/capitalisation.py`), le résultat le porte à part
+(`ResultatNotionnel.capitalisation`), et la somme des deux n'existe que sous un
+nom qui le dit (`pension_totale`).
+
+**Ce qui l'alimente.** Une cotisation de 5 %
+(`taux_capitalisation_obligatoire`), prélevée à compter de l'année de bascule
+(`annee_debut_capitalisation`, 2026) sur la **même assiette** que la cotisation
+notionnelle de l'année, et **en plus** d'elle. L'effort contributif monte donc
+de cinq points, il n'est pas redéployé : la répartition reçoit toujours ses
+18 %, et le compte notionnel du scénario 6 est identique, au centime, à ce
+qu'il serait sans le pilier — un test l'exige. Les années antérieures à la
+bascule ne versent rien, et qui a liquidé avant n'a pas de pilier du tout.
+Le total prélevé reste inférieur à celui d'aujourd'hui : 18 + 5 = 23 %, contre
+28 % pour un salarié du privé.
+
+Prendre la même assiette n'est pas une commodité : c'est ce qui interdit au
+pilier de se construire une base à lui, plafonnée autrement, servie les années
+d'interruption, ou pleine l'année du départ. Il lit les assiettes que le compte
+notionnel a retenues, et rien d'autre.
+
+**Où il est placé.** Sur des titres sans risque portés jusqu'à leur échéance.
+La courbe retenue est la structure par terme des souverains **AAA de la zone
+euro**, estimée et publiée chaque jour ouvré par la BCE
+(`data/reference/macro/courbe_taux_sans_risque.csv`, jeu `YC`, modèle de
+Svensson, composition continue). L'OAT française rend davantage — 51 points de
+base au dix ans le 17 septembre 2026 — mais cet écart rémunère un risque de
+crédit, qu'un régime obligatoire promettant une rente ne peut pas compter comme
+un rendement acquis. Le choix est donc **prudent**, et il réduit la rente
+affichée.
+
+Les versements futurs ne se placent pas aux taux comptants d'aujourd'hui, mais
+aux **taux forward implicites** de la même courbe :
+
+```
+f(T₁, T₂) = (z(T₂)·T₂ − z(T₁)·T₁) / (T₂ − T₁)
+```
+
+où `z(T)` est le taux zéro-coupon continu à l'horizon `T`. Le taux annuel
+employé est `exp(f) − 1`. Cette construction dispense le modèle d'une prévision
+de taux : le forward n'est pas une opinion, il est arbitré par la courbe
+elle-même. Un test vérifie l'identité qui le définit — dix ans puis dix ans
+valent vingt ans, à 10⁻¹² près.
+
+Ce qu'elle suppose doit être dit : prendre le forward pour le taux futur est
+l'**hypothèse des anticipations pures**, qui néglige la prime de terme. Quand
+la courbe monte, le forward excède le taux futur moyen attendu, et le pilier
+s'en trouve légèrement flatté. Au-delà de la dernière maturité publiée
+(trente ans), le taux zéro-coupon est prolongé à plat, et tout placement qui
+en dépend est déclaré `estimee`.
+
+**L'échelle de maturités.** Trois points cotés — 2, 10 et 30 ans —, et une
+règle d'horizon qui glisse du long vers le court :
+
+```
+part longue = 0,75 × borne₀₁((h − 10) / 20)
+part courte = 0,75 × borne₀₁((10 − h) / 8)
+part moyenne = 1 − part longue − part courte
+```
+
+où `h` est le nombre d'années restant jusqu'à la liquidation. Deux contraintes
+la ferment. Aucune maturité ne dépasse `h` : un titre arrivant à échéance après
+le départ devrait être vendu avant terme, donc à un prix qui n'est plus sans
+risque ; les maturités sont donc plafonnées, ce qui les fait coïncider à
+l'approche du départ. Et aucune ne dépasse les trois quarts du versement : en
+début de carrière l'allocation est *principalement* longue, jamais
+exclusivement. À l'échéance d'une ligne, son produit est replacé selon la même
+règle, pour l'horizon restant.
+
+| Années avant le départ | Répartition du versement |
+|---:|---|
+| 40 | 25 % à 10 ans, 75 % à 30 ans |
+| 30 | 25 % à 10 ans, 75 % à 30 ans |
+| 20 | 62,5 % à 10 ans, 37,5 % à 20 ans |
+| 10 | 100 % à 10 ans |
+| 5 | 46,9 % à 2 ans, 53,1 % à 5 ans |
+| 2 | 100 % à 2 ans |
+
+**La convention de date, et pourquoi c'est celle du compte notionnel.** Le
+versement d'une année est crédité à la **fin** de cette année : il rapporte de
+l'année suivante jusqu'à l'année de liquidation incluse, soit exactement les
+années où `Indexation.coefficient` revaloriserait la cotisation notionnelle du
+même millésime. Sans cette symétrie, l'écart entre les deux compartiments
+contiendrait une année de rendement offerte à l'un des deux, et le lecteur la
+prendrait pour un effet de la capitalisation. Sur une courbe plate, le capital
+admet alors une forme close que les tests vérifient :
+
+```
+K = Σ_a  V_a (1 − f_versement) × [(1 + r)(1 − f_gestion)]^(L − a)
+```
+
+**Ce qu'il coûte.** Trois prélèvements, ceux du PER tel qu'il est vendu
+aujourd'hui, mesurés pour 2025 par l'Observatoire des produits d'épargne
+financière (CCSF, Banque de France) sur les remises de l'ACPR, support en
+euros : 1,09 % sur chaque versement, 0,76 % par an sur l'encours, 2,20 % sur
+chaque arrérage de rente
+(`data/reference/macro/frais_epargne_retraite.yaml`). Ce sont les frais d'un
+produit vendu à des volontaires, contrat par contrat, dont la commission du
+réseau distributeur est l'essentiel ; elle n'aurait pas d'objet avec une
+cotisation obligatoire. Les retenir tels quels est donc une **borne haute**,
+assumée : le modèle dit ce que la proposition coûterait si rien ne bougeait
+dans la tarification. Le simulateur affiche le coût complet des frais, qui
+dépasse les frais prélevés, parce que ce qui est prélevé ne produit plus
+d'intérêts.
+
+**Comment le capital devient une rente.** Par le mécanisme du PER : le capital
+est divisé par un coefficient actuariel, puis chaque arrérage supporte ses
+frais.
+
+```
+rente = capital / G(a, L) × (1 − f_arrérages)
+```
+
+`G` est le diviseur du modèle, sur la même table de génération, unisexe par
+défaut, avec un taux technique nul
+(`taux_technique_rente_capitalisation`) comme dans la plupart des contrats. Les
+deux lignes du scénario 6 partagent alors le **même diviseur** : à capital égal
+elles servent le même montant, et tout écart vient d'ailleurs. Un taux
+technique positif verserait davantage au début et moins ensuite, à espérance de
+coût inchangée, comme `taux_anticipe_conversion` pour la répartition.
+
+**Ce qui se transmet.** Le capital, intégralement, si le cotisant meurt avant
+d'avoir liquidé : c'est la règle du PER, et c'est ce qu'une réforme de la
+répartition ne peut pas offrir, un compte notionnel n'étant pas un capital mais
+un droit. Le modèle en donne deux mesures, toutes deux sur sa propre table de
+mortalité : le **capital transmissible** à chaque date, qui est l'encours de
+l'année, et l'**espérance du capital transmis** vue de l'ouverture du pilier,
+
+```
+E = Σ_t (S_t − S_{t+1}) × ½ (encours d'ouverture + encours de clôture)_t
+```
+
+la somme portant sur les années d'accumulation strictement antérieures à la
+liquidation — le modèle calcule une pension pour un assuré qui atteint son
+départ, et compter l'année du départ ferait servir la rente et transmettre le
+capital à la fois. Après la liquidation, la rente est viagère et ne se transmet
+pas : une rente réversible ou à annuités garanties serait plus faible, et le
+modèle ne la retient pas.
+
+**Le déblocage.** À la retraite, en rente, ou au décès, par l'héritage, et pas
+autrement. La proposition retire donc au PER ses sorties anticipées — achat de
+la résidence principale, accidents de la vie — et sa sortie en capital : ce qui
+est obligatoire ne se récupère pas à volonté. C'est la seule chose que le
+pilier change à l'enveloppe existante, avec le caractère obligatoire de la
+cotisation.
+
+**Ce que ce compartiment ne fait pas.** Il ne simule aucun risque de marché :
+il est placé sans risque par construction, et le seul aléa qui subsiste, celui
+de taux futurs s'écartant des forwards d'aujourd'hui, n'est pas chiffré. Il ne
+calcule aucune fiscalité, alors que les versements au PER sont déductibles et
+la rente imposable ; tous les montants du modèle sont bruts, ici comme
+ailleurs. Il n'entre pas dans la garantie vieillesse, qui reste servie sur la
+seule pension contributive de répartition : savoir si un pilier capitalisé doit
+réduire une allocation différentielle est une question de droit, pas de modèle.
+Et il n'entre pas dans le bilan de la page Coût, parce qu'il ne finance aucune
+pension d'aujourd'hui.
 
 ---
 

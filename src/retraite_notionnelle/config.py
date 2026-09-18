@@ -528,6 +528,54 @@ class Parametres:
     #: deux planchers se comparent.
     situation_foyer: SituationFoyer = SituationFoyer.SEUL
 
+    # --- Pilier de capitalisation obligatoire (proposition) ------------------
+    #: La troisième pièce de la proposition, après le taux unique et la garantie
+    #: vieillesse : une cotisation OBLIGATOIRE, placée et non mutualisée, qui
+    #: s'ajoute au compte notionnel au lieu de s'y substituer. Elle ne change
+    #: rien à ce que la répartition sert — le compte notionnel est calculé sans
+    #: elle et affiché sans elle —, et c'est pour cela qu'elle est tenue dans un
+    #: compartiment distinct, ``moteur/capitalisation.py``.
+    #:
+    #: Mettre à ``False`` retire le pilier sans toucher au reste : la
+    #: proposition redevient exactement ce qu'elle était avant lui, ce qu'un
+    #: test vérifie.
+    capitalisation_obligatoire: bool = True
+
+    #: Taux de la cotisation capitalisée, prélevé sur la MÊME assiette que la
+    #: cotisation notionnelle de l'année, EN PLUS d'elle : l'effort contributif
+    #: monte de cinq points à compter de la bascule, il n'est pas redéployé.
+    taux_capitalisation_obligatoire: float = 0.05
+
+    #: Première année de cotisation au pilier. Les années antérieures gardent
+    #: les taux qui étaient les leurs et ne versent rien : qui a liquidé avant
+    #: n'a pas de pilier, et qui liquide après n'en a que les années d'après.
+    #: C'est l'année de bascule, pour que la proposition change tout le même
+    #: jour.
+    annee_debut_capitalisation: int = 2026
+
+    #: Les trois frais du PER, tels que l'Observatoire des produits d'épargne
+    #: financière les mesure pour 2025 sur le support en euros — le seul qui
+    #: corresponde à un placement sans risque. Leur source et leurs réserves
+    #: sont dans ``data/reference/macro/frais_epargne_retraite.yaml``, et un
+    #: test refuse que les deux divergent.
+    #:
+    #: Ce sont les frais d'un produit VENDU À DES VOLONTAIRES, contrat par
+    #: contrat : la commission du réseau qui le place est l'essentiel du frais
+    #: sur versement, et elle n'a pas d'objet quand la cotisation est
+    #: obligatoire. Les retenir tels quels est donc une borne haute, assumée.
+    frais_versement_capitalisation: float = 0.0109
+    frais_gestion_capitalisation: float = 0.0076
+    frais_arrerages_capitalisation: float = 0.0220
+
+    #: Taux technique de la rente viagère servie par le pilier. Nul par défaut,
+    #: comme dans la plupart des PER : la rente n'anticipe alors aucun
+    #: rendement futur, et son diviseur est EXACTEMENT celui de la pension
+    #: notionnelle — les deux compartiments deviennent comparables au centime.
+    #: Un taux positif verse davantage au début et moins ensuite, à espérance
+    #: de coût inchangée, comme ``taux_anticipe_conversion`` pour la
+    #: répartition.
+    taux_technique_rente_capitalisation: float = 0.0
+
     # --- Neutralisations ----------------------------------------------------
     neutralisations: Neutralisations = field(default_factory=Neutralisations)
 

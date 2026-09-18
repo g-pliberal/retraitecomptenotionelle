@@ -278,6 +278,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # qui paie : rapports à la CCSS, fiches CNAF, Agirc-Arrco, Ircantec.
         "transferts_retraite": "macro/transferts_retraite.csv",
         "productivite": "macro/productivite.csv",
+        # La courbe sans risque : une ligne par date d'observation et par
+        # maturité, et non par année. Elle n'alimente que le pilier capitalisé.
+        "courbe_taux_sans_risque": "macro/courbe_taux_sans_risque.csv",
         "plafond": "macro/plafond_securite_sociale.csv",
         "plafond_ancien": "macro/plafond_securite_sociale.csv",
         "plafond_journal_officiel": "macro/plafond_securite_sociale.csv",

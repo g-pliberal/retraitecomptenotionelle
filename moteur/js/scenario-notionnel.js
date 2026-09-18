@@ -33,12 +33,17 @@ import { MinimumVieillesse } from "./regimes.js";
 
 /** Produit les deux variantes de comptes notionnels. */
 export class ScenarioNotionnel {
-  constructor(constructeur, convertisseur, ageReference, scenarioActuel, parametres) {
+  constructor(constructeur, convertisseur, ageReference, scenarioActuel, parametres,
+              capitalisation = null) {
     this.constructeur = constructeur;
     this.convertisseur = convertisseur;
     this.ageReference = ageReference;
     this.scenarioActuel = scenarioActuel;
     this.parametres = parametres;
+    // Le pilier capitalisé n'est construit que pour la proposition : les autres
+    // scénarios ne le reçoivent pas, et ne peuvent donc pas le servir par
+    // inadvertance.
+    this.capitalisation = capitalisation;
   }
 
   _sexe(carriere) {
@@ -101,7 +106,39 @@ export class ScenarioNotionnel {
     resultat_.pension_annuelle += garantie.complement;
     resultat_.pension_mensuelle = resultat_.pension_annuelle / 12.0;
     resultat_.garantie_vieillesse = garantie;
+    resultat_.capitalisation = this._pilierCapitalise(carriere, resultat_);
+    resultat_.rente_capitalisation_obligatoire = resultat_.capitalisation === null
+      ? 0.0 : resultat_.capitalisation.rente_annuelle;
+    resultat_.pension_totale = resultat_.pension_annuelle
+      + resultat_.rente_capitalisation_obligatoire;
+    resultat_.pension_totale_mensuelle = resultat_.pension_totale / 12.0;
     return resultat_;
+  }
+
+  /**
+   * Le pilier obligatoire, bâti sur les assiettes du compte notionnel.
+   *
+   * Il n'en construit pas d'autre : la cotisation capitalisée est prélevée sur
+   * la MÊME assiette, la même année, que la cotisation notionnelle. Les deux ne
+   * peuvent donc pas diverger — ni sur le plafonnement, ni sur les années
+   * d'interruption, ni sur l'année du départ, qui n'est pleine pour personne.
+   *
+   * La garantie vieillesse, elle, ne regarde pas cette rente : elle est servie
+   * sur la pension CONTRIBUTIVE de répartition.
+   */
+  _pilierCapitalise(carriere, resultat_) {
+    if (this.capitalisation === null) return null;
+    const assiettes = new Map(
+      resultat_.compte.cotisations.map((c) => [c.annee, c.assiette_retenue]),
+    );
+    return this.capitalisation.construire({
+      assiettes,
+      anneeNaissance: carriere.annee_naissance,
+      ageLiquidation: carriere.age_liquidation || 0.0,
+      anneeLiquidation: carriere.anneeLiquidation,
+      moisLiquidation: carriere.moisLiquidation,
+      sexe: carriere.sexe,
+    });
   }
 
   /**
@@ -271,12 +308,20 @@ export class ScenarioNotionnel {
 function resultat(champs) {
   return {
     // Le détail de la conversion des droits figés n'existe qu'en prospectif ;
-    // ailleurs il vaut null, comme du côté Python. La garantie vieillesse, de
-    // même, n'existe que dans le scénario 6.
+    // ailleurs il vaut null, comme du côté Python. La garantie vieillesse et le
+    // pilier capitalisé, de même, n'existent que dans le scénario 6.
     droits_acquis: null,
     garantie_vieillesse: null,
+    //: `pension_annuelle` ne comprend PAS la rente du pilier capitalisé : elle
+    //: n'est pas une pension de répartition, elle ne se revalorise pas comme
+    //: elle, et elle se transmet là où l'autre ne se transmet pas. Le total est
+    //: à `pension_totale`, toujours affiché comme une somme de deux lignes.
+    capitalisation: null,
+    rente_capitalisation_obligatoire: 0.0,
     ...champs,
     pension_mensuelle: champs.pension_annuelle / 12.0,
+    pension_totale: champs.pension_annuelle,
+    pension_totale_mensuelle: champs.pension_annuelle / 12.0,
     /**
      * Ce que vaudrait le compartiment de capitalisation, POUR MÉMOIRE. Le RAFP
      * et les droits des anciennes assurances sociales ne sont pas convertis en

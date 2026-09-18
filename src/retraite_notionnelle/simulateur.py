@@ -33,7 +33,9 @@ from .donnees.effectifs import EffectifsRetraites
 from .donnees.macro import DonneesMacro
 from .donnees.mortalite import DonneesMortalite
 from .donnees.regimes import CatalogueRegimes
+from .donnees.taux import CourbeTauxSansRisque
 from .moteur.age_reference import AgeReference
+from .moteur.capitalisation import ConstructeurCapitalisation
 from .moteur.compte import ConstructeurCompte
 from .moteur.conversion import Convertisseur
 from .moteur.fusion import RegimeFusionne, fusionner
@@ -202,6 +204,34 @@ class Comparaison:
         """Taux de remplacement de n'importe lequel des scénarios notionnels."""
         return self._taux(getattr(self, scenario).pension_annuelle)
 
+    # -- avec le pilier capitalisé ------------------------------------------
+    #
+    # Trois méthodes, et elles ne servent qu'à la PROPOSITION : elle seule
+    # porte un pilier capitalisé, et pour tous les autres scénarios ces trois
+    # valeurs sont, au centime près, celles d'au-dessus. Les séparer n'est pas
+    # une précaution de style : une pension de répartition et une rente issue
+    # d'un capital ne se revalorisent pas de la même façon, ne se transmettent
+    # pas de la même façon, et ne sont pas exposées aux mêmes risques. Le site
+    # affiche le total, mais jamais sans dire de quoi il est fait.
+
+    def rente_capitalisee(self, scenario: str) -> float:
+        """Ce que le pilier obligatoire sert, en plus de la répartition."""
+        return getattr(self, scenario).rente_capitalisation_obligatoire
+
+    def pension_totale(self, scenario: str) -> float:
+        """Répartition et capitalisation réunies."""
+        return getattr(self, scenario).pension_totale
+
+    def variation_totale(self, scenario: str) -> float:
+        """Écart au système actuel, pilier capitalisé compris."""
+        reference = self.actuel.pension_annuelle
+        if reference <= 0:
+            return float("nan")
+        return self.pension_totale(scenario) / reference - 1.0
+
+    def taux_remplacement_total(self, scenario: str) -> float:
+        return self._taux(self.pension_totale(scenario))
+
     # -- restitution ---------------------------------------------------------
 
     def tableau(self) -> str:
@@ -230,8 +260,17 @@ class Comparaison:
             "-" * 104,
         ]
 
-        def ligne(nom: str, montant: float, ecart_relatif: float | None) -> str:
-            variation = "réf." if ecart_relatif is None else f"{ecart_relatif:+.1%}"
+        def ligne(nom: str, montant: float,
+                  ecart_relatif: float | str | None) -> str:
+            # Trois cas, et le troisième compte : l'étalon porte « réf. », un
+            # scénario porte son écart, et une ligne qui ne se compare à rien —
+            # un compartiment servi à part — ne porte rien du tout. Elle
+            # portait « réf. », ce qui la donnait pour la référence des autres.
+            if isinstance(ecart_relatif, str):
+                variation = ecart_relatif
+            else:
+                variation = ("réf." if ecart_relatif is None
+                             else f"{ecart_relatif:+.1%}")
             constant = self.en_euros_constants(montant)
             return (
                 f"{nom:<62} {montant:>10,.0f}€ {constant:>10,.0f}€ "
@@ -256,7 +295,24 @@ class Comparaison:
             lignes += [
                 "-" * 104,
                 ligne("   hors répartition (RAFP), servi à part, identique aux 6",
-                      hors_repartition, None),
+                      hors_repartition, ""),
+            ]
+
+        # Le pilier de capitalisation obligatoire, en dessous et à part. Il
+        # n'appartient qu'au dernier scénario, il ne sort pas de la
+        # répartition, et l'additionner en silence à une pension notionnelle
+        # ferait passer pour un rendement de la répartition ce qui vient d'un
+        # marché obligataire.
+        rente_capitalisee = self.notionnel_liberal.rente_capitalisation_obligatoire
+        if rente_capitalisee > 0:
+            numero = SCENARIOS_NOTIONNELS[-1][1]
+            lignes += [
+                "-" * 104,
+                ligne(f"   + rente du pilier capitalisé, scénario {numero} seul",
+                      rente_capitalisee, ""),
+                ligne(f"   = total servi par le scénario {numero}",
+                      self.notionnel_liberal.pension_totale,
+                      self.variation_totale("notionnel_liberal")),
             ]
 
         lignes += [
@@ -428,6 +484,34 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
             sorted(resultat.compte.annees_part_employeur.items())
         ),
         "rente_capitalisation": resultat.rente_capitalisation_annuelle,
+        "capitalisation": None if resultat.capitalisation is None else {
+            "annee_ouverture": resultat.capitalisation.annee_ouverture,
+            "taux_cotisation": resultat.capitalisation.taux_cotisation,
+            "annees_cotisees": resultat.capitalisation.annees_cotisees,
+            "versements": resultat.capitalisation.versements,
+            "interets": resultat.capitalisation.interets,
+            "frais_preleves": resultat.capitalisation.frais_preleves,
+            "cout_des_frais": resultat.capitalisation.cout_des_frais,
+            "capital": resultat.capitalisation.capital,
+            "capital_hors_frais": resultat.capitalisation.capital_hors_frais,
+            "diviseur": resultat.capitalisation.conversion.diviseur,
+            "frais_arrerages": resultat.capitalisation.frais_arrerages,
+            "rente_annuelle": resultat.capitalisation.rente_annuelle,
+            "rente_mensuelle": resultat.capitalisation.rente_mensuelle,
+            "taux_rendement_annuel": resultat.capitalisation.taux_rendement_annuel,
+            "rendement_cumule": resultat.capitalisation.rendement_cumule,
+            "probabilite_deces_avant_liquidation": (
+                resultat.capitalisation.probabilite_deces_avant_liquidation
+            ),
+            "esperance_capital_transmis": (
+                resultat.capitalisation.esperance_capital_transmis
+            ),
+            "fiabilite": str(resultat.capitalisation.fiabilite),
+        },
+        "rente_capitalisation_obligatoire": resultat.rente_capitalisation_obligatoire,
+        "pension_totale": resultat.pension_totale,
+        "pension_totale_euros_constants": resultat.pension_totale * coefficient,
+        "pension_totale_mensuelle": resultat.pension_totale_mensuelle,
         "garantie_vieillesse": None if resultat.garantie_vieillesse is None else {
             "situation": resultat.garantie_vieillesse.situation,
             "age_atteint": resultat.garantie_vieillesse.age_atteint,
@@ -499,6 +583,11 @@ class Simulateur:
     @cached_property
     def mortalite(self) -> DonneesMortalite:
         return DonneesMortalite(self.parametres.racine_donnees)
+
+    @cached_property
+    def courbe_taux(self) -> CourbeTauxSansRisque:
+        """La courbe sans risque : elle n'alimente que le pilier capitalisé."""
+        return CourbeTauxSansRisque(self.parametres.racine_donnees)
 
     @cached_property
     def catalogue(self) -> CatalogueRegimes:
@@ -608,11 +697,40 @@ class Simulateur:
         )
 
     @cached_property
+    def convertisseur_rente_capitalisee(self) -> Convertisseur:
+        """Le convertisseur de la rente du PER : même table, taux technique propre.
+
+        Il ne diffère de celui de la pension notionnelle que par le taux
+        d'actualisation incorporé au diviseur — nul de part et d'autre au
+        réglage par défaut, si bien que les deux diviseurs sont alors le même
+        nombre. Les séparer coûte une ligne et garantit qu'un taux technique
+        donné au PER ne déplacera jamais la pension de répartition.
+        """
+        return Convertisseur(
+            self.mortalite,
+            self.parametres.avec(
+                taux_anticipe_conversion=(
+                    self.parametres.taux_technique_rente_capitalisation
+                )
+            ),
+        )
+
+    @cached_property
+    def constructeur_capitalisation(self) -> ConstructeurCapitalisation:
+        """Le pilier obligatoire de la proposition — et d'elle seule."""
+        return ConstructeurCapitalisation(
+            self.courbe_taux, self.mortalite,
+            self.convertisseur_rente_capitalisee, self.parametres,
+        )
+
+    @cached_property
     def scenario_liberal(self) -> ScenarioNotionnel:
-        """Scénario 6 : le scénario 4 jusqu'à la bascule, 18 % pour tous ensuite."""
+        """Scénario 6 : le scénario 4 jusqu'à la bascule, 18 % pour tous ensuite,
+        la garantie vieillesse et le pilier de capitalisation obligatoire."""
         return ScenarioNotionnel(
             self.constructeur_liberal, self.convertisseur,
             self.age_reference, self.scenario_actuel, self.parametres,
+            capitalisation=self.constructeur_capitalisation,
         )
 
     @cached_property
