@@ -1220,7 +1220,7 @@ ul.serree li { margin: 0.3rem 0; }
 .carte-partage.claire .detail { color: var(--sur-creme-doux); }
 /* Le pied : le compte et l'adresse. C'est lui qui fait qu'une image republiée
    dit encore d'où elle vient — et il est doublé, dans l'image téléchargée, par
-   un filigrane que le recadrage n'enlève pas. */
+   un filigrane posé en travers du cadre. */
 .carte-partage .pied {
   display: flex; justify-content: space-between; align-items: baseline;
   gap: 2cqw; border-top: 1px solid var(--trait); padding-top: 2.167cqw;

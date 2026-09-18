@@ -4110,46 +4110,57 @@ def _script_du_site() -> str:
         encoding="utf-8")
 
 
-def test_le_filigrane_couvre_l_image_et_ne_se_rogne_pas():
+def test_le_filigrane_ne_paraît_qu_une_fois_et_traverse_l_image():
     """Une signature posée en pied part au premier recadrage.
 
     Et recadrer ne demande rien de plus qu'une capture d'écran : le pied d'une
-    image republiée est ce qui disparaît le plus facilement, alors que c'est
-    lui qui dit d'où elle vient. Le filigrane répond à cela en étant PARTOUT —
-    le compte écrit en diagonale sur toute la surface, à un pas assez serré
-    pour qu'aucun découpage encore publiable n'en soit exempt.
+    image republiée est ce qui disparaît le plus facilement, alors que c'est lui
+    qui dit d'où elle vient. D'où un filigrane — mais UN SEUL.
 
-    Ce test tient les trois conditions qui le rendent inrognable : le pas reste
-    petit devant l'image, un rang sur deux est décalé (sans quoi un couloir
-    vertical entier resterait vierge), et les deux composeurs d'image l'appellent
-    EN DERNIER — posé avant, une aire pleine le recouvrirait.
+    Il a d'abord été une grille, le compte répété soixante-dix fois en diagonale
+    sur toute la surface. C'était la réponse littérale à « qu'il ne puisse pas
+    être rogné », et c'était invivable : une image couverte de son propre
+    filigrane ressemble à une planche de contact, et personne ne republie une
+    planche de contact. « Je ne veux le voir apparaître qu'une fois. »
+
+    Une seule marque, donc, et ce test tient les deux conditions qui lui
+    permettent quand même de résister : elle est posée sur la DIAGONALE et
+    occupe une large part de sa longueur — elle traverse le cadre, au lieu de se
+    loger dans un coin qu'on découpe —, et elle reste assez pâle pour qu'on ne
+    la voie qu'en la cherchant. Les deux composeurs d'image la posent EN
+    DERNIER : posée avant, une aire pleine la recouvrirait.
     """
     page = _script_du_site()
     assert "function filigrane(dessin, largeur, hauteur, couleur)" in page
+    corps = page[page.index("function filigrane(dessin"):]
+    corps = corps[:corps.index("\n}\n")]
 
-    pas_x = int(re.search(r"const PAS_FILIGRANE_X = (\d+);", page).group(1))
-    pas_y = int(re.search(r"const PAS_FILIGRANE_Y = (\d+);", page).group(1))
-    # 1200 × 675 est le format des cartes, et la plus petite image du site.
-    assert pas_x <= 1200 / 6, f"{pas_x} : un recadrage au sixième sortirait vierge"
-    assert pas_y <= 675 / 6, f"{pas_y} : un recadrage au sixième sortirait vierge"
-    assert "(rang % 2)" in page, "sans décalage d'un rang sur deux, il reste des couloirs"
-
-    # Un filigrane se voit quand on le cherche, et pas avant : « il faut quelque
-    # chose de subtil et discret mais qui ne puisse pas être rogné ». La densité
-    # le rend inrognable, la pâleur le rend discret, et les deux ne s'opposent
-    # pas — c'est leur PRODUIT qui décide de ce qu'on voit.
-    opacite = float(re.search(r"const OPACITE_FILIGRANE = ([\d.]+);", page).group(1))
-    assert 0.03 <= opacite <= 0.08, (
-        f"{opacite} : sous 3 % le filigrane ne dit plus rien ; au-dessus de 8 % "
-        "il se lit comme un tampon posé sur l'image"
+    # Une fois, et une seule. Ni boucle, ni second tracé.
+    assert corps.count("fillText(SIGNATURE") == 1, (
+        "le filigrane écrit le compte plus d'une fois : il doit paraître une "
+        "fois, pas faire une trame"
     )
-    taille = int(re.search(r"filigrane\b.*?`(\d+) (\d+)px \$\{SANS\}`", page,
-                           re.S).group(2))
-    graisse = int(re.search(r"filigrane\b.*?`(\d+) (\d+)px \$\{SANS\}`", page,
-                            re.S).group(1))
-    assert taille <= 16 and graisse <= 600, (
-        f"{graisse} {taille}px : un filigrane en gras est une signature, pas une "
-        "texture"
+    assert "for (" not in corps, "une boucle dans le filigrane, c'est une grille"
+
+    # Sur la diagonale, et à l'échelle de l'image : c'est ce qui la fait
+    # traverser le cadre au lieu de se loger dans un coin.
+    assert "Math.atan2(hauteur, largeur)" in corps, (
+        "l'angle doit être celui de la diagonale, qui n'est pas le même pour "
+        "une carte de 1200 × 675 et pour l'image d'un graphique"
+    )
+    part = float(re.search(r"const PART_FILIGRANE = ([\d.]+);", page).group(1))
+    assert part >= 2 / 3, (
+        f"{part} de la diagonale : trop court pour traverser le cadre, un "
+        "recadrage l'emporterait en entier"
+    )
+
+    # Assez pâle pour ne se voir qu'en la cherchant : « il faut quelque chose de
+    # subtil et discret ». Une lettre de 300 px se remarque plus qu'une de 14 à
+    # opacité égale, d'où une borne plus basse que celle de la grille.
+    opacite = float(re.search(r"const OPACITE_FILIGRANE = ([\d.]+);", page).group(1))
+    assert 0.02 <= opacite <= 0.055, (
+        f"{opacite} : sous 2 % le filigrane ne dit plus rien ; au-dessus de "
+        "5,5 % une marque de cette taille se lit comme un tampon"
     )
 
     appels = [m.start() for m in re.finditer(r"^  filigrane\(dessin", page, re.M)]
@@ -4158,8 +4169,7 @@ def test_le_filigrane_couvre_l_image_et_ne_se_rogne_pas():
         "celle d'un graphique et celle d'une carte à publier"
     )
     for depart in appels:
-        suite = page[depart:]
-        assert "toBlob" in suite[:600], (
+        assert "toBlob" in page[depart:depart + 600], (
             "le filigrane doit être posé en dernier, juste avant l'export"
         )
 

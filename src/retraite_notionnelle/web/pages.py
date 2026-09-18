@@ -3001,8 +3001,8 @@ def _carte_partage(nom: str, surtitre: str, chiffre: str, phrase: str,
     Le pied est ce qui compte le plus : une image qui quitte le site n'a plus
     ni barre d'adresse ni page autour, et sans ces deux lignes elle circule
     sans dire d'où elle vient. Le premier qui la republie en devient la source.
-    Dans l'image téléchargée, un filigrane le redit sur toute la surface — le
-    pied se recadre, le filigrane non.
+    Dans l'image téléchargée, un filigrane le redit en travers du cadre — le
+    pied se recadre tout seul, le filigrane coûte la carte.
 
     ``nom`` est le nom de la carte, lu AVANT elle : c'est ce qui permet de
     choisir laquelle publier sans les regarder toutes.
@@ -3053,9 +3053,9 @@ def _partager(contexte: Contexte) -> str:
         '<span class="cle-texte">prêtes à publier.</span>',
         "Un bouton par carte : l'image part au format des réseaux sociaux, "
         "avec son message déjà rédigé. "
-        f'<strong class="cle-texte">{g.SIGNATURE}</strong> y est répété en '
-        "filigrane sur toute la surface, pas seulement dans un coin : "
-        "recadrer l'image ne l'enlève pas.",
+        f'<strong class="cle-texte">{g.SIGNATURE}</strong> y est posé en '
+        "filigrane, en travers de l'image et non dans un coin : le recadrer "
+        "revient à recadrer la carte.",
     )
 
     cartes = "".join([
@@ -3123,8 +3123,8 @@ def _partager(contexte: Contexte) -> str:
     <p>Inutile de repasser par ici pour partager un graphique : sous chacun, la
     même barre <span class="cle-texte">Partager</span> compose l'image de ce
     que vous venez de lire et le message qui va avec. Toutes portent le
-    filigrane <span class="cle-texte">{g.SIGNATURE}</span>, qui ne se recadre
-    pas.</p>
+    filigrane <span class="cle-texte">{g.SIGNATURE}</span>, en travers du
+    cadre.</p>
   </div>
 </div>
 """
