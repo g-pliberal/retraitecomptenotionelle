@@ -3494,27 +3494,37 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
   cible qu'on venait de toucher, et faisait disparaître son pictogramme.
 
   *La signature partait au premier recadrage.* Elle était en pied d'image, et
-  recadrer ne demande rien de plus qu'une capture d'écran. Le compte est
-  maintenant répété en diagonale sur toute la surface, au pas de 168 × 104
-  points avec un rang sur deux décalé d'un demi-pas — sans ce décalage, un
-  couloir vertical entier reste vierge et un recadrage peut y tomber. Il est
-  posé EN DERNIER, par-dessus le tracé : posé avant, l'aire pleine d'un
-  graphique le recouvrirait. Le pied subsiste et ne fait pas double emploi : le
-  filigrane dit à qui l'image appartient, le pied dit où elle mène, et il gagne
-  pour cela l'adresse du site, qui n'y était pas.
+  recadrer ne demande rien de plus qu'une capture d'écran. Un filigrane s'y
+  ajoute, posé EN DERNIER — par-dessus le tracé, car posé avant l'aire pleine
+  d'un graphique le recouvrirait. Le pied subsiste et ne fait pas double
+  emploi : le filigrane dit à qui l'image appartient, le pied dit où elle mène,
+  et il gagne pour cela l'adresse du site, qui n'y était pas.
 
-  *Le filigrane a dû être rattrapé d'une passe.* Sa première version — 20 px en
-  gras, en or, à 12 % d'opacité — se lisait comme un tampon posé sur l'image :
-  « il faut se calmer sur les filigranes ; il faut quelque chose de subtil et
-  discret mais qui ne puisse pas être rogné. » Trois réglages l'ont ramené à
-  une texture qu'on ne voit qu'en la cherchant : 14 px en 500 au lieu de 20 px
-  en 900, 5,5 % au lieu de 12 %, et l'encre de la page au lieu de l'or de la
-  charte — l'or attirait l'œil, une teinte de texte se fond dans le fond. Le
-  pas, lui, s'est RESSERRÉ, de 190 × 120 à 168 × 104 : **densité et discrétion
-  ne s'opposent pas**, c'est leur produit qui décide de ce qu'on voit, et un
-  filigrane plus pâle peut être plus dense sans se remarquer davantage. L'encre
-  posée par unité de surface est divisée par près de quatre, et un recadrage au
-  sixième de l'image en porte toujours un.
+  *Le filigrane a demandé trois passes, et c'est la partie instructive.* La
+  première version répondait littéralement à « qu'il ne puisse pas être rogné »
+  par une GRILLE : le compte répété en diagonale sur toute la surface, 20 px en
+  gras, en or, à 12 % d'opacité. Aucun découpage ne pouvait les manquer tous —
+  et l'image ressemblait à une planche de contact. Deuxième passe, sur « il faut
+  se calmer sur les filigranes ; il faut quelque chose de subtil et discret
+  mais qui ne puisse pas être rogné » : 14 px en 500, 5,5 %, l'encre de la page
+  au lieu de l'or de la charte, et le pas RESSERRÉ plutôt qu'élargi — densité et
+  discrétion ne s'opposent pas, c'est leur produit qui décide de ce qu'on voit.
+  L'encre posée par unité de surface était divisée par quatre. Ce n'était
+  toujours pas ce qui était demandé : « je ne veux le voir apparaître qu'une
+  fois, pas plein de fois. »
+
+  Troisième passe, et la bonne : **une seule marque, posée sur la diagonale de
+  l'image et large de 86 % de sa longueur.** Elle traverse le cadre d'un coin à
+  l'autre ; un rognage qui l'enlève entièrement enlève avec elle l'essentiel de
+  ce qu'il y avait à publier. L'angle est calculé — `atan2(hauteur, largeur)` —,
+  parce qu'il n'est pas le même pour une carte de 1200 × 675 et pour l'image
+  d'un graphique, plus haute ; et la taille est CHERCHÉE sur une mesure, la
+  largeur d'un mot dépendant de la police que le navigateur a fini par charger.
+  L'opacité descend à 3,5 % : **une lettre de 300 px se remarque plus qu'une de
+  14 à opacité égale**, parce qu'elle occupe l'œil d'un coup au lieu de faire
+  une texture. Il faut le dire nettement — un filigrane unique se recadre, si
+  l'on y met le prix : c'est le maximum qu'une seule marque puisse opposer, et
+  c'est ce qui a été demandé.
 
   Trois choses à en retenir. **Un aperçu n'a pas à être l'image** : tant qu'il
   fallait capturer l'écran, la carte devait être rendue au pixel près, ce qui
@@ -3532,6 +3542,7 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
   diff des témoins de page est le texte de Partager et la barre des cartes de
   Coût. Vérifié au navigateur — les quatre cartes et les deux cartes à
   graphique composées et téléchargées, à 390 et 1440 points, sans erreur de
-  console. Un test tient le filigrane : pas serré devant l'image, rangs
-  décalés, opacité bornée PAR LE HAUT autant que par le bas, taille et graisse
-  plafonnées, et posé en dernier par les deux composeurs.
+  console. Un test tient le filigrane : une seule occurrence — ni boucle, ni
+  second tracé —, l'angle pris sur la diagonale, une part minimale de cette
+  diagonale, une opacité bornée PAR LE HAUT autant que par le bas, et la pose
+  en dernier par les deux composeurs.

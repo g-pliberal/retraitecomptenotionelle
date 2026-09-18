@@ -2557,8 +2557,8 @@ ${carte}
  * est l'APERÇU de la carte, réduit à la largeur de sa colonne ; ce qui se
  * publie est l'image composée par le bouton, aux vraies dimensions. Le pied est
  * ce qui compte le plus — une image qui quitte le site n'a plus ni barre
- * d'adresse ni page autour —, et le filigrane de l'image le redit sur toute la
- * surface : le pied se recadre, le filigrane non.
+ * d'adresse ni page autour —, et le filigrane de l'image le redit en travers du
+ * cadre : le pied se recadre tout seul, le filigrane coûte la carte.
  *
  * Copie de `_carte_partage` dans `web/pages.py`.
  */
@@ -2603,9 +2603,9 @@ function partager(contexte) {
     + '<span class="cle-texte">prêtes à publier.</span>',
     "Un bouton par carte : l'image part au format des réseaux sociaux, "
     + "avec son message déjà rédigé. "
-    + `<strong class="cle-texte">${g.SIGNATURE}</strong> y est répété en `
-    + "filigrane sur toute la surface, pas seulement dans un coin : "
-    + "recadrer l'image ne l'enlève pas.",
+    + `<strong class="cle-texte">${g.SIGNATURE}</strong> y est posé en `
+    + "filigrane, en travers de l'image et non dans un coin : le recadrer "
+    + "revient à recadrer la carte.",
   );
 
   const cartes = [
@@ -2673,8 +2673,8 @@ ${tete}
     <p>Inutile de repasser par ici pour partager un graphique : sous chacun, la
     même barre <span class="cle-texte">Partager</span> compose l'image de ce
     que vous venez de lire et le message qui va avec. Toutes portent le
-    filigrane <span class="cle-texte">${g.SIGNATURE}</span>, qui ne se recadre
-    pas.</p>
+    filigrane <span class="cle-texte">${g.SIGNATURE}</span>, en travers du
+    cadre.</p>
   </div>
 </div>
 `;
