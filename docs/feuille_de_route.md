@@ -2699,6 +2699,63 @@ entre Python et le portage.
 
 ---
 
+### 32. Le temps qu'on perd à travailler sur le dépôt — `fait`
+
+**La demande.** « C'est vraiment lent de travailler sur ce projet. » Chantier
+d'outillage : il ne déplace aucun chiffre, il rend les autres actions moins
+chères. Rien n'avait jamais été mesuré, alors on a commencé par là.
+
+**Ce qui a été mesuré.** Suite complète, machine à quatre cœurs : **7 min 25**,
+905 tests. Un profil de simulation partie de zéro : 1,55 s, dont 1,5 s
+d'analyse YAML en Python pur. Chaque construction de contexte relisait
+1,4 Mo de fiches — les mêmes neuf fichiers, à chaque fois. Et une session
+neuve ne pouvait rien lancer du tout : ni pytest ni le paquet installés,
+`python -m pytest` répondait « No module named pytest ».
+
+**Ce qui a été fait.**
+
+- *Le YAML n'est analysé qu'une fois.* `charger_yaml` mémorise l'arbre, indexé
+  sur la signature du fichier (mtime et taille), et rend une copie profonde :
+  l'appelant garde un dictionnaire librement modifiable, exactement comme
+  avant, et un fichier modifié sur le disque est relu sans qu'on ait à vider
+  quoi que ce soit. La copie coûte 4 ms là où l'analyse coûtait 400 ms.
+- *Le chargeur C quand libyaml est là.* `yaml.safe_load` ne le choisit jamais
+  de lui-même ; à contenu égal il lit huit fois plus vite (0,049 s contre
+  0,406 s sur la plus grosse fiche). Repli silencieux sur le chargeur Python.
+- *La suite se répartit sur les cœurs.* Greffon `pytest_parallele`, chargé par
+  `addopts`. Il s'efface si `pytest-xdist` n'est pas installé, si l'appelant a
+  déjà posé `-n`, si `PYTEST_SANS_XDIST` est mis, ou si l'on vise un fichier ou
+  un cas précis — démarrer quatre processus pour un test coûte plus que de
+  l'exécuter. Il fallait un greffon et non un `conftest.py` : les conftest sont
+  chargés *par* le hook `pytest_load_initial_conftests`, donc trop tard.
+- *Une session démarre en état de marche.* `.claude/hooks/session-start.sh`
+  installe `.[dev]`, pytest-xdist, et le PyYAML de PyPI quand celui de la
+  distribution n'a pas libyaml.
+
+**Ce que ça a déplacé.**
+
+| | avant | après |
+| --- | --- | --- |
+| Suite complète | 7 min 25 | **47 s** (9,4×) |
+| Suite en série, un seul cœur | 7 min 25 | 2 min 34 (2,9×) |
+| Simulation, contexte neuf | 1,55 s | 0,16 s (9,7×) |
+| `tests/test_moteur.py` seul | — | 4,5 s |
+
+**Vérifié.** Les 905 tests passent, avant comme après. `construire_donnees.py`
+reproduit `moteur/donnees.json` et `moteur/style.css` **octet pour octet** :
+c'est la preuve que le cache et le chargeur C n'ont rien changé au fond. Les
+quatre garde-fous du greffon ont été essayés un par un.
+
+**Ce qui reste.** Les deux plus gros postes sont désormais
+`test_les_temoins_du_portage_sont_a_jour` (19,6 s) et les trois tests de
+`test_cout.py` (10 s chacun) ; ils recalculent des grilles entières de cas
+types. Un cache de session sur ces grilles les ferait tomber, mais il faudrait
+d'abord s'assurer qu'aucun test ne compte sur leur recalcul. Et
+l'enregistrement du hook dans `.claude/settings.json` reste à faire à la main :
+une session Claude Code n'a pas le droit de modifier sa propre configuration.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -3239,3 +3296,9 @@ entre Python et le portage.
   heureux : à quatre couleurs, la palette devient séparable sous deutéranopie
   et sous protanopie, ce qu'elle n'était pas à six, et le contrôle est entré
   dans les tests.
+- **Septembre 2026, action 32.** Faite. Chantier d'outillage : la suite passe
+  de 7 min 25 à 47 s, une simulation partie de zéro de 1,55 s à 0,16 s, et une
+  session neuve n'a plus à installer quoi que ce soit avant de lancer un test.
+  Aucun chiffre du modèle ne bouge — le build est reproduit octet pour octet.
+  Reste à enregistrer le hook de démarrage dans `.claude/settings.json`, ce
+  qu'une session ne peut pas faire elle-même.
