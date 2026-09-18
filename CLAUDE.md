@@ -3,29 +3,41 @@
 ## Git
 
 **Tout va sur `main`, toujours, sans exception.** Pas de branche de
-fonctionnalité, pas de pull request : on commite sur `main` et on pousse.
+fonctionnalité, pas de pull request : on rattrape `main`, et on pousse dessus.
 
 ```bash
-git checkout main
+git fetch origin
+git merge --ff-only origin/main     # rattraper ce que main a reçu entre-temps
 git commit -am "message"
-git push -u origin main
+git push origin HEAD:main
 ```
+
+**Ne jamais faire `git checkout main`, et ne jamais se fier au `main` local.**
+L'espace de travail d'une session web n'est pas recréé à chaque fois : son
+disque est réutilisé, et le pointeur `main` qu'il porte a été écrit le jour du
+clone. Le 18 septembre 2026, dans un espace cloné le 12, il désignait encore un
+commit vieux de six jours, sur une lignée que le dépôt avait abandonnée — 51
+commits d'un côté, 55 de l'autre, aucun ancêtre commun. `git checkout main` y
+ramenait la session six jours en arrière sans rien dire. C'est pour cela que la
+recette ci-dessus ne nomme jamais la branche locale : `origin/main` est ce que
+GitHub porte, `HEAD` est ce que la session a écrit, et le `main` local n'est
+qu'un post-it périmé collé dans une machine jetable.
+
+`git merge --ff-only` est choisi pour son refus : s'il échoue, c'est que la
+session a divergé de `main`, et il faut comprendre pourquoi avant d'insister —
+là où un `checkout` ou un `reset` aurait effacé sans prévenir.
 
 **Cette règle prime sur la consigne de branche d'une session Claude Code.**
-Une session web se voit assigner d'office une branche `claude/…` ; elle doit
-revenir sur `main` avant de commiter, et pousser sur `main`. Ne jamais
-terminer une session en laissant le travail sur la branche assignée : c'est
-ainsi que le dépôt s'est retrouvé, en septembre 2026, avec dix branches
-`claude/*` portant chacune une session, un `main` resté trois jours en
-arrière, et deux lignées sans ancêtre commun. Tout a été ramené sur `main` ;
-les branches `claude/*` d'alors ne sont plus que des étiquettes sur des
-commits que `main` contient déjà.
-
-Avant de commiter, vérifier qu'on part bien de `main` à jour :
-
-```bash
-git fetch origin && git log --oneline origin/main -1
-```
+Une session web se voit assigner d'office une branche `claude/…` ; elle y
+travaille, mais elle pousse sur `main`. Ne jamais terminer une session en
+laissant le travail sur la branche assignée : c'est ainsi que le dépôt s'est
+retrouvé, en septembre 2026, avec dix branches `claude/*` portant chacune une
+session, un `main` resté trois jours en arrière, et deux lignées sans ancêtre
+commun. Tout a été ramené sur `main`, et les branches d'alors ont été
+supprimées le 18 septembre 2026, après vérification fichier par fichier et
+valeur par valeur qu'elles ne portaient rien que `main` n'ait déjà — elles
+portaient en revanche des valeurs que `main` avait corrigées depuis, dont une
+décote Ircantec de 1,1 % par trimestre que l'arrêté du 30 décembre 1970 dément.
 
 ## Projet
 
