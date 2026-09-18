@@ -5182,13 +5182,45 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   compte vaut `haute` et jamais `certifiee` : le COR consolide des comptes
   produits par les régimes, c'est le critère 1 du manifeste des sources.
 
-- **Les recettes ne réagissent à aucun scénario.** Le coefficient d'équilibre
-  confronte le coût de chaque système aux ressources RÉELLEMENT encaissées,
-  celles du système actuel. Le contrefactuel est donc « à prélèvement inchangé,
-  ce système tiendrait-il ? » — une question bien posée, et pas la seule : le
-  scénario 6, qui pose un taux unique de 18 % pour tous, déplacerait aussi les
-  recettes. Les réserves financières des régimes, que le COR chiffre à part, ne
-  sont pas comptées non plus : le solde dit le flux, jamais le stock.
+- **Les recettes réagissent sur deux points, et sur deux seulement.** Le
+  premier est le droit (voir ci-dessous). Le second est le TAUX, et il ne
+  concerne que le scénario 6 : il remplace tous les taux de cotisation par un
+  seul, 18 %, parts salariale et patronale additionnées, et sa part cotisée des
+  ressources est donc multipliée par le rapport de ce que ce taux prélève sur
+  les carrières de la grille à ce que le droit en vigueur y prélève. Ce rapport
+  vaut **0,63** une fois la bascule passée, c'est-à-dire un taux moyen de
+  **28,7 %** aujourd'hui. Le contrôle externe est le meilleur dont cette page
+  dispose : le COR publie, dans son rapport annuel, le taux de cotisation
+  retraite d'un salarié non cadre du privé sous le plafond, parts salariale et
+  employeur — 27,9 % en 2025 —, et le modèle le retrouve à huit dixièmes de
+  point près sur une grille qui mêle à ce salarié des fonctionnaires, dont
+  l'employeur verse 74,28 % du traitement, et des non-salariés, qui cotisent
+  moins. Le scénario 6 passe ainsi d'un solde moyen de +3,75 % du PIB à
+  −0,09 %, et son coefficient de 2070 de 1,53 à 1,07.
+
+  Le calcul est tenu au niveau du SEUL rapport, comme celui des masses de
+  pension, et il suppose trois choses. Que l'assiette ne bouge pas : un taux
+  plus bas déforme l'offre de travail et la structure des rémunérations, et
+  aucune élasticité n'est posée ici. Que les ressources non cotisées — le quart
+  du total — sont reconduites telles quelles, faute que le programme dise ce
+  qu'il en ferait ; c'est l'hypothèse la plus favorable au scénario. Et que le
+  poids d'un cas type parmi les COTISANTS est celui qu'il a parmi les
+  retraités de sa caisse, faute d'une série de cotisants : cette approximation
+  surreprésente les régimes qui s'éteignent, dont les taux sont parmi les plus
+  élevés, et pousse donc le rapport vers le bas.
+
+  **Une réserve de sens opposé, et elle est nommée parce qu'elle est
+  chiffrable.** Le modèle porte au compte le taux qui ACQUIERT des droits, et
+  c'est lui qu'il compare à 18 %. Ce n'est pas tout ce qui rentre : la
+  contribution d'équilibre générale et la contribution d'équilibre technique de
+  l'Agirc-Arrco, environ deux points et demi sur un salaire du privé, n'ouvrent
+  aucun droit et sont pourtant encaissées. Les compter relèverait le
+  dénominateur, donc abaisserait le rapport de recettes du scénario 6 : le
+  chiffre affiché lui est favorable, et le refermer demande une série de taux
+  ENCAISSÉS à côté de celle des taux qui acquièrent.
+
+  Les réserves financières des régimes, que le COR chiffre à part, ne sont
+  toujours pas comptées : le solde dit le flux, jamais le stock.
 
   Une part de ces recettes est désormais NOMMÉE, et c'est la moins défendable :
   le poste « transferts d'organismes extérieurs » du COR contient ce que la
@@ -5211,7 +5243,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   système actuel. Le système actuel encaisse tout et garde le solde du COR.
   Le coefficient n'est toujours pas appliqué, et ce que la branche famille
   ferait de ce qu'elle cesserait de verser est une décision de programme, pas
-  un résultat du modèle.
+  un résultat du modèle. Depuis le 18 septembre 2026, ce retrait n'est plus la
+  seule réaction des recettes : voir le point précédent.
 
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
@@ -5720,7 +5753,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 929 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 933 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

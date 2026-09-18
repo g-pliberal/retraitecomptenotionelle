@@ -2891,7 +2891,7 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
 
 ---
 
-### 35. Les recettes et les dépenses du scénario 6, chiffrées toutes les deux — `à faire`
+### 35. Les recettes et les dépenses du scénario 6, chiffrées toutes les deux — `en cours`
 
 **Pourquoi.** Le scénario 6 est la proposition du dépôt, et c'est celui dont le
 bilan est le moins bien tenu. Sa DÉPENSE réagit à ce qu'il change, parce que le
@@ -2972,6 +2972,65 @@ toucher aux moteurs de pension.
    prélève 5 % sur la même assiette et ne finance pas la répartition. L'effort
    contributif du scénario 6 est donc de 23 %, sa recette de système de 18 %,
    et la page doit porter les deux nombres sans les confondre.
+
+**Ce que le volet A a déplacé, au 18 septembre 2026.** Le point 2 est fait, et
+c'est celui qui portait le résultat. La page Coût n'affiche plus, pour le
+scénario 6, les recettes d'un système dont il remplace tous les taux.
+
+- *Le rapport de recettes existe, et il est bâti sur la grille des cas types*
+  (`cout.py`, `_masses_cotisations` et `_rapports_recettes`, portés en regard
+  dans `moteur/js/cout.js`). La recette de chaque système est celle du COR,
+  dont la part COTISÉE — 77 % du total — est multipliée par ce rapport.
+- *Le dénominateur n'est pas celui qu'on croyait.* Prendre le compte du
+  scénario 4 pour « ce que le droit en vigueur prélève » était faux : après la
+  bascule, ce compte fusionne les régimes et prélève le taux du statut pivot
+  privé pour TOUT LE MONDE — 25,8 %, fonctionnaires compris. C'était déjà une
+  réforme, et le rapport ne comparait alors que deux réformes entre elles. Le
+  dénominateur est désormais le même compte SANS régime fusionné, c'est-à-dire
+  ce que chaque régime prélèverait jusqu'en 2070 si rien ne changeait : 25,8 %
+  pour un salarié du privé, 42,7 % pour un fonctionnaire de catégorie active,
+  47,9 % pour un agent de conduite, 76,6 % pour un fonctionnaire sédentaire.
+  Un compte de plus par couple, soit un sixième de calcul en plus sur la grille.
+- *Le rapport vaut 0,63*, stable dès deux ans après la bascule, soit un taux
+  moyen implicite de **28,7 %**. Le contrôle externe était à trouver, et il
+  existe : la figure 3.1 du rapport annuel du COR publie le taux de cotisation
+  retraite d'un salarié non cadre du privé sous le plafond, parts salariale et
+  employeur, de 1940 à 2025 — **27,9 %** en 2025. Huit dixièmes de point d'écart
+  sur une grille qui mêle à ce salarié des fonctionnaires et des non-salariés.
+  La même figure dit autre chose, qui n'était pas cherché : le taux moyen sur
+  toute la carrière de la génération 1940 était de **18,97 %**, c'est-à-dire ce
+  que la proposition demande.
+- *Ce que ça déplace.* Solde moyen 2026-2070 du scénario 6 : de **+3,75 %** du
+  PIB à **−0,09 %**. Coefficient de 2070 : de **1,53** à **1,07**. Solde de
+  2025 : inchangé, la bascule n'ayant pas eu lieu. Le scénario reste très
+  au-dessus du système actuel (−1,13 %), et son excédent devient un équilibre.
+  Aucun autre chiffre du dépôt ne bouge : pas une pension, pas un rapport de
+  masses, pas un témoin de simulation.
+- *Un effet de bord de la grille, borné et écrit.* Chaque génération y
+  représente cinq classes d'âge, et la cohorte née deux ans plus tôt verse
+  l'année `t` ce que la génération de la grille verse en `t + 2`. Deux ans avant
+  la bascule, ce `t + 2` était déjà à 18 % : la recette de 2025 baissait pour
+  une réforme qui n'avait pas eu lieu. Le rapport est donc écrit à un avant la
+  bascule plutôt que calculé. Après elle, le même décalage joue en sens inverse
+  et s'éteint en deux ans.
+- *Une réserve nouvelle, de sens opposé, et chiffrable.* Le modèle porte au
+  compte le taux qui ACQUIERT des droits, non tout ce qui rentre : la
+  contribution d'équilibre générale et la contribution d'équilibre technique de
+  l'Agirc-Arrco, environ deux points et demi sur un salaire du privé, n'ouvrent
+  aucun droit et sont pourtant encaissées. Les compter abaisserait encore le
+  rapport. Le chiffre affiché est donc favorable au scénario 6, et le refermer
+  demande une série de taux ENCAISSÉS à côté de celle des taux qui acquièrent.
+
+**Ce qui reste du volet A** : l'assiette en niveau (point 1), qui donnerait une
+seconde route indépendante du rapport ; la série d'effectifs de COTISANTS
+(point 3), qui remplacerait la pondération par les retraités ; les trois
+variantes de ressources non cotisées (point 4) ; et la ligne des cinq points
+capitalisés (point 5). Deux sources repérées en chemin, chez le COR et dans le
+classeur que `scripts/fetch/cor_comptes_retraite.py` télécharge déjà : la
+figure 3.1, taux de cotisation d'un non-cadre du privé de 1940 à 2025, à
+certifier ; et le tableau 2.11, qui donne l'équivalence du COR entre un point de
+taux de prélèvement et un pour-cent de masse de pension — 2,76 points contre
+8,6 % à l'horizon 2070, sur le même champ que nos comptes.
 
 **B. Faire entrer la garantie vieillesse dans la trajectoire.**
 
@@ -3780,3 +3839,20 @@ scénario ».
   grille de cas types ne voit pas une allocation différentielle, et le zéro
   qu'elle rend est plus faux qu'une approximation : c'est la moitié de la
   proposition, celle que l'impôt finance, absente de sa propre trajectoire.
+
+- **Septembre 2026, action 35, volet A.** Fait, et c'est le volet qui portait le
+  résultat. Le scénario 6 n'encaisse plus ce qu'encaisse un système dont il
+  remplace tous les taux : sa part cotisée est multipliée par 0,63, son solde
+  moyen 2026-2070 passe de +3,75 % du PIB à −0,09 %, son coefficient de 2070 de
+  1,53 à 1,07. Le détail est sous l'action. Trois choses à en retenir. **Le
+  dénominateur d'un contrefactuel est lui-même un contrefactuel** : prendre le
+  compte du scénario 4 pour « ce que le droit prélève » revenait à comparer deux
+  réformes, ce compte fusionnant les régimes à la bascule ; il fallait
+  redemander le même compte sans fusion. **Un contrôle externe existait et
+  n'avait pas été cherché** : la figure 3.1 du rapport annuel du COR publie le
+  taux de cotisation d'un non-cadre du privé depuis 1940, et le modèle la
+  retrouve à huit dixièmes de point — la même figure dit que la génération 1940
+  a cotisé 18,97 % sur toute sa carrière, soit ce que la proposition demande.
+  Et **une grille à pas de cinq ans fuit aux deux bords d'une réforme** : la
+  recette de 2025 baissait pour une bascule de 2026, parce qu'une cohorte de la
+  tranche verse ce que la génération de la grille verse deux ans plus tard.

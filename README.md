@@ -800,7 +800,7 @@ contrôle et non identité.
 | 3. Notionnel dès 2026, part salariale | −0,65 % | +2,43 % | **1,89** |
 | 4. Notionnel rétroactif, salariale + patronale | +4,87 % | +2,70 % | 1,17 |
 | 5. Notionnel dès 2026, salariale + patronale | −0,65 % | +0,61 % | 1,14 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,87 % | +3,75 % | 1,53 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,87 % | **−0,09 %** | **1,07** |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -837,6 +837,30 @@ avant et sur tout l'horizon projeté. C'est pourquoi les scénarios 3 et 5 sont
 déjà en déficit en 2025, où ils servent encore les pensions du système actuel,
 et pourquoi le scénario 3 vaut 1,87 en 2070 et non 1,94. Le système actuel,
 lui, encaisse tout, et son solde reste celui du COR.
+
+**La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
+remplace tous les taux de cotisation par un seul, 18 %, parts salariale et
+patronale additionnées. Sur les carrières de la grille, le droit en vigueur en
+prélève **28,7 %** en moyenne : 27,9 % pour un salarié non cadre du privé sous
+le plafond, chiffre que le COR publie dans son rapport annuel et que le modèle
+retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
+dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
+77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
+change le sens du tableau pour ce scénario : son solde moyen passe de +3,75 %
+du PIB à −0,09 %, son coefficient de 2070 de 1,53 à 1,07, et l'excédent qu'il
+affichait devient un équilibre — toujours très au-dessus du système actuel, qui
+reste à −1,13 %. Les quatre autres scénarios notionnels ne changent que ce qui
+est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans
+tous les cas, et leur recette ne bouge pas.
+
+Deux choses que ce calcul ne fait pas, et toutes deux jouent en faveur du
+scénario 6. Les ressources qui ne sont pas cotisées (impôts et taxes affectés,
+subventions d'équilibre) sont reconduites telles quelles, faute que le
+programme dise ce qu'il en ferait. Et le taux auquel les 18 % sont comparés est
+celui qui ACQUIERT des droits, non tout ce qui rentre : la contribution
+d'équilibre générale et la contribution d'équilibre technique de l'Agirc-Arrco,
+deux points et demi de plus sur un salaire du privé, n'ouvrent aucun droit et
+sont pourtant encaissées.
 
 ---
 
@@ -1070,7 +1094,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          929 tests Python
+tests/                          933 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

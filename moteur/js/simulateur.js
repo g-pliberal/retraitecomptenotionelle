@@ -398,11 +398,16 @@ export class Simulateur {
     // autre différence ne peut s'y glisser à l'insu du lecteur.
     // Scénarios 4 et 5 : un seul scénario pour les deux, comme
     // `scenarioNotionnel` sert aux scénarios 2 et 3.
+    // Il est nommé parce qu'il sert deux fois : aux scénarios 4 et 5, et à la
+    // page « Coût », qui lui demande ce que le DROIT EN VIGUEUR prélève sur une
+    // carrière — le même compte, sans régime fusionné. C'est le dénominateur du
+    // rapport de recettes.
+    this.constructeurEmployeur = new ConstructeurCompte(
+      this.macro, this.catalogue, this.affiliations, this.indexation,
+      { ...parametres, part_cotisation: PartCotisation.TOTALE },
+    );
     this.scenarioEmployeur = new ScenarioNotionnel(
-      new ConstructeurCompte(
-        this.macro, this.catalogue, this.affiliations, this.indexation,
-        { ...parametres, part_cotisation: PartCotisation.TOTALE },
-      ),
+      this.constructeurEmployeur,
       this.convertisseur, this.ageReference, this.scenarioActuel, parametres,
     );
     // Le pilier de capitalisation obligatoire, et la courbe sans risque qui

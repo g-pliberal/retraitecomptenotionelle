@@ -66,17 +66,32 @@ CE QUE CE MODULE NE FAIT TOUJOURS PAS
    l'APPLIQUE pas : les courbes de coût restent celles d'un système qui ne se
    pilote pas. Le facteur étant commun, l'appliquer déplacerait les niveaux
    sans toucher aux écarts entre carrières.
-4. **Les recettes ne réagissent à rien, sauf sur un point.** Le solde
-   ci-dessous confronte le coût de chaque système aux ressources RÉELLEMENT
-   encaissées, celles du système actuel. C'est le bon contrefactuel — « à
-   prélèvement inchangé, ce système tiendrait-il ? » — et ce n'est pas le
-   seul : le scénario 6, qui pose un taux unique de 18 %, changerait aussi les
-   recettes, et le coefficient d'équilibre ne le dit pas. Le point où elles
-   réagissent : ce que la branche famille et l'assurance chômage versent pour
-   des droits que les scénarios notionnels ne servent pas — AVPF, majorations
-   pour enfants, points des chômeurs — leur est RETIRÉ, année par année là où
-   on le connaît (2013-2024), à part constante des ressources ailleurs. La
-   recette suit le droit.
+4. **Les recettes réagissent sur deux points, et sur deux seulement.** Le
+   solde ci-dessous confronte le coût de chaque système aux ressources du
+   système actuel, corrigées de ce que le système en question ne peut pas
+   encaisser.
+
+   LA RECETTE SUIT LE DROIT. Ce que la branche famille et l'assurance chômage
+   versent pour des droits que les scénarios notionnels ne servent pas — AVPF,
+   majorations pour enfants, points des chômeurs — leur est RETIRÉ, année par
+   année là où on le connaît (2013-2024), à part constante des ressources
+   ailleurs.
+
+   LA RECETTE SUIT LE TAUX. Le scénario 6 remplace tous les taux par 18 % à
+   compter de la bascule : sa part COTISÉE des ressources est multipliée par le
+   rapport de ce que ce taux prélève sur les carrières de la grille à ce que le
+   droit en vigueur y prélève. Ce rapport vaut 0,62 une fois la bascule passée,
+   c'est-à-dire un taux moyen de 29 % aujourd'hui, et il ne bouge plus ensuite.
+   Aucun autre scénario n'y touche : les scénarios 2 à 5 changent ce qui est
+   PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ, et l'employeur verse sa part dans
+   tous les cas.
+
+   Ce qui ne réagit toujours pas : les ressources NON cotisées — impôts et
+   taxes affectés, subventions d'équilibre, un quart du total — reconduites
+   telles quelles faute que le programme dise ce qu'il en ferait, ce qui est
+   l'hypothèse la plus favorable au scénario 6 ; et les réserves financières
+   des régimes, que le COR chiffre à part, le solde disant le flux et jamais le
+   stock.
 
 LE SOLDE, ET NON LE COÛT
 -------------------------
@@ -86,7 +101,9 @@ bilan vient du COR, seul à consolider dépenses ET ressources du système de
 retraite sur un même périmètre (``donnees/equilibre.py`` dit pourquoi ce n'est
 pas la DREES). De là, deux grandeurs par système et par année :
 
-    ressources de S = ressources observées − recette non acquise (S notionnel)
+    ressources de S = ressources cotisées × rapport de recette de S
+                      + ressources non cotisées
+                      − recette non acquise (S notionnel)
     solde du système S = ressources de S − dépenses du COR × rapport S
     coefficient d'équilibre de S = ressources de S ÷ (dépenses × rapport S)
 
@@ -148,6 +165,18 @@ CLES_MASSES: tuple[str, ...] = tuple(scenario for scenario, _ in SCENARIOS) + (
     COMPOSANTE_GARANTIE,
 )
 
+#: Les deux BARÈMES DE PRÉLÈVEMENT dont une masse de cotisations est calculée.
+#: Ils ne sont que deux parce qu'un seul scénario change ce qui est PRÉLEVÉ :
+#: le 6, qui remplace tous les taux par 18 % à compter de la bascule. Les
+#: scénarios 2 à 5 changent ce qui est PORTÉ AU COMPTE — la part salariale
+#: seule, ou les deux parts — et non ce que la paie supporte : l'employeur
+#: verse toujours sa part, elle finance toujours le système, et elle n'ouvre
+#: simplement plus de droit à celui qui la voit passer. Confondre les deux
+#: ferait dire au scénario 2 qu'il encaisse un tiers de moins, ce qui serait
+#: faux.
+TAUX_REELS = "taux_reels"
+CLES_RECETTES: tuple[str, ...] = (TAUX_REELS, "notionnel_liberal")
+
 #: Première génération dont une liquidation puisse tomber après le début de la
 #: répartition (1941) : née en 1880, elle liquide à 61 ans en 1941. En deçà, le
 #: modèle refuse — à juste titre — de calculer quoi que ce soit.
@@ -199,6 +228,10 @@ class Pensionne:
     annee_liquidation: int
     #: Pension annuelle en euros constants, par scénario.
     pensions: dict[str, float]
+    #: Ce que cette carrière VERSE, année par année, sous chacun des deux
+    #: barèmes de prélèvement. En euros courants de chaque année : seul le
+    #: rapport des deux est lu, et il est sans dimension.
+    cotisations: dict[str, dict[int, float]] = field(default_factory=dict)
 
 
 @dataclass
@@ -253,6 +286,9 @@ class AvenirAnnuel:
     rapports: dict[str, float]
     #: Rapport de dépendance démographique : 65 ans et plus sur 20-64 ans.
     dependance: float
+    #: Rapport de la RECETTE de chaque système à celle du système actuel. Un
+    #: partout, sauf pour le scénario 6 à compter de la bascule.
+    rapports_recettes: dict[str, float] = field(default_factory=dict)
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
@@ -335,6 +371,13 @@ class SoldeAnnuel:
     #: que les scénarios notionnels ne servent pas, en part de PIB : une recette
     #: du système actuel, jamais la leur.
     retrait: float = 0.0
+    #: Rapport de la recette de chaque système à celle du système actuel. Vide
+    #: vaut un partout, c'est-à-dire l'ancienne convention : des recettes qui
+    #: ne réagissent à rien.
+    rapports_recettes: dict[str, float] = field(default_factory=dict)
+    #: Part des ressources qui est une cotisation assise sur un revenu
+    #: d'activité, la seule sur laquelle un changement de taux ait prise.
+    part_contributive: float = 0.0
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB."""
@@ -343,12 +386,29 @@ class SoldeAnnuel:
     def ressources_de(self, scenario: str) -> float:
         """Ce qu'un système peut compter comme ressources, en part de PIB.
 
-        Le système actuel encaisse tout. Un scénario notionnel ne sert ni
-        l'AVPF, ni les majorations pour enfants, ni rien pendant une année de
-        chômage : il ne peut pas compter ce que la CNAF et l'Unédic versent
-        pour ces droits-là. LA RECETTE SUIT LE DROIT.
+        Le système actuel encaisse tout. Un scénario notionnel perd deux
+        choses, et il faut les distinguer parce qu'elles n'ont pas la même
+        cause.
+
+        LA RECETTE SUIT LE DROIT. Aucun scénario notionnel ne sert l'AVPF, les
+        majorations pour enfants, ni rien pendant une année de chômage : il ne
+        peut pas compter ce que la CNAF et l'Unédic versent pour ces droits-là.
+        C'est ``retrait``, et il vaut pour les cinq.
+
+        LA RECETTE SUIT LE TAUX. Le scénario 6 remplace tous les taux par 18 %
+        à compter de la bascule ; ce qui est prélevé baisse donc, et la part
+        COTISÉE des ressources baisse avec. Les ressources qui ne sont pas des
+        cotisations — impôts et taxes affectés, subventions d'équilibre — sont
+        laissées inchangées : le programme ne dit pas ce qu'il en ferait, et
+        les reconduire est l'hypothèse qui n'en ajoute aucune autre. C'est
+        aussi celle qui FLATTE le scénario 6, et la page doit le dire.
         """
-        return self.ressources if scenario == "actuel" else self.ressources - self.retrait
+        if scenario == "actuel":
+            return self.ressources
+        rapport = self.rapports_recettes.get(scenario, 1.0)
+        cotisees = self.ressources * self.part_contributive
+        autres = self.ressources - cotisees
+        return cotisees * rapport + autres - self.retrait
 
     def solde(self, scenario: str) -> float:
         """Ressources moins dépenses, en part de PIB. Négatif : besoin de financement."""
@@ -518,6 +578,17 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 ) -> tuple[list[Pensionne], dict[str, int]]:
     """Simule la grille et en tire, pour chaque couple, sa pension par système."""
     grille = calculer_cas_types(simulateur, cas_types, generations(), liquidation)
+    # Ce que le droit en vigueur prélève sur chacune de ces carrières, année par
+    # année et sans bascule : le dénominateur du rapport de recettes. Un compte
+    # de plus par couple, soit un sixième de calcul en plus sur la grille.
+    reels = {
+        (code, generation): simulateur.constructeur_employeur.construire(
+            comparaison.carriere,
+            annee_liquidation=comparaison.carriere.annee_liquidation,
+            annee_debut=comparaison.carriere.premiere_annee,
+        ).cotisations
+        for (code, generation), comparaison in grille.resultats.items()
+    }
     pensionnes = [
         Pensionne(
             code=code,
@@ -533,6 +604,24 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 COMPOSANTE_GARANTIE: comparaison.en_euros_constants(
                     comparaison.notionnel_liberal.garantie_vieillesse.complement
                 ),
+            },
+            cotisations={
+                # Le dénominateur ne peut pas être le compte du scénario 4.
+                # Celui-là fusionne les régimes à la bascule et prélève ensuite
+                # le taux du statut pivot privé pour TOUT LE MONDE : c'est déjà
+                # une réforme, et la comparer au scénario 6 reviendrait à
+                # comparer deux réformes. Ce qu'il faut est ce que le DROIT EN
+                # VIGUEUR prélèverait, régime par régime, sur les mêmes
+                # carrières et jusqu'en 2070 — c'est-à-dire le même compte
+                # SANS régime fusionné.
+                TAUX_REELS: {
+                    ligne.annee: ligne.cotisation
+                    for ligne in reels[(code, generation)]
+                },
+                "notionnel_liberal": {
+                    ligne.annee: ligne.cotisation
+                    for ligne in comparaison.notionnel_liberal.compte.cotisations
+                },
             },
         )
         for (code, generation), comparaison in grille.resultats.items()
@@ -583,6 +672,67 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         for cle in CLES_MASSES:
             masses[cle] += part * poids * pensionne.pensions[cle]
     return masses, vivants
+
+
+def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
+                        annee: int, poids_cas: dict[str, float]) -> dict[str, float]:
+    """Ce que les COTISANTS versent une année donnée, sous les deux barèmes.
+
+    Le pendant de :func:`_masses`, du côté de la recette, et bâti sur la même
+    grille : les mêmes carrières, les mêmes poids de cas types, les mêmes
+    effectifs de classe d'âge. Une différence, et elle tient à ce qu'une
+    cotisation n'est pas une pension. Une pension ne bouge plus après la
+    liquidation, si bien que la cohorte voisine sert le même montant décalé
+    d'un an ; une cotisation change chaque année de la carrière, et la cohorte
+    née un an plus tôt verse, l'année ``t``, ce que la cohorte de la grille
+    versait en ``t − 1``. C'est cette année-là qu'on va chercher.
+
+    Le poids des cas types est celui des RETRAITÉS de leur caisse, faute d'une
+    série de cotisants : c'est la réserve principale de cette grandeur, et elle
+    est écrite dans ``limites.md``. Elle surreprésente les régimes qui
+    s'éteignent, dont les taux sont parmi les plus élevés, et pousse donc le
+    rapport vers le bas.
+    """
+    masses = {cle: 0.0 for cle in CLES_RECETTES}
+    for pensionne in pensionnes:
+        part = poids_cas.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            poids = population.effectif(annee - pensionne.generation - decalage, annee)
+            if poids <= 0.0:
+                continue
+            for cle in CLES_RECETTES:
+                versee = pensionne.cotisations.get(cle, {}).get(annee - decalage, 0.0)
+                if versee:
+                    masses[cle] += part * poids * versee
+    return masses
+
+
+def _rapports_recettes(masses: dict[str, float], annee: int,
+                       bascule: int) -> dict[str, float]:
+    """Rapport de la recette de chaque système à celle du système actuel.
+
+    Un pour tous, sauf pour le scénario 6. Ce n'est pas une approximation :
+    voir ``CLES_RECETTES``. Zéro cotisation au dénominateur — les années
+    d'avant la première carrière de la grille — rend un rapport de un, qui est
+    la valeur neutre et non un résultat.
+
+    AVANT LA BASCULE, le rapport vaut un PAR CONSTRUCTION, et il est écrit
+    plutôt que calculé. La raison est un effet de bord de la grille : chaque
+    génération y représente les cinq classes d'âge qui l'entourent, et la
+    cohorte née deux ans plus tôt verse, l'année ``t``, ce que la génération de
+    la grille verse en ``t + 2``. Deux ans avant la bascule, ce ``t + 2`` est
+    déjà à 18 %, et la recette de 2025 baissait alors d'un dixième de point de
+    PIB pour une réforme qui n'a pas encore eu lieu. Après la bascule, le même
+    décalage joue en sens inverse et s'éteint en deux ans : c'est la marche que
+    ``limites.md`` décrit déjà du côté des pensions, et elle est bornée.
+    """
+    rapports = {scenario: 1.0 for scenario, _ in SCENARIOS}
+    reference = masses[TAUX_REELS]
+    if annee >= bascule and reference > 0.0:
+        rapports["notionnel_liberal"] = masses["notionnel_liberal"] / reference
+    return rapports
 
 
 def _ponderation(simulateur: Simulateur, mode: str,
@@ -658,9 +808,11 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
 
     lignes: list[AvenirAnnuel] = []
     for annee in range(depenses.premiere_annee_ventilee, HORIZON + 1):
-        masses, _ = _masses(pensionnes, population, annee, poids(annee))
+        poids_annee = poids(annee)
+        masses, _ = _masses(pensionnes, population, annee, poids_annee)
         if masses["actuel"] <= 0.0:
             continue
+        cotisations = _masses_cotisations(pensionnes, population, annee, poids_annee)
         projete = annee > derniere_publiee
         coefficient = macro.coefficient_prix(annee, annee_euros)
         base = (
@@ -678,6 +830,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             dependance=population.effectif_tranche(
                 AGE_DEPENDANCE, population.age_maximal, annee) / actifs
             if actifs else 0.0,
+            rapports_recettes=_rapports_recettes(
+                cotisations, annee, simulateur.parametres.annee_bascule),
         ))
 
     return Avenir(
@@ -718,6 +872,8 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             rapports=par_annee[annee].rapports,
             pib=par_annee[annee].pib if annee <= derniere_annee_pib else 0.0,
             retrait=comptes.recette_non_acquise(annee),
+            rapports_recettes=par_annee[annee].rapports_recettes,
+            part_contributive=comptes.part_contributive(annee),
         )
         for annee in comptes.annees() if annee in par_annee
     ]
