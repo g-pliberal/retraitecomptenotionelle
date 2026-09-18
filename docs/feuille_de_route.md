@@ -2812,6 +2812,85 @@ essayées : `loadscope` est deux fois pire (95 s, un worker hérite de tout
 
 ---
 
+### 34. Un test qui confronte les affirmations du site au modèle — `à faire`
+
+**Pourquoi.** Ouverte par le retrait de la note « aucun droit repris »
+(journal, septembre 2026). Elle a vécu deux jours en page d'accueil en
+affirmant le contraire de ce que le programme fait, sur la même page, trois
+fois. Rien ne pouvait l'arrêter : `tests/temoins/pages.json` FIGE le texte des
+pages — il rend visible une modification, il ne valide aucune affirmation —, et
+`tests/test_web.py` ne vérifie que des formulaires, des bornes, des adresses et
+des chiffres. Ce que `inventaire.yaml`, `reformes.yaml` et `veille.yaml` ont
+chacun — un test qui refuse l'oubli —, les affirmations des pages ne l'ont pas.
+Or ce sont elles qu'on lit : un lecteur du site voit la phrase, pas le témoin.
+
+**Les trois modes de panne, à traiter ensemble.**
+
+1. *La phrase que le code dément.* Celle qui a été retirée. Il en reste au
+   moins une, jumelle, dans le dépliant de transition
+   (`web/pages.py`, `_programme_transition`) : « La bascule ne reprend aucun
+   droit acquis et ne touche à aucune pension déjà versée », écrite QUATRE
+   LIGNES au-dessus du tableau qui dit « Les droits déjà acquis sont figés,
+   réduits à leur part contributive ». C'est la première à instruire.
+2. *La phrase qu'une autre page dément.* L'accueil promet « L'écart se solde
+   chaque année, au lieu de s'accumuler en silence » ; la page Coût déclare
+   « Le coefficient d'équilibre n'est jamais appliqué ». Les deux sont exactes
+   dans leur registre — l'une décrit le système proposé, l'autre le modèle qui
+   le chiffre — et leur voisinage est un mensonge. C'est exactement le sujet de
+   l'action 11, et le test dirait laquelle des deux bouge quand elle sera faite.
+3. *La phrase vraie qui a pourri.* Un défaut de `config.py` qui se déplace, un
+   régime qui entre au catalogue, un barème recertifié : la prose ne suit pas,
+   parce que rien ne la convoque. L'action 31 a renuméroté les scénarios ; la
+   suivante déplacera autre chose.
+
+**La forme.** Un catalogue, `data/reference/site/affirmations.yaml`, et un test
+qui l'exploite dans les deux sens — c'est la mécanique de `inventaire.yaml`,
+qui a déjà fait ses preuves. Chaque entrée porte : `id` ; la page ; l'`extrait`
+verbatim, assez long pour être retrouvé et assez court pour survivre à une
+retouche de mise en page ; ce que la phrase `porte`, en une ligne ; et son
+`etat` — `verifiee`, `contredite` (avec l'action qui la refermera), ou
+`sans_portee` pour ce qui est de la rhétorique et non une affirmation sur le
+modèle.
+
+Le test fait trois choses :
+
+- **L'extrait est encore là.** S'il a disparu du rendu, la phrase a été
+  réécrite sans qu'on repasse par le catalogue : échec. C'est le garde-fou
+  contre le mode de panne 3, et il ne coûte rien — les pages sont déjà rendues
+  par la fixture `page`.
+- **Le contrôle passe.** Chaque entrée `verifiee` nomme une fonction qui
+  interroge le MODÈLE, pas le texte : « le taux du régime fusionné est le même
+  pour tous les statuts après la bascule », « deux carrières de même capital
+  notionnel rendent la même pension », « aucun avantage non contributif ne
+  survit dans le compte ». Une entrée `contredite` est un test qui vérifie
+  qu'elle l'est encore, et qui tombe le jour où l'action qui la refermait est
+  faite — de sorte qu'on ne referme pas une action en oubliant la phrase.
+- **Rien n'échappe au catalogue.** Toute phrase forte des pages — au premier
+  jet, le contenu des `<strong>` de `web/pages.py`, une centaine — est soit
+  dans le catalogue, soit déclarée `sans_portee`. C'est la clause
+  d'exhaustivité, celle qui fait qu'une phrase NOUVELLE ne peut pas entrer sans
+  qu'on ait dit ce qu'elle engage.
+
+**Le piège à nommer d'avance.** Un catalogue qu'on remplit de `sans_portee`
+pour faire passer la suite ne vaut rien. La limite est simple à écrire et à
+tenir en relecture : est `sans_portee` ce qui ne peut pas être faux — un titre,
+une invitation, une transition. Dès qu'une phrase affirme quelque chose sur ce
+que le système FAIT, elle a un contrôle ou un `contredite` qui nomme son
+action.
+
+**Fichiers.** `data/reference/site/affirmations.yaml` (neuf) ; un
+`tests/test_affirmations.py` (neuf) ; `web/pages.py` pour les phrases à
+corriger au passage, et `moteur/js/pages.js` en regard ; les témoins.
+Le portage JavaScript n'a pas à porter le test : le catalogue vise le texte,
+et les deux moteurs rendent le même.
+
+**Fin.** Le catalogue couvre les phrases fortes des six pages, la jumelle du
+dépliant de transition est corrigée, et les deux contradictions connues
+(étape 2 de la transition, écart soldé contre coefficient jamais appliqué) sont
+dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre.
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -3379,3 +3458,5 @@ essayées : `loadscope` est deux fois pire (95 s, un worker hérite de tout
   `tests/test_web.py` ne vérifie que des formulaires, des bornes et des
   chiffres. Ce que `inventaire.yaml`, `reformes.yaml` et `veille.yaml` ont
   chacun (un test d'exhaustivité), les affirmations des pages ne l'ont pas.
+  D'où l'action 34. À noter pour qui la prendra : la jumelle de la phrase
+  retirée vit encore dans le dépliant de transition.
