@@ -4383,7 +4383,7 @@ def test_les_pages_longues_portent_leur_plan(contexte):
     for chemin, attendus in (
         ("/cout", ["cout-bilan", "cout-provenance", "cout-depenses", "cout-ressources",
                    "cout-transferts", "cout-scenarios", "cout-equilibre", "cout-garantie",
-                   "cout-poids", "cout-sources", "cout-limites"]),
+                   "cout-capitalisation", "cout-poids", "cout-sources", "cout-limites"]),
         ("/donnees", ["donnees-series", "donnees-fiabilite", "donnees-inventaire",
                       "donnees-sources", "donnees-reutilisation"]),
     ):

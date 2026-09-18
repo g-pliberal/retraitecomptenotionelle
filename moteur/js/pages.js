@@ -10,6 +10,8 @@ import {
   MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge, moisTravailles,
 } from "./calendrier.js";
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
+import { MATURITES, repartition } from "./capitalisation.js";
+import { CourbeTauxSansRisque } from "./taux.js";
 import { FAMILLES_STATUT, formaterBorne } from "./regimes.js";
 import {
   CAS_TYPES, GENERATIONS, ageLiquidationPour, calculerCasTypes,
@@ -2747,12 +2749,20 @@ function resultats(contexte, saisie) {
     retroactif: retro.pension_annuelle,
     "retroactif-employeur":
       comparaison.notionnel_retroactif_employeur.pension_annuelle,
-    liberal: comparaison.notionnel_liberal.pension_annuelle,
+    // La proposition sert DEUX lignes : la pension de répartition issue du
+    // compte notionnel, et la rente du pilier capitalisé obligatoire. Le
+    // montant affiché est leur somme — c'est ce qui tombe sur le compte du
+    // retraité —, et la barre comme la glose disent aussitôt ce qui vient de
+    // l'une et ce qui vient de l'autre.
+    liberal: comparaison.notionnel_liberal.pension_totale,
   };
   const constants = {};
   for (const [cle, montant] of Object.entries(courants)) {
     constants[cle] = comparaison.enEurosConstants(montant);
   }
+  const capitalise = comparaison.enEurosConstants(
+    comparaison.notionnel_liberal.rente_capitalisation_obligatoire,
+  );
   const reference = Math.max(...Object.values(constants)) || 1.0;
 
   // Les deux unités ne se distinguent que si le départ tombe ailleurs que sur
@@ -2764,7 +2774,8 @@ function resultats(contexte, saisie) {
     ? "par mois, en euros d'aujourd'hui"
     : `par mois, en euros de ${saisie.euros}`;
 
-  const bloc = (cle, titre, glose, variation, tauxRemplacement) => {
+  const bloc = (cle, titre, glose, variation, tauxRemplacement,
+                partCapitalisee = 0.0) => {
     const montant = constants[cle];
     const variationHtml = variation === null
       ? '<span class="discret">référence</span>'
@@ -2774,6 +2785,19 @@ function resultats(contexte, saisie) {
         <span class="somme">${g.eurosCentimes(courants[cle] / 12)}</span>
         <span class="unite">par mois, en euros de ${anneeDepart}</span>
       </span>` : "";
+    // La barre du système qui porte un pilier capitalisé est coupée en deux :
+    // la répartition pleine, la capitalisation hachurée. Même couleur — c'est
+    // le même système —, autre texture — ce n'est pas la même promesse.
+    const repartition = montant - partCapitalisee;
+    let barre = `<span style="width:${formatFixe(repartition / reference * 100, 1)}%"></span>`;
+    let partage = "";
+    if (partCapitalisee > 0) {
+      barre += `<span class="capitalise" style="width:${formatFixe(partCapitalisee / reference * 100, 1)}%"></span>`;
+      partage = `
+      <span class="partage">${g.eurosCentimes(repartition / 12)} de pension
+        par répartition + ${g.eurosCentimes(partCapitalisee / 12)} de rente
+        capitalisée, par mois</span>`;
+    }
     return `
 <div class="scenario">
   <div class="entete">
@@ -2785,8 +2809,8 @@ function resultats(contexte, saisie) {
         <span class="annuel">${g.eurosCentimes(montant)} par an</span>
       </span>${depart}
     </span>
-  </div>
-  <div class="barre ${cle}"><span style="width:${formatFixe(montant / reference * 100, 1)}%"></span></div>
+  </div>${partage}
+  <div class="barre ${cle}">${barre}</div>
   <div class="glose">${glose} · ${g.terme("taux de remplacement")}
     ${g.pourcentage(tauxRemplacement)} · écart au système actuel : ${variationHtml}</div>
 </div>`;
@@ -2810,10 +2834,13 @@ function resultats(contexte, saisie) {
       comparaison.tauxRemplacement("notionnel_retroactif_employeur"))
     + bloc("liberal",
       "4. La proposition du Parti libéral français",
-      `le système 3 jusqu'à ${saisie.bascule}, puis 18 % pour tous — `
-      + "plus une garantie vieillesse payée par l'impôt",
-      comparaison.variation("notionnel_liberal"),
-      comparaison.tauxRemplacement("notionnel_liberal"));
+      `le système 3 jusqu'à ${saisie.bascule}, puis 18 % pour tous en `
+      + "répartition et "
+      + `${g.pourcentage(comparaison.parametres.taux_capitalisation_obligatoire, false, 0)} `
+      + "capitalisés par-dessus — plus une garantie vieillesse payée par l'impôt",
+      comparaison.variationTotale("notionnel_liberal"),
+      comparaison.tauxRemplacementTotal("notionnel_liberal"),
+      capitalise);
 
   const fiches = [
     g.fiche("années cotisées", String(carriere.anneesCotisees.length)),
@@ -2919,6 +2946,7 @@ ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
 ${contributionEmployeur(comparaison)}
 ${garantieVieillesse(comparaison, saisie)}
+${pilierCapitalise(comparaison, saisie)}
 ${detail(contexte, comparaison)}
 `;
 }
@@ -3121,6 +3149,170 @@ const EXEMPLES_GARANTIE = [
   [[300.0, 5000.0], "300 € et 5 000 €"],
   [[300.0], "personne seule, 300 €"],
 ];
+
+/**
+ * Le pilier obligatoire : ce qu'il reçoit, ce qu'il rend, ce qu'il lègue.
+ *
+ * Portage de `_pilier_capitalise`. C'est la seule ligne de tout le site où de
+ * l'argent est réellement placé : le bloc doit donc dire où va l'argent, ce
+ * qu'il coûte, et ce qu'il devient si l'assuré meurt avant d'avoir liquidé.
+ * La dernière n'est pas un détail de présentation : c'est ce que la
+ * capitalisation donne et que la répartition ne donne pas, et c'est aussi ce
+ * qui explique qu'elle rapporte moins à rente égale.
+ */
+function pilierCapitalise(comparaison, saisie) {
+  const liberal = comparaison.notionnel_liberal;
+  const pilier = liberal.capitalisation;
+  if (pilier === null || pilier === undefined) return "";
+
+  const parametres = comparaison.parametres;
+  const taux = g.pourcentage(pilier.taux_cotisation, false, 0);
+  const depart = comparaison.carriere.anneeLiquidation;
+  const titre = `Le pilier de capitalisation obligatoire : ${taux} placés dès `
+    + `${parametres.annee_debut_capitalisation}`;
+
+  if (!pilier.actif) {
+    return g.depliant(titre, `
+<p>Cette carrière ne cotise pas au pilier : elle s'achève en ${depart}, et la
+cotisation capitalisée n'est due qu'à compter de
+${parametres.annee_debut_capitalisation}. La proposition ne demande rien au
+passé — ni ce taux, ni un autre —, et qui a liquidé avant la bascule reçoit
+donc, du système 4, la seule pension de répartition.</p>`);
+  }
+
+  // Les trois frais sont des paramètres : les lire ici, et non les écrire en
+  // dur, fait que changer le barème change la page.
+  const frais = parametres;
+  const premiere = pilier.annees[0];
+  const derniere = pilier.annees[pilier.annees.length - 1];
+
+  // Ce que devient un euro versé : la cascade complète, du prélèvement à la
+  // rente. Chaque ligne est une opération, et la suivante part du résultat de
+  // la précédente — c'est la seule façon de rendre un capital vérifiable.
+  const cascade = g.tableau(
+    ["", "Ce qui se passe", `Montant, en euros de ${depart}`],
+    [
+      [`a) Cotisation de ${taux}`,
+        "prélevée sur la même assiette que la cotisation notionnelle, de "
+        + `${premiere.annee} à ${derniere.annee}, EN PLUS d'elle`,
+        g.euros(pilier.versements)],
+      ["b) − frais sur versement",
+        `${g.pourcentage(frais.frais_versement_capitalisation, false, 2)} `
+        + "de chaque versement",
+        `− ${g.euros(pilier.frais_versement)}`],
+      ["c) + intérêts",
+        "placés sur des titres sans risque, à des maturités qui raccourcissent "
+        + "à l'approche du départ",
+        `+ ${g.euros(pilier.interets)}`],
+      ["d) − frais de gestion",
+        `${g.pourcentage(frais.frais_gestion_capitalisation, false, 2)} `
+        + "par an sur l'encours",
+        `− ${g.euros(pilier.frais_gestion)}`],
+      ["e) = capital au départ",
+        "ce que vaut le compte le jour de la liquidation",
+        g.euros(pilier.capital)],
+      ["f) ÷ coefficient de conversion",
+        `${g.nombre(pilier.conversion.diviseur, DECIMALES_DIVISEUR)}, la même `
+        + "table de mortalité que la pension notionnelle",
+        `${g.euros(pilier.capital / pilier.conversion.diviseur)} par an`],
+      ["g) − frais sur arrérages",
+        `${g.pourcentage(frais.frais_arrerages_capitalisation, false, 2)} `
+        + "de chaque versement de rente",
+        `− ${g.euros(pilier.capital / pilier.conversion.diviseur
+          - pilier.rente_annuelle)} par an`],
+      ["h) = rente servie", "à vie, et qui s'éteint avec le rentier",
+        `${g.eurosCentimes(pilier.rente_annuelle)} par an`],
+    ],
+    ["", "", "nombre"],
+    "D'un euro cotisé à un euro de rente",
+    true,
+  );
+
+  // L'échelle de maturités, telle qu'elle a effectivement servi : le premier
+  // versement et le dernier. Deux lignes suffisent à montrer le glissement.
+  const placements = (annee) => {
+    if (annee.placements.length === 0) {
+      return "gardé disponible : le départ a lieu dans l'année";
+    }
+    return annee.placements.map(([maturite, part]) => `${g.pourcentage(part / annee.versement_net)} à `
+      + `${maturite} an${maturite > 1 ? "s" : ""}`).join(", ");
+  };
+
+  const echelle = g.tableau(
+    ["Versement", "Années avant le départ", "Placé"],
+    [
+      [String(premiere.annee), `${premiere.horizon}`, placements(premiere)],
+      [String(derniere.annee), `${derniere.horizon}`, placements(derniere)],
+    ],
+    ["", "nombre", ""],
+    "Où va un versement, au début et à la fin de la carrière",
+    true,
+  );
+
+  const transmission = `
+<p><strong>Ce qui se transmet, et ce qui ne se transmet pas.</strong> Tant que
+le compte n'est pas liquidé, il est un capital, et un décès le fait passer aux
+héritiers : l'encours de l'année, tel que le relevé le porterait ce jour-là. À
+la veille du départ, il vaudrait ${g.euros(pilier.capital)}, le capital entier de
+la ligne e) ; plus tôt dans la carrière, il vaudrait moins. Vu de
+${pilier.annee_ouverture}, l'année où le pilier s'ouvre, la probabilité de mourir
+avant d'avoir liquidé est de
+${g.pourcentage(pilier.probabilite_deces_avant_liquidation)}, et l'espérance de
+ce qui serait alors transmis de
+${g.euros(pilier.esperance_capital_transmis)}. Après la liquidation, en revanche,
+la rente est viagère : elle s'éteint avec le rentier, et rien n'est transmis.
+C'est le prix de son montant, une rente qui se transmettrait étant plus
+faible.</p>
+<p>Le compte notionnel, lui, ne transmet rien à aucun moment : il n'est pas un
+capital, il est un droit. C'est la différence de nature entre les deux lignes
+du système 4, et elle ne se lit pas sur les montants.</p>`;
+
+  // Une carrière qui s'arrête l'année même de la bascule n'a pas eu d'année
+  // pour rapporter : parler de rendement n'aurait pas de sens, et le taux
+  // affiché serait un artefact.
+  const rendement = pilier.interets > 0 ? `
+<p><strong>Ce que le pilier rapporte, frais compris :</strong>
+${g.pourcentage(pilier.taux_rendement_annuel, false, 2)} par an. C'est le
+taux qui, appliqué aux versements aux mêmes dates, donnerait le même capital.
+Les frais coûtent ${g.euros(pilier.cout_des_frais)}, davantage que les
+${g.euros(pilier.frais_preleves)} prélevés, parce que ce qui est prélevé ne
+produit plus d'intérêts.</p>` : `
+<p><strong>Ce pilier n'a pas eu d'année pour rapporter :</strong> le seul
+versement tombe l'année du départ, et il est porté tel quel. Seuls les
+${g.euros(pilier.frais_preleves)} de frais sur versement le grèvent.</p>`;
+
+  return g.depliant(titre, `
+<p>À compter de ${parametres.annee_debut_capitalisation}, ${taux} de la
+rémunération sont prélevés <strong>en plus</strong> de la cotisation de
+répartition, et placés. Ils ne passent pas par le compte notionnel : ils
+constituent un capital, au nom du cotisant, dans un plan d'épargne retraite —
+l'enveloppe qui existe déjà. Deux choses seulement l'en distinguent : la
+cotisation est obligatoire, et l'argent n'en sort qu'à la retraite, sous forme
+de rente, ou au décès, par l'héritage.${g.bulle(
+    "Pourquoi ce n'est pas la même chose qu'une pension",
+    "Une pension de répartition est un droit sur les cotisations des actifs de "
+    + "demain : elle ne dépend d'aucun marché, elle est revalorisée par une règle "
+    + "collective, et elle ne se lègue pas. Une rente capitalisée sort d'un "
+    + "capital réellement placé : elle dépend des taux du jour où l'argent a été "
+    + "placé, elle supporte des frais, et le capital se transmet tant qu'il n'a "
+    + "pas été converti en rente. Les deux sont additionnées sur la ligne du "
+    + "système 4, jamais confondues.")}</p>
+${cascade}
+${rendement}
+${echelle}
+${transmission}
+<p class="discret">Les taux employés sont ceux de la courbe des titres
+souverains les mieux notés de la zone euro, relevée le
+${echapper(dateEnClair(pilier.date_courbe))} et publiée par la Banque centrale
+européenne ; les versements des années suivantes emploient les taux à terme
+que cette même courbe implique. Les trois frais sont les moyennes 2025 des
+plans d'épargne retraite individuels, mesurées par l'Observatoire des produits
+d'épargne financière. La page <a href="${g.lien("/methode/")}#capitalisation">Méthode</a>
+dit ce que ces choix supposent, et la page <a href="${g.lien("/donnees/")}">Données</a>
+d'où ils viennent. Fiabilité de ce compartiment :
+<span class="etiquette-fiabilite">${echapper(nomFiabilite(pilier.fiabilite))}</span>, le
+barème de frais étant saisi et non recontrôlé.</p>`);
+}
 
 /**
  * Ce que le système 4 change, et ce que l'impôt y paie.
@@ -3513,12 +3705,15 @@ const GRILLES_CAS_TYPES = [
     "La proposition du Parti libéral français, par rapport à aujourd'hui",
     "La proposition libérale : taux unique de 18 % et garantie vieillesse",
     "Le même compte rétroactif que le système 3 jusqu'à la bascule, puis "
-    + "un taux unique de 18 % — salariale et patronale confondues —, et une "
-    + "garantie vieillesse individualisée financée par l'impôt par-dessus. "
-    + "Les lignes qui cotisaient au-delà de 18 % descendent sous le "
-    + "système 3, celles qui cotisaient en deçà remontent. La garantie ne se "
-    + "voit que sur les cas dont la pension reste sous le plancher, à partir "
-    + "de 65 ans.",
+    + "un taux unique de 18 % — salariale et patronale confondues —, une "
+    + "cotisation de 5 % capitalisée par-dessus, et une garantie vieillesse "
+    + "individualisée financée par l'impôt. Les lignes qui cotisaient au-delà "
+    + "de 18 % descendent sous le système 3, celles qui cotisaient en deçà "
+    + "remontent. L'écart affiché comprend la rente du pilier capitalisé : "
+    + "elle ne joue que pour qui cotise après la bascule, et d'autant plus "
+    + "qu'il lui reste d'années à courir — la page Simuler en donne le "
+    + "partage, carrière par carrière. La garantie, elle, ne se voit que sur "
+    + "les cas dont la pension reste sous le plancher, à partir de 65 ans.",
   ],
   [
     "notionnel_retroactif",
@@ -3599,7 +3794,9 @@ function casTypes(contexte) {
           cellules.push("—");
           continue;
         }
-        const variation = comparaison.variation(scenario);
+        // L'écart porte sur ce que le système SERT, pilier capitalisé
+        // compris. Il ne joue que sur le système 4 — les autres n'en ont pas.
+        const variation = comparaison.variationTotale(scenario);
         cellules.push(new g.Cellule(
           g.pourcentage(variation, true, 0), variation,
         ));
@@ -3625,7 +3822,7 @@ function casTypes(contexte) {
   for (const cas of CAS_TYPES) {
     const comparaison = resultat.resultats.get(`${cas.code}|${derniere}`);
     if (comparaison !== undefined) {
-      ecarts.push([comparaison.variation(montre), cas.libelle]);
+      ecarts.push([comparaison.variationTotale(montre), cas.libelle]);
     }
   }
   ecarts.sort((a, b) => (a[0] - b[0]) || (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
@@ -3968,6 +4165,7 @@ que de ${premiereVentilee} à ${derniereVentilee}.`,
     coutDetailScenarios(contexte),
     coutDetailEquilibre(contexte),
     coutDetailGarantie(contexte),
+    coutDetailCapitalisation(contexte),
     coutDetailPoids(contexte),
     coutDetailSources(contexte),
     coutDetailLimites(contexte),
@@ -4648,6 +4846,72 @@ système 4.</div>
 `, "cout-garantie");
 }
 
+/**
+ * Le pilier capitalisé n'est pas dans ce bilan, et il faut dire pourquoi.
+ *
+ * Une page qui compte ce qui rentre et ce qui sort d'un système en répartition
+ * doit dire ce qu'elle fait d'un prélèvement qui n'y entre pas. Le pilier ne
+ * finance aucune pension d'aujourd'hui : il constitue un capital, au nom de
+ * celui qui verse. Copie de `_cout_detail_capitalisation` dans `web/pages.py`.
+ */
+function coutDetailCapitalisation(contexte) {
+  const base = contexte.base;
+  const repartition_ = base.taux_cotisation_liberal;
+  const capitalise = base.taux_capitalisation_obligatoire;
+  const total = repartition_ + capitalise;
+  return g.depliant(
+    "Ce que le pilier capitalisé prélève, et pourquoi il n'est pas dans ce bilan",
+    `
+<p>À compter de ${base.annee_debut_capitalisation}, le système 4 prélève
+${g.pourcentage(capitalise, false, 0)} de la rémunération <strong>en plus</strong>
+des ${g.pourcentage(repartition_, false, 0)} de la répartition. Ces
+${g.pourcentage(capitalise, false, 0)} ne paient aucune pension : ils
+constituent un capital au nom de celui qui verse. Ils ne sont donc ni une
+ressource ni une dépense du système de retraite, et <strong>aucun des chiffres
+de cette page ne les compte</strong> — le solde du système 4 est celui de sa
+répartition, comme celui des trois autres.</p>
+
+${g.tableau(
+    ["", "Aujourd'hui", "Système 4"],
+    [
+      ["Prélevé pour la répartition",
+        g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0),
+        g.pourcentage(repartition_, false, 0)],
+      ["Prélevé pour la capitalisation", "—",
+        g.pourcentage(capitalise, false, 0)],
+      ["Total prélevé sur la rémunération",
+        g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0),
+        `<strong>${g.pourcentage(total, false, 0)}</strong>`],
+    ],
+    ["", "nombre", "nombre"],
+    "Ce que coûte la retraite à celui qui travaille, part salariale et "
+    + "patronale additionnées",
+    true,
+  )}
+
+<p>Le total prélevé <strong>baisse de
+${g.nombre((TAUX_ACTUEL_TOTAL - total) * 100, 0)} points</strong> :
+${g.pourcentage(total, false, 0)} contre
+${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui pour un salarié du
+privé. La part qui finance les pensions des autres passe de
+${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} à
+${g.pourcentage(repartition_, false, 0)} ; ce qui reste,
+${g.pourcentage(capitalise, false, 0)}, revient à celui qui l'a versé — sous
+forme de rente à la retraite, ou de capital à ses héritiers s'il meurt
+avant.</p>
+
+<div class="note"><strong>Ce que cela ne dit pas.</strong> Le pilier est neutre
+pour les comptes publics au moment où il se remplit, mais il ne l'est pas pour
+toujours : les versements sont déductibles à l'entrée et la rente imposable à la
+sortie, et le modèle ne calcule aucune fiscalité. Il ne dit rien non plus du
+coût de transition : un euro prélevé pour être placé cesse d'être disponible
+pour payer les pensions d'aujourd'hui. C'est vrai de toute capitalisation, et
+c'est ce que ce prélèvement supplémentaire évite, puisqu'il ne prend rien à la
+répartition.</div>`,
+    "cout-capitalisation",
+  );
+}
+
 /** Ce que chaque carrière type pèse dans les agrégats de la page. */
 function coutDetailPoids(contexte) {
   const c = contexte.cout();
@@ -5005,12 +5269,134 @@ méthodologie complète</a></p>
 <h2>Pour aller plus loin</h2>
 
 ${methodeIndexation(contexte, revalPratiquee, masseSalariale, loterie)}
+${methodeCapitalisation(contexte)}
 ${methodeDroitPositif()}
 ${methodeSuppressions()}
 ${methodeCarriere(contexte)}
 ${methodeUnites()}
 ${methodeConstruction()}
 `;
+}
+
+/**
+ * Le pilier capitalisé : où va l'argent, à quel taux, à quel prix.
+ *
+ * Portage de `_methode_capitalisation`. C'est la seule partie du modèle qui
+ * place réellement de l'argent, et donc la seule qui dépende d'un marché :
+ * elle doit dire d'où viennent les taux, ce que le placement suppose, et ce
+ * que la transmission change à la comparaison avec la répartition.
+ */
+function methodeCapitalisation(contexte) {
+  const base = contexte.base;
+  const courbe = new CourbeTauxSansRisque(contexte.paquet);
+  const taux = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+
+  const comptants = g.tableau(
+    ["Maturité", "Taux zéro-coupon, en rythme annuel"],
+    MATURITES.map((maturite) => [`${maturite} ans`,
+      g.pourcentage(courbe.placement(courbe.annee, maturite).taux, false, 2)]),
+    ["", "nombre"],
+    `La courbe employée, au ${dateEnClair(courbe.date)}`,
+    true,
+  );
+
+  // L'allocation, telle que la règle la produit : ce sont les poids que le
+  // moteur applique, lus par le même code. Une table écrite à la main pourrait
+  // se désaccorder du calcul ; celle-ci ne le peut pas.
+  const horizons = [40, 30, 20, 10, 5, 2];
+  const glissement = g.tableau(
+    ["Années avant le départ", "Répartition du versement par maturité"],
+    horizons.map((horizon) => [String(horizon),
+      repartition(horizon).map(([maturite, poids]) => `${g.pourcentage(poids)} à ${maturite} an`
+        + `${maturite > 1 ? "s" : ""}`).join(", ")]),
+    ["nombre", ""],
+    "Où va un versement selon ce qu'il reste à courir",
+    true,
+  );
+
+  return g.depliant(
+    `Le pilier capitalisé : ${taux} placés, ce que cela suppose`,
+    `
+<p>La proposition ajoute, à compter de ${base.annee_debut_capitalisation}, une
+cotisation de ${taux} prélevée sur la même assiette que la cotisation de
+répartition, <strong>en plus</strong> d'elle : elle ne s'y substitue pas. Elle
+n'entre pas au compte notionnel, elle constitue un capital au nom du cotisant,
+dans un plan d'épargne retraite. Les années antérieures gardent les taux qui étaient les
+leurs et ne versent rien.</p>
+
+<h3>Où l'argent est placé</h3>
+<p>Sur des titres sans risque, portés jusqu'à leur échéance. La courbe retenue
+est celle des souverains les mieux notés de la zone euro, que la Banque centrale
+européenne publie chaque jour ouvré : c'est la définition opérationnelle du taux
+sans risque en euro. L'OAT française rend davantage : une cinquantaine de points
+de base au dix ans. Cet écart rémunère un risque de crédit, et un régime
+obligatoire qui promet une rente ne peut pas le compter comme un rendement
+acquis. Retenir la courbe la mieux notée est donc le choix prudent, et il
+réduit la rente affichée.</p>
+${comptants}
+<p>Les versements des années suivantes ne se placent pas à ces taux-là, mais aux
+taux À TERME que cette même courbe implique, ceux que le marché cote déjà pour
+une période future. C'est ce qui dispense le modèle d'une prévision de taux :
+le forward n'est pas une opinion, il est arbitré. <strong>Ce qu'il suppose</strong>
+tient en une phrase : que le taux futur sera, en moyenne, le forward
+d'aujourd'hui. C'est l'hypothèse des anticipations pures, et elle ignore la
+prime de terme, c'est-à-dire le supplément qu'un prêteur exige pour immobiliser
+son argent. Quand la courbe monte, elle flatte donc légèrement le pilier.
+Au-delà de trente ans, la courbe ne dit plus rien : le taux est prolongé à plat,
+et tout résultat qui en dépend est déclaré « estimé ».</p>
+
+<h3>Selon quelle règle les maturités sont choisies</h3>
+<p>Longues tant que le départ est loin, courtes à l'approche : c'est
+l'allocation par horizon que toute épargne à échéance pratique. Aucune ligne
+n'arrive à échéance après le départ, car il faudrait la vendre avant terme, à un
+prix qui n'est plus sans risque ; à l'échéance d'une ligne, son produit est
+replacé selon la même règle, pour ce qu'il reste à courir. Aucune maturité
+ne dépasse les trois quarts du versement : une épargne obligatoire ne se
+concentre pas sur un seul point de la courbe.</p>
+${glissement}
+
+<h3>Ce que l'enveloppe coûte</h3>
+<p>Trois prélèvements, ceux du plan d'épargne retraite tel qu'il est vendu
+aujourd'hui, mesurés par l'Observatoire des produits d'épargne financière sur
+les remises de l'ACPR :
+${g.pourcentage(base.frais_versement_capitalisation, false, 2)} sur chaque
+versement, ${g.pourcentage(base.frais_gestion_capitalisation, false, 2)} par
+an sur l'encours, ${g.pourcentage(base.frais_arrerages_capitalisation, false, 2)}
+sur chaque arrérage de rente. Ce sont les frais d'un produit vendu à des
+volontaires, contrat par contrat, et la commission du réseau qui le place en est
+l'essentiel : elle n'aurait pas d'objet si la cotisation était obligatoire. Les
+retenir tels quels est donc une <strong>borne haute</strong>, assumée comme
+telle : le modèle dit ce que la proposition coûterait si rien ne bougeait dans
+la tarification.</p>
+
+<h3>Comment le capital devient une rente</h3>
+<p>Par le mécanisme du plan d'épargne retraite : le capital est divisé par un
+coefficient actuariel, puis chaque arrérage supporte ses frais. Le coefficient
+est celui du modèle (table de génération, unisexe par défaut), et le taux
+technique est nul, comme dans la plupart des contrats. Les deux lignes du
+système 4 partagent alors le MÊME diviseur, et deviennent comparables au
+centime : à capital égal elles servent le même montant, et tout écart vient
+d'ailleurs.</p>
+
+<h3>Ce qui se transmet</h3>
+<p>Le capital, intégralement, si le cotisant meurt avant d'avoir liquidé. C'est
+la règle du plan d'épargne retraite, et c'est ce que la répartition ne fait
+pas : un compte notionnel n'est pas un capital, il est un droit, et il s'éteint
+avec son titulaire sans rien laisser. Après la liquidation, la rente est
+viagère et ne se transmet pas davantage : une rente réversible ou à annuités
+garanties serait plus faible, et le modèle ne la retient pas.</p>
+
+<h3>Ce que le modèle ne fait pas</h3>
+<p>Il ne simule aucun risque de marché : le pilier est placé sans risque par
+construction, et le seul aléa qui subsiste, celui de taux futurs s'écartant des
+forwards d'aujourd'hui, n'est pas chiffré. Il ne calcule aucune fiscalité :
+tous les montants du site sont bruts, ici comme ailleurs, alors que les
+versements au plan sont déductibles et la rente imposable. Et la garantie
+vieillesse ne regarde pas cette rente : elle est servie sur la seule pension
+contributive de répartition. Savoir si un pilier capitalisé doit réduire une
+allocation différentielle est une question de droit, pas de modèle.</p>`,
+    "capitalisation",
+  );
 }
 
 /**
@@ -5546,13 +5932,26 @@ ${g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", "texte"],
     "Nombre de régimes par niveau de fiabilité", true)}`, "donnees-fiabilite");
 
   const depliantSources = g.depliant("D'où viennent les chiffres, et comment on arbitre", `
-<p>Vingt-huit institutions sont recensées dans
+<p>Trente institutions sont recensées dans
 <a href="${g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a> : INSEE,
 COR, Comité de suivi des retraites, DREES, CNAV, Service des retraites de l'État,
 Caisse des dépôts, Direction de la Sécurité sociale, Cour des comptes,
 Agirc-Arrco, Assemblée nationale, Union Retraite, CCMSA, CNAVPL, CNBF, DGAFP,
 Direction du Budget, ERAFP, Ircantec, caisses des régimes spéciaux, Urssaf,
-Légifrance, INED, Eurostat, OCDE, OpenFisca-France, IPP, CEPII.</p>
+Légifrance, INED, Eurostat, OCDE, OpenFisca-France, IPP, CEPII, Banque centrale
+européenne, Observatoire des produits d'épargne financière.</p>
+<p><strong>Les deux sources du pilier capitalisé.</strong> Les taux auxquels il
+place sont la courbe zéro-coupon des souverains les mieux notés de la zone euro,
+que la <strong>Banque centrale européenne</strong> publie chaque jour ouvré :
+c'est le producteur, la récupération est automatique, et les trente maturités
+sont recontrôlées comme n'importe quelle série
+(<code>courbe_taux_sans_risque</code> dans le tableau ci-dessus). Les frais de
+l'enveloppe sont les moyennes 2025 des plans d'épargne retraite individuels,
+mesurées par l'<strong>Observatoire des produits d'épargne financière</strong> —
+le CCSF, à la Banque de France — sur les remises de l'ACPR. Ces trois valeurs
+sont <code>haute</code> et non <code>certifiee</code> : le rapport est un PDF que
+le dépôt ne sait pas récupérer automatiquement, et la règle du manifeste plafonne
+à ce niveau ce qui n'a pas été confronté au document du producteur.</p>
 <p>Chaque valeur porte son niveau de fiabilité, <code>certifiee</code>,
 <code>haute</code>, <code>moyenne</code> ou <code>estimee</code>, et la fiabilité
 d'un résultat est celle de son maillon le plus faible.</p>
@@ -5684,6 +6083,12 @@ function programme(contexte) {
       ["Tenir l'équilibre",
         "une réforme, tous les huit ans en moyenne",
         "un chiffre publié chaque année"],
+      // La transmission est le seul point où les deux systèmes ne promettent
+      // pas la même NATURE de droit : une pension s'éteint, un capital se
+      // lègue. Le dire ici, et non dans un dépliant.
+      ["Si vous mourez avant la retraite",
+        "vos cotisations restent au système",
+        "le capital de la part capitalisée revient à vos héritiers"],
     ],
     ["", "texte", "texte"],
     "Le système actuel et notre programme, terme à terme",
@@ -5829,6 +6234,7 @@ ${depliantCalcul}
 
 ${programmeJustice(contexte)}
 ${programmeGarantie(contexte)}
+${programmeCapitalisation(contexte)}
 ${programmeTransition(contexte)}
 
 ${depliantVerifier}
@@ -5915,6 +6321,7 @@ const AGE_OUVERTURE_GARANTIE = 65;
 function engagements(contexte) {
   const base = contexte.base;
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
   const garantie = base.garantie_vieillesse_mensuelle;
   const isolement = base.allocation_isolement_mensuelle;
   const seul = g.euros(garantie + isolement);
@@ -5928,15 +6335,18 @@ function engagements(contexte) {
       + `plus <strong class="cle-texte">${g.euros(isolement)} d'allocation `
       + "d'isolement</strong> pour qui vit seul. Payés par l'impôt, dès "
       + `${AGE_OUVERTURE_GARANTIE} ans.`],
-    [taux,
-      "de cotisation, au lieu de "
-      + '<strong class="cle-texte">'
-      + `${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui</strong>.`,
-      "Part salariale et patronale additionnées : "
-      + `${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
-      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)} pour un salarié du privé. `
-      + 'Demain, <strong class="cle-texte">le même taux pour tout le '
-      + "monde</strong>."],
+    [`${taux} + ${capitalise}`,
+      "de cotisation : la répartition, "
+      + '<strong class="cle-texte">plus un capital à votre nom</strong>.',
+      `${taux} au compte de retraite — part salariale et patronale `
+      + "additionnées, contre "
+      + `${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui `
+      + `(${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
+      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)} pour un salarié du privé), `
+      + 'et <strong class="cle-texte">le même taux pour tout le monde</strong>. '
+      + `Par-dessus, ${capitalise} placés sur des titres sans risque, `
+      + '<strong class="cle-texte">qui vous appartiennent</strong> et se '
+      + "transmettent."],
     ["1 compte",
       '<strong class="cle-texte">en euros</strong>, lisible par tous.',
       "Un compte personnel de retraite : vous voyez "
@@ -6055,6 +6465,49 @@ d'assiette, plus que le montant, qui fait la différence pour les femmes aux
 pensions les plus faibles.
 <a href="${g.lien("/cout")}">Ce qu'elle coûterait</a> est calculé sur la
 distribution réelle des pensions, non sur des cas types.</p>`);
+}
+
+/**
+ * La part capitalisée, expliquée à qui n'a pas ouvert la page Méthode.
+ *
+ * Trois questions et trois seulement : ce que c'est, ce que cela change pour
+ * celui qui cotise, et ce que cela ne fait pas. Copie de
+ * `_programme_capitalisation` dans `web/pages.py`.
+ */
+function programmeCapitalisation(contexte) {
+  const base = contexte.base;
+  const taux = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const repartition_ = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  return g.depliant(
+    `La part capitalisée : ${taux} qui vous appartiennent`,
+    `
+<p>À compter de ${base.annee_debut_capitalisation}, ${taux} de votre rémunération
+sont prélevés <strong>en plus</strong> des ${repartition_} de la répartition, et
+placés à votre nom sur des titres sans risque. Ce capital ne passe pas par le
+compte notionnel : il vous revient, dans un plan d'épargne retraite, l'enveloppe
+qui existe déjà et que des millions de Français détiennent. Les années d'avant
+ne changent pas :
+elles gardent les taux qui étaient les leurs, et qui a déjà liquidé ne cotise
+rien.</p>
+<ul class="serree">
+  <li><strong>Il vous appartient.</strong> Si vous mourez avant d'avoir liquidé,
+  le capital revient à vos héritiers, intégralement. Une pension de répartition,
+  elle, s'éteint avec vous sans rien laisser.</li>
+  <li><strong>Il ne sort qu'à la retraite.</strong> Pas d'achat de résidence
+  principale, pas de sortie anticipée : la cotisation est obligatoire, et
+  l'argent n'en sort qu'en rente viagère, ou par l'héritage.</li>
+  <li><strong>Il est placé sans risque.</strong> Des titres d'État parmi les
+  mieux notés de la zone euro, portés jusqu'à leur échéance : longue tant que la
+  retraite est loin, courte à l'approche du départ. Aucune action, aucun pari.</li>
+  <li><strong>Il ne remplace rien.</strong> La retraite par répartition reste ce
+  qu'elle est, et le compte notionnel la calcule sans regarder ce capital. Les
+  deux montants sont affichés côte à côte, jamais confondus.</li>
+</ul>
+<p>Ce que cela coûte est chiffré : l'enveloppe prélève des frais, et le
+simulateur les montre euro par euro, comme il montre le rendement qui reste. La
+page <a href="${g.lien("/methode/")}#capitalisation">Méthode</a> dit à quels
+taux l'argent est placé, d'où ils viennent et ce qu'ils supposent.</p>`,
+  );
 }
 
 /** Les six étapes, et l'année où chacune produit son effet. */

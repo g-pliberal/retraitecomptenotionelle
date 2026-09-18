@@ -302,6 +302,22 @@ def source_pib_courant() -> dict[tuple, float]:
     return {(periode,): valeur for periode, valeur in sorted(niveaux.items())}
 
 
+def source_courbe_taux_sans_risque() -> dict[tuple, float]:
+    """Courbe zéro-coupon des souverains AAA de la zone euro, par maturité.
+
+    Les clés portent la DATE d'observation autant que la maturité : une courbe
+    est un instantané, et deux jours ne se mélangent pas. Le fichier de
+    référence garde donc les courbes successives, et le modèle lit la plus
+    récente.
+    """
+    brut = _lire_json("bce_courbe_taux.json", "scripts/fetch/bce_courbe_taux.py")
+    valeurs: dict[tuple, float] = {}
+    for cle, taux in brut["courbe"].items():
+        _, jour, maturite = cle.split("|")
+        valeurs[(jour, maturite)] = float(taux)
+    return dict(sorted(valeurs.items()))
+
+
 def _lire_json(nom_fichier: str, script: str) -> dict:
     chemin = BRUT / nom_fichier
     if not chemin.exists():
@@ -2101,7 +2117,8 @@ def source_employeur_sncf() -> dict[tuple, float]:
 
 #: Colonnes-clés qui se trient en NOMBRE et non en texte. Sans elles, la borne
 #: « 1000 » d'une tranche de pension tomberait entre « 100 » et « 200 ».
-CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuelle"})
+CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuelle",
+                             "maturite"})
 
 
 @dataclass(frozen=True)
@@ -2242,6 +2259,42 @@ class Certification:
 
 
 CERTIFICATIONS = (
+    Certification(
+        nom="courbe_taux_sans_risque",
+        chemin=REFERENCE / "macro" / "courbe_taux_sans_risque.csv",
+        cles=("date", "maturite"),
+        colonne="taux_continu",
+        source=source_courbe_taux_sans_risque,
+        origine="BCE, portail de données, jeu YC (souverains AAA, Svensson)",
+        decimales=8,
+        tolerance=1e-8,
+        entete=(
+            "# Courbe des taux sans risque de la zone euro — zéro-coupon par maturité",
+            "# source_id: bce_courbe_taux_aaa",
+            "# unite: taux zéro-coupon à COMPOSITION CONTINUE, en fraction. Le taux",
+            "#        annuel équivalent est exp(taux_continu) - 1 ; la conversion est",
+            "#        faite par le modèle, pas à la saisie.",
+            "# fiabilite:",
+            "#   certifiee : valeurs relevées sur le portail de données de la BCE, qui",
+            "#               estime et publie cette courbe, et recontrôlées par",
+            "#               scripts/verifier_donnees.py.",
+            "#",
+            "# Une courbe est un INSTANTANÉ : chaque ligne porte sa date d'observation,",
+            "# et le modèle lit la plus récente. Les courbes passées restent ici pour",
+            "# que l'on puisse refaire un calcul tel qu'il a été publié.",
+            "#",
+            "# Ces taux servent au seul pilier de capitalisation obligatoire de la",
+            "# proposition : ils disent à quel taux un versement se place pour une durée",
+            "# donnée, et, par leurs forwards implicites, à quel taux les versements des",
+            "# années suivantes se placeront. La courbe AAA rend moins que l'OAT",
+            "# française — 51 points de base au 10 ans en septembre 2026 — et c'est",
+            "# voulu : cet écart rémunère un risque de crédit, qu'un régime obligatoire",
+            "# ne peut pas promettre. Voir docs/methodologie.md.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
     Certification(
         nom="inflation",
         chemin=REFERENCE / "macro" / "ipc_annuel.csv",

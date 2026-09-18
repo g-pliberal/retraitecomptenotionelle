@@ -567,6 +567,30 @@ entrees:
     prochaine_veille: "2026-12-31"
 
 journal:
+  - date: "2026-09-18"
+    session: "pilier de capitalisation obligatoire ajouté au scénario 6"
+    consulte: >-
+      Portail de données de la BCE, jeu YC (courbe zéro-coupon des souverains
+      AAA de la zone euro, modèle de Svensson, trente maturités au
+      17 septembre 2026) et jeu IRS (rendement de l'emprunt d'État français à
+      dix ans) ; rapport annuel 2026 de l'Observatoire des produits d'épargne
+      financière pour les frais des PER individuels, exercice 2025.
+    trouve: >-
+      Courbe AAA de 2,97 % à un an à 3,75 % à trente ans, l'OAT française
+      rendant 51 points de base de plus au dix ans ; frais moyens du PER
+      individuel sur support en euros de 1,09 % sur versement, 0,76 % par an
+      sur encours et 2,20 % sur arrérages. La courbe est récupérée
+      automatiquement et certifiée ; les trois frais restent au niveau
+      `haute`, le rapport de l'OPEF étant un PDF que le serveur de la Banque
+      de France refuse aux requêtes non navigateur.
+    reste: >-
+      Le scénario 1 n'est pas touché par cette session : aucune règle du droit
+      en vigueur n'a été écrite ni modifiée, et aucune ligne du registre
+      ci-dessus n'a changé d'état. Restent à lire à la source, pour le pilier
+      lui-même, les articles L. 224-1 et suivants du code monétaire et
+      financier — le modèle décrit l'enveloppe PER, il n'en applique aucune
+      règle fiscale — et le rapport de l'OPEF sur le document du producteur,
+      dès qu'une session saura l'ouvrir.
   - date: "2026-09-17"
     session: "action 27 bis, tout ce que le dump de juillet 2025 laissait dans l'ombre"
     consulte: >-
