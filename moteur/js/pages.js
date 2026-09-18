@@ -6100,9 +6100,8 @@ function programmeTransition(contexte) {
     true,
   );
   return g.depliant("Comment on y va, étape par étape", `
-<p>La bascule ne reprend aucun droit acquis : elle fige ce qui est acquis, le
-convertit en capital, et applique la règle nouvelle aux seules années
-suivantes.</p>
+<p>La bascule fige ce qui est acquis, le réduit à ce qui a été cotisé, et le
+convertit en capital.</p>
 ${etapes}
 <p>Après la bascule, un seul régime : départ possible à
 ${age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>`);
