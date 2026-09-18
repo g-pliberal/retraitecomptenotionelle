@@ -208,6 +208,9 @@ def _calibrer(e60_cible: float, e65_cible: float, annee: int, sexe: str,
     return LoiMortalite(MORTALITE_ACCIDENTELLE, b, k, annee, sexe, fiabilite)
 
 
+_QUOTIENTS_EN_CACHE: dict[tuple[str, int, int], dict | None] = {}
+
+
 class DonneesMortalite:
     """Tables du moment et tables de génération pour les deux sexes."""
 
@@ -246,13 +249,23 @@ class DonneesMortalite:
         chemin = self.racine / "reference" / "mortalite" / "quotients_periode.csv"
         if not chemin.exists():
             return None
+        # Ce fichier fait vingt-cinq mille lignes et se relisait une fois par
+        # jeu de données reconstruit — trente-cinq fois pour les seuls témoins.
+        # La table est partagée, non copiée : tout ce qui la touche la lit
+        # (`in`, `.get`), ici comme dans `LoiMortalite`.
+        etat = chemin.stat()
+        cle_fichier = (str(chemin), etat.st_mtime_ns, etat.st_size)
+        if cle_fichier in _QUOTIENTS_EN_CACHE:
+            return _QUOTIENTS_EN_CACHE[cle_fichier]
         table: dict[tuple[int, str], dict[int, float]] = {}
         with chemin.open(encoding="utf-8") as flux:
             lignes = (l for l in flux if not l.lstrip().startswith("#"))
             for ligne in csv.DictReader(lignes):
                 cle = (int(ligne["annee"]), ligne["sexe"])
                 table.setdefault(cle, {})[int(ligne["age"])] = float(ligne["qx"])
-        return table or None
+        resultat = table or None
+        _QUOTIENTS_EN_CACHE[cle_fichier] = resultat
+        return resultat
 
     @property
     def utilise_tables_reelles(self) -> bool:
