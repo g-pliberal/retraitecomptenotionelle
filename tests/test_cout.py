@@ -1022,6 +1022,88 @@ def test_la_recette_suit_le_droit(cout: Cout, comptes: ComptesRetraite):
         assert 0.004 < solde.annee(annee).retrait < 0.007, annee
 
 
+def test_la_recette_suit_le_taux(cout: Cout):
+    """Le scénario 6 prélève 18 % : il ne peut pas encaisser ce qu'un système à 29 % encaisse.
+
+    C'est la seconde façon dont une recette suit ce que le système fait, et
+    elle ne joue que sur la part COTISÉE des ressources — un quart du total est
+    de l'impôt affecté et des subventions, sur quoi un taux de cotisation n'a
+    aucune prise.
+    """
+    bascule = Parametres().annee_bascule
+    for ligne in cout.solde.annees:
+        rapport = ligne.rapports_recettes["notionnel_liberal"]
+        if ligne.annee < bascule:
+            assert rapport == 1.0, ligne.annee
+            continue
+        assert 0.5 < rapport < 0.8, ligne.annee
+        # Ce que la formule doit rendre, écrit autrement qu'elle.
+        cotisees = ligne.ressources * ligne.part_contributive
+        attendu = cotisees * rapport + (ligne.ressources - cotisees) - ligne.retrait
+        assert ligne.ressources_de("notionnel_liberal") == pytest.approx(attendu)
+        assert ligne.ressources_de("notionnel_liberal") < ligne.ressources_de(
+            "notionnel_retroactif_employeur"), ligne.annee
+
+
+def test_seul_le_scenario_6_change_ce_qui_est_preleve(cout: Cout):
+    """Les scénarios 2 à 5 changent ce qui est PORTÉ AU COMPTE, pas ce qui est PRÉLEVÉ.
+
+    L'employeur verse sa part dans tous les cas ; sous les scénarios 2 et 3,
+    elle finance le système sans ouvrir de droit à celui qui la voit passer.
+    Prêter à ces scénarios une recette diminuée serait un contresens, et c'est
+    pourquoi leur rapport de recettes est écrit à un plutôt que calculé.
+    """
+    for ligne in cout.solde.annees:
+        for scenario, _ in SCENARIOS:
+            if scenario == "notionnel_liberal":
+                continue
+            assert ligne.rapports_recettes[scenario] == 1.0, (ligne.annee, scenario)
+        for scenario in ("notionnel_retroactif", "notionnel_prospectif",
+                         "notionnel_retroactif_employeur",
+                         "notionnel_prospectif_employeur"):
+            assert ligne.ressources_de(scenario) == pytest.approx(
+                ligne.ressources - ligne.retrait), (ligne.annee, scenario)
+
+
+def test_le_taux_moyen_que_le_rapport_implique_est_celui_que_le_cor_publie(cout: Cout):
+    """Contrôle externe : 18 % divisés par le rapport doivent redonner un taux réel.
+
+    Le COR publie le taux de cotisation retraite d'un salarié non-cadre du
+    privé sous le plafond, parts salariale et employeur : 27,9 % en 2025
+    (figure 3.1 de son rapport annuel). La grille du dépôt mêle à ce salarié
+    des fonctionnaires, dont l'employeur verse 74 % du traitement, et des
+    non-salariés, qui cotisent moins : le taux moyen qu'elle implique doit
+    donc TOMBER AUTOUR de ce chiffre, un peu au-dessus, et jamais loin.
+    """
+    bascule = Parametres().annee_bascule
+    lignes = [l for l in cout.solde.annees if l.annee >= bascule + 5]
+    assert lignes
+    for ligne in lignes:
+        taux_implique = 0.18 / ligne.rapports_recettes["notionnel_liberal"]
+        assert 0.25 < taux_implique < 0.34, (ligne.annee, taux_implique)
+
+
+def test_les_recettes_reactives_deplacent_le_solde_du_scenario_6(cout: Cout):
+    """Ce que le chantier a déplacé, mesuré et non raconté.
+
+    L'ancienne convention laissait au scénario 6 les ressources d'un système
+    dont il remplace tous les taux. Un dictionnaire de rapports vide la
+    reproduit exactement, et l'écart entre les deux est ce que la réaction des
+    recettes coûte au scénario.
+    """
+    bascule = Parametres().annee_bascule
+    fin = cout.solde.derniere_annee
+    reactif = cout.solde.solde_moyen("notionnel_liberal", bascule, fin)
+    fige = sum(
+        ligne.ressources - ligne.retrait - ligne.depense("notionnel_liberal")
+        for ligne in cout.solde.annees if bascule <= ligne.annee <= fin
+    ) / len([l for l in cout.solde.annees if bascule <= l.annee <= fin])
+    # Trois points de PIB de moins, et un excédent moyen qui disparaît.
+    assert fige - reactif > 0.03
+    assert fige > 0.03
+    assert reactif < 0.005
+
+
 def test_le_retrait_est_a_part_constante_hors_de_la_fenetre(
         cout: Cout, comptes: ComptesRetraite):
     """Avant 2013 et après la dernière année connue, la part des ressources ne bouge pas.

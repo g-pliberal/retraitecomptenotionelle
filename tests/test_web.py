@@ -4921,7 +4921,7 @@ def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(context
         assert "<span>Ce que cette page ne dit pas</span>" not in corps, chemin
         assert "ne dit pas</span>" not in corps, chemin
     cout = rendre(contexte, "/cout", {})[1]
-    assert "<span>Dix réserves à lire avant de citer ces chiffres</span>" in cout
+    assert "<span>Onze réserves à lire avant de citer ces chiffres</span>" in cout
     assert "Une page de chiffres vaut par ce qu'elle laisse de côté" in cout
 
 

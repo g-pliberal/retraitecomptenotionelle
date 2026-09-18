@@ -4953,8 +4953,13 @@ def _cout_detail_transferts(contexte: Contexte) -> str:
     horizon = solde.annee(solde.derniere_annee)
 
     def sans_retrait(ligne, scenario: str) -> float:
-        """Le coefficient qu'on lirait si la recette restait comptée."""
-        return ligne.ressources / ligne.depense(scenario)
+        """Le coefficient qu'on lirait si cette recette-là restait comptée.
+
+        Celle-là SEULE : la réaction des recettes au taux de la proposition
+        reste en place, sans quoi ce dépliant lui attribuerait un écart qui
+        n'est pas le sien.
+        """
+        return (ligne.ressources_de(scenario) + ligne.retrait) / ligne.depense(scenario)
     return g.depliant("Ce que la branche famille et l'assurance chômage versent", f"""
 <p>Le poste « transferts d'organismes extérieurs » du tableau précédent est un
 agrégat. Le voici ventilé par celui qui paie, lu dans les rapports à la
@@ -5257,15 +5262,36 @@ retiré, à part constante des ressources sur les années projetées. C'est ce
 retrait qui creuse leur solde : un système notionnel qui ne sert plus ces
 droits ne peut pas en garder les recettes.</p>
 
+<div class="note"><strong>Un taux de 18 % n'encaisse pas ce qu'un taux de
+{g.pourcentage(0.18 / horizon.rapports_recettes["notionnel_liberal"], decimales=1)}
+encaisse.</strong> La proposition remplace tous les taux de cotisation par un
+seul, parts salariale et patronale additionnées. Sur les carrières de la
+grille, le droit en vigueur prélève en moyenne
+{g.pourcentage(0.18 / horizon.rapports_recettes["notionnel_liberal"], decimales=1)} :
+27,9 % pour un salarié non cadre du privé sous le plafond, chiffre que le COR
+publie et que le modèle retrouve, et bien davantage pour un fonctionnaire, dont
+l'employeur verse 74 % du traitement. La part cotisée des ressources,
+{g.pourcentage(horizon.part_contributive, decimales=0)} du total, est donc
+multipliée par
+{g.nombre(horizon.rapports_recettes["notionnel_liberal"], 2)} à compter de la
+bascule. C'est ce qui ramène le coefficient de la proposition en
+{solde.derniere_annee} de
+{g.nombre(horizon.ressources / horizon.depense("notionnel_liberal"), 2)} à
+{g.nombre(horizon.coefficient("notionnel_liberal"), 2)}, et son solde moyen
+d'un excédent à l'équilibre. Ce qui n'est pas cotisé (impôts et taxes
+affectés, subventions d'équilibre) est reconduit tel quel : le programme ne dit
+pas ce qu'il en ferait, et le reconduire est l'hypothèse la plus favorable qu'on
+puisse lui prêter.</div>
+
 <div class="note"><strong>Un coefficient supérieur à un est une marge, et
 une marge se sert.</strong> Lire les
 {g.nombre(horizon.coefficient("notionnel_liberal"), 2)} de la proposition comme
 une économie de {g.pourcentage(
     1 - 1 / horizon.coefficient("notionnel_liberal"), decimales=0)} serait un
-contresens : à prélèvement inchangé, ce système-là servirait autant que le
-nôtre, mais autrement réparti entre les carrières. Le modèle calcule ce
-facteur ; il ne l'applique jamais, et toutes les courbes de coût de cette page
-sont celles d'un système qui ne se pilote pas.</div>
+contresens : à ces recettes-là, ce système servirait davantage que ce que la
+colonne « dépense » lui prête, et autrement réparti entre les carrières. Le
+modèle calcule ce facteur ; il ne l'applique jamais, et toutes les courbes de
+coût de cette page sont celles d'un système qui ne se pilote pas.</div>
 """, identifiant="cout-equilibre")
 
 
@@ -5542,19 +5568,30 @@ def _cout_detail_limites(contexte: Contexte) -> str:
     solde = cout.solde
     avenir = cout.avenir
     observe = solde.annee(solde.derniere_annee_observee)
-    return g.depliant("Dix réserves à lire avant de citer ces chiffres",  f"""
+    return g.depliant("Onze réserves à lire avant de citer ces chiffres",  f"""
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
-laisse dix, écrits ici plutôt qu'en note de bas de page.</p>
+laisse onze, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
-  <li><strong>Les recettes ne réagissent à rien.</strong> Elles sont celles du
-  système actuel, encaissées ou projetées telles quelles : la question posée
-  est « à prélèvement inchangé, ce système tiendrait-il ? ». Le système 4, qui
-  pose un taux unique de 18 % pour tous, déplacerait aussi les recettes, et
-  rien ici ne le dit. Une seule recette suit le droit : ce que la branche
-  famille et l'assurance chômage versent pour des droits que les scénarios
-  notionnels ne servent pas leur est retiré, à part constante des ressources
-  sur les années projetées. Le dépliant « Ce que la branche famille et
-  l'assurance chômage versent » dit ce que cela vaut.</li>
+  <li><strong>Les recettes réagissent sur deux points, et sur deux
+  seulement.</strong> La recette suit le droit : ce que la branche famille et
+  l'assurance chômage versent pour des droits que les systèmes notionnels ne
+  servent pas leur est retiré. La recette suit le taux : le système 4, qui pose
+  un taux unique de 18 % pour tous, voit la part cotisée de ses ressources
+  baisser dans le rapport de ce que ce taux prélève à ce que le droit en
+  vigueur prélève. Deux choses ne réagissent toujours pas. Le quart des
+  ressources qui n'est pas cotisé (impôts et taxes affectés, subventions
+  d'équilibre) est reconduit tel quel, faute qu'aucun programme dise ce qu'il
+  en ferait : c'est l'hypothèse la plus favorable au système 4. Et l'assiette
+  elle-même, que le modèle suppose inchangée alors qu'un taux plus bas la
+  déforme.</li>
+  <li><strong>Ce qui est prélevé n'est pas ce qui ouvre des droits.</strong> Le
+  modèle porte au compte le taux qui ACQUIERT, et c'est lui qu'il compare à
+  18 %. Deux prélèvements de l'Agirc-Arrco n'ouvrent aucun droit et rentrent
+  pourtant dans les caisses : la contribution d'équilibre générale et la
+  contribution d'équilibre technique, deux points et demi de plus sur un
+  salaire du privé. Les compter relèverait ce que le système actuel encaisse,
+  donc abaisserait encore le rapport de recettes du système 4 : le chiffre
+  affiché lui est favorable.</li>
   <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
   L'appliquer changerait toutes les pensions par un même facteur, donc tous les
   niveaux de cette page, sans toucher aux écarts entre carrières, qui sont la

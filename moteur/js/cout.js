@@ -68,6 +68,19 @@ export const COMPOSANTE_GARANTIE = "garantie_vieillesse_liberal";
 export const CLES_MASSES = [...SCENARIOS.map(([scenario]) => scenario), COMPOSANTE_GARANTIE];
 
 /**
+ * Les deux BARÈMES DE PRÉLÈVEMENT dont une masse de cotisations est calculée.
+ *
+ * Ils ne sont que deux parce qu'un seul scénario change ce qui est PRÉLEVÉ : le
+ * 6, qui remplace tous les taux par 18 % à compter de la bascule. Les scénarios
+ * 2 à 5 changent ce qui est PORTÉ AU COMPTE — la part salariale seule, ou les
+ * deux parts — et non ce que la paie supporte : l'employeur verse toujours sa
+ * part, elle finance toujours le système, et elle n'ouvre simplement plus de
+ * droit à celui qui la voit passer.
+ */
+export const TAUX_REELS = "taux_reels";
+export const CLES_RECETTES = [TAUX_REELS, "notionnel_liberal"];
+
+/**
  * Première génération dont une liquidation puisse tomber après le début de la
  * répartition (1941). En deçà, le modèle refuse — à juste titre — de calculer.
  */
@@ -129,6 +142,24 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     );
     // La clé de la grille est « code|génération » : la génération en est la
     // seconde moitié, et c'est elle qui dit quel âge ce couple a chaque année.
+    // Ce que cette carrière VERSE, année par année, sous les deux barèmes. Le
+    // dénominateur ne peut pas être le compte du scénario 4 : celui-là fusionne
+    // les régimes à la bascule et prélève ensuite le taux du statut pivot privé
+    // pour tout le monde, ce qui est déjà une réforme. On redemande donc le
+    // même compte SANS régime fusionné, c'est-à-dire ce que le droit en vigueur
+    // prélèverait sur la même carrière jusqu'en 2070.
+    const versements = { [TAUX_REELS]: {}, notionnel_liberal: {} };
+    const reels = simulateur.constructeurEmployeur.construire(
+      comparaison.carriere,
+      comparaison.carriere.anneeLiquidation,
+      comparaison.carriere.premiereAnnee,
+    );
+    for (const ligne of reels.cotisations) {
+      versements[TAUX_REELS][ligne.annee] = ligne.cotisation;
+    }
+    for (const ligne of comparaison.notionnel_liberal.compte.cotisations) {
+      versements.notionnel_liberal[ligne.annee] = ligne.cotisation;
+    }
     liste.push({
       // Le code du cas type est la première moitié de la clé : c'est par lui
       // que le couple reçoit son poids.
@@ -136,6 +167,7 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
       generation: Number(cle.slice(cle.indexOf("|") + 1)),
       anneeLiquidation: comparaison.carriere.anneeLiquidation,
       pensions,
+      cotisations: versements,
     });
   }
   const motifs = new Map();
@@ -175,6 +207,53 @@ function masses(liste, population, annee, poidsCas) {
     }
   }
   return { total, vivants };
+}
+
+/**
+ * Ce que les COTISANTS versent une année donnée, sous les deux barèmes.
+ *
+ * Le pendant de `masses`, du côté de la recette, et bâti sur la même grille.
+ * Une différence : une pension ne bouge plus après la liquidation, si bien que
+ * la cohorte voisine sert le même montant ; une cotisation change chaque année
+ * de la carrière, et la cohorte née deux ans plus tôt verse, l'année `t`, ce que
+ * la génération de la grille verse en `t + 2`. C'est cette année-là qu'on va
+ * chercher.
+ */
+function massesCotisations(liste, population, annee, poidsCas) {
+  const total = {};
+  for (const cle of CLES_RECETTES) total[cle] = 0;
+  for (const pensionne of liste) {
+    const part = poidsCas[pensionne.code] || 0;
+    if (part <= 0) continue;
+    for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
+      const poids = population.effectif(annee - pensionne.generation - decalage, annee);
+      if (poids <= 0) continue;
+      for (const cle of CLES_RECETTES) {
+        const versee = pensionne.cotisations[cle][annee - decalage] || 0;
+        if (versee) total[cle] += part * poids * versee;
+      }
+    }
+  }
+  return total;
+}
+
+/**
+ * Rapport de la recette de chaque système à celle du système actuel.
+ *
+ * Un pour tous, sauf pour le scénario 6. AVANT LA BASCULE, il vaut un PAR
+ * CONSTRUCTION, et il est écrit plutôt que calculé : la cohorte née deux ans
+ * plus tôt verse ce que la génération de la grille verse deux ans plus tard,
+ * déjà à 18 %, et la recette de 2025 baissait pour une réforme qui n'a pas eu
+ * lieu. Après la bascule, le même décalage joue en sens inverse et s'éteint en
+ * deux ans.
+ */
+function rapportsRecettes(total, annee, bascule) {
+  const resultat = {};
+  for (const [scenario] of SCENARIOS) resultat[scenario] = 1.0;
+  if (annee >= bascule && total[TAUX_REELS] > 0) {
+    resultat.notionnel_liberal = total.notionnel_liberal / total[TAUX_REELS];
+  }
+  return resultat;
 }
 
 /**
@@ -245,7 +324,7 @@ class CoutAnnuel {
  */
 class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
-              dependance) {
+              dependance, recettes = {}) {
     this.annee = annee;
     this.projete = projete;
     this.base = base;
@@ -253,6 +332,9 @@ class AvenirAnnuel {
     this.pib = pib;
     this.rapports = rapportsAnnee;
     this.dependance = dependance;
+    // Rapport de la RECETTE de chaque système à celle du système actuel. Un
+    // partout, sauf pour le scénario 6 à compter de la bascule.
+    this.rapportsRecettes = recettes;
   }
 
   /** Coût du système, en millions d'euros constants de référence. */
@@ -320,7 +402,8 @@ class Avenir {
  * qu'une hypothèse de croissance déguisée en observation.
  */
 class SoldeAnnuel {
-  constructor(annee, projete, ressources, depenses, rapportsAnnee, pib, retrait = 0.0) {
+  constructor(annee, projete, ressources, depenses, rapportsAnnee, pib, retrait = 0.0,
+              recettes = {}, partContributive = 0.0) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
@@ -331,6 +414,11 @@ class SoldeAnnuel {
     // que les scénarios notionnels ne servent pas, en part de PIB : une
     // recette du système actuel, jamais la leur.
     this.retrait = retrait;
+    // Rapport de la recette de chaque système à celle du système actuel, et
+    // part des ressources qui est une cotisation — la seule sur laquelle un
+    // changement de taux ait prise.
+    this.rapportsRecettes = recettes;
+    this.partContributive = partContributive;
   }
 
   /** Ce que le système coûterait cette année-là, en part de PIB. */
@@ -346,7 +434,14 @@ class SoldeAnnuel {
    * RECETTE SUIT LE DROIT.
    */
   ressourcesDe(scenario) {
-    return scenario === "actuel" ? this.ressources : this.ressources - this.retrait;
+    if (scenario === "actuel") return this.ressources;
+    // LA RECETTE SUIT LE TAUX : le scénario 6 remplace tous les taux par 18 %,
+    // et la part COTISÉE des ressources baisse d'autant. Les ressources qui ne
+    // sont pas des cotisations — impôts affectés, subventions d'équilibre —
+    // sont laissées inchangées, faute que le programme dise ce qu'il en ferait.
+    const rapport = this.rapportsRecettes[scenario] ?? 1.0;
+    const cotisees = this.ressources * this.partContributive;
+    return cotisees * rapport + (this.ressources - cotisees) - this.retrait;
   }
 
   /** Ressources moins dépenses. Négatif : besoin de financement. */
@@ -538,8 +633,10 @@ function construireAvenir(liste, depenses, population, simulateur, poids) {
 
   const lignes = [];
   for (let annee = depenses.premiereAnneeVentilee; annee <= HORIZON; annee += 1) {
-    const total = masses(liste, population, annee, poids(annee)).total;
+    const poidsAnnee = poids(annee);
+    const total = masses(liste, population, annee, poidsAnnee).total;
     if (total.actuel <= 0) continue;
+    const cotisations = massesCotisations(liste, population, annee, poidsAnnee);
     const projete = annee > dernierePubliee;
     const coefficient = macro.coefficientPrix(annee, anneeEuros);
     const base = projete
@@ -559,6 +656,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids) {
         ? population.effectifTranche(AGE_DEPENDANCE, population.ageMaximal, annee)
           / actifs
         : 0.0,
+      rapportsRecettes(cotisations, annee, simulateur.parametres.annee_bascule),
     ));
   }
 
@@ -597,6 +695,8 @@ function construireSolde(avenir, comptes, derniereAnneePib) {
       ligne.rapports,
       annee <= derniereAnneePib ? ligne.pib : 0.0,
       comptes.recetteNonAcquise(annee),
+      ligne.rapportsRecettes,
+      comptes.partContributive(annee),
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
