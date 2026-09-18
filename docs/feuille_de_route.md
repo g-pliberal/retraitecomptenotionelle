@@ -2728,9 +2728,11 @@ neuve ne pouvait rien lancer du tout : ni pytest ni le paquet installés,
   un cas précis — démarrer quatre processus pour un test coûte plus que de
   l'exécuter. Il fallait un greffon et non un `conftest.py` : les conftest sont
   chargés *par* le hook `pytest_load_initial_conftests`, donc trop tard.
-- *Une session démarre en état de marche.* `.claude/hooks/session-start.sh`
-  installe `.[dev]`, pytest-xdist, et le PyYAML de PyPI quand celui de la
-  distribution n'a pas libyaml.
+- *Une session démarre en état de marche.* Un hook de démarrage installe
+  `.[dev]`, pytest-xdist, et le PyYAML de PyPI quand celui de la distribution
+  n'a pas libyaml. **Il n'est pas dans le dépôt** : une session Claude Code
+  n'a pas le droit d'écrire sous `.claude/`, ni le fichier ni son inscription
+  dans `settings.json`. Son texte est donné plus bas, à poser à la main.
 
 **Ce que ça a déplacé.**
 
@@ -2746,13 +2748,38 @@ reproduit `moteur/donnees.json` et `moteur/style.css` **octet pour octet** :
 c'est la preuve que le cache et le chargeur C n'ont rien changé au fond. Les
 quatre garde-fous du greffon ont été essayés un par un.
 
+**Le hook, à poser à la main.** Écrire `.claude/hooks/session-start.sh`,
+le rendre exécutable (`chmod +x`) :
+
+```bash
+#!/bin/bash
+set -euo pipefail
+[ "${CLAUDE_CODE_REMOTE:-}" != "true" ] && exit 0
+cd "${CLAUDE_PROJECT_DIR:-.}"
+python -m pip install --quiet --disable-pip-version-check -e '.[dev]'
+# PyYAML de PyPI plutôt que celui de la distribution : sa roue embarque
+# libyaml, que `charger_yaml` préfère au chargeur Python. Celui de Debian ne
+# se laisse pas désinstaller, d'où `--ignore-installed`, qui le masque.
+python -c 'import yaml,sys; sys.exit(0 if yaml.__with_libyaml__ else 1)' \
+  || python -m pip install --quiet --disable-pip-version-check \
+       --ignore-installed --no-cache-dir PyYAML
+```
+
+puis l'inscrire dans `.claude/settings.json`, à côté des hooks Impeccable :
+
+```json
+"SessionStart": [
+  { "hooks": [ { "type": "command",
+                 "command": "\"${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh\"",
+                 "timeout": 300 } ] }
+]
+```
+
 **Ce qui reste.** Les deux plus gros postes sont désormais
 `test_les_temoins_du_portage_sont_a_jour` (19,6 s) et les trois tests de
 `test_cout.py` (10 s chacun) ; ils recalculent des grilles entières de cas
 types. Un cache de session sur ces grilles les ferait tomber, mais il faudrait
-d'abord s'assurer qu'aucun test ne compte sur leur recalcul. Et
-l'enregistrement du hook dans `.claude/settings.json` reste à faire à la main :
-une session Claude Code n'a pas le droit de modifier sa propre configuration.
+d'abord s'assurer qu'aucun test ne compte sur leur recalcul.
 
 ---
 
@@ -3300,5 +3327,5 @@ une session Claude Code n'a pas le droit de modifier sa propre configuration.
   de 7 min 25 à 47 s, une simulation partie de zéro de 1,55 s à 0,16 s, et une
   session neuve n'a plus à installer quoi que ce soit avant de lancer un test.
   Aucun chiffre du modèle ne bouge — le build est reproduit octet pour octet.
-  Reste à enregistrer le hook de démarrage dans `.claude/settings.json`, ce
-  qu'une session ne peut pas faire elle-même.
+  Reste à poser le hook de démarrage sous `.claude/`, ce qu'une session ne peut
+  pas faire elle-même : son script est donné sous l'action.
