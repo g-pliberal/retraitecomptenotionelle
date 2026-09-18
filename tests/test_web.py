@@ -2515,9 +2515,9 @@ def test_la_palette_des_scenarios_reste_lisible():
 
 # -- accessibilité -------------------------------------------------------------
 #
-# Ce que le site promet dans ses mentions légales, vérifié ici. Une déclaration
-# d'accessibilité qui n'est adossée à aucun contrôle se périme au premier
-# changement de gabarit : celui qui suit ne se périme pas.
+# Le site ne déclare plus son accessibilité — le site d'accueil porte cette
+# déclaration —, mais il continue de la mesurer. Une promesse écrite se périme
+# au premier changement de gabarit ; ces contrôles-là ne se périment pas.
 
 #: Plancher de contraste des textes courants, et des textes agrandis ou des
 #: contours de composants — WCAG 2.1, critères 1.4.3 et 1.4.11.
@@ -2785,33 +2785,51 @@ def test_le_lien_d_evitement_ouvre_chaque_page(contexte):
     )
 
 
-def test_les_mentions_legales_sont_joignables_depuis_toute_page():
-    """La loi veut qu'elles le soient. Le pied est posé une fois, à côté de
-    ``<main>``, et ne dépend donc pas de la page affichée."""
+def test_le_pied_avertit_depuis_toute_page():
+    """Le pied est posé une fois, à côté de ``<main>``, et ne dépend donc pas
+    de la page affichée : ce qu'il dit, il le dit partout."""
     pied = g.pied()
-    assert 'href="#/mentions"' in pied
     assert "aucune valeur officielle" in pied, (
         "le pied doit dire que le simulateur n'engage aucune caisse"
     )
+    assert "info-retraite.fr" in pied, "le pied doit renvoyer à la caisse"
+    assert "CC BY-SA 4.0" in pied, "le pied doit dire sous quelle licence citer"
 
 
-def test_la_page_des_mentions_dit_l_hebergeur_et_l_etat_d_accessibilite(contexte):
-    """Les trois obligations que la page porte, et le trou qu'elle signale.
+def test_le_site_ne_porte_aucune_mention_legale(contexte):
+    """Le simulateur est encarté dans partiliberalfrancais.fr, qui l'édite et
+    l'héberge : l'identification de l'éditeur, la politique de données
+    personnelles et la déclaration d'accessibilité sont les siennes.
 
-    La LCEN impose de nommer l'hébergeur ; l'éditeur personne morale doit
-    s'identifier, et ce qui manque pour cela doit être visible plutôt que
-    comblé au jugé.
+    Deux déclarations concurrentes valent moins qu'une, et celle d'ici se
+    périmait sans que rien ne le dise — elle nommait GitHub, Inc. comme
+    hébergeur, ce qui n'est vrai que de l'adresse GitHub Pages. Le test
+    empêche qu'elle revienne par une page ou un pied de page.
     """
-    _, corps = rendre(contexte, "/mentions", {})
-    assert "GitHub, Inc." in corps, "l'hébergeur doit être nommé"
-    assert "conformité partielle" in corps, (
-        "l'état d'accessibilité doit être déclaré, et sans le surestimer"
-    )
-    assert "Aucun audit externe" in corps
-    assert corps.count("a-completer") >= 4, (
-        "les mentions que l'éditeur doit encore fournir doivent rester visibles"
-    )
-    assert "ne collecte rien" in corps
+    interdits = ("Mentions légales", "Directeur de la publication",
+                 "directeur de la publication", "a-completer",
+                 "conformité partielle", "règlement (UE) 2016/679",
+                 "défenseurdesdroits", "RGAA")
+    pages = [("pied", g.pied())] + [
+        (chemin, rendre(contexte, chemin, {})[1]) for chemin in TITRES
+    ]
+    for ou, corps in pages:
+        for interdit in interdits:
+            assert interdit not in corps, f"{interdit!r} est revenu sur {ou}"
+
+
+def test_la_page_des_donnees_dit_sous_quelle_licence_reprendre(contexte):
+    """Ce que l'hôte ne peut pas porter à la place du dépôt : ses licences.
+
+    Une mention légale se délègue à l'éditeur du site d'accueil ; la licence
+    du code, celle des infographies et l'obligation de citer le producteur
+    d'une série, non — elles portent sur ce fichier-ci.
+    """
+    _, corps = rendre(contexte, "/donnees", {})
+    assert "Apache 2.0" in corps
+    assert "CC BY-SA" in corps
+    assert "Licence Ouverte" in corps
+    assert "cite le producteur, pas ce site" in corps
 
 
 def test_chaque_page_du_site_est_comparee_au_portage(contexte):
@@ -3720,11 +3738,9 @@ def _hors_depliants(corps: str) -> str:
 #: vers le haut d'environ un tiers : elles n'interdisent pas d'écrire, elles
 #: interdisent de revenir à une page qu'on ne lit pas.
 #:
-#: Deux pages échappent à la règle des mots, et pour des raisons opposées.
-#: « /simuler » EST un formulaire : ce qu'on y compte est fait de libellés de
-#: champs et de deux cents options de menus, que personne ne lit à la suite.
-#: « /mentions » est une page légale : ses informations doivent être lisibles
-#: sans qu'on ait à déplier quoi que ce soit, et la replier serait la cacher.
+#: Une page échappe à la règle des mots : « /simuler » EST un formulaire : ce
+#: qu'on y compte est fait de libellés de champs et de deux cents options de
+#: menus, que personne ne lit à la suite.
 BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Deux tableaux sur l'accueil : celui qui oppose les deux systèmes terme à
     # terme, et celui du plancher — l'argument le plus parlant du site, remonté
@@ -3747,7 +3763,6 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     "/cout": (700, 2, 0),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
-    "/mentions": (1400, 0, 0),
 }
 
 
@@ -4193,7 +4208,7 @@ def test_aucune_page_ne_compte_plus_de_quatre_systemes(contexte, chemin):
 
     Le compte du MODÈLE n'est pas visé : il en calcule toujours six, et les
     commentaires du code le disent. Ce test ne lit que ce qui s'affiche, sur
-    les neuf routes — c'est là que vivaient les deux phrases fausses.
+    les huit routes — c'est là que vivaient les deux phrases fausses.
     """
     corps = rendre(contexte, chemin,
                    {"naissance": "1975-01-01"}
@@ -4239,7 +4254,7 @@ def test_les_pages_longues_portent_leur_plan(contexte):
                    "cout-transferts", "cout-scenarios", "cout-equilibre", "cout-garantie",
                    "cout-poids", "cout-sources", "cout-limites"]),
         ("/donnees", ["donnees-series", "donnees-fiabilite", "donnees-inventaire",
-                      "donnees-sources"]),
+                      "donnees-sources", "donnees-reutilisation"]),
     ):
         corps = rendre(contexte, chemin, {})[1]
         plan = re.search(r'<nav class="plan" aria-label="Dans cette page">.*?</nav>', corps, re.S)
@@ -4252,7 +4267,7 @@ def test_les_pages_longues_portent_leur_plan(contexte):
         # Le plan vient APRÈS les trois chiffres : le résultat d'abord, la
         # carte ensuite.
         assert corps.index('<div class="fiches reperes">') < corps.index('<nav class="plan"')
-    for chemin in ("/", "/cas-types", "/methode", "/simuler", "/mentions"):
+    for chemin in ("/", "/cas-types", "/methode", "/simuler"):
         assert '<nav class="plan"' not in rendre(contexte, chemin, {})[1], chemin
 
     from pathlib import Path
@@ -4523,9 +4538,9 @@ def test_la_navigation_est_groupee_par_fonction():
         "/", "/simuler", "/trajectoire", "/cas-types", "/cout", "/methode",
         "/donnees", "/partager"]
     # Toute page de la barre est une page que le routeur sait rendre, et
-    # réciproquement : seules les mentions légales en sont absentes, parce que
-    # le pied de page y renvoie de partout.
-    assert set(chemin for chemin, _ in g.LIENS) == set(TITRES) - {"/mentions"}
+    # réciproquement : depuis le retrait des mentions légales, le site n'a plus
+    # aucune page hors barre.
+    assert set(chemin for chemin, _ in g.LIENS) == set(TITRES)
     # L'étiquette est masquée à l'œil, pas à l'oreille.
     assert "nav .etiquette" in g.FEUILLE_DE_STYLE
     etiquette = g.FEUILLE_DE_STYLE.split("nav .etiquette {")[1].split("}")[0]
@@ -4651,7 +4666,7 @@ def _prose(corps: str) -> str:
 #: interdisent d'y revenir comme à un tic.
 INCISES_MAXIMUM = {
     "/": 3, "/simuler": 14, "/trajectoire": 5, "/cas-types": 9, "/cout": 22,
-    "/methode": 9, "/donnees": 4, "/partager": 4, "/mentions": 9,
+    "/methode": 9, "/donnees": 6, "/partager": 4,
 }
 
 

@@ -57,7 +57,7 @@ le navigateur, aucune route n'a besoin d'être configurée côté serveur.
 | `/retraite/` | L'accueil : le programme, puis les liens vers les cinq autres pages. |
 | `/retraite/#/simuler` | Le formulaire de simulation, vide de tout résultat. |
 | `/retraite/#/simuler?…` | Une simulation, tous paramètres dans l'adresse : elle se partage, se cite, se recharge. Exemple : `#/simuler?naissance=1965-03-01&sexe=H&statut=salarie_prive_non_cadre&debut=1985-09-01&liquidation=2029-03-01`. |
-| `/retraite/#/cas-types`, `#/cout`, `#/methode`, `#/donnees`, `#/mentions` | Les autres pages. |
+| `/retraite/#/cas-types`, `#/cout`, `#/methode`, `#/donnees` | Les autres pages. |
 
 Ces adresses sont celles que les pages du simulateur écrivent elles-mêmes ;
 elles ne changeront pas sans que ce fichier le dise. Les anciennes adresses de
@@ -121,10 +121,30 @@ revenus, relevé de carrière — ne quitte pas la machine du lecteur ; il
 n'existe aucun serveur à qui l'envoyer. Les paramètres sont écrits dans
 l'adresse (`#/simuler?…`), donc dans l'historique du navigateur et dans tout
 lien partagé, et le fragment `#…` n'est **pas** transmis au serveur par le
-navigateur. L'hébergeur voit passer la visite, comme pour toute page. La page
-« Mentions légales » du simulateur le dit ; elle nomme GitHub, Inc. comme
-hébergeur, ce qui est vrai de l'adresse GitHub Pages et **à compléter** pour
-la copie servie par le site parent — c'est à l'éditeur de le faire.
+navigateur. L'hébergeur voit passer la visite, comme pour toute page.
+
+Le simulateur ne porte **aucune mention légale** : ni identification de
+l'éditeur, ni politique de données personnelles, ni déclaration
+d'accessibilité. Il portait les trois jusqu'au 18 septembre 2026 ; elles ont
+été retirées parce que le site d'accueil édite et héberge la page et porte donc
+les siennes, et parce que deux déclarations concurrentes valent moins qu'une —
+celle du simulateur nommait GitHub, Inc. comme hébergeur, ce qui n'est vrai que
+de l'adresse GitHub Pages.
+
+**C'est donc à l'éditeur du site d'accueil de les porter**, et elles doivent
+couvrir `/retraite/` : l'identification de l'éditeur (loi n° 2004-575 du
+21 juin 2004, article 6-III), ce que le simulateur fait des données saisies —
+rien, comme décrit ci-dessus — et l'état d'accessibilité. Ce que le dépôt
+continue de porter, parce que lui seul le connaît, est sa licence : code sous
+Apache 2.0, infographies et textes sous CC BY-SA 4.0, séries à citer chez leur
+producteur ; c'est en pied de page et sous `#/donnees`, section « Licences et
+réutilisation ».
+
+Une conséquence à peser : l'adresse GitHub Pages
+(`g-pliberal.github.io/retraitecomptenotionelle/`) n'a pas de site parent pour
+porter cette partie légale. Elle est une publication de travail du dépôt ; si
+elle doit rester une adresse publique, ses mentions sont à poser ailleurs
+(dépôt, `README`) ou l'adresse à fermer.
 
 ## L'intégration recommandée : un lien
 

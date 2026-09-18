@@ -397,13 +397,6 @@ a:hover { opacity: 0.85; }
 .note.entree p { margin: 0; }
 .note.entree .actions { margin-top: 0.7rem; }
 .discret { color: var(--texte-tres-doux); font-size: 0.9rem; }
-/* Un champ des mentions légales que l'éditeur n'a pas encore renseigné. Il est
-   marqué, et non masqué : un trou visible se comble, un trou discret reste. */
-.a-completer {
-  font-style: normal; color: var(--alerte);
-  border-bottom: 1px dashed currentColor;
-}
-
 /* -- le panneau crème -------------------------------------------------------
 
    Tout ce qu'on remplit ou qu'on emporte est posé sur du crème : le
