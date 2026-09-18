@@ -857,18 +857,33 @@ function enLignes(contexte, texte, largeur, espacement = 0) {
 // l'image jusqu'à ce qu'il n'en reste rien à publier.
 //
 // Il est posé EN DERNIER, par-dessus le tracé comme par-dessus le texte : posé
-// avant, une aire pleine le recouvrirait. Et il est à 12 % d'opacité — assez
-// pour se lire quand on cherche d'où vient l'image, assez peu pour ne pas
-// gêner la lecture d'une courbe.
-const PAS_FILIGRANE_X = 190;
-const PAS_FILIGRANE_Y = 120;
-const OPACITE_FILIGRANE = 0.12;
+// avant, une aire pleine le recouvrirait.
+//
+// Et il doit être DISCRET. Sa première version — 20 px en gras, en or, à 12 %
+// — se lisait comme un tampon posé sur l'image, et une image qu'on remarque
+// d'abord pour son filigrane ne circule pas. Trois réglages l'ont ramené à une
+// texture qu'on ne voit qu'en la cherchant, sans rien lui retirer de sa
+// fonction :
+//
+//   * la taille et la graisse, de 20 px en 900 à 14 px en 500 : un quart de
+//     l'encre à surface égale ;
+//   * l'opacité, de 12 % à 5,5 % ;
+//   * la couleur, qui n'est plus l'or de la charte mais l'encre de la page —
+//     l'or attirait l'œil, une teinte de texte se fond dans le fond.
+//
+// Le pas, lui, s'est RESSERRÉ : un filigrane plus pâle peut être plus dense
+// sans se voir davantage, et c'est la densité qui le rend inrognable. Le
+// produit des deux — ce que le filigrane pose d'encre par unité de surface —
+// est divisé par près de quatre.
+const PAS_FILIGRANE_X = 168;
+const PAS_FILIGRANE_Y = 104;
+const OPACITE_FILIGRANE = 0.055;
 
 function filigrane(dessin, largeur, hauteur, couleur) {
   dessin.save();
   dessin.globalAlpha = OPACITE_FILIGRANE;
   dessin.fillStyle = couleur;
-  dessin.font = `900 20px ${SANS}`;
+  dessin.font = `500 14px ${SANS}`;
   dessin.textAlign = "left";
   dessin.textBaseline = "middle";
   // La rotation se prend au centre : la grille couvre alors la toile entière
@@ -1030,7 +1045,7 @@ async function imageDuGraphique(carte) {
   for (const ligne of source) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 28; }
 
   piedDImage(dessin, y + 18, encre, accent, doux);
-  filigrane(dessin, LARGEUR_IMAGE, hauteur, accent);
+  filigrane(dessin, LARGEUR_IMAGE, hauteur, encre);
 
   return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
 }
@@ -1146,7 +1161,7 @@ async function imageDeCarteAPublier(affiche) {
     y = poserBloc(dessin, bloc, marge, y + (rang ? bloc.marge : 0));
   });
 
-  filigrane(dessin, LARGEUR_IMAGE, hauteur, compte?.couleur || style.color);
+  filigrane(dessin, LARGEUR_IMAGE, hauteur, style.color);
   return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
 }
 
