@@ -3460,3 +3460,64 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
   chacun (un test d'exhaustivité), les affirmations des pages ne l'ont pas.
   D'où l'action 34. À noter pour qui la prendra : la jumelle de la phrase
   retirée vit encore dans le dépliant de transition.
+
+- **Septembre 2026, le partage pour la base militante.** À la demande : « il
+  faut du contenu partageable facilement sur les réseaux sociaux ; ce qui est
+  présent ne me convient pas ; il faut que ce soit simple, bien intégré, et que
+  le filigrane contenant le @pliberal ne puisse pas être rogné. » Trois défauts,
+  trois corrections.
+
+  *Les cartes de la page Partager demandaient une capture d'écran.* Elles
+  étaient rendues à leur taille réelle — 1200 × 675 — dans un cadre qui
+  défilait horizontalement, et la page disait « défilez pour voir la carte
+  entière, puis capturez-la ». C'était trois gestes, un outil de capture et un
+  recadrage à la main pour une image que le site savait composer. Elles portent
+  maintenant le même bouton que les graphiques, et sortent en PNG composé sur
+  une toile aux vraies dimensions. Ce que la page montre n'est plus l'image mais
+  son APERÇU, réduit à la largeur de sa colonne : les longueurs de la carte sont
+  passées en `cqw`, centièmes de la largeur du cadre, soit la valeur du modèle
+  divisée par douze. C'est ce qui permet aux quatre cartes de tenir deux par
+  ligne, comparables d'un coup d'œil, là où une seule colonne en faisait une
+  page à dérouler.
+
+  *La barre portait trois boutons.* Publier sur X, télécharger l'image, copier
+  le texte : il fallait choisir avant d'agir, et chacun des trois était
+  incomplet — l'image sans le message, le message sans l'image. Elle en porte
+  deux. **Partager** compose l'image ET le message, ouvre la feuille de partage
+  du système quand il y en a une (c'est la seule voie qui donne un post complet
+  en un geste, et c'est celle du téléphone), et à défaut enregistre l'image en
+  mettant le message dans le presse-papiers. **Publier sur X** ouvre l'intention
+  — la fenêtre d'abord, avant toute composition, un navigateur n'autorisant une
+  page à en ouvrir une que dans le geste même du clic — puis enregistre l'image
+  à joindre. Le compte rendu a quitté le libellé du bouton pour un
+  `role="status"` à côté : l'écrire dans le bouton changeait sous le doigt la
+  cible qu'on venait de toucher, et faisait disparaître son pictogramme.
+
+  *La signature partait au premier recadrage.* Elle était en pied d'image, et
+  recadrer ne demande rien de plus qu'une capture d'écran. Le compte est
+  maintenant répété en diagonale sur toute la surface, à 12 % d'opacité, au pas
+  de 190 × 120 points avec un rang sur deux décalé d'un demi-pas — sans ce
+  décalage, un couloir vertical entier reste vierge et un recadrage peut y
+  tomber. Il est posé EN DERNIER, par-dessus le tracé : posé avant, l'aire
+  pleine d'un graphique le recouvrirait. Le pied subsiste et ne fait pas double
+  emploi : le filigrane dit à qui l'image appartient, le pied dit où elle mène,
+  et il gagne pour cela l'adresse du site, qui n'y était pas.
+
+  Trois choses à en retenir. **Un aperçu n'a pas à être l'image** : tant qu'il
+  fallait capturer l'écran, la carte devait être rendue au pixel près, ce qui
+  interdisait de la réduire et imposait le cadre défilant ; du jour où le
+  bouton compose, l'aperçu redevient un aperçu et la mise en page se libère.
+  **Une image composée peut suivre la feuille de style** : les blocs de la
+  carte sont lus dans leur aperçu — police, graisse, taille, couleur,
+  interlettrage, interligne, marge —, tout étant remis à l'échelle de 1200 px,
+  si bien que rien n'est décrit deux fois et que modifier le style modifie
+  l'image. Et **le geste qui manquait n'était pas un bouton de plus, mais un de
+  moins** : ce qu'on voulait, c'était un post complet, pas le choix entre trois
+  moitiés.
+
+  Aucun chiffre déplacé : les témoins de simulation sont identiques, et le seul
+  diff des témoins de page est le texte de Partager et la barre des cartes de
+  Coût. Vérifié au navigateur — les quatre cartes et les deux cartes à
+  graphique composées et téléchargées, à 390 et 1440 points, sans erreur de
+  console. Un test tient le filigrane : pas serré devant l'image, rangs
+  décalés, opacité bornée, et posé en dernier par les deux composeurs.

@@ -30,6 +30,14 @@ export const SITE_PARENT = "https://partiliberalfrancais.fr/";
 export const SIGNATURE = "@pliberal";
 export const SIGNATURE_SITE = "Parti libéral français — le simulateur de retraite";
 
+/**
+ * L'adresse qu'une image emporte. Celle du site parent, et non celle de GitHub
+ * Pages : c'est là que le lecteur d'un post doit atterrir. Elle vaut pour les
+ * cartes de la page Partager comme pour les images composées sous un
+ * graphique — une image qui circule sans adresse ne ramène personne.
+ */
+export const ADRESSE_SITE = "partiliberalfrancais.fr/#simulateur";
+
 /** Espace insécable fin, séparateur de milliers à la française. */
 const FINE = "\u202f";
 
@@ -572,6 +580,10 @@ export const ICONES = {
   download: '<path d="M12 15V3" />'
     + '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />'
     + '<path d="m7 10 5 5 5-5" />',
+  "share-2": '<circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" />'
+    + '<circle cx="18" cy="19" r="3" />'
+    + '<line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />'
+    + '<line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />',
   "trending-up": '<path d="M16 7h6v6" /><path d="m22 7-8.5 8.5-5-5L2 17" />',
   "triangle-alert":
     '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 '
@@ -714,6 +726,25 @@ export function plan(corps, chemin, etiquette = "Dans cette page") {
 }
 
 /**
+ * Les deux gestes du partage, sous une carte ou sous une image à publier.
+ *
+ * Une seule écriture pour les deux endroits où l'on partage — la carte d'un
+ * graphique et la carte de la page Partager. Le comportement est dans
+ * `index.html`, en écoute déléguée sur ces classes.
+ *
+ * Copie de `barre_partage` dans `web/gabarit.py`.
+ */
+export function barrePartage() {
+  return '<p class="partage">'
+    + '<button type="button" class="partager">'
+    + `${icone("share-2")}<span>Partager</span></button>`
+    + '<button type="button" class="partager-x">Publier sur X</button>'
+    + '<span class="etat" role="status"></span>'
+    + '<textarea class="repli" hidden readonly rows="3"'
+    + ' aria-label="Texte à copier à la main"></textarea></p>';
+}
+
+/**
  * Une question, sa réponse en une phrase, et l'image qui la montre.
  *
  * C'est l'unité de lecture de la page Coût, et elle est faite pour deux
@@ -732,22 +763,16 @@ export function cle(question, reponse, corps, source = "", identifiant = "") {
   // La barre de partage n'est pas un ornement : c'est elle qui fait de la carte
   // autre chose qu'un bloc de page, et elle est SOUS LE RÉSULTAT — le partage
   // doit être là où l'on regarde le graphique, et non dans une page à part que
-  // personne ne trouve. Trois gestes : `partager-x` ouvre X avec un message
-  // déjà rédigé, `partager` compose l'image, `copier-texte` met le message dans
-  // le presse-papiers. Le comportement des trois est dans `index.html`, en
-  // écoute déléguée. Le `<textarea>` est le repli du presse-papiers, vide et
-  // masqué tant qu'on n'en a pas besoin.
+  // personne ne trouve. DEUX gestes : `partager` compose l'image ET le message
+  // puis ouvre la feuille de partage du système, `partager-x` ouvre X avec le
+  // message déjà rédigé. Le comportement des deux est dans `index.html`, en
+  // écoute déléguée, et c'est le même que celui des cartes de la page Partager.
+  // Le `<span class="etat">` porte le compte rendu, le `<textarea>` le repli du
+  // presse-papiers : vides et masqués tant qu'on n'en a pas besoin.
   // La barre n'apparaît que si la carte porte un TRACÉ : c'est lui que l'image
   // compose, et une carte qui n'en a pas donnerait un bouton qui échoue.
   const partage = corps.includes('<figure class="graphique"')
-    ? '<p class="partage">'
-      + '<span class="etiquette">Partager ce résultat</span>'
-      + '<button type="button" class="partager-x">Publier sur X</button>'
-      + '<button type="button" class="partager">'
-      + `${icone("download")}<span>Télécharger l'image</span></button>`
-      + '<button type="button" class="copier-texte">Copier le texte</button>'
-      + '<textarea class="repli" hidden readonly rows="3"'
-      + ' aria-label="Texte à copier à la main"></textarea></p>'
+    ? barrePartage()
     : "";
   // Identifiée, la carte est joignable depuis le plan de la page ; le
   // `tabindex` lui permet de recevoir le focus quand on y arrive par lui.

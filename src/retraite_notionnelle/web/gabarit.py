@@ -940,51 +940,58 @@ section.cle > .source {
 }
 /* -- la barre de partage ----------------------------------------------------
 
-   Elle est SOUS LE RÉSULTAT, et non dans une page « Partager » que personne ne
-   trouve : le partage doit être là où l'on regarde le graphique. Trois gestes,
-   dans l'ordre où on les veut — publier, voir ce qu'on publierait, copier le
-   texte pour l'envoyer ailleurs. */
-section.cle > .partage {
+   Elle est SOUS LE RÉSULTAT — sous le graphique qu'on vient de lire, sous la
+   carte qu'on vient de voir —, et non dans une page « Partager » que personne
+   ne trouve. Elle est écrite UNE fois et sert aux deux : c'est pourquoi ses
+   sélecteurs ne nomment plus la carte qui la porte.
+
+   Deux gestes, et non trois. Publier sur X, télécharger l'image et copier le
+   texte demandaient de choisir avant d'agir, et chacun des trois était
+   incomplet. Le premier bouton fait maintenant le tout ; le second reste
+   parce qu'un ordinateur ne sait ouvrir qu'un seul réseau avec un message
+   déjà écrit. */
+.partage {
   margin: 1.25rem 0 0; padding-top: 1.125rem;
   border-top: 3px solid var(--or);
   display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
 }
-section.cle > .partage > .etiquette {
-  font-size: 0.875rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--texte-tres-doux); margin-right: 0.25rem;
-}
-/* Les trois boutons partagent la cible tactile de 48 px et la même casse. Le
-   premier est plein — c'est celui qu'on vient chercher —, les deux autres
-   creux. */
-section.cle > .partage > .partager,
-section.cle > .partage > .partager-x,
-section.cle > .partage > .copier-texte {
+/* Les deux boutons partagent la cible tactile de 48 px. Le premier est plein —
+   c'est celui qu'on vient chercher —, le second creux. */
+.partage > .partager,
+.partage > .partager-x {
   font: inherit; font-size: 0.9375rem; cursor: pointer;
   min-height: 3rem; padding: 0.85rem 1.125rem;
-  border-radius: 0; display: inline-flex; align-items: center; gap: 0.4rem;
+  border-radius: 0; display: inline-flex; align-items: center; gap: 0.5rem;
 }
-section.cle > .partage > .partager-x {
+.partage > .partager {
   font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase;
   color: var(--fond); background: var(--or); border: 2px solid var(--or);
 }
-section.cle > .partage > .partager,
-section.cle > .partage > .copier-texte {
+.partage > .partager-x {
   font-weight: 700; color: var(--texte); background: transparent;
   border: 2px solid var(--trait-champ);
 }
-section.cle > .partage > .partager:hover,
-section.cle > .partage > .copier-texte:hover { border-color: var(--or); }
-section.cle > .partage > .partager-x:hover { opacity: 0.88; }
-section.cle > .partage > .partager[disabled] { opacity: 0.6; cursor: progress; }
+.partage > .partager:hover { opacity: 0.88; }
+.partage > .partager-x:hover { border-color: var(--or); }
+.partage > .partager[disabled] { opacity: 0.6; cursor: progress; }
+/* Le compte rendu du geste — « image enregistrée, texte copié ». Il s'écrivait
+   dans le libellé du bouton, ce qui changeait sous le doigt la cible qu'on
+   venait de toucher, et faisait disparaître le pictogramme ; il est ici, à
+   côté, et son `role="status"` le fait annoncer sans qu'on ait à y revenir. */
+.partage > .etat {
+  font-size: 0.9375rem; line-height: 1.35; color: var(--texte-doux);
+  min-width: 0; flex: 1 1 8rem;
+}
+.partage > .etat:empty { display: none; }
 /* Le repli du presse-papiers : quand le navigateur refuse la copie, le texte
    s'affiche dans un champ sélectionnable plutôt que d'annoncer un succès qui
    n'a pas eu lieu. Il prend toute la largeur, sous les boutons, et ne s'efface
    pas tout seul — c'est au lecteur de le refermer. */
-section.cle > .partage > .repli {
+.partage > .repli {
   flex: 1 1 100%; margin: 0; font-family: inherit; font-size: 0.9375rem;
   background: var(--fond); color: var(--texte); border: 2px solid var(--or);
 }
-section.cle > .partage > .repli[hidden] { display: none; }
+.partage > .repli[hidden] { display: none; }
 section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 /* Le mot de jargon et sa définition. Tout est en ligne — le mot doit couler
    dans sa phrase comme n'importe quel autre —, et l'enveloppe est simplement
@@ -1160,84 +1167,97 @@ ul.serree li { margin: 0.3rem 0; }
 
 /* -- les cartes à publier ---------------------------------------------------
 
-   1200 × 675, la boîte de X et de LinkedIn. Elles sont rendues À LEUR TAILLE
-   RÉELLE dans un cadre qui défile, et non réduites : la typographie était
-   exprimée en unités relatives à un conteneur de 400 px, si bien qu'aucune
-   capture ne faisait jamais l'image annoncée. En pixels, calibrée pour cette
-   largeur, une capture donne vraiment 1200 × 675, avec « @pliberal » à 32 px —
-   lisible après republication.
+   1200 × 675, la boîte de X et de LinkedIn. Ce qui s'affiche ici n'est plus
+   l'image : c'est son APERÇU. La carte a longtemps été rendue à sa taille
+   réelle dans un cadre qui défilait, parce qu'il fallait la capturer à l'écran
+   pour l'avoir ; elle se télécharge maintenant d'un bouton, composée sur une
+   toile aux vraies dimensions, et l'aperçu n'a plus qu'à ressembler à ce qu'on
+   emportera. Il se réduit donc avec sa colonne, dans le rapport exact de 16/9.
 
-   `box-sizing: border-box` : le padding entre dans la boîte, donc le rapport
-   rendu est bien 1,778 et X ne recadre pas. */
+   Toutes les longueurs de la carte sont en `cqw` — centièmes de la largeur du
+   cadre —, c'est-à-dire la valeur en pixels du modèle divisée par douze. C'est
+   la seule façon d'obtenir une réduction FIDÈLE : l'`em` aurait fallu composer
+   les tailles les unes dans les autres, et les marges d'une ligne de 52 px ne
+   se disent pas dans la même unité que celles d'une ligne de 28. Une valeur en
+   pixels précède chaque taille de police, pour un navigateur qui ne connaîtrait
+   pas les requêtes de conteneur : la carte y sera petite, jamais illisible. */
 .cadre-carte {
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
-  background: var(--fond-carte); padding: 0.75rem; min-width: 0;
+  container-type: inline-size;
+  background: var(--fond-carte); padding: 0.5rem; min-width: 0;
 }
 .carte-partage {
-  width: 1200px; height: 675px; box-sizing: border-box;
-  background: var(--fond); color: var(--texte); padding: 56px;
+  aspect-ratio: 1200 / 675; box-sizing: border-box;
+  background: var(--fond); color: var(--texte); padding: 4.667cqw;
   display: flex; flex-direction: column; justify-content: space-between;
   font-family: "Public Sans", system-ui, sans-serif;
 }
 .carte-partage.claire { background: var(--creme); color: var(--sur-creme); }
 .carte-partage .surtitre {
-  margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--or); line-height: 1;
+  margin: 0; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--or);
+  line-height: 1;
 }
 .carte-partage.claire .surtitre { color: var(--sur-creme-accent); }
 .carte-partage .chiffre {
-  font-size: 150px; line-height: 0.85; font-weight: 900; letter-spacing: -0.05em;
-  color: var(--or);
+  font-size: 75px; font-size: 12.5cqw; line-height: 0.85; font-weight: 900;
+  letter-spacing: -0.05em; color: var(--or);
 }
 /* Le déficit : un chiffre qui s'écrit en toutes lettres — « 2,4 points de
    PIB » —, donc plus long, donc plus petit, et de la couleur de l'aire du
    graphique qui le montre. */
-.carte-partage.deficit .chiffre { font-size: 112px; color: var(--manque); }
+.carte-partage.deficit .chiffre { font-size: 56px; font-size: 9.333cqw;
+                                  color: var(--manque); }
 /* L'appel au simulateur ne porte pas un chiffre mais une question : elle se
    pose en serif, sur la carte claire, et la phrase dessous prend le poids que
    le chiffre avait. */
 .carte-partage.appel .chiffre {
   font-family: "Instrument Serif", Georgia, serif;
-  font-size: 96px; line-height: 0.95; font-weight: 400; letter-spacing: 0;
-  color: inherit;
+  font-size: 48px; font-size: 8cqw; line-height: 0.95; font-weight: 400;
+  letter-spacing: 0; color: inherit;
 }
 .carte-partage.appel .phrase {
   font-family: "Public Sans", system-ui, sans-serif;
-  font-size: 40px; line-height: 1.3; font-weight: 700;
+  font-size: 20px; font-size: 3.333cqw; line-height: 1.3; font-weight: 700;
 }
 .carte-partage .phrase {
-  margin-top: 22px; font-family: "Instrument Serif", Georgia, serif;
-  font-size: 52px; line-height: 1.12; color: var(--texte);
+  margin-top: 1.833cqw; font-family: "Instrument Serif", Georgia, serif;
+  font-size: 26px; font-size: 4.333cqw; line-height: 1.12; color: var(--texte);
 }
 .carte-partage.claire .phrase { color: var(--sur-creme); }
 .carte-partage .detail {
-  margin-top: 20px; max-width: 1000px; font-size: 28px; line-height: 1.45;
+  margin-top: 1.667cqw; max-width: 83.333cqw;
+  font-size: 14px; font-size: 2.333cqw; line-height: 1.45;
   color: var(--texte-doux);
 }
 .carte-partage.claire .detail { color: var(--sur-creme-doux); }
 /* Le pied : le compte et l'adresse. C'est lui qui fait qu'une image republiée
-   dit encore d'où elle vient. */
+   dit encore d'où elle vient — et il est doublé, dans l'image téléchargée, par
+   un filigrane que le recadrage n'enlève pas. */
 .carte-partage .pied {
   display: flex; justify-content: space-between; align-items: baseline;
-  gap: 24px; border-top: 1px solid var(--trait); padding-top: 26px;
-  font-size: 32px; font-weight: 700;
+  gap: 2cqw; border-top: 1px solid var(--trait); padding-top: 2.167cqw;
+  font-size: 16px; font-size: 2.667cqw; font-weight: 700;
 }
 .carte-partage.claire .pied { border-top-color: var(--creme-trait); }
 .carte-partage .pied .compte { color: var(--or); }
 .carte-partage.claire .pied .compte { color: var(--sur-creme-accent); }
 .carte-partage .pied .adresse {
-  color: var(--texte-tres-doux); font-weight: 400; font-size: 26px;
+  color: var(--texte-tres-doux); font-weight: 400;
+  font-size: 13px; font-size: 2.167cqw;
 }
 .carte-partage.claire .pied .adresse { color: var(--sur-creme-doux); }
-/* Les figures de la page Partager. La piste de grille est BORNÉE : sans
-   `minmax(0,1fr)` et `min-width:0`, elle se dimensionnait sur les 1200 px de la
-   carte, le cadre n'avait rien à faire défiler, et c'est la page entière qui
-   s'élargissait. */
-.cartes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.25rem;
-          margin-top: 1.75rem; }
+/* Les figures de la page Partager. Deux par ligne dès qu'il y a la place : les
+   cartes se comparent, et une seule colonne en faisait une page à dérouler.
+   `min(100%, …)` borne la piste sur les écrans étroits, où une largeur
+   minimale plus large que la page déborderait. */
+.cartes { display: grid; gap: 2.25rem; margin-top: 1.75rem;
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr)); }
 .cartes > figure { margin: 0; min-width: 0; }
+/* La légende NOMME la carte, et se lit avant elle : c'est ce qui permet de
+   choisir laquelle publier sans les regarder toutes. */
 .cartes > figure > figcaption {
-  margin-top: 0.75rem; font-size: 1rem; line-height: 1.5;
+  margin: 0 0 0.6rem; font-size: 0.875rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--texte-tres-doux);
 }
 
@@ -1353,11 +1373,11 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   ol.gestes > li > .rang { font-size: 2.5rem; }
   .paire { gap: 2rem; margin: 2.5rem 0; }
   section.cle { padding: 1.25rem 1rem 1rem; }
-  /* Chaque bouton de partage prend sa ligne : trois de front sur 358 points se
+  /* Chaque bouton de partage prend sa ligne : deux de front sur 358 points se
      serraient sous la cible tactile de 44 px. */
-  section.cle > .partage > .partager,
-  section.cle > .partage > .partager-x,
-  section.cle > .partage > .copier-texte { flex: 1 1 100%; justify-content: center; }
+  .partage > .partager,
+  .partage > .partager-x { flex: 1 1 100%; justify-content: center; }
+  .partage > .etat { flex: 1 1 100%; }
   /* La bulle du glossaire quitte le fil du texte et se pose en bas de l'écran,
      sur toute la largeur. Une boîte flottante ancrée sur un mot qui peut se
      trouver au bord de l'écran en déborderait ; et une boîte posée DANS le fil
@@ -1450,6 +1470,12 @@ SITE_PARENT = "https://partiliberalfrancais.fr/"
 #: devient la source.
 SIGNATURE = "@pliberal"
 SIGNATURE_SITE = "Parti libéral français — le simulateur de retraite"
+
+#: L'adresse qu'une image emporte. Celle du site parent, et non celle de GitHub
+#: Pages : c'est là que le lecteur d'un post doit atterrir. Elle vaut pour les
+#: cartes de la page Partager comme pour les images composées sous un
+#: graphique — une image qui circule sans adresse ne ramène personne.
+ADRESSE_SITE = "partiliberalfrancais.fr/#simulateur"
 
 #: La navigation, par FONCTION et non par page : le message, la preuve, la
 #: confiance. Six liens à la file ne disaient pas où aller après le programme ;
@@ -1942,6 +1968,10 @@ ICONES = {
     "download": '<path d="M12 15V3" />'
                 '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />'
                 '<path d="m7 10 5 5 5-5" />',
+    "share-2": '<circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" />'
+               '<circle cx="18" cy="19" r="3" />'
+               '<line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />'
+               '<line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />',
     "trending-up": '<path d="M16 7h6v6" /><path d="m22 7-8.5 8.5-5-5L2 17" />',
     "triangle-alert":
         '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 '
@@ -2243,6 +2273,27 @@ def plan(corps: str, chemin: str, etiquette: str = "Dans cette page") -> str:
     )
 
 
+def barre_partage() -> str:
+    """Les deux gestes du partage, sous une carte ou sous une image à publier.
+
+    Une seule écriture pour les deux endroits où l'on partage — la carte d'un
+    graphique et la carte de la page Partager. Elles n'avaient rien en commun :
+    l'une posait trois boutons, l'autre demandait une capture d'écran. Le
+    lecteur ne voit plus qu'un geste, au même endroit, avec le même libellé.
+
+    Le comportement est dans ``index.html``, en écoute déléguée sur ces classes.
+    """
+    return (
+        '<p class="partage">'
+        '<button type="button" class="partager">'
+        f"{icone('share-2')}<span>Partager</span></button>"
+        '<button type="button" class="partager-x">Publier sur X</button>'
+        '<span class="etat" role="status"></span>'
+        '<textarea class="repli" hidden readonly rows="3"'
+        ' aria-label="Texte à copier à la main"></textarea></p>'
+    )
+
+
 def cle(question: str, reponse: str, corps: str, source: str = "",
         identifiant: str = "") -> str:
     """Une question, sa réponse en une phrase, et l'image qui la montre.
@@ -2267,39 +2318,36 @@ def cle(question: str, reponse: str, corps: str, source: str = "",
     # grand monde ne va l'utiliser à part les militants qui savent qu'elle
     # existe ». Le partage doit être là où l'on regarde le graphique.
     #
-    # Trois gestes, dans l'ordre où on les veut :
+    # DEUX boutons, et non trois. Elle en a porté trois — publier sur X,
+    # télécharger l'image, copier le texte —, ce qui demandait au militant de
+    # choisir un geste avant d'en faire un seul, et laissait chacun des trois
+    # incomplet : l'image sans le message, le message sans l'image. Le premier
+    # bouton fait maintenant le tout — il compose l'image ET le message, ouvre
+    # la feuille de partage du système quand il y en a une, et à défaut
+    # enregistre l'image en mettant le message dans le presse-papiers. Le
+    # second reste parce que sur un ordinateur, X est le seul réseau qu'on
+    # puisse ouvrir avec un message déjà écrit.
     #
-    #   * `partager-x` ouvre X avec un message déjà rédigé, tiré de la carte ;
-    #   * `partager` compose, dans le navigateur, une image qui porte la
-    #     question, la réponse, le tracé, sa source et la signature du compte ;
-    #   * `copier-texte` met le même message dans le presse-papiers, pour un
-    #     envoi ailleurs.
+    # Le comportement des deux est dans `index.html`, en écoute déléguée, et
+    # il est le MÊME que celui des cartes de la page Partager : un seul jeu de
+    # classes, un seul code. Sans lui, les boutons ne feraient rien, et c'est
+    # pourquoi un test tient l'accord entre les deux fichiers, bouton par
+    # bouton.
     #
-    # Le comportement des trois est dans `index.html`, en écoute déléguée ;
-    # sans lui, les boutons ne feraient rien, et c'est pourquoi un test tient
-    # l'accord entre les deux fichiers, bouton par bouton.
-    #
-    # Le `<textarea>` est le repli du presse-papiers : quand le navigateur
-    # refuse la copie, le texte s'y affiche, sélectionnable, plutôt que
-    # d'annoncer un succès qui n'a pas eu lieu. Il est vide et masqué tant
-    # qu'on n'en a pas besoin.
+    # Le `<span class="etat">` porte le compte rendu — « image enregistrée,
+    # texte copié » —, et il est un `role="status"` : le dire dans le libellé
+    # du bouton, comme avant, changeait sous le doigt la cible qu'on venait de
+    # toucher. Le `<textarea>` est le repli du presse-papiers : quand le
+    # navigateur refuse la copie, le texte s'y affiche, sélectionnable, plutôt
+    # que d'annoncer un succès qui n'a pas eu lieu. Les deux sont vides et
+    # masqués tant qu'on n'en a pas besoin.
     #
     # La barre n'apparaît que si la carte porte un TRACÉ : c'est lui que
     # l'image compose, et une carte qui n'en a pas — celle qui porte un
     # tableau, ou une liste — donnerait un bouton qui échoue. Le savoir se lit
     # dans le corps de la carte plutôt que de se déclarer en paramètre : un
     # appelant n'a pas à redire ce que son propre contenu dit déjà.
-    partage = (
-        '<p class="partage">'
-        '<span class="etiquette">Partager ce résultat</span>'
-        '<button type="button" class="partager-x">Publier sur X</button>'
-        '<button type="button" class="partager">'
-        f"{icone('download')}<span>Télécharger l'image</span></button>"
-        '<button type="button" class="copier-texte">Copier le texte</button>'
-        '<textarea class="repli" hidden readonly rows="3"'
-        ' aria-label="Texte à copier à la main"></textarea></p>'
-        if '<figure class="graphique"' in corps else ""
-    )
+    partage = barre_partage() if '<figure class="graphique"' in corps else ""
     # Identifiée, la carte est joignable depuis le plan de la page ; le
     # `tabindex` lui permet de recevoir le focus quand on y arrive par lui.
     cible = f' id="{escape(identifiant)}" tabindex="-1"' if identifiant else ""

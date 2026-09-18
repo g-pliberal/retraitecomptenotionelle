@@ -107,7 +107,7 @@ import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
 // La signature des images composées ici vient du gabarit, comme tout ce
 // que le site écrit : elle ne doit exister qu'à un seul endroit.
-const { SIGNATURE, SIGNATURE_SITE } = gabarit;
+const { SIGNATURE, SIGNATURE_SITE, ADRESSE_SITE } = gabarit;
 
 const amorce = document.getElementById("amorce");
 let contexte = null;
@@ -756,6 +756,29 @@ const PROPRIETES_TRACE = [
 const LARGEUR_IMAGE = 1200;
 const MARGE_IMAGE = 52;
 
+// Les deux familles du site. Une toile ne sait rien des polices de la page tant
+// qu'elles ne sont pas chargées : `polices()` les réclame avant la première
+// composition, et le repli système reste écrit dans la déclaration pour le cas
+// où elles n'arriveraient pas.
+const SANS = '"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+// La carte d'un graphique reste composée en serif système : ses lignes sont du
+// texte courant, et « Instrument Serif » est un caractère d'affiche, dessiné
+// pour un chiffre de 150 px et illisible en 19.
+const SERIF = '"Iowan Old Style", Palatino, Georgia, serif';
+
+let policesDemandees = null;
+
+function polices() {
+  if (!policesDemandees) {
+    policesDemandees = Promise.all([
+      document.fonts?.load(`900 150px "Public Sans"`),
+      document.fonts?.load(`700 32px "Public Sans"`),
+      document.fonts?.load(`400 52px "Instrument Serif"`),
+    ].filter(Boolean)).catch(() => {});
+  }
+  return policesDemandees;
+}
+
 function svgAutonome(svg) {
   const clone = svg.cloneNode(true);
   // Le clone a exactement la structure de l'original : c'est ce qui permet de
@@ -782,41 +805,152 @@ function svgAutonome(svg) {
     + encodeURIComponent(new XMLSerializer().serializeToString(clone));
 }
 
-/** Découpe un texte en lignes qui tiennent dans une largeur donnée. */
-function enLignes(contexte, texte, largeur) {
-  const lignes = [];
-  let courante = "";
-  for (const mot of texte.split(/\s+/).filter(Boolean)) {
-    const essai = courante ? `${courante} ${mot}` : mot;
-    if (courante && contexte.measureText(essai).width > largeur) {
-      lignes.push(courante);
-      courante = mot;
-    } else {
-      courante = essai;
-    }
+// -- écrire sur une toile -----------------------------------------------------
+
+/** La largeur d'un texte, interlettrage compris. */
+function largeurDe(contexte, texte, espacement = 0) {
+  return contexte.measureText(texte).width + espacement * Math.max(texte.length - 1, 0);
+}
+
+/** Écrit un texte, en posant les lettres une à une s'il est interlettré. */
+function ecrire(contexte, texte, x, y, espacement = 0) {
+  if (!espacement) { contexte.fillText(texte, x, y); return; }
+  let curseur = x;
+  for (const caractere of texte) {
+    contexte.fillText(caractere, curseur, y);
+    curseur += contexte.measureText(caractere).width + espacement;
   }
-  if (courante) { lignes.push(courante); }
+}
+
+/** Découpe un texte en lignes qui tiennent dans une largeur donnée.
+ *
+ * Un saut de ligne écrit dans le texte — ce qu'un `<br>` de la carte devient —
+ * est RESPECTÉ : il sépare deux phrases que l'auteur a voulu voir l'une sous
+ * l'autre, et les recoller pour les recouper ailleurs perdrait ce choix.
+ */
+function enLignes(contexte, texte, largeur, espacement = 0) {
+  const lignes = [];
+  for (const paragraphe of String(texte).split("\n")) {
+    let courante = "";
+    for (const mot of paragraphe.split(/\s+/).filter(Boolean)) {
+      const essai = courante ? `${courante} ${mot}` : mot;
+      if (courante && largeurDe(contexte, essai, espacement) > largeur) {
+        lignes.push(courante);
+        courante = mot;
+      } else {
+        courante = essai;
+      }
+    }
+    if (courante) { lignes.push(courante); }
+  }
   return lignes;
 }
 
-const SERIF = '"Iowan Old Style", Palatino, Georgia, serif';
+// -- le filigrane -------------------------------------------------------------
+//
+// La signature en pied d'image dit d'où l'image vient ; elle disparaît au
+// premier recadrage, et recadrer ne demande rien de plus qu'une capture
+// d'écran. Le filigrane, lui, est PARTOUT : le compte est répété en diagonale
+// sur toute la surface, à un pas assez serré pour qu'aucun découpage encore
+// utilisable n'en soit exempt — moins d'un sixième de la largeur d'une image,
+// moins d'un cinquième de sa hauteur. Rogner le filigrane demande de rogner
+// l'image jusqu'à ce qu'il n'en reste rien à publier.
+//
+// Il est posé EN DERNIER, par-dessus le tracé comme par-dessus le texte : posé
+// avant, une aire pleine le recouvrirait. Et il est à 12 % d'opacité — assez
+// pour se lire quand on cherche d'où vient l'image, assez peu pour ne pas
+// gêner la lecture d'une courbe.
+const PAS_FILIGRANE_X = 190;
+const PAS_FILIGRANE_Y = 120;
+const OPACITE_FILIGRANE = 0.12;
 
-async function imageDeLaCarte(carte) {
+function filigrane(dessin, largeur, hauteur, couleur) {
+  dessin.save();
+  dessin.globalAlpha = OPACITE_FILIGRANE;
+  dessin.fillStyle = couleur;
+  dessin.font = `900 20px ${SANS}`;
+  dessin.textAlign = "left";
+  dessin.textBaseline = "middle";
+  // La rotation se prend au centre : la grille couvre alors la toile entière
+  // dès que sa portée dépasse la demi-diagonale.
+  dessin.translate(largeur / 2, hauteur / 2);
+  dessin.rotate(-Math.PI / 7);
+  const portee = Math.hypot(largeur, hauteur) / 2 + PAS_FILIGRANE_X;
+  let rang = 0;
+  for (let y = -portee; y <= portee; y += PAS_FILIGRANE_Y, rang += 1) {
+    // Un rang sur deux est décalé d'un demi-pas : une grille droite laisse des
+    // couloirs verticaux entiers entre deux colonnes, et un recadrage sur un
+    // couloir sortirait sans signature.
+    const depart = -portee + (rang % 2) * (PAS_FILIGRANE_X / 2);
+    for (let x = depart; x <= portee; x += PAS_FILIGRANE_X) {
+      dessin.fillText(SIGNATURE, x, y);
+    }
+  }
+  dessin.restore();
+}
+
+/** Le pied d'une image composée : le compte, ce qu'est le site, où aller.
+ *
+ * Il double le filigrane, et ne fait pas double emploi avec lui : le filigrane
+ * dit à qui l'image appartient, le pied dit où elle mène. Il rend la hauteur
+ * qu'il a prise, pour que l'appelant n'ait pas à la recalculer.
+ */
+function piedDImage(dessin, bas, encre, accent, doux) {
+  dessin.save();
+  dessin.strokeStyle = doux;
+  dessin.globalAlpha = 0.35;
+  dessin.beginPath();
+  dessin.moveTo(MARGE_IMAGE, bas);
+  dessin.lineTo(LARGEUR_IMAGE - MARGE_IMAGE, bas);
+  dessin.stroke();
+  dessin.globalAlpha = 1;
+  const ligne = bas + 34;
+  dessin.font = `600 27px ${SERIF}`;
+  dessin.fillStyle = accent;
+  dessin.fillText(SIGNATURE, MARGE_IMAGE, ligne);
+  dessin.font = `17px ${SERIF}`;
+  dessin.fillStyle = doux;
+  dessin.fillText(SIGNATURE_SITE, MARGE_IMAGE, ligne + 25);
+  dessin.font = `600 21px ${SERIF}`;
+  dessin.textAlign = "right";
+  dessin.fillText(ADRESSE_SITE, LARGEUR_IMAGE - MARGE_IMAGE, ligne);
+  dessin.textAlign = "left";
+  dessin.restore();
+  return 34 + 25;
+}
+
+// -- l'image d'une carte ------------------------------------------------------
+//
+// Deux cartes se partagent, et elles ne se composent pas de la même façon :
+// celle d'un graphique porte un tracé qu'il faut redessiner, celle de la page
+// Partager porte un chiffre et trois lignes que la feuille de style met déjà en
+// page. Le reste — le filigrane, le pied, le message, les boutons — leur est
+// commun, et n'est écrit qu'une fois.
+
+/** Le texte d'un élément, SANS les définitions du glossaire qu'il contient.
+ *
+ * Elles sont dans le HTML même repliées — c'est ce qui permet de les ouvrir
+ * sans rien recharger —, et `textContent` les rend comme le reste : sans ce
+ * tri, la source d'une carte se lisait « En part du PIBLe PIB, c'est tout ce
+ * que la France produit… ». Un `<br>` devient un saut de ligne, que le
+ * découpage en lignes respecte.
+ */
+function texteDuNoeud(noeud) {
+  if (!noeud) { return ""; }
+  const sans = noeud.cloneNode(true);
+  sans.querySelectorAll(".mot > .bulle").forEach((bulle) => bulle.remove());
+  sans.querySelectorAll("br").forEach((saut) => saut.replaceWith("\n"));
+  return sans.textContent.replace(/[^\S\n]+/g, " ").replace(/ ?\n ?/g, "\n").trim();
+}
+
+function texteDe(carte, selecteur) {
+  return texteDuNoeud(carte.querySelector(selecteur)).replace(/\n/g, " ");
+}
+
+async function imageDuGraphique(carte) {
   const figure = carte.querySelector("figure.graphique");
   const svg = figure?.querySelector("svg");
   if (!svg) { return null; }
-  // Le texte d'un élément, SANS les définitions du glossaire qu'il contient.
-  // Elles sont dans le HTML même repliées — c'est ce qui permet de les ouvrir
-  // sans rien recharger —, et `textContent` les rend comme le reste : sans ce
-  // tri, la source d'une carte se lisait « En part du PIBLe PIB, c'est tout ce
-  // que la France produit… ».
-  const texte = (selecteur) => {
-    const trouve = carte.querySelector(selecteur);
-    if (!trouve) { return ""; }
-    const sans = trouve.cloneNode(true);
-    sans.querySelectorAll(".mot > .bulle").forEach((bulle) => bulle.remove());
-    return sans.textContent.replace(/\s+/g, " ").trim();
-  };
 
   const image = new Image();
   image.src = svgAutonome(svg);
@@ -832,11 +966,11 @@ async function imageDeLaCarte(carte) {
   const mesure = document.createElement("canvas").getContext("2d");
   const largeurTexte = LARGEUR_IMAGE - 2 * MARGE_IMAGE;
   mesure.font = `600 38px ${SERIF}`;
-  const titre = enLignes(mesure, texte("h3"), largeurTexte);
+  const titre = enLignes(mesure, texteDe(carte, "h3"), largeurTexte);
   mesure.font = `28px ${SERIF}`;
-  const reponse = enLignes(mesure, texte(".reponse"), largeurTexte);
+  const reponse = enLignes(mesure, texteDe(carte, ".reponse"), largeurTexte);
   mesure.font = `19px ${SERIF}`;
-  const source = enLignes(mesure, texte(".source"), largeurTexte);
+  const source = enLignes(mesure, texteDe(carte, ".source"), largeurTexte);
 
   // Une entrée de légende porte une pastille, sauf celle du ruban d'écart, qui
   // en porte deux — une par teinte. Les dessiner toutes est la seule façon de
@@ -854,7 +988,7 @@ async function imageDeLaCarte(carte) {
   const hauteurLegende = legendes.length * 30;
   const hauteur = MARGE_IMAGE + titre.length * 48 + 14 + reponse.length * 40
     + 22 + hauteurTrace + 16 + hauteurLegende + 26 + source.length * 28
-    + 30 + 58 + MARGE_IMAGE;
+    + 30 + 18 + 59 + MARGE_IMAGE;
 
   const toile = document.createElement("canvas");
   toile.width = LARGEUR_IMAGE * 2;
@@ -895,41 +1029,152 @@ async function imageDeLaCarte(carte) {
   dessin.fillStyle = doux;
   for (const ligne of source) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 28; }
 
-  // La signature. Deux lignes et un filet : le compte, et ce qu'est le site.
-  // Une image qui circule n'a plus de barre d'adresse.
-  y += 18;
-  dessin.strokeStyle = doux;
-  dessin.globalAlpha = 0.35;
-  dessin.beginPath();
-  dessin.moveTo(MARGE_IMAGE, y);
-  dessin.lineTo(LARGEUR_IMAGE - MARGE_IMAGE, y);
-  dessin.stroke();
-  dessin.globalAlpha = 1;
-  y += 34;
-  dessin.font = `600 27px ${SERIF}`;
-  dessin.fillStyle = accent;
-  dessin.fillText(SIGNATURE, MARGE_IMAGE, y);
-  dessin.font = `19px ${SERIF}`;
-  dessin.fillStyle = doux;
-  dessin.textAlign = "right";
-  dessin.fillText(SIGNATURE_SITE, LARGEUR_IMAGE - MARGE_IMAGE, y);
-  dessin.textAlign = "left";
+  piedDImage(dessin, y + 18, encre, accent, doux);
+  filigrane(dessin, LARGEUR_IMAGE, hauteur, accent);
 
   return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
 }
 
+/** Un bloc de la carte à publier, lu dans son aperçu.
+ *
+ * Police, graisse, taille, couleur, interlettrage, interligne, marge : tout
+ * vient de la FEUILLE DE STYLE, à l'échelle près. L'aperçu de la page est en
+ * centièmes de la largeur de sa colonne ; l'image est le même bloc à 1200 px de
+ * large. Rien n'est donc décrit deux fois, et changer la carte dans le style
+ * change l'image.
+ */
+function blocDeCarte(dessin, affiche, selecteur, echelle, largeurMax) {
+  const noeud = affiche.querySelector(selecteur);
+  if (!noeud) { return null; }
+  const style = getComputedStyle(noeud);
+  const taille = parseFloat(style.fontSize) * echelle;
+  const espacement = style.letterSpacing === "normal"
+    ? 0 : parseFloat(style.letterSpacing) * echelle;
+  const bornePropre = parseFloat(style.maxWidth);
+  const largeur = Number.isFinite(bornePropre)
+    ? Math.min(largeurMax, bornePropre * echelle) : largeurMax;
+  const brut = texteDuNoeud(noeud);
+  const texte = style.textTransform === "uppercase" ? brut.toUpperCase() : brut;
+  const police = `${style.fontWeight} ${taille}px ${style.fontFamily}`;
+  dessin.font = police;
+  const lignes = enLignes(dessin, texte, largeur, espacement);
+  const interligne = style.lineHeight === "normal"
+    ? taille * 1.15 : parseFloat(style.lineHeight) * echelle;
+  return {
+    police, couleur: style.color, espacement, interligne, lignes, taille,
+    marge: (parseFloat(style.marginTop) || 0) * echelle,
+    hauteur: lignes.length * interligne,
+  };
+}
+
+/** Pose un bloc mesuré par `blocDeCarte`, et rend l'ordonnée d'après. */
+function poserBloc(dessin, bloc, x, y) {
+  if (!bloc) { return y; }
+  dessin.font = bloc.police;
+  dessin.fillStyle = bloc.couleur;
+  let ligne = y + bloc.taille * 0.82;
+  for (const texte of bloc.lignes) {
+    ecrire(dessin, texte, x, ligne, bloc.espacement);
+    ligne += bloc.interligne;
+  }
+  return y + bloc.hauteur;
+}
+
+/** L'image d'une carte de la page Partager, à 1200 × 675.
+ *
+ * C'est le format de X et de LinkedIn, et la carte a été dessinée pour lui.
+ * Elle a longtemps été rendue à sa taille réelle dans un cadre qui défilait, à
+ * charge pour le lecteur d'en faire une capture d'écran et de la recadrer :
+ * deux gestes, un outil, et une image dont la signature partait au premier
+ * rognage. Elle se compose maintenant ici, aux mêmes dimensions, à partir de ce
+ * que la feuille de style dit de son aperçu.
+ */
+async function imageDeCarteAPublier(affiche) {
+  await polices();
+  const cadre = affiche.getBoundingClientRect();
+  if (!cadre.width) { return null; }
+  const echelle = LARGEUR_IMAGE / cadre.width;
+  const hauteur = Math.round(cadre.height * echelle);
+  const style = getComputedStyle(affiche);
+  const marge = parseFloat(style.paddingLeft) * echelle;
+  const largeurTexte = LARGEUR_IMAGE - 2 * marge;
+
+  const toile = document.createElement("canvas");
+  toile.width = LARGEUR_IMAGE * 2;
+  toile.height = hauteur * 2;
+  const dessin = toile.getContext("2d");
+  dessin.scale(2, 2);
+  dessin.fillStyle = style.backgroundColor;
+  dessin.fillRect(0, 0, LARGEUR_IMAGE, hauteur);
+  dessin.textBaseline = "alphabetic";
+
+  const surtitre = blocDeCarte(dessin, affiche, ".surtitre", echelle, largeurTexte);
+  const chiffre = blocDeCarte(dessin, affiche, ".chiffre", echelle, largeurTexte);
+  const phrase = blocDeCarte(dessin, affiche, ".phrase", echelle, largeurTexte);
+  const detail = blocDeCarte(dessin, affiche, ".detail", echelle, largeurTexte);
+  const compte = blocDeCarte(dessin, affiche, ".pied .compte", echelle, largeurTexte);
+  const adresse = blocDeCarte(dessin, affiche, ".pied .adresse", echelle, largeurTexte);
+
+  // Le pied, d'abord : c'est lui qui borne la place du milieu. La carte est une
+  // boîte flexible en `space-between` — sur-titre en haut, pied en bas, le reste
+  // centré dans ce qui reste —, et l'image la reproduit telle quelle.
+  const stylePied = getComputedStyle(affiche.querySelector(".pied"));
+  const hautPied = hauteur - marge
+    - (parseFloat(stylePied.paddingTop) * echelle
+       + Math.max(compte?.hauteur || 0, adresse?.hauteur || 0));
+  dessin.strokeStyle = stylePied.borderTopColor;
+  dessin.lineWidth = Math.max(parseFloat(stylePied.borderTopWidth) * echelle, 1);
+  dessin.beginPath();
+  dessin.moveTo(marge, hautPied);
+  dessin.lineTo(LARGEUR_IMAGE - marge, hautPied);
+  dessin.stroke();
+  const ligneDuPied = hautPied + parseFloat(stylePied.paddingTop) * echelle;
+  poserBloc(dessin, compte, marge, ligneDuPied);
+  if (adresse) {
+    dessin.font = adresse.police;
+    const large = largeurDe(dessin, adresse.lignes[0] || "", adresse.espacement);
+    poserBloc(dessin, adresse, LARGEUR_IMAGE - marge - large, ligneDuPied);
+  }
+
+  const basSurtitre = poserBloc(dessin, surtitre, marge, marge);
+  const milieu = [chiffre, phrase, detail].filter(Boolean);
+  const hauteurMilieu = milieu.reduce(
+    (somme, bloc, rang) => somme + bloc.hauteur + (rang ? bloc.marge : 0), 0);
+  let y = basSurtitre
+    + Math.max((hautPied - basSurtitre - hauteurMilieu) / 2, 0);
+  milieu.forEach((bloc, rang) => {
+    y = poserBloc(dessin, bloc, marge, y + (rang ? bloc.marge : 0));
+  });
+
+  filigrane(dessin, LARGEUR_IMAGE, hauteur, compte?.couleur || style.color);
+  return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
+}
+
+/** Le conteneur d'une barre de partage : la carte d'un graphique, ou celle
+ * d'une image à publier. Les deux portent la même barre et le même code. */
+function carteDe(bouton) {
+  return bouton.closest("section.cle, figure.carte");
+}
+
+function imageDeLaCarte(carte) {
+  const affiche = carte.querySelector(".carte-partage");
+  return affiche ? imageDeCarteAPublier(affiche) : imageDuGraphique(carte);
+}
+
 function nomDeFichier(carte) {
-  const question = (carte.querySelector("h3")?.textContent || "graphique")
+  const titre = carte.querySelector("h3")
+    || carte.querySelector("figcaption")
+    || carte.querySelector(".surtitre");
+  const question = (titre?.textContent || "carte")
     .toLowerCase()
     .normalize("NFD").replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
-  return `retraite-${question || "graphique"}.png`;
+  return `retraite-${question || "carte"}.png`;
 }
 
-// Le texte d'un partage : la question, la réponse en une phrase, la source, et
-// la signature. C'est le pendant écrit d'`imageDeLaCarte()` — la même carte,
-// dite plutôt que dessinée —, et il sert aux deux boutons qui ne composent pas
-// d'image : « Publier sur X » et « Copier le texte ».
+// Le texte d'un partage : ce que la carte pose comme question, ce qu'elle
+// répond, d'où elle le tient, et où aller. C'est le pendant écrit de l'image —
+// la même carte, dite plutôt que dessinée.
 //
 // Il est BORNÉ. X coupe à 280 caractères, et compte toute adresse pour 23
 // quelle qu'en soit la longueur : le budget réel est donc 280 moins 23, moins
@@ -941,23 +1186,23 @@ const LIMITE_X = 280;
 const COUT_ADRESSE = 23;
 
 function texteDeLaCarte(carte) {
-  // Les définitions du glossaire sont dans le HTML même repliées : sans ce
-  // tri, la source se lirait « En part du PIBLe PIB, c'est tout ce que la
-  // France produit… », exactement comme pour l'image.
-  const texte = (selecteur) => {
-    const trouve = carte.querySelector(selecteur);
-    if (!trouve) { return ""; }
-    const sans = trouve.cloneNode(true);
-    sans.querySelectorAll(".mot > .bulle").forEach((bulle) => bulle.remove());
-    return sans.textContent.replace(/\s+/g, " ").trim();
-  };
-
-  const question = texte("h3");
-  const reponse = texte(".reponse");
-  const source = texte(".source");
-  // L'adresse de la carte, et non celle du site : elle rouvre la page où le
-  // lecteur était, ce qui est tout l'intérêt d'un lien dans un message.
-  const adresse = location.href;
+  const affiche = carte.querySelector(".carte-partage");
+  // Une carte à publier ne pose pas de question : elle annonce un chiffre. Sa
+  // « réponse » est donc le chiffre suivi de sa phrase, qui se lisent d'un
+  // trait — « 1 320 € par mois au minimum, pour une personne seule. »
+  const question = affiche ? texteDe(carte, ".surtitre") : texteDe(carte, "h3");
+  const reponse = affiche
+    ? [texteDe(carte, ".chiffre"), texteDe(carte, ".phrase")]
+      .filter(Boolean).join(" ")
+    : texteDe(carte, ".reponse");
+  const source = affiche ? texteDe(carte, ".detail") : texteDe(carte, ".source");
+  // L'adresse d'un graphique est celle de la page où le lecteur était : elle la
+  // rouvre, ce qui est tout l'intérêt d'un lien dans un message. Une carte à
+  // publier, elle, renvoie au simulateur — nul ne clique pour arriver sur une
+  // page de cartes à publier.
+  const adresse = affiche
+    ? `${location.origin}${location.pathname}#/simuler`
+    : location.href;
   const pied = `${adresse} ${SIGNATURE}`;
 
   const assembler = (avecSource, corps) => [
@@ -983,132 +1228,145 @@ function texteDeLaCarte(carte) {
   return assembler(false, `${(espace > 20 ? coupe.slice(0, espace) : coupe).trim()}…`);
 }
 
-document.addEventListener("click", async (evenement) => {
-  const bouton = evenement.target.closest("button.partager");
-  if (!bouton) { return; }
-  const carte = bouton.closest("section.cle");
-  if (!carte) { return; }
-  // Le libellé est retenu en HTML, et non en texte : le bouton porte un
-  // pictogramme, et le rendre par `textContent` le faisait disparaître à la
-  // première composition, définitivement.
-  const libelle = bouton.innerHTML;
-  bouton.disabled = true;
-  bouton.textContent = "Composition…";
-  try {
-    const image = await imageDeLaCarte(carte);
-    if (!image) { throw new Error("aucun graphique à composer"); }
-    const nom = nomDeFichier(carte);
-    const fichier = new File([image], nom, { type: "image/png" });
-    // Sur téléphone, la feuille de partage du système évite un aller-retour par
-    // le dossier des téléchargements. Ailleurs, on télécharge.
-    if (navigator.canShare?.({ files: [fichier] })) {
-      await navigator.share({ files: [fichier] });
-    } else {
-      const adresse = URL.createObjectURL(image);
-      const lien = document.createElement("a");
-      lien.href = adresse;
-      lien.download = nom;
-      lien.click();
-      URL.revokeObjectURL(adresse);
-    }
-  } catch (erreur) {
-    // Un partage refusé par l'utilisateur n'est pas une erreur.
-    if (erreur?.name !== "AbortError") {
-      bouton.textContent = "Image impossible ici";
-      setTimeout(() => { bouton.innerHTML = libelle; }, 3000);
-      bouton.disabled = false;
-      return;
-    }
-  }
-  bouton.innerHTML = libelle;
-  bouton.disabled = false;
-});
-
-// « Publier sur X ». Sur téléphone, la feuille de partage du système sait
-// joindre l'image AU texte : on la tente d'abord, et c'est la seule voie qui
-// donne un post complet en un geste. Ailleurs, on ouvre l'intent de X avec le
-// message pré-écrit — le navigateur n'autorise pas une page à y attacher un
-// fichier, et le lecteur joint l'image qu'il aura téléchargée à côté. C'est la
-// limite connue de ce dispositif ; la lever demanderait une image composée
-// côté serveur, ce qu'un site statique ne fait pas.
-document.addEventListener("click", async (evenement) => {
-  const bouton = evenement.target.closest("button.partager-x");
-  if (!bouton) { return; }
-  const carte = bouton.closest("section.cle");
-  if (!carte) { return; }
-  const texte = texteDeLaCarte(carte);
-
-  if (navigator.canShare?.({ text: texte })) {
-    try {
-      const image = await imageDeLaCarte(carte);
-      const fichier = image
-        && new File([image], nomDeFichier(carte), { type: "image/png" });
-      const avecImage = fichier && navigator.canShare({ files: [fichier], text: texte });
-      await navigator.share(avecImage ? { files: [fichier], text: texte } : { text: texte });
-      return;
-    } catch (erreur) {
-      // Un partage refusé par l'utilisateur n'est pas une erreur, et n'appelle
-      // pas de repli : il ne veut pas partager.
-      if (erreur?.name === "AbortError") { return; }
-    }
-  }
-  window.open(`https://x.com/intent/post?text=${encodeURIComponent(texte)}`,
-              "_blank", "noopener");
-});
-
-// « Copier le texte ». Le libellé du bouton sert d'accusé de réception, comme
-// le fait déjà « Image impossible ici ».
+// -- les deux gestes du partage -----------------------------------------------
 //
-// En cas de REFUS du presse-papiers — page non sécurisée, permission retirée,
-// navigateur qui n'expose rien —, le texte s'affiche dans le champ prévu pour,
-// et il Y RESTE : c'est au lecteur de le refermer en recliquant. Il s'effaçait
-// tout seul au bout de quelques secondes, ce qui reprenait le texte à qui
-// n'avait pas eu le temps de le sélectionner. Seule la confirmation disparaît
-// d'elle-même.
-document.addEventListener("click", async (evenement) => {
-  const bouton = evenement.target.closest("button.copier-texte");
-  if (!bouton) { return; }
-  const carte = bouton.closest("section.cle");
-  if (!carte) { return; }
-  const repli = carte.querySelector(".partage > .repli");
+// La barre en portait trois — publier sur X, télécharger l'image, copier le
+// texte —, ce qui demandait de choisir avant d'agir et laissait chacun des
+// trois incomplet : l'image sans le message, le message sans l'image. Elle en
+// porte deux, et chacun rend un post complet.
 
-  // Deuxième clic quand le repli est ouvert : on referme.
-  if (repli && !repli.hidden) {
-    repli.hidden = true;
-    repli.value = "";
-    bouton.textContent = "Copier le texte";
-    return;
-  }
+/** Enregistre une image dans les téléchargements. */
+function telecharger(image, nom) {
+  const adresse = URL.createObjectURL(image);
+  const lien = document.createElement("a");
+  lien.href = adresse;
+  lien.download = nom;
+  lien.click();
+  URL.revokeObjectURL(adresse);
+}
 
-  const texte = texteDeLaCarte(carte);
-  let copie = false;
+/** Met un texte dans le presse-papiers. Rend `false` si le navigateur refuse.
+ *
+ * Le repli historique — un champ hors flux, sélectionné, et la commande
+ * d'édition du document — sert aux navigateurs sans API de presse-papiers, et
+ * aux pages servies sans chiffrement, où l'API n'existe pas.
+ */
+async function copierTexte(texte) {
   try {
     await navigator.clipboard.writeText(texte);
-    copie = true;
+    return true;
   } catch {
-    // Le repli historique, pour les navigateurs sans API de presse-papiers :
-    // un champ hors flux, sélectionné, et la commande d'édition du document.
     const champ = document.createElement("textarea");
     champ.value = texte;
     champ.setAttribute("readonly", "");
     champ.style.cssText = "position:fixed;top:-9999px;opacity:0";
     document.body.append(champ);
     champ.select();
+    let copie = false;
     try { copie = document.execCommand("copy"); } catch { copie = false; }
     champ.remove();
+    return copie;
   }
+}
 
-  if (copie) {
-    bouton.textContent = "Texte copié";
-    setTimeout(() => { bouton.textContent = "Copier le texte"; }, 2400);
-    return;
+/** Affiche le message dans le champ de repli, pour une copie à la main. */
+function ouvrirRepli(carte, texte) {
+  const repli = carte.querySelector(".partage > .repli");
+  if (!repli) { return; }
+  repli.value = texte;
+  repli.hidden = false;
+  repli.select();
+}
+
+/** Le compte rendu du geste, à côté des boutons et non dans leur libellé. */
+function compteRendu(carte, message) {
+  const etat = carte.querySelector(".partage > .etat");
+  if (etat) { etat.textContent = message; }
+}
+
+// « Partager ». Un seul geste pour un post complet : l'image ET le message.
+//
+// Sur téléphone, la feuille de partage du système les porte tous les deux vers
+// le réseau que le militant utilise — c'est la seule voie qui donne un post
+// complet sans passer par le dossier des téléchargements. Ailleurs, l'image est
+// enregistrée et le message mis dans le presse-papiers : il ne reste qu'à
+// coller et à joindre.
+document.addEventListener("click", async (evenement) => {
+  const bouton = evenement.target.closest("button.partager");
+  if (!bouton) { return; }
+  const carte = carteDe(bouton);
+  if (!carte) { return; }
+  bouton.disabled = true;
+  compteRendu(carte, "Composition de l'image…");
+  try {
+    const image = await imageDeLaCarte(carte);
+    if (!image) { throw new Error("aucune image à composer"); }
+    const nom = nomDeFichier(carte);
+    const fichier = new File([image], nom, { type: "image/png" });
+    const texte = texteDeLaCarte(carte);
+    let partage = false;
+    if (navigator.canShare?.({ files: [fichier], text: texte })) {
+      try {
+        await navigator.share({ files: [fichier], text: texte });
+        partage = true;
+      } catch (erreur) {
+        // Un partage refusé par l'utilisateur n'est pas une erreur : il ne veut
+        // pas partager, et lui enregistrer l'image quand même serait lui forcer
+        // la main.
+        if (erreur?.name === "AbortError") {
+          compteRendu(carte, "");
+          bouton.disabled = false;
+          return;
+        }
+        // Safari retire l'autorisation de partager dès que la composition a duré
+        // plus qu'un geste. On retombe alors sur l'enregistrement, qui ne la
+        // demande pas.
+      }
+    }
+    if (partage) {
+      compteRendu(carte, "");
+    } else {
+      telecharger(image, nom);
+      if (await copierTexte(texte)) {
+        compteRendu(carte, "Image enregistrée, message copié : collez-le dans "
+          + "votre publication et joignez l'image.");
+      } else {
+        compteRendu(carte, "Image enregistrée. Le message est ci-dessous, à "
+          + "copier à la main.");
+        ouvrirRepli(carte, texte);
+      }
+    }
+  } catch {
+    compteRendu(carte, "Ce navigateur ne sait pas composer l'image ici.");
   }
-  if (repli) {
-    repli.value = texte;
-    repli.hidden = false;
-    repli.select();
+  bouton.disabled = false;
+});
+
+// « Publier sur X ». La fenêtre de X s'ouvre D'ABORD, avant toute composition :
+// un navigateur n'autorise une page à ouvrir une fenêtre que dans le geste même
+// du clic, et l'attente de l'image le lui ferait perdre. L'image est enregistrée
+// ensuite, pour être jointe à la publication : le navigateur n'autorise pas une
+// page à attacher un fichier à l'intention de X, et la lever demanderait une
+// image composée côté serveur, ce qu'un site statique ne fait pas.
+document.addEventListener("click", async (evenement) => {
+  const bouton = evenement.target.closest("button.partager-x");
+  if (!bouton) { return; }
+  const carte = carteDe(bouton);
+  if (!carte) { return; }
+  const texte = texteDeLaCarte(carte);
+  window.open(`https://x.com/intent/post?text=${encodeURIComponent(texte)}`,
+              "_blank", "noopener");
+  compteRendu(carte, "Publication ouverte sur X. Composition de l'image…");
+  try {
+    const image = await imageDeLaCarte(carte);
+    if (!image) { throw new Error("aucune image à composer"); }
+    telecharger(image, nomDeFichier(carte));
+    compteRendu(carte, "Publication ouverte sur X, image enregistrée : il ne "
+      + "reste qu'à la joindre.");
+  } catch {
+    compteRendu(carte, "Publication ouverte sur X, sans l'image : ce navigateur "
+      + "ne sait pas la composer.");
   }
-  bouton.textContent = "Copie refusée — texte ci-dessous (masquer)";
 });
 
 // Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici
