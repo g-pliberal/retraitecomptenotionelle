@@ -2699,7 +2699,7 @@ entre Python et le portage.
 
 ---
 
-### 32. Le temps qu'on perd à travailler sur le dépôt — `fait`
+### 33. Le temps qu'on perd à travailler sur le dépôt — `fait`
 
 **La demande.** « C'est vraiment lent de travailler sur ce projet. » Chantier
 d'outillage : il ne déplace aucun chiffre, il rend les autres actions moins
@@ -3323,7 +3323,7 @@ d'abord s'assurer qu'aucun test ne compte sur leur recalcul.
   heureux : à quatre couleurs, la palette devient séparable sous deutéranopie
   et sous protanopie, ce qu'elle n'était pas à six, et le contrôle est entré
   dans les tests.
-- **Septembre 2026, action 32.** Faite. Chantier d'outillage : la suite passe
+- **Septembre 2026, action 33.** Faite. Chantier d'outillage : la suite passe
   de 7 min 25 à 47 s, une simulation partie de zéro de 1,55 s à 0,16 s, et une
   session neuve n'a plus à installer quoi que ce soit avant de lancer un test.
   Aucun chiffre du modèle ne bouge — le build est reproduit octet pour octet.

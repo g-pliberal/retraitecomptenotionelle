@@ -55,7 +55,7 @@ Le livrable est le site statique ; voir `README.md`.
   `python -m pytest` répond « No module named pytest », puis ne collecte rien
   faute du paquet `retraite_notionnelle` — c'est ce qui coûtait le plus de
   temps au démarrage. Un hook `SessionStart` le ferait tout seul ; son script
-  est sous l'action 32 de `docs/feuille_de_route.md`, à poser à la main, une
+  est sous l'action 33 de `docs/feuille_de_route.md`, à poser à la main, une
   session Claude Code n'ayant pas le droit d'écrire sous `.claude/`.
 - Outillage d'audit d'interface (Impeccable, Web Interface Guidelines,
   Playwright CLI) : compétences dans `.claude/skills/`, mises en place par
