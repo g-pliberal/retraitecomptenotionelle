@@ -274,7 +274,11 @@ class Carriere:
     def derniere_annee(self) -> int:
         return max(ligne.annee for ligne in self.lignes)
 
-    @property
+    # Mémorisées : la construction des témoins appelait `date_liquidation` un
+    # million trois cent mille fois pour recalculer la même date. Les champs
+    # dont elles dépendent ne sont jamais réaffectés après le constructeur —
+    # la classe s'appuie déjà sur ce contrat pour ses autres `cached_property`.
+    @cached_property
     def date_naissance(self) -> DateMois:
         return DateMois(self.annee_naissance, self.mois_naissance)
 
@@ -290,7 +294,7 @@ class Carriere:
         """
         return self.annee_naissance + (self.mois_naissance - 1) / 12
 
-    @property
+    @cached_property
     def date_liquidation(self) -> DateMois:
         """Mois où la pension prend effet.
 

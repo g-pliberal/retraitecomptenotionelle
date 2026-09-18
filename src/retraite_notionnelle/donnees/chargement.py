@@ -10,6 +10,8 @@ from __future__ import annotations
 import copy
 import csv
 import json
+import pickle
+from bisect import bisect_left
 from dataclasses import dataclass
 from enum import IntEnum
 from pathlib import Path
@@ -84,6 +86,7 @@ class SerieAnnuelle:
         if not self._valeurs:
             raise ValueError(f"série {nom!r} vide")
         self._annees = list(self._valeurs)
+        self._memo: dict[int, ValeurAnnuelle] = {}
 
     # -- accès ---------------------------------------------------------------
 
@@ -96,7 +99,21 @@ class SerieAnnuelle:
         return self._annees[-1]
 
     def brut(self, annee: int) -> ValeurAnnuelle:
-        """Valeur avec sa fiabilité, en appliquant la règle d'interpolation."""
+        """Valeur avec sa fiabilité, en appliquant la règle d'interpolation.
+
+        Appelée six millions de fois par la construction des témoins, dont
+        l'écrasante majorité sur les mêmes années : le résultat est mémorisé.
+        La série ne change jamais après `__init__` — `prolongee` en construit
+        une neuve —, donc la mémorisation ne peut pas se désynchroniser.
+        """
+        connue = self._memo.get(annee)
+        if connue is not None:
+            return connue
+        valeur = self._calculer(annee)
+        self._memo[annee] = valeur
+        return valeur
+
+    def _calculer(self, annee: int) -> ValeurAnnuelle:
         if annee in self._valeurs:
             return self._valeurs[annee]
 
@@ -107,8 +124,11 @@ class SerieAnnuelle:
             base = self._valeurs[self.derniere_annee]
             return ValeurAnnuelle(annee, base.valeur, Fiabilite.ESTIMEE)
 
-        precedente = max(a for a in self._annees if a < annee)
-        suivante = min(a for a in self._annees if a > annee)
+        # `_annees` est trié : on encadre par dichotomie. Le balayage complet
+        # qu'il y avait ici (`max(a for a in ... if a < annee)`, deux fois)
+        # coûtait la longueur de la série à chaque interpolation.
+        rang = bisect_left(self._annees, annee)
+        precedente, suivante = self._annees[rang - 1], self._annees[rang]
         avant, apres = self._valeurs[precedente], self._valeurs[suivante]
 
         if self.interpolation == "escalier":
@@ -160,6 +180,14 @@ class SerieAnnuelle:
         )
 
 
+# Même raison que pour le YAML plus bas : les mêmes CSV sont relus des dizaines
+# de fois par une construction de témoins, une fois par jeu de données rebâti.
+# La série rendue est partagée et non copiée — c'est sûr, et même souhaitable :
+# `SerieAnnuelle` ne change jamais après son constructeur (`prolongee` en rend
+# une neuve), et sa mémoire d'interpolation profite alors à tous les appelants.
+_SERIES_EN_CACHE: dict[tuple, SerieAnnuelle] = {}
+
+
 def charger_serie_annuelle(
     chemin: Path,
     colonne_valeur: str,
@@ -172,6 +200,15 @@ def charger_serie_annuelle(
     Les lignes commençant par ``#`` sont des commentaires : elles portent la
     documentation de provenance et sont ignorées à la lecture.
     """
+    try:
+        etat = chemin.stat()
+        cle = (str(chemin), etat.st_mtime_ns, etat.st_size, colonne_valeur, nom,
+               interpolation, tuple(sorted((filtre or {}).items())))
+    except OSError:  # pragma: no cover - le fichier manquant lèvera plus bas
+        cle = None
+    if cle is not None and cle in _SERIES_EN_CACHE:
+        return _SERIES_EN_CACHE[cle]
+
     valeurs: dict[int, ValeurAnnuelle] = {}
     with chemin.open(encoding="utf-8") as flux:
         lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
@@ -186,7 +223,10 @@ def charger_serie_annuelle(
             )
     if not valeurs:
         raise ValueError(f"aucune ligne exploitable dans {chemin} (filtre={filtre})")
-    return SerieAnnuelle(valeurs, nom or f"{chemin.stem}.{colonne_valeur}", interpolation)
+    serie = SerieAnnuelle(valeurs, nom or f"{chemin.stem}.{colonne_valeur}", interpolation)
+    if cle is not None:
+        _SERIES_EN_CACHE[cle] = serie
+    return serie
 
 
 # Le chargeur C de libyaml quand il est là, le chargeur Python sinon : à
@@ -199,7 +239,25 @@ _LECTEUR = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 # l'essentiel des sept minutes de la suite de tests. On garde donc l'arbre
 # analysé, indexé par la signature du fichier (mtime et taille) pour qu'une
 # donnée modifiée soit relue sans qu'on ait à vider quoi que ce soit.
-_YAML_EN_CACHE: dict[tuple[str, int, int], dict] = {}
+# La valeur gardée est la forme `pickle` de l'arbre, et non l'arbre : la
+# recharger revient à en faire une copie neuve, trois fois plus vite que
+# `deepcopy` (1,0 ms contre 2,9 ms sur la plus grosse fiche). Un contenu que
+# `pickle` refuserait — il n'y en a pas, `safe_load` ne rend que des types
+# simples — retombe sur `deepcopy`.
+_YAML_EN_CACHE: dict[tuple[str, int, int], bytes | dict] = {}
+
+
+def _copie(garde: bytes | dict) -> dict:
+    if isinstance(garde, bytes):
+        return pickle.loads(garde)
+    return copy.deepcopy(garde)
+
+
+def _a_garder(contenu: dict) -> bytes | dict:
+    try:
+        return pickle.dumps(contenu, protocol=pickle.HIGHEST_PROTOCOL)
+    except (pickle.PicklingError, TypeError, RecursionError):  # pragma: no cover
+        return contenu
 
 
 def charger_yaml(chemin: Path) -> dict:
@@ -217,12 +275,11 @@ def charger_yaml(chemin: Path) -> dict:
     except OSError:  # pragma: no cover - le fichier manquant lèvera plus bas
         cle = None
     if cle is not None and cle in _YAML_EN_CACHE:
-        return copy.deepcopy(_YAML_EN_CACHE[cle])
+        return _copie(_YAML_EN_CACHE[cle])
     with chemin.open(encoding="utf-8") as flux:
         contenu = yaml.load(flux, Loader=_LECTEUR) or {}
     if cle is not None:
-        _YAML_EN_CACHE[cle] = contenu
-        return copy.deepcopy(contenu)
+        _YAML_EN_CACHE[cle] = _a_garder(contenu)
     return contenu
 
 

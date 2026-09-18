@@ -2738,10 +2738,10 @@ neuve ne pouvait rien lancer du tout : ni pytest ni le paquet installés,
 
 | | avant | après |
 | --- | --- | --- |
-| Suite complète | 7 min 25 | **47 s** (9,4×) |
-| Suite en série, un seul cœur | 7 min 25 | 2 min 34 (2,9×) |
-| Simulation, contexte neuf | 1,55 s | 0,16 s (9,7×) |
-| `tests/test_moteur.py` seul | — | 4,5 s |
+| Suite complète | 7 min 25 | **35 s** (12,7×) |
+| Suite en série, un seul cœur | 7 min 25 | 1 min 54 (3,9×) |
+| Simulation, contexte neuf | 1,55 s | 0,078 s (20×) |
+| Construction des témoins | 19,4 s | 13,3 s |
 
 **Vérifié.** Les 905 tests passent, avant comme après. `construire_donnees.py`
 reproduit `moteur/donnees.json` et `moteur/style.css` **octet pour octet** :
@@ -2775,11 +2775,40 @@ puis l'inscrire dans `.claude/settings.json`, à côté des hooks Impeccable :
 ]
 ```
 
-**Ce qui reste.** Les deux plus gros postes sont désormais
-`test_les_temoins_du_portage_sont_a_jour` (19,6 s) et les trois tests de
-`test_cout.py` (10 s chacun) ; ils recalculent des grilles entières de cas
-types. Un cache de session sur ces grilles les ferait tomber, mais il faudrait
-d'abord s'assurer qu'aucun test ne compte sur leur recalcul.
+**Second tour, une fois le YAML réglé.** Le profil ne montrait plus de
+lecture de fichiers mais du calcul — et, dedans, du travail refait :
+
+- *`SerieAnnuelle.brut` mémorise, et encadre par dichotomie.* Six millions
+  d'appels, presque tous sur les mêmes années. L'interpolation balayait en
+  outre toute la liste des années deux fois (`max(a for a in ... if a < annee)`)
+  alors qu'elle est triée. La dichotomie a été vérifiée contre l'ancien calcul
+  sur 71 865 encadrements : aucun écart.
+- *`date_liquidation` et `date_naissance` deviennent des `cached_property`.*
+  La première était recalculée **1 300 000 fois** par construction de témoins.
+  Les champs dont elles dépendent ne sont jamais réaffectés après le
+  constructeur — c'est déjà le contrat des autres `cached_property` de
+  `Carriere`, et une recherche sur tout le dépôt le confirme.
+- *Les séries annuelles et la table des quotients de mortalité sont mises en
+  cache.* `quotients_periode.csv` fait vingt-cinq mille lignes et se relisait
+  trente-cinq fois pour les seuls témoins. La table est partagée sans copie :
+  tout ce qui la touche la lit (`in`, `.get`), ici comme dans `LoiMortalite`.
+- *Le cache YAML garde la forme `pickle` plutôt que l'arbre.* La recharger est
+  une copie neuve, trois fois plus rapide que `deepcopy` : c'est ce qui fait
+  passer une simulation partie de zéro de 0,156 s à 0,078 s.
+- *La fixture `page` des tests mémorise son rendu.* Une trentaine de tests
+  demandent la même adresse, et `/cout` coûtait trois secondes et demie à
+  chaque fois. Une page rendue est une chaîne : la partager ne peut pas faire
+  communiquer deux tests.
+
+**Ce qui reste.** La suite est au plafond du parallélisme : 35 s de temps réel
+pour 2 min 16 de temps processeur sur quatre cœurs, soit 97 % d'occupation.
+Le plancher est `test_les_temoins_du_portage_sont_a_jour` (14,3 s), qui est un
+seul bloc : aucun nombre de cœurs ne descendra sous lui tant qu'il n'est pas
+découpé. Descendre plus bas demanderait d'optimiser les boucles chaudes de
+`scenarios/actuel.py` — le modèle de référence lui-même, à ne toucher qu'avec
+les témoins comme garde-fou. Les stratégies de répartition de xdist ont été
+essayées : `loadscope` est deux fois pire (95 s, un worker hérite de tout
+`test_web.py`), `worksteal` équivalent, et sur-souscrire les cœurs dégrade.
 
 ---
 
@@ -3324,7 +3353,7 @@ d'abord s'assurer qu'aucun test ne compte sur leur recalcul.
   et sous protanopie, ce qu'elle n'était pas à six, et le contrôle est entré
   dans les tests.
 - **Septembre 2026, action 33.** Faite. Chantier d'outillage : la suite passe
-  de 7 min 25 à 47 s, une simulation partie de zéro de 1,55 s à 0,16 s, et une
+  de 7 min 25 à 35 s, une simulation partie de zéro de 1,55 s à 0,078 s, et une
   session neuve n'a plus à installer quoi que ce soit avant de lancer un test.
   Aucun chiffre du modèle ne bouge — le build est reproduit octet pour octet.
   Reste à poser le hook de démarrage sous `.claude/`, ce qu'une session ne peut

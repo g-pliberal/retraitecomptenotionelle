@@ -47,7 +47,8 @@ Le livrable est le site statique ; voir `README.md`.
   `python scripts/construire_donnees.py`. À reconstruire après toute modification
   des données ou du style.
 - Tests : `tests/` — `python -m pytest` (lance aussi `node --test`). La suite
-  complète se répartit d'elle-même sur les cœurs et tient en une minute ; viser
+  complète se répartit d'elle-même sur les cœurs et tient en trente-cinq
+  secondes ; viser
   un fichier ou un cas (`python -m pytest tests/test_moteur.py`) la garde en
   série, ce qui est plus lisible et plus rapide pour un seul test. Pour tout
   forcer en série : `PYTEST_SANS_XDIST=1`.
@@ -66,11 +67,17 @@ Le livrable est le site statique ; voir `README.md`.
 - Seule dépendance hors bibliothèque standard : PyYAML. Le portage JavaScript
   n'utilise aucune bibliothèque. pytest et pytest-xdist ne servent qu'aux tests
   (`.[dev]`) ; la suite tourne sans xdist, en série.
-- Les fiches YAML sont relues souvent et pèsent 1,4 Mo par contexte :
-  `charger_yaml` mémorise l'arbre analysé, indexé sur la signature du fichier,
-  et rend une copie. Une donnée modifiée est donc relue sans rien vider, et
-  l'appelant peut modifier ce qu'il reçoit. Ne pas contourner ce point de
-  passage : c'est lui qui tient les temps de la suite et du build.
+- Les données lues sur disque sont mémorisées, indexées sur la signature du
+  fichier (mtime et taille) : `charger_yaml`, `charger_serie_annuelle`, la
+  table des quotients de mortalité. Un fichier modifié est donc relu sans
+  qu'on ait à vider quoi que ce soit. `charger_yaml` rend une copie, l'appelant
+  peut la modifier ; les séries et la table des quotients sont partagées, parce
+  qu'elles ne sont jamais modifiées — le rester est une contrainte. Ne pas
+  contourner ces points de passage : ce sont eux qui tiennent les temps.
+- `SerieAnnuelle` et `Carriere` sont immuables après leur constructeur, et s'en
+  servent : mémoire d'interpolation pour la première, `cached_property` pour la
+  seconde (`date_liquidation` était recalculée 1,3 million de fois). Ajouter un
+  champ qu'on réassigne après coup casserait silencieusement ces mémoires.
 
 Le Python de `src/` fait foi. Toute modification du modèle doit être portée dans
 `moteur/js/`, puis les témoins régénérés par

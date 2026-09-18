@@ -77,10 +77,19 @@ def page(contexte):
 
     Le site n'assemble jamais autre chose : l'en-tête, le corps rendu, le pied.
     """
+    # Le rendu est mémorisé : une trentaine de tests demandent la même page,
+    # et `/cout` coûtait trois secondes et demie à chaque fois. Rendre deux
+    # fois la même adresse donne la même chaîne — et une chaîne ne se modifie
+    # pas, donc la partager ne peut pas faire communiquer deux tests.
+    memo: dict[tuple, str] = {}
+
     def rendu(chemin: str = "/simuler", **parametres: object) -> str:
-        _, corps = rendre(contexte, chemin,
-                          {nom: str(valeur) for nom, valeur in parametres.items()})
-        return g.entete(chemin) + corps + g.pied()
+        arguments = {nom: str(valeur) for nom, valeur in parametres.items()}
+        cle = (chemin, tuple(sorted(arguments.items())))
+        if cle not in memo:
+            _, corps = rendre(contexte, chemin, arguments)
+            memo[cle] = g.entete(chemin) + corps + g.pied()
+        return memo[cle]
 
     return rendu
 
