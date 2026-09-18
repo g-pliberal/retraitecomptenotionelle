@@ -6100,8 +6100,7 @@ function programmeTransition(contexte) {
     true,
   );
   return g.depliant("Comment on y va, étape par étape", `
-<p>La bascule fige ce qui est acquis, le réduit à ce qui a été cotisé, et le
-convertit en capital.</p>
+<p>La bascule fige ce qui est acquis.</p>
 ${etapes}
 <p>Après la bascule, un seul régime : départ possible à
 ${age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>`);
