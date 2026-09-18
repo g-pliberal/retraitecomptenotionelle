@@ -33,11 +33,18 @@ travaille, mais elle pousse sur `main`. Ne jamais terminer une session en
 laissant le travail sur la branche assignée : c'est ainsi que le dépôt s'est
 retrouvé, en septembre 2026, avec dix branches `claude/*` portant chacune une
 session, un `main` resté trois jours en arrière, et deux lignées sans ancêtre
-commun. Tout a été ramené sur `main`, et les branches d'alors ont été
-supprimées le 18 septembre 2026, après vérification fichier par fichier et
-valeur par valeur qu'elles ne portaient rien que `main` n'ait déjà — elles
-portaient en revanche des valeurs que `main` avait corrigées depuis, dont une
-décote Ircantec de 1,1 % par trimestre que l'arrêté du 30 décembre 1970 dément.
+commun. Tout a été ramené sur `main`.
+
+Les quatorze branches `claude/*` qui restaient ont été auditées le 18 septembre
+2026, fichier par fichier et valeur par valeur : aucune ne porte quoi que ce
+soit que `main` n'ait déjà. Neuf d'entre elles portent en revanche des valeurs
+que `main` a corrigées depuis — dont une décote Ircantec de 1,1 % par trimestre
+que l'article 16 de l'arrêté du 30 décembre 1970 dément. **Elles sont donc à
+supprimer, et leur suppression se fait à la main**, depuis l'onglet Branches de
+GitHub : le jeton d'une session Claude Code peut créer et mettre à jour une
+référence, pas en supprimer une — `git push origin --delete` répond 403. Les
+empreintes sont dans le message du commit qui porte cette phrase, pour qui
+voudrait en ressusciter une.
 
 ## Projet
 
