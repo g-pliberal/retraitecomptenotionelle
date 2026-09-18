@@ -2514,6 +2514,85 @@ notionnelles » et est masqué ; le titre du simulateur, masqué par l'hôte dan
 le cadre, est encore « Retraite à comptes notionnels ». Ni l'un ni l'autre ne
 se change d'ici.
 
+### 30. La refonte en affiche, et le partage là où l'on regarde — `fait`
+
+**Le constat.** Le site disait juste et ne se retenait pas. Bandeau bleu-vert
+sage, cartes claires, titres de tableau de bord : la mise en page d'un outil de
+calcul, posée sur un programme politique que personne n'a demandé à lire. Le
+simulateur, qui est l'argument — les autres partis proposent, celui-ci
+chiffre —, n'apparaissait qu'au troisième écran, et le mot ne figurait que dans
+un onglet.
+
+**Ce qui a été fait.** Une maquette, travaillée et validée écran par écran dans
+Claude Design (huit écrans, quatre-vingts allers-retours), portée ici :
+
+- *Une identité d'affiche.* Vert profond `#0b3d3a`, or `#e9c53d`, crème pour ce
+  qu'on remplit ou qu'on emporte. Titres en capitales très serrées, fluides de
+  36 à 97 px. Public Sans et Instrument Serif, **servies par le dépôt** —
+  `moteur/polices/`, sous OFL : les charger chez Google aurait emporté
+  l'adresse IP du lecteur chez un tiers à chaque visite, et fait mentir « rien
+  n'est envoyé ». UN SEUL THÈME : l'affiche est l'identité, pas un habit de
+  nuit, et `@media print` reteinte tout en noir sur blanc.
+- *Chaque page porte son titre.* Le nom du site n'est plus un `<h1>` répété
+  huit fois ; `g.affiche()` donne à chaque page un sur-titre, un `<h1>` et un
+  chapeau. Un `h1` par page, vérifié au navigateur.
+- *Une barre d'onglets.* Huit pages, collante au large, statique sur téléphone.
+  Les trois groupes de fonction subsistent pour les synthèses vocales, sortis
+  de l'écran par `clip-path` et non par `display: none`. L'onglet courant porte
+  un soulignement épais EN PLUS de sa couleur, et `aria-current`.
+- *Deux pages neuves.* **Trajectoire** (cumul versé du départ à 105 ans) sort
+  le graphique le plus démonstratif du dépôt du dépliant où il était rangé et
+  lui donne sa page, avec le formulaire court pour changer de carrière sans la
+  quitter. **Partager** porte quatre cartes 1200 × 675, rendues à leur taille
+  réelle dans un cadre défilant — en unités relatives, aucune capture n'aurait
+  fait l'image annoncée.
+- *Le partage descend sur les pages.* Une page « Partager » seule ne sert
+  personne : on ne la trouve pas. Chaque carte à graphique porte donc trois
+  boutons — **Publier sur X** (message pré-écrit tiré de la carte, borné à
+  280 signes, l'adresse comptée pour 23), **Télécharger l'image**, **Copier le
+  texte** (avec repli `execCommand` et champ sélectionnable si le
+  presse-papiers refuse). `texteDeLaCarte()` dans `index.html`, à côté
+  d'`imageDeLaCarte()`.
+- *Accessibilité, reprise en même temps.* Un focus clavier visible, qui
+  manquait entièrement — c'était le défaut le plus pénalisant du site. Libellés
+  de formulaire en 15 px casse normale au lieu de capitales à 12. Gloses en
+  sans-serif 16 px au lieu de serif fin 15. Emphase en or DOUBLÉE d'un
+  demi-gras, pour survivre en niveaux de gris. Tableaux larges qui disent
+  qu'ils défilent. Cibles tactiles portées à 24 px.
+
+**Ce que ça a déplacé.** Rien dans le modèle : aucun scénario, aucune série,
+aucun barème n'a bougé, et les témoins de simulation sont identiques au
+caractère près. Deux corrections réelles cependant, l'une et l'autre trouvées
+par les tests du dépôt :
+
+- *La palette des scénarios était à refaire.* Celle d'avant avait été posée sur
+  un fond presque noir ; sur le vert profond elle tombait entre 2,5 et 3,9:1.
+  La nouvelle tient 4,8:1 au moins, et surtout **ΔE ≥ 15 entre toutes les
+  paires** et non seulement entre voisines — l'ancienne descendait à 7,3 sur ce
+  critère. Six teintes ne se séparent pas toutes sous deutéranopie (le meilleur
+  arrangement possible y descend à 8,6) : c'est pourquoi tirets, intitulés et
+  signes portent l'information à côté de la couleur.
+- *Le contour des champs* est passé de 2,59:1 à 4,12:1 (WCAG 1.4.11).
+
+**Vérifié.** 897 tests (contre 882), dont les neuf routes comparées
+caractère par caractère entre Python et le portage. Au navigateur, sur les huit
+pages : un `h1` chacune, aucune requête hors du site, aucune erreur de console,
+aucun débordement latéral à 320, 390 et 820 points, les trois boutons de
+partage fonctionnels (PNG composé, intention X formée, presse-papiers à
+278 signes).
+
+**Ce qui reste.** Deux choses, à trancher par l'auteur du site :
+
+- *Les six scénarios.* La maquette n'en montre que quatre — la décision prise
+  en cours de route était de supprimer « dès la bascule » et « bascule avec le
+  patronal », jugés « inutiles désormais ». Ce n'est pas un choix de mise en
+  page : il retire deux comparaisons du modèle affiché, et il touche la page
+  Coût, les onglets de Cas types et les témoins. Il n'a pas été fait ici.
+- *Les libellés des scénarios.* « Compte notionnel, part salariale seule »
+  plutôt que « Notionnel rétroactif » : plus clair, et c'est la formulation que
+  l'auteur a lui-même proposée. Non appliqué non plus, pour ne pas séparer le
+  renommage de la question ci-dessus.
+
 ---
 
 ## Ce qui est délibérément en bas
@@ -3041,3 +3120,10 @@ se change d'ici.
   cadre du site du parti. Aucun chiffre déplacé. La leçon : **ce qu'une page
   fait après un clic doit se vérifier là où elle est servie**, et un cadre
   qui n'a pas d'ascenseur change tout ce que « faire défiler » veut dire.
+
+- **Septembre 2026, action 30.** Faite. Le site est passé du tableau de bord à
+  l'affiche, et le partage est descendu de la page « Partager » vers chaque
+  carte de résultat. Le modèle n'a pas bougé d'un chiffre ; deux défauts
+  d'accessibilité mesurables ont été corrigés au passage (palette des
+  scénarios, contour des champs). Reste à trancher : réduire ou non les six
+  scénarios affichés à quatre, et leurs libellés.

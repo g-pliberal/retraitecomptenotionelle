@@ -8,6 +8,7 @@ standard et sert de référence au portage JavaScript.
 from __future__ import annotations
 
 import html
+import itertools
 import re
 from urllib.parse import parse_qsl
 
@@ -96,7 +97,10 @@ def test_les_pages_repondent(page, chemin):
 def test_accueil_sans_parametres_ne_calcule_rien(page):
     """Une visite nue montre le formulaire, pas des résultats surgis de nulle part."""
     texte = page("/simuler")
-    assert "Simuler une carrière" in texte
+    # Le titre de la page est devenu son affiche ; la carte qui porte les
+    # champs s'intitule « Votre carrière ».
+    assert "Votre carrière, calculée" in texte
+    assert 'name="naissance"' in texte
     assert "Résultats" not in texte
 
 
@@ -2189,9 +2193,24 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
     assert 'from "./moteur/js/pages.js"' in page
     assert "cdn.jsdelivr.net" not in page
 
-    #: Seules adresses tolérées : le dépôt lui-même (liens que le lecteur suit
-    #: s'il le veut) et l'espace de noms SVG, qui n'est jamais requêté.
-    autorisees = ("https://github.com/g-pliberal/", "http://www.w3.org/2000/svg")
+    #: Les deux polices de l'affiche sont servies par le dépôt — les charger
+    #: chez Google aurait emporté l'adresse IP du lecteur chez un tiers à
+    #: chaque visite, et fait mentir la phrase « rien n'est envoyé ».
+    feuille = g.FEUILLE_DE_STYLE
+    assert "fonts.googleapis.com" not in feuille
+    assert "fonts.gstatic.com" not in feuille
+    polices = Path(__file__).resolve().parents[1] / "moteur" / "polices"
+    for fichier in re.findall(r"url\((polices/[^)]+)\)", feuille):
+        assert (polices.parent / fichier).is_file(), f"police absente : {fichier}"
+    assert len(re.findall(r"@font-face", feuille)) == 4
+
+    #: Seules adresses tolérées, et aucune n'est chargée avec la page : le
+    #: dépôt lui-même (liens que le lecteur suit s'il le veut), l'espace de
+    #: noms SVG, qui n'est jamais requêté, et l'intention de publication de X,
+    #: que le bouton « Publier sur X » ouvre dans un onglet — c'est une
+    #: navigation demandée par le lecteur, pas une requête faite dans son dos.
+    autorisees = ("https://github.com/g-pliberal/", "http://www.w3.org/2000/svg",
+                  "https://x.com/intent/post")
     for hote in ("http://", "https://"):
         for morceau in page.split(hote)[1:]:
             adresse = hote + morceau.split('"')[0]
@@ -2368,7 +2387,9 @@ def test_le_moteur_javascript_est_versionne():
 #: daltonienne. La quatrième — séparation sous deutéranopie et protanopie — a
 #: été vérifiée à l'extérieur au moment où la palette a été posée, et c'est elle
 #: qui a fait rejeter la précédente : sa pire paire voisine tombait à ΔE 4,3.
-BANDE_LUMINOSITE = {"clair": (0.43, 0.77), "sombre": (0.48, 0.67)}
+#: Il n'y a plus qu'un thème depuis la refonte : la bande est celle de
+#: l'affiche, mesurée sur le vert profond.
+BANDE_LUMINOSITE = (0.70, 0.87)
 CHROMA_MINIMAL = 0.10
 ECART_MINIMAL_VISION_NORMALE = 15.0
 
@@ -2393,23 +2414,12 @@ def _oklab(hexa: str) -> tuple[float, float, float]:
     )
 
 
-def _palette(theme: str) -> list[str]:
-    """Les six couleurs de scénario lues dans la feuille de style.
-
-    Le thème sombre les redéfinit dans un bloc ``prefers-color-scheme`` : on
-    prend la DERNIÈRE définition pour le sombre, la première pour le clair.
-    """
-    feuille = g.FEUILLE_DE_STYLE
-    couleurs = []
-    for nom in SCENARIOS_COLORES:
-        trouvees = re.findall(rf"--{nom}:\s*(#[0-9a-f]{{6}})\s*;", feuille)
-        assert trouvees, f"couleur « --{nom} » absente de la feuille de style"
-        couleurs.append(trouvees[0] if theme == "clair" else trouvees[-1])
-    return couleurs
+def _palette() -> list[str]:
+    """Les six couleurs de scénario lues dans la feuille de style."""
+    return [_couleur(nom) for nom in SCENARIOS_COLORES]
 
 
-@pytest.mark.parametrize("theme", ["clair", "sombre"])
-def test_la_palette_des_scenarios_reste_lisible(theme):
+def test_la_palette_des_scenarios_reste_lisible():
     """Six courbes qui se croisent ne peuvent pas être séparées par la couleur
     seule si cette couleur est trop pâle ou trop proche de sa voisine.
 
@@ -2419,9 +2429,9 @@ def test_la_palette_des_scenarios_reste_lisible(theme):
     15. Ce test ne rejoue pas la simulation daltonienne, mais il arrête la
     dérive qui l'avait provoquée.
     """
-    couleurs = _palette(theme)
+    couleurs = _palette()
     assert len(set(couleurs)) == 6, "deux scénarios partagent une couleur"
-    bas, haut = BANDE_LUMINOSITE[theme]
+    bas, haut = BANDE_LUMINOSITE
     for couleur in couleurs:
         clarte, a, b = _oklab(couleur)
         assert bas <= clarte <= haut, (
@@ -2430,13 +2440,24 @@ def test_la_palette_des_scenarios_reste_lisible(theme):
         assert (a * a + b * b) ** 0.5 >= CHROMA_MINIMAL, (
             f"{couleur} : chroma trop faible, la couleur lit gris"
         )
-    for premiere, seconde in zip(couleurs, couleurs[1:]):
+    for premiere, seconde in itertools.combinations(couleurs, 2):
         x, y = _oklab(premiere), _oklab(seconde)
         ecart = 100 * sum((u - v) ** 2 for u, v in zip(x, y)) ** 0.5
         assert ecart >= ECART_MINIMAL_VISION_NORMALE, (
             f"{premiere} et {seconde} : ΔE {ecart:.1f}, sous le plancher de "
             f"{ECART_MINIMAL_VISION_NORMALE:.0f} en vision normale"
         )
+    # Et la couleur n'est jamais seule : six teintes catégorielles ne se
+    # séparent pas toutes sous deutéranopie, quel que soit le choix — le
+    # meilleur arrangement possible sous les contraintes ci-dessus y descend à
+    # ΔE 8,6. Le tracé porte donc aussi un motif de tirets, qui lui ne se perd
+    # jamais, et la légende le reprend.
+    pleine = g.Serie("Pleine", (1.0, 2.0, 3.0), "var(--actuel)")
+    tiretee = g.Serie("Tiretée", (1.0, 2.0, 3.0), "var(--liberal)", tirets=True)
+    trace = g.graphique("t", (2000, 2001, 2002), (pleine, tiretee))
+    assert trace.count("stroke-dasharray") >= 1, (
+        "une série en tirets doit se distinguer autrement que par sa couleur"
+    )
 
 
 # -- accessibilité -------------------------------------------------------------
@@ -2451,16 +2472,20 @@ CONTRASTE_TEXTE = 4.5
 CONTRASTE_COMPOSANT = 3.0
 
 
-def _couleur(nom: str, theme: str) -> str:
-    """Une variable de la feuille de style, dans l'un des deux thèmes.
+def _couleur(nom: str) -> str:
+    """Une variable de la feuille de style, telle que l'écran la rend.
 
-    Le thème sombre redéfinit les mêmes noms dans un bloc
-    ``prefers-color-scheme`` : la première définition est celle du clair, la
-    dernière celle du sombre.
+    Il n'y a plus qu'un thème depuis la refonte en affiche : le vert profond
+    EST l'identité du site, et non un habit de nuit qu'on quitte le matin.
+    Seule la première définition compte donc — celle de ``:root``. Les
+    suivantes sont celles du bloc ``@media print``, qui reteinte toute la
+    palette en noir sur blanc pour ne pas coûter une cartouche par page, et
+    qu'aucun écran ne voit.
     """
-    trouvees = re.findall(rf"--{nom}:\s*(#[0-9a-f]{{6}})\s*;", g.FEUILLE_DE_STYLE)
+    ecran = g.FEUILLE_DE_STYLE.split("@media print")[0]
+    trouvees = re.findall(rf"--{nom}:\s*(#[0-9a-f]{{6}})\s*;", ecran)
     assert trouvees, f"couleur « --{nom} » absente de la feuille de style"
-    return trouvees[0] if theme == "clair" else trouvees[-1]
+    return trouvees[0]
 
 
 def _luminance(hexa: str) -> float:
@@ -2479,8 +2504,7 @@ def _contraste(premiere: str, seconde: str) -> float:
     return (claire + 0.05) / (sombre + 0.05)
 
 
-@pytest.mark.parametrize("theme", ["clair", "sombre"])
-def test_les_textes_tiennent_le_plancher_de_contraste(theme):
+def test_les_textes_tiennent_le_plancher_de_contraste():
     """Tout ce qui s'écrit, sur chacun des trois fonds de la page.
 
     ``--texte-doux`` porte les aides de saisie, les gloses, les graduations des
@@ -2491,15 +2515,14 @@ def test_les_textes_tiennent_le_plancher_de_contraste(theme):
     """
     for fond in ("fond", "fond-carte", "fond-appui"):
         for texte in ("texte", "texte-doux", "accent", "alerte"):
-            mesure = _contraste(_couleur(texte, theme), _couleur(fond, theme))
+            mesure = _contraste(_couleur(texte), _couleur(fond))
             assert mesure >= CONTRASTE_TEXTE, (
-                f"{theme} : --{texte} sur --{fond} tombe à {mesure:.2f}:1, "
+                f"--{texte} sur --{fond} tombe à {mesure:.2f}:1, "
                 f"sous le plancher de {CONTRASTE_TEXTE}:1"
             )
 
 
-@pytest.mark.parametrize("theme", ["clair", "sombre"])
-def test_le_contour_des_champs_se_distingue_du_fond(theme):
+def test_le_contour_des_champs_se_distingue_du_fond():
     """Un champ de saisie se reconnaît à son contour : encore faut-il le voir.
 
     WCAG 1.4.11 demande 3:1 entre un composant d'interface et ce qui l'entoure.
@@ -2507,9 +2530,9 @@ def test_le_contour_des_champs_se_distingue_du_fond(theme):
     aucune information —, et les champs ont donc leur propre couleur de bord.
     """
     for fond in ("fond", "fond-carte"):
-        mesure = _contraste(_couleur("trait-champ", theme), _couleur(fond, theme))
+        mesure = _contraste(_couleur("trait-champ"), _couleur(fond))
         assert mesure >= CONTRASTE_COMPOSANT, (
-            f"{theme} : le contour des champs tombe à {mesure:.2f}:1 sur "
+            f"le contour des champs tombe à {mesure:.2f}:1 sur "
             f"--{fond}, sous le plancher de {CONTRASTE_COMPOSANT}:1"
         )
 
@@ -2519,7 +2542,6 @@ def test_la_feuille_de_style_respecte_le_reglage_mouvement_reduit():
 
     Le système le signale, et la feuille l'écoute — WCAG 2.2.2 et 2.3.3.
     """
-    assert "@media (prefers-color-scheme: dark)" in g.FEUILLE_DE_STYLE
     bloc = g.FEUILLE_DE_STYLE.split("@media (prefers-reduced-motion: reduce)")
     assert len(bloc) == 2, "la feuille ne tient pas compte du mouvement réduit"
     assert "animation-iteration-count: 1 !important" in bloc[1], (
@@ -3622,11 +3644,20 @@ def _hors_depliants(corps: str) -> str:
     cache tant que leur onglet n'est pas choisi, et les bulles du glossaire,
     fermées tant qu'on ne les demande pas : rien de tout cela ne se lit à
     l'ouverture de la page.
+
+    LES OPTIONS D'UN MENU DÉROULANT non plus. Un ``<select>`` fermé occupe une
+    ligne et montre un libellé, quel que soit le nombre d'options qu'il porte ;
+    les compter reviendrait à imputer au lecteur de l'accueil les soixante-dix
+    statuts d'affiliation du catalogue — quatre cent cinquante mots qu'il ne
+    voit pas, et qui feraient dépasser son budget au simple fait que le site
+    connaît beaucoup de régimes. Le menu est donc réduit à ce qu'il montre.
     """
     sans_bulles = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps,
                          flags=re.S)
+    sans_options = re.sub(r"<select\b[^>]*>.*?</select>", "<select></select>",
+                          sans_bulles, flags=re.S)
     return _sans_blocs(
-        _sans_blocs(sans_bulles, "details", r"<details\b"),
+        _sans_blocs(sans_options, "details", r"<details\b"),
         "div", r'<div class="panneau"[^>]*\bhidden>',
     )
 
@@ -3648,6 +3679,13 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # lignes et un bouton qui disent que le site est un simulateur.
     "/": (670, 0, 2),
     "/simuler": (1500, 0, 0),
+    # Trajectoire porte UN graphique, et c'est son sujet : il est donc ouvert,
+    # là où celui de Coût attend qu'on déplie. Le reste de la page tient en
+    # deux blocs de texte et le formulaire court.
+    "/trajectoire": (500, 1, 0),
+    # Partager ne porte que des cartes : leur texte est court par
+    # construction — il doit tenir dans une image de 1200 × 675.
+    "/partager": (400, 0, 0),
     # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
     # la trajectoire du système actuel pour l'une, le résumé en langage
@@ -3733,6 +3771,10 @@ def test_la_page_de_resultats_replie_son_detail(contexte):
     )
 
 
+#: Les pages assez longues pour avoir un détail à ranger. Trajectoire et
+#: Partager n'en sont pas : la première porte un graphique et deux
+#: paragraphes, la seconde quatre cartes. Leur imposer trois sections repliées
+#: reviendrait à leur demander d'abord d'en écrire le contenu.
 @pytest.mark.parametrize("chemin", ["/", "/cas-types", "/cout", "/methode",
                                     "/donnees"])
 def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
@@ -4281,22 +4323,39 @@ def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance(contexte):
 # -- action 29 : l'entrée, pour qui arrive du site du parti --------------------
 
 
-def test_l_accueil_dit_simulez_avant_les_reperes(contexte):
+def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements(contexte):
     """Un visiteur doit savoir en dix secondes que le site est un simulateur,
-    et où cliquer. Le mot et le bouton viennent avant les trois chiffres
-    repères, hors de tout dépliant ; le bouton du bas de page reste. Dans le
-    cadre que le site du parti ouvre sur cette page, le titre du simulateur est
-    masqué par l'hôte : ce bloc est alors la seule chose qui dise « simulez »."""
+    et où cliquer.
+
+    Depuis la refonte en affiche, ce n'est plus un bloc qui dit « simulez » et
+    renvoie ailleurs : c'est LE FORMULAIRE LUI-MÊME, court, en crème, posé sous
+    le titre et avant les quatre engagements. La preuve est à hauteur de la
+    promesse, et le premier écran ne demande plus de cliquer pour commencer.
+
+    Il est hors de tout dépliant, il porte l'adresse du simulateur, et le
+    rappel du bas de page reste. Dans le cadre que le site du parti ouvre sur
+    cette page, le titre du simulateur est masqué par l'hôte : ce bloc est
+    alors la seule chose qui dise « simulez »."""
     corps = rendre(contexte, "/", {})[1]
     visible = _hors_depliants(corps)
-    entree = visible.index('<div class="note entree">')
-    reperes = visible.index('<div class="fiches reperes">')
-    assert entree < reperes
-    assert "Simulez votre carrière" in visible[entree:reperes]
+    formulaire = visible.index('<form class="creme simulateur-court"')
+    engagements = visible.index('<section class="engagements"')
+    affiche = visible.index('<div class="affiche">')
+    assert affiche < formulaire < engagements
+    # Il soumet vers le simulateur, et ses champs sont ceux du grand
+    # formulaire : c'est la même adresse qui les reçoit.
+    entete = visible[formulaire:engagements]
+    assert f'action="{g.lien("/simuler")}"' in entete
+    assert "Et vous, ça donne combien" in entete
+    # Les champs se lisent sur le corps brut : `_hors_depliants` vide les
+    # menus déroulants de leurs options, et emporte l'attribut du `<select>`.
+    brut = corps[corps.index('<form class="creme simulateur-court"'):]
+    brut = brut[:brut.index("</form>")]
+    for champ in ("naissance", "debut", "statut", "liquidation"):
+        assert f'name="{champ}"' in brut, f"le champ {champ} manque"
     bouton = f'<a class="bouton" href="{g.lien("/simuler")}">'
-    assert visible.index(bouton) < reperes
-    assert visible.count(bouton) == 2, "le bouton du bas de page a disparu"
-    assert ".note.entree" in g.FEUILLE_DE_STYLE
+    assert visible.count(bouton) == 1, "le rappel du bas de page a disparu"
+    assert ".simulateur-court .grille" in g.FEUILLE_DE_STYLE
 
 
 def test_le_formulaire_dit_que_l_exemple_est_rempli(page):
@@ -4340,24 +4399,44 @@ def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
 
 
 def test_la_navigation_est_groupee_par_fonction():
-    """Le message, la preuve, la confiance : trois groupes, et non six liens.
+    """Le message, la preuve, la confiance, et ce qu'on en fait : quatre
+    groupes, et non huit liens à la file.
 
-    Chaque groupe porte une étiquette en clair — lue par tout le monde, pas
-    seulement par une synthèse vocale —, et les six pages restent des liens
-    par l'ancre, dans l'ordre. ``LIENS`` est la liste à plat des mêmes pages.
+    Le groupement reste, et il reste DIT : chaque groupe porte son étiquette
+    dans le HTML, où les synthèses vocales la lisent comme la structure du
+    menu. Ce qui a changé à la refonte, c'est qu'elle ne se voit plus — huit
+    pages sous quatre intertitres prenaient deux fois la hauteur du bandeau,
+    devenu collant. La feuille la sort de l'écran sans la sortir de l'arbre
+    d'accessibilité : `clip-path`, et non `display: none`.
     """
     entete = g.entete("/cout")
     groupes = re.findall(r'<span class="groupe"><span class="etiquette">(.*?)</span>'
                          r'<span class="liens">(.*?)</span></span>', entete)
     assert [etiquette for etiquette, _ in groupes] == [
-        "Le programme", "La preuve", "La confiance"]
+        "Le programme", "La preuve", "La confiance", "Faire connaître"]
     pages = [re.findall(r'href="([^"]+)"', liens) for _, liens in groupes]
-    assert pages == [["#/"], ["#/simuler", "#/cas-types", "#/cout"],
-                     ["#/methode", "#/donnees"]]
+    assert pages == [["#/"],
+                     ["#/simuler", "#/trajectoire", "#/cas-types", "#/cout"],
+                     ["#/methode", "#/donnees"],
+                     ["#/partager"]]
     assert 'href="#/cout" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
-        "/", "/simuler", "/cas-types", "/cout", "/methode", "/donnees"]
+        "/", "/simuler", "/trajectoire", "/cas-types", "/cout", "/methode",
+        "/donnees", "/partager"]
+    # Toute page de la barre est une page que le routeur sait rendre, et
+    # réciproquement : seules les mentions légales en sont absentes, parce que
+    # le pied de page y renvoie de partout.
+    assert set(chemin for chemin, _ in g.LIENS) == set(TITRES) - {"/mentions"}
+    # L'étiquette est masquée à l'œil, pas à l'oreille.
     assert "nav .etiquette" in g.FEUILLE_DE_STYLE
+    etiquette = g.FEUILLE_DE_STYLE.split("nav .etiquette {")[1].split("}")[0]
+    assert "clip-path" in etiquette and "display: none" not in etiquette, (
+        "une étiquette en display:none quitte aussi l'arbre d'accessibilité"
+    )
+    # L'onglet courant ne se signale pas QUE par la couleur : un soulignement
+    # épais le marque, et `aria-current` l'annonce.
+    actif = g.FEUILLE_DE_STYLE.split('nav a[aria-current="page"] {')[1].split("}")[0]
+    assert "border-bottom-color" in actif
 
 
 def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre(contexte):
@@ -4472,8 +4551,8 @@ def _prose(corps: str) -> str:
 #: n'interdisent pas l'incise, qui est une ponctuation française, elles
 #: interdisent d'y revenir comme à un tic.
 INCISES_MAXIMUM = {
-    "/": 3, "/simuler": 14, "/cas-types": 9, "/cout": 22, "/methode": 9,
-    "/donnees": 4, "/mentions": 9,
+    "/": 3, "/simuler": 14, "/trajectoire": 5, "/cas-types": 9, "/cout": 22,
+    "/methode": 9, "/donnees": 4, "/partager": 4, "/mentions": 9,
 }
 
 
@@ -4507,7 +4586,14 @@ def test_le_procede_ce_n_est_pas_x_c_est_y_a_disparu(contexte, chemin):
 def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
     """« Il est illisible. Il est inégal. Il n'est pas piloté. » est devenu une
     liste asymétrique, et l'accueil porte une note signée : qui publie ce
-    site, pourquoi, et avec quelles réserves."""
+    site, pourquoi, et avec quelles réserves.
+
+    La note a changé de place à la refonte en affiche. Elle était le quatrième
+    bloc de texte du premier écran ; elle est maintenant dans le dépliant qui
+    dit comment vérifier, parce que c'est le même geste — et parce que le
+    premier écran doit tenir son budget de lecture. Ce qui reste visible est
+    l'engagement, en une phrase sur le panneau crème : tout est chiffré, sur
+    des données publiques et un modèle ouvert."""
     corps = rendre(contexte, "/", {})[1]
     assert "Il est illisible." not in corps and "Il n'est pas piloté." not in corps
     assert "Illisible, d'abord." in corps and "Et personne ne le pilote." in corps
@@ -4516,7 +4602,14 @@ def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
     assert "Nous avons choisi" in note.group(1)
     assert "Nos réserves sont écrites" in note.group(1)
     assert "Le Parti libéral français, septembre 2026." in note.group(1)
-    assert "Pourquoi ce site." in _hors_depliants(corps)
+    # Elle est rangée, pas supprimée : dans le dépliant « Tout vérifier ».
+    assert "Pourquoi ce site." not in _hors_depliants(corps)
+    verifier = corps[corps.index("Tout vérifier, page par page"):]
+    assert "Pourquoi ce site." in verifier
+    # Et l'engagement, lui, reste sous les yeux.
+    visible = _hors_depliants(corps)
+    assert "Vérifiez plutôt que de nous croire" in visible
+    assert "sur des données publiques" in visible
 
 
 def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(contexte):

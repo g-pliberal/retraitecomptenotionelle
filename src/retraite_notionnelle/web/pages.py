@@ -56,6 +56,7 @@ from ..donnees.equilibre import (
 )
 from ..donnees.regimes import charger_inventaire
 from ..donnees.population import Population
+from ..scenarios.actuel import MinimumVieillesse
 from ..simulateur import Comparaison, Simulateur
 from . import gabarit as g
 
@@ -1351,10 +1352,12 @@ class Contexte:
 TITRES = {
     "/": "Programme",
     "/simuler": "Simuler",
+    "/trajectoire": "Trajectoire",
     "/cas-types": "Cas types",
     "/cout": "Coût",
     "/methode": "Méthode",
     "/donnees": "Données",
+    "/partager": "Partager",
     # Hors de la barre de navigation, où elle prendrait la place d'une page
     # qu'on vient lire : le pied de page y renvoie depuis toutes les autres,
     # ce que la loi demande — être joignable depuis n'importe où sur le site.
@@ -1376,6 +1379,9 @@ DESCRIPTIONS = {
     "/simuler": "Votre carrière calculée de six façons : le système actuel, et "
                 "les comptes notionnels appliqués depuis 1941 ou à partir de la "
                 "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
+    "/trajectoire": "Ce que chaque système aura versé, du départ à 105 ans : "
+                    "le cumul, et non la pension d'un mois — c'est là que la "
+                    "durée de la retraite entre dans le calcul.",
     "/cas-types": "Treize carrières types sur sept générations : ce que chaque "
                   "pension deviendrait, par rapport à aujourd'hui, sous la "
                   "proposition et sous quatre contrefactuels.",
@@ -1386,6 +1392,9 @@ DESCRIPTIONS = {
                 "presque tout.",
     "/donnees": "D'où viennent les chiffres du site, série par série et régime "
                 "par régime, et ce qui a été recontrôlé contre sa source.",
+    "/partager": "Les chiffres du programme au format des réseaux sociaux, "
+                 "1200 × 675, signés @pliberal : le plancher, le taux, le "
+                 "déficit, et les trois graphiques du site.",
     "/mentions": "Mentions légales, données personnelles et accessibilité du "
                  "simulateur de retraite en comptes notionnels.",
 }
@@ -1399,10 +1408,15 @@ def rendre(contexte: Contexte, chemin: str,
     ``<main>``. Les erreurs de saisie sont rendues dans la page, jamais levées :
     une adresse mal formée doit afficher un message, pas une trace d'exécution.
 
-    Seul ``/simuler`` lit ``parametres`` : c'est la seule page que l'adresse
-    paramètre. Toute adresse inconnue retombe sur l'accueil, comme le fait le
-    routeur d'``index.html``.
+    ``/simuler`` et ``/trajectoire`` lisent ``parametres`` : ce sont les deux
+    pages que l'adresse paramètre, et elles portent le même formulaire. Toute
+    adresse inconnue retombe sur l'accueil, comme le fait le routeur
+    d'``index.html``.
     """
+    if chemin == "/trajectoire":
+        return TITRES[chemin], _page_trajectoire(contexte, parametres or {})
+    if chemin == "/partager":
+        return TITRES[chemin], _partager(contexte)
     if chemin == "/cas-types":
         return TITRES[chemin], _cas_types(contexte)
     if chemin == "/cout":
@@ -1460,43 +1474,10 @@ def _programme(contexte: Contexte) -> str:
     simulateur = contexte.simulateur()
     regimes = len(simulateur.catalogue)
     inventaire = len(charger_inventaire(base.racine_donnees))
-    depenses = contexte.depenses()
-    derniere = depenses.derniere_annee
     comptes = contexte.comptes()
     annee_solde = comptes.derniere_annee_observee
     taux = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
     plancher = g.euros(base.garantie_vieillesse_mensuelle)
-
-    reperes = g.fiche(
-        "Régimes de retraite en France", str(inventaire),
-        "chacun avec ses propres règles",
-    ) + g.fiche(
-        f"Ce que cela coûte, en {derniere}",
-        g.pourcentage(depenses.part_pib(derniere), decimales=1),
-        "de tout ce que la France produit",
-    ) + g.fiche(
-        "Notre proposition", taux,
-        "de cotisation, pour tout le monde",
-    )
-
-    propositions = g.points([
-        ("Un compte, pas des trimestres",
-         "Chaque euro cotisé est inscrit sur votre compte. Vous le suivez "
-         "toute votre vie, comme un compte en banque. Sauf que rien n'est "
-         "placé : c'est toujours la " + g.terme("répartition") + "."),
-        ("Le même taux pour tous",
-         f"{taux} du salaire, part du salarié et part de l'employeur "
-         "additionnées, quel que soit le métier. Aujourd'hui le taux dépend du "
-         "statut, et personne ne sait dire pourquoi."),
-        (f"Un plancher de {plancher} par personne",
-         "Versé à qui n'atteint pas ce montant, à partir de 65 ans, et payé "
-         "par l'impôt. Il regarde votre seule pension, pas celle de votre "
-         "conjoint."),
-        ("Un réglage par an, au lieu d'une réforme tous les huit ans",
-         "Un chiffre publié chaque année ramène les comptes à l'équilibre. "
-         "Plus besoin de changer la règle en urgence, au détriment de ceux qui "
-         "n'ont pas encore liquidé."),
-    ])
 
     differences = g.tableau(
         ["", "Aujourd'hui", "Avec notre programme"],
@@ -1569,6 +1550,17 @@ ce que l'un et l'autre coûtent.
 <a href="{g.lien("/methode")}">Le détail du calcul</a>.</p>""")
 
     depliant_verifier = g.depliant("Tout vérifier, page par page", f"""
+<div class="note signee">
+<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
+plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
+à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
+puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par
+page : le modèle reste un modèle, ses séries d'avant 1950 sont fragiles, et le
+niveau des pensions notionnelles dépend d'un réglage annuel qu'il calcule sans
+l'appliquer. Nous préférons un chiffre discutable à une promesse qu'on ne peut
+pas discuter.</p>
+<p class="discret">Le Parti libéral français, septembre 2026.</p>
+</div>
 <ul class="serree">
   <li><a href="{g.lien("/simuler")}">Simuler</a> : votre carrière, ou votre
   relevé collé tel quel, sous les six scénarios.</li>
@@ -1586,34 +1578,55 @@ licence libre : <a href="{g.DEPOT}">le dépôt</a>. Solde du système de retrait
 en {annee_solde} :
 {g.pourcentage(comptes.solde(annee_solde), signe=True, decimales=2)} du PIB.</p>""")
 
-    # L'entrée. Le site est un simulateur, et rien sur le premier écran ne le
-    # disait : le mot n'était que dans un onglet, et le seul bouton arrivait au
-    # troisième écran — au cinquième sur un téléphone. Dans le cadre que le site
-    # du parti ouvre sur cette page, le titre du simulateur est masqué par
-    # l'hôte, et ce bloc est la seule chose qui dise « simulez ». Deux lignes,
-    # pas trois : à la troisième, le bouton passe sous le pli du téléphone.
-    entree = f"""
-<div class="note entree">
-<p><strong>Ce que ça donnerait pour vous ? Simulez votre carrière.</strong><br>
-Six montants côte à côte : les règles d'aujourd'hui, et cinq autres.</p>
-<p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Simuler ma
-retraite</a></p>
-</div>"""
+    # Les trois gestes du calcul. Ils étaient au format du texte courant, et se
+    # lisaient comme une note de bas de page à côté du tableau qui leur fait
+    # face — alors qu'ils pèsent autant. Chiffres de 50 px, texte de 24, un
+    # filet entre chacun.
+    gestes = "".join(
+        f'<li><span class="rang">{rang}</span><span>{texte}</span></li>'
+        for rang, texte in enumerate([
+            "<strong>On inscrit</strong> chaque cotisation sur votre compte, "
+            "au premier euro, sans plafond.",
+            "<strong>On revalorise</strong> le compte chaque année, au rythme "
+            "des salaires du pays.",
+            "<strong>On divise</strong>, au départ, par les années qu'il vous "
+            "reste à vivre en moyenne. C'est votre pension.",
+        ], start=1)
+    )
+
+    tete = g.affiche(
+        "Notre programme pour les retraites",
+        'La seule retraite qui vous rend <span class="cle-texte">vraiment</span> '
+        "ce que vous avez cotisé.",
+        '<strong class="cle-texte">Un compte à votre nom, en euros.</strong> '
+        "Chaque cotisation y est inscrite ; à la retraite, il devient votre "
+        'pension. <strong class="cle-texte">Pas de trimestres, pas de barèmes, '
+        "pas de surprise.</strong>",
+    )
 
     return f"""
-<h2 style="margin-top:0">Notre programme pour les retraites</h2>
-<p class="chapeau">Un seul régime. Un compte par personne. {taux} de cotisation
-pour tout le monde. Et un plancher de {plancher} par mois, payé par l'impôt.</p>
-{entree}
-<div class="fiches reperes">{reperes}</div>
+{tete}
 
-{propositions}
+{_simulateur_court(contexte)}
 
-<h2>Le plancher, concrètement</h2>
-<p>Aujourd'hui, l'ASPA regarde les ressources du couple : à 300 € et 1 500 €
-de pension, il ne reçoit rien. La garantie regarde chacun. Ce que cela verse,
-par mois, à quatre couples et à une personne seule :</p>
-{_tableau_garantie()}
+{_engagements(contexte)}
+
+<div class="paire">
+  <div>
+    <p class="surtitre">Le calcul</p>
+    <h2 style="margin-top:0">Comment ça marche, en trois gestes</h2>
+    <ol class="gestes">{gestes}</ol>
+    <p class="discret">Rien n'est placé : les cotisations de l'année paient
+    les pensions de l'année. C'est toujours la {g.terme("répartition")}.</p>
+  </div>
+  <div class="encadre">
+    <h2 class="serif" style="margin-top:0">Le plancher regarde chacun, pas le
+    couple</h2>
+    <p>Aujourd'hui, l'ASPA regarde les ressources du couple : à 300 € et
+    1 500 € de pension, il ne reçoit rien. La garantie regarde chacun :</p>
+    {_tableau_garantie()}
+  </div>
+</div>
 
 <h2>Ce que cela change</h2>
 {differences}
@@ -1626,20 +1639,13 @@ retraites ne fait rien économiser l'année où elle est votée : il faut attend
 que des carrières entières se déroulent sous la nouvelle règle. Qui promet une
 économie immédiate propose autre chose.</div>
 
-<h2>Vérifiez plutôt que de nous croire</h2>
-<p>Tout est calculé, sur des données publiques et un modèle ouvert.</p>
-<div class="note signee">
-<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
-plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
-à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
-puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par page : le modèle reste un modèle, ses
-séries d'avant 1950 sont fragiles, et le niveau des pensions notionnelles
-dépend d'un réglage annuel qu'il calcule sans l'appliquer. Nous préférons un
-chiffre discutable à une promesse qu'on ne peut pas discuter.</p>
-<p class="discret">Le Parti libéral français, septembre 2026.</p>
-</div>
-<p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer ma
+<div class="creme">
+<p class="surtitre">Vérifiez plutôt que de nous croire</p>
+<h2 class="serif" style="margin:0">Tout est chiffré, sur des données publiques
+et un modèle ouvert.</h2>
+<p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Simuler ma
 retraite</a><a href="{g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
+</div>
 
 <h2>Pour aller plus loin</h2>
 
@@ -1699,6 +1705,152 @@ sans que personne ne l'ait voté.</p>
   <li><strong>L'écart se solde chaque année</strong>, au lieu de s'accumuler en
   silence jusqu'à la réforme suivante.</li>
 </ul>""")
+
+
+#: Le taux de cotisation retraite d'aujourd'hui, parts salariale et patronale
+#: additionnées — la base sur laquelle les 18 % de la proposition se comparent.
+#: Ce n'est pas une moyenne inter-régimes : c'est le total du CAS LE PLUS
+#: COURANT, un salarié non cadre du privé sous le plafond, décomposé ainsi :
+#:
+#:     retraite de base plafonnée       6,90 %  +  8,55 %  = 15,45 %
+#:     retraite de base déplafonnée     0,40 %  +  2,11 %  =  2,51 %
+#:     Agirc-Arrco tranche 1            3,15 %  +  4,72 %  =  7,87 %
+#:     CEG                              0,86 %  +  1,29 %  =  2,15 %
+#:     -------------------------------------------------------------
+#:     total                           11,31 %  + 16,67 %  = 27,98 %
+#:
+#: Les pages arrondissent à 28 %, 11,3 % et 16,7 %. Tout autre statut cotise
+#: autrement, et c'est dit partout où le chiffre paraît : « pour un salarié du
+#: privé », jamais « en moyenne ».
+TAUX_ACTUEL_SALARIAL = 0.1131
+TAUX_ACTUEL_PATRONAL = 0.1667
+TAUX_ACTUEL_TOTAL = TAUX_ACTUEL_SALARIAL + TAUX_ACTUEL_PATRONAL
+
+
+def _engagements(contexte: Contexte) -> str:
+    """Les quatre engagements du programme, chiffrés, numérotés 01 à 04.
+
+    C'est la section qui porte le message, et elle a mis trois états à le
+    porter. D'abord quatre chiffres nus, qu'on lisait comme des statistiques
+    orphelines ; puis les mêmes sous un titre, qui redisait ce que le titre de
+    la page disait déjà ; enfin ceux-ci — numérotés, sur trois niveaux nets.
+
+    Les trois niveaux sont le fond de l'affaire. Le CHIFFRE en or attire l'œil ;
+    la PROMESSE en serif, en crème plein contraste, porte le message, et c'est
+    elle qui se perdait quand les cartes n'avaient que deux niveaux ; le DÉTAIL
+    technique, plus discret mais à 18 px — pas 15 —, répond à celui qui veut
+    savoir comment.
+
+    Dans chaque carte, un ou deux passages en or, jamais plus : au-delà,
+    l'emphase ne désigne plus rien. Ils sont doublés d'un demi-gras, pour
+    survivre en niveaux de gris comme en daltonisme.
+
+    Les quatre valeurs sont celles du MODÈLE, et non des nombres écrits ici :
+    changer ``garantie_vieillesse_mensuelle`` change la page.
+    """
+    base = contexte.base
+    taux = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
+    garantie = base.garantie_vieillesse_mensuelle
+    isolement = base.allocation_isolement_mensuelle
+    # Seul : la garantie plus l'allocation d'isolement. En couple : la garantie
+    # pour chacun, et rien de plus — l'isolement ne se verse qu'à qui vit seul.
+    # « Une garantie de 800 € » était trompeur : c'est le plancher par personne,
+    # pas ce que touche quelqu'un.
+    seul = g.euros(garantie + isolement)
+    couple = g.euros(2 * garantie)
+
+    cartes = [
+        (seul,
+         f"par mois au minimum, seul.<br>"
+         f'<strong class="cle-texte">{couple}</strong> pour un couple.',
+         f'<strong class="cle-texte">{g.euros(garantie)} par personne</strong>, '
+         f'plus <strong class="cle-texte">{g.euros(isolement)} d\'allocation '
+         f"d'isolement</strong> pour qui vit seul. Payés par l'impôt, dès "
+         f"{MinimumVieillesse.AGE_OUVERTURE} ans."),
+        (taux,
+         "de cotisation, au lieu de "
+         f'<strong class="cle-texte">'
+         f"{g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)} aujourd'hui</strong>.",
+         "Part salariale et patronale additionnées : "
+         f"{g.pourcentage(TAUX_ACTUEL_SALARIAL)} + "
+         f"{g.pourcentage(TAUX_ACTUEL_PATRONAL)} pour un salarié du privé. "
+         'Demain, <strong class="cle-texte">le même taux pour tout le '
+         "monde</strong>."),
+        ("1 compte",
+         '<strong class="cle-texte">en euros</strong>, lisible par tous.',
+         "Un compte personnel de retraite : vous voyez "
+         '<strong class="cle-texte">votre solde comme sur un relevé '
+         "bancaire</strong>."),
+        ("100 %",
+         "de ce que vous avez cotisé "
+         '<strong class="cle-texte">vous revient</strong>.',
+         "Partir plus tôt donne moins, plus tard donne plus — "
+         '<strong class="cle-texte">dans le rapport exact de ce que ça '
+         "coûte</strong>."),
+    ]
+    corps = "".join(
+        f'<div class="engagement"><div class="rang">{rang:02d}</div>'
+        f'<div class="chiffre">{chiffre}</div>'
+        f'<div class="promesse">{promesse}</div>'
+        f'<div class="detail">{detail}</div></div>'
+        for rang, (chiffre, promesse, detail) in enumerate(cartes, start=1)
+    )
+    return (
+        '<section class="engagements" aria-label="Nos quatre engagements">'
+        f'<div class="grille">{corps}</div></section>'
+    )
+
+
+def _simulateur_court(contexte: Contexte, vers: str = "/simuler") -> str:
+    """Le formulaire court de l'accueil : quatre champs, et « Calculer ».
+
+    Le site est un simulateur, et rien du premier écran ne le disait : le mot
+    n'était que dans un onglet, et le seul bouton arrivait au troisième écran —
+    au cinquième sur un téléphone. Il est maintenant SOUS LE TITRE, sur le
+    panneau crème, avant même les engagements : la preuve est mise à hauteur de
+    la promesse.
+
+    Quatre champs et non douze. Ce sont ceux qui suffisent à une carrière
+    ordinaire ; la page Simuler porte le formulaire entier, et le lien y mène
+    pour une carrière hachée. Les noms des champs sont exactement ceux du grand
+    formulaire (``naissance``, ``debut``, ``statut``, ``liquidation``), parce
+    que c'est la même adresse qui les reçoit — et que l'écoute de soumission
+    d'``index.html`` lit l'``action``, sans rien savoir du formulaire.
+    """
+    saisie = Saisie()
+    affiliations = contexte.simulateur().affiliations
+    champs = "".join([
+        g.champ_date("naissance", "Date de naissance", saisie.naissance_iso,
+                     "seul le mois compte", saisie.naissance_en_clair,
+                     min=f"{NAISSANCE_MINIMALE}-01-01",
+                     max=f"{NAISSANCE_MAXIMALE}-12-31",
+                     autocomplete="bday"),
+        g.champ_date("debut", "Début de carrière", saisie.jour_de(saisie.debut),
+                     "le premier mois cotisé", saisie.calcul_de(saisie.debut),
+                     min=saisie.jour_de(AGE_DEBUT_MINIMAL),
+                     max=saisie.jour_de(AGE_DEBUT_MAXIMAL)),
+        g.liste("statut", "Statut",
+                _options_statuts(affiliations, saisie.date_de(saisie.debut)),
+                saisie.statut),
+        g.champ_date("liquidation", "Départ souhaité",
+                     saisie.jour_de(saisie.liquidation), "effectif, ou souhaité",
+                     saisie.calcul_de(saisie.liquidation),
+                     min=saisie.jour_de(AGE_LIQUIDATION_MINIMAL),
+                     max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL)),
+    ])
+    return f"""
+<form class="creme simulateur-court" method="get" action="{g.lien(vers)}">
+  <div class="tete">
+    <h2 class="serif">Et vous, ça donne combien&nbsp;?</h2>
+    <span class="etiquette">Le simulateur</span>
+  </div>
+  <div class="grille">{champs}
+    <button type="submit">Calculer →</button>
+  </div>
+  <p class="discret" style="margin:0.9rem 0 0">Six montants côte à côte :
+  les règles d'aujourd'hui, et les nôtres. Tout se calcule dans votre
+  navigateur, rien n'est envoyé.</p>
+</form>"""
 
 
 def _tableau_garantie() -> str:
@@ -2276,12 +2428,20 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
                 type_="number", min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
     ])
 
-    return f"""
+    tete = g.affiche(
+        "Le simulateur",
+        "Votre carrière, calculée "
+        '<span class="cle-texte">six fois.</span>',
+        "Le système actuel, les comptes notionnels appliqués depuis 1941 ou à "
+        "partir de la bascule, et notre proposition. Tout se calcule dans "
+        "votre navigateur : rien n'est envoyé, rien n'est conservé.",
+    )
+    return tete + f"""
 <form class="carte" method="get" action="{g.lien('/simuler')}">
   {g.cache("unite_revenu", saisie.unite_revenu)}
-  <h2 style="margin-top:0">Simuler une carrière{_bulle_du_titre(saisie)}</h2>
-  <p class="chapeau" style="margin-top:0.3rem">L'exemple est déjà rempli.
-  Calculez-le tel quel, ou saisissez votre carrière.</p>
+  <h2 class="serif" style="margin-top:0">Votre carrière{_bulle_du_titre(saisie)}</h2>
+  <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
+  quel, ou saisissez la vôtre.</p>
   <div class="grille">{identite}</div>
   <h3>La carrière, période par période{_bulle_des_periodes()}</h3>
   {_metiers(saisie, affiliations, echelle)}
@@ -2737,9 +2897,14 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     )
 
 
-def _trajectoire(contexte: Contexte, comparaison: Comparaison,
-                 saisie: Saisie) -> str:
+def _corps_trajectoire(contexte: Contexte, comparaison: Comparaison,
+                       saisie: Saisie) -> str:
     """Le cumul versé par chaque scénario, du départ à 105 ans.
+
+    Renvoie le CORPS seul, sans son enveloppe : la page Simuler le replie sous
+    un dépliant (:func:`_trajectoire`), la page Trajectoire le montre ouvert,
+    et il n'est calculé qu'une fois de chaque façon. Chaîne vide si la
+    carrière ne permet aucun cumul.
 
     Les six barres du haut donnent la pension d'UN mois — le premier. Elles ne
     disent donc rien de ce qu'une retraite finit par verser, ni de ce que la
@@ -2813,7 +2978,7 @@ def _trajectoire(contexte: Contexte, comparaison: Comparaison,
     # encore son « k » sur téléphone, où les textes du repère sont grossis. Le
     # texte sous le graphique dit ce que « k€ » désigne, et de quelle année.
     unite = "k€"
-    return g.depliant("Ce que chaque scénario finit par verser", f"""
+    return f"""
 <p>Les six montants du haut sont ceux d'un seul mois, le premier. Ce graphique
 les additionne, année après année, à mesure que le retraité vieillit.{g.bulle(
     "Ce que ce graphique ajoute aux six montants",
@@ -2851,7 +3016,260 @@ ans d'âge, le nombre par lequel le capital notionnel est divisé.
     f"{AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête — c'est pour eux "
     "qu'il va si loin.",
 )}</p>
-""")
+"""
+
+
+def _trajectoire(contexte: Contexte, comparaison: Comparaison,
+                 saisie: Saisie) -> str:
+    """Le même cumul, replié, pour le bas de la page Simuler.
+
+    Là-bas il vient après six montants et trois tableaux : le déplier d'office
+    ferait un septième bloc à traverser. Il a sa propre page, en revanche, où
+    il est le sujet et s'ouvre donc de lui-même.
+    """
+    corps = _corps_trajectoire(contexte, comparaison, saisie)
+    if not corps:
+        return ""
+    return g.depliant("Ce que chaque scénario finit par verser", corps)
+
+
+
+def _page_trajectoire(contexte: Contexte, parametres: dict[str, str]) -> str:
+    """Ce que chaque système vous AURA versé, du départ à 105 ans.
+
+    Cette page existe parce qu'un montant mensuel ne dit rien de la durée. Les
+    barres de la page Simuler donnent la pension d'un mois, le premier ; ici
+    on additionne, année après année, et c'est là que la mécanique notionnelle
+    devient visible — la pension vaut le capital divisé par l'espérance de vie,
+    donc vivre au-delà de cette moyenne c'est toucher plus que ce que la
+    carrière a financé.
+
+    Elle porte UN graphique, et un seul : c'est la règle du site depuis la
+    refonte — le Coût montre la trajectoire du système, Simuler compare les
+    scénarios, celle-ci compare les cumuls. Une page, une question.
+
+    Le formulaire est le même que celui de l'accueil, et pointe ici : on change
+    la carrière sans quitter la page. Sans paramètres, la carrière d'exemple
+    répond — une page qui s'ouvrirait sur un formulaire vide ne montrerait pas
+    ce qu'elle a à montrer.
+    """
+    tete = g.affiche(
+        "Trajectoire",
+        "Ce que chaque système vous "
+        '<span class="cle-texte">aura versé.</span>',
+        "La même carrière, suivie année après année depuis le départ. Pas une "
+        "pension mensuelle, mais le cumul : ce que vous aurez réellement "
+        "touché à 75, à 86, à 95 ans.",
+    )
+    formulaire = _simulateur_court(contexte, "/trajectoire")
+
+    try:
+        saisie = Saisie.depuis_requete(parametres)
+    except ErreurSaisie as erreur:
+        return tete + formulaire + _erreur(str(erreur))
+
+    try:
+        comparaison = contexte.simuler(saisie)
+        corps = _corps_trajectoire(contexte, comparaison, saisie)
+    except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError) as erreur:
+        return tete + formulaire + _erreur(str(erreur))
+    if not corps:
+        return tete + formulaire + _erreur(
+            "Cette carrière ne verse aucune pension : il n'y a pas de cumul "
+            "à tracer."
+        )
+
+    # Le graphique est monté en CARTE, et non posé nu : c'est la carte qui lui
+    # donne sa question, sa réponse en une phrase, sa source — et sa barre de
+    # partage. Sans elle, la Trajectoire aurait été la seule page à graphique
+    # dont on ne puisse rien publier, alors que c'est le tracé le plus
+    # démonstratif du site.
+    carte = g.cle(
+        "Au total, combien chaque système aura-t-il versé ?",
+        "À âge de départ identique, l'écart entre deux courbes est ce que le "
+        "système choisi vous coûte ou vous rapporte, année après année.",
+        corps,
+        "Cumuls bruts, en euros constants, sur la carrière saisie. "
+        "Modèle ouvert : "
+        f'<a href="{g.DEPOT}">le dépôt</a>.',
+        identifiant="cumul",
+    )
+
+    return f"""
+{tete}
+
+{formulaire}
+
+{carte}
+
+<div class="paire">
+  <div>
+    <h2 style="margin-top:0">Pourquoi le cumul, et pas le mois</h2>
+    <p>Une pension mensuelle ne dit rien de la durée. Le graphique montre les
+    six systèmes à âge de départ identique : l'écart entre deux courbes est ce
+    que le système choisi vous coûte ou vous rapporte, année après année.</p>
+    <p>Les scénarios qui ne portent au compte que la <strong>part
+    salariale</strong> restent sous le système actuel ; ceux qui y ajoutent la
+    <strong>part patronale</strong> passent au-dessus. <span class="cle-texte">La
+    proposition libérale se place entre les deux, avec un taux de
+    {g.pourcentage(contexte.base.taux_cotisation_liberal, decimales=0)} au lieu
+    de {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)}.</span></p>
+  </div>
+  <div class="encadre">
+    <h2 class="serif" style="margin-top:0">Le repère de l'espérance de vie</h2>
+    <p>C'est la durée que le modèle lit sur la table de la génération
+    concernée, et par laquelle le compte notionnel divise. Celui qui vit plus
+    longtemps touche davantage que ce qu'il a cotisé, celui qui vit moins
+    longtemps touche moins — comme dans tout système par répartition.</p>
+    <p class="discret">Le trait vertical du graphique la marque. La courbe
+    continue au-delà : c'est là que se lit ce qu'une longue vieillesse
+    change.</p>
+  </div>
+</div>
+"""
+
+
+
+def _carte_partage(surtitre: str, chiffre: str, phrase: str, detail: str,
+                   classes: str = "", legende: str = "") -> str:
+    """Une carte 1200 × 675, au format de X et de LinkedIn.
+
+    Elle est rendue À SA TAILLE RÉELLE, dans un cadre qui défile, et non
+    réduite : la maquette l'exprimait en unités relatives à un conteneur de
+    400 px, si bien qu'aucune capture d'écran ne faisait jamais l'image
+    annoncée. En pixels, calibrée pour 1200 de large, une capture donne
+    vraiment 1200 × 675 — avec « @pliberal » à 32 px, lisible après
+    republication.
+
+    Le pied est ce qui compte le plus : une image qui quitte le site n'a plus
+    ni barre d'adresse ni page autour, et sans ces deux lignes elle circule
+    sans dire d'où elle vient. Le premier qui la republie en devient la source.
+    """
+    boite = f"carte-partage {classes}".strip()
+    pied = (f'<div class="pied"><span class="compte">{g.SIGNATURE}</span>'
+            f'<span class="adresse">{ADRESSE_PARTAGE}</span></div>')
+    corps = (f'<div class="{boite}">'
+             f'<p class="surtitre">{surtitre}</p>'
+             f'<div><div class="chiffre">{chiffre}</div>'
+             f'<div class="phrase">{phrase}</div>'
+             f'<div class="detail">{detail}</div></div>{pied}</div>')
+    return (f'<figure><div class="cadre-carte">{corps}</div>'
+            f'<figcaption>{legende}</figcaption></figure>')
+
+
+#: L'adresse qu'une carte emporte. Celle du site parent, et non celle de
+#: GitHub Pages : c'est là que le lecteur d'un post doit atterrir.
+ADRESSE_PARTAGE = "partiliberalfrancais.fr/#simulateur"
+
+
+def _partager(contexte: Contexte) -> str:
+    """Les chiffres du programme, au format des réseaux sociaux.
+
+    Cette page a failli ne pas exister sous cette forme. Elle a d'abord été LE
+    dispositif de partage, et c'était une erreur : « pas grand monde ne va
+    l'utiliser à part les militants qui sont au courant qu'elle existe ». Le
+    partage est donc descendu sur les pages elles-mêmes — une barre sous chaque
+    graphique, qui compose l'image de CE qu'on vient de lire. Ce qui reste ici
+    est ce que cette barre ne peut pas donner : les chiffres du programme, qui
+    ne sont le résultat d'aucun graphique, et la liste complète pour qui les
+    veut tous.
+
+    Les valeurs viennent du modèle, comme partout ailleurs : changer un
+    paramètre change les cartes.
+    """
+    base = contexte.base
+    cout = contexte.cout()
+    solde = cout.solde
+    horizon = solde.annee(solde.derniere_annee)
+    taux = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
+    garantie = base.garantie_vieillesse_mensuelle
+    isolement = base.allocation_isolement_mensuelle
+    manque = abs(horizon.solde("actuel"))
+    depense = horizon.depense("actuel")
+
+    tete = g.affiche(
+        "Partager",
+        "Quatre cartes, "
+        '<span class="cle-texte">prêtes à publier.</span>',
+        "Au format des réseaux sociaux — 1200 × 675 —, avec le chiffre, sa "
+        "source et notre compte. Une capture d'écran de la carte suffit : "
+        f'<strong class="cle-texte">{g.SIGNATURE}</strong> voyage avec '
+        "l'image. Chaque cadre défile horizontalement pour montrer la carte "
+        "entière.",
+    )
+
+    cartes = "".join([
+        _carte_partage(
+            "Notre programme pour les retraites",
+            g.euros(garantie + isolement),
+            "par mois au minimum, pour une personne seule.<br>"
+            f"{g.euros(2 * garantie)} pour un couple.",
+            f"{g.euros(garantie)} par personne, plus {g.euros(isolement)} "
+            "d'allocation d'isolement. Payés par l'impôt, dès "
+            f"{MinimumVieillesse.AGE_OUVERTURE} ans.",
+            legende="Le plancher. Défilez pour voir la carte entière, puis "
+                    "capturez-la.",
+        ),
+        _carte_partage(
+            "Baisse des prélèvements",
+            taux,
+            "de cotisation retraite, pour tout le monde.",
+            "Part salariale et patronale additionnées : "
+            f"{g.pourcentage(TAUX_ACTUEL_SALARIAL)} + "
+            f"{g.pourcentage(TAUX_ACTUEL_PATRONAL)} aujourd'hui pour un "
+            "salarié du privé.",
+            legende="Le taux. Défilez pour voir la carte entière, puis "
+                    "capturez-la.",
+        ),
+        _carte_partage(
+            "Ce que le système actuel ne paie plus",
+            f"{g.nombre(manque * 100, 1)} points de PIB",
+            f"c'est l'écart annuel à combler en {solde.derniere_annee}, sans "
+            "réforme.",
+            f"{g.pourcentage(depense, decimales=1)} du PIB de dépenses contre "
+            f"{g.pourcentage(depense - manque, decimales=1)} de ressources. "
+            "Source : COR, comptes du système de retraite.",
+            classes="deficit",
+            legende="Le déficit. Défilez pour voir la carte entière, puis "
+                    "capturez-la.",
+        ),
+        _carte_partage(
+            "Le simulateur",
+            "Et vous, ça donne combien ?",
+            "Votre carrière, calculée six fois : les règles d'aujourd'hui, et "
+            "les nôtres.",
+            "Modèle ouvert, données publiques. Tout se calcule dans votre "
+            "navigateur : rien n'est envoyé.",
+            classes="claire appel",
+            legende="L'appel au simulateur. Défilez pour voir la carte "
+                    "entière, puis capturez-la.",
+        ),
+    ])
+
+    return f"""
+{tete}
+
+<div class="cartes">{cartes}</div>
+
+<div class="paire">
+  <div>
+    <h2 style="margin-top:0">Texte prêt à coller</h2>
+    <p>« Un minimum de {g.euros(garantie + isolement)}/mois, {taux} de
+    cotisation au lieu de
+    {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)}, et un compte de retraite
+    en euros que chacun peut lire. Vérifiez sur votre carrière :
+    {ADRESSE_PARTAGE} — {g.SIGNATURE} »</p>
+  </div>
+  <div class="encadre">
+    <h2 class="serif" style="margin-top:0">Et depuis les pages du site</h2>
+    <p>Inutile de repasser par ici pour partager un graphique : sous chacun, une
+    barre <span class="cle-texte">Partager</span> compose l'image de ce que vous
+    venez de lire, propose un message déjà rédigé pour X, et copie ce message.
+    Les graphiques portent aussi <span class="cle-texte">{g.SIGNATURE}</span>
+    dans le cadre — une capture reste signée.</p>
+  </div>
+</div>
+"""
 
 
 def _titres_scenarios(saisie: Saisie) -> tuple[tuple[str, str], ...]:
@@ -4128,11 +4546,16 @@ def _cas_types(contexte: Contexte) -> str:
         "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge.</p>" + ages,
     )
 
+    tete = g.affiche(
+        "Cas types",
+        'Treize carrières, <span class="cle-texte">sept générations.</span>',
+        "Chaque case dit ce que la pension deviendrait, par rapport à "
+        "aujourd'hui, pour la même carrière. <strong>Rouge : moins "
+        "qu'aujourd'hui. Vert : plus.</strong>",
+    )
+
     return f"""
-<h2 style="margin-top:0">Treize carrières, comparées</h2>
-<p class="chapeau">Treize carrières types, sept générations. Chaque case dit ce
-que la pension deviendrait, par rapport à aujourd'hui, pour la même carrière.
-<strong>Rouge : moins qu'aujourd'hui. Vert : plus.</strong></p>
+{tete}
 
 <div class="note"><strong>Ces pourcentages ne sont pas des baisses de
 pension.</strong> Chaque case compare deux carrières calculées sous la même
@@ -4410,12 +4833,17 @@ que de {premiere_ventilee} à {derniere_ventilee}.""",
     ])
     plan = g.plan(carte_bilan + carte_provenance + detail, "/cout")
 
+    tete = g.affiche(
+        "Le coût",
+        'Ce qui rentre, ce qui sort, '
+        '<span class="cle-texte">ce qui manque.</span>',
+        "Vos cotisations ne sont pas mises de côté. Elles paient aussitôt les "
+        "pensions de ceux qui sont déjà retraités : c'est la "
+        + g.terme("répartition") + ".",
+    )
+
     return f"""
-<h2 style="margin-top:0">L'argent de la retraite</h2>
-<p class="chapeau">Vos cotisations ne sont pas mises de côté. Elles paient
-aussitôt les pensions de ceux qui sont déjà retraités : c'est la
-{g.terme("répartition")}. Voici ce qui rentre, ce qui sort, et ce
-qui manque.</p>
+{tete}
 
 <div class="note resume"><strong>En clair.</strong> En {obs}, les retraites
 ont coûté un peu plus qu'elles n'ont rapporté : il a manqué
@@ -5403,11 +5831,17 @@ salaires : ce qu'un système en répartition peut servir sans toucher à son tau
 Les huit autres restent à un clic, dans les options du simulateur.""",
     )
 
+    tete = g.affiche(
+        "La méthode",
+        "Comment c'est calculé, "
+        '<span class="cle-texte">en trois opérations.</span>',
+        "Un compte notionnel est un compte <em>virtuel</em> : rien n'est "
+        "placé, les cotisations de l'année paient les pensions de l'année. "
+        "Ce qui change, c'est le calcul du droit.",
+    )
+
     return f"""
-<h2 style="margin-top:0">Comment c'est calculé</h2>
-<p class="chapeau">Un compte notionnel est un compte <em>virtuel</em> : rien
-n'est placé, les cotisations de l'année paient les pensions de l'année. Ce qui
-change, c'est le calcul du droit, en trois opérations.</p>
+{tete}
 
 <div class="note resume"><strong>En clair.</strong> Votre pension serait votre
 compte divisé par le nombre d'années qu'il vous reste à vivre, en moyenne.
@@ -6009,11 +6443,16 @@ détaillées</a></p>""", identifiant="donnees-sources")
               + _inventaire_section(macro.racine, simulateur.catalogue)
               + depliant_sources)
 
+    tete = g.affiche(
+        "Les données",
+        "Rien ici n'est "
+        '<span class="cle-texte">à croire sur parole.</span>',
+        "Chaque série est recontrôlée, automatiquement, contre le fichier de "
+        "l'institution qui la produit. Ce qui ne l'est pas est dit.",
+    )
+
     return f"""
-<h2 style="margin-top:0">Ce que valent les chiffres</h2>
-<p class="chapeau">Rien ici n'est à croire sur parole. Chaque série est
-recontrôlée, automatiquement, contre le fichier de l'institution qui la
-produit. Ce qui ne l'est pas est dit.</p>
+{tete}
 
 <div class="note resume"><strong>En clair.</strong> Les chiffres de ce site
 viennent des institutions qui les produisent : l'INSEE pour les prix et les
