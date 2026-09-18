@@ -880,14 +880,20 @@ tbody tr[hidden] { display: none; }
   background: repeating-linear-gradient(135deg, var(--liberal) 0 3px,
                                         var(--fond-carte) 3px 6px);
 }
-/* Le partage du montant de la proposition, sous le chiffre et aligné sur lui :
-   le total se lit d'abord, ce qui le compose juste après. Sur un téléphone, la
-   ligne repasse à gauche avec le reste du bloc. */
-.scenario .partage {
+/* De quoi le montant de la proposition est fait, sous le chiffre et aligné sur
+   lui : le total se lit d'abord, sa composition juste après. Sur un téléphone,
+   la ligne repasse à gauche avec le reste du bloc.
+
+   Elle ne s'appelle PAS « partage », et c'est délibéré : cette classe-là est
+   déjà celle de la barre de boutons de partage, qui porte un filet or de 3 px
+   sur toute la largeur. Un nom repris ailleurs a tiré ce filet en travers du
+   bloc de la proposition, entre le montant et sa barre — une ligne jaune
+   continue que rien n'expliquait. */
+.scenario .composition {
   display: block; text-align: right; font-size: 0.9rem;
   color: var(--texte-doux); margin-top: 0.2rem;
 }
-@media (max-width: 40rem) { .scenario .partage { text-align: left; } }
+@media (max-width: 40rem) { .scenario .composition { text-align: left; } }
 .fiches { display: grid;
           grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
           gap: 1rem; }
