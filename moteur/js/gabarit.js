@@ -106,10 +106,15 @@ export function affiche(surtitre, titre, chapeau) {
 /**
  * Pied de page.
  *
- * Il porte ce que la loi exige d'atteindre depuis n'importe quelle page — les
- * mentions légales — et ce que le lecteur doit savoir avant de citer un chiffre
- * : d'où vient le modèle, en quelle unité il compte, et qu'il ne vaut pas
- * relevé de carrière.
+ * Il porte ce que le lecteur doit savoir avant de citer un chiffre : d'où vient
+ * le modèle, sous quelle licence, en quelle unité il compte, et qu'il ne vaut
+ * pas relevé de carrière.
+ *
+ * Il ne porte AUCUNE mention légale. Le site qui accueille le simulateur —
+ * partiliberalfrancais.fr — édite et héberge la page ; l'identification de
+ * l'éditeur, la politique de données personnelles et la déclaration
+ * d'accessibilité sont les siennes, et deux déclarations concurrentes valent
+ * moins qu'une.
  */
 export function pied() {
   return `<footer>
@@ -123,7 +128,6 @@ export function pied() {
   Les montants sont bruts, exprimés en euros constants de l'année de référence.
   Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
   <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
-  <p><a href="${lien("/mentions")}">Mentions légales, données personnelles et accessibilité</a></p>
   <p class="retour-site">Un outil du <a href="${SITE_PARENT}" target="_top">Parti libéral français</a>.</p>
 </footer>`;
 }
@@ -551,8 +555,8 @@ export function fiche(etiquette, valeur, precision = "", definition = "") {
  * épaisseurs, et un emoji dont le rendu change avec le système.
  *
  * Le tracé est écrit ICI, et non chargé : le portage JavaScript n'utilise
- * aucune bibliothèque, et la page ne demande aucune ressource tierce — c'est ce
- * que les mentions légales promettent. Les originaux sont recopiés sans
+ * aucune bibliothèque, et la page ne demande aucune ressource tierce — un test
+ * du dépôt l'exige. Les originaux sont recopiés sans
  * retouche dans `moteur/icones/`, et un test vérifie que cette table dit
  * exactement ce qu'ils disent, des deux côtés du portage.
  *

@@ -133,9 +133,12 @@ trois chiffres et deux graphiques en tête de page, qui se lisent au survol et s
 téléchargent en image), **Méthode**, **Données** (l'état de fiabilité des
 séries). Chacune est bâtie de la même façon : ce qui répond à la question en
 tête de page, et tout ce qui la justifie dans des sections repliées qui se
-parcourent comme un sommaire. Le pied de
-page renvoie aux **Mentions légales**, qui disent qui édite, qui héberge, ce que
-le site fait des données saisies — rien — et où en est son accessibilité.
+parcourent comme un sommaire. Le site ne porte aucune mention légale : il est
+encarté dans partiliberalfrancais.fr, qui l'édite et l'héberge, et qui porte donc
+l'identification de l'éditeur, la politique de données personnelles et la
+déclaration d'accessibilité. Ce que le dépôt ne peut pas déléguer — la licence
+du code, celle des infographies, l'obligation de citer le producteur d'une
+série — se lit sous **Données**, section « Licences et réutilisation ».
 
 La simulation vit sous `#/simuler`, et son adresse contient tous ses
 paramètres — elle peut être citée ou partagée telle quelle. Chaque résultat est
@@ -1048,7 +1051,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          905 tests Python
+tests/                          896 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1108,9 +1111,10 @@ Aucun test n'accède au réseau : les sources sont simulées.
 Une vingtaine d'entre eux tiennent l'accessibilité : contrastes mesurés dans les
 deux thèmes, titres et en-têtes de ligne des tableaux, étiquettes et groupes du
 formulaire, zones défilantes atteignables au clavier, absence d'information
-enfermée dans une infobulle, et focus reposé après chaque rendu. Ce que la page
-« Mentions légales » déclare est donc vérifié à chaque modification, et non
-affirmé une fois pour toutes.
+enfermée dans une infobulle, et focus reposé après chaque rendu. Le site ne
+déclare plus son accessibilité — cette déclaration appartient à l'éditeur du
+site d'accueil —, mais il continue de la mesurer à chaque modification : une
+promesse écrite se périme, ces contrôles-là non.
 
 Deux d'entre eux lancent `node` pour rejouer le calcul côté JavaScript — les
 cas-témoins figés, puis des carrières tirées au hasard ; ils sont ignorés si

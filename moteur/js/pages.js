@@ -1459,8 +1459,6 @@ export const DESCRIPTIONS = {
   "/partager": "Les chiffres du programme au format des réseaux sociaux, "
     + "1200 × 675, signés @pliberal : le plancher, le taux, le "
     + "déficit, et les trois graphiques du site.",
-  "/mentions": "Mentions légales, données personnelles et accessibilité du "
-    + "simulateur de retraite en comptes notionnels.",
 };
 
 export const TITRES = {
@@ -1472,10 +1470,6 @@ export const TITRES = {
   "/methode": "Méthode",
   "/donnees": "Données",
   "/partager": "Partager",
-  // Hors de la barre de navigation, où elle prendrait la place d'une page
-  // qu'on vient lire : le pied de page y renvoie depuis toutes les autres, ce
-  // que la loi demande — être joignable depuis n'importe où sur le site.
-  "/mentions": "Mentions légales",
 };
 
 /**
@@ -1504,9 +1498,6 @@ export function rendre(contexte, chemin, parametres = null) {
   }
   if (chemin === "/donnees") {
     return [TITRES[chemin], donnees(contexte)];
-  }
-  if (chemin === "/mentions") {
-    return [TITRES[chemin], mentions()];
   }
   if (chemin !== "/simuler") {
     return [TITRES["/"], programme(contexte)];
@@ -5578,9 +5569,37 @@ mesure, le COR pour ce qu'il décide.</p>
 <p class="discret"><a href="${g.DEPOT}/blob/main/docs/limites.md">Limites
 détaillées</a></p>`, "donnees-sources");
 
+  // La réutilisation se range ici plutôt que sur une page à elle : qui vient
+  // chercher d'où sort un chiffre est celui-là même qui s'apprête à le
+  // reprendre, et la règle de citation ne se comprend qu'à côté de la liste des
+  // producteurs. Ce n'est pas une mention légale — l'éditeur du site d'accueil
+  // porte les siennes —, c'est la licence de ce dépôt.
+  const depliantReutilisation = g.depliant("Licences et réutilisation", `
+<p>Le code du modèle et du site est publié sous
+<a href="${g.DEPOT}/blob/main/LICENSE">licence Apache 2.0</a> : réutilisable, y
+compris commercialement, à condition d'en conserver la mention. Les pictogrammes
+viennent de <a href="https://lucide.dev">Lucide</a> (licence ISC) ; ils sont
+recopiés dans le dépôt, et le site ne les charge donc chez personne.</p>
+<p>Les infographies, graphiques, tableaux et textes que le site affiche sont
+sous licence <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">Creative
+Commons Attribution – Partage dans les mêmes conditions 4.0</a> (CC BY-SA) :
+libres de reprise et d'adaptation, à condition de citer ce site et d'en indiquer
+l'adresse, de signaler les modifications, et de republier toute version modifiée
+sous la même licence. Le nom et le logo du Parti Libéral Français ne sont
+couverts par aucune de ces licences.</p>
+<p>Les données, elles, ne sont pas la propriété de l'éditeur. Les séries
+françaises reprises ici — INSEE, DREES, DILA et Légifrance, Service des
+retraites de l'État, caisses — sont des informations publiques, réutilisables
+au titre des articles L321-1 et suivants du code des relations entre le public
+et l'administration, le plus souvent sous Licence Ouverte (Etalab). Eurostat et
+l'OCDE posent leurs propres conditions de réutilisation. Toutes imposent la
+citation de la source : chaque valeur du dépôt porte la sienne dans
+<a href="${g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a>.
+<strong>Qui reprend un chiffre d'ici cite le producteur, pas ce site.</strong></p>`, "donnees-reutilisation");
+
   const detail = depliantSeries + depliantFiabilite
     + inventaireSection(contexte.paquet.inventaire || [], simulateur.catalogue)
-    + depliantSources;
+    + depliantSources + depliantReutilisation;
 
   const tete = g.affiche(
     "Les données",
@@ -6093,153 +6112,4 @@ règle nouvelle aux seules années suivantes.</p>
 ${etapes}
 <p>Après la bascule, un seul régime : départ possible à
 ${age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>`);
-}
-
-function mentions() {
-  const aCompleter = '<em class="a-completer">information à compléter par '
-    + "l'éditeur</em>";
-  return `
-<h2 style="margin-top:0">Mentions légales</h2>
-<p class="chapeau">Qui publie ce site, qui l'héberge, ce qu'il fait de ce que
-vous saisissez — c'est-à-dire rien —, et où il en est de son accessibilité.</p>
-
-<h3>Éditeur</h3>
-<p>Parti Libéral Français.</p>
-<div class="note avertissement">
-  <p><strong>Cette rubrique est incomplète.</strong> Un site édité par une
-  personne morale doit afficher sa dénomination exacte, l'adresse de son siège,
-  un numéro de téléphone et le nom de son directeur de la publication
-  (loi n° 2004-575 du 21 juin 2004, article 6-III-1 ; loi n° 82-652 du
-  29 juillet 1982, article 93-2). Manquent ici :</p>
-  <ul class="serree">
-    <li>dénomination sociale ou statutaire exacte, et forme juridique : ${aCompleter}</li>
-    <li>adresse du siège : ${aCompleter}</li>
-    <li>numéro de téléphone : ${aCompleter}</li>
-    <li>directeur de la publication : ${aCompleter}</li>
-  </ul>
-</div>
-
-<h3>Hébergement</h3>
-<p>Le site est publié par GitHub Pages. Hébergeur : GitHub, Inc.,
-88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis —
-<a href="https://github.com/contact">github.com/contact</a>.</p>
-
-<h3>Contact</h3>
-<p>Pour signaler une erreur de calcul, une source mal citée ou un défaut
-d'accessibilité : <a href="${g.DEPOT}/issues">les tickets du dépôt</a>. Une
-demande y est publique, ce qui est aussi la façon la plus simple de vérifier
-qu'elle a reçu une réponse.</p>
-
-<h3>Ce que ce simulateur n'est pas</h3>
-<p>Il n'émane d'aucune caisse de retraite, d'aucune administration, et n'engage
-personne. Ce qu'il affiche est le résultat d'un modèle appliqué aux données que
-vous saisissez : ce n'est ni un relevé de carrière, ni une estimation de vos
-droits, ni un conseil patrimonial ou financier. Vos droits réels ne sont établis
-que par vos caisses, dont le service commun est
-<a href="https://www.info-retraite.fr/">info-retraite.fr</a>. Les écarts entre
-scénarios sont l'objet du modèle ; les niveaux affichés pour une carrière
-individuelle en gardent la marge d'incertitude décrite par la
-page <a href="${g.lien("/donnees")}">Données</a>.</p>
-
-<h3>Données personnelles</h3>
-<p><strong>Ce site ne collecte rien.</strong> Il n'a pas de serveur de calcul :
-le modèle, ses tables et ses séries sont téléchargés une fois, puis tout
-s'exécute dans votre navigateur. Ce que vous saisissez — date de naissance,
-sexe, date de départ, revenu — n'est envoyé nulle part, n'est enregistré nulle
-part, et disparaît quand vous fermez l'onglet.</p>
-<ul class="serree">
-  <li><strong>Aucun cookie, aucun traceur, aucune mesure d'audience.</strong>
-  Rien n'est déposé sur votre appareil, et le site ne demande donc aucun
-  consentement : il n'a rien à faire consentir.</li>
-  <li><strong>Aucune ressource tierce.</strong> Pas de police d'écriture
-  distante, pas de carte, pas de bibliothèque appelée à un autre domaine : tout
-  ce que la page charge vient de cette adresse. Un contrôle automatique le
-  vérifie à chaque modification du dépôt.</li>
-  <li><strong>L'adresse de la page contient vos paramètres.</strong> C'est ce
-  qui rend une simulation citable et refaisable à l'identique. La partie qui les
-  porte suit le signe <code>#</code>, que les navigateurs n'envoient jamais au
-  serveur ; elle reste en revanche dans l'historique de votre navigateur, et
-  partager le lien, c'est partager ce que vous avez saisi.</li>
-  <li><strong>L'hébergeur, lui, voit passer votre visite.</strong> Servir une
-  page suppose de recevoir une requête : GitHub, comme tout hébergeur, traite à
-  ce titre votre adresse IP, selon sa propre politique de confidentialité.
-  L'éditeur de ce site n'y a pas accès.</li>
-</ul>
-<p>Il n'y a donc, du côté de l'éditeur, aucun traitement de données à caractère
-personnel au sens du règlement (UE) 2016/679, et rien sur quoi exercer un droit
-d'accès ou d'effacement : il n'existe nulle part de données vous concernant qui
-viennent de ce site.</p>
-
-<h3>Accessibilité : conformité partielle</h3>
-<p>Ce site n'entre pas dans le champ de l'obligation d'accessibilité de
-l'article 47 de la loi n° 2005-102 du 11 février 2005, qui vise les personnes
-publiques, les délégataires de service public et les entreprises de plus de
-250 millions d'euros de chiffre d'affaires. Il vise néanmoins le
-<strong>RGAA 4.1</strong>, c'est-à-dire le niveau AA des WCAG 2.1.</p>
-<p><strong>État déclaré : conformité partielle, par auto-évaluation.</strong>
-Aucun audit externe n'a été mené, et aucun test n'a été conduit avec des
-utilisateurs de technologies d'assistance. Ce qui a été vérifié, et l'est à
-chaque modification par les contrôles automatiques du dépôt :</p>
-<ul class="serree">
-  <li>contrastes de texte au-delà de 4,5:1 et contours de champs au-delà de
-  3:1, dans le thème clair comme dans le thème sombre ;</li>
-  <li>couleurs des quatre systèmes séparables autrement que par la teinte, et
-  contrôlées pour les visions daltoniennes ;</li>
-  <li>tableaux titrés, avec en-têtes de colonne et de ligne ;</li>
-  <li>chaque graphique suivi du tableau de ses points, année par année : une
-  courbe est une image, et ce tableau en est la description détaillée ;</li>
-  <li>formulaire entièrement étiqueté, groupé par métier, utilisable au
-  clavier ;</li>
-  <li>dates saisies au calendrier du navigateur — celui que le lecteur connaît
-  déjà, dans sa langue et au clavier —, et l'âge qu'elles font écrit sous le
-  champ, rattaché à lui pour être lu avec ;</li>
-  <li>résultat du calcul annoncé aux synthèses vocales, qui ne verraient
-  autrement rien changer ;</li>
-  <li>lien d'évitement, repères de page, et respect du réglage système
-  « animations réduites ».</li>
-</ul>
-<p><strong>Ce qui reste non conforme, ou non vérifié :</strong></p>
-<ul class="serree">
-  <li>les graphiques restent du dessin : le tracé lui-même — la forme d'une
-  courbe, le moment où deux d'entre elles se croisent — ne se lit qu'à l'œil.
-  Le tableau de ses points en donne toutes les valeurs, mais lire une forme
-  dans une colonne de nombres demande un effort que voir n'exige pas ;</li>
-  <li>certaines grilles — treize cas types sur sept générations, ou les cent onze
-  lignes d'un tableau de graphique — restent larges et demandent un défilement
-  sur petit écran ;</li>
-  <li>le site exige JavaScript : le calcul se fait dans le navigateur, faute de
-  serveur pour le faire ailleurs ;</li>
-  <li>aucun test n'a été mené sur lecteur d'écran réel (NVDA, JAWS, VoiceOver).</li>
-</ul>
-<p>Un défaut d'accessibilité peut être signalé par
-<a href="${g.DEPOT}/issues">les tickets du dépôt</a>. À défaut de réponse, le
-Défenseur des droits peut être saisi :
-<a href="https://formulaire.defenseurdesdroits.fr/">formulaire.defenseurdesdroits.fr</a>.</p>
-
-<h3>Code, infographies, données et réutilisation</h3>
-<p>Le code du modèle et du site est publié sous
-<a href="${g.DEPOT}/blob/main/LICENSE">licence Apache 2.0</a> : réutilisable, y compris
-commercialement, à condition d'en conserver la mention. Les pictogrammes
-viennent de <a href="https://lucide.dev">Lucide</a> (licence ISC) ; ils sont
-recopiés dans le dépôt, et le site ne les charge donc chez personne.</p>
-<p>Les infographies, graphiques, tableaux et textes que le site affiche sont
-sous licence <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">Creative
-Commons Attribution – Partage dans les mêmes conditions 4.0</a> (CC BY-SA) :
-libres de reprise et d'adaptation, à condition de citer ce site et d'en
-indiquer l'adresse, de signaler les modifications, et de republier toute version
-modifiée sous la même licence. Le nom et le logo du Parti Libéral Français ne
-sont couverts par aucune de ces licences.</p>
-<p>Les données, elles, ne sont pas la propriété de l'éditeur. Les séries
-françaises reprises ici — INSEE, DREES, DILA et Légifrance, Service des
-retraites de l'État, caisses — sont des informations publiques, réutilisables
-au titre des articles L321-1 et suivants du code des relations entre le public
-et l'administration, le plus souvent sous Licence Ouverte (Etalab). Eurostat et
-l'OCDE posent leurs propres conditions de réutilisation. Toutes imposent la
-citation de la source : chaque valeur du dépôt porte la sienne dans
-<a href="${g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a>, et la
-page <a href="${g.lien("/donnees")}">Données</a> en donne l'état de
-contrôle. Qui reprend un chiffre d'ici cite le producteur, pas ce site.</p>
-<p class="discret">Dernière mise à jour de cette page : elle suit le dépôt, dont
-l'historique complet est public.</p>
-`;
 }

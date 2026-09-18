@@ -2635,6 +2635,68 @@ Python et le portage, et au navigateur : quatre barres sur Simuler, quatre
 courbes sur la Trajectoire, trois onglets sur Cas types, la proposition sur le
 graphique du Coût, aucune erreur de console.
 
+### 32. Retirer les mentions légales, que le site d'accueil porte — `fait`
+
+**La demande.** « On peut enlever toutes les mentions légales, données
+personnelles et accessibilité ? Normalement le site
+https://partiliberalfrancais.fr/ qui va accueillir ça prendra toute la partie
+légale. »
+
+**Pourquoi c'est juste.** Le simulateur est servi sous
+`partiliberalfrancais.fr/retraite/` : c'est ce site qui l'édite et qui
+l'héberge, et donc lui qui doit l'identification de l'éditeur (LCEN, article
+6-III), la politique de données personnelles et la déclaration
+d'accessibilité. Deux déclarations concurrentes valent moins qu'une, et celle
+du dépôt était déjà fausse d'un côté : elle nommait GitHub, Inc. comme
+hébergeur, ce qui n'est vrai que de l'adresse GitHub Pages. L'action 28 l'avait
+noté sans le corriger — « c'est à l'éditeur » —, et les quatre champs
+`a-completer` de la rubrique Éditeur attendaient depuis l'action 23.
+
+**Ce qui a été fait.**
+
+- *La page `/mentions` n'existe plus* : ni route, ni titre, ni description
+  `meta`, ni témoin, ni lien en pied. Le site n'a désormais plus aucune page
+  hors de sa barre de navigation, et un test l'exige (`set(LIENS) == set(TITRES)`).
+- *Le style `.a-completer`* — le champ marqué en rouge tireté que l'éditeur
+  devait combler — part avec elle.
+- *Ce que l'hôte ne peut PAS porter reste*, parce qu'il ne le connaît pas : la
+  licence Apache 2.0 du code, la CC BY-SA 4.0 des infographies et des textes,
+  l'ISC de Lucide, et l'obligation de citer le producteur d'une série plutôt
+  que ce site. Ces trois paragraphes sont repliés sous Données — dépliant
+  « Licences et réutilisation », `donnees-reutilisation` —, à côté de la liste
+  des vingt-huit institutions : qui vient chercher d'où sort un chiffre est
+  celui-là même qui s'apprête à le reprendre. Le pied de page continue de dire
+  les deux licences en une ligne, et que le simulateur n'a aucune valeur
+  officielle.
+- *Un test interdit le retour* de « Mentions légales », « conformité
+  partielle », « règlement (UE) 2016/679», « RGAA », `a-completer` et du
+  Défenseur des droits, sur toute page et dans le pied.
+
+**Ce qui n'a pas changé : l'accessibilité elle-même.** Le site cesse de la
+DÉCLARER, pas de la tenir. Les contrastes mesurés dans les deux thèmes, les
+tableaux titrés, le tableau de points sous chaque graphique, le formulaire
+étiqueté, le lien d'évitement, le respect des « animations réduites » et le
+contrôle daltonien restent, et restent vérifiés à chaque modification par la
+vingtaine de tests de la section « accessibilité » de `test_web.py`. Une
+promesse écrite se périme au premier changement de gabarit ; ces contrôles-là
+non.
+
+**Ce qui reste à l'éditeur du site d'accueil**, et qui est écrit dans
+`docs/integration-partiliberalfrancais.md` : porter ces mentions de façon
+qu'elles couvrent `/retraite/`. Le fichier donne la matière de la rubrique
+« données personnelles » — tout est calculé dans le navigateur, rien n'est
+envoyé, les paramètres vivent dans le fragment `#`, que le navigateur ne
+transmet pas — et l'état d'accessibilité mesuré.
+
+**Une réserve, laissée ouverte.** L'adresse GitHub Pages
+(`g-pliberal.github.io/retraitecomptenotionelle/`) n'a pas de site parent pour
+porter la partie légale. C'est une publication de travail du dépôt ; si elle
+doit rester une adresse publique, ses mentions sont à poser ailleurs, ou
+l'adresse à fermer. Le choix appartient à l'éditeur.
+
+**Vérifié.** 896 tests, et les huit routes comparées caractère par caractère
+entre Python et le portage.
+
 ---
 
 ## Ce qui est délibérément en bas
