@@ -82,7 +82,7 @@ export const CONVERSIONS_ACQUIS = [
   ["liquidation", "À l'âge de départ effectif"],
 ];
 
-// Situation de foyer de la garantie vieillesse du scénario 6. Elle ne joue que
+// Situation de foyer de la garantie vieillesse du système 4. Elle ne joue que
 // sur l'allocation d'isolement : la garantie est individualisée, et la pension
 // du conjoint n'entre jamais dans le calcul.
 export const SITUATIONS_FOYER = [
@@ -183,17 +183,51 @@ export const AGE_MAXIMUM_TRAJECTOIRE = 105;
  * Les six courbes : attribut du modèle, variable CSS de couleur — la même que
  * la barre du haut, pour qu'une couleur désigne partout le même scénario — et
  * le chiffre posé au bout de la courbe. Ce chiffre n'est pas décoratif : la
- * palette des six scénarios échoue au contrôle de séparation daltonienne
+ * palette à quatre systèmes tient le contrôle de séparation daltonienne, ce
  * (pire paire voisine : ΔE 4,3 sous deutéranopie), et six courbes qui se
  * croisent ne peuvent pas être identifiées par la couleur seule.
+ */
+/**
+ * LES QUATRE SYSTÈMES QUE LE SITE COMPARE, dans l'ordre où il les montre.
+ *
+ * Le modèle en calcule six et continue de le faire : ses deux variantes
+ * « dès la bascule » restent dans `Comparaison` et dans `cout.SCENARIOS`.
+ * Elles ne sont plus MONTRÉES — le site ne pose plus la question à laquelle
+ * elles répondaient. Copie de `SCENARIOS_MONTRES` dans `web/pages.py`.
+ */
+export const SCENARIOS_MONTRES = [
+  "actuel",
+  "notionnel_retroactif",
+  "notionnel_retroactif_employeur",
+  "notionnel_liberal",
+];
+
+/**
+ * Le libellé de chaque système partout où le site le NOMME. La nomenclature du
+ * modèle, elle, ne bouge pas : `cout.SCENARIOS` numérote toujours de 1 à 6.
+ * Copie de `LIBELLES_SYSTEMES` dans `web/pages.py`.
+ */
+const LIBELLES_SYSTEMES = {
+  actuel: "1. Système de répartition actuel",
+  notionnel_retroactif: "2. Compte notionnel, part salariale",
+  notionnel_retroactif_employeur: "3. Compte notionnel, les deux parts",
+  notionnel_liberal: "4. La proposition libérale",
+};
+
+/** Les mêmes, appariés et dans l'ordre. */
+const SCENARIOS_COMPARES = SCENARIOS_MONTRES.map(
+  (scenario) => [scenario, LIBELLES_SYSTEMES[scenario]],
+);
+
+/**
+ * Les quatre courbes : attribut du modèle, variable CSS de couleur, et le
+ * chiffre posé au bout de la courbe.
  */
 export const TRAJECTOIRE = [
   ["actuel", "--actuel", "1"],
   ["notionnel_retroactif", "--retroactif", "2"],
-  ["notionnel_prospectif", "--prospectif", "3"],
-  ["notionnel_retroactif_employeur", "--retroactif-employeur", "4"],
-  ["notionnel_prospectif_employeur", "--prospectif-employeur", "5"],
-  ["notionnel_liberal", "--liberal", "6"],
+  ["notionnel_retroactif_employeur", "--retroactif-employeur", "3"],
+  ["notionnel_liberal", "--liberal", "4"],
 ];
 
 /**
@@ -209,7 +243,7 @@ export const ANNEE_MINIMALE = 1941;
 export const ANNEE_MAXIMALE = 2070;
 
 /**
- * Un enfant de plus change la pension du scénario 1 par ses majorations. Le
+ * Un enfant de plus change la pension du système 1 par ses majorations. Le
  * champ était borné à douze dans le formulaire et nulle part ailleurs.
  */
 export const ENFANTS_MAXIMUM = 12;
@@ -340,7 +374,7 @@ const DEFAUTS = Object.freeze({
   conversion_acquis: "reference",
   part_cotisation: "salariale",
   // Seul ou en couple : la situation de foyer de la garantie vieillesse du
-  // scénario 6. Le défaut est la personne seule, comme pour l'ASPA.
+  // système 4. Le défaut est la personne seule, comme pour l'ASPA.
   foyer: "seul",
   projection: "cor_reference",
   bascule: 2026,
@@ -1301,7 +1335,7 @@ export class Contexte {
     return this._distribution;
   }
 
-  /** Le coût agrégé des six systèmes — une seconde de calcul, une fois. */
+  /** Le coût agrégé de tous les systèmes — une seconde de calcul, une fois. */
   cout() {
     if (!this._cout) {
       this._cout = calculerCout(
@@ -1416,7 +1450,7 @@ export const DESCRIPTIONS = {
     + "pension deviendrait, par rapport à aujourd'hui, sous la "
     + "proposition et sous quatre contrefactuels.",
   "/cout": "Ce que la retraite coûte, d'où vient l'argent, et ce qui manque, "
-    + "de 1959 à 2070 — et ce que chacun des six systèmes coûterait.",
+    + "de 1959 à 2070 — et ce que chacun des quatre systèmes coûterait.",
   "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
     + "opérations, et pourquoi la règle de revalorisation décide de "
     + "presque tout.",
@@ -1803,7 +1837,7 @@ function formulaire(saisie, contexte) {
 
   const avance = [
     // Le sexe ne change RIEN par défaut : la table de conversion est unisexe,
-    // et les majorations pour enfants — les seules du scénario 1 qui
+    // et les majorations pour enfants — les seules du système 1 qui
     // distinguent le père de la mère — ne jouent qu'à partir d'un enfant. Or
     // ces deux réglages sont ici. Le champ les rejoint : il est sans effet tant
     // qu'on n'y a pas touché, et à côté d'eux dès qu'on y touche.
@@ -1831,20 +1865,15 @@ function formulaire(saisie, contexte) {
       "number", { min: "1", max: String(LISSAGE_MAXIMUM), step: "1" },
       "Une moyenne glissante appliquée à la règle choisie, quelle qu'elle "
       + "soit : 5 ans, c'est la fenêtre italienne."),
-    g.liste("age_reference", "Âge de référence", AGES_REFERENCE, saisie.age_reference,
-      "", {}, g.GLOSSAIRE["âge de référence"]),
     g.liste("table", "Table de conversion", TABLES, saisie.table,
       "", {}, g.GLOSSAIRE["table de conversion"]),
     g.liste("part_cotisation", "Part de la cotisation portée au compte",
       PARTS_COTISATION, saisie.part_cotisation,
       "salariale seule, ou salariale et patronale", {},
       g.GLOSSAIRE["part patronale"]),
-    g.liste("conversion_acquis", "Conversion des droits acquis",
-      CONVERSIONS_ACQUIS, saisie.conversion_acquis,
-      "âge auquel les droits figés à la bascule sont convertis"),
-    g.liste("foyer", "Situation de foyer (scénario 6)",
+    g.liste("foyer", "Situation de foyer",
       SITUATIONS_FOYER, saisie.foyer,
-      "scénario 6 seulement", {},
+      "la proposition libérale seulement", {},
       "Elle ne joue que sur l'allocation d'isolement de la garantie "
       + "vieillesse : 1 050 € par mois pour qui vit seul, 800 € par personne "
       + "à deux."),
@@ -1878,11 +1907,11 @@ function formulaire(saisie, contexte) {
   ${basculeUnite(saisie, echelle)}
   ${releveFormulaire(saisie)}
   <details class="options">
-    ${g.sommaire("Options de modélisation (sexe, profil, indexation, âge de "
-    + "référence, projection)")}
+    ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
+      + "projection)")}
     <div class="grille">${avance}</div>
   </details>
-  <p style="margin-top:1.4rem"><button type="submit">Calculer les six scénarios</button></p>
+  <p style="margin-top:1.4rem"><button type="submit">Calculer les quatre systèmes</button></p>
 </form>
 `;
 }
@@ -2220,7 +2249,7 @@ function resumeReleve(contexte, saisie) {
 /**
  * À quelle date se rapportent les montants affichés, et en quels euros.
  *
- * C'est la première question que pose un lecteur devant les six barres :
+ * C'est la première question que pose un lecteur devant les quatre barres :
  * « ce nombre, c'est celui de quand ? ». Deux conventions y répondent, dont
  * aucune ne va de soi. Le moteur ne calcule qu'une pension AU MOMENT DE LA
  * LIQUIDATION — il n'existe aucune phase postérieure qu'il revaloriserait —,
@@ -2328,7 +2357,7 @@ function legendeDesUnites(comparaison, saisie) {
 /**
  * Le cumul versé par chaque scénario, du départ à 105 ans.
  *
- * Les six barres du haut donnent la pension d'UN mois — le premier. Elles ne
+ * Les quatre barres du haut donnent la pension d'UN mois — le premier. Elles ne
  * disent donc rien de ce qu'une retraite finit par verser, ni de ce que la
  * durée y change. Or c'est là que la mécanique notionnelle se joue : la pension
  * vaut le capital divisé par l'espérance de vie, si bien que vivre au-delà de
@@ -2374,15 +2403,15 @@ function corpsTrajectoire(contexte, comparaison, saisie) {
   const survie = courbeDeSurvie(contexte, carriere, conversion.table);
   const vivants = (age) => g.pourcentage(partVivante(survie, age - depart), false, 0);
 
-  // Le scénario 2 passe au-dessus du scénario 1 pour qui a beaucoup cotisé sans
+  // Le système 2 passe au-dessus du système 1 pour qui a beaucoup cotisé sans
   // que le droit en vigueur le lui rende — un libéral à quatre fois le salaire
   // moyen, par exemple. La phrase disait « l'écart se creuse » en affichant
   // « -45 575 € par an » : un signe moins au milieu d'un texte qui affirmait le
   // contraire.
   const ecart = annuel.actuel - annuel.notionnel_retroactif;
-  const phraseEcart = `Le scénario 2 verse ${g.euros(Math.abs(ecart))} par an de `
+  const phraseEcart = `Le système 2 verse ${g.euros(Math.abs(ecart))} par an de `
     + (ecart >= 0 ? "moins" : "plus")
-    + " que le scénario 1 ; l'écart se creuse ici d'autant d'années que la "
+    + " que le système 1 ; l'écart se creuse ici d'autant d'années que la "
     + "retraite dure";
   // Unité brève : le libellé est ancré à gauche de l'axe et déborderait du
   // cadre au-delà d'une poignée de caractères — « milliers d'euros de 2026,
@@ -2391,9 +2420,9 @@ function corpsTrajectoire(contexte, comparaison, saisie) {
   // sous le graphique dit ce que « k€ » désigne, et de quelle année.
   const unite = "k€";
   return `
-<p>Les six montants du haut sont ceux d'un seul mois, le premier. Ce graphique
+<p>Les quatre montants du haut sont ceux d'un seul mois, le premier. Ce graphique
 les additionne, année après année, à mesure que le retraité vieillit.${g.bulle(
-    "Ce que ce graphique ajoute aux six montants",
+    "Ce que ce graphique ajoute aux quatre montants",
     "C'est là que la durée entre dans le calcul. Une pension "
     + "notionnelle vaut le capital divisé par l'espérance de vie, donc "
     + "<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce "
@@ -2401,7 +2430,7 @@ les additionne, année après année, à mesure que le retraité vieillit.${g.bu
     + `bruts, en milliers d'euros constants de ${saisie.euros} : ils supposent `
     + "que la pension garde son pouvoir d'achat après le départ, le moteur ne "
     + "simulant aucune revalorisation postérieure à la liquidation. Une "
-    + "indexation qui décrocherait des prix ferait fléchir les six courbes à "
+    + "indexation qui décrocherait des prix ferait fléchir les quatre courbes à "
     + "la fois, sans changer leur ordre.",
   )}</p>
 ${g.graphique(
@@ -2430,7 +2459,7 @@ ${phraseEcart}.${g.bulle(
 /**
  * Le même cumul, replié, pour le bas de la page Simuler.
  *
- * Là-bas il vient après six montants et trois tableaux : le déplier d'office
+ * Là-bas il vient après quatre montants et trois tableaux : le déplier d'office
  * ferait un septième bloc à traverser. Il a sa propre page, en revanche, où il
  * est le sujet et s'ouvre donc de lui-même.
  */
@@ -2509,7 +2538,7 @@ ${carte}
   <div>
     <h2 style="margin-top:0">Pourquoi le cumul, et pas le mois</h2>
     <p>Une pension mensuelle ne dit rien de la durée. Le graphique montre les
-    six systèmes à âge de départ identique : l'écart entre deux courbes est ce
+    quatre systèmes à âge de départ identique : l'écart entre deux courbes est ce
     que le système choisi vous coûte ou vous rapporte, année après année.</p>
     <p>Les scénarios qui ne portent au compte que la <strong>part
     salariale</strong> restent sous le système actuel ; ceux qui y ajoutent la
@@ -2667,12 +2696,11 @@ ${tete}
 /** Le libellé de chaque scénario, dans l'ordre des barres. */
 function titresScenarios(saisie) {
   return [
-    ["actuel", "1. Système actuel"],
-    ["notionnel_retroactif", "2. Notionnel rétroactif"],
-    ["notionnel_prospectif", `3. Notionnel dès ${saisie.bascule}`],
-    ["notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"],
-    ["notionnel_prospectif_employeur", `5. Dès ${saisie.bascule}, avec le patronal`],
-    ["notionnel_liberal", `6. Libéral : 18 % dès ${saisie.bascule}, garantie`],
+    ["actuel", "1. Système de répartition actuel"],
+    ["notionnel_retroactif", "2. Compte notionnel, part salariale seule"],
+    ["notionnel_retroactif_employeur",
+      "3. Compte notionnel, part salariale + patronale"],
+    ["notionnel_liberal", "4. La proposition du Parti libéral français"],
   ];
 }
 
@@ -2715,77 +2743,6 @@ function partVivante(survie, duree) {
   return survie[rang] * (1 - fraction) + survie[rang + 1] * fraction;
 }
 
-/**
- * L'âge de référence, affiché seulement là où il agit.
- *
- * Ce chiffre n'entre dans AUCUNE des six pensions par lui-même. Il sert à une
- * seule opération : convertir en capital les droits acquis avant la bascule,
- * donc les scénarios 3 et 5 et eux seuls. Les scénarios 1, 2, 4 et 6 ne le
- * lisent jamais — en comptes notionnels, l'âge de départ est déjà payé par le
- * coefficient de conversion et par les années non cotisées.
- *
- * Deux conséquences, et c'est pourquoi la fiche ne se contente pas de lire
- * `ecart_age` :
- *
- * - l'âge montré doit être celui de l'année de BASCULE, celui que la conversion
- *   emploie, et non celui de l'année de liquidation. Les deux ne coïncident que
- *   depuis 2017, où le cliquet est à 67 ans quelle que soit l'année ; une
- *   bascule antérieure les sépare, et la fiche affichait alors un âge que le
- *   calcul n'utilisait pas ;
- * - quand rien n'a été acquis avant la bascule, ou que l'utilisateur a demandé
- *   la conversion à l'âge de départ effectif, l'âge de référence ne sert à rien
- *   et la fiche disparaît plutôt que d'annoncer un chiffre inerte.
- */
-function ficheAgeReference(comparaison, saisie) {
-  const acquis = comparaison.notionnel_prospectif.droits_acquis;
-  if (acquis === null || acquis === undefined
-      || saisie.conversion_acquis !== "reference") {
-    return "";
-  }
-  // L'étiquette est un mot du glossaire ; ce que l'âge COÛTE sur cette
-  // carrière-ci est dit sous les fiches, par `noteAgeReference`.
-  return g.fiche(
-    "âge de référence", age(acquis.age_conversion),
-    "scénarios 3 et 5 seulement",
-    g.GLOSSAIRE["âge de référence"],
-  );
-}
-
-/**
- * Ce que l'âge de référence coûte, dit en clair dès qu'il coûte — la pénalité
- * nommée, et le réglage qui la retire. Voir `_note_age_reference` dans
- * `web/pages.py`.
- */
-function noteAgeReference(comparaison, saisie) {
-  const acquis = comparaison.notionnel_prospectif.droits_acquis;
-  if (acquis === null || acquis === undefined
-      || saisie.conversion_acquis !== "reference") {
-    return "";
-  }
-  const depart = comparaison.carriere.age_liquidation || 0.0;
-  const reference = acquis.age_conversion;
-  if (reference === depart) {
-    return "";
-  }
-  let quand;
-  let effet;
-  if (reference > depart) {
-    quand = `${age(reference - depart)} avant`;
-    effet = "l'anticipation est payée une seconde fois, sur le passé";
-  } else {
-    quand = `${age(depart - reference)} après`;
-    effet = "le report est récompensé une seconde fois, sur le passé";
-  }
-  return `<p class="note"><strong>Vous partez ${quand} l'âge de référence.`
-    + "</strong> Dans les scénarios 3 et 5, les droits acquis avant "
-    + `${saisie.bascule} sont convertis en capital comme si vous partiez à `
-    + `${age(reference)}, puis servis à partir de ${age(depart)} : ${effet}. `
-    + "Le réglage « Conversion des droits acquis : à l'âge de départ "
-    + "effectif », dans les options de modélisation du formulaire, retire "
-    + "cet écart — c'est la convention qu'une réforme réelle retiendrait. "
-    + "Les scénarios 1, 2, 4 et 6 n'en dépendent pas.</p>";
-}
-
 function resultats(contexte, saisie) {
   const comparaison = contexte.simuler(saisie);
   const carriere = comparaison.carriere;
@@ -2801,11 +2758,8 @@ function resultats(contexte, saisie) {
   const courants = {
     actuel: comparaison.actuel.pension_annuelle,
     retroactif: retro.pension_annuelle,
-    prospectif: comparaison.notionnel_prospectif.pension_annuelle,
     "retroactif-employeur":
       comparaison.notionnel_retroactif_employeur.pension_annuelle,
-    "prospectif-employeur":
-      comparaison.notionnel_prospectif_employeur.pension_annuelle,
     liberal: comparaison.notionnel_liberal.pension_annuelle,
   };
   const constants = {};
@@ -2851,32 +2805,26 @@ function resultats(contexte, saisie) {
 </div>`;
   };
 
-  const scenarios = bloc("actuel", "1. Système actuel",
-    "droit en vigueur, minima et majorations compris",
+  // La glose porte ce que le titre ne dit plus : DEPUIS QUAND la carrière est
+  // recalculée, et à quel taux. C'est ce qui explique l'ordre des montants.
+  const scenarios = bloc("actuel", "1. Système de répartition actuel",
+    "le droit en vigueur, minima et majorations compris",
     null, comparaison.tauxRemplacementActuel)
-    + bloc("retroactif", "2. Comptes notionnels, rétroactifs depuis 1941",
-      "toute la carrière recalculée sur la seule part salariale",
+    + bloc("retroactif", "2. Compte notionnel, part salariale seule",
+      "toute la carrière recalculée depuis 1941, sur la seule part "
+      + "salariale — 11,3 % du brut pour un salarié du privé",
       comparaison.variation("notionnel_retroactif"),
       comparaison.tauxRemplacementRetroactif)
-    + bloc("prospectif", `3. Comptes notionnels à compter de ${saisie.bascule}`,
-      "droits acquis conservés, règles notionnelles ensuite",
-      comparaison.variation("notionnel_prospectif"),
-      comparaison.tauxRemplacementProspectif)
     + bloc("retroactif-employeur",
-      "4. Comptes notionnels rétroactifs, salariale + patronale",
-      "le scénario 2, la part patronale en plus",
+      "3. Compte notionnel, part salariale + patronale",
+      "la même carrière recalculée depuis 1941, les deux parts "
+      + "comprises — les 28 % prélevés aujourd'hui",
       comparaison.variation("notionnel_retroactif_employeur"),
       comparaison.tauxRemplacement("notionnel_retroactif_employeur"))
-    + bloc("prospectif-employeur",
-      `5. Comptes notionnels à compter de ${saisie.bascule}, salariale + patronale`,
-      "le scénario 3, la part patronale en plus",
-      comparaison.variation("notionnel_prospectif_employeur"),
-      comparaison.tauxRemplacement("notionnel_prospectif_employeur"))
     + bloc("liberal",
-      `6. Proposition libérale : 18 % pour tous dès ${saisie.bascule}, `
-      + "garantie vieillesse",
-      `le scénario 4 jusqu'à ${saisie.bascule}, 18 % pour tous ensuite, `
-      + "plus une garantie financée par l'impôt",
+      "4. La proposition du Parti libéral français",
+      `le système 3 jusqu'à ${saisie.bascule}, puis 18 % pour tous — `
+      + "plus une garantie vieillesse payée par l'impôt",
       comparaison.variation("notionnel_liberal"),
       comparaison.tauxRemplacement("notionnel_liberal"));
 
@@ -2886,7 +2834,6 @@ function resultats(contexte, saisie) {
     // mois, et c'est ce mois que l'utilisateur vient de choisir.
     g.fiche("liquidation", `${age(carriere.age_liquidation)} `
       + `<span class="discret">en ${carriere.dateLiquidation}</span>`),
-    ficheAgeReference(comparaison, saisie),
     // Deux décimales, et non une : le lecteur qui refait la division
     // « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7 au
     // lieu de 25,67 il tombait un euro à côté, et doutait du reste.
@@ -2909,13 +2856,13 @@ function resultats(contexte, saisie) {
     );
     capitalisation = '<p class="discret">Hors répartition, servi à part : '
       + `${g.eurosCentimes(montant / 12)} par mois de RAFP, en euros de ${saisie.euros} `
-      + "comme les six montants ci-dessus."
+      + "comme les quatre montants ci-dessus."
       + g.bulle(
         "Pourquoi le RAFP est servi à part",
         "Ce régime est PROVISIONNÉ — sa rente sort d'un placement, non de la "
         + "cotisation des actifs —, si bien qu'une réforme de la répartition "
         + "ne l'atteint pas. Il est donc retiré des six totaux et servi à "
-        + "l'identique dans les six scénarios : c'est la seule façon de "
+        + "l'identique dans les quatre systèmes : c'est la seule façon de "
         + "comparer ce qui est comparable.",
       )
       + "</p>";
@@ -2924,8 +2871,8 @@ function resultats(contexte, saisie) {
   let minimum = "";
   if (comparaison.actuel.minimum_applique) {
     minimum = '<p class="discret">Le minimum contributif s\'applique dans le '
-      + "scénario 1 ; il est supprimé dans les scénarios 2 à 5, et le "
-      + "scénario 6 lui substitue sa garantie vieillesse.</p>";
+      + "système 1 ; il est supprimé dans les systèmes notionnels, et la "
+      + "proposition lui substitue sa garantie vieillesse.</p>";
   }
 
   let ouverture = "";
@@ -2938,8 +2885,8 @@ function resultats(contexte, saisie) {
       + "</strong> cette liquidation à "
       + `${g.nombre(comparaison.carriere.age_liquidation, 2)} ans${attente}. `
       + "Ni l'âge légal du régime, ni le départ anticipé pour carrière longue "
-      + "ne le permettent. Le montant du scénario 1 reste calculé, parce qu'il "
-      + "faut bien comparer les six scénarios sur la même carrière, mais il "
+      + "ne le permettent. Le montant du système 1 reste calculé, parce qu'il "
+      + "faut bien comparer les quatre systèmes sur la même carrière, mais il "
       + "ne décrit aucune pension que le système actuel servirait.</span></p>";
   }
 
@@ -2951,11 +2898,11 @@ function resultats(contexte, saisie) {
   // est la référence des cinq autres. Cinq phrases, en clair.
   const chiffre = deuxUnites ? "grand chiffre" : "chiffre";
   const lecture = `
-<p class="note resume"><strong>Six calculs pour votre carrière.</strong>
-Le scénario 1 applique les règles d'aujourd'hui. C'est la référence.
-Les scénarios 2 à 6 appliquent chacun d'autres règles à la même carrière.
+<p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
+Le système 1 applique les règles d'aujourd'hui. C'est la référence.
+Les trois autres appliquent chacun d'autres règles à la même carrière.
 Le ${chiffre} : votre pension brute, ${uniteReference}.
-Le pourcentage en fin de ligne : l'écart avec le scénario 1.</p>`;
+Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 
   // Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
   // un téléphone montrait après le calcul un coefficient de conversion, un
@@ -2974,11 +2921,10 @@ ${lecture}
 </div>
 <div class="carte">
   <div class="fiches">${fiches}</div>
-  ${noteAgeReference(comparaison, saisie)}
   ${resumeParcours(contexte, saisie)}
 </div>
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Les six montants ci-dessus sont le résultat ; tout ce qui
+<p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
 voir.</p>
 ${trajectoire(contexte, comparaison, saisie)}
@@ -2986,23 +2932,15 @@ ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
 ${contributionEmployeur(comparaison)}
 ${garantieVieillesse(comparaison, saisie)}
-${cascade(comparaison, saisie)}
 ${detail(contexte, comparaison)}
 `;
 }
 
 /**
- * Les six scénarios, dans l'ordre où la page les affiche, avec le libellé
+ * Les quatre systèmes, dans l'ordre où la page les affiche, avec le libellé
  * court que la fourchette leur donne.
  */
-const SCENARIOS_AFFICHES = [
-  ["actuel", "1. Système actuel"],
-  ["notionnel_retroactif", "2. Notionnel rétroactif"],
-  ["notionnel_prospectif", "3. Notionnel à la bascule"],
-  ["notionnel_retroactif_employeur", "4. Rétroactif, avec le patronal"],
-  ["notionnel_prospectif_employeur", "5. Bascule, avec le patronal"],
-  ["notionnel_liberal", "6. Libéral : 18 % dès la bascule, garantie"],
-];
+const SCENARIOS_AFFICHES = SCENARIOS_COMPARES;
 
 /**
  * Ce que l'hypothèse de productivité pèse dans le résultat affiché.
@@ -3084,7 +3022,7 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     : NaN;
 
   return g.depliant("Ce que l'hypothèse pèse", `
-<p>La même carrière, rejouée sous les trois hypothèses du COR. Le scénario 2
+<p>La même carrière, rejouée sous les trois hypothèses du COR. Le système 2
 passe de ${g.eurosCentimes(basse.notionnel_retroactif / 12)} à
 ${g.eurosCentimes(haute.notionnel_retroactif / 12)} par mois, soit
 <strong>${g.pourcentage(ecart2)} d'amplitude</strong> autour des
@@ -3136,10 +3074,10 @@ function contributionEmployeur(comparaison) {
     ? g.tableau(
       ["Part", "Ce qu'elle recouvre", "Montant"],
       [
-        ["Part salariale", "ce que l'assuré supporte — scénarios 2 et 3",
+        ["Part salariale", "ce que l'assuré supporte — système 2",
           g.euros(employeur.agent)],
         ["Part patronale", "ce que verse l'employeur", g.euros(employeur.employeur)],
-        ["Total", "scénarios 4 et 5", g.euros(employeur.total)],
+        ["Total", "système 3", g.euros(employeur.total)],
       ],
       ["", "", "nombre"],
       "Cotisations versées sur toute la carrière, en euros courants cumulés",
@@ -3179,8 +3117,8 @@ actifs ? » — et à elle seule.</p>`;
 <p>Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce que
 son employeur verse.${g.bulle(
     "Ce que les scénarios portent au compte",
-    "Les scénarios 2 et 3 ne portent au compte que la première ; les "
-    + "scénarios 4 et 5 y ajoutent la seconde, et ne changent rien d'autre.",
+    "Le système 2 ne porte au compte que la première ; le système 3 "
+    + "y ajoute la seconde, et ne change rien d'autre.",
   )}</p>
 ${partage}${public_}`);
 }
@@ -3198,10 +3136,10 @@ const EXEMPLES_GARANTIE = [
 ];
 
 /**
- * Ce que le scénario 6 change, et ce que l'impôt y paie.
+ * Ce que le système 4 change, et ce que l'impôt y paie.
  *
  * Deux choses, et le bloc les sépare. Le taux unique change ce que le compte
- * reçoit : il se lit dans le capital, contre celui du scénario 4. La garantie
+ * reçoit : il se lit dans le capital, contre celui du système 3. La garantie
  * vieillesse change ce qui est servi par-dessus : différentielle,
  * individualisée, financée par l'impôt — et c'est elle que le tableau détaille,
  * étape par étape, parce qu'elle est la seule ligne de toute la page qui ne
@@ -3217,7 +3155,7 @@ function garantieVieillesse(comparaison, saisie) {
   const capital4 = comparaison.notionnel_retroactif_employeur.capital_notionnel;
   const taux = g.pourcentage(parametres.taux_cotisation_liberal, false, 0);
   // Les années cotisées à 18 % : celles de la bascule au départ. Avant, le
-  // compte est celui du scénario 4, et le capital ne s'en écarte pas.
+  // compte est celui du système 3, et le capital ne s'en écarte pas.
   const annees18 = liberal.compte.cotisations
     .filter((c) => c.annee >= bascule && !c.nulle)
     .map((c) => c.annee);
@@ -3225,10 +3163,10 @@ function garantieVieillesse(comparaison, saisie) {
     ? `Ici, les années ${annees18[0]} à ${annees18[annees18.length - 1]} sont cotisées à `
       + `${taux} ; celles d'avant ${bascule} le sont aux taux réels, et le `
       + `capital vaut ${g.euros(liberal.capital_notionnel)} contre `
-      + `${g.euros(capital4)} pour le scénario 4.`
+      + `${g.euros(capital4)} pour le système 3.`
     : `Ici, la carrière s'achève avant ${bascule} : aucune année n'est `
       + `cotisée à ${taux}, et le compte est exactement celui du `
-      + `scénario 4, ${g.euros(liberal.capital_notionnel)}.`;
+      + `système 3, ${g.euros(liberal.capital_notionnel)}.`;
   const baseMensuelle = parametres.garantie_vieillesse_mensuelle;
   const isolementMensuel = parametres.allocation_isolement_mensuelle;
   const seul = garantie.situation === "seul";
@@ -3248,7 +3186,7 @@ function garantieVieillesse(comparaison, saisie) {
       `ce qu'${situation} doit percevoir au minimum`,
       `${g.eurosCentimes(garantie.plancher_annuel)} par an`],
     ["d) Pension contributive",
-      `le compte notionnel du scénario 6 — taux réels avant ${bascule}, `
+      `le compte notionnel du système 4 — taux réels avant ${bascule}, `
       + `${taux} pour tous ensuite — divisé par `
       + `${g.nombre(liberal.conversion.diviseur, DECIMALES_DIVISEUR)}`,
       `${g.eurosCentimes(garantie.pension_contributive)} par an`],
@@ -3257,7 +3195,7 @@ function garantieVieillesse(comparaison, saisie) {
         ? "max(0, c − d) à partir de 65 ans, financée par l'impôt"
         : "rien : la liquidation a lieu avant 65 ans, l'âge de l'allocation",
       `${g.eurosCentimes(garantie.complement)} par an`],
-    ["f) = pension du scénario 6", "d + e",
+    ["f) = pension du système 4", "d + e",
       `${g.eurosCentimes(liberal.pension_annuelle)} par an`],
   ];
 
@@ -3268,19 +3206,19 @@ function garantieVieillesse(comparaison, saisie) {
       + `reste sous le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
       + `l'impôt en finance <strong>${g.eurosCentimes(garantie.complement / 12)} `
       + `par mois</strong>, soit ${g.pourcentage(garantie.complement / liberal.pension_annuelle)} `
-      + "de ce que le scénario 6 verse.</p>";
+      + "de ce que le système 4 verse.</p>";
   } else if (!garantie.age_atteint) {
     lecture = "<p>Ici, rien n'est servi : la liquidation a lieu à "
       + `${age(comparaison.carriere.age_liquidation || 0.0)}, avant les 65 ans `
       + "de l'allocation. Le modèle liquide et s'arrête — il ne suit pas "
       + "l'assuré jusqu'à 65 ans, où la garantie s'ouvrirait si sa pension "
       + "restait sous le plancher. C'est la même réserve que pour l'ASPA du "
-      + "scénario 1.</p>";
+      + "système 1.</p>";
   } else {
     lecture = "<p>Ici, la pension contributive de "
       + `${g.eurosCentimes(garantie.pension_contributive / 12)} par mois `
       + `dépasse le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
-      + "la garantie ne sert rien, et le scénario 6 est un compte notionnel "
+      + "la garantie ne sert rien, et le système 4 est un compte notionnel "
       + "à taux unique, sans plus.</p>";
   }
 
@@ -3300,12 +3238,12 @@ function garantieVieillesse(comparaison, saisie) {
   });
 
   return g.depliant(
-    "Le scénario 6 : un taux pour tous, et une garantie payée par l'impôt",
+    "Le système 4 : un taux pour tous, et une garantie payée par l'impôt",
     `
 <p>La garantie vieillesse, étape par étape, en euros de ${annee} — l'année du
 départ.${g.bulle(
-    "Ce que le scénario 6 change au scénario 4",
-    "Il est le scénario 4 — même compte rétroactif, cotisation salariale et "
+    "Ce que le système 4 change au système 3",
+    "Il est le système 3 — même compte rétroactif, cotisation salariale et "
     + "patronale confondues, mêmes âges, même indexation, même liquidation — à "
     + `deux différences près. La première : à compter de ${bascule}, un taux `
     + `unique de ${taux}, parts salariale et patronale additionnées, le même `
@@ -3319,7 +3257,7 @@ ${g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
     ["", "", "nombre"],
-    `La garantie vieillesse du scénario 6, étape par étape, en euros de ${annee}`,
+    `La garantie vieillesse du système 4, étape par étape, en euros de ${annee}`,
     true,
   )}
 ${lecture}
@@ -3394,11 +3332,11 @@ cotisations ont été multipliées entre leur versement et la liquidation.${g.bu
     + "non sur un choix, et la plus généreuse — elle vaut salaire moyen + "
     + "emploi salarié, et l'emploi salarié a doublé depuis 1950. Son "
     + "incohérence, à garder en tête : elle crédite le compte du rendement que "
-    + "le système ENTIER dégage, quand les scénarios 2 et 3 n'y versent que la "
-    + "part salariale ; c'est aux scénarios 4 et 5 qu'elle se compare sans "
+    + "le système ENTIER dégage, quand le système 2 n'y verse que la "
+    + "part salariale ; c'est au système 3 qu'elle se compare sans "
     + "biais. La deuxième ligne n'est pas une hypothèse mais un relevé — le "
     + "coefficient que les arrêtés ont réellement appliqué, celui dont le "
-    + "scénario 1 se sert : l'écart entre elle et le système actuel mesure "
+    + "système 1 se sert : l'écart entre elle et le système actuel mesure "
     + "l'effet propre des comptes notionnels, et tout ce qui sépare les autres "
     + "lignes de celle-là mesure l'effet de la règle. Le triple lock inversé "
     + "compare deux taux nominaux à un taux réel : dès que l'inflation dépasse "
@@ -3431,130 +3369,6 @@ toutes ces lignes à la fois.${g.bulle(
 `);
 }
 
-/**
- * Détaille le passage du scénario 1 au scénario 3, étape par étape.
- *
- * C'est la partie du modèle la moins intuitive : le scénario 3 n'est pas le
- * scénario 1 diminué d'un pourcentage, c'est une autre formule appliquée à la
- * même carrière. Tant qu'on ne voit pas la chaîne de calcul, l'écart affiché
- * reste un chiffre à croire.
- */
-function cascade(comparaison, saisie) {
-  const prospectif = comparaison.notionnel_prospectif;
-  const acquis = prospectif.droits_acquis;
-  if (acquis === null || prospectif.capital_notionnel <= 0) {
-    // Rien n'a été cotisé : une cascade de zéros n'explique rien, et le reste
-    // de la page dit déjà que le compte est vide.
-    return "";
-  }
-
-  const liquidation = comparaison.carriere.anneeLiquidation;
-  const ageLiquidation = comparaison.carriere.age_liquidation || 0.0;
-  const diviseur = prospectif.conversion.diviseur;
-  const capitalApres = prospectif.capital_notionnel - acquis.capital;
-  const actuel = comparaison.actuel.pension_annuelle;
-  const renvoiCascade = liquidation !== saisie.euros
-    ? "La dernière ligne est donc le scénario 3 tel que la <em>seconde</em> "
-      + "colonne l'affiche, non le chiffre mis en avant."
-    : "Le départ tombant sur l'année de référence, la dernière ligne est "
-      + "exactement le montant du scénario 3 affiché plus haut.";
-
-  const lignes = [
-    [`a) Droits acquis à ${saisie.bascule}`,
-      "carrière arrêtée à la bascule, règles actuelles, avantages non "
-      + "contributifs retirés, sans décote",
-      `${g.eurosCentimes(acquis.pension_figee)} par an`],
-    [`b) × diviseur à ${age(acquis.age_conversion)}`,
-      `coefficient de conversion en ${saisie.bascule} : `
-      + `${g.nombre(acquis.diviseur, DECIMALES_DIVISEUR)}`,
-      g.euros(acquis.capital_a_la_bascule)],
-    [`c) × revalorisation ${saisie.bascule}-${liquidation}`,
-      "règle d'indexation retenue : ×"
-      + `${g.nombre(acquis.coefficient_revalorisation, DECIMALES_FACTEUR)}`,
-      g.euros(acquis.capital)],
-    [`d) + cotisations ${saisie.bascule}-${liquidation - 1}`,
-      "versées au régime unique, revalorisées de même",
-      g.euros(capitalApres)],
-    ["e) = capital notionnel", "ce que la carrière a effectivement financé",
-      g.euros(prospectif.capital_notionnel)],
-    [`f) ÷ diviseur à ${age(ageLiquidation)}`,
-      `coefficient de conversion en ${liquidation} : `
-      + `${g.nombre(diviseur, DECIMALES_DIVISEUR)}`,
-      `${g.eurosCentimes(prospectif.pension_annuelle)} par an`],
-  ];
-
-  const partAcquis = acquis.capital / prospectif.capital_notionnel;
-  // Le seul endroit du site où l'âge de référence agit, donc le seul où son
-  // histoire a sa place : la fiche des résultats se borne à dire ce qu'il est,
-  // le budget de lecture de la page ne lui laissant pas davantage.
-  //
-  // Les DEUX sens sont écrits. La version d'avant ne parlait que de
-  // l'anticipation, ce qui laissait croire à une sanction ; c'est un PIVOT, et
-  // un départ postérieur à l'âge de référence est bonifié par le même
-  // mécanisme. Taire cette moitié-là aurait été présenter une convention de
-  // modélisation comme une règle de justice.
-  let neutralite = "";
-  if (saisie.conversion_acquis === "reference"
-      && acquis.age_conversion !== ageLiquidation) {
-    const effet = acquis.age_conversion > ageLiquidation
-      ? "L'anticipation est donc payée une seconde fois, sur le passé."
-      : "Le report est donc récompensé une seconde fois, sur le passé.";
-    neutralite = `<p>Ligne b) : les droits déjà ouverts sont convertis au diviseur de `
-      + `l'âge de référence (${age(acquis.age_conversion)}), alors que la `
-      + `rente sera servie depuis ${age(ageLiquidation)}. ${effet} `
-      + `L'option « conversion des droits acquis à l'âge de départ `
-      + `effectif » supprime cet écart, et c'est la convention qu'une `
-      + `réforme réelle retiendrait.</p>`
-      + `<p>D'où vient ce chiffre : ${age(acquis.age_conversion)} est l'âge `
-      + `du <strong>taux plein</strong> du régime général, celui auquel la `
-      + `décote s'annule quelle que soit la durée cotisée. La loi `
-      + `n° 2010-1330 du 9 novembre 2010 l'a porté de 65 à 67 ans par `
-      + `paliers, cible atteinte en 2017 ; la réforme du 14 avril 2023 l'y `
-      + `a laissé. Le modèle le tient à <strong>cliquet</strong> — il ne `
-      + `redescend jamais —, de sorte que l'abaissement à 60 ans de 1982 ne `
-      + `le fasse pas baisser et qu'un départ à 60 ans en 1990 se lise bien `
-      + `comme une anticipation de cinq ans.</p>`
-      + `<p>C'est le <strong>seul</strong> usage de cet âge dans tout le `
-      + `site : il n'entre que dans les scénarios 3 et 5, par cette ligne b). `
-      + `Les scénarios 1, 2, 4 et 6 ne le lisent jamais — en comptes `
-      + `notionnels, partir tôt est déjà payé deux fois, par les années non `
-      + `cotisées et par un coefficient de conversion plus élevé. Et c'est `
-      + `un <strong>pivot</strong>, non une sanction : partir avant lui `
-      + `réduit la part acquise, partir après l'augmente.</p>`;
-  }
-
-  return g.depliant("Du scénario 1 au scénario 3, ligne à ligne", `
-<p>Montants en <strong>euros de ${liquidation}</strong>, l'année du départ.${g.bulle(
-    "Pourquoi cette section est en euros de l'année du départ",
-    "Le scénario 3 n'est pas le scénario 1 diminué d'un pourcentage : c'est "
-    + "une autre formule appliquée à la même carrière, et la chaîne de calcul "
-    + "est arithmétique — la convertir ligne à ligne au pouvoir d'achat d'une "
-    + `autre année la rendrait fausse. ${renvoiCascade}`,
-  )}</p>
-${g.tableau(
-    ["Étape", "Ce qu'elle fait", "Résultat"],
-    lignes,
-    ["", "", "nombre"],
-    `Du scénario 1 au scénario 3, étape par étape, en euros de ${liquidation}`,
-    true,
-  )}
-<p>À comparer aux ${g.eurosCentimes(actuel)} par an du système actuel.${g.bulle(
-    "D'où vient l'écart",
-    "D'aucun abattement appliqué au scénario 1 : de ce que le capital "
-    + `réellement constitué, ${g.euros(prospectif.capital_notionnel)}, ne `
-    + `finance pas les ${g.euros(actuel * diviseur)} que le droit en vigueur `
-    + `promet sur ${g.nombre(diviseur, 1)} années de retraite.`,
-  )}</p>
-${neutralite}
-<p class="discret">Les droits acquis avant ${saisie.bascule} pèsent
-${g.pourcentage(partAcquis)} du capital final.${g.bulle(
-    "Ce que cette part devient",
-    "Elle décroît de génération en génération : c'est elle qui étale la "
-    + "réforme dans le temps, et non un dispositif transitoire.",
-  )}</p>
-`);
-}
-
 function detail(contexte, comparaison) {
   const retro = comparaison.notionnel_retroactif;
   const catalogue = contexte.simulateur().catalogue;
@@ -3572,11 +3386,11 @@ function detail(contexte, comparaison) {
   const annee = comparaison.carriere.anneeLiquidation;
   const anneeReference = comparaison.parametres.annee_euros_constants;
   const renvoi = annee !== anneeReference
-    ? "C'est l'unité de la <em>seconde</em> colonne des six scénarios, celle "
+    ? "C'est l'unité de la <em>seconde</em> colonne des quatre systèmes, celle "
       + "du virement — pas celle du chiffre mis en avant, qui les ramène au "
       + `pouvoir d'achat de ${anneeReference}.`
     : "Le départ tombant sur l'année de référence, c'est aussi l'unité des "
-      + "six montants affichés plus haut.";
+      + "quatre montants affichés plus haut.";
   // Les régimes PROVISIONNÉS sont sortis du tableau principal : leur rente ne
   // fait pas partie du total, et une ligne posée au-dessus d'un total qui
   // l'ignore fait un tableau qui ne s'additionne pas — 33 176,69 + 667,12
@@ -3609,7 +3423,7 @@ function detail(contexte, comparaison) {
     lignesActuel.push([
       "<strong>Pension du système actuel</strong>",
       `<strong>${g.eurosCentimes(actuel.pension_annuelle)}</strong>`,
-      '<span class="discret">c\'est le scénario 1 ci-dessus, pris dans les '
+      '<span class="discret">c\'est le système 1 ci-dessus, pris dans les '
       + "euros de son année de départ</span>",
     ]);
   }
@@ -3618,7 +3432,7 @@ function detail(contexte, comparaison) {
     lignesActuel.push([
       `hors total — ${libelle}`, montant,
       '<span class="discret">régime PROVISIONNÉ, servi à part et retiré des '
-      + "six scénarios</span> · " + detail,
+      + "quatre systèmes</span> · " + detail,
     ]);
   }
 
@@ -3672,17 +3486,17 @@ l'année du départ.${g.bulle(
     + "calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une "
     + "autre année ferait des totaux faux.",
   )}</p>
-<h4>Scénario 1 — de quoi votre pension actuelle est faite${g.bulle(
+<h4>Système 1 — de quoi votre pension actuelle est faite${g.bulle(
     "Comment lire ce tableau",
     "Chaque régime d'abord, puis les avantages que le droit en vigueur ajoute "
-    + "par-dessus ; le total est la pension du scénario 1. Un minimum est déjà "
+    + "par-dessus ; le total est la pension du système 1. Un minimum est déjà "
     + "compris dans la ligne du régime qui le sert : le sous-total contributif "
     + "l'en retire, et la ligne suivante le rend visible — c'est la même "
     + "somme, comptée une fois.",
   )}</h4>
 ${regimes}
 ${part}
-<h4>Scénario 2 — construction du compte notionnel rétroactif</h4>
+<h4>Système 2 — construction du compte notionnel rétroactif</h4>
 ${compte}
 <details>
   ${g.sommaire("Les résultats complets en JSON")}
@@ -3693,7 +3507,7 @@ elle peut être citée ou partagée telle quelle.</p>
 `);
 }
 /**
- * Les six scénarios de la page Cas types, dans l'ordre d'affichage : le code du
+ * Les trois grilles de la page Cas types, dans l'ordre d'affichage : le code du
  * scénario, le titre de sa section, le titre accessible de sa grille, et la
  * phrase qui dit ce qu'on y voit. Le premier est CELUI QUI S'AFFICHE — la seule
  * réforme applicable qui crédite ce qui est réellement prélevé —, les cinq
@@ -3703,62 +3517,43 @@ elle peut être citée ou partagée telle quelle.</p>
  * Les cinq grilles de la page Cas types, dans l'ordre des onglets : le code du
  * scénario, le libellé de son onglet, le titre de sa section, le titre
  * accessible de sa grille, et la phrase qui dit ce qu'on y voit. Le premier
- * est celui qui s'affiche à l'ouverture — le scénario 6, la proposition.
+ * est celui qui s'affiche à l'ouverture — le système 4, la proposition.
  */
 const GRILLES_CAS_TYPES = [
   [
     "notionnel_liberal",
-    "Scénario 6, la proposition",
-    "Scénario 6 — le scénario 4, puis 18 % pour tous et une garantie",
-    "Scénario 6, scénario 4 à taux unique dès la bascule et garantie vieillesse",
-    "Le même compte rétroactif que le scénario 4 jusqu'à la bascule, puis "
+    "4. La proposition",
+    "La proposition du Parti libéral français, par rapport à aujourd'hui",
+    "La proposition libérale : taux unique de 18 % et garantie vieillesse",
+    "Le même compte rétroactif que le système 3 jusqu'à la bascule, puis "
     + "un taux unique de 18 % — salariale et patronale confondues —, et une "
     + "garantie vieillesse individualisée financée par l'impôt par-dessus. "
     + "Les lignes qui cotisaient au-delà de 18 % descendent sous le "
-    + "scénario 4, celles qui cotisaient en deçà remontent. La garantie ne se "
+    + "système 3, celles qui cotisaient en deçà remontent. La garantie ne se "
     + "voit que sur les cas dont la pension reste sous le plancher, à partir "
     + "de 65 ans.",
   ],
   [
     "notionnel_retroactif",
-    "Scénario 2",
-    "Scénario 2 — comptes notionnels rétroactifs depuis 1941",
-    "Scénario 2, comptes notionnels rétroactifs",
+    "2. Part salariale seule",
+    "Le compte notionnel sur la seule part salariale, par rapport à "
+    + "aujourd'hui",
+    "Compte notionnel, part salariale seule, carrière recalculée depuis 1941",
     "Les générations anciennes sont les plus touchées : leurs cotisations, "
     + "versées quand l'inflation dépassait la productivité, ont été "
     + "revalorisées à un taux très inférieur à la hausse des prix.",
   ],
   [
-    "notionnel_prospectif",
-    "Scénario 3",
-    "Scénario 3 — comptes notionnels dès la bascule, part salariale seule",
-    "Scénario 3, comptes notionnels à compter de la bascule",
-    "Les générations déjà retraitées sont inchangées : leurs droits sont "
-    + "intégralement acquis avant la bascule. Les indépendants et professions "
-    + "libérales progressent parce que le régime unique relève leur taux de "
-    + "cotisation et déplafonne leur assiette — un effort contributif accru, "
-    + "pas un avantage accordé.",
-  ],
-  [
     "notionnel_retroactif_employeur",
-    "Scénario 4",
-    "Scénario 4 — le scénario 2, part patronale comprise",
-    "Scénario 4, scénario 2 part patronale comprise",
+    "3. Les deux parts",
+    "Le compte notionnel sur les deux parts, par rapport à aujourd'hui",
+    "Compte notionnel, part salariale et patronale, carrière recalculée "
+    + "depuis 1941",
     "Toutes les lignes bougent, sauf celles des non-salariés — artisan, "
     + "exploitant agricole, profession libérale — qui n'ont pas d'employeur "
-    + "et pour qui ce scénario est le scénario 2. Les lignes publiques "
+    + "et pour qui ce système est le système 2. Les lignes publiques "
     + "bougent le plus : la contribution de leur employeur est un taux "
     + "d'équilibre, sans commune mesure avec la part patronale d'un salarié.",
-  ],
-  [
-    "notionnel_prospectif_employeur",
-    "Scénario 5",
-    "Scénario 5 — comptes notionnels dès la bascule, employeur compris",
-    "Scénario 5, scénario 3 part patronale comprise",
-    "Les droits acquis avant la bascule sont conservés : les générations "
-    + "déjà retraitées ne bougent pas, et plus une carrière est récente, plus "
-    + "elle est calculée sous la règle nouvelle. À compter de la bascule il "
-    + "n'y a plus qu'un régime, et les écarts entre statuts s'y referment.",
   ],
 ];
 
@@ -3767,7 +3562,7 @@ const GRILLES_CAS_TYPES = [
  *
  * LA PAGE NE MONTRE QU'UNE GRILLE À LA FOIS, ET C'EST LA PROPOSITION : les
  * cinq grilles sont derrière des onglets — des boutons radio, dont le panneau
- * suit en CSS —, et l'onglet ouvert est le scénario 6. Voir `_cas_types` dans
+ * suit en CSS —, et l'onglet ouvert est le système 4. Voir `_cas_types` dans
  * `web/pages.py`.
  *
  * CE QU'ELLE DIT EST UN ÉCART ENTRE LIGNES, JAMAIS UN NIVEAU. Le modèle calcule
@@ -3776,7 +3571,7 @@ const GRILLES_CAS_TYPES = [
  * non en note de bas de page.
  */
 /**
- * « proposition » sur le scénario 6, « contrefactuel » sur les autres, rien
+ * « proposition » sur le système 4, « contrefactuel » sur les autres, rien
  * sur le système actuel : le badge redit là où l'erreur de lecture se produit
  * ce que le préambule a dit.
  */
@@ -3854,11 +3649,11 @@ function casTypes(contexte) {
     reperes = g.fiche(
       "La carrière la mieux traitée", echapper(haut[1].split(" (")[0]),
       `${g.pourcentage(haut[0], true, 0)} par rapport à aujourd'hui, `
-      + `génération ${derniere}, scénario 6`,
+      + `génération ${derniere}, système 4`,
     ) + g.fiche(
       "La moins bien traitée", echapper(bas[1].split(" (")[0]),
       `${g.pourcentage(bas[0], true, 0)} par rapport à aujourd'hui, `
-      + `génération ${derniere}, scénario 6`,
+      + `génération ${derniere}, système 4`,
     ) + g.fiche(
       "Ce qui les sépare",
       `${g.nombre((haut[0] - bas[0]) * 100, 0)} points`,
@@ -3946,11 +3741,13 @@ de quoi relever toutes les cases d'autant.
 
 <div class="fiches reperes">${reperes}</div>
 
-<p class="discret">Le modèle calcule six scénarios. Le <strong>scénario 6</strong>
-est <a href="${g.lien("/")}">la proposition</a> ; les scénarios 2 à 5 sont des
-contrefactuels, qui mesurent ce que chaque ingrédient déplace : la
-rétroactivité, la part patronale, le taux unique.</p>
-<fieldset class="onglets"><legend>Scénario affiché</legend>${onglets}</fieldset>
+<p class="discret">Le <strong>système 4</strong> est
+<a href="${g.lien("/")}">la proposition</a> ; les systèmes 2 et 3 sont des
+contrefactuels, qui mesurent ce que chaque ingrédient déplace : la part
+patronale, puis le taux unique. Le modèle calcule deux variantes de plus —
+celles où les droits acquis sont conservés à la bascule —, que le site ne
+compare pas.</p>
+<fieldset class="onglets"><legend>Système affiché</legend>${onglets}</fieldset>
 <div class="panneaux">${panneaux}</div>
 <p class="discret">« Aujourd'hui » n'est pas un point fixe. Le système actuel,
 colonne de référence de ces grilles, manque déjà de
@@ -3983,14 +3780,12 @@ const BANDES_COUT = [
   ["professions_liberales", "var(--serie-6)"],
 ];
 
-// Couleur de chacun des six scénarios — les mêmes que sur la page de
+// Couleur de chacun des quatre systèmes — les mêmes que sur la page de
 // résultats, pour qu'un lecteur qui passe de l'une à l'autre les reconnaisse.
 const COULEURS_SCENARIOS = {
   actuel: "var(--actuel)",
   notionnel_retroactif: "var(--retroactif)",
-  notionnel_prospectif: "var(--prospectif)",
   notionnel_retroactif_employeur: "var(--retroactif-employeur)",
-  notionnel_prospectif_employeur: "var(--prospectif-employeur)",
   notionnel_liberal: "var(--liberal)",
 };
 
@@ -4094,9 +3889,11 @@ function cout(contexte) {
   }
   const sortie = solde.annees.map((ligne) => [ligne.annee, ligne.depense("actuel") * 100]);
   const entree = solde.annees.map((ligne) => [ligne.annee, ligne.ressources * 100]);
-  // La réforme ne change rien avant sa bascule : sa courbe ne commence donc qu'à
-  // l'année observée la plus récente, d'où la décision se prend.
-  const reforme = "notionnel_prospectif_employeur";
+  // La troisième courbe est LA PROPOSITION, et non plus une variante que le
+  // site ne compare plus. Elle ne commence qu'à l'année observée la plus
+  // récente — non parce qu'elle ne changerait rien avant, elle est rétroactive
+  // et change tout, mais parce que c'est de là que la décision se prend.
+  const reforme = "notionnel_liberal";
   const apres = solde.annees.filter((ligne) => ligne.annee >= obs)
     .map((ligne) => [ligne.annee, ligne.depense(reforme) * 100]);
 
@@ -4107,8 +3904,8 @@ function cout(contexte) {
       "autre source, périmètre un peu plus large"),
     serie("Ce qui sort : les pensions versées", "var(--serie-2)", sortie),
     serie("Ce qui rentre : cotisations et impôts", "var(--serie-5)", entree),
-    serie(`Ce qui sortirait en comptes notionnels dès ${bascule}`,
-      "var(--serie-4)", apres, true),
+    serie(`Ce que coûterait notre proposition, dès ${bascule}`,
+      "var(--liberal)", apres, true),
   ];
   const bilan = g.graphique(
     "Ce que la retraite verse et ce qu'elle encaisse, de "
@@ -4395,7 +4192,7 @@ assis sur un revenu d'activité — la seule ressource qu'un compte notionnel
 sache porter au crédit de quelqu'un. ${g.pourcentage(partCotisee, false, 0)}
 des ressources de ${derniere} le sont, en comptant la contribution d'équilibre
 que l'État verse au régime de ses propres fonctionnaires : le modèle la porte
-déjà au compte des scénarios 4 et 5, et c'est à ce titre qu'elle est comptée
+déjà au compte du système 3, et c'est à ce titre qu'elle est comptée
 ici, malgré un taux fixé pour équilibrer plutôt que pour acquérir. La part
 cotisée <em>recule</em> : elle était de
 ${g.pourcentage(comptes.partContributive(premiere), false, 0)} en ${premiere}.</p>
@@ -4476,7 +4273,7 @@ la branche famille déclare verser, consolidé du côté des régimes qui
 reçoivent.</p>
 
 <div class="note"><strong>Ces recettes financent des droits que les scénarios
-notionnels ne servent pas.</strong> Les scénarios 2 à 6 suppriment l'assurance
+notionnels ne servent pas.</strong> Les systèmes notionnels suppriment l'assurance
 vieillesse des parents au foyer et les majorations pour enfants, et ne portent
 rien au compte pendant une année de chômage. Ils comptent pourtant, dans les
 ressources qu'ils supposent inchangées, les
@@ -4486,23 +4283,22 @@ de l'assurance chômage de ${derniere} — ${g.pourcentage(supprime, false, 2)}
 du PIB, ${g.pourcentage(partSupprimee, false, 1)} des ressources. <strong>Le
 coefficient d'équilibre du dépliant suivant les leur retire</strong> : année
 par année là où on les connaît, à part constante des ressources avant et
-après, jusqu'à l'horizon du COR. Sans ce retrait, le scénario 3 afficherait
-${g.nombre(sansRetrait(horizon, "notionnel_prospectif"), 2)} en
+après, jusqu'à l'horizon du COR. Sans ce retrait, la proposition afficherait
+${g.nombre(sansRetrait(horizon, "notionnel_liberal"), 2)} en
 ${solde.derniereAnnee} au lieu de
-${g.nombre(horizon.coefficient("notionnel_prospectif"), 2)}, et le scénario 5
-${g.nombre(sansRetrait(horizon, "notionnel_prospectif_employeur"), 2)} au lieu
-de ${g.nombre(horizon.coefficient("notionnel_prospectif_employeur"), 2)} ; en
-${derniere}, où ces deux scénarios servent encore les pensions du système
-actuel, l'écart est le même :
-${g.nombre(sansRetrait(ligneSolde, "notionnel_prospectif"), 2)} contre
-${g.nombre(ligneSolde.coefficient("notionnel_prospectif"), 2)}. Ce que la
+${g.nombre(horizon.coefficient("notionnel_liberal"), 2)}, et le système 2
+${g.nombre(sansRetrait(horizon, "notionnel_retroactif"), 2)} au lieu
+de ${g.nombre(horizon.coefficient("notionnel_retroactif"), 2)} ; en
+${derniere}, l'écart est du même ordre :
+${g.nombre(sansRetrait(ligneSolde, "notionnel_liberal"), 2)} contre
+${g.nombre(ligneSolde.coefficient("notionnel_liberal"), 2)}. Ce que la
 branche famille cesserait de verser à la retraite ne disparaît pas : il lui
 reste, et ce qu'elle en fait est une décision de programme, pas un résultat de
 ce modèle.</div>
 `, "cout-transferts");
 }
 
-/** Les six systèmes : ce qu'ils auraient coûté, ce qu'ils coûteraient. */
+/** Les quatre systèmes : ce qu'ils auraient coûté, ce qu'ils coûteraient. */
 function coutDetailScenarios(contexte) {
   const c = contexte.cout();
   const avenir = c.avenir;
@@ -4518,23 +4314,23 @@ function coutDetailScenarios(contexte) {
   // alors une seule courbe en prétendant en montrer trois. On ne trace donc que
   // les scénarios qui s'en écartent, et la légende nomme les autres.
   const confondus = c.confondusAvecActuel();
-  const numeros = SCENARIOS.filter(([scenario]) => confondus.includes(scenario))
+  const numeros = SCENARIOS_COMPARES.filter(([scenario]) => confondus.includes(scenario))
     .map(([, libelle]) => libelle.split(".")[0]);
   const gloseActuel = numeros.length
     ? `et les scénarios ${numeros.join(" et ")}, qui lui sont confondus`
     : "";
-  const courbes = SCENARIOS
+  const courbes = SCENARIOS_COMPARES
     .filter(([scenario]) => !confondus.includes(scenario))
     .map(([scenario, libelle]) => new g.Serie(
       libelle,
       c.annees.map((ligne) => ligne.coutConstants(scenario) / 1000),
       COULEURS_SCENARIOS[scenario],
-      scenario.startsWith("notionnel_prospectif"),
+      scenario === "notionnel_liberal",
       scenario === "actuel" ? gloseActuel : "",
     ));
   const reference = c.cumul("actuel");
   const dernier = c.annee(derniere);
-  const lignesPasse = SCENARIOS.map(([scenario, libelle]) => {
+  const lignesPasse = SCENARIOS_COMPARES.map(([scenario, libelle]) => {
     const cumul = c.cumul(scenario);
     return [
       nomScenario(scenario, libelle),
@@ -4557,7 +4353,7 @@ function coutDetailScenarios(contexte) {
   const horizon = avenir.annee(avenir.derniereAnnee);
   const depart = avenir.annee(derniere);
   const referenceAvenir = avenir.cumul("actuel");
-  const lignesAvenir = SCENARIOS.map(([scenario, libelle]) => {
+  const lignesAvenir = SCENARIOS_COMPARES.map(([scenario, libelle]) => {
     const cumul = avenir.cumul(scenario);
     return [
       nomScenario(scenario, libelle),
@@ -4586,15 +4382,15 @@ function coutDetailScenarios(contexte) {
       String(millesime),
       g.nombre(ligne.dependance, 2),
       g.pourcentage(ligne.partPib("actuel"), false, 1),
-      g.pourcentage(ligne.partPib("notionnel_prospectif"), false, 1),
-      g.pourcentage(ligne.partPib("notionnel_prospectif_employeur"), false, 1),
+      g.pourcentage(ligne.partPib("notionnel_retroactif_employeur"),
+        false, 1),
+      g.pourcentage(ligne.partPib("notionnel_liberal"), false, 1),
     ]);
   }
 
-  return g.depliant("Les six systèmes comparés, du passé jusqu'à 2070", `
-<p>Le modèle calcule six systèmes pour une même carrière. La carte du haut n'en
-montre qu'un, le seul qui décrive une réforme applicable en créditant ce qui
-est réellement prélevé. Voici les six, sur le passé puis sur l'avenir. Le
+  return g.depliant("Les quatre systèmes comparés, du passé jusqu'à 2070", `
+<p>La carte du haut ne montre que la proposition. Voici les quatre systèmes que
+le site compare, sur le passé puis sur l'avenir. Le
 « système actuel » de ces tableaux est la ligne de référence, pas un
 équilibre : il manque de
 ${g.pourcentage(-soldeActuel.annee(soldeActuel.derniereAnneeObservee).solde("actuel"), false, 2)}
@@ -4614,7 +4410,7 @@ ${c.generations.length} générations, de ${c.generations[0]} à
 ${c.generations[c.generations.length - 1]}.</p>
 
 ${g.graphique(
-    `Coût annuel des six systèmes, ${c.premiereAnnee}-${derniere}, `
+    `Coût annuel des quatre systèmes, ${c.premiereAnnee}-${derniere}, `
     + `en milliards d'euros constants de ${euros}`,
     annees, courbes, `Md € ${euros}`)}
 
@@ -4623,23 +4419,16 @@ ${g.tableau(
       `Coût ${derniere}`, `Part du PIB ${derniere}`],
     lignesPasse,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    `Ce que les six systèmes auraient coûté de ${c.premiereAnnee} à ${derniere}`,
+    `Ce que les quatre systèmes auraient coûté de ${c.premiereAnnee} à ${derniere}`,
     true,
   )}
 
-<div class="note"><strong>Les scénarios 3 et 5 coûtent exactement ce que coûte
-le système actuel, et ce n'est pas un défaut du calcul.</strong> Leur bascule est
-fixée à ${bascule} : aucune pension servie avant cette date n'en est modifiée,
-puisque les droits déjà acquis sont conservés. Une réforme prospective ne fait
-rien économiser sur le passé : elle ne commence à compter qu'au premier assuré
-qui liquide après elle. C'est vrai de toute réforme des retraites qui respecte
-les droits acquis.</div>
 
-<p>Le scénario 2 aurait coûté ${milliards(c.cumul("notionnel_retroactif"), 0)}
+<p>Le système 2 aurait coûté ${milliards(c.cumul("notionnel_retroactif"), 0)}
 au lieu de ${milliards(reference, 0)}. Cet écart mesure tout autre chose que l'effet des
 comptes notionnels. Il mesure deux choses qui n'ont rien à voir avec eux : ce
 scénario ne porte au compte que la <strong>part salariale</strong> de la
-cotisation, là où le scénario 4 y ajoute la part patronale et coûte
+cotisation, là où le système 3 y ajoute la part patronale et coûte
 ${milliards(c.cumul("notionnel_retroactif_employeur"), 0)}, et il applique une
 <a href="${g.lien("/methode", "indexation")}">règle d'indexation</a> dont la page
 Méthode montre qu'elle domine tout le reste.</p>
@@ -4671,11 +4460,15 @@ ${g.tableau(
     true,
   )}
 <p class="discret">Le cumul porte sur les seules années projetées, en euros
-constants de ${euros}. Les scénarios 2, 4 et 6 restent des contrefactuels et non
-des réformes : ils supposent recalculées les pensions de gens qui les perçoivent
-depuis trente ans, ce qu'aucun droit ne permettrait. Les scénarios 3 et 5, eux,
-décrivent une réforme applicable, droits acquis conservés et règles nouvelles
-pour la suite.</p>
+constants de ${euros}. <strong>Les trois systèmes notionnels comparés ici sont
+des contrefactuels</strong> : ils supposent
+recalculées les pensions de gens qui les perçoivent depuis trente ans, ce
+qu'aucun droit ne permettrait. Ils répondent à « qu'aurait donné cette règle
+si elle avait toujours été la nôtre ? », pas à « que se passerait-il si on la
+votait demain ? ». Le modèle sait aussi calculer la seconde question — des
+variantes où les droits acquis sont conservés et la règle nouvelle ne vaut que
+pour la suite —, mais le site ne les compare plus : la proposition du parti est
+rétroactive, et c'est elle qu'il s'agit de chiffrer.</p>
 
 <h4>Ce qui pousse la dépense, et ce qui la retient</h4>
 ${g.tableau(
@@ -4705,7 +4498,7 @@ function coutDetailEquilibre(contexte) {
   const obs = solde.derniereAnneeObservee;
   const observe = solde.annee(obs);
   const horizon = solde.annee(solde.derniereAnnee);
-  const lignes = SCENARIOS.map(([scenario, libelle]) => {
+  const lignes = SCENARIOS_COMPARES.map(([scenario, libelle]) => {
     const equilibre = solde.premiereAnneeEquilibree(scenario);
     return [
       nomScenario(scenario, libelle),
@@ -4750,15 +4543,15 @@ le système actuel encaisse : ce que la branche famille et l'assurance chômage
 versent pour des droits qu'ils ne servent pas, soit
 
 ${g.pourcentage(observe.retrait, false, 2)} du PIB en ${obs}, leur est
-retiré, à part constante des ressources sur les années projetées. C'est
-pourquoi les scénarios 3 et 5 sont déjà en déficit en ${obs}, alors qu'ils y
-servent encore les pensions du système actuel.</p>
+retiré, à part constante des ressources sur les années projetées. C'est ce
+retrait qui creuse leur solde : un système notionnel qui ne sert plus ces
+droits ne peut pas en garder les recettes.</p>
 
 <div class="note"><strong>Un coefficient supérieur à un est une marge, et
 une marge se sert.</strong> Lire les
-${g.nombre(horizon.coefficient("notionnel_prospectif"), 2)} du scénario 3 comme
+${g.nombre(horizon.coefficient("notionnel_liberal"), 2)} de la proposition comme
 une économie de ${g.pourcentage(
-      1 - 1 / horizon.coefficient("notionnel_prospectif"), false, 0)} serait un
+      1 - 1 / horizon.coefficient("notionnel_liberal"), false, 0)} serait un
 contresens : à prélèvement inchangé, ce système-là servirait autant que le
 nôtre, mais autrement réparti entre les carrières. Le modèle calcule ce
 facteur ; il ne l'applique jamais, et toutes les courbes de coût de cette page
@@ -4789,7 +4582,7 @@ function coutDetailGarantie(contexte) {
   ];
   const assiettes = [
     [`Pensions de ${distribution.millesime}`, 1.0],
-    ["Pensions du scénario 6", facteurContributif],
+    ["Pensions du système 4", facteurContributif],
   ];
   const lignes = [];
   for (const [titreAssiette, facteur] of assiettes) {
@@ -4816,11 +4609,11 @@ function coutDetailGarantie(contexte) {
   );
 
   return g.depliant("Ce que coûterait la garantie vieillesse", `
-<p>La garantie du scénario 6 est <strong>différentielle</strong> : elle ne verse
+<p>La garantie du système 4 est <strong>différentielle</strong> : elle ne verse
 que ce qui manque à une pension pour atteindre son plancher. Son coût est donc
 tout entier celui de la <strong>queue basse de la distribution</strong> des
 pensions, et treize carrières de référence ne décrivent pas une distribution :
-le chiffre que le tableau des six scénarios en tire —
+le chiffre que le tableau des quatre systèmes en tire —
 ${milliards(c.cumul(COMPOSANTE_GARANTIE), 0)} sur soixante-six ans — est
 faux, et il faut le remplacer.</p>
 
@@ -4829,7 +4622,7 @@ cent euros, combien de retraités touchent combien. Le barème s'y applique
 directement, sans passer par aucun cas type. Deux lectures : ce que la garantie
 coûterait <strong>aux pensions d'aujourd'hui</strong>, en remplacement de
 l'ASPA (un calcul qui ne doit rien au modèle), et ce qu'elle coûterait
-<strong>aux pensions du scénario 6</strong>, toute la distribution étant alors
+<strong>aux pensions du système 4</strong>, toute la distribution étant alors
 déplacée du rapport ${g.pourcentage(facteurContributif, false, 0)} que le
 modèle donne à sa part contributive. Deux planchers aussi, parce que l'enquête
 dit la pension sans dire avec qui l'on vit : le coût réel est entre les deux.</p>
@@ -4850,7 +4643,7 @@ ${g.tableau(
 huit distributions publiées qui soit dans la même grandeur que celles du modèle.
 Les pensions d'une tranche de cent euros sont supposées y être réparties
 uniformément, et la tranche ouverte du haut est traitée comme une masse
-ponctuelle. Le déplacement des pensions au rapport du scénario 6 est
+ponctuelle. Le déplacement des pensions au rapport du système 4 est
 <em>proportionnel et uniforme</em>, alors que le scénario ne déplace pas toutes
 les carrières du même rapport : les deux dernières lignes sont un ordre de
 grandeur là où les deux premières sont un calcul.</p>
@@ -4864,7 +4657,7 @@ centaines de milliers de personnes à une allocation servie à
 ${g.nombre(garantieBasse.beneficiaires / 1e6, 1)} millions de retraités aux
 pensions d'aujourd'hui, et à
 ${g.nombre(garantieScenario.beneficiaires / 1e6, 1)} millions à celles du
-scénario 6.</div>
+système 4.</div>
 `, "cout-garantie");
 }
 
@@ -4984,7 +4777,7 @@ laisse dix, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
   <li><strong>Les recettes ne réagissent à rien.</strong> Elles sont celles du
   système actuel, encaissées ou projetées telles quelles : la question posée
-  est « à prélèvement inchangé, ce système tiendrait-il ? ». Le scénario 6, qui
+  est « à prélèvement inchangé, ce système tiendrait-il ? ». Le système 4, qui
   pose un taux unique de 18 % pour tous, déplacerait aussi les recettes, et
   rien ici ne le dit. Une seule recette suit le droit : ce que la branche
   famille et l'assurance chômage versent pour des droits que les scénarios
@@ -5249,7 +5042,7 @@ si sévère.</p>
 
 <p><strong>« Revalorisation réellement pratiquée » est la seule ligne qui ne soit
 pas une hypothèse</strong> : c'est le coefficient que les arrêtés annuels ont
-appliqué aux salaires portés au compte, celui dont le scénario 1 se sert pour
+appliqué aux salaires portés au compte, celui dont le système 1 se sert pour
 calculer le ${g.terme("salaire de référence")}. Il vaut
 <strong>×${g.nombre(revalPratiquee, 0)}</strong> sur la période, près de cinq
 fois les prix, parce que le régime général a revalorisé sur les SALAIRES
@@ -5269,8 +5062,8 @@ suédois, italiens, polonais et lettons, à des variantes près. Sur 1941-2025 i
 vaut ×${g.nombre(masseSalariale, 0)}, onze fois les prix : l'emploi salarié a
 doublé depuis 1950, et cette croissance-là s'ajoute chaque année à celle des
 salaires. Une réserve : ce rendement est celui du système ENTIER, alors que les
-scénarios 2 et 3 ne portent au compte que la part salariale de la cotisation.
-C'est aux scénarios 4 et 5 qu'il faut le comparer.</p>
+le système 2 ne porte au compte que la part salariale de la cotisation.
+C'est au système 3 qu'il faut le comparer.</p>
 
 <p><strong>Le PIB nominal</strong> pousse la même idée à l'assiette la plus
 large : il gagne ce que la masse salariale perd quand la valeur ajoutée se
@@ -5305,7 +5098,7 @@ réelle <em>chaque</em> année. Les deux sont dans les options.</p>`);
 
 /** Ce que l'étalon reproduit du droit en vigueur. */
 function methodeDroitPositif() {
-  return g.depliant("Ce que le scénario 1 applique du droit en vigueur", `
+  return g.depliant("Ce que le système 1 applique du droit en vigueur", `
 <p>L'étalon ne vaut que par ce qu'il reproduit. Il applique la
 ${g.terme("décote")} et la ${g.terme("surcote")}, la proratisation par la
 ${g.terme("durée", "durée d'assurance")}, le ${g.terme("salaire de référence")}
@@ -5366,9 +5159,9 @@ ni minimum contributif, ni minimum garanti, ni ASPA, ni majoration pour enfants,
 ni majoration de durée d'assurance, ni AVPF, ni bonifications, ni catégorie
 active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le scénario
 1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
-<p>Une exception : le <strong>scénario 6</strong>, la
+<p>Une exception : le <strong>système 4</strong>, la
 <a href="${g.lien("/")}">proposition du Parti libéral français</a>, remet un
-plancher, et un seul. C'est le scénario 4, à deux différences près : un taux
+plancher, et un seul. C'est le système 3, à deux différences près : un taux
 unique de 18 % pour tous à compter de la bascule, salariale et patronale
 additionnées, les années antérieures restant portées au compte aux taux réels ;
 et une garantie vieillesse, différentielle et servie à 65 ans comme l'ASPA, mais
@@ -5423,7 +5216,7 @@ function methodeConstruction() {
 <a href="${g.DEPOT}/tree/main/src">le dossier <code>src/</code> du dépôt</a> : c'est
 lui qui fait foi, et c'est lui qui est testé contre les sources — les textes,
 les barèmes, et des calculateurs extérieurs comme OpenFisca, qui servent
-d'oracle au scénario 1.</p>
+d'oracle au système 1.</p>
 <p>Ce que vous lisez ici est un <strong>portage en JavaScript</strong> de ce
 modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateur
 : rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte
@@ -5446,7 +5239,7 @@ function methodeUnites() {
   return g.depliant("En quelles unités, et sur quel périmètre", `
 <h4 id="unites">Brut, et pas net</h4>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,
-les cotisations versées, le capital notionnel, les six pensions. « Brut » a ici
+les cotisations versées, le capital notionnel, les quatre pensions. « Brut » a ici
 le sens des comptes nationaux : <em>salaires et traitements bruts</em> (D11)
 rapportés à l'emploi salarié intérieur. C'est-à-dire <strong>avant</strong>
 cotisations salariales, CSG, CRDS et impôt sur le revenu, et <strong>hors</strong>
@@ -5937,7 +5730,7 @@ pas discuter.</p>
 </div>
 <ul class="serree">
   <li><a href="${g.lien("/simuler")}">Simuler</a> : votre carrière, ou votre
-  relevé collé tel quel, sous les six scénarios.</li>
+  relevé collé tel quel, sous les quatre systèmes.</li>
   <li><a href="${g.lien("/cas-types")}">Cas types</a> : treize carrières sur sept
   générations.</li>
   <li><a href="${g.lien("/cout")}">Coût</a> : ce qui rentre, ce qui sort, et ce
@@ -6199,7 +5992,7 @@ function simulateurCourt(contexte, vers = "/simuler") {
   <div class="grille">${champs}
     <button type="submit">Calculer →</button>
   </div>
-  <p class="discret" style="margin:0.9rem 0 0">Six montants côte à côte :
+  <p class="discret" style="margin:0.9rem 0 0">Quatre montants côte à côte :
   les règles d'aujourd'hui, et les nôtres. Tout se calcule dans votre
   navigateur, rien n'est envoyé.</p>
 </form>`;
@@ -6390,7 +6183,7 @@ chaque modification par les contrôles automatiques du dépôt :</p>
 <ul class="serree">
   <li>contrastes de texte au-delà de 4,5:1 et contours de champs au-delà de
   3:1, dans le thème clair comme dans le thème sombre ;</li>
-  <li>couleurs des six scénarios séparables autrement que par la teinte, et
+  <li>couleurs des quatre systèmes séparables autrement que par la teinte, et
   contrôlées pour les visions daltoniennes ;</li>
   <li>tableaux titrés, avec en-têtes de colonne et de ligne ;</li>
   <li>chaque graphique suivi du tableau de ses points, année par année : une

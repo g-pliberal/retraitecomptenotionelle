@@ -104,11 +104,21 @@ def test_accueil_sans_parametres_ne_calcule_rien(page):
     assert "Résultats" not in texte
 
 
-def test_simulation_affiche_les_trois_scenarios(page):
+def test_simulation_affiche_les_quatre_systemes(page):
+    """Les quatre systèmes comparés, nommés par leur assiette.
+
+    Les libellés ont changé à la refonte : « Notionnel rétroactif » ne disait
+    rien à qui n'avait pas lu la page Méthode. Ce qui distingue un système de
+    l'autre est maintenant dans son titre — l'assiette —, et depuis quand la
+    carrière est recalculée est dans la glose.
+    """
     texte = page("/simuler", naissance=1960, statut="agent_sncf",
                  debut=20, liquidation=52)
-    for attendu in ("Système actuel", "rétroactifs depuis 1941",
-                    "à compter de 2026", "Résultats"):
+    for attendu in ("1. Système de répartition actuel",
+                    "2. Compte notionnel, part salariale seule",
+                    "3. Compte notionnel, part salariale + patronale",
+                    "4. La proposition du Parti libéral français",
+                    "recalculée depuis 1941", "Résultats"):
         assert attendu in texte
 
 
@@ -1193,7 +1203,7 @@ def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
     combien l'impôt en finance ; à 62 ans, elle dit pourquoi rien n'est servi."""
     texte = page("/simuler", naissance=1958, liquidation=65, salaire=1500,
                  unite_revenu="euros_mois")
-    assert "Le scénario 6 : un taux pour tous" in texte
+    assert "Le système 4 : un taux pour tous" in texte
     assert "Garantie vieillesse servie" in texte
     assert "l'impôt en finance" in texte
     assert "personne seule, 300 €" in texte
@@ -1659,11 +1669,11 @@ def _verifier_cascade(nom, corps, pas_diviseur, pas_facteur):
     assert abs(valeur["e"] / coefficient["f"] - valeur["f"]) <= borne, f"{nom} : f)"
 
 
-def test_les_six_scenarios_donnent_le_meme_montant_au_mois_et_a_l_annee(contexte):
-    """Mensuel × 12 = annuel, sur les nombres affichés, pour les six blocs."""
+def test_les_quatre_systemes_donnent_le_meme_montant_au_mois_et_a_l_annee(contexte):
+    """Mensuel × 12 = annuel, sur les nombres affichés, pour les quatre blocs."""
     corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
-    assert len(blocs) == 6, f"{len(blocs)} scénarios affichés, six attendus"
+    assert len(blocs) == 4, f"{len(blocs)} systèmes affichés, quatre attendus"
     for bloc in blocs:
         mensuel = _nombres(re.search(r'principal">(.*?)</span>\s*<span class="annuel',
                                      bloc, re.S).group(1))[0]
@@ -1936,9 +1946,9 @@ def test_le_resume_vocal_annonce_bien_les_montants(contexte):
     """Et le sélecteur doit trouver quelque chose, pas seulement exister."""
     corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
-    assert len(blocs) == 6
+    assert len(blocs) == 4
     for bloc in blocs:
-        assert re.search(r'class="titre">[^<]+<', bloc), "scénario sans titre"
+        assert re.search(r'class="titre">[^<]+<', bloc), "système sans titre"
         assert re.search(r'class="chiffre principal">\s*<span class="somme">[^<]+<',
                          bloc), "scénario sans montant mis en avant"
 
@@ -2393,8 +2403,7 @@ BANDE_LUMINOSITE = (0.70, 0.87)
 CHROMA_MINIMAL = 0.10
 ECART_MINIMAL_VISION_NORMALE = 15.0
 
-SCENARIOS_COLORES = ("actuel", "retroactif", "prospectif",
-                     "retroactif-employeur", "prospectif-employeur", "liberal")
+SCENARIOS_COLORES = ("actuel", "retroactif", "retroactif-employeur", "liberal")
 
 
 def _oklab(hexa: str) -> tuple[float, float, float]:
@@ -2414,6 +2423,38 @@ def _oklab(hexa: str) -> tuple[float, float, float]:
     )
 
 
+def _simuler_daltonisme(hexa: str, genre: str) -> str:
+    """La couleur telle qu'un œil deutéranope ou protanope la reçoit.
+
+    Matrices de Viénot, Brettel et Mollon (1999), la référence usuelle : on
+    passe en espace LMS, on écrase le cône manquant en le reconstruisant depuis
+    les deux autres, et on revient en sRGB.
+    """
+    canaux = [int(hexa[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    r, v, b = [
+        c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+        for c in canaux
+    ]
+    grand_l = 17.8824 * r + 43.5161 * v + 4.11935 * b
+    moyen = 3.45565 * r + 27.1554 * v + 3.86714 * b
+    court = 0.0299566 * r + 0.184309 * v + 1.46709 * b
+    if genre == "deuteranopie":
+        grand_l2, moyen2, court2 = grand_l, 0.494207 * grand_l + 1.24827 * court, court
+    else:
+        grand_l2, moyen2, court2 = 2.02344 * moyen - 2.52581 * court, moyen, court
+    rouge = 0.080944 * grand_l2 - 0.130504 * moyen2 + 0.116721 * court2
+    vert = -0.0102485 * grand_l2 + 0.0540194 * moyen2 - 0.113615 * court2
+    bleu = -0.000365294 * grand_l2 - 0.00412163 * moyen2 + 0.693513 * court2
+
+    def encoder(canal: float) -> int:
+        canal = max(0.0, min(1.0, canal))
+        canal = (12.92 * canal if canal <= 0.0031308
+                 else 1.055 * canal ** (1 / 2.4) - 0.055)
+        return round(max(0.0, min(1.0, canal)) * 255)
+
+    return "#%02x%02x%02x" % (encoder(rouge), encoder(vert), encoder(bleu))
+
+
 def _palette() -> list[str]:
     """Les six couleurs de scénario lues dans la feuille de style."""
     return [_couleur(nom) for nom in SCENARIOS_COLORES]
@@ -2430,7 +2471,7 @@ def test_la_palette_des_scenarios_reste_lisible():
     dérive qui l'avait provoquée.
     """
     couleurs = _palette()
-    assert len(set(couleurs)) == 6, "deux scénarios partagent une couleur"
+    assert len(set(couleurs)) == 4, "deux systèmes partagent une couleur"
     bas, haut = BANDE_LUMINOSITE
     for couleur in couleurs:
         clarte, a, b = _oklab(couleur)
@@ -2447,11 +2488,23 @@ def test_la_palette_des_scenarios_reste_lisible():
             f"{premiere} et {seconde} : ΔE {ecart:.1f}, sous le plancher de "
             f"{ECART_MINIMAL_VISION_NORMALE:.0f} en vision normale"
         )
-    # Et la couleur n'est jamais seule : six teintes catégorielles ne se
-    # séparent pas toutes sous deutéranopie, quel que soit le choix — le
-    # meilleur arrangement possible sous les contraintes ci-dessus y descend à
-    # ΔE 8,6. Le tracé porte donc aussi un motif de tirets, qui lui ne se perd
-    # jamais, et la légende le reprend.
+    # ET SOUS DALTONISME. C'est le contrôle que la palette à six couleurs ne
+    # pouvait pas passer — le meilleur arrangement possible y descendait à
+    # ΔE 8,6, et aucun choix de teintes n'y changeait rien : six catégories ne
+    # se distinguent pas toutes pour un œil qui confond le rouge et le vert. À
+    # quatre, la contrainte se relâche, et il est tenu. Il est donc vérifié ici
+    # plutôt que sous-traité à une relecture extérieure.
+    for genre in ("deuteranopie", "protanopie"):
+        vues = [_simuler_daltonisme(couleur, genre) for couleur in couleurs]
+        for premiere, seconde in itertools.combinations(vues, 2):
+            x, y = _oklab(premiere), _oklab(seconde)
+            ecart = 100 * sum((u - v) ** 2 for u, v in zip(x, y)) ** 0.5
+            assert ecart >= ECART_MINIMAL_VISION_NORMALE, (
+                f"{genre} : {premiere} et {seconde} se confondent (ΔE "
+                f"{ecart:.1f})"
+            )
+    # La couleur n'est pas seule pour autant : le tracé porte aussi son motif
+    # de tirets, qui ne se perd jamais, et la légende le reprend.
     pleine = g.Serie("Pleine", (1.0, 2.0, 3.0), "var(--actuel)")
     tiretee = g.Serie("Tiretée", (1.0, 2.0, 3.0), "var(--liberal)", tirets=True)
     trace = g.graphique("t", (2000, 2001, 2002), (pleine, tiretee))
@@ -3763,9 +3816,11 @@ def test_la_page_de_resultats_replie_son_detail(contexte):
     assert visible.count('<figure class="graphique"') == 0, (
         "un graphique reste ouvert"
     )
-    # Et le détail est là, replié : sept sections, plus lourdes à elles seules
-    # que tout ce qui reste ouvert.
-    assert len(re.findall(r'<details class="section"[ >]', corps)) >= 7
+    # Et le détail est là, replié : six sections, plus lourdes à elles seules
+    # que tout ce qui reste ouvert. Il y en avait sept ; celle qui détaillait
+    # « du système 1 au système 3, ligne à ligne » est partie avec les variantes
+    # « dès la bascule », dont elle expliquait la conversion des droits acquis.
+    assert len(re.findall(r'<details class="section"[ >]', corps)) >= 6
     assert len(visible) < len(corps) / 2, (
         "le détail replié pèse moins que ce qui reste ouvert"
     )
@@ -3812,10 +3867,10 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent(contexte):
     assert "Points Agirc-Arrco des chômeurs" in texte
     assert "Ces recettes financent des droits que les scénarios" in texte
     # Le dépliant dit que le coefficient retire la recette, et ce qu'on lirait
-    # sans ce retrait, pour les deux scénarios applicables.
+    # sans ce retrait, sur deux des systèmes comparés.
     assert "Le coefficient d'équilibre du dépliant suivant les leur retire" in texte
-    assert re.search(r"le scénario 3 afficherait \d,\d\d en 20\d\d au lieu de \d,\d\d", texte)
-    assert "et le scénario 5" in texte
+    assert re.search(r"la proposition afficherait \d,\d\d en 20\d\d au lieu de \d,\d\d", texte)
+    assert "et le système 2" in texte
 
 
 def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
@@ -4030,11 +4085,11 @@ def test_le_jargon_du_relecteur_porte_sa_definition(contexte):
 
     resultats = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     assert {"taux de remplacement", "coefficient de conversion",
-            "âge de référence"} <= termes(resultats)
+            } <= termes(resultats)
     assert any(mot.startswith("capital notionnel") for mot in termes(resultats))
     # L'appel d'une bulle porte son texte tel quel — c'est du HTML de phrase —,
     # là où le mot du glossaire échappe le sien.
-    for cle in ("statut d'affiliation", "table de conversion", "âge de référence",
+    for cle in ("statut d'affiliation", "table de conversion",
                 "part patronale", "indexation"):
         assert g.GLOSSAIRE[cle] in bulles(resultats), cle
 
@@ -4046,30 +4101,11 @@ def test_le_jargon_du_relecteur_porte_sa_definition(contexte):
             "taux de remplacement"} <= termes(cout)
     assert "réglage annuel" in termes(rendre(contexte, "/cas-types", {})[1])
 
-
-def test_l_age_de_reference_dit_ce_qu_il_coute_et_ou_le_regler(contexte):
-    """Partir avant l'âge de référence coûte une seconde fois, sur le passé.
-
-    La fiche affichait « 67 ans » sans un mot ; la note nomme l'écart, la
-    pénalité, et le réglage qui la retire. Elle disparaît quand il n'y a rien
-    à dire : départ à l'âge de référence, ou conversion à l'âge effectif.
-    """
-    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
-    assert "Vous partez 3 ans avant l'âge de référence." in corps
-    assert "payée une seconde fois" in corps
-    assert "Conversion des droits acquis : à l'âge de départ effectif" in corps
-    # La note est en clair, pas dans une bulle ni un dépliant.
-    assert "Vous partez 3 ans avant" in _hors_depliants(corps)
-
-    neutre = rendre(contexte, "/simuler",
-                    {**SIMULATION_TEMOIN, "conversion_acquis": "liquidation"})[1]
-    assert "l'âge de référence.</strong>" not in neutre
-    a_l_heure = rendre(contexte, "/simuler",
-                       {**SIMULATION_TEMOIN, "liquidation": "2042-01-01"})[1]
-    assert "Vous partez" not in a_l_heure
-    tard = rendre(contexte, "/simuler",
-                  {**SIMULATION_TEMOIN, "liquidation": "2044-01-01"})[1]
-    assert "Vous partez 2 ans après" in tard and "récompensé une seconde fois" in tard
+# L'âge de référence ne se règle plus, et sa note n'existe plus : la
+# conversion des droits acquis était propre aux deux variantes « dès la
+# bascule », que le site ne compare plus depuis qu'il est passé à quatre
+# systèmes. Le MODÈLE la calcule toujours — voir tests/test_simulateur.py —,
+# mais aucune page ne la montre, et il n'y a donc plus rien à vérifier ici.
 
 
 def test_le_menu_des_statuts_est_groupe_par_famille(page):
@@ -4111,20 +4147,50 @@ def test_la_page_cas_types_ouvre_sur_la_proposition(contexte):
     radios = re.findall(r'<input type="radio" name="grille" id="grille-([^"]+)"( checked)?>',
                         corps)
     assert [code for code, _ in radios] == [
-        "notionnel_liberal", "notionnel_retroactif", "notionnel_prospectif",
-        "notionnel_retroactif_employeur", "notionnel_prospectif_employeur",
+        "notionnel_liberal", "notionnel_retroactif",
+        "notionnel_retroactif_employeur",
     ]
-    assert [bool(coche) for _, coche in radios] == [True, False, False, False, False]
+    assert [bool(coche) for _, coche in radios] == [True, False, False]
     panneaux = re.findall(r'<div class="panneau" data-onglet="([^"]+)"( hidden)?>', corps)
     assert [code for code, _ in panneaux] == [code for code, _ in radios]
-    assert [bool(cache) for _, cache in panneaux] == [False, True, True, True, True]
+    assert [bool(cache) for _, cache in panneaux] == [False, True, True]
     # Chaque radio porte son libellé, et le premier dit ce qu'il est.
-    assert '<label for="grille-notionnel_liberal">Scénario 6, la proposition</label>' in corps
-    # La feuille de style sait montrer chacun des cinq panneaux.
+    assert '<label for="grille-notionnel_liberal">4. La proposition</label>' in corps
+    # La feuille de style sait montrer chacun des trois panneaux.
     for code, _ in radios:
         assert f'.onglets:has(#grille-{code}:checked) ~ .panneaux > .panneau[data-onglet="{code}"]' in g.FEUILLE_DE_STYLE, code
     # Et les trois chiffres d'ouverture sont lus sur cette grille-là.
-    assert "génération 2000, scénario 6" in corps
+    assert "génération 2000, système 4" in corps
+
+
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_aucune_page_ne_compte_encore_six_systemes(contexte, chemin):
+    """Le site en compare QUATRE, et doit le dire partout de la même façon.
+
+    Passer de six à quatre a touché cinquante-deux phrases. Les tests de
+    structure en ont rattrapé la plupart ; deux ont échappé à tout — « Six
+    calculs pour votre carrière », suivi trois mots plus loin de « les trois
+    autres », et « Six montants côte à côte » sous le formulaire de l'accueil.
+    Une phrase fausse qu'aucun sélecteur ne regarde reste fausse ; celle-ci la
+    regarde.
+
+    Le compte du MODÈLE n'est pas visé : il en calcule toujours six, et les
+    commentaires du code le disent. Ce test ne lit que ce qui s'affiche.
+    """
+    corps = rendre(contexte, chemin,
+                   {"naissance": "1975-01-01"}
+                   if chemin in ("/simuler", "/trajectoire") else {})[1]
+    texte = re.sub(r"<[^>]+>", " ", corps)
+    restes = re.findall(
+        r"[Ss]ix (?:calculs|montants|systèmes|scénarios|courbes|barres|pensions)",
+        texte,
+    )
+    assert not restes, f"{chemin} : {restes}"
+    # Et les numéros s'arrêtent à quatre : un « système 5 » n'aurait plus de
+    # référent, puisque la barre correspondante n'existe plus.
+    assert not re.findall(r"\b(?:système|systèmes|scénario|scénarios) [56]\b", texte), (
+        f"{chemin} : un numéro au-delà de quatre subsiste"
+    )
 
 
 def test_les_pages_longues_portent_leur_plan(contexte):
@@ -4272,17 +4338,16 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel(cont
     titres = re.findall(r'<div class="panneau" data-onglet="([^"]+)"[^>]*><h3>.*?'
                         r'<span class="badge (\w+)">', cas_types)
     assert titres == [("notionnel_liberal", "proposition")] + [
-        (code, "contrefactuel") for code in ("notionnel_retroactif", "notionnel_prospectif",
-                                             "notionnel_retroactif_employeur",
-                                             "notionnel_prospectif_employeur")]
+        (code, "contrefactuel") for code in ("notionnel_retroactif",
+                                             "notionnel_retroactif_employeur")]
 
     cout = rendre(contexte, "/cout", {})[1]
     lignes = re.findall(r'<th class="" scope="row">(\d)\. [^<]*(?:<span class="badge (\w+)">)?',
                         cout)
-    # Trois tableaux à six lignes : le passé, l'avenir, l'équilibre.
+    # Trois tableaux à quatre lignes : le passé, l'avenir, l'équilibre.
     assert lignes.count(("1", "")) == 3, lignes
-    assert lignes.count(("6", "proposition")) == 3
-    for numero in "2345":
+    assert lignes.count(("4", "proposition")) == 3
+    for numero in "23":
         assert lignes.count((numero, "contrefactuel")) == 3, numero
     assert ".badge.proposition" in g.FEUILLE_DE_STYLE
 
@@ -4369,12 +4434,13 @@ def test_le_formulaire_dit_que_l_exemple_est_rempli(page):
 
 def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(contexte):
     """Sous « Résultats » : cinq phrases qui disent ce qu'on regarde, puis les
-    six montants, puis seulement les repères techniques. Dans l'ordre inverse,
-    un téléphone montrait un coefficient de conversion et pas un euro."""
+    quatre montants, puis seulement les repères techniques. Dans l'ordre
+    inverse, un téléphone montrait un coefficient de conversion et pas un
+    euro."""
     corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     visible = _hors_depliants(corps)
     resultats = visible.index('id="resultats"')
-    lecture = visible.index("Six calculs pour votre carrière", resultats)
+    lecture = visible.index("Quatre calculs pour votre carrière", resultats)
     premier = visible.index('<div class="scenario">', lecture)
     reperes = visible.index('<div class="fiches">', resultats)
     assert lecture < premier < reperes
@@ -4453,7 +4519,7 @@ def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre(contexte):
                          ("/cas-types", "/methode"), ("/cas-types", "/")):
         assert f'href="{g.lien(vers)}"' in pages[depuis], f"{depuis} ne renvoie pas vers {vers}"
     assert "treize carrières types</a> montrent ce\nqu'elle déplace" in pages["/methode"]
-    assert 'est <a href="#/">la proposition</a>' in pages["/cas-types"]
+    assert '<a href="#/">la proposition</a>' in pages["/cas-types"]
 
 
 def test_la_methode_dit_comment_le_site_est_construit(contexte):

@@ -2581,17 +2581,59 @@ aucun débordement latéral à 320, 390 et 820 points, les trois boutons de
 partage fonctionnels (PNG composé, intention X formée, presse-papiers à
 278 signes).
 
-**Ce qui reste.** Deux choses, à trancher par l'auteur du site :
+**Ce qui restait** — les six scénarios affichés et leurs libellés — a été fait
+juste après, sous l'action 31.
 
-- *Les six scénarios.* La maquette n'en montre que quatre — la décision prise
-  en cours de route était de supprimer « dès la bascule » et « bascule avec le
-  patronal », jugés « inutiles désormais ». Ce n'est pas un choix de mise en
-  page : il retire deux comparaisons du modèle affiché, et il touche la page
-  Coût, les onglets de Cas types et les témoins. Il n'a pas été fait ici.
-- *Les libellés des scénarios.* « Compte notionnel, part salariale seule »
-  plutôt que « Notionnel rétroactif » : plus clair, et c'est la formulation que
-  l'auteur a lui-même proposée. Non appliqué non plus, pour ne pas séparer le
-  renommage de la question ci-dessus.
+### 31. Quatre systèmes comparés, au lieu de six — `fait`
+
+**La demande.** « Les scénarios 3 et 5, on les a mis à la base, mais je pense
+qu'ils sont inutiles désormais. » Ce sont les deux variantes *dès la bascule* :
+droits acquis conservés, règles notionnelles ensuite. Et un renommage, proposé
+par l'auteur du site : « Compte notionnel, part salariale seule » plutôt que
+« Notionnel rétroactif », qui ne disait rien à qui n'avait pas lu la Méthode.
+
+**Ce qui a été fait.**
+
+- *Un seul endroit décide.* `SCENARIOS_MONTRES` et `LIBELLES_SYSTEMES`, dans
+  `web/pages.py` : les barres de Simuler, les courbes de la Trajectoire, les
+  grilles de Cas types et le comparatif de Coût les lisent tous.
+- *Les quatre libellés* nomment ce qui change d'un système à l'autre —
+  l'assiette —, et la GLOSE porte ce que le titre a cessé de dire : depuis
+  quand la carrière est recalculée, et à quel taux. Sans elle on ne
+  comprendrait pas pourquoi le 2 donne moins que le 4.
+- *La numérotation suit*, 1 à 4, dans les cinquante-deux phrases qui citaient
+  un numéro. Le mot a changé en même temps — « scénario » devient « système »
+  dans tout ce que le lecteur voit —, ce qui rendait la substitution sûre :
+  aucune collision possible entre la source et la cible. La nomenclature du
+  MODÈLE ne bouge pas : `cout.SCENARIOS` numérote toujours ses six de 1 à 6, et
+  aucune page n'affiche plus un libellé venu de là.
+- *La page Coût passe à quatre aussi*, tableaux et graphique. Et la courbe de
+  la carte de tête, qui traçait une variante que le site ne montre plus, trace
+  désormais LA PROPOSITION : 8,6 % du PIB en 2025, 8,1 % en 2070, contre
+  14,1 % et 15,3 % pour le système actuel.
+
+**Ce que ça a coûté, et qui n'était pas prévu.** Les scénarios 3 et 5 étaient
+les SEULS à convertir les droits acquis. Les retirer de l'affichage a donc
+rendu inertes, et fait retirer avec eux : la fiche « âge de référence », son
+avertissement (« vous partez 3 ans avant l'âge de référence — l'anticipation
+est payée une seconde fois, sur le passé »), le dépliant « du système 1 au
+système 3, ligne à ligne » qui était l'explication la plus concrète du calcul
+notionnel, et deux options du formulaire. Le modèle les calcule toujours ;
+aucune page ne les montre. Le choix a été posé explicitement avant d'être fait.
+
+**Ce que ça a déplacé, en bien.** La palette. À six teintes, la séparation sous
+deutéranopie plafonnait à ΔE 8,6 et aucun choix de couleurs n'y changeait rien
+— six catégories ne se distinguent pas toutes pour un œil qui confond le rouge
+et le vert. À quatre, la contrainte se relâche : la nouvelle palette tient
+ΔE ≥ 15,5 sous deutéranopie et ≥ 15,2 sous protanopie, au-dessus du plancher de
+15. **Le contrôle daltonien est désormais dans le test** — `_simuler_daltonisme`,
+matrices de Viénot-Brettel-Mollon — au lieu d'être sous-traité à une relecture
+extérieure comme il l'était depuis la pose de la palette.
+
+**Vérifié.** 896 tests, les neuf routes comparées caractère par caractère entre
+Python et le portage, et au navigateur : quatre barres sur Simuler, quatre
+courbes sur la Trajectoire, trois onglets sur Cas types, la proposition sur le
+graphique du Coût, aucune erreur de console.
 
 ---
 
@@ -3127,3 +3169,11 @@ partage fonctionnels (PNG composé, intention X formée, presse-papiers à
   d'accessibilité mesurables ont été corrigés au passage (palette des
   scénarios, contour des champs). Reste à trancher : réduire ou non les six
   scénarios affichés à quatre, et leurs libellés.
+
+- **Septembre 2026, action 31.** Faite. Le site ne compare plus que quatre
+  systèmes, renommés et renumérotés. Le modèle en calcule toujours six. La
+  mécanique de conversion des droits acquis a quitté l'interface avec les deux
+  variantes qui l'employaient, choix posé avant d'être fait. Effet de bord
+  heureux : à quatre couleurs, la palette devient séparable sous deutéranopie
+  et sous protanopie, ce qu'elle n'était pas à six, et le contrôle est entré
+  dans les tests.
