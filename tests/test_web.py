@@ -3955,6 +3955,47 @@ def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
         )
 
 
+def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture(contexte):
+    """La page Partager demandait une capture d'écran ; elle n'en demande plus.
+
+    Les cartes étaient rendues à leur taille réelle dans un cadre qui défilait,
+    à charge pour le militant de faire défiler, de capturer et de recadrer une
+    image que le site savait composer lui-même. Elles portent maintenant la
+    MÊME barre que les graphiques — un seul jeu de classes, un seul code —, et
+    chacune emporte le compte et l'adresse.
+    """
+    corps = rendre(contexte, "/partager", {})[1]
+    cartes = re.findall(r'<figure class="carte">(.*?)</figure>', corps, re.S)
+    assert len(cartes) == 4, f"{len(cartes)} cartes, quatre attendues"
+    for carte in cartes:
+        assert carte.index("<figcaption>") < carte.index('class="cadre-carte"'), (
+            "la légende nomme la carte, et se lit AVANT elle"
+        )
+        assert '<button type="button" class="partager">' in carte, (
+            "une carte à publier doit partir d'un bouton, et non d'une capture"
+        )
+        assert '<button type="button" class="partager-x">' in carte
+        assert g.SIGNATURE in carte and g.ADRESSE_SITE in carte, (
+            "une image qui quitte le site doit dire qui l'a faite et où aller"
+        )
+    assert "captur" not in corps.lower(), (
+        "la page invite encore à capturer l'écran : le bouton compose l'image"
+    )
+
+
+def test_la_barre_de_partage_n_est_ecrite_qu_une_fois(contexte):
+    """Deux endroits partagent — la carte d'un graphique, la carte à publier —
+    et ils ne doivent pas diverger. Le gabarit n'en écrit qu'une, et les deux
+    pages la reprennent telle quelle."""
+    barre = g.barre_partage()
+    for chemin in ("/cout", "/partager"):
+        corps = rendre(contexte, chemin, {})[1]
+        assert barre in corps, f"{chemin} écrit sa propre barre de partage"
+    # Deux gestes, et pas un de plus : le troisième bouton demandait de choisir
+    # avant d'agir, et laissait chacun des trois incomplet.
+    assert barre.count("<button") == 2, barre
+
+
 # -- lire un graphique, et le faire sortir en image ----------------------------
 
 
@@ -4027,6 +4068,11 @@ def test_le_script_du_site_sait_lire_et_exporter_un_graphique():
     assert '.closest("button.partager")' in page
     assert "toBlob" in page and "navigator.share" in page
     assert "SIGNATURE" in page and "SIGNATURE_SITE" in page
+    # Les DEUX gestes de la barre, et le compte rendu qui les suit. Le libellé
+    # du bouton ne sert plus d'accusé de réception : il change sous le doigt la
+    # cible qu'on vient de toucher.
+    assert '.closest("button.partager-x")' in page
+    assert '.partage > .etat' in page
     # La signature n'est pas écrite deux fois : elle vient du gabarit.
     assert "@pliberal" not in page, (
         "la signature est écrite en dur dans index.html — elle doit venir de "
@@ -4037,11 +4083,15 @@ def test_le_script_du_site_sait_lire_et_exporter_un_graphique():
 def test_la_signature_des_images_nomme_le_compte_et_le_site():
     """Une image qui circule n'a plus de barre d'adresse ni de pied de page.
 
-    Sans ces deux lignes, elle sort du site sans dire d'où elle vient, et le
-    premier qui la republie en devient la source.
+    Sans ces trois lignes, elle sort du site sans dire d'où elle vient, ni où
+    aller la vérifier, et le premier qui la republie en devient la source.
     """
     assert g.SIGNATURE.startswith("@")
     assert "libéral" in g.SIGNATURE_SITE.lower()
+    # L'adresse est celle du site parent, et non celle de GitHub Pages : c'est
+    # là que le lecteur d'un post doit atterrir.
+    assert "partiliberalfrancais.fr" in g.ADRESSE_SITE
+    assert "://" not in g.ADRESSE_SITE, "une adresse d'image se lit, pas se clique"
     # Et les deux portages disent la même chose : le JavaScript est la seule
     # copie, et c'est celle que la page lit.
     from pathlib import Path
@@ -4050,6 +4100,56 @@ def test_la_signature_des_images_nomme_le_compte_et_le_site():
           ).read_text(encoding="utf-8")
     assert f'export const SIGNATURE = "{g.SIGNATURE}";' in js
     assert f'export const SIGNATURE_SITE = "{g.SIGNATURE_SITE}";' in js
+    assert f'export const ADRESSE_SITE = "{g.ADRESSE_SITE}";' in js
+
+
+def _script_du_site() -> str:
+    from pathlib import Path
+
+    return (Path(__file__).resolve().parents[1] / "index.html").read_text(
+        encoding="utf-8")
+
+
+def test_le_filigrane_couvre_l_image_et_ne_se_rogne_pas():
+    """Une signature posée en pied part au premier recadrage.
+
+    Et recadrer ne demande rien de plus qu'une capture d'écran : le pied d'une
+    image republiée est ce qui disparaît le plus facilement, alors que c'est
+    lui qui dit d'où elle vient. Le filigrane répond à cela en étant PARTOUT —
+    le compte écrit en diagonale sur toute la surface, à un pas assez serré
+    pour qu'aucun découpage encore publiable n'en soit exempt.
+
+    Ce test tient les trois conditions qui le rendent inrognable : le pas reste
+    petit devant l'image, un rang sur deux est décalé (sans quoi un couloir
+    vertical entier resterait vierge), et les deux composeurs d'image l'appellent
+    EN DERNIER — posé avant, une aire pleine le recouvrirait.
+    """
+    page = _script_du_site()
+    assert "function filigrane(dessin, largeur, hauteur, couleur)" in page
+
+    pas_x = int(re.search(r"const PAS_FILIGRANE_X = (\d+);", page).group(1))
+    pas_y = int(re.search(r"const PAS_FILIGRANE_Y = (\d+);", page).group(1))
+    # 1200 × 675 est le format des cartes, et la plus petite image du site.
+    assert pas_x <= 1200 / 5, f"{pas_x} : un recadrage au cinquième sortirait vierge"
+    assert pas_y <= 675 / 5, f"{pas_y} : un recadrage au cinquième sortirait vierge"
+    assert "(rang % 2)" in page, "sans décalage d'un rang sur deux, il reste des couloirs"
+
+    opacite = float(re.search(r"const OPACITE_FILIGRANE = ([\d.]+);", page).group(1))
+    assert 0.05 <= opacite <= 0.2, (
+        f"{opacite} : trop pâle, le filigrane ne dit plus rien ; trop dense, il "
+        "couvre le tracé"
+    )
+
+    appels = [m.start() for m in re.finditer(r"^  filigrane\(dessin", page, re.M)]
+    assert len(appels) == 2, (
+        f"{len(appels)} images composées portent le filigrane, deux attendues — "
+        "celle d'un graphique et celle d'une carte à publier"
+    )
+    for depart in appels:
+        suite = page[depart:]
+        assert "toBlob" in suite[:600], (
+            "le filigrane doit être posé en dernier, juste avant l'export"
+        )
 
 
 # -- la revue du 15 septembre 2026 : le thème « expérience utilisateur » --------

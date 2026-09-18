@@ -1434,8 +1434,8 @@ DESCRIPTIONS = {
     "/donnees": "D'où viennent les chiffres du site, série par série et régime "
                 "par régime, et ce qui a été recontrôlé contre sa source.",
     "/partager": "Les chiffres du programme au format des réseaux sociaux, "
-                 "1200 × 675, signés @pliberal : le plancher, le taux, le "
-                 "déficit, et les trois graphiques du site.",
+                 "1200 × 675, en filigrane @pliberal : le plancher, le taux, "
+                 "le déficit, et l'appel au simulateur.",
 }
 
 
@@ -2987,36 +2987,36 @@ def _page_trajectoire(contexte: Contexte, parametres: dict[str, str]) -> str:
 
 
 
-def _carte_partage(surtitre: str, chiffre: str, phrase: str, detail: str,
-                   classes: str = "", legende: str = "") -> str:
+def _carte_partage(nom: str, surtitre: str, chiffre: str, phrase: str,
+                   detail: str, classes: str = "") -> str:
     """Une carte 1200 × 675, au format de X et de LinkedIn.
 
-    Elle est rendue À SA TAILLE RÉELLE, dans un cadre qui défile, et non
-    réduite : la maquette l'exprimait en unités relatives à un conteneur de
-    400 px, si bien qu'aucune capture d'écran ne faisait jamais l'image
-    annoncée. En pixels, calibrée pour 1200 de large, une capture donne
-    vraiment 1200 × 675 — avec « @pliberal » à 32 px, lisible après
-    republication.
+    Ce que la page montre est l'APERÇU de la carte, réduit à la largeur de sa
+    colonne ; ce qui se publie est l'image composée par le bouton, aux vraies
+    dimensions. Elle a d'abord été rendue à sa taille réelle dans un cadre qui
+    défilait, à charge pour le lecteur d'en faire une capture d'écran : deux
+    gestes, un outil de capture, et un recadrage à la main pour une image que
+    le site savait composer lui-même.
 
     Le pied est ce qui compte le plus : une image qui quitte le site n'a plus
     ni barre d'adresse ni page autour, et sans ces deux lignes elle circule
     sans dire d'où elle vient. Le premier qui la republie en devient la source.
+    Dans l'image téléchargée, un filigrane le redit sur toute la surface — le
+    pied se recadre, le filigrane non.
+
+    ``nom`` est le nom de la carte, lu AVANT elle : c'est ce qui permet de
+    choisir laquelle publier sans les regarder toutes.
     """
     boite = f"carte-partage {classes}".strip()
     pied = (f'<div class="pied"><span class="compte">{g.SIGNATURE}</span>'
-            f'<span class="adresse">{ADRESSE_PARTAGE}</span></div>')
+            f'<span class="adresse">{g.ADRESSE_SITE}</span></div>')
     corps = (f'<div class="{boite}">'
              f'<p class="surtitre">{surtitre}</p>'
              f'<div><div class="chiffre">{chiffre}</div>'
              f'<div class="phrase">{phrase}</div>'
              f'<div class="detail">{detail}</div></div>{pied}</div>')
-    return (f'<figure><div class="cadre-carte">{corps}</div>'
-            f'<figcaption>{legende}</figcaption></figure>')
-
-
-#: L'adresse qu'une carte emporte. Celle du site parent, et non celle de
-#: GitHub Pages : c'est là que le lecteur d'un post doit atterrir.
-ADRESSE_PARTAGE = "partiliberalfrancais.fr/#simulateur"
+    return (f'<figure class="carte"><figcaption>{nom}</figcaption>'
+            f'<div class="cadre-carte">{corps}</div>{g.barre_partage()}</figure>')
 
 
 def _partager(contexte: Contexte) -> str:
@@ -3028,8 +3028,11 @@ def _partager(contexte: Contexte) -> str:
     partage est donc descendu sur les pages elles-mêmes — une barre sous chaque
     graphique, qui compose l'image de CE qu'on vient de lire. Ce qui reste ici
     est ce que cette barre ne peut pas donner : les chiffres du programme, qui
-    ne sont le résultat d'aucun graphique, et la liste complète pour qui les
-    veut tous.
+    ne sont le résultat d'aucun graphique.
+
+    Elle demandait encore une capture d'écran. Elle n'en demande plus : chaque
+    carte porte la MÊME barre que les graphiques du site, et rend la même
+    chose — une image et son message.
 
     Les valeurs viennent du modèle, comme partout ailleurs : changer un
     paramètre change les cartes.
@@ -3048,15 +3051,16 @@ def _partager(contexte: Contexte) -> str:
         "Partager",
         "Quatre cartes, "
         '<span class="cle-texte">prêtes à publier.</span>',
-        "Au format des réseaux sociaux — 1200 × 675 —, avec le chiffre, sa "
-        "source et notre compte. Une capture d'écran de la carte suffit : "
-        f'<strong class="cle-texte">{g.SIGNATURE}</strong> voyage avec '
-        "l'image. Chaque cadre défile horizontalement pour montrer la carte "
-        "entière.",
+        "Un bouton par carte : l'image part au format des réseaux sociaux, "
+        "avec son message déjà rédigé. "
+        f'<strong class="cle-texte">{g.SIGNATURE}</strong> y est répété en '
+        "filigrane sur toute la surface, pas seulement dans un coin : "
+        "recadrer l'image ne l'enlève pas.",
     )
 
     cartes = "".join([
         _carte_partage(
+            "Le plancher",
             "Notre programme pour les retraites",
             g.euros(garantie + isolement),
             "par mois au minimum, pour une personne seule.<br>"
@@ -3064,10 +3068,9 @@ def _partager(contexte: Contexte) -> str:
             f"{g.euros(garantie)} par personne, plus {g.euros(isolement)} "
             "d'allocation d'isolement. Payés par l'impôt, dès "
             f"{MinimumVieillesse.AGE_OUVERTURE} ans.",
-            legende="Le plancher. Défilez pour voir la carte entière, puis "
-                    "capturez-la.",
         ),
         _carte_partage(
+            "Le taux",
             "Baisse des prélèvements",
             taux,
             "de cotisation retraite, pour tout le monde.",
@@ -3075,10 +3078,9 @@ def _partager(contexte: Contexte) -> str:
             f"{g.pourcentage(TAUX_ACTUEL_SALARIAL)} + "
             f"{g.pourcentage(TAUX_ACTUEL_PATRONAL)} aujourd'hui pour un "
             "salarié du privé.",
-            legende="Le taux. Défilez pour voir la carte entière, puis "
-                    "capturez-la.",
         ),
         _carte_partage(
+            "Le déficit",
             "Ce que le système actuel ne paie plus",
             f"{g.nombre(manque * 100, 1)} points de PIB",
             f"c'est l'écart annuel à combler en {solde.derniere_annee}, sans "
@@ -3087,10 +3089,9 @@ def _partager(contexte: Contexte) -> str:
             f"{g.pourcentage(depense - manque, decimales=1)} de ressources. "
             "Source : COR, comptes du système de retraite.",
             classes="deficit",
-            legende="Le déficit. Défilez pour voir la carte entière, puis "
-                    "capturez-la.",
         ),
         _carte_partage(
+            "L'appel au simulateur",
             "Le simulateur",
             "Et vous, ça donne combien ?",
             "Votre carrière, calculée quatre fois : les règles d'aujourd'hui, et "
@@ -3098,8 +3099,6 @@ def _partager(contexte: Contexte) -> str:
             "Modèle ouvert, données publiques. Tout se calcule dans votre "
             "navigateur : rien n'est envoyé.",
             classes="claire appel",
-            legende="L'appel au simulateur. Défilez pour voir la carte "
-                    "entière, puis capturez-la.",
         ),
     ])
 
@@ -3115,15 +3114,17 @@ def _partager(contexte: Contexte) -> str:
     cotisation au lieu de
     {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)}, et un compte de retraite
     en euros que chacun peut lire. Vérifiez sur votre carrière :
-    {ADRESSE_PARTAGE} — {g.SIGNATURE} »</p>
+    {g.ADRESSE_SITE} — {g.SIGNATURE} »</p>
+    <p class="discret">Le bouton de chaque carte met déjà ce message dans le
+    presse-papiers avec l'image.</p>
   </div>
   <div class="encadre">
     <h2 class="serif" style="margin-top:0">Et depuis les pages du site</h2>
-    <p>Inutile de repasser par ici pour partager un graphique : sous chacun, une
-    barre <span class="cle-texte">Partager</span> compose l'image de ce que vous
-    venez de lire, propose un message déjà rédigé pour X, et copie ce message.
-    Les graphiques portent aussi <span class="cle-texte">{g.SIGNATURE}</span>
-    dans le cadre — une capture reste signée.</p>
+    <p>Inutile de repasser par ici pour partager un graphique : sous chacun, la
+    même barre <span class="cle-texte">Partager</span> compose l'image de ce
+    que vous venez de lire et le message qui va avec. Toutes portent le
+    filigrane <span class="cle-texte">{g.SIGNATURE}</span>, qui ne se recadre
+    pas.</p>
   </div>
 </div>
 """

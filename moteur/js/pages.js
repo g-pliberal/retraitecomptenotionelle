@@ -1457,8 +1457,8 @@ export const DESCRIPTIONS = {
   "/donnees": "D'où viennent les chiffres du site, série par série et régime "
     + "par régime, et ce qui a été recontrôlé contre sa source.",
   "/partager": "Les chiffres du programme au format des réseaux sociaux, "
-    + "1200 × 675, signés @pliberal : le plancher, le taux, le "
-    + "déficit, et les trois graphiques du site.",
+    + "1200 × 675, en filigrane @pliberal : le plancher, le taux, "
+    + "le déficit, et l'appel au simulateur.",
 };
 
 export const TITRES = {
@@ -2553,31 +2553,26 @@ ${carte}
 }
 
 /**
- * L'adresse qu'une carte emporte. Celle du site parent, et non celle de
- * GitHub Pages : c'est là que le lecteur d'un post doit atterrir.
- */
-const ADRESSE_PARTAGE = "partiliberalfrancais.fr/#simulateur";
-
-/**
- * Une carte 1200 × 675, au format de X et de LinkedIn, rendue à SA TAILLE
- * RÉELLE dans un cadre qui défile : une capture donne alors vraiment l'image
- * annoncée. Le pied est ce qui compte le plus — une image qui quitte le site
- * n'a plus ni barre d'adresse ni page autour.
+ * Une carte 1200 × 675, au format de X et de LinkedIn. Ce que la page montre
+ * est l'APERÇU de la carte, réduit à la largeur de sa colonne ; ce qui se
+ * publie est l'image composée par le bouton, aux vraies dimensions. Le pied est
+ * ce qui compte le plus — une image qui quitte le site n'a plus ni barre
+ * d'adresse ni page autour —, et le filigrane de l'image le redit sur toute la
+ * surface : le pied se recadre, le filigrane non.
  *
  * Copie de `_carte_partage` dans `web/pages.py`.
  */
-function cartePartage(surtitre, chiffre, phrase, detail, classes = "",
-  legende = "") {
+function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "") {
   const boite = `carte-partage ${classes}`.trim();
   const pied = `<div class="pied"><span class="compte">${g.SIGNATURE}</span>`
-    + `<span class="adresse">${ADRESSE_PARTAGE}</span></div>`;
+    + `<span class="adresse">${g.ADRESSE_SITE}</span></div>`;
   const corps = `<div class="${boite}">`
     + `<p class="surtitre">${surtitre}</p>`
     + `<div><div class="chiffre">${chiffre}</div>`
     + `<div class="phrase">${phrase}</div>`
     + `<div class="detail">${detail}</div></div>${pied}</div>`;
-  return `<figure><div class="cadre-carte">${corps}</div>`
-    + `<figcaption>${legende}</figcaption></figure>`;
+  return `<figure class="carte"><figcaption>${nom}</figcaption>`
+    + `<div class="cadre-carte">${corps}</div>${g.barrePartage()}</figure>`;
 }
 
 /**
@@ -2586,7 +2581,9 @@ function cartePartage(surtitre, chiffre, phrase, detail, classes = "",
  * Cette page a d'abord été LE dispositif de partage, et c'était une erreur :
  * personne ne la trouvait. Le partage est descendu sur les pages elles-mêmes ;
  * ce qui reste ici est ce que la barre de partage ne peut pas donner — les
- * chiffres du programme, qui ne sont le résultat d'aucun graphique.
+ * chiffres du programme, qui ne sont le résultat d'aucun graphique. Elle
+ * demandait encore une capture d'écran ; elle porte maintenant la même barre
+ * que les graphiques du site.
  *
  * Copie de `_partager` dans `web/pages.py`.
  */
@@ -2604,15 +2601,16 @@ function partager(contexte) {
     "Partager",
     "Quatre cartes, "
     + '<span class="cle-texte">prêtes à publier.</span>',
-    "Au format des réseaux sociaux — 1200 × 675 —, avec le chiffre, sa "
-    + "source et notre compte. Une capture d'écran de la carte suffit : "
-    + `<strong class="cle-texte">${g.SIGNATURE}</strong> voyage avec `
-    + "l'image. Chaque cadre défile horizontalement pour montrer la carte "
-    + "entière.",
+    "Un bouton par carte : l'image part au format des réseaux sociaux, "
+    + "avec son message déjà rédigé. "
+    + `<strong class="cle-texte">${g.SIGNATURE}</strong> y est répété en `
+    + "filigrane sur toute la surface, pas seulement dans un coin : "
+    + "recadrer l'image ne l'enlève pas.",
   );
 
   const cartes = [
     cartePartage(
+      "Le plancher",
       "Notre programme pour les retraites",
       g.euros(garantie + isolement),
       "par mois au minimum, pour une personne seule.<br>"
@@ -2620,10 +2618,9 @@ function partager(contexte) {
       `${g.euros(garantie)} par personne, plus ${g.euros(isolement)} `
       + "d'allocation d'isolement. Payés par l'impôt, dès "
       + `${AGE_OUVERTURE_GARANTIE} ans.`,
-      "",
-      "Le plancher. Défilez pour voir la carte entière, puis capturez-la.",
     ),
     cartePartage(
+      "Le taux",
       "Baisse des prélèvements",
       taux,
       "de cotisation retraite, pour tout le monde.",
@@ -2631,10 +2628,9 @@ function partager(contexte) {
       + `${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
       + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)} aujourd'hui pour un `
       + "salarié du privé.",
-      "",
-      "Le taux. Défilez pour voir la carte entière, puis capturez-la.",
     ),
     cartePartage(
+      "Le déficit",
       "Ce que le système actuel ne paie plus",
       `${g.nombre(manque * 100, 1)} points de PIB`,
       `c'est l'écart annuel à combler en ${solde.derniereAnnee}, sans `
@@ -2643,9 +2639,9 @@ function partager(contexte) {
       + `${g.pourcentage(depense - manque, false, 1)} de ressources. `
       + "Source : COR, comptes du système de retraite.",
       "deficit",
-      "Le déficit. Défilez pour voir la carte entière, puis capturez-la.",
     ),
     cartePartage(
+      "L'appel au simulateur",
       "Le simulateur",
       "Et vous, ça donne combien ?",
       "Votre carrière, calculée quatre fois : les règles d'aujourd'hui, et "
@@ -2653,8 +2649,6 @@ function partager(contexte) {
       "Modèle ouvert, données publiques. Tout se calcule dans votre "
       + "navigateur : rien n'est envoyé.",
       "claire appel",
-      "L'appel au simulateur. Défilez pour voir la carte entière, puis "
-      + "capturez-la.",
     ),
   ].join("");
 
@@ -2670,15 +2664,17 @@ ${tete}
     cotisation au lieu de
     ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)}, et un compte de retraite
     en euros que chacun peut lire. Vérifiez sur votre carrière :
-    ${ADRESSE_PARTAGE} — ${g.SIGNATURE} »</p>
+    ${g.ADRESSE_SITE} — ${g.SIGNATURE} »</p>
+    <p class="discret">Le bouton de chaque carte met déjà ce message dans le
+    presse-papiers avec l'image.</p>
   </div>
   <div class="encadre">
     <h2 class="serif" style="margin-top:0">Et depuis les pages du site</h2>
-    <p>Inutile de repasser par ici pour partager un graphique : sous chacun, une
-    barre <span class="cle-texte">Partager</span> compose l'image de ce que vous
-    venez de lire, propose un message déjà rédigé pour X, et copie ce message.
-    Les graphiques portent aussi <span class="cle-texte">${g.SIGNATURE}</span>
-    dans le cadre — une capture reste signée.</p>
+    <p>Inutile de repasser par ici pour partager un graphique : sous chacun, la
+    même barre <span class="cle-texte">Partager</span> compose l'image de ce
+    que vous venez de lire et le message qui va avec. Toutes portent le
+    filigrane <span class="cle-texte">${g.SIGNATURE}</span>, qui ne se recadre
+    pas.</p>
   </div>
 </div>
 `;
