@@ -3620,25 +3620,27 @@ def test_le_titre_d_un_scenario_ne_reserve_pas_de_hauteur_sur_telephone():
     assert ".scenario .titre { flex: 0 1 auto; max-width: 100%; }" in telephone
 
 
-def test_les_deux_montants_se_replient_plutot_que_de_deborder():
+def test_le_montant_d_un_scenario_se_replie_plutot_que_de_deborder():
     """Le téléphone ne rend pas la page avec la police ni la taille demandées.
 
     Aucun des empattements de la charte n'existe sur Android, qui y substitue
     un serif plus large, et le système grossit le texte par-dessus. Une somme
     qui ne se coupe pas dans une rangée qui ne se replie pas finissait donc
-    hors de la carte : « par mois, en euros de 2039 » sortait de l'écran, et
-    emportait la page entière dans un défilement horizontal. Les libellés se
-    replient, les sommes non, la rangée passe à la ligne en dernier recours —
-    et le trait qui séparait les deux montants ne pend plus dans le vide.
+    hors de la carte : « par mois, en euros d'aujourd'hui » sortait de l'écran,
+    et emportait la page entière dans un défilement horizontal. Les libellés se
+    replient, les sommes non, la rangée passe à la ligne en dernier recours.
     """
     telephone = _regles_du_telephone()
     montant = telephone.split(".scenario .montant {")[1].split("}")[0]
     assert "flex-wrap: wrap" in montant
+    # `margin-left: auto` cale le montant à droite de l'entête, ce qui n'a de
+    # sens qu'en ligne : en colonne, il poussait la somme seule contre le bord
+    # droit de l'écran, loin du titre qu'elle chiffre.
+    assert "margin-left: 0" in montant
     chiffre = telephone.split(".scenario .chiffre {")[1].split("}")[0]
     assert "white-space: normal" in chiffre and "min-width: 0" in chiffre
     assert (".scenario .chiffre .somme, .scenario .chiffre .annuel "
             "{ white-space: nowrap; }") in telephone
-    assert ".scenario .depart { padding-left: 0; border-left: none; }" in telephone
 
 
 def test_l_appel_d_une_bulle_tient_la_cible_tactile():
@@ -4658,7 +4660,27 @@ def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(context
     assert lecture < premier < reperes
     cle = visible[lecture:premier]
     assert "C'est la référence." in cle
-    assert "grand chiffre : votre pension brute, par mois, en euros d'aujourd'hui" in cle
+    assert "chiffre : votre pension brute, par mois, en euros d'aujourd'hui" in cle
+
+
+def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
+    """Un montant par scénario, et dans une seule unité.
+
+    Chaque ligne portait deux nombres : le pouvoir d'achat d'aujourd'hui, et la
+    somme nominale du mois du départ — « 3 190,21 € par mois, en euros de
+    2039 ». Des euros d'une année que personne n'a en poche, qu'il fallait une
+    légende pour distinguer des autres, et qui doublaient les quatre lignes de
+    la comparaison. Seuls les euros de l'année de référence sont affichés.
+    """
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    depart = SIMULATION_TEMOIN["liquidation"][:4]
+    for bloc in corps.split('<div class="scenario">')[1:]:
+        entete = bloc.split("</div>")[0]
+        assert entete.count('class="chiffre') == 1
+        assert f"en euros de {depart}" not in entete
+        assert "par mois, en euros d'aujourd'hui" in entete
+    assert "Deux fois le même montant" not in corps
+    assert "grand chiffre" not in corps
 
 
 def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):

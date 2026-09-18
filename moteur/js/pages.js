@@ -2254,9 +2254,9 @@ function resumeReleve(contexte, saisie) {
  * Les deux conventions se disent différemment selon que le départ est passé ou
  * à venir, parce que ce qu'elles écartent n'est pas le même : pour un actif,
  * les revalorisations à venir de sa pension ; pour un retraité, celles qu'il a
- * déjà reçues. La seconde convention, elle, n'est plus une convention muette :
- * les deux unités sont affichées l'une à côté de l'autre, et ce paragraphe n'a
- * qu'à dire laquelle est laquelle.
+ * déjà reçues. La seconde n'a plus qu'un chiffre à expliquer : la page
+ * n'affiche que le pouvoir d'achat de l'année de référence, jamais la somme
+ * nominale du mois du départ, et ce paragraphe dit d'où il vient.
  */
 function lectureDesMontants(comparaison, saisie) {
   const carriere = comparaison.carriere;
@@ -2285,22 +2285,23 @@ function lectureDesMontants(comparaison, saisie) {
 
   let unites;
   if (annee > saisie.euros) {
-    unites = "Chaque système les donne dans deux unités : la somme telle "
-      + `qu'elle serait versée en ${annee}, l'inflation d'ici là comprise, `
-      + `et cette même somme ramenée au pouvoir d'achat de ${saisie.euros} `
-      + "— plus petite, sans rien acheter de moins. C'est ce pouvoir "
-      + "d'achat, et non le nombre inscrit sur le virement, qui dit ce que "
-      + "vaut la pension : il est mis en avant pour cette raison.";
+    unites = `Ils sont donnés en euros de ${saisie.euros}, et dans cette unité `
+      + `seulement : la somme telle qu'elle serait versée en ${annee}, `
+      + "l'inflation d'ici là comprise, est ramenée au pouvoir d'achat de "
+      + `${saisie.euros} — plus petite, sans rien acheter de moins. C'est ce `
+      + "pouvoir d'achat, et non le nombre qui sera inscrit sur le virement, "
+      + "qui dit ce que vaut la pension : le nombre nominal n'est pas "
+      + "affiché.";
   } else if (annee < saisie.euros) {
-    unites = "Chaque système les donne dans deux unités : la somme telle "
-      + `qu'elle a été versée en ${annee}, en euros de l'époque, et cette `
-      + `même somme ramenée au pouvoir d'achat de ${saisie.euros} — c'est `
-      + "celle-là qui est mise en avant, parce qu'elle seule se compare aux "
-      + "prix que vous connaissez.";
+    unites = `Ils sont donnés en euros de ${saisie.euros}, et dans cette unité `
+      + `seulement : la somme telle qu'elle a été versée en ${annee}, en `
+      + "euros de l'époque, est ramenée au pouvoir d'achat de "
+      + `${saisie.euros}, le seul qui se compare aux prix que vous `
+      + "connaissez ; le montant de l'époque n'est pas affiché.";
   } else {
     unites = `Le départ tombe sur ${saisie.euros}, l'année de référence : les `
-      + "deux unités de la page se confondent, et chaque scénario n'affiche "
-      + "qu'un chiffre.";
+      + "euros du départ et ceux dans lesquels la page compte sont les mêmes, "
+      + "et il n'y a rien à convertir.";
   }
 
   return g.bulle(
@@ -2313,38 +2314,6 @@ function lectureDesMontants(comparaison, saisie) {
     + "annuelle au dernier revenu d'activité ramené à l'année pleine — un brut "
     + "sur un brut, donc plus bas qu'un taux calculé sur des nets.",
   );
-}
-
-/**
- * Ce que sont les deux nombres qu'affiche chaque scénario.
- *
- * Elle se lit AVANT les barres, parce qu'elle répond à ce que le lecteur voit
- * d'abord — deux montants là où il en attendait un —, quand le bloc « de quand
- * sont ces chiffres ? » qui la suit répond, lui, à la convention de date.
- * Muette quand le départ tombe sur l'année de référence : il n'y a alors qu'un
- * chiffre, et rien à distinguer.
- */
-function legendeDesUnites(comparaison, saisie) {
-  const annee = comparaison.carriere.anneeLiquidation;
-  if (annee === saisie.euros) return "";
-
-  const date = echapper(String(comparaison.carriere.dateLiquidation));
-  const valeur = saisie.euros === comparaison.parametres.annee_courante
-    ? "ce que la pension vaudrait aujourd'hui"
-    : `ce que la pension vaudrait en euros de ${saisie.euros}`;
-  const autre = annee > saisie.euros
-    ? `la somme qui serait inscrite sur le virement de ${date}, inflation d'ici `
-      + "là comprise"
-    : "la somme réellement versée le mois du départ, en euros de l'époque — "
-      + `${date}`;
-  return '<p class="discret" style="margin:0 0 1.4rem">Deux fois le même '
-    + `montant : le <strong>grand chiffre</strong> est ${valeur}`
-    + g.bulle(
-      "Les deux unités",
-      `Le grand chiffre est ${valeur} — le seul qui se compare à un salaire ou `
-      + `à un loyer que vous connaissez ; celui d'à côté est ${autre}.`,
-    )
-    + "</p>";
 }
 
 /**
@@ -2739,11 +2708,12 @@ function resultats(contexte, saisie) {
   const conversion = retro.conversion;
 
   // Le moteur ne calcule qu'un montant, en euros de l'année de liquidation. La
-  // page en affiche deux : celui-là, tel qu'il tomberait sur le relevé bancaire
-  // le mois du départ, et le même ramené au pouvoir d'achat de l'année de
-  // référence. Le second est le seul qui se compare à un salaire ou à un loyer
-  // que le lecteur connaît ; c'est donc lui qui est mis en avant, l'autre à
-  // côté pour que la conversion n'ait pas à être refaite de tête.
+  // page n'en affiche qu'un, et ce n'est pas celui-là : le même ramené au
+  // pouvoir d'achat de l'année de référence, seul à se comparer à un salaire ou
+  // à un loyer que le lecteur connaît. La somme nominale du mois du départ —
+  // des euros d'une année que personne n'a en poche — paraissait à côté : elle
+  // doublait chaque ligne d'un second chiffre qu'il fallait une légende pour
+  // distinguer du premier.
   const courants = {
     actuel: comparaison.actuel.pension_annuelle,
     retroactif: retro.pension_annuelle,
@@ -2765,11 +2735,7 @@ function resultats(contexte, saisie) {
   );
   const reference = Math.max(...Object.values(constants)) || 1.0;
 
-  // Les deux unités ne se distinguent que si le départ tombe ailleurs que sur
-  // l'année de référence : sinon le coefficient vaut un, et afficher deux fois
-  // le même nombre n'apprendrait rien.
   const anneeDepart = carriere.anneeLiquidation;
-  const deuxUnites = anneeDepart !== saisie.euros;
   const uniteReference = saisie.euros === comparaison.parametres.annee_courante
     ? "par mois, en euros d'aujourd'hui"
     : `par mois, en euros de ${saisie.euros}`;
@@ -2780,11 +2746,6 @@ function resultats(contexte, saisie) {
     const variationHtml = variation === null
       ? '<span class="discret">référence</span>'
       : `<strong>${g.pourcentage(variation, true)}</strong>`;
-    const depart = deuxUnites ? `
-      <span class="chiffre depart">
-        <span class="somme">${g.eurosCentimes(courants[cle] / 12)}</span>
-        <span class="unite">par mois, en euros de ${anneeDepart}</span>
-      </span>` : "";
     // La barre du système qui porte un pilier capitalisé est coupée en deux :
     // la répartition pleine, la capitalisation hachurée. Même couleur — c'est
     // le même système —, autre texture — ce n'est pas la même promesse.
@@ -2807,7 +2768,7 @@ function resultats(contexte, saisie) {
         <span class="somme">${g.eurosCentimes(montant / 12)}</span>
         <span class="unite">${uniteReference}</span>
         <span class="annuel">${g.eurosCentimes(montant)} par an</span>
-      </span>${depart}
+      </span>
     </span>
   </div>${partage}
   <div class="barre ${cle}">${barre}</div>
@@ -2910,12 +2871,11 @@ function resultats(contexte, saisie) {
   // La clé de lecture, avant les chiffres. Les six blocs portent des titres
   // exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le premier
   // est la référence des cinq autres. Cinq phrases, en clair.
-  const chiffre = deuxUnites ? "grand chiffre" : "chiffre";
   const lecture = `
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
 Les trois autres appliquent chacun d'autres règles à la même carrière.
-Le ${chiffre} : votre pension brute, ${uniteReference}.
+Le chiffre : votre pension brute, ${uniteReference}.
 Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 
   // Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
@@ -2926,7 +2886,6 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 ${lectureDesMontants(comparaison, saisie)}</h2>
 ${lecture}
 <div class="carte">
-  ${legendeDesUnites(comparaison, saisie)}
   ${scenarios}
   ${fiabilite}
   ${capitalisation}
@@ -3565,9 +3524,8 @@ function detail(contexte, comparaison) {
   const annee = comparaison.carriere.anneeLiquidation;
   const anneeReference = comparaison.parametres.annee_euros_constants;
   const renvoi = annee !== anneeReference
-    ? "C'est l'unité de la <em>seconde</em> colonne des quatre systèmes, celle "
-      + "du virement — pas celle du chiffre mis en avant, qui les ramène au "
-      + `pouvoir d'achat de ${anneeReference}.`
+    ? "Ce n'est pas l'unité des quatre montants affichés plus haut, qui les "
+      + `ramène au pouvoir d'achat de ${anneeReference}.`
     : "Le départ tombant sur l'année de référence, c'est aussi l'unité des "
       + "quatre montants affichés plus haut.";
   // Les régimes PROVISIONNÉS sont sortis du tableau principal : leur rente ne

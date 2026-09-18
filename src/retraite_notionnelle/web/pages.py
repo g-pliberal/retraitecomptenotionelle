@@ -2689,43 +2689,6 @@ def _resume_releve(contexte: Contexte, saisie: Saisie) -> str:
     )
 
 
-def _legende_des_unites(comparaison: Comparaison, saisie: Saisie) -> str:
-    """Ce que sont les deux nombres qu'affiche chaque scénario.
-
-    Elle se lit AVANT les barres, parce qu'elle répond à ce que le lecteur voit
-    d'abord — deux montants là où il en attendait un —, quand le bloc « de quand
-    sont ces chiffres ? » qui la suit répond, lui, à la convention de date.
-    Muette quand le départ tombe sur l'année de référence : il n'y a alors qu'un
-    chiffre, et rien à distinguer.
-    """
-    annee = comparaison.carriere.annee_liquidation
-    if annee == saisie.euros:
-        return ""
-
-    valeur = ("ce que la pension vaudrait aujourd'hui"
-              if saisie.euros == comparaison.parametres.annee_courante
-              else f"ce que la pension vaudrait en euros de {saisie.euros}")
-    autre = (
-        f"la somme qui serait inscrite sur le virement de "
-        f"{escape(str(comparaison.carriere.date_liquidation))}, inflation d'ici "
-        "là comprise"
-        if annee > saisie.euros else
-        f"la somme réellement versée le mois du départ, en euros de l'époque — "
-        f"{escape(str(comparaison.carriere.date_liquidation))}"
-    )
-    return (
-        f'<p class="discret" style="margin:0 0 1.4rem">Deux fois le même '
-        f"montant : le <strong>grand chiffre</strong> est {valeur}"
-        + g.bulle(
-            "Les deux unités",
-            f"Le grand chiffre est {valeur} — le seul qui se compare à un "
-            f"salaire ou à un loyer que vous connaissez ; celui d'à côté est "
-            f"{autre}.",
-        )
-        + "</p>"
-    )
-
-
 def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     """À quelle date se rapportent les montants affichés, et en quels euros.
 
@@ -2741,9 +2704,9 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     Les deux conventions se disent différemment selon que le départ est passé
     ou à venir, parce que ce qu'elles écartent n'est pas le même : pour un
     actif, les revalorisations à venir de sa pension ; pour un retraité, celles
-    qu'il a déjà reçues. La seconde convention, elle, n'est plus une convention
-    muette : les deux unités sont affichées l'une à côté de l'autre, et ce
-    paragraphe n'a qu'à dire laquelle est laquelle.
+    qu'il a déjà reçues. La seconde n'a plus qu'un chiffre à expliquer : la
+    page n'affiche que le pouvoir d'achat de l'année de référence, jamais la
+    somme nominale du mois du départ, et ce paragraphe dit d'où il vient.
     """
     carriere = comparaison.carriere
     annee = carriere.annee_liquidation
@@ -2775,26 +2738,27 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
 
     if annee > saisie.euros:
         unites = (
-            "Chaque système les donne dans deux unités : la somme telle "
-            f"qu'elle serait versée en {annee}, l'inflation d'ici là comprise, "
-            f"et cette même somme ramenée au pouvoir d'achat de {saisie.euros} "
-            "— plus petite, sans rien acheter de moins. C'est ce pouvoir "
-            "d'achat, et non le nombre inscrit sur le virement, qui dit ce que "
-            "vaut la pension : il est mis en avant pour cette raison."
+            f"Ils sont donnés en euros de {saisie.euros}, et dans cette unité "
+            "seulement : la somme telle qu'elle serait versée en "
+            f"{annee}, l'inflation d'ici là comprise, est ramenée au pouvoir "
+            f"d'achat de {saisie.euros} — plus petite, sans rien acheter de "
+            "moins. C'est ce pouvoir d'achat, et non le nombre qui sera inscrit "
+            "sur le virement, qui dit ce que vaut la pension : le nombre "
+            "nominal n'est pas affiché."
         )
     elif annee < saisie.euros:
         unites = (
-            "Chaque système les donne dans deux unités : la somme telle "
-            f"qu'elle a été versée en {annee}, en euros de l'époque, et cette "
-            f"même somme ramenée au pouvoir d'achat de {saisie.euros} — c'est "
-            "celle-là qui est mise en avant, parce qu'elle seule se compare aux "
-            "prix que vous connaissez."
+            f"Ils sont donnés en euros de {saisie.euros}, et dans cette unité "
+            f"seulement : la somme telle qu'elle a été versée en {annee}, en "
+            "euros de l'époque, est ramenée au pouvoir d'achat de "
+            f"{saisie.euros}, le seul qui se compare aux prix que vous "
+            "connaissez ; le montant de l'époque n'est pas affiché."
         )
     else:
         unites = (
             f"Le départ tombe sur {saisie.euros}, l'année de référence : les "
-            "deux unités de la page se confondent, et chaque scénario n'affiche "
-            "qu'un chiffre."
+            "euros du départ et ceux dans lesquels la page compte sont les "
+            "mêmes, et il n'y a rien à convertir."
         )
 
     return g.bulle(
@@ -3252,12 +3216,12 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     conversion = retro.conversion
 
     # Le moteur ne calcule qu'un montant, en euros de l'année de liquidation.
-    # La page en affiche deux : celui-là, tel qu'il tomberait sur le relevé
-    # bancaire le mois du départ, et le même ramené au pouvoir d'achat de
-    # l'année de référence. Le second est le seul qui se compare à un salaire
-    # ou à un loyer que le lecteur connaît ; c'est donc lui qui est mis en
-    # avant, l'autre à côté pour que la conversion n'ait pas à être refaite de
-    # tête.
+    # La page n'en affiche qu'un, et ce n'est pas celui-là : le même ramené au
+    # pouvoir d'achat de l'année de référence, seul à se comparer à un salaire
+    # ou à un loyer que le lecteur connaît. La somme nominale du mois du départ
+    # — des euros d'une année que personne n'a en poche — paraissait à côté :
+    # elle doublait chaque ligne d'un second chiffre qu'il fallait une légende
+    # pour distinguer du premier.
     courants = {
         "actuel": comparaison.actuel.pension_annuelle,
         "retroactif": retro.pension_annuelle,
@@ -3278,11 +3242,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     )
     reference = max(constants.values()) or 1.0
 
-    # Les deux unités ne se distinguent que si le départ tombe ailleurs que sur
-    # l'année de référence : sinon le coefficient vaut un, et afficher deux fois
-    # le même nombre n'apprendrait rien.
     annee_depart = carriere.annee_liquidation
-    deux_unites = annee_depart != saisie.euros
     unite_reference = (
         "par mois, en euros d'aujourd'hui"
         if saisie.euros == comparaison.parametres.annee_courante
@@ -3296,11 +3256,6 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             '<span class="discret">référence</span>' if variation is None
             else f"<strong>{g.pourcentage(variation, signe=True)}</strong>"
         )
-        depart = f"""
-      <span class="chiffre depart">
-        <span class="somme">{g.euros_centimes(courants[cle] / 12)}</span>
-        <span class="unite">par mois, en euros de {annee_depart}</span>
-      </span>""" if deux_unites else ""
         # La barre du système qui porte un pilier capitalisé est coupée en
         # deux : la répartition pleine, la capitalisation hachurée. Même
         # couleur — c'est le même système —, autre texture — ce n'est pas la
@@ -3325,7 +3280,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         <span class="somme">{g.euros_centimes(montant / 12)}</span>
         <span class="unite">{unite_reference}</span>
         <span class="annuel">{g.euros_centimes(montant)} par an</span>
-      </span>{depart}
+      </span>
     </span>
   </div>{partage}
   <div class="barre {cle}">{barre}</div>
@@ -3439,12 +3394,11 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     # La clé de lecture, avant les chiffres. Les six blocs portent des titres
     # exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le premier
     # est la référence des cinq autres. Cinq phrases, en clair.
-    chiffre = "grand chiffre" if deux_unites else "chiffre"
     lecture = f"""
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
 Les trois autres appliquent chacun d'autres règles à la même carrière.
-Le {chiffre} : votre pension brute, {unite_reference}.
+Le chiffre : votre pension brute, {unite_reference}.
 Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 
     # Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
@@ -3455,7 +3409,6 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 {_lecture_des_montants(comparaison, saisie)}</h2>
 {lecture}
 <div class="carte">
-  {_legende_des_unites(comparaison, saisie)}
   {scenarios}
   {fiabilite}
   {capitalisation}
@@ -4108,9 +4061,8 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
     annee = comparaison.carriere.annee_liquidation
     annee_reference = comparaison.parametres.annee_euros_constants
     renvoi = (
-        "C'est l'unité de la <em>seconde</em> colonne des quatre systèmes, celle "
-        "du virement — pas celle du chiffre mis en avant, qui les ramène au "
-        f"pouvoir d'achat de {annee_reference}."
+        "Ce n'est pas l'unité des quatre montants affichés plus haut, qui les "
+        f"ramène au pouvoir d'achat de {annee_reference}."
         if annee != annee_reference else
         "Le départ tombant sur l'année de référence, c'est aussi l'unité des "
         "quatre montants affichés plus haut."

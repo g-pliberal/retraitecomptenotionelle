@@ -3585,3 +3585,20 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
   borne haute ; la prime de terme, non retirée des forwards ; et la question de
   droit que le modèle ne tranche pas, celle de savoir si cette rente doit
   entrer dans les ressources examinées par la garantie vieillesse.
+
+- **Septembre 2026, un seul montant par scénario.** Demandé hors feuille de
+  route : les résultats n'affichent plus que les euros de l'année de référence.
+  Chaque ligne portait deux nombres — le pouvoir d'achat d'aujourd'hui, et la
+  somme nominale du mois du départ, « 3 190,21 € par mois, en euros de 2039 » —,
+  plus la légende qui disait lequel était lequel. Des euros d'une année que
+  personne n'a en poche, quatre fois répétés, dans une page dont tout l'objet
+  est de comparer quatre montants entre eux : le second chiffre, son filet, sa
+  règle de repli sur téléphone et sa légende sont retirés des deux moteurs.
+  La bulle « de quand sont ces chiffres » reste, et dit maintenant que le
+  montant nominal n'est pas affiché.
+
+  Ce que ça déplace : aucun chiffre — les témoins de simulation sont
+  inchangés, seuls ceux des pages ont bougé. Ce qui reste en euros de l'année
+  de liquidation, et le dit : le capital notionnel des repères techniques, et
+  les tableaux des dépliants, où la chaîne de calcul ne s'additionne dans
+  aucune autre unité.

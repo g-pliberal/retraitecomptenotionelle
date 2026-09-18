@@ -824,10 +824,10 @@ tbody tr[hidden] { display: none; }
 .scenario .entete { display: flex; justify-content: space-between; gap: 0.2rem 1rem;
                     align-items: baseline; flex-wrap: wrap; }
 .scenario .titre { flex: 1 1 14rem; font-size: 1.0625rem; font-weight: 700; }
-/* Deux montants par scénario, côte à côte : le pouvoir d'achat d'aujourd'hui,
-   mis en avant, et la somme nominale du mois du départ, en retrait. Ils
-   partagent la même ligne de base pour se lire comme un seul chiffre donné en
-   deux unités, et non comme deux résultats concurrents. */
+/* Un montant par scénario : le pouvoir d'achat de l'année de référence, et lui
+   seul. La somme nominale du mois du départ l'accompagnait, en retrait derrière
+   un filet ; elle donnait deux nombres à lire là où la comparaison n'en demande
+   qu'un. */
 .scenario .montant { display: flex; justify-content: flex-end; align-items: baseline;
                      gap: 1.1rem; flex-wrap: nowrap; margin-left: auto;
                      font-variant-numeric: tabular-nums; }
@@ -838,8 +838,6 @@ tbody tr[hidden] { display: none; }
 .scenario .principal .somme {
   font-size: 1.875rem; font-weight: 900; letter-spacing: -0.03em;
 }
-.scenario .depart { padding-left: 1.1rem; border-left: 1px solid var(--trait); }
-.scenario .depart .somme { font-size: 1.05rem; color: var(--texte-doux); }
 .scenario .montant .annuel { color: var(--texte-doux); font-size: 0.85rem; }
 /* La glose sous un scénario : en sans-serif 16 px, et non en serif fin 15 px.
    C'était le texte le plus fatigant du site — à cette taille, un serif fin est
@@ -1343,19 +1341,17 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
      réserve plus une largeur mais une HAUTEUR : chaque scénario portait donc
      224 px de vide entre son titre et son montant. */
   .scenario .titre { flex: 0 1 auto; max-width: 100%; }
-  /* Les deux montants passent sous l'intitulé, alignés à gauche comme lui :
-     côte à côte tant qu'ils tiennent, l'un sous l'autre sinon. Les libellés se
-     replient, les sommes jamais — un montant coupé en deux lignes ne se lit
-     plus —, et la rangée passe à la ligne quand même cela ne suffit pas. */
+  /* Le montant passe sous l'intitulé, aligné à gauche comme lui : `margin-left:
+     auto` le poussait à droite de l'écran dès qu'il fut seul, et il flottait au
+     milieu du vide. Les libellés se replient, les sommes jamais — un montant
+     coupé en deux lignes ne se lit plus —, et la rangée passe à la ligne quand
+     même cela ne suffit pas. */
   .scenario .montant { justify-content: flex-start; flex-wrap: wrap;
-                       column-gap: 0.9rem; row-gap: 0.3rem; max-width: 100%; }
+                       column-gap: 0.9rem; row-gap: 0.3rem; max-width: 100%;
+                       margin-left: 0; }
   .scenario .chiffre { align-items: flex-start; white-space: normal;
                        min-width: 0; max-width: 100%; }
   .scenario .chiffre .somme, .scenario .chiffre .annuel { white-space: nowrap; }
-  /* Le trait qui sépare les deux montants ne sépare plus rien dès qu'ils
-     passent l'un sous l'autre, et aucun sélecteur ne dit qu'une rangée s'est
-     repliée : il ne s'affiche donc sur aucun téléphone. */
-  .scenario .depart { padding-left: 0; border-left: none; }
   /* Les tableaux du détail portent jusqu'à six colonnes, et un téléphone leur
      donne 358 points : un demi-point de moins et des marges plus serrées leur
      rendent un cinquième de leur hauteur. */
