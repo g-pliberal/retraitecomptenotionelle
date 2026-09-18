@@ -120,36 +120,29 @@ FEUILLE_DE_STYLE = """
   --bandeau-texte: #f4efe4;
   --bandeau-doux: #c3d8d4;
   --bandeau-vif: #e9c53d;
-  /* Les six scénarios. La palette d'avant la refonte avait été posée sur un
-     fond presque noir (#0f1c21) ; sur le vert profond, qui est bien plus
-     clair, elle tombait entre 2,5 et 3,9:1 — illisible. Celle-ci est refaite
-     pour ce fond, sous quatre contraintes tenues ensemble par
-     `test_la_palette_des_scenarios_reste_lisible` :
+  /* LES QUATRE SYSTÈMES COMPARÉS, et c'est le nombre qui fait leur qualité.
+     À six teintes, la séparation sous deutéranopie plafonnait à ΔE 8,6 : aucun
+     choix de couleurs n'y changeait rien, six catégories ne se distinguent pas
+     toutes pour un œil qui confond le rouge et le vert. À quatre, la contrainte
+     se relâche d'un coup, et cette palette tient :
 
-       * 4,8:1 au moins sur le fond, 4,0:1 sur la carte ;
-       * un chroma d'au moins 0,105 en OKLab, sans quoi la couleur lit gris ;
-       * une bande de clarté étroite (0,70 à 0,86), pour qu'aucune courbe ne
-         paraisse plus importante qu'une autre ;
-       * ΔE d'au moins 15 entre TOUTES les paires, et non seulement entre
-         voisines — deux courbes non adjacentes se croisent aussi. L'ancienne
-         palette descendait à 7,3 sur ce critère ; celle-ci tient 15,1.
+       * ΔE ≥ 18,6 entre toutes les paires en vision normale ;
+       * ΔE ≥ 15,5 sous deutéranopie, ≥ 15,2 sous protanopie — au-dessus du
+         plancher de 15, donc séparées pour tout le monde, et non plus
+         seulement pour ceux qui voient les six couleurs ;
+       * 4,8:1 au moins sur le vert profond, chroma ≥ 0,115 (aucune ne lit
+         gris), et une bande de clarté étroite pour qu'aucune courbe ne paraisse
+         plus importante qu'une autre.
 
-     Ce que la couleur ne peut pas faire. Six teintes catégorielles ne se
-     séparent pas toutes sous deutéranopie : le meilleur arrangement trouvé
-     sous les contraintes ci-dessus y descend à ΔE 8,6, et aucun choix de
-     teintes ne fait beaucoup mieux à six séries. C'est pourquoi la couleur
-     n'est JAMAIS seule à porter l'information ici — chaque courbe a son motif
-     de tirets (`Serie.tirets`), chaque barre son intitulé écrit en toutes
-     lettres, et chaque écart son signe. Un daltonien lit la page entière sans
-     distinguer deux de ces six teintes.
+     La couleur n'est pas seule pour autant — les tracés gardent leurs motifs,
+     les barres leur intitulé, les écarts leur signe —, mais elle suffit
+     désormais, ce qui n'était pas le cas avant.
 
      La proposition libérale est en or : c'est l'accent de l'affiche, et la
      seule couleur que l'œil trouve en premier. C'est fait pour. */
-  --actuel: #ff852d;
-  --retroactif: #61bee6;
-  --prospectif: #32f1c9;
-  --retroactif-employeur: #2ebb6b;
-  --prospectif-employeur: #fd84b2;
+  --actuel: #76a2ff;
+  --retroactif: #57e7fe;
+  --retroactif-employeur: #e98b97;
   --liberal: #e9c53d;
   --alerte: #f0b849;
   /* Ce qui manque et ce qui reste, sur le graphique du coût. Opaques, et non
@@ -835,9 +828,7 @@ tbody tr[hidden] { display: none; }
 .panneaux > .panneau[hidden] { display: none; }
 .onglets:has(input:checked) ~ .panneaux > .panneau { display: none; }
 .onglets:has(#grille-notionnel_liberal:checked) ~ .panneaux > .panneau[data-onglet="notionnel_liberal"],
-.onglets:has(#grille-notionnel_prospectif_employeur:checked) ~ .panneaux > .panneau[data-onglet="notionnel_prospectif_employeur"],
 .onglets:has(#grille-notionnel_retroactif:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif"],
-.onglets:has(#grille-notionnel_prospectif:checked) ~ .panneaux > .panneau[data-onglet="notionnel_prospectif"],
 .onglets:has(#grille-notionnel_retroactif_employeur:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif_employeur"] {
   display: block;
 }
@@ -885,9 +876,7 @@ tbody tr[hidden] { display: none; }
 .barre > span { display: block; height: 10px; }
 .barre.actuel > span { background: var(--actuel); }
 .barre.retroactif > span { background: var(--retroactif); }
-.barre.prospectif > span { background: var(--prospectif); }
 .barre.retroactif-employeur > span { background: var(--retroactif-employeur); }
-.barre.prospectif-employeur > span { background: var(--prospectif-employeur); }
 .barre.liberal > span { background: var(--liberal); height: 14px; }
 .fiches { display: grid;
           grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
