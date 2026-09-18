@@ -51,10 +51,12 @@ Le livrable est le site statique ; voir `README.md`.
   un fichier ou un cas (`python -m pytest tests/test_moteur.py`) la garde en
   série, ce qui est plus lisible et plus rapide pour un seul test. Pour tout
   forcer en série : `PYTEST_SANS_XDIST=1`.
-- Mise en route d'une session : `.claude/hooks/session-start.sh` installe le
-  paquet en mode éditable, pytest et pytest-xdist. Sans lui, `python -m pytest`
-  répond « No module named pytest », puis ne collecte rien faute du paquet
-  `retraite_notionnelle` : c'est ce qui coûtait le plus de temps au démarrage.
+- Mise en route d'une session : `pip install -e '.[dev]'`. Sans ça,
+  `python -m pytest` répond « No module named pytest », puis ne collecte rien
+  faute du paquet `retraite_notionnelle` — c'est ce qui coûtait le plus de
+  temps au démarrage. Un hook `SessionStart` le ferait tout seul ; son script
+  est sous l'action 32 de `docs/feuille_de_route.md`, à poser à la main, une
+  session Claude Code n'ayant pas le droit d'écrire sous `.claude/`.
 - Outillage d'audit d'interface (Impeccable, Web Interface Guidelines,
   Playwright CLI) : compétences dans `.claude/skills/`, mises en place par
   `scripts/setup_ui_tools.sh` ; ce qui demande le réseau et comment changer une
