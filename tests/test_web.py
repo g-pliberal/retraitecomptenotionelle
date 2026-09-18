@@ -4130,14 +4130,26 @@ def test_le_filigrane_couvre_l_image_et_ne_se_rogne_pas():
     pas_x = int(re.search(r"const PAS_FILIGRANE_X = (\d+);", page).group(1))
     pas_y = int(re.search(r"const PAS_FILIGRANE_Y = (\d+);", page).group(1))
     # 1200 × 675 est le format des cartes, et la plus petite image du site.
-    assert pas_x <= 1200 / 5, f"{pas_x} : un recadrage au cinquième sortirait vierge"
-    assert pas_y <= 675 / 5, f"{pas_y} : un recadrage au cinquième sortirait vierge"
+    assert pas_x <= 1200 / 6, f"{pas_x} : un recadrage au sixième sortirait vierge"
+    assert pas_y <= 675 / 6, f"{pas_y} : un recadrage au sixième sortirait vierge"
     assert "(rang % 2)" in page, "sans décalage d'un rang sur deux, il reste des couloirs"
 
+    # Un filigrane se voit quand on le cherche, et pas avant : « il faut quelque
+    # chose de subtil et discret mais qui ne puisse pas être rogné ». La densité
+    # le rend inrognable, la pâleur le rend discret, et les deux ne s'opposent
+    # pas — c'est leur PRODUIT qui décide de ce qu'on voit.
     opacite = float(re.search(r"const OPACITE_FILIGRANE = ([\d.]+);", page).group(1))
-    assert 0.05 <= opacite <= 0.2, (
-        f"{opacite} : trop pâle, le filigrane ne dit plus rien ; trop dense, il "
-        "couvre le tracé"
+    assert 0.03 <= opacite <= 0.08, (
+        f"{opacite} : sous 3 % le filigrane ne dit plus rien ; au-dessus de 8 % "
+        "il se lit comme un tampon posé sur l'image"
+    )
+    taille = int(re.search(r"filigrane\b.*?`(\d+) (\d+)px \$\{SANS\}`", page,
+                           re.S).group(2))
+    graisse = int(re.search(r"filigrane\b.*?`(\d+) (\d+)px \$\{SANS\}`", page,
+                            re.S).group(1))
+    assert taille <= 16 and graisse <= 600, (
+        f"{graisse} {taille}px : un filigrane en gras est une signature, pas une "
+        "texture"
     )
 
     appels = [m.start() for m in re.finditer(r"^  filigrane\(dessin", page, re.M)]
