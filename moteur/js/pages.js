@@ -5817,12 +5817,6 @@ ${differences}
 <p class="discret">C'est le système de la Suède, de l'Italie, de la Pologne et
 de la Lettonie.</p>
 
-<div class="note"><strong>Aucune pension déjà versée ne changerait, et aucun
-droit déjà acquis ne serait repris.</strong> C'est pourquoi une réforme des
-retraites ne fait rien économiser l'année où elle est votée : il faut attendre
-que des carrières entières se déroulent sous la nouvelle règle. Qui promet une
-économie immédiate propose autre chose.</div>
-
 <div class="creme">
 <p class="surtitre">Vérifiez plutôt que de nous croire</p>
 <h2 class="serif" style="margin:0">Tout est chiffré, sur des données publiques

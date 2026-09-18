@@ -3358,3 +3358,24 @@ essayées : `loadscope` est deux fois pire (95 s, un worker hérite de tout
   Aucun chiffre du modèle ne bouge — le build est reproduit octet pour octet.
   Reste à poser le hook de démarrage sous `.claude/`, ce qu'une session ne peut
   pas faire elle-même : son script est donné sous l'action.
+
+- **Septembre 2026, la note « aucun droit repris ».** Retirée de l'accueil.
+  Elle affirmait qu'aucune pension versée ne changerait, qu'aucun droit acquis
+  ne serait repris, et qu'une réforme des retraites n'économise rien l'année de
+  son vote. Le programme sur la même page dit le contraire trois fois :
+  l'étape 2 réduit les droits acquis « à leur part contributive », donc reprend
+  la majoration pour enfants, la MDA, les périodes assimilées et les minima
+  (`scenarios/notionnel.py`, `_droits_acquis`, et la liste
+  `avantages_non_contributifs` des fiches) ; le défaut
+  `age_conversion_droits_acquis = reference` fait payer l'anticipation sur ces
+  droits déjà ouverts, ce qui est l'action 24 ; et l'étape 5, le pilotage,
+  multiplie *toutes* les pensions — celles en cours de versement comprises —
+  par le coefficient d'équilibre, dès la première année. Hors du site, la
+  généralité est fausse aussi : un recul d'âge décale des départs dès son année
+  d'application, et la sous-indexation rogne immédiatement les pensions
+  servies. Aucun chiffre déplacé. **La leçon : rien ne confronte la prose du
+  site au modèle.** Les témoins `tests/temoins/pages.json` figent le texte —
+  ils rendent visible une modification, ils ne valident aucune affirmation —, et
+  `tests/test_web.py` ne vérifie que des formulaires, des bornes et des
+  chiffres. Ce que `inventaire.yaml`, `reformes.yaml` et `veille.yaml` ont
+  chacun (un test d'exhaustivité), les affirmations des pages ne l'ont pas.
