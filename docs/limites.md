@@ -4663,6 +4663,17 @@ se chiffre pas sur treize carrières, parce que son coût est tout entier celui 
 la queue basse de la distribution, et que treize carrières ne décrivent pas une
 distribution.
 
+**Et sur l'AVENIR, cette masse est exactement nulle.** Mesuré le 18 septembre
+2026 : le rapport de masse de la garantie vaut 8,8 · 10⁻⁶ en 2024 et zéro de
+2030 à 2070. Le motif n'est pas l'âge, contrairement à ce que le paragraphe
+précédent laisse croire : c'est le NIVEAU. Les deux seuls cas types qui tombent
+sous le plancher de 800 € au scénario 6 — l'exploitant agricole à 674 € par
+mois, le carrière complète au SMIC à 797 € — liquident à 64 et 62 ans, et la
+garantie ne s'ouvre qu'à 65 ; les cinq qui liquident à 65 ans ou plus sont tous
+au-dessus du plancher. La trajectoire projetée du scénario 6 ne porte donc
+AUCUNE garantie vieillesse, c'est-à-dire aucune des dépenses que l'impôt
+financerait. C'est l'action 35 de `docs/feuille_de_route.md`.
+
 La page porte donc, à côté, le barème appliqué à la distribution des pensions
 brutes de droit direct que publie l'échantillon interrégimes de retraités de la
 DREES (fin 2020, tranches de cent euros). Quatre chiffres, parce que deux
