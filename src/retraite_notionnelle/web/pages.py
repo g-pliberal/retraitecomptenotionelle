@@ -1982,9 +1982,9 @@ def _programme_transition(contexte: Contexte) -> str:
         entete_de_ligne=True,
     )
     return g.depliant("Comment on y va, étape par étape", f"""
-<p>La bascule ne reprend aucun droit acquis et ne touche à aucune pension déjà
-versée : elle fige ce qui est acquis, le convertit en capital, et applique la
-règle nouvelle aux seules années suivantes.</p>
+<p>La bascule ne reprend aucun droit acquis : elle fige ce qui est acquis, le
+convertit en capital, et applique la règle nouvelle aux seules années
+suivantes.</p>
 {etapes}
 <p>Après la bascule, un seul régime : départ possible à
 {_age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>""")
