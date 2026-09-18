@@ -4163,34 +4163,67 @@ def test_la_page_cas_types_ouvre_sur_la_proposition(contexte):
     assert "génération 2000, système 4" in corps
 
 
+#: Les tournures où un nombre écrit en toutes lettres NE compte pas les
+#: systèmes. Sans cette liste, le contrôle ci-dessous se déclencherait sur des
+#: phrases justes : un indice qui vaut « près de cinq fois les prix » n'a rien
+#: à voir avec le nombre de systèmes comparés.
+COMPTES_LEGITIMES = (
+    "fois les prix",
+)
+
+
 @pytest.mark.parametrize("chemin", list(TITRES))
-def test_aucune_page_ne_compte_encore_six_systemes(contexte, chemin):
+def test_aucune_page_ne_compte_plus_de_quatre_systemes(contexte, chemin):
     """Le site en compare QUATRE, et doit le dire partout de la même façon.
 
     Passer de six à quatre a touché cinquante-deux phrases. Les tests de
-    structure en ont rattrapé la plupart ; deux ont échappé à tout — « Six
-    calculs pour votre carrière », suivi trois mots plus loin de « les trois
-    autres », et « Six montants côte à côte » sous le formulaire de l'accueil.
-    Une phrase fausse qu'aucun sélecteur ne regarde reste fausse ; celle-ci la
-    regarde.
+    structure en ont rattrapé la plupart, et une première version de celui-ci a
+    rattrapé « Six calculs pour votre carrière ». Il cherchait des mots — « six
+    systèmes », « six montants » — et il a donc laissé passer exactement ce
+    qu'il ne cherchait pas : le TITRE de la page Simuler, « Votre carrière,
+    calculée six fois », que l'auteur du site a vu avant lui. Plus la carte à
+    publier, qui portait la même phrase et qui voyage sans le site autour
+    d'elle.
+
+    Il ne cherche donc plus des tournures connues, mais TROIS FORMES :
+
+    * un numéro de système au-delà de quatre, qui n'a plus de référent ;
+    * un décompte en toutes lettres suivi d'un mot qui désigne les systèmes ;
+    * « calculée N fois » ou « calculée de N façons », quel que soit N.
 
     Le compte du MODÈLE n'est pas visé : il en calcule toujours six, et les
-    commentaires du code le disent. Ce test ne lit que ce qui s'affiche.
+    commentaires du code le disent. Ce test ne lit que ce qui s'affiche, sur
+    les neuf routes — c'est là que vivaient les deux phrases fausses.
     """
     corps = rendre(contexte, chemin,
                    {"naissance": "1975-01-01"}
                    if chemin in ("/simuler", "/trajectoire") else {})[1]
-    texte = re.sub(r"<[^>]+>", " ", corps)
-    restes = re.findall(
-        r"[Ss]ix (?:calculs|montants|systèmes|scénarios|courbes|barres|pensions)",
-        texte,
+    texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", corps)))
+
+    def fautes(motif: str) -> list[str]:
+        # La tournure légitime se reconnaît à ce qui SUIT le nombre — « cinq
+        # fois les prix » —, donc sur la fenêtre, pas sur la correspondance,
+        # qui s'arrête au mot compté.
+        trouvees = []
+        for t in re.finditer(motif, texte, re.I):
+            fenetre = texte[t.start():t.end() + 24]
+            if any(bon in fenetre for bon in COMPTES_LEGITIMES):
+                continue
+            trouvees.append(texte[max(0, t.start() - 50):t.end() + 50])
+        return trouvees
+
+    numeros = fautes(r"\b(?:systèmes?|scénarios?) [5-9]\b")
+    assert not numeros, f"{chemin} : un numéro au-delà de quatre — {numeros}"
+
+    decomptes = fautes(
+        r"\b(?:cinq|six|sept|huit|neuf) "
+        r"(?:systèmes?|scénarios?|calculs?|montants?|courbes?|barres?|façons?|fois)\b"
     )
-    assert not restes, f"{chemin} : {restes}"
-    # Et les numéros s'arrêtent à quatre : un « système 5 » n'aurait plus de
-    # référent, puisque la barre correspondante n'existe plus.
-    assert not re.findall(r"\b(?:système|systèmes|scénario|scénarios) [56]\b", texte), (
-        f"{chemin} : un numéro au-delà de quatre subsiste"
-    )
+    assert not decomptes, f"{chemin} : un décompte périmé — {decomptes}"
+
+    calculees = fautes(r"calculées? (?:de )?(?!quatre)\w+ (?:fois|façons)")
+    assert not calculees, f"{chemin} : « calculée » mal comptée — {calculees}"
+
 
 
 def test_les_pages_longues_portent_leur_plan(contexte):

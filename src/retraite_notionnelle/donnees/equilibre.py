@@ -103,7 +103,7 @@ POSTES: tuple[PosteRessources, ...] = (
         "Ce que l'État verse au régime de ses propres fonctionnaires, au taux "
         "qui équilibre ce régime — 74,28 % des traitements en 2024. C'est une "
         "cotisation d'employeur par son assiette, un solde par son taux : le "
-        "modèle la porte au compte des scénarios 4 et 5, et elle est comptée "
+        "modèle la porte au compte du système 3, et elle est comptée "
         "ici comme contributive pour cette raison.",
         True,
     ),

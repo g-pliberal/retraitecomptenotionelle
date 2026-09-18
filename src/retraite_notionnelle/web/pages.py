@@ -1421,7 +1421,7 @@ DESCRIPTIONS = {
          "unique en comptes notionnels, un taux de 18 % pour tous, une garantie "
          "vieillesse individualisée — et le simulateur qui le chiffre, carrière "
          "par carrière, dans votre navigateur.",
-    "/simuler": "Votre carrière calculée de six façons : le système actuel, et "
+    "/simuler": "Votre carrière calculée de quatre façons : le système actuel, et "
                 "les comptes notionnels appliqués depuis 1941 ou à partir de la "
                 "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
     "/trajectoire": "Ce que chaque système aura versé, du départ à 105 ans : "
@@ -2349,7 +2349,7 @@ def _bulle_du_titre(saisie: Saisie) -> str:
     """
     return g.bulle(
         "Ce que ce formulaire calcule",
-        "Votre carrière, calculée de six façons : le système actuel, et les "
+        "Votre carrière, calculée de quatre façons : le système actuel, et les "
         f'<a href="{g.lien("/")}">comptes notionnels</a> — appliqués depuis '
         f"1941, ou à partir de {saisie.bascule}. Tout se calcule dans votre "
         "navigateur : rien n'est envoyé nulle part.",
@@ -2471,7 +2471,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     tete = g.affiche(
         "Le simulateur",
         "Votre carrière, calculée "
-        '<span class="cle-texte">six fois.</span>',
+        '<span class="cle-texte">quatre fois.</span>',
         "Le système actuel, les comptes notionnels appliqués depuis 1941 ou à "
         "partir de la bascule, et notre proposition. Tout se calcule dans "
         "votre navigateur : rien n'est envoyé, rien n'est conservé.",
@@ -2902,7 +2902,7 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
 
     if annee > saisie.euros:
         unites = (
-            "Chaque scénario les donne dans deux unités : la somme telle "
+            "Chaque système les donne dans deux unités : la somme telle "
             f"qu'elle serait versée en {annee}, l'inflation d'ici là comprise, "
             f"et cette même somme ramenée au pouvoir d'achat de {saisie.euros} "
             "— plus petite, sans rien acheter de moins. C'est ce pouvoir "
@@ -2911,7 +2911,7 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
         )
     elif annee < saisie.euros:
         unites = (
-            "Chaque scénario les donne dans deux unités : la somme telle "
+            "Chaque système les donne dans deux unités : la somme telle "
             f"qu'elle a été versée en {annee}, en euros de l'époque, et cette "
             f"même somme ramenée au pouvoir d'achat de {saisie.euros} — c'est "
             "celle-là qui est mise en avant, parce qu'elle seule se compare aux "
@@ -2926,8 +2926,8 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
 
     return g.bulle(
         "De quand sont ces chiffres, et en quels euros",
-        f"{quand} {unites} Ce que compare cette page, ce sont six façons de "
-        "CALCULER une pension de départ, pas six façons de la revaloriser "
+        f"{quand} {unites} Ce que compare cette page, ce sont quatre façons de "
+        "CALCULER une pension de départ, pas quatre façons de la revaloriser "
         "ensuite. Montants <strong>bruts</strong> et au centime, comme la "
         "caisse les verse : avant CSG, CRDS et impôt, comme le revenu "
         "d'activité saisi plus haut. Le <strong>taux de remplacement</strong> "
@@ -3033,7 +3033,7 @@ les additionne, année après année, à mesure que le retraité vieillit.{g.bul
     "fois, sans changer leur ordre.",
 )}</p>
 {g.graphique(
-    "Cumul versé par chaque scénario, du départ à "
+    "Cumul versé par chaque système, du départ à "
     f"{AGE_MAXIMUM_TRAJECTOIRE} ans",
     ages, series,
     unite=unite,
@@ -3070,7 +3070,7 @@ def _trajectoire(contexte: Contexte, comparaison: Comparaison,
     corps = _corps_trajectoire(contexte, comparaison, saisie)
     if not corps:
         return ""
-    return g.depliant("Ce que chaque scénario finit par verser", corps)
+    return g.depliant("Ce que chaque système finit par verser", corps)
 
 
 
@@ -3276,7 +3276,7 @@ def _partager(contexte: Contexte) -> str:
         _carte_partage(
             "Le simulateur",
             "Et vous, ça donne combien ?",
-            "Votre carrière, calculée six fois : les règles d'aujourd'hui, et "
+            "Votre carrière, calculée quatre fois : les règles d'aujourd'hui, et "
             "les nôtres.",
             "Modèle ouvert, données publiques. Tout se calcule dans votre "
             "navigateur : rien n'est envoyé.",
@@ -3676,11 +3676,11 @@ passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
     "non un intervalle de confiance, et l'avenir peut en sortir.",
 )}</p>
 {g.tableau(
-    ["Scénario", "Productivité 0,4 %", escape(retenu), "Productivité 1,0 %",
+    ["Système", "Productivité 0,4 %", escape(retenu), "Productivité 1,0 %",
      "Amplitude"],
     lignes,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    titre="Pension mensuelle de chaque scénario sous les trois hypothèses de "
+    titre="Pension mensuelle de chaque système sous les trois hypothèses de "
           "productivité du COR",
     entete_de_ligne=True,
 )}
@@ -5012,7 +5012,7 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
             g.pourcentage(dernier.part_pib * dernier.rapports[scenario], decimales=1),
         ])
     lignes_passe.append([
-        "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
+        "<em>dont garantie vieillesse du système 4, financée par l'impôt</em>",
         _milliards(cout.cumul(COMPOSANTE_GARANTIE), 0),
         "—",
         _milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
@@ -5037,7 +5037,7 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
             else _milliards(avenir.ecart_cumule(scenario), 0),
         ])
     lignes_avenir.append([
-        "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
+        "<em>dont garantie vieillesse du système 4, financée par l'impôt</em>",
         _milliards(horizon.cout_constants(COMPOSANTE_GARANTIE), 0),
         g.pourcentage(horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1),
         _milliards(avenir.cumul(COMPOSANTE_GARANTIE), 0),
@@ -5209,7 +5209,7 @@ actuel en {obs} (il faudrait rogner de
 dernière colonne ne regarde que les années projetées : le passé est ce qu'il a
 été. Pour le système actuel, dont le rapport vaut un par construction, ces
 colonnes redonnent exactement le solde publié par le COR, ce qui dit que
-le raccord ne triche pas. Les cinq autres systèmes ne comptent pas tout ce que
+le raccord ne triche pas. Les trois autres systèmes ne comptent pas tout ce que
 le système actuel encaisse : ce que la branche famille et l'assurance chômage
 versent pour des droits qu'ils ne servent pas, soit
 
@@ -5813,10 +5813,10 @@ publique, dont le coefficient et l'âge d'annulation montent en charge de 2006 �
 2020 et dont l'âge d'annulation est la limite d'âge du grade et non 67 ans ; et
 la garantie minimale de points de l'Agirc, 120 points par an de 1989 à 2018
 même quand la tranche B est nulle.</p>
-<p>Enfin, le scénario dit si le droit <strong>ouvre</strong> la liquidation
+<p>Enfin, le système dit si le droit <strong>ouvre</strong> la liquidation
 demandée : âge légal du régime, ou départ anticipé pour carrière longue. Quand
-il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les six
-scénarios sur la même carrière, mais la page le signale : il ne décrit alors
+il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les
+quatre systèmes sur la même carrière, mais la page le signale : il ne décrit alors
 aucune pension que le système actuel servirait.</p>""")
 
 
@@ -5826,8 +5826,8 @@ def _methode_suppressions() -> str:
 <p>Le principe « seules les cotisations comptent » est appliqué sans exception :
 ni minimum contributif, ni minimum garanti, ni ASPA, ni majoration pour enfants,
 ni majoration de durée d'assurance, ni AVPF, ni bonifications, ni catégorie
-active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le scénario
-1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
+active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le
+système 1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
 <p>Une exception : le <strong>système 4</strong>, la
 <a href="{g.lien("/")}">proposition du Parti libéral français</a>, remet un
 plancher, et un seul. C'est le système 3, à deux différences près : un taux

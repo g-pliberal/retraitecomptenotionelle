@@ -1440,7 +1440,7 @@ export const DESCRIPTIONS = {
     + "unique en comptes notionnels, un taux de 18 % pour tous, une garantie "
     + "vieillesse individualisée — et le simulateur qui le chiffre, carrière "
     + "par carrière, dans votre navigateur.",
-  "/simuler": "Votre carrière calculée de six façons : le système actuel, et "
+  "/simuler": "Votre carrière calculée de quatre façons : le système actuel, et "
     + "les comptes notionnels appliqués depuis 1941 ou à partir de la "
     + "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
   "/trajectoire": "Ce que chaque système aura versé, du départ à 105 ans : "
@@ -1769,7 +1769,7 @@ function messageErreur(message) {
 function bulleDuTitre(saisie) {
   return g.bulle(
     "Ce que ce formulaire calcule",
-    "Votre carrière, calculée de six façons : le système actuel, et les "
+    "Votre carrière, calculée de quatre façons : le système actuel, et les "
     + `<a href="${g.lien("/")}">comptes notionnels</a> — appliqués depuis 1941, `
     + `ou à partir de ${saisie.bascule}. Tout se calcule dans votre navigateur : `
     + "rien n'est envoyé nulle part.",
@@ -1890,7 +1890,7 @@ function formulaire(saisie, contexte) {
   const tete = g.affiche(
     "Le simulateur",
     "Votre carrière, calculée "
-    + '<span class="cle-texte">six fois.</span>',
+    + '<span class="cle-texte">quatre fois.</span>',
     "Le système actuel, les comptes notionnels appliqués depuis 1941 ou à "
     + "partir de la bascule, et notre proposition. Tout se calcule dans "
     + "votre navigateur : rien n'est envoyé, rien n'est conservé.",
@@ -2292,14 +2292,14 @@ function lectureDesMontants(comparaison, saisie) {
 
   let unites;
   if (annee > saisie.euros) {
-    unites = "Chaque scénario les donne dans deux unités : la somme telle "
+    unites = "Chaque système les donne dans deux unités : la somme telle "
       + `qu'elle serait versée en ${annee}, l'inflation d'ici là comprise, `
       + `et cette même somme ramenée au pouvoir d'achat de ${saisie.euros} `
       + "— plus petite, sans rien acheter de moins. C'est ce pouvoir "
       + "d'achat, et non le nombre inscrit sur le virement, qui dit ce que "
       + "vaut la pension : il est mis en avant pour cette raison.";
   } else if (annee < saisie.euros) {
-    unites = "Chaque scénario les donne dans deux unités : la somme telle "
+    unites = "Chaque système les donne dans deux unités : la somme telle "
       + `qu'elle a été versée en ${annee}, en euros de l'époque, et cette `
       + `même somme ramenée au pouvoir d'achat de ${saisie.euros} — c'est `
       + "celle-là qui est mise en avant, parce qu'elle seule se compare aux "
@@ -2312,8 +2312,8 @@ function lectureDesMontants(comparaison, saisie) {
 
   return g.bulle(
     "De quand sont ces chiffres, et en quels euros",
-    `${quand} ${unites} Ce que compare cette page, ce sont six façons de `
-    + "CALCULER une pension de départ, pas six façons de la revaloriser "
+    `${quand} ${unites} Ce que compare cette page, ce sont quatre façons de `
+    + "CALCULER une pension de départ, pas quatre façons de la revaloriser "
     + "ensuite. Montants <strong>bruts</strong> et au centime, comme la caisse "
     + "les verse : avant CSG, CRDS et impôt, comme le revenu d'activité saisi "
     + "plus haut. Le <strong>taux de remplacement</strong> rapporte la pension "
@@ -2434,7 +2434,7 @@ les additionne, année après année, à mesure que le retraité vieillit.${g.bu
     + "la fois, sans changer leur ordre.",
   )}</p>
 ${g.graphique(
-    "Cumul versé par chaque scénario, du départ à "
+    "Cumul versé par chaque système, du départ à "
     + `${AGE_MAXIMUM_TRAJECTOIRE} ans`,
     ages, series, unite, false, 0, true, ageEsperance,
     `espérance de vie : ${g.nombre(ageEsperance, 1)} ans`, etiquettes, "Âge",
@@ -2466,7 +2466,7 @@ ${phraseEcart}.${g.bulle(
 function trajectoire(contexte, comparaison, saisie) {
   const corps = corpsTrajectoire(contexte, comparaison, saisie);
   if (!corps) return "";
-  return g.depliant("Ce que chaque scénario finit par verser", corps);
+  return g.depliant("Ce que chaque système finit par verser", corps);
 }
 
 /**
@@ -2657,7 +2657,7 @@ function partager(contexte) {
     cartePartage(
       "Le simulateur",
       "Et vous, ça donne combien ?",
-      "Votre carrière, calculée six fois : les règles d'aujourd'hui, et "
+      "Votre carrière, calculée quatre fois : les règles d'aujourd'hui, et "
       + "les nôtres.",
       "Modèle ouvert, données publiques. Tout se calcule dans votre "
       + "navigateur : rien n'est envoyé.",
@@ -3040,11 +3040,11 @@ ${g.eurosCentimes(reference)} affichés plus haut.${g.bulle(
     + "paramètre, non un intervalle de confiance, et l'avenir peut en sortir.",
   )}</p>
 ${g.tableau(
-    ["Scénario", "Productivité 0,4 %", echapper(retenu), "Productivité 1,0 %",
+    ["Système", "Productivité 0,4 %", echapper(retenu), "Productivité 1,0 %",
       "Amplitude"],
     lignes,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    "Pension mensuelle de chaque scénario sous les trois hypothèses de "
+    "Pension mensuelle de chaque système sous les trois hypothèses de "
       + "productivité du COR",
     true,
   )}
@@ -4343,7 +4343,7 @@ function coutDetailScenarios(contexte) {
     ];
   });
   lignesPasse.push([
-    "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
+    "<em>dont garantie vieillesse du système 4, financée par l'impôt</em>",
     milliards(c.cumul(COMPOSANTE_GARANTIE), 0),
     "—",
     milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
@@ -4366,7 +4366,7 @@ function coutDetailScenarios(contexte) {
     ];
   });
   lignesAvenir.push([
-    "<em>dont garantie vieillesse du 6, financée par l'impôt</em>",
+    "<em>dont garantie vieillesse du système 4, financée par l'impôt</em>",
     milliards(horizon.coutConstants(COMPOSANTE_GARANTIE), 0),
     g.pourcentage(horizon.partPib(COMPOSANTE_GARANTIE), false, 1),
     milliards(avenir.cumul(COMPOSANTE_GARANTIE), 0),
@@ -4538,7 +4538,7 @@ ${g.nombre(horizon.coefficient("actuel"), 2)} en ${solde.derniereAnnee}. La
 dernière colonne ne regarde que les années projetées : le passé est ce qu'il a
 été. Pour le système actuel, dont le rapport vaut un par construction, ces
 colonnes redonnent exactement le solde publié par le COR, ce qui dit que
-le raccord ne triche pas. Les cinq autres systèmes ne comptent pas tout ce que
+le raccord ne triche pas. Les trois autres systèmes ne comptent pas tout ce que
 le système actuel encaisse : ce que la branche famille et l'assurance chômage
 versent pour des droits qu'ils ne servent pas, soit
 
@@ -5144,10 +5144,10 @@ publique, dont le coefficient et l'âge d'annulation montent en charge de 2006 �
 2020 et dont l'âge d'annulation est la limite d'âge du grade et non 67 ans ; et
 la garantie minimale de points de l'Agirc, 120 points par an de 1989 à 2018
 même quand la tranche B est nulle.</p>
-<p>Enfin, le scénario dit si le droit <strong>ouvre</strong> la liquidation
+<p>Enfin, le système dit si le droit <strong>ouvre</strong> la liquidation
 demandée : âge légal du régime, ou départ anticipé pour carrière longue. Quand
-il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les six
-scénarios sur la même carrière, mais la page le signale : il ne décrit alors
+il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les
+quatre systèmes sur la même carrière, mais la page le signale : il ne décrit alors
 aucune pension que le système actuel servirait.</p>`);
 }
 
@@ -5157,8 +5157,8 @@ function methodeSuppressions() {
 <p>Le principe « seules les cotisations comptent » est appliqué sans exception :
 ni minimum contributif, ni minimum garanti, ni ASPA, ni majoration pour enfants,
 ni majoration de durée d'assurance, ni AVPF, ni bonifications, ni catégorie
-active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le scénario
-1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
+active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le
+système 1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
 <p>Une exception : le <strong>système 4</strong>, la
 <a href="${g.lien("/")}">proposition du Parti libéral français</a>, remet un
 plancher, et un seul. C'est le système 3, à deux différences près : un taux
