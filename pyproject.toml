@@ -14,10 +14,16 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+# pytest-xdist n'est pas obligatoire : sans lui la suite tourne en série, le
+# greffon `pytest_parallele` s'effaçant de lui-même. Avec, elle passe de sept
+# minutes à moins d'une.
+dev = ["pytest>=8.0", "pytest-xdist>=3.5"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Le greffon répartit la suite complète sur les cœurs disponibles ; il se retire
+# tout seul si pytest-xdist n'est pas là, ou si l'on vise un test précis.
+addopts = "-p retraite_notionnelle.pytest_parallele"

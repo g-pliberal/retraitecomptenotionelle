@@ -46,7 +46,15 @@ Le livrable est le site statique ; voir `README.md`.
   paquet de données et feuille de style, tous deux produits par
   `python scripts/construire_donnees.py`. À reconstruire après toute modification
   des données ou du style.
-- Tests : `tests/` — `python -m pytest` (lance aussi `node --test`)
+- Tests : `tests/` — `python -m pytest` (lance aussi `node --test`). La suite
+  complète se répartit d'elle-même sur les cœurs et tient en une minute ; viser
+  un fichier ou un cas (`python -m pytest tests/test_moteur.py`) la garde en
+  série, ce qui est plus lisible et plus rapide pour un seul test. Pour tout
+  forcer en série : `PYTEST_SANS_XDIST=1`.
+- Mise en route d'une session : `.claude/hooks/session-start.sh` installe le
+  paquet en mode éditable, pytest et pytest-xdist. Sans lui, `python -m pytest`
+  répond « No module named pytest », puis ne collecte rien faute du paquet
+  `retraite_notionnelle` : c'est ce qui coûtait le plus de temps au démarrage.
 - Outillage d'audit d'interface (Impeccable, Web Interface Guidelines,
   Playwright CLI) : compétences dans `.claude/skills/`, mises en place par
   `scripts/setup_ui_tools.sh` ; ce qui demande le réseau et comment changer une
@@ -54,7 +62,13 @@ Le livrable est le site statique ; voir `README.md`.
 - Les chantiers à mener, classés par ce qu'ils déplacent : `docs/feuille_de_route.md`.
   Une session qui cherche quoi faire commence là, et y note ce qu'elle a fait.
 - Seule dépendance hors bibliothèque standard : PyYAML. Le portage JavaScript
-  n'utilise aucune bibliothèque.
+  n'utilise aucune bibliothèque. pytest et pytest-xdist ne servent qu'aux tests
+  (`.[dev]`) ; la suite tourne sans xdist, en série.
+- Les fiches YAML sont relues souvent et pèsent 1,4 Mo par contexte :
+  `charger_yaml` mémorise l'arbre analysé, indexé sur la signature du fichier,
+  et rend une copie. Une donnée modifiée est donc relue sans rien vider, et
+  l'appelant peut modifier ce qu'il reçoit. Ne pas contourner ce point de
+  passage : c'est lui qui tient les temps de la suite et du build.
 
 Le Python de `src/` fait foi. Toute modification du modèle doit être portée dans
 `moteur/js/`, puis les témoins régénérés par

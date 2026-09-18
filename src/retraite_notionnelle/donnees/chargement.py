@@ -7,6 +7,7 @@ et doit pouvoir refuser de s'exécuter si l'utilisateur exige mieux.
 
 from __future__ import annotations
 
+import copy
 import csv
 import json
 from dataclasses import dataclass
@@ -188,9 +189,41 @@ def charger_serie_annuelle(
     return SerieAnnuelle(valeurs, nom or f"{chemin.stem}.{colonne_valeur}", interpolation)
 
 
+# Le chargeur C de libyaml quand il est là, le chargeur Python sinon : à
+# contenu égal le premier lit cinq à dix fois plus vite, et rien d'autre ne
+# change. `yaml.safe_load` ne le choisit jamais de lui-même.
+_LECTEUR = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+
+# Les fiches de régimes pèsent 1,4 Mo de YAML, relus en entier à chaque
+# construction d'un contexte : c'était 1,5 s par simulation partie de zéro, et
+# l'essentiel des sept minutes de la suite de tests. On garde donc l'arbre
+# analysé, indexé par la signature du fichier (mtime et taille) pour qu'une
+# donnée modifiée soit relue sans qu'on ait à vider quoi que ce soit.
+_YAML_EN_CACHE: dict[tuple[str, int, int], dict] = {}
+
+
 def charger_yaml(chemin: Path) -> dict:
+    """Lit un YAML, en mémorisant l'arbre analysé d'un appel à l'autre.
+
+    L'appelant reçoit une copie profonde, comme avant : le dictionnaire rendu
+    reste librement modifiable sans que la mémorisation en garde trace. La
+    copie coûte cent fois moins cher que l'analyse (4 ms contre 400 ms pour la
+    plus grosse fiche), et le cache se périme tout seul dès que le fichier
+    change sur le disque.
+    """
+    try:
+        etat = chemin.stat()
+        cle = (str(chemin), etat.st_mtime_ns, etat.st_size)
+    except OSError:  # pragma: no cover - le fichier manquant lèvera plus bas
+        cle = None
+    if cle is not None and cle in _YAML_EN_CACHE:
+        return copy.deepcopy(_YAML_EN_CACHE[cle])
     with chemin.open(encoding="utf-8") as flux:
-        return yaml.safe_load(flux) or {}
+        contenu = yaml.load(flux, Loader=_LECTEUR) or {}
+    if cle is not None:
+        _YAML_EN_CACHE[cle] = contenu
+        return copy.deepcopy(contenu)
+    return contenu
 
 
 def journal_certification(racine: Path) -> dict:
