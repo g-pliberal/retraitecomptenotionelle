@@ -2891,6 +2891,164 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
 
 ---
 
+### 35. Les recettes et les dépenses du scénario 6, chiffrées toutes les deux — `à faire`
+
+**Pourquoi.** Le scénario 6 est la proposition du dépôt, et c'est celui dont le
+bilan est le moins bien tenu. Sa DÉPENSE réagit à ce qu'il change, parce que le
+modèle recalcule les pensions ; sa RECETTE ne réagit à rien, parce que le
+coefficient d'équilibre lui laisse les ressources du système actuel alors qu'il
+remplace tous les taux par 18 %. Et la moitié de sa dépense financée par
+l'impôt, la garantie vieillesse, ne pèse rien du tout dans la trajectoire. La
+page Coût affiche donc, pour lui, un excédent qu'aucune des deux erreurs ne
+contredit : elles vont toutes les deux dans le même sens.
+
+**Ce que le modèle dit aujourd'hui, et qui fonde l'action.** Quatre mesures,
+faites le 18 septembre 2026 sur `calculer_cout` aux paramètres par défaut.
+
+1. *Le scénario 6 affiche un excédent moyen de +3,75 % du PIB sur 2026-2070*,
+   contre −1,13 % pour le système actuel, et son coefficient d'équilibre vaut
+   1,57 en 2025 et 1,53 en 2070 (0,99 et 0,84 pour le système actuel). Ces
+   chiffres supposent qu'un système à 18 % encaisse ce qu'encaisse un système
+   à 28 %.
+2. *La part contributive des ressources de 2025 est de 322 Md€*, soit 10,8 %
+   du PIB : 274 Md€ de cotisations (65,6 % des ressources) et 49 Md€ de
+   contribution d'équilibre de l'État (11,7 %). Le reste — 64 Md€ d'impôts et
+   taxes affectés, 16 Md€ de transferts, 8 Md€ de subventions d'équilibre —
+   n'est pas cotisé, et un compte notionnel ne sait pas le créditer.
+3. *La garantie vieillesse coûte zéro de 2030 à 2070* dans la trajectoire du
+   modèle. Son rapport de masse vaut 8,8 · 10⁻⁶ en 2024 et exactement 0
+   ensuite ; les 610 Md€ constants du cumul passé viennent tous de générations
+   anciennes. La raison n'est pas l'âge, contrairement à ce que `limites.md`
+   laissait entendre : cinq des treize cas types liquident bien à 65 ans ou
+   plus. C'est le NIVEAU. Les deux seuls cas types qui tombent sous le plancher
+   au scénario 6 — l'exploitant agricole à 674 € par mois, le carrière complète
+   au SMIC à 797 € — partent à 64 et 62 ans, et le modèle ne les suit pas
+   jusqu'à 65 ; les cinq qui partent après 65 ans sont tous au-dessus de 800 €.
+   Le barème appliqué à la distribution réelle, lui, chiffre 33 à 59 Md€ par an.
+4. *La dépense à laquelle on applique le rapport n'est pas du même périmètre
+   que le rapport.* Le rapport est celui des droits DIRECTS des cas types ; la
+   base est la dépense DREES du risque vieillesse-SURVIE, ou celle du COR, qui
+   portent l'une et l'autre les droits dérivés. L'écart est dit dans
+   « ce qui est délibérément en bas », il n'est pas corrigé.
+
+**A. Faire réagir les recettes.** C'est le gros morceau, et il se fait sans
+toucher aux moteurs de pension.
+
+1. *Poser l'assiette en NIVEAU.* Aucune série du dépôt ne la porte :
+   `masse_salariale.csv` ne donne que des variations, et sert à l'indexation.
+   Il faut les salaires et traitements bruts de l'ensemble des branches (D11
+   des comptes nationaux, déjà lu en niveau par `verifier_donnees.py`) et les
+   revenus d'activité des non-salariés. Ordre de grandeur, à établir et non à
+   reprendre : pour une assiette de 1 100 à 1 400 Md€, 18 % rendent 198 à
+   252 Md€, contre les 322 Md€ contributifs de 2025. L'écart serait de 70 à
+   125 Md€ par an, soit 2,4 à 4,2 points de PIB. Le taux implicite d'aujourd'hui
+   sur cette même assiette large est de 23 à 29 %.
+2. *Un rapport de RECETTES, symétrique du rapport de masses.* C'est la route
+   propre, et elle réutilise ce qui existe : la grille des cas types donne déjà,
+   année par année, la cotisation versée par chaque carrière — `compte.cotisations`
+   porte l'assiette retenue et le montant. Le rapport de l'année est la somme
+   des cotisations à 18 % sur la somme des cotisations aux taux réels, pondérée
+   par les effectifs d'ÂGE ACTIF de l'INSEE et par les effectifs de COTISANTS
+   par régime. Ancré sur les cotisations observées de la dernière année du COR,
+   il donne la recette de chaque système comme `_avenir` donne sa dépense.
+   L'avantage sur un calcul « 18 % contre 28 % » est décisif : l'assiette du
+   taux unique est DÉPLAFONNÉE dans le modèle (`compte.py`, branche du régime
+   fusionné), ce qui élargit l'assiette au moment où le taux baisse, et seul un
+   rapport calculé sur les carrières capte les deux effets à la fois.
+3. *Une série d'effectifs de cotisants.* `effectifs_retraites.csv` compte les
+   retraités ; la pondération des recettes demande les cotisants, que la même
+   enquête annuelle auprès des caisses publie. C'est la seule donnée nouvelle
+   que l'action exige.
+4. *Dire ce que le programme fait des ressources non cotisées, et ne pas le
+   décider à sa place.* Les 18 % remplacent-ils aussi les 64 Md€ d'impôts et
+   taxes affectés, qui compensent pour l'essentiel des allègements de
+   cotisations patronales ? Et les subventions d'équilibre aux régimes en
+   extinction, qui survivent à toute réforme le temps que leurs pensionnés
+   s'éteignent ? Trois variantes à poser en paramètre et à afficher côte à
+   côte : les 18 % seuls, les 18 % plus la fiscalité affectée d'aujourd'hui,
+   les 18 % plus la fiscalité et les subventions d'extinction. Le dépôt chiffre
+   les trois ; le choix est politique.
+5. *Sortir les cinq points capitalisés de la recette.* Le pilier obligatoire
+   prélève 5 % sur la même assiette et ne finance pas la répartition. L'effort
+   contributif du scénario 6 est donc de 23 %, sa recette de système de 18 %,
+   et la page doit porter les deux nombres sans les confondre.
+
+**B. Faire entrer la garantie vieillesse dans la trajectoire.**
+
+1. *La chiffrer sur une distribution, jamais sur les cas types.* Une allocation
+   différentielle est tout entière la queue basse de la distribution, et treize
+   carrières ne décrivent pas une queue basse : le résultat est zéro, ce qui est
+   plus faux qu'un chiffre approché. `garantie.py` fait déjà le calcul sur la
+   distribution de l'EIR 2020 ; ce qu'il lui manque est d'être PROJETÉ, année
+   par année, et raccordé à la trajectoire au lieu d'être affiché à côté.
+2. *Servir la garantie à 65 ans à qui a liquidé avant.* C'est ce qui met
+   l'agrégat à zéro, et c'est réparable d'abord au seul niveau de l'agrégat, en
+   comptant le complément à partir de l'année des 65 ans du couple (cas type,
+   génération) — sans toucher aux deux moteurs. La page de simulation, qui dit
+   aujourd'hui « la garantie s'ouvrirait trois ans plus tard », est le second
+   temps, et celui-là se paie deux fois.
+3. *Chiffrer le NET, pas le brut.* La garantie remplace l'ASPA, et les
+   scénarios notionnels suppriment aussi le minimum contributif, le minimum
+   garanti et la pension majorée de référence. Ce que l'impôt paierait en plus
+   est la garantie MOINS ce que ces quatre dispositifs coûtent aujourd'hui. En
+   sens inverse, deux choses la renchérissent : l'ASPA a un non-recours que la
+   DREES estime à la moitié des ayants droit, et elle est récupérable sur
+   succession, là où une garantie automatique et individualisée ne l'est pas.
+   Les deux corrections sont de même ordre et de signe opposé ; il faut les
+   deux, ou aucune.
+4. *La porter en ligne d'impôt, pas en ligne de cotisation.* La structure est
+   déjà là — `COMPOSANTE_GARANTIE` a sa masse et son rapport. Ce qui manque est
+   que le solde du scénario 6 dise : voici ce que les 18 % financent, voici ce
+   que le contribuable finance, et voici le total.
+
+**C. Le périmètre, des deux côtés.** La recette suit le droit depuis
+septembre 2026 ; la dépense, non. Le rapport des droits directs s'applique à
+une base qui porte les droits dérivés — 1,5 point de PIB environ. La correction
+ne demande pas de modéliser un ménage : elle demande de ventiler la base en
+droits directs et droits dérivés (la DREES publie la ventilation), de
+n'appliquer le rapport qu'aux directs, et de DIRE ce que le scénario 6 fait de
+la réversion — la servir en partageant le capital notionnel, comme l'Italie, ou
+ne pas la servir, comme la Suède. Tant que ce n'est pas écrit, le scénario 6
+promet implicitement une réversion qu'il ne finance pas.
+
+**Sources à lire.** INSEE, comptes nationaux annuels, salaires et traitements
+bruts par branche (D11, niveau) et revenu mixte des entrepreneurs individuels ;
+DREES, enquête annuelle auprès des caisses de retraite, effectifs de COTISANTS
+par régime ; COR, rapport annuel, taux de prélèvement global et assiette des
+cotisations, pour recouper la route du rapport par une route en niveau ;
+DREES, Comptes de la protection sociale, ventilation droits directs / droits
+dérivés ; DREES, minima de pension et non-recours à l'ASPA.
+
+**Fichiers.** `src/retraite_notionnelle/cout.py` (un `_recettes` en regard de
+`_avenir`, et `SoldeAnnuel` qui cesse de supposer les ressources fixes) ;
+`src/retraite_notionnelle/garantie.py` (la projection) ;
+`data/reference/macro/` (assiette en niveau, effectifs de cotisants, ventilation
+des droits) avec leur `source_id` dans `data/sources.yaml` ;
+`src/retraite_notionnelle/config.py` (les trois variantes de ressources non
+cotisées) ; page Coût dans `web/pages.py` et `moteur/js/pages.js` ;
+`moteur/js/cout.js` et `moteur/js/garantie.js` en regard ; `limites.md` §5 et
+« Le scénario 6 » ; les témoins.
+
+**Le piège à nommer d'avance.** Cette action est la seule du fichier qui puisse
+faire perdre à la proposition du dépôt l'excédent qu'elle affiche. Elle se mène
+donc comme les autres : on calcule, on publie le chiffre, et on écrit ce qu'il
+suppose. Un excédent de 3,75 % du PIB obtenu en laissant les recettes d'un
+système à 28 % à un système à 18 % n'est pas un résultat favorable, c'est un
+résultat faux, et il est plus dangereux pour le projet que ne le serait un
+déficit chiffré. Deuxième piège : l'action 11 — appliquer le coefficient
+d'équilibre — porte sur la même page et se compose avec celle-ci. L'ordre est
+celui-ci d'abord, l'action 11 ensuite : appliquer un coefficient calculé sur
+des recettes fausses ne ferait que propager l'erreur aux pensions.
+
+**Fin.** La page Coût porte, pour le scénario 6 et face au système actuel, un
+compte à quatre lignes en part de PIB, de 2026 à 2070 : ce que les 18 %
+rapportent, ce que la répartition verse, ce que l'impôt verse au titre de la
+garantie, et le solde. Les trois variantes de ressources non cotisées sont
+affichables. `limites.md` §5 ne dit plus « les recettes ne réagissent à aucun
+scénario ».
+
+---
+
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -2904,6 +3062,10 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
 - **La réversion.** Hors périmètre par construction : le modèle décrit une
   carrière, pas un ménage. À noter tout de même que la dépense DREES comparée
   sur la page Coût inclut la survie ; l'écart de périmètre est dit, pas corrigé.
+  L'action 35 en reprend la moitié qui ne demande pas de ménage : ventiler la
+  base en droits directs et dérivés au seul niveau de l'agrégat, et dire ce que
+  le scénario 6 fait de la réversion. Modéliser une pension de réversion reste
+  en bas.
 
 ---
 
@@ -3602,3 +3764,19 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
   de liquidation, et le dit : le capital notionnel des repères techniques, et
   les tableaux des dépliants, où la chaîne de calcul ne s'additionne dans
   aucune autre unité.
+
+- **Septembre 2026, action 35 ouverte.** Demandée : être plus précis sur les
+  recettes et les dépenses du scénario 6. Quatre mesures faites avant de
+  l'écrire, et c'est ce qu'elles disent qui fixe l'ordre des travaux. Le
+  scénario 6 affiche aujourd'hui un excédent moyen de +3,75 % du PIB sur
+  2026-2070 et un coefficient d'équilibre de 1,53 en 2070, en encaissant les
+  ressources d'un système dont les taux sont ceux qu'il remplace. Et sa
+  garantie vieillesse coûte EXACTEMENT ZÉRO de 2030 à 2070. Le motif n'était
+  pas celui que `limites.md` donnait : l'âge n'y est pour rien, cinq des treize
+  cas types liquident à 65 ans ou plus. Les deux seuls qui tombent sous le
+  plancher de 800 € au scénario 6 — l'exploitant agricole à 674 €, le carrière
+  complète au SMIC à 797 € — partent à 64 et 62 ans, et la garantie ne s'ouvre
+  qu'à 65. Les cinq qui partent assez tard sont tous au-dessus du plancher. Une
+  grille de cas types ne voit pas une allocation différentielle, et le zéro
+  qu'elle rend est plus faux qu'une approximation : c'est la moitié de la
+  proposition, celle que l'impôt finance, absente de sa propre trajectoire.
