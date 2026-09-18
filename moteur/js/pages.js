@@ -1409,6 +1409,9 @@ export const DESCRIPTIONS = {
   "/simuler": "Votre carrière calculée de six façons : le système actuel, et "
     + "les comptes notionnels appliqués depuis 1941 ou à partir de la "
     + "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
+  "/trajectoire": "Ce que chaque système aura versé, du départ à 105 ans : "
+    + "le cumul, et non la pension d'un mois — c'est là que la "
+    + "durée de la retraite entre dans le calcul.",
   "/cas-types": "Treize carrières types sur sept générations : ce que chaque "
     + "pension deviendrait, par rapport à aujourd'hui, sous la "
     + "proposition et sous quatre contrefactuels.",
@@ -1419,6 +1422,9 @@ export const DESCRIPTIONS = {
     + "presque tout.",
   "/donnees": "D'où viennent les chiffres du site, série par série et régime "
     + "par régime, et ce qui a été recontrôlé contre sa source.",
+  "/partager": "Les chiffres du programme au format des réseaux sociaux, "
+    + "1200 × 675, signés @pliberal : le plancher, le taux, le "
+    + "déficit, et les trois graphiques du site.",
   "/mentions": "Mentions légales, données personnelles et accessibilité du "
     + "simulateur de retraite en comptes notionnels.",
 };
@@ -1426,10 +1432,12 @@ export const DESCRIPTIONS = {
 export const TITRES = {
   "/": "Programme",
   "/simuler": "Simuler",
+  "/trajectoire": "Trajectoire",
   "/cas-types": "Cas types",
   "/cout": "Coût",
   "/methode": "Méthode",
   "/donnees": "Données",
+  "/partager": "Partager",
   // Hors de la barre de navigation, où elle prendrait la place d'une page
   // qu'on vient lire : le pied de page y renvoie depuis toutes les autres, ce
   // que la loi demande — être joignable depuis n'importe où sur le site.
@@ -1445,6 +1453,12 @@ export const TITRES = {
  * paramètre. Toute adresse inconnue retombe sur l'accueil.
  */
 export function rendre(contexte, chemin, parametres = null) {
+  if (chemin === "/trajectoire") {
+    return [TITRES[chemin], pageTrajectoire(contexte, parametres || {})];
+  }
+  if (chemin === "/partager") {
+    return [TITRES[chemin], partager(contexte)];
+  }
   if (chemin === "/cas-types") {
     return [TITRES[chemin], casTypes(contexte)];
   }
@@ -1844,12 +1858,20 @@ function formulaire(saisie, contexte) {
       { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
   ].join("");
 
-  return `
+  const tete = g.affiche(
+    "Le simulateur",
+    "Votre carrière, calculée "
+    + '<span class="cle-texte">six fois.</span>',
+    "Le système actuel, les comptes notionnels appliqués depuis 1941 ou à "
+    + "partir de la bascule, et notre proposition. Tout se calcule dans "
+    + "votre navigateur : rien n'est envoyé, rien n'est conservé.",
+  );
+  return tete + `
 <form class="carte" method="get" action="${g.lien("/simuler")}">
   ${g.cache("unite_revenu", saisie.unite_revenu)}
-  <h2 style="margin-top:0">Simuler une carrière${bulleDuTitre(saisie)}</h2>
-  <p class="chapeau" style="margin-top:0.3rem">L'exemple est déjà rempli.
-  Calculez-le tel quel, ou saisissez votre carrière.</p>
+  <h2 class="serif" style="margin-top:0">Votre carrière${bulleDuTitre(saisie)}</h2>
+  <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
+  quel, ou saisissez la vôtre.</p>
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
   ${metiersFormulaire(saisie, affiliations, echelle)}
@@ -2319,7 +2341,7 @@ function legendeDesUnites(comparaison, saisie) {
  * postérieure à la liquidation — additionner en euros constants est la
  * convention la plus neutre dont on dispose, ce n'est pas une prévision.
  */
-function trajectoire(contexte, comparaison, saisie) {
+function corpsTrajectoire(contexte, comparaison, saisie) {
   const carriere = comparaison.carriere;
   const depart = carriere.age_liquidation || 0.0;
   if (!(depart > 0 && depart < AGE_MAXIMUM_TRAJECTOIRE)) return "";
@@ -2368,7 +2390,7 @@ function trajectoire(contexte, comparaison, saisie) {
   // son « k » sur téléphone, où les textes du repère sont grossis. Le texte
   // sous le graphique dit ce que « k€ » désigne, et de quelle année.
   const unite = "k€";
-  return g.depliant("Ce que chaque scénario finit par verser", `
+  return `
 <p>Les six montants du haut sont ceux d'un seul mois, le premier. Ce graphique
 les additionne, année après année, à mesure que le retraité vieillit.${g.bulle(
     "Ce que ce graphique ajoute aux six montants",
@@ -2402,7 +2424,244 @@ ${phraseEcart}.${g.bulle(
     + `${AGE_MAXIMUM_TRAJECTOIRE} ans, où le graphique s'arrête — c'est pour `
     + "eux qu'il va si loin.",
   )}</p>
-`);
+`;
+}
+
+/**
+ * Le même cumul, replié, pour le bas de la page Simuler.
+ *
+ * Là-bas il vient après six montants et trois tableaux : le déplier d'office
+ * ferait un septième bloc à traverser. Il a sa propre page, en revanche, où il
+ * est le sujet et s'ouvre donc de lui-même.
+ */
+function trajectoire(contexte, comparaison, saisie) {
+  const corps = corpsTrajectoire(contexte, comparaison, saisie);
+  if (!corps) return "";
+  return g.depliant("Ce que chaque scénario finit par verser", corps);
+}
+
+/**
+ * Ce que chaque système vous AURA versé, du départ à 105 ans.
+ *
+ * Un montant mensuel ne dit rien de la durée : les barres de la page Simuler
+ * donnent la pension d'un mois, le premier. Ici on additionne, et c'est là que
+ * la mécanique notionnelle devient visible. Un graphique, et un seul : c'est
+ * la règle du site.
+ *
+ * Copie de `_page_trajectoire` dans `web/pages.py`.
+ */
+function pageTrajectoire(contexte, parametres) {
+  const tete = g.affiche(
+    "Trajectoire",
+    "Ce que chaque système vous "
+    + '<span class="cle-texte">aura versé.</span>',
+    "La même carrière, suivie année après année depuis le départ. Pas une "
+    + "pension mensuelle, mais le cumul : ce que vous aurez réellement "
+    + "touché à 75, à 86, à 95 ans.",
+  );
+  const form = simulateurCourt(contexte, "/trajectoire");
+
+  let saisie;
+  try {
+    saisie = Saisie.depuisRequete(parametres);
+  } catch (erreur) {
+    if (fauteDeProgramme(erreur)) throw erreur;
+    return tete + form + messageErreur(erreur.message);
+  }
+
+  let corps;
+  try {
+    corps = corpsTrajectoire(contexte, contexte.simuler(saisie), saisie);
+  } catch (erreur) {
+    if (fauteDeProgramme(erreur)) throw erreur;
+    return tete + form + messageErreur(erreur.message);
+  }
+  if (!corps) {
+    return tete + form + messageErreur(
+      "Cette carrière ne verse aucune pension : il n'y a pas de cumul "
+      + "à tracer.",
+    );
+  }
+
+  // Le graphique est monté en CARTE : c'est elle qui lui donne sa question, sa
+  // réponse en une phrase, sa source — et sa barre de partage. Sans elle, la
+  // Trajectoire aurait été la seule page à graphique dont on ne puisse rien
+  // publier.
+  const carte = g.cle(
+    "Au total, combien chaque système aura-t-il versé ?",
+    "À âge de départ identique, l'écart entre deux courbes est ce que le "
+    + "système choisi vous coûte ou vous rapporte, année après année.",
+    corps,
+    "Cumuls bruts, en euros constants, sur la carrière saisie. "
+    + "Modèle ouvert : "
+    + `<a href="${g.DEPOT}">le dépôt</a>.`,
+    "cumul",
+  );
+
+  return `
+${tete}
+
+${form}
+
+${carte}
+
+<div class="paire">
+  <div>
+    <h2 style="margin-top:0">Pourquoi le cumul, et pas le mois</h2>
+    <p>Une pension mensuelle ne dit rien de la durée. Le graphique montre les
+    six systèmes à âge de départ identique : l'écart entre deux courbes est ce
+    que le système choisi vous coûte ou vous rapporte, année après année.</p>
+    <p>Les scénarios qui ne portent au compte que la <strong>part
+    salariale</strong> restent sous le système actuel ; ceux qui y ajoutent la
+    <strong>part patronale</strong> passent au-dessus. <span class="cle-texte">La
+    proposition libérale se place entre les deux, avec un taux de
+    ${g.pourcentage(contexte.base.taux_cotisation_liberal, false, 0)} au lieu
+    de ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)}.</span></p>
+  </div>
+  <div class="encadre">
+    <h2 class="serif" style="margin-top:0">Le repère de l'espérance de vie</h2>
+    <p>C'est la durée que le modèle lit sur la table de la génération
+    concernée, et par laquelle le compte notionnel divise. Celui qui vit plus
+    longtemps touche davantage que ce qu'il a cotisé, celui qui vit moins
+    longtemps touche moins — comme dans tout système par répartition.</p>
+    <p class="discret">Le trait vertical du graphique la marque. La courbe
+    continue au-delà : c'est là que se lit ce qu'une longue vieillesse
+    change.</p>
+  </div>
+</div>
+`;
+}
+
+/**
+ * L'adresse qu'une carte emporte. Celle du site parent, et non celle de
+ * GitHub Pages : c'est là que le lecteur d'un post doit atterrir.
+ */
+const ADRESSE_PARTAGE = "partiliberalfrancais.fr/#simulateur";
+
+/**
+ * Une carte 1200 × 675, au format de X et de LinkedIn, rendue à SA TAILLE
+ * RÉELLE dans un cadre qui défile : une capture donne alors vraiment l'image
+ * annoncée. Le pied est ce qui compte le plus — une image qui quitte le site
+ * n'a plus ni barre d'adresse ni page autour.
+ *
+ * Copie de `_carte_partage` dans `web/pages.py`.
+ */
+function cartePartage(surtitre, chiffre, phrase, detail, classes = "",
+  legende = "") {
+  const boite = `carte-partage ${classes}`.trim();
+  const pied = `<div class="pied"><span class="compte">${g.SIGNATURE}</span>`
+    + `<span class="adresse">${ADRESSE_PARTAGE}</span></div>`;
+  const corps = `<div class="${boite}">`
+    + `<p class="surtitre">${surtitre}</p>`
+    + `<div><div class="chiffre">${chiffre}</div>`
+    + `<div class="phrase">${phrase}</div>`
+    + `<div class="detail">${detail}</div></div>${pied}</div>`;
+  return `<figure><div class="cadre-carte">${corps}</div>`
+    + `<figcaption>${legende}</figcaption></figure>`;
+}
+
+/**
+ * Les chiffres du programme, au format des réseaux sociaux.
+ *
+ * Cette page a d'abord été LE dispositif de partage, et c'était une erreur :
+ * personne ne la trouvait. Le partage est descendu sur les pages elles-mêmes ;
+ * ce qui reste ici est ce que la barre de partage ne peut pas donner — les
+ * chiffres du programme, qui ne sont le résultat d'aucun graphique.
+ *
+ * Copie de `_partager` dans `web/pages.py`.
+ */
+function partager(contexte) {
+  const base = contexte.base;
+  const solde = contexte.cout().solde;
+  const horizon = solde.annee(solde.derniereAnnee);
+  const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  const garantie = base.garantie_vieillesse_mensuelle;
+  const isolement = base.allocation_isolement_mensuelle;
+  const manque = Math.abs(horizon.solde("actuel"));
+  const depense = horizon.depense("actuel");
+
+  const tete = g.affiche(
+    "Partager",
+    "Quatre cartes, "
+    + '<span class="cle-texte">prêtes à publier.</span>',
+    "Au format des réseaux sociaux — 1200 × 675 —, avec le chiffre, sa "
+    + "source et notre compte. Une capture d'écran de la carte suffit : "
+    + `<strong class="cle-texte">${g.SIGNATURE}</strong> voyage avec `
+    + "l'image. Chaque cadre défile horizontalement pour montrer la carte "
+    + "entière.",
+  );
+
+  const cartes = [
+    cartePartage(
+      "Notre programme pour les retraites",
+      g.euros(garantie + isolement),
+      "par mois au minimum, pour une personne seule.<br>"
+      + `${g.euros(2 * garantie)} pour un couple.`,
+      `${g.euros(garantie)} par personne, plus ${g.euros(isolement)} `
+      + "d'allocation d'isolement. Payés par l'impôt, dès "
+      + `${AGE_OUVERTURE_GARANTIE} ans.`,
+      "",
+      "Le plancher. Défilez pour voir la carte entière, puis capturez-la.",
+    ),
+    cartePartage(
+      "Baisse des prélèvements",
+      taux,
+      "de cotisation retraite, pour tout le monde.",
+      "Part salariale et patronale additionnées : "
+      + `${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
+      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)} aujourd'hui pour un `
+      + "salarié du privé.",
+      "",
+      "Le taux. Défilez pour voir la carte entière, puis capturez-la.",
+    ),
+    cartePartage(
+      "Ce que le système actuel ne paie plus",
+      `${g.nombre(manque * 100, 1)} points de PIB`,
+      `c'est l'écart annuel à combler en ${solde.derniereAnnee}, sans `
+      + "réforme.",
+      `${g.pourcentage(depense, false, 1)} du PIB de dépenses contre `
+      + `${g.pourcentage(depense - manque, false, 1)} de ressources. `
+      + "Source : COR, comptes du système de retraite.",
+      "deficit",
+      "Le déficit. Défilez pour voir la carte entière, puis capturez-la.",
+    ),
+    cartePartage(
+      "Le simulateur",
+      "Et vous, ça donne combien ?",
+      "Votre carrière, calculée six fois : les règles d'aujourd'hui, et "
+      + "les nôtres.",
+      "Modèle ouvert, données publiques. Tout se calcule dans votre "
+      + "navigateur : rien n'est envoyé.",
+      "claire appel",
+      "L'appel au simulateur. Défilez pour voir la carte entière, puis "
+      + "capturez-la.",
+    ),
+  ].join("");
+
+  return `
+${tete}
+
+<div class="cartes">${cartes}</div>
+
+<div class="paire">
+  <div>
+    <h2 style="margin-top:0">Texte prêt à coller</h2>
+    <p>« Un minimum de ${g.euros(garantie + isolement)}/mois, ${taux} de
+    cotisation au lieu de
+    ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)}, et un compte de retraite
+    en euros que chacun peut lire. Vérifiez sur votre carrière :
+    ${ADRESSE_PARTAGE} — ${g.SIGNATURE} »</p>
+  </div>
+  <div class="encadre">
+    <h2 class="serif" style="margin-top:0">Et depuis les pages du site</h2>
+    <p>Inutile de repasser par ici pour partager un graphique : sous chacun, une
+    barre <span class="cle-texte">Partager</span> compose l'image de ce que vous
+    venez de lire, propose un message déjà rédigé pour X, et copie ce message.
+    Les graphiques portent aussi <span class="cle-texte">${g.SIGNATURE}</span>
+    dans le cadre — une capture reste signée.</p>
+  </div>
+</div>
+`;
 }
 
 /** Le libellé de chaque scénario, dans l'ordre des barres. */
@@ -3661,11 +3920,16 @@ function casTypes(contexte) {
     + "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge.</p>" + ages,
   );
 
+  const tete = g.affiche(
+    "Cas types",
+    'Treize carrières, <span class="cle-texte">sept générations.</span>',
+    "Chaque case dit ce que la pension deviendrait, par rapport à "
+    + "aujourd'hui, pour la même carrière. <strong>Rouge : moins "
+    + "qu'aujourd'hui. Vert : plus.</strong>",
+  );
+
   return `
-<h2 style="margin-top:0">Treize carrières, comparées</h2>
-<p class="chapeau">Treize carrières types, sept générations. Chaque case dit ce
-que la pension deviendrait, par rapport à aujourd'hui, pour la même carrière.
-<strong>Rouge : moins qu'aujourd'hui. Vert : plus.</strong></p>
+${tete}
 
 <div class="note"><strong>Ces pourcentages ne sont pas des baisses de
 pension.</strong> Chaque case compare deux carrières calculées sous la même
@@ -3926,12 +4190,17 @@ que de ${premiereVentilee} à ${derniereVentilee}.`,
   ].join("");
   const plan = g.plan(carteBilan + carteProvenance + detail, "/cout");
 
+  const tete = g.affiche(
+    "Le coût",
+    'Ce qui rentre, ce qui sort, '
+    + '<span class="cle-texte">ce qui manque.</span>',
+    "Vos cotisations ne sont pas mises de côté. Elles paient aussitôt les "
+    + "pensions de ceux qui sont déjà retraités : c'est la "
+    + g.terme("répartition") + ".",
+  );
+
   return `
-<h2 style="margin-top:0">L'argent de la retraite</h2>
-<p class="chapeau">Vos cotisations ne sont pas mises de côté. Elles paient
-aussitôt les pensions de ceux qui sont déjà retraités : c'est la
-${g.terme("répartition")}. Voici ce qui rentre, ce qui sort, et ce
-qui manque.</p>
+${tete}
 
 <div class="note resume"><strong>En clair.</strong> En ${obs}, les retraites
 ont coûté un peu plus qu'elles n'ont rapporté : il a manqué
@@ -4918,11 +5187,17 @@ salaires : ce qu'un système en répartition peut servir sans toucher à son tau
 Les huit autres restent à un clic, dans les options du simulateur.`,
   );
 
+  const tete = g.affiche(
+    "La méthode",
+    "Comment c'est calculé, "
+    + '<span class="cle-texte">en trois opérations.</span>',
+    "Un compte notionnel est un compte <em>virtuel</em> : rien n'est "
+    + "placé, les cotisations de l'année paient les pensions de l'année. "
+    + "Ce qui change, c'est le calcul du droit.",
+  );
+
   return `
-<h2 style="margin-top:0">Comment c'est calculé</h2>
-<p class="chapeau">Un compte notionnel est un compte <em>virtuel</em> : rien
-n'est placé, les cotisations de l'année paient les pensions de l'année. Ce qui
-change, c'est le calcul du droit, en trois opérations.</p>
+${tete}
 
 <div class="note resume"><strong>En clair.</strong> Votre pension serait votre
 compte divisé par le nombre d'années qu'il vous reste à vivre, en moyenne.
@@ -5514,11 +5789,16 @@ détaillées</a></p>`, "donnees-sources");
     + inventaireSection(contexte.paquet.inventaire || [], simulateur.catalogue)
     + depliantSources;
 
+  const tete = g.affiche(
+    "Les données",
+    "Rien ici n'est "
+    + '<span class="cle-texte">à croire sur parole.</span>',
+    "Chaque série est recontrôlée, automatiquement, contre le fichier de "
+    + "l'institution qui la produit. Ce qui ne l'est pas est dit.",
+  );
+
   return `
-<h2 style="margin-top:0">Ce que valent les chiffres</h2>
-<p class="chapeau">Rien ici n'est à croire sur parole. Chaque série est
-recontrôlée, automatiquement, contre le fichier de l'institution qui la
-produit. Ce qui ne l'est pas est dit.</p>
+${tete}
 
 <div class="note resume"><strong>En clair.</strong> Les chiffres de ce site
 viennent des institutions qui les produisent : l'INSEE pour les prix et les
@@ -5569,43 +5849,10 @@ function programme(contexte) {
   const simulateur = contexte.simulateur();
   const regimes = simulateur.catalogue.taille;
   const inventaire = (contexte.paquet.inventaire || []).length;
-  const depenses = contexte.depenses();
-  const derniere = depenses.derniereAnnee;
   const comptes = contexte.comptes();
   const anneeSolde = comptes.derniereAnneeObservee;
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const plancher = g.euros(base.garantie_vieillesse_mensuelle);
-
-  const reperes = g.fiche(
-    "Régimes de retraite en France", String(inventaire),
-    "chacun avec ses propres règles",
-  ) + g.fiche(
-    `Ce que cela coûte, en ${derniere}`,
-    g.pourcentage(depenses.partPib(derniere), false, 1),
-    "de tout ce que la France produit",
-  ) + g.fiche(
-    "Notre proposition", taux,
-    "de cotisation, pour tout le monde",
-  );
-
-  const propositions = g.points([
-    ["Un compte, pas des trimestres",
-      "Chaque euro cotisé est inscrit sur votre compte. Vous le suivez "
-      + "toute votre vie, comme un compte en banque. Sauf que rien n'est "
-      + "placé : c'est toujours la " + g.terme("répartition") + "."],
-    ["Le même taux pour tous",
-      `${taux} du salaire, part du salarié et part de l'employeur `
-      + "additionnées, quel que soit le métier. Aujourd'hui le taux dépend du "
-      + "statut, et personne ne sait dire pourquoi."],
-    [`Un plancher de ${plancher} par personne`,
-      "Versé à qui n'atteint pas ce montant, à partir de 65 ans, et payé "
-      + "par l'impôt. Il regarde votre seule pension, pas celle de votre "
-      + "conjoint."],
-    ["Un réglage par an, au lieu d'une réforme tous les huit ans",
-      "Un chiffre publié chaque année ramène les comptes à l'équilibre. "
-      + "Plus besoin de changer la règle en urgence, au détriment de ceux qui "
-      + "n'ont pas encore liquidé."],
-  ]);
 
   const differences = g.tableau(
     ["", "Aujourd'hui", "Avec notre programme"],
@@ -5677,6 +5924,17 @@ ce que l'un et l'autre coûtent.
 <a href="${g.lien("/methode")}">Le détail du calcul</a>.</p>`);
 
   const depliantVerifier = g.depliant("Tout vérifier, page par page", `
+<div class="note signee">
+<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
+plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
+à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
+puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par
+page : le modèle reste un modèle, ses séries d'avant 1950 sont fragiles, et le
+niveau des pensions notionnelles dépend d'un réglage annuel qu'il calcule sans
+l'appliquer. Nous préférons un chiffre discutable à une promesse qu'on ne peut
+pas discuter.</p>
+<p class="discret">Le Parti libéral français, septembre 2026.</p>
+</div>
 <ul class="serree">
   <li><a href="${g.lien("/simuler")}">Simuler</a> : votre carrière, ou votre
   relevé collé tel quel, sous les six scénarios.</li>
@@ -5694,34 +5952,53 @@ licence libre : <a href="${g.DEPOT}">le dépôt</a>. Solde du système de retrai
 en ${anneeSolde} :
 ${g.pourcentage(comptes.solde(anneeSolde), true, 2)} du PIB.</p>`);
 
-  // L'entrée. Le site est un simulateur, et rien sur le premier écran ne le
-  // disait : le mot n'était que dans un onglet, et le seul bouton arrivait au
-  // troisième écran — au cinquième sur un téléphone. Dans le cadre que le site
-  // du parti ouvre sur cette page, le titre du simulateur est masqué par
-  // l'hôte, et ce bloc est la seule chose qui dise « simulez ». Deux lignes,
-  // pas trois : à la troisième, le bouton passe sous le pli du téléphone.
-  const entree = `
-<div class="note entree">
-<p><strong>Ce que ça donnerait pour vous ? Simulez votre carrière.</strong><br>
-Six montants côte à côte : les règles d'aujourd'hui, et cinq autres.</p>
-<p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Simuler ma
-retraite</a></p>
-</div>`;
+  // Les trois gestes du calcul. Ils étaient au format du texte courant, et se
+  // lisaient comme une note de bas de page à côté du tableau qui leur fait
+  // face — alors qu'ils pèsent autant.
+  const gestes = [
+    "<strong>On inscrit</strong> chaque cotisation sur votre compte, "
+    + "au premier euro, sans plafond.",
+    "<strong>On revalorise</strong> le compte chaque année, au rythme "
+    + "des salaires du pays.",
+    "<strong>On divise</strong>, au départ, par les années qu'il vous "
+    + "reste à vivre en moyenne. C'est votre pension.",
+  ].map((texte, index) => (
+    `<li><span class="rang">${index + 1}</span><span>${texte}</span></li>`
+  )).join("");
+
+  const tete = g.affiche(
+    "Notre programme pour les retraites",
+    'La seule retraite qui vous rend <span class="cle-texte">vraiment</span> '
+    + "ce que vous avez cotisé.",
+    '<strong class="cle-texte">Un compte à votre nom, en euros.</strong> '
+    + "Chaque cotisation y est inscrite ; à la retraite, il devient votre "
+    + 'pension. <strong class="cle-texte">Pas de trimestres, pas de barèmes, '
+    + "pas de surprise.</strong>",
+  );
 
   return `
-<h2 style="margin-top:0">Notre programme pour les retraites</h2>
-<p class="chapeau">Un seul régime. Un compte par personne. ${taux} de cotisation
-pour tout le monde. Et un plancher de ${plancher} par mois, payé par l'impôt.</p>
-${entree}
-<div class="fiches reperes">${reperes}</div>
+${tete}
 
-${propositions}
+${simulateurCourt(contexte)}
 
-<h2>Le plancher, concrètement</h2>
-<p>Aujourd'hui, l'ASPA regarde les ressources du couple : à 300 € et 1 500 €
-de pension, il ne reçoit rien. La garantie regarde chacun. Ce que cela verse,
-par mois, à quatre couples et à une personne seule :</p>
-${tableauGarantie()}
+${engagements(contexte)}
+
+<div class="paire">
+  <div>
+    <p class="surtitre">Le calcul</p>
+    <h2 style="margin-top:0">Comment ça marche, en trois gestes</h2>
+    <ol class="gestes">${gestes}</ol>
+    <p class="discret">Rien n'est placé : les cotisations de l'année paient
+    les pensions de l'année. C'est toujours la ${g.terme("répartition")}.</p>
+  </div>
+  <div class="encadre">
+    <h2 class="serif" style="margin-top:0">Le plancher regarde chacun, pas le
+    couple</h2>
+    <p>Aujourd'hui, l'ASPA regarde les ressources du couple : à 300 € et
+    1 500 € de pension, il ne reçoit rien. La garantie regarde chacun :</p>
+    ${tableauGarantie()}
+  </div>
+</div>
 
 <h2>Ce que cela change</h2>
 ${differences}
@@ -5734,20 +6011,13 @@ retraites ne fait rien économiser l'année où elle est votée : il faut attend
 que des carrières entières se déroulent sous la nouvelle règle. Qui promet une
 économie immédiate propose autre chose.</div>
 
-<h2>Vérifiez plutôt que de nous croire</h2>
-<p>Tout est calculé, sur des données publiques et un modèle ouvert.</p>
-<div class="note signee">
-<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
-plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
-à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
-puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par page : le modèle reste un modèle, ses
-séries d'avant 1950 sont fragiles, et le niveau des pensions notionnelles
-dépend d'un réglage annuel qu'il calcule sans l'appliquer. Nous préférons un
-chiffre discutable à une promesse qu'on ne peut pas discuter.</p>
-<p class="discret">Le Parti libéral français, septembre 2026.</p>
-</div>
-<p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer ma
+<div class="creme">
+<p class="surtitre">Vérifiez plutôt que de nous croire</p>
+<h2 class="serif" style="margin:0">Tout est chiffré, sur des données publiques
+et un modèle ouvert.</h2>
+<p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Simuler ma
 retraite</a><a href="${g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
+</div>
 
 <h2>Pour aller plus loin</h2>
 
@@ -5817,6 +6087,124 @@ sans que personne ne l'ait voté.</p>
  * couples, deux colonnes : ce que l'ASPA sert aujourd'hui, ce que la garantie
  * servirait. La ligne « 300 € et 1 500 € » dit tout.
  */
+/**
+ * Le taux de cotisation retraite d'aujourd'hui, parts salariale et patronale
+ * additionnées. Copie de `TAUX_ACTUEL_*` dans `web/pages.py`, où la
+ * décomposition ligne à ligne est écrite.
+ */
+const TAUX_ACTUEL_SALARIAL = 0.1131;
+const TAUX_ACTUEL_PATRONAL = 0.1667;
+const TAUX_ACTUEL_TOTAL = TAUX_ACTUEL_SALARIAL + TAUX_ACTUEL_PATRONAL;
+
+/** L'âge d'ouverture de la garantie, celui de l'ASPA. */
+const AGE_OUVERTURE_GARANTIE = 65;
+
+/**
+ * Les quatre engagements du programme, chiffrés, numérotés 01 à 04.
+ *
+ * Trois niveaux par carte : le CHIFFRE en or attire l'œil, la PROMESSE en
+ * serif porte le message — c'est elle qui se perdait quand les cartes n'en
+ * avaient que deux —, le DÉTAIL technique répond à qui veut savoir comment. Un
+ * ou deux passages en or par carte, jamais plus, et doublés d'un demi-gras
+ * pour survivre en niveaux de gris.
+ *
+ * Copie de `_engagements` dans `web/pages.py`.
+ */
+function engagements(contexte) {
+  const base = contexte.base;
+  const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  const garantie = base.garantie_vieillesse_mensuelle;
+  const isolement = base.allocation_isolement_mensuelle;
+  const seul = g.euros(garantie + isolement);
+  const couple = g.euros(2 * garantie);
+
+  const cartes = [
+    [seul,
+      "par mois au minimum, seul.<br>"
+      + `<strong class="cle-texte">${couple}</strong> pour un couple.`,
+      `<strong class="cle-texte">${g.euros(garantie)} par personne</strong>, `
+      + `plus <strong class="cle-texte">${g.euros(isolement)} d'allocation `
+      + "d'isolement</strong> pour qui vit seul. Payés par l'impôt, dès "
+      + `${AGE_OUVERTURE_GARANTIE} ans.`],
+    [taux,
+      "de cotisation, au lieu de "
+      + '<strong class="cle-texte">'
+      + `${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui</strong>.`,
+      "Part salariale et patronale additionnées : "
+      + `${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
+      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)} pour un salarié du privé. `
+      + 'Demain, <strong class="cle-texte">le même taux pour tout le '
+      + "monde</strong>."],
+    ["1 compte",
+      '<strong class="cle-texte">en euros</strong>, lisible par tous.',
+      "Un compte personnel de retraite : vous voyez "
+      + '<strong class="cle-texte">votre solde comme sur un relevé '
+      + "bancaire</strong>."],
+    ["100 %",
+      "de ce que vous avez cotisé "
+      + '<strong class="cle-texte">vous revient</strong>.',
+      "Partir plus tôt donne moins, plus tard donne plus — "
+      + '<strong class="cle-texte">dans le rapport exact de ce que ça '
+      + "coûte</strong>."],
+  ];
+  const corps = cartes.map(([chiffre, promesse, detail], index) => (
+    `<div class="engagement"><div class="rang">${String(index + 1).padStart(2, "0")}</div>`
+    + `<div class="chiffre">${chiffre}</div>`
+    + `<div class="promesse">${promesse}</div>`
+    + `<div class="detail">${detail}</div></div>`
+  )).join("");
+  return '<section class="engagements" aria-label="Nos quatre engagements">'
+    + `<div class="grille">${corps}</div></section>`;
+}
+
+/**
+ * Le formulaire court de l'accueil : quatre champs, et « Calculer ».
+ *
+ * Il est SOUS LE TITRE, avant même les engagements : la preuve est mise à
+ * hauteur de la promesse. Les noms des champs sont exactement ceux du grand
+ * formulaire, parce que c'est la même adresse qui les reçoit.
+ *
+ * `vers` est la page qui reçoit la saisie : l'accueil renvoie au simulateur,
+ * la page Trajectoire se renvoie à elle-même.
+ *
+ * Copie de `_simulateur_court` dans `web/pages.py`.
+ */
+function simulateurCourt(contexte, vers = "/simuler") {
+  const saisie = new Saisie();
+  const affiliations = contexte.simulateur().affiliations;
+  const champs = [
+    g.champDate("naissance", "Date de naissance", saisie.naissanceIso,
+      "seul le mois compte", saisie.naissanceEnClair,
+      { min: `${NAISSANCE_MINIMALE}-01-01`, max: `${NAISSANCE_MAXIMALE}-12-31`,
+        autocomplete: "bday" }),
+    g.champDate("debut", "Début de carrière", saisie.jourDe(saisie.debut),
+      "le premier mois cotisé", saisie.calculDe(saisie.debut),
+      { min: saisie.jourDe(AGE_DEBUT_MINIMAL),
+        max: saisie.jourDe(AGE_DEBUT_MAXIMAL) }),
+    g.liste("statut", "Statut",
+      optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
+      saisie.statut),
+    g.champDate("liquidation", "Départ souhaité",
+      saisie.jourDe(saisie.liquidation), "effectif, ou souhaité",
+      saisie.calculDe(saisie.liquidation),
+      { min: saisie.jourDe(AGE_LIQUIDATION_MINIMAL),
+        max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL) }),
+  ].join("");
+  return `
+<form class="creme simulateur-court" method="get" action="${g.lien(vers)}">
+  <div class="tete">
+    <h2 class="serif">Et vous, ça donne combien&nbsp;?</h2>
+    <span class="etiquette">Le simulateur</span>
+  </div>
+  <div class="grille">${champs}
+    <button type="submit">Calculer →</button>
+  </div>
+  <p class="discret" style="margin:0.9rem 0 0">Six montants côte à côte :
+  les règles d'aujourd'hui, et les nôtres. Tout se calcule dans votre
+  navigateur, rien n'est envoyé.</p>
+</form>`;
+}
+
 /**
  * Ce que le plancher individualisé change, en cinq lignes : l'argument le
  * plus immédiatement parlant du site, en haut de l'accueil.

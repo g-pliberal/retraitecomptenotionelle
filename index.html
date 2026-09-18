@@ -926,12 +926,72 @@ function nomDeFichier(carte) {
   return `retraite-${question || "graphique"}.png`;
 }
 
+// Le texte d'un partage : la question, la réponse en une phrase, la source, et
+// la signature. C'est le pendant écrit d'`imageDeLaCarte()` — la même carte,
+// dite plutôt que dessinée —, et il sert aux deux boutons qui ne composent pas
+// d'image : « Publier sur X » et « Copier le texte ».
+//
+// Il est BORNÉ. X coupe à 280 caractères, et compte toute adresse pour 23
+// quelle qu'en soit la longueur : le budget réel est donc 280 moins 23, moins
+// le compte et les passages à la ligne. Ce qui saute quand ça ne tient pas est
+// choisi, et non subi — la source d'abord, qui est la moins utile dans un
+// message court, puis la réponse, tronquée au dernier espace pour ne pas
+// couper un mot en deux.
+const LIMITE_X = 280;
+const COUT_ADRESSE = 23;
+
+function texteDeLaCarte(carte) {
+  // Les définitions du glossaire sont dans le HTML même repliées : sans ce
+  // tri, la source se lirait « En part du PIBLe PIB, c'est tout ce que la
+  // France produit… », exactement comme pour l'image.
+  const texte = (selecteur) => {
+    const trouve = carte.querySelector(selecteur);
+    if (!trouve) { return ""; }
+    const sans = trouve.cloneNode(true);
+    sans.querySelectorAll(".mot > .bulle").forEach((bulle) => bulle.remove());
+    return sans.textContent.replace(/\s+/g, " ").trim();
+  };
+
+  const question = texte("h3");
+  const reponse = texte(".reponse");
+  const source = texte(".source");
+  // L'adresse de la carte, et non celle du site : elle rouvre la page où le
+  // lecteur était, ce qui est tout l'intérêt d'un lien dans un message.
+  const adresse = location.href;
+  const pied = `${adresse} ${SIGNATURE}`;
+
+  const assembler = (avecSource, corps) => [
+    question, corps, avecSource && source ? `Source : ${source}` : "", pied,
+  ].filter(Boolean).join("\n\n");
+
+  // Le coût d'un texte tel que X le compte : l'adresse vaut 23, le reste vaut
+  // sa longueur.
+  const cout = (texte) => texte.length - adresse.length + COUT_ADRESSE;
+
+  let propose = assembler(true, reponse);
+  if (cout(propose) <= LIMITE_X) { return propose; }
+  propose = assembler(false, reponse);
+  if (cout(propose) <= LIMITE_X) { return propose; }
+
+  // Il faut tronquer la réponse. On calcule la place qui lui reste une fois le
+  // reste posé, et on coupe au dernier espace avant cette place.
+  const sansReponse = cout(assembler(false, ""));
+  const place = LIMITE_X - sansReponse - 1;
+  if (place < 20) { return assembler(false, "").trim(); }
+  const coupe = reponse.slice(0, place);
+  const espace = coupe.lastIndexOf(" ");
+  return assembler(false, `${(espace > 20 ? coupe.slice(0, espace) : coupe).trim()}…`);
+}
+
 document.addEventListener("click", async (evenement) => {
   const bouton = evenement.target.closest("button.partager");
   if (!bouton) { return; }
   const carte = bouton.closest("section.cle");
   if (!carte) { return; }
-  const libelle = bouton.textContent;
+  // Le libellé est retenu en HTML, et non en texte : le bouton porte un
+  // pictogramme, et le rendre par `textContent` le faisait disparaître à la
+  // première composition, définitivement.
+  const libelle = bouton.innerHTML;
   bouton.disabled = true;
   bouton.textContent = "Composition…";
   try {
@@ -955,13 +1015,100 @@ document.addEventListener("click", async (evenement) => {
     // Un partage refusé par l'utilisateur n'est pas une erreur.
     if (erreur?.name !== "AbortError") {
       bouton.textContent = "Image impossible ici";
-      setTimeout(() => { bouton.textContent = libelle; }, 3000);
+      setTimeout(() => { bouton.innerHTML = libelle; }, 3000);
       bouton.disabled = false;
       return;
     }
   }
-  bouton.textContent = libelle;
+  bouton.innerHTML = libelle;
   bouton.disabled = false;
+});
+
+// « Publier sur X ». Sur téléphone, la feuille de partage du système sait
+// joindre l'image AU texte : on la tente d'abord, et c'est la seule voie qui
+// donne un post complet en un geste. Ailleurs, on ouvre l'intent de X avec le
+// message pré-écrit — le navigateur n'autorise pas une page à y attacher un
+// fichier, et le lecteur joint l'image qu'il aura téléchargée à côté. C'est la
+// limite connue de ce dispositif ; la lever demanderait une image composée
+// côté serveur, ce qu'un site statique ne fait pas.
+document.addEventListener("click", async (evenement) => {
+  const bouton = evenement.target.closest("button.partager-x");
+  if (!bouton) { return; }
+  const carte = bouton.closest("section.cle");
+  if (!carte) { return; }
+  const texte = texteDeLaCarte(carte);
+
+  if (navigator.canShare?.({ text: texte })) {
+    try {
+      const image = await imageDeLaCarte(carte);
+      const fichier = image
+        && new File([image], nomDeFichier(carte), { type: "image/png" });
+      const avecImage = fichier && navigator.canShare({ files: [fichier], text: texte });
+      await navigator.share(avecImage ? { files: [fichier], text: texte } : { text: texte });
+      return;
+    } catch (erreur) {
+      // Un partage refusé par l'utilisateur n'est pas une erreur, et n'appelle
+      // pas de repli : il ne veut pas partager.
+      if (erreur?.name === "AbortError") { return; }
+    }
+  }
+  window.open(`https://x.com/intent/post?text=${encodeURIComponent(texte)}`,
+              "_blank", "noopener");
+});
+
+// « Copier le texte ». Le libellé du bouton sert d'accusé de réception, comme
+// le fait déjà « Image impossible ici ».
+//
+// En cas de REFUS du presse-papiers — page non sécurisée, permission retirée,
+// navigateur qui n'expose rien —, le texte s'affiche dans le champ prévu pour,
+// et il Y RESTE : c'est au lecteur de le refermer en recliquant. Il s'effaçait
+// tout seul au bout de quelques secondes, ce qui reprenait le texte à qui
+// n'avait pas eu le temps de le sélectionner. Seule la confirmation disparaît
+// d'elle-même.
+document.addEventListener("click", async (evenement) => {
+  const bouton = evenement.target.closest("button.copier-texte");
+  if (!bouton) { return; }
+  const carte = bouton.closest("section.cle");
+  if (!carte) { return; }
+  const repli = carte.querySelector(".partage > .repli");
+
+  // Deuxième clic quand le repli est ouvert : on referme.
+  if (repli && !repli.hidden) {
+    repli.hidden = true;
+    repli.value = "";
+    bouton.textContent = "Copier le texte";
+    return;
+  }
+
+  const texte = texteDeLaCarte(carte);
+  let copie = false;
+  try {
+    await navigator.clipboard.writeText(texte);
+    copie = true;
+  } catch {
+    // Le repli historique, pour les navigateurs sans API de presse-papiers :
+    // un champ hors flux, sélectionné, et la commande d'édition du document.
+    const champ = document.createElement("textarea");
+    champ.value = texte;
+    champ.setAttribute("readonly", "");
+    champ.style.cssText = "position:fixed;top:-9999px;opacity:0";
+    document.body.append(champ);
+    champ.select();
+    try { copie = document.execCommand("copy"); } catch { copie = false; }
+    champ.remove();
+  }
+
+  if (copie) {
+    bouton.textContent = "Texte copié";
+    setTimeout(() => { bouton.textContent = "Copier le texte"; }, 2400);
+    return;
+  }
+  if (repli) {
+    repli.value = texte;
+    repli.hidden = false;
+    repli.select();
+  }
+  bouton.textContent = "Copie refusée — texte ci-dessous (masquer)";
 });
 
 // Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici

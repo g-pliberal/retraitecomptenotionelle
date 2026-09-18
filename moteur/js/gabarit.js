@@ -39,9 +39,10 @@ const FINE = "\u202f";
  */
 export const GROUPES_NAVIGATION = [
   ["Le programme", [["/", "Programme"]]],
-  ["La preuve", [["/simuler", "Simuler"], ["/cas-types", "Cas types"],
-    ["/cout", "Coût"]]],
+  ["La preuve", [["/simuler", "Simuler"], ["/trajectoire", "Trajectoire"],
+    ["/cas-types", "Cas types"], ["/cout", "Coût"]]],
   ["La confiance", [["/methode", "Méthode"], ["/donnees", "Données"]]],
+  ["Faire connaître", [["/partager", "Partager"]]],
 ];
 
 export const LIENS = GROUPES_NAVIGATION.flatMap(([, liens]) => liens);
@@ -81,10 +82,25 @@ export function entete(cheminActif = "/") {
 <header class="bandeau"><div class="interieur">
   <div class="marque">
     <a class="retour" href="${SITE_PARENT}" target="_top">${icone("arrow-left")}<span>Parti libéral français</span></a>
-    <h1><a href="${lien("/")}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></h1>
+    <p class="nom"><a href="${lien("/")}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></p>
   </div>
   <nav aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
+}
+
+/**
+ * Le bloc de tête d'une page : sur-titre, titre massif, chapeau.
+ *
+ * C'est l'unité qui fait de chaque page une affiche, et elle est la même
+ * partout pour que les huit se reconnaissent comme un seul site. Le titre est
+ * le `<h1>` de la page — le seul, depuis que le nom du site a cédé la place —,
+ * et il est mis en capitales par le STYLE, jamais dans le texte.
+ *
+ * Copie d'`affiche` dans `web/gabarit.py`.
+ */
+export function affiche(surtitre, titre, chapeau) {
+  return `<div class="affiche"><p class="surtitre">${echapper(surtitre)}</p>`
+    + `<h1>${titre}</h1><p class="chapeau">${chapeau}</p></div>`;
 }
 
 /**
@@ -709,15 +725,25 @@ export function plan(corps, chemin, etiquette = "Dans cette page") {
  */
 export function cle(question, reponse, corps, source = "", identifiant = "") {
   const fin = source ? `<p class="source">${source}</p>` : "";
-  // Le bouton n'est pas un ornement : c'est lui qui fait de la carte autre chose
-  // qu'un bloc de page. Il compose, dans le navigateur, une image qui porte la
-  // question, la réponse, le tracé, sa source et la signature du compte. Le
-  // comportement est dans `index.html`, en écoute déléguée.
-  // Il n'apparaît que si la carte porte un TRACÉ : c'est lui que l'image
+  // La barre de partage n'est pas un ornement : c'est elle qui fait de la carte
+  // autre chose qu'un bloc de page, et elle est SOUS LE RÉSULTAT — le partage
+  // doit être là où l'on regarde le graphique, et non dans une page à part que
+  // personne ne trouve. Trois gestes : `partager-x` ouvre X avec un message
+  // déjà rédigé, `partager` compose l'image, `copier-texte` met le message dans
+  // le presse-papiers. Le comportement des trois est dans `index.html`, en
+  // écoute déléguée. Le `<textarea>` est le repli du presse-papiers, vide et
+  // masqué tant qu'on n'en a pas besoin.
+  // La barre n'apparaît que si la carte porte un TRACÉ : c'est lui que l'image
   // compose, et une carte qui n'en a pas donnerait un bouton qui échoue.
   const partage = corps.includes('<figure class="graphique"')
-    ? '<p class="partage"><button type="button" class="partager">'
-      + `${icone("download")}<span>Télécharger l'image</span></button></p>`
+    ? '<p class="partage">'
+      + '<span class="etiquette">Partager ce résultat</span>'
+      + '<button type="button" class="partager-x">Publier sur X</button>'
+      + '<button type="button" class="partager">'
+      + `${icone("download")}<span>Télécharger l'image</span></button>`
+      + '<button type="button" class="copier-texte">Copier le texte</button>'
+      + '<textarea class="repli" hidden readonly rows="3"'
+      + ' aria-label="Texte à copier à la main"></textarea></p>'
     : "";
   // Identifiée, la carte est joignable depuis le plan de la page ; le
   // `tabindex` lui permet de recevoir le focus quand on y arrive par lui.
