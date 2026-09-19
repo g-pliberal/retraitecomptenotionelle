@@ -5603,16 +5603,24 @@ function coutDetailLimites(contexte) {
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
 laisse onze, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
-  <li><strong>Les recettes réagissent sur deux points, et sur deux
+  <li><strong>Les recettes réagissent sur trois points, et sur trois
   seulement.</strong> La recette suit le droit : ce que la branche famille,
   l'assurance chômage et le fonds de solidarité vieillesse versent pour des
   droits que les systèmes notionnels ne servent pas leur est retiré, un peu
   plus d'un point de PIB. La recette suit le taux : le système 4, qui pose un
   taux unique de 18 %, prélève ce taux sur l'assiette mesurée des revenus
-  d'activité au lieu de la part cotisée des ressources d'aujourd'hui. Le reste
-  est reconduit tel quel (subventions d'équilibre aux régimes en extinction,
-  impôts et taxes affectés), faute qu'aucun programme dise ce qu'il en
-  ferait.</li>
+  d'activité au lieu de la part cotisée des ressources d'aujourd'hui. La
+  recette suit enfin le PRINCIPE, et pour le seul système 4 : un compte
+  notionnel ne crédite que ce qui est assis sur un revenu d'activité, et ce
+  système ne reconduit donc aucune des trois ressources qui n'acquièrent de
+  droits à personne. La contribution d'équilibre de l'État s'en va parce que
+  les 18 % s'appliquent aussi aux traitements des fonctionnaires, et que la
+  reconduire la compterait deux fois. Les subventions d'équilibre aux régimes
+  en extinction s'en vont parce que la fusion de tous les régimes supprime la
+  catégorie même du retraité sans cotisants. Les impôts et taxes affectés s'en
+  vont parce qu'un impôt n'ouvre de droit à personne. Trois postes : 27 % des
+  ressources en 2024, 29 % en 2070. Les cinq autres systèmes les encaissent
+  tous, faute qu'aucun programme dise ce qu'il en ferait.</li>
   <li><strong>L'assiette est supposée insensible au taux.</strong> Un taux de
   cotisation plus bas déforme l'offre de travail et la structure des
   rémunérations ; aucune élasticité n'est posée ici, et le sens de l'effet

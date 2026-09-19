@@ -109,9 +109,11 @@ POSTES: tuple[PosteRessources, ...] = (
     ),
     PosteRessources(
         "impots_et_taxes", "Impôts et taxes affectés",
-        "CSG, forfait social, taxe sur les salaires, transferts de TVA. Pour "
-        "l'essentiel, la compensation des allègements généraux de cotisations "
-        "patronales : l'État a exonéré, puis remboursé par l'impôt.",
+        "CSG, forfait social, taxe sur les salaires, transferts de TVA. "
+        "38 % en financent le fonds de solidarité vieillesse. Ce n'est PAS la "
+        "compensation des allègements généraux de cotisations patronales : "
+        "celle-là passe par la TVA, qui finance la branche maladie, et le "
+        "compte de la Cnav n'en porte aucune ligne.",
         False,
     ),
     PosteRessources(
@@ -232,6 +234,13 @@ class Organisme:
     #: sur l'allocation. Tant que le modèle ne le fait pas, la recette suit le
     #: droit.
     droit_supprime: bool
+    #: Sa recette arrive-t-elle par l'impôt plutôt que par un transfert ? Vrai
+    #: du seul fonds de solidarité vieillesse : ce qu'il verse aux régimes est
+    #: financé par la CSG, et cette CSG est DÉJÀ dans le poste « impôts et
+    #: taxes affectés » des ressources. Retirer le poste en entier et retirer
+    #: ce versement retirerait donc la même somme deux fois ; ``cout.py`` s'en
+    #: sert pour ne la retirer qu'une.
+    recette_par_impot: bool = False
 
 
 POSTES_TRANSFERTS: tuple[PosteTransfert, ...] = (
@@ -308,6 +317,7 @@ ORGANISMES: tuple[Organisme, ...] = (
         "part constante prend le relais, ce qui est exact puisque les "
         "missions, elles, continuent.",
         True,
+        recette_par_impot=True,
     ),
 )
 
@@ -464,17 +474,27 @@ class ComptesRetraite:
         """
         return self.transfert_part_pib(organisme, annee) / self.ressource(annee)
 
-    def transfert_supprime_part_pib(self, annee: int) -> float:
+    def transfert_supprime_part_pib(self, annee: int,
+                                    *, par_impot: bool | None = None) -> float:
         """Ce que le compte notionnel ne peut pas compter, en part du PIB.
 
         La somme des versements qui financent un droit que les scénarios
         notionnels ne servent pas. C'est ce qu'il faudrait retirer des
         ressources avant de lire leur coefficient d'équilibre.
+
+        ``par_impot`` sépare les deux façons dont cette recette arrive : par un
+        transfert d'organisme, qui est dans le poste « transferts » des
+        ressources (la CNAF, l'Unédic), ou par l'impôt, qui est dans le poste
+        « impôts et taxes affectés » (le fonds de solidarité vieillesse). Qui
+        retire un de ces deux postes en entier doit cesser de retirer la ligne
+        correspondante, sous peine de retirer la même somme deux fois.
         """
         return sum(self.transfert_part_pib(organisme.code, annee)
-                   for organisme in ORGANISMES if organisme.droit_supprime)
+                   for organisme in ORGANISMES
+                   if organisme.droit_supprime
+                   and (par_impot is None or organisme.recette_par_impot is par_impot))
 
-    def recette_non_acquise(self, annee: int) -> float:
+    def recette_non_acquise(self, annee: int, *, par_impot: bool | None = None) -> float:
         """Ce qu'un scénario notionnel doit retirer de ses ressources, en part du PIB.
 
         Dans la fenêtre où les quatre lignes sont connues, c'est ce que la
@@ -483,12 +503,16 @@ class ComptesRetraite:
         chose à PART CONSTANTE des ressources, celle de l'année connue la plus
         proche : personne ne projette ce que la CNAF versera en 2070, et une
         part constante est l'hypothèse qui n'en ajoute aucune autre.
+
+        ``par_impot`` passe à ``transfert_supprime_part_pib`` et y dit lesquels
+        des quatre organismes compter.
         """
         premiere, derniere = self.premiere_annee_transferts, self.derniere_annee_transferts
         if premiere <= annee <= derniere:
-            return self.transfert_supprime_part_pib(annee)
+            return self.transfert_supprime_part_pib(annee, par_impot=par_impot)
         reference = min(max(annee, premiere), derniere)
-        part = self.transfert_supprime_part_pib(reference) / self.ressource(reference)
+        part = (self.transfert_supprime_part_pib(reference, par_impot=par_impot)
+                / self.ressource(reference))
         return part * self.ressource(annee)
 
     # -- fenêtre des transferts --------------------------------------------------

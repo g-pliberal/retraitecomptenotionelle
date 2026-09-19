@@ -1163,11 +1163,12 @@ def test_l_assiette_porte_ses_deux_postes_sur_toute_la_fenetre(
 def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cout):
     """La convention du programme, écrite autrement que dans le code.
 
-    Les employeurs versent la cotisation entière ; l'État leur rembourse
-    l'allègement par l'impôt, et ce remboursement est une aide à l'activité
-    économique, pas une recette de retraite. Un système qui n'exonère personne
-    n'a donc rien à se faire compenser : il encaisse son taux plein et ne
-    reçoit aucun impôt affecté.
+    Le scénario 6 encaisse son taux plein sur l'assiette mesurée, et rien de ce
+    qui n'est pas assis sur un revenu d'activité : ni la contribution
+    d'équilibre de l'État, que les 18 % remplacent ; ni les subventions
+    d'équilibre, dont la fusion supprime l'objet ; ni les impôts et taxes
+    affectés, qui n'acquièrent de droits à personne. Restent les transferts et
+    les autres produits, moins la recette non acquise.
     """
     bascule = Parametres().annee_bascule
     taux = Parametres().taux_cotisation_liberal
@@ -1184,13 +1185,16 @@ def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cou
         assert ligne.recette_par_assiette, ligne.annee
         assert ligne.taux_liberal == taux
         pleine = ligne.ressources * taux / ligne.taux_prelevement
-        # Les subventions d'équilibre sortent aussi depuis le 19 septembre
-        # 2026 : la fusion des régimes fait disparaître les retraités sans
-        # cotisants, donc l'objet même de la subvention.
+        # Trois postes sortent, tous le 19 septembre 2026 : la contribution
+        # d'équilibre (remplacée par les 18 % sur les traitements), les
+        # subventions (la fusion des régimes en supprime l'objet), les impôts
+        # affectés (aucun droit acquis). Le retrait, lui, rend la part qui
+        # vient de sortir avec l'impôt, pour ne pas la retirer deux fois.
         autres = ligne.ressources * (1.0 - ligne.part_contributive
-                                     - ligne.part_subventions)
+                                     - ligne.part_subventions
+                                     - ligne.part_impots)
         assert ligne.ressources_de("notionnel_liberal") == pytest.approx(
-            pleine + autres - ligne.retrait), ligne.annee
+            pleine + autres - (ligne.retrait - ligne.retrait_par_impot)), ligne.annee
         if ligne.annee >= bascule + 3:
             # Une fois le décalage de la grille éteint, le taux plein rapporte
             # PLUS que le rapport de taux légaux ne le disait : c'est la
@@ -1206,7 +1210,23 @@ def test_les_deux_conventions_de_recette_se_mesurent(cout: Cout, cout_assiette: 
 
     L'ancienne convention reste calculable, comme la pondération égale des cas
     types : c'est ce qui permet de dire de combien elle se trompait plutôt que
-    d'en discuter. Elle est plus favorable au scénario 6, et de beaucoup.
+    d'en discuter. Elle est désormais la PLUS FAVORABLE au scénario 6, et
+    l'écart ne vient pas de son taux. Deux effets s'y opposent :
+
+    * le TAUX. Le taux plein prélevé sur l'assiette mesurée rapporte plus que
+      le rapport de taux légaux appliqué à la part cotisée, parce que ce
+      rapport prête au scénario la déperdition du système actuel — deux points
+      et demi d'assiette qu'un taux prélevé à plat ne perd pas. Cet effet joue
+      pour la convention du programme, et ``test_la_recette_du_scenario_6_est_
+      son_taux_sur_l_assiette`` le tient.
+    * les POSTES NON RECONDUITS. Seule la convention du programme fait sortir
+      la contribution d'équilibre, les subventions et les impôts affectés :
+      l'ancienne les encaisse tous. Ce second effet est le plus gros, et c'est
+      lui qui renverse le signe de l'écart.
+
+    L'ancienne convention n'est donc plus « l'ancienne façon de calculer le
+    taux » : c'est un chemin qui ne porte AUCUNE des décisions de septembre
+    2026. On la garde comme repère, pas comme variante.
     """
     assert cout.convention_recette == CONVENTION_RAPPORT
     assert cout_assiette.convention_recette == CONVENTION_ASSIETTE
@@ -1214,11 +1234,20 @@ def test_les_deux_conventions_de_recette_se_mesurent(cout: Cout, cout_assiette: 
     fin = cout.solde.derniere_annee
     ancien = cout.solde.solde_moyen("notionnel_liberal", bascule, fin)
     nouveau = cout_assiette.solde.solde_moyen("notionnel_liberal", bascule, fin)
-    # L'ancienne convention est la plus SÉVÈRE, et c'est le contraire de ce
-    # qu'on croyait le 19 septembre au matin : elle prête au taux de 18 % la
-    # déperdition du système actuel, soit deux points et demi d'assiette qu'un
-    # taux prélevé à plat ne perd pas.
-    assert nouveau - ancien > 0.005, (ancien, nouveau)
+    # La convention du programme est la plus sévère, de près d'un point de PIB.
+    assert ancien - nouveau > 0.005, (ancien, nouveau)
+    # Et ce n'est pas son taux qui la rend sévère : à postes reconduits égaux,
+    # le taux plein sur l'assiette rapporterait PLUS. On le vérifie année par
+    # année en redonnant au scénario les trois postes qu'il ne reconduit pas.
+    for annee in (2030, 2050, 2070):
+        point = cout_assiette.solde.annee(annee)
+        rendus = point.ressources * (point.part_contributive
+                                     + point.part_subventions
+                                     + point.part_impots)
+        sans_decisions = (point.ressources_de("notionnel_liberal") + rendus
+                          - point.retrait_par_impot)
+        assert sans_decisions > cout.solde.annee(annee).ressources_de(
+            "notionnel_liberal"), annee
     # Les cinq autres systèmes ne bougent pas d'un iota : la convention ne
     # touche qu'au seul scénario dont le TAUX change.
     for scenario, _ in SCENARIOS:
@@ -1391,17 +1420,79 @@ def test_le_scenario_6_ne_reconduit_pas_la_contribution_d_equilibre_de_l_Etat(
         )
 
         # 2. Ce que le scénario 6 reconduit, c'est le COMPLÉMENT de la part
-        #    contributive ET des subventions d'équilibre — donc ni les
-        #    cotisations, ni la contribution de l'État, ni les subventions.
+        #    contributive, des subventions d'équilibre et des impôts affectés
+        #    — donc ni les cotisations, ni la contribution de l'État, ni les
+        #    subventions, ni l'impôt.
         attendu = (point.ressources * point.taux_liberal / point.taux_prelevement
                    + point.ressources * (1.0 - point.part_contributive
-                                         - point.part_subventions)
-                   - point.retrait)
+                                         - point.part_subventions
+                                         - point.part_impots)
+                   - (point.retrait - point.retrait_par_impot))
         assert point.ressources_de("notionnel_liberal") == pytest.approx(attendu)
 
         # 3. Les subventions d'équilibre existent bel et bien dans le système
         #    actuel : le test n'est pas vide de sens.
         assert point.part_subventions > 0.0
+
+
+def test_le_scenario_6_ne_reconduit_pas_les_impots_et_taxes_affectes(
+        cout_assiette, comptes: ComptesRetraite):
+    """Un impôt affecté n'acquiert de droits à personne.
+
+    Décision du Parti libéral du 19 septembre 2026, et il faut dire par quel
+    argument elle NE passe PAS : on avait cru un temps que ce poste compensait
+    les allègements généraux de cotisations patronales, qu'un système sans
+    exonération ne consent pas. Le dépôt a établi que c'est faux — la TVA qui
+    compense ces allègements finance la branche maladie, et le compte de la
+    CNAV n'en porte aucune ligne. L'argument qui vaut est celui des 18 % : un
+    compte notionnel ne crédite que ce qui est assis sur un revenu d'activité.
+
+    Le poste pèse 14,1 % des ressources, 57 milliards en 2024, et le retirer
+    coûte 1,40 point de PIB au solde moyen du scénario 6.
+    """
+    annees = [a for a in cout_assiette.solde.annees if a.recette_par_assiette]
+    assert annees
+
+    for point in annees:
+        assert point.part_impots == pytest.approx(
+            comptes.part("impots_et_taxes", point.annee))
+        assert point.part_impots > 0.10, point.annee
+        # Le poste est bien sorti : le rendre au scénario lui redonne sa
+        # taille exacte, moins la CSG du fonds de solidarité, qui repartirait
+        # alors dans le retrait. Plus d'un point de PIB, toutes années.
+        sans = point.ressources_de("notionnel_liberal")
+        rendu = point.ressources * point.part_impots - point.retrait_par_impot
+        assert rendu > 0.01, point.annee
+        assert sans + rendu > sans
+
+
+def test_la_csg_du_fonds_de_solidarite_ne_sort_qu_une_fois(
+        cout_assiette, comptes: ComptesRetraite):
+    """Elle est dans le poste retiré ET dans le retrait : on la compterait deux fois.
+
+    Ce que le fonds de solidarité vieillesse verse aux régimes est financé par
+    une CSG qui est DANS les impôts et taxes affectés — 34 % du poste en 2024.
+    Tant que le poste restait, retirer le versement était la seule façon de
+    faire sortir cette CSG ; maintenant que le poste s'en va en entier, le
+    retirer encore la ferait sortir deux fois. ``retrait_par_impot`` est cette
+    somme, et le retrait la rend.
+    """
+    annees = [a for a in cout_assiette.solde.annees if a.recette_par_assiette]
+    assert annees
+
+    for point in annees:
+        attendu = comptes.recette_non_acquise(point.annee, par_impot=True)
+        assert point.retrait_par_impot == pytest.approx(attendu), point.annee
+        # Elle est une part réelle du retrait, jamais sa totalité : la CNAF et
+        # l'Unédic versent, eux, par un transfert, et leur recette est dans le
+        # poste « transferts », qui reste.
+        assert 0.0 < point.retrait_par_impot < point.retrait, point.annee
+        hors_impot = comptes.recette_non_acquise(point.annee, par_impot=False)
+        assert (point.retrait_par_impot + hors_impot
+                == pytest.approx(point.retrait)), point.annee
+        # Et c'est bien le seul organisme dans ce cas.
+        par_impot = [o.code for o in ORGANISMES if o.recette_par_impot]
+        assert par_impot == ["solidarite"]
 
 
 def test_le_scenario_6_ne_reconduit_pas_les_subventions_d_equilibre(
