@@ -3608,6 +3608,57 @@ toucher aux moteurs de pension.
    lire ce qu'il rejette. Les quatre bogues étaient tous dans mon code, pas
    dans les rapports.
 
+   **Huitième passe, 19 septembre 2026 : les 195 conflits ont dénoncé une
+   note de bas de page, et l'attribution des fiches n'est toujours pas sûre.**
+
+   - **Le gros morceau : une NOTE DE BAS DE PAGE lue comme un en-tête.** La
+     SNCF concentrait 53 des 195 conflits, dont 40 sur la seule année 2017,
+     avec des valeurs qui croissaient avec le millésime du rapport — 21, 34,
+     69, 116. La cause : « *(***) Le taux de cotisation T2 a été fixé à
+     11,81 % entre le 1er janvier 2017 et le 30 avril 2017…* » porte trois fois
+     2017, et mon détecteur d'en-tête, qui se contentait d'années NON
+     DÉCROISSANTES, la lisait en colonnes `[%, 2017, 2017, %, 2017]`. **Toute
+     la fiche de la SNCF était datée de 2017.** Les années doivent être
+     STRICTEMENT croissantes, et c'est corrigé.
+
+     Le résultat se voit : la SNCF donne désormais une série continue et
+     décroissante, 156 963 cotisants en 2012 à 105 610 en 2025, dont trois
+     points tombent à l'unité sur la fiche 4.1 — 123 019 en 2021, 112 621 en
+     2023, 108 877 en 2024.
+
+   - **L'attribution des tableaux aux fiches reste une heuristique, et elle
+     se trompe.** Le numéro de fiche est répété en tête de chaque page, pas
+     au-dessus de chaque tableau ; le chercher en remontant donne parfois la
+     fiche précédente. Dans le rapport de 2025, un tableau de la CNRACL était
+     porté au crédit de la SNCF. **Deux remèdes ont été essayés et tous deux
+     ont fait pire** : préférer le titre du tableau quand il nomme le régime a
+     donné le SRE à la CNRACL et un tableau SNCF à la CNIEG ; délimiter les
+     fiches par intervalles a fait tomber presque tout dans un seul régime.
+     Les deux sont annulés, et l'heuristique assumée dans le docstring.
+
+   - **Faute de la réparer, on la SURVEILLE, par deux filets.** Le premier,
+     grossier : une valeur éloignée d'un facteur trois de la médiane de sa
+     propre série n'est pas une évolution — 237 écartées. Il ne voit pas une
+     confusion entre régimes de taille voisine, et ne prétend pas la voir. Le
+     second est exact : **une caisse n'a qu'un effectif de cotisants pour une
+     année, donc deux tableaux qui remplissent la même case se dénoncent
+     eux-mêmes** — 543 écartées. C'est lui qui attrape 135 775 et 112 621 tous
+     deux portés à la CNIEG en 2023, ou 2 144 492 et 2 016 662 portés à la
+     CNRACL. On n'arbitre pas : les deux partent, parce que rien dans le texte
+     ne dit lequel est le bon.
+
+   **Le bilan, et il est volontairement plus petit qu'avant.** De 6 807
+   valeurs sans filet à **5 289 valeurs passées par trois contrôles
+   indépendants** — accord entre rapports, ordre de grandeur, unicité de la
+   case. Les contaminations connues sont devenues des TROUS et non des erreurs
+   silencieuses : la CNIEG n'a plus de valeur pour 2023, et c'est préférable à
+   112 621, qui était celle de la SNCF.
+
+   Les contrôles par source tierce passent tous : SNCF 2021, 2023 et 2024 à
+   l'unité sur la fiche 4.1 ; CNRACL 2021 à 2 189 791 et 2013 à 2 194 861, soit
+   exactement la fiche 4.1 et le recueil de la caisse ; MSA exploitants 2021 à
+   445 511, exactement la fiche 4.1.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -5238,3 +5289,39 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   **La leçon.** Un garde-fou qui rejette 7 % des lectures ne dit pas que la
   source est mauvaise : il dit d'aller lire ce qu'il rejette. Les quatre bogues
   étaient dans mon code, pas dans les rapports.
+
+- **Septembre 2026, action 35, volet A, point 3, huitième passe : les 195
+  conflits examinés.** Demandé : regarder les conflits restants. Ils ont
+  dénoncé un bogue net et un problème que je n'ai pas su résoudre.
+
+  **Le bogue : une note de bas de page lue comme un en-tête d'années.** La
+  SNCF concentrait 53 des 195 conflits, dont 40 sur la seule année 2017. La
+  note « le taux de cotisation T2 a été fixé à 11,81 % entre le 1er janvier
+  2017 et le 30 avril 2017 » porte trois fois la même année, et mon détecteur,
+  qui acceptait des années non décroissantes, la lisait comme des colonnes.
+  Toute la fiche de la SNCF était datée de 2017. Les années doivent être
+  strictement croissantes. Corrigé, la SNCF donne une série continue de
+  156 963 cotisants en 2012 à 105 610 en 2025, dont trois points tombent à
+  l'unité sur la fiche 4.1.
+
+  **Le problème non résolu : l'attribution des tableaux aux fiches.** Le numéro
+  de fiche est répété en tête de page, pas au-dessus de chaque tableau, et le
+  chercher en remontant donne parfois la fiche précédente. J'ai essayé deux
+  remèdes et **les deux ont fait pire** — préférer le titre du tableau a donné
+  le SRE à la CNRACL, délimiter les fiches par intervalles a tout fait tomber
+  dans un seul régime. Les deux sont annulés.
+
+  **Faute de réparer, surveiller.** Deux filets s'ajoutent. Un filet grossier
+  sur l'ordre de grandeur — une valeur à plus d'un facteur trois de la médiane
+  de sa série — qui écarte 237 valeurs et ne voit pas les confusions entre
+  régimes de taille voisine. Et un filet EXACT : une caisse n'a qu'un effectif
+  de cotisants par année, donc deux tableaux qui remplissent la même case se
+  dénoncent eux-mêmes ; 543 valeurs écartées, dont les 135 775 et 112 621
+  portés tous deux à la CNIEG en 2023. On n'arbitre pas, les deux partent.
+
+  **Le bilan est volontairement plus petit** : de 6 807 valeurs sans filet à
+  5 289 passées par trois contrôles. Les contaminations connues sont devenues
+  des trous plutôt que des erreurs silencieuses — la CNIEG n'a plus de 2023, ce
+  qui vaut mieux que la valeur de la SNCF. Tous les contrôles par source tierce
+  passent à l'unité : SNCF 2021, 2023, 2024 ; CNRACL 2013 et 2021 ; MSA
+  exploitants 2021.
