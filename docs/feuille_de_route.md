@@ -2994,15 +2994,132 @@ toucher aux moteurs de pension.
    et c'est une raison de chercher une VRAIE source plutôt que de bâtir vite
    sur celle-là.
 
-   **Pistes non explorées**, pour une passe de recherche large : le programme
-   de qualité et d'efficience « Retraites » annexé au PLFSS, qui porte un
-   indicateur d'effectifs de cotisants par régime ; les rapports annuels de
-   chaque caisse (CNAV, CNRACL, CNIEG, CPRPSNCF, CNAVPL, CNBF, MSA, Ircantec
-   via la Caisse des dépôts) ; le rapport de la Cour des comptes de 2024 sur
-   la compensation, cité par la CCSS ; l'annuaire statistique de la Sécurité
-   sociale ; les déclarations sociales nominatives agrégées publiées par
-   l'ACOSS/URSSAF Caisse nationale ; et l'EIC de la DREES, qui échantillonne
-   des CARRIÈRES et non des pensions.
+   **Passe de recherche large, 19 septembre 2026.** Les six pistes ont été
+   parcourues. Il en sort DEUX sources, dont une que la passe précédente avait
+   sous le nez : elle est dans les mêmes rapports CCSS, elle est en TEXTE, et
+   elle est à l'unité près. Le reste est écarté, et l'est ici pour qu'on ne le
+   reparcoure pas.
+
+   - **CCSS, fiche 4.1, tableau 1 — « Effectifs de bénéficiaires et de
+     cotisants des régimes de base hors régime général ».** C'est la source.
+     Elle donne le cotisant caisse par caisse, à l'unité, et
+     `scripts/fetch/lecture_pdf.py` la lit en texte — c'est là que la passe
+     du 19 septembre s'était trompée : ce n'est pas la fiche « compensation
+     généralisée vieillesse » (5.2), qui porte ses tableaux en image, mais
+     une fiche voisine du même rapport. Elle paraît dans le rapport d'AUTOMNE
+     depuis celui de septembre 2022, et chaque rapport arrête l'année
+     précédente : quatre millésimes, **2021, 2022, 2023 et 2024**, un de plus
+     à chaque automne. Les rapports de septembre 2018, 2020 et 2021 ont été
+     ouverts et ne la portent pas ; la série commence donc en 2021 et ne
+     remontera pas.
+
+     Les cotisants de 2024, tels que le rapport d'octobre 2025 les écrit :
+     CNRACL 2 151 694, SRE (fonctionnaires civils ET militaires ensemble)
+     2 008 352, CNAVPL 882 980, MSA salariés 764 922, MSA exploitants
+     420 847, CNIEG 133 091, SNCF 108 877, CNBF 78 047, CRPCEN 55 263, RATP
+     39 334, ENIM 30 132, FSPOEIE 16 612, Banque de France 6 639, CANSSM 700.
+     Quatre de ces lignes se recoupent avec la fiche 5 du même rapport, au
+     cotisant près pour l'ENIM, la CRPCEN, la Banque de France et la CNBF, et
+     à une unité près pour la CANSSM.
+
+     Ce qu'elle ne donne pas, et il faut le dire : le RÉGIME GÉNÉRAL, que son
+     titre exclut ; les régimes COMPLÉMENTAIRES, donc l'Ircantec et le RCI ;
+     et le partage des fonctionnaires d'État entre CIVILS et MILITAIRES, que
+     le SRE agrège en une ligne. Sur les treize cas types, elle en couvre
+     donc cinq de plein droit — CNRACL, SNCF, CNIEG, MSA exploitants,
+     CNAVPL — et une sixième à la condition de trancher le partage
+     civils/militaires ailleurs.
+     Avantage décisif sur l'instantané de 2024 qui tenait lieu de source :
+     la SNCF y est en 2021, 2022, 2023 ET 2024, là où la compensation la perd
+     à partir de 2025.
+
+   - **PQE « Retraites » annexé au PLFSS — indicateur n° 18, puis n° 11 : «
+     Nombre de cotisants à des régimes de retraite, par régime ».** La piste
+     était bonne et la source existe : dix-huit régimes en milliers, source
+     CCSS, et la seule qui donne à la fois le régime général ET le partage
+     civils/militaires. Sa notion de cotisant est celle de l'article
+     `D. 134-4` du code de la sécurité sociale — le cotisant actif de la
+     compensation —, mais AMPUTÉE, par dérogation assumée, de ceux dont le
+     FSV prend les cotisations en charge : ce n'est donc pas le décompte de
+     la compensation, et les deux ne se raccordent pas (régime général à
+     18,3 millions en 2012 pour le PQE, 24,3 millions en 2022 pour la
+     compensation).
+
+     Son défaut est l'âge. Les colonnes sont 1992, 1996, 2000, 2004, 2006,
+     puis 2008 à 2012, une de plus par millésime ; l'édition de 2014 est la
+     dernière à porter le tableau, celle de 2017 l'a remplacé par un simple
+     ratio cotisants/retraités tous régimes, et le REPSS qui a succédé au PQE
+     ne l'a pas repris. L'édition de 2016 n'a pas pu être tranchée : son PDF
+     résiste au lecteur du dépôt, qui n'en sort que du binaire.
+     Les éditions se prennent à
+     `securite-sociale.fr/.../PLFSS/<an>/ANNEXE_1/PLFSS-<an>-ANNEXE_1-PQE-RETRAITE.pdf`,
+     qui répond pour 2011 à 2014 et 2016 à 2018.
+
+   - **Ircantec — open data de la Caisse des dépôts.** Le jeu
+     `cotisantsircantec_typecoll_nbagents` donne l'effectif de cotisants par
+     famille d'employeurs de 2014 à 2021, en API Opendatasoft, sommable :
+     3 107 780 en 2014, 3 136 894 en 2021. Son voisin
+     `actifs-cotisant-a-la-cnracl-selon-les-employeurs` fait de même pour la
+     CNRACL de 2014 à 2022, mais sur une autre définition que la CCSS —
+     2 494 306 en 2022 contre 2 189 791 pour la fiche 4.1 de 2021 —, et les
+     deux ne doivent pas être cousues.
+     **Au passage, la ligne « open data DREES et data.gouv.fr — rien » de la
+     passe précédente est trop large** : data.gouv.fr porte bien des
+     effectifs de cotisants, ceux de l'Ircantec, sous le nom de la Caisse des
+     dépôts.
+
+   Les trois pistes restantes sont écartées, et voici pourquoi :
+
+   - **REPSS (successeur du PQE), indicateur 1.3, tableau 1 — trop grossier.**
+     Il donne bien cotisations, prestations, cotisants et bénéficiaires régime
+     par régime, et il est à jour (2025). Mais les cotisants y sont en
+     MILLIONS À UNE DÉCIMALE : la SNCF, la RATP, la CNIEG, l'ENIM et la
+     CRPCEN y valent toutes 0,0 ou 0,1. Inutilisable là où la pondération
+     mord. L'indicateur 1.7 du même REPSS, lui, ne publie que des ratios par
+     GROUPES de régimes. Sur le site, ces tableaux sont des images PNG ;
+     c'est l'annexe PDF au PLACSS qui les porte en texte.
+   - **Jaune budgétaire « Pensions » annexé au PLF — utile en appoint, pas
+     comme série.** Ses effectifs sont en prose et à deux ou trois chiffres
+     significatifs (CNRACL 2,2 M, SRE 1,63 M de civils et 0,32 M de
+     militaires au 1er janvier 2024, Ircantec 3,2 M, FSPOEIE 0,09 M). Il a
+     pourtant une vertu que personne d'autre n'a côté source actuelle : il
+     SÉPARE les civils des militaires, ce que la fiche 4.1 agrège. C'est là
+     qu'on ira chercher la clé de partage, pas la série.
+   - **MSA, note annuelle « Compensation démographique » — agrège ce qu'on
+     cherche.** Elle est annuelle, elle remonte à 2000, elle est en texte, et
+     son tableau 1 réunit TOUS les régimes spéciaux en une seule ligne
+     (5 460 118 en 2022). Elle ne sert que pour le régime général, les deux
+     MSA et les indépendants.
+   - **URSSAF Caisse nationale, DSN agrégées — hors champ par
+     construction.** Vingt-cinq jeux répondent à « cotisant » sur
+     `open.urssaf.fr` : comptes cotisants, travailleurs indépendants,
+     exonérations, établissements du secteur privé. Aucun n'est ventilé par
+     régime de retraite, et l'URSSAF ne recouvre ni la fonction publique, ni
+     la SNCF, ni la CNIEG, ni la MSA, ni la CNAVPL. Écarté.
+   - **EIC de la DREES — inaccessible, et ce n'est pas un agrégat.** C'est un
+     échantillon anonymisé de carrières individuelles, diffusé par le CASD
+     sous habilitation. Il ne publie pas d'effectifs de cotisants par régime.
+     Écarté.
+   - **Cour des comptes, RALFSS 2024, chapitre III sur la compensation — pas
+     lu, et sans doute pas une source.** `ccomptes.fr` est injoignable depuis
+     cet environnement : le relais ferme le tunnel au bout de onze secondes,
+     sur quatre tentatives. Ce que la CCSS en cite et ce qu'en disent les
+     résumés converge : c'est une CRITIQUE du décompte — effectifs de la MSA
+     salariés estimés sur des moyennes plutôt que relevés au 1er janvier,
+     CNAVPL qui déduit les radiations rétroactives sans ajouter les
+     affiliations rétroactives —, pas un tableau. À reprendre si le dépôt
+     s'appuie un jour sur la compensation, parce qu'il dit alors ce que vaut
+     le chiffre ; pas pour y trouver la série.
+
+   **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
+   partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
+   téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
+   déjà), compléter le régime général et l'Ircantec par leurs propres
+   sources, et NE PAS coudre le PQE au bout : ses deux définitions ne se
+   raccordent pas, et quatre années à l'unité près valent mieux qu'une série
+   longue dont la moitié compte autre chose. L'urgence reste faible — la
+   mesure du 19 septembre tient : sous la convention du programme, la
+   pondération ne déplace pas le solde du scénario 6 d'un millième.
 4. *Dire ce que le programme fait des ressources non cotisées, et ne pas le
    décider à sa place.* Les 18 % remplacent-ils aussi les 64 Md€ d'impôts et
    taxes affectés, qui compensent pour l'essentiel des allègements de
@@ -4185,3 +4302,53 @@ scénario ».
   *Ce qui reste du volet B* : projeter la distribution des pensions au lieu de
   la figer à l'EIR 2020, et chiffrer le coût NET des quatre dispositifs que la
   garantie remplace, non-recours de l'ASPA compris.
+
+- **Septembre 2026, action 35, volet A, point 3 : la source était dans le même
+  rapport.** Passe de recherche large sur les six pistes laissées ouvertes la
+  veille. La trouvaille n'est pas au bout d'une piste : elle est à deux fiches
+  de là où la passe précédente s'était arrêtée. Le rapport à la Commission des
+  comptes de la Sécurité sociale porte, en fiche 4.1, un tableau « Effectifs de
+  bénéficiaires et de cotisants des régimes de base hors régime général » qui
+  donne le cotisant caisse par caisse **à l'unité**, et que le lecteur PDF du
+  dépôt lit **en texte**. La veille, on avait conclu de la fiche 5.2 — la
+  compensation généralisée vieillesse, dont les tableaux sont en image — que la
+  CCSS ne donnait qu'un instantané de 2024 illisible ailleurs. C'était vrai de
+  la fiche 5.2 et faux du rapport : la fiche 4.1 paraît à chaque automne depuis
+  septembre 2022 et arrête l'année précédente, ce qui fait quatre millésimes,
+  2021 à 2024, et un de plus chaque année. Les rapports de septembre 2018, 2020
+  et 2021 ont été ouverts : ils ne la portent pas, la série ne remontera donc
+  pas plus haut. **La leçon vaut d'être écrite : on avait éliminé un document
+  sur la foi d'une de ses fiches.**
+
+  Le PQE « Retraites », piste la plus prometteuse sur le papier, existe bien —
+  indicateur n° 18 puis n° 11, dix-huit régimes en milliers, et le seul à
+  donner à la fois le régime général et le partage civils/militaires — mais il
+  s'arrête à l'édition de 2014, et sa notion de cotisant retranche ceux dont le
+  FSV paie les cotisations, si bien qu'il ne se raccorde PAS à la CCSS : 18,3
+  millions contre 24,3 pour le régime général. Deux séries qui ne comptent pas
+  la même chose ne se cousent pas, et c'est pour cela que la recommandation
+  écrite au point 3 est de ne pas les coudre.
+
+  L'Ircantec, absente de la compensation par construction, se prend en open
+  data à la Caisse des dépôts, 2014-2021, en API. **Ce qui corrige au passage
+  une phrase de la veille** : « open data DREES et data.gouv.fr — rien » était
+  trop large, data.gouv.fr porte bien des effectifs de cotisants.
+
+  Quatre pistes sont écartées et le point 3 dit pourquoi, pour qu'on ne les
+  reparcoure pas : le REPSS arrondit les cotisants au dixième de million, ce
+  qui met la SNCF, la RATP, la CNIEG, l'ENIM et la CRPCEN à 0,0 ou 0,1 ; la
+  note annuelle de la MSA réunit tous les régimes spéciaux en une ligne ;
+  l'URSSAF ne ventile rien par régime de retraite et ne couvre ni la fonction
+  publique ni les régimes spéciaux ; l'EIC est un échantillon de carrières
+  diffusé sous habilitation par le CASD, pas un agrégat publié. Le Jaune
+  budgétaire « Pensions » survit à titre d'appoint, et pour une raison précise :
+  il est le seul, côté source actuelle, à séparer les fonctionnaires civils des
+  militaires, que la fiche 4.1 agrège en une seule ligne SRE. Le chapitre de la
+  Cour des comptes n'a pas pu être lu — `ccomptes.fr` est injoignable depuis cet
+  environnement, le relais ferme le tunnel — et tout indique que c'est une
+  critique du décompte, non un tableau.
+
+  Rien n'est codé : c'est une passe de recherche, et son livrable est le relevé
+  ci-dessus. L'urgence reste celle que la veille avait mesurée — sous la
+  convention du programme, la pondération des cas types ne déplace pas le solde
+  du scénario 6 d'un millième.
