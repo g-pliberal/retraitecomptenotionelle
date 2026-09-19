@@ -516,6 +516,7 @@ résumé :
 | Profil de salaire par tranche d'âge | 1962-2024 | **certifiée** | INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES |
 | Profil de salaire par âge et catégorie | 2024 | **certifiée** | INSEE Melodi, DS_DERA_PRIVE_ANNUEL |
 | Profil de salaire public par âge et statut | 2023 | **certifiée** | INSEE Melodi, DS_DERA_PUBLIC_ANNUEL |
+| Profil de salaire par âge et secteur | 2018, 2022 | **certifiée** | Eurostat, enquête sur la structure des salaires |
 | Population par âge, 50 ans et plus | 1962-2023 | **certifiée** | INSEE, estimations de population (classeur des projections 2026) |
 | Population par âge, 50 ans et plus | 2024-2070 | projetée | INSEE, projections de population 2026, scénario central |
 | Population des 20-64 ans | 1962-2023 / 2024-2070 | **certifiée** / projetée | mêmes sources |
@@ -2109,13 +2110,35 @@ du versant pondère déjà les catégories par leurs effectifs réels. Deviner l
 catégorie de chaque affiliation aurait été réinventer ce que la lecture vient
 de retirer.
 
-Deux trous demeurent de ce côté. **Les militaires n'ont aucun profil publié** :
-le code `PM` de ce jeu désigne les personnels MÉDICAUX de l'hospitalière, à
-6 765 € nets par mois, et non des militaires — aucun jeu de l'INSEE ne porte la
-solde indiciaire par âge. Les cas types militaires prennent donc le profil de
-l'État. Et les **régimes spéciaux** — SNCF, IEG, RATP, mines — n'ont pas
-davantage de profil publié : ils prennent celui des employés du privé, comme
-tous les indépendants et les non-salariés.
+**Les militaires n'ont aucun profil publié** : le code `PM` de ce jeu désigne
+les personnels MÉDICAUX de l'hospitalière, à 6 765 € nets par mois, et non des
+militaires — aucun jeu de l'INSEE ne porte la solde indiciaire par âge. Les cas
+types militaires prennent donc le profil de l'État.
+
+**Les régimes spéciaux portent une correction, et c'est l'hypothèse la plus
+forte du modèle.** Aucune source française ne ventile leur salaire par âge —
+sept pistes ont été parcourues et fermées, le relevé est sous l'action
+correspondante de la feuille de route. L'enquête européenne sur la structure
+des salaires, elle, ventile par âge et par SECTION d'activité, et deux sections
+tombent sur un périmètre de régime plutôt qu'à côté : `D`, électricité et gaz,
+est le champ du statut des IEG ; `H`, transports et entreposage, est plus large
+que la SNCF et la RATP mais c'est là qu'elles sont.
+
+Cette source est **agrégée par secteur**, donc impropre à décrire une carrière :
+elle mélange l'effet d'âge et un effet de composition, et aucune source ne
+croise les trois dimensions — vérifié chez Eurostat comme chez l'INSEE. Le
+modèle n'en prend donc qu'un RAPPORT de pentes, secteur sur ensemble de
+l'économie : ×1,38 pour l'électricité-gaz, ×0,93 pour les transports, ×1,40
+pour la finance. **Cela suppose que ce rapport est le même à l'intérieur des
+catégories qu'en agrégé, et rien ne le démontre.** C'est un choix assumé :
+sans lui, ces régimes n'auraient aucune correction du tout.
+
+Deux garde-fous. Les facteurs ne sont retenus que s'ils tiennent d'une vague à
+l'autre — dix pour cent d'écart entre 2018 et 2022 : les **mines** passent de
+0,93 à 1,19 et les **spectacles** de 0,83 à 1,08, ce sont de petits secteurs,
+leur facteur n'est que du bruit, et leurs régimes gardent le profil du privé
+sans correction. Et la France ne publie que trois tranches d'âge à ce niveau,
+ce qui borne la finesse de la pente.
 
 ### Ce que dit la confrontation à une seconde implémentation
 
@@ -6454,7 +6477,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1085<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1086<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

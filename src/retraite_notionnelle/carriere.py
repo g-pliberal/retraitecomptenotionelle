@@ -885,6 +885,79 @@ PROFIL_PAR_AFFILIATION = {
 #: non-salariés n'ont aucun profil publié par âge.
 PROFIL_PAR_DEFAUT = "employe"
 
+#: LA SECTION D'ACTIVITÉ dont chaque affiliation emprunte son facteur de pente,
+#: dans ``profil_salaire_secteur.csv``. Elle ne sert QUE pour les régimes dont
+#: aucune source française ne dit le profil salarial : les régimes spéciaux.
+#:
+#: Deux sections tombent sur le périmètre d'un régime plutôt qu'à côté : ``D``,
+#: électricité et gaz, est le champ du statut des IEG ; ``H``, transports et
+#: entreposage, est plus large que la SNCF et la RATP mais c'est là qu'elles
+#: sont. ``K`` couvre la Banque de France.
+#:
+#: NE FIGURENT QUE LES SECTIONS STABLES d'une vague à l'autre — le critère est
+#: dix pour cent d'écart entre 2018 et 2022. Les mines passent de 0,93 à 1,19 et
+#: les spectacles de 0,83 à 1,08 : ce sont de petits secteurs, leur facteur
+#: n'est que du bruit, et leurs régimes gardent donc le profil du privé sans
+#: correction.
+PROFIL_SECTEUR_PAR_AFFILIATION = {
+    "agent_ieg": "D",
+    "agent_sncf": "H",
+    "agent_ratp": "H",
+    "agent_chemins_fer_secondaires": "H",
+    "agent_port_strasbourg": "H",
+    "marin": "H",
+    "personnel_navigant": "H",
+    "agent_banque_de_france": "K",
+}
+
+#: La section de référence : elle vaut un, et chaque secteur s'y rapporte.
+SECTION_ENSEMBLE = "B-S"
+
+#: Les deux tranches dont le rapport mesure la pente d'un secteur.
+TRANCHE_SECTEUR_JEUNE, TRANCHE_SECTEUR_AGEE = "Y_LT30", "Y_GE50"
+
+
+def _facteur_secteur(racine: Path, affiliation: str) -> float:
+    """De combien la pente d'un secteur s'écarte de celle de l'économie.
+
+    C'est la seule chose que l'enquête européenne puisse dire des régimes
+    spéciaux, et elle ne la dit qu'en AGRÉGÉ : un profil par secteur mélange
+    l'effet d'âge et un effet de composition, et aucune source ne croise l'âge,
+    le secteur et la profession — vérifié chez Eurostat comme chez l'INSEE.
+
+    On n'en prend donc qu'un RAPPORT, secteur sur ensemble, que l'on applique à
+    la forme intra-catégorie. **Cela suppose ce rapport identique à l'intérieur
+    des catégories et en agrégé**, ce que rien ne démontre : c'est l'hypothèse
+    la plus forte du profil salarial, elle est assumée, et ``docs/limites.md``
+    la nomme. Sans elle, ces régimes n'auraient rien du tout.
+
+    Les deux vagues sont moyennées : elles ne servent pas à dater le facteur —
+    quatre ans ne déplacent pas une structure de carrière — mais à écarter le
+    bruit des petits secteurs, ce que fait déjà
+    ``PROFIL_SECTEUR_PAR_AFFILIATION``.
+    """
+    section = PROFIL_SECTEUR_PAR_AFFILIATION.get(affiliation)
+    if section is None:
+        return 1.0
+    table, _ = charger_table_csv(
+        racine / "reference" / "macro" / "profil_salaire_secteur.csv",
+        ("secteur", "vague", "tranche"), "salaire_relatif",
+    )
+    vagues = sorted({cle[1] for cle in table})
+
+    def pente(nom: str, vague: str) -> float | None:
+        jeune = table.get((nom, vague, TRANCHE_SECTEUR_JEUNE))
+        agee = table.get((nom, vague, TRANCHE_SECTEUR_AGEE))
+        return agee / jeune if jeune and agee else None
+
+    facteurs = []
+    for vague in vagues:
+        secteur, ensemble = pente(section, vague), pente(SECTION_ENSEMBLE, vague)
+        if secteur and ensemble:
+            facteurs.append(secteur / ensemble)
+    return sum(facteurs) / len(facteurs) if facteurs else 1.0
+
+
 def profil_de_l_affiliation(affiliation: str) -> str:
     """Le groupe salarial que le modèle prête à une affiliation."""
     return PROFIL_PAR_AFFILIATION.get(affiliation, PROFIL_PAR_DEFAUT)
@@ -1004,7 +1077,8 @@ def profil_salaire(racine: Path, profil: str, age: float, annee: int,
     cle = "statut" if categorie in GROUPES_PUBLIC else "categorie"
     table = _table_profil(racine, fichier, cle)
     forme = _interpole_tranches(table.get(categorie, {}), TRANCHES_CATEGORIE, age)
-    return 1.0 + (forme - 1.0) * _modulation_annee(racine, annee)
+    facteur = _facteur_secteur(racine, affiliation or "")
+    return 1.0 + (forme - 1.0) * _modulation_annee(racine, annee) * facteur
 
 
 def bornes_deformation(racine: Path, profil: str,

@@ -194,6 +194,29 @@ institutions:
           il vaut 6 765 € nets par mois. Les militaires ne sont dans aucun de
           ces jeux.
 
+      - id: eurostat_profil_salaire_secteur
+        titre: Enquête européenne sur la structure des salaires — salaire par âge et activité
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/earn_ses22_20
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/profil_salaire_secteur.csv
+        recuperation: scripts/fetch/eurostat_profil_salaire_secteur.py
+        note: >-
+          La seule source qui approche les régimes spéciaux : sa section D est
+          le champ du statut des industries électriques et gazières, sa section
+          H celle où sont la SNCF et la RATP. Aucune source française ne
+          ventile le salaire par âge pour ces populations — le relevé des
+          impasses est sous l'action correspondante de la feuille de route.
+          Deux vagues, 2018 et 2022, et c'est ce qui permet de trier : le
+          facteur de l'électricité-gaz vaut 1,41 puis 1,35, celui des
+          transports 0,928 puis 0,931, mais celui des mines passe de 0,93 à
+          1,19 et celui des spectacles de 0,83 à 1,08 — ces deux-là ne sont que
+          du bruit et leurs régimes gardent le profil du privé. La source est
+          AGRÉGÉE par secteur, donc impropre à décrire une carrière : le modèle
+          n'en prend qu'un rapport de pentes, ce qui suppose ce rapport
+          identique en intra-catégorie et en agrégé. C'est l'hypothèse la plus
+          forte du profil salarial, et docs/limites.md la nomme.
+
       - id: insee_assiette_activite
         titre: Assiette des revenus d'activité — salaires bruts (D11) et revenu mixte (B3G)
         url: https://api.insee.fr/melodi/data/DD_CNA_TEE

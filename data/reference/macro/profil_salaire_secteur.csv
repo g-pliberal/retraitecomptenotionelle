@@ -1,0 +1,200 @@
+# Profil de salaire par âge et par section d'activité, France
+# source_id: eurostat_profil_salaire_secteur
+# unite: rapport sans dimension (1,00 = moyenne de la section)
+# fiabilite:
+#   certifiee (2018, 2022) : enquête quadriennale sur la structure des
+#             salaires, salaire mensuel brut moyen, recontrôlé par
+#             scripts/verifier_donnees.py. La France ne publie que trois
+#             tranches d'âge à ce niveau ; 2010 et 2014 ne répondent pas,
+#             2006 n'a pas la dimension d'activité.
+#
+# POURQUOI CETTE SOURCE EXISTE ICI. Les régimes spéciaux portaient le
+# profil des employés du privé faute de mieux. La section D est le champ
+# des industries électriques et gazières, la section H celui où sont la
+# SNCF et la RATP : aucune source FRANÇAISE ne ventile le salaire par âge
+# pour ces populations.
+#
+# CE QU'ELLE N'EST PAS : un profil de carrière. Elle est AGRÉGÉE par
+# secteur — aucune source ne croise l'âge, le secteur et la profession,
+# vérifié chez Eurostat comme chez l'INSEE. Le modèle ne lui prend qu'un
+# RAPPORT de pentes, secteur sur ensemble, ce qui suppose ce rapport
+# identique à l'intérieur des catégories et en agrégé. Rien ne le
+# démontre, et docs/limites.md le dit.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+secteur,vague,tranche,salaire_relatif,fiabilite
+B,2018,Y30-49,1.0836,certifiee
+B,2018,Y_GE50,0.9795,certifiee
+B,2018,Y_LT30,0.6879,certifiee
+B,2022,Y30-49,0.9858,certifiee
+B,2022,Y_GE50,1.2027,certifiee
+B,2022,Y_LT30,0.6250,certifiee
+B-E,2018,Y30-49,0.9955,certifiee
+B-E,2018,Y_GE50,1.1196,certifiee
+B-E,2018,Y_LT30,0.6587,certifiee
+B-E,2022,Y30-49,1.0195,certifiee
+B-E,2022,Y_GE50,1.1497,certifiee
+B-E,2022,Y_LT30,0.6164,certifiee
+B-F,2018,Y30-49,1.0053,certifiee
+B-F,2018,Y_GE50,1.1184,certifiee
+B-F,2018,Y_LT30,0.6792,certifiee
+B-F,2022,Y30-49,1.0251,certifiee
+B-F,2022,Y_GE50,1.1526,certifiee
+B-F,2022,Y_LT30,0.6444,certifiee
+B-N,2018,Y30-49,1.0100,certifiee
+B-N,2018,Y_GE50,1.1424,certifiee
+B-N,2018,Y_LT30,0.7073,certifiee
+B-N,2022,Y30-49,1.0385,certifiee
+B-N,2022,Y_GE50,1.1700,certifiee
+B-N,2022,Y_LT30,0.6930,certifiee
+B-S,2018,Y30-49,0.9972,certifiee
+B-S,2018,Y_GE50,1.1261,certifiee
+B-S,2018,Y_LT30,0.7361,certifiee
+B-S,2022,Y30-49,1.0191,certifiee
+B-S,2022,Y_GE50,1.1472,certifiee
+B-S,2022,Y_LT30,0.7088,certifiee
+B-S_X_O,2018,Y30-49,0.9983,certifiee
+B-S_X_O,2018,Y_GE50,1.1409,certifiee
+B-S_X_O,2018,Y_LT30,0.7302,certifiee
+B-S_X_O,2022,Y30-49,1.0231,certifiee
+B-S_X_O,2022,Y_GE50,1.1641,certifiee
+B-S_X_O,2022,Y_LT30,0.7035,certifiee
+C,2018,Y30-49,0.9968,certifiee
+C,2018,Y_GE50,1.1170,certifiee
+C,2018,Y_LT30,0.6571,certifiee
+C,2022,Y30-49,1.0127,certifiee
+C,2022,Y_GE50,1.1572,certifiee
+C,2022,Y_LT30,0.6106,certifiee
+D,2018,Y30-49,0.9819,certifiee
+D,2018,Y_GE50,1.2534,certifiee
+D,2018,Y_LT30,0.5819,certifiee
+D,2022,Y30-49,1.0533,certifiee
+D,2022,Y_GE50,1.2149,certifiee
+D,2022,Y_LT30,0.5559,certifiee
+E,2018,Y30-49,0.9903,certifiee
+E,2018,Y_GE50,1.0641,certifiee
+E,2018,Y_LT30,0.7634,certifiee
+E,2022,Y30-49,1.0266,certifiee
+E,2022,Y_GE50,1.0645,certifiee
+E,2022,Y_LT30,0.7795,certifiee
+F,2018,Y30-49,1.0429,certifiee
+F,2018,Y_GE50,1.0841,certifiee
+F,2018,Y_LT30,0.7485,certifiee
+F,2022,Y30-49,1.0458,certifiee
+F,2022,Y_GE50,1.1336,certifiee
+F,2022,Y_LT30,0.7244,certifiee
+G,2018,Y30-49,1.0259,certifiee
+G,2018,Y_GE50,1.1486,certifiee
+G,2018,Y_LT30,0.7451,certifiee
+G,2022,Y30-49,1.0629,certifiee
+G,2022,Y_GE50,1.2299,certifiee
+G,2022,Y_LT30,0.7032,certifiee
+G-J,2018,Y30-49,1.0285,certifiee
+G-J,2018,Y_GE50,1.1296,certifiee
+G-J,2018,Y_LT30,0.7312,certifiee
+G-J,2022,Y30-49,1.0462,certifiee
+G-J,2022,Y_GE50,1.1959,certifiee
+G-J,2022,Y_LT30,0.7202,certifiee
+G-S,2018,Y30-49,0.9950,certifiee
+G-S,2018,Y_GE50,1.1277,certifiee
+G-S,2018,Y_LT30,0.7500,certifiee
+G-S,2022,Y30-49,1.0179,certifiee
+G-S,2022,Y_GE50,1.1455,certifiee
+G-S,2022,Y_LT30,0.7227,certifiee
+G-S_X_O,2018,Y30-49,0.9965,certifiee
+G-S_X_O,2018,Y_GE50,1.1469,certifiee
+G-S_X_O,2018,Y_LT30,0.7443,certifiee
+G-S_X_O,2022,Y30-49,1.0225,certifiee
+G-S_X_O,2022,Y_GE50,1.1668,certifiee
+G-S_X_O,2022,Y_LT30,0.7169,certifiee
+H,2018,Y30-49,0.9864,certifiee
+H,2018,Y_GE50,1.0820,certifiee
+H,2018,Y_LT30,0.7618,certifiee
+H,2022,Y30-49,0.9889,certifiee
+H,2022,Y_GE50,1.1117,certifiee
+H,2022,Y_LT30,0.7378,certifiee
+I,2018,Y30-49,1.0397,certifiee
+I,2018,Y_GE50,1.0997,certifiee
+I,2018,Y_LT30,0.8943,certifiee
+I,2022,Y30-49,1.0728,certifiee
+I,2022,Y_GE50,1.1612,certifiee
+I,2022,Y_LT30,0.8797,certifiee
+J,2018,Y30-49,1.0193,certifiee
+J,2018,Y_GE50,1.1738,certifiee
+J,2018,Y_LT30,0.6531,certifiee
+J,2022,Y30-49,0.9945,certifiee
+J,2022,Y_GE50,1.3356,certifiee
+J,2022,Y_LT30,0.6725,certifiee
+K,2018,Y30-49,0.9518,certifiee
+K,2018,Y_GE50,1.2588,certifiee
+K,2018,Y_LT30,0.5890,certifiee
+K,2022,Y30-49,1.0016,certifiee
+K,2022,Y_GE50,1.2912,certifiee
+K,2022,Y_LT30,0.5672,certifiee
+K-N,2018,Y30-49,0.9881,certifiee
+K-N,2018,Y_GE50,1.1826,certifiee
+K-N,2018,Y_LT30,0.7083,certifiee
+K-N,2022,Y30-49,1.0340,certifiee
+K-N,2022,Y_GE50,1.1572,certifiee
+K-N,2022,Y_LT30,0.7027,certifiee
+L,2018,Y30-49,1.0102,certifiee
+L,2018,Y_GE50,1.0748,certifiee
+L,2018,Y_LT30,0.7405,certifiee
+L,2022,Y30-49,1.0338,certifiee
+L,2022,Y_GE50,1.1143,certifiee
+L,2022,Y_LT30,0.6823,certifiee
+M,2018,Y30-49,0.9739,certifiee
+M,2018,Y_GE50,1.2472,certifiee
+M,2018,Y_LT30,0.6654,certifiee
+M,2022,Y30-49,1.0414,certifiee
+M,2022,Y_GE50,1.2623,certifiee
+M,2022,Y_LT30,0.6351,certifiee
+N,2018,Y30-49,1.0157,certifiee
+N,2018,Y_GE50,1.0470,certifiee
+N,2018,Y_LT30,0.8811,certifiee
+N,2022,Y30-49,1.0178,certifiee
+N,2022,Y_GE50,1.0624,certifiee
+N,2022,Y_LT30,0.8626,certifiee
+O,2018,Y30-49,0.9738,certifiee
+O,2018,Y_GE50,1.0822,certifiee
+O,2018,Y_LT30,0.7375,certifiee
+O,2022,Y30-49,0.9865,certifiee
+O,2022,Y_GE50,1.0881,certifiee
+O,2022,Y_LT30,0.7220,certifiee
+O-S,2018,Y30-49,0.9691,certifiee
+O-S,2018,Y_GE50,1.1189,certifiee
+O-S,2018,Y_LT30,0.7839,certifiee
+O-S,2022,Y30-49,0.9844,certifiee
+O-S,2022,Y_GE50,1.1268,certifiee
+O-S,2022,Y_LT30,0.7343,certifiee
+P,2018,Y30-49,0.9471,certifiee
+P,2018,Y_GE50,1.1784,certifiee
+P,2018,Y_LT30,0.8033,certifiee
+P,2022,Y30-49,0.9494,certifiee
+P,2022,Y_GE50,1.2005,certifiee
+P,2022,Y_LT30,0.6446,certifiee
+P-S,2018,Y30-49,0.9665,certifiee
+P-S,2018,Y_GE50,1.1473,certifiee
+P-S,2018,Y_LT30,0.7925,certifiee
+P-S,2022,Y30-49,0.9824,certifiee
+P-S,2022,Y_GE50,1.1566,certifiee
+P-S,2022,Y_LT30,0.7317,certifiee
+Q,2018,Y30-49,0.9681,certifiee
+Q,2018,Y_GE50,1.1462,certifiee
+Q,2018,Y_LT30,0.7825,certifiee
+Q,2022,Y30-49,0.9846,certifiee
+Q,2022,Y_GE50,1.1333,certifiee
+Q,2022,Y_LT30,0.7805,certifiee
+R,2018,Y30-49,0.9635,certifiee
+R,2018,Y_GE50,1.1439,certifiee
+R,2018,Y_LT30,0.9003,certifiee
+R,2022,Y30-49,1.0584,certifiee
+R,2022,Y_GE50,1.2425,certifiee
+R,2022,Y_LT30,0.7117,certifiee
+S,2018,Y30-49,0.9934,certifiee
+S,2018,Y_GE50,1.1008,certifiee
+S,2018,Y_LT30,0.7885,certifiee
+S,2022,Y30-49,1.1224,certifiee
+S,2022,Y_GE50,1.0671,certifiee
+S,2022,Y_LT30,0.6428,certifiee

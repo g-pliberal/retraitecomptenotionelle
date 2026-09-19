@@ -1888,6 +1888,16 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
   55 ans pour un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un
   catégorie A, là où le profil du privé qu'on leur servait valait ×1,30.
 
+  **Les régimes spéciaux portent en plus un facteur de secteur**, lu dans
+  l'enquête européenne sur la structure des salaires : ×1,38 pour les IEG
+  (section « électricité et gaz », qui est le champ de leur statut), ×0,93 pour
+  la SNCF et la RATP (section « transports »), ×1,40 pour la Banque de France.
+  C'est la seule source qui les approche, elle est agrégée par secteur, et le
+  modèle n'en prend qu'un rapport de pentes — ce qui suppose ce rapport
+  identique en intra-catégorie et en agrégé. C'est l'hypothèse la plus forte du
+  profil salarial ; `limites.md` §1 la nomme, et les mines comme les spectacles
+  en sont exclus, leur facteur ne tenant pas d'une vague à l'autre.
+
   **Et le profil se choisit sur l'AFFILIATION**, non sur un réglage saisi : on
   ne demande pas sa progression de carrière à quelqu'un qui a déjà dit qu'il
   était fonctionnaire de l'État. La table est `PROFIL_PAR_AFFILIATION`, et les

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 586<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 633<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6050,6 +6050,63 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   sur téléphone, bande de lecture qui doublait la légende, bascules coupées,
   colonnes de phrases, largeur des grands tableaux). Le détail est sous
   l'action.
+- **Septembre 2026, les régimes spéciaux, et le relevé des impasses.** Ils
+  portaient le profil salarial des employés du privé, faute de mieux. Sept
+  pistes ont été parcourues avant d'en trouver une, et elles sont ici pour
+  qu'on ne les reparcoure pas :
+
+  - **Catalogue Melodi de l'INSEE, 147 jeux** — quatre jeux de salaires,
+    aucun par régime ni par secteur assez fin.
+  - **INSEE BDM, 244 flux** — aucune dimension d'âge sur les salaires.
+  - **Secteur × âge × catégorie de l'INSEE (2024)** — existe, mais `B_D_E`,
+    qui porte les IEG et les mines, n'a rien au niveau agrégé : il n'est
+    ventilé que par taille d'établissement, et les grandes cellules sont vides.
+  - **Fiches de régimes du dépôt** — règles de pension seulement, aucune
+    structure salariale.
+  - **Compléments par régime du COR** — effectifs, masses, ressources, âge
+    moyen de départ : pas de salaire par âge.
+  - **CNIEG** — le site répond, mais ne publie qu'une page de pilotage, sans
+    annuaire statistique.
+  - **RATP open data** — 26 jeux, tous d'exploitation ferroviaire.
+  - **Injoignables depuis ce conteneur** : `data.gouv.fr`, `opendata.sncf.com`,
+    le site de la CPRPSNCF, `epsilon.insee.fr`. À reprendre ailleurs. La vraie
+    source, si elle existe, serait les BILANS SOCIAUX de la SNCF, de la RATP et
+    d'EDF, que la loi impose de publier et qui portent la masse salariale par
+    tranche d'âge.
+
+  *Ce qui a été trouvé* : l'enquête européenne sur la structure des salaires
+  (`earn_ses18_20`, `earn_ses22_20`), qui ventile par âge et par SECTION
+  d'activité. Deux sections tombent sur un périmètre de régime plutôt qu'à
+  côté — `D`, électricité et gaz, est le champ du statut des IEG ; `H`,
+  transports, est là où sont la SNCF et la RATP. Deux vagues, ce qui permet de
+  trier : le facteur de l'électricité-gaz vaut 1,41 puis 1,35, celui des
+  transports 0,928 puis 0,931, mais celui des mines passe de 0,93 à 1,19 et
+  celui des spectacles de 0,83 à 1,08 — ces deux-là ne sont que du bruit, et
+  leurs régimes gardent le profil du privé sans correction.
+
+  *L'hypothèse, et elle est assumée.* La source est AGRÉGÉE par secteur : elle
+  mélange l'effet d'âge et un effet de composition, et aucune source ne croise
+  l'âge, le secteur et la profession — vérifié chez Eurostat comme chez
+  l'INSEE. Le modèle n'en prend donc qu'un rapport de pentes, secteur sur
+  ensemble, appliqué à la forme intra-catégorie, ce qui suppose ce rapport
+  identique des deux côtés. **Rien ne le démontre.** C'est l'hypothèse la plus
+  forte du profil salarial, elle est écrite dans le fichier certifié, au
+  manifeste des sources, dans `limites.md` §1 et dans `methodologie.md`, et un
+  test tient ses deux bornes : elle ne touche que les affiliations nommées, et
+  pas celles dont le facteur ne tient pas.
+
+  *Ce que ça déplace* : rien de visible — les écarts médians et la trajectoire
+  2070 ne bougent pas au centième près, les régimes spéciaux pesant peu dans la
+  pondération par effectifs. Ce qui change est qu'un agent des IEG progresse
+  désormais 38 % plus vite qu'un employé du privé, et un agent SNCF 7 % moins
+  vite, au lieu de progresser exactement comme lui.
+
+  **Fichiers.** `scripts/fetch/eurostat_profil_salaire_secteur.py` ;
+  `data/reference/macro/profil_salaire_secteur.csv` et sa règle de
+  certification ; `data/sources.yaml` ; `PROFIL_SECTEUR_PAR_AFFILIATION` et
+  `_facteur_secteur` dans `carriere.py` et leur portage ;
+  `scripts/construire_donnees.py` ; `docs/methodologie.md`, `docs/limites.md`
+  §1 ; `tests/test_moteur.py`, `tests/test_donnees.py` ; les témoins.
 
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 

@@ -717,14 +717,25 @@
    "verifiee_le": "2026-09-19"
   },
   "profil_salaire_public": {
-   "ajoutees": 35,
+   "ajoutees": 0,
    "colonne": "salaire_relatif",
    "corrigees": 0,
    "empreinte": "2b299744d82292e7",
-   "identiques": 0,
+   "identiques": 35,
    "niveau": "certifiee",
    "source": "INSEE Melodi, DS_DERA_PUBLIC_ANNUEL (2023)",
    "valeurs": 35,
+   "verifiee_le": "2026-09-19"
+  },
+  "profil_salaire_secteur": {
+   "ajoutees": 174,
+   "colonne": "salaire_relatif",
+   "corrigees": 0,
+   "empreinte": "eda1bffba32bd3ca",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Eurostat, earn_ses18_20 et earn_ses22_20 (France)",
+   "valeurs": 174,
    "verifiee_le": "2026-09-19"
   },
   "quotients_mortalite": {

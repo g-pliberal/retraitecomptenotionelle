@@ -549,6 +549,20 @@ def _profil_salaire(fichier: str, cle: str) -> dict:
     return groupes
 
 
+def _profil_salaire_secteur() -> dict:
+    """Profil par secteur, à trois niveaux : section, vague, tranche d'âge."""
+    from retraite_notionnelle.donnees.chargement import charger_table_csv
+
+    table, _ = charger_table_csv(
+        DONNEES / "reference" / "macro" / "profil_salaire_secteur.csv",
+        ("secteur", "vague", "tranche"), "salaire_relatif",
+    )
+    groupes: dict[str, dict[str, dict[str, float]]] = {}
+    for (section, vague, tranche), valeur in sorted(table.items()):
+        groupes.setdefault(section, {}).setdefault(vague, {})[tranche] = valeur
+    return groupes
+
+
 def _table_par_generation(classe) -> dict:
     """Paramètre législatif indexé sur l'année de naissance."""
     # La clé s'écrit comme JavaScript l'écrirait : « 1951 » et non « 1951.0 »,
@@ -914,6 +928,7 @@ def construire() -> bytes:
             "profil_salaire_categorie.csv", "categorie"),
         "profil_salaire_statut_public": _profil_salaire(
             "profil_salaire_statut_public.csv", "statut"),
+        "profil_salaire_secteur": _profil_salaire_secteur(),
         "contribution_employeur_public": _contribution_employeur_public(),
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),

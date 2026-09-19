@@ -19,6 +19,7 @@ from retraite_notionnelle.moteur.conversion import Convertisseur
 from retraite_notionnelle.moteur.fusion import CritereTaux, RegleFusion, fusionner
 from retraite_notionnelle.carriere import (
     ANNEE_FORME_CATEGORIE,
+    _facteur_secteur,
     TRANCHES_CATEGORIE,
     TRANCHES_SERIE,
     profil_salaire,
@@ -515,6 +516,31 @@ def test_le_profil_salarial_ne_doit_rien_a_une_droite_inventee():
 
     assert pente("ascendant") == pytest.approx(1.30, abs=0.02)
     assert pente("fortement_ascendant") == pytest.approx(1.86, abs=0.03)
+
+
+def test_le_facteur_de_secteur_ne_touche_que_les_regimes_speciaux():
+    """L'hypothèse la plus forte du profil salarial, tenue à sa place.
+
+    Aucune source française ne ventile le salaire par âge pour les régimes
+    spéciaux. L'enquête européenne le fait par SECTION d'activité, et deux
+    sections tombent sur un périmètre de régime : l'électricité-gaz est le champ
+    du statut des IEG, les transports celui où sont la SNCF et la RATP. Mais
+    elle est agrégée, donc le modèle n'en prend qu'un rapport de pentes — ce qui
+    suppose ce rapport identique en intra-catégorie et en agrégé.
+
+    Ce test garde les deux bornes de cette hypothèse : elle ne touche QUE les
+    affiliations nommées, et elle n'est pas retenue là où elle ne tient pas
+    d'une vague à l'autre — les mines et les spectacles.
+    """
+    assert _facteur_secteur(RACINE_DONNEES, "agent_ieg") == pytest.approx(1.38, abs=0.03)
+    assert _facteur_secteur(RACINE_DONNEES, "agent_sncf") == pytest.approx(0.93, abs=0.02)
+
+    # Tout le reste est à un : le facteur ne déborde pas sur le privé, ni sur le
+    # public, ni sur les régimes dont le secteur n'est que du bruit.
+    for affiliation in ("salarie_prive_non_cadre", "salarie_prive_cadre",
+                        "fonctionnaire_etat", "contractuel_public", "artisan",
+                        "mineur", "personnel_opera", "personnel_comedie_francaise"):
+        assert _facteur_secteur(RACINE_DONNEES, affiliation) == 1.0, affiliation
 
 
 # -- âge de référence --------------------------------------------------------

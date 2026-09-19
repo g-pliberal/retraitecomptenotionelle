@@ -704,6 +704,52 @@ export const PROFIL_PAR_AFFILIATION = {
 export const PROFIL_PAR_DEFAUT = "employe";
 export const PROFIL_AUTOMATIQUE = "auto";
 
+/**
+ * La section d'activité dont chaque affiliation emprunte son facteur de pente.
+ * Portage de `PROFIL_SECTEUR_PAR_AFFILIATION` de `carriere.py`, qui porte le
+ * motif et l'hypothèse que ce facteur suppose.
+ */
+export const PROFIL_SECTEUR_PAR_AFFILIATION = {
+  agent_ieg: "D",
+  agent_sncf: "H",
+  agent_ratp: "H",
+  agent_chemins_fer_secondaires: "H",
+  agent_port_strasbourg: "H",
+  marin: "H",
+  personnel_navigant: "H",
+  agent_banque_de_france: "K",
+};
+
+const SECTION_ENSEMBLE = "B-S";
+const TRANCHE_SECTEUR_JEUNE = "Y_LT30";
+const TRANCHE_SECTEUR_AGEE = "Y_GE50";
+
+/** De combien la pente d'un secteur s'écarte de celle de l'économie. */
+function facteurSecteur(paquet, affiliation) {
+  const section = PROFIL_SECTEUR_PAR_AFFILIATION[affiliation];
+  if (section === undefined) {
+    return 1.0;
+  }
+  const table = paquet.profil_salaire_secteur ?? {};
+  const pente = (nom, vague) => {
+    const profil = (table[nom] ?? {})[vague] ?? {};
+    const jeune = profil[TRANCHE_SECTEUR_JEUNE];
+    const agee = profil[TRANCHE_SECTEUR_AGEE];
+    return jeune && agee ? agee / jeune : null;
+  };
+  const facteurs = [];
+  for (const vague of Object.keys(table[section] ?? {}).sort()) {
+    const secteur = pente(section, vague);
+    const ensemble = pente(SECTION_ENSEMBLE, vague);
+    if (secteur && ensemble) {
+      facteurs.push(secteur / ensemble);
+    }
+  }
+  return facteurs.length
+    ? facteurs.reduce((a, b) => a + b, 0) / facteurs.length
+    : 1.0;
+}
+
 /** Le groupe salarial que le modèle prête à une affiliation. */
 export function profilDeLAffiliation(affiliation) {
   return PROFIL_PAR_AFFILIATION[affiliation] ?? PROFIL_PAR_DEFAUT;
@@ -783,7 +829,8 @@ export function profilSalaire(paquet, profil, age, annee, affiliation = null) {
     ? (paquet.profil_salaire_statut_public ?? {})
     : (paquet.profil_salaire_categorie ?? {});
   const forme = interpoleTranches(table[categorie], TRANCHES_CATEGORIE, age);
-  return 1.0 + (forme - 1.0) * modulationAnnee(paquet, annee);
+  const facteur = facteurSecteur(paquet, affiliation ?? "");
+  return 1.0 + (forme - 1.0) * modulationAnnee(paquet, annee) * facteur;
 }
 
 /** Ce que le profil fait du niveau saisi, en début et en fin de carrière. */

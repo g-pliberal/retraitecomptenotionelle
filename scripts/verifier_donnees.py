@@ -463,6 +463,56 @@ def source_profil_salaire_public() -> dict[tuple, float]:
     return valeurs
 
 
+#: Les trois tranches d'âge que la France publie dans l'enquête européenne, et
+#: les deux qui bornent une carrière. Y30-49 est là pour le contrôle, pas pour
+#: la pente.
+TRANCHES_SECTEUR = ("Y_LT30", "Y30-49", "Y_GE50")
+
+#: La section qui sert de référence : l'ensemble de l'industrie, de la
+#: construction et des services. C'est elle qui vaut un, et à laquelle chaque
+#: secteur se rapporte.
+SECTION_ENSEMBLE = "B-S"
+
+
+def source_profil_salaire_secteur() -> dict[tuple, float]:
+    """Salaire d'une tranche d'âge rapporté à celui du secteur, par vague.
+
+    L'enquête européenne sur la structure des salaires est la SEULE source qui
+    approche les régimes spéciaux : sa section ``D`` est le champ des industries
+    électriques et gazières, sa section ``H`` celui où sont la SNCF et la RATP.
+    Aucune source française ne ventile le salaire par âge pour ces populations.
+
+    Elle est AGRÉGÉE par secteur, donc impropre à décrire une carrière : aucune
+    des sources du dépôt ne croise l'âge, le secteur et la profession —
+    vérifié chez Eurostat comme chez l'INSEE. Le modèle ne lui prend donc qu'un
+    RAPPORT de pentes, secteur sur ensemble, et ``carriere.py`` dit ce que cela
+    suppose.
+
+    Les deux vagues sont gardées l'une et l'autre, et c'est ce qui permet de
+    trier : un secteur dont le facteur bouge d'une vague à l'autre n'est que du
+    bruit, et ``PROFIL_SECTEUR_PAR_AFFILIATION`` ne le nomme pas.
+    """
+    chemin = BRUT / "eurostat_profil_salaire_secteur.json"
+    if not chemin.exists():
+        raise SourceAbsente(
+            f"{chemin} absent "
+            "(lancer scripts/fetch/eurostat_profil_salaire_secteur.py)"
+        )
+    charge = json.loads(chemin.read_text(encoding="utf-8"))
+    valeurs: dict[tuple, float] = {}
+    for vague, cellules in sorted(charge.get("vagues", {}).items()):
+        totaux = {cle.split("|")[0]: v for cle, v in cellules.items()
+                  if cle.endswith("|TOTAL")}
+        for cle, brut in cellules.items():
+            section, tranche = cle.split("|")
+            if tranche not in TRANCHES_SECTEUR:
+                continue
+            moyenne = totaux.get(section)
+            if moyenne:
+                valeurs[(section, vague, tranche)] = brut / moyenne
+    return valeurs
+
+
 def source_pib_nominal() -> dict[tuple, float]:
     """Variation nominale du produit intérieur brut.
 
@@ -3036,6 +3086,43 @@ CERTIFICATIONS = (
             "# personnels MÉDICAUX de l'hospitalière, à 6 765 € nets par mois, et non",
             "# des militaires. Aucun jeu de l'INSEE ne porte la solde indiciaire par",
             "# âge : les cas types militaires gardent le profil de l'État.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="profil_salaire_secteur",
+        chemin=REFERENCE / "macro" / "profil_salaire_secteur.csv",
+        cles=("secteur", "vague", "tranche"),
+        colonne="salaire_relatif",
+        source=source_profil_salaire_secteur,
+        origine="Eurostat, earn_ses18_20 et earn_ses22_20 (France)",
+        decimales=4,
+        tolerance=5e-4,
+        entete=(
+            "# Profil de salaire par âge et par section d'activité, France",
+            "# source_id: eurostat_profil_salaire_secteur",
+            "# unite: rapport sans dimension (1,00 = moyenne de la section)",
+            "# fiabilite:",
+            "#   certifiee (2018, 2022) : enquête quadriennale sur la structure des",
+            "#             salaires, salaire mensuel brut moyen, recontrôlé par",
+            "#             scripts/verifier_donnees.py. La France ne publie que trois",
+            "#             tranches d'âge à ce niveau ; 2010 et 2014 ne répondent pas,",
+            "#             2006 n'a pas la dimension d'activité.",
+            "#",
+            "# POURQUOI CETTE SOURCE EXISTE ICI. Les régimes spéciaux portaient le",
+            "# profil des employés du privé faute de mieux. La section D est le champ",
+            "# des industries électriques et gazières, la section H celui où sont la",
+            "# SNCF et la RATP : aucune source FRANÇAISE ne ventile le salaire par âge",
+            "# pour ces populations.",
+            "#",
+            "# CE QU'ELLE N'EST PAS : un profil de carrière. Elle est AGRÉGÉE par",
+            "# secteur — aucune source ne croise l'âge, le secteur et la profession,",
+            "# vérifié chez Eurostat comme chez l'INSEE. Le modèle ne lui prend qu'un",
+            "# RAPPORT de pentes, secteur sur ensemble, ce qui suppose ce rapport",
+            "# identique à l'intérieur des catégories et en agrégé. Rien ne le",
+            "# démontre, et docs/limites.md le dit.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",
