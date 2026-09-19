@@ -42,6 +42,7 @@ from retraite_notionnelle.web.pages import (
     INDEXATIONS,
     LISSAGE_MAXIMUM,
     METIERS_MAXIMUM,
+    PAGES_AGREGEES,
     PAS_MULTIPLE,
     PROFILS,
     PROJECTIONS,
@@ -52,6 +53,7 @@ from retraite_notionnelle.web.pages import (
     Contexte,
     ErreurSaisie,
     Saisie,
+    _champs_modelisation,
     rendre,
     statuts,
 )
@@ -4888,8 +4890,17 @@ def test_chaque_route_porte_sa_description():
 
 
 def _prose(corps: str) -> str:
-    """Le texte d'une page hors de ses tableaux, où « — » est une case vide."""
-    sans_tables = re.sub(r"<table.*?</table>", " ", corps, flags=re.S)
+    """Le texte d'une page hors de ses tableaux, où « — » est une case vide.
+
+    Le bloc de réglages des pages agrégées en sort aussi : ce sont les champs
+    du simulateur, rendus une seconde fois, et le tiret de « Masse salariale —
+    règle d'équilibre » y sépare un libellé de sa glose, il n'y ouvre pas une
+    incise. Les compter sur trois pages de plus ne dirait rien de leur prose ;
+    ils restent comptés là où ils sont écrits, dans les options du simulateur.
+    """
+    sans_reglages = re.sub(r'<details class="options reglages"[^>]*>.*?</details>', " ",
+                           corps, flags=re.S)
+    sans_tables = re.sub(r"<table.*?</table>", " ", sans_reglages, flags=re.S)
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", sans_tables)))
 
 
@@ -5002,3 +5013,160 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification(contexte):
     table = re.search(r'<table id="series">.*?</table>', corps, re.S).group(0)
     assert '<th class="texte" scope="col"><button type="button" class="tri" data-colonne="3">Vérifiée le</button></th>' in table
     assert table.count(f">{dates[0]}<") >= 1
+
+
+# -- les trois pages agrégées obéissent aux réglages du simulateur ------------
+#
+# Elles ne calculent aucune carrière saisie — elles croisent des carrières
+# types avec des générations —, mais elles doivent le faire sous les MÊMES
+# règles que le simulateur. Jusqu'au 19 septembre 2026, elles calculaient
+# toujours sous les paramètres par défaut : changer l'indexation dans le
+# simulateur déplaçait la pension affichée, et pas un chiffre de la page Coût.
+# Les deux pages disaient alors, sans le dire, deux choses différentes.
+
+
+@pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
+def test_une_page_agregee_porte_son_bloc_de_reglages(page, chemin):
+    corps = page(chemin)
+    assert 'class="options reglages"' in corps
+    assert "Recalculer cette page" in corps
+    # Le formulaire vise la route NUE : le routeur colle la requête derrière
+    # l'action, et une action qui en porterait déjà une en donnerait deux.
+    assert f'action="#{chemin}"' in corps
+
+
+@pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
+def test_une_page_agregee_au_defaut_ne_dit_rien_des_reglages(page, chemin):
+    """Tant que rien n'est changé, la page est celle d'avant."""
+    corps = page(chemin)
+    assert "ne sont pas ceux des réglages par défaut" not in corps
+    # Et ses liens sont nus : une adresse partagée ne porte que ce que son
+    # auteur a effectivement réglé.
+    assert '<a href="#/cout"' in corps or '<a href="#/simuler"' in corps
+    assert "#/cout?" not in corps
+
+
+@pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
+def test_un_reglage_explicite_au_defaut_rend_la_page_du_defaut(page, chemin):
+    """« indexation=masse_salariale » est le défaut : la page ne doit pas bouger.
+
+    C'est ce qui garantit que la lecture des réglages est ADDITIVE : une
+    adresse qui ne demande rien de neuf rend exactement la page d'avant.
+    """
+    assert page(chemin, indexation="masse_salariale") == page(chemin)
+
+
+@pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
+def test_une_page_agregee_ignore_la_carriere_de_l_adresse(page, chemin):
+    """Une adresse de simulateur collée sur la page Coût n'y décrit que des règles.
+
+    La naissance, le statut et le revenu qu'elle porte n'ont aucun sens dans un
+    agrégat : ils sont ignorés, et une faute dans l'un d'eux ne peut pas faire
+    échouer la page.
+    """
+    assert page(chemin, naissance="1962", statut="fonctionnaire_civil",
+                salaire="3000", unite_revenu="euros_mois") == page(chemin)
+
+
+@pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
+def test_une_page_agregee_dit_quand_elle_n_est_plus_au_defaut(page, chemin):
+    corps = page(chemin, indexation="prix", bascule="2030")
+    assert "ne sont pas ceux des réglages par défaut" in corps
+    # L'apostrophe est échappée dans la page : on compare sur le texte lu.
+    assert "règle d'indexation : Prix" in html.unescape(corps)
+    assert "année de bascule : 2030" in corps
+    # Et de quoi revenir en arrière, sans avoir à effacer une adresse à la main.
+    assert f'<a href="#{chemin}">revenir aux réglages par défaut</a>' in corps
+
+
+@pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
+def test_les_reglages_suivent_le_lecteur_d_une_page_a_l_autre(page, chemin):
+    """Sans cela, changer une règle ici et cliquer là ramènerait au défaut."""
+    corps = page(chemin, indexation="prix")
+    assert '<a href="#/simuler?indexation=prix"' in corps
+    assert '#/methode?indexation=prix' in corps
+    # Le bandeau de navigation les porte aussi : c'est lui qu'on clique.
+    assert '#/cout?indexation=prix' in g.entete(chemin)
+
+
+def test_un_reglage_deplace_les_chiffres_de_la_page_cout(contexte):
+    """Le cœur de l'affaire : ce sont les CHIFFRES qui doivent bouger.
+
+    L'indexation sur les prix, au lieu de la croissance de la masse salariale,
+    écrase la valeur réelle des comptes notionnels : la masse de pensions que
+    chaque système notionnel servirait s'en trouve nettement réduite. Le
+    rapport que la page trace est celui-là.
+    """
+    defaut = contexte.cout()
+    prix = contexte.pour(
+        Saisie.modelisation({"indexation": "prix"}).parametres(contexte.base)
+    ).cout()
+    annee = defaut.derniere_annee
+    for scenario in ("notionnel_retroactif", "notionnel_liberal"):
+        assert prix.annee(annee).rapports[scenario] < defaut.annee(annee).rapports[scenario]
+    # Et le contexte d'origine n'a pas bougé : deux jeux de règles cohabitent.
+    assert contexte.cout().annee(annee).rapports == defaut.annee(annee).rapports
+
+
+def test_un_reglage_hors_bornes_ne_fait_pas_tomber_la_page(page):
+    """Une adresse mal formée doit afficher une phrase, pas une trace d'exécution."""
+    corps = page("/cout", bascule="1800")
+    assert "Saisie refusée" in corps
+    # Et la page est rendue derrière, sous les règles par défaut.
+    assert "ne sont pas ceux des réglages par défaut" not in corps
+    assert 'class="options reglages"' in corps
+
+
+def test_une_adresse_qui_ne_porte_que_des_reglages_ne_demande_pas_de_calcul(page):
+    """Cliquer « Simuler » dans le bandeau ne doit pas calculer une carrière.
+
+    Les liens du site portent les réglages partout, y compris vers le
+    simulateur. Sans cette règle, le seul fait d'avoir changé l'indexation
+    aurait fait calculer d'office, à chaque passage par le bandeau, la carrière
+    d'exemple que personne n'a saisie.
+    """
+    assert "Saisie refusée" not in page("/simuler", indexation="prix")
+    assert not Saisie.depuis_requete({"indexation": "prix"}).demandee
+    assert Saisie.depuis_requete({"naissance": "1975"}).demandee
+
+
+def test_un_contexte_derive_partage_ce_qui_ne_depend_pas_des_regles(contexte):
+    """Dériver ne doit rien recharger : les séries observées sont les mêmes."""
+    derive = contexte.pour(
+        Saisie.modelisation({"bascule": "2030"}).parametres(contexte.base))
+    assert derive is not contexte
+    assert derive.depenses() is contexte.depenses()
+    assert derive.comptes() is contexte.comptes()
+    assert derive.population() is contexte.population()
+    # Un jeu de règles identique ne dérive rien du tout.
+    assert contexte.pour(contexte.base) is contexte
+
+
+def test_les_champs_de_modelisation_sont_ecrits_une_seule_fois(contexte):
+    """Le simulateur et les pages agrégées proposent le MÊME jeu de règles.
+
+    Deux listes de champs auraient suffi à les faire diverger, et deux pages du
+    même site auraient alors proposé deux jeux de règles qui n'en sont qu'un.
+    """
+    champs = _champs_modelisation(Saisie())
+    assert champs in rendre(contexte, "/simuler", {})[1]
+    assert champs in rendre(contexte, "/cout", {})[1]
+
+
+def test_le_routeur_ne_prend_pas_une_adresse_reglee_pour_une_simulation():
+    """« #/?indexation=prix » est l'accueil réglé, et non une vieille adresse.
+
+    Le routeur d'``index.html`` renvoie sur le simulateur toute adresse qui
+    porte « #/ » suivi d'une requête : ce sont les liens partagés d'avant que
+    l'accueil ne devienne le programme. Depuis que les réglages suivent le
+    lecteur, le lien de l'accueil en porte une lui aussi — et cliquer
+    « Programme » après avoir changé l'indexation envoyait sur le simulateur.
+    """
+    from pathlib import Path
+
+    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(
+        encoding="utf-8")
+    assert "CLES_MODELISATION" in page, (
+        "le routeur doit savoir distinguer une règle d'un champ de carrière"
+    )
+    assert "!CLES_MODELISATION.includes(cle)" in page

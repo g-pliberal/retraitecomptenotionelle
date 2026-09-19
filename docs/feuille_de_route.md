@@ -1965,6 +1965,36 @@ versé à l'action 24.
   chiffres et ce que « vérifié » veut dire. Un test exige les trois, visibles
   sans rien déplier, de trois à cinq phrases.
 
+- [x] 🔴 **Faire obéir les pages agrégées aux réglages du simulateur** `Coût · Cas types · Avantages`
+  Les trois pages qui agrègent calculaient toujours sous les paramètres par défaut, quels que soient les réglages choisis dans le simulateur : changer la règle d'indexation déplaçait la pension affichée sur `/simuler` et pas un chiffre de `/cout`. Les deux pages disaient alors, sans le dire, deux choses différentes — et rien sur le site ne permettait de s'en apercevoir.
+  *Fait le 19 septembre 2026.* Les trois pages lisent désormais les dix
+  réglages de modélisation de l'adresse (`CLES_MODELISATION` : indexation,
+  lissage, âge de référence, table, conversion des droits acquis, part de
+  cotisation, foyer, projection, bascule, euros constants) et se calculent
+  sous eux. Ce qui a permis de le faire sans toucher aux trente endroits qui
+  lisent `contexte.base` : le `Contexte` porte le jeu de règles, et les pages
+  agrégées reçoivent un contexte DÉRIVÉ par `pour()`, qui partage toutes les
+  mémoires — les séries observées ne se rechargent pas, et les agrégats sont
+  mémorisés par jeu de règles, six au plus. Le reste tient en trois pièces :
+  les réglages suivent le lecteur, parce que `gabarit.lien` les ajoute à toute
+  adresse interne (un état de module, posé par `rendre` et lui seul ; les
+  formulaires visent `gabarit.route`, l'adresse nue, sinon le routeur
+  doublerait la requête) ; chaque page agrégée porte le bloc « Les règles du
+  calcul », qui est le formulaire du simulateur, écrit une fois et rendu
+  deux ; et un encadré dit, dès qu'un réglage s'écarte du défaut, que les
+  chiffres ne sont pas ceux du site, avec de quoi y revenir. Les carrières
+  saisies dans l'adresse sont ignorées par ces pages — un agrégat n'a pas
+  d'individu —, et une adresse qui ne porte QUE des réglages ne déclenche
+  plus de calcul sur `/simuler` : sans quoi le bandeau aurait calculé d'office
+  une carrière que personne n'a saisie. Tant que rien n'est changé, les trois
+  pages et leurs adresses sont celles d'avant, au caractère près ; trois
+  témoins de plus fixent les pages réglées, un quatrième le simulateur réglé
+  sans carrière. Ce que cela ne règle pas, et qu'il ne faut pas laisser
+  croire : ces pages croisent douze cas types avec des générations, pondérés
+  par les effectifs des caisses. Elles obéissent aux mêmes RÈGLES que le
+  simulateur, elles ne calculent pas la carrière qu'on y a saisie — une
+  carrière n'a pas de poids dans une population.
+
 - [x] ⚪ **Sortir l'autocritique méthodologique de la masse de texte** `Coût`
   La comparaison à la projection du COR (« notre écart vaut -0,3 point de PIB au départ et 5,1 à l'arrivée […] il n'est pas flatteur ») est un vrai gage de sérieux, mais elle est noyée dans un paragraphe. En faire un encart « point de vigilance » à part la transforme en argument de crédibilité au lieu de la laisser passer inaperçue.
   *Fait le 17 septembre 2026.* La comparaison à la projection du COR est un

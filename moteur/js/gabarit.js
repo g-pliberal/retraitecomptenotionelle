@@ -57,14 +57,58 @@ export const GROUPES_NAVIGATION = [
 export const LIENS = GROUPES_NAVIGATION.flatMap(([, liens]) => liens);
 
 /**
- * Adresse d'une page interne.
+ * Les réglages de modélisation en vigueur, écrits comme une requête —
+ * « indexation=prix&bascule=2030 » —, et vides tant que tout est au défaut.
+ *
+ * C'est un état de module, et c'en est un à dessein. Les réglages doivent
+ * suivre le lecteur d'une page à l'autre, sinon la page Coût affiche d'autres
+ * règles que celles qu'il vient de choisir dans le simulateur ; or `lien` est
+ * appelé à plus de cinquante endroits, au fond de corps de page qui ne
+ * reçoivent rien d'autre que leur contexte. Leur passer la requête à tous
+ * aurait fait cinquante signatures pour une valeur qui ne change qu'une fois
+ * par rendu. Elle est donc posée en UN SEUL endroit — `pages.rendre`, le point
+ * d'entrée unique du rendu — et remise à zéro à chaque appel, de sorte
+ * qu'aucun rendu ne peut hériter des réglages du précédent.
+ */
+let OPTIONS = "";
+
+/** Fixe les réglages que porteront les liens internes. Voir `OPTIONS`. */
+export function poserOptions(requete) {
+  OPTIONS = requete || "";
+}
+
+/** Les réglages en vigueur, pour qui doit les écrire lui-même. */
+export function options() {
+  return OPTIONS;
+}
+
+/**
+ * Adresse d'une page interne, réglages de modélisation compris.
  *
  * Le site tient dans une seule page : la navigation passe par l'ancre de
  * l'adresse (`#/cas-types`). L'ancre de section, elle, ne peut pas s'y ajouter
  * — la place est prise — et n'est acceptée que pour que les appels disent vers
  * quoi ils pointent.
+ *
+ * Quand le lecteur a changé un réglage, l'adresse le porte : c'est ainsi que
+ * les trois pages agrégées calculent sous les règles qu'il a choisies, et non
+ * sous celles par défaut. Tant qu'il n'a rien changé, la requête est vide et
+ * l'adresse est celle d'avant, au caractère près.
  */
 export function lien(chemin, ancre = "") {
+  return `#${chemin}${OPTIONS ? `?${OPTIONS}` : ""}`;
+}
+
+/**
+ * L'adresse NUE d'une page, sans les réglages : la cible d'un formulaire.
+ *
+ * Un formulaire en `GET` écrit lui-même la requête, à partir de ses champs ;
+ * le routeur d'`index.html` colle celle-ci derrière l'action. Une action qui
+ * porterait déjà une requête en donnerait donc deux —
+ * « #/cout?indexation=prix?indexation=prix ». Les formulaires visent la route,
+ * les liens visent `lien`.
+ */
+export function route(chemin) {
   return `#${chemin}`;
 }
 

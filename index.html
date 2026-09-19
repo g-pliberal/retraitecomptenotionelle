@@ -107,7 +107,9 @@
 </div>
 
 <script type="module">
-import { CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS, TITRES, rendre } from "./moteur/js/pages.js";
+import {
+  CLES_MODELISATION, CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS, TITRES, rendre,
+} from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
 // La signature des images composées ici vient du gabarit, comme tout ce
@@ -208,8 +210,15 @@ function adresse() {
   // Les adresses partagées avant que l'accueil ne devienne le programme
   // portaient la simulation sur « #/ » ; leur rendre le formulaire coûte une
   // ligne, et les perdre coûterait la simulation qu'elles décrivent.
+  //
+  // Une adresse qui ne porte que des RÈGLES n'en est pas une : depuis que les
+  // réglages suivent le lecteur, tous les liens du site les portent, celui de
+  // l'accueil compris. Sans cette réserve, cliquer « Programme » après avoir
+  // changé l'indexation envoyait sur le simulateur.
   const route = chemin || "/";
-  const ancienne = route === "/" && Object.keys(parametres).length > 0;
+  const ancienne = route === "/" && Object.keys(parametres).some(
+    (cle) => !CLES_MODELISATION.includes(cle),
+  );
   return { chemin: ancienne ? "/simuler" : route, parametres };
 }
 
