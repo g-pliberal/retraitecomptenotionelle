@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 370<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 375<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6618,10 +6618,48 @@ pas encore en vigueur (surcote parentale, salaire de référence des parents,
 applicables à compter de 2026) : aucun chiffre ne peut exister. Trois ne sont
 pas des dispositifs mais des écarts de règle, mesurés ailleurs. Les
 dix-neuf autres attendent une source : les bonifications de service des
-militaires et des corps actifs, que le Service des retraites de l'État publie
-dans son rapport annuel sans que le dépôt le lise encore ; l'allocation
+militaires et des corps actifs, dont le rapport du Service des retraites de
+l'État ne donne PAS la masse — vérifié, voir le volet H ; l'allocation
 veuvage, que les comptes noient dans un poste « autres droits dérivés » ; le
 service national et le congé parental, qu'aucune nomenclature n'isole.
+
+
+**Volet H — le rapport du SRE, lu : il ne porte pas les bonifications.** À la
+demande. Le volet G laissait les bonifications de service comme « prochain
+gisement, et il est identifié » : le rapport annuel du Service des retraites de
+l'État. Il a été lu, et la piste est fausse.
+
+- *Quatre éditions lues* — 2019, 2021, 2023, 2024 — plus les deux infographies
+  « Les chiffres-clés des retraites de l'État » de juin 2026. C'est un rapport
+  d'**activité**, pas un document statistique : les bonifications n'y
+  apparaissent que comme part du contentieux (8 % des nouvelles affaires en
+  2023, 5,5 % en 2024) et comme jurisprudence du Conseil d'État. Aucune masse,
+  aucun effectif, aucun trimestre. Les infographies n'en parlent pas du tout.
+
+- *Le bon document est le jaune budgétaire* « Pensions de retraite de la
+  fonction publique ». La preuve est dans son tableur compagnon, mis en ligne
+  sur data.gouv.fr pour le PLF 2012 : il porte une feuille nommée
+  `bonifications`. Les éditions récentes sont sur budget.gouv.fr, que protège
+  un pare-feu anti-robot (Incapsula) — ni `curl` ni navigateur ne passent, et
+  le dépôt ne contourne pas. La limite est donc DOCUMENTÉE au lieu d'être
+  ouverte, ce qui vaut mieux qu'une piste qu'on croit tenir.
+
+- *Un gain latéral, qui n'était pas cherché.* La jurisprudence citée par le
+  rapport 2023 (Conseil d'État, 11 octobre 2023, n° 454135 et suivants) nomme
+  le texte de la bonification du cinquième des personnels actifs de police, que
+  l'inventaire portait depuis le début en « statuts particuliers — à
+  certifier ». Lu dans LEGI et posé : **loi n° 57-444 du 8 avril 1957, articles
+  1er et 6**, un cinquième du temps passé en services actifs, plafonné à cinq
+  annuités, et subordonné depuis le 28 décembre 2023 à la condition de durée de
+  services du onzième alinéa du 1° du I de l'article L. 24. Une des deux lignes
+  « à certifier » de l'inventaire est close.
+
+**Ce qui reste du volet H.** Deux voies pour la masse, et aucune n'est
+satisfaisante : demander le tableur du jaune à sa source, ou reprendre celui du
+PLF 2012, dont les valeurs auraient quinze ans. Les textes des corps autres que
+la police restent à certifier : l'index renvoie l'article 125 de la loi
+n° 83-1179 du 29 décembre 1983 pour les sapeurs-pompiers, dans une version qui
+s'arrête en 2000, et la suite n'a pas été lue.
 
 ---
 

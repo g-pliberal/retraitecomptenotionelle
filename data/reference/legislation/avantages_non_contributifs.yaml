@@ -884,7 +884,9 @@ avantages:
       particuliers aux policiers, aux sapeurs-pompiers professionnels, aux
       surveillants de l'administration pénitentiaire et aux douaniers de la
       branche surveillance.
-    base_legale: [statuts particuliers — à certifier, hors CPCMR]
+    base_legale: [Loi n° 57-444 du 8 avril 1957 art. 1, Loi n° 57-444 du
+      8 avril 1957 art. 6, R. 411-2 code de la sécurité intérieure,
+      autres corps — à certifier]
     veille: []
     creation: 1957
     fin: null
@@ -897,8 +899,9 @@ avantages:
       été lue — l'écrire ici sans l'avoir lue serait une déduction, pas une
       source.
     sans_chiffre: >-
-      suppose le corps d'appartenance, que le simulateur ne saisit pas ; ses
-      textes sont d'ailleurs éclatés dans les statuts de chaque corps
+      suppose le corps d'appartenance, que le simulateur ne saisit pas ; et
+      aucune publication n'en donne la masse, le rapport du Service des
+      retraites de l'État n'étant pas un document statistique
     cout:
       mesurable_par: aucune
       note: >-

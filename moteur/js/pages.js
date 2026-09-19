@@ -5717,6 +5717,10 @@ function avantagesDetailEtats(contexte) {
 
 /** Les trois réserves de la page, et pourquoi elles y sont. */
 function avantagesDetailLimites(contexte) {
+  // Le compte des lignes « à certifier » se calcule : voir pages.py.
+  const aCertifier = contexte.inventaireAvantages().avantages.filter(
+    (avantage) => avantage.base_legale.some((t) => t.includes("certifier")),
+  ).length;
   return g.depliant(
     "Trois choses que ces chiffres ne disent pas",
     `<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
@@ -5731,9 +5735,10 @@ ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
 portent sur la même pension, vue sous un autre angle, et les additionner serait
 un double compte.</p>
 <p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
-dans la base LEGI, version par version ; deux lignes de l'inventaire portent la
-mention « à certifier », parce que leurs textes sont éclatés dans des statuts de
-corps qui n'ont pas été lus. Une déduction n'est pas une lecture.</p>`,
+dans la base LEGI, version par version. ${aCertifier} lignes portent encore la
+mention « à certifier » : leurs textes vivent dans des statuts de corps ou des
+lois de circonstance qui n'ont pas tous été lus. Une déduction n'est pas une
+lecture.</p>`,
     "avantages-limites",
   );
 }

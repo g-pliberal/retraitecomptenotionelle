@@ -643,6 +643,33 @@ dénominateur aurait été un choix, pas une neutralité.
 L'inventaire compte donc **quarante-deux dispositifs, dont dix-huit portent un
 chiffre** et vingt-quatre une raison écrite.
 
+### Le rapport du SRE, lu : il ne porte pas les bonifications
+
+Le §4 sexies laissait les bonifications de service comme la piste suivante, et
+nommait le rapport annuel du Service des retraites de l'État. Quatre éditions
+ont été lues — 2019, 2021, 2023, 2024 — plus les deux infographies
+« chiffres-clés » de juin 2026. **La piste est fausse** : c'est un rapport
+d'*activité*, pas un document statistique. Les bonifications n'y apparaissent
+que comme part du contentieux (8 % des nouvelles affaires en 2023, 5,5 % en
+2024) et comme jurisprudence. Aucune masse, aucun effectif, aucun trimestre.
+
+Le document qui les publie est le **jaune budgétaire « Pensions de retraite de
+la fonction publique »**, et la preuve tient dans son tableur compagnon : celui
+du PLF 2012, encore en ligne sur data.gouv.fr, porte une feuille nommée
+`bonifications`. Les éditions récentes sont sur budget.gouv.fr, derrière un
+pare-feu anti-robot ; le dépôt ne contourne pas. La limite est désormais
+**documentée** plutôt qu'ouverte, ce qui vaut mieux qu'une piste qu'on croit
+tenir.
+
+Un gain latéral, qui n'était pas cherché. La jurisprudence citée par le rapport
+2023 (Conseil d'État, 11 octobre 2023, n° 454135 et suivants) nomme le texte de
+la bonification du cinquième des personnels actifs de police, que l'inventaire
+portait depuis le début en « statuts particuliers — à certifier ». Lu dans LEGI
+et posé : **loi n° 57-444 du 8 avril 1957, articles 1er et 6**, un cinquième du
+temps passé en services actifs, plafonné à cinq annuités, et subordonné depuis
+le 28 décembre 2023 à la condition de durée de services du onzième alinéa du 1°
+du I de l'article L. 24. Une des deux lignes « à certifier » est close.
+
 ### Ce que ces trois lignes apprennent
 
 Elles ne pèsent que 0,8 milliard à elles trois, et ce n'est pas le point. Le

@@ -956,3 +956,45 @@ journal:
       \ (L. 356-1), noyée dans un poste « autres droits dérivés » ; le service\
       \ national et le congé parental, qu'aucune nomenclature n'isole. Les\
       \ reprises de veille du 17 septembre 2026 restent ouvertes."
+  - date: '2026-09-19'
+    session: "action 37 : lire le rapport du SRE pour les bonifications de service"
+    consulte: "Les rapports d'activité du régime des retraites de l'État,\
+      \ éditions 2019, 2021, 2023 et 2024, téléchargés depuis\
+      \ retraitesdeletat.gouv.fr, ainsi que les deux infographies « Les\
+      \ chiffres-clés des retraites de l'État », édition de juin 2026. Puis,\
+      \ dans l'index LEGI : les articles 1er et 6 de la loi n° 57-444 du\
+      \ 8 avril 1957 instituant un régime particulier de retraites en faveur\
+      \ des personnels actifs de police, dont l'article 1er dans sa version en\
+      \ vigueur depuis le 28 décembre 2023 (LEGIARTI000048697299)."
+    trouve: "RÉSULTAT NÉGATIF SUR LE POINT PRINCIPAL, et il est net : le rapport\
+      \ du SRE est un rapport d'ACTIVITÉ, non un document statistique. Les\
+      \ bonifications n'y apparaissent que comme part du contentieux — 8 % des\
+      \ nouvelles affaires en 2023, 5,5 % en 2024 — et comme jurisprudence du\
+      \ Conseil d'État. Aucune masse, aucun effectif, aucun trimestre. Les\
+      \ infographies de chiffres-clés n'en parlent pas du tout. Le document qui\
+      \ les publie est le jaune budgétaire « Pensions de retraite de la\
+      \ fonction publique » : son tableur compagnon, mis en ligne sur\
+      \ data.gouv.fr pour le PLF 2012, porte une feuille nommée\
+      \ « bonifications ». Les éditions récentes sont sur budget.gouv.fr, que\
+      \ protège un pare-feu anti-robot (Incapsula) : ni curl ni navigateur ne\
+      \ passent, et le dépôt ne contourne pas.\
+      \ \
+      \ GAIN LATÉRAL, et il n'était pas cherché : la jurisprudence citée par le\
+      \ rapport 2023 (Conseil d'État, 11 octobre 2023, n° 454135 et suivants)\
+      \ nomme le texte de la bonification du cinquième des personnels actifs de\
+      \ police, que l'inventaire portait en « statuts particuliers — à\
+      \ certifier ». Lu dans LEGI et posé : loi n° 57-444 du 8 avril 1957,\
+      \ articles 1er et 6, un cinquième du temps passé en services actifs,\
+      \ plafonné à cinq annuités et désormais subordonné à la condition de\
+      \ durée de services du onzième alinéa du 1° du I de l'article L. 24."
+    reste: "La masse des bonifications de service reste hors de portée du dépôt,\
+      \ et c'est maintenant une limite DOCUMENTÉE plutôt qu'une piste ouverte :\
+      \ le rapport du SRE ne la porte pas, et le jaune budgétaire qui la porte\
+      \ n'est pas accessible depuis une session. Deux voies restent : demander\
+      \ le tableur du jaune à sa source, ou reprendre celui du PLF 2012 publié\
+      \ sur data.gouv.fr, dont les valeurs auraient quinze ans. Les textes des\
+      \ corps autres que la police — sapeurs-pompiers, surveillants\
+      \ pénitentiaires, contrôleurs aériens — restent à certifier : l'index\
+      \ renvoie l'article 125 de la loi n° 83-1179 du 29 décembre 1983 pour les\
+      \ premiers, dans une version qui s'arrête en 2000, et la suite n'a pas\
+      \ été lue. Les reprises de veille du 17 septembre 2026 restent ouvertes."

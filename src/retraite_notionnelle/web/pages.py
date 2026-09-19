@@ -6421,10 +6421,22 @@ def _avantages_detail_etats(contexte: Contexte) -> str:
 
 
 def _avantages_detail_limites(contexte: Contexte) -> str:
-    """Les trois réserves de la page, et pourquoi elles y sont."""
+    """Les trois réserves de la page, et pourquoi elles y sont.
+
+    LE COMPTE DES LIGNES « À CERTIFIER » SE CALCULE, et il l'a appris à ses
+    dépens : il était écrit en toutes lettres, et la phrase qui le portait
+    donnait une raison — « leurs textes sont éclatés dans des statuts de corps »
+    — qui n'a cessé d'être vraie que pour la moitié d'entre elles le jour où le
+    texte de la police a été lu. Un compte écrit en prose se périme ; une raison
+    écrite en prose se périme plus discrètement encore.
+    """
+    a_certifier = sum(
+        1 for avantage in contexte.inventaire_avantages().avantages
+        if any("certifier" in texte for texte in avantage.base_legale)
+    )
     return g.depliant(
         "Trois choses que ces chiffres ne disent pas",
-        """<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
+        f"""<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
 Supprimer un avantage ne rend pas son coût : il faudrait décider ce que
 l'assuré aurait fait sans lui — travailler plus longtemps, partir avec moins, ne
 pas partir. Le dépôt ne tranche pas à sa place, et ces chiffres disent ce qui
@@ -6436,9 +6448,10 @@ ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
 portent sur la même pension, vue sous un autre angle, et les additionner serait
 un double compte.</p>
 <p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
-dans la base LEGI, version par version ; deux lignes de l'inventaire portent la
-mention « à certifier », parce que leurs textes sont éclatés dans des statuts de
-corps qui n'ont pas été lus. Une déduction n'est pas une lecture.</p>""",
+dans la base LEGI, version par version. {a_certifier} lignes portent encore la
+mention « à certifier » : leurs textes vivent dans des statuts de corps ou des
+lois de circonstance qui n'ont pas tous été lus. Une déduction n'est pas une
+lecture.</p>""",
         identifiant="avantages-limites",
     )
 
