@@ -896,7 +896,7 @@ export const MARGE_GAUCHE = 66;
  * La marge de droite loge la MOITIÉ de la dernière graduation d'abscisse,
  * qui est centrée sur elle : trop étroite, « 2024 » déborderait du viewBox.
  */
-export const MARGE_DROITE = 24;
+export const MARGE_DROITE = 28;
 
 /**
  * Écart vertical minimal, en unités du repère, entre deux étiquettes posées au
@@ -910,8 +910,10 @@ export const MARGE_DROITE = 24;
  * unités du viewBox, et deux étiquettes séparées de douze s'y chevauchaient.
  */
 export const ESPACEMENT_ETIQUETTES = 22.0;
-export const MARGE_HAUT = 26;
-export const MARGE_BAS = 28;
+// 34 et non 26 : voir le Python — sur téléphone, les textes grossis se
+// recouvraient en haut et en bas du cadre.
+export const MARGE_HAUT = 34;
+export const MARGE_BAS = 34;
 
 /**
  * Nombre d'intervalles de l'axe vertical. Cinq : assez pour lire, assez peu
@@ -1285,7 +1287,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   for (const annee of graduationsX(annees[0], derniereAnnee)) {
     const x = nombreBrut(abscisse(annee, annees[0], derniereAnnee));
     lignes.push(`<text class="graduation" x="${x}" `
-      + `y="${nombreBrut(HAUTEUR_TRACE - MARGE_BAS + 16)}" `
+      + `y="${nombreBrut(HAUTEUR_TRACE - MARGE_BAS + 24)}" `
       + `text-anchor="middle">${annee}</text>`);
   }
 
@@ -1320,7 +1322,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   // unité longue débordait du cadre. Voir le Python.
   const uniteHtml = unite
     ? `<text class="graduation" x="0" `
-      + `y="${nombreBrut(MARGE_HAUT - 11)}" text-anchor="start">${echapper(unite)}</text>`
+      + `y="${nombreBrut(MARGE_HAUT - 16)}" text-anchor="start">${echapper(unite)}</text>`
     : "";
   // Le repère dit où l'observation s'arrête et où la projection commence — une
   // frontière qu'un graphique doit montrer, faute de quoi il donne à une

@@ -666,7 +666,8 @@ function montrerLecture(figure, rang) {
   // année-là. Les ordonnées sont relues dans le tracé lui-même : les chemins
   // portent déjà les coordonnées, et les recalculer supposerait de connaître
   // l'échelle, que le SVG ne dit pas.
-  const dessins = [`<line class="guide" x1="${x}" y1="14" x2="${x}" y2="272"/>`];
+  // Du haut du cadre à l'axe : 300 − MARGE_BAS, les mêmes marges que le gabarit.
+  const dessins = [`<line class="guide" x1="${x}" y1="22" x2="${x}" y2="266"/>`];
   const courbes = [...svg.querySelectorAll("path.courbe")];
   ligne.valeurs.forEach((valeur, colonne) => {
     const courbe = courbes[colonne];

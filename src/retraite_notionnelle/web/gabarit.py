@@ -795,6 +795,11 @@ td.nombre, td.date, th.date { white-space: nowrap; }
    la grille la réduisait à deux cents points et une note de trente lignes
    faisait une rangée de sept cents. */
 td.long, th.long { min-width: 18rem; }
+/* Les deux grands tableaux de la page Données : 91 séries sur cinq colonnes,
+   89 régimes sur sept. Sans largeur minimale, la colonne des statuts d'un
+   régime mettait un code par ligne et une rangée faisait cinq cents points. */
+table#series { min-width: 40rem; }
+table#inventaire { min-width: 64rem; }
 /* Une colonne de PHRASES, et non de nombres : elle se lit alignée à gauche,
    comme tout texte. */
 td.texte, th.texte { text-align: left; }
@@ -895,7 +900,7 @@ tbody tr[hidden] { display: none; }
    de sorte qu'elles ne puissent pas se décaler d'un pixel. */
 .bascule .choix > a, .bascule .choix > .actif {
   display: inline-flex; align-items: center; justify-content: center;
-  min-height: 2.75rem;
+  min-height: 2.75rem; white-space: nowrap;
   padding: 0 1rem; font-size: 0.9375rem; font-weight: 600;
   border: 2px solid var(--trait-champ); color: var(--texte);
   text-decoration: none;
@@ -1224,28 +1229,28 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
    regarde le plus. C'est maintenant une bande de hauteur fixe sous le tracé,
    qui ne peut par construction recouvrir ni déborder de rien.
 
-   Chaque cellule porte son étiquette, sa valeur dans la couleur de sa courbe,
-   et un complément. Les trois rangées ont une hauteur IMPOSÉE, et
-   l'alignement se fait par le haut : sans cela, la cellule qui porte une
-   fourchette remontait son chiffre, et les valeurs ne partaient plus du même
-   y. */
+   Elle PREND LA PLACE de la légende : même géométrie — une liste de pastilles
+   et de noms qui passe à la ligne —, avec l'année en tête et la valeur après
+   chaque nom. Posée au-dessus de la légende, elle la doublait : deux listes
+   des mêmes quatre séries, l'une chiffrée, l'autre pas. La légende se cache
+   donc tant que la bande est visible, et revient quand le pointeur sort. */
 .graphique .lecture {
-  margin-top: 0.75rem; border-top: 3px solid var(--or); padding-top: 0.6rem;
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 1.5rem;
+  margin: 0.75rem 0 0; padding: 0;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 1.5rem;
   font-size: 0.9375rem;
 }
 .graphique .lecture[hidden] { display: none; }
+.graphique:has(> .lecture:not([hidden])) > figcaption { display: none; }
 /* Ce que le script écrit : l'année (et l'unité) en tête, puis une liste avec
    une pastille, le nom court de la série et sa valeur. La feuille décrivait
    jusqu'ici une grille de cellules que rien n'écrivait, et la bande rendait
-   « • ■Ce qui sort13,5 » : puces, pastille et valeur collées. */
+   « • ■Ce qui sort13,5 » : puces, pastille et valeur collées. La liste ne
+   fait pas de boîte : ses entrées coulent dans la rangée, à la suite de
+   l'année, comme celles de la légende. */
 .graphique .lecture > .annee {
   font-weight: 700; color: var(--or); font-variant-numeric: tabular-nums;
 }
-.graphique .lecture > ul {
-  list-style: none; margin: 0; padding: 0;
-  display: flex; flex-wrap: wrap; gap: 0.35rem 1.25rem;
-}
+.graphique .lecture > ul { display: contents; list-style: none; margin: 0; padding: 0; }
 .graphique .lecture li { display: inline-flex; align-items: baseline; gap: 0.45rem; }
 .graphique .lecture .valeur {
   font-weight: 800; font-variant-numeric: tabular-nums; color: var(--texte);
@@ -1461,9 +1466,6 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
    ici que les choses qui doivent CHANGER DE FORME — une rangée qui passe en
    colonne, une bande de lecture qui ne peut plus tenir cinq cellules de front. */
 @media (max-width: 48rem) {
-  /* La bande de lecture du graphique empile ses séries : de front, six noms
-     de série se coupaient en deux sur 390 points. */
-  .graphique .lecture > ul { flex-direction: column; gap: 0.25rem; }
   /* Les engagements passent à une colonne, et leurs filets verticaux
      deviennent horizontaux : un filet à gauche ne sépare plus rien quand
      tout est empilé. */
@@ -1554,6 +1556,9 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
      de se comprimer à un mot par ligne ou de déborder. Ils défilent tous, à
      la même largeur. */
   .dispositifs table { min-width: 30rem; }
+  /* Même règle pour tout tableau d'au moins quatre colonnes : comprimé à
+     300 points, il mettait un mot par ligne et une rangée sur douze. */
+  .defilant table:has(thead th:nth-child(4)) { min-width: 34rem; }
   /* L'aperçu d'une carte à publier, réduit à la largeur d'un téléphone,
      tombait à cinq pixels de texte. Il garde 36 rem et défile dans sa
      figure : on lit ce qu'on va publier. */
@@ -2651,9 +2656,13 @@ def cle(question: str, reponse: str, corps: str, source: str = "",
 LARGEUR_TRACE = 720
 HAUTEUR_TRACE = 300
 MARGE_GAUCHE = 66
-MARGE_DROITE = 24
-MARGE_HAUT = 26
-MARGE_BAS = 28
+MARGE_DROITE = 28  # la moitié de « 2070 » à 18 unités, la taille du téléphone
+#: 34 et non 26 : sur téléphone les textes du repère font 18 unités, et
+#: l'unité de l'axe (« % du PIB »), posée au-dessus du cadre, recouvrait la
+#: graduation du haut. Même raison en bas : le « 0 » de l'axe vertical et la
+#: première année se chevauchaient, et les années descendent d'autant.
+MARGE_HAUT = 34
+MARGE_BAS = 34
 #: La marge de droite loge la MOITIÉ de la dernière graduation d'abscisse, qui
 #: est centrée sur elle : trop étroite, « 2024 » déborderait du viewBox.
 
@@ -3058,7 +3067,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
         x = nombre_brut(_abscisse(annee, annees[0], annees[-1]))
         lignes.append(
             f'<text class="graduation" x="{x}" '
-            f'y="{nombre_brut(HAUTEUR_TRACE - MARGE_BAS + 16)}" '
+            f'y="{nombre_brut(HAUTEUR_TRACE - MARGE_BAS + 24)}" '
             f'text-anchor="middle">{annee}</text>'
         )
 
@@ -3094,7 +3103,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     # unités hors du cadre, et se trouvait coupée sur un téléphone.
     unite_html = (
         f'<text class="graduation" x="0" '
-        f'y="{nombre_brut(MARGE_HAUT - 11)}" text-anchor="start">{escape(unite)}</text>'
+        f'y="{nombre_brut(MARGE_HAUT - 16)}" text-anchor="start">{escape(unite)}</text>'
         if unite else ""
     )
     repere_html = ""

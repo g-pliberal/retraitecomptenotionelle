@@ -5664,7 +5664,7 @@ function avantagesDetailListe(contexte) {
     blocs.push(
       `<h4>${echapper(famille.libelle)}</h4><p>${echapper(famille.quoi)}</p>`
       + g.tableau(["Dispositif", "Base légale", "Depuis", "Jusqu'à",
-        "Dans le modèle"], lignes, null,
+        "Dans le modèle"], lignes, ["", "texte", "nombre", "texte", "texte"],
       `${famille.libelle} : ${lignes.length} dispositifs`, true),
     );
   }
@@ -5711,7 +5711,7 @@ function avantagesDetailEtats(contexte) {
     : "";
   return g.depliant(
     "Ce que le modèle sait de chacun",
-    g.tableau(["État", "Combien", "Ce que cela veut dire"], lignes, null,
+    g.tableau(["État", "Combien", "Ce que cela veut dire"], lignes, ["", "nombre", "texte"],
       "Ce que le modèle sait de chaque avantage", true) + note,
     "avantages-etats",
   );
@@ -6613,7 +6613,7 @@ ${g.tableau(
     ["Cas type", "Caisse dont il porte les retraités",
       `Poids en ${derniere}`, "Ancienne convention"],
     lignes,
-    ["", "", "nombre", "nombre"],
+    ["", "texte", "nombre", "nombre"],
     `Ce que chaque cas type pèse dans les agrégats de cette page, en ${derniere}`,
     true,
   )}

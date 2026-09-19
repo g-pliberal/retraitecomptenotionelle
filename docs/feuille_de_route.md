@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 377<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 379<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6022,6 +6022,13 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   `<button>` en bloc en ligne. Une passe suivante repartira du script décrit
   sous « Comment refaire la passe ».
 
+- **19 septembre 2026, action 42, seconde passe.** Refaite de zéro sur
+  `main` après les vingt corrections : rien ne revient, sept constats de
+  moins de gravité trouvés et corrigés le jour même (marges des graphiques
+  sur téléphone, bande de lecture qui doublait la légende, bascules coupées,
+  colonnes de phrases, largeur des grands tableaux). Le détail est sous
+  l'action.
+
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 
 **La demande.** « J'aimerais qu'on fasse la liste des avantages en retraite
@@ -7406,6 +7413,27 @@ et les adresses. 18 : l'en-tête collant des tableaux de points est peint en
 le dépliant de Simuler gardant sa phrase. 20 : rien à faire, comme noté.
 Trois tests qui cherchaient l'ancienne classe du bloc de réglages ont été mis
 à jour.
+
+**La seconde passe, le même jour, après les vingt.** Refaite de zéro sur
+`main`, avec les mêmes captures et un diagnostic automatique de plus — les
+textes d'un SVG qui sortent du cadre ou se recouvrent. Aucune page ne
+déborde, aucune erreur de console, et rien des vingt ne revient. Sept
+constats de moins de gravité, corrigés dans la foulée : sur téléphone,
+l'unité d'un graphique recouvrait la graduation du haut et le « 0 » de
+l'axe recouvrait la première année (les marges du repère passent de 26 et
+28 à 34 unités, les années descendent de 8, la marge de droite loge la
+moitié de « 2070 » à 18 unités) ; la bande de lecture d'un graphique
+doublait la légende — deux listes des mêmes séries, l'une chiffrée — et
+prend maintenant sa place, la légende revenant quand le pointeur sort ; les
+branches d'une bascule se coupaient en deux (« € par / mois ») ; quatre
+colonnes de phrases restaient alignées à droite (la base légale et le
+modèle des 42 dispositifs, « ce que cela veut dire », la caisse de chaque
+cas type) ; les tableaux des 91 séries et des 89 régimes, et tout tableau
+d'au moins quatre colonnes sous 34 rem, gardent une largeur de lecture et
+défilent au lieu de mettre un mot par ligne. Ce qui reste et qu'on laisse :
+une note de quinze lignes dans une cellule de l'inventaire des régimes fait
+une rangée haute, à toutes les largeurs — c'est le contenu, et la glose
+sous le tableau proposée au point 8 est la vraie réponse.
 
 **Fichiers touchés le 19 septembre.** `web/gabarit.py` et `moteur/js/gabarit.js`
 (feuille, `mot`, `tableau`, `graphique`, `fiabilite_en_clair`), `web/pages.py`

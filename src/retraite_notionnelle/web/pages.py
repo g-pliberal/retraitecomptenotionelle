@@ -6371,6 +6371,7 @@ def _avantages_detail_liste(contexte: Contexte) -> str:
             f"<h4>{escape(famille.libelle)}</h4><p>{escape(famille.quoi)}</p>"
             + g.tableau(["Dispositif", "Base légale", "Depuis", "Jusqu'à",
                          "Dans le modèle"], lignes,
+                        ["", "texte", "nombre", "texte", "texte"],
                         titre=f"{famille.libelle} : {len(lignes)} dispositifs",
                         entete_de_ligne=True)
         )
@@ -6417,6 +6418,7 @@ def _avantages_detail_etats(contexte: Contexte) -> str:
     return g.depliant(
         "Ce que le modèle sait de chacun",
         g.tableau(["État", "Combien", "Ce que cela veut dire"], lignes,
+                  ["", "nombre", "texte"],
                   titre="Ce que le modèle sait de chaque avantage",
                   entete_de_ligne=True) + note,
         identifiant="avantages-etats",
@@ -7352,7 +7354,7 @@ ce que valait la convention antérieure, qui les pesait à égalité.</p>
     ["Cas type", "Caisse dont il porte les retraités",
      f"Poids en {derniere}", "Ancienne convention"],
     lignes,
-    ["", "", "nombre", "nombre"],
+    ["", "texte", "nombre", "nombre"],
     titre=f"Ce que chaque cas type pèse dans les agrégats de cette page, en {derniere}",
     entete_de_ligne=True,
 )}
