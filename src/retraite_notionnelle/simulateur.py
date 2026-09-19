@@ -253,7 +253,7 @@ class Comparaison:
             f"{c.trimestres_actuels} trimestres au sens actuel",
             f"Liquidation : {formater_age(c.age_liquidation)}, "
             f"en {c.date_liquidation}",
-            f"Âge de référence à cliquet : {ecart.age_reference:g} ans -> {ecart}",
+            f"Âge de référence : {ecart.age_reference:g} ans -> {ecart}",
             f"Coefficient de conversion : {conversion.diviseur:.2f} "
             f"(espérance de vie résiduelle {conversion.esperance_residuelle:.2f} ans, "
             f"table {conversion.table})",

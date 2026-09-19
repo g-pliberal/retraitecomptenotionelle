@@ -300,13 +300,13 @@ print(simulateur.simuler(carriere).tableau())
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
 | Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, 36 entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
 | Tous les régimes, actuels **et** disparus | 72 régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **quatre-vingt-neuf lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
-| Départ trop tôt = pension réduite | Âge de référence **à cliquet** : l'abaissement de 1982 ne le fait pas redescendre |
+| Départ trop tôt = pension réduite | Âge de référence à **64 ans** — l'âge légal d'ouverture des droits — à partir de la bascule ; avant elle, un **cliquet** que l'abaissement de 1982 ne fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | SNCF à 50 ans = 15 ans d'anticipation ; Opéra à 40 ans = 25 ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
 | Six résultats comparables | Système actuel / notionnel rétroactif / notionnel prospectif sur la part salariale, puis les deux mêmes comptes notionnels part patronale comprise, puis la proposition libérale — le compte rétroactif à 18 % pour tous, avec une garantie vieillesse individualisée financée par l'impôt |
 | Cas particulier **et** cas général | Simulation individuelle + grille 13 cas types × 7 générations |
 | Fusion des régimes au cas le plus défavorable | Âge 64/67, 172 trimestres, carrière entière, assiette déplafonnée, zéro avantage |
-| Droits acquis respectés à la bascule | Conversion à l'âge de référence par défaut — le seul endroit où l'âge de départ pèse sur les droits d'avant la bascule, donc ce qui empêche de gagner à partir tôt ; l'âge de départ effectif est offert en variante, et la cascade de calcul est affichée |
+| Droits acquis respectés à la bascule | Conversion à l'âge de référence par défaut — le seul endroit où l'âge de départ pèse sur les droits d'avant la bascule, donc ce qui empêche de gagner à partir tôt. La référence étant désormais 64 ans, un départ à 64 ans ne perd plus rien et seul un départ plus précoce paie ; l'âge de départ effectif reste offert en variante, et la cascade de calcul est affichée |
 | Statuts comparables au même étalon | Les fiches publiques ne portent que la retenue de l'agent ; elle est alignée sur l'effort contributif total du privé, sans quoi on compare un demi-effort à un effort entier |
 | Part salariale et part patronale distinguées, pour tous | `part_salariale` dans chaque fiche de salariés — 40,87 % au régime général en 2023, 40 % à l'Agirc-Arrco —, et `sans_employeur` sur les statuts qui cotisent seuls |
 | Part employeur du public, quand elle est publiée | Neuf régimes : taux implicite de l'État 1995-2005, taux appelé par le CAS « Pensions » 2006-2026, CNRACL depuis 1948, SNCF 1992-2018, RATP 2007-2025, IEG 2005-2020, mines depuis 1984, Opéra de Paris et Comédie-Française depuis 1992 — portés au compte par les scénarios 4 et 5, et le modèle dit sur combien d'années il a dû s'en passer |
@@ -565,9 +565,9 @@ Scénario                                                          Courants   Co
 --------------------------------------------------------------------------------------------------------
 1. Système actuel                                                  40,358€     32,210€    2,684€     réf.
 2. Notionnel rétroactif, part salariale                             7,963€      6,355€      530€   -80.3%
-3. Notionnel dès 2026, part salariale                              24,497€     19,551€    1,629€   -39.3%
+3. Notionnel dès 2026, part salariale                              26,927€     21,490€    1,791€   -33.3%
 4. Notionnel rétroactif, salariale + patronale                     43,975€     35,096€    2,925€    +9.0%
-5. Notionnel dès 2026, salariale + patronale                       29,827€     23,805€    1,984€   -26.1%
+5. Notionnel dès 2026, salariale + patronale                       32,257€     25,744€    2,145€   -20.1%
 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        41,262€     32,931€    2,744€    +2.2%
 --------------------------------------------------------------------------------------------------------
    hors répartition (RAFP), servi à part, identique aux 6           1,424€      1,137€       95€         

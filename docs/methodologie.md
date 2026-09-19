@@ -350,22 +350,35 @@ restatent pas.
 
 ---
 
-## 4. L'âge de référence à cliquet
+## 4. L'âge de référence
 
 ### La construction
 
 L'âge de référence est l'âge auquel une liquidation est réputée « à l'heure ».
-Il est bâti **à cliquet** : c'est le maximum de tous les âges de taux plein
-observés jusqu'à l'année considérée. Il ne redescend jamais.
+Il se lit en deux temps, séparés par l'année de bascule.
+
+**À partir de la bascule, il vaut 64 ans** : l'âge légal d'ouverture des droits,
+que la loi du 14 avril 2023 atteint en 2030. C'est le défaut du modèle. Le
+système proposé ne reconduit pas le taux plein à 67 ans, parce que le taux plein
+est une condition de **durée d'assurance** — un nombre de trimestres — et qu'un
+compte notionnel n'a pas cette notion : il n'a qu'un capital et un diviseur.
+Reconduire 67 ans aurait été importer dans le système proposé une borne que rien
+n'y justifie.
+
+**Avant la bascule, il est bâti à cliquet** : c'est le maximum de tous les âges
+de taux plein observés jusqu'à l'année considérée, et il ne redescend jamais.
+64 ans n'existait dans aucun droit avant 2030 ; une liquidation de 1990 se
+mesure donc à son époque, et non à la nôtre.
 
 | Période | Âge du taux plein en droit | Âge de référence retenu |
 |---|---|---|
 | 1945-1981 | 65 ans | 65 ans |
 | 1982-2010 | **60 ans** (ordonnance du 26 mars 1982) | **65 ans** — le cliquet tient |
 | 2011-2016 | montée en charge 65 → 67 | 65 → 67 ans |
-| 2017- | 67 ans | 67 ans |
+| 2017-2025 | 67 ans | 67 ans |
+| 2026- | 67 ans | **64 ans** — l'âge fixe prend le relais |
 
-Conséquences directes, conformes à la demande :
+Conséquences directes sur la période à cliquet, conformes à la demande :
 
 - une liquidation à 60 ans en 1990 est une **anticipation de 5 ans** ;
 - un agent de conduite parti à 50 ans en 1990 anticipe de **15 ans** ;
@@ -387,9 +400,26 @@ cotisations manquantes sur une carrière de 42 ans, la perte totale approche 25 
 Une décote explicite supplémentaire reste disponible
 (`ModeCoefficientEcart.EXPLICITE`), mais c'est alors une double peine assumée.
 
+### Ce que l'âge de référence déplace, et ce qu'il ne déplace pas
+
+Il ne pèse sur AUCUNE pension des quatre systèmes que le site compare : le
+scénario 1 ne le lit jamais, et les scénarios rétroactifs recalculent toute la
+carrière sans rien figer. Il ne pèse que sur les deux scénarios **prospectifs**,
+et par un seul canal — le diviseur auquel les droits acquis sont convertis à la
+bascule (§5). Partout ailleurs, il est une grandeur affichée : l'écart
+d'anticipation que le rapport de simulation imprime.
+
+Ce canal unique n'est pas léger pour autant. Passer de 67 à 64 ans prend un
+diviseur plus élevé, donc un capital d'ouverture plus gros, et le cadeau va tout
+entier aux générations de transition. Les deux scénarios prospectifs y gagnent
+un demi-point de PIB de dépense : le scénario 5 repasse sous le système actuel
+en solde moyen, le 3 recule son année d'équilibre de 2044 à 2049.
+
 ### Variantes
 
-- `cliquet_legal` (défaut) — la règle décrite ci-dessus ;
+- `fixe_apres_bascule` (défaut) — la règle décrite ci-dessus ;
+- `cliquet_legal` — le cliquet sur toute la période, sans âge fixe après la
+  bascule ;
 - `cliquet_puis_esperance_vie` — après la bascule, l'âge de référence suit
   l'espérance de vie de façon à stabiliser le rapport durée de retraite / durée
   de carrière ;

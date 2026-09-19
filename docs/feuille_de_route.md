@@ -2193,6 +2193,16 @@ dans une passe sur le site.
 retiendrait, `limites.md` §3 et `methodologie.md` §5 disent ce que l'ancien
 défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouver.
 
+**Ce que deux actions lui ont retiré depuis, et qu'il faut lire avant de la
+reprendre.** L'action 31 a retiré du site les deux scénarios prospectifs, les
+seuls que ce réglage touche : la note et la cascade que cette action veut
+réécrire n'existent plus, et sa conclusion est déjà atteinte par un autre
+chemin. Puis l'âge de référence est passé à 64 ans (journal, septembre 2026) :
+les deux conventions prennent alors le même diviseur pour un départ à 64 ans et
+ne se séparent plus que sur les départs plus précoces. Ce qui reste est un
+chantier d'hygiène du modèle — un défaut que `methodologie.md` §5 désavoue —,
+non un chantier de lecture du site. À reclasser en conséquence.
+
 ### 25. Le barème de la surcote de 2004 à 2008, trimestre par trimestre — `fait`
 
 **Pourquoi.** Le scénario 1 sert la surcote au taux de la fiche en vigueur
@@ -5692,6 +5702,39 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   données — que devient la contribution d'équilibre de l'État quand le taux
   devient 18 % ? Le programme ne le dit pas, et le dépôt ne tranchera pas à sa
   place.
+
+- **Septembre 2026, l'âge de référence passe à 64 ans.** À la demande. Nouveau
+  mode `fixe_apres_bascule`, qui devient le DÉFAUT des deux moteurs : 64 ans —
+  l'âge légal d'ouverture des droits — à partir de l'année de bascule, incluse,
+  et le cliquet avant elle. La borne inclut la bascule exprès : c'est l'année où
+  les droits acquis sont convertis, et une borne stricte aurait laissé le
+  changement sans effet sur le seul calcul où l'âge de référence pèse sur une
+  pension. Le cliquet reste en variante, et les trois tests qui le vérifient le
+  nomment désormais au lieu de le supposer.
+
+  *Ce que ça déplace, et ce qu'il faut savoir avant de s'en servir* : RIEN sur
+  les quatre systèmes que le site compare — le scénario 1 ne lit jamais l'âge de
+  référence, les rétroactifs ne figent aucun droit —, et 0 cellule sur 91 bouge
+  dans leur grille de cas types. L'effet est tout entier sur les deux scénarios
+  PROSPECTIFS, que l'action 31 a retirés de l'affichage : ils gagnent chacun un
+  demi-point de PIB de dépense, le 3 recule son équilibre de 2044 à 2049, et le
+  5 repasse SOUS le système actuel en solde moyen (−1,48 % contre −1,14 %). Le
+  sursaut du premier temps, qui durait cinq ans et plafonnait à 1 %, dure
+  jusqu'à huit ans et monte à 2,7 % : la conversion à un âge plus bas va tout
+  entière aux générations de transition.
+
+  *Et elle vide l'action 24 de sa moitié utile* : avec une référence à 64 ans,
+  les deux conventions de conversion des droits acquis coïncident pour un départ
+  à 64 ans. L'action ne mord plus que sur les départs avant 64.
+
+  **Fichiers.** `ModeAgeReference.FIXE_APRES_BASCULE` et `age_reference_fixe`
+  dans `config.py` et `config.js` ; `moteur/age_reference.py` et
+  `moteur/js/age-reference.js` ; `AGES_REFERENCE` et le défaut de `Saisie` dans
+  `web/pages.py` et `moteur/js/pages.js` ; la ligne du tableau de
+  `simulateur.py`, qui ne nomme plus un mode sur quatre ; `docs/methodologie.md`
+  §4 ; deux lignes du cahier des charges du `README.md` et son bloc d'exemple ;
+  `tests/test_moteur.py`, `tests/test_simulateur.py`, `tests/test_cout.py` ; les
+  témoins.
 
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 

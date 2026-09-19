@@ -96,6 +96,9 @@ export const ModeAgeReference = Object.freeze({
   CLIQUET_PUIS_ESPERANCE_VIE: "cliquet_puis_esperance_vie",
   //: Âge du taux plein de l'année de liquidation, sans cliquet — contrefactuel.
   LEGAL_SANS_CLIQUET: "legal_sans_cliquet",
+  //: Cliquet légal jusqu'à la bascule, puis un âge fixe — 64 ans, l'âge légal
+  //: d'ouverture des droits. C'est le défaut.
+  FIXE_APRES_BASCULE: "fixe_apres_bascule",
 });
 
 /**
@@ -196,7 +199,9 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   plafond_assiette_en_pass: 8.0,
 
   // --- Âge de référence -----------------------------------------------------
-  mode_age_reference: ModeAgeReference.CLIQUET_LEGAL,
+  mode_age_reference: ModeAgeReference.FIXE_APRES_BASCULE,
+  //: Âge de référence servi à partir de la bascule en mode FIXE_APRES_BASCULE.
+  age_reference_fixe: 64,
   ratio_cible_retraite_carriere: 0.5,
 
   // --- Conversion en rente --------------------------------------------------

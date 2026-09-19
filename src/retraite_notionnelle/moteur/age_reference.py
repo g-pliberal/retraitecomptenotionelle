@@ -1,7 +1,15 @@
-"""Âge de référence à cliquet et écart d'anticipation.
+"""Âge de référence et écart d'anticipation.
 
-Règle demandée : *chaque fois que l'âge de départ a été abaissé, la pension doit
-être calculée comme si l'assuré était parti trop tôt*. Concrètement :
+Le DÉFAUT fixe l'âge de référence à 64 ans — l'âge légal d'ouverture des droits
+— à partir de l'année de bascule, et garde le cliquet ci-dessous avant elle. Le
+système proposé ne reconduit pas le taux plein à 67 ans, qui est une condition
+de DURÉE D'ASSURANCE, notion qu'un compte notionnel n'a pas ; et 64 ans
+n'existait dans aucun droit avant 2030, si bien qu'une liquidation de 1990 se
+mesure à son époque et non à la nôtre.
+
+Le cliquet reste offert en variante, et c'est lui que décrit la suite. Règle
+demandée : *chaque fois que l'âge de départ a été abaissé, la pension doit être
+calculée comme si l'assuré était parti trop tôt*. Concrètement :
 
 * l'âge de référence ne redescend jamais — c'est un **cliquet** sur l'âge du
   taux plein du régime général ;
@@ -98,6 +106,16 @@ class AgeReference:
 
         if mode is ModeAgeReference.LEGAL_SANS_CLIQUET:
             return self._legal(annee)
+
+        # La borne n'est pas la même des deux côtés, et c'est voulu.
+        # L'indexation sur l'espérance de vie PROLONGE le cliquet : elle le
+        # reprend à l'année suivante. L'âge fixe le REMPLACE, et il doit valoir
+        # dès la bascule elle-même, parce que c'est à cette année-là que les
+        # droits acquis sont convertis — la borne stricte l'aurait laissé sans
+        # effet sur le seul calcul où l'âge de référence pèse sur une pension.
+        if (mode is ModeAgeReference.FIXE_APRES_BASCULE
+                and annee >= self.parametres.annee_bascule):
+            return self.parametres.age_reference_fixe
 
         base = self._applique_cliquet(annee)
 

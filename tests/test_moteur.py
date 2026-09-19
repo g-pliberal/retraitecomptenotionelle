@@ -436,12 +436,36 @@ def test_coefficient_ne_revalorise_pas_l_annee_du_versement(macro):
 
 
 def test_cliquet_ne_redescend_jamais(mortalite):
-    reference = AgeReference(RACINE_DONNEES, Parametres(), mortalite)
+    """Le mode est nommé : le défaut, lui, abaisse la référence à la bascule."""
+    reference = AgeReference(
+        RACINE_DONNEES,
+        Parametres(mode_age_reference=ModeAgeReference.CLIQUET_LEGAL),
+        mortalite,
+    )
     precedent = 0.0
     for annee in range(1945, 2031):
         courant = reference.age(annee)
         assert courant >= precedent, f"l'âge de référence recule en {annee}"
         precedent = courant
+
+
+def test_le_defaut_tient_le_cliquet_puis_fixe_soixante_quatre(mortalite):
+    """Le défaut coupe en deux à la bascule, qu'il inclut.
+
+    Avant elle, le cliquet, parce que 64 ans n'existait dans aucun droit et
+    qu'une liquidation de 1990 se mesure à son époque. À partir d'elle, l'âge
+    légal d'ouverture des droits. La bascule elle-même est du second côté : les
+    droits acquis y sont convertis, et c'est le seul calcul où l'âge de
+    référence pèse sur une pension.
+    """
+    parametres = Parametres()
+    assert parametres.mode_age_reference is ModeAgeReference.FIXE_APRES_BASCULE
+    reference = AgeReference(RACINE_DONNEES, parametres, mortalite)
+
+    assert reference.age(1990) == 65.0
+    assert reference.age(parametres.annee_bascule - 1) == 67.0
+    assert reference.age(parametres.annee_bascule) == 64.0
+    assert reference.age(2070) == 64.0
 
 
 def test_abaissement_de_1982_ne_baisse_pas_la_reference(mortalite):
