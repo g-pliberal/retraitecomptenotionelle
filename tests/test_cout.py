@@ -231,19 +231,26 @@ def test_la_garantie_vieillesse_est_comptee_dans_le_6_et_redite_a_part(cout, ave
     """La part que l'impôt finance est une composante du scénario 6, jamais plus
     grosse que lui, et jamais négative.
 
-    Sur la fenêtre observée elle reste une fraction du scénario, parce que seuls
-    les cas types qui liquident à 65 ans ou après la touchent : cinq des treize
-    aux générations récentes, aucun à celles d'avant 1955. La borne était à 5 %
-    tant que les cas types partaient tous à l'âge écrit dans la grille — ils
-    partaient alors trop tôt pour voir la garantie, et un seul la voyait. Elle
-    est à 15 % depuis qu'ils partent au taux plein de leur génération : le
-    chiffre lu est 8,6 %, et il vient d'un défaut corrigé, non d'un défaut
-    introduit.
+    Elle n'est plus bornée par le scénario, et c'est la nature d'une allocation
+    différentielle : sur une pension minuscule, ce qui manque pour atteindre un
+    plancher dépasse ce qui est servi. Les premières années de la fenêtre, où
+    les comptes notionnels rétroactifs ne rendent presque rien, le montrent
+    sans détour — le rapport y passe au-dessus de un. Ce qui reste vrai partout
+    est qu'elle n'est jamais négative, et qu'elle DÉCROÎT sur la projection, à
+    mesure que les pensions montent face à un plancher indexé sur les prix.
+
+    Elle n'est plus nulle non plus. Depuis que la garantie est servie à 65 ans
+    à qui a liquidé plus tôt, la trajectoire en porte une : c'était zéro de
+    2030 à 2070, ce qui était le chiffre le plus faux de la page.
     """
     for ligne in cout.annees + avenir.annees:
-        assert 0.0 <= ligne.rapports[COMPOSANTE_GARANTIE] <= ligne.rapports["notionnel_liberal"]
+        assert ligne.rapports[COMPOSANTE_GARANTIE] >= 0.0, ligne.annee
     assert cout.cumul(COMPOSANTE_GARANTIE) > 0.0
-    assert cout.cumul(COMPOSANTE_GARANTIE) < 0.15 * cout.cumul("notionnel_liberal")
+    projetees = avenir.projetees()
+    assert all(ligne.rapports[COMPOSANTE_GARANTIE] > 0.0 for ligne in projetees)
+    # Décroissante sur la projection, de son entrée à l'horizon.
+    assert (projetees[-1].rapports[COMPOSANTE_GARANTIE]
+            < 0.5 * projetees[0].rapports[COMPOSANTE_GARANTIE])
 
 
 # -- la pyramide des âges ----------------------------------------------------
@@ -681,7 +688,7 @@ def test_deplacer_les_pensions_vers_le_bas_coute_plus_cher(distribution):
         cout_garantie(distribution, 16e6, 800.0, 0.0)
 
 
-def test_la_garantie_vue_par_les_cas_types_est_bien_plus_basse(cout, distribution):
+def test_la_garantie_vue_par_les_cas_types_est_bien_plus_basse(cout, avenir, distribution):
     """Le constat qui a motivé le chiffrage sur la distribution, et ce qu'il est
     devenu.
 
@@ -695,11 +702,17 @@ def test_la_garantie_vue_par_les_cas_types_est_bien_plus_basse(cout, distributio
     coûte la queue basse de la distribution, et treize carrières choisies pour
     couvrir les configurations du système n'en ont pas.
     """
-    annees = cout.derniere_annee - cout.premiere_annee + 1
-    par_an_vu_des_cas_types = cout.cumul(COMPOSANTE_GARANTIE) / annees
+    projetees = avenir.projetees()
+    par_an_vu_des_cas_types = (
+        cout.avenir.cumul(COMPOSANTE_GARANTIE) / len(projetees))
     par_an_sur_la_distribution = cout_garantie(
         distribution, 16e6, 800.0).cout_annuel_meur
-    assert par_an_sur_la_distribution > 1.8 * par_an_vu_des_cas_types
+    # L'écart n'est plus un abîme : les cas types voient désormais une garantie
+    # du bon ORDRE DE GRANDEUR, là où ils en voyaient zéro. Il reste, et il
+    # tient à ce qu'une grille de treize carrières n'a pas de queue basse.
+    assert par_an_vu_des_cas_types > 0.0
+    rapport = par_an_vu_des_cas_types / par_an_sur_la_distribution
+    assert 0.3 < rapport < 1.5, rapport
 
 
 # -- le solde : ce qui rentre, face à ce qui sort ----------------------------

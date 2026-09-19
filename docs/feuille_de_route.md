@@ -3165,6 +3165,37 @@ taux de prélèvement et un pour-cent de masse de pension — 2,76 points contre
 
 **B. Faire entrer la garantie vieillesse dans la trajectoire.**
 
+*Le point 2 est fait le 19 septembre 2026, et il a emporté deux autres
+décisions.* La garantie est désormais servie à 65 ans à qui a liquidé plus tôt :
+avant 65 ans on ne touche pas le minimum vieillesse, à partir de 65 ans on le
+touche. Le complément est calculé dans tous les cas et n'entre dans la pension
+affichée que s'il est dû dès le départ ; `GarantieVieillesse` porte
+`annee_ouverture`, `differee` et `servie_a_la_liquidation`, et la page de
+simulation dit l'année d'ouverture et le montant à venir. L'égalité entre le
+complément calculé au départ et celui qui sera servi trois ans plus tard est
+exacte, non approchée : plancher et pension sont tous deux indexés sur les
+prix.
+
+Le programme a tranché au passage la question que le dépôt laissait ouverte
+depuis le pilier capitalisé : **la garantie regarde l'ENSEMBLE de la pension
+obligatoire**, les 18 % de répartition et les 5 % capitalisés. Une allocation
+différentielle compte les ressources, non leur origine.
+
+Et une troisième décision en a découlé : **la garantie quitte la masse
+contributive du scénario 6**. Elle est financée par l'impôt ; la laisser dans
+les deux lignes l'aurait fait payer deux fois, une fois par les cotisations et
+une fois par le contribuable. C'est la symétrie de ce que la recette fait déjà.
+
+Ce que ça déplace : la trajectoire porte **0,91 % du PIB de garantie en 2026**,
+décroissant à 0,23 % en 2070, soit 696 milliards d'euros constants cumulés sur
+la projection, là où elle portait zéro. Le solde du scénario 6 ne bouge pas —
++0,12 % de moyenne — puisque la garantie entre d'un côté et sort de l'autre le
+même jour.
+
+*Ce qui reste du volet B* : projeter la distribution des pensions au lieu de la
+figer à l'EIR 2020, et chiffrer le coût NET des quatre dispositifs que la
+garantie remplace, non-recours de l'ASPA compris.
+
 1. *La chiffrer sur une distribution, jamais sur les cas types.* Une allocation
    différentielle est tout entière la queue basse de la distribution, et treize
    carrières ne décrivent pas une queue basse : le résultat est zéro, ce qui est
@@ -4069,3 +4100,15 @@ scénario ».
   qu'on sait calculer des deux façons se change en un mot** — c'est ce qui a
   permis de la discuter sur des chiffres pendant trois jours avant de la
   publier.
+
+- **Septembre 2026, action 35, volet B, premier point.** La garantie vieillesse
+  ne coûte plus zéro : elle est servie à 65 ans à qui a liquidé plus tôt, et la
+  trajectoire porte 0,91 % du PIB en 2026, décroissant à 0,23 % en 2070. Le
+  programme a tranché deux questions au passage. La garantie regarde
+  l'ENSEMBLE de la pension obligatoire, 18 % de répartition et 5 % capitalisés
+  — ce que le dépôt laissait ouvert depuis que le pilier existe. Et elle quitte
+  la masse contributive du scénario 6, puisque l'impôt la finance : la laisser
+  dans les deux lignes l'aurait fait payer deux fois. Ce qu'il faut en retenir :
+  **une règle d'âge peut annuler une dépense au lieu de la décaler**, et
+  personne ne le voit tant que le résultat est zéro — un zéro n'a l'air ni
+  faux ni juste.

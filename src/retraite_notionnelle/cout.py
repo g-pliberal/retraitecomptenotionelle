@@ -250,6 +250,11 @@ class Pensionne:
     generation: int
     #: Année de liquidation : avant elle, aucune pension n'est servie.
     annee_liquidation: int
+    #: Année où la garantie vieillesse s'ouvre : celle de la liquidation si
+    #: elle a lieu à 65 ans ou plus, celle des 65 ans sinon. Avant elle, on ne
+    #: touche pas le minimum vieillesse, et la masse de la composante ne porte
+    #: donc rien — c'est la seule clé dont la date d'entrée diffère.
+    annee_ouverture_garantie: int
     #: Pension annuelle en euros constants, par scénario.
     pensions: dict[str, float]
     #: Ce que cette carrière VERSE, année par année, sous chacun des deux
@@ -670,6 +675,9 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             code=code,
             generation=generation,
             annee_liquidation=comparaison.carriere.annee_liquidation,
+            annee_ouverture_garantie=(
+                comparaison.notionnel_liberal.garantie_vieillesse.annee_ouverture
+            ),
             pensions={
                 **{
                     scenario: comparaison.en_euros_constants(
@@ -677,6 +685,14 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                     )
                     for scenario, _ in SCENARIOS
                 },
+                # Le scénario 6 est ramené à sa part CONTRIBUTIVE : la garantie
+                # est financée par l'impôt, elle ne pèse pas sur le compte des
+                # cotisants, et la porter dans les deux lignes reviendrait à la
+                # faire payer deux fois. C'est la symétrie de ce que la recette
+                # fait déjà — la CSG de solidarité sort des ressources.
+                "notionnel_liberal": comparaison.en_euros_constants(
+                    comparaison.notionnel_liberal.garantie_vieillesse.pension_contributive
+                ),
                 COMPOSANTE_GARANTIE: comparaison.en_euros_constants(
                     comparaison.notionnel_liberal.garantie_vieillesse.complement
                 ),
@@ -736,17 +752,24 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         if part <= 0.0:
             continue
         poids = 0.0
+        poids_garantie = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             if annee < pensionne.annee_liquidation + decalage:
                 continue
-            poids += population.effectif(
+            effectif = population.effectif(
                 annee - pensionne.generation - decalage, annee
             )
+            poids += effectif
+            # La garantie n'entre qu'à 65 ans, même pour qui est parti plus
+            # tôt : avant, on ne touche pas le minimum vieillesse.
+            if annee >= pensionne.annee_ouverture_garantie + decalage:
+                poids_garantie += effectif
         if poids <= 0.0:
             continue
         vivants += 1
         for cle in CLES_MASSES:
-            masses[cle] += part * poids * pensionne.pensions[cle]
+            poids_cle = poids_garantie if cle == COMPOSANTE_GARANTIE else poids
+            masses[cle] += part * poids_cle * pensionne.pensions[cle]
     return masses, vivants
 
 

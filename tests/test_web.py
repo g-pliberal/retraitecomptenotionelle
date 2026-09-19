@@ -1213,7 +1213,8 @@ def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
     texte = page("/simuler", naissance=1958, liquidation=65, salaire=1500,
                  unite_revenu="euros_mois")
     assert "Le système 4 : un taux pour tous" in texte
-    assert "Garantie vieillesse servie" in texte
+    assert "Garantie vieillesse" in texte
+    assert "rente du pilier obligatoire" in texte
     assert "l'impôt en finance" in texte
     assert "personne seule, 300 €" in texte
     texte = page("/simuler", naissance=1958, liquidation=62, salaire=1500,

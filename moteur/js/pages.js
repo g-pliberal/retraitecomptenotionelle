@@ -3339,33 +3339,45 @@ function garantieVieillesse(comparaison, saisie) {
       + `${taux} pour tous ensuite — divisé par `
       + `${g.nombre(liberal.conversion.diviseur, DECIMALES_DIVISEUR)}`,
       `${g.eurosCentimes(garantie.pension_contributive)} par an`],
-    ["e) Garantie vieillesse servie",
-      garantie.age_atteint
-        ? "max(0, c − d) à partir de 65 ans, financée par l'impôt"
-        : "rien : la liquidation a lieu avant 65 ans, l'âge de l'allocation",
+    ["e) + rente du pilier obligatoire",
+      "les 5 % capitalisés : la garantie regarde l'ensemble de la pension "
+      + "obligatoire, pas la seule répartition",
+      `${g.eurosCentimes(garantie.rente_capitalisee)} par an`],
+    ["f) = ressources examinées", "d + e",
+      `${g.eurosCentimes(garantie.ressources)} par an`],
+    ["g) Garantie vieillesse",
+      "max(0, c − f), financée par l'impôt, servie à partir de 65 ans"
+      + (garantie.age_atteint
+        ? "" : ` — soit ici à compter de ${garantie.annee_ouverture}`),
       `${g.eurosCentimes(garantie.complement)} par an`],
-    ["f) = pension du système 4", "d + e",
+    ["h) = pension du système 4",
+      garantie.age_atteint
+        ? "d + g dès le départ"
+        : `d seul jusqu'à 65 ans, puis d + g à partir de ${garantie.annee_ouverture}`,
       `${g.eurosCentimes(liberal.pension_annuelle)} par an`],
   ];
 
   let lecture;
-  if (garantie.servie) {
-    lecture = "<p>Ici, la pension contributive de "
-      + `${g.eurosCentimes(garantie.pension_contributive / 12)} par mois `
+  if (garantie.servie_a_la_liquidation) {
+    lecture = "<p>Ici, la pension obligatoire de "
+      + `${g.eurosCentimes(garantie.ressources / 12)} par mois `
       + `reste sous le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
       + `l'impôt en finance <strong>${g.eurosCentimes(garantie.complement / 12)} `
       + `par mois</strong>, soit ${g.pourcentage(garantie.complement / liberal.pension_annuelle)} `
       + "de ce que le système 4 verse.</p>";
-  } else if (!garantie.age_atteint) {
-    lecture = "<p>Ici, rien n'est servi : la liquidation a lieu à "
+  } else if (garantie.differee) {
+    lecture = "<p>Ici, la liquidation a lieu à "
       + `${age(comparaison.carriere.age_liquidation || 0.0)}, avant les 65 ans `
-      + "de l'allocation. Le modèle liquide et s'arrête — il ne suit pas "
-      + "l'assuré jusqu'à 65 ans, où la garantie s'ouvrirait si sa pension "
-      + "restait sous le plancher. C'est la même réserve que pour l'ASPA du "
-      + "système 1.</p>";
+      + `de l'allocation : rien n'est servi jusqu'en ${garantie.annee_ouverture}. `
+      + "À partir de là, la pension obligatoire de "
+      + `${g.eurosCentimes(garantie.ressources / 12)} par mois restant sous le `
+      + `plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)}, l'impôt `
+      + `en finance <strong>${g.eurosCentimes(garantie.complement / 12)} par `
+      + "mois</strong>. Le montant affiché plus haut est celui du départ, sans "
+      + "la garantie.</p>";
   } else {
-    lecture = "<p>Ici, la pension contributive de "
-      + `${g.eurosCentimes(garantie.pension_contributive / 12)} par mois `
+    lecture = "<p>Ici, la pension obligatoire de "
+      + `${g.eurosCentimes(garantie.ressources / 12)} par mois `
       + `dépasse le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
       + "la garantie ne sert rien, et le système 4 est un compte notionnel "
       + "à taux unique, sans plus.</p>";

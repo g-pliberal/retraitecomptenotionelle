@@ -898,24 +898,63 @@ def test_la_garantie_reproduit_le_tableau_de_la_proposition(simulateur):
     assert aide(simulateur, 300) == pytest.approx(750)
 
 
-def test_la_garantie_n_est_ouverte_qu_a_65_ans(simulateur):
-    """Comme l'ASPA qu'elle remplace : liquider à 62 ans n'ouvre rien, à 65 ans
-    la pension contributive est portée au plancher, et la pension du scénario 6
-    est la somme des deux — ce que l'impôt paie s'ajoute, il ne remplace pas."""
+def test_la_garantie_n_est_servie_qu_a_partir_de_65_ans(simulateur):
+    """Avant 65 ans on ne touche rien ; à 65 ans on touche, même parti plus tôt.
+
+    C'est la règle de l'ASPA qu'elle remplace, et le modèle la sert désormais
+    en entier : qui liquide à 62 ans perçoit sa seule pension contributive
+    pendant trois ans, puis la garantie s'ouvre. Le complément est donc
+    CALCULÉ dans les deux cas — il est dû —, et il n'entre dans la pension
+    affichée que lorsqu'il est dû dès le départ.
+    """
     avant = simulateur.simuler(_carriere_modeste(simulateur, 62)).notionnel_liberal
-    assert not avant.garantie_vieillesse.age_atteint
-    assert avant.garantie_vieillesse.complement == 0.0
-    assert avant.pension_annuelle == pytest.approx(
-        avant.garantie_vieillesse.pension_contributive
+    garantie_avant = avant.garantie_vieillesse
+    assert not garantie_avant.age_atteint
+    assert not garantie_avant.servie_a_la_liquidation
+    assert garantie_avant.differee and garantie_avant.servie
+    assert garantie_avant.complement > 0.0
+    # La pension affichée reste la contributive : à 62 ans, rien de plus.
+    assert avant.pension_annuelle == pytest.approx(garantie_avant.pension_contributive)
+    # Et l'ouverture est datée : l'année des 65 ans, pas celle du départ.
+    assert garantie_avant.annee_ouverture == (
+        simulateur.simuler(_carriere_modeste(simulateur, 62)).carriere.annee_naissance + 65
     )
 
     apres = simulateur.simuler(_carriere_modeste(simulateur, 65)).notionnel_liberal
     garantie = apres.garantie_vieillesse
-    assert garantie.age_atteint and garantie.servie
+    assert garantie.age_atteint and garantie.servie_a_la_liquidation
+    assert not garantie.differee
     assert apres.pension_annuelle == pytest.approx(garantie.plancher_annuel)
     assert apres.pension_annuelle == pytest.approx(
         garantie.pension_contributive + garantie.complement
     )
+
+
+def test_la_garantie_regarde_les_deux_etages_obligatoires(simulateur):
+    """18 % de répartition et 5 % capitalisés : le plancher voit les deux.
+
+    Une allocation différentielle compte les ressources, non leur origine. La
+    rente du pilier obligatoire réduit donc le complément, euro pour euro,
+    dès qu'elle existe — c'est-à-dire pour les carrières qui cotisent après la
+    bascule.
+    """
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1975, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=30, age_liquidation=67, niveau_salaire=0.45,
+    ))
+    liberal = comparaison.notionnel_liberal
+    garantie = liberal.garantie_vieillesse
+    assert liberal.capitalisation is not None
+    assert garantie.rente_capitalisee == pytest.approx(
+        liberal.capitalisation.rente_annuelle)
+    assert garantie.rente_capitalisee > 0.0
+    assert garantie.ressources == pytest.approx(
+        garantie.pension_contributive + garantie.rente_capitalisee)
+    if garantie.servie:
+        assert garantie.complement == pytest.approx(
+            garantie.plancher_annuel - garantie.ressources)
+        # Sans le pilier, le complément aurait été plus gros d'autant.
+        assert garantie.complement < garantie.plancher_annuel - garantie.pension_contributive
 
 
 def test_le_plancher_suit_les_prix_depuis_2026(simulateur):

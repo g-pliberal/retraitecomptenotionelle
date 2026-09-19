@@ -4644,11 +4644,24 @@ hérite des limites du scénario 4, part patronale inconnue du public comprise :
 ce qui a été cotisé avant la bascule y est porté aux mêmes taux, et estimé là
 où le 4 l'estime. Il en ajoute trois.
 
-**La garantie n'est ouverte qu'à 65 ans, et le modèle ne suit pas l'assuré
-jusque-là.** C'est la réserve de l'ASPA du scénario 1, reprise telle quelle :
-qui liquide à 62 ans avec une petite pension ne reçoit rien dans le scénario 6,
-alors que la garantie s'ouvrirait trois ans plus tard. La page de simulation le
-dit à chaque fois que c'est le cas.
+**La garantie est ouverte à 65 ans, et le modèle sert désormais ce qu'elle
+doit à qui est parti plus tôt.** *Corrigé le 19 septembre 2026.* Avant 65 ans
+on ne touche pas le minimum vieillesse ; à partir de 65 ans on le touche, même
+si l'on a liquidé à 62. Le complément est donc CALCULÉ dans tous les cas, et il
+n'entre dans la pension affichée que lorsqu'il est dû dès le départ ; la page
+de simulation dit l'année où il s'ouvre, et le montant qu'il vaudra. Cette
+égalité entre le complément calculé au départ et celui qui sera servi trois ans
+plus tard n'est pas une approximation : le plancher et la pension sont tous
+deux indexés sur les prix, et leur différence est invariante dans les euros de
+n'importe quelle année entre les deux.
+
+**La garantie regarde l'ENSEMBLE de la pension obligatoire.** *Tranché le
+19 septembre 2026 par le programme.* Les 18 % de répartition et les 5 %
+capitalisés sont comparés ensemble au plancher : une allocation différentielle
+compte les ressources, non leur origine. La rente du pilier réduit donc le
+complément euro pour euro, et c'est ce qui coûte le moins à l'impôt. Le modèle
+laissait jusque-là cette rente hors du calcul, faute que la question — de
+droit, pas de modèle — ait été tranchée.
 
 **Les montants sont des euros de 2026, déflatés par les prix.** 800 € et 250 €
 sont ceux de la proposition ; une liquidation de 1995 les reçoit ramenés par
@@ -4656,29 +4669,34 @@ l'indice des prix, comme l'ASPA entre deux ancres de son barème. Ce n'est
 qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
 indexée sur les prix depuis 1941.
 
-**La masse de garantie que produisent les cas types est un chiffre faux, et la
-page le remplace.** Cinq des treize cas types liquident à 65 ans ou après aux
-générations récentes, et aucun à celles d'avant 1955 ; la masse de la garantie,
-et donc ce que l'impôt paierait, est portée par ces cinq-là seulement. La ligne
-« dont garantie vieillesse » du tableau dit 621 milliards sur soixante-six ans,
-soit 9,4 par an, là où le barème appliqué à la distribution réelle en coûte
-18,4. L'écart n'était pas de deux mais de quarante avant que les cas types ne
-liquident à l'âge de leur génération : c'est le même défaut qui les faisait
-partir trop tôt pour voir la garantie. Ce n'était pas une imprécision : une allocation DIFFÉRENTIELLE ne
-se chiffre pas sur treize carrières, parce que son coût est tout entier celui de
-la queue basse de la distribution, et que treize carrières ne décrivent pas une
-distribution.
+**La masse que produisent les cas types était nulle sur toute la projection,
+et elle ne l'est plus.** Le 18 septembre 2026, le rapport de masse de la
+garantie valait 8,8 · 10⁻⁶ en 2024 et zéro de 2030 à 2070 : la trajectoire du
+scénario 6 ne portait AUCUNE des dépenses que l'impôt financerait. Le motif
+n'était pas l'âge de l'allocation mais le NIVEAU des pensions de la grille —
+les deux seuls cas types qui tombent sous le plancher, l'exploitant agricole à
+674 € par mois et le carrière complète au SMIC à 797 €, liquident à 64 et
+62 ans, et les cinq qui partent à 65 ans ou plus sont tous au-dessus. Servir la
+garantie à 65 ans à qui est parti plus tôt a refermé ce zéro : la trajectoire
+porte désormais **0,91 % du PIB en 2026**, décroissant à 0,23 % en 2070 à
+mesure que les pensions montent face à un plancher indexé sur les prix, soit
+696 milliards d'euros constants cumulés sur la projection.
 
-**Et sur l'AVENIR, cette masse est exactement nulle.** Mesuré le 18 septembre
-2026 : le rapport de masse de la garantie vaut 8,8 · 10⁻⁶ en 2024 et zéro de
-2030 à 2070. Le motif n'est pas l'âge, contrairement à ce que le paragraphe
-précédent laisse croire : c'est le NIVEAU. Les deux seuls cas types qui tombent
-sous le plancher de 800 € au scénario 6 — l'exploitant agricole à 674 € par
-mois, le carrière complète au SMIC à 797 € — liquident à 64 et 62 ans, et la
-garantie ne s'ouvre qu'à 65 ; les cinq qui liquident à 65 ans ou plus sont tous
-au-dessus du plancher. La trajectoire projetée du scénario 6 ne porte donc
-AUCUNE garantie vieillesse, c'est-à-dire aucune des dépenses que l'impôt
-financerait. C'est l'action 35 de `docs/feuille_de_route.md`.
+**Elle reste une masse vue par treize carrières, et c'est la limite qui ne se
+refermera pas ainsi.** Une allocation DIFFÉRENTIELLE ne se chiffre pas sur
+treize carrières, parce que son coût est tout entier celui de la queue basse de
+la distribution, et que treize carrières choisies pour couvrir les
+configurations du système n'en ont pas. Le chiffre est maintenant du bon ordre
+de grandeur — de l'ordre des trois quarts de ce que le barème appliqué à la
+distribution réelle donne aux pensions d'aujourd'hui — au lieu d'être nul, ce
+qui est un progrès et non une solution.
+
+**Ce que la garantie n'est plus : une dépense du compte des cotisants.** Elle
+est financée par l'impôt, et elle a donc quitté la masse contributive du
+scénario 6, où elle était comptée jusqu'ici. C'est la symétrie de ce que la
+recette fait déjà — la CSG de solidarité sort des ressources —, et sans elle la
+garantie aurait été payée deux fois : une fois par les cotisations, une fois
+par le contribuable.
 
 La page porte donc, à côté, le barème appliqué à la distribution des pensions
 brutes de droit direct que publie l'échantillon interrégimes de retraités de la
@@ -5925,7 +5943,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 938 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 939 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
