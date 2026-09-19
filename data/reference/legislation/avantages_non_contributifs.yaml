@@ -1,0 +1,1090 @@
+# Tous les avantages non contributifs que sert le scénario 1
+# ===========================================================
+# source_id: legifrance_textes, cor_septieme_rapport, dss_ccss_transferts_retraite
+#
+# CE QUE CE FICHIER EST
+# ---------------------
+# Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce
+# qui a été cotisé. Tout ce qui sépare les deux est ici, sous un code, avec sa
+# base légale, les régimes qui le servent, l'état du modèle à son égard et le
+# moyen d'en chiffrer le coût.
+#
+# C'est la liste qui manquait. Le dépôt en portait trois, partielles et
+# discordantes, et aucune ne disait ce que chaque ligne coûte :
+#
+#   1. `Neutralisations` (src/retraite_notionnelle/config.py) — quinze champs
+#      booléens, DÉCLARATIFS, qu'aucun moteur ne lit. Elle mélange des droits
+#      (le minimum contributif) et des mécanismes (la décote et la surcote),
+#      et son docstring annonçait des lignes que le moteur ne sert pas.
+#   2. `avantages_non_contributifs` des fiches de régime
+#      (data/reference/regimes/*.yaml) — seize codes, DATÉS et par régime,
+#      que le moteur lit vraiment, mais dont six ne commandent aucun calcul.
+#   3. La cascade `AvantageApplique`
+#      (src/retraite_notionnelle/scenarios/actuel.py) — sept codes, et les
+#      seuls CHIFFRÉS en euros : c'est la seule des trois qui réponde à
+#      « combien ».
+#
+# Ce fichier est l'union des trois, complétée de ce qu'aucune des trois ne
+# porte — la réversion, les bonifications de service, les départs anticipés
+# pour handicap, inaptitude, incapacité et amiante, la majoration pour tierce
+# personne —, et il ajoute à chaque ligne ce qu'il faut pour la chiffrer. Un
+# test (tests/test_avantages.py) exige que tout code employé par l'une des
+# trois listes ait sa ligne ici.
+#
+# CE QU'IL N'EST PAS
+# ------------------
+# Il ne chiffre rien lui-même. Il dit, ligne par ligne, PAR QUOI le coût se
+# mesure : le modèle quand la cascade l'isole, une série publiée quand elle
+# existe, rien du tout quand personne ne publie. Les trois cas sont nommés, et
+# le troisième est une limite, pas un oubli.
+#
+# ÉTAT DU MODÈLE — quatre valeurs, et elles ne se valent pas
+# -----------------------------------------------------------
+#   chiffre  : le scénario 1 le sert ET la cascade en isole le montant en
+#              euros. La somme des lignes chiffrées vaut EXACTEMENT
+#              `pension_annuelle - total_contributif` : c'est vérifié.
+#   integre  : le scénario 1 le sert, mais son effet passe par un trimestre,
+#              un âge ou une assiette, et ne se sépare pas du contributif sans
+#              recalculer la pension une seconde fois, avantage retiré.
+#   declare  : une fiche de régime le déclare, le moteur ne le sert pas. La
+#              déclaration est alors une INTENTION, et ce fichier le dit.
+#   absent   : ni déclaré ni servi. C'est un écart au droit positif, et
+#              `docs/limites.md` en répond.
+#
+# COMMENT LE COÛT SE MESURE — trois valeurs
+# ------------------------------------------
+#   modele        : la cascade donne le montant par cas type et par
+#                   génération ; `cout.py` sait déjà en faire une masse
+#                   annuelle, ancrée sur la dépense observée.
+#   serie_publiee : un organisme publie la dépense, en série. `source_id`
+#                   renvoie au manifeste data/sources.yaml.
+#   aucune        : personne ne publie, et le modèle ne le sert pas. Le coût
+#                   est inconnu, et l'écrire est plus utile que de l'estimer.
+#
+# L'ORDRE DE GRANDEUR D'ENSEMBLE, mesuré par quelqu'un d'autre
+# -------------------------------------------------------------
+# Le COR, dans le rapport commandé par l'article 75 de la LFSS 2009 (27 janvier
+# 2010, source `cor_septieme_rapport`), chiffre les droits versés au titre de
+# la solidarité — droits familiaux, chômage, maladie, invalidité, minimum
+# contributif ou garanti — à « de l'ordre d'un cinquième des retraites tous
+# régimes ». C'est le seul contrôle externe du total, et il ne couvre ni la
+# réversion ni les bonifications de service.
+
+familles:
+  droits_familiaux:
+    libelle: Droits familiaux
+    quoi: >-
+      Ce que la naissance ou l'éducation d'un enfant ajoute à la pension, sans
+      qu'aucune cotisation supplémentaire ne l'ait payée : des trimestres, un
+      pourcentage, une assiette portée au compte, un salaire de référence
+      calculé sur moins d'années.
+  minima_de_pension:
+    libelle: Minima de pension
+    quoi: >-
+      Un plancher opposé au résultat du calcul contributif. Ce que le plancher
+      ajoute n'a jamais été cotisé — c'est la définition même d'un minimum.
+  periodes_non_cotisees:
+    libelle: Périodes non cotisées mais validées
+    quoi: >-
+      Chômage, maladie, maternité, invalidité, accident du travail, service
+      national : des trimestres, et parfois des points de complémentaire, que
+      la période ouvre sans qu'un salaire les ait portés.
+  droits_derives:
+    libelle: Droits dérivés (survivants)
+    quoi: >-
+      Ce que le décès de l'assuré ouvre au conjoint survivant et aux orphelins.
+      Non contributif au sens strict : la cotisation de l'assuré a déjà été
+      rendue par sa propre pension.
+  age_et_bonifications:
+    libelle: Âge de départ et bonifications de service
+    quoi: >-
+      Partir plus tôt sans que la pension en soit diminuée à proportion, ou
+      compter plus d'années qu'on n'en a servies. C'est l'avantage le plus
+      coûteux et le moins visible : il ne s'affiche sur aucun bulletin de
+      pension comme une ligne.
+  autres_avantages:
+    libelle: Majorations diverses
+    quoi: >-
+      Ce qui ne relève d'aucune des cinq familles précédentes, y compris les
+      dispositifs éteints, qu'il faut garder pour lire les séries anciennes.
+  ecarts_structurels:
+    libelle: Écarts structurels au principe contributif
+    quoi: >-
+      Ce ne sont pas des DISPOSITIFS, et aucune caisse ne les liquide sous un
+      nom. Ce sont les trois façons dont une pension excède la cotisation sans
+      qu'aucun droit gratuit ne soit en cause : un barème d'âge qui n'est pas
+      actuariel, un rendement supérieur à ce que l'assiette peut porter, un
+      régime dont l'équilibre est payé par l'impôt. Ils sont ici parce que la
+      question posée — pourquoi les pensions actuelles dépassent-elles ce qui a
+      été cotisé — ne se répond pas sans eux, et ce sont eux que le scénario 2
+      mesure. Ils ne s'ADDITIONNENT PAS aux six familles ci-dessus : ils
+      portent sur la même pension, et les compter ensemble serait un double
+      compte.
+
+avantages:
+
+  # --- Droits familiaux ----------------------------------------------------
+
+  - code: majoration_duree_assurance
+    libelle: Majoration de durée d'assurance pour enfants (MDA)
+    famille: droits_familiaux
+    alias: [mda]
+    quoi: >-
+      Jusqu'à huit trimestres par enfant au régime général et dans les régimes
+      alignés — quatre au titre de la maternité, quatre au titre de l'éducation.
+      Ils ne sont pas cotisés : ils effacent de la décote et relèvent le
+      prorata, sans rien ajouter au salaire de référence.
+    base_legale: [L. 351-4 CSS, L. 351-5 CSS]
+    veille: [majoration_duree_assurance_enfants]
+    creation: 1972
+    fin: null
+    regimes: régime général, régimes alignés, non-salariés
+    etat_modele: chiffre
+    ligne_cascade: majoration_duree_assurance
+    cout:
+      mesurable_par: modele
+      note: >-
+        Chiffrée par différence : la pension est recalculée sans les trimestres
+        d'enfants, et l'écart est la ligne. C'est le bon ordre — la MDA agit
+        AVANT la majoration de 10 % et avant le minimum.
+
+  - code: bonification_enfants_fonction_publique
+    libelle: Bonification pour enfants de la fonction publique
+    famille: droits_familiaux
+    alias: [bonifications]
+    quoi: >-
+      Un an par enfant né avant le 1er janvier 2004, sous condition
+      d'interruption d'activité ; deux trimestres pour les enfants nés depuis.
+      C'est le pendant de la MDA pour les fonctionnaires, qui ne l'ont pas.
+    base_legale: [L. 12 b et b bis CPCMR, L. 12 bis CPCMR]
+    veille: [majoration_duree_assurance_enfants]
+    creation: 1964
+    fin: null
+    regimes: fonction publique, régimes spéciaux
+    etat_modele: chiffre
+    ligne_cascade: majoration_duree_assurance
+    cout:
+      mesurable_par: modele
+      note: >-
+        Même ligne de cascade que la MDA — le libellé rendu change avec le
+        dispositif. Les séparer suppose de ventiler la masse par régime, ce que
+        la pondération par effectifs de caisse permet déjà.
+
+  - code: majoration_enfants
+    libelle: Majoration de pension pour trois enfants et plus
+    famille: droits_familiaux
+    quoi: >-
+      Dix pour cent de la pension, à partir du troisième enfant, au père comme
+      à la mère, dans presque tous les régimes de base ; l'Agirc-Arrco sert la
+      sienne, plafonnée. Non imposable jusqu'en 2013. Elle est proportionnelle
+      à la pension, donc croissante avec le revenu : c'est le seul avantage
+      familial dont le montant augmente avec le salaire.
+    base_legale: [L. 351-12 CSS, L. 18 CPCMR, accord national interprofessionnel Agirc-Arrco]
+    veille: [majoration_dix_pour_cent]
+    creation: 1945
+    fin: null
+    regimes: tous les régimes de base, Agirc-Arrco, Ircantec
+    etat_modele: chiffre
+    ligne_cascade: majoration_enfants
+    cout:
+      mesurable_par: modele
+      source_id: dss_ccss_transferts_retraite
+      note: >-
+        Doublement mesurable, et c'est un contrôle : le modèle la chiffre par
+        cas type, et la CNAF publie ce qu'elle rembourse à la CNAV sous le
+        poste `cnaf_majorations` de transferts_retraite.csv (4,4 Md€ en 2011).
+        Les deux ne couvrent pas le même champ — le transfert ne porte que le
+        régime général — mais ils doivent varier ensemble.
+
+  - code: avpf
+    libelle: Assurance vieillesse des parents au foyer
+    famille: droits_familiaux
+    alias: [assurance_vieillesse_parents_au_foyer]
+    quoi: >-
+      La CNAF cotise à l'assurance vieillesse, sur une assiette égale au SMIC,
+      pour le parent qui interrompt ou réduit son activité. Ce n'est pas un
+      trimestre gratuit : c'est une cotisation, versée par un tiers, qui entre
+      au salaire de référence. D'où son effet, plus fort que celui de la MDA
+      sur les carrières courtes.
+    base_legale: [L. 381-1 CSS]
+    veille: [avpf]
+    creation: 1972
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: chiffre
+    ligne_cascade: avpf
+    cout:
+      mesurable_par: modele
+      source_id: dss_ccss_transferts_retraite
+      note: >-
+        Même double mesure que la majoration pour enfants : poste `cnaf_avpf`
+        (4,4 Md€ en 2011). La série publiée donne la COTISATION versée l'année
+        courante, le modèle donne la PENSION qu'elle produit des décennies plus
+        tard — ne jamais les additionner, ni les comparer à la même date.
+
+  - code: surcote_parentale
+    libelle: Surcote parentale
+    famille: droits_familiaux
+    quoi: >-
+      1,25 % par trimestre, quatre au plus, à qui détient au moins un trimestre
+      de majoration pour enfants et avait sa durée requise à 63 ans. C'est la
+      contrepartie directe du recul de l'âge légal de 2023 : elle paie l'année
+      que la surcote ordinaire ne récompensait pas.
+    base_legale: [L. 351-1-2-1 CSS]
+    veille: [surcote_parentale]
+    creation: 2023
+    fin: null
+    regimes: régime général, régimes alignés, fonction publique
+    etat_modele: chiffre
+    ligne_cascade: surcote_parentale
+    cout:
+      mesurable_par: modele
+      note: >-
+        Montée en charge par génération : rien avant 1964, un trimestre pour
+        1965, quatre à partir de 1968. La série de coût ne commence donc qu'en
+        2027 et croît jusqu'en 2032.
+
+  - code: salaire_de_reference_des_parents
+    libelle: Salaire annuel moyen calculé sur moins d'années pour les parents
+    famille: droits_familiaux
+    quoi: >-
+      Vingt-quatre meilleures années pour un enfant, vingt-trois pour deux et
+      plus, au lieu de vingt-cinq. Retirer une mauvaise année de la moyenne
+      relève la pension sans qu'aucune cotisation l'ait payée.
+    base_legale: [R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026, article 1er)]
+    veille: [sam_parents_24_23]
+    creation: 2026
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      L'avantage porte sur l'ASSIETTE, pas sur le montant : il change le salaire
+      de référence avant tout le reste. L'isoler suppose de recalculer la
+      pension sur vingt-cinq années et de prendre l'écart — faisable, et c'est
+      exactement la mécanique des lignes chiffrées.
+    cout:
+      mesurable_par: modele
+      note: >-
+        À ajouter à la cascade. Le recalcul est du même type que celui de la
+        MDA, et le dispositif est trop récent pour qu'une série publiée existe.
+
+  - code: majoration_duree_assurance_conge_parental
+    libelle: Majoration de durée d'assurance pour congé parental d'éducation
+    famille: droits_familiaux
+    quoi: >-
+      La durée effective du congé parental est ajoutée à la durée d'assurance,
+      quand elle est plus favorable que la MDA de l'article L. 351-4. Les deux
+      ne se cumulent pas : le droit retient la plus avantageuse.
+    base_legale: [L. 351-5 CSS]
+    veille: [majoration_duree_assurance_enfants]
+    creation: 1977
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Le simulateur ne saisit pas la durée du congé parental, seulement le
+      nombre d'enfants. La comparaison « la plus avantageuse des deux » est
+      donc hors d'atteinte des carrières que le modèle construit.
+    cout:
+      mesurable_par: aucune
+      note: >-
+        Demanderait un champ de carrière nouveau. L'effet est borné par le
+        haut : il ne peut jamais valoir moins que la MDA, qui est déjà servie.
+
+  - code: majoration_duree_assurance_enfant_handicape
+    libelle: Majoration de durée d'assurance pour enfant handicapé
+    famille: droits_familiaux
+    quoi: >-
+      Un trimestre par période de trente mois d'éducation d'un enfant ouvrant
+      droit à l'allocation d'éducation de l'enfant handicapé, huit au plus, sans
+      préjudice de la MDA ordinaire — les deux se cumulent, contrairement au
+      congé parental.
+    base_legale: [L. 351-4-1 CSS]
+    veille: []
+    creation: 2003
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Demande une information médicale que le simulateur ne collecte pas, comme
+      la retraite anticipée pour handicap.
+    cout:
+      mesurable_par: aucune
+      note: Population étroite ; le coût est probablement le plus faible de la famille.
+
+  # --- Minima de pension ---------------------------------------------------
+
+  - code: minimum_contributif
+    libelle: Minimum contributif, et sa majoration
+    famille: minima_de_pension
+    quoi: >-
+      Un plancher opposé à la pension de base liquidée au taux plein,
+      proratisé par la durée d'assurance ; sa majoration, elle, est proratisée
+      par la durée COTISÉE. Le tout est écrêté par l'article L. 173-2 quand
+      l'ensemble des pensions personnelles dépasse un plafond.
+    base_legale: [L. 351-10 CSS, D. 351-2-1 CSS, L. 173-2 CSS]
+    veille: [minimum_contributif]
+    creation: 1983
+    fin: null
+    regimes: régime général, régimes alignés, non-salariés
+    etat_modele: chiffre
+    ligne_cascade: minimum_contributif
+    cout:
+      mesurable_par: modele
+      note: >-
+        Le seul avantage dont le coût DÉCROÎT quand les salaires montent : un
+        plancher ne coûte que ce qui manque pour l'atteindre. Sa série doit
+        donc suivre la distribution des pensions, pas la masse.
+
+  - code: minimum_garanti
+    libelle: Minimum garanti de la fonction publique
+    famille: minima_de_pension
+    quoi: >-
+      Le plancher des pensions civiles et militaires, barème en points d'indice
+      par durée de services, ouvert au taux plein — ou à qui atteignait l'âge
+      d'ouverture de ses droits avant 2011.
+    base_legale: [L. 17 CPCMR, loi n° 2003-775 article 66 V]
+    veille: [minimum_garanti]
+    creation: 1964
+    fin: null
+    regimes: fonction publique, régimes spéciaux
+    etat_modele: chiffre
+    ligne_cascade: minimum_garanti
+    cout:
+      mesurable_par: modele
+      source_id: sre_minimum_garanti
+      note: >-
+        Le montant SERVI prime sur la projection : la revalorisation « comme les
+        pensions » a été gelée en 2014 et sous-indexée depuis, et projeter une
+        ancre certifiée sur l'IPC surestime de 4,6 % le minimum garanti de 2024.
+
+  - code: minimum_vieillesse
+    libelle: Minimum vieillesse (ASPA)
+    famille: minima_de_pension
+    alias: [minimum_vieillesse_aspa]
+    quoi: >-
+      Une allocation différentielle portée au plafond, sous condition de
+      ressources du ménage, financée par l'impôt via le FSV. Ce n'est pas une
+      pension : c'est un minimum social versé aux vieux, et il est ici parce
+      qu'il entre dans le revenu des retraités que la comparaison mesure.
+    base_legale: [L. 815-1 CSS et suivants, L. 816-2 CSS, L. 161-25 CSS]
+    veille: [minimum_vieillesse]
+    creation: 1956
+    fin: null
+    regimes: hors régime — servi par le FSV
+    etat_modele: chiffre
+    ligne_cascade: minimum_vieillesse
+    cout:
+      mesurable_par: modele
+      source_id: drees_comptes_protection_sociale
+      note: >-
+        Le scénario 6 le remplace par la garantie vieillesse (800 €, plus 250 €
+        d'isolement), chiffrée sur la distribution DREES et non sur les cas
+        types : 18,4 Md€ par an aux pensions d'aujourd'hui. La même méthode
+        chiffre l'ASPA actuelle, et c'est le seul avantage pour lequel la
+        distribution vaut mieux que les cas types.
+
+  - code: garantie_minimale_points
+    libelle: Garantie minimale de points de l'Agirc
+    famille: minima_de_pension
+    quoi: >-
+      Cent vingt points par an garantis au cadre dont le salaire au-dessus du
+      plafond ne suffisait pas à les acheter. Éteinte avec la fusion
+      Agirc-Arrco du 1er janvier 2019.
+    base_legale: [accord Agirc du 9 février 1988]
+    veille: []
+    creation: 1989
+    fin: 2018
+    regimes: Agirc
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Servie par le champ `points_minimum_annuels: 120` des fiches de régime :
+      elle agit sur le NOMBRE DE POINTS acquis dans l'année, donc en amont de
+      la pension, comme le salaire de référence.
+    cout:
+      mesurable_par: modele
+      note: >-
+        Recalcul sans plancher de points. Dispositif éteint : la série est
+        bornée à 1989-2018, et son coût décroît à mesure que le plafond monte.
+
+  - code: pension_majoree_reference
+    libelle: Pension majorée de référence du régime agricole
+    famille: minima_de_pension
+    quoi: >-
+      Le plancher de la retraite forfaitaire et proportionnelle des non-salariés
+      agricoles, complété depuis 2015 par la garantie « 85 % du SMIC » puis par
+      le complément différentiel de points de RCO.
+    base_legale: [L. 732-54-1 code rural]
+    veille: []
+    creation: 2002
+    fin: null
+    regimes: non-salariés agricoles (MSA)
+    etat_modele: declare
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Déclarée dans cinq périodes de non_salaries.yaml ; aucun code du moteur ne
+      la lit. `Neutralisations` la range d'ailleurs dans « ce que le scénario 1
+      ne sert pas ».
+    cout:
+      mesurable_par: aucune
+      note: >-
+        À porter au moteur avant de pouvoir la chiffrer. Les non-salariés
+        agricoles sont le régime où un plancher pèse le plus lourd, leur pension
+        contributive étant la plus faible du catalogue.
+
+  # --- Périodes non cotisées mais validées ---------------------------------
+
+  - code: periodes_assimilees
+    libelle: Périodes assimilées
+    famille: periodes_non_cotisees
+    quoi: >-
+      Chômage indemnisé ou non, maladie, maternité, invalidité, accident du
+      travail, service national : quatre trimestres validés par an, sans
+      cotisation et sans salaire porté au compte. Ils comptent pour la durée
+      d'assurance — donc contre la décote et pour le prorata — et jamais pour
+      le salaire annuel moyen.
+    base_legale: [L. 351-3 CSS, R. 351-12 CSS]
+    veille: []
+    creation: 1945
+    fin: null
+    regimes: régime général, régimes alignés, non-salariés
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      L'avantage est un TRIMESTRE, et son effet se dilue dans la décote et la
+      proratisation. Le modèle le sert par
+      `legislation/periodes_non_travaillees.csv`, neuf motifs, chacun disant
+      combien de trimestres il assimile.
+    cout:
+      mesurable_par: modele
+      source_id: dss_ccss_transferts_retraite
+      note: >-
+        Chiffrable par recalcul, motif par motif — c'est la ligne la plus
+        instructive à ouvrir, parce que le chômage et la maladie sont la
+        première source de trimestres non cotisés. Le FSV publie ce qu'il prend
+        en charge (`fsv_cotisations`, 10,3 Md€ en 2011) : c'est le contrôle
+        externe de la seule part chômage.
+
+  - code: points_gratuits_complementaires
+    libelle: Points de complémentaire acquis sans cotisation
+    famille: periodes_non_cotisees
+    quoi: >-
+      Chômage indemnisé, maladie, maternité, invalidité, accident du travail
+      ouvrent des points d'Agirc-Arrco et d'Ircantec que le salarié n'a pas
+      payés ; l'Unédic verse la contrepartie pour le chômage.
+    base_legale: [accords nationaux interprofessionnels Agirc-Arrco, décret Ircantec]
+    veille: []
+    creation: 1962
+    fin: null
+    regimes: Agirc-Arrco, Ircantec
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Servis par la colonne `ouvre_droits_complementaires` de
+      periodes_non_travaillees.csv, qui vaut « oui » pour cinq motifs sur neuf.
+      L'effet passe par le nombre de points, donc en amont de la pension.
+    cout:
+      mesurable_par: modele
+      source_id: dss_ccss_transferts_retraite
+      note: >-
+        Le poste `unedic_agirc_arrco` donne la contrepartie versée par
+        l'assurance chômage — 2,8 Md€ en 2010 — et c'est le contrôle externe le
+        plus direct de toute la liste : un seul payeur, un seul objet.
+
+  - code: service_national
+    libelle: Validation du service national
+    famille: periodes_non_cotisees
+    quoi: >-
+      Les périodes de service militaire légal valident quatre trimestres par an,
+      sans cotisation et sans ouvrir de points de complémentaire. Dispositif en
+      extinction, la conscription ayant été suspendue en 1997.
+    base_legale: [L. 351-3 CSS]
+    veille: []
+    creation: 1945
+    fin: null
+    regimes: tous
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Motif `service_militaire` de periodes_non_travaillees.csv : même mécanique
+      que les autres périodes assimilées, dont il n'est qu'un cas.
+    cout:
+      mesurable_par: modele
+      note: >-
+        Série décroissante par construction : les dernières générations
+        concernées liquident dans les années 2030.
+
+  # --- Droits dérivés (survivants) -----------------------------------------
+
+  - code: reversion
+    libelle: Pension de réversion
+    famille: droits_derives
+    quoi: >-
+      Une fraction de la pension du défunt — 54 % au régime général sous
+      condition de ressources, 60 % à l'Agirc-Arrco sans condition mais sous
+      condition d'âge, 50 % dans la fonction publique sans condition de
+      ressources — versée au conjoint survivant. C'est, de très loin, la
+      première dépense non contributive du système.
+    base_legale: [L. 353-1 CSS, L. 38 CPCMR]
+    veille: [reversion]
+    creation: 1945
+    fin: null
+    regimes: tous — déclaré dans 756 périodes du catalogue, soit la quasi-totalité
+    etat_modele: declare
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Le modèle décrit une CARRIÈRE, pas un ménage : il n'a ni conjoint, ni date
+      de décès, ni ressources du survivant. Les 756 déclarations des fiches sont
+      donc une intention — aucun code ne les lit. C'est l'écart le plus lourd
+      entre les trois listes du dépôt et le droit positif.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_panorama_retraites
+      note: >-
+        Le seul avantage de la liste dont le coût se lise DIRECTEMENT dans une
+        publication annuelle : la DREES publie la masse des droits dérivés, par
+        régime et par sexe, dans le panorama « Les retraités et les retraites ».
+        Aucun recalcul n'est nécessaire, et aucun n'est possible.
+
+  - code: majoration_reversion
+    libelle: Majoration de la pension de réversion
+    famille: droits_derives
+    quoi: >-
+      Un pourcentage de la réversion ajouté au survivant qui a atteint l'âge
+      d'annulation de la décote et dont l'ensemble des avantages de retraite ne
+      dépasse pas un plafond, réduite à due concurrence du dépassement.
+    base_legale: [L. 353-6 CSS]
+    veille: [reversion]
+    creation: 2010
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: "Même raison que la réversion : le modèle n'a pas de ménage."
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_panorama_retraites
+      note: Comprise dans la masse des droits dérivés, rarement isolée.
+
+  - code: majoration_forfaitaire_reversion_enfants
+    libelle: Majoration forfaitaire de réversion pour enfant à charge
+    famille: droits_derives
+    quoi: >-
+      Un montant forfaitaire par enfant à charge, ajouté à la pension de
+      réversion du conjoint survivant qui n'a pas atteint l'âge de la retraite.
+    base_legale: [L. 353-1 CSS]
+    veille: [reversion]
+    creation: 2010
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: Même raison que la réversion.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_panorama_retraites
+      note: Comprise dans la masse des droits dérivés.
+
+  - code: allocation_veuvage
+    libelle: Allocation veuvage
+    famille: droits_derives
+    quoi: >-
+      Une allocation temporaire au conjoint survivant trop jeune pour la
+      réversion, sous condition de ressources, servie deux ans au plus.
+    base_legale: [L. 356-1 CSS]
+    veille: [reversion]
+    creation: 1980
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: Même raison que la réversion.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_comptes_protection_sociale
+      note: Masse faible ; publiée avec les prestations survie.
+
+  - code: pension_orphelin
+    libelle: Pension d'orphelin
+    famille: droits_derives
+    quoi: >-
+      Une fraction de la pension du fonctionnaire décédé versée à chaque enfant
+      de moins de vingt et un ans. Les régimes spéciaux ont la leur ; le régime
+      général n'en a pas.
+    base_legale: [L. 40 CPCMR]
+    veille: [reversion]
+    creation: 1964
+    fin: null
+    regimes: fonction publique, régimes spéciaux
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: Même raison que la réversion.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: sre_rapport_annuel
+      note: >-
+        Le rapport annuel du Service des retraites de l'État distingue les
+        pensions d'orphelin des pensions de réversion.
+
+  # --- Âge de départ et bonifications de service ---------------------------
+
+  - code: categorie_active
+    libelle: Départ anticipé des catégories actives et super-actives
+    famille: age_et_bonifications
+    quoi: >-
+      L'emploi classé actif ouvre la pension cinq ans avant l'âge légal, dix ans
+      pour les emplois super-actifs, et l'âge d'annulation de la décote suit
+      d'autant. Partir plus tôt sans abattement supplémentaire est un avantage
+      exactement mesurable : c'est la différence entre le coefficient de
+      conversion de l'âge réel et celui de l'âge légal.
+    base_legale: [L. 24 I 1° CPCMR, L. 14 bis CPCMR, décret n° 2026-344 du 7 mai 2026 article 3 D]
+    veille: [categorie_active_super_active, categorie_active_duree_requise]
+    creation: 1853
+    fin: null
+    regimes: fonction publique, ouvriers de l'État, régimes spéciaux
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      L'avantage est un ÂGE, pas un montant. Sept statuts de
+      `legislation/affiliations.yaml` le portent, et le scénario 1 leur oppose
+      l'âge anticipé de L. 24 et l'âge d'annulation de L. 14 bis.
+    cout:
+      mesurable_par: modele
+      note: >-
+        Chiffrable par recalcul à l'âge légal de droit commun — c'est la ligne
+        la plus lourde de la famille, et celle que le notionnel pénalise le
+        plus : partir tôt y coûte deux fois, moins de cotisations accumulées et
+        une rente à servir plus longtemps.
+
+  - code: carriere_longue
+    libelle: Retraite anticipée pour carrière longue
+    famille: age_et_bonifications
+    quoi: >-
+      Qui a commencé tôt et réunit une durée cotisée suffisante part avant l'âge
+      légal, au taux plein. Certaines périodes non cotisées — maternité,
+      chômage, maladie, et depuis 2025 les trimestres d'enfants — sont
+      « réputées cotisées » pour ouvrir ce droit.
+    base_legale: [L. 351-1-1 CSS, D. 351-1-1 CSS, L. 351-1-1 3° CSS]
+    veille: [carriere_longue, carriere_longue_enfants_reputes_cotises, carriere_longue_reputes_cotises_autres]
+    creation: 2003
+    fin: null
+    regimes: régime général, régimes alignés, non-salariés
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Même nature que la catégorie active : un âge, pas un montant. Le modèle
+      le sert par `legislation/carriere_longue.csv` et par
+      `_age_carriere_longue`.
+    cout:
+      mesurable_par: modele
+      note: >-
+        Deux avantages superposés qu'il faut séparer : l'âge de départ lui-même,
+        et les trimestres RÉPUTÉS cotisés qui l'ouvrent — ces derniers étant un
+        avantage non contributif au second degré.
+
+  - code: age_jouissance_militaire
+    libelle: Jouissance immédiate de la pension militaire
+    famille: age_et_bonifications
+    quoi: >-
+      La pension militaire est due dès que la durée de services requise est
+      accomplie — quinze ou dix-sept ans selon l'époque et le grade —, sans
+      condition d'âge. Un militaire peut ainsi percevoir sa pension à moins de
+      quarante ans.
+    base_legale: [L. 24 CPCMR, L. 25 CPCMR]
+    veille: [categorie_active_super_active]
+    creation: 1831
+    fin: null
+    regimes: militaires
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Servi par `legislation/age_jouissance_militaire.csv` et
+      `legislation/duree_services_militaires.csv`. La limite d'âge de grade, qui
+      ouvre la pension quelle que soit la durée accomplie, reste hors du modèle.
+    cout:
+      mesurable_par: modele
+      note: >-
+        C'est l'avantage d'âge le plus extrême du système : le coefficient de
+        conversion à trente-huit ans est plus du double de celui de soixante-
+        quatre ans.
+
+  - code: bonification_cinquieme_militaires
+    libelle: Bonification du cinquième du temps de service des militaires
+    famille: age_et_bonifications
+    quoi: >-
+      Une annuité gratuite pour cinq servies, cinq au plus, au militaire
+      réunissant dix-sept ans de services effectifs. Le maximum va à qui part à
+      cinquante-neuf ans, et la bonification décroît d'une annuité par année
+      supplémentaire servie.
+    base_legale: [L. 12 i CPCMR]
+    veille: []
+    creation: 1964
+    fin: null
+    regimes: militaires
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Suppose de connaître le corps d'appartenance et le détail des services,
+      que le simulateur ne saisit pas. `Neutralisations` le range explicitement
+      dans « ce que le scénario 1 ne sert pas ».
+    cout:
+      mesurable_par: aucune
+      note: >-
+        Chiffrable dès qu'une carrière porte une durée de services militaires
+        effectifs — l'information est déjà dans
+        `legislation/duree_services_militaires.csv`, mais pour l'ouverture du
+        droit, pas pour la bonification.
+
+  - code: bonification_cinquieme_services_actifs
+    libelle: Bonification du cinquième des policiers, pompiers et surveillants
+    famille: age_et_bonifications
+    quoi: >-
+      La même annuité gratuite pour cinq servies, accordée par des statuts
+      particuliers aux policiers, aux sapeurs-pompiers professionnels, aux
+      surveillants de l'administration pénitentiaire et aux douaniers de la
+      branche surveillance.
+    base_legale: [statuts particuliers — à certifier, hors CPCMR]
+    veille: []
+    creation: 1957
+    fin: null
+    regimes: fonction publique, catégories actives
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Même raison que pour les militaires. La base légale n'est pas dans le
+      CPCMR : elle est éclatée dans les statuts de chaque corps, et elle n'a pas
+      été lue — l'écrire ici sans l'avoir lue serait une déduction, pas une
+      source.
+    cout:
+      mesurable_par: aucune
+      note: >-
+        Premier travail à faire : trouver les textes, corps par corps, dans
+        l'index LEGI. Cette ligne existe pour que l'oubli soit visible.
+
+  - code: bonification_depaysement
+    libelle: Bonification de dépaysement
+    famille: age_et_bonifications
+    quoi: >-
+      Des annuités gratuites pour les services civils rendus hors d'Europe,
+      prises en compte dès lors que la pension rémunère au moins quinze années
+      de services effectifs.
+    base_legale: [L. 12 a CPCMR]
+    veille: []
+    creation: 1964
+    fin: null
+    regimes: fonction publique
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: Suppose de connaître le lieu d'affectation, que le simulateur ne saisit pas.
+    cout:
+      mesurable_par: aucune
+      note: Population étroite.
+
+  - code: benefices_campagne
+    libelle: Bénéfices de campagne
+    famille: age_et_bonifications
+    quoi: >-
+      Le temps passé en opérations, à la mer ou outre-mer est compté double ou
+      davantage. Avantage ancien, dont le coût se concentre sur les générations
+      ayant servi en Afrique du Nord.
+    base_legale: [L. 12 c CPCMR]
+    veille: []
+    creation: 1964
+    fin: null
+    regimes: militaires, fonction publique
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
+    cout:
+      mesurable_par: aucune
+      note: Série décroissante ; les générations concernées sortent des effectifs.
+
+  - code: bonification_service_aerien_sous_marin
+    libelle: Bonification pour service aérien ou sous-marin commandé
+    famille: age_et_bonifications
+    quoi: >-
+      Des annuités gratuites au prorata des heures de vol ou de la durée des
+      services sous-marins, selon des coefficients arrêtés à la date d'ouverture
+      du droit.
+    base_legale: [L. 12 d CPCMR]
+    veille: []
+    creation: 1964
+    fin: null
+    regimes: militaires, personnel navigant
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
+    cout:
+      mesurable_par: aucune
+      note: Population étroite.
+
+  - code: retraite_anticipee_handicap
+    libelle: Retraite anticipée des travailleurs handicapés
+    famille: age_et_bonifications
+    quoi: >-
+      Départ dès cinquante-cinq ans, au taux plein et sans décote, pour l'assuré
+      justifiant d'une incapacité permanente d'au moins 50 % pendant une durée
+      d'assurance minimale.
+    base_legale: [L. 351-1-3 CSS, D. 351-1-5 CSS, décret n° 2026-344 article 3 C et G]
+    veille: [retraite_anticipee_handicap]
+    creation: 2003
+    fin: null
+    regimes: tous
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Demande une information médicale que le modèle ne collecte pas :
+      l'assuré est déclaré non ouvert.
+    cout:
+      mesurable_par: aucune
+      note: >-
+        Chiffrable si le simulateur gagne un champ « taux d'incapacité ». Le
+        recalcul serait alors celui de la catégorie active.
+
+  - code: inaptitude_invalidite
+    libelle: Taux plein par inaptitude ou invalidité
+    famille: age_et_bonifications
+    quoi: >-
+      Le taux plein est acquis à l'âge légal, sans condition de durée, à
+      l'assuré reconnu inapte au travail ou titulaire d'une pension
+      d'invalidité. C'est la suppression pure et simple de la décote.
+    base_legale: [L. 351-8 1° bis CSS]
+    veille: [inaptitude_invalidite_penibilite_amiante]
+    creation: 1945
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Demande une information médicale que le modèle ne collecte pas. Effet
+      constaté dans `docs/limites.md` : les assurés concernés sont déclarés non
+      ouverts, ou décotés à tort.
+    cout:
+      mesurable_par: aucune
+      note: >-
+        Une part importante des liquidations au taux plein passe par là, et le
+        modèle n'en sert aucune. C'est le plus gros angle mort de la famille.
+
+  - code: incapacite_permanente_penibilite
+    libelle: Départ anticipé pour incapacité permanente et compte pénibilité
+    famille: age_et_bonifications
+    alias: [penibilite]
+    quoi: >-
+      Départ dès soixante ans au taux plein pour l'assuré atteint d'une
+      incapacité permanente reconnue au titre d'un accident du travail ou d'une
+      maladie professionnelle ; les points du compte professionnel de prévention
+      ouvrent, eux, un départ anticipé de deux ans au plus.
+    base_legale: [L. 351-1-4 CSS, L. 4163-1 code du travail]
+    veille: [inaptitude_invalidite_penibilite_amiante]
+    creation: 2010
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Demande une information médicale et un compte de points que le modèle ne
+      collecte pas. Le code `penibilite` est pourtant déclaré dans quatre
+      périodes de fiches — déclaration sans effet.
+    cout:
+      mesurable_par: aucune
+      note: >-
+        La Caisse nationale d'assurance maladie publie les départs pour
+        incapacité permanente ; le compte de prévention a son propre rapport.
+        Aucun des deux n'est encore au manifeste des sources.
+
+  - code: cessation_anticipee_amiante
+    libelle: Cessation anticipée d'activité des travailleurs de l'amiante
+    famille: age_et_bonifications
+    quoi: >-
+      Une allocation servie jusqu'à l'âge de la retraite aux salariés exposés à
+      l'amiante, pendant laquelle les droits à retraite continuent d'être
+      validés sans cotisation du bénéficiaire.
+    base_legale: [loi n° 98-1194 article 41 — à certifier]
+    veille: [inaptitude_invalidite_penibilite_amiante]
+    creation: 1999
+    fin: null
+    regimes: régime général, régimes spéciaux
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Ni le dispositif ni son fonds ne sont dans le modèle. La référence à la
+      loi de 1998 n'a pas été lue dans l'index : elle est donnée pour la
+      recherche, pas comme une source.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: dss_comptes_secu
+      note: >-
+        Le fonds de cessation anticipée d'activité des travailleurs de l'amiante
+        a son compte propre, publié à la Commission des comptes de la Sécurité
+        sociale.
+
+  # --- Majorations diverses ------------------------------------------------
+
+  - code: majoration_tierce_personne
+    libelle: Majoration pour assistance d'une tierce personne
+    famille: autres_avantages
+    quoi: >-
+      Un supplément forfaitaire au titulaire d'une pension qui ne peut accomplir
+      seul les actes ordinaires de la vie. Servi au régime général comme dans la
+      fonction publique.
+    base_legale: [L. 355-1 CSS, L. 30 CPCMR]
+    veille: []
+    creation: 1945
+    fin: null
+    regimes: tous
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: Demande une information médicale que le modèle ne collecte pas.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_comptes_protection_sociale
+      note: Comprise dans les prestations d'invalidité des comptes de la protection sociale.
+
+  - code: majoration_conjoint_a_charge
+    libelle: Majoration pour conjoint à charge
+    famille: autres_avantages
+    quoi: >-
+      Un supplément au titulaire dont le conjoint, ayant atteint un certain âge,
+      ne percevait aucun avantage de sécurité sociale. Supprimée pour les
+      pensions prenant effet à compter du 1er janvier 2011 ; les droits ouverts
+      avant continuent d'être servis.
+    base_legale: [L. 351-13 CSS]
+    veille: []
+    creation: 1945
+    fin: 2010
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Le modèle décrit une carrière, pas un ménage : il n'a pas de conjoint.
+      Dispositif en extinction, à porter seulement si les séries anciennes en
+      dépendent.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: cnav_statistiques
+      note: Série décroissante, éteinte à terme.
+
+  - code: coefficient_solidarite
+    libelle: Coefficient de solidarité de l'Agirc-Arrco
+    famille: autres_avantages
+    quoi: >-
+      L'inverse d'un avantage : un abattement temporaire de 10 % pendant trois
+      ans appliqué au salarié qui liquidait à l'âge du taux plein, et une
+      majoration pour qui décalait. Dispositif supprimé pour les liquidations à
+      compter du 1er décembre 2023.
+    base_legale: [accord national interprofessionnel Agirc-Arrco du 30 octobre 2015]
+    veille: []
+    creation: 2019
+    fin: 2023
+    regimes: Agirc-Arrco
+    etat_modele: declare
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Déclaré dans deux périodes de complementaires_prive.yaml, sans effet :
+      l'abattement est TEMPORAIRE, et le modèle ne calcule qu'une pension
+      annuelle unique. Le porter tel quel le rendrait faussement permanent.
+    cout:
+      mesurable_par: aucune
+      note: >-
+        Gardé dans la liste parce qu'il est de signe NÉGATIF : le retirer
+        gonflerait les pensions de 2019 à 2023, et une série de coût qui
+        l'ignore surestime ces cinq années.
+
+  # --- Écarts structurels au principe contributif --------------------------
+  #
+  # Ces trois lignes ne s'additionnent ni entre elles ni aux six familles
+  # ci-dessus : elles portent sur la même pension, vue sous un autre angle.
+
+  - code: decote_surcote_non_actuarielles
+    libelle: Décote et surcote qui ne sont pas actuarielles
+    famille: ecarts_structurels
+    alias: [decote_surcote]
+    quoi: >-
+      Un barème actuariel ferait payer au départ anticipé exactement ce qu'il
+      coûte : moins d'années de cotisation, et une rente à servir plus
+      longtemps. La décote française, 1,25 % par trimestre manquant, est
+      inférieure à ce coût ; la surcote, au même taux, est inférieure à ce que
+      l'année de plus rapporte. Partir tôt est donc subventionné par ceux qui
+      partent tard, et cette subvention n'a aucun nom dans le droit.
+    base_legale: [R. 351-27 CSS, L. 14 CPCMR, L. 351-1-2 CSS, D. 351-1-4 CSS]
+    veille: [decote_regime_general, decote_fonction_publique, surcote_regime_general, surcote_fonction_publique]
+    creation: 1983
+    fin: null
+    regimes: tous
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Ce n'est pas un droit gratuit qu'on retire, c'est un BARÈME qu'on
+      remplace. Dans un compte notionnel il n'y a ni décote ni surcote : le
+      coefficient de conversion fait le travail, et il est actuariel par
+      construction.
+    cout:
+      mesurable_par: modele
+      note: >-
+        Mesuré par comparaison des deux barèmes à âge de départ donné, et c'est
+        une part substantielle de l'écart entre le scénario 1 et le scénario 2 —
+        sur un agent parti à cinquante ans, l'écart total atteint −90,5 %, dont
+        la décote manquante fait le plus gros.
+
+  - code: rendement_superieur_au_rendement_d_equilibre
+    libelle: Rendement servi supérieur à ce que l'assiette peut porter
+    famille: ecarts_structurels
+    quoi: >-
+      C'est le plus gros des trois, et le moins visible : même sans aucun droit
+      gratuit, même avec un barème d'âge actuariel, une pension en annuités
+      n'est pas bornée par la cotisation versée. Elle est calculée sur un
+      salaire de référence et une durée, non sur un compte. Un compte notionnel,
+      lui, ne peut servir que ce que l'assiette porte.
+    base_legale: []
+    veille: []
+    creation: 1945
+    fin: null
+    regimes: tous
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Ce n'est pas un dispositif : c'est la différence entre deux règles de
+      calcul. Il ne se retire pas, il se remplace — et le remplacement EST le
+      scénario 2.
+    cout:
+      mesurable_par: modele
+      note: >-
+        C'est exactement ce que mesure `cout.py` : le rapport de la masse du
+        scénario 2 à celle du scénario 1, cumulé à −79,5 % sur 1959-2024 à la
+        pondération par effectifs. Retirer de cet écart les lignes chiffrables
+        ci-dessus donne, par soustraction, ce qui reste imputable au seul
+        changement de règle.
+
+  - code: financement_non_contributif_des_regimes
+    libelle: Impôts, subventions d'équilibre et compensation démographique
+    famille: ecarts_structurels
+    quoi: >-
+      Une part des pensions n'est pas payée par des cotisations mais par
+      l'impôt : subventions d'équilibre des régimes spéciaux (SNCF, RATP, mines,
+      marins), contribution de l'État employeur portée jusqu'à 82,28 % du
+      traitement en 2026, impôts et taxes affectés compensant les allègements,
+      compensation démographique entre régimes.
+    base_legale: []
+    veille: []
+    creation: 1945
+    fin: null
+    regimes: régimes spéciaux, fonction publique, tous par les impôts affectés
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Ce n'est pas un droit de l'assuré : c'est une RECETTE. Elle n'apparaît
+      donc jamais dans une pension individuelle, seulement au compte du régime.
+      Le modèle la porte du côté des cotisations
+      (`legislation/contribution_employeur_public.csv`, neuf régimes certifiés),
+      pas du côté des droits.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: cor_comptes_systeme_retraite
+      note: >-
+        Lisible dans `macro/structure_ressources_retraite.csv` : la part des
+        ressources qui n'est pas de la cotisation. À ne jamais additionner aux
+        lignes de prestation — c'est le même argent, compté à l'autre bout.
