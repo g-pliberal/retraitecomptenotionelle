@@ -1184,7 +1184,11 @@ def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cou
         assert ligne.recette_par_assiette, ligne.annee
         assert ligne.taux_liberal == taux
         pleine = ligne.ressources * taux / ligne.taux_prelevement
-        autres = ligne.ressources * (1.0 - ligne.part_contributive)
+        # Les subventions d'équilibre sortent aussi depuis le 19 septembre
+        # 2026 : la fusion des régimes fait disparaître les retraités sans
+        # cotisants, donc l'objet même de la subvention.
+        autres = ligne.ressources * (1.0 - ligne.part_contributive
+                                     - ligne.part_subventions)
         assert ligne.ressources_de("notionnel_liberal") == pytest.approx(
             pleine + autres - ligne.retrait), ligne.annee
         if ligne.annee >= bascule + 3:
@@ -1387,8 +1391,41 @@ def test_le_scenario_6_ne_reconduit_pas_la_contribution_d_equilibre_de_l_Etat(
         )
 
         # 2. Ce que le scénario 6 reconduit, c'est le COMPLÉMENT de la part
-        #    contributive — donc ni les cotisations, ni la contribution.
+        #    contributive ET des subventions d'équilibre — donc ni les
+        #    cotisations, ni la contribution de l'État, ni les subventions.
         attendu = (point.ressources * point.taux_liberal / point.taux_prelevement
-                   + point.ressources * (1.0 - point.part_contributive)
+                   + point.ressources * (1.0 - point.part_contributive
+                                         - point.part_subventions)
                    - point.retrait)
         assert point.ressources_de("notionnel_liberal") == pytest.approx(attendu)
+
+        # 3. Les subventions d'équilibre existent bel et bien dans le système
+        #    actuel : le test n'est pas vide de sens.
+        assert point.part_subventions > 0.0
+
+
+def test_le_scenario_6_ne_reconduit_pas_les_subventions_d_equilibre(
+        cout_assiette, comptes: ComptesRetraite):
+    """La fusion des régimes fait disparaître l'objet même de la subvention.
+
+    Une subvention d'équilibre comble le compte d'un régime dont les cotisants
+    ont disparu avant les retraités — la SNCF, les mines, les marins. Le
+    scénario 6 fusionne tous les régimes : **il n'y a plus de retraité sans
+    cotisants dès lors qu'il n'y a plus qu'un régime**, et donc plus rien à
+    équilibrer par le budget. Décision du Parti libéral du 19 septembre 2026.
+
+    Elle coûte 0,24 point de PIB au solde moyen du scénario 6 — de −0,88 % à
+    −1,12 % —, et c'est la mesure de ce que l'ancienne hypothèse lui offrait.
+    """
+    annees = [a for a in cout_assiette.solde.annees if a.recette_par_assiette]
+    assert annees
+
+    for point in annees:
+        # Ce que le scénario 6 encaisse, plus les subventions, redonne ce qu'il
+        # encaissait quand on les lui reconduisait : l'écart est exactement
+        # elles, et rien d'autre.
+        sans = point.ressources_de("notionnel_liberal")
+        avec = sans + point.ressources * point.part_subventions
+        assert avec > sans, f"{point.annee} : les subventions ne pèsent rien"
+        assert point.part_subventions == pytest.approx(
+            comptes.part("subventions_equilibre", point.annee))

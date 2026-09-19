@@ -3852,6 +3852,40 @@ toucher aux moteurs de pension.
    celle qui flatte le scénario 6, et le docstring le dit désormais avec les
    chiffres.
 
+   **Treizième passe, 19 septembre 2026 : les subventions d'équilibre sortent
+   aussi, et le scénario 6 perd un quart de point.** Le programme a tranché, et
+   l'argument est le meilleur de toute cette série de décisions parce qu'il ne
+   porte pas sur la comptabilité mais sur la NATURE de ce qu'on reconduisait.
+
+   Une subvention d'équilibre comble le compte d'un régime dont les cotisants
+   ont disparu avant les retraités — la SNCF, les mines, les marins, dont le
+   classeur du COR dit qu'ils sont financés à 61, 81 et 76 % par le budget en
+   2023, et la SNCF à 94,5 % en 2070. **Le scénario 6 fusionne tous les
+   régimes : il n'y a plus de retraité sans cotisants dès lors qu'il n'y a plus
+   qu'un régime.** L'objet de la subvention disparaît avec les régimes qu'elle
+   équilibrait. Les pensions, elles, restent dues : servies comme les autres,
+   pour partie recalculées à la baisse par le notionnel, pour partie portées
+   par les cotisants du système unifié.
+
+   **Ce que ça coûte, mesuré et non supposé** : le solde moyen du scénario 6
+   sur les 45 années projetées passe de **−0,875 % à −1,117 % du PIB**, soit
+   **0,242 point perdu**. C'est exactement ce que l'ancienne hypothèse lui
+   offrait, et c'est le sens de la décision : reconduire une subvention dont
+   l'objet a disparu était la dernière grande faveur faite au scénario 6.
+
+   Porté dans `moteur/js/cout.js` comme le dépôt l'exige, témoins régénérés.
+
+   **Ce qui reste reconduit, et n'est pas tranché** : les impôts et taxes
+   affectés (1,944 point de PIB en 2024), les transferts (0,665) et les autres
+   produits (0,303). Le même argument vaudrait pour les impôts — ils compensent
+   des allègements de cotisations patronales qu'un système sans exonération ne
+   consent pas — et c'est la prochaine question.
+
+   **Une précaution que le programme a demandée et qu'on respecte** : rien n'est
+   écrit au public. La page affiche les chiffres nouveaux, mais aucune prose
+   n'explique encore ce fonctionnement — il faut d'abord vérifier que ces
+   chiffres font un système cohérent.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -3861,15 +3895,25 @@ toucher aux moteurs de pension.
    longue dont la moitié compte autre chose. L'urgence reste faible — la
    mesure du 19 septembre tient : sous la convention du programme, la
    pondération ne déplace pas le solde du scénario 6 d'un millième.
-4. *Dire ce que le programme fait des ressources non cotisées, et ne pas le
-   décider à sa place.* Les 18 % remplacent-ils aussi les 64 Md€ d'impôts et
-   taxes affectés, qui compensent pour l'essentiel des allègements de
-   cotisations patronales ? Et les subventions d'équilibre aux régimes en
-   extinction, qui survivent à toute réforme le temps que leurs pensionnés
-   s'éteignent ? Trois variantes à poser en paramètre et à afficher côte à
-   côte : les 18 % seuls, les 18 % plus la fiscalité affectée d'aujourd'hui,
-   les 18 % plus la fiscalité et les subventions d'extinction. Le dépôt chiffre
-   les trois ; le choix est politique.
+4. *Dire ce que le programme fait des ressources non cotisées.* **Deux des
+   trois questions sont désormais tranchées, par le programme lui-même, le 19
+   septembre 2026.** La contribution d'équilibre de l'État disparaît : il cotise
+   à 18 % comme tout employeur, et l'assiette couvrant toutes les branches, les
+   traitements de ses agents y sont déjà. Les subventions d'équilibre
+   disparaissent aussi, et l'argument n'est pas comptable mais logique — une
+   subvention comble le compte d'un régime dont les cotisants ont disparu avant
+   les retraités, et **le scénario 6 fusionne tous les régimes, si bien que
+   cette catégorie cesse d'exister**. Cette ligne disait auparavant que ces
+   subventions « survivent à toute réforme le temps que leurs pensionnés
+   s'éteignent » : c'est faux d'une réforme qui fusionne, et les pensions en
+   question sont servies comme les autres, pour partie recalculées par le
+   notionnel, pour partie portées par les cotisants du système unifié.
+
+   Reste la troisième, et elle n'est pas tranchée : les 18 % remplacent-ils
+   aussi les 64 Md€ d'impôts et taxes affectés, qui compensent pour l'essentiel
+   des allègements de cotisations patronales que ce système ne consent pas ?
+   L'argument qui a fait sortir les deux autres vaudrait pour celle-ci ; le
+   dépôt la reconduit en attendant, et le choix est politique.
 5. *Sortir les cinq points capitalisés de la recette.* Le pilier obligatoire
    prélève 5 % sur la même assiette et ne finance pas la répartition. L'effort
    contributif du scénario 6 est donc de 23 %, sa recette de système de 18 %,
@@ -5783,3 +5827,36 @@ rend automatique et que le droit actuel ne rend nulle part.
   la SNCF en 2070. Ce ne sont pas des cotisations d'employeur que 18 %
   remplaceraient, mais des charges de liquidation de régimes fermés que le
   budget porte quoi qu'il arrive.
+
+- **Septembre 2026, action 35, volet A : les subventions d'équilibre sortent
+  du scénario 6.** Décision du programme, et l'argument ne porte pas sur la
+  comptabilité mais sur la NATURE de ce qu'on reconduisait.
+
+  Une subvention d'équilibre comble le compte d'un régime dont les cotisants
+  ont disparu avant les retraités — la SNCF, les mines, les marins, financés à
+  61, 81 et 76 % par le budget en 2023, et la SNCF à 94,5 % en 2070 selon le
+  classeur du COR. **Le scénario 6 fusionne tous les régimes : il n'y a plus de
+  retraité sans cotisants dès lors qu'il n'y a plus qu'un régime.** L'objet de
+  la subvention disparaît avec les régimes qu'elle équilibrait ; les pensions
+  restent dues et sont servies comme les autres, pour partie recalculées à la
+  baisse par le notionnel, pour partie portées par les cotisants du système
+  unifié.
+
+  **Mesuré** : le solde moyen du scénario 6 sur les 45 années projetées passe
+  de −0,875 % à −1,117 % du PIB, soit 0,242 point perdu. C'est exactement ce
+  que l'ancienne hypothèse lui offrait, et reconduire une subvention dont
+  l'objet a disparu était la dernière grande faveur qu'on lui faisait.
+
+  La feuille de route affirmait le contraire — que ces subventions « survivent
+  à toute réforme le temps que leurs pensionnés s'éteignent ». C'est faux d'une
+  réforme qui FUSIONNE, et la ligne est corrigée au volet A, point 4.
+
+  Porté dans `moteur/js/cout.js`, témoins régénérés, 956 tests verts. Reste
+  reconduit et non tranché : impôts et taxes affectés (1,944 point de PIB),
+  transferts (0,665), autres produits (0,303). Le même argument vaudrait pour
+  les impôts, qui compensent des allègements qu'un système sans exonération ne
+  consent pas.
+
+  **Rien n'est écrit au public**, à la demande du programme : la page affiche
+  les chiffres nouveaux, mais aucune prose n'explique encore ce fonctionnement.
+  Il faut d'abord vérifier que ces chiffres font un système cohérent.
