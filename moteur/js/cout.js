@@ -522,7 +522,8 @@ class Avenir {
  */
 class SoldeAnnuel {
   constructor(annee, projete, ressources, depenses, rapportsAnnee, pib, retrait = 0.0,
-              recettes = {}, partContributive = 0.0, tauxPrelevement = 0.0,
+              recettes = {}, partContributive = 0.0, partSubventions = 0.0,
+              tauxPrelevement = 0.0,
               tauxLiberal = 0.0, anneeBascule = 0,
               convention = CONVENTION_RAPPORT) {
     this.annee = annee;
@@ -540,6 +541,10 @@ class SoldeAnnuel {
     // changement de taux ait prise.
     this.rapportsRecettes = recettes;
     this.partContributive = partContributive;
+    // Part des ressources qui est une subvention d'équilibre : ce que le
+    // budget comble aux régimes dont les cotisants ont disparu avant les
+    // retraités. Le scénario 6 ne la reconduit pas — voir `ressourcesDe`.
+    this.partSubventions = partSubventions;
     // Ce que le système prélève, rapporté à l'ASSIETTE et non au PIB ; le taux
     // unique de la proposition ; l'année où il commence ; et laquelle des deux
     // conventions de recette s'applique.
@@ -582,8 +587,15 @@ class SoldeAnnuel {
       // branche maladie. Ce que ce poste porte et qui ne revient pas à ce
       // système, c'est la CSG du fonds de solidarité vieillesse, et elle sort
       // par `retrait`.
+      // LES SUBVENTIONS D'ÉQUILIBRE NE SONT PAS RECONDUITES NON PLUS. Une
+      // subvention comble le compte d'un régime dont les cotisants ont disparu
+      // avant les retraités — la SNCF, les mines, les marins. Le scénario 6
+      // fusionne tous les régimes : cette catégorie cesse d'exister, et il n'y
+      // a plus rien à équilibrer par le budget.
       const pleine = this.ressources * this.tauxLiberal / this.tauxPrelevement;
-      return pleine + this.ressources * (1 - this.partContributive) - this.retrait;
+      const autres = this.ressources
+        * (1 - this.partContributive - this.partSubventions);
+      return pleine + autres - this.retrait;
     }
     // LA RECETTE SUIT LE TAUX, ancienne convention : la part COTISÉE des
     // ressources observées est multipliée par un rapport de taux légaux.
@@ -854,6 +866,7 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       comptes.recetteNonAcquise(annee),
       ligne.rapportsRecettes,
       comptes.partContributive(annee),
+      comptes.part("subventions_equilibre", annee),
       tauxPrelevement(annee),
       tauxLiberal,
       anneeBascule,

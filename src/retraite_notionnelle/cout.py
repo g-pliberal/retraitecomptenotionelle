@@ -411,6 +411,11 @@ class SoldeAnnuel:
     #: l'essentiel, la compensation des allègements généraux : l'État a
     #: exonéré des cotisations patronales, puis remboursé par l'impôt.
     part_compensation: float = 0.0
+    #: Part des ressources qui est une subvention d'équilibre : ce que le budget
+    #: de l'État comble aux régimes dont les cotisants ont disparu avant les
+    #: retraités — la SNCF, les mines, les marins. Le scénario 6 ne la reconduit
+    #: pas, et ``ressources_de`` dit pourquoi.
+    part_subventions: float = 0.0
     #: Ce que le système prélève, rapporté à l'ASSIETTE des revenus d'activité
     #: et non au PIB. Zéro quand l'assiette n'est pas chargée, et la convention
     #: « assiette » se replie alors sur l'ancienne.
@@ -457,17 +462,26 @@ class SoldeAnnuel:
         18 % qu'on leur applique SONT ce que l'État verse désormais. Reconduire
         la contribution en plus la compterait deux fois.
 
-        CE QUI RESTE RECONDUIT, ET QUI N'EST PAS TRANCHÉ : les ressources qui
-        ne sont ni des cotisations ni cette contribution — impôts et taxes
-        affectés, transferts, subventions d'équilibre, autres produits, soit
-        23,1 % des ressources de 2024. Les subventions d'équilibre (0,27 point
-        de PIB) sont le cas le plus discutable : elles comblent les comptes de
-        régimes fermés dont les cotisants ont disparu avant les retraités — la
-        SNCF, les mines, les marins —, et à ce titre elles ne sont pas une
-        cotisation d'employeur que 18 % remplaceraient, mais une charge de
-        liquidation que le budget porte quoi qu'il arrive. Les reconduire est
-        l'hypothèse qui n'en ajoute aucune autre ; c'est aussi celle qui FLATTE
-        le scénario 6, et la page doit le dire.
+        LES SUBVENTIONS D'ÉQUILIBRE NE SONT PAS RECONDUITES NON PLUS, et
+        l'argument n'est pas comptable mais logique. Une subvention d'équilibre
+        comble le compte d'un régime dont les cotisants ont disparu avant les
+        retraités — la SNCF, les mines, les marins. **Le scénario 6 fusionne
+        tous les régimes : cette catégorie cesse d'exister.** Il n'y a plus de
+        retraité sans cotisants dès lors qu'il n'y a plus qu'un régime, et donc
+        plus rien à équilibrer par le budget. Les pensions de ces régimes-là
+        sont servies comme les autres : pour partie recalculées à la baisse par
+        le notionnel, pour partie portées par les cotisants du système unifié.
+        Décision du Parti libéral, 19 septembre 2026.
+
+        Elle coûte 0,27 point de PIB au scénario 6, et c'est un coût qu'il faut
+        se réjouir de payer : reconduire une subvention dont l'objet a disparu
+        était l'hypothèse la plus flatteuse du modèle.
+
+        CE QUI RESTE RECONDUIT : les impôts et taxes affectés, les transferts
+        et les autres produits, soit 21,1 % des ressources de 2024. Les
+        premiers compensent des allègements de cotisations patronales que ce
+        système ne consent pas — l'argument vaudrait pour les retirer aussi, et
+        il n'est pas tranché.
         """
         if scenario == "actuel":
             return self.ressources
@@ -482,7 +496,8 @@ class SoldeAnnuel:
             # de solidarité vieillesse, et elle sort par ``retrait`` comme
             # sortent les versements de la CNAF et de l'Unédic.
             pleine = self.ressources * self.taux_liberal / self.taux_prelevement
-            autres = self.ressources * (1.0 - self.part_contributive)
+            autres = self.ressources * (1.0 - self.part_contributive
+                                        - self.part_subventions)
             return pleine + autres - self.retrait
         rapport = self.rapports_recettes.get(scenario, 1.0)
         cotisees = self.ressources * self.part_contributive
@@ -1149,6 +1164,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             rapports_recettes=par_annee[annee].rapports_recettes,
             part_contributive=comptes.part_contributive(annee),
             part_compensation=comptes.part("impots_et_taxes", annee),
+            part_subventions=comptes.part("subventions_equilibre", annee),
             taux_prelevement=taux_prelevement(annee),
             taux_liberal=taux_liberal,
             annee_bascule=annee_bascule,
