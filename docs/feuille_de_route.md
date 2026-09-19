@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 987<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 989<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -7542,6 +7542,22 @@ les mêmes trois rangées et se pose sur celle des contrôles. Mesuré dans
 Chromium à 768 et 1 280 points, sur l'accueil et sur Simuler avec tous les
 dépliants ouverts : plus aucune rangée où deux contrôles partent de hauteurs
 différentes.
+
+**La lecture d'un graphique ne fait plus sauter la page.** Signalé après
+la seconde passe : en balayant vite un tracé à la souris, « la légende
+saute ». Deux causes, toutes deux dans la bande de lecture que la seconde
+passe avait mise à la place de la légende : ses entrées se repliaient
+autrement à chaque année selon la largeur des chiffres, et la légende qui
+disparaissait puis revenait à chaque entrée et sortie du pointeur changeait
+la hauteur de la figure. La bande n'est plus affichée — elle reste la
+région vocale, qui dit maintenant une phrase par année — et les valeurs
+s'écrivent DANS la légende, dans une case par série, vide au repos, que le
+script dimensionne au rendu à la plus longue valeur de la série (autant de
+`ch` que de caractères, les chiffres étant à chasse fixe). L'année s'écrit
+en haut du trait de repère, dans le tracé, avec le halo des étiquettes de
+série. Mesuré en balayant quarante positions sur Coût et Trajectoire, à
+360 et 1 280 points : la figure garde une seule hauteur, et les entrées de
+la légende une seule position, du repos à la sortie du pointeur.
 
 **Fichiers touchés le 19 septembre.** `web/gabarit.py` et `moteur/js/gabarit.js`
 (feuille, `mot`, `tableau`, `graphique`, `fiabilite_en_clair`), `web/pages.py`

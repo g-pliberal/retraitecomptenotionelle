@@ -288,6 +288,9 @@ async function afficher() {
   daterStatuts(contenu);
   suivreLesDates(contenu);
   reprendre(contenu);
+  for (const figure of contenu.querySelectorAll("figure.graphique")) {
+    dimensionnerLecture(figure);
+  }
 }
 
 // -- les statuts, aux seules dates où leur régime recrutait -------------------
@@ -638,11 +641,30 @@ function rangVise(figure, part, total) {
   return Math.max(0, Math.min(total - 1, Math.round(position * (total - 1))));
 }
 
+// Les cases de la légende prennent, dès le rendu, la largeur de la plus
+// longue valeur de leur série : c'est ce qui fait que rien ne bouge au survol.
+// Les chiffres sont à chasse fixe, et `ch` est la largeur d'un chiffre : autant
+// de `ch` que de caractères est une borne sûre.
+function dimensionnerLecture(figure) {
+  const points = pointsDuGraphique(figure);
+  if (!points) { return; }
+  for (const entree of figure.querySelectorAll("figcaption li[data-serie]")) {
+    const colonne = Number(entree.dataset.serie);
+    const largeur = Math.max(0, ...points.lignes.map((ligne) => {
+      const valeur = ligne.valeurs[colonne];
+      return valeur && valeur !== "—" ? valeur.length : 0;
+    }));
+    const case_ = entree.querySelector(".lu");
+    if (case_) { case_.style.minWidth = `${largeur}ch`; }
+  }
+}
+
 function effacerLecture(figure) {
   const survol = figure.querySelector(".survol");
   if (survol) { survol.replaceChildren(); }
   const lecture = figure.querySelector(".lecture");
   if (lecture) { lecture.hidden = true; }
+  for (const case_ of figure.querySelectorAll("figcaption .lu")) { case_.textContent = ""; }
   figure._rang = null;
 }
 
@@ -677,19 +699,25 @@ function montrerLecture(figure, rang) {
     dessins.push(`<circle class="point" cx="${x}" cy="${y}" r="4" `
       + `fill="${points.couleurs[colonne] || "currentColor"}"/>`);
   });
+  // L'année, en haut du trait, du côté où il reste de la place.
+  const aGauche = x > (gauche + droite) / 2;
+  dessins.push(`<text class="annee-lue" x="${x + (aGauche ? -6 : 6)}" y="18" `
+    + `text-anchor="${aGauche ? "end" : "start"}">${neutraliser(ligne.abscisse)}</text>`);
   survol.innerHTML = dessins.join("");
 
-  const items = ligne.valeurs.map((valeur, colonne) => {
-    if (valeur === "—") { return ""; }
-    const pastille = `<span class="pastille" style="background:`
-      + `${points.couleurs[colonne] || "currentColor"}"></span>`;
-    return `<li>${pastille}<span>${neutraliser(points.entetes[colonne])}</span>`
-      + `<span class="valeur">${neutraliser(valeur)}</span></li>`;
-  }).join("");
-  const unite = points.unite ? ` · ${neutraliser(points.unite)}` : "";
-  lecture.innerHTML = '<span class="annee">'
-    + `${neutraliser(ligne.abscisse)}${unite}</span><ul>${items}</ul>`;
-  lecture.classList.toggle("a-droite", x > (gauche + droite) / 2);
+  // Les valeurs s'écrivent dans les cases de la légende, dimensionnées au
+  // rendu : la figure ne change pas de forme.
+  for (const entree of figure.querySelectorAll("figcaption li[data-serie]")) {
+    const valeur = ligne.valeurs[Number(entree.dataset.serie)];
+    const case_ = entree.querySelector(".lu");
+    if (case_) { case_.textContent = valeur && valeur !== "—" ? valeur : ""; }
+  }
+
+  // Ce que la synthèse vocale entend : la même chose, en une phrase.
+  const items = ligne.valeurs.map((valeur, colonne) =>
+    valeur === "—" ? "" : `${points.entetes[colonne]} : ${valeur}`).filter(Boolean);
+  const unite = points.unite ? ` (${points.unite})` : "";
+  lecture.textContent = `${ligne.abscisse}${unite}. ${items.join(". ")}.`;
   lecture.hidden = false;
 }
 

@@ -1230,37 +1230,33 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
    lisible sans une ligne de script. */
 .graphique .survol .guide { stroke: var(--texte); stroke-width: 1; }
 .graphique .survol .point { stroke-width: 3; fill: var(--fond); }
-/* La lecture de l'année survolée. Elle N'EST PLUS une infobulle flottante :
-   posée dans le cadre, elle recouvrait forcément des courbes, quelle que soit
-   son ancre, et sortait du bord en fin de série — c'est-à-dire là où l'on
-   regarde le plus. C'est maintenant une bande de hauteur fixe sous le tracé,
-   qui ne peut par construction recouvrir ni déborder de rien.
+/* La lecture d'une année. Elle S'ÉCRIT DANS LA LÉGENDE : chaque entrée porte
+   une case, vide au repos, où la valeur de l'année survolée s'inscrit. Les
+   cases ont d'avance la largeur de la plus longue valeur de leur série, posée
+   par le script au rendu de la page : rien ne bouge donc au survol, ni quand
+   le pointeur sort. Une bande à part — essayée deux fois — sautait : ses
+   entrées se repliaient autrement à chaque année selon la largeur des
+   chiffres, et remplacer la légende par la bande changeait la hauteur de la
+   figure à chaque entrée et sortie du pointeur. L'année, elle, est écrite
+   dans le tracé, en haut du trait de repère.
 
-   Elle PREND LA PLACE de la légende : même géométrie — une liste de pastilles
-   et de noms qui passe à la ligne —, avec l'année en tête et la valeur après
-   chaque nom. Posée au-dessus de la légende, elle la doublait : deux listes
-   des mêmes quatre séries, l'une chiffrée, l'autre pas. La légende se cache
-   donc tant que la bande est visible, et revient quand le pointeur sort. */
+   La région `.lecture` reste : c'est ce que la synthèse vocale entend. Elle
+   n'est plus affichée. */
 .graphique .lecture {
-  margin: 0.75rem 0 0; padding: 0;
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 1.5rem;
-  font-size: 0.9375rem;
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
 }
 .graphique .lecture[hidden] { display: none; }
-.graphique:has(> .lecture:not([hidden])) > figcaption { display: none; }
-/* Ce que le script écrit : l'année (et l'unité) en tête, puis une liste avec
-   une pastille, le nom court de la série et sa valeur. La feuille décrivait
-   jusqu'ici une grille de cellules que rien n'écrivait, et la bande rendait
-   « • ■Ce qui sort13,5 » : puces, pastille et valeur collées. La liste ne
-   fait pas de boîte : ses entrées coulent dans la rangée, à la suite de
-   l'année, comme celles de la légende. */
-.graphique .lecture > .annee {
-  font-weight: 700; color: var(--or); font-variant-numeric: tabular-nums;
+ul.legende .lu {
+  display: inline-block; text-align: right; font-weight: 800;
+  font-variant-numeric: tabular-nums; color: var(--texte);
 }
-.graphique .lecture > ul { display: contents; list-style: none; margin: 0; padding: 0; }
-.graphique .lecture li { display: inline-flex; align-items: baseline; gap: 0.45rem; }
-.graphique .lecture .valeur {
-  font-weight: 800; font-variant-numeric: tabular-nums; color: var(--texte);
+/* L'année survolée, en haut du trait de repère, avec le même halo que les
+   étiquettes de série. */
+.graphique .annee-lue {
+  font-family: inherit; font-size: 13px; font-weight: 800;
+  fill: var(--or); paint-order: stroke; stroke: var(--fond); stroke-width: 6px;
+  stroke-linejoin: round;
 }
 /* L'aide qui dit que les flèches marchent. Elle n'apparaît qu'au focus clavier :
    à la souris, elle n'apprendrait rien et prendrait une ligne. */
@@ -1596,6 +1592,7 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .cadre-carte { min-width: 36rem; }
   .graphique .graduation { font-size: 18px; }
   .graphique .etiquette-serie { font-size: 20px; stroke-width: 7px; }
+  .graphique .annee-lue { font-size: 18px; }
   .graphique .signature { font-size: 26px; }
 }
 

@@ -1555,11 +1555,13 @@ export function friseFlux(titre, annees) {
  * qu'une liste flottant sous un dessin.
  */
 function legende(series, libelleEcart = "") {
-  let entrees = series.map((serie) => '<li><span class="pastille" '
+  // `data-serie` et la case `.lu` : là où le script écrit la valeur de
+  // l'année survolée — voir `montrerLecture` dans index.html.
+  let entrees = series.map((serie, rang) => `<li data-serie="${rang}"><span class="pastille" `
     + `style="background:${serie.couleur}"></span>`
     + `<span>${echapper(serie.libelle)}`
     + (serie.glose ? ` <span class="discret">${echapper(serie.glose)}</span>` : "")
-    + "</span></li>").join("");
+    + '</span><span class="lu"></span></li>').join("");
   // Le ruban d'écart prend une entrée de plus, à deux pastilles : sans elle, le
   // rouge et le vert du fond ne voudraient rien dire pour qui ne les a pas
   // devinés.
