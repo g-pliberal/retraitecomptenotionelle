@@ -1,0 +1,25 @@
+# Les fichiers fabriqués par un script ne se fusionnent pas ligne à ligne.
+#
+# `pages.json` (2,4 Mo), `simulations.json` (4,8 Mo) et `donnees.json` (3 Mo)
+# sont écrits par un script depuis le modèle Python. Quand deux sessions les
+# ont régénérés chacune de son côté, la fusion à trois branches de git y
+# réussit souvent — et c'est le danger : elle rend un fichier que ni l'une ni
+# l'autre n'a produit, qui ne correspond à aucun état du modèle. Les tests le
+# rattrapent (`--verifier` compare l'octet), mais après coup et sans dire quoi.
+#
+# `-merge` fait donc échouer la fusion franchement : git garde la version de
+# la branche courante et déclare le conflit. La résolution ne s'arbitre pas,
+# elle se relance — voir « Plusieurs sessions en parallèle » dans CLAUDE.md :
+#
+#   git checkout --ours <fichier>   # n'importe quel côté fait l'affaire
+#   python scripts/construire_donnees.py && python scripts/construire_temoins.py
+#   python -m pytest
+#
+# On ne touche pas à l'attribut `diff` : le diff chiffre par chiffre des
+# témoins est ce qui rend le portage JavaScript vérifiable, il doit rester
+# lisible.
+
+moteur/donnees.json            -merge
+moteur/style.css               -merge
+tests/temoins/pages.json       -merge
+tests/temoins/simulations.json -merge

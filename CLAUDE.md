@@ -83,6 +83,52 @@ dépôt** : une session Claude Code n'a pas le droit d'écrire sous `.claude/`.
 Son inscription dans `settings.json` est donnée sous l'action 36 de
 `docs/feuille_de_route.md`, à poser à la main, une fois pour toutes.
 
+**Plusieurs sessions en parallèle : oui, en se partageant le dépôt par zones.**
+Chaque session web a son conteneur et son clone — rien n'est partagé côté
+disque — et `scripts/pousser.sh` traite le cas courant tout seul : quand une
+autre session a poussé entre-temps, il rebase sur `origin/main` les commits de
+celle-ci, qui n'ont jamais été publiés, et pousse. Deux sessions qui touchent
+des fichiers différents ne se voient même pas. Ce qui coûte n'est donc pas git,
+c'est le petit nombre de fichiers que toutes les sessions écrivent. Sur les
+soixante derniers commits, au 19 septembre 2026 : `docs/feuille_de_route.md`
+dans 38, `docs/limites.md` dans 20, `tests/temoins/pages.json` dans 18,
+`moteur/style.css` dans 7, `moteur/donnees.json` dans 5,
+`tests/temoins/simulations.json` dans 4. Deux sessions qui touchent l'une et
+l'autre aux pages du site se rencontrent dans `pages.json` à peu près à coup
+sûr. D'où quatre règles :
+
+- **Partager par zone, pas par envie.** Une session sur le modèle et son
+  portage, une sur les données et la certification, une sur le site — mais
+  jamais deux sur les pages en même temps.
+- **Commiter petit et pousser souvent.** La fenêtre de divergence est ce qui
+  coûte : une session qui garde dix commits une heure fait un conflit là où
+  trois poussées n'en font aucun. `pousser.sh` refuse d'ailleurs, sans rien
+  pousser, au-delà de vingt commits d'écart.
+- **Écrire dans la feuille de route au dernier commit**, juste avant de
+  pousser, pas en commençant : la note est courte, localisée dans sa section, et
+  le conflit éventuel se lit en trois lignes. Même chose pour le `journal` de
+  `veille.yaml`, qui s'allonge par la fin.
+- **Un conflit sur un fichier fabriqué ne s'arbitre pas, il se relance.**
+  `.gitattributes` marque `-merge` les quatre fichiers qu'un script écrit
+  (`moteur/donnees.json`, `moteur/style.css`, `tests/temoins/pages.json`,
+  `tests/temoins/simulations.json`) : git y déclare le conflit au lieu de
+  fusionner ligne à ligne et de rendre un fichier que ni l'une ni l'autre des
+  sessions n'a produit. La version de la branche courante reste dans le
+  répertoire de travail, sans marqueurs, et la résolution est mécanique :
+
+```bash
+git rebase origin/main          # pousser.sh l'a refusé, on le reprend à la main
+python scripts/construire_donnees.py
+python scripts/construire_temoins.py
+git add -A && git rebase --continue
+python -m pytest && bash scripts/pousser.sh
+```
+
+  Le côté qu'on garde n'a pas d'importance, puisqu'on réécrit les quatre
+  fichiers depuis les sources rebasées. Si plusieurs commits de la session
+  touchent aux témoins, le rebasage s'arrête autant de fois : régénérer à
+  chaque arrêt, chaque commit retrouvant alors les témoins de son propre état.
+
 ## Projet
 
 Modèle de retraite français en comptes notionnels appliqué rétroactivement.
