@@ -5390,6 +5390,34 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
             assert 'role="group"' in bloc and 'aria-label="Montants"' in bloc
 
 
+def test_les_deux_branches_d_une_bascule_ne_se_separent_jamais(contexte):
+    """Sur un téléphone, c'est la légende qui passe à la ligne, pas le contrôle.
+
+    La première version mettait la légende et les deux branches à plat dans un
+    conteneur qui se replie : à 390 px, « UNITÉ » gardait « € par mois » et
+    renvoyait « × salaire moyen » à la ligne suivante. Deux touches décalées
+    d'une ligne ne se lisent plus comme un choix entre deux états — elles se
+    lisent comme deux boutons. Les branches vivent donc dans une enveloppe
+    commune, que la feuille de style déclare insécable.
+    """
+    corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
+    bascules = re.findall(
+        r'<div class="bascule" role="group" aria-label="[^"]+">(.*?)</div>',
+        corps, re.S)
+    assert bascules, "la page ne porte aucune bascule"
+    for dedans in bascules:
+        # L'enveloppe est le DERNIER enfant de la bascule : ce qu'elle
+        # contient court jusqu'à son `</span>` final.
+        choix = re.search(r'<span class="choix">(.*)</span>\s*$', dedans, re.S)
+        assert choix, f"les branches ne sont pas enveloppées : {dedans}"
+        # Les deux états sont DANS l'enveloppe, et la légende en dehors.
+        assert choix.group(1).count("<a href=") == 1
+        assert 'class="actif"' in choix.group(1)
+        assert 'class="legende"' not in choix.group(1)
+    assert ".bascule > .choix" in g.FEUILLE_DE_STYLE
+    assert "flex-wrap: nowrap" in g.FEUILLE_DE_STYLE
+
+
 def test_la_bascule_des_resultats_precede_les_montants(contexte):
     """Un réglage qu'on découvre après avoir lu les chiffres arrive trop tard.
 

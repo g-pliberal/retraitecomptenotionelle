@@ -6748,6 +6748,14 @@ repères convertis : SMIC 1 443 €, moyenne 2 751 €, plafond 3 170 € en net
 1 823 €, 3 475 € et 4 005 € en brut. Demander un revenu brut sous une bascule
 qui annonce le net faisait taper l'un pour l'autre.
 
+**Un défaut trouvé au téléphone, et corrigé.** La première version mettait la
+légende et les deux branches à plat dans un conteneur qui se replie : à 390 px,
+« UNITÉ » gardait « € par mois » et renvoyait « × salaire moyen » à la ligne
+suivante. Deux touches décalées d'une ligne ne se lisent plus comme un choix
+entre deux états — elles se lisent comme deux boutons. Les branches vivent donc
+dans une enveloppe `.choix` déclarée insécable : c'est la légende qui passe à la
+ligne, et le contrôle reste entier. Un test l'exige.
+
 **Fichiers.** `bascule()` et son bloc CSS dans `web/gabarit.py` et
 `moteur/js/gabarit.js` ; `_bascule_montants`, `_bascule_unite` et `_champ_revenu`
 dans `web/pages.py` et `moteur/js/pages.js` ; feuille de style et témoins

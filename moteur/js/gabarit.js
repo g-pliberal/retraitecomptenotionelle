@@ -749,14 +749,17 @@ export function points(entrees) {
  * n'en emploie aucun pour se déplacer — l'adresse EST la saisie.
  */
 export function bascule(legende, branches, actif) {
-  const morceaux = [`<span class="legende">${echapper(legende)}</span>`];
+  const morceaux = [];
   for (const [libelle, cible] of branches) {
     morceaux.push(libelle === actif
       ? `<span class="actif" aria-current="true">${echapper(libelle)}</span>`
       : `<a href="${cible}">${echapper(libelle)}</a>`);
   }
+  // Les deux branches sont enveloppées ENSEMBLE : sur un téléphone, c'est la
+  // légende qui passe à la ligne, jamais le contrôle qui se coupe en deux.
   return `<div class="bascule" role="group" aria-label="${echapper(legende)}">`
-    + `${morceaux.join("")}</div>`;
+    + `<span class="legende">${echapper(legende)}</span>`
+    + `<span class="choix">${morceaux.join("")}</span></div>`;
 }
 
 export function depliant(titre, corps, identifiant = "") {

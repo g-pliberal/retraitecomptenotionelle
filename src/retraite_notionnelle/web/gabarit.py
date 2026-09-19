@@ -838,20 +838,25 @@ tbody tr[hidden] { display: none; }
   font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--texte-doux); margin-right: 0.15rem;
 }
+/* Les deux branches tiennent dans une enveloppe qui NE SE COUPE PAS : quand la
+   largeur manque, c'est la légende qui passe seule à la ligne. Un contrôle
+   scindé en deux lignes cesse d'être un contrôle. */
+.bascule > .choix { display: inline-flex; flex-wrap: nowrap; gap: 0.4rem; }
 /* Les branches partagent tout sauf leur état : une seule règle pour les deux,
    de sorte qu'elles ne puissent pas se décaler d'un pixel. */
-.bascule > a, .bascule > .actif {
-  display: inline-flex; align-items: center; min-height: 2.75rem;
+.bascule .choix > a, .bascule .choix > .actif {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 2.75rem;
   padding: 0 1rem; font-size: 0.9375rem; font-weight: 600;
   border: 2px solid var(--trait-champ); color: var(--texte);
   text-decoration: none;
 }
-.bascule > .actif {
+.bascule .choix > .actif {
   background: var(--or); color: var(--fond); border-color: var(--or);
   font-weight: 700; cursor: default;
 }
-.bascule > a:hover { border-color: var(--or); }
-.bascule > a:focus-visible { outline: 3px solid var(--or); outline-offset: 3px; }
+.bascule .choix > a:hover { border-color: var(--or); }
+.bascule .choix > a:focus-visible { outline: 3px solid var(--or); outline-offset: 3px; }
 .panneaux > .panneau[hidden] { display: none; }
 .onglets:has(input:checked) ~ .panneaux > .panneau { display: none; }
 .onglets:has(#grille-notionnel_liberal:checked) ~ .panneaux > .panneau[data-onglet="notionnel_liberal"],
@@ -2364,15 +2369,18 @@ def bascule(legende: str, branches: list[tuple[str, str]], actif: str) -> str:
     et ce site n'en emploie aucun pour se déplacer : l'adresse EST la saisie,
     elle se partage et se recharge. Voir ``_bascule_montants``.
     """
-    morceaux = [f'<span class="legende">{escape(legende)}</span>']
+    morceaux = []
     for libelle, cible in branches:
         if libelle == actif:
             morceaux.append(
                 f'<span class="actif" aria-current="true">{escape(libelle)}</span>')
         else:
             morceaux.append(f'<a href="{cible}">{escape(libelle)}</a>')
+    # Les deux branches sont enveloppées ENSEMBLE : sur un téléphone, c'est la
+    # légende qui passe à la ligne, jamais le contrôle qui se coupe en deux.
     return (f'<div class="bascule" role="group" aria-label="{escape(legende)}">'
-            + "".join(morceaux) + "</div>")
+            f'<span class="legende">{escape(legende)}</span>'
+            f'<span class="choix">{"".join(morceaux)}</span></div>')
 
 
 def depliant(titre: str, corps: str, identifiant: str = "") -> str:
