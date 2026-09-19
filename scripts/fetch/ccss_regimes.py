@@ -150,6 +150,32 @@ def _replie(texte: str) -> str:
     return " ".join(texte.split())
 
 
+def rapports_tous() -> dict[int, str]:
+    """Un rapport par millésime, SANS le plancher de 2013.
+
+    ``ccss_transferts_retraite.rapports()`` écarte tout ce qui précède
+    ``PREMIERE_ANNEE_LISIBLE``. Ce plancher est juste pour les séries que ce
+    module-là certifie, et faux ici : le recensement de l'archive montre que
+    quarante des quarante-sept millésimes s'ouvrent. On refait donc le tri, à
+    l'identique pour le reste — l'automne de préférence, le printemps sinon.
+    """
+    page = CCSS._recuperer(CCSS.PAGE_RAPPORTS).decode("utf-8", "replace")
+    par_annee: dict[int, list[str]] = {}
+    for lien, annee in CCSS.LIEN_RAPPORT.findall(page):
+        if not lien.startswith("http"):
+            lien = CCSS.RACINE_SITE + lien
+        par_annee.setdefault(int(annee), []).append(lien)
+    choisis: dict[int, str] = {}
+    for annee, liens in par_annee.items():
+        noms = {l: l.rsplit("/", 1)[-1] for l in liens}
+        automne = [l for l in liens if CCSS.AUTOMNE.search(noms[l])]
+        printemps = [l for l in liens if CCSS.PRINTEMPS.search(noms[l])]
+        choisis[annee] = (automne or printemps or liens)[0]
+    if not choisis:
+        raise LookupError("aucun rapport à la CCSS sur la page qui les liste")
+    return dict(sorted(choisis.items()))
+
+
 def sommaire(lignes: list[str]) -> dict[str, str]:
     """Numéro de fiche -> titre, lu au sommaire du rapport."""
     titres: dict[str, str] = {}
@@ -228,6 +254,51 @@ def lire_rapport(annee_rapport: int, octets: bytes) -> tuple[dict, int]:
     return trouves, orphelins
 
 
+#: Deux rapports qui donnent la même année du même régime doivent tomber
+#: d'accord. Un écart relatif au-delà de ce seuil n'est pas un arrondi : c'est
+#: une colonne lue de travers, ou un périmètre révisé. On n'arbitre pas — on
+#: écarte, et on le dit.
+ECART_TOLERE = 0.01
+
+
+def _reconcilier(serie: dict) -> tuple[list[dict], list[dict]]:
+    """Ne garde que ce sur quoi les rapports s'accordent.
+
+    La moisson d'avant 2013 l'exige. Les rapports de 2000 à 2006 sont des scans
+    océrisés : la reconstitution de mise en page y sépare les milliers — « 2
+    937,4 » ressort en « 937,4 » d'un côté et « 2 » de l'autre — et met les
+    colonnes dans le désordre une fois sur quatre. Une lecture isolée n'y est
+    donc pas fiable, et la seule défense qui ne demande pas de juger sur le
+    fond est la REDONDANCE : chaque rapport porte quatre ou cinq exercices, et
+    une année donnée est donc lue par plusieurs. Quand ils divergent, on ne
+    tranche pas ; on retire la valeur et on la verse aux conflits, où elle
+    reste consultable.
+    """
+    valeurs: list[dict] = []
+    conflits: list[dict] = []
+    for regime, libelles in serie.items():
+        for libelle, annees in libelles.items():
+            for annee, lectures in sorted(annees.items()):
+                montants = [v for v, _ in lectures]
+                pivot = min(montants, key=abs)
+                echelle = max(abs(pivot), 1e-9)
+                accord = all(abs(m - pivot) / echelle <= ECART_TOLERE for m in montants)
+                enregistrement = {
+                    "regime": regime, "serie": libelle, "annee": annee,
+                    "lectures": [{"valeur": v, "rapport": r} for v, r in lectures],
+                }
+                if accord:
+                    premier = min(lectures, key=lambda x: x[1])
+                    valeurs.append({
+                        "regime": regime, "serie": libelle, "annee": annee,
+                        "valeur": premier[0], "rapport": premier[1],
+                        "lectures": len(lectures),
+                    })
+                else:
+                    conflits.append(enregistrement)
+    return valeurs, conflits
+
+
 def main() -> int:
     arg = argparse.ArgumentParser(description=__doc__)
     arg.add_argument("--depuis", type=int, default=2013)
@@ -235,7 +306,7 @@ def main() -> int:
     options = arg.parse_args()
 
     try:
-        rapports = CCSS.rapports()
+        rapports = rapports_tous()
     except (urllib.error.HTTPError, urllib.error.URLError, LookupError) as erreur:
         print(f"échec : {erreur}", file=sys.stderr)
         return 1
@@ -264,14 +335,9 @@ def main() -> int:
                 cible = serie.setdefault(code, {}).setdefault(libelle, {})
                 titres_vus.setdefault(code, set()).add(titre)
                 for a, v in annees.items():
-                    cible.setdefault(a, (v, annee))       # le premier qui arrête gagne
+                    cible.setdefault(a, []).append((v, annee))
 
-    valeurs = [
-        {"regime": r, "serie": s, "annee": a, "valeur": v, "rapport": src}
-        for r, libelles in serie.items()
-        for s, annees in libelles.items()
-        for a, (v, src) in sorted(annees.items())
-    ]
+    valeurs, conflits = _reconcilier(serie)
     if not valeurs:
         print("échec : aucun tableau lu", file=sys.stderr)
         return 1
@@ -283,6 +349,7 @@ def main() -> int:
                 "source": CCSS.PAGE_RAPPORTS,
                 "fiabilite": "certifiee",
                 "rapports_illisibles": illisibles,
+                "conflits": conflits,
                 "titres_par_caisse": {k: sorted(v) for k, v in sorted(titres_vus.items())},
                 "valeurs": valeurs,
             },
@@ -292,8 +359,9 @@ def main() -> int:
         encoding="utf-8",
     )
     annees = sorted({v["annee"] for v in valeurs})
-    print(f"\n{len(valeurs)} valeurs — {len(serie)} régimes, "
+    print(f"\n{len(valeurs)} valeurs — {len({v['regime'] for v in valeurs})} régimes, "
           f"{annees[0]}-{annees[-1]} → {SORTIE}")
+    print(f"{len(conflits)} lectures écartées faute d'accord entre rapports")
     if illisibles:
         print(f"rapports sans tableau lisible : {illisibles}")
     return 0

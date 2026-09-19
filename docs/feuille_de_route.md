@@ -3498,6 +3498,65 @@ toucher aux moteurs de pension.
      moderne, l'avant-2013 ayant une fiche de régime différente à chaque
      époque.
 
+   **Sixième passe, 19 septembre 2026 : l'avant-2013 ne se moissonne pas, et
+   voici les mesures qui le disent.** Demandé : moissonner aussi l'avant-2013.
+   La réponse est non, pour trois raisons indépendantes, chacune mesurée sur
+   les trente-deux millésimes concernés. Aucune ne se contourne en insistant.
+
+   1. **Les deux ancres du moissonneur moderne sont absentes, partout.** Zéro
+      titre « Données générales » et zéro entrée de sommaire numérotée dans
+      TOUS les rapports d'avant 2013 — vérifié sur 2000, 2003, 2005, 2006 et
+      2010. Le script reconnaît une fiche de régime par son numéro au
+      sommaire, puis son tableau par son titre ; ni l'un ni l'autre n'existe.
+
+   2. **De 1979 à 1998, il n'y a pas de tableau à colonnes d'années.** Le
+      compte est sans appel : zéro en-tête d'années croissantes dans chacun
+      des dix-huit millésimes, à une exception près (1987, un seul). Ces
+      rapports présentent des tableaux d'UNE année à colonnes de RISQUES —
+      celui de 1996 donne « LES PRESTATIONS VERSÉES EN 1995 », vingt-deux
+      régimes en lignes et les risques en colonnes. C'est exploitable en
+      principe, mais sporadique en pratique : le meilleur bloc par rapport
+      compte de 0 à 7 lignes de régime selon l'année, et la plupart des
+      millésimes n'en portent aucun.
+
+   3. **De 2000 à 2006 et en 2010, ce sont des scans océrisés dont la
+      géométrie ne tient pas.** Il y a bien des en-têtes d'années — 31 en
+      2000, 151 en 2001, 203 en 2003, 342 en 2010 — mais **une part énorme est
+      dans le désordre** : 142 sur 293 en 2001, 47 sur 226 en 2006, 91 sur 433
+      en 2010. Pire, la reconstitution de mise en page **coupe les milliers** :
+      « 2 937,4 » ressort en « 937,4 » d'un côté et « 2 » de l'autre, sur la
+      même ligne. Changer la tolérance de regroupement n'y fait rien — essayé
+      à 3,0, 1,5, 0,8 et 0,3. Et l'OCR mange les libellés : « Prestations
+      extraléaales », « nrnrfi iitc affprlAcl ».
+
+      Faute de sommaire, il faudrait reconnaître le régime à son nom dans la
+      prose. **C'est le piège** : appliqués hors d'un titre de sommaire, les
+      motifs de la table canonique se trompent — « Régimes de non-salariés
+      non-agricoles » tombe sur `msa_salaries`, une ligne sur le déficit d'une
+      branche tombe sur un régime. Ce qu'on produirait serait faux sans le
+      dire, ce qui est le seul résultat que ce dépôt refuse.
+
+   **Ce que la passe laisse quand même, et qui sert.** Deux choses sont
+   entrées dans `ccss_regimes.py` :
+
+   - `rapports_tous()`, l'index de l'archive SANS le plancher de 2013 de
+     `ccss_transferts_retraite`, qui était juste pour les séries que ce
+     module-là certifie et faux pour explorer ;
+   - **la réconciliation entre rapports**, qui est la défense qu'il aurait
+     fallu pour l'ère ancienne et qui vaut déjà pour la moderne. Chaque
+     rapport porte quatre ou cinq exercices : une année donnée est donc lue
+     plusieurs fois. On ne garde une valeur que si toutes les lectures
+     s'accordent à 1 % près ; sinon on ne tranche pas, on écarte et on verse
+     la valeur aux `conflits`, où elle reste consultable.
+
+     **Le résultat sur la moisson moderne justifie à lui seul le garde-fou** :
+     412 lectures sur 5 662 ne s'accordent pas, soit 7,3 %, et la moisson
+     tombe de 5 662 à **5 250 valeurs contrôlées**. Les conflits mêlent des
+     révisions légitimes — 1 282 248 contre 1 302 845 assurés cotisants à la
+     MSA salariés en 2014, 1,6 % d'écart — et des lectures franchement
+     fausses : 78 874 contre 571 193 pour la même case. Sans confrontation,
+     les secondes seraient passées pour des données.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -5054,3 +5113,42 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   point 3 : le chapitre des régimes n'a pas de numéro fixe d'un millésime à
   l'autre, et le même régime change de graphie — cinquante et un libellés pour
   une vingtaine de caisses, ramenés par une table de motifs.
+
+- **Septembre 2026, action 35, volet A, point 3, sixième passe : l'avant-2013
+  ne se moissonne pas.** Demandé : moissonner aussi l'avant-2013. La réponse
+  est non, et elle tient à trois mesures, pas à une impression.
+
+  **Les deux ancres du moissonneur sont absentes partout** : zéro titre
+  « Données générales » et zéro entrée de sommaire numérotée dans tous les
+  rapports d'avant 2013. **De 1979 à 1998, il n'existe aucun tableau à colonnes
+  d'années** — zéro en-tête croissant sur dix-huit millésimes, une seule
+  exception en 1987 ; ces rapports présentent des tableaux d'UNE année à
+  colonnes de risques, sporadiques, de 0 à 7 lignes de régime selon l'année.
+  **De 2000 à 2006 et en 2010, ce sont des scans océrisés dont la géométrie ne
+  tient pas** : 142 en-têtes sur 293 dans le désordre en 2001, et la
+  reconstitution coupe les milliers — « 2 937,4 » ressort en « 937,4 » et
+  « 2 » sur la même ligne. Changer la tolérance de regroupement n'y fait rien,
+  essayé à 3,0, 1,5, 0,8 et 0,3.
+
+  Faute de sommaire, il faudrait reconnaître le régime à son nom dans la prose,
+  et c'est là que ça devient dangereux plutôt que seulement difficile : les
+  motifs de la table canonique, sûrs sur un titre de sommaire, se trompent en
+  prose — « Régimes de non-salariés non-agricoles » tombe sur `msa_salaries`.
+  On produirait des chiffres faux sans le dire. **On s'arrête donc, et on écrit
+  pourquoi.**
+
+  **Deux acquis restent.** `rapports_tous()` indexe l'archive sans le plancher
+  de 2013, qui était juste pour les séries certifiées par
+  `ccss_transferts_retraite` et faux pour explorer. Et surtout **la
+  réconciliation entre rapports** : chaque rapport portant quatre ou cinq
+  exercices, une année est lue plusieurs fois, et on ne garde une valeur que si
+  toutes les lectures s'accordent à 1 % près — sinon on ne tranche pas, on
+  écarte et on verse aux `conflits`.
+
+  C'était la défense qu'il aurait fallu pour l'ère ancienne ; elle vaut déjà
+  pour la moderne, et son résultat la justifie à lui seul : **412 lectures sur
+  5 662 ne s'accordent pas**, soit 7,3 %, et la moisson passe de 5 662 à 5 250
+  valeurs contrôlées. Les conflits mêlent des révisions légitimes — 1,6 %
+  d'écart sur les cotisants de la MSA salariés en 2014 — et des lectures
+  franchement fausses, 78 874 contre 571 193 pour la même case. Sans
+  confrontation, les secondes seraient passées pour des données.
