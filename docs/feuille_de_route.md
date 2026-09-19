@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 145<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 149<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -688,7 +688,12 @@ système actuel. `limites.md` §5 porte les trois.
   entre les deux jaunes est son solde. *Mesuré* : dès 2026, la proposition
   encaisse moins qu'elle ne verse, et l'écart se voit là où la phrase « les
   comptes ne se rééquilibrent jamais » le disait sans le montrer. Seul le
-  témoin de la page Coût bouge.
+  témoin de la page Coût bouge. Dans la foulée, les deux courbes de la
+  proposition partent de la bascule et non plus de la dernière année
+  observée : l'année d'avant la bascule, la proposition n'est pas encore
+  appliquée, son point était celui du système actuel, et la courbe faisait
+  un à-pic de cinq points de PIB qui ne mesurait rien — l'utilisateur l'a vu
+  tout de suite.
 
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 

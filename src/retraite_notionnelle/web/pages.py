@@ -5801,21 +5801,24 @@ def _cout(contexte: Contexte) -> str:
     sortie = {ligne.annee: ligne.depense("actuel") * 100 for ligne in solde.annees}
     entree = {ligne.annee: ligne.ressources * 100 for ligne in solde.annees}
     # La troisième courbe est LA PROPOSITION, et non plus une variante que le
-    # site ne compare plus. Elle ne commence qu'à l'année observée la plus
-    # récente — non parce qu'elle ne changerait rien avant, elle est
-    # rétroactive et change tout, mais parce que c'est de là que la décision se
-    # prend. Ce qu'elle aurait coûté sur le passé est dans les tableaux du
-    # dépliant, à sa place : celle d'un contrefactuel.
+    # site ne compare plus. Elle ne commence qu'à la bascule — non parce
+    # qu'elle ne changerait rien avant, elle est rétroactive et change tout,
+    # mais parce que c'est de là que la décision se prend. Ce qu'elle aurait
+    # coûté sur le passé est dans les tableaux du dépliant, à sa place : celle
+    # d'un contrefactuel. Pas à l'année observée non plus : l'année d'avant la
+    # bascule, la proposition n'est pas encore appliquée, son point est celui
+    # du système actuel, et la courbe faisait un à-pic qui ne mesurait rien.
     reforme = "notionnel_liberal"
+    depart_reforme = max(obs, bascule)
     apres = {ligne.annee: ligne.depense(reforme) * 100
-             for ligne in solde.annees if ligne.annee >= obs}
+             for ligne in solde.annees if ligne.annee >= depart_reforme}
     # Et ce qu'elle encaisserait : 18 % sur les revenus d'activité, sans la
     # contribution d'équilibre de l'État ni ce que la CNAF et l'Unédic versent
     # pour des droits qu'elle ne sert plus. Deux courbes pour la proposition
     # comme pour le système actuel, sinon on ne voit qu'une moitié de son
     # compte : ce qu'elle coûte, jamais ce qu'elle rapporte.
     encaisse = {ligne.annee: ligne.ressources_de(reforme) * 100
-                for ligne in solde.annees if ligne.annee >= obs}
+                for ligne in solde.annees if ligne.annee >= depart_reforme}
     taux_liberal = contexte.simulateur().parametres.taux_cotisation_liberal
 
     # L'ordre est celui de la lecture, de gauche à droite : la légende se
