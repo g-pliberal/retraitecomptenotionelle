@@ -7666,3 +7666,28 @@ majoration pour congé parental et celle pour enfant handicapé, absentes du
 scénario 1 ; le partage de la MDA entre les parents, que la loi de 2010
 permet et que le modèle donne entière à la mère ; et une population : la
 grille dit ce qu'une mère perd ou gagne, pas ce que les mères pèsent.
+
+**Le bilan vie entière, le même jour** (`--vie-entiere`). La page Coût retire
+aux scénarios notionnels les 10,9 milliards que la branche famille verse à la
+retraite en 2024 — AVPF et majorations pour enfants — et dit que l'argent lui
+reste ; le programme le rend aux familles à la naissance. Le second tableau en
+tire la conséquence : 10,9 milliards pour 663 000 naissances font 16 386 € par
+enfant, suivis du salaire moyen jusqu'à l'année où chaque enfant naît, et le
+bilan compare la pension du scénario 1 servie sur l'espérance de vie à la
+liquidation à celle du scénario 6 sur la même durée, plus l'aide reçue. Le
+chiffre des naissances est celui du bilan démographique de l'INSEE, et il
+n'est pas dans les données du dépôt : c'est la seule hypothèse du tableau qui
+ne soit pas lue. **Une mère de plusieurs enfants n'y gagne pas.** Portée au
+compte à chaque naissance et revalorisée comme lui, l'aide vaut à la
+liquidation 74 € par mois pour un enfant, 146 € pour deux, 216 € pour trois,
+quand le scénario 1 sert 134, 143 et 366 € à carrière complète, 543 et 846 €
+avec trois et six ans d'arrêt. À deux enfants sans arrêt, l'aide égale le
+droit ; partout ailleurs elle est en dessous, et de loin dès que la mère
+s'est arrêtée, parce que l'AVPF est concentrée sur celle qui s'arrête quand
+l'aide est répartie sur toutes les naissances. Sur la vie entière, en euros de
+2026 et sans actualisation, le solde va de −200 000 € sans enfant à −296 000 €
+pour trois enfants et six ans d'arrêt : l'essentiel de l'écart n'est pas
+l'enfant, c'est le compte lui-même, qui sert 30 % de moins à la salariée du
+privé sans enfant. Ce que le bilan ne compte pas : les cotisations de la mère,
+identiques par construction (18 + 5 + 5 contre 28) ; la réversion ; les
+allocations familiales et la PAJE, qui existent sous les deux systèmes.

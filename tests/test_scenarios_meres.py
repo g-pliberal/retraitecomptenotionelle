@@ -63,3 +63,23 @@ def test_le_script_ecrit_son_csv(tmp_path):
     with sortie.open(encoding="utf-8") as flux:
         lignes = list(csv.DictReader(flux))
     assert [l["code"] for l in lignes] == [s.code for s in scenarios_meres.SITUATIONS]
+
+
+def test_l_aide_a_la_naissance_ne_va_qu_aux_meres_et_vaut_moins_que_le_droit(lignes):
+    for ligne in lignes:
+        if ligne.situation.nombre_enfants == 0:
+            assert ligne.aide_recue == 0 and ligne.aide_en_pension == 0
+        else:
+            assert ligne.aide_recue > 0 and ligne.aide_en_pension > 0
+            # L'aide, portée au compte, ne rattrape jamais ce que le droit
+            # sert à une mère qui s'est arrêtée : l'AVPF est concentrée sur
+            # elle, l'aide est répartie sur toutes les naissances.
+            if ligne.situation.annees_arret:
+                assert ligne.aide_en_pension < ligne.effet_enfants_actuel
+
+
+def test_le_solde_vie_entiere_se_recompose(lignes):
+    for ligne in lignes:
+        assert ligne.annees_pension > 20
+        attendu = ligne.liberal_vie + ligne.aide_recue - ligne.actuel_vie
+        assert abs(ligne.solde_vie - attendu) < 1e-6

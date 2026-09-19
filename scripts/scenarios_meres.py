@@ -37,6 +37,32 @@ donné TOTAL, pilier capitalisé compris, comme la dernière ligne du tableau du
 simulateur. La garantie vieillesse n'est comptée que si elle est servie à la
 liquidation, c'est-à-dire à 65 ans au plus tôt ; avant, la colonne « garantie »
 dit ce qu'elle servirait à cet âge.
+
+LE BILAN VIE ENTIÈRE (``--vie-entiere``)
+----------------------------------------
+La page Coût retire aux scénarios notionnels ce que la branche famille verse
+aujourd'hui à la retraite — les cotisations d'AVPF et le remboursement des
+majorations pour enfants, lus dans ``transferts_retraite.csv`` — et dit que
+cet argent reste à la branche famille. Le programme le rend aux familles au
+moment de la naissance plutôt qu'à la retraite. Ce second tableau en tire la
+conséquence pour chaque mère de la grille :
+
+- **l'aide à la naissance** est ce que la CNAF verse à la retraite une année
+  donnée, divisé par les naissances de la même année — soit, en 2024, un peu
+  plus de 16 000 € par enfant —, exprimée en part du salaire moyen pour être
+  portée aux années où ses enfants naissent ;
+- **l'aide en pension** est ce que cette somme vaudrait si elle avait été
+  portée au compte notionnel à la naissance de chaque enfant : revalorisée
+  comme le compte, puis divisée par le même coefficient de conversion ;
+- **la vie entière** compare, en euros de 2026 et sans actualisation, la
+  pension du scénario 1 servie sur l'espérance de vie à la liquidation à
+  celle du scénario 6 servie sur la même durée, plus l'aide reçue.
+
+Ce que le bilan ne compte pas, et pourquoi : les cotisations que la mère a
+versées elle-même, identiques dans les deux systèmes par construction
+(18 + 5 + 5 contre 28) ; la réversion ; et les allocations familiales, la
+PAJE ou le quotient familial, qui existent sous les deux systèmes et ne
+distinguent pas l'un de l'autre.
 """
 
 from __future__ import annotations
@@ -50,9 +76,23 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from retraite_notionnelle import Parametres  # noqa: E402
+from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
+from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.simulateur import Comparaison, Simulateur  # noqa: E402
 
 LIBERAL = "notionnel_liberal"
+
+#: Naissances en France en 2024, INSEE, bilan démographique 2024 (janvier
+#: 2025). Ce chiffre N'EST PAS dans les données du dépôt : c'est l'hypothèse
+#: du bilan vie entière, écrite ici pour qu'on la voie et qu'on la change.
+NAISSANCES = {2024: 663_000}
+#: L'année où l'aide par enfant est calculée : la dernière où les transferts
+#: de la CNAF et les naissances sont tous deux connus.
+ANNEE_AIDE = 2024
+#: Années entre deux naissances, dans la grille.
+ECART_ENTRE_ENFANTS = 2
+#: Euros dans lesquels le bilan est écrit.
+ANNEE_EUROS = 2026
 
 
 @dataclass(frozen=True)
@@ -118,10 +158,37 @@ class Ligne:
     trimestres_requis: int
     taux: float
     avantages: tuple[str, ...]
+    #: Espérance de vie à la liquidation, en années : la durée sur laquelle
+    #: la pension est servie, celle du coefficient de conversion du modèle.
+    annees_pension: float = 0.0
+    #: Ce que la mère recevrait à la naissance de ses enfants, somme en
+    #: euros de 2026, si la branche famille rendait aux familles ce qu'elle
+    #: verse aujourd'hui à la retraite.
+    aide_recue: float = 0.0
+    #: La même aide portée au compte à chaque naissance, en pension mensuelle.
+    aide_en_pension: float = 0.0
 
     @property
     def ecart(self) -> float:
         return self.liberal / self.actuel - 1.0 if self.actuel > 0 else float("nan")
+
+    @property
+    def actuel_vie(self) -> float:
+        return self.actuel * 12.0 * self.annees_pension
+
+    @property
+    def liberal_vie(self) -> float:
+        return self.liberal * 12.0 * self.annees_pension
+
+    @property
+    def solde_vie(self) -> float:
+        """Ce que la vie entière rend de plus (ou de moins) sous le scénario 6."""
+        return self.liberal_vie + self.aide_recue - self.actuel_vie
+
+    @property
+    def solde_pension(self) -> float:
+        """Le même solde, l'aide lue en pension : ce qui manque chaque mois."""
+        return self.liberal + self.aide_en_pension - self.actuel
 
 
 class Grille:
@@ -132,6 +199,30 @@ class Grille:
         self.niveau = niveau
         self.affiliation = affiliation
         self.age_debut = age_debut
+
+    @property
+    def comptes(self) -> ComptesRetraite:
+        if not hasattr(self, "_comptes"):
+            self._comptes = ComptesRetraite(self.simulateur.parametres.racine_donnees)
+        return self._comptes
+
+    def aide_par_enfant(self, annee: int) -> float:
+        """L'aide à la naissance, en euros courants de ``annee``.
+
+        Ce que la branche famille verse à la retraite en ``ANNEE_AIDE`` — AVPF
+        et majorations, en millions d'euros —, par naissance de la même année,
+        puis suivie du salaire moyen jusqu'à ``annee`` : une aide qui est une
+        part constante du salaire, comme les cotisations qu'elle remplace.
+        """
+        macro = self.simulateur.macro
+        par_naissance = (self.comptes.transfert_organisme("famille", ANNEE_AIDE)
+                         * 1e6 / NAISSANCES[ANNEE_AIDE])
+        return (par_naissance * salaire_moyen_annuel(macro, annee)
+                / salaire_moyen_annuel(macro, ANNEE_AIDE))
+
+    def annees_de_naissance(self, situation: Situation) -> list[int]:
+        return [self.generation + AGE_PREMIER_ENFANT + ECART_ENTRE_ENFANTS * i
+                for i in range(situation.nombre_enfants)]
 
     @property
     def age_reference(self) -> float:
@@ -199,6 +290,15 @@ class Grille:
         actuel = self._mensuel(avec, avec.actuel.pension_annuelle)
         liberal = self._mensuel(avec, avec.pension_totale(LIBERAL))
         garantie = avec.notionnel_liberal.garantie_vieillesse
+        conversion = avec.notionnel_liberal.conversion
+        macro = self.simulateur.macro
+        annee_liquidation = avec.carriere.annee_liquidation
+        aides = {annee: self.aide_par_enfant(annee)
+                 for annee in self.annees_de_naissance(situation)}
+        capital_aides = sum(
+            montant * self.simulateur.indexation.coefficient(annee, annee_liquidation)
+            for annee, montant in aides.items()
+        )
         return Ligne(
             situation=situation,
             age_liquidation=avec.carriere.age_liquidation,
@@ -216,7 +316,16 @@ class Grille:
                 f"{a.libelle} : {self._mensuel(avec, a.montant):+.0f} €/mois ({a.detail})"
                 for a in avec.actuel.avantages_appliques
             ),
+            annees_pension=conversion.esperance_residuelle,
+            aide_recue=sum(montant * macro.coefficient_prix(annee, ANNEE_EUROS)
+                           for annee, montant in aides.items()),
+            aide_en_pension=self._mensuel(avec, capital_aides / conversion.diviseur),
         )
+
+
+def euros(montant: float, signe: bool = False) -> str:
+    """« 1 234 € », l'espace pour milliers, le signe si demandé."""
+    return f"{montant:{'+' if signe else ''},.0f} €".replace(",", "\u202f")
 
 
 def formater_age(age: float) -> str:
@@ -253,13 +362,39 @@ def imprimer(grille: Grille, lignes: list[Ligne], detail: bool) -> None:
           "devenant de simples années sans activité.")
 
 
+def imprimer_vie_entiere(grille: Grille, lignes: list[Ligne]) -> None:
+    aide = grille.aide_par_enfant(ANNEE_AIDE)
+    cnaf = grille.comptes.transfert_organisme("famille", ANNEE_AIDE)
+    print(f"\nBilan vie entière. La branche famille verse {cnaf / 1000:.1f} Md€ à la "
+          f"retraite en {ANNEE_AIDE} (AVPF et majorations pour enfants), pour "
+          f"{euros(NAISSANCES[ANNEE_AIDE])[:-2]} naissances : {euros(aide)} par enfant, "
+          f"rendus à la naissance au lieu de la retraite, suivant le salaire moyen.")
+    print("Euros constants de 2026, sans actualisation ; la pension est servie sur "
+          "l'espérance de vie à la liquidation.\n")
+    entete = (f"{'Situation':58} {'Années':>6} {'Scén. 1 vie':>12} {'Scén. 6 vie':>12} "
+              f"{'Aide reçue':>10} {'Solde vie':>10} {'Aide/mois':>9} {'Solde/mois':>10}")
+    print(entete)
+    print("-" * len(entete))
+    for l in lignes:
+        print(f"{l.situation.libelle:58} {l.annees_pension:>6.1f} {euros(l.actuel_vie):>12} "
+              f"{euros(l.liberal_vie):>12} {euros(l.aide_recue):>10} "
+              f"{euros(l.solde_vie, True):>10} {euros(l.aide_en_pension, True):>9} "
+              f"{euros(l.solde_pension, True):>10}")
+    print("\n« Solde vie » : pension du scénario 6 sur la vie, plus l'aide reçue, "
+          "moins la pension du scénario 1 sur la vie. « Aide/mois » : la même aide "
+          "portée au compte à chaque naissance, revalorisée comme lui et convertie "
+          "à la liquidation. « Solde/mois » : scénario 6 plus aide en pension, moins "
+          "scénario 1.")
+
+
 def ecrire_csv(chemin: Path, lignes: list[Ligne]) -> None:
     with chemin.open("w", encoding="utf-8", newline="") as flux:
         w = csv.writer(flux)
         w.writerow(["code", "situation", "enfants", "annees_arret", "age_liquidation",
                     "liquidation_ouverte", "actuel_mensuel", "liberal_mensuel", "ecart",
                     "effet_enfants_actuel", "effet_enfants_liberal", "garantie_mensuelle",
-                    "garantie_servie", "trimestres", "trimestres_requis", "taux"])
+                    "garantie_servie", "trimestres", "trimestres_requis", "taux",
+                    "annees_pension", "aide_recue", "aide_en_pension", "solde_vie"])
         for l in lignes:
             w.writerow([l.situation.code, l.situation.libelle, l.situation.nombre_enfants,
                         l.situation.annees_arret, f"{l.age_liquidation:.2f}",
@@ -267,7 +402,8 @@ def ecrire_csv(chemin: Path, lignes: list[Ligne]) -> None:
                         f"{l.ecart:.4f}", f"{l.effet_enfants_actuel:.2f}",
                         f"{l.effet_enfants_liberal:.2f}", f"{l.garantie:.2f}",
                         int(l.garantie_servie), l.trimestres, l.trimestres_requis,
-                        f"{l.taux:.4f}"])
+                        f"{l.taux:.4f}", f"{l.annees_pension:.2f}", f"{l.aide_recue:.2f}",
+                        f"{l.aide_en_pension:.2f}", f"{l.solde_vie:.2f}"])
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -279,12 +415,16 @@ def main(argv: list[str] | None = None) -> int:
     parseur.add_argument("--age-debut", type=float, default=21)
     parseur.add_argument("--detail", action="store_true",
                          help="sous chaque ligne, les avantages que le scénario 1 applique")
+    parseur.add_argument("--vie-entiere", action="store_true",
+                         help="le second tableau : l'aide à la naissance contre la pension")
     parseur.add_argument("--csv", type=Path)
     args = parseur.parse_args(argv)
 
     grille = Grille(args.generation, args.niveau, args.affiliation, args.age_debut)
     lignes = [grille.calculer(s) for s in SITUATIONS]
     imprimer(grille, lignes, args.detail)
+    if args.vie_entiere:
+        imprimer_vie_entiere(grille, lignes)
     if args.csv:
         ecrire_csv(args.csv, lignes)
         print(f"\nÉcrit : {args.csv}")
