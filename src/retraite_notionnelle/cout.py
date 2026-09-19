@@ -443,11 +443,31 @@ class SoldeAnnuel:
 
         LA RECETTE SUIT LE TAUX. Le scénario 6 remplace tous les taux par 18 %
         à compter de la bascule ; ce qui est prélevé baisse donc, et la part
-        COTISÉE des ressources baisse avec. Les ressources qui ne sont pas des
-        cotisations — impôts et taxes affectés, subventions d'équilibre — sont
-        laissées inchangées : le programme ne dit pas ce qu'il en ferait, et
-        les reconduire est l'hypothèse qui n'en ajoute aucune autre. C'est
-        aussi celle qui FLATTE le scénario 6, et la page doit le dire.
+        COTISÉE des ressources baisse avec.
+
+        LA CONTRIBUTION D'ÉQUILIBRE DE L'ÉTAT DISPARAÎT, ET L'ÉTAT COTISE À
+        18 % COMME TOUT EMPLOYEUR. C'est une décision du Parti libéral, prise
+        le 19 septembre 2026, et elle était jusque-là un ACCIDENT DE
+        CONSTRUCTION plutôt qu'un choix : ce poste est marqué ``contributive``
+        dans ``equilibre.py``, il entre donc dans ``part_contributive`` — 77,3 %
+        des ressources, dont 65,6 de cotisations et 11,7 de contribution — et
+        se trouve remplacé par les 18 %, sans que rien ne l'écrive. Le raccord
+        est juste parce que l'assiette est celle des salaires et traitements de
+        TOUTES les branches : les traitements des fonctionnaires y sont, et les
+        18 % qu'on leur applique SONT ce que l'État verse désormais. Reconduire
+        la contribution en plus la compterait deux fois.
+
+        CE QUI RESTE RECONDUIT, ET QUI N'EST PAS TRANCHÉ : les ressources qui
+        ne sont ni des cotisations ni cette contribution — impôts et taxes
+        affectés, transferts, subventions d'équilibre, autres produits, soit
+        23,1 % des ressources de 2024. Les subventions d'équilibre (0,27 point
+        de PIB) sont le cas le plus discutable : elles comblent les comptes de
+        régimes fermés dont les cotisants ont disparu avant les retraités — la
+        SNCF, les mines, les marins —, et à ce titre elles ne sont pas une
+        cotisation d'employeur que 18 % remplaceraient, mais une charge de
+        liquidation que le budget porte quoi qu'il arrive. Les reconduire est
+        l'hypothèse qui n'en ajoute aucune autre ; c'est aussi celle qui FLATTE
+        le scénario 6, et la page doit le dire.
         """
         if scenario == "actuel":
             return self.ressources

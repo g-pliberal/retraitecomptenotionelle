@@ -3812,6 +3812,46 @@ toucher aux moteurs de pension.
    devient 18 % ? Le programme ne le dit pas, et le dépôt ne le décidera pas à
    sa place.
 
+   **Douzième passe, 19 septembre 2026 : la convention de l'État est
+   tranchée, et elle n'était jusque-là vraie que par accident.** Le programme
+   a décidé : **la contribution d'équilibre disparaît, l'État cotise à 18 %
+   comme tout employeur.**
+
+   **La vérification a changé le travail.** Avant d'implémenter, on a regardé
+   ce que le code faisait déjà — et il faisait exactement cela. La
+   contribution d'équilibre est marquée `contributive` dans `equilibre.py` :
+   elle entre donc dans `part_contributive`, qui vaut **77,3 % des ressources
+   — 65,6 de cotisations et 11,7 de contribution** —, et c'est toute cette
+   enveloppe que les 18 % remplacent. Le terme reconduit, lui, est le
+   COMPLÉMENT : `ressources × (1 − part_contributive)`, d'où la contribution
+   est absente.
+
+   Le raccord n'est juste que pour une raison qu'il fallait écrire :
+   **l'assiette couvre TOUTES les branches**, traitements des fonctionnaires
+   compris. Les 18 % qu'on leur applique SONT ce que l'État verse désormais ;
+   reconduire la contribution en plus la compterait deux fois.
+
+   **Ce qui a donc été fait n'est pas un changement de calcul mais une mise
+   sous garde.** Le docstring de `ressources_de` disait « le programme ne dit
+   pas ce qu'il en ferait » : il le dit maintenant, et c'est écrit. Et un test
+   tient la convention, parce qu'elle reposait sur un drapeau que personne ne
+   protégeait — décocher `contributive` sur ce poste aurait fait reconduire la
+   contribution EN PLUS des 18 % sans qu'aucun test ne bronche.
+
+   **Ce que la décision ne tranche pas, et qu'il faudra trancher.** Restent
+   reconduits 23,1 % des ressources de 2024 : impôts et taxes affectés
+   (1,944 point de PIB), transferts (0,665), **subventions d'équilibre
+   (0,274)**, autres produits (0,303). Les subventions sont le cas le plus
+   discutable, et la ventilation par régime dit pourquoi : elles financent
+   60,8 % de la SNCF et de la RATP en 2023, 81,1 % des mines, 76,7 % du
+   FSPOEIE, 76,3 % de l'ENIM — et **94,5 % de la SNCF en 2070**. Ce ne sont
+   pas des cotisations d'employeur que 18 % remplaceraient : ce sont des
+   charges de liquidation de régimes fermés, dont les cotisants ont disparu
+   avant les retraités, et que le budget porte quoi qu'il arrive. Les
+   reconduire reste l'hypothèse qui n'en ajoute aucune autre ; c'est aussi
+   celle qui flatte le scénario 6, et le docstring le dit désormais avec les
+   chiffres.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -5716,3 +5756,30 @@ rend automatique et que le droit actuel ne rend nulle part.
 `tests/test_avantages.py` ; `scripts/cout_avantages.py` ;
 `docs/avantages_non_contributifs.md` ; renvois posés dans
 `docs/methodologie.md` §6 et `docs/limites.md` §5.
+- **Septembre 2026, action 35, volet A : la convention de l'État, tranchée.**
+  Le programme a décidé — la contribution d'équilibre disparaît, l'État cotise
+  à 18 % comme tout employeur.
+
+  **Vérifier avant d'implémenter a changé le travail** : le code faisait déjà
+  cela. La contribution d'équilibre est marquée `contributive` dans
+  `equilibre.py`, elle entre donc dans `part_contributive` — 77,3 % des
+  ressources, dont 65,6 de cotisations et 11,7 de contribution — et c'est toute
+  cette enveloppe que les 18 % remplacent ; le terme reconduit est son
+  complément, d'où elle est absente. Le raccord n'est juste que parce que
+  l'assiette couvre TOUTES les branches, traitements des fonctionnaires
+  compris : les 18 % qu'on leur applique SONT ce que l'État verse désormais.
+
+  **Ce n'est donc pas un changement de calcul mais une mise sous garde.** La
+  convention était vraie par accident de construction : elle reposait sur un
+  drapeau que personne ne protégeait, et décocher `contributive` sur ce poste
+  aurait fait reconduire la contribution EN PLUS des 18 % sans qu'aucun test ne
+  bronche. Le docstring l'écrit maintenant, et un test la tient.
+
+  **Ce que la décision ne tranche pas** : 23,1 % des ressources restent
+  reconduites — impôts affectés 1,944 point de PIB, transferts 0,665,
+  subventions d'équilibre 0,274, autres produits 0,303. Les subventions sont le
+  cas le plus discutable, et la ventilation par régime dit pourquoi : 60,8 % du
+  financement de la SNCF et de la RATP en 2023, 81,1 % des mines, et 94,5 % de
+  la SNCF en 2070. Ce ne sont pas des cotisations d'employeur que 18 %
+  remplaceraient, mais des charges de liquidation de régimes fermés que le
+  budget porte quoi qu'il arrive.
