@@ -3021,11 +3021,59 @@ scénario 6, les recettes d'un système dont il remplace tous les taux.
   rapport. Le chiffre affiché est donc favorable au scénario 6, et le refermer
   demande une série de taux ENCAISSÉS à côté de celle des taux qui acquièrent.
 
-**Ce qui reste du volet A** : l'assiette en niveau (point 1), qui donnerait une
-seconde route indépendante du rapport ; la série d'effectifs de COTISANTS
-(point 3), qui remplacerait la pondération par les retraités ; les trois
-variantes de ressources non cotisées (point 4) ; et la ligne des cinq points
-capitalisés (point 5). Deux sources repérées en chemin, chez le COR et dans le
+**Le point 1 a été instruit le 19 septembre 2026, et il n'a pas donné ce qu'on
+attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
+
+- *L'assiette existe, et deux routes la donnent à 3,8 % près.* Route INSEE : les
+  salaires et traitements bruts (D11, comptes nationaux base 2020, idbank
+  011785411, déjà récupéré par `insee_bdm.py` mais employé pour ses seules
+  variations) plus le revenu mixte brut des ménages, soit 1 112 + 138 =
+  **1 250 Md€ en 2024**. Route COR : le tableau 2.11 du rapport annuel chiffre
+  l'ajustement nécessaire à l'équilibre DEUX FOIS, en pour-cent de la masse de
+  pension et en points de taux de prélèvement ; le rapport des deux donne
+  l'assiette, **3,19 fois la masse de pension**, soit 1 298 Md€. Les deux routes
+  sont indépendantes — l'une ne doit rien au COR, l'autre rien à l'INSEE — et
+  elles s'écartent de 3,8 %. L'assiette vaut **42,5 % du PIB**, remarquablement
+  stable de 2016 à 2024.
+- *Le taux réellement encaissé est plus bas que le taux légal, et l'écart est
+  l'exonération.* Sur cette assiette, le système encaisse **32,4 points** de
+  ressources en 2024, dont **24,9 points** de cotisations et de contribution
+  d'équilibre. Or le taux légal d'un salarié type est de 28 à 29 %. Les
+  quatre points d'écart sont les allègements généraux, que l'État compense par
+  l'impôt : la même somme reparaît plus bas, dans les 4,6 points d'impôts et
+  taxes affectés.
+- *Ce que le modèle suppose sans le dire.* Appliquer le rapport 0,62 aux
+  ressources OBSERVÉES revient à prêter au taux de 18 % la même déperdition
+  qu'au système actuel : le modèle fait rentrer **15,5 % de l'assiette là où la
+  proposition en affiche 18**. C'est l'hypothèse « à structure d'exonérations
+  inchangée ». Elle est défendable, elle n'est pas neutre, et elle n'était
+  écrite nulle part.
+- *Les trois variantes, et le modèle est au milieu.* En points d'assiette, et
+  au titre de 2024 : à exonérations inchangées, ce que le modèle affiche,
+  **22,94** ; 18 % prélevés à plat sans exonération, impôts affectés conservés,
+  **25,48** ; 18 % à plat avec suppression des impôts qui compensaient les
+  exonérations, **20,92**. Soit de 64 % à 79 % des ressources d'aujourd'hui,
+  le modèle à 71 %. Traduit en solde moyen, la fourchette fait environ un point
+  de PIB de part et d'autre du −0,09 % affiché. **C'est l'incertitude réelle de
+  l'exercice, et elle est plus grande que tout ce que la page dit par
+  ailleurs.**
+- *Ce qui reste à faire de ce point.* Certifier les deux séries — le niveau du
+  D11, qui ne demande qu'une ligne de `verifier_donnees.py` puisque la source
+  est déjà téléchargée, et le revenu mixte, qui pose un problème de manifeste :
+  l'INSEE le produit mais sa banque de données ne l'expose pas (les comptes de
+  branche ne donnent qu'un agrégat « excédent d'exploitation / revenu mixte »,
+  et le jeu des secteurs institutionnels ne sert que cinq ratios), de sorte que
+  la seule forme accessible est celle qu'Eurostat rediffuse, `nasa_10_nf_tr`,
+  B3G du secteur S14. Le critère 1 du manifeste fait préférer le producteur au
+  repreneur ; il faudra soit trouver la porte de l'INSEE, soit écrire pourquoi
+  on ne l'a pas trouvée. Puis afficher les trois variantes, ce qui est le
+  point 4 : les deux questions n'en font qu'une, les impôts affectés étant la
+  compensation des exonérations.
+
+**Ce qui reste du volet A** : la certification de l'assiette et les trois
+variantes ci-dessus (points 1 et 4, désormais un seul chantier) ; la série d'effectifs de COTISANTS
+(point 3), qui remplacerait la pondération par les retraités ; et la ligne des
+cinq points capitalisés (point 5). Deux sources repérées en chemin, chez le COR et dans le
 classeur que `scripts/fetch/cor_comptes_retraite.py` télécharge déjà : la
 figure 3.1, taux de cotisation d'un non-cadre du privé de 1940 à 2025, à
 certifier ; et le tableau 2.11, qui donne l'équivalence du COR entre un point de
@@ -3856,3 +3904,20 @@ scénario ».
   Et **une grille à pas de cinq ans fuit aux deux bords d'une réforme** : la
   recette de 2025 baissait pour une bascule de 2026, parce qu'une cohorte de la
   tranche verse ce que la génération de la grille verse deux ans plus tard.
+
+- **Septembre 2026, action 35, l'assiette en niveau.** Instruite, non codée. Le
+  point 1 devait donner une seconde route au rapport de recettes ; il a donné
+  autre chose : la fourchette dans laquelle ce rapport se tient. L'assiette vaut
+  1 250 Md€ en 2024, 42,5 % du PIB, par deux routes indépendantes qui s'écartent
+  de 3,8 % — l'INSEE d'un côté, l'inversion du tableau 2.11 du COR de l'autre.
+  Sur elle, le système encaisse 24,9 points de cotisations quand le taux légal
+  est de 28 à 29 : l'écart est l'allègement général, que l'impôt compense.
+  **Appliquer un rapport de taux légaux à des ressources observées prête donc au
+  taux de 18 % la déperdition du système actuel** — le modèle fait rentrer 15,5 %
+  de l'assiette là où la proposition en affiche 18. Trois lectures se défendent,
+  de 64 % à 79 % des ressources d'aujourd'hui, l'affichage à 71 %. Deux choses à
+  en retenir. **Un rapport sans dimension n'est pas neutre quand on l'applique à
+  un niveau** : il transporte avec lui la structure du dénominateur. Et **une
+  source annoncée n'est pas une source disponible** : l'INSEE produit le revenu
+  mixte, sa banque de données ne l'expose pas, et la seule forme atteignable est
+  celle qu'Eurostat rediffuse — ce que le manifeste devra trancher.
