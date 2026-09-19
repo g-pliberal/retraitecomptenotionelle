@@ -3111,6 +3111,89 @@ toucher aux moteurs de pension.
      s'appuie un jour sur la compensation, parce qu'il dit alors ce que vaut
      le chiffre ; pas pour y trouver la série.
 
+   **Seconde passe, 19 septembre 2026 : recouper, et projeter.** La première
+   passe cherchait UNE source ; celle-ci en cherche PLUSIEURS, pour qu'elles se
+   contredisent utilement. Elle en ajoute trois, et elle tranche une question
+   que la première laissait ouverte : de QUOI la fiche 4.1 est-elle le
+   décompte ?
+
+   - **Cnav, abrégé statistique de la branche retraite, chapitre 07 — « Les
+     cotisants selon les régimes participant à la compensation ».** Il porte
+     la table de compensation ENTIÈRE, **régime général compris**, à l'unité
+     et en texte, avec sa source en toutes lettres : « Direction de la
+     sécurité sociale pour la commission de compensation ». Il comble donc
+     exactement le trou de la fiche 4.1. Un millésime par édition, au 1er
+     juillet de l'année N−2 : l'édition 2023 donne 2021, la 2024 donne 2022,
+     la 2025 donne 2023. Au 1er juillet 2023 : régime général 23 780 528
+     (dont 21 034 526 salariés et 2 746 002 indépendants), collectivités
+     locales 2 259 996, fonctionnaires civils et militaires 1 854 542,
+     professions libérales y compris CNBF 922 442, salariés agricoles
+     758 344, exploitants agricoles 421 381, CNIEG 132 744, SNCF 112 878,
+     CRPCEN 60 303, RATP 41 064, ENIM 24 800, ouvriers d'État 17 538, Banque
+     de France 7 038, mines 773 — total 30 410 230.
+
+   - **CNRACL, recueil statistique, table I.1.3 — la série longue d'une
+     caisse.** « Populations cotisante et pensionnée (moyenne annuelle) »,
+     2012 à 2022, à l'unité : 2 171 826 en 2012, 2 189 791 en 2021,
+     2 188 201 en 2022. C'est onze ans là où la CCSS en donne quatre, et
+     c'est la preuve que la piste « rapports annuels de chaque caisse » est
+     productive : ce qu'on a fait pour la CNRACL, on peut le faire pour les
+     douze autres.
+
+   - **PLFSS, annexe 1 « Présentation des régimes obligatoires de base » —
+     troisième véhicule du MÊME tableau.** Son tableau 2 est mot pour mot
+     celui de la fiche 4.1. Il ne sert donc pas à recouper, seulement à
+     confirmer que le tableau est déposé devant le Parlement — et il y est en
+     IMAGE, quand la CCSS le porte en texte. C'est la CCSS qu'on lit.
+
+   **Ce que le recoupement établit, et c'est le résultat de la passe.** Les
+   deux vecteurs ne comptent PAS la même chose, et on sait maintenant lequel
+   compte quoi. Pour 2021, quatre lignes coïncident au COTISANT PRÈS — MSA
+   salariés 714 686, RATP 42 444, Banque de France 7 852, mines 1 027 — et les
+   autres s'écartent : CNIEG −2,7 %, exploitants agricoles −1,9 %, ENIM
+   −3,2 %, CRPCEN −3,4 %, SRE −5,8 %, SNCF +0,8 %. L'explication est venue du
+   recueil CNRACL : sa moyenne annuelle 2021, 2 189 791, est **exactement** le
+   chiffre de la fiche 4.1, quand la compensation écrit 2 206 638 au 1er
+   juillet. Donc :
+
+   - la **fiche 4.1 de la CCSS** est le décompte que CHAQUE RÉGIME déclare à
+     la DSS, sur son propre champ et sa propre date ;
+   - le **chapitre 07 de l'abrégé Cnav** est le décompte de la COMMISSION DE
+     COMPENSATION, au 1er juillet, France métropolitaine, notion de l'article
+     `D. 134-4`.
+
+   Les petits régimes donnent le même nombre aux deux, n'en ayant qu'un ; les
+   gros divergent de un à six pour cent. **Aucune des deux n'est fausse, et
+   c'est pourquoi il faut en choisir une et l'écrire** — pas les mélanger
+   ligne à ligne, ce qui ferait un tableau qu'aucune source ne signe.
+
+   **Côté projections, le COR donne ce qu'il faut, et en classeur.** La passe
+   précédente avait écarté le COR sur la question de l'HISTORIQUE, ce qui
+   restait juste ; sur la PROJECTION, il est la seule source publique, et ses
+   `.xlsx` sont lisibles par `scripts/fetch/lecture_xlsx.py` :
+
+   - **Figure 1.13** (classeur `Donnees_RA2026_P1.xlsx`) — « Évolution des
+     effectifs cotisants aux régimes de la fonction publique », base 100 en
+     2025, **de 2019 à 2070**, quatre séries : FPE civils et militaires,
+     FPT + FPH (donc CNRACL), Ircantec, ensemble. Appliqué à un NIVEAU de
+     2025 pris à la CCSS ou à la Cnav, cet indice donne des effectifs
+     projetés. Sources : Direction du budget, Ircantec, hypothèses COR 2026.
+   - **Figure 2.7** (classeur `Donnees_RA2026_P2.xlsx`) — ratio
+     cotisants/retraités projeté année par année **de 2025 à 2070** pour la
+     CNAV, la FPE, la CNRACL et l'Agirc-Arrco. Croisé avec
+     `effectifs_retraites.csv`, il redonne des cotisants.
+   - Les figures 2.6, 2.12 et 2.15 ventilent dépenses et soldes par GROUPES
+     de régimes — Lura, FPE, CNRACL, non-salariés base, régimes spéciaux,
+     complémentaires —, ce qui est la maille à laquelle le COR raisonne.
+
+   Ses hypothèses sont explicites et il faut les reprendre avec les chiffres :
+   les effectifs de la fonction publique viennent de la Direction du budget et
+   suivent, après 2037, la population active globale ; les régimes spéciaux
+   intègrent les fermetures de la réforme de 2023 (CRPCEN, Banque de France,
+   CNIEG, RATP) et, pour la SNCF et la RATP, le basculement de cotisants vers
+   le privé qu'entraîne l'ouverture à la concurrence ; les régimes de
+   non-salariés ont communiqué leurs évolutions en 2024.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -4352,3 +4435,41 @@ scénario ».
   ci-dessus. L'urgence reste celle que la veille avait mesurée — sous la
   convention du programme, la pondération des cas types ne déplace pas le solde
   du scénario 6 d'un millième.
+
+- **Septembre 2026, action 35, volet A, point 3, seconde passe : recouper et
+  projeter.** Demandé : plusieurs sources officielles indiscutables, qui se
+  recoupent, et de quoi projeter. Trois sources s'ajoutent, et le recoupement
+  tranche une question que la première passe laissait ouverte.
+
+  L'**abrégé statistique de la Cnav**, chapitre 07, porte la table de
+  compensation entière, **régime général compris** — ce qui manquait à la
+  fiche 4.1 —, à l'unité, en texte, un millésime par édition. Le **recueil
+  statistique de la CNRACL**, table I.1.3, donne onze ans de cotisants en
+  moyenne annuelle, 2012-2022, là où la CCSS en donne quatre. L'**annexe 1 du
+  PLFSS** reprend le tableau de la fiche 4.1 mot pour mot, mais en image :
+  elle confirme sans recouper.
+
+  **Le recoupement dit ceci, et c'est le résultat.** Pour 2021, quatre lignes
+  coïncident au cotisant près entre la CCSS et la Cnav — MSA salariés,
+  RATP, Banque de France, mines — et les autres s'écartent de un à six pour
+  cent. Le recueil CNRACL a livré la clé : sa moyenne annuelle 2021,
+  2 189 791, est **exactement** le chiffre de la fiche 4.1, quand la
+  compensation écrit 2 206 638 au 1er juillet. Donc la fiche 4.1 est ce que
+  chaque régime DÉCLARE à la DSS, sur son champ et sa date ; le chapitre 07
+  est le décompte de la COMMISSION DE COMPENSATION, au 1er juillet, métropole,
+  notion de `D. 134-4`. Les petits régimes donnent le même nombre aux deux,
+  n'en ayant qu'un ; les gros divergent. **Aucune des deux n'est fausse : il
+  faut en choisir une et l'écrire**, et surtout ne pas les mélanger ligne à
+  ligne, ce qui ferait un tableau qu'aucune source ne signe.
+
+  Côté **projections**, le COR est la seule source publique, et ses classeurs
+  sont lisibles par `lecture_xlsx.py`. La figure 1.13 donne les effectifs
+  cotisants de la fonction publique en base 100, **de 2019 à 2070**, pour la
+  FPE, la CNRACL et l'Ircantec ; la figure 2.7 donne le ratio
+  cotisants/retraités projeté **de 2025 à 2070** pour la CNAV, la FPE, la
+  CNRACL et l'Agirc-Arrco. L'écart de maille est à dire : le COR raisonne par
+  GROUPES de régimes, pas par caisse. Écarter le COR pour l'historique
+  restait juste ; l'écarter pour la projection aurait été une erreur.
+
+  Rien n'est codé : c'est une passe de recherche, et son livrable est le
+  relevé.
