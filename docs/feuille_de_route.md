@@ -4656,3 +4656,100 @@ scénario ».
   troisième passe présentait ce classeur comme « la source qui rend les autres
   secondaires » : il le reste par sa couverture et son horizon, mais il est
   d'un millésime de plus que le reste du dépôt, et ça se dit.
+
+---
+
+### 36. Pousser sur `main` sans y penser, et sans un mot de plus — `fait`
+
+**La demande.** « J'ai toujours ce genre de message… ça m'énerve, ça utilise
+des jetons pour rien. Je veux juste que l'on pousse toujours sur `main` pour
+que `main` soit toujours à jour sans avoir besoin de le faire moi-même. » Le
+message en question était, de session en session, le même paragraphe : une
+explication du compteur de commits « non poussés », de la branche assignée,
+et du 403 qui empêche d'en supprimer une.
+
+**Le diagnostic.** Le compteur ne se trompait pas de calcul, il se trompait de
+point de comparaison. Au démarrage d'une session web, la référence distante de
+sa branche `claude/…` existe déjà, posée sur le commit du clone :
+`origin/claude/clever-tesla-mln5zm` valait `3030cf6`, exactement `origin/main`.
+`git push origin HEAD:main` publie le travail mais ne touche pas cette
+référence, et `git push origin HEAD:main` ne pose pas d'amont non plus — la
+branche locale n'en avait aucun (`fatal: no upstream configured`). Le compteur
+comparait donc à un point fixe, et montait d'un cran à chaque commit pendant
+que `origin/main` les portait tous. Chaque session le constatait, le
+réexpliquait, et refusait de pousser la branche pour ne pas laisser de ménage.
+Or la référence existe déjà : refuser de la faire suivre ne supprimait aucune
+branche, ça ne faisait que garder le compteur faux.
+
+**Ce qui a été fait.** `scripts/pousser.sh`, une commande pour tout le rite :
+`fetch origin main`, `merge --ff-only origin/main`, `push origin HEAD:main`,
+puis la référence de branche amenée sur `HEAD` — jamais créée si elle n'existe
+pas, une session ne saurait pas la supprimer — et `origin/main` posé en amont
+de la branche locale. Les deux compteurs possibles lisent alors zéro. Le
+script est silencieux quand il n'y a rien à publier et écrit une ligne
+(`main ← 3030cf6 (2 commit(s))`) quand il a poussé. Les poussées et le `fetch`
+reprennent cinq fois, 2, 4, 8 puis 16 secondes, le réseau d'une session web
+lâchant sans prévenir.
+
+**Le cas qui s'est présenté pendant l'écriture même de ce script.** La
+première version refusait toute divergence, comme la recette manuscrite et son
+`--ff-only`. Elle a refusé de publier ce commit-ci : une autre session avait
+poussé `96abe3e` entre le clone et la fin du travail, et les deux lignées
+avaient chacune un commit depuis `3030cf6`. C'est le cas ORDINAIRE, et le
+refus y rendait à l'utilisateur exactement la corvée qu'on lui enlevait. Le
+script rebase donc les commits de la session sur `origin/main` — ils n'ont
+jamais été publiés, rien n'est réécrit chez personne — et garde son refus pour
+ce qui le mérite : un conflit de rebasage (avorté, le dépôt reste propre),
+plus de vingt commits d'écart, des modifications non commitées en travers, ou
+**aucun ancêtre commun**, qui est la panne de septembre 2026 que `CLAUDE.md`
+raconte. La référence de branche est alors poussée avec `--force-with-lease`,
+un rebasage la faisant descendre d'ailleurs qu'avant. `CLAUDE.md` dit la règle qui
+va avec, et qui est la vraie demande : **ne rien écrire sur ce compteur**, une
+ligne au plus, jamais un paragraphe.
+
+**Le hook, à poser à la main.** Le script rend `main` à jour dès qu'une session
+le lance ; un hook `Stop` le lance à la fin de chaque tour, sans que personne y
+pense. Comme celui de l'action 33, il n'est pas dans le dépôt — une session
+Claude Code n'a pas le droit d'écrire sous `.claude/`, l'écriture est refusée.
+Ajouter cette entrée à la liste `Stop` de `.claude/settings.json`, à côté du
+hook Impeccable :
+
+```json
+{
+  "type": "command",
+  "command": "bash \"${CLAUDE_PROJECT_DIR}/scripts/pousser.sh\"",
+  "timeout": 120,
+  "statusMessage": "Publication sur main"
+}
+```
+
+Le fichier complet, hooks Impeccable compris, devient :
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      { "matcher": "Edit|Write",
+        "hooks": [ { "type": "command",
+                     "command": "\"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/impeccable\" hook",
+                     "timeout": 5,
+                     "statusMessage": "Checking UI changes" } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command",
+                     "command": "\"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/impeccable\" hook",
+                     "timeout": 30,
+                     "statusMessage": "Design deep pass" },
+                   { "type": "command",
+                     "command": "bash \"${CLAUDE_PROJECT_DIR}/scripts/pousser.sh\"",
+                     "timeout": 120,
+                     "statusMessage": "Publication sur main" } ] }
+    ]
+  }
+}
+```
+
+**Ce que ça ne fait pas.** Le hook ne commite pas : il publie ce qui est
+commité, et rien d'autre. Un travail laissé non commité reste dans le
+conteneur, qui est jeté. Et le script ne touche jamais au `main` local, ce
+post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
