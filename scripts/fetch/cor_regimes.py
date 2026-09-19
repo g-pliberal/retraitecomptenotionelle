@@ -91,10 +91,18 @@ SORTIE = Path("data/brut/cor_regimes.json")
 LIEN_CLASSEUR = re.compile(
     r'href="(/sites/default/files/[^"]*[Rr]%C3%A9gimes[^"]*\.xlsx)"'
 )
-#: Une ligne d'en-tête porte un libellé puis la file des années.
-ANNEE_MIN, ANNEE_MAX = 1900, 2200
-#: En deçà, la ligne n'est pas une série : c'est un titre ou une note.
-POINTS_MINIMUM = 10
+#: Une ligne d'en-tête porte un libellé puis une file d'années croissantes.
+#: Les bornes sont larges à dessein : le classeur ne va que de 2010 à 2070,
+#: mais un millésime ultérieur pourrait déborder.
+ANNEE_MIN, ANNEE_MAX = 1990, 2100
+#: Quatre années suffisent à reconnaître un en-tête. Le seuil est bas parce que
+#: le bloc « structure de financement » n'en porte que SIX — 2010, 2023, 2030,
+#: 2040, 2050, 2070 — là où tous les autres en portent soixante et une. Le
+#: reconnaître demandait de descendre sous le seuil qui lui allait.
+ANNEES_MINIMUM = 4
+#: Une ligne de valeurs doit remplir la moitié des colonnes de son en-tête,
+#: sans quoi c'est une note ou un renvoi.
+PART_MINIMALE = 0.5
 
 
 def _contexte() -> ssl.SSLContext:
@@ -119,6 +127,23 @@ def adresse_classeur() -> str:
     return RACINE_SITE + liens[0]
 
 
+def _est_file_dannees(nombres: dict[int, float]) -> bool:
+    """Reconnaît la ligne d'en-tête d'un bloc : des années, et rien d'autre.
+
+    Le test est volontairement strict, parce que le seuil est descendu à quatre
+    valeurs : il faut des ENTIERS, tous dans la fenêtre, tous distincts et
+    STRICTEMENT CROISSANTS de gauche à droite. Aucune série du classeur ne
+    ressemble à ça — ni les effectifs, ni les masses, ni les âges de départ, qui
+    tournent autour de soixante-deux.
+    """
+    if len(nombres) < ANNEES_MINIMUM:
+        return False
+    suite = [nombres[k] for k in sorted(nombres)]
+    if not all(float(v).is_integer() and ANNEE_MIN < v < ANNEE_MAX for v in suite):
+        return False
+    return all(a < b for a, b in zip(suite, suite[1:]))
+
+
 def lire_feuille(cellules: dict) -> list[tuple[str, str, int, float]]:
     """Les séries d'une feuille de régime, sous forme (bloc, série, année, valeur).
 
@@ -138,16 +163,11 @@ def lire_feuille(cellules: dict) -> list[tuple[str, str, int, float]]:
         textes = [v for v in cellule.values() if isinstance(v, str)]
         nombres = {k: v for k, v in cellule.items() if isinstance(v, (int, float))}
         libelle = textes[0].strip() if textes else ""
-        est_entete = (
-            libelle
-            and len(nombres) > 30
-            and all(ANNEE_MIN < v < ANNEE_MAX for v in nombres.values())
-        )
-        if est_entete:
+        if libelle and _est_file_dannees(nombres):
             bloc = libelle
             annees = {k: int(v) for k, v in nombres.items()}
             continue
-        if annees and libelle and len(nombres) > POINTS_MINIMUM:
+        if annees and libelle and len(nombres) >= max(3, PART_MINIMALE * len(annees)):
             for colonne, annee in annees.items():
                 if colonne in nombres:
                     sortie.append((bloc or "", libelle, annee, float(nombres[colonne])))
