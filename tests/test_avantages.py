@@ -200,13 +200,10 @@ def test_une_source_publiee_nomme_toujours_sa_source(inventaire):
 
 @pytest.fixture(scope="module")
 def script_cout():
-    import importlib.util
+    """Le module du modèle, qui porte la mesure — le script n'en est qu'un appelant."""
+    from retraite_notionnelle import avantages
 
-    chemin = RACINE_DONNEES.parent / "scripts" / "cout_avantages.py"
-    cahier = importlib.util.spec_from_file_location("cout_avantages", chemin)
-    module = importlib.util.module_from_spec(cahier)
-    cahier.loader.exec_module(module)
-    return module
+    return avantages
 
 
 def test_un_avantage_chiffre_par_recalcul_nomme_un_script_qui_existe(inventaire):
@@ -219,12 +216,15 @@ def test_un_avantage_chiffre_par_recalcul_nomme_un_script_qui_existe(inventaire)
 
 
 def test_le_statut_sedentaire_temoin_releve_des_memes_regimes(script_cout):
-    """La contrefactuelle du classement ne doit déplacer QUE l'âge opposé.
+    """Le statut témoin sert de CONTRÔLE au retrait par le catalogue.
 
-    Si le statut témoin relevait d'autres régimes, l'écart mesurerait un
-    changement de caisse et non la valeur du classement. C'est l'hypothèse
-    centrale du recalcul, et elle tient à deux lignes d'un fichier de données
-    qu'une session pourrait remanier sans y penser.
+    La catégorie active se mesure en retirant sa déclaration des fiches. Une
+    seconde mesure, indépendante, refait la pension avec le statut sédentaire de
+    mêmes régimes ; les deux doivent coïncider, et le test suivant l'exige. Pour
+    que cette coïncidence ait un sens, encore faut-il que le témoin relève
+    bien des mêmes caisses — sans quoi l'écart mesurerait un changement de
+    régime. Cela tient à deux lignes d'un fichier de données qu'une session
+    pourrait remanier sans y penser.
     """
     import yaml as _yaml
 
@@ -312,4 +312,121 @@ def test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension(script_cout)
                  + sum(a.montant for a in actuel.avantages_appliques))
         assert total == pytest.approx(actuel.pension_annuelle), (
             f"{cas.code} : la cascade ne somme plus à la pension"
+        )
+
+
+def test_les_deux_mesures_de_la_categorie_active_coincident(script_cout):
+    """Deux chemins indépendants, et ils doivent donner le même euro.
+
+    Le premier retire la DÉCLARATION `categorie_active` des fiches de régime :
+    le moteur cesse d'opposer l'âge anticipé, sans qu'aucune ligne de code
+    change. Le second change le STATUT de l'assuré pour le statut sédentaire de
+    mêmes caisses. Les deux mesurent la même chose par des voies qui n'ont rien
+    de commun — l'une passe par les données du régime, l'autre par celles de la
+    carrière — et leur accord est ce qui donne confiance dans le chiffre.
+
+    C'est la mesure par le catalogue qui est retenue : elle vaut pour tout
+    avantage qu'une fiche déclare, là où le statut témoin suppose qu'il en
+    existe un, ce qui n'est pas le cas des régimes spéciaux.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import CAS_TYPES
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    variantes = script_cout.scenarios_neutralises(simulateur)
+    cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_actif")
+    temoin = script_cout.SEDENTAIRE[cas.affiliation][0]
+    compares = 0
+    for generation in (1955, 1960, 1970, 1975, 1985):
+        age = cas.age_liquidation_pour(simulateur, generation)
+        reelle = simulateur.scenario_actuel.calculer(
+            script_cout.carriere_variante(simulateur, cas, generation, age))
+        par_catalogue = reelle.pension_annuelle - variantes["categorie_active"].calculer(
+            script_cout.carriere_variante(simulateur, cas, generation, age)
+        ).pension_annuelle
+        par_statut = reelle.pension_annuelle - simulateur.scenario_actuel.calculer(
+            script_cout.carriere_variante(
+                simulateur, cas, generation, age, affiliation=temoin)
+        ).pension_annuelle
+        assert par_catalogue == pytest.approx(par_statut, abs=1e-6), (
+            f"génération {generation} : {par_catalogue:.2f} € par le catalogue, "
+            f"{par_statut:.2f} € par le statut"
+        )
+        compares += 1
+    assert compares == 5
+
+
+def test_chaque_neutralisation_dit_ce_qu_elle_retire(script_cout, par_code):
+    """Un écart ne veut rien dire sans sa contrefactuelle.
+
+    Chaque ligne mesurée par retrait doit nommer ce que le retrait fait, et
+    viser une ligne de l'inventaire : c'est ce que la page affiche sous le
+    chiffre, et ce qui permet de relire la mesure sans rouvrir le code.
+    """
+    voies = {"carriere", "catalogue", "table"}
+    for neutralisation in script_cout.NEUTRALISATIONS:
+        assert neutralisation.code in par_code, (
+            f"{neutralisation.code} : neutralisation sans ligne d'inventaire"
+        )
+        assert neutralisation.par in voies, (
+            f"{neutralisation.code} : voie de retrait inconnue {neutralisation.par!r}"
+        )
+        assert len(neutralisation.quoi) > 40, (
+            f"{neutralisation.code} : la contrefactuelle n'est pas décrite"
+        )
+
+
+def test_toute_ligne_integree_est_mesuree_ou_dit_pourquoi_elle_ne_l_est_pas(inventaire):
+    """Onze lignes `integre`, et aucune ne doit rester sans réponse.
+
+    Une ligne que le scénario 1 sert sans que la cascade l'isole est soit
+    mesurée par retrait — elle porte alors `chiffre_par` —, soit d'une autre
+    nature, et sa note doit dire par quoi elle se chiffre. Ce test interdit
+    qu'une douzième apparaisse en silence.
+    """
+    codes = {n.code for n in __import__(
+        "retraite_notionnelle.avantages", fromlist=["x"]).NEUTRALISATIONS}
+    for avantage in inventaire["avantages"]:
+        if avantage["etat_modele"] != "integre":
+            continue
+        if avantage["code"] in codes:
+            assert avantage.get("chiffre_par"), (
+                f"{avantage['code']} : mesuré par retrait, mais sans `chiffre_par`"
+            )
+            continue
+        # Les autres ne sont pas des dispositifs : elles se chiffrent ailleurs,
+        # et la note doit dire où.
+        assert avantage["famille"] == "ecarts_structurels", (
+            f"{avantage['code']} : ligne intégrée sans neutralisation ni raison"
+        )
+        assert "CHIFFRÉ" in avantage["cout"]["note"], (
+            f"{avantage['code']} : ni mesuré par retrait, ni chiffré ailleurs"
+        )
+
+
+def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
+    """Un retrait ne doit pas déplacer une pension qu'il ne concerne pas.
+
+    Le catalogue privé de `categorie_active` ne doit rien faire à un salarié du
+    privé ; le barème de carrière longue vidé ne doit rien faire à qui est entré
+    tard. Sans ce contrôle, une variante trop large gonflerait toutes les
+    lignes à la fois, et l'erreur passerait pour un résultat.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import CAS_TYPES
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    variantes = script_cout.scenarios_neutralises(simulateur)
+    cas = next(c for c in CAS_TYPES if c.code == "cadre")
+    generation = 1955
+    age = cas.age_liquidation_pour(simulateur, generation)
+    carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
+    reelle = simulateur.scenario_actuel.calculer(carriere).pension_annuelle
+    for code in ("categorie_active", "carriere_longue"):
+        obtenue = variantes[code].calculer(carriere).pension_annuelle
+        assert obtenue == pytest.approx(reelle), (
+            f"le retrait de {code} déplace la pension d'un cadre du privé "
+            f"de {reelle - obtenue:.2f} €"
         )

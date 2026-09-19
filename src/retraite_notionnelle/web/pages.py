@@ -39,7 +39,8 @@ from ..config import (
     TableConversion,
 )
 from ..avantages import (
-    LIBELLES_MOTIFS, MOTIFS, calculer_avantages, charger_avantages,
+    LIBELLES_MOTIFS, MOTIFS, NEUTRALISATIONS, calculer_avantages,
+    charger_avantages,
     inventaire_depuis_paquet,
 )
 from ..cout import COMPOSANTE_GARANTIE, calculer_cout
@@ -5320,8 +5321,10 @@ def _avantages_detail_etats(contexte: Contexte) -> str:
          "ces lignes vaut exactement la pension moins sa part cotisée."],
         ["servi, chiffré à part", str(inventaire.compte("integre")),
          "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
-         "ou une assiette. Deux sont mesurés par recalcul — on refait la "
-         "pension sans l'avantage —, les autres restent à ouvrir."],
+         f"ou une assiette. {len(NEUTRALISATIONS)} sont mesurés par retrait : on "
+         "refait la pension sans l'avantage, et l'écart est le chiffre. Les "
+         f"{inventaire.compte('integre') - len(NEUTRALISATIONS)} derniers ne sont "
+         "pas des dispositifs, et se lisent ailleurs."],
         ["déclaré, non servi", str(inventaire.compte("declare")),
          "Une fiche de régime les déclare, aucun code ne les sert. La "
          "déclaration est une intention."],

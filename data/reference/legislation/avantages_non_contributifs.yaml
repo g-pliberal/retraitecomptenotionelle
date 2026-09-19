@@ -244,6 +244,7 @@ avantages:
         2027 et croît jusqu'en 2032.
 
   - code: salaire_de_reference_des_parents
+    chiffre_par: scripts/cout_avantages.py
     libelle: Salaire annuel moyen calculé sur moins d'années pour les parents
     famille: droits_familiaux
     quoi: >-
@@ -265,8 +266,14 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        À ajouter à la cascade. Le recalcul est du même type que celui de la
-        MDA, et le dispositif est trop récent pour qu'une série publiée existe.
+        CHIFFRÉ, par recalcul : la date d'entrée en vigueur est repoussée hors
+        de portée, et le salaire de référence repasse à vingt-cinq années. Le
+        retrait vaut 729 € par an à la carrière interrompue de la génération
+        1985, et 451 € à celle de 1965.
+        ZÉRO SUR LA FENÊTRE PUBLIÉE, et ce n'est pas un défaut de mesure : la
+        règle ne s'applique qu'aux pensions prenant effet à compter du 1er
+        septembre 2026, et la dernière dépense publiée est celle de 2024. La
+        première génération concernée de la grille, 1965, liquide en 2027.
 
   - code: majoration_duree_assurance_conge_parental
     libelle: Majoration de durée d'assurance pour congé parental d'éducation
@@ -387,6 +394,7 @@ avantages:
         distribution vaut mieux que les cas types.
 
   - code: garantie_minimale_points
+    chiffre_par: scripts/cout_avantages.py
     libelle: Garantie minimale de points de l'Agirc
     famille: minima_de_pension
     quoi: >-
@@ -407,8 +415,15 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        Recalcul sans plancher de points. Dispositif éteint : la série est
-        bornée à 1989-2018, et son coût décroît à mesure que le plafond monte.
+        CHIFFRÉE, par recalcul : le plancher de cent vingt points est retiré des
+        fiches de l'Agirc, et le cadre n'acquiert plus que ce que son salaire
+        au-dessus du plafond achète. 205 € par an pour le cadre de la génération
+        1985, 77 € pour celui de 1965.
+        ZÉRO SUR LA FENÊTRE PUBLIÉE, pour une raison de calendrier : le plancher
+        ne mord que sur les premières années d'une carrière de cadre, quand le
+        salaire au-dessus du plafond est encore faible, et il n'a existé que de
+        1989 à 2018. Les carrières dont les débuts tombent dans cette fenêtre
+        liquident toutes après 2024.
 
   - code: pension_majoree_reference
     libelle: Pension majorée de référence du régime agricole
@@ -481,6 +496,7 @@ avantages:
         points de complémentaire gratuits — voir la ligne suivante.
 
   - code: points_gratuits_complementaires
+    chiffre_par: scripts/cout_avantages.py
     libelle: Points de complémentaire acquis sans cotisation
     famille: periodes_non_cotisees
     quoi: >-
@@ -502,16 +518,21 @@ avantages:
       mesurable_par: modele
       source_id: dss_ccss_transferts_retraite
       note: >-
-        SÉPARABLE, et par un détour élégant : le chômage indemnisé et le chômage
-        non indemnisé valident les mêmes quatre trimestres, et seul le premier
-        ouvre des points de complémentaire. L'écart entre les deux EST la valeur
-        de ces points — 612 € par an sur une carrière au salaire moyen ayant subi
-        cinq années de chômage, contre 7 154 € pour la validation entière. Le
-        poste `unedic_agirc_arrco` donne la contrepartie versée par l'assurance
-        chômage — 3,8 Md€ en 2024 — et c'est le contrôle externe le plus direct
-        de toute la liste : un seul payeur, un seul objet.
+        CHIFFRÉS, et par un détour élégant : le chômage indemnisé et le chômage
+        NON indemnisé valident les mêmes quatre trimestres, et seul le premier
+        ouvre des points de complémentaire. Remplacer l'un par l'autre isole
+        donc exactement ces points. Sous une dose de cinq années de chômage,
+        génération 1985 : 1 427 € par an au salaire moyen, 8 585 € au cadre —
+        c'est sur la tranche au-dessus du plafond que la complémentaire pèse le
+        plus.
+        ZÉRO SUR LA GRILLE, faute de chômeur : aucun des treize cas types n'en
+        connaît. Le poste `unedic_agirc_arrco` de `transferts_retraite.csv`
+        donne ce que l'assurance chômage verse à ce titre, 3,8 Md€ en 2024 —
+        c'est le contrôle externe le plus direct de toute la liste, un seul
+        payeur pour un seul objet.
 
   - code: service_national
+    chiffre_par: scripts/cout_avantages.py
     libelle: Validation du service national
     famille: periodes_non_cotisees
     quoi: >-
@@ -531,8 +552,15 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        Série décroissante par construction : les dernières générations
-        concernées liquident dans les années 2030.
+        CHIFFRÉ, par recalcul : l'année de service devient une année sans
+        activité, qui ne valide rien. Sous une année de service à vingt ans,
+        génération 1985 : 2 996 € par an au salaire moyen, 5 693 € au cadre,
+        5 033 € au fonctionnaire sédentaire. Un seul trimestre de plus ou de
+        moins fait basculer une décote entière, d'où des montants sans commune
+        mesure avec la durée validée.
+        ZÉRO SUR LA GRILLE, faute d'appelé : aucun cas type ne porte le motif.
+        Dispositif en extinction — la conscription a été suspendue en 1997 — et
+        la série s'éteindra d'elle-même dans les années 2030.
 
   # --- Droits dérivés (survivants) -----------------------------------------
 
@@ -690,6 +718,7 @@ avantages:
         surcoût net — partir tôt, c'est aussi cotiser moins.
 
   - code: carriere_longue
+    chiffre_par: scripts/cout_avantages.py
     libelle: Retraite anticipée pour carrière longue
     famille: age_et_bonifications
     quoi: >-
@@ -711,11 +740,18 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        Deux avantages superposés qu'il faut séparer : l'âge de départ lui-même,
-        et les trimestres RÉPUTÉS cotisés qui l'ouvrent — ces derniers étant un
-        avantage non contributif au second degré.
+        CHIFFRÉE, et le résultat est ZÉRO sur le montant. Le barème est vidé, et
+        la pension ne bouge pas d'un euro : un assuré entré tôt réunit sa durée
+        de toute façon, si bien que le taux plein lui est acquis avec ou sans le
+        dispositif. Ce que la carrière longue change n'est pas le montant, c'est
+        la DATE : elle ouvre la porte, elle ne remplit pas la pension.
+        Tout son prix est donc dans la durée, et `--duree` le mesure : 3,8 Md€
+        en 2024, contre rien avant 2010. La série ne commence qu'alors,
+        mécaniquement, à mesure que l'âge légal monte au-dessus de l'âge auquel
+        une carrière commencée tôt réunit sa durée.
 
   - code: age_jouissance_militaire
+    chiffre_par: scripts/cout_avantages.py
     libelle: Jouissance immédiate de la pension militaire
     famille: age_et_bonifications
     quoi: >-
@@ -737,19 +773,23 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        NON CHIFFRÉE sur le montant, et le refus est un résultat. La
-        contrefactuelle naturelle — le même agent en fonctionnaire civil, qui
-        relève des mêmes régimes — déplace aussi la DURÉE REQUISE : 172
-        trimestres pour le militaire contre 160 pour le civil de la même
-        génération. La proratisation change avec le statut, l'écart ne mesure
-        plus l'âge, et il ressort même NÉGATIF. `scripts/cout_avantages.py` pose
-        le garde-fou, refuse la ligne partout dès qu'elle est faussée quelque
-        part, et imprime la raison.
+        CHIFFRÉE SUR CERTAINES GÉNÉRATIONS, et refusée sur les autres — le refus
+        étant contagieux, la ligne ne paraît pas dans l'agrégat. Le retrait se
+        fait sur les fiches, qui déclarent `categorie_active` : la pension ne
+        s'ouvre plus à la durée de services, et l'âge légal de droit commun est
+        opposé au militaire. 4 420 € par an pour la génération 1985, 1 188 €
+        pour 1965.
+        LE REFUS, lui, est un résultat. Sur d'autres générations le même retrait
+        déplace la DURÉE REQUISE — 172 trimestres contre 160 —, parce que la
+        pension militaire a la sienne : la proratisation change avec le droit, et
+        l'écart ne mesure plus l'âge seul. Le garde-fou compare les deux durées,
+        refuse la ligne, et la refuse partout dès qu'elle est faussée quelque
+        part : une ligne mesurée pour certaines générations et pas pour d'autres
+        donnerait un agrégat dont le biais serait invisible.
         Reste `--duree`, qui n'a pas besoin de contrefactuelle : la pension d'un
         militaire parti à quarante-quatre ans est servie vingt ans avant l'âge
         légal, et ces vingt annuités se comptent directement. C'est l'avantage
-        d'âge le plus extrême du système — le coefficient de conversion à
-        trente-huit ans est plus du double de celui de soixante-quatre ans.
+        d'âge le plus extrême du système.
 
   - code: bonification_cinquieme_militaires
     libelle: Bonification du cinquième du temps de service des militaires
@@ -1064,10 +1104,24 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        Mesuré par comparaison des deux barèmes à âge de départ donné, et c'est
-        une part substantielle de l'écart entre le scénario 1 et le scénario 2 —
-        sur un agent parti à cinquante ans, l'écart total atteint −90,5 %, dont
-        la décote manquante fait le plus gros.
+        CHIFFRÉ, mais pas par un retrait : on ne retire pas un barème, on le
+        remplace. La mesure compare donc ce que coûte une année d'anticipation
+        sous le droit en vigueur et sous le coefficient de conversion notionnel,
+        qui est actuariel par construction.
+        LE RÉSULTAT RENVERSE L'INTUITION, et il tient au PLAFOND de vingt
+        trimestres de l'article L. 14. Sur un fonctionnaire sédentaire de la
+        génération 1965, âge de référence 64,5 ans : partir à 62,5 ans laisse
+        81,7 % de la pension sous le droit actuel contre 84,0 % sous le
+        notionnel — le droit est PLUS DUR de 2,3 points ; à 59,5 ans, 59,1 %
+        contre 65,5 %, plus dur de 6,4 points. Puis la décote bute sur son
+        plafond, et le rapport s'inverse : à 56,5 ans le droit est plus doux de
+        1,5 point, à 54,5 ans de 5,1 points, à 52,5 ans de 7,6 points.
+        AUTREMENT DIT : la décote surpunit l'anticipation ordinaire et
+        sous-punit l'anticipation extrême. Or l'anticipation extrême est
+        exactement celle de la catégorie active (cinq ans), de la super-active
+        (dix), de la conduite SNCF (douze) et des militaires (vingt). Le barème
+        est donc le plus clément précisément là où il devrait l'être le moins,
+        et c'est ce que `--duree` retrouve par un autre chemin.
 
   - code: rendement_superieur_au_rendement_d_equilibre
     libelle: Rendement servi supérieur à ce que l'assiette peut porter
@@ -1092,11 +1146,19 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        C'est exactement ce que mesure `cout.py` : le rapport de la masse du
-        scénario 2 à celle du scénario 1, cumulé à −79,5 % sur 1959-2024 à la
-        pondération par effectifs. Retirer de cet écart les lignes chiffrables
-        ci-dessus donne, par soustraction, ce qui reste imputable au seul
-        changement de règle.
+        CHIFFRÉ, et c'est de très loin le plus gros de toute la liste — mais ce
+        n'est pas un retrait, c'est un REMPLACEMENT de règle, et le remplacement
+        EST le scénario 2. `cout.py` en donne le rapport : la masse du scénario 2
+        vaut 27,9 % de celle du scénario 1 en 2024, soit un écart de 72,1 %, ou
+        307,5 Md€ sur une dépense de 426,7.
+        DEUX LECTURES, et il faut donner les deux. Le scénario 2 ne porte au
+        compte que la part SALARIALE : l'écart de 307,5 Md€ mesure donc ce que
+        les pensions dépassent la cotisation de l'assuré lui-même. Le scénario 4
+        y ajoute la part patronale, et l'écart tombe à 133,7 Md€ — 31,3 % de la
+        dépense. La seconde est la comparaison honnête avec « ce qui a été
+        cotisé », la première avec « ce que l'assuré a lui-même supporté ».
+        NE PAS L'ADDITIONNER aux lignes de dispositifs : celles-ci sont
+        comprises dedans, puisqu'un compte notionnel les supprime aussi.
 
   - code: financement_non_contributif_des_regimes
     libelle: Impôts, subventions d'équilibre et compensation démographique
@@ -1124,6 +1186,17 @@ avantages:
       mesurable_par: serie_publiee
       source_id: cor_comptes_systeme_retraite
       note: >-
-        Lisible dans `macro/structure_ressources_retraite.csv` : la part des
-        ressources qui n'est pas de la cotisation. À ne jamais additionner aux
-        lignes de prestation — c'est le même argent, compté à l'autre bout.
+        CHIFFRÉ, et lu plutôt que calculé — c'est une RECETTE, elle n'apparaît
+        dans aucune pension individuelle. `macro/structure_ressources_retraite.csv`
+        le donne poste par poste : en 2025, les cotisations ne font que 65,6 %
+        des ressources du système. Le reste se partage entre les impôts et taxes
+        affectés (15,3 %), la contribution d'équilibre de l'État employeur
+        (11,7 %), les transferts d'autres organismes (3,9 %), les subventions
+        d'équilibre des régimes spéciaux (1,8 %) et d'autres produits (1,7 %).
+        DEUX RÉSERVES. Les impôts et taxes compensent pour l'essentiel des
+        exonérations de cotisations : les compter comme un financement non
+        contributif reviendrait à traiter une cotisation remboursée autrement
+        que la cotisation elle-même. Et les transferts sont déjà comptés du côté
+        des prestations, sous l'AVPF et la majoration pour enfants. Le noyau
+        indiscutable est donc la contribution d'équilibre et les subventions,
+        13,5 % des ressources.

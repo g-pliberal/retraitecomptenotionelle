@@ -22,7 +22,8 @@ import {
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
 import {
-  LIBELLES_MOTIFS, MOTIFS, calculerAvantages, chargerAvantages,
+  LIBELLES_MOTIFS, MOTIFS, NEUTRALISATIONS, calculerAvantages,
+  chargerAvantages,
 } from "./avantages.js";
 import { COMPOSANTE_GARANTIE, SCENARIOS, calculerCout } from "./cout.js";
 import { DistributionPensions } from "./distribution.js";
@@ -4720,8 +4721,10 @@ function avantagesDetailEtats(contexte) {
       + "ces lignes vaut exactement la pension moins sa part cotisée."],
     ["servi, chiffré à part", String(inventaire.compte("integre")),
       "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
-      + "ou une assiette. Deux sont mesurés par recalcul — on refait la "
-      + "pension sans l'avantage —, les autres restent à ouvrir."],
+      + `ou une assiette. ${NEUTRALISATIONS.length} sont mesurés par retrait : on `
+      + "refait la pension sans l'avantage, et l'écart est le chiffre. Les "
+      + `${inventaire.compte("integre") - NEUTRALISATIONS.length} derniers ne sont `
+      + "pas des dispositifs, et se lisent ailleurs."],
     ["déclaré, non servi", String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, aucun code ne les sert. La "
       + "déclaration est une intention."],

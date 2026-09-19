@@ -5716,11 +5716,11 @@ Deux causes, et la seconde était inconnue :
    dérivés par régime et par sexe dans le panorama « Les retraités et les
    retraites » (`drees_panorama_retraites`). C'est la seule ligne de l'inventaire
    dont le coût s'obtienne sans aucun recalcul, et c'est la plus lourde.
-3. *Les onze lignes « intégré », chiffrées par recalcul*, exactement comme les
-   huit lignes de cascade : on recalcule la pension sans l'avantage, et l'écart
-   est la ligne. **Les deux plus lourdes sont faites** — voir le volet B. Restent
-   les neuf autres, dont le salaire de référence des parents et la garantie
-   minimale de points, toutes deux du même type : un recalcul sur l'assiette.
+3. *Les onze lignes « intégré », chiffrées par retrait* — **fait, volets B et
+   D.** Huit le sont ; les trois autres ne sont pas des dispositifs et se lisent
+   ailleurs. Ce qui reste n'est plus une mesure mais une population : quatre des
+   huit ne pèsent rien sur la fenêtre publiée, faute de chômeurs, d'appelés et
+   de parents dans la grille. C'est le point 1 de cette liste.
 4. *Les trois contrôles externes du dépôt, opposés au résultat* :
    `cnaf_avpf` et `cnaf_majorations` pour les droits familiaux,
    `fsv_cotisations` pour le chômage, `unedic_agirc_arrco` pour les points
@@ -5855,6 +5855,98 @@ trois graphiques, aucun débordement horizontal, aucune erreur de console.
 message d'attente dans `index.html` ; barre de navigation dans
 `web/gabarit.py` et `moteur/js/gabarit.js` ; `scripts/construire_donnees.py`
 (clé `avantages`) et `scripts/construire_temoins.py` (témoin `avantages`).
+
+**Volet D — les neuf lignes « intégré » qui restaient.** À la demande. Onze
+avantages sont servis par le scénario 1 sans que la cascade les isole ; deux
+avaient été mesurés au volet B. Les neuf autres le sont maintenant, ou disent
+pourquoi elles ne le seront pas.
+
+*Un mécanisme, trois voies, et aucune ne touche au moteur.* Un avantage qu'on ne
+lit pas, on le retire, et l'écart est la ligne. `NEUTRALISATIONS` déclare pour
+chacun par où le retrait passe : par la CARRIÈRE quand l'avantage tient à ce que
+l'assuré a vécu (une année de chômage devient une année sans activité) ; par le
+CATALOGUE quand la fiche du régime le déclare (un catalogue dont
+`avantages_non_contributifs` ou `points_minimum_annuels` est dépouillé produit un
+régime qui ne sert plus l'avantage) ; par une TABLE quand il vient d'un barème
+daté (le barème de carrière longue vidé, la date d'effet du salaire de référence
+des parents repoussée). C'est la condition pour que la mesure reste une mesure :
+si le calcul changeait, on comparerait deux modèles et non deux droits.
+
+*La voie du catalogue est validée par un second chemin.* La catégorie active se
+mesurait déjà en changeant le STATUT de l'agent pour le statut sédentaire de
+mêmes caisses. Les deux chemins — l'un par les données du régime, l'autre par
+celles de la carrière — donnent **le même euro sur cinq générations**, et un test
+l'exige. La mesure retenue est celle du catalogue : elle vaut pour tout avantage
+qu'une fiche déclare, là où le statut témoin suppose qu'il en existe un, ce
+qu'aucun régime spécial n'offre.
+
+*Ce que chacune vaut, génération 1985, à date de départ inchangée* : catégorie
+active 4 530 €, jouissance militaire 4 420 €, périodes assimilées 4 526 €,
+salaire de référence des parents 729 €, garantie minimale de points 205 €,
+carrière longue 0 €. Sous une dose de cinq années de chômage et d'une année de
+service national — hypothèse affichée comme telle : périodes assimilées 12 062 €
+au salaire moyen et 18 350 € au cadre, service national 2 996 € et 5 693 €,
+points gratuits de complémentaire 1 427 € et 8 585 €.
+
+**TROIS RÉSULTATS QU'ON N'ATTENDAIT PAS.**
+
+- *La carrière longue ne vaut rien sur le montant.* Le barème vidé, la pension ne
+  bouge pas d'un euro : un assuré entré tôt réunit sa durée de toute façon, et le
+  taux plein lui est acquis avec ou sans le dispositif. Elle ouvre la porte ;
+  elle ne remplit pas la pension. Tout son prix est dans la durée — 3,8 Md€ en
+  2024, rien avant 2010.
+
+- *La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.* Comparée
+  au coefficient de conversion notionnel, qui est actuariel par construction, sur
+  un fonctionnaire sédentaire de 1965 : le droit actuel est plus dur de 2,3
+  points à deux ans d'avance, de 6,4 points à cinq ans, puis la décote bute sur
+  son plafond de vingt trimestres et il devient plus doux — de 1,5 point à huit
+  ans, de 5,1 à dix, de 7,6 à douze. Or l'anticipation extrême est exactement
+  celle de la catégorie active, de la super-active, de la conduite SNCF et des
+  militaires. **Le barème est le plus clément là où il devrait l'être le moins**,
+  et c'est ce que `--duree` retrouvait par un autre chemin.
+
+- *Chiffrer les neuf n'a pas déplacé la masse d'un euro.* La décomposition
+  annuelle vaut toujours 12,6 Md€ en 2024, aux mêmes sept lignes. Quatre des huit
+  mesures sont nulles sur la fenêtre publiée, et aucune de ces absences n'est un
+  défaut : le salaire de référence des parents ne s'applique qu'aux pensions de
+  septembre 2026 et la dernière dépense publiée est de 2024 ; la garantie
+  minimale de points ne mord que sur des carrières qui liquident après 2024 ; le
+  service national et les points gratuits de complémentaire ne sont portés par
+  aucun cas type. **Le but n'était pas de déplacer le total mais de savoir
+  pourquoi chaque ligne vaut ce qu'elle vaut.** Une liste qui ne dit pas cela
+  n'est pas une liste : c'est un tableau de zéros.
+
+*Le refus reste, et il est mieux argumenté.* La jouissance militaire se mesure
+sur certaines générations — 4 420 € en 1985 — et se refuse sur d'autres, où le
+retrait déplace aussi la durée requise, 172 trimestres contre 160. Le garde-fou
+compare les deux durées et refuse partout dès qu'elle est faussée quelque part.
+
+*Les trois dernières ne sont pas des dispositifs*, et se chiffrent ailleurs : le
+rendement supérieur à ce que l'assiette porte est le rapport du scénario 2 au
+scénario 1, soit 307,5 Md€ en part salariale et 133,7 avec la part patronale ; le
+financement non contributif se lit dans `structure_ressources_retraite.csv`, où
+les cotisations ne font que 65,6 % des ressources de 2025, dont un noyau
+indiscutable de 13,5 % pour la contribution d'équilibre et les subventions.
+
+*Quatre tests de plus*, dont celui qui prouve que les deux chemins de la
+catégorie active coïncident, celui qui exige qu'une neutralisation nomme ce
+qu'elle retire, celui qui interdit qu'une douzième ligne « intégré » apparaisse
+sans réponse, et celui qui vérifie qu'une variante ne déplace pas une pension
+qu'elle ne concerne pas — un catalogue sans classement ne doit rien faire à un
+cadre du privé.
+
+*Le portage suit, et la parité est vérifiée couple par couple* : les 342 couples
+de la grille rendent exactement les mêmes parts des deux côtés. Le calcul JS
+passe de 0,6 à 1,5 seconde, le Python de 4 à 8.
+
+**Fichiers.** `src/retraite_notionnelle/avantages.py` (`Neutralisation`,
+`NEUTRALISATIONS`, `scenarios_neutralises`, `recalculer`) et son portage
+`moteur/js/avantages.js` ; `scenario-actuel.js`, dont le seuil des parents
+devient une propriété d'instance comme l'attribut de classe du Python ;
+`scripts/cout_avantages.py` (`--par-carriere` montre les huit lignes et la dose) ;
+`tests/test_avantages.py` ; `data/reference/legislation/avantages_non_contributifs.yaml` ;
+`docs/avantages_non_contributifs.md` §4 ter ; `docs/limites.md` §5.
 
 **Fichiers.** `data/reference/legislation/avantages_non_contributifs.yaml` ;
 `tests/test_avantages.py` ; `scripts/cout_avantages.py` ;

@@ -61,6 +61,7 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
@@ -70,8 +71,8 @@ import yaml  # noqa: E402
 
 from retraite_notionnelle import Parametres  # noqa: E402
 from retraite_notionnelle.avantages import (  # noqa: E402
-    CONTRIBUTIF, MOTIFS, RECALCULS, SEDENTAIRE, carriere_variante, decomposer,
-    masses, masses_anticipees, motif_de_depart, recalculer,
+    CONTRIBUTIF, MOTIFS, NEUTRALISATIONS, carriere_variante, decomposer,
+    masses, masses_anticipees, recalculer, scenarios_neutralises,
 )
 from retraite_notionnelle.castypes import CAS_TYPES  # noqa: E402
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
@@ -111,35 +112,57 @@ def libelles() -> dict[str, str]:
 def par_carriere(simulateur: Simulateur, generation: int):
     """Ce que chaque avantage vaut à un assuré, cas type par cas type.
 
-    C'est le chiffre qui a un sens quand l'agrégat n'en a pas. La grille ne
-    porte qu'une carrière interrompue sur treize et aucun chômage ; elle ne
-    peut donc pas dire ce que les périodes assimilées COÛTENT au système, faute
-    de savoir combien d'assurés en ont. Elle peut parfaitement dire ce qu'elles
-    RAPPORTENT à qui en a, et c'est ce que cette table mesure, en appliquant à
-    chaque carrière une dose commune de chômage indemnisé.
+    C'est le chiffre qui a un sens quand l'agrégat n'en a pas — et c'est ici le
+    cas pour la moitié des lignes. Quatre des neuf avantages mesurés par
+    recalcul ne pèsent RIEN sur la fenêtre que la DREES publie, chacune pour une
+    raison qui lui est propre et qui n'a rien d'un défaut de mesure :
+
+    * le salaire de référence des parents ne s'applique qu'aux pensions
+      prenant effet à compter de septembre 2026 ;
+    * la garantie minimale de points ne mord que sur des carrières dont les
+      premières années tombent entre 1989 et 2018, et qui liquident après 2024 ;
+    * la carrière longue ne vaut rien sur le MONTANT — son prix est entièrement
+      dans la durée, que ``--duree`` mesure ;
+    * le service national et les points gratuits de complémentaire ne sont
+      portés par aucun cas type de la grille, dont un seul connaît une
+      interruption.
+
+    Cette table lève les deux derniers obstacles en appliquant à chaque carrière
+    une DOSE COMMUNE : cinq années de chômage indemnisé au milieu de la vie
+    active, et une année de service national au début. C'est une hypothèse,
+    affichée comme telle, et non une mesure de ce que la population a vécu.
     """
+    variantes = scenarios_neutralises(simulateur)
     lignes = []
     for cas in CAS_TYPES:
         try:
             age = cas.age_liquidation_pour(simulateur, generation)
-            reelle = simulateur.scenario_actuel.calculer(
-                carriere_variante(simulateur, cas, generation, age)
-            )
         except (ValueError, KeyError):
             continue
-        # La dose de chômage est appliquée au milieu de la carrière active,
-        # là où elle coûte le plus cher au salaire de référence.
-        debut = int(generation + (cas.age_debut + age) / 2)
-        chomage = {debut + k: "chomage_indemnise" for k in range(DOSE_INTERRUPTION)}
-        neant = {annee: "sans_activite" for annee in chomage}
-        avec = simulateur.scenario_actuel.calculer(
-            carriere_variante(simulateur, cas, generation, age, interruptions=chomage))
-        sans = simulateur.scenario_actuel.calculer(
-            carriere_variante(simulateur, cas, generation, age, interruptions=neant))
-        recalculs, refuses = recalculer(simulateur, cas, generation, age, reelle)
-        lignes.append((cas, age, reelle.pension_annuelle,
-                       avec.pension_annuelle - sans.pension_annuelle,
-                       recalculs, refuses))
+        # La dose est posée en DÉCALAGES depuis l'âge d'entrée, comme les
+        # interruptions d'un cas type : le chômage au milieu de la vie active,
+        # là où il coûte le plus cher au salaire de référence, et le service
+        # national à vingt ans.
+        milieu = max(1, int((age - cas.age_debut) / 2))
+        dose = tuple(
+            [(milieu + rang, "chomage_indemnise") for rang in range(DOSE_INTERRUPTION)]
+            + [(max(0, int(20 - cas.age_debut)), "service_militaire")]
+        )
+        charge = replace(cas, interruptions_relatives=dose)
+        try:
+            reelle = simulateur.scenario_actuel.calculer(
+                carriere_variante(simulateur, cas, generation, age))
+            chargee = simulateur.scenario_actuel.calculer(
+                carriere_variante(simulateur, charge, generation, age))
+        except (ValueError, KeyError):
+            continue
+        # Deux mesures pour deux questions : ce que la carrière RÉELLE du cas
+        # type porte, et ce que la même carrière porterait si elle avait connu
+        # la dose. Les deux sont rendues, et la seconde est signalée.
+        propres, refus = recalculer(simulateur, cas, generation, age, reelle, variantes)
+        sous_dose, _ = recalculer(simulateur, charge, generation, age, chargee, variantes)
+        lignes.append((cas, age, reelle.pension_annuelle, chargee.pension_annuelle,
+                       propres, sous_dose, refus))
     return lignes
 
 
@@ -202,33 +225,41 @@ def main() -> int:
     simulateur = Simulateur(parametres)
 
     if options.par_carriere:
-        print(f"Ce que chaque avantage vaut à un assuré — génération {options.generation}")
-        print(f"Pensions annuelles en euros courants de l'année de liquidation.")
+        lignes = par_carriere(simulateur, options.generation)
+        codes = [n.code for n in NEUTRALISATIONS]
+        presents = [c for c in codes
+                    if any(c in propres or c in dose
+                           for _, _, _, _, propres, dose, _ in lignes)]
+        print(f"Ce que chaque avantage vaut à un assuré — génération "
+              f"{options.generation}")
+        print("Pensions annuelles en euros courants de l'année de liquidation.")
+        print("Une ligne par cas type ; en dessous, la même carrière sous la dose.")
         print()
-        entete = (f"{'Cas type':34s}{'Âge':>5s}{'Pension':>10s}"
-                  f"{'Assimilées':>12s}{'Classement':>12s}")
+        entete = (f"{'Cas type':30s}{'Âge':>4s}{'Pension':>10s}"
+                  + "".join(f"{code[:13]:>15s}" for code in presents))
         print(entete)
         print("-" * len(entete))
         refus: dict[str, str] = {}
-        for cas, age, pension, chomage, recalculs, refuses in par_carriere(
-                simulateur, options.generation):
+        for cas, age, pension, chargee, propres, dose, refuses in lignes:
             refus.update(refuses)
-            classement = sum(recalculs.get(cle, 0.0) for cle in
-                             ("categorie_active", "age_jouissance_militaire"))
-            print(f"{cas.code:34s}{age:>5.0f}{pension:>10.0f}"
-                  f"{chomage:>12.0f}{classement:>12.0f}")
+            print(f"{cas.code:30s}{age:>4.0f}{pension:>10.0f}"
+                  + "".join(f"{propres.get(code, 0.0):>15.0f}" for code in presents))
+            if dose != propres:
+                print(f"{'  └ sous la dose':30s}{'':>4s}{chargee:>10.0f}"
+                      + "".join(f"{dose.get(code, 0.0):>15.0f}" for code in presents))
         print()
-        print(f"« Assimilées » : ce que valent {DOSE_INTERRUPTION} années de chômage")
-        print("indemnisé au milieu de la carrière, comparées aux mêmes années sans")
-        print("aucune validation. C'est une HYPOTHÈSE de dose, pas une mesure : la")
-        print("grille ne dit rien de la fréquence réelle du chômage.")
+        print("LA DOSE est une HYPOTHÈSE et non une mesure : cinq années de chômage")
+        print("indemnisé au milieu de la vie active, et une année de service national")
+        print("à vingt ans. La grille ne dit rien de la fréquence réelle de l'un ni")
+        print("de l'autre ; elle dit ce qu'ils valent à qui les a connus.")
         print()
-        print("« Classement » : ce que vaut la catégorie active — ou, pour le")
-        print("militaire, la jouissance immédiate — à date de départ INCHANGÉE.")
-        print("Le chiffre est petit, et ce n'est pas une erreur : la décote est")
-        print("plafonnée à vingt trimestres, si bien que l'agent classé et l'agent")
-        print("sédentaire partis le même jour butent tous deux sur le même plafond.")
-        print("Ce que le classement coûte vraiment est dans --duree.")
+        print("CE QUE CHAQUE COLONNE MESURE, c'est le retrait de l'avantage à date de")
+        print("liquidation inchangée. Les valeurs ne s'additionnent pas : la décote")
+        print("est plafonnée, et deux retraits qui butent sur le même plafond ne font")
+        print("pas deux fois le premier.")
+        for neutralisation in NEUTRALISATIONS:
+            if neutralisation.code in presents:
+                print(f"  {neutralisation.code} — {neutralisation.quoi}")
         _dire_les_refus(refus)
         return 0
 
