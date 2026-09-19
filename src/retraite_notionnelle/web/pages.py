@@ -3282,6 +3282,46 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         else f"par mois, en euros de {saisie.euros}"
     )
 
+    # Le salaire net que chaque système laisse PENDANT la carrière, à côté de
+    # la pension qu'il servira APRÈS. Les trois premiers prélèvent la même
+    # chose : le même nombre y paraît donc trois fois, et c'est le propos —
+    # seul le système 4 déplace la fiche de paie. Vide quand il n'y a pas de
+    # fiche de paie à écrire : un retraité ne cotise plus, et le modèle ne sait
+    # écrire que celle d'un salarié du privé.
+    remuneration = comparaison.remuneration
+    nets = {}
+    if remuneration is not None:
+        reference_paie = remuneration.reference
+        nets = {
+            "actuel": reference_paie.droit_en_vigueur.net,
+            "retroactif": reference_paie.droit_en_vigueur.net,
+            "retroactif-employeur": reference_paie.droit_en_vigueur.net,
+            "liberal": reference_paie.proposition.net,
+        }
+
+    def salaire(cle: str) -> str:
+        """Le second chiffre de la ligne : ce qu'on touche en travaillant.
+
+        Il est volontairement plus petit que la pension — la page compare des
+        pensions, et le salaire est ce qu'on met EN REGARD. L'écart n'est écrit
+        que là où il y en a un, pour que les trois premières lignes se lisent
+        comme ce qu'elles sont : le même salaire net.
+        """
+        if cle not in nets:
+            return ""
+        net = nets[cle]
+        ecart = net - nets["actuel"]
+        mention = (
+            f'<span class="ecart">{_euros_signe(ecart / 12.0)} par mois</span>'
+            if abs(ecart) >= 0.005 else ""
+        )
+        return f"""
+      <span class="chiffre salaire">
+        <span class="somme">{g.euros_centimes(net / 12.0)}</span>
+        <span class="unite">salaire net pendant la carrière</span>
+        {mention}
+      </span>"""
+
     def bloc(cle: str, titre: str, glose: str, variation: float | None,
              taux_remplacement: float, part_capitalisee: float = 0.0) -> str:
         montant = constants[cle]
@@ -3308,7 +3348,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
 <div class="scenario">
   <div class="entete">
     <span class="titre">{escape(titre)}</span>
-    <span class="montant">
+    <span class="montant">{salaire(cle)}
       <span class="chiffre principal">
         <span class="somme">{g.euros_centimes(montant / 12)}</span>
         <span class="unite">{unite_reference}</span>

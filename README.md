@@ -1125,7 +1125,11 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
+<<<<<<< HEAD
 tests/                          988 tests Python
+=======
+tests/                          985 tests Python
+>>>>>>> 95f025d (Le salaire net se lit à côté de chaque pension, pas seulement plus bas)
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1

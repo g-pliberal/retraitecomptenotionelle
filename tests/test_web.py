@@ -4672,23 +4672,62 @@ def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(context
 
 
 def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
-    """Un montant par scénario, et dans une seule unité.
+    """UNE PENSION par scénario, et dans une seule unité.
 
-    Chaque ligne portait deux nombres : le pouvoir d'achat d'aujourd'hui, et la
-    somme nominale du mois du départ — « 3 190,21 € par mois, en euros de
-    2039 ». Des euros d'une année que personne n'a en poche, qu'il fallait une
-    légende pour distinguer des autres, et qui doublaient les quatre lignes de
-    la comparaison. Seuls les euros de l'année de référence sont affichés.
+    Chaque ligne portait deux nombres pour la même grandeur : le pouvoir
+    d'achat d'aujourd'hui, et la somme nominale du mois du départ — « 3 190,21 €
+    par mois, en euros de 2039 ». Des euros d'une année que personne n'a en
+    poche, qu'il fallait une légende pour distinguer des autres, et qui
+    doublaient les quatre lignes de la comparaison.
+
+    Ce que ce test interdit est donc la SECONDE UNITÉ, pas le second chiffre.
+    Le salaire net que le système laisse pendant la carrière a le droit de se
+    tenir à côté de la pension : c'est une autre grandeur, elle porte son
+    étiquette, et c'est même ce qui sépare les quatre systèmes avant la
+    retraite. Une seule chose reste exigée — un seul `chiffre principal`, celui
+    de la pension, et lui seul dans les euros de l'année de référence.
     """
     corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     depart = SIMULATION_TEMOIN["liquidation"][:4]
     for bloc in corps.split('<div class="scenario">')[1:]:
-        entete = bloc.split("</div>")[0]
-        assert entete.count('class="chiffre') == 1
+        entete = bloc.split('<div class="barre')[0]
+        assert entete.count('class="chiffre principal"') == 1
         assert f"en euros de {depart}" not in entete
         assert "par mois, en euros d'aujourd'hui" in entete
+        # Le second chiffre, s'il est là, dit de quoi il parle : sans son
+        # étiquette, deux nombres se toucheraient sans que rien ne les sépare.
+        if 'class="chiffre salaire"' in entete:
+            assert "salaire net pendant la carrière" in entete
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
+
+
+def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
+    """Les quatre systèmes portent leur salaire net, et trois portent le même.
+
+    C'est le propos : les systèmes 1, 2 et 3 ne changent pas ce qui est
+    PRÉLEVÉ, seulement ce qui est porté au compte. Voir le même nombre trois
+    fois puis un quatrième différent est ce qui le montre sans une phrase.
+    L'écart n'est donc écrit que sur la ligne qui en a un.
+    """
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    entetes = [bloc.split('<div class="barre')[0]
+               for bloc in corps.split('<div class="scenario">')[1:]]
+    assert len(entetes) == 4
+    salaires = [re.search(r'class="chiffre salaire">\s*<span class="somme">'
+                          r'([^<]+)</span>', entete)
+                for entete in entetes]
+    assert all(salaires), "un scénario n'affiche pas son salaire net"
+    montants = [s.group(1) for s in salaires]
+    assert montants[0] == montants[1] == montants[2], (
+        "les systèmes 1 à 3 prélèvent la même chose : leur salaire net doit "
+        f"être le même, et vaut {montants[:3]}"
+    )
+    assert montants[3] != montants[0], (
+        "le système 4 change le prélèvement : son salaire net doit différer"
+    )
+    assert entetes[3].count('class="ecart"') == 1
+    assert sum(entete.count('class="ecart"') for entete in entetes[:3]) == 0
 
 
 def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
