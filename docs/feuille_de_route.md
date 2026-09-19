@@ -3015,9 +3015,12 @@ scénario 6, les recettes d'un système dont il remplace tous les taux.
   et s'éteint en deux ans.
 - *Une réserve nouvelle, de sens opposé, et chiffrable.* Le modèle porte au
   compte le taux qui ACQUIERT des droits, non tout ce qui rentre : la
-  contribution d'équilibre générale et la contribution d'équilibre technique de
-  l'Agirc-Arrco, environ deux points et demi sur un salaire du privé, n'ouvrent
-  aucun droit et sont pourtant encaissées. Les compter abaisserait encore le
+  contribution d'équilibre général et la contribution d'équilibre technique de
+  l'Agirc-Arrco n'ouvrent aucun droit et sont pourtant encaissées. Sous le
+  plafond, la première seule s'applique, à 2,15 % : et c'est exactement ce qui
+  manque au modèle, dont le taux de 25,83 % plus ces 2,15 donnent 27,98 quand
+  le COR publie 27,89 pour le même salarié. La seconde, 0,35 %, n'est due que
+  par ceux dont la rémunération dépasse le plafond. Les compter abaisserait encore le
   rapport. Le chiffre affiché est donc favorable au scénario 6, et le refermer
   demande une série de taux ENCAISSÉS à côté de celle des taux qui acquièrent.
 
