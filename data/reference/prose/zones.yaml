@@ -79,8 +79,23 @@ fichiers:
       "Le profil de carrière, et les trois choses qu'il suppose": recit
   docs/methodologie.md:
     defaut: a_declarer
+  # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
+  # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
+  # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
+  # ferait disparaître l'intérêt du document, qui est de montrer un total
+  # passant de 5,3 à 95,2 milliards à mesure qu'on apprend où regarder.
+  #
+  # Trois sections échappent à ce régime : elles décrivent l'inventaire tel
+  # qu'il est aujourd'hui, et leurs comptes se périment donc pour de bon. Le
+  # tableau du §2 l'a fait le jour où trois dispositifs de plus ont été
+  # trouvés. Elles restent à arbitrer : il leur faut une sonde qui recompte
+  # depuis `avantages_non_contributifs.yaml`, pas une relecture.
   docs/avantages_non_contributifs.md:
-    defaut: a_declarer
+    defaut: recit
+    sections:
+      Les avantages non contributifs du scénario 1: a_declarer
+      "2. L'état du modèle : quatre mots, et ils ne se valent pas": a_declarer
+      3. La liste: a_declarer
   docs/veille_droit.md:
     defaut: a_declarer
   docs/outillage_interface.md:
@@ -93,7 +108,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 213
+  sections_a_declarer: 192
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

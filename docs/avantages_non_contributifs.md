@@ -41,7 +41,7 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | **chiffré** | 8 | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
 | **intégré** | 11 | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Les trois derniers ne sont pas des dispositifs. |
 | **déclaré** | 3 | Une fiche de régime le déclare, aucun code ne le sert. La déclaration est une intention — mais la réversion, qui est de ceux-là, a désormais son coût, LU dans les séries de la DREES : voir le §4 quater. |
-| **absent** | 17 | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour sept d'entre eux, qu'ils publient poste par poste : voir le §4 quinquies. |
+| **absent** | 20 | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
 
 Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
 recalcul de même nature), par une **série publiée**, ou par **rien** — ce

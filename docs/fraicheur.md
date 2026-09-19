@@ -11,7 +11,7 @@ la main : la feuille de route donnait « plus de trois mille lignes » à
 `src/retraite_notionnelle/scenarios/actuel.py`, qui en fait
 <!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/-->,
 et « douze mille lignes » au portage, qui en fait
-<!--chiffre:lignes(moteur/js/*.js)-->23 240<!--/--> ; le README annonçait un
+<!--chiffre:lignes(moteur/js/*.js)-->23 324<!--/--> ; le README annonçait un
 premier chargement de 310 Ko quand il en transfère plus du double, et
 « 123 simulations » quand les témoins en figent
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->485<!--/-->.
@@ -92,7 +92,7 @@ C'est ce qui fait avancer le dépôt sans qu'on y pense. Deux compteurs, en bas
 de `zones.yaml`, qui ne peuvent que décroître :
 
 - **les sections non déclarées**, aujourd'hui
-  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->213<!--/--> ;
+  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->192<!--/--> ;
 - **les chiffres qui portent l'aveu `a_verifier`**, aujourd'hui
   <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.chiffres_a_verifier)-->2<!--/-->.
 
