@@ -41,14 +41,39 @@ l'écrit là où il affiche le chiffre. La lecture prudente — seule la part
 salariale bouge, l'employeur garde son économie — donne à peu près la moitié
 du gain ; elle est disponible par ``incidence="salariale"``.
 
-LE PARTAGE DES 18 %
--------------------
+LE PARTAGE DES 18 %, ET POURQUOI IL N'EST PAS ANODIN
+-----------------------------------------------------
 La proposition fixe un taux unique de 18 %, « salariale et patronale
 additionnées », et ne dit pas qui porte quoi. Le modèle partage **moitié-moitié**
-— 9 % et 9 % —, et de même pour les 5 % capitalisés. Sous l'incidence
-intégrale, ce partage ne change PAS le salaire net : il ne déplace que la ligne
-« brut » entre le coût du travail et le net. Il compte sous l'autre incidence,
-et c'est pourquoi il est écrit ici plutôt que deviné.
+— 9 % et 9 % —, et de même pour les 5 % capitalisés.
+
+On attendrait ce partage sans effet sous l'incidence intégrale : à coût du
+travail donné, ce qui n'est pas versé à une caisse est versé au salarié, quel
+que soit le nom de la ligne. C'est FAUX, et les tests l'ont montré. Le partage
+déplace le salaire net, pour deux raisons qui n'ont rien à voir l'une avec
+l'autre :
+
+1. **La CSG et la CRDS sont assises sur le BRUT**, non sur le coût du travail.
+   Faire porter un point à l'employeur plutôt qu'au salarié rétrécit le brut,
+   donc leur assiette, donc leur montant. Dix points déplacés valent un point
+   de net. L'algèbre est courte : à coût C fixé, le net vaut
+   ``C − brut × (taux total + autres patronaux + CSG-CRDS)``, et le brut, lui,
+   décroît quand la part patronale grossit.
+2. **La réduction générale n'efface que des cotisations PATRONALES.** En deçà
+   de trois SMIC, plus la part patronale est grosse, plus l'allègement l'est,
+   plus il reste de coût du travail à verser en salaire.
+
+Les deux jouent dans le même sens, et fort : au salaire moyen comme à quatre
+SMIC, faire porter les 23 points entièrement à l'employeur plutôt que
+moitié-moitié vaut plusieurs milliers d'euros de net par an. Le partage retenu
+est donc le choix MÉDIAN d'un paramètre que la proposition laisse ouvert, et pas
+une commodité d'écriture. ``part_salariale_taux_unique`` le rend réglable, et
+deux tests fixent les deux mécanismes.
+
+C'est, au passage, un résultat sur le système actuel plus que sur la
+proposition : notre droit fait dépendre le salaire net de la FRONTIÈRE entre
+part salariale et part patronale, alors que cette frontière ne change rien à
+ce que le travail coûte ni à ce qu'il rapporte au système.
 
 LA RÉDUCTION GÉNÉRALE, ET POURQUOI ELLE NE PEUT PAS ÊTRE IGNORÉE
 -----------------------------------------------------------------
@@ -189,10 +214,14 @@ class ReductionGenerale:
     libelle: str
     plafond_en_smic: float
     puissance: float
+    #: Plancher du coefficient, quel que soit le salaire sous le plafond.
     taux_minimum: float
-    taux_maximal: float
-    #: Les taux dont la somme fait ``taux_minimum + taux_maximal``, poste par
-    #: poste, tels que le décret les additionne.
+    #: Valeur maximale du coefficient — celle qu'atteint un salaire au SMIC —,
+    #: et somme exacte des taux du périmètre : au SMIC, la réduction efface la
+    #: TOTALITÉ des cotisations patronales qu'elle vise.
+    coefficient_maximal: float
+    #: Ces taux, poste par poste. Leur somme est ``coefficient_maximal``, et un
+    #: test l'exige : c'est ce qui relie le coefficient aux barèmes.
     composantes: dict[str, float]
     #: Celles de ces composantes qui financent la retraite, et qu'un scénario
     #: remplace donc par les siennes.
@@ -203,16 +232,17 @@ class ReductionGenerale:
         """Points de cotisation retraite patronale compris dans le coefficient."""
         return sum(self.composantes[code] for code in self.composantes_retraite)
 
-    def taux_maximal_avec(self, taux_retraite_employeur: float) -> float:
+    def coefficient_maximal_avec(self, taux_retraite_employeur: float) -> float:
         """Le coefficient maximal quand la retraite patronale change de taux.
 
         La loi le plafonne à la somme des taux du périmètre : on retire la
         retraite d'aujourd'hui et on ajoute celle du scénario. Le résultat ne
-        descend jamais sous zéro.
+        descend jamais sous le plancher.
         """
         return max(
-            0.0,
-            self.taux_maximal - self.taux_retraite_inclus + taux_retraite_employeur,
+            self.taux_minimum,
+            self.coefficient_maximal - self.taux_retraite_inclus
+            + taux_retraite_employeur,
         )
 
     def coefficient(self, brut: float, smic_annuel: float,
@@ -222,10 +252,11 @@ class ReductionGenerale:
             return 0.0
         if brut >= self.plafond_en_smic * smic_annuel:
             return 0.0
-        maximal = self.taux_maximal_avec(taux_retraite_employeur)
+        maximal = self.coefficient_maximal_avec(taux_retraite_employeur)
+        delta = maximal - self.taux_minimum
         rapport = max(0.0, 0.5 * (self.plafond_en_smic * smic_annuel / brut - 1.0))
-        coefficient = self.taux_minimum + round(maximal * rapport ** self.puissance, 4)
-        return min(self.taux_minimum + maximal, coefficient)
+        coefficient = self.taux_minimum + round(delta * rapport ** self.puissance, 4)
+        return min(maximal, coefficient)
 
 
 @dataclass(frozen=True)
@@ -287,7 +318,7 @@ def _charger(chemin: str, signature: tuple) -> BaremePrelevements:
             plafond_en_smic=float(reduction["plafond_en_smic"]),
             puissance=float(reduction["puissance"]),
             taux_minimum=float(reduction["taux_minimum"]),
-            taux_maximal=float(reduction["taux_maximal"]),
+            coefficient_maximal=float(reduction["coefficient_maximal"]),
             composantes={code: float(valeur)
                          for code, valeur in reduction["composantes"].items()},
             composantes_retraite=tuple(reduction["composantes_retraite"]),
@@ -546,8 +577,8 @@ class ConstructeurFiche:
         salariales = sum(ligne.salarie for ligne in lignes)
         patronales = sum(ligne.employeur for ligne in lignes)
         taux_retraite = bloc.taux_employeur_dans_la_reduction(self.bareme)
-        maximal = (self.bareme.reduction_generale.taux_minimum
-                   + self.bareme.reduction_generale.taux_maximal_avec(taux_retraite))
+        maximal = self.bareme.reduction_generale.coefficient_maximal_avec(
+            taux_retraite)
         part_retraite = taux_retraite / maximal if maximal > 0 else 0.0
         return FicheDePaie(
             annee=annee,
@@ -650,8 +681,9 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
 
     ``part_salariale`` partage chaque taux entre l'assuré et son employeur. La
     proposition ne le dit pas ; le dépôt partage moitié-moitié, et le docstring
-    du module dit pourquoi ce choix ne déplace pas le salaire net sous
-    l'incidence retenue.
+    du module dit pourquoi ce choix, qu'on croirait sans effet, en a un : la
+    CSG est assise sur le brut, et la réduction générale n'efface que du
+    patronal.
 
     Le pilier capitalisé est un étage à part, et hors du périmètre de la
     réduction générale : il n'est ni une assurance sociale, ni un régime
