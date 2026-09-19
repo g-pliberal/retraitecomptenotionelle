@@ -5972,17 +5972,38 @@ le 19 septembre 2026 :
    hommes. Le rapport ne multiplie plus que le reste.
 
    **Ce que le scénario fait de la réversion est maintenant une décision, et
-   elle est écrite.** Le dépôt la SERT, comme l'Italie, où le capital notionnel
-   du défunt se partage : la part dérivée est reconduite telle quelle. L'autre
-   chemin — la Suède, où un compte notionnel ne verse qu'à son titulaire —
-   reste calculable sous `convention_reversion="supprimee"`, et il n'est pas le
-   défaut parce qu'il est le plus flatteur : il rendrait 1,19 point de PIB au
-   scénario 6, et de 0,4 à 1,2 point à chacun des autres.
+   elle est écrite : seul le scénario 1 la sert.** Décision du Parti libéral,
+   19 septembre 2026, et elle ne fait qu'appliquer à cette ligne la règle des
+   trente-huit autres. Les scénarios 2 à 6 retirent tous les avantages non
+   contributifs, et l'inventaire du dépôt range la réversion parmi eux depuis
+   toujours : « non contributive au sens strict, la cotisation de l'assuré
+   ayant déjà été rendue par sa propre pension », et « de très loin la
+   PREMIÈRE dépense non contributive du système ». La servir dans un compte
+   notionnel était l'exception non écrite, pas la règle ; ces cinq scénarios
+   mesurent ce qu'une retraite composée uniquement de part contributive
+   représente, et une réversion n'en est pas. C'est le chemin de la Suède, où
+   un compte notionnel ne verse qu'à son titulaire. Celui de l'Italie, qui
+   partage le capital du défunt, reste calculable sous
+   `convention_reversion="servie"`.
 
-   Ce que la correction coûte, par scénario, en point de solde moyen
-   2026-2070 : scénario 2, −0,81 ; scénario 3, −0,23 ; scénario 4, −0,27 ;
-   scénario 5, −0,09 ; scénario 6, −0,35. Le scénario 1 ne bouge pas d'un
-   iota, son rapport valant un.
+   **Une réforme ne reprend pas un droit déjà ouvert.** Une réversion dérive de
+   la pension du défunt : si l'assuré a liquidé en 2010, son conjoint survivant
+   tient son droit du droit de 2010, et une réforme de 2026 ne le lui retire
+   pas. Les scénarios RÉTROACTIFS (2, 4, 6) recalculent tout le monde et ne
+   servent plus un euro de réversion. Les scénarios PROSPECTIFS (3, 5) ne
+   cessent de la servir qu'à mesure que le stock d'avant s'éteint :
+   `part_post_bascule` porte cette fraction, elle vaut zéro avant la bascule —
+   ce qui préserve à l'euro près l'identité de ces scénarios avec le système
+   actuel — et dépasse 90 % à l'horizon.
+
+   Ce que la décision rend, par scénario, en point de solde moyen 2026-2070 :
+   **+1,19 aux trois scénarios rétroactifs** (2, 4 et 6), qui cessent de la
+   servir tout de suite, et **+0,78 aux deux prospectifs** (3 et 5), qui ne
+   cessent qu'à mesure. L'écart entre les deux chiffres est exactement ce que
+   coûte le respect des droits déjà ouverts. Le scénario 1 ne bouge pas d'un iota, son
+   rapport valant un, et un test l'exige. Le scénario 5 retrouve au passage
+   l'équilibre, atteint in extremis en 2067, et repasse au-dessus du système
+   actuel.
 
    **Et la part est contrôlée chez un autre producteur.** Elle est construite à
    partir du classeur du COR, où douze des vingt-deux régimes publient leur
@@ -6278,7 +6299,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 1037 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 1038 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

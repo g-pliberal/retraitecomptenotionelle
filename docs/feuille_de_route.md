@@ -4214,12 +4214,11 @@ rapport des droits directs s'applique à une base qui porte les droits dérivés
 1,5 point de PIB environ. C'est corrigé. La base est ventilée
 (`part_droits_derives.csv`, le COR, 2010-2070, contrôlée contre la DREES à
 0,06 point près), le rapport ne multiplie plus que les directs, et ce que les
-scénarios font de la réversion est écrit : ils la SERVENT, comme l'Italie, où
-le capital notionnel du défunt se partage. Le chemin suédois — ne verser qu'au
-titulaire — reste calculable sous `convention_reversion="supprimee"` et n'est
-pas le défaut parce qu'il est le plus flatteur : il rendrait 1,19 point de PIB
-au scénario 6. **À trancher par le programme.** Le détail est à la fin de ce
-journal.
+scénarios font de la réversion est écrit. **Le programme a tranché le jour
+même : seul le scénario 1 la sert**, les cinq autres la retirant comme tout
+avantage non contributif — c'est le chemin de la Suède. Celui de l'Italie, qui
+partage le capital du défunt, reste calculable sous
+`convention_reversion="servie"`. Le détail est à la fin de ce journal.
 
 **Sources à lire.** INSEE, comptes nationaux annuels, salaires et traitements
 bruts par branche (D11, niveau) et revenu mixte des entrepreneurs individuels ;
@@ -6436,3 +6435,46 @@ lignes de journal du 19 septembre 2026 dans `legislation/veille.yaml`.
   `moteur/js/pages.js`, témoins régénérés, 1019 tests verts. La page Coût
   compte une douzième réserve, qui dit au public ce que les systèmes font de la
   réversion.
+
+- **Septembre 2026, la réversion ne reste que dans le scénario 1.** Décision du
+  Parti libéral, prise le jour même où le volet C a séparé les deux masses, et
+  elle ne fait qu'appliquer à cette ligne la règle des trente-huit autres.
+
+  **L'argument est celui du dépôt, pas un de plus.** Les scénarios 2 à 6
+  retirent tous les avantages non contributifs, et
+  `legislation/avantages_non_contributifs.yaml` range la réversion parmi eux
+  depuis toujours : « non contributive au sens strict, la cotisation de
+  l'assuré ayant déjà été rendue par sa propre pension », et « de très loin la
+  PREMIÈRE dépense non contributive du système ». La servir dans un compte
+  notionnel était l'exception non écrite. Ces cinq scénarios servent de témoins
+  pour dire ce qu'une retraite composée UNIQUEMENT de part contributive
+  représente ; une pension de réversion n'en est pas. Le scénario 1 la sert
+  dans tous les cas : il est le droit en vigueur.
+
+  **Ce que la décision a forcé à écrire, et qui n'était pas dans la consigne.**
+  Appliquée telle quelle, elle cassait une propriété exacte du modèle : les
+  scénarios PROSPECTIFS sont identiques au système actuel avant leur bascule,
+  et un test le tient. Leur retirer la réversion dès 2026 les en aurait
+  écartés. Or une réversion dérive de la pension du défunt : si l'assuré a
+  liquidé en 2010, son conjoint survivant tient son droit du droit de 2010, et
+  une réforme de 2026 ne le lui retire pas. **Une réforme ne supprime que ce
+  qu'elle a produit.** D'où `part_post_bascule`, calculée dans `_masses` : la
+  fraction de la masse portée par les pensions liquidées à la bascule ou après.
+  Elle vaut zéro avant celle-ci, 4,8 % en 2026, 58,7 % en 2040, 99,9 % en 2070.
+  Les scénarios rétroactifs recalculent tout le monde et ne la regardent pas.
+
+  **Mesuré**, en point de solde moyen 2026-2070 : **+1,19 aux trois scénarios
+  rétroactifs** (2, 4, 6), **+0,78 aux deux prospectifs** (3, 5). L'écart entre
+  les deux est exactement ce que coûte le respect des droits déjà ouverts. Le
+  scénario 1 ne bouge pas d'un iota, et un test l'exige.
+
+  Le scénario 6 passe de −2,861 % à **−1,674 % du PIB**, contre −1,135 % pour
+  le système actuel ; il n'est plus pire que lui que dans 33 des 45 années,
+  contre 41. Le scénario 5 retrouve l'équilibre, atteint in extremis en 2067,
+  et repasse au-dessus du système actuel — son test a été rouvert et réécrit.
+
+  Porté dans `moteur/js/`, témoins régénérés, 1038 tests verts. La douzième
+  réserve de la page Coût dit désormais l'inverse de ce qu'elle disait le
+  matin, et elle le dit en entier : seul le système actuel sert la réversion,
+  et les systèmes prospectifs continuent de la servir aux pensions liquidées
+  avant leur bascule.

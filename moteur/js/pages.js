@@ -5575,7 +5575,8 @@ function coutDetailScenarios(contexte) {
       // multiplie que les droits directs de la base.
       g.pourcentage(masseDuScenario(dernier.partPib, dernier.partDerives,
                                     dernier.rapports[scenario], scenario,
-                                    dernier.reversionServie), false, 1),
+                                    dernier.reversionServie,
+                                    dernier.partPostBascule), false, 1),
     ];
   });
   lignesPasse.push([
@@ -6169,17 +6170,17 @@ laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
   génération qui part juste après : les courbes de réforme s'écartent d'un ou
   deux dixièmes de point avant même la bascule. Un test borne l'effet à un
   demi-point.</li>
-  <li><strong>La réversion est reconduite telle quelle, et c'est une
-  décision.</strong> Le modèle ne calcule aucune pension de réversion : elle
-  revient au conjoint survivant et non à l'assuré. Le rapport par lequel les
-  systèmes notionnels font réagir la dépense ne décrit donc que les pensions
-  qu'un assuré s'est ouvertes lui-même, et il ne s'applique qu'à cette part de
-  la dépense, un dixième environ de la masse versée étant de la réversion. Ce
-  dixième-là, les systèmes notionnels le servent comme aujourd'hui, à la façon
-  de l'Italie, où le compte notionnel du défunt se partage. La Suède fait
-  l'inverse et ne verse qu'au titulaire du compte ; ce chemin est calculable et
-  rendrait plus d'un point de PIB au système 4, ce qui est précisément la
-  raison de ne pas le prendre sans l'avoir décidé.</li>
+  <li><strong>Seul le système actuel sert la pension de réversion.</strong>
+  Une réversion est ce qu'un conjoint survivant reçoit de la carrière d'un
+  autre : c'est la première dépense non contributive du système, un dixième
+  environ de tout ce qui est versé. Les systèmes notionnels comparés ici
+  retirent tous les avantages non contributifs, et celui-là comme les autres :
+  ils ne rendent que ce qui a été cotisé, et c'est précisément ce qu'ils
+  servent à mesurer. Le système actuel, lui, la sert, puisqu'il est le droit en
+  vigueur. Une réforme ne reprend toutefois pas un droit déjà ouvert : les
+  systèmes qui ne valent que pour l'avenir continuent de servir la réversion
+  des pensions liquidées avant leur bascule, et ne cessent de la servir qu'à
+  mesure que ces pensions s'éteignent.</li>
   <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
   projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
   COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en
