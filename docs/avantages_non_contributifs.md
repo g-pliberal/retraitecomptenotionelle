@@ -39,7 +39,7 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 |---|---|---|
 | **chiffré** | 8 | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
 | **intégré** | 11 | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Les trois derniers ne sont pas des dispositifs. |
-| **déclaré** | 3 | Une fiche de régime le déclare, aucun code ne le sert. La déclaration est une intention. |
+| **déclaré** | 3 | Une fiche de régime le déclare, aucun code ne le sert. La déclaration est une intention — mais la réversion, qui est de ceux-là, a désormais son coût, LU dans les séries de la DREES : voir le §4 quater. |
 | **absent** | 17 | Ni déclaré ni servi. C'est un écart au droit positif. |
 
 Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
@@ -135,10 +135,14 @@ En milliards d'euros courants de chaque année :
 | 2010 | 282,1 | 3,8 | 1,8 | 2,3 | 0,2 | 0,2 | 0,3 | **8,6** | **3,1 %** |
 | 2024 | 426,7 | 6,8 | 3,1 | 2,1 | 0,6 | 0,0 | 0,0 | **12,6** | **3,0 %** |
 
-**Ce chiffre reste faux, et il faut dire de quelle façon.** Le COR chiffre les
-droits de solidarité à « de l'ordre d'un cinquième des retraites tous régimes »
-(rapport du 27 janvier 2010, commandé par l'article 75 de la LFSS 2009). Un
-cinquième de 426,7 milliards fait 85 milliards. Le modèle en mesure 12,6.
+**Ce chiffre ne porte que ce que le modèle CALCULE.** La réversion, qui se lit
+au lieu de se calculer, s'y ajoute pour 38,3 milliards : le total chiffré est
+donc de **50,9 milliards en 2024**, soit 11,9 % de la dépense. Le COR chiffre
+les droits de solidarité à « de l'ordre d'un cinquième des retraites tous
+régimes » (rapport du 27 janvier 2010, commandé par l'article 75 de la LFSS
+2009), soit 85 milliards sur une dépense de 426,7. On en tient les trois
+cinquièmes. Le §4 quater dit d'où vient le plus gros morceau, et le §5 ce qui
+manque encore.
 
 ## 4 bis. Les deux avantages qui ne se lisaient pas dans la cascade
 
@@ -360,16 +364,95 @@ la grille, une est nulle par nature, une est refusée, et trois relèvent d'une
 autre grandeur. Une liste qui ne dit pas cela n'est pas une liste : c'est un
 tableau de zéros.
 
+## 4 quater. La réversion, lue et non calculée
+
+C'était la deuxième priorité du §6, et de très loin la ligne la plus lourde de
+l'inventaire. Elle est chiffrée : **38,3 Md€ en 2024**, soit **9,0 % de la
+dépense de retraite**. À elle seule, elle pèse trois fois tout ce que le modèle
+mesure par ailleurs, et fait passer le total chiffré de 12,6 à **50,9 Md€, soit
+11,9 % de la dépense** contre 3,0 % auparavant.
+
+| Année | Réversion | Part de la dépense | Total chiffré |
+|---|---|---|---|
+| 2004 | 25,4 Md€ | 13,5 % | 29,8 Md€ (14,0 %) |
+| 2010 | 30,8 Md€ | 10,9 % | 39,4 Md€ (14,0 %) |
+| 2020 | 33,9 Md€ | 9,4 % | 44,9 Md€ (12,5 %) |
+| 2024 | 38,3 Md€ | 9,0 % | 50,9 Md€ (11,9 %) |
+
+### Elle ne se calcule pas, et c'est structurel
+
+Le modèle décrit une **carrière**, pas un ménage. Il n'a ni conjoint, ni date de
+décès, ni ressources du survivant, et ne produira donc jamais une pension de
+réversion. Les 756 périodes du catalogue qui déclarent `reversion` sont une
+intention que nul code ne sert — c'est l'écart le plus ancien entre les
+déclarations du dépôt et ce qu'il calcule, relevé au §1.
+
+Aucune des trois voies de retrait du §4 ter n'y peut rien : on ne retire pas un
+avantage qui n'a jamais été servi. La seule issue est de le **lire**.
+
+### La masse est un produit, et chacun de ses termes vient d'une cellule
+
+L'enquête annuelle de la DREES auprès des caisses de retraite (EACR) donne, pour
+chaque couple (caisse, année) :
+
+- le **nombre de bénéficiaires** d'un droit dérivé — champ `ddert`, qui compte
+  tous ceux qui en touchent un, qu'ils aient ou non une pension de droit direct
+  par ailleurs ;
+- le **montant mensuel moyen de ce droit-là** — colonne `m2`.
+
+Leur produit, sur douze mois, est la masse. `scripts/fetch/drees_eacr.py` les
+lit dans la même feuille et sous la même règle de millésime que les effectifs
+qu'il récupérait déjà ; `scripts/verifier_donnees.py` en écrit
+`data/reference/macro/droits_derives.csv`, 305 valeurs certifiées de 2004 à
+2024.
+
+**Deux pièges, et ils coûtent cher.**
+
+*La colonne.* Le classeur porte aussi `mont`, qui est la pension **totale** du
+bénéficiaire, droit direct compris : 745,60 € à la Cnav en 2020 contre 326,70 €
+pour la seule part dérivée. La prendre doublerait la masse. Le classeur se
+contrôle d'ailleurs lui-même : la moyenne des `m2` du champ « dérivé seul » et
+du champ « cumul des deux », pondérée par leurs effectifs, vaut exactement le
+`m2` du champ « dérivé total ».
+
+*La somme des caisses.* Un polypensionné touche une réversion à la Cnav **et** à
+l'Agirc-Arrco : la somme des effectifs compte deux fois la même veuve, 8,5
+millions de bénéficiaires au lieu de 4,4. Les **masses**, elles, s'additionnent
+sans double compte, chaque caisse versant la sienne — et leur somme recoupe la
+ligne « tous régimes » à 2 % près, ce qui est le contrôle interne de la série.
+
+### Ce qu'elle change au statut de la page
+
+C'est la ligne la plus sûre de tout l'inventaire, et par un renversement qui
+mérite d'être dit : **elle est la seule qui ne repose pas sur les treize
+carrières types**. Elle dénombre 4,4 millions de personnes réelles. Les huit
+lignes mesurées par retrait sont, elles, aussi bonnes que la grille — c'est-à-dire
+pas très bonnes, et le §5 dit pourquoi.
+
+La page du site lui donne sa propre carte, et son propre graphique, sur sa
+propre fenêtre. La raison est graphique autant que méthodologique : empilée avec
+les autres, dont la série remonte à 1959, elle aurait dessiné une falaise de
+vingt-cinq milliards en 2004, et le lecteur y aurait vu un saut de dépense là où
+il n'y a qu'un début de publication.
+
+### Ce qui reste hors de portée
+
+La réversion n'est pas tout le droit dérivé. L'**allocation veuvage**, la
+**majoration de réversion** de l'article L. 353-6 et les **pensions d'orphelin**
+restent absentes de l'inventaire chiffré. La première est marginale ; la
+deuxième est comprise dans le montant que l'EACR mesure, puisque la caisse la
+verse avec la réversion ; la troisième est publiée à part par le Service des
+retraites de l'État, et n'a pas été reprise.
+
 ## 5. Pourquoi, et c'est le vrai résultat de ce chantier
 
 Deux causes, et elles ne se corrigent pas de la même façon.
 
-**La première est connue et écrite** : vingt-neuf des trente-neuf dispositifs
-ne sont pas chiffrés, et l'inventaire dit lesquels. La réversion pèse à elle
-seule plus que tout ce qui est mesuré ici, et le modèle ne peut pas la voir —
-il décrit une carrière, pas un ménage. Les périodes assimilées, la catégorie
-active, les bonifications de service sont dans le même cas, chacune pour sa
-raison propre.
+**La première est connue et écrite** : vingt-sept des trente-neuf dispositifs
+ne sont pas chiffrés, et l'inventaire dit lesquels. Ce qui reste hors de portée
+n'est plus la réversion, qui est désormais lue, mais les bonifications de
+service, les départs anticipés pour handicap ou inaptitude, l'allocation
+veuvage et les pensions d'orphelin, chacun pour sa raison propre.
 
 **La seconde ne l'était pas, et elle est plus grave : la grille de cas types n'a
 pas d'enfants.** Sur les treize cas types, **un seul** en a — `carriere_interrompue`,
@@ -400,10 +483,10 @@ raison.**
    les cas types.** Il faut la distribution des retraités par nombre d'enfants,
    par sexe et par génération. Sans elle, toute la première famille vaut zéro ou
    presque, et c'est la plus documentée du système français.
-2. **La réversion se lit, elle ne se calcule pas.** La DREES publie la masse des
-   droits dérivés par régime et par sexe dans le panorama « Les retraités et les
-   retraites ». C'est la seule ligne de l'inventaire dont le coût s'obtienne sans
-   aucun recalcul — et c'est la plus lourde.
+2. **La réversion se lit, elle ne se calcule pas — c'est fait.** 38,3 Md€ en
+   2024, lus dans l'enquête annuelle de la DREES auprès des caisses (§4 quater).
+   Restent hors de l'inventaire chiffré l'allocation veuvage et les pensions
+   d'orphelin, publiées ailleurs.
 3. **Les onze lignes « intégrées » se chiffrent par retrait — c'est fait.** Huit
    le sont, par la carrière, par le catalogue ou par une table (§4 bis et
    4 ter) ; les trois autres ne sont pas des dispositifs et se lisent ailleurs.

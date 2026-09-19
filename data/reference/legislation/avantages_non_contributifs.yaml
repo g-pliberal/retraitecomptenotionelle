@@ -565,6 +565,7 @@ avantages:
   # --- Droits dérivés (survivants) -----------------------------------------
 
   - code: reversion
+    chiffre_par: scripts/fetch/drees_eacr.py
     libelle: Pension de réversion
     famille: droits_derives
     quoi: >-
@@ -587,12 +588,31 @@ avantages:
       entre les trois listes du dépôt et le droit positif.
     cout:
       mesurable_par: serie_publiee
+      serie: macro/droits_derives.csv
       source_id: drees_panorama_retraites
       note: >-
-        Le seul avantage de la liste dont le coût se lise DIRECTEMENT dans une
-        publication annuelle : la DREES publie la masse des droits dérivés, par
-        régime et par sexe, dans le panorama « Les retraités et les retraites ».
-        Aucun recalcul n'est nécessaire, et aucun n'est possible.
+        CHIFFRÉE, et c'est la seule ligne de tout l'inventaire qui se LISE au lieu de se
+        calculer — la plus lourde, aussi. 38,3 Md€ en 2024, soit 9,0 % de la dépense de
+        retraite, contre 25,4 Md€ en 2004. À elle seule, elle vaut trois fois tout ce
+        que le modèle mesure par ailleurs.
+        LA MASSE EST UN PRODUIT, lu dans l'enquête annuelle de la DREES auprès des
+        caisses : le NOMBRE de bénéficiaires d'un droit dérivé (champ `ddert`) par le
+        MONTANT MENSUEL MOYEN de ce droit-là (colonne `m2`), sur douze mois. La colonne
+        compte : `mont` porterait la pension totale du bénéficiaire, droit direct
+        compris, et doublerait la masse.
+        POURQUOI ELLE NE SE CALCULE PAS : le modèle décrit une CARRIÈRE et non un
+        ménage. Il n'a ni conjoint, ni date de décès, ni ressources du survivant, et les
+        756 périodes du catalogue qui déclarent `reversion` sont une intention que nul
+        code ne sert. Ce n'est pas une faiblesse de la mesure mais un changement de
+        nature — et la lecture est, de loin, la plus sûre des deux : elle dénombre 4,4
+        millions de personnes réelles là où les autres lignes reposent sur treize
+        carrières types.
+        LE CONTRÔLE INTERNE : la somme des vingt-cinq caisses recoupe la ligne « tous
+        régimes » à 2 % près. Les effectifs, eux, ne s'additionnent pas — un
+        polypensionné touche une réversion à la Cnav ET à l'Agirc-Arrco, et la somme des
+        caisses compte deux fois la même veuve, 8,5 millions contre 4,4.
+        Série : `data/reference/macro/droits_derives.csv`, 305 valeurs certifiées de
+        2004 à 2024.
 
   - code: majoration_reversion
     libelle: Majoration de la pension de réversion

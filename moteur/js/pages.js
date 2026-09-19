@@ -22,7 +22,7 @@ import {
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
 import {
-  LIBELLES_MOTIFS, MOTIFS, NEUTRALISATIONS, calculerAvantages,
+  LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculerAvantages,
   chargerAvantages,
 } from "./avantages.js";
 import { COMPOSANTE_GARANTIE, SCENARIOS, calculerCout, masseDuScenario } from "./cout.js";
@@ -4923,6 +4923,16 @@ function avantages(contexte) {
   const derniere = c.derniere;
   const chiffres = inventaire.chiffres.length;
   const total = inventaire.avantages.length;
+  // Combien de périodes du catalogue déclarent la réversion : le chiffre est
+  // COMPTÉ et non écrit, pour qu'une fiche ajoutée le déplace.
+  let declarations = 0;
+  for (const regime of contexte.simulateur().catalogue) {
+    for (const periode of regime.periodes) {
+      if ((periode.avantages_non_contributifs || []).includes("reversion")) {
+        declarations += 1;
+      }
+    }
+  }
 
   // -- premier graphique : combien existent, et depuis quand ---------------
   //
@@ -4973,17 +4983,43 @@ function avantages(contexte) {
   );
 
   // -- deuxième graphique : ce qu'ils coûtent ------------------------------
+  // La réversion est écartée du tracé empilé, et ce n'est pas un oubli. Sa
+  // série commence en 2004, quand les autres remontent à 1959 : empilée, elle
+  // dessinerait une falaise de vingt-cinq milliards cette année-là, et le
+  // lecteur y verrait un saut de dépense là où il n'y a qu'un début de
+  // publication. Elle a donc sa carte, sur sa propre fenêtre.
   const anneesCout = c.annees.map((ligne) => ligne.annee);
-  const couts = [...c.lignes].reverse().map((ligne, rang) => new g.Serie(
+  const calculees = c.lignes.filter((ligne) => !LIGNES_LUES.includes(ligne));
+  const couts = [...calculees].reverse().map((ligne, rang) => new g.Serie(
     inventaire.libelleDeLigne(ligne),
     c.annees.map((annee) => (annee.lignes[ligne] || 0) / 1000),
     COULEURS_LIGNES[rang % COULEURS_LIGNES.length],
   ));
+  const totalCalcule = calculees.reduce(
+    (somme, ligne) => somme + (derniere.lignes[ligne] || 0), 0,
+  );
   const courbeCout = g.graphique(
     `Coût des avantages non contributifs que le modèle sait chiffrer, de `
     + `${anneesCout[0]} à ${anneesCout[anneesCout.length - 1]}`,
     anneesCout, couts, "Md€ courants", true, 0, true, null, "", [], "Année",
     null, "", 1,
+  );
+
+  const anneesReversion = c.annees
+    .filter((ligne) => ligne.lignes.reversion !== undefined)
+    .map((ligne) => ligne.annee);
+  const reversion = derniere.lignes.reversion || 0;
+  const courbeReversion = anneesReversion.length === 0 ? "" : g.graphique(
+    `Masse des pensions de réversion, de ${anneesReversion[0]} à `
+    + `${anneesReversion[anneesReversion.length - 1]}`,
+    anneesReversion,
+    [new g.Serie(
+      "Pensions de réversion versées",
+      c.annees.filter((ligne) => ligne.lignes.reversion !== undefined)
+        .map((ligne) => ligne.lignes.reversion / 1000),
+      "var(--serie-2)",
+    )],
+    "Md€ courants", false, 0, true, null, "", [], "Année", null, "", 1,
   );
 
   // -- troisième graphique : les annuités servies trop tôt -----------------
@@ -5012,18 +5048,18 @@ dans la base LEGI. Ce graphique ne calcule rien : il compte des lignes.`,
 
   const carteCout = g.cle(
     "Combien coûtent ceux que l'on sait chiffrer ?",
-    `<strong>${milliards(derniere.gratuit, 1)} en ${derniere.annee}, soit
-${g.pourcentage(derniere.gratuit / derniere.observee, false, 1)} de la
-dépense.</strong> C'est un <em>plancher très bas</em> : ${chiffres} dispositifs
-sur ${total} y sont, et le COR chiffre l'ensemble des droits de solidarité à
-« de l'ordre d'un cinquième » des retraites.`,
+    `<strong>${milliards(totalCalcule, 1)} en ${derniere.annee}</strong>,
+pour les ${chiffres - LIGNES_LUES.length} dispositifs que le modèle sait refaire
+sans leur avantage. La réversion n'est pas dans ce tracé : elle ne se calcule
+pas, elle se lit, et la carte suivante lui revient.`,
     courbeCout + g.depliant(
       "Pourquoi ce chiffre est un plancher, et de combien",
       `<p>Deux raisons, et la seconde est la plus gênante.</p>
-<p><strong>La réversion n'y est pas</strong>, ni les bonifications de service,
-ni les départs anticipés pour handicap ou inaptitude. La réversion est à elle
-seule la première dépense non contributive du système, et ce modèle ne peut pas
-la voir : il décrit une carrière, pas un ménage.</p>
+<p><strong>La réversion n'y est pas, et la carte suivante dit
+pourquoi</strong> : elle se lit au lieu de se calculer, et sa série commence en
+2004 quand celle-ci remonte à 1959. Ce qui manque vraiment à ce tracé est
+ailleurs : les bonifications de service, et les départs anticipés pour handicap
+ou inaptitude.</p>
 <p><strong>Et la grille de carrières types n'est pas une population.</strong> Un
 seul de ses treize cas types a des enfants (deux, quand le seuil est à trois),
 un seul porte des interruptions, aucun ne connaît le chômage. La
@@ -5036,6 +5072,38 @@ d'un avantage est un compte de <em>population</em>.</p>`,
     `Source : décomposition du scénario 1 sur la grille de carrières types,
 rapportée à la dépense observée de la DREES. Seule la part est modélisée.`,
     "avantages-cout",
+  );
+
+  const carteReversion = g.cle(
+    "Et la réversion, que personne ne calcule ?",
+    `<strong>${milliards(reversion, 1)} en ${derniere.annee}</strong>, soit
+${g.pourcentage(reversion / derniere.observee, false, 1)} de la dépense de
+retraite. À elle seule, la réversion pèse trois fois tout ce que le modèle
+mesure par ailleurs.`,
+    courbeReversion + g.depliant(
+      "Pourquoi ce chiffre est lu et non calculé",
+      `<p>Le modèle décrit une <strong>carrière</strong>, pas un
+ménage. Il n'a ni conjoint, ni date de décès, ni ressources du survivant, et ne
+produira donc jamais une pension de réversion : les
+${declarations} périodes du catalogue qui la déclarent sont une
+intention que nul code ne sert.</p>
+<p>Son montant vient donc de l'<strong>enquête annuelle de la DREES auprès des
+caisses de retraite</strong>, qui dénombre les bénéficiaires d'un droit dérivé
+et le montant mensuel moyen de ce droit-là. Le produit des deux, sur douze mois,
+est la masse. La colonne compte : le classeur donne aussi la pension
+<em>totale</em> du bénéficiaire, droit direct compris, et la prendre doublerait
+le chiffre.</p>
+<p><strong>C'est la ligne la plus sûre de cette page.</strong> Elle dénombre
+4,4 millions de personnes réelles, là où les autres reposent sur treize
+carrières types. La somme des vingt-cinq caisses recoupe d'ailleurs le total
+« tous régimes » à 2 % près, ce qui est le contrôle interne de la série. Les
+effectifs, eux, ne s'additionnent pas : un polypensionné touche une réversion à
+la Cnav <em>et</em> à l'Agirc-Arrco, et la somme des caisses compte deux fois la
+même veuve, 8,5 millions contre 4,4.</p>`,
+    ),
+    `Source : DREES, enquête annuelle auprès des caisses de retraite,
+champ des bénéficiaires d'un droit dérivé. Série certifiée de 2004 à 2024.`,
+    "avantages-reversion",
   );
 
   const partClassement = derniere.anticipee > 0
@@ -5073,7 +5141,8 @@ le droit de l'époque disait à l'heure.`,
   const detail = avantagesDetailListe(contexte)
     + avantagesDetailEtats(contexte)
     + avantagesDetailLimites(contexte);
-  const plan = g.plan(carteFrise + carteCout + carteAge + detail, "/avantages");
+  const plan = g.plan(carteFrise + carteCout + carteReversion + carteAge
+    + detail, "/avantages");
 
   const tete = g.affiche(
     "Les avantages",
@@ -5090,7 +5159,9 @@ ${tete}
 <div class="note resume"><strong>En clair.</strong> Le système actuel compte
 ${enVigueur} dispositifs qui ajoutent à une pension sans qu'aucune cotisation
 les ait payés, contre un seul en ${premiereFrise}. Le modèle sait en chiffrer
-${chiffres} : ${milliards(derniere.gratuit, 1)} en ${derniere.annee}. Il mesure à
+${chiffres} : ${milliards(derniere.gratuit, 1)} en ${derniere.annee}, dont
+${milliards(derniere.lignes.reversion || 0, 1)} de réversion, qui est lue
+et non calculée. Il mesure à
 part ${milliards(derniere.anticipee, 1)} de pensions servies avant l'âge légal,
 que nulle décote ne rattrape. Les deux chiffres sont des planchers, et cette
 page dit de combien.</div>
@@ -5102,6 +5173,8 @@ ${plan}
 ${carteFrise}
 
 ${carteCout}
+
+${carteReversion}
 
 ${carteAge}
 
@@ -5169,11 +5242,14 @@ function avantagesDetailEtats(contexte) {
       + "pas des dispositifs, et se lisent ailleurs."],
     ["déclaré, non servi", String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, aucun code ne les sert. La "
-      + "déclaration est une intention."],
+      + "réversion est de ceux-là : 756 périodes du catalogue l'annoncent, et "
+      + "le modèle ne la produira jamais, faute de décrire un ménage. Son coût "
+      + "est donc LU dans l'enquête de la DREES auprès des caisses, et c'est "
+      + "le chiffre le plus sûr de cette page."],
     ["absent", String(inventaire.compte("absent")),
-      "Ni déclarés ni servis : la réversion, les bonifications de service, "
-      + "les départs pour handicap ou inaptitude. C'est un écart au droit "
-      + "positif, et le dépôt le nomme plutôt que de l'estimer."],
+      "Ni déclarés ni servis : les bonifications de service, les départs "
+      + "pour handicap ou inaptitude, l'allocation veuvage. C'est un écart au "
+      + "droit positif, et le dépôt le nomme plutôt que de l'estimer."],
   ];
   const clesRefus = Object.keys(c.refus).sort();
   const refus = clesRefus.map(

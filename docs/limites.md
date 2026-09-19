@@ -5278,8 +5278,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   étaient faux, le barème appliqué à la distribution DREES donne 18,4 milliards
   — et elle est due ici pour les mêmes raisons. Mesuré :
   `scripts/cout_avantages.py` trouve 12,6 milliards d'avantages gratuits en 2024,
-  soit 3,0 % de la dépense, là où le COR chiffre les droits de solidarité à « de
-  l'ordre d'un cinquième ». Les vingt-neuf dispositifs non chiffrés expliquent
+  soit 3,0 % de la dépense ; la réversion, qui se LIT dans les séries de la
+  DREES au lieu de se calculer, y ajoute 38,3 milliards, ce qui porte le total
+  chiffré à 50,9 milliards, soit 11,9 %. Le COR chiffre l'ensemble des droits de
+  solidarité à « de l'ordre d'un cinquième », soit 85 milliards : on en tient
+  les trois cinquièmes. Les vingt-neuf dispositifs non chiffrés expliquent
   la plus grande part de l'écart, l'absence d'enfants le reste. Voir
   `docs/avantages_non_contributifs.md`.
 

@@ -135,6 +135,10 @@ export class DepensesRetraite {
     const serie = (cle) => SerieAnnuelle.depuisPaquet(cle, brut[cle]);
     this.total = serie("total");
     this.pib = serie("pib_courant");
+    // La réversion, lue et non modélisée : le modèle décrit une carrière, pas
+    // un ménage. C'est la seule dépense non contributive dont le montant vienne
+    // d'une publication plutôt que d'un calcul.
+    this.droitsDerives = serie("droits_derives");
     this.systemes = new Map(
       SYSTEMES.map((systeme) => [systeme.code, serie(systeme.code)]),
     );
@@ -193,6 +197,22 @@ export class DepensesRetraite {
   }
 
   /** Part de la dépense dans le produit intérieur brut de la même année. */
+  /**
+   * Masse des pensions de réversion de l'année, en millions d'euros courants.
+   *
+   * `null` hors de la fenêtre que la DREES publie : cette grandeur ne
+   * s'extrapole pas. Elle ne se calcule pas non plus — le modèle n'a ni
+   * conjoint, ni date de décès, ni ressources du survivant —, et c'est
+   * précisément pourquoi elle est lue.
+   */
+  reversion(annee) {
+    if (annee < this.droitsDerives.premiereAnnee
+        || annee > this.droitsDerives.derniereAnnee) {
+      return null;
+    }
+    return this.droitsDerives.valeur(annee);
+  }
+
   partPib(annee) {
     return this.total.valeur(annee) / this.pib.valeur(annee);
   }

@@ -1083,6 +1083,60 @@ def source_effectifs_retraites() -> dict[tuple, float]:
     return {cle: valeur for cle, (_, valeur) in par_caisse.items()}
 
 
+def source_droits_derives() -> dict[tuple, float]:
+    """Masse des pensions de réversion, caisse par caisse et année par année.
+
+    LA SEULE LIGNE DE L'INVENTAIRE DES AVANTAGES NON CONTRIBUTIFS QUI SE LISE
+    AU LIEU DE SE CALCULER, et de très loin la plus lourde. Le modèle décrit
+    une carrière, pas un ménage : il n'a ni conjoint, ni date de décès, ni
+    ressources du survivant, et ne saura donc jamais produire une réversion. La
+    DREES, elle, la dénombre caisse par caisse depuis 2004.
+
+    LA MASSE EST UN PRODUIT, et chacun de ses deux termes vient d'une cellule
+    différente du même tableau : le NOMBRE de bénéficiaires d'un droit dérivé
+    (champ ``ddert``) et le MONTANT MENSUEL MOYEN de ce droit-là (colonne
+    ``m2``). Douze mois plus tard, on a des euros.
+
+    DEUX PIÈGES, ET ILS COÛTENT CHER.
+
+    Le premier est la colonne. ``mont`` porte la pension TOTALE du
+    bénéficiaire, droit direct compris ; ``m2`` la seule part dérivée. Prendre
+    la première doublerait la masse — 745,60 € contre 326,70 € à la Cnav en
+    2020. Le classeur se contrôle d'ailleurs lui-même : la moyenne des ``m2``
+    de ``dders`` (dérivé seul) et de ``cumd`` (cumul des deux), pondérée par
+    leurs effectifs, vaut exactement le ``m2`` de ``ddert``.
+
+    Le second est la somme des caisses. Un polypensionné touche une réversion à
+    la Cnav ET à l'Agirc-Arrco : la somme des effectifs compte deux fois la
+    même veuve — 8,5 millions de bénéficiaires au lieu de 4,4. Les MASSES, en
+    revanche, s'additionnent sans double compte, puisque chaque caisse verse la
+    sienne. La ligne ``tous_regimes`` (code 0000) est la seule qui compte des
+    PERSONNES, et c'est elle que le modèle lit ; les caisses ne sont là que
+    pour la ventilation, et leur somme la recoupe à 2 % près.
+    """
+    charge = _eacr().get("droits_derives") or {}
+    series = charge.get("series") or {}
+    if not series:
+        raise SourceAbsente(
+            "data/brut/drees_eacr.json ne porte pas les droits dérivés — "
+            "relancer scripts/fetch/drees_eacr.py"
+        )
+    inconnues = set(series) - {code for code, _ in CAISSES_EACR}
+    if inconnues:
+        raise SourceAbsente(
+            "caisses EACR absentes de CAISSES_EACR : " + ", ".join(sorted(inconnues))
+        )
+    par_caisse: dict[tuple, tuple[str, float]] = {}
+    for code, nom in CAISSES_EACR:
+        for annee, (beneficiaires, montant) in series.get(code, {}).items():
+            cle = (annee, nom)
+            # En millions d'euros, comme toutes les masses du dépôt.
+            masse = beneficiaires * montant * 12.0 / 1e6
+            if code >= par_caisse.get(cle, ("", 0.0))[0]:
+                par_caisse[cle] = (code, masse)
+    return {cle: valeur for cle, (_, valeur) in par_caisse.items()}
+
+
 def source_distribution_pensions() -> dict[tuple, float]:
     """Part des retraités par tranche de cent euros de pension brute mensuelle.
 
@@ -3242,6 +3296,56 @@ CERTIFICATIONS = (
             "# chômeurs. Le compte notionnel du dépôt SUPPRIME les droits que la",
             "# CNAF finance ; il ne peut pas compter comme acquise la recette qui",
             "# les paie, et c'est ici qu'on lit ce qu'elle vaut.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="droits_derives",
+        chemin=REFERENCE / "macro" / "droits_derives.csv",
+        cles=("annee", "caisse"),
+        colonne="masse_meur",
+        source=source_droits_derives,
+        origine="DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+        decimales=1,
+        tolerance=0.06,
+        unite=" M€",
+        entete=(
+            "# La réversion : ce que les caisses versent aux survivants",
+            "# source_id: drees_eacr",
+            "# unite: millions d'euros courants de l'année",
+            "# fiabilite:",
+            "#   certifiee (2004-2024) : effectifs et montant mensuel moyen du",
+            "#             droit dérivé, feuille A-Cadrage du classeur diffusé par",
+            "#             la DREES, recontrôlés par scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À chiffrer la première dépense non contributive du système, et la",
+            "# seule ligne de `legislation/avantages_non_contributifs.yaml` que le",
+            "# modèle ne calculera jamais : il décrit une carrière, pas un ménage,",
+            "# et n'a ni conjoint, ni date de décès, ni ressources du survivant.",
+            "# Là où les autres avantages se mesurent en retirant une règle et en",
+            "# refaisant la pension, celui-ci se LIT.",
+            "#",
+            "# COMMENT LA MASSE EST OBTENUE",
+            "# -----------------------------",
+            "# Par un produit : le nombre de bénéficiaires d'un droit dérivé",
+            "# (champ `ddert` du classeur) par le montant mensuel moyen de ce",
+            "# droit-là (colonne `m2`), sur douze mois. La colonne compte : `mont`",
+            "# porterait la pension TOTALE du bénéficiaire, droit direct compris,",
+            "# et doublerait la masse.",
+            "#",
+            "# CE QUE LA SOMME DES CAISSES N'EST PAS",
+            "# --------------------------------------",
+            "# Un effectif de personnes. Un polypensionné touche une réversion à",
+            "# la Cnav ET à l'Agirc-Arrco, et la somme des caisses compte deux fois",
+            "# la même veuve : 8,5 millions de bénéficiaires contre 4,4 au « Tous",
+            "# régimes ». Les MASSES, elles, s'additionnent sans double compte,",
+            "# chaque caisse versant la sienne — et leur somme recoupe la ligne",
+            "# `tous_regimes` à 2 % près, ce qui est le contrôle interne de cette",
+            "# série.",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",

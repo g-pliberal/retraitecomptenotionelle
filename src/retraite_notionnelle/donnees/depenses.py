@@ -152,6 +152,13 @@ class DepensesRetraite:
         self.pib = charger_serie_annuelle(
             macro / "pib_courant.csv", "pib_meur", nom="pib_courant"
         )
+        # La réversion, lue et non modélisée : le modèle décrit une carrière,
+        # pas un ménage. C'est la seule dépense non contributive dont le montant
+        # vienne d'une publication plutôt que d'un calcul.
+        self.droits_derives = charger_serie_annuelle(
+            macro / "droits_derives.csv", "masse_meur", nom="droits_derives",
+            filtre={"caisse": "tous_regimes"},
+        )
         self.systemes: dict[str, SerieAnnuelle] = {}
         for systeme in SYSTEMES:
             self.systemes[systeme.code] = charger_serie_annuelle(
@@ -197,6 +204,19 @@ class DepensesRetraite:
 
     def depense_systeme(self, code: str, annee: int) -> float:
         return self.systemes[code](annee)
+
+    def reversion(self, annee: int) -> float | None:
+        """Masse des pensions de réversion de l'année, en millions d'euros courants.
+
+        ``None`` hors de la fenêtre que la DREES publie : cette grandeur ne
+        s'extrapole pas. Elle ne se calcule pas non plus — le modèle n'a ni
+        conjoint, ni date de décès, ni ressources du survivant —, et c'est
+        précisément pourquoi elle est lue.
+        """
+        if not (self.droits_derives.premiere_annee <= annee
+                <= self.droits_derives.derniere_annee):
+            return None
+        return self.droits_derives(annee)
 
     def part_pib(self, annee: int) -> float:
         """Part de la dépense dans le produit intérieur brut de la même année."""

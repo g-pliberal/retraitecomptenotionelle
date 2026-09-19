@@ -166,6 +166,17 @@
    "valeurs": 138,
    "verifiee_le": "2026-09-14"
   },
+  "droits_derives": {
+   "ajoutees": 305,
+   "colonne": "masse_meur",
+   "corrigees": 0,
+   "empreinte": "1798975d604f1718",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
+   "valeurs": 305,
+   "verifiee_le": "2026-09-19"
+  },
   "duree_assurance_requise": {
    "ajoutees": 0,
    "colonne": "trimestres",
@@ -241,7 +252,7 @@
    "niveau": "certifiee",
    "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
    "valeurs": 334,
-   "verifiee_le": "2026-09-14"
+   "verifiee_le": "2026-09-19"
   },
   "employeur_public_cnracl": {
    "ajoutees": 0,

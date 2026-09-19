@@ -72,6 +72,21 @@ MESURES: frozenset[str] = frozenset({"modele", "serie_publiee", "aucune"})
 #: La part contributive, sous une clé qui ne peut être celle d'aucun avantage.
 CONTRIBUTIF = "_contributif"
 
+#: Les lignes qui sont LUES et non calculées, et qu'il ne faut donc pas lire
+#: comme les autres.
+#:
+#: La réversion est la première dépense non contributive du système et la seule
+#: que ce modèle ne produira jamais : il décrit une CARRIÈRE, pas un ménage, et
+#: n'a ni conjoint, ni date de décès, ni ressources du survivant. Là où les
+#: autres lignes sont des écarts — une pension refaite sans l'avantage —,
+#: celle-ci est un montant publié par la DREES, caisse par caisse, depuis 2004.
+#:
+#: Ce n'est pas une faiblesse de la mesure mais un changement de nature, et la
+#: page doit le dire : une ligne mesurée sur treize cas types et une ligne
+#: dénombrée sur quatre millions de veuves ne se lisent pas avec la même
+#: confiance. La seconde est, de loin, la plus sûre des deux.
+LIGNES_LUES: tuple[str, ...] = ("reversion",)
+
 #: Les avantages que le scénario 1 sert mais que la cascade N'ISOLE PAS, et
 #: qu'on mesure donc par recalcul. Leur montant est PRIS SUR la part
 #: contributive, où la cascade les avait laissés faute de savoir les séparer :
@@ -146,8 +161,16 @@ class Avantage:
 
     @property
     def chiffre(self) -> bool:
-        """Le modèle sait-il dire ce que cette ligne coûte ?"""
-        return self.ligne_cascade is not None or self.code in RECALCULS
+        """Sait-on dire ce que cette ligne coûte, et par quelque moyen que ce soit ?
+
+        Trois moyens, et ils ne se valent pas : la cascade l'isole, un retrait
+        le mesure, ou une publication le donne. Le troisième est le plus sûr des
+        trois — il compte des personnes réelles et non des cas types — et c'est
+        celui de la réversion.
+        """
+        return (self.ligne_cascade is not None
+                or self.code in RECALCULS
+                or self.code in LIGNES_LUES)
 
     def dictionnaire(self) -> dict:
         """Ce que le paquet de données transporte, et que le portage relit."""
@@ -796,11 +819,18 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
         observee = depenses.depense(annee)
         masse, par_motif = masses_anticipees(
             pensionnes, simulateur, population, annee, poids_annee)
+        lignes = {cle: observee * valeur / totale
+                  for cle, valeur in parts.items() if cle != CONTRIBUTIF}
+        # La réversion s'ajoute telle qu'elle est publiée, sans passer par la
+        # part de masse : elle ne vient pas du même endroit, et la faire passer
+        # par le modèle reviendrait à lui prêter une précision qu'il n'a pas.
+        reversion = depenses.reversion(annee)
+        if reversion is not None:
+            lignes["reversion"] = reversion
         annees.append(AnneeAvantages(
             annee=annee,
             observee=observee,
-            lignes={cle: observee * valeur / totale
-                    for cle, valeur in parts.items() if cle != CONTRIBUTIF},
+            lignes=lignes,
             anticipees={motif: observee * valeur / masse if masse > 0.0 else 0.0
                         for motif, valeur in par_motif.items()},
         ))
