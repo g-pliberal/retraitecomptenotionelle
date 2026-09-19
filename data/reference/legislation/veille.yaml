@@ -824,4 +824,32 @@ journal:
       de la réduction générale, l'arrêté du taux d'accidents du travail retenu
       dans son périmètre et la convention d'assurance chômage de 2024, comme au
       19 septembre. Les reprises de veille listées au 17 septembre 2026 restent
+  - date: '2026-09-19'
+    session: 'action 37, volets B à E : chiffrer les avantages non contributifs'
+    consulte: >-
+      Aucune source de droit nouvelle : ces volets MESURENT ce que le scénario 1
+      sert déjà, ils ne transcrivent aucune règle. Une source de DONNÉES en
+      revanche, et elle était déjà au manifeste : l'enquête annuelle de la DREES
+      auprès des caisses de retraite (`drees_eacr`), dont la feuille A-Cadrage
+      portait, à côté des effectifs de droit direct que le dépôt lisait déjà,
+      les bénéficiaires d'un droit dérivé et le montant mensuel moyen de ce
+      droit-là.
+    trouve: >-
+      La réversion chiffrée à 38,3 Md€ en 2024, soit 9,0 % de la dépense de
+      retraite — la première dépense non contributive du système, et la seule
+      ligne de l'inventaire qui se lise au lieu de se calculer. Deux pièges
+      évités et écrits dans l'en-tête de la série : la colonne `mont` porte la
+      pension totale du bénéficiaire et aurait doublé la masse, et la somme des
+      effectifs de caisse compte deux fois le même polypensionné. Par ailleurs,
+      un contrôle utile sur le droit lui-même : la décote de l'article L. 14,
+      plafonnée à vingt trimestres, est plus DURE qu'un barème actuariel
+      jusqu'à sept ans d'anticipation et plus DOUCE au-delà — c'est-à-dire
+      précisément là où la catégorie active, les régimes spéciaux et la pension
+      militaire opèrent.
+    reste: >-
+      Trois droits dérivés restent hors de l'inventaire chiffré : l'allocation
+      veuvage (L. 356-1), la majoration de réversion (L. 353-6, comprise dans ce
+      que l'EACR mesure puisque la caisse la verse avec la réversion) et les
+      pensions d'orphelin (L. 40 CPCMR, publiées à part par le Service des
+      retraites de l'État). Les reprises de veille du 17 septembre 2026 restent
       ouvertes.

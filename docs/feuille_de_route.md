@@ -5788,10 +5788,9 @@ Deux causes, et la seconde était inconnue :
    presque — et c'est la plus documentée du système français. Source probable :
    l'échantillon interrégimes de retraités de la DREES (`drees_eir_distribution`
    est déjà au manifeste pour la distribution des pensions).
-2. *La réversion, lue et non calculée.* La DREES publie la masse des droits
-   dérivés par régime et par sexe dans le panorama « Les retraités et les
-   retraites » (`drees_panorama_retraites`). C'est la seule ligne de l'inventaire
-   dont le coût s'obtienne sans aucun recalcul, et c'est la plus lourde.
+2. *La réversion, lue et non calculée* — **fait, volet E.** 38,3 Md€ en 2024,
+   lus dans l'enquête annuelle de la DREES auprès des caisses. Restent hors de
+   l'inventaire chiffré l'allocation veuvage et les pensions d'orphelin.
 3. *Les onze lignes « intégré », chiffrées par retrait* — **fait, volets B et
    D.** Huit le sont ; les trois autres ne sont pas des dispositifs et se lisent
    ailleurs. Ce qui reste n'est plus une mesure mais une population : quatre des
@@ -6023,6 +6022,75 @@ devient une propriété d'instance comme l'attribut de classe du Python ;
 `scripts/cout_avantages.py` (`--par-carriere` montre les huit lignes et la dose) ;
 `tests/test_avantages.py` ; `data/reference/legislation/avantages_non_contributifs.yaml` ;
 `docs/avantages_non_contributifs.md` §4 ter ; `docs/limites.md` §5.
+
+**Volet E — la réversion, lue dans les séries de la DREES.** À la demande, et
+c'était la deuxième priorité de la liste ci-dessous. C'est la ligne la plus
+lourde de tout l'inventaire : **38,3 Md€ en 2024, soit 9,0 % de la dépense de
+retraite**, contre 25,4 Md€ en 2004. À elle seule, elle pèse trois fois tout ce
+que le modèle mesure par ailleurs, et porte le total chiffré de 12,6 à
+**50,9 Md€, soit 11,9 % de la dépense** au lieu de 3,0 %. Le COR chiffre les
+droits de solidarité à « de l'ordre d'un cinquième » : on en tient désormais les
+trois cinquièmes.
+
+*Elle ne se calcule pas, et aucune des trois voies de retrait du volet D n'y
+peut rien* : on ne retire pas un avantage qui n'a jamais été servi. Le modèle
+décrit une CARRIÈRE et non un ménage — ni conjoint, ni date de décès, ni
+ressources du survivant —, et les 756 périodes du catalogue qui déclarent
+`reversion` sont une intention que nul code ne sert. La seule issue était de la
+LIRE.
+
+*La source était déjà dans le dépôt, à une colonne près.* L'enquête annuelle de
+la DREES auprès des caisses de retraite alimentait les effectifs de retraités de
+droit direct depuis l'action 1. La même feuille porte, pour chaque couple
+(caisse, année), le nombre de bénéficiaires d'un droit dérivé et le montant
+mensuel moyen de ce droit-là. `lire_cadrage` a donc été généralisée à un couple
+(champ, mesure) plutôt que dupliquée : les deux lectures passent par le même
+filtrage et la même règle de millésime, et deux fonctions séparées auraient
+divergé à la première correction de campagne.
+
+**DEUX PIÈGES, ET ILS COÛTENT CHER.**
+
+- *La colonne.* Le classeur porte `mont`, qui est la pension TOTALE du
+  bénéficiaire, droit direct compris — 745,60 € à la Cnav en 2020 —, et `m2`,
+  qui est la seule part dérivée : 326,70 €. Prendre la première aurait doublé la
+  masse. Le classeur se contrôle lui-même : la moyenne des `m2` du champ
+  « dérivé seul » et du champ « cumul des deux », pondérée par leurs effectifs,
+  vaut exactement le `m2` du champ « dérivé total ».
+- *La somme des caisses.* Un polypensionné touche une réversion à la Cnav ET à
+  l'Agirc-Arrco : la somme des effectifs compte deux fois la même veuve, 8,5
+  millions au lieu de 4,4. Les MASSES, elles, s'additionnent sans double compte,
+  et leur somme recoupe la ligne « tous régimes » à 2 % près — c'est le contrôle
+  interne de la série, et il est écrit dans son en-tête.
+
+*Ce qu'elle change au statut de la page.* C'est la ligne la plus SÛRE de tout
+l'inventaire, par un renversement qui mérite d'être dit : elle est la seule qui
+ne repose pas sur les treize carrières types, et dénombre 4,4 millions de
+personnes réelles. Les huit lignes mesurées par retrait sont, elles, aussi
+bonnes que la grille — c'est-à-dire pas très bonnes.
+
+*Une carte à elle, pour une raison graphique autant que méthodologique.* Empilée
+avec les autres, dont la série remonte à 1959, la réversion dessinait une
+falaise de vingt-cinq milliards en 2004, et le lecteur y voyait un saut de
+dépense là où il n'y a qu'un début de publication. Elle a donc son graphique sur
+sa propre fenêtre, et la page passe à quatre cartes. Les budgets de lecture ont
+été relevés en conséquence, avec le motif écrit sur place : le chiffre le plus
+lourd de la page ne doit pas être celui qu'on replie.
+
+*Ce qui reste hors de portée.* La réversion n'est pas tout le droit dérivé.
+L'allocation veuvage est marginale ; la majoration de réversion de L. 353-6 est
+comprise dans ce que l'EACR mesure, la caisse la versant avec la réversion ; les
+pensions d'orphelin sont publiées à part par le Service des retraites de l'État
+et n'ont pas été reprises.
+
+**Fichiers.** `scripts/fetch/drees_eacr.py` (`lire_cadrage` généralisée,
+`CHAMP_DERIVE`, `COLONNE_DERIVE`) ; `scripts/verifier_donnees.py`
+(`source_droits_derives`, certification `droits_derives`) ;
+`data/reference/macro/droits_derives.csv`, 305 valeurs certifiées 2004-2024 ;
+`donnees/depenses.py` et son portage, qui exposent `reversion(annee)` ;
+`avantages.py` (`LIGNES_LUES`) et `moteur/js/avantages.js` ; la carte
+`avantages-reversion` de la page, dans les deux portages ;
+`data/reference/legislation/avantages_non_contributifs.yaml` ;
+`docs/avantages_non_contributifs.md` §4 quater ; `docs/limites.md` §5.
 
 **Fichiers.** `data/reference/legislation/avantages_non_contributifs.yaml` ;
 `tests/test_avantages.py` ; `scripts/cout_avantages.py` ;

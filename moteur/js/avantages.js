@@ -49,6 +49,23 @@ export const MESURES = new Set(["modele", "serie_publiee", "aucune"]);
 export const CONTRIBUTIF = "_contributif";
 
 /**
+ * Les lignes qui sont LUES et non calculées, et qu'il ne faut donc pas lire
+ * comme les autres.
+ *
+ * La réversion est la première dépense non contributive du système et la seule
+ * que ce modèle ne produira jamais : il décrit une CARRIÈRE, pas un ménage, et
+ * n'a ni conjoint, ni date de décès, ni ressources du survivant. Là où les
+ * autres lignes sont des écarts — une pension refaite sans l'avantage —,
+ * celle-ci est un montant publié par la DREES, caisse par caisse, depuis 2004.
+ *
+ * Ce n'est pas une faiblesse de la mesure mais un changement de nature : une
+ * ligne mesurée sur treize cas types et une ligne dénombrée sur quatre millions
+ * de veuves ne se lisent pas avec la même confiance. La seconde est, de loin,
+ * la plus sûre des deux.
+ */
+export const LIGNES_LUES = ["reversion"];
+
+/**
  * Les avantages que le scénario 1 sert mais que la cascade N'ISOLE PAS, et
  * qu'on mesure donc par recalcul. Leur montant est PRIS SUR la part
  * contributive, où la cascade les avait laissés faute de savoir les séparer :
@@ -120,10 +137,19 @@ export class Inventaire {
     return this.avantages.filter((avantage) => avantage.etat_modele === etat).length;
   }
 
-  /** Ceux dont le modèle sait dire ce qu'ils coûtent. */
+  /**
+   * Ceux dont on sait dire ce qu'ils coûtent, par quelque moyen que ce soit.
+   *
+   * Trois moyens, et ils ne se valent pas : la cascade l'isole, un retrait le
+   * mesure, ou une publication le donne. Le troisième est le plus sûr — il
+   * compte des personnes réelles et non des cas types — et c'est celui de la
+   * réversion.
+   */
   get chiffres() {
     return this.avantages.filter(
-      (avantage) => avantage.ligne_cascade !== null || RECALCULS.includes(avantage.code),
+      (avantage) => avantage.ligne_cascade !== null
+        || RECALCULS.includes(avantage.code)
+        || LIGNES_LUES.includes(avantage.code),
     );
   }
 
@@ -616,6 +642,11 @@ export function calculerAvantages(simulateur, depenses, population,
     for (const [cle, valeur] of Object.entries(parts)) {
       if (cle !== CONTRIBUTIF) lignes[cle] = (observee * valeur) / totale;
     }
+    // La réversion s'ajoute telle qu'elle est publiée, sans passer par la part
+    // de masse : elle ne vient pas du même endroit, et la faire passer par le
+    // modèle reviendrait à lui prêter une précision qu'il n'a pas.
+    const reversion = depenses.reversion(annee);
+    if (reversion !== null) lignes.reversion = reversion;
     const anticipees = {};
     for (const [motif, valeur] of Object.entries(parMotif)) {
       anticipees[motif] = masse > 0 ? (observee * valeur) / masse : 0;

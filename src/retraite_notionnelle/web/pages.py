@@ -39,7 +39,7 @@ from ..config import (
     TableConversion,
 )
 from ..avantages import (
-    LIBELLES_MOTIFS, MOTIFS, NEUTRALISATIONS, calculer_avantages,
+    LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculer_avantages,
     charger_avantages,
     inventaire_depuis_paquet,
 )
@@ -5510,6 +5510,13 @@ def _avantages(contexte: Contexte) -> str:
     derniere = cout.derniere
     chiffres = len(inventaire.chiffres)
     total = len(inventaire.avantages)
+    # Combien de périodes du catalogue déclarent la réversion : le chiffre est
+    # COMPTÉ et non écrit, pour qu'une fiche ajoutée le déplace.
+    declarations = sum(
+        1 for regime in contexte.simulateur().catalogue
+        for periode in regime.periodes
+        if "reversion" in periode.avantages_non_contributifs
+    )
 
     # -- premier graphique : combien existent, et depuis quand ---------------
     #
@@ -5558,22 +5565,50 @@ def _avantages(contexte: Contexte) -> str:
         + " de la dépense",
     )
 
-    # -- deuxième graphique : ce qu'ils coûtent ------------------------------
+    # -- deuxième graphique : ce que le MODÈLE chiffre ------------------------
+    #
+    # La réversion en est écartée, et ce n'est pas un oubli. Sa série commence
+    # en 2004, quand les autres remontent à 1959 : empilée, elle dessinerait une
+    # falaise de vingt-cinq milliards cette année-là, et le lecteur y verrait un
+    # saut de dépense là où il n'y a qu'un début de publication. Elle a donc sa
+    # carte, sur sa propre fenêtre.
     annees_cout = tuple(ligne.annee for ligne in cout.annees)
+    calculees = tuple(ligne for ligne in cout.lignes if ligne not in LIGNES_LUES)
     couts = tuple(
         g.Serie(
             inventaire.libelle_de_ligne(ligne),
             tuple(annee.lignes.get(ligne, 0.0) / 1000 for annee in cout.annees),
             COULEURS_LIGNES[rang % len(COULEURS_LIGNES)],
         )
-        for rang, ligne in enumerate(reversed(cout.lignes))
+        for rang, ligne in enumerate(reversed(calculees))
     )
+    total_calcule = sum(derniere.lignes.get(ligne, 0.0) for ligne in calculees)
     courbe_cout = g.graphique(
         f"Coût des avantages non contributifs que le modèle sait chiffrer, de "
         f"{annees_cout[0]} à {annees_cout[-1]}",
         annees_cout, couts, unite="Md€ courants", empile=True,
         decimales_donnees=1,
     )
+
+    # -- le graphique de la réversion, sur la fenêtre que la DREES publie -----
+    annees_reversion = tuple(
+        ligne.annee for ligne in cout.annees if "reversion" in ligne.lignes
+    )
+    reversion = derniere.lignes.get("reversion", 0.0)
+    courbe_reversion = g.graphique(
+        f"Masse des pensions de réversion, de {annees_reversion[0]} à "
+        f"{annees_reversion[-1]}",
+        annees_reversion,
+        (
+            g.Serie(
+                "Pensions de réversion versées",
+                tuple(ligne.lignes["reversion"] / 1000 for ligne in cout.annees
+                      if "reversion" in ligne.lignes),
+                "var(--serie-2)",
+            ),
+        ),
+        unite="Md€ courants", decimales_donnees=1,
+    ) if annees_reversion else ""
 
     # -- troisième graphique : les annuités servies trop tôt -----------------
     anticipees = tuple(
@@ -5604,18 +5639,18 @@ dans la base LEGI. Ce graphique ne calcule rien : il compte des lignes.""",
 
     carte_cout = g.cle(
         "Combien coûtent ceux que l'on sait chiffrer ?",
-        f"""<strong>{_milliards(derniere.gratuit, 1)} en {derniere.annee}, soit
-{g.pourcentage(derniere.gratuit / derniere.observee, decimales=1)} de la
-dépense.</strong> C'est un <em>plancher très bas</em> : {chiffres} dispositifs
-sur {total} y sont, et le COR chiffre l'ensemble des droits de solidarité à
-« de l'ordre d'un cinquième » des retraites.""",
+        f"""<strong>{_milliards(total_calcule, 1)} en {derniere.annee}</strong>,
+pour les {chiffres - len(LIGNES_LUES)} dispositifs que le modèle sait refaire
+sans leur avantage. La réversion n'est pas dans ce tracé : elle ne se calcule
+pas, elle se lit, et la carte suivante lui revient.""",
         courbe_cout + g.depliant(
             "Pourquoi ce chiffre est un plancher, et de combien",
             """<p>Deux raisons, et la seconde est la plus gênante.</p>
-<p><strong>La réversion n'y est pas</strong>, ni les bonifications de service,
-ni les départs anticipés pour handicap ou inaptitude. La réversion est à elle
-seule la première dépense non contributive du système, et ce modèle ne peut pas
-la voir : il décrit une carrière, pas un ménage.</p>
+<p><strong>La réversion n'y est pas, et la carte suivante dit
+pourquoi</strong> : elle se lit au lieu de se calculer, et sa série commence en
+2004 quand celle-ci remonte à 1959. Ce qui manque vraiment à ce tracé est
+ailleurs : les bonifications de service, et les départs anticipés pour handicap
+ou inaptitude.</p>
 <p><strong>Et la grille de carrières types n'est pas une population.</strong> Un
 seul de ses treize cas types a des enfants (deux, quand le seuil est à trois),
 un seul porte des interruptions, aucun ne connaît le chômage. La
@@ -5628,6 +5663,38 @@ d'un avantage est un compte de <em>population</em>.</p>""",
         """Source : décomposition du scénario 1 sur la grille de carrières types,
 rapportée à la dépense observée de la DREES. Seule la part est modélisée.""",
         identifiant="avantages-cout",
+    )
+
+    carte_reversion = g.cle(
+        "Et la réversion, que personne ne calcule ?",
+        f"""<strong>{_milliards(reversion, 1)} en {derniere.annee}</strong>, soit
+{g.pourcentage(reversion / derniere.observee, decimales=1)} de la dépense de
+retraite. À elle seule, la réversion pèse trois fois tout ce que le modèle
+mesure par ailleurs.""",
+        courbe_reversion + g.depliant(
+            "Pourquoi ce chiffre est lu et non calculé",
+            f"""<p>Le modèle décrit une <strong>carrière</strong>, pas un
+ménage. Il n'a ni conjoint, ni date de décès, ni ressources du survivant, et ne
+produira donc jamais une pension de réversion : les
+{declarations} périodes du catalogue qui la déclarent sont une
+intention que nul code ne sert.</p>
+<p>Son montant vient donc de l'<strong>enquête annuelle de la DREES auprès des
+caisses de retraite</strong>, qui dénombre les bénéficiaires d'un droit dérivé
+et le montant mensuel moyen de ce droit-là. Le produit des deux, sur douze mois,
+est la masse. La colonne compte : le classeur donne aussi la pension
+<em>totale</em> du bénéficiaire, droit direct compris, et la prendre doublerait
+le chiffre.</p>
+<p><strong>C'est la ligne la plus sûre de cette page.</strong> Elle dénombre
+4,4 millions de personnes réelles, là où les autres reposent sur treize
+carrières types. La somme des vingt-cinq caisses recoupe d'ailleurs le total
+« tous régimes » à 2 % près, ce qui est le contrôle interne de la série. Les
+effectifs, eux, ne s'additionnent pas : un polypensionné touche une réversion à
+la Cnav <em>et</em> à l'Agirc-Arrco, et la somme des caisses compte deux fois la
+même veuve, 8,5 millions contre 4,4.</p>""",
+        ),
+        """Source : DREES, enquête annuelle auprès des caisses de retraite,
+champ des bénéficiaires d'un droit dérivé. Série certifiée de 2004 à 2024.""",
+        identifiant="avantages-reversion",
     )
 
     part_classement = (derniere.anticipees.get("classement", 0.0)
@@ -5664,7 +5731,8 @@ le droit de l'époque disait à l'heure.""",
     detail = (_avantages_detail_liste(contexte)
               + _avantages_detail_etats(contexte)
               + _avantages_detail_limites(contexte))
-    plan = g.plan(carte_frise + carte_cout + carte_age + detail, "/avantages")
+    plan = g.plan(carte_frise + carte_cout + carte_reversion + carte_age
+                  + detail, "/avantages")
 
     tete = g.affiche(
         "Les avantages",
@@ -5681,7 +5749,9 @@ le droit de l'époque disait à l'heure.""",
 <div class="note resume"><strong>En clair.</strong> Le système actuel compte
 {en_vigueur} dispositifs qui ajoutent à une pension sans qu'aucune cotisation
 les ait payés, contre un seul en {premiere_frise}. Le modèle sait en chiffrer
-{chiffres} : {_milliards(derniere.gratuit, 1)} en {derniere.annee}. Il mesure à
+{chiffres} : {_milliards(derniere.gratuit, 1)} en {derniere.annee}, dont
+{_milliards(derniere.lignes.get("reversion", 0.0), 1)} de réversion, qui est lue
+et non calculée. Il mesure à
 part {_milliards(derniere.anticipee, 1)} de pensions servies avant l'âge légal,
 que nulle décote ne rattrape. Les deux chiffres sont des planchers, et cette
 page dit de combien.</div>
@@ -5693,6 +5763,8 @@ page dit de combien.</div>
 {carte_frise}
 
 {carte_cout}
+
+{carte_reversion}
 
 {carte_age}
 
@@ -5774,11 +5846,14 @@ def _avantages_detail_etats(contexte: Contexte) -> str:
          "pas des dispositifs, et se lisent ailleurs."],
         ["déclaré, non servi", str(inventaire.compte("declare")),
          "Une fiche de régime les déclare, aucun code ne les sert. La "
-         "déclaration est une intention."],
+         "réversion est de ceux-là : 756 périodes du catalogue l'annoncent, et "
+         "le modèle ne la produira jamais, faute de décrire un ménage. Son coût "
+         "est donc LU dans l'enquête de la DREES auprès des caisses, et c'est "
+         "le chiffre le plus sûr de cette page."],
         ["absent", str(inventaire.compte("absent")),
-         "Ni déclarés ni servis : la réversion, les bonifications de service, "
-         "les départs pour handicap ou inaptitude. C'est un écart au droit "
-         "positif, et le dépôt le nomme plutôt que de l'estimer."],
+         "Ni déclarés ni servis : les bonifications de service, les départs "
+         "pour handicap ou inaptitude, l'allocation veuvage. C'est un écart au "
+         "droit positif, et le dépôt le nomme plutôt que de l'estimer."],
     ]
     refus = "".join(
         f"<p><strong>{escape(ligne)}</strong> — {escape(raison)}</p>"

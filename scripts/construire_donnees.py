@@ -151,6 +151,11 @@ def _depenses() -> dict:
             nom="depenses_retraite"),
         "pib_courant": charger_serie_annuelle(
             macro / "pib_courant.csv", "pib_meur", nom="pib_courant"),
+        # La réversion, lue et non modélisée : le modèle décrit une carrière,
+        # pas un ménage. Elle voyage avec les dépenses parce qu'elle en est une.
+        "droits_derives": charger_serie_annuelle(
+            macro / "droits_derives.csv", "masse_meur", nom="droits_derives",
+            filtre={"caisse": "tous_regimes"}),
     }
     for systeme in SYSTEMES:
         series[systeme.code] = charger_serie_annuelle(

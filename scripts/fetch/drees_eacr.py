@@ -60,8 +60,24 @@ SORTIE = Path("data/brut/drees_eacr.json")
 #: Feuille du classeur qui porte le tableau de cadrage.
 FEUILLE = "A-Cadrage"
 
-#: Champ retenu : bénéficiaires d'un droit direct.
+#: Champ des bénéficiaires d'un droit DIRECT, et colonne qui porte leur nombre.
 CHAMP = "ddir"
+
+#: Champ des bénéficiaires d'un droit DÉRIVÉ — la réversion —, et colonne qui
+#: porte le montant mensuel moyen de ce droit-là.
+#:
+#: ``ddert`` compte TOUS les bénéficiaires d'un droit dérivé, qu'ils aient ou
+#: non une pension de droit direct par ailleurs ; ``dders`` ne compte que ceux
+#: qui n'ont que cela. C'est ``ddert`` qu'il faut pour une masse, puisque la
+#: caisse verse la réversion aux uns comme aux autres.
+#:
+#: Et c'est ``m2`` qu'il faut, non ``mont`` : la seconde colonne porte la
+#: pension TOTALE du bénéficiaire, droit direct compris, la première la seule
+#: part dérivée. Les confondre doublerait la masse. Le classeur le vérifie
+#: lui-même : la moyenne pondérée des ``m2`` de ``dders`` et de ``cumd`` vaut
+#: exactement le ``m2`` de ``ddert``.
+CHAMP_DERIVE = "ddert"
+COLONNE_DERIVE = "m2"
 
 #: Dimensions qu'on ne ventile pas — on veut le total de la caisse.
 TOTALISEES = ("Sexe", "Resid", "Liq", "StatutSNCF")
@@ -97,14 +113,22 @@ def classeur_de_cadrage() -> tuple[str, bytes]:
     raise RuntimeError(f"feuille {FEUILLE!r} absente des classeurs EACR")
 
 
-def lire_cadrage(contenu: bytes) -> tuple[dict[str, str], dict[str, dict[str, float]]]:
-    """Effectifs de droit direct par caisse et par année, millésime le plus récent.
+def lire_cadrage(contenu: bytes, champ: str = CHAMP,
+                 mesure: str = "effectifs",
+                 ) -> tuple[dict[str, str], dict[str, dict[str, float]]]:
+    """Une grandeur du cadrage, par caisse et par année, millésime le plus récent.
 
-    Rend deux tables : le libellé de chaque caisse, et ses effectifs indexés par
-    année. Les caisses sont désignées par leur CODE et non par leur nom : la
-    DREES rebaptise ses caisses — « SSI complémentaire » est devenue « RCI
-    complémentaire » sans changer de code — et une série ne doit pas se couper
-    parce qu'un régime a changé d'enseigne.
+    Rend deux tables : le libellé de chaque caisse, et la grandeur demandée
+    indexée par année. Les caisses sont désignées par leur CODE et non par leur
+    nom : la DREES rebaptise ses caisses — « SSI complémentaire » est devenue
+    « RCI complémentaire » sans changer de code — et une série ne doit pas se
+    couper parce qu'un régime a changé d'enseigne.
+
+    ``champ`` et ``mesure`` disent quelle cellule lire : les effectifs de droit
+    direct par défaut, le montant mensuel moyen du droit dérivé pour la
+    réversion. Les deux passent par le même filtrage et la même règle de
+    millésime, ce qui est la raison d'être de ce paramètre : deux lectures
+    séparées auraient divergé à la première correction de campagne.
     """
     grille = feuilles(contenu)[FEUILLE]
     derniere_ligne = max(ligne for ligne, _ in grille)
@@ -118,11 +142,11 @@ def lire_cadrage(contenu: bytes) -> tuple[dict[str, str], dict[str, dict[str, fl
     retenues: dict[tuple[str, int], tuple[int, str, float]] = {}
     for ligne in range(1, derniere_ligne + 1):
         cellule = {nom: grille.get((ligne, colonne)) for nom, colonne in entete.items()}
-        if cellule.get("Champ") != CHAMP:
+        if cellule.get("Champ") != champ:
             continue
         if any(cellule.get(nom) != "Ensemble" for nom in TOTALISEES):
             continue
-        effectif = cellule.get("effectifs")
+        effectif = cellule.get(mesure)
         if not isinstance(effectif, float) or effectif <= 0:
             continue
         code, annee = str(cellule["CC"]), int(cellule["Année"])
@@ -148,6 +172,23 @@ def main() -> int:
         return 1
 
     libelles, effectifs = lire_cadrage(contenu)
+    # La réversion se lit dans le même tableau, sur deux cellules : le NOMBRE de
+    # bénéficiaires d'un droit dérivé, et le MONTANT MENSUEL MOYEN de ce
+    # droit-là. Leur produit, sur douze mois, est la masse que la caisse verse à
+    # ce titre — la seule grandeur que le modèle ne saura jamais calculer, faute
+    # de décrire des ménages.
+    derives_libelles, derives_effectifs = lire_cadrage(
+        contenu, CHAMP_DERIVE, "effectifs")
+    _, derives_montants = lire_cadrage(contenu, CHAMP_DERIVE, COLONNE_DERIVE)
+    libelles = {**derives_libelles, **libelles}
+    derives = {
+        code: {
+            annee: [effectif, derives_montants[code][annee]]
+            for annee, effectif in sorted(serie.items())
+            if annee in derives_montants.get(code, {})
+        }
+        for code, serie in sorted(derives_effectifs.items())
+    }
     charge = {
         "source": BASE,
         "fichier": nom,
@@ -155,6 +196,12 @@ def main() -> int:
         "unite": "personnes",
         "caisses": dict(sorted(libelles.items())),
         "effectifs": {code: effectifs[code] for code in sorted(effectifs)},
+        "droits_derives": {
+            "champ": CHAMP_DERIVE,
+            "colonne": COLONNE_DERIVE,
+            "unite": "bénéficiaires, puis euros par mois",
+            "series": {code: serie for code, serie in derives.items() if serie},
+        },
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
@@ -164,6 +211,13 @@ def main() -> int:
     annees = sorted(int(a) for serie in effectifs.values() for a in serie)
     print(f"{len(effectifs)} caisses écrites dans {SORTIE}")
     print(f"Effectifs de droit direct : {min(annees)}-{max(annees)}")
+    tous = charge["droits_derives"]["series"].get("0000", {})
+    if tous:
+        derniere = max(tous)
+        beneficiaires, montant = tous[derniere]
+        print(f"Droits dérivés, tous régimes en {derniere} : "
+              f"{beneficiaires / 1e6:.3f} M bénéficiaires, {montant:.1f} €/mois, "
+              f"soit {beneficiaires * montant * 12 / 1e9:.1f} Md€")
     return 0
 
 

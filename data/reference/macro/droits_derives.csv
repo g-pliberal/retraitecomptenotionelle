@@ -1,0 +1,343 @@
+# La réversion : ce que les caisses versent aux survivants
+# source_id: drees_eacr
+# unite: millions d'euros courants de l'année
+# fiabilite:
+#   certifiee (2004-2024) : effectifs et montant mensuel moyen du
+#             droit dérivé, feuille A-Cadrage du classeur diffusé par
+#             la DREES, recontrôlés par scripts/verifier_donnees.py.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À chiffrer la première dépense non contributive du système, et la
+# seule ligne de `legislation/avantages_non_contributifs.yaml` que le
+# modèle ne calculera jamais : il décrit une carrière, pas un ménage,
+# et n'a ni conjoint, ni date de décès, ni ressources du survivant.
+# Là où les autres avantages se mesurent en retirant une règle et en
+# refaisant la pension, celui-ci se LIT.
+#
+# COMMENT LA MASSE EST OBTENUE
+# -----------------------------
+# Par un produit : le nombre de bénéficiaires d'un droit dérivé
+# (champ `ddert` du classeur) par le montant mensuel moyen de ce
+# droit-là (colonne `m2`), sur douze mois. La colonne compte : `mont`
+# porterait la pension TOTALE du bénéficiaire, droit direct compris,
+# et doublerait la masse.
+#
+# CE QUE LA SOMME DES CAISSES N'EST PAS
+# --------------------------------------
+# Un effectif de personnes. Un polypensionné touche une réversion à
+# la Cnav ET à l'Agirc-Arrco, et la somme des caisses compte deux fois
+# la même veuve : 8,5 millions de bénéficiaires contre 4,4 au « Tous
+# régimes ». Les MASSES, elles, s'additionnent sans double compte,
+# chaque caisse versant la sienne — et leur somme recoupe la ligne
+# `tous_regimes` à 2 % près, ce qui est le contrôle interne de cette
+# série.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,caisse,masse_meur,fiabilite
+2004,tous_regimes,25382.1,certifiee
+2005,tous_regimes,26276.4,certifiee
+2006,cnav,7363.8,certifiee
+2006,cnieg,449.7,certifiee
+2006,ircantec,153.5,certifiee
+2006,msa_exploitants,1195.8,certifiee
+2006,msa_salaries,994.9,certifiee
+2006,ratp,105.1,certifiee
+2006,tous_regimes,27000.9,certifiee
+2007,cnav,7803.7,certifiee
+2007,cnieg,454.3,certifiee
+2007,ircantec,160.2,certifiee
+2007,msa_exploitants,1199.4,certifiee
+2007,msa_salaries,1007.6,certifiee
+2007,ratp,106.6,certifiee
+2007,sncf,905.1,certifiee
+2007,tous_regimes,27877.2,certifiee
+2008,cnav,8190.8,certifiee
+2008,cnieg,476.8,certifiee
+2008,ircantec,166.0,certifiee
+2008,msa_exploitants,1208.5,certifiee
+2008,msa_salaries,1017.8,certifiee
+2008,ratp,105.5,certifiee
+2008,sncf,934.4,certifiee
+2008,tous_regimes,28686.4,certifiee
+2009,cnav,8405.6,certifiee
+2009,cnieg,479.9,certifiee
+2009,crpcen,52.3,certifiee
+2009,ircantec,171.6,certifiee
+2009,msa_exploitants,1221.1,certifiee
+2009,msa_salaries,1019.3,certifiee
+2009,ratp,108.5,certifiee
+2009,sncf,931.6,certifiee
+2009,tous_regimes,29469.2,certifiee
+2010,cnav,8695.7,certifiee
+2010,cnieg,487.5,certifiee
+2010,crpcen,54.0,certifiee
+2010,fonction_publique_etat_civile,2932.5,certifiee
+2010,fonction_publique_etat_militaire,1359.0,certifiee
+2010,ircantec,176.5,certifiee
+2010,msa_exploitants,1208.8,certifiee
+2010,msa_salaries,1013.5,certifiee
+2010,ratp,108.0,certifiee
+2010,sncf,927.4,certifiee
+2010,tous_regimes,30810.3,certifiee
+2011,cnav,9031.2,certifiee
+2011,cnieg,500.2,certifiee
+2011,crpcen,56.0,certifiee
+2011,fonction_publique_etat_civile,3028.5,certifiee
+2011,fonction_publique_etat_militaire,1409.6,certifiee
+2011,ircantec,183.6,certifiee
+2011,msa_exploitants,1213.0,certifiee
+2011,msa_salaries,1023.7,certifiee
+2011,ratp,111.4,certifiee
+2011,sncf,929.9,certifiee
+2011,tous_regimes,30799.1,certifiee
+2012,cnav,9330.5,certifiee
+2012,cnieg,512.5,certifiee
+2012,cnracl,929.8,certifiee
+2012,crpcen,57.8,certifiee
+2012,fonction_publique_etat_civile,3116.0,certifiee
+2012,fonction_publique_etat_militaire,1426.1,certifiee
+2012,ircantec,190.5,certifiee
+2012,msa_exploitants,1189.5,certifiee
+2012,msa_salaries,1018.0,certifiee
+2012,ratp,114.1,certifiee
+2012,sncf,916.7,certifiee
+2012,tous_regimes,31254.7,certifiee
+2013,cnav,9556.5,certifiee
+2013,cnieg,521.9,certifiee
+2013,cnracl,1092.0,certifiee
+2013,crpcen,58.5,certifiee
+2013,fonction_publique_etat_civile,3189.6,certifiee
+2013,fonction_publique_etat_militaire,1433.4,certifiee
+2013,ircantec,197.0,certifiee
+2013,msa_exploitants,1169.9,certifiee
+2013,msa_salaries,1013.0,certifiee
+2013,ratp,115.6,certifiee
+2013,rci_complementaire,236.4,certifiee
+2013,sncf,932.3,certifiee
+2013,tous_regimes,32734.4,certifiee
+2014,cnav,9635.1,certifiee
+2014,cnieg,526.0,certifiee
+2014,cnracl,1104.5,certifiee
+2014,crpcen,58.8,certifiee
+2014,erafp,0.0,certifiee
+2014,fonction_publique_etat_civile,3228.8,certifiee
+2014,fonction_publique_etat_militaire,1422.6,certifiee
+2014,fspoeie,316.5,certifiee
+2014,ircantec,201.4,certifiee
+2014,msa_exploitants,1167.1,certifiee
+2014,msa_exploitants_complementaire,54.1,certifiee
+2014,msa_salaries,988.9,certifiee
+2014,ratp,115.2,certifiee
+2014,rci_complementaire,246.3,certifiee
+2014,sncf,906.5,certifiee
+2014,tous_regimes,32895.5,certifiee
+2015,cnav,9737.1,certifiee
+2015,cnieg,528.1,certifiee
+2015,cnracl,1130.3,certifiee
+2015,crpcen,59.4,certifiee
+2015,erafp,0.0,certifiee
+2015,fonction_publique_etat_civile,3245.6,certifiee
+2015,fonction_publique_etat_militaire,1413.3,certifiee
+2015,fspoeie,310.9,certifiee
+2015,ircantec,204.8,certifiee
+2015,msa_exploitants,1117.5,certifiee
+2015,msa_exploitants_complementaire,57.2,certifiee
+2015,msa_salaries,965.8,certifiee
+2015,ratp,114.9,certifiee
+2015,rci_complementaire,261.4,certifiee
+2015,sncf,860.9,certifiee
+2015,tous_regimes,33112.8,certifiee
+2016,banque_de_france,51.1,certifiee
+2016,cnav,9799.5,certifiee
+2016,cnieg,528.4,certifiee
+2016,cnracl,1153.4,certifiee
+2016,crpcen,60.0,certifiee
+2016,erafp,0.0,certifiee
+2016,fonction_publique_etat_civile,3269.4,certifiee
+2016,fonction_publique_etat_militaire,1395.3,certifiee
+2016,fspoeie,303.8,certifiee
+2016,ircantec,207.7,certifiee
+2016,msa_exploitants,1082.1,certifiee
+2016,msa_exploitants_complementaire,59.3,certifiee
+2016,msa_salaries,940.1,certifiee
+2016,ratp,116.9,certifiee
+2016,rci_complementaire,274.7,certifiee
+2016,sncf,836.5,certifiee
+2016,tous_regimes,33064.8,certifiee
+2017,banque_de_france,51.4,certifiee
+2017,cnav,9872.7,certifiee
+2017,cnieg,534.3,certifiee
+2017,cnracl,1189.3,certifiee
+2017,crpcen,60.3,certifiee
+2017,erafp,0.1,certifiee
+2017,fonction_publique_etat_civile,3316.4,certifiee
+2017,fonction_publique_etat_militaire,1387.8,certifiee
+2017,fspoeie,301.0,certifiee
+2017,ircantec,211.5,certifiee
+2017,msa_exploitants,1053.9,certifiee
+2017,msa_exploitants_complementaire,59.9,certifiee
+2017,msa_salaries,919.8,certifiee
+2017,ratp,118.0,certifiee
+2017,rci_complementaire,286.1,certifiee
+2017,sncf,829.9,certifiee
+2017,tous_regimes,33210.1,certifiee
+2018,agirc_arrco,11183.6,certifiee
+2018,banque_de_france,50.7,certifiee
+2018,cnav,9971.7,certifiee
+2018,cnieg,537.2,certifiee
+2018,cnracl,1218.9,certifiee
+2018,crpcen,63.1,certifiee
+2018,erafp,0.1,certifiee
+2018,fonction_publique_etat_civile,3359.2,certifiee
+2018,fonction_publique_etat_militaire,1370.6,certifiee
+2018,fspoeie,296.4,certifiee
+2018,ircantec,216.8,certifiee
+2018,msa_exploitants,1011.1,certifiee
+2018,msa_exploitants_complementaire,62.1,certifiee
+2018,msa_salaries,891.4,certifiee
+2018,ratp,119.6,certifiee
+2018,rci_complementaire,297.7,certifiee
+2018,sncf,806.6,certifiee
+2018,tous_regimes,33392.9,certifiee
+2019,agirc_arrco,10937.9,certifiee
+2019,banque_de_france,49.8,certifiee
+2019,canssm,404.1,certifiee
+2019,cnav,11037.5,certifiee
+2019,cnieg,541.9,certifiee
+2019,cnracl,1261.3,certifiee
+2019,crpcen,63.5,certifiee
+2019,erafp,0.1,certifiee
+2019,fonction_publique_etat_civile,3389.3,certifiee
+2019,fonction_publique_etat_militaire,1350.8,certifiee
+2019,fspoeie,293.6,certifiee
+2019,ircantec,220.6,certifiee
+2019,msa_exploitants,975.4,certifiee
+2019,msa_exploitants_complementaire,69.3,certifiee
+2019,msa_salaries,866.6,certifiee
+2019,ratp,119.8,certifiee
+2019,rci_complementaire,310.9,certifiee
+2019,sncf,795.0,certifiee
+2019,tous_regimes,33662.7,certifiee
+2020,agirc_arrco,10972.0,certifiee
+2020,banque_de_france,49.0,certifiee
+2020,canssm,383.6,certifiee
+2020,cnav,11152.6,certifiee
+2020,cnbf,17.5,certifiee
+2020,cnbf_complementaire,16.0,certifiee
+2020,cnieg,544.6,certifiee
+2020,cnracl,1295.0,certifiee
+2020,crpcen,64.1,certifiee
+2020,enim,228.7,certifiee
+2020,erafp,0.1,certifiee
+2020,fonction_publique_etat_civile,3425.6,certifiee
+2020,fonction_publique_etat_militaire,1335.8,certifiee
+2020,fspoeie,289.6,certifiee
+2020,ircantec,227.0,certifiee
+2020,msa_exploitants,938.5,certifiee
+2020,msa_exploitants_complementaire,70.4,certifiee
+2020,msa_salaries,842.5,certifiee
+2020,ratp,120.2,certifiee
+2020,ratp_coordination,0.9,certifiee
+2020,rci_complementaire,319.9,certifiee
+2020,sncf,780.3,certifiee
+2020,sncf_coordination,8.8,certifiee
+2020,tous_regimes,33918.6,certifiee
+2021,agirc_arrco,11135.3,certifiee
+2021,banque_de_france,46.1,certifiee
+2021,canssm,360.1,certifiee
+2021,cnav,11347.5,certifiee
+2021,cnbf,18.0,certifiee
+2021,cnbf_complementaire,16.9,certifiee
+2021,cnieg,549.7,certifiee
+2021,cnracl,1326.8,certifiee
+2021,crpcen,64.4,certifiee
+2021,enim,225.0,certifiee
+2021,erafp,0.3,certifiee
+2021,fonction_publique_etat_civile,3463.0,certifiee
+2021,fonction_publique_etat_militaire,1317.5,certifiee
+2021,fspoeie,285.5,certifiee
+2021,ircantec,233.8,certifiee
+2021,msa_exploitants,901.1,certifiee
+2021,msa_exploitants_complementaire,74.6,certifiee
+2021,msa_salaries,819.2,certifiee
+2021,ratp,119.5,certifiee
+2021,ratp_coordination,0.9,certifiee
+2021,rci_complementaire,329.0,certifiee
+2021,sncf,764.2,certifiee
+2021,sncf_coordination,8.5,certifiee
+2021,tous_regimes,34061.7,certifiee
+2022,agirc_arrco,11722.1,certifiee
+2022,banque_de_france,49.7,certifiee
+2022,canssm,353.6,certifiee
+2022,cnav,11971.6,certifiee
+2022,cnbf,18.3,certifiee
+2022,cnbf_complementaire,23.7,certifiee
+2022,cnieg,570.1,certifiee
+2022,cnracl,1422.4,certifiee
+2022,crpcen,66.3,certifiee
+2022,enim,230.9,certifiee
+2022,erafp,0.4,certifiee
+2022,fonction_publique_etat_civile,3669.0,certifiee
+2022,fonction_publique_etat_militaire,1347.2,certifiee
+2022,fspoeie,293.0,certifiee
+2022,ircantec,245.3,certifiee
+2022,msa_exploitants,895.2,certifiee
+2022,msa_exploitants_complementaire,81.9,certifiee
+2022,msa_salaries,826.1,certifiee
+2022,ratp,155.2,certifiee
+2022,rci_complementaire,338.0,certifiee
+2022,sncf,764.0,certifiee
+2022,sncf_coordination,8.6,certifiee
+2022,tous_regimes,35736.1,certifiee
+2023,agirc_arrco,12544.8,certifiee
+2023,banque_de_france,48.9,certifiee
+2023,canssm,333.4,certifiee
+2023,cavimac,1.3,certifiee
+2023,cnav,12135.1,certifiee
+2023,cnbf,19.6,certifiee
+2023,cnbf_complementaire,24.8,certifiee
+2023,cnieg,603.6,certifiee
+2023,cnracl,1463.9,certifiee
+2023,crpcen,68.6,certifiee
+2023,enim,227.3,certifiee
+2023,erafp,0.5,certifiee
+2023,fonction_publique_etat_civile,3791.1,certifiee
+2023,fonction_publique_etat_militaire,1345.5,certifiee
+2023,fspoeie,288.8,certifiee
+2023,ircantec,257.5,certifiee
+2023,msa_exploitants,867.2,certifiee
+2023,msa_exploitants_complementaire,86.9,certifiee
+2023,msa_salaries,808.1,certifiee
+2023,ratp,125.6,certifiee
+2023,ratp_coordination,0.9,certifiee
+2023,rci_complementaire,367.6,certifiee
+2023,sncf,765.8,certifiee
+2023,sncf_coordination,8.6,certifiee
+2023,tous_regimes,36550.9,certifiee
+2024,agirc_arrco,12733.3,certifiee
+2024,banque_de_france,50.1,certifiee
+2024,canssm,325.8,certifiee
+2024,cavimac,1.3,certifiee
+2024,cnav,12844.5,certifiee
+2024,cnbf,20.8,certifiee
+2024,cnbf_complementaire,26.2,certifiee
+2024,cnieg,617.0,certifiee
+2024,cnracl,1568.4,certifiee
+2024,crpcen,71.9,certifiee
+2024,enim,234.1,certifiee
+2024,erafp,0.8,certifiee
+2024,fonction_publique_etat_civile,4031.1,certifiee
+2024,fonction_publique_etat_militaire,1388.1,certifiee
+2024,fspoeie,299.2,certifiee
+2024,ircantec,276.7,certifiee
+2024,msa_exploitants,870.8,certifiee
+2024,msa_exploitants_complementaire,94.7,certifiee
+2024,msa_salaries,823.3,certifiee
+2024,ratp,131.2,certifiee
+2024,ratp_coordination,0.9,certifiee
+2024,rci_complementaire,386.7,certifiee
+2024,sncf,788.7,certifiee
+2024,sncf_coordination,8.7,certifiee
+2024,tous_regimes,38343.0,certifiee
