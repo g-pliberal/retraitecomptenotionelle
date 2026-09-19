@@ -5857,8 +5857,9 @@ la Cnav. La marche de 2020 est une réorganisation, pas une dépense nouvelle.
 **Le coût des quatre autres systèmes est estimé, et ne peut pas être autre
 chose.** Il est obtenu en multipliant la dépense observée par le rapport des
 masses de pension — la moyenne des écarts entre systèmes, pondérée par le poids
-de chaque génération dans la masse de l'année. Ce rapport porte trois
-approximations, énoncées sur la page :
+de chaque génération dans la masse de l'année. Ce rapport porte quatre
+approximations, énoncées sur la page — la quatrième ayant cessé d'en être une
+le 19 septembre 2026 :
 
 1. **Les effectifs de génération ne sont plus supposés.** Cette page a d'abord
    pesé toutes les générations à égalité, faute de pyramide des âges ; elle
@@ -5904,6 +5905,51 @@ approximations, énoncées sur la page :
    Elles pèsent peu dans le cumul — la dépense de 1959 vaut 0,5 % de celle de
    2024 en euros courants — mais leur rapport ne vaut pas ce que valent ceux
    d'après 1980.
+
+4. **Le rapport ne multiplie plus la réversion, et c'est le volet C.** Il
+   décrit les droits DIRECTS et eux seuls : il est le quotient de deux masses
+   calculées sur treize cas types, qui n'ont ni conjoint ni survivant, et la
+   réversion figure depuis toujours parmi les droits que même l'étalon ne sert
+   pas. La base à laquelle on l'appliquait, elle, porte les deux. Un scénario
+   notionnel réduisait donc la réversion dans la même proportion que les
+   pensions propres, **sans que rien ne l'ait décidé** — et il l'a fait
+   jusqu'au 19 septembre 2026.
+
+   La base est désormais ventilée. `part_droits_derives.csv` dit quelle
+   fraction de la masse versée est une pension de réversion : 12,4 % en 2010,
+   10,4 % en 2024, 9,5 % en 2040, 5,7 % en 2070 — la réversion recule dans la
+   projection du COR, les carrières des femmes se rapprochant de celles des
+   hommes. Le rapport ne multiplie plus que le reste.
+
+   **Ce que le scénario fait de la réversion est maintenant une décision, et
+   elle est écrite.** Le dépôt la SERT, comme l'Italie, où le capital notionnel
+   du défunt se partage : la part dérivée est reconduite telle quelle. L'autre
+   chemin — la Suède, où un compte notionnel ne verse qu'à son titulaire —
+   reste calculable sous `convention_reversion="supprimee"`, et il n'est pas le
+   défaut parce qu'il est le plus flatteur : il rendrait 1,19 point de PIB au
+   scénario 6, et de 0,4 à 1,2 point à chacun des autres.
+
+   Ce que la correction coûte, par scénario, en point de solde moyen
+   2026-2070 : scénario 2, −0,81 ; scénario 3, −0,23 ; scénario 4, −0,27 ;
+   scénario 5, −0,09 ; scénario 6, −0,35. Le scénario 1 ne bouge pas d'un
+   iota, son rapport valant un.
+
+   **Et la part est contrôlée chez un autre producteur.** Elle est construite à
+   partir du classeur du COR, où douze des vingt-deux régimes publient leur
+   droit dérivé à part — pour les dix autres, dont la fonction publique d'État
+   et la CNRACL, c'est la différence entre la masse de prestations et le droit
+   direct. La DREES, elle, ventile ses propres comptes en droit direct
+   (`E11-21.1`) et droit dérivé (`E11-22.1`) depuis 2020. Deux enquêtes, deux
+   périmètres, deux nomenclatures, cinq années communes : les parts s'écartent
+   de **0,06 point au plus**, et de 0,01 point deux fois. C'est le seul
+   contrôle externe dont cette série dispose, et il est bon.
+
+   Ce qui reste : la part est très légèrement SURESTIMÉE pour les dix régimes
+   sans bloc dédié, la différence prestations moins direct portant aussi un
+   petit résidu de prestations qui n'est ni l'un ni l'autre — 0,3 % des
+   prestations là où on peut le mesurer. Et hors de 2010-2070, la valeur de
+   bord est reconduite au niveau `estimee` : la dépense observée remonte à
+   1959, cette ventilation non.
 
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
@@ -6182,7 +6228,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 1013 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 1019 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

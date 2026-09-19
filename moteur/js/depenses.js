@@ -21,6 +21,13 @@ import { SerieAnnuelle } from "./serie.js";
  * l'aide sociale aux personnes âgées et le minimum vieillesse, et l'on ne
  * compare pas des comptes notionnels à une allocation d'autonomie.
  */
+/**
+ * Les deux catégories de la ventilation d'une masse de pensions, du vocabulaire
+ * du COR comme de celui de la DREES : ce qu'un assuré s'est ouvert par sa
+ * propre carrière, et ce qu'un conjoint survivant reçoit de celle d'un autre.
+ */
+export const CATEGORIES_DROITS = ["direct", "derive"];
+
 export const SYSTEMES = [
   {
     code: "regime_general",
@@ -136,6 +143,10 @@ export class DepensesRetraite {
     this.premiereAnneeVentilee = Math.max(
       ...SYSTEMES.map((systeme) => this.systemes.get(systeme.code).premiereAnnee),
     );
+    this.partDerives = serie("part_droits_derives");
+    this.pensionsDroits = new Map(
+      CATEGORIES_DROITS.map((categorie) => [categorie, serie(`pensions_${categorie}`)]),
+    );
   }
 
   annees() {
@@ -159,6 +170,26 @@ export class DepensesRetraite {
 
   depenseSysteme(code, annee) {
     return this.systemes.get(code).valeur(annee);
+  }
+
+  /**
+   * Quelle fraction de la masse versée est une pension de RÉVERSION. Un
+   * huitième en 2010, un dixième en 2024, un dix-huitième en 2070 : la
+   * réversion recule dans la projection du COR, les carrières des femmes se
+   * rapprochant de celles des hommes.
+   *
+   * Elle sert à une chose : le rapport de masses par lequel un scénario
+   * notionnel fait réagir la dépense est celui des droits DIRECTS des cas
+   * types, et sans cette part il s'appliquait aussi à la réversion, que le
+   * modèle ne calcule pas.
+   */
+  partDroitsDerives(annee) {
+    return this.partDerives.valeur(annee);
+  }
+
+  /** Pensions de droit direct ou de droit dérivé selon la DREES, 2020-2024. */
+  pensionsDroit(categorie, annee) {
+    return this.pensionsDroits.get(categorie).valeur(annee);
   }
 
   /** Part de la dépense dans le produit intérieur brut de la même année. */

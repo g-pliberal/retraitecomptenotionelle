@@ -142,7 +142,7 @@
    "niveau": "certifiee",
    "source": "DREES, Comptes de la protection sociale, risque vieillesse-survie",
    "valeurs": 66,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-19"
   },
   "depenses_retraite_regimes": {
    "ajoutees": 0,
@@ -153,7 +153,7 @@
    "niveau": "certifiee",
    "source": "DREES, Comptes de la protection sociale, risque vieillesse-survie par organisme",
    "valeurs": 455,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-19"
   },
   "distribution_pensions": {
    "ajoutees": 138,
@@ -518,6 +518,28 @@
    "valeurs": 9,
    "verifiee_le": "2026-09-17"
   },
+  "part_droits_derives": {
+   "ajoutees": 0,
+   "colonne": "part",
+   "corrigees": 0,
+   "empreinte": "513a1110b9cd20e9",
+   "identiques": 61,
+   "niveau": "haute",
+   "source": "COR, compléments du rapport annuel de juin 2024, masses de pensions de droit direct et de droit dérivé",
+   "valeurs": 61,
+   "verifiee_le": "2026-09-19"
+  },
+  "pensions_droits": {
+   "ajoutees": 0,
+   "colonne": "montant_meur",
+   "corrigees": 0,
+   "empreinte": "cff0ca2df0b52cad",
+   "identiques": 10,
+   "niveau": "certifiee",
+   "source": "DREES, Comptes de la protection sociale, postes E11-21.1 et E11-22.1",
+   "valeurs": 10,
+   "verifiee_le": "2026-09-19"
+  },
   "pib_courant": {
    "ajoutees": 0,
    "colonne": "pib_meur",
@@ -704,6 +726,17 @@
    "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
    "valeurs": 20,
    "verifiee_le": "2026-09-17"
+  },
+  "structure_financement_regimes": {
+   "ajoutees": 0,
+   "colonne": "part",
+   "corrigees": 0,
+   "empreinte": "d79e8592a3ac0fe8",
+   "identiques": 930,
+   "niveau": "haute",
+   "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
+   "valeurs": 930,
+   "verifiee_le": "2026-09-19"
   },
   "structure_ressources_retraite": {
    "ajoutees": 0,

@@ -43,7 +43,7 @@ from ..avantages import (
     charger_avantages,
     inventaire_depuis_paquet,
 )
-from ..cout import COMPOSANTE_GARANTIE, calculer_cout
+from ..cout import COMPOSANTE_GARANTIE, calculer_cout, masse_du_scenario
 from ..donnees.assiette import AssietteActivite
 from ..donnees.distribution import DistributionPensions
 from ..garantie import cout_garantie
@@ -5980,15 +5980,22 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
             g.pourcentage(cumul / reference - 1, signe=True, decimales=1)
             if scenario != "actuel" else "réf.",
             _milliards(dernier.cout(scenario), 1),
-            g.pourcentage(dernier.part_pib * dernier.rapports[scenario], decimales=1),
+            # La part de PIB suit la même règle que le coût : le rapport ne
+            # multiplie que les droits directs de la base.
+            g.pourcentage(masse_du_scenario(
+                dernier.part_pib, dernier.part_derives,
+                dernier.rapports[scenario], scenario,
+                dernier.reversion_servie), decimales=1),
         ])
     lignes_passe.append([
         "<em>dont garantie vieillesse du système 4, financée par l'impôt</em>",
         _milliards(cout.cumul(COMPOSANTE_GARANTIE), 0),
         "—",
         _milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
-        g.pourcentage(dernier.part_pib * dernier.rapports[COMPOSANTE_GARANTIE],
-                      decimales=1),
+        g.pourcentage(masse_du_scenario(
+            dernier.part_pib, dernier.part_derives,
+            dernier.rapports[COMPOSANTE_GARANTIE], COMPOSANTE_GARANTIE,
+            dernier.reversion_servie), decimales=1),
     ])
 
     horizon = avenir.annee(avenir.derniere_annee)
@@ -6499,9 +6506,9 @@ def _cout_detail_limites(contexte: Contexte) -> str:
     solde = cout.solde
     avenir = cout.avenir
     observe = solde.annee(solde.derniere_annee_observee)
-    return g.depliant("Onze réserves à lire avant de citer ces chiffres",  f"""
+    return g.depliant("Douze réserves à lire avant de citer ces chiffres",  f"""
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
-laisse onze, écrits ici plutôt qu'en note de bas de page.</p>
+laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
   <li><strong>Les recettes réagissent sur trois points, et sur trois
   seulement.</strong> La recette suit le droit : ce que la branche famille,
@@ -6567,6 +6574,17 @@ laisse onze, écrits ici plutôt qu'en note de bas de page.</p>
   génération qui part juste après : les courbes de réforme s'écartent d'un ou
   deux dixièmes de point avant même la bascule. Un test borne l'effet à un
   demi-point.</li>
+  <li><strong>La réversion est reconduite telle quelle, et c'est une
+  décision.</strong> Le modèle ne calcule aucune pension de réversion : elle
+  revient au conjoint survivant et non à l'assuré. Le rapport par lequel les
+  systèmes notionnels font réagir la dépense ne décrit donc que les pensions
+  qu'un assuré s'est ouvertes lui-même, et il ne s'applique qu'à cette part de
+  la dépense, un dixième environ de la masse versée étant de la réversion. Ce
+  dixième-là, les systèmes notionnels le servent comme aujourd'hui, à la façon
+  de l'Italie, où le compte notionnel du défunt se partage. La Suède fait
+  l'inverse et ne verse qu'au titulaire du compte ; ce chemin est calculable et
+  rendrait plus d'un point de PIB au système 4, ce qui est précisément la
+  raison de ne pas le prendre sans l'avoir décidé.</li>
   <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
   projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
   COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en

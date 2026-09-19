@@ -45,7 +45,7 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     charger_yaml,
     journal_certification,
 )
-from retraite_notionnelle.donnees.depenses import SYSTEMES  # noqa: E402
+from retraite_notionnelle.donnees.depenses import CATEGORIES_DROITS, SYSTEMES  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import POSTES, POSTES_TRANSFERTS  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
@@ -156,6 +156,16 @@ def _depenses() -> dict:
         series[systeme.code] = charger_serie_annuelle(
             macro / "depenses_retraite_regimes.csv", "depenses_meur",
             nom=f"depenses_{systeme.code}", filtre={"regime": systeme.code})
+    # La part de RÉVERSION dans la masse versée, et la ventilation de la DREES
+    # qui la contrôle. La première sert au calcul — elle dit quel morceau de la
+    # base un rapport de droits directs a le droit de multiplier ; la seconde
+    # ne sert qu'à la page, qui montre d'où vient la première.
+    series["part_droits_derives"] = charger_serie_annuelle(
+        macro / "part_droits_derives.csv", "part", nom="part_droits_derives")
+    for categorie in CATEGORIES_DROITS:
+        series[f"pensions_{categorie}"] = charger_serie_annuelle(
+            macro / "pensions_droits.csv", "montant_meur",
+            nom=f"pensions_{categorie}", filtre={"categorie": categorie})
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
 
 

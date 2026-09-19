@@ -1,0 +1,112 @@
+# La part des pensions de RÉVERSION dans la masse versée
+# source_id: cor_regimes
+# unite: part de la masse de prestations, en fraction
+# fiabilite:
+#   haute (2010-2070) : masses publiées par le COR dans les
+#             compléments de son rapport annuel, recomposées par
+#             scripts/verifier_donnees.py et recontrôlées contre la
+#             ventilation que la DREES publie de son côté.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À ne pas recalculer une réversion que le modèle ne calcule pas.
+# Le rapport de masses par lequel cout.py fait réagir la dépense est
+# celui des droits DIRECTS des treize cas types ; la base à laquelle
+# il s'applique porte aussi les droits dérivés. Sans cette part, un
+# scénario notionnel réduisait la réversion dans la même proportion
+# que les pensions de droit direct, sans que rien ne l'ait décidé.
+#
+# CE QU'ELLE DIT, ET IL FAUT LE LIRE
+# -----------------------------------
+# La réversion recule, et c'est la projection du COR qui le dit :
+# 12,4 % de la masse en 2010, 10,4 % en 2024, 9,5 % en 2040, 5,7 %
+# en 2070. Les carrières des femmes se rapprochent de celles des
+# hommes, et une pension de réversion différentielle s'éteint à
+# mesure que la pension propre du survivant monte.
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# 1. ELLE EST CONSTRUITE. Douze des vingt-deux régimes du classeur
+#    publient leur droit dérivé à part ; pour les dix autres — dont
+#    la fonction publique d'État et la CNRACL, qui pèsent — c'est la
+#    différence entre la masse de prestations et le droit direct.
+#    Cette différence porte aussi un petit résidu de prestations qui
+#    n'est ni l'un ni l'autre : 0,3 % des prestations là où les trois
+#    blocs permettent de le mesurer. La part est donc très
+#    légèrement surestimée, et jamais de plus de ce résidu.
+# 2. LE MILLÉSIME est celui des compléments de JUIN 2024, seul
+#    publié, quand le reste du dépôt tourne sur le COR 2026.
+# 3. HORS DE 2010-2070, la valeur de bord est reconduite, et la
+#    fiabilité tombe à « estimée » : la dépense observée remonte à
+#    1959, cette ventilation non.
+# 4. LE RAFP EST ÉCARTÉ, le périmètre du système de retraite
+#    excluant la capitalisation ; le FSV n'a pas de masse de
+#    pensions à ventiler.
+#
+# pensions_droits.csv porte la ventilation de la DREES, qui la
+# contrôle sur 2020-2024.
+#
+# Ne pas modifier les années certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,part,fiabilite
+2010,0.123673,haute
+2011,0.121982,haute
+2012,0.120987,haute
+2013,0.119499,haute
+2014,0.118400,haute
+2015,0.116882,haute
+2016,0.115566,haute
+2017,0.114150,haute
+2018,0.113055,haute
+2019,0.111801,haute
+2020,0.109755,haute
+2021,0.108176,haute
+2022,0.106936,haute
+2023,0.105298,haute
+2024,0.103978,haute
+2025,0.103186,haute
+2026,0.102395,haute
+2027,0.101670,haute
+2028,0.101156,haute
+2029,0.101407,haute
+2030,0.101065,haute
+2031,0.100919,haute
+2032,0.100798,haute
+2033,0.100318,haute
+2034,0.099773,haute
+2035,0.099325,haute
+2036,0.098630,haute
+2037,0.097849,haute
+2038,0.097143,haute
+2039,0.096260,haute
+2040,0.095382,haute
+2041,0.094392,haute
+2042,0.093234,haute
+2043,0.091942,haute
+2044,0.090414,haute
+2045,0.088916,haute
+2046,0.087553,haute
+2047,0.086199,haute
+2048,0.084768,haute
+2049,0.083207,haute
+2050,0.081534,haute
+2051,0.079994,haute
+2052,0.078372,haute
+2053,0.076848,haute
+2054,0.075297,haute
+2055,0.073895,haute
+2056,0.072552,haute
+2057,0.071297,haute
+2058,0.069962,haute
+2059,0.068707,haute
+2060,0.067446,haute
+2061,0.066247,haute
+2062,0.064988,haute
+2063,0.063757,haute
+2064,0.062559,haute
+2065,0.061416,haute
+2066,0.060355,haute
+2067,0.059368,haute
+2068,0.058405,haute
+2069,0.057503,haute
+2070,0.056638,haute

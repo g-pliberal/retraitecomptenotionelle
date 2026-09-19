@@ -880,8 +880,105 @@ def source_structure_financement_regimes() -> dict[tuple, float]:
         poste = POSTES_FINANCEMENT.get(ligne["serie"])
         if regime is None or poste is None:
             continue
-        cle = (ligne["annee"], regime, poste)
+        cle = (str(ligne["annee"]), regime, poste)
         valeurs[cle] = valeurs.get(cle, 0.0) + ligne["valeur"]
+    return dict(sorted(valeurs.items()))
+
+
+#: Les trois blocs du classeur du COR qui portent la ventilation d'une masse de
+#: pensions. Le troisième sert de FILET : dix des vingt-deux régimes ne publient
+#: pas leur droit dérivé à part, et la différence entre la masse de prestations
+#: et le droit direct le rend, à ceci près qu'elle porte aussi le petit résidu
+#: de prestations qui n'est ni l'un ni l'autre — 0,3 % des prestations chez les
+#: douze régimes où les trois blocs permettent de le mesurer.
+BLOCS_MASSES_COR: dict[str, str] = {
+    "direct": "Masse de pensions de droit direct en milliards d'euros 2023",
+    "derive": "Masse de pensions de droit dérivé en milliards d'euros 2023",
+    "prestations": "Masse de prestations en milliards d'euros 2023",
+}
+
+#: Le seul régime du classeur que le périmètre du système de retraite exclut :
+#: le RAFP est de la capitalisation, et ``equilibre.py`` le dit déjà de
+#: l'agrégat. Le FSV, lui, n'a pas de masse de pensions à ventiler.
+HORS_PERIMETRE_MASSES: frozenset[str] = frozenset({"RAFP", "FSV"})
+
+
+def source_part_droits_derives() -> dict[tuple, float]:
+    """La part des pensions de RÉVERSION dans la masse versée, 2010-2070.
+
+    Elle répond à une question que le modèle posait mal. Le rapport de masses
+    par lequel ``cout.py`` fait réagir la dépense est celui des droits DIRECTS
+    des cas types ; la base à laquelle il s'applique, elle, porte les droits
+    dérivés — un huitième de la masse en 2010, un dix-huitième en 2070. Sans
+    cette part, le modèle recalculait à la baisse une réversion qu'il ne
+    calcule pas.
+
+    CONSTRUITE, ET NON LUE TELLE QUELLE. Douze des vingt-deux régimes du
+    classeur publient leur droit dérivé à part ; pour les dix autres — dont la
+    fonction publique d'État et la CNRACL, qui pèsent — c'est la différence
+    entre la masse de prestations et le droit direct, ce qui l'augmente du
+    résidu décrit sous ``BLOCS_MASSES_COR``. Le RAFP est écarté, le périmètre
+    du système de retraite excluant la capitalisation.
+
+    CONTRÔLÉE CHEZ UN AUTRE PRODUCTEUR, ET C'EST LE POINT FORT DE CETTE SÉRIE.
+    Les Comptes de la protection sociale de la DREES ventilent les pensions en
+    droit direct (poste ``E11-21.1``) et droit dérivé (``E11-22.1``) depuis
+    2020. Deux producteurs, deux périmètres, deux nomenclatures : sur les cinq
+    années communes, les parts s'écartent de 0,06 point au plus et de 0,01
+    point deux fois. ``controle_part_droits_derives`` l'exerce à chaque
+    vérification.
+    """
+    masses: dict[int, dict[str, float]] = {}
+    for ligne in _cor_regimes()["valeurs"]:
+        if ligne["regime"] in HORS_PERIMETRE_MASSES:
+            continue
+        for cle, bloc in BLOCS_MASSES_COR.items():
+            if ligne["bloc"] == bloc:
+                par_regime = masses.setdefault(ligne["annee"], {})
+                par_regime[f"{ligne['regime']}|{cle}"] = ligne["valeur"]
+    parts: dict[tuple, float] = {}
+    for annee, valeurs in sorted(masses.items()):
+        regimes = {nom.split("|", 1)[0] for nom in valeurs}
+        derive = prestations = 0.0
+        for regime in regimes:
+            presta = valeurs.get(f"{regime}|prestations")
+            direct = valeurs.get(f"{regime}|direct")
+            if presta is None or direct is None:
+                continue
+            prestations += presta
+            derive += valeurs.get(f"{regime}|derive", presta - direct)
+        if prestations > 0.0:
+            parts[(str(annee),)] = derive / prestations
+    return parts
+
+
+#: Les deux sous-postes du risque vieillesse-survie que la DREES publie depuis
+#: 2020, et la catégorie du dépôt qu'ils portent.
+POSTES_PENSIONS_CPS: dict[str, str] = {
+    "E11-21.1": "direct",
+    "E11-22.1": "derive",
+}
+
+
+def source_pensions_droits() -> dict[tuple, float]:
+    """Les pensions de droit direct et de droit dérivé, en millions d'euros.
+
+    C'est le producteur de la dépense qui ventile lui-même sa dépense, et c'est
+    donc la ventilation la mieux établie qui existe. Elle est courte — la DREES
+    ne publie ces deux sous-postes que depuis 2020, là où le risque entier
+    remonte à 1959 — et c'est pour cela qu'elle ne sert pas de série au modèle :
+    elle CONTRÔLE ``part_droits_derives.csv``, qui, lui, couvre 2010-2070.
+
+    La somme des deux vaut 401,4 milliards en 2024, contre 426,7 pour le risque
+    vieillesse-survie tout entier : l'écart est le minimum vieillesse, les
+    prestations de dépendance et la retraite supplémentaire, que le poste large
+    porte aussi.
+    """
+    pensions = _cps()["pensions"]
+    valeurs: dict[tuple, float] = {}
+    for code, categorie in POSTES_PENSIONS_CPS.items():
+        for annee, montant in pensions.get(code, {}).items():
+            valeurs[(str(annee), categorie)] = montant
     return dict(sorted(valeurs.items()))
 
 
@@ -2952,6 +3049,112 @@ CERTIFICATIONS = (
         ),
     ),
     Certification(
+        nom="part_droits_derives",
+        chemin=REFERENCE / "macro" / "part_droits_derives.csv",
+        cles=("annee",),
+        colonne="part",
+        source=source_part_droits_derives,
+        origine="COR, compléments du rapport annuel de juin 2024, "
+                "masses de pensions de droit direct et de droit dérivé",
+        decimales=6,
+        tolerance=5.1e-7,
+        niveau="haute",
+        entete=(
+            "# La part des pensions de RÉVERSION dans la masse versée",
+            "# source_id: cor_regimes",
+            "# unite: part de la masse de prestations, en fraction",
+            "# fiabilite:",
+            "#   haute (2010-2070) : masses publiées par le COR dans les",
+            "#             compléments de son rapport annuel, recomposées par",
+            "#             scripts/verifier_donnees.py et recontrôlées contre la",
+            "#             ventilation que la DREES publie de son côté.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À ne pas recalculer une réversion que le modèle ne calcule pas.",
+            "# Le rapport de masses par lequel cout.py fait réagir la dépense est",
+            "# celui des droits DIRECTS des treize cas types ; la base à laquelle",
+            "# il s'applique porte aussi les droits dérivés. Sans cette part, un",
+            "# scénario notionnel réduisait la réversion dans la même proportion",
+            "# que les pensions de droit direct, sans que rien ne l'ait décidé.",
+            "#",
+            "# CE QU'ELLE DIT, ET IL FAUT LE LIRE",
+            "# -----------------------------------",
+            "# La réversion recule, et c'est la projection du COR qui le dit :",
+            "# 12,4 % de la masse en 2010, 10,4 % en 2024, 9,5 % en 2040, 5,7 %",
+            "# en 2070. Les carrières des femmes se rapprochent de celles des",
+            "# hommes, et une pension de réversion différentielle s'éteint à",
+            "# mesure que la pension propre du survivant monte.",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR",
+            "# ------------------------------------------",
+            "# 1. ELLE EST CONSTRUITE. Douze des vingt-deux régimes du classeur",
+            "#    publient leur droit dérivé à part ; pour les dix autres — dont",
+            "#    la fonction publique d'État et la CNRACL, qui pèsent — c'est la",
+            "#    différence entre la masse de prestations et le droit direct.",
+            "#    Cette différence porte aussi un petit résidu de prestations qui",
+            "#    n'est ni l'un ni l'autre : 0,3 % des prestations là où les trois",
+            "#    blocs permettent de le mesurer. La part est donc très",
+            "#    légèrement surestimée, et jamais de plus de ce résidu.",
+            "# 2. LE MILLÉSIME est celui des compléments de JUIN 2024, seul",
+            "#    publié, quand le reste du dépôt tourne sur le COR 2026.",
+            "# 3. HORS DE 2010-2070, la valeur de bord est reconduite, et la",
+            "#    fiabilité tombe à « estimée » : la dépense observée remonte à",
+            "#    1959, cette ventilation non.",
+            "# 4. LE RAFP EST ÉCARTÉ, le périmètre du système de retraite",
+            "#    excluant la capitalisation ; le FSV n'a pas de masse de",
+            "#    pensions à ventiler.",
+            "#",
+            "# pensions_droits.csv porte la ventilation de la DREES, qui la",
+            "# contrôle sur 2020-2024.",
+            "#",
+            "# Ne pas modifier les années certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="pensions_droits",
+        chemin=REFERENCE / "macro" / "pensions_droits.csv",
+        cles=("annee", "categorie"),
+        colonne="montant_meur",
+        source=source_pensions_droits,
+        origine="DREES, Comptes de la protection sociale, postes E11-21.1 et "
+                "E11-22.1",
+        decimales=2,
+        tolerance=0.011,
+        unite=" M€",
+        niveau="certifiee",
+        entete=(
+            "# Pensions de droit direct et de droit dérivé, tous régimes, France",
+            "# source_id: drees_comptes_protection_sociale",
+            "# unite: millions d'euros courants de l'année",
+            "# fiabilite:",
+            "#   certifiee (2020-2024) : sous-postes E11-21.1 et E11-22.1 des",
+            "#             Comptes de la protection sociale, recontrôlés par",
+            "#             scripts/verifier_donnees.py contre l'API de la DREES.",
+            "#",
+            "# POURQUOI SI COURT, ET POURQUOI QUAND MÊME",
+            "# ------------------------------------------",
+            "# La DREES ne publie ces deux sous-postes que depuis 2020, là où le",
+            "# risque vieillesse-survie entier remonte à 1959. Cinq années ne",
+            "# font pas une série, et celle-ci n'en est pas une : elle CONTRÔLE",
+            "# part_droits_derives.csv, qui couvre 2010-2070 mais vient du COR.",
+            "# Deux producteurs qui trouvent la même part de réversion à six",
+            "# centièmes de point près valent mieux qu'un seul qui l'affirme.",
+            "#",
+            "# CE QUE LEUR SOMME N'EST PAS",
+            "# ----------------------------",
+            "# 401,4 milliards en 2024, contre 426,7 pour le risque",
+            "# vieillesse-survie entier de depenses_retraite.csv. L'écart est le",
+            "# minimum vieillesse, les prestations liées à la dépendance des",
+            "# personnes âgées et la retraite supplémentaire, que le poste large",
+            "# porte aussi.",
+            "#",
+            "# Ne pas modifier les années certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
         nom="structure_financement_regimes",
         chemin=REFERENCE / "regimes" / "structure_financement.csv",
         cles=("annee", "regime", "poste"),
@@ -4145,6 +4348,58 @@ def controle_ventilation_depenses() -> list[str]:
     return messages
 
 
+def controle_part_droits_derives() -> list[str]:
+    """Deux producteurs doivent trouver la même part de réversion.
+
+    ``part_droits_derives.csv`` vient du COR et couvre 2010-2070 ;
+    ``pensions_droits.csv`` vient de la DREES, qui est le producteur de la
+    dépense, et ne couvre que 2020-2024. Sur ces cinq années, les deux parts
+    doivent coïncider — et elles coïncident à six centièmes de point près, deux
+    fois à un centième, alors que rien ne les y oblige : deux enquêtes
+    différentes, deux périmètres différents, deux nomenclatures différentes.
+
+    C'est le seul contrôle externe dont cette série dispose, et il est
+    exigeant : un demi-point d'écart signalerait qu'un régime manque au
+    numérateur ou au dénominateur du calcul construit à partir du classeur.
+    """
+    messages: list[str] = []
+    cor = {
+        int(l["annee"]): float(l["part"])
+        for l in charger_csv(REFERENCE / "macro" / "part_droits_derives.csv")
+    }
+    drees: dict[int, dict[str, float]] = {}
+    for ligne in charger_csv(REFERENCE / "macro" / "pensions_droits.csv"):
+        drees.setdefault(int(ligne["annee"]), {})[ligne["categorie"]] = float(
+            ligne["montant_meur"]
+        )
+    if not cor or not drees:
+        return ["ABSENT  part des droits dérivés : une des deux séries manque"]
+
+    communes = sorted(set(cor) & set(drees))
+    pire = 0.0
+    for annee in communes:
+        lignes = drees[annee]
+        total = lignes.get("direct", 0.0) + lignes.get("derive", 0.0)
+        if total <= 0.0:
+            continue
+        ecart = abs(lignes["derive"] / total - cor[annee])
+        pire = max(pire, ecart)
+        if ecart > 0.005:
+            messages.append(
+                f"ÉCART   part des droits dérivés {annee} : COR {cor[annee]:.4f}, "
+                f"DREES {lignes['derive'] / total:.4f}"
+            )
+    if not communes:
+        messages.append("SUSPECT part des droits dérivés : aucune année commune")
+    else:
+        messages.append(
+            f"OK      part des droits dérivés : {len(communes)} années communes "
+            f"({communes[0]}-{communes[-1]}), écart maximal "
+            f"{pire * 100:.2f} point entre le COR et la DREES"
+        )
+    return messages
+
+
 def controle_solde_retraite() -> list[str]:
     """Le solde publié par le COR doit être la différence de ses deux colonnes.
 
@@ -5181,6 +5436,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.append("")
     messages.extend(controle_coherence_interne())
     messages.extend(controle_ventilation_depenses())
+    messages.extend(controle_part_droits_derives())
     messages.extend(controle_solde_retraite())
     messages.extend(controle_transferts_retraite())
     messages.extend(controle_part_salariale())
