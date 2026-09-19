@@ -2084,8 +2084,6 @@ def _engagements(contexte: Contexte) -> str:
     base = contexte.base
     taux = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
     capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
-    volontaire = g.pourcentage(
-        base.taux_capitalisation_volontaire_applique, decimales=0)
     garantie = base.garantie_vieillesse_mensuelle
     isolement = base.allocation_isolement_mensuelle
     # Seul : la garantie plus l'allocation d'isolement. En couple : la garantie
@@ -2113,9 +2111,7 @@ def _engagements(contexte: Contexte) -> str:
          f'et <strong class="cle-texte">le même taux pour tout le monde</strong>. '
          f"Par-dessus, {capitalise} placés sur des titres sans risque, "
          '<strong class="cle-texte">qui vous appartiennent</strong> et se '
-         f"transmettent. Restent {volontaire} rendus : le simulateur montre ce "
-         "qu'ils donnent si vous les placez au même endroit, "
-         f'<strong class="cle-texte">à effort inchangé</strong>.'),
+         "transmettent."),
         ("1 compte",
          '<strong class="cle-texte">en euros</strong>, lisible par tous.',
          "Un compte personnel de retraite : vous voyez "
@@ -2263,15 +2259,9 @@ def _programme_capitalisation(contexte: Contexte) -> str:
     """
     base = contexte.base
     taux = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
-    volontaire = g.pourcentage(base.taux_capitalisation_volontaire, decimales=0)
-    total = g.pourcentage(base.taux_capitalisation_applique, decimales=0)
     repartition_ = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
-    impose_ = g.pourcentage(
-        base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire,
-        decimales=0)
-    propose = g.pourcentage(base.taux_retraite_propose, decimales=0)
     return g.depliant(
-        f"La part capitalisée : {total} qui vous appartiennent",
+        f"La part capitalisée : {taux} qui vous appartiennent",
         f"""
 <p>À compter de {base.annee_debut_capitalisation}, {taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des {repartition_} de la répartition, et
@@ -2281,24 +2271,13 @@ qui existe déjà et que des millions de Français détiennent. Les années d'av
 ne changent pas :
 elles gardent les taux qui étaient les leurs, et qui a déjà liquidé ne cotise
 rien.</p>
-<p><strong>À ces {taux} s'ajoutent {volontaire} que personne ne vous
-impose.</strong> Le système actuel prélève
-{g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)} de la rémunération d'un salarié
-du privé pour la retraite ; {repartition_} et {taux} en font {impose_}, et la
-proposition vous rend donc les cinq points qui restent. Le site suppose que vous
-les remettez au même endroit, sur le même compte, aux mêmes conditions : votre
-effort revient alors à {propose}, c'est-à-dire à ce qu'il est déjà aujourd'hui,
-et les deux systèmes se comparent enfin <strong>à prix égal</strong>. Vous êtes
-libre de ne pas le faire : les montants du simulateur disent aussi ce que vous
-toucheriez sans.</p>
 <ul class="serree">
   <li><strong>Il vous appartient.</strong> Si vous mourez avant d'avoir liquidé,
   le capital revient à vos héritiers, intégralement. Une pension de répartition,
   elle, s'éteint avec vous sans rien laisser.</li>
   <li><strong>Il ne sort qu'à la retraite.</strong> Pas d'achat de résidence
-  principale, pas de sortie anticipée : l'argent n'en sort qu'en rente viagère,
-  ou par l'héritage. C'est vrai des {taux} obligatoires comme des {volontaire}
-  que vous ajoutez.</li>
+  principale, pas de sortie anticipée : la cotisation est obligatoire, et
+  l'argent n'en sort qu'en rente viagère, ou par l'héritage.</li>
   <li><strong>Il est placé sans risque.</strong> Des titres d'État parmi les
   mieux notés de la zone euro, portés jusqu'à leur échéance : longue tant que la
   retraite est loin, courte à l'approche du départ. Aucune action, aucun pari.</li>
@@ -3547,9 +3526,6 @@ def _partager(contexte: Contexte) -> str:
     horizon = solde.annee(solde.derniere_annee)
     taux = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
     capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
-    volontaire = g.pourcentage(
-        base.taux_capitalisation_volontaire_applique, decimales=0)
-    propose = g.pourcentage(base.taux_retraite_propose, decimales=0)
     garantie = base.garantie_vieillesse_mensuelle
     isolement = base.allocation_isolement_mensuelle
     manque = abs(horizon.solde("actuel"))
@@ -3580,13 +3556,12 @@ def _partager(contexte: Contexte) -> str:
         _carte_partage(
             "Le taux",
             "Baisse des prélèvements",
-            f"{taux} + {capitalise}",
+            taux,
             "de cotisation retraite, pour tout le monde.",
-            f"{g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)} aujourd'hui pour "
-            f"un salarié du privé ({g.pourcentage(TAUX_ACTUEL_SALARIAL)} + "
-            f"{g.pourcentage(TAUX_ACTUEL_PATRONAL)}). Les {volontaire} rendus "
-            f"peuvent aller au même compte : {propose} en tout, comme "
-            "aujourd'hui, pour une retraite qui vous appartient.",
+            "Part salariale et patronale additionnées : "
+            f"{g.pourcentage(TAUX_ACTUEL_SALARIAL)} + "
+            f"{g.pourcentage(TAUX_ACTUEL_PATRONAL)} aujourd'hui pour un "
+            "salarié du privé.",
         ),
         _carte_partage(
             "Le déficit",
@@ -3621,10 +3596,9 @@ def _partager(contexte: Contexte) -> str:
     <h2 style="margin-top:0">Texte prêt à coller</h2>
     <p>« Un minimum de {g.euros(garantie + isolement)}/mois, {taux} de
     cotisation au lieu de
-    {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)}, {capitalise} capitalisés
-    à votre nom et {volontaire} rendus que vous placez où vous voulez, et un
-    compte de retraite en euros que chacun peut lire. Vérifiez sur votre
-    carrière : {g.ADRESSE_SITE} — {g.SIGNATURE} »</p>
+    {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)}, et un compte de retraite
+    en euros que chacun peut lire. Vérifiez sur votre carrière :
+    {g.ADRESSE_SITE} — {g.SIGNATURE} »</p>
     <p class="discret">Le bouton de chaque carte met déjà ce message dans le
     presse-papiers avec l'image.</p>
   </div>
@@ -3729,13 +3703,6 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     capitalise = comparaison.en_euros_constants(
         comparaison.notionnel_liberal.rente_capitalisation_obligatoire
     )
-    # La part de cette rente qui vient des cinq points VOLONTAIRES — ceux que
-    # la proposition rend et que le site suppose remis au compte. Elle est
-    # nommée à part sous la barre : c'est la seule ligne de la page que
-    # personne n'impose, et le lecteur doit pouvoir la retrancher de l'œil.
-    capitalise_volontaire = comparaison.en_euros_constants(
-        comparaison.notionnel_liberal.rente_capitalisation_volontaire
-    )
     reference = max(constants.values()) or 1.0
 
     montants = Montants.depuis(saisie, comparaison.parametres, comparaison)
@@ -3789,8 +3756,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
       </span>"""
 
     def bloc(cle: str, titre: str, glose: str, variation: float | None,
-             taux_remplacement: float, part_capitalisee: float = 0.0,
-             part_volontaire: float = 0.0) -> str:
+             taux_remplacement: float, part_capitalisee: float = 0.0) -> str:
         montant = constants[cle]
         variation_html = (
             '<span class="discret">référence</span>' if variation is None
@@ -3807,24 +3773,11 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         if part_capitalisee > 0:
             barre += (f'<span class="capitalise" '
                       f'style="width:{part_capitalisee / reference * 100:.1f}%"></span>')
-            # Trois montants nommés plutôt que deux dès qu'il y a du
-            # volontaire : additionner en silence une épargne facultative à une
-            # cotisation obligatoire ferait promettre au lecteur un montant
-            # qu'il n'aura que s'il la verse.
-            detail = (
-                f"""
-        {g.euros_centimes(montants.pension(part_capitalisee - part_volontaire) / 12)}
-        de rente capitalisée obligatoire +
-        {g.euros_centimes(montants.pension(part_volontaire) / 12)} de rente
-        des cinq points volontaires, par mois"""
-                if part_volontaire > 0 else
-                f"""
-        {g.euros_centimes(montants.pension(part_capitalisee) / 12)} de rente
-        capitalisée, par mois"""
-            )
             partage = f"""
       <span class="composition">{g.euros_centimes(montants.pension(repartition) / 12)}
-        de pension par répartition +{detail}</span>"""
+        de pension par répartition +
+        {g.euros_centimes(montants.pension(part_capitalisee) / 12)} de rente
+        capitalisée, par mois</span>"""
         return f"""
 <div class="scenario">
   <div class="entete">
@@ -3864,19 +3817,14 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                comparaison.taux_remplacement("notionnel_retroactif_employeur"))
         + bloc("liberal",
                "4. La proposition du Parti libéral français",
-               f"le système 3 jusqu'à {saisie.bascule}, puis "
-               f"{g.pourcentage(comparaison.parametres.taux_cotisation_liberal, decimales=0)} "
-               "pour tous en répartition, "
+               f"le système 3 jusqu'à {saisie.bascule}, puis 18 % pour tous en "
+               "répartition et "
                f"{g.pourcentage(comparaison.parametres.taux_capitalisation_obligatoire, decimales=0)} "
-               "capitalisés par-dessus et "
-               f"{g.pourcentage(comparaison.parametres.taux_capitalisation_volontaire_applique, decimales=0)} "
-               f"que vous ajoutez librement pour cotiser autant qu'aujourd'hui "
-               f"({g.pourcentage(comparaison.parametres.taux_retraite_propose, decimales=0)} "
-               "en tout) — plus une garantie vieillesse payée par l'impôt",
+               "capitalisés par-dessus — plus une garantie vieillesse payée "
+               "par l'impôt",
                comparaison.variation_totale("notionnel_liberal"),
                comparaison.taux_remplacement_total("notionnel_liberal"),
-               part_capitalisee=capitalise,
-               part_volontaire=capitalise_volontaire)
+               part_capitalisee=capitalise)
     )
 
     fiches = "".join([
@@ -4189,7 +4137,7 @@ EXEMPLES_GARANTIE = (
 
 
 def _pilier_capitalise(comparaison: Comparaison, saisie: Saisie) -> str:
-    """Le pilier capitalisé : ce qu'il reçoit, ce qu'il rend, ce qu'il lègue.
+    """Le pilier obligatoire : ce qu'il reçoit, ce qu'il rend, ce qu'il lègue.
 
     C'est la seule ligne de tout le site où de l'argent est réellement placé.
     Le bloc doit donc dire trois choses qu'aucune autre ne dit : où va
@@ -4205,14 +4153,11 @@ def _pilier_capitalise(comparaison: Comparaison, saisie: Saisie) -> str:
 
     parametres = comparaison.parametres
     taux = g.pourcentage(pilier.taux_cotisation, decimales=0)
-    taux_impose = g.pourcentage(pilier.taux_cotisation_obligatoire, decimales=0)
-    taux_volontaire = g.pourcentage(pilier.taux_cotisation_volontaire, decimales=0)
-    avec_volontaire = pilier.taux_cotisation_volontaire > 0
     depart = comparaison.carriere.annee_liquidation
 
     if not pilier.actif:
         return g.depliant(
-            f"Le pilier capitalisé : {taux} placés dès "
+            f"Le pilier de capitalisation obligatoire : {taux} placés dès "
             f"{parametres.annee_debut_capitalisation}",
             f"""
 <p>Cette carrière ne cotise pas au pilier : elle s'achève en {depart}, et la
@@ -4235,9 +4180,7 @@ donc, du système 4, la seule pension de répartition.</p>""",
         ["", "Ce qui se passe", f"Montant, en euros de {depart}"],
         [
             [f"a) Cotisation de {taux}",
-             (f"{taux_impose} imposés et {taux_volontaire} volontaires, "
-              if avec_volontaire else "")
-             + f"prélevés sur la même assiette que la cotisation notionnelle, "
+             f"prélevée sur la même assiette que la cotisation notionnelle, "
              f"de {premiere.annee} à {derniere.annee}, EN PLUS d'elle",
              g.euros(pilier.versements)],
             ["b) − frais sur versement",
@@ -4331,33 +4274,16 @@ produit plus d'intérêts.</p>"""
 versement tombe l'année du départ, et il est porté tel quel. Seuls les
 {g.euros(pilier.frais_preleves)} de frais sur versement le grèvent.</p>"""
 
-    # Ce que servent les cinq points volontaires, nommé à part : le pilier est
-    # exactement proportionnel à son taux, si bien que la moitié volontaire
-    # rend la moitié de la rente. Le lecteur doit pouvoir retrancher cette
-    # ligne, qui est la seule de la page que personne ne lui impose.
-    partage_volontaire = ""
-    if avec_volontaire:
-        partage_volontaire = f"""
-<p><strong>Sur cette rente, {g.euros_centimes(pilier.rente_volontaire)} par an
-viennent des {taux_volontaire} que vous versez librement</strong>, et
-{g.euros_centimes(pilier.rente_obligatoire)} des {taux_impose} que la
-proposition impose. Le compte ne les distingue nulle part ailleurs : même
-assiette, même placement, mêmes frais, même table — la rente se partage donc
-dans le rapport exact des deux taux. Si vous ne versez pas ces
-{taux_volontaire}, retranchez cette part du total du système 4, et gardez-la
-sur votre fiche de paie : c'est le même argent, et c'est vous qui
-choisissez.</p>"""
-
     return g.depliant(
-        f"Le pilier capitalisé : {taux} placés dès "
+        f"Le pilier de capitalisation obligatoire : {taux} placés dès "
         f"{parametres.annee_debut_capitalisation}",
         f"""
 <p>À compter de {parametres.annee_debut_capitalisation}, {taux} de la
 rémunération sont prélevés <strong>en plus</strong> de la cotisation de
 répartition, et placés. Ils ne passent pas par le compte notionnel : ils
 constituent un capital, au nom du cotisant, dans un plan d'épargne retraite —
-l'enveloppe qui existe déjà. Deux choses seulement l'en distinguent : {taux_impose}
-sont obligatoires, et l'argent n'en sort qu'à la retraite, sous forme
+l'enveloppe qui existe déjà. Deux choses seulement l'en distinguent : la
+cotisation est obligatoire, et l'argent n'en sort qu'à la retraite, sous forme
 de rente, ou au décès, par l'héritage.{g.bulle(
     "Pourquoi ce n'est pas la même chose qu'une pension",
     "Une pension de répartition est un droit sur les cotisations des actifs de "
@@ -4368,7 +4294,6 @@ de rente, ou au décès, par l'héritage.{g.bulle(
     "pas été converti en rente. Les deux sont additionnées sur la ligne du "
     "système 4, jamais confondues.")}</p>
 {cascade}
-{partage_volontaire}
 {rendement}
 {echelle}
 {transmission}
@@ -4445,11 +4370,9 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
          f"{taux} pour tous ensuite — divisé par "
          f"{g.nombre(liberal.conversion.diviseur, DECIMALES_DIVISEUR)}",
          g.euros_centimes(garantie.pension_contributive) + " par an"],
-        ["e) + rente du pilier capitalisé",
-         f"les "
-         f"{g.pourcentage(parametres.taux_capitalisation_applique, decimales=0)} "
-         "capitalisés, volontaires compris : une allocation différentielle "
-         "compte les ressources et non leur origine",
+        ["e) + rente du pilier obligatoire",
+         "les 5 % capitalisés : la garantie regarde l'ensemble de la pension "
+         "obligatoire, pas la seule répartition",
          g.euros_centimes(garantie.rente_capitalisee) + " par an"],
         ["f) = ressources examinées", "d + e",
          g.euros_centimes(garantie.ressources) + " par an"],
@@ -4798,26 +4721,6 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
         f"{_euros_signe(cumul, centimes=False)} en euros de {saisie.euros}."
         if duree > 1 else ""
     )
-    # LE CHIFFRE DU MILIEU COMPREND L'ÉPARGNE VOLONTAIRE, et il faut le dire
-    # dans la même phrase : cinq points que personne n'impose sont retirés de
-    # ce net, et l'assuré les retrouve sur un compte à son nom. Sans cette
-    # ligne, le lecteur croirait la proposition plus coûteuse qu'elle n'est ;
-    # sans le chiffre du milieu, il croirait cette épargne gratuite.
-    volontaire = ""
-    if remuneration.verse_le_volontaire:
-        sans = remuneration.reference.net_sans_volontaire / 12.0
-        ecart_sans = remuneration.gain_net_mensuel_sans_volontaire
-        volontaire = (
-            f""" Ce chiffre suppose que vous versez les
-  <strong>{g.pourcentage(comparaison.parametres.taux_capitalisation_volontaire_applique, decimales=0)}
-  de capitalisation volontaire</strong> que la proposition vous rend, soit
-  {g.euros_centimes(remuneration.epargne_volontaire_mensuelle)} par mois qui
-  quittent votre {net} pour un compte à votre nom : vous cotisez alors
-  {g.pourcentage(comparaison.parametres.taux_retraite_propose, decimales=0)}
-  en tout, comme aujourd'hui. Si vous ne les versez pas, votre {net} est de
-  {g.euros_centimes(sans)}, soit {_euros_signe(ecart_sans)} par mois — et la
-  rente du système 4 baisse d'autant."""
-        )
     # Deux hypothèses, et il faut dire laquelle vaut ici : le coût du travail
     # tenu fixe quand l'employeur verse des taux de droit commun, l'assiette
     # tenue fixe quand il verse un taux d'équilibre — ou qu'il n'y en a pas.
@@ -4835,7 +4738,7 @@ que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">{ouverture}</div>
   <p>Soit <strong>{_euros_signe(gain)} {sens} sur votre fiche de paie</strong>,
-  {sous_quelle_hypothese}.{reste}{volontaire}</p>
+  {sous_quelle_hypothese}.{reste}</p>
   {_salaire_net_detail(comparaison, remuneration, saisie)}
 </div>"""
 
@@ -4882,20 +4785,6 @@ def _salaire_net_detail(comparaison: Comparaison, remuneration,
         ["Dont pour la retraite" if avec_cout
          else "Dont pour la retraite, à votre charge",
          mois(retraite_avant), mois(retraite_apres)],
-    ]
-    # La ligne que l'assuré peut retirer de sa propre décision. Elle est sous
-    # le prélèvement retraite parce qu'elle en fait partie — c'est bien de la
-    # retraite qui est prélevée —, mais elle est la seule du tableau que rien
-    # n'impose, et la colonne « Systèmes 1 à 3 » y porte un tiret : elle
-    # n'existe pas sous le droit en vigueur.
-    if reference.epargne_volontaire > 0:
-        lignes.append(
-            ["Dont capitalisation volontaire, à votre nom", "—",
-             mois(reference.epargne_volontaire)])
-        lignes.append(
-            [f"{libelle_net} si vous ne la versez pas", mois(avant.net),
-             mois(reference.net_sans_volontaire)])
-    lignes += [
         ["Ce qui vous arrive, sur 100 € coûtés" if avec_cout
          else f"Ce qui vous reste, sur 100 € de {assiette.lower()}",
          g.pourcentage(avant.part_qui_arrive if avec_cout
@@ -4968,22 +4857,7 @@ def _salaire_net_epargne(epargne: float, remuneration,
     if epargne <= 0:
         return ""
     taux = g.pourcentage(parametres.taux_capitalisation_obligatoire, decimales=0)
-    volontaire = g.pourcentage(
-        parametres.taux_capitalisation_volontaire_applique, decimales=0)
     repartition = g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)
-    total = g.pourcentage(parametres.taux_retraite_propose, decimales=0)
-    ajout = ""
-    if remuneration.verse_le_volontaire:
-        ajout = (
-            f" Sur ces {g.pourcentage(parametres.taux_capitalisation_applique, decimales=0)}, "
-            f"{volontaire} sont <strong>volontaires</strong> : ce sont les "
-            "points que la proposition vous rend et que le site suppose remis "
-            f"au même compte, soit {g.euros_centimes(remuneration.epargne_volontaire_mensuelle)} "
-            f"par mois et {g.euros(remuneration.epargne_volontaire_cumulee)} "
-            f"d'ici votre départ. Vous cotisez alors {total} en tout, "
-            "c'est-à-dire ce que vous versez déjà aujourd'hui — et c'est à ce "
-            "prix-là que les deux colonnes se comparent."
-        )
     return (
         f'<p class="note resume"><strong>{g.euros_centimes(epargne)} par mois '
         "de ce prélèvement est de l'épargne à votre nom.</strong> Le système 4 "
@@ -4991,7 +4865,7 @@ def _salaire_net_epargne(epargne: float, remuneration,
         "cinq points ne partent pas : ils alimentent un compte qui reste le "
         "vôtre, transmissible à vos héritiers tant qu'il n'est pas liquidé — "
         f"{g.euros(remuneration.epargne_cumulee)} d'ici votre départ, en euros "
-        f"de {saisie.euros}.{ajout} "
+        f"de {saisie.euros}. "
         + ("Sans eux, le salaire net monterait à tous les niveaux de salaire ; "
            "avec eux, il baisse au voisinage du SMIC."
            if remuneration.affiche_cout_du_travail
@@ -5072,37 +4946,19 @@ def _salaire_net_partage(remuneration, parametres, part: float) -> str:
     repartition = g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)
     capitalise = g.pourcentage(
         parametres.taux_capitalisation_obligatoire, decimales=0)
-    volontaire = g.pourcentage(
-        parametres.taux_capitalisation_volontaire_applique, decimales=0)
-    # Les cinq points volontaires échappent au partage, et ce n'est pas un
-    # détail d'écriture : personne ne cofinance une épargne que l'assuré décide
-    # seul. C'est aussi ce qui explique que les activer fasse baisser le net de
-    # leur montant entier, là où les points imposés n'en coûtent que la moitié.
-    hors_partage = ""
-    if remuneration.verse_le_volontaire and remuneration.profil != "independant":
-        hors_partage = f"""
-<p><strong>Les {volontaire} volontaires, eux, ne sont partagés avec
-personne.</strong> Aucun employeur ne cofinance une épargne que son salarié
-décide seul : ils sont portés en entier par vous, et le coût du travail ne
-bouge pas quand vous les versez. C'est pourquoi ils retirent de votre net leur
-montant entier, quand les {capitalise} imposés ne vous en coûtent que la
-moitié.</p>"""
     if remuneration.profil == "independant":
         return f"""<p><strong>Les {repartition} et les {capitalise} capitalisés sont à votre
 charge en entier.</strong> La proposition les annonce « salariale et patronale
 additionnées » ; vous êtes les deux à la fois, comme vous l'êtes déjà des
 vingt-six points que vous versez aujourd'hui. Vous prêter un employeur pour la
-moitié de la charge fabriquerait un gain qui n'existe pas. Les {volontaire}
-volontaires le sont aussi, et pour une autre raison : personne ne cofinance une
-épargne qu'on décide seul. Votre profil est le seul où les trois taux pèsent de
-la même façon.</p>"""
+moitié de la charge fabriquerait un gain qui n'existe pas.</p>"""
     if not remuneration.affiche_cout_du_travail:
         return f"""<p><strong>Les {repartition} sont partagés moitié-moitié</strong> entre
 vous et votre employeur, comme les {capitalise} capitalisés : votre part est
 donc de {g.pourcentage(part, decimales=0)} de chacun. La proposition ne dit pas
 qui porte quoi, et ce partage commande directement le chiffre ci-dessus —
 puisque seule votre part y figure, tout déplacer vers l'employeur ferait
-disparaître la hausse, et tout déplacer vers vous la doublerait.</p>{hors_partage}"""
+disparaître la hausse, et tout déplacer vers vous la doublerait.</p>"""
     return f"""<p><strong>Les {repartition}
 sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
 {capitalise}
@@ -5110,7 +4966,7 @@ capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
 neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
 porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
 bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
-est le partage du milieu ({g.pourcentage(part, decimales=0)} pour vous).</p>{hors_partage}"""
+est le partage du milieu ({g.pourcentage(part, decimales=0)} pour vous).</p>"""
 
 
 def _salaire_net_allegement(remuneration) -> str:
@@ -7246,15 +7102,7 @@ def _cout_detail_capitalisation(contexte: Contexte) -> str:
     base = contexte.base
     repartition_ = base.taux_cotisation_liberal
     capitalise = base.taux_capitalisation_obligatoire
-    volontaire = base.taux_capitalisation_volontaire_applique
-    impose = repartition_ + capitalise
-    total = impose + volontaire
-    # La ligne volontaire ne paraît que si elle existe : la retirer des
-    # paramètres doit rendre au tableau la forme qu'il avait à deux lignes.
-    ligne_volontaire = (
-        [["Placé volontairement, les points rendus", "—",
-          g.pourcentage(volontaire, decimales=0)]] if volontaire else []
-    )
+    total = repartition_ + capitalise
     return g.depliant(
         "Ce que le pilier capitalisé prélève, et pourquoi il n'est pas dans ce bilan",
         f"""
@@ -7265,9 +7113,7 @@ des {g.pourcentage(repartition_, decimales=0)} de la répartition. Ces
 constituent un capital au nom de celui qui verse. Ils ne sont donc ni une
 ressource ni une dépense du système de retraite, et <strong>aucun des chiffres
 de cette page ne les compte</strong> — le solde du système 4 est celui de sa
-répartition, comme celui des trois autres. Il en va de même des
-{g.pourcentage(volontaire, decimales=0)} que le cotisant peut ajouter de
-lui-même : ils ne passent pas davantage par les caisses.</p>
+répartition, comme celui des trois autres.</p>
 
 {g.tableau(
     ["", "Aujourd'hui", "Système 4"],
@@ -7275,12 +7121,9 @@ lui-même : ils ne passent pas davantage par les caisses.</p>
         ["Prélevé pour la répartition",
          g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0),
          g.pourcentage(repartition_, decimales=0)],
-        ["Prélevé pour la capitalisation, obligatoire", "—",
+        ["Prélevé pour la capitalisation", "—",
          g.pourcentage(capitalise, decimales=0)],
-    ] + ligne_volontaire + [
-        ["Total imposé", g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0),
-         g.pourcentage(impose, decimales=0)],
-        ["Total versé si les points rendus sont replacés",
+        ["Total prélevé sur la rémunération",
          g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0),
          f"<strong>{g.pourcentage(total, decimales=0)}</strong>"],
     ],
@@ -7290,9 +7133,9 @@ lui-même : ils ne passent pas davantage par les caisses.</p>
     entete_de_ligne=True,
 )}
 
-<p>Ce qui est <strong>imposé</strong> baisse de
-{g.nombre((TAUX_ACTUEL_TOTAL - impose) * 100, 0)} points :
-{g.pourcentage(impose, decimales=0)} contre
+<p>Le total prélevé <strong>baisse de
+{g.nombre((TAUX_ACTUEL_TOTAL - total) * 100, 0)} points</strong> :
+{g.pourcentage(total, decimales=0)} contre
 {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)} aujourd'hui pour un salarié du
 privé. La part qui finance les pensions des autres passe de
 {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)} à
@@ -7300,17 +7143,6 @@ privé. La part qui finance les pensions des autres passe de
 {g.pourcentage(capitalise, decimales=0)}, revient à celui qui l'a versé — sous
 forme de rente à la retraite, ou de capital à ses héritiers s'il meurt
 avant.</p>
-
-<p><strong>Le simulateur, lui, montre la seconde ligne du total.</strong> Les
-{g.nombre((TAUX_ACTUEL_TOTAL - impose) * 100, 0)} points rendus, il les suppose
-remis au même compte, et l'effort revient alors à
-{g.pourcentage(total, decimales=0)}, ce qu'il est déjà. C'est la seule façon de
-comparer deux systèmes sans comparer en même temps deux niveaux d'effort : à ce
-prix-là, {g.pourcentage(base.taux_capitalisation_applique, decimales=0)} des
-{g.pourcentage(total, decimales=0)} appartiennent au cotisant et se
-transmettent, contre rien aujourd'hui. Qui préfère garder ces points les garde,
-et sa rente baisse de ce qu'ils auraient rapporté : la page de résultats écrit
-les deux montants.</p>
 
 <div class="note"><strong>Ce que cela ne dit pas.</strong> Le pilier est neutre
 pour les comptes publics au moment où il se remplit, mais il ne l'est pas pour
@@ -7730,10 +7562,6 @@ def _methode_capitalisation(contexte: Contexte) -> str:
     base = contexte.base
     courbe = CourbeTauxSansRisque(base.racine_donnees)
     taux = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
-    volontaire = g.pourcentage(
-        base.taux_capitalisation_volontaire_applique, decimales=0)
-    total_capitalise = g.pourcentage(
-        base.taux_capitalisation_applique, decimales=0)
 
     comptants = g.tableau(
         ["Maturité", "Taux zéro-coupon, en rythme annuel"],
@@ -7762,7 +7590,7 @@ def _methode_capitalisation(contexte: Contexte) -> str:
     )
 
     return g.depliant(
-        f"Le pilier capitalisé : {total_capitalise} placés, ce que cela suppose",
+        f"Le pilier capitalisé : {taux} placés, ce que cela suppose",
         f"""
 <p>La proposition ajoute, à compter de {base.annee_debut_capitalisation}, une
 cotisation de {taux} prélevée sur la même assiette que la cotisation de
@@ -7770,40 +7598,6 @@ répartition, <strong>en plus</strong> d'elle : elle ne s'y substitue pas. Elle
 n'entre pas au compte notionnel, elle constitue un capital au nom du cotisant,
 dans un plan d'épargne retraite. Les années antérieures gardent les taux qui étaient les
 leurs et ne versent rien.</p>
-
-<h3>Les {volontaire} qui ne sont imposés par personne</h3>
-<p>{g.pourcentage(base.taux_cotisation_liberal, decimales=0)} de répartition et
-{taux} capitalisés font
-{g.pourcentage(base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire, decimales=0)},
-quand le système actuel en prélève
-{g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)} pour un salarié du privé. La
-proposition rend donc {volontaire}, et le modèle suppose qu'ils sont
-<strong>replacés sur le même compte</strong>, aux mêmes conditions : le pilier
-reçoit {total_capitalise} en tout, et l'effort de retraite revient à
-{g.pourcentage(base.taux_retraite_propose, decimales=0)}, exactement celui
-d'aujourd'hui. Le modèle ne prétend pas prévoir que les cotisants le feront : il
-pose une <strong>convention de comparaison</strong>. Sans elle, le site
-opposerait deux systèmes qui ne coûtent pas le même prix, et l'écart de pension
-se lirait pour partie comme un effet des règles alors qu'il viendrait d'un
-effort moindre.</p>
-<p>Le compartiment ne distingue ces points nulle part ailleurs qu'en proportion
-— même assiette, même échelle de maturités, mêmes frais, même table de
-mortalité —, si bien que la rente se partage dans le rapport exact des deux
-taux. Deux endroits les séparent, et deux seulement. Sur la <strong>fiche de
-paie</strong>, les {volontaire} volontaires sont portés en entier par l'assuré,
-là où les {taux} imposés sont partagés avec l'employeur : personne ne cofinance
-une épargne qu'on décide seul, et le coût du travail ne bouge pas quand on la
-verse. Dans les <strong>résultats</strong>, la rente qu'ils servent est écrite
-sur sa propre ligne, pour que le lecteur qui ne les verserait pas puisse la
-retrancher.</p>
-<p>Un troisième endroit aurait pu les séparer, et ne les sépare pas : la
-<strong>garantie vieillesse</strong>. Elle est différentielle, elle compte les
-ressources et non leur origine, et cette rente-là en est une. Une épargne que
-personne n'oblige réduit donc l'allocation, exactement comme une pension
-personnelle réduit l'ASPA d'aujourd'hui. Pour qui reste sous le plancher après
-avoir versé, ces cinq points ne rapportent <strong>rien du tout</strong> en
-pension : la garantie les reprend euro pour euro. Il leur reste ce que la
-répartition ne donne à personne, un capital qui se transmet.</p>
 
 <h3>Où l'argent est placé</h3>
 <p>Sur des titres sans risque, portés jusqu'à leur échéance. La courbe retenue

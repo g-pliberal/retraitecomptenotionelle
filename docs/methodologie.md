@@ -1190,7 +1190,7 @@ pas parmi les scénarios 2 à 5 parce qu'elle ne répond pas à la même questio
 elle ne mesure plus ce qui a été versé, mais ce qu'une réforme choisirait de
 reconnaître. C'est précisément la question que pose le scénario 6.
 
-### Scénario 6 — la proposition libérale : 18 % pour tous dès la bascule, 5 + 5 % capitalisés, et une garantie vieillesse
+### Scénario 6 — la proposition libérale : 18 % pour tous dès la bascule, 5 % capitalisés, et une garantie vieillesse
 
 Le scénario 6 est la proposition du Parti libéral français. C'est **exactement
 le scénario 4** — compte rétroactif depuis l'origine de la répartition,
@@ -1284,45 +1284,16 @@ silence à une pension de répartition. Le code le tient à part
 (`ResultatNotionnel.capitalisation`), et la somme des deux n'existe que sous un
 nom qui le dit (`pension_totale`).
 
-**Ce qui l'alimente.** DEUX cotisations, prélevées à compter de l'année de
-bascule (`annee_debut_capitalisation`, 2026) sur la **même assiette** que la
-cotisation notionnelle de l'année, et **en plus** d'elle.
-
-La première est obligatoire : 5 % (`taux_capitalisation_obligatoire`). L'effort
-contributif monte donc de cinq points, il n'est pas redéployé — la répartition
-reçoit toujours ses 18 %, et le compte notionnel du scénario 6 est identique,
-au centime, à ce qu'il serait sans le pilier ; un test l'exige. Le total imposé
-reste alors inférieur à celui d'aujourd'hui : 18 + 5 = 23 %, contre 28 % pour
-un salarié du privé.
-
-La seconde est **volontaire** : 5 % encore (`taux_capitalisation_volontaire`),
-et c'est la seule pièce du modèle que personne n'impose. Elle remet au compte
-les cinq points que la proposition rend, de sorte que l'effort revienne à
-18 + 5 + 5 = 28 %, c'est-à-dire à ce qu'il est déjà. Ce n'est pas une
-prévision de comportement mais une **convention de comparaison** : sans elle,
-le site opposerait deux systèmes qui ne coûtent pas le même prix, et une partie
-de l'écart de pension se lirait comme un effet des règles alors qu'elle
-viendrait d'un effort moindre. `capitalisation_volontaire=False` la retire, et
-la proposition redevient 18 + 5 ; un test le vérifie.
-
-Le pilier ne distingue les deux nulle part ailleurs qu'en **proportion** : même
-assiette, même échelle de maturités, mêmes frais, même table de mortalité. Tout
-ce qu'il produit étant exactement proportionnel au taux — les frais sont des
-pourcentages, l'allocation ne dépend que de l'horizon, aucun seuil n'intervient
-—, le capital et la rente se partagent au prorata des deux taux, et
-`Capitalisation.part_volontaire` suffit à le dire. Un test compare ce partage
-au calcul complet fait à taux réduit.
-
-Deux endroits les séparent, et deux seulement. Sur la **fiche de paie**, les
-cinq points volontaires sont portés en entier par l'assuré, là où les vingt-trois
-points imposés sont partagés avec l'employeur : personne ne cofinance une
-épargne qu'on décide seul, si bien qu'activer la cotisation volontaire ne change
-ni le coût du travail, ni le brut, ni la CSG qui est assise dessus — seulement
-le net, d'exactement son montant. Dans les **résultats**, la rente qu'elle sert
-est écrite sur sa propre ligne, partout où le total du scénario 6 paraît.
-
-Les années antérieures à la bascule ne versent rien, et qui a liquidé avant n'a
-pas de pilier du tout.
+**Ce qui l'alimente.** Une cotisation de 5 %
+(`taux_capitalisation_obligatoire`), prélevée à compter de l'année de bascule
+(`annee_debut_capitalisation`, 2026) sur la **même assiette** que la cotisation
+notionnelle de l'année, et **en plus** d'elle. L'effort contributif monte donc
+de cinq points, il n'est pas redéployé : la répartition reçoit toujours ses
+18 %, et le compte notionnel du scénario 6 est identique, au centime, à ce
+qu'il serait sans le pilier — un test l'exige. Les années antérieures à la
+bascule ne versent rien, et qui a liquidé avant n'a pas de pilier du tout.
+Le total prélevé reste inférieur à celui d'aujourd'hui : 18 + 5 = 23 %, contre
+28 % pour un salarié du privé.
 
 Prendre la même assiette n'est pas une commodité : c'est ce qui interdit au
 pilier de se construire une base à lui, plafonnée autrement, servie les années
@@ -1468,12 +1439,8 @@ de retraite, rente capitalisée comprise. La question — un pilier capitalisé
 doit-il réduire une allocation différentielle ? — est une question de droit,
 pas de modèle, et le programme l'a tranchée : une allocation différentielle
 compte les ressources et non leur origine, comme l'ASPA d'aujourd'hui compte
-une pension personnelle. Les cinq points **volontaires** y entrent comme les
-autres, et la conséquence est rude : pour qui reste sous le plancher après
-avoir versé, ils ne rapportent **rien** en pension, la garantie les reprenant
-euro pour euro. Il leur reste ce que la répartition ne donne à personne, un
-capital qui se transmet. Un test fixe les deux cas, sous le plancher et
-au-dessus.
+une pension personnelle. Cette section a longtemps écrit le contraire, et elle
+avait tort.
 
 ---
 

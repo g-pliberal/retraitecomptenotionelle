@@ -1,5 +1,5 @@
 /**
- * Le pilier de capitalisation : accumulation, rente, transmission.
+ * Le pilier de capitalisation obligatoire : accumulation, rente, transmission.
  *
  * Portage de ``src/retraite_notionnelle/moteur/capitalisation.py``, dont il
  * reproduit les conventions au centime — les témoins de `tests/temoins/` le
@@ -13,15 +13,6 @@
  * liquidé. Les deux sont donc tenus séparément et ne s'additionnent que sur la
  * ligne « total ».
  *
- * DEUX COTISATIONS L'ALIMENTENT, et une seule est imposée. 5 % obligatoires que
- * la proposition ajoute aux 18 % de répartition, et 5 % VOLONTAIRES : les points
- * qu'elle rend, remis au même compte pour que l'effort retombe sur les quelque
- * 28 % d'aujourd'hui et que les deux systèmes se comparent à prix égal. Le
- * pilier ne les distingue qu'en proportion — même assiette, même placement,
- * mêmes frais, même rente —, parce que tout ce qu'il produit est exactement
- * proportionnel au taux. Ce qui les sépare est sur la fiche de paie, où
- * l'obligatoire est partagée avec l'employeur et la volontaire pas.
- *
  * CONVENTION DE DATE, ET POURQUOI C'EST CELLE DU COMPTE NOTIONNEL. Le versement
  * d'une année est crédité à la FIN de cette année : il rapporte de l'année
  * suivante jusqu'à l'année de liquidation incluse, soit exactement les années
@@ -30,11 +21,7 @@
  * des deux.
  */
 
-import {
-  TableConversion,
-  tauxCapitalisationApplique,
-  tauxCapitalisationVolontaireApplique,
-} from "./config.js";
+import { TableConversion } from "./config.js";
 import { Fiabilite } from "./serie.js";
 
 /** Les trois maturités de l'échelle : courte, moyenne, longue. */
@@ -174,7 +161,7 @@ export class ConstructeurCapitalisation {
       ? this.parametres.frais_versement_capitalisation : 0.0;
     const fraisGestion = avecFrais
       ? this.parametres.frais_gestion_capitalisation : 0.0;
-    const tauxCotisation = tauxCapitalisationApplique(this.parametres);
+    const tauxCotisation = this.parametres.taux_capitalisation_obligatoire;
 
     let lignes = [];
     const annees = [];
@@ -279,17 +266,11 @@ export class ConstructeurCapitalisation {
     );
     const fraisArrerages = this.parametres.frais_arrerages_capitalisation;
 
-    // Le pilier s'éteint quand il n'a plus rien à encaisser : ni les cinq
-    // points obligatoires, ni les cinq points volontaires. Retirer l'un laisse
-    // l'autre debout.
-    if (anneeLiquidation < ouverture
-        || tauxCapitalisationApplique(this.parametres) <= 0) {
+    if (anneeLiquidation < ouverture || !this.parametres.capitalisation_obligatoire) {
       return resultatCapitalisation({
         annee_ouverture: ouverture,
         annee_liquidation: anneeLiquidation,
-        taux_cotisation: tauxCapitalisationApplique(this.parametres),
-        taux_cotisation_volontaire:
-          tauxCapitalisationVolontaireApplique(this.parametres),
+        taux_cotisation: this.parametres.taux_capitalisation_obligatoire,
         annees: [],
         capital: 0.0,
         capital_hors_frais: 0.0,
@@ -323,9 +304,7 @@ export class ConstructeurCapitalisation {
     return resultatCapitalisation({
       annee_ouverture: ouverture,
       annee_liquidation: anneeLiquidation,
-      taux_cotisation: tauxCapitalisationApplique(this.parametres),
-      taux_cotisation_volontaire:
-        tauxCapitalisationVolontaireApplique(this.parametres),
+      taux_cotisation: this.parametres.taux_capitalisation_obligatoire,
       annees,
       capital,
       capital_hors_frais: sansFrais.length
@@ -353,23 +332,8 @@ function resultatCapitalisation(champs) {
   const versements = somme("versement_brut");
   const fraisVersement = somme("frais_versement");
   const fraisGestion = somme("frais_gestion");
-  // Le pilier est exactement proportionnel à son taux : aucun seuil, aucun
-  // frais forfaitaire. Cette seule fraction partage donc le capital, la rente
-  // et le capital transmis entre les deux cotisations, sans les recalculer.
-  const tauxVolontaire = champs.taux_cotisation_volontaire || 0.0;
-  const partVolontaire = champs.taux_cotisation > 0
-    ? tauxVolontaire / champs.taux_cotisation : 0.0;
   return {
     ...champs,
-    taux_cotisation_volontaire: tauxVolontaire,
-    taux_cotisation_obligatoire: champs.taux_cotisation - tauxVolontaire,
-    part_volontaire: partVolontaire,
-    capital_volontaire: champs.capital * partVolontaire,
-    capital_obligatoire: champs.capital - champs.capital * partVolontaire,
-    rente_volontaire: champs.rente_annuelle * partVolontaire,
-    rente_volontaire_mensuelle: (champs.rente_annuelle * partVolontaire) / 12.0,
-    rente_obligatoire:
-      champs.rente_annuelle - champs.rente_annuelle * partVolontaire,
     actif: champs.capital > 0,
     rente_mensuelle: champs.rente_annuelle / 12.0,
     versements,

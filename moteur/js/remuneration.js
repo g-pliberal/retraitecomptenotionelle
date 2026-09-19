@@ -31,7 +31,6 @@
  *    d'employeur du tout. Voir `profilDeLaFiche`.
  */
 
-import { tauxCapitalisationVolontaireApplique } from "./config.js";
 import { Fiabilite } from "./serie.js";
 
 /** Heures d'un temps plein sur une année : 35 heures sur 52 semaines. */
@@ -599,15 +598,9 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
  * Le pilier capitalisé est un étage à part, et hors du périmètre de la
  * réduction générale : il n'est ni une assurance sociale, ni un régime
  * complémentaire légalement obligatoire au sens de l'article L. 921-4.
- *
- * LES CINQ POINTS VOLONTAIRES NE SONT PARTAGÉS AVEC PERSONNE. Ils sont portés
- * en entier par l'assuré, quel que soit `partSalariale` : un employeur ne
- * cofinance pas une épargne que son salarié décide seul. Conséquence, et elle
- * commande tout le bloc « salaire » du site : les activer ne change ni le coût
- * du travail, ni le brut, seulement le net, d'exactement leur montant.
  */
 export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
-  partSalariale = 0.5, tauxCapitalisationVolontaire = 0) {
+  partSalariale = 0.5) {
   const composantes = [new ComposanteRetraite({
     code: "regime_unifie",
     libelle: "Retraite, compte notionnel",
@@ -626,15 +619,6 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
       dansLaReductionGenerale: false,
     }));
   }
-  if (tauxCapitalisationVolontaire) {
-    composantes.push(new ComposanteRetraite({
-      code: "capitalisation_volontaire",
-      libelle: "Retraite, capitalisation volontaire",
-      salarie: [{ bas: 0, haut: null, taux: tauxCapitalisationVolontaire }],
-      employeur: [],
-      dansLaReductionGenerale: false,
-    }));
-  }
   return new BlocRetraite({
     libelle: "Retraite (proposition)",
     composantes,
@@ -648,10 +632,8 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
  * indépendant est les deux à la fois, et lui prêter un employeur pour la
  * moitié de la charge fabriquerait un gain qui n'existe pas.
  */
-export function blocTauxUniqueSansEmployeur(tauxRepartition, tauxCapitalisation = 0,
-  tauxCapitalisationVolontaire = 0) {
-  return blocTauxUnique(tauxRepartition, tauxCapitalisation, 1,
-    tauxCapitalisationVolontaire);
+export function blocTauxUniqueSansEmployeur(tauxRepartition, tauxCapitalisation = 0) {
+  return blocTauxUnique(tauxRepartition, tauxCapitalisation, 1);
 }
 
 /** La fiche de paie sait-elle décrire ce statut ? */
@@ -718,10 +700,6 @@ export function smicAnnuel(macro, annee) {
 // -- ce qu'un actif touche, système par système ------------------------------
 
 /** Une année d'activité, sous le droit en vigueur et sous la proposition. */
-//: Codes des deux lignes capitalisées de la fiche : celle que la proposition
-//: impose, celle que l'assuré ajoute.
-const CODES_CAPITALISATION = ["capitalisation", "capitalisation_volontaire"];
-
 export class AnneeComparee {
   constructor(fiche) {
     Object.assign(this, fiche);
@@ -742,29 +720,8 @@ export class AnneeComparee {
    */
   get epargneAVotreNom() {
     return this.proposition.lignes
-      .filter((l) => CODES_CAPITALISATION.includes(l.code))
+      .filter((l) => l.code === "capitalisation")
       .reduce((total, l) => total + l.salarie + l.employeur, 0);
-  }
-
-  /** Les seuls cinq points volontaires, entièrement à la charge de l'assuré. */
-  get epargneVolontaire() {
-    return this.proposition.lignes
-      .filter((l) => l.code === "capitalisation_volontaire")
-      .reduce((total, l) => total + l.salarie + l.employeur, 0);
-  }
-
-  /**
-   * Le net si l'assuré ne verse PAS les cinq points volontaires. La
-   * soustraction est exacte : cette cotisation ne touche ni au brut, que
-   * l'employeur ne cofinance pas, ni à la CSG, qui est assise sur le brut.
-   */
-  get netSansVolontaire() {
-    return this.proposition.net + this.epargneVolontaire;
-  }
-
-  /** Ce que la proposition ajoute au net quand on s'en tient à ses 23 points. */
-  get gainNetSansVolontaire() {
-    return this.netSansVolontaire - this.droitEnVigueur.net;
   }
 
   /**
@@ -799,28 +756,6 @@ export class RemunerationActif {
     return this.annees.reduce(
       (total, a) => total + a.epargneAVotreNom * a.coefficientEurosConstants, 0,
     );
-  }
-
-  /** Les cinq points volontaires de l'année de référence, par mois. */
-  get epargneVolontaireMensuelle() {
-    return this.reference.epargneVolontaire / 12.0;
-  }
-
-  /** Ce que les seuls points volontaires auront versé, en euros constants. */
-  get epargneVolontaireCumulee() {
-    return this.annees.reduce(
-      (total, a) => total + a.epargneVolontaire * a.coefficientEurosConstants, 0,
-    );
-  }
-
-  /** Le gain de net quand l'assuré s'en tient aux 23 points imposés. */
-  get gainNetMensuelSansVolontaire() {
-    return this.reference.gainNetSansVolontaire / 12.0;
-  }
-
-  /** Y a-t-il seulement des points volontaires à montrer ? */
-  get verseLeVolontaire() {
-    return this.annees.some((a) => a.epargneVolontaire > 0);
   }
 
   get buteSurLeSmic() {
@@ -863,14 +798,13 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
   const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
   const capitalisation = parametres.capitalisation_obligatoire
     ? parametres.taux_capitalisation_obligatoire : 0;
-  const volontaire = tauxCapitalisationVolontaireApplique(parametres);
   const propose = affiliations.sansEmployeur(statut)
     ? blocTauxUniqueSansEmployeur(
-      parametres.taux_cotisation_liberal, capitalisation, volontaire,
+      parametres.taux_cotisation_liberal, capitalisation,
     )
     : blocTauxUnique(
       parametres.taux_cotisation_liberal, capitalisation,
-      parametres.part_salariale_taux_unique, volontaire,
+      parametres.part_salariale_taux_unique,
     );
 
   const comparees = [];

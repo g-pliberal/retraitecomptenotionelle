@@ -229,8 +229,7 @@ class ResultatNotionnel:
     #: La garantie vieillesse et ses étapes — seulement dans le scénario 6, où
     #: ``pension_annuelle`` la comprend.
     garantie_vieillesse: GarantieVieillesse | None = None
-    #: Le pilier capitalisé — seulement dans le scénario 6, et il porte les
-    #: deux cotisations : les 5 % obligatoires et les 5 % volontaires.
+    #: Le pilier de capitalisation obligatoire — seulement dans le scénario 6.
     #: ``pension_annuelle`` ne le comprend PAS : la rente qu'il sert n'est pas
     #: une pension de répartition, elle ne se revalorise pas comme elle, elle
     #: se transmet là où l'autre ne se transmet pas, et les confondre ferait
@@ -245,23 +244,8 @@ class ResultatNotionnel:
 
     @property
     def rente_capitalisation_obligatoire(self) -> float:
-        """Rente annuelle servie par le pilier capitalisé, nulle sans lui.
-
-        Les deux cotisations réunies, l'obligatoire et la volontaire : c'est ce
-        que le pilier sert, et le nom de la propriété est resté celui qu'il
-        avait quand il n'y en avait qu'une. Les deux parts se lisent à
-        :attr:`rente_capitalisation_volontaire` et à sa complémentaire.
-        """
+        """Rente annuelle servie par le pilier capitalisé, nulle sans lui."""
         return self.capitalisation.rente_annuelle if self.capitalisation else 0.0
-
-    @property
-    def rente_capitalisation_volontaire(self) -> float:
-        """Ce que servent les cinq points rendus par la proposition, puis remis.
-
-        C'est la ligne qui rend la comparaison honnête : sans elle, le scénario
-        6 est servi par 23 points quand le scénario 1 l'est par 28.
-        """
-        return self.capitalisation.rente_volontaire if self.capitalisation else 0.0
 
     @property
     def pension_totale(self) -> float:
@@ -383,10 +367,10 @@ class ScenarioNotionnel:
         gardée à part pour que l'on sache ce qui vient de l'impôt.
         """
         resultat = self.retroactif(carriere, regime_fusionne, libelle=libelle)
-        # Le pilier capitalisé D'ABORD : la garantie regarde toutes les
-        # ressources de retraite, les 18 % de répartition ET les dix points
-        # capitalisés. L'ordre importe donc, là où il était indifférent tant
-        # que la garantie ne voyait que la répartition.
+        # Le pilier capitalisé D'ABORD : la garantie regarde l'ensemble de la
+        # pension obligatoire, les 18 % de répartition ET les 5 % capitalisés.
+        # L'ordre importe donc, là où il était indifférent tant que la garantie
+        # ne voyait que la répartition.
         resultat.capitalisation = self._pilier_capitalise(carriere, resultat)
         rente = (resultat.capitalisation.rente_annuelle
                  if resultat.capitalisation is not None else 0.0)
@@ -401,7 +385,7 @@ class ScenarioNotionnel:
 
     def _pilier_capitalise(self, carriere: Carriere,
                            resultat: ResultatNotionnel) -> Capitalisation | None:
-        """Le pilier capitalisé, bâti sur les assiettes du compte notionnel.
+        """Le pilier obligatoire, bâti sur les assiettes du compte notionnel.
 
         Il n'en construit pas d'autre : la cotisation capitalisée est prélevée
         sur la MÊME assiette, la même année, que la cotisation notionnelle. Les
@@ -410,19 +394,13 @@ class ScenarioNotionnel:
         personne.
 
         La garantie vieillesse REGARDE cette rente depuis le 19 septembre
-        2026. La question — un pilier capitalisé doit-il réduire une allocation
-        différentielle ? — est une question de droit, pas de modèle, et le
-        programme l'a tranchée : le plancher se compare à l'ensemble des
-        ressources de retraite, 18 % de répartition et dix points capitalisés.
-        C'est cohérent avec ce qu'est une allocation différentielle, qui compte
-        les ressources et non leur origine ; c'est aussi ce qui coûte le moins
-        à l'impôt.
-
-        **Les cinq points volontaires y sont donc comptés comme les autres**,
-        et ce n'est pas anodin : une épargne que personne n'oblige réduit
-        malgré tout l'allocation, exactement comme une pension personnelle
-        réduit l'ASPA d'aujourd'hui. Le modèle applique ici la règle de
-        l'allocation, non une faveur faite à l'épargnant.
+        2026. La question — un pilier capitalisé obligatoire doit-il réduire
+        une allocation différentielle ? — est une question de droit, pas de
+        modèle, et le programme l'a tranchée : le plancher se compare à
+        l'ensemble de la pension obligatoire, 18 % de répartition et 5 %
+        capitalisés. C'est cohérent avec ce qu'est une allocation
+        différentielle, qui compte les ressources et non leur origine ; c'est
+        aussi ce qui coûte le moins à l'impôt.
         """
         if self.capitalisation is None:
             return None
