@@ -128,6 +128,29 @@ JETONS = re.compile(
 )
 
 
+def _reels(operandes: bytes) -> list[float]:
+    """La tête numérique d'un opérateur de position.
+
+    On s'arrête au premier jeton qui n'est pas un nombre, ce qui laisse de côté
+    le nom de l'opérateur — le groupe capturé porte « 0 -1.6 Td », le « Td »
+    compris — et, surtout, l'opérande réduit à « - » que certains producteurs
+    émettent. ``float`` levait alors, et TOUT le rapport devenait illisible :
+    c'est ce qui fermait celui de 1995 à la CCSS, vingt méga-octets pourtant
+    lisibles par ailleurs.
+
+    On ne devine jamais la valeur manquante — la mettre à zéro déplacerait le
+    texte sans prévenir. C'est à l'appelant de vérifier qu'il en a assez, et de
+    SAUTER l'opérateur sinon, ce qui laisse le curseur où il était.
+    """
+    valeurs: list[float] = []
+    for jeton in operandes.split():
+        try:
+            valeurs.append(float(jeton))
+        except ValueError:
+            break
+    return valeurs
+
+
 def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
     """Reconstitue les lignes visuelles du document, de haut en bas.
 
@@ -165,17 +188,24 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
         police = None
         for jeton in JETONS.finditer(contenu):
             if jeton.group("tm"):
-                nombres = jeton.group("tm").split()
-                echelle_x, echelle_y = float(nombres[0]), float(nombres[3])
-                x, y = float(nombres[4]), float(nombres[5])
+                nombres = _reels(jeton.group("tm"))
+                if len(nombres) < 6:
+                    continue
+                echelle_x, echelle_y = nombres[0], nombres[3]
+                x, y = nombres[4], nombres[5]
             elif jeton.group("td"):
-                nombres = jeton.group("td").split()
-                x += float(nombres[0]) * echelle_x
-                y += float(nombres[1]) * echelle_y
+                nombres = _reels(jeton.group("td"))
+                if len(nombres) < 2:
+                    continue
+                x += nombres[0] * echelle_x
+                y += nombres[1] * echelle_y
                 if jeton.group("td").rstrip().endswith(b"TD"):
-                    interligne = -float(nombres[1]) * echelle_y
+                    interligne = -nombres[1] * echelle_y
             elif jeton.group("tl"):
-                interligne = float(jeton.group("tl").split()[0]) * echelle_y
+                nombres = _reels(jeton.group("tl"))
+                if not nombres:
+                    continue
+                interligne = nombres[0] * echelle_y
             elif jeton.group("etoile") or jeton.group("retour"):
                 y -= interligne
             elif jeton.group("tf"):
