@@ -471,7 +471,7 @@ a:hover { opacity: 0.85; }
      champs partent de la même ligne. Le bouton, lui, se centre. */
   gap: 1rem; align-items: start;
 }
-.simulateur-court .grille button { white-space: nowrap; align-self: center; }
+.simulateur-court .grille button { white-space: nowrap; }
 
 /* -- les engagements --------------------------------------------------------
 
@@ -580,17 +580,30 @@ form .grille {
   grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
   gap: 1rem 1.5rem;
 }
-/* Les aides de saisie n'ont pas toutes la même longueur : celle qui passe à la
-   ligne décalait son champ d'un cran vers le bas, et les champs d'une même
-   rangée ne s'alignaient plus. Chaque cellule devient une colonne dont le
-   libellé absorbe la hauteur en trop ; les champs se posent alors sur la même
-   ligne, quelle que soit l'aide au-dessus. */
-form .grille > div { display: flex; flex-direction: column; }
-/* `hidden` seul ne masque rien ici : `display: flex` ci-dessus l'emporte sur la
-   feuille du navigateur. La règle est écrite pour le champ de revenu d'une
+/* Les aides de saisie n'ont pas toutes la même longueur, et une date porte
+   sous elle une ligne de rappel (« soit 21 ans ») que les autres champs n'ont
+   pas. Chaque cellule devenait une colonne dont le libellé absorbait la
+   hauteur en trop : les champs se calaient par le BAS, et une date, qui garde
+   sa ligne de rappel sous elle, remontait d'autant au-dessus de ses voisins.
+
+   Chaque cellule est donc une SOUS-GRILLE de trois rangées — libellé,
+   contrôle, rappel — partagées par toute la rangée : les libellés ont la
+   même hauteur, les contrôles partent tous de la même ligne, et le rappel
+   d'une date ne pousse plus rien. La sous-grille ne reprend pas l'écart de
+   rangée de la grille : il n'en faut aucun entre un libellé et son champ. */
+form .grille > div { display: grid; grid-template-rows: subgrid; grid-row: span 3; row-gap: 0; }
+@supports not (grid-template-rows: subgrid) {
+  form .grille > div { display: flex; flex-direction: column; }
+  form .grille > div > label { flex: 1 0 auto; }
+}
+/* `hidden` seul ne masque rien ici : `display: grid` ci-dessus l'emporte sur
+   la feuille du navigateur. La règle est écrite pour le champ de revenu d'une
    période sans emploi, que la page retire dès que le motif est choisi. */
 form .grille > div[hidden] { display: none; }
-form .grille > div > label { flex: 1 0 auto; }
+/* Le bouton du formulaire court occupe les mêmes trois rangées, et se pose
+   sur celle des contrôles : ni au niveau des libellés, ni centré au jugé. */
+form .grille > .action { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
+form .grille > .action > button { grid-row: 2; }
 /* Le libellé d'un champ : 15 px, casse normale, demi-gras. PAS de capitales
    espacées à 12 px, si joli que ce fût : les capitales et le corps réduit sont
    deux handicaps qui se cumulent, notamment pour les dyslexiques. */
@@ -616,6 +629,12 @@ input, select, textarea {
   width: 100%; padding: 0.7rem 0.75rem; font: inherit; font-size: 1rem;
   color: var(--texte); background: var(--fond); border: 2px solid var(--trait-champ);
   border-radius: 0;
+}
+/* Tous les contrôles d'une rangée à la même hauteur : un champ de date
+   faisait 54 points, un menu déroulant 47, un nombre 52, et leurs bords
+   supérieurs ne se rejoignaient pas. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select {
+  min-height: 3.375rem;
 }
 /* Le relevé de carrière se lit en colonnes : une police à chasse fixe aligne
    les années les unes sous les autres, et une faute de frappe s'y voit. Le

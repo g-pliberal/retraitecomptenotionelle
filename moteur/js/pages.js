@@ -8374,7 +8374,7 @@ function simulateurCourt(contexte, vers = "/simuler") {
     <span class="etiquette">Le simulateur</span>
   </div>
   <div class="grille">${champs}
-    <button type="submit">Calculer →</button>
+    <div class="action"><button type="submit">Calculer →</button></div>
   </div>
   <p class="discret" style="margin:0.9rem 0 0">Quatre montants côte à côte :
   les règles d'aujourd'hui, et les nôtres. Tout se calcule dans votre

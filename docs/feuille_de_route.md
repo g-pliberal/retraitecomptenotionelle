@@ -7525,6 +7525,24 @@ une note de quinze lignes dans une cellule de l'inventaire des régimes fait
 une rangée haute, à toutes les largeurs — c'est le contenu, et la glose
 sous le tableau proposée au point 8 est la vraie réponse.
 
+**Les champs d'une même rangée, sur la même ligne.** Signalé après la
+seconde passe : dans les formulaires, les contrôles d'une rangée ne
+partaient pas de la même hauteur. Deux causes. Chaque cellule était une
+colonne flexible dont le libellé absorbait la hauteur en trop, ce qui
+calait les contrôles par le BAS : une date, qui garde sa ligne de rappel
+sous elle (« soit 21 ans »), remontait d'autant au-dessus de ses voisins,
+et le mot du glossaire d'un libellé sur deux lignes (« Sexe », « Règle
+d'indexation ») faisait remonter le sien de soixante-dix points. Et les
+contrôles n'avaient pas la même hauteur : 54 points pour une date, 47 pour
+un menu, 52 pour un nombre. Chaque cellule est maintenant une sous-grille de
+trois rangées — libellé, contrôle, rappel — partagées par toute la rangée,
+avec un repli en colonne flexible là où la sous-grille n'existe pas, et tout
+contrôle a 3,375 rem de haut au moins. Le bouton du formulaire court occupe
+les mêmes trois rangées et se pose sur celle des contrôles. Mesuré dans
+Chromium à 768 et 1 280 points, sur l'accueil et sur Simuler avec tous les
+dépliants ouverts : plus aucune rangée où deux contrôles partent de hauteurs
+différentes.
+
 **Fichiers touchés le 19 septembre.** `web/gabarit.py` et `moteur/js/gabarit.js`
 (feuille, `mot`, `tableau`, `graphique`, `fiabilite_en_clair`), `web/pages.py`
 et `moteur/js/pages.js` (classes de colonnes, libellés du plancher, aide du
