@@ -16,7 +16,7 @@ transcription machine complète et datée des décrets, et elle cite ses
 références. La fiabilité est donc plafonnée à ``haute`` — OpenFisca transcrit
 le Journal officiel, il ne le produit pas.
 
-CINQ FAMILLES SONT RÉCUPÉRÉES
+SEPT FAMILLES SONT RÉCUPÉRÉES
 -----------------------------
 1. **Cotisations de sécurité sociale** hors vieillesse : maladie-maternité-
    invalidité-décès, allocations familiales, accidents du travail et maladies
@@ -36,6 +36,24 @@ CINQ FAMILLES SONT RÉCUPÉRÉES
    2026 remplace la réduction Fillon et les deux « bandeaux » maladie et
    famille : ses quatre paramètres, et la liste des taux dont la somme fait
    son coefficient maximal.
+6. **Secteur public** : la retenue pour pension du titulaire, la contribution
+   de son employeur — un taux d'ÉQUILIBRE, que la fiche de paie n'affiche pas,
+   et qui n'est récupéré ici que pour qu'on puisse le lire —, la cotisation
+   maladie de l'État et des collectivités, la contribution exceptionnelle de
+   solidarité (nulle depuis 2018), le RAFP et l'Ircantec.
+7. **Travailleurs indépendants** : maladie-maternité, indemnités journalières,
+   invalidité-décès, allocations familiales, retraite de base et RCI, formation
+   professionnelle.
+
+CE QU'OPENFISCA NE SAIT PLUS, ET QU'IL A FALLU LIRE À LA SOURCE
+----------------------------------------------------------------
+Les deux barèmes PROGRESSIFS des indépendants — maladie et maternité,
+allocations familiales — sont dans OpenFisca dans leur rédaction de 2018, que
+la réforme de l'assiette unique de 2024 a remplacée : le fichier de données les
+porte donc dans la version lue dans l'index LEGI du dépôt (D. 621-1, D. 621-2 et
+D. 613-1, en vigueur), et ce récupérateur ne sert plus, pour eux, qu'à voir si
+OpenFisca rattrape son retard. `derniere_verification_openfisca` le dit poste
+par poste.
 
 CE QUI N'EST PAS RÉCUPÉRÉ, ET POURQUOI
 --------------------------------------
@@ -91,6 +109,50 @@ VALEURS = {
     "rgdu_seuil_effectif": (
         "reductions_cotisations_sociales/allegement_general/"
         "ensemble_des_entreprises/seuil_taille_entreprise.yaml"),
+    # -- indépendants : les taux qui ne dépendent pas du niveau de revenu ----
+    "independant_invalidite_deces_artisans": (
+        "cotisations_taxes_independants_artisans_commercants/deces_ac/"
+        "artisans/sous_pss.yaml"),
+    "independant_invalidite_deces_commercants": (
+        "cotisations_taxes_independants_artisans_commercants/deces_ac/"
+        "commercants_industriels/apres_2004/sous_pss.yaml"),
+    "independant_famille_seuil_bas": (
+        "cotisations_taxes_independants_artisans_commercants/famille/"
+        "famille_ind/si_revenu_d_activite_110_pss.yaml"),
+    "independant_famille_seuil_haut": (
+        "cotisations_taxes_independants_artisans_commercants/famille/"
+        "famille_ind/si_revenu_d_activite_140_pss.yaml"),
+    "independant_maladie_entre_1_1_et_5_pss": (
+        "cotisations_taxes_independants_artisans_commercants/mmid/mmid_ac/"
+        "assures_actifs/entre_11_5_pss_2.yaml"),
+    "independant_maladie_au_dela_de_5_pss": (
+        "cotisations_taxes_independants_artisans_commercants/mmid/mmid_ac/"
+        "assures_actifs/dela_5_pss.yaml"),
+    "independant_retraite_base_sous_pss": (
+        "cotisations_taxes_independants_artisans_commercants/ret_ac/"
+        "artisans/sous_pss.yaml"),
+    "independant_retraite_base_deplafonnee": (
+        "cotisations_taxes_independants_artisans_commercants/ret_ac/"
+        "tous_independants/tout_salaire.yaml"),
+    "independant_rci_sous_plafond": (
+        "cotisations_taxes_independants_artisans_commercants/ret_comp_ac/"
+        "art_ind_com/sous_plafond_rci.yaml"),
+    "independant_rci_au_dela_du_plafond": (
+        "cotisations_taxes_independants_artisans_commercants/ret_comp_ac/"
+        "art_ind_com/entre_1_plafond_rci_et_4_plafonds_pss.yaml"),
+    "independant_plafond_rci": (
+        "cotisations_taxes_independants_artisans_commercants/ret_comp_ac/"
+        "art_ind_com/montant_du_plafond_rci.yaml"),
+    "independant_formation_artisans": (
+        "cotisations_taxes_independants_artisans_commercants/formation_ac/"
+        "artisans/sous_pss.yaml"),
+    "independant_formation_commercants": (
+        "cotisations_taxes_independants_artisans_commercants/formation_ac/"
+        "commercants_industriels/sous_pss.yaml"),
+    # -- secteur public : la SNCF, dont le taux salarié est une valeur simple -
+    "sncf_cotisation_salarie": (
+        "cotisations_secteur_public/sncf/regime_de_retraite/"
+        "cotisations_employes.yaml"),
 }
 
 #: Paramètres à TRANCHES — un taux par tranche de plafond de sécurité sociale.
@@ -136,6 +198,53 @@ BAREMES = {
     "agirc_arrco_employeur": (
         "regimes_complementaires_retraite_secteur_prive/agirc_arrco/employeur/"
         "agirc_arrco.yaml"),
+    # -- secteur public -----------------------------------------------------
+    # La retenue de l'agent est la seule de ces lignes qui entre dans la fiche
+    # de paie. Les trois contributions d'employeur sont récupérées pour être
+    # LUES, non pour être affichées : ce sont des taux d'équilibre, et le
+    # docstring de `remuneration.py` dit pourquoi le site refuse de les
+    # présenter comme un coût du travail.
+    "pension_civile_salarie": (
+        "cotisations_secteur_public/retraite/pension/salarie/pension.yaml"),
+    "pension_civile_employeur": (
+        "cotisations_secteur_public/retraite/pension/employeur/civils/"
+        "pension.yaml"),
+    "pension_militaire_employeur": (
+        "cotisations_secteur_public/retraite/pension/employeur/militaires/"
+        "pension.yaml"),
+    "cnracl_salarie": "cotisations_secteur_public/cnracl/salarie/cnracl_s_ti.yaml",
+    "cnracl_employeur": "cotisations_secteur_public/cnracl/employeur/cnracl.yaml",
+    # Les deux suivantes disent que le salarial public est nul : c'est le
+    # RÉSULTAT qui autorise la liste de postes vide du profil `agent_seul`.
+    "maladie_etat_salarie": (
+        "cotisations_secteur_public/mmid/etat/tout_traitement/salarie/"
+        "maladie.yaml"),
+    "maladie_etat_employeur": (
+        "cotisations_secteur_public/mmid/etat/tout_traitement/employeur/"
+        "maladie.yaml"),
+    "maladie_collectivites_salarie": (
+        "cotisations_secteur_public/mmid/colloc/tout_traitement/salarie/"
+        "maladie.yaml"),
+    "maladie_collectivites_employeur": (
+        "cotisations_secteur_public/mmid/colloc/tout_traitement/employeur/"
+        "maladie.yaml"),
+    "solidarite_fonction_publique": (
+        "cotisations_secteur_public/fds/salarie/solidarite.yaml"),
+    "rafp_salarie": "cotisations_secteur_public/rafp/salarie/rafp.yaml",
+    "rafp_employeur": "cotisations_secteur_public/rafp/employeur/rafp.yaml",
+    "ircantec_salarie": (
+        "cotisations_secteur_public/ircantec/taux_cotisations_appeles/salarie/"
+        "ircantec.yaml"),
+    "ircantec_employeur": (
+        "cotisations_secteur_public/ircantec/taux_cotisations_appeles/"
+        "employeur/ircantec.yaml"),
+    # -- indépendants : les barèmes par tranche -----------------------------
+    "independant_indemnites_journalieres_artisans": (
+        "cotisations_taxes_independants_artisans_commercants/mmid/arti/"
+        "indjour.yaml"),
+    "independant_indemnites_journalieres_commercants": (
+        "cotisations_taxes_independants_artisans_commercants/mmid/comind/"
+        "indjour.yaml"),
 }
 
 

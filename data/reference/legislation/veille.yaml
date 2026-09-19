@@ -775,3 +775,53 @@ journal:
       l'amiante (loi n° 98-1194, article 41), donnée pour la recherche et non
       comme une source. Les reprises de veille listées au 17 septembre 2026
       restent ouvertes.
+  - date: '2026-09-19'
+    session: >-
+      action 38, extension de la fiche de paie au public, aux régimes
+      spéciaux et aux indépendants
+    consulte: >-
+      scripts/veille_droit.py (rien de neuf depuis le 19 septembre 2026, journal
+      à jour) ; index LEGI du dépôt, à jour au 13 septembre 2026, pour lire dans
+      leur version EN VIGUEUR les barèmes de prélèvement des travailleurs
+      indépendants, qu'OpenFisca décrit encore dans leur rédaction de 2018 :
+      D. 621-1 (LEGIARTI000049904610, taux de base maladie-maternité, 8,50 %
+      sous trois plafonds et 6,50 % au-delà), D. 621-2 (LEGIARTI000049904592,
+      les cinq paliers de la réduction de ce taux, 20 %, 40 %, 60 %, 110 % et
+      200 % du plafond), D. 621-3 (LEGIARTI000049904537, indemnités
+      journalières, 0,50 % sous cinq plafonds pour les artisans-commerçants et
+      0,30 % sous trois plafonds pour les libéraux), D. 613-1
+      (LEGIARTI000041966324, allocations familiales, nulles jusqu'à 110 % du
+      plafond puis croissantes jusqu'à 3,10 % à 140 %), L. 136-3
+      (LEGIARTI000051284498) et L. 131-6 (LEGIARTI000048683707) pour l'assiette
+      sociale unique et son abattement de 26 %. Paramètres OpenFisca du secteur
+      public et des indépendants récupérés par
+      scripts/fetch/openfisca_prelevements.py, soixante-deux en tout.
+    trouve: >-
+      Aucune règle de PENSION modifiée : ce chantier ne touche qu'aux
+      prélèvements, qui n'entrent dans aucun scénario. Deux lectures comptent.
+      Un, OpenFisca est en retard de la réforme de l'assiette unique de 2024
+      pour les indépendants : il donne encore le barème maladie de 2018
+      (0,85 % à 7,20 % entre zéro et 110 % du plafond) et une cotisation
+      d'indemnités journalières à 0,70 %. Les quatre barèmes ci-dessus ont donc
+      été transcrits depuis LEGI, et non depuis OpenFisca. Deux, le salarial
+      d'un fonctionnaire titulaire se réduit à la retenue pour pension et à la
+      CSG-CRDS, et c'est un RÉSULTAT vérifié plutôt qu'une omission : la
+      cotisation maladie salariale est absente des barèmes de l'État comme des
+      collectivités, la contribution exceptionnelle de solidarité est nulle
+      depuis le 1er janvier 2018 (article 143 de la loi n° 2016-1918), et un
+      titulaire n'est pas assuré contre le chômage (L. 5424-1 du code du
+      travail). Le net d'un fonctionnaire vaut ainsi 79,4 % de son traitement,
+      à deux dixièmes de point de celui d'un salarié du privé.
+    reste: >-
+      La contribution des indépendants à la formation professionnelle, un
+      forfait de 0,25 % du plafond, n'est pas portée — par symétrie avec les
+      taxes sur salaires du privé, qui ne le sont pas non plus. L'assiette
+      minimale des très bas revenus d'indépendant n'est pas appliquée, faute de
+      savoir si l'assuré relève d'une de ses exonérations : le net affiché en
+      bas de barème est un plafond. Les régimes d'invalidité-décès des sections
+      de la CNAVPL, souvent forfaitaires, sont alignés sur le taux des
+      artisans-commerçants. Restent à lire à la source les deux décrets de 2025
+      de la réduction générale, l'arrêté du taux d'accidents du travail retenu
+      dans son périmètre et la convention d'assurance chômage de 2024, comme au
+      19 septembre. Les reprises de veille listées au 17 septembre 2026 restent
+      ouvertes.

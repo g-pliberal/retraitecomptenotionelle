@@ -4317,10 +4317,16 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
     montants qu'on touche le mois prochain — et c'est la seule ligne du site où
     une réforme des retraites se lit sur une fiche de paie.
 
-    Il ne s'affiche pas pour tout le monde : un retraité ne cotise plus, et les
-    taux hors retraite du modèle sont ceux du régime général, donc ceux d'un
-    salarié du privé. Hors de ces deux cas, il n'y a rien à montrer, et mieux
-    vaut ne rien montrer qu'un net faux.
+    Il ne s'affiche pas pour tout le monde : un retraité ne cotise plus, et
+    quatre familles de statut n'ont pas les taux hors retraite du régime général
+    — la MSA, l'outre-mer, les élus, et qui n'a pas d'emploi. Hors de ces deux
+    cas, il n'y a rien à montrer, et mieux vaut ne rien montrer qu'un net faux.
+
+    QUATRE PROFILS, ET UN LIBELLÉ PAR PROFIL. Ce qui s'écrit « salaire » pour un
+    salarié du privé s'écrit « traitement » pour un fonctionnaire et « revenu
+    professionnel » pour un indépendant ; et la ligne « coût du travail » ne
+    s'affiche que là où ce que verse l'employeur est un prix du travail, non un
+    taux d'équilibre. ``remuneration.py`` porte la décision, ce bloc l'écrit.
 
     TROIS CHIFFRES OUVERTS, LE RESTE REPLIÉ. La page de résultats tient un
     budget de mots et n'ouvre aucun tableau : ce bloc s'y plie. Le net
@@ -4333,9 +4339,10 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
     reference = remuneration.reference
     avant, apres = reference.droit_en_vigueur, reference.proposition
     gain = remuneration.gain_net_mensuel
+    net = escape(remuneration.libelle_net.lower())
 
     ouverture = "".join([
-        g.fiche(f"votre salaire net en {reference.annee}",
+        g.fiche(f"votre {net} en {reference.annee}",
                 g.euros_centimes(avant.net / 12.0)),
         g.fiche("avec le système 4", g.euros_centimes(apres.net / 12.0)),
         g.fiche("par mois", _euros_signe(gain)),
@@ -4348,6 +4355,14 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
         f"{_euros_signe(cumul, centimes=False)} en euros de {saisie.euros}."
         if duree > 1 else ""
     )
+    # Deux hypothèses, et il faut dire laquelle vaut ici : le coût du travail
+    # tenu fixe quand l'employeur verse des taux de droit commun, l'assiette
+    # tenue fixe quand il verse un taux d'équilibre — ou qu'il n'y en a pas.
+    if remuneration.affiche_cout_du_travail:
+        sous_quelle_hypothese = "à coût du travail inchangé pour votre employeur"
+    else:
+        sous_quelle_hypothese = (
+            f"à {escape(remuneration.libelle_assiette.lower())} inchangé")
     return f"""
 <h2 id="salaire-net">Et pendant que vous cotisez</h2>
 <p class="chapeau">Une réforme des retraites ne change pas que votre pension :
@@ -4357,7 +4372,7 @@ que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">{ouverture}</div>
   <p>Soit <strong>{_euros_signe(gain)} {sens} sur votre fiche de paie</strong>,
-  à coût du travail inchangé pour votre employeur.{reste}</p>
+  {sous_quelle_hypothese}.{reste}</p>
   {_salaire_net_detail(comparaison, remuneration, saisie)}
 </div>"""
 
@@ -4375,37 +4390,73 @@ def _salaire_net_detail(comparaison: Comparaison, remuneration,
     # tableau à défiler latéralement sur un téléphone, et l'écart qui compte —
     # celui du net — est déjà le chiffre de tête. Les deux autres se lisent
     # sous le tableau, en une phrase.
-    lignes = [
+    #
+    # LA PREMIÈRE LIGNE N'EST PAS TOUJOURS LÀ. Le coût du travail suppose de
+    # savoir ce que l'employeur verse ; quand ce qu'il verse est un taux
+    # d'équilibre — 82,28 % du traitement pour l'État en 2026 —, ce n'est pas un
+    # prix du travail, et l'afficher tromperait. Le tableau se réduit alors à ce
+    # que l'assuré voit vraiment : son assiette et son net.
+    avec_cout = remuneration.affiche_cout_du_travail
+    assiette = escape(remuneration.libelle_assiette)
+    libelle_net = escape(remuneration.libelle_net)
+    lignes = []
+    if avec_cout:
         # Le mot s'affiche avec sa capitale, comme les autres intitulés de
         # ligne, mais renvoie à la même entrée du glossaire.
-        [g.terme("Coût du travail", "coût du travail"),
-         mois(avant.cout_du_travail), mois(apres.cout_du_travail)],
-        ["Salaire brut", mois(avant.brut), mois(apres.brut)],
-        ["<strong>Salaire net</strong>",
+        lignes.append([g.terme("Coût du travail", "coût du travail"),
+                       mois(avant.cout_du_travail), mois(apres.cout_du_travail)])
+    # Ce qu'on met sous « dont pour la retraite » suit la même logique : les deux
+    # parts réunies quand la colonne part d'un coût du travail, la seule part de
+    # l'assuré quand elle part de son assiette — sans quoi la ligne compterait
+    # une part patronale que le reste du tableau ignore.
+    retraite_avant = avant.retraite_totale if avec_cout else avant.retraite_salarie
+    retraite_apres = apres.retraite_totale if avec_cout else apres.retraite_salarie
+    lignes += [
+        [assiette, mois(avant.brut), mois(apres.brut)],
+        [f"<strong>{libelle_net}</strong>",
          f"<strong>{mois(avant.net)}</strong>",
          f"<strong>{mois(apres.net)}</strong>"],
-        ["Dont pour la retraite",
-         mois(avant.retraite_totale), mois(apres.retraite_totale)],
-        ["Ce qui vous arrive, sur 100 € coûtés",
-         g.pourcentage(avant.part_qui_arrive),
-         g.pourcentage(apres.part_qui_arrive)],
+        ["Dont pour la retraite" if avec_cout
+         else "Dont pour la retraite, à votre charge",
+         mois(retraite_avant), mois(retraite_apres)],
+        ["Ce qui vous arrive, sur 100 € coûtés" if avec_cout
+         else f"Ce qui vous reste, sur 100 € de {assiette.lower()}",
+         g.pourcentage(avant.part_qui_arrive if avec_cout
+                       else avant.net / avant.brut),
+         g.pourcentage(apres.part_qui_arrive if avec_cout
+                       else apres.net / apres.brut)],
     ]
     grille = g.tableau(
         ["Par mois", "Systèmes 1 à 3", "Système 4"],
         lignes, ["", "nombre", "nombre"],
+        # Pas d'`escape` ici : `g.tableau` échappe déjà son titre. Le doubler
+        # ne se voyait pas tant que le seul statut couvert était « Salarié du
+        # secteur privé » ; « Fonctionnaire titulaire de l'État » a une
+        # apostrophe, et elle sortait en `&amp;#x27;`.
         titre=f"Votre fiche de paie en {reference.annee}, sous les quatre "
-              f"systèmes — {escape(remuneration.libelle_statut)}",
+              f"systèmes — {remuneration.libelle_statut}",
         entete_de_ligne=True,
     )
-    lecture = (
-        f"<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
-        f"prélèvement retraite, lui, passe de {mois(avant.retraite_totale)} à "
-        f"{mois(apres.retraite_totale)} par mois, soit "
-        f"<strong>{_euros_signe((apres.retraite_totale - avant.retraite_totale) / 12.0)}"
-        f"</strong> ; le salaire brut monte de "
-        f"{_euros_signe((apres.brut - avant.brut) / 12.0)}, et le net de "
-        f"{_euros_signe((apres.net - avant.net) / 12.0)}.</p>"
-    )
+    if avec_cout:
+        lecture = (
+            f"<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
+            f"prélèvement retraite, lui, passe de {mois(retraite_avant)} à "
+            f"{mois(retraite_apres)} par mois, soit "
+            f"<strong>{_euros_signe((retraite_apres - retraite_avant) / 12.0)}"
+            f"</strong> ; le salaire brut monte de "
+            f"{_euros_signe((apres.brut - avant.brut) / 12.0)}, et le net de "
+            f"{_euros_signe((apres.net - avant.net) / 12.0)}.</p>"
+        )
+    else:
+        lecture = (
+            f"<p>Le {assiette.lower()} ne bouge pas : c'est l'hypothèse, et ici "
+            f"c'est la seule disponible. Ce que vous versez pour votre retraite "
+            f"passe de {mois(retraite_avant)} à {mois(retraite_apres)} par mois, "
+            f"soit <strong>"
+            f"{_euros_signe((retraite_apres - retraite_avant) / 12.0)}</strong> ; "
+            f"votre net bouge donc de "
+            f"{_euros_signe((apres.net - avant.net) / 12.0)}.</p>"
+        )
 
     alerte = ""
     if remuneration.bute_sur_le_smic:
@@ -4448,51 +4499,156 @@ def _salaire_net_epargne(epargne: float, remuneration,
         "cinq points ne partent pas : ils alimentent un compte qui reste le "
         "vôtre, transmissible à vos héritiers tant qu'il n'est pas liquidé — "
         f"{g.euros(remuneration.epargne_cumulee)} d'ici votre départ, en euros "
-        f"de {saisie.euros}. Sans eux, le salaire net monterait à tous les "
-        "niveaux de salaire ; avec eux, il baisse au voisinage du SMIC.</p>"
+        f"de {saisie.euros}. "
+        + ("Sans eux, le salaire net monterait à tous les niveaux de salaire ; "
+           "avec eux, il baisse au voisinage du SMIC."
+           if remuneration.affiche_cout_du_travail
+           else "Sans eux, le chiffre du haut remonterait de la part que vous "
+                "en supportez : ce que vous perdez en net, vous le retrouvez "
+                "sur ce compte.")
+        + "</p>"
     )
 
 
 def _salaire_net_methode(comparaison: Comparaison, remuneration) -> str:
-    """Ce qu'il faut savoir pour discuter le chiffre plutôt que le croire."""
+    """Ce qu'il faut savoir pour discuter le chiffre plutôt que le croire.
+
+    Le premier paragraphe est celui qui change d'un profil à l'autre, et c'est
+    le plus important : il dit ce que le modèle tient FIXE, et pourquoi il n'a
+    pas le choix quand l'employeur verse un taux d'équilibre.
+    """
     parametres = comparaison.parametres
     part = parametres.part_salariale_taux_unique
+    assiette = escape(remuneration.libelle_assiette.lower())
     return f"""
 <h3>Comment ce chiffre est calculé, et ce qu'il suppose</h3>
-<p><strong>Le coût du travail est tenu fixe.</strong> C'est ce que votre
+{_salaire_net_incidence(remuneration, assiette)}
+{_salaire_net_partage(remuneration, parametres, part)}
+{_salaire_net_allegement(remuneration)}
+{_salaire_net_perimetre(remuneration)}
+<p class="discret">Taux hors retraite : millésime {remuneration.millesime_bareme},
+appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
+de financement. Fiabilité : {escape(str(remuneration.fiabilite))}. Les taux de
+retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
+exactement ce que le compte notionnel encaisse.</p>"""
+
+
+def _salaire_net_incidence(remuneration, assiette: str) -> str:
+    """Ce que le modèle tient fixe — et, pour le public, pourquoi il le doit.
+
+    C'est la décision que ce bloc a demandée, et elle est écrite sur la page
+    plutôt que dans un fichier : la contribution d'un employeur public est un
+    taux d'ÉQUILIBRE, pas un prix du travail, et l'incidence intégrale posée
+    dessus donnerait un gain qui n'existe pas.
+    """
+    if remuneration.affiche_cout_du_travail:
+        return """<p><strong>Le coût du travail est tenu fixe.</strong> C'est ce que votre
 employeur a budgété pour votre poste, et aucune réforme des retraites ne le
 change. Ce qu'il ne verse plus en cotisations, il le verse en salaire : le brut
 monte, et le net avec lui. C'est ce que veut dire « réduire l'écart entre le net
 et le brut », et c'est l'hypothèse la plus favorable à une baisse de cotisation
 — une cotisation patronale est du salaire différé, mais rien n'oblige un
-employeur à le rendre du jour au lendemain.</p>
-<p><strong>Les {g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)}
+employeur à le rendre du jour au lendemain.</p>"""
+    if remuneration.profil == "independant":
+        return f"""<p><strong>Votre {assiette} est tenu fixe, et il n'y a pas de coût du
+travail à afficher</strong> : vous n'avez pas d'employeur, et votre cotisation
+est intégralement personnelle. Ce qu'une baisse de taux vous rend vous revient
+donc en entier, sans qu'il faille supposer qui que ce soit pour le répercuter —
+c'est le seul des quatre profils où l'incidence n'est pas une hypothèse.
+L'assiette retenue est l'assiette sociale unique : votre revenu professionnel
+après l'abattement de 26 %, qui sert depuis 2025 aux cotisations comme à la
+CSG.</p>"""
+    return f"""<p><strong>Votre {assiette} est tenu fixe, et le site n'affiche pas de
+coût du travail pour votre statut.</strong> Ce n'est pas un oubli, c'est un
+refus. Ce que verse votre employeur n'est pas le prix de votre travail mais un
+<strong>taux d'équilibre</strong> — jusqu'à 82,28 % du traitement pour l'État en
+2026 —, fixé pour que le compte « Pensions » tombe juste, c'est-à-dire pour
+payer les pensions d'aujourd'hui, et non parce que vous acquerriez 82 % de votre
+traitement en droits nouveaux. Le traiter comme un coût du travail et supposer
+qu'une baisse vous reviendrait en salaire afficherait une augmentation de
+soixante-dix points qui n'existe pas : cette contribution finance une dette de
+pensions qui, elle, reste à payer. C'est la page <a href="{g.lien("/cout")}">Coût</a>
+qui en traite.</p>
+<p>Le chiffre ci-dessus est donc la lecture <strong>prudente</strong> : seule la
+part que vous supportez bouge. Il n'est pas comparable, terme à terme, au gain
+d'un salarié du privé, dont le site fait remonter la part patronale dans le
+brut.</p>"""
+
+
+def _salaire_net_partage(remuneration, parametres, part: float) -> str:
+    """Le partage des 18 %, et ce qu'il pèse — ou ne pèse pas, sans employeur."""
+    repartition = g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)
+    capitalise = g.pourcentage(
+        parametres.taux_capitalisation_obligatoire, decimales=0)
+    if remuneration.profil == "independant":
+        return f"""<p><strong>Les {repartition} et les {capitalise} capitalisés sont à votre
+charge en entier.</strong> La proposition les annonce « salariale et patronale
+additionnées » ; vous êtes les deux à la fois, comme vous l'êtes déjà des
+vingt-six points que vous versez aujourd'hui. Vous prêter un employeur pour la
+moitié de la charge fabriquerait un gain qui n'existe pas.</p>"""
+    if not remuneration.affiche_cout_du_travail:
+        return f"""<p><strong>Les {repartition} sont partagés moitié-moitié</strong> entre
+vous et votre employeur, comme les {capitalise} capitalisés : votre part est
+donc de {g.pourcentage(part, decimales=0)} de chacun. La proposition ne dit pas
+qui porte quoi, et ce partage commande directement le chiffre ci-dessus —
+puisque seule votre part y figure, tout déplacer vers l'employeur ferait
+disparaître la hausse, et tout déplacer vers vous la doublerait.</p>"""
+    return f"""<p><strong>Les {repartition}
 sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
-{g.pourcentage(parametres.taux_capitalisation_obligatoire, decimales=0)}
+{capitalise}
 capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
 neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
 porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
 bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
-est le partage du milieu ({g.pourcentage(part, decimales=0)} pour vous).</p>
-<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
+est le partage du milieu ({g.pourcentage(part, decimales=0)} pour vous).</p>"""
+
+
+def _salaire_net_allegement(remuneration) -> str:
+    """L'allègement sur les bas salaires — quand il s'applique, et sinon pourquoi."""
+    if remuneration.affiche_cout_du_travail:
+        return """<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
 Depuis 2026, il efface au niveau du SMIC la totalité des cotisations patronales
 qu'il vise — son coefficient, 40,21 %, est exactement leur somme — et s'éteint à
 trois SMIC. Conséquence, et elle va à contre-courant : <strong>au SMIC, baisser
 la cotisation retraite de l'employeur ne rend rien</strong>, puisqu'il n'en
 versait déjà plus. La loi fixe ce coefficient « dans la limite de la somme des
 taux » du périmètre ; le modèle refait donc l'addition sous la proposition au
-lieu de garder le chiffre d'aujourd'hui.</p>
-<p><strong>Ce que la fiche de paie ne porte pas</strong> : la taxe
+lieu de garder le chiffre d'aujourd'hui.</p>"""
+    return """<p><strong>L'allègement sur les bas salaires ne joue pas ici.</strong> La
+réduction générale de l'article L. 241-13 n'efface que des cotisations
+patronales du régime général ; elle ne s'applique ni à la retenue d'un
+fonctionnaire, ni aux cotisations personnelles d'un indépendant. C'est pourtant
+elle qui commande le résultat d'un salarié du privé, chez qui elle rend nul, au
+voisinage du SMIC, le gain d'une baisse de cotisation patronale — une raison de
+plus de ne pas comparer les deux chiffres sans précaution.</p>"""
+
+
+def _salaire_net_perimetre(remuneration) -> str:
+    """Ce que la fiche ne porte pas, et qui n'est pas le même selon le profil."""
+    if remuneration.profil == "independant":
+        return """<p><strong>Ce que la fiche ne porte pas</strong> : la contribution à la
+formation professionnelle, qui est un forfait de 0,25 % du plafond et non un
+taux, et l'assiette minimale que la loi impose aux très bas revenus — le net
+affiché en bas de barème est donc un plafond. Vos cotisations de retraite sont
+celles des fiches de régime, qui alignent l'artisan et le commerçant sur le
+régime général : c'est la convention du modèle entier, et elle vaut ici comme
+pour la pension.</p>"""
+    if not remuneration.affiche_cout_du_travail:
+        return """<p><strong>Ce que la fiche ne porte pas</strong> : la retraite
+additionnelle de la fonction publique, assise sur les PRIMES, que l'assiette de
+ce modèle — le traitement indiciaire brut et la nouvelle bonification
+indiciaire — exclut par construction. Un agent dont les primes pèsent lourd voit
+donc ici une fraction de sa rémunération, et non sa feuille de paie entière. Les
+autres prélèvements salariaux sont nuls, et c'est un résultat : la cotisation
+maladie salariale a disparu en 2018 comme dans le privé, un titulaire n'est pas
+assuré contre le chômage, et la contribution exceptionnelle de solidarité de 1 %
+a été supprimée la même année.</p>"""
+    return """<p><strong>Ce que la fiche ne porte pas</strong> : la taxe
 d'apprentissage, la formation professionnelle, la participation à la
 construction, le versement mobilité, la prévoyance et la mutuelle d'entreprise.
 Aucune ne bouge d'un système à l'autre, et plusieurs dépendent de la commune ou
 de la taille de l'entreprise. Le coût du travail affiché est donc un plancher.
-L'employeur type est une entreprise de cinquante salariés et plus.</p>
-<p class="discret">Taux hors retraite : millésime {remuneration.millesime_bareme},
-appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
-de financement. Fiabilité : {escape(str(remuneration.fiabilite))}. Les taux de
-retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
-exactement ce que le compte notionnel encaisse.</p>"""
+L'employeur type est une entreprise de cinquante salariés et plus.</p>"""
 
 
 def _decomposition(contexte: Contexte, saisie: Saisie,

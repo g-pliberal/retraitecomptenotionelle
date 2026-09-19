@@ -5750,13 +5750,13 @@ deux chiffres décrivent deux futurs, et leur somme n'a pas de sens.
 
 ---
 
-## 5 ante bis. La fiche de paie : sept réserves, dont deux décisives
+## 5 ante bis. La fiche de paie : neuf réserves, dont trois décisives
 
 Le site affiche, sous les quatre pensions, ce qu'un actif touche PENDANT qu'il
-cotise : coût du travail, salaire brut, salaire net, sous le droit en vigueur et
+cotise : coût du travail, revenu brut, revenu net, sous le droit en vigueur et
 sous la proposition. C'est la seule grandeur du dépôt qui ne soit pas une
-pension, et elle porte ses incertitudes propres. Les deux premières commandent
-le signe du résultat, pas seulement sa taille.
+pension, et elle porte ses incertitudes propres. Trois d'entre elles — la 1, la
+2 et la 5 — commandent le SIGNE du résultat, et pas seulement sa taille.
 
 **1. L'incidence est supposée intégrale, et c'est une hypothèse.** Le coût du
 travail est tenu fixe, et le salaire brut est celui qui l'épuise sous les
@@ -5765,7 +5765,8 @@ salaire. C'est la lecture que fait l'économie du travail à long terme — une
 cotisation patronale est du salaire différé —, et c'est la plus favorable à une
 baisse de cotisation. Rien n'oblige un employeur à rendre son économie du jour
 au lendemain, et la lecture prudente, où seule la part salariale bouge, donne
-environ la moitié du gain (`incidence` dans `remuneration.py`).
+environ la moitié du gain : c'est `Incidence.ASSIETTE` dans `remuneration.py`,
+et la réserve 5 dit pour quels statuts c'est la seule lecture disponible.
 
 **2. Le partage salarial/patronal du taux unique n'est pas neutre, et la
 proposition ne le fixe pas.** Elle dit « 18 %, salariale et patronale
@@ -5794,12 +5795,52 @@ réalité, c'est le coût du travail qui monterait. Le site pose un avertissemen
 quand le cas se produit ; le modèle, lui, ne recalcule pas la variante « coût du
 travail en hausse », qui supposerait de décider ce que l'employeur en fait.
 
-**5. Un salarié du privé, et lui seul.** Les taux hors retraite sont ceux du
-régime général. Un fonctionnaire, un artisan, un agent d'un régime spécial n'ont
-ni les mêmes branches ni les mêmes assiettes, et leur « employeur » est l'État,
-dont la contribution est un taux d'équilibre et non un prix du travail. Le site
-n'affiche donc aucune fiche de paie à ces statuts — mieux vaut rien qu'un net
-faux. C'est le premier prolongement à faire.
+**5. Le gain d'un fonctionnaire et celui d'un salarié du privé ne se comparent
+pas terme à terme.** Le site couvre désormais quatre profils, et le découpage
+n'est pas celui des familles de statut : c'est celui de ce que l'on sait de
+l'employeur. Quand il verse des taux de DROIT COMMUN — un salarié du privé, un
+agent d'un régime spécial que la fermeture de 2023 a versé au régime général, un
+agent public non titulaire —, le site affiche un coût du travail et le tient
+fixe : l'incidence est intégrale. Quand ce qu'il verse est un taux
+d'ÉQUILIBRE — 82,28 % du traitement pour l'État en 2026, 37,65 % pour la
+CNRACL —, **le site n'affiche pas de coût du travail** : ce taux est fixé pour
+que le compte d'affectation spéciale « Pensions » tombe juste, non parce que
+l'agent acquerrait 82 % de son traitement en droits nouveaux, et poser dessus
+l'incidence intégrale afficherait une hausse de salaire de soixante-dix points
+qui n'existe pas — la dette de pensions qu'il finance, elle, reste à payer. Pour
+ces statuts, le traitement indiciaire brut est tenu fixe et seule la retenue de
+l'agent bouge : c'est la lecture prudente. Le gain affiché vaut donc **environ
+la moitié** de ce qu'une lecture intégrale donnerait, et le mettre en regard de
+celui d'un salarié du privé compare deux hypothèses et non deux statuts. La page
+le dit à l'endroit où elle affiche le chiffre. Un indépendant tient lui aussi
+son revenu fixe, mais là ce n'est pas une hypothèse : il n'a pas d'employeur,
+donc rien à répercuter.
+
+**5 bis. Quatre familles de statut ne reçoivent toujours aucune fiche de paie.**
+Les salariés et exploitants agricoles — la MSA a ses propres taux hors
+retraite —, l'outre-mer, dont chaque collectivité a sa caisse, les élus, dont
+l'indemnité de fonction n'est pas un salaire, et qui n'a pas d'emploi. Mieux
+vaut rien qu'un net faux, et c'est un test qui le tient.
+
+**5 ter. Ce que chaque profil laisse dehors.** Pour un fonctionnaire, la
+retraite additionnelle de la fonction publique (RAFP), assise sur les PRIMES que
+l'assiette du dépôt — traitement indiciaire brut et NBI — exclut par
+construction : un agent dont les primes pèsent lourd ne voit ici qu'une fraction
+de sa feuille de paie. Pour un indépendant, la contribution à la formation
+professionnelle (un forfait de 0,25 % du plafond, et non un taux, laissé dehors
+par symétrie avec les taxes sur salaires du privé) et l'assiette minimale que la
+loi impose aux très bas revenus, faute de savoir si l'assuré relève d'une de ses
+exonérations : le net affiché en bas de barème est un plafond. Ses cotisations
+de retraite sont par ailleurs celles des fiches de régime, qui alignent
+l'artisan et le commerçant sur le régime général — 15,45 % sous le plafond et
+2,51 % déplafonnés plutôt que 17,15 % et 0,72 % : c'est la convention du modèle
+entier, et la fiche de paie ne peut pas en diverger sans que le compte notionnel
+et elle cessent de dire la même chose. Enfin, pour un agent public non
+titulaire, le coefficient maximal de la réduction générale reste celui du décret
+— un chiffre national bâti sur les taux du privé —, alors que le périmètre de
+son employeur est plus étroit de la CEG et plus large de l'Ircantec ; ce qui
+borne la réduction est alors la règle générale, qui interdit d'effacer plus que
+ce qui est dû.
 
 **6. Le coût du travail affiché est un plancher.** Ne sont comptées ni la taxe
 d'apprentissage, ni la contribution à la formation, ni la participation à la
@@ -5818,8 +5859,14 @@ départ : le modèle ne prévoit pas la prochaine loi de financement. Les salair
 le plafond et le SMIC, eux, suivent les séries projetées, si bien que le rapport
 du salaire au SMIC — ce qui commande la réduction générale — reste stable. Les
 taux viennent d'OpenFisca-France, transcription tierce du Journal officiel :
-fiabilité `haute`, jamais `certifiee`. La réduction générale, elle, a été lue à
-la source (L. 241-13, version du 1er janvier 2026, LEGIARTI000053280526).
+fiabilité `haute`, jamais `certifiee`. Quatre barèmes ont en revanche été lus à
+la source dans l'index LEGI : la réduction générale (L. 241-13, version du
+1er janvier 2026, LEGIARTI000053280526) et les trois barèmes d'indépendant que
+la réforme de l'assiette unique de 2024 a réécrits et dont OpenFisca porte
+encore la rédaction de 2018 — maladie et maternité (D. 621-1 et D. 621-2),
+allocations familiales (D. 613-1) et indemnités journalières (D. 621-3). C'est
+la réserve à surveiller en sens inverse : là où OpenFisca a du retard, le dépôt
+ne le voit que s'il va lire.
 
 Rien de tout cela ne touche une pension : retiré, le modèle calcule exactement
 les mêmes six scénarios.
@@ -6228,7 +6275,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 1020 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 1037 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

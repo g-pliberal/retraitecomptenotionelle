@@ -1104,8 +1104,9 @@ src/retraite_notionnelle/
   scenarios/                    système actuel, comptes notionnels
   simulateur.py                 façade et restitution
   remuneration.py               la fiche de paie d'un actif : coût du travail,
-                                salaire brut, salaire net — la seule grandeur
-                                du dépôt qui ne soit pas une pension
+                                revenu brut, revenu net, en quatre profils —
+                                la seule grandeur du dépôt qui ne soit pas
+                                une pension
   castypes.py                   cas général
   cout.py                       ce que chaque système a coûté, coûterait,
                                 et le solde qu'il laisserait
@@ -1125,7 +1126,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1020 tests Python
+tests/                          1037 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
