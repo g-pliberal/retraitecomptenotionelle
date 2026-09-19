@@ -59,7 +59,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import ccss_transferts_retraite as CCSS  # noqa: E402
-from lecture_pdf import lignes_pdf  # noqa: E402
+from lecture_pdf import lignes_par_page, lignes_pdf  # noqa: E402
 
 SORTIE = Path("data/brut/ccss_regimes.json")
 CACHE = Path("data/brut/ccss_rapports")
@@ -238,23 +238,30 @@ def sommaire(lignes: list[str]) -> dict[str, str]:
     return titres
 
 
-def _fiche_courante(lignes: list[str], rang: int) -> str | None:
-    """Le numéro de fiche le plus proche AU-DESSUS du tableau.
+def _fiche_de_la_page(page: list[str]) -> str | None:
+    """Le numéro de fiche que porte cette page, s'il est unique.
 
-    C'EST UNE HEURISTIQUE, ET ELLE SE TROMPE PARFOIS. Le numéro est répété en
-    tête de chaque page, mais pas toujours au-dessus du tableau : dans le
-    rapport de 2025, deux tableaux ont été portés au crédit du mauvais régime.
-    Deux remèdes ont été essayés et tous deux ont fait PIRE — préférer le titre
-    du tableau (la CNRACL héritait alors du SRE, la CNIEG d'un tableau SNCF),
-    puis délimiter les fiches par intervalles (tout tombait dans une seule).
-    On garde donc l'heuristique, et c'est ``_ecarts_de_magnitude`` qui rattrape
-    ce qu'elle rate.
+    LE NUMÉRO DE FICHE EST UNE TÊTE DE PAGE : il vaut pour la page qui le
+    porte, et pour elle seule. Le chercher en remontant depuis le tableau,
+    comme le faisait ce module, suppose que le flux sorte les pages dans
+    l'ordre du document — ce qui est faux. **Le rapport de 2025 les sort dans
+    l'ordre INVERSE des fiches** : 4.15, puis 4.14, puis 4.13… Le marqueur le
+    plus proche au-dessus d'un tableau y est donc celui de la fiche VOISINE.
+    C'est ainsi qu'un tableau « de la branche vieillesse de la CNRACL » se
+    retrouvait porté au crédit de la SNCF, et que la CNRACL héritait du SRE.
+
+    Deux remèdes avaient été tentés avant celui-ci, et tous deux ont fait
+    pire : préférer le titre du tableau quand il nomme le régime, et délimiter
+    les fiches par intervalles. Le bon niveau n'était ni l'un ni l'autre, mais
+    la PAGE, qu'il a fallu exposer dans ``lecture_pdf``.
+
+    Une page qui porte deux numéros différents est ambiguë — un pied de page
+    de fin de fiche et une tête de page de la suivante — et on ne devine pas :
+    on rend ``None``, et le tableau part aux orphelins.
     """
-    for i in range(rang, max(rang - PORTEE_FICHE, 0), -1):
-        m = MARQUEUR.match(lignes[i].strip())
-        if m:
-            return m.group(1)
-    return None
+    marques = {m.group(1) for m in
+               (MARQUEUR.match(l.strip()) for l in page) if m}
+    return marques.pop() if len(marques) == 1 else None
 
 
 def _entete(lignes: list[str], rang: int) -> tuple[int, list] | None:
@@ -295,47 +302,45 @@ def lire_tableau(lignes: list[str], depart: int, colonnes: list) -> dict[str, di
 def lire_rapport(annee_rapport: int, octets: bytes) -> tuple[dict, int]:
     """Les tableaux « Données générales » d'un rapport, par régime.
 
+    On parcourt PAGE PAR PAGE, parce que c'est la page qui dit à quelle fiche
+    un tableau appartient. La fenêtre de lecture déborde sur la page suivante :
+    un tableau annoncé en bas d'une page a ses lignes sur l'autre, et le
+    tronquer à la page perdait la moitié des séries.
+
     Rend aussi le nombre de tableaux qu'on a vus sans savoir à quel régime les
     rattacher : c'est la mesure de ce que la mise en page de l'époque refuse.
     """
-    lignes = lignes_pdf(octets)
-    titres = sommaire(lignes)
-    trouves: dict[str, dict[str, dict[int, float]]] = {}
+    pages = lignes_par_page(octets)
+    titres = sommaire([l for page in pages for l in page])
+    trouves: dict[tuple[str, str, str], dict[str, dict[int, float]]] = {}
     orphelins = 0
-    for i, ligne in enumerate(lignes):
-        if not TABLEAU.search(ligne):
+    for numero, page in enumerate(pages):
+        if not any(TABLEAU.search(l) for l in page):
             continue
-        tete = _entete(lignes, i)
-        if tete is None:
-            continue
-        rang, colonnes = tete
-        # LE TITRE DU TABLEAU PRIME SUR LE MARQUEUR DE PAGE quand il nomme le
-        # régime. Dans le rapport de 2025, le marqueur trouvé en remontant
-        # appartient à la fiche PRÉCÉDENTE : un tableau « de la branche
-        # vieillesse de la CNRACL » était rattaché à la SNCF, et la CNRACL
-        # récupérait celui du SRE — 2 151 694 cotisants portés au crédit de la
-        # SNCF, qui en a cent fois moins. Le titre, lui, ne se trompe pas.
-        fiche = _fiche_courante(lignes, i)
+        fiche = _fiche_de_la_page(page)
         regime = titres.get(fiche or "")
-        if not regime:
-            orphelins += 1
-            continue
-        code = canonique(regime)
-        if code is None:
-            orphelins += 1
-            continue
-        # UNE MÊME FICHE PORTE PLUSIEURS « DONNÉES GÉNÉRALES ». Le titre
-        # distingue « toutes branches » de la vieillesse seule, « Ensemble des
-        # risques », « régime unifié », le complémentaire des indépendants…
-        # Les fondre faisait dire à un même rapport deux valeurs pour la même
-        # case — 8 et 685 en charges nettes de la MSA salariés en 2013 — et
-        # fabriquait cinquante-quatre conflits « un rapport contre lui-même ».
-        tableau = _cle_tableau(ligne)
-        for libelle, annees in lire_tableau(lignes, rang, colonnes).items():
-            cible = trouves.setdefault((code, regime, tableau), {}).setdefault(libelle, {})
-            for a, v in annees.items():
-                if a < annee_rapport:      # jamais une prévision
-                    cible[a] = v
+        code = canonique(regime) if regime else None
+        # La fenêtre déborde sur DEUX pages : un tableau annoncé en bas d'une
+        # page a son en-tête sur la suivante et ses dernières lignes sur celle
+        # d'après. S'arrêter à une seule page voisine faisait tomber le rapport
+        # de 2026 de 407 valeurs à 107.
+        suite = page + [l for autre in pages[numero + 1:numero + 3] for l in autre]
+        for i, ligne in enumerate(page):
+            if not TABLEAU.search(ligne):
+                continue
+            if code is None:
+                orphelins += 1
+                continue
+            tete = _entete(suite, i)
+            if tete is None:
+                continue
+            rang, colonnes = tete
+            tableau = _cle_tableau(ligne)
+            for libelle, annees in lire_tableau(suite, rang, colonnes).items():
+                cible = trouves.setdefault((code, regime, tableau), {}).setdefault(libelle, {})
+                for a, v in annees.items():
+                    if a < annee_rapport:      # jamais une prévision
+                        cible[a] = v
     return trouves, orphelins
 
 
@@ -442,17 +447,36 @@ def _doublons(valeurs: list[dict]) -> tuple[list[dict], list[dict]]:
 
     On n'arbitre pas : les deux partent, parce que rien dans le texte ne dit
     lequel est le bon.
+
+    MAIS SEULEMENT AU SEIN D'UN MÊME TABLEAU. Une fiche porte souvent sa table
+    vieillesse et sa table « toutes branches », dont les lignes portent les
+    mêmes libellés sans mesurer la même chose. Les confondre revenait à jeter
+    318 valeurs justes une fois l'attribution par page réparée.
     """
     par_case: dict[tuple[str, str, int], list[dict]] = {}
     for v in valeurs:
         par_case.setdefault((v["regime"], v["serie"], v["annee"]), []).append(v)
     gardees, doubles = [], []
     for lot in par_case.values():
-        distinctes = {round(v["valeur"], 6) for v in lot}
-        if len(distinctes) > 1:
+        # DEUX TABLEAUX DIFFÉRENTS NE SE CONTREDISENT PAS : ils mesurent deux
+        # choses. Une fiche porte souvent sa table vieillesse ET sa table
+        # « toutes branches », et leurs « prestations légales nettes » n'ont
+        # aucune raison d'être égales — 10 577 contre 5 751 millions à la MSA
+        # salariés en 2016. Rejeter ces paires écartait 318 valeurs justes,
+        # soit la totalité des doublons une fois l'attribution réparée. On ne
+        # rejette donc que la contradiction VRAIE : deux valeurs du MÊME
+        # tableau pour la même case.
+        par_tableau: dict[str, set[float]] = {}
+        for v in lot:
+            par_tableau.setdefault(v.get("tableau", ""), set()).add(round(v["valeur"], 6))
+        if any(len(s) > 1 for s in par_tableau.values()):
             doubles.extend(lot)
-        else:
-            gardees.append(lot[0])
+            continue
+        vus: set[str] = set()
+        for v in lot:
+            if v.get("tableau", "") not in vus:
+                vus.add(v.get("tableau", ""))
+                gardees.append(v)
     return gardees, doubles
 
 

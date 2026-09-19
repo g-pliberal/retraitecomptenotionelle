@@ -151,7 +151,7 @@ def _reels(operandes: bytes) -> list[float]:
     return valeurs
 
 
-def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
+def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
     """Reconstitue les lignes visuelles du document, de haut en bas.
 
     LE NUMÉRO DE FLUX FAIT PARTIE DE LA CLÉ, et c'est tout sauf un détail.
@@ -217,7 +217,12 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
                 if morceau.strip():
                     fragments.append((page, y, x, morceau))
 
-    fragments.sort(key=lambda f: (f[0], -f[1], f[2]))
+    return fragments
+
+
+def _assembler(fragments: list[tuple[int, float, float, str]],
+               tolerance: float) -> list[str]:
+    """Regroupe des fragments déjà triés en lignes visuelles."""
     lignes: list[str] = []
     courante: list[str] = []
     ordonnee = None
@@ -245,6 +250,47 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
     if courante:
         lignes.append(re.sub(r"\s+", " ", "".join(courante)).strip())
     return [l for l in lignes if l]
+
+
+def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
+    """Reconstitue les lignes visuelles du document, de haut en bas.
+
+    LE NUMÉRO DE FLUX FAIT PARTIE DE LA CLÉ, et c'est tout sauf un détail.
+    Chaque page d'un PDF a son propre repère : l'ordonnée 700 y désigne le même
+    endroit de la feuille, page 1 comme page 60. Regrouper les fragments sur la
+    seule ordonnée collait bout à bout la ligne du haut de CHAQUE page — un
+    titre de la page 1 suivi d'un chiffre de la page 40 et d'une note de la
+    page 97, dans une même chaîne. Sur la chronologie de la CARMF, cent pages
+    de tableaux, cela rendait huit lignes pour cent quatre-vingt mille
+    caractères, et l'on en concluait que la mise en page « ne se reconstituait
+    pas ». Elle se reconstitue très bien : c'est le lecteur qui empilait les
+    pages.
+    """
+    fragments = _fragments(octets)
+    fragments.sort(key=lambda f: (f[0], -f[1], f[2]))
+    return _assembler(fragments, tolerance)
+
+
+def lignes_par_page(octets: bytes, tolerance: float = 3.0) -> list[list[str]]:
+    """Les mêmes lignes que :func:`lignes_pdf`, mais groupées par page.
+
+    Écrit pour les rapports à la CCSS, dont le numéro de fiche est une TÊTE DE
+    PAGE : il vaut pour la page qui le porte, et pour elle seule. Savoir où une
+    page commence et finit est donc ce qui permet de rattacher un tableau à sa
+    fiche — et le rapport de 2025 montre pourquoi on ne peut pas s'en passer :
+    ses pages sortent du flux dans l'ordre INVERSE des fiches, 4.15 puis 4.14
+    puis 4.13, si bien que le marqueur le plus proche au-dessus d'un tableau
+    est celui de la fiche VOISINE, jamais la sienne.
+
+    On ne refait pas l'extraction : le découpage se lit dans les mêmes
+    fragments, dont le premier champ est déjà le numéro de page.
+    """
+    fragments = _fragments(octets)
+    fragments.sort(key=lambda f: (f[0], -f[1], f[2]))
+    pages: dict[int, list[tuple[int, float, float, str]]] = {}
+    for fragment in fragments:
+        pages.setdefault(fragment[0], []).append(fragment)
+    return [_assembler(pages[page], tolerance) for page in sorted(pages)]
 
 
 def texte_pdf(octets: bytes) -> str:

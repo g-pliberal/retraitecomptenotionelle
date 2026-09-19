@@ -3659,6 +3659,58 @@ toucher aux moteurs de pension.
    exactement la fiche 4.1 et le recueil de la caisse ; MSA exploitants 2021 à
    445 511, exactement la fiche 4.1.
 
+   **Neuvième passe, 19 septembre 2026 : l'attribution est réparée, et le bon
+   niveau était la PAGE.** Trois tentatives avaient échoué faute d'avoir
+   regardé la source. La quatrième a commencé par là, et la cause est nette :
+   **le rapport de 2025 sort ses pages dans l'ordre INVERSE des fiches** —
+   marqueurs 4.15, puis 4.14, puis 4.13 à mesure que les lignes avancent.
+   Chercher le marqueur « le plus proche au-dessus » y donne donc
+   systématiquement la fiche VOISINE. D'où le tableau « de la branche
+   vieillesse de la CNRACL » porté au crédit de la SNCF, et la CNRACL héritant
+   du SRE.
+
+   Le numéro de fiche est une TÊTE DE PAGE : il vaut pour sa page, et pour
+   elle seule. Le bon niveau n'était donc ni le marqueur le plus proche, ni le
+   titre du tableau, ni un intervalle — c'était la page, qu'il a fallu exposer
+   dans `lecture_pdf` par une fonction `lignes_par_page`. La vérification
+   tient en une ligne : sur les treize pages du rapport de 2025 qui portent un
+   « Données générales », **chacune porte exactement un marqueur, et c'est le
+   bon**.
+
+   `lecture_pdf` a été scindé pour cela en `_fragments` et `_assembler`, dont
+   `lignes_pdf` et `lignes_par_page` se servent toutes deux ; le refactor est
+   neutre, contrôlé sur le rapport de 2025 — mêmes 15 485 lignes, en 505
+   pages, à l'identique.
+
+   **Un garde-fou est tombé avec le bogue, et c'est le signe que c'était le
+   bon.** Le détecteur de « case remplie deux fois » écartait 318 valeurs. Une
+   fois l'attribution réparée, on a regardé ce qu'il rejetait : **les 133 cas
+   venaient tous de tableaux DIFFÉRENTS** — la table vieillesse d'une fiche
+   contre sa table « toutes branches », dont les lignes portent les mêmes
+   libellés sans mesurer la même chose : 10 577 contre 5 751 millions de
+   prestations légales nettes à la MSA salariés en 2016. Ce n'était pas une
+   contradiction, c'était deux mesures. Le détecteur ne rejette donc plus que
+   la contradiction vraie, au sein d'un MÊME tableau — **et il n'en trouve
+   plus aucune**.
+
+   **L'état après réparation** : 5 419 valeurs, 25 régimes, 2011-2025, et
+   **zéro case remplie deux fois**. Restent 148 désaccords entre rapports et
+   191 écarts de magnitude, tous deux consultables dans le fichier produit.
+
+   Les contrôles par source tierce passent **neuf fois sur dix à l'unité** —
+   SNCF 2023 et 2024, CNRACL 2013, 2021 et 2024, CNIEG 2023 et 2024, MSA
+   exploitants 2021 et 2024 — la dixième étant un trou, la SNCF de 2021, qu'un
+   autre garde-fou retient. Et deux séries qui étaient fausses ou absentes
+   sont maintenant justes : la CNIEG de 2023 vaut 135 775 et non plus 112 621,
+   qui était la SNCF ; la CNRACL de 2024 vaut 2 151 694 et non plus 2 008 352,
+   qui était le SRE.
+
+   **La leçon, et c'est la même que deux passes plus tôt.** Les trois
+   tentatives ratées ont toutes consisté à corriger une heuristique par une
+   autre sans ouvrir le document. Quinze lignes de diagnostic — afficher, pour
+   chaque tableau, le marqueur trouvé et le titre — ont donné la réponse
+   immédiatement.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -5325,3 +5377,40 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   qui vaut mieux que la valeur de la SNCF. Tous les contrôles par source tierce
   passent à l'unité : SNCF 2021, 2023, 2024 ; CNRACL 2013 et 2021 ; MSA
   exploitants 2021.
+
+- **Septembre 2026, action 35, volet A, point 3, neuvième passe : l'attribution
+  des tableaux aux fiches est réparée.** Trois tentatives avaient échoué faute
+  d'avoir regardé la source. La quatrième a commencé par là.
+
+  **La cause : le rapport de 2025 sort ses pages dans l'ordre INVERSE des
+  fiches** — les marqueurs passent 4.15, 4.14, 4.13 à mesure que les lignes
+  avancent. Chercher le marqueur « le plus proche au-dessus » d'un tableau y
+  donne donc systématiquement la fiche voisine, d'où le tableau « de la branche
+  vieillesse de la CNRACL » porté au crédit de la SNCF, et la CNRACL héritant du
+  SRE.
+
+  Le numéro de fiche est une TÊTE DE PAGE : il vaut pour sa page et pour elle
+  seule. Le bon niveau n'était donc ni le marqueur le plus proche, ni le titre
+  du tableau, ni un intervalle — c'était la page, qu'il a fallu exposer dans
+  `lecture_pdf` par `lignes_par_page`. Sur les treize pages du rapport de 2025
+  portant un « Données générales », chacune porte exactement un marqueur, et
+  c'est le bon. `lecture_pdf` est scindé en `_fragments` et `_assembler` pour
+  cela, refactor contrôlé neutre : mêmes 15 485 lignes, en 505 pages.
+
+  **Un garde-fou est tombé avec le bogue, et c'est le signe que c'était le
+  bon.** Le détecteur de « case remplie deux fois » écartait 318 valeurs ; une
+  fois l'attribution réparée, ses 133 cas venaient TOUS de tableaux différents
+  — la table vieillesse d'une fiche contre sa table « toutes branches », qui ne
+  mesurent pas la même chose. Il ne rejette plus que la contradiction vraie, au
+  sein d'un même tableau, et il n'en trouve plus aucune.
+
+  **État : 5 419 valeurs, 25 régimes, 2011-2025, zéro case remplie deux fois.**
+  Les contrôles par source tierce passent neuf fois sur dix à l'unité, et deux
+  séries qui étaient fausses sont justes : la CNIEG de 2023 vaut 135 775 et non
+  112 621 qui était la SNCF ; la CNRACL de 2024 vaut 2 151 694 et non 2 008 352
+  qui était le SRE.
+
+  **La leçon est la même que deux passes plus tôt** : les trois tentatives
+  ratées ont consisté à corriger une heuristique par une autre sans ouvrir le
+  document. Quinze lignes de diagnostic — afficher, pour chaque tableau, le
+  marqueur trouvé et le titre — ont donné la réponse immédiatement.
