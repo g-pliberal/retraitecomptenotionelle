@@ -634,9 +634,13 @@ def test_l_unite_vaut_pour_tous_les_metiers():
 def _lien_de_bascule(contexte, parametres):
     """L'adresse que porte le lien « saisir plutôt … », lue comme une requête."""
     corps = rendre(contexte, "/simuler", parametres)[1]
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">(Saisir plutôt [^<]*)</a></p>',
-                     corps)
-    assert lien, "le formulaire ne porte plus de lien de bascule d'unité"
+    # La bascule d'unité écrit ses deux états ; celui qui s'applique n'est pas
+    # un lien. On cherche donc la branche PROPOSÉE, dans la bascule « Unité ».
+    bloc = re.search(r'<div class="bascule" role="group" aria-label="Unité">'
+                     r'.*?</div>', corps, re.S)
+    assert bloc, "le formulaire ne porte plus de bascule d'unité"
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">([^<]*)</a>', bloc.group(0))
+    assert lien, "la bascule d'unité ne propose aucun autre état"
     return dict(parse_qsl(html.unescape(lien.group(1)))), html.unescape(lien.group(2))
 
 
@@ -650,7 +654,7 @@ def test_la_bascule_d_unite_convertit_les_montants(contexte):
     """
     suite, libelle = _lien_de_bascule(
         contexte, {"naissance": "1975", "montants": "brut"})
-    assert libelle == "Saisir plutôt un multiple du salaire moyen"
+    assert libelle == "× salaire moyen"
     assert suite["unite_revenu"] == "moyen"
     # 3 500 € par mois, à l'échelle d'un salaire moyen de 3 475 € : environ 1.
     assert float(suite["salaire"]) == pytest.approx(1.0, abs=0.05)
@@ -765,13 +769,30 @@ def test_un_refus_garde_l_unite_de_saisie(contexte):
     assert "Niveau de revenu" in corps
 
 
-def test_le_formulaire_dit_brut_et_donne_l_echelle(contexte):
-    """La question posée — « brut ou net ? » — trouve sa réponse sur le champ."""
-    _, corps = rendre(contexte, "/simuler", {})
-    assert "Revenu brut mensuel" in corps
-    assert "la ligne « brut » de la fiche de paie" in corps
-    # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
-    assert "SMIC" in corps and "moyenne" in corps and "plafond" in corps
+def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle(contexte):
+    """La question posée — « brut ou net ? » — trouve sa réponse sur le champ.
+
+    Et elle la trouve DANS LE MODE COURANT : demander un « revenu brut » sous
+    une bascule qui annonce le net ferait taper l'un pour l'autre, et le modèle
+    lirait sans broncher un net comme un brut. Les repères chiffrés suivent
+    aussi — un SMIC net n'est pas un SMIC brut.
+    """
+    for mode, ligne in (("brut", "la ligne « brut » de la fiche de paie"),
+                        ("net", "la ligne « net à payer » de la fiche de paie")):
+        _, corps = rendre(contexte, "/simuler", {"montants": mode})
+        assert f"Revenu {mode} mensuel" in corps
+        assert ligne in corps
+        # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
+        assert "SMIC" in corps and "moyenne" in corps and "plafond" in corps
+
+    # Et les trois repères sont bien convertis, non recopiés : le SMIC net d'un
+    # salarié du privé vaut environ 79 % de son brut.
+    _, brut = rendre(contexte, "/simuler", {"montants": "brut"})
+    _, net = rendre(contexte, "/simuler", {"montants": "net"})
+    def smic(corps):
+        return float(re.search(r"SMIC ([\d\u202f]+)\u202f€", corps)
+                     .group(1).replace("\u202f", ""))
+    assert 0.75 < smic(net) / smic(brut) < 0.85
 
 
 def test_le_multiple_est_traduit_en_euros(contexte):
@@ -5244,19 +5265,22 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere(contexte):
     """
     depart = {"naissance": "1975", "unite_revenu": "euros_mois",
               "salaire": "2500", "montants": "net"}
+    # La bascule écrit ses DEUX états ; celui qui s'applique n'est pas un lien.
+    # On cherche donc la branche « brut » sous sa forme de lien, et on vérifie
+    # au passage que « net » est bien marqué comme l'état courant.
     corps = rendre(contexte, "/simuler", depart)[1]
-    lien = re.search(
-        r'<a href="#/simuler\?([^"]*)">Voir les montants en brut</a>', corps)
-    assert lien, "la page ne porte pas de bascule vers le brut"
+    assert '<span class="actif" aria-current="true">net</span>' in corps
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">brut</a>', corps)
+    assert lien, "la page ne porte pas de branche « brut »"
     vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
     assert vers_brut["montants"] == "brut"
     # Un net de 2 500 € vaut un brut d'environ 3 160 € pour un salarié du privé.
     assert 3000 < float(vers_brut["salaire"]) < 3300
 
     retour = rendre(contexte, "/simuler", vers_brut)[1]
-    lien = re.search(
-        r'<a href="#/simuler\?([^"]*)">Voir les montants en net</a>', retour)
-    assert lien, "la page ne porte pas de bascule vers le net"
+    assert '<span class="actif" aria-current="true">brut</span>' in retour
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">net</a>', retour)
+    assert lien, "la page ne porte pas de branche « net »"
     vers_net = dict(parse_qsl(html.unescape(lien.group(1))))
     assert float(vers_net["salaire"]) == pytest.approx(2500, abs=2)
 
@@ -5336,3 +5360,43 @@ def test_le_taux_de_remplacement_parle_la_langue_du_mode(contexte):
         # 0,79 de salaire. Une fourchette large suffit — elle n'est pas là pour
         # valider un dixième de point, mais pour attraper un taux resté brut.
         assert 1.10 < net / brut < 1.20, f"{net} / {brut}"
+
+
+def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
+    """Ce qui sépare une bascule d'un lien, et pourquoi elle l'a remplacé.
+
+    Un lien seul — « Voir les montants en brut » — demande au lecteur de
+    déduire l'état courant de la phrase qui propose d'en changer, ce que
+    personne ne fait, et il ne se voit pas parce qu'il ressemble au texte. Les
+    deux états côte à côte disent à la fois où l'on est et où l'on peut aller.
+
+    Trois propriétés, et chacune a coûté un aller-retour : les deux libellés
+    sont là, un seul est un lien, et l'état courant porte `aria-current` — sans
+    quoi une synthèse vocale lirait deux mots sans savoir lequel s'applique.
+    """
+    for mode, autre in (("net", "brut"), ("brut", "net")):
+        corps = rendre(contexte, "/simuler",
+                       {"naissance": "1975", "montants": mode})[1]
+        bascules = re.findall(
+            r'<div class="bascule" role="group" aria-label="Montants">.*?</div>',
+            corps, re.S)
+        assert bascules, "la page ne porte aucune bascule de montants"
+        for bloc in bascules:
+            assert f'<span class="actif" aria-current="true">{mode}</span>' in bloc
+            assert f">{autre}</a>" in bloc
+            # Un seul lien : l'état courant n'a pas d'adresse, c'est celle où
+            # l'on est déjà.
+            assert bloc.count("<a href=") == 1
+            assert 'role="group"' in bloc and 'aria-label="Montants"' in bloc
+
+
+def test_la_bascule_des_resultats_precede_les_montants(contexte):
+    """Un réglage qu'on découvre après avoir lu les chiffres arrive trop tard.
+
+    Elle était sous les quatre systèmes, entre eux et la fiabilité : on lisait
+    quatre nombres, puis on apprenait qu'on aurait pu les lire autrement. Elle
+    ouvre maintenant la carte.
+    """
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    carte = corps.split('<h2 id="resultats"')[1]
+    assert carte.index('class="bascule"') < carte.index('<div class="scenario">')

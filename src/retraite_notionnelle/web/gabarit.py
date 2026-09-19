@@ -818,6 +818,40 @@ tbody tr[hidden] { display: none; }
 }
 .onglets input:focus-visible + label { outline: 3px solid var(--or); outline-offset: 3px; }
 .onglets label:hover { border-color: var(--or); }
+/* LA BASCULE : un choix entre deux états qui NAVIGUE.
+
+   Son cousin `.onglets` montre et cache des panneaux déjà rendus — un bouton
+   radio et `:has()` y suffisent. Celle-ci change l'adresse, donc recalcule :
+   ses branches sont des LIENS, et l'état courant n'en est pas un. C'est ce qui
+   la rend utilisable sans JavaScript, partageable, et lisible par un lecteur
+   d'écran, à qui `aria-current` dit où l'on est.
+
+   Elle était un lien discret en bas de page — « Voir les montants en brut » —,
+   c'est-à-dire un réglage que personne ne voyait et dont personne ne pouvait
+   deviner l'état courant. Les deux états sont maintenant écrits côte à côte,
+   et celui qui s'applique est rempli. On lit le réglage sans le chercher. */
+.bascule {
+  display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+  margin: 0.9rem 0 0;
+}
+.bascule > .legende {
+  font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--texte-doux); margin-right: 0.15rem;
+}
+/* Les branches partagent tout sauf leur état : une seule règle pour les deux,
+   de sorte qu'elles ne puissent pas se décaler d'un pixel. */
+.bascule > a, .bascule > .actif {
+  display: inline-flex; align-items: center; min-height: 2.75rem;
+  padding: 0 1rem; font-size: 0.9375rem; font-weight: 600;
+  border: 2px solid var(--trait-champ); color: var(--texte);
+  text-decoration: none;
+}
+.bascule > .actif {
+  background: var(--or); color: var(--fond); border-color: var(--or);
+  font-weight: 700; cursor: default;
+}
+.bascule > a:hover { border-color: var(--or); }
+.bascule > a:focus-visible { outline: 3px solid var(--or); outline-offset: 3px; }
 .panneaux > .panneau[hidden] { display: none; }
 .onglets:has(input:checked) ~ .panneaux > .panneau { display: none; }
 .onglets:has(#grille-notionnel_liberal:checked) ~ .panneaux > .panneau[data-onglet="notionnel_liberal"],
@@ -2311,6 +2345,34 @@ def points(entrees: list[tuple[str, str]]) -> str:
         for titre, texte in entrees
     )
     return f'<div class="points">{corps}</div>'
+
+
+def bascule(legende: str, branches: list[tuple[str, str]], actif: str) -> str:
+    """Un choix entre deux états, écrit en entier, dont l'un NAVIGUE.
+
+    ``branches`` donne, pour chaque état, son libellé et l'adresse qui y mène ;
+    ``actif`` nomme le libellé de l'état courant, qui n'est donc pas un lien.
+
+    Pourquoi tout écrire plutôt qu'un lien vers l'autre état. Un lien seul —
+    « Voir les montants en brut » — demande au lecteur de déduire l'état
+    courant de la phrase qui propose d'en changer, ce que personne ne fait ;
+    et il ne se voit pas, parce qu'il ressemble au texte. Les deux états côte
+    à côte disent à la fois où l'on est et où l'on peut aller, en un objet
+    qu'on repère sans le chercher.
+
+    Pourquoi des liens plutôt qu'un menu. Un menu ne navigue pas sans script,
+    et ce site n'en emploie aucun pour se déplacer : l'adresse EST la saisie,
+    elle se partage et se recharge. Voir ``_bascule_montants``.
+    """
+    morceaux = [f'<span class="legende">{escape(legende)}</span>']
+    for libelle, cible in branches:
+        if libelle == actif:
+            morceaux.append(
+                f'<span class="actif" aria-current="true">{escape(libelle)}</span>')
+        else:
+            morceaux.append(f'<a href="{cible}">{escape(libelle)}</a>')
+    return (f'<div class="bascule" role="group" aria-label="{escape(legende)}">'
+            + "".join(morceaux) + "</div>")
 
 
 def depliant(titre: str, corps: str, identifiant: str = "") -> str:

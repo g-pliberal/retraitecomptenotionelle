@@ -734,6 +734,31 @@ export function points(entrees) {
   return `<div class="points">${corps}</div>`;
 }
 
+/**
+ * Un choix entre deux états, écrit en entier, dont l'un NAVIGUE.
+ *
+ * `branches` donne, pour chaque état, son libellé et l'adresse qui y mène ;
+ * `actif` nomme le libellé de l'état courant, qui n'est donc pas un lien.
+ *
+ * Un lien seul — « Voir les montants en brut » — demande au lecteur de déduire
+ * l'état courant de la phrase qui propose d'en changer, ce que personne ne
+ * fait ; et il ne se voit pas, parce qu'il ressemble au texte. Les deux états
+ * côte à côte disent à la fois où l'on est et où l'on peut aller.
+ *
+ * Des liens plutôt qu'un menu : un menu ne navigue pas sans script, et ce site
+ * n'en emploie aucun pour se déplacer — l'adresse EST la saisie.
+ */
+export function bascule(legende, branches, actif) {
+  const morceaux = [`<span class="legende">${echapper(legende)}</span>`];
+  for (const [libelle, cible] of branches) {
+    morceaux.push(libelle === actif
+      ? `<span class="actif" aria-current="true">${echapper(libelle)}</span>`
+      : `<a href="${cible}">${echapper(libelle)}</a>`);
+  }
+  return `<div class="bascule" role="group" aria-label="${echapper(legende)}">`
+    + `${morceaux.join("")}</div>`;
+}
+
 export function depliant(titre, corps, identifiant = "") {
   // `identifiant` le rend joignable depuis le plan de la page.
   const cible = identifiant ? ` id="${echapper(identifiant)}"` : "";

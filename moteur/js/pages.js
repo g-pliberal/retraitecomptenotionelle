@@ -2390,16 +2390,30 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
   // salariés, et un artisan n'a ni salaire ni fiche de paie. Le brut garde le
   // même sens pour lui — ce sur quoi ses cotisations sont assises —, et la
   // fiche de paie n'est plus donnée que comme l'exemple qu'elle est.
+  // Le libellé suit la bascule : demander un « revenu brut » sous un réglage
+  // qui annonce le net ferait taper l'un pour l'autre. Les repères chiffrés —
+  // SMIC, moyenne, plafond — sont bruts par nature et sont convertis eux
+  // aussi, ou laissés tels quels quand on ne sait pas les convertir.
+  const enNet = saisie.saisieEnNet;
+  const mot = enNet ? "net" : "brut";
+  const repere = (enNet && echelle.convertit(saisie.statut))
+    ? ((montant) => echelle.netMensuel(montant, saisie.statut))
+    : ((montant) => montant);
   const aide = bref
-    ? "en euros bruts par mois"
-    : `SMIC ${g.euros(echelle.smic)}, moyenne ${g.euros(echelle.mensuel(1))}, `
-      + `plafond ${g.euros(echelle.plafond)}`;
-  return g.champ(nom, "Revenu brut mensuel", valeur, aide, "number",
-    { min: "0", step: "1" },
-    bref ? ""
-      : "En euros d'aujourd'hui, avant cotisations et impôt — pour un salarié, "
-        + "la ligne « brut » de la fiche de paie. Le modèle le suit ensuite le "
-        + "long du salaire moyen, année après année.");
+    ? `en euros ${mot}s par mois`
+    : `SMIC ${g.euros(repere(echelle.smic))}, moyenne `
+      + `${g.euros(repere(echelle.mensuel(1)))}, `
+      + `plafond ${g.euros(repere(echelle.plafond))}`;
+  const complement = enNet
+    ? "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — pour un "
+      + "salarié, la ligne « net à payer » de la fiche de paie. Le modèle "
+      + "remonte au brut par les prélèvements de votre statut, puis le suit le "
+      + "long du salaire moyen, année après année."
+    : "En euros d'aujourd'hui, avant cotisations et impôt — pour un salarié, "
+      + "la ligne « brut » de la fiche de paie. Le modèle le suit ensuite le "
+      + "long du salaire moyen, année après année.";
+  return g.champ(nom, `Revenu ${mot} mensuel`, valeur, aide, "number",
+    { min: "0", step: "1" }, bref ? "" : complement);
 }
 
 /**
@@ -2444,11 +2458,16 @@ function basculeUnite(saisie, echelle) {
   valeurs.slice(1).forEach((valeur, index) => {
     remplacements[`metier${index + 2}_salaire`] = valeur;
   });
-  const libelle = versLesEuros
-    ? "Saisir plutôt des euros par mois"
-    : "Saisir plutôt un multiple du salaire moyen";
-  return '<p class="discret" style="margin:0.9rem 0 0">'
-    + `<a href="#/simuler?${echapper(saisie.requete(remplacements))}">${libelle}</a></p>`;
+  const cible = `#/simuler?${echapper(saisie.requete(remplacements))}`;
+  // Le MÊME composant que la bascule des montants, juste au-dessus d'elle :
+  // deux réglages de même nature n'avaient pas la même forme, et l'un des deux
+  // ne se voyait pas.
+  const euros = "€ par mois";
+  const multiple = "× salaire moyen";
+  const branches = versLesEuros
+    ? [[euros, cible], [multiple, "#"]]
+    : [[euros, "#"], [multiple, cible]];
+  return g.bascule("Unité", branches, versLesEuros ? multiple : euros);
 }
 
 /**
@@ -3334,8 +3353,8 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 ${lectureDesMontants(comparaison, saisie)}</h2>
 ${lecture}
 <div class="carte">
-  ${scenarios}
   ${basculeMontants(saisie, contexte.echelle(saisie), "#resultats")}
+  ${scenarios}
   ${fiabilite}
   ${capitalisation}
   ${minimum}
@@ -3638,11 +3657,12 @@ function basculeMontants(saisie, echelle, ancre = "") {
       remplacements[`metier${index + 2}_salaire`] = valeur;
     });
   }
-  const libelle = versLeNet
-    ? "Voir les montants en net" : "Voir les montants en brut";
   const cible = `#/simuler?${echapper(saisie.requete(remplacements))}${ancre}`;
-  return '<p class="discret" style="margin:0.9rem 0 0">'
-    + `<a href="${cible}">${libelle}</a></p>`;
+  // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
+  const branches = versLeNet
+    ? [["net", cible], ["brut", "#"]]
+    : [["net", "#"], ["brut", cible]];
+  return g.bascule("Montants", branches, saisie.enNet ? "net" : "brut");
 }
 
 /**

@@ -2841,15 +2841,33 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
     # salariés, et un artisan n'a ni salaire ni fiche de paie. Le brut garde le
     # même sens pour lui — ce sur quoi ses cotisations sont assises —, et la
     # fiche de paie n'est plus donnée que comme l'exemple qu'elle est.
-    aide = ("en euros bruts par mois" if bref else
-            f"SMIC {g.euros(echelle.smic)}, moyenne "
-            f"{g.euros(echelle.mensuel(1))}, plafond {g.euros(echelle.plafond)}")
-    return g.champ(nom, "Revenu brut mensuel", valeur, aide, type_="number",
-                   complement="" if bref else
-                   "En euros d'aujourd'hui, avant cotisations et impôt — pour "
-                   "un salarié, la ligne « brut » de la fiche de paie. Le "
-                   "modèle le suit ensuite le long du salaire moyen, année "
-                   "après année.",
+    # Le libellé suit la bascule : demander un « revenu brut » sous un réglage
+    # qui annonce le net ferait taper l'un pour l'autre, et le modèle lirait
+    # sans broncher un net comme un brut. Les repères chiffrés de l'aide —
+    # SMIC, moyenne, plafond — sont bruts par nature ; ils sont donc convertis
+    # eux aussi, statut par statut, ou tus quand on ne sait pas les convertir.
+    en_net = saisie.saisie_en_net
+    mot = "net" if en_net else "brut"
+    if en_net and echelle.convertit(saisie.statut):
+        repere = (lambda montant: echelle.net_mensuel(montant, saisie.statut))
+    else:
+        repere = (lambda montant: montant)
+    aide = (f"en euros {mot}s par mois" if bref else
+            f"SMIC {g.euros(repere(echelle.smic))}, moyenne "
+            f"{g.euros(repere(echelle.mensuel(1)))}, "
+            f"plafond {g.euros(repere(echelle.plafond))}")
+    complement = (
+        "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — pour un "
+        "salarié, la ligne « net à payer » de la fiche de paie. Le modèle "
+        "remonte au brut par les prélèvements de votre statut, puis le suit le "
+        "long du salaire moyen, année après année."
+        if en_net else
+        "En euros d'aujourd'hui, avant cotisations et impôt — pour un salarié, "
+        "la ligne « brut » de la fiche de paie. Le modèle le suit ensuite le "
+        "long du salaire moyen, année après année."
+    )
+    return g.champ(nom, f"Revenu {mot} mensuel", valeur, aide, type_="number",
+                   complement="" if bref else complement,
                    min="0", step="1")
 
 
@@ -2893,11 +2911,16 @@ def _bascule_unite(saisie: Saisie, echelle: "Echelle") -> str:
     remplacements = {"unite_revenu": autre, "salaire": valeurs[0]}
     for rang, valeur in enumerate(valeurs[1:], start=2):
         remplacements[f"metier{rang}_salaire"] = valeur
-    libelle = ("Saisir plutôt des euros par mois" if vers_les_euros
-               else "Saisir plutôt un multiple du salaire moyen")
-    return (f'<p class="discret" style="margin:0.9rem 0 0">'
-            f'<a href="#/simuler?{escape(saisie.requete(**remplacements))}">{libelle}</a>'
-            "</p>")
+    cible = f"#/simuler?{escape(saisie.requete(**remplacements))}"
+    # Le MÊME composant que la bascule des montants, juste au-dessus d'elle.
+    # Les deux réglages du formulaire faisaient le même travail et n'avaient
+    # pas la même forme : un lien souligné d'un côté, un contrôle de l'autre.
+    # L'un des deux se voyait, l'autre pas, et rien ne disait qu'ils étaient de
+    # même nature.
+    euros, multiple = "€ par mois", "× salaire moyen"
+    branches = [(euros, cible if vers_les_euros else "#"),
+                (multiple, "#" if vers_les_euros else cible)]
+    return g.bascule("Unité", branches, multiple if vers_les_euros else euros)
 
 
 def _metiers(saisie: Saisie, affiliations: Affiliations,
@@ -3860,8 +3883,8 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 {_lecture_des_montants(comparaison, saisie)}</h2>
 {lecture}
 <div class="carte">
-  {scenarios}
   {_bascule_montants(saisie, contexte.echelle(saisie), "#resultats")}
+  {scenarios}
   {fiabilite}
   {capitalisation}
   {minimum}
@@ -4583,8 +4606,8 @@ def _bascule_montants(saisie: Saisie, echelle: "Echelle",
     métier par métier, exactement comme le fait la bascule d'unité.
     """
     vers_le_net = not saisie.en_net
-    autre = "net" if vers_le_net else "brut"
-    remplacements: dict[str, object] = {"montants": autre}
+    remplacements: dict[str, object] = {
+        "montants": "net" if vers_le_net else "brut"}
     # Seule la saisie EN EUROS porte un net ou un brut : un multiple du salaire
     # moyen est un rapport entre deux bruts, que le mode ne touche pas.
     if saisie.revenu_en_euros:
@@ -4599,13 +4622,11 @@ def _bascule_montants(saisie: Saisie, echelle: "Echelle",
         remplacements["salaire"] = traduits[0]
         for rang, valeur in enumerate(traduits[1:], start=2):
             remplacements[f"metier{rang}_salaire"] = valeur
-    libelle = ("Voir les montants en net" if vers_le_net
-               else "Voir les montants en brut")
-    cible = f"#/simuler?{escape(saisie.requete(**remplacements))}"
-    if ancre:
-        cible += ancre
-    return (f'<p class="discret" style="margin:0.9rem 0 0">'
-            f'<a href="{cible}">{libelle}</a></p>')
+    cible = f"#/simuler?{escape(saisie.requete(**remplacements))}{ancre}"
+    # L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
+    branches = [("net", cible if vers_le_net else "#"),
+                ("brut", "#" if vers_le_net else cible)]
+    return g.bascule("Montants", branches, "net" if saisie.en_net else "brut")
 
 
 def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:

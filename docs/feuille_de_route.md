@@ -6713,3 +6713,42 @@ leur portage ; `MODES_MONTANT`, `Saisie.montants`, `Echelle`, `Montants`,
 `web/pages.py` et `moteur/js/pages.js` ; paquet de données en version 15 ;
 `docs/limites.md` § 5 ante ter ; la ligne de journal du 19 septembre 2026 dans
 `legislation/veille.yaml`.
+### 40. Un réglage se voit ou n'existe pas — `fait`
+
+**Demande.** « Est-ce qu'on peut rendre plus simple et plus visible le bouton de
+changement de brut/net ? Il faut quelque chose d'élégant et visible. »
+
+**Le diagnostic.** L'action 39 avait posé la bascule en lien discret — « Voir
+les montants en brut » —, sous les quatre cartes. Trois défauts, et le même à
+chaque fois : un lien ne dit pas qu'il est un RÉGLAGE. Il ne montre pas l'état
+courant, il ne montre pas l'autre état, et placé sous les chiffres il arrive
+après qu'on les a lus. Le réglage le plus structurant du simulateur — celui qui
+décide si le nombre affiché est ce qu'on touche — était le moins visible de la
+page.
+
+**Ce qui est fait.** Un composant, `g.bascule(légende, branches, actif)`, qui
+écrit SES DEUX ÉTATS côte à côte, remplit l'actif à l'or du dépôt et laisse
+l'autre en lien. C'est l'idiome des onglets, en plus petit : même bordure de
+2 px, même hauteur de touche de 2,75 rem, `role="group"` et `aria-current` sur
+l'état courant. Il tient sans JavaScript, chaque branche étant une adresse
+complète.
+
+Trois emplois, et le troisième n'était pas demandé :
+
+- **le formulaire** : `MONTANTS [net] [brut]` ;
+- **les résultats** : la même bascule, REMONTÉE au-dessus des quatre cartes.
+  Un réglage qu'on découvre après avoir lu les chiffres arrive trop tard ;
+- **l'unité** : `UNITÉ [€ par mois] [× salaire moyen]`, convertie au même
+  composant. Deux réglages de même nature rendus différemment — un lien souligné
+  d'un côté, un contrôle de l'autre — c'était précisément ce qui n'était pas
+  élégant.
+
+**Et l'étiquette du champ suit le mode.** « Revenu **net** mensuel », avec ses
+repères convertis : SMIC 1 443 €, moyenne 2 751 €, plafond 3 170 € en net contre
+1 823 €, 3 475 € et 4 005 € en brut. Demander un revenu brut sous une bascule
+qui annonce le net faisait taper l'un pour l'autre.
+
+**Fichiers.** `bascule()` et son bloc CSS dans `web/gabarit.py` et
+`moteur/js/gabarit.js` ; `_bascule_montants`, `_bascule_unite` et `_champ_revenu`
+dans `web/pages.py` et `moteur/js/pages.js` ; feuille de style et témoins
+régénérés.
