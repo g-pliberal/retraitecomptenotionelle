@@ -54,6 +54,7 @@ from retraite_notionnelle.avantages import charger_avantages  # noqa: E402
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
+from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
@@ -80,7 +81,7 @@ STYLE = RACINE / "moteur" / "style.css"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 13
+VERSION = 14
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -716,6 +717,54 @@ def _frais_epargne_retraite() -> dict:
     }
 
 
+def _prelevements_remuneration() -> dict:
+    """Les prélèvements hors retraite — ce qui sépare un brut d'un net.
+
+    Passe par le chargeur du modèle, comme tout le reste : les segments y sont
+    déjà développés depuis la forme cumulative du fichier, si bien que le
+    portage n'a pas à refaire cette conversion — donc pas à la refaire
+    autrement.
+    """
+    bareme = charger_prelevements(DONNEES)
+
+    def segments(suite) -> list:
+        return [{"bas": s.bas_en_plafonds, "haut": s.haut_en_plafonds,
+                 "taux": s.taux} for s in suite]
+
+    reduction = bareme.reduction_generale
+    return {
+        "annee": bareme.annee,
+        "fiabilite": int(bareme.fiabilite),
+        "csg_deductible": bareme.csg_deductible,
+        "csg_imposable": bareme.csg_imposable,
+        "crds": bareme.crds,
+        "abattement_frais": segments(bareme.abattement_frais),
+        "postes": [
+            {
+                "code": poste.code,
+                "libelle": poste.libelle,
+                "retraite": poste.retraite,
+                "dans_la_reduction_generale": poste.dans_la_reduction_generale,
+                "taux_dans_la_reduction": poste.taux_dans_la_reduction,
+                "cadres_seulement": poste.cadres_seulement,
+                "due_au_dela_de_un_plafond": poste.due_au_dela_de_un_plafond,
+                "salarie": segments(poste.salarie),
+                "employeur": segments(poste.employeur),
+            }
+            for poste in bareme.postes
+        ],
+        "reduction_generale": {
+            "libelle": reduction.libelle,
+            "plafond_en_smic": reduction.plafond_en_smic,
+            "puissance": reduction.puissance,
+            "taux_minimum": reduction.taux_minimum,
+            "coefficient_maximal": reduction.coefficient_maximal,
+            "composantes": dict(sorted(reduction.composantes.items())),
+            "composantes_retraite": list(reduction.composantes_retraite),
+        },
+    }
+
+
 def _inventaire() -> list:
     """Tous les régimes, calculés ou non, tels que la page « Données » les liste."""
     return [ligne.dictionnaire() for ligne in charger_inventaire(DONNEES)]
@@ -746,6 +795,7 @@ def construire() -> bytes:
         "hypotheses": _hypotheses(),
         "courbe_taux_sans_risque": _courbe_taux_sans_risque(),
         "frais_epargne_retraite": _frais_epargne_retraite(),
+        "prelevements_remuneration": _prelevements_remuneration(),
         "quotients": _quotients(),
         "calibrations": _calibrations(),
         "regimes": _regimes(),

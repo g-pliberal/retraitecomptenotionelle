@@ -236,6 +236,13 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: réels du scénario 4) ; et une GARANTIE VIEILLESSE qui remplace l'ASPA,
   //: différentielle, individualisée, financée par l'impôt, ouverte à 65 ans.
   taux_cotisation_liberal: 0.18,
+  //: Partage du taux unique entre l'assuré et son employeur. La proposition
+  //: dit « 18 %, salariale et patronale additionnées » et ne dit pas qui porte
+  //: quoi ; le dépôt partage MOITIÉ-MOITIÉ. Ce paramètre ne touche à AUCUNE
+  //: pension — le compte porte la somme des deux parts — mais il compte dans
+  //: la fiche de paie : la CSG est assise sur le BRUT, que le partage déplace,
+  //: et la réduction générale n'efface que des cotisations PATRONALES.
+  part_salariale_taux_unique: 0.5,
   //: Montants MENSUELS, en euros de `annee_euros_garantie_vieillesse`, ramenés
   //: à l'année de liquidation par l'indice des prix. 800 + 250 = 1 050 € seul,
   //: 800 € par personne à deux.
