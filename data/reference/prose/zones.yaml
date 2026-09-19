@@ -98,8 +98,20 @@ fichiers:
       3. La liste: a_declarer
   docs/veille_droit.md:
     defaut: a_declarer
+  # Le fichier entier reste à arbitrer, et le passer en `etat` a été essayé :
+  # il porte trois tailles — celles du moteur d'Impeccable, de Chromium et d'un
+  # plafond de caractères — dont deux désignent des logiciels installés HORS du
+  # dépôt. Aucune sonde ne les atteint depuis un clone, et les ancrer
+  # demanderait de mesurer ce qu'on n'a pas. Les deux sections ci-dessous sont
+  # déclarées parce qu'elles, on sait ce qu'elles engagent.
   docs/outillage_interface.md:
     defaut: a_declarer
+    sections:
+      # Elle raconte la demi-journée où l'on a cru qu'un site public bloquait le
+      # dépôt, quand c'était son propre navigateur qui ne faisait confiance à
+      # personne. La date est le sujet de la section.
+      "Le navigateur ne voit rien hors de `localhost`, et il le dit mal": recit
+      "Ce qu'un navigateur ne débloque pas": recit
   docs/integration-partiliberalfrancais.md:
     defaut: a_declarer
   CLAUDE.md:

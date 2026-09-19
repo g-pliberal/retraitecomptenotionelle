@@ -85,6 +85,60 @@ relancer le script, puis recopier la SKILL.md livrée par le nouveau paquet
 dans `.claude/skills/playwright-cli/` si elle a changé. Pas de Playwright MCP :
 tout passe par la ligne de commande.
 
+## Le navigateur ne voit rien hors de `localhost`, et il le dit mal
+
+Dans une session web, le trafic HTTPS sortant traverse un proxy qui
+re-termine TLS : tout outil doit donc faire confiance au certificat de son
+autorité. Le fichier `/root/.ccr/README.md` annonce que « le magasin NSS du
+navigateur » est déjà préparé. **Le 19 septembre 2026, il était vide**, et
+Chromium refusait toute adresse HTTPS avec `ERR_CERT_AUTHORITY_INVALID` —
+`example.com` comprise.
+
+Le symptôme trompe, et c'est là qu'on perd du temps. Un audit d'interface
+ouvre une page servie en local, sur `http://127.0.0.1`, qui ne passe pas par
+le proxy : tout marche. L'échec n'arrive que sur une adresse extérieure, et
+une erreur de CERTIFICAT sur un site protégé par un pare-feu anti-robot se
+lit spontanément comme un refus du site. C'est ce qui s'est produit : une
+session a conclu qu'un site public la bloquait, alors que son navigateur
+n'avait jamais établi la connexion.
+
+La correction tient en une ligne, une fois par conteneur :
+
+```bash
+apt-get install -y libnss3-tools    # certutil n'est pas dans l'image
+certutil -A -n ccr-agent-proxy -t "C,," -d sql:$HOME/.pki/nssdb \
+    -i /root/.ccr/agent-proxy-ca.crt
+```
+
+Ce n'est pas un contournement : c'est exactement ce que le README prescrit
+pour les autres outils, qu'on pointe vers `/root/.ccr/ca-bundle.crt`. Chromium
+n'ayant pas d'option de CA, il faut passer par son magasin. **Ne jamais y
+substituer `--ignore-certificate-errors` ni `ignoreHTTPSErrors`** : ceux-là
+désactivent la vérification au lieu d'ajouter une confiance.
+
+Pour vérifier en trois secondes que le navigateur voit dehors :
+
+```bash
+node -e 'import("/opt/node22/lib/node_modules/playwright/index.mjs").then(async ({chromium}) => {
+  const n = await chromium.launch(); const p = await n.newPage();
+  console.log((await p.goto("https://example.com/")).status()); await n.close(); })'
+```
+
+## Ce qu'un navigateur ne débloque pas
+
+Une fois le certificat réglé, Playwright ouvre ce que `curl` ne sait pas
+ouvrir : les pages dont le contenu est construit en JavaScript, et celles qui
+exigent un vrai moteur de rendu. C'est un gain réel, et il vaut d'essayer
+avant de conclure qu'une source est hors de portée.
+
+Il ne débloque pas un **refus délibéré**. `budget.gouv.fr`, qui publie les
+annexes budgétaires, répond 403 à Chromium avec une page Incapsula portant un
+identifiant d'incident et `NOINDEX, NOFOLLOW` : ce n'est pas un défi que
+l'exécution du JavaScript résout, c'est une décision. Passer outre
+demanderait de maquiller les signaux d'automatisation du navigateur, ce que
+le dépôt ne fait pas. Une source qui refuse se consigne comme limite — voir
+le volet H de l'action 37 — plutôt que de se forcer.
+
 ## Web Interface Guidelines : règles figées
 
 `SKILL.md` lit `guidelines.md`, copie conforme, octet pour octet, de
