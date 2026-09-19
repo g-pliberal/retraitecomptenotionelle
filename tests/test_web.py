@@ -4697,7 +4697,7 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
         # Le second chiffre, s'il est là, dit de quoi il parle : sans son
         # étiquette, deux nombres se toucheraient sans que rien ne les sépare.
         if 'class="chiffre salaire"' in entete:
-            assert "salaire net pendant la carrière" in entete
+            assert "salaire net, par mois" in entete
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
 

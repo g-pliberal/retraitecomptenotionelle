@@ -3318,7 +3318,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         return f"""
       <span class="chiffre salaire">
         <span class="somme">{g.euros_centimes(net / 12.0)}</span>
-        <span class="unite">salaire net pendant la carrière</span>
+        <span class="unite">salaire net, par mois</span>
         {mention}
       </span>"""
 

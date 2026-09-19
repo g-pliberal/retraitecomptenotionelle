@@ -2815,7 +2815,7 @@ function resultats(contexte, saisie) {
     return `
       <span class="chiffre salaire">
         <span class="somme">${g.eurosCentimes(net / 12)}</span>
-        <span class="unite">salaire net pendant la carrière</span>
+        <span class="unite">salaire net, par mois</span>
         ${mention}
       </span>`;
   };
