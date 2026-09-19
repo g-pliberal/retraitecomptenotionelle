@@ -24,6 +24,8 @@ from retraite_notionnelle.castypes import (
 )
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.cout import (
+    CONVENTION_ASSIETTE,
+    CONVENTION_RAPPORT,
     COMPOSANTE_GARANTIE,
     DERNIERE_GENERATION,
     HORIZON,
@@ -31,6 +33,10 @@ from retraite_notionnelle.cout import (
     SCENARIOS,
     calculer_cout,
     generations,
+)
+from retraite_notionnelle.donnees.assiette import (
+    POSTES_ASSIETTE,
+    AssietteActivite,
 )
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.distribution import DistributionPensions
@@ -72,7 +78,8 @@ def comptes() -> ComptesRetraite:
 @pytest.fixture(scope="module")
 def cout(depenses: DepensesRetraite, population: Population,
          comptes: ComptesRetraite):
-    return calculer_cout(Simulateur(Parametres()), depenses, population, comptes)
+    return calculer_cout(Simulateur(Parametres()), depenses, population, comptes,
+                         convention_recette=CONVENTION_RAPPORT)
 
 
 @pytest.fixture(scope="module")
@@ -1020,6 +1027,130 @@ def test_la_recette_suit_le_droit(cout: Cout, comptes: ComptesRetraite):
     # Un demi-point de PIB, toutes les années connues.
     for annee in comptes.annees_transferts():
         assert 0.004 < solde.annee(annee).retrait < 0.007, annee
+
+
+@pytest.fixture(scope="module")
+def assiette() -> AssietteActivite:
+    return AssietteActivite(RACINE_DONNEES)
+
+
+@pytest.fixture(scope="module")
+def cout_assiette(depenses: DepensesRetraite, population: Population,
+                  comptes: ComptesRetraite, assiette: AssietteActivite):
+    """Le coût sous la convention du programme : le taux plein sur l'assiette."""
+    return calculer_cout(Simulateur(Parametres()), depenses, population, comptes,
+                         assiette=assiette,
+                         convention_recette=CONVENTION_ASSIETTE)
+
+
+def test_l_assiette_se_recoupe_avec_celle_que_le_cor_implique(
+        assiette: AssietteActivite, comptes: ComptesRetraite):
+    """Deux routes indépendantes vers la même grandeur, et elles se rejoignent.
+
+    Le tableau 2.11 du rapport annuel du COR chiffre l'ajustement nécessaire à
+    l'équilibre deux fois : en pour-cent de la masse de pension et en points de
+    taux de prélèvement. Le rapport des deux donne son assiette sans qu'il ait
+    eu à la publier — 3,19 fois la masse de pension. L'assiette mesurée ici ne
+    doit rien au COR, et lui ne doit rien à l'INSEE : qu'elles tombent à
+    quelques pour cent l'une de l'autre est le seul contrôle externe dont cette
+    grandeur dispose.
+    """
+    # 2020 est écarté : le PIB s'est effondré sans que la masse de pension
+    # suive, et le rapport des deux ne dit cette année-là que le confinement.
+    for annee in (2022, 2023, 2024):
+        implicite = 3.19 * comptes.depense(annee)
+        mesuree = assiette.part_pib(annee)
+        assert mesuree == pytest.approx(implicite, rel=0.08), annee
+    # Et elle est stable : une assiette qui sauterait d'une année à l'autre
+    # dirait qu'un des deux postes a changé de définition.
+    parts = [assiette.part_pib(a) for a in range(2016, 2025)]
+    assert max(parts) - min(parts) < 0.012, parts
+
+
+def test_l_assiette_porte_ses_deux_postes_sur_toute_la_fenetre(
+        assiette: AssietteActivite):
+    """Une assiette amputée d'un de ses postes ne serait pas une assiette."""
+    assert {code for code, _ in POSTES_ASSIETTE} == set(assiette.postes)
+    assert assiette.premiere_annee <= 1949
+    assert assiette.derniere_annee >= 2024
+    for annee in (1949, 1980, 2024):
+        for code, _ in POSTES_ASSIETTE:
+            assert assiette.poste(code, annee) > 0.0, (annee, code)
+        assert assiette.fiabilite(annee) is Fiabilite.CERTIFIEE, annee
+    # Les salaires pèsent l'essentiel, le revenu mixte le reste : l'inverse
+    # dirait que les deux postes ont été intervertis.
+    assert (assiette.poste("salaires_bruts", 2024)
+            > 5 * assiette.poste("revenu_mixte", 2024))
+
+
+def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cout):
+    """La convention du programme, écrite autrement que dans le code.
+
+    Les employeurs versent la cotisation entière ; l'État leur rembourse
+    l'allègement par l'impôt, et ce remboursement est une aide à l'activité
+    économique, pas une recette de retraite. Un système qui n'exonère personne
+    n'a donc rien à se faire compenser : il encaisse son taux plein et ne
+    reçoit aucun impôt affecté.
+    """
+    bascule = Parametres().annee_bascule
+    taux = Parametres().taux_cotisation_liberal
+    vues = 0
+    for ligne in cout_assiette.solde.annees:
+        if ligne.annee < bascule:
+            # Avant la bascule, rien n'a changé : le scénario 6 prélève les
+            # taux réels, et ne perd que la recette non acquise.
+            assert not ligne.recette_par_assiette, ligne.annee
+            assert ligne.ressources_de("notionnel_liberal") == pytest.approx(
+                ligne.ressources - ligne.retrait), ligne.annee
+            continue
+        vues += 1
+        assert ligne.recette_par_assiette, ligne.annee
+        assert ligne.taux_liberal == taux
+        pleine = ligne.ressources * taux / ligne.taux_prelevement
+        autres = ligne.ressources * (
+            1.0 - ligne.part_contributive - ligne.part_compensation)
+        assert ligne.ressources_de("notionnel_liberal") == pytest.approx(
+            pleine + autres - ligne.retrait), ligne.annee
+        if ligne.annee >= bascule + 3:
+            # Une fois le décalage de la grille éteint, le taux plein rapporte
+            # PLUS que le rapport de taux légaux ne le disait : c'est la
+            # déperdition que l'ancienne convention prêtait à tort au
+            # scénario. Ce qu'il perd est ailleurs, dans l'impôt retiré.
+            assert pleine > ligne.ressources * ligne.part_contributive * (
+                ligne.rapports_recettes["notionnel_liberal"]), ligne.annee
+    assert vues > 40
+
+
+def test_les_deux_conventions_de_recette_se_mesurent(cout: Cout, cout_assiette: Cout):
+    """Ce que la convention du programme déplace, et dans quel sens.
+
+    L'ancienne convention reste calculable, comme la pondération égale des cas
+    types : c'est ce qui permet de dire de combien elle se trompait plutôt que
+    d'en discuter. Elle est plus favorable au scénario 6, et de beaucoup.
+    """
+    assert cout.convention_recette == CONVENTION_RAPPORT
+    assert cout_assiette.convention_recette == CONVENTION_ASSIETTE
+    bascule = Parametres().annee_bascule
+    fin = cout.solde.derniere_annee
+    ancien = cout.solde.solde_moyen("notionnel_liberal", bascule, fin)
+    nouveau = cout_assiette.solde.solde_moyen("notionnel_liberal", bascule, fin)
+    assert ancien - nouveau > 0.01, (ancien, nouveau)
+    # Les cinq autres systèmes ne bougent pas d'un iota : la convention ne
+    # touche qu'au seul scénario dont le TAUX change.
+    for scenario, _ in SCENARIOS:
+        if scenario == "notionnel_liberal":
+            continue
+        for annee in (2030, 2050, 2070):
+            assert (cout.solde.annee(annee).ressources_de(scenario)
+                    == pytest.approx(
+                        cout_assiette.solde.annee(annee).ressources_de(scenario)))
+
+
+def test_une_convention_de_recette_inconnue_est_refusee(
+        depenses: DepensesRetraite, population: Population):
+    with pytest.raises(ValueError, match="convention de recette inconnue"):
+        calculer_cout(Simulateur(Parametres()), depenses, population,
+                      convention_recette="au_doigt_mouille")
 
 
 def test_la_recette_suit_le_taux(cout: Cout):

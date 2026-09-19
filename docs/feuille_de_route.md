@@ -3074,9 +3074,29 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   et `scripts/fetch/insee_revenu_mixte.py` le récupère. Rester chez le
   producteur n'était pas une coquetterie : Eurostat rediffuse la même grandeur
   sous `nasa_10_nf_tr`, et les deux millésimes s'écartent de 0,8 % sur 2023.
-- *Ce qui reste à faire de ce point* : afficher les trois variantes, ce qui est
-  le point 4 — les deux questions n'en font qu'une, les impôts affectés étant
-  la compensation des exonérations.
+- *Le point 4 est tranché par le programme, et le modèle sait le calculer.*
+  Le 19 septembre 2026, le Parti libéral français a posé sa convention : les
+  employeurs versent la cotisation entière, l'État leur rembourse l'allègement
+  par l'impôt, et ce remboursement est une aide à l'activité économique, non
+  une recette de retraite. `calculer_cout(convention_recette="assiette")`
+  applique donc les 18 % à l'assiette mesurée et retire les impôts et taxes
+  affectés ; `"rapport"` garde l'ancienne, comme `ponderation="egale"` garde
+  l'ancienne pondération. Ce que cela déplace : le solde moyen 2026-2070 du
+  scénario 6 passe de **−0,09 %** du PIB à **−1,28 %**, son coefficient de 2040
+  de 0,94 à 0,83, et il ne repasse plus jamais à l'équilibre — contre −1,13 %
+  pour le système actuel. **Sous sa propre convention, la proposition est
+  légèrement moins bien financée que le système qu'elle remplace.**
+- *Ce qui reste, et c'est maintenant le plus gros risque de la page.* Retirer
+  le poste « impôts et taxes affectés » en entier suppose que tout ce qu'il
+  contient disparaisse avec les exonérations ; il porte aussi de la CSG, du
+  forfait social et de la taxe sur les salaires. Aucune source du dépôt ne
+  ventile ce poste, et la sensibilité est de deux points de PIB : −1,28 % si
+  l'on retire tout, −0,26 % si l'on retire la moitié, +0,76 % si l'on ne
+  retire rien. La ventilation se cherche dans les annexes du projet de loi de
+  financement de la sécurité sociale, que le lecteur PDF du dépôt sait lire
+  depuis l'action 6. Et la page affiche toujours l'ancienne convention : un
+  chiffre de tête ne se change pas sans que celui qui le publie l'ait décidé.
+  Le portage JavaScript, la page et les témoins suivront ce choix-là.
 
 **Ce qui reste du volet A** : la certification de l'assiette et les trois
 variantes ci-dessus (points 1 et 4, désormais un seul chantier) ; la série d'effectifs de COTISANTS
@@ -3929,3 +3949,20 @@ scénario ».
   source annoncée n'est pas une source disponible** : l'INSEE produit le revenu
   mixte, sa banque de données ne l'expose pas, et la seule forme atteignable est
   celle qu'Eurostat rediffuse — ce que le manifeste devra trancher.
+
+- **Septembre 2026, action 35, la convention du programme.** Le Parti libéral
+  français a tranché la question que l'assiette avait ouverte, et il l'a
+  tranchée contre lui-même : les employeurs versent la cotisation entière,
+  l'État leur rembourse l'allègement par l'impôt, et ce remboursement est une
+  aide à l'activité économique, pas une recette de retraite. Le modèle calcule
+  désormais les deux conventions. Sous la sienne, le solde moyen 2026-2070 du
+  scénario 6 passe de −0,09 % du PIB à −1,28 %, contre −1,13 % pour le système
+  actuel : la proposition devient légèrement moins bien financée que ce qu'elle
+  remplace. Deux effets s'y composent en sens contraire, et le plus gros est
+  celui qu'on n'attendait pas — le taux plein rapporte deux points et demi
+  d'assiette de plus que l'ancienne convention ne le disait, mais les impôts
+  affectés en font perdre quatre et demi. Ce qu'il faut en retenir : **une
+  convention comptable posée pour la clarté peut coûter plus qu'un paramètre**,
+  et le dépôt doit pouvoir la calculer avant que quiconque en discute. La page
+  affiche toujours l'ancienne, faute d'une décision sur ce qu'elle doit
+  montrer.

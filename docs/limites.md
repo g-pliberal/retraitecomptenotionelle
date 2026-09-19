@@ -5294,6 +5294,52 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   aux Urssaf ET sur celles déclarées aux institutions de retraite
   complémentaire, au prorata de leurs taux dans le coefficient maximal.
 
+  **LA CONVENTION DU PROGRAMME, ET CE QU'ELLE COÛTE À LA PROPOSITION.** Le
+  19 septembre 2026, le Parti libéral français a tranché la question que la
+  fourchette ci-dessus laissait ouverte, et il l'a tranchée contre lui-même.
+  Sa position tient en deux phrases. Les employeurs versent la cotisation
+  ENTIÈRE ; l'État leur rembourse ensuite l'allègement par l'impôt, et ce
+  remboursement est une aide à l'activité économique, non une recette de
+  retraite — pas plus que le minimum vieillesse n'est une dépense de
+  répartition. Un système qui n'exonère personne n'a donc rien à se faire
+  compenser : il encaisse son taux plein, et ne reçoit aucun impôt affecté.
+
+  Le modèle sait calculer les deux. `convention_recette="assiette"` applique
+  les 18 % à l'assiette mesurée et retire les impôts et taxes affectés ;
+  `"rapport"` est l'ancienne, qui multipliait la part cotisée des ressources
+  observées par un rapport de taux légaux. L'écart n'est pas un détail :
+
+  | | Solde moyen 2026-2070 | Coefficient 2040 | Équilibre atteint |
+  |---|---|---|---|
+  | Scénario 6, convention `rapport` | −0,09 % du PIB | 0,94 | 2026 |
+  | Scénario 6, convention `assiette` | **−1,28 %** | **0,83** | **jamais** |
+  | Système actuel | −1,13 % | — | jamais |
+
+  Deux effets de sens contraire s'y composent, et le second l'emporte. Le taux
+  plein rapporte PLUS que le rapport de taux légaux ne le disait — 18 %
+  d'assiette au lieu de 15,5 —, soit deux points et demi d'assiette de gagnés.
+  Mais les impôts et taxes affectés en font perdre quatre et demi. **Sous sa
+  propre convention, la proposition est donc légèrement moins bien financée
+  que le système qu'elle remplace.**
+
+  **Ce qui décide encore de deux points de PIB.** Retirer le poste ENTIER
+  suppose que tout ce qu'il contient disparaisse avec les exonérations. Ce
+  n'est vrai qu'en partie : il porte aussi de la CSG, du forfait social et de
+  la taxe sur les salaires, dont une part finance des droits NON CONTRIBUTIFS
+  — minimum vieillesse, validation des périodes de chômage — que les scénarios
+  notionnels ne servent pas davantage, ce qui plaide pour les retirer aussi,
+  et une part qui n'a rien à voir avec l'un ni l'autre. Le dépôt ne sait pas
+  faire ce partage : aucune de ses sources ne ventile ce poste. La sensibilité
+  est mesurée, et elle est énorme — si l'on ne retirait que la moitié du
+  poste, le solde moyen serait de −0,26 % ; si l'on n'en retirait rien,
+  de +0,76 %. **C'est aujourd'hui la plus grande incertitude de la page, et
+  elle est plus grande que l'écart entre les deux systèmes comparés.**
+
+  **Ce que la page affiche en attendant.** L'ancienne convention, parce qu'un
+  chiffre de tête ne se change pas sans que celui qui le publie l'ait décidé.
+  Les deux sont calculables, l'écart est écrit ici, et le jour où le
+  programme dira laquelle il publie, il n'y aura qu'un mot à changer.
+
   Les réserves financières des régimes, que le COR chiffre à part, ne sont
   toujours pas comptées : le solde dit le flux, jamais le stock.
 
@@ -5828,7 +5874,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 933 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 938 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

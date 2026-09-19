@@ -135,6 +135,7 @@ from .castypes import (
     poids_effectifs,
     poids_egaux,
 )
+from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite
 from .donnees.depenses import DepensesRetraite
 from .donnees.equilibre import ComptesRetraite
@@ -176,6 +177,29 @@ CLES_MASSES: tuple[str, ...] = tuple(scenario for scenario, _ in SCENARIOS) + (
 #: faux.
 TAUX_REELS = "taux_reels"
 CLES_RECETTES: tuple[str, ...] = (TAUX_REELS, "notionnel_liberal")
+
+#: Les deux façons d'établir la recette du scénario 6, et elles ne posent pas
+#: la même question.
+#:
+#: ``assiette`` applique son taux de 18 % à l'ASSIETTE MESURÉE des revenus
+#: d'activité, et lui retire les impôts et taxes affectés. C'est la convention
+#: du programme, et elle tient en une phrase : les employeurs versent la
+#: cotisation entière, l'État leur rembourse ensuite l'allègement par l'impôt,
+#: et ce remboursement est une aide à l'activité économique — pas une recette
+#: de retraite, pas plus que le minimum vieillesse n'est une dépense de
+#: répartition. Un système qui n'exonère personne n'a donc rien à se faire
+#: compenser : il encaisse son taux plein et ne reçoit aucun impôt.
+#:
+#: ``rapport`` est l'ancienne convention, gardée pour mesurer ce qu'elle
+#: valait : elle multipliait la part cotisée des ressources OBSERVÉES par le
+#: rapport de deux taux LÉGAUX. Ce faisant, elle prêtait au taux de 18 % la
+#: déperdition du système actuel — 15,5 % d'assiette encaissés pour 18 %
+#: affichés — et lui laissait des impôts qui compensent des exonérations qu'il
+#: ne consent pas. Les deux erreurs vont en sens contraire, et la seconde est
+#: la plus grosse.
+CONVENTION_ASSIETTE = "assiette"
+CONVENTION_RAPPORT = "rapport"
+CONVENTIONS_RECETTE: tuple[str, ...] = (CONVENTION_ASSIETTE, CONVENTION_RAPPORT)
 
 #: Première génération dont une liquidation puisse tomber après le début de la
 #: répartition (1941) : née en 1880, elle liquide à 61 ans en 1941. En deçà, le
@@ -378,6 +402,23 @@ class SoldeAnnuel:
     #: Part des ressources qui est une cotisation assise sur un revenu
     #: d'activité, la seule sur laquelle un changement de taux ait prise.
     part_contributive: float = 0.0
+    #: Part des ressources qui est un impôt ou une taxe affectés. Pour
+    #: l'essentiel, la compensation des allègements généraux : l'État a
+    #: exonéré des cotisations patronales, puis remboursé par l'impôt.
+    part_compensation: float = 0.0
+    #: Ce que le système prélève, rapporté à l'ASSIETTE des revenus d'activité
+    #: et non au PIB. Zéro quand l'assiette n'est pas chargée, et la convention
+    #: « assiette » se replie alors sur l'ancienne.
+    taux_prelevement: float = 0.0
+    #: Le taux unique que la proposition substitue à tous les autres.
+    taux_liberal: float = 0.0
+    #: Année à compter de laquelle ce taux s'applique. Avant elle, le
+    #: scénario 6 prélève les taux réels comme tout le monde.
+    annee_bascule: int = 0
+    #: Comment la recette du scénario 6 est établie : ``assiette``, en
+    #: appliquant son taux à l'assiette mesurée, ou ``rapport``, l'ancienne
+    #: convention, qui lui appliquait un rapport de taux légaux.
+    convention_recette: str = CONVENTION_RAPPORT
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB."""
@@ -405,10 +446,37 @@ class SoldeAnnuel:
         """
         if scenario == "actuel":
             return self.ressources
+        if scenario == "notionnel_liberal" and self.recette_par_assiette:
+            # Le taux plein sur l'assiette mesurée, et rien de ce que l'impôt
+            # verse pour compenser des exonérations que ce système ne consent
+            # pas. Les autres ressources — subventions d'équilibre aux régimes
+            # en extinction, transferts, produits divers — sont reconduites.
+            pleine = self.ressources * self.taux_liberal / self.taux_prelevement
+            autres = self.ressources * (
+                1.0 - self.part_contributive - self.part_compensation
+            )
+            return pleine + autres - self.retrait
         rapport = self.rapports_recettes.get(scenario, 1.0)
         cotisees = self.ressources * self.part_contributive
         autres = self.ressources - cotisees
         return cotisees * rapport + autres - self.retrait
+
+    @property
+    def recette_par_assiette(self) -> bool:
+        """La convention du programme s'applique-t-elle à cette année ?
+
+        Trois conditions, et la moindre manquante fait retomber sur l'ancienne
+        convention plutôt que sur une division par zéro : la convention doit
+        être demandée, l'assiette doit avoir été chargée, et la bascule doit
+        avoir eu lieu — avant elle, le scénario 6 prélève les taux réels comme
+        tout le monde.
+        """
+        return (
+            self.convention_recette == CONVENTION_ASSIETTE
+            and self.taux_prelevement > 0.0
+            and self.taux_liberal > 0.0
+            and 0 < self.annee_bascule <= self.annee
+        )
 
     def solde(self, scenario: str) -> float:
         """Ressources moins dépenses, en part de PIB. Négatif : besoin de financement."""
@@ -522,6 +590,12 @@ class Cout:
     ponderation: str = "effectifs"
     #: Datation du départ des cas types : ``droit`` ou ``absolu``.
     liquidation: str = "droit"
+    #: Convention de recette du scénario 6 : ``assiette`` ou ``rapport``.
+    #: Le défaut reste ``rapport`` tant que le programme n'a pas tranché ce que
+    #: la page doit AFFICHER : les deux se calculent, et l'écart entre elles —
+    #: plus d'un point de PIB sur le solde moyen — est trop grand pour qu'on le
+    #: change sans le dire.
+    convention_recette: str = CONVENTION_RAPPORT
     #: Poids de chaque cas type la DERNIÈRE année observée — ce que la page
     #: affiche pour dire sur quoi ses agrégats reposent.
     poids: dict[str, float] = field(default_factory=dict)
@@ -847,7 +921,9 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
 
 
 def _solde(avenir: Avenir, comptes: ComptesRetraite,
-           derniere_annee_pib: int) -> Solde:
+           derniere_annee_pib: int, assiette: AssietteActivite | None,
+           taux_liberal: float, annee_bascule: int,
+           convention: str) -> Solde:
     """Le bilan, obtenu en croisant le compte du COR et les rapports du modèle.
 
     Aucune pension n'est resimulée ici : les rapports de masses sont ceux que
@@ -863,6 +939,20 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
     scénario 1 est exactement le solde publié, et non une reconstitution.
     """
     par_annee = {ligne.annee: ligne for ligne in avenir.annees}
+
+    def taux_prelevement(annee: int) -> float:
+        """Le taux de prélèvement de l'année, ou celui de la dernière connue.
+
+        Il faut le calculer sur une année où l'assiette est PUBLIÉE : la
+        reconduire au-delà reviendrait à figer un montant en euros courants,
+        alors que c'est le taux qui se reconduit. Voir
+        ``AssietteActivite.taux_prelevement``.
+        """
+        if assiette is None:
+            return 0.0
+        reference = assiette.annee_de_reference(annee)
+        return assiette.taux_prelevement(comptes.ressource(reference), reference)
+
     lignes = [
         SoldeAnnuel(
             annee=annee,
@@ -874,6 +964,11 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             retrait=comptes.recette_non_acquise(annee),
             rapports_recettes=par_annee[annee].rapports_recettes,
             part_contributive=comptes.part_contributive(annee),
+            part_compensation=comptes.part("impots_et_taxes", annee),
+            taux_prelevement=taux_prelevement(annee),
+            taux_liberal=taux_liberal,
+            annee_bascule=annee_bascule,
+            convention_recette=convention,
         )
         for annee in comptes.annees() if annee in par_annee
     ]
@@ -895,7 +990,9 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   comptes: ComptesRetraite | None = None,
                   cas_types: tuple[CasType, ...] = CAS_TYPES,
                   ponderation: str = "effectifs",
-                  liquidation: str = "droit") -> Cout:
+                  liquidation: str = "droit",
+                  assiette: AssietteActivite | None = None,
+                  convention_recette: str = CONVENTION_RAPPORT) -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
     Les années où le modèle ne sert AUCUNE pension — celles d'avant la première
@@ -918,6 +1015,11 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     solde reste vide, ce qui est exactement l'état du dépôt avant que ces
     ressources n'existent.
     """
+    if convention_recette not in CONVENTIONS_RECETTE:
+        raise ValueError(
+            f"convention de recette inconnue : {convention_recette!r} "
+            f"(attendu : {CONVENTIONS_RECETTE})"
+        )
     pensionnes, echecs = _pensionnes(simulateur, cas_types, liquidation)
     poids = _ponderation(simulateur, ponderation, cas_types)
     macro = simulateur.macro
@@ -945,13 +1047,17 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     return Cout(
         annees=lignes,
         avenir=avenir,
-        solde=_solde(avenir, comptes, depenses.pib.derniere_annee)
-        if comptes is not None and avenir.annees else Solde(),
+        solde=_solde(
+            avenir, comptes, depenses.pib.derniere_annee, assiette,
+            simulateur.parametres.taux_cotisation_liberal,
+            simulateur.parametres.annee_bascule, convention_recette,
+        ) if comptes is not None and avenir.annees else Solde(),
         annee_euros=annee_euros,
         generations=generations(),
         echecs=echecs,
         ponderation=ponderation,
         liquidation=liquidation,
+        convention_recette=convention_recette,
         poids=poids(depenses.derniere_annee),
         # Le contrefactuel ne peut jamais valoir mieux qu'« estimé » : la
         # dépense observée est certifiée, le rapport qui la corrige ne l'est
