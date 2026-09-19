@@ -28,7 +28,7 @@ comparables :
 | **3** | Notionnel **à compter de 2026** | Réforme prospective : les droits déjà acquis sont figés — au contributif seul, avantages non contributifs retirés — puis convertis en capital, et les règles notionnelles s'appliquent ensuite. Qui a liquidé avant la bascule garde sa pension telle quelle : c'est ce qui distingue ce scénario du **2**. |
 | **4** | Le scénario **2**, part patronale comprise | Le même compte rétroactif, la cotisation de l'employeur en plus : celle de la fiche pour le privé, celle réellement versée — jusqu'à 82,28 % du traitement en 2026 — pour le public. |
 | **5** | Le scénario **3**, part patronale comprise | Le même compte prospectif, droits acquis conservés, avec la même part patronale en plus. |
-| **6** | La **proposition libérale** : le scénario **4** jusqu'à 2026, puis 18 % pour tous en répartition, 5 % capitalisés, et une garantie vieillesse | Le même compte rétroactif, cotisation entière aux taux réels jusqu'à la bascule, puis un **taux unique de 18 %** à compter de 2026 — salariale et patronale additionnées, le même pour tous les statuts. Par-dessus, deux ajouts. Une **cotisation capitalisée de 5 %**, prélevée sur la même assiette **en plus** de la répartition, placée sur des titres sans risque à des maturités qui raccourcissent à l'approche du départ, servie en rente viagère selon la table du modèle, et **transmissible** aux héritiers tant qu'elle n'est pas liquidée : elle est tenue dans un compartiment distinct, jamais confondue avec la pension notionnelle. Et une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
+| **6** | La **proposition libérale** : le scénario **4** jusqu'à 2026, puis 18 % pour tous en répartition, 5 + 5 % capitalisés, et une garantie vieillesse | Le même compte rétroactif, cotisation entière aux taux réels jusqu'à la bascule, puis un **taux unique de 18 %** à compter de 2026 — salariale et patronale additionnées, le même pour tous les statuts. Par-dessus, trois ajouts. Une **cotisation capitalisée de 5 %**, prélevée sur la même assiette **en plus** de la répartition, placée sur des titres sans risque à des maturités qui raccourcissent à l'approche du départ, servie en rente viagère selon la table du modèle, et **transmissible** aux héritiers tant qu'elle n'est pas liquidée : elle est tenue dans un compartiment distinct, jamais confondue avec la pension notionnelle. Puis **5 % de capitalisation volontaire** : 18 + 5 font 23 quand le système actuel prélève 28, et le modèle suppose les cinq points rendus remis au même compte, pour que les deux systèmes se comparent **à effort égal**. Et une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
 
 Les comptes sont revalorisés, par défaut, sur la croissance de la **masse
 salariale** — l'assiette des cotisations, donc le rendement qu'un système en
@@ -59,12 +59,12 @@ Agent de conduite SNCF né en 1955, parti à 50 ans (quinze ans avant l'âge de 
 
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
-1. Système actuel                                                  35,435€     28,280€    2,357€     réf.
-2. Notionnel rétroactif, part salariale                             8,483€      6,770€      564€   -76.1%
-3. Notionnel dès 2026, part salariale                              27,029€     21,571€    1,798€   -23.7%
-4. Notionnel rétroactif, salariale + patronale                     49,581€     39,570€    3,298€   +39.9%
-5. Notionnel dès 2026, salariale + patronale                       32,000€     25,539€    2,128€    -9.7%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        47,051€     37,551€    3,129€   +32.8%
+1. Système actuel                                                  19,256€     26,960€    2,247€     réf.
+2. Notionnel rétroactif, part salariale                             2,270€      3,178€      265€   -88.2%
+3. Notionnel dès 2026, part salariale                              19,256€     26,960€    2,247€    +0.0%
+4. Notionnel rétroactif, salariale + patronale                      7,481€     10,474€      873€   -61.2%
+5. Notionnel dès 2026, salariale + patronale                       19,256€     26,960€    2,247€    +0.0%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse         7,481€     10,474€      873€   -61.2%
 ```
 
 > Les scénarios 4 et 5 sont les scénarios 2 et 3, à une différence près et une
@@ -80,7 +80,7 @@ Scénario                                                          Courants   Co
 
 > **Le scénario 6 est la proposition du Parti libéral français**, et il se lit
 > contre le scénario 4 : même compte rétroactif, cotisation salariale et
-> patronale confondues, mêmes âges, même indexation, même liquidation. Trois
+> patronale confondues, mêmes âges, même indexation, même liquidation. Quatre
 > choses changent. Le taux — 18 % pour tous à compter de 2026, là où le
 > scénario 4 porte les taux réellement en vigueur de chaque régime ; ce qui a
 > été cotisé avant 2026 sous le système actuel reste porté au compte tel quel,
@@ -93,15 +93,28 @@ Scénario                                                          Courants   Co
 > page de simulation détaille la garantie étape par étape, et la page Coût
 > compte à part ce que l'impôt en finance.
 >
-> Et un **pilier capitalisé obligatoire** : 5 % de la même assiette, prélevés
-> en plus des 18 %, à compter de 2026. Ils ne passent pas par le compte
-> notionnel ; ils constituent un capital, placé sur des titres sans risque et
-> logé dans l'enveloppe du PER. Le total prélevé reste inférieur à celui
-> d'aujourd'hui : 18 + 5 = 23 %, contre 28 % pour un salarié du privé. Le
-> modèle le tient dans un compartiment à part, et les six sorties — tableau,
-> page, JSON — affichent toujours deux lignes nommées plutôt qu'une somme.
-> Ce qui les sépare n'est pas un détail de présentation : une pension de
-> répartition s'éteint avec son titulaire, un capital se transmet.
+> Et un **pilier capitalisé** : 5 % de la même assiette, prélevés en plus des
+> 18 %, à compter de 2026. Ils ne passent pas par le compte notionnel ; ils
+> constituent un capital, placé sur des titres sans risque et logé dans
+> l'enveloppe du PER. Le total imposé reste inférieur à celui d'aujourd'hui :
+> 18 + 5 = 23 %, contre 28 % pour un salarié du privé. Le modèle le tient dans
+> un compartiment à part, et les six sorties — tableau, page, JSON — affichent
+> toujours des lignes nommées plutôt qu'une somme. Ce qui les sépare n'est pas
+> un détail de présentation : une pension de répartition s'éteint avec son
+> titulaire, un capital se transmet.
+>
+> Restent **cinq points rendus**, et c'est la question que tout le monde pose
+> ensuite : et si on les remettait au même endroit ? Le modèle suppose que oui
+> — une **capitalisation volontaire de 5 %**, sur la même assiette, aux mêmes
+> conditions —, et l'effort revient alors à 28 %, ce qu'il est déjà. Ce n'est
+> pas une prévision de comportement mais une convention de comparaison : sans
+> elle, le site opposerait deux systèmes qui ne coûtent pas le même prix.
+> Elle est volontaire, donc **entièrement à la charge de l'assuré** sur la
+> fiche de paie — aucun employeur ne cofinance une épargne qu'on décide seul —,
+> et la rente qu'elle sert est nommée à part partout où le total paraît, pour
+> que qui ne la verserait pas puisse la retrancher.
+> `capitalisation_volontaire=False` la retire, et la proposition redevient
+> 18 + 5.
 
 > **Le scénario 2 n'est pas une proposition de réforme**, et l'écart qu'il
 > affiche ne mesure pas l'effet des comptes notionnels. Deux raisons, et aucune
@@ -127,8 +140,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->687<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 109<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->692<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 128<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Six pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -578,8 +591,9 @@ Scénario                                                          Courants   Co
 --------------------------------------------------------------------------------------------------------
    hors répartition (RAFP), servi à part, identique aux 6           1,506€      1,202€      100€         
 --------------------------------------------------------------------------------------------------------
-   + rente du pilier capitalisé, scénario 6 seul                    1,633€      1,303€      109€         
-   = total servi par le scénario 6                                 48,684€     38,854€    3,238€   +37.4%
+   + rente capitalisée obligatoire, scénario 6                      1,633€      1,303€      109€         
+   + rente capitalisée volontaire, les 5 points rendus              1,633€      1,303€      109€         
+   = total servi par le scénario 6                                 50,317€     40,157€    3,346€   +42.0%
 
 Qui verse la cotisation, en euros courants cumulés :
   part salariale           139,912 €   scénarios 2 et 3
@@ -593,10 +607,11 @@ et c'est le taux, pas la garantie : jusqu'en 2025 son compte est celui du 4, aux
 taux réels, et ce n'est que sur les années 2026-2038, cotisées à 18 % au lieu
 des 82,28 % que l'État verse, qu'il s'en écarte. La pension contributive dépasse
 de toute façon le plancher. Les treize années cotisées au pilier capitalisé
-ajoutent 1 633 € par an, servis à part : le total du scénario 6 repasse ainsi
-au-dessus du scénario 4, mais les deux lignes ne promettent pas la même chose —
-la seconde s'éteint avec sa titulaire, le capital de la première se serait
-transmis.
+ajoutent 1 633 € par an au titre des 5 % obligatoires, et 1 633 € de plus si
+elle verse les 5 % rendus : le total du scénario 6 repasse ainsi au-dessus du
+scénario 4, mais les trois lignes ne promettent pas la même chose — la pension
+de répartition s'éteint avec sa titulaire, le capital des deux autres se serait
+transmis, et la dernière, elle, n'est due que si elle décide de la verser.
 
 L'employeur verse ici 79 % du total. C'est l'ordre de grandeur d'un taux
 d'**équilibre**, et c'est la limite du scénario 4 : 82,28 % ne signifie pas
@@ -1132,7 +1147,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1086 tests Python
+tests/                          1107 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1181,7 +1196,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1086<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1107<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

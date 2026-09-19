@@ -102,11 +102,15 @@ export class ScenarioNotionnel {
   liberal(carriere, regimeFusionne = null,
           libelle = "Comptes notionnels rétroactifs, taux unique dès la bascule et garantie vieillesse") {
     const resultat_ = this.retroactif(carriere, regimeFusionne, libelle);
-    // Le pilier capitalisé D'ABORD : la garantie regarde l'ensemble de la
-    // pension obligatoire, les 18 % de répartition ET les 5 % capitalisés.
+    // Le pilier capitalisé D'ABORD : la garantie regarde toutes les
+    // ressources de retraite, les 18 % de répartition ET les dix points
+    // capitalisés, volontaires compris — une allocation différentielle compte
+    // les ressources et non leur origine.
     resultat_.capitalisation = this._pilierCapitalise(carriere, resultat_);
     resultat_.rente_capitalisation_obligatoire = resultat_.capitalisation === null
       ? 0.0 : resultat_.capitalisation.rente_annuelle;
+    resultat_.rente_capitalisation_volontaire = resultat_.capitalisation === null
+      ? 0.0 : resultat_.capitalisation.rente_volontaire;
     const garantie = this._garantieVieillesse(
       carriere, resultat_.pension_annuelle,
       resultat_.rente_capitalisation_obligatoire,
@@ -126,7 +130,7 @@ export class ScenarioNotionnel {
   }
 
   /**
-   * Le pilier obligatoire, bâti sur les assiettes du compte notionnel.
+   * Le pilier capitalisé, bâti sur les assiettes du compte notionnel.
    *
    * Il n'en construit pas d'autre : la cotisation capitalisée est prélevée sur
    * la MÊME assiette, la même année, que la cotisation notionnelle. Les deux ne
@@ -357,6 +361,9 @@ function resultat(champs) {
     //: à `pension_totale`, toujours affiché comme une somme de deux lignes.
     capitalisation: null,
     rente_capitalisation_obligatoire: 0.0,
+    //: La part de cette rente qui vient des cinq points VOLONTAIRES, ceux que
+    //: la proposition rend et que le modèle suppose remis au compte.
+    rente_capitalisation_volontaire: 0.0,
     ...champs,
     pension_mensuelle: champs.pension_annuelle / 12.0,
     pension_totale: champs.pension_annuelle,

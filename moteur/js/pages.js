@@ -19,6 +19,8 @@ import {
 import {
   AgeConversionDroitsAcquis, ModeAgeReference, ModeIndexation, PARAMETRES_DEFAUT, PartCotisation,
   SituationFoyer, TableConversion, avec, cleParametres,
+  tauxCapitalisationApplique, tauxCapitalisationVolontaireApplique,
+  tauxRetraitePropose,
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
 import {
@@ -3020,6 +3022,11 @@ function partager(contexte) {
   const solde = contexte.cout().solde;
   const horizon = solde.annee(solde.derniereAnnee);
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const volontaire = g.pourcentage(
+    tauxCapitalisationVolontaireApplique(base), false, 0,
+  );
+  const propose = g.pourcentage(tauxRetraitePropose(base), false, 0);
   const garantie = base.garantie_vieillesse_mensuelle;
   const isolement = base.allocation_isolement_mensuelle;
   const manque = Math.abs(horizon.solde("actuel"));
@@ -3050,12 +3057,13 @@ function partager(contexte) {
     cartePartage(
       "Le taux",
       "Baisse des prélèvements",
-      taux,
+      `${taux} + ${capitalise}`,
       "de cotisation retraite, pour tout le monde.",
-      "Part salariale et patronale additionnées : "
-      + `${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
-      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)} aujourd'hui pour un `
-      + "salarié du privé.",
+      `${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui pour `
+      + `un salarié du privé (${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
+      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)}). Les ${volontaire} rendus `
+      + `peuvent aller au même compte : ${propose} en tout, comme `
+      + "aujourd'hui, pour une retraite qui vous appartient.",
     ),
     cartePartage(
       "Le déficit",
@@ -3090,9 +3098,10 @@ ${tete}
     <h2 style="margin-top:0">Texte prêt à coller</h2>
     <p>« Un minimum de ${g.euros(garantie + isolement)}/mois, ${taux} de
     cotisation au lieu de
-    ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)}, et un compte de retraite
-    en euros que chacun peut lire. Vérifiez sur votre carrière :
-    ${g.ADRESSE_SITE} — ${g.SIGNATURE} »</p>
+    ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)}, ${capitalise} capitalisés
+    à votre nom et ${volontaire} rendus que vous placez où vous voulez, et un
+    compte de retraite en euros que chacun peut lire. Vérifiez sur votre
+    carrière : ${g.ADRESSE_SITE} — ${g.SIGNATURE} »</p>
     <p class="discret">Le bouton de chaque carte met déjà ce message dans le
     presse-papiers avec l'image.</p>
   </div>
@@ -3190,6 +3199,12 @@ function resultats(contexte, saisie) {
   const capitalise = comparaison.enEurosConstants(
     comparaison.notionnel_liberal.rente_capitalisation_obligatoire,
   );
+  // La part de cette rente qui vient des cinq points VOLONTAIRES, nommée à
+  // part sous la barre : c'est la seule ligne de la page que personne
+  // n'impose, et le lecteur doit pouvoir la retrancher de l'œil.
+  const capitaliseVolontaire = comparaison.enEurosConstants(
+    comparaison.notionnel_liberal.rente_capitalisation_volontaire,
+  );
   const reference = Math.max(...Object.values(constants)) || 1.0;
 
   const anneeDepart = carriere.anneeLiquidation;
@@ -3241,7 +3256,7 @@ function resultats(contexte, saisie) {
 
 
   const bloc = (cle, titre, glose, variation, tauxRemplacement,
-                partCapitalisee = 0.0) => {
+                partCapitalisee = 0.0, partVolontaire = 0.0) => {
     const montant = constants[cle];
     const variationHtml = variation === null
       ? '<span class="discret">référence</span>'
@@ -3254,11 +3269,20 @@ function resultats(contexte, saisie) {
     let partage = "";
     if (partCapitalisee > 0) {
       barre += `<span class="capitalise" style="width:${formatFixe(partCapitalisee / reference * 100, 1)}%"></span>`;
+      // Trois montants nommés plutôt que deux dès qu'il y a du volontaire :
+      // additionner en silence une épargne facultative à une cotisation
+      // obligatoire ferait promettre un montant que le lecteur n'aura que s'il
+      // la verse.
+      const detail = partVolontaire > 0 ? `
+        ${g.eurosCentimes(montants.pension(partCapitalisee - partVolontaire) / 12)}
+        de rente capitalisée obligatoire +
+        ${g.eurosCentimes(montants.pension(partVolontaire) / 12)} de rente
+        des cinq points volontaires, par mois` : `
+        ${g.eurosCentimes(montants.pension(partCapitalisee) / 12)} de rente
+        capitalisée, par mois`;
       partage = `
       <span class="composition">${g.eurosCentimes(montants.pension(repartition) / 12)}
-        de pension par répartition +
-        ${g.eurosCentimes(montants.pension(partCapitalisee) / 12)} de rente
-        capitalisée, par mois</span>`;
+        de pension par répartition +${detail}</span>`;
     }
     return `
 <div class="scenario">
@@ -3297,13 +3321,18 @@ function resultats(contexte, saisie) {
       comparaison.tauxRemplacement("notionnel_retroactif_employeur"))
     + bloc("liberal",
       "4. La proposition du Parti libéral français",
-      `le système 3 jusqu'à ${saisie.bascule}, puis 18 % pour tous en `
-      + "répartition et "
+      `le système 3 jusqu'à ${saisie.bascule}, puis `
+      + `${g.pourcentage(comparaison.parametres.taux_cotisation_liberal, false, 0)} `
+      + "pour tous en répartition, "
       + `${g.pourcentage(comparaison.parametres.taux_capitalisation_obligatoire, false, 0)} `
-      + "capitalisés par-dessus — plus une garantie vieillesse payée par l'impôt",
+      + "capitalisés par-dessus et "
+      + `${g.pourcentage(tauxCapitalisationVolontaireApplique(comparaison.parametres), false, 0)} `
+      + "que vous ajoutez librement pour cotiser autant qu'aujourd'hui "
+      + `(${g.pourcentage(tauxRetraitePropose(comparaison.parametres), false, 0)} `
+      + "en tout) — plus une garantie vieillesse payée par l'impôt",
       comparaison.variationTotale("notionnel_liberal"),
       comparaison.tauxRemplacementTotal("notionnel_liberal"),
-      capitalise);
+      capitalise, capitaliseVolontaire);
 
   const fiches = [
     g.fiche("années cotisées", String(carriere.anneesCotisees.length)),
@@ -3753,6 +3782,23 @@ function salaireNet(comparaison, saisie) {
   const sousQuelleHypothese = remuneration.afficheCoutDuTravail
     ? "à coût du travail inchangé pour votre employeur"
     : `à ${echapper(remuneration.libelleAssiette.toLowerCase())} inchangé`;
+  // LE CHIFFRE DU MILIEU COMPREND L'ÉPARGNE VOLONTAIRE, et il faut le dire
+  // dans la même phrase : cinq points que personne n'impose sont retirés de ce
+  // net, et l'assuré les retrouve sur un compte à son nom.
+  let volontaire = "";
+  if (remuneration.verseLeVolontaire) {
+    const sans = reference.netSansVolontaire / 12;
+    const ecartSans = remuneration.gainNetMensuelSansVolontaire;
+    volontaire = ` Ce chiffre suppose que vous versez les
+  <strong>${g.pourcentage(tauxCapitalisationVolontaireApplique(comparaison.parametres), false, 0)}
+  de capitalisation volontaire</strong> que la proposition vous rend, soit
+  ${g.eurosCentimes(remuneration.epargneVolontaireMensuelle)} par mois qui
+  quittent votre ${net} pour un compte à votre nom : vous cotisez alors
+  ${g.pourcentage(tauxRetraitePropose(comparaison.parametres), false, 0)}
+  en tout, comme aujourd'hui. Si vous ne les versez pas, votre ${net} est de
+  ${g.eurosCentimes(sans)}, soit ${eurosSigne(ecartSans)} par mois — et la
+  rente du système 4 baisse d'autant.`;
+  }
 
   return `
 <h2 id="salaire-net">Et pendant que vous cotisez</h2>
@@ -3763,7 +3809,7 @@ que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">${ouverture}</div>
   <p>Soit <strong>${eurosSigne(gain)} ${sens} sur votre fiche de paie</strong>,
-  ${sousQuelleHypothese}.${reste}</p>
+  ${sousQuelleHypothese}.${reste}${volontaire}</p>
   ${salaireNetDetail(comparaison, remuneration, saisie)}
 </div>`;
 }
@@ -3802,6 +3848,19 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
       `<strong>${mois(apres.net)}</strong>`],
     [avecCout ? "Dont pour la retraite" : "Dont pour la retraite, à votre charge",
       mois(retraiteAvant), mois(retraiteApres)],
+  );
+  // La ligne que l'assuré peut retirer de sa propre décision. Elle est la seule
+  // du tableau que rien n'impose, et la colonne « Systèmes 1 à 3 » y porte un
+  // tiret : elle n'existe pas sous le droit en vigueur.
+  if (reference.epargneVolontaire > 0) {
+    lignes.push(
+      ["Dont capitalisation volontaire, à votre nom", "—",
+        mois(reference.epargneVolontaire)],
+      [`${libelleNet} si vous ne la versez pas`, mois(avant.net),
+        mois(reference.netSansVolontaire)],
+    );
+  }
+  lignes.push(
     [avecCout ? "Ce qui vous arrive, sur 100 € coûtés"
       : `Ce qui vous reste, sur 100 € de ${assiette.toLowerCase()}`,
     g.pourcentage(avecCout ? avant.partQuiArrive : avant.net / avant.brut),
@@ -3860,14 +3919,28 @@ function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
     return "";
   }
   const taux = g.pourcentage(parametres.taux_capitalisation_obligatoire, false, 0);
+  const volontaire = g.pourcentage(
+    tauxCapitalisationVolontaireApplique(parametres), false, 0,
+  );
   const repartition = g.pourcentage(parametres.taux_cotisation_liberal, false, 0);
+  const total = g.pourcentage(tauxRetraitePropose(parametres), false, 0);
+  const ajout = remuneration.verseLeVolontaire
+    ? ` Sur ces ${g.pourcentage(tauxCapitalisationApplique(parametres), false, 0)}, `
+      + `${volontaire} sont <strong>volontaires</strong> : ce sont les `
+      + "points que la proposition vous rend et que le site suppose remis "
+      + `au même compte, soit ${g.eurosCentimes(remuneration.epargneVolontaireMensuelle)} `
+      + `par mois et ${g.euros(remuneration.epargneVolontaireCumulee)} `
+      + `d'ici votre départ. Vous cotisez alors ${total} en tout, `
+      + "c'est-à-dire ce que vous versez déjà aujourd'hui — et c'est à ce "
+      + "prix-là que les deux colonnes se comparent."
+    : "";
   return `<p class="note resume"><strong>${g.eurosCentimes(epargne)} par mois `
     + "de ce prélèvement est de l'épargne à votre nom.</strong> Le système 4 "
     + `prélève ${taux} par-dessus les ${repartition} de répartition, et ces `
     + "cinq points ne partent pas : ils alimentent un compte qui reste le "
     + "vôtre, transmissible à vos héritiers tant qu'il n'est pas liquidé — "
     + `${g.euros(remuneration.epargneCumulee)} d'ici votre départ, en euros `
-    + `de ${saisie.euros}. `
+    + `de ${saisie.euros}.${ajout} `
     + (remuneration.afficheCoutDuTravail
       ? "Sans eux, le salaire net monterait à tous les niveaux de salaire ; "
         + "avec eux, il baisse au voisinage du SMIC."
@@ -3945,12 +4018,30 @@ function salaireNetPartage(remuneration, parametres, part) {
   const capitalise = g.pourcentage(
     parametres.taux_capitalisation_obligatoire, false, 0,
   );
+  const volontaire = g.pourcentage(
+    tauxCapitalisationVolontaireApplique(parametres), false, 0,
+  );
+  // Les cinq points volontaires échappent au partage : personne ne cofinance
+  // une épargne que l'assuré décide seul. C'est aussi ce qui explique que les
+  // activer fasse baisser le net de leur montant entier.
+  const horsPartage = (remuneration.verseLeVolontaire
+    && remuneration.profil !== "independant")
+    ? `
+<p><strong>Les ${volontaire} volontaires, eux, ne sont partagés avec
+personne.</strong> Aucun employeur ne cofinance une épargne que son salarié
+décide seul : ils sont portés en entier par vous, et le coût du travail ne
+bouge pas quand vous les versez. C'est pourquoi ils retirent de votre net leur
+montant entier, quand les ${capitalise} imposés ne vous en coûtent que la
+moitié.</p>` : "";
   if (remuneration.profil === "independant") {
     return `<p><strong>Les ${repartition} et les ${capitalise} capitalisés sont à votre
 charge en entier.</strong> La proposition les annonce « salariale et patronale
 additionnées » ; vous êtes les deux à la fois, comme vous l'êtes déjà des
 vingt-six points que vous versez aujourd'hui. Vous prêter un employeur pour la
-moitié de la charge fabriquerait un gain qui n'existe pas.</p>`;
+moitié de la charge fabriquerait un gain qui n'existe pas. Les ${volontaire}
+volontaires le sont aussi, et pour une autre raison : personne ne cofinance une
+épargne qu'on décide seul. Votre profil est le seul où les trois taux pèsent de
+la même façon.</p>`;
   }
   if (!remuneration.afficheCoutDuTravail) {
     return `<p><strong>Les ${repartition} sont partagés moitié-moitié</strong> entre
@@ -3958,7 +4049,7 @@ vous et votre employeur, comme les ${capitalise} capitalisés : votre part est
 donc de ${part} de chacun. La proposition ne dit pas
 qui porte quoi, et ce partage commande directement le chiffre ci-dessus —
 puisque seule votre part y figure, tout déplacer vers l'employeur ferait
-disparaître la hausse, et tout déplacer vers vous la doublerait.</p>`;
+disparaître la hausse, et tout déplacer vers vous la doublerait.</p>${horsPartage}`;
   }
   return `<p><strong>Les ${repartition}
 sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
@@ -3967,7 +4058,7 @@ capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
 neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
 porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
 bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
-est le partage du milieu (${part} pour vous).</p>`;
+est le partage du milieu (${part} pour vous).</p>${horsPartage}`;
 }
 
 /** L'allègement sur les bas salaires — quand il s'applique, et sinon pourquoi. */
@@ -4099,7 +4190,7 @@ const EXEMPLES_GARANTIE = [
 ];
 
 /**
- * Le pilier obligatoire : ce qu'il reçoit, ce qu'il rend, ce qu'il lègue.
+ * Le pilier capitalisé : ce qu'il reçoit, ce qu'il rend, ce qu'il lègue.
  *
  * Portage de `_pilier_capitalise`. C'est la seule ligne de tout le site où de
  * l'argent est réellement placé : le bloc doit donc dire où va l'argent, ce
@@ -4115,8 +4206,13 @@ function pilierCapitalise(comparaison, saisie) {
 
   const parametres = comparaison.parametres;
   const taux = g.pourcentage(pilier.taux_cotisation, false, 0);
+  const tauxImpose = g.pourcentage(pilier.taux_cotisation_obligatoire, false, 0);
+  const tauxVolontaire = g.pourcentage(
+    pilier.taux_cotisation_volontaire, false, 0,
+  );
+  const avecVolontaire = pilier.taux_cotisation_volontaire > 0;
   const depart = comparaison.carriere.anneeLiquidation;
-  const titre = `Le pilier de capitalisation obligatoire : ${taux} placés dès `
+  const titre = `Le pilier capitalisé : ${taux} placés dès `
     + `${parametres.annee_debut_capitalisation}`;
 
   if (!pilier.actif) {
@@ -4141,7 +4237,9 @@ donc, du système 4, la seule pension de répartition.</p>`);
     ["", "Ce qui se passe", `Montant, en euros de ${depart}`],
     [
       [`a) Cotisation de ${taux}`,
-        "prélevée sur la même assiette que la cotisation notionnelle, de "
+        (avecVolontaire
+          ? `${tauxImpose} imposés et ${tauxVolontaire} volontaires, ` : "")
+        + "prélevés sur la même assiette que la cotisation notionnelle, de "
         + `${premiere.annee} à ${derniere.annee}, EN PLUS d'elle`,
         g.euros(pilier.versements)],
       ["b) − frais sur versement",
@@ -4229,13 +4327,28 @@ produit plus d'intérêts.</p>` : `
 versement tombe l'année du départ, et il est porté tel quel. Seuls les
 ${g.euros(pilier.frais_preleves)} de frais sur versement le grèvent.</p>`;
 
+  // Ce que servent les cinq points volontaires, nommé à part : le pilier est
+  // exactement proportionnel à son taux, si bien que la moitié volontaire rend
+  // la moitié de la rente. Le lecteur doit pouvoir retrancher cette ligne, qui
+  // est la seule de la page que personne ne lui impose.
+  const partageVolontaire = avecVolontaire ? `
+<p><strong>Sur cette rente, ${g.eurosCentimes(pilier.rente_volontaire)} par an
+viennent des ${tauxVolontaire} que vous versez librement</strong>, et
+${g.eurosCentimes(pilier.rente_obligatoire)} des ${tauxImpose} que la
+proposition impose. Le compte ne les distingue nulle part ailleurs : même
+assiette, même placement, mêmes frais, même table — la rente se partage donc
+dans le rapport exact des deux taux. Si vous ne versez pas ces
+${tauxVolontaire}, retranchez cette part du total du système 4, et gardez-la
+sur votre fiche de paie : c'est le même argent, et c'est vous qui
+choisissez.</p>` : "";
+
   return g.depliant(titre, `
 <p>À compter de ${parametres.annee_debut_capitalisation}, ${taux} de la
 rémunération sont prélevés <strong>en plus</strong> de la cotisation de
 répartition, et placés. Ils ne passent pas par le compte notionnel : ils
 constituent un capital, au nom du cotisant, dans un plan d'épargne retraite —
-l'enveloppe qui existe déjà. Deux choses seulement l'en distinguent : la
-cotisation est obligatoire, et l'argent n'en sort qu'à la retraite, sous forme
+l'enveloppe qui existe déjà. Deux choses seulement l'en distinguent : ${tauxImpose}
+sont obligatoires, et l'argent n'en sort qu'à la retraite, sous forme
 de rente, ou au décès, par l'héritage.${g.bulle(
     "Pourquoi ce n'est pas la même chose qu'une pension",
     "Une pension de répartition est un droit sur les cotisations des actifs de "
@@ -4246,6 +4359,7 @@ de rente, ou au décès, par l'héritage.${g.bulle(
     + "pas été converti en rente. Les deux sont additionnées sur la ligne du "
     + "système 4, jamais confondues.")}</p>
 ${cascade}
+${partageVolontaire}
 ${rendement}
 ${echelle}
 ${transmission}
@@ -4317,9 +4431,10 @@ function garantieVieillesse(comparaison, saisie) {
       + `${taux} pour tous ensuite — divisé par `
       + `${g.nombre(liberal.conversion.diviseur, DECIMALES_DIVISEUR)}`,
       `${g.eurosCentimes(garantie.pension_contributive)} par an`],
-    ["e) + rente du pilier obligatoire",
-      "les 5 % capitalisés : la garantie regarde l'ensemble de la pension "
-      + "obligatoire, pas la seule répartition",
+    ["e) + rente du pilier capitalisé",
+      `les ${g.pourcentage(tauxCapitalisationApplique(parametres), false, 0)} `
+      + "capitalisés, volontaires compris : une allocation différentielle "
+      + "compte les ressources et non leur origine",
       `${g.eurosCentimes(garantie.rente_capitalisee)} par an`],
     ["f) = ressources examinées", "d + e",
       `${g.eurosCentimes(garantie.ressources)} par an`],
@@ -6608,7 +6723,15 @@ function coutDetailCapitalisation(contexte) {
   const base = contexte.base;
   const repartition_ = base.taux_cotisation_liberal;
   const capitalise = base.taux_capitalisation_obligatoire;
-  const total = repartition_ + capitalise;
+  const volontaire = tauxCapitalisationVolontaireApplique(base);
+  const impose = repartition_ + capitalise;
+  const total = impose + volontaire;
+  // La ligne volontaire ne paraît que si elle existe : la retirer des
+  // paramètres doit rendre au tableau la forme qu'il avait à deux lignes.
+  const ligneVolontaire = volontaire
+    ? [["Placé volontairement, les points rendus", "—",
+      g.pourcentage(volontaire, false, 0)]]
+    : [];
   return g.depliant(
     "Ce que le pilier capitalisé prélève, et pourquoi il n'est pas dans ce bilan",
     `
@@ -6619,7 +6742,9 @@ ${g.pourcentage(capitalise, false, 0)} ne paient aucune pension : ils
 constituent un capital au nom de celui qui verse. Ils ne sont donc ni une
 ressource ni une dépense du système de retraite, et <strong>aucun des chiffres
 de cette page ne les compte</strong> — le solde du système 4 est celui de sa
-répartition, comme celui des trois autres.</p>
+répartition, comme celui des trois autres. Il en va de même des
+${g.pourcentage(volontaire, false, 0)} que le cotisant peut ajouter de
+lui-même : ils ne passent pas davantage par les caisses.</p>
 
 ${g.tableau(
     ["", "Aujourd'hui", "Système 4"],
@@ -6627,9 +6752,12 @@ ${g.tableau(
       ["Prélevé pour la répartition",
         g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0),
         g.pourcentage(repartition_, false, 0)],
-      ["Prélevé pour la capitalisation", "—",
+      ["Prélevé pour la capitalisation, obligatoire", "—",
         g.pourcentage(capitalise, false, 0)],
-      ["Total prélevé sur la rémunération",
+      ...ligneVolontaire,
+      ["Total imposé", g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0),
+        g.pourcentage(impose, false, 0)],
+      ["Total versé si les points rendus sont replacés",
         g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0),
         `<strong>${g.pourcentage(total, false, 0)}</strong>`],
     ],
@@ -6639,9 +6767,9 @@ ${g.tableau(
     true,
   )}
 
-<p>Le total prélevé <strong>baisse de
-${g.nombre((TAUX_ACTUEL_TOTAL - total) * 100, 0)} points</strong> :
-${g.pourcentage(total, false, 0)} contre
+<p>Ce qui est <strong>imposé</strong> baisse de
+${g.nombre((TAUX_ACTUEL_TOTAL - impose) * 100, 0)} points :
+${g.pourcentage(impose, false, 0)} contre
 ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui pour un salarié du
 privé. La part qui finance les pensions des autres passe de
 ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} à
@@ -6649,6 +6777,17 @@ ${g.pourcentage(repartition_, false, 0)} ; ce qui reste,
 ${g.pourcentage(capitalise, false, 0)}, revient à celui qui l'a versé — sous
 forme de rente à la retraite, ou de capital à ses héritiers s'il meurt
 avant.</p>
+
+<p><strong>Le simulateur, lui, montre la seconde ligne du total.</strong> Les
+${g.nombre((TAUX_ACTUEL_TOTAL - impose) * 100, 0)} points rendus, il les suppose
+remis au même compte, et l'effort revient alors à
+${g.pourcentage(total, false, 0)}, ce qu'il est déjà. C'est la seule façon de
+comparer deux systèmes sans comparer en même temps deux niveaux d'effort : à ce
+prix-là, ${g.pourcentage(tauxCapitalisationApplique(base), false, 0)} des
+${g.pourcentage(total, false, 0)} appartiennent au cotisant et se
+transmettent, contre rien aujourd'hui. Qui préfère garder ces points les garde,
+et sa rente baisse de ce qu'ils auraient rapporté : la page de résultats écrit
+les deux montants.</p>
 
 <div class="note"><strong>Ce que cela ne dit pas.</strong> Le pilier est neutre
 pour les comptes publics au moment où il se remplit, mais il ne l'est pas pour
@@ -7069,6 +7208,12 @@ function methodeCapitalisation(contexte) {
   const base = contexte.base;
   const courbe = new CourbeTauxSansRisque(contexte.paquet);
   const taux = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const volontaire = g.pourcentage(
+    tauxCapitalisationVolontaireApplique(base), false, 0,
+  );
+  const totalCapitalise = g.pourcentage(
+    tauxCapitalisationApplique(base), false, 0,
+  );
 
   const comptants = g.tableau(
     ["Maturité", "Taux zéro-coupon, en rythme annuel"],
@@ -7094,7 +7239,7 @@ function methodeCapitalisation(contexte) {
   );
 
   return g.depliant(
-    `Le pilier capitalisé : ${taux} placés, ce que cela suppose`,
+    `Le pilier capitalisé : ${totalCapitalise} placés, ce que cela suppose`,
     `
 <p>La proposition ajoute, à compter de ${base.annee_debut_capitalisation}, une
 cotisation de ${taux} prélevée sur la même assiette que la cotisation de
@@ -7102,6 +7247,40 @@ répartition, <strong>en plus</strong> d'elle : elle ne s'y substitue pas. Elle
 n'entre pas au compte notionnel, elle constitue un capital au nom du cotisant,
 dans un plan d'épargne retraite. Les années antérieures gardent les taux qui étaient les
 leurs et ne versent rien.</p>
+
+<h3>Les ${volontaire} qui ne sont imposés par personne</h3>
+<p>${g.pourcentage(base.taux_cotisation_liberal, false, 0)} de répartition et
+${taux} capitalisés font
+${g.pourcentage(base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire, false, 0)},
+quand le système actuel en prélève
+${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} pour un salarié du privé. La
+proposition rend donc ${volontaire}, et le modèle suppose qu'ils sont
+<strong>replacés sur le même compte</strong>, aux mêmes conditions : le pilier
+reçoit ${totalCapitalise} en tout, et l'effort de retraite revient à
+${g.pourcentage(tauxRetraitePropose(base), false, 0)}, exactement celui
+d'aujourd'hui. Le modèle ne prétend pas prévoir que les cotisants le feront : il
+pose une <strong>convention de comparaison</strong>. Sans elle, le site
+opposerait deux systèmes qui ne coûtent pas le même prix, et l'écart de pension
+se lirait pour partie comme un effet des règles alors qu'il viendrait d'un
+effort moindre.</p>
+<p>Le compartiment ne distingue ces points nulle part ailleurs qu'en proportion
+— même assiette, même échelle de maturités, mêmes frais, même table de
+mortalité —, si bien que la rente se partage dans le rapport exact des deux
+taux. Deux endroits les séparent, et deux seulement. Sur la <strong>fiche de
+paie</strong>, les ${volontaire} volontaires sont portés en entier par l'assuré,
+là où les ${taux} imposés sont partagés avec l'employeur : personne ne cofinance
+une épargne qu'on décide seul, et le coût du travail ne bouge pas quand on la
+verse. Dans les <strong>résultats</strong>, la rente qu'ils servent est écrite
+sur sa propre ligne, pour que le lecteur qui ne les verserait pas puisse la
+retrancher.</p>
+<p>Un troisième endroit aurait pu les séparer, et ne les sépare pas : la
+<strong>garantie vieillesse</strong>. Elle est différentielle, elle compte les
+ressources et non leur origine, et cette rente-là en est une. Une épargne que
+personne n'oblige réduit donc l'allocation, exactement comme une pension
+personnelle réduit l'ASPA d'aujourd'hui. Pour qui reste sous le plancher après
+avoir versé, ces cinq points ne rapportent <strong>rien du tout</strong> en
+pension : la garantie les reprend euro pour euro. Il leur reste ce que la
+répartition ne donne à personne, un capital qui se transmet.</p>
 
 <h3>Où l'argent est placé</h3>
 <p>Sur des titres sans risque, portés jusqu'à leur échéance. La courbe retenue
@@ -8103,6 +8282,9 @@ function engagements(contexte) {
   const base = contexte.base;
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const volontaire = g.pourcentage(
+    tauxCapitalisationVolontaireApplique(base), false, 0,
+  );
   const garantie = base.garantie_vieillesse_mensuelle;
   const isolement = base.allocation_isolement_mensuelle;
   const seul = g.euros(garantie + isolement);
@@ -8127,7 +8309,9 @@ function engagements(contexte) {
       + 'et <strong class="cle-texte">le même taux pour tout le monde</strong>. '
       + `Par-dessus, ${capitalise} placés sur des titres sans risque, `
       + '<strong class="cle-texte">qui vous appartiennent</strong> et se '
-      + "transmettent."],
+      + `transmettent. Restent ${volontaire} rendus : le simulateur montre ce `
+      + "qu'ils donnent si vous les placez au même endroit, "
+      + '<strong class="cle-texte">à effort inchangé</strong>.'],
     ["1 compte",
       '<strong class="cle-texte">en euros</strong>, lisible par tous.',
       "Un compte personnel de retraite : vous voyez "
@@ -8258,9 +8442,15 @@ distribution réelle des pensions, non sur des cas types.</p>`);
 function programmeCapitalisation(contexte) {
   const base = contexte.base;
   const taux = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const volontaire = g.pourcentage(base.taux_capitalisation_volontaire, false, 0);
+  const total = g.pourcentage(tauxCapitalisationApplique(base), false, 0);
   const repartition_ = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  const impose_ = g.pourcentage(
+    base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire, false, 0,
+  );
+  const propose = g.pourcentage(tauxRetraitePropose(base), false, 0);
   return g.depliant(
-    `La part capitalisée : ${taux} qui vous appartiennent`,
+    `La part capitalisée : ${total} qui vous appartiennent`,
     `
 <p>À compter de ${base.annee_debut_capitalisation}, ${taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des ${repartition_} de la répartition, et
@@ -8270,13 +8460,24 @@ qui existe déjà et que des millions de Français détiennent. Les années d'av
 ne changent pas :
 elles gardent les taux qui étaient les leurs, et qui a déjà liquidé ne cotise
 rien.</p>
+<p><strong>À ces ${taux} s'ajoutent ${volontaire} que personne ne vous
+impose.</strong> Le système actuel prélève
+${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} de la rémunération d'un salarié
+du privé pour la retraite ; ${repartition_} et ${taux} en font ${impose_}, et la
+proposition vous rend donc les cinq points qui restent. Le site suppose que vous
+les remettez au même endroit, sur le même compte, aux mêmes conditions : votre
+effort revient alors à ${propose}, c'est-à-dire à ce qu'il est déjà aujourd'hui,
+et les deux systèmes se comparent enfin <strong>à prix égal</strong>. Vous êtes
+libre de ne pas le faire : les montants du simulateur disent aussi ce que vous
+toucheriez sans.</p>
 <ul class="serree">
   <li><strong>Il vous appartient.</strong> Si vous mourez avant d'avoir liquidé,
   le capital revient à vos héritiers, intégralement. Une pension de répartition,
   elle, s'éteint avec vous sans rien laisser.</li>
   <li><strong>Il ne sort qu'à la retraite.</strong> Pas d'achat de résidence
-  principale, pas de sortie anticipée : la cotisation est obligatoire, et
-  l'argent n'en sort qu'en rente viagère, ou par l'héritage.</li>
+  principale, pas de sortie anticipée : l'argent n'en sort qu'en rente viagère,
+  ou par l'héritage. C'est vrai des ${taux} obligatoires comme des ${volontaire}
+  que vous ajoutez.</li>
   <li><strong>Il est placé sans risque.</strong> Des titres d'État parmi les
   mieux notés de la zone euro, portés jusqu'à leur échéance : longue tant que la
   retraite est loin, courte à l'approche du départ. Aucune action, aucun pari.</li>

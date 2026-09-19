@@ -1250,12 +1250,57 @@ def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
                  unite_revenu="euros_mois")
     assert "Le système 4 : un taux pour tous" in texte
     assert "Garantie vieillesse" in texte
-    assert "rente du pilier obligatoire" in texte
+    assert "rente du pilier capitalisé" in texte
     assert "l'impôt en finance" in texte
     assert "personne seule, 300\u00a0€" in texte
     texte = page("/simuler", naissance=1958, liquidation=62, salaire=1500,
                  unite_revenu="euros_mois")
     assert "avant les 65 ans" in texte
+
+
+def test_la_page_ecrit_les_cinq_points_volontaires_partout_ou_ils_pesent(page):
+    """Les cinq points rendus se lisent sur la pension ET sur la fiche de paie.
+
+    La règle de ce bloc : nulle part le site n'additionne en silence une
+    épargne facultative à une cotisation obligatoire. Partout où le total du
+    système 4 paraît, la part volontaire est nommée à côté ; et sur la fiche de
+    paie, les deux nets sont écrits — celui qui la verse, celui qui ne la verse
+    pas.
+    """
+    texte = page("/simuler", naissance=1995, liquidation=64, salaire=3000,
+                 unite_revenu="euros_mois")
+    # Sous la barre du système 4, la rente est coupée en deux lignes nommées.
+    assert "de rente capitalisée obligatoire" in texte
+    assert "de rente des cinq points volontaires" in " ".join(texte.split())
+    # Le dépliant du pilier dit ce que chacune des deux sert.
+    assert "que vous versez librement" in texte
+    # La fiche de paie porte la ligne et le net qu'on aurait sans elle.
+    assert "Dont capitalisation volontaire, à votre nom" in texte
+    assert "si vous ne la versez pas" in texte
+    assert "de capitalisation volontaire" in " ".join(texte.split())
+
+
+def test_la_proposition_se_compare_a_taux_egal_cotise(contexte):
+    """Les 18 + 5 + 5 valent les 28 % d'aujourd'hui, et les pages le disent.
+
+    C'est la raison d'être des cinq points volontaires : sans eux, le site
+    opposerait deux systèmes qui ne coûtent pas le même prix.
+    """
+    from retraite_notionnelle.web.pages import TAUX_ACTUEL_TOTAL
+
+    base = contexte.base
+    assert base.taux_retraite_propose == pytest.approx(
+        round(TAUX_ACTUEL_TOTAL, 2))
+    programme = _prose(rendre(contexte, "/", {})[1])
+    assert "que personne ne vous impose" in programme
+    # La ligne du total est une ligne de TABLEAU, que `_prose` retire : on la
+    # cherche donc dans le corps rendu, et la phrase qui la commente en prose.
+    cout = rendre(contexte, "/cout", {})[1]
+    assert "Total versé si les points rendus sont replacés" in cout
+    assert "le simulateur, lui, montre la seconde ligne du total" in (
+        _prose(cout).lower())
+    methode = _prose(rendre(contexte, "/methode", {})[1])
+    assert "convention de comparaison" in methode
 
 
 # -- rendu -------------------------------------------------------------------

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 633<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 987<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -5112,41 +5112,52 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   diagonale, une opacité bornée PAR LE HAUT autant que par le bas, et la pose
   en dernier par les deux composeurs.
 
-- **Septembre 2026, les cinq points rendus : essayé, puis retiré.** Demandé hors
-  feuille de route : « on passe d'environ 28 % de cotisation à 18 + 5 ; affichons
-  le salaire en y rajoutant 5 % de capitalisation non obligatoire, ça permet de
-  mieux se rendre compte à taux égal cotisé ». Le scénario 6 a donc porté une
-  quatrième pièce, une cotisation capitalisée VOLONTAIRE de cinq points, remise
-  au même compte pour que l'effort revienne aux 28 % d'aujourd'hui et que les
-  deux systèmes se comparent à prix égal. Elle a été **retirée le jour même**,
-  sur décision du demandeur : la proposition reste 18 + 5. Ce qui suit est ce
-  que l'essai a appris, et qui vaut pour quiconque y reviendrait.
+- **Septembre 2026, les cinq points rendus, et remis.** La pièce a été posée,
+  retirée le soir même sur un malentendu, puis reposée à l'identique : si une
+  session future la retrouve dans l'historique sous les deux formes, c'est de
+  cet aller-retour qu'il s'agit, et la version en vigueur est celle-ci.
+  Demandé hors feuille de
+  route : « on passe d'environ 28 % de cotisation à 18 + 5 ; affichons le
+  salaire en y rajoutant 5 % de capitalisation non obligatoire, ça permet de
+  mieux se rendre compte à taux égal cotisé ». Le scénario 6 porte donc une
+  QUATRIÈME pièce, `taux_capitalisation_volontaire`, et le pilier reçoit dix
+  points au lieu de cinq. Deux décisions, prises avec le demandeur : les cinq
+  points entrent dans le total du 6, et la fiche de paie les met entièrement à
+  la charge de l'assuré.
 
-  **Le net baisse, et c'est l'effet du partage.** Une épargne que l'assuré
-  décide seul n'est cofinancée par personne, là où les vingt-trois points
-  imposés sont partagés moitié-moitié avec l'employeur. Les cinq points
-  volontaires retirent donc du net leur montant ENTIER, quand les cinq points
-  obligatoires n'en coûtent que la moitié : pour un non-cadre du privé né en
-  1990, la proposition rendait +73 € par mois, et l'ajout les transformait en
-  −105 €. « À taux égal cotisé » ne veut donc pas dire « à net égal », et c'est
-  ce qui a fait retirer la pièce.
+  Un seul compartiment, pas deux. Tout ce que le pilier produit est exactement
+  proportionnel à son taux — les frais sont des pourcentages, l'allocation ne
+  dépend que de l'horizon, aucun seuil n'intervient —, si bien que
+  `part_volontaire` partage le capital et la rente sans les recalculer. Un test
+  le vérifie contre le calcul complet fait à taux réduit : c'est deux fois
+  moins de travail au rendu, et une seule chaîne à maintenir.
 
-  **Sous le plancher, ces cinq points ne rapportaient rien.** La garantie
+  **Le net baisse, et c'est la conséquence du second choix.** À coût du travail
+  tenu fixe, la proposition rendait +73 € par mois à un non-cadre du privé né
+  en 1990 ; les cinq points volontaires en coûtent 179, puisque personne ne les
+  cofinance là où les vingt-trois points imposés sont partagés avec
+  l'employeur. Le site écrit donc les DEUX nets partout : celui de qui verse,
+  celui de qui ne verse pas, et la ligne « si vous ne la versez pas » dans le
+  tableau de la fiche de paie.
+
+  **Et sous le plancher, ces cinq points ne rapportent rien.** La garantie
   vieillesse est différentielle et compte les ressources sans regarder leur
-  origine : elle reprenait la rente volontaire euro pour euro. Ne restait à
-  l'épargnant que le seul avantage propre à la capitalisation, un capital qui se
-  transmet.
+  origine : elle reprend la rente volontaire euro pour euro. Un test fixe les
+  deux régimes, sous le plancher et au-dessus ; les pages Méthode et Simuler le
+  disent, parce que personne ne le devine. Ce qui reste à l'épargnant dans ce
+  cas est le seul avantage propre à la capitalisation : un capital qui se
+  transmet, et qui vaut le double.
 
-  **Le pilier est exactement proportionnel à son taux** — les frais sont des
-  pourcentages, l'allocation ne dépend que de l'horizon, aucun seuil n'intervient
-  —, si bien qu'un second compartiment était inutile : une fraction suffisait à
-  partager capital et rente. C'est bon à savoir pour toute variante de taux.
-
-  Deux dérives trouvées en chemin, sans rapport avec la demande, et corrigées :
-  le bloc d'exemple SNCF du README, que nul test ne couvre, annonçait 5 390 € au
-  scénario 4 quand le modèle en servait 7 295 ; et `methodologie.md` écrivait
-  encore que le pilier capitalisé n'entre pas dans la garantie vieillesse, ce
-  qui n'est plus vrai depuis le 19 septembre.
+  Ce que ça déplace : rien sur les scénarios 1 à 5, rien sur la pension de
+  répartition du 6 hors garantie. Sur le total servi par le 6, la rente
+  capitalisée double. Deux traces à nettoyer trouvées en chemin, sans rapport
+  avec la demande : le bloc d'exemple SNCF du README avait dérivé (scénario 4 à
+  5 390 € quand le modèle en servait 7 295), et `methodologie.md` écrivait
+  encore que le pilier n'entre pas dans la garantie vieillesse, ce qui n'était
+  plus vrai depuis le 19 septembre. Les deux sont corrigés. Reste ouvert : le
+  taux de 5 % est celui que le demandeur a fixé, et il ne coïncide avec l'écart
+  aux 28 % que pour un salarié du privé — un fonctionnaire, dont l'État verse
+  jusqu'à 82,28 %, se voit rendre bien davantage que cinq points.
 
 - **Septembre 2026, le pilier de capitalisation obligatoire.** Demandé hors
   feuille de route, et ajouté au scénario 6 : 5 % de la même assiette que la
