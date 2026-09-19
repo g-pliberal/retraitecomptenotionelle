@@ -2781,6 +2781,45 @@ function resultats(contexte, saisie) {
     ? "par mois, en euros d'aujourd'hui"
     : `par mois, en euros de ${saisie.euros}`;
 
+  // Le salaire net que chaque système laisse PENDANT la carrière, à côté de la
+  // pension qu'il servira APRÈS. Les trois premiers prélèvent la même chose :
+  // le même nombre y paraît donc trois fois, et c'est le propos — seul le
+  // système 4 déplace la fiche de paie.
+  const remuneration = comparaison.remuneration;
+  const nets = {};
+  if (remuneration !== null) {
+    const referencePaie = remuneration.reference;
+    nets.actuel = referencePaie.droitEnVigueur.net;
+    nets.retroactif = referencePaie.droitEnVigueur.net;
+    nets["retroactif-employeur"] = referencePaie.droitEnVigueur.net;
+    nets.liberal = referencePaie.proposition.net;
+  }
+
+  /**
+   * Le second chiffre de la ligne : ce qu'on touche en travaillant.
+   *
+   * Volontairement plus petit que la pension — la page compare des pensions, et
+   * le salaire est ce qu'on met EN REGARD. L'écart n'est écrit que là où il y
+   * en a un, pour que les trois premières lignes se lisent comme ce qu'elles
+   * sont : le même salaire net.
+   */
+  const salaire = (cle) => {
+    if (!(cle in nets)) {
+      return "";
+    }
+    const net = nets[cle];
+    const ecart = net - nets.actuel;
+    const mention = Math.abs(ecart) >= 0.005
+      ? `<span class="ecart">${eurosSigne(ecart / 12)} par mois</span>`
+      : "";
+    return `
+      <span class="chiffre salaire">
+        <span class="somme">${g.eurosCentimes(net / 12)}</span>
+        <span class="unite">salaire net pendant la carrière</span>
+        ${mention}
+      </span>`;
+  };
+
   const bloc = (cle, titre, glose, variation, tauxRemplacement,
                 partCapitalisee = 0.0) => {
     const montant = constants[cle];
@@ -2804,7 +2843,7 @@ function resultats(contexte, saisie) {
 <div class="scenario">
   <div class="entete">
     <span class="titre">${echapper(titre)}</span>
-    <span class="montant">
+    <span class="montant">${salaire(cle)}
       <span class="chiffre principal">
         <span class="somme">${g.eurosCentimes(montant / 12)}</span>
         <span class="unite">${uniteReference}</span>
