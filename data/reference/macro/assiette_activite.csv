@@ -1,0 +1,201 @@
+# Assiette des revenus d'activité, en niveau — France
+# source_id: insee_assiette_activite
+# unite: millions d'euros courants
+# fiabilite:
+#   certifiee (1949-) : comptes nationaux annuels base 2020, lus chez
+#             l'INSEE et recontrôlés par scripts/verifier_donnees.py.
+#             `salaires_bruts` vient de la banque de données
+#             macroéconomiques (idbank 011785411), `revenu_mixte` du
+#             tableau économique d'ensemble exposé par Melodi
+#             (opération B3G, secteur S14).
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À dire SUR QUOI l'on prélève, et donc ce qu'un taux de cotisation
+# rapporte réellement. Le reste du dépôt travaille en rapports — de
+# masses de pension, de cotisations — parce qu'un rapport est robuste ;
+# mais un rapport de taux LÉGAUX appliqué à des ressources OBSERVÉES
+# transporte avec lui la structure du dénominateur, exonérations
+# comprises. C'est cette série qui permet de le voir : en 2024, les
+# deux postes font 1 250 Md€, soit 42,5 % du PIB, et le système de
+# retraite y prélève 24,9 points de cotisations là où le taux légal
+# d'un salarié type est de 28 à 29 %.
+#
+# LES DEUX POSTES, ET POURQUOI IL EN FAUT DEUX
+# ---------------------------------------------
+# `salaires_bruts` est l'assiette des salariés : c'est sur le salaire
+# brut que les deux parts de la cotisation sont calculées, et c'est
+# aussi sur le traitement que l'État verse sa contribution d'équilibre.
+# `revenu_mixte` est celle des non-salariés. Les additionner suppose
+# que l'on tienne le revenu mixte pour un revenu du TRAVAIL, ce qu'il
+# n'est qu'en partie : il rémunère aussi le capital de l'entrepreneur
+# individuel. Le compte national ne les sépare pas, l'assiette sociale
+# non plus, et la convention est donc celle des deux.
+#
+# UN CONTRÔLE EXTERNE, ET IL TOMBE À 3,8 %
+# -----------------------------------------
+# Le tableau 2.11 du rapport annuel du COR chiffre l'ajustement
+# nécessaire à l'équilibre DEUX FOIS : en pour-cent de la masse de
+# pension et en points de taux de prélèvement. Le rapport des deux
+# donne son assiette sans qu'il ait eu à la publier — 3,19 fois la
+# masse de pension, soit 1 298 Md€ en 2024 contre 1 250 ici. Les deux
+# routes sont indépendantes : l'une ne doit rien au COR, l'autre rien
+# à l'INSEE.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+annee,poste,montant_meur,fiabilite
+1949,revenu_mixte,3411.8,certifiee
+1949,salaires_bruts,4635.0,certifiee
+1950,revenu_mixte,3950.2,certifiee
+1950,salaires_bruts,5139.0,certifiee
+1951,revenu_mixte,4752.4,certifiee
+1951,salaires_bruts,6539.0,certifiee
+1952,revenu_mixte,5424.6,certifiee
+1952,salaires_bruts,7830.0,certifiee
+1953,revenu_mixte,5409.0,certifiee
+1953,salaires_bruts,8138.0,certifiee
+1954,revenu_mixte,5635.2,certifiee
+1954,salaires_bruts,8790.0,certifiee
+1955,revenu_mixte,5914.7,certifiee
+1955,salaires_bruts,9500.0,certifiee
+1956,revenu_mixte,6206.7,certifiee
+1956,salaires_bruts,10672.0,certifiee
+1957,revenu_mixte,6959.1,certifiee
+1957,salaires_bruts,11981.0,certifiee
+1958,revenu_mixte,8023.9,certifiee
+1958,salaires_bruts,13676.0,certifiee
+1959,revenu_mixte,8134.7,certifiee
+1959,salaires_bruts,14948.0,certifiee
+1960,revenu_mixte,9092.9,certifiee
+1960,salaires_bruts,16305.0,certifiee
+1961,revenu_mixte,9252.1,certifiee
+1961,salaires_bruts,17974.0,certifiee
+1962,revenu_mixte,10599.4,certifiee
+1962,salaires_bruts,20205.0,certifiee
+1963,revenu_mixte,11119.5,certifiee
+1963,salaires_bruts,23023.0,certifiee
+1964,revenu_mixte,11659.1,certifiee
+1964,salaires_bruts,25556.0,certifiee
+1965,revenu_mixte,12324.4,certifiee
+1965,salaires_bruts,27438.0,certifiee
+1966,revenu_mixte,13267.7,certifiee
+1966,salaires_bruts,29566.0,certifiee
+1967,revenu_mixte,14277.8,certifiee
+1967,salaires_bruts,31782.0,certifiee
+1968,revenu_mixte,14855.4,certifiee
+1968,salaires_bruts,35706.0,certifiee
+1969,revenu_mixte,15819.7,certifiee
+1969,salaires_bruts,40748.0,certifiee
+1970,revenu_mixte,17202.4,certifiee
+1970,salaires_bruts,46373.0,certifiee
+1971,revenu_mixte,18249.8,certifiee
+1971,salaires_bruts,52337.0,certifiee
+1972,revenu_mixte,20609.5,certifiee
+1972,salaires_bruts,58578.0,certifiee
+1973,revenu_mixte,22393.3,certifiee
+1973,salaires_bruts,67614.0,certifiee
+1974,revenu_mixte,24292.1,certifiee
+1974,salaires_bruts,80746.0,certifiee
+1975,revenu_mixte,25968.1,certifiee
+1975,salaires_bruts,93951.0,certifiee
+1976,revenu_mixte,28135.2,certifiee
+1976,salaires_bruts,108650.0,certifiee
+1977,revenu_mixte,30869.6,certifiee
+1977,salaires_bruts,122780.0,certifiee
+1978,revenu_mixte,35644.1,certifiee
+1978,salaires_bruts,138870.0,certifiee
+1979,revenu_mixte,39413.5,certifiee
+1979,salaires_bruts,156458.0,certifiee
+1980,revenu_mixte,44315.1,certifiee
+1980,salaires_bruts,180352.0,certifiee
+1981,revenu_mixte,46464.4,certifiee
+1981,salaires_bruts,205054.0,certifiee
+1982,revenu_mixte,52567.6,certifiee
+1982,salaires_bruts,233237.0,certifiee
+1983,revenu_mixte,57962.7,certifiee
+1983,salaires_bruts,254527.0,certifiee
+1984,revenu_mixte,59336.0,certifiee
+1984,salaires_bruts,272232.0,certifiee
+1985,revenu_mixte,62731.1,certifiee
+1985,salaires_bruts,287318.0,certifiee
+1986,revenu_mixte,66114.2,certifiee
+1986,salaires_bruts,302852.0,certifiee
+1987,revenu_mixte,66786.1,certifiee
+1987,salaires_bruts,315526.0,certifiee
+1988,revenu_mixte,69245.7,certifiee
+1988,salaires_bruts,333182.0,certifiee
+1989,revenu_mixte,76937.7,certifiee
+1989,salaires_bruts,354645.0,certifiee
+1990,revenu_mixte,80823.0,certifiee
+1990,salaires_bruts,380022.0,certifiee
+1991,revenu_mixte,80837.6,certifiee
+1991,salaires_bruts,397985.0,certifiee
+1992,revenu_mixte,82731.7,certifiee
+1992,salaires_bruts,410673.0,certifiee
+1993,revenu_mixte,79357.3,certifiee
+1993,salaires_bruts,418157.0,certifiee
+1994,revenu_mixte,80866.6,certifiee
+1994,salaires_bruts,427274.0,certifiee
+1995,revenu_mixte,81893.1,certifiee
+1995,salaires_bruts,444427.0,certifiee
+1996,revenu_mixte,84900.8,certifiee
+1996,salaires_bruts,456866.0,certifiee
+1997,revenu_mixte,84275.2,certifiee
+1997,salaires_bruts,469910.0,certifiee
+1998,revenu_mixte,88080.1,certifiee
+1998,salaires_bruts,488107.0,certifiee
+1999,revenu_mixte,93113.1,certifiee
+1999,salaires_bruts,511020.0,certifiee
+2000,revenu_mixte,98587.3,certifiee
+2000,salaires_bruts,542929.0,certifiee
+2001,revenu_mixte,103637.0,certifiee
+2001,salaires_bruts,568272.0,certifiee
+2002,revenu_mixte,106910.9,certifiee
+2002,salaires_bruts,592111.0,certifiee
+2003,revenu_mixte,108570.7,certifiee
+2003,salaires_bruts,607920.0,certifiee
+2004,revenu_mixte,112086.4,certifiee
+2004,salaires_bruts,630054.0,certifiee
+2005,revenu_mixte,112603.2,certifiee
+2005,salaires_bruts,654468.0,certifiee
+2006,revenu_mixte,118046.9,certifiee
+2006,salaires_bruts,683257.0,certifiee
+2007,revenu_mixte,122348.8,certifiee
+2007,salaires_bruts,710864.0,certifiee
+2008,revenu_mixte,123878.2,certifiee
+2008,salaires_bruts,732673.0,certifiee
+2009,revenu_mixte,114415.0,certifiee
+2009,salaires_bruts,733497.0,certifiee
+2010,revenu_mixte,114986.7,certifiee
+2010,salaires_bruts,753472.0,certifiee
+2011,revenu_mixte,114932.0,certifiee
+2011,salaires_bruts,772256.0,certifiee
+2012,revenu_mixte,114942.3,certifiee
+2012,salaires_bruts,786966.0,certifiee
+2013,revenu_mixte,112505.4,certifiee
+2013,salaires_bruts,797561.0,certifiee
+2014,revenu_mixte,113721.3,certifiee
+2014,salaires_bruts,806662.0,certifiee
+2015,revenu_mixte,112690.3,certifiee
+2015,salaires_bruts,817787.0,certifiee
+2016,revenu_mixte,111962.9,certifiee
+2016,salaires_bruts,835498.0,certifiee
+2017,revenu_mixte,113539.7,certifiee
+2017,salaires_bruts,863467.0,certifiee
+2018,revenu_mixte,114880.6,certifiee
+2018,salaires_bruts,885990.0,certifiee
+2019,revenu_mixte,117160.1,certifiee
+2019,salaires_bruts,914078.0,certifiee
+2020,revenu_mixte,117110.7,certifiee
+2020,salaires_bruts,877341.0,certifiee
+2021,revenu_mixte,125678.7,certifiee
+2021,salaires_bruts,946417.0,certifiee
+2022,revenu_mixte,131976.6,certifiee
+2022,salaires_bruts,1020600.0,certifiee
+2023,revenu_mixte,136533.7,certifiee
+2023,salaires_bruts,1078011.0,certifiee
+2024,revenu_mixte,137521.5,certifiee
+2024,salaires_bruts,1111650.0,certifiee
+2025,revenu_mixte,140943.3,certifiee
+2025,salaires_bruts,1129309.0,certifiee

@@ -3028,12 +3028,12 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   salaires et traitements bruts (D11, comptes nationaux base 2020, idbank
   011785411, déjà récupéré par `insee_bdm.py` mais employé pour ses seules
   variations) plus le revenu mixte brut des ménages, soit 1 112 + 138 =
-  **1 250 Md€ en 2024**. Route COR : le tableau 2.11 du rapport annuel chiffre
+  **1 249 Md€ en 2024**. Route COR : le tableau 2.11 du rapport annuel chiffre
   l'ajustement nécessaire à l'équilibre DEUX FOIS, en pour-cent de la masse de
   pension et en points de taux de prélèvement ; le rapport des deux donne
   l'assiette, **3,19 fois la masse de pension**, soit 1 298 Md€. Les deux routes
   sont indépendantes — l'une ne doit rien au COR, l'autre rien à l'INSEE — et
-  elles s'écartent de 3,8 %. L'assiette vaut **42,5 % du PIB**, remarquablement
+  elles s'écartent de 3,9 %. L'assiette vaut **42,5 % du PIB**, remarquablement
   stable de 2016 à 2024.
 - *Le taux réellement encaissé est plus bas que le taux légal, et l'écart est
   l'exonération.* Sur cette assiette, le système encaisse **32,4 points** de
@@ -3057,18 +3057,23 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   de PIB de part et d'autre du −0,09 % affiché. **C'est l'incertitude réelle de
   l'exercice, et elle est plus grande que tout ce que la page dit par
   ailleurs.**
-- *Ce qui reste à faire de ce point.* Certifier les deux séries — le niveau du
-  D11, qui ne demande qu'une ligne de `verifier_donnees.py` puisque la source
-  est déjà téléchargée, et le revenu mixte, qui pose un problème de manifeste :
-  l'INSEE le produit mais sa banque de données ne l'expose pas (les comptes de
-  branche ne donnent qu'un agrégat « excédent d'exploitation / revenu mixte »,
-  et le jeu des secteurs institutionnels ne sert que cinq ratios), de sorte que
-  la seule forme accessible est celle qu'Eurostat rediffuse, `nasa_10_nf_tr`,
-  B3G du secteur S14. Le critère 1 du manifeste fait préférer le producteur au
-  repreneur ; il faudra soit trouver la porte de l'INSEE, soit écrire pourquoi
-  on ne l'a pas trouvée. Puis afficher les trois variantes, ce qui est le
-  point 4 : les deux questions n'en font qu'une, les impôts affectés étant la
-  compensation des exonérations.
+- *Les deux séries sont certifiées depuis le 19 septembre 2026*, chez leur
+  producteur et non chez un repreneur :
+  `data/reference/macro/assiette_activite.csv`, 154 valeurs de 1949 à 2025,
+  deux postes. Le niveau du D11 ne demandait qu'une source de plus dans
+  `verifier_donnees.py`, le fichier brut étant déjà téléchargé. Le revenu mixte
+  a demandé de chercher une porte : la banque de données macroéconomiques ne le
+  publie pas — ses comptes de branche ne donnent qu'un agrégat « excédent
+  d'exploitation / revenu mixte » qui mêle le profit des sociétés au revenu des
+  entrepreneurs individuels, et son jeu de comptes des secteurs institutionnels
+  ne sert que cinq ratios. **Le tableau économique d'ensemble exposé par
+  Melodi, lui, le porte** (`DD_CNA_TEE`, opération B3G, secteur S14, 1949-2025),
+  et `scripts/fetch/insee_revenu_mixte.py` le récupère. Rester chez le
+  producteur n'était pas une coquetterie : Eurostat rediffuse la même grandeur
+  sous `nasa_10_nf_tr`, et les deux millésimes s'écartent de 0,8 % sur 2023.
+- *Ce qui reste à faire de ce point* : afficher les trois variantes, ce qui est
+  le point 4 — les deux questions n'en font qu'une, les impôts affectés étant
+  la compensation des exonérations.
 
 **Ce qui reste du volet A** : la certification de l'assiette et les trois
 variantes ci-dessus (points 1 et 4, désormais un seul chantier) ; la série d'effectifs de COTISANTS
