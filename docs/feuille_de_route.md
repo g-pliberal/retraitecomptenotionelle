@@ -3355,14 +3355,23 @@ toucher aux moteurs de pension.
    - **Les masses, elles, remontent à 1979, et c'était le gisement le plus
      sous-estimé.** Les rapports à la CCSS sont publiés depuis 1979 et **le
      lecteur PDF du dépôt les ouvre** : 19 043 lignes lisibles sur 19 306 pour
-     celui de septembre 1996, 11 767 pour 2003, 19 953 pour 2010. Le dépôt
-     croyait le contraire — `ccss_transferts_retraite.py` pose
-     `PREMIERE_ANNEE_LISIBLE = 2013` et son docstring dit les rapports de 2007
-     à 2012 « chiffrés » et ceux de 2004 à 2006 compressés. **C'est faux du
-     lecteur, et vrai seulement de son parseur de tableaux**, qui est écrit
-     pour la mise en page moderne. Et ce qu'on y trouve est exactement la série
-     de coût cherchée : le rapport de 1996 porte « LES PRESTATIONS VERSÉES EN
-     1995, millions de francs », colonne vieillesse, vingt-deux régimes nommés
+     celui de septembre 1996, 11 767 pour 2003, 19 953 pour 2010.
+
+     **Correction, apportée par le recensement des quarante-sept millésimes.**
+     Cette passe avait écrit que la croyance du dépôt — `PREMIERE_ANNEE_LISIBLE
+     = 2013`, les rapports de 2007 à 2012 « chiffrés », ceux de 2004 à 2006
+     compressés — était « fausse du lecteur, et vraie seulement de son
+     parseur ». **C'est inexact, et le compte de mots le dit** : 2007, 2008 et
+     2011 rendent ZÉRO mot, 2009 en rend 76, 2012 en rend 3 887. Le lecteur
+     échoue bel et bien sur cette fenêtre-là. Le dépôt se trompait seulement
+     sur ses BORDS : 2004, 2005 et 2006 rendent 83 502, 445 070 et 97 940 mots,
+     et 2010 en rend 190 989. **Quarante millésimes sur quarante-sept sont
+     lisibles**, tout 1979-2006 compris, pour 6,1 millions de mots ; la fenêtre
+     fermée est 2007-2009 et 2011, 2012 étant trop maigre pour compter.
+
+     Et ce qu'on y trouve est exactement la série de coût cherchée : le rapport
+     de 1996 porte « LES PRESTATIONS VERSÉES EN 1995, millions de francs »,
+     colonne vieillesse, vingt-deux régimes nommés
      — CNAVTS 303 725, fonctionnaires 148 603, exploitants agricoles 79 799,
      collectivités locales 28 993, SNCF 26 566, EDF-GDF 15 287, mines 13 036,
      marins 5 963, RATP 3 778, CRPCEN 2 171, Banque de France 1 528. Quarante-
@@ -3431,6 +3440,63 @@ toucher aux moteurs de pension.
    l'État, régime par régime, sont dans le bloc « structure de financement » du
    même classeur, qu'il reste à lire — il est dans les feuilles, sous forme de
    parts, et le script le laisse passer faute d'en-tête d'années.
+
+   **Cinquième passe, 19 septembre 2026 : les deux chantiers, faits.**
+
+   - **Le bloc « structure de financement » est lu.** Il échappait au script
+     parce que son en-tête ne porte que SIX années — 2010, 2023, 2030, 2040,
+     2050, 2070 — là où les autres blocs en portent soixante et une. Le seuil
+     descend à quatre, la reconnaissance se durcit en échange (des entiers,
+     dans la fenêtre, distincts, strictement croissants), et un seul bloc
+     s'ajoute : 1 183 valeurs, de 52 049 à 53 232.
+
+     C'est **ce qui sépare le coût d'une réforme pour l'État de son coût pour
+     les caisses**. Part du financement en 2023 puis en 2070 : contribution
+     d'équilibre de l'État à la FPE 86,0 % puis 81,3 % ; subvention
+     d'équilibre à la SNCF 60,8 % puis 94,5 %, à la RATP 60,8 % puis 92,3 %,
+     aux mines 81,1 % puis 91,8 %, au FSPOEIE 76,7 % puis 85,1 %, à l'ENIM
+     76,3 % puis 66,8 %. Et le **besoin de financement**, que personne ne
+     couvre : 7,1 % à la CNRACL en 2023 et 48,6 % en 2070, 0 % puis 35,5 % à
+     l'Ircantec, 0,8 % puis 19,3 % à la CNAV.
+
+   - **L'archive CCSS est recensée, et elle me contredit.** Les quarante-sept
+     millésimes ont été téléchargés et passés au lecteur : **quarante-six
+     lisibles, 6,1 millions de mots**, un seul échec — 1995, sur un opérande
+     malformé que le lecteur ne savait pas sauter, corrigé depuis, ce qui fait
+     quarante-sept. Mais le compte de mots dit aussi que **2007, 2008 et 2011
+     rendent zéro mot, 2009 en rend 76 et 2012 en rend 3 887** : la fenêtre
+     que le dépôt disait fermée l'est bien. Il se trompait sur ses bords, pas
+     sur son centre.
+
+   - **`scripts/fetch/ccss_regimes.py` moissonne la mise en page moderne.**
+     Chaque fiche de régime ouvre sur un « Tableau 1 • Données générales » qui
+     porte, pour le régime seul et année par année : cotisants vieillesse,
+     bénéficiaires vieillesse ventilés droit direct et droit dérivé, produits
+     nets dont cotisations, charges nettes dont prestations. **5 662 valeurs,
+     22 caisses, 2011-2025.** C'est la seule source qui donne les EFFECTIFS et
+     les MASSES d'un régime dans le même tableau — la fiche 4.1 n'en est qu'un
+     extrait.
+
+     Couverture par caisse, en années : MSA salariés, MSA exploitants et CNIEG
+     14 ; Agirc-Arrco et CNRACL 13 ; Ircantec et CNAVPL complémentaire 12 ;
+     SNCF et CANSSM 10 ; RATP 9 ; RSI vieillesse 8 ; ENIM 7 ; CRPCEN et
+     FSPOEIE 6 ; Banque de France 4 ; les plus petites 2 ou 3.
+
+     Deux difficultés ont dû être traitées, et elles se reverront. **Le
+     chapitre des régimes n'a pas de numéro fixe** : il est le 5 en 2019 et
+     autre chose en 2017, où le 5 porte « du régime général aux autres régimes
+     de base » — le chercher au chapitre 5 ne rendait qu'UN régime pour ce
+     millésime. Et **le même régime change de graphie d'un rapport à l'autre**,
+     la mise en page mangeant les espaces à des endroits différents :
+     cinquante et un libellés pour une vingtaine de caisses. Une table de
+     motifs canoniques les ramène à un code, et le fichier produit garde tous
+     les titres vus sous chaque code, pour qu'on puisse vérifier.
+
+     Ce qui reste : les libellés de SÉRIE ont les mêmes variantes de casse que
+     les titres avaient — « Chargesnettes » et « CHARGESNETTES » cohabitent —
+     et mériteraient la même table ; et la moisson s'arrête à la mise en page
+     moderne, l'avant-2013 ayant une fiche de régime différente à chaque
+     époque.
 
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
@@ -4956,3 +5022,35 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   l'archive CCSS pour l'avant-2010 des masses, et lire le bloc « structure de
   financement » du classeur COR, où sont les subventions d'équilibre de l'État
   régime par régime, que le script laisse passer faute d'en-tête d'années.
+
+- **Septembre 2026, action 35, volet A, point 3, cinquième passe : les deux
+  chantiers faits, et une correction.** Demandé : lire le bloc « structure de
+  financement » et moissonner l'archive CCSS.
+
+  Le **bloc de financement** est lu : il échappait au script parce que son
+  en-tête ne porte que six années là où les autres en portent soixante et une.
+  Il donne ce qui sépare le coût d'une réforme pour l'État de son coût pour les
+  caisses — contribution d'équilibre, subvention d'équilibre, et le besoin de
+  financement que personne ne couvre, qui passe de 7,1 % à 48,6 % du
+  financement de la CNRACL entre 2023 et 2070.
+
+  L'**archive CCSS** est recensée en entier, et **elle me contredit**. La passe
+  précédente avait écrit que la croyance du dépôt — rapports de 2007 à 2012
+  illisibles — était « fausse du lecteur, et vraie seulement de son parseur ».
+  Le compte de mots dit l'inverse : 2007, 2008 et 2011 rendent ZÉRO mot, 2009
+  en rend 76, 2012 en rend 3 887. La fenêtre est bien fermée ; le dépôt se
+  trompait sur ses BORDS — 2004, 2005, 2006 et 2010 sont lisibles — pas sur son
+  centre. Quarante-six millésimes sur quarante-sept étaient lisibles, et le
+  quarante-septième l'est devenu : 1995 tombait sur un opérande malformé que le
+  lecteur PDF ne savait pas sauter. **Conclusion à retenir : un compte de mots
+  aurait tranché en une minute ce que trois lignes lues à l'œil ont fait
+  affirmer de travers.**
+
+  `scripts/fetch/ccss_regimes.py` moissonne la mise en page moderne : **5 662
+  valeurs, 22 caisses, 2011-2025**, avec cotisants vieillesse, bénéficiaires
+  ventilés droit direct et dérivé, produits nets, charges nettes et
+  prestations. C'est la seule source qui donne les effectifs ET les masses d'un
+  régime dans le même tableau. Deux pièges y ont été traités et sont écrits au
+  point 3 : le chapitre des régimes n'a pas de numéro fixe d'un millésime à
+  l'autre, et le même régime change de graphie — cinquante et un libellés pour
+  une vingtaine de caisses, ramenés par une table de motifs.
