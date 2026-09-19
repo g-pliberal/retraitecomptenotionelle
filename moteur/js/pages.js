@@ -3140,7 +3140,10 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
   // tableau à défiler latéralement sur un téléphone, et l'écart qui compte —
   // celui du net — est déjà le chiffre de tête.
   const lignes = [
-    [g.terme("coût du travail"), mois(avant.coutDuTravail), mois(apres.coutDuTravail)],
+    // Le mot s'affiche avec sa capitale, comme les autres intitulés de ligne,
+    // mais renvoie à la même entrée du glossaire.
+    [g.terme("Coût du travail", "coût du travail"),
+      mois(avant.coutDuTravail), mois(apres.coutDuTravail)],
     ["Salaire brut", mois(avant.brut), mois(apres.brut)],
     ["<strong>Salaire net</strong>", `<strong>${mois(avant.net)}</strong>`,
       `<strong>${mois(apres.net)}</strong>`],
