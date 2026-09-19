@@ -85,7 +85,27 @@ CONTRIBUTIF = "_contributif"
 #: page doit le dire : une ligne mesurée sur treize cas types et une ligne
 #: dénombrée sur quatre millions de veuves ne se lisent pas avec la même
 #: confiance. La seconde est, de loin, la plus sûre des deux.
-LIGNES_LUES: tuple[str, ...] = ("reversion",)
+#: Ce que les comptes de la protection sociale isolent, et la ligne de
+#: l'inventaire que chaque poste renseigne. Une ligne peut en réunir deux :
+#: l'inaptitude et l'invalidité ouvrent le même taux plein sans condition de
+#: durée, et l'inventaire n'en fait qu'un dispositif.
+#:
+#: CES POSTES REMPLACENT LA LIGNE CALCULÉE, ils ne s'y ajoutent pas. Le
+#: producteur prime sur le modèle — critère 1 de `data/sources.yaml` —, et
+#: l'écart est parfois celui du tout au rien : la grille n'a aucun cas type de
+#: trois enfants, si bien que la majoration pour enfants y valait ZÉRO quand
+#: les comptes en portent près de huit milliards.
+POSTES_PUBLIES: dict[str, tuple[str, ...]] = {
+    "majoration_enfants": ("majoration_enfants",),
+    "minimum_vieillesse": ("minimum_vieillesse",),
+    "majoration_tierce_personne": ("majoration_tierce_personne",),
+    "majoration_conjoint_a_charge": ("majoration_conjoint_a_charge",),
+    "majoration_reversion": ("majoration_reversion",),
+    "pension_orphelin": ("pension_orphelin",),
+    "inaptitude_invalidite": ("pensions_inaptitude", "pensions_invalidite"),
+}
+
+LIGNES_LUES: tuple[str, ...] = ("reversion", *POSTES_PUBLIES)
 
 #: Les avantages que le scénario 1 sert mais que la cascade N'ISOLE PAS, et
 #: qu'on mesure donc par recalcul. Leur montant est PRIS SUR la part
@@ -158,6 +178,11 @@ class Avantage:
     #: Code de la ligne de cascade qui l'isole, quand elle existe.
     ligne_cascade: str | None
     mesurable_par: str
+    #: Pourquoi cette ligne n'a pas de montant sur la dernière année publiée.
+    #: Vide quand elle en a un. C'est ce que la page affiche dans la colonne
+    #: restée vide du tableau : un blanc sans raison est une dette, une raison
+    #: écrite est une limite.
+    sans_chiffre: str = ""
 
     @property
     def chiffre(self) -> bool:
@@ -169,7 +194,7 @@ class Avantage:
         celui de la réversion.
         """
         return (self.ligne_cascade is not None
-                or self.code in RECALCULS
+                or self.code in {n.code for n in NEUTRALISATIONS}
                 or self.code in LIGNES_LUES)
 
     def dictionnaire(self) -> dict:
@@ -186,6 +211,7 @@ class Avantage:
             "etat_modele": self.etat_modele,
             "ligne_cascade": self.ligne_cascade,
             "mesurable_par": self.mesurable_par,
+            "sans_chiffre": self.sans_chiffre,
         }
 
 
@@ -214,6 +240,19 @@ class Inventaire:
     @property
     def chiffres(self) -> tuple[Avantage, ...]:
         return tuple(a for a in self.avantages if a.chiffre)
+
+    def famille_de_ligne(self, ligne: str) -> str | None:
+        """La famille d'une ligne de coût, pour la couleur du graphique.
+
+        Une ligne peut porter deux dispositifs — la MDA et la bonification pour
+        enfants de la fonction publique en sont le cas — mais jamais deux
+        familles : le même trimestre gratuit reste un droit familial sous l'un
+        et l'autre texte. La première trouvée fait donc foi.
+        """
+        for avantage in self.avantages:
+            if avantage.ligne_cascade == ligne or avantage.code == ligne:
+                return avantage.famille
+        return None
 
     def libelle_de_ligne(self, ligne: str) -> str:
         """Le nom d'une ligne de coût, qui peut porter deux dispositifs.
@@ -266,6 +305,7 @@ def charger_avantages(racine: Path) -> Inventaire:
             etat_modele=fiche["etat_modele"],
             ligne_cascade=fiche["ligne_cascade"],
             mesurable_par=mesure,
+            sans_chiffre=" ".join((fiche.get("sans_chiffre") or "").split()),
         ))
     return Inventaire(familles=familles, avantages=tuple(avantages))
 
@@ -827,6 +867,15 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
         reversion = depenses.reversion(annee)
         if reversion is not None:
             lignes["reversion"] = reversion
+        # Et les postes que les comptes isolent, qui REMPLACENT la ligne
+        # calculée : une mesure vaut mieux qu'un modèle, surtout quand le
+        # modèle chiffre à zéro un dispositif que personne ne porte dans la
+        # grille.
+        for ligne, postes in POSTES_PUBLIES.items():
+            montants = [depenses.prestation(poste, annee) for poste in postes]
+            if all(montant is None for montant in montants):
+                continue
+            lignes[ligne] = sum(montant or 0.0 for montant in montants)
         annees.append(AnneeAvantages(
             annee=annee,
             observee=observee,

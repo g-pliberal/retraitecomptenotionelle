@@ -63,7 +63,29 @@ export const CONTRIBUTIF = "_contributif";
  * de veuves ne se lisent pas avec la même confiance. La seconde est, de loin,
  * la plus sûre des deux.
  */
-export const LIGNES_LUES = ["reversion"];
+/**
+ * Ce que les comptes de la protection sociale isolent, et la ligne de
+ * l'inventaire que chaque poste renseigne. Une ligne peut en réunir deux :
+ * l'inaptitude et l'invalidité ouvrent le même taux plein sans condition de
+ * durée, et l'inventaire n'en fait qu'un dispositif.
+ *
+ * CES POSTES REMPLACENT LA LIGNE CALCULÉE, ils ne s'y ajoutent pas. Le
+ * producteur prime sur le modèle, et l'écart est parfois celui du tout au
+ * rien : la grille n'a aucun cas type de trois enfants, si bien que la
+ * majoration pour enfants y valait ZÉRO quand les comptes en portent près de
+ * huit milliards.
+ */
+export const POSTES_PUBLIES = {
+  majoration_enfants: ["majoration_enfants"],
+  minimum_vieillesse: ["minimum_vieillesse"],
+  majoration_tierce_personne: ["majoration_tierce_personne"],
+  majoration_conjoint_a_charge: ["majoration_conjoint_a_charge"],
+  majoration_reversion: ["majoration_reversion"],
+  pension_orphelin: ["pension_orphelin"],
+  inaptitude_invalidite: ["pensions_inaptitude", "pensions_invalidite"],
+};
+
+export const LIGNES_LUES = ["reversion", ...Object.keys(POSTES_PUBLIES)];
 
 /**
  * Les avantages que le scénario 1 sert mais que la cascade N'ISOLE PAS, et
@@ -148,9 +170,23 @@ export class Inventaire {
   get chiffres() {
     return this.avantages.filter(
       (avantage) => avantage.ligne_cascade !== null
-        || RECALCULS.includes(avantage.code)
+        || NEUTRALISATIONS.some((n) => n.code === avantage.code)
         || LIGNES_LUES.includes(avantage.code),
     );
+  }
+
+  /**
+   * La famille d'une ligne de coût, pour la couleur du graphique.
+   *
+   * Une ligne peut porter deux dispositifs — la MDA et la bonification pour
+   * enfants de la fonction publique en sont le cas — mais jamais deux
+   * familles : le même trimestre gratuit reste un droit familial sous l'un et
+   * l'autre texte. La première trouvée fait donc foi.
+   */
+  familleDeLigne(ligne) {
+    const porte = this.avantages.find(
+      (avantage) => avantage.ligne_cascade === ligne || avantage.code === ligne);
+    return porte ? porte.famille : null;
   }
 
   /**
@@ -647,6 +683,14 @@ export function calculerAvantages(simulateur, depenses, population,
     // modèle reviendrait à lui prêter une précision qu'il n'a pas.
     const reversion = depenses.reversion(annee);
     if (reversion !== null) lignes.reversion = reversion;
+    // Et les postes que les comptes isolent, qui REMPLACENT la ligne calculée :
+    // une mesure vaut mieux qu'un modèle, surtout quand le modèle chiffre à
+    // zéro un dispositif que personne ne porte dans la grille.
+    for (const [ligne, postes] of Object.entries(POSTES_PUBLIES)) {
+      const montants = postes.map((poste) => depenses.prestation(poste, annee));
+      if (montants.every((montant) => montant === null)) continue;
+      lignes[ligne] = montants.reduce((somme, montant) => somme + (montant || 0), 0);
+    }
     const anticipees = {};
     for (const [motif, valeur] of Object.entries(parMotif)) {
       anticipees[motif] = masse > 0 ? (observee * valeur) / masse : 0;

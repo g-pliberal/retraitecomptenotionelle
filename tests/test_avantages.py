@@ -430,3 +430,118 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
             f"le retrait de {code} déplace la pension d'un cadre du privé "
             f"de {reelle - obtenue:.2f} €"
         )
+
+
+def test_toute_ligne_sans_montant_dit_pourquoi(script_cout, inventaire):
+    """Un blanc sans raison est une dette ; une raison écrite est une limite.
+
+    La page nomme les trente-neuf dispositifs et donne, pour chacun, son coût de
+    la dernière année publiée. Vingt-quatre n'en ont pas : la colonne reste
+    vide, et c'est précisément là qu'il faut écrire pourquoi. Sans ce test, un
+    dispositif ajouté demain apparaîtrait sur le site avec deux cases vides et
+    rien pour les expliquer.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.simulateur import Simulateur
+
+    parametres = Parametres()
+    simulateur = Simulateur(parametres)
+    cout = script_cout.calculer_avantages(
+        simulateur,
+        DepensesRetraite(parametres.racine_donnees),
+        Population(parametres.racine_donnees),
+    )
+    montants = cout.derniere.lignes
+    muets = []
+    for avantage in inventaire["avantages"]:
+        ligne = avantage["ligne_cascade"] or avantage["code"]
+        if montants.get(ligne):
+            continue
+        if not (avantage.get("sans_chiffre") or "").strip():
+            muets.append(avantage["code"])
+    assert muets == [], (
+        "dispositifs sans montant ET sans raison écrite : " + ", ".join(muets)
+    )
+
+
+def test_un_poste_publie_vise_une_ligne_de_l_inventaire(script_cout, par_code):
+    """Les comptes remplacent le modèle : encore faut-il savoir sur quelle ligne.
+
+    Chaque poste des Comptes de la protection sociale renseigne une ligne
+    nommée de l'inventaire, et c'est ce qui permet au tableau de la page de
+    dire, case par case, si le chiffre est LU ou CALCULÉ. Un poste qui viserait
+    une ligne inexistante passerait inaperçu : il produirait une bande sans
+    libellé sur le graphique.
+    """
+    for ligne in script_cout.POSTES_PUBLIES:
+        assert ligne in par_code, f"{ligne} : poste publié sans ligne d'inventaire"
+    for ligne in script_cout.LIGNES_LUES:
+        assert ligne in par_code, f"{ligne} : ligne lue sans ligne d'inventaire"
+
+
+def test_toute_ligne_chiffree_appartient_a_une_famille(script_cout, par_code):
+    """Le graphique empile des FAMILLES : une ligne sans famille disparaîtrait.
+
+    Le tracé de la page groupe les lignes de coût par famille de l'inventaire,
+    parce que quinze lignes pour neuf couleurs donnaient six bandes portant la
+    couleur d'une autre. Le groupement écarte, par sécurité, toute ligne dont
+    il ne sait pas la famille — et une ligne écartée ne fait aucun bruit : elle
+    manque au total du tracé sans que rien ne le dise, quand le tableau juste
+    en dessous la compte. Ce test refuse ce silence.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.avantages import charger_avantages
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.simulateur import Simulateur
+
+    parametres = Parametres()
+    cout = script_cout.calculer_avantages(
+        Simulateur(parametres),
+        DepensesRetraite(parametres.racine_donnees),
+        Population(parametres.racine_donnees),
+    )
+    inventaire = charger_avantages(parametres.racine_donnees)
+    orphelines = [ligne for ligne in cout.lignes
+                  if inventaire.famille_de_ligne(ligne) is None]
+    assert orphelines == [], (
+        "lignes de coût sans famille, absentes du graphique : "
+        + ", ".join(orphelines)
+    )
+
+
+def test_une_ligne_lue_ne_s_interrompt_jamais(script_cout):
+    """Une ligne publiée commence, puis ne s'arrête plus jusqu'au bord.
+
+    La fenêtre du graphique est l'intersection des fenêtres de publication des
+    lignes LUES, et elle se calcule en gardant les années où toutes sont
+    présentes. Ce calcul suppose que chaque ligne forme un bloc : si l'une
+    d'elles avait un trou au milieu, la fenêtre se couperait en deux et le
+    tracé empilerait deux morceaux comme s'ils se suivaient.
+
+    Le jour où ce test tombe, il ne faut pas élargir la fenêtre : il faut
+    regarder quelle série a un trou, et pourquoi son producteur l'a laissé.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.simulateur import Simulateur
+
+    parametres = Parametres()
+    cout = script_cout.calculer_avantages(
+        Simulateur(parametres),
+        DepensesRetraite(parametres.racine_donnees),
+        Population(parametres.racine_donnees),
+    )
+    for lue in script_cout.LIGNES_LUES:
+        servies = [ligne.annee for ligne in cout.annees if lue in ligne.lignes]
+        if not servies:
+            continue
+        attendues = list(range(servies[0], servies[-1] + 1))
+        connues = [ligne.annee for ligne in cout.annees
+                   if servies[0] <= ligne.annee <= servies[-1]]
+        assert servies == [a for a in attendues if a in connues], (
+            f"{lue} : série publiée à trous, de {servies[0]} à {servies[-1]}"
+        )

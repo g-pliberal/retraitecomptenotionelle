@@ -167,11 +167,11 @@
    "verifiee_le": "2026-09-14"
   },
   "droits_derives": {
-   "ajoutees": 305,
+   "ajoutees": 0,
    "colonne": "masse_meur",
    "corrigees": 0,
    "empreinte": "1798975d604f1718",
-   "identiques": 0,
+   "identiques": 305,
    "niveau": "certifiee",
    "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
    "valeurs": 305,
@@ -671,6 +671,17 @@
    "source": "INSEE, projections de population 2026, scénario central",
    "valeurs": 2585,
    "verifiee_le": "2026-09-13"
+  },
+  "prestations_non_contributives": {
+   "ajoutees": 40,
+   "colonne": "montant_meur",
+   "corrigees": 0,
+   "empreinte": "0afc6f03ab280df3",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, Comptes de la protection sociale",
+   "valeurs": 40,
+   "verifiee_le": "2026-09-19"
   },
   "productivite": {
    "ajoutees": 0,

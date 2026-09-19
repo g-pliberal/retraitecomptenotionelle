@@ -686,6 +686,42 @@ def source_depenses_retraite() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(_cps()["total"].items())}
 
 
+
+def source_prestations_non_contributives() -> dict[tuple, float]:
+    """Les prestations non contributives que les comptes de la protection
+    sociale isolent, poste par poste et tous régimes.
+
+    C'EST CE QUI MANQUAIT À LA PAGE « AVANTAGES ». Le modèle mesure un avantage
+    en refaisant la pension sans lui, sur treize carrières types — et cette
+    grille n'est pas une population : elle n'a aucun cas type de trois enfants,
+    si bien que la majoration pour enfants y valait ZÉRO quand les comptes en
+    portent près de huit milliards. Là où ces postes existent, ils remplacent la
+    ligne calculée au lieu de la compléter : le producteur prime sur le modèle,
+    et c'est le critère 1 de `data/sources.yaml`.
+
+    Cinq lignes de l'inventaire n'avaient AUCUN chiffre et en ont un : la
+    majoration pour tierce personne, celle pour conjoint à charge, celle des
+    pensions de réversion, les pensions d'orphelin et les pensions servies au
+    titre de l'inaptitude ou de l'invalidité.
+
+    LA FENÊTRE EST COURTE, et c'est la limite de cette source : la DREES ne
+    publie ce grain qu'à partir de 2020, quand le total du risque remonte à
+    1959. Une série de cinq ans n'est pas une histoire ; elle est un ordre de
+    grandeur, et la page le dit.
+    """
+    prestations = _cps().get("prestations") or {}
+    if not prestations:
+        raise SourceAbsente(
+            "data/brut/drees_cps.json ne porte pas les prestations non "
+            "contributives — relancer scripts/fetch/drees_cps.py"
+        )
+    return {
+        (annee, poste): valeur
+        for poste, serie in sorted(prestations.items())
+        for annee, valeur in sorted(serie.items())
+    }
+
+
 def source_depenses_retraite_regimes() -> dict[tuple, float]:
     """Le même risque, ventilé par système, à partir de 1990.
 
@@ -3296,6 +3332,52 @@ CERTIFICATIONS = (
             "# chômeurs. Le compte notionnel du dépôt SUPPRIME les droits que la",
             "# CNAF finance ; il ne peut pas compter comme acquise la recette qui",
             "# les paie, et c'est ici qu'on lit ce qu'elle vaut.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="prestations_non_contributives",
+        chemin=REFERENCE / "macro" / "prestations_non_contributives.csv",
+        cles=("annee", "poste"),
+        colonne="montant_meur",
+        source=source_prestations_non_contributives,
+        origine="DREES, Comptes de la protection sociale",
+        decimales=2,
+        tolerance=0.006,
+        unite=" M€",
+        entete=(
+            "# Les prestations non contributives que les comptes isolent",
+            "# source_id: drees_comptes_protection_sociale",
+            "# unite: millions d'euros courants de l'année",
+            "# fiabilite:",
+            "#   certifiee (2020-…) : postes du risque vieillesse-survie des",
+            "#             Comptes de la protection sociale, tous régimes,",
+            "#             recontrôlés par scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À chiffrer les avantages non contributifs que le modèle ne sait",
+            "# pas mesurer, et surtout ceux qu'il mesurait FAUX. Un avantage se",
+            "# mesure ici en refaisant la pension sans lui, sur treize carrières",
+            "# types ; or cette grille n'est pas une population. Aucun de ses cas",
+            "# types n'a trois enfants, si bien que la majoration pour enfants y",
+            "# valait zéro quand les comptes en portent près de huit milliards.",
+            "#",
+            "# LE PRODUCTEUR PRIME SUR LE MODÈLE, et c'est le critère 1 de",
+            "# data/sources.yaml : là où ces postes existent, ils REMPLACENT la",
+            "# ligne calculée au lieu de la compléter.",
+            "#",
+            "# CE QUE CETTE SÉRIE N'EST PAS",
+            "# -----------------------------",
+            "# Une histoire. La DREES ne publie ce grain qu'à partir de 2020,",
+            "# quand le total du risque remonte à 1959 : cinq années ne font pas",
+            "# une tendance, elles font un ordre de grandeur. La page le dit.",
+            "#",
+            "# Et une partition. Les postes ne se recouvrent pas mais ne couvrent",
+            "# pas tout : les bonifications de service, les départs anticipés pour",
+            "# handicap et le compte de pénibilité n'ont de poste nulle part.",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",

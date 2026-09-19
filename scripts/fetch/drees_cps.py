@@ -52,6 +52,29 @@ POSTE = "E11-2"
 #: Sous-postes récupérés en plus, au niveau national seulement.
 SOUS_POSTES = ("E11-21.1", "E11-22.1")
 
+#: Les prestations NON CONTRIBUTIVES que les comptes isolent, et la ligne de
+#: `legislation/avantages_non_contributifs.yaml` que chacune renseigne.
+#:
+#: C'est la découverte de ce chantier : plusieurs avantages que le modèle
+#: calculait à zéro — faute de cas type qui les porte — sont PUBLIÉS, poste par
+#: poste, depuis 2020. La majoration pour enfants en est l'exemple criant : la
+#: grille n'a aucun cas type de trois enfants et la chiffrait donc à zéro, quand
+#: les comptes en portent près de huit milliards.
+#:
+#: Le producteur prime sur le modèle, et c'est la règle du dépôt
+#: (`data/sources.yaml`, critère 1) : là où ces postes existent, ils
+#: REMPLACENT la ligne calculée au lieu de la compléter.
+PRESTATIONS: tuple[tuple[str, str], ...] = (
+    ("E11-21.1.41", "majoration_enfants"),
+    ("E11-21.1.42", "majoration_tierce_personne"),
+    ("E11-21.1.43", "majoration_conjoint_a_charge"),
+    ("E11-21.1.12", "pensions_inaptitude"),
+    ("E11-21.1.13", "pensions_invalidite"),
+    ("E11-21.2", "minimum_vieillesse"),
+    ("E11-22.1.16", "pension_orphelin"),
+    ("E11-22.1.20", "majoration_reversion"),
+)
+
 
 def recuperer(condition: str) -> list[dict]:
     url = f"{BASE}?{urllib.parse.urlencode({'where': condition})}"
@@ -61,7 +84,10 @@ def recuperer(condition: str) -> list[dict]:
 
 
 def main() -> int:
-    codes = ", ".join(f'"{code}"' for code in (POSTE, *SOUS_POSTES))
+    codes = ", ".join(
+        f'"{code}"'
+        for code in (POSTE, *SOUS_POSTES, *(c for c, _ in PRESTATIONS))
+    )
     try:
         lignes = recuperer(f"ps_code in ({codes})")
     except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
@@ -74,10 +100,16 @@ def main() -> int:
     # regroupement en systèmes lisibles relève du vérificateur et non d'ici.
     total: dict[str, float] = {}
     pensions: dict[str, dict[str, float]] = {code: {} for code in SOUS_POSTES}
+    prestations: dict[str, dict[str, float]] = {nom: {} for _, nom in PRESTATIONS}
+    par_code = dict(PRESTATIONS)
     regimes: dict[str, dict[str, float]] = {}
     for ligne in lignes:
         annee, valeur = str(ligne["annee"]), ligne["val"]
         if valeur is None:
+            continue
+        if ligne["ps_code"] in par_code:
+            if ligne["si_niveau"] == "0":
+                prestations[par_code[ligne["ps_code"]]][annee] = valeur
             continue
         if ligne["ps_code"] != POSTE:
             if ligne["si_niveau"] == "0":
@@ -93,6 +125,10 @@ def main() -> int:
         "poste": POSTE,
         "total": dict(sorted(total.items())),
         "pensions": {code: dict(sorted(v.items())) for code, v in pensions.items()},
+        "prestations": {
+            nom: dict(sorted(serie.items()))
+            for nom, serie in sorted(prestations.items()) if serie
+        },
         "regimes": {nom: dict(sorted(v.items())) for nom, v in sorted(regimes.items())},
         "unite": "millions d'euros courants",
     }
@@ -105,6 +141,10 @@ def main() -> int:
     print(f"{len(annees)} années écrites dans {SORTIE}")
     print(f"Total tous régimes : {min(annees)}-{max(annees)}")
     print(f"Ventilation : {len(regimes)} régimes")
+    for nom, serie in sorted(prestations.items()):
+        if serie:
+            derniere = max(serie)
+            print(f"  {nom:32s} {serie[derniere] / 1000:7.2f} Md€ en {derniere}")
     return 0
 
 

@@ -5807,8 +5807,18 @@ def _avantages(contexte: Contexte) -> str:
     inventaire = contexte.inventaire_avantages()
     cout = contexte.avantages()
     derniere = cout.derniere
-    chiffres = len(inventaire.chiffres)
+    # CE QUE LA PAGE ANNONCE EST CE QUE SON TABLEAU MONTRE. `inventaire.chiffres`
+    # compte les dispositifs que le modèle SAIT chiffrer, ce qui n'est pas la
+    # même chose que ceux qui PORTENT un chiffre : un avantage éteint, ou que
+    # nul cas type ne porte, se mesure très bien et vaut zéro. Annoncer les
+    # premiers au-dessus d'un tableau qui montre les seconds, c'était promettre
+    # vingt-deux cases pleines et en donner quinze.
     total = len(inventaire.avantages)
+    chiffres = sum(
+        1 for avantage in inventaire.avantages
+        if cout.derniere
+        and cout.derniere.lignes.get(avantage.ligne_cascade or avantage.code)
+    )
     # Combien de périodes du catalogue déclarent la réversion : le chiffre est
     # COMPTÉ et non écrit, pour qu'une fiche ajoutée le déplace.
     declarations = sum(
@@ -5866,39 +5876,65 @@ def _avantages(contexte: Contexte) -> str:
 
     # -- deuxième graphique : tout ce qu'on sait chiffrer, en un seul tracé ---
     #
-    # LA FENÊTRE EST CELLE OÙ TOUTES LES LIGNES SONT PUBLIÉES, et non celle de
-    # la plus ancienne. Les lignes calculées remontent à 1959 ; la réversion,
-    # qui est lue et non calculée, commence en 2004. Les empiler sur la fenêtre
-    # longue dessinerait une falaise de vingt-cinq milliards cette année-là, et
-    # le lecteur y verrait un saut de dépense là où il n'y a qu'un début de
-    # publication.
+    # LA FENÊTRE EST CELLE OÙ TOUTES LES LIGNES SONT PUBLIÉES, et elle se
+    # calcule au lieu de s'écrire. Les lignes que le modèle REFAIT existent dès
+    # qu'il sert une pension, en 1959 ; celles qu'il LIT commencent le jour où
+    # leur producteur les publie, et pas avant — 2004 pour la réversion, 2020
+    # pour les sous-postes des comptes de la protection sociale. Empiler les
+    # unes sur les autres hors de leur fenêtre commune dessinerait une falaise
+    # de quarante milliards en 2020, et le lecteur y verrait une explosion de
+    # la dépense là où il n'y a qu'un début de publication.
     #
-    # Le choix ne coûte d'ailleurs presque rien, et il gagne en cohérence : les
-    # POIDS des cas types viennent eux aussi de la DREES, qui ne les publie que
-    # de 2004 à 2024 — avant, la répartition du bord est reconduite et la série
-    # tombe au niveau « estimée ». La fenêtre commune est donc celle où chaque
-    # terme du produit est observé. Ce que les années antérieures montraient —
+    # La fenêtre est donc courte, cinq points, et c'est le prix de l'honnêteté :
+    # elle a été calculée sur la seule réversion tant que celle-ci était la
+    # seule ligne lue, et elle s'est resserrée d'elle-même le jour où huit
+    # postes publiés l'ont rejointe. L'HISTOIRE LONGUE N'EST PAS PERDUE : le
+    # premier graphique de la page compte les dispositifs depuis 1800, et la
+    # commande d'analyse du dépôt imprime les lignes calculées depuis 1959 —
     # un minimum vieillesse qui pesait le tiers de la dépense en 1960 et qui
-    # s'est éteint — est dans `scripts/cout_avantages.py`, qui remonte à 1959.
+    # s'est éteint depuis.
     annees_cout = tuple(ligne.annee for ligne in cout.annees)
+    lues = frozenset(LIGNES_LUES) & frozenset(cout.lignes)
     annees_publiees = tuple(
-        ligne.annee for ligne in cout.annees if "reversion" in ligne.lignes
+        ligne.annee for ligne in cout.annees if lues <= frozenset(ligne.lignes)
     )
     fenetre = tuple(
         ligne for ligne in cout.annees if ligne.annee in set(annees_publiees)
     )
+    # LE TRACÉ EMPILE LES FAMILLES, PAS LES LIGNES. Quinze lignes pour neuf
+    # couleurs, c'est six bandes qui portent la couleur d'une autre : une
+    # légende qu'on ne peut pas suivre, et les six plus petites tiennent de
+    # toute façon dans l'épaisseur du trait. Les familles sont le découpage que
+    # l'inventaire porte lui-même, et celui des tableaux qui suivent ; elles
+    # sont sept, la palette en a neuf, et le détail ligne à ligne est juste en
+    # dessous. Une ligne sans famille — il ne devrait pas y en avoir — serait
+    # tue plutôt que rangée au hasard.
+    par_famille: dict[str, dict[int, float]] = {}
+    for ligne in cout.lignes:
+        famille = inventaire.famille_de_ligne(ligne)
+        if famille is None:
+            continue
+        cumul = par_famille.setdefault(famille, {})
+        for annee in fenetre:
+            cumul[annee.annee] = (cumul.get(annee.annee, 0.0)
+                                  + annee.lignes.get(ligne, 0.0))
+    ordonnees = sorted(
+        (f for f in inventaire.familles if any(par_famille.get(f.code, {}).values())),
+        key=lambda f: -par_famille[f.code].get(derniere.annee, 0.0),
+    )
     couts = tuple(
         g.Serie(
-            inventaire.libelle_de_ligne(ligne),
-            tuple(annee.lignes.get(ligne, 0.0) / 1000 for annee in fenetre),
+            famille.libelle,
+            tuple(par_famille[famille.code].get(annee.annee, 0.0) / 1000
+                  for annee in fenetre),
             COULEURS_LIGNES[rang % len(COULEURS_LIGNES)],
         )
-        for rang, ligne in enumerate(reversed(cout.lignes))
+        for rang, famille in enumerate(reversed(ordonnees))
     )
     reversion = derniere.lignes.get("reversion", 0.0)
     courbe_cout = g.graphique(
-        f"Coût des avantages non contributifs que l'on sait chiffrer, de "
-        f"{annees_publiees[0]} à {annees_publiees[-1]}",
+        f"Coût des avantages non contributifs que l'on sait chiffrer, par "
+        f"famille, de {annees_publiees[0]} à {annees_publiees[-1]}",
         annees_publiees, couts, unite="Md€ courants", empile=True,
         decimales_donnees=1,
     ) if annees_publiees else ""
@@ -5935,41 +5971,52 @@ dans la base LEGI. Ce graphique ne calcule rien : il compte des lignes.""",
         f"""<strong>{_milliards(derniere.gratuit, 1)} en {derniere.annee}, soit
 {g.pourcentage(derniere.gratuit / derniere.observee, decimales=1)} de la
 dépense</strong>, dont {_milliards(reversion, 1)} pour la seule
-<strong>réversion</strong>. C'est encore un plancher : {chiffres} dispositifs
-sur {total} y sont, et le COR chiffre l'ensemble des droits de solidarité à
-« de l'ordre d'un cinquième » des retraites.""",
-        courbe_cout + g.depliant(
+<strong>réversion</strong>. Le COR chiffre les droits de solidarité à « de
+l'ordre d'un cinquième » des retraites : on y est. {chiffres} des {total}
+dispositifs portent un chiffre ; le tableau ci-dessous nomme les autres et dit
+ce qui manque à chacun.""",
+        courbe_cout
+        + "<h3>Les trente-neuf, un par un</h3>"
+        + f"""<p class="chapeau">Ce que chacun coûte en {derniere.annee}, et,
+quand la case est vide, pourquoi elle l'est. La dernière famille ne s'additionne
+pas aux autres : elle n'est pas faite de dispositifs.</p>"""
+        + _avantages_table_complete(contexte)
+        + g.depliant(
             "Pourquoi ce chiffre est un plancher, et de combien",
-            """<p>Deux raisons, et la seconde est la plus gênante.</p>
-<p><strong>La réversion est là, mais elle n'est pas calculée : elle est
-lue.</strong> Le modèle décrit une carrière, pas un ménage : il n'a ni conjoint,
-ni date de décès, ni ressources du survivant, et ne produira donc jamais une
-pension de réversion. Son montant vient de l'enquête annuelle de la DREES auprès
-des caisses, qui dénombre les bénéficiaires d'un droit dérivé et le montant
-mensuel moyen de ce droit-là. C'est, de loin, la ligne la plus sûre du tracé :
-elle dénombre 4,4 millions de personnes réelles, là où les autres reposent sur
-treize carrières types. Ce qui manque vraiment est ailleurs : les bonifications
-de service, et les départs anticipés pour handicap ou inaptitude.</p>
-<p><strong>La fenêtre est celle où toutes les lignes sont publiées.</strong> Les
-lignes calculées remontent à 1959 ; la réversion commence en 2004, et les poids
-des carrières types viennent eux aussi d'une série que la DREES ne publie que
-depuis cette année-là. Le tracé s'arrête donc là où chaque terme est observé.
-Les années antérieures montraient un minimum vieillesse qui pesait le tiers de
-la dépense en 1960 et qui s'est éteint ; le dépôt les calcule toujours, hors du
-site.</p>
-<p><strong>Et la grille de carrières types n'est pas une population.</strong> Un
-seul de ses treize cas types a des enfants (deux, quand le seuil est à trois),
-un seul porte des interruptions, aucun ne connaît le chômage. La
-majoration de pension pour trois enfants et plus vaut donc zéro toutes les
-années de la série, quand la branche famille en rembourse près de six
-milliards. Une grille de cas types sert à <em>comparer</em> des systèmes sur une
-même carrière, où les erreurs de niveau s'annulent au dénominateur ; le coût
-d'un avantage est un compte de <em>population</em>.</p>""",
+            """<p>Trois choses à savoir avant de citer ce chiffre.</p>
+<p><strong>Les plus grosses lignes sont lues, pas calculées.</strong> La
+réversion, le minimum vieillesse, la majoration pour enfants, les pensions
+d'orphelin, celles servies pour inaptitude ou invalidité : leur montant vient
+des comptes de la protection sociale et de l'enquête annuelle de la DREES
+auprès des caisses, poste par poste. Ce sont des comptes de personnes réelles,
+et ce sont les chiffres les plus sûrs de la page. Le tableau ci-dessus le dit
+case par case.</p>
+<p><strong>Là où les deux existaient, le poste publié a remplacé la ligne
+calculée</strong>, et l'écart entre les deux était énorme. Un seul des treize
+cas types de la grille a des enfants (deux, quand le seuil de la majoration
+est à trois), et le modèle chiffrait donc à zéro un avantage qui pèse
+7,8 milliards. Une grille de cas types sert à <em>comparer</em> des systèmes
+sur une même carrière, où les erreurs de niveau s'annulent au dénominateur ; le
+coût d'un avantage est un compte de <em>population</em>, et il se lit chez celui
+qui compte.</p>
+<p><strong>La fenêtre est courte parce que les postes publiés le sont.</strong>
+Les lignes calculées remontent à 1959 et la réversion à 2004, mais les
+sous-postes des comptes ne sont publiés que depuis 2020 : le tracé s'arrête là
+où <em>chaque</em> terme est observé. Les empiler plus tôt dessinerait une
+falaise de quarante milliards, qui ne serait qu'un début de publication. Le
+premier graphique de la page, lui, remonte à 1800.</p>
+<p><strong>Et ce total reste un plancher.</strong> Les bonifications de service
+des militaires et des corps actifs, les départs anticipés pour handicap, la
+majoration de durée au titre du congé parental ne sont ni calculés par le
+modèle ni isolés par les comptes. Le tableau ci-dessus les nomme et dit, pour
+chacun, ce qui manque.</p></p>""",
         ),
-        """Sources : décomposition du scénario 1 sur la grille de carrières
-types, rapportée à la dépense observée de la DREES — seule la part est
-modélisée ; et, pour la réversion, l'enquête annuelle de la DREES auprès des
-caisses de retraite, série certifiée de 2004 à 2024.""",
+        """Sources : pour les lignes lues, les comptes de la protection
+sociale de la DREES, sous-postes du risque vieillesse-survie, et son enquête
+annuelle auprès des caisses de retraite ; pour les lignes calculées,
+décomposition du scénario 1 sur la grille de carrières types, rapportée à la
+dépense observée, dont seule la part est modélisée. Toutes certifiées, année
+par année.""",
         identifiant="avantages-cout",
     )
 
@@ -6056,7 +6103,7 @@ avantage, ligne à ligne.</p>
 retraite</a><a href="{g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">La liste entière, et ce que le modèle sait en faire.</p>
+<p class="chapeau">Les mêmes dispositifs, avec leurs textes et leurs dates.</p>
 
 {detail}
 """
@@ -6070,6 +6117,77 @@ PAGES_AGREGEES = {
     "/cout": _cout,
     "/avantages": _avantages,
 }
+
+
+def _avantages_table_complete(contexte: Contexte) -> str:
+    """Les trente-neuf, un par ligne, avec ce qu'ils coûtent ou pourquoi on l'ignore.
+
+    C'EST LE CŒUR DE LA PAGE, et il a longtemps manqué. Les graphiques ne
+    portent que ce qui se chiffre ; une page qui affirme qu'il existe
+    trente-neuf avantages doit les NOMMER tous, et dire pour chacun ce qu'on en
+    sait. Un blanc sans raison est une dette ; une raison écrite est une limite.
+
+    Trois colonnes, et pas une de plus : le dispositif, ce qu'il coûte la
+    dernière année publiée, et — quand la case est vide — pourquoi elle l'est.
+    Les familles séparent les lignes, parce qu'un avantage d'âge et un minimum
+    de pension ne se comparent pas.
+
+    LES MONTANTS NE VIENNENT PAS TOUS DU MÊME ENDROIT, et chaque case le dit :
+    un montant LU dans une publication et un montant REFAIT par le modèle ne se
+    lisent pas avec la même confiance. Le premier compte des personnes réelles,
+    le second treize carrières types.
+    """
+    inventaire = contexte.inventaire_avantages()
+    cout = contexte.avantages()
+    derniere = cout.derniere
+    montants = derniere.lignes if derniere else {}
+
+    # DEUX DISPOSITIFS PEUVENT PARTAGER UNE LIGNE, et le montant ne doit alors
+    # paraître qu'une fois. La MDA du privé et la bonification pour enfants de
+    # la fonction publique sont le même trimestre gratuit sous deux textes : la
+    # cascade n'en tient qu'une ligne, et l'imprimer deux fois inviterait à
+    # l'additionner. Le premier dispositif porte le chiffre, le second dit où
+    # il est.
+    vues: set[str] = set()
+
+    blocs = []
+    for famille in inventaire.familles:
+        lignes = []
+        for avantage in inventaire.par_famille(famille.code):
+            ligne = avantage.ligne_cascade or avantage.code
+            montant = montants.get(ligne)
+            if montant and ligne in vues:
+                porteur = next(a.libelle for a in inventaire.avantages
+                               if (a.ligne_cascade or a.code) == ligne)
+                lignes.append([
+                    avantage.libelle, "—",
+                    "le modèle n'en tient qu'une seule ligne, celle de "
+                    "« " + escape(porteur) + " » : le chiffre ci-dessus les "
+                    "porte toutes les deux",
+                ])
+            elif montant:
+                vues.add(ligne)
+                origine = "lu" if ligne in LIGNES_LUES else "calculé"
+                lignes.append([
+                    avantage.libelle,
+                    _milliards(montant, 2),
+                    f'<span class="discret">{origine}</span>',
+                ])
+            else:
+                lignes.append([avantage.libelle, "—", escape(avantage.sans_chiffre)])
+        if not lignes:
+            continue
+        blocs.append(
+            f"<h4>{escape(famille.libelle)}</h4>"
+            + g.tableau(
+                ["Dispositif", f"Coût en {derniere.annee}",
+                 "D'où vient le chiffre, ou pourquoi il manque"],
+                lignes, ["", "nombre", ""],
+                titre=f"{famille.libelle} : {len(lignes)} dispositifs et leur coût",
+                entete_de_ligne=True,
+            )
+        )
+    return "".join(blocs)
 
 
 def _avantages_detail_liste(contexte: Contexte) -> str:
@@ -6097,7 +6215,7 @@ def _avantages_detail_liste(contexte: Contexte) -> str:
                         entete_de_ligne=True)
         )
     return g.depliant(
-        f"La liste entière : {len(inventaire.avantages)} dispositifs",
+        f"Les {len(inventaire.avantages)} dispositifs, avec leur base légale et leurs dates",
         "".join(blocs),
         identifiant="avantages-liste",
     )

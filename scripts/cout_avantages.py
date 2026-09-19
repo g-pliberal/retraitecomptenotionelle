@@ -71,7 +71,8 @@ import yaml  # noqa: E402
 
 from retraite_notionnelle import Parametres  # noqa: E402
 from retraite_notionnelle.avantages import (  # noqa: E402
-    CONTRIBUTIF, MOTIFS, NEUTRALISATIONS, carriere_variante, decomposer,
+    CONTRIBUTIF, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculer_avantages,
+    carriere_variante, decomposer,
     masses, masses_anticipees, recalculer, scenarios_neutralises,
 )
 from retraite_notionnelle.castypes import CAS_TYPES  # noqa: E402
@@ -89,6 +90,17 @@ from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 DOSE_INTERRUPTION = 5
 
 
+def _codes_mesures() -> frozenset[str]:
+    """Les codes qui portent une ligne de coût sans porter de ligne de cascade.
+
+    Deux sources, et elles ne se recouvrent pas : ceux que le modèle mesure en
+    RETIRANT l'avantage et en refaisant la pension, et ceux dont le montant est
+    LU dans un poste publié. Les premiers sont des contrefactuelles, les seconds
+    des comptes ; la table des libellés a besoin des deux.
+    """
+    return frozenset({n.code for n in NEUTRALISATIONS} | set(LIGNES_LUES))
+
+
 def libelles() -> dict[str, str]:
     """Le libellé de chaque ligne, lu dans l'inventaire.
 
@@ -104,7 +116,7 @@ def libelles() -> dict[str, str]:
         ligne = avantage["ligne_cascade"]
         if ligne is not None:
             noms.setdefault(ligne, []).append(avantage["libelle"])
-        elif avantage["code"] in RECALCULS:
+        elif avantage["code"] in _codes_mesures():
             noms.setdefault(avantage["code"], []).append(avantage["libelle"])
     return {ligne: " / ".join(sorted(parts)) for ligne, parts in noms.items()}
 
@@ -315,21 +327,25 @@ def main() -> int:
         _dire_les_refus(refus)
         return 0
 
-    lignes = []
-    for annee in depenses.annees():
-        if options.depuis is not None and annee < options.depuis:
-            continue
-        if options.jusqu is not None and annee > options.jusqu:
-            continue
-        part = masses(pensionnes, population, annee, poids(annee))
-        totale = sum(part.values())
-        if totale <= 0.0:
-            continue
-        observee = depenses.depense(annee)
-        lignes.append((annee, observee, {
-            cle: (valeur / totale, observee * valeur / totale)
-            for cle, valeur in part.items()
-        }))
+    # LE TABLEAU EST CELUI DU SITE, et pas un second calcul qui lui ressemble.
+    # Cette commande a longtemps refait la décomposition pour elle seule, à
+    # partir des seules masses du modèle ; elle annonçait 12,6 milliards quand
+    # la page en annonçait 93,9, et l'écart n'était pas une erreur de calcul
+    # mais une différence de périmètre — les postes LUS dans les comptes
+    # manquaient ici. Un chiffre qui dépend de la porte par laquelle on entre
+    # n'est pas un chiffre. Le calcul vit désormais dans le modèle, les deux
+    # portes y mènent, et la fenêtre se taille après coup.
+    cout = calculer_avantages(simulateur, depenses, population,
+                              options.ponderation, options.liquidation)
+    refus = cout.refus
+    lignes = [
+        (ligne.annee, ligne.observee,
+         {cle: (euros / ligne.observee, euros)
+          for cle, euros in ligne.lignes.items()})
+        for ligne in cout.annees
+        if (options.depuis is None or ligne.annee >= options.depuis)
+        and (options.jusqu is None or ligne.annee <= options.jusqu)
+    ]
 
     if not lignes:
         print("aucune année servie sur la fenêtre demandée", file=sys.stderr)
@@ -344,13 +360,20 @@ def main() -> int:
     print("Montants en milliards d'euros COURANTS de chaque année. « Part » est la")
     print("fraction de la dépense observée que ces avantages expliquent.")
     print()
-    print("C'EST UN PLANCHER, et très bas. Dix avantages sur les trente-neuf de")
-    print("l'inventaire sont chiffrés ici ; la réversion, les bonifications de")
-    print("service et les départs anticipés pour handicap ou inaptitude n'y sont")
-    print("pas. Surtout, la grille de cas types n'est pas une population : un seul")
-    print("de ses treize cas types a des enfants, un seul porte des interruptions,")
-    print("aucun ne connaît le chômage. Voir --par-carriere pour le chiffre qui a")
-    print("un sens, et --duree pour le second effet des avantages d'âge.")
+    print("LES COLONNES NE VIENNENT PAS TOUTES DU MÊME ENDROIT. Certaines sont")
+    print("LUES dans les comptes de la protection sociale ou dans l'enquête de la")
+    print("DREES auprès des caisses : elles comptent des personnes réelles. Les")
+    print("autres sont REFAITES par le modèle, en retirant l'avantage de la")
+    print("cascade et en rapportant l'écart à la dépense observée ; elles reposent")
+    print("sur treize carrières types, dont un seul a des enfants et aucun ne")
+    print("connaît le chômage. Là où les deux existaient, le poste publié a")
+    print("remplacé la ligne calculée.")
+    print()
+    print("C'EST TOUT DE MÊME UN PLANCHER. Les bonifications de service, les")
+    print("départs anticipés pour handicap et le congé parental ne sont ni")
+    print("calculés ni publiés séparément. Voir --par-carriere pour ce que chaque")
+    print("avantage vaut à un assuré, et --duree pour le second effet des")
+    print("avantages d'âge, qui se compte en annuités et non en euros.")
 
     _dire_les_refus(refus)
 

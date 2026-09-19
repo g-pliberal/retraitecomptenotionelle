@@ -5858,15 +5858,20 @@ porte la décomposition de l'individu à la masse par la méthode de `cout.py`, 
 
 **Ce que ça a déplacé, et ce n'est pas ce qui était prévu.** Le premier chiffrage
 donnait **5,3 milliards d'avantages gratuits en 2024, soit 1,2 % de la
-dépense** — 12,6 milliards et 3,0 % depuis que les périodes assimilées et la
-catégorie active sont chiffrées (volet B ci-dessous) —, là où le COR chiffre les
-droits de solidarité à « de l'ordre d'un cinquième des retraites tous régimes ».
-Deux causes, et la seconde était inconnue :
+dépense**, là où le COR chiffre les droits de solidarité à « de l'ordre d'un
+cinquième des retraites tous régimes ». Il en vaut aujourd'hui **93,9, soit
+22,0 %** : 12,6 par les recalculs du volet B, puis la réversion (volet E) et
+huit postes publiés (volet F), qui font à eux seuls 87 % du total. Le chemin
+importe plus que le chiffre d'arrivée, parce que les deux causes de l'écart
+initial ne se corrigeaient pas de la même façon, et que la seconde était
+inconnue :
 
-- *Trente et un dispositifs sur trente-neuf ne sont pas chiffrés*, et
-  l'inventaire dit lesquels. La réversion pèse à elle seule plus que tout ce qui
-  est mesuré, et le modèle ne peut pas la voir : il décrit une carrière, pas un
-  ménage.
+- *Trente et un dispositifs sur trente-neuf n'étaient pas chiffrés*, et
+  l'inventaire disait lesquels. La réversion pesait à elle seule plus que tout
+  ce qui était mesuré, et le modèle ne peut pas la voir : il décrit une
+  carrière, pas un ménage. Elle est désormais LUE (volet E), comme sept autres
+  lignes (volet F) ; vingt-quatre restent sans chiffre, chacune avec sa raison
+  écrite.
 - *La grille de cas types n'a pas d'enfants.* Un seul des treize en a —
   `carriere_interrompue`, deux enfants —, si bien que la majoration de pension
   pour trois enfants et plus vaut **zéro toutes les années de la série**, quand
@@ -5874,9 +5879,12 @@ Deux causes, et la seconde était inconnue :
   pour la même raison ; l'AVPF et la MDA ne sont portées que par ce seul cas
   type. C'est exactement l'erreur déjà rencontrée sur la garantie vieillesse à
   l'action 1 — les 93 milliards tirés des cas types, corrigés à 18,4 par la
-  distribution DREES — et elle appelle la même correction. La grille est un
-  instrument de RAPPORT, où les erreurs de niveau s'annulent au dénominateur ;
-  le coût d'un avantage est un compte de POPULATION.
+  distribution DREES. La grille est un instrument de RAPPORT, où les erreurs de
+  niveau s'annulent au dénominateur ; le coût d'un avantage est un compte de
+  POPULATION. **La correction a été faite par l'autre bout** (volet F) : lire
+  le poste que la DREES publie, plutôt que reconstruire la population qui
+  permettrait de le calculer. Reconstruire reste souhaitable, mais pour
+  vérifier et projeter, non plus pour chiffrer.
 
 **Ce qui reste, dans l'ordre du gain.**
 
@@ -5898,10 +5906,10 @@ Deux causes, et la seconde était inconnue :
    `fsv_cotisations` pour le chômage, `unedic_agirc_arrco` pour les points
    gratuits de complémentaire (`macro/transferts_retraite.csv`). Aucun ne couvre
    le même champ que le modèle ; tous doivent varier dans le même sens.
-5. *Porter la décomposition dans `cout.py` et sur la page Coût*, une fois qu'elle
-   vaut quelque chose. Tant qu'elle mesure 1,2 % de ce qu'elle prétend mesurer,
-   l'afficher tromperait — d'où le script séparé, qui n'impose ni portage
-   JavaScript ni régénération des témoins.
+5. *Porter la décomposition dans `cout.py` et sur la page Coût*. L'objection qui
+   la retenait — elle mesurait 1,2 % de ce qu'elle prétend mesurer — est levée :
+   elle en mesure 22,0 %, et elle a sa page (volets C et F). Reste à décider si
+   la page Coût doit la reprendre, ou seulement y renvoyer.
 
 **Une contradiction relevée au passage.** `Neutralisations` porte
 `reversion: bool = True` pendant que son propre docstring dit que le scénario 1
@@ -6318,6 +6326,59 @@ et n'ont pas été reprises.
   page Coût qui disait ces postes « reconduits tels quels » a été réécrite.
 
   **Rien de plus n'est écrit au public**, toujours à la demande du programme.
+
+
+**Volet F — tous les avantages sur la page, et les huit postes que les comptes
+publient.** À la demande : « je veux qu'on mette absolument tous les avantages
+sur cette page, j'ai l'impression qu'on n'a même pas mis moitié jusqu'à
+présent ». C'était exact : douze dispositifs sur trente-neuf portaient un
+chiffre, et la page ne nommait les autres que dans un dépliant refermé.
+
+- *Huit postes des Comptes de la protection sociale* renseignent chacun une
+  ligne de l'inventaire, et sont certifiés dans
+  `data/reference/macro/prestations_non_contributives.csv` (40 valeurs,
+  2020-2024). **Là où ils existent, ils REMPLACENT la ligne calculée** — premier
+  critère de `data/sources.yaml`, le producteur prime sur le repreneur.
+  L'écart dit ce que la grille coûtait : la majoration de pension pour trois
+  enfants et plus valait **zéro** toutes les années de la série, faute d'un cas
+  type qui atteigne le seuil de trois enfants, quand les comptes en portent
+  **7,78 milliards**. Le total chiffré passe de 50,9 à **93,9 milliards en
+  2024, soit 22,0 % de la dépense** — le COR chiffre les droits de solidarité à
+  « de l'ordre d'un cinquième », et on y est. **Les lignes lues font 87 % de ce
+  total** : ce que le modèle apporte ici n'est pas le chiffre, c'est la liste.
+
+- *Les trente-neuf sont nommés sur la page*, famille par famille, chacun avec
+  son coût ou, quand la case est vide, la phrase qui dit pourquoi — quinze
+  chiffres, vingt-quatre raisons. Chaque montant dit aussi **d'où il vient**,
+  « lu » ou « calculé » : un compte de personnes réelles et un recalcul sur
+  treize carrières types ne se lisent pas avec la même confiance. Un test
+  refuse qu'une ligne n'ait ni chiffre ni raison.
+
+- *Trois défauts trouvés en vérifiant, et c'est le vrai contenu de ce volet.*
+  **La page annonçait vingt-deux cases pleines et en montrait quinze** : elle
+  comptait ce que le modèle SAIT chiffrer là où son tableau montre ce qui PORTE
+  un chiffre — un avantage éteint se mesure très bien et vaut zéro. **La ligne
+  de commande et le site avaient divergé**, 12,6 milliards contre 93,9, parce
+  que la commande refaisait la décomposition pour elle seule, sans les postes
+  lus ; le calcul vit désormais dans le modèle et les deux portes y mènent.
+  **Le graphique empilait quinze lignes sur neuf couleurs**, six bandes
+  portant la couleur d'une autre : il empile maintenant les familles, qui sont
+  sept. Sa fenêtre, enfin, se CALCULE — l'intersection des fenêtres de
+  publication des lignes lues — au lieu de tester la seule réversion comme
+  avant ; sans quoi les postes publiés depuis 2020 auraient dessiné une falaise
+  de quarante milliards où le lecteur aurait lu une explosion de la dépense.
+
+- *Deux tests de plus* tiennent ce qui vient d'être réparé : toute ligne
+  chiffrée appartient à une famille, faute de quoi elle disparaîtrait du
+  graphique sans bruit tout en comptant dans le tableau ; et une série publiée
+  ne s'interrompt jamais entre son premier et son dernier point, faute de quoi
+  la fenêtre se couperait en deux.
+
+**Ce qui reste du volet F.** L'allocation veuvage, les bonifications de service
+des militaires et des corps actifs, les départs anticipés pour handicap et la
+majoration de durée au titre du congé parental ne sont ni calculés ni isolés
+par un poste publié. La page les nomme et dit ce qui manque à chacun ; c'est
+une limite écrite, pas une dette cachée.
 
 ---
 

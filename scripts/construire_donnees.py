@@ -157,6 +157,17 @@ def _depenses() -> dict:
             macro / "droits_derives.csv", "masse_meur", nom="droits_derives",
             filtre={"caisse": "tous_regimes"}),
     }
+    # Les postes non contributifs des comptes, sous leur propre clé : ils sont
+    # LUS dans le fichier et non écrits ici, pour qu'un poste ajouté aux comptes
+    # récupérés voyage sans qu'aucune liste ne le répète.
+    from retraite_notionnelle.donnees.depenses import _postes_non_contributifs
+    chemin = macro / "prestations_non_contributives.csv"
+    prestations = {
+        poste: charger_serie_annuelle(
+            chemin, "montant_meur", nom=f"prestation_{poste}",
+            filtre={"poste": poste})
+        for poste in (_postes_non_contributifs(chemin) if chemin.exists() else ())
+    }
     for systeme in SYSTEMES:
         series[systeme.code] = charger_serie_annuelle(
             macro / "depenses_retraite_regimes.csv", "depenses_meur",
@@ -171,7 +182,11 @@ def _depenses() -> dict:
         series[f"pensions_{categorie}"] = charger_serie_annuelle(
             macro / "pensions_droits.csv", "montant_meur",
             nom=f"pensions_{categorie}", filtre={"categorie": categorie})
-    return {nom: _serie(serie) for nom, serie in sorted(series.items())}
+    paquet = {nom: _serie(serie) for nom, serie in sorted(series.items())}
+    paquet["prestations"] = {
+        poste: _serie(serie) for poste, serie in sorted(prestations.items())
+    }
+    return paquet
 
 
 def _comptes_retraite() -> dict:

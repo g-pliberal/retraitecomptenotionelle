@@ -5188,8 +5188,13 @@ function avantages(contexte) {
   const inventaire = contexte.inventaireAvantages();
   const c = contexte.avantages();
   const derniere = c.derniere;
-  const chiffres = inventaire.chiffres.length;
+  // Ce que la page annonce est ce que son tableau montre : les dispositifs qui
+  // PORTENT un chiffre, et non ceux que le modèle sait chiffrer. Voir pages.py.
   const total = inventaire.avantages.length;
+  const chiffres = inventaire.avantages.filter(
+    (avantage) => c.derniere
+      && c.derniere.lignes[avantage.ligne_cascade || avantage.code],
+  ).length;
   // Combien de périodes du catalogue déclarent la réversion : le chiffre est
   // COMPTÉ et non écrit, pour qu'une fiche ajoutée le déplace.
   let declarations = 0;
@@ -5257,22 +5262,43 @@ function avantages(contexte) {
   // le lecteur y verrait un saut de dépense là où il n'y a qu'un début de
   // publication.
   //
-  // Le choix ne coûte d'ailleurs presque rien, et il gagne en cohérence : les
-  // POIDS des cas types viennent eux aussi de la DREES, qui ne les publie que
-  // de 2004 à 2024. La fenêtre commune est celle où chaque terme du produit
-  // est observé.
+  // La fenêtre se CALCULE au lieu de s'écrire : elle est l'intersection des
+  // fenêtres de publication des lignes LUES — 2004 pour la réversion, 2020
+  // pour les sous-postes des comptes. Elle s'est resserrée d'elle-même le jour
+  // où huit postes publiés ont rejoint la réversion. Voir pages.py.
   const anneesCout = c.annees.map((ligne) => ligne.annee);
-  const fenetre = c.annees.filter((ligne) => ligne.lignes.reversion !== undefined);
+  const lues = LIGNES_LUES.filter((ligne) => c.lignes.includes(ligne));
+  const fenetre = c.annees.filter(
+    (ligne) => lues.every((lue) => ligne.lignes[lue] !== undefined));
   const anneesPubliees = fenetre.map((ligne) => ligne.annee);
-  const couts = [...c.lignes].reverse().map((ligne, rang) => new g.Serie(
-    inventaire.libelleDeLigne(ligne),
-    fenetre.map((annee) => (annee.lignes[ligne] || 0) / 1000),
+  // Le tracé empile les FAMILLES, pas les lignes : quinze lignes pour neuf
+  // couleurs, c'est six bandes qui portent la couleur d'une autre. Voir
+  // pages.py pour le raisonnement complet.
+  const parFamille = new Map();
+  for (const ligne of c.lignes) {
+    const famille = inventaire.familleDeLigne(ligne);
+    if (famille === null) continue;
+    if (!parFamille.has(famille)) parFamille.set(famille, new Map());
+    const cumul = parFamille.get(famille);
+    for (const annee of fenetre) {
+      cumul.set(annee.annee,
+        (cumul.get(annee.annee) || 0) + (annee.lignes[ligne] || 0));
+    }
+  }
+  const ordonnees = inventaire.familles
+    .filter((f) => [...(parFamille.get(f.code) || new Map()).values()]
+      .some((v) => v))
+    .sort((a, b) => (parFamille.get(b.code).get(derniere.annee) || 0)
+      - (parFamille.get(a.code).get(derniere.annee) || 0));
+  const couts = [...ordonnees].reverse().map((famille, rang) => new g.Serie(
+    famille.libelle,
+    fenetre.map((annee) => (parFamille.get(famille.code).get(annee.annee) || 0) / 1000),
     COULEURS_LIGNES[rang % COULEURS_LIGNES.length],
   ));
   const reversion = derniere.lignes.reversion || 0;
   const courbeCout = anneesPubliees.length === 0 ? "" : g.graphique(
-    `Coût des avantages non contributifs que l'on sait chiffrer, de `
-    + `${anneesPubliees[0]} à ${anneesPubliees[anneesPubliees.length - 1]}`,
+    `Coût des avantages non contributifs que l'on sait chiffrer, par `
+    + `famille, de ${anneesPubliees[0]} à ${anneesPubliees[anneesPubliees.length - 1]}`,
     anneesPubliees, couts, "Md€ courants", true, 0, true, null, "", [], "Année",
     null, "", 1,
   );
@@ -5306,41 +5332,52 @@ dans la base LEGI. Ce graphique ne calcule rien : il compte des lignes.`,
     `<strong>${milliards(derniere.gratuit, 1)} en ${derniere.annee}, soit
 ${g.pourcentage(derniere.gratuit / derniere.observee, false, 1)} de la
 dépense</strong>, dont ${milliards(reversion, 1)} pour la seule
-<strong>réversion</strong>. C'est encore un plancher : ${chiffres} dispositifs
-sur ${total} y sont, et le COR chiffre l'ensemble des droits de solidarité à
-« de l'ordre d'un cinquième » des retraites.`,
-    courbeCout + g.depliant(
+<strong>réversion</strong>. Le COR chiffre les droits de solidarité à « de
+l'ordre d'un cinquième » des retraites : on y est. ${chiffres} des ${total}
+dispositifs portent un chiffre ; le tableau ci-dessous nomme les autres et dit
+ce qui manque à chacun.`,
+    courbeCout
+    + "<h3>Les trente-neuf, un par un</h3>"
+    + `<p class="chapeau">Ce que chacun coûte en ${derniere.annee}, et,
+quand la case est vide, pourquoi elle l'est. La dernière famille ne s'additionne
+pas aux autres : elle n'est pas faite de dispositifs.</p>`
+    + avantagesTableComplete(contexte)
+    + g.depliant(
       "Pourquoi ce chiffre est un plancher, et de combien",
-      `<p>Deux raisons, et la seconde est la plus gênante.</p>
-<p><strong>La réversion est là, mais elle n'est pas calculée : elle est
-lue.</strong> Le modèle décrit une carrière, pas un ménage : il n'a ni conjoint,
-ni date de décès, ni ressources du survivant, et ne produira donc jamais une
-pension de réversion. Son montant vient de l'enquête annuelle de la DREES auprès
-des caisses, qui dénombre les bénéficiaires d'un droit dérivé et le montant
-mensuel moyen de ce droit-là. C'est, de loin, la ligne la plus sûre du tracé :
-elle dénombre 4,4 millions de personnes réelles, là où les autres reposent sur
-treize carrières types. Ce qui manque vraiment est ailleurs : les bonifications
-de service, et les départs anticipés pour handicap ou inaptitude.</p>
-<p><strong>La fenêtre est celle où toutes les lignes sont publiées.</strong> Les
-lignes calculées remontent à 1959 ; la réversion commence en 2004, et les poids
-des carrières types viennent eux aussi d'une série que la DREES ne publie que
-depuis cette année-là. Le tracé s'arrête donc là où chaque terme est observé.
-Les années antérieures montraient un minimum vieillesse qui pesait le tiers de
-la dépense en 1960 et qui s'est éteint ; le dépôt les calcule toujours, hors du
-site.</p>
-<p><strong>Et la grille de carrières types n'est pas une population.</strong> Un
-seul de ses treize cas types a des enfants (deux, quand le seuil est à trois),
-un seul porte des interruptions, aucun ne connaît le chômage. La
-majoration de pension pour trois enfants et plus vaut donc zéro toutes les
-années de la série, quand la branche famille en rembourse près de six
-milliards. Une grille de cas types sert à <em>comparer</em> des systèmes sur une
-même carrière, où les erreurs de niveau s'annulent au dénominateur ; le coût
-d'un avantage est un compte de <em>population</em>.</p>`,
+      `<p>Trois choses à savoir avant de citer ce chiffre.</p>
+<p><strong>Les plus grosses lignes sont lues, pas calculées.</strong> La
+réversion, le minimum vieillesse, la majoration pour enfants, les pensions
+d'orphelin, celles servies pour inaptitude ou invalidité : leur montant vient
+des comptes de la protection sociale et de l'enquête annuelle de la DREES
+auprès des caisses, poste par poste. Ce sont des comptes de personnes réelles,
+et ce sont les chiffres les plus sûrs de la page. Le tableau ci-dessus le dit
+case par case.</p>
+<p><strong>Là où les deux existaient, le poste publié a remplacé la ligne
+calculée</strong>, et l'écart entre les deux était énorme. Un seul des treize
+cas types de la grille a des enfants (deux, quand le seuil de la majoration
+est à trois), et le modèle chiffrait donc à zéro un avantage qui pèse
+7,8 milliards. Une grille de cas types sert à <em>comparer</em> des systèmes
+sur une même carrière, où les erreurs de niveau s'annulent au dénominateur ; le
+coût d'un avantage est un compte de <em>population</em>, et il se lit chez celui
+qui compte.</p>
+<p><strong>La fenêtre est courte parce que les postes publiés le sont.</strong>
+Les lignes calculées remontent à 1959 et la réversion à 2004, mais les
+sous-postes des comptes ne sont publiés que depuis 2020 : le tracé s'arrête là
+où <em>chaque</em> terme est observé. Les empiler plus tôt dessinerait une
+falaise de quarante milliards, qui ne serait qu'un début de publication. Le
+premier graphique de la page, lui, remonte à 1800.</p>
+<p><strong>Et ce total reste un plancher.</strong> Les bonifications de service
+des militaires et des corps actifs, les départs anticipés pour handicap, la
+majoration de durée au titre du congé parental ne sont ni calculés par le
+modèle ni isolés par les comptes. Le tableau ci-dessus les nomme et dit, pour
+chacun, ce qui manque.</p></p>`,
     ),
-    `Sources : décomposition du scénario 1 sur la grille de carrières
-types, rapportée à la dépense observée de la DREES — seule la part est
-modélisée ; et, pour la réversion, l'enquête annuelle de la DREES auprès des
-caisses de retraite, série certifiée de 2004 à 2024.`,
+    `Sources : pour les lignes lues, les comptes de la protection
+sociale de la DREES, sous-postes du risque vieillesse-survie, et son enquête
+annuelle auprès des caisses de retraite ; pour les lignes calculées,
+décomposition du scénario 1 sur la grille de carrières types, rapportée à la
+dépense observée, dont seule la part est modélisée. Toutes certifiées, année
+par année.`,
     "avantages-cout",
   );
 
@@ -5428,10 +5465,70 @@ avantage, ligne à ligne.</p>
 retraite</a><a href="${g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">La liste entière, et ce que le modèle sait en faire.</p>
+<p class="chapeau">Les mêmes dispositifs, avec leurs textes et leurs dates.</p>
 
 ${detail}
 `;
+}
+
+/**
+ * Les trente-neuf, un par ligne, avec ce qu'ils coûtent ou pourquoi on l'ignore.
+ *
+ * C'EST LE CŒUR DE LA PAGE. Les graphiques ne portent que ce qui se chiffre ;
+ * une page qui affirme qu'il existe trente-neuf avantages doit les NOMMER tous,
+ * et dire pour chacun ce qu'on en sait. Un blanc sans raison est une dette ;
+ * une raison écrite est une limite.
+ */
+function avantagesTableComplete(contexte) {
+  const inventaire = contexte.inventaireAvantages();
+  const c = contexte.avantages();
+  const derniere = c.derniere;
+  const montants = derniere === null ? {} : derniere.lignes;
+
+  // Deux dispositifs peuvent partager une ligne, et le montant ne doit alors
+  // paraître qu'une fois : voir pages.py.
+  const vues = new Set();
+
+  const blocs = [];
+  for (const famille of inventaire.familles) {
+    const lignes = [];
+    for (const avantage of inventaire.parFamille(famille.code)) {
+      const ligne = avantage.ligne_cascade || avantage.code;
+      const montant = montants[ligne];
+      if (montant && vues.has(ligne)) {
+        // Deux dispositifs peuvent partager une ligne : le premier porte le
+        // chiffre, le second dit où il est. Voir pages.py.
+        const porteur = inventaire.avantages.find(
+          (a) => (a.ligne_cascade || a.code) === ligne).libelle;
+        lignes.push([
+          avantage.libelle, "—",
+          "le modèle n'en tient qu'une seule ligne, celle de « "
+          + echapper(porteur) + " » : le chiffre ci-dessus les porte toutes les deux",
+        ]);
+      } else if (montant) {
+        vues.add(ligne);
+        const origine = LIGNES_LUES.includes(ligne) ? "lu" : "calculé";
+        lignes.push([
+          avantage.libelle,
+          milliards(montant, 2),
+          `<span class="discret">${origine}</span>`,
+        ]);
+      } else {
+        lignes.push([avantage.libelle, "—", echapper(avantage.sans_chiffre || "")]);
+      }
+    }
+    if (lignes.length === 0) continue;
+    blocs.push(
+      `<h4>${echapper(famille.libelle)}</h4>`
+      + g.tableau(
+        ["Dispositif", `Coût en ${derniere.annee}`,
+          "D'où vient le chiffre, ou pourquoi il manque"],
+        lignes, ["", "nombre", ""],
+        `${famille.libelle} : ${lignes.length} dispositifs et leur coût`, true,
+      ),
+    );
+  }
+  return blocs.join("");
 }
 
 /** Les trente-neuf, famille par famille, avec leur base légale. */
@@ -5455,7 +5552,7 @@ function avantagesDetailListe(contexte) {
     );
   }
   return g.depliant(
-    `La liste entière : ${inventaire.avantages.length} dispositifs`,
+    `Les ${inventaire.avantages.length} dispositifs, avec leur base légale et leurs dates`,
     blocs.join(""),
     "avantages-liste",
   );

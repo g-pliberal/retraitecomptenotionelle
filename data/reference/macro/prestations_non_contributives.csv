@@ -1,0 +1,74 @@
+# Les prestations non contributives que les comptes isolent
+# source_id: drees_comptes_protection_sociale
+# unite: millions d'euros courants de l'année
+# fiabilite:
+#   certifiee (2020-…) : postes du risque vieillesse-survie des
+#             Comptes de la protection sociale, tous régimes,
+#             recontrôlés par scripts/verifier_donnees.py.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À chiffrer les avantages non contributifs que le modèle ne sait
+# pas mesurer, et surtout ceux qu'il mesurait FAUX. Un avantage se
+# mesure ici en refaisant la pension sans lui, sur treize carrières
+# types ; or cette grille n'est pas une population. Aucun de ses cas
+# types n'a trois enfants, si bien que la majoration pour enfants y
+# valait zéro quand les comptes en portent près de huit milliards.
+#
+# LE PRODUCTEUR PRIME SUR LE MODÈLE, et c'est le critère 1 de
+# data/sources.yaml : là où ces postes existent, ils REMPLACENT la
+# ligne calculée au lieu de la compléter.
+#
+# CE QUE CETTE SÉRIE N'EST PAS
+# -----------------------------
+# Une histoire. La DREES ne publie ce grain qu'à partir de 2020,
+# quand le total du risque remonte à 1959 : cinq années ne font pas
+# une tendance, elles font un ordre de grandeur. La page le dit.
+#
+# Et une partition. Les postes ne se recouvrent pas mais ne couvrent
+# pas tout : les bonifications de service, les départs anticipés pour
+# handicap et le compte de pénibilité n'ont de poste nulle part.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,poste,montant_meur,fiabilite
+2020,majoration_conjoint_a_charge,109.76,certifiee
+2020,majoration_enfants,6732.09,certifiee
+2020,majoration_reversion,1134.77,certifiee
+2020,majoration_tierce_personne,306.78,certifiee
+2020,minimum_vieillesse,4008.21,certifiee
+2020,pension_orphelin,5707.47,certifiee
+2020,pensions_inaptitude,7713.57,certifiee
+2020,pensions_invalidite,11399.59,certifiee
+2021,majoration_conjoint_a_charge,95.26,certifiee
+2021,majoration_enfants,6800.31,certifiee
+2021,majoration_reversion,1124.77,certifiee
+2021,majoration_tierce_personne,300.54,certifiee
+2021,minimum_vieillesse,4058.47,certifiee
+2021,pension_orphelin,5769.48,certifiee
+2021,pensions_inaptitude,7638.15,certifiee
+2021,pensions_invalidite,11686.25,certifiee
+2022,majoration_conjoint_a_charge,84.71,certifiee
+2022,majoration_enfants,7067.88,certifiee
+2022,majoration_reversion,1148.38,certifiee
+2022,majoration_tierce_personne,302.59,certifiee
+2022,minimum_vieillesse,4261.78,certifiee
+2022,pension_orphelin,5992.66,certifiee
+2022,pensions_inaptitude,7787.27,certifiee
+2022,pensions_invalidite,12317.36,certifiee
+2023,majoration_conjoint_a_charge,75.54,certifiee
+2023,majoration_enfants,7335.19,certifiee
+2023,majoration_reversion,1169.93,certifiee
+2023,majoration_tierce_personne,303.35,certifiee
+2023,minimum_vieillesse,4521.08,certifiee
+2023,pension_orphelin,6209.68,certifiee
+2023,pensions_inaptitude,7919.57,certifiee
+2023,pensions_invalidite,12941.91,certifiee
+2024,majoration_conjoint_a_charge,69.23,certifiee
+2024,majoration_enfants,7776.59,certifiee
+2024,majoration_reversion,1216.45,certifiee
+2024,majoration_tierce_personne,307.73,certifiee
+2024,minimum_vieillesse,4941.15,certifiee
+2024,pension_orphelin,6451.73,certifiee
+2024,pensions_inaptitude,8289.04,certifiee
+2024,pensions_invalidite,13908.68,certifiee

@@ -141,6 +141,19 @@ SYSTEMES: tuple[Systeme, ...] = (
 CODES_SYSTEMES = tuple(systeme.code for systeme in SYSTEMES)
 
 
+def _postes_non_contributifs(chemin) -> tuple[str, ...]:
+    """Les postes présents dans le fichier, dans l'ordre alphabétique.
+
+    Ils sont LUS et non écrits : ajouter un poste aux comptes récupérés doit
+    suffire à le faire apparaître, sans qu'aucune liste du modèle ne le répète.
+    """
+    import csv
+
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        return tuple(sorted({ligne["poste"] for ligne in csv.DictReader(lignes)}))
+
+
 class DepensesRetraite:
     """Les dépenses observées, avec leur ventilation et le PIB qui les rapporte."""
 
@@ -159,6 +172,17 @@ class DepensesRetraite:
             macro / "droits_derives.csv", "masse_meur", nom="droits_derives",
             filtre={"caisse": "tous_regimes"},
         )
+        # Les prestations non contributives que les comptes isolent, poste par
+        # poste, depuis 2020. Elles ne complètent pas le modèle : elles le
+        # REMPLACENT là où elles existent, le producteur primant sur le calcul.
+        self.prestations: dict[str, SerieAnnuelle] = {}
+        chemin = macro / "prestations_non_contributives.csv"
+        if chemin.exists():
+            for poste in _postes_non_contributifs(chemin):
+                self.prestations[poste] = charger_serie_annuelle(
+                    chemin, "montant_meur", nom=f"prestation_{poste}",
+                    filtre={"poste": poste},
+                )
         self.systemes: dict[str, SerieAnnuelle] = {}
         for systeme in SYSTEMES:
             self.systemes[systeme.code] = charger_serie_annuelle(
@@ -217,6 +241,20 @@ class DepensesRetraite:
                 <= self.droits_derives.derniere_annee):
             return None
         return self.droits_derives(annee)
+
+    def prestation(self, poste: str, annee: int) -> float | None:
+        """Un poste non contributif des comptes, en millions d'euros courants.
+
+        ``None`` hors de la fenêtre publiée. La DREES ne donne ce grain qu'à
+        partir de 2020, quand le total du risque remonte à 1959 : cinq années ne
+        font pas une tendance, elles font un ordre de grandeur.
+        """
+        serie = self.prestations.get(poste)
+        if serie is None:
+            return None
+        if not serie.premiere_annee <= annee <= serie.derniere_annee:
+            return None
+        return serie(annee)
 
     def part_pib(self, annee: int) -> float:
         """Part de la dépense dans le produit intérieur brut de la même année."""

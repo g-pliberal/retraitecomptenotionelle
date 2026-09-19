@@ -5268,22 +5268,25 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 - **La grille de cas types ne sait pas compter le coût d'un avantage non
   contributif, et le sens de l'erreur est connu : elle n'a pas d'enfants.** Un
   seul des treize cas types en a — `carriere_interrompue`, deux enfants —, si
-  bien que la majoration de pension pour trois enfants et plus vaut **zéro
-  toutes les années de la série** quand la CNAF en rembourse 5,9 milliards en
-  2025, et que la surcote parentale vaut zéro pour la même raison. La grille est
-  faite pour comparer des systèmes sur une même carrière, où les erreurs de
-  niveau s'annulent au dénominateur ; le coût d'un avantage est un compte de
-  POPULATION, et il lui faut une structure de population. C'est la correction
-  déjà faite pour la garantie vieillesse — les 93 milliards tirés des cas types
-  étaient faux, le barème appliqué à la distribution DREES donne 18,4 milliards
-  — et elle est due ici pour les mêmes raisons. Mesuré :
-  `scripts/cout_avantages.py` trouve 12,6 milliards d'avantages gratuits en 2024,
-  soit 3,0 % de la dépense ; la réversion, qui se LIT dans les séries de la
-  DREES au lieu de se calculer, y ajoute 38,3 milliards, ce qui porte le total
-  chiffré à 50,9 milliards, soit 11,9 %. Le COR chiffre l'ensemble des droits de
-  solidarité à « de l'ordre d'un cinquième », soit 85 milliards : on en tient
-  les trois cinquièmes. Les vingt-neuf dispositifs non chiffrés expliquent
-  la plus grande part de l'écart, l'absence d'enfants le reste. Voir
+  bien que la majoration de pension pour trois enfants et plus valait **zéro
+  toutes les années de la série**, et que la surcote parentale vaut zéro pour
+  la même raison. La grille est faite pour comparer des systèmes sur une même
+  carrière, où les erreurs de niveau s'annulent au dénominateur ; le coût d'un
+  avantage est un compte de POPULATION. C'est l'erreur déjà rencontrée sur la
+  garantie vieillesse — les 93 milliards tirés des cas types étaient faux, le
+  barème appliqué à la distribution DREES donne 18,4 milliards.
+
+  **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
+  parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
+  valent 93,9 milliards en 2024, soit 22,0 % de la dépense, et **87 % de ce
+  total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
+  et sept autres lignes dans les sous-postes des Comptes de la protection
+  sociale, dont la majoration pour enfants à 7,8 milliards — que le modèle
+  chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
+  l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
+  le chiffre mais la LISTE, et les 12,6 milliards qu'il calcule encore lui-même
+  restent soumis à cette limite. Vingt-quatre dispositifs sur trente-neuf ne
+  portent aucun chiffre, chacun avec sa raison écrite. Voir
   `docs/avantages_non_contributifs.md`.
 
 - **La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.**

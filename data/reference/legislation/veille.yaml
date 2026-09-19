@@ -889,3 +889,35 @@ journal:
       pensions d'orphelin (L. 40 CPCMR, publiées à part par le Service des
       retraites de l'État). Les reprises de veille du 17 septembre 2026 restent
       ouvertes.
+  - date: '2026-09-19'
+    session: "action 37, volet F : tous les avantages sur la page, et les postes\
+      \ publiés"
+    consulte: "Aucune source de DROIT nouvelle : ce volet ne transcrit aucune règle,\
+      \ il chiffre des dispositifs déjà inventoriés. Une source de DONNÉES, en\
+      \ revanche, et elle était déjà au manifeste : les Comptes de la protection\
+      \ sociale de la DREES (`drees_cps`), dont le risque vieillesse-survie est\
+      \ ventilé en sous-postes depuis l'exercice 2020. Huit d'entre eux\
+      \ correspondent exactement à une ligne de l'inventaire : majoration pour\
+      \ enfants, minimum vieillesse, majoration pour tierce personne, majoration\
+      \ pour conjoint à charge, majoration de réversion, pension d'orphelin, et\
+      \ les pensions servies au titre de l'inaptitude et de l'invalidité."
+    trouve: "Le total chiffré passe de 50,9 à 93,9 Md€ en 2024, soit 22,0 % de la\
+      \ dépense — le COR chiffre les droits de solidarité à « de l'ordre d'un\
+      \ cinquième », et on y est. Le résultat qui compte n'est pas le total mais\
+      \ sa composition : 87 % vient de lignes LUES, et le poste publié REMPLACE\
+      \ la ligne calculée partout où les deux existent — premier critère de\
+      \ `data/sources.yaml`, le producteur prime sur le repreneur. L'écart entre\
+      \ les deux mesure ce que la grille de cas types coûtait : la majoration de\
+      \ pension pour trois enfants et plus valait zéro toutes les années de la\
+      \ série, faute d'un cas type atteignant le seuil de trois enfants, quand\
+      \ les comptes en portent 7,78 Md€. Ce que le modèle apporte ici n'est donc\
+      \ pas le chiffre, c'est la liste et l'article sous lequel chercher."
+    reste: "L'allocation veuvage (L. 356-1) reste seule hors de portée parmi les\
+      \ droits dérivés : les comptes la rangent dans un poste « autres droits\
+      \ dérivés » qui ne l'isole pas. La majoration de réversion et les pensions\
+      \ d'orphelin, encore déclarées hors d'atteinte au journal précédent, sont\
+      \ désormais lues (1,22 et 6,45 Md€ en 2024). Restent également sans\
+      \ chiffre les bonifications de service des militaires et des corps actifs,\
+      \ les départs anticipés pour handicap et la majoration de durée au titre du\
+      \ congé parental : la page les nomme et dit pour chacun ce qui manque. Les\
+      \ reprises de veille du 17 septembre 2026 restent ouvertes."

@@ -369,6 +369,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/contribution_employeur_public.csv",
         "effectifs_retraites": "regimes/effectifs_retraites.csv",
         "droits_derives": "macro/droits_derives.csv",
+        "prestations_non_contributives":
+            "macro/prestations_non_contributives.csv",
         "distribution_pensions": "macro/distribution_pensions.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
         # La part de réversion et la ventilation qui la contrôle : deux

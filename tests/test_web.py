@@ -3807,15 +3807,20 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # courant pour l'autre. Les bornes suivent, d'un paragraphe chacune.
     "/cas-types": (750, 0, 1),
     "/cout": (700, 2, 0),
-    # Trois graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils
-    # ne répondent pas à la même question et n'ont pas le même statut. Le
-    # premier COMPTE des lignes d'inventaire et ne calcule rien ; le deuxième
-    # chiffre ce que les avantages coûtent, toutes lignes réunies — celles que
-    # le modèle recalcule et la réversion, qui se lit ; le troisième mesure des
-    # annuités, qui est une autre grandeur. Les replier reviendrait à demander
-    # au lecteur de déplier pour comprendre que les trois chiffres ne
-    # s'additionnent pas.
-    "/avantages": (750, 3, 0),
+    # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
+    # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
+    # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
+    # vingt-quatre qui n'ont pas de montant — pourquoi il manque. Cela fait sept
+    # tableaux et huit cents mots, qu'on ne peut pas replier sans défaire la
+    # page : une liste cachée derrière un dépliant ne prouve rien.
+    #
+    # Trois graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils ne
+    # répondent pas à la même question et n'ont pas le même statut. Le premier
+    # COMPTE des lignes d'inventaire et ne calcule rien ; le deuxième chiffre ce
+    # que les avantages coûtent ; le troisième mesure des annuités, qui est une
+    # autre grandeur. Les replier reviendrait à demander au lecteur de déplier
+    # pour comprendre que les trois chiffres ne s'additionnent pas.
+    "/avantages": (1900, 3, 7),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
 }

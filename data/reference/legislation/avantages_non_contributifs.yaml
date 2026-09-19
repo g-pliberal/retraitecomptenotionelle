@@ -236,6 +236,9 @@ avantages:
     regimes: régime général, régimes alignés, fonction publique
     etat_modele: chiffre
     ligne_cascade: surcote_parentale
+    sans_chiffre: >-
+      créée en 2023, elle ne paie que des pensions prenant effet à compter de
+      2026 : rien à mesurer sur les années publiées
     cout:
       mesurable_par: modele
       note: >-
@@ -263,6 +266,9 @@ avantages:
       de référence avant tout le reste. L'isoler suppose de recalculer la
       pension sur vingt-cinq années et de prendre l'écart — faisable, et c'est
       exactement la mécanique des lignes chiffrées.
+    sans_chiffre: >-
+      ne s'applique qu'aux pensions prenant effet à compter de septembre 2026,
+      quand la dernière dépense publiée est celle de 2024
     cout:
       mesurable_par: modele
       note: >-
@@ -293,6 +299,9 @@ avantages:
       Le simulateur ne saisit pas la durée du congé parental, seulement le
       nombre d'enfants. La comparaison « la plus avantageuse des deux » est
       donc hors d'atteinte des carrières que le modèle construit.
+    sans_chiffre: >-
+      le simulateur saisit un nombre d'enfants, pas la durée d'un congé
+      parental : la comparaison « la plus avantageuse des deux » lui échappe
     cout:
       mesurable_par: aucune
       note: >-
@@ -317,6 +326,9 @@ avantages:
     pourquoi_pas_chiffre: >-
       Demande une information médicale que le simulateur ne collecte pas, comme
       la retraite anticipée pour handicap.
+    sans_chiffre: >-
+      demande une information médicale que le modèle ne collecte pas, et aucun
+      poste des comptes ne l'isole
     cout:
       mesurable_par: aucune
       note: Population étroite ; le coût est probablement le plus faible de la famille.
@@ -412,6 +424,9 @@ avantages:
       Servie par le champ `points_minimum_annuels: 120` des fiches de régime :
       elle agit sur le NOMBRE DE POINTS acquis dans l'année, donc en amont de
       la pension, comme le salaire de référence.
+    sans_chiffre: >-
+      éteinte en 2018, elle ne mord que sur des carrières de cadre dont les
+      premières années tombent après 1989 et qui liquident après 2024
     cout:
       mesurable_par: modele
       note: >-
@@ -443,6 +458,9 @@ avantages:
       Déclarée dans cinq périodes de non_salaries.yaml ; aucun code du moteur ne
       la lit. `Neutralisations` la range d'ailleurs dans « ce que le scénario 1
       ne sert pas ».
+    sans_chiffre: >-
+      déclarée par cinq fiches du catalogue et servie par aucun code : la
+      déclaration est une intention
     cout:
       mesurable_par: aucune
       note: >-
@@ -514,6 +532,9 @@ avantages:
       Servis par la colonne `ouvre_droits_complementaires` de
       periodes_non_travaillees.csv, qui vaut « oui » pour cinq motifs sur neuf.
       L'effet passe par le nombre de points, donc en amont de la pension.
+    sans_chiffre: >-
+      aucun des treize cas types ne connaît le chômage, et les comptes ne
+      séparent pas ces points du reste des pensions complémentaires
     cout:
       mesurable_par: modele
       source_id: dss_ccss_transferts_retraite
@@ -549,6 +570,8 @@ avantages:
     pourquoi_pas_chiffre: >-
       Motif `service_militaire` de periodes_non_travaillees.csv : même mécanique
       que les autres périodes assimilées, dont il n'est qu'un cas.
+    sans_chiffre: >-
+      aucun cas type ne porte le motif, et les comptes ne l'isolent pas
     cout:
       mesurable_par: modele
       note: >-
@@ -648,6 +671,9 @@ avantages:
     etat_modele: absent
     ligne_cascade: null
     pourquoi_pas_chiffre: Même raison que la réversion.
+    sans_chiffre: >-
+      comprise dans le poste « majorations sur pensions de réversion » des
+      comptes, qui ne la sépare pas de la majoration principale
     cout:
       mesurable_par: serie_publiee
       source_id: drees_panorama_retraites
@@ -667,6 +693,9 @@ avantages:
     etat_modele: absent
     ligne_cascade: null
     pourquoi_pas_chiffre: Même raison que la réversion.
+    sans_chiffre: >-
+      rangée dans le poste « autres droits dérivés » des comptes, qui ne
+      l'isole pas
     cout:
       mesurable_par: serie_publiee
       source_id: drees_comptes_protection_sociale
@@ -757,6 +786,9 @@ avantages:
       Même nature que la catégorie active : un âge, pas un montant. Le modèle
       le sert par `legislation/carriere_longue.csv` et par
       `_age_carriere_longue`.
+    sans_chiffre: >-
+      ne vaut rien sur le montant : un assuré entré tôt réunit sa durée de
+      toute façon. Son prix est en annuités, et le dernier tracé le donne
     cout:
       mesurable_par: modele
       note: >-
@@ -790,6 +822,9 @@ avantages:
       Servi par `legislation/age_jouissance_militaire.csv` et
       `legislation/duree_services_militaires.csv`. La limite d'âge de grade, qui
       ouvre la pension quelle que soit la durée accomplie, reste hors du modèle.
+    sans_chiffre: >-
+      le retrait déplace aussi la durée requise, 172 trimestres contre 160 :
+      l'écart ne mesure plus l'âge seul, et la mesure est refusée
     cout:
       mesurable_par: modele
       note: >-
@@ -830,6 +865,9 @@ avantages:
       Suppose de connaître le corps d'appartenance et le détail des services,
       que le simulateur ne saisit pas. `Neutralisations` le range explicitement
       dans « ce que le scénario 1 ne sert pas ».
+    sans_chiffre: >-
+      suppose la durée de services militaires effectifs, que le simulateur ne
+      saisit pas, et aucun poste des comptes ne l'isole
     cout:
       mesurable_par: aucune
       note: >-
@@ -858,6 +896,9 @@ avantages:
       CPCMR : elle est éclatée dans les statuts de chaque corps, et elle n'a pas
       été lue — l'écrire ici sans l'avoir lue serait une déduction, pas une
       source.
+    sans_chiffre: >-
+      suppose le corps d'appartenance, que le simulateur ne saisit pas ; ses
+      textes sont d'ailleurs éclatés dans les statuts de chaque corps
     cout:
       mesurable_par: aucune
       note: >-
@@ -879,6 +920,8 @@ avantages:
     etat_modele: absent
     ligne_cascade: null
     pourquoi_pas_chiffre: Suppose de connaître le lieu d'affectation, que le simulateur ne saisit pas.
+    sans_chiffre: >-
+      suppose le lieu d'affectation, que le simulateur ne saisit pas
     cout:
       mesurable_par: aucune
       note: Population étroite.
@@ -898,6 +941,8 @@ avantages:
     etat_modele: absent
     ligne_cascade: null
     pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
+    sans_chiffre: >-
+      suppose le détail des services, que le simulateur ne saisit pas
     cout:
       mesurable_par: aucune
       note: Série décroissante ; les générations concernées sortent des effectifs.
@@ -917,6 +962,9 @@ avantages:
     etat_modele: absent
     ligne_cascade: null
     pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
+    sans_chiffre: >-
+      suppose les heures de vol ou la durée des services sous-marins, que le
+      simulateur ne saisit pas
     cout:
       mesurable_par: aucune
       note: Population étroite.
@@ -938,6 +986,9 @@ avantages:
     pourquoi_pas_chiffre: >-
       Demande une information médicale que le modèle ne collecte pas :
       l'assuré est déclaré non ouvert.
+    sans_chiffre: >-
+      demande un taux d'incapacité que le modèle ne collecte pas ; les comptes
+      n'isolent qu'une majoration voisine, de trente millions
     cout:
       mesurable_par: aucune
       note: >-
@@ -988,6 +1039,9 @@ avantages:
       Demande une information médicale et un compte de points que le modèle ne
       collecte pas. Le code `penibilite` est pourtant déclaré dans quatre
       périodes de fiches — déclaration sans effet.
+    sans_chiffre: >-
+      demande une information médicale et un compte de points que le modèle ne
+      collecte pas
     cout:
       mesurable_par: aucune
       note: >-
@@ -1013,6 +1067,9 @@ avantages:
       Ni le dispositif ni son fonds ne sont dans le modèle. La référence à la
       loi de 1998 n'a pas été lue dans l'index : elle est donnée pour la
       recherche, pas comme une source.
+    sans_chiffre: >-
+      relève du risque emploi et non du risque vieillesse-survie : elle est
+      hors du compte que cette page décompose
     cout:
       mesurable_par: serie_publiee
       source_id: dss_comptes_secu
@@ -1086,6 +1143,9 @@ avantages:
       Déclaré dans deux périodes de complementaires_prive.yaml, sans effet :
       l'abattement est TEMPORAIRE, et le modèle ne calcule qu'une pension
       annuelle unique. Le porter tel quel le rendrait faussement permanent.
+    sans_chiffre: >-
+      abattement TEMPORAIRE de trois ans, éteint en 2023 : un modèle qui ne
+      calcule qu'une pension annuelle unique le rendrait permanent
     cout:
       mesurable_par: aucune
       note: >-
@@ -1121,6 +1181,9 @@ avantages:
       remplace. Dans un compte notionnel il n'y a ni décote ni surcote : le
       coefficient de conversion fait le travail, et il est actuariel par
       construction.
+    sans_chiffre: >-
+      un barème ne se retire pas, il se remplace : ce n'est pas un montant
+      mais un écart de règle, et le §4 ter du document le chiffre
     cout:
       mesurable_par: modele
       note: >-
@@ -1163,6 +1226,9 @@ avantages:
       Ce n'est pas un dispositif : c'est la différence entre deux règles de
       calcul. Il ne se retire pas, il se remplace — et le remplacement EST le
       scénario 2.
+    sans_chiffre: >-
+      c'est l'écart entre deux règles de calcul, que le scénario 2 mesure tout
+      entier : 307,5 milliards en part salariale
     cout:
       mesurable_par: modele
       note: >-
@@ -1202,6 +1268,9 @@ avantages:
       Le modèle la porte du côté des cotisations
       (`legislation/contribution_employeur_public.csv`, neuf régimes certifiés),
       pas du côté des droits.
+    sans_chiffre: >-
+      c'est une RECETTE, elle n'apparaît dans aucune pension : les cotisations
+      ne font que 65,6 % des ressources du système en 2025
     cout:
       mesurable_par: serie_publiee
       source_id: cor_comptes_systeme_retraite

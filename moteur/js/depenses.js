@@ -139,6 +139,14 @@ export class DepensesRetraite {
     // un ménage. C'est la seule dépense non contributive dont le montant vienne
     // d'une publication plutôt que d'un calcul.
     this.droitsDerives = serie("droits_derives");
+    // Les prestations non contributives que les comptes isolent, poste par
+    // poste, depuis 2020. Elles ne complètent pas le modèle : elles le
+    // REMPLACENT là où elles existent, le producteur primant sur le calcul.
+    this.prestations = new Map(
+      Object.keys(brut.prestations || {}).sort().map(
+        (poste) => [poste, SerieAnnuelle.depuisPaquet(poste, brut.prestations[poste])],
+      ),
+    );
     this.systemes = new Map(
       SYSTEMES.map((systeme) => [systeme.code, serie(systeme.code)]),
     );
@@ -211,6 +219,19 @@ export class DepensesRetraite {
       return null;
     }
     return this.droitsDerives.valeur(annee);
+  }
+
+  /**
+   * Un poste non contributif des comptes, en millions d'euros courants.
+   *
+   * `null` hors de la fenêtre publiée. La DREES ne donne ce grain qu'à partir
+   * de 2020, quand le total du risque remonte à 1959.
+   */
+  prestation(poste, annee) {
+    const serie = this.prestations.get(poste);
+    if (serie === undefined) return null;
+    if (annee < serie.premiereAnnee || annee > serie.derniereAnnee) return null;
+    return serie.valeur(annee);
   }
 
   partPib(annee) {

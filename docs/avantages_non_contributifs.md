@@ -40,11 +40,13 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | **chiffré** | 8 | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
 | **intégré** | 11 | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Les trois derniers ne sont pas des dispositifs. |
 | **déclaré** | 3 | Une fiche de régime le déclare, aucun code ne le sert. La déclaration est une intention — mais la réversion, qui est de ceux-là, a désormais son coût, LU dans les séries de la DREES : voir le §4 quater. |
-| **absent** | 17 | Ni déclaré ni servi. C'est un écart au droit positif. |
+| **absent** | 17 | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour sept d'entre eux, qu'ils publient poste par poste : voir le §4 quinquies. |
 
 Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
 recalcul de même nature), par une **série publiée**, ou par **rien** — ce
-dernier cas étant une limite qu'il vaut mieux écrire qu'estimer.
+dernier cas étant une limite qu'il vaut mieux écrire qu'estimer. Quand les deux
+premières existent, **la série publiée l'emporte** : c'est le premier critère
+de `data/sources.yaml`, et c'est ce qui fait aujourd'hui 87 % du total chiffré.
 
 ## 3. La liste
 
@@ -357,7 +359,8 @@ d'équilibre et les subventions, **13,5 % des ressources**.
 ### Ce que tout cela déplace dans l'agrégat : rien
 
 La décomposition annuelle vaut toujours **12,6 Md€ en 2024**, aux mêmes sept
-lignes. Chiffrer les neuf n'a pas déplacé la masse d'un euro, et ce n'était pas
+lignes. (C'est la part CALCULÉE du total ; les lignes lues portent le reste, et
+le §4 quinquies fait le compte.) Chiffrer les neuf n'a pas déplacé la masse d'un euro, et ce n'était pas
 le but : le but était de savoir **pourquoi** chacune vaut ce qu'elle vaut. Sur
 les neuf, quatre sont nulles pour des raisons de calendrier ou de composition de
 la grille, une est nulle par nature, une est refusée, et trois relèvent d'une
@@ -370,7 +373,8 @@ C'était la deuxième priorité du §6, et de très loin la ligne la plus lourde
 l'inventaire. Elle est chiffrée : **38,3 Md€ en 2024**, soit **9,0 % de la
 dépense de retraite**. À elle seule, elle pèse trois fois tout ce que le modèle
 mesure par ailleurs, et fait passer le total chiffré de 12,6 à **50,9 Md€, soit
-11,9 % de la dépense** contre 3,0 % auparavant.
+11,9 % de la dépense** contre 3,0 % auparavant. (Le §4 quinquies le porte
+ensuite à 93,9 Md€, en lisant huit postes de plus.)
 
 | Année | Réversion | Part de la dépense | Total chiffré |
 |---|---|---|---|
@@ -431,47 +435,154 @@ pas très bonnes, et le §5 dit pourquoi.
 
 La page du site la porte **dans le même tracé que les autres** : une seule
 carte réunit tout ce qu'on sait chiffrer, et c'est le total qui doit se lire
-d'un coup d'œil. Le prix de cette réunion est la **fenêtre** : le graphique
-s'arrête à 2004, là où la réversion commence, faute de quoi elle dessinerait une
-falaise de vingt-cinq milliards cette année-là et le lecteur y verrait un saut
-de dépense là où il n'y a qu'un début de publication.
+d'un coup d'œil. Le prix de cette réunion est la **fenêtre**, qui ne peut aller
+plus loin en arrière que la plus jeune des lignes lues : 2004 quand la réversion
+était la seule, cinq points seulement depuis que les postes des comptes l'ont
+rejointe (§4 quinquies). Le graphique la calcule au lieu de l'écrire, et elle
+se resserre donc d'elle-même à chaque ligne lue qui arrive.
 
-Ce prix est plus faible qu'il n'y paraît, et le choix gagne même en cohérence :
-les **poids** des carrières types viennent eux aussi d'une série que la DREES ne
-publie que de 2004 à 2024 — avant, la répartition du bord est reconduite et la
-série tombe au niveau « estimée ». La fenêtre commune est donc celle où chaque
-terme du produit est observé. Ce que les années antérieures montraient — un
-minimum vieillesse qui pesait le tiers de la dépense en 1960 et qui s'est
-éteint — reste calculé par `scripts/cout_avantages.py`, qui remonte à 1959.
+Ce prix est plus faible qu'il n'y paraît : les **poids** des carrières types
+viennent eux aussi d'une série que la DREES ne publie que de 2004 à 2024 —
+avant, la répartition du bord est reconduite et la série tombe au niveau
+« estimée ». La fenêtre est donc celle où chaque terme du produit est observé.
+Ce que les années antérieures montraient — un minimum vieillesse qui pesait le
+tiers de la dépense en 1960 et qui s'est éteint — reste calculé par la commande
+d'analyse du dépôt, qui remonte à 1959.
 
 ### Ce qui reste hors de portée
 
-La réversion n'est pas tout le droit dérivé. L'**allocation veuvage**, la
-**majoration de réversion** de l'article L. 353-6 et les **pensions d'orphelin**
-restent absentes de l'inventaire chiffré. La première est marginale ; la
-deuxième est comprise dans le montant que l'EACR mesure, puisque la caisse la
-verse avec la réversion ; la troisième est publiée à part par le Service des
-retraites de l'État, et n'a pas été reprise.
+La réversion n'est pas tout le droit dérivé. Au moment où ce paragraphe a été
+écrit, l'**allocation veuvage**, la **majoration de réversion** et les
+**pensions d'orphelin** restaient absentes de l'inventaire chiffré. Les deux
+dernières ne le sont plus : les comptes de la protection sociale les publient
+poste par poste, 1,22 et 6,45 Md€ en 2024 (§4 quinquies). L'allocation veuvage,
+elle, reste rangée dans un poste « autres droits dérivés » qui ne l'isole pas.
+
+## 4 quinquies. Les postes que les comptes publient, et qui remplacent le modèle
+
+Le §5 concluait que la grille de cas types n'est pas une population, et le §6
+en tirait une priorité : trouver la distribution des retraités par nombre
+d'enfants. **Ce n'était pas la seule issue, et c'était la plus longue.** Les
+Comptes de la protection sociale de la DREES publient, depuis 2020, les
+sous-postes du risque vieillesse-survie un par un. Huit d'entre eux sont
+exactement des lignes de l'inventaire, et ils comptent des personnes réelles.
+
+`data/sources.yaml` tranche le cas dans son premier critère : **le producteur
+prime sur le repreneur**. Là où un poste publié existe, il **remplace** la
+ligne calculée au lieu de la compléter. L'écart entre les deux dit ce que la
+grille coûtait :
+
+| Ligne | Modèle, 2024 | Poste publié, 2024 |
+|---|---|---|
+| Majoration de pension pour trois enfants et plus | 0,00 Md€ | **7,78 Md€** |
+| Minimum vieillesse (ASPA) | ~0,02 Md€ | **4,94 Md€** |
+| Taux plein par inaptitude ou invalidité | absent | **22,20 Md€** |
+| Pension d'orphelin | absent | **6,45 Md€** |
+| Majoration de la pension de réversion | absent | **1,22 Md€** |
+| Majoration pour assistance d'une tierce personne | absent | **0,31 Md€** |
+| Majoration pour conjoint à charge | absent | **0,07 Md€** |
+
+La majoration pour enfants est le cas d'école : un seul des treize cas types a
+des enfants, et il en a deux quand le seuil est à trois. Le modèle chiffrait
+donc à zéro, toutes les années de la série, un avantage qui pèse près de huit
+milliards. Ce n'était pas une erreur de calcul mais une erreur de **question** :
+on demandait à un instrument de rapport de compter une population.
+
+### Ce que cela donne au total
+
+| | 2020 | 2024 |
+|---|---|---|
+| Dépense observée | 359,5 Md€ | 426,7 Md€ |
+| Lignes **lues** (comptes, EACR) | 68,5 Md€ | **81,3 Md€** |
+| Lignes **calculées** (retrait sur la grille) | 13,5 Md€ | **12,6 Md€** |
+| Total chiffré | 82,0 Md€ | **93,9 Md€** |
+| Part de la dépense | 22,8 % | **22,0 %** |
+
+Le COR chiffre les droits de solidarité à « de l'ordre d'un cinquième » des
+retraites. On y est, et on y arrive par en dessous : ce total reste un
+plancher. **Les lignes lues font 87 % du total**, et c'est le résultat le plus
+net de ce chantier : ce que le modèle apporte ici n'est pas le chiffre, c'est
+la LISTE — savoir ce qu'il faut compter, et sous quel article.
+
+### Ce que la page montre désormais
+
+Trois changements, et le premier est celui que l'utilisateur réclamait.
+
+**Les trente-neuf sont nommés.** Un tableau par famille, chaque dispositif sur
+sa ligne, avec son coût sur la dernière année publiée ou, quand la case est
+vide, **la phrase qui dit pourquoi**. Quinze portent un chiffre ; les
+vingt-quatre autres portent une raison, et un test du dépôt refuse qu'une
+ligne n'ait ni l'un ni l'autre. La page affirmait qu'il existe trente-neuf
+avantages et n'en montrait pas la moitié ; un blanc sans raison est une dette,
+une raison écrite est une limite.
+
+**Un montant ne paraît qu'une fois.** La MDA du privé et la bonification pour
+enfants de la fonction publique sont le même trimestre gratuit sous deux
+textes, et la cascade n'en tient qu'une ligne. Le premier dispositif porte le
+chiffre ; le second dit où il est, plutôt que de le répéter — un chiffre
+imprimé deux fois s'additionne dans la tête du lecteur.
+
+**Chaque case dit d'où elle vient.** « lu » ou « calculé ». Un montant compté
+sur des personnes réelles et un montant refait sur treize carrières types ne se
+lisent pas avec la même confiance, et la page ne peut pas laisser le lecteur
+les confondre.
+
+**Le graphique empile les familles, sur la fenêtre où tout est publié.** Quinze
+lignes pour neuf couleurs donnaient six bandes portant la couleur d'une autre,
+et les six plus petites tenaient dans l'épaisseur du trait ; les familles sont
+le découpage que l'inventaire porte lui-même. Et la fenêtre se **calcule** au
+lieu de s'écrire : c'est l'intersection des fenêtres de publication des lignes
+lues, 2004 pour la réversion et 2020 pour les sous-postes des comptes. Elle
+s'est donc resserrée d'elle-même à cinq points le jour où ces postes sont
+arrivés. Les empiler plus tôt aurait dessiné une falaise de quarante milliards
+en 2020, où le lecteur aurait vu une explosion de la dépense là où il n'y a
+qu'un début de publication.
+
+### Trois pièges rencontrés, et ce qu'ils apprennent
+
+**Le compte annoncé n'était pas le compte montré.** La page disait « 22 des 39
+dispositifs portent un chiffre » au-dessus d'un tableau qui montrait quinze
+cases pleines. Les deux comptages sont justes et ne mesurent pas la même
+chose : le premier compte ce que le modèle SAIT chiffrer, le second ce qui
+PORTE un chiffre — un avantage éteint, ou que nul cas type ne porte, se mesure
+très bien et vaut zéro. C'est le second que la page annonce désormais, parce
+que c'est celui que son tableau montre.
+
+**La ligne de commande et le site avaient divergé.** La commande d'analyse
+refaisait la décomposition pour elle seule, à partir des seules masses du
+modèle : elle annonçait 12,6 milliards quand la page en annonçait 93,9. L'écart
+n'était pas une erreur de calcul mais une différence de périmètre — les postes
+lus manquaient d'un côté. Un chiffre qui dépend de la porte par laquelle on
+entre n'est pas un chiffre : le calcul vit maintenant dans le modèle, et les
+deux portes y mènent.
+
+**Une ligne sans famille disparaîtrait sans bruit.** Le graphique groupe par
+famille et écarte, par sécurité, toute ligne dont il ignore la famille. Une
+ligne écartée manquerait au total du tracé quand le tableau juste en dessous la
+compterait. Un test l'interdit, comme un second interdit qu'une série publiée
+ait un trou au milieu, ce qui couperait la fenêtre en deux.
 
 ## 5. Pourquoi, et c'est le vrai résultat de ce chantier
 
 Deux causes, et elles ne se corrigent pas de la même façon.
 
-**La première est connue et écrite** : vingt-sept des trente-neuf dispositifs
-ne sont pas chiffrés, et l'inventaire dit lesquels. Ce qui reste hors de portée
-n'est plus la réversion, qui est désormais lue, mais les bonifications de
-service, les départs anticipés pour handicap ou inaptitude, l'allocation
-veuvage et les pensions d'orphelin, chacun pour sa raison propre.
+**La première est connue et écrite** : vingt-quatre des trente-neuf
+dispositifs ne portent pas de chiffre sur la dernière année publiée, et
+l'inventaire dit, pour chacun, laquelle des deux raisons s'applique — le modèle
+ne sait pas le mesurer, ou aucun poste publié ne l'isole. Ce qui reste vraiment
+hors de portée, ce sont les bonifications de service des militaires et des
+corps actifs, les départs anticipés pour handicap, la majoration de durée au
+titre du congé parental et l'allocation veuvage.
 
-**La seconde ne l'était pas, et elle est plus grave : la grille de cas types n'a
-pas d'enfants.** Sur les treize cas types, **un seul** en a — `carriere_interrompue`,
-deux enfants. Conséquences mécaniques, et non accidentelles :
+**La seconde ne l'était pas, et c'est le vrai résultat de ce chantier : la
+grille de cas types n'a pas d'enfants.** Sur les treize cas types, **un seul**
+en a — `carriere_interrompue`, deux enfants. Conséquences mécaniques, et non
+accidentelles :
 
-- la **majoration de pension pour trois enfants et plus** vaut **zéro toutes les
-  années de la série**, parce que le seuil est à trois et qu'aucun cas type ne
-  l'atteint. La CNAF rembourse pourtant 5,9 milliards à ce titre en 2025
-  (`macro/transferts_retraite.csv`, poste `cnaf_majorations`), et ce n'est que la
-  part du régime général ;
+- la **majoration de pension pour trois enfants et plus** valait **zéro toutes
+  les années de la série**, parce que le seuil est à trois et qu'aucun cas type
+  ne l'atteint. Les comptes de la protection sociale en portent 7,78 milliards
+  en 2024 ;
 - la **surcote parentale** vaut zéro pour la même raison ;
 - l'**AVPF** et la **MDA** ne sont portées que par ce seul cas type, au poids de
   sa caisse. L'AVPF mesurée tombe à 0,0 milliard en 2024 quand la CNAF verse
@@ -479,23 +590,34 @@ deux enfants. Conséquences mécaniques, et non accidentelles :
 
 La grille de cas types est faite pour **comparer des systèmes sur une même
 carrière** : c'est un instrument de rapport, et les erreurs de niveau
-s'annulent au dénominateur. Elle n'est pas faite pour **compter une population**,
-et le coût d'un avantage est un compte de population. Le dépôt le savait déjà
-pour la garantie vieillesse — les 93 milliards que les cas types en tiraient
-étaient un chiffre faux, et le barème a été appliqué à la distribution DREES
-pour donner 18,4 milliards. **La même correction est due ici, et pour la même
-raison.**
+s'annulent au dénominateur. Elle n'est pas faite pour **compter une
+population**, et le coût d'un avantage est un compte de population. Le dépôt le
+savait déjà pour la garantie vieillesse — les 93 milliards que les cas types en
+tiraient étaient un chiffre faux, et le barème a été appliqué à la distribution
+DREES pour donner 18,4 milliards.
+
+**La correction a été faite ici, mais par l'autre bout.** Reconstruire une
+population par nombre d'enfants, par sexe et par génération était la voie
+longue ; lire le poste que la DREES publie était la voie courte, et elle donne
+un compte de personnes réelles plutôt qu'un modèle. Là où les deux existent, le
+poste publié l'emporte — c'est le premier critère de `data/sources.yaml`, le
+producteur prime sur le repreneur. **Les lignes lues font aujourd'hui 87 % du
+total chiffré.** Ce que le modèle apporte n'est donc pas le chiffre : c'est la
+liste, et l'article sous lequel chercher.
 
 ## 6. Ce qu'il faut faire, dans l'ordre
 
-1. **Les droits familiaux se chiffrent sur une structure de population, pas sur
-   les cas types.** Il faut la distribution des retraités par nombre d'enfants,
-   par sexe et par génération. Sans elle, toute la première famille vaut zéro ou
-   presque, et c'est la plus documentée du système français.
+1. **Les droits familiaux se lisent là où ils sont publiés — c'est fait pour
+   la majoration de pension**, 7,78 Md€ en 2024 (§4 quinquies). Restent la
+   surcote parentale, qui ne paiera qu'à compter de 2026, et la majoration de
+   durée au titre du congé parental, qu'aucun poste n'isole. La distribution
+   des retraités par nombre d'enfants, par sexe et par génération reste
+   souhaitable : elle seule permettrait de vérifier le poste publié au lieu de
+   le recopier, et de projeter ce que ces droits deviennent.
 2. **La réversion se lit, elle ne se calcule pas — c'est fait.** 38,3 Md€ en
    2024, lus dans l'enquête annuelle de la DREES auprès des caisses (§4 quater).
-   Restent hors de l'inventaire chiffré l'allocation veuvage et les pensions
-   d'orphelin, publiées ailleurs.
+   La majoration de réversion et les pensions d'orphelin ont suivi par les
+   comptes. Reste l'allocation veuvage, qu'un poste fourre-tout absorbe.
 3. **Les onze lignes « intégrées » se chiffrent par retrait — c'est fait.** Huit
    le sont, par la carrière, par le catalogue ou par une table (§4 bis et
    4 ter) ; les trois autres ne sont pas des dispositifs et se lisent ailleurs.
