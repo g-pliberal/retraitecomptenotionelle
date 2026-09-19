@@ -4094,7 +4094,9 @@ def _salaire_net_detail(comparaison: Comparaison, remuneration,
     # celui du net — est déjà le chiffre de tête. Les deux autres se lisent
     # sous le tableau, en une phrase.
     lignes = [
-        [g.terme("coût du travail"),
+        # Le mot s'affiche avec sa capitale, comme les autres intitulés de
+        # ligne, mais renvoie à la même entrée du glossaire.
+        [g.terme("Coût du travail", "coût du travail"),
          mois(avant.cout_du_travail), mois(apres.cout_du_travail)],
         ["Salaire brut", mois(avant.brut), mois(apres.brut)],
         ["<strong>Salaire net</strong>",
