@@ -5012,7 +5012,7 @@ def _prose(corps: str) -> str:
     incise. Les compter sur trois pages de plus ne dirait rien de leur prose ;
     ils restent comptés là où ils sont écrits, dans les options du simulateur.
     """
-    sans_reglages = re.sub(r'<details class="options reglages"[^>]*>.*?</details>', " ",
+    sans_reglages = re.sub(r'<details class="section options reglages"[^>]*>.*?</details>', " ",
                            corps, flags=re.S)
     sans_tables = re.sub(r"<table.*?</table>", " ", sans_reglages, flags=re.S)
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", sans_tables)))
@@ -5147,7 +5147,7 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification(contexte):
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
 def test_une_page_agregee_porte_son_bloc_de_reglages(page, chemin):
     corps = page(chemin)
-    assert 'class="options reglages"' in corps
+    assert 'class="section options reglages"' in corps
     assert "Recalculer cette page" in corps
     # Le formulaire vise la route NUE : le routeur colle la requête derrière
     # l'action, et une action qui en porterait déjà une en donnerait deux.
@@ -5233,7 +5233,7 @@ def test_un_reglage_hors_bornes_ne_fait_pas_tomber_la_page(page):
     assert "Saisie refusée" in corps
     # Et la page est rendue derrière, sous les règles par défaut.
     assert "ne sont pas ceux des réglages par défaut" not in corps
-    assert 'class="options reglages"' in corps
+    assert 'class="section options reglages"' in corps
 
 
 def test_une_adresse_qui_ne_porte_que_des_reglages_ne_demande_pas_de_calcul(page):

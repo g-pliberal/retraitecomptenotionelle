@@ -26,7 +26,11 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 046<!--/--> lignes), puis dans les
+<<<<<<< HEAD
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 061<!--/--> lignes), puis dans les
+=======
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 061<!--/--> lignes), puis dans les
+>>>>>>> 6b842ee (Les points 9 à 20 de la passe visuelle, corrigés)
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -5934,6 +5938,7 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   `tests/test_cout.py`, `tests/test_donnees.py`, `tests/test_web.py` ; les
   témoins.
 
+<<<<<<< HEAD
 - **Septembre 2026, le profil se choisit sur l'affiliation, et le public a le
   sien.** Suite immédiate de la note précédente. Le profil lu chez l'INSEE
   était celui du PRIVÉ, servi à tout le monde : le jeu annuel détaillé de la
@@ -5982,6 +5987,15 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   dans `web/pages.py` et son portage ; `docs/methodologie.md`,
   `docs/limites.md` §1 ; `tests/test_simulateur.py`, `tests/test_donnees.py` ;
   les témoins.
+=======
+- **19 septembre 2026, action 42, suite et fin.** Les vingt constats sont
+  corrigés, en deux temps, dans les deux portages, avec les témoins
+  régénérés et cinq tests mis au niveau du gabarit ; le détail est sous
+  l'action, qui passe à `fait`. Deux choses apprises en chemin, notées là
+  aussi : une `<caption>` ne peut pas être collante, et Chromium rend tout
+  `<button>` en bloc en ligne. Une passe suivante repartira du script décrit
+  sous « Comment refaire la passe ».
+>>>>>>> 6b842ee (Les points 9 à 20 de la passe visuelle, corrigés)
 
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 
@@ -7066,7 +7080,7 @@ chiffres du dépôt, l'autre les affirmations du site.
 `tests/test_prose.py`, `docs/fraicheur.md` (neufs) ; les ancres posées dans
 `README.md`, `docs/feuille_de_route.md` et `docs/limites.md`.
 
-### 42. La passe visuelle du 19 septembre 2026 : vingt constats, du téléphone au bureau — `à faire`
+### 42. La passe visuelle du 19 septembre 2026 : vingt constats, du téléphone au bureau — `fait`
 
 **Pourquoi.** Le site n'avait jamais été regardé page par page à plusieurs
 largeurs depuis la refonte en affiche (action 30) et la bascule net/brut
@@ -7080,7 +7094,9 @@ ci-dessous, du plus visible au plus discret ; les lignes renvoient à
 `src/retraite_notionnelle/web/gabarit.py` (la feuille de style y vit) sauf
 mention contraire. **Rien n'a été corrigé** : cette action est la liste.
 
-**Ce qui se voit de loin.**
+**Ce qui se voit de loin — corrigé le 19 septembre 2026, comme le reste.**
+Ce qui a été fait, point par point, est dit à la fin de l'action ; les
+constats restent tels qu'ils ont été écrits, avec les lignes d'alors.
 
 1. *La bande de lecture d'un graphique est cassée.* Au survol d'une courbe,
    la bande sous le tracé affiche « • ■Ce qui sort13,5 » : puces de liste,
@@ -7231,7 +7247,66 @@ les `<details>`, cliquer un `.terme`, tabuler, survoler un `svg`, passer en
 média `print`. Un script de vingt lignes fait tout ; il devrait rejoindre
 `scripts/` avec cette action, et écrire ses captures hors du dépôt.
 
-**Fichiers à toucher.** `src/retraite_notionnelle/web/gabarit.py` (la
+**Ce qui a été corrigé (les huit premiers).** 1 : la feuille décrit
+maintenant la structure que le script écrit — année en tête, liste sans
+puces, pastille, nom, valeur en graisse —, empilée sous 48 rem. 2 : sous
+34 rem le tracé ne descend plus sous 30 rem et défile dans sa figure, les
+graduations passent de 24 à 18 unités ; l'unité de l'axe part du bord gauche
+du repère (`text-anchor="start"` à `x="0"`) et l'étiquette du repère se pose
+du côté où il reste de la place, dans les deux portages. 3 : la légende du
+métier est dans `--texte-doux`, et ne reprend `--sur-creme-doux` que sous
+`.creme`. 4 : une variable `--fond-defilant`, que `.carte`, `.note`,
+`.plan`, `.erreur`, `.cadre-carte`, `.engagements`, `section.cle` et
+`.creme` redéfinissent à leur couleur. 5 : la `<caption>` porte un `<span>`
+collant large de `100cqw`, `.defilant` étant devenu conteneur de requête —
+une `<caption>` ne peut pas être collante elle-même, et en bloc Chromium la
+range sous l'en-tête ; les deux ont été essayés. 6 : `td.nombre`, `td.date`
+et `th.date` ne se coupent plus (`white-space: nowrap`), la colonne des
+dates de la page Données porte `date`, et les couples du plancher sont
+écrits avec des espaces insécables ordinaires — la fine (U+202F) que le site
+emploie dans ses nombres est presque invisible en gras, et ces libellés
+voisinent des cellules qui gardent une espace pleine. 7 : le mot du
+glossaire est un `<span role="button" tabindex="0">`, parce que Chromium
+rend tout `<button>` en bloc en ligne quoi qu'on lui dise (essayé :
+`display: inline` reste `inline-block`) ; `index.html` lui donne Entrée et
+Espace, `text-align: inherit` défait le centrage, et l'appel de bulle reste
+un vrai bouton. 8 : `.texte` posé sur les cinq colonnes de phrases, et
+`.texte long` (18 rem au moins) sur les notes des 89 régimes. Les deux
+tests qui attendaient un `<button>` ou une espace pleine ont été mis à jour
+avec le gabarit.
+
+**Ce qui a été corrigé ensuite (les points 9 à 20, le même jour).** 9 : la
+grille des engagements est à deux colonnes fixes, et passe à une seule sous
+48 rem, dans la même requête que le retrait et le filet des cartes paires —
+`auto-fit` la repliait dès 40 rem, quatorze rem avant ses filets. 10 :
+`tbody tr:last-child :is(th, td)`. 11 : `margin-right: 1.25rem` sur la
+bascule. 12 : « Statut » porte une ligne d'aide (« celui du premier
+emploi »), et la grille courte s'aligne par le haut, le bouton centré. 13 :
+le dépliant des règles porte `class="section"`. 14 : les repères sont une
+sous-grille (`grid-template-rows: subgrid`, trois rangées partagées) là où
+elle existe, la colonne flexible ailleurs. 15 : chaque famille de dispositifs
+est dans une boîte `.dispositifs`, et sous 34 rem ses tableaux gardent 30 rem
+et défilent tous. 16 : sous 34 rem l'aperçu d'une carte à publier garde 36 rem
+et défile dans sa figure — le texte y reste lisible parce que les `cqw` se
+mesurent sur cette largeur-là. 17 : `fiabilite_en_clair` (`fiabiliteEnClair`
+en JavaScript) accentue les niveaux partout où ils s'affichent — badges,
+tableaux, menus de filtre —, les clés restant sans accent dans les attributs
+et les adresses. 18 : l'en-tête collant des tableaux de points est peint en
+`--fond-defilant`, comme le voile. 19 : la page Trajectoire ouvre sur
+« Chaque système sert une pension mensuelle ; ce graphique les additionne »,
+le dépliant de Simuler gardant sa phrase. 20 : rien à faire, comme noté.
+Trois tests qui cherchaient l'ancienne classe du bloc de réglages ont été mis
+à jour.
+
+**Fichiers touchés le 19 septembre.** `web/gabarit.py` et `moteur/js/gabarit.js`
+(feuille, `mot`, `tableau`, `graphique`, `fiabilite_en_clair`), `web/pages.py`
+et `moteur/js/pages.js` (classes de colonnes, libellés du plancher, aide du
+statut, classe du bloc de réglages, boîte des dispositifs, niveaux en clair,
+phrase de Trajectoire), `index.html` (Entrée et Espace sur un mot du
+glossaire), `tests/test_web.py`, `moteur/style.css` et
+`tests/temoins/pages.json` régénérés.
+
+**Fichiers à toucher pour une passe suivante.** `src/retraite_notionnelle/web/gabarit.py` (la
 feuille, les marges du graphique, l'unité de l'axe), `index.html` (la bande
 de lecture), `src/retraite_notionnelle/web/pages.py` et son portage
 `moteur/js/pages.js` (classes `.texte`, espaces insécables, « Estimée »,

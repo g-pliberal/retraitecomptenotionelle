@@ -2172,9 +2172,12 @@ def _simulateur_court(contexte: Contexte, vers: str = "/simuler") -> str:
                      "le premier mois cotisé", saisie.calcul_de(saisie.debut),
                      min=saisie.jour_de(AGE_DEBUT_MINIMAL),
                      max=saisie.jour_de(AGE_DEBUT_MAXIMAL)),
+        # Une ligne d'aide, comme sous chaque date : sans elle, l'étiquette
+        # était plus courte d'une ligne et le menu partait plus bas que les
+        # champs voisins.
         g.liste("statut", "Statut",
                 _options_statuts(affiliations, saisie.date_de(saisie.debut)),
-                saisie.statut),
+                saisie.statut, "celui du premier emploi"),
         g.champ_date("liquidation", "Départ souhaité",
                      saisie.jour_de(saisie.liquidation), "effectif, ou souhaité",
                      saisie.calcul_de(saisie.liquidation),
@@ -2625,7 +2628,7 @@ def _reglages(saisie: Saisie, chemin: str) -> str:
     )
     change = bool(saisie.requete_modelisation())
     return f"""
-<details class="options reglages"{' open' if change else ''}>
+<details class="section options reglages"{' open' if change else ''}>
   {g.sommaire("Les règles du calcul (indexation, projection, bascule…)")}
   <p class="discret">Cette page croise des carrières types avec des
   générations : elle ne calcule aucune carrière saisie. Mais elle obéit aux
@@ -3245,7 +3248,7 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
 
 
 def _corps_trajectoire(contexte: Contexte, comparaison: Comparaison,
-                       saisie: Saisie) -> str:
+                       saisie: Saisie, seul: bool = False) -> str:
     """Le cumul versé par chaque scénario, du départ à 105 ans.
 
     Renvoie le CORPS seul, sans son enveloppe : la page Simuler le replie sous
@@ -3326,7 +3329,9 @@ def _corps_trajectoire(contexte: Contexte, comparaison: Comparaison,
     # texte sous le graphique dit ce que « k€ » désigne, et de quelle année.
     unite = "k€"
     return f"""
-<p>Les quatre montants du haut sont ceux d'un seul mois, le premier. Ce graphique
+<p>{"Chaque système sert une pension mensuelle ; ce graphique"
+     if seul else
+     "Les quatre montants du haut sont ceux d'un seul mois, le premier. Ce graphique"}
 les additionne, année après année, à mesure que le retraité vieillit.{g.bulle(
     "Ce que ce graphique ajoute aux quatre montants",
     "C'est là que la durée entre dans le calcul. Une pension "
@@ -3417,7 +3422,9 @@ def _page_trajectoire(contexte: Contexte, parametres: dict[str, str]) -> str:
 
     try:
         comparaison = contexte.simuler(saisie)
-        corps = _corps_trajectoire(contexte, comparaison, saisie)
+        # `seul` : la page ne montre pas les quatre montants mensuels que le
+        # dépliant de Simuler a au-dessus de lui, et sa phrase ne les cite pas.
+        corps = _corps_trajectoire(contexte, comparaison, saisie, seul=True)
     except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError) as erreur:
         return tete + formulaire + _erreur(str(erreur))
     if not corps:
@@ -3903,7 +3910,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
 
     fiabilite = (
         '<p class="discret" style="margin-top:1.5rem">Fiabilité du résultat : '
-        f'<span class="etiquette-fiabilite">{escape(str(comparaison.fiabilite))}'
+        f'<span class="etiquette-fiabilite">{escape(g.fiabilite_en_clair(comparaison.fiabilite))}'
         "</span></p>"
     )
     # La clé de lecture, avant les chiffres. Les six blocs portent des titres
@@ -4313,7 +4320,7 @@ plans d'épargne retraite individuels, mesurées par l'Observatoire des produits
 d'épargne financière. La page <a href="{g.lien("/methode/")}">Méthode</a>
 dit ce que ces choix supposent, et la page <a href="{g.lien("/donnees/")}">Données</a>
 d'où ils viennent. Fiabilité de ce compartiment :
-<span class="etiquette-fiabilite">{escape(str(pilier.fiabilite))}</span>, le
+<span class="etiquette-fiabilite">{escape(g.fiabilite_en_clair(pilier.fiabilite))}</span>, le
 barème de frais étant saisi et non recontrôlé.</p>""",
     )
 
@@ -4901,7 +4908,7 @@ def _salaire_net_methode(comparaison: Comparaison, remuneration) -> str:
 {_salaire_net_perimetre(remuneration)}
 <p class="discret">Taux hors retraite : millésime {remuneration.millesime_bareme},
 appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
-de financement. Fiabilité : {escape(str(remuneration.fiabilite))}. Les taux de
+de financement. Fiabilité : {escape(g.fiabilite_en_clair(remuneration.fiabilite))}. Les taux de
 retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
 exactement ce que le compte notionnel encaisse.</p>"""
 
@@ -6320,6 +6327,7 @@ def _avantages_table_complete(contexte: Contexte) -> str:
         if not lignes:
             continue
         blocs.append(
+            '<div class="dispositifs">'
             f"<h4>{escape(famille.libelle)}</h4>"
             + g.tableau(
                 ["Dispositif", f"Coût en {derniere.annee}",
@@ -6328,6 +6336,7 @@ def _avantages_table_complete(contexte: Contexte) -> str:
                 titre=f"{famille.libelle} : {len(lignes)} dispositifs et leur coût",
                 entete_de_ligne=True,
             )
+            + "</div>"
         )
     return "".join(blocs)
 
@@ -8019,7 +8028,7 @@ def _inventaire_section(racine, catalogue) -> str:
             escape(ligne.nom),
             escape(FAMILLES_INVENTAIRE[ligne.famille]),
             escape(lecture[ligne.couverture]),
-            cellule(fiabilites.get(ligne.code, "")),
+            cellule(g.fiabilite_en_clair(fiabilites.get(ligne.code, ""))),
             escape(_periode_inventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
             cellule(", ".join(ligne.statuts)),
             cellule(ligne.raison_hors_champ if ligne.couverture == "hors_champ"
@@ -8044,7 +8053,8 @@ def _inventaire_section(racine, catalogue) -> str:
                                     if comptes[cle]], "",
                   data_filtre="couverture")
         + g.liste("inventaire-fiabilite", "Fiabilité de la fiche",
-                  [("", "Toutes")] + [(niveau, niveau) for niveau in NIVEAUX_FIABILITE
+                  [("", "Toutes")] + [(niveau, g.fiabilite_en_clair(niveau))
+                                      for niveau in NIVEAUX_FIABILITE
                                       if niveau in fiabilites.values()], "",
                   data_filtre="fiabilite")
         + "</div>"
@@ -8101,10 +8111,10 @@ def _donnees(contexte: Contexte) -> str:
         fin = debut + 9
         periodes.append([
             f"{debut}-{fin}",
-            escape(str(macro.inflation.fiabilite_minimale_sur(debut, fin))),
-            escape(str(macro.salaire_moyen.fiabilite_minimale_sur(debut, fin))),
-            escape(str(macro.productivite.fiabilite_minimale_sur(debut, fin))),
-            f"<strong>{escape(str(macro.fiabilite_sur(debut, fin)))}</strong>",
+            escape(g.fiabilite_en_clair(macro.inflation.fiabilite_minimale_sur(debut, fin))),
+            escape(g.fiabilite_en_clair(macro.salaire_moyen.fiabilite_minimale_sur(debut, fin))),
+            escape(g.fiabilite_en_clair(macro.productivite.fiabilite_minimale_sur(debut, fin))),
+            f"<strong>{escape(g.fiabilite_en_clair(macro.fiabilite_sur(debut, fin)))}</strong>",
         ])
 
     par_niveau: dict[str, list[str]] = {}
@@ -8120,7 +8130,8 @@ def _donnees(contexte: Contexte) -> str:
     journal = journal_certification(macro.racine)
     series = journal.get("series", {})
     certifications = [
-        [escape(nom), f"{trace['valeurs']}", escape(trace.get("niveau", "certifiee")),
+        [escape(nom), f"{trace['valeurs']}",
+         escape(g.fiabilite_en_clair(trace.get("niveau", "certifiee"))),
          escape(trace["verifiee_le"]), escape(trace["source"])]
         for nom, trace in sorted(series.items())
     ]
@@ -8137,7 +8148,8 @@ def _donnees(contexte: Contexte) -> str:
                   "un nom, une source…", type_="search",
                   data_filtre="texte", autocomplete="off")
         + g.liste("series-niveau", "Niveau",
-                  [("", "Tous")] + [(niveau, niveau) for niveau in NIVEAUX_FIABILITE
+                  [("", "Tous")] + [(niveau, g.fiabilite_en_clair(niveau))
+                                    for niveau in NIVEAUX_FIABILITE
                                     if niveau in niveaux_series], "",
                   data_filtre="niveau")
         + "</div>"

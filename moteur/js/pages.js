@@ -2155,7 +2155,7 @@ function reglages(saisie, chemin) {
     .join("");
   const change = Boolean(saisie.requeteModelisation());
   return `
-<details class="options reglages"${change ? " open" : ""}>
+<details class="section options reglages"${change ? " open" : ""}>
   ${g.sommaire("Les règles du calcul (indexation, projection, bascule…)")}
   <p class="discret">Cette page croise des carrières types avec des
   générations : elle ne calcule aucune carrière saisie. Mais elle obéit aux
@@ -2779,7 +2779,7 @@ function lectureDesMontants(comparaison, saisie) {
  * postérieure à la liquidation — additionner en euros constants est la
  * convention la plus neutre dont on dispose, ce n'est pas une prévision.
  */
-function corpsTrajectoire(contexte, comparaison, saisie) {
+function corpsTrajectoire(contexte, comparaison, saisie, seul = false) {
   const carriere = comparaison.carriere;
   const depart = carriere.age_liquidation || 0.0;
   if (!(depart > 0 && depart < AGE_MAXIMUM_TRAJECTOIRE)) return "";
@@ -2829,7 +2829,9 @@ function corpsTrajectoire(contexte, comparaison, saisie) {
   // sous le graphique dit ce que « k€ » désigne, et de quelle année.
   const unite = "k€";
   return `
-<p>Les quatre montants du haut sont ceux d'un seul mois, le premier. Ce graphique
+<p>${seul
+    ? "Chaque système sert une pension mensuelle ; ce graphique"
+    : "Les quatre montants du haut sont ceux d'un seul mois, le premier. Ce graphique"}
 les additionne, année après année, à mesure que le retraité vieillit.${g.bulle(
     "Ce que ce graphique ajoute aux quatre montants",
     "C'est là que la durée entre dans le calcul. Une pension "
@@ -2909,7 +2911,7 @@ function pageTrajectoire(contexte, parametres) {
 
   let corps;
   try {
-    corps = corpsTrajectoire(contexte, contexte.simuler(saisie), saisie);
+    corps = corpsTrajectoire(contexte, contexte.simuler(saisie), saisie, true);
   } catch (erreur) {
     if (fauteDeProgramme(erreur)) throw erreur;
     return tete + form + messageErreur(erreur.message);
@@ -3359,7 +3361,7 @@ function resultats(contexte, saisie) {
 
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
-    + `${echapper(nomFiabilite(comparaison.fiabilite))}</span></p>`;
+    + `${echapper(g.fiabiliteEnClair(nomFiabilite(comparaison.fiabilite)))}</span></p>`;
   // La clé de lecture, avant les chiffres. Les six blocs portent des titres
   // exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le premier
   // est la référence des cinq autres. Cinq phrases, en clair.
@@ -3886,7 +3888,7 @@ ${salaireNetAllegement(remuneration)}
 ${salaireNetPerimetre(remuneration)}
 <p class="discret">Taux hors retraite : millésime ${remuneration.millesimeBareme},
 appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
-de financement. Fiabilité : ${nomFiabilite(remuneration.fiabilite)}. Les taux de
+de financement. Fiabilité : ${g.fiabiliteEnClair(nomFiabilite(remuneration.fiabilite))}. Les taux de
 retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
 exactement ce que le compte notionnel encaisse.</p>`;
 }
@@ -4248,7 +4250,7 @@ plans d'épargne retraite individuels, mesurées par l'Observatoire des produits
 d'épargne financière. La page <a href="${g.lien("/methode/")}">Méthode</a>
 dit ce que ces choix supposent, et la page <a href="${g.lien("/donnees/")}">Données</a>
 d'où ils viennent. Fiabilité de ce compartiment :
-<span class="etiquette-fiabilite">${echapper(nomFiabilite(pilier.fiabilite))}</span>, le
+<span class="etiquette-fiabilite">${echapper(g.fiabiliteEnClair(nomFiabilite(pilier.fiabilite)))}</span>, le
 barème de frais étant saisi et non recontrôlé.</p>`);
 }
 
@@ -5623,13 +5625,15 @@ function avantagesTableComplete(contexte) {
     }
     if (lignes.length === 0) continue;
     blocs.push(
-      `<h4>${echapper(famille.libelle)}</h4>`
+      '<div class="dispositifs">'
+      + `<h4>${echapper(famille.libelle)}</h4>`
       + g.tableau(
         ["Dispositif", `Coût en ${derniere.annee}`,
           "D'où vient le chiffre, ou pourquoi il manque"],
         lignes, ["", "nombre", "texte"],
         `${famille.libelle} : ${lignes.length} dispositifs et leur coût`, true,
-      ),
+      )
+      + "</div>"
     );
   }
   return blocs.join("");
@@ -7289,7 +7293,7 @@ function inventaireSection(lignes, catalogue) {
       echapper(ligne.nom),
       echapper(FAMILLES_INVENTAIRE[ligne.famille]),
       echapper(lecture[ligne.couverture]),
-      cellule(fiabilites.get(ligne.code) ?? ""),
+      cellule(g.fiabiliteEnClair(fiabilites.get(ligne.code) ?? "")),
       echapper(periodeInventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
       cellule((ligne.statuts || []).join(", ")),
       cellule(ligne.couverture === "hors_champ" ? ligne.raison_hors_champ : ligne.manque),
@@ -7317,7 +7321,7 @@ function inventaireSection(lignes, catalogue) {
     + g.liste("inventaire-fiabilite", "Fiabilité de la fiche",
       [["", "Toutes"]].concat(NIVEAUX_FIABILITE
         .filter((niveau) => [...fiabilites.values()].includes(niveau))
-        .map((niveau) => [niveau, niveau])), "",
+        .map((niveau) => [niveau, g.fiabiliteEnClair(niveau)])), "",
       "", { data_filtre: "fiabilite" })
     + "</div>"
     + '<p class="compte discret" aria-live="polite" data-compte-de="inventaire" '
@@ -7370,10 +7374,10 @@ function donnees(contexte) {
     const fin = debut + 9;
     periodes.push([
       `${debut}-${fin}`,
-      echapper(nomFiabilite(macro.inflation.fiabiliteMinimaleSur(debut, fin))),
-      echapper(nomFiabilite(macro.salaire_moyen.fiabiliteMinimaleSur(debut, fin))),
-      echapper(nomFiabilite(macro.productivite.fiabiliteMinimaleSur(debut, fin))),
-      `<strong>${echapper(nomFiabilite(macro.fiabiliteSur(debut, fin)))}</strong>`,
+      echapper(g.fiabiliteEnClair(nomFiabilite(macro.inflation.fiabiliteMinimaleSur(debut, fin)))),
+      echapper(g.fiabiliteEnClair(nomFiabilite(macro.salaire_moyen.fiabiliteMinimaleSur(debut, fin)))),
+      echapper(g.fiabiliteEnClair(nomFiabilite(macro.productivite.fiabiliteMinimaleSur(debut, fin)))),
+      `<strong>${echapper(g.fiabiliteEnClair(nomFiabilite(macro.fiabiliteSur(debut, fin))))}</strong>`,
     ]);
   }
 
@@ -7399,7 +7403,7 @@ function donnees(contexte) {
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([nom, trace]) => [
       echapper(nom), String(trace.valeurs),
-      echapper(trace.niveau ?? "certifiee"), echapper(trace.verifiee_le),
+      echapper(g.fiabiliteEnClair(trace.niveau ?? "certifiee")), echapper(trace.verifiee_le),
       echapper(trace.source),
     ]);
   // La table des séries se cherche et se trie comme l'inventaire : c'est une
@@ -7417,7 +7421,7 @@ function donnees(contexte) {
       + g.liste("series-niveau", "Niveau",
         [["", "Tous"]].concat(NIVEAUX_FIABILITE
           .filter((niveau) => niveauxSeries.has(niveau))
-          .map((niveau) => [niveau, niveau])), "",
+          .map((niveau) => [niveau, g.fiabiliteEnClair(niveau)])), "",
         "", { data_filtre: "niveau" })
       + "</div>"
       + '<p class="compte discret" aria-live="polite" data-compte-de="series" '
@@ -7967,7 +7971,7 @@ function simulateurCourt(contexte, vers = "/simuler") {
         max: saisie.jourDe(AGE_DEBUT_MAXIMAL) }),
     g.liste("statut", "Statut",
       optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
-      saisie.statut),
+      saisie.statut, "celui du premier emploi"),
     g.champDate("liquidation", "Départ souhaité",
       saisie.jourDe(saisie.liquidation), "effectif, ou souhaité",
       saisie.calculDe(saisie.liquidation),

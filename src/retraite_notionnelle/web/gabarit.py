@@ -463,9 +463,14 @@ a:hover { opacity: 0.85; }
 .simulateur-court .grille {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(10.625rem, 100%), 1fr));
-  gap: 1rem; align-items: end;
+  /* Par le HAUT : alignées par le bas, les cellules calaient chaque champ sur
+     la ligne de rappel qui le suit, et le menu du statut, qui n'en a pas,
+     tombait trente points sous les dates. Chaque champ porte maintenant une
+     ligne d'aide, si bien que les étiquettes ont la même hauteur et que les
+     champs partent de la même ligne. Le bouton, lui, se centre. */
+  gap: 1rem; align-items: start;
 }
-.simulateur-court .grille button { white-space: nowrap; }
+.simulateur-court .grille button { white-space: nowrap; align-self: center; }
 
 /* -- les engagements --------------------------------------------------------
 
@@ -474,18 +479,21 @@ a:hover { opacity: 0.85; }
    lire comme une liste d'engagements et non comme quatre statistiques
    orphelines, ce qu'elles étaient tant qu'elles n'avaient ni titre ni rang.
 
-   DEUX PAR LIGNE, ET JAMAIS TROIS. La largeur minimale d'une colonne vaut 45 %
-   du bloc : trois colonnes ne peuvent donc plus tenir, quelle que soit la
-   largeur de l'écran. C'est une correction demandée deux fois — à trois
-   colonnes, la quatrième carte tombait seule sur sa ligne, et « on avait le
-   cul entre deux chaises ». */
+   DEUX PAR LIGNE, ET JAMAIS TROIS. Deux colonnes fixes : trois ne peuvent
+   pas tenir, quelle que soit la largeur de l'écran. C'est une correction
+   demandée deux fois — à trois colonnes, la quatrième carte tombait seule sur
+   sa ligne, et « on avait le cul entre deux chaises ». Le passage à une
+   colonne se fait sous 48 rem, dans la même requête que le retrait et le
+   filet des cartes paires : la grille se repliait d'elle-même par `auto-fit`
+   dès 40 rem, quand le filet, lui, n'était retiré qu'à 34 rem — entre les
+   deux, une carte sur deux restait en retrait de 24 points. */
 .engagements {
   margin: 4rem 0 0; background: var(--fond-carte);
   border-top: 4px solid var(--or);
 }
 .engagements .grille {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(max(20rem, 45%), 100%), 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 0; padding: 0.5rem clamp(1.25rem, 4vw, 2rem) 2.25rem;
   /* Le filet de séparation est porté par les cartes, et non par le fond du
      conteneur : un fond qui sert de trait laisse un rectangle vert vide dès
@@ -870,7 +878,9 @@ tbody tr[hidden] { display: none; }
    et celui qui s'applique est rempli. On lit le réglage sans le chercher. */
 .bascule {
   display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
-  margin: 0.9rem 0 0;
+  /* Une marge à droite : deux bascules côte à côte — unité, montants — se
+     touchaient, la seconde légende collée au dernier bouton de la première. */
+  margin: 0.9rem 1.25rem 0 0;
 }
 .bascule > .legende {
   font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.12em;
@@ -1035,6 +1045,16 @@ tbody tr[hidden] { display: none; }
   padding: 1.25rem 1.25rem 1.25rem 0;
   box-shadow: 1px 0 0 var(--trait);
   display: flex; flex-direction: column;
+}
+/* Étiquette, nombre, précision : trois rangées PARTAGÉES entre les cartes
+   d'une même ligne, pour que les nombres s'alignent quand une étiquette tient
+   sur deux lignes — « 39 390 » tombait vingt points sous « 89 » et « 28 ». Là
+   où la sous-grille n'existe pas, la colonne flexible reste. */
+@supports (grid-template-rows: subgrid) {
+  .fiches.reperes .fiche {
+    display: grid; grid-template-rows: subgrid; grid-row: span 3;
+    align-content: start;
+  }
 }
 .fiches.reperes .fiche .valeur {
   font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 900;
@@ -1281,7 +1301,7 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 .donnees-graphique table { font-size: 0.9rem; }
 .donnees-graphique th, .donnees-graphique td { padding: 0.25rem 0.6rem; }
 .donnees-graphique thead th {
-  position: sticky; top: 0; background: var(--fond-carte);
+  position: sticky; top: 0; background: var(--fond-defilant);
   box-shadow: inset 0 -2px 0 var(--or);
 }
 .donnees-graphique caption { padding-bottom: 0.35rem; }
@@ -1443,6 +1463,15 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   /* La bande de lecture du graphique empile ses séries : de front, six noms
      de série se coupaient en deux sur 390 points. */
   .graphique .lecture > ul { flex-direction: column; gap: 0.25rem; }
+  /* Les engagements passent à une colonne, et leurs filets verticaux
+     deviennent horizontaux : un filet à gauche ne sépare plus rien quand
+     tout est empilé. */
+  .engagements .grille { grid-template-columns: 1fr; }
+  .engagements .engagement,
+  .engagements .engagement:nth-child(even) {
+    padding: 1.5rem 0 0; box-shadow: none; border-top: 1px solid var(--trait);
+  }
+  .engagements .engagement:first-child { border-top: 0; }
 }
 @media (max-width: 34rem) {
   body { font-size: 1rem; }
@@ -1481,15 +1510,8 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   /* Le retrait d'une section repliée coûte 26 points de largeur à ce qu'elle
      contient : de quoi couper une colonne de chiffres. */
   details.section > .dedans { padding-left: 0.6rem; }
-  /* Les engagements et les frises passent à une colonne, et leurs filets
-     verticaux deviennent horizontaux : un filet à gauche ne sépare plus rien
-     quand tout est empilé. */
-  .engagements .grille { grid-template-columns: 1fr; }
-  .engagements .engagement,
-  .engagements .engagement:nth-child(even) {
-    padding: 1.5rem 0 0; box-shadow: none; border-top: 1px solid var(--trait);
-  }
-  .engagements .engagement:first-child { border-top: 0; }
+  /* Les frises passent à une colonne (les engagements l'ont fait à 48 rem,
+     avec leurs filets). */
   .fiches { grid-template-columns: 1fr; }
   .fiches.reperes { grid-template-columns: 1fr; }
   .fiches.reperes .fiche {
@@ -1526,6 +1548,16 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
      unités y font douze pixels sans rien recouvrir. */
   .graphique { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .graphique > svg { min-width: 30rem; }
+  /* Les tableaux des dispositifs — trois colonnes dont deux de phrases — ne
+     tiennent pas dans 300 points : chacun décidait seul, selon son contenu,
+     de se comprimer à un mot par ligne ou de déborder. Ils défilent tous, à
+     la même largeur. */
+  .dispositifs table { min-width: 30rem; }
+  /* L'aperçu d'une carte à publier, réduit à la largeur d'un téléphone,
+     tombait à cinq pixels de texte. Il garde 36 rem et défile dans sa
+     figure : on lit ce qu'on va publier. */
+  .cartes > figure { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cadre-carte { min-width: 36rem; }
   .graphique .graduation { font-size: 18px; }
   .graphique .etiquette-serie { font-size: 20px; stroke-width: 7px; }
   .graphique .signature { font-size: 26px; }
@@ -2076,6 +2108,22 @@ def tableau(entetes: list[str], lignes: list[list[str | Cellule]],
         f"<thead><tr>{tete}</tr></thead>"
         f"<tbody>{corps}</tbody></table></div>"
     )
+
+
+#: Ce qu'un niveau de fiabilité s'appelle sous les yeux du lecteur. Les clés
+#: — « estimee », « certifiee » — voyagent dans les attributs de filtre et les
+#: adresses, sans accent parce que ce sont des identifiants ; à l'écran, un
+#: badge « ESTIMEE » se lisait comme une faute.
+FIABILITE_EN_CLAIR = {
+    "estimee": "estimée", "moyenne": "moyenne", "haute": "haute",
+    "certifiee": "certifiée",
+}
+
+
+def fiabilite_en_clair(niveau: object) -> str:
+    """Le nom d'un niveau de fiabilité, accentué, pour l'affichage."""
+    cle = str(niveau)
+    return FIABILITE_EN_CLAIR.get(cle, cle)
 
 
 def gloses(entrees: list[tuple[str, str]]) -> str:

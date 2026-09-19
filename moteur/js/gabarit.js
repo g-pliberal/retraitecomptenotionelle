@@ -574,6 +574,17 @@ export function tableau(entetes, lignes, classesColonnes = null, titre = "",
  * une infobulle de survol ne s'ouvre ni au clavier, ni au doigt, ni sous une
  * synthèse vocale. Sorties du tableau, elles se lisent dans tous les cas.
  */
+/** Ce qu'un niveau de fiabilité s'appelle sous les yeux du lecteur : les clés
+ * restent sans accent dans les attributs et les adresses. Voir le Python. */
+const FIABILITE_EN_CLAIR = {
+  estimee: "estimée", moyenne: "moyenne", haute: "haute", certifiee: "certifiée",
+};
+
+export function fiabiliteEnClair(niveau) {
+  const cle = String(niveau);
+  return FIABILITE_EN_CLAIR[cle] ?? cle;
+}
+
 export function gloses(entrees) {
   if (!entrees.length) {
     return "";
