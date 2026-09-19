@@ -3086,17 +3086,44 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   de 0,94 à 0,83, et il ne repasse plus jamais à l'équilibre — contre −1,13 %
   pour le système actuel. **Sous sa propre convention, la proposition est
   légèrement moins bien financée que le système qu'elle remplace.**
-- *Ce qui reste, et c'est maintenant le plus gros risque de la page.* Retirer
-  le poste « impôts et taxes affectés » en entier suppose que tout ce qu'il
-  contient disparaisse avec les exonérations ; il porte aussi de la CSG, du
-  forfait social et de la taxe sur les salaires. Aucune source du dépôt ne
-  ventile ce poste, et la sensibilité est de deux points de PIB : −1,28 % si
-  l'on retire tout, −0,26 % si l'on retire la moitié, +0,76 % si l'on ne
-  retire rien. La ventilation se cherche dans les annexes du projet de loi de
-  financement de la sécurité sociale, que le lecteur PDF du dépôt sait lire
-  depuis l'action 6. Et la page affiche toujours l'ancienne convention : un
-  chiffre de tête ne se change pas sans que celui qui le publie l'ait décidé.
-  Le portage JavaScript, la page et les témoins suivront ce choix-là.
+- *La ventilation du poste a été cherchée, et trouvée — pas où on l'attendait,
+  et pas ce qu'on attendait.* Elle n'est pas dans les annexes du projet de loi
+  de financement : elle est dans le rapport à la Commission des comptes de la
+  Sécurité sociale, que `scripts/fetch/ccss_transferts_retraite.py` télécharge
+  déjà, au compte de la CNAV et à celui du Fonds de solidarité vieillesse.
+  Deux résultats, et le premier démolit l'argument de départ.
+
+  **La compensation des allègements n'est pas dans ce poste.** Le compte de la
+  CNAV ne porte aucune ligne de TVA, et c'est par la TVA que l'État compense
+  les allègements — elle ferait 20 % des produits nets de la branche MALADIE
+  en 2025. Retirer ce poste au nom de la compensation serait retirer la
+  mauvaise somme pour la bonne raison.
+
+  **Ce qu'il porte est de la CSG de solidarité, et elle, elle doit sortir.**
+  Sur 57,1 Md€ d'impôts et taxes affectés en 2024, **21,7 — 38 % — sont les
+  ressources du Fonds de solidarité vieillesse**, qui ne sert qu'à deux
+  choses : prendre en charge des cotisations pour des périodes non travaillées
+  (15,7 Md€, dont 13,0 au titre du chômage) et payer le minimum vieillesse
+  (4,2 Md€). Aucun scénario notionnel ne sert l'un ni l'autre. C'est mot pour
+  mot la règle déjà appliquée à la CNAF et à l'Unédic, et le fonds y échappait
+  parce que sa recette entre dans les comptes sous un autre nom.
+
+  **Ce que cela donne** : en retirant la seule CSG du fonds, le solde moyen
+  2026-2070 du scénario 6 est de **−0,02 % du PIB** — l'équilibre à un
+  centième près, contre −1,13 % pour le système actuel. Les trois lectures
+  s'ordonnent : −1,28 % en retirant tout le poste, −0,02 % en n'en retirant
+  que la solidarité, +0,76 % en n'en retirant rien.
+
+- *Ce qui reste à faire, et c'est court.* Une série certifiée des ressources du
+  Fonds de solidarité vieillesse, à prendre au même endroit et par le même
+  script que les transferts de la CNAF et de l'Unédic, puis à verser au
+  `retrait` de `equilibre.py` : ce n'est pas une convention nouvelle, c'est
+  l'extension d'une règle existante à un fonds qu'elle avait manqué. Attention
+  au raccord : **le fonds est supprimé au 1er janvier 2026** par l'article 24
+  de la loi de financement pour 2025, et sa CSG passe au compte de la CNAV.
+  Ensuite seulement, le portage JavaScript, la page et les témoins. La page
+  affiche toujours l'ancienne convention : un chiffre de tête ne se change pas
+  sans que celui qui le publie l'ait décidé.
 
 **Ce qui reste du volet A** : la certification de l'assiette et les trois
 variantes ci-dessus (points 1 et 4, désormais un seul chantier) ; la série d'effectifs de COTISANTS
@@ -3966,3 +3993,20 @@ scénario ».
   et le dépôt doit pouvoir la calculer avant que quiconque en discute. La page
   affiche toujours l'ancienne, faute d'une décision sur ce qu'elle doit
   montrer.
+
+- **Septembre 2026, action 35, ce que les impôts affectés contiennent.**
+  Cherché dans les annexes du PLFSS sur demande, trouvé dans le rapport à la
+  Commission des comptes de la Sécurité sociale, que le dépôt téléchargeait
+  déjà. Deux choses. **La compensation des allègements généraux n'est pas dans
+  les impôts affectés à la retraite** : le compte de la CNAV ne porte aucune
+  ligne de TVA, et c'est la TVA qui compense — elle finance la branche
+  maladie. L'argument par lequel on avait justifié de retirer ce poste était
+  donc faux, alors même que la conclusion était à demi juste. **Ce que le poste
+  porte, c'est la CSG du Fonds de solidarité vieillesse, 38 % du total**, qui
+  ne finance que des périodes non travaillées et le minimum vieillesse —
+  exactement ce qu'aucun scénario notionnel ne sert. En ne retirant que
+  celle-là, le solde moyen du scénario 6 est de −0,02 % du PIB contre −1,13 %
+  pour le système actuel. Ce qu'il faut en retenir : **une règle du dépôt
+  peut manquer une recette parce qu'elle entre sous un autre nom** — « la
+  recette suit le droit » visait les transferts, et le fonds de solidarité lui
+  échappait en arrivant par l'impôt.
