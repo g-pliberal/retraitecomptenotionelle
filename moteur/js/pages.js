@@ -3082,18 +3082,6 @@ function eurosSigne(montant, centimes = true) {
 }
 
 /**
- * Un écart entre deux pourcentages, en POINTS et avec son signe.
- *
- * « +1,4 % » se lirait comme une hausse relative de 1,4 %, dix fois plus petite
- * que ce que la ligne dit.
- */
-function points(ecart) {
-  const valeur = ecart * 100;
-  const signe = valeur > 0 ? "+" : "";
-  return `${signe}${g.nombre(valeur, 1)} point${Math.abs(valeur) >= 2 ? "s" : ""}`;
-}
-
-/**
  * Ce qu'un actif touche PENDANT qu'il cotise, dans les deux systèmes.
  *
  * Portage de `_salaire_net` de `web/pages.py`. Le reste de la page compare des
@@ -3148,28 +3136,32 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
   const avant = reference.droitEnVigueur;
   const apres = reference.proposition;
   const mois = (montant) => g.eurosCentimes(montant / 12);
-  const ecart = (apresValeur, avantValeur) => eurosSigne((apresValeur - avantValeur) / 12);
-
+  // TROIS COLONNES, ET NON QUATRE. Une colonne « écart » de plus forçait le
+  // tableau à défiler latéralement sur un téléphone, et l'écart qui compte —
+  // celui du net — est déjà le chiffre de tête.
   const lignes = [
-    ["Ce que votre emploi coûte", mois(avant.coutDuTravail), mois(apres.coutDuTravail),
-      '<span class="discret">inchangé</span>'],
-    ["Salaire brut", mois(avant.brut), mois(apres.brut), ecart(apres.brut, avant.brut)],
+    [g.terme("coût du travail"), mois(avant.coutDuTravail), mois(apres.coutDuTravail)],
+    ["Salaire brut", mois(avant.brut), mois(apres.brut)],
     ["<strong>Salaire net</strong>", `<strong>${mois(avant.net)}</strong>`,
-      `<strong>${mois(apres.net)}</strong>`,
-      `<strong>${ecart(apres.net, avant.net)}</strong>`],
-    ["Dont prélevé pour votre retraite", mois(avant.retraiteTotale),
-      mois(apres.retraiteTotale), ecart(apres.retraiteTotale, avant.retraiteTotale)],
-    [`Ce qui vous arrive, sur 100 € de ${g.terme("coût du travail")}`,
-      g.pourcentage(avant.partQuiArrive), g.pourcentage(apres.partQuiArrive),
-      points(apres.partQuiArrive - avant.partQuiArrive)],
+      `<strong>${mois(apres.net)}</strong>`],
+    ["Dont pour la retraite", mois(avant.retraiteTotale), mois(apres.retraiteTotale)],
+    ["Ce qui vous arrive, sur 100 € coûtés",
+      g.pourcentage(avant.partQuiArrive), g.pourcentage(apres.partQuiArrive)],
   ];
   const grille = g.tableau(
-    ["Par mois", "Systèmes 1 à 3", "Système 4", "Écart"],
-    lignes, ["", "nombre", "nombre", "nombre"],
+    ["Par mois", "Systèmes 1 à 3", "Système 4"],
+    lignes, ["", "nombre", "nombre"],
     `Votre fiche de paie en ${reference.annee}, sous les quatre systèmes — `
     + `${remuneration.libelleStatut}`,
     true,
   );
+  const lecture = "<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
+    + `prélèvement retraite, lui, passe de ${mois(avant.retraiteTotale)} à `
+    + `${mois(apres.retraiteTotale)} par mois, soit `
+    + `<strong>${eurosSigne((apres.retraiteTotale - avant.retraiteTotale) / 12)}`
+    + "</strong> ; le salaire brut monte de "
+    + `${eurosSigne((apres.brut - avant.brut) / 12)}, et le net de `
+    + `${eurosSigne((apres.net - avant.net) / 12)}.</p>`;
 
   const alerte = remuneration.buteSurLeSmic
     ? '<p class="note avertissement">'
@@ -3183,6 +3175,7 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
 
   return g.depliant("Votre fiche de paie, ligne à ligne", `
 ${grille}
+${lecture}
 ${alerte}
 ${salaireNetEpargne(reference.epargneAVotreNom / 12, remuneration,
     comparaison.parametres, saisie)}
