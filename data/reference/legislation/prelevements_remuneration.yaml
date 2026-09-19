@@ -1,0 +1,316 @@
+# Ce qui sépare un salaire net d'un coût du travail — hors retraite
+# =================================================================
+# source_id: openfisca_prelevements
+#
+# Le reste du dépôt ne connaît qu'un prélèvement : celui qui finance la
+# retraite, parce que c'est lui qui alimente le compte notionnel. Ce fichier
+# porte TOUS LES AUTRES — maladie, famille, chômage, accidents du travail,
+# CSG, CRDS —, et il n'a qu'un usage : écrire un salaire NET.
+#
+# POURQUOI
+# --------
+# Une réforme des retraites qui change le taux de cotisation change le salaire
+# net. Le dire sans le chiffrer, c'est ce que fait tout le monde ; le chiffrer
+# demande de savoir ce que les autres branches prélèvent, puisque le net est ce
+# qui reste une fois TOUT retiré. D'où ce fichier. Il ne touche à aucune
+# pension : retiré, le modèle calcule exactement les mêmes six scénarios.
+#
+# CE QU'IL DÉCRIT : UN SALARIÉ DU SECTEUR PRIVÉ, ET LUI SEUL
+# ----------------------------------------------------------
+# Les taux ci-dessous sont ceux du régime général. Ils ne valent ni pour un
+# fonctionnaire, ni pour un artisan, ni pour un agent d'un régime spécial : le
+# site ne montre donc de fiche de paie qu'aux statuts de la famille `prive`, et
+# le dit quand il ne le fait pas. `docs/limites.md` porte la réserve.
+#
+# L'EMPLOYEUR TYPE
+# ----------------
+# Deux taux dépendent de la taille de l'entreprise : le FNAL (0,10 % en deçà de
+# cinquante salariés, 0,50 % au-delà) et, par lui, le coefficient maximal de la
+# réduction générale. Le fichier retient **cinquante salariés et plus**, qui
+# emploient un peu plus de la moitié des salariés du privé. L'écart avec l'autre
+# barème vaut 0,40 point de coût du travail, et 0,40 point de coefficient.
+#
+# LE TAUX D'ACCIDENTS DU TRAVAIL
+# ------------------------------
+# 3,00 % est la valeur qu'OpenFisca retient pour taux moyen. Le taux réel est
+# propre à chaque établissement — il dépend de son activité et de sa
+# sinistralité —, et le taux net moyen national publié par la branche AT-MP est
+# plus bas. Le retenir ou non ne déplace AUCUN écart entre scénarios : cette
+# cotisation ne bouge dans aucun d'eux. Elle ne déplace que le niveau du coût du
+# travail affiché, et `docs/limites.md` le dit.
+#
+# CE QUI N'EST PAS ICI
+# --------------------
+# Les taxes assises sur les salaires qui ne financent aucune assurance sociale :
+# taxe d'apprentissage, contribution à la formation professionnelle,
+# participation à l'effort de construction, versement mobilité. Le versement
+# mobilité dépend de la commune, les autres de la taille de l'entreprise ; les
+# porter demanderait de choisir un employeur type de plus, et aucune ne bouge
+# d'un scénario à l'autre. Ne sont pas ici non plus les couvertures
+# conventionnelles — prévoyance, mutuelle d'entreprise —, qui ne sont pas du
+# droit mais de la branche ou de l'accord d'entreprise. Le coût du travail
+# affiché est donc un PLANCHER, et l'écart brut-net un plancher lui aussi.
+#
+# SOURCE ET FIABILITÉ
+# -------------------
+# Les taux viennent d'OpenFisca-France, par `scripts/fetch/openfisca_prelevements.py`,
+# et chacun porte ci-dessous les textes qu'OpenFisca cite. OpenFisca transcrit le
+# Journal officiel, il ne le produit pas : la fiabilité est plafonnée à `haute`,
+# comme pour les taux vieillesse de `regimes/taux_cotisation_annuels.csv`.
+# La réduction générale, elle, a été lue à la source : article L. 241-13 du code
+# de la sécurité sociale, version en vigueur du 1er janvier 2026 au 1er janvier
+# 2028 (LEGIARTI000053280526), lue dans l'index LEGI du dépôt le 19 septembre
+# 2026.
+#
+# LES TAUX SONT CEUX EN VIGUEUR AU 1er JANVIER, comme partout dans le dépôt.
+
+annee: 2026
+
+employeur_type:
+  effectif: "cinquante salariés et plus"
+  pourquoi: >-
+    Le FNAL et le coefficient maximal de la réduction générale changent au seuil
+    de cinquante salariés. Le barème retenu est celui des entreprises de
+    cinquante salariés et plus.
+
+# Chaque poste porte deux barèmes — ce que l'assuré supporte, ce que l'employeur
+# verse — découpés par tranche de PLAFOND DE LA SÉCURITÉ SOCIALE.
+# `jusqu_en_plafonds: null` signifie « sans limite ».
+#
+# `retraite: true` marque les prélèvements retraite que les fiches de régime ne
+# portent PAS, parce qu'ils n'acquièrent aucun droit : la contribution
+# d'équilibre général, la contribution d'équilibre technique, l'APEC. Ils sont
+# bel et bien prélevés, et un scénario qui remplace le financement de la
+# retraite les remplace eux aussi. Ce que les fiches portent — vieillesse de
+# base et Agirc-Arrco — n'est PAS répété ici : le modèle le lit là où il le
+# lisait déjà, pour que la fiche de paie et le compte notionnel ne puissent pas
+# diverger.
+#
+# `dans_la_reduction_generale: true` marque ceux qui entrent dans le périmètre
+# de l'article L. 241-13.
+postes:
+
+  - code: maladie
+    libelle: "Maladie, maternité, invalidité, décès"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.1300}]
+    note: >-
+      La cotisation salariale est supprimée depuis le 1er janvier 2018 ; le
+      taux réduit employeur de 7,00 % en deçà de 2,5 Smic — le « bandeau
+      maladie » — a disparu le 31 décembre 2025, absorbé par la réduction
+      générale dégressive unique.
+    textes:
+      - "Article D. 242-3 du code de la sécurité sociale"
+      - "Loi n° 2017-1836 du 30 décembre 2017, article 8 (LFSS 2018)"
+      - "Loi n° 2025-199 du 28 février 2025, article 18 (LFSS 2025)"
+
+  - code: famille
+    libelle: "Allocations familiales"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0525}]
+    note: >-
+      Le taux réduit de 3,45 % en deçà de 3,5 Smic — le « bandeau famille » — a
+      disparu le 31 décembre 2025 comme celui de la maladie.
+    textes:
+      - "Article D. 241-3-1 du code de la sécurité sociale"
+      - "Loi n° 2025-199 du 28 février 2025, article 18 (LFSS 2025)"
+
+  - code: accidents_travail
+    libelle: "Accidents du travail et maladies professionnelles"
+    retraite: false
+    dans_la_reduction_generale: true
+    taux_dans_la_reduction: 0.0049
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0300}]
+    note: >-
+      Taux moyen. Le taux réellement appelé est propre à l'établissement. Seuls
+      0,49 point entrent dans le périmètre de la réduction générale, par
+      l'arrêté que vise le I de l'article L. 241-13 : c'est
+      `taux_dans_la_reduction`, et c'est lui que le décret additionne.
+    textes:
+      - "Articles L. 241-5 et D. 242-6-1 et suivants du code de la sécurité sociale"
+
+  - code: autonomie
+    libelle: "Contribution de solidarité pour l'autonomie"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0030}]
+    textes:
+      - "Article L. 137-40 du code de la sécurité sociale"
+      - "Loi n° 2004-626 du 30 juin 2004"
+
+  - code: chomage
+    libelle: "Assurance chômage"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur:
+      - {jusqu_en_plafonds: 4, taux: 0.0400}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    note: >-
+      La part salariale est supprimée depuis le 1er octobre 2018. Le taux
+      employeur est revenu de 4,05 % à 4,00 % le 1er mai 2025. L'assiette
+      s'arrête à quatre plafonds.
+    textes:
+      - "Articles L. 5422-9 et L. 5422-12 du code du travail"
+      - "Convention d'assurance chômage du 15 novembre 2024"
+
+  - code: garantie_salaires
+    libelle: "Garantie des salaires (AGS)"
+    retraite: false
+    dans_la_reduction_generale: false
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur:
+      - {jusqu_en_plafonds: 4, taux: 0.0020}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    textes:
+      - "Articles L. 3253-6 et L. 3253-18 du code du travail"
+
+  - code: logement
+    libelle: "Fonds national d'aide au logement (FNAL)"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0050}]
+    note: "Barème des entreprises de cinquante salariés et plus ; 0,10 % sous le seuil."
+    textes:
+      - "Articles L. 813-4 et L. 813-5 du code de la construction et de l'habitation"
+
+  - code: dialogue_social
+    libelle: "Financement des organisations syndicales"
+    retraite: false
+    dans_la_reduction_generale: false
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.00016}]
+    textes:
+      - "Article L. 2135-10 du code du travail"
+
+  - code: equilibre_general
+    libelle: "Contribution d'équilibre général (CEG)"
+    retraite: true
+    dans_la_reduction_generale: true
+    salarie:
+      - {jusqu_en_plafonds: 1, taux: 0.0086}
+      - {jusqu_en_plafonds: 8, taux: 0.0108}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    employeur:
+      - {jusqu_en_plafonds: 1, taux: 0.0129}
+      - {jusqu_en_plafonds: 8, taux: 0.0162}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    note: >-
+      Prélevée pour la retraite, elle n'acquiert AUCUN point : elle finance les
+      charges que l'Agirc-Arrco porte sans contrepartie contributive — départs
+      avant 67 ans, pensions de réversion. C'est pour cela qu'aucune fiche de
+      régime ne la porte, et pour cela qu'elle est ici.
+    textes:
+      - "Accord national interprofessionnel du 17 novembre 2017, article 34"
+      - "Article L. 921-4 du code de la sécurité sociale"
+
+  - code: equilibre_technique
+    libelle: "Contribution d'équilibre technique (CET)"
+    retraite: true
+    # Le décret qui fixe le coefficient maximal ne l'additionne pas, bien
+    # qu'elle soit une contribution de l'article L. 921-4 : elle n'est due
+    # qu'au-delà du plafond, et le barème s'arrête aux taux de première
+    # tranche. Le modèle suit le décret, qui est ce qui s'applique.
+    dans_la_reduction_generale: false
+    due_au_dela_de_un_plafond: true
+    salarie:
+      - {jusqu_en_plafonds: 8, taux: 0.0014}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    employeur:
+      - {jusqu_en_plafonds: 8, taux: 0.0021}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    note: >-
+      Due par les seuls salariés dont la rémunération dépasse le plafond, mais
+      assise alors sur la TOTALITÉ du salaire, premier euro compris. N'acquiert
+      aucun point.
+    textes:
+      - "Accord national interprofessionnel du 17 novembre 2017, article 35"
+
+  - code: apec
+    libelle: "Association pour l'emploi des cadres (APEC)"
+    retraite: true
+    dans_la_reduction_generale: false
+    cadres_seulement: true
+    salarie:
+      - {jusqu_en_plafonds: 4, taux: 0.00024}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    employeur:
+      - {jusqu_en_plafonds: 4, taux: 0.00036}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    note: "Due par les seuls cadres. N'acquiert aucun droit à retraite."
+    textes:
+      - "Convention nationale du 12 juillet 2011 relative à l'Apec"
+
+# La CSG et la CRDS ne sont pas des cotisations : elles n'ouvrent aucun droit et
+# leur assiette n'est pas le salaire brut mais le salaire brut ABATTU pour frais
+# professionnels. Elles sont donc à part.
+contributions_sociales:
+  csg_deductible: 0.068
+  csg_imposable: 0.024
+  crds: 0.005
+  abattement_frais_professionnels:
+    - {jusqu_en_plafonds: 4, taux: 0.0175}
+    - {jusqu_en_plafonds: null, taux: 0.0000}
+  note: >-
+    CSG 9,20 % et CRDS 0,50 %, assises sur 98,25 % du brut jusqu'à quatre
+    plafonds et sur 100 % au-delà. Le partage entre CSG déductible (6,80 %) et
+    CSG imposable (2,40 %) ne change pas le net : il ne joue que sur l'impôt sur
+    le revenu, que ce dépôt ne calcule pas.
+  textes:
+    - "Articles L. 136-1 à L. 136-8 du code de la sécurité sociale"
+    - "Ordonnance n° 96-50 du 24 janvier 1996, article 19 (CRDS)"
+
+# La réduction générale dégressive unique, depuis le 1er janvier 2026
+# -------------------------------------------------------------------
+# Elle remplace d'un coup la réduction Fillon et les deux bandeaux maladie et
+# famille. Elle annule l'essentiel des cotisations PATRONALES au niveau du Smic
+# et s'éteint à trois Smic. C'est ce qui rend son omission impossible : sans
+# elle, le coût du travail d'un salarié au Smic est surestimé d'un tiers, et
+# tout gain qu'une baisse de cotisation lui rendrait l'est d'autant.
+#
+# Coefficient = taux_minimum + taux_maximal × max(0 ; ½ × (3 × Smic ÷ brut − 1))^puissance
+# plafonné à taux_minimum + taux_maximal, et nul dès que le brut atteint trois Smic.
+#
+# `taux_maximal` est fixé par décret « dans la limite de la somme des taux des
+# cotisations et contributions incluses dans le périmètre de la réduction ».
+# C'est pourquoi ses COMPOSANTES sont écrites ci-dessous : un scénario qui
+# change le taux de retraite change la somme, donc le coefficient. Le modèle
+# refait l'addition au lieu de figer le chiffre — un allègement ne peut pas
+# alléger une cotisation qui n'existe plus.
+reduction_generale:
+  libelle: "Réduction générale dégressive unique"
+  plafond_en_smic: 3.0
+  puissance: 1.75
+  taux_minimum: 0.02
+  taux_maximal: 0.3821
+  composantes:
+    maladie: 0.0700
+    vieillesse_plafonnee: 0.0855
+    vieillesse_deplafonnee: 0.0211
+    famille: 0.0345
+    accidents_travail: 0.0049
+    autonomie: 0.0030
+    agirc_arrco: 0.0472
+    equilibre_general: 0.0129
+    chomage: 0.0400
+    logement: 0.0050
+    compensation_bandeaux: 0.0580
+  composantes_retraite:
+    - vieillesse_plafonnee
+    - vieillesse_deplafonnee
+    - agirc_arrco
+    - equilibre_general
+  textes:
+    - "Article L. 241-13 du code de la sécurité sociale, version en vigueur du 1er janvier 2026 (LEGIARTI000053280526)"
+    - "Loi n° 2025-199 du 28 février 2025, article 18 (LFSS 2025)"
+    - "Décret n° 2025-887 du 4 septembre 2025"
+    - "Décret n° 2025-1446 du 31 décembre 2025"
+
+fiabilite: haute
