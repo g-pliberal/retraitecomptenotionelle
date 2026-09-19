@@ -3341,6 +3341,97 @@ toucher aux moteurs de pension.
    source ligne par ligne, et le classeur du COR est le seul qui en offre une
    seule pour les treize.
 
+   **Quatrième passe, 19 septembre 2026 : tout ce qui existe, par caisse et par
+   année.** Demandé : « chaque nombre de personne pour chaque régime pour
+   toutes les années que les régimes ont existé », pour tracer le coût des
+   retraités actuels et voir comment fluctue le coût réel d'une réforme.
+
+   **La demande telle quelle n'est pas satisfiable, et il vaut mieux le dire
+   une fois.** Aucun producteur ne publie la matrice complète. Le mur n'est pas
+   le même selon ce qu'on cherche : pour les MASSES, il est à 1979 et il est
+   bas ; pour les EFFECTIFS par caisse, il est à 2004 côté source unique, et
+   plus haut caisse par caisse. Ce qui suit est l'état exact des lieux.
+
+   - **Les masses, elles, remontent à 1979, et c'était le gisement le plus
+     sous-estimé.** Les rapports à la CCSS sont publiés depuis 1979 et **le
+     lecteur PDF du dépôt les ouvre** : 19 043 lignes lisibles sur 19 306 pour
+     celui de septembre 1996, 11 767 pour 2003, 19 953 pour 2010. Le dépôt
+     croyait le contraire — `ccss_transferts_retraite.py` pose
+     `PREMIERE_ANNEE_LISIBLE = 2013` et son docstring dit les rapports de 2007
+     à 2012 « chiffrés » et ceux de 2004 à 2006 compressés. **C'est faux du
+     lecteur, et vrai seulement de son parseur de tableaux**, qui est écrit
+     pour la mise en page moderne. Et ce qu'on y trouve est exactement la série
+     de coût cherchée : le rapport de 1996 porte « LES PRESTATIONS VERSÉES EN
+     1995, millions de francs », colonne vieillesse, vingt-deux régimes nommés
+     — CNAVTS 303 725, fonctionnaires 148 603, exploitants agricoles 79 799,
+     collectivités locales 28 993, SNCF 26 566, EDF-GDF 15 287, mines 13 036,
+     marins 5 963, RATP 3 778, CRPCEN 2 171, Banque de France 1 528. Quarante-
+     sept millésimes existent sur le même modèle.
+
+     Ce n'est pas une passe de recherche qui les moissonne : chaque année a sa
+     mise en page, et c'est un chantier à part entière. Mais **la porte est
+     ouverte, et le dépôt la croyait fermée.**
+
+   - **Les effectifs, caisse par caisse : voici où est le mur pour chacune.**
+
+     | source | ce qu'elle donne | couverture |
+     |---|---|---|
+     | Cnav, abrégé ch. 01 | cotisants ET retraités, régime général | **1963-2023** |
+     | CNAVPL, recueil | cotisants réels, et par section | **1950-2025** |
+     | CNRACL, recueil I.1.3 | cotisants et pensionnés, moyenne annuelle | 2012-2022 |
+     | DREES EACR (dans le dépôt) | retraités de droit direct, 28 caisses | 2004-2024 |
+     | COR, classeur par régime | retraités ET cotisants, 23 régimes | 2010-2070 |
+     | CCSS, fiche 4.1 | cotisants, 15 caisses, à l'unité | 2021-2024 |
+     | Cnav, abrégé ch. 07 | cotisants de la compensation, régime général compris | un an par édition |
+     | PQE « Retraites » | cotisants, 18 régimes, en milliers | 1992-2012, années creuses |
+     | CDC, open data | cotisants Ircantec et CNRACL | 2014-2021 / 2022 |
+
+     Autrement dit : **avant 2004, il n'existe pas de source unique donnant les
+     effectifs de toutes les caisses**, et il faut les prendre caisse par
+     caisse, là où elles ont tenu leur propre histoire. Deux l'ont fait
+     remarquablement — la Cnav depuis 1963, la CNAVPL depuis 1950. Les autres
+     commencent où leur annuaire commence.
+
+   - **Ce qui est désormais disponible en une commande :
+     `scripts/fetch/cor_regimes.py`.** Il va chercher le classeur par régime du
+     COR et en tire **52 049 valeurs — 23 régimes, 2010 à 2070, 36 blocs** :
+     effectifs de retraités de droit direct et de cotisants (femmes, hommes,
+     ensemble), masses de prestations et de pensions de droit direct et dérivé,
+     dépenses totales, ressources totales et techniques, solde technique et
+     solde élargi, réserves, âge moyen de départ, rapport démographique et
+     pension relative — en milliards d'euros constants ET en part de PIB. C'est
+     la seule source qui porte l'observé et le projeté dans le même tableau,
+     par caisse ; elle couvre l'Ircantec et le RCI, que la CCSS ne couvre pas ;
+     et elle éteint les régimes fermés par la réforme de 2023 au lieu de les
+     reconduire — la CNIEG passe de 8,62 Md€ de dépenses en 2023 à 3,91 en
+     2070, la SNCF de 5,40 à 2,03, quand la CNAV va de 159,95 à 317,77 et
+     l'Ircantec de 4,18 à 11,69.
+
+     Le script porte ses trois pièges dans son docstring, et n'en corrige aucun
+     en silence : deux feuilles portent des unités sous un en-tête qui annonce
+     des millions, l'année de départ varie d'une feuille à l'autre, et la FPE
+     reste d'un seul tenant.
+
+   - **Un jeu DREES qu'on avait déclaré inexistant, et ce qu'il vaut.** L'open
+     data de la DREES expose bien un jeu « Les effectifs de retraités, montants
+     de pensions et âges de départ », dont une pièce s'appelle « Rapport des
+     effectifs de retraités et de cotisants de 2004 à 2016 ». Lu : il est TOUS
+     RÉGIMES, et son dénominateur de cotisants est l'emploi intérieur de
+     l'INSEE, pas un décompte de caisse. Il ne sert donc pas à ventiler — mais
+     il donne une série de contrôle tous régimes, 2004-2016, et il corrige une
+     formulation trop large des passes précédentes : l'open data DREES n'est
+     pas vide, il est simplement au mauvais niveau.
+
+   **Pour l'objectif annoncé — le coût des retraités actuels, et ce qu'une
+   réforme y déplace — voici ce qui manque encore**, et c'est court : le
+   classeur du COR donne les masses et les effectifs par caisse de 2010 à 2070
+   avec les ressources et les soldes, ce qui suffit à chiffrer une réforme
+   appliquée au stock ; l'avant-2010 des masses se prend dans l'archive CCSS,
+   qui est ouverte mais non moissonnée ; et les subventions d'équilibre de
+   l'État, régime par régime, sont dans le bloc « structure de financement » du
+   même classeur, qu'il reste à lire — il est dans les feuilles, sous forme de
+   parts, et le script le laisse passer faute d'en-tête d'années.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -4816,3 +4907,52 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   nombre à l'unité : la CNRACL du COR EST la moyenne annuelle que la caisse
   déclare. La deuxième passe l'avait déduit d'un seul rapprochement ; c'est
   maintenant établi sur trois.
+
+- **Septembre 2026, action 35, volet A, point 3, quatrième passe : tout ce qui
+  existe, par caisse et par année.** Demandé : chaque effectif, chaque régime,
+  chaque année d'existence, pour tracer le coût des retraités actuels et ce
+  qu'une réforme y déplace.
+
+  **La demande telle quelle n'est pas satisfiable, et le dire une fois vaut
+  mieux que le contourner.** Aucun producteur ne publie la matrice complète, et
+  le mur n'est pas au même endroit selon ce qu'on cherche.
+
+  **Pour les MASSES, il est à 1979, et c'est la découverte de la passe.** Les
+  rapports à la CCSS sont publiés depuis 1979 et le lecteur PDF du dépôt les
+  ouvre : 19 043 lignes lisibles sur 19 306 pour celui de septembre 1996. Le
+  dépôt croyait le contraire — `ccss_transferts_retraite.py` pose
+  `PREMIERE_ANNEE_LISIBLE = 2013` et dit les rapports de 2007 à 2012
+  « chiffrés ». C'est faux du LECTEUR, et vrai seulement de son PARSEUR, écrit
+  pour la mise en page moderne. Et ce qu'on y trouve est la série de coût
+  cherchée : « LES PRESTATIONS VERSÉES EN 1995, millions de francs », colonne
+  vieillesse, vingt-deux régimes nommés. Quarante-sept millésimes sur le même
+  modèle. Les moissonner est un chantier — chaque année a sa mise en page — mais
+  **la porte est ouverte et le dépôt la croyait fermée**.
+
+  **Pour les EFFECTIFS par caisse, il n'existe pas de source unique avant
+  2004.** Il faut les prendre caisse par caisse, là où chacune a tenu son
+  histoire : la Cnav depuis 1963, la CNAVPL depuis 1950, la CNRACL depuis 2012,
+  l'EACR de la DREES pour 28 caisses depuis 2004, le COR pour 23 régimes de 2010
+  à 2070. Le tableau complet des couvertures est au point 3.
+
+  **Livré, et pas seulement relevé : `scripts/fetch/cor_regimes.py`.** Il tire
+  du classeur par régime du COR **52 049 valeurs — 23 régimes, 2010-2070, 36
+  blocs** : effectifs de retraités et de cotisants ventilés par sexe, masses de
+  prestations et de pensions, dépenses totales, ressources, soldes technique et
+  élargi, réserves, âge de départ, en euros constants ET en part de PIB. C'est
+  de quoi chiffrer une réforme appliquée au stock, caisse par caisse, avec les
+  régimes fermés qui s'éteignent au lieu d'être reconduits. Les trois pièges du
+  classeur sont dans son docstring et aucun n'est corrigé en silence.
+
+  **Une formulation des passes précédentes était trop large** : « open data
+  DREES — rien » est faux au sens strict. Le jeu « Les effectifs de retraités,
+  montants de pensions et âges de départ » existe et porte une pièce « Rapport
+  des effectifs de retraités et de cotisants de 2004 à 2016 ». Lu : il est tous
+  régimes et son dénominateur est l'emploi intérieur de l'INSEE. Il ne ventile
+  pas, mais il donne une série de contrôle, et l'open data DREES n'est pas vide
+  — il est au mauvais niveau.
+
+  Ce qui reste à faire est court et il est écrit au point 3 : moissonner
+  l'archive CCSS pour l'avant-2010 des masses, et lire le bloc « structure de
+  financement » du classeur COR, où sont les subventions d'équilibre de l'État
+  régime par régime, que le script laisse passer faute d'en-tête d'années.
