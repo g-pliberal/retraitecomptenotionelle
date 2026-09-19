@@ -3166,6 +3166,13 @@ def test_le_README_dit_le_vrai_nombre_de_tests():
     Interroger la session courante donnerait un nombre faux dès que quelqu'un
     lance un sous-ensemble (`-k`, un fichier) : le test échouerait sans qu'une
     ligne du dépôt ait bougé.
+
+    Ce test ne survit que pour l'arborescence du README, qui annonce le compte
+    DANS UN BLOC DE CODE : une ancre y serait visible, et `verifier_prose.py`
+    n'y touche donc pas — c'est le premier de ses angles morts, nommé dans
+    `docs/fraicheur.md`. Les deux autres phrases qui donnaient ce compte, dans
+    le README et dans `limites.md`, portent maintenant la sonde `tests()` et se
+    corrigent toutes seules.
     """
     import re
     import subprocess
@@ -3182,15 +3189,14 @@ def test_le_README_dit_le_vrai_nombre_de_tests():
     assert compte, f"collecte illisible : {collecte.stdout[-400:]}"
     reels = int(compte.group(1))
 
-    for nom, motif in (("README.md", r"(\d+) tests Python"),
-                       ("docs/limites.md", r"(\d+) tests couvrent")):
-        texte = (racine / nom).read_text(encoding="utf-8")
-        annonces = re.findall(motif, texte)
-        assert annonces, f"{nom} n'annonce plus de nombre de tests"
-        for annonce in annonces:
-            assert int(annonce) == reels, (
-                f"{nom} annonce {annonce} tests, le dépôt en collecte {reels}"
-            )
+    texte = (racine / "README.md").read_text(encoding="utf-8")
+    annonces = re.findall(r"(\d+) tests Python", texte)
+    assert annonces, "l'arborescence du README n'annonce plus de nombre de tests"
+    for annonce in annonces:
+        assert int(annonce) == reels, (
+            f"l'arborescence du README annonce {annonce} tests, le dépôt en "
+            f"collecte {reels}"
+        )
 
 
 def test_le_README_montre_la_simulation_que_le_modele_calcule_vraiment():
@@ -3300,36 +3306,34 @@ def test_les_bornes_d_assiette_sont_les_memes_des_deux_cotes():
 
 
 def test_le_README_dit_le_vrai_poids_du_paquet():
-    """« 165 Ko compressés (621 Ko brut) » est une mesure, pas une impression.
+    """Ce que le premier chargement transfère, et qui le tient.
 
-    Elle annonçait 277 Ko compressés et 1 Mo brut, pour un paquet qui en fait
-    165 et 621 : la phrase avait été écrite une fois, et les données avaient
-    changé depuis. C'est le sort de tout chiffre recopié que rien ne recoupe.
+    Ce test mesurait `moteur/donnees.json` seul, à cinq pour cent près, pour
+    une phrase qui annonce TOUT le premier chargement — les données, la
+    feuille de style, les vingt-cinq modules préchargés et la page. Il est
+    donc resté vert pendant que la phrase dérivait de 310 Ko à plus du
+    double : il recoupait la mauvaise grandeur.
 
-    La tolérance est large — cinq pour cent —, parce que le README arrondit et
-    qu'il n'a pas à être réécrit pour un kilo-octet ; elle est assez serrée pour
-    attraper un doublement.
+    La phrase porte maintenant ses deux sondes, et
+    `tests/test_prose.py::test_aucun_chiffre_ancre_n_a_derive` les recalcule à
+    chaque exécution. Ce qui reste à tenir ici, c'est qu'on ne puisse pas les
+    retirer : un chiffre désancré redeviendrait un souvenir, en silence.
     """
-    import gzip
     import re
     from pathlib import Path
 
-    racine = Path(__file__).resolve().parents[1]
-    paquet = (racine / "moteur" / "donnees.json").read_bytes()
-    brut = len(paquet) / 1024
-    compresse = len(gzip.compress(paquet)) / 1024
-
-    annonce = re.search(r"transfère (\d+) Ko compressés \((\d+) Ko brut\)",
-                        (racine / "README.md").read_text(encoding="utf-8"))
-    assert annonce, "le README ne dit plus ce que le premier chargement transfère"
-    dit_compresse, dit_brut = (int(annonce.group(1)), int(annonce.group(2)))
-
-    for dit, mesure, quoi in ((dit_compresse, compresse, "compressé"),
-                              (dit_brut, brut, "brut")):
-        assert abs(dit - mesure) / mesure < 0.05, (
-            f"le README annonce {dit} Ko {quoi}, le paquet en fait "
-            f"{mesure:.0f} — écart de {abs(dit - mesure) / mesure:.0%}"
-        )
+    readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
+    annonce = re.search(
+        r"chargement transfère <!--chiffre:poids_comprime\(([^)]*)\)-->[\d  ]+<!--/--> Ko compressés\s*"
+        r"\(<!--chiffre:poids\(([^)]*)\)-->[\d  ]+<!--/--> Ko bruts\)", readme)
+    assert annonce, "le README ne dit plus, sous sonde, ce que le premier chargement transfère"
+    for charge in annonce.groups():
+        for morceau in ("moteur/donnees.json", "moteur/style.css",
+                        "moteur/js/*.js", "index.html"):
+            assert morceau in charge, (
+                f"la sonde du premier chargement oublie {morceau} : c'est ainsi "
+                "que l'ancienne mesure comptait le paquet pour le tout"
+            )
 
 
 def test_le_balayage_des_temoins_visite_six_generations():

@@ -127,7 +127,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère 310 Ko compressés (2874 Ko brut) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->670<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 049<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Six pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -157,9 +158,10 @@ consultable en JSON au bas de la page.
 <details>
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
-`index.html` charge deux choses : `moteur/donnees.json` (2874 Ko — les séries, les
+`index.html` charge deux choses : `moteur/donnees.json`
+(<!--chiffre:poids(moteur/donnees.json)-->2 944<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
-2070, les 72 fiches de régime) et
+2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
 du dépôt, telle quelle : c'est ce que GitHub Pages publie sans aucun réglage, et
 `.nojekyll` demande que les fichiers soient servis sans transformation. Rien
@@ -174,13 +176,17 @@ poids de ce qu'on voulait exécuter.
 
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
-`scripts/construire_temoins.py` fige depuis lui 123 simulations complètes et le
-HTML des quatre pages, dans `tests/temoins/`. `node --test` rejoue le tout côté
-JavaScript et compare valeur par valeur — 10 615 nombres, dont 97,9 % identiques
+`scripts/construire_temoins.py` fige depuis lui
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->485<!--/--> simulations complètes et
+<!--chiffre:entrees(tests/temoins/pages.json:)-->43<!--/--> rendus de page, dans `tests/temoins/`.
+`node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
+<!--chiffre:a_verifier(le compte des nombres comparés demande de lancer node --test)-->10 615<!--/--> nombres,
+dont <!--chiffre:a_verifier(la part identique au bit près demande de lancer node --test)-->97,9<!--/--> % identiques
 au bit près, l'écart maximal étant de quelques *ulp* (5 · 10⁻¹⁵ ; un *ulp* vaut
 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
 formatage à la française reproduit jusqu'à l'arrondi au pair de Python, faute de
-quoi un « −12,5 % » deviendrait « −13 % » d'un côté et « −12 % » de l'autre.
+quoi un « <!--chiffre:illustration()-->−12,5<!--/--> % » deviendrait
+« <!--chiffre:illustration()-->−13<!--/--> % » d'un côté et « <!--chiffre:illustration()-->−12<!--/--> % » de l'autre.
 
 Des cas figés ne prouvent que ce qu'on a pensé à figer. Un second contrôle tire
 donc des carrières au hasard — graine fixe, donc reproductible —, les calcule en
@@ -207,7 +213,7 @@ python -m http.server 8000        # puis http://127.0.0.1:8000
 
 ## En Python, hors du site
 
-Le site expose le modèle en quatre pages. Pour l'interroger autrement — un
+Le site expose le modèle en six pages. Pour l'interroger autrement — un
 calcul par lots, une variante de paramètres, un chiffre à vérifier à la main —
 le modèle de référence s'appelle directement. La seule dépendance est PyYAML.
 
@@ -1126,7 +1132,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1057 tests Python
+tests/                          1068 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1175,13 +1181,13 @@ JSON ».
 python -m pytest tests
 ```
 
-Près de cinq cents tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1068<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
-le rendu des pages et la fraîcheur de ce que charge le site. Le compte exact
-n'est pas écrit ici : un nombre que rien ne recoupe finit toujours par mentir.
-Aucun test n'accède au réseau : les sources sont simulées.
+le rendu des pages et la fraîcheur de ce que charge le site. Ce compte-là est
+recalculé à chaque contrôle de la prose — un nombre que rien ne recoupe finit
+toujours par mentir. Aucun test n'accède au réseau : les sources sont simulées.
 
 Une vingtaine d'entre eux tiennent l'accessibilité : contrastes mesurés dans les
 deux thèmes, titres et en-têtes de ligne des tableaux, étiquettes et groupes du

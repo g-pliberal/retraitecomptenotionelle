@@ -164,6 +164,13 @@ Le livrable est le site statique ; voir `README.md`.
   Playwright CLI) : compétences dans `.claude/skills/`, mises en place par
   `scripts/setup_ui_tools.sh` ; ce qui demande le réseau et comment changer une
   version figée : `docs/outillage_interface.md`.
+- Ce que la prose affirme, et ce qu'un test en exige : `docs/fraicheur.md`. Une
+  section est `etat` (vraie aujourd'hui : tout chiffre y est ancré sur une sonde
+  qui le recalcule, un chiffre nu est refusé), `recit` (vraie à sa date, gelée),
+  `produit` (écrite par un script) ou `a_declarer`. Le partage est dans
+  `data/reference/prose/zones.yaml`, et ses deux cliquets ne peuvent que
+  décroître. Après toute modification de la prose :
+  `python scripts/verifier_prose.py --corriger`.
 - Les chantiers à mener, classés par ce qu'ils déplacent : `docs/feuille_de_route.md`.
   Une session qui cherche quoi faire commence là, et y note ce qu'elle a fait.
 - Seule dépendance hors bibliothèque standard : PyYAML. Le portage JavaScript

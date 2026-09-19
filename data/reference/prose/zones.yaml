@@ -1,0 +1,93 @@
+# Ce que chaque section de la prose du dépôt AFFIRME — et donc ce qu'un test
+# peut en exiger. Lu par `scripts/verifier_prose.py` ; voir son en-tête pour la
+# mécanique, et `docs/fraicheur.md` pour la raison d'être.
+#
+# Quatre régimes, et un seul est contraignant :
+#
+#   etat        la section décrit ce qui est vrai AUJOURD'HUI. Tout chiffre y
+#               est ancré sur une sonde qui le recalcule, et un chiffre nu y
+#               est refusé.
+#   recit       la section raconte ce qui s'est passé un jour. Ses chiffres
+#               sont justes à leur date, gelés, et les rafraîchir serait
+#               réécrire l'histoire.
+#   produit     la section est écrite par un script, qui a déjà son test.
+#   a_declarer  personne n'a encore tranché. Le cliquet les compte.
+#
+# Le cliquet, en bas, est ce qui fait avancer le dépôt sans qu'on y pense : il
+# ne peut que décroître. Une section nouvelle dans un fichier `a_declarer` le
+# fait monter, et le test échoue jusqu'à ce qu'on ait dit ce qu'elle engage.
+
+fichiers:
+
+  # ------------------------------------------------------------------------
+  # Le document le plus lu : c'est par lui qu'on commence.
+  # ------------------------------------------------------------------------
+  README.md:
+    defaut: a_declarer
+    # « Le site a d'abord exécuté le Python lui-même, par Pyodide » ouvre un
+    # paragraphe qui raconte l'époque d'avant le portage : ses 13,5 Mo et ses
+    # 263 Ko sont ceux de ce temps-là, au milieu d'une section d'état.
+    paragraphes_recit:
+      - "Le site a d'abord exécuté le Python lui-même"
+    sections:
+      Ouvrir le simulateur: etat
+      # Le corps de la section : ce que le premier chargement transfère, ce que
+      # `index.html` charge, et le poids du portage.
+      "👉 [g-pliberal.github.io/retraitecomptenotionelle](https://g-pliberal.github.io/retraitecomptenotionelle/)": etat
+      Tests: etat
+
+  # ------------------------------------------------------------------------
+  # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
+  # faire le jour où on l'a écrit, et ses bilans ce qu'on a mesuré ce jour-là.
+  # Seul le préambule parle du dépôt d'aujourd'hui.
+  # ------------------------------------------------------------------------
+  docs/feuille_de_route.md:
+    defaut: recit
+    sections:
+      # Le seul morceau qui parle du dépôt d'aujourd'hui : le coût transversal
+      # d'un changement du modèle, en lignes de code des deux côtés.
+      "Feuille de route — les actions qui font le plus progresser le modèle": etat
+
+  # ------------------------------------------------------------------------
+  # Produit par un script, et déjà tenu par test_le_document_des_regimes_suit_l_inventaire.
+  # ------------------------------------------------------------------------
+  docs/regimes.md:
+    defaut: produit
+
+  # ------------------------------------------------------------------------
+  # Le reste attend l'arbitrage, section par section. `limites.md` est le plus
+  # gros morceau et le plus mélangé : cinquante sections au passé — des
+  # corrections faites — et trois au présent (§1, §4, §5), qui disent ce que
+  # les chiffres du dépôt valent aujourd'hui.
+  # ------------------------------------------------------------------------
+  # Ce document-ci décrit la mécanique elle-même : il se soumet à ce qu'il
+  # demande aux autres, et tous ses chiffres sont ancrés.
+  docs/fraicheur.md:
+    defaut: etat
+    sections:
+      # Cette section cite les chiffres périmés qu'on a trouvés : les ancrer
+      # serait les corriger, et le constat n'aurait plus de sens.
+      Le constat: recit
+
+  docs/limites.md:
+    defaut: a_declarer
+  docs/methodologie.md:
+    defaut: a_declarer
+  docs/avantages_non_contributifs.md:
+    defaut: a_declarer
+  docs/veille_droit.md:
+    defaut: a_declarer
+  docs/outillage_interface.md:
+    defaut: a_declarer
+  docs/integration-partiliberalfrancais.md:
+    defaut: a_declarer
+  CLAUDE.md:
+    defaut: a_declarer
+
+cliquet:
+  # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
+  # Il ne peut que décroître : `--inventaire` les liste.
+  sections_a_declarer: 213
+  # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
+  # que seule une sonde qui les recalcule peut éteindre.
+  chiffres_a_verifier: 2

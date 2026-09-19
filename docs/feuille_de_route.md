@@ -15,8 +15,8 @@ avec la raison. Une découverte faite en chemin qui mérite un chantier se note
 ici, pas dans un commentaire de code.
 
 **Le constat de septembre 2026, qui fonde ce classement.** La couverture des
-régimes est finie : 89 lignes d'inventaire, plus aucune ligne « à modéliser »,
-37 fiches partielles dont chaque mur est documenté dans `regimes.md` et
+régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->89<!--/--> lignes d'inventaire, plus aucune ligne « à modéliser »,
+<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->37<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
 `limites.md` §4. Continuer sur cet axe rapporte peu : les manques restants
 portent sur des populations minuscules ou des barèmes que personne ne publie.
 Les gains sont sur ce qui porte les résultats de tête du README : les agrégats
@@ -24,8 +24,9 @@ de la page Coût, la part patronale, les taux de cotisation qui sont la matière
 même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
-fois, dans `src/retraite_notionnelle/scenarios/actuel.py` (plus de trois mille
-lignes) et dans le portage `moteur/js/` (douze mille lignes), puis dans les
+fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->22 776<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6783,3 +6784,54 @@ peut pas s'y ajouter, la place est prise » —, et deux appels l'avaient contou
 `moteur/js/gabarit.js` ; `_bascule_montants`, `_bascule_unite` et `_champ_revenu`
 dans `web/pages.py` et `moteur/js/pages.js` ; feuille de style et témoins
 régénérés.
+---
+
+### 41. Tarir la prose périmée, au lieu de la réparer un chiffre à la fois — `en cours`
+
+**Pourquoi.** Le dépôt affirme des milliers de chiffres en prose, et une
+vingtaine seulement étaient tenus par un test. Les autres étaient des
+souvenirs : cette feuille de route donnait « plus de trois mille lignes » à
+`actuel.py`, qui en fait plus de quatre mille, et « douze mille lignes » au
+portage, qui en fait près du double ; le README annonçait un premier
+chargement de 310 Ko quand il en transfère plus du double, « 123 simulations »
+quand les témoins en figent 485, « quatre pages » à deux endroits quand la même
+page en annonce six, et « près de cinq cents tests » pour un dépôt qui en
+comptait plus de mille.
+
+Le mal n'est pas le chiffre faux : c'est qu'on ne puisse pas savoir. Le dépôt
+écrit son ÉTAT et son HISTOIRE dans les mêmes fichiers, dans la même
+typographie, sans frontière. « 263 Ko de modèle » est faux aujourd'hui et était
+vrai du temps de Pyodide, une ligne plus haut. Un test qui corrigerait ce
+chiffre abîmerait le récit — et c'est pourquoi aucun test général n'était
+possible.
+
+La réponse d'avant était un test par chiffre, écrit après chaque dérive
+constatée. Chacun répare, aucun n'empêche la suivante, parce qu'il faut à
+chaque fois qu'un humain ait remarqué. Et la vague ne protège pas : le README
+écrivait « près de cinq cents tests » pour n'avoir pas à tenir un compte exact,
+et se trompait du double.
+
+**Ce qui est en place.** `data/reference/prose/zones.yaml` déclare, section par
+section, ce qu'elle affirme — `etat`, `recit`, `produit`, `a_declarer` ;
+`scripts/verifier_prose.py` recalcule tout chiffre ancré et refuse un chiffre
+nu dans une zone d'état ; `tests/test_prose.py` en fait une obligation. Deux
+cliquets, dans `zones.yaml`, ne peuvent que décroître : les sections non
+déclarées et les chiffres qui portent l'aveu `a_verifier`. Tout est décrit dans
+`docs/fraicheur.md`.
+
+**Ce qui reste — et c'est le travail, qui se fait section par section.**
+Abaisser le premier cliquet. `limites.md` est le morceau principal et le plus
+mélangé : trois sections au présent, qui disent ce que les chiffres du dépôt
+valent, et une cinquantaine au passé, qui racontent des corrections faites.
+`methodologie.md`, `avantages_non_contributifs.md` et le reste du README
+suivent. Rien n'oblige à tout reprendre d'un coup, et rien ne permet de
+reculer.
+
+**L'angle mort à traiter ensuite.** Ce contrôle ne juge pas une phrase,
+seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
+invisible. C'est l'action 34, et les deux se complètent — l'une tient les
+chiffres du dépôt, l'autre les affirmations du site.
+
+**Fichiers.** `scripts/verifier_prose.py`, `data/reference/prose/zones.yaml`,
+`tests/test_prose.py`, `docs/fraicheur.md` (neufs) ; les ancres posées dans
+`README.md`, `docs/feuille_de_route.md` et `docs/limites.md`.
