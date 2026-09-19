@@ -570,6 +570,42 @@ entrees:
 
 journal:
   - date: "2026-09-19"
+    session: "le net et le brut, d'un bout à l'autre du simulateur"
+    consulte: >-
+      Index LEGI du dépôt : article L. 136-8 du code de la sécurité sociale,
+      version en vigueur du 31 décembre 2025 au 27 juin 2026
+      (LEGIARTI000053278668), lu en entier par `dila_cherche.py legi --texte ID
+      --motif` — I, II, III, III bis et III ter ; article L. 14-10-4 du code de
+      l'action sociale et des familles pour la contribution additionnelle de
+      solidarité pour l'autonomie.
+    trouve: >-
+      Le II 2° de L. 136-8 assujettit les pensions de retraite à la CSG au taux
+      de 8,30 %. Le III et le III bis y dérogent selon le REVENU FISCAL DE
+      RÉFÉRENCE du foyer perçu l'avant-dernière année, au sens du IV de
+      l'article 1417 du code général des impôts : exonération jusqu'à 11 128 €
+      pour une part de quotient familial, 3,80 % jusqu'à 14 548 €, 6,60 %
+      jusqu'à 22 580 €, 8,30 % au-delà ; le III ter revalorise ces seuils
+      chaque 1er janvier sur les prix hors tabac. Le 1° bis de L. 14-10-4
+      ajoute 0,30 % de CASA, due par les seules personnes dont le revenu
+      atteint le seuil du taux plein de CSG. Avec 0,50 % de CRDS, une pension
+      au taux plein est amputée de 9,10 %.
+    reste: >-
+      Le scénario 1 n'est pas modifié : aucune pension calculée ne bouge, et
+      aucune ligne du registre ci-dessus n'a changé d'état. Ce qui a été ajouté
+      est un AFFICHAGE — le simulateur se lit désormais en net ou en brut, au
+      choix, saisie comprise — et la convention qu'il suppose est écrite sur la
+      page et dans `docs/limites.md` § 5 ante ter : le dépôt applique le taux
+      plein à tous, faute de connaître le revenu fiscal du foyer. Restent à
+      lire à la source : la cotisation d'assurance maladie de 1 % sur les
+      retraites complémentaires, que le modèle n'applique pas parce que les
+      scénarios notionnels ne distinguent pas base et complémentaire ; et le
+      régime des rentes viagères à titre onéreux (article 158-6 du code général
+      des impôts), que le dépôt écarte au profit du titre gratuit pour la rente
+      du pilier capitalisé. À revoir à chaque loi de financement, les seuils
+      étant revalorisés annuellement.
+    prochaine_veille: "2027-01-31"
+
+  - date: "2026-09-19"
     session: "le salaire net d'un actif, et les prélèvements hors retraite"
     consulte: >-
       Index LEGI du dépôt, à jour au 13 septembre 2026 : article L. 241-13 du

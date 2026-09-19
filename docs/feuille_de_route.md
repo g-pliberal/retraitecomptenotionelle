@@ -6468,3 +6468,65 @@ lignes de journal du 19 septembre 2026 dans `legislation/veille.yaml`.
   matin, et elle le dit en entier : seul le système actuel sert la réversion,
   et les systèmes prospectifs continuent de la servir aux pensions liquidées
   avant leur bascule.
+---
+
+### 39. Choisir entre le net et le brut, à toutes les étapes — `fait`
+
+**La demande.** « Je veux qu'on puisse choisir entre le net et le brut dans
+toutes les étapes du simulateur. »
+
+**Le préalable, qui était tout le travail.** Le site savait déjà écrire un
+salaire net — action 38 —, mais pas une pension nette : il opposait donc un net
+à un brut, deux grandeurs différentes. Écrire une pension nette demande un taux
+de CSG, et l'article L. 136-8 le fait dépendre du REVENU FISCAL DE RÉFÉRENCE du
+foyer, que le simulateur ne demande pas. **Le programme a tranché pour le taux
+plein**, appliqué à tous : 8,30 % de CSG, 0,50 % de CRDS, 0,30 % de CASA, soit
+9,10 %. La convention surestime le prélèvement sur les petites pensions — une
+pension de 660 € par mois serait exonérée des trois —, et c'est écrit sous la
+clé de lecture comme dans `docs/limites.md` § 5 ante ter.
+
+**Ce qui est fait.** Un réglage unique, `montants`, gouverne le simulateur
+entier :
+
+- **la saisie** : en mode net, le nombre tapé est un net mensuel, et le modèle
+  remonte au brut en RÉSOLVANT la fiche de paie du statut — ce n'est pas une
+  estimation mais l'inverse exact du calcul qui produit le net
+  (`ConstructeurFiche.brut_a_net_donne`). Les quatre profils sont couverts ;
+  les statuts sans fiche de paie lisent le nombre tel quel, et le formulaire le
+  dit au lieu de le taire ;
+- **l'affichage** : les deux chiffres de chaque carte, la composition de la
+  proposition, la clé de lecture et son unité suivent le mode ;
+- **l'adresse** : `montants` s'y écrit toujours, comme l'unité, parce qu'il
+  gouverne l'interprétation du nombre « salaire ». Une adresse partagée décrit
+  donc la carrière qu'on a calculée.
+
+**Le piège, et c'est le même qu'à la bascule d'unité.** Le lien qui change de
+mode TRADUIT les montants saisis. Le recopier tel quel ferait relire un net
+comme un brut, et la page reviendrait en décrivant une autre carrière, mieux
+payée d'un quart. Un test fait l'aller-retour : 2 500 € net ↔ 3 158 € brut, et
+retour sur 2 500.
+
+**Le défaut est le NET.** C'est ce qu'on touche et ce qu'on connaît de soi, et
+c'est la seule comparaison cohérente avec le salaire net que l'action 38 avait
+mis en avant. Le brut reste à un clic, et reste la langue de tout ce qui n'a pas
+de net : un capital notionnel, une assiette de cotisation, les tableaux de
+détail. La bascule ne gouverne que ce qu'on TOUCHE.
+
+**Ce qui reste.** La cotisation maladie de 1 % sur la retraite complémentaire
+n'est pas comptée — les scénarios notionnels ne distinguent pas base et
+complémentaire, et l'appliquer aux uns et pas aux autres fabriquerait un écart
+sans règle. La rente du pilier capitalisé suit le barème des pensions, par la
+convention de la rente viagère à titre gratuit. Et le taux de CSG reste le taux
+plein tant que le formulaire ne demandera pas de quoi faire mieux : le rendre
+exact suppose un champ de plus, ou une inférence depuis la pension — celle que
+le dépôt fait déjà pour l'ASPA.
+
+**Fichiers.** Le volet `pensions` de
+`data/reference/legislation/prelevements_remuneration.yaml` ;
+`PrelevementsPension`, `brut_a_net_donne`, `salaire_brut_depuis_net` et
+`salaire_net_depuis_brut` dans `src/retraite_notionnelle/remuneration.py` et
+leur portage ; `MODES_MONTANT`, `Saisie.montants`, `Echelle`, `Montants`,
+`_bascule_montants`, `_mention_conversion` et `_note_du_mode` dans
+`web/pages.py` et `moteur/js/pages.js` ; paquet de données en version 15 ;
+`docs/limites.md` § 5 ante ter ; la ligne de journal du 19 septembre 2026 dans
+`legislation/veille.yaml`.

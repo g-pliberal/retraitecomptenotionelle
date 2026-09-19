@@ -206,7 +206,41 @@ export class ProfilRemuneration {
   }
 }
 
-/** Les quatre profils, tels que le paquet de données les porte. */
+/**
+ * Ce qu'on paie une fois retraité — et non plus en travaillant.
+ *
+ * Une pension n'est pas un salaire : aucune cotisation sociale, puisqu'on
+ * n'acquiert plus de droits ; aucun abattement pour frais professionnels ; et
+ * un taux de CSG propre. **Le dépôt retient le TAUX PLEIN pour tout le monde**,
+ * faute de connaître le revenu fiscal du foyer dont la loi le fait dépendre :
+ * la convention surestime donc le prélèvement sur les petites pensions, qui
+ * seraient exonérées.
+ */
+export class PrelevementsPension {
+  constructor(fiche) {
+    this.csg_taux_plein = fiche.csg_taux_plein;
+    this.crds = fiche.crds;
+    this.casa = fiche.casa;
+    this.bareme_csg = fiche.bareme_csg;
+  }
+
+  /** Ce qui sépare une pension brute de sa nette : 9,1 %. */
+  get tauxTotal() {
+    return this.csg_taux_plein + this.crds + this.casa;
+  }
+
+  net(brut) {
+    return brut * (1 - this.tauxTotal);
+  }
+
+  /** L'inverse, pour la saisie : quelle pension brute laisse ce net. */
+  brut(net) {
+    const reste = 1 - this.tauxTotal;
+    return reste > 0 ? net / reste : net;
+  }
+}
+
+/** Les quatre profils, tels que le paquet de données les porte, et les pensions. */
 export class BaremePrelevements {
   constructor(paquet) {
     this.annee = paquet.annee;
@@ -216,6 +250,7 @@ export class BaremePrelevements {
         ([code, fiche]) => [code, new ProfilRemuneration(fiche)],
       ),
     );
+    this.pensions = new PrelevementsPension(paquet.pensions);
   }
 
   profil(code) {
@@ -446,6 +481,32 @@ export class ConstructeurFiche {
       const milieu = (bas + haut) / 2;
       const fiche = this.fiche(0, milieu, plafondAnnuel, smicAnnuel, bloc, cadre);
       if (fiche.coutDuTravail < cout) {
+        bas = milieu;
+      } else {
+        haut = milieu;
+      }
+    }
+    return (bas + haut) / 2;
+  }
+
+  /**
+   * Le revenu brut dont il reste `net` une fois tout retiré — l'inverse de la
+   * fiche de paie, et il sert à la SAISIE : le lecteur qui connaît son net le
+   * tape tel quel, et le modèle, qui ne raisonne qu'en brut, remonte jusqu'à
+   * lui. Le net croît strictement avec le brut, donc une dichotomie suffit ;
+   * la borne haute part de trois fois le net, aucun profil ne prélevant deux
+   * tiers d'un revenu.
+   */
+  brutANetDonne(net, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
+    if (net <= 0) {
+      return 0;
+    }
+    let bas = net;
+    let haut = net * 3;
+    for (let pas = 0; pas < 80; pas += 1) {
+      const milieu = (bas + haut) / 2;
+      const fiche = this.fiche(0, milieu, plafondAnnuel, smicAnnuel, bloc, cadre);
+      if (fiche.net < net) {
         bas = milieu;
       } else {
         haut = milieu;
@@ -797,3 +858,54 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
 }
 
 export { Fiabilite };
+
+
+/**
+ * Le revenu brut annuel dont il reste `netAnnuel` — ou lui-même.
+ *
+ * C'est l'entrée du mode « net » de la saisie. Rend le net INCHANGÉ quand le
+ * statut n'a pas de fiche de paie — l'exploitant agricole, l'élu, l'outre-mer :
+ * mieux vaut un brut approché par un net qu'un refus de calculer, et le site
+ * dit alors qu'il n'a pas su convertir.
+ */
+export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
+  statut, annee, netAnnuel) {
+  if (netAnnuel <= 0) {
+    return netAnnuel;
+  }
+  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee);
+  if (codeProfil === null) {
+    return netAnnuel;
+  }
+  const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
+  return new ConstructeurFiche(bareme.profil(codeProfil)).brutANetDonne(
+    netAnnuel,
+    macro.plafond_securite_sociale.valeur(annee),
+    smicAnnuel(macro, annee),
+    blocDroitEnVigueur(catalogue, affiliations, statut, annee),
+    cadre,
+  );
+}
+
+/**
+ * Le sens direct : le revenu net annuel que laisse `brutAnnuel`, ou lui-même.
+ * Sert à la BASCULE, qui doit traduire le nombre saisi et non le relire.
+ */
+export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
+  statut, annee, brutAnnuel) {
+  if (brutAnnuel <= 0) {
+    return brutAnnuel;
+  }
+  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee);
+  if (codeProfil === null) {
+    return brutAnnuel;
+  }
+  const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
+  return new ConstructeurFiche(bareme.profil(codeProfil)).fiche(
+    annee, brutAnnuel,
+    macro.plafond_securite_sociale.valeur(annee),
+    smicAnnuel(macro, annee),
+    blocDroitEnVigueur(catalogue, affiliations, statut, annee),
+    cadre,
+  ).net;
+}

@@ -81,7 +81,7 @@ STYLE = RACINE / "moteur" / "style.css"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 14
+VERSION = 15
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -806,6 +806,19 @@ def _prelevements_remuneration() -> dict:
         "fiabilite": int(prelevements.fiabilite),
         "profils": {code: profil(fiche)
                     for code, fiche in sorted(prelevements.profils.items())},
+        # Ce qu'on paie une fois retraité, et non plus en travaillant : c'est
+        # lui qui permet au site d'écrire une pension NETTE, donc de la
+        # comparer à un salaire net plutôt qu'à côté de lui.
+        "pensions": {
+            "csg_taux_plein": prelevements.pensions.csg_taux_plein,
+            "crds": prelevements.pensions.crds,
+            "casa": prelevements.pensions.casa,
+            "bareme_csg": [
+                {"libelle": tranche.libelle, "taux": tranche.taux,
+                 "revenu_fiscal_maximum": tranche.revenu_fiscal_maximum}
+                for tranche in prelevements.pensions.bareme_csg
+            ],
+        },
     }
 
 

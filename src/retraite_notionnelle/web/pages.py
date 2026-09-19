@@ -63,6 +63,11 @@ from ..donnees.equilibre import (
 from ..donnees.regimes import charger_inventaire
 from ..donnees.population import Population
 from ..scenarios.actuel import MinimumVieillesse
+from ..remuneration import (
+    charger_prelevements,
+    salaire_brut_depuis_net,
+    salaire_net_depuis_brut,
+)
 from ..simulateur import Comparaison, Simulateur
 from . import gabarit as g
 
@@ -147,6 +152,20 @@ UNITES_REVENU = [
 #: nombre rond proche du salaire moyen plutôt que le salaire moyen exact : le
 #: champ est fait pour être remplacé, et « 3 500 » se relit mieux que « 3 475 ».
 SALAIRE_DEFAUT = {"euros_mois": 3500.0, "moyen": 1.0}
+
+#: Les deux façons de lire tout montant du simulateur — ce qu'on saisit comme
+#: ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
+#: pension brute sur la même page compare deux grandeurs différentes, et c'est
+#: exactement ce que le site faisait avant cette bascule.
+#:
+#: Le défaut est le NET, parce que c'est ce qu'on touche et ce qu'on connaît de
+#: soi. Le brut reste à un clic, et il reste la langue du reste du site : les
+#: capitaux, les assiettes et les tableaux de détail sont bruts par nature et
+#: ne bougent pas — on ne « nette » pas un capital notionnel.
+MODES_MONTANT = [
+    ("net", "net — ce qui arrive sur le compte"),
+    ("brut", "brut — avant CSG et cotisations"),
+]
 
 #: Précision du multiple du salaire moyen, en décimales et en pas. Les deux
 #: doivent rester d'accord : le lien de bascule écrit un multiple arrondi à
@@ -446,6 +465,12 @@ class Saisie:
     #: saisit ce que le métier paie maintenant, et le modèle suit ensuite le
     #: salaire moyen d'une année à l'autre.
     unite_revenu: str = "euros_mois"
+    #: Net ou brut : vaut pour TOUT le simulateur, la saisie comprise. En
+    #: « net », le salaire tapé est un net mensuel que le modèle convertit en
+    #: brut par la fiche de paie du statut, et tous les montants affichés —
+    #: salaire, pension, rente — sont nets de ce qui les frappe. Voir
+    #: ``MODES_MONTANT``.
+    montants: str = "net"
     #: Les métiers exercés APRÈS le premier. Le premier, lui, est décrit par
     #: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
     #: multiples reste donc valide, et décrit la carrière d'un seul métier.
@@ -502,6 +527,8 @@ class Saisie:
         ))
         saisie = cls(
             unite_revenu=unite,
+            montants=_parmi(parametres, "montants", MODES_MONTANT,
+                            defauts.montants),
             naissance=annee_naissance,
             naissance_mois=mois_naissance,
             naissance_jour=naissance[2] if naissance else defauts.naissance_jour,
@@ -635,6 +662,22 @@ class Saisie:
         """Vrai si les revenus sont saisis en euros, faux si c'est un ratio."""
         return self.unite_revenu == "euros_mois"
 
+    @property
+    def en_net(self) -> bool:
+        """Vrai si tout — saisie et affichage — se lit en net."""
+        return self.montants == "net"
+
+    @property
+    def saisie_en_net(self) -> bool:
+        """Vrai si le nombre saisi est un NET à convertir.
+
+        Le mode net ne change la SAISIE que lorsqu'elle est en euros : un
+        multiple du salaire moyen est un rapport entre deux bruts, et le
+        convertir n'aurait pas de sens — le salaire moyen publié par l'INSEE
+        est brut.
+        """
+        return self.en_net and self.revenu_en_euros
+
     def _verifier_revenu(self, valeur: float, rang: int) -> None:
         """Un revenu saisi, contrôlé dans l'unité où il a été écrit.
 
@@ -671,9 +714,16 @@ class Saisie:
         sens sur quatre-vingts ans, quand un montant n'en a que rapporté à son
         année.
         """
-        saisis = [self.salaire] + [metier.salaire for metier in self.metiers]
+        lignes = self.lignes_carriere
+        saisis = [ligne.salaire for ligne in lignes]
         if not self.revenu_en_euros:
             return saisis
+        # En mode net, le nombre saisi n'est pas encore un brut : on remonte
+        # d'abord jusqu'à lui, statut par statut, PUIS on ramène à l'unité du
+        # modèle. L'ordre compte — le salaire moyen de l'échelle est un brut.
+        if self.saisie_en_net:
+            saisis = [echelle.brut_mensuel(valeur, ligne.statut)
+                      for valeur, ligne in zip(saisis, lignes)]
         return [echelle.niveau(valeur) for valeur in saisis]
 
     def parcours(self, echelle: "Echelle") -> list[Metier]:
@@ -1084,6 +1134,10 @@ class Saisie:
         # c'est ce qui distingue une adresse neuve d'une adresse d'avant les
         # euros, dont le « salaire » nu est un multiple du salaire moyen.
         champs["unite_revenu"] = self.unite_revenu
+        # Le mode s'écrit toujours lui aussi : il gouverne l'interprétation du
+        # nombre « salaire », et une adresse partagée qui l'omettrait décrirait
+        # une autre carrière que celle qu'on a calculée.
+        champs["montants"] = self.montants
         # Les métiers qui suivent le premier, un groupe de trois champs chacun.
         # Une ligne vide du formulaire n'en produit aucun : l'adresse ne porte
         # que ce qui a été saisi.
@@ -1315,6 +1369,59 @@ class Echelle:
     smic: float
     #: Plafond mensuel de la Sécurité sociale de la même année.
     plafond: float
+    #: Ce qui remonte d'un net mensuel au brut qui le laisse, statut par
+    #: statut. ``None`` en mode brut — il n'y a alors rien à convertir — et
+    #: dans les pages qui n'ont pas de saisie. Voir
+    #: ``remuneration.salaire_brut_depuis_net``.
+    vers_brut: object | None = None
+    #: Les deux sens, toujours disponibles : ils ne servent qu'à la bascule,
+    #: qui doit traduire quel que soit le mode où l'on se trouve.
+    vers_net: object | None = None
+    vers_brut_direct: object | None = None
+
+    def brut_mensuel(self, montant: float, statut: str) -> float:
+        """Le brut mensuel d'un montant saisi, quel que soit le mode.
+
+        En mode brut, c'est le montant lui-même ; en mode net, ce que la fiche
+        de paie du statut laisse. Les statuts que le modèle ne sait pas décrire
+        rendent le montant inchangé : voir ``convertit``.
+        """
+        if self.vers_brut is None or montant <= 0:
+            return montant
+        return self.vers_brut(montant, statut)
+
+    def brut_mensuel_direct(self, net: float, statut: str) -> float:
+        """Le net vers le brut, quel que soit le mode courant.
+
+        ``brut_mensuel`` ne convertit qu'en mode net — c'est ce qui le rend sûr
+        au milieu du calcul. La bascule, elle, doit convertir depuis le mode où
+        l'on est vers celui où l'on va, donc sans condition.
+        """
+        if self.vers_brut_direct is None or net <= 0:
+            return net
+        return self.vers_brut_direct(net, statut)
+
+    def net_mensuel(self, brut: float, statut: str) -> float:
+        """Le sens direct : ce qu'un brut mensuel laisse, statut par statut.
+
+        Sert à la BASCULE, et non au calcul : passer du brut au net doit
+        traduire le nombre saisi, pour que la page revienne en décrivant la
+        même carrière.
+        """
+        if self.vers_net is None or brut <= 0:
+            return brut
+        return self.vers_net(brut, statut)
+
+    def convertit(self, statut: str) -> bool:
+        """La conversion a-t-elle un effet pour ce statut ?
+
+        Faux pour un exploitant agricole, un élu, un ultramarin : le modèle n'a
+        pas leurs prélèvements hors retraite, et le nombre saisi est alors lu
+        comme un brut. Le formulaire le dit plutôt que de le taire.
+        """
+        if self.vers_net is None:
+            return False
+        return self.net_mensuel(1000.0, statut) != 1000.0
 
     def niveau(self, euros_mensuels: float) -> float:
         """Un salaire mensuel brut, en multiples du salaire moyen."""
@@ -1458,10 +1565,29 @@ class Contexte:
         parametres = saisie.parametres(self.base)
         macro = self.simulateur(parametres).macro
         annee = parametres.annee_courante
+        simulateur = self.simulateur(parametres)
+
+        def vers_brut(net_mensuel: float, statut: str) -> float:
+            return salaire_brut_depuis_net(
+                parametres.racine_donnees, macro, simulateur.catalogue,
+                simulateur.affiliations, statut, annee,
+                net_mensuel * MOIS_PAR_AN,
+            ) / MOIS_PAR_AN
+
+        def vers_net(brut_mensuel: float, statut: str) -> float:
+            return salaire_net_depuis_brut(
+                parametres.racine_donnees, macro, simulateur.catalogue,
+                simulateur.affiliations, statut, annee,
+                brut_mensuel * MOIS_PAR_AN,
+            ) / MOIS_PAR_AN
+
         return Echelle(
             moyen=salaire_moyen_annuel(macro, annee),
             smic=HEURES_SMIC_PAR_MOIS * macro.smic_horaire(annee),
             plafond=macro.plafond_securite_sociale(annee) / MOIS_PAR_AN,
+            vers_brut=vers_brut if saisie.saisie_en_net else None,
+            vers_net=vers_net,
+            vers_brut_direct=vers_brut,
         )
 
     def simuler(self, saisie: Saisie) -> Comparaison:
@@ -2626,6 +2752,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     return tete + f"""
 <form class="carte" method="get" action="{g.route('/simuler')}">
   {g.cache("unite_revenu", saisie.unite_revenu)}
+  {g.cache("montants", saisie.montants)}
   <h2 class="serif" style="margin-top:0">Votre carrière{_bulle_du_titre(saisie)}</h2>
   <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
   quel, ou saisissez la vôtre.</p>
@@ -2633,6 +2760,8 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   <h3>La carrière, période par période{_bulle_des_periodes()}</h3>
   {_metiers(saisie, affiliations, echelle)}
   {_bascule_unite(saisie, echelle)}
+  {_bascule_montants(saisie, echelle)}
+  {_mention_conversion(saisie, echelle)}
   {_releve(saisie)}
   <details class="options">
     {g.sommaire("Options de modélisation (sexe, profil, indexation, "
@@ -3516,6 +3645,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     )
     reference = max(constants.values()) or 1.0
 
+    montants = Montants.depuis(saisie, comparaison.parametres)
     annee_depart = carriere.annee_liquidation
     unite_reference = (
         "par mois, en euros d'aujourd'hui"
@@ -3534,10 +3664,11 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     if remuneration is not None:
         reference_paie = remuneration.reference
         nets = {
-            "actuel": reference_paie.droit_en_vigueur.net,
-            "retroactif": reference_paie.droit_en_vigueur.net,
-            "retroactif-employeur": reference_paie.droit_en_vigueur.net,
-            "liberal": reference_paie.proposition.net,
+            "actuel": montants.salaire(reference_paie.droit_en_vigueur),
+            "retroactif": montants.salaire(reference_paie.droit_en_vigueur),
+            "retroactif-employeur": montants.salaire(
+                reference_paie.droit_en_vigueur),
+            "liberal": montants.salaire(reference_paie.proposition),
         }
 
     def salaire(cle: str) -> str:
@@ -3560,7 +3691,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
       <span class="chiffre salaire">
         <span class="categorie">salaire</span>
         <span class="somme">{g.nombre(net / 12.0)}</span>
-        <span class="unite">€ net/mois</span>
+        <span class="unite">{montants.unite_salaire}</span>
         {mention}
       </span>"""
 
@@ -3583,8 +3714,9 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             barre += (f'<span class="capitalise" '
                       f'style="width:{part_capitalisee / reference * 100:.1f}%"></span>')
             partage = f"""
-      <span class="composition">{g.euros_centimes(repartition / 12)} de pension
-        par répartition + {g.euros_centimes(part_capitalisee / 12)} de rente
+      <span class="composition">{g.euros_centimes(montants.pension(repartition) / 12)}
+        de pension par répartition +
+        {g.euros_centimes(montants.pension(part_capitalisee) / 12)} de rente
         capitalisée, par mois</span>"""
         return f"""
 <div class="scenario">
@@ -3593,8 +3725,8 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     <span class="montant">{salaire(cle)}
       <span class="chiffre principal">
         <span class="categorie">retraite</span>
-        <span class="somme">{g.nombre(montant / 12)}</span>
-        <span class="unite">€ brut/mois</span>
+        <span class="somme">{g.nombre(montants.pension(montant) / 12)}</span>
+        <span class="unite">{montants.unite_pension}</span>
       </span>
     </span>
   </div>{partage}
@@ -3713,11 +3845,10 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
 Les trois autres appliquent chacun d'autres règles à la même carrière.
-Deux chiffres par ligne : à gauche votre <strong>salaire net</strong> pendant
-que vous cotisez, à droite votre <strong>pension brute</strong> une fois
-retraité — {unite_reference}, l'un comme l'autre.
-La pension est dite brute parce qu'elle l'est : la CSG, la CRDS et la
-contribution de solidarité qui la frappent ne sont pas calculées ici.
+Deux chiffres par ligne : à gauche votre <strong>salaire</strong> pendant que
+vous cotisez, à droite votre <strong>pension</strong> une fois retraité — en
+{montants.mot}, l'un comme l'autre, {unite_reference}.
+{_note_du_mode(montants)}
 Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 
     # Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
@@ -3729,6 +3860,7 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 {lecture}
 <div class="carte">
   {scenarios}
+  {_bascule_montants(saisie, contexte.echelle(saisie), "#resultats")}
   {fiabilite}
   {capitalisation}
   {minimum}
@@ -4312,6 +4444,132 @@ def _euros_signe(montant: float, centimes: bool = True) -> str:
     signe = "+" if montant > 0 else ""
     ecrit = g.euros_centimes(montant) if centimes else g.euros(montant)
     return f"{signe}{ecrit}"
+
+
+@dataclass(frozen=True)
+class Montants:
+    """Le mode net/brut, et ce qu'il fait à chaque montant affiché.
+
+    Un seul objet, construit une fois par rendu, pour que la bascule n'existe
+    qu'à un endroit. Deux grandeurs n'ont pas le même barème — un salaire
+    supporte des cotisations, une pension n'en supporte plus — et deux autres
+    n'ont pas de net du tout : un CAPITAL notionnel et une ASSIETTE de
+    cotisation sont bruts par nature, et le site les laisse tels quels.
+    """
+
+    net: bool
+    #: Ce qui sépare une pension brute de sa nette : CSG 8,30 %, CRDS 0,50 %,
+    #: CASA 0,30 %. Voir ``remuneration.PrelevementsPension``.
+    taux_pension: float
+
+    @classmethod
+    def depuis(cls, saisie: Saisie, base: Parametres) -> "Montants":
+        pensions = charger_prelevements(base.racine_donnees).pensions
+        return cls(net=saisie.en_net, taux_pension=pensions.taux_total)
+
+    def pension(self, brut: float) -> float:
+        """Une pension, une rente, une garantie : tout ce qui se sert après."""
+        return brut * (1.0 - self.taux_pension) if self.net else brut
+
+    def salaire(self, fiche) -> float:
+        """Un salaire, lu sur la fiche de paie qui porte déjà les deux."""
+        return fiche.net if self.net else fiche.brut
+
+    @property
+    def mot(self) -> str:
+        return "net" if self.net else "brut"
+
+    @property
+    def unite_salaire(self) -> str:
+        return "€ net/mois" if self.net else "€ brut/mois"
+
+    @property
+    def unite_pension(self) -> str:
+        return "€ net/mois" if self.net else "€ brut/mois"
+
+
+def _note_du_mode(montants: "Montants") -> str:
+    """Ce que le mode courant suppose, en une phrase, là où il s'applique.
+
+    En NET, c'est la convention de CSG qu'il faut dire : la loi fait dépendre
+    le taux du revenu fiscal du foyer, que le simulateur ne demande pas, et le
+    dépôt retient le taux plein. En BRUT, c'est le rappel qu'un brut n'est pas
+    ce qu'on touche.
+    """
+    if montants.net:
+        return (
+            "La pension est nette de "
+            f"{g.pourcentage(montants.taux_pension, decimales=1)} : CSG, CRDS "
+            "et contribution de solidarité, au <strong>taux plein</strong>. La "
+            "loi fait dépendre ce taux du revenu fiscal du foyer, que ce "
+            "simulateur ne demande pas : une petite pension, exonérée en "
+            "réalité, est donc ici un peu sous-estimée."
+        )
+    return ("Le brut n'est pas ce qui arrive sur le compte : il reste à en "
+            "retirer les cotisations pour un salaire, la CSG pour une pension.")
+
+
+def _mention_conversion(saisie: Saisie, echelle: "Echelle") -> str:
+    """Le statut dont le modèle ne sait pas faire la fiche de paie, s'il y en a.
+
+    L'exploitant agricole relève de la MSA, l'élu touche une indemnité de
+    fonction, l'ultramarin a la caisse de sa collectivité : leurs prélèvements
+    hors retraite ne sont pas dans le dépôt. Le nombre saisi est alors lu comme
+    un brut, et l'affichage reste brut pour la partie salaire. Le taire ferait
+    croire à une conversion qui n'a pas eu lieu.
+    """
+    if not saisie.saisie_en_net:
+        return ""
+    sans = [ligne.statut for ligne in saisie.lignes_carriere
+            if not ligne.sans_emploi and not echelle.convertit(ligne.statut)]
+    if not sans:
+        return ""
+    return ('<p class="note avertissement" style="margin-top:0.6rem">'
+            + g.icone("triangle-alert", "Avertissement")
+            + "<span>Le modèle ne connaît pas les prélèvements hors retraite "
+            "de l'un de vos statuts : pour lui, le montant saisi est lu "
+            "<strong>tel quel</strong>, comme un brut. La pension, elle, reste "
+            "affichée en net.</span></p>")
+
+
+def _bascule_montants(saisie: Saisie, echelle: "Echelle",
+                      ancre: str = "") -> str:
+    """Le lien qui passe de net à brut, et retour — montants déjà traduits.
+
+    Un lien plutôt qu'un menu, pour la même raison que la bascule d'unité : il
+    porte l'adresse entière, si bien que l'adresse se partage telle qu'on la
+    lit, et cela ne demande pas une ligne de JavaScript.
+
+    LES MONTANTS SAISIS SONT TRADUITS, et c'est tout l'enjeu : en mode net, le
+    nombre du formulaire est un net. Le recopier tel quel dans l'autre mode le
+    ferait relire comme un brut, et la page reviendrait en décrivant une AUTRE
+    carrière — mieux payée d'un quart. Le lien porte donc le montant converti,
+    métier par métier, exactement comme le fait la bascule d'unité.
+    """
+    vers_le_net = not saisie.en_net
+    autre = "net" if vers_le_net else "brut"
+    remplacements: dict[str, object] = {"montants": autre}
+    # Seule la saisie EN EUROS porte un net ou un brut : un multiple du salaire
+    # moyen est un rapport entre deux bruts, que le mode ne touche pas.
+    if saisie.revenu_en_euros:
+        lignes = saisie.lignes_carriere
+        traduits = [
+            _nombre(round(echelle.net_mensuel(ligne.salaire, ligne.statut)
+                          if vers_le_net
+                          else echelle.brut_mensuel_direct(ligne.salaire,
+                                                           ligne.statut)))
+            for ligne in lignes
+        ]
+        remplacements["salaire"] = traduits[0]
+        for rang, valeur in enumerate(traduits[1:], start=2):
+            remplacements[f"metier{rang}_salaire"] = valeur
+    libelle = ("Voir les montants en net" if vers_le_net
+               else "Voir les montants en brut")
+    cible = f"#/simuler?{escape(saisie.requete(**remplacements))}"
+    if ancre:
+        cible += ancre
+    return (f'<p class="discret" style="margin:0.9rem 0 0">'
+            f'<a href="{cible}">{libelle}</a></p>')
 
 
 def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:

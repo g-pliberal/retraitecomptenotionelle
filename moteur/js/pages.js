@@ -41,6 +41,7 @@ import { Population } from "./population.js";
 import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
 import { nomFiabilite } from "./serie.js";
+import { salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur } from "./simulateur.js";
 
 export const PROFILS = [
@@ -119,6 +120,17 @@ export const UNITES_REVENU = [
 // nombre rond proche du salaire moyen plutôt que le salaire moyen exact : le
 // champ est fait pour être remplacé, et « 3 500 » se relit mieux que « 3 475 ».
 export const SALAIRE_DEFAUT = { euros_mois: 3500.0, moyen: 1.0 };
+
+// Les deux façons de lire tout montant du simulateur — ce qu'on saisit comme
+// ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
+// pension brute sur la même page compare deux grandeurs différentes, et c'est
+// exactement ce que le site faisait avant cette bascule. Le défaut est le NET,
+// parce que c'est ce qu'on touche et ce qu'on connaît de soi ; le brut reste à
+// un clic, et reste la langue des capitaux et des assiettes, bruts par nature.
+export const MODES_MONTANT = [
+  ["net", "net — ce qui arrive sur le compte"],
+  ["brut", "brut — avant CSG et cotisations"],
+];
 
 // Précision du multiple du salaire moyen, en décimales et en pas. Les deux
 // doivent rester d'accord : le lien de bascule écrit un multiple arrondi à
@@ -381,6 +393,7 @@ const DEFAUTS = Object.freeze({
   //: ce que le métier paie maintenant, et le modèle suit ensuite le salaire
   //: moyen d'une année à l'autre.
   unite_revenu: "euros_mois",
+  montants: "net",
   //: Les métiers exercés APRÈS le premier. Le premier, lui, est décrit par
   //: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
   //: multiples reste donc valide, et décrit la carrière d'un seul métier.
@@ -439,6 +452,7 @@ export class Saisie {
       ? naissance.mois : entier(parametres, "naissance_mois", DEFAUTS.naissance_mois);
     const saisie = new Saisie({
       unite_revenu: unite,
+      montants: parmi(parametres, "montants", MODES_MONTANT, DEFAUTS.montants),
       naissance: anneeNaissance,
       naissance_mois: moisNaissance,
       naissance_jour: naissance ? naissance.jour : DEFAUTS.naissance_jour,
@@ -579,6 +593,21 @@ export class Saisie {
     return this.unite_revenu === "euros_mois";
   }
 
+  /** Vrai si tout — saisie et affichage — se lit en net. */
+  get enNet() {
+    return this.montants === "net";
+  }
+
+  /**
+   * Vrai si le nombre saisi est un NET à convertir. Le mode ne change la
+   * SAISIE que lorsqu'elle est en euros : un multiple du salaire moyen est un
+   * rapport entre deux bruts, et le convertir n'aurait pas de sens — le
+   * salaire moyen publié par l'INSEE est brut.
+   */
+  get saisieEnNet() {
+    return this.enNet && this.revenu_en_euros;
+  }
+
   /**
    * Un revenu saisi, contrôlé dans l'unité où il a été écrit. Le message parle
    * la langue du champ : refuser « 2 500 € par mois » au motif qu'il faut
@@ -624,9 +653,18 @@ export class Saisie {
   }
 
   niveaux(echelle) {
-    const saisis = [this.salaire, ...this.metiers.map((metier) => metier.salaire)];
+    const lignes = this.lignesCarriere;
+    let saisis = lignes.map((ligne) => ligne.salaire);
     if (!this.revenu_en_euros) {
       return saisis;
+    }
+    // En mode net, le nombre saisi n'est pas encore un brut : on remonte
+    // d'abord jusqu'à lui, statut par statut, PUIS on ramène à l'unité du
+    // modèle. L'ordre compte — le salaire moyen de l'échelle est un brut.
+    if (this.saisieEnNet) {
+      saisis = saisis.map(
+        (valeur, index) => echelle.brutMensuel(valeur, lignes[index].statut),
+      );
     }
     return saisis.map((valeur) => echelle.niveau(valeur));
   }
@@ -1068,6 +1106,10 @@ export class Saisie {
     // ce qui distingue une adresse neuve d'une adresse d'avant les euros, dont
     // le « salaire » nu est un multiple du salaire moyen.
     champs.unite_revenu = this.unite_revenu;
+    // Le mode s'écrit toujours lui aussi : il gouverne l'interprétation du
+    // nombre « salaire », et une adresse partagée qui l'omettrait décrirait une
+    // autre carrière que celle qu'on a calculée.
+    champs.montants = this.montants;
     // Les métiers qui suivent le premier, un groupe de trois champs chacun. Une
     // ligne vide du formulaire n'en produit aucun : l'adresse ne porte que ce
     // qui a été saisi.
@@ -1328,7 +1370,15 @@ function age(valeur) {
  * s'affiche soit exactement ce qui se calcule.
  */
 export class Echelle {
-  constructor({ moyen, smic, plafond }) {
+  constructor({ moyen, smic, plafond, versBrut = null, versNet = null,
+    versBrutDirect = null }) {
+    // Ce qui remonte d'un net mensuel au brut qui le laisse, statut par
+    // statut. `versBrut` est nul en mode brut — il n'y a rien à convertir —,
+    // les deux autres sont toujours là : la bascule doit traduire quel que
+    // soit le mode où l'on se trouve.
+    this.versBrut = versBrut;
+    this.versNet = versNet;
+    this.versBrutDirect = versBrutDirect;
     // Salaire moyen par tête, en euros BRUTS annuels de l'année de référence.
     this.moyen = moyen;
     // SMIC mensuel brut de la même année, sur 151,67 heures.
@@ -1345,6 +1395,42 @@ export class Echelle {
   /** L'opération inverse : un multiple, en euros bruts par mois. */
   mensuel(niveau) {
     return (niveau * this.moyen) / MOIS_PAR_AN;
+  }
+
+  /** Le brut mensuel d'un montant saisi, quel que soit le mode. */
+  brutMensuel(montant, statut) {
+    if (this.versBrut === null || montant <= 0) {
+      return montant;
+    }
+    return this.versBrut(montant, statut);
+  }
+
+  /** Le net vers le brut, quel que soit le mode courant — pour la bascule. */
+  brutMensuelDirect(net, statut) {
+    if (this.versBrutDirect === null || net <= 0) {
+      return net;
+    }
+    return this.versBrutDirect(net, statut);
+  }
+
+  /** Le sens direct : ce qu'un brut mensuel laisse — pour la bascule. */
+  netMensuel(brut, statut) {
+    if (this.versNet === null || brut <= 0) {
+      return brut;
+    }
+    return this.versNet(brut, statut);
+  }
+
+  /**
+   * La conversion a-t-elle un effet pour ce statut ? Faux pour un exploitant
+   * agricole, un élu, un ultramarin : le modèle n'a pas leurs prélèvements
+   * hors retraite, et le nombre saisi est alors lu comme un brut.
+   */
+  convertit(statut) {
+    if (this.versNet === null) {
+      return false;
+    }
+    return this.netMensuel(1000.0, statut) !== 1000.0;
   }
 }
 
@@ -1500,10 +1586,23 @@ export class Contexte {
     const parametres = saisie.parametres(this.base);
     const macro = this.simulateur(parametres).macro;
     const annee = parametres.annee_courante;
+    const simulateur = this.simulateur(parametres);
+    const bareme = simulateur.baremePrelevements;
+    const versBrut = (netMensuel, statut) => salaireBrutDepuisNet(
+      bareme, macro, simulateur.catalogue, simulateur.affiliations,
+      statut, annee, netMensuel * MOIS_PAR_AN,
+    ) / MOIS_PAR_AN;
+    const versNet = (brutMensuel, statut) => salaireNetDepuisBrut(
+      bareme, macro, simulateur.catalogue, simulateur.affiliations,
+      statut, annee, brutMensuel * MOIS_PAR_AN,
+    ) / MOIS_PAR_AN;
     return new Echelle({
       moyen: salaireMoyenAnnuel(macro, annee),
       smic: HEURES_SMIC_PAR_MOIS * macro.smic_horaire.valeur(annee),
       plafond: macro.plafond_securite_sociale.valeur(annee) / MOIS_PAR_AN,
+      versBrut: saisie.saisieEnNet ? versBrut : null,
+      versNet,
+      versBrutDirect: versBrut,
     });
   }
 
@@ -2189,6 +2288,7 @@ function formulaire(saisie, contexte) {
   return tete + `
 <form class="carte" method="get" action="${g.route("/simuler")}">
   ${g.cache("unite_revenu", saisie.unite_revenu)}
+  ${g.cache("montants", saisie.montants)}
   <h2 class="serif" style="margin-top:0">Votre carrière${bulleDuTitre(saisie)}</h2>
   <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
   quel, ou saisissez la vôtre.</p>
@@ -2196,6 +2296,8 @@ function formulaire(saisie, contexte) {
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
   ${metiersFormulaire(saisie, affiliations, echelle)}
   ${basculeUnite(saisie, echelle)}
+  ${basculeMontants(saisie, echelle)}
+  ${mentionConversion(saisie, echelle)}
   ${releveFormulaire(saisie)}
   <details class="options">
     ${g.sommaire("Options de modélisation (sexe, profil, indexation, "
@@ -3043,13 +3145,14 @@ function resultats(contexte, saisie) {
   // le même nombre y paraît donc trois fois, et c'est le propos — seul le
   // système 4 déplace la fiche de paie.
   const remuneration = comparaison.remuneration;
+  const montants = Montants.depuis(saisie, contexte.simulateur(comparaison.parametres));
   const nets = {};
   if (remuneration !== null) {
     const referencePaie = remuneration.reference;
-    nets.actuel = referencePaie.droitEnVigueur.net;
-    nets.retroactif = referencePaie.droitEnVigueur.net;
-    nets["retroactif-employeur"] = referencePaie.droitEnVigueur.net;
-    nets.liberal = referencePaie.proposition.net;
+    nets.actuel = montants.salaire(referencePaie.droitEnVigueur);
+    nets.retroactif = montants.salaire(referencePaie.droitEnVigueur);
+    nets["retroactif-employeur"] = montants.salaire(referencePaie.droitEnVigueur);
+    nets.liberal = montants.salaire(referencePaie.proposition);
   }
 
   /**
@@ -3073,10 +3176,11 @@ function resultats(contexte, saisie) {
       <span class="chiffre salaire">
         <span class="categorie">salaire</span>
         <span class="somme">${g.nombre(net / 12)}</span>
-        <span class="unite">€ net/mois</span>
+        <span class="unite">${montants.uniteSalaire}</span>
         ${mention}
       </span>`;
   };
+
 
   const bloc = (cle, titre, glose, variation, tauxRemplacement,
                 partCapitalisee = 0.0) => {
@@ -3093,8 +3197,9 @@ function resultats(contexte, saisie) {
     if (partCapitalisee > 0) {
       barre += `<span class="capitalise" style="width:${formatFixe(partCapitalisee / reference * 100, 1)}%"></span>`;
       partage = `
-      <span class="composition">${g.eurosCentimes(repartition / 12)} de pension
-        par répartition + ${g.eurosCentimes(partCapitalisee / 12)} de rente
+      <span class="composition">${g.eurosCentimes(montants.pension(repartition) / 12)}
+        de pension par répartition +
+        ${g.eurosCentimes(montants.pension(partCapitalisee) / 12)} de rente
         capitalisée, par mois</span>`;
     }
     return `
@@ -3104,8 +3209,8 @@ function resultats(contexte, saisie) {
     <span class="montant">${salaire(cle)}
       <span class="chiffre principal">
         <span class="categorie">retraite</span>
-        <span class="somme">${g.nombre(montant / 12)}</span>
-        <span class="unite">€ brut/mois</span>
+        <span class="somme">${g.nombre(montants.pension(montant) / 12)}</span>
+        <span class="unite">${montants.unitePension}</span>
       </span>
     </span>
   </div>${partage}
@@ -3213,11 +3318,10 @@ function resultats(contexte, saisie) {
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
 Les trois autres appliquent chacun d'autres règles à la même carrière.
-Deux chiffres par ligne : à gauche votre <strong>salaire net</strong> pendant
-que vous cotisez, à droite votre <strong>pension brute</strong> une fois
-retraité — ${uniteReference}, l'un comme l'autre.
-La pension est dite brute parce qu'elle l'est : la CSG, la CRDS et la
-contribution de solidarité qui la frappent ne sont pas calculées ici.
+Deux chiffres par ligne : à gauche votre <strong>salaire</strong> pendant que
+vous cotisez, à droite votre <strong>pension</strong> une fois retraité — en
+${montants.mot}, l'un comme l'autre, ${uniteReference}.
+${noteDuMode(montants)}
 Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 
   // Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
@@ -3229,6 +3333,7 @@ ${lectureDesMontants(comparaison, saisie)}</h2>
 ${lecture}
 <div class="carte">
   ${scenarios}
+  ${basculeMontants(saisie, contexte.echelle(saisie), "#resultats")}
   ${fiabilite}
   ${capitalisation}
   ${minimum}
@@ -3381,6 +3486,128 @@ const NATURES_PART_EMPLOYEUR = {
 function eurosSigne(montant, centimes = true) {
   const signe = montant > 0 ? "+" : "";
   return `${signe}${centimes ? g.eurosCentimes(montant) : g.euros(montant)}`;
+}
+
+/**
+ * Le mode net/brut, et ce qu'il fait à chaque montant affiché.
+ *
+ * Un seul objet, construit une fois par rendu, pour que la bascule n'existe
+ * qu'à un endroit. Deux grandeurs n'ont pas le même barème — un salaire
+ * supporte des cotisations, une pension n'en supporte plus — et deux autres
+ * n'ont pas de net du tout : un CAPITAL notionnel et une ASSIETTE de cotisation
+ * sont bruts par nature, et le site les laisse tels quels.
+ */
+export class Montants {
+  constructor(net, tauxPension) {
+    this.net = net;
+    this.tauxPension = tauxPension;
+  }
+
+  static depuis(saisie, simulateur) {
+    return new Montants(saisie.enNet,
+      simulateur.baremePrelevements.pensions.tauxTotal);
+  }
+
+  /** Une pension, une rente, une garantie : tout ce qui se sert après. */
+  pension(brut) {
+    return this.net ? brut * (1 - this.tauxPension) : brut;
+  }
+
+  /** Un salaire, lu sur la fiche de paie qui porte déjà les deux. */
+  salaire(fiche) {
+    return this.net ? fiche.net : fiche.brut;
+  }
+
+  get mot() {
+    return this.net ? "net" : "brut";
+  }
+
+  get uniteSalaire() {
+    return this.net ? "€ net/mois" : "€ brut/mois";
+  }
+
+  get unitePension() {
+    return this.net ? "€ net/mois" : "€ brut/mois";
+  }
+}
+
+/**
+ * Ce que le mode courant suppose, en une phrase, là où il s'applique.
+ *
+ * En NET, c'est la convention de CSG qu'il faut dire : la loi fait dépendre le
+ * taux du revenu fiscal du foyer, que le simulateur ne demande pas, et le dépôt
+ * retient le taux plein. En BRUT, c'est le rappel qu'un brut n'est pas ce qu'on
+ * touche.
+ */
+function noteDuMode(montants) {
+  if (montants.net) {
+    return "La pension est nette de "
+      + `${g.pourcentage(montants.tauxPension, false, 1)} : CSG, CRDS `
+      + "et contribution de solidarité, au <strong>taux plein</strong>. La "
+      + "loi fait dépendre ce taux du revenu fiscal du foyer, que ce "
+      + "simulateur ne demande pas : une petite pension, exonérée en "
+      + "réalité, est donc ici un peu sous-estimée.";
+  }
+  return "Le brut n'est pas ce qui arrive sur le compte : il reste à en "
+    + "retirer les cotisations pour un salaire, la CSG pour une pension.";
+}
+
+/**
+ * Le statut dont le modèle ne sait pas faire la fiche de paie, s'il y en a.
+ *
+ * L'exploitant agricole relève de la MSA, l'élu touche une indemnité de
+ * fonction, l'ultramarin a la caisse de sa collectivité. Le nombre saisi est
+ * alors lu comme un brut, et le taire ferait croire à une conversion qui n'a
+ * pas eu lieu.
+ */
+function mentionConversion(saisie, echelle) {
+  if (!saisie.saisieEnNet) {
+    return "";
+  }
+  const sans = saisie.lignesCarriere.filter(
+    (ligne) => !ligne.sans_emploi && !echelle.convertit(ligne.statut),
+  );
+  if (!sans.length) {
+    return "";
+  }
+  return '<p class="note avertissement" style="margin-top:0.6rem">'
+    + g.icone("triangle-alert", "Avertissement")
+    + "<span>Le modèle ne connaît pas les prélèvements hors retraite "
+    + "de l'un de vos statuts : pour lui, le montant saisi est lu "
+    + "<strong>tel quel</strong>, comme un brut. La pension, elle, reste "
+    + "affichée en net.</span></p>";
+}
+
+/**
+ * Le lien qui passe de net à brut, et retour — montants déjà traduits.
+ *
+ * LES MONTANTS SAISIS SONT TRADUITS, et c'est tout l'enjeu : en mode net, le
+ * nombre du formulaire est un net. Le recopier tel quel dans l'autre mode le
+ * ferait relire comme un brut, et la page reviendrait en décrivant une AUTRE
+ * carrière — mieux payée d'un quart.
+ */
+function basculeMontants(saisie, echelle, ancre = "") {
+  const versLeNet = !saisie.enNet;
+  const remplacements = { montants: versLeNet ? "net" : "brut" };
+  // Seule la saisie EN EUROS porte un net ou un brut : un multiple du salaire
+  // moyen est un rapport entre deux bruts, que le mode ne touche pas.
+  if (saisie.revenu_en_euros) {
+    const lignes = saisie.lignesCarriere;
+    const traduits = lignes.map((ligne) => nombreBrut(Math.round(
+      versLeNet
+        ? echelle.netMensuel(ligne.salaire, ligne.statut)
+        : echelle.brutMensuelDirect(ligne.salaire, ligne.statut),
+    ), 0));
+    remplacements.salaire = traduits[0];
+    traduits.slice(1).forEach((valeur, index) => {
+      remplacements[`metier${index + 2}_salaire`] = valeur;
+    });
+  }
+  const libelle = versLeNet
+    ? "Voir les montants en net" : "Voir les montants en brut";
+  const cible = `#/simuler?${echapper(saisie.requete(remplacements))}${ancre}`;
+  return '<p class="discret" style="margin:0.9rem 0 0">'
+    + `<a href="${cible}">${libelle}</a></p>`;
 }
 
 /**

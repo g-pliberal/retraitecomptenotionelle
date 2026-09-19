@@ -70,7 +70,7 @@ def _echelle():
     ``Saisie.parcours`` en a besoin depuis que le formulaire accepte des euros :
     convertir « 2 500 € par mois » en multiple suppose le salaire moyen.
     """
-    return Contexte().echelle(Saisie())
+    return Contexte().echelle(Saisie(montants="brut"))
 
 
 @pytest.fixture(scope="module")
@@ -576,7 +576,10 @@ def test_le_formulaire_vierge_demande_des_euros():
 
 def test_un_salaire_mensuel_devient_un_multiple():
     """2 500 € par mois contre 40 000 € annuels d'ancrage, à l'échelle de 2026."""
-    saisie = Saisie.depuis_requete({"unite_revenu": "euros_mois", "salaire": "2500"})
+    # En brut : ce test mesure la conversion euros → multiple, et le mode
+    # net y ajouterait la conversion net → brut, qui a son propre test.
+    saisie = Saisie.depuis_requete({"unite_revenu": "euros_mois",
+                                    "salaire": "2500", "montants": "brut"})
     echelle = _echelle()
     assert saisie.niveaux(echelle) == pytest.approx([2500 * 12 / echelle.moyen])
     assert saisie.parcours(echelle)[0].niveau_salaire == pytest.approx(
@@ -620,7 +623,7 @@ def test_un_salaire_negatif_ou_nul_est_refuse():
 def test_l_unite_vaut_pour_tous_les_metiers():
     echelle = _echelle()
     saisie = Saisie.depuis_requete({
-        "unite_revenu": "euros_mois", "salaire": "2500",
+        "unite_revenu": "euros_mois", "salaire": "2500", "montants": "brut",
         "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "5000",
     })
@@ -631,7 +634,8 @@ def test_l_unite_vaut_pour_tous_les_metiers():
 def _lien_de_bascule(contexte, parametres):
     """L'adresse que porte le lien « saisir plutôt … », lue comme une requête."""
     corps = rendre(contexte, "/simuler", parametres)[1]
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">([^<]*)</a></p>', corps)
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">(Saisir plutôt [^<]*)</a></p>',
+                     corps)
     assert lien, "le formulaire ne porte plus de lien de bascule d'unité"
     return dict(parse_qsl(html.unescape(lien.group(1)))), html.unescape(lien.group(2))
 
@@ -644,7 +648,8 @@ def test_la_bascule_d_unite_convertit_les_montants(contexte):
     aurait refusé la saisie au lieu de la traduire. Le lien, lui, porte les
     montants déjà convertis.
     """
-    suite, libelle = _lien_de_bascule(contexte, {"naissance": "1975"})
+    suite, libelle = _lien_de_bascule(
+        contexte, {"naissance": "1975", "montants": "brut"})
     assert libelle == "Saisir plutôt un multiple du salaire moyen"
     assert suite["unite_revenu"] == "moyen"
     # 3 500 € par mois, à l'échelle d'un salaire moyen de 3 475 € : environ 1.
@@ -699,10 +704,14 @@ def test_les_bornes_annoncees_par_le_refus_sont_acceptees(contexte):
     Il dit « de 348 à 34 754 € » : les deux valeurs sont arrondies, et un
     arrondi du mauvais côté nommerait une borne hors bornes.
     """
-    echelle = contexte.echelle(Saisie())
+    # En brut : les bornes que le message nomme sont des bornes de BRUT,
+    # puisque c'est l'unité du modèle. En net, le nombre saisi est converti
+    # avant d'être borné, et le test porterait sur autre chose.
+    echelle = contexte.echelle(Saisie(montants="brut"))
     for borne in (round(echelle.mensuel(0.1)), round(echelle.mensuel(10))):
         saisie = Saisie.depuis_requete({
             "unite_revenu": "euros_mois", "salaire": str(borne),
+            "montants": "brut",
         })
         saisie.parcours(echelle)  # ne doit pas lever
 
@@ -710,6 +719,7 @@ def test_les_bornes_annoncees_par_le_refus_sont_acceptees(contexte):
 def test_la_bascule_convertit_tous_les_metiers(contexte):
     suite, _ = _lien_de_bascule(contexte, {
         "naissance": "1975", "unite_revenu": "euros_mois", "salaire": "2900",
+        "montants": "brut",
         "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "5800",
     })
@@ -4694,9 +4704,16 @@ def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(context
     assert lecture < premier < reperes
     cle = visible[lecture:premier]
     assert "C'est la référence." in cle
-    assert "votre <strong>salaire net</strong> pendant" in cle
-    assert "votre <strong>pension brute</strong> une fois" in cle
-    assert "par mois, en euros d'aujourd'hui, l'un comme l'autre" in cle
+    assert "votre <strong>salaire</strong> pendant" in cle
+    assert "votre <strong>pension</strong> une fois" in cle
+    # Le mode se lit dans la clé, et il vaut pour les DEUX chiffres : c'est
+    # précisément ce que la bascule garantit, et ce que le site ne faisait pas
+    # quand il opposait un salaire net à une pension brute.
+    # Le mot du mode et l'unité sont sur deux lignes du gabarit : on compare
+    # donc sur le texte aplati, comme le lecteur le lit.
+    aplati = " ".join(cle.split())
+    assert "en net, l'un comme l'autre, par mois, en euros d'aujourd'hui" in aplati
+    assert "au <strong>taux plein</strong>" in aplati
 
 
 def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
@@ -4721,10 +4738,10 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
         entete = bloc.split('<div class="barre')[0]
         assert entete.count('class="chiffre principal"') == 1
         assert f"en euros de {depart}" not in entete
-        # L'unité longue a quitté les cartes — « € brut/mois » suffit à côté
-        # d'un « € net/mois » — et la clé de lecture la porte une fois pour
-        # toutes. C'est là qu'on exige qu'elle soit dite.
-        assert "€ brut/mois" in entete
+        # L'unité longue a quitté les cartes — deux mots suffisent sous chaque
+        # nombre — et la clé de lecture la porte une fois pour toutes. Ce que
+        # la carte doit dire, c'est le MODE, et le même pour ses deux chiffres.
+        assert entete.count("€ net/mois") == 2
         # Le second chiffre, s'il est là, dit de quoi il parle : sans son
         # étiquette, deux nombres se toucheraient sans que rien ne les sépare.
         if 'class="chiffre salaire"' in entete:
@@ -4732,9 +4749,9 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
             assert "€ net/mois" in entete
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
-    depart_ou_reference = f"en euros de {depart}"
-    assert depart_ou_reference not in corps.split('<div class="carte">')[0]
-    assert "par mois, en euros d'aujourd'hui, l'un comme l'autre" in corps
+    assert f"en euros de {depart}" not in corps.split('<div class="carte">')[0]
+    assert ("en net, l'un comme l'autre, par mois, en euros d'aujourd'hui"
+            in " ".join(corps.split()))
 
 
 def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
@@ -5209,3 +5226,72 @@ def test_le_routeur_ne_prend_pas_une_adresse_reglee_pour_une_simulation():
         "le routeur doit savoir distinguer une règle d'un champ de carrière"
     )
     assert "!CLES_MODELISATION.includes(cle)" in page
+
+
+def test_la_bascule_net_brut_decrit_la_meme_carriere(contexte):
+    """Le piège que ce lien existe pour éviter, et c'est le même qu'à l'unité.
+
+    En mode net, le nombre du formulaire est un NET. Le recopier tel quel dans
+    l'autre mode le ferait relire comme un brut, et la page reviendrait en
+    décrivant une autre carrière — mieux payée d'un quart. Le lien porte donc
+    le montant traduit, et l'aller-retour doit retomber sur le nombre de
+    départ.
+    """
+    depart = {"naissance": "1975", "unite_revenu": "euros_mois",
+              "salaire": "2500", "montants": "net"}
+    corps = rendre(contexte, "/simuler", depart)[1]
+    lien = re.search(
+        r'<a href="#/simuler\?([^"]*)">Voir les montants en brut</a>', corps)
+    assert lien, "la page ne porte pas de bascule vers le brut"
+    vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
+    assert vers_brut["montants"] == "brut"
+    # Un net de 2 500 € vaut un brut d'environ 3 160 € pour un salarié du privé.
+    assert 3000 < float(vers_brut["salaire"]) < 3300
+
+    retour = rendre(contexte, "/simuler", vers_brut)[1]
+    lien = re.search(
+        r'<a href="#/simuler\?([^"]*)">Voir les montants en net</a>', retour)
+    assert lien, "la page ne porte pas de bascule vers le net"
+    vers_net = dict(parse_qsl(html.unescape(lien.group(1))))
+    assert float(vers_net["salaire"]) == pytest.approx(2500, abs=2)
+
+
+def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
+    """Même carrière, deux modes : le rapport des pensions est celui du barème.
+
+    C'est le seul test qui relie les deux moitiés de la bascule — la saisie,
+    qui convertit un net en brut, et l'affichage, qui retire 9,1 % de la
+    pension. S'il tombe, l'une des deux a bougé sans l'autre.
+    """
+    def pension(parametres):
+        corps = rendre(contexte, "/simuler", parametres)[1]
+        entete = corps.split('<div class="scenario">')[1].split('<div class="barre')[0]
+        brut = re.search(r'class="chiffre principal">\s*'
+                         r'<span class="categorie">retraite</span>\s*'
+                         r'<span class="somme">([^<]+)</span>', entete)
+        assert brut, entete[:200]
+        return float(brut.group(1).replace(" ", "").replace(",", "."))
+
+    commun = {"naissance": "1985-03-01", "sexe": "F",
+              "statut": "salarie_prive_non_cadre", "debut": "2007-09-01",
+              "liquidation": "2049-03-01", "unite_revenu": "euros_mois"}
+    # Le même salaire, dit une fois en brut et une fois en net : la bascule
+    # donne la correspondance, et on la reprend ici pour ne pas la deviner.
+    en_brut = pension({**commun, "salaire": "3158", "montants": "brut"})
+    en_net = pension({**commun, "salaire": "2500", "montants": "net"})
+    assert en_net == pytest.approx(en_brut * (1 - 0.091), rel=2e-3)
+
+
+def test_le_mode_des_montants_voyage_dans_l_adresse(contexte):
+    """Une adresse partagée décrit la carrière qu'on a calculée, mode compris.
+
+    Le mode gouverne l'interprétation du nombre « salaire » : une adresse qui
+    l'omettrait retomberait sur le défaut et décrirait une autre carrière.
+    C'est pourquoi `requete` l'écrit toujours, comme l'unité.
+    """
+    saisie = Saisie.depuis_requete({"naissance": "1975", "montants": "brut"})
+    assert "montants=brut" in saisie.requete()
+    assert "montants=net" in Saisie.depuis_requete({"naissance": "1975"}).requete()
+    # Et le formulaire le renvoie quand on le soumet, par un champ caché.
+    corps = rendre(contexte, "/simuler", {"naissance": "1975", "montants": "brut"})[1]
+    assert '<input type="hidden" name="montants" value="brut">' in corps
