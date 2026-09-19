@@ -913,10 +913,10 @@ diviseurs diffèrent, la conversion n'est pas neutre.
 
 Pour un salarié né en 1975 partant à 64 ans, l'âge de référence est de 67 ans :
 les droits acquis sont convertis à `G(67, 2026) = 22,03` puis servis à
-`G(64, 2039) = 25,81`. L'écart entre les deux, environ 10 %, est retiré de
+`G(64, 2039) = 25,67`. L'écart entre les deux, environ 10 %, est retiré de
 droits que le système actuel aurait servis sans décote — l'anticipation est
 payée une seconde fois, sur le passé. La pension du scénario 3 passe de
-25 771 € à 27 808 € par an lorsqu'on retient l'autre convention.
+23 074 € à 25 334 € par an lorsqu'on retient l'autre convention.
 
 Le défaut est la lecture stricte du cahier des charges : dans un système
 notionnel, l'âge de départ se paie, y compris sur le passé. `liquidation` est la
