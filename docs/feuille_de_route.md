@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->22 776<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->22 827<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
