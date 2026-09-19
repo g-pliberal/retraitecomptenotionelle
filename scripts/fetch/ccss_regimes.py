@@ -82,6 +82,70 @@ PORTEE_FICHE = 120
 LIBELLE_MINIMUM = 6
 
 
+#: Le même régime change de graphie d'un rapport à l'autre : la mise en page
+#: mange les espaces à des endroits différents — « Régimespécial des agents
+#: delaSNCF », « Régime spécial des agents de la SNCF », « Régime spécial
+#: desagents de la SNCF » — et les polices à encodage propre rendent certains
+#: titres en charabia. Cinquante et un libellés pour une vingtaine de caisses :
+#: sans cette table, la série est inexploitable. On reconnaît donc le régime à
+#: un MOTIF distinctif, cherché dans le titre replié, sans espaces ni accents.
+#: L'ordre compte : le plus spécifique d'abord.
+CANONIQUES: tuple[tuple[str, str], ...] = (
+    ("brancheMALADIE", "rsi_maladie"),          # jamais fondu dans le RSI vieillesse
+    ("brancheVIEILLESSE", "rsi_vieillesse"),
+    ("independants", "rsi"),
+    ("retraitecomplementaireobligatoiredesnon", "msa_exploitants_complementaire"),
+    ("exploitantsagricoles", "msa_exploitants"),
+    ("exploitants", "msa_exploitants"),
+    ("salariesagricoles", "msa_salaries"),
+    ("agricoledessalaries", "msa_salaries"),
+    ("salaries", "msa_salaries"),
+    ("cnracl", "cnracl"),
+    ("territoriaux", "cnracl"),
+    ("canssm", "canssm"),
+    ("mines", "canssm"),
+    ("agircarrco", "agirc_arrco"),
+    ("agirc", "agirc_arrco"),
+    ("arrco", "agirc_arrco"),
+    ("sncf", "sncf"),
+    ("ratp", "ratp"),
+    ("crpcen", "crpcen"),
+    ("clercs", "crpcen"),
+    ("cnieg", "cnieg"),
+    ("electriques", "cnieg"),
+    ("fspoeie", "fspoeie"),
+    ("enim", "enim"),
+    ("invalidesdelamarine", "enim"),
+    ("cnavplcomplementaire", "cnavpl_complementaire"),
+    ("cnavpl", "cnavpl_complementaire"),
+    ("professionsliberales", "cnavpl"),
+    ("ircantec", "ircantec"),
+    ("banquedefrance", "banque_de_france"),
+    ("cnbf", "cnbf"),
+    ("barreaufrancais", "cnbf"),
+    ("cultes", "cavimac"),
+    ("saspa", "saspa"),
+    ("personnesagees", "saspa"),
+    ("navig", "crpnpac"),
+    ("fonctionnairescivilsetmilitaires", "fonction_publique_etat"),
+    ("autresregimes", "autres_regimes"),
+)
+
+#: Les accents et les espaces sautent avant la reconnaissance : les titres les
+#: portent de façon instable.
+ACCENTS = str.maketrans("àâäéèêëîïôöùûüç", "aaaeeeeiioouuuc")
+
+
+def canonique(titre: str) -> str | None:
+    """Le code de caisse d'un titre de fiche, ou ``None`` si on ne le reconnaît pas."""
+    nu = titre.lower().translate(ACCENTS)
+    nu = "".join(c for c in nu if c.isalnum())
+    for motif, code in CANONIQUES:
+        if motif.lower() in nu:
+            return code
+    return None
+
+
 def _replie(texte: str) -> str:
     return " ".join(texte.split())
 
@@ -152,8 +216,12 @@ def lire_rapport(annee_rapport: int, octets: bytes) -> tuple[dict, int]:
         if not regime:
             orphelins += 1
             continue
+        code = canonique(regime)
+        if code is None:
+            orphelins += 1
+            continue
         for libelle, annees in lire_tableau(lignes, rang, colonnes).items():
-            cible = trouves.setdefault(regime, {}).setdefault(libelle, {})
+            cible = trouves.setdefault((code, regime), {}).setdefault(libelle, {})
             for a, v in annees.items():
                 if a < annee_rapport:      # jamais une prévision
                     cible[a] = v
@@ -174,6 +242,7 @@ def main() -> int:
 
     #: régime -> série -> année -> (valeur, rapport qui l'arrête)
     serie: dict[str, dict[str, dict[int, tuple[float, int]]]] = {}
+    titres_vus: dict[str, set[str]] = {}
     illisibles: list[int] = []
     for annee, url in sorted(rapports.items()):
         if not options.depuis <= annee <= options.jusqu:
@@ -190,9 +259,10 @@ def main() -> int:
         n = sum(len(v) for r in trouves.values() for v in r.values())
         print(f"  {annee} : {len(trouves):>2} régimes, {n:>4} valeurs"
               f"{f', {orphelins} tableaux sans régime' if orphelins else ''}")
-        for regime, libelles in trouves.items():
+        for (code, titre), libelles in trouves.items():
             for libelle, annees in libelles.items():
-                cible = serie.setdefault(regime, {}).setdefault(libelle, {})
+                cible = serie.setdefault(code, {}).setdefault(libelle, {})
+                titres_vus.setdefault(code, set()).add(titre)
                 for a, v in annees.items():
                     cible.setdefault(a, (v, annee))       # le premier qui arrête gagne
 
@@ -213,6 +283,7 @@ def main() -> int:
                 "source": CCSS.PAGE_RAPPORTS,
                 "fiabilite": "certifiee",
                 "rapports_illisibles": illisibles,
+                "titres_par_caisse": {k: sorted(v) for k, v in sorted(titres_vus.items())},
                 "valeurs": valeurs,
             },
             ensure_ascii=False,
