@@ -81,6 +81,25 @@ export const TAUX_REELS = "taux_reels";
 export const CLES_RECETTES = [TAUX_REELS, "notionnel_liberal"];
 
 /**
+ * Les deux façons d'établir la recette du scénario 6, et elles ne posent pas
+ * la même question.
+ *
+ * `assiette` applique son taux de 18 % à l'ASSIETTE MESURÉE des revenus
+ * d'activité. C'est la convention du programme : les employeurs versent la
+ * cotisation entière, l'État leur rembourse l'allègement par l'impôt, et ce
+ * remboursement est une aide à l'activité économique. Un système qui n'exonère
+ * personne encaisse donc son taux plein.
+ *
+ * `rapport` est l'ancienne convention, gardée pour mesurer ce qu'elle valait :
+ * elle multipliait la part cotisée des ressources OBSERVÉES par le rapport de
+ * deux taux LÉGAUX, prêtant ainsi au taux de 18 % la déperdition du système
+ * actuel — 15,5 % d'assiette encaissés pour 18 % affichés.
+ */
+export const CONVENTION_ASSIETTE = "assiette";
+export const CONVENTION_RAPPORT = "rapport";
+export const CONVENTIONS_RECETTE = [CONVENTION_ASSIETTE, CONVENTION_RAPPORT];
+
+/**
  * Première génération dont une liquidation puisse tomber après le début de la
  * répartition (1941). En deçà, le modèle refuse — à juste titre — de calculer.
  */
@@ -403,7 +422,9 @@ class Avenir {
  */
 class SoldeAnnuel {
   constructor(annee, projete, ressources, depenses, rapportsAnnee, pib, retrait = 0.0,
-              recettes = {}, partContributive = 0.0) {
+              recettes = {}, partContributive = 0.0, tauxPrelevement = 0.0,
+              tauxLiberal = 0.0, anneeBascule = 0,
+              convention = CONVENTION_RAPPORT) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
@@ -419,6 +440,25 @@ class SoldeAnnuel {
     // changement de taux ait prise.
     this.rapportsRecettes = recettes;
     this.partContributive = partContributive;
+    // Ce que le système prélève, rapporté à l'ASSIETTE et non au PIB ; le taux
+    // unique de la proposition ; l'année où il commence ; et laquelle des deux
+    // conventions de recette s'applique.
+    this.tauxPrelevement = tauxPrelevement;
+    this.tauxLiberal = tauxLiberal;
+    this.anneeBascule = anneeBascule;
+    this.conventionRecette = convention;
+  }
+
+  /**
+   * La convention du programme s'applique-t-elle à cette année ? Trois
+   * conditions, et la moindre manquante fait retomber sur l'ancienne plutôt
+   * que sur une division par zéro.
+   */
+  get recetteParAssiette() {
+    return this.conventionRecette === CONVENTION_ASSIETTE
+      && this.tauxPrelevement > 0
+      && this.tauxLiberal > 0
+      && this.anneeBascule > 0 && this.anneeBascule <= this.annee;
   }
 
   /** Ce que le système coûterait cette année-là, en part de PIB. */
@@ -435,10 +475,18 @@ class SoldeAnnuel {
    */
   ressourcesDe(scenario) {
     if (scenario === "actuel") return this.ressources;
-    // LA RECETTE SUIT LE TAUX : le scénario 6 remplace tous les taux par 18 %,
-    // et la part COTISÉE des ressources baisse d'autant. Les ressources qui ne
-    // sont pas des cotisations — impôts affectés, subventions d'équilibre —
-    // sont laissées inchangées, faute que le programme dise ce qu'il en ferait.
+    if (scenario === "notionnel_liberal" && this.recetteParAssiette) {
+      // Le taux plein sur l'assiette mesurée, et rien d'autre de changé. Les
+      // impôts et taxes affectés RESTENT : ils ne compensent pas les
+      // allègements généraux, c'est la TVA qui le fait et elle finance la
+      // branche maladie. Ce que ce poste porte et qui ne revient pas à ce
+      // système, c'est la CSG du fonds de solidarité vieillesse, et elle sort
+      // par `retrait`.
+      const pleine = this.ressources * this.tauxLiberal / this.tauxPrelevement;
+      return pleine + this.ressources * (1 - this.partContributive) - this.retrait;
+    }
+    // LA RECETTE SUIT LE TAUX, ancienne convention : la part COTISÉE des
+    // ressources observées est multipliée par un rapport de taux légaux.
     const rapport = this.rapportsRecettes[scenario] ?? 1.0;
     const cotisees = this.ressources * this.partContributive;
     return cotisees * rapport + (this.ressources - cotisees) - this.retrait;
@@ -681,8 +729,17 @@ function construireAvenir(liste, depenses, population, simulateur, poids) {
  * COR de bout en bout : c'est ce qui fait que le solde du scénario 1 est
  * exactement le solde publié, et non une reconstitution.
  */
-function construireSolde(avenir, comptes, derniereAnneePib) {
+function construireSolde(avenir, comptes, derniereAnneePib, assiette,
+                        tauxLiberal, anneeBascule, convention) {
   const parAnnee = new Map(avenir.annees.map((ligne) => [ligne.annee, ligne]));
+  // Le taux de prélèvement de l'année, ou celui de la dernière connue : il
+  // faut le calculer sur une année où l'assiette est PUBLIÉE, reconduire un
+  // montant en euros courants n'ayant pas de sens.
+  const tauxPrelevement = (annee) => {
+    if (!assiette) return 0.0;
+    const reference = assiette.anneeDeReference(annee);
+    return assiette.tauxPrelevement(comptes.ressource(reference), reference);
+  };
   const lignes = [];
   for (const annee of comptes.annees()) {
     const ligne = parAnnee.get(annee);
@@ -697,6 +754,10 @@ function construireSolde(avenir, comptes, derniereAnneePib) {
       comptes.recetteNonAcquise(annee),
       ligne.rapportsRecettes,
       comptes.partContributive(annee),
+      tauxPrelevement(annee),
+      tauxLiberal,
+      anneeBascule,
+      convention,
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
@@ -726,7 +787,11 @@ function construireSolde(avenir, comptes, derniereAnneePib) {
  */
 export function calculerCout(simulateur, depenses, population, comptes = null,
                              casTypes = CAS_TYPES, mode = "effectifs",
-                             liquidation = "droit") {
+                             liquidation = "droit", assiette = null,
+                             conventionRecette = CONVENTION_ASSIETTE) {
+  if (!CONVENTIONS_RECETTE.includes(conventionRecette)) {
+    throw new Error(`convention de recette inconnue : ${conventionRecette}`);
+  }
   const { liste, motifs } = pensionnes(simulateur, casTypes, liquidation);
   const poids = ponderation(simulateur, mode, casTypes);
   const macro = simulateur.macro;
@@ -758,7 +823,11 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     lignes,
     avenir,
     comptes && avenir.annees.length
-      ? construireSolde(avenir, comptes, depenses.pib.derniereAnnee)
+      ? construireSolde(
+        avenir, comptes, depenses.pib.derniereAnnee, assiette,
+        simulateur.parametres.taux_cotisation_liberal,
+        simulateur.parametres.annee_bascule, conventionRecette,
+      )
       : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE),
     anneeEuros,
     generations(),

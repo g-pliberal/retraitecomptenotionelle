@@ -5202,7 +5202,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   point près sur une grille qui mêle à ce salarié des fonctionnaires, dont
   l'employeur verse 74,28 % du traitement, et des non-salariés, qui cotisent
   moins. Le scénario 6 passe ainsi d'un solde moyen de +3,75 % du PIB à
-  −0,73 %, et son coefficient de 2070 de 1,53 à 1,00.
+  +0,12 %, et son coefficient de 2070 de 1,53 à 1,10.
 
   Le calcul est tenu au niveau du SEUL rapport, comme celui des masses de
   pension, et il suppose trois choses. Que l'assiette ne bouge pas : un taux
@@ -5311,8 +5311,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   | | Solde moyen 2026-2070 | Coefficient 2040 | Équilibre atteint |
   |---|---|---|---|
-  | Scénario 6, convention `rapport` (affichée) | −0,73 % du PIB | 0,88 | 2026 |
-  | Scénario 6, convention `assiette` | **+0,12 %** | **0,97** | **2026** |
+  | Scénario 6, convention `assiette` (affichée) | **+0,12 % du PIB** | **0,97** | 2026 |
+  | Scénario 6, convention `rapport` | −0,73 % | 0,88 | 2026 |
   | Système actuel | −1,13 % | — | jamais |
 
 Le taux plein rapporte PLUS que le rapport de taux légaux ne le disait :
@@ -5372,10 +5372,10 @@ Le taux plein rapporte PLUS que le rapport de taux légaux ne le disait :
   donc raccorder deux périmètres, comme elle le fait déjà pour les caisses que
   la DREES renumérote.
 
-  **Ce que la page affiche en attendant.** L'ancienne convention, parce qu'un
-  chiffre de tête ne se change pas sans que celui qui le publie l'ait décidé.
-  Les deux sont calculables, l'écart est écrit ici, et le jour où le
-  programme dira laquelle il publie, il n'y aura qu'un mot à changer.
+  **Ce que la page affiche.** La convention du programme, depuis le
+  19 septembre 2026. L'autre reste calculable — `convention_recette="rapport"`
+  —, comme `ponderation="egale"` garde l'ancienne pondération des cas types :
+  on ne discute pas d'une convention qu'on ne sait pas chiffrer.
 
   Les réserves financières des régimes, que le COR chiffre à part, ne sont
   toujours pas comptées : le solde dit le flux, jamais le stock.

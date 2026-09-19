@@ -38,6 +38,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
+from retraite_notionnelle.donnees.assiette import POSTES_ASSIETTE  # noqa: E402
 from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     SerieAnnuelle,
     charger_serie_annuelle,
@@ -182,6 +183,13 @@ def _comptes_retraite() -> dict:
         series[f"transferts_{poste.code}"] = charger_serie_annuelle(
             macro / "transferts_retraite.csv", "montant_meur",
             nom=f"transferts_{poste.code}", filtre={"poste": poste.code})
+    # L'assiette des revenus d'activité, en millions d'euros : ce sur quoi la
+    # proposition prélève ses 18 %. Sans elle, un taux affiché ne se convertit
+    # pas en recette.
+    for code, _ in POSTES_ASSIETTE:
+        series[f"assiette_{code}"] = charger_serie_annuelle(
+            macro / "assiette_activite.csv", "montant_meur",
+            nom=f"assiette_{code}", filtre={"poste": code})
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
 
 

@@ -20,6 +20,7 @@ import {
   AgeConversionDroitsAcquis, ModeAgeReference, ModeIndexation, PARAMETRES_DEFAUT, PartCotisation,
   SituationFoyer, TableConversion, avec, cleParametres,
 } from "./config.js";
+import { AssietteActivite } from "./assiette.js";
 import { COMPOSANTE_GARANTIE, SCENARIOS, calculerCout } from "./cout.js";
 import { DistributionPensions } from "./distribution.js";
 import { coutGarantie } from "./garantie.js";
@@ -1295,6 +1296,7 @@ export class Contexte {
     this._comptes = null;
     this._population = null;
     this._distribution = null;
+    this._assiette = null;
     this._cout = null;
   }
 
@@ -1337,11 +1339,20 @@ export class Contexte {
     return this._distribution;
   }
 
+  /** Sur quoi l'on prélève : sans elle, un taux ne se convertit pas en recette. */
+  assiette() {
+    if (!this._assiette) {
+      this._assiette = new AssietteActivite(this.paquet);
+    }
+    return this._assiette;
+  }
+
   /** Le coût agrégé de tous les systèmes — une seconde de calcul, une fois. */
   cout() {
     if (!this._cout) {
       this._cout = calculerCout(
         this.simulateur(), this.depenses(), this.population(), this.comptes(),
+        undefined, undefined, undefined, this.assiette(),
       );
     }
     return this._cout;
@@ -4643,6 +4654,8 @@ chose autrement, par le diviseur d'espérance de vie, mais ils le font
 function coutDetailEquilibre(contexte) {
   const c = contexte.cout();
   const solde = c.solde;
+  const assiette = contexte.assiette();
+  const anneeAssiette = assiette.derniereAnnee;
   const obs = solde.derniereAnneeObservee;
   const observe = solde.annee(obs);
   const horizon = solde.annee(solde.derniereAnnee);
@@ -4695,26 +4708,28 @@ retiré, à part constante des ressources sur les années projetées. C'est ce
 retrait qui creuse leur solde : un système notionnel qui ne sert plus ces
 droits ne peut pas en garder les recettes.</p>
 
-<div class="note"><strong>Un taux de 18 % n'encaisse pas ce qu'un taux de
-${g.pourcentage(0.18 / horizon.rapportsRecettes.notionnel_liberal, false, 1)}
-encaisse.</strong> La proposition remplace tous les taux de cotisation par un
-seul, parts salariale et patronale additionnées. Sur les carrières de la
-grille, le droit en vigueur prélève en moyenne
-${g.pourcentage(0.18 / horizon.rapportsRecettes.notionnel_liberal, false, 1)} :
-27,9 % pour un salarié non cadre du privé sous le plafond, chiffre que le COR
-publie et que le modèle retrouve, et bien davantage pour un fonctionnaire, dont
-l'employeur verse 74 % du traitement. La part cotisée des ressources,
-${g.pourcentage(horizon.partContributive, false, 0)} du total, est donc
-multipliée par
-${g.nombre(horizon.rapportsRecettes.notionnel_liberal, 2)} à compter de la
-bascule. C'est ce qui ramène le coefficient de la proposition en
-${solde.derniereAnnee} de
-${g.nombre(horizon.ressources / horizon.depense("notionnel_liberal"), 2)} à
-${g.nombre(horizon.coefficient("notionnel_liberal"), 2)}, et son solde moyen
-d'un excédent à l'équilibre. Ce qui n'est pas cotisé (impôts et taxes
-affectés, subventions d'équilibre) est reconduit tel quel : le programme ne dit
-pas ce qu'il en ferait, et le reconduire est l'hypothèse la plus favorable qu'on
-puisse lui prêter.</div>
+<div class="note"><strong>Dix-huit pour cent de quoi ?</strong> Le système 4
+remplace tous les taux de cotisation par un seul, parts salariale et patronale
+additionnées, et ce taux s'applique à l'ASSIETTE des revenus d'activité : les
+salaires et traitements bruts, plus le revenu mixte des non-salariés, soit
+${milliards(assiette.montant(anneeAssiette), 0)} en ${anneeAssiette},
+${g.pourcentage(assiette.partPib(anneeAssiette), false, 1)} du PIB. Le
+système de retraite y prélève aujourd'hui
+${g.pourcentage(horizon.tauxPrelevement, false, 1)} de ressources en tout, et
+la proposition en prélèverait 18 : c'est le rapport de ces deux nombres qui fait
+sa recette. Elle ne touche aucune compensation d'allègement, n'en accordant
+aucun, et cela ne lui retire rien ici : cette compensation passe par la TVA, qui
+finance la branche maladie et n'apparaît pas au compte de la retraite.</div>
+
+<div class="note"><strong>L'autre lecture, plus sévère d'un point de
+PIB.</strong> Le modèle sait aussi appliquer aux 18 % la DÉPERDITION du système
+actuel : les allègements généraux et les assiettes réduites font qu'un taux
+légal proche de
+${g.pourcentage(0.18 / horizon.rapportsRecettes.notionnel_liberal, false, 0)}
+ne rentre pas en entier. Compter ainsi revient à supposer que la proposition
+garde la même architecture d'exonérations, ce que son texte ne dit pas. Les deux
+lectures se défendent, elles sont toutes deux calculées, et la page a retenu la
+première.</div>
 
 <div class="note"><strong>Un coefficient supérieur à un est une marge, et
 une marge se sert.</strong> Lire les
@@ -5011,25 +5026,23 @@ function coutDetailLimites(contexte) {
 laisse onze, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
   <li><strong>Les recettes réagissent sur deux points, et sur deux
-  seulement.</strong> La recette suit le droit : ce que la branche famille et
-  l'assurance chômage versent pour des droits que les systèmes notionnels ne
-  servent pas leur est retiré. La recette suit le taux : le système 4, qui pose
-  un taux unique de 18 % pour tous, voit la part cotisée de ses ressources
-  baisser dans le rapport de ce que ce taux prélève à ce que le droit en
-  vigueur prélève. Deux choses ne réagissent toujours pas. Le quart des
-  ressources qui n'est pas cotisé (impôts et taxes affectés, subventions
-  d'équilibre) est reconduit tel quel, faute qu'aucun programme dise ce qu'il
-  en ferait : c'est l'hypothèse la plus favorable au système 4. Et l'assiette
-  elle-même, que le modèle suppose inchangée alors qu'un taux plus bas la
-  déforme.</li>
-  <li><strong>Ce qui est prélevé n'est pas ce qui ouvre des droits.</strong> Le
-  modèle porte au compte le taux qui ACQUIERT, et c'est lui qu'il compare à
-  18 %. Deux prélèvements de l'Agirc-Arrco n'ouvrent aucun droit et rentrent
-  pourtant dans les caisses : la contribution d'équilibre générale et la
-  contribution d'équilibre technique, deux points et demi de plus sur un
-  salaire du privé. Les compter relèverait ce que le système actuel encaisse,
-  donc abaisserait encore le rapport de recettes du système 4 : le chiffre
-  affiché lui est favorable.</li>
+  seulement.</strong> La recette suit le droit : ce que la branche famille,
+  l'assurance chômage et le fonds de solidarité vieillesse versent pour des
+  droits que les systèmes notionnels ne servent pas leur est retiré, un peu
+  plus d'un point de PIB. La recette suit le taux : le système 4, qui pose un
+  taux unique de 18 %, prélève ce taux sur l'assiette mesurée des revenus
+  d'activité au lieu de la part cotisée des ressources d'aujourd'hui. Le reste
+  est reconduit tel quel (subventions d'équilibre aux régimes en extinction,
+  impôts et taxes affectés), faute qu'aucun programme dise ce qu'il en
+  ferait.</li>
+  <li><strong>L'assiette est supposée insensible au taux.</strong> Un taux de
+  cotisation plus bas déforme l'offre de travail et la structure des
+  rémunérations ; aucune élasticité n'est posée ici, et le sens de l'effet
+  joue plutôt en faveur du système 4. Au-delà de la dernière année où
+  l'assiette est publiée, c'est le TAUX DE PRÉLÈVEMENT qui est reconduit et
+  non la part de PIB de l'assiette : celle-ci suit alors les ressources
+  projetées par le COR, dont la baisse en part de PIB tient précisément à une
+  assiette qui progresse moins vite que le PIB.</li>
   <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
   L'appliquer changerait toutes les pensions par un même facteur, donc tous les
   niveaux de cette page, sans toucher aux écarts entre carrières, qui sont la

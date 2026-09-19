@@ -594,11 +594,10 @@ class Cout:
     #: Datation du départ des cas types : ``droit`` ou ``absolu``.
     liquidation: str = "droit"
     #: Convention de recette du scénario 6 : ``assiette`` ou ``rapport``.
-    #: Le défaut reste ``rapport`` tant que le programme n'a pas tranché ce que
-    #: la page doit AFFICHER : les deux se calculent, et l'écart entre elles —
-    #: plus d'un point de PIB sur le solde moyen — est trop grand pour qu'on le
-    #: change sans le dire.
-    convention_recette: str = CONVENTION_RAPPORT
+    #: ``assiette`` est celle du programme, et celle que la page affiche depuis
+    #: le 19 septembre 2026 ; ``rapport`` reste calculable pour dire ce qu'elle
+    #: valait, comme ``ponderation="egale"`` garde l'ancienne pondération.
+    convention_recette: str = CONVENTION_ASSIETTE
     #: Poids de chaque cas type la DERNIÈRE année observée — ce que la page
     #: affiche pour dire sur quoi ses agrégats reposent.
     poids: dict[str, float] = field(default_factory=dict)
@@ -995,7 +994,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   ponderation: str = "effectifs",
                   liquidation: str = "droit",
                   assiette: AssietteActivite | None = None,
-                  convention_recette: str = CONVENTION_RAPPORT) -> Cout:
+                  convention_recette: str = CONVENTION_ASSIETTE) -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
     Les années où le modèle ne sert AUCUNE pension — celles d'avant la première
