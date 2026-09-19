@@ -1,7 +1,10 @@
 /**
- * Âge de référence à cliquet et écart d'anticipation.
+ * Âge de référence et écart d'anticipation.
  *
- * Portage de ``src/retraite_notionnelle/moteur/age_reference.py``. Règle
+ * Portage de ``src/retraite_notionnelle/moteur/age_reference.py``. Le DÉFAUT
+ * fixe l'âge de référence à 64 ans — l'âge légal d'ouverture des droits — à
+ * partir de l'année de bascule, et garde le cliquet avant elle. Le cliquet
+ * reste offert en variante, et c'est lui que décrit la suite. Règle
  * demandée : chaque fois que l'âge de départ a été abaissé, la pension est
  * calculée comme si l'assuré était parti trop tôt. L'âge de référence ne
  * redescend donc jamais — c'est un cliquet sur l'âge du taux plein du régime
@@ -49,6 +52,17 @@ export class AgeReference {
 
     if (mode === ModeAgeReference.LEGAL_SANS_CLIQUET) {
       return this._legal.valeur(annee);
+    }
+
+    // La borne n'est pas la même des deux côtés, et c'est voulu. L'indexation
+    // sur l'espérance de vie PROLONGE le cliquet : elle le reprend à l'année
+    // suivante. L'âge fixe le REMPLACE, et il doit valoir dès la bascule
+    // elle-même, parce que c'est à cette année-là que les droits acquis sont
+    // convertis — la borne stricte l'aurait laissé sans effet sur le seul
+    // calcul où l'âge de référence pèse sur une pension.
+    if (mode === ModeAgeReference.FIXE_APRES_BASCULE
+        && annee >= this.parametres.annee_bascule) {
+      return this.parametres.age_reference_fixe;
     }
 
     const base = this._appliqueCliquet(annee);

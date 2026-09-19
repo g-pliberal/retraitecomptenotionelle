@@ -71,7 +71,8 @@ export const INDEXATIONS = [
 export const LISSAGE_MAXIMUM = 30;
 
 export const AGES_REFERENCE = [
-  ["cliquet_legal", "Cliquet légal (défaut)"],
+  ["fixe_apres_bascule", "64 ans à partir de la bascule (défaut)"],
+  ["cliquet_legal", "Cliquet légal"],
   ["cliquet_puis_esperance_vie", "Cliquet puis espérance de vie"],
   ["legal_sans_cliquet", "Âge légal, sans cliquet"],
 ];
@@ -395,7 +396,7 @@ const DEFAUTS = Object.freeze({
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
-  age_reference: "cliquet_legal",
+  age_reference: "fixe_apres_bascule",
   table: "unisexe",
   conversion_acquis: "reference",
   part_cotisation: "salariale",

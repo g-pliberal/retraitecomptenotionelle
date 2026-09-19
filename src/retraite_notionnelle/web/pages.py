@@ -98,7 +98,8 @@ INDEXATIONS = [
 LISSAGE_MAXIMUM = 30
 
 AGES_REFERENCE = [
-    ("cliquet_legal", "Cliquet légal (défaut)"),
+    ("fixe_apres_bascule", "64 ans à partir de la bascule (défaut)"),
+    ("cliquet_legal", "Cliquet légal"),
     ("cliquet_puis_esperance_vie", "Cliquet puis espérance de vie"),
     ("legal_sans_cliquet", "Âge légal, sans cliquet"),
 ]
@@ -460,7 +461,7 @@ class Saisie:
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
-    age_reference: str = "cliquet_legal"
+    age_reference: str = "fixe_apres_bascule"
     table: str = "unisexe"
     conversion_acquis: str = "reference"
     part_cotisation: str = "salariale"

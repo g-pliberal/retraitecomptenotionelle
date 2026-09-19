@@ -358,21 +358,32 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
     peser. Le rapport monte donc d'abord — jusqu'à dépasser 1 pour le
     scénario 5, qui porte le plus de droits — avant de tomber.
 
-    CE PREMIER TEMPS DURE CINQ ANS, et cinq ans est le pas de la grille de
-    générations : ce n'est pas un phénomène, c'est la granularité avec
-    laquelle le modèle renouvelle ses liquidants face à un stock qui, lui,
-    change de régime d'un coup. Passé ce pas, la décroissance est stricte
+    CE PREMIER TEMPS DURAIT CINQ ANS — le pas de la grille de générations —
+    tant que les droits acquis se convertissaient au diviseur de 67 ans. Il en
+    dure jusqu'à huit depuis que l'âge de référence est fixé à 64 ans à partir
+    de la bascule : la conversion à un âge plus bas prend un diviseur plus
+    élevé, donc un capital d'ouverture plus gros, et ce cadeau va tout entier
+    aux générations de transition, celles-là mêmes qui liquident pendant le
+    premier temps. Le scénario 5, qui porte en plus la part patronale, le
+    reçoit deux fois et culmine à 2,7 % au-dessus du système actuel en 2034 ;
+    le 3 culmine à 1,3 % en 2031. Passé le sommet, la décroissance est stricte
     jusqu'à l'horizon, et c'est elle que ce test garde.
+
+    Le sommet est donc CHERCHÉ et non supposé : fixer son année d'avance
+    ferait passer le test pour un contrôle alors qu'il ne serait qu'un
+    enregistrement.
     """
-    premier_pas = avenir.annee_bascule + PAS_GENERATIONS
     for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
         lignes = [l for l in avenir.annees if l.annee >= avenir.annee_bascule]
-        # Le sursaut initial existe, mais il reste petit : la réforme ne coûte
-        # pas plus de un pour cent de plus que le système qu'elle remplace.
-        assert max(l.rapports[scenario] for l in lignes) < 1.01
+        # Le sursaut initial existe, et il reste petit : la réforme ne coûte
+        # pas plus de trois pour cent de plus que le système qu'elle remplace.
+        sommet = max(lignes, key=lambda l: l.rapports[scenario])
+        assert sommet.rapports[scenario] < 1.03, scenario
+        # Et il est borné dans le temps : au plus deux pas de grille.
+        assert sommet.annee <= avenir.annee_bascule + 2 * PAS_GENERATIONS, scenario
         precedent = None
         for ligne in lignes:
-            if ligne.annee < premier_pas:
+            if ligne.annee < sommet.annee:
                 continue
             rapport = ligne.rapports[scenario]
             if precedent is not None:
@@ -846,29 +857,38 @@ def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
     ajoute la part patronale, donc des droits, donc une dépense — et l'écart
     ne se rattrape plus sur l'horizon.
 
-    Les deux restent au-dessus du système actuel : c'est le seul classement
-    que ce test garantit encore.
+    ET LE SCÉNARIO 5 EST PASSÉ SOUS LE SYSTÈME ACTUEL, depuis que l'âge de
+    référence est fixé à 64 ans à partir de la bascule. Converti à 64 ans et
+    non à 67, un droit déjà acquis prend un diviseur plus élevé, donc un
+    capital d'ouverture plus gros : les deux réformes prospectives coûtent
+    chacune un demi-point de PIB de plus, et celle qui portait déjà le plus de
+    droits repasse du mauvais côté. Le 3 garde sa marge, le 5 perd son
+    classement. C'est un résultat, et il se dit : convertir les droits acquis
+    sans pénalité d'âge se paie, et ce que ça coûte se lit ici.
     """
     debut, fin = solde.premiere_annee_projetee, solde.derniere_annee
     assert solde.premiere_annee_equilibree("actuel") is None
     assert solde.solde_moyen("actuel", debut, fin) < 0.0
-    for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
-        assert (solde.solde_moyen(scenario, debut, fin)
-                > solde.solde_moyen("actuel", debut, fin))
-    # Le 3 s'équilibre et reste excédentaire en moyenne.
+    # Le 3 s'équilibre, reste excédentaire en moyenne, et reste au-dessus du
+    # système actuel.
     annee = solde.premiere_annee_equilibree("notionnel_prospectif")
     assert annee is not None and annee >= debut
     assert solde.solde_moyen("notionnel_prospectif", debut, fin) > 0.0
-    # Le 5 ne s'équilibre plus. Il en était tout près tant que les pensions
-    # liquidées restaient figées en euros constants ; revalorisées sur la masse
-    # salariale, elles lui coûtent six dixièmes de point et l'équilibre avec.
-    # Depuis le volet C, la réversion qu'il ne recalcule pas lui en coûte neuf
-    # centièmes de plus. Le dire vaut mieux que de l'arrondir : une réforme qui
-    # porte la part patronale au compte porte des droits, et des droits se
-    # paient.
+    assert (solde.solde_moyen("notionnel_prospectif", debut, fin)
+            > solde.solde_moyen("actuel", debut, fin))
+    # Le 5 ne s'équilibre plus et ne bat plus le système actuel. Il en était
+    # tout près tant que les pensions liquidées restaient figées en euros
+    # constants ; revalorisées sur la masse salariale, elles lui coûtent six
+    # dixièmes de point et l'équilibre avec. Depuis le volet C, la réversion
+    # qu'il ne recalcule pas lui en coûte neuf centièmes de plus, et depuis que
+    # l'âge de référence est fixé à 64 ans, la conversion des droits acquis un
+    # demi-point de plus encore — assez pour le faire passer SOUS le système
+    # actuel. Le dire vaut mieux que de l'arrondir : une réforme qui porte la
+    # part patronale au compte porte des droits, et des droits se paient.
     assert solde.premiere_annee_equilibree("notionnel_prospectif_employeur") is None
-    assert -0.013 < solde.solde_moyen(
-        "notionnel_prospectif_employeur", debut, fin) < 0.0
+    assert -0.020 < solde.solde_moyen(
+        "notionnel_prospectif_employeur", debut, fin) < solde.solde_moyen(
+        "actuel", debut, fin)
     # Le scénario 5 porte plus de droits que le 3 : il coûte davantage.
     assert (solde.solde_moyen("notionnel_prospectif_employeur", debut, fin)
             < solde.solde_moyen("notionnel_prospectif", debut, fin))

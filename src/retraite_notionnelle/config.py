@@ -155,6 +155,15 @@ class ModeAgeReference(str, Enum):
     #: Reproduit le droit positif ; sert de contrefactuel.
     LEGAL_SANS_CLIQUET = "legal_sans_cliquet"
 
+    #: Cliquet légal jusqu'à l'année de bascule, puis un âge FIXE —
+    #: ``Parametres.age_reference_fixe``, soit 64 ans, l'âge légal d'ouverture
+    #: des droits que la loi du 14 avril 2023 atteint en 2030. C'est le défaut :
+    #: le système proposé ne reconduit pas le taux plein à 67 ans, qui est une
+    #: condition de durée d'assurance, notion qu'un compte notionnel n'a pas.
+    #: Avant la bascule, le cliquet reste seul en vigueur : 64 ans n'existait
+    #: dans aucun droit, et une liquidation de 1990 se mesure à son époque.
+    FIXE_APRES_BASCULE = "fixe_apres_bascule"
+
 
 class PartCotisation(str, Enum):
     """Quelle part de la cotisation retraite alimente le compte notionnel.
@@ -430,7 +439,11 @@ class Parametres:
     plafond_assiette_en_pass: float | None = 8.0
 
     # --- Âge de référence ---------------------------------------------------
-    mode_age_reference: ModeAgeReference = ModeAgeReference.CLIQUET_LEGAL
+    mode_age_reference: ModeAgeReference = ModeAgeReference.FIXE_APRES_BASCULE
+
+    #: Âge de référence servi à partir de la bascule en mode
+    #: FIXE_APRES_BASCULE. 64 ans : l'âge légal d'ouverture des droits.
+    age_reference_fixe: float = 64.0
 
     #: Ratio cible durée de retraite / durée de carrière, utilisé seulement en
     #: mode CLIQUET_PUIS_ESPERANCE_VIE.

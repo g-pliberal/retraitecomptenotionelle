@@ -14,6 +14,7 @@ from retraite_notionnelle.carriere import (
 )
 from retraite_notionnelle.config import (
     AgeConversionDroitsAcquis,
+    ModeAgeReference,
     PartCotisation,
     ModeIndexation,
     Neutralisations,
@@ -320,9 +321,16 @@ def test_convertir_les_droits_acquis_a_l_age_de_depart_les_preserve(simulateur):
     rapport des deux diviseurs dès lors que l'assuré liquide avant cet âge.
     Converti à l'âge de départ effectif, il ne perd rien : la sanction
     d'anticipation ne joue plus que sur les cotisations, comme prévu.
+
+    Les deux conventions ne se séparent que si les deux âges diffèrent : le
+    cliquet est donc nommé ici, là où le défaut fixe la référence à 64 ans et
+    fait coïncider les deux sur un départ à 64 ans. C'est le sujet du test, pas
+    un détail de montage.
     """
+    cliquet = Parametres().avec(mode_age_reference=ModeAgeReference.CLIQUET_LEGAL)
+    simulateur = Simulateur(cliquet)
     neutre = Simulateur(
-        Parametres().avec(
+        cliquet.avec(
             age_conversion_droits_acquis=AgeConversionDroitsAcquis.LIQUIDATION
         )
     )
@@ -1188,7 +1196,9 @@ def test_la_majoration_du_minimum_suit_la_seule_duree_cotisee(simulateur):
 
 def test_le_tableau_mentionne_l_ecart_d_age(simulateur, salarie_moyen):
     texte = simulateur.simuler(salarie_moyen).tableau()
-    assert "Âge de référence à cliquet" in texte
+    # La ligne ne nomme plus un mode : le dépôt en a quatre, et le défaut
+    # n'est plus le cliquet.
+    assert "Âge de référence :" in texte
     assert "anticipation" in texte
 
 

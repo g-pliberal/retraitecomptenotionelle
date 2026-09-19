@@ -48,7 +48,7 @@ BASE = {
     "naissance": "1975", "sexe": "H", "statut": "salarie_prive_non_cadre",
     "debut": "21", "liquidation": "64", "salaire": "1", "profil": "ascendant",
     "primes": "0", "enfants": "0", "interruptions": "",
-    "indexation": "triple_lock_inverse", "age_reference": "cliquet_legal",
+    "indexation": "triple_lock_inverse", "age_reference": "fixe_apres_bascule",
     "table": "unisexe", "conversion_acquis": "reference",
     "projection": "cor_reference",
     "bascule": "2026", "euros": "2026",
@@ -340,7 +340,12 @@ def _cas() -> list[dict]:
         cas.append((f"lissage_{fenetre}", {"lissage": fenetre}))
     cas.append(("lissage_regle_italienne",
                 {"indexation": "pib_nominal", "lissage": "5"}))
-    for mode in ("cliquet_puis_esperance_vie", "legal_sans_cliquet"):
+    # Le cas de base porte le DÉFAUT — 64 ans à partir de la bascule. Les trois
+    # variantes sont balayées ici, le cliquet compris : c'est lui qui a été le
+    # défaut jusqu'en septembre 2026, et le laisser hors du balayage aurait
+    # retiré du portage la règle que quatre-vingts ans de liquidations
+    # antérieures à la bascule continuent d'utiliser.
+    for mode in ("cliquet_legal", "cliquet_puis_esperance_vie", "legal_sans_cliquet"):
         cas.append((f"age_reference_{mode}", {"age_reference": mode}))
     cas.append(("table_par_sexe", {"table": "par_sexe"}))
     # Conversion des droits acquis : à l'âge de référence (défaut) ou à l'âge de
