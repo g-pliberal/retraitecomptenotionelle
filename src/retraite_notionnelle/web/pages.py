@@ -30,6 +30,7 @@ from ..carriere import (
 )
 from ..castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
 from ..config import (
+    RACINE_DONNEES,
     AgeConversionDroitsAcquis,
     PartCotisation,
     ModeAgeReference,
@@ -2913,7 +2914,7 @@ def _aide_profil(profil: str) -> str:
     2 900 € chaque année de sa vie, alors que le revenu saisi est celui du
     milieu de carrière et que le profil le déforme aux deux bouts.
     """
-    debut, fin = bornes_deformation(profil)
+    debut, fin = bornes_deformation(RACINE_DONNEES, profil)
     if debut == fin:
         return "le revenu saisi vaut pour toutes les années de la carrière"
     return (f"le revenu saisi est celui du milieu de carrière : ×{g.nombre(debut, 2)} "
@@ -7839,7 +7840,7 @@ jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, plutôt qu
 veut isoler l'effet propre des comptes notionnels. Sur une carrière
 (un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
 à 62), la correction reste modeste : +5,2 points pour la génération 1920,
-+0,0 pour 1945, -0,4 pour 1958. Les cotisations se concentrent sur les dernières années, là où
++0,0 pour 1945, -0,5 pour 1958. Les cotisations se concentrent sur les dernières années, là où
 les deux règles coïncident.</p>
 
 <p><strong>« Masse salariale » est ce que la théorie désigne.</strong> En

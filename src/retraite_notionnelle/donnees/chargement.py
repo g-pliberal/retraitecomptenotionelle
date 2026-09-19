@@ -267,6 +267,42 @@ def charger_table_par_generation(
     return resultat
 
 
+#: Tables à clé composite — (année, tranche), (catégorie, tranche) —, mémorisées
+#: sur la signature du fichier comme les séries annuelles. Ni l'une ni l'autre
+#: des deux autres formes ne convient : la clé n'est pas un entier, et elle n'est
+#: pas unique.
+_TABLES_CSV_EN_CACHE: dict[tuple, tuple[dict, tuple]] = {}
+
+
+def charger_table_csv(
+    chemin: Path, cles: tuple[str, ...], colonne: str,
+) -> tuple[dict[tuple[str, ...], float], tuple[Fiabilite, ...]]:
+    """Charge un CSV à clé composite, mémorisé. Rend la table et ses fiabilités.
+
+    Les clés sont rendues telles qu'elles sont écrites, en texte : c'est à
+    l'appelant de les interpréter, une année et une tranche d'âge n'ayant pas
+    le même type.
+    """
+    try:
+        etat = chemin.stat()
+        signature = (str(chemin), etat.st_mtime_ns, etat.st_size, cles, colonne)
+    except OSError:
+        return {}, ()
+    if signature in _TABLES_CSV_EN_CACHE:
+        return _TABLES_CSV_EN_CACHE[signature]
+
+    table: dict[tuple[str, ...], float] = {}
+    fiabilites: list[Fiabilite] = []
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        for ligne in csv.DictReader(lignes):
+            table[tuple(ligne[c] for c in cles)] = float(ligne[colonne])
+            fiabilites.append(Fiabilite.depuis_texte(ligne["fiabilite"]))
+    resultat = (table, tuple(fiabilites))
+    _TABLES_CSV_EN_CACHE[signature] = resultat
+    return resultat
+
+
 def valeur_par_generation(
     table: dict[float, tuple[float, Fiabilite]],
     generations: tuple[float, ...],

@@ -24,9 +24,8 @@ from pathlib import Path
 
 from .donnees.chargement import (
     charger_periodes_non_travaillees,
-    charger_table_par_generation,
+    charger_table_csv,
     charger_yaml,
-    valeur_par_generation,
 )
 from .donnees.macro import DonneesMacro
 from .calendrier import (
@@ -713,43 +712,36 @@ class Carriere:
 
         interruptions = interruptions or {}
         motifs = charger_periodes_non_travaillees(macro.racine)
-        # L'ÉTALON DE LA DÉFORMATION EST LA CARRIÈRE COMPLÈTE DE LA GÉNÉRATION,
-        # et non la carrière de l'assuré. Le dénominateur était la seconde,
-        # mesurée en mois, et il faisait dépendre de la DATE DE DÉPART le
-        # salaire de toutes les années ANTÉRIEURES : deux assurés au même passé
-        # n'avaient pas le même passé dès que l'un décidait de travailler plus
-        # longtemps. Mesuré le 19 septembre 2026 sur le profil ascendant,
-        # allonger la carrière de 60 à 67 ans rabaissait de 5,2 % les salaires
-        # d'avant 2026 — 8,4 % en profil fortement ascendant —, ce qui
-        # surestimait de quatre points le gain à travailler plus longtemps dans
-        # le système actuel, dont le salaire de référence ne retient que les
-        # meilleures années. Un premier symptôme de la même cause avait déjà été
-        # corrigé : mesurée en années civiles, la longueur dépendait de
-        # l'existence d'une dernière année incomplète, et un départ décalé d'un
-        # mois faisait BAISSER la pension d'un travail plus long.
+        # LE PROFIL SE LIT À UN ÂGE ET À UNE ANNÉE, et c'est tout ce dont il
+        # dépend. Il valait auparavant trois nombres écrits à la main — 60 % du
+        # niveau saisi au premier emploi, 130 % au dernier —, appliqués le long
+        # de la carrière de l'assuré. Deux défauts en découlaient, tous deux
+        # mesurés le 19 septembre 2026 :
         #
-        # L'étalon est donc la durée d'assurance requise de la génération —
-        # 157 trimestres pour 1940, 172 pour 1975 —, qui ne doit rien au choix
-        # de l'assuré. Le retrait de douze mois est conservé : il place la
-        # dernière année d'une carrière complète au sommet de la fourchette,
-        # qui est ce que la table des déformations annonce. Au-delà d'une
-        # carrière complète, l'avancement PLAFONNE : la progression salariale
-        # n'est pas sans fin, et sans ce plafond les années au-delà du taux
-        # plein sortiraient de la fourchette affichée.
-        duree_mois = _duree_carriere_complete(
-            macro.racine, annee_naissance + (mois_naissance - 1) / 12
-        )
+        # 1. le dénominateur étant la carrière de l'assuré, allonger celle-ci
+        #    rabaissait le salaire de toutes les années ANTÉRIEURES — de 5,2 %
+        #    entre 60 et 67 ans en profil ascendant, 8,4 % en fortement
+        #    ascendant —, ce qui surestimait de quatre points le gain à
+        #    travailler plus longtemps dans le système actuel, dont le salaire
+        #    de référence ne retient que les meilleures années ;
+        # 2. la pente elle-même était trop forte d'un tiers, et la même pour
+        #    toutes les générations, quand l'INSEE observe ×1,30 de 26 à 55 ans
+        #    pour un employé et ×1,86 pour un cadre, et une prime à l'âge qui a
+        #    varié de 1,19 en 1962 à 1,47 en 2000.
+        #
+        # Lire le profil à (âge, année) règle les deux d'un coup : le passé ne
+        # peut plus dépendre d'une décision future, et l'effet de génération
+        # vient de la série longue au lieu d'être supposé nul.
         salaire_moyen_reference = indice_salaire_moyen(macro, annee_debut, annee_fin)
 
         lignes: list[AnneeCarriere] = []
         for annee in annees:
             part = fraction_annee(annee, debut, fin)
             trimestres_maximum = trimestres_civils(mois_travailles(annee, debut, fin))
-            avancement = min(
-                (max(DateMois(annee, 1).rang, debut.rang) - debut.rang) / duree_mois,
-                1.0,
+            deformation = profil_salaire(
+                macro.racine, profil_carriere,
+                annee - annee_naissance, annee,
             )
-            deformation = _deformation(profil_carriere, avancement)
             # Ce que chaque métier a occupé de l'année. La somme vaut les mois
             # travaillés de l'année : les périodes la découpent sans reste.
             mois_par_metier = [mois_travailles(annee, ouverture, cloture)
@@ -797,58 +789,144 @@ class Carriere:
         )
 
 
-#: Ce que chaque profil de carrière fait du niveau de revenu saisi : sa valeur
-#: au tout début de la vie active, et sa valeur à la fin. Entre les deux, la
-#: déformation est linéaire. La table est ici, et non enfouie dans une suite de
-#: `if`, parce que le site l'affiche : dire « profil ascendant » sans dire que
-#: le revenu saisi vaut 0,6 fois moins au premier emploi et 1,3 fois plus au
-#: dernier laisse croire qu'on a saisi un salaire constant.
-#: La table donne le point de départ et l'AMPLITUDE, non le point d'arrivée :
-#: c'est l'arithmétique qu'écrivaient les trois formules qu'elle remplace, et
-#: la garder au bit près évite de faire bouger toutes les pensions du dépôt
-#: pour une réécriture qui ne change rien. :func:`bornes_deformation` en
-#: reconstitue les deux bouts pour qui veut les afficher.
-DEFORMATIONS = {
-    "plat": (1.0, 0.0),
-    "ascendant": (0.60, 0.70),
-    "fortement_ascendant": (0.50, 1.40),
+#: La catégorie socioprofessionnelle dont chaque profil emprunte sa FORME, dans
+#: ``profil_salaire_categorie.csv``. ``plat`` n'en emprunte aucune : le revenu
+#: saisi vaut pour toutes les années, et c'est la seule convention qui ne
+#: suppose rien.
+#:
+#: Les trois noms restent, parce que le site les affiche et que les fiches de
+#: cas types les portent. Ce qu'ils désignent, en revanche, n'est plus une
+#: droite inventée mais un profil LU : ×1,30 de 26 à 55 ans pour un employé,
+#: ×1,86 pour un cadre, là où les droites d'avant appliquaient ×1,69 et ×2,42 —
+#: un tiers de trop, et le même à toutes les générations.
+PROFILS_CATEGORIE = {
+    "plat": None,
+    "ascendant": "employe",
+    "fortement_ascendant": "cadre",
 }
 
+#: Le milieu qu'on prête à chaque tranche des deux fichiers. Un profil de
+#: carrière se lit à un ÂGE, pas à une tranche : il faut donc un point par
+#: tranche, et c'est ce point qui décide de la pente. Les bornes ouvertes
+#: prennent le milieu de leur population d'emploi et non celui de leur
+#: intervalle, qui serait absurde — on n'entre pas dans la vie active à quinze
+#: ans, on n'y reste pas jusqu'à cent. Ces deux tables sont le reflet de
+#: ``TRANCHES_AGE_SERIES`` et ``TRANCHES_AGE_CATEGORIES`` de
+#: ``scripts/verifier_donnees.py``, et un test les tient identiques.
+TRANCHES_SERIE = {
+    "Y_LT26": 23.0, "Y26T30": 28.0, "Y31T40": 35.5,
+    "Y41T50": 45.5, "Y51T60": 55.5, "Y_GT60": 62.0,
+}
+TRANCHES_CATEGORIE = {
+    "Y_LT30": 26.0, "Y30T39": 34.5, "Y40T49": 44.5,
+    "Y50T59": 54.5, "Y_GE60": 62.0,
+}
 
-#: Durée d'assurance requise retenue quand la génération est antérieure au
-#: premier millésime du fichier — 1900, soit avant toute génération que le
-#: modèle traverse. Trente-sept ans et demi : la durée d'avant la loi de 1993.
-TRIMESTRES_CARRIERE_COMPLETE_DEFAUT = 150
+#: Année de référence de la forme intra-catégorie, celle que porte le jeu
+#: détaillé de l'INSEE. La modulation dans le temps y vaut un.
+ANNEE_FORME_CATEGORIE = 2024
+
+#: Les deux tranches dont l'écart mesure la pente d'une carrière. Renseignées
+#: depuis 1962, quand les deux bords ne le sont que depuis 1996 : ce sont elles
+#: qui fixent la profondeur de la modulation.
+TRANCHE_JEUNE, TRANCHE_AGEE = "Y26T30", "Y51T60"
 
 
-def _duree_carriere_complete(racine: Path, generation: float) -> int:
-    """Étalon de la déformation salariale, en mois, pour une génération.
-
-    C'est la durée d'assurance requise pour le taux plein — la seule mesure de
-    « carrière complète » que le droit publie, et elle est indexée sur l'année
-    de naissance, donc insensible à la date de départ que l'assuré choisit.
-    """
-    table, generations = charger_table_par_generation(
-        racine / "reference" / "legislation" / "duree_assurance_requise.csv",
-        "trimestres",
+def _table_profil(racine: Path, fichier: str,
+                  cle: str) -> dict[str, dict[str, float]]:
+    """Un des deux fichiers de profil, groupé par sa première clé."""
+    table, _ = charger_table_csv(
+        racine / "reference" / "macro" / fichier, (cle, "tranche"),
+        "salaire_relatif",
     )
-    valeur = valeur_par_generation(table, generations, generation)
-    trimestres = (TRIMESTRES_CARRIERE_COMPLETE_DEFAUT if valeur is None
-                  else valeur[0])
-    return max(int(round(trimestres * 3)) - 12, 12)
+    groupes: dict[str, dict[str, float]] = {}
+    for (groupe, tranche), valeur in table.items():
+        groupes.setdefault(groupe, {})[tranche] = valeur
+    return groupes
 
 
-def bornes_deformation(profil: str) -> tuple[float, float]:
-    """Ce que le profil fait du niveau saisi, au premier et au dernier emploi."""
-    depart, amplitude = DEFORMATIONS[profil]
-    return depart, depart + amplitude
+def _interpole_tranches(profil: dict[str, float], milieux: dict[str, float],
+                        age: float) -> float:
+    """Valeur du profil à un âge, interpolée entre les milieux de tranche.
+
+    Au-delà du premier et du dernier milieu, la valeur du bord est reconduite :
+    l'INSEE ne dit rien au-delà, et y prolonger la pente inventerait des
+    salaires que personne n'a observés.
+    """
+    points = sorted((milieux[t], v) for t, v in profil.items() if t in milieux)
+    if not points:
+        return 1.0
+    if age <= points[0][0]:
+        return points[0][1]
+    if age >= points[-1][0]:
+        return points[-1][1]
+    for (age_bas, bas), (age_haut, haut) in zip(points, points[1:]):
+        if age_bas <= age <= age_haut:
+            return bas + (haut - bas) * (age - age_bas) / (age_haut - age_bas)
+    return points[-1][1]
 
 
-def _deformation(profil: str, avancement: float) -> float:
-    if profil not in DEFORMATIONS:
+def _modulation_annee(racine: Path, annee: int) -> float:
+    """Pente de carrière de l'année, rapportée à celle de l'année de référence.
+
+    C'est ici que se loge l'effet de génération, et il est observé : la prime à
+    l'âge valait 1,19 entre les 51-60 ans et les 26-30 ans en 1962, 1,47 en
+    2000, 1,35 en 2024. Celui qui est né en 1940 est entré dans la vie active
+    au salaire moyen de son temps, celui qui est né en 1960 à 86 % du sien.
+
+    Hors de la fenêtre observée — avant 1962, après 2024 — la valeur du bord
+    est reconduite, convention du dépôt pour toute série bornée.
+    """
+    table = _table_profil(racine, "profil_salaire_age.csv", "annee")
+    annees = sorted(int(a) for a in table)
+    if not annees:
+        return 1.0
+
+    def ecart(millesime: int) -> float:
+        profil = table.get(str(millesime), {})
+        jeune, agee = profil.get(TRANCHE_JEUNE), profil.get(TRANCHE_AGEE)
+        return agee - jeune if jeune is not None and agee is not None else 0.0
+
+    reference = ecart(ANNEE_FORME_CATEGORIE)
+    borne = min(max(annee, annees[0]), annees[-1])
+    return ecart(borne) / reference if reference else 1.0
+
+
+def profil_salaire(racine: Path, profil: str, age: float, annee: int) -> float:
+    """Ce que le profil fait du niveau saisi, à cet âge et cette année-là.
+
+    Deux sources, parce qu'aucune ne suffit seule. La FORME vient du profil
+    intra-catégorie de 2024, seul jeu de l'INSEE qui croise l'âge et la
+    catégorie — et seul profil qui décrive une CARRIÈRE, un profil agrégé
+    mélangeant l'effet d'âge et un effet de composition. L'ÉVOLUTION vient de
+    la série longue, qui dit comment la prime à l'âge s'est déplacée depuis
+    1962.
+
+    On module l'écart à la moyenne et non la valeur elle-même :
+    ``1 + (forme − 1) × modulation`` laisse le profil centré quoi qu'il arrive,
+    de sorte que le niveau de revenu saisi garde son sens.
+    """
+    if profil not in PROFILS_CATEGORIE:
         raise ValueError(f"profil de carrière inconnu : {profil!r}")
-    depart, amplitude = DEFORMATIONS[profil]
-    return depart + amplitude * avancement
+    categorie = PROFILS_CATEGORIE[profil]
+    if categorie is None:
+        return 1.0
+    table = _table_profil(racine, "profil_salaire_categorie.csv", "categorie")
+    forme = _interpole_tranches(table.get(categorie, {}), TRANCHES_CATEGORIE, age)
+    return 1.0 + (forme - 1.0) * _modulation_annee(racine, annee)
+
+
+def bornes_deformation(racine: Path, profil: str) -> tuple[float, float]:
+    """Ce que le profil fait du niveau saisi, en début et en fin de carrière.
+
+    Lues à l'année de référence de la forme : ce sont les deux nombres que le
+    site affiche sous le menu des profils, et ils doivent donc être ceux d'une
+    carrière observée et non d'un bord de table.
+    """
+    if PROFILS_CATEGORIE.get(profil) is None:
+        return 1.0, 1.0
+    return (profil_salaire(racine, profil, 25.0, ANNEE_FORME_CATEGORIE),
+            profil_salaire(racine, profil, 60.0, ANNEE_FORME_CATEGORIE))
 
 
 #: Point d'ancrage du salaire moyen par tête, en euros bruts annuels courants.

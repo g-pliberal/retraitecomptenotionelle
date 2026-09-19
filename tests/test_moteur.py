@@ -17,6 +17,12 @@ from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.moteur.age_reference import AgeReference
 from retraite_notionnelle.moteur.conversion import Convertisseur
 from retraite_notionnelle.moteur.fusion import CritereTaux, RegleFusion, fusionner
+from retraite_notionnelle.carriere import (
+    ANNEE_FORME_CATEGORIE,
+    TRANCHES_CATEGORIE,
+    TRANCHES_SERIE,
+    profil_salaire,
+)
 from retraite_notionnelle.moteur.indexation import Indexation
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -466,27 +472,49 @@ def test_le_passe_ne_depend_pas_de_l_age_de_depart():
         assert all(p == pytest.approx(passes[0]) for p in passes), profil
 
 
-def test_l_etalon_du_profil_suit_la_generation():
-    """Deux générations n'ont pas la même carrière complète, ni le même profil.
+def test_le_profil_salarial_suit_la_generation():
+    """Chaque génération a vécu sa propre pente, et le modèle la lit.
 
-    157 trimestres pour 1940, 172 pour 1975 : à âge d'entrée et de départ
-    égaux, l'aînée atteint donc le haut de sa fourchette salariale plus tôt que
-    la cadette. Un étalon unique — 43 ans pour tout le monde — serait un
-    anachronisme, et il coupait le passé des vieilles générations de 6,4 %
-    quand celui des récentes ne bougeait que de 2,1 %.
+    La prime à l'âge n'a pas été la même à toutes les époques : l'INSEE la
+    mesure à 1,19 entre les 51-60 ans et les 26-30 ans en 1962, 1,47 en 2000,
+    1,35 en 2024. Celui qui est né en 1940 est entré dans la vie active au
+    salaire moyen de son temps, celui qui est né en 1960 à 86 % du sien.
+
+    Le modèle appliquait auparavant la MÊME droite à toutes les générations.
+    Il lit maintenant la série longue, et retrouve les pentes observées à
+    quelques centièmes près : ×1,23 contre ×1,25 pour la génération 1940,
+    ×1,37 contre ×1,38 pour celle de 1960.
     """
-    simulateur = Simulateur(Parametres())
+    def pente(generation, profil="ascendant"):
+        jeune = profil_salaire(RACINE_DONNEES, profil, 26, generation + 26)
+        agee = profil_salaire(RACINE_DONNEES, profil, 55, generation + 55)
+        return agee / jeune
 
-    def dernier_relatif(annee_naissance):
-        carriere = simulateur.carriere_simple(
-            annee_naissance=annee_naissance, sexe="H",
-            affiliation="salarie_prive_non_cadre",
-            age_debut=21, age_liquidation=60, profil_carriere="ascendant",
-        )
-        lignes = sorted(carriere.lignes, key=lambda l: l.annee)
-        return lignes[-1].revenu / lignes[0].revenu
+    assert pente(1940) < pente(1950) < pente(1960)
+    assert pente(1940) == pytest.approx(1.25, abs=0.05)
+    assert pente(1960) == pytest.approx(1.38, abs=0.05)
+    # Le profil plat ne doit RIEN à la génération : c'est la convention qui ne
+    # suppose rien, et elle doit le rester.
+    assert pente(1940, "plat") == pytest.approx(1.0)
+    assert pente(1975, "plat") == pytest.approx(1.0)
 
-    assert dernier_relatif(1940) > dernier_relatif(1975)
+
+def test_le_profil_salarial_ne_doit_rien_a_une_droite_inventee():
+    """Les pentes servies sont celles de l'INSEE, catégorie par catégorie.
+
+    Le modèle appliquait ×1,69 de 26 à 55 ans en profil ascendant et ×2,42 en
+    fortement ascendant, sans source. L'INSEE observe ×1,30 pour un employé et
+    ×1,86 pour un cadre en 2024 — un tiers de moins dans les deux cas. Ce test
+    tient l'année de référence, la seule où la modulation vaut un et où la
+    forme lue doit donc se retrouver telle quelle.
+    """
+    def pente(profil):
+        jeune = profil_salaire(RACINE_DONNEES, profil, 26, ANNEE_FORME_CATEGORIE)
+        agee = profil_salaire(RACINE_DONNEES, profil, 54.5, ANNEE_FORME_CATEGORIE)
+        return agee / jeune
+
+    assert pente("ascendant") == pytest.approx(1.30, abs=0.02)
+    assert pente("fortement_ascendant") == pytest.approx(1.86, abs=0.03)
 
 
 # -- âge de référence --------------------------------------------------------

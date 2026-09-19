@@ -1,0 +1,37 @@
+# Profil d'âge par catégorie socioprofessionnelle, privé, 2024
+# source_id: insee_profil_salaire_categorie
+# unite: rapport sans dimension (1,00 = moyenne de la catégorie)
+# fiabilite:
+#   certifiee (2024) : salaire net mensuel en équivalent temps plein, à
+#             temps complet, recontrôlé par scripts/verifier_donnees.py.
+#
+# C'EST LE PROFIL D'UNE CARRIÈRE, et le seul : une personne progresse
+# dans sa catégorie, elle ne traverse pas la structure d'emploi. Ce jeu
+# est le seul des trois à croiser l'âge et la catégorie — ni la série
+# longue du privé ni celle du public ne le font — et il ne porte qu'une
+# année. Sa forme est donc supposée stable dans le temps, ce que rien
+# ne démontre et que docs/limites.md dit.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+categorie,tranche,salaire_relatif,fiabilite
+cadre,Y30T39,0.8875,certifiee
+cadre,Y40T49,1.0689,certifiee
+cadre,Y50T59,1.1813,certifiee
+cadre,Y_GE60,1.3429,certifiee
+cadre,Y_LT30,0.6345,certifiee
+employe,Y30T39,1.0442,certifiee
+employe,Y40T49,1.0838,certifiee
+employe,Y50T59,1.1024,certifiee
+employe,Y_GE60,1.1414,certifiee
+employe,Y_LT30,0.8510,certifiee
+ouvrier,Y30T39,1.0134,certifiee
+ouvrier,Y40T49,1.0609,certifiee
+ouvrier,Y50T59,1.0805,certifiee
+ouvrier,Y_GE60,1.0930,certifiee
+ouvrier,Y_LT30,0.8410,certifiee
+profession_intermediaire,Y30T39,0.9922,certifiee
+profession_intermediaire,Y40T49,1.0643,certifiee
+profession_intermediaire,Y50T59,1.1164,certifiee
+profession_intermediaire,Y_GE60,1.1994,certifiee
+profession_intermediaire,Y_LT30,0.7909,certifiee

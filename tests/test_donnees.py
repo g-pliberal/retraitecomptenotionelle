@@ -377,6 +377,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # producteurs, deux fichiers, la même grandeur.
         "part_droits_derives": "macro/part_droits_derives.csv",
         "pensions_droits": "macro/pensions_droits.csv",
+        # Le profil salarial : la forme vient d'un jeu, son évolution dans le
+        # temps de l'autre, et aucun ne suffit seul.
+        "profil_salaire_age": "macro/profil_salaire_age.csv",
+        "profil_salaire_categorie": "macro/profil_salaire_categorie.csv",
         "assiette_salaires": "macro/assiette_activite.csv",
         "assiette_revenu_mixte": "macro/assiette_activite.csv",
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",

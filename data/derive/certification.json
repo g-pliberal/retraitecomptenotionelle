@@ -694,6 +694,28 @@
    "valeurs": 76,
    "verifiee_le": "2026-09-13"
   },
+  "profil_salaire_age": {
+   "ajoutees": 310,
+   "colonne": "salaire_relatif",
+   "corrigees": 0,
+   "empreinte": "dea10baec089b7ec",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES",
+   "valeurs": 310,
+   "verifiee_le": "2026-09-19"
+  },
+  "profil_salaire_categorie": {
+   "ajoutees": 20,
+   "colonne": "salaire_relatif",
+   "corrigees": 0,
+   "empreinte": "fbaa827c59b5c3d8",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE Melodi, DS_DERA_PRIVE_ANNUEL (2024)",
+   "valeurs": 20,
+   "verifiee_le": "2026-09-19"
+  },
   "quotients_mortalite": {
    "ajoutees": 0,
    "colonne": "qx",

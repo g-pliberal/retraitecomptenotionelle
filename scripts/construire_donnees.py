@@ -530,6 +530,25 @@ def _periodes_non_travaillees() -> dict:
     }
 
 
+def _profil_salaire(fichier: str, cle: str) -> dict:
+    """Profil salarial, groupé par sa première clé puis par tranche d'âge.
+
+    Deux niveaux plutôt qu'une clé composite : JavaScript n'a pas de tuple, et
+    une clé « 1962|Y26T30 » se recolle mal. Le portage lit donc
+    ``paquet.profil_salaire_age["1962"]["Y26T30"]``.
+    """
+    from retraite_notionnelle.donnees.chargement import charger_table_csv
+
+    table, _ = charger_table_csv(
+        DONNEES / "reference" / "macro" / fichier, (cle, "tranche"),
+        "salaire_relatif",
+    )
+    groupes: dict[str, dict[str, float]] = {}
+    for (groupe, tranche), valeur in sorted(table.items()):
+        groupes.setdefault(groupe, {})[tranche] = valeur
+    return groupes
+
+
 def _table_par_generation(classe) -> dict:
     """Paramètre législatif indexé sur l'année de naissance."""
     # La clé s'écrit comme JavaScript l'écrirait : « 1951 » et non « 1951.0 »,
@@ -890,6 +909,9 @@ def construire() -> bytes:
         "coefficients_minoration": _table_par_generation(CoefficientsMinoration),
         "annees_salaire_reference": _table_par_generation(AnneesSalaireReference),
         "periodes_non_travaillees": _periodes_non_travaillees(),
+        "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
+        "profil_salaire_categorie": _profil_salaire(
+            "profil_salaire_categorie.csv", "categorie"),
         "contribution_employeur_public": _contribution_employeur_public(),
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),

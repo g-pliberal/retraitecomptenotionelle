@@ -1668,7 +1668,15 @@ def test_le_tableau_du_detail_s_additionne_a_l_ecran(contexte, nom, champs):
 
     assert total is not None, f"{nom} : pas de ligne de total"
     assert regimes, f"{nom} : aucune ligne de régime"
-    assert sum(regimes) == pytest.approx(total, abs=0.01), (
+    # La tolérance suit le NOMBRE DE LIGNES, et c'est de l'arithmétique, non de
+    # la complaisance : chaque ligne est arrondie au centime pour l'affichage,
+    # le total l'est une seule fois, et les arrondis peuvent s'ajouter jusqu'à
+    # un demi-centime par ligne. Un seuil fixe à un centime passait tant que les
+    # arrondis se compensaient ; il tombait au premier tableau où ils ne le
+    # faisaient pas, sans qu'aucune ligne ne soit fausse. Ce que ce test doit
+    # garder est que l'écran S'ADDITIONNE, pas que les flottants tombent juste.
+    tolerance = 0.005 * len(regimes) + 0.005
+    assert sum(regimes) == pytest.approx(total, abs=tolerance), (
         f"{nom} : les lignes affichées font {sum(regimes):.2f} €, "
         f"le total affiché {total:.2f} €"
     )
@@ -3187,7 +3195,7 @@ def test_la_correction_des_trois_generations_se_retrouve(contexte):
     assert "un salarié du privé non cadre" in corps, (
         "la page doit dire sur quelle carrière ces points sont mesurés"
     )
-    for generation, attendu in ((1920, 5.2), (1945, 0.0), (1958, -0.4)):
+    for generation, attendu in ((1920, 5.2), (1945, 0.0), (1958, -0.5)):
         mesure = correction(generation)
         assert round(mesure, 1) == attendu, (
             f"génération {generation} : la page annonce {attendu:+.1f} point(s), "

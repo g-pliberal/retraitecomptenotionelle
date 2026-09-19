@@ -2268,7 +2268,7 @@ function formulaire(saisie, contexte) {
       + "le système actuel réserve à la mère la majoration de durée "
       + "d'assurance."),
     g.liste("profil", "Profil de carrière", PROFILS, saisie.profil,
-      aideProfil(saisie.profil)),
+      aideProfil(contexte.paquet, saisie.profil)),
     g.champ("primes", "Part de primes", nombreBrut(saisie.primes),
       "fonction publique : assiette du RAFP", "number",
       { min: "0", max: "0.6", step: "0.01" }),
@@ -2436,8 +2436,8 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
  * de sa vie, alors que le revenu saisi est celui du milieu de carrière et que
  * le profil le déforme aux deux bouts.
  */
-function aideProfil(profil) {
-  const [debut, fin] = bornesDeformation(profil);
+function aideProfil(paquet, profil) {
+  const [debut, fin] = bornesDeformation(paquet, profil);
   if (debut === fin) {
     return "le revenu saisi vaut pour toutes les années de la carrière";
   }
@@ -7119,7 +7119,7 @@ jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, plutôt qu
 veut isoler l'effet propre des comptes notionnels. Sur une carrière
 (un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
 à 62), la correction reste modeste : +5,2 points pour la génération 1920,
-+0,0 pour 1945, -0,4 pour 1958. Les cotisations se concentrent sur les dernières années, là où
++0,0 pour 1945, -0,5 pour 1958. Les cotisations se concentrent sur les dernières années, là où
 les deux règles coïncident.</p>
 
 <p><strong>« Masse salariale » est ce que la théorie désigne.</strong> En

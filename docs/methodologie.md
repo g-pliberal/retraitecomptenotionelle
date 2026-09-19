@@ -1874,19 +1874,38 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
   zéro. Un métier deux fois mieux payé que le précédent double le revenu au point
   du changement, il ne renvoie pas l'assuré au bas de sa grille.
 
-  **Son étalon est la carrière complète de la GÉNÉRATION** — la durée
-  d'assurance requise pour le taux plein, 157 trimestres pour 1940 et 172 pour
-  1975 —, et non la carrière de l'assuré. La distinction n'est pas
-  théorique : tant que le dénominateur était la carrière de l'assuré, choisir
-  de travailler plus longtemps rabaissait le salaire de toutes les années
-  ANTÉRIEURES, parce qu'une même année s'y trouvait moins « avancée ». Mesuré
-  le 19 septembre 2026, allonger une carrière de 60 à 67 ans rabaissait de
-  5,2 % les salaires d'avant 2026 en profil ascendant et de 8,4 % en profil
-  fortement ascendant, ce qui surestimait de quatre points le gain à travailler
-  plus longtemps dans le système actuel, dont le salaire de référence ne retient
-  que les meilleures années. Au-delà d'une carrière complète, la progression
-  PLAFONNE : c'est pourquoi le site annonce le haut de la fourchette « après une
-  carrière complète » et non « au dernier emploi » ;
+  **Il est LU chez l'INSEE, à un âge et à une année**, et ne dépend de rien
+  d'autre. Deux séries le portent, parce qu'aucune ne suffit seule :
+
+  - la FORME vient de `profil_salaire_categorie.csv` — salaires du privé par
+    âge et par catégorie socioprofessionnelle, 2024. C'est le seul jeu de
+    l'INSEE qui croise ces deux dimensions, et donc le seul qui décrive une
+    CARRIÈRE : un profil agrégé mélangerait l'effet d'âge et un effet de
+    composition, les jeunes étant plus souvent dans les catégories les moins
+    payées, si bien que son écart entre les bords vaut 0,46 quand celui des
+    ouvriers vaut 0,24. Observé de 26 à 55 ans : ×1,28 pour un ouvrier, ×1,30
+    pour un employé, ×1,41 pour une profession intermédiaire, ×1,86 pour un
+    cadre ;
+  - l'ÉVOLUTION vient de `profil_salaire_age.csv` — séries longues du privé
+    par tranche d'âge, 1962-2024. C'est là que se loge l'effet de génération :
+    la prime à l'âge valait 1,19 entre les 51-60 ans et les 26-30 ans en 1962,
+    1,47 en 2000, 1,35 en 2024. Celui qui est né en 1940 est entré dans la vie
+    active au salaire moyen de son temps, celui qui est né en 1960 à 86 % du
+    sien.
+
+  On module l'écart à la moyenne et non la valeur : `1 + (forme − 1) ×
+  modulation` laisse le profil centré, de sorte que le niveau de revenu saisi
+  garde son sens. Le modèle retrouve ainsi les pentes observées à quelques
+  centièmes près — ×1,23 contre ×1,25 pour la génération 1940, ×1,37 contre
+  ×1,38 pour celle de 1960.
+
+  **Ce que ça a remplacé, et ce que ça a coûté.** Trois nombres écrits à la
+  main, sans source : 60 % du niveau saisi au premier emploi, 130 % au dernier,
+  190 % pour un cadre. Ils appliquaient une pente de ×1,69 et ×2,42 de 26 à
+  55 ans — un tiers de trop —, la même à toutes les générations, et mesurée sur
+  la carrière de l'assuré, si bien que travailler plus longtemps rabaissait
+  rétroactivement ses propres salaires passés. Les trois réserves qui restent
+  sont au §1 de `limites.md` ;
 * **une année civile n'a qu'un statut.** Le moteur ne connaît qu'une ligne par
   année — un salaire est déclaré à l'année, les régimes liquident à l'année. L'année
   d'un changement revient donc au métier qui en occupe le plus de mois, et à

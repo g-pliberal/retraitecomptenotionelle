@@ -5884,6 +5884,62 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   constats, rangés par gravité sous l'action, chacun avec sa cause dans le
   code et la correction proposée. Rien n'a été corrigé dans cette session :
   la liste est le livrable, la correction est l'action.
+- **Septembre 2026, le profil de carrière est lu chez l'INSEE.** Trouvé en
+  remontant la piste de l'action 24 : le profil salarial valait trois nombres
+  écrits à la main — 60 % du niveau saisi au premier emploi, 130 % au dernier,
+  190 % pour un cadre —, sans source, dans un dépôt dont la règle est qu'une
+  valeur non lue à la source n'entre pas. Rien dans `sources.yaml`, rien dans
+  `limites.md`, et l'historique ne remonte pas avant la réécriture du fichier.
+  Il pesait pourtant SEPT POINTS sur l'écart que le site affiche : à salaires
+  cumulés identiques, passer du profil plat au profil ascendant faisait passer
+  la proposition de −31,7 % à −39,2 % du système actuel.
+
+  *La source.* `DS_DERA_PRIVE_SERIES_LONGUES` et `DS_DERA_PRIVE_ANNUEL`, par
+  l'API Melodi de l'INSEE, sans clé. Aucune ne suffit seule et c'est le cœur de
+  la conception : la première porte quatre tranches d'âge de 1962 à 2024 mais
+  est AGRÉGÉE — elle mélange l'effet d'âge et un effet de composition, les
+  jeunes étant plus souvent dans les catégories mal payées, si bien que son
+  écart entre les bords vaut 0,46 quand celui des ouvriers vaut 0,24 ; la
+  seconde croise l'âge et la catégorie, et est donc la seule à décrire une
+  CARRIÈRE, mais ne porte que 2024. La forme vient donc de la seconde,
+  l'évolution dans le temps de la première.
+
+  *Ce que la mesure a dit.* Le profil était trop pentu d'un tiers — ×1,69 de 26
+  à 55 ans contre ×1,30 observé pour un employé, ×2,42 contre ×1,86 pour un
+  cadre — et il était le MÊME pour toutes les générations, quand l'observation
+  diverge : ×1,25 pour celle de 1940, ×1,32 pour 1950, ×1,38 pour 1960. Le
+  modèle retrouve désormais ces pentes à quelques centièmes près.
+
+  *Ce que ça déplace, et c'est beaucoup.* Le système actuel perd 11 % sur la
+  carrière témoin du README, et l'écart du scénario 4 y passe de +9,5 % à
+  +39,9 %. La raison est mécanique : un profil moins pentu abaisse les
+  dernières années, donc le salaire de référence du système actuel, qui ne
+  retient que les vingt-cinq meilleures, et relève les premières, que le compte
+  notionnel porte au compte comme les autres. **Le profil inventé flattait le
+  système actuel**, et c'est ce que sept points d'écart voulaient dire. Sur la
+  grille des cas types, l'écart médian de la proposition passe à −41,4 % ; la
+  trajectoire 2070 de la page Coût descend de 19,49 % à 19,24 % du PIB.
+
+  *Ce qui n'est pas comblable*, et qui est écrit au §1 de `limites.md` : rien
+  avant 1962, les deux bords d'âge seulement depuis 1996, l'écart entre
+  catégories observé sur la seule année 2024 — et la série longue du public ne
+  croisant pas l'âge et le statut, les fonctionnaires et les militaires portent
+  le profil du privé.
+
+  *Au passage*, l'étalon par génération posé le matin même devient inutile : un
+  profil lu à (âge, année) ne peut pas dépendre d'une décision future, et
+  l'effet de génération vient de l'observation au lieu d'être supposé.
+
+  **Fichiers.** `scripts/fetch/insee_profil_salaire_age.py` ;
+  `data/reference/macro/profil_salaire_age.csv` et
+  `profil_salaire_categorie.csv`, avec leurs deux règles de certification dans
+  `scripts/verifier_donnees.py` et leurs deux entrées dans `data/sources.yaml` ;
+  `charger_table_csv` dans `donnees/chargement.py` ; `profil_salaire` et
+  `bornes_deformation` dans `carriere.py` et leur portage ;
+  `scripts/construire_donnees.py` ; `docs/methodologie.md`, `docs/limites.md`
+  §1, le bloc d'exemple du `README.md` ; `tests/test_moteur.py`,
+  `tests/test_cout.py`, `tests/test_donnees.py`, `tests/test_web.py` ; les
+  témoins.
 
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 

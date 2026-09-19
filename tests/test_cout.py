@@ -361,13 +361,16 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
 
     CE PREMIER TEMPS DURAIT CINQ ANS — le pas de la grille de générations —
     tant que les droits acquis se convertissaient au diviseur de 67 ans. Il en
-    dure jusqu'à huit depuis que l'âge de référence est fixé à 64 ans à partir
-    de la bascule : la conversion à un âge plus bas prend un diviseur plus
-    élevé, donc un capital d'ouverture plus gros, et ce cadeau va tout entier
-    aux générations de transition, celles-là mêmes qui liquident pendant le
-    premier temps. Le scénario 5, qui porte en plus la part patronale, le
-    reçoit deux fois et culmine à 2,7 % au-dessus du système actuel en 2034 ;
-    le 3 culmine à 1,3 % en 2031. Passé le sommet, la décroissance est stricte
+    dure jusqu'à DIX depuis deux corrections qui vont dans le même sens.
+    L'âge de référence fixé à 64 ans à partir de la bascule fait prendre à la
+    conversion un diviseur plus élevé, donc un capital d'ouverture plus gros,
+    et ce cadeau va tout entier aux générations de transition — celles-là mêmes
+    qui liquident pendant le premier temps. Le profil salarial lu chez l'INSEE
+    y ajoute sa part : moins pentu d'un tiers, il relève le salaire des
+    premières années de carrière, donc les droits des cohortes qui basculent
+    en cours de route. Le scénario 5, qui porte en plus la part patronale,
+    reçoit les deux et culmine à 3,4 % au-dessus du système actuel en 2036 ;
+    le 3 culmine à 1,6 % en 2031. Passé le sommet, la décroissance est stricte
     jusqu'à l'horizon, et c'est elle que ce test garde.
 
     Le sommet est donc CHERCHÉ et non supposé : fixer son année d'avance
@@ -377,9 +380,9 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
     for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
         lignes = [l for l in avenir.annees if l.annee >= avenir.annee_bascule]
         # Le sursaut initial existe, et il reste petit : la réforme ne coûte
-        # pas plus de trois pour cent de plus que le système qu'elle remplace.
+        # pas plus de cinq pour cent de plus que le système qu'elle remplace.
         sommet = max(lignes, key=lambda l: l.rapports[scenario])
-        assert sommet.rapports[scenario] < 1.03, scenario
+        assert sommet.rapports[scenario] < 1.05, scenario
         # Et il est borné dans le temps : au plus deux pas de grille.
         assert sommet.annee <= avenir.annee_bascule + 2 * PAS_GENERATIONS, scenario
         precedent = None

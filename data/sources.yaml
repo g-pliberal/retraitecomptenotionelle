@@ -138,6 +138,41 @@ institutions:
           l'emploi salarié intérieur en personnes physiques — la définition du
           SMPT dans les comptes nationaux. Disponible depuis 1949.
 
+      - id: insee_profil_salaire_age
+        titre: Séries longues de salaires dans le secteur privé — par tranche d'âge
+        url: https://api.insee.fr/melodi/data/DS_DERA_PRIVE_SERIES_LONGUES
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/profil_salaire_age.csv
+        recuperation: scripts/fetch/insee_profil_salaire_age.py
+        note: >-
+          Salaire net mensuel en équivalent temps plein, à temps complet, en
+          euros constants, par tranche d'âge : quatre tranches de 26 à 60 ans
+          depuis 1962, les deux bords depuis 1996 seulement. C'est la seule
+          source qui dise comment la prime à l'âge a évolué — 1,19 entre les
+          51-60 ans et les 26-30 ans en 1962, 1,47 en 2000, 1,35 en 2024 —, et
+          donc la seule où se lise l'effet de génération que le modèle
+          appliquait uniformément. Elle est AGRÉGÉE et ne décrit donc pas une
+          carrière : le modèle ne lui prend que l'évolution de cet écart, la
+          forme venant d'insee_profil_salaire_categorie.
+
+      - id: insee_profil_salaire_categorie
+        titre: Salaires du secteur privé par âge et catégorie socioprofessionnelle
+        url: https://api.insee.fr/melodi/data/DS_DERA_PRIVE_ANNUEL
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/profil_salaire_categorie.csv
+        recuperation: scripts/fetch/insee_profil_salaire_age.py
+        note: >-
+          Le seul des trois jeux de salaires de Melodi à croiser l'âge et la
+          catégorie socioprofessionnelle — ni la série longue du privé ni celle
+          du public ne le font, vérifié. Il donne donc le profil
+          INTRA-CATÉGORIE, qui est celui d'une carrière : ×1,28 de 26 à 55 ans
+          pour un ouvrier, ×1,30 pour un employé, ×1,41 pour une profession
+          intermédiaire, ×1,86 pour un cadre. Le modèle appliquait ×1,69 et
+          ×2,42, sans source. Ne porte que l'année 2024 : sa forme est supposée
+          stable dans le temps, ce que docs/limites.md dit.
+
       - id: insee_assiette_activite
         titre: Assiette des revenus d'activité — salaires bruts (D11) et revenu mixte (B3G)
         url: https://api.insee.fr/melodi/data/DD_CNA_TEE

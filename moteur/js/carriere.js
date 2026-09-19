@@ -575,24 +575,19 @@ export class Carriere {
     const anneeFin = annees[annees.length - 1];
 
     const plages = interruptions || new Map();
-    // L'ÉTALON DE LA DÉFORMATION EST LA CARRIÈRE COMPLÈTE DE LA GÉNÉRATION,
-    // et non la carrière de l'assuré : le dénominateur était la seconde, et il
-    // faisait dépendre de la DATE DE DÉPART le salaire de toutes les années
-    // antérieures. Voir `carriere.py`, qui porte la mesure et le motif.
-    const dureeMois = dureeCarriereComplete(
-      macro.paquet, annee_naissance + (mois_naissance - 1) / 12,
-    );
+    // LE PROFIL SE LIT À UN ÂGE ET À UNE ANNÉE, et c'est tout ce dont il
+    // dépend : le passé ne peut donc plus changer parce qu'on décide de
+    // travailler plus longtemps, et la pente est celle que l'INSEE observe
+    // pour la génération. Voir `carriere.py`, qui porte la mesure et le motif.
     const salaireMoyen = indiceSalaireMoyen(macro, anneeDebut, anneeFin);
 
     const lignes = [];
     for (const annee of annees) {
       const part = fractionAnnee(annee, debut, fin);
       const trimestresMaximum = trimestresCivils(moisTravailles(annee, debut, fin));
-      const avancement = Math.min(
-        (Math.max(new DateMois(annee, 1).rang, debut.rang) - debut.rang) / dureeMois,
-        1.0,
+      const deforme = profilSalaire(
+        macro.paquet, profil_carriere, annee - annee_naissance, annee,
       );
-      const deforme = deformation(profil_carriere, avancement);
       // Ce que chaque métier a occupé de l'année. La somme vaut les mois
       // travaillés de l'année : les périodes la découpent sans reste.
       const moisParMetier = periodes.map(
@@ -645,61 +640,95 @@ export class Carriere {
 }
 
 /**
- * Ce que chaque profil de carrière fait du niveau de revenu saisi : sa valeur
- * au tout début de la vie active, et l'AMPLITUDE dont elle croît jusqu'au
- * dernier emploi. La table donne l'amplitude et non le point d'arrivée pour
- * refaire au bit près l'arithmétique des trois formules qu'elle remplace ;
- * `bornesDeformation` en reconstitue les deux bouts pour qui veut les afficher.
+ * La catégorie socioprofessionnelle dont chaque profil emprunte sa FORME.
+ * Portage de `PROFILS_CATEGORIE` de `carriere.py`, qui porte le motif.
  */
-/**
- * Durée d'assurance requise retenue quand la génération est antérieure au
- * premier millésime du fichier. Trente-sept ans et demi : la durée d'avant la
- * loi de 1993.
- */
-export const TRIMESTRES_CARRIERE_COMPLETE_DEFAUT = 150;
-
-/**
- * Étalon de la déformation salariale, en mois, pour une génération.
- *
- * C'est la durée d'assurance requise pour le taux plein — la seule mesure de
- * « carrière complète » que le droit publie, et elle est indexée sur l'année de
- * naissance, donc insensible à la date de départ que l'assuré choisit.
- */
-function dureeCarriereComplete(paquet, generation) {
-  const table = paquet.durees_requises ?? {};
-  const generations = Object.keys(table).map(Number).sort((a, b) => a - b);
-  let trimestres = TRIMESTRES_CARRIERE_COMPLETE_DEFAUT;
-  if (generations.length > 0 && generation >= generations[0]) {
-    let applicable = generations[0];
-    for (const candidate of generations) {
-      if (candidate > generation) {
-        break;
-      }
-      applicable = candidate;
-    }
-    [trimestres] = table[String(applicable)];
-  }
-  return Math.max(Math.round(trimestres * 3) - 12, 12);
-}
-
-export const DEFORMATIONS = {
-  plat: [1.0, 0.0],
-  ascendant: [0.6, 0.7],
-  fortement_ascendant: [0.5, 1.4],
+export const PROFILS_CATEGORIE = {
+  plat: null,
+  ascendant: "employe",
+  fortement_ascendant: "cadre",
 };
 
-/** Ce que le profil fait du niveau saisi, au premier et au dernier emploi. */
-export function bornesDeformation(profil) {
-  const [depart, amplitude] = DEFORMATIONS[profil];
-  return [depart, depart + amplitude];
+/** Milieu prêté à chaque tranche du fichier par catégorie. */
+export const TRANCHES_CATEGORIE = {
+  Y_LT30: 26.0, Y30T39: 34.5, Y40T49: 44.5, Y50T59: 54.5, Y_GE60: 62.0,
+};
+
+/** Année de référence de la forme : la modulation y vaut un. */
+export const ANNEE_FORME_CATEGORIE = 2024;
+
+const TRANCHE_JEUNE = "Y26T30";
+const TRANCHE_AGEE = "Y51T60";
+
+/** Valeur d'un profil à un âge, interpolée entre les milieux de tranche. */
+function interpoleTranches(profil, milieux, age) {
+  const points = Object.entries(profil ?? {})
+    .filter(([tranche]) => tranche in milieux)
+    .map(([tranche, valeur]) => [milieux[tranche], valeur])
+    .sort((a, b) => a[0] - b[0]);
+  if (points.length === 0) {
+    return 1.0;
+  }
+  if (age <= points[0][0]) {
+    return points[0][1];
+  }
+  if (age >= points[points.length - 1][0]) {
+    return points[points.length - 1][1];
+  }
+  for (let i = 0; i + 1 < points.length; i += 1) {
+    const [ageBas, bas] = points[i];
+    const [ageHaut, haut] = points[i + 1];
+    if (ageBas <= age && age <= ageHaut) {
+      return bas + (haut - bas) * ((age - ageBas) / (ageHaut - ageBas));
+    }
+  }
+  return points[points.length - 1][1];
 }
 
-function deformation(profil, avancement) {
-  if (!(profil in DEFORMATIONS)) {
+/** Pente de carrière de l'année, rapportée à celle de l'année de référence. */
+function modulationAnnee(paquet, annee) {
+  const table = paquet.profil_salaire_age ?? {};
+  const annees = Object.keys(table).map(Number).sort((a, b) => a - b);
+  if (annees.length === 0) {
+    return 1.0;
+  }
+  const ecart = (millesime) => {
+    const profil = table[String(millesime)] ?? {};
+    const jeune = profil[TRANCHE_JEUNE];
+    const agee = profil[TRANCHE_AGEE];
+    return jeune === undefined || agee === undefined ? 0.0 : agee - jeune;
+  };
+  const reference = ecart(ANNEE_FORME_CATEGORIE);
+  const borne = Math.min(Math.max(annee, annees[0]), annees[annees.length - 1]);
+  return reference ? ecart(borne) / reference : 1.0;
+}
+
+/**
+ * Ce que le profil fait du niveau saisi, à cet âge et cette année-là.
+ * Portage de `profil_salaire` de `carriere.py`, qui porte le motif.
+ */
+export function profilSalaire(paquet, profil, age, annee) {
+  if (!(profil in PROFILS_CATEGORIE)) {
     throw new Error(`profil de carrière inconnu : ${profil}`);
   }
-  const [depart, amplitude] = DEFORMATIONS[profil];
-  return depart + amplitude * avancement;
+  const categorie = PROFILS_CATEGORIE[profil];
+  if (categorie === null) {
+    return 1.0;
+  }
+  const table = paquet.profil_salaire_categorie ?? {};
+  const forme = interpoleTranches(table[categorie], TRANCHES_CATEGORIE, age);
+  return 1.0 + (forme - 1.0) * modulationAnnee(paquet, annee);
+}
+
+/** Ce que le profil fait du niveau saisi, en début et en fin de carrière. */
+export function bornesDeformation(paquet, profil) {
+  if (!PROFILS_CATEGORIE[profil]) {
+    return [1.0, 1.0];
+  }
+  return [
+    profilSalaire(paquet, profil, 25.0, ANNEE_FORME_CATEGORIE),
+    profilSalaire(paquet, profil, 60.0, ANNEE_FORME_CATEGORIE),
+  ];
 }
 
 /**

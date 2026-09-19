@@ -513,6 +513,8 @@ résumé :
 | Productivité réelle | 1950-2025 | **certifiée** | INSEE BDM, idbanks 011785223 et 011793334 |
 | Productivité réelle | 1930-1949 | estimée | reconstitution |
 | Produit intérieur brut, en niveau | 1949-2025 | **certifiée** | INSEE BDM, idbank 011779992 |
+| Profil de salaire par tranche d'âge | 1962-2024 | **certifiée** | INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES |
+| Profil de salaire par âge et catégorie | 2024 | **certifiée** | INSEE Melodi, DS_DERA_PRIVE_ANNUEL |
 | Population par âge, 50 ans et plus | 1962-2023 | **certifiée** | INSEE, estimations de population (classeur des projections 2026) |
 | Population par âge, 50 ans et plus | 2024-2070 | projetée | INSEE, projections de population 2026, scénario central |
 | Population des 20-64 ans | 1962-2023 / 2024-2070 | **certifiée** / projetée | mêmes sources |
@@ -2060,6 +2062,44 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   salaire annuel moyen, et liquidation unique (LURA).
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
+
+### Le profil de carrière, et les trois choses qu'il suppose
+
+Le modèle ne connaît pas la carrière de celui qui se simule : il en construit
+une à partir d'un niveau de revenu et d'un PROFIL, qui dit comment ce revenu se
+déforme avec l'âge. **Ce profil valait trois nombres écrits à la main** — 60 %
+du niveau saisi au premier emploi, 130 % au dernier, 190 % pour un cadre —,
+sans source, dans un dépôt dont la règle est qu'une valeur non lue à la source
+n'entre pas. Il pèse pourtant lourd : à salaires cumulés identiques, passer du
+profil plat au profil ascendant déplaçait de **sept points** l'écart affiché
+entre le système actuel et la proposition, parce que le premier ne retient que
+les vingt-cinq meilleures années et se trouve donc flatté par un profil montant,
+là où un compte notionnel compte toutes les années.
+
+Il est lu depuis le 19 septembre 2026, et sa pente était **trop forte d'un
+tiers** : ×1,69 de 26 à 55 ans contre ×1,30 observé pour un employé, ×2,42
+contre ×1,86 pour un cadre. Trois réserves restent, et aucune n'est comblable
+par une donnée qui existe :
+
+- **Avant 1962, rien.** L'INSEE ne ventile pas le salaire par âge plus tôt, et
+  le modèle liquide depuis 1941 : les carrières commencées dans les années 1920
+  à 1950 n'ont aucun profil observé. La valeur de 1962 y est reconduite, comme
+  le dépôt le fait pour toute série bornée.
+- **Les deux bords d'âge avant 1996.** Les tranches « moins de 26 ans » et
+  « plus de 60 ans » ne sont ventilées que depuis 1996. Elles ne servent qu'à
+  l'interpolation aux extrémités, et le profil y est reconduit à plat plutôt que
+  prolongé — prolonger la pente inventerait des salaires que personne n'a
+  observés.
+- **L'écart entre catégories n'est observé qu'en 2024.** C'est le seul jeu de
+  l'INSEE à croiser l'âge et la catégorie socioprofessionnelle — vérifié : ni la
+  série longue du privé ni celle du public ne le font. Le supposer stable dans
+  le temps est une hypothèse. Elle est raisonnable, la hiérarchie cadre/ouvrier
+  ne se renversant pas, mais rien ne la démontre.
+
+Et une limite de structure : la série longue du public ne croise pas l'âge et le
+statut. **Les fonctionnaires, les militaires et les régimes spéciaux portent
+donc le profil du privé**, faute d'un profil public par catégorie. Ce que ça
+vaut n'est pas mesuré.
 
 ### Ce que dit la confrontation à une seconde implémentation
 

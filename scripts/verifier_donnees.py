@@ -284,6 +284,118 @@ def source_assiette_revenu_mixte() -> dict[tuple, float]:
     }
 
 
+#: Les tranches d'âge retenues dans chacun des deux jeux INSEE, et rien de
+#: plus : ce script écrit des tranches, il ne les interpole pas. Le MILIEU
+#: qu'on prête à chacune est une décision de modèle, et il n'a donc qu'un seul
+#: endroit — ``TRANCHES_SERIE`` et ``TRANCHES_CATEGORIE`` de ``carriere.py``.
+TRANCHES_AGE_SERIES = ("Y_LT26", "Y26T30", "Y31T40", "Y41T50", "Y51T60", "Y_GT60")
+TRANCHES_AGE_CATEGORIES = ("Y_LT30", "Y30T39", "Y40T49", "Y50T59", "Y_GE60")
+
+#: Les quatre catégories socioprofessionnelles du jeu détaillé, sous le nom que
+#: le modèle leur donne.
+CATEGORIES_SALAIRE = {"3": "cadre", "4": "profession_intermediaire",
+                      "5": "employe", "6": "ouvrier"}
+
+
+def _charge_profil_salaire(fichier: str, attendus: dict[str, str]) -> list[dict]:
+    """Observations d'un des deux jeux de profil salarial, filtres relus."""
+    chemin = BRUT / fichier
+    if not chemin.exists():
+        raise SourceAbsente(
+            f"{chemin} absent "
+            "(lancer scripts/fetch/insee_profil_salaire_age.py)"
+        )
+    charge = json.loads(chemin.read_text(encoding="utf-8"))
+    if charge.get("filtres") != attendus:
+        raise SourceAbsente(
+            f"{chemin} n'a pas été téléchargé avec les filtres attendus "
+            f"{attendus} mais avec {charge.get('filtres')} "
+            "(relancer scripts/fetch/insee_profil_salaire_age.py)"
+        )
+    return charge["observations"]
+
+
+def source_profil_salaire_age() -> dict[tuple, float]:
+    """Salaire d'une tranche d'âge rapporté au salaire moyen de son année.
+
+    Un RAPPORT, et non un montant : c'est la seule forme qui se transporte
+    d'une année à l'autre sans convention de prix, et c'est celle dont le
+    modèle a besoin, puisqu'il applique déjà la croissance du salaire moyen.
+
+    Ce profil est AGRÉGÉ, donc impropre à décrire une carrière : il mélange
+    l'effet d'âge et un effet de composition — les jeunes sont plus souvent
+    dans les catégories les moins payées, si bien que son écart entre les
+    bords vaut 0,46 en 2024 quand celui des ouvriers vaut 0,24. Ce qu'on lui
+    demande est donc l'ÉVOLUTION de cet écart, qui est le seul endroit où
+    l'effet de génération se lit : 1,19 entre 51-60 ans et 26-30 ans en 1962,
+    1,47 en 2000, 1,35 en 2024.
+    """
+    attendus = {
+        "DERA_MEASURE": "SALAIRE_NET_EQTP_MENSUEL_MOYEN_EUROS_CONSTANTS",
+        "SEX": "_T", "PCS_ESE": "_T", "ACTIVITY": "_T", "QUANTILE": "_T",
+        "WKTIME": "FT",
+    }
+    observations = _charge_profil_salaire(
+        "insee_profil_salaire_age.json", attendus)
+    par_annee: dict[int, dict[str, float]] = {}
+    for observation in observations:
+        dimensions = observation["dimensions"]
+        valeur = observation["measures"].get("OBS_VALUE_NIVEAU", {}).get("value")
+        if valeur is None:
+            continue
+        annee = int(dimensions["TIME_PERIOD"])
+        par_annee.setdefault(annee, {})[dimensions["AGE"]] = float(valeur)
+
+    valeurs: dict[tuple, float] = {}
+    for annee in sorted(par_annee):
+        moyenne = par_annee[annee].get("_T")
+        if not moyenne:
+            continue
+        for tranche in TRANCHES_AGE_SERIES:
+            brut = par_annee[annee].get(tranche)
+            if brut is not None:
+                valeurs[(str(annee), tranche)] = brut / moyenne
+    return valeurs
+
+
+def source_profil_salaire_categorie() -> dict[tuple, float]:
+    """Profil d'âge INTRA-CATÉGORIE, rapporté à la moyenne de la catégorie.
+
+    C'est le profil d'une carrière, et le seul : une personne progresse dans sa
+    catégorie, elle ne traverse pas la structure d'emploi. Le jeu détaillé est
+    le seul des trois à croiser l'âge et la catégorie — ni la série longue du
+    privé ni celle du public ne le font, vérifié —, et il ne porte qu'une année.
+    Sa forme est donc supposée stable dans le temps, ce que
+    ``docs/limites.md`` dit et que rien ne démontre.
+    """
+    attendus = {
+        "DERA_MEASURE": "SALAIRE_NET_EQTP_MENSUEL_MOYENNE",
+        "SEX": "_T", "ACTIVITY": "_T", "NUMBER_EMPL": "_T", "QUANTILE": "_T",
+        "WKTIME": "FT",
+    }
+    observations = _charge_profil_salaire(
+        "insee_profil_salaire_categorie.json", attendus)
+    par_categorie: dict[str, dict[str, float]] = {}
+    for observation in observations:
+        dimensions = observation["dimensions"]
+        valeur = observation["measures"].get("OBS_VALUE_NIVEAU", {}).get("value")
+        code = dimensions["PCS_ESE"]
+        if valeur is None or code not in CATEGORIES_SALAIRE:
+            continue
+        par_categorie.setdefault(code, {})[dimensions["AGE"]] = float(valeur)
+
+    valeurs: dict[tuple, float] = {}
+    for code in sorted(par_categorie):
+        moyenne = par_categorie[code].get("_T")
+        if not moyenne:
+            continue
+        for tranche in TRANCHES_AGE_CATEGORIES:
+            brut = par_categorie[code].get(tranche)
+            if brut is not None:
+                valeurs[(CATEGORIES_SALAIRE[code], tranche)] = brut / moyenne
+    return valeurs
+
+
 def source_pib_nominal() -> dict[tuple, float]:
     """Variation nominale du produit intérieur brut.
 
@@ -2766,6 +2878,68 @@ CERTIFICATIONS = (
         decimales=1,
         tolerance=0.05,
         unite=" M€",
+    ),
+    Certification(
+        nom="profil_salaire_age",
+        chemin=REFERENCE / "macro" / "profil_salaire_age.csv",
+        cles=("annee", "tranche"),
+        colonne="salaire_relatif",
+        source=source_profil_salaire_age,
+        origine="INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES",
+        decimales=4,
+        tolerance=5e-4,
+        entete=(
+            "# Salaire par tranche d'âge, rapporté au salaire moyen de l'année",
+            "# source_id: insee_profil_salaire_age",
+            "# unite: rapport sans dimension (1,00 = salaire moyen de l'année)",
+            "# fiabilite:",
+            "#   certifiee (1962-2024, tranches 26-60) : salaire net mensuel en",
+            "#             équivalent temps plein, à temps complet, euros constants,",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#   certifiee (1996-2024, moins de 26 et plus de 60) : mêmes séries, que",
+            "#             l'INSEE ne ventile pas plus tôt sur ces deux bords.",
+            "#",
+            "# CE QUE CE FICHIER N'EST PAS. Un profil de carrière. Il est AGRÉGÉ :",
+            "# il mélange l'effet d'âge et un effet de composition, les jeunes étant",
+            "# plus souvent dans les catégories les moins payées. Son écart entre",
+            "# les bords vaut 0,46 en 2024, celui des ouvriers 0,24 — le lire comme",
+            "# une carrière individuelle surestimerait la progression du double.",
+            "# Le modèle ne lui demande que l'ÉVOLUTION de cet écart, qui porte",
+            "# l'effet de génération : 1,19 entre 51-60 ans et 26-30 ans en 1962,",
+            "# 1,47 en 2000, 1,35 en 2024. La FORME vient de",
+            "# profil_salaire_categorie.csv.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="profil_salaire_categorie",
+        chemin=REFERENCE / "macro" / "profil_salaire_categorie.csv",
+        cles=("categorie", "tranche"),
+        colonne="salaire_relatif",
+        source=source_profil_salaire_categorie,
+        origine="INSEE Melodi, DS_DERA_PRIVE_ANNUEL (2024)",
+        decimales=4,
+        tolerance=5e-4,
+        entete=(
+            "# Profil d'âge par catégorie socioprofessionnelle, privé, 2024",
+            "# source_id: insee_profil_salaire_categorie",
+            "# unite: rapport sans dimension (1,00 = moyenne de la catégorie)",
+            "# fiabilite:",
+            "#   certifiee (2024) : salaire net mensuel en équivalent temps plein, à",
+            "#             temps complet, recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# C'EST LE PROFIL D'UNE CARRIÈRE, et le seul : une personne progresse",
+            "# dans sa catégorie, elle ne traverse pas la structure d'emploi. Ce jeu",
+            "# est le seul des trois à croiser l'âge et la catégorie — ni la série",
+            "# longue du privé ni celle du public ne le font — et il ne porte qu'une",
+            "# année. Sa forme est donc supposée stable dans le temps, ce que rien",
+            "# ne démontre et que docs/limites.md dit.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="pib_nominal",
