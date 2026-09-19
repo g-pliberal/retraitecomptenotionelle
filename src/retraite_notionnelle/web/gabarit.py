@@ -851,27 +851,36 @@ tbody tr[hidden] { display: none; }
   font-size: 1.875rem; font-weight: 900; letter-spacing: -0.03em;
 }
 .scenario .montant .annuel { color: var(--texte-doux); font-size: 0.85rem; }
-/* Le salaire net, à GAUCHE de la pension et plus petit qu'elle. Deux grandeurs
-   de nature différente se touchent ici — ce qu'on touche en travaillant, ce
-   qu'on touchera à la retraite —, et le seul moyen de les distinguer sans une
-   légende est la taille : la pension reste le chiffre de la page, le salaire
-   est ce qu'on met en regard. Il porte son étiquette sur deux lignes au plus,
-   large de 9 rem, plutôt que de repousser la pension hors de l'écran. */
-.scenario .salaire { align-items: flex-end; }
-.scenario .salaire .somme { font-size: 1.25rem; font-weight: 700; }
-.scenario .salaire .unite { white-space: normal; text-align: right;
-                            max-width: 9rem; line-height: 1.25; }
+/* Le salaire net, à gauche de la pension et DE LA MÊME TAILLE QU'ELLE.
+   Deux grandeurs de nature différente se touchent ici — ce qu'on touche en
+   travaillant, ce qu'on touchera à la retraite —, et elles comptent autant
+   l'une que l'autre : une réforme des retraites se juge sur les deux. Elles
+   étaient d'abord écrites à deux tailles, la pension dominant le salaire ;
+   le salaire s'y perdait, et c'est précisément lui que personne ne chiffre.
+
+   Ce qui les distingue n'est donc plus la taille mais l'étiquette, et un
+   filet vertical qui les sépare — le même idiome que la frise de repères des
+   pages Coût et Avantages. */
+.scenario .salaire { align-items: flex-end; padding-right: 1.1rem;
+                     box-shadow: 1px 0 0 var(--trait); }
+.scenario .salaire .somme {
+  font-size: 1.875rem; font-weight: 900; letter-spacing: -0.03em;
+}
+.scenario .salaire .unite { white-space: nowrap; text-align: right; }
 /* L'écart n'est écrit que là où il y en a un — donc sur la seule proposition —
    et dans la couleur d'accent, qui ne sert nulle part ailleurs dans ce bloc. */
-.scenario .salaire .ecart { font-size: 0.85rem; font-weight: 700;
+.scenario .salaire .ecart { font-size: 0.95rem; font-weight: 700;
                             color: var(--accent); white-space: nowrap; }
-@media (max-width: 40rem) {
-  /* Sur un téléphone, l'entête se replie déjà : les deux chiffres passent
-     l'un sous l'autre plutôt que de se serrer, et l'étiquette du salaire
-     retrouve toute la largeur. */
-  .scenario .montant { flex-wrap: wrap; justify-content: flex-start; gap: 0.2rem 1.1rem; }
-  .scenario .salaire { align-items: flex-start; }
-  .scenario .salaire .unite { text-align: left; max-width: none; }
+@media (max-width: 48rem) {
+  /* Deux grands nombres ne tiennent pas côte à côte sous 768 px : ils passent
+     l'un sous l'autre, le filet vertical devient horizontal, et les étiquettes
+     repassent à gauche avec eux. */
+  .scenario .montant { flex-wrap: wrap; justify-content: flex-start;
+                       gap: 0.4rem 1.1rem; }
+  .scenario .salaire { align-items: flex-start; padding-right: 0;
+                       padding-bottom: 0.4rem; box-shadow: none;
+                       border-bottom: 1px solid var(--trait); flex: 1 0 100%; }
+  .scenario .salaire .unite { text-align: left; }
 }
 /* La glose sous un scénario : en sans-serif 16 px, et non en serif fin 15 px.
    C'était le texte le plus fatigant du site — à cette taille, un serif fin est
