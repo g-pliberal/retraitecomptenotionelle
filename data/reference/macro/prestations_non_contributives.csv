@@ -32,6 +32,9 @@
 # Ne pas modifier ces valeurs à la main : elles seraient écrasées
 # au prochain scripts/verifier_donnees.py --appliquer.
 annee,poste,montant_meur,fiabilite
+2020,indemnite_temporaire_derive,9.96,certifiee
+2020,indemnite_temporaire_direct,150.00,certifiee
+2020,majoration_assures_handicapes,24.53,certifiee
 2020,majoration_conjoint_a_charge,109.76,certifiee
 2020,majoration_enfants,6732.09,certifiee
 2020,majoration_reversion,1134.77,certifiee
@@ -40,6 +43,10 @@ annee,poste,montant_meur,fiabilite
 2020,pension_orphelin,5707.47,certifiee
 2020,pensions_inaptitude,7713.57,certifiee
 2020,pensions_invalidite,11399.59,certifiee
+2020,retraite_du_combattant,641.59,certifiee
+2021,indemnite_temporaire_derive,10.11,certifiee
+2021,indemnite_temporaire_direct,149.62,certifiee
+2021,majoration_assures_handicapes,25.11,certifiee
 2021,majoration_conjoint_a_charge,95.26,certifiee
 2021,majoration_enfants,6800.31,certifiee
 2021,majoration_reversion,1124.77,certifiee
@@ -48,6 +55,10 @@ annee,poste,montant_meur,fiabilite
 2021,pension_orphelin,5769.48,certifiee
 2021,pensions_inaptitude,7638.15,certifiee
 2021,pensions_invalidite,11686.25,certifiee
+2021,retraite_du_combattant,593.75,certifiee
+2022,indemnite_temporaire_derive,10.21,certifiee
+2022,indemnite_temporaire_direct,148.84,certifiee
+2022,majoration_assures_handicapes,26.40,certifiee
 2022,majoration_conjoint_a_charge,84.71,certifiee
 2022,majoration_enfants,7067.88,certifiee
 2022,majoration_reversion,1148.38,certifiee
@@ -56,6 +67,10 @@ annee,poste,montant_meur,fiabilite
 2022,pension_orphelin,5992.66,certifiee
 2022,pensions_inaptitude,7787.27,certifiee
 2022,pensions_invalidite,12317.36,certifiee
+2022,retraite_du_combattant,560.75,certifiee
+2023,indemnite_temporaire_derive,19.82,certifiee
+2023,indemnite_temporaire_direct,247.10,certifiee
+2023,majoration_assures_handicapes,28.80,certifiee
 2023,majoration_conjoint_a_charge,75.54,certifiee
 2023,majoration_enfants,7335.19,certifiee
 2023,majoration_reversion,1169.93,certifiee
@@ -64,6 +79,10 @@ annee,poste,montant_meur,fiabilite
 2023,pension_orphelin,6209.68,certifiee
 2023,pensions_inaptitude,7919.57,certifiee
 2023,pensions_invalidite,12941.91,certifiee
+2023,retraite_du_combattant,491.73,certifiee
+2024,indemnite_temporaire_derive,19.15,certifiee
+2024,indemnite_temporaire_direct,239.82,certifiee
+2024,majoration_assures_handicapes,31.83,certifiee
 2024,majoration_conjoint_a_charge,69.23,certifiee
 2024,majoration_enfants,7776.59,certifiee
 2024,majoration_reversion,1216.45,certifiee
@@ -72,3 +91,4 @@ annee,poste,montant_meur,fiabilite
 2024,pension_orphelin,6451.73,certifiee
 2024,pensions_inaptitude,8289.04,certifiee
 2024,pensions_invalidite,13908.68,certifiee
+2024,retraite_du_combattant,504.28,certifiee

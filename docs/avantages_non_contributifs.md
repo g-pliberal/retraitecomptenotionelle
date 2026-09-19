@@ -1,7 +1,8 @@
 # Les avantages non contributifs du scénario 1
 
 Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce qui a
-été cotisé. **Tout ce qui sépare les deux est ici** : trente-neuf dispositifs,
+été cotisé. **Tout ce qui sépare les deux est ici** : quarante-deux
+dispositifs,
 sous un code, avec leur base légale, les régimes qui les servent, l'état du
 modèle à leur égard et le moyen d'en chiffrer le coût.
 
@@ -374,7 +375,8 @@ l'inventaire. Elle est chiffrée : **38,3 Md€ en 2024**, soit **9,0 % de la
 dépense de retraite**. À elle seule, elle pèse trois fois tout ce que le modèle
 mesure par ailleurs, et fait passer le total chiffré de 12,6 à **50,9 Md€, soit
 11,9 % de la dépense** contre 3,0 % auparavant. (Le §4 quinquies le porte
-ensuite à 93,9 Md€, en lisant huit postes de plus.)
+ensuite à 93,9 Md€, en lisant huit postes de plus, et le §4 sexies à
+95,2 Md€ en en trouvant trois autres.)
 
 | Année | Réversion | Part de la dépense | Total chiffré |
 |---|---|---|---|
@@ -498,6 +500,9 @@ on demandait à un instrument de rapport de compter une population.
 | Total chiffré | 82,0 Md€ | **93,9 Md€** |
 | Part de la dépense | 22,8 % | **22,0 %** |
 
+Le §4 sexies porte ce total à **95,2 Md€, soit 22,3 %**, en ajoutant trois
+dispositifs que l'inventaire ne portait pas.
+
 Le COR chiffre les droits de solidarité à « de l'ordre d'un cinquième » des
 retraites. On y est, et on y arrive par en dessous : ce total reste un
 plancher. **Les lignes lues font 87 % du total**, et c'est le résultat le plus
@@ -508,11 +513,11 @@ la LISTE — savoir ce qu'il faut compter, et sous quel article.
 
 Trois changements, et le premier est celui que l'utilisateur réclamait.
 
-**Les trente-neuf sont nommés.** Un tableau par famille, chaque dispositif sur
+**Tous sont nommés.** Un tableau par famille, chaque dispositif sur
 sa ligne, avec son coût sur la dernière année publiée ou, quand la case est
 vide, **la phrase qui dit pourquoi**. Quinze portent un chiffre ; les
 vingt-quatre autres portent une raison, et un test du dépôt refuse qu'une
-ligne n'ait ni l'un ni l'autre. La page affirmait qu'il existe trente-neuf
+ligne n'ait ni l'un ni l'autre. La page affirmait qu'il existe quarante-deux
 avantages et n'en montrait pas la moitié ; un blanc sans raison est une dette,
 une raison écrite est une limite.
 
@@ -562,11 +567,101 @@ ligne écartée manquerait au total du tracé quand le tableau juste en dessous 
 compterait. Un test l'interdit, comme un second interdit qu'une série publiée
 ait un trou au milieu, ce qui couperait la fenêtre en deux.
 
+## 4 sexies. Tous, et sur le plus d'années possibles
+
+Deux demandes en une, et elles tirent dans des sens opposés : ajouter des
+lignes rapproche de l'exhaustivité, mais chaque ligne nouvelle vient d'une
+source dont la fenêtre est plus courte que celle du modèle. Le chantier a donc
+buté d'abord sur un défaut, puis sur un choix.
+
+### Le défaut : une falaise cachée à l'intérieur d'une ligne
+
+Le §4 quinquies a posé que le poste publié REMPLACE la ligne calculée. La règle
+n'était appliquée qu'aux années que le poste couvre : avant, la ligne gardait sa
+valeur calculée. Le minimum vieillesse valait donc **0,02 Md€ en 2019, par le
+modèle, et 4,01 Md€ en 2020, par les comptes** — un facteur deux cents à
+l'intérieur d'une seule série, invisible tant que le graphique commençait en
+2020.
+
+C'est pire qu'une falaise entre deux lignes, parce que personne ne va la
+chercher. La règle est donc devenue : **une ligne qui a une fois un poste publié
+est publiée sur toute sa longueur**, et sa valeur calculée est jetée même pour
+les années que le poste ne couvre pas. Une ligne ne mélange jamais deux
+périmètres.
+
+### Le choix : deux tracés plutôt qu'un compromis
+
+Le prix de cette règle est une fenêtre de cinq ans, et une page qui promet
+« l'évolution du coût au cours du temps » ne peut pas s'en contenter. Les
+sources ne se rejoignent pourtant pas : le modèle calcule depuis 1959, la
+réversion se lit depuis 2004, les sous-postes des comptes depuis 2020. Aucune
+fenêtre ne contient tout.
+
+Vérifié auprès du producteur plutôt que supposé : l'API des comptes de la
+protection sociale ne publie AUCUN sous-poste du risque vieillesse-survie avant
+2020, quand le total du risque remonte à 1959. Il n'y a rien à aller chercher
+plus loin.
+
+D'où deux tracés, chacun cohérent de bout en bout, et jamais additionnés :
+
+| | Fenêtre | Ce qu'il porte | 2024 |
+|---|---|---|---|
+| Le **niveau** | 2020-2024 | le meilleur chiffre connu, poste publié où il existe | 95,2 Md€, 22,3 % |
+| La **forme** | 1959-2024 | le modèle seul, même calcul d'un bout à l'autre | 13,1 Md€, 3,1 % |
+
+La page dit en toutes lettres que les deux ne se comparent pas : un lecteur qui
+verrait 3,1 % sous 22,3 % conclurait que les avantages ont fondu, quand c'est le
+champ de la mesure qui change.
+
+Et la forme longue dit quelque chose que le niveau ne dit pas. **Le minimum
+vieillesse faisait 31 % de la dépense de retraite en 1959** : il y avait alors
+peu de pensions et beaucoup de vieillards sans droits. Il s'éteint à mesure que
+les carrières se complètent, et la courbe remonte à partir des années 1980 sous
+l'effet des minima de pension et des périodes assimilées. Les dispositifs qui
+rattrapent une carrière incomplète ont remplacé ceux qui secouraient une
+carrière absente.
+
+### Trois dispositifs que l'inventaire ne portait pas
+
+L'arbre des comptes a été parcouru poste par poste, et trois d'entre eux ne
+correspondaient à aucune ligne de l'inventaire. Base légale lue dans l'index
+LEGI, version en vigueur :
+
+| Dispositif | Base légale | 2024 |
+|---|---|---|
+| Indemnité temporaire de retraite outre-mer | décret n° 52-1050 du 10 septembre 1952 art. 1 ; LFR 2008 art. 137 | 0,26 Md€ |
+| Retraite du combattant | L. 321-1 et L. 321-2 CPMIVG, D. 321-1 | 0,50 Md€ |
+| Majoration de pension des assurés handicapés | L. 351-1-3 CSS | 0,03 Md€ |
+
+La première est la plus nette : une majoration de 35 à 75 % de la pension des
+fonctionnaires retraités résidant outre-mer, sans contrepartie de cotisation,
+fermée aux nouveaux bénéficiaires depuis 2009. La deuxième n'est pas une
+pension, mais les comptes la rangent dans le risque vieillesse-survie, donc dans
+le dénominateur que cette page décompose : l'y laisser au numérateur et pas au
+dénominateur aurait été un choix, pas une neutralité.
+
+L'inventaire compte donc **quarante-deux dispositifs, dont dix-huit portent un
+chiffre** et vingt-quatre une raison écrite.
+
+### Ce que ces trois lignes apprennent
+
+Elles ne pèsent que 0,8 milliard à elles trois, et ce n'est pas le point. Le
+point est qu'elles étaient **publiées depuis 2020 et que personne ne les avait
+regardées** : l'inventaire avait été bâti en partant des trois listes du dépôt,
+qui décrivent ce que le modèle sait faire, et non en partant de la nomenclature
+du producteur, qui décrit ce que le système verse. Les deux ne se recouvrent
+pas, et c'est la seconde qui fait foi sur l'exhaustivité.
+
+Le compte de dispositifs a d'ailleurs été retiré de la prose de la page partout
+où il n'était pas calculé. Il y était écrit en toutes lettres à huit endroits ;
+il s'est périmé d'un coup. Un nombre qui vit dans une phrase est un nombre qui
+ment un jour.
+
 ## 5. Pourquoi, et c'est le vrai résultat de ce chantier
 
 Deux causes, et elles ne se corrigent pas de la même façon.
 
-**La première est connue et écrite** : vingt-quatre des trente-neuf
+**La première est connue et écrite** : vingt-quatre des quarante-deux
 dispositifs ne portent pas de chiffre sur la dernière année publiée, et
 l'inventaire dit, pour chacun, laquelle des deux raisons s'applique — le modèle
 ne sait pas le mesurer, ou aucun poste publié ne l'isole. Ce qui reste vraiment

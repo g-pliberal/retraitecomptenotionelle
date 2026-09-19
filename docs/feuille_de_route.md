@@ -6488,6 +6488,60 @@ majoration de durée au titre du congé parental ne sont ni calculés ni isolés
 par un poste publié. La page les nomme et dit ce qui manque à chacun ; c'est
 une limite écrite, pas une dette cachée.
 
+
+**Volet G — tous les chiffres, et sur le plus d'années possibles.** À la
+demande : « il faut les chiffres pour tous et sur le plus d'années possibles ».
+Deux demandes qui tirent en sens opposés, puisque chaque ligne nouvelle vient
+d'une source plus courte que le modèle.
+
+- *Un défaut d'abord, et il était grave.* La règle du volet F — le poste publié
+  remplace la ligne calculée — n'était appliquée qu'aux années que le poste
+  couvre. Le minimum vieillesse valait donc **0,02 Md€ en 2019 par le modèle et
+  4,01 Md€ en 2020 par les comptes, dans la même série** : un facteur deux
+  cents à l'intérieur d'une ligne, invisible tant que le graphique commençait
+  en 2020. Une falaise cachée dans une ligne est pire qu'une falaise entre deux
+  lignes, parce que personne ne va la chercher. Règle posée et testée : **une
+  ligne qui a une fois un poste publié est publiée sur toute sa longueur.**
+
+- *Deux tracés plutôt qu'un compromis.* Vérifié auprès du producteur et non
+  supposé : l'API des comptes de la protection sociale ne publie aucun
+  sous-poste du risque vieillesse-survie avant 2020, quand le total remonte à
+  1959. Aucune fenêtre ne contient tout. La page porte donc le NIVEAU sur
+  2020-2024 (95,2 Md€, 22,3 %) et la FORME sur 1959-2024 (le modèle seul,
+  13,1 Md€, 3,1 %), en disant qu'ils ne s'additionnent pas. La forme longue
+  montre un **minimum vieillesse à 31 % de la dépense en 1959**, qui s'éteint à
+  mesure que les carrières se complètent, puis une remontée à partir des années
+  1980 : les dispositifs qui rattrapent une carrière incomplète remplacent ceux
+  qui secouraient une carrière absente.
+
+- *Trois dispositifs que l'inventaire ne portait pas*, trouvés en parcourant
+  l'arbre des comptes poste par poste, base légale lue dans l'index LEGI :
+  l'**indemnité temporaire de retraite outre-mer** (décret n° 52-1050 du
+  10 septembre 1952, fermée par l'article 137 de la LFR 2008), 0,26 Md€ ; la
+  **retraite du combattant** (L. 321-1 CPMIVG), 0,50 ; la **majoration de
+  pension des assurés handicapés** (L. 351-1-3 CSS), 0,03. Elles ne pèsent que
+  0,8 milliard, et ce n'est pas le point : elles étaient publiées depuis 2020 et
+  personne ne les avait regardées. L'inventaire avait été bâti depuis les trois
+  listes du dépôt, qui disent ce que le MODÈLE sait faire, au lieu de la
+  nomenclature du producteur, qui dit ce que le SYSTÈME verse. C'est la seconde
+  qui fait foi sur l'exhaustivité.
+
+- *Le compte écrit en prose a été retiré partout où il n'était pas calculé.*
+  « Trente-neuf » figurait en toutes lettres à huit endroits du site et s'est
+  périmé d'un coup en passant à quarante-deux. Un nombre qui vit dans une
+  phrase est un nombre qui ment un jour.
+
+**Ce qui reste du volet G.** Vingt-quatre dispositifs sur quarante-deux n'ont
+toujours pas de chiffre, et les raisons se rangent en trois tas. Deux ne sont
+pas encore en vigueur (surcote parentale, salaire de référence des parents,
+applicables à compter de 2026) : aucun chiffre ne peut exister. Trois ne sont
+pas des dispositifs mais des écarts de règle, mesurés ailleurs. Les
+dix-neuf autres attendent une source : les bonifications de service des
+militaires et des corps actifs, que le Service des retraites de l'État publie
+dans son rapport annuel sans que le dépôt le lise encore ; l'allocation
+veuvage, que les comptes noient dans un poste « autres droits dérivés » ; le
+service national et le congé parental, qu'aucune nomenclature n'isole.
+
 ---
 
 ### 38. Le salaire net d'un actif, sous chaque système — `fait`

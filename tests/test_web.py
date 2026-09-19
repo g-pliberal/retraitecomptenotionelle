@@ -3892,13 +3892,34 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # tableaux et huit cents mots, qu'on ne peut pas replier sans défaire la
     # page : une liste cachée derrière un dépliant ne prouve rien.
     #
-    # Trois graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils ne
-    # répondent pas à la même question et n'ont pas le même statut. Le premier
-    # COMPTE des lignes d'inventaire et ne calcule rien ; le deuxième chiffre ce
-    # que les avantages coûtent ; le troisième mesure des annuités, qui est une
-    # autre grandeur. Les replier reviendrait à demander au lecteur de déplier
-    # pour comprendre que les trois chiffres ne s'additionnent pas.
-    "/avantages": (1900, 3, 7),
+    # LA BORNE SUIT L'INVENTAIRE, et c'est assumé : elle est passée de 1900 à
+    # 1950 mots le jour où trois dispositifs de plus ont été trouvés dans les
+    # comptes de la protection sociale — l'indemnité temporaire de résidence
+    # outre-mer, la retraite du combattant et la majoration des assurés
+    # handicapés. Chacun coûte une ligne de tableau et son libellé. Refuser ces
+    # mots-là reviendrait à choisir la longueur de la page contre son
+    # exhaustivité, qui est sa seule raison d'être. En revanche la borne ne
+    # suit PAS la prose : tout mot ajouté qui ne nomme pas un dispositif doit
+    # en déloger un autre.
+    #
+    # Quatre graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils
+    # ne répondent pas à la même question et n'ont pas le même statut. Le
+    # premier COMPTE des lignes d'inventaire et ne calcule rien ; le deuxième
+    # chiffre ce que les avantages coûtent, au meilleur niveau connu, sur les
+    # cinq ans où les comptes détaillent leurs postes ; le troisième donne la
+    # même décomposition sur soixante-six ans, du modèle seul, parce qu'une
+    # série de cinq points ne montre aucune évolution ; le quatrième mesure des
+    # annuités, qui est une autre grandeur encore.
+    #
+    # LE TROISIÈME EST LE PRIX D'UNE HONNÊTETÉ, et on ne peut pas le replier.
+    # Les postes publiés s'arrêtent à 2020 et la réversion à 2004 : une page qui
+    # promet « l'évolution du coût au cours du temps » et montre cinq points ne
+    # tient pas sa promesse, et une page qui empilerait ces séries sur toute la
+    # longueur dessinerait des falaises qui ne sont que des débuts de
+    # publication. Deux tracés, deux périmètres, chacun cohérent de bout en
+    # bout. Les replier reviendrait à demander au lecteur de déplier pour
+    # comprendre que les chiffres ne s'additionnent pas.
+    "/avantages": (1950, 4, 7),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
 }

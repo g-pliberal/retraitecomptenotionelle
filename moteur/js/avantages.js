@@ -83,6 +83,12 @@ export const POSTES_PUBLIES = {
   majoration_reversion: ["majoration_reversion"],
   pension_orphelin: ["pension_orphelin"],
   inaptitude_invalidite: ["pensions_inaptitude", "pensions_invalidite"],
+  // La majoration de résidence outre-mer se verse au retraité comme à ses
+  // ayants cause : deux postes, un seul dispositif.
+  indemnite_temporaire_retraite: ["indemnite_temporaire_direct",
+    "indemnite_temporaire_derive"],
+  retraite_du_combattant: ["retraite_du_combattant"],
+  majoration_assures_handicapes: ["majoration_assures_handicapes"],
 };
 
 export const LIGNES_LUES = ["reversion", ...Object.keys(POSTES_PUBLIES)];
@@ -144,7 +150,7 @@ export const LIBELLES_MOTIFS = {
   regime_special: "Régimes spéciaux",
 };
 
-/** L'inventaire : les trente-neuf dispositifs, et les familles qui les rangent. */
+/** L'inventaire : les dispositifs recensés, et les familles qui les rangent. */
 export class Inventaire {
   constructor(familles, avantages) {
     this.familles = familles;
@@ -674,9 +680,19 @@ export function calculerAvantages(simulateur, depenses, population,
     const [masse, parMotif] = massesAnticipees(
       pensionnes, simulateur, population, annee, poidsAnnee,
     );
-    const lignes = {};
+    // Une ligne ne mélange jamais deux périmètres : une ligne qui a une fois un
+    // poste publié est publiée sur toute sa longueur, et sa valeur calculée est
+    // jetée même là où le poste ne va pas. Voir avantages.py.
+    // `modele` garde TOUTES les lignes calculées, y compris celles qu'un poste
+    // publié remplace : c'est la seule série qui remonte à 1959 sur un
+    // périmètre qui ne change jamais, et le graphique long s'en sert.
+    const modele = {};
     for (const [cle, valeur] of Object.entries(parts)) {
-      if (cle !== CONTRIBUTIF) lignes[cle] = (observee * valeur) / totale;
+      if (cle !== CONTRIBUTIF) modele[cle] = (observee * valeur) / totale;
+    }
+    const lignes = {};
+    for (const [cle, valeur] of Object.entries(modele)) {
+      if (!LIGNES_LUES.includes(cle)) lignes[cle] = valeur;
     }
     // La réversion s'ajoute telle qu'elle est publiée, sans passer par la part
     // de masse : elle ne vient pas du même endroit, et la faire passer par le
@@ -699,9 +715,13 @@ export function calculerAvantages(simulateur, depenses, population,
       annee,
       observee,
       lignes,
+      modele,
       anticipees,
       get gratuit() {
         return Object.values(this.lignes).reduce((a, b) => a + b, 0);
+      },
+      get gratuitModele() {
+        return Object.values(this.modele).reduce((a, b) => a + b, 0);
       },
       get anticipee() {
         return Object.values(this.anticipees).reduce((a, b) => a + b, 0);
@@ -721,9 +741,20 @@ export function calculerAvantages(simulateur, depenses, population,
     if (ecart !== 0) return ecart;
     return a < b ? -1 : a > b ? 1 : 0;
   });
+  const dernierModele = annees.length > 0 ? annees[annees.length - 1].modele : {};
+  const connuesModele = new Set();
+  for (const annee of annees) {
+    for (const cle of Object.keys(annee.modele)) connuesModele.add(cle);
+  }
+  const lignesModele = [...connuesModele].sort((a, b) => {
+    const ecart = (dernierModele[b] || 0) - (dernierModele[a] || 0);
+    if (ecart !== 0) return ecart;
+    return a < b ? -1 : a > b ? 1 : 0;
+  });
   return {
     annees,
     lignes,
+    lignesModele,
     refus,
     ponderation: ponderationChoisie,
     get derniere() {

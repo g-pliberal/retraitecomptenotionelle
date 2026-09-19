@@ -5318,16 +5318,24 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent 93,9 milliards en 2024, soit 22,0 % de la dépense, et **87 % de ce
+  valent 95,2 milliards en 2024, soit 22,3 % de la dépense, et **86 % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et sept autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à 7,8 milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les 12,6 milliards qu'il calcule encore lui-même
-  restent soumis à cette limite. Vingt-quatre dispositifs sur trente-neuf ne
-  portent aucun chiffre, chacun avec sa raison écrite. Voir
-  `docs/avantages_non_contributifs.md`.
+  le chiffre mais la LISTE, et les 13,1 milliards qu'il calcule encore lui-même
+  restent soumis à cette limite. Vingt-quatre dispositifs sur quarante-deux ne
+  portent aucun chiffre, chacun avec sa raison écrite.
+
+  **Une seconde limite, découverte en réparant la première : les deux mesures
+  n'ont pas la même fenêtre.** Les sous-postes des comptes ne sont publiés que
+  depuis 2020, la réversion depuis 2004, et le modèle calcule depuis 1959. Une
+  ligne ne mélange donc jamais les deux périmètres — la règle a été posée après
+  qu'un minimum vieillesse eut valu 0,02 milliard en 2019 par le modèle et 4,01
+  en 2020 par les comptes, dans la même série. Le site porte en conséquence
+  deux tracés qui ne s'additionnent pas : le NIVEAU sur cinq ans, la FORME sur
+  soixante-six. Voir `docs/avantages_non_contributifs.md`.
 
 - **La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.**
   Mesuré en comparant ce que coûte une année d'anticipation sous le droit en

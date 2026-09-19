@@ -73,6 +73,16 @@ PRESTATIONS: tuple[tuple[str, str], ...] = (
     ("E11-21.2", "minimum_vieillesse"),
     ("E11-22.1.16", "pension_orphelin"),
     ("E11-22.1.20", "majoration_reversion"),
+    # Trois dispositifs que l'inventaire ne portait pas du tout, et que les
+    # comptes isolent : la majoration de résidence des retraités de la fonction
+    # publique outre-mer, en deux postes qu'il faut réunir (droit direct et
+    # ayants cause) ; l'allocation des anciens combattants, qui n'est pas une
+    # pension mais que les comptes rangent dans le risque vieillesse ; et la
+    # majoration de pension des assurés partis au titre du handicap.
+    ("E11-21.1.21", "indemnite_temporaire_direct"),
+    ("E11-22.1.21", "indemnite_temporaire_derive"),
+    ("E11-21.1.14", "retraite_du_combattant"),
+    ("E11-21.1.44", "majoration_assures_handicapes"),
 )
 
 

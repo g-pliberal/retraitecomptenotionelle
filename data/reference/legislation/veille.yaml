@@ -921,3 +921,38 @@ journal:
       \ les départs anticipés pour handicap et la majoration de durée au titre du\
       \ congé parental : la page les nomme et dit pour chacun ce qui manque. Les\
       \ reprises de veille du 17 septembre 2026 restent ouvertes."
+  - date: '2026-09-19'
+    session: "action 37, volet G : tous les chiffres, sur le plus d'années possibles"
+    consulte: "Trois textes lus dans l'index LEGI, version en vigueur, pour trois\
+      \ dispositifs que l'inventaire ne portait pas et que les comptes de la\
+      \ protection sociale isolent : le décret n° 52-1050 du 10 septembre 1952\
+      \ (art. 1) et l'article 137 de la loi n° 2008-1443 du 30 décembre 2008,\
+      \ qui ferme l'indemnité temporaire de retraite outre-mer aux nouveaux\
+      \ bénéficiaires ; les articles L. 321-1, L. 321-2 et D. 321-1 du code des\
+      \ pensions militaires d'invalidité et des victimes de guerre, recodifiés\
+      \ au 1er janvier 2017, pour la retraite du combattant ; l'article\
+      \ L. 351-1-3 du code de la sécurité sociale, version du 1er septembre\
+      \ 2023, pour la majoration de pension des assurés handicapés. Également\
+      \ interrogée, l'API des Comptes de la protection sociale, pour savoir si\
+      \ la borne de 2020 des sous-postes venait du producteur ou de la requête."
+    trouve: "La borne de 2020 vient bien du producteur : AUCUN sous-poste du\
+      \ risque vieillesse-survie n'est publié avant, quand le total du risque\
+      \ remonte à 1959. Aucune fenêtre ne contient donc toutes les lignes, et la\
+      \ page porte en conséquence deux tracés qui ne s'additionnent pas — le\
+      \ niveau sur cinq ans, la forme sur soixante-six. Un défaut a été corrigé\
+      \ au passage : une ligne gardait sa valeur CALCULÉE avant l'année où son\
+      \ poste PUBLIÉ commence, ce qui faisait passer le minimum vieillesse de\
+      \ 0,02 Md€ en 2019 à 4,01 en 2020 dans la même série. Les trois\
+      \ dispositifs ajoutés portent le total chiffré à 95,2 Md€ en 2024, soit\
+      \ 22,3 % de la dépense, et l'inventaire à quarante-deux lignes dont\
+      \ dix-huit chiffrées."
+    reste: "Vingt-quatre dispositifs restent sans chiffre. Deux ne sont pas encore\
+      \ en vigueur (surcote parentale, salaire de référence des parents, à\
+      \ compter de 2026) et aucun chiffre ne peut exister ; trois ne sont pas\
+      \ des dispositifs mais des écarts de règle. Les autres attendent une\
+      \ source : les bonifications de service des militaires et des corps\
+      \ actifs, publiées par le Service des retraites de l'État dans son rapport\
+      \ annuel, que le dépôt ne lit pas encore ; l'allocation veuvage\
+      \ (L. 356-1), noyée dans un poste « autres droits dérivés » ; le service\
+      \ national et le congé parental, qu'aucune nomenclature n'isole. Les\
+      \ reprises de veille du 17 septembre 2026 restent ouvertes."

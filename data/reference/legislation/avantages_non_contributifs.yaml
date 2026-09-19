@@ -1080,6 +1080,80 @@ avantages:
 
   # --- Majorations diverses ------------------------------------------------
 
+  - code: indemnite_temporaire_retraite
+    libelle: Indemnité temporaire de retraite outre-mer
+    famille: autres_avantages
+    quoi: >-
+      Une majoration de 35 à 75 % de la pension des fonctionnaires retraités
+      qui résident dans certaines collectivités d'outre-mer. Elle ne répond à
+      aucune cotisation supplémentaire : c'est un supplément de résidence servi
+      à vie. Fermée aux nouveaux bénéficiaires depuis 2009 et plafonnée, elle
+      s'éteint par extinction de ses titulaires.
+    base_legale: [Décret n° 52-1050 du 10 septembre 1952 art. 1, LOI n° 2008-1443
+      du 30 décembre 2008 art. 137, Décret n° 2009-114 du 30 janvier 2009]
+    veille: []
+    creation: 1952
+    fin: null
+    regimes: [fonction_publique_etat, fonction_publique_territoriale]
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Le simulateur ne saisit pas le lieu de résidence à la liquidation.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_comptes_protection_sociale
+      note: >-
+        Postes « Indemnités temporaires de la Fonction publique » des comptes
+        de la protection sociale, droit direct et ayants cause réunis.
+
+  - code: retraite_du_combattant
+    libelle: Retraite du combattant
+    famille: autres_avantages
+    quoi: >-
+      Une allocation servie à partir de soixante-cinq ans au titulaire de la
+      carte du combattant, d'un montant fixé en points d'indice et sans rapport
+      avec une carrière. Elle n'est pas une pension et ne suppose aucune
+      cotisation ; les comptes la rangent pourtant dans le risque
+      vieillesse-survie, et donc dans la dépense que cette page décompose.
+    base_legale: [L. 321-1 CPMIVG, L. 321-2 CPMIVG, D. 321-1 CPMIVG]
+    veille: []
+    creation: 1930
+    fin: null
+    regimes: tous
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Le modèle décrit une carrière, pas un parcours militaire : il ne sait pas
+      qui détient la carte du combattant.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_comptes_protection_sociale
+      note: Poste « Retraites du combattant » des comptes de la protection sociale.
+
+  - code: majoration_assures_handicapes
+    libelle: Majoration de pension des assurés handicapés
+    famille: autres_avantages
+    quoi: >-
+      Un supplément de pension proportionnel à la durée cotisée, servi à
+      l'assuré parti au titre du handicap. Il s'ajoute au départ anticipé lui-
+      même, dont il est distinct : l'un ouvre le droit plus tôt, l'autre
+      augmente le montant.
+    base_legale: [L. 351-1-3 CSS]
+    veille: []
+    creation: 2005
+    fin: null
+    regimes: tous
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Demande un taux d'incapacité que le modèle ne collecte pas.
+    cout:
+      mesurable_par: serie_publiee
+      source_id: drees_comptes_protection_sociale
+      note: >-
+        Poste « Majorations sur pensions de base - assurés handicapés » des
+        comptes de la protection sociale.
+
   - code: majoration_tierce_personne
     libelle: Majoration pour assistance d'une tierce personne
     famille: autres_avantages

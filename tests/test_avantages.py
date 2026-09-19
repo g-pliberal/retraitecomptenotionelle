@@ -545,3 +545,81 @@ def test_une_ligne_lue_ne_s_interrompt_jamais(script_cout):
         assert servies == [a for a in attendues if a in connues], (
             f"{lue} : série publiée à trous, de {servies[0]} à {servies[-1]}"
         )
+
+
+def test_une_ligne_ne_melange_jamais_deux_perimetres(script_cout):
+    """Une ligne LUE n'existe que là où son producteur la publie.
+
+    C'est la règle la plus chère de ce chantier, et elle a été posée après
+    coup : une ligne gardait sa valeur CALCULÉE pour les années d'avant le
+    premier poste PUBLIÉ. Le minimum vieillesse valait donc 0,02 milliard en
+    2019, par le modèle, et 4,01 en 2020, par les comptes — un facteur deux
+    cents à l'intérieur d'une seule série, que personne ne pouvait voir tant
+    que le graphique commençait en 2020.
+
+    Une falaise cachée dans une ligne est pire qu'une falaise entre deux
+    lignes : nul ne va la chercher. Ce test vérifie qu'aucune ligne lue ne
+    déborde de la fenêtre de sa source, en comparant sa série à celle des
+    dépenses publiées.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.simulateur import Simulateur
+
+    parametres = Parametres()
+    depenses = DepensesRetraite(parametres.racine_donnees)
+    cout = script_cout.calculer_avantages(
+        Simulateur(parametres), depenses, Population(parametres.racine_donnees))
+
+    for ligne in script_cout.LIGNES_LUES:
+        postes = script_cout.POSTES_PUBLIES.get(ligne)
+        for annee in cout.annees:
+            if ligne not in annee.lignes:
+                continue
+            if postes is None:  # la réversion, lue dans l'enquête aux caisses
+                publie = depenses.reversion(annee.annee) is not None
+            else:
+                publie = any(depenses.prestation(poste, annee.annee) is not None
+                             for poste in postes)
+            assert publie, (
+                f"{ligne} portée en {annee.annee} alors qu'aucune source ne la "
+                f"publie cette année-là : c'est la valeur du modèle qui a servi"
+            )
+
+
+def test_la_decomposition_du_modele_couvre_toute_la_fenetre(script_cout):
+    """Le modèle seul garde ses lignes même là où un poste les remplace.
+
+    La règle du test précédent JETTE la valeur calculée d'une ligne lue. Elle
+    ne doit pas la jeter partout : c'est la seule série qui remonte à la
+    première pension servie sur un périmètre qui ne change jamais, et le
+    graphique long de la page s'en sert. Les deux vivent donc côte à côte,
+    ``lignes`` pour le niveau et ``modele`` pour la forme, et ce test interdit
+    qu'une simplification future confonde les deux.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.simulateur import Simulateur
+
+    parametres = Parametres()
+    cout = script_cout.calculer_avantages(
+        Simulateur(parametres),
+        DepensesRetraite(parametres.racine_donnees),
+        Population(parametres.racine_donnees),
+    )
+    assert cout.lignes_modele, "la décomposition du modèle est vide"
+    portees = {ligne for annee in cout.annees for ligne in annee.modele}
+    remplacees = portees & set(script_cout.LIGNES_LUES)
+    assert remplacees, (
+        "aucune ligne lue n'a de valeur calculée : le graphique long a perdu "
+        "sa raison d'être, ou LIGNES_LUES a changé sans que ce test suive"
+    )
+    for ligne in remplacees:
+        annees = [a.annee for a in cout.annees if a.modele.get(ligne)]
+        lues = [a.annee for a in cout.annees if ligne in a.lignes]
+        assert annees and annees[0] < min(lues), (
+            f"{ligne} : le modèle ne remonte pas plus haut que la publication, "
+            f"le graphique long n'y gagne rien"
+        )

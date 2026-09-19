@@ -38,7 +38,7 @@ La grille de cas types n'est pas une population. Un seul de ses treize cas types
 a des enfants, un seul porte des interruptions, aucun ne connaît le chômage. Les
 masses qui en sortent sont donc des PLANCHERS, et très bas : 3 % de la dépense
 là où le COR chiffre les droits de solidarité à « de l'ordre d'un cinquième ».
-Vingt-neuf des trente-neuf dispositifs n'y sont d'ailleurs pas — la réversion en
+La plupart des dispositifs de l'inventaire n'y sont d'ailleurs pas — la réversion en
 tête, première dépense non contributive du système, qu'un modèle décrivant une
 carrière et non un ménage ne peut pas voir.
 
@@ -103,6 +103,12 @@ POSTES_PUBLIES: dict[str, tuple[str, ...]] = {
     "majoration_reversion": ("majoration_reversion",),
     "pension_orphelin": ("pension_orphelin",),
     "inaptitude_invalidite": ("pensions_inaptitude", "pensions_invalidite"),
+    # La majoration de résidence outre-mer se verse au retraité comme à ses
+    # ayants cause : deux postes, un seul dispositif, et il faut les réunir.
+    "indemnite_temporaire_retraite": ("indemnite_temporaire_direct",
+                                      "indemnite_temporaire_derive"),
+    "retraite_du_combattant": ("retraite_du_combattant",),
+    "majoration_assures_handicapes": ("majoration_assures_handicapes",),
 }
 
 LIGNES_LUES: tuple[str, ...] = ("reversion", *POSTES_PUBLIES)
@@ -226,7 +232,7 @@ class Famille:
 
 @dataclass(frozen=True)
 class Inventaire:
-    """Les trente-neuf dispositifs, et les familles qui les rangent."""
+    """Les dispositifs de l'inventaire, et les familles qui les rangent."""
 
     familles: tuple[Famille, ...]
     avantages: tuple[Avantage, ...]
@@ -655,14 +661,31 @@ class AnneeAvantages:
     annee: int
     #: Dépense observée, en millions d'euros courants.
     observee: float
-    #: Coût de chaque ligne, en millions d'euros courants de l'année.
+    #: Coût de chaque ligne, en millions d'euros courants de l'année. C'est le
+    #: MEILLEUR CHIFFRE disponible : le poste publié là où il existe, le modèle
+    #: ailleurs, et jamais les deux dans la même ligne.
     lignes: dict[str, float]
+    #: La décomposition du MODÈLE SEUL, toutes lignes comprises, y compris
+    #: celles qu'un poste publié remplace dans ``lignes``.
+    #:
+    #: Elle existe pour une raison et une seule : c'est la seule série qui
+    #: remonte à la première pension servie, en 1959, sur un périmètre qui ne
+    #: change jamais. Les postes des comptes s'arrêtent à 2020 et la réversion
+    #: à 2004 ; les empiler sur soixante-six ans dessinerait des falaises qui
+    #: ne sont que des débuts de publication. L'histoire longue se lit donc
+    #: ici, et le niveau juste dans ``lignes`` — deux questions, deux séries,
+    #: et surtout jamais additionnées.
+    modele: dict[str, float]
     #: Coût des pensions servies avant l'âge légal, par motif d'ouverture.
     anticipees: dict[str, float]
 
     @property
     def gratuit(self) -> float:
         return sum(self.lignes.values())
+
+    @property
+    def gratuit_modele(self) -> float:
+        return sum(self.modele.values())
 
     @property
     def anticipee(self) -> float:
@@ -677,6 +700,8 @@ class CoutAvantages:
     #: Les lignes effectivement chiffrées, par coût décroissant de la dernière
     #: année : c'est l'ordre de la légende et celui des bandes empilées.
     lignes: tuple[str, ...] = ()
+    #: Les lignes de la décomposition du modèle seul, même ordre.
+    lignes_modele: tuple[str, ...] = ()
     #: Ce que le garde-fou a refusé de mesurer, et pourquoi. Un refus est un
     #: résultat : la page l'affiche au lieu de le taire.
     refus: dict[str, str] = field(default_factory=dict)
@@ -859,8 +884,22 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
         observee = depenses.depense(annee)
         masse, par_motif = masses_anticipees(
             pensionnes, simulateur, population, annee, poids_annee)
-        lignes = {cle: observee * valeur / totale
+        # UNE LIGNE NE MÉLANGE JAMAIS DEUX PÉRIMÈTRES. Les lignes que le modèle
+        # calcule et celles qu'un producteur publie ne se suivent pas : elles
+        # comptent deux choses différentes, sur deux populations différentes.
+        # Une ligne qui a UNE FOIS un poste publié est publiée sur TOUTE sa
+        # longueur, et sa valeur calculée est jetée même pour les années que le
+        # poste ne couvre pas.
+        #
+        # Sans cette règle, le minimum vieillesse valait 0,02 Md€ en 2019, par
+        # le modèle, puis 4,01 en 2020, par les comptes : un facteur deux cents
+        # à l'intérieur d'une seule série, invisible tant que le graphique
+        # commençait en 2020. Une falaise cachée dans une ligne est pire qu'une
+        # falaise visible entre deux lignes — personne ne va la chercher.
+        modele = {cle: observee * valeur / totale
                   for cle, valeur in parts.items() if cle != CONTRIBUTIF}
+        lignes = {cle: valeur for cle, valeur in modele.items()
+                  if cle not in LIGNES_LUES}
         # La réversion s'ajoute telle qu'elle est publiée, sans passer par la
         # part de masse : elle ne vient pas du même endroit, et la faire passer
         # par le modèle reviendrait à lui prêter une précision qu'il n'a pas.
@@ -880,6 +919,7 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
             annee=annee,
             observee=observee,
             lignes=lignes,
+            modele=modele,
             anticipees={motif: observee * valeur / masse if masse > 0.0 else 0.0
                         for motif, valeur in par_motif.items()},
         ))
@@ -891,5 +931,11 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
         {cle for annee in annees for cle in annee.lignes},
         key=lambda cle: (-derniere.get(cle, 0.0), cle),
     ))
-    return CoutAvantages(annees=tuple(annees), lignes=lignes, refus=refus,
+    dernier_modele = annees[-1].modele if annees else {}
+    lignes_modele = tuple(sorted(
+        {cle for annee in annees for cle in annee.modele},
+        key=lambda cle: (-dernier_modele.get(cle, 0.0), cle),
+    ))
+    return CoutAvantages(annees=tuple(annees), lignes=lignes,
+                         lignes_modele=lignes_modele, refus=refus,
                          ponderation=ponderation)

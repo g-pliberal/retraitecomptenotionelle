@@ -1553,7 +1553,7 @@ export class Contexte {
     return this._donnee("assiette", () => new AssietteActivite(this.paquet));
   }
 
-  /** Les trente-neuf avantages non contributifs — une donnée, pas un calcul. */
+  /** L'inventaire des avantages non contributifs — une donnée, pas un calcul. */
   inventaireAvantages() {
     return this._donnee("inventaireAvantages", () => chargerAvantages(this.paquet));
   }
@@ -1697,7 +1697,7 @@ export const DESCRIPTIONS = {
     + "proposition et sous quatre contrefactuels.",
   "/cout": "Ce que la retraite coûte, d'où vient l'argent, et ce qui manque, "
     + "de 1959 à 2070 — et ce que chacun des quatre systèmes coûterait.",
-  "/avantages": "Les trente-neuf avantages non contributifs du système actuel : "
+  "/avantages": "Tous les avantages non contributifs du système actuel : "
     + "lesquels, depuis quand, et ce que le modèle sait en chiffrer.",
   "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
     + "opérations, et pourquoi la règle de revalorisation décide de "
@@ -5468,6 +5468,41 @@ function avantages(contexte) {
     null, "", 1,
   );
 
+  // -- graphique long : le modèle seul, sur toute sa longueur --------------
+  // Le tracé précédent est juste mais court, celui-ci long mais étroit : les
+  // deux ne s'additionnent jamais. Voir pages.py pour le raisonnement complet.
+  const anneesModele = c.annees.map((a) => a.annee);
+  const famillesModele = new Map();
+  for (const ligne of c.lignesModele) {
+    const famille = inventaire.familleDeLigne(ligne);
+    if (famille === null) continue;
+    if (!famillesModele.has(famille)) famillesModele.set(famille, new Map());
+    const cumul = famillesModele.get(famille);
+    for (const a of c.annees) {
+      cumul.set(a.annee, (cumul.get(a.annee) || 0) + (a.modele[ligne] || 0));
+    }
+  }
+  const finModele = anneesModele[anneesModele.length - 1];
+  const ordreModele = inventaire.familles
+    .filter((f) => [...(famillesModele.get(f.code) || new Map()).values()].some((v) => v))
+    .sort((x, y) => (famillesModele.get(y.code).get(finModele) || 0)
+      - (famillesModele.get(x.code).get(finModele) || 0));
+  const bandesModele = [...ordreModele].reverse().map((famille, rang) => new g.Serie(
+    famille.libelle,
+    anneesModele.map((a) => (famillesModele.get(famille.code).get(a) || 0) / 1000),
+    COULEURS_LIGNES[rang % COULEURS_LIGNES.length],
+  ));
+  const courbeLongue = anneesModele.length === 0 ? "" : g.graphique(
+    `Ce que le modèle reconstitue seul, par famille, de `
+    + `${anneesModele[0]} à ${finModele}`,
+    anneesModele, bandesModele, "Md€ courants", true, 0, true, null, "", [],
+    "Année", null, "", 1,
+  );
+  const partDebutModele = c.annees[0].observee
+    ? c.annees[0].gratuitModele / c.annees[0].observee : 0;
+  const partFinModele = derniere.observee
+    ? derniere.gratuitModele / derniere.observee : 0;
+
   // -- troisième graphique : les annuités servies trop tôt -----------------
   const anticipees = MOTIFS.map((motif) => new g.Serie(
     LIBELLES_MOTIFS[motif],
@@ -5502,7 +5537,18 @@ l'ordre d'un cinquième » des retraites : on y est. ${chiffres} des ${total}
 dispositifs portent un chiffre ; le tableau ci-dessous nomme les autres et dit
 ce qui manque à chacun.`,
     courbeCout
-    + "<h3>Les trente-neuf, un par un</h3>"
+    + "<h3>Et sur soixante-six ans ?</h3>"
+    + `<p class="chapeau">Le tracé ci-dessus est juste mais court : les
+comptes ne détaillent leurs postes que depuis ${anneesPubliees[0]}. Celui-ci est
+long mais étroit. Il porte les ${ordreModele.length} familles que le modèle
+reconstitue seul, de ${anneesModele[0]} à ${finModele}, calculées de la
+même façon d'un bout à l'autre.</p>
+<p><strong>Les deux ne s'additionnent pas et ne se comparent pas :</strong>
+${g.pourcentage(partFinModele, false, 1)} de la dépense ici,
+${g.pourcentage(derniere.gratuit / derniere.observee, false, 1)} au-dessus.
+C'est le champ de la mesure qui change, et ce tracé donne une forme.</p>`
+    + courbeLongue
+    + "<h3>Tous les dispositifs, un par un</h3>"
     + `<p class="chapeau">Ce que chacun coûte en ${derniere.annee}, et,
 quand la case est vide, pourquoi elle l'est. La dernière famille ne s'additionne
 pas aux autres : elle n'est pas faite de dispositifs.</p>`
@@ -5531,6 +5577,13 @@ sous-postes des comptes ne sont publiés que depuis 2020 : le tracé s'arrête l
 où <em>chaque</em> terme est observé. Les empiler plus tôt dessinerait une
 falaise de quarante milliards, qui ne serait qu'un début de publication. Le
 premier graphique de la page, lui, remonte à 1800.</p>
+<p><strong>Et la forme longue parle.</strong> Le minimum vieillesse faisait
+${g.pourcentage(partDebutModele, false, 0)} de la dépense en
+${c.annees[0].annee}, quand il y avait peu de pensions et beaucoup de
+vieillards sans droits ; il s'est éteint à mesure que les carrières se
+complétaient. La courbe remonte ensuite, à partir des années 1980 : les minima
+de pension et les périodes assimilées rattrapent des carrières incomplètes là
+où l'on secourait des carrières absentes.</p>
 <p><strong>Et ce total reste un plancher.</strong> Les bonifications de service
 des militaires et des corps actifs, les départs anticipés pour handicap, la
 majoration de durée au titre du congé parental ne sont ni calculés par le
@@ -5637,10 +5690,10 @@ ${detail}
 }
 
 /**
- * Les trente-neuf, un par ligne, avec ce qu'ils coûtent ou pourquoi on l'ignore.
+ * Chaque dispositif sur sa ligne, avec son coût ou la raison qui l'en prive.
  *
  * C'EST LE CŒUR DE LA PAGE. Les graphiques ne portent que ce qui se chiffre ;
- * une page qui affirme qu'il existe trente-neuf avantages doit les NOMMER tous,
+ * une page qui affirme qu'il existe quarante-deux avantages doit les NOMMER tous,
  * et dire pour chacun ce qu'on en sait. Un blanc sans raison est une dette ;
  * une raison écrite est une limite.
  */
@@ -5696,7 +5749,7 @@ function avantagesTableComplete(contexte) {
   return blocs.join("");
 }
 
-/** Les trente-neuf, famille par famille, avec leur base légale. */
+/** L'inventaire entier, famille par famille, avec sa base légale. */
 function avantagesDetailListe(contexte) {
   const inventaire = contexte.inventaireAvantages();
   const blocs = [];
@@ -5781,7 +5834,7 @@ ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
 portent sur la même pension, vue sous un autre angle, et les additionner serait
 un double compte.</p>
 <p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
-dans la base LEGI, version par version ; deux lignes sur trente-neuf portent la
+dans la base LEGI, version par version ; deux lignes de l'inventaire portent la
 mention « à certifier », parce que leurs textes sont éclatés dans des statuts de
 corps qui n'ont pas été lus. Une déduction n'est pas une lecture.</p>`,
     "avantages-limites",
