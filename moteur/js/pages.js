@@ -4301,6 +4301,12 @@ function cout(contexte) {
     1,
   );
   const equilibre = solde.premiereAnneeEquilibree(reforme);
+  // « en 2043 » et « jamais » ne se branchent pas au même endroit de la
+  // phrase : l'un complète le verbe, l'autre le nie, et le repli posé sur le
+  // seul millésime donnait « les comptes se rééquilibrent en jamais ».
+  const retourEquilibre = equilibre
+    ? `les comptes se rééquilibrent en ${equilibre}`
+    : "les comptes ne se rééquilibrent jamais";
 
   // -- le second graphique : d'où vient l'argent ---------------------------
   const anneesVentilees = comptes.anneesVentilees();
@@ -4328,8 +4334,7 @@ function cout(contexte) {
 <strong>L'écart va se creuser</strong> : en ${solde.derniereAnnee} il
 manquerait
 ${g.pourcentage(Math.abs(horizon.solde("actuel") / horizon.depense("actuel")), false, 0)}
-de la facture. En comptes notionnels dès ${bascule}, les comptes se
-rééquilibrent en ${equilibre || "jamais"}.`,
+de la facture. En comptes notionnels dès ${bascule}, ${retourEquilibre}.`,
     bilan,
     `Sources : DREES jusqu'en ${solde.premiereAnnee - 1}, Conseil
 d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
