@@ -3071,8 +3071,9 @@ function resultats(contexte, saisie) {
       : "";
     return `
       <span class="chiffre salaire">
-        <span class="somme">${g.eurosCentimes(net / 12)}</span>
-        <span class="unite">salaire net, par mois</span>
+        <span class="categorie">salaire</span>
+        <span class="somme">${g.nombre(net / 12)}</span>
+        <span class="unite">€ net/mois</span>
         ${mention}
       </span>`;
   };
@@ -3102,8 +3103,9 @@ function resultats(contexte, saisie) {
     <span class="titre">${echapper(titre)}</span>
     <span class="montant">${salaire(cle)}
       <span class="chiffre principal">
-        <span class="somme">${g.eurosCentimes(montant / 12)}</span>
-        <span class="unite">${uniteReference}</span>
+        <span class="categorie">retraite</span>
+        <span class="somme">${g.nombre(montant / 12)}</span>
+        <span class="unite">€ brut/mois</span>
       </span>
     </span>
   </div>${partage}
@@ -3211,7 +3213,11 @@ function resultats(contexte, saisie) {
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
 Les trois autres appliquent chacun d'autres règles à la même carrière.
-Le chiffre : votre pension brute, ${uniteReference}.
+Deux chiffres par ligne : à gauche votre <strong>salaire net</strong> pendant
+que vous cotisez, à droite votre <strong>pension brute</strong> une fois
+retraité — ${uniteReference}, l'un comme l'autre.
+La pension est dite brute parce qu'elle l'est : la CSG, la CRDS et la
+contribution de solidarité qui la frappent ne sont pas calculées ici.
 Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 
   // Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,

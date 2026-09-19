@@ -848,6 +848,15 @@ tbody tr[hidden] { display: none; }
                      white-space: nowrap; }
 .scenario .chiffre .somme { line-height: 1.2; }
 .scenario .chiffre .unite { font-size: 0.8rem; color: var(--texte-doux); }
+/* Ce que le nombre mesure, AU-DESSUS de lui — « salaire », « retraite ». Deux
+   grands nombres se touchent sur chaque ligne, et rien ne les distinguait
+   qu'une unité lue après coup ; on lit maintenant ce qu'on regarde avant de le
+   lire. Même traitement que la frise de repères des pages Coût et Avantages :
+   capitales espacées, petit corps, couleur douce. */
+.scenario .chiffre .categorie {
+  font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--texte-doux); line-height: 1.4;
+}
 .scenario .principal .somme {
   font-size: 1.875rem; font-weight: 900; letter-spacing: -0.03em;
 }
