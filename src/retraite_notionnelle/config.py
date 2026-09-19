@@ -510,9 +510,11 @@ class Parametres:
     #:
     #: Ce paramètre ne touche à AUCUNE pension : le compte notionnel porte la
     #: somme des deux parts, et le partage lui est indifférent. Il ne sert qu'à
-    #: la fiche de paie de `remuneration.py`, où il déplace la ligne « brut »
-    #: entre le coût du travail et le net — sans déplacer le net lui-même, sous
-    #: l'hypothèse d'incidence que ce module retient.
+    #: la fiche de paie de `remuneration.py` — mais il y compte, et beaucoup :
+    #: la CSG est assise sur le BRUT, que le partage déplace, et la réduction
+    #: générale n'efface que des cotisations PATRONALES. Plus la part patronale
+    #: est grosse, plus le salaire net est élevé à coût du travail donné. Voir
+    #: le docstring de `remuneration.py`.
     part_salariale_taux_unique: float = 0.5
 
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui

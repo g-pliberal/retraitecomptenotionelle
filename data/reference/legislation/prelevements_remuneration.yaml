@@ -289,19 +289,29 @@ reduction_generale:
   plafond_en_smic: 3.0
   puissance: 1.75
   taux_minimum: 0.02
-  taux_maximal: 0.3821
+  # « La valeur maximale du coefficient est fixée par décret, dans la limite de
+  # la somme des taux des cotisations et contributions incluses dans le
+  # périmètre de la réduction » (L. 241-13, III). La limite est ATTEINTE : les
+  # dix taux ci-dessous font 40,21 %, et c'est exactement le coefficient. Au
+  # SMIC, l'employeur ne verse donc plus rien de ce périmètre.
+  #
+  # Le décret publie ce coefficient en deux morceaux — un plancher de 2,00 % et
+  # un « taux delta » de 38,21 % — et décompose le second avec les ANCIENS taux
+  # réduits de maladie et de famille plus 5,80 points de compensation de leur
+  # suppression. Le total est le même ; l'écriture ci-dessous est celle qui se
+  # vérifie, puisque chacune de ses lignes est un taux de ce fichier.
+  coefficient_maximal: 0.4021
   composantes:
-    maladie: 0.0700
+    maladie: 0.1300
     vieillesse_plafonnee: 0.0855
     vieillesse_deplafonnee: 0.0211
-    famille: 0.0345
+    famille: 0.0525
     accidents_travail: 0.0049
     autonomie: 0.0030
     agirc_arrco: 0.0472
     equilibre_general: 0.0129
     chomage: 0.0400
     logement: 0.0050
-    compensation_bandeaux: 0.0580
   composantes_retraite:
     - vieillesse_plafonnee
     - vieillesse_deplafonnee
