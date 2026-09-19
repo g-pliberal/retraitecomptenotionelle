@@ -4890,14 +4890,21 @@ def _cout(contexte: Contexte) -> str:
     # Bâties à part et non dans le gabarit final : une réponse et une source
     # sont elles-mêmes des textes à trous, et Python n'accepte pas un bloc entre
     # triples guillemets à l'intérieur d'un autre.
+    #
+    # « en 2043 » et « jamais » ne se branchent pas au même endroit de la
+    # phrase : l'un complète le verbe, l'autre le nie, et le repli posé sur le
+    # seul millésime donnait « les comptes se rééquilibrent en jamais ».
+    retour_equilibre = (
+        f"les comptes se rééquilibrent en {equilibre}" if equilibre
+        else "les comptes ne se rééquilibrent jamais"
+    )
     carte_bilan = g.cle(
         "La retraite coûte-t-elle plus qu'elle ne rapporte ?",
         f"""Oui, un peu : {_milliards(abs(manque), 1)} de trop en {obs}.
 <strong>L'écart va se creuser</strong> : en {solde.derniere_annee} il
 manquerait
 {g.pourcentage(abs(horizon.solde("actuel") / horizon.depense("actuel")), decimales=0)}
-de la facture. En comptes notionnels dès {bascule}, les comptes se
-rééquilibrent en {equilibre or "jamais"}.""",
+de la facture. En comptes notionnels dès {bascule}, {retour_equilibre}.""",
         bilan,
         f"""Sources : DREES jusqu'en {solde.premiere_annee - 1}, Conseil
 d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
