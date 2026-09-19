@@ -5215,18 +5215,27 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   surreprésente les régimes qui s'éteignent, dont les taux sont parmi les plus
   élevés, et pousse donc le rapport vers le bas.
 
-  **Une réserve de sens opposé, et elle est nommée parce qu'elle est
-  chiffrable.** Le modèle porte au compte le taux qui ACQUIERT des droits, et
-  c'est lui qu'il compare à 18 %. Ce n'est pas tout ce qui rentre : la
-  contribution d'équilibre général et la contribution d'équilibre technique de
-  l'Agirc-Arrco n'ouvrent aucun droit et sont pourtant encaissées. Sous le
-  plafond, la première seule s'applique, à 2,15 % : et c'est exactement ce qui
-  manque au modèle, dont le taux de 25,83 % plus ces 2,15 donnent 27,98 quand
-  le COR publie 27,89 pour le même salarié. La seconde, 0,35 %, n'est due que
-  par ceux dont la rémunération dépasse le plafond. Les compter relèverait le
-  dénominateur, donc abaisserait le rapport de recettes du scénario 6 : le
-  chiffre affiché lui est favorable, et le refermer demande une série de taux
-  ENCAISSÉS à côté de celle des taux qui acquièrent.
+  **Une réserve de sens opposé, qui ne vaut QUE pour la variante
+  `rapport`.** Ce rapport compare des taux qui ACQUIÈRENT des droits, et ce
+  n'est pas tout ce qui rentre : la contribution d'équilibre général et la
+  contribution d'équilibre technique de l'Agirc-Arrco n'ouvrent aucun droit et
+  sont pourtant encaissées. Sous le plafond, la première seule s'applique, à
+  2,15 % : et c'est exactement ce qui manque au modèle, dont le taux de 25,83 %
+  plus ces 2,15 donnent 27,98 quand le COR publie 27,89 pour le même salarié.
+  La seconde, 0,35 %, n'est due que par ceux dont la rémunération dépasse le
+  plafond. Les compter abaisserait le rapport, donc la recette qu'il prête au
+  scénario 6.
+
+  **La convention affichée, elle, n'a pas cette réserve, et elle supprime ces
+  deux contributions sans qu'on ait à le demander.** Son dénominateur est le
+  taux de prélèvement OBSERVÉ — les ressources du COR rapportées à l'assiette,
+  32,8 % —, qui compte tout ce qui rentre, contributions d'équilibre
+  comprises. Et son numérateur est un taux unique de 18 % qui remplace TOUTES
+  les cotisations : sous le scénario 6, il n'y a plus ni contribution
+  d'équilibre général, ni contribution d'équilibre technique, ni taux d'appel,
+  ni tranche. Ce que le modèle ne crédite pas au compte, le scénario ne
+  l'encaisse pas davantage — la symétrie est complète, et elle est obtenue par
+  construction plutôt que par une correction.
 
   **Et une fourchette, mesurée le 19 septembre 2026, qui est plus large que
   tout le reste de cette page.** Le rapport compare des taux LÉGAUX, puis il est
