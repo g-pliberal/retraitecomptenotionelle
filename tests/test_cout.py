@@ -805,7 +805,18 @@ def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
         annee = solde.premiere_annee_equilibree(scenario)
         assert annee is not None and annee >= solde.premiere_annee_projetee
         assert solde.solde_moyen(scenario, solde.premiere_annee_projetee,
-                                 solde.derniere_annee) > 0.0
+                                 solde.derniere_annee) > solde.solde_moyen(
+                                     "actuel", solde.premiere_annee_projetee,
+                                     solde.derniere_annee)
+    # Le scénario 3 reste excédentaire en moyenne ; le 5, qui porte plus de
+    # droits, est passé tout juste sous zéro le jour où le fonds de solidarité
+    # vieillesse est entré dans le retrait. Le dire vaut mieux que de le
+    # cacher : un point de PIB de recette en moins ne laisse pas tout debout.
+    assert solde.solde_moyen("notionnel_prospectif", solde.premiere_annee_projetee,
+                             solde.derniere_annee) > 0.0
+    assert -0.005 < solde.solde_moyen(
+        "notionnel_prospectif_employeur", solde.premiere_annee_projetee,
+        solde.derniere_annee) < 0.005
     # Le scénario 5 porte plus de droits que le 3 : il s'équilibre plus tard.
     assert (solde.premiere_annee_equilibree("notionnel_prospectif_employeur")
             >= solde.premiere_annee_equilibree("notionnel_prospectif"))
@@ -948,8 +959,15 @@ def test_la_branche_famille_verse_dix_milliards(comptes: ComptesRetraite):
     avpf = comptes.transfert("cnaf_avpf", annee)
     majorations = comptes.transfert("cnaf_majorations", annee)
     assert 0.7 < avpf / majorations < 1.3
-    assert 0.004 < comptes.transfert_supprime_part_pib(annee) < 0.007
-    # Les deux caisses ont un droit supprimé : la recette suit le droit.
+    # Le fonds de solidarité vieillesse s'y est ajouté le 19 septembre 2026, et
+    # il pèse plus que les deux autres réunis : le retrait total est passé d'un
+    # demi-point de PIB à plus d'un point.
+    assert 18_000 < comptes.transfert_organisme("solidarite", annee) < 25_000
+    assert (comptes.transfert_organisme("solidarite", annee)
+            > comptes.transfert_organisme("famille", annee)
+            + comptes.transfert_organisme("chomage", annee))
+    assert 0.010 < comptes.transfert_supprime_part_pib(annee) < 0.015
+    # Les trois organismes ont un droit supprimé : la recette suit le droit.
     assert all(organisme.droit_supprime for organisme in ORGANISMES)
 
 
@@ -961,14 +979,26 @@ def test_les_deux_caisses_n_expliquent_pas_tout_le_poste_transferts(
     et quelques versements plus petits : la branche famille et l'assurance
     chômage doivent en expliquer l'essentiel sans le dépasser. Un dépassement
     dirait que les deux séries n'ont plus le même périmètre.
+
+    Le fonds de solidarité vieillesse est hors de ce contrôle, et c'est tout
+    son intérêt : sa recette n'arrive pas par un transfert mais par l'impôt —
+    elle est dans le poste « impôts et taxes affectés ». C'est pour cela que la
+    règle « la recette suit le droit » l'avait manqué pendant un an.
     """
+    par_transfert = ("famille", "chomage")
     for annee in comptes.annees_transferts():
         if annee > comptes.derniere_annee_ventilee:
             continue
-        ventilee = sum(comptes.transfert_part_ressources(o.code, annee)
-                       for o in ORGANISMES)
+        ventilee = sum(comptes.transfert_part_ressources(code, annee)
+                       for code in par_transfert)
         poste = comptes.part("transferts", annee)
         assert 0.5 * poste < ventilee < poste, annee
+    # Et le fonds, lui, pèse une bonne part du poste des impôts et taxes : 38 %
+    # en 2024, ce que la page doit pouvoir dire.
+    annee = comptes.derniere_annee_transferts
+    part = (comptes.transfert_part_ressources("solidarite", annee)
+            / comptes.part("impots_et_taxes", annee))
+    assert 0.25 < part < 0.55, part
 
 
 def test_la_ventilation_recoupe_le_dont_du_cor(comptes: ComptesRetraite):
@@ -1024,9 +1054,10 @@ def test_la_recette_suit_le_droit(cout: Cout, comptes: ComptesRetraite):
             assert ligne.solde(scenario) == pytest.approx(
                 ligne.solde("actuel") - ligne.retrait)
             assert ligne.coefficient(scenario) < ligne.coefficient("actuel")
-    # Un demi-point de PIB, toutes les années connues.
+    # Plus d'un point de PIB, toutes les années connues, depuis que le fonds
+    # de solidarité vieillesse est entré dans le compte.
     for annee in comptes.annees_transferts():
-        assert 0.004 < solde.annee(annee).retrait < 0.007, annee
+        assert 0.009 < solde.annee(annee).retrait < 0.018, annee
 
 
 @pytest.fixture(scope="module")
@@ -1107,8 +1138,7 @@ def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cou
         assert ligne.recette_par_assiette, ligne.annee
         assert ligne.taux_liberal == taux
         pleine = ligne.ressources * taux / ligne.taux_prelevement
-        autres = ligne.ressources * (
-            1.0 - ligne.part_contributive - ligne.part_compensation)
+        autres = ligne.ressources * (1.0 - ligne.part_contributive)
         assert ligne.ressources_de("notionnel_liberal") == pytest.approx(
             pleine + autres - ligne.retrait), ligne.annee
         if ligne.annee >= bascule + 3:
@@ -1134,7 +1164,11 @@ def test_les_deux_conventions_de_recette_se_mesurent(cout: Cout, cout_assiette: 
     fin = cout.solde.derniere_annee
     ancien = cout.solde.solde_moyen("notionnel_liberal", bascule, fin)
     nouveau = cout_assiette.solde.solde_moyen("notionnel_liberal", bascule, fin)
-    assert ancien - nouveau > 0.01, (ancien, nouveau)
+    # L'ancienne convention est la plus SÉVÈRE, et c'est le contraire de ce
+    # qu'on croyait le 19 septembre au matin : elle prête au taux de 18 % la
+    # déperdition du système actuel, soit deux points et demi d'assiette qu'un
+    # taux prélevé à plat ne perd pas.
+    assert nouveau - ancien > 0.005, (ancien, nouveau)
     # Les cinq autres systèmes ne bougent pas d'un iota : la convention ne
     # touche qu'au seul scénario dont le TAUX change.
     for scenario, _ in SCENARIOS:

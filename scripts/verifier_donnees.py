@@ -786,9 +786,11 @@ def source_structure_ressources() -> dict[tuple, float]:
 
 
 #: Postes de la ventilation des transferts, tels que ``ccss_transferts_retraite.py``
-#: les écrit : deux lignes de la CNAF, deux de l'Unédic.
+#: les écrit : deux lignes de la CNAF, deux de l'Unédic, deux du fonds de
+#: solidarité vieillesse.
 POSTES_TRANSFERTS: tuple[str, ...] = (
     "cnaf_avpf", "cnaf_majorations", "unedic_agirc_arrco", "unedic_ircantec",
+    "fsv_cotisations", "fsv_prestations",
 )
 
 
@@ -2856,7 +2858,7 @@ CERTIFICATIONS = (
         colonne="montant_meur",
         source=source_transferts_retraite,
         origine="rapports à la Commission des comptes de la Sécurité sociale, "
-                "fiches CNAF, Agirc-Arrco et Ircantec",
+                "fiches CNAF, Agirc-Arrco, Ircantec et CNAV",
         decimales=1,
         tolerance=0.06,
         unite=" M€",

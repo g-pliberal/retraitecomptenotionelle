@@ -126,6 +126,18 @@ LIGNES: tuple[tuple[str, tuple[str, ...], bool], ...] = (
     ("unedic_ircantec", (
         r"^autitreduchomage\(unedic\)$",
     ), False),
+    # Le fonds de solidarité vieillesse paie deux choses, et les deux lignes
+    # sont ADDITIVES : le fonds verse à plusieurs régimes, et chaque fiche
+    # porte la sienne. Le libellé de la seconde s'est précisé en 2024 — « au
+    # titre du minimum vieillesse » —, et les deux se voient nommer « (CNAV à
+    # partir de 2026) » depuis que le fonds est promis à la suppression.
+    ("fsv_cotisations", (
+        r"^prisesenchargedecotisationsparlefsv(\(cnavapartirde\d{4}\))?$",
+    ), True),
+    ("fsv_prestations", (
+        r"^prisesenchargedeprestationsparlefsv"
+        r"(autitreduminimumvieillesse)?(\(cnavapartirde\d{4}\))?$",
+    ), True),
 )
 
 #: Une ligne d'en-tête : des années, éventuellement marquées « (p) » ou « (t) »,
@@ -223,14 +235,32 @@ def _montant(jeton: str) -> float:
     return float(jeton.replace(" ", "").replace(",", "."))
 
 
+#: Cellules vides d'un tableau : le rapport y met un tiret ou un double signe
+#: quand la valeur n'existe pas ou que l'évolution n'a pas de sens. Elles ne
+#: sont ni un montant ni un taux, et les compter pour l'un ou pour l'autre
+#: faisait rejeter toute ligne qui en portait une.
+CELLULES_VIDES = frozenset({"--", "++", "-"})
+
+
 def _valeurs(ligne: str, libelle: str, colonnes: list) -> dict[int, float] | None:
     """Les montants d'une ligne, année par année, ou ``None`` si le compte n'y est pas.
 
     Le libellé est retiré, ce qui laisse des nombres des deux côtés : certains
     tableaux mettent les taux d'évolution AVANT le libellé et les montants
     après. On ne se fie donc pas à l'ordre des jetons pour distinguer les deux,
-    mais à leur forme, et l'on vérifie que le compte des montants est celui des
-    années de l'en-tête.
+    mais à leur forme.
+
+    DEUX TOLÉRANCES, ET CE QU'ELLES COÛTENT. Une cellule vide est SAUTÉE au
+    lieu de faire rejeter la ligne. Et une ligne qui porte PLUS de montants que
+    l'en-tête n'annonce d'années est lue sur son PRÉFIXE, parce que les
+    tableaux des comptes de la CNAV portent depuis 2024 des colonnes « pro
+    forma » qu'aucun en-tête ne déclare : les colonnes de gauche sont les
+    années closes, celles de droite des variantes de périmètre de l'année en
+    cours, et seules les premières sont retenues de toute façon. Sans ces deux
+    tolérances, les prises en charge du fonds de solidarité vieillesse étaient
+    illisibles une année sur deux. Avec elles, aucune des quatre séries déjà
+    certifiées ne bouge d'un euro — c'est le contrôle qui a décidé de les
+    poser.
     """
     reste = ligne.replace(libelle, " ")
     annees = [c for c in colonnes if c is not None]
@@ -238,19 +268,29 @@ def _valeurs(ligne: str, libelle: str, colonnes: list) -> dict[int, float] | Non
     for lecture in (JETONS_GROUPES, JETONS_SEPARES):
         montants: list[float] = []
         evolutions = 0
+        illisible = False
         for jeton in lecture.findall(reste):
+            if jeton in CELLULES_VIDES:
+                continue
             if _est_taux(jeton):
                 evolutions += 1
             else:
                 try:
                     montants.append(_montant(jeton))
                 except ValueError:
-                    return None
+                    illisible = True
+                    break
+        if illisible:
+            continue
         # Le nombre de taux peut dépasser d'un le nombre de colonnes « % » :
         # la première année d'un tableau porte parfois le sien sans que
-        # l'en-tête ne l'annonce. Il ne peut pas en manquer.
-        if len(montants) == len(annees) and evolutions in (taux, taux + 1):
-            return {annee: montant for (annee, _), montant in zip(annees, montants)}
+        # l'en-tête ne l'annonce. Il peut aussi en manquer un, quand la
+        # dernière colonne est une cellule vide.
+        if len(montants) >= len(annees) and evolutions >= taux - 1:
+            return {
+                annee: montant
+                for (annee, _), montant in zip(annees, montants[:len(annees)])
+            }
     return None
 
 

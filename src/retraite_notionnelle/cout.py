@@ -447,14 +447,17 @@ class SoldeAnnuel:
         if scenario == "actuel":
             return self.ressources
         if scenario == "notionnel_liberal" and self.recette_par_assiette:
-            # Le taux plein sur l'assiette mesurée, et rien de ce que l'impôt
-            # verse pour compenser des exonérations que ce système ne consent
-            # pas. Les autres ressources — subventions d'équilibre aux régimes
-            # en extinction, transferts, produits divers — sont reconduites.
+            # Le taux plein sur l'assiette mesurée, et rien d'autre de changé.
+            # Les impôts et taxes affectés RESTENT, et c'est une correction du
+            # 19 septembre 2026 : on les avait d'abord retirés en entier, au
+            # motif qu'ils compensaient les allègements généraux. Ils ne les
+            # compensent pas — la TVA qui le fait finance la branche maladie,
+            # et le compte de la CNAV n'en porte aucune ligne. Ce que ce poste
+            # porte et qui ne revient pas à ce système, c'est la CSG du fonds
+            # de solidarité vieillesse, et elle sort par ``retrait`` comme
+            # sortent les versements de la CNAF et de l'Unédic.
             pleine = self.ressources * self.taux_liberal / self.taux_prelevement
-            autres = self.ressources * (
-                1.0 - self.part_contributive - self.part_compensation
-            )
+            autres = self.ressources * (1.0 - self.part_contributive)
             return pleine + autres - self.retrait
         rapport = self.rapports_recettes.get(scenario, 1.0)
         cotisees = self.ressources * self.part_contributive
