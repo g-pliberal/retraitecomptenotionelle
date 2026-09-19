@@ -29,6 +29,7 @@ from retraite_notionnelle.cout import (
     COMPOSANTE_GARANTIE,
     DERNIERE_GENERATION,
     HORIZON,
+    PAS_GENERATIONS,
     PREMIERE_GENERATION,
     SCENARIOS,
     calculer_cout,
@@ -338,16 +339,41 @@ def test_les_scenarios_prospectifs_se_detachent_apres_la_bascule(avenir):
 
 
 def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
-    """Une réforme prospective ne peut pas revenir en arrière : chaque année
-    supplémentaire remplace des pensions anciennes par des pensions nouvelles,
-    et l'écart ne se referme jamais."""
-    precedent = 1.0
-    for ligne in avenir.annees:
-        if ligne.annee < avenir.annee_bascule:
-            continue
-        rapport = ligne.rapports["notionnel_prospectif"]
-        assert rapport <= precedent + 1e-9, ligne.annee
-        precedent = rapport
+    """Une réforme prospective ne revient pas en arrière — passé son premier pas.
+
+    Chaque année supplémentaire remplace des pensions anciennes par des
+    pensions nouvelles, plus basses, et l'écart au système actuel se creuse
+    sans se refermer. C'était vrai dès la bascule tant que les pensions servies
+    restaient figées en euros constants ; ça ne l'est plus dès la première
+    année, parce que la réforme fait DEUX choses le même jour : elle ferme
+    l'ancien barème aux nouveaux liquidants, et elle fait passer TOUT LE STOCK
+    des pensions en cours à l'indexation sur la masse salariale, plus
+    généreuse que les prix du système actuel. La seconde joue à la hausse et se
+    voit tout de suite ; la première joue à la baisse et met une génération à
+    peser. Le rapport monte donc d'abord — jusqu'à dépasser 1 pour le
+    scénario 5, qui porte le plus de droits — avant de tomber.
+
+    CE PREMIER TEMPS DURE CINQ ANS, et cinq ans est le pas de la grille de
+    générations : ce n'est pas un phénomène, c'est la granularité avec
+    laquelle le modèle renouvelle ses liquidants face à un stock qui, lui,
+    change de régime d'un coup. Passé ce pas, la décroissance est stricte
+    jusqu'à l'horizon, et c'est elle que ce test garde.
+    """
+    premier_pas = avenir.annee_bascule + PAS_GENERATIONS
+    for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
+        lignes = [l for l in avenir.annees if l.annee >= avenir.annee_bascule]
+        # Le sursaut initial existe, mais il reste petit : la réforme ne coûte
+        # pas plus de un pour cent de plus que le système qu'elle remplace.
+        assert max(l.rapports[scenario] for l in lignes) < 1.01
+        precedent = None
+        for ligne in lignes:
+            if ligne.annee < premier_pas:
+                continue
+            rapport = ligne.rapports[scenario]
+            if precedent is not None:
+                assert rapport <= precedent + 1e-12, (scenario, ligne.annee)
+            precedent = rapport
+        assert precedent < 0.85, scenario
 
 
 def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir):
@@ -804,35 +830,42 @@ def test_le_coefficient_dit_exactement_ce_que_dit_le_solde(solde):
 
 
 def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
-    """Le résultat de fond de cette section, et il tient en une ligne.
+    """Le résultat de fond de cette section, et il a changé de forme.
 
-    Le système actuel reste déficitaire sur toute la fenêtre projetée du COR ;
-    les deux réformes applicables — droits acquis conservés, règles nouvelles
-    ensuite — repassent à l'équilibre, et le font d'autant plus vite que la
-    part patronale entre au compte.
+    Le système actuel reste déficitaire sur toute la fenêtre projetée du COR,
+    et c'est le seul énoncé de ce test qui n'a jamais bougé. Les réformes
+    prospectives, elles, ne s'en écartent plus de la même façon depuis que les
+    pensions SERVIES sont revalorisées sur la masse salariale comme le compte
+    qui les a produites : le scénario 3 repasse encore à l'équilibre, le 5 ne
+    le fait plus. Ce qui les sépare est ce qu'elles portent au compte — le 5 y
+    ajoute la part patronale, donc des droits, donc une dépense — et l'écart
+    ne se rattrape plus sur l'horizon.
+
+    Les deux restent au-dessus du système actuel : c'est le seul classement
+    que ce test garantit encore.
     """
+    debut, fin = solde.premiere_annee_projetee, solde.derniere_annee
     assert solde.premiere_annee_equilibree("actuel") is None
-    assert solde.solde_moyen("actuel", solde.premiere_annee_projetee,
-                             solde.derniere_annee) < 0.0
+    assert solde.solde_moyen("actuel", debut, fin) < 0.0
     for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
-        annee = solde.premiere_annee_equilibree(scenario)
-        assert annee is not None and annee >= solde.premiere_annee_projetee
-        assert solde.solde_moyen(scenario, solde.premiere_annee_projetee,
-                                 solde.derniere_annee) > solde.solde_moyen(
-                                     "actuel", solde.premiere_annee_projetee,
-                                     solde.derniere_annee)
-    # Le scénario 3 reste excédentaire en moyenne ; le 5, qui porte plus de
-    # droits, est passé tout juste sous zéro le jour où le fonds de solidarité
-    # vieillesse est entré dans le retrait. Le dire vaut mieux que de le
-    # cacher : un point de PIB de recette en moins ne laisse pas tout debout.
-    assert solde.solde_moyen("notionnel_prospectif", solde.premiere_annee_projetee,
-                             solde.derniere_annee) > 0.0
-    assert -0.005 < solde.solde_moyen(
-        "notionnel_prospectif_employeur", solde.premiere_annee_projetee,
-        solde.derniere_annee) < 0.005
-    # Le scénario 5 porte plus de droits que le 3 : il s'équilibre plus tard.
-    assert (solde.premiere_annee_equilibree("notionnel_prospectif_employeur")
-            >= solde.premiere_annee_equilibree("notionnel_prospectif"))
+        assert (solde.solde_moyen(scenario, debut, fin)
+                > solde.solde_moyen("actuel", debut, fin))
+    # Le 3 s'équilibre et reste excédentaire en moyenne.
+    annee = solde.premiere_annee_equilibree("notionnel_prospectif")
+    assert annee is not None and annee >= debut
+    assert solde.solde_moyen("notionnel_prospectif", debut, fin) > 0.0
+    # Le 5 ne s'équilibre plus. Il en était tout près — solde moyen de −0,04 %
+    # et équilibre en 2047 — tant que les pensions liquidées restaient figées
+    # en euros constants ; revalorisées sur la masse salariale, elles lui
+    # coûtent six dixièmes de point et l'équilibre avec. Le dire vaut mieux
+    # que de l'arrondir : une réforme qui porte la part patronale au compte
+    # porte des droits, et des droits se paient.
+    assert solde.premiere_annee_equilibree("notionnel_prospectif_employeur") is None
+    assert -0.010 < solde.solde_moyen(
+        "notionnel_prospectif_employeur", debut, fin) < 0.0
+    # Le scénario 5 porte plus de droits que le 3 : il coûte davantage.
+    assert (solde.solde_moyen("notionnel_prospectif_employeur", debut, fin)
+            < solde.solde_moyen("notionnel_prospectif", debut, fin))
 
 
 def test_le_solde_en_euros_s_arrete_ou_le_pib_publie_s_arrete(solde, depenses):
@@ -1277,8 +1310,13 @@ def test_les_recettes_reactives_deplacent_le_solde_du_scenario_6(cout: Cout):
         for ligne in cout.solde.annees if bascule <= ligne.annee <= fin
     ) / len([l for l in cout.solde.annees if bascule <= l.annee <= fin])
     # Trois points de PIB de moins, et un excédent moyen qui disparaît.
+    # L'excédent que l'ancienne convention affichait valait plus de trois
+    # points de PIB tant que les pensions servies restaient figées en euros
+    # constants ; revalorisées sur la masse salariale, elles en reprennent un,
+    # et il n'en reste que deux. L'écart entre les deux conventions, lui, n'a
+    # pas bougé : c'est la recette qu'il mesure, et la recette n'a pas changé.
     assert fige - reactif > 0.03
-    assert fige > 0.03
+    assert fige > 0.02
     assert reactif < 0.005
 
 

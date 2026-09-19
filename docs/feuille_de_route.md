@@ -4112,3 +4112,32 @@ scénario ».
   **une règle d'âge peut annuler une dépense au lieu de la décaler**, et
   personne ne le voit tant que le résultat est zéro — un zéro n'a l'air ni
   faux ni juste.
+
+- **Septembre 2026, action 35, volet B, second point : les DEUX indexations.**
+  Le Parti libéral français a demandé si l'ASPA était bien indexée sur
+  l'inflation. Elle l'est — `L. 816-2` renvoie au coefficient de `L. 161-25`,
+  moyenne annuelle des prix hors tabac, plancher à un —, mais la question en
+  cachait une autre : la pension notionnelle, elle, suit la masse salariale, et
+  le modèle ne le faisait nulle part. Un système notionnel a deux règles
+  d'indexation, celle du compte pendant la carrière et celle de la pension une
+  fois servie ; le dépôt n'en portait qu'une, ses masses figeant la pension en
+  euros constants pour toute la retraite. C'était juste pour le scénario 1 et
+  pour la garantie, que la loi indexe sur les prix ; c'était faux pour les cinq
+  scénarios notionnels, dont le diviseur de conversion suppose depuis toujours
+  le contraire. Corrigé par `RevalorisationServie` : le scénario 6 perd un
+  point de PIB de solde moyen — de +0,12 % à **−0,88 %** —, le scénario 5 perd
+  son année d'équilibre, le scénario 1 ne bouge pas d'un millième, ce qui est
+  le contrôle. Deux effets de bord méritent d'être notés : le complément de
+  garantie différé est calculé pour l'année où il s'ouvre et non pour celle du
+  départ, ce qui lui retire un neuvième (0,80 % du PIB en 2026, 616 Md€
+  cumulés) ; et **les premières années d'une réforme prospective coûtent plus
+  cher que le système qu'elle remplace**, parce qu'elle fait passer tout le
+  stock des retraités à une indexation plus généreuse avant que les nouveaux
+  liquidants ne pèsent. Ce qu'il faut en retenir : **une convention qui n'est
+  écrite nulle part est une convention quand même** — figer une pension en
+  euros constants, c'est l'indexer sur les prix, et il aura fallu une question
+  d'un lecteur pour que le mot soit prononcé.
+
+  *Ce qui reste du volet B* : projeter la distribution des pensions au lieu de
+  la figer à l'EIR 2020, et chiffrer le coût NET des quatre dispositifs que la
+  garantie remplace, non-recours de l'ASPA compris.

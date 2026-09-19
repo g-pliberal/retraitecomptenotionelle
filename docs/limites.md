@@ -1822,6 +1822,86 @@ La variante nominale conserve 69 % du pouvoir d'achat sur la même période, tou
 en restant plus sévère que l'indexation sur les prix. C'est probablement ce que
 vise l'intention d'une règle d'indexation prudente ; le choix reste ouvert.
 
+### Les DEUX règles d'indexation, et celle qui manquait
+
+*Corrigé le 19 septembre 2026, sur une question du Parti libéral français : « la
+pension à compte notionnel est indexée sur la masse salariale alors que la
+garantie vieillesse reste indexée comme l'ASPA ; c'est bien avec l'inflation
+qu'est indexée l'ASPA ? »*
+
+Oui — article `L. 816-2` du code de la sécurité sociale, version en vigueur
+depuis le 31 décembre 2018 (`LEGIARTI000036393188`) : les montants de
+l'allocation et ses plafonds de ressources « sont revalorisés au 1er janvier de
+chaque année par application du coefficient mentionné à l'article `L. 161-25` ».
+Et `L. 161-25` (`LEGIARTI000031781092`, en vigueur depuis le 1er janvier 2016)
+fixe ce coefficient à « l'évolution de la moyenne annuelle des prix à la
+consommation, hors tabac, calculée sur les douze derniers indices mensuels […]
+publiés par l'INSEE l'avant-dernier mois qui précède la date de
+revalorisation », avec un plancher à un : l'ASPA ne baisse jamais en euros
+courants. C'est la règle des pensions du régime général (`L. 161-23-1`), et
+c'est pourquoi `D. 815-1` a cessé de suivre le montant servi (voir plus haut).
+
+**Mais la question en cachait une autre, et celle-là portait un défaut.** Un
+système à comptes notionnels a DEUX règles d'indexation : celle qui fait
+grossir le compte pendant la carrière, et celle qui revalorise la pension une
+fois qu'elle est servie. Les pays qui ont fait ce système les règlent
+séparément — la Suède revalorise le compte sur l'indice des salaires et la
+pension liquidée sur ce même indice diminué de 1,6 point ; l'Italie revalorise
+le compte sur le PIB et la pension liquidée sur les prix.
+
+Le dépôt n'en portait qu'une. Le moteur calcule une pension AU MOMENT DE LA
+LIQUIDATION et s'arrête là, et les masses de la page « Coût » figeaient cette
+pension en euros constants pour toute la retraite. C'est une indexation sur les
+PRIX qui ne disait pas son nom. Elle est juste pour le scénario 1, où c'est la
+loi, et pour la garantie vieillesse, que `L. 816-2` y renvoie. Elle est fausse
+pour les cinq scénarios notionnels, dont le contrat promet autre chose — et le
+modèle le savait déjà, ailleurs : le diviseur de conversion vaut l'espérance de
+vie résiduelle parce que `taux_anticipe_conversion` est nul, et il ne la vaut
+QUE si la rente est ensuite revalorisée au taux qui a fait grossir le compte.
+**Le modèle promettait une rente indexée sur la masse salariale et en servait
+une indexée sur les prix.** Il payait moins que son propre contrat, et l'écart
+ne se simplifiait pas dans le rapport au scénario 1, puisque celui-là, lui,
+était correct.
+
+L'écart vaut 0,69 point par an en projection — 2,45 % de masse salariale contre
+1,75 % de prix —, soit ×1,15 sur vingt ans de retraite et jusqu'à ×2,96 pour
+les vingt années qui suivent une liquidation de 1960. `RevalorisationServie`
+l'applique désormais, et l'applique à la règle en vigueur quelle qu'elle soit :
+sous le triple lock inversé, qui passe sous les prix la plupart des années, son
+coefficient descend en dessous de un et la correction joue à la baisse.
+
+| Solde moyen 2026-2070 | avant | après |
+|---|---|---|
+| 1. Système actuel | −1,13 % | −1,13 % |
+| 2. Notionnel rétroactif, part salariale | +7,92 % | +7,49 % |
+| 3. Notionnel dès 2026, part salariale | +1,79 % | +1,01 % |
+| 4. Notionnel rétroactif, salariale + patronale | +2,06 % | +1,00 % |
+| 5. Notionnel dès 2026, salariale + patronale | −0,04 % | **−0,93 %** |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie | +0,12 % | **−0,88 %** |
+
+Le scénario 6 perd un point de PIB de solde moyen et passe sous zéro ; le
+scénario 5 perd son année d'équilibre, qu'il atteignait en 2047. Le scénario 1
+ne bouge pas d'un millième, ce qui est le contrôle de la correction : c'est le
+seul dont la règle n'a pas changé.
+
+**Ce que la correction fait aux scénarios PROSPECTIFS, et qui se voit.** Les
+scénarios 3 et 5 changent la règle à compter de la bascule, pour tout le stock
+des pensions en cours — c'est ce que font les réformes réelles, et c'est le
+choix du programme. Une réforme prospective fait donc DEUX choses le même
+jour : elle ferme l'ancien barème aux nouveaux liquidants, ce qui joue à la
+baisse et met une génération à peser, et elle fait passer les retraités déjà
+là à une indexation plus généreuse que les prix, ce qui joue à la hausse et se
+voit tout de suite. Le rapport au système actuel monte donc d'abord — jusqu'à
+dépasser 1 pour le scénario 5, qui porte le plus de droits — avant de tomber.
+**Les premières années d'une réforme prospective coûtent plus cher que le
+système qu'elle remplace, et non moins.** Ce premier temps dure cinq ans, qui
+sont le pas de la grille de générations : passé lui, la décroissance est
+stricte jusqu'à l'horizon.
+
+Ce qui ne change pas : la pension INDIVIDUELLE affichée par la page de
+simulation, qui est celle de la liquidation et ne l'a jamais été d'une autre
+année. La correction ne porte que sur les masses.
+
 **Ce document, le README et le site ont longtemps désigné `indexation=prix`
 comme la règle qui neutralise l'indexation.** C'était faux, et l'erreur n'était
 pas petite : le régime général ne revalorise les salaires portés au compte sur
@@ -4649,11 +4729,21 @@ doit à qui est parti plus tôt.** *Corrigé le 19 septembre 2026.* Avant 65 ans
 on ne touche pas le minimum vieillesse ; à partir de 65 ans on le touche, même
 si l'on a liquidé à 62. Le complément est donc CALCULÉ dans tous les cas, et il
 n'entre dans la pension affichée que lorsqu'il est dû dès le départ ; la page
-de simulation dit l'année où il s'ouvre, et le montant qu'il vaudra. Cette
-égalité entre le complément calculé au départ et celui qui sera servi trois ans
-plus tard n'est pas une approximation : le plancher et la pension sont tous
-deux indexés sur les prix, et leur différence est invariante dans les euros de
-n'importe quelle année entre les deux.
+de simulation dit l'année où il s'ouvre, et le montant qu'il vaudra.
+
+**Ce montant n'est pas celui du départ, et ce document a dit le contraire.**
+Il affirmait l'égalité exacte entre le complément calculé à la liquidation et
+celui servi trois ans plus tard, « le plancher et la pension étant tous deux
+indexés sur les prix ». C'était vrai du modèle, qui figeait alors les pensions
+en euros constants, et faux de la proposition : le plancher suit les prix comme
+l'ASPA — article `L. 816-2`, qui renvoie au coefficient de `L. 161-25` —, la
+pension notionnelle suit la masse salariale, et l'écart entre les deux se
+referme de 0,7 point par an. Un départ à 62 ans voit donc sa pension gagner
+deux points sur le plancher avant l'ouverture, et le complément diminuer
+d'autant. Il est désormais calculé POUR l'année d'ouverture, et la cascade de
+la page montre la ligne `f′` qui porte ce passage. La trajectoire de la
+garantie y perd un neuvième : **0,80 % du PIB en 2026** au lieu de 0,91 %, et
+**616 milliards** cumulés au lieu de 696.
 
 **La garantie regarde l'ENSEMBLE de la pension obligatoire.** *Tranché le
 19 septembre 2026 par le programme.* Les 18 % de répartition et les 5 %
@@ -4678,9 +4768,9 @@ les deux seuls cas types qui tombent sous le plancher, l'exploitant agricole à
 674 € par mois et le carrière complète au SMIC à 797 €, liquident à 64 et
 62 ans, et les cinq qui partent à 65 ans ou plus sont tous au-dessus. Servir la
 garantie à 65 ans à qui est parti plus tôt a refermé ce zéro : la trajectoire
-porte désormais **0,91 % du PIB en 2026**, décroissant à 0,23 % en 2070 à
+porte désormais **0,80 % du PIB en 2026**, décroissant à 0,20 % en 2070 à
 mesure que les pensions montent face à un plancher indexé sur les prix, soit
-696 milliards d'euros constants cumulés sur la projection.
+616 milliards d'euros constants cumulés sur la projection.
 
 **Elle reste une masse vue par treize carrières, et c'est la limite qui ne se
 refermera pas ainsi.** Une allocation DIFFÉRENTIELLE ne se chiffre pas sur

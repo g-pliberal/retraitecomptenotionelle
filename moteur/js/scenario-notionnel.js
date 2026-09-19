@@ -163,8 +163,11 @@ export class ScenarioNotionnel {
    *
    * L'ÂGE est celui de l'ASPA, 65 ans, et il ne fait plus disparaître le
    * complément : il en retarde le service. Le montant vaut à compter de
-   * `annee_ouverture`, et c'est exact plutôt qu'approché — plancher et pension
-   * sont tous deux indexés sur les prix, leur différence est donc invariante.
+   * `annee_ouverture`, et il est calculé POUR cette année-là. Les deux ne
+   * coïncident pas, contrairement à ce que ce texte affirmait : le plancher
+   * suit les prix comme l'ASPA (article L. 816-2), la pension notionnelle suit
+   * la masse salariale, et entre 62 et 65 ans la seconde gagne deux points sur
+   * le premier. `revalorisation_differee` porte cet écart.
    */
   _garantieVieillesse(carriere, pensionContributive, renteCapitalisee = 0.0) {
     const parametres = this.parametres;
@@ -179,13 +182,22 @@ export class ScenarioNotionnel {
     const plancher = base + isolement;
     const ageAtteint = (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE;
     const ressources = pensionContributive + renteCapitalisee;
-    const complement = Math.max(0.0, plancher - ressources);
+    const ouverture = ageAtteint
+      ? annee
+      : carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE;
+    // Ce que la pension gagne en termes réels d'ici l'ouverture : la
+    // revalorisation nominale de la règle d'indexation, ramenée aux euros de la
+    // liquidation, qui sont ceux du plancher. Vaut un si la règle suit les prix.
+    const revalorisation = ouverture > annee
+      ? this.constructeur.indexation.coefficient(annee, ouverture)
+        * this.constructeur.macro.coefficientPrix(ouverture, annee)
+      : 1.0;
+    const aLOuverture = ressources * revalorisation;
+    const complement = Math.max(0.0, plancher - aLOuverture);
     return {
       situation: parametres.situation_foyer,
       age_atteint: ageAtteint,
-      annee_ouverture: ageAtteint
-        ? annee
-        : carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE,
+      annee_ouverture: ouverture,
       coefficient_prix: coefficient,
       base_annuelle: base,
       isolement_annuel: isolement,
@@ -193,6 +205,8 @@ export class ScenarioNotionnel {
       pension_contributive: pensionContributive,
       rente_capitalisee: renteCapitalisee,
       ressources,
+      revalorisation_differee: revalorisation,
+      ressources_a_l_ouverture: aLOuverture,
       complement,
       servie: complement > 0,
       servie_a_la_liquidation: ageAtteint && complement > 0,

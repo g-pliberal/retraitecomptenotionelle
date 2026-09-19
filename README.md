@@ -796,11 +796,11 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +9,29 % | +7,92 % | 2,49 |
-| 3. Notionnel dès 2026, part salariale | −1,32 % | +1,79 % | **1,80** |
-| 4. Notionnel rétroactif, salariale + patronale | +4,20 % | +2,06 % | 1,12 |
-| 5. Notionnel dès 2026, salariale + patronale | −1,33 % | −0,04 % | 1,08 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,20 % | **+0,12 %** | **1,10** |
+| 2. Notionnel rétroactif, part salariale | +8,78 % | +7,49 % | 2,27 |
+| 3. Notionnel dès 2026, part salariale | −1,32 % | +1,01 % | **1,62** |
+| 4. Notionnel rétroactif, salariale + patronale | +2,95 % | +1,00 % | 1,02 |
+| 5. Notionnel dès 2026, salariale + patronale | −1,33 % | −0,93 % | 0,99 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +2,95 % | **−0,88 %** | **1,00** |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -835,7 +835,7 @@ de chômage ; leur coefficient ne compte donc pas ces recettes : elles leur
 sont retirées, année par année de 2013 à 2024, à part constante des ressources
 avant et sur tout l'horizon projeté. C'est pourquoi les scénarios 3 et 5 sont
 déjà en déficit en 2025, où ils servent encore les pensions du système actuel,
-et pourquoi le scénario 3 vaut 1,80 en 2070 et non 1,94. Le système actuel,
+et pourquoi le scénario 3 vaut 1,62 en 2070 et non 1,94. Le système actuel,
 lui, encaisse tout, et son solde reste celui du COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
@@ -847,9 +847,10 @@ retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
 dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
 77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
 change le sens du tableau pour ce scénario : son excédent moyen passe de
-+3,75 % du PIB à +0,12 %, et son coefficient de 2070 de 1,53 à 1,10. Il reste
-le seul des trois systèmes rétroactifs à ne pas afficher de marge confortable,
-et il reste très au-dessus du système actuel, qui est à −1,13 %. Les quatre autres scénarios notionnels ne changent que ce qui
++2,11 % du PIB à −0,88 %, et son coefficient de 2070 de 1,29 à 1,00. Il est le
+seul des trois systèmes rétroactifs à ne pas afficher de marge, et il reste
+au-dessus du système actuel, qui est à −1,13 % — d'un quart de point, non plus
+d'un point et quart. Les quatre autres scénarios notionnels ne changent que ce qui
 est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans
 tous les cas, et leur recette ne bouge pas.
 
@@ -862,7 +863,7 @@ système de retraite y prélève aujourd'hui 32,8 % de ressources en tout ; la
 proposition en prélèverait 18. Le modèle sait aussi calculer la lecture
 inverse, où les 18 % subissent la même déperdition que les taux légaux
 d'aujourd'hui — allègements généraux, assiettes réduites : le scénario 6 y
-serait déficitaire de 0,73 % du PIB. Cette lecture suppose que la proposition
+serait déficitaire de 1,72 % du PIB. Cette lecture suppose que la proposition
 garde la même architecture d'exonérations, ce que son texte ne dit pas ;
 `docs/limites.md` §5 dit ce qui sépare les deux.
 
@@ -873,7 +874,20 @@ servent pas : des trimestres pour des périodes non travaillées (15,2 Md€ en
 recette n'arrive pas par un transfert mais par l'impôt. Il y est entré le
 19 septembre 2026, et le retrait total passe d'un demi-point de PIB à **1,17 %**
 — ce qui coûte 0,64 point de solde moyen à chacun des cinq scénarios
-notionnels, et fait passer le scénario 5 tout juste sous zéro.
+notionnels.
+
+**Et les pensions LIQUIDÉES suivent la règle d'indexation, comme le compte qui
+les a produites.** Un système notionnel a deux règles d'indexation — celle du
+compte pendant la carrière, celle de la pension une fois servie — et le modèle
+n'en portait qu'une : ses masses figeaient la pension en euros constants pour
+toute la retraite, soit une indexation sur les PRIX qui ne disait pas son nom.
+C'est la loi pour le scénario 1 et pour la garantie vieillesse, qui suivent
+l'article L. 161-25 ; ce n'est pas la proposition, où la pension suit la masse
+salariale, 0,7 point par an au-dessus des prix. Les cinq scénarios notionnels
+payaient donc moins que leur propre contrat, d'un dixième environ sur une
+retraite. Corrigé le 19 septembre 2026 : **un point de PIB de solde moyen pour
+le scénario 6**, qui passe de +0,12 % à −0,88 %, et l'équilibre du scénario 5
+avec.
 
 ---
 

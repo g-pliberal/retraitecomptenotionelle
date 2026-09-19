@@ -3871,8 +3871,21 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
          g.euros_centimes(garantie.rente_capitalisee) + " par an"],
         ["f) = ressources examinées", "d + e",
          g.euros_centimes(garantie.ressources) + " par an"],
+    ]
+    if not garantie.age_atteint:
+        lignes.append([
+            f"f′) ressources en {garantie.annee_ouverture}",
+            "la pension notionnelle est revalorisée sur la masse salariale, le "
+            "plancher sur les prix comme l'ASPA : l'écart entre les deux se "
+            f"réduit de {g.pourcentage(garantie.revalorisation_differee - 1.0)} "
+            "d'ici l'ouverture",
+            g.euros_centimes(garantie.ressources_a_l_ouverture) + " par an",
+        ])
+    reference = "f" if garantie.age_atteint else "f′"
+    lignes += [
         ["g) Garantie vieillesse",
-         "max(0, c − f), financée par l'impôt, servie à partir de 65 ans"
+         f"max(0, c − {reference}), financée par l'impôt, servie à partir de "
+         "65 ans"
          + ("" if garantie.age_atteint
             else f" — soit ici à compter de {garantie.annee_ouverture}"),
          g.euros_centimes(garantie.complement) + " par an"],
@@ -3897,9 +3910,12 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
             f"{_age(comparaison.carriere.age_liquidation or 0.0)}, avant les 65 ans "
             f"de l'allocation : rien n'est servi jusqu'en "
             f"{garantie.annee_ouverture}. À partir de là, la pension "
-            f"obligatoire de {g.euros_centimes(garantie.ressources / 12)} par "
-            f"mois restant sous le plancher de "
-            f"{g.euros_centimes(garantie.plancher_annuel / 12)}, l'impôt en "
+            f"obligatoire — {g.euros_centimes(garantie.ressources / 12)} par "
+            f"mois au départ, "
+            f"{g.euros_centimes(garantie.ressources_a_l_ouverture / 12)} à "
+            "l'ouverture, parce qu'elle suit la masse salariale quand le "
+            "plancher suit les prix — reste sous le plancher de "
+            f"{g.euros_centimes(garantie.plancher_annuel / 12)} : l'impôt en "
             f"finance <strong>{g.euros_centimes(garantie.complement / 12)} par "
             "mois</strong>. Le montant affiché plus haut est celui du départ, "
             "sans la garantie.</p>"

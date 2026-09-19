@@ -299,11 +299,13 @@ entrees:
     prochaine_veille: "2027-03-31"
 
   - id: minimum_vieillesse
-    regle: "ASPA servie au barème d'une personne seule sans autre ressource, à tous, en ligne séparée."
-    textes: ["L. 815-1 CSS et suivants"]
+    regle: "ASPA servie au barème d'une personne seule sans autre ressource, à tous, en ligne séparée. Revalorisée sur les prix : L. 816-2 renvoie au coefficient de L. 161-25, moyenne annuelle des prix hors tabac, plancher à 1."
+    textes: ["L. 815-1 CSS et suivants", "L. 816-2 CSS", "L. 161-25 CSS"]
     sources:
       - {type: service_public, reference: "montants de l'ASPA 2026", date: "2026-01-01"}
-    verifie_le: "2026-09-17"
+      - {type: legifrance, reference: "L. 816-2 CSS, LEGIARTI000036393188, en vigueur depuis le 2018-12-31", date: "2026-09-19"}
+      - {type: legifrance, reference: "L. 161-25 CSS, LEGIARTI000031781092, en vigueur depuis le 2016-01-01", date: "2026-09-19"}
+    verifie_le: "2026-09-19"
     temoins: []
     reformes: []
     etat: approximation
@@ -567,6 +569,38 @@ entrees:
     prochaine_veille: "2026-12-31"
 
 journal:
+  - date: "2026-09-19"
+    session: "indexation des pensions servies, et règle de revalorisation de l'ASPA"
+    consulte: >-
+      Index LEGI du dépôt, champ social : article L. 816-2 du code de la
+      sécurité sociale (version en vigueur depuis le 31 décembre 2018,
+      LEGIARTI000036393188) et article L. 161-25 (version en vigueur depuis le
+      1er janvier 2016, LEGIARTI000031781092), lus en entier par
+      `dila_cherche.py legi --texte ID --motif`.
+    trouve: >-
+      L. 816-2 revalorise les montants de l'ASPA et ses plafonds de ressources
+      au 1er janvier de chaque année par application du coefficient de
+      L. 161-25 ; ce coefficient est l'évolution de la moyenne annuelle des
+      prix à la consommation hors tabac sur les douze derniers indices
+      mensuels publiés par l'INSEE l'avant-dernier mois précédant la
+      revalorisation, et il est porté à un s'il lui est inférieur — l'ASPA ne
+      baisse donc jamais en euros courants. C'est le même coefficient que
+      celui des pensions du régime général (L. 161-23-1), ce qui confirme la
+      convention du modèle pour le scénario 1 comme pour la garantie
+      vieillesse.
+    reste: >-
+      Le scénario 1 n'est pas modifié par cette session : les deux articles
+      lus CONFIRMENT la règle que le modèle appliquait déjà, et la ligne
+      `minimum_vieillesse` du registre reste à l'état `approximation` pour les
+      motifs qui étaient les siens — condition de ressources du foyer et
+      non-recours, non la revalorisation. Ce qui a changé est hors du
+      scénario 1 : les pensions SERVIES des cinq scénarios notionnels suivent
+      désormais la règle d'indexation du modèle au lieu d'être figées en euros
+      constants, ce que `docs/limites.md` documente. Reste à lire le plancher
+      à un de L. 161-25 dans une circulaire d'application, pour savoir s'il a
+      déjà mordu depuis 2016.
+    prochaine_veille: "2027-01-31"
+
   - date: "2026-09-18"
     session: "pilier de capitalisation obligatoire ajouté au scénario 6"
     consulte: >-
