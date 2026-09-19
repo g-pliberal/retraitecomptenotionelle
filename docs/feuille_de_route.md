@@ -7611,6 +7611,38 @@ série. Mesuré en balayant quarante positions sur Coût et Trajectoire, à
 360 et 1 280 points : la figure garde une seule hauteur, et les entrées de
 la légende une seule position, du repos à la sortie du pointeur.
 
+**Rien ne sort des graphiques, et ils se lisent partout.** Demandé après
+la lecture au survol. Vérification systématique : chaque graphique de huit
+routes (deux simulations, deux trajectoires, Coût, Avantages, Méthode,
+l'accueil), dépliants ouverts, à 320, 360, 768, 1 280 et 1 920 points ; pour
+chaque texte du tracé, sortie du cadre, chevauchement avec un autre texte,
+taille rendue sous 10 pixels ; pour chaque tracé, sortie du cadre ; pour la
+légende, débordement de la figure ; puis le survol de CHAQUE année, une par
+une, en faisant défiler la figure quand le tracé est plus large que
+l'écran : l'année écrite en haut du trait ne doit ni sortir ni recouvrir un
+autre texte, les points ne doivent pas sortir, et la case de chaque valeur
+dans la légende doit la contenir. Quatre défauts trouvés, corrigés le jour
+même. *Le clignotement* : l'écoute de `pointerleave` en capture recevait
+la sortie de CHAQUE élément — une courbe, un cercle, le trait que le survol
+venait de redessiner sous le doigt — et effaçait la lecture à chaque fois ;
+seule la sortie de la figure compte désormais. *L'année sur l'unité* :
+pour les premières années, l'étiquette de l'année recouvrait l'unité de
+l'axe, dans le même coin ; elle s'écarte maintenant du trait de la largeur
+de l'unité. *Le zéro sur la première année* : sur téléphone, le « 0 » de
+l'axe vertical et la première graduation d'année se touchaient ; les années
+descendent de trois unités. *La case trop juste* : dimensionnée en `ch`,
+elle débordait d'un pixel — les chiffres tabulaires en graisse 800 sont plus
+larges que le zéro qui définit le `ch` ; elle est maintenant mesurée dans
+la case elle-même sur les valeurs les plus longues, et ne rétrécit jamais.
+Après correction, la vérification ne rend plus rien : zéro constat sur
+1 720 survols et 48 graphiques. Le script est `graphiques.mjs`, à
+reprendre pour une passe suivante — il faudrait qu'il rejoigne `scripts/`.
+Une chose apprise : la suite de tests ne charge pas `index.html` dans un
+navigateur, et une déclaration en double dans son script a rendu le site
+blanc sans qu'aucun test ne le dise ; c'est la vérification elle-même qui
+l'a vu. Un test qui analyse ce script avec `node --check` coûterait dix
+lignes.
+
 **Fichiers touchés le 19 septembre.** `web/gabarit.py` et `moteur/js/gabarit.js`
 (feuille, `mot`, `tableau`, `graphique`, `fiabilite_en_clair`), `web/pages.py`
 et `moteur/js/pages.js` (classes de colonnes, libellés du plancher, aide du

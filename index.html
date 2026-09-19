@@ -642,20 +642,28 @@ function rangVise(figure, part, total) {
 }
 
 // Les cases de la légende prennent, dès le rendu, la largeur de la plus
-// longue valeur de leur série : c'est ce qui fait que rien ne bouge au survol.
-// Les chiffres sont à chasse fixe, et `ch` est la largeur d'un chiffre : autant
-// de `ch` que de caractères est une borne sûre.
+// large valeur de leur série : c'est ce qui fait que rien ne bouge au survol.
+// MESURÉE, et non estimée en `ch` : les chiffres tabulaires en graisse 800
+// sont plus larges que le zéro courant qui définit le `ch`, et une case
+// estimée débordait d'un pixel sur un téléphone. On mesure les valeurs les
+// plus longues dans la case elle-même, avant de la vider.
 function dimensionnerLecture(figure) {
   const points = pointsDuGraphique(figure);
   if (!points) { return; }
   for (const entree of figure.querySelectorAll("figcaption li[data-serie]")) {
     const colonne = Number(entree.dataset.serie);
-    const largeur = Math.max(0, ...points.lignes.map((ligne) => {
-      const valeur = ligne.valeurs[colonne];
-      return valeur && valeur !== "—" ? valeur.length : 0;
-    }));
     const case_ = entree.querySelector(".lu");
-    if (case_) { case_.style.minWidth = `${largeur}ch`; }
+    if (!case_) { continue; }
+    const valeurs = [...new Set(points.lignes.map((ligne) => ligne.valeurs[colonne])
+      .filter((valeur) => valeur && valeur !== "—"))];
+    valeurs.sort((a, b) => b.length - a.length);
+    let largeur = 0;
+    for (const valeur of valeurs.slice(0, 6)) {
+      case_.textContent = valeur;
+      largeur = Math.max(largeur, case_.getBoundingClientRect().width);
+    }
+    case_.textContent = "";
+    case_.style.minWidth = `${Math.ceil(largeur)}px`;
   }
 }
 
@@ -699,9 +707,15 @@ function montrerLecture(figure, rang) {
     dessins.push(`<circle class="point" cx="${x}" cy="${y}" r="4" `
       + `fill="${points.couleurs[colonne] || "currentColor"}"/>`);
   });
-  // L'année, en haut du trait, du côté où il reste de la place.
+  // L'année, en haut du trait, du côté où il reste de la place — et jamais
+  // sur l'unité de l'axe, qui occupe le coin gauche de la même ligne : pour
+  // les premières années, l'étiquette s'écarte du trait plutôt que de la
+  // recouvrir.
   const aGauche = x > (gauche + droite) / 2;
-  dessins.push(`<text class="annee-lue" x="${x + (aGauche ? -6 : 6)}" y="18" `
+  const uniteAxe = svg.querySelector('text.graduation[x="0"]');
+  const bord = uniteAxe ? uniteAxe.getBBox().width + 10 : 0;
+  const xAnnee = aGauche ? x - 6 : Math.max(x + 6, bord);
+  dessins.push(`<text class="annee-lue" x="${xAnnee}" y="18" `
     + `text-anchor="${aGauche ? "end" : "start"}">${neutraliser(ligne.abscisse)}</text>`);
   survol.innerHTML = dessins.join("");
 
@@ -756,9 +770,17 @@ document.addEventListener("pointermove", (evenement) => {
   montrerLecture(figure, rangVise(figure, part, points.lignes.length));
 });
 
+// En capture, `pointerleave` arrive pour CHAQUE élément que le pointeur
+// quitte — une courbe, un cercle, le trait de repère lui-même, que le survol
+// vient de redessiner sous le doigt. Chacun effaçait la lecture, que le
+// mouvement suivant redessinait : c'est ce qui faisait clignoter la légende
+// en balayant vite. Seule la sortie de la figure compte.
 document.addEventListener("pointerleave", (evenement) => {
   const figure = evenement.target.closest?.("figure.graphique");
-  if (figure) { effacerLecture(figure); }
+  if (!figure) { return; }
+  if (evenement.relatedTarget && figure.contains(evenement.relatedTarget)) { return; }
+  if (evenement.target !== figure && evenement.relatedTarget) { return; }
+  effacerLecture(figure);
 }, true);
 
 // Le clavier : les flèches parcourent les années, Échap referme. C'est ce qui

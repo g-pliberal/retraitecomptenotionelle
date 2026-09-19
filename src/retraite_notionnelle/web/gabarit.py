@@ -1263,6 +1263,9 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 ul.legende .lu {
   display: inline-block; text-align: right; font-weight: 800;
   font-variant-numeric: tabular-nums; color: var(--texte);
+  /* Jamais comprimée ni coupée : sa largeur est celle que le script a
+     mesurée, et une case qui rétrécit ferait déborder sa valeur. */
+  flex: none; white-space: nowrap;
 }
 /* L'année survolée, en haut du trait de repère, avec le même halo que les
    étiquettes de série. */
@@ -1588,8 +1591,14 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
      collées. Le tracé ne descend donc plus sous 30 rem et DÉFILE dans sa
      figure : à 360 points il est réduit d'un tiers, non de moitié, et dix-huit
      unités y font douze pixels sans rien recouvrir. */
-  .graphique { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .graphique { overflow-x: auto; -webkit-overflow-scrolling: touch; container-type: inline-size; }
   .graphique > svg { min-width: 30rem; }
+  /* La légende et l'aide restent sous l'œil quand le tracé défile : posées
+     dans la figure qui défile, elles partaient avec lui, et l'on ne voyait
+     plus que les valeurs, sans les noms. */
+  .graphique > figcaption, .graphique > .aide-clavier {
+    position: sticky; left: 0; width: 100cqw; box-sizing: border-box;
+  }
   /* Les tableaux des dispositifs — trois colonnes dont deux de phrases — ne
      tiennent pas dans 300 points : chacun décidait seul, selon son contenu,
      de se comprimer à un mot par ligne ou de déborder. Ils défilent tous, à
@@ -3107,7 +3116,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
         x = nombre_brut(_abscisse(annee, annees[0], annees[-1]))
         lignes.append(
             f'<text class="graduation" x="{x}" '
-            f'y="{nombre_brut(HAUTEUR_TRACE - MARGE_BAS + 24)}" '
+            f'y="{nombre_brut(HAUTEUR_TRACE - MARGE_BAS + 27)}" '
             f'text-anchor="middle">{annee}</text>'
         )
 

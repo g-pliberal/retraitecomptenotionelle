@@ -1287,7 +1287,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   for (const annee of graduationsX(annees[0], derniereAnnee)) {
     const x = nombreBrut(abscisse(annee, annees[0], derniereAnnee));
     lignes.push(`<text class="graduation" x="${x}" `
-      + `y="${nombreBrut(HAUTEUR_TRACE - MARGE_BAS + 24)}" `
+      + `y="${nombreBrut(HAUTEUR_TRACE - MARGE_BAS + 27)}" `
       + `text-anchor="middle">${annee}</text>`);
   }
 

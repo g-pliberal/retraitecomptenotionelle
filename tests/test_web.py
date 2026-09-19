@@ -5636,3 +5636,19 @@ def test_la_bascule_des_resultats_precede_les_montants(contexte):
     corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     carte = corps.split('<h2 id="resultats"')[1]
     assert carte.index('class="bascule"') < carte.index('<div class="scenario">')
+
+
+def test_le_script_de_la_page_s_analyse():
+    """Le script d'``index.html`` n'est chargé par aucun test dans un navigateur :
+    une déclaration en double y a rendu le site blanc le 19 septembre 2026 sans
+    qu'aucun test ne le dise. ``node --check`` le lit comme le navigateur le
+    lira, et refuse ce qui ne s'analyse pas."""
+    import subprocess
+    import tempfile
+    from pathlib import Path
+    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    script = re.search(r'<script type="module">(.*?)</script>', page, re.S).group(1)
+    with tempfile.NamedTemporaryFile("w", suffix=".mjs", delete=False, encoding="utf-8") as fichier:
+        fichier.write(script)
+    resultat = subprocess.run(["node", "--check", fichier.name], capture_output=True, text=True)
+    assert resultat.returncode == 0, resultat.stderr
