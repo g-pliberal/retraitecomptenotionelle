@@ -3039,9 +3039,12 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   l'exonération.* Sur cette assiette, le système encaisse **32,4 points** de
   ressources en 2024, dont **24,9 points** de cotisations et de contribution
   d'équilibre. Or le taux légal d'un salarié type est de 28 à 29 %. Les
-  quatre points d'écart sont les allègements généraux, que l'État compense par
-  l'impôt : la même somme reparaît plus bas, dans les 4,6 points d'impôts et
-  taxes affectés.
+  quatre points d'écart ont deux causes que le dépôt ne sait pas encore
+  départager : l'allègement général, que l'État compense par l'impôt et qui
+  reparaît plus bas dans les 4,6 points d'impôts et taxes affectés, et la
+  composition de la grille, pondérée par les retraités, qui surreprésente les
+  régimes à taux élevés. `limites.md` décrit le premier, article par article ;
+  le point 3 du volet A refermerait le second.
 - *Ce que le modèle suppose sans le dire.* Appliquer le rapport 0,62 aux
   ressources OBSERVÉES revient à prêter au taux de 18 % la même déperdition
   qu'au système actuel : le modèle fait rentrer **15,5 % de l'assiette là où la
