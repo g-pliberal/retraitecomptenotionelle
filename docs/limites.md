@@ -5277,11 +5277,26 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   déjà faite pour la garantie vieillesse — les 93 milliards tirés des cas types
   étaient faux, le barème appliqué à la distribution DREES donne 18,4 milliards
   — et elle est due ici pour les mêmes raisons. Mesuré :
-  `scripts/cout_avantages.py` trouve 5,3 milliards d'avantages gratuits en 2024,
-  soit 1,2 % de la dépense, là où le COR chiffre les droits de solidarité à « de
-  l'ordre d'un cinquième ». Les trente et un dispositifs non chiffrés expliquent
+  `scripts/cout_avantages.py` trouve 12,6 milliards d'avantages gratuits en 2024,
+  soit 3,0 % de la dépense, là où le COR chiffre les droits de solidarité à « de
+  l'ordre d'un cinquième ». Les vingt-neuf dispositifs non chiffrés expliquent
   la plus grande part de l'écart, l'absence d'enfants le reste. Voir
   `docs/avantages_non_contributifs.md`.
+
+- **Une décote plafonnée ne sait pas dire qui part trop tôt, et le modèle en
+  hérite.** L'article L. 14 borne la décote à vingt trimestres : un agent de
+  catégorie active parti à 57 ans et un agent sédentaire parti le même jour
+  butent tous deux sur le même plafond, et leurs pensions ne diffèrent que de
+  868 € par an. Mesurer la valeur d'un avantage d'ÂGE par l'écart de MONTANT
+  à date de départ fixe donne donc un chiffre petit — 0,6 milliard en 2024 pour
+  la catégorie active — et ce chiffre n'est pas faux, il est incomplet : ce que
+  l'avantage coûte, ce sont les annuités servies avant l'âge légal, que nulle
+  décote ne rattrape. Elles valent **23,7 milliards en 2024**, dont 8,8 pour le
+  classement, 9,3 pour les régimes spéciaux et 5,6 pour la carrière longue
+  (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
+  un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
+  moyenne ; c'est exactement l'arbitrage qu'un coefficient de conversion
+  notionnel rend automatique et que le droit actuel ne rend nulle part.
 
 - **Le pilotage, et non plus le solde.** Le modèle calcule des droits
   individuels ; il porte une pyramide des âges, qui lui dit ce que chaque
@@ -6051,7 +6066,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 949 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 954 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

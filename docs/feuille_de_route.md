@@ -5599,11 +5599,12 @@ réciproquement ; qu'un avantage non chiffré dise POURQUOI ; et que tout renvoi
 porte la décomposition de l'individu à la masse par la méthode de `cout.py`, et
 `docs/avantages_non_contributifs.md` commente le tout.
 
-**Ce que ça a déplacé, et ce n'est pas ce qui était prévu.** Le chiffrage donne
-**5,3 milliards d'avantages gratuits en 2024, soit 1,2 % de la dépense**, là où
-le COR chiffre les droits de solidarité à « de l'ordre d'un cinquième des
-retraites tous régimes ». Seize fois trop peu. Deux causes, et la seconde était
-inconnue :
+**Ce que ça a déplacé, et ce n'est pas ce qui était prévu.** Le premier chiffrage
+donnait **5,3 milliards d'avantages gratuits en 2024, soit 1,2 % de la
+dépense** — 12,6 milliards et 3,0 % depuis que les périodes assimilées et la
+catégorie active sont chiffrées (volet B ci-dessous) —, là où le COR chiffre les
+droits de solidarité à « de l'ordre d'un cinquième des retraites tous régimes ».
+Deux causes, et la seconde était inconnue :
 
 - *Trente et un dispositifs sur trente-neuf ne sont pas chiffrés*, et
   l'inventaire dit lesquels. La réversion pèse à elle seule plus que tout ce qui
@@ -5633,10 +5634,9 @@ inconnue :
    dont le coût s'obtienne sans aucun recalcul, et c'est la plus lourde.
 3. *Les onze lignes « intégré », chiffrées par recalcul*, exactement comme les
    huit lignes de cascade : on recalcule la pension sans l'avantage, et l'écart
-   est la ligne. Les périodes assimilées et la catégorie active sont les deux
-   plus lourdes et les deux plus faciles — le modèle sert déjà les deux, il
-   suffit de les retirer. C'est là que se trouve le gros du chiffre manquant qui
-   soit à portée du modèle.
+   est la ligne. **Les deux plus lourdes sont faites** — voir le volet B. Restent
+   les neuf autres, dont le salaire de référence des parents et la garantie
+   minimale de points, toutes deux du même type : un recalcul sur l'assiette.
 4. *Les trois contrôles externes du dépôt, opposés au résultat* :
    `cnaf_avpf` et `cnaf_majorations` pour les droits familiaux,
    `fsv_cotisations` pour le chômage, `unedic_agirc_arrco` pour les points
@@ -5653,6 +5653,64 @@ ne sert pas la réversion. Neutraliser ce que l'étalon n'a jamais servi ne chan
 rien, et l'écart annoncé entre les systèmes n'en contient pas un euro. La ligne
 reste — elle décrit une intention de réforme —, mais l'inventaire la range sous
 `declare` et dit pourquoi.
+
+**Volet B — les périodes assimilées et la catégorie active, chiffrées.** À la
+demande. Les deux sont servies par le scénario 1 sans que la cascade les isole :
+leur effet passe par un trimestre ou par un âge. Elles sont désormais mesurées
+par recalcul, dans `scripts/cout_avantages.py`, à date de liquidation inchangée.
+
+- *Les périodes assimilées valent 6,8 milliards en 2024*, ce qui en fait la plus
+  grosse ligne de la décomposition. On refait la pension en donnant aux périodes
+  non travaillées le motif `sans_activite`, qui ne valide rien, et l'AVPF est
+  retranchée de l'écart — la cascade la porte déjà, et elle serait comptée deux
+  fois. Le chiffre agrégé reste un plancher extrême : aucun cas type ne connaît
+  le chômage. D'où `--par-carriere`, qui donne le chiffre parlant — **cinq années
+  de chômage indemnisé valent 7 154 € de pension annuelle à une carrière au
+  salaire moyen, soit 29 % de sa pension**, et entre un sixième et un tiers selon
+  le cas type. Sous-produit obtenu par un détour : le chômage indemnisé et le
+  chômage non indemnisé valident les mêmes trimestres, seul le premier ouvrant
+  des points de complémentaire ; l'écart entre les deux EST la valeur de ces
+  points, 612 € par an.
+
+- *La catégorie active vaut 0,6 milliard sur le montant, et 8,8 sur la durée.*
+  C'est le résultat de ce volet, et il n'était pas prévu. Mesurée à date de
+  départ inchangée contre le statut sédentaire de mêmes régimes, elle ne vaut
+  que 868 € par an à un agent classé de la génération 1960 — parce que **la
+  décote est plafonnée à vingt trimestres** et que l'agent classé et l'agent
+  sédentaire partis le même jour butent tous deux sur le même plafond. Une
+  décote plafonnée ne sait pas dire qui part cinq ans trop tôt. Ce que
+  l'avantage coûte vraiment, ce sont les annuités servies avant l'âge légal :
+  `--duree` les compte à l'âge légal de chaque génération, et trouve **23,7
+  milliards en 2024** — 8,8 pour le classement, 9,3 pour les régimes spéciaux,
+  5,6 pour la carrière longue. Quinze fois l'effet de montant. La composition
+  change au cours du temps : rien pour la carrière longue jusqu'aux années 2010,
+  puis 5,6 milliards, mécaniquement, à mesure que l'âge légal monte au-dessus de
+  l'âge auquel une carrière commencée tôt réunit sa durée.
+
+- *Un refus, qui est un résultat.* La jouissance immédiate de la pension
+  militaire n'est PAS chiffrée sur le montant. Sa contrefactuelle naturelle — le
+  même agent en fonctionnaire civil, qui relève des mêmes régimes — déplace
+  aussi la durée requise, 172 trimestres contre 160, si bien que la
+  proratisation change avec le statut et que l'écart ressort négatif. Le script
+  pose un garde-fou qui compare les durées requises, refuse la ligne, imprime la
+  raison, et la refuse PARTOUT dès qu'elle est faussée quelque part : une ligne
+  mesurée pour certaines générations et pas pour d'autres donnerait un agrégat
+  biaisé dont le biais serait invisible.
+
+- *Cinq tests de plus* protègent les hypothèses du recalcul, qu'une fiche
+  modifiée casserait sans bruit : le statut témoin relève des mêmes régimes que
+  le statut classé ; aucun cas type ne porte à la fois des interruptions et un
+  classement, faute de quoi l'addition de deux retraits d'âge surestimerait ;
+  `sans_activite` ne valide rien ; le recalcul rend un montant positif et
+  inférieur à la pension ; la décomposition somme toujours à la pension entière.
+
+**Ce qui reste du volet B.** La réserve sur `--duree` est écrite partout où le
+chiffre l'est : ce sont des annuités ANTICIPÉES, non un surcoût NET — partir
+tôt, c'est aussi cotiser moins et mourir plus tôt en moyenne. Chiffrer le net
+demanderait de projeter la carrière contrefactuelle jusqu'à l'âge légal, donc de
+décider ce que l'agent aurait fait de ces années : le dépôt ne tranchera pas à
+sa place. C'est exactement l'arbitrage qu'un coefficient de conversion notionnel
+rend automatique et que le droit actuel ne rend nulle part.
 
 **Fichiers.** `data/reference/legislation/avantages_non_contributifs.yaml` ;
 `tests/test_avantages.py` ; `scripts/cout_avantages.py` ;

@@ -184,3 +184,132 @@ def test_une_source_publiee_nomme_toujours_sa_source(inventaire):
             assert avantage["cout"].get("source_id"), (
                 f"{avantage['code']} : série publiée annoncée sans source_id"
             )
+
+
+# ---------------------------------------------------------------------------
+# Le chiffrage par recalcul : ce que la cascade n'isole pas
+#
+# Deux avantages — les périodes assimilées et la catégorie active — sont servis
+# par le scénario 1 sans que la cascade les sépare : leur effet passe par un
+# trimestre ou par un âge. `scripts/cout_avantages.py` les mesure en refaisant
+# la pension sans l'avantage, à date de liquidation inchangée. Ces tests
+# protègent les deux hypothèses dont ce recalcul dépend, et qu'une fiche
+# modifiée casserait sans bruit.
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def script_cout():
+    import importlib.util
+
+    chemin = RACINE_DONNEES.parent / "scripts" / "cout_avantages.py"
+    cahier = importlib.util.spec_from_file_location("cout_avantages", chemin)
+    module = importlib.util.module_from_spec(cahier)
+    cahier.loader.exec_module(module)
+    return module
+
+
+def test_un_avantage_chiffre_par_recalcul_nomme_un_script_qui_existe(inventaire):
+    racine = RACINE_DONNEES.parent
+    chiffres = [a for a in inventaire["avantages"] if a.get("chiffre_par")]
+    assert chiffres, "plus aucun avantage n'est chiffré par recalcul"
+    for avantage in chiffres:
+        chemin = racine / avantage["chiffre_par"]
+        assert chemin.is_file(), f"{avantage['code']} : {chemin} n'existe pas"
+
+
+def test_le_statut_sedentaire_temoin_releve_des_memes_regimes(script_cout):
+    """La contrefactuelle du classement ne doit déplacer QUE l'âge opposé.
+
+    Si le statut témoin relevait d'autres régimes, l'écart mesurerait un
+    changement de caisse et non la valeur du classement. C'est l'hypothèse
+    centrale du recalcul, et elle tient à deux lignes d'un fichier de données
+    qu'une session pourrait remanier sans y penser.
+    """
+    import yaml as _yaml
+
+    chemin = RACINE_DONNEES / "reference" / "legislation" / "affiliations.yaml"
+    with chemin.open(encoding="utf-8") as flux:
+        affiliations = _yaml.safe_load(flux)["affiliations"]
+
+    def regimes(code: str) -> set[str]:
+        return {regime for periode in affiliations[code]["periodes"]
+                for regime in periode["regimes"]}
+
+    for classe, (temoin, _) in script_cout.SEDENTAIRE.items():
+        assert regimes(classe) == regimes(temoin), (
+            f"{classe} et son témoin {temoin} ne relèvent pas des mêmes régimes"
+        )
+
+
+def test_aucun_cas_type_ne_porte_les_deux_avantages_recalcules(script_cout):
+    """Deux retraits d'âge ne s'additionnent pas, la décote étant plafonnée.
+
+    Le script mesure chaque avantage isolément et les additionne. C'est exact
+    tant qu'aucune carrière ne porte les deux — ce qui est le cas : les
+    interruptions sont sur une carrière du privé, le classement sur des
+    carrières publiques. Si un cas type venait à porter les deux, l'addition
+    surestimerait, et ce test le dirait avant le chiffre.
+    """
+    from retraite_notionnelle.castypes import CAS_TYPES
+
+    fautifs = [cas.code for cas in CAS_TYPES
+               if cas.interruptions_relatives and cas.affiliation in script_cout.SEDENTAIRE]
+    assert fautifs == [], (
+        "cas types portant à la fois des interruptions et un statut classé : "
+        + ", ".join(fautifs)
+        + " — le recalcul les additionne, ce qui surestime : voir `recalculer`."
+    )
+
+
+def test_le_motif_sans_activite_ne_valide_rien(script_cout):
+    """La contrefactuelle des périodes assimilées repose sur ce seul motif.
+
+    `sans_activite` est ce par quoi le script remplace une interruption pour
+    mesurer ce qu'elle valait. S'il venait à valider un trimestre, le recalcul
+    mesurerait la différence entre deux avantages au lieu de la valeur de l'un.
+    """
+    import csv as _csv
+
+    chemin = RACINE_DONNEES / "reference" / "legislation" / "periodes_non_travaillees.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = {ligne["motif"]: ligne for ligne in _csv.DictReader(
+            l for l in flux if not l.lstrip().startswith("#"))}
+    neant = lignes["sans_activite"]
+    assert int(neant["trimestres_assimiles"]) == 0
+    assert neant["ouvre_droits_complementaires"] == "non"
+    assert neant["avpf"] == "non"
+
+
+def test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension(script_cout):
+    """Le recalcul mesure un AVANTAGE : il ne peut pas être négatif.
+
+    Et la décomposition doit rester complète : les montants recalculés sont
+    pris sur la part contributive, où la cascade les avait laissés, si bien que
+    la somme des parts vaut toujours la pension entière. C'est la propriété qui
+    rend la table lisible ligne à ligne, et elle se vérifie sur un cas type qui
+    porte chacun des deux avantages.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import CAS_TYPES
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    generation = 1960
+    porteurs = ("carriere_interrompue", "fonctionnaire_actif")
+    for cas in (c for c in CAS_TYPES if c.code in porteurs):
+        age = cas.age_liquidation_pour(simulateur, generation)
+        carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
+        actuel = simulateur.scenario_actuel.calculer(carriere)
+        parts, _ = script_cout.recalculer(simulateur, cas, generation, age, actuel)
+        assert parts, f"{cas.code} devrait porter un avantage recalculé"
+        for ligne, montant in parts.items():
+            assert montant > 0.0, f"{cas.code} : {ligne} mesuré négatif ({montant})"
+            assert montant < actuel.pension_annuelle, (
+                f"{cas.code} : {ligne} dépasse la pension entière"
+            )
+        total = (actuel.total_contributif
+                 + sum(a.montant for a in actuel.avantages_appliques))
+        assert total == pytest.approx(actuel.pension_annuelle), (
+            f"{cas.code} : la cascade ne somme plus à la pension"
+        )
