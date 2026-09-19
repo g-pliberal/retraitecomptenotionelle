@@ -5390,6 +5390,35 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
             assert 'role="group"' in bloc and 'aria-label="Montants"' in bloc
 
 
+def test_aucune_adresse_du_site_ne_porte_deux_croisillons(contexte):
+    """Le bogue qui a cassé la bascule, et que rien ne voyait venir.
+
+    Ici la ROUTE vit dans le fragment : `#/simuler?...`. Ajouter une ancre de
+    section au bout — `#resultats`, pour revenir sur les chiffres — ne fabrique
+    donc pas une ancre, mais allonge la DERNIÈRE VALEUR de la requête. La
+    bascule des résultats écrivait `montants=brut#resultats`, qui n'est pas un
+    mode connu : le modèle retombait sur son défaut, la page revenait en net,
+    et le salaire déjà converti en brut y était relu comme un net — une
+    carrière mieux payée d'un quart, sans un mot.
+
+    Le test vaut pour tout le site, et pas pour la seule bascule : c'est un
+    piège de la forme des adresses, que n'importe quel lien peut retrouver.
+    Pour aller à une section, le site a `data-vers`, que le routeur traite
+    sans toucher à l'adresse.
+    """
+    routes = [("/simuler", {"naissance": "1975", "montants": "net"}),
+              ("/simuler", {"naissance": "1975", "montants": "brut"}),
+              ("/", {}), ("/cout", {}), ("/donnees", {}), ("/programme", {})]
+    for route, parametres in routes:
+        corps = rendre(contexte, route, parametres)[1]
+        for adresse in re.findall(r'href="([^"]*)"', corps):
+            fragment = html.unescape(adresse)
+            assert fragment.count("#") <= 1, (
+                f"{route} : l'adresse {fragment!r} porte deux croisillons ; "
+                "la route occupe déjà le fragment, un second `#` entre dans "
+                "la requête")
+
+
 def test_les_deux_branches_d_une_bascule_ne_se_separent_jamais(contexte):
     """Sur un téléphone, c'est la légende qui passe à la ligne, pas le contrôle.
 

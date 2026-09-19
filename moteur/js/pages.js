@@ -3353,7 +3353,7 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 ${lectureDesMontants(comparaison, saisie)}</h2>
 ${lecture}
 <div class="carte">
-  ${basculeMontants(saisie, contexte.echelle(saisie), "#resultats")}
+  ${basculeMontants(saisie, contexte.echelle(saisie))}
   ${scenarios}
   ${fiabilite}
   ${capitalisation}
@@ -3640,7 +3640,7 @@ function mentionConversion(saisie, echelle) {
  * ferait relire comme un brut, et la page reviendrait en décrivant une AUTRE
  * carrière — mieux payée d'un quart.
  */
-function basculeMontants(saisie, echelle, ancre = "") {
+function basculeMontants(saisie, echelle) {
   const versLeNet = !saisie.enNet;
   const remplacements = { montants: versLeNet ? "net" : "brut" };
   // Seule la saisie EN EUROS porte un net ou un brut : un multiple du salaire
@@ -3657,7 +3657,10 @@ function basculeMontants(saisie, echelle, ancre = "") {
       remplacements[`metier${index + 2}_salaire`] = valeur;
     });
   }
-  const cible = `#/simuler?${echapper(saisie.requete(remplacements))}${ancre}`;
+  // PAS D'ANCRE AU BOUT DE L'ADRESSE : la route vit déjà dans le fragment,
+  // et un second `#` allonge la dernière valeur de la requête au lieu de
+  // désigner une section — `montants=brut#resultats` n'est pas un mode.
+  const cible = `#/simuler?${echapper(saisie.requete(remplacements))}`;
   // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
   const branches = versLeNet
     ? [["net", cible], ["brut", "#"]]
@@ -4214,7 +4217,7 @@ ${echapper(dateEnClair(pilier.date_courbe))} et publiée par la Banque centrale
 européenne ; les versements des années suivantes emploient les taux à terme
 que cette même courbe implique. Les trois frais sont les moyennes 2025 des
 plans d'épargne retraite individuels, mesurées par l'Observatoire des produits
-d'épargne financière. La page <a href="${g.lien("/methode/")}#capitalisation">Méthode</a>
+d'épargne financière. La page <a href="${g.lien("/methode/")}">Méthode</a>
 dit ce que ces choix supposent, et la page <a href="${g.lien("/donnees/")}">Données</a>
 d'où ils viennent. Fiabilité de ce compartiment :
 <span class="etiquette-fiabilite">${echapper(nomFiabilite(pilier.fiabilite))}</span>, le
@@ -7991,7 +7994,7 @@ rien.</p>
 </ul>
 <p>Ce que cela coûte est chiffré : l'enveloppe prélève des frais, et le
 simulateur les montre euro par euro, comme il montre le rendement qui reste. La
-page <a href="${g.lien("/methode/")}#capitalisation">Méthode</a> dit à quels
+page <a href="${g.lien("/methode/")}">Méthode</a> dit à quels
 taux l'argent est placé, d'où ils viennent et ce qu'ils supposent.</p>`,
   );
 }

@@ -2286,7 +2286,7 @@ rien.</p>
 </ul>
 <p>Ce que cela coûte est chiffré : l'enveloppe prélève des frais, et le
 simulateur les montre euro par euro, comme il montre le rendement qui reste. La
-page <a href="{g.lien("/methode/")}#capitalisation">Méthode</a> dit à quels
+page <a href="{g.lien("/methode/")}">Méthode</a> dit à quels
 taux l'argent est placé, d'où ils viennent et ce qu'ils supposent.</p>""",
     )
 
@@ -3883,7 +3883,7 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 {_lecture_des_montants(comparaison, saisie)}</h2>
 {lecture}
 <div class="carte">
-  {_bascule_montants(saisie, contexte.echelle(saisie), "#resultats")}
+  {_bascule_montants(saisie, contexte.echelle(saisie))}
   {scenarios}
   {fiabilite}
   {capitalisation}
@@ -4266,7 +4266,7 @@ souverains les mieux notés de la zone euro, relevée le
 européenne ; les versements des années suivantes emploient les taux à terme
 que cette même courbe implique. Les trois frais sont les moyennes 2025 des
 plans d'épargne retraite individuels, mesurées par l'Observatoire des produits
-d'épargne financière. La page <a href="{g.lien("/methode/")}#capitalisation">Méthode</a>
+d'épargne financière. La page <a href="{g.lien("/methode/")}">Méthode</a>
 dit ce que ces choix supposent, et la page <a href="{g.lien("/donnees/")}">Données</a>
 d'où ils viennent. Fiabilité de ce compartiment :
 <span class="etiquette-fiabilite">{escape(str(pilier.fiabilite))}</span>, le
@@ -4591,13 +4591,22 @@ def _mention_conversion(saisie: Saisie, echelle: "Echelle") -> str:
             "affichée en net.</span></p>")
 
 
-def _bascule_montants(saisie: Saisie, echelle: "Echelle",
-                      ancre: str = "") -> str:
+def _bascule_montants(saisie: Saisie, echelle: "Echelle") -> str:
     """Le lien qui passe de net à brut, et retour — montants déjà traduits.
 
     Un lien plutôt qu'un menu, pour la même raison que la bascule d'unité : il
     porte l'adresse entière, si bien que l'adresse se partage telle qu'on la
     lit, et cela ne demande pas une ligne de JavaScript.
+
+    PAS D'ANCRE AU BOUT DE L'ADRESSE, et c'est un bogue payé. La bascule des
+    résultats portait `#resultats`, pour revenir sur les chiffres plutôt qu'en
+    haut du formulaire. Mais ici la ROUTE vit déjà dans le fragment : un second
+    `#` ne fabrique pas une ancre, il allonge la dernière valeur de la requête.
+    `montants=brut#resultats` n'est pas un mode connu, le modèle retombait sur
+    son défaut, et la page revenait en net — avec le salaire converti en brut
+    relu comme un net, donc une carrière mieux payée d'un quart. Le retour aux
+    résultats est déjà assuré sans ancre : `reprendre()` y pose le focus et y
+    fait défiler à chaque rendu.
 
     LES MONTANTS SAISIS SONT TRADUITS, et c'est tout l'enjeu : en mode net, le
     nombre du formulaire est un net. Le recopier tel quel dans l'autre mode le
@@ -4622,7 +4631,7 @@ def _bascule_montants(saisie: Saisie, echelle: "Echelle",
         remplacements["salaire"] = traduits[0]
         for rang, valeur in enumerate(traduits[1:], start=2):
             remplacements[f"metier{rang}_salaire"] = valeur
-    cible = f"#/simuler?{escape(saisie.requete(**remplacements))}{ancre}"
+    cible = f"#/simuler?{escape(saisie.requete(**remplacements))}"
     # L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
     branches = [("net", cible if vers_le_net else "#"),
                 ("brut", "#" if vers_le_net else cible)]

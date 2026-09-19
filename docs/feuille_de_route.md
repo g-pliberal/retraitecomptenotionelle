@@ -6756,6 +6756,29 @@ entre deux états — elles se lisent comme deux boutons. Les branches vivent do
 dans une enveloppe `.choix` déclarée insécable : c'est la légende qui passe à la
 ligne, et le contrôle reste entier. Un test l'exige.
 
+**Le bogue que la bascule a révélé : deux croisillons dans une adresse.** La
+bascule des résultats portait une ancre, `#resultats`, pour revenir sur les
+chiffres plutôt qu'en haut du formulaire. Mais ici la ROUTE vit dans le
+fragment — `#/simuler?…` —, et un second `#` ne fabrique pas une ancre : il
+allonge la DERNIÈRE VALEUR de la requête. L'adresse écrivait donc
+`montants=brut#resultats`, qui n'est pas un mode connu ; le modèle retombait sur
+son défaut, la page revenait en net, et le salaire déjà converti en brut y était
+relu comme un net. Le lecteur qui cliquait « brut » voyait ses montants monter
+d'un quart, toujours étiquetés « € net/mois », et la bascule refusait de
+revenir. L'ancre était de surcroît inutile : `reprendre()`, dans `index.html`,
+pose déjà le focus sur `#resultats` et y fait défiler à chaque rendu.
+
+Le test qui en sort ne garde pas la bascule mais **tout le site** : aucune
+adresse rendue par aucune page ne porte deux croisillons. Il a immédiatement
+trouvé une seconde occurrence, plus ancienne et jamais signalée — deux liens
+`{g.lien("/methode/")}#capitalisation` dont le chemin devenait
+`/methode/#capitalisation`, inconnu du routeur, qui renvoyait donc à l'accueil.
+Ils pointent maintenant sur la page Méthode, dont le plan porte la section. Pour
+aller à une section, le site a `data-vers`, que le routeur traite sans toucher à
+l'adresse ; le docstring de `g.lien` le disait déjà — « l'ancre de section ne
+peut pas s'y ajouter, la place est prise » —, et deux appels l'avaient contourné
+à la main.
+
 **Fichiers.** `bascule()` et son bloc CSS dans `web/gabarit.py` et
 `moteur/js/gabarit.js` ; `_bascule_montants`, `_bascule_unite` et `_champ_revenu`
 dans `web/pages.py` et `moteur/js/pages.js` ; feuille de style et témoins
