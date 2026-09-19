@@ -2399,8 +2399,11 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
   // fiche de paie n'est plus donnée que comme l'exemple qu'elle est.
   // Le libellé suit la bascule : demander un « revenu brut » sous un réglage
   // qui annonce le net ferait taper l'un pour l'autre. Les repères chiffrés —
-  // SMIC, moyenne, plafond — sont bruts par nature et sont convertis eux
-  // aussi, ou laissés tels quels quand on ne sait pas les convertir.
+  // SMIC, salaire moyen — sont bruts par nature et sont convertis eux
+  // aussi, ou laissés tels quels quand on ne sait pas les convertir. Le
+  // plafond de la Sécurité sociale n'en fait plus partie : sous un champ
+  // numérique, « plafond 4 005 € » se lit comme le maximum que le champ
+  // accepte, et c'est ainsi qu'un lecteur l'a lu.
   const enNet = saisie.saisieEnNet;
   const mot = enNet ? "net" : "brut";
   // Le statut dont le dépôt n'a pas les prélèvements hors retraite : le nombre
@@ -2412,9 +2415,8 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
     : ((montant) => montant);
   const aide = bref
     ? `en euros ${mot}s par mois`
-    : `SMIC ${g.euros(repere(echelle.smic))}, moyenne `
-      + `${g.euros(repere(echelle.mensuel(1)))}, `
-      + `plafond ${g.euros(repere(echelle.plafond))}`;
+    : `Repères : SMIC ${g.euros(repere(echelle.smic))}, salaire moyen `
+      + `${g.euros(repere(echelle.mensuel(1)))}`;
   let complement;
   if (converti) {
     complement = "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — "

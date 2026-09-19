@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 375<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 377<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -7375,3 +7375,14 @@ de lecture), `src/retraite_notionnelle/web/pages.py` et son portage
 `moteur/js/pages.js` (classes `.texte`, espaces insécables, « Estimée »,
 la phrase de Trajectoire), puis `python scripts/construire_donnees.py` et les
 témoins.
+
+**Un vingt-et-unième constat, venu d'un lecteur le même jour.** Sous le champ
+« Revenu brut mensuel », l'aide donnait trois repères : « SMIC 1 823 €,
+moyenne 3 475 €, plafond 4 005 € ». Le troisième est le plafond mensuel de la
+Sécurité sociale, mais sous un champ numérique, le mot se lit comme le maximum
+que le champ accepte — et c'est ainsi qu'il a été lu. Le repère ne parle qu'à
+qui connaît la tuyauterie des régimes ; il est retiré, et « moyenne » devient
+« salaire moyen » : « Repères : SMIC 1 823 €, salaire moyen 3 475 € ». Les
+deux portages, `tests/test_web.py`, le README et `tests/temoins/pages.json`
+suivent. Le champ, lui, n'a pas changé : il accepte de 0,1 à 10 fois le
+salaire moyen, et le refus au-delà le dit en euros.

@@ -2860,8 +2860,12 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
     # Le libellé suit la bascule : demander un « revenu brut » sous un réglage
     # qui annonce le net ferait taper l'un pour l'autre, et le modèle lirait
     # sans broncher un net comme un brut. Les repères chiffrés de l'aide —
-    # SMIC, moyenne, plafond — sont bruts par nature ; ils sont donc convertis
+    # SMIC, salaire moyen — sont bruts par nature ; ils sont donc convertis
     # eux aussi, statut par statut, ou tus quand on ne sait pas les convertir.
+    # Le plafond de la Sécurité sociale n'en fait plus partie : sous un champ
+    # numérique, « plafond 4 005 € » se lit comme le maximum que le champ
+    # accepte, et c'est ainsi qu'un lecteur l'a lu. Le repère ne parle qu'à
+    # qui connaît la tuyauterie des régimes ; les deux autres parlent à tous.
     en_net = saisie.saisie_en_net
     mot = "net" if en_net else "brut"
     # Le statut dont le dépôt n'a pas les prélèvements hors retraite : le
@@ -2873,9 +2877,8 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
     repere = ((lambda montant: echelle.net_mensuel(montant, saisie.statut))
               if converti else (lambda montant: montant))
     aide = (f"en euros {mot}s par mois" if bref else
-            f"SMIC {g.euros(repere(echelle.smic))}, moyenne "
-            f"{g.euros(repere(echelle.mensuel(1)))}, "
-            f"plafond {g.euros(repere(echelle.plafond))}")
+            f"Repères : SMIC {g.euros(repere(echelle.smic))}, salaire moyen "
+            f"{g.euros(repere(echelle.mensuel(1)))}")
     if converti:
         complement = (
             "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — pour "

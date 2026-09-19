@@ -783,9 +783,12 @@ def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle(contexte):
         assert f"Revenu {mode} mensuel" in corps
         assert ligne in corps
         # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
-        assert "SMIC" in corps and "moyenne" in corps and "plafond" in corps
+        assert "SMIC" in corps and "salaire moyen" in corps
+        # Et pas de « plafond » sous le champ : le mot s'y lit comme le maximum
+        # que le champ accepte, ce que le plafond de la Sécurité sociale n'est pas.
+        assert not re.search(r"plafond [\d\u202f]+\u202f€", corps)
 
-    # Et les trois repères sont bien convertis, non recopiés : le SMIC net d'un
+    # Et les deux repères sont bien convertis, non recopiés : le SMIC net d'un
     # salarié du privé vaut environ 79 % de son brut.
     _, brut = rendre(contexte, "/simuler", {"montants": "brut"})
     _, net = rendre(contexte, "/simuler", {"montants": "net"})
