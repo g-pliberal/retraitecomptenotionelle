@@ -340,6 +340,25 @@ const LIBELLES_SANS_EMPLOI = Object.fromEntries(SANS_EMPLOI);
 /** Saisie inexploitable, à afficher telle quelle à l'utilisateur. */
 export class ErreurSaisie extends Error {}
 
+/**
+ * Les clés de requête qui décrivent les RÈGLES, et non la carrière.
+ *
+ * Ce sont exactement les dix que `Saisie.parametres` lit pour fabriquer un jeu
+ * de paramètres : tout le reste — naissance, statut, revenu, enfants, profil,
+ * interruptions — décrit un individu, et un individu n'a pas sa place dans un
+ * agrégat. C'est cette liste qui permet aux trois pages agrégées de lire une
+ * adresse de simulateur sans rien en retenir d'autre que les règles, et aux
+ * liens internes de ne porter que ce qui a un sens partout.
+ *
+ * Le sexe n'en est pas : il ne joue que sur la table de conversion « par sexe »
+ * et sur les majorations pour enfants, deux réglages individuels. Les cas types
+ * portent le leur.
+ */
+export const CLES_MODELISATION = Object.freeze([
+  "indexation", "lissage", "age_reference", "table", "conversion_acquis",
+  "part_cotisation", "foyer", "projection", "bascule", "euros",
+]);
+
 const DEFAUTS = Object.freeze({
   naissance: 1975,
   naissance_mois: 1,
@@ -450,7 +469,14 @@ export class Saisie {
       projection: parmi(parametres, "projection", PROJECTIONS, DEFAUTS.projection),
       bascule: entier(parametres, "bascule", DEFAUTS.bascule),
       euros: entier(parametres, "euros", DEFAUTS.euros),
-      demandee: Object.keys(parametres).length > 0,
+      // Une adresse qui ne porte QUE des réglages de modélisation ne demande
+      // pas de calcul : elle règle le modèle. C'est ce qui permet aux liens
+      // internes de porter les réglages partout — y compris vers le
+      // simulateur — sans que cliquer « Simuler » dans le bandeau ne lance
+      // d'office le calcul d'une carrière que personne n'a saisie. Toute
+      // adresse portant le moindre champ de carrière demande un calcul, comme
+      // avant.
+      demandee: Object.keys(parametres).some((cle) => !CLES_MODELISATION.includes(cle)),
     });
     saisie.verifier();
     return saisie;
@@ -705,6 +731,40 @@ export class Saisie {
       annee_bascule: this.bascule,
       annee_euros_constants: this.euros,
     });
+  }
+
+  /**
+   * La saisie réduite à ses RÈGLES, pour les pages qui agrègent.
+   *
+   * Les pages Cas types, Coût et Avantages ne calculent aucune carrière
+   * saisie : elles croisent des carrières types avec des générations. Ce
+   * qu'elles doivent retenir d'une adresse, ce sont les réglages de
+   * modélisation — et eux seuls. Une adresse de simulateur collée sur la page
+   * Coût y décrit donc un jeu de règles, jamais un individu : la naissance, le
+   * statut et le revenu qu'elle porte sont ignorés, et une faute dans l'un
+   * d'eux ne peut pas faire échouer la page.
+   */
+  static modelisation(parametres) {
+    const retenus = {};
+    for (const cle of CLES_MODELISATION) {
+      if (cle in parametres) { retenus[cle] = parametres[cle]; }
+    }
+    return Saisie.depuisRequete(retenus);
+  }
+
+  /**
+   * Les réglages qui s'écartent du défaut, écrits comme une requête.
+   *
+   * Vide tant que rien n'a été changé : les adresses du site restent alors
+   * celles d'avant, au caractère près, et un lien partagé ne porte que ce que
+   * son auteur a effectivement réglé.
+   */
+  requeteModelisation() {
+    return CLES_MODELISATION
+      .filter((cle) => this[cle] !== DEFAUTS[cle])
+      .map((cle) => `${encodeURIComponent(cle).replace(/%20/g, "+")}`
+        + `=${encodeURIComponent(String(this[cle])).replace(/%20/g, "+")}`)
+      .join("&");
   }
 
   /**
@@ -1259,10 +1319,6 @@ function age(valeur) {
 // -- fabrique ----------------------------------------------------------------
 
 /**
- * Simulateurs mémorisés par jeu de paramètres. Le chargement des données coûte
- * quelques dixièmes de seconde ; une simulation en coûte dix millisecondes.
- */
-/**
  * L'échelle des salaires d'une année : le repère, et les conversions.
  *
  * Le modèle raisonne en multiples du salaire moyen ; le formulaire, en euros.
@@ -1291,19 +1347,89 @@ export class Echelle {
   }
 }
 
+/**
+ * Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
+ * confondus. Deux par jeu — le coût et les avantages —, donc trois jeux de
+ * règles : celui par défaut, et les deux derniers essayés.
+ */
+const AGREGATS_MEMORISES = 6;
+
+/**
+ * Les données du site, et le jeu de règles sous lequel on les lit.
+ *
+ * Un contexte, c'est deux choses : des données coûteuses à charger, et UN jeu
+ * de paramètres — `base` — sous lequel tout ce que la page demande est
+ * calculé. `simulateur()`, `cout()` et `avantages()` répondent tous trois sous
+ * ce jeu-là, sans qu'aucune page ait à le leur redire.
+ *
+ * Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — se rendent donc
+ * sous un contexte dérivé par `pour`, portant les réglages que l'adresse
+ * demande. Le corps des pages n'en sait rien : il lit `contexte.base` comme il
+ * l'a toujours fait, et y trouve les règles en vigueur au lieu des règles par
+ * défaut. C'est ce qui évite de faire passer un jeu de paramètres à la main
+ * dans la trentaine d'endroits qui les lisent.
+ *
+ * Les mémoires sont des `Map` partagées, et c'est ce qui fait tenir la
+ * dérivation : un contexte dérivé PARTAGE ce que le contexte d'origine a déjà
+ * chargé. Le chargement des données coûte quelques dixièmes de seconde, une
+ * simulation en coûte dix, un agrégat une seconde : rien de tout cela ne doit
+ * se refaire parce qu'on a changé une règle.
+ */
 export class Contexte {
-  constructor(paquet, base = PARAMETRES_DEFAUT) {
+  constructor(paquet, base = PARAMETRES_DEFAUT, memoires = null) {
     this.paquet = paquet;
     this.base = base;
-    this._instances = new Map();
-    this._depenses = null;
-    this._comptes = null;
-    this._population = null;
-    this._distribution = null;
-    this._assiette = null;
-    this._cout = null;
-    this._inventaireAvantages = null;
-    this._avantages = null;
+    // Un simulateur par jeu de paramètres rencontré.
+    this._instances = memoires ? memoires.instances : new Map();
+    // Ce qui ne dépend d'AUCUN paramètre : dépense observée, comptes du COR,
+    // population, distribution des pensions, assiette, inventaire des
+    // avantages. Ces séries sont lues, jamais calculées : un changement de
+    // règle ne les déplace pas.
+    this._donnees = memoires ? memoires.donnees : new Map();
+    // Les agrégats, eux, dépendent des règles : un coût par jeu de paramètres.
+    this._agregats = memoires ? memoires.agregats : new Map();
+  }
+
+  /**
+   * Le même contexte, sous un autre jeu de règles.
+   *
+   * Les mémoires sont partagées, pas recopiées : dériver ne coûte rien, et ce
+   * que l'un charge, l'autre le trouve chargé.
+   */
+  pour(parametres) {
+    if (cleParametres(parametres) === cleParametres(this.base)) { return this; }
+    return new Contexte(this.paquet, parametres, {
+      instances: this._instances,
+      donnees: this._donnees,
+      agregats: this._agregats,
+    });
+  }
+
+  /** Une donnée indépendante des règles, chargée une fois pour toutes. */
+  _donnee(nom, fabrique) {
+    if (!this._donnees.has(nom)) {
+      this._donnees.set(nom, fabrique());
+    }
+    return this._donnees.get(nom);
+  }
+
+  /**
+   * Un agrégat, mémorisé par jeu de règles — et en nombre borné.
+   *
+   * Sans borne, une adresse suffirait à faire enfler la mémoire de l'onglet
+   * d'un jeu de règles à l'autre : le calcul se fait chez le lecteur, et
+   * l'adresse EST la saisie. Le plus ancien s'en va ; revenir aux réglages par
+   * défaut après en avoir essayé trois recalcule, une seconde.
+   */
+  _agregat(nom, fabrique) {
+    const cle = `${nom}|${cleParametres(this.base)}`;
+    if (!this._agregats.has(cle)) {
+      if (this._agregats.size >= AGREGATS_MEMORISES) {
+        this._agregats.delete(this._agregats.keys().next().value);
+      }
+      this._agregats.set(cle, fabrique());
+    }
+    return this._agregats.get(cle);
   }
 
   simulateur(parametres = null) {
@@ -1316,70 +1442,51 @@ export class Contexte {
   }
 
   depenses() {
-    if (!this._depenses) {
-      this._depenses = new DepensesRetraite(this.paquet);
-    }
-    return this._depenses;
+    return this._donnee("depenses", () => new DepensesRetraite(this.paquet));
   }
 
   /** Le second terme du bilan : ce que le système de retraite encaisse. */
   comptes() {
-    if (!this._comptes) {
-      this._comptes = new ComptesRetraite(this.paquet);
-    }
-    return this._comptes;
+    return this._donnee("comptes", () => new ComptesRetraite(this.paquet));
   }
 
   population() {
-    if (!this._population) {
-      this._population = new Population(this.paquet);
-    }
-    return this._population;
+    return this._donnee("population", () => new Population(this.paquet));
   }
 
   /** La distribution des pensions — elle seule chiffre un plancher. */
   distribution() {
-    if (!this._distribution) {
-      this._distribution = new DistributionPensions(this.paquet);
-    }
-    return this._distribution;
+    return this._donnee("distribution", () => new DistributionPensions(this.paquet));
   }
 
   /** Sur quoi l'on prélève : sans elle, un taux ne se convertit pas en recette. */
   assiette() {
-    if (!this._assiette) {
-      this._assiette = new AssietteActivite(this.paquet);
-    }
-    return this._assiette;
+    return this._donnee("assiette", () => new AssietteActivite(this.paquet));
   }
 
   /** Les trente-neuf avantages non contributifs — une donnée, pas un calcul. */
   inventaireAvantages() {
-    if (!this._inventaireAvantages) {
-      this._inventaireAvantages = chargerAvantages(this.paquet);
-    }
-    return this._inventaireAvantages;
+    return this._donnee("inventaireAvantages", () => chargerAvantages(this.paquet));
   }
 
   /** Ce que les avantages non contributifs coûtent — une seconde, une fois. */
   avantages() {
-    if (!this._avantages) {
-      this._avantages = calculerAvantages(
-        this.simulateur(), this.depenses(), this.population(),
-      );
-    }
-    return this._avantages;
+    return this._agregat("avantages", () => calculerAvantages(
+      this.simulateur(), this.depenses(), this.population(),
+    ));
   }
 
-  /** Le coût agrégé de tous les systèmes — une seconde de calcul, une fois. */
+  /**
+   * Le coût agrégé de tous les systèmes — une seconde de calcul, une fois.
+   *
+   * Sous les règles de `base`, et non sous celles par défaut : c'est ce qui
+   * fait que la page Coût chiffre ce que le simulateur calcule.
+   */
   cout() {
-    if (!this._cout) {
-      this._cout = calculerCout(
-        this.simulateur(), this.depenses(), this.population(), this.comptes(),
-        undefined, undefined, undefined, this.assiette(),
-      );
-    }
-    return this._cout;
+    return this._agregat("cout", () => calculerCout(
+      this.simulateur(), this.depenses(), this.population(), this.comptes(),
+      undefined, undefined, undefined, this.assiette(),
+    ));
   }
 
   /**
@@ -1517,24 +1624,40 @@ export const TITRES = {
  * rendues dans la page, jamais levées : une adresse mal formée doit afficher un
  * message, pas une trace d'exécution.
  *
- * Seul ``/simuler`` lit ``parametres`` : c'est la seule page que l'adresse
- * paramètre. Toute adresse inconnue retombe sur l'accueil.
+ * `/simuler` et `/trajectoire` lisent `parametres` en entier : ce sont les deux
+ * pages que l'adresse paramètre carrière comprise, et elles portent le même
+ * formulaire. Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — n'en
+ * lisent que les RÈGLES, et se calculent sous elles. Toute adresse inconnue
+ * retombe sur l'accueil.
+ *
+ * C'est ici, et nulle part ailleurs, que les réglages sont posés pour les liens
+ * de la page à venir : `rendre` est le point d'entrée unique du rendu, et les y
+ * poser à chaque appel — fût-ce à vide — garantit qu'aucune page n'hérite des
+ * réglages de la précédente.
  */
 export function rendre(contexte, chemin, parametres = null) {
+  const requete = parametres || {};
+  let regles;
+  let refus = "";
+  try {
+    regles = Saisie.modelisation(requete);
+  } catch (erreur) {
+    if (fauteDeProgramme(erreur)) throw erreur;
+    // Un réglage hors bornes ne doit pas emporter la page : elle se rend sous
+    // les règles par défaut, précédée de la phrase qui dit pourquoi.
+    regles = new Saisie();
+    refus = messageErreur(erreur.message);
+  }
+  g.poserOptions(regles.requeteModelisation());
+
   if (chemin === "/trajectoire") {
-    return [TITRES[chemin], pageTrajectoire(contexte, parametres || {})];
+    return [TITRES[chemin], refus + pageTrajectoire(contexte, requete)];
   }
   if (chemin === "/partager") {
     return [TITRES[chemin], partager(contexte)];
   }
-  if (chemin === "/cas-types") {
-    return [TITRES[chemin], casTypes(contexte)];
-  }
-  if (chemin === "/cout") {
-    return [TITRES[chemin], cout(contexte)];
-  }
-  if (chemin === "/avantages") {
-    return [TITRES[chemin], avantages(contexte)];
+  if (chemin in PAGES_AGREGEES) {
+    return [TITRES[chemin], refus + agregee(chemin, contexte, regles)];
   }
   if (chemin === "/methode") {
     return [TITRES[chemin], methode(contexte)];
@@ -1548,7 +1671,7 @@ export function rendre(contexte, chemin, parametres = null) {
 
   let saisie;
   try {
-    saisie = Saisie.depuisRequete(parametres || {});
+    saisie = Saisie.depuisRequete(requete);
   } catch (erreur) {
     if (!(erreur instanceof ErreurSaisie)) {
       throw erreur;
@@ -1558,7 +1681,7 @@ export function rendre(contexte, chemin, parametres = null) {
     // saisie : sans cela, une faute de frappe sur l'année de naissance
     // renverrait en euros quelqu'un qui raisonnait en multiples, avec des
     // nombres de l'autre unité sous les yeux.
-    const unite = parmi(parametres || {}, "unite_revenu", UNITES_REVENU,
+    const unite = parmi(requete, "unite_revenu", UNITES_REVENU,
       DEFAUTS.unite_revenu);
     // La saisie de repli sert au chapeau ET au formulaire : « saisie » est
     // resté indéfini, la construction ayant échoué.
@@ -1583,6 +1706,31 @@ export function rendre(contexte, chemin, parametres = null) {
     }
   }
   return [TITRES["/simuler"], corps];
+}
+
+/**
+ * Une page qui agrège, calculée sous les règles que l'adresse demande.
+ *
+ * Le corps de la page n'en sait rien : il reçoit un contexte DÉRIVÉ, dont
+ * `base` porte ces règles, et lit `contexte.base`, `contexte.cout()` ou
+ * `contexte.simulateur()` comme il l'a toujours fait. C'est le contexte qui
+ * sait sous quelles règles on l'interroge, et non chacune des trente lignes qui
+ * l'interrogent.
+ */
+/**
+ * Les trois pages qui AGRÈGENT : elles ne calculent aucune carrière saisie,
+ * mais elles obéissent aux mêmes règles que le simulateur. Voir `agregee`.
+ */
+const PAGES_AGREGEES = {
+  "/cas-types": casTypes,
+  "/cout": cout,
+  "/avantages": avantages,
+};
+
+function agregee(chemin, contexte, saisie) {
+  return avertissementReglages(saisie, chemin)
+    + PAGES_AGREGEES[chemin](contexte.pour(saisie.parametres(contexte.base)))
+    + reglages(saisie, chemin);
 }
 
 /**
@@ -1832,6 +1980,142 @@ function bulleDesPeriodes() {
   );
 }
 
+/**
+ * Le nom de chaque réglage en français, et la liste où lire le libellé de sa
+ * valeur quand elle en a un. Elle sert à DIRE ce que la page a fait : « la
+ * page a été calculée sous d'autres règles » n'apprend rien si l'on ne dit pas
+ * lesquelles.
+ */
+const LIBELLES_MODELISATION = Object.freeze({
+  indexation: ["règle d'indexation", INDEXATIONS],
+  lissage: ["lissage de l'indexation, en années", null],
+  age_reference: ["âge de référence", AGES_REFERENCE],
+  table: ["table de conversion", TABLES],
+  conversion_acquis: ["âge de conversion des droits acquis", CONVERSIONS_ACQUIS],
+  part_cotisation: ["part de la cotisation portée au compte", PARTS_COTISATION],
+  foyer: ["situation de foyer", SITUATIONS_FOYER],
+  projection: ["scénario macroéconomique", PROJECTIONS],
+  bascule: ["année de bascule", null],
+  euros: ["euros constants de", null],
+});
+
+/** Ce que le lecteur a changé, écrit en toutes lettres. */
+function reglagesEnClair(saisie) {
+  const dits = [];
+  for (const cle of CLES_MODELISATION) {
+    const valeur = saisie[cle];
+    if (valeur === DEFAUTS[cle]) { continue; }
+    const [nom, choix] = LIBELLES_MODELISATION[cle];
+    const trouve = choix
+      ? (choix.find(([code]) => code === valeur) || [null, String(valeur)])[1]
+      : String(valeur);
+    dits.push(`${nom} : ${trouve}`);
+  }
+  return dits.join(" ; ");
+}
+
+/**
+ * Un encadré, en tête de page, dès que les chiffres ne sont plus ceux du défaut.
+ *
+ * Sans lui, une adresse partagée afficherait des chiffres qui ne sont pas ceux
+ * du site sans que rien ne le dise — exactement la faute que cette page
+ * reproche au reste du débat public. Il ne paraît que si quelque chose a été
+ * changé : tant que tout est au défaut, la page est celle d'avant, au
+ * caractère près.
+ */
+function avertissementReglages(saisie, chemin) {
+  if (!saisie.requeteModelisation()) { return ""; }
+  return `<div class="encadre">
+<p><strong>Ces chiffres ne sont pas ceux des réglages par défaut.</strong>
+La page a été calculée sous les règles que vous avez choisies —
+${echapper(reglagesEnClair(saisie))}. Tous les liens du site les emportent
+tant que vous ne les remettez pas :
+<a href="${g.route(chemin)}">revenir aux réglages par défaut</a>.</p>
+</div>`;
+}
+
+/**
+ * Les règles du calcul, et de quoi les changer sans quitter la page.
+ *
+ * C'est le même jeu de champs que les options du simulateur, et c'est le même
+ * code qui les écrit : une page qui agrège et une page qui simule ne peuvent
+ * pas proposer deux jeux de règles différents.
+ *
+ * Le formulaire vise la ROUTE et non le lien — voir `gabarit.route` : il écrit
+ * lui-même sa requête, à partir de ses champs.
+ */
+function reglages(saisie, chemin) {
+  // Les deux réglages sans champ voyagent cachés : le formulaire les perdrait,
+  // et une adresse qui les portait se retrouverait silencieusement ramenée au
+  // défaut au premier « Recalculer ».
+  const caches = ["age_reference", "conversion_acquis"]
+    .filter((cle) => saisie[cle] !== DEFAUTS[cle])
+    .map((cle) => g.cache(cle, String(saisie[cle])))
+    .join("");
+  const change = Boolean(saisie.requeteModelisation());
+  return `
+<details class="options reglages"${change ? " open" : ""}>
+  ${g.sommaire("Les règles du calcul (indexation, projection, bascule…)")}
+  <p class="discret">Cette page croise des carrières types avec des
+  générations : elle ne calcule aucune carrière saisie. Mais elle obéit aux
+  mêmes règles que le simulateur, et ces règles se changent ici. La page est
+  recalculée, et l'adresse les emporte vers les autres pages.</p>
+  <form class="carte" method="get" action="${g.route(chemin)}">
+    ${caches}
+    <div class="grille">${champsModelisation(saisie)}</div>
+    <p style="margin-top:1.4rem"><button type="submit">Recalculer cette page</button></p>
+  </form>
+</details>
+`;
+}
+
+/**
+ * Les huit réglages qui décrivent les RÈGLES, et non la carrière.
+ *
+ * Ils sont écrits ici une fois, et servent deux fois : dans les options du
+ * simulateur, et dans le bloc de réglages des trois pages agrégées. Les écrire
+ * deux fois aurait suffi à les faire diverger — un libellé ici, une borne là —,
+ * et deux pages du même site auraient alors proposé deux jeux de règles qui
+ * n'en sont qu'un.
+ *
+ * Les deux réglages restants — l'âge de référence et l'âge de conversion des
+ * droits acquis — n'ont jamais eu de champ : ils ne se règlent que par
+ * l'adresse. Le bloc de réglages les emporte en champs cachés pour ne pas les
+ * perdre au passage du formulaire.
+ */
+function champsModelisation(saisie) {
+  return [
+    g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
+      "revalorisation des comptes et des pensions", {},
+      g.GLOSSAIRE["indexation"]),
+    g.champ("lissage", "Lissage de l'indexation", saisie.lissage,
+      "en années : 1 = aucun",
+      "number", { min: "1", max: String(LISSAGE_MAXIMUM), step: "1" },
+      "Une moyenne glissante appliquée à la règle choisie, quelle qu'elle "
+      + "soit : 5 ans, c'est la fenêtre italienne."),
+    g.liste("table", "Table de conversion", TABLES, saisie.table,
+      "", {}, g.GLOSSAIRE["table de conversion"]),
+    g.liste("part_cotisation", "Part de la cotisation portée au compte",
+      PARTS_COTISATION, saisie.part_cotisation,
+      "salariale seule, ou salariale et patronale", {},
+      g.GLOSSAIRE["part patronale"]),
+    g.liste("foyer", "Situation de foyer",
+      SITUATIONS_FOYER, saisie.foyer,
+      "la proposition libérale seulement", {},
+      "Elle ne joue que sur l'allocation d'isolement de la garantie "
+      + "vieillesse : 1 050 € par mois pour qui vit seul, 800 € par personne "
+      + "à deux."),
+    g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
+      "au-delà de la dernière observation"),
+    g.champ("bascule", "Année de bascule", saisie.bascule,
+      "passage au régime unique", "number",
+      { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
+    g.champ("euros", "Euros constants de", saisie.euros,
+      "l'année dont les montants prennent le pouvoir d'achat", "number",
+      { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
+  ].join("");
+}
+
 function formulaire(saisie, contexte) {
   const affiliations = contexte.simulateur().affiliations;
   const echelle = contexte.echelle(saisie);
@@ -1891,35 +2175,7 @@ function formulaire(saisie, contexte) {
       { min: "0", max: String(ENFANTS_MAXIMUM), step: "1" }),
     g.champ("interruptions", "Interruptions", saisie.interruptions,
       "« 1995:1999:education_enfant », séparées par des virgules"),
-    g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
-      "revalorisation des comptes et des pensions", {},
-      g.GLOSSAIRE["indexation"]),
-    g.champ("lissage", "Lissage de l'indexation", saisie.lissage,
-      "en années : 1 = aucun",
-      "number", { min: "1", max: String(LISSAGE_MAXIMUM), step: "1" },
-      "Une moyenne glissante appliquée à la règle choisie, quelle qu'elle "
-      + "soit : 5 ans, c'est la fenêtre italienne."),
-    g.liste("table", "Table de conversion", TABLES, saisie.table,
-      "", {}, g.GLOSSAIRE["table de conversion"]),
-    g.liste("part_cotisation", "Part de la cotisation portée au compte",
-      PARTS_COTISATION, saisie.part_cotisation,
-      "salariale seule, ou salariale et patronale", {},
-      g.GLOSSAIRE["part patronale"]),
-    g.liste("foyer", "Situation de foyer",
-      SITUATIONS_FOYER, saisie.foyer,
-      "la proposition libérale seulement", {},
-      "Elle ne joue que sur l'allocation d'isolement de la garantie "
-      + "vieillesse : 1 050 € par mois pour qui vit seul, 800 € par personne "
-      + "à deux."),
-    g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
-      "au-delà de la dernière observation"),
-    g.champ("bascule", "Année de bascule", saisie.bascule,
-      "passage au régime unique", "number",
-      { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
-    g.champ("euros", "Euros constants de", saisie.euros,
-      "l'année dont les montants prennent le pouvoir d'achat", "number",
-      { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
-  ].join("");
+  ].join("") + champsModelisation(saisie);
 
   const tete = g.affiche(
     "Le simulateur",
@@ -1930,7 +2186,7 @@ function formulaire(saisie, contexte) {
     + "votre navigateur : rien n'est envoyé, rien n'est conservé.",
   );
   return tete + `
-<form class="carte" method="get" action="${g.lien("/simuler")}">
+<form class="carte" method="get" action="${g.route("/simuler")}">
   ${g.cache("unite_revenu", saisie.unite_revenu)}
   <h2 class="serif" style="margin-top:0">Votre carrière${bulleDuTitre(saisie)}</h2>
   <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
@@ -7040,7 +7296,7 @@ function simulateurCourt(contexte, vers = "/simuler") {
         max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL) }),
   ].join("");
   return `
-<form class="creme simulateur-court" method="get" action="${g.lien(vers)}">
+<form class="creme simulateur-court" method="get" action="${g.route(vers)}">
   <div class="tete">
     <h2 class="serif">Et vous, ça donne combien&nbsp;?</h2>
     <span class="etiquette">Le simulateur</span>

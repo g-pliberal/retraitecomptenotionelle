@@ -403,6 +403,24 @@ class MetierSaisi:
     sans_emploi: bool = False
 
 
+#: Les clés de requête qui décrivent les RÈGLES, et non la carrière.
+#:
+#: Ce sont exactement les dix que ``Saisie.parametres`` lit pour fabriquer un
+#: jeu de :class:`Parametres` : tout le reste — naissance, statut, revenu,
+#: enfants, profil, interruptions — décrit un individu, et un individu n'a pas
+#: sa place dans un agrégat. C'est cette liste qui permet aux trois pages
+#: agrégées de lire une adresse de simulateur sans rien en retenir d'autre que
+#: les règles, et aux liens internes de ne porter que ce qui a un sens partout.
+#:
+#: Le sexe n'en est pas : il ne joue que sur la table de conversion « par sexe »
+#: et sur les majorations pour enfants, deux réglages individuels. Les cas types
+#: portent le leur.
+CLES_MODELISATION = (
+    "indexation", "lissage", "age_reference", "table", "conversion_acquis",
+    "part_cotisation", "foyer", "projection", "bascule", "euros",
+)
+
+
 @dataclass
 class Saisie:
     """Paramètres d'une simulation, tels que l'utilisateur les a saisis."""
@@ -518,7 +536,14 @@ class Saisie:
             projection=_parmi(parametres, "projection", PROJECTIONS, defauts.projection),
             bascule=_entier(parametres, "bascule", defauts.bascule),
             euros=_entier(parametres, "euros", defauts.euros),
-            demandee=bool(parametres),
+            # Une adresse qui ne porte QUE des réglages de modélisation ne
+            # demande pas de calcul : elle règle le modèle. C'est ce qui permet
+            # aux liens internes de porter les réglages partout — y compris
+            # vers le simulateur — sans que cliquer « Simuler » dans le bandeau
+            # ne lance d'office le calcul d'une carrière que personne n'a
+            # saisie. Toute adresse portant le moindre champ de carrière
+            # demande un calcul, comme avant.
+            demandee=any(cle not in CLES_MODELISATION for cle in parametres),
         )
         saisie.verifier()
         return saisie
@@ -804,6 +829,36 @@ class Saisie:
             annee_bascule=self.bascule,
             annee_euros_constants=self.euros,
         )
+
+    @classmethod
+    def modelisation(cls, parametres: dict[str, str]) -> "Saisie":
+        """La saisie réduite à ses RÈGLES, pour les pages qui agrègent.
+
+        Les pages Cas types, Coût et Avantages ne calculent aucune carrière
+        saisie : elles croisent des carrières types avec des générations. Ce
+        qu'elles doivent retenir d'une adresse, ce sont les réglages de
+        modélisation — et eux seuls. Une adresse de simulateur collée sur la
+        page Coût y décrit donc un jeu de règles, jamais un individu : la
+        naissance, le statut et le revenu qu'elle porte sont ignorés, et une
+        faute dans l'un d'eux ne peut pas faire échouer la page.
+        """
+        return cls.depuis_requete({
+            cle: valeur for cle, valeur in parametres.items()
+            if cle in CLES_MODELISATION
+        })
+
+    def requete_modelisation(self) -> str:
+        """Les réglages qui s'écartent du défaut, écrits comme une requête.
+
+        Vide tant que rien n'a été changé : les adresses du site restent alors
+        celles d'avant, au caractère près, et un lien partagé ne porte que ce
+        que son auteur a effectivement réglé.
+        """
+        defauts = Saisie()
+        return urlencode({
+            cle: getattr(self, cle) for cle in CLES_MODELISATION
+            if getattr(self, cle) != getattr(defauts, cle)
+        })
 
     def interruptions_analysees(
         self, motifs_connus: Iterable[str] | None = None,
@@ -1269,25 +1324,78 @@ class Echelle:
         return niveau * self.moyen / MOIS_PAR_AN
 
 
+#: Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
+#: confondus. Deux par jeu — le coût et les avantages —, donc trois jeux de
+#: règles : celui par défaut, et les deux derniers essayés.
+AGREGATS_MEMORISES = 6
+
+
 @dataclass
 class Contexte:
-    """Simulateurs mémorisés par jeu de paramètres.
+    """Les données du site, et le jeu de règles sous lequel on les lit.
 
-    Le chargement des données coûte quelques dixièmes de seconde ; une
-    simulation en coûte dix millisecondes. On garde donc une instance par jeu
-    de paramètres rencontré.
+    Un contexte, c'est deux choses : des données coûteuses à charger, et UN jeu
+    de paramètres — ``base`` — sous lequel tout ce que la page demande est
+    calculé. ``simulateur()``, ``cout()`` et ``avantages()`` répondent tous
+    trois sous ce jeu-là, sans qu'aucune page ait à le leur redire.
+
+    Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — se rendent donc
+    sous un contexte dérivé par :meth:`pour`, portant les réglages que l'adresse
+    demande. Le corps des pages n'en sait rien : il lit ``contexte.base`` comme
+    il l'a toujours fait, et y trouve les règles en vigueur au lieu des règles
+    par défaut. C'est ce qui évite de faire passer un jeu de paramètres à la
+    main dans la trentaine d'endroits qui les lisent.
+
+    Les mémoires sont des dictionnaires plutôt qu'un champ par donnée, et c'est
+    ce qui fait tenir la dérivation : un dictionnaire passe par référence, si
+    bien qu'un contexte dérivé PARTAGE ce que le contexte d'origine a déjà
+    chargé. Le chargement des données coûte quelques dixièmes de seconde, une
+    simulation en coûte dix, un agrégat deux secondes : rien de tout cela ne
+    doit se refaire parce qu'on a changé une règle.
     """
 
     base: Parametres = field(default_factory=Parametres)
+    #: Un simulateur par jeu de paramètres rencontré.
     _instances: dict[Parametres, Simulateur] = field(default_factory=dict)
-    _depenses: DepensesRetraite | None = None
-    _comptes: ComptesRetraite | None = None
-    _population: Population | None = None
-    _distribution: DistributionPensions | None = None
-    _assiette: AssietteActivite | None = None
-    _cout: object = None
-    _inventaire_avantages: object = None
-    _avantages: object = None
+    #: Ce qui ne dépend d'AUCUN paramètre : dépense observée, comptes du COR,
+    #: population, distribution des pensions, assiette, inventaire des
+    #: avantages. Ces séries sont lues, jamais calculées : un changement de
+    #: règle ne les déplace pas.
+    _donnees: dict[str, object] = field(default_factory=dict)
+    #: Les agrégats, eux, dépendent des règles : un coût par jeu de paramètres.
+    _agregats: dict[tuple[str, Parametres], object] = field(default_factory=dict)
+
+    def pour(self, parametres: Parametres) -> "Contexte":
+        """Le même contexte, sous un autre jeu de règles.
+
+        Les mémoires sont partagées, pas recopiées : dériver ne coûte rien, et
+        ce que l'un charge, l'autre le trouve chargé.
+        """
+        if parametres == self.base:
+            return self
+        return Contexte(base=parametres, _instances=self._instances,
+                        _donnees=self._donnees, _agregats=self._agregats)
+
+    def _donnee(self, nom: str, fabrique):
+        """Une donnée indépendante des règles, chargée une fois pour toutes."""
+        if nom not in self._donnees:
+            self._donnees[nom] = fabrique()
+        return self._donnees[nom]
+
+    def _agregat(self, nom: str, fabrique):
+        """Un agrégat, mémorisé par jeu de règles — et en nombre borné.
+
+        Sans borne, une adresse suffirait à faire enfler la mémoire de l'onglet
+        d'un jeu de règles à l'autre : le calcul se fait chez le lecteur, et
+        l'adresse EST la saisie. Le plus ancien s'en va ; revenir aux réglages
+        par défaut après en avoir essayé trois recalcule, deux secondes.
+        """
+        cle = (nom, self.base)
+        if cle not in self._agregats:
+            if len(self._agregats) >= AGREGATS_MEMORISES:
+                self._agregats.pop(next(iter(self._agregats)))
+            self._agregats[cle] = fabrique()
+        return self._agregats[cle]
 
     def simulateur(self, parametres: Parametres | None = None) -> Simulateur:
         parametres = parametres or self.base
@@ -1296,53 +1404,48 @@ class Contexte:
         return self._instances[parametres]
 
     def depenses(self) -> DepensesRetraite:
-        if self._depenses is None:
-            self._depenses = DepensesRetraite(self.base.racine_donnees)
-        return self._depenses
+        return self._donnee(
+            "depenses", lambda: DepensesRetraite(self.base.racine_donnees))
 
     def comptes(self) -> ComptesRetraite:
         """Le second terme du bilan : ce que le système de retraite encaisse."""
-        if self._comptes is None:
-            self._comptes = ComptesRetraite(self.base.racine_donnees)
-        return self._comptes
+        return self._donnee(
+            "comptes", lambda: ComptesRetraite(self.base.racine_donnees))
 
     def population(self) -> Population:
-        if self._population is None:
-            self._population = Population(self.base.racine_donnees)
-        return self._population
+        return self._donnee(
+            "population", lambda: Population(self.base.racine_donnees))
 
     def distribution(self) -> DistributionPensions:
         """La distribution des pensions — elle seule chiffre un plancher."""
-        if self._distribution is None:
-            self._distribution = DistributionPensions(self.base.racine_donnees)
-        return self._distribution
+        return self._donnee(
+            "distribution", lambda: DistributionPensions(self.base.racine_donnees))
 
     def assiette(self) -> AssietteActivite:
         """Sur quoi l'on prélève : sans elle, un taux ne devient pas une recette."""
-        if self._assiette is None:
-            self._assiette = AssietteActivite(self.base.racine_donnees)
-        return self._assiette
+        return self._donnee(
+            "assiette", lambda: AssietteActivite(self.base.racine_donnees))
 
     def cout(self):
-        """Le coût agrégé de tous les systèmes — deux secondes de calcul, une fois."""
-        if self._cout is None:
-            self._cout = calculer_cout(
-                self.simulateur(), self.depenses(), self.population(),
-                self.comptes(), assiette=self.assiette())
-        return self._cout
+        """Le coût agrégé de tous les systèmes — deux secondes de calcul, une fois.
+
+        Sous les règles de ``base``, et non sous celles par défaut : c'est ce
+        qui fait que la page Coût chiffre ce que le simulateur calcule.
+        """
+        return self._agregat("cout", lambda: calculer_cout(
+            self.simulateur(), self.depenses(), self.population(),
+            self.comptes(), assiette=self.assiette()))
 
     def inventaire_avantages(self):
         """Les trente-neuf avantages non contributifs — une donnée, pas un calcul."""
-        if self._inventaire_avantages is None:
-            self._inventaire_avantages = charger_avantages(self.base.racine_donnees)
-        return self._inventaire_avantages
+        return self._donnee(
+            "inventaire_avantages",
+            lambda: charger_avantages(self.base.racine_donnees))
 
     def avantages(self):
         """Ce que les avantages non contributifs coûtent — quatre secondes, une fois."""
-        if self._avantages is None:
-            self._avantages = calculer_avantages(
-                self.simulateur(), self.depenses(), self.population())
-        return self._avantages
+        return self._agregat("avantages", lambda: calculer_avantages(
+            self.simulateur(), self.depenses(), self.population()))
 
     def echelle(self, saisie: Saisie) -> Echelle:
         """L'échelle des salaires de l'année courante, pour cette saisie.
@@ -1478,21 +1581,34 @@ def rendre(contexte: Contexte, chemin: str,
     ``<main>``. Les erreurs de saisie sont rendues dans la page, jamais levées :
     une adresse mal formée doit afficher un message, pas une trace d'exécution.
 
-    ``/simuler`` et ``/trajectoire`` lisent ``parametres`` : ce sont les deux
-    pages que l'adresse paramètre, et elles portent le même formulaire. Toute
+    ``/simuler`` et ``/trajectoire`` lisent ``parametres`` en entier : ce sont
+    les deux pages que l'adresse paramètre carrière comprise, et elles portent
+    le même formulaire. Les trois pages qui AGRÈGENT — Cas types, Coût,
+    Avantages — n'en lisent que les RÈGLES, et se calculent sous elles. Toute
     adresse inconnue retombe sur l'accueil, comme le fait le routeur
     d'``index.html``.
+
+    C'est ici, et nulle part ailleurs, que les réglages sont posés pour les
+    liens de la page à venir : ``rendre`` est le point d'entrée unique du
+    rendu, et les y poser à chaque appel — fût-ce à vide — garantit qu'aucune
+    page n'hérite des réglages de la précédente.
     """
+    parametres = parametres or {}
+    refus = ""
+    try:
+        reglages = Saisie.modelisation(parametres)
+    except ErreurSaisie as erreur:
+        # Un réglage hors bornes ne doit pas emporter la page : elle se rend
+        # sous les règles par défaut, précédée de la phrase qui dit pourquoi.
+        reglages, refus = Saisie(), _erreur(str(erreur))
+    g.poser_options(reglages.requete_modelisation())
+
     if chemin == "/trajectoire":
-        return TITRES[chemin], _page_trajectoire(contexte, parametres or {})
+        return TITRES[chemin], refus + _page_trajectoire(contexte, parametres)
     if chemin == "/partager":
         return TITRES[chemin], _partager(contexte)
-    if chemin == "/cas-types":
-        return TITRES[chemin], _cas_types(contexte)
-    if chemin == "/cout":
-        return TITRES[chemin], _cout(contexte)
-    if chemin == "/avantages":
-        return TITRES[chemin], _avantages(contexte)
+    if chemin in PAGES_AGREGEES:
+        return TITRES[chemin], refus + _agregee(chemin, contexte, reglages)
     if chemin == "/methode":
         return TITRES[chemin], _methode(contexte)
     if chemin == "/donnees":
@@ -1501,14 +1617,14 @@ def rendre(contexte: Contexte, chemin: str,
         return TITRES["/"], _programme(contexte)
 
     try:
-        saisie = Saisie.depuis_requete(parametres or {})
+        saisie = Saisie.depuis_requete(parametres)
     except ErreurSaisie as erreur:
         # Le formulaire repart de ses valeurs par défaut — c'est ce qui permet
         # de le réafficher quoi qu'ait porté l'adresse —, mais il garde l'unité
         # de saisie : sans cela, une faute de frappe sur l'année de naissance
         # renverrait en euros quelqu'un qui raisonnait en multiples, avec des
         # nombres de l'autre unité sous les yeux.
-        unite = _parmi(parametres or {}, "unite_revenu", UNITES_REVENU,
+        unite = _parmi(parametres, "unite_revenu", UNITES_REVENU,
                        Saisie.unite_revenu)
         saisie = Saisie(demandee=False, unite_revenu=unite,
                         salaire=SALAIRE_DEFAUT[unite])
@@ -1523,6 +1639,22 @@ def rendre(contexte: Contexte, chemin: str,
         except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError) as erreur:
             corps += _erreur(str(erreur))
     return TITRES["/simuler"], corps
+
+
+def _agregee(chemin: str, contexte: Contexte, reglages: Saisie) -> str:
+    """Une page qui agrège, calculée sous les règles que l'adresse demande.
+
+    Le corps de la page n'en sait rien : il reçoit un contexte DÉRIVÉ, dont
+    ``base`` porte ces règles, et lit ``contexte.base``, ``contexte.cout()`` ou
+    ``contexte.simulateur()`` comme il l'a toujours fait. C'est le contexte qui
+    sait sous quelles règles on l'interroge, et non chacune des trente lignes
+    qui l'interrogent.
+    """
+    return (
+        _avertissement_reglages(reglages, chemin)
+        + PAGES_AGREGEES[chemin](contexte.pour(reglages.parametres(contexte.base)))
+        + _reglages(reglages, chemin)
+    )
 
 def _programme(contexte: Contexte) -> str:
     """Le programme du Parti libéral français pour les retraites.
@@ -1915,7 +2047,7 @@ def _simulateur_court(contexte: Contexte, vers: str = "/simuler") -> str:
                      max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL)),
     ])
     return f"""
-<form class="creme simulateur-court" method="get" action="{g.lien(vers)}">
+<form class="creme simulateur-court" method="get" action="{g.route(vers)}">
   <div class="tete">
     <h2 class="serif">Et vous, ça donne combien&nbsp;?</h2>
     <span class="etiquette">Le simulateur</span>
@@ -2283,6 +2415,143 @@ def _bulle_des_periodes() -> str:
     )
 
 
+#: Le nom de chaque réglage en français, et la liste où lire le libellé de sa
+#: valeur quand elle en a un. Elle sert à DIRE ce que la page a fait : « la
+#: page a été calculée sous d'autres règles » n'apprend rien si l'on ne dit pas
+#: lesquelles.
+LIBELLES_MODELISATION = {
+    "indexation": ("règle d'indexation", INDEXATIONS),
+    "lissage": ("lissage de l'indexation, en années", None),
+    "age_reference": ("âge de référence", AGES_REFERENCE),
+    "table": ("table de conversion", TABLES),
+    "conversion_acquis": ("âge de conversion des droits acquis", CONVERSIONS_ACQUIS),
+    "part_cotisation": ("part de la cotisation portée au compte", PARTS_COTISATION),
+    "foyer": ("situation de foyer", SITUATIONS_FOYER),
+    "projection": ("scénario macroéconomique", PROJECTIONS),
+    "bascule": ("année de bascule", None),
+    "euros": ("euros constants de", None),
+}
+
+
+def _reglages_en_clair(saisie: Saisie) -> str:
+    """Ce que le lecteur a changé, écrit en toutes lettres."""
+    defauts = Saisie()
+    dits = []
+    for cle, (nom, choix) in LIBELLES_MODELISATION.items():
+        valeur = getattr(saisie, cle)
+        if valeur == getattr(defauts, cle):
+            continue
+        libelle = str(valeur)
+        if choix is not None:
+            libelle = next((intitule for code, intitule in choix
+                            if code == valeur), libelle)
+        dits.append(f"{nom} : {libelle}")
+    return " ; ".join(dits)
+
+
+def _avertissement_reglages(saisie: Saisie, chemin: str) -> str:
+    """Un encadré, en tête de page, dès que les chiffres ne sont plus ceux du défaut.
+
+    Sans lui, une adresse partagée afficherait des chiffres qui ne sont pas
+    ceux du site sans que rien ne le dise — exactement la faute que cette page
+    reproche au reste du débat public. Il ne paraît que si quelque chose a été
+    changé : tant que tout est au défaut, la page est celle d'avant, au
+    caractère près.
+    """
+    if not saisie.requete_modelisation():
+        return ""
+    return f"""<div class="encadre">
+<p><strong>Ces chiffres ne sont pas ceux des réglages par défaut.</strong>
+La page a été calculée sous les règles que vous avez choisies —
+{escape(_reglages_en_clair(saisie))}. Tous les liens du site les emportent
+tant que vous ne les remettez pas :
+<a href="{g.route(chemin)}">revenir aux réglages par défaut</a>.</p>
+</div>"""
+
+
+def _reglages(saisie: Saisie, chemin: str) -> str:
+    """Les règles du calcul, et de quoi les changer sans quitter la page.
+
+    C'est le même jeu de champs que les options du simulateur, et c'est le même
+    code qui les écrit : une page qui agrège et une page qui simule ne peuvent
+    pas proposer deux jeux de règles différents.
+
+    Le formulaire vise la ROUTE et non le lien — voir :func:`gabarit.route` :
+    il écrit lui-même sa requête, à partir de ses champs.
+    """
+    defauts = Saisie()
+    # Les deux réglages sans champ voyagent cachés : le formulaire les perdrait,
+    # et une adresse qui les portait se retrouverait silencieusement ramenée au
+    # défaut au premier « Recalculer ».
+    caches = "".join(
+        g.cache(cle, str(getattr(saisie, cle)))
+        for cle in ("age_reference", "conversion_acquis")
+        if getattr(saisie, cle) != getattr(defauts, cle)
+    )
+    change = bool(saisie.requete_modelisation())
+    return f"""
+<details class="options reglages"{' open' if change else ''}>
+  {g.sommaire("Les règles du calcul (indexation, projection, bascule…)")}
+  <p class="discret">Cette page croise des carrières types avec des
+  générations : elle ne calcule aucune carrière saisie. Mais elle obéit aux
+  mêmes règles que le simulateur, et ces règles se changent ici. La page est
+  recalculée, et l'adresse les emporte vers les autres pages.</p>
+  <form class="carte" method="get" action="{g.route(chemin)}">
+    {caches}
+    <div class="grille">{_champs_modelisation(saisie)}</div>
+    <p style="margin-top:1.4rem"><button type="submit">Recalculer cette page</button></p>
+  </form>
+</details>
+"""
+
+
+def _champs_modelisation(saisie: Saisie) -> str:
+    """Les huit réglages qui décrivent les RÈGLES, et non la carrière.
+
+    Ils sont écrits ici une fois, et servent deux fois : dans les options du
+    simulateur, et dans le bloc de réglages des trois pages agrégées. Les
+    écrire deux fois aurait suffi à les faire diverger — un libellé ici, une
+    borne là —, et deux pages du même site auraient alors proposé deux jeux de
+    règles qui n'en sont qu'un.
+
+    Les deux réglages restants — l'âge de référence et l'âge de conversion des
+    droits acquis — n'ont jamais eu de champ : ils ne se règlent que par
+    l'adresse. Le bloc de réglages les emporte en champs cachés pour ne pas les
+    perdre au passage du formulaire.
+    """
+    return "".join([
+        g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
+                "revalorisation des comptes et des pensions",
+                complement=g.GLOSSAIRE["indexation"]),
+        g.champ("lissage", "Lissage de l'indexation", saisie.lissage,
+                "en années : 1 = aucun",
+                complement="Une moyenne glissante appliquée à la règle "
+                "choisie, quelle qu'elle soit : 5 ans, c'est la fenêtre "
+                "italienne.",
+                type_="number", min="1", max=str(LISSAGE_MAXIMUM), step="1"),
+        g.liste("table", "Table de conversion", TABLES, saisie.table,
+                complement=g.GLOSSAIRE["table de conversion"]),
+        g.liste("part_cotisation", "Part de la cotisation portée au compte",
+                PARTS_COTISATION, saisie.part_cotisation,
+                "salariale seule, ou salariale et patronale",
+                complement=g.GLOSSAIRE["part patronale"]),
+        g.liste("foyer", "Situation de foyer",
+                SITUATIONS_FOYER, saisie.foyer,
+                "la proposition libérale seulement",
+                complement="Elle ne joue que sur l'allocation d'isolement de "
+                "la garantie vieillesse : 1 050 € par mois pour qui vit seul, "
+                "800 € par personne à deux."),
+        g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
+                "au-delà de la dernière observation"),
+        g.champ("bascule", "Année de bascule", saisie.bascule,
+                "passage au régime unique", type_="number",
+                min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
+        g.champ("euros", "Euros constants de", saisie.euros,
+                "l'année dont les montants prennent le pouvoir d'achat",
+                type_="number", min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE))
+    ])
+
+
 def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     affiliations = contexte.simulateur().affiliations
     echelle = contexte.echelle(saisie)
@@ -2343,36 +2612,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
                 type_="number", min="0", max=str(ENFANTS_MAXIMUM), step="1"),
         g.champ("interruptions", "Interruptions", saisie.interruptions,
                 "« 1995:1999:education_enfant », séparées par des virgules"),
-        g.liste("indexation", "Règle d'indexation", INDEXATIONS, saisie.indexation,
-                "revalorisation des comptes et des pensions",
-                complement=g.GLOSSAIRE["indexation"]),
-        g.champ("lissage", "Lissage de l'indexation", saisie.lissage,
-                "en années : 1 = aucun",
-                complement="Une moyenne glissante appliquée à la règle "
-                "choisie, quelle qu'elle soit : 5 ans, c'est la fenêtre "
-                "italienne.",
-                type_="number", min="1", max=str(LISSAGE_MAXIMUM), step="1"),
-        g.liste("table", "Table de conversion", TABLES, saisie.table,
-                complement=g.GLOSSAIRE["table de conversion"]),
-        g.liste("part_cotisation", "Part de la cotisation portée au compte",
-                PARTS_COTISATION, saisie.part_cotisation,
-                "salariale seule, ou salariale et patronale",
-                complement=g.GLOSSAIRE["part patronale"]),
-        g.liste("foyer", "Situation de foyer",
-                SITUATIONS_FOYER, saisie.foyer,
-                "la proposition libérale seulement",
-                complement="Elle ne joue que sur l'allocation d'isolement de "
-                "la garantie vieillesse : 1 050 € par mois pour qui vit seul, "
-                "800 € par personne à deux."),
-        g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
-                "au-delà de la dernière observation"),
-        g.champ("bascule", "Année de bascule", saisie.bascule,
-                "passage au régime unique", type_="number",
-                min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
-        g.champ("euros", "Euros constants de", saisie.euros,
-                "l'année dont les montants prennent le pouvoir d'achat",
-                type_="number", min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
-    ])
+    ]) + _champs_modelisation(saisie)
 
     tete = g.affiche(
         "Le simulateur",
@@ -2383,7 +2623,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
         "votre navigateur : rien n'est envoyé, rien n'est conservé.",
     )
     return tete + f"""
-<form class="carte" method="get" action="{g.lien('/simuler')}">
+<form class="carte" method="get" action="{g.route('/simuler')}">
   {g.cache("unite_revenu", saisie.unite_revenu)}
   <h2 class="serif" style="margin-top:0">Votre carrière{_bulle_du_titre(saisie)}</h2>
   <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
@@ -5318,6 +5558,16 @@ retraite</a><a href="{g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
 
 {detail}
 """
+
+
+#: Les trois pages qui AGRÈGENT : elles ne calculent aucune carrière saisie,
+#: mais elles obéissent aux mêmes règles que le simulateur. La table est posée
+#: ici, après les trois fonctions, et lue par ``rendre`` — voir ``_agregee``.
+PAGES_AGREGEES = {
+    "/cas-types": _cas_types,
+    "/cout": _cout,
+    "/avantages": _avantages,
+}
 
 
 def _avantages_detail_liste(contexte: Contexte) -> str:

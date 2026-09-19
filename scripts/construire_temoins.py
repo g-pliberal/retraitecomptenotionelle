@@ -529,6 +529,14 @@ def sans_bloc_json(html: str) -> str:
     return _BLOC_JSON.sub(r"\1\2", html)
 
 
+#: Un jeu de règles qui n'est pas celui par défaut, pour les trois pages qui
+#: agrègent : l'indexation sur les prix au lieu de la masse salariale, la
+#: bascule décalée de quatre ans, et la part patronale portée au compte.
+REGLES_AUTRES = {
+    "indexation": "prix", "bascule": "2030", "part_cotisation": "totale",
+}
+
+
 def _pages(contexte: Contexte) -> dict:
     demandes = [
         ("simuler", "/simuler", {}),
@@ -667,6 +675,21 @@ def _pages(contexte: Contexte) -> dict:
         ("cas_types", "/cas-types", {}),
         ("cout", "/cout", {}),
         ("avantages", "/avantages", {}),
+        # Les trois pages agrégées sous d'autres règles que celles par défaut.
+        # C'est le seul témoin qui compare les deux portages sur un AGRÉGAT
+        # recalculé : l'avertissement, le bloc de réglages, les liens qui
+        # portent la requête, et surtout les chiffres, qui bougent tous.
+        # Trois réglages, choisis pour toucher trois mécanismes distincts —
+        # la revalorisation des comptes, la date du changement de régime, et
+        # ce que la cotisation porte au compte.
+        # Une adresse qui ne porte QUE des réglages : le formulaire s'affiche
+        # réglé, et aucun résultat n'est calculé — c'est ce qui permet aux
+        # liens du site d'emporter les réglages jusqu'au simulateur sans y
+        # déclencher le calcul d'une carrière que personne n'a saisie.
+        ("simuler_regles_seules", "/simuler", REGLES_AUTRES),
+        ("cas_types_regles", "/cas-types", REGLES_AUTRES),
+        ("cout_regles", "/cout", REGLES_AUTRES),
+        ("avantages_regles", "/avantages", REGLES_AUTRES),
         ("methode", "/methode", {}),
         ("donnees", "/donnees", {}),
         ("partager", "/partager", {}),
