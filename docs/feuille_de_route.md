@@ -26,11 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-<<<<<<< HEAD
 et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 061<!--/--> lignes), puis dans les
-=======
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 061<!--/--> lignes), puis dans les
->>>>>>> 6b842ee (Les points 9 à 20 de la passe visuelle, corrigés)
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -5938,7 +5934,6 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   `tests/test_cout.py`, `tests/test_donnees.py`, `tests/test_web.py` ; les
   témoins.
 
-<<<<<<< HEAD
 - **Septembre 2026, le profil se choisit sur l'affiliation, et le public a le
   sien.** Suite immédiate de la note précédente. Le profil lu chez l'INSEE
   était celui du PRIVÉ, servi à tout le monde : le jeu annuel détaillé de la
@@ -5987,7 +5982,7 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   dans `web/pages.py` et son portage ; `docs/methodologie.md`,
   `docs/limites.md` §1 ; `tests/test_simulateur.py`, `tests/test_donnees.py` ;
   les témoins.
-=======
+
 - **19 septembre 2026, action 42, suite et fin.** Les vingt constats sont
   corrigés, en deux temps, dans les deux portages, avec les témoins
   régénérés et cinq tests mis au niveau du gabarit ; le détail est sous
@@ -5995,7 +5990,6 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   aussi : une `<caption>` ne peut pas être collante, et Chromium rend tout
   `<button>` en bloc en ligne. Une passe suivante repartira du script décrit
   sous « Comment refaire la passe ».
->>>>>>> 6b842ee (Les points 9 à 20 de la passe visuelle, corrigés)
 
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 
