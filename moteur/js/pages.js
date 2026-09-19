@@ -2398,7 +2398,11 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
   // aussi, ou laissés tels quels quand on ne sait pas les convertir.
   const enNet = saisie.saisieEnNet;
   const mot = enNet ? "net" : "brut";
-  const repere = (enNet && echelle.convertit(saisie.statut))
+  // Le statut dont le dépôt n'a pas les prélèvements hors retraite : le nombre
+  // y est lu tel quel. L'aide doit le dire ELLE AUSSI, et non promettre une
+  // conversion que l'avertissement voisin viendra démentir.
+  const converti = enNet && echelle.convertit(saisie.statut);
+  const repere = converti
     ? ((montant) => echelle.netMensuel(montant, saisie.statut))
     : ((montant) => montant);
   const aide = bref
@@ -2406,14 +2410,22 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
     : `SMIC ${g.euros(repere(echelle.smic))}, moyenne `
       + `${g.euros(repere(echelle.mensuel(1)))}, `
       + `plafond ${g.euros(repere(echelle.plafond))}`;
-  const complement = enNet
-    ? "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — pour un "
-      + "salarié, la ligne « net à payer » de la fiche de paie. Le modèle "
-      + "remonte au brut par les prélèvements de votre statut, puis le suit le "
-      + "long du salaire moyen, année après année."
-    : "En euros d'aujourd'hui, avant cotisations et impôt — pour un salarié, "
-      + "la ligne « brut » de la fiche de paie. Le modèle le suit ensuite le "
-      + "long du salaire moyen, année après année.";
+  let complement;
+  if (converti) {
+    complement = "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — "
+      + "pour un salarié, la ligne « net à payer » de la fiche de paie. Le "
+      + "modèle remonte au brut par les prélèvements de votre statut, puis le "
+      + "suit le long du salaire moyen, année après année.";
+  } else if (enNet) {
+    complement = "En euros d'aujourd'hui. Le modèle n'a pas les prélèvements "
+      + "hors retraite de ce statut : il ne peut pas remonter au brut, et lit "
+      + "donc le nombre tel quel, puis le suit le long du salaire moyen, "
+      + "année après année.";
+  } else {
+    complement = "En euros d'aujourd'hui, avant cotisations et impôt — pour un "
+      + "salarié, la ligne « brut » de la fiche de paie. Le modèle le suit "
+      + "ensuite le long du salaire moyen, année après année.";
+  }
   return g.champ(nom, `Revenu ${mot} mensuel`, valeur, aide, "number",
     { min: "0", step: "1" }, bref ? "" : complement);
 }

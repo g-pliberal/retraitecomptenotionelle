@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 199<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 211<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6847,6 +6847,16 @@ il disait « Ici, un brut sur un brut », il dit maintenant que les deux termes
 sont pris dans la même unité, quelle qu'elle soit. La page Méthode, qui
 expliquait que tout le modèle est brut, ajoute que le simulateur sait afficher
 des nets — le calcul, lui, reste brut de bout en bout.
+
+**L'aide du champ promettait une conversion qui n'avait pas lieu.** Sous un
+statut dont le dépôt n'a pas les prélèvements hors retraite — la MSA, l'élu,
+l'ultramarin, qui n'a pas d'emploi —, le nombre saisi est lu TEL QUEL, et un
+avertissement le dit. L'aide du champ, deux lignes plus haut, continuait
+pourtant d'annoncer que « le modèle remonte au brut par les prélèvements de
+votre statut ». Deux phrases se contredisaient à l'écran, sans rien pour dire
+laquelle concernait le lecteur. L'aide suit désormais le même test que
+l'avertissement — `echelle.convertit(statut)` —, et dit alors qu'elle ne peut
+pas remonter au brut.
 
 **Fichiers.** `bascule()` et son bloc CSS dans `web/gabarit.py` et
 `moteur/js/gabarit.js` ; `_bascule_montants`, `_bascule_unite` et `_champ_revenu`

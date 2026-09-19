@@ -5439,6 +5439,34 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
             assert 'role="group"' in bloc and 'aria-label="Montants"' in bloc
 
 
+def test_l_aide_du_champ_ne_promet_pas_une_conversion_qui_n_aura_pas_lieu(contexte):
+    """Deux phrases contradictoires à deux lignes d'écart, et rien pour trancher.
+
+    Sous un statut dont le dépôt n'a pas les prélèvements hors retraite — la
+    MSA, l'élu, l'ultramarin, qui n'a pas d'emploi —, le nombre saisi est lu
+    TEL QUEL. Un avertissement le disait ; l'aide du champ, juste au-dessus,
+    continuait de promettre que « le modèle remonte au brut par les
+    prélèvements de votre statut ». Le lecteur voyait donc deux phrases se
+    contredire sans savoir laquelle le concernait.
+    """
+    base = {"naissance": "1985-03-01", "sexe": "F", "debut": "2007-09-01",
+            "liquidation": "2049-03-01", "unite_revenu": "euros_mois",
+            "salaire": "1800", "montants": "net"}
+    promesse = "remonte au brut par les prélèvements de votre statut"
+    # Là où la conversion a lieu, l'aide la décrit.
+    corps = rendre(contexte, "/simuler",
+                   {**base, "statut": "salarie_prive_non_cadre"})[1]
+    assert promesse in corps
+    assert "il ne peut pas remonter au brut" not in corps
+    # Là où elle n'a pas lieu, l'aide le dit, et l'avertissement la double.
+    for statut in ("salarie_agricole", "elu_local", "salarie_mayotte",
+                   "sans_activite"):
+        corps = rendre(contexte, "/simuler", {**base, "statut": statut})[1]
+        assert promesse not in corps, f"{statut} : l'aide promet une conversion"
+        assert "il ne peut pas remonter au brut" in corps, statut
+        assert "lu <strong>tel quel</strong>" in corps, statut
+
+
 def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique(contexte):
     """Une clé de lecture fausse est pire qu'absente : elle enseigne l'erreur.
 

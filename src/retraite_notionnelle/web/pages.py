@@ -2869,24 +2869,38 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
     # eux aussi, statut par statut, ou tus quand on ne sait pas les convertir.
     en_net = saisie.saisie_en_net
     mot = "net" if en_net else "brut"
-    if en_net and echelle.convertit(saisie.statut):
-        repere = (lambda montant: echelle.net_mensuel(montant, saisie.statut))
-    else:
-        repere = (lambda montant: montant)
+    # Le statut dont le dépôt n'a pas les prélèvements hors retraite : le
+    # nombre y est lu tel quel. L'aide doit le dire ELLE AUSSI, et non
+    # promettre une conversion que l'avertissement, deux lignes plus bas,
+    # viendra démentir — le lecteur croirait alors que l'une des deux phrases
+    # ne le concerne pas, sans savoir laquelle.
+    converti = en_net and echelle.convertit(saisie.statut)
+    repere = ((lambda montant: echelle.net_mensuel(montant, saisie.statut))
+              if converti else (lambda montant: montant))
     aide = (f"en euros {mot}s par mois" if bref else
             f"SMIC {g.euros(repere(echelle.smic))}, moyenne "
             f"{g.euros(repere(echelle.mensuel(1)))}, "
             f"plafond {g.euros(repere(echelle.plafond))}")
-    complement = (
-        "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — pour un "
-        "salarié, la ligne « net à payer » de la fiche de paie. Le modèle "
-        "remonte au brut par les prélèvements de votre statut, puis le suit le "
-        "long du salaire moyen, année après année."
-        if en_net else
-        "En euros d'aujourd'hui, avant cotisations et impôt — pour un salarié, "
-        "la ligne « brut » de la fiche de paie. Le modèle le suit ensuite le "
-        "long du salaire moyen, année après année."
-    )
+    if converti:
+        complement = (
+            "En euros d'aujourd'hui, tels qu'ils arrivent sur le compte — pour "
+            "un salarié, la ligne « net à payer » de la fiche de paie. Le "
+            "modèle remonte au brut par les prélèvements de votre statut, puis "
+            "le suit le long du salaire moyen, année après année."
+        )
+    elif en_net:
+        complement = (
+            "En euros d'aujourd'hui. Le modèle n'a pas les prélèvements hors "
+            "retraite de ce statut : il ne peut pas remonter au brut, et lit "
+            "donc le nombre tel quel, puis le suit le long du salaire moyen, "
+            "année après année."
+        )
+    else:
+        complement = (
+            "En euros d'aujourd'hui, avant cotisations et impôt — pour un "
+            "salarié, la ligne « brut » de la fiche de paie. Le modèle le suit "
+            "ensuite le long du salaire moyen, année après année."
+        )
     return g.champ(nom, f"Revenu {mot} mensuel", valeur, aide, type_="number",
                    complement="" if bref else complement,
                    min="0", step="1")
