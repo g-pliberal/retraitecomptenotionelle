@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 989<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 132<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -642,6 +642,39 @@ système actuel. `limites.md` §5 porte les trois.
   le modèle n'a qu'une caisse et un stock, et que quarante-cinq colonnes se
   parcourent au défilement. Quatre frises rendues par page, soit trois cents
   kilooctets de SVG dans le témoin de la page Coût.
+
+- **19 septembre 2026, la dette du pays sous le stock : l'échelle qui
+  manquait.** Demandé par l'utilisateur : un graphique de la dette publique en
+  part du PIB dans la page Coût, pour voir d'un coup d'œil si la proposition
+  fait mieux ou moins bien que le système actuel. La section de la dette
+  disait « celle que l'État porte déjà, que cette page ne chiffre pas » ; elle
+  la chiffre. Livré : `data/reference/macro/dette_publique.csv`, la dette des
+  administrations publiques au sens de Maastricht en part du PIB, 1995-2025,
+  certifiée depuis la BDM de l'INSEE (idbank 010777608, quatrième trimestre
+  de la seule série en base 2020 — les annuelles de la BDM sont restées en
+  bases 2010 et 2014, et un rapport au PIB ne se lit que dans la base du PIB
+  qu'on lui oppose) ; la série dans `ComptesRetraite` et dans le paquet ;
+  `Dette.dette_publique_observee`, `annee_dette_publique` et
+  `dette_publique(scenario, annee)` dans `cout.py`, portés dans `cout.js` ; un
+  second graphique dans le dépliant de la dette, dans les deux rendus : la
+  dette observée de 1995 à 2025, puis, à compter de 2025, cette dette tenue à
+  plat en part du PIB à laquelle le système actuel et la proposition ajoutent
+  leur seul stock. L'hypothèse est dite sur la page : ce n'est pas une
+  prévision de la dette publique, le reste du budget n'est pas modélisé, et
+  une dette qui bougerait pour d'autres raisons décalerait les deux courbes
+  d'un même bloc sans changer leur écart. Les systèmes 2 et 3 ne sont pas
+  tracés là — leur réserve de cinq fois le PIB dessinerait un pays qui a
+  remboursé quatre fois sa dette, ce qu'aucun système notionnel ne ferait, et
+  son échelle écraserait l'écart qui compte ; leur stock reste dans le
+  graphique et le tableau du dessus. *Mesuré* : la dette publique faisait
+  **116 % du PIB fin 2025** ; à rien d'autre qui bouge, le système actuel la
+  porte à **182 %** en 2070 et la proposition à **260 %**, soit 78 points de
+  PIB de plus que le système actuel — l'écart entre les deux stocks, tel
+  quel. Deux tests dans `test_cout.py` ; le témoin de la page Coût bouge, les
+  469 témoins de simulation ne bougent pas. Ce qui reste : l'axe du graphique
+  monte à 500 pour une courbe qui plafonne à 260, parce que le pas rond de
+  `_sommet` saute de 50 à 100 quand cinq divisions ne suffisent plus — c'est
+  la règle de tous les graphiques du site, et elle se règle là, pas ici.
 
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 

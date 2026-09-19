@@ -1,0 +1,58 @@
+# Dette des administrations publiques au sens de Maastricht, France
+# source_id: insee_bdm_dette_publique (comptes nationaux, base 2020)
+# unite: part du produit intérieur brut, en fraction
+# fiabilite:
+#   certifiee (1995-…) : stock au 31 décembre rapporté au PIB des quatre
+#             derniers trimestres, quatrième trimestre de la série
+#             trimestrielle en point de PIB (idbank 010777608),
+#             recontrôlé par scripts/verifier_donnees.py.
+#
+# C'est la dette de TOUTES les administrations publiques — État,
+# organismes divers, collectivités locales, Sécurité sociale —, brute et
+# consolidée, au périmètre que la France notifie à la Commission
+# européenne. Elle ne sert à aucun calcul de pension : la page Coût la
+# pose sous ce que chaque système de retraite accumule, pour que le
+# stock d'un système se lise à l'échelle de celui que le pays porte déjà.
+#
+# POURQUOI LE QUATRIÈME TRIMESTRE D'UNE SÉRIE TRIMESTRIELLE
+# --------------------------------------------------------
+# Les séries annuelles de la BDM sont restées dans les bases 2010 et
+# 2014 des comptes nationaux ; seule la trimestrielle est en base 2020,
+# celle de pib_courant.csv. Un rapport au PIB ne se lit que dans la
+# base du PIB qu'on lui oppose, et le stock au 31 décembre rapporté au
+# PIB des quatre derniers trimestres EST la dette annuelle.
+#
+# Ne pas modifier les années certifiées à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,part_pib,fiabilite
+1995,0.578,certifiee
+1996,0.606,certifiee
+1997,0.620,certifiee
+1998,0.621,certifiee
+1999,0.614,certifiee
+2000,0.597,certifiee
+2001,0.593,certifiee
+2002,0.613,certifiee
+2003,0.654,certifiee
+2004,0.669,certifiee
+2005,0.682,certifiee
+2006,0.654,certifiee
+2007,0.655,certifiee
+2008,0.698,certifiee
+2009,0.841,certifiee
+2010,0.863,certifiee
+2011,0.887,certifiee
+2012,0.917,certifiee
+2013,0.946,certifiee
+2014,0.962,certifiee
+2015,0.970,certifiee
+2016,0.981,certifiee
+2017,0.988,certifiee
+2018,0.985,certifiee
+2019,0.982,certifiee
+2020,1.149,certifiee
+2021,1.128,certifiee
+2022,1.114,certifiee
+2023,1.095,certifiee
+2024,1.126,certifiee
+2025,1.157,certifiee

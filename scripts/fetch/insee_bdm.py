@@ -127,6 +127,21 @@ SERIES: dict[str, dict[str, str]] = {
         "role": "Valeur de service du point Agirc-Arrco, mensuel, 2019-",
         "note": "prend le relais des deux précédentes ; seule série à courir après 2024",
     },
+    # -- dette publique -----------------------------------------------------
+    # Trimestrielle, parce que c'est la seule que l'INSEE publie en base 2020 :
+    # les séries annuelles de la BDM (dataflows CNA-2010-DETTE-APU et
+    # CNA-2014-DETTE-APU) sont restées dans leurs bases anciennes, et un
+    # rapport au PIB ne se lit que dans la base du PIB qu'on lui oppose. Le
+    # quatrième trimestre est le stock au 31 décembre, rapporté au PIB des
+    # quatre derniers trimestres : c'est la dette annuelle, telle que l'INSEE
+    # la notifie à la Commission européenne.
+    "dette_publique": {
+        "idbank": "010777608",
+        "role": "Dette des administrations publiques au sens de Maastricht, ensemble, "
+                "en point de PIB, base 2020, trimestriel, 1995-",
+        "note": "le stock au 31 décembre est la dette de l'année ; sert le graphique "
+                "de la dette publique sur la page Coût",
+    },
 }
 
 

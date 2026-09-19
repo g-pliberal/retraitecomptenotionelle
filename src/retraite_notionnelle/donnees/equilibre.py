@@ -363,6 +363,12 @@ class ComptesRetraite:
         }
         self.pib = charger_serie_annuelle(
             macro / "pib_courant.csv", "pib_meur", nom="pib_courant")
+        # La dette de TOUTES les administrations publiques, au sens de
+        # Maastricht, en part de PIB : ce que le pays porte déjà. Elle ne sert
+        # à aucun calcul ; la page Coût pose dessus le stock que chaque système
+        # accumule, pour qu'il se lise à l'échelle.
+        self.dette_publique = charger_serie_annuelle(
+            macro / "dette_publique.csv", "part_pib", nom="dette_publique")
 
     # -- bornes --------------------------------------------------------------
 

@@ -271,6 +271,25 @@ institutions:
           l'italienne » de l'indexation, dont le lissage sur cinq ans est
           appliqué par le moteur et non par la série.
 
+      - id: insee_bdm_dette_publique
+        titre: Dette des administrations publiques au sens de Maastricht, en point de PIB, base 2020
+        url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/010777608
+        idbank: ["010777608"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/dette_publique.csv
+        recuperation: scripts/fetch/insee_bdm.py
+        note: >-
+          Série TRIMESTRIELLE, dont seul le quatrième trimestre est lu : le
+          stock au 31 décembre rapporté au PIB des quatre derniers trimestres
+          est la dette annuelle, celle que la France notifie à la Commission
+          européenne. Les séries annuelles de la BDM (CNA-2010-DETTE-APU,
+          CNA-2014-DETTE-APU) sont restées dans leurs bases anciennes, et un
+          rapport au PIB ne se lit que dans la base du PIB qu'on lui oppose,
+          celle de pib_courant.csv. Toutes administrations publiques, brute,
+          consolidée, depuis 1995. Ne sert à aucun calcul de pension : la page
+          Coût la pose sous le stock que chaque système de retraite accumule.
+
       - id: insee_bdm_productivite
         titre: Productivité du travail par tête, comptes nationaux base 2020
         url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/011785223

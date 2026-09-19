@@ -1809,6 +1809,55 @@ def test_le_taux_est_celui_de_la_courbe_et_la_croissance_celle_du_pib(dette, ave
     assert dette.fiabilite == Fiabilite.ESTIMEE
 
 
+def test_la_dette_publique_est_posee_sous_le_stock_sans_y_entrer(
+        dette, solde, comptes: ComptesRetraite):
+    """Ce que le pays doit déjà, lu chez l'INSEE, et ce que chaque système y ajoute.
+
+    La série observée est recopiée telle quelle jusqu'à l'année de départ, et
+    pas au-delà : le stock d'un système ne se cumule pas dans une dette qu'il
+    n'a pas faite. Le point de départ est la dernière valeur publiée avant ou
+    à l'année de départ, et ``dette_publique`` n'est rien d'autre que ce point
+    plus le stock — tenu à plat, sans intérêts ni croissance propres, parce que
+    le reste des administrations publiques n'est pas modélisé.
+    """
+    observee = dette.dette_publique_observee
+    assert observee, "la série de l'INSEE n'est pas arrivée jusqu'à la dette"
+    assert min(observee) == comptes.dette_publique.premiere_annee == 1995
+    assert max(observee) <= dette.annee_depart
+    assert dette.annee_dette_publique == max(observee)
+    for annee, valeur in observee.items():
+        assert valeur == pytest.approx(comptes.dette_publique(annee)), annee
+        # Une part de PIB, jamais un pourcentage : elle s'additionne au stock.
+        assert 0.5 < valeur < 1.5, annee
+    depart = dette.dette_publique_depart
+    assert depart == pytest.approx(observee[dette.annee_dette_publique])
+    for scenario, _ in SCENARIOS:
+        assert dette.dette_publique(scenario, dette.annee_depart) == pytest.approx(depart)
+        for ligne in dette.annees:
+            assert dette.dette_publique(scenario, ligne.annee) == pytest.approx(
+                depart + ligne.stock(scenario)), (scenario, ligne.annee)
+    # L'écart entre deux systèmes, à l'échelle du pays, est exactement l'écart
+    # entre leurs stocks : la dette de départ, commune, s'efface.
+    fin = dette.derniere_annee
+    assert (dette.dette_publique("notionnel_liberal", fin)
+            - dette.dette_publique("actuel", fin)) == pytest.approx(
+        dette.horizon("notionnel_liberal") - dette.horizon("actuel"))
+
+
+def test_sans_serie_la_dette_publique_est_nulle_et_le_stock_intact(
+        dette, solde, avenir):
+    """La série est un ornement du stock, jamais une condition de son calcul."""
+    courbe = Simulateur(Parametres()).courbe_taux
+    sans = calculer_dette(solde, avenir, courbe)
+    assert sans.dette_publique_observee == {}
+    assert sans.annee_dette_publique == 0
+    assert sans.dette_publique_depart == 0.0
+    for scenario, _ in SCENARIOS:
+        assert sans.horizon(scenario) == pytest.approx(dette.horizon(scenario))
+        assert sans.dette_publique(scenario, sans.derniere_annee) == pytest.approx(
+            dette.horizon(scenario))
+
+
 def test_le_systeme_actuel_accumule_une_dette_et_les_notionnels_l_inverse(dette, solde):
     """Un solde toujours négatif fait une dette qui ne cesse de croître.
 

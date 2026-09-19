@@ -835,11 +835,18 @@ class DetteAnnuelle {
  * Le stock part de zéro à la dernière année observée ; le taux est le forward
  * à un an de la courbe sans risque, celui-là même auquel le pilier capitalisé
  * place ses versements ; la croissance est celle du PIB de `Avenir`.
+ *
+ * La dette publique est posée dessous, pas mélangée : `dettePubliqueObservee`
+ * porte ce que le pays doit déjà, au sens de Maastricht, année par année
+ * jusqu'au départ ; `dettePublique()` tient ce niveau à plat, en part de PIB,
+ * et y ajoute le stock d'un système. Ce n'est pas une prévision de la dette du
+ * pays, c'est l'échelle à laquelle le stock d'un système se lit.
  */
 class Dette {
   constructor(annees = [], anneeDepart = 0, ecartTaux = 0.0, dateCourbe = "",
               derniereAnneeCotee = 0, fiabiliteTaux = Fiabilite.ESTIMEE,
-              fiabilite = Fiabilite.ESTIMEE) {
+              fiabilite = Fiabilite.ESTIMEE, dettePubliqueObservee = {},
+              anneeDettePublique = 0) {
     this.annees = annees;
     this.anneeDepart = anneeDepart;
     this.ecartTaux = ecartTaux;
@@ -847,8 +854,27 @@ class Dette {
     this.derniereAnneeCotee = derniereAnneeCotee;
     this.fiabiliteTaux = fiabiliteTaux;
     this.fiabilite = fiabilite;
+    // La dette des administrations publiques observée, en part de PIB, par
+    // année jusqu'à l'année de départ incluse ; et l'année dont la valeur
+    // sert de point de départ — le départ lui-même, ou la dernière publiée.
+    this.dettePubliqueObservee = dettePubliqueObservee;
+    this.anneeDettePublique = anneeDettePublique;
     this.premiereAnnee = annees.length ? annees[0].annee : 0;
     this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
+  }
+
+  /** Ce que le pays doit au départ, en part de PIB ; zéro sans série. */
+  get dettePubliqueDepart() {
+    const valeur = this.dettePubliqueObservee[this.anneeDettePublique];
+    return valeur === undefined ? 0.0 : valeur;
+  }
+
+  /**
+   * La dette publique de départ, plus ce que le système y a ajouté : le reste
+   * des administrations publiques est supposé tenir sa dette à plat.
+   */
+  dettePublique(scenario, millesime) {
+    return this.dettePubliqueDepart + this.stock(scenario, millesime);
   }
 
   annee(millesime) {
@@ -911,9 +937,13 @@ class Dette {
  * Le stock que les soldes projetés accumulent, système par système. Rien
  * n'est resimulé : les soldes sont ceux de `Solde`, le PIB celui de `Avenir`,
  * le taux celui de la courbe. Borné aux années PROJETÉES : le passé a été
- * financé, et son stock est ailleurs.
+ * financé, et son stock est ailleurs. `dettePublique`, la série observée de
+ * la dette des administrations publiques, n'entre dans aucun cumul : elle est
+ * recopiée jusqu'à l'année de départ, et sa dernière valeur publiée avant ou
+ * à cette année devient le point de départ de `Dette.dettePublique()`.
  */
-export function calculerDette(solde, avenir, courbe, ecartTaux = 0.0) {
+export function calculerDette(solde, avenir, courbe, ecartTaux = 0.0,
+                              dettePublique = null) {
   const projetees = solde.projetees();
   if (!projetees.length) return new Dette();
   const scenarios = SCENARIOS.map(([scenario]) => scenario);
@@ -942,14 +972,27 @@ export function calculerDette(solde, avenir, courbe, ecartTaux = 0.0) {
     ));
   }
   if (!lignes.length) return new Dette();
+  const depart = lignes[0].annee - 1;
+  const observee = {};
+  let anneeDettePublique = 0;
+  if (dettePublique) {
+    for (const annee of dettePublique.annees) {
+      if (annee <= depart) {
+        observee[annee] = dettePublique.valeur(annee);
+        anneeDettePublique = annee;
+      }
+    }
+  }
   return new Dette(
     lignes,
-    lignes[0].annee - 1,
+    depart,
     ecartTaux,
     courbe.date,
     courbe.annee + courbe.maturiteMaximale,
     fiabiliteTaux,
     Fiabilite.ESTIMEE,
+    observee,
+    anneeDettePublique,
   );
 }
 
@@ -1235,6 +1278,7 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     mode,
     poids(depenses.derniereAnnee),
     liquidation,
-    calculerDette(solde, avenir, simulateur.courbeTaux),
+    calculerDette(solde, avenir, simulateur.courbeTaux, 0.0,
+                  comptes ? comptes.dettePublique : null),
   );
 }

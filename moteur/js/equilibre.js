@@ -279,6 +279,10 @@ export class ComptesRetraite {
       ]),
     );
     this.pib = SerieAnnuelle.depuisPaquet("pib_courant", paquet.depenses.pib_courant);
+    // La dette de TOUTES les administrations publiques, au sens de Maastricht,
+    // en part de PIB : ce que le pays porte déjà. Elle ne sert à aucun calcul ;
+    // la page Coût pose dessus le stock que chaque système accumule.
+    this.dettePublique = SerieAnnuelle.depuisPaquet("dette_publique", brut.dette_publique);
     this.premiereAnnee = this.depenses.premiereAnnee;
     this.derniereAnnee = this.depenses.derniereAnnee;
     // La frontière entre observé et projeté se lit dans la FIABILITÉ et non

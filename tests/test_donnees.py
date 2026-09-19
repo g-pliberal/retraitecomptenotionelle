@@ -263,6 +263,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "masse_salariale": "macro/masse_salariale.csv",
         "pib_nominal": "macro/pib_nominal.csv",
         "pib_courant": "macro/pib_courant.csv",
+        "dette_publique": "macro/dette_publique.csv",
         "population_par_age": "macro/population_par_age.csv",
         "population_par_age_projetee": "macro/population_par_age.csv",
         "population_active": "macro/population_active.csv",

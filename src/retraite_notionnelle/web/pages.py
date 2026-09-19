@@ -7182,6 +7182,16 @@ coût de cette page sont celles d'un système qui ne se pilote pas.</div>
 #: chose qu'elle LIT au lieu de la calculer.
 ECART_TAUX_DETTE = 0.01
 
+#: Les systèmes que le graphique de la dette publique trace : le droit en
+#: vigueur et la proposition, ceux entre lesquels la décision se prend. Les
+#: deux notionnels « à droits constants » n'y sont pas — non qu'ils soient
+#: cachés, leur stock est dans le graphique et le tableau du dessus, mais une
+#: réserve de cinq fois le PIB posée sous une dette de 116 % dessine un pays
+#: qui aurait remboursé quatre fois sa dette, ce qu'aucun système notionnel ne
+#: ferait, le coefficient d'équilibre rendant cette marge aux pensions ; et
+#: l'échelle qu'elle imposerait écraserait l'écart qui compte.
+SYSTEMES_DETTE_PUBLIQUE: tuple[str, ...] = ("actuel", "notionnel_liberal")
+
 
 def _cout_detail_dette(contexte: Contexte) -> str:
     """Ce que le déficit accumule : la dette, si rien ne s'ajuste.
@@ -7208,6 +7218,16 @@ def _cout_detail_dette(contexte: Contexte) -> str:
     la BCE, celui-là même auquel le pilier capitalisé du système 4 place ses
     versements. La seule sensibilité montrée est donc celle-là — un point de
     taux en plus ou en moins —, en deux colonnes de plus dans le tableau.
+
+    PUIS LA DETTE DU PAYS, POUR L'ÉCHELLE. Un second graphique pose la dette
+    des administrations publiques, telle que l'INSEE la publie depuis 1995,
+    et la prolonge à plat, en part de PIB, en y ajoutant le seul stock du
+    système de retraite : le droit en vigueur d'un côté, la proposition de
+    l'autre. Ce n'est pas une prévision de la dette publique — le reste du
+    budget n'est pas modélisé —, c'est ce qui permet de lire un stock de
+    soixante points de PIB à l'échelle des cent seize que le pays porte déjà,
+    et de voir, d'un coup d'œil, si la proposition fait mieux ou moins bien
+    que le système actuel.
     """
     cout = contexte.cout()
     dette = cout.dette
@@ -7249,6 +7269,7 @@ def _cout_detail_dette(contexte: Contexte) -> str:
         ])
     premiere = dette.annees[0]
     cotee = dette.annee(dette.derniere_annee_cotee) or dette.annees[-1]
+    publique = _cout_dette_publique(dette, fin)
     return g.depliant(
         "Ce que le déficit accumule : la dette, si rien ne s'ajuste", f"""
 <p>Un solde est un flux : ce qui manque une année, ou ce qui reste. Un déficit
@@ -7270,10 +7291,10 @@ Avec les intérêts, et une fois le tout rapporté à un PIB qui grandit, la det
 atteint {g.pourcentage(dette.horizon("actuel"), decimales=0)} du PIB en {fin},
 et ses seuls intérêts coûtent cette année-là
 {g.pourcentage(dette.annees[-1].interet("actuel"), decimales=1)} du PIB. Elle
-s'ajouterait à celle que l'État porte déjà, que cette page ne chiffre pas. La
-proposition, qui fixe le taux à 18 % et ne fixe pas les pensions, en accumule
-{g.pourcentage(dette.horizon("notionnel_liberal"), decimales=0)} du PIB au même
-horizon.</p>
+s'ajouterait à celle que le pays porte déjà, que le second graphique pose
+dessous. La proposition, qui fixe le taux à 18 % et ne fixe pas les pensions,
+en accumule {g.pourcentage(dette.horizon("notionnel_liberal"), decimales=0)} du
+PIB au même horizon.</p>
 
 {g.tableau(
     ["Système", f"Dette en {fin}", f"Intérêts de l'année {fin}",
@@ -7296,7 +7317,7 @@ jamais. La courbe d'un système qui plonge sous l'axe mesure la marge que ce
 coefficient aurait à distribuer, celle d'un système qui monte mesure ce qu'il
 faudrait rogner, ou financer autrement. Le système actuel, lui, ne se règle
 pas : il attend une réforme, et la courbe dit ce que coûte l'attente.</div>
-
+{publique}
 <div class="note"><strong>Le taux est lu, pas choisi.</strong> C'est le taux à
 un an que la courbe des souverains les mieux notés de la zone euro, publiée par
 la Banque centrale européenne le {_date_en_clair(dette.date_courbe)}, implique pour
@@ -7311,6 +7332,105 @@ point de plus ou de moins déplace la dette du système actuel en {fin} de
 """,
         identifiant="cout-dette",
     )
+
+
+def _cout_dette_publique(dette, fin: int) -> str:
+    """La dette du pays, et ce que chaque système y ajoute : l'échelle du stock.
+
+    LA DETTE OBSERVÉE D'ABORD, telle que l'INSEE la publie au sens de
+    Maastricht — toutes administrations publiques, brute, consolidée — depuis
+    1995 et jusqu'à l'année de départ ; PUIS, à compter de là, cette dette
+    tenue à plat en part de PIB, à laquelle chaque système ajoute son seul
+    stock. Deux systèmes, ceux entre lesquels la décision se prend ; les deux
+    autres sont dans le graphique et le tableau du dessus, et la constante
+    ``SYSTEMES_DETTE_PUBLIQUE`` dit pourquoi ils ne sont pas ici.
+
+    L'HYPOTHÈSE EST DITE, PAS CACHÉE : le reste des administrations publiques
+    a son propre solde, que le site ne modélise pas. Une dette qui monterait
+    pour d'autres raisons décalerait les courbes d'un même bloc sans changer
+    leur écart, et c'est cet écart — ce que la proposition ajoute ou retire
+    par rapport au droit en vigueur — que le graphique donne à lire.
+    """
+    observee = dette.dette_publique_observee
+    if not observee:
+        return ""
+    depart = dette.annee_depart
+    annee_dette = dette.annee_dette_publique
+    premiere_observee = min(observee)
+    annees = tuple(range(premiere_observee, fin + 1))
+    courbes = [g.Serie(
+        "Dette publique observée, toutes administrations",
+        tuple(observee[annee] * 100 if annee in observee else None
+              for annee in annees),
+        "var(--serie-1)",
+        glose="INSEE, au sens de Maastricht",
+    )]
+    for scenario in SYSTEMES_DETTE_PUBLIQUE:
+        courbes.append(g.Serie(
+            LIBELLES_SYSTEMES[scenario],
+            tuple(dette.dette_publique(scenario, annee) * 100
+                  if annee >= depart else None for annee in annees),
+            COULEURS_SCENARIOS[scenario],
+            scenario == "notionnel_liberal",
+            glose="la dette tenue à plat, plus le stock du système",
+        ))
+    trace = g.graphique(
+        f"La dette publique de {premiere_observee} à {annee_dette}, puis ce "
+        f"que le système actuel et la proposition y ajoutent jusqu'en {fin}, "
+        "en part du PIB",
+        annees, tuple(courbes), "% du PIB", False, 0, True, depart,
+        "projection",
+        ("",) + tuple(LIBELLES_SYSTEMES[scenario].split(".")[0]
+                      for scenario in SYSTEMES_DETTE_PUBLIQUE),
+        "Année", None, "", 0,
+    )
+    actuel = dette.dette_publique("actuel", fin)
+    proposition = dette.dette_publique("notionnel_liberal", fin)
+    ecart = proposition - actuel
+    if abs(ecart) < 0.005:
+        lecture = "la proposition et le système actuel laissent le pays au même point"
+    elif ecart > 0:
+        lecture = (
+            f"la proposition laisse le pays {g.pourcentage(ecart, decimales=0)} "
+            "du PIB plus endetté que le système actuel"
+        )
+    else:
+        lecture = (
+            f"la proposition laisse le pays {g.pourcentage(-ecart, decimales=0)} "
+            "du PIB moins endetté que le système actuel"
+        )
+    return f"""
+<p>Ce stock ne part pas de rien : le pays porte déjà une dette. Le graphique
+suivant la pose dessous. D'abord la dette des administrations publiques au
+sens de Maastricht (État, collectivités, Sécurité sociale), telle que
+l'INSEE la publie de {premiere_observee} à {annee_dette} ; puis, à compter de
+{depart}, cette dette tenue à son niveau de {annee_dette} en part du PIB, à
+laquelle chaque système ajoute son seul stock, tel que le graphique du dessus
+le cumule. C'est l'échelle qui manquait : ce que le système de retraite
+ajoute se lit à côté de ce que le pays doit déjà.</p>
+
+{trace}
+
+<p><strong>La dette publique faisait
+{g.pourcentage(dette.dette_publique_depart, decimales=0)} du PIB fin
+{annee_dette}.</strong> Si rien d'autre ne bougeait, le système actuel la
+porterait à {g.pourcentage(actuel, decimales=0)} du PIB en {fin}, et la
+proposition à {g.pourcentage(proposition, decimales=0)} : {lecture}. L'écart
+entre les deux courbes est exactement l'écart entre les deux stocks du
+graphique précédent, et c'est lui qui se lit ici, à l'échelle du pays.</p>
+
+<div class="note"><strong>Ce n'est pas une prévision de la dette
+publique.</strong> Le reste des administrations publiques (l'État hors
+retraite, les collectivités, l'assurance maladie) a son propre solde, que ce
+site ne modélise pas. La dette est donc tenue à plat, en part du PIB, à son
+niveau de {annee_dette}, et seule la retraite la déplace. Une dette qui
+monterait, ou baisserait, pour d'autres raisons décalerait les deux courbes
+d'un même bloc sans changer leur écart. Les systèmes 2 et 3 ne sont pas
+tracés : leur réserve, posée sous cette dette, dessinerait un pays qui l'a
+remboursée plusieurs fois, ce qu'aucun système notionnel ne ferait puisque le
+coefficient d'équilibre rend cette marge aux pensions ; et son échelle
+écraserait l'écart qui compte. Leur stock est dans le tableau.</div>
+"""
 
 
 def _cout_detail_frise(contexte: Contexte) -> str:

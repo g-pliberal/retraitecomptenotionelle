@@ -589,6 +589,24 @@ def source_pib_courant() -> dict[tuple, float]:
     return {(periode,): valeur for periode, valeur in sorted(niveaux.items())}
 
 
+def source_dette_publique() -> dict[tuple, float]:
+    """Dette des administrations publiques au sens de Maastricht, en part du PIB.
+
+    L'INSEE publie la série en points de PIB et par trimestre ; le quatrième
+    trimestre est le stock au 31 décembre rapporté au PIB des quatre derniers
+    trimestres, c'est-à-dire la dette annuelle telle qu'elle est notifiée à
+    la Commission européenne. Les trois autres trimestres ne sont pas lus : le
+    dépôt ne connaît que des années. En FRACTION, comme comptes_retraite.csv,
+    pour que les deux s'additionnent sans conversion.
+    """
+    observations = _observations("dette_publique")
+    return {
+        (periode[:4],): valeur / 100.0
+        for periode, valeur in sorted(observations.items())
+        if periode.endswith("-Q4")
+    }
+
+
 def source_courbe_taux_sans_risque() -> dict[tuple, float]:
     """Courbe zéro-coupon des souverains AAA de la zone euro, par maturité.
 
@@ -3183,6 +3201,44 @@ CERTIFICATIONS = (
             "# l'indexation. Rapporter une dépense au PIB demande le NIVEAU, et c'est",
             "# la seule raison d'être de ce fichier : il ne double pas une donnée, il",
             "# en lit une autre grandeur.",
+            "#",
+            "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="dette_publique",
+        chemin=REFERENCE / "macro" / "dette_publique.csv",
+        cles=("annee",),
+        colonne="part_pib",
+        source=source_dette_publique,
+        origine="INSEE BDM, idbank 010777608 (quatrième trimestre)",
+        decimales=3,
+        tolerance=5.1e-4,
+        entete=(
+            "# Dette des administrations publiques au sens de Maastricht, France",
+            "# source_id: insee_bdm_dette_publique (comptes nationaux, base 2020)",
+            "# unite: part du produit intérieur brut, en fraction",
+            "# fiabilite:",
+            "#   certifiee (1995-…) : stock au 31 décembre rapporté au PIB des quatre",
+            "#             derniers trimestres, quatrième trimestre de la série",
+            "#             trimestrielle en point de PIB (idbank 010777608),",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# C'est la dette de TOUTES les administrations publiques — État,",
+            "# organismes divers, collectivités locales, Sécurité sociale —, brute et",
+            "# consolidée, au périmètre que la France notifie à la Commission",
+            "# européenne. Elle ne sert à aucun calcul de pension : la page Coût la",
+            "# pose sous ce que chaque système de retraite accumule, pour que le",
+            "# stock d'un système se lise à l'échelle de celui que le pays porte déjà.",
+            "#",
+            "# POURQUOI LE QUATRIÈME TRIMESTRE D'UNE SÉRIE TRIMESTRIELLE",
+            "# --------------------------------------------------------",
+            "# Les séries annuelles de la BDM sont restées dans les bases 2010 et",
+            "# 2014 des comptes nationaux ; seule la trimestrielle est en base 2020,",
+            "# celle de pib_courant.csv. Un rapport au PIB ne se lit que dans la",
+            "# base du PIB qu'on lui oppose, et le stock au 31 décembre rapporté au",
+            "# PIB des quatre derniers trimestres EST la dette annuelle.",
             "#",
             "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",

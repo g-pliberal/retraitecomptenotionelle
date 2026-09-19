@@ -222,6 +222,11 @@ def _comptes_retraite() -> dict:
         series[f"assiette_{code}"] = charger_serie_annuelle(
             macro / "assiette_activite.csv", "montant_meur",
             nom=f"assiette_{code}", filtre={"poste": code})
+    # La dette de toutes les administrations publiques, en part de PIB : ce
+    # que le pays porte déjà, sous quoi la page Coût pose le stock de chaque
+    # système. Elle ne sert à aucun calcul.
+    series["dette_publique"] = charger_serie_annuelle(
+        macro / "dette_publique.csv", "part_pib", nom="dette_publique")
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
 
 

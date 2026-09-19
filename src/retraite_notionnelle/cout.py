@@ -136,7 +136,7 @@ from .castypes import (
     poids_egaux,
 )
 from .donnees.assiette import AssietteActivite
-from .donnees.chargement import Fiabilite
+from .donnees.chargement import Fiabilite, SerieAnnuelle
 from .donnees.depenses import DepensesRetraite
 from .donnees.taux import CourbeTauxSansRisque
 from .donnees.equilibre import ComptesRetraite
@@ -832,6 +832,16 @@ class Dette:
 
     LA CROISSANCE EST CELLE DE LA PROJECTION : le PIB nominal de ``Avenir``,
     qui suit les hypothèses du COR corrigées de la population d'âge actif.
+
+    LA DETTE PUBLIQUE EST POSÉE DESSOUS, PAS MÉLANGÉE. ``dette_publique_observee``
+    porte ce que le pays doit déjà, au sens de Maastricht, tel que l'INSEE le
+    publie année par année jusqu'au départ ; ``dette_publique`` tient ce
+    niveau à plat, en part de PIB, et y ajoute le stock d'un système — comme
+    si le reste des administrations publiques maintenait sa dette et que la
+    retraite seule la déplaçait. Ce n'est pas une prévision de la dette du
+    pays, qui dépend de soldes que ce module ne connaît pas ; c'est l'échelle
+    à laquelle le stock d'un système se lit, et la distance entre deux
+    systèmes y est exactement la distance entre leurs stocks.
     """
 
     annees: list[DetteAnnuelle] = field(default_factory=list)
@@ -848,10 +858,31 @@ class Dette:
     #: au-delà. Le stock, lui, n'est jamais mieux qu'estimé.
     fiabilite_taux: Fiabilite = Fiabilite.ESTIMEE
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
+    #: La dette des administrations publiques observée, en part de PIB, par
+    #: année, jusqu'à l'année de départ incluse. Vide quand la série manque.
+    dette_publique_observee: dict[int, float] = field(default_factory=dict)
+    #: L'année dont la dette publique observée sert de point de départ :
+    #: l'année de départ elle-même, ou la dernière publiée avant elle.
+    annee_dette_publique: int = 0
 
     @property
     def premiere_annee(self) -> int:
         return self.annees[0].annee
+
+    @property
+    def dette_publique_depart(self) -> float:
+        """Ce que le pays doit au départ, en part de PIB ; zéro sans série."""
+        return self.dette_publique_observee.get(self.annee_dette_publique, 0.0)
+
+    def dette_publique(self, scenario: str, millesime: int) -> float:
+        """La dette publique de départ, plus ce que le système y a ajouté.
+
+        Le reste des administrations publiques est supposé tenir sa dette à
+        plat, en part de PIB : seul le stock du système bouge. À l'année de
+        départ, c'est la dette observée ; avant, la fonction ne dit rien de
+        plus que ``dette_publique_observee``.
+        """
+        return self.dette_publique_depart + self.stock(scenario, millesime)
 
     @property
     def derniere_annee(self) -> int:
@@ -907,13 +938,19 @@ class Dette:
 
 
 def calculer_dette(solde: Solde, avenir: Avenir, courbe: CourbeTauxSansRisque,
-                   ecart_taux: float = 0.0) -> Dette:
+                   ecart_taux: float = 0.0,
+                   dette_publique: SerieAnnuelle | None = None) -> Dette:
     """Le stock que les soldes projetés accumulent, système par système.
 
     Rien n'est resimulé : les soldes sont ceux de ``Solde``, le PIB celui de
     ``Avenir``, le taux celui de la courbe. La fonction ne fait que cumuler,
     et c'est ce qui la rend gratuite — et ce qui la borne aux années où le
     solde est PROJETÉ : le passé a été financé, et son stock est ailleurs.
+
+    ``dette_publique`` est la série observée de la dette des administrations
+    publiques, en part de PIB. Elle n'entre dans aucun cumul : elle est
+    recopiée jusqu'à l'année de départ, et la dernière valeur publiée avant
+    ou à cette année devient le point de départ de ``Dette.dette_publique``.
     """
     projetees = solde.projetees()
     if not projetees:
@@ -950,14 +987,24 @@ def calculer_dette(solde: Solde, avenir: Avenir, courbe: CourbeTauxSansRisque,
         ))
     if not lignes:
         return Dette()
+    depart = lignes[0].annee - 1
+    observee: dict[int, float] = {}
+    annee_dette_publique = 0
+    if dette_publique is not None:
+        for annee in dette_publique.annees():
+            if annee <= depart:
+                observee[annee] = dette_publique(annee)
+                annee_dette_publique = annee
     return Dette(
         annees=lignes,
-        annee_depart=lignes[0].annee - 1,
+        annee_depart=depart,
         ecart_taux=ecart_taux,
         date_courbe=courbe.date,
         derniere_annee_cotee=courbe.annee + courbe.maturite_maximale,
         fiabilite_taux=fiabilite_taux,
         fiabilite=Fiabilite.ESTIMEE,
+        dette_publique_observee=observee,
+        annee_dette_publique=annee_dette_publique,
     )
 
 
@@ -1640,7 +1687,10 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         annees=lignes,
         avenir=avenir,
         solde=solde,
-        dette=calculer_dette(solde, avenir, simulateur.courbe_taux),
+        dette=calculer_dette(
+            solde, avenir, simulateur.courbe_taux,
+            dette_publique=comptes.dette_publique if comptes is not None else None,
+        ),
         annee_euros=annee_euros,
         generations=generations(),
         echecs=echecs,

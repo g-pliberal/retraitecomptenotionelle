@@ -155,6 +155,17 @@
    "valeurs": 455,
    "verifiee_le": "2026-09-19"
   },
+  "dette_publique": {
+   "ajoutees": 31,
+   "colonne": "part_pib",
+   "corrigees": 0,
+   "empreinte": "15c018915a4ec22e",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbank 010777608 (quatrième trimestre)",
+   "valeurs": 31,
+   "verifiee_le": "2026-09-19"
+  },
   "distribution_pensions": {
    "ajoutees": 138,
    "colonne": "part_pct",
