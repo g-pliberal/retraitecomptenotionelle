@@ -4171,11 +4171,11 @@ ${partage}${public_}`);
 // ou une seule pour une personne seule. La page les recalcule avec la règle que
 // le scénario applique, plutôt que de les recopier.
 const EXEMPLES_GARANTIE = [
-  [[300.0, 300.0], "300 € et 300 €"],
-  [[300.0, 1500.0], "300 € et 1 500 €"],
-  [[900.0, 900.0], "900 € et 900 €"],
-  [[300.0, 5000.0], "300 € et 5 000 €"],
-  [[300.0], "personne seule, 300 €"],
+  [[300.0, 300.0], "300 € et 300 €"],
+  [[300.0, 1500.0], "300 € et 1 500 €"],
+  [[900.0, 900.0], "900 € et 900 €"],
+  [[300.0, 5000.0], "300 € et 5 000 €"],
+  [[300.0], "personne seule, 300 €"],
 ];
 
 /**
@@ -4258,7 +4258,7 @@ donc, du système 4, la seule pension de répartition.</p>`);
       ["h) = rente servie", "à vie, et qui s'éteint avec le rentier",
         `${g.eurosCentimes(pilier.rente_annuelle)} par an`],
     ],
-    ["", "", "nombre"],
+    ["", "texte", "nombre"],
     "D'un euro cotisé à un euro de rente",
     true,
   );
@@ -4279,7 +4279,7 @@ donc, du système 4, la seule pension de répartition.</p>`);
       [String(premiere.annee), `${premiere.horizon}`, placements(premiere)],
       [String(derniere.annee), `${derniere.horizon}`, placements(derniere)],
     ],
-    ["", "nombre", ""],
+    ["", "nombre", "texte"],
     "Où va un versement, au début et à la fin de la carrière",
     true,
   );
@@ -4513,7 +4513,7 @@ départ.${g.bulle(
 ${g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
-    ["", "", "nombre"],
+    ["", "texte", "nombre"],
     `La garantie vieillesse du système 4, étape par étape, en euros de ${annee}`,
     true,
   )}
@@ -4697,7 +4697,7 @@ function detail(contexte, comparaison) {
       ["Régime, puis avantage", `Pension annuelle, en euros de ${annee}`,
         "Calcul"],
       lignesActuel,
-      ["", "nombre", ""],
+      ["", "nombre", "texte"],
       "Pension du système actuel, régime par régime",
       true,
     )
@@ -5741,7 +5741,7 @@ function avantagesTableComplete(contexte) {
       + g.tableau(
         ["Dispositif", `Coût en ${derniere.annee}`,
           "D'où vient le chiffre, ou pourquoi il manque"],
-        lignes, ["", "nombre", ""],
+        lignes, ["", "nombre", "texte"],
         `${famille.libelle} : ${lignes.length} dispositifs et leur coût`, true,
       ),
     );
@@ -7504,7 +7504,7 @@ function inventaireSection(lignes, catalogue) {
     ["Régime", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
       "Ce qui manque, ou pourquoi"],
     corps,
-    ["", "texte", "texte", "texte", "texte", "texte", "texte"],
+    ["", "texte", "texte", "texte", "texte", "texte", "texte long"],
     `Les ${lignes.length} régimes de l'inventaire`,
     true,
     attributs,
@@ -7652,7 +7652,7 @@ puis <code>scripts/verifier_donnees.py --appliquer</code>.</div>`;
   const depliantSeries = g.depliant("Quelles séries, et contre quelle source", `
 ${filtresSeries}
 ${g.tableau(["Série", "Valeurs", "Niveau", "Vérifiée le", "Source"], certifications,
-    ["", "nombre", "", "texte", "texte"],
+    ["", "nombre", "", "texte date", "texte"],
     "Séries recontrôlées contre la source qui les produit", true,
     attributsSeries, true, "series")}
 <p class="discret">Une valeur n'est « certifiée » que si elle a été confrontée au
@@ -8180,11 +8180,11 @@ function tableauGarantie() {
   return g.tableau(
     ["Pensions des deux personnes", "Aujourd'hui (ASPA)", "Avec la garantie"],
     [
-      ["300 € et 300 €", "1 000 €", "1 000 €"],
-      ["300 € et 1 500 €", "0 €", "500 €"],
-      ["900 € et 900 €", "0 €", "0 €"],
-      ["300 € et 5 000 €", "0 €", "500 €"],
-      ["Personne seule, 300 €", "750 €", "750 €"],
+      ["300 € et 300 €", "1 000 €", "1 000 €"],
+      ["300 € et 1 500 €", "0 €", "500 €"],
+      ["900 € et 900 €", "0 €", "0 €"],
+      ["300 € et 5 000 €", "0 €", "500 €"],
+      ["Personne seule, 300 €", "750 €", "750 €"],
     ],
     ["", "nombre", "nombre"],
     "Ce que le plancher individualisé change, par mois",

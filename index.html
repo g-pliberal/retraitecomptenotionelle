@@ -566,6 +566,15 @@ document.addEventListener("click", (evenement) => {
 // surgissante, et sans cela le clavier n'a aucun moyen de refermer celle-ci
 // (WCAG 1.4.13).
 document.addEventListener("keydown", (evenement) => {
+  // Le mot du glossaire est un `<span role="button">` — un vrai bouton ne
+  // coule pas dans une phrase sous Chromium — et doit donc répondre à Entrée
+  // et à Espace comme un bouton le ferait de lui-même.
+  if ((evenement.key === "Enter" || evenement.key === " ")
+      && evenement.target.matches?.('.mot > .terme[role="button"]')) {
+    evenement.preventDefault();
+    evenement.target.click();
+    return;
+  }
   if (evenement.key !== "Escape") { return; }
   const ouvert = document.querySelector('.mot > .terme[aria-expanded="true"]');
   if (!ouvert) { return; }

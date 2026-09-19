@@ -2205,11 +2205,11 @@ def _tableau_garantie() -> str:
     return g.tableau(
         ["Pensions des deux personnes", "Aujourd'hui (ASPA)", "Avec la garantie"],
         [
-            ["300 € et 300 €", "1 000 €", "1 000 €"],
-            ["300 € et 1 500 €", "0 €", "500 €"],
-            ["900 € et 900 €", "0 €", "0 €"],
-            ["300 € et 5 000 €", "0 €", "500 €"],
-            ["Personne seule, 300 €", "750 €", "750 €"],
+            ["300 € et 300 €", "1 000 €", "1 000 €"],
+            ["300 € et 1 500 €", "0 €", "500 €"],
+            ["900 € et 900 €", "0 €", "0 €"],
+            ["300 € et 5 000 €", "0 €", "500 €"],
+            ["Personne seule, 300 €", "750 €", "750 €"],
         ],
         ["", "nombre", "nombre"],
         titre="Ce que le plancher individualisé change, par mois",
@@ -4179,11 +4179,11 @@ son employeur verse.{g.bulle(
 #: ou une seule pour une personne seule. La page les recalcule avec la règle
 #: que le scénario applique, plutôt que de les recopier.
 EXEMPLES_GARANTIE = (
-    ((300.0, 300.0), "300 € et 300 €"),
-    ((300.0, 1500.0), "300 € et 1 500 €"),
-    ((900.0, 900.0), "900 € et 900 €"),
-    ((300.0, 5000.0), "300 € et 5 000 €"),
-    ((300.0,), "personne seule, 300 €"),
+    ((300.0, 300.0), "300 € et 300 €"),
+    ((300.0, 1500.0), "300 € et 1 500 €"),
+    ((900.0, 900.0), "900 € et 900 €"),
+    ((300.0, 5000.0), "300 € et 5 000 €"),
+    ((300.0,), "personne seule, 300 €"),
 )
 
 
@@ -4267,7 +4267,7 @@ donc, du système 4, la seule pension de répartition.</p>""",
             ["h) = rente servie", "à vie, et qui s'éteint avec le rentier",
              g.euros_centimes(pilier.rente_annuelle) + " par an"],
         ],
-        ["", "", "nombre"],
+        ["", "texte", "nombre"],
         titre="D'un euro cotisé à un euro de rente",
         entete_de_ligne=True,
     )
@@ -4291,7 +4291,7 @@ donc, du système 4, la seule pension de répartition.</p>""",
             [str(premiere.annee), f"{premiere.horizon}", placements(premiere)],
             [str(derniere.annee), f"{derniere.horizon}", placements(derniere)],
         ],
-        ["", "nombre", ""],
+        ["", "nombre", "texte"],
         titre="Où va un versement, au début et à la fin de la carrière",
         entete_de_ligne=True,
     )
@@ -4545,7 +4545,7 @@ départ.{g.bulle(
 {g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
     lignes,
-    ["", "", "nombre"],
+    ["", "texte", "nombre"],
     titre=f"La garantie vieillesse du système 4, étape par étape, en euros de {annee}",
     entete_de_ligne=True,
 )}
@@ -5315,7 +5315,7 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
         ["Régime, puis avantage", f"Pension annuelle, en euros de {annee}",
          "Calcul"],
         lignes_actuel,
-        ["", "nombre", ""],
+        ["", "nombre", "texte"],
         titre="Pension du système actuel, régime par régime",
         entete_de_ligne=True,
     ) if lignes_actuel else "<p>Aucun droit liquidé dans le système actuel.</p>"
@@ -6461,7 +6461,7 @@ def _avantages_table_complete(contexte: Contexte) -> str:
             + g.tableau(
                 ["Dispositif", f"Coût en {derniere.annee}",
                  "D'où vient le chiffre, ou pourquoi il manque"],
-                lignes, ["", "nombre", ""],
+                lignes, ["", "nombre", "texte"],
                 titre=f"{famille.libelle} : {len(lignes)} dispositifs et leur coût",
                 entete_de_ligne=True,
             )
@@ -8254,7 +8254,7 @@ def _inventaire_section(racine, catalogue) -> str:
         ["Régime", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
          "Ce qui manque, ou pourquoi"],
         corps,
-        ["", "texte", "texte", "texte", "texte", "texte", "texte"],
+        ["", "texte", "texte", "texte", "texte", "texte", "texte long"],
         titre=f"Les {len(lignes)} régimes de l'inventaire",
         entete_de_ligne=True,
         attributs_lignes=attributs,
@@ -8393,7 +8393,7 @@ puis <code>scripts/verifier_donnees.py --appliquer</code>.</div>"""
     depliant_series = g.depliant("Quelles séries, et contre quelle source", f"""
 {filtres_series}
 {g.tableau(["Série", "Valeurs", "Niveau", "Vérifiée le", "Source"], certifications,
-           ["", "nombre", "", "texte", "texte"],
+           ["", "nombre", "", "texte date", "texte"],
            titre="Séries recontrôlées contre la source qui les produit",
            entete_de_ligne=True, attributs_lignes=attributs_series,
            triable=True, identifiant="series")}

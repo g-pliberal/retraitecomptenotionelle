@@ -1249,7 +1249,7 @@ def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
     assert "Garantie vieillesse" in texte
     assert "rente du pilier capitalisé" in texte
     assert "l'impôt en finance" in texte
-    assert "personne seule, 300 €" in texte
+    assert "personne seule, 300\u00a0€" in texte
     texte = page("/simuler", naissance=1958, liquidation=62, salaire=1500,
                  unite_revenu="euros_mois")
     assert "avant les 65 ans" in texte
@@ -3514,7 +3514,10 @@ def test_un_mot_du_glossaire_ne_coupe_pas_son_paragraphe():
     paragraphe. Le mot est donc un ``<button>``, qui est du contenu de phrase.
     """
     assert "<details" not in g.mot("répartition", "Les cotisations d'aujourd'hui…")
-    assert "<button" in g.mot("répartition", "Les cotisations d'aujourd'hui…")
+    # Un `<span role="button">`, et non un `<button>` : Chromium rend tout bouton
+    # en bloc en ligne, qui ne coule pas dans une phrase.
+    assert 'role="button" tabindex="0"' in g.mot("répartition", "Les cotisations d'aujourd'hui…")
+    assert "<button" not in g.mot("répartition", "Les cotisations d'aujourd'hui…")
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
@@ -3555,7 +3558,7 @@ def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
         # l'appel — un point d'interrogation posé après un titre ou un libellé
         # de champ, qui n'a pas de texte et doit donc porter son nom.
         assert mot.startswith(
-            '<button type="button" class="terme" aria-expanded="false">'
+            '<span class="terme" role="button" tabindex="0" aria-expanded="false">'
         ) or re.match(
             r'<button type="button" class="terme appel" aria-expanded="false" '
             r'aria-label="[^"]+"><svg class="icone" ', mot,
@@ -4371,7 +4374,7 @@ def test_le_jargon_du_relecteur_porte_sa_definition(contexte):
     """
     def termes(corps: str) -> set[str]:
         return set(re.findall(
-            r'<button type="button" class="terme" aria-expanded="false">(.*?)</button>',
+            r'<span class="terme" role="button" tabindex="0" aria-expanded="false">(.*?)</span>',
             corps,
         ))
 
@@ -4894,8 +4897,9 @@ def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
     corps = rendre(contexte, "/", {})[1]
     visible = _hors_depliants(corps)
     assert "Ce que le plancher individualisé change, par mois" in visible
-    assert visible.index("300 € et 1 500 €") < visible.index("Le système actuel et notre programme")
-    assert corps.count("<caption>Ce que le plancher individualisé change, par mois</caption>") == 1
+    # Des espaces insécables : « 1 500 / € » se coupait en deux sur un téléphone.
+    assert visible.index("300\u00a0€ et 1\u00a0500\u00a0€") < visible.index("Le système actuel et notre programme")
+    assert corps.count("<caption><span>Ce que le plancher individualisé change, par mois</span></caption>") == 1
     assert "Le tableau du haut de page le montre" in corps
 
 
@@ -5171,7 +5175,7 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification(contexte):
         "la date du dernier passage ne doit plus être présentée comme celle de tout"
     )
     table = re.search(r'<table id="series">.*?</table>', corps, re.S).group(0)
-    assert '<th class="texte" scope="col"><button type="button" class="tri" data-colonne="3">Vérifiée le</button></th>' in table
+    assert '<th class="texte date" scope="col"><button type="button" class="tri" data-colonne="3">Vérifiée le</button></th>' in table
     assert table.count(f">{dates[0]}<") >= 1
 
 

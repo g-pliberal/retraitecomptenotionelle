@@ -559,7 +559,7 @@ export function tableau(entetes, lignes, classesColonnes = null, titre = "",
       ligne.slice(0, classes.length)
         .map((valeur, i) => cellule(valeur, classes[i], i === 0)).join("")
     }</tr>`).join("");
-  const legendeHtml = titre ? `<caption>${echapper(titre)}</caption>` : "";
+  const legendeHtml = titre ? `<caption><span>${echapper(titre)}</span></caption>` : "";
   const nom = titre ? ` role="region" aria-label="${echapper(titre)}"` : "";
   const cible = identifiant ? ` id="${echapper(identifiant)}"` : "";
   return `<div class="defilant" tabindex="0"${nom}><table${cible}>${legendeHtml}`
@@ -700,8 +700,10 @@ export function sommaire(texte) {
  * basculement est dans `index.html`, en écoute déléguée.
  */
 export function mot(terme, definition) {
-  return '<span class="mot"><button type="button" class="terme" '
-    + `aria-expanded="false">${echapper(terme)}</button>`
+  // Un `<span role="button">`, et non un `<button>` : Chromium rend tout bouton
+  // en bloc en ligne, qui ne coule pas dans une phrase. Voir `mot` en Python.
+  return '<span class="mot"><span class="terme" role="button" tabindex="0" '
+    + `aria-expanded="false">${echapper(terme)}</span>`
     + `<span class="bulle" role="note" hidden>${echapper(definition)}</span></span>`;
 }
 
@@ -1277,9 +1279,11 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     }
   }
 
+  // L'unité part du bord gauche du repère : ancrée à `end` sur l'axe, une
+  // unité longue débordait du cadre. Voir le Python.
   const uniteHtml = unite
-    ? `<text class="graduation" x="${nombreBrut(MARGE_GAUCHE - 6)}" `
-      + `y="${nombreBrut(MARGE_HAUT - 10)}" text-anchor="end">${echapper(unite)}</text>`
+    ? `<text class="graduation" x="0" `
+      + `y="${nombreBrut(MARGE_HAUT - 11)}" text-anchor="start">${echapper(unite)}</text>`
     : "";
   // Le repère dit où l'observation s'arrête et où la projection commence — une
   // frontière qu'un graphique doit montrer, faute de quoi il donne à une
@@ -1288,9 +1292,12 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   if (repere !== null && repere >= annees[0] && repere <= derniereAnnee) {
     const position = abscisse(repere, annees[0], derniereAnnee);
     const x = nombreBrut(position);
+    // Du côté où il reste de la place : à gauche du trait dans la seconde
+    // moitié du tracé, comme en Python.
+    const aGauche = repere > (annees[0] + derniereAnnee) / 2;
     const etiquette = libelleRepere
-      ? `<text class="graduation" x="${nombreBrut(position + 5)}" `
-        + `y="${nombreBrut(MARGE_HAUT + 8)}" text-anchor="start">`
+      ? `<text class="graduation" x="${nombreBrut(position + (aGauche ? -5 : 5))}" `
+        + `y="${nombreBrut(MARGE_HAUT + 8)}" text-anchor="${aGauche ? "end" : "start"}">`
         + `${echapper(libelleRepere)}</text>`
       : "";
     repereHtml = `<line class="repere" x1="${x}" y1="${nombreBrut(MARGE_HAUT)}" `
