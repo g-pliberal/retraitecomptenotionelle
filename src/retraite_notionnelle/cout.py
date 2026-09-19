@@ -728,8 +728,114 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
 _DEMI_TRANCHE = PAS_GENERATIONS // 2
 
 
+#: Les masses que la revalorisation des pensions SERVIES atteint : les cinq
+#: scénarios notionnels, et eux seuls. Le scénario 1 en est exclu parce que le
+#: droit l'indexe sur les prix — article L. 161-23-1 du code de la sécurité
+#: sociale, qui renvoie au coefficient de l'article L. 161-25 —, et la garantie
+#: vieillesse parce que l'article L. 816-2 renvoie l'ASPA au même coefficient.
+#: C'est cette asymétrie qui fait tout : une règle commune se simplifierait
+#: dans le rapport de masses, celle-ci ne se simplifie pas.
+CLES_REVALORISEES: frozenset[str] = frozenset(
+    cle for cle, _ in SCENARIOS if cle != "actuel"
+)
+
+#: Les scénarios 3 et 5, dont la règle d'indexation NE COMMENCE QU'À LA
+#: BASCULE. Une réforme prospective ne gèle pas l'indexation du stock : elle
+#: change la règle pour toutes les pensions à compter du jour où elle
+#: s'applique, celles qui étaient déjà servies comprises — c'est ce que font
+#: les réformes réelles, et c'est ce que le programme retient. Ce qu'elle ne
+#: fait pas, c'est agir AVANT elle-même : une pension servie en 2010 a été
+#: revalorisée sur les prix de 2010 à 2025, quoi qu'il advienne en 2026.
+#:
+#: D'où ``max(liquidation, bascule)`` et non « liquidée après la bascule ».
+#: La nuance n'est pas rhétorique : la seconde forme priverait à jamais de la
+#: règle nouvelle tous ceux qui étaient déjà retraités, et ferait du scénario 3
+#: une réforme qui met cinquante ans à s'appliquer. La première la leur donne
+#: le jour de la bascule, et laisse le passé intact — ce qu'un test exige.
+CLES_PROSPECTIVES: frozenset[str] = frozenset({
+    "notionnel_prospectif", "notionnel_prospectif_employeur",
+})
+
+
+class RevalorisationServie:
+    """Ce que devient une pension DÉJÀ LIQUIDÉE, année après année.
+
+    UN SYSTÈME NOTIONNEL A DEUX RÈGLES D'INDEXATION, ET NON UNE. La première
+    fait grossir le compte pendant la carrière ; la seconde revalorise la
+    pension une fois qu'elle est servie. Les pays qui ont fait ce système les
+    règlent séparément : la Suède revalorise le compte sur l'indice des
+    salaires et la pension liquidée sur ce même indice diminué de 1,6 point ;
+    l'Italie revalorise le compte sur le PIB et la pension liquidée sur les
+    prix.
+
+    Le dépôt n'en portait qu'une. Les masses de la page « Coût » figeaient la
+    pension en euros constants pour toute la retraite, ce qui est une
+    indexation sur les PRIX qui ne disait pas son nom — correcte pour le
+    scénario 1, où c'est la loi, fausse pour les cinq autres. Car la seconde
+    règle est déjà écrite ailleurs dans le modèle, et depuis toujours : le
+    diviseur de conversion vaut l'espérance de vie résiduelle parce que
+    ``taux_anticipe_conversion`` est nul, et il ne la vaut QUE si la rente est
+    ensuite revalorisée au taux auquel le compte l'a été. Le modèle promettait
+    donc une rente indexée sur la masse salariale et en servait une indexée sur
+    les prix ; il payait moins que son propre contrat.
+
+    CE QUE REND CETTE CLASSE est le coefficient qui corrige l'écart, en euros
+    CONSTANTS puisque c'est l'unité des masses : le produit des taux
+    d'indexation depuis la liquidation, déflaté des prix de la même période. Il
+    vaut 1 l'année de la liquidation, ×1,15 au bout de vingt ans de projection
+    — 2,45 % contre 1,75 % —, et jusqu'à ×3 pour les vingt années qui suivent
+    une liquidation de 1960, où la masse salariale progressait de cinq points
+    par an au-dessus des prix.
+
+    CE QU'ELLE N'EST PAS. Elle ne choisit pas la règle : elle applique celle
+    que ``mode_indexation`` porte déjà, quelle qu'elle soit. Sous le triple
+    lock inversé, qui passe sous les prix la plupart des années, son
+    coefficient descend en dessous de 1 et la correction joue à la baisse.
+    C'est la conséquence logique de la règle, et non un défaut.
+    """
+
+    def __init__(self, simulateur: Simulateur,
+                 premiere_annee: int, derniere_annee: int) -> None:
+        macro = simulateur.macro
+        indexation = simulateur.indexation
+        #: L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
+        #: qu'elle sert : voir :data:`CLES_PROSPECTIVES`.
+        self.annee_bascule = simulateur.parametres.annee_bascule
+        self.premiere_annee = premiere_annee
+        self.derniere_annee = max(derniere_annee, premiere_annee)
+        index = 1.0
+        self._index: dict[int, float] = {self.premiere_annee: index}
+        for annee in range(self.premiere_annee + 1, self.derniere_annee + 1):
+            # Le taux d'indexation est NOMINAL, les masses sont en euros
+            # constants : on le déflate année par année, et non en bloc. Un
+            # produit de taux nominaux divisé par une inflation cumulée serait
+            # la même chose ici, mais cesserait de l'être dès qu'un plancher ou
+            # un lissage s'appliquerait à l'un des deux — et il y en a un.
+            index *= (1.0 + indexation.taux(annee).taux) * macro.coefficient_prix(
+                annee, annee - 1
+            )
+            self._index[annee] = index
+
+    def _valeur(self, annee: int) -> float:
+        borne = min(max(annee, self.premiere_annee), self.derniere_annee)
+        return self._index[borne]
+
+    def coefficient(self, annee_liquidation: int, annee: int) -> float:
+        """Ce que vaut en ``annee``, en euros constants, un euro de pension
+        liquidé en ``annee_liquidation``.
+
+        Vaut exactement 1 l'année de la liquidation et avant elle : une pension
+        qui n'est pas encore servie ne se revalorise pas.
+        """
+        if annee <= annee_liquidation:
+            return 1.0
+        depart = self._valeur(annee_liquidation)
+        return self._valeur(annee) / depart if depart else 1.0
+
+
 def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
-            poids_cas: dict[str, float]) -> tuple[dict[str, float], int]:
+            poids_cas: dict[str, float],
+            revalorisation: RevalorisationServie) -> tuple[dict[str, float], int]:
     """Masse de pensions par système, une année donnée, et le nombre de couples.
 
     DEUX pondérations se composent ici, et elles ne disent pas la même chose.
@@ -744,6 +850,15 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     Celle du CAS TYPE est sociologique : elle dit combien de retraités ont eu
     cette carrière-là, et vient des effectifs de caisse de la DREES. Sans elle,
     l'agent de conduite pèserait ce que pèse le salarié au salaire moyen.
+
+    Ces deux-là pèsent des TÊTES. Deux autres pèsent des EUROS :
+    ``poids_revalorise`` porte ce que la pension est devenue depuis la
+    liquidation sous la règle d'indexation — voir :class:`RevalorisationServie`
+    —, et ``poids_revalorise_prospectif`` fait de même en ne comptant que ce
+    qui suit la bascule, parce que les scénarios 3 et 5 n'existent pas avant
+    elle. Le scénario 1 et la garantie
+    vieillesse gardent le poids en têtes, parce que le droit les indexe sur les
+    prix et que les masses sont déjà en euros constants.
     """
     masses = {cle: 0.0 for cle in CLES_MASSES}
     vivants = 0
@@ -753,13 +868,28 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             continue
         poids = 0.0
         poids_garantie = 0.0
+        poids_revalorise = 0.0
+        poids_revalorise_prospectif = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            if annee < pensionne.annee_liquidation + decalage:
+            liquidation = pensionne.annee_liquidation + decalage
+            if annee < liquidation:
                 continue
             effectif = population.effectif(
                 annee - pensionne.generation - decalage, annee
             )
             poids += effectif
+            # Le troisième poids porte la revalorisation des pensions SERVIES,
+            # et il faut qu'il soit à part : le coefficient dépend de l'année
+            # de liquidation, qui n'est pas la même pour les cinq cohortes de
+            # la tranche. Le sortir de la boucle appliquerait à toutes celui de
+            # la génération du milieu, soit deux ans d'indexation en trop d'un
+            # côté et en moins de l'autre.
+            poids_revalorise += effectif * revalorisation.coefficient(
+                liquidation, annee
+            )
+            poids_revalorise_prospectif += effectif * revalorisation.coefficient(
+                max(liquidation, revalorisation.annee_bascule), annee
+            )
             # La garantie n'entre qu'à 65 ans, même pour qui est parti plus
             # tôt : avant, on ne touche pas le minimum vieillesse.
             if annee >= pensionne.annee_ouverture_garantie + decalage:
@@ -768,7 +898,14 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             continue
         vivants += 1
         for cle in CLES_MASSES:
-            poids_cle = poids_garantie if cle == COMPOSANTE_GARANTIE else poids
+            if cle == COMPOSANTE_GARANTIE:
+                poids_cle = poids_garantie
+            elif cle in CLES_PROSPECTIVES:
+                poids_cle = poids_revalorise_prospectif
+            elif cle in CLES_REVALORISEES:
+                poids_cle = poids_revalorise
+            else:
+                poids_cle = poids
             masses[cle] += part * poids_cle * pensionne.pensions[cle]
     return masses, vivants
 
@@ -865,7 +1002,8 @@ def _rapports(masses: dict[str, float]) -> dict[str, float]:
 
 def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             population: Population, simulateur: Simulateur,
-            poids: Callable[[int], dict[str, float]]) -> Avenir:
+            poids: Callable[[int], dict[str, float]],
+            revalorisation: RevalorisationServie) -> Avenir:
     """La trajectoire de la répartition, de la première année ventilée à l'horizon.
 
     Deux régimes, une seule formule. Jusqu'à la dernière année publiée, la base
@@ -878,7 +1016,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     derniere_publiee = depenses.derniere_annee
 
     masses_ancrage, _ = _masses(pensionnes, population, derniere_publiee,
-                                poids(derniere_publiee))
+                                poids(derniere_publiee), revalorisation)
     if masses_ancrage["actuel"] <= 0.0:
         return Avenir()
     # L'ancrage est le prix, en euros constants de référence, d'une unité de la
@@ -908,7 +1046,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     lignes: list[AvenirAnnuel] = []
     for annee in range(depenses.premiere_annee_ventilee, HORIZON + 1):
         poids_annee = poids(annee)
-        masses, _ = _masses(pensionnes, population, annee, poids_annee)
+        masses, _ = _masses(pensionnes, population, annee, poids_annee,
+                            revalorisation)
         if masses["actuel"] <= 0.0:
             continue
         cotisations = _masses_cotisations(pensionnes, population, annee, poids_annee)
@@ -1049,10 +1188,20 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     poids = _ponderation(simulateur, ponderation, cas_types)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
+    # La seconde règle d'indexation, construite une fois pour les deux régimes
+    # de la page — les années publiées et la projection. Elle part de la plus
+    # ancienne liquidation de la grille, parce qu'un coefficient ne se rattrape
+    # pas : il se cumule depuis le départ en retraite.
+    revalorisation = RevalorisationServie(
+        simulateur,
+        min((p.annee_liquidation for p in pensionnes), default=HORIZON) - _DEMI_TRANCHE,
+        HORIZON,
+    )
 
     lignes: list[CoutAnnuel] = []
     for annee in depenses.annees():
-        masses, vivants = _masses(pensionnes, population, annee, poids(annee))
+        masses, vivants = _masses(pensionnes, population, annee, poids(annee),
+                                  revalorisation)
         if masses["actuel"] <= 0.0:
             continue
         lignes.append(CoutAnnuel(
@@ -1068,7 +1217,8 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         (depenses.fiabilite(ligne.annee) for ligne in lignes),
         default=Fiabilite.ESTIMEE,
     )
-    avenir = _avenir(pensionnes, depenses, population, simulateur, poids)
+    avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
+                     revalorisation)
     return Cout(
         annees=lignes,
         avenir=avenir,

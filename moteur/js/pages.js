@@ -3345,8 +3345,20 @@ function garantieVieillesse(comparaison, saisie) {
       `${g.eurosCentimes(garantie.rente_capitalisee)} par an`],
     ["f) = ressources examinées", "d + e",
       `${g.eurosCentimes(garantie.ressources)} par an`],
+  ];
+  if (!garantie.age_atteint) {
+    lignes.push([
+      `f′) ressources en ${garantie.annee_ouverture}`,
+      "la pension notionnelle est revalorisée sur la masse salariale, le "
+      + "plancher sur les prix comme l'ASPA : l'écart entre les deux se réduit "
+      + `de ${g.pourcentage(garantie.revalorisation_differee - 1.0)} d'ici l'ouverture`,
+      `${g.eurosCentimes(garantie.ressources_a_l_ouverture)} par an`,
+    ]);
+  }
+  const reference = garantie.age_atteint ? "f" : "f′";
+  lignes.push(
     ["g) Garantie vieillesse",
-      "max(0, c − f), financée par l'impôt, servie à partir de 65 ans"
+      `max(0, c − ${reference}), financée par l'impôt, servie à partir de 65 ans`
       + (garantie.age_atteint
         ? "" : ` — soit ici à compter de ${garantie.annee_ouverture}`),
       `${g.eurosCentimes(garantie.complement)} par an`],
@@ -3355,7 +3367,7 @@ function garantieVieillesse(comparaison, saisie) {
         ? "d + g dès le départ"
         : `d seul jusqu'à 65 ans, puis d + g à partir de ${garantie.annee_ouverture}`,
       `${g.eurosCentimes(liberal.pension_annuelle)} par an`],
-  ];
+  );
 
   let lecture;
   if (garantie.servie_a_la_liquidation) {
@@ -3369,10 +3381,12 @@ function garantieVieillesse(comparaison, saisie) {
     lecture = "<p>Ici, la liquidation a lieu à "
       + `${age(comparaison.carriere.age_liquidation || 0.0)}, avant les 65 ans `
       + `de l'allocation : rien n'est servi jusqu'en ${garantie.annee_ouverture}. `
-      + "À partir de là, la pension obligatoire de "
-      + `${g.eurosCentimes(garantie.ressources / 12)} par mois restant sous le `
-      + `plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)}, l'impôt `
-      + `en finance <strong>${g.eurosCentimes(garantie.complement / 12)} par `
+      + "À partir de là, la pension obligatoire — "
+      + `${g.eurosCentimes(garantie.ressources / 12)} par mois au départ, `
+      + `${g.eurosCentimes(garantie.ressources_a_l_ouverture / 12)} à l'ouverture, `
+      + "parce qu'elle suit la masse salariale quand le plancher suit les prix — "
+      + `reste sous le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
+      + `l'impôt en finance <strong>${g.eurosCentimes(garantie.complement / 12)} par `
       + "mois</strong>. Le montant affiché plus haut est celui du départ, sans "
       + "la garantie.</p>";
   } else {

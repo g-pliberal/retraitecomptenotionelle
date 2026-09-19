@@ -144,8 +144,26 @@ class GarantieVieillesse:
     #: que le plancher regarde, et non la seule répartition : les deux sont
     #: obligatoires, et une allocation différentielle compte les ressources.
     ressources: float
+    #: Ce que les ressources gagnent, EN TERMES RÉELS, entre la liquidation et
+    #: l'ouverture de la garantie. Vaut 1 quand les deux coïncident.
+    #:
+    #: Ce coefficient existe parce que les deux termes de la comparaison ne
+    #: suivent pas la même règle : la pension notionnelle est revalorisée sur
+    #: la masse salariale, le plancher sur les prix comme l'ASPA — article
+    #: L. 816-2 du code de la sécurité sociale, qui renvoie au coefficient de
+    #: l'article L. 161-25. Leur écart n'est donc PAS invariant entre 62 et
+    #: 65 ans : la pension monte d'environ sept dixièmes de point par an
+    #: au-dessus du plancher, et le complément dû à 65 ans est plus petit que
+    #: celui qu'on calculerait au départ. Le modèle l'a longtemps affirmé
+    #: invariant ; c'était vrai du modèle, qui figeait alors les pensions en
+    #: euros constants, et faux de la proposition.
+    revalorisation_differee: float
+    #: ``ressources × revalorisation_differee`` : ce dont la personne dispose
+    #: l'année où la garantie s'ouvre, dans les euros de la liquidation.
+    ressources_a_l_ouverture: float
     #: Ce que la garantie ajoute à compter de ``annee_ouverture`` :
-    #: ``max(0, plancher - ressources)``. C'est la part financée par l'impôt.
+    #: ``max(0, plancher - ressources_a_l_ouverture)``. C'est la part financée
+    #: par l'impôt.
     complement: float
 
     @property
@@ -413,11 +431,13 @@ class ScenarioNotionnel:
 
         L'ÂGE est celui de l'ASPA, 65 ans, et il ne fait plus disparaître le
         complément : il en retarde le service. Le montant calculé ici vaut donc
-        à compter de ``annee_ouverture``. Cette égalité entre le complément
-        calculé au départ et celui qui sera servi à 65 ans n'est pas une
-        approximation : le plancher est indexé sur les prix, la pension l'est
-        aussi, et leur différence est donc invariante dans les euros de
-        n'importe quelle année entre les deux.
+        à compter de ``annee_ouverture``, et il est calculé POUR cette année-là
+        et non pour celle du départ. Les deux ne coïncident pas, contrairement
+        à ce que ce texte a affirmé : le plancher suit les prix comme l'ASPA,
+        la pension notionnelle suit la masse salariale, et entre 62 et 65 ans
+        la seconde gagne environ deux points sur le premier. Calculer le
+        complément au départ pour le servir trois ans plus tard le surestimait
+        d'autant. ``revalorisation_differee`` porte cet écart.
         """
         parametres = self.parametres
         annee = carriere.annee_liquidation
@@ -432,13 +452,25 @@ class ScenarioNotionnel:
         plancher = base + isolement
         age_atteint = (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE
         ressources = pension_contributive + rente_capitalisee
+        ouverture = (
+            annee if age_atteint
+            else carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE
+        )
+        # Ce que la pension gagne en termes réels d'ici l'ouverture : la
+        # revalorisation nominale de la règle d'indexation, ramenée aux euros
+        # de la liquidation, qui sont ceux du plancher. Les deux facteurs se
+        # compensent exactement quand la règle suit les prix — auquel cas ce
+        # coefficient vaut un, et le calcul redevient celui d'avant.
+        revalorisation = (
+            self.constructeur.indexation.coefficient(annee, ouverture)
+            * self.constructeur.macro.coefficient_prix(ouverture, annee)
+            if ouverture > annee else 1.0
+        )
+        a_l_ouverture = ressources * revalorisation
         return GarantieVieillesse(
             situation=parametres.situation_foyer.value,
             age_atteint=age_atteint,
-            annee_ouverture=(
-                annee if age_atteint
-                else carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE
-            ),
+            annee_ouverture=ouverture,
             coefficient_prix=coefficient,
             base_annuelle=base,
             isolement_annuel=isolement,
@@ -446,7 +478,9 @@ class ScenarioNotionnel:
             pension_contributive=pension_contributive,
             rente_capitalisee=rente_capitalisee,
             ressources=ressources,
-            complement=max(0.0, plancher - ressources),
+            revalorisation_differee=revalorisation,
+            ressources_a_l_ouverture=a_l_ouverture,
+            complement=max(0.0, plancher - a_l_ouverture),
         )
 
     # -- scénario 3 ----------------------------------------------------------

@@ -206,6 +206,77 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
 }
 
 /**
+ * Les masses que la revalorisation des pensions SERVIES atteint : les cinq
+ * scénarios notionnels, et eux seuls. Le scénario 1 en est exclu parce que le
+ * droit l'indexe sur les prix — article L. 161-23-1 du code de la sécurité
+ * sociale, qui renvoie au coefficient de l'article L. 161-25 —, et la garantie
+ * vieillesse parce que l'article L. 816-2 renvoie l'ASPA au même coefficient.
+ * C'est cette asymétrie qui fait tout : une règle commune se simplifierait dans
+ * le rapport de masses, celle-ci ne se simplifie pas.
+ */
+export const CLES_REVALORISEES = new Set(
+  SCENARIOS.map(([scenario]) => scenario).filter((scenario) => scenario !== "actuel"),
+);
+
+/**
+ * Les scénarios 3 et 5, dont la règle d'indexation NE COMMENCE QU'À LA BASCULE.
+ * Une réforme prospective ne gèle pas l'indexation du stock : elle change la
+ * règle pour toutes les pensions à compter du jour où elle s'applique, celles
+ * déjà servies comprises. Ce qu'elle ne fait pas, c'est agir avant elle-même.
+ * D'où `max(liquidation, bascule)` et non « liquidée après la bascule ».
+ */
+export const CLES_PROSPECTIVES = new Set([
+  "notionnel_prospectif", "notionnel_prospectif_employeur",
+]);
+
+/**
+ * Ce que devient une pension DÉJÀ LIQUIDÉE, année après année.
+ *
+ * Portage de `RevalorisationServie` dans `cout.py`, dont le raisonnement est
+ * écrit en entier. En deux phrases : un système notionnel a DEUX règles
+ * d'indexation — le compte pendant la carrière, la pension une fois servie —,
+ * et le dépôt n'en portait qu'une, les masses figeant la pension en euros
+ * constants pour toute la retraite. C'était une indexation sur les prix qui ne
+ * disait pas son nom, correcte pour le scénario 1 où c'est la loi, fausse pour
+ * les cinq autres, dont le diviseur de conversion suppose déjà que la rente
+ * suit le taux qui a fait grossir le compte.
+ */
+export class RevalorisationServie {
+  constructor(simulateur, premiereAnnee, derniereAnnee) {
+    const macro = simulateur.macro;
+    const indexation = simulateur.indexation;
+    // L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
+    // qu'elle sert : voir CLES_PROSPECTIVES.
+    this.anneeBascule = simulateur.parametres.annee_bascule;
+    this.premiereAnnee = premiereAnnee;
+    this.derniereAnnee = Math.max(derniereAnnee, premiereAnnee);
+    let index = 1;
+    this._index = new Map([[this.premiereAnnee, index]]);
+    for (let annee = this.premiereAnnee + 1; annee <= this.derniereAnnee; annee += 1) {
+      // Le taux d'indexation est NOMINAL, les masses sont en euros constants :
+      // on le déflate année par année, et non en bloc.
+      index *= (1 + indexation.taux(annee).taux) * macro.coefficientPrix(annee, annee - 1);
+      this._index.set(annee, index);
+    }
+  }
+
+  _valeur(annee) {
+    const borne = Math.min(Math.max(annee, this.premiereAnnee), this.derniereAnnee);
+    return this._index.get(borne);
+  }
+
+  /**
+   * Ce que vaut en `annee`, en euros constants, un euro de pension liquidé en
+   * `anneeLiquidation`. Vaut exactement 1 l'année de la liquidation et avant.
+   */
+  coefficient(anneeLiquidation, annee) {
+    if (annee <= anneeLiquidation) return 1;
+    const depart = this._valeur(anneeLiquidation);
+    return depart ? this._valeur(annee) / depart : 1;
+  }
+}
+
+/**
  * Masse de pensions par système, une année donnée, et le nombre de couples.
  *
  * Les cinq cohortes que représente une génération de la grille sont parcourues
@@ -213,7 +284,7 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
  * propre année. Les faire basculer le même jour ferait avancer la trajectoire
  * par marches de cinq ans au lieu de la faire monter.
  */
-function masses(liste, population, annee, poidsCas) {
+function masses(liste, population, annee, poidsCas, revalorisation) {
   const total = {};
   for (const cle of CLES_MASSES) total[cle] = 0;
   let vivants = 0;
@@ -225,10 +296,20 @@ function masses(liste, population, annee, poidsCas) {
     if (part <= 0) continue;
     let poids = 0;
     let poidsGarantie = 0;
+    let poidsRevalorise = 0;
+    let poidsRevaloriseProspectif = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
-      if (annee < pensionne.anneeLiquidation + decalage) continue;
+      const liquidation = pensionne.anneeLiquidation + decalage;
+      if (annee < liquidation) continue;
       const effectif = population.effectif(annee - pensionne.generation - decalage, annee);
       poids += effectif;
+      // Le troisième poids porte la revalorisation des pensions SERVIES, et il
+      // faut qu'il soit à part : le coefficient dépend de l'année de
+      // liquidation, qui n'est pas la même pour les cinq cohortes de la tranche.
+      poidsRevalorise += effectif * revalorisation.coefficient(liquidation, annee);
+      poidsRevaloriseProspectif += effectif * revalorisation.coefficient(
+        Math.max(liquidation, revalorisation.anneeBascule), annee,
+      );
       // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt.
       if (annee >= pensionne.anneeOuvertureGarantie + decalage) {
         poidsGarantie += effectif;
@@ -237,7 +318,10 @@ function masses(liste, population, annee, poidsCas) {
     if (poids <= 0) continue;
     vivants += 1;
     for (const cle of CLES_MASSES) {
-      const poidsCle = cle === COMPOSANTE_GARANTIE ? poidsGarantie : poids;
+      let poidsCle = poids;
+      if (cle === COMPOSANTE_GARANTIE) poidsCle = poidsGarantie;
+      else if (CLES_PROSPECTIVES.has(cle)) poidsCle = poidsRevaloriseProspectif;
+      else if (CLES_REVALORISEES.has(cle)) poidsCle = poidsRevalorise;
       total[cle] += part * poidsCle * pensionne.pensions[cle];
     }
   }
@@ -666,13 +750,13 @@ class Cout {
  * produit, mise à l'échelle par un ancrage calculé sur cette même dernière
  * année : les deux expressions coïncident exactement à la jonction.
  */
-function construireAvenir(liste, depenses, population, simulateur, poids) {
+function construireAvenir(liste, depenses, population, simulateur, poids, revalorisation) {
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
   const dernierePubliee = depenses.derniereAnnee;
 
   const ancrageMasses = masses(liste, population, dernierePubliee,
-                              poids(dernierePubliee)).total;
+                              poids(dernierePubliee), revalorisation).total;
   if (ancrageMasses.actuel <= 0) {
     return new Avenir([], 0, 0, anneeEuros, Fiabilite.ESTIMEE);
   }
@@ -698,7 +782,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids) {
   const lignes = [];
   for (let annee = depenses.premiereAnneeVentilee; annee <= HORIZON; annee += 1) {
     const poidsAnnee = poids(annee);
-    const total = masses(liste, population, annee, poidsAnnee).total;
+    const total = masses(liste, population, annee, poidsAnnee, revalorisation).total;
     if (total.actuel <= 0) continue;
     const cotisations = massesCotisations(liste, population, annee, poidsAnnee);
     const projete = annee > dernierePubliee;
@@ -812,10 +896,18 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   const poids = ponderation(simulateur, mode, casTypes);
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
+  // La seconde règle d'indexation, construite une fois pour les deux régimes de
+  // la page. Elle part de la plus ancienne liquidation de la grille : un
+  // coefficient ne se rattrape pas, il se cumule depuis le départ en retraite.
+  const premiereLiquidation = liste.length
+    ? Math.min(...liste.map((p) => p.anneeLiquidation)) - DEMI_TRANCHE
+    : HORIZON;
+  const revalorisation = new RevalorisationServie(simulateur, premiereLiquidation, HORIZON);
 
   const lignes = [];
   for (const annee of depenses.annees()) {
-    const { total, vivants } = masses(liste, population, annee, poids(annee));
+    const { total, vivants } = masses(liste, population, annee, poids(annee),
+                                      revalorisation);
     if (total.actuel <= 0) continue;
     lignes.push(new CoutAnnuel(
       annee,
@@ -834,7 +926,8 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // Le contrefactuel ne peut jamais valoir mieux qu'« estimé » : la dépense
   // observée est certifiée, le rapport qui la corrige ne l'est pas et ne peut
   // pas l'être.
-  const avenir = construireAvenir(liste, depenses, population, simulateur, poids);
+  const avenir = construireAvenir(liste, depenses, population, simulateur, poids,
+                                  revalorisation);
   return new Cout(
     lignes,
     avenir,
