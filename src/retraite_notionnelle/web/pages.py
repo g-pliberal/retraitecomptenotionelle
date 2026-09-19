@@ -2864,7 +2864,7 @@ def _aide_profil(profil: str) -> str:
     if debut == fin:
         return "le revenu saisi vaut pour toutes les années de la carrière"
     return (f"le revenu saisi est celui du milieu de carrière : ×{g.nombre(debut, 2)} "
-            f"au premier emploi, ×{g.nombre(fin, 2)} au dernier")
+            f"au premier emploi, ×{g.nombre(fin, 2)} après une carrière complète")
 
 
 def _bascule_unite(saisie: Saisie, echelle: "Echelle") -> str:

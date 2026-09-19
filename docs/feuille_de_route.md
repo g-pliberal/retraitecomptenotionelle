@@ -5782,6 +5782,57 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   `tests/test_moteur.py`, `tests/test_simulateur.py`, `tests/test_cout.py` ; les
   témoins.
 
+- **Septembre 2026, le profil salarial cesse de réécrire le passé.** Trouvé en
+  vérifiant les chiffres de l'action 24 : sous le réglage actuel, le pot de
+  droits acquis valait 419 792 € pour un départ à 60 ans et 397 677 € pour un
+  départ à 67, sur ce qui devait être le même passé. La cause n'était pas la
+  conversion mais la CONSTRUCTION DE LA CARRIÈRE. La déformation salariale
+  (60 % à 130 % du niveau saisi en profil ascendant) se mesurait sur
+  l'avancement dans la carrière de l'ASSURÉ : une même année civile s'y
+  trouvait moins avancée dans une carrière plus longue, donc moins payée.
+  Décider de travailler jusqu'à 67 ans rabaissait donc ses propres salaires de
+  1996 à 2025.
+
+  *Mesuré avant correction* : −5,2 % sur les salaires d'avant 2026 en profil
+  ascendant entre 60 et 67 ans, −8,4 % en fortement ascendant. Douze des treize
+  cas types portent un profil déformé, seul le SMIC carrière complète est plat.
+  Pas d'inversion de signe — testé de 58 à 70 ans, la pension monte toujours —
+  mais un biais : le site annonçait +83,3 % de gain à travailler de 60 à 67 ans
+  dans le système actuel, contre +79,3 % à passé inchangé. **Quatre points, et
+  ils avantageaient le système actuel**, dont le salaire de référence ne retient
+  que les meilleures années. Les scénarios notionnels, eux, ne bougeaient que de
+  trois dixièmes de point.
+
+  *L'étalon retenu* : la durée d'assurance requise pour le taux plein, PAR
+  GÉNÉRATION — 157 trimestres pour 1940, 172 pour 1975 —, que l'assuré ne
+  choisit pas. Au-delà d'une carrière complète, l'avancement plafonne. Un
+  ancrage unique à 64 ans avait été essayé d'abord et écarté : anachronique
+  pour les générations qui liquidaient à 60 ou 65, il coupait le passé de 1940
+  de 6,4 % contre 2,1 % pour 2000, ce qui redressait la trajectoire de la page
+  Coût de plus d'un demi-point de PIB — un artefact, pas un résultat.
+
+  *Ce que la correction a déplacé* : 58 cellules sur 91. Les carrières
+  complètes ne bougent pas (−0,4 % à +0,4 %) ; tout l'effet porte sur les
+  départs précoces, dont la carrière est plus courte qu'une carrière complète et
+  qui n'atteignent donc plus le haut de la fourchette salariale — militaire
+  −16,4 %, agent de conduite SNCF −11,6 %, catégorie active −8,6 %, IEG −7,4 %.
+  Les ÉCARTS entre systèmes, qui sont ce que le site affiche, ne bougent pas :
+  médiane +0,0 point sur les trois comparaisons. Page Coût : 19,39 % à 19,49 %
+  du PIB en 2070, soldes moyens déplacés de deux à trois centièmes de point.
+
+  *Au passage*, la lecture des tables par génération passe par un chargeur
+  mémorisé commun (`charger_table_par_generation`), là où `carriere.py` et
+  `scenarios/actuel.py` auraient analysé le même fichier chacun de son côté.
+
+  **Fichiers.** `_duree_carriere_complete` dans `carriere.py` et
+  `dureeCarriereComplete` dans `moteur/js/carriere.js` ;
+  `charger_table_par_generation` et `valeur_par_generation` dans
+  `donnees/chargement.py`, dont `TableParGeneration` de `scenarios/actuel.py`
+  hérite désormais la mémorisation ; l'aide du profil dans `web/pages.py` et son
+  portage, qui annonce le haut de la fourchette « après une carrière complète »
+  et non « au dernier emploi » ; `docs/methodologie.md` ; le bloc d'exemple du
+  `README.md` ; `tests/test_moteur.py` ; les témoins.
+
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 
 **La demande.** « J'aimerais qu'on fasse la liste des avantages en retraite

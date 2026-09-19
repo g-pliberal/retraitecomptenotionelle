@@ -11,7 +11,7 @@ import copy
 import csv
 import json
 import pickle
-from bisect import bisect_left
+from bisect import bisect_left, bisect_right
 from dataclasses import dataclass
 from enum import IntEnum
 from pathlib import Path
@@ -227,6 +227,60 @@ def charger_serie_annuelle(
     if cle is not None:
         _SERIES_EN_CACHE[cle] = serie
     return serie
+
+
+#: Tables indexées sur la GÉNÉRATION et non sur l'année, mémorisées sur la même
+#: signature de fichier que les séries annuelles. Elles ne peuvent pas passer par
+#: ``charger_serie_annuelle`` : leur clé s'écrit en années décimales — 1961,667
+#: pour « né à compter du 1er septembre 1961 » —, là où une série annuelle est
+#: indexée par des entiers.
+_TABLES_GENERATION_EN_CACHE: dict[tuple, tuple[dict, tuple]] = {}
+
+
+def charger_table_par_generation(
+    chemin: Path, colonne: str,
+) -> tuple[dict[float, tuple[float, Fiabilite]], tuple[float, ...]]:
+    """Charge un CSV ``generation,<colonne>,fiabilite``, mémorisé.
+
+    Rend la table et ses générations triées. Un fichier absent rend deux
+    conteneurs vides : c'est à l'appelant de dire ce qu'il en fait, la fiche du
+    régime reprenant en général la main.
+    """
+    try:
+        etat = chemin.stat()
+        cle = (str(chemin), etat.st_mtime_ns, etat.st_size, colonne)
+    except OSError:
+        return {}, ()
+    if cle in _TABLES_GENERATION_EN_CACHE:
+        return _TABLES_GENERATION_EN_CACHE[cle]
+
+    table: dict[float, tuple[float, Fiabilite]] = {}
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        for ligne in csv.DictReader(lignes):
+            table[float(ligne["generation"])] = (
+                float(ligne[colonne]),
+                Fiabilite.depuis_texte(ligne["fiabilite"]),
+            )
+    resultat = (table, tuple(sorted(table)))
+    _TABLES_GENERATION_EN_CACHE[cle] = resultat
+    return resultat
+
+
+def valeur_par_generation(
+    table: dict[float, tuple[float, Fiabilite]],
+    generations: tuple[float, ...],
+    generation: float,
+) -> tuple[float, Fiabilite] | None:
+    """Dernière valeur dont la génération ne dépasse pas celle demandée.
+
+    En deçà de la première génération du fichier, ``None`` : le paramètre ne
+    dépendait pas encore de la génération à cette date-là.
+    """
+    if not generations or generation < generations[0]:
+        return None
+    rang = bisect_right(generations, generation)
+    return table[generations[rang - 1]]
 
 
 # Le chargeur C de libyaml quand il est là, le chargeur Python sinon : à

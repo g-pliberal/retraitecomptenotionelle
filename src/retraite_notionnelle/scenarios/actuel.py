@@ -50,7 +50,11 @@ from pathlib import Path
 from ..calendrier import DateMois, en_mois
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import Parametres
-from ..donnees.chargement import Fiabilite
+from ..donnees.chargement import (
+    Fiabilite,
+    charger_table_par_generation,
+    valeur_par_generation,
+)
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation, SalairesForfaitaires,
                               PeriodeRegime)
@@ -229,28 +233,16 @@ class TableParGeneration:
     """
 
     def __init__(self, racine: Path, fichier: str, colonne: str) -> None:
-        self._table: dict[float, tuple[float, Fiabilite]] = {}
-        chemin = racine / "reference" / "legislation" / fichier
-        if not chemin.exists():
-            return
-        with chemin.open(encoding="utf-8") as flux:
-            lignes = (l for l in flux if not l.lstrip().startswith("#"))
-            for ligne in csv.DictReader(lignes):
-                self._table[float(ligne["generation"])] = (
-                    float(ligne[colonne]),
-                    Fiabilite.depuis_texte(ligne["fiabilite"]),
-                )
-        self._generations = sorted(self._table)
+        # La lecture passe par le chargeur mémorisé, comme les séries
+        # annuelles : ces tables sont relues à chaque construction de scénario,
+        # et `carriere.py` lit la même durée requise pour l'étalon de son
+        # profil salarial. Un seul analyseur, donc, et une seule sémantique.
+        self._table, self._generations = charger_table_par_generation(
+            racine / "reference" / "legislation" / fichier, colonne
+        )
 
     def valeur(self, generation: float) -> tuple[float, Fiabilite] | None:
-        if not self._table or generation < self._generations[0]:
-            return None
-        applicable = self._generations[0]
-        for candidate in self._generations:
-            if candidate > generation:
-                break
-            applicable = candidate
-        return self._table[applicable]
+        return valeur_par_generation(self._table, self._generations, generation)
 
 
 class DureesRequises(TableParGeneration):

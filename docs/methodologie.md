@@ -1833,7 +1833,21 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
   compris. `profil_carriere` décrit une progression de *carrière*, pas d'emploi :
   le niveau propre à chaque métier s'y superpose, il ne remet pas la progression à
   zéro. Un métier deux fois mieux payé que le précédent double le revenu au point
-  du changement, il ne renvoie pas l'assuré au bas de sa grille ;
+  du changement, il ne renvoie pas l'assuré au bas de sa grille.
+
+  **Son étalon est la carrière complète de la GÉNÉRATION** — la durée
+  d'assurance requise pour le taux plein, 157 trimestres pour 1940 et 172 pour
+  1975 —, et non la carrière de l'assuré. La distinction n'est pas
+  théorique : tant que le dénominateur était la carrière de l'assuré, choisir
+  de travailler plus longtemps rabaissait le salaire de toutes les années
+  ANTÉRIEURES, parce qu'une même année s'y trouvait moins « avancée ». Mesuré
+  le 19 septembre 2026, allonger une carrière de 60 à 67 ans rabaissait de
+  5,2 % les salaires d'avant 2026 en profil ascendant et de 8,4 % en profil
+  fortement ascendant, ce qui surestimait de quatre points le gain à travailler
+  plus longtemps dans le système actuel, dont le salaire de référence ne retient
+  que les meilleures années. Au-delà d'une carrière complète, la progression
+  PLAFONNE : c'est pourquoi le site annonce le haut de la fourchette « après une
+  carrière complète » et non « au dernier emploi » ;
 * **une année civile n'a qu'un statut.** Le moteur ne connaît qu'une ligne par
   année — un salaire est déclaré à l'année, les régimes liquident à l'année. L'année
   d'un changement revient donc au métier qui en occupe le plus de mois, et à

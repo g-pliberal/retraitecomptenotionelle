@@ -18,6 +18,7 @@ from retraite_notionnelle.moteur.age_reference import AgeReference
 from retraite_notionnelle.moteur.conversion import Convertisseur
 from retraite_notionnelle.moteur.fusion import CritereTaux, RegleFusion, fusionner
 from retraite_notionnelle.moteur.indexation import Indexation
+from retraite_notionnelle.simulateur import Simulateur
 
 
 @pytest.fixture(scope="module")
@@ -430,6 +431,62 @@ def test_coefficient_ne_revalorise_pas_l_annee_du_versement(macro):
     assert indexation.coefficient(2000, 2001) == pytest.approx(
         1 + indexation.taux(2001).taux
     )
+
+
+# -- profil de rémunération ---------------------------------------------------
+
+
+def test_le_passe_ne_depend_pas_de_l_age_de_depart():
+    """Travailler plus longtemps ne doit pas réécrire les salaires d'avant.
+
+    L'étalon de la déformation salariale a longtemps été la carrière de
+    l'assuré, si bien qu'une même année civile se trouvait moins « avancée »
+    dans une carrière plus longue, donc moins payée. Allonger sa carrière
+    rabaissait alors son propre passé — de 5,2 % entre 60 et 67 ans en profil
+    ascendant, de 8,4 % en fortement ascendant —, ce qui surestimait de quatre
+    points le gain à travailler plus longtemps dans le système actuel, dont le
+    salaire de référence ne retient que les meilleures années.
+
+    L'étalon est désormais la carrière complète de la GÉNÉRATION, que l'assuré
+    ne choisit pas. Le passé est donc strictement invariant, et ce test le dit
+    sur les trois profils, y compris pour un départ au-delà du taux plein, où
+    l'avancement plafonne.
+    """
+    simulateur = Simulateur(Parametres())
+    for profil in ("plat", "ascendant", "fortement_ascendant"):
+        passes = []
+        for age in (58, 60, 64, 67, 70):
+            carriere = simulateur.carriere_simple(
+                annee_naissance=1975, sexe="H",
+                affiliation="salarie_prive_non_cadre",
+                age_debut=21, age_liquidation=age, profil_carriere=profil,
+            )
+            passes.append(sum(l.revenu for l in carriere.lignes if l.annee < 2026))
+        assert passes[0] == pytest.approx(passes[-1]), profil
+        assert all(p == pytest.approx(passes[0]) for p in passes), profil
+
+
+def test_l_etalon_du_profil_suit_la_generation():
+    """Deux générations n'ont pas la même carrière complète, ni le même profil.
+
+    157 trimestres pour 1940, 172 pour 1975 : à âge d'entrée et de départ
+    égaux, l'aînée atteint donc le haut de sa fourchette salariale plus tôt que
+    la cadette. Un étalon unique — 43 ans pour tout le monde — serait un
+    anachronisme, et il coupait le passé des vieilles générations de 6,4 %
+    quand celui des récentes ne bougeait que de 2,1 %.
+    """
+    simulateur = Simulateur(Parametres())
+
+    def dernier_relatif(annee_naissance):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee_naissance, sexe="H",
+            affiliation="salarie_prive_non_cadre",
+            age_debut=21, age_liquidation=60, profil_carriere="ascendant",
+        )
+        lignes = sorted(carriere.lignes, key=lambda l: l.annee)
+        return lignes[-1].revenu / lignes[0].revenu
+
+    assert dernier_relatif(1940) > dernier_relatif(1975)
 
 
 # -- âge de référence --------------------------------------------------------

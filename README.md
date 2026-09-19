@@ -563,22 +563,22 @@ Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
-1. Système actuel                                                  40,358€     32,210€    2,684€     réf.
-2. Notionnel rétroactif, part salariale                             7,963€      6,355€      530€   -80.3%
-3. Notionnel dès 2026, part salariale                              26,927€     21,490€    1,791€   -33.3%
-4. Notionnel rétroactif, salariale + patronale                     43,975€     35,096€    2,925€    +9.0%
-5. Notionnel dès 2026, salariale + patronale                       32,257€     25,744€    2,145€   -20.1%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        41,262€     32,931€    2,744€    +2.2%
+1. Système actuel                                                  39,841€     31,797€    2,650€     réf.
+2. Notionnel rétroactif, part salariale                             7,889€      6,297€      525€   -80.2%
+3. Notionnel dès 2026, part salariale                              26,638€     21,259€    1,772€   -33.1%
+4. Notionnel rétroactif, salariale + patronale                     43,620€     34,813€    2,901€    +9.5%
+5. Notionnel dès 2026, salariale + patronale                       31,904€     25,462€    2,122€   -19.9%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        40,939€     32,673€    2,723€    +2.8%
 --------------------------------------------------------------------------------------------------------
-   hors répartition (RAFP), servi à part, identique aux 6           1,424€      1,137€       95€         
+   hors répartition (RAFP), servi à part, identique aux 6           1,410€      1,126€       94€         
 --------------------------------------------------------------------------------------------------------
-   + rente du pilier capitalisé, scénario 6 seul                    1,750€      1,396€      116€         
-   = total servi par le scénario 6                                 43,011€     34,327€    2,861€    +6.6%
+   + rente du pilier capitalisé, scénario 6 seul                    1,729€      1,380€      115€         
+   = total servi par le scénario 6                                 42,668€     34,053€    2,838€    +7.1%
 
 Qui verse la cotisation, en euros courants cumulés :
-  part salariale           136,434 €   scénarios 2 et 3
-  part patronale           522,341 €   soit 79% du total
-  total                    658,775 €   scénarios 4 et 5
+  part salariale           135,050 €   scénarios 2 et 3
+  part patronale           517,830 €   soit 79% du total
+  total                    652,880 €   scénarios 4 et 5
   contribution employeur publique trouvée sur 29 année(s)
 ```
 

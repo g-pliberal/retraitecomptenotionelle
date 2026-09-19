@@ -22,7 +22,12 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
 
-from .donnees.chargement import charger_periodes_non_travaillees, charger_yaml
+from .donnees.chargement import (
+    charger_periodes_non_travaillees,
+    charger_table_par_generation,
+    charger_yaml,
+    valeur_par_generation,
+)
 from .donnees.macro import DonneesMacro
 from .calendrier import (
     MOIS_PAR_AN,
@@ -708,22 +713,42 @@ class Carriere:
 
         interruptions = interruptions or {}
         motifs = charger_periodes_non_travaillees(macro.racine)
-        # Le profil de rémunération se déforme le long de la carrière, et sa
-        # longueur se mesure EN MOIS : la mesurer en années civiles la faisait
-        # dépendre de l'existence d'une dernière année incomplète, si bien
-        # qu'un départ décalé d'un mois déformait tout le profil et faisait
-        # BAISSER la pension d'un travail plus long. Le dénominateur est la
-        # dernière année pleine, comme avant : une carrière commençant et
-        # finissant au 1er janvier retrouve exactement ses anciennes valeurs.
-        duree_mois = max(fin.rang - 12 - debut.rang, 12)
+        # L'ÉTALON DE LA DÉFORMATION EST LA CARRIÈRE COMPLÈTE DE LA GÉNÉRATION,
+        # et non la carrière de l'assuré. Le dénominateur était la seconde,
+        # mesurée en mois, et il faisait dépendre de la DATE DE DÉPART le
+        # salaire de toutes les années ANTÉRIEURES : deux assurés au même passé
+        # n'avaient pas le même passé dès que l'un décidait de travailler plus
+        # longtemps. Mesuré le 19 septembre 2026 sur le profil ascendant,
+        # allonger la carrière de 60 à 67 ans rabaissait de 5,2 % les salaires
+        # d'avant 2026 — 8,4 % en profil fortement ascendant —, ce qui
+        # surestimait de quatre points le gain à travailler plus longtemps dans
+        # le système actuel, dont le salaire de référence ne retient que les
+        # meilleures années. Un premier symptôme de la même cause avait déjà été
+        # corrigé : mesurée en années civiles, la longueur dépendait de
+        # l'existence d'une dernière année incomplète, et un départ décalé d'un
+        # mois faisait BAISSER la pension d'un travail plus long.
+        #
+        # L'étalon est donc la durée d'assurance requise de la génération —
+        # 157 trimestres pour 1940, 172 pour 1975 —, qui ne doit rien au choix
+        # de l'assuré. Le retrait de douze mois est conservé : il place la
+        # dernière année d'une carrière complète au sommet de la fourchette,
+        # qui est ce que la table des déformations annonce. Au-delà d'une
+        # carrière complète, l'avancement PLAFONNE : la progression salariale
+        # n'est pas sans fin, et sans ce plafond les années au-delà du taux
+        # plein sortiraient de la fourchette affichée.
+        duree_mois = _duree_carriere_complete(
+            macro.racine, annee_naissance + (mois_naissance - 1) / 12
+        )
         salaire_moyen_reference = indice_salaire_moyen(macro, annee_debut, annee_fin)
 
         lignes: list[AnneeCarriere] = []
         for annee in annees:
             part = fraction_annee(annee, debut, fin)
             trimestres_maximum = trimestres_civils(mois_travailles(annee, debut, fin))
-            avancement = (max(DateMois(annee, 1).rang, debut.rang)
-                          - debut.rang) / duree_mois
+            avancement = min(
+                (max(DateMois(annee, 1).rang, debut.rang) - debut.rang) / duree_mois,
+                1.0,
+            )
             deformation = _deformation(profil_carriere, avancement)
             # Ce que chaque métier a occupé de l'année. La somme vaut les mois
             # travaillés de l'année : les périodes la découpent sans reste.
@@ -788,6 +813,29 @@ DEFORMATIONS = {
     "ascendant": (0.60, 0.70),
     "fortement_ascendant": (0.50, 1.40),
 }
+
+
+#: Durée d'assurance requise retenue quand la génération est antérieure au
+#: premier millésime du fichier — 1900, soit avant toute génération que le
+#: modèle traverse. Trente-sept ans et demi : la durée d'avant la loi de 1993.
+TRIMESTRES_CARRIERE_COMPLETE_DEFAUT = 150
+
+
+def _duree_carriere_complete(racine: Path, generation: float) -> int:
+    """Étalon de la déformation salariale, en mois, pour une génération.
+
+    C'est la durée d'assurance requise pour le taux plein — la seule mesure de
+    « carrière complète » que le droit publie, et elle est indexée sur l'année
+    de naissance, donc insensible à la date de départ que l'assuré choisit.
+    """
+    table, generations = charger_table_par_generation(
+        racine / "reference" / "legislation" / "duree_assurance_requise.csv",
+        "trimestres",
+    )
+    valeur = valeur_par_generation(table, generations, generation)
+    trimestres = (TRIMESTRES_CARRIERE_COMPLETE_DEFAUT if valeur is None
+                  else valeur[0])
+    return max(int(round(trimestres * 3)) - 12, 12)
 
 
 def bornes_deformation(profil: str) -> tuple[float, float]:

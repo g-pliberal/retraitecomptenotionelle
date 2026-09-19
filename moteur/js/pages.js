@@ -2414,7 +2414,7 @@ function aideProfil(profil) {
     return "le revenu saisi vaut pour toutes les années de la carrière";
   }
   return `le revenu saisi est celui du milieu de carrière : ×${g.nombre(debut, 2)} `
-    + `au premier emploi, ×${g.nombre(fin, 2)} au dernier`;
+    + `au premier emploi, ×${g.nombre(fin, 2)} après une carrière complète`;
 }
 
 /**

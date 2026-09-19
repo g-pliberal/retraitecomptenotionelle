@@ -575,19 +575,23 @@ export class Carriere {
     const anneeFin = annees[annees.length - 1];
 
     const plages = interruptions || new Map();
-    // Le profil de rémunération se déforme le long de la carrière, et sa
-    // longueur se mesure EN MOIS : la mesurer en années civiles la faisait
-    // dépendre de l'existence d'une dernière année incomplète, si bien qu'un
-    // départ décalé d'un mois déformait tout le profil.
-    const dureeMois = Math.max(fin.rang - 12 - debut.rang, 12);
+    // L'ÉTALON DE LA DÉFORMATION EST LA CARRIÈRE COMPLÈTE DE LA GÉNÉRATION,
+    // et non la carrière de l'assuré : le dénominateur était la seconde, et il
+    // faisait dépendre de la DATE DE DÉPART le salaire de toutes les années
+    // antérieures. Voir `carriere.py`, qui porte la mesure et le motif.
+    const dureeMois = dureeCarriereComplete(
+      macro.paquet, annee_naissance + (mois_naissance - 1) / 12,
+    );
     const salaireMoyen = indiceSalaireMoyen(macro, anneeDebut, anneeFin);
 
     const lignes = [];
     for (const annee of annees) {
       const part = fractionAnnee(annee, debut, fin);
       const trimestresMaximum = trimestresCivils(moisTravailles(annee, debut, fin));
-      const avancement = (Math.max(new DateMois(annee, 1).rang, debut.rang)
-        - debut.rang) / dureeMois;
+      const avancement = Math.min(
+        (Math.max(new DateMois(annee, 1).rang, debut.rang) - debut.rang) / dureeMois,
+        1.0,
+      );
       const deforme = deformation(profil_carriere, avancement);
       // Ce que chaque métier a occupé de l'année. La somme vaut les mois
       // travaillés de l'année : les périodes la découpent sans reste.
@@ -647,6 +651,37 @@ export class Carriere {
  * refaire au bit près l'arithmétique des trois formules qu'elle remplace ;
  * `bornesDeformation` en reconstitue les deux bouts pour qui veut les afficher.
  */
+/**
+ * Durée d'assurance requise retenue quand la génération est antérieure au
+ * premier millésime du fichier. Trente-sept ans et demi : la durée d'avant la
+ * loi de 1993.
+ */
+export const TRIMESTRES_CARRIERE_COMPLETE_DEFAUT = 150;
+
+/**
+ * Étalon de la déformation salariale, en mois, pour une génération.
+ *
+ * C'est la durée d'assurance requise pour le taux plein — la seule mesure de
+ * « carrière complète » que le droit publie, et elle est indexée sur l'année de
+ * naissance, donc insensible à la date de départ que l'assuré choisit.
+ */
+function dureeCarriereComplete(paquet, generation) {
+  const table = paquet.durees_requises ?? {};
+  const generations = Object.keys(table).map(Number).sort((a, b) => a - b);
+  let trimestres = TRIMESTRES_CARRIERE_COMPLETE_DEFAUT;
+  if (generations.length > 0 && generation >= generations[0]) {
+    let applicable = generations[0];
+    for (const candidate of generations) {
+      if (candidate > generation) {
+        break;
+      }
+      applicable = candidate;
+    }
+    [trimestres] = table[String(applicable)];
+  }
+  return Math.max(Math.round(trimestres * 3) - 12, 12);
+}
+
 export const DEFORMATIONS = {
   plat: [1.0, 0.0],
   ascendant: [0.6, 0.7],
