@@ -5322,18 +5322,53 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   propre convention, la proposition est donc légèrement moins bien financée
   que le système qu'elle remplace.**
 
-  **Ce qui décide encore de deux points de PIB.** Retirer le poste ENTIER
-  suppose que tout ce qu'il contient disparaisse avec les exonérations. Ce
-  n'est vrai qu'en partie : il porte aussi de la CSG, du forfait social et de
-  la taxe sur les salaires, dont une part finance des droits NON CONTRIBUTIFS
-  — minimum vieillesse, validation des périodes de chômage — que les scénarios
-  notionnels ne servent pas davantage, ce qui plaide pour les retirer aussi,
-  et une part qui n'a rien à voir avec l'un ni l'autre. Le dépôt ne sait pas
-  faire ce partage : aucune de ses sources ne ventile ce poste. La sensibilité
-  est mesurée, et elle est énorme — si l'on ne retirait que la moitié du
-  poste, le solde moyen serait de −0,26 % ; si l'on n'en retirait rien,
-  de +0,76 %. **C'est aujourd'hui la plus grande incertitude de la page, et
-  elle est plus grande que l'écart entre les deux systèmes comparés.**
+  **CE QUE CE POSTE CONTIENT VRAIMENT, ET IL NE CONTIENT PAS CE QU'ON
+  CROYAIT.** Lu le 19 septembre 2026 dans le rapport à la Commission des
+  comptes de la Sécurité sociale d'octobre 2025, compte de la CNAV et compte
+  du Fonds de solidarité vieillesse. Deux choses en sortent, et la première
+  démolit l'argument par lequel on avait commencé.
+
+  *La compensation des allègements n'est pas dans ce poste.* Le compte de la
+  CNAV ne porte AUCUNE ligne de TVA, et c'est par la TVA que l'État compense
+  les allègements généraux — elle en ferait 20 % des produits nets de la
+  branche MALADIE en 2025. Ce que la retraite perd à l'allègement lui revient
+  donc par une autre voie que ses impôts affectés, probablement par la
+  répartition des ressources entre branches, et retirer ce poste au nom de la
+  compensation serait retirer la mauvaise somme pour la bonne raison.
+
+  *Ce que le poste porte, en revanche, est de la CSG de solidarité.* Les
+  impôts et taxes affectés au système de retraite valent 57,1 Md€ en 2024, et
+  **21,7 d'entre eux — 38 % — sont les ressources du Fonds de solidarité
+  vieillesse**, c'est-à-dire de la CSG. Ce fonds ne sert qu'à deux choses : il
+  prend en charge des cotisations pour des périodes non travaillées — 15,7 Md€
+  en 2024, dont 13,0 au titre du chômage et 2,4 au titre de la maladie — et il
+  paie le minimum vieillesse, 4,2 Md€. **Aucun scénario notionnel ne sert l'un
+  ni l'autre** : ils ne portent rien au compte pendant une année de chômage, et
+  la garantie vieillesse qui remplace le minimum vieillesse est financée à
+  part, par l'impôt, hors du compte des cotisants. C'est mot pour mot la règle
+  que le dépôt applique déjà à la CNAF et à l'Unédic — LA RECETTE SUIT LE
+  DROIT —, et le Fonds de solidarité vieillesse y échappait parce que sa
+  recette entre dans les comptes sous un autre nom. Le reste du poste — taxe
+  sur les salaires, forfait social, contribution sociale de solidarité des
+  sociétés, et les taxes des régimes agricoles — finance des pensions
+  ordinaires, et rien ne justifie de l'ôter.
+
+  *Ce que cela donne.* Retirer la seule CSG du Fonds de solidarité vieillesse,
+  et non le poste entier, place le solde moyen 2026-2070 du scénario 6 à
+  **−0,02 % du PIB** : l'équilibre, à un centième près, contre −1,13 % pour le
+  système actuel. Les trois lectures s'ordonnent ainsi — −1,28 % en retirant
+  tout le poste, −0,02 % en n'en retirant que la solidarité, +0,76 % en n'en
+  retirant rien. **La troisième est indéfendable, la première retire trop, et
+  c'est la deuxième qui suit la règle du dépôt.** Elle n'est pas encore
+  appliquée : il y faut une série certifiée des ressources du fonds, et c'est
+  l'action 35 qui la porte.
+
+  *Une date à retenir pour cette série.* Le Fonds de solidarité vieillesse est
+  SUPPRIMÉ au 1er janvier 2026 par l'article 24 de la loi de financement de la
+  sécurité sociale pour 2025 ; ses missions et son financement passent à la
+  CNAV, dont le compte porte depuis lors la CSG directement. La série devra
+  donc raccorder deux périmètres, comme elle le fait déjà pour les caisses que
+  la DREES renumérote.
 
   **Ce que la page affiche en attendant.** L'ancienne convention, parce qu'un
   chiffre de tête ne se change pas sans que celui qui le publie l'ait décidé.
