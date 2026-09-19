@@ -6823,6 +6823,23 @@ l'adresse ; le docstring de `g.lien` le disait déjà — « l'ancre de section 
 peut pas s'y ajouter, la place est prise » —, et deux appels l'avaient contourné
 à la main.
 
+**La clé de lecture démentait les chiffres qu'elle explique.** Elle est écrite
+une fois pour toutes, et l'action 39 ne l'avait pas relue : au-dessus de quatre
+montants nets, elle annonçait « Montants BRUTS et au centime, comme la caisse
+les verse : avant CSG, CRDS et impôt », puis « un brut sur un brut, donc plus
+bas qu'un taux calculé sur des nets » au-dessus d'un taux de remplacement
+calculé, précisément, sur des nets. Elle disait donc au lecteur de corriger
+mentalement dans le MAUVAIS SENS le seul chiffre de la page qu'il ne peut pas
+vérifier. Elle suit désormais le mode, et nomme le prélèvement en clair —
+9,10 % de CSG, CRDS et Casa. Un test exige que chaque mode nomme son unité et
+seulement la sienne.
+
+Le glossaire, lui, sert les deux modes ET les pages qui n'ont pas de bascule :
+il disait « Ici, un brut sur un brut », il dit maintenant que les deux termes
+sont pris dans la même unité, quelle qu'elle soit. La page Méthode, qui
+expliquait que tout le modèle est brut, ajoute que le simulateur sait afficher
+des nets — le calcul, lui, reste brut de bout en bout.
+
 **Fichiers.** `bascule()` et son bloc CSS dans `web/gabarit.py` et
 `moteur/js/gabarit.js` ; `_bascule_montants`, `_bascule_unite` et `_champ_revenu`
 dans `web/pages.py` et `moteur/js/pages.js` ; feuille de style et témoins

@@ -5439,6 +5439,37 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):
             assert 'role="group"' in bloc and 'aria-label="Montants"' in bloc
 
 
+def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique(contexte):
+    """Une clé de lecture fausse est pire qu'absente : elle enseigne l'erreur.
+
+    Elle a dit « Montants BRUTS et au centime, comme la caisse les verse :
+    avant CSG, CRDS et impôt » au-dessus de quatre montants nets, et « un brut
+    sur un brut, donc plus bas qu'un taux calculé sur des nets » au-dessus d'un
+    taux de remplacement calculé, précisément, sur des nets — en disant donc au
+    lecteur de corriger mentalement dans le mauvais sens le seul chiffre de la
+    page qu'il ne peut pas vérifier.
+    """
+    saisie = {"naissance": "1985-03-01", "sexe": "F",
+              "statut": "salarie_prive_non_cadre", "debut": "2007-09-01",
+              "liquidation": "2049-03-01", "unite_revenu": "euros_mois",
+              "salaire": "2500"}
+    attendu = {
+        "net": ("Montants <strong>nets</strong>", "un net sur un net"),
+        "brut": ("Montants <strong>bruts</strong>", "un brut sur un brut"),
+    }
+    for mode, (montants, rapport) in attendu.items():
+        corps = rendre(contexte, "/simuler", {**saisie, "montants": mode})[1]
+        assert montants in corps, f"{mode} : la clé de lecture ne dit pas l'unité"
+        assert rapport in corps, f"{mode} : le taux de remplacement est mal décrit"
+        # Et surtout : elle ne dit pas l'autre.
+        autre_montants, autre_rapport = attendu["brut" if mode == "net" else "net"]
+        assert autre_montants not in corps, f"{mode} : la clé annonce l'autre unité"
+        assert autre_rapport not in corps, f"{mode} : le taux annonce l'autre unité"
+    # Le glossaire, lui, sert les deux modes ET les pages qui n'ont pas de
+    # bascule : il ne peut donc nommer ni l'un ni l'autre.
+    assert "Ici, un brut sur un brut" not in g.GLOSSAIRE["taux de remplacement"]
+
+
 def test_aucune_adresse_du_site_ne_porte_deux_croisillons(contexte):
     """Le bogue qui a cassé la bascule, et que rien ne voyait venir.
 

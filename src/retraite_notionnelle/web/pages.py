@@ -3208,16 +3208,38 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
             "mêmes, et il n'y a rien à convertir."
         )
 
+    # La clé de lecture SUIT LE MODE, sous peine de démentir les chiffres
+    # qu'elle explique. Elle a dit « montants bruts, avant CSG » au-dessus de
+    # montants nets, et « un brut sur un brut, donc plus bas qu'un taux calculé
+    # sur des nets » au-dessus d'un taux de remplacement calculé, précisément,
+    # sur des nets. Une clé de lecture fausse est pire qu'absente : elle
+    # enseigne l'erreur à qui prend la peine de la lire.
+    if saisie.en_net:
+        prelevements = (
+            "Montants <strong>nets</strong> et au centime, tels qu'ils "
+            "arrivent sur le compte : après CSG, CRDS et Casa — 9,10 %, le "
+            "taux plein, appliqué ici à tout le monde — et avant impôt sur le "
+            "revenu, comme le revenu d'activité saisi plus haut. Le "
+            "<strong>taux de remplacement</strong> rapporte la pension "
+            "annuelle au dernier revenu d'activité ramené à l'année pleine — "
+            "un net sur un net, donc plus haut qu'un taux calculé sur des "
+            "bruts."
+        )
+    else:
+        prelevements = (
+            "Montants <strong>bruts</strong> et au centime, comme la caisse "
+            "les verse : avant CSG, CRDS et impôt, comme le revenu d'activité "
+            "saisi plus haut. Le <strong>taux de remplacement</strong> "
+            "rapporte la pension annuelle au dernier revenu d'activité ramené "
+            "à l'année pleine — un brut sur un brut, donc plus bas qu'un taux "
+            "calculé sur des nets."
+        )
+
     return g.bulle(
         "De quand sont ces chiffres, et en quels euros",
         f"{quand} {unites} Ce que compare cette page, ce sont quatre façons de "
         "CALCULER une pension de départ, pas quatre façons de la revaloriser "
-        "ensuite. Montants <strong>bruts</strong> et au centime, comme la "
-        "caisse les verse : avant CSG, CRDS et impôt, comme le revenu "
-        "d'activité saisi plus haut. Le <strong>taux de remplacement</strong> "
-        "rapporte la pension annuelle au dernier revenu d'activité ramené à "
-        "l'année pleine — un brut sur un brut, donc plus bas qu'un taux calculé "
-        "sur des nets.",
+        f"ensuite. {prelevements}",
     )
 
 
@@ -8005,8 +8027,10 @@ rapportés à l'emploi salarié intérieur. C'est-à-dire <strong>avant</strong>
 cotisations salariales, CSG, CRDS et impôt sur le revenu, et <strong>hors</strong>
 cotisations patronales. C'est l'assiette sur laquelle les régimes appellent leurs
 cotisations, donc la seule grandeur qu'un compte notionnel puisse enregistrer.
-Le taux de remplacement affiché rapporte un brut à un brut, et il est
-mécaniquement plus bas qu'un taux calculé sur des nets.</p>
+Le simulateur sait néanmoins AFFICHER des nets : une bascule convertit les
+pensions et les salaires au moment de les écrire, le calcul restant brut de bout
+en bout. Le taux de remplacement suit cette bascule — un brut sur un brut, plus
+bas qu'un taux calculé sur des nets, ou un net sur un net.</p>
 <p>Le revenu d'activité se saisit en <strong>euros d'aujourd'hui</strong>. Le
 modèle, lui, ne connaît que le <strong>multiple du salaire moyen</strong>, seule
 unité qui garde son sens sur quatre-vingts ans. La page fait donc une division,

@@ -2266,7 +2266,8 @@ GLOSSAIRE = {
     "taux de remplacement":
         "La première pension rapportée au dernier revenu d'activité : 60 % "
         "veut dire que la pension vaut 60 % de ce que vous gagniez juste avant "
-        "de partir. Ici, un brut sur un brut.",
+        "de partir. Les deux termes sont pris dans la MÊME unité : deux "
+        "bruts, ou deux nets là où la page affiche des nets.",
     "assiette déplafonnée":
         "L'assiette est la part du revenu sur laquelle on cotise. Déplafonnée "
         ": on cotise sur tout le revenu, sans le plafond au-delà duquel le "
