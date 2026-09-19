@@ -3551,11 +3551,62 @@ toucher aux moteurs de pension.
 
      **Le résultat sur la moisson moderne justifie à lui seul le garde-fou** :
      412 lectures sur 5 662 ne s'accordent pas, soit 7,3 %, et la moisson
-     tombe de 5 662 à **5 250 valeurs contrôlées**. Les conflits mêlent des
+     tombe de 5 662 à 5 250 valeurs. *(Le mot « contrôlées » écrit ici d'abord
+     était trop fort, et la passe suivante le corrige : seules 20 % des valeurs
+     sont lues par deux rapports et donc réellement confrontées.)* Les conflits mêlent des
      révisions légitimes — 1 282 248 contre 1 302 845 assurés cotisants à la
      MSA salariés en 2014, 1,6 % d'écart — et des lectures franchement
      fausses : 78 874 contre 571 193 pour la même case. Sans confrontation,
      les secondes seraient passées pour des données.
+
+   **Septième passe, 19 septembre 2026 : les 412 conflits examinés, et quatre
+   bogues qu'ils ont dénoncés.** Demandé : relancer la moisson avec le
+   garde-fou et vérifier les conflits. Je n'en avais regardé que cinq. Les
+   examiner tous a montré qu'ils n'étaient pas surtout des révisions de la
+   DSS, mais surtout des fautes de mon lecteur. Quatre corrections en sont
+   sorties, et la moisson passe de 5 250 valeurs et 412 conflits à **6 807
+   valeurs et 195 conflits, dont plus aucune contradiction interne**.
+
+   1. **Une fiche porte PLUSIEURS « Données générales ».** Le titre les
+      distingue — « toutes branches », « Ensemble des risques », « régime
+      unifié », « du régime vieillesse complémentaire des indépendants » — et
+      je les fondais : un même rapport donnait alors deux valeurs pour la même
+      case, 8 et 685 en charges nettes de la MSA salariés en 2013. Le titre
+      entre donc dans la clé.
+   2. **Mais le titre brut ne peut pas servir de clé** entre rapports : la
+      mise en page écrit « Donnéesgénérales » ici et « Données générales » là.
+      Le garder tel quel a fait tomber la confrontation de 30 % à 19 % des
+      valeurs — j'avais réparé une fuite en en ouvrant une autre. Le titre est
+      donc réduit à son QUALIFICATIF, sans le numéro, la puce ni les mots
+      « données générales » eux-mêmes.
+   3. **« Retraite complémentaire obligatoire des NON-SALARIÉS AGRICOLES »
+      porte `salariesagricoles` en sous-chaîne.** Le RCO des exploitants
+      tombait donc sur la MSA salariés, qui se contredisait elle-même — 659 061
+      contre 522 534 cotisants en 2012, 2 503 203 contre 506 549 bénéficiaires.
+      Son motif, que j'avais supprimé en refondant la table, est remis en tête.
+   4. **L'Agirc et l'Arrco n'ont fusionné qu'au 1er janvier 2019.** Avant, ce
+      sont deux régimes, deux fiches, deux comptes ; les fondre sous un seul
+      code mélangeait leurs séries d'avant-fusion. Trois codes désormais.
+
+   **Ce que le garde-fou ne fait PAS, et c'est la nuance qui manquait.** Il ne
+   confronte que ce qui est lu deux fois : **1 353 valeurs sur 6 807, soit
+   20 %**. Les 80 % restantes ne sont pas « contrôlées » — elles sont
+   seulement non contredites, ce qui n'est pas la même chose. Écrire
+   « valeurs contrôlées » pour l'ensemble, comme la passe précédente l'a fait,
+   était trop fort.
+
+   **En revanche, le contrôle par source tierce est excellent.** Cotisants
+   vieillesse de la moisson, confrontés à ce que les autres sources disent :
+   CNIEG 2023, 135 775 — la fiche 4.1 dit 135 775, à l'unité ; SNCF 2023,
+   112 621 — la fiche 4.1 dit 112 621, à l'unité ; CNRACL 2021, 2 189 791 — la
+   fiche 4.1 ET le recueil de la caisse disent 2 189 791, à l'unité. Seul
+   l'écart CNIEG 2021 subsiste, 135 944 contre 135 427, soit 0,4 %, la fiche
+   du régime et le tableau de synthèse ne tombant pas exactement d'accord.
+
+   **La leçon, pour la prochaine fois.** Un garde-fou qui rejette 7 % des
+   lectures ne dit pas que la source est mauvaise : il dit d'abord d'aller
+   lire ce qu'il rejette. Les quatre bogues étaient tous dans mon code, pas
+   dans les rapports.
 
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
@@ -5152,3 +5203,38 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   d'écart sur les cotisants de la MSA salariés en 2014 — et des lectures
   franchement fausses, 78 874 contre 571 193 pour la même case. Sans
   confrontation, les secondes seraient passées pour des données.
+
+- **Septembre 2026, action 35, volet A, point 3, septième passe : les 412
+  conflits examinés.** Demandé : relancer la moisson avec le garde-fou et
+  vérifier les conflits. Je n'en avais regardé que cinq, et j'en avais conclu
+  un peu vite qu'ils mêlaient révisions de la DSS et lectures fausses. Les
+  examiner tous dit autre chose : **ils dénonçaient surtout des bogues de mon
+  propre lecteur**. Quatre corrections en sortent, et la moisson passe de 5 250
+  valeurs et 412 conflits à **6 807 valeurs et 195 conflits, dont plus aucune
+  contradiction interne** — zéro cas où un rapport se contredit lui-même,
+  contre dix-sept au départ.
+
+  Les quatre, dans l'ordre où ils sont apparus : une fiche porte PLUSIEURS
+  « Données générales » que le titre distingue et que je fondais ; le titre
+  brut ne peut pas servir de clé entre rapports, la mise en page l'écrivant
+  tantôt avec ses espaces tantôt sans, si bien que ma première correction a
+  ouvert une autre fuite — la confrontation tombant de 30 % à 19 % ; « retraite
+  complémentaire obligatoire des NON-SALARIÉS AGRICOLES » porte
+  `salariesagricoles` en sous-chaîne et tombait sur la MSA salariés ; et
+  l'Agirc et l'Arrco, fusionnées seulement au 1er janvier 2019, étaient fondues
+  sous un seul code, ce qui mélangeait leurs séries d'avant-fusion.
+
+  **Une nuance qui manquait, et qui corrige la passe précédente.** Le garde-fou
+  ne confronte que ce qui est lu deux fois : 1 353 valeurs sur 6 807, soit
+  20 %. Les 80 % restantes ne sont pas « contrôlées », elles sont seulement non
+  contredites. J'avais écrit « valeurs contrôlées » pour l'ensemble ; c'était
+  trop fort, et c'est corrigé au point 3.
+
+  **Le contrôle par source tierce, lui, est excellent** : CNIEG 2023 à 135 775
+  et SNCF 2023 à 112 621, soit exactement ce que dit la fiche 4.1 ; CNRACL 2021
+  à 2 189 791, soit exactement ce que disent la fiche 4.1 ET le recueil de la
+  caisse. Trois coïncidences à l'unité sur quatre contrôles.
+
+  **La leçon.** Un garde-fou qui rejette 7 % des lectures ne dit pas que la
+  source est mauvaise : il dit d'aller lire ce qu'il rejette. Les quatre bogues
+  étaient dans mon code, pas dans les rapports.

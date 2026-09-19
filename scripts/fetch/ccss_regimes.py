@@ -94,19 +94,31 @@ CANONIQUES: tuple[tuple[str, str], ...] = (
     ("brancheMALADIE", "rsi_maladie"),          # jamais fondu dans le RSI vieillesse
     ("brancheVIEILLESSE", "rsi_vieillesse"),
     ("independants", "rsi"),
-    ("retraitecomplementaireobligatoiredesnon", "msa_exploitants_complementaire"),
+    # « salaries » tout court attrapait « NON-salariés » : deux fiches d'un
+    # même rapport tombaient sur msa_salaries, qui se contredisait alors
+    # lui-même — 659 061 contre 522 534 cotisants en 2012. Les motifs agricoles
+    # exigent donc « agricole », et jamais le mot seul.
+    # Le RCO des exploitants s'intitule « retraite complémentaire obligatoire
+    # des NON-SALARIÉS AGRICOLES », qui porte « salariesagricoles » en
+    # sous-chaîne : sans cette ligne en tête, il tombait sur msa_salaries, qui
+    # se contredisait alors lui-même — 659 061 contre 522 534 cotisants.
+    ("retraitecomplementaireobligatoire", "msa_exploitants_complementaire"),
+    ("nonsalariesagricoles", "msa_exploitants"),
     ("exploitantsagricoles", "msa_exploitants"),
-    ("exploitants", "msa_exploitants"),
     ("salariesagricoles", "msa_salaries"),
     ("agricoledessalaries", "msa_salaries"),
-    ("salaries", "msa_salaries"),
+    ("agricoledesexploitants", "msa_exploitants"),
     ("cnracl", "cnracl"),
     ("territoriaux", "cnracl"),
     ("canssm", "canssm"),
-    ("mines", "canssm"),
+    ("danslesmines", "canssm"),
+    ("desmines", "canssm"),
+    # L'Agirc et l'Arrco n'ont fusionné qu'au 1er janvier 2019 : avant, ce sont
+    # DEUX régimes, avec deux fiches et deux comptes. Les fondre sous un seul
+    # code mélangeait leurs séries d'avant-fusion.
     ("agircarrco", "agirc_arrco"),
-    ("agirc", "agirc_arrco"),
-    ("arrco", "agirc_arrco"),
+    ("agirc", "agirc"),
+    ("arrco", "arrco"),
     ("sncf", "sncf"),
     ("ratp", "ratp"),
     ("crpcen", "crpcen"),
@@ -116,8 +128,7 @@ CANONIQUES: tuple[tuple[str, str], ...] = (
     ("fspoeie", "fspoeie"),
     ("enim", "enim"),
     ("invalidesdelamarine", "enim"),
-    ("cnavplcomplementaire", "cnavpl_complementaire"),
-    ("cnavpl", "cnavpl_complementaire"),
+    ("cnavpl", "cnavpl"),
     ("professionsliberales", "cnavpl"),
     ("ircantec", "ircantec"),
     ("banquedefrance", "banque_de_france"),
@@ -135,13 +146,29 @@ CANONIQUES: tuple[tuple[str, str], ...] = (
 #: portent de façon instable.
 ACCENTS = str.maketrans("àâäéèêëîïôöùûüç", "aaaeeeeiioouuuc")
 
+#: Ces caisses ont DEUX fiches dans le même rapport, une pour leur régime de
+#: base et une pour leur complémentaire, et le motif ne les distingue pas.
+#: Les fondre faisait dire à un même rapport deux chiffres pour la même
+#: case — 57 536 et 53 269 cotisants à la CNBF en 2012 —, et douze des
+#: dix-sept conflits « un rapport contre lui-même » venaient de là.
+A_DEUX_ETAGES = frozenset({"cnbf", "cnavpl", "msa_exploitants", "rci"})
+
 
 def canonique(titre: str) -> str | None:
-    """Le code de caisse d'un titre de fiche, ou ``None`` si on ne le reconnaît pas."""
+    """Le code de caisse d'un titre de fiche, ou ``None`` si on ne le reconnaît pas.
+
+    Le suffixe ``_complementaire`` n'est posé que pour les caisses qui ont
+    vraiment les deux étages : l'Agirc-Arrco ou l'Ircantec SONT des régimes
+    complémentaires, et leur accoler le suffixe n'apprendrait rien.
+    """
     nu = titre.lower().translate(ACCENTS)
     nu = "".join(c for c in nu if c.isalnum())
+    if "nonsalaries" in nu and "agricole" not in nu:
+        return None          # « régimes de non-salariés non agricoles » : pas une caisse
     for motif, code in CANONIQUES:
         if motif.lower() in nu:
+            if code in A_DEUX_ETAGES and "complementaire" in nu:
+                return code + "_complementaire"
             return code
     return None
 
@@ -174,6 +201,31 @@ def rapports_tous() -> dict[int, str]:
     if not choisis:
         raise LookupError("aucun rapport à la CCSS sur la page qui les liste")
     return dict(sorted(choisis.items()))
+
+
+#: Ce qui, dans un titre de tableau, ne distingue rien : le numéro, la puce,
+#: les mots « données générales » eux-mêmes. Ce qui reste — « toutes
+#: branches », « ensemble des risques », « régime unifié » — est le
+#: qualificatif qui sépare deux tableaux d'une même fiche.
+BRUIT_TITRE = re.compile(
+    r"tableau\s*\d*|donn[ée]es?\s*g[ée]n[ée]rales?|[^\w\s]", re.I
+)
+
+
+def _cle_tableau(ligne: str) -> str:
+    """Le qualificatif d'un tableau, réduit à ce qui le distingue.
+
+    Le titre doit servir de CLÉ D'UN RAPPORT À L'AUTRE : c'est lui qui sépare
+    « Données générales — toutes branches » de la vieillesse seule. Mais la
+    mise en page l'écrit « Donnéesgénérales » ici et « Données générales » là,
+    et le garder brut fragmentait la clé entre millésimes : la confrontation
+    entre rapports, qui est tout l'intérêt du garde-fou, tombait de 30 % à
+    19 % des valeurs. On réduit donc le titre à son qualificatif, sans
+    espaces, sans accents et sans ponctuation.
+    """
+    nu = _replie(ligne).lower().translate(ACCENTS)
+    nu = BRUIT_TITRE.sub(" ", nu)
+    return " ".join(nu.split())
 
 
 def sommaire(lignes: list[str]) -> dict[str, str]:
@@ -246,8 +298,15 @@ def lire_rapport(annee_rapport: int, octets: bytes) -> tuple[dict, int]:
         if code is None:
             orphelins += 1
             continue
+        # UNE MÊME FICHE PORTE PLUSIEURS « DONNÉES GÉNÉRALES ». Le titre
+        # distingue « toutes branches » de la vieillesse seule, « Ensemble des
+        # risques », « régime unifié », le complémentaire des indépendants…
+        # Les fondre faisait dire à un même rapport deux valeurs pour la même
+        # case — 8 et 685 en charges nettes de la MSA salariés en 2013 — et
+        # fabriquait cinquante-quatre conflits « un rapport contre lui-même ».
+        tableau = _cle_tableau(ligne)
         for libelle, annees in lire_tableau(lignes, rang, colonnes).items():
-            cible = trouves.setdefault((code, regime), {}).setdefault(libelle, {})
+            cible = trouves.setdefault((code, regime, tableau), {}).setdefault(libelle, {})
             for a, v in annees.items():
                 if a < annee_rapport:      # jamais une prévision
                     cible[a] = v
@@ -277,20 +336,28 @@ def _reconcilier(serie: dict) -> tuple[list[dict], list[dict]]:
     valeurs: list[dict] = []
     conflits: list[dict] = []
     for regime, libelles in serie.items():
-        for libelle, annees in libelles.items():
+        for (tableau, libelle), annees in libelles.items():
             for annee, lectures in sorted(annees.items()):
                 montants = [v for v, _ in lectures]
-                pivot = min(montants, key=abs)
-                echelle = max(abs(pivot), 1e-9)
-                accord = all(abs(m - pivot) / echelle <= ECART_TOLERE for m in montants)
+                # L'échelle est le plus GRAND en valeur absolue. Prendre le
+                # plus petit faisait diviser par zéro dès qu'un rapport lisait
+                # 0 — « ×709 000 000 000 » pour un écart de 0 à 709 —, ce qui
+                # rendait le classement des conflits illisible sans rien
+                # changer au verdict.
+                echelle = max(max(abs(m) for m in montants), 1e-9)
+                etendue = max(montants) - min(montants)
+                accord = etendue / echelle <= ECART_TOLERE
                 enregistrement = {
-                    "regime": regime, "serie": libelle, "annee": annee,
+                    "regime": regime, "tableau": tableau,
+                    "serie": libelle, "annee": annee,
                     "lectures": [{"valeur": v, "rapport": r} for v, r in lectures],
                 }
+                enregistrement["ecart_relatif"] = etendue / echelle
                 if accord:
                     premier = min(lectures, key=lambda x: x[1])
                     valeurs.append({
-                        "regime": regime, "serie": libelle, "annee": annee,
+                        "regime": regime, "tableau": tableau,
+                        "serie": libelle, "annee": annee,
                         "valeur": premier[0], "rapport": premier[1],
                         "lectures": len(lectures),
                     })
@@ -330,9 +397,9 @@ def main() -> int:
         n = sum(len(v) for r in trouves.values() for v in r.values())
         print(f"  {annee} : {len(trouves):>2} régimes, {n:>4} valeurs"
               f"{f', {orphelins} tableaux sans régime' if orphelins else ''}")
-        for (code, titre), libelles in trouves.items():
+        for (code, titre, tableau), libelles in trouves.items():
             for libelle, annees in libelles.items():
-                cible = serie.setdefault(code, {}).setdefault(libelle, {})
+                cible = serie.setdefault(code, {}).setdefault((tableau, libelle), {})
                 titres_vus.setdefault(code, set()).add(titre)
                 for a, v in annees.items():
                     cible.setdefault(a, []).append((v, annee))
