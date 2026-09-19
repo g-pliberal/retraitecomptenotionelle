@@ -5310,8 +5310,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de 1,80 en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de 46 % : il se lit comme la marge dont ce système
+  niveaux, et un coefficient de 1,62 en 2070 pour le scénario 3 ne se lit donc
+  pas comme une économie de 38 % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas

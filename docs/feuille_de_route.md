@@ -911,8 +911,8 @@ d'équilibre de chaque système est désormais CALCULÉ, année par année, de 2
 excédent : il relève les pensions jusqu'à l'équilibre, ou les abaisse, par un
 facteur commun à toutes les pensions de l'année et un fonds de réserve qui
 lisse. Tant que ce facteur n'est pas appliqué, les courbes de la page Coût sont
-celles d'un système qui ne se pilote pas, et le coefficient de 1,87 du
-scénario 3 en 2070 se lit trop facilement comme une économie de 46 %.
+celles d'un système qui ne se pilote pas, et le coefficient de 1,62 du
+scénario 3 en 2070 se lit trop facilement comme une économie de 38 %.
 
 **Sources.** Aucune à récupérer : tout est là. Le mécanisme, en revanche, se
 décrit — le coefficient suédois (`balansindex`), qui n'ajuste que le
