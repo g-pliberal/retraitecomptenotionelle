@@ -3136,12 +3136,19 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   de +0,61 % à −0,04 %, le 3 de +2,43 % à +1,79 %. Le système actuel ne bouge
   pas : il encaisse tout, et son solde reste celui du COR.
 
-- *Ce qui reste du volet A* : la série d'effectifs de COTISANTS (point 3), et
-  la ligne des cinq points capitalisés (point 5). Et une décision qui
-  n'appartient pas au modèle : la page affiche toujours la convention
-  `rapport`, la plus sévère des deux, alors que la convention `assiette` du
-  programme donne **+0,12 %** de solde moyen. Un chiffre de tête ne se change
-  pas sans que celui qui le publie l'ait décidé.
+- *La page affiche la convention du programme depuis le 19 septembre 2026.*
+  Le défaut de `calculer_cout` est passé à `assiette`, le portage JavaScript a
+  reçu son `AssietteActivite` et les deux champs que le solde annuel porte en
+  plus, le paquet de données transporte les deux postes de l'assiette, et les
+  deux notes de la page qui expliquaient l'ancienne convention ont été
+  réécrites. Le scénario 6 affiche donc **+0,12 %** de solde moyen 2026-2070 et
+  un coefficient de 1,10 en 2070, contre −1,13 % pour le système actuel.
+  L'ancienne convention reste calculable et mesurée, comme
+  `ponderation="egale"`.
+- *Ce qui reste du volet A* : la série d'effectifs de COTISANTS (point 3), qui
+  refermerait l'autre moitié de l'écart entre taux légal et taux encaissé, et
+  la ligne des cinq points capitalisés (point 5), pour que la page distingue
+  l'effort contributif de 23 % de la recette de système de 18 %.
 
 **Ce qui reste du volet A** : la certification de l'assiette et les trois
 variantes ci-dessus (points 1 et 4, désormais un seul chantier) ; la série d'effectifs de COTISANTS
@@ -4046,3 +4053,16 @@ scénario ».
   une autre** : deux tolérances de plus dans `_valeurs`, vérifiées sur les
   quatre séries déjà certifiées, ont rendu lisible une série qui ne l'était
   qu'une année sur deux.
+
+- **Septembre 2026, action 35, la page bascule.** Le programme a tranché : la
+  page affiche sa convention — les 18 % prélevés à plat sur l'assiette mesurée
+  —, et non plus le rapport de taux légaux. Le scénario 6 passe de −0,73 % à
+  **+0,12 %** de solde moyen 2026-2070, contre −1,13 % pour le système actuel.
+  Le portage a coûté un module JavaScript de plus (`assiette.js`), quatre
+  champs au solde annuel, deux postes au paquet de données et une ligne de
+  préchargement dans `index.html`. Les deux notes de la page qui expliquaient
+  l'ancienne convention disent maintenant sur quoi les 18 % s'appliquent, et ce
+  que l'autre lecture donnerait. Ce qu'il faut en retenir : **une convention
+  qu'on sait calculer des deux façons se change en un mot** — c'est ce qui a
+  permis de la discuter sur des chiffres pendant trois jours avant de la
+  publier.

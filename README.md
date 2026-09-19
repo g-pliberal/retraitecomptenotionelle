@@ -800,7 +800,7 @@ contrôle et non identité.
 | 3. Notionnel dès 2026, part salariale | −1,32 % | +1,79 % | **1,80** |
 | 4. Notionnel rétroactif, salariale + patronale | +4,20 % | +2,06 % | 1,12 |
 | 5. Notionnel dès 2026, salariale + patronale | −1,33 % | −0,04 % | 1,08 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,20 % | **−0,73 %** | **1,00** |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,20 % | **+0,12 %** | **1,10** |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -846,24 +846,25 @@ le plafond, chiffre que le COR publie dans son rapport annuel et que le modèle
 retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
 dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
 77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
-change le sens du tableau pour ce scénario : son solde moyen passe de +3,75 %
-du PIB à −0,73 %, son coefficient de 2070 de 1,53 à 1,00, et l'excédent qu'il
-affichait devient un léger déficit — moins creusé que celui du système actuel,
-qui reste à −1,13 %. Les quatre autres scénarios notionnels ne changent que ce qui
+change le sens du tableau pour ce scénario : son excédent moyen passe de
++3,75 % du PIB à +0,12 %, et son coefficient de 2070 de 1,53 à 1,10. Il reste
+le seul des trois systèmes rétroactifs à ne pas afficher de marge confortable,
+et il reste très au-dessus du système actuel, qui est à −1,13 %. Les quatre autres scénarios notionnels ne changent que ce qui
 est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans
 tous les cas, et leur recette ne bouge pas.
 
-Deux choses que ce calcul ne fait pas, et toutes deux jouent en faveur du
-scénario 6. Les ressources qui ne sont pas cotisées (impôts et taxes affectés,
-subventions d'équilibre) sont reconduites telles quelles. Et le taux auquel les
-18 % sont comparés est celui qui ACQUIERT des droits, non tout ce qui rentre :
-la contribution d'équilibre générale et la contribution d'équilibre technique
-de l'Agirc-Arrco, deux points et demi de plus sur un salaire du privé,
-n'ouvrent aucun droit et sont pourtant encaissées. Le modèle sait aussi
-calculer la lecture inverse, où les 18 % sont prélevés à plat sur l'assiette
-mesurée : le scénario 6 y est excédentaire de 0,12 % du PIB en moyenne. Les
-deux se défendent, `docs/limites.md` §5 dit ce qui les sépare, et la page
-affiche la plus sévère.
+**Dix-huit pour cent de quoi ?** De l'assiette des revenus d'activité :
+salaires et traitements bruts plus revenu mixte des non-salariés, **1 249 Md€
+en 2024**, soit 42,6 % du PIB. Elle est certifiée chez l'INSEE
+(`assiette_activite.csv`) et recoupée par une seconde route qui ne doit rien à
+l'INSEE — l'inversion du tableau 2.11 du rapport du COR, à 3,9 % près. Le
+système de retraite y prélève aujourd'hui 32,8 % de ressources en tout ; la
+proposition en prélèverait 18. Le modèle sait aussi calculer la lecture
+inverse, où les 18 % subissent la même déperdition que les taux légaux
+d'aujourd'hui — allègements généraux, assiettes réduites : le scénario 6 y
+serait déficitaire de 0,73 % du PIB. Cette lecture suppose que la proposition
+garde la même architecture d'exonérations, ce que son texte ne dit pas ;
+`docs/limites.md` §5 dit ce qui sépare les deux.
 
 **Et la recette suit le droit jusqu'au bout.** Le fonds de solidarité
 vieillesse finance par la CSG deux choses que les scénarios notionnels ne
