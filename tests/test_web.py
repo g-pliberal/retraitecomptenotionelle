@@ -5295,3 +5295,39 @@ def test_le_mode_des_montants_voyage_dans_l_adresse(contexte):
     # Et le formulaire le renvoie quand on le soumet, par un champ caché.
     corps = rendre(contexte, "/simuler", {"naissance": "1975", "montants": "brut"})[1]
     assert '<input type="hidden" name="montants" value="brut">' in corps
+
+
+def test_le_taux_de_remplacement_parle_la_langue_du_mode(contexte):
+    """Le défaut que la question « obtient-on les mêmes chiffres ? » a révélé.
+
+    Le modèle calcule le taux de remplacement BRUT sur BRUT. Affiché tel quel à
+    côté de montants nets, il serait le seul chiffre de la page à parler
+    l'autre langue — et il mentirait dans un sens précis : une pension est
+    moins prélevée qu'un salaire, 9,1 % contre une vingtaine de points, si bien
+    que le taux NET dépasse le taux brut de plusieurs points. C'est un fait
+    connu du système français, et rarement montré.
+    """
+    commun = {"naissance": "1985-03-01", "sexe": "F",
+              "statut": "salarie_prive_non_cadre", "debut": "2007-09-01",
+              "liquidation": "2049-03-01", "unite_revenu": "euros_mois"}
+
+    def taux(parametres):
+        corps = rendre(contexte, "/simuler", parametres)[1]
+        lus = []
+        for bloc in corps.split('<div class="scenario">')[1:]:
+            glose = bloc.split('class="glose"')[1].split("</div>")[0]
+            plat = " ".join(re.sub(r"<[^>]+>", "", html.unescape(glose)).split())
+            trouve = re.search(r"(\d+,\d+) % · écart", plat)
+            assert trouve, plat[:120]
+            lus.append(float(trouve.group(1).replace(",", ".")))
+        return lus
+
+    en_brut = taux({**commun, "salaire": "3158", "montants": "brut"})
+    en_net = taux({**commun, "salaire": "2500", "montants": "net"})
+    assert len(en_brut) == 4
+    for brut, net in zip(en_brut, en_net):
+        assert net > brut, "le taux net doit dépasser le taux brut"
+        # Le rapport des deux prélèvements : 0,909 de pension contre environ
+        # 0,79 de salaire. Une fourchette large suffit — elle n'est pas là pour
+        # valider un dixième de point, mais pour attraper un taux resté brut.
+        assert 1.10 < net / brut < 1.20, f"{net} / {brut}"

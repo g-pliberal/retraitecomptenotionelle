@@ -5912,6 +5912,18 @@ le cas d'une cotisation obligatoire. Une rente à titre onéreux relèverait des
 prélèvements sur revenus du patrimoine, à 17,2 % sur une fraction du montant qui
 dépend de l'âge. La proposition ne tranche pas.
 
+**3 bis. Le taux de remplacement suit le mode, et il MONTE en net.** Le modèle
+le calcule brut sur brut. En mode net, le site le convertit — pension nette
+rapportée au dernier revenu net —, sans quoi il serait le seul chiffre de la
+page à parler l'autre langue. Le taux net dépasse alors le taux brut de
+plusieurs points : 44,7 % devient 51,4 % sur la carrière témoin. Ce n'est pas
+un artefact, c'est un fait du système français — une pension est prélevée de
+9,1 %, un salaire d'une vingtaine de points — et il est rarement montré. La
+conversion emprunte le rapport net/brut de la DERNIÈRE fiche de paie de la
+carrière, celle de l'année du départ, qui est l'année du dénominateur ; pour un
+statut sans fiche de paie, le taux reste brut faute de pouvoir le netter
+honnêtement.
+
 **4. Ce qui reste brut, et le restera.** Un CAPITAL notionnel et une ASSIETTE de
 cotisation n'ont pas de net : on ne « nette » pas un capital. Les tableaux de
 détail — décomposition par régime, capital, cotisations versées, contribution de
@@ -6357,7 +6369,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 1046 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 1047 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

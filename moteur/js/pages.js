@@ -3145,7 +3145,8 @@ function resultats(contexte, saisie) {
   // le même nombre y paraît donc trois fois, et c'est le propos — seul le
   // système 4 déplace la fiche de paie.
   const remuneration = comparaison.remuneration;
-  const montants = Montants.depuis(saisie, contexte.simulateur(comparaison.parametres));
+  const montants = Montants.depuis(
+    saisie, contexte.simulateur(comparaison.parametres), comparaison);
   const nets = {};
   if (remuneration !== null) {
     const referencePaie = remuneration.reference;
@@ -3216,7 +3217,8 @@ function resultats(contexte, saisie) {
   </div>${partage}
   <div class="barre ${cle}">${barre}</div>
   <div class="glose">${glose} · ${g.terme("taux de remplacement")}
-    ${g.pourcentage(tauxRemplacement)} · écart au système actuel : ${variationHtml}</div>
+    ${g.pourcentage(montants.tauxRemplacement(tauxRemplacement))} ·
+    écart au système actuel : ${variationHtml}</div>
 </div>`;
   };
 
@@ -3498,14 +3500,47 @@ function eurosSigne(montant, centimes = true) {
  * sont bruts par nature, et le site les laisse tels quels.
  */
 export class Montants {
-  constructor(net, tauxPension) {
+  constructor(net, tauxPension, rapportNetBrutSalaire = 0) {
     this.net = net;
     this.tauxPension = tauxPension;
+    // Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
+    // d'activité. Zéro quand le statut n'a pas de fiche de paie : le taux
+    // reste alors brut, faute de pouvoir le netter honnêtement.
+    this.rapportNetBrutSalaire = rapportNetBrutSalaire;
   }
 
-  static depuis(saisie, simulateur) {
+  static depuis(saisie, simulateur, comparaison = null) {
+    // Le rapport net/brut du salaire se lit sur la DERNIÈRE fiche de paie de
+    // la carrière, celle de l'année du départ : c'est l'année dont le revenu
+    // sert de dénominateur au taux de remplacement.
+    let rapport = 0;
+    const remuneration = comparaison ? comparaison.remuneration : null;
+    if (remuneration !== null && remuneration !== undefined) {
+      const derniere = remuneration.annees[remuneration.annees.length - 1]
+        .droitEnVigueur;
+      if (derniere.brut > 0) {
+        rapport = derniere.net / derniere.brut;
+      }
+    }
     return new Montants(saisie.enNet,
-      simulateur.baremePrelevements.pensions.tauxTotal);
+      simulateur.baremePrelevements.pensions.tauxTotal, rapport);
+  }
+
+  /**
+   * Le taux de remplacement, dans la langue du mode.
+   *
+   * Le modèle le calcule brut sur brut. Affiché à côté de montants NETS, il
+   * serait le seul chiffre de la page à parler l'autre langue — et il
+   * mentirait dans un sens précis : une pension est moins prélevée qu'un
+   * salaire, 9,1 % contre une vingtaine de points, si bien que le taux NET
+   * dépasse le taux brut de plusieurs points. C'est un fait connu, et rarement
+   * montré.
+   */
+  tauxRemplacement(tauxBrut) {
+    if (!this.net || this.rapportNetBrutSalaire <= 0) {
+      return tauxBrut;
+    }
+    return tauxBrut * (1 - this.tauxPension) / this.rapportNetBrutSalaire;
   }
 
   /** Une pension, une rente, une garantie : tout ce qui se sert après. */
