@@ -3645,7 +3645,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     )
     reference = max(constants.values()) or 1.0
 
-    montants = Montants.depuis(saisie, comparaison.parametres)
+    montants = Montants.depuis(saisie, comparaison.parametres, comparaison)
     annee_depart = carriere.annee_liquidation
     unite_reference = (
         "par mois, en euros d'aujourd'hui"
@@ -3732,7 +3732,8 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
   </div>{partage}
   <div class="barre {cle}">{barre}</div>
   <div class="glose">{glose} · {g.terme("taux de remplacement")}
-    {g.pourcentage(taux_remplacement)} · écart au système actuel : {variation_html}</div>
+    {g.pourcentage(montants.taux_remplacement(taux_remplacement))} ·
+    écart au système actuel : {variation_html}</div>
 </div>"""
 
     # La glose porte ce que le titre ne dit plus : DEPUIS QUAND la carrière est
@@ -4463,9 +4464,20 @@ class Montants:
     taux_pension: float
 
     @classmethod
-    def depuis(cls, saisie: Saisie, base: Parametres) -> "Montants":
+    def depuis(cls, saisie: Saisie, base: Parametres,
+               comparaison: Comparaison | None = None) -> "Montants":
         pensions = charger_prelevements(base.racine_donnees).pensions
-        return cls(net=saisie.en_net, taux_pension=pensions.taux_total)
+        # Le rapport net/brut du salaire se lit sur la DERNIÈRE fiche de paie
+        # de la carrière, celle de l'année du départ : c'est l'année dont le
+        # revenu sert de dénominateur au taux de remplacement.
+        rapport = 0.0
+        remuneration = getattr(comparaison, "remuneration", None)
+        if remuneration is not None:
+            derniere = remuneration.annees[-1].droit_en_vigueur
+            if derniere.brut > 0:
+                rapport = derniere.net / derniere.brut
+        return cls(net=saisie.en_net, taux_pension=pensions.taux_total,
+                   rapport_net_brut_salaire=rapport)
 
     def pension(self, brut: float) -> float:
         """Une pension, une rente, une garantie : tout ce qui se sert après."""
@@ -4474,6 +4486,30 @@ class Montants:
     def salaire(self, fiche) -> float:
         """Un salaire, lu sur la fiche de paie qui porte déjà les deux."""
         return fiche.net if self.net else fiche.brut
+
+    def taux_remplacement(self, taux_brut: float) -> float:
+        """Le taux de remplacement, dans la langue du mode.
+
+        Le modèle le calcule brut sur brut : une pension brute rapportée au
+        dernier revenu d'activité brut. Affiché à côté de montants NETS, il
+        deviendrait le seul chiffre de la page à parler l'autre langue — et il
+        mentirait dans un sens précis, car un même écart de brut se traduit par
+        un écart de net PLUS GRAND : une pension est moins prélevée qu'un
+        salaire, 9,1 % contre une vingtaine de points.
+
+        Le taux net vaut donc le taux brut multiplié par le rapport des deux
+        prélèvements. C'est un fait connu, et rarement montré : en France, le
+        taux de remplacement net dépasse le taux brut de plusieurs points.
+        """
+        if not self.net or self.rapport_net_brut_salaire <= 0:
+            return taux_brut
+        return taux_brut * (1.0 - self.taux_pension) / self.rapport_net_brut_salaire
+
+    #: Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
+    #: d'activité — le dénominateur du taux de remplacement. Zéro quand le
+    #: statut n'a pas de fiche de paie : le taux reste alors brut, faute de
+    #: pouvoir le netter honnêtement.
+    rapport_net_brut_salaire: float = 0.0
 
     @property
     def mot(self) -> str:
