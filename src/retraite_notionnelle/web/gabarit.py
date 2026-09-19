@@ -2187,6 +2187,11 @@ GLOSSAIRE = {
         "Le plancher de la proposition : à partir de 65 ans, ce qui manque "
         "pour l'atteindre est versé, payé par l'impôt. Il regarde votre seule "
         "pension, jamais celle du conjoint.",
+    "coût du travail":
+        "Ce que votre emploi coûte à votre employeur : votre salaire brut, "
+        "plus les cotisations qu'il verse par-dessus, moins l'allègement dont "
+        "il bénéficie sur les bas salaires. C'est le montant qui ne change pas "
+        "quand on déplace une cotisation.",
 }
 
 

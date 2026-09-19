@@ -21,6 +21,7 @@ import { ConstructeurCapitalisation } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
 import { EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
+import { BaremePrelevements, remunerationDeLaCarriere } from "./remuneration.js";
 import {
   DonneeInsuffisante, Fiabilite, fiabiliteDepuisTexte, nomFiabilite,
 } from "./serie.js";
@@ -55,7 +56,7 @@ export class Comparaison {
     carriere, actuel, notionnelRetroactif, notionnelProspectif,
     notionnelRetroactifEmployeur, notionnelProspectifEmployeur, notionnelLiberal,
     regimeFusionne, parametres, coefficientEurosConstants = 1.0,
-    dernierRevenuAnnualise = 0.0,
+    dernierRevenuAnnualise = 0.0, remuneration = null,
   }) {
     this.carriere = carriere;
     this.actuel = actuel;
@@ -73,6 +74,11 @@ export class Comparaison {
     //: liquidation. Dénominateur du taux de remplacement. Calculé par le
     //: simulateur, qui seul dispose des séries.
     this.dernier_revenu_annualise = dernierRevenuAnnualise;
+    //: Ce qu'un actif touche entre la bascule et son départ, sous le droit en
+    //: vigueur et sous la proposition. `null` pour qui a déjà liquidé — il ne
+    //: cotise plus — et pour tout statut dont `remuneration.js` ne sait pas
+    //: écrire la fiche de paie.
+    this.remuneration = remuneration;
   }
 
   /** Pension rapportée au dernier revenu d'activité, à la date du départ. */
@@ -381,6 +387,10 @@ export class Simulateur {
     // Aucune pension n'en dépend : les effectifs de retraités par caisse ne
     // servent qu'aux AGRÉGATS, où ils disent ce que chaque cas type pèse.
     this.effectifs = new EffectifsRetraites(paquet);
+    // Les prélèvements hors retraite : ils n'entrent dans AUCUNE pension. Ils
+    // ne servent qu'à la fiche de paie, qui dit ce qu'un actif touche pendant
+    // qu'il cotise.
+    this.baremePrelevements = new BaremePrelevements(paquet.prelevements_remuneration);
 
     this.indexation = new Indexation(this.macro, parametres);
     this.convertisseur = new Convertisseur(this.mortalite, parametres);
@@ -524,6 +534,10 @@ export class Simulateur {
         carriere.anneeLiquidation, this.parametres.annee_euros_constants,
       ),
       dernierRevenuAnnualise: dernierRevenuAnnualise(carriere, this.macro),
+      remuneration: remunerationDeLaCarriere(
+        carriere, this.macro, this.catalogue, this.affiliations,
+        this.parametres, this.baremePrelevements,
+      ),
     });
   }
 

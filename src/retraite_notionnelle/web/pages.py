@@ -3451,6 +3451,7 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
   <div class="fiches">{fiches}</div>
   {_resume_parcours(contexte, saisie)}
 </div>
+{_salaire_net(comparaison, saisie)}
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
@@ -4017,6 +4018,203 @@ départ.{g.bulle(
     "pension contributive. L'option « situation de foyer » du formulaire ne "
     "change qu'une chose : l'allocation d'isolement.",
 )}</p>""")
+
+
+def _euros_signe(montant: float, centimes: bool = True) -> str:
+    """Un montant qui est un ÉCART : il se lit avec son signe, positif compris."""
+    signe = "+" if montant > 0 else ""
+    ecrit = g.euros_centimes(montant) if centimes else g.euros(montant)
+    return f"{signe}{ecrit}"
+
+
+def _points(ecart: float) -> str:
+    """Un écart entre deux pourcentages, en POINTS et avec son signe.
+
+    « +1,4 % » se lirait comme une hausse relative de 1,4 %, dix fois plus
+    petite que ce que la ligne dit.
+    """
+    valeur = ecart * 100
+    signe = "+" if valeur > 0 else ""
+    return (f"{signe}{g.nombre(valeur, 1)} point"
+            + ("s" if abs(valeur) >= 2 else ""))
+
+
+def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
+    """Ce qu'un actif touche PENDANT qu'il cotise, dans les deux systèmes.
+
+    Le reste de la page compare des pensions, c'est-à-dire des montants qu'on
+    touchera dans trente ans. Ce bloc compare des salaires, c'est-à-dire des
+    montants qu'on touche le mois prochain — et c'est la seule ligne du site où
+    une réforme des retraites se lit sur une fiche de paie.
+
+    Il ne s'affiche pas pour tout le monde : un retraité ne cotise plus, et les
+    taux hors retraite du modèle sont ceux du régime général, donc ceux d'un
+    salarié du privé. Hors de ces deux cas, il n'y a rien à montrer, et mieux
+    vaut ne rien montrer qu'un net faux.
+
+    TROIS CHIFFRES OUVERTS, LE RESTE REPLIÉ. La page de résultats tient un
+    budget de mots et n'ouvre aucun tableau : ce bloc s'y plie. Le net
+    d'aujourd'hui, celui de la proposition, l'écart — puis la fiche de paie
+    entière, ligne à ligne, pour qui déplie.
+    """
+    remuneration = comparaison.remuneration
+    if remuneration is None:
+        return ""
+    reference = remuneration.reference
+    avant, apres = reference.droit_en_vigueur, reference.proposition
+    gain = remuneration.gain_net_mensuel
+
+    ouverture = "".join([
+        g.fiche(f"votre salaire net en {reference.annee}",
+                g.euros_centimes(avant.net / 12.0)),
+        g.fiche("avec le système 4", g.euros_centimes(apres.net / 12.0)),
+        g.fiche("par mois", _euros_signe(gain)),
+    ])
+    sens = "de plus" if gain >= 0 else "de MOINS"
+    duree = len(remuneration.annees)
+    cumul = remuneration.gain_net_cumule
+    reste = (
+        f" Sur les {duree} années qui vous séparent de la retraite : "
+        f"{_euros_signe(cumul, centimes=False)} en euros de {saisie.euros}."
+        if duree > 1 else ""
+    )
+    return f"""
+<h2 id="salaire-net">Et pendant que vous cotisez</h2>
+<p class="chapeau">Une réforme des retraites ne change pas que votre pension :
+elle change ce qui est prélevé sur votre travail, donc ce que vous touchez
+chaque mois. Les systèmes 1, 2 et 3 prélèvent la même chose — ils ne changent
+que ce qui est porté au compte. Le système 4, lui, y touche.</p>
+<div class="carte">
+  <div class="fiches">{ouverture}</div>
+  <p>Soit <strong>{_euros_signe(gain)} {sens} sur votre fiche de paie</strong>,
+  à coût du travail inchangé pour votre employeur.{reste}</p>
+  {_salaire_net_detail(comparaison, remuneration, saisie)}
+</div>"""
+
+
+def _salaire_net_detail(comparaison: Comparaison, remuneration,
+                        saisie: Saisie) -> str:
+    """La fiche de paie entière, et ce qu'il faut savoir pour la discuter."""
+    reference = remuneration.reference
+    avant, apres = reference.droit_en_vigueur, reference.proposition
+
+    def mois(montant: float) -> str:
+        return g.euros_centimes(montant / 12.0)
+
+    def ecart(apres_: float, avant_: float) -> str:
+        return _euros_signe((apres_ - avant_) / 12.0)
+
+    lignes = [
+        ["Ce que votre emploi coûte",
+         mois(avant.cout_du_travail), mois(apres.cout_du_travail),
+         '<span class="discret">inchangé</span>'],
+        ["Salaire brut", mois(avant.brut), mois(apres.brut),
+         ecart(apres.brut, avant.brut)],
+        ["<strong>Salaire net</strong>",
+         f"<strong>{mois(avant.net)}</strong>",
+         f"<strong>{mois(apres.net)}</strong>",
+         f"<strong>{ecart(apres.net, avant.net)}</strong>"],
+        ["Dont prélevé pour votre retraite",
+         mois(avant.retraite_totale), mois(apres.retraite_totale),
+         ecart(apres.retraite_totale, avant.retraite_totale)],
+        [f"Ce qui vous arrive, sur 100 € de {g.terme('coût du travail')}",
+         g.pourcentage(avant.part_qui_arrive),
+         g.pourcentage(apres.part_qui_arrive),
+         _points(apres.part_qui_arrive - avant.part_qui_arrive)],
+    ]
+    grille = g.tableau(
+        ["Par mois", "Systèmes 1 à 3", "Système 4", "Écart"],
+        lignes, ["", "nombre", "nombre", "nombre"],
+        titre=f"Votre fiche de paie en {reference.annee}, sous les quatre "
+              f"systèmes — {escape(remuneration.libelle_statut)}",
+        entete_de_ligne=True,
+    )
+
+    alerte = ""
+    if remuneration.bute_sur_le_smic:
+        alerte = (
+            '<p class="note avertissement">'
+            + g.icone("triangle-alert", "Avertissement")
+            + "<span>À ce niveau de salaire, le calcul ci-dessus suppose un "
+            "salaire brut <strong>inférieur au SMIC</strong>, ce que la loi "
+            "interdit. Dans la réalité, c'est le coût du travail qui monterait, "
+            "et non le salaire qui baisserait : l'emploi coûterait plus cher à "
+            "l'employeur, pour un net inchangé.</span></p>"
+        )
+
+    return g.depliant("Votre fiche de paie, ligne à ligne", f"""
+{grille}
+{alerte}
+{_salaire_net_epargne(reference.epargne_a_votre_nom / 12.0, remuneration,
+                      comparaison.parametres, saisie)}
+{_salaire_net_methode(comparaison, remuneration)}""")
+
+
+def _salaire_net_epargne(epargne: float, remuneration,
+                        parametres: Parametres, saisie: Saisie) -> str:
+    """Les cinq points capitalisés : prélevés sur le net, mais acquis à l'assuré.
+
+    Les compter dans le gain serait faux — ils ne tombent pas sur le compte en
+    banque. Les passer sous silence le serait aussi : contrairement à une
+    cotisation, ce que ce prélèvement achète reste au nom de l'assuré et se
+    transmet. Ils sont donc à part, et dits.
+    """
+    if epargne <= 0:
+        return ""
+    taux = g.pourcentage(parametres.taux_capitalisation_obligatoire, decimales=0)
+    repartition = g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)
+    return (
+        f'<p class="note resume"><strong>{g.euros_centimes(epargne)} par mois '
+        "de ce prélèvement est de l'épargne à votre nom.</strong> Le système 4 "
+        f"prélève {taux} par-dessus les {repartition} de répartition, et ces "
+        "cinq points ne partent pas : ils alimentent un compte qui reste le "
+        "vôtre, transmissible à vos héritiers tant qu'il n'est pas liquidé — "
+        f"{g.euros(remuneration.epargne_cumulee)} d'ici votre départ, en euros "
+        f"de {saisie.euros}. Sans eux, le salaire net monterait à tous les "
+        "niveaux de salaire ; avec eux, il baisse au voisinage du SMIC.</p>"
+    )
+
+
+def _salaire_net_methode(comparaison: Comparaison, remuneration) -> str:
+    """Ce qu'il faut savoir pour discuter le chiffre plutôt que le croire."""
+    parametres = comparaison.parametres
+    part = parametres.part_salariale_taux_unique
+    return f"""
+<h3>Comment ce chiffre est calculé, et ce qu'il suppose</h3>
+<p><strong>Le coût du travail est tenu fixe.</strong> C'est ce que votre
+employeur a budgété pour votre poste, et aucune réforme des retraites ne le
+change. Ce qu'il ne verse plus en cotisations, il le verse en salaire : le brut
+monte, et le net avec lui. C'est ce que veut dire « réduire l'écart entre le net
+et le brut », et c'est l'hypothèse la plus favorable à une baisse de cotisation
+— une cotisation patronale est du salaire différé, mais rien n'oblige un
+employeur à le rendre du jour au lendemain.</p>
+<p><strong>Les {g.pourcentage(parametres.taux_cotisation_liberal, decimales=0)}
+sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
+{g.pourcentage(parametres.taux_capitalisation_obligatoire, decimales=0)}
+capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
+neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
+porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
+bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
+est le partage du milieu ({g.pourcentage(part, decimales=0)} pour vous).</p>
+<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
+Depuis 2026, il efface au niveau du SMIC la totalité des cotisations patronales
+qu'il vise — son coefficient, 40,21 %, est exactement leur somme — et s'éteint à
+trois SMIC. Conséquence, et elle va à contre-courant : <strong>au SMIC, baisser
+la cotisation retraite de l'employeur ne rend rien</strong>, puisqu'il n'en
+versait déjà plus. La loi fixe ce coefficient « dans la limite de la somme des
+taux » du périmètre ; le modèle refait donc l'addition sous la proposition au
+lieu de garder le chiffre d'aujourd'hui.</p>
+<p><strong>Ce que la fiche de paie ne porte pas</strong> : la taxe
+d'apprentissage, la formation professionnelle, la participation à la
+construction, le versement mobilité, la prévoyance et la mutuelle d'entreprise.
+Aucune ne bouge d'un système à l'autre, et plusieurs dépendent de la commune ou
+de la taille de l'entreprise. Le coût du travail affiché est donc un plancher.
+L'employeur type est une entreprise de cinquante salariés et plus.</p>
+<p class="discret">Taux hors retraite : millésime {remuneration.millesime_bareme},
+appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
+de financement. Fiabilité : {escape(str(remuneration.fiabilite))}. Les taux de
+retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
+exactement ce que le compte notionnel encaisse.</p>"""
 
 
 def _decomposition(contexte: Contexte, saisie: Saisie,

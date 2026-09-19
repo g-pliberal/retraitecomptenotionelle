@@ -2936,6 +2936,7 @@ ${lecture}
   <div class="fiches">${fiches}</div>
   ${resumeParcours(contexte, saisie)}
 </div>
+${salaireNet(comparaison, saisie)}
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
@@ -3071,6 +3072,187 @@ const NATURES_PART_EMPLOYEUR = {
   implicite: "taux implicite reconstitué par les documents budgétaires",
   repli: "aucune série publiée : effort du privé de la même année",
 };
+
+/**
+ * Un montant qui est un ÉCART : il se lit avec son signe, positif compris.
+ */
+function eurosSigne(montant, centimes = true) {
+  const signe = montant > 0 ? "+" : "";
+  return `${signe}${centimes ? g.eurosCentimes(montant) : g.euros(montant)}`;
+}
+
+/**
+ * Un écart entre deux pourcentages, en POINTS et avec son signe.
+ *
+ * « +1,4 % » se lirait comme une hausse relative de 1,4 %, dix fois plus petite
+ * que ce que la ligne dit.
+ */
+function points(ecart) {
+  const valeur = ecart * 100;
+  const signe = valeur > 0 ? "+" : "";
+  return `${signe}${g.nombre(valeur, 1)} point${Math.abs(valeur) >= 2 ? "s" : ""}`;
+}
+
+/**
+ * Ce qu'un actif touche PENDANT qu'il cotise, dans les deux systèmes.
+ *
+ * Portage de `_salaire_net` de `web/pages.py`. Le reste de la page compare des
+ * pensions, c'est-à-dire des montants qu'on touchera dans trente ans ; ce bloc
+ * compare des salaires, c'est-à-dire des montants qu'on touche le mois
+ * prochain. C'est la seule ligne du site où une réforme des retraites se lit
+ * sur une fiche de paie.
+ *
+ * Trois chiffres ouverts, le reste replié : la page de résultats tient un
+ * budget de mots et n'ouvre aucun tableau.
+ */
+function salaireNet(comparaison, saisie) {
+  const remuneration = comparaison.remuneration;
+  if (remuneration === null) {
+    return "";
+  }
+  const reference = remuneration.reference;
+  const avant = reference.droitEnVigueur;
+  const apres = reference.proposition;
+  const gain = remuneration.gainNetMensuel;
+
+  const ouverture = [
+    g.fiche(`votre salaire net en ${reference.annee}`, g.eurosCentimes(avant.net / 12)),
+    g.fiche("avec le système 4", g.eurosCentimes(apres.net / 12)),
+    g.fiche("par mois", eurosSigne(gain)),
+  ].join("");
+  const sens = gain >= 0 ? "de plus" : "de MOINS";
+  const duree = remuneration.annees.length;
+  const cumul = remuneration.gainNetCumule;
+  const reste = duree > 1
+    ? ` Sur les ${duree} années qui vous séparent de la retraite : `
+      + `${eurosSigne(cumul, false)} en euros de ${saisie.euros}.`
+    : "";
+
+  return `
+<h2 id="salaire-net">Et pendant que vous cotisez</h2>
+<p class="chapeau">Une réforme des retraites ne change pas que votre pension :
+elle change ce qui est prélevé sur votre travail, donc ce que vous touchez
+chaque mois. Les systèmes 1, 2 et 3 prélèvent la même chose — ils ne changent
+que ce qui est porté au compte. Le système 4, lui, y touche.</p>
+<div class="carte">
+  <div class="fiches">${ouverture}</div>
+  <p>Soit <strong>${eurosSigne(gain)} ${sens} sur votre fiche de paie</strong>,
+  à coût du travail inchangé pour votre employeur.${reste}</p>
+  ${salaireNetDetail(comparaison, remuneration, saisie)}
+</div>`;
+}
+
+/** La fiche de paie entière, et ce qu'il faut savoir pour la discuter. */
+function salaireNetDetail(comparaison, remuneration, saisie) {
+  const reference = remuneration.reference;
+  const avant = reference.droitEnVigueur;
+  const apres = reference.proposition;
+  const mois = (montant) => g.eurosCentimes(montant / 12);
+  const ecart = (apresValeur, avantValeur) => eurosSigne((apresValeur - avantValeur) / 12);
+
+  const lignes = [
+    ["Ce que votre emploi coûte", mois(avant.coutDuTravail), mois(apres.coutDuTravail),
+      '<span class="discret">inchangé</span>'],
+    ["Salaire brut", mois(avant.brut), mois(apres.brut), ecart(apres.brut, avant.brut)],
+    ["<strong>Salaire net</strong>", `<strong>${mois(avant.net)}</strong>`,
+      `<strong>${mois(apres.net)}</strong>`,
+      `<strong>${ecart(apres.net, avant.net)}</strong>`],
+    ["Dont prélevé pour votre retraite", mois(avant.retraiteTotale),
+      mois(apres.retraiteTotale), ecart(apres.retraiteTotale, avant.retraiteTotale)],
+    [`Ce qui vous arrive, sur 100 € de ${g.terme("coût du travail")}`,
+      g.pourcentage(avant.partQuiArrive), g.pourcentage(apres.partQuiArrive),
+      points(apres.partQuiArrive - avant.partQuiArrive)],
+  ];
+  const grille = g.tableau(
+    ["Par mois", "Systèmes 1 à 3", "Système 4", "Écart"],
+    lignes, ["", "nombre", "nombre", "nombre"],
+    `Votre fiche de paie en ${reference.annee}, sous les quatre systèmes — `
+    + `${remuneration.libelleStatut}`,
+    true,
+  );
+
+  const alerte = remuneration.buteSurLeSmic
+    ? '<p class="note avertissement">'
+      + g.icone("triangle-alert", "Avertissement")
+      + "<span>À ce niveau de salaire, le calcul ci-dessus suppose un "
+      + "salaire brut <strong>inférieur au SMIC</strong>, ce que la loi "
+      + "interdit. Dans la réalité, c'est le coût du travail qui monterait, "
+      + "et non le salaire qui baisserait : l'emploi coûterait plus cher à "
+      + "l'employeur, pour un net inchangé.</span></p>"
+    : "";
+
+  return g.depliant("Votre fiche de paie, ligne à ligne", `
+${grille}
+${alerte}
+${salaireNetEpargne(reference.epargneAVotreNom / 12, remuneration,
+    comparaison.parametres, saisie)}
+${salaireNetMethode(comparaison, remuneration)}`);
+}
+
+/**
+ * Les cinq points capitalisés : prélevés sur le net, mais acquis à l'assuré.
+ *
+ * Les compter dans le gain serait faux — ils ne tombent pas sur le compte en
+ * banque. Les taire le serait aussi : contrairement à une cotisation, ce que ce
+ * prélèvement achète reste au nom de l'assuré et se transmet.
+ */
+function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
+  if (epargne <= 0) {
+    return "";
+  }
+  const taux = g.pourcentage(parametres.taux_capitalisation_obligatoire, false, 0);
+  const repartition = g.pourcentage(parametres.taux_cotisation_liberal, false, 0);
+  return `<p class="note resume"><strong>${g.eurosCentimes(epargne)} par mois `
+    + "de ce prélèvement est de l'épargne à votre nom.</strong> Le système 4 "
+    + `prélève ${taux} par-dessus les ${repartition} de répartition, et ces `
+    + "cinq points ne partent pas : ils alimentent un compte qui reste le "
+    + "vôtre, transmissible à vos héritiers tant qu'il n'est pas liquidé — "
+    + `${g.euros(remuneration.epargneCumulee)} d'ici votre départ, en euros `
+    + `de ${saisie.euros}. Sans eux, le salaire net monterait à tous les `
+    + "niveaux de salaire ; avec eux, il baisse au voisinage du SMIC.</p>";
+}
+
+/** Ce qu'il faut savoir pour discuter le chiffre plutôt que le croire. */
+function salaireNetMethode(comparaison, remuneration) {
+  const parametres = comparaison.parametres;
+  const part = g.pourcentage(parametres.part_salariale_taux_unique, false, 0);
+  return `
+<h3>Comment ce chiffre est calculé, et ce qu'il suppose</h3>
+<p><strong>Le coût du travail est tenu fixe.</strong> C'est ce que votre
+employeur a budgété pour votre poste, et aucune réforme des retraites ne le
+change. Ce qu'il ne verse plus en cotisations, il le verse en salaire : le brut
+monte, et le net avec lui. C'est ce que veut dire « réduire l'écart entre le net
+et le brut », et c'est l'hypothèse la plus favorable à une baisse de cotisation
+— une cotisation patronale est du salaire différé, mais rien n'oblige un
+employeur à le rendre du jour au lendemain.</p>
+<p><strong>Les ${g.pourcentage(parametres.taux_cotisation_liberal, false, 0)}
+sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
+${g.pourcentage(parametres.taux_capitalisation_obligatoire, false, 0)}
+capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
+neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
+porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
+bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
+est le partage du milieu (${part} pour vous).</p>
+<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
+Depuis 2026, il efface au niveau du SMIC la totalité des cotisations patronales
+qu'il vise — son coefficient, 40,21 %, est exactement leur somme — et s'éteint à
+trois SMIC. Conséquence, et elle va à contre-courant : <strong>au SMIC, baisser
+la cotisation retraite de l'employeur ne rend rien</strong>, puisqu'il n'en
+versait déjà plus. La loi fixe ce coefficient « dans la limite de la somme des
+taux » du périmètre ; le modèle refait donc l'addition sous la proposition au
+lieu de garder le chiffre d'aujourd'hui.</p>
+<p><strong>Ce que la fiche de paie ne porte pas</strong> : la taxe
+d'apprentissage, la formation professionnelle, la participation à la
+construction, le versement mobilité, la prévoyance et la mutuelle d'entreprise.
+Aucune ne bouge d'un système à l'autre, et plusieurs dépendent de la commune ou
+de la taille de l'entreprise. Le coût du travail affiché est donc un plancher.
+L'employeur type est une entreprise de cinquante salariés et plus.</p>
+<p class="discret">Taux hors retraite : millésime ${remuneration.millesimeBareme},
+appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
+de financement. Fiabilité : ${nomFiabilite(remuneration.fiabilite)}. Les taux de
+retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
+exactement ce que le compte notionnel encaisse.</p>`;
+}
 
 /**
  * Qui verse la cotisation : l'assuré, son employeur, dans quelle proportion.
