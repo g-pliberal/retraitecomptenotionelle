@@ -5877,6 +5877,14 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   et non « au dernier emploi » ; `docs/methodologie.md` ; le bloc d'exemple du
   `README.md` ; `tests/test_moteur.py` ; les témoins.
 
+- **19 septembre 2026, action 42.** Ouverte : une passe visuelle exhaustive du
+  site, neuf pages à trois largeurs (360, 768 et 1280 points), états
+  interactifs compris — résultats, dépliants ouverts, bulle du glossaire,
+  erreur de saisie, focus clavier, lecture au survol, impression. Vingt
+  constats, rangés par gravité sous l'action, chacun avec sa cause dans le
+  code et la correction proposée. Rien n'a été corrigé dans cette session :
+  la liste est le livrable, la correction est l'action.
+
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 
 **La demande.** « J'aimerais qu'on fasse la liste des avantages en retraite
@@ -6895,3 +6903,175 @@ chiffres du dépôt, l'autre les affirmations du site.
 **Fichiers.** `scripts/verifier_prose.py`, `data/reference/prose/zones.yaml`,
 `tests/test_prose.py`, `docs/fraicheur.md` (neufs) ; les ancres posées dans
 `README.md`, `docs/feuille_de_route.md` et `docs/limites.md`.
+
+### 42. La passe visuelle du 19 septembre 2026 : vingt constats, du téléphone au bureau — `à faire`
+
+**Pourquoi.** Le site n'avait jamais été regardé page par page à plusieurs
+largeurs depuis la refonte en affiche (action 30) et la bascule net/brut
+(action 39). Cette passe l'a fait : les neuf routes à 360, 768 et 1280 points,
+puis les états qu'une capture de page ne montre pas — les résultats d'une
+simulation, chaque dépliant ouvert, la bulle d'un mot du glossaire, un refus de
+saisie, le focus clavier, la lecture d'un graphique au survol, la version
+imprimée. Aucune page ne défile horizontalement, aucune erreur de console, la
+bulle, le refus de saisie et les anneaux de focus sont justes. Le reste est
+ci-dessous, du plus visible au plus discret ; les lignes renvoient à
+`src/retraite_notionnelle/web/gabarit.py` (la feuille de style y vit) sauf
+mention contraire. **Rien n'a été corrigé** : cette action est la liste.
+
+**Ce qui se voit de loin.**
+
+1. *La bande de lecture d'un graphique est cassée.* Au survol d'une courbe,
+   la bande sous le tracé affiche « • ■Ce qui sort13,5 » : puces de liste,
+   pastille collée au libellé, valeur collée au libellé. Le script
+   (`index.html`, ligne 680) écrit `<span class="annee">` puis un `<ul>` de
+   `<li>` avec une `.pastille` ; la feuille (ligne 1170) attend des enfants
+   directs en colonnes de grille avec `.etiquette`, `.valeur` et `.complement`.
+   Les deux ont été écrits dans le même commit et ne se sont jamais rencontrés.
+   Correction : écrire la CSS de la structure réelle — `ul` sans puces en
+   `display: flex`, `li` en `inline-flex` avec un `gap`, `.valeur` en graisse
+   900 —, ou faire produire par le script la structure que la CSS attend.
+2. *Les graphiques sont illisibles sur téléphone.* À 360 points, le SVG est
+   réduit à 42 % : la règle de la ligne 1496 grossit bien les graduations à 24
+   unités, mais les marges (ligne 2560 et suivantes : 66 à gauche, 24 à droite)
+   restent en unités du repère et ne suivent pas. Résultat : « k€ » sur
+   « 1 500 », « 1831 » collé à « 1850 », « 2060 » sur « 2070 », l'étiquette
+   « espérance de vie : 89,7 ans » qui sort du cadre, et l'unité de l'axe
+   (« Md€ courants ») coupée au bord gauche de la carte. Toutes les pages à
+   graphique (Trajectoire, Coût, Avantages, résultats) sont touchées.
+   Correction : un second jeu de marges sous 34 rem — ou, plus simple, une
+   `viewBox` recalculée pour le téléphone, portée par un attribut que la CSS
+   choisit —, et l'unité de l'axe ancrée à `text-anchor="start"` sur le bord
+   gauche (ligne 2973) plutôt qu'à `end` sur l'axe, ce qui la ferait tenir
+   quelle que soit sa longueur (à 1280 points déjà, « Md€ courants » déborde de
+   quarante pixels dans la marge de la carte).
+3. *La légende « PREMIER MÉTIER » du simulateur est invisible.* Elle est
+   écrite dans `--sur-creme-doux` (ligne 673), la couleur du texte doux SUR
+   CRÈME, alors que le formulaire de la page Simuler est sur carte sombre :
+   du vert foncé sur vert foncé, à toutes les largeurs. Elle n'est lisible
+   qu'à l'impression. Correction : `color: var(--texte-doux)`, la couleur du
+   fond crème n'étant à prendre que sous `.creme`.
+4. *Une bande sombre borde la droite de chaque tableau posé sur une carte.*
+   Le voile de l'ombre de défilement (ligne 726) est peint dans `--fond`, le
+   vert de la page ; sur une carte `--fond-carte` (les sections clés de Coût,
+   Avantages, Méthode, les résultats, la fiche de paie), il fait un rectangle
+   d'un ton plus sombre de 2,5 rem au bord droit, même quand rien ne défile.
+   Correction : une variable `--fond-defilant` que `.cle`, `.encadre` et les
+   autres cartes redéfinissent à leur couleur.
+5. *Sur téléphone, la légende d'un tableau qui défile est coupée.* La
+   `<caption>` est large comme le tableau, pas comme l'écran : « Ce que le
+   plancher individualisé change, p », « La proposition libérale : taux
+   unique de 18 % et g », « Ce que chaque règle d'indexation aurait cons »
+   (accueil, Cas types, Méthode à 360 points). Correction : sortir le titre
+   du tableau vers un `<p>` au-dessus de `.defilant` (avec `aria-describedby`
+   ou en le gardant en `caption` positionnée `sticky; left: 0`, à vérifier
+   dans les deux moteurs).
+6. *Des nombres se coupent en deux.* « 300 € et 1 500 € » se lit « 300 € et
+   1 500 / € » puis « 5 / 000 € » dans le tableau du plancher à 360 points :
+   les espaces de la ligne 2204 de `pages.py` sont ordinaires, pas fines
+   insécables comme partout ailleurs. Même famille : « 12 028,70 € par / an »
+   dans les étapes de la garantie vieillesse (résultats, 1280 points),
+   « 62 / ans » dans les deux dernières colonnes de l'âge de liquidation (Cas
+   types), « 2026-09- / 14 » sur les 88 lignes de la page Données. Correction :
+   `white-space: nowrap` sur `td.nombre` et sur la colonne des dates, et les
+   espaces insécables dans les libellés composés.
+7. *Un mot du glossaire dans une case étroite se brise en bloc.* Sur l'accueil
+   à 360 points, « vos 25 meilleures années, un taux » devient « vos /
+   25 meilleures / années / , un taux » : le `<button class="terme">` est un
+   `inline-block` (ligne 1100), et un bloc ne coule pas dans une phrase. Même
+   cause, autre effet : dans les repères des résultats, « capital notionnel
+   rétroactif, en euros de 2039 » s'affiche CENTRÉ sur deux lignes, parce
+   qu'un bouton centre son texte. Correction : `display: inline` sur le
+   bouton (à vérifier dans Chromium, qui traite parfois un bouton comme un
+   bloc quoi qu'on lui dise ; sinon un `<span role="button" tabindex="0">`)
+   et `text-align: inherit`.
+8. *Les colonnes de phrases sont alignées à droite.* La CSS prévoit
+   `td.texte` pour cela (ligne 753), mais les tableaux qui portent des
+   phrases ne l'utilisent pas : « D'où vient le chiffre, ou pourquoi il
+   manque » sur Avantages (39 lignes en drapeau à droite, mot par mot à 360
+   points), « Ce qu'elle fait », « Ce qui se passe », « Calcul » et « Placé »
+   dans les résultats, la colonne des notes des 89 régimes sur Données — où
+   une note de trente lignes dans une colonne de 200 points fait une rangée de
+   700 points de haut. Correction : poser `.texte` dans `pages.py` sur ces
+   colonnes, et donner aux notes longues une glose sous le tableau
+   (`dl.gloses`) plutôt qu'une cellule.
+
+**Ce qui se voit de près.**
+
+9. *Les engagements 02 et 04 sont décalés à 768 points.* La grille passe à
+   une colonne dès que deux fois 45 % ne tiennent plus, mais le retrait et le
+   filet des cartes paires (ligne 497) ne sont retirés qu'à 34 rem (ligne
+   1459) : entre les deux, une carte sur deux est en retrait de 24 points.
+   Correction : aligner les deux seuils, ou porter le filet par un
+   `:nth-child(even)` sous une requête de conteneur.
+10. *Le dernier filet d'un tableau s'arrête sous la première colonne.* La
+    règle `tbody tr:last-child td { border-bottom: none }` (ligne 749) ne
+    couvre pas le `<th>` de rangée : chaque tableau finit par un trait
+    orphelin de la largeur de sa première cellule. Visible sur tous.
+    Correction : `tbody tr:last-child :is(th, td)`.
+11. *« UNITÉ … × salaire moyen MONTANTS net brut » sans espace.* Les deux
+    bascules du formulaire sont des `inline-flex` sans marge entre elles
+    (ligne 833) : la seconde légende colle au dernier bouton de la première.
+    Correction : `column-gap` sur le conteneur ou `margin-right: 1.25rem`.
+12. *Sur l'accueil et Trajectoire, le menu « Statut » descend sous les
+    autres champs.* La grille courte aligne ses cellules par le bas (ligne
+    464), et « Statut » est le seul champ sans ligne d'aide ni de rappel
+    dessous : son menu tombe 30 points plus bas que les dates. Correction :
+    lui donner une aide (« régime au premier emploi ») ou aligner par le
+    haut avec une hauteur d'étiquette fixe.
+13. *« Les règles du calcul (indexation, projection, bascule…) » n'est pas
+    une section.* Sur Cas types, Coût et Avantages, ce dépliant suit la pile
+    des `details.section` sans en avoir le style : chevron décalé, sans
+    graisse, sans filet, avec un vide au-dessus. Il porte un formulaire, pas
+    un texte, et c'est peut-être voulu — mais il se lit comme un oubli.
+    Correction : soit `class="section"`, soit un style propre et nommé.
+14. *Les trois repères de la page Données ne sont pas alignés.* « Valeurs
+    recontrôlées contre leur source » tient sur deux lignes et pousse son
+    nombre 20 points sous « 89 » et « 28 » (ligne 995 : colonne flexible,
+    étiquette avant le nombre). Correction : `grid-template-rows: auto 1fr
+    auto` avec le nombre calé en bas, ou une hauteur minimale d'étiquette.
+15. *Sur Avantages à 360 points, les tableaux des trente-neuf ne se
+    comportent pas tous pareil.* Le premier se comprime jusqu'à un mot par
+    ligne, les suivants dépassent et défilent : chaque tableau décide seul,
+    selon son contenu. Correction : la même largeur minimale pour tous
+    (`table { min-width: 34rem }` sous `.defilant` à cette largeur), ou une
+    mise en page en liste sous 34 rem.
+16. *Les aperçus des cartes à publier sont illisibles à 360 points.* Réduits
+    au rapport 16/9 de leur colonne, leurs textes tombent à cinq pixels. Ce
+    sont des aperçus d'image, donc tolérable ; un lien « voir l'image en
+    grand » sous chacun réglerait la question.
+
+**Ce qui se voit à peine.**
+
+17. *« ESTIMEE »* dans le badge de fiabilité des résultats et du compartiment
+    capitalisé, sans accent : `nomFiabilite` rend la clé et la CSS la met en
+    capitales. « Estimée » et l'accent survivrait à `text-transform`.
+18. *L'en-tête collant des tableaux de points d'un graphique* est peint en
+    `--fond-carte` (ligne 1246) même hors carte, dans les dépliants des
+    résultats : une bande d'un ton plus clair au-dessus du tableau.
+19. *La page Trajectoire parle des « quatre montants du haut »* qu'elle ne
+    montre pas : la phrase vient du dépliant des résultats et n'a pas été
+    adaptée à la page.
+20. *À 768 points exactement, le bandeau tient sur deux rangées* et la
+    seconde n'a que trois entrées ; à 360 il en faut trois, et il n'est plus
+    collant (voulu, ligne 1427). Rien à faire, noté pour mémoire.
+
+**Vérifié, et sain.** Le contraste de tous les textes courants ; les anneaux
+de focus, y compris sur les résumés des dépliants et les appels de bulle ; la
+bulle du glossaire, qui reste dans l'écran à 360 points ; le refus de saisie ;
+la pile des trois repères et des engagements à 360 points ; la version
+imprimée du simulateur ; le formulaire long à toutes les
+largeurs, hormis les points 3 et 11 ; le pied de page.
+
+**Comment refaire la passe.** Servir le dépôt (`python -m http.server`),
+lancer Chromium par Playwright à trois largeurs, capturer chaque route en
+page entière, puis rejouer les états : soumettre le formulaire, ouvrir tous
+les `<details>`, cliquer un `.terme`, tabuler, survoler un `svg`, passer en
+média `print`. Un script de vingt lignes fait tout ; il devrait rejoindre
+`scripts/` avec cette action, et écrire ses captures hors du dépôt.
+
+**Fichiers à toucher.** `src/retraite_notionnelle/web/gabarit.py` (la
+feuille, les marges du graphique, l'unité de l'axe), `index.html` (la bande
+de lecture), `src/retraite_notionnelle/web/pages.py` et son portage
+`moteur/js/pages.js` (classes `.texte`, espaces insécables, « Estimée »,
+la phrase de Trajectoire), puis `python scripts/construire_donnees.py` et les
+témoins.
