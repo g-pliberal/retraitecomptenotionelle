@@ -3797,16 +3797,15 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # courant pour l'autre. Les bornes suivent, d'un paragraphe chacune.
     "/cas-types": (750, 0, 1),
     "/cout": (700, 2, 0),
-    # Quatre graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils
+    # Trois graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils
     # ne répondent pas à la même question et n'ont pas le même statut. Le
     # premier COMPTE des lignes d'inventaire et ne calcule rien ; le deuxième
-    # mesure un coût par retrait, et c'est un plancher ; le troisième LIT la
-    # réversion dans une publication, sur sa propre fenêtre ; le quatrième
-    # mesure des annuités, qui est une autre grandeur encore. Les replier
-    # reviendrait à demander au lecteur de déplier pour comprendre que les
-    # quatre chiffres ne s'additionnent pas — et le troisième, qui est le plus
-    # lourd de tous, ne doit pas être celui qu'on cache.
-    "/avantages": (850, 4, 0),
+    # chiffre ce que les avantages coûtent, toutes lignes réunies — celles que
+    # le modèle recalcule et la réversion, qui se lit ; le troisième mesure des
+    # annuités, qui est une autre grandeur. Les replier reviendrait à demander
+    # au lecteur de déplier pour comprendre que les trois chiffres ne
+    # s'additionnent pas.
+    "/avantages": (750, 3, 0),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
 }
