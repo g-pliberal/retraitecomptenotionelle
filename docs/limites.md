@@ -5218,9 +5218,12 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   **Une réserve de sens opposé, et elle est nommée parce qu'elle est
   chiffrable.** Le modèle porte au compte le taux qui ACQUIERT des droits, et
   c'est lui qu'il compare à 18 %. Ce n'est pas tout ce qui rentre : la
-  contribution d'équilibre générale et la contribution d'équilibre technique de
-  l'Agirc-Arrco, environ deux points et demi sur un salaire du privé, n'ouvrent
-  aucun droit et sont pourtant encaissées. Les compter relèverait le
+  contribution d'équilibre général et la contribution d'équilibre technique de
+  l'Agirc-Arrco n'ouvrent aucun droit et sont pourtant encaissées. Sous le
+  plafond, la première seule s'applique, à 2,15 % : et c'est exactement ce qui
+  manque au modèle, dont le taux de 25,83 % plus ces 2,15 donnent 27,98 quand
+  le COR publie 27,89 pour le même salarié. La seconde, 0,35 %, n'est due que
+  par ceux dont la rémunération dépasse le plafond. Les compter relèverait le
   dénominateur, donc abaisserait le rapport de recettes du scénario 6 : le
   chiffre affiché lui est favorable, et le refermer demande une série de taux
   ENCAISSÉS à côté de celle des taux qui acquièrent.
