@@ -6,9 +6,24 @@
 fonctionnalité, pas de pull request : on rattrape `main`, et on pousse dessus.
 
 ```bash
-git fetch origin
-git merge --ff-only origin/main     # rattraper ce que main a reçu entre-temps
 git commit -am "message"
+bash scripts/pousser.sh
+```
+
+`scripts/pousser.sh` fait la recette en entier : `git fetch origin main`,
+`git merge --ff-only origin/main` pour rattraper ce que `main` a reçu
+entre-temps, `git push origin HEAD:main`, puis les deux gestes qui font taire
+le compteur de commits non poussés (plus bas). Il ne dit rien quand il n'y a
+rien à publier, et écrit une ligne quand il a poussé. Quand une autre session
+a poussé entre-temps, il rebase les commits de celle-ci sur `origin/main` —
+ils n'ont jamais été publiés — et il refuse, sans rien avoir poussé, dès que
+ça sort de ce cas : conflit, plus de vingt commits d'écart, modifications non
+commitées, ou aucun ancêtre commun, qui est le cas grave. À la main, la
+recette reste :
+
+```bash
+git fetch origin
+git merge --ff-only origin/main
 git push origin HEAD:main
 ```
 
@@ -45,6 +60,28 @@ GitHub : le jeton d'une session Claude Code peut créer et mettre à jour une
 référence, pas en supprimer une — `git push origin --delete` répond 403. Les
 empreintes sont dans le message du commit qui porte cette phrase, pour qui
 voudrait en ressusciter une.
+
+**Le compteur de commits « non poussés » est faux, et ne se commente pas.**
+La référence distante de la branche `claude/…` d'une session est créée à son
+démarrage, sur le commit du clone ; `git push origin HEAD:main` ne la touche
+pas, et la branche locale n'a aucun amont. Le compteur compare donc à un point
+fixe : il monte d'un cran à chaque commit alors que `origin/main` les porte
+déjà tous. Des sessions entières y ont dépensé, chacune à son tour, un
+paragraphe d'explication à l'utilisateur, qui n'en peut plus. `scripts/pousser.sh`
+y met fin des deux côtés : après le push sur `main`, il fait suivre la
+référence de branche — qui ne porte alors jamais que ce que `main` porte déjà,
+et se supprime comme les autres — et donne `origin/main` pour amont à la
+branche locale. Il ne crée jamais cette référence si elle n'existe pas : une
+session ne saurait pas la supprimer (403). **Si un compteur monte quand même,
+relancer le script et ne rien écrire là-dessus** : une ligne au plus, jamais
+une explication. C'est du temps et des jetons dépensés pour un chiffre qui se
+trompe.
+
+Un hook `Stop` lancerait le script tout seul à la fin de chaque tour, et
+`main` serait à jour sans que personne ait à y penser. **Il n'est pas dans le
+dépôt** : une session Claude Code n'a pas le droit d'écrire sous `.claude/`.
+Son inscription dans `settings.json` est donnée sous l'action 36 de
+`docs/feuille_de_route.md`, à poser à la main, une fois pour toutes.
 
 ## Projet
 
