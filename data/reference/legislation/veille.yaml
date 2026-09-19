@@ -697,3 +697,33 @@ journal:
       LURA en cas de statuts simultanés ; revalorisation des pensions 2026 ;
       bonification d'un trimestre CNRACL/FSPOEIE du décret n° 2026-699 ;
       Mayotte.
+  - date: '2026-09-19'
+    session: action 37, inventaire des avantages non contributifs
+    consulte: >-
+      scripts/veille_droit.py (rien de neuf depuis le 19 septembre 2026, journal
+      à jour) ; index LEGI du dépôt, à jour au 13 septembre 2026, pour contrôler
+      article par article les bases légales inscrites à l'inventaire : L. 351-3,
+      L. 351-4-1, L. 351-5, L. 351-12, L. 351-13, L. 353-1, L. 353-3, L. 353-5,
+      L. 353-6, L. 355-1, L. 356-1, R. 351-12 du code de la sécurité sociale ;
+      L. 12, L. 17, L. 18, L. 24, L. 30, L. 38, L. 40 du code des pensions
+      civiles et militaires ; L. 732-54-1 du code rural. Texte intégral lu pour
+      L. 12 CPCMR (bonifications a, b, b bis, c, d, i), L. 351-5 CSS (congé
+      parental), L. 353-6 CSS (majoration de réversion) et L. 351-13 CSS
+      (conjoint à charge).
+    trouve: >-
+      Aucune règle du scénario 1 modifiée ; ce chantier INVENTORIE, il ne
+      transcrit pas. Un contrôle négatif utile : L. 351-7 CSS, que la rédaction
+      de l'inventaire allait citer pour l'inaptitude, N'EXISTE PAS dans le code
+      de la sécurité sociale — la référence exacte est L. 351-8 1° bis, déjà
+      lue par l'entrée `inaptitude_invalidite_penibilite_amiante`. Les numéros
+      d'article se collisionnent d'un code à l'autre (L. 351-3 et L. 351-5
+      désignent aussi des articles du code du travail et du code de la
+      construction), et l'index les départage.
+    reste: >-
+      Deux bases légales de l'inventaire restent à certifier, et y sont marquées
+      comme telles : la bonification du cinquième des policiers, pompiers et
+      surveillants, dont les textes sont éclatés dans les statuts de corps et
+      hors du CPCMR ; et la cessation anticipée d'activité des travailleurs de
+      l'amiante (loi n° 98-1194, article 41), donnée pour la recherche et non
+      comme une source. Les reprises de veille listées au 17 septembre 2026
+      restent ouvertes.

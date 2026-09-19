@@ -423,6 +423,13 @@ Les tables elles-mêmes sont décrites au §9.
 
 ## 6. Les neutralisations
 
+> **L'inventaire complet de ce que le scénario 1 sert au-delà de la cotisation
+> — trente-neuf dispositifs, avec leur base légale et le moyen d'en chiffrer le
+> coût — est dans `data/reference/legislation/avantages_non_contributifs.yaml`,
+> et `docs/avantages_non_contributifs.md` le commente.** Le tableau ci-dessous
+> ne porte que les quinze champs de `Neutralisations`, qui sont une déclaration
+> d'intention de réforme et non une liste du droit positif.
+
 Sont **supprimés** dans les scénarios notionnels — tous activés par défaut dans
 `Neutralisations` :
 

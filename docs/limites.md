@@ -5265,6 +5265,24 @@ Ce qui suit n'est pas une liste de manques mais un **périmètre**, et chaque
 ligne dit ce qu'elle coûte et dans quel sens. Une limite qu'on sait mesurer
 n'est plus une limite : c'est un paramètre connu du résultat.
 
+- **La grille de cas types ne sait pas compter le coût d'un avantage non
+  contributif, et le sens de l'erreur est connu : elle n'a pas d'enfants.** Un
+  seul des treize cas types en a — `carriere_interrompue`, deux enfants —, si
+  bien que la majoration de pension pour trois enfants et plus vaut **zéro
+  toutes les années de la série** quand la CNAF en rembourse 5,9 milliards en
+  2025, et que la surcote parentale vaut zéro pour la même raison. La grille est
+  faite pour comparer des systèmes sur une même carrière, où les erreurs de
+  niveau s'annulent au dénominateur ; le coût d'un avantage est un compte de
+  POPULATION, et il lui faut une structure de population. C'est la correction
+  déjà faite pour la garantie vieillesse — les 93 milliards tirés des cas types
+  étaient faux, le barème appliqué à la distribution DREES donne 18,4 milliards
+  — et elle est due ici pour les mêmes raisons. Mesuré :
+  `scripts/cout_avantages.py` trouve 5,3 milliards d'avantages gratuits en 2024,
+  soit 1,2 % de la dépense, là où le COR chiffre les droits de solidarité à « de
+  l'ordre d'un cinquième ». Les trente et un dispositifs non chiffrés expliquent
+  la plus grande part de l'écart, l'absence d'enfants le reste. Voir
+  `docs/avantages_non_contributifs.md`.
+
 - **Le pilotage, et non plus le solde.** Le modèle calcule des droits
   individuels ; il porte une pyramide des âges, qui lui dit ce que chaque
   système COÛTERAIT ; il porte depuis peu les RESSOURCES, et donc le solde et le
@@ -6033,7 +6051,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 940 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 949 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

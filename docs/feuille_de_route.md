@@ -5575,3 +5575,86 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   données — que devient la contribution d'équilibre de l'État quand le taux
   devient 18 % ? Le programme ne le dit pas, et le dépôt ne tranchera pas à sa
   place.
+
+### 37. Chiffrer les trente-neuf avantages non contributifs, et pas huit — `en cours`
+
+**La demande.** « J'aimerais qu'on fasse la liste des avantages en retraite
+actuels qui ne sont pas contributifs dans le scénario 1. Le but serait de
+calculer le coût de chacun et de voir l'évolution de son coût au cours du temps.
+Le but est d'être exhaustif pour ne passer à côté de rien : cela explique en
+partie pourquoi les retraites actuelles sont gonflées par rapport à ce que les
+gens ont vraiment cotisé. »
+
+**Ce qui est fait.** La liste existe, et elle est tenue par un test.
+`data/reference/legislation/avantages_non_contributifs.yaml` porte trente-neuf
+dispositifs — huit `chiffré`, onze `intégré`, trois `déclaré`, dix-sept
+`absent` —, chacun avec sa base légale lue dans l'index LEGI, les régimes qui le
+servent, et le moyen d'en mesurer le coût. `tests/test_avantages.py` (neuf
+tests) exige que tout code employé par l'une des trois listes préexistantes du
+dépôt — les champs de `Neutralisations`, les `avantages_non_contributifs` des
+fiches, les lignes de la cascade `AvantageApplique` — ait sa ligne, sous son code
+ou sous un alias ; que toute ligne de cascade pointe un avantage chiffré et
+réciproquement ; qu'un avantage non chiffré dise POURQUOI ; et que tout renvoi à
+`veille.yaml` ou au manifeste des sources existe. `scripts/cout_avantages.py`
+porte la décomposition de l'individu à la masse par la méthode de `cout.py`, et
+`docs/avantages_non_contributifs.md` commente le tout.
+
+**Ce que ça a déplacé, et ce n'est pas ce qui était prévu.** Le chiffrage donne
+**5,3 milliards d'avantages gratuits en 2024, soit 1,2 % de la dépense**, là où
+le COR chiffre les droits de solidarité à « de l'ordre d'un cinquième des
+retraites tous régimes ». Seize fois trop peu. Deux causes, et la seconde était
+inconnue :
+
+- *Trente et un dispositifs sur trente-neuf ne sont pas chiffrés*, et
+  l'inventaire dit lesquels. La réversion pèse à elle seule plus que tout ce qui
+  est mesuré, et le modèle ne peut pas la voir : il décrit une carrière, pas un
+  ménage.
+- *La grille de cas types n'a pas d'enfants.* Un seul des treize en a —
+  `carriere_interrompue`, deux enfants —, si bien que la majoration de pension
+  pour trois enfants et plus vaut **zéro toutes les années de la série**, quand
+  la CNAF en rembourse 5,9 milliards en 2025 ; la surcote parentale vaut zéro
+  pour la même raison ; l'AVPF et la MDA ne sont portées que par ce seul cas
+  type. C'est exactement l'erreur déjà rencontrée sur la garantie vieillesse à
+  l'action 1 — les 93 milliards tirés des cas types, corrigés à 18,4 par la
+  distribution DREES — et elle appelle la même correction. La grille est un
+  instrument de RAPPORT, où les erreurs de niveau s'annulent au dénominateur ;
+  le coût d'un avantage est un compte de POPULATION.
+
+**Ce qui reste, dans l'ordre du gain.**
+
+1. *Une structure de population par nombre d'enfants*, par sexe et par
+   génération. Sans elle, toute la famille des droits familiaux vaut zéro ou
+   presque — et c'est la plus documentée du système français. Source probable :
+   l'échantillon interrégimes de retraités de la DREES (`drees_eir_distribution`
+   est déjà au manifeste pour la distribution des pensions).
+2. *La réversion, lue et non calculée.* La DREES publie la masse des droits
+   dérivés par régime et par sexe dans le panorama « Les retraités et les
+   retraites » (`drees_panorama_retraites`). C'est la seule ligne de l'inventaire
+   dont le coût s'obtienne sans aucun recalcul, et c'est la plus lourde.
+3. *Les onze lignes « intégré », chiffrées par recalcul*, exactement comme les
+   huit lignes de cascade : on recalcule la pension sans l'avantage, et l'écart
+   est la ligne. Les périodes assimilées et la catégorie active sont les deux
+   plus lourdes et les deux plus faciles — le modèle sert déjà les deux, il
+   suffit de les retirer. C'est là que se trouve le gros du chiffre manquant qui
+   soit à portée du modèle.
+4. *Les trois contrôles externes du dépôt, opposés au résultat* :
+   `cnaf_avpf` et `cnaf_majorations` pour les droits familiaux,
+   `fsv_cotisations` pour le chômage, `unedic_agirc_arrco` pour les points
+   gratuits de complémentaire (`macro/transferts_retraite.csv`). Aucun ne couvre
+   le même champ que le modèle ; tous doivent varier dans le même sens.
+5. *Porter la décomposition dans `cout.py` et sur la page Coût*, une fois qu'elle
+   vaut quelque chose. Tant qu'elle mesure 1,2 % de ce qu'elle prétend mesurer,
+   l'afficher tromperait — d'où le script séparé, qui n'impose ni portage
+   JavaScript ni régénération des témoins.
+
+**Une contradiction relevée au passage.** `Neutralisations` porte
+`reversion: bool = True` pendant que son propre docstring dit que le scénario 1
+ne sert pas la réversion. Neutraliser ce que l'étalon n'a jamais servi ne change
+rien, et l'écart annoncé entre les systèmes n'en contient pas un euro. La ligne
+reste — elle décrit une intention de réforme —, mais l'inventaire la range sous
+`declare` et dit pourquoi.
+
+**Fichiers.** `data/reference/legislation/avantages_non_contributifs.yaml` ;
+`tests/test_avantages.py` ; `scripts/cout_avantages.py` ;
+`docs/avantages_non_contributifs.md` ; renvois posés dans
+`docs/methodologie.md` §6 et `docs/limites.md` §5.
