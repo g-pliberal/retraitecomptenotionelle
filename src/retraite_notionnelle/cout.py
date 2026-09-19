@@ -321,16 +321,16 @@ class CoutAnnuel:
     #: 19 septembre 2026 : elle est un avantage non contributif, et ils les
     #: retirent tous. Voir ``CONVENTIONS_REVERSION``.
     reversion_servie: bool = False
-    #: Part de la masse portée par les pensions liquidées à la bascule ou
-    #: après : la seule dont une réforme PROSPECTIVE retire la réversion. Un
-    #: pour les réformes rétroactives, qui recalculent tout le monde.
-    part_post_bascule: float = 1.0
+    #: La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes PROSPECTIVES, qui
+    #: sont le système actuel avant elle et servent donc sa réversion ;
+    #: après, elles ne la servent plus, à personne.
+    reforme_en_vigueur: bool = True
 
     def cout(self, scenario: str) -> float:
         """Coût du système, en millions d'euros courants de l'année."""
         return masse_du_scenario(self.observee, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie, self.part_post_bascule)
+                                 self.reversion_servie, self.reforme_en_vigueur)
 
     def cout_constants(self, scenario: str) -> float:
         return self.cout(scenario) * self.coefficient_constants
@@ -342,7 +342,7 @@ class CoutAnnuel:
 
 def masse_du_scenario(base: float, part_derives: float, rapport: float,
                       scenario: str, reversion_servie: bool = False,
-                      part_post_bascule: float = 1.0) -> float:
+                      reforme_en_vigueur: bool = True) -> float:
     """Applique un rapport de masses à une base, et au seul morceau qu'il décrit.
 
     LE RAPPORT NE DÉCRIT QUE LES DROITS DIRECTS. Il est le quotient de deux
@@ -359,16 +359,14 @@ def masse_du_scenario(base: float, part_derives: float, rapport: float,
     contributif, et les scénarios notionnels les retirent tous.
     ``CONVENTIONS_REVERSION`` dit d'où vient cette règle.
 
-    UNE RÉFORME NE SUPPRIME QUE CE QU'ELLE A PRODUIT. ``part_post_bascule`` est
-    la fraction de la masse portée par les pensions liquidées à la bascule ou
-    après, et c'est d'elle seule que la réversion est retirée. Les réformes
-    RÉTROACTIVES recalculent tout le monde : elle vaut un pour elles, et la
-    réversion disparaît en entier. Les réformes PROSPECTIVES ne valent que pour
-    l'avenir : un conjoint survivant dont l'assuré a liquidé en 2010 tient son
-    droit du droit de 2010, et une réforme de 2026 ne le lui retire pas. La
-    part vaut donc zéro avant la bascule — ce qui préserve à l'euro près
-    l'identité des scénarios 3 et 5 avec le système actuel — et monte à mesure
-    que le stock d'avant se renouvelle.
+    ``reforme_en_vigueur`` ne sert qu'aux réformes PROSPECTIVES, et à une seule
+    chose : une réforme qui ne commence qu'à sa bascule ne peut rien avoir
+    changé AVANT elle. Les scénarios 3 et 5 sont, par construction, le système
+    actuel jusqu'à ce jour-là — ils y recopient ses pensions, et un test tient
+    l'égalité de leurs courbes à l'euro près. Ils y servent donc la réversion
+    comme lui. À compter de la bascule, ils ne la servent plus, à personne. Les
+    réformes RÉTROACTIVES, elles, recalculent tout le monde depuis 1941 : le
+    drapeau ne les concerne pas et vaut vrai pour elles.
 
     DEUX CAS À PART. Le SYSTÈME ACTUEL rend sa base sans rien y toucher : il est
     le droit en vigueur, il sert la réversion, et aucune convention ne le
@@ -385,8 +383,9 @@ def masse_du_scenario(base: float, part_derives: float, rapport: float,
         return directe
     if reversion_servie:
         return directe + base * part_derives
-    convertie = part_post_bascule if scenario in CLES_PROSPECTIVES else 1.0
-    return directe + base * part_derives * (1.0 - convertie)
+    if scenario in CLES_PROSPECTIVES and not reforme_en_vigueur:
+        return directe + base * part_derives
+    return directe
 
 
 @dataclass
@@ -423,16 +422,16 @@ class AvenirAnnuel:
     #: 19 septembre 2026 : elle est un avantage non contributif, et ils les
     #: retirent tous. Voir ``CONVENTIONS_REVERSION``.
     reversion_servie: bool = False
-    #: Part de la masse portée par les pensions liquidées à la bascule ou
-    #: après : la seule dont une réforme PROSPECTIVE retire la réversion. Un
-    #: pour les réformes rétroactives, qui recalculent tout le monde.
-    part_post_bascule: float = 1.0
+    #: La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes PROSPECTIVES, qui
+    #: sont le système actuel avant elle et servent donc sa réversion ;
+    #: après, elles ne la servent plus, à personne.
+    reforme_en_vigueur: bool = True
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
         return masse_du_scenario(self.base, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie, self.part_post_bascule)
+                                 self.reversion_servie, self.reforme_en_vigueur)
 
     def cout(self, scenario: str) -> float:
         """Le même coût, ramené aux euros courants de son année."""
@@ -553,10 +552,10 @@ class SoldeAnnuel:
     #: 19 septembre 2026 : elle est un avantage non contributif, et ils les
     #: retirent tous. Voir ``CONVENTIONS_REVERSION``.
     reversion_servie: bool = False
-    #: Part de la masse portée par les pensions liquidées à la bascule ou
-    #: après : la seule dont une réforme PROSPECTIVE retire la réversion. Un
-    #: pour les réformes rétroactives, qui recalculent tout le monde.
-    part_post_bascule: float = 1.0
+    #: La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes PROSPECTIVES, qui
+    #: sont le système actuel avant elle et servent donc sa réversion ;
+    #: après, elles ne la servent plus, à personne.
+    reforme_en_vigueur: bool = True
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB.
@@ -566,7 +565,7 @@ class SoldeAnnuel:
         """
         return masse_du_scenario(self.depenses, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie, self.part_post_bascule)
+                                 self.reversion_servie, self.reforme_en_vigueur)
 
     def ressources_de(self, scenario: str) -> float:
         """Ce qu'un système peut compter comme ressources, en part de PIB.
@@ -1018,8 +1017,7 @@ class RevalorisationServie:
 
 def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             poids_cas: dict[str, float],
-            revalorisation: RevalorisationServie
-            ) -> tuple[dict[str, float], int, float]:
+            revalorisation: RevalorisationServie) -> tuple[dict[str, float], int]:
     """Masse de pensions par système, une année donnée, et le nombre de couples.
 
     DEUX pondérations se composent ici, et elles ne disent pas la même chose.
@@ -1035,17 +1033,6 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     cette carrière-là, et vient des effectifs de caisse de la DREES. Sans elle,
     l'agent de conduite pèserait ce que pèse le salarié au salaire moyen.
 
-    LA TROISIÈME VALEUR RENDUE est la part de la masse du système actuel que
-    portent les pensions LIQUIDÉES À LA BASCULE OU APRÈS. Elle sert à une seule
-    chose, et ``masse_du_scenario`` la dit : une réforme PROSPECTIVE ne
-    supprime la réversion que des pensions qu'elle a elle-même produites. Un
-    conjoint survivant dont l'assuré a liquidé en 2010 tient son droit du droit
-    de 2010, et une réforme de 2026 ne le lui retire pas. Cette part vaut donc
-    zéro avant la bascule — ce qui préserve à l'euro près l'identité des
-    scénarios 3 et 5 avec le système actuel — et monte à mesure que le stock
-    d'avant se renouvelle. Les réformes RÉTROACTIVES, elles, recalculent tout
-    le monde : la part ne les concerne pas, et vaut un pour elles.
-
     Ces deux-là pèsent des TÊTES. Deux autres pèsent des EUROS :
     ``poids_revalorise`` porte ce que la pension est devenue depuis la
     liquidation sous la règle d'indexation — voir :class:`RevalorisationServie`
@@ -1057,9 +1044,6 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     """
     masses = {cle: 0.0 for cle in CLES_MASSES}
     vivants = 0
-    # La masse du système actuel portée par les liquidations d'après la
-    # bascule : le numérateur de la troisième valeur rendue.
-    masse_post_bascule = 0.0
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -1068,7 +1052,6 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         poids_garantie = 0.0
         poids_revalorise = 0.0
         poids_revalorise_prospectif = 0.0
-        poids_post_bascule = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             liquidation = pensionne.annee_liquidation + decalage
             if annee < liquidation:
@@ -1077,8 +1060,6 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                 annee - pensionne.generation - decalage, annee
             )
             poids += effectif
-            if liquidation >= revalorisation.annee_bascule:
-                poids_post_bascule += effectif
             # Le troisième poids porte la revalorisation des pensions SERVIES,
             # et il faut qu'il soit à part : le coefficient dépend de l'année
             # de liquidation, qui n'est pas la même pour les cinq cohortes de
@@ -1098,7 +1079,6 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         if poids <= 0.0:
             continue
         vivants += 1
-        masse_post_bascule += part * poids_post_bascule * pensionne.pensions["actuel"]
         for cle in CLES_MASSES:
             if cle == COMPOSANTE_GARANTIE:
                 poids_cle = poids_garantie
@@ -1109,10 +1089,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             else:
                 poids_cle = poids
             masses[cle] += part * poids_cle * pensionne.pensions[cle]
-    part_post_bascule = (
-        masse_post_bascule / masses["actuel"] if masses["actuel"] > 0.0 else 0.0
-    )
-    return masses, vivants, part_post_bascule
+    return masses, vivants
 
 
 def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
@@ -1221,7 +1198,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     annee_euros = simulateur.parametres.annee_euros_constants
     derniere_publiee = depenses.derniere_annee
 
-    masses_ancrage, _, _ = _masses(pensionnes, population, derniere_publiee,
+    masses_ancrage, _ = _masses(pensionnes, population, derniere_publiee,
                                 poids(derniere_publiee), revalorisation)
     if masses_ancrage["actuel"] <= 0.0:
         return Avenir()
@@ -1252,7 +1229,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     lignes: list[AvenirAnnuel] = []
     for annee in range(depenses.premiere_annee_ventilee, HORIZON + 1):
         poids_annee = poids(annee)
-        masses, _, part_post_bascule = _masses(pensionnes, population, annee, poids_annee,
+        masses, _ = _masses(pensionnes, population, annee, poids_annee,
                             revalorisation)
         if masses["actuel"] <= 0.0:
             continue
@@ -1278,7 +1255,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                 cotisations, annee, simulateur.parametres.annee_bascule),
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
-            part_post_bascule=part_post_bascule,
+            reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
         ))
 
     return Avenir(
@@ -1347,7 +1324,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             convention_recette=convention,
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
-            part_post_bascule=par_annee[annee].part_post_bascule,
+            reforme_en_vigueur=annee >= annee_bascule,
         )
         for annee in comptes.annees() if annee in par_annee
     ]
@@ -1429,7 +1406,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
 
     lignes: list[CoutAnnuel] = []
     for annee in depenses.annees():
-        masses, vivants, part_post_bascule = _masses(pensionnes, population, annee, poids(annee),
+        masses, vivants = _masses(pensionnes, population, annee, poids(annee),
                                   revalorisation)
         if masses["actuel"] <= 0.0:
             continue
@@ -1442,7 +1419,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
             pensionnes=vivants,
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
-            part_post_bascule=part_post_bascule,
+            reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
         ))
 
     fiabilite = min(

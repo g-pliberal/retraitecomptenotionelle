@@ -137,12 +137,11 @@ export const CONVENTIONS_REVERSION = [
  * le dépôt fixe à « supprimée », la réversion étant un avantage non
  * contributif de plus.
  *
- * UNE RÉFORME NE SUPPRIME QUE CE QU'ELLE A PRODUIT. `partPostBascule` est la
- * fraction de la masse portée par les pensions liquidées à la bascule ou
- * après, et c'est d'elle seule que la réversion est retirée. Les réformes
- * rétroactives recalculent tout le monde : elle vaut un pour elles. Les
- * réformes prospectives ne valent que pour l'avenir : un conjoint survivant
- * dont l'assuré a liquidé en 2010 tient son droit du droit de 2010.
+ * `reformeEnVigueur` ne sert qu'aux réformes PROSPECTIVES : elles sont, par
+ * construction, le système actuel jusqu'à leur bascule, et y servent donc sa
+ * réversion. À compter de la bascule elles ne la servent plus, à personne. Les
+ * réformes rétroactives recalculent tout le monde depuis 1941 : le drapeau ne
+ * les concerne pas.
  *
  * Deux cas à part : le système actuel rend sa base sans rien y toucher, étant
  * le droit en vigueur ; et la garantie vieillesse, qui n'est pas un système
@@ -150,13 +149,17 @@ export const CONVENTIONS_REVERSION = [
  * directs, ne reçoit aucune réversion.
  */
 export function masseDuScenario(base, partDerives, rapport, scenario,
-                                reversionServie = false, partPostBascule = 1) {
+                                reversionServie = false, reformeEnVigueur = true) {
   if (scenario === "actuel") return base;
   const directe = base * (1 - partDerives) * rapport;
   if (scenario === COMPOSANTE_GARANTIE) return directe;
   if (reversionServie) return directe + base * partDerives;
-  const convertie = CLES_PROSPECTIVES.has(scenario) ? partPostBascule : 1;
-  return directe + base * partDerives * (1 - convertie);
+  // Avant sa bascule, une réforme prospective EST le système actuel : elle en
+  // sert la réversion comme le reste. Après, elle ne la sert plus, à personne.
+  if (CLES_PROSPECTIVES.has(scenario) && !reformeEnVigueur) {
+    return directe + base * partDerives;
+  }
+  return directe;
 }
 
 /**
@@ -348,9 +351,6 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
   const total = {};
   for (const cle of CLES_MASSES) total[cle] = 0;
   let vivants = 0;
-  // La masse du système actuel portée par les liquidations d'après la
-  // bascule : une réforme PROSPECTIVE ne retire la réversion qu'à celle-là.
-  let massePostBascule = 0;
   for (const pensionne of liste) {
     // Deux pondérations se composent ici : celle de la GÉNÉRATION, démographique,
     // et celle du CAS TYPE, sociologique — combien de retraités ont eu cette
@@ -361,13 +361,11 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     let poidsGarantie = 0;
     let poidsRevalorise = 0;
     let poidsRevaloriseProspectif = 0;
-    let poidsPostBascule = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
       const liquidation = pensionne.anneeLiquidation + decalage;
       if (annee < liquidation) continue;
       const effectif = population.effectif(annee - pensionne.generation - decalage, annee);
       poids += effectif;
-      if (liquidation >= revalorisation.anneeBascule) poidsPostBascule += effectif;
       // Le troisième poids porte la revalorisation des pensions SERVIES, et il
       // faut qu'il soit à part : le coefficient dépend de l'année de
       // liquidation, qui n'est pas la même pour les cinq cohortes de la tranche.
@@ -382,7 +380,6 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     }
     if (poids <= 0) continue;
     vivants += 1;
-    massePostBascule += part * poidsPostBascule * pensionne.pensions.actuel;
     for (const cle of CLES_MASSES) {
       let poidsCle = poids;
       if (cle === COMPOSANTE_GARANTIE) poidsCle = poidsGarantie;
@@ -391,8 +388,7 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       total[cle] += part * poidsCle * pensionne.pensions[cle];
     }
   }
-  const partPostBascule = total.actuel > 0 ? massePostBascule / total.actuel : 0;
-  return { total, vivants, partPostBascule };
+  return { total, vivants };
 }
 
 /**
@@ -478,7 +474,7 @@ function rapports(total) {
 /** Le coût d'une année, observé puis recalculé pour chaque système. */
 class CoutAnnuel {
   constructor(annee, observee, coefficientConstants, partPib, rapportsAnnee, nombre,
-              partDerives = 0.0, reversionServie = false, partPostBascule = 1.0) {
+              partDerives = 0.0, reversionServie = false, reformeEnVigueur = true) {
     this.annee = annee;
     this.observee = observee;
     this.coefficientConstants = coefficientConstants;
@@ -489,16 +485,15 @@ class CoutAnnuel {
     // rapport ne décrit pas — voir `masseDuScenario`.
     this.partDerives = partDerives;
     this.reversionServie = reversionServie;
-    // Part de la masse liquidée à la bascule ou après : la seule dont une
-    // réforme PROSPECTIVE retire la réversion.
-    this.partPostBascule = partPostBascule;
+    // La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes prospectives.
+    this.reformeEnVigueur = reformeEnVigueur;
   }
 
   /** Coût du système, en millions d'euros courants de l'année. */
   cout(scenario) {
     return masseDuScenario(this.observee, this.partDerives,
                            this.rapports[scenario], scenario, this.reversionServie,
-                           this.partPostBascule);
+                           this.reformeEnVigueur);
   }
 
   coutConstants(scenario) {
@@ -521,7 +516,7 @@ class CoutAnnuel {
 class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
               dependance, recettes = {}, partDerives = 0.0,
-              reversionServie = false, partPostBascule = 1.0) {
+              reversionServie = false, reformeEnVigueur = true) {
     this.annee = annee;
     this.projete = projete;
     this.base = base;
@@ -536,16 +531,15 @@ class AvenirAnnuel {
     // rapport ne décrit pas — voir `masseDuScenario`.
     this.partDerives = partDerives;
     this.reversionServie = reversionServie;
-    // Part de la masse liquidée à la bascule ou après : la seule dont une
-    // réforme PROSPECTIVE retire la réversion.
-    this.partPostBascule = partPostBascule;
+    // La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes prospectives.
+    this.reformeEnVigueur = reformeEnVigueur;
   }
 
   /** Coût du système, en millions d'euros constants de référence. */
   coutConstants(scenario) {
     return masseDuScenario(this.base, this.partDerives,
                            this.rapports[scenario], scenario, this.reversionServie,
-                           this.partPostBascule);
+                           this.reformeEnVigueur);
   }
 
   /** Le même coût, ramené aux euros courants de son année. */
@@ -615,7 +609,7 @@ class SoldeAnnuel {
               tauxLiberal = 0.0, anneeBascule = 0,
               convention = CONVENTION_RAPPORT,
               partDerives = 0.0, reversionServie = false,
-              partPostBascule = 1.0) {
+              reformeEnVigueur = true) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
@@ -652,9 +646,8 @@ class SoldeAnnuel {
     // rapport ne décrit pas — voir `masseDuScenario`.
     this.partDerives = partDerives;
     this.reversionServie = reversionServie;
-    // Part de la masse liquidée à la bascule ou après : la seule dont une
-    // réforme PROSPECTIVE retire la réversion.
-    this.partPostBascule = partPostBascule;
+    // La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes prospectives.
+    this.reformeEnVigueur = reformeEnVigueur;
   }
 
   /**
@@ -677,7 +670,7 @@ class SoldeAnnuel {
   depense(scenario) {
     return masseDuScenario(this.depenses, this.partDerives,
                            this.rapports[scenario], scenario, this.reversionServie,
-                           this.partPostBascule);
+                           this.reformeEnVigueur);
   }
 
   /**
@@ -904,8 +897,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
   const lignes = [];
   for (let annee = depenses.premiereAnneeVentilee; annee <= HORIZON; annee += 1) {
     const poidsAnnee = poids(annee);
-    const { total, partPostBascule } = masses(liste, population, annee, poidsAnnee,
-                                              revalorisation);
+    const { total } = masses(liste, population, annee, poidsAnnee, revalorisation);
     if (total.actuel <= 0) continue;
     const cotisations = massesCotisations(liste, population, annee, poidsAnnee);
     const projete = annee > dernierePubliee;
@@ -930,7 +922,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       rapportsRecettes(cotisations, annee, simulateur.parametres.annee_bascule),
       depenses.partDroitsDerives(annee),
       reversionServie,
-      partPostBascule,
+      annee >= simulateur.parametres.annee_bascule,
     ));
   }
 
@@ -990,7 +982,7 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       convention,
       depenses.partDroitsDerives(annee),
       reversionServie,
-      ligne.partPostBascule,
+      annee >= anneeBascule,
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
@@ -1044,8 +1036,8 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
 
   const lignes = [];
   for (const annee of depenses.annees()) {
-    const { total, vivants, partPostBascule } = masses(liste, population, annee,
-                                                       poids(annee), revalorisation);
+    const { total, vivants } = masses(liste, population, annee, poids(annee),
+                                      revalorisation);
     if (total.actuel <= 0) continue;
     lignes.push(new CoutAnnuel(
       annee,
@@ -1056,7 +1048,7 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
       vivants,
       depenses.partDroitsDerives(annee),
       reversionServie,
-      partPostBascule,
+      annee >= simulateur.parametres.annee_bascule,
     ));
   }
 

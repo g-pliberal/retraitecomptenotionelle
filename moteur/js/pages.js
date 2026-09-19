@@ -5803,7 +5803,7 @@ function coutDetailScenarios(contexte) {
       g.pourcentage(masseDuScenario(dernier.partPib, dernier.partDerives,
                                     dernier.rapports[scenario], scenario,
                                     dernier.reversionServie,
-                                    dernier.partPostBascule), false, 1),
+                                    dernier.reformeEnVigueur), false, 1),
     ];
   });
   lignesPasse.push([
@@ -6404,10 +6404,9 @@ laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
   retirent tous les avantages non contributifs, et celui-là comme les autres :
   ils ne rendent que ce qui a été cotisé, et c'est précisément ce qu'ils
   servent à mesurer. Le système actuel, lui, la sert, puisqu'il est le droit en
-  vigueur. Une réforme ne reprend toutefois pas un droit déjà ouvert : les
-  systèmes qui ne valent que pour l'avenir continuent de servir la réversion
-  des pensions liquidées avant leur bascule, et ne cessent de la servir qu'à
-  mesure que ces pensions s'éteignent.</li>
+  vigueur. Les systèmes qui ne valent que pour l'avenir la servent jusqu'à leur
+  bascule, n'étant jusque-là rien d'autre que le système actuel. Ensuite ils ne
+  la servent plus, aux veuves d'avant comme à celles d'après.</li>
   <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
   projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
   COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en
