@@ -103,6 +103,10 @@ export class ScenarioActuel {
     this.minimumGaranti = new MinimumGaranti(paquet, macro);
     this.minimumVieillesse = new MinimumVieillesse(paquet, macro);
     this.carriereLongue = new CarriereLongue(paquet);
+    // Propriété d'instance, comme l'attribut de classe du Python : la mesure
+    // des avantages non contributifs la repousse hors de portée pour lire ce
+    // que la règle des parents ajoute à une pension.
+    this.parentsMeilleuresAnneesDepuis = PARENTS_MEILLEURES_ANNEES_DEPUIS;
     this.surcoteBaremes = new SurcoteBaremes(paquet);
     this.majorationsEnfants = new MajorationsPourEnfants(paquet);
     this.surcoteParentale = new SurcoteParentale(paquet);
@@ -328,7 +332,7 @@ export class ScenarioActuel {
         // pour deux enfants et plus, pensions prenant effet à compter du
         // 1er septembre 2026 (R. 173-3-2, décret n° 2026-699).
         if (enfantsMajores > 0 && carriere.age_liquidation !== null
-            && carriere.dateLiquidation.rang >= PARENTS_MEILLEURES_ANNEES_DEPUIS) {
+            && carriere.dateLiquidation.rang >= this.parentsMeilleuresAnneesDepuis) {
           annees = Math.max(1, annees - (enfantsMajores === 1 ? 1 : 2));
         }
       }

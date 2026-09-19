@@ -48,14 +48,17 @@ qu'ensuite, sous leur réserve.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import copy
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
+from .calendrier import DateMois
 from .castypes import CAS_TYPES, CasType
 from .cout import _DEMI_TRANCHE, _ponderation, generations
 from .donnees.chargement import charger_yaml
 from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
+from .scenarios.actuel import CarriereLongue, ScenarioActuel
 from .simulateur import Simulateur
 
 #: Les quatre états possibles du modèle à l'égard d'un avantage. Vocabulaire
@@ -257,6 +260,186 @@ def inventaire_depuis_paquet(lignes: dict) -> Inventaire:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Neutraliser pour mesurer
+# ---------------------------------------------------------------------------
+#
+# La cascade du scénario 1 isole huit avantages parce qu'elle les CALCULE l'un
+# après l'autre, et qu'un montant intermédiaire s'y lit. Les autres passent par
+# un trimestre, un âge ou une assiette : rien n'en sort qu'on puisse lire. Pour
+# ceux-là il faut RETIRER l'avantage et refaire la pension, à date de
+# liquidation inchangée — et l'écart est la ligne.
+#
+# Retirer se fait de trois façons, et une seule convient à chaque avantage :
+#
+# * par la CARRIÈRE, quand l'avantage tient à ce que l'assuré a vécu. Une année
+#   de chômage devient une année sans activité, qui ne valide rien.
+# * par le CATALOGUE, quand la fiche du régime le déclare. Le moteur lit
+#   ``avantages_non_contributifs`` et ``points_minimum_annuels`` ; un catalogue
+#   dont la ligne est retirée produit un régime qui ne sert plus l'avantage,
+#   sans qu'aucun code du moteur change.
+# * par une TABLE du scénario, quand l'avantage vient d'un barème daté. La
+#   carrière longue a le sien ; un barème vide ne propose plus rien.
+#
+# Aucune de ces trois façons ne touche au moteur. C'est la condition pour que la
+# mesure reste une mesure : si le calcul changeait, on comparerait deux modèles
+# et non deux droits.
+
+
+#: Les deux statuts dont la pension s'ouvre à une DURÉE DE SERVICES et non à un
+#: âge. Ils partagent avec la catégorie active le drapeau ``categorie_active``
+#: des fiches — le même retrait les neutralise tous les deux —, mais ce n'est
+#: pas le même droit, et la mesure les sépare : L. 24 II pour les uns, L. 24 I
+#: 1° pour les autres.
+MILITAIRES: frozenset[str] = frozenset({"militaire", "militaire_officier"})
+
+
+@dataclass(frozen=True)
+class Neutralisation:
+    """Comment retirer un avantage du scénario 1, et ce que le retrait signifie."""
+
+    #: Ligne de l'inventaire que la mesure renseigne.
+    code: str
+    #: Ce que le retrait fait, en une phrase — c'est ce que la page affiche
+    #: sous le chiffre, parce qu'un écart ne veut rien dire sans sa
+    #: contrefactuelle.
+    quoi: str
+    #: ``catalogue``, ``table`` ou ``carriere`` : par où l'avantage est retiré.
+    par: str
+
+
+NEUTRALISATIONS: tuple[Neutralisation, ...] = (
+    Neutralisation(
+        code="periodes_assimilees",
+        quoi="les périodes non travaillées deviennent des années sans activité, "
+             "qui ne valident aucun trimestre",
+        par="carriere",
+    ),
+    Neutralisation(
+        code="points_gratuits_complementaires",
+        quoi="le chômage indemnisé devient du chômage non indemnisé : mêmes "
+             "trimestres validés, plus aucun point de complémentaire",
+        par="carriere",
+    ),
+    Neutralisation(
+        code="service_national",
+        quoi="le service national devient une année sans activité",
+        par="carriere",
+    ),
+    Neutralisation(
+        code="categorie_active",
+        quoi="les fiches ne déclarent plus le classement de l'emploi : l'âge "
+             "légal de droit commun est opposé à l'agent",
+        par="catalogue",
+    ),
+    Neutralisation(
+        code="age_jouissance_militaire",
+        quoi="la pension militaire ne s'ouvre plus à la durée de services : "
+             "l'âge légal de droit commun lui est opposé",
+        par="catalogue",
+    ),
+    Neutralisation(
+        code="garantie_minimale_points",
+        quoi="le plancher de cent vingt points par an est retiré des fiches de "
+             "l'Agirc : le cadre n'acquiert plus que ce que son salaire achète",
+        par="catalogue",
+    ),
+    Neutralisation(
+        code="salaire_de_reference_des_parents",
+        quoi="le salaire de référence des parents repasse à vingt-cinq années, "
+             "comme celui des autres assurés",
+        par="table",
+    ),
+    Neutralisation(
+        code="carriere_longue",
+        quoi="le barème du départ anticipé pour carrière longue est vidé : "
+             "aucune porte ne s'ouvre avant l'âge légal",
+        par="table",
+    ),
+)
+
+#: Les codes mesurés par un retrait dans la carrière, et le motif par lequel on
+#: remplace la période. ``None`` vaut « toutes les interruptions ».
+_MOTIFS_NEUTRALISES: dict[str, tuple[frozenset[str] | None, str]] = {
+    "periodes_assimilees": (None, "sans_activite"),
+    "points_gratuits_complementaires": (
+        frozenset({"chomage_indemnise", "maladie", "maternite", "invalidite",
+                   "accident_travail"}),
+        "chomage_non_indemnise",
+    ),
+    "service_national": (frozenset({"service_militaire"}), "sans_activite"),
+}
+
+
+def _catalogue_sans(catalogue, code: str | None = None,
+                    plancher_de_points: bool = False):
+    """Le catalogue, privé d'une déclaration, sans qu'aucun code du moteur change.
+
+    Le moteur lit ``avantages_non_contributifs`` période par période, et
+    ``points_minimum_annuels`` pour la garantie minimale de points de l'Agirc.
+    Retirer l'un ou l'autre suffit à ce que le régime cesse de servir
+    l'avantage : c'est la contrefactuelle la plus fidèle qui soit, puisqu'elle
+    ne change que la DÉCLARATION, là où le droit l'a lui-même écrite.
+    """
+    variante = copy.deepcopy(catalogue)
+    for nom, regime in list(variante._regimes.items()):
+        periodes = []
+        for periode in regime.periodes:
+            champs: dict = {}
+            if code is not None and code in periode.avantages_non_contributifs:
+                champs["avantages_non_contributifs"] = tuple(
+                    declare for declare in periode.avantages_non_contributifs
+                    if declare != code
+                )
+            if plancher_de_points and periode.points_minimum_annuels is not None:
+                champs["points_minimum_annuels"] = None
+            periodes.append(replace(periode, **champs) if champs else periode)
+        variante._regimes[nom] = replace(regime, periodes=tuple(periodes))
+    return variante
+
+
+def scenarios_neutralises(simulateur: Simulateur) -> dict[str, ScenarioActuel]:
+    """Un scénario 1 par avantage retiré, construit une fois pour toute la grille.
+
+    Les trois cent quarante-deux couples de la grille partagent ces variantes :
+    les construire par couple coûterait le chargement des tables autant de fois,
+    et rendrait la page inutilisable.
+
+    Les avantages retirés PAR LA CARRIÈRE n'y sont pas : ils ne demandent aucun
+    scénario nouveau, seulement une carrière autre.
+    """
+    variantes: dict[str, ScenarioActuel] = {}
+    catalogues = {
+        "categorie_active": _catalogue_sans(simulateur.catalogue,
+                                            code="categorie_active"),
+        "garantie_minimale_points": _catalogue_sans(simulateur.catalogue,
+                                                    plancher_de_points=True),
+    }
+    # Le classement de l'emploi et la jouissance militaire partagent leur
+    # déclaration : un seul catalogue les neutralise, et c'est l'affiliation de
+    # la carrière qui dit laquelle des deux lignes l'écart renseigne.
+    catalogues["age_jouissance_militaire"] = catalogues["categorie_active"]
+    for code, catalogue in catalogues.items():
+        variantes[code] = ScenarioActuel(
+            simulateur.macro, catalogue, simulateur.affiliations,
+            simulateur.parametres,
+        )
+    parents = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+                             simulateur.affiliations, simulateur.parametres)
+    # La date d'entrée en vigueur, repoussée hors de portée : la branche qui
+    # retire une ou deux années au salaire de référence ne s'exécute plus.
+    parents.PARENTS_MEILLEURES_ANNEES_DEPUIS = DateMois(2999, 1)
+    variantes["salaire_de_reference_des_parents"] = parents
+
+    longue = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+                            simulateur.affiliations, simulateur.parametres)
+    # Un barème lu sur un fichier absent est un barème vide, et le constructeur
+    # le prévoit : aucune porte ne s'ouvre plus avant l'âge légal.
+    longue.carriere_longue = CarriereLongue(Path("barème-vidé-pour-la-mesure"))
+    variantes["carriere_longue"] = longue
+    return variantes
+
+
 def carriere_variante(simulateur: Simulateur, cas: CasType, generation: int,
                       age: float, affiliation: str | None = None,
                       interruptions: dict[int, str] | None = None):
@@ -287,7 +470,9 @@ def carriere_variante(simulateur: Simulateur, cas: CasType, generation: int,
 
 
 def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
-               age: float, reelle) -> tuple[dict[str, float], dict[str, str]]:
+               age: float, reelle,
+               variantes: dict[str, ScenarioActuel] | None = None,
+               ) -> tuple[dict[str, float], dict[str, str]]:
     """Les avantages non isolés par la cascade, mesurés par recalcul.
 
     Rend un dictionnaire VIDE quand la carrière n'en porte aucun, plutôt qu'un
@@ -300,53 +485,75 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
     travaillées retire les trimestres assimilés ET l'AVPF, que la cascade
     chiffre déjà sous sa propre ligne. On la retranche donc de l'écart brut.
 
-    La seconde est une interaction qu'on ne mesure pas. Retirer deux avantages
-    d'âge à la fois n'est pas la somme de deux retraits — la décote est
-    plafonnée, et deux pénalités qui butent sur le même plafond ne s'additionnent
-    pas. Aucun cas type de la grille ne porte les deux (les interruptions sont
-    sur une carrière du privé, le classement sur des carrières publiques), et un
-    test l'exige ; si cela changeait, ce calcul devrait changer aussi.
+    La seconde est une interaction qu'on ne mesure pas. Retirer deux avantages à
+    la fois n'est pas la somme de deux retraits : la décote est plafonnée, et
+    deux pénalités qui butent sur le même plafond ne s'additionnent pas. Chaque
+    ligne est donc mesurée seule, contre la pension réelle, et leur somme est un
+    ordre de grandeur plutôt qu'un total exact. Aucun cas type de la grille ne
+    porte deux avantages d'âge à la fois, ce qu'un test exige.
 
-    LE GARDE-FOU refuse plutôt que de rendre un chiffre faux. Un changement de
-    statut ne vaut comme contrefactuelle que s'il ne déplace QUE l'âge opposé.
-    Quand il déplace aussi la DURÉE REQUISE, le rapport de proratisation change
-    avec lui et l'écart ne mesure plus l'avantage : c'est le cas du militaire,
-    dont la pension exige 172 trimestres là où le fonctionnaire civil en exige
-    160, si bien que la contrefactuelle civile rend une pension PLUS FORTE et
-    l'avantage un montant négatif. L'appelant reçoit le refus et sa raison. Ce
-    que la jouissance militaire coûte est une affaire d'annuités servies, que
-    :func:`masses_anticipees` mesure et que celle-ci ne mesurera jamais.
+    LE GARDE-FOU refuse plutôt que de rendre un chiffre faux. Un retrait ne vaut
+    comme contrefactuelle que s'il ne déplace QUE l'avantage visé. Quand il
+    déplace aussi la DURÉE REQUISE, le rapport de proratisation change avec lui
+    et l'écart ne mesure plus rien de nommable. L'appelant reçoit le refus et sa
+    raison, et le refus est contagieux : voir :func:`decomposer`.
     """
     parts: dict[str, float] = {}
     refus: dict[str, str] = {}
-    if cas.interruptions_relatives:
-        sans = simulateur.scenario_actuel.calculer(carriere_variante(
-            simulateur, cas, generation, age,
-            interruptions={
-                int(generation + cas.age_debut + decalage): "sans_activite"
-                for decalage, _ in cas.interruptions_relatives
-            },
-        ))
-        avpf = sum(a.montant for a in reelle.avantages_appliques if a.code == "avpf")
-        ecart = reelle.pension_annuelle - sans.pension_annuelle - avpf
-        if ecart > 0.0:
-            parts["periodes_assimilees"] = ecart
-    if cas.affiliation in SEDENTAIRE:
-        temoin, ligne = SEDENTAIRE[cas.affiliation]
-        sans = simulateur.scenario_actuel.calculer(
-            carriere_variante(simulateur, cas, generation, age, affiliation=temoin)
-        )
-        if sans.trimestres_requis != reelle.trimestres_requis:
-            refus[ligne] = (
-                f"{cas.code} : la contrefactuelle {temoin} exige "
-                f"{sans.trimestres_requis} trimestres contre "
-                f"{reelle.trimestres_requis} — la proratisation change avec le "
-                f"statut, l'écart ne mesure plus l'âge"
+    if variantes is None:
+        variantes = scenarios_neutralises(simulateur)
+    avpf = sum(a.montant for a in reelle.avantages_appliques if a.code == "avpf")
+    reelles = {
+        int(generation + cas.age_debut + decalage): motif
+        for decalage, motif in cas.interruptions_relatives
+    }
+    militaire = cas.affiliation in MILITAIRES
+
+    for neutralisation in NEUTRALISATIONS:
+        code = neutralisation.code
+        # La jouissance militaire et le classement de l'emploi partagent leur
+        # déclaration dans les fiches ; l'affiliation dit laquelle des deux
+        # lignes l'écart renseigne, et l'autre n'est pas même calculée.
+        if code == "categorie_active" and militaire:
+            continue
+        if code == "age_jouissance_militaire" and not militaire:
+            continue
+
+        if neutralisation.par == "carriere":
+            motifs, remplacement = _MOTIFS_NEUTRALISES[code]
+            if not any(motifs is None or motif in motifs
+                       for motif in reelles.values()):
+                continue
+            sans = simulateur.scenario_actuel.calculer(carriere_variante(
+                simulateur, cas, generation, age,
+                interruptions={
+                    annee: (remplacement if motifs is None or motif in motifs
+                            else motif)
+                    for annee, motif in reelles.items()
+                },
+            ))
+            # L'AVPF part avec les périodes d'éducation, et la cascade la porte
+            # déjà : sans ce retrait elle serait comptée deux fois.
+            ecart = reelle.pension_annuelle - sans.pension_annuelle - (
+                avpf if code == "periodes_assimilees" else 0.0
             )
         else:
+            variante = variantes.get(code)
+            if variante is None:
+                continue
+            sans = variante.calculer(
+                carriere_variante(simulateur, cas, generation, age))
+            if sans.trimestres_requis != reelle.trimestres_requis:
+                refus[code] = (
+                    f"{cas.code} : le retrait déplace la durée requise, "
+                    f"{sans.trimestres_requis} trimestres contre "
+                    f"{reelle.trimestres_requis} — la proratisation change avec "
+                    f"lui, et l'écart ne mesure plus l'avantage seul"
+                )
+                continue
             ecart = reelle.pension_annuelle - sans.pension_annuelle
-            if ecart > 0.0:
-                parts[ligne] = ecart
+        if ecart > 0.0:
+            parts[code] = parts.get(code, 0.0) + ecart
     return parts, refus
 
 
@@ -440,6 +647,9 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     debut = simulateur.parametres.annee_debut_repartition
+    # Les variantes sont construites UNE FOIS pour les trois cent quarante-deux
+    # couples : par couple, elles rechargeraient les tables autant de fois.
+    variantes = scenarios_neutralises(simulateur)
     pensionnes: list[Pensionne] = []
     refus: dict[str, str] = {}
     for cas in CAS_TYPES:
@@ -458,7 +668,8 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
             parts = {CONTRIBUTIF: actuel.total_contributif}
             for avantage in actuel.avantages_appliques:
                 parts[avantage.code] = parts.get(avantage.code, 0.0) + avantage.montant
-            mesures, refuses = recalculer(simulateur, cas, generation, age, actuel)
+            mesures, refuses = recalculer(
+                simulateur, cas, generation, age, actuel, variantes)
             refus.update(refuses)
             for ligne, montant in mesures.items():
                 parts[ligne] = parts.get(ligne, 0.0) + montant

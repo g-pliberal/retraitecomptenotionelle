@@ -38,7 +38,7 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
 | **chiffré** | 8 | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
-| **intégré** | 11 | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Deux le sont désormais** — les périodes assimilées et la catégorie active : voir le §4 bis. |
+| **intégré** | 11 | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Les trois derniers ne sont pas des dispositifs. |
 | **déclaré** | 3 | Une fiche de régime le déclare, aucun code ne le sert. La déclaration est une intention. |
 | **absent** | 17 | Ni déclaré ni servi. C'est un écart au droit positif. |
 
@@ -229,6 +229,137 @@ ces points — 612 € par an sur la carrière au salaire moyen, contre 7 154 �
 la validation entière. L'assurance chômage en verse la contrepartie, 3,8 Md€ en
 2024 au poste `unedic_agirc_arrco`.
 
+## 4 ter. Les neuf lignes « intégré » qui restaient
+
+Onze avantages sont **servis par le scénario 1 sans que la cascade les isole** :
+leur effet passe par un trimestre, un âge ou une assiette, et rien n'en sort
+qu'on puisse lire. Deux avaient été mesurés (§ 4 bis). Voici les neuf autres.
+
+### Retirer pour mesurer, par trois voies et pas une de plus
+
+Un avantage qu'on ne lit pas, on le **retire**, et l'écart est la ligne. Le
+retrait se fait de trois façons, et aucune ne touche au moteur — c'est la
+condition pour que la mesure reste une mesure : si le calcul changeait, on
+comparerait deux modèles et non deux droits.
+
+| Voie | Ce qu'on retire | Pour quoi |
+|---|---|---|
+| **la carrière** | une année de chômage devient une année sans activité | périodes assimilées, points gratuits de complémentaire, service national |
+| **le catalogue** | la fiche du régime cesse de déclarer l'avantage | catégorie active, jouissance militaire, garantie minimale de points |
+| **une table** | le barème daté est vidé, ou sa date d'effet repoussée | carrière longue, salaire de référence des parents |
+
+La voie du **catalogue** est la plus fidèle des trois : elle ne change que la
+*déclaration*, là où le droit l'a lui-même écrite. Un test le vérifie par un
+détour : la catégorie active est mesurée une seconde fois en changeant le
+**statut** de l'agent pour le statut sédentaire de mêmes caisses, et les deux
+chemins — l'un par les données du régime, l'autre par celles de la carrière —
+donnent le même euro sur cinq générations.
+
+### Ce que chacune vaut
+
+Génération 1985, en euros par an de pension, à date de départ inchangée. Les
+colonnes ne s'additionnent pas : la décote est plafonnée, et deux retraits qui
+butent sur le même plafond ne font pas deux fois le premier.
+
+| Ligne | Ce que le retrait fait | Valeur |
+|---|---|---|
+| Catégorie active | l'âge légal de droit commun est opposé à l'agent classé | **4 530 €** |
+| Jouissance militaire | la pension ne s'ouvre plus à la durée de services | **4 420 €** |
+| Périodes assimilées | les interruptions ne valident plus rien | **4 526 €** |
+| Salaire de référence des parents | retour à vingt-cinq années | **729 €** |
+| Garantie minimale de points | le plancher de 120 points est retiré | **205 €** |
+| Carrière longue | le barème d'anticipation est vidé | **0 €** |
+
+Et sous une **dose** de cinq années de chômage indemnisé et d'une année de
+service national — une hypothèse, affichée comme telle, puisque la grille n'en
+porte aucune :
+
+| Ligne | Salaire moyen | Cadre |
+|---|---|---|
+| Périodes assimilées | 12 062 € | 18 350 € |
+| Service national | 2 996 € | 5 693 € |
+| Points gratuits de complémentaire | 1 427 € | 8 585 € |
+
+### Trois résultats qu'on n'attendait pas
+
+**La carrière longue ne vaut rien sur le montant.** Le barème vidé, la pension ne
+bouge pas d'un euro : un assuré entré tôt réunit sa durée de toute façon, et le
+taux plein lui est acquis avec ou sans le dispositif. Ce que la carrière longue
+change n'est pas le montant mais la **date**. Elle ouvre la porte ; elle ne
+remplit pas la pension. Tout son prix est dans la durée — 3,8 Md€ en 2024, rien
+avant 2010.
+
+**Quatre des neuf ne pèsent rien sur la fenêtre publiée**, et aucune de ces
+absences n'est un défaut de mesure :
+
+- le salaire de référence des parents ne s'applique qu'aux pensions prenant
+  effet à compter de septembre 2026, et la dernière dépense publiée est de 2024 ;
+- la garantie minimale de points ne mord que sur les premières années d'une
+  carrière de cadre, et n'a existé que de 1989 à 2018 : les carrières concernées
+  liquident toutes après 2024 ;
+- le service national et les points gratuits de complémentaire ne sont portés
+  par aucun cas type, dont un seul connaît une interruption.
+
+**La jouissance militaire se mesure sur certaines générations et se refuse sur
+les autres.** Le retrait y déplace aussi la durée requise — 172 trimestres
+contre 160, la pension militaire ayant la sienne —, et la proratisation change
+avec le droit. Le garde-fou compare les deux durées, refuse la ligne, et la
+refuse **partout** dès qu'elle est faussée quelque part : une ligne mesurée pour
+certaines générations et pas pour d'autres donnerait un agrégat dont le biais
+serait invisible.
+
+### Les trois qui ne sont pas des dispositifs
+
+Elles se chiffrent, mais pas par un retrait — on ne retire pas un barème, on le
+remplace ; on ne retire pas une recette, on la lit.
+
+**La décote n'est pas actuarielle, et le résultat renverse l'intuition.** Sur un
+fonctionnaire sédentaire de la génération 1965, âge de référence 64,5 ans, en
+comparant ce que coûte l'anticipation sous le droit en vigueur et sous le
+coefficient de conversion notionnel :
+
+| Départ | Droit actuel | Notionnel | Écart |
+|---|---|---|---|
+| 62,5 ans | 81,7 % | 84,0 % | **−2,3 pts** (plus dur) |
+| 59,5 ans | 59,1 % | 65,5 % | **−6,4 pts** (plus dur) |
+| 56,5 ans | 48,0 % | 46,4 % | **+1,5 pt** (plus doux) |
+| 54,5 ans | 44,6 % | 39,5 % | **+5,1 pts** |
+| 52,5 ans | 40,3 % | 32,7 % | **+7,6 pts** |
+
+La décote **surpunit l'anticipation ordinaire et sous-punit l'anticipation
+extrême**, parce qu'elle est plafonnée à vingt trimestres. Or l'anticipation
+extrême est exactement celle de la catégorie active (cinq ans), de la
+super-active (dix), de la conduite SNCF (douze) et des militaires (vingt). Le
+barème est le plus clément là où il devrait l'être le moins.
+
+**Le rendement servi dépasse ce que l'assiette porte, et c'est de très loin le
+plus gros de la liste.** La masse du scénario 2 vaut 27,9 % de celle du
+scénario 1 en 2024 : l'écart est de 307,5 Md€ sur une dépense de 426,7. Le
+scénario 2 ne porte au compte que la part **salariale** ; avec la part
+patronale (scénario 4), l'écart tombe à **133,7 Md€**, soit 31,3 % de la
+dépense. La seconde est la comparaison honnête avec « ce qui a été cotisé », la
+première avec « ce que l'assuré a lui-même supporté ». Ne jamais l'additionner
+aux lignes de dispositifs : celles-ci sont comprises dedans.
+
+**Une part du financement n'est pas contributive.** En 2025, les cotisations ne
+font que 65,6 % des ressources du système. Le reste : impôts et taxes affectés
+15,3 %, contribution d'équilibre de l'État employeur 11,7 %, transferts 3,9 %,
+subventions d'équilibre des régimes spéciaux 1,8 %, autres produits 1,7 %. Deux
+réserves : les impôts compensent pour l'essentiel des exonérations de
+cotisations, et les transferts sont déjà comptés du côté des prestations, sous
+l'AVPF et la majoration pour enfants. Le noyau indiscutable est la contribution
+d'équilibre et les subventions, **13,5 % des ressources**.
+
+### Ce que tout cela déplace dans l'agrégat : rien
+
+La décomposition annuelle vaut toujours **12,6 Md€ en 2024**, aux mêmes sept
+lignes. Chiffrer les neuf n'a pas déplacé la masse d'un euro, et ce n'était pas
+le but : le but était de savoir **pourquoi** chacune vaut ce qu'elle vaut. Sur
+les neuf, quatre sont nulles pour des raisons de calendrier ou de composition de
+la grille, une est nulle par nature, une est refusée, et trois relèvent d'une
+autre grandeur. Une liste qui ne dit pas cela n'est pas une liste : c'est un
+tableau de zéros.
+
 ## 5. Pourquoi, et c'est le vrai résultat de ce chantier
 
 Deux causes, et elles ne se corrigent pas de la même façon.
@@ -273,11 +404,12 @@ raison.**
    droits dérivés par régime et par sexe dans le panorama « Les retraités et les
    retraites ». C'est la seule ligne de l'inventaire dont le coût s'obtienne sans
    aucun recalcul — et c'est la plus lourde.
-3. **Les onze lignes « intégrées » se chiffrent par recalcul**, exactement comme
-   les huit lignes de cascade : on recalcule la pension sans l'avantage, et
-   l'écart est la ligne. Les périodes assimilées et la catégorie active sont les
-   deux plus lourdes, et les deux les plus faciles — le modèle sert déjà les
-   deux, il suffit de les retirer.
+3. **Les onze lignes « intégrées » se chiffrent par retrait — c'est fait.** Huit
+   le sont, par la carrière, par le catalogue ou par une table (§4 bis et
+   4 ter) ; les trois autres ne sont pas des dispositifs et se lisent ailleurs.
+   Ce qui reste n'est plus une mesure à faire mais une POPULATION à trouver :
+   quatre des huit ne pèsent rien sur la fenêtre publiée, faute de chômeurs,
+   d'appelés et de parents dans la grille. C'est le point 1.
 4. **Les trois contrôles externes du dépôt doivent être opposés au résultat** :
    `cnaf_avpf` et `cnaf_majorations` pour les droits familiaux, `fsv_cotisations`
    pour le chômage, `unedic_agirc_arrco` pour les points gratuits de

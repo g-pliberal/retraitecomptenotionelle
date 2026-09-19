@@ -5283,6 +5283,19 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   la plus grande part de l'écart, l'absence d'enfants le reste. Voir
   `docs/avantages_non_contributifs.md`.
 
+- **La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.**
+  Mesuré en comparant ce que coûte une année d'anticipation sous le droit en
+  vigueur et sous le coefficient de conversion notionnel, sur un fonctionnaire
+  sédentaire de la génération 1965 : partir deux ans plus tôt laisse 81,7 % de
+  la pension sous le droit actuel contre 84,0 % sous le notionnel — le droit est
+  PLUS DUR de 2,3 points ; à cinq ans d'avance, plus dur de 6,4 points. Puis la
+  décote bute sur son plafond de vingt trimestres et le rapport s'inverse : à
+  huit ans d'avance le droit est plus doux de 1,5 point, à dix ans de 5,1, à
+  douze ans de 7,6. Or l'anticipation extrême est exactement celle de la
+  catégorie active, de la super-active, de la conduite SNCF et des militaires :
+  le barème est le plus clément là où il devrait l'être le moins. Voir
+  `docs/avantages_non_contributifs.md` §4 ter.
+
 - **Une décote plafonnée ne sait pas dire qui part trop tôt, et le modèle en
   hérite.** L'article L. 14 borne la décote à vingt trimestres : un agent de
   catégorie active parti à 57 ans et un agent sédentaire parti le même jour
@@ -6169,7 +6182,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 984 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 988 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
