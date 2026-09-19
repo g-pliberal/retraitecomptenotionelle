@@ -1681,17 +1681,31 @@ def _verifier_cascade(nom, corps, pas_diviseur, pas_facteur):
     assert abs(valeur["e"] / coefficient["f"] - valeur["f"]) <= borne, f"{nom} : f)"
 
 
-def test_les_quatre_systemes_donnent_le_meme_montant_au_mois_et_a_l_annee(contexte):
-    """Mensuel × 12 = annuel, sur les nombres affichés, pour les quatre blocs."""
-    corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
+def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie(contexte):
+    """Le même nombre est écrit à deux endroits : il doit y être le même.
+
+    Ce test remplace celui qui vérifiait « mensuel × 12 = annuel » sur chaque
+    carte. Le total annuel a quitté l'affichage — une pension se pense au mois,
+    comme un salaire —, et avec lui le recoupement qu'il permettait. Le salaire
+    net en offre un autre, et meilleur : il est écrit une fois en tête de
+    chaque carte, et une seconde fois dans la fiche de paie repliée. Deux
+    chemins de calcul, deux rendus, un seul nombre attendu.
+    """
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 4, f"{len(blocs)} systèmes affichés, quatre attendus"
-    for bloc in blocs:
-        mensuel = _nombres(re.search(r'principal">(.*?)</span>\s*<span class="annuel',
-                                     bloc, re.S).group(1))[0]
-        annuel = _nombres(re.search(r'class="annuel">(.*?)</span>', bloc, re.S).group(1))[0]
-        # Chacun est arrondi au centime : l'écart ne peut passer 12 × 0,005 €.
-        assert abs(mensuel * 12 - annuel) <= 0.06 + 0.005, bloc[:120]
+    cartes = [_nombres(re.search(r'class="chiffre salaire">\s*'
+                                r'<span class="somme">(.*?)</span>', bloc, re.S).group(1))[0]
+              for bloc in blocs]
+    # La ligne « Salaire net » du tableau : deux cellules, le droit en vigueur
+    # puis la proposition. Les trois premières cartes portent la première.
+    ligne = re.search(r"<strong>Salaire net</strong>.*?</tr>", corps, re.S).group(0)
+    tableau = _nombres(re.sub(r"<[^>]+>", " ", ligne))
+    assert len(tableau) == 2, f"la ligne du tableau porte {len(tableau)} nombres"
+    for rang, attendu in enumerate([tableau[0]] * 3 + [tableau[1]]):
+        assert abs(cartes[rang] - attendu) <= 0.005, (
+            f"carte {rang + 1} : {cartes[rang]} en tête, {attendu} dans la fiche"
+        )
 
 
 def test_les_colonnes_derivees_de_la_page_cout_se_refont(contexte):
@@ -3642,8 +3656,7 @@ def test_le_montant_d_un_scenario_se_replie_plutot_que_de_deborder():
     assert "margin-left: 0" in montant
     chiffre = telephone.split(".scenario .chiffre {")[1].split("}")[0]
     assert "white-space: normal" in chiffre and "min-width: 0" in chiffre
-    assert (".scenario .chiffre .somme, .scenario .chiffre .annuel "
-            "{ white-space: nowrap; }") in telephone
+    assert ".scenario .chiffre .somme { white-space: nowrap; }" in telephone
 
 
 def test_l_appel_d_une_bulle_tient_la_cible_tactile():

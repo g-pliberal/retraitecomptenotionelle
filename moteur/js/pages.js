@@ -3104,7 +3104,6 @@ function resultats(contexte, saisie) {
       <span class="chiffre principal">
         <span class="somme">${g.eurosCentimes(montant / 12)}</span>
         <span class="unite">${uniteReference}</span>
-        <span class="annuel">${g.eurosCentimes(montant)} par an</span>
       </span>
     </span>
   </div>${partage}

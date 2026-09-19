@@ -3593,7 +3593,6 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
       <span class="chiffre principal">
         <span class="somme">{g.euros_centimes(montant / 12)}</span>
         <span class="unite">{unite_reference}</span>
-        <span class="annuel">{g.euros_centimes(montant)} par an</span>
       </span>
     </span>
   </div>{partage}

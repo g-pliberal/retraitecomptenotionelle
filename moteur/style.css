@@ -824,10 +824,11 @@ tbody tr[hidden] { display: none; }
 .scenario .entete { display: flex; justify-content: space-between; gap: 0.2rem 1rem;
                     align-items: baseline; flex-wrap: wrap; }
 .scenario .titre { flex: 1 1 14rem; font-size: 1.0625rem; font-weight: 700; }
-/* Un montant par scénario : le pouvoir d'achat de l'année de référence, et lui
-   seul. La somme nominale du mois du départ l'accompagnait, en retrait derrière
-   un filet ; elle donnait deux nombres à lire là où la comparaison n'en demande
-   qu'un. */
+/* Un montant par scénario, et un seul : le pouvoir d'achat de l'année de
+   référence, PAR MOIS. Deux autres nombres l'ont accompagné puis quitté — la
+   somme nominale du mois du départ, puis le total annuel. Une pension se pense
+   au mois, comme un salaire ; le total annuel ne servait qu'à multiplier par
+   douze sous les yeux du lecteur. */
 .scenario .montant { display: flex; justify-content: flex-end; align-items: baseline;
                      gap: 1.1rem; flex-wrap: nowrap; margin-left: auto;
                      font-variant-numeric: tabular-nums; }
@@ -838,7 +839,6 @@ tbody tr[hidden] { display: none; }
 .scenario .principal .somme {
   font-size: 1.875rem; font-weight: 900; letter-spacing: -0.03em;
 }
-.scenario .montant .annuel { color: var(--texte-doux); font-size: 0.85rem; }
 /* Le salaire net, à gauche de la pension et DE LA MÊME TAILLE QU'ELLE.
    Deux grandeurs de nature différente se touchent ici — ce qu'on touche en
    travaillant, ce qu'on touchera à la retraite —, et elles comptent autant
@@ -1382,7 +1382,7 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
                        margin-left: 0; }
   .scenario .chiffre { align-items: flex-start; white-space: normal;
                        min-width: 0; max-width: 100%; }
-  .scenario .chiffre .somme, .scenario .chiffre .annuel { white-space: nowrap; }
+  .scenario .chiffre .somme { white-space: nowrap; }
   /* Les tableaux du détail portent jusqu'à six colonnes, et un téléphone leur
      donne 358 points : un demi-point de moins et des marges plus serrées leur
      rendent un cinquième de leur hauteur. */
