@@ -5235,9 +5235,14 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   l'INSEE plus le revenu mixte des ménages d'un côté, l'inversion du
   tableau 2.11 du COR de l'autre — le système encaisse 32,4
   points de ressources, dont 24,9 de cotisations, là où le taux légal d'un
-  salarié type est de 28 à 29 %. Les quatre points d'écart sont les allègements
-  généraux, que l'impôt compense et qui reparaissent dans les 4,6 points
-  d'impôts et taxes affectés. Le modèle fait donc rentrer **15,5 % de l'assiette
+  salarié type est de 28 à 29 %. Les quatre points d'écart ont deux causes, et
+  le dépôt ne sait pas encore les départager. La première est l'ALLÈGEMENT
+  GÉNÉRAL, décrit ci-dessous, que l'impôt compense et qui reparaît dans les
+  4,6 points d'impôts et taxes affectés. La seconde est la COMPOSITION de la
+  grille : ses cas types sont pondérés par les retraités de leur caisse, ce qui
+  surreprésente la fonction publique et les régimes spéciaux, dont les taux
+  sont les plus élevés, et gonfle donc le taux légal moyen qu'on lui fait
+  dire. C'est le point 3 du volet A qui refermerait celle-là. Le modèle fait donc rentrer **15,5 % de l'assiette
   là où la proposition en affiche 18**. Trois lectures se défendent, et elles
   encadrent l'affichage : à exonérations inchangées, ce qui est affiché, 22,94
   points d'assiette ; 18 % prélevés à plat sans exonération et impôts affectés
@@ -5246,6 +5251,48 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   affiché étant à 71 %. En solde moyen, cela fait environ un point de PIB de
   part et d'autre du −0,09 %. Le départage n'appartient pas au modèle : c'est
   une décision de programme, et l'action 35 prévoit d'afficher les trois.
+
+  **CE QU'EST L'ALLÈGEMENT GÉNÉRAL, ET CE QU'IL PREND À LA RETRAITE.** Lu
+  dans l'article L. 241-13 du code de la sécurité sociale, version en vigueur
+  du 1<sup>er</sup> janvier 2026 (LEGIARTI000053280526, issue de la loi
+  n° 2025-199 du 28 février 2025 et de la loi n° 2025-1403 du 30 décembre
+  2025), et dans l'article D. 241-7 qui le chiffre (LEGIARTI000054252241,
+  décret n° 2026-509 du 12 juin 2026). Ce n'est pas une exonération de
+  cotisation retraite : c'est une réduction UNIQUE, dégressive, calculée sur un
+  périmètre de huit prélèvements patronaux, puis répartie entre les caisses au
+  prorata de leurs taux.
+
+  Le périmètre, dans l'ordre du I de l'article : les cotisations patronales
+  d'assurances sociales — maladie, maternité, invalidité, décès et
+  **vieillesse** — et d'allocations familiales ; les cotisations
+  accidents du travail, à hauteur du seul taux fixé par arrêté ; la
+  contribution au Fonds national d'aide au logement ; **les cotisations
+  patronales de retraite complémentaire légalement obligatoire**, c'est-à-dire
+  l'Agirc-Arrco ; la contribution de solidarité pour l'autonomie ; et les
+  contributions patronales d'assurance chômage.
+
+  Le barème. La réduction ne vaut que pour les rémunérations INFÉRIEURES à
+  trois fois le SMIC — c'était 1,6 SMIC avant que la réforme de 2025-2026 ne
+  fonde en un seul dispositif la réduction générale et les deux « bandeaux »
+  maladie et famille. Son coefficient vaut, au plus,
+  `Tmin + Tdelta` = **39,81 %** de la rémunération brute, ou 40,21 % selon le
+  taux de FNAL dû par l'employeur : c'est la somme des taux du périmètre, et
+  c'est donc au niveau du SMIC que la quasi-totalité des cotisations patronales
+  disparaît. Il décroît ensuite selon une puissance 1,75 du rapport au SMIC,
+  jusqu'à un plancher `Tmin` de 2 % atteint à trois SMIC.
+
+  Ce que la retraite y perd. Les cotisations patronales de vieillesse de base
+  valent 10,66 % de la rémunération en 2026 (15,45 % plafonné et 2,51 %
+  déplafonné, dont le dépôt certifie les parts salariales), et la part
+  patronale de l'Agirc-Arrco sous le plafond 4,72 % : **15,38 %** de
+  rémunération, soit **38 % du périmètre de la réduction**. En y ajoutant les
+  deux contributions d'équilibre de l'Agirc-Arrco, que le dépôt ne porte pas
+  (voir la réserve ci-dessus), on approche 42 %. **Deux euros sur cinq de tout
+  allègement général sont donc de l'argent de retraite**, et ce n'est pas une
+  déduction : le VII de l'article L. 241-13 et le VI de l'article D. 241-7
+  disent que le montant de la réduction s'impute sur les cotisations déclarées
+  aux Urssaf ET sur celles déclarées aux institutions de retraite
+  complémentaire, au prorata de leurs taux dans le coefficient maximal.
 
   Les réserves financières des régimes, que le COR chiffre à part, ne sont
   toujours pas comptées : le solde dit le flux, jamais le stock.
