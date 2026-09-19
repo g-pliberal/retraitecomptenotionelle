@@ -3194,6 +3194,88 @@ toucher aux moteurs de pension.
    le privé qu'entraîne l'ouverture à la concurrence ; les régimes de
    non-salariés ont communiqué leurs évolutions en 2024.
 
+   **Troisième passe, 19 septembre 2026 : les rapports annuels des caisses, et
+   ce qu'ils ont mené à trouver.** La piste « rapports annuels de chaque
+   caisse » a été parcourue caisse par caisse. Elle donne trois séries longues,
+   elle en ferme une, et elle a mené — par la fiche que le COR consacre à la
+   SNCF — à la source qui rend toutes les autres secondaires.
+
+   - **COR, « Compléments du rapport annuel 2024 : projections détaillées par
+     régime » — LA source, et elle n'était dans aucune des listes.** Vingt-deux
+     fiches, une par régime, à présentation harmonisée, et surtout **un seul
+     classeur**, `Données_régimes_publi_V2.xlsx`, qui porte **vingt-quatre
+     feuilles, une par régime**, chacune avec un bloc « Effectifs de cotisants
+     en millions » ventilé Femmes / Hommes / **Ensemble**, historique ET
+     projeté **jusqu'en 2070**. `lecture_xlsx.py` le lit tel quel.
+
+     Il couvre **les treize caisses des cas types**, Ircantec et RCI comprises
+     — les deux que la CCSS rate par construction. En 2023, puis en 2070 :
+     CNAV 22 257 775 → 23 596 332 ; CNRACL 2 168 137 → 2 114 975 ; FPE
+     2 041 199 → 1 893 125 ; Ircantec 3 169 028 → 3 143 714 ; RCI 1 707 103 →
+     1 855 338 ; CNAVPL 980 098 → 646 814 ; MSA exploitants 432 402 →
+     299 168 ; CNIEG 136 287 → 51 ; SNCF 112 232 → 0 ; ENIM 30 169 → 21 806.
+     Les régimes fermés par la réforme de 2023 s'éteignent bien dans la
+     projection, ce qu'aucune reconduction d'effectifs de retraités ne saurait
+     imiter.
+
+     **Trois pièges, mesurés :** les feuilles CRPCEN et CRPNPAC portent des
+     UNITÉS sous un en-tête qui annonce des millions (CRPCEN 60 378 cotisants
+     en 2023, à rapprocher des 60 303 de la Cnav) ; l'année de départ varie
+     d'une feuille à l'autre (2010 pour la plupart, 2015 pour la FPE, 2019 pour
+     le RCI, 2023 pour la CNRACL et la CNBF, 2024 pour le FSPOEIE) ; et la FPE
+     reste d'un seul tenant, civils et militaires confondus — le partage se
+     prend au Jaune « Pensions », qui est toujours le seul à le donner.
+
+   - **Cnav, abrégé statistique, chapitre 01 — soixante ans de régime
+     général.** « Évolution du nombre de cotisants actifs occupés et de
+     retraités du régime général et rapport démographique **depuis 1963** » :
+     2 479 205 cotisants en 1963, 9 700 735 en 2000, 14 916 011 en 2023. La
+     table porte DEUX colonnes de cotisants, celle du lieu de résidence et
+     celle du lieu de travail, avec la rétropolation 2010-2014 qui les
+     raccorde, et elle dit sa source : « commission de compensation de
+     décembre, résultats définitifs ».
+
+   - **CNAVPL, recueil statistique — soixante-quinze ans, et trois notions dans
+     la même caisse.** Le tableau « Ensemble des sections (historique) » donne
+     les cotisants réels de **1950 à 2025** : 103 262 en 1950, 400 894 en 1995,
+     866 581 en 2025 ; et le recueil les ventile par section professionnelle
+     (CARPIMKO 253 961, CIPAV 168 613, CARMF 125 952…). Le même document écrit
+     par ailleurs 839 824 « cotisants compensables » en 2024. Trois chiffres,
+     trois notions, une seule caisse : cotisants réels, cotisants
+     compensables, et ce que la CCSS retient (882 980 en 2024). **C'est
+     l'illustration la plus nette de ce que la deuxième passe avait établi**, et
+     le dépôt n'a pas le droit de les mélanger.
+
+   - **CNIEG, annuaire statistique — publié, annuel, et illisible.** Les
+     millésimes 2017 à 2024 existent. Le lecteur du dépôt n'en tire que TROIS
+     lignes chiffrées sur 1 893 : tout y est en image. C'est le seul annuaire
+     de caisse rencontré dans ce cas, et il n'y a pas à insister — le classeur
+     du COR donne la CNIEG, et la CCSS aussi.
+
+   - **CPRPSNCF — site injoignable depuis cet environnement.** Le proxy refuse
+     le CONNECT vers `cprpsncf.fr` (502, `connect_rejected`). Sans objet : la
+     fiche CPRPF du COR couvre le régime, et mieux, puisqu'elle le projette.
+
+   **Le recoupement à trois voix, sur 2023.** Avec le COR, la CCSS et la Cnav
+   sur la même année, on peut enfin mesurer la dispersion :
+
+   | caisse | COR | CCSS 4.1 | Cnav 1/7 | étendue |
+   |---|---|---|---|---|
+   | FPE | 2 041 199 | 2 041 020 | 1 854 542 | +0,01 % puis −9 % |
+   | SNCF | 112 232 | 112 621 | 112 878 | 0,6 % |
+   | CNIEG | 136 287 | 135 775 | 132 744 | 2,7 % |
+   | MSA exploitants | 432 402 | 429 423 | 421 381 | 2,6 % |
+   | ENIM | 30 169 | 29 879 | 24 800 | 22 % |
+   | CNAVPL | 980 098 | 913 831 | 877 881 (recueil) | 12 % |
+
+   Ce qu'il faut en retenir : **le COR et la CCSS coïncident presque
+   parfaitement sur la FPE** — 179 cotisants d'écart sur deux millions, ce qui
+   dit que le COR reprend la déclaration du régime —, **et la dispersion
+   explose sur les caisses où les notions divergent**, l'ENIM et la CNAVPL au
+   premier chef. Une pondération bâtie sur ces effectifs doit donc citer SA
+   source ligne par ligne, et le classeur du COR est le seul qui en offre une
+   seule pour les treize.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -4470,6 +4552,51 @@ scénario ».
   CNRACL et l'Agirc-Arrco. L'écart de maille est à dire : le COR raisonne par
   GROUPES de régimes, pas par caisse. Écarter le COR pour l'historique
   restait juste ; l'écarter pour la projection aurait été une erreur.
+
+  Rien n'est codé : c'est une passe de recherche, et son livrable est le
+  relevé.
+
+- **Septembre 2026, action 35, volet A, point 3, troisième passe : les
+  rapports annuels des caisses.** Demandé : continuer sur cette piste. Elle
+  donne trois séries longues, elle en ferme une — et, par la fiche que le COR
+  consacre à la SNCF, elle mène à la source qui rend les autres secondaires.
+
+  **Le COR publie, en complément de son rapport annuel, une fiche par régime
+  et UN classeur, `Données_régimes_publi_V2.xlsx`, à vingt-quatre feuilles,
+  une par régime.** Chacune porte « Effectifs de cotisants en millions »,
+  ventilé Femmes / Hommes / Ensemble, historique ET **projeté jusqu'en 2070**.
+  Il couvre **les treize caisses des cas types, Ircantec et RCI comprises** —
+  les deux que la CCSS rate par construction — et il fait s'éteindre dans la
+  projection les régimes que la réforme de 2023 a fermés, ce qu'aucune
+  reconduction d'effectifs de retraités ne saurait imiter. C'est, des trois
+  passes, la seule source qui réponde à la fois à la maille, à la couverture
+  et à l'horizon. Elle n'était dans aucune des listes de pistes : on l'a
+  trouvée en tirant le fil d'une caisse dont le site est injoignable.
+
+  Trois pièges y sont mesurés et écrits au point 3 : deux feuilles portent des
+  unités sous un en-tête qui annonce des millions ; l'année de départ varie
+  d'une feuille à l'autre ; la FPE reste civils et militaires confondus.
+
+  Les annuaires de caisses donnent, eux, la profondeur : la Cnav remonte à
+  **1963** pour le régime général, la CNAVPL à **1950** pour ses cotisants
+  réels, la CNRACL à 2012. La CNAVPL fournit au passage la démonstration la
+  plus nette de ce que la deuxième passe avait établi : elle écrit dans le
+  MÊME recueil 866 581 cotisants réels et 839 824 cotisants compensables,
+  quand la CCSS en retient 882 980. Trois chiffres, trois notions, une seule
+  caisse.
+
+  Deux impasses, dites pour qu'on n'y retourne pas : l'annuaire statistique de
+  la CNIEG est publié chaque année mais **entièrement en images** — trois
+  lignes chiffrées sur 1 893 —, et `cprpsncf.fr` est injoignable depuis cet
+  environnement, le proxy refusant le CONNECT. Ni l'une ni l'autre ne manque,
+  le classeur du COR couvrant les deux régimes.
+
+  Le recoupement à trois voix sur 2023 est au point 3. Sa leçon : le COR et la
+  CCSS coïncident à 179 cotisants près sur les deux millions de la FPE — le
+  COR reprend donc la déclaration du régime — mais la dispersion atteint 12 %
+  sur la CNAVPL et 22 % sur l'ENIM. **Une pondération bâtie là-dessus doit
+  citer sa source ligne par ligne**, et le classeur du COR est le seul qui en
+  offre une seule pour les treize.
 
   Rien n'est codé : c'est une passe de recherche, et son livrable est le
   relevé.
