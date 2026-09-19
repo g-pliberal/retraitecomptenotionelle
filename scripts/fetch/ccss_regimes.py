@@ -239,7 +239,17 @@ def sommaire(lignes: list[str]) -> dict[str, str]:
 
 
 def _fiche_courante(lignes: list[str], rang: int) -> str | None:
-    """Le numéro de fiche le plus proche AU-DESSUS du tableau."""
+    """Le numéro de fiche le plus proche AU-DESSUS du tableau.
+
+    C'EST UNE HEURISTIQUE, ET ELLE SE TROMPE PARFOIS. Le numéro est répété en
+    tête de chaque page, mais pas toujours au-dessus du tableau : dans le
+    rapport de 2025, deux tableaux ont été portés au crédit du mauvais régime.
+    Deux remèdes ont été essayés et tous deux ont fait PIRE — préférer le titre
+    du tableau (la CNRACL héritait alors du SRE, la CNIEG d'un tableau SNCF),
+    puis délimiter les fiches par intervalles (tout tombait dans une seule).
+    On garde donc l'heuristique, et c'est ``_ecarts_de_magnitude`` qui rattrape
+    ce qu'elle rate.
+    """
     for i in range(rang, max(rang - PORTEE_FICHE, 0), -1):
         m = MARQUEUR.match(lignes[i].strip())
         if m:
@@ -248,11 +258,21 @@ def _fiche_courante(lignes: list[str], rang: int) -> str | None:
 
 
 def _entete(lignes: list[str], rang: int) -> tuple[int, list] | None:
-    """La première ligne d'années sous le titre du tableau."""
+    """La première ligne d'années sous le titre du tableau.
+
+    LES ANNÉES DOIVENT ÊTRE STRICTEMENT CROISSANTES, et c'est tout l'enjeu.
+    Se contenter de « non décroissantes » faisait passer une NOTE DE BAS DE
+    PAGE pour un en-tête : « (***) Le taux de cotisation T2 a été fixé à
+    11,81 % entre le 1er janvier 2017 et le 30 avril 2017, puis… » porte trois
+    fois 2017 et se lisait en colonnes [%, 2017, 2017, %, 2017]. Toute la
+    fiche de la SNCF était alors datée de 2017, ce qui donnait quatre valeurs
+    différentes pour cette seule année selon le rapport lu — 21, 34, 69 puis
+    116 — et expliquait à lui seul cinquante-trois des conflits.
+    """
     for j in range(rang, min(rang + PORTEE_ENTETE, len(lignes))):
         colonnes = CCSS._colonnes(lignes[j])
-        annees = [c for c in colonnes if c is not None]
-        if len(annees) >= 3 and all(a >= annees[0][0] for a, _ in annees):
+        annees = [a for a, _ in (c for c in colonnes if c is not None)]
+        if len(annees) >= 3 and all(x < y for x, y in zip(annees, annees[1:])):
             return j, colonnes
     return None
 
@@ -289,6 +309,12 @@ def lire_rapport(annee_rapport: int, octets: bytes) -> tuple[dict, int]:
         if tete is None:
             continue
         rang, colonnes = tete
+        # LE TITRE DU TABLEAU PRIME SUR LE MARQUEUR DE PAGE quand il nomme le
+        # régime. Dans le rapport de 2025, le marqueur trouvé en remontant
+        # appartient à la fiche PRÉCÉDENTE : un tableau « de la branche
+        # vieillesse de la CNRACL » était rattaché à la SNCF, et la CNRACL
+        # récupérait celui du SRE — 2 151 694 cotisants portés au crédit de la
+        # SNCF, qui en a cent fois moins. Le titre, lui, ne se trompe pas.
         fiche = _fiche_courante(lignes, i)
         regime = titres.get(fiche or "")
         if not regime:
@@ -366,6 +392,70 @@ def _reconcilier(serie: dict) -> tuple[list[dict], list[dict]]:
     return valeurs, conflits
 
 
+#: Un cotisant de la SNCF et un cotisant de la CNRACL ne sont pas du même
+#: ordre : quand une série d'une caisse porte une valeur vingt fois éloignée
+#: de sa propre médiane, ce n'est pas une évolution, c'est un tableau attribué
+#: au mauvais régime.
+FACTEUR_ABERRANT = 3.0
+
+
+def _ecarts_de_magnitude(valeurs: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Écarte les valeurs qui n'ont pas l'ordre de grandeur de leur propre série.
+
+    C'est le filet sous l'attribution par marqueur de page, qui se trompe
+    parfois de fiche. Le test est volontairement grossier — un facteur trois
+    autour de la médiane de la caisse pour cette série — parce qu'il ne doit
+    attraper QUE le franc mélange : 2 151 694 cotisants portés à la SNCF quand
+    sa médiane en dit 130 000. Il ne voit pas, et ne prétend pas voir, une
+    confusion entre deux régimes de taille voisine : la CNRACL et le SRE, à
+    deux millions chacun, lui passeraient sous le nez.
+    """
+    par_serie: dict[tuple[str, str], list[float]] = {}
+    for v in valeurs:
+        par_serie.setdefault((v["regime"], v["serie"]), []).append(abs(v["valeur"]))
+    medianes = {}
+    for cle, suite in par_serie.items():
+        suite = sorted(suite)
+        medianes[cle] = suite[len(suite) // 2]
+    gardees, aberrantes = [], []
+    for v in valeurs:
+        pivot = medianes[(v["regime"], v["serie"])]
+        val = abs(v["valeur"])
+        if pivot > 0 and val > 0 and max(val / pivot, pivot / val) > FACTEUR_ABERRANT:
+            aberrantes.append({**v, "mediane_serie": pivot})
+        else:
+            gardees.append(v)
+    return gardees, aberrantes
+
+
+def _doublons(valeurs: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Écarte les cases qu'un même millésime remplit deux fois différemment.
+
+    C'est le détecteur EXACT du tableau attribué au mauvais régime, là où
+    ``_ecarts_de_magnitude`` n'est qu'un filet grossier. Une caisse n'a qu'un
+    effectif de cotisants pour une année : si deux tableaux en donnent deux,
+    l'un des deux n'est pas à elle. On le voit sans rien savoir des ordres de
+    grandeur, donc y compris quand les deux régimes se ressemblent — 135 775
+    et 112 621 cotisants portés tous deux à la CNIEG en 2023, le second étant
+    celui de la SNCF ; 2 144 492 et 2 016 662 portés à la CNRACL en 2024, le
+    second étant celui du SRE. Ni l'un ni l'autre n'aurait été vu autrement.
+
+    On n'arbitre pas : les deux partent, parce que rien dans le texte ne dit
+    lequel est le bon.
+    """
+    par_case: dict[tuple[str, str, int], list[dict]] = {}
+    for v in valeurs:
+        par_case.setdefault((v["regime"], v["serie"], v["annee"]), []).append(v)
+    gardees, doubles = [], []
+    for lot in par_case.values():
+        distinctes = {round(v["valeur"], 6) for v in lot}
+        if len(distinctes) > 1:
+            doubles.extend(lot)
+        else:
+            gardees.append(lot[0])
+    return gardees, doubles
+
+
 def main() -> int:
     arg = argparse.ArgumentParser(description=__doc__)
     arg.add_argument("--depuis", type=int, default=2013)
@@ -405,6 +495,8 @@ def main() -> int:
                     cible.setdefault(a, []).append((v, annee))
 
     valeurs, conflits = _reconcilier(serie)
+    valeurs, aberrantes = _ecarts_de_magnitude(valeurs)
+    valeurs, doubles = _doublons(valeurs)
     if not valeurs:
         print("échec : aucun tableau lu", file=sys.stderr)
         return 1
@@ -417,6 +509,8 @@ def main() -> int:
                 "fiabilite": "certifiee",
                 "rapports_illisibles": illisibles,
                 "conflits": conflits,
+                "ecarts_de_magnitude": aberrantes,
+                "cases_remplies_deux_fois": doubles,
                 "titres_par_caisse": {k: sorted(v) for k, v in sorted(titres_vus.items())},
                 "valeurs": valeurs,
             },
@@ -429,6 +523,8 @@ def main() -> int:
     print(f"\n{len(valeurs)} valeurs — {len({v['regime'] for v in valeurs})} régimes, "
           f"{annees[0]}-{annees[-1]} → {SORTIE}")
     print(f"{len(conflits)} lectures écartées faute d'accord entre rapports")
+    print(f"{len(aberrantes)} écartées pour écart de magnitude dans leur propre série")
+    print(f"{len(doubles)} écartées parce que deux tableaux remplissent la même case")
     if illisibles:
         print(f"rapports sans tableau lisible : {illisibles}")
     return 0
