@@ -350,6 +350,55 @@ def test_convertir_les_droits_acquis_a_l_age_de_depart_les_preserve(simulateur):
     assert liquidation.compte.capital == pytest.approx(reference.compte.capital)
 
 
+def test_le_pot_des_droits_acquis_ne_depend_que_du_passe():
+    """La raison pour laquelle l'action 24 a été abandonnée, tenue par un test.
+
+    Les droits d'avant la bascule sont une pension annuelle ; la convertir en
+    capital demande un âge. Sous le défaut ``REFERENCE``, cet âge ne dépend pas
+    de l'assuré : un même passé constitue donc le MÊME pot, qu'on parte à 60 ans
+    ou à 67. Sous ``LIQUIDATION``, l'âge est celui du départ, et le pot enfle
+    quand on part tôt — 28 % d'écart pour un passé identique, ce qu'aucune
+    différence de carrière ne justifie.
+
+    La conséquence est l'incitation, et c'est elle qui a tranché : le pot
+    rétrécissant avec l'âge à peu près au rythme où les cotisations nouvelles le
+    remplissent, les deux s'annulent, et sept années de travail de plus ne font
+    presque plus monter le capital. Les bornes ci-dessous sont larges exprès —
+    c'est un ORDRE DE GRANDEUR qu'on tient, pas un instantané, et un test qui
+    fige un chiffre au centime finit par être relâché plutôt que lu.
+    """
+    reference = Simulateur(Parametres())
+    liquidation = Simulateur(Parametres().avec(
+        age_conversion_droits_acquis=AgeConversionDroitsAcquis.LIQUIDATION))
+
+    def mesure(sim, age):
+        carriere = sim.carriere_simple(
+            annee_naissance=1975, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_debut=21, age_liquidation=age,
+        )
+        resultat = sim.simuler(carriere).notionnel_prospectif
+        return resultat.droits_acquis.capital_a_la_bascule, resultat.capital_notionnel
+
+    pots_reference = [mesure(reference, age)[0] for age in (60, 62, 64, 67)]
+    pots_liquidation = [mesure(liquidation, age)[0] for age in (60, 62, 64, 67)]
+
+    # Le passé est le même dans les quatre cas : seul l'âge de départ change.
+    assert pots_reference[0] == pytest.approx(pots_reference[-1])
+    assert all(p == pytest.approx(pots_reference[0]) for p in pots_reference)
+
+    # Sous l'autre convention, il enfle quand on part tôt, et strictement.
+    assert all(a > b for a, b in zip(pots_liquidation, pots_liquidation[1:]))
+    assert pots_liquidation[0] / pots_liquidation[-1] > 1.20
+
+    # Et c'est ce qui annule l'incitation à travailler plus longtemps.
+    capital_reference = [mesure(reference, age)[1] for age in (60, 67)]
+    capital_liquidation = [mesure(liquidation, age)[1] for age in (60, 67)]
+    gain_reference = capital_reference[1] / capital_reference[0] - 1.0
+    gain_liquidation = capital_liquidation[1] / capital_liquidation[0] - 1.0
+    assert gain_reference > 0.20, gain_reference
+    assert gain_liquidation < 0.05, gain_liquidation
+
+
 def test_la_cascade_des_droits_acquis_reconstitue_le_capital(simulateur):
     """Les étapes publiées doivent redonner le capital, sinon elles mentent."""
     carriere = simulateur.carriere_simple(
