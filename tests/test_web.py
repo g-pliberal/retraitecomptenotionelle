@@ -1694,8 +1694,16 @@ def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie(contexte):
     corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 4, f"{len(blocs)} systèmes affichés, quatre attendus"
-    cartes = [_nombres(re.search(r'class="chiffre salaire">\s*'
-                                r'<span class="somme">(.*?)</span>', bloc, re.S).group(1))[0]
+    # Le nombre des cartes est NU depuis que l'unité est passée sous lui
+    # (« 2 540,34 » puis « € net/mois ») : `_nombres` cherche un symbole et n'en
+    # trouve plus. On le lit donc directement, à la française.
+    def _nu(texte: str) -> float:
+        return float(texte.replace("\u202f", "").replace(",", "."))
+
+    cartes = [_nu(re.search(r'class="chiffre salaire">\s*'
+                            r'<span class="categorie">salaire</span>\s*'
+                            r'<span class="somme">(.*?)</span>',
+                            bloc, re.S).group(1))
               for bloc in blocs]
     # La ligne « Salaire net » du tableau : deux cellules, le droit en vigueur
     # puis la proposition. Les trois premières cartes portent la première.
@@ -1975,7 +1983,8 @@ def test_le_resume_vocal_annonce_bien_les_montants(contexte):
     assert len(blocs) == 4
     for bloc in blocs:
         assert re.search(r'class="titre">[^<]+<', bloc), "système sans titre"
-        assert re.search(r'class="chiffre principal">\s*<span class="somme">[^<]+<',
+        assert re.search(r'class="chiffre principal">\s*<span class="categorie">'
+                         r'retraite</span>\s*<span class="somme">[^<]+<',
                          bloc), "scénario sans montant mis en avant"
 
 
@@ -4686,7 +4695,9 @@ def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(context
     assert lecture < premier < reperes
     cle = visible[lecture:premier]
     assert "C'est la référence." in cle
-    assert "chiffre : votre pension brute, par mois, en euros d'aujourd'hui" in cle
+    assert "votre <strong>salaire net</strong> pendant" in cle
+    assert "votre <strong>pension brute</strong> une fois" in cle
+    assert "par mois, en euros d'aujourd'hui, l'un comme l'autre" in cle
 
 
 def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
@@ -4711,13 +4722,20 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
         entete = bloc.split('<div class="barre')[0]
         assert entete.count('class="chiffre principal"') == 1
         assert f"en euros de {depart}" not in entete
-        assert "par mois, en euros d'aujourd'hui" in entete
+        # L'unité longue a quitté les cartes — « € brut/mois » suffit à côté
+        # d'un « € net/mois » — et la clé de lecture la porte une fois pour
+        # toutes. C'est là qu'on exige qu'elle soit dite.
+        assert "€ brut/mois" in entete
         # Le second chiffre, s'il est là, dit de quoi il parle : sans son
         # étiquette, deux nombres se toucheraient sans que rien ne les sépare.
         if 'class="chiffre salaire"' in entete:
-            assert "salaire net, par mois" in entete
+            assert ">salaire</span>" in entete
+            assert "€ net/mois" in entete
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
+    depart_ou_reference = f"en euros de {depart}"
+    assert depart_ou_reference not in corps.split('<div class="carte">')[0]
+    assert "par mois, en euros d'aujourd'hui, l'un comme l'autre" in corps
 
 
 def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
@@ -4732,8 +4750,9 @@ def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
     entetes = [bloc.split('<div class="barre')[0]
                for bloc in corps.split('<div class="scenario">')[1:]]
     assert len(entetes) == 4
-    salaires = [re.search(r'class="chiffre salaire">\s*<span class="somme">'
-                          r'([^<]+)</span>', entete)
+    salaires = [re.search(r'class="chiffre salaire">\s*'
+                          r'<span class="categorie">salaire</span>\s*'
+                          r'<span class="somme">([^<]+)</span>', entete)
                 for entete in entetes]
     assert all(salaires), "un scénario n'affiche pas son salaire net"
     montants = [s.group(1) for s in salaires]
