@@ -4027,18 +4027,6 @@ def _euros_signe(montant: float, centimes: bool = True) -> str:
     return f"{signe}{ecrit}"
 
 
-def _points(ecart: float) -> str:
-    """Un écart entre deux pourcentages, en POINTS et avec son signe.
-
-    « +1,4 % » se lirait comme une hausse relative de 1,4 %, dix fois plus
-    petite que ce que la ligne dit.
-    """
-    valeur = ecart * 100
-    signe = "+" if valeur > 0 else ""
-    return (f"{signe}{g.nombre(valeur, 1)} point"
-            + ("s" if abs(valeur) >= 2 else ""))
-
-
 def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
     """Ce qu'un actif touche PENDANT qu'il cotise, dans les deux systèmes.
 
@@ -4101,33 +4089,38 @@ def _salaire_net_detail(comparaison: Comparaison, remuneration,
     def mois(montant: float) -> str:
         return g.euros_centimes(montant / 12.0)
 
-    def ecart(apres_: float, avant_: float) -> str:
-        return _euros_signe((apres_ - avant_) / 12.0)
-
+    # TROIS COLONNES, ET NON QUATRE. Une colonne « écart » de plus forçait le
+    # tableau à défiler latéralement sur un téléphone, et l'écart qui compte —
+    # celui du net — est déjà le chiffre de tête. Les deux autres se lisent
+    # sous le tableau, en une phrase.
     lignes = [
-        ["Ce que votre emploi coûte",
-         mois(avant.cout_du_travail), mois(apres.cout_du_travail),
-         '<span class="discret">inchangé</span>'],
-        ["Salaire brut", mois(avant.brut), mois(apres.brut),
-         ecart(apres.brut, avant.brut)],
+        [g.terme("coût du travail"),
+         mois(avant.cout_du_travail), mois(apres.cout_du_travail)],
+        ["Salaire brut", mois(avant.brut), mois(apres.brut)],
         ["<strong>Salaire net</strong>",
          f"<strong>{mois(avant.net)}</strong>",
-         f"<strong>{mois(apres.net)}</strong>",
-         f"<strong>{ecart(apres.net, avant.net)}</strong>"],
-        ["Dont prélevé pour votre retraite",
-         mois(avant.retraite_totale), mois(apres.retraite_totale),
-         ecart(apres.retraite_totale, avant.retraite_totale)],
-        [f"Ce qui vous arrive, sur 100 € de {g.terme('coût du travail')}",
+         f"<strong>{mois(apres.net)}</strong>"],
+        ["Dont pour la retraite",
+         mois(avant.retraite_totale), mois(apres.retraite_totale)],
+        ["Ce qui vous arrive, sur 100 € coûtés",
          g.pourcentage(avant.part_qui_arrive),
-         g.pourcentage(apres.part_qui_arrive),
-         _points(apres.part_qui_arrive - avant.part_qui_arrive)],
+         g.pourcentage(apres.part_qui_arrive)],
     ]
     grille = g.tableau(
-        ["Par mois", "Systèmes 1 à 3", "Système 4", "Écart"],
-        lignes, ["", "nombre", "nombre", "nombre"],
+        ["Par mois", "Systèmes 1 à 3", "Système 4"],
+        lignes, ["", "nombre", "nombre"],
         titre=f"Votre fiche de paie en {reference.annee}, sous les quatre "
               f"systèmes — {escape(remuneration.libelle_statut)}",
         entete_de_ligne=True,
+    )
+    lecture = (
+        f"<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
+        f"prélèvement retraite, lui, passe de {mois(avant.retraite_totale)} à "
+        f"{mois(apres.retraite_totale)} par mois, soit "
+        f"<strong>{_euros_signe((apres.retraite_totale - avant.retraite_totale) / 12.0)}"
+        f"</strong> ; le salaire brut monte de "
+        f"{_euros_signe((apres.brut - avant.brut) / 12.0)}, et le net de "
+        f"{_euros_signe((apres.net - avant.net) / 12.0)}.</p>"
     )
 
     alerte = ""
@@ -4144,6 +4137,7 @@ def _salaire_net_detail(comparaison: Comparaison, remuneration,
 
     return g.depliant("Votre fiche de paie, ligne à ligne", f"""
 {grille}
+{lecture}
 {alerte}
 {_salaire_net_epargne(reference.epargne_a_votre_nom / 12.0, remuneration,
                       comparaison.parametres, saisie)}
