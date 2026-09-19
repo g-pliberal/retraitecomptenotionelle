@@ -173,6 +173,27 @@ institutions:
           ×2,42, sans source. Ne porte que l'année 2024 : sa forme est supposée
           stable dans le temps, ce que docs/limites.md dit.
 
+      - id: insee_profil_salaire_public
+        titre: Salaires de la fonction publique par âge, statut et versant
+        url: https://api.insee.fr/melodi/data/DS_DERA_PUBLIC_ANNUEL
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/profil_salaire_statut_public.csv
+        recuperation: scripts/fetch/insee_profil_salaire_age.py
+        note: >-
+          Le seul jeu de l'INSEE à croiser l'âge et le statut de la fonction
+          publique — la série longue du public ne le fait pas, vérifié. Il ne
+          porte que 2023. Les pentes observées de moins de 30 ans à 50-59 ans
+          sont loin de celle du privé qu'on appliquait aux fonctionnaires :
+          ×1,11 pour un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un
+          catégorie A, contre ×1,30 servi. Les trois versants y figurent aussi,
+          et ce sont eux que les affiliations lisent, aucune ne portant la
+          catégorie : leur profil pondère déjà les catégories par leurs
+          effectifs. Piège du codage : PM n'est pas « personnels militaires »
+          mais « personnels médicaux », il n'existe que dans l'hospitalière, et
+          il vaut 6 765 € nets par mois. Les militaires ne sont dans aucun de
+          ces jeux.
+
       - id: insee_assiette_activite
         titre: Assiette des revenus d'activité — salaires bruts (D11) et revenu mixte (B3G)
         url: https://api.insee.fr/melodi/data/DD_CNA_TEE

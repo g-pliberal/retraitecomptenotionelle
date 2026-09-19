@@ -72,7 +72,14 @@ from ..remuneration import (
 from ..simulateur import Comparaison, Simulateur
 from . import gabarit as g
 
+#: Le profil de carrière se DÉDUIT du statut par défaut : on ne demande pas sa
+#: progression de carrière à quelqu'un qui a déjà dit qu'il était fonctionnaire
+#: de l'État ou cadre du privé, et le modèle lit chez l'INSEE le profil du
+#: groupe correspondant. Les trois autres restent, parce qu'une carrière au
+#: SMIC ne progresse pas comme la moyenne de son groupe et que la mesure d'une
+#: variante doit rester possible.
 PROFILS = [
+    ("auto", "Déduit du statut (défaut)"),
     ("plat", "Plat — le salaire suit le salaire moyen"),
     ("ascendant", "Ascendant — profil employé/ouvrier"),
     ("fortement_ascendant", "Fortement ascendant — profil cadre"),
@@ -481,7 +488,7 @@ class Saisie:
     #: carrière paramétrique — les métiers, le profil et le niveau de revenu ne
     #: servent plus à rien : plus rien n'est reconstitué, tout est lu.
     releve: str = ""
-    profil: str = "ascendant"
+    profil: str = "auto"
     primes: float = 0.0
     enfants: int = 0
     interruptions: str = ""
@@ -2731,7 +2738,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
                 "à la mère la majoration de durée d'assurance.",
                 autocomplete="sex"),
         g.liste("profil", "Profil de carrière", PROFILS, saisie.profil,
-                _aide_profil(saisie.profil)),
+                _aide_profil(saisie.profil, saisie.statut)),
         g.champ("primes", "Part de primes", _nombre(saisie.primes),
                 "fonction publique : assiette du RAFP", type_="number",
                 min="0", max="0.6", step="0.01"),
@@ -2886,14 +2893,14 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
                    min="0", step="1")
 
 
-def _aide_profil(profil: str) -> str:
+def _aide_profil(profil: str, affiliation: str | None = None) -> str:
     """Ce que le profil fait du salaire saisi, en toutes lettres.
 
     Sans elle, saisir « 2 900 € par mois » se lit comme la promesse de gagner
     2 900 € chaque année de sa vie, alors que le revenu saisi est celui du
     milieu de carrière et que le profil le déforme aux deux bouts.
     """
-    debut, fin = bornes_deformation(RACINE_DONNEES, profil)
+    debut, fin = bornes_deformation(RACINE_DONNEES, profil, affiliation)
     if debut == fin:
         return "le revenu saisi vaut pour toutes les années de la carrière"
     return (f"le revenu saisi est celui du milieu de carrière : ×{g.nombre(debut, 2)} "

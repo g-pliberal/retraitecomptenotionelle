@@ -515,6 +515,7 @@ résumé :
 | Produit intérieur brut, en niveau | 1949-2025 | **certifiée** | INSEE BDM, idbank 011779992 |
 | Profil de salaire par tranche d'âge | 1962-2024 | **certifiée** | INSEE Melodi, DS_DERA_PRIVE_SERIES_LONGUES |
 | Profil de salaire par âge et catégorie | 2024 | **certifiée** | INSEE Melodi, DS_DERA_PRIVE_ANNUEL |
+| Profil de salaire public par âge et statut | 2023 | **certifiée** | INSEE Melodi, DS_DERA_PUBLIC_ANNUEL |
 | Population par âge, 50 ans et plus | 1962-2023 | **certifiée** | INSEE, estimations de population (classeur des projections 2026) |
 | Population par âge, 50 ans et plus | 2024-2070 | projetée | INSEE, projections de population 2026, scénario central |
 | Population des 20-64 ans | 1962-2023 / 2024-2070 | **certifiée** / projetée | mêmes sources |
@@ -2096,10 +2097,25 @@ par une donnée qui existe :
   le temps est une hypothèse. Elle est raisonnable, la hiérarchie cadre/ouvrier
   ne se renversant pas, mais rien ne la démontre.
 
-Et une limite de structure : la série longue du public ne croise pas l'âge et le
-statut. **Les fonctionnaires, les militaires et les régimes spéciaux portent
-donc le profil du privé**, faute d'un profil public par catégorie. Ce que ça
-vaut n'est pas mesuré.
+**Le public a depuis son propre profil, et il en avait besoin.** Le jeu annuel
+détaillé de la fonction publique croise l'âge et le statut — le seul des trois
+à le faire —, et les pentes y sont très éloignées de celle du privé qu'on leur
+appliquait : ×1,11 de 26 à 55 ans pour un catégorie C, ×1,22 pour un catégorie
+B, ×1,56 pour un catégorie A, contre ×1,30 servi à tous. Le profil se choisit
+désormais sur l'AFFILIATION, et les affiliations publiques prennent celui de
+leur versant — ×1,60 pour l'État, ×1,27 pour la territoriale, ×1,32 pour
+l'hospitalière —, parce qu'aucune ne porte le A, le B ou le C et que le profil
+du versant pondère déjà les catégories par leurs effectifs réels. Deviner la
+catégorie de chaque affiliation aurait été réinventer ce que la lecture vient
+de retirer.
+
+Deux trous demeurent de ce côté. **Les militaires n'ont aucun profil publié** :
+le code `PM` de ce jeu désigne les personnels MÉDICAUX de l'hospitalière, à
+6 765 € nets par mois, et non des militaires — aucun jeu de l'INSEE ne porte la
+solde indiciaire par âge. Les cas types militaires prennent donc le profil de
+l'État. Et les **régimes spéciaux** — SNCF, IEG, RATP, mines — n'ont pas
+davantage de profil publié : ils prennent celui des employés du privé, comme
+tous les indépendants et les non-salariés.
 
 ### Ce que dit la confrontation à une seconde implémentation
 

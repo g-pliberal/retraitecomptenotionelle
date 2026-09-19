@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 
 from typing import TYPE_CHECKING
 
-from .carriere import Carriere
+from .carriere import PROFIL_AUTOMATIQUE, Carriere
 from .simulateur import Comparaison, Simulateur
 
 if TYPE_CHECKING:  # pragma: no cover - annotation seulement
@@ -56,7 +56,11 @@ class CasType:
     #: que le droit de la génération confirme.
     age_liquidation: float
     niveau_salaire: float
-    profil_carriere: str = "ascendant"
+    #: Le défaut RÉSOUT le profil sur l'affiliation, et les fiches ci-dessous ne
+    #: le nomment que là où elles en savent plus que l'affiliation : le
+    #: sédentaire est de catégorie B et l'actif de catégorie C, ce que leur
+    #: commentaire disait déjà sans que le modèle le lise.
+    profil_carriere: str = PROFIL_AUTOMATIQUE
     sexe: str = "H"
     nombre_enfants: int = 0
     part_primes: float = 0.0
@@ -214,7 +218,6 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Cadre du privé",
         affiliation="salarie_prive_cadre",
         age_debut=23, age_liquidation=64, niveau_salaire=2.2,
-        profil_carriere="fortement_ascendant",
         caisses=("cnav",),
         commentaire="Forte part de rémunération au-dessus du plafond.",
     ),
@@ -242,6 +245,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="fonctionnaire_etat",
         age_debut=22, age_liquidation=64, niveau_salaire=1.2,
         part_primes=0.18,
+        profil_carriere="public_categorie_b",
         caisses=("fonction_publique_etat_civile",),
         commentaire="Traitement indiciaire hors primes ; les primes relèvent du RAFP.",
     ),
@@ -251,6 +255,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="fonctionnaire_territorial_hospitalier_actif",
         age_debut=22, age_liquidation=57, niveau_salaire=1.1,
         part_primes=0.22,
+        profil_carriere="public_categorie_c",
         caisses=("cnracl",),
         regle_liquidation="ouverture",
         commentaire=(
@@ -333,7 +338,6 @@ CAS_TYPES: tuple[CasType, ...] = (
         libelle="Profession libérale",
         affiliation="profession_liberale",
         age_debut=27, age_liquidation=66, niveau_salaire=2.5,
-        profil_carriere="fortement_ascendant",
         caisses=("cnavpl",),
         ecart_liquidation=2,
         commentaire="Régime de base CNAVPL et complémentaire Cipav, la section par "

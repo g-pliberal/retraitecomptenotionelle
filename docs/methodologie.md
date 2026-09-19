@@ -1860,6 +1860,23 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
     active au salaire moyen de son temps, celui qui est né en 1960 à 86 % du
     sien.
 
+  **Le public a son propre fichier**, `profil_salaire_statut_public.csv`, lu
+  dans le seul jeu de l'INSEE qui croise l'âge et le statut : ×1,11 de 26 à
+  55 ans pour un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un
+  catégorie A, là où le profil du privé qu'on leur servait valait ×1,30.
+
+  **Et le profil se choisit sur l'AFFILIATION**, non sur un réglage saisi : on
+  ne demande pas sa progression de carrière à quelqu'un qui a déjà dit qu'il
+  était fonctionnaire de l'État. La table est `PROFIL_PAR_AFFILIATION`, et les
+  affiliations publiques prennent le profil de leur VERSANT — aucune ne porte
+  le A, le B ou le C, et celui du versant pondère déjà les catégories par leurs
+  effectifs. Le profil se lit métier par métier : changer d'affiliation en cours
+  de carrière déplace la pente sans rien remettre à zéro. Les quatre noms
+  explicites restent, pour une grille qui en sait plus — les cas types
+  « sédentaire » et « catégorie active » portent le B et le C que leur
+  commentaire annonçait déjà — et pour une carrière qui ne progresse pas, comme
+  celle au SMIC.
+
   On module l'écart à la moyenne et non la valeur : `1 + (forme − 1) ×
   modulation` laisse le profil centré, de sorte que le niveau de revenu saisi
   garde son sens. Le modèle retrouve ainsi les pentes observées à quelques

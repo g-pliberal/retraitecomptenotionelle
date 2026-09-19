@@ -912,6 +912,8 @@ def construire() -> bytes:
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(
             "profil_salaire_categorie.csv", "categorie"),
+        "profil_salaire_statut_public": _profil_salaire(
+            "profil_salaire_statut_public.csv", "statut"),
         "contribution_employeur_public": _contribution_employeur_public(),
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),

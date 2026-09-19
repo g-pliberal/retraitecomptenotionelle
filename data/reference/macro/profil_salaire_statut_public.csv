@@ -1,0 +1,57 @@
+# Profil d'âge de la fonction publique, par statut et par versant
+# source_id: insee_profil_salaire_public
+# unite: rapport sans dimension (1,00 = moyenne du groupe)
+# fiabilite:
+#   certifiee (2023) : salaire net mensuel en équivalent temps plein, à
+#             temps complet, recontrôlé par scripts/verifier_donnees.py.
+#
+# Le profil du privé qu'on appliquait aux fonctionnaires était trop
+# pentu pour les catégories B et C — ×1,30 servi contre ×1,22 et ×1,11
+# observés de 26 à 55 ans — et trop plat pour un catégorie A, qui fait
+# ×1,56. Les trois VERSANTS sont ici pour les affiliations, qui ne
+# portent pas la catégorie : leur profil pondère les catégories par
+# leurs effectifs réels, et ne suppose rien.
+#
+# CE QU'IL N'Y A PAS : les militaires. Le code PM de ce jeu désigne les
+# personnels MÉDICAUX de l'hospitalière, à 6 765 € nets par mois, et non
+# des militaires. Aucun jeu de l'INSEE ne porte la solde indiciaire par
+# âge : les cas types militaires gardent le profil de l'État.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+statut,tranche,salaire_relatif,fiabilite
+public_categorie_a,Y30T39,0.8304,certifiee
+public_categorie_a,Y40T49,0.9759,certifiee
+public_categorie_a,Y50T59,1.1177,certifiee
+public_categorie_a,Y_GE60,1.2701,certifiee
+public_categorie_a,Y_LT30,0.7151,certifiee
+public_categorie_b,Y30T39,0.9104,certifiee
+public_categorie_b,Y40T49,0.9974,certifiee
+public_categorie_b,Y50T59,1.0440,certifiee
+public_categorie_b,Y_GE60,1.0807,certifiee
+public_categorie_b,Y_LT30,0.8582,certifiee
+public_categorie_c,Y30T39,0.9597,certifiee
+public_categorie_c,Y40T49,1.0118,certifiee
+public_categorie_c,Y50T59,1.0115,certifiee
+public_categorie_c,Y_GE60,1.0323,certifiee
+public_categorie_c,Y_LT30,0.9103,certifiee
+public_etat,Y30T39,0.8508,certifiee
+public_etat,Y40T49,1.0028,certifiee
+public_etat,Y50T59,1.1212,certifiee
+public_etat,Y_GE60,1.2409,certifiee
+public_etat,Y_LT30,0.6996,certifiee
+public_hospitaliere,Y30T39,0.9808,certifiee
+public_hospitaliere,Y40T49,1.0075,certifiee
+public_hospitaliere,Y50T59,1.0459,certifiee
+public_hospitaliere,Y_GE60,1.3254,certifiee
+public_hospitaliere,Y_LT30,0.7909,certifiee
+public_non_titulaire,Y30T39,0.9494,certifiee
+public_non_titulaire,Y40T49,1.0540,certifiee
+public_non_titulaire,Y50T59,1.1430,certifiee
+public_non_titulaire,Y_GE60,1.2713,certifiee
+public_non_titulaire,Y_LT30,0.8380,certifiee
+public_territoriale,Y30T39,0.9186,certifiee
+public_territoriale,Y40T49,1.0258,certifiee
+public_territoriale,Y50T59,1.0395,certifiee
+public_territoriale,Y_GE60,1.0921,certifiee
+public_territoriale,Y_LT30,0.8164,certifiee

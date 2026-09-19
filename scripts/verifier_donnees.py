@@ -396,6 +396,73 @@ def source_profil_salaire_categorie() -> dict[tuple, float]:
     return valeurs
 
 
+#: Les statuts de la fonction publique retenus, sous le nom que le modèle leur
+#: donne. Les trois VERSANTS y figurent aussi — État, territoriale,
+#: hospitalière —, et ce sont eux que les affiliations lisent par défaut : leur
+#: profil pondère déjà les catégories par leurs effectifs réels, là où deviner
+#: la catégorie de chaque affiliation serait réinventer ce que ce fichier vient
+#: remplacer.
+#:
+#: ``PM`` est absent, et volontairement : ce n'est pas « personnels militaires »
+#: mais « personnels médicaux », il n'existe que dans l'hospitalière, et il
+#: vaut 6 765 € nets par mois. Les militaires ne sont dans aucun de ces jeux.
+STATUTS_PUBLIC = {
+    "F_A": "public_categorie_a", "F_B": "public_categorie_b",
+    "F_C": "public_categorie_c", "NT": "public_non_titulaire",
+}
+VERSANTS_PUBLIC = {"1": "public_etat", "2": "public_territoriale",
+                   "3": "public_hospitaliere"}
+
+
+def source_profil_salaire_public() -> dict[tuple, float]:
+    """Profil d'âge de la fonction publique, par statut et par versant.
+
+    Le seul jeu de l'INSEE à croiser l'âge et le statut — la série longue du
+    public ne le fait pas, vérifié — et il ne porte que 2023. Les pentes
+    observées de moins de 30 ans à 50-59 ans sont très éloignées de celle du
+    privé qu'on leur appliquait : ×1,11 pour un catégorie C et ×1,22 pour un
+    catégorie B, contre ×1,30 pour un employé du privé, et ×1,56 pour un
+    catégorie A contre ×1,86 pour un cadre.
+
+    Les statuts sont lus tous versants confondus, les versants tous statuts
+    confondus : le jeu croise les trois dimensions, mais une carrière n'est pas
+    à la fois « catégorie B » et « territoriale » dans le modèle, dont les
+    affiliations ne portent que l'une des deux.
+    """
+    attendus = {
+        "DERA_MEASURE": "SALAIRE_NET_EQTP_MENSUEL_MOYENNE",
+        "SEX": "_T", "PCS_ESE": "_T", "QUANTILE": "_T", "WKTIME": "FT",
+    }
+    observations = _charge_profil_salaire(
+        "insee_profil_salaire_public.json", attendus)
+    par_groupe: dict[str, dict[str, float]] = {}
+    for observation in observations:
+        dimensions = observation["dimensions"]
+        valeur = observation["measures"].get("OBS_VALUE_NIVEAU", {}).get("value")
+        if valeur is None:
+            continue
+        statut = dimensions["CIVILSERVANT_STATUS"]
+        versant = dimensions["PUBLIC_LEGAL_FORM"]
+        groupe = None
+        if versant == "_T" and statut in STATUTS_PUBLIC:
+            groupe = STATUTS_PUBLIC[statut]
+        elif statut == "_T" and versant in VERSANTS_PUBLIC:
+            groupe = VERSANTS_PUBLIC[versant]
+        if groupe is not None:
+            par_groupe.setdefault(groupe, {})[dimensions["AGE"]] = float(valeur)
+
+    valeurs: dict[tuple, float] = {}
+    for groupe in sorted(par_groupe):
+        moyenne = par_groupe[groupe].get("_T")
+        if not moyenne:
+            continue
+        for tranche in TRANCHES_AGE_CATEGORIES:
+            brut = par_groupe[groupe].get(tranche)
+            if brut is not None:
+                valeurs[(groupe, tranche)] = brut / moyenne
+    return valeurs
+
+
 def source_pib_nominal() -> dict[tuple, float]:
     """Variation nominale du produit intérieur brut.
 
@@ -2936,6 +3003,39 @@ CERTIFICATIONS = (
             "# longue du privé ni celle du public ne le font — et il ne porte qu'une",
             "# année. Sa forme est donc supposée stable dans le temps, ce que rien",
             "# ne démontre et que docs/limites.md dit.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="profil_salaire_public",
+        chemin=REFERENCE / "macro" / "profil_salaire_statut_public.csv",
+        cles=("statut", "tranche"),
+        colonne="salaire_relatif",
+        source=source_profil_salaire_public,
+        origine="INSEE Melodi, DS_DERA_PUBLIC_ANNUEL (2023)",
+        decimales=4,
+        tolerance=5e-4,
+        entete=(
+            "# Profil d'âge de la fonction publique, par statut et par versant",
+            "# source_id: insee_profil_salaire_public",
+            "# unite: rapport sans dimension (1,00 = moyenne du groupe)",
+            "# fiabilite:",
+            "#   certifiee (2023) : salaire net mensuel en équivalent temps plein, à",
+            "#             temps complet, recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# Le profil du privé qu'on appliquait aux fonctionnaires était trop",
+            "# pentu pour les catégories B et C — ×1,30 servi contre ×1,22 et ×1,11",
+            "# observés de 26 à 55 ans — et trop plat pour un catégorie A, qui fait",
+            "# ×1,56. Les trois VERSANTS sont ici pour les affiliations, qui ne",
+            "# portent pas la catégorie : leur profil pondère les catégories par",
+            "# leurs effectifs réels, et ne suppose rien.",
+            "#",
+            "# CE QU'IL N'Y A PAS : les militaires. Le code PM de ce jeu désigne les",
+            "# personnels MÉDICAUX de l'hospitalière, à 6 765 € nets par mois, et non",
+            "# des militaires. Aucun jeu de l'INSEE ne porte la solde indiciaire par",
+            "# âge : les cas types militaires gardent le profil de l'État.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",

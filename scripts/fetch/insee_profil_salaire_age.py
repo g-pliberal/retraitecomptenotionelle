@@ -76,14 +76,32 @@ FILTRES_CATEGORIES = {
     "WKTIME": "FT",
 }
 
+#: Le même jeu annuel détaillé, côté fonction publique. Il croise l'âge et le
+#: STATUT — catégories A, B et C, non-titulaires — et le VERSANT, et c'est le
+#: seul à le faire : la série longue du public ne les croise pas. Il ne porte
+#: que 2023.
+#:
+#: Piège du codage, et il coûte cher si on le rate : ``PM`` n'est pas
+#: « personnels militaires » mais « personnels médicaux ». Il n'existe que dans
+#: le versant 3, l'hospitalière, et vaut 6 765 € nets par mois quand l'ensemble
+#: du public en vaut 2 682. Les militaires ne sont dans AUCUN de ces jeux.
+JEU_PUBLIC = "DS_DERA_PUBLIC_ANNUEL"
+
+FILTRES_PUBLIC = {
+    "DERA_MEASURE": "SALAIRE_NET_EQTP_MENSUEL_MOYENNE",
+    "SEX": "_T", "PCS_ESE": "_T", "QUANTILE": "_T", "WKTIME": "FT",
+}
+
 SORTIE_SERIES = Path("data/brut/insee_profil_salaire_age.json")
 SORTIE_CATEGORIES = Path("data/brut/insee_profil_salaire_categorie.json")
+SORTIE_PUBLIC = Path("data/brut/insee_profil_salaire_public.json")
 
 
 def main() -> int:
     for jeu, filtres, sortie in (
         (JEU_SERIES, FILTRES_SERIES, SORTIE_SERIES),
         (JEU_CATEGORIES, FILTRES_CATEGORIES, SORTIE_CATEGORIES),
+        (JEU_PUBLIC, FILTRES_PUBLIC, SORTIE_PUBLIC),
     ):
         try:
             chemin = telecharger(jeu, filtres, sortie)

@@ -381,6 +381,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # temps de l'autre, et aucun ne suffit seul.
         "profil_salaire_age": "macro/profil_salaire_age.csv",
         "profil_salaire_categorie": "macro/profil_salaire_categorie.csv",
+        "profil_salaire_public": "macro/profil_salaire_statut_public.csv",
         "assiette_salaires": "macro/assiette_activite.csv",
         "assiette_revenu_mixte": "macro/assiette_activite.csv",
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",

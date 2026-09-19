@@ -28,6 +28,11 @@ from .donnees.chargement import (
     charger_yaml,
 )
 from .donnees.macro import DonneesMacro
+
+#: Le profil que le modèle résout lui-même sur l'affiliation. C'est le défaut,
+#: et le seul que le site propose : les autres noms restent pour la grille de
+#: cas types et pour qui veut mesurer une variante.
+PROFIL_AUTOMATIQUE = "auto"
 from .calendrier import (
     MOIS_PAR_AN,
     DateMois,
@@ -597,7 +602,7 @@ class Carriere:
         macro: DonneesMacro,
         mois_naissance: int = 1,
         niveau_salaire: float = 1.0,
-        profil_carriere: str = "plat",
+        profil_carriere: str = PROFIL_AUTOMATIQUE,
         interruptions: dict[int, str] | None = None,
         nombre_enfants: int = 0,
         part_primes: float = 0.0,
@@ -632,7 +637,7 @@ class Carriere:
         age_liquidation: float,
         macro: DonneesMacro,
         mois_naissance: int = 1,
-        profil_carriere: str = "plat",
+        profil_carriere: str = PROFIL_AUTOMATIQUE,
         interruptions: dict[int, str] | None = None,
         nombre_enfants: int = 0,
         part_primes: float = 0.0,
@@ -655,17 +660,18 @@ class Carriere:
         impôt sur le revenu, cotisations patronales exclues.
 
         ``profil_carriere`` décrit la déformation du salaire relatif au cours de
-        la vie active, et il vaut pour la carrière ENTIÈRE, changements de métier
-        compris — c'est une progression de carrière, pas d'emploi :
+        la vie active. Son défaut, ``auto``, la CHOISIT SUR L'AFFILIATION de
+        chaque métier : on ne demande pas son profil de carrière à quelqu'un qui
+        a déjà dit qu'il était fonctionnaire, et le profil d'un catégorie C
+        (×1,11 de 26 à 55 ans) n'est pas celui d'un cadre du privé (×1,86). La
+        table est ``PROFIL_PAR_AFFILIATION``, ses valeurs sont lues chez
+        l'INSEE, et ``plat`` reste disponible pour la convention qui ne suppose
+        rien — une carrière au SMIC, par exemple, dont le salaire ne progresse
+        pas avec l'âge.
 
-        * ``plat`` — le salaire suit exactement le salaire moyen ;
-        * ``ascendant`` — le salaire relatif croît de 60 % à 130 % du niveau
-          cible (profil ouvrier/employé) ;
-        * ``fortement_ascendant`` — de 50 % à 190 % (profil cadre).
-
-        Le niveau de revenu propre à chaque métier se superpose à cette
-        déformation : changer de métier déplace le niveau, il ne remet pas la
-        progression à zéro.
+        Le profil se lit à un ÂGE et à une ANNÉE : changer de métier déplace la
+        pente sans rien remettre à zéro, et le niveau de revenu propre à chaque
+        métier s'y superpose comme avant.
 
         ``interruptions`` associe une année à un type de période non cotisée.
 
@@ -738,16 +744,20 @@ class Carriere:
         for annee in annees:
             part = fraction_annee(annee, debut, fin)
             trimestres_maximum = trimestres_civils(mois_travailles(annee, debut, fin))
-            deformation = profil_salaire(
-                macro.racine, profil_carriere,
-                annee - annee_naissance, annee,
-            )
+            # Le profil se lit MÉTIER PAR MÉTIER, parce que l'affiliation peut
+            # changer en cours de carrière et qu'elle est ce qui le choisit.
+            # Rien n'est remis à zéro pour autant : un profil lu à l'âge ne
+            # connaît pas la durée déjà parcourue, et passer du privé au public
+            # déplace la pente sans effacer ce qui précède.
+            age_annee = annee - annee_naissance
             # Ce que chaque métier a occupé de l'année. La somme vaut les mois
             # travaillés de l'année : les périodes la découpent sans reste.
             mois_par_metier = [mois_travailles(annee, ouverture, cloture)
                                for _, ouverture, cloture in periodes]
             revenu = sum(
-                metier.niveau_salaire * deformation
+                metier.niveau_salaire
+                * profil_salaire(macro.racine, profil_carriere, age_annee,
+                                 annee, metier.affiliation)
                 * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN)
                 for (metier, _, _), mois in zip(periodes, mois_par_metier)
                 if mois > 0
@@ -803,7 +813,81 @@ PROFILS_CATEGORIE = {
     "plat": None,
     "ascendant": "employe",
     "fortement_ascendant": "cadre",
+    # Les profils lus, sous leur nom de source. Ils se choisissent d'eux-mêmes
+    # par l'affiliation (voir ``PROFIL_PAR_AFFILIATION``) et restent nommables
+    # pour une grille qui sait mieux — les cas types portent la catégorie du
+    # fonctionnaire dans leur commentaire, le formulaire du site ne la demande
+    # pas.
+    "ouvrier": "ouvrier",
+    "employe": "employe",
+    "profession_intermediaire": "profession_intermediaire",
+    "cadre": "cadre",
+    "public_etat": "public_etat",
+    "public_territoriale": "public_territoriale",
+    "public_hospitaliere": "public_hospitaliere",
+    "public_categorie_a": "public_categorie_a",
+    "public_categorie_b": "public_categorie_b",
+    "public_categorie_c": "public_categorie_c",
+    "public_non_titulaire": "public_non_titulaire",
 }
+
+#: Les groupes lus dans le fichier du PUBLIC plutôt que dans celui du privé.
+GROUPES_PUBLIC = frozenset(
+    cle for cle in PROFILS_CATEGORIE if str(cle).startswith("public_")
+)
+
+#: LE PROFIL SE CHOISIT SUR L'AFFILIATION, et non sur un réglage saisi : on ne
+#: demande pas son profil de carrière à quelqu'un qui a déjà dit qu'il était
+#: fonctionnaire. La table ne porte que les écarts au défaut.
+#:
+#: Les affiliations publiques prennent le profil de leur VERSANT et non d'une
+#: catégorie : aucune d'elles ne porte le A, le B ou le C, et le profil du
+#: versant pondère déjà les catégories par leurs effectifs réels. Deviner la
+#: catégorie de chacune serait réinventer ce que la lecture vient remplacer.
+#:
+#: Les militaires prennent celui de l'État, faute de source : aucun jeu de
+#: l'INSEE ne porte la solde indiciaire par âge.
+PROFIL_PAR_AFFILIATION = {
+    "salarie_prive_cadre": "cadre",
+    "salarie_prive_cadre_entreprise_recente": "cadre",
+    "fonctionnaire_etat": "public_etat",
+    "fonctionnaire_etat_actif": "public_etat",
+    "fonctionnaire_etat_super_actif": "public_etat",
+    "fonctionnaire_pacifique": "public_etat",
+    "ouvrier_etat": "public_etat",
+    "ouvrier_etat_actif": "public_etat",
+    "militaire": "public_etat",
+    "militaire_officier": "public_etat",
+    "fonctionnaire_territorial_hospitalier": "public_territoriale",
+    "fonctionnaire_territorial_hospitalier_actif": "public_territoriale",
+    "fonctionnaire_territorial_hospitalier_super_actif": "public_territoriale",
+    "contractuel_public": "public_non_titulaire",
+    "maitre_enseignement_prive": "public_non_titulaire",
+    # Les professions libérales réglementées progressent comme des cadres :
+    # c'est le profil que la grille leur donnait déjà, et le seul des quatre
+    # du privé qui ait la forme d'une carrière indépendante.
+    "profession_liberale": "cadre",
+    "liberal_non_reglemente": "cadre",
+    "avocat": "cadre",
+    "notaire": "cadre",
+    "medecin_liberal": "cadre",
+    "chirurgien_dentiste_ou_sage_femme": "cadre",
+    "pharmacien": "cadre",
+    "veterinaire": "cadre",
+    "expert_comptable": "cadre",
+    "auxiliaire_medical": "profession_intermediaire",
+    "officier_ministeriel": "cadre",
+}
+
+#: Ce que prend toute affiliation que la table ne nomme pas : le profil des
+#: employés du privé. C'est le groupe le plus nombreux, et le plus proche d'une
+#: carrière ordinaire — les régimes spéciaux, les indépendants et les
+#: non-salariés n'ont aucun profil publié par âge.
+PROFIL_PAR_DEFAUT = "employe"
+
+def profil_de_l_affiliation(affiliation: str) -> str:
+    """Le groupe salarial que le modèle prête à une affiliation."""
+    return PROFIL_PAR_AFFILIATION.get(affiliation, PROFIL_PAR_DEFAUT)
 
 #: Le milieu qu'on prête à chaque tranche des deux fichiers. Un profil de
 #: carrière se lit à un ÂGE, pas à une tranche : il faut donc un point par
@@ -892,7 +976,8 @@ def _modulation_annee(racine: Path, annee: int) -> float:
     return ecart(borne) / reference if reference else 1.0
 
 
-def profil_salaire(racine: Path, profil: str, age: float, annee: int) -> float:
+def profil_salaire(racine: Path, profil: str, age: float, annee: int,
+                   affiliation: str | None = None) -> float:
     """Ce que le profil fait du niveau saisi, à cet âge et cette année-là.
 
     Deux sources, parce qu'aucune ne suffit seule. La FORME vient du profil
@@ -906,27 +991,34 @@ def profil_salaire(racine: Path, profil: str, age: float, annee: int) -> float:
     ``1 + (forme − 1) × modulation`` laisse le profil centré quoi qu'il arrive,
     de sorte que le niveau de revenu saisi garde son sens.
     """
-    if profil not in PROFILS_CATEGORIE:
+    if profil == PROFIL_AUTOMATIQUE:
+        categorie = profil_de_l_affiliation(affiliation or "")
+    elif profil in PROFILS_CATEGORIE:
+        categorie = PROFILS_CATEGORIE[profil]
+    else:
         raise ValueError(f"profil de carrière inconnu : {profil!r}")
-    categorie = PROFILS_CATEGORIE[profil]
     if categorie is None:
         return 1.0
-    table = _table_profil(racine, "profil_salaire_categorie.csv", "categorie")
+    fichier = ("profil_salaire_statut_public.csv" if categorie in GROUPES_PUBLIC
+               else "profil_salaire_categorie.csv")
+    cle = "statut" if categorie in GROUPES_PUBLIC else "categorie"
+    table = _table_profil(racine, fichier, cle)
     forme = _interpole_tranches(table.get(categorie, {}), TRANCHES_CATEGORIE, age)
     return 1.0 + (forme - 1.0) * _modulation_annee(racine, annee)
 
 
-def bornes_deformation(racine: Path, profil: str) -> tuple[float, float]:
+def bornes_deformation(racine: Path, profil: str,
+                       affiliation: str | None = None) -> tuple[float, float]:
     """Ce que le profil fait du niveau saisi, en début et en fin de carrière.
 
     Lues à l'année de référence de la forme : ce sont les deux nombres que le
     site affiche sous le menu des profils, et ils doivent donc être ceux d'une
     carrière observée et non d'un bord de table.
     """
-    if PROFILS_CATEGORIE.get(profil) is None:
+    if profil != PROFIL_AUTOMATIQUE and PROFILS_CATEGORIE.get(profil) is None:
         return 1.0, 1.0
-    return (profil_salaire(racine, profil, 25.0, ANNEE_FORME_CATEGORIE),
-            profil_salaire(racine, profil, 60.0, ANNEE_FORME_CATEGORIE))
+    return (profil_salaire(racine, profil, 25.0, ANNEE_FORME_CATEGORIE, affiliation),
+            profil_salaire(racine, profil, 60.0, ANNEE_FORME_CATEGORIE, affiliation))
 
 
 #: Point d'ancrage du salaire moyen par tête, en euros bruts annuels courants.

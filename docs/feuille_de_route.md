@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->22 977<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 046<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -5933,6 +5933,55 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   §1, le bloc d'exemple du `README.md` ; `tests/test_moteur.py`,
   `tests/test_cout.py`, `tests/test_donnees.py`, `tests/test_web.py` ; les
   témoins.
+
+- **Septembre 2026, le profil se choisit sur l'affiliation, et le public a le
+  sien.** Suite immédiate de la note précédente. Le profil lu chez l'INSEE
+  était celui du PRIVÉ, servi à tout le monde : le jeu annuel détaillé de la
+  fonction publique croise pourtant l'âge et le statut — le seul des trois à le
+  faire —, et les pentes y sont très éloignées. De 26 à 55 ans : **×1,11 pour
+  un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un catégorie A**, contre
+  ×1,30 servi à tous. Le profil du privé était donc trop pentu de 17 % pour un
+  catégorie C — le cas type « catégorie active », aide-soignant ou agent
+  technique territorial — et trop plat de 20 % pour un catégorie A.
+
+  *Le piège du codage, évité de justesse.* Le code `PM` de ce jeu n'est pas
+  « personnels militaires » mais **personnels MÉDICAUX** : il n'existe que dans
+  le versant hospitalier et vaut 6 765 € nets par mois quand l'ensemble du
+  public en vaut 2 682. Les militaires ne sont dans aucun de ces jeux, et les
+  cas types militaires prennent le profil de l'État, faute de mieux.
+
+  *Le profil se choisit désormais sur l'AFFILIATION* — `PROFIL_PAR_AFFILIATION`
+  —, et non sur un réglage saisi : on ne demande pas sa progression de carrière
+  à quelqu'un qui a déjà dit qu'il était fonctionnaire de l'État. Les
+  affiliations publiques prennent le profil de leur VERSANT (×1,60 pour l'État,
+  ×1,27 pour la territoriale, ×1,32 pour l'hospitalière) parce qu'aucune ne
+  porte le A, le B ou le C, et que le profil du versant pondère déjà les
+  catégories par leurs effectifs réels : deviner la catégorie de chaque
+  affiliation aurait été réinventer ce qu'on venait de retirer. Le profil se lit
+  MÉTIER PAR MÉTIER, l'affiliation pouvant changer en cours de carrière.
+
+  *Ce que ça déplace* : l'écart médian de la proposition sur la grille passe de
+  −41,4 % à −41,6 %, celui du compte notionnel deux parts de −33,5 % à −34,5 %,
+  et la trajectoire 2070 de 19,24 % à 19,28 % du PIB. Peu, donc — les quatre cas
+  types publics pèsent peu dans la pondération par effectifs —, mais ce sont
+  quatre carrières sur treize qui cessent de porter un profil qui n'est pas le
+  leur.
+
+  *Trois tests l'ont senti passer*, et c'est le bon signe : ils comparaient deux
+  statuts « à rémunération égale » pour isoler le périmètre de cotisation ou la
+  grille des forfaits marins, et le défaut leur donnait désormais deux profils
+  différents. Ils nomment leur profil, et disent pourquoi.
+
+  **Fichiers.** `DS_DERA_PUBLIC_ANNUEL` ajouté à
+  `scripts/fetch/insee_profil_salaire_age.py` ;
+  `data/reference/macro/profil_salaire_statut_public.csv` et sa règle de
+  certification ; `data/sources.yaml` ; `PROFIL_PAR_AFFILIATION`,
+  `PROFIL_AUTOMATIQUE` et le profil par métier dans `carriere.py` et son
+  portage ; `castypes.py` et `castypes.js`, où deux fiches portent enfin la
+  catégorie que leur commentaire annonçait ; `PROFILS` et le défaut de `Saisie`
+  dans `web/pages.py` et son portage ; `docs/methodologie.md`,
+  `docs/limites.md` §1 ; `tests/test_simulateur.py`, `tests/test_donnees.py` ;
+  les témoins.
 
 ### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 

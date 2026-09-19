@@ -45,6 +45,7 @@ import { salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur } from "./simulateur.js";
 
 export const PROFILS = [
+  ["auto", "Déduit du statut (défaut)"],
   ["plat", "Plat — le salaire suit le salaire moyen"],
   ["ascendant", "Ascendant — profil employé/ouvrier"],
   ["fortement_ascendant", "Fortement ascendant — profil cadre"],
@@ -403,7 +404,7 @@ const DEFAUTS = Object.freeze({
   //: paramétrique — les métiers, le profil et le niveau de revenu ne servent
   //: plus à rien : plus rien n'est reconstitué, tout est lu.
   releve: "",
-  profil: "ascendant",
+  profil: "auto",
   primes: 0.0,
   enfants: 0,
   interruptions: "",
@@ -2266,7 +2267,7 @@ function formulaire(saisie, contexte) {
       + "le système actuel réserve à la mère la majoration de durée "
       + "d'assurance."),
     g.liste("profil", "Profil de carrière", PROFILS, saisie.profil,
-      aideProfil(contexte.paquet, saisie.profil)),
+      aideProfil(contexte.paquet, saisie.profil, saisie.statut)),
     g.champ("primes", "Part de primes", nombreBrut(saisie.primes),
       "fonction publique : assiette du RAFP", "number",
       { min: "0", max: "0.6", step: "0.01" }),
@@ -2434,8 +2435,8 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
  * de sa vie, alors que le revenu saisi est celui du milieu de carrière et que
  * le profil le déforme aux deux bouts.
  */
-function aideProfil(paquet, profil) {
-  const [debut, fin] = bornesDeformation(paquet, profil);
+function aideProfil(paquet, profil, affiliation = null) {
+  const [debut, fin] = bornesDeformation(paquet, profil, affiliation);
   if (debut === fin) {
     return "le revenu saisi vaut pour toutes les années de la carrière";
   }

@@ -524,7 +524,7 @@ export class Carriere {
     age_liquidation,
     macro,
     mois_naissance = 1,
-    profil_carriere = "plat",
+    profil_carriere = PROFIL_AUTOMATIQUE,
     interruptions = null,
     nombre_enfants = 0,
     part_primes = 0.0,
@@ -585,9 +585,9 @@ export class Carriere {
     for (const annee of annees) {
       const part = fractionAnnee(annee, debut, fin);
       const trimestresMaximum = trimestresCivils(moisTravailles(annee, debut, fin));
-      const deforme = profilSalaire(
-        macro.paquet, profil_carriere, annee - annee_naissance, annee,
-      );
+      // Le profil se lit MÉTIER PAR MÉTIER : l'affiliation peut changer en
+      // cours de carrière, et c'est elle qui le choisit.
+      const ageAnnee = annee - annee_naissance;
       // Ce que chaque métier a occupé de l'année. La somme vaut les mois
       // travaillés de l'année : les périodes la découpent sans reste.
       const moisParMetier = periodes.map(
@@ -596,7 +596,10 @@ export class Carriere {
       let revenu = 0;
       periodes.forEach(({ metier }, i) => {
         if (moisParMetier[i] > 0) {
-          revenu += metier.niveau_salaire * deforme * salaireMoyen.get(annee)
+          revenu += metier.niveau_salaire
+            * profilSalaire(macro.paquet, profil_carriere, ageAnnee, annee,
+              metier.affiliation)
+            * salaireMoyen.get(annee)
             * (moisParMetier[i] / MOIS_PAR_AN);
         }
       });
@@ -647,7 +650,64 @@ export const PROFILS_CATEGORIE = {
   plat: null,
   ascendant: "employe",
   fortement_ascendant: "cadre",
+  ouvrier: "ouvrier",
+  employe: "employe",
+  profession_intermediaire: "profession_intermediaire",
+  cadre: "cadre",
+  public_etat: "public_etat",
+  public_territoriale: "public_territoriale",
+  public_hospitaliere: "public_hospitaliere",
+  public_categorie_a: "public_categorie_a",
+  public_categorie_b: "public_categorie_b",
+  public_categorie_c: "public_categorie_c",
+  public_non_titulaire: "public_non_titulaire",
 };
+
+/** Les groupes lus dans le fichier du public plutôt que dans celui du privé. */
+const GROUPES_PUBLIC = new Set(
+  Object.keys(PROFILS_CATEGORIE).filter((cle) => cle.startsWith("public_")),
+);
+
+/**
+ * Le profil se choisit sur l'AFFILIATION. Portage de
+ * `PROFIL_PAR_AFFILIATION` de `carriere.py`, qui porte le motif.
+ */
+export const PROFIL_PAR_AFFILIATION = {
+  salarie_prive_cadre: "cadre",
+  salarie_prive_cadre_entreprise_recente: "cadre",
+  fonctionnaire_etat: "public_etat",
+  fonctionnaire_etat_actif: "public_etat",
+  fonctionnaire_etat_super_actif: "public_etat",
+  fonctionnaire_pacifique: "public_etat",
+  ouvrier_etat: "public_etat",
+  ouvrier_etat_actif: "public_etat",
+  militaire: "public_etat",
+  militaire_officier: "public_etat",
+  fonctionnaire_territorial_hospitalier: "public_territoriale",
+  fonctionnaire_territorial_hospitalier_actif: "public_territoriale",
+  fonctionnaire_territorial_hospitalier_super_actif: "public_territoriale",
+  contractuel_public: "public_non_titulaire",
+  maitre_enseignement_prive: "public_non_titulaire",
+  profession_liberale: "cadre",
+  liberal_non_reglemente: "cadre",
+  avocat: "cadre",
+  notaire: "cadre",
+  medecin_liberal: "cadre",
+  chirurgien_dentiste_ou_sage_femme: "cadre",
+  pharmacien: "cadre",
+  veterinaire: "cadre",
+  expert_comptable: "cadre",
+  auxiliaire_medical: "profession_intermediaire",
+  officier_ministeriel: "cadre",
+};
+
+export const PROFIL_PAR_DEFAUT = "employe";
+export const PROFIL_AUTOMATIQUE = "auto";
+
+/** Le groupe salarial que le modèle prête à une affiliation. */
+export function profilDeLAffiliation(affiliation) {
+  return PROFIL_PAR_AFFILIATION[affiliation] ?? PROFIL_PAR_DEFAUT;
+}
 
 /** Milieu prêté à chaque tranche du fichier par catégorie. */
 export const TRANCHES_CATEGORIE = {
@@ -707,27 +767,33 @@ function modulationAnnee(paquet, annee) {
  * Ce que le profil fait du niveau saisi, à cet âge et cette année-là.
  * Portage de `profil_salaire` de `carriere.py`, qui porte le motif.
  */
-export function profilSalaire(paquet, profil, age, annee) {
-  if (!(profil in PROFILS_CATEGORIE)) {
+export function profilSalaire(paquet, profil, age, annee, affiliation = null) {
+  let categorie;
+  if (profil === PROFIL_AUTOMATIQUE) {
+    categorie = profilDeLAffiliation(affiliation ?? "");
+  } else if (profil in PROFILS_CATEGORIE) {
+    categorie = PROFILS_CATEGORIE[profil];
+  } else {
     throw new Error(`profil de carrière inconnu : ${profil}`);
   }
-  const categorie = PROFILS_CATEGORIE[profil];
   if (categorie === null) {
     return 1.0;
   }
-  const table = paquet.profil_salaire_categorie ?? {};
+  const table = GROUPES_PUBLIC.has(categorie)
+    ? (paquet.profil_salaire_statut_public ?? {})
+    : (paquet.profil_salaire_categorie ?? {});
   const forme = interpoleTranches(table[categorie], TRANCHES_CATEGORIE, age);
   return 1.0 + (forme - 1.0) * modulationAnnee(paquet, annee);
 }
 
 /** Ce que le profil fait du niveau saisi, en début et en fin de carrière. */
-export function bornesDeformation(paquet, profil) {
-  if (!PROFILS_CATEGORIE[profil]) {
+export function bornesDeformation(paquet, profil, affiliation = null) {
+  if (profil !== PROFIL_AUTOMATIQUE && !PROFILS_CATEGORIE[profil]) {
     return [1.0, 1.0];
   }
   return [
-    profilSalaire(paquet, profil, 25.0, ANNEE_FORME_CATEGORIE),
-    profilSalaire(paquet, profil, 60.0, ANNEE_FORME_CATEGORIE),
+    profilSalaire(paquet, profil, 25.0, ANNEE_FORME_CATEGORIE, affiliation),
+    profilSalaire(paquet, profil, 60.0, ANNEE_FORME_CATEGORIE, affiliation),
   ];
 }
 

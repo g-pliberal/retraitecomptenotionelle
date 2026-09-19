@@ -13,6 +13,8 @@
  * carrière interrompue — parce que ce sont eux que la réforme déplace le plus.
  */
 
+import { PROFIL_AUTOMATIQUE } from "./carriere.js";
+
 /** Jeu de cas types couvrant les principales configurations du système. */
 export const CAS_TYPES = [
   {
@@ -37,7 +39,6 @@ export const CAS_TYPES = [
     libelle: "Cadre du privé",
     affiliation: "salarie_prive_cadre",
     age_debut: 23, age_liquidation: 64, niveau_salaire: 2.2,
-    profil_carriere: "fortement_ascendant",
     caisses: ["cnav"],
     commentaire: "Forte part de rémunération au-dessus du plafond.",
   },
@@ -63,6 +64,7 @@ export const CAS_TYPES = [
     affiliation: "fonctionnaire_etat",
     age_debut: 22, age_liquidation: 64, niveau_salaire: 1.2,
     part_primes: 0.18,
+    profil_carriere: "public_categorie_b",
     caisses: ["fonction_publique_etat_civile"],
     commentaire: "Traitement indiciaire hors primes ; les primes relèvent du RAFP.",
   },
@@ -72,6 +74,7 @@ export const CAS_TYPES = [
     affiliation: "fonctionnaire_territorial_hospitalier_actif",
     age_debut: 22, age_liquidation: 57, niveau_salaire: 1.1,
     part_primes: 0.22,
+    profil_carriere: "public_categorie_c",
     caisses: ["cnracl"],
     regle_liquidation: "ouverture",
     commentaire: "Aide-soignant, agent technique territorial : l'emploi est classé, "
@@ -141,7 +144,6 @@ export const CAS_TYPES = [
     libelle: "Profession libérale",
     affiliation: "profession_liberale",
     age_debut: 27, age_liquidation: 66, niveau_salaire: 2.5,
-    profil_carriere: "fortement_ascendant",
     caisses: ["cnavpl"],
     ecart_liquidation: 2,
     commentaire: "Régime de base CNAVPL et complémentaire Cipav, la section par "
@@ -160,7 +162,7 @@ export const CAS_TYPES = [
     commentaire: "Régime général + Ircantec.",
   },
 ].map((cas) => ({
-  profil_carriere: "ascendant",
+  profil_carriere: PROFIL_AUTOMATIQUE,
   sexe: "H",
   nombre_enfants: 0,
   part_primes: 0.0,

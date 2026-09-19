@@ -637,7 +637,12 @@ def test_a_salaire_egal_le_statut_est_compare_a_la_meme_grandeur(simulateur):
     est réel — les taux salariaux ne sont pas identiques d'un régime à l'autre —
     et se compte en points, non en dizaines de points.
     """
-    commun = dict(annee_naissance=1975, sexe="H", age_debut=22, age_liquidation=64)
+    # Le profil est NOMMÉ, et plat : ce test isole le périmètre de cotisation,
+    # ce qui suppose la même trajectoire de salaire des deux côtés. Le défaut la
+    # choisit sur l'affiliation — profil de l'État contre profil des employés du
+    # privé —, et comparerait alors deux carrières au lieu de deux barèmes.
+    commun = dict(annee_naissance=1975, sexe="H", age_debut=22, age_liquidation=64,
+                  profil_carriere="plat")
 
     def pension(affiliation, scenario):
         carriere = simulateur.carriere_simple(affiliation=affiliation, **commun)
@@ -654,7 +659,11 @@ def test_l_ancienne_convention_egalise_les_statuts(simulateur):
     aligne = Simulateur(Parametres().avec(
         part_cotisation=PartCotisation.TOTALE_ALIGNEE
     ))
-    commun = dict(annee_naissance=1975, sexe="H", age_debut=22, age_liquidation=64)
+    # Profil nommé, et plat : ce que ce test veut voir se rejoindre est le
+    # TAUX, et deux profils différents feraient diverger les deux carrières
+    # avant même qu'on prélève.
+    commun = dict(annee_naissance=1975, sexe="H", age_debut=22, age_liquidation=64,
+                  profil_carriere="plat")
     pensions = [
         aligne.simuler(
             aligne.carriere_simple(affiliation=affiliation, **commun)
@@ -2861,9 +2870,13 @@ def test_le_marin_cotise_et_liquide_sur_le_forfait_de_sa_categorie(simulateur):
     """
     from retraite_notionnelle.carriere import salaire_moyen_annuel
 
+    # Profil plat : ce test vise la GRILLE des forfaits, et un marin à
+    # 40 000 € doit tomber dans la treizième catégorie. Le défaut déformerait
+    # ce salaire avec l'âge et le ferait changer de catégorie.
     carriere = simulateur.carriere_simple(
         annee_naissance=1965, sexe="H", affiliation="marin",
         age_debut=20, age_liquidation=60, niveau_salaire=1.0,
+        profil_carriere="plat",
     )
     ligne = carriere.ligne(2024)
     forfait = simulateur.scenario_actuel.grilles.forfait(
