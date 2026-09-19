@@ -72,6 +72,11 @@ CACHE = Path("data/brut/ccss_rapports")
 SOMMAIRE = re.compile(r"^(\d\.\d+)\s*(.{6,90}?)\s*\.{4,}")
 #: Le numéro de fiche, répété en tête de chaque page de la fiche.
 MARQUEUR = re.compile(r"^(\d\.\d+)\b")
+#: Le même numéro, mais collé à la FIN d'une ligne. La mise en page l'y pousse
+#: quand la tête de page tombe à hauteur d'une note : le rapport de 2022 écrit
+#: « correspond à la moyenne de ces deux taux . 5.6 ». Six pages à tableau
+#: n'avaient aucun marqueur en début de ligne, cinq l'avaient en fin.
+MARQUEUR_FIN = re.compile(r"(?:^|\s)(\d\.\d+)\s*$")
 #: Le titre du tableau, dont la mise en page mange parfois les espaces.
 TABLEAU = re.compile(r"onn[ée]es\s?g[ée]n[ée]rales", re.I)
 #: Au-delà, l'en-tête d'années n'appartient plus au tableau.
@@ -261,7 +266,14 @@ def _fiche_de_la_page(page: list[str]) -> str | None:
     """
     marques = {m.group(1) for m in
                (MARQUEUR.match(l.strip()) for l in page) if m}
-    return marques.pop() if len(marques) == 1 else None
+    if len(marques) == 1:
+        return marques.pop()
+    if marques:
+        return None          # page ambiguë : on ne devine pas
+    # Rien en début de ligne : le numéro est peut-être collé en fin.
+    tardifs = {m.group(1) for m in
+               (MARQUEUR_FIN.search(l.strip()) for l in page) if m}
+    return tardifs.pop() if len(tardifs) == 1 else None
 
 
 def _entete(lignes: list[str], rang: int) -> tuple[int, list] | None:

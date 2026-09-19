@@ -3699,8 +3699,8 @@ toucher aux moteurs de pension.
 
    Les contrôles par source tierce passent **neuf fois sur dix à l'unité** —
    SNCF 2023 et 2024, CNRACL 2013, 2021 et 2024, CNIEG 2023 et 2024, MSA
-   exploitants 2021 et 2024 — la dixième étant un trou, la SNCF de 2021, qu'un
-   autre garde-fou retient. Et deux séries qui étaient fausses ou absentes
+   exploitants 2021 et 2024 — la dixième étant un trou, la SNCF de 2021.
+   *(La passe suivante le comble : neuf contrôles sur neuf.)* Et deux séries qui étaient fausses ou absentes
    sont maintenant justes : la CNIEG de 2023 vaut 135 775 et non plus 112 621,
    qui était la SNCF ; la CNRACL de 2024 vaut 2 151 694 et non plus 2 008 352,
    qui était le SRE.
@@ -3710,6 +3710,42 @@ toucher aux moteurs de pension.
    autre sans ouvrir le document. Quinze lignes de diagnostic — afficher, pour
    chaque tableau, le marqueur trouvé et le titre — ont donné la réponse
    immédiatement.
+
+   **Dixième passe, 19 septembre 2026 : pourquoi la SNCF de 2021 manquait.**
+   Le trou n'était dans aucun des trois garde-fous — la valeur n'avait jamais
+   été LUE. Deux causes, et elles se sont révélées différentes l'une de
+   l'autre.
+
+   - **Le tableau de la fiche SNCF est une IMAGE en 2022 et en 2023.** Leurs
+     pages ne portent que le titre, la ligne d'unité, la source et les notes :
+     aucun chiffre, aucun en-tête d'années. Ce n'est pas réparable, et il faut
+     le savoir — toutes les fiches ne sont pas en texte tous les ans.
+
+   - **Le numéro de fiche était collé en FIN de ligne.** Le rapport de 2022
+     écrit « *correspond à la moyenne de ces deux taux . 5.6* » : le marqueur y
+     est, mais mon motif l'ancrait au début de ligne. Six pages à tableau, sur
+     l'ensemble des millésimes, n'avaient aucun marqueur en tête ; **cinq
+     l'avaient en queue** — une en 2014, trois en 2016, une en 2022, une en
+     2024. Le motif de secours les récupère, et il n'est essayé que si rien
+     n'a été trouvé en tête, pour ne pas fabriquer d'ambiguïté.
+
+   Cela suffit à combler le trou : la SNCF de 2021 vaut 123 019 cotisants,
+   lus dans le rapport de 2022, soit exactement ce que la fiche 4.1 écrit. La
+   série est désormais continue de 2012 à 2025, de 156 963 à 105 610.
+
+   **La valeur existait bien ailleurs, et c'est une remarque utile pour la
+   suite** : « 123019 » se trouve en toutes lettres dans les rapports de 2022
+   et de 2023, mais dans le TABLEAU DE SYNTHÈSE — la fiche 4.1 — que ce
+   moissonneur ne lit pas, puisqu'il ne cible que les « Données générales » des
+   fiches. Les deux familles de tableaux se complètent : quand la fiche d'un
+   régime est en image, la synthèse peut encore porter ses effectifs. La lire
+   aussi est le prochain gain facile.
+
+   **État final : 5 493 valeurs, 25 régimes, 2011-2025, zéro case remplie deux
+   fois, et neuf contrôles indépendants sur neuf à l'unité.** Les caisses les
+   mieux servies : CNRACL 720 valeurs, MSA salariés 599, MSA exploitants 589,
+   SNCF 506, CNAVPL complémentaire 430, RATP 340, CANSSM 332, Agirc-Arrco 322,
+   CNIEG 288.
 
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
@@ -5414,3 +5450,30 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   ratées ont consisté à corriger une heuristique par une autre sans ouvrir le
   document. Quinze lignes de diagnostic — afficher, pour chaque tableau, le
   marqueur trouvé et le titre — ont donné la réponse immédiatement.
+
+- **Septembre 2026, action 35, volet A, point 3, dixième passe : le trou de la
+  SNCF en 2021.** Demandé : regarder pourquoi. Il n'était dans aucun des trois
+  garde-fous — la valeur n'avait jamais été lue. Deux causes distinctes.
+
+  **Le tableau de la fiche SNCF est une IMAGE en 2022 et en 2023** : leurs
+  pages ne portent que le titre, l'unité, la source et les notes, pas un
+  chiffre. Ce n'est pas réparable, et c'est à savoir — toutes les fiches ne
+  sont pas en texte tous les ans.
+
+  **Et le numéro de fiche était collé en FIN de ligne** : le rapport de 2022
+  écrit « correspond à la moyenne de ces deux taux . 5.6 », là où mon motif
+  l'ancrait en début. Six pages à tableau n'avaient aucun marqueur en tête sur
+  l'ensemble des millésimes ; cinq l'avaient en queue. Le motif de secours les
+  récupère, et n'est essayé que si rien n'a été trouvé en tête.
+
+  Cela comble le trou : la SNCF de 2021 vaut 123 019 cotisants, exactement ce
+  qu'écrit la fiche 4.1, et la série est continue de 2012 à 2025.
+
+  **Une remarque pour la suite** : « 123019 » figure aussi dans le TABLEAU DE
+  SYNTHÈSE des rapports de 2022 et 2023 — la fiche 4.1 —, que ce moissonneur ne
+  lit pas puisqu'il ne cible que les « Données générales » des fiches. Les deux
+  familles se complètent : quand la fiche d'un régime est en image, la synthèse
+  peut encore porter ses effectifs. La lire aussi est le prochain gain facile.
+
+  **État final : 5 493 valeurs, 25 régimes, 2011-2025, zéro case remplie deux
+  fois, neuf contrôles indépendants sur neuf à l'unité.**
