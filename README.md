@@ -796,11 +796,11 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +9,96 % | +8,57 % | 2,62 |
-| 3. Notionnel dès 2026, part salariale | −0,65 % | +2,43 % | **1,89** |
-| 4. Notionnel rétroactif, salariale + patronale | +4,87 % | +2,70 % | 1,17 |
-| 5. Notionnel dès 2026, salariale + patronale | −0,65 % | +0,61 % | 1,14 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,87 % | **−0,09 %** | **1,07** |
+| 2. Notionnel rétroactif, part salariale | +9,29 % | +7,92 % | 2,49 |
+| 3. Notionnel dès 2026, part salariale | −1,32 % | +1,79 % | **1,80** |
+| 4. Notionnel rétroactif, salariale + patronale | +4,20 % | +2,06 % | 1,12 |
+| 5. Notionnel dès 2026, salariale + patronale | −1,33 % | −0,04 % | 1,08 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,20 % | **−0,73 %** | **1,00** |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -835,7 +835,7 @@ de chômage ; leur coefficient ne compte donc pas ces recettes : elles leur
 sont retirées, année par année de 2013 à 2024, à part constante des ressources
 avant et sur tout l'horizon projeté. C'est pourquoi les scénarios 3 et 5 sont
 déjà en déficit en 2025, où ils servent encore les pensions du système actuel,
-et pourquoi le scénario 3 vaut 1,87 en 2070 et non 1,94. Le système actuel,
+et pourquoi le scénario 3 vaut 1,80 en 2070 et non 1,94. Le système actuel,
 lui, encaisse tout, et son solde reste celui du COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
@@ -847,20 +847,32 @@ retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
 dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
 77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
 change le sens du tableau pour ce scénario : son solde moyen passe de +3,75 %
-du PIB à −0,09 %, son coefficient de 2070 de 1,53 à 1,07, et l'excédent qu'il
-affichait devient un équilibre — toujours très au-dessus du système actuel, qui
-reste à −1,13 %. Les quatre autres scénarios notionnels ne changent que ce qui
+du PIB à −0,73 %, son coefficient de 2070 de 1,53 à 1,00, et l'excédent qu'il
+affichait devient un léger déficit — moins creusé que celui du système actuel,
+qui reste à −1,13 %. Les quatre autres scénarios notionnels ne changent que ce qui
 est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans
 tous les cas, et leur recette ne bouge pas.
 
 Deux choses que ce calcul ne fait pas, et toutes deux jouent en faveur du
 scénario 6. Les ressources qui ne sont pas cotisées (impôts et taxes affectés,
-subventions d'équilibre) sont reconduites telles quelles, faute que le
-programme dise ce qu'il en ferait. Et le taux auquel les 18 % sont comparés est
-celui qui ACQUIERT des droits, non tout ce qui rentre : la contribution
-d'équilibre générale et la contribution d'équilibre technique de l'Agirc-Arrco,
-deux points et demi de plus sur un salaire du privé, n'ouvrent aucun droit et
-sont pourtant encaissées.
+subventions d'équilibre) sont reconduites telles quelles. Et le taux auquel les
+18 % sont comparés est celui qui ACQUIERT des droits, non tout ce qui rentre :
+la contribution d'équilibre générale et la contribution d'équilibre technique
+de l'Agirc-Arrco, deux points et demi de plus sur un salaire du privé,
+n'ouvrent aucun droit et sont pourtant encaissées. Le modèle sait aussi
+calculer la lecture inverse, où les 18 % sont prélevés à plat sur l'assiette
+mesurée : le scénario 6 y est excédentaire de 0,12 % du PIB en moyenne. Les
+deux se défendent, `docs/limites.md` §5 dit ce qui les sépare, et la page
+affiche la plus sévère.
+
+**Et la recette suit le droit jusqu'au bout.** Le fonds de solidarité
+vieillesse finance par la CSG deux choses que les scénarios notionnels ne
+servent pas : des trimestres pour des périodes non travaillées (15,2 Md€ en
+2024) et le minimum vieillesse (4,3 Md€). Il échappait à la règle parce que sa
+recette n'arrive pas par un transfert mais par l'impôt. Il y est entré le
+19 septembre 2026, et le retrait total passe d'un demi-point de PIB à **1,17 %**
+— ce qui coûte 0,64 point de solde moyen à chacun des cinq scénarios
+notionnels, et fait passer le scénario 5 tout juste sous zéro.
 
 ---
 

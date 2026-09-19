@@ -5169,7 +5169,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de 1,87 en 2070 pour le scénario 3 ne se lit donc
+  niveaux, et un coefficient de 1,80 en 2070 pour le scénario 3 ne se lit donc
   pas comme une économie de 46 % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
@@ -5202,7 +5202,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   point près sur une grille qui mêle à ce salarié des fonctionnaires, dont
   l'employeur verse 74,28 % du traitement, et des non-salariés, qui cotisent
   moins. Le scénario 6 passe ainsi d'un solde moyen de +3,75 % du PIB à
-  −0,09 %, et son coefficient de 2070 de 1,53 à 1,07.
+  −0,73 %, et son coefficient de 2070 de 1,53 à 1,00.
 
   Le calcul est tenu au niveau du SEUL rapport, comme celui des masses de
   pension, et il suppose trois choses. Que l'assiette ne bouge pas : un taux
@@ -5249,8 +5249,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   conservés, 25,48 ; 18 % à plat et suppression des impôts qui compensaient ces
   exonérations, 20,92. De 64 % à 79 % des ressources d'aujourd'hui, le chiffre
   affiché étant à 71 %. En solde moyen, cela fait environ un point de PIB de
-  part et d'autre du −0,09 %. Le départage n'appartient pas au modèle : c'est
-  une décision de programme, et l'action 35 prévoit d'afficher les trois.
+  part et d'autre. Le départage n'appartient pas au modèle : c'est une
+  décision de programme.
 
   **CE QU'EST L'ALLÈGEMENT GÉNÉRAL, ET CE QU'IL PREND À LA RETRAITE.** Lu
   dans l'article L. 241-13 du code de la sécurité sociale, version en vigueur
@@ -5311,16 +5311,19 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   | | Solde moyen 2026-2070 | Coefficient 2040 | Équilibre atteint |
   |---|---|---|---|
-  | Scénario 6, convention `rapport` | −0,09 % du PIB | 0,94 | 2026 |
-  | Scénario 6, convention `assiette` | **−1,28 %** | **0,83** | **jamais** |
+  | Scénario 6, convention `rapport` (affichée) | −0,73 % du PIB | 0,88 | 2026 |
+  | Scénario 6, convention `assiette` | **+0,12 %** | **0,97** | **2026** |
   | Système actuel | −1,13 % | — | jamais |
 
-  Deux effets de sens contraire s'y composent, et le second l'emporte. Le taux
-  plein rapporte PLUS que le rapport de taux légaux ne le disait — 18 %
-  d'assiette au lieu de 15,5 —, soit deux points et demi d'assiette de gagnés.
-  Mais les impôts et taxes affectés en font perdre quatre et demi. **Sous sa
-  propre convention, la proposition est donc légèrement moins bien financée
-  que le système qu'elle remplace.**
+Le taux plein rapporte PLUS que le rapport de taux légaux ne le disait :
+  18 % d'assiette au lieu de 15,5, soit deux points et demi d'assiette gagnés,
+  et c'est ce qui sépare les deux lignes. **Sous sa propre convention, la
+  proposition est donc légèrement excédentaire, là où l'affichage la donne en
+  léger déficit ; dans les deux cas elle fait mieux que le système qu'elle
+  remplace.** *Cette ligne a d'abord été calculée à −1,28 % : on retirait alors
+  tout le poste des impôts et taxes affectés, au motif qu'il compensait les
+  allègements. Il ne les compense pas — voir ci-dessous —, et seule la CSG de
+  solidarité en sort, par le retrait.*
 
   **CE QUE CE POSTE CONTIENT VRAIMENT, ET IL NE CONTIENT PAS CE QU'ON
   CROYAIT.** Lu le 19 septembre 2026 dans le rapport à la Commission des
@@ -5353,15 +5356,14 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   sociétés, et les taxes des régimes agricoles — finance des pensions
   ordinaires, et rien ne justifie de l'ôter.
 
-  *Ce que cela donne.* Retirer la seule CSG du Fonds de solidarité vieillesse,
-  et non le poste entier, place le solde moyen 2026-2070 du scénario 6 à
-  **−0,02 % du PIB** : l'équilibre, à un centième près, contre −1,13 % pour le
-  système actuel. Les trois lectures s'ordonnent ainsi — −1,28 % en retirant
-  tout le poste, −0,02 % en n'en retirant que la solidarité, +0,76 % en n'en
-  retirant rien. **La troisième est indéfendable, la première retire trop, et
-  c'est la deuxième qui suit la règle du dépôt.** Elle n'est pas encore
-  appliquée : il y faut une série certifiée des ressources du fonds, et c'est
-  l'action 35 qui la porte.
+  *Ce que cela donne, et c'est fait.* Le fonds est entré dans le retrait le
+  19 septembre 2026, avec sa série certifiée, à côté de la branche famille et
+  de l'assurance chômage : ce qu'il VERSE — 15,2 Md€ de cotisations prises en
+  charge et 4,3 de minimum vieillesse en 2024 — est retiré des ressources des
+  cinq scénarios notionnels. Le retrait total passe d'un demi-point de PIB à
+  **1,17 %**, et coûte 0,64 point de solde moyen à chacun d'eux. Le poste des
+  impôts et taxes affectés, lui, RESTE : il ne compense pas les allègements, et
+  ce qu'il portait de solidarité sort maintenant par l'autre porte.
 
   *Une date à retenir pour cette série.* Le Fonds de solidarité vieillesse est
   SUPPRIMÉ au 1er janvier 2026 par l'article 24 de la loi de financement de la
@@ -5385,7 +5387,9 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   pour les points de retraite complémentaire des chômeurs — 3,9 milliards. Les
   scénarios notionnels suppriment les premiers droits et ne portent rien au
   compte pendant une année de chômage ; ils comptent pourtant ces recettes,
-  0,50 % du PIB et 3,7 % des ressources en 2024. La série
+  0,50 % du PIB et 3,7 % des ressources en 2024 — auxquels s'ajoute depuis le
+  19 septembre 2026 le fonds de solidarité vieillesse, 0,67 point de plus. La
+  série
   `transferts_retraite.csv` les lit chez celui qui paie, dans les rapports à
   la Commission des comptes de la Sécurité sociale, de 2013 à 2024 (l'Unédic)
   ou 2025 (la CNAF) ; les rapports d'avant 2013 sont chiffrés ou compressés

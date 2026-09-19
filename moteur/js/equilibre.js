@@ -176,6 +176,25 @@ export const POSTES_TRANSFERTS = [
     libelle: "Points Ircantec des chômeurs",
     glose: "La même chose, pour les contractuels de la fonction publique.",
   },
+  {
+    code: "fsv_cotisations",
+    organisme: "solidarite",
+    libelle: "Cotisations prises en charge pour des périodes non travaillées",
+    glose: "Ce que le fonds de solidarité vieillesse verse aux régimes pour "
+      + "que le chômage indemnisé, la maladie, l'apprentissage, le service "
+      + "national et les stages de formation ouvrent des trimestres : des "
+      + "droits acquis sans qu'aucune cotisation ait été prélevée sur un "
+      + "revenu.",
+  },
+  {
+    code: "fsv_prestations",
+    organisme: "solidarite",
+    libelle: "Minimum vieillesse, et le minimum contributif jusqu'en 2015",
+    glose: "Ce que le même fonds verse pour les prestations qui ne dépendent "
+      + "pas de ce qui a été cotisé : le minimum vieillesse, et le minimum "
+      + "contributif de 2011 à 2015. C'est ce second financement, éteint "
+      + "depuis, qui fait doubler cette ligne avant 2016.",
+  },
 ];
 
 export const CODES_TRANSFERTS = POSTES_TRANSFERTS.map((poste) => poste.code);
@@ -206,6 +225,22 @@ export const ORGANISMES = [
       + "chômeurs indemnisés. Le compte notionnel du dépôt ne porte rien au "
       + "compte pendant une année de chômage : cette recette non plus n'est "
       + "pas la sienne, tant qu'il ne crédite pas ce que l'Unédic verse.",
+    droitSupprime: true,
+  },
+  {
+    code: "solidarite",
+    libelle: "Fonds de solidarité vieillesse",
+    explication: "Le fonds finance par la CSG deux choses, et deux seulement : "
+      + "des trimestres pour des périodes non travaillées, et le minimum "
+      + "vieillesse. Aucun scénario notionnel ne sert l'un ni l'autre, la "
+      + "garantie vieillesse qui remplace le second étant financée à part, "
+      + "hors du compte des cotisants. Ce fonds échappait à la règle parce "
+      + "que sa recette n'arrive pas par un transfert mais par l'impôt : elle "
+      + "est dans le poste « impôts et taxes affectés », dont elle fait 38 % "
+      + "en 2024. Il est supprimé au 1er janvier 2026, ses missions et son "
+      + "financement passant à la CNAV ; la série s'arrête donc à 2025, et la "
+      + "part constante prend le relais, ce qui est exact puisque les "
+      + "missions, elles, continuent.",
     droitSupprime: true,
   },
 ];

@@ -35,22 +35,22 @@
    "verifiee_le": "2026-09-17"
   },
   "assiette_revenu_mixte": {
-   "ajoutees": 77,
+   "ajoutees": 0,
    "colonne": "montant_meur",
    "corrigees": 0,
    "empreinte": "9c3a492bb97dfb64",
-   "identiques": 0,
+   "identiques": 77,
    "niveau": "certifiee",
    "source": "INSEE Melodi, DD_CNA_TEE (B3G du secteur S14)",
    "valeurs": 77,
    "verifiee_le": "2026-09-19"
   },
   "assiette_salaires": {
-   "ajoutees": 77,
+   "ajoutees": 0,
    "colonne": "montant_meur",
    "corrigees": 0,
    "empreinte": "d34610dbbc21c963",
-   "identiques": 0,
+   "identiques": 77,
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011785411 (D11, total des branches)",
    "valeurs": 77,
@@ -761,15 +761,15 @@
    "verifiee_le": "2026-09-15"
   },
   "transferts_retraite": {
-   "ajoutees": 57,
+   "ajoutees": 30,
    "colonne": "montant_meur",
    "corrigees": 0,
-   "empreinte": "2579bef08d9699f2",
-   "identiques": 0,
+   "empreinte": "6629f3b4c640cc49",
+   "identiques": 57,
    "niveau": "haute",
-   "source": "rapports à la Commission des comptes de la Sécurité sociale, fiches CNAF, Agirc-Arrco et Ircantec",
-   "valeurs": 57,
-   "verifiee_le": "2026-09-16"
+   "source": "rapports à la Commission des comptes de la Sécurité sociale, fiches CNAF, Agirc-Arrco, Ircantec et CNAV",
+   "valeurs": 87,
+   "verifiee_le": "2026-09-19"
   },
   "valeurs_point": {
    "ajoutees": 0,

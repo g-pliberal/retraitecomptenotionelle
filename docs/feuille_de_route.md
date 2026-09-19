@@ -3114,16 +3114,34 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   s'ordonnent : −1,28 % en retirant tout le poste, −0,02 % en n'en retirant
   que la solidarité, +0,76 % en n'en retirant rien.
 
-- *Ce qui reste à faire, et c'est court.* Une série certifiée des ressources du
-  Fonds de solidarité vieillesse, à prendre au même endroit et par le même
-  script que les transferts de la CNAF et de l'Unédic, puis à verser au
-  `retrait` de `equilibre.py` : ce n'est pas une convention nouvelle, c'est
-  l'extension d'une règle existante à un fonds qu'elle avait manqué. Attention
-  au raccord : **le fonds est supprimé au 1er janvier 2026** par l'article 24
-  de la loi de financement pour 2025, et sa CSG passe au compte de la CNAV.
-  Ensuite seulement, le portage JavaScript, la page et les témoins. La page
-  affiche toujours l'ancienne convention : un chiffre de tête ne se change pas
-  sans que celui qui le publie l'ait décidé.
+- *Le fonds est entré dans le retrait le 19 septembre 2026.* Deux postes de
+  plus dans `transferts_retraite.csv` — les cotisations qu'il prend en charge
+  et les prestations qu'il verse —, lus dans les mêmes rapports et par le même
+  script que ceux de la CNAF et de l'Unédic, de 2011 à 2025, et un organisme de
+  plus dans `equilibre.py`. Ce n'était pas une convention nouvelle : c'est
+  l'extension d'une règle existante à un fonds qu'elle avait manqué parce que
+  sa recette arrive par l'impôt et non par un transfert.
+
+  **Ce que le lecteur de PDF a coûté au passage.** Les prises en charge du
+  fonds étaient illisibles une année sur deux : depuis 2024, les tableaux des
+  comptes de la CNAV portent des colonnes « pro forma » qu'aucun en-tête ne
+  déclare, et les cellules vides s'y écrivent « -- ». Deux tolérances ont été
+  posées dans `_valeurs` — sauter une cellule vide, lire une ligne trop longue
+  sur son préfixe — après avoir vérifié qu'elles ne déplacent aucune des
+  quatre séries déjà certifiées, d'un euro.
+
+  **Ce que ça déplace.** Le retrait total passe d'un demi-point de PIB à
+  **1,17 %**, dont 0,67 pour le seul fonds. Les cinq scénarios notionnels
+  perdent 0,64 point de solde moyen : le 6 passe de −0,09 % à **−0,73 %**, le 5
+  de +0,61 % à −0,04 %, le 3 de +2,43 % à +1,79 %. Le système actuel ne bouge
+  pas : il encaisse tout, et son solde reste celui du COR.
+
+- *Ce qui reste du volet A* : la série d'effectifs de COTISANTS (point 3), et
+  la ligne des cinq points capitalisés (point 5). Et une décision qui
+  n'appartient pas au modèle : la page affiche toujours la convention
+  `rapport`, la plus sévère des deux, alors que la convention `assiette` du
+  programme donne **+0,12 %** de solde moyen. Un chiffre de tête ne se change
+  pas sans que celui qui le publie l'ait décidé.
 
 **Ce qui reste du volet A** : la certification de l'assiette et les trois
 variantes ci-dessus (points 1 et 4, désormais un seul chantier) ; la série d'effectifs de COTISANTS
@@ -4010,3 +4028,21 @@ scénario ».
   peut manquer une recette parce qu'elle entre sous un autre nom** — « la
   recette suit le droit » visait les transferts, et le fonds de solidarité lui
   échappait en arrivant par l'impôt.
+
+- **Septembre 2026, action 35, le fonds de solidarité vieillesse.** Sa série
+  est certifiée et le retrait l'a absorbée : 15,2 Md€ de cotisations prises en
+  charge et 4,3 de minimum vieillesse en 2024, retirés aux cinq scénarios
+  notionnels comme le sont depuis un an les versements de la CNAF et de
+  l'Unédic. Le retrait total passe d'un demi-point de PIB à 1,17 %, et coûte
+  0,64 point de solde moyen à chacun d'eux ; le scénario 6 passe de −0,09 % à
+  −0,73 %, le 5 tout juste sous zéro. Trois choses à en retenir. **Une règle
+  peut manquer une recette parce qu'elle arrive sous un autre nom** : « la
+  recette suit le droit » visait les transferts, et la solidarité entrait par
+  l'impôt. **Une correction peut en appeler une autre** : en ajoutant le fonds
+  au retrait, la convention `assiette` le retirait deux fois, puisqu'elle ôtait
+  déjà tout le poste des impôts affectés — il a fallu défaire la moitié de la
+  veille, celle qui reposait sur la compensation des allègements, laquelle
+  n'existe pas dans ce poste. Et **un lecteur de PDF est une hypothèse comme
+  une autre** : deux tolérances de plus dans `_valeurs`, vérifiées sur les
+  quatre séries déjà certifiées, ont rendu lisible une série qui ne l'était
+  qu'une année sur deux.
