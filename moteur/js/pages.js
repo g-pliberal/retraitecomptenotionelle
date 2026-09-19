@@ -25,7 +25,7 @@ import {
   LIBELLES_MOTIFS, MOTIFS, NEUTRALISATIONS, calculerAvantages,
   chargerAvantages,
 } from "./avantages.js";
-import { COMPOSANTE_GARANTIE, SCENARIOS, calculerCout } from "./cout.js";
+import { COMPOSANTE_GARANTIE, SCENARIOS, calculerCout, masseDuScenario } from "./cout.js";
 import { DistributionPensions } from "./distribution.js";
 import { coutGarantie } from "./garantie.js";
 import { SYSTEMES, DepensesRetraite } from "./depenses.js";
@@ -5375,7 +5375,11 @@ function coutDetailScenarios(contexte) {
         ? g.pourcentage(cumul / reference - 1, true, 1)
         : "réf.",
       milliards(dernier.cout(scenario), 1),
-      g.pourcentage(dernier.partPib * dernier.rapports[scenario], false, 1),
+      // La part de PIB suit la même règle que le coût : le rapport ne
+      // multiplie que les droits directs de la base.
+      g.pourcentage(masseDuScenario(dernier.partPib, dernier.partDerives,
+                                    dernier.rapports[scenario], scenario,
+                                    dernier.reversionServie), false, 1),
     ];
   });
   lignesPasse.push([
@@ -5383,7 +5387,10 @@ function coutDetailScenarios(contexte) {
     milliards(c.cumul(COMPOSANTE_GARANTIE), 0),
     "—",
     milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
-    g.pourcentage(dernier.partPib * dernier.rapports[COMPOSANTE_GARANTIE], false, 1),
+    g.pourcentage(masseDuScenario(dernier.partPib, dernier.partDerives,
+                                  dernier.rapports[COMPOSANTE_GARANTIE],
+                                  COMPOSANTE_GARANTIE, dernier.reversionServie),
+                  false, 1),
   ]);
 
   const horizon = avenir.annee(avenir.derniereAnnee);
@@ -5898,9 +5905,9 @@ function coutDetailLimites(contexte) {
   const solde = c.solde;
   const avenir = c.avenir;
   const observe = solde.annee(solde.derniereAnneeObservee);
-  return g.depliant("Onze réserves à lire avant de citer ces chiffres",  `
+  return g.depliant("Douze réserves à lire avant de citer ces chiffres",  `
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
-laisse onze, écrits ici plutôt qu'en note de bas de page.</p>
+laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
   <li><strong>Les recettes réagissent sur trois points, et sur trois
   seulement.</strong> La recette suit le droit : ce que la branche famille,
@@ -5966,6 +5973,17 @@ laisse onze, écrits ici plutôt qu'en note de bas de page.</p>
   génération qui part juste après : les courbes de réforme s'écartent d'un ou
   deux dixièmes de point avant même la bascule. Un test borne l'effet à un
   demi-point.</li>
+  <li><strong>La réversion est reconduite telle quelle, et c'est une
+  décision.</strong> Le modèle ne calcule aucune pension de réversion : elle
+  revient au conjoint survivant et non à l'assuré. Le rapport par lequel les
+  systèmes notionnels font réagir la dépense ne décrit donc que les pensions
+  qu'un assuré s'est ouvertes lui-même, et il ne s'applique qu'à cette part de
+  la dépense, un dixième environ de la masse versée étant de la réversion. Ce
+  dixième-là, les systèmes notionnels le servent comme aujourd'hui, à la façon
+  de l'Italie, où le compte notionnel du défunt se partage. La Suède fait
+  l'inverse et ne verse qu'au titulaire du compte ; ce chemin est calculable et
+  rendrait plus d'un point de PIB au système 4, ce qui est précisément la
+  raison de ne pas le prendre sans l'avoir décidé.</li>
   <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
   projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
   COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en

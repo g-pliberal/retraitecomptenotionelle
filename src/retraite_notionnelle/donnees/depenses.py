@@ -25,6 +25,12 @@ from pathlib import Path
 from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
 
 
+#: Les deux catégories de la ventilation d'une masse de pensions, du vocabulaire
+#: du COR comme de celui de la DREES : ce qu'un assuré s'est ouvert par sa
+#: propre carrière, et ce qu'un conjoint survivant reçoit de celle d'un autre.
+CATEGORIES_DROITS: tuple[str, ...] = ("direct", "derive")
+
+
 @dataclass(frozen=True)
 class Systeme:
     """Un système de retraite, au découpage des Comptes de la protection sociale.
@@ -152,6 +158,16 @@ class DepensesRetraite:
                 macro / "depenses_retraite_regimes.csv", "depenses_meur",
                 nom=f"depenses_{systeme.code}", filtre={"regime": systeme.code},
             )
+        self.part_derives = charger_serie_annuelle(
+            macro / "part_droits_derives.csv", "part", nom="part_droits_derives"
+        )
+        self.pensions_droits: dict[str, SerieAnnuelle] = {
+            categorie: charger_serie_annuelle(
+                macro / "pensions_droits.csv", "montant_meur",
+                nom=f"pensions_{categorie}", filtre={"categorie": categorie},
+            )
+            for categorie in CATEGORIES_DROITS
+        }
 
     # -- bornes --------------------------------------------------------------
 
@@ -185,6 +201,34 @@ class DepensesRetraite:
     def part_pib(self, annee: int) -> float:
         """Part de la dépense dans le produit intérieur brut de la même année."""
         return self.total(annee) / self.pib(annee)
+
+    def part_droits_derives(self, annee: int) -> float:
+        """Quelle fraction de la masse versée est une pension de RÉVERSION.
+
+        Un huitième en 2010, un dixième en 2024, un dix-huitième en 2070 : la
+        réversion recule dans la projection du COR, parce que les carrières des
+        femmes se rapprochent de celles des hommes et qu'une pension
+        différentielle s'éteint à mesure que la pension propre du survivant
+        monte.
+
+        Elle sert à une chose, et ``cout.py`` la dit : le rapport de masses par
+        lequel un scénario notionnel fait réagir la dépense est celui des
+        droits DIRECTS des cas types. Sans cette part, il s'appliquait aussi à
+        la réversion, que le modèle ne calcule pas — un scénario la réduisait
+        donc dans la même proportion que les pensions propres, sans que rien ne
+        l'ait décidé.
+        """
+        return self.part_derives(annee)
+
+    def pensions_droit(self, categorie: str, annee: int) -> float:
+        """Pensions de droit direct ou de droit dérivé, en millions d'euros.
+
+        La ventilation de la DREES, 2020-2024. Courte par construction, elle ne
+        fait pas série : elle CONTRÔLE ``part_droits_derives``, qui vient du COR
+        et couvre 2010-2070. Sur les cinq années communes, les deux parts
+        s'écartent de six centièmes de point au plus.
+        """
+        return self.pensions_droits[categorie](annee)
 
     def repartition(self, annee: int) -> float:
         """Ce que coûte la seule répartition obligatoire, ventilation à l'appui.

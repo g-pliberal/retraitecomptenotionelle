@@ -341,7 +341,9 @@ institutions:
         acces: api
         statut_integration: certifie
         recuperation: scripts/fetch/cor_regimes.py
-        cible: data/reference/regimes/structure_financement.csv
+        cible: >-
+          data/reference/regimes/structure_financement.csv,
+          data/reference/macro/part_droits_derives.csv
         millesime: juin 2024
         note: >-
           Vingt-deux fiches, une par régime, et UN classeur qui porte leurs
@@ -554,7 +556,8 @@ institutions:
         recuperation: scripts/fetch/drees_cps.py
         cible: >-
           data/reference/macro/depenses_retraite.csv,
-          data/reference/macro/depenses_retraite_regimes.csv
+          data/reference/macro/depenses_retraite_regimes.csv,
+          data/reference/macro/pensions_droits.csv
         note: >-
           Comptabilité nationale du social : les prestations réellement versées,
           année par année et organisme par organisme. Le risque

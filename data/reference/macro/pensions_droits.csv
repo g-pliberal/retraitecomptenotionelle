@@ -1,0 +1,38 @@
+# Pensions de droit direct et de droit dérivé, tous régimes, France
+# source_id: drees_comptes_protection_sociale
+# unite: millions d'euros courants de l'année
+# fiabilite:
+#   certifiee (2020-2024) : sous-postes E11-21.1 et E11-22.1 des
+#             Comptes de la protection sociale, recontrôlés par
+#             scripts/verifier_donnees.py contre l'API de la DREES.
+#
+# POURQUOI SI COURT, ET POURQUOI QUAND MÊME
+# ------------------------------------------
+# La DREES ne publie ces deux sous-postes que depuis 2020, là où le
+# risque vieillesse-survie entier remonte à 1959. Cinq années ne
+# font pas une série, et celle-ci n'en est pas une : elle CONTRÔLE
+# part_droits_derives.csv, qui couvre 2010-2070 mais vient du COR.
+# Deux producteurs qui trouvent la même part de réversion à six
+# centièmes de point près valent mieux qu'un seul qui l'affirme.
+#
+# CE QUE LEUR SOMME N'EST PAS
+# ----------------------------
+# 401,4 milliards en 2024, contre 426,7 pour le risque
+# vieillesse-survie entier de depenses_retraite.csv. L'écart est le
+# minimum vieillesse, les prestations liées à la dépendance des
+# personnes âgées et la retraite supplémentaire, que le poste large
+# porte aussi.
+#
+# Ne pas modifier les années certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,categorie,montant_meur,fiabilite
+2020,derive,37289.98,certifiee
+2020,direct,301626.34,certifiee
+2021,derive,37400.69,certifiee
+2021,direct,306379.81,certifiee
+2022,derive,38392.98,certifiee
+2022,direct,320272.39,certifiee
+2023,derive,39875.37,certifiee
+2023,direct,336707.16,certifiee
+2024,derive,41709.29,certifiee
+2024,direct,359717.10,certifiee

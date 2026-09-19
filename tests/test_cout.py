@@ -35,6 +35,11 @@ from retraite_notionnelle.cout import (
     calculer_cout,
     generations,
 )
+from retraite_notionnelle.cout import (
+    COMPOSANTE_GARANTIE,
+    CONVENTION_REVERSION_SERVIE,
+    CONVENTION_REVERSION_SUPPRIMEE,
+)
 from retraite_notionnelle.donnees.assiette import (
     POSTES_ASSIETTE,
     AssietteActivite,
@@ -854,14 +859,15 @@ def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
     annee = solde.premiere_annee_equilibree("notionnel_prospectif")
     assert annee is not None and annee >= debut
     assert solde.solde_moyen("notionnel_prospectif", debut, fin) > 0.0
-    # Le 5 ne s'équilibre plus. Il en était tout près — solde moyen de −0,04 %
-    # et équilibre en 2047 — tant que les pensions liquidées restaient figées
-    # en euros constants ; revalorisées sur la masse salariale, elles lui
-    # coûtent six dixièmes de point et l'équilibre avec. Le dire vaut mieux
-    # que de l'arrondir : une réforme qui porte la part patronale au compte
-    # porte des droits, et des droits se paient.
+    # Le 5 ne s'équilibre plus. Il en était tout près tant que les pensions
+    # liquidées restaient figées en euros constants ; revalorisées sur la masse
+    # salariale, elles lui coûtent six dixièmes de point et l'équilibre avec.
+    # Depuis le volet C, la réversion qu'il ne recalcule pas lui en coûte neuf
+    # centièmes de plus. Le dire vaut mieux que de l'arrondir : une réforme qui
+    # porte la part patronale au compte porte des droits, et des droits se
+    # paient.
     assert solde.premiere_annee_equilibree("notionnel_prospectif_employeur") is None
-    assert -0.010 < solde.solde_moyen(
+    assert -0.013 < solde.solde_moyen(
         "notionnel_prospectif_employeur", debut, fin) < 0.0
     # Le scénario 5 porte plus de droits que le 3 : il coûte davantage.
     assert (solde.solde_moyen("notionnel_prospectif_employeur", debut, fin)
@@ -1342,14 +1348,17 @@ def test_les_recettes_reactives_deplacent_le_solde_du_scenario_6(cout: Cout):
         ligne.ressources - ligne.retrait - ligne.depense("notionnel_liberal")
         for ligne in cout.solde.annees if bascule <= ligne.annee <= fin
     ) / len([l for l in cout.solde.annees if bascule <= l.annee <= fin])
-    # Trois points de PIB de moins, et un excédent moyen qui disparaît.
+    # Près de quatre points de PIB d'écart, et un excédent moyen qui disparaît.
     # L'excédent que l'ancienne convention affichait valait plus de trois
     # points de PIB tant que les pensions servies restaient figées en euros
-    # constants ; revalorisées sur la masse salariale, elles en reprennent un,
-    # et il n'en reste que deux. L'écart entre les deux conventions, lui, n'a
-    # pas bougé : c'est la recette qu'il mesure, et la recette n'a pas changé.
+    # constants ; revalorisées sur la masse salariale, elles en reprennent un.
+    # Il en reste 1,8 point depuis que le volet C a cessé de faire recalculer
+    # par le rapport une réversion que le modèle ne calcule pas : c'est la
+    # DÉPENSE que cette correction-là déplace, et elle déplace donc les deux
+    # termes de la même quantité. L'ÉCART, lui, ne mesure que la recette, et
+    # n'a pas bougé.
     assert fige - reactif > 0.03
-    assert fige > 0.02
+    assert fige > 0.015
     assert reactif < 0.005
 
 
@@ -1433,6 +1442,150 @@ def test_le_scenario_6_ne_reconduit_pas_la_contribution_d_equilibre_de_l_Etat(
         # 3. Les subventions d'équilibre existent bel et bien dans le système
         #    actuel : le test n'est pas vide de sens.
         assert point.part_subventions > 0.0
+
+
+def test_le_rapport_ne_multiplie_que_les_droits_directs(
+        cout_assiette: Cout, depenses: DepensesRetraite):
+    """Volet C : la base porte la réversion, le rapport ne la décrit pas.
+
+    Le rapport de masses est le quotient de deux masses calculées sur treize
+    cas types, qui n'ont ni conjoint ni survivant : aucune réversion n'y entre,
+    et ``config.py`` range la réversion depuis toujours parmi les droits que
+    même l'étalon ne sert pas. La base, elle, porte les deux. Les multiplier
+    l'une par l'autre revenait à recalculer à la baisse une pension que
+    personne n'avait recalculée.
+    """
+    lignes = [l for l in cout_assiette.solde.annees if l.annee >= 2026]
+    assert lignes
+
+    for point in lignes:
+        assert point.part_derives == pytest.approx(
+            depenses.part_droits_derives(point.annee)), point.annee
+        # Elle pèse, et elle recule : entre un vingtième et un huitième.
+        assert 0.05 < point.part_derives < 0.13, point.annee
+
+        for scenario, _ in SCENARIOS:
+            attendu = (point.depenses * (1.0 - point.part_derives)
+                       * point.rapports[scenario]
+                       + point.depenses * point.part_derives)
+            assert point.depense(scenario) == pytest.approx(attendu), (
+                point.annee, scenario)
+
+    # La réversion recule sur l'horizon : c'est la projection du COR, et un
+    # modèle qui la figerait dirait autre chose qu'elle.
+    assert (cout_assiette.solde.annee(2070).part_derives
+            < cout_assiette.solde.annee(2026).part_derives - 0.03)
+
+
+def test_le_systeme_actuel_garde_sa_base_intacte(cout_assiette: Cout):
+    """La ventilation ne doit rien déplacer du scénario 1, qui est le réel.
+
+    Son rapport vaut un partout ; la formule le rendrait de toute façon, mais
+    une identité qui tient par accident d'arrondi n'est pas une identité. Le
+    solde du scénario 1 est le solde PUBLIÉ par le COR, et c'est ce qui permet
+    de lire les cinq autres à côté de lui.
+    """
+    for point in cout_assiette.solde.annees:
+        assert point.depense("actuel") == point.depenses, point.annee
+        assert point.rapports["actuel"] == 1.0, point.annee
+    for point in cout_assiette.annees:
+        assert point.cout("actuel") == point.observee, point.annee
+
+
+def test_la_garantie_vieillesse_ne_recoit_aucune_reversion(cout_assiette: Cout):
+    """Elle n'est pas un système, et une allocation différentielle n'a pas de veuve.
+
+    La garantie est calculée, comme les rapports, sur les seuls droits directs
+    des cas types : son rapport multiplie donc la part directe de la base, et
+    rien ne lui est ajouté. Lui ajouter la réversion la gonflerait d'un
+    dixième sans qu'aucun calcul l'ait produite.
+    """
+    for point in cout_assiette.solde.annees:
+        attendu = (point.depenses * (1.0 - point.part_derives)
+                   * point.rapports[COMPOSANTE_GARANTIE])
+        assert point.depense(COMPOSANTE_GARANTIE) == pytest.approx(attendu)
+        # Et elle est strictement plus petite que si on la lui ajoutait.
+        if point.part_derives > 0.0 and point.rapports[COMPOSANTE_GARANTIE] > 0.0:
+            assert point.depense(COMPOSANTE_GARANTIE) < point.depenses
+
+
+def test_les_deux_conventions_de_reversion_se_mesurent(
+        depenses: DepensesRetraite, population: Population,
+        comptes: ComptesRetraite, assiette: AssietteActivite):
+    """Ce que le choix italien coûte au regard du choix suédois.
+
+    Le dépôt sert la réversion — le capital notionnel du défunt se partage,
+    comme en Italie. L'autre chemin existe : en Suède, un compte notionnel ne
+    verse qu'à son titulaire. Il est calculable pour qu'on sache ce qu'il vaut,
+    et il n'est pas servi par défaut, parce qu'il est le plus FLATTEUR des deux
+    pour tous les scénarios notionnels — et que le dépôt ne prend pas
+    l'hypothèse flatteuse sans qu'un programme l'ait tranchée.
+    """
+    def fait(convention: str) -> Cout:
+        return calculer_cout(Simulateur(Parametres()), depenses, population,
+                             comptes, assiette=assiette,
+                             convention_recette=CONVENTION_ASSIETTE,
+                             convention_reversion=convention)
+
+    servie = fait(CONVENTION_REVERSION_SERVIE).solde
+    supprimee = fait(CONVENTION_REVERSION_SUPPRIMEE).solde
+    debut, fin = servie.premiere_annee_projetee, servie.derniere_annee
+
+    # Le scénario 1 ne bouge pas d'un iota : la convention ne porte que sur les
+    # systèmes notionnels, le réel servant évidemment la réversion.
+    assert (servie.solde_moyen("actuel", debut, fin)
+            == pytest.approx(supprimee.solde_moyen("actuel", debut, fin)))
+
+    # Les cinq autres y gagnent tous, et c'est pourquoi ce n'est pas le défaut.
+    for scenario, _ in SCENARIOS:
+        if scenario == "actuel":
+            continue
+        gain = (supprimee.solde_moyen(scenario, debut, fin)
+                - servie.solde_moyen(scenario, debut, fin))
+        assert gain > 0.005, (scenario, gain)
+
+    # Pour le scénario 6, c'est plus d'un point de PIB : de −2,86 % à −1,67 %.
+    ecart = (supprimee.solde_moyen("notionnel_liberal", debut, fin)
+             - servie.solde_moyen("notionnel_liberal", debut, fin))
+    assert 0.010 < ecart < 0.014, ecart
+
+
+def test_une_convention_de_reversion_inconnue_est_refusee(
+        depenses: DepensesRetraite, population: Population):
+    with pytest.raises(ValueError, match="convention de réversion inconnue"):
+        calculer_cout(Simulateur(Parametres()), depenses, population,
+                      convention_reversion="partagee")
+
+
+def test_les_deux_producteurs_trouvent_la_meme_part_de_reversion(
+        depenses: DepensesRetraite):
+    """Le seul contrôle externe dont cette part dispose, et il est bon.
+
+    ``part_droits_derives`` est construite à partir du classeur du COR ;
+    ``pensions_droits`` est la ventilation que la DREES publie elle-même, et
+    la DREES est le producteur de la dépense. Deux enquêtes, deux périmètres,
+    deux nomenclatures, cinq années communes — et les parts s'écartent de six
+    centièmes de point au plus.
+
+    C'est ce qui permet de se servir de la première sur 2010-2070 sans la
+    prendre pour argent comptant : là où on peut la vérifier, elle tient.
+    """
+    communes = range(2020, 2025)
+    pire = 0.0
+    for annee in communes:
+        direct = depenses.pensions_droit("direct", annee)
+        derive = depenses.pensions_droit("derive", annee)
+        assert direct > 0.0 and derive > 0.0, annee
+        part_drees = derive / (direct + derive)
+        pire = max(pire, abs(part_drees - depenses.part_droits_derives(annee)))
+    assert pire < 0.001, pire
+
+    # Et la somme des deux n'est pas le risque entier : il porte aussi le
+    # minimum vieillesse, la dépendance et la retraite supplémentaire.
+    pensions = (depenses.pensions_droit("direct", 2024)
+                + depenses.pensions_droit("derive", 2024))
+    assert pensions < depenses.depense(2024)
+    assert pensions > 0.9 * depenses.depense(2024)
 
 
 def test_le_scenario_6_ne_reconduit_pas_les_impots_et_taxes_affectes(

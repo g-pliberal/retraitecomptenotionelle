@@ -85,19 +85,59 @@ export const CLES_RECETTES = [TAUX_REELS, "notionnel_liberal"];
  * la même question.
  *
  * `assiette` applique son taux de 18 % à l'ASSIETTE MESURÉE des revenus
- * d'activité. C'est la convention du programme : les employeurs versent la
- * cotisation entière, l'État leur rembourse l'allègement par l'impôt, et ce
- * remboursement est une aide à l'activité économique. Un système qui n'exonère
- * personne encaisse donc son taux plein.
+ * d'activité, et ne reconduit aucune ressource non contributive. C'est la
+ * convention du programme : un compte notionnel ne crédite que ce qui est
+ * assis sur un revenu d'activité.
  *
  * `rapport` est l'ancienne convention, gardée pour mesurer ce qu'elle valait :
  * elle multipliait la part cotisée des ressources OBSERVÉES par le rapport de
- * deux taux LÉGAUX, prêtant ainsi au taux de 18 % la déperdition du système
- * actuel — 15,5 % d'assiette encaissés pour 18 % affichés.
+ * deux taux LÉGAUX, et ne retirait aucun des trois postes non contributifs.
  */
 export const CONVENTION_ASSIETTE = "assiette";
 export const CONVENTION_RAPPORT = "rapport";
 export const CONVENTIONS_RECETTE = [CONVENTION_ASSIETTE, CONVENTION_RAPPORT];
+
+/**
+ * CE QUE LES SCÉNARIOS NOTIONNELS FONT DE LA RÉVERSION, et il fallait le dire.
+ *
+ * Le modèle ne calcule aucune pension de réversion : elle concerne le conjoint
+ * survivant et non l'assuré. Le rapport de masses par lequel un scénario fait
+ * réagir la dépense ne décrit donc que les droits DIRECTS, et il s'appliquait
+ * pourtant à une base qui porte les deux.
+ *
+ * `servie` est la convention du dépôt : la réversion est reconduite telle
+ * quelle, comme en Italie, où le capital notionnel du défunt se partage. C'est
+ * la plus COÛTEUSE des deux, et c'est une raison de la prendre par défaut.
+ * `supprimee` est l'autre chemin, celui de la Suède, gardé pour qu'on sache ce
+ * qu'il vaut.
+ */
+export const CONVENTION_REVERSION_SERVIE = "servie";
+export const CONVENTION_REVERSION_SUPPRIMEE = "supprimee";
+export const CONVENTIONS_REVERSION = [
+  CONVENTION_REVERSION_SERVIE, CONVENTION_REVERSION_SUPPRIMEE,
+];
+
+/**
+ * Applique un rapport de masses à une base, et au seul morceau qu'il décrit.
+ *
+ * LE RAPPORT NE DÉCRIT QUE LES DROITS DIRECTS : il est le quotient de deux
+ * masses calculées sur les treize cas types, qui n'ont ni conjoint ni
+ * survivant. La base, elle, porte les deux — un huitième de réversion en 2010,
+ * un dixième en 2024, un dix-huitième en 2070. Le rapport ne multiplie donc
+ * que la part directe, et la part dérivée suit la convention du scénario.
+ *
+ * Deux cas à part : le système actuel rend sa base sans rien y toucher, et la
+ * garantie vieillesse, qui n'est pas un système mais une allocation
+ * différentielle calculée elle aussi sur les seuls droits directs, ne reçoit
+ * aucune réversion.
+ */
+export function masseDuScenario(base, partDerives, rapport, scenario,
+                                reversionServie = true) {
+  if (scenario === "actuel") return base;
+  const directe = base * (1 - partDerives) * rapport;
+  if (scenario === COMPOSANTE_GARANTIE || !reversionServie) return directe;
+  return directe + base * partDerives;
+}
 
 /**
  * Première génération dont une liquidation puisse tomber après le début de la
@@ -410,18 +450,24 @@ function rapports(total) {
 
 /** Le coût d'une année, observé puis recalculé pour chaque système. */
 class CoutAnnuel {
-  constructor(annee, observee, coefficientConstants, partPib, rapportsAnnee, nombre) {
+  constructor(annee, observee, coefficientConstants, partPib, rapportsAnnee, nombre,
+              partDerives = 0.0, reversionServie = true) {
     this.annee = annee;
     this.observee = observee;
     this.coefficientConstants = coefficientConstants;
     this.partPib = partPib;
     this.rapports = rapportsAnnee;
     this.pensionnes = nombre;
+    // Part de la masse versée qui est une pension de RÉVERSION, et que le
+    // rapport ne décrit pas — voir `masseDuScenario`.
+    this.partDerives = partDerives;
+    this.reversionServie = reversionServie;
   }
 
   /** Coût du système, en millions d'euros courants de l'année. */
   cout(scenario) {
-    return this.observee * this.rapports[scenario];
+    return masseDuScenario(this.observee, this.partDerives,
+                           this.rapports[scenario], scenario, this.reversionServie);
   }
 
   coutConstants(scenario) {
@@ -443,7 +489,8 @@ class CoutAnnuel {
  */
 class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
-              dependance, recettes = {}) {
+              dependance, recettes = {}, partDerives = 0.0,
+              reversionServie = true) {
     this.annee = annee;
     this.projete = projete;
     this.base = base;
@@ -454,11 +501,16 @@ class AvenirAnnuel {
     // Rapport de la RECETTE de chaque système à celle du système actuel. Un
     // partout, sauf pour le scénario 6 à compter de la bascule.
     this.rapportsRecettes = recettes;
+    // Part de la masse versée qui est une pension de RÉVERSION, et que le
+    // rapport ne décrit pas — voir `masseDuScenario`.
+    this.partDerives = partDerives;
+    this.reversionServie = reversionServie;
   }
 
   /** Coût du système, en millions d'euros constants de référence. */
   coutConstants(scenario) {
-    return this.base * this.rapports[scenario];
+    return masseDuScenario(this.base, this.partDerives,
+                           this.rapports[scenario], scenario, this.reversionServie);
   }
 
   /** Le même coût, ramené aux euros courants de son année. */
@@ -526,7 +578,8 @@ class SoldeAnnuel {
               partImpots = 0.0, retraitParImpot = 0.0,
               tauxPrelevement = 0.0,
               tauxLiberal = 0.0, anneeBascule = 0,
-              convention = CONVENTION_RAPPORT) {
+              convention = CONVENTION_RAPPORT,
+              partDerives = 0.0, reversionServie = true) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
@@ -559,6 +612,10 @@ class SoldeAnnuel {
     this.tauxLiberal = tauxLiberal;
     this.anneeBascule = anneeBascule;
     this.conventionRecette = convention;
+    // Part de la masse versée qui est une pension de RÉVERSION, et que le
+    // rapport ne décrit pas — voir `masseDuScenario`.
+    this.partDerives = partDerives;
+    this.reversionServie = reversionServie;
   }
 
   /**
@@ -573,9 +630,14 @@ class SoldeAnnuel {
       && this.anneeBascule > 0 && this.anneeBascule <= this.annee;
   }
 
-  /** Ce que le système coûterait cette année-là, en part de PIB. */
+  /**
+   * Ce que le système coûterait cette année-là, en part de PIB. Le rapport ne
+   * multiplie que la part des droits DIRECTS de la base : il ne décrit qu'eux,
+   * et `masseDuScenario` dit pourquoi.
+   */
   depense(scenario) {
-    return this.depenses * this.rapports[scenario];
+    return masseDuScenario(this.depenses, this.partDerives,
+                           this.rapports[scenario], scenario, this.reversionServie);
   }
 
   /**
@@ -769,7 +831,8 @@ class Cout {
  * produit, mise à l'échelle par un ancrage calculé sur cette même dernière
  * année : les deux expressions coïncident exactement à la jonction.
  */
-function construireAvenir(liste, depenses, population, simulateur, poids, revalorisation) {
+function construireAvenir(liste, depenses, population, simulateur, poids, revalorisation,
+                          reversionServie = true) {
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
   const dernierePubliee = depenses.derniereAnnee;
@@ -824,6 +887,8 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
           / actifs
         : 0.0,
       rapportsRecettes(cotisations, annee, simulateur.parametres.annee_bascule),
+      depenses.partDroitsDerives(annee),
+      reversionServie,
     ));
   }
 
@@ -849,7 +914,8 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
  * exactement le solde publié, et non une reconstitution.
  */
 function construireSolde(avenir, comptes, derniereAnneePib, assiette,
-                        tauxLiberal, anneeBascule, convention) {
+                        tauxLiberal, anneeBascule, convention, depenses,
+                        reversionServie = true) {
   const parAnnee = new Map(avenir.annees.map((ligne) => [ligne.annee, ligne]));
   // Le taux de prélèvement de l'année, ou celui de la dernière connue : il
   // faut le calculer sur une année où l'assiette est PUBLIÉE, reconduire un
@@ -880,6 +946,8 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       tauxLiberal,
       anneeBascule,
       convention,
+      depenses.partDroitsDerives(annee),
+      reversionServie,
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
@@ -910,10 +978,15 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
 export function calculerCout(simulateur, depenses, population, comptes = null,
                              casTypes = CAS_TYPES, mode = "effectifs",
                              liquidation = "droit", assiette = null,
-                             conventionRecette = CONVENTION_ASSIETTE) {
+                             conventionRecette = CONVENTION_ASSIETTE,
+                             conventionReversion = CONVENTION_REVERSION_SERVIE) {
   if (!CONVENTIONS_RECETTE.includes(conventionRecette)) {
     throw new Error(`convention de recette inconnue : ${conventionRecette}`);
   }
+  if (!CONVENTIONS_REVERSION.includes(conventionReversion)) {
+    throw new Error(`convention de réversion inconnue : ${conventionReversion}`);
+  }
+  const reversionServie = conventionReversion === CONVENTION_REVERSION_SERVIE;
   const { liste, motifs } = pensionnes(simulateur, casTypes, liquidation);
   const poids = ponderation(simulateur, mode, casTypes);
   const macro = simulateur.macro;
@@ -938,6 +1011,8 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
       depenses.partPib(annee),
       rapports(total),
       vivants,
+      depenses.partDroitsDerives(annee),
+      reversionServie,
     ));
   }
 
@@ -949,7 +1024,7 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // observée est certifiée, le rapport qui la corrige ne l'est pas et ne peut
   // pas l'être.
   const avenir = construireAvenir(liste, depenses, population, simulateur, poids,
-                                  revalorisation);
+                                  revalorisation, reversionServie);
   return new Cout(
     lignes,
     avenir,
@@ -957,7 +1032,8 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
       ? construireSolde(
         avenir, comptes, depenses.pib.derniereAnnee, assiette,
         simulateur.parametres.taux_cotisation_liberal,
-        simulateur.parametres.annee_bascule, conventionRecette,
+        simulateur.parametres.annee_bascule, conventionRecette, depenses,
+        reversionServie,
       )
       : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE),
     anneeEuros,

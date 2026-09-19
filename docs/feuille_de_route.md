@@ -4198,15 +4198,18 @@ garantie remplace, non-recours de l'ASPA compris.
    que le solde du scénario 6 dise : voici ce que les 18 % financent, voici ce
    que le contribuable finance, et voici le total.
 
-**C. Le périmètre, des deux côtés.** La recette suit le droit depuis
-septembre 2026 ; la dépense, non. Le rapport des droits directs s'applique à
-une base qui porte les droits dérivés — 1,5 point de PIB environ. La correction
-ne demande pas de modéliser un ménage : elle demande de ventiler la base en
-droits directs et droits dérivés (la DREES publie la ventilation), de
-n'appliquer le rapport qu'aux directs, et de DIRE ce que le scénario 6 fait de
-la réversion — la servir en partageant le capital notionnel, comme l'Italie, ou
-ne pas la servir, comme la Suède. Tant que ce n'est pas écrit, le scénario 6
-promet implicitement une réversion qu'il ne finance pas.
+**C. Le périmètre, des deux côtés — `fait` le 19 septembre 2026.** Il disait
+ceci : la recette suit le droit depuis septembre 2026, la dépense non ; le
+rapport des droits directs s'applique à une base qui porte les droits dérivés,
+1,5 point de PIB environ. C'est corrigé. La base est ventilée
+(`part_droits_derives.csv`, le COR, 2010-2070, contrôlée contre la DREES à
+0,06 point près), le rapport ne multiplie plus que les directs, et ce que les
+scénarios font de la réversion est écrit : ils la SERVENT, comme l'Italie, où
+le capital notionnel du défunt se partage. Le chemin suédois — ne verser qu'au
+titulaire — reste calculable sous `convention_reversion="supprimee"` et n'est
+pas le défaut parce qu'il est le plus flatteur : il rendrait 1,19 point de PIB
+au scénario 6. **À trancher par le programme.** Le détail est à la fin de ce
+journal.
 
 **Sources à lire.** INSEE, comptes nationaux annuels, salaires et traitements
 bruts par branche (D11, niveau) et revenu mixte des entrepreneurs individuels ;
@@ -6188,3 +6191,76 @@ connaît aujourd'hui que les valeurs transcrites par OpenFisca, d'où la fiabili
 `config.js` ; le bloc `_salaire_net` de `web/pages.py` et son portage ;
 `docs/limites.md` § 5 ante bis ; la ligne de journal du 19 septembre 2026 dans
 `legislation/veille.yaml`.
+
+- **Septembre 2026, action 35, volet C : la ventilation droits directs /
+  droits dérivés.** Le volet C demandait trois choses : ventiler la base,
+  n'appliquer le rapport qu'aux droits directs, et DIRE ce que le scénario 6
+  fait de la réversion. Les trois sont faites.
+
+  **Le défaut, d'abord, parce qu'il n'était pas petit.** Le rapport de masses
+  par lequel un scénario notionnel fait réagir la dépense est le quotient de
+  deux masses calculées sur treize cas types, qui n'ont ni conjoint ni
+  survivant : aucune réversion n'y entre, et `config.py` la range depuis
+  toujours parmi les droits que même l'étalon ne sert pas. La base à laquelle
+  il s'appliquait, elle, porte les deux. **Un scénario notionnel réduisait donc
+  la réversion dans la même proportion que les pensions propres, sans que rien
+  ne l'ait décidé** — et il le faisait aux trois endroits où un rapport
+  multiplie une base : la dépense observée de 1959 à 2024, la trajectoire
+  projetée, et le solde. La colonne « part de PIB » de la page Coût le faisait
+  une quatrième fois, en multipliant directement `part_pib` par le rapport.
+  `masse_du_scenario` est maintenant le seul chemin.
+
+  **La source, et elle est meilleure que prévu.** Le classeur du COR déjà
+  moissonné par `cor_regimes.py` porte les masses de pensions de droit direct
+  et de droit dérivé, 2010-2070, régime par régime. Douze des vingt-deux
+  régimes publient leur droit dérivé à part ; pour les dix autres — dont la
+  fonction publique d'État et la CNRACL, qui pèsent — c'est la différence entre
+  la masse de prestations et le droit direct, qui porte en plus un résidu de
+  0,3 % des prestations. D'où `part_droits_derives.csv`, 61 années, niveau
+  `haute` : **12,4 % en 2010, 10,4 % en 2024, 9,5 % en 2040, 5,7 % en 2070.**
+  La réversion recule, et c'est la projection du COR qui le dit.
+
+  **Le contrôle externe, qui est le point fort de cette passe.** La DREES
+  ventile ses propres comptes en droit direct (poste `E11-21.1`) et droit
+  dérivé (`E11-22.1`) depuis 2020, et `drees_cps.py` les récupérait DÉJÀ sans
+  que rien ne les écrive. Ils entrent au niveau `certifiee` sous
+  `pensions_droits.csv`. Deux producteurs, deux périmètres, deux
+  nomenclatures, cinq années communes : **les parts s'écartent de 0,06 point au
+  plus, et de 0,01 point deux fois.** `controle_part_droits_derives` l'exerce à
+  chaque vérification, et un test le refait dans la suite.
+
+  **La décision, écrite parce qu'il le fallait.** Ce que la ventilation ne
+  tranche pas, c'est ce que le scénario fait de la part dérivée, et ce n'est
+  pas un calcul. Le dépôt la SERT — la réversion est reconduite telle quelle,
+  comme en Italie, où le capital notionnel du défunt se partage.
+  `convention_reversion="supprimee"` calcule l'autre chemin, celui de la Suède,
+  et il n'est pas le défaut pour une raison unique : **c'est le plus flatteur
+  des deux.** Il rendrait 1,19 point de PIB au scénario 6 et de 0,4 à 1,2 point
+  à chacun des autres, et le dépôt ne prend pas l'hypothèse flatteuse sans
+  qu'un programme l'ait tranchée. À trancher, donc, par le Parti libéral.
+
+  **Mesuré**, en point de solde moyen 2026-2070 : scénario 2, −0,81 ;
+  scénario 3, −0,23 ; scénario 4, −0,27 ; scénario 5, −0,09 ; scénario 6,
+  −0,35. Le scénario 1 ne bouge pas d'un iota, son rapport valant un, et un
+  test l'exige. Le scénario 6 passe de −2,512 % à **−2,861 % du PIB** contre
+  −1,135 % pour le système actuel ; il est plus déficitaire que lui dans 41 des
+  45 années, contre 38 avant. Le scénario 5 franchit au passage la borne de
+  −1 %, ce qui a demandé de rouvrir son test.
+
+  **Deux bogues trouvés en chemin, et corrigés.** Le premier est à moi : les
+  clés de `source_structure_financement_regimes` étaient des entiers là où le
+  vérificateur attend des chaînes, si bien que `--appliquer` faisait planter la
+  trace et aurait dupliqué chaque ligne du fichier. Il ne se voyait pas dans la
+  suite de tests, qui lit les CSV sans relancer le vérificateur. Le second est
+  d'affichage : la page multipliait `part_pib` par le rapport à la main, hors
+  de tout chemin commun.
+
+  **Ce qui reste du volet C** : dire ce qu'une réversion notionnelle SERAIT
+  — partage du capital, ou rien — reste une convention et non un calcul ; le
+  modèle ne saura pas en chiffrer une tant qu'il n'a pas de ménages. Et la
+  part est très légèrement surestimée pour les dix régimes sans bloc dédié.
+
+  Porté dans `moteur/js/cout.js`, `moteur/js/depenses.js` et
+  `moteur/js/pages.js`, témoins régénérés, 1019 tests verts. La page Coût
+  compte une douzième réserve, qui dit au public ce que les systèmes font de la
+  réversion.
