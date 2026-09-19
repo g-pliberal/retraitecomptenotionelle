@@ -5291,8 +5291,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   à date de départ fixe donne donc un chiffre petit — 0,6 milliard en 2024 pour
   la catégorie active — et ce chiffre n'est pas faux, il est incomplet : ce que
   l'avantage coûte, ce sont les annuités servies avant l'âge légal, que nulle
-  décote ne rattrape. Elles valent **23,7 milliards en 2024**, dont 8,8 pour le
-  classement, 9,3 pour les régimes spéciaux et 5,6 pour la carrière longue
+  décote ne rattrape. Elles valent **13,7 milliards en 2024**, dont 7,5 pour le
+  classement, 2,4 pour les régimes spéciaux et 3,8 pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
   moyenne ; c'est exactement l'arbitrage qu'un coefficient de conversion
@@ -6066,7 +6066,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 972 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 982 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

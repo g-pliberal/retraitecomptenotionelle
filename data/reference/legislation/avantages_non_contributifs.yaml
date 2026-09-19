@@ -82,7 +82,7 @@ familles:
     libelle: Minima de pension
     quoi: >-
       Un plancher opposé au résultat du calcul contributif. Ce que le plancher
-      ajoute n'a jamais été cotisé — c'est la définition même d'un minimum.
+      ajoute n'a jamais été cotisé : c'est la définition même d'un minimum.
   periodes_non_cotisees:
     libelle: Périodes non cotisées mais validées
     quoi: >-
@@ -114,10 +114,9 @@ familles:
       nom. Ce sont les trois façons dont une pension excède la cotisation sans
       qu'aucun droit gratuit ne soit en cause : un barème d'âge qui n'est pas
       actuariel, un rendement supérieur à ce que l'assiette peut porter, un
-      régime dont l'équilibre est payé par l'impôt. Ils sont ici parce que la
-      question posée — pourquoi les pensions actuelles dépassent-elles ce qui a
-      été cotisé — ne se répond pas sans eux, et ce sont eux que le scénario 2
-      mesure. Ils ne s'ADDITIONNENT PAS aux six familles ci-dessus : ils
+      régime dont l'équilibre est payé par l'impôt. Ils sont ici parce qu'on ne
+      peut pas dire sans eux pourquoi les pensions actuelles dépassent ce qui a
+      été cotisé, et ce sont eux que le scénario 2 mesure. Ils ne s'ADDITIONNENT PAS aux six familles ci-dessus : ils
       portent sur la même pension, et les compter ensemble serait un double
       compte.
 
@@ -682,9 +681,9 @@ avantages:
         l'agent classé et l'agent sédentaire partis le même jour butent tous
         deux sur le même plafond.
         Sur la DURÉE : les pensions servies avant l'âge légal de la génération.
-        8,8 Md€ en 2024 pour le seul classement, dans un total de 23,7 Md€ de
-        pensions anticipées — dont 9,3 pour les régimes spéciaux et 5,6 pour la
-        carrière longue. C'est quinze fois l'effet de montant, et c'est là qu'est
+        7,5 Md€ en 2024 pour le seul classement, dans un total de 13,7 Md€ de
+        pensions anticipées — dont 2,4 pour les régimes spéciaux et 3,8 pour la
+        carrière longue. C'est treize fois l'effet de montant, et c'est là qu'est
         l'argent : une annuité servie avant l'âge légal n'est rattrapée par
         aucune décote. `scripts/cout_avantages.py --duree` la ventile par motif.
         Réserve écrite dans le script : ce sont des annuités anticipées, non un
