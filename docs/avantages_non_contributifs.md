@@ -38,7 +38,7 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
 | **chiffré** | 8 | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
-| **intégré** | 11 | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. Chiffrable ; pas chiffré. |
+| **intégré** | 11 | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Deux le sont désormais** — les périodes assimilées et la catégorie active : voir le §4 bis. |
 | **déclaré** | 3 | Une fiche de régime le déclare, aucun code ne le sert. La déclaration est une intention. |
 | **absent** | 17 | Ni déclaré ni servi. C'est un écart au droit positif. |
 
@@ -125,25 +125,105 @@ l'est. Les poids sont ceux de `cout.py` et pas d'autres : l'effectif INSEE de
 chaque classe d'âge pour la génération, les effectifs de caisse de la DREES pour
 le cas type.
 
-```
-Année  Dépense observée   Bonification/MDA  Minimum contrib.  Minimum vieill.   Total gratuit   Part
-1960            2,4 Md€              0,0               0,0               0,7             0,7   30,0 %
-1980           44,3 Md€              0,2               0,0               4,3             4,4   10,0 %
-2000          178,1 Md€              0,2               1,1               1,4             3,1    1,7 %
-2024          426,7 Md€              3,1               2,1               0,0             5,3    1,2 %
-```
+En milliards d'euros courants de chaque année :
 
-**Ce chiffre est faux, et il faut dire exactement de quelle façon.** Le COR
-chiffre les droits de solidarité à « de l'ordre d'un cinquième des retraites tous
-régimes » (rapport du 27 janvier 2010, commandé par l'article 75 de la LFSS
-2009). Un cinquième de 426,7 milliards fait 85 milliards. Le modèle en mesure
-5,3. Il n'en manque pas un peu : il en manque seize fois trop.
+| Année | Dépense | Périodes assimilées | MDA / bonif. | Min. contributif | Catég. active | AVPF | Min. vieillesse | **Total** | **Part** |
+|---|---|---|---|---|---|---|---|---|---|
+| 1980 | 44,3 | 0,2 | 0,2 | 0,0 | 0,0 | 0,0 | 4,3 | **4,6** | **10,4 %** |
+| 1990 | 115,9 | 0,3 | 0,2 | 0,4 | 0,0 | 0,3 | 3,3 | **4,5** | **3,9 %** |
+| 2000 | 178,1 | 0,6 | 0,2 | 1,1 | 0,0 | 0,3 | 1,4 | **3,7** | **2,1 %** |
+| 2010 | 282,1 | 3,8 | 1,8 | 2,3 | 0,2 | 0,2 | 0,3 | **8,6** | **3,1 %** |
+| 2024 | 426,7 | 6,8 | 3,1 | 2,1 | 0,6 | 0,0 | 0,0 | **12,6** | **3,0 %** |
+
+**Ce chiffre reste faux, et il faut dire de quelle façon.** Le COR chiffre les
+droits de solidarité à « de l'ordre d'un cinquième des retraites tous régimes »
+(rapport du 27 janvier 2010, commandé par l'article 75 de la LFSS 2009). Un
+cinquième de 426,7 milliards fait 85 milliards. Le modèle en mesure 12,6.
+
+## 4 bis. Les deux avantages qui ne se lisaient pas dans la cascade
+
+Les périodes assimilées et la catégorie active sont **servies** par le scénario 1
+sans que la cascade les isole : leur effet passe par un trimestre ou par un âge,
+non par un montant. Elles se mesurent par **recalcul** — on refait la pension
+sans l'avantage, à date de liquidation inchangée, et l'écart est la ligne. C'est
+le principe même de la cascade, dont les huit lignes sont déjà des écarts.
+
+Le recalcul se fait à date de départ fixe, et c'est ce qui le rend comparable.
+Mais **un avantage d'âge agit deux fois**, et la seconde est de loin la plus
+lourde.
+
+**Premier effet — sur le montant.** On refait la pension de l'agent classé avec
+le statut sédentaire de mêmes régimes. Résultat : **0,6 Md€ en 2024**, et 868 €
+par an pour un agent classé de la génération 1960. C'est petit, et ce n'est pas
+une erreur : **la décote est plafonnée à vingt trimestres**, si bien que l'agent
+classé parti à 57 ans et l'agent sédentaire parti le même jour butent tous deux
+sur le même plafond. Une décote plafonnée ne sait pas dire qui part cinq ans trop
+tôt.
+
+**Second effet — sur la durée.** Ce que le classement coûte vraiment, ce sont les
+**annuités servies avant l'âge légal**, qu'aucune décote ne rattrape.
+`--duree` les compte, à l'âge légal de chaque génération et non à un âge fixe :
+
+| Année | Dépense | Anticipée | Part | Carrière longue | Classement | Régimes spéciaux |
+|---|---|---|---|---|---|---|
+| 1980 | 44,3 | 3,8 | 8,7 % | 0,0 | 2,6 | 1,3 |
+| 1990 | 115,9 | 5,6 | 4,8 % | 0,0 | 3,8 | 1,8 |
+| 2000 | 178,1 | 6,6 | 3,7 % | 0,0 | 4,4 | 2,2 |
+| 2010 | 282,1 | 9,7 | 3,4 % | 0,0 | 6,5 | 3,2 |
+| 2024 | 426,7 | **23,7** | **5,6 %** | 5,6 | 8,8 | 9,3 |
+
+**23,7 milliards en 2024, soit quinze fois l'effet de montant.** Et la
+composition change : jusqu'aux années 2010 les départs anticipés viennent
+entièrement des statuts classés et des régimes spéciaux ; la **carrière longue**
+n'apparaît qu'ensuite, et pèse 5,6 milliards en 2024 — mécaniquement, à mesure
+que l'âge légal monte au-dessus de l'âge auquel une carrière commencée tôt
+réunit sa durée.
+
+> **Réserve, écrite aussi dans le script.** Ce sont des annuités *anticipées*,
+> pas un surcoût *net* : partir tôt, c'est aussi cotiser moins et mourir plus
+> tôt en moyenne. Le chiffre dit ce que le système verse avant l'âge légal, non
+> ce qu'il économiserait à supprimer ces départs. C'est précisément l'arbitrage
+> qu'un coefficient de conversion notionnel rend automatique et que le droit
+> actuel ne rend nulle part.
+
+**Un refus, qui est un résultat.** La jouissance immédiate de la pension
+militaire n'est pas chiffrée sur le montant, et le script dit pourquoi : la
+contrefactuelle naturelle — le même agent en fonctionnaire civil, qui relève des
+mêmes régimes — déplace aussi la **durée requise**, 172 trimestres contre 160.
+La proratisation change avec le statut, l'écart ne mesure plus l'âge, et il
+ressort même négatif. Le garde-fou refuse la ligne, et la refuse **partout** dès
+qu'elle est faussée quelque part : une ligne mesurée pour certaines générations
+et pas pour d'autres donnerait un agrégat biaisé dont le biais serait invisible.
+
+**Ce que l'avantage vaut à qui le touche.** Quand l'agrégat n'a pas de sens, la
+valeur individuelle en a un. `--par-carriere` applique à chaque cas type une dose
+commune de cinq années de chômage indemnisé — une **hypothèse**, affichée comme
+telle — et mesure ce qu'elles valent :
+
+| Cas type | Âge | Pension | Périodes assimilées | Part |
+|---|---|---|---|---|
+| SMIC, carrière complète | 60 | 11 919 € | 3 782 € | 32 % |
+| Salaire moyen | 63 | 24 436 € | 7 154 € | 29 % |
+| Cadre | 65 | 58 259 € | 12 389 € | 21 % |
+| Fonctionnaire sédentaire | 64 | 37 513 € | 9 858 € | 26 % |
+| Exploitant agricole | 62 | 9 140 € | 1 508 € | 17 % |
+
+Cinq années sans travailler valent entre un sixième et un tiers de la pension.
+C'est le chiffre qui dit ce que le dispositif fait ; celui de la table agrégée
+dit seulement ce que la grille en sait.
+
+Un dernier sous-produit, obtenu par un détour : le chômage **indemnisé** et le
+chômage **non indemnisé** valident les mêmes quatre trimestres, et seul le premier
+ouvre des points de complémentaire. L'écart entre les deux **est** la valeur de
+ces points — 612 € par an sur la carrière au salaire moyen, contre 7 154 € pour
+la validation entière. L'assurance chômage en verse la contrepartie, 3,8 Md€ en
+2024 au poste `unedic_agirc_arrco`.
 
 ## 5. Pourquoi, et c'est le vrai résultat de ce chantier
 
 Deux causes, et elles ne se corrigent pas de la même façon.
 
-**La première est connue et écrite** : trente et un des trente-neuf dispositifs
+**La première est connue et écrite** : vingt-neuf des trente-neuf dispositifs
 ne sont pas chiffrés, et l'inventaire dit lesquels. La réversion pèse à elle
 seule plus que tout ce qui est mesuré ici, et le modèle ne peut pas la voir —
 il décrit une carrière, pas un ménage. Les périodes assimilées, la catégorie

@@ -459,15 +459,27 @@ avantages:
       proratisation. Le modèle le sert par
       `legislation/periodes_non_travaillees.csv`, neuf motifs, chacun disant
       combien de trimestres il assimile.
+    chiffre_par: scripts/cout_avantages.py
     cout:
       mesurable_par: modele
       source_id: dss_ccss_transferts_retraite
       note: >-
-        Chiffrable par recalcul, motif par motif — c'est la ligne la plus
-        instructive à ouvrir, parce que le chômage et la maladie sont la
-        première source de trimestres non cotisés. Le FSV publie ce qu'il prend
-        en charge (`fsv_cotisations`, 10,3 Md€ en 2011) : c'est le contrôle
-        externe de la seule part chômage.
+        CHIFFRÉE, par recalcul : on refait la pension en donnant aux périodes
+        non travaillées le motif `sans_activite`, qui ne valide rien, et l'écart
+        est la ligne — l'AVPF retranchée, la cascade la portant déjà. Résultat
+        sur la grille : 6,8 Md€ en 2024, la plus grosse ligne de toute la
+        décomposition. Ce chiffre est un PLANCHER extrême : aucun cas type ne
+        connaît le chômage, et la seule interruption de la grille est un congé
+        d'éducation. Ce que les périodes assimilées valent à un assuré qui en a
+        est autrement plus parlant — cinq années de chômage indemnisé au milieu
+        d'une carrière au salaire moyen valent 7 154 € de pension annuelle, soit
+        29 % de sa pension (`--par-carriere`). Le FSV publie ce qu'il prend en
+        charge (`fsv_cotisations`, 15,9 Md€ en 2025) : c'est le contrôle externe
+        de la seule part chômage.
+        Un sous-produit du même recalcul sépare les deux étages : cinq années de
+        chômage INDEMNISÉ valent 612 € de plus que cinq années de chômage NON
+        indemnisé sur la même carrière, et cet écart est exactement la valeur des
+        points de complémentaire gratuits — voir la ligne suivante.
 
   - code: points_gratuits_complementaires
     libelle: Points de complémentaire acquis sans cotisation
@@ -491,9 +503,14 @@ avantages:
       mesurable_par: modele
       source_id: dss_ccss_transferts_retraite
       note: >-
-        Le poste `unedic_agirc_arrco` donne la contrepartie versée par
-        l'assurance chômage — 2,8 Md€ en 2010 — et c'est le contrôle externe le
-        plus direct de toute la liste : un seul payeur, un seul objet.
+        SÉPARABLE, et par un détour élégant : le chômage indemnisé et le chômage
+        non indemnisé valident les mêmes quatre trimestres, et seul le premier
+        ouvre des points de complémentaire. L'écart entre les deux EST la valeur
+        de ces points — 612 € par an sur une carrière au salaire moyen ayant subi
+        cinq années de chômage, contre 7 154 € pour la validation entière. Le
+        poste `unedic_agirc_arrco` donne la contrepartie versée par l'assurance
+        chômage — 3,8 Md€ en 2024 — et c'est le contrôle externe le plus direct
+        de toute la liste : un seul payeur, un seul objet.
 
   - code: service_national
     libelle: Validation du service national
@@ -652,13 +669,26 @@ avantages:
       L'avantage est un ÂGE, pas un montant. Sept statuts de
       `legislation/affiliations.yaml` le portent, et le scénario 1 leur oppose
       l'âge anticipé de L. 24 et l'âge d'annulation de L. 14 bis.
+    chiffre_par: scripts/cout_avantages.py
     cout:
       mesurable_par: modele
       note: >-
-        Chiffrable par recalcul à l'âge légal de droit commun — c'est la ligne
-        la plus lourde de la famille, et celle que le notionnel pénalise le
-        plus : partir tôt y coûte deux fois, moins de cotisations accumulées et
-        une rente à servir plus longtemps.
+        CHIFFRÉE, par recalcul, et il faut compter DEUX effets que tout invite à
+        confondre.
+        Sur le MONTANT : on refait la pension avec le statut sédentaire de mêmes
+        régimes, à date de départ inchangée. 0,6 Md€ en 2024, et 868 € par an
+        pour un agent classé de la génération 1960. C'est PETIT, et ce n'est pas
+        une erreur — la décote est plafonnée à vingt trimestres, si bien que
+        l'agent classé et l'agent sédentaire partis le même jour butent tous
+        deux sur le même plafond.
+        Sur la DURÉE : les pensions servies avant l'âge légal de la génération.
+        8,8 Md€ en 2024 pour le seul classement, dans un total de 23,7 Md€ de
+        pensions anticipées — dont 9,3 pour les régimes spéciaux et 5,6 pour la
+        carrière longue. C'est quinze fois l'effet de montant, et c'est là qu'est
+        l'argent : une annuité servie avant l'âge légal n'est rattrapée par
+        aucune décote. `scripts/cout_avantages.py --duree` la ventile par motif.
+        Réserve écrite dans le script : ce sont des annuités anticipées, non un
+        surcoût net — partir tôt, c'est aussi cotiser moins.
 
   - code: carriere_longue
     libelle: Retraite anticipée pour carrière longue
@@ -708,9 +738,19 @@ avantages:
     cout:
       mesurable_par: modele
       note: >-
-        C'est l'avantage d'âge le plus extrême du système : le coefficient de
-        conversion à trente-huit ans est plus du double de celui de soixante-
-        quatre ans.
+        NON CHIFFRÉE sur le montant, et le refus est un résultat. La
+        contrefactuelle naturelle — le même agent en fonctionnaire civil, qui
+        relève des mêmes régimes — déplace aussi la DURÉE REQUISE : 172
+        trimestres pour le militaire contre 160 pour le civil de la même
+        génération. La proratisation change avec le statut, l'écart ne mesure
+        plus l'âge, et il ressort même NÉGATIF. `scripts/cout_avantages.py` pose
+        le garde-fou, refuse la ligne partout dès qu'elle est faussée quelque
+        part, et imprime la raison.
+        Reste `--duree`, qui n'a pas besoin de contrefactuelle : la pension d'un
+        militaire parti à quarante-quatre ans est servie vingt ans avant l'âge
+        légal, et ces vingt annuités se comptent directement. C'est l'avantage
+        d'âge le plus extrême du système — le coefficient de conversion à
+        trente-huit ans est plus du double de celui de soixante-quatre ans.
 
   - code: bonification_cinquieme_militaires
     libelle: Bonification du cinquième du temps de service des militaires
