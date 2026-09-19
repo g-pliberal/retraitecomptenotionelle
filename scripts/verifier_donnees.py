@@ -785,6 +785,106 @@ def source_structure_ressources() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Ce que le COR appelle chaque régime dans son classeur par régime, et le code
+#: de caisse que le dépôt emploie. Le FSV n'y est pas : ce n'est pas un régime,
+#: et sa feuille porte DEUX tableaux de financement dont les parts somment à 2.
+#: La FPE est d'un seul tenant chez le COR, là où le dépôt sépare les civils
+#: des militaires : on garde le bloc sous un code propre plutôt que de répartir
+#: au jugé.
+REGIMES_COR: dict[str, str] = {
+    "Agirc-Arrco": "agirc_arrco",
+    "BDF": "banque_de_france",
+    "CANSSM": "canssm",
+    "CNAV": "cnav",
+    "CNAVPL_RB": "cnavpl",
+    "CNAVPL_RC": "cnavpl_complementaire",
+    "CNBF": "cnbf",
+    "CNIEG": "cnieg",
+    "CNRACL": "cnracl",
+    "CPRPF": "sncf",
+    "CRPCEN": "crpcen",
+    "CRPNPAC": "crpnpac",
+    "ENIM": "enim",
+    "FPE": "fonction_publique_etat",
+    "FSPOEIE": "fspoeie",
+    "IRCANTEC": "ircantec",
+    "MSA_NSA_RB": "msa_exploitants",
+    "MSA_NSA_RCO": "msa_exploitants_complementaire",
+    "MSA_SA": "msa_salaries",
+    "RAFP": "erafp",
+    "RATP": "ratp",
+    "RCI": "rci_complementaire",
+}
+
+#: Les vingt-cinq libellés du bloc « Répartition du financement » ramenés à huit
+#: postes. Les cinq premiers codes sont ceux de
+#: ``structure_ressources_retraite.csv``, pour que l'agrégat et le détail par
+#: régime se lisent avec le même vocabulaire ; les trois derniers n'existent
+#: qu'ici, la ventilation par régime étant plus fine que celle du système.
+POSTES_FINANCEMENT: dict[str, str] = {
+    "Cotisations totales": "cotisations",
+    "Cotisations salariés": "cotisations",
+    "Cotisations patronales (DSPNR et DSF)": "cotisations",
+    "Cotisations salariés et employeurs (opérateurs de l'État)": "cotisations",
+    "Contribution d'équilibre de l'État": "contribution_equilibre_etat",
+    "Contribution d'équilibre": "contribution_equilibre_etat",
+    "Subvention d'équilibre": "subventions_equilibre",
+    "ITAF et prises en charge État": "impots_et_taxes",
+    "ITAF": "impots_et_taxes",
+    "CTA (Itaf et prise en charge État)": "impots_et_taxes",
+    "CSG": "impots_et_taxes",
+    "Compensation démographique": "compensation_demographique",
+    "Prises en charge FSV": "transferts",
+    "Transferts entre organismes (externes)": "transferts",
+    "Transferts entre organismes (internes)": "transferts",
+    "Transferts externes (Cnaf)": "transferts",
+    "Pec Aspa": "transferts",
+    "Pec majo de pensions": "transferts",
+    "Pec Mico": "transferts",
+    "Pec cot chômage RB": "transferts",
+    "Pec cot chômage RC": "transferts",
+    "Autres pec cot": "transferts",
+    "Produits de gestion, financiers": "autres_produits",
+    "Produits de gestion, etc.": "autres_produits",
+    "Besoin de financement": "besoin_de_financement",
+}
+
+
+def _cor_regimes() -> dict:
+    return _lire_json("cor_regimes.json", "scripts/fetch/cor_regimes.py")
+
+
+def source_structure_financement_regimes() -> dict[tuple, float]:
+    """Qui finance chaque régime, poste par poste, de 2010 à 2070.
+
+    C'est le détail de ce que ``structure_ressources_retraite.csv`` ne dit que
+    pour le système entier. La question à laquelle il répond est celle que la
+    page « Coût » ne sait pas poser : un scénario qui remplace tous les taux
+    par 18 % déplace-t-il une charge vers l'État ou vers les caisses ? La
+    réponse n'est pas la même selon le régime — l'État finance 86 % de la
+    fonction publique d'État par sa contribution d'équilibre, et 61 % de la
+    SNCF par une subvention, quand la CNRACL ne reçoit rien de lui et porte un
+    besoin de financement que personne ne couvre.
+
+    LES PARTS NE SOMMENT PAS TOUJOURS À UN, et on ne les normalise pas. Sur les
+    134 couples (régime, année), 100 somment à un à un millième près ; les
+    autres s'en écartent jusqu'à onze pour cent — l'Ircantec de 2010, dont les
+    produits financiers pèsent 17,7 %, et la CNRACL de 2010 et 2023. C'est ce
+    que le classeur publie ; corriger en silence reviendrait à inventer.
+    """
+    valeurs: dict[tuple, float] = {}
+    for ligne in _cor_regimes()["valeurs"]:
+        if "Répartition du financement" not in ligne["bloc"]:
+            continue
+        regime = REGIMES_COR.get(ligne["regime"])
+        poste = POSTES_FINANCEMENT.get(ligne["serie"])
+        if regime is None or poste is None:
+            continue
+        cle = (ligne["annee"], regime, poste)
+        valeurs[cle] = valeurs.get(cle, 0.0) + ligne["valeur"]
+    return dict(sorted(valeurs.items()))
+
+
 #: Postes de la ventilation des transferts, tels que ``ccss_transferts_retraite.py``
 #: les écrit : deux lignes de la CNAF, deux de l'Unédic, deux du fonds de
 #: solidarité vieillesse.
@@ -2846,6 +2946,59 @@ CERTIFICATIONS = (
             "# l'Unédic. Le coefficient d'équilibre de la page « Coût » suppose ces",
             "# ressources-là inchangées ; ces parts disent de quoi cette hypothèse",
             "# est faite.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="structure_financement_regimes",
+        chemin=REFERENCE / "regimes" / "structure_financement.csv",
+        cles=("annee", "regime", "poste"),
+        colonne="part",
+        source=source_structure_financement_regimes,
+        origine="COR, compléments du rapport annuel de juin 2024, "
+                "projections détaillées par régime",
+        decimales=6,
+        tolerance=5.1e-7,
+        niveau="haute",
+        entete=(
+            "# Qui finance chaque régime : cotisations, État, transferts, et ce",
+            "# que personne ne couvre",
+            "# source_id: cor_regimes",
+            "# unite: part du financement du régime pour l'année, en fraction",
+            "# fiabilite:",
+            "#   haute (2010-2070) : parts publiées par le COR dans les",
+            "#             compléments de son rapport annuel, et recontrôlées par",
+            "#             scripts/verifier_donnees.py contre son classeur.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À répondre à une question que structure_ressources_retraite.csv",
+            "# ne sait poser que pour le système entier : un scénario qui",
+            "# remplace tous les taux par 18 % déplace-t-il une charge vers",
+            "# l'ÉTAT ou vers les CAISSES ? La réponse dépend du régime. L'État",
+            "# finance 86 % de la fonction publique d'État par sa contribution",
+            "# d'équilibre, et 61 % de la SNCF par une subvention ; la CNRACL ne",
+            "# reçoit rien de lui et porte un besoin de financement que personne",
+            "# ne couvre — 7 % en 2023, 49 % en 2070.",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR",
+            "# ------------------------------------------",
+            "# 1. LE MILLÉSIME. Ces parts viennent des compléments du rapport de",
+            "#    JUIN 2024, seul millésime publié : ni 2025 ni 2026 ne les ont",
+            "#    reconduits. Le reste du dépôt tourne sur le COR 2026. Mélanger",
+            "#    les deux coudrait deux exercices de projection.",
+            "# 2. LES ANNÉES. Six seulement — 2010, 2015, 2023, 2030, 2040, 2050",
+            "#    et 2070 selon les régimes — parce que le classeur ne publie",
+            "#    cette ventilation qu'à ces dates-là. Ce n'est pas une série",
+            "#    annuelle, et interpoler serait inventer.",
+            "# 3. LES PARTS NE SOMMENT PAS TOUJOURS À UN. Cent couples (régime,",
+            "#    année) sur 134 somment à un à un millième près ; les autres",
+            "#    s'en écartent jusqu'à onze pour cent. C'est ce que le classeur",
+            "#    publie, et on ne normalise pas.",
+            "# 4. LA FONCTION PUBLIQUE D'ÉTAT EST D'UN SEUL TENANT, civils et",
+            "#    militaires confondus, là où le reste du dépôt les sépare.",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",

@@ -333,6 +333,36 @@ institutions:
           supposé constant. L'inflation de long terme à 1,75 % est une
           convention reconduite des rapports antérieurs : les documents publics
           de juin 2025 et juin 2026 ne la restatent pas.
+      - id: cor_regimes
+        titre: >-
+          Compléments du rapport annuel — projections détaillées par régime :
+          effectifs, masses, ressources et structure de financement
+        url: https://www.cor-retraites.fr/fiches/complements-rapport-annuel-2024-projections-detaillees-par-regime
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/cor_regimes.py
+        cible: data/reference/regimes/structure_financement.csv
+        millesime: juin 2024
+        note: >-
+          Vingt-deux fiches, une par régime, et UN classeur qui porte leurs
+          données : vingt-quatre feuilles, 53 232 valeurs, de 2010 à 2070.
+          C'est la seule source publique qui donne, à la même maille et sous la
+          même convention, les effectifs de retraités ET de cotisants, les
+          masses, les ressources, les soldes et la STRUCTURE DE FINANCEMENT de
+          chaque régime — ce dernier bloc étant le seul endroit où se lise ce
+          qu'un régime doit à l'État et ce qu'il doit à ses cotisants. Le COR
+          n'en est pas le producteur — ce sont les comptes des régimes, via la
+          DSS — mais il est le seul à les mettre sous une convention commune :
+          les valeurs entrent au niveau `haute`, jamais `certifiee`.
+          MILLÉSIME : juin 2024, et c'est le SEUL publié. Vérifié le 19
+          septembre 2026 : ni le rapport de 2025 ni celui de 2026 n'ont
+          reconduit ces compléments — index des fiches, pages des deux
+          rapports et sondage des chemins concordent. L'en-tête
+          `Last-Modified` du serveur affiche avril 2026 et ne veut rien dire,
+          c'est une remise en ligne ; le sommaire du classeur, lui, écrit
+          « Complément du rapport annuel du COR - juin 2024 ». Le reste du
+          dépôt tournant sur le COR 2026, mélanger les deux coudrait deux
+          exercices de projection.
       - id: cor_comptes_systeme_retraite
         titre: >-
           Comptes du système de retraite — dépenses, ressources et solde, en

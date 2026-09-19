@@ -30,6 +30,7 @@ from .carriere import (
 from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.effectifs import EffectifsRetraites
+from .donnees.financement_regimes import StructureFinancement
 from .donnees.macro import DonneesMacro
 from .donnees.mortalite import DonneesMortalite
 from .donnees.regimes import CatalogueRegimes
@@ -610,6 +611,18 @@ class Simulateur:
         disent ce que chaque configuration de carrière pèse réellement.
         """
         return EffectifsRetraites(self.parametres.racine_donnees)
+
+    @cached_property
+    def financement_regimes(self) -> StructureFinancement:
+        """Qui finance chaque régime : ses cotisants, l'État, ou personne.
+
+        Aucune pension n'en dépend non plus. Elle sert à dire ce qu'une réforme
+        déplace ENTRE FINANCEURS, ce que le coefficient d'équilibre agrégé ne
+        distingue pas : 86 % de la fonction publique d'État viennent de la
+        contribution de l'État, et 49 % de la CNRACL de 2070 ne viennent de
+        personne.
+        """
+        return StructureFinancement(self.parametres.racine_donnees)
 
     @cached_property
     def affiliations(self) -> Affiliations:
