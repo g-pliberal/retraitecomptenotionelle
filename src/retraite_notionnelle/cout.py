@@ -407,10 +407,16 @@ class SoldeAnnuel:
     #: Part des ressources qui est une cotisation assise sur un revenu
     #: d'activité, la seule sur laquelle un changement de taux ait prise.
     part_contributive: float = 0.0
-    #: Part des ressources qui est un impôt ou une taxe affectés. Pour
-    #: l'essentiel, la compensation des allègements généraux : l'État a
-    #: exonéré des cotisations patronales, puis remboursé par l'impôt.
-    part_compensation: float = 0.0
+    #: Part des ressources qui est un impôt ou une taxe affectés : CSG,
+    #: forfait social, taxe sur les salaires, transferts de TVA. Le scénario 6
+    #: ne les reconduit pas, et ``ressources_de`` dit pourquoi.
+    part_impots: float = 0.0
+    #: La part de ``retrait`` dont la recette arrive par l'impôt et non par un
+    #: transfert : ce que le fonds de solidarité vieillesse verse aux régimes,
+    #: financé par une CSG qui est dans ``part_impots``. Qui retire le poste en
+    #: entier doit cesser de retirer cette ligne — sans quoi la même somme
+    #: sortirait deux fois.
+    retrait_par_impot: float = 0.0
     #: Part des ressources qui est une subvention d'équilibre : ce que le budget
     #: de l'État comble aux régimes dont les cotisants ont disparu avant les
     #: retraités — la SNCF, les mines, les marins. Le scénario 6 ne la reconduit
@@ -477,28 +483,42 @@ class SoldeAnnuel:
         se réjouir de payer : reconduire une subvention dont l'objet a disparu
         était l'hypothèse la plus flatteuse du modèle.
 
-        CE QUI RESTE RECONDUIT : les impôts et taxes affectés, les transferts
-        et les autres produits, soit 21,1 % des ressources de 2024. Les
-        premiers compensent des allègements de cotisations patronales que ce
-        système ne consent pas — l'argument vaudrait pour les retirer aussi, et
-        il n'est pas tranché.
+        LES IMPÔTS ET TAXES AFFECTÉS NE SONT PAS RECONDUITS — 14,1 % des
+        ressources, 57 milliards en 2024. Décision du Parti libéral, 19
+        septembre 2026, et il faut dire par quel argument elle NE passe PAS :
+        on avait cru un temps que ce poste compensait les allègements généraux
+        de cotisations patronales, qu'un système sans exonération ne consent
+        pas. C'est faux, et le dépôt l'a établi le 19 septembre 2026 : la TVA
+        qui compense ces allègements finance la branche maladie, et le compte
+        de la CNAV n'en porte aucune ligne. L'argument qui vaut est celui qui
+        vaut pour les 18 % : **un compte notionnel ne crédite que ce qui est
+        assis sur un revenu d'activité.** Un impôt affecté n'acquiert de droits
+        à personne ; le porter au crédit d'un système qui ne rend que ce qui a
+        été cotisé, c'est lui prêter une recette sans contrepartie.
+
+        ET IL FAUT LE RETIRER UNE FOIS, PAS DEUX. Un tiers de ce poste est la
+        CSG du fonds de solidarité vieillesse — ce que le fonds verse aux
+        régimes, 19,6 des 57 milliards de 2024 —, et elle sortait DÉJÀ par
+        ``retrait``, lu du côté de ce versement. Retirer le poste en entier sans toucher au retrait
+        la ferait sortir deux fois. ``retrait_par_impot`` est cette somme, et
+        elle est rendue au retrait à l'instant où le poste s'en va.
         """
         if scenario == "actuel":
             return self.ressources
         if scenario == "notionnel_liberal" and self.recette_par_assiette:
-            # Le taux plein sur l'assiette mesurée, et rien d'autre de changé.
-            # Les impôts et taxes affectés RESTENT, et c'est une correction du
-            # 19 septembre 2026 : on les avait d'abord retirés en entier, au
-            # motif qu'ils compensaient les allègements généraux. Ils ne les
-            # compensent pas — la TVA qui le fait finance la branche maladie,
-            # et le compte de la CNAV n'en porte aucune ligne. Ce que ce poste
-            # porte et qui ne revient pas à ce système, c'est la CSG du fonds
-            # de solidarité vieillesse, et elle sort par ``retrait`` comme
-            # sortent les versements de la CNAF et de l'Unédic.
+            # Le taux plein sur l'assiette mesurée. Trois postes ne sont pas
+            # reconduits — la contribution d'équilibre, qui est REMPLACÉE par
+            # les 18 % appliqués aux traitements ; les subventions, dont la
+            # fusion supprime l'objet ; les impôts affectés, qui n'acquièrent
+            # de droits à personne. Ce qui reste : les transferts et les autres
+            # produits, 7 % des ressources de 2024.
             pleine = self.ressources * self.taux_liberal / self.taux_prelevement
             autres = self.ressources * (1.0 - self.part_contributive
-                                        - self.part_subventions)
-            return pleine + autres - self.retrait
+                                        - self.part_subventions
+                                        - self.part_impots)
+            # La CSG du fonds de solidarité vieillesse vient de sortir avec le
+            # poste : la retirer encore ici la retirerait deux fois.
+            return pleine + autres - (self.retrait - self.retrait_par_impot)
         rapport = self.rapports_recettes.get(scenario, 1.0)
         cotisees = self.ressources * self.part_contributive
         autres = self.ressources - cotisees
@@ -1163,7 +1183,8 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             retrait=comptes.recette_non_acquise(annee),
             rapports_recettes=par_annee[annee].rapports_recettes,
             part_contributive=comptes.part_contributive(annee),
-            part_compensation=comptes.part("impots_et_taxes", annee),
+            part_impots=comptes.part("impots_et_taxes", annee),
+            retrait_par_impot=comptes.recette_non_acquise(annee, par_impot=True),
             part_subventions=comptes.part("subventions_equilibre", annee),
             taux_prelevement=taux_prelevement(annee),
             taux_liberal=taux_liberal,

@@ -5514,9 +5514,36 @@ Le taux plein rapporte PLUS que le rapport de taux légaux ne le disait :
   de l'assurance chômage : ce qu'il VERSE — 15,2 Md€ de cotisations prises en
   charge et 4,3 de minimum vieillesse en 2024 — est retiré des ressources des
   cinq scénarios notionnels. Le retrait total passe d'un demi-point de PIB à
-  **1,17 %**, et coûte 0,64 point de solde moyen à chacun d'eux. Le poste des
-  impôts et taxes affectés, lui, RESTE : il ne compense pas les allègements, et
-  ce qu'il portait de solidarité sort maintenant par l'autre porte.
+  **1,17 %**, et coûte 0,64 point de solde moyen à chacun d'eux.
+
+  *Et le poste entier est sorti du scénario 6 le soir même.* Décision du Parti
+  libéral, 19 septembre 2026, prise APRÈS la lecture ci-dessus et contre
+  l'argument qu'elle démolit : ce n'est pas parce qu'il compenserait les
+  allègements que ce poste s'en va, c'est parce qu'un impôt affecté n'ouvre de
+  droit à personne. C'est l'argument qui vaut déjà pour les 18 % : un compte
+  notionnel ne crédite que ce qui est assis sur un revenu d'activité. Les
+  57,1 Md€ ne sont donc pas reconduits, et le scénario 6 rejoint sur ce point
+  les deux autres postes sortis le même jour, la contribution d'équilibre de
+  l'État et les subventions aux régimes en extinction.
+
+  **Il fallait ne le retirer qu'une fois.** La CSG du fonds est DANS ce poste
+  et son versement est DANS le retrait : sortir le poste en entier sans
+  toucher au retrait aurait fait sortir la même somme deux fois. Le retrait du
+  scénario 6 rend donc au compte ce que le fonds verse — 19,6 des 57,1 Md€ de
+  2024 —, et ne retire plus que la branche famille et l'assurance chômage,
+  dont la recette passe, elle, par le poste « transferts », qui reste. Les
+  quatre autres scénarios notionnels, qui encaissent toujours les impôts
+  affectés, gardent le retrait entier. C'est `retrait_par_impot` dans
+  `cout.py`, et deux tests le tiennent.
+
+  *Ce que la sortie coûte.* Le solde moyen du scénario 6 sur 2026-2070 passe
+  de −1,12 % du PIB à **−2,51 %**, contre −1,14 % pour le système actuel : il
+  est désormais plus déficitaire que lui dans 38 des 45 années, et ne revient
+  à l'équilibre sur aucune. Son coefficient d'équilibre — ce que le système
+  peut servir rapporté à ce qu'il promet — descend de 0,97 à **0,82**. Les
+  trois décisions du 19 septembre, prises ensemble, retirent au scénario 6 les
+  27 % de ressources qui n'acquièrent de droits à personne, et le chiffre qui
+  reste est celui d'un système qui ne vit que de ses cotisations.
 
   *Une date à retenir pour cette série.* Le Fonds de solidarité vieillesse est
   SUPPRIMÉ au 1er janvier 2026 par l'article 24 de la loi de financement de la
@@ -6142,7 +6169,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 982 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 984 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

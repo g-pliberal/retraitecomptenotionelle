@@ -5913,13 +5913,73 @@ message d'attente dans `index.html` ; barre de navigation dans
 
   Porté dans `moteur/js/cout.js`, témoins régénérés, 956 tests verts. Reste
   reconduit et non tranché : impôts et taxes affectés (1,944 point de PIB),
-  transferts (0,665), autres produits (0,303). Le même argument vaudrait pour
-  les impôts, qui compensent des allègements qu'un système sans exonération ne
-  consent pas.
+  transferts (0,665), autres produits (0,303).
+
+  [Corrigé le 19 septembre 2026 au soir.] Cette entrée ajoutait ici que « le
+  même argument vaudrait pour les impôts, qui compensent des allègements qu'un
+  système sans exonération ne consent pas ». C'est faux, et c'est la phrase que
+  le dépôt avait démolie le matin même : la TVA qui compense les allègements
+  finance la branche maladie. Les impôts affectés sont bien sortis le soir,
+  mais par l'argument des 18 %, et l'entrée qui clôt ce journal le dit.
 
   **Rien n'est écrit au public**, à la demande du programme : la page affiche
   les chiffres nouveaux, mais aucune prose n'explique encore ce fonctionnement.
   Il faut d'abord vérifier que ces chiffres font un système cohérent.
+
+- **Septembre 2026, action 35, les impôts et taxes affectés sortent aussi.**
+  Troisième et dernière des décisions du 19 septembre, et celle qui exigeait
+  d'abord une rétractation : l'argument offert au programme pour la lui
+  proposer — « ils compensent des allègements de cotisations patronales qu'un
+  système sans exonération ne consent pas » — est celui que le dépôt avait
+  lui-même démoli le matin même, deux entrées plus haut. La TVA qui compense
+  les allègements finance la branche MALADIE, et le compte de la CNAV n'en
+  porte aucune ligne. La phrase reconduite à tort dans cette feuille de route
+  au paragraphe précédent est donc fausse, et remplacée par celle-ci.
+
+  **L'argument qui vaut est celui des 18 %** : un compte notionnel ne crédite
+  que ce qui est assis sur un revenu d'activité. Un impôt affecté n'ouvre de
+  droit à personne ; le porter au crédit d'un système qui ne rend que ce qui a
+  été cotisé, c'est lui prêter une recette sans contrepartie. C'est le même
+  argument qui a fait sortir la contribution d'équilibre et les subventions, et
+  il n'a rien à voir avec ce que ce poste compense.
+
+  **Il fallait ne le retirer qu'une fois.** 38 % du poste sont les ressources
+  du fonds de solidarité vieillesse (21,7 des 57,1 Md€ de 2024), et ce que ce
+  fonds VERSE aux régimes — 19,6 Md€ — était déjà retiré par `retrait` depuis
+  le matin. Sortir le poste en entier sans toucher au retrait aurait fait
+  sortir la même somme deux fois : exactement l'erreur que le dépôt avait
+  relevée et corrigée quelques heures plus tôt. D'où `retrait_par_impot`, qui
+  est cette somme et que le scénario 6 rend au compte à l'instant où le poste
+  s'en va. Les quatre autres scénarios notionnels, qui encaissent toujours les
+  impôts affectés, gardent le retrait entier. Un organisme porte désormais le
+  drapeau `recette_par_impot` dans `equilibre.py`, et c'est le seul.
+
+  **Mesuré** : le solde moyen du scénario 6 sur 2026-2070 passe de −1,117 % à
+  **−2,512 %** du PIB, contre −1,135 % pour le système actuel. Il est plus
+  déficitaire que lui dans 38 des 45 années (contre 27 avant), ne revient à
+  l'équilibre sur aucune, et son coefficient d'équilibre tombe de 0,97 à 0,82.
+  La sortie coûte 1,395 point, six fois ce que coûtaient les subventions.
+
+  **Ce que les trois décisions donnent ensemble** : le scénario 6 ne compte
+  plus que les 73 % de ressources assises sur un revenu d'activité, et il est
+  désormais, sur la moyenne des 45 années, le PLUS déficitaire des chemins
+  comparés. La convention `rapport`, qui reste calculable, ne porte AUCUNE des
+  trois décisions : elle n'est plus « l'ancienne façon de calculer le taux »
+  mais un repère d'avant septembre 2026, et son test le dit maintenant.
+
+  Porté dans `moteur/js/cout.js` et `moteur/js/equilibre.js`, témoins
+  régénérés, 984 tests verts. Deux postes restent reconduits, et cette fois
+  sans qu'un argument traîne pour les retirer : les transferts d'organismes
+  extérieurs (0,665 point de PIB, et ce qu'ils portent de non acquis sort déjà
+  par `retrait`) et les autres produits (0,303 point, des recettes de gestion
+  des caisses).
+
+  **La glose publiée portait encore l'argument faux** et a été corrigée dans
+  les deux ports : le poste « impôts et taxes affectés » annonçait « pour
+  l'essentiel, la compensation des allègements généraux ». La réserve de la
+  page Coût qui disait ces postes « reconduits tels quels » a été réécrite.
+
+  **Rien de plus n'est écrit au public**, toujours à la demande du programme.
 
 ---
 

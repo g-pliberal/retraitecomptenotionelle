@@ -57,9 +57,11 @@ export const POSTES = [
   {
     code: "impots_et_taxes",
     libelle: "Impôts et taxes affectés",
-    glose: "CSG, forfait social, taxe sur les salaires, transferts de TVA. Pour "
-      + "l'essentiel, la compensation des allègements généraux de cotisations "
-      + "patronales : l'État a exonéré, puis remboursé par l'impôt.",
+    glose: "CSG, forfait social, taxe sur les salaires, transferts de TVA. "
+      + "38 % en financent le fonds de solidarité vieillesse. Ce n'est PAS la "
+      + "compensation des allègements généraux de cotisations patronales : "
+      + "celle-là passe par la TVA, qui finance la branche maladie, et le "
+      + "compte de la Cnav n'en porte aucune ligne.",
     contributive: false,
   },
   {
@@ -208,6 +210,12 @@ export const CODES_TRANSFERTS = POSTES_TRANSFERTS.map((poste) => poste.code);
  * système notionnel réel pourrait créditer ce que l'Unédic paie, qui est une
  * cotisation assise sur l'allocation. Tant que le modèle ne le fait pas, la
  * recette suit le droit.
+ *
+ * `recetteParImpot` : vrai du seul fonds de solidarité vieillesse. Ce qu'il
+ * verse aux régimes est financé par la CSG, et cette CSG est DÉJÀ dans le
+ * poste « impôts et taxes affectés » des ressources. Qui retire ce poste en
+ * entier doit cesser de retirer ce versement, sous peine de retirer la même
+ * somme deux fois.
  */
 export const ORGANISMES = [
   {
@@ -242,6 +250,7 @@ export const ORGANISMES = [
       + "part constante prend le relais, ce qui est exact puisque les "
       + "missions, elles, continuent.",
     droitSupprime: true,
+    recetteParImpot: true,
   },
 ];
 
@@ -392,10 +401,12 @@ export class ComptesRetraite {
    * servent pas. C'est ce qu'il faudrait retirer des ressources avant de lire
    * leur coefficient d'équilibre.
    */
-  transfertSupprimePartPib(annee) {
+  transfertSupprimePartPib(annee, parImpot = null) {
     let somme = 0;
     for (const organisme of ORGANISMES) {
-      if (organisme.droitSupprime) somme += this.transfertPartPib(organisme.code, annee);
+      if (!organisme.droitSupprime) continue;
+      if (parImpot !== null && Boolean(organisme.recetteParImpot) !== parImpot) continue;
+      somme += this.transfertPartPib(organisme.code, annee);
     }
     return somme;
   }
@@ -407,14 +418,17 @@ export class ComptesRetraite {
    * avant 2013, et sur tout l'horizon projeté du COR —, c'est la même chose à
    * PART CONSTANTE des ressources, celle de l'année connue la plus proche :
    * personne ne projette ce que la CNAF versera en 2070, et une part constante
-   * est l'hypothèse qui n'en ajoute aucune autre.
+   * est l'hypothèse qui n'en ajoute aucune autre. `parImpot` passe à
+   * `transfertSupprimePartPib` et y dit lesquels des quatre organismes compter.
    */
-  recetteNonAcquise(annee) {
+  recetteNonAcquise(annee, parImpot = null) {
     const premiere = this.premiereAnneeTransferts;
     const derniere = this.derniereAnneeTransferts;
-    if (annee >= premiere && annee <= derniere) return this.transfertSupprimePartPib(annee);
+    if (annee >= premiere && annee <= derniere) {
+      return this.transfertSupprimePartPib(annee, parImpot);
+    }
     const reference = Math.min(Math.max(annee, premiere), derniere);
-    const part = this.transfertSupprimePartPib(reference) / this.ressource(reference);
+    const part = this.transfertSupprimePartPib(reference, parImpot) / this.ressource(reference);
     return part * this.ressource(annee);
   }
 

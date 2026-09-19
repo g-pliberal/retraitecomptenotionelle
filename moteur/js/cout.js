@@ -523,6 +523,7 @@ class Avenir {
 class SoldeAnnuel {
   constructor(annee, projete, ressources, depenses, rapportsAnnee, pib, retrait = 0.0,
               recettes = {}, partContributive = 0.0, partSubventions = 0.0,
+              partImpots = 0.0, retraitParImpot = 0.0,
               tauxPrelevement = 0.0,
               tauxLiberal = 0.0, anneeBascule = 0,
               convention = CONVENTION_RAPPORT) {
@@ -545,6 +546,12 @@ class SoldeAnnuel {
     // budget comble aux régimes dont les cotisants ont disparu avant les
     // retraités. Le scénario 6 ne la reconduit pas — voir `ressourcesDe`.
     this.partSubventions = partSubventions;
+    // Part des ressources qui est un impôt ou une taxe affectés : le
+    // scénario 6 ne la reconduit pas non plus. `retraitParImpot` est la part
+    // de `retrait` dont la recette est DANS ce poste — la CSG du fonds de
+    // solidarité vieillesse —, et qui sortirait deux fois sans lui.
+    this.partImpots = partImpots;
+    this.retraitParImpot = retraitParImpot;
     // Ce que le système prélève, rapporté à l'ASSIETTE et non au PIB ; le taux
     // unique de la proposition ; l'année où il commence ; et laquelle des deux
     // conventions de recette s'applique.
@@ -581,21 +588,21 @@ class SoldeAnnuel {
   ressourcesDe(scenario) {
     if (scenario === "actuel") return this.ressources;
     if (scenario === "notionnel_liberal" && this.recetteParAssiette) {
-      // Le taux plein sur l'assiette mesurée, et rien d'autre de changé. Les
-      // impôts et taxes affectés RESTENT : ils ne compensent pas les
-      // allègements généraux, c'est la TVA qui le fait et elle finance la
-      // branche maladie. Ce que ce poste porte et qui ne revient pas à ce
-      // système, c'est la CSG du fonds de solidarité vieillesse, et elle sort
-      // par `retrait`.
-      // LES SUBVENTIONS D'ÉQUILIBRE NE SONT PAS RECONDUITES NON PLUS. Une
-      // subvention comble le compte d'un régime dont les cotisants ont disparu
-      // avant les retraités — la SNCF, les mines, les marins. Le scénario 6
-      // fusionne tous les régimes : cette catégorie cesse d'exister, et il n'y
-      // a plus rien à équilibrer par le budget.
+      // Le taux plein sur l'assiette mesurée. Trois postes ne sont pas
+      // reconduits. LA CONTRIBUTION D'ÉQUILIBRE DE L'ÉTAT est remplacée par
+      // les 18 % appliqués aux traitements, et la reconduire en plus la
+      // compterait deux fois. LES SUBVENTIONS D'ÉQUILIBRE comblent le compte
+      // d'un régime dont les cotisants ont disparu avant les retraités — la
+      // SNCF, les mines, les marins ; le scénario 6 fusionne tous les régimes,
+      // et cette catégorie cesse d'exister. LES IMPÔTS ET TAXES AFFECTÉS
+      // n'acquièrent de droits à personne : un compte notionnel ne crédite que
+      // ce qui est assis sur un revenu d'activité.
       const pleine = this.ressources * this.tauxLiberal / this.tauxPrelevement;
       const autres = this.ressources
-        * (1 - this.partContributive - this.partSubventions);
-      return pleine + autres - this.retrait;
+        * (1 - this.partContributive - this.partSubventions - this.partImpots);
+      // La CSG du fonds de solidarité vieillesse vient de sortir avec le
+      // poste : la retirer encore ici la retirerait deux fois.
+      return pleine + autres - (this.retrait - this.retraitParImpot);
     }
     // LA RECETTE SUIT LE TAUX, ancienne convention : la part COTISÉE des
     // ressources observées est multipliée par un rapport de taux légaux.
@@ -867,6 +874,8 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       ligne.rapportsRecettes,
       comptes.partContributive(annee),
       comptes.part("subventions_equilibre", annee),
+      comptes.part("impots_et_taxes", annee),
+      comptes.recetteNonAcquise(annee, true),
       tauxPrelevement(annee),
       tauxLiberal,
       anneeBascule,
