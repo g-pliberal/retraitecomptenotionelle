@@ -71,6 +71,12 @@ fichiers:
 
   docs/limites.md:
     defaut: a_declarer
+    sections:
+      # Elle raconte une correction datée : ×1,69 et ×2,42 sont les pentes que
+      # le modèle appliquait AVANT le 19 septembre 2026, ×1,30 et ×1,86 celles
+      # que l'INSEE observe en 2024. Les rafraîchir effacerait ce qui a été
+      # corrigé, et le constat n'aurait plus de sens.
+      "Le profil de carrière, et les trois choses qu'il suppose": recit
   docs/methodologie.md:
     defaut: a_declarer
   docs/avantages_non_contributifs.md:

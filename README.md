@@ -59,12 +59,12 @@ Agent de conduite SNCF né en 1955, parti à 50 ans (quinze ans avant l'âge de 
 
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
-1. Système actuel                                                  19,042€     26,660€    2,222€     réf.
-2. Notionnel rétroactif, part salariale                             1,915€      2,681€      223€   -89.9%
-3. Notionnel dès 2026, part salariale                              19,042€     26,660€    2,222€    +0.0%
-4. Notionnel rétroactif, salariale + patronale                      6,464€      9,051€      754€   -66.1%
-5. Notionnel dès 2026, salariale + patronale                       19,042€     26,660€    2,222€    +0.0%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse         6,464€      9,051€      754€   -66.1%
+1. Système actuel                                                  35,435€     28,280€    2,357€     réf.
+2. Notionnel rétroactif, part salariale                             8,483€      6,770€      564€   -76.1%
+3. Notionnel dès 2026, part salariale                              27,029€     21,571€    1,798€   -23.7%
+4. Notionnel rétroactif, salariale + patronale                     49,581€     39,570€    3,298€   +39.9%
+5. Notionnel dès 2026, salariale + patronale                       32,000€     25,539€    2,128€    -9.7%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        47,051€     37,551€    3,129€   +32.8%
 ```
 
 > Les scénarios 4 et 5 sont les scénarios 2 et 3, à une différence près et une
@@ -140,8 +140,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->677<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 074<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->679<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 081<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Six pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -172,7 +172,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->2 944<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->2 950<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -582,23 +582,23 @@ Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
-1. Système actuel                                                  39,841€     31,797€    2,650€     réf.
-2. Notionnel rétroactif, part salariale                             7,889€      6,297€      525€   -80.2%
-3. Notionnel dès 2026, part salariale                              26,638€     21,259€    1,772€   -33.1%
-4. Notionnel rétroactif, salariale + patronale                     43,620€     34,813€    2,901€    +9.5%
-5. Notionnel dès 2026, salariale + patronale                       31,904€     25,462€    2,122€   -19.9%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        40,939€     32,673€    2,723€    +2.8%
+1. Système actuel                                                  35,435€     28,280€    2,357€     réf.
+2. Notionnel rétroactif, part salariale                             8,483€      6,770€      564€   -76.1%
+3. Notionnel dès 2026, part salariale                              27,029€     21,571€    1,798€   -23.7%
+4. Notionnel rétroactif, salariale + patronale                     49,581€     39,570€    3,298€   +39.9%
+5. Notionnel dès 2026, salariale + patronale                       32,000€     25,539€    2,128€    -9.7%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        47,051€     37,551€    3,129€   +32.8%
 --------------------------------------------------------------------------------------------------------
-   hors répartition (RAFP), servi à part, identique aux 6           1,410€      1,126€       94€         
+   hors répartition (RAFP), servi à part, identique aux 6           1,506€      1,202€      100€         
 --------------------------------------------------------------------------------------------------------
-   + rente capitalisée obligatoire, scénario 6                      1,729€      1,380€      115€         
-   + rente capitalisée volontaire, les 5 points rendus              1,729€      1,380€      115€         
-   = total servi par le scénario 6                                 44,397€     35,433€    2,953€   +11.4%
+   + rente capitalisée obligatoire, scénario 6                      1,633€      1,303€      109€         
+   + rente capitalisée volontaire, les 5 points rendus              1,633€      1,303€      109€         
+   = total servi par le scénario 6                                 50,317€     40,157€    3,346€   +42.0%
 
 Qui verse la cotisation, en euros courants cumulés :
-  part salariale           135,050 €   scénarios 2 et 3
-  part patronale           517,830 €   soit 79% du total
-  total                    652,880 €   scénarios 4 et 5
+  part salariale           139,912 €   scénarios 2 et 3
+  part patronale           579,314 €   soit 81% du total
+  total                    719,225 €   scénarios 4 et 5
   contribution employeur publique trouvée sur 29 année(s)
 ```
 
@@ -1147,7 +1147,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1095 tests Python
+tests/                          1096 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1196,7 +1196,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1095<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1096<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
