@@ -1357,3 +1357,38 @@ def test_le_bilan_se_dit_aussi_en_euros(cout: Cout):
     assert horizon.pib == 0.0
     assert horizon.ressources_meur() == 0.0
     assert horizon.depense_meur("actuel") == 0.0
+
+
+def test_le_scenario_6_ne_reconduit_pas_la_contribution_d_equilibre_de_l_Etat(
+        cout_assiette, comptes: ComptesRetraite):
+    """L'État cotise à 18 % comme tout employeur, et ne verse plus d'équilibre.
+
+    Décision du Parti libéral du 19 septembre 2026. Elle était jusque-là vraie
+    par accident : la contribution d'équilibre est marquée `contributive` dans
+    `equilibre.py`, donc comprise dans `part_contributive`, donc remplacée par
+    les 18 % — sans que rien ne l'écrive ni ne l'empêche de changer. Ce test la
+    tient.
+
+    Le raccord n'est juste que parce que l'assiette couvre TOUTES les branches :
+    les traitements des fonctionnaires y sont, et les 18 % qu'on leur applique
+    sont ce que l'État verse désormais. Reconduire la contribution en plus la
+    compterait deux fois.
+    """
+    annees = [a for a in cout_assiette.solde.annees if a.recette_par_assiette]
+    assert annees, "aucune année ne suit la convention du programme"
+
+    for point in annees:
+        # 1. La contribution d'équilibre est DANS la part contributive : la
+        #    part contributive dépasse donc les seules cotisations.
+        part_cotisations = comptes.part("cotisations", point.annee)
+        assert point.part_contributive > part_cotisations + 1e-9, (
+            f"{point.annee} : la contribution d'équilibre est sortie de la part "
+            "contributive, le scénario 6 la reconduirait en plus des 18 %"
+        )
+
+        # 2. Ce que le scénario 6 reconduit, c'est le COMPLÉMENT de la part
+        #    contributive — donc ni les cotisations, ni la contribution.
+        attendu = (point.ressources * point.taux_liberal / point.taux_prelevement
+                   + point.ressources * (1.0 - point.part_contributive)
+                   - point.retrait)
+        assert point.ressources_de("notionnel_liberal") == pytest.approx(attendu)
