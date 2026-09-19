@@ -5143,6 +5143,7 @@ que de ${premiereVentilee} à ${derniereVentilee}.`,
     coutDetailScenarios(contexte),
     coutDetailEquilibre(contexte),
     coutDetailDette(contexte),
+    coutDetailFrise(contexte),
     coutDetailGarantie(contexte),
     coutDetailCapitalisation(contexte),
     coutDetailPoids(contexte),
@@ -6419,6 +6420,77 @@ ${g.pourcentage(moins.horizon("actuel"), false, 0)} à
 ${g.pourcentage(plus.horizon("actuel"), false, 0)} du PIB.</div>
 `,
     "cout-dette",
+  );
+}
+
+/**
+ * La frise des flux : chaque année, ce qui rentre, ce qui sort, ce qui reste.
+ * Une colonne par année et par système, un système à la fois par les onglets
+ * des grilles de Cas types. Copie de `_cout_detail_frise` dans `web/pages.py`.
+ */
+function coutDetailFrise(contexte) {
+  const c = contexte.cout();
+  const dette = c.dette;
+  if (!dette.annees.length) return "";
+  const solde = c.solde;
+  const depart = dette.anneeDepart;
+  const fin = dette.derniereAnnee;
+
+  const frise = (scenario, libelle) => {
+    const lignes = [];
+    let precedent = 0.0;
+    for (const ligne of dette.annees) {
+      const bilan = solde.annee(ligne.annee);
+      lignes.push(new g.AnneeFrise(
+        ligne.annee,
+        bilan.ressourcesDe(scenario) * 100,
+        bilan.depense(scenario) * 100,
+        ligne.interet(scenario) * 100,
+        precedent / (1.0 + ligne.croissance) * 100,
+        ligne.stock(scenario) * 100,
+        ligne.croissance,
+      ));
+      precedent = ligne.stock(scenario);
+    }
+    return g.friseFlux(
+      "Ce qui rentre, ce qui sort et ce qui s'accumule chaque année de "
+      + `${dette.premiereAnnee} à ${fin}, ${libelle}`,
+      lignes,
+    );
+  };
+
+  const court = (libelle) => libelle.split(". ").slice(1).join(". ");
+  const onglets = SCENARIOS_COMPARES.map(([scenario, libelle], rang) => (
+    `<input type="radio" name="grille" id="grille-${scenario}"`
+    + (rang === 0 ? " checked" : "")
+    + `><label for="grille-${scenario}">${echapper(court(libelle))}</label>`
+  )).join("");
+  const panneaux = SCENARIOS_COMPARES.map(([scenario, libelle], rang) => (
+    `<div class="panneau" data-onglet="${scenario}"`
+    + (rang === 0 ? "" : " hidden") + ">"
+    + `<h3>${echapper(libelle)} ${badgeScenario(scenario)}</h3>`
+    + frise(scenario, court(libelle).toLowerCase()) + "</div>"
+  )).join("");
+  return g.depliant(
+    "La frise des flux : chaque année, ce qui rentre, ce qui sort, ce qui reste", `
+<p>La courbe de la section précédente se lit ici colonne par colonne, une par
+année, comme un registre. À gauche <strong>ce qui rentre</strong> dans la
+caisse, à droite <strong>ce qui sort</strong>, au milieu la caisse elle-même,
+aussi haute que le plus grand des deux : son pied est rouge quand il manque de
+l'argent, et cet argent est emprunté ; vert quand il en reste, et cet argent
+est placé. Dessous, en chiffres, le stock : ce qu'il était au 1er janvier,
+les intérêts de l'année, l'emprunt ou le placement, et ce qu'il est au 31
+décembre. Chaque colonne tombe juste : le 31 décembre d'une année, rapporté au
+PIB de la suivante, est son 1er janvier.</p>
+<p class="discret">Tout est en part du PIB de l'année, comme sur la courbe. Le
+stock n'est pas dessiné à l'échelle des flux, dont il vaut jusqu'à cinquante
+fois la hauteur : il est écrit. Un stock négatif est une réserve, et ses intérêts lui
+rapportent au lieu de lui coûter. La frise défile de ${depart + 1} à ${fin} ;
+ses chiffres sont redits, ligne par ligne, dans le tableau replié dessous.</p>
+<fieldset class="onglets"><legend>Système affiché</legend>${onglets}</fieldset>
+<div class="panneaux">${panneaux}</div>
+`,
+    "cout-frise",
   );
 }
 

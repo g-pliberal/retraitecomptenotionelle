@@ -1412,6 +1412,141 @@ export function donneesDuGraphique(titre, annees, series, unite = "",
 }
 
 /**
+ * Géométrie de la frise des flux, en unités SVG : une colonne par année, un
+ * point de PIB vaut `ECHELLE_FRISE` pixels. Portage de `frise_flux`.
+ */
+const COLONNE_FRISE = 200;
+const MARGE_FRISE = 16;
+const HAUTEUR_FRISE = 330;
+const HAUT_FRISE = 40;
+const ECHELLE_FRISE = 7.0;
+const LARGEUR_NOEUD_FRISE = 14;
+
+/**
+ * Une année de la frise, en POINTS de PIB — sauf la croissance, en fraction.
+ */
+export class AnneeFrise {
+  constructor(annee, rentre, sort, interets, debut, fin, croissance) {
+    this.annee = annee;
+    this.rentre = rentre;
+    this.sort = sort;
+    this.interets = interets;
+    this.debut = debut;
+    this.fin = fin;
+    this.croissance = croissance;
+  }
+}
+
+/**
+ * La frise des stocks et des flux, année par année, pour un système. Chaque
+ * colonne est un compte qui tombe juste : ce qui rentre, la caisse, ce qui
+ * sort, et dessous le stock en chiffres. Voir `frise_flux` dans `gabarit.py`.
+ */
+export function friseFlux(titre, annees) {
+  if (!annees.length) return "";
+  const largeur = MARGE_FRISE * 2 + COLONNE_FRISE * annees.length;
+  const demi = LARGEUR_NOEUD_FRISE / 2;
+  const xRentre = 20;
+  const xCaisse = 93;
+  const xSort = 166;
+  const basBarres = HAUT_FRISE + ECHELLE_FRISE * 16;
+  const pts = (valeur) => `${nombre(valeur, 1)}${FINE}%`;
+  const largeurNoeud = nombreBrut(LARGEUR_NOEUD_FRISE);
+
+  const dessins = [];
+  annees.forEach((ligne, rang) => {
+    const x = MARGE_FRISE + COLONNE_FRISE * rang;
+    const hRentre = ECHELLE_FRISE * ligne.rentre;
+    const hSort = ECHELLE_FRISE * ligne.sort;
+    const hCaisse = Math.max(hRentre, hSort);
+    const hSolde = Math.abs(hRentre - hSort);
+    const solde = ligne.rentre - ligne.sort;
+    const teinte = solde >= 0.0 ? "reste" : "manque";
+    const gauche = nombreBrut(x + xRentre + LARGEUR_NOEUD_FRISE);
+    const milieu = nombreBrut(x + xCaisse);
+    const milieuDroit = nombreBrut(x + xCaisse + LARGEUR_NOEUD_FRISE);
+    const droite = nombreBrut(x + xSort);
+    const haut = nombreBrut(HAUT_FRISE);
+    dessins.push(
+      `<line class="grille" x1="${nombreBrut(x)}" y1="${nombreBrut(30)}" `
+      + `x2="${nombreBrut(x)}" y2="${nombreBrut(HAUTEUR_FRISE - 10)}"/>`
+      + `<text class="titre" x="${nombreBrut(x + COLONNE_FRISE / 2)}" y="22" `
+      + `text-anchor="middle">${ligne.annee}</text>`
+      + `<path class="ruban rentre" d="M${gauche} ${haut} L${milieu} ${haut} `
+      + `L${milieu} ${nombreBrut(HAUT_FRISE + hRentre)} `
+      + `L${gauche} ${nombreBrut(HAUT_FRISE + hRentre)} Z"/>`
+      + `<path class="ruban sort" d="M${milieuDroit} ${haut} L${droite} ${haut} `
+      + `L${droite} ${nombreBrut(HAUT_FRISE + hSort)} `
+      + `L${milieuDroit} ${nombreBrut(HAUT_FRISE + hSort)} Z"/>`
+      + `<rect class="noeud rentre" x="${nombreBrut(x + xRentre)}" y="${haut}" `
+      + `width="${largeurNoeud}" height="${nombreBrut(hRentre)}"/>`
+      + `<rect class="noeud" x="${milieu}" y="${haut}" `
+      + `width="${largeurNoeud}" height="${nombreBrut(hCaisse)}"/>`
+      + (hSolde > 0.0
+        ? `<rect class="${teinte}" x="${milieu}" `
+          + `y="${nombreBrut(HAUT_FRISE + hCaisse - hSolde)}" `
+          + `width="${largeurNoeud}" height="${nombreBrut(hSolde)}"/>`
+        : "")
+      + `<rect class="noeud sort" x="${droite}" y="${haut}" `
+      + `width="${largeurNoeud}" height="${nombreBrut(hSort)}"/>`
+      + `<text class="graduation" x="${nombreBrut(x + xRentre + demi)}" `
+      + `y="${nombreBrut(basBarres + 18)}" text-anchor="middle">Rentre</text>`
+      + `<text class="graduation" x="${nombreBrut(x + xRentre + demi)}" `
+      + `y="${nombreBrut(basBarres + 34)}" text-anchor="middle">${pts(ligne.rentre)}</text>`
+      + `<text class="graduation ${teinte}" x="${nombreBrut(x + xCaisse + demi)}" `
+      + `y="${nombreBrut(basBarres + 18)}" text-anchor="middle">`
+      + `${solde >= 0.0 ? "Reste" : "Manque"}</text>`
+      + `<text class="graduation ${teinte}" x="${nombreBrut(x + xCaisse + demi)}" `
+      + `y="${nombreBrut(basBarres + 34)}" text-anchor="middle">${pts(Math.abs(solde))}</text>`
+      + `<text class="graduation" x="${nombreBrut(x + xSort + demi)}" `
+      + `y="${nombreBrut(basBarres + 18)}" text-anchor="middle">Sort</text>`
+      + `<text class="graduation" x="${nombreBrut(x + xSort + demi)}" `
+      + `y="${nombreBrut(basBarres + 34)}" text-anchor="middle">${pts(ligne.sort)}</text>`
+      + `<text class="graduation" x="${nombreBrut(x + xRentre)}" `
+      + `y="${nombreBrut(basBarres + 66)}">PIB : ${pourcentage(ligne.croissance, true, 1)}</text>`
+      + `<text class="graduation" x="${nombreBrut(x + xRentre)}" `
+      + `y="${nombreBrut(basBarres + 86)}">1er janv. : ${pts(ligne.debut)}</text>`
+      + `<text class="graduation" x="${nombreBrut(x + xRentre)}" `
+      + `y="${nombreBrut(basBarres + 106)}">intérêts : ${pts(ligne.interets)}</text>`
+      + `<text class="graduation ${teinte}" x="${nombreBrut(x + xRentre)}" `
+      + `y="${nombreBrut(basBarres + 126)}">`
+      + `${solde >= 0.0 ? "placé" : "emprunt"} : ${pts(Math.abs(solde))}</text>`
+      + `<text class="titre" x="${nombreBrut(x + xRentre)}" `
+      + `y="${nombreBrut(basBarres + 148)}">31 déc. : ${pts(ligne.fin)}</text>`,
+    );
+  });
+
+  const legende = '<figcaption><ul class="legende">'
+    + '<li><span class="pastille" style="background:var(--serie-5)"></span>'
+    + "<span>Ce qui rentre : cotisations et impôts</span></li>"
+    + '<li><span class="pastille" style="background:var(--serie-2)"></span>'
+    + "<span>Ce qui sort : les pensions</span></li>"
+    + '<li><span class="pastille ecart-plus"></span>'
+    + '<span class="pastille ecart-moins"></span>'
+    + "<span>Le pied de la caisse : vert s'il en reste, rouge s'il en manque</span></li>"
+    + "</ul></figcaption>";
+  const grille = tableau(
+    ["Année", "Rentre", "Sort", "Solde", "Intérêts",
+      "Stock au 1er janvier", "Stock au 31 décembre"],
+    annees.map((ligne) => [
+      String(ligne.annee), nombre(ligne.rentre, 2), nombre(ligne.sort, 2),
+      nombre(ligne.rentre - ligne.sort, 2), nombre(ligne.interets, 2),
+      nombre(ligne.debut, 2), nombre(ligne.fin, 2),
+    ]),
+    [""].concat(Array(6).fill("nombre")),
+    `${titre}, en points de PIB`, true,
+  );
+  return `<figure class="frise" role="group" aria-label="${echapper(titre)}">`
+    + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
+    + `<svg width="${largeur}" height="${HAUTEUR_FRISE}" `
+    + `viewBox="0 0 ${largeur} ${HAUTEUR_FRISE}" role="img" aria-label="${echapper(titre)}">`
+    + `${dessins.join("")}</svg></div>${legende}</figure>`
+    + '<details class="donnees-frise">'
+    + sommaire(`Les chiffres de cette frise, année par année (${annees.length} lignes)`)
+    + `${grille}</details>`;
+}
+
+/**
  * Légende du graphique, posée en `<figcaption>`.
  *
  * Ce n'est pas un ornement : le SVG est annoncé comme une image, et la légende

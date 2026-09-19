@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 379<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 586<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -615,11 +615,33 @@ système actuel. `limites.md` §5 porte les trois.
   de 2026 à 2070 — 51 points de déficits additionnés, le reste d'intérêts nets
   de la croissance —, 57 % à un point de taux de moins, 78 % à un point de
   plus, et ses intérêts de 2070 pèsent 2,4 % du PIB ; la proposition, à 18 %,
-  en accumule 150 % ; les systèmes 2 et 3 accumulent l'inverse, des réserves
-  de 526 % et 108 % du PIB, qui mesurent la marge que le coefficient
-  d'équilibre, jamais appliqué, aurait à distribuer. Six tests dans
+  en accumule 145 % (115 % et 183 % à un point près) ; les systèmes 2 et 3
+  accumulent l'inverse, des réserves de 526 % et 113 % du PIB, qui mesurent la
+  marge que le coefficient d'équilibre, jamais appliqué, aurait à distribuer.
+  *[Ces chiffres sont ceux de `main` après le rebasage : la session avait
+  mesuré 150 % et 108 % sur une base antérieure au profil de carrière lu chez
+  l'INSEE, et son message de commit les porte encore.]* Six tests dans
   `test_cout.py`, un dans `test_web.py` pour l'échelle négative, le plan de la
   page Coût compte une entrée de plus.
+
+- **19 septembre 2026, la frise des flux, dans un dépliant.** La seconde
+  pièce reprise du même simulateur : son registre année par année, où chaque
+  colonne est un compte qui tombe juste. Ici, par système et par année de 2026
+  à 2070 : ce qui rentre dans la caisse, ce qui en sort, le pied de la caisse
+  coloré de ce qui manque (emprunté) ou de ce qui reste (placé), et dessous
+  le stock en chiffres, du 1er janvier au 31 décembre, intérêts et emprunt
+  compris ; le 31 décembre d'une année, rapporté au PIB de la suivante, est
+  son 1er janvier. Le stock n'est pas dessiné à l'échelle des flux, dont il
+  vaut jusqu'à cinquante fois la hauteur : il est écrit. Un système à la fois,
+  par les onglets des grilles de Cas types, dont la feuille de style apprend
+  le système actuel. Livré : `frise_flux` et `AnneeFrise` dans `gabarit.py`,
+  `friseFlux` dans `gabarit.js`, la section « La frise des flux » sur la page
+  Coût dans les deux rendus, entre la dette et la garantie, les styles
+  `.frise` et `.donnees-frise`. Ce que la frise ne reprend pas de l'artifact :
+  ses cinq voies (livret, fonds, caisse, deux dettes) et son zoom, parce que
+  le modèle n'a qu'une caisse et un stock, et que quarante-cinq colonnes se
+  parcourent au défilement. Quatre frises rendues par page, soit trois cents
+  kilooctets de SVG dans le témoin de la page Coût.
 
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 

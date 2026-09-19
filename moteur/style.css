@@ -900,6 +900,7 @@ tbody tr[hidden] { display: none; }
 .bascule .choix > a:focus-visible { outline: 3px solid var(--or); outline-offset: 3px; }
 .panneaux > .panneau[hidden] { display: none; }
 .onglets:has(input:checked) ~ .panneaux > .panneau { display: none; }
+.onglets:has(#grille-actuel:checked) ~ .panneaux > .panneau[data-onglet="actuel"],
 .onglets:has(#grille-notionnel_liberal:checked) ~ .panneaux > .panneau[data-onglet="notionnel_liberal"],
 .onglets:has(#grille-notionnel_retroactif:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif"],
 .onglets:has(#grille-notionnel_retroactif_employeur:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif_employeur"] {
@@ -1289,15 +1290,38 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
    à la distance qui sépare deux paragraphes : c'est la même figure, dite
    autrement. Déplié, il est borné en hauteur, et ses en-têtes de colonne
    restent visibles pendant qu'on le parcourt. */
-.donnees-graphique { margin: -1.4rem 0 1.7rem; }
-.donnees-graphique .defilant { max-height: 24rem; overflow-y: auto; }
-.donnees-graphique table { font-size: 0.9rem; }
-.donnees-graphique th, .donnees-graphique td { padding: 0.25rem 0.6rem; }
-.donnees-graphique thead th {
+.donnees-graphique, .donnees-frise { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique .defilant, .donnees-frise .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-graphique table, .donnees-frise table { font-size: 0.9rem; }
+.donnees-graphique th, .donnees-graphique td,
+.donnees-frise th, .donnees-frise td { padding: 0.25rem 0.6rem; }
+.donnees-graphique thead th, .donnees-frise thead th {
   position: sticky; top: 0; background: var(--fond-defilant);
   box-shadow: inset 0 -2px 0 var(--or);
 }
-.donnees-graphique caption { padding-bottom: 0.35rem; }
+.donnees-graphique caption, .donnees-frise caption { padding-bottom: 0.35rem; }
+/* La frise des flux : une colonne par année, lue de gauche à droite dans une
+   boîte qui défile. Le SVG garde sa largeur en pixels — c'est la boîte qui
+   défile, pas le dessin qui rétrécit —, sans quoi quarante-cinq années
+   tiendraient dans quarante-cinq millimètres. */
+.frise { margin: 1.5rem 0 1.75rem; }
+.frise .defilant { padding-bottom: 0.5rem; }
+.frise svg { display: block; height: auto; max-width: none; }
+.frise .titre {
+  fill: var(--texte); font-family: inherit; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.frise .graduation {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.frise .grille { stroke: var(--trait); stroke-width: 1; }
+.frise .noeud { fill: var(--serie-9); }
+.frise .noeud.rentre, .frise .ruban.rentre { fill: var(--serie-5); }
+.frise .noeud.sort, .frise .ruban.sort { fill: var(--serie-2); }
+.frise .ruban { opacity: 0.45; }
+.frise .manque { fill: var(--manque); }
+.frise .reste { fill: var(--reste); }
 ul.legende {
   list-style: none; margin: 0.75rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-size: 0.9375rem;

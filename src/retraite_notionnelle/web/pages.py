@@ -5767,6 +5767,7 @@ que de {premiere_ventilee} à {derniere_ventilee}.""",
         _cout_detail_scenarios(contexte),
         _cout_detail_equilibre(contexte),
         _cout_detail_dette(contexte),
+        _cout_detail_frise(contexte),
         _cout_detail_garantie(contexte),
         _cout_detail_capitalisation(contexte),
         _cout_detail_poids(contexte),
@@ -7165,6 +7166,86 @@ point de plus ou de moins déplace la dette du système actuel en {fin} de
 {g.pourcentage(plus.horizon("actuel"), decimales=0)} du PIB.</div>
 """,
         identifiant="cout-dette",
+    )
+
+
+def _cout_detail_frise(contexte: Contexte) -> str:
+    """La frise des flux : chaque année, ce qui rentre, ce qui sort, ce qui reste.
+
+    LA SECTION PRÉCÉDENTE DONNE LA COURBE ; CELLE-CI DONNE LE REGISTRE. Une
+    colonne par année et par système, où l'on voit passer l'argent : ce qui
+    rentre dans la caisse, ce qui en sort, et le pied de la caisse — emprunté
+    quand il manque, placé quand il reste — qui va grossir ou réduire le stock
+    écrit dessous. Le stock au 1er janvier est celui du 31 décembre précédent,
+    rapporté au PIB de l'année : c'est ce qui fait que chaque colonne tombe
+    juste, au dixième près, avec les mêmes nombres que la courbe.
+
+    Un système à la fois, par les mêmes onglets que les grilles de Cas types :
+    quatre frises rendues, une seule visible, et le premier onglet reste
+    visible là où ``:has()`` n'existe pas.
+    """
+    cout = contexte.cout()
+    dette = cout.dette
+    if not dette.annees:
+        return ""
+    solde = cout.solde
+    depart = dette.annee_depart
+    fin = dette.derniere_annee
+
+    def frise(scenario: str, libelle: str) -> str:
+        lignes = []
+        precedent = 0.0
+        for ligne in dette.annees:
+            bilan = solde.annee(ligne.annee)
+            lignes.append(g.AnneeFrise(
+                ligne.annee,
+                bilan.ressources_de(scenario) * 100,
+                bilan.depense(scenario) * 100,
+                ligne.interet(scenario) * 100,
+                precedent / (1.0 + ligne.croissance) * 100,
+                ligne.stock(scenario) * 100,
+                ligne.croissance,
+            ))
+            precedent = ligne.stock(scenario)
+        return g.frise_flux(
+            f"Ce qui rentre, ce qui sort et ce qui s'accumule chaque année de "
+            f"{dette.premiere_annee} à {fin}, {libelle}",
+            tuple(lignes),
+        )
+
+    onglets = "".join(
+        f'<input type="radio" name="grille" id="grille-{scenario}"'
+        + (" checked" if rang == 0 else "")
+        + f'><label for="grille-{scenario}">{escape(libelle.split(". ", 1)[1])}</label>'
+        for rang, (scenario, libelle) in enumerate(SCENARIOS_COMPARES)
+    )
+    panneaux = "".join(
+        f'<div class="panneau" data-onglet="{scenario}"'
+        + ("" if rang == 0 else " hidden") + ">"
+        + f"<h3>{escape(libelle)} {_badge_scenario(scenario)}</h3>"
+        + frise(scenario, libelle.split(". ", 1)[1].lower()) + "</div>"
+        for rang, (scenario, libelle) in enumerate(SCENARIOS_COMPARES)
+    )
+    return g.depliant(
+        "La frise des flux : chaque année, ce qui rentre, ce qui sort, ce qui reste", f"""
+<p>La courbe de la section précédente se lit ici colonne par colonne, une par
+année, comme un registre. À gauche <strong>ce qui rentre</strong> dans la
+caisse, à droite <strong>ce qui sort</strong>, au milieu la caisse elle-même,
+aussi haute que le plus grand des deux : son pied est rouge quand il manque de
+l'argent, et cet argent est emprunté ; vert quand il en reste, et cet argent
+est placé. Dessous, en chiffres, le stock : ce qu'il était au 1er janvier,
+les intérêts de l'année, l'emprunt ou le placement, et ce qu'il est au 31
+décembre. Chaque colonne tombe juste : le 31 décembre d'une année, rapporté au
+PIB de la suivante, est son 1er janvier.</p>
+<p class="discret">Tout est en part du PIB de l'année, comme sur la courbe. Le
+stock n'est pas dessiné à l'échelle des flux, dont il vaut jusqu'à cinquante
+fois la hauteur : il est écrit. Un stock négatif est une réserve, et ses intérêts lui
+rapportent au lieu de lui coûter. La frise défile de {depart + 1} à {fin} ;
+ses chiffres sont redits, ligne par ligne, dans le tableau replié dessous.</p>
+<fieldset class="onglets"><legend>Système affiché</legend>{onglets}</fieldset>
+<div class="panneaux">{panneaux}</div>
+""",
+        identifiant="cout-frise",
     )
 
 

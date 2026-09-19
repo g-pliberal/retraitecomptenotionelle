@@ -913,6 +913,7 @@ tbody tr[hidden] { display: none; }
 .bascule .choix > a:focus-visible { outline: 3px solid var(--or); outline-offset: 3px; }
 .panneaux > .panneau[hidden] { display: none; }
 .onglets:has(input:checked) ~ .panneaux > .panneau { display: none; }
+.onglets:has(#grille-actuel:checked) ~ .panneaux > .panneau[data-onglet="actuel"],
 .onglets:has(#grille-notionnel_liberal:checked) ~ .panneaux > .panneau[data-onglet="notionnel_liberal"],
 .onglets:has(#grille-notionnel_retroactif:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif"],
 .onglets:has(#grille-notionnel_retroactif_employeur:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif_employeur"] {
@@ -1302,15 +1303,38 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
    à la distance qui sépare deux paragraphes : c'est la même figure, dite
    autrement. Déplié, il est borné en hauteur, et ses en-têtes de colonne
    restent visibles pendant qu'on le parcourt. */
-.donnees-graphique { margin: -1.4rem 0 1.7rem; }
-.donnees-graphique .defilant { max-height: 24rem; overflow-y: auto; }
-.donnees-graphique table { font-size: 0.9rem; }
-.donnees-graphique th, .donnees-graphique td { padding: 0.25rem 0.6rem; }
-.donnees-graphique thead th {
+.donnees-graphique, .donnees-frise { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique .defilant, .donnees-frise .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-graphique table, .donnees-frise table { font-size: 0.9rem; }
+.donnees-graphique th, .donnees-graphique td,
+.donnees-frise th, .donnees-frise td { padding: 0.25rem 0.6rem; }
+.donnees-graphique thead th, .donnees-frise thead th {
   position: sticky; top: 0; background: var(--fond-defilant);
   box-shadow: inset 0 -2px 0 var(--or);
 }
-.donnees-graphique caption { padding-bottom: 0.35rem; }
+.donnees-graphique caption, .donnees-frise caption { padding-bottom: 0.35rem; }
+/* La frise des flux : une colonne par année, lue de gauche à droite dans une
+   boîte qui défile. Le SVG garde sa largeur en pixels — c'est la boîte qui
+   défile, pas le dessin qui rétrécit —, sans quoi quarante-cinq années
+   tiendraient dans quarante-cinq millimètres. */
+.frise { margin: 1.5rem 0 1.75rem; }
+.frise .defilant { padding-bottom: 0.5rem; }
+.frise svg { display: block; height: auto; max-width: none; }
+.frise .titre {
+  fill: var(--texte); font-family: inherit; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.frise .graduation {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.frise .grille { stroke: var(--trait); stroke-width: 1; }
+.frise .noeud { fill: var(--serie-9); }
+.frise .noeud.rentre, .frise .ruban.rentre { fill: var(--serie-5); }
+.frise .noeud.sort, .frise .ruban.sort { fill: var(--serie-2); }
+.frise .ruban { opacity: 0.45; }
+.frise .manque { fill: var(--manque); }
+.frise .reste { fill: var(--reste); }
 ul.legende {
   list-style: none; margin: 0.75rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-size: 0.9375rem;
@@ -3209,6 +3233,167 @@ def donnees_du_graphique(titre: str, annees: tuple[int, ...],
         '<details class="donnees-graphique">'
         + sommaire(f"Les chiffres de ce graphique, {pas} par {pas} "
                    f"({len(annees)} lignes)")
+        + f"{grille}</details>"
+    )
+
+
+#: Géométrie de la frise des flux, en unités SVG. Une colonne par année :
+#: trois barres — ce qui rentre, la caisse, ce qui sort —, deux rubans entre
+#: elles, et sous la caisse ce qui manque ou ce qui reste. Un point de PIB
+#: vaut ``ECHELLE_FRISE`` pixels, le même pour toutes les années et tous les
+#: systèmes, pour que deux colonnes se comparent à l'œil.
+COLONNE_FRISE = 200
+MARGE_FRISE = 16
+HAUTEUR_FRISE = 330
+HAUT_FRISE = 40
+ECHELLE_FRISE = 7.0
+LARGEUR_NOEUD_FRISE = 14
+
+
+@dataclass(frozen=True)
+class AnneeFrise:
+    """Une année de la frise, en POINTS de PIB — sauf la croissance, en fraction."""
+
+    annee: int
+    #: Ce qui rentre dans la caisse : cotisations, impôts, transferts.
+    rentre: float
+    #: Ce qui en sort : les pensions.
+    sort: float
+    #: Les intérêts du stock de l'année précédente.
+    interets: float
+    #: Le stock au 1er janvier, déjà rapporté au PIB de l'année.
+    debut: float
+    #: Le stock au 31 décembre.
+    fin: float
+    #: La croissance nominale du PIB sur l'année.
+    croissance: float
+
+
+def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
+    """La frise des stocks et des flux, année par année, pour un système.
+
+    CHAQUE COLONNE EST UN COMPTE QUI TOMBE JUSTE. À gauche ce qui rentre, au
+    milieu la caisse, à droite ce qui sort ; la caisse est aussi haute que le
+    plus grand des deux, et son pied est coloré de ce qui manque — emprunté —
+    ou de ce qui reste — placé. Dessous, en chiffres, le stock : ce qu'il était
+    au 1er janvier, rapporté au PIB de l'année, plus les intérêts, plus
+    l'emprunt ou moins le placement, et ce qu'il est au 31 décembre. Le stock
+    n'est pas dessiné à l'échelle des flux : il en vaut jusqu'à cinquante fois
+    un, et une barre à cette hauteur écraserait tout le reste.
+
+    Tout est en part du PIB. Une valeur négative du stock est une réserve.
+
+    Le dessin est rendu dans une boîte qui défile, à largeur fixe : c'est le
+    lecteur qui avance dans les années, comme il tournerait les pages d'un
+    registre. Ses chiffres sont redits dans un tableau replié dessous, ligne
+    par ligne, parce qu'un dessin est une image et qu'une image ne se lit pas
+    au clavier.
+    """
+    if not annees:
+        return ""
+    largeur = MARGE_FRISE * 2 + COLONNE_FRISE * len(annees)
+    demi = LARGEUR_NOEUD_FRISE / 2
+    x_rentre, x_caisse, x_sort = 20, 93, 166
+    bas_barres = HAUT_FRISE + ECHELLE_FRISE * 16
+
+    def pts(valeur: float) -> str:
+        return nombre(valeur, 1) + "\u202f%"
+
+    dessins: list[str] = []
+    for rang, ligne in enumerate(annees):
+        x = MARGE_FRISE + COLONNE_FRISE * rang
+        h_rentre = ECHELLE_FRISE * ligne.rentre
+        h_sort = ECHELLE_FRISE * ligne.sort
+        h_caisse = max(h_rentre, h_sort)
+        h_solde = abs(h_rentre - h_sort)
+        solde = ligne.rentre - ligne.sort
+        teinte = "reste" if solde >= 0.0 else "manque"
+        gauche = nombre_brut(x + x_rentre + LARGEUR_NOEUD_FRISE)
+        milieu = nombre_brut(x + x_caisse)
+        milieu_droit = nombre_brut(x + x_caisse + LARGEUR_NOEUD_FRISE)
+        droite = nombre_brut(x + x_sort)
+        haut = nombre_brut(HAUT_FRISE)
+        dessins.append(
+            f'<line class="grille" x1="{nombre_brut(x)}" y1="{nombre_brut(30)}" '
+            f'x2="{nombre_brut(x)}" y2="{nombre_brut(HAUTEUR_FRISE - 10)}"/>'
+            f'<text class="titre" x="{nombre_brut(x + COLONNE_FRISE / 2)}" y="22" '
+            f'text-anchor="middle">{ligne.annee}</text>'
+            # Les rubans d'abord : ils sont un fond.
+            f'<path class="ruban rentre" d="M{gauche} {haut} L{milieu} {haut} '
+            f'L{milieu} {nombre_brut(HAUT_FRISE + h_rentre)} '
+            f'L{gauche} {nombre_brut(HAUT_FRISE + h_rentre)} Z"/>'
+            f'<path class="ruban sort" d="M{milieu_droit} {haut} L{droite} {haut} '
+            f'L{droite} {nombre_brut(HAUT_FRISE + h_sort)} '
+            f'L{milieu_droit} {nombre_brut(HAUT_FRISE + h_sort)} Z"/>'
+            f'<rect class="noeud rentre" x="{nombre_brut(x + x_rentre)}" y="{haut}" '
+            f'width="{nombre_brut(LARGEUR_NOEUD_FRISE)}" height="{nombre_brut(h_rentre)}"/>'
+            f'<rect class="noeud" x="{milieu}" y="{haut}" '
+            f'width="{nombre_brut(LARGEUR_NOEUD_FRISE)}" height="{nombre_brut(h_caisse)}"/>'
+            + (
+                f'<rect class="{teinte}" x="{milieu}" '
+                f'y="{nombre_brut(HAUT_FRISE + h_caisse - h_solde)}" '
+                f'width="{nombre_brut(LARGEUR_NOEUD_FRISE)}" height="{nombre_brut(h_solde)}"/>'
+                if h_solde > 0.0 else ""
+            )
+            + f'<rect class="noeud sort" x="{droite}" y="{haut}" '
+            f'width="{nombre_brut(LARGEUR_NOEUD_FRISE)}" height="{nombre_brut(h_sort)}"/>'
+            f'<text class="graduation" x="{nombre_brut(x + x_rentre + demi)}" '
+            f'y="{nombre_brut(bas_barres + 18)}" text-anchor="middle">Rentre</text>'
+            f'<text class="graduation" x="{nombre_brut(x + x_rentre + demi)}" '
+            f'y="{nombre_brut(bas_barres + 34)}" text-anchor="middle">{pts(ligne.rentre)}</text>'
+            f'<text class="graduation {teinte}" x="{nombre_brut(x + x_caisse + demi)}" '
+            f'y="{nombre_brut(bas_barres + 18)}" text-anchor="middle">'
+            f'{"Reste" if solde >= 0.0 else "Manque"}</text>'
+            f'<text class="graduation {teinte}" x="{nombre_brut(x + x_caisse + demi)}" '
+            f'y="{nombre_brut(bas_barres + 34)}" text-anchor="middle">{pts(abs(solde))}</text>'
+            f'<text class="graduation" x="{nombre_brut(x + x_sort + demi)}" '
+            f'y="{nombre_brut(bas_barres + 18)}" text-anchor="middle">Sort</text>'
+            f'<text class="graduation" x="{nombre_brut(x + x_sort + demi)}" '
+            f'y="{nombre_brut(bas_barres + 34)}" text-anchor="middle">{pts(ligne.sort)}</text>'
+            f'<text class="graduation" x="{nombre_brut(x + x_rentre)}" '
+            f'y="{nombre_brut(bas_barres + 66)}">PIB : {pourcentage(ligne.croissance, True, 1)}</text>'
+            f'<text class="graduation" x="{nombre_brut(x + x_rentre)}" '
+            f'y="{nombre_brut(bas_barres + 86)}">1er janv. : {pts(ligne.debut)}</text>'
+            f'<text class="graduation" x="{nombre_brut(x + x_rentre)}" '
+            f'y="{nombre_brut(bas_barres + 106)}">intérêts : {pts(ligne.interets)}</text>'
+            f'<text class="graduation {teinte}" x="{nombre_brut(x + x_rentre)}" '
+            f'y="{nombre_brut(bas_barres + 126)}">'
+            f'{"placé" if solde >= 0.0 else "emprunt"} : {pts(abs(solde))}</text>'
+            f'<text class="titre" x="{nombre_brut(x + x_rentre)}" '
+            f'y="{nombre_brut(bas_barres + 148)}">31 déc. : {pts(ligne.fin)}</text>'
+        )
+
+    legende = (
+        '<figcaption><ul class="legende">'
+        '<li><span class="pastille" style="background:var(--serie-5)"></span>'
+        "<span>Ce qui rentre : cotisations et impôts</span></li>"
+        '<li><span class="pastille" style="background:var(--serie-2)"></span>'
+        "<span>Ce qui sort : les pensions</span></li>"
+        '<li><span class="pastille ecart-plus"></span>'
+        '<span class="pastille ecart-moins"></span>'
+        "<span>Le pied de la caisse : vert s'il en reste, rouge s'il en manque</span></li>"
+        "</ul></figcaption>"
+    )
+    grille = tableau(
+        ["Année", "Rentre", "Sort", "Solde", "Intérêts",
+         "Stock au 1er janvier", "Stock au 31 décembre"],
+        [
+            [str(ligne.annee), nombre(ligne.rentre, 2), nombre(ligne.sort, 2),
+             nombre(ligne.rentre - ligne.sort, 2), nombre(ligne.interets, 2),
+             nombre(ligne.debut, 2), nombre(ligne.fin, 2)]
+            for ligne in annees
+        ],
+        [""] + ["nombre"] * 6,
+        titre=titre + ", en points de PIB", entete_de_ligne=True,
+    )
+    return (
+        f'<figure class="frise" role="group" aria-label="{escape(titre)}">'
+        f'<div class="defilant" tabindex="0" role="region" aria-label="{escape(titre)}">'
+        f'<svg width="{largeur}" height="{HAUTEUR_FRISE}" '
+        f'viewBox="0 0 {largeur} {HAUTEUR_FRISE}" role="img" aria-label="{escape(titre)}">'
+        f"{''.join(dessins)}</svg></div>{legende}</figure>"
+        '<details class="donnees-frise">'
+        + sommaire(f"Les chiffres de cette frise, année par année ({len(annees)} lignes)")
         + f"{grille}</details>"
     )
 
