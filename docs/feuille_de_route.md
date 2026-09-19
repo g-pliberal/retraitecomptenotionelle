@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 132<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 145<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -675,6 +675,20 @@ système actuel. `limites.md` §5 porte les trois.
   monte à 500 pour une courbe qui plafonne à 260, parce que le pas rond de
   `_sommet` saute de 50 à 100 quand cinq divisions ne suffisent plus — c'est
   la règle de tous les graphiques du site, et elle se règle là, pas ici.
+
+- **19 septembre 2026, la proposition a ses deux courbes sur le bilan.**
+  Demandé par l'utilisateur : le graphique de tête de la page Coût donnait
+  au système actuel ce qui sort et ce qui rentre, et à la proposition une
+  seule courbe, ce qu'elle coûterait. On ne voyait qu'une moitié de son
+  compte. Livré : une cinquième courbe, « Ce qu'elle encaisserait », en jaune
+  plein sous le jaune en tirets, lue dans `ressources_de("notionnel_liberal")`
+  — 18 % sur les revenus d'activité, sans la contribution d'équilibre de
+  l'État ni ce que la CNAF et l'Unédic versent pour des droits qu'elle ne
+  sert plus —, dans les deux rendus, et la note sous la carte dit que l'écart
+  entre les deux jaunes est son solde. *Mesuré* : dès 2026, la proposition
+  encaisse moins qu'elle ne verse, et l'écart se voit là où la phrase « les
+  comptes ne se rééquilibrent jamais » le disait sans le montrer. Seul le
+  témoin de la page Coût bouge.
 
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 

@@ -5809,6 +5809,14 @@ def _cout(contexte: Contexte) -> str:
     reforme = "notionnel_liberal"
     apres = {ligne.annee: ligne.depense(reforme) * 100
              for ligne in solde.annees if ligne.annee >= obs}
+    # Et ce qu'elle encaisserait : 18 % sur les revenus d'activité, sans la
+    # contribution d'équilibre de l'État ni ce que la CNAF et l'Unédic versent
+    # pour des droits qu'elle ne sert plus. Deux courbes pour la proposition
+    # comme pour le système actuel, sinon on ne voit qu'une moitié de son
+    # compte : ce qu'elle coûte, jamais ce qu'elle rapporte.
+    encaisse = {ligne.annee: ligne.ressources_de(reforme) * 100
+                for ligne in solde.annees if ligne.annee >= obs}
+    taux_liberal = contexte.simulateur().parametres.taux_cotisation_liberal
 
     # L'ordre est celui de la lecture, de gauche à droite : la légende se
     # parcourt alors dans l'ordre où l'œil rencontre les courbes.
@@ -5819,6 +5827,9 @@ def _cout(contexte: Contexte) -> str:
         _serie("Ce qui rentre : cotisations et impôts", "var(--serie-5)", entree),
         _serie(f"Ce que coûterait notre proposition, dès {bascule}",
                "var(--liberal)", apres, tirets=True),
+        _serie("Ce qu'elle encaisserait", "var(--liberal)", encaisse,
+               glose=f"{g.pourcentage(taux_liberal, decimales=0)} sur les "
+               "revenus d'activité, sans la contribution de l'État"),
     )
     bilan = g.graphique(
         f"Ce que la retraite verse et ce qu'elle encaisse, de "
@@ -5954,7 +5965,9 @@ lieu d'attendre une réforme.</div>
 système en {g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
 dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
 ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
-on servirait autant, mais réparti autrement entre les carrières</em>.</div>
+on servirait autant, mais réparti autrement entre les carrières</em>. La
+courbe jaune pleine dit ce que la proposition encaisserait, et l'écart entre
+les deux jaunes est son solde.</div>
 
 <h2>Et pour vous ?</h2>
 <p>Tout cela est un total national. Ce que chaque règle donne sur votre
