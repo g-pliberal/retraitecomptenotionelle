@@ -48,7 +48,11 @@ LE PARTAGE DES 18 %, ET POURQUOI IL N'EST PAS ANODIN
 -----------------------------------------------------
 La proposition fixe un taux unique de 18 %, « salariale et patronale
 additionnées », et ne dit pas qui porte quoi. Le modèle partage **moitié-moitié**
-— 9 % et 9 % —, et de même pour les 5 % capitalisés.
+— 9 % et 9 % —, et de même pour les 5 % capitalisés obligatoires.
+
+Les cinq points de capitalisation VOLONTAIRE échappent à ce partage : ils sont
+portés en entier par l'assuré. Personne ne les lui impose, donc personne ne les
+cofinance — et le coût du travail ne bouge pas quand il les verse.
 
 On attendrait ce partage sans effet sous l'incidence intégrale : à coût du
 travail donné, ce qui n'est pas versé à une caisse est versé au salarié, quel
@@ -67,7 +71,7 @@ l'autre :
    plus il reste de coût du travail à verser en salaire.
 
 Les deux jouent dans le même sens, et fort : au salaire moyen comme à quatre
-SMIC, faire porter les 23 points entièrement à l'employeur plutôt que
+SMIC, faire porter les 23 points imposés entièrement à l'employeur plutôt que
 moitié-moitié vaut plusieurs milliers d'euros de net par an. Le partage retenu
 est donc le choix MÉDIAN d'un paramètre que la proposition laisse ouvert, et pas
 une commodité d'écriture. ``part_salariale_taux_unique`` le rend réglable, et
@@ -996,6 +1000,9 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
                      part_salariale: float = 0.5,
                      libelle_repartition: str = "Retraite, compte notionnel",
                      libelle_capitalisation: str = "Retraite, part capitalisée",
+                     taux_capitalisation_volontaire: float = 0.0,
+                     libelle_capitalisation_volontaire: str =
+                         "Retraite, capitalisation volontaire",
                      ) -> BlocRetraite:
     """Le bloc de la proposition : un taux unique, au premier euro, sans plafond.
 
@@ -1008,6 +1015,15 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
     Le pilier capitalisé est un étage à part, et hors du périmètre de la
     réduction générale : il n'est ni une assurance sociale, ni un régime
     complémentaire légalement obligatoire au sens de l'article L. 921-4.
+
+    **Les cinq points VOLONTAIRES, eux, ne sont partagés avec personne.** Ils
+    sont portés en entier par l'assuré, quel que soit ``part_salariale`` : un
+    employeur ne cofinance pas une épargne que son salarié décide seul, et lui
+    en prêter la moitié fabriquerait une hausse du coût du travail que rien
+    n'appuie. Conséquence à retenir, parce qu'elle commande tout le bloc
+    « salaire » du site : activer ces cinq points ne change NI le coût du
+    travail, NI le salaire brut — seulement le net, d'exactement cinq points
+    d'assiette.
     """
     composantes = [ComposanteRetraite(
         code="regime_unifie", libelle=libelle_repartition,
@@ -1023,6 +1039,14 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
                                taux_capitalisation * (1.0 - part_salariale)),),
             dans_la_reduction_generale=False,
         ))
+    if taux_capitalisation_volontaire:
+        composantes.append(ComposanteRetraite(
+            code="capitalisation_volontaire",
+            libelle=libelle_capitalisation_volontaire,
+            salarie=(Segment(0.0, None, taux_capitalisation_volontaire),),
+            employeur=(),
+            dans_la_reduction_generale=False,
+        ))
     return BlocRetraite(
         libelle="Retraite (proposition)",
         composantes=tuple(composantes),
@@ -1032,16 +1056,20 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
 
 def bloc_taux_unique_sans_employeur(
         taux_repartition: float, taux_capitalisation: float = 0.0,
+        taux_capitalisation_volontaire: float = 0.0,
         ) -> BlocRetraite:
     """Le même bloc pour qui n'a pas d'employeur : il porte les 18 % en entier.
 
     La proposition additionne « salariale et patronale ». Un indépendant est les
     deux à la fois — c'est déjà vrai aujourd'hui de ses 26 points —, et lui
     prêter un employeur pour la moitié de la charge fabriquerait un gain qui
-    n'existe pas.
+    n'existe pas. Les cinq points volontaires étaient déjà entièrement à sa
+    charge : ce profil est le seul où les deux capitalisations pèsent pareil.
     """
     return bloc_taux_unique(taux_repartition, taux_capitalisation,
-                            part_salariale=1.0)
+                            part_salariale=1.0,
+                            taux_capitalisation_volontaire=(
+                                taux_capitalisation_volontaire))
 
 
 # -- à quel profil un statut appartient --------------------------------------
@@ -1137,6 +1165,10 @@ class AnneeComparee:
     def gain_net_constant(self) -> float:
         return self.gain_net * self.coefficient_euros_constants
 
+    #: Codes des deux lignes capitalisées de la fiche : celle que la
+    #: proposition impose, celle que l'assuré ajoute.
+    CODES_CAPITALISATION = ("capitalisation", "capitalisation_volontaire")
+
     @property
     def epargne_a_votre_nom(self) -> float:
         """Le pilier capitalisé : prélevé sur le net, mais acquis à l'assuré.
@@ -1145,10 +1177,41 @@ class AnneeComparee:
         aux héritiers tant qu'il n'est pas liquidé. Le site l'affiche à part du
         gain, parce que le confondre avec lui serait compter deux fois, et le
         passer sous silence serait compter une fois de trop.
+
+        Les DEUX cotisations y sont, l'obligatoire et la volontaire : ce qui
+        les sépare est qui les verse, pas ce qu'elles deviennent.
         """
         return sum(ligne.salarie + ligne.employeur
                    for ligne in self.proposition.lignes
-                   if ligne.code == "capitalisation")
+                   if ligne.code in self.CODES_CAPITALISATION)
+
+    @property
+    def epargne_volontaire(self) -> float:
+        """Les seuls cinq points volontaires, entièrement à la charge de l'assuré.
+
+        C'est l'écart entre les deux nets que le site affiche : celui de la
+        proposition telle qu'elle est imposée, et celui de la proposition
+        cotisée au taux d'aujourd'hui.
+        """
+        return sum(ligne.salarie + ligne.employeur
+                   for ligne in self.proposition.lignes
+                   if ligne.code == "capitalisation_volontaire")
+
+    @property
+    def net_sans_volontaire(self) -> float:
+        """Le net si l'assuré ne verse PAS les cinq points volontaires.
+
+        Le calcul est une soustraction, et il est exact : cette cotisation ne
+        touche ni au brut — l'employeur n'en verse rien, le coût du travail est
+        inchangé —, ni à la CSG, qui est assise sur le brut. Elle ne déplace
+        que le net, d'exactement son montant.
+        """
+        return self.proposition.net + self.epargne_volontaire
+
+    @property
+    def gain_net_sans_volontaire(self) -> float:
+        """Ce que la proposition ajoute au net quand on s'en tient à ses 23 points."""
+        return self.net_sans_volontaire - self.droit_en_vigueur.net
 
     @property
     def brut_sous_le_smic(self) -> bool:
@@ -1212,6 +1275,27 @@ class RemunerationActif:
                    for annee in self.annees)
 
     @property
+    def epargne_volontaire_mensuelle(self) -> float:
+        """Les cinq points volontaires de l'année de référence, par mois."""
+        return self.reference.epargne_volontaire / 12.0
+
+    @property
+    def epargne_volontaire_cumulee(self) -> float:
+        """Ce que les seuls points volontaires auront versé, en euros constants."""
+        return sum(annee.epargne_volontaire * annee.coefficient_euros_constants
+                   for annee in self.annees)
+
+    @property
+    def gain_net_mensuel_sans_volontaire(self) -> float:
+        """Le gain de net quand l'assuré s'en tient aux 23 points imposés."""
+        return self.reference.gain_net_sans_volontaire / 12.0
+
+    @property
+    def verse_le_volontaire(self) -> bool:
+        """Y a-t-il seulement des points volontaires à montrer ?"""
+        return any(annee.epargne_volontaire > 0 for annee in self.annees)
+
+    @property
     def bute_sur_le_smic(self) -> bool:
         return any(annee.brut_sous_le_smic for annee in self.annees)
 
@@ -1247,13 +1331,15 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
     cadre = "cadre" in statut and "non_cadre" not in statut
     capitalisation = (parametres.taux_capitalisation_obligatoire
                       if parametres.capitalisation_obligatoire else 0.0)
+    volontaire = parametres.taux_capitalisation_volontaire_applique
     if affiliations.sans_employeur(statut):
         propose = bloc_taux_unique_sans_employeur(
-            parametres.taux_cotisation_liberal, capitalisation)
+            parametres.taux_cotisation_liberal, capitalisation, volontaire)
     else:
         propose = bloc_taux_unique(
             parametres.taux_cotisation_liberal, capitalisation,
             part_salariale=parametres.part_salariale_taux_unique,
+            taux_capitalisation_volontaire=volontaire,
         )
 
     comparees: list[AnneeComparee] = []

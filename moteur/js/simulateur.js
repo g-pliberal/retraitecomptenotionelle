@@ -164,9 +164,14 @@ export class Comparaison {
   // revalorisent pas de la même façon, ne se transmettent pas de la même façon,
   // et ne sont pas exposées aux mêmes risques.
 
-  /** Ce que le pilier obligatoire sert, en plus de la répartition. */
+  /** Ce que le pilier capitalisé sert, en plus de la répartition. */
   renteCapitalisee(scenario) {
     return this[scenario].rente_capitalisation_obligatoire;
+  }
+
+  /** La part de cette rente qui vient des cinq points volontaires. */
+  renteCapitaliseeVolontaire(scenario) {
+    return this[scenario].rente_capitalisation_volontaire;
   }
 
   /** Répartition et capitalisation réunies. */
@@ -313,6 +318,10 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
         frais_arrerages: resultat.capitalisation.frais_arrerages,
         rente_annuelle: resultat.capitalisation.rente_annuelle,
         rente_mensuelle: resultat.capitalisation.rente_mensuelle,
+        taux_cotisation_volontaire:
+          resultat.capitalisation.taux_cotisation_volontaire,
+        rente_volontaire: resultat.capitalisation.rente_volontaire,
+        capital_volontaire: resultat.capitalisation.capital_volontaire,
         taux_rendement_annuel: resultat.capitalisation.taux_rendement_annuel,
         rendement_cumule: resultat.capitalisation.rendement_cumule,
         probabilite_deces_avant_liquidation:
@@ -322,6 +331,7 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
         fiabilite: nomFiabilite(resultat.capitalisation.fiabilite),
       },
     rente_capitalisation_obligatoire: resultat.rente_capitalisation_obligatoire,
+    rente_capitalisation_volontaire: resultat.rente_capitalisation_volontaire,
     pension_totale: resultat.pension_totale,
     pension_totale_euros_constants: resultat.pension_totale * coefficient,
     pension_totale_mensuelle: resultat.pension_totale_mensuelle,

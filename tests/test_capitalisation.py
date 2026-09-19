@@ -185,7 +185,7 @@ def test_le_capital_a_la_forme_close_quand_la_courbe_est_plate(mortalite):
         age_liquidation=50.0, annee_liquidation=2040,
     )
 
-    net = 30_000.0 * parametres.taux_capitalisation_obligatoire * (
+    net = 30_000.0 * parametres.taux_capitalisation_applique * (
         1 - parametres.frais_versement_capitalisation
     )
     facteur = (1 + 0.03) * (1 - parametres.frais_gestion_capitalisation)
@@ -211,7 +211,7 @@ def test_sans_frais_le_capital_est_celui_de_la_courbe_seule(mortalite):
         assiettes=assiettes, annee_naissance=1990,
         age_liquidation=45.0, annee_liquidation=2035,
     )
-    brut = 40_000.0 * parametres.taux_capitalisation_obligatoire
+    brut = 40_000.0 * parametres.taux_capitalisation_applique
     attendu = sum(brut * 1.04 ** (2035 - annee) for annee in range(2026, 2036))
     assert pilier.capital == pytest.approx(attendu)
     assert pilier.capital_hors_frais == pytest.approx(pilier.capital)
@@ -388,7 +388,8 @@ def test_la_pension_de_repartition_ne_bouge_pas_avec_le_pilier():
     notionnelle d'un centime, c'est qu'il aurait pris quelque chose au compte.
     """
     avec = Simulateur(Parametres())
-    sans = Simulateur(Parametres(capitalisation_obligatoire=False))
+    sans = Simulateur(Parametres(capitalisation_obligatoire=False,
+                                 capitalisation_volontaire=False))
     carriere = dict(annee_naissance=1990, sexe="F",
                     affiliation="salarie_prive_non_cadre",
                     age_debut=22, age_liquidation=64)
@@ -445,7 +446,7 @@ def test_la_cotisation_capitalisee_s_ajoute_a_la_meme_assiette(simulateur):
         attendue = assiettes.get(annee.annee, 0.0)
         assert annee.assiette == pytest.approx(attendue)
         assert annee.versement_brut == pytest.approx(
-            attendue * simulateur.parametres.taux_capitalisation_obligatoire
+            attendue * simulateur.parametres.taux_capitalisation_applique
         )
 
 
@@ -530,3 +531,160 @@ def test_la_table_par_sexe_change_la_rente_et_pas_le_capital():
     assert b.capitalisation.capital == pytest.approx(a.capitalisation.capital)
     # Une femme vit plus longtemps : sa rente baisse sur table sexuée.
     assert b.capitalisation.rente_annuelle < a.capitalisation.rente_annuelle
+
+
+# -- les cinq points volontaires ---------------------------------------------
+
+
+def test_le_pilier_se_partage_au_prorata_exact_des_deux_taux(simulateur):
+    """La proportionnalité, qui est ce qui autorise le partage par division.
+
+    Rien dans le pilier ne dépend du niveau du versement : les frais sont des
+    pourcentages, l'échelle de placement ne dépend que de l'horizon, aucun
+    seuil n'intervient. Le capital et la rente sont donc exactement
+    proportionnels au taux, et `part_volontaire` suffit à dire ce que chaque
+    cotisation sert. Si ce test tombait, toutes les lignes « dont volontaire »
+    du site deviendraient fausses, sans qu'aucune autre ne bouge.
+    """
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1995, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=23, age_liquidation=64,
+    ))
+    pilier = comparaison.notionnel_liberal.capitalisation
+    attendue = (simulateur.parametres.taux_capitalisation_volontaire
+                / simulateur.parametres.taux_capitalisation_applique)
+    assert pilier.part_volontaire == pytest.approx(attendue)
+    assert pilier.rente_volontaire + pilier.rente_obligatoire == pytest.approx(
+        pilier.rente_annuelle)
+    assert pilier.capital_volontaire + pilier.capital_obligatoire == pytest.approx(
+        pilier.capital)
+    assert pilier.taux_cotisation_obligatoire == pytest.approx(
+        simulateur.parametres.taux_capitalisation_obligatoire)
+
+
+def test_les_cinq_points_volontaires_valent_le_pilier_obligatoire():
+    """À taux égal, la cotisation volontaire sert la même rente que l'imposée.
+
+    C'est la vérification par le calcul complet de ce que la proportionnalité
+    fait dire par une division : on retire les cinq points volontaires, et le
+    pilier tombe exactement de moitié.
+    """
+    avec = Simulateur(Parametres())
+    sans = Simulateur(Parametres(capitalisation_volontaire=False))
+    carriere = dict(annee_naissance=1995, sexe="F",
+                    affiliation="salarie_prive_non_cadre",
+                    age_debut=23, age_liquidation=64)
+    pilier_avec = avec.simuler(
+        avec.carriere_simple(**carriere)).notionnel_liberal.capitalisation
+    pilier_sans = sans.simuler(
+        sans.carriere_simple(**carriere)).notionnel_liberal.capitalisation
+
+    assert pilier_sans.rente_annuelle == pytest.approx(
+        pilier_avec.rente_obligatoire)
+    assert pilier_sans.capital == pytest.approx(pilier_avec.capital_obligatoire)
+    assert pilier_sans.rente_volontaire == 0.0
+    # Le rendement, lui, ne dépend pas du montant versé : c'est le même compte.
+    assert pilier_sans.taux_rendement_annuel == pytest.approx(
+        pilier_avec.taux_rendement_annuel)
+
+
+def test_le_volontaire_ne_touche_pas_a_la_repartition():
+    """Le retirer ne doit rien changer à la pension notionnelle elle-même.
+
+    La garantie vieillesse est la seule exception, et elle est voulue : une
+    allocation différentielle compte les ressources sans regarder leur origine,
+    de sorte qu'une épargne volontaire la réduit comme le ferait une pension.
+    Cette carrière-là n'y touche pas, sa pension étant au-dessus du plancher.
+    """
+    avec = Simulateur(Parametres())
+    sans = Simulateur(Parametres(capitalisation_volontaire=False))
+    carriere = dict(annee_naissance=1995, sexe="F",
+                    affiliation="salarie_prive_non_cadre",
+                    age_debut=23, age_liquidation=64)
+    resultat_avec = avec.simuler(avec.carriere_simple(**carriere)).notionnel_liberal
+    resultat_sans = sans.simuler(sans.carriere_simple(**carriere)).notionnel_liberal
+
+    assert resultat_avec.garantie_vieillesse.complement == 0.0
+    assert resultat_sans.pension_annuelle == pytest.approx(
+        resultat_avec.pension_annuelle)
+    assert resultat_avec.pension_totale > resultat_sans.pension_totale
+
+
+def test_sous_le_plancher_les_cinq_points_volontaires_ne_rapportent_rien():
+    """Le résultat le plus désagréable du pilier volontaire, et il est voulu.
+
+    Une allocation différentielle compte les ressources sans regarder leur
+    origine : la rente des cinq points rendus y entre comme le reste, et la
+    garantie se retire d'autant. Pour qui reste SOUS LE PLANCHER après avoir
+    versé, le total ne bouge donc pas d'un centime — l'épargne est reprise euro
+    pour euro, exactement comme une pension personnelle est reprise à qui
+    touche l'ASPA. Le site doit le dire, parce que personne ne le devine, et le
+    modèle doit le montrer, parce que c'est une conséquence de la règle et non
+    un défaut de calcul.
+
+    Ce qui reste à l'épargnant dans ce cas n'est pas nul pour autant, et c'est
+    tout ce que la capitalisation a de propre : le capital se transmet s'il
+    meurt avant d'avoir liquidé, là où la garantie ne laisse rien.
+    """
+    avec = Simulateur(Parametres())
+    sans = Simulateur(Parametres(capitalisation_volontaire=False))
+    carriere = dict(annee_naissance=1995, sexe="F",
+                    affiliation="salarie_prive_non_cadre",
+                    age_debut=23, age_liquidation=67, niveau_salaire=0.35)
+    resultat_avec = avec.simuler(avec.carriere_simple(**carriere)).notionnel_liberal
+    resultat_sans = sans.simuler(sans.carriere_simple(**carriere)).notionnel_liberal
+
+    assert resultat_avec.garantie_vieillesse.complement > 0
+    # La garantie absorbe la rente entière, et le total est le même des deux
+    # côtés : le plancher est atteint dans les deux cas.
+    assert (resultat_sans.garantie_vieillesse.complement
+            - resultat_avec.garantie_vieillesse.complement) == pytest.approx(
+        resultat_avec.rente_capitalisation_volontaire)
+    assert resultat_avec.pension_totale == pytest.approx(
+        resultat_sans.pension_totale)
+    # Ce qui reste, et qui ne se voit pas sur la pension : un capital qui se
+    # transmet, et qui vaut le double avec les cinq points.
+    assert resultat_avec.capitalisation.esperance_capital_transmis > (
+        resultat_sans.capitalisation.esperance_capital_transmis)
+
+
+def test_au_dessus_du_plancher_la_rente_volontaire_revient_a_l_assure():
+    """Dès que la pension dépasse le plancher, les cinq points se voient."""
+    avec = Simulateur(Parametres())
+    sans = Simulateur(Parametres(capitalisation_volontaire=False))
+    carriere = dict(annee_naissance=1995, sexe="F",
+                    affiliation="salarie_prive_non_cadre",
+                    age_debut=23, age_liquidation=67)
+    resultat_avec = avec.simuler(avec.carriere_simple(**carriere)).notionnel_liberal
+    resultat_sans = sans.simuler(sans.carriere_simple(**carriere)).notionnel_liberal
+
+    assert resultat_avec.garantie_vieillesse.complement == 0.0
+    assert resultat_avec.pension_totale - resultat_sans.pension_totale == (
+        pytest.approx(resultat_avec.rente_capitalisation_volontaire))
+
+
+def test_sans_aucune_des_deux_cotisations_le_pilier_disparait():
+    """Les deux interrupteurs se composent, et l'un n'efface pas l'autre."""
+    parametres = Parametres(capitalisation_obligatoire=False,
+                            capitalisation_volontaire=False)
+    assert parametres.taux_capitalisation_applique == 0.0
+    simulateur = Simulateur(parametres)
+    resultat = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1995, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=23, age_liquidation=64,
+    )).notionnel_liberal
+    assert resultat.capitalisation.capital == 0.0
+    assert resultat.rente_capitalisation_obligatoire == 0.0
+    assert resultat.pension_totale == pytest.approx(resultat.pension_annuelle)
+
+
+def test_seuls_les_cinq_points_volontaires_alimentent_un_pilier_sans_obligatoire():
+    """Retirer l'obligatoire laisse le volontaire debout, et tout est volontaire."""
+    simulateur = Simulateur(Parametres(capitalisation_obligatoire=False))
+    pilier = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1995, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=23, age_liquidation=64,
+    )).notionnel_liberal.capitalisation
+    assert pilier.capital > 0
+    assert pilier.part_volontaire == pytest.approx(1.0)
+    assert pilier.rente_obligatoire == pytest.approx(0.0)

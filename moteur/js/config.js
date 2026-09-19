@@ -279,6 +279,15 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   frais_versement_capitalisation: 0.0109,
   frais_gestion_capitalisation: 0.0076,
   frais_arrerages_capitalisation: 0.0220,
+  // --- Capitalisation volontaire : les cinq points rendus ---------------------
+  //: Le quatrième terme, et le seul que personne n'impose. Le système actuel
+  //: prélève près de 28 % du salaire ; la proposition en prélève 23. Elle rend
+  //: donc CINQ POINTS, et le modèle suppose qu'ils sont remis au même compte :
+  //: l'effort revient à ce qu'il est aujourd'hui, et les deux systèmes se
+  //: comparent à prix égal. Sur la fiche de paie, cette cotisation est
+  //: entièrement à la charge de l'assuré, puisque personne ne la lui impose.
+  capitalisation_volontaire: true,
+  taux_capitalisation_volontaire: 0.05,
   //: Taux technique de la rente, nul par défaut comme dans la plupart des PER :
   //: le diviseur de la rente est alors EXACTEMENT celui de la pension
   //: notionnelle, et les deux compartiments deviennent comparables au centime.
@@ -295,6 +304,31 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 });
 
 /** Copie modifiée : les paramètres sont traités comme immuables. */
+/** Les cinq points volontaires, ou zéro quand on les a retirés. */
+export function tauxCapitalisationVolontaireApplique(parametres) {
+  return parametres.capitalisation_volontaire
+    ? parametres.taux_capitalisation_volontaire : 0.0;
+}
+
+/**
+ * Ce que le pilier capitalisé encaisse en tout, obligatoire et volontaire.
+ *
+ * Un seul taux en sort : le placement, les frais et la rente ne distinguent pas
+ * les deux origines. Ce qui les distingue est sur la fiche de paie, où l'une est
+ * partagée avec l'employeur et l'autre pas.
+ */
+export function tauxCapitalisationApplique(parametres) {
+  const obligatoire = parametres.capitalisation_obligatoire
+    ? parametres.taux_capitalisation_obligatoire : 0.0;
+  return obligatoire + tauxCapitalisationVolontaireApplique(parametres);
+}
+
+/** Tout ce que la proposition prélève sur la rémunération, en un taux. */
+export function tauxRetraitePropose(parametres) {
+  return parametres.taux_cotisation_liberal
+    + tauxCapitalisationApplique(parametres);
+}
+
 export function avec(parametres, modifications) {
   return Object.freeze({ ...parametres, ...modifications });
 }

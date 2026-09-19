@@ -1,4 +1,4 @@
-"""Le pilier de capitalisation obligatoire : accumulation, rente, transmission.
+"""Le pilier de capitalisation : accumulation, rente, transmission.
 
 Ce compartiment n'est PAS un compte notionnel, et tout le module tient à cette
 différence. Le compte notionnel est virtuel : rien n'y est placé, la
@@ -12,11 +12,25 @@ moment, sur la ligne « total ».
 Cinq décisions le définissent, et chacune est un endroit où le modèle peut être
 contesté.
 
-**1. Ce qui l'alimente.** Un taux unique — 5 % — appliqué, à compter de l'année
-de bascule, à la MÊME assiette que la cotisation notionnelle de l'année. Le
-même prélèvement, sur la même base, en plus : la proposition ajoute cinq points
-d'effort, elle n'en redéploie pas. Les années antérieures à la bascule
-n'alimentent rien, et qui a liquidé avant n'a pas de pilier du tout.
+**1. Ce qui l'alimente.** Deux cotisations, appliquées à compter de l'année de
+bascule à la MÊME assiette que la cotisation notionnelle de l'année. La
+première — 5 % — est OBLIGATOIRE : la proposition l'ajoute aux 18 % de
+répartition, elle ne la redéploie pas. La seconde — 5 % encore — est
+VOLONTAIRE, et c'est la seule pièce du modèle que personne n'impose : elle
+remet au compte les cinq points que la proposition rend, de sorte que l'effort
+contributif retombe sur les quelque 28 % d'aujourd'hui et que les deux systèmes
+se comparent à prix égal. Le pilier ne les distingue nulle part ailleurs qu'en
+proportion (:attr:`Capitalisation.part_volontaire`) : même assiette, même
+placement, mêmes frais, même rente. Ce qui les sépare est sur la fiche de paie,
+où l'obligatoire est partagée avec l'employeur et la volontaire pas. Les années
+antérieures à la bascule n'alimentent rien, et qui a liquidé avant n'a pas de
+pilier du tout.
+
+Tout ce que le pilier produit est PROPORTIONNEL à ce taux — les frais sont des
+pourcentages, l'échelle de placement ne dépend que de l'horizon, et aucun seuil
+n'intervient. Le capital et la rente se partagent donc entre les deux origines
+au prorata exact des taux, et un test l'exige : c'est ce qui autorise
+:attr:`Capitalisation.rente_volontaire` à diviser plutôt qu'à recalculer.
 
 **2. Où il est placé.** Sur des titres sans risque à plusieurs maturités, selon
 une règle d'horizon : longues tant que le départ est loin, courtes à l'approche
@@ -174,6 +188,7 @@ class Capitalisation:
     #: vie active si elle est postérieure.
     annee_ouverture: int
     annee_liquidation: int
+    #: Taux effectivement prélevé, les deux cotisations réunies.
     taux_cotisation: float
     annees: tuple[AnneeCapitalisation, ...]
 
@@ -204,6 +219,50 @@ class Capitalisation:
     date_courbe: str = ""
 
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
+
+    #: Part de :attr:`taux_cotisation` qui vient de la cotisation VOLONTAIRE —
+    #: les cinq points que la proposition rend et que l'assuré choisit de
+    #: remettre au compte. Zéro quand on la retire.
+    taux_cotisation_volontaire: float = 0.0
+
+    @property
+    def taux_cotisation_obligatoire(self) -> float:
+        """Ce que la proposition impose, les points volontaires retirés."""
+        return self.taux_cotisation - self.taux_cotisation_volontaire
+
+    @property
+    def part_volontaire(self) -> float:
+        """Fraction du pilier qui vient du volontaire, entre 0 et 1.
+
+        Le pilier est exactement proportionnel à son taux — aucun seuil, aucun
+        frais forfaitaire —, si bien que cette seule fraction partage le
+        capital, la rente et le capital transmis sans qu'il faille les
+        recalculer. Le docstring du module dit pourquoi, et un test le vérifie.
+        """
+        if self.taux_cotisation <= 0:
+            return 0.0
+        return self.taux_cotisation_volontaire / self.taux_cotisation
+
+    @property
+    def capital_volontaire(self) -> float:
+        return self.capital * self.part_volontaire
+
+    @property
+    def capital_obligatoire(self) -> float:
+        return self.capital - self.capital_volontaire
+
+    @property
+    def rente_volontaire(self) -> float:
+        """La part de la rente qui vient des cinq points rendus puis remis."""
+        return self.rente_annuelle * self.part_volontaire
+
+    @property
+    def rente_volontaire_mensuelle(self) -> float:
+        return self.rente_volontaire / 12.0
+
+    @property
+    def rente_obligatoire(self) -> float:
+        return self.rente_annuelle - self.rente_volontaire
 
     @property
     def actif(self) -> bool:
@@ -377,7 +436,7 @@ class ConstructeurCapitalisation:
         frais_gestion = (
             self.parametres.frais_gestion_capitalisation if avec_frais else 0.0
         )
-        taux_cotisation = self.parametres.taux_capitalisation_obligatoire
+        taux_cotisation = self.parametres.taux_capitalisation_applique
 
         lignes: list[_Ligne] = []
         annees: list[AnneeCapitalisation] = []
@@ -484,11 +543,17 @@ class ConstructeurCapitalisation:
             mois_liquidation,
         )
 
-        if annee_liquidation < ouverture or not self.parametres.capitalisation_obligatoire:
+        # Le pilier s'éteint quand il n'a plus rien à encaisser : ni les cinq
+        # points obligatoires, ni les cinq points volontaires. Retirer l'un
+        # laisse l'autre debout — c'est tout l'intérêt de les avoir séparés.
+        if (annee_liquidation < ouverture
+                or self.parametres.taux_capitalisation_applique <= 0):
             return Capitalisation(
                 annee_ouverture=ouverture,
                 annee_liquidation=annee_liquidation,
-                taux_cotisation=self.parametres.taux_capitalisation_obligatoire,
+                taux_cotisation=self.parametres.taux_capitalisation_applique,
+                taux_cotisation_volontaire=(
+                    self.parametres.taux_capitalisation_volontaire_applique),
                 annees=(),
                 capital=0.0,
                 capital_hors_frais=0.0,
@@ -523,7 +588,9 @@ class ConstructeurCapitalisation:
         return Capitalisation(
             annee_ouverture=ouverture,
             annee_liquidation=annee_liquidation,
-            taux_cotisation=self.parametres.taux_capitalisation_obligatoire,
+            taux_cotisation=self.parametres.taux_capitalisation_applique,
+            taux_cotisation_volontaire=(
+                self.parametres.taux_capitalisation_volontaire_applique),
             annees=tuple(annees),
             capital=capital,
             capital_hors_frais=sans_frais[-1].encours if sans_frais else 0.0,

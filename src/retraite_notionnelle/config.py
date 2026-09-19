@@ -594,6 +594,38 @@ class Parametres:
     frais_gestion_capitalisation: float = 0.0076
     frais_arrerages_capitalisation: float = 0.0220
 
+    # --- Capitalisation volontaire : les cinq points rendus ------------------
+    #: Le quatrième terme, et le seul que personne n'impose. Le système actuel
+    #: prélève près de 28 % du salaire pour la retraite ; la proposition en
+    #: prélève 23 — 18 de répartition, 5 capitalisés d'office. Elle rend donc
+    #: CINQ POINTS, et la question que tout le monde pose ensuite est la même :
+    #: et si on les remettait au même endroit ?
+    #:
+    #: Ce paramètre y répond. Il ajoute au pilier capitalisé une cotisation
+    #: VOLONTAIRE, de même taux, sur la même assiette, la même année : l'effort
+    #: contributif revient alors exactement à ce qu'il est aujourd'hui, et le
+    #: site peut montrer, à taux égal cotisé, ce que la proposition sert contre
+    #: ce que le système actuel sert. C'est la seule comparaison où les deux
+    #: colonnes coûtent le même prix.
+    #:
+    #: Elle est volontaire, et cela a deux conséquences que le modèle tient.
+    #: Sur la FICHE DE PAIE, elle est entièrement à la charge de l'assuré :
+    #: aucun employeur ne verse une épargne que son salarié décide seul, et le
+    #: coût du travail ne bouge donc pas d'un centime quand on l'active. Sur la
+    #: PENSION, elle se confond avec le pilier obligatoire — même placement,
+    #: mêmes frais, même rente, même transmission —, et le compartiment garde
+    #: la trace de ce qui vient d'elle : voir ``Capitalisation.part_volontaire``.
+    #:
+    #: Mettre à ``False`` la retire sans toucher au reste, et la proposition
+    #: redevient 18 + 5, ce qu'un test vérifie.
+    capitalisation_volontaire: bool = True
+
+    #: Taux de la cotisation capitalisée volontaire. Cinq points : exactement
+    #: ce que la proposition rend, à la décimale près de ce que le système
+    #: actuel prélève en moyenne. Le mettre ailleurs déplace le total cotisé, et
+    #: la comparaison « à taux égal » cesse d'en être une.
+    taux_capitalisation_volontaire: float = 0.05
+
     #: Taux technique de la rente viagère servie par le pilier. Nul par défaut,
     #: comme dans la plupart des PER : la rente n'anticipe alors aucun
     #: rendement futur, et son diviseur est EXACTEMENT celui de la pension
@@ -619,6 +651,36 @@ class Parametres:
 
     # --- Chemins ------------------------------------------------------------
     racine_donnees: Path = RACINE_DONNEES
+
+    @property
+    def taux_capitalisation_volontaire_applique(self) -> float:
+        """Les cinq points volontaires, ou zéro quand on les a retirés."""
+        return (self.taux_capitalisation_volontaire
+                if self.capitalisation_volontaire else 0.0)
+
+    @property
+    def taux_capitalisation_applique(self) -> float:
+        """Ce que le pilier capitalisé encaisse en tout, obligatoire et volontaire.
+
+        Un seul taux en sort, parce que le placement, les frais et la rente ne
+        distinguent pas les deux origines : ce qui les distingue est sur la
+        fiche de paie, où l'une est partagée avec l'employeur et l'autre pas,
+        et dans ce que la page en dit. Le compartiment, lui, garde la
+        proportion (``Capitalisation.part_volontaire``).
+        """
+        obligatoire = (self.taux_capitalisation_obligatoire
+                       if self.capitalisation_obligatoire else 0.0)
+        return obligatoire + self.taux_capitalisation_volontaire_applique
+
+    @property
+    def taux_retraite_propose(self) -> float:
+        """Tout ce que la proposition prélève sur la rémunération, en un taux.
+
+        C'est le nombre qui se compare aux quelque 28 % d'aujourd'hui, et la
+        raison d'être des cinq points volontaires : 18 et 5 en font 23, les
+        cinq derniers ramènent à 28.
+        """
+        return self.taux_cotisation_liberal + self.taux_capitalisation_applique
 
     def avec(self, **modifications) -> "Parametres":
         """Retourne une copie modifiée (les paramètres sont immuables)."""

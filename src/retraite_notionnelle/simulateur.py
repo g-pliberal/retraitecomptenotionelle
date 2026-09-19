@@ -222,8 +222,12 @@ class Comparaison:
     # affiche le total, mais jamais sans dire de quoi il est fait.
 
     def rente_capitalisee(self, scenario: str) -> float:
-        """Ce que le pilier obligatoire sert, en plus de la répartition."""
+        """Ce que le pilier capitalisé sert, en plus de la répartition."""
         return getattr(self, scenario).rente_capitalisation_obligatoire
+
+    def rente_capitalisee_volontaire(self, scenario: str) -> float:
+        """La part de cette rente qui vient des cinq points volontaires."""
+        return getattr(self, scenario).rente_capitalisation_volontaire
 
     def pension_totale(self, scenario: str) -> float:
         """Répartition et capitalisation réunies."""
@@ -305,18 +309,30 @@ class Comparaison:
                       hors_repartition, ""),
             ]
 
-        # Le pilier de capitalisation obligatoire, en dessous et à part. Il
-        # n'appartient qu'au dernier scénario, il ne sort pas de la
-        # répartition, et l'additionner en silence à une pension notionnelle
-        # ferait passer pour un rendement de la répartition ce qui vient d'un
-        # marché obligataire.
+        # Le pilier capitalisé, en dessous et à part. Il n'appartient qu'au
+        # dernier scénario, il ne sort pas de la répartition, et l'additionner
+        # en silence à une pension notionnelle ferait passer pour un rendement
+        # de la répartition ce qui vient d'un marché obligataire. Ses deux
+        # cotisations sont distinguées, parce que l'une est imposée et l'autre
+        # non : c'est la seconde qui ramène l'effort au taux d'aujourd'hui.
         rente_capitalisee = self.notionnel_liberal.rente_capitalisation_obligatoire
         if rente_capitalisee > 0:
             numero = SCENARIOS_NOTIONNELS[-1][1]
+            volontaire = self.notionnel_liberal.rente_capitalisation_volontaire
+            lignes += ["-" * 104]
+            if volontaire > 0:
+                lignes += [
+                    ligne(f"   + rente capitalisée obligatoire, scénario {numero}",
+                          rente_capitalisee - volontaire, ""),
+                    ligne("   + rente capitalisée volontaire, les 5 points rendus",
+                          volontaire, ""),
+                ]
+            else:
+                lignes += [
+                    ligne(f"   + rente du pilier capitalisé, scénario {numero} seul",
+                          rente_capitalisee, ""),
+                ]
             lignes += [
-                "-" * 104,
-                ligne(f"   + rente du pilier capitalisé, scénario {numero} seul",
-                      rente_capitalisee, ""),
                 ligne(f"   = total servi par le scénario {numero}",
                       self.notionnel_liberal.pension_totale,
                       self.variation_totale("notionnel_liberal")),
@@ -510,6 +526,10 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
             "frais_arrerages": resultat.capitalisation.frais_arrerages,
             "rente_annuelle": resultat.capitalisation.rente_annuelle,
             "rente_mensuelle": resultat.capitalisation.rente_mensuelle,
+            "taux_cotisation_volontaire":
+                resultat.capitalisation.taux_cotisation_volontaire,
+            "rente_volontaire": resultat.capitalisation.rente_volontaire,
+            "capital_volontaire": resultat.capitalisation.capital_volontaire,
             "taux_rendement_annuel": resultat.capitalisation.taux_rendement_annuel,
             "rendement_cumule": resultat.capitalisation.rendement_cumule,
             "probabilite_deces_avant_liquidation": (
@@ -521,6 +541,7 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
             "fiabilite": str(resultat.capitalisation.fiabilite),
         },
         "rente_capitalisation_obligatoire": resultat.rente_capitalisation_obligatoire,
+        "rente_capitalisation_volontaire": resultat.rente_capitalisation_volontaire,
         "pension_totale": resultat.pension_totale,
         "pension_totale_euros_constants": resultat.pension_totale * coefficient,
         "pension_totale_mensuelle": resultat.pension_totale_mensuelle,
