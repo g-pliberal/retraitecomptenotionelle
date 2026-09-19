@@ -6068,13 +6068,18 @@ ne repose pas sur les treize carrières types, et dénombre 4,4 millions de
 personnes réelles. Les huit lignes mesurées par retrait sont, elles, aussi
 bonnes que la grille — c'est-à-dire pas très bonnes.
 
-*Une carte à elle, pour une raison graphique autant que méthodologique.* Empilée
-avec les autres, dont la série remonte à 1959, la réversion dessinait une
-falaise de vingt-cinq milliards en 2004, et le lecteur y voyait un saut de
-dépense là où il n'y a qu'un début de publication. Elle a donc son graphique sur
-sa propre fenêtre, et la page passe à quatre cartes. Les budgets de lecture ont
-été relevés en conséquence, avec le motif écrit sur place : le chiffre le plus
-lourd de la page ne doit pas être celui qu'on replie.
+*Une carte pour tout, et une fenêtre pour prix.* La réversion a d'abord eu sa
+carte, pour une raison graphique : empilée avec les autres, dont la série
+remonte à 1959, elle dessinait une falaise de vingt-cinq milliards en 2004. À la
+demande — « je voudrais ne pas faire de carte dédiée, je souhaite garder une
+carte pour tous les avantages dans une seule carte » —, les deux ont été
+réunies, et c'est la FENÊTRE qui absorbe la difficulté : le tracé commence en
+2004, là où la réversion commence. Le choix gagne même en cohérence, les poids
+des carrières types venant eux aussi d'une série que la DREES ne publie que
+depuis 2004 ; la fenêtre commune est celle où chaque terme du produit est
+observé. Ce que les années antérieures montraient — un minimum vieillesse qui
+pesait le tiers de la dépense en 1960 — reste dans le script, qui remonte à
+1959. La page garde ses trois cartes et ses budgets de lecture d'origine.
 
 *Ce qui reste hors de portée.* La réversion n'est pas tout le droit dérivé.
 L'allocation veuvage est marginale ; la majoration de réversion de L. 353-6 est

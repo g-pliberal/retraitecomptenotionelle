@@ -429,11 +429,20 @@ carrières types**. Elle dénombre 4,4 millions de personnes réelles. Les huit
 lignes mesurées par retrait sont, elles, aussi bonnes que la grille — c'est-à-dire
 pas très bonnes, et le §5 dit pourquoi.
 
-La page du site lui donne sa propre carte, et son propre graphique, sur sa
-propre fenêtre. La raison est graphique autant que méthodologique : empilée avec
-les autres, dont la série remonte à 1959, elle aurait dessiné une falaise de
-vingt-cinq milliards en 2004, et le lecteur y aurait vu un saut de dépense là où
-il n'y a qu'un début de publication.
+La page du site la porte **dans le même tracé que les autres** : une seule
+carte réunit tout ce qu'on sait chiffrer, et c'est le total qui doit se lire
+d'un coup d'œil. Le prix de cette réunion est la **fenêtre** : le graphique
+s'arrête à 2004, là où la réversion commence, faute de quoi elle dessinerait une
+falaise de vingt-cinq milliards cette année-là et le lecteur y verrait un saut
+de dépense là où il n'y a qu'un début de publication.
+
+Ce prix est plus faible qu'il n'y paraît, et le choix gagne même en cohérence :
+les **poids** des carrières types viennent eux aussi d'une série que la DREES ne
+publie que de 2004 à 2024 — avant, la répartition du bord est reconduite et la
+série tombe au niveau « estimée ». La fenêtre commune est donc celle où chaque
+terme du produit est observé. Ce que les années antérieures montraient — un
+minimum vieillesse qui pesait le tiers de la dépense en 1960 et qui s'est
+éteint — reste calculé par `scripts/cout_avantages.py`, qui remonte à 1959.
 
 ### Ce qui reste hors de portée
 
