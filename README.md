@@ -1089,7 +1089,8 @@ data/
                                 minima, décote de la fonction publique,
                                 catégorie active et pension militaire,
                                 carrière longue, contribution employeur des
-                                régimes publics, profils d'affiliation
+                                régimes publics, profils d'affiliation,
+                                prélèvements sur salaire hors retraite
   brut/                         téléchargements bruts, non versionnés
   derive/                       calibrations et journal de certification
 
@@ -1102,6 +1103,9 @@ src/retraite_notionnelle/
                                 pilier de capitalisation obligatoire
   scenarios/                    système actuel, comptes notionnels
   simulateur.py                 façade et restitution
+  remuneration.py               la fiche de paie d'un actif : coût du travail,
+                                salaire brut, salaire net — la seule grandeur
+                                du dépôt qui ne soit pas une pension
   castypes.py                   cas général
   cout.py                       ce que chaque système a coûté, coûterait,
                                 et le solde qu'il laisserait
