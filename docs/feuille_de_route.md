@@ -3253,6 +3253,44 @@ toucher aux moteurs de pension.
      les neuf autres caisses, seul l'exercice de 2024 est publié, et il faut
      l'écrire à côté du chiffre.
 
+     **Le millésime 2025 n'existe pas davantage — mais il a laissé autre
+     chose.** Vérifié le 19 septembre 2026 : la page du rapport de juin 2025
+     n'offre aucune fiche de régime ni classeur par régime. Elle porte en
+     revanche une rubrique que celle de 2026 n'a PAS, « Hypothèses
+     sous-jacentes au rapport », et sous elle
+     `hypo_cotisants_chômage_2025.xlsx`, mis à jour le 5 mai 2025, qui est un
+     complément par régime au rabais mais réel :
+
+     - ses onglets `Chô_5%`, `Chô_7%` et `Chô_10%` déclinent **l'emploi par
+       régime**, en niveau pour l'année de base et en évolution ensuite,
+       jusqu'en 2070, pour chaque hypothèse de chômage — Agirc-Arrco,
+       Ircantec, CRPNPAC, auto-entrepreneurs SSI et professions libérales,
+       entre autres ;
+     - ses onglets `FPE` et `CNRACL` donnent des NIVEAUX, et mieux ventilés
+       que partout ailleurs : la FPE y sépare La Poste et Orange du reste
+       (2 005 560 en 2024, dont 59 120), la CNRACL y sépare FPT et FPH ;
+     - son onglet `CER` porte la part des cotisants en cumul emploi-retraite,
+       par régime.
+
+     Le même millésime publie `Données_complémentaires_RA2025.xlsx`, dont
+     l'onglet `Cotisants_Retraités` donne les cotisants TOUS RÉGIMES de 2000 à
+     2070 sous cinq variantes. La page de juin 2026 n'a ni l'un ni l'autre :
+     elle se limite à ses six classeurs de chapitres.
+
+     **Et ce classeur 2025 referme la boucle du recoupement.** Sa CNRACL de
+     2021 vaut 2 189 790,76 — quand la fiche 4.1 de la CCSS écrit 2 189 791 et
+     le recueil de la caisse 2 189 791. Trois véhicules, le même nombre à
+     l'unité : la CNRACL du COR EST la moyenne annuelle que la caisse déclare,
+     ce que la deuxième passe avait déduit d'un seul rapprochement et qui est
+     maintenant établi sur trois.
+
+     Le tableau des millésimes disponibles est donc celui-ci : **2024**, les
+     compléments par régime complets, vingt-deux fiches et un classeur à
+     vingt-quatre feuilles ; **2025**, pas de compléments, mais des hypothèses
+     de cotisants par régime, en niveau pour la FPE et la CNRACL seulement ;
+     **2026**, ni l'un ni l'autre, et seulement les figures 1.13 et 2.7 des
+     classeurs de chapitres.
+
    - **Cnav, abrégé statistique, chapitre 01 — soixante ans de régime
      général.** « Évolution du nombre de cotisants actifs occupés et de
      retraités du régime général et rapport démographique **depuis 1963** » :
@@ -4753,3 +4791,29 @@ Le fichier complet, hooks Impeccable compris, devient :
 commité, et rien d'autre. Un travail laissé non commité reste dans le
 conteneur, qui est jeté. Et le script ne touche jamais au `main` local, ce
 post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
+
+- **Septembre 2026, action 35, volet A, point 3 : pas de millésime 2025 non
+  plus des compléments par régime, et ce que 2025 publie à la place.** La page
+  du rapport de juin 2025 n'offre ni fiche de régime ni classeur par régime :
+  les compléments de 2024 restent les seuls. Mais elle porte une rubrique que
+  celle de 2026 n'a pas — « Hypothèses sous-jacentes au rapport » — et sous
+  elle `hypo_cotisants_chômage_2025.xlsx`, mis à jour le 5 mai 2025 : ses
+  onglets de chômage déclinent l'emploi PAR RÉGIME jusqu'en 2070, et ses
+  onglets `FPE` et `CNRACL` donnent des niveaux mieux ventilés que partout
+  ailleurs — la FPE y sépare La Poste et Orange, la CNRACL y sépare FPT et
+  FPH. Le même millésime publie un onglet `Cotisants_Retraités` tous régimes,
+  2000-2070, sous cinq variantes.
+
+  **La cadence du COR est donc décroissante, et il faut le savoir avant de
+  bâtir dessus** : 2024 publie des compléments par régime complets ; 2025 ne
+  publie que des hypothèses de cotisants, par régime mais en niveau pour deux
+  caisses seulement ; 2026 ne publie ni les uns ni les autres, et se limite
+  aux figures 1.13 et 2.7 de ses classeurs de chapitres. Rien ne dit que le
+  jeu de 2024 sera refait.
+
+  **Un gain, au passage, qui ferme une question ouverte.** Le classeur 2025
+  donne la CNRACL de 2021 à 2 189 790,76, quand la fiche 4.1 de la CCSS écrit
+  2 189 791 et le recueil de la caisse 2 189 791. Trois véhicules, le même
+  nombre à l'unité : la CNRACL du COR EST la moyenne annuelle que la caisse
+  déclare. La deuxième passe l'avait déduit d'un seul rapprochement ; c'est
+  maintenant établi sur trois.
