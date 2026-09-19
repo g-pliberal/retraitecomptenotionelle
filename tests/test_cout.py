@@ -36,6 +36,7 @@ from retraite_notionnelle.cout import (
     generations,
 )
 from retraite_notionnelle.cout import (
+    CLES_PROSPECTIVES,
     COMPOSANTE_GARANTIE,
     CONVENTION_REVERSION_SERVIE,
     CONVENTION_REVERSION_SUPPRIMEE,
@@ -849,22 +850,25 @@ def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
     """Le résultat de fond de cette section, et il a changé de forme.
 
     Le système actuel reste déficitaire sur toute la fenêtre projetée du COR,
-    et c'est le seul énoncé de ce test qui n'a jamais bougé. Les réformes
-    prospectives, elles, ne s'en écartent plus de la même façon depuis que les
-    pensions SERVIES sont revalorisées sur la masse salariale comme le compte
-    qui les a produites : le scénario 3 repasse encore à l'équilibre, le 5 ne
-    le fait plus. Ce qui les sépare est ce qu'elles portent au compte — le 5 y
-    ajoute la part patronale, donc des droits, donc une dépense — et l'écart
-    ne se rattrape plus sur l'horizon.
+    et c'est le seul énoncé de ce test qui n'a jamais bougé. Les deux réformes
+    prospectives s'équilibrent, le 3 au milieu des années 2040 et le 5
+    seulement à la toute fin de l'horizon. Ce qui les sépare est ce qu'elles
+    portent au compte : le 5 y ajoute la part patronale, donc des droits, donc
+    une dépense.
 
-    ET LE SCÉNARIO 5 EST PASSÉ SOUS LE SYSTÈME ACTUEL, depuis que l'âge de
-    référence est fixé à 64 ans à partir de la bascule. Converti à 64 ans et
+    LE SCÉNARIO 5 EST PASSÉ SOUS LE SYSTÈME ACTUEL, puis repassé au-dessus, et
+    les deux mouvements se nomment. Il est tombé dessous quand l'âge de
+    référence a été fixé à 64 ans à partir de la bascule : converti à 64 ans et
     non à 67, un droit déjà acquis prend un diviseur plus élevé, donc un
-    capital d'ouverture plus gros : les deux réformes prospectives coûtent
-    chacune un demi-point de PIB de plus, et celle qui portait déjà le plus de
-    droits repasse du mauvais côté. Le 3 garde sa marge, le 5 perd son
-    classement. C'est un résultat, et il se dit : convertir les droits acquis
-    sans pénalité d'âge se paie, et ce que ça coûte se lit ici.
+    capital d'ouverture plus gros, et les deux réformes prospectives coûtent
+    chacune un demi-point de PIB de plus. Il est remonté quand les scénarios
+    notionnels ont cessé de servir la réversion — un avantage non contributif
+    de plus, retiré comme les trente-huit autres —, ce qui lui rend un point de
+    PIB et son équilibre avec, atteint in extremis à trois ans de l'horizon.
+
+    Sa moyenne reste négative, et c'est elle qui compte : un équilibre atteint
+    en 2067 n'équilibre pas quarante années de déficit. Convertir les droits
+    acquis sans pénalité d'âge se paie, et ce que ça coûte se lit ici.
     """
     debut, fin = solde.premiere_annee_projetee, solde.derniere_annee
     assert solde.premiere_annee_equilibree("actuel") is None
@@ -876,19 +880,15 @@ def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
     assert solde.solde_moyen("notionnel_prospectif", debut, fin) > 0.0
     assert (solde.solde_moyen("notionnel_prospectif", debut, fin)
             > solde.solde_moyen("actuel", debut, fin))
-    # Le 5 ne s'équilibre plus et ne bat plus le système actuel. Il en était
-    # tout près tant que les pensions liquidées restaient figées en euros
-    # constants ; revalorisées sur la masse salariale, elles lui coûtent six
-    # dixièmes de point et l'équilibre avec. Depuis le volet C, la réversion
-    # qu'il ne recalcule pas lui en coûte neuf centièmes de plus, et depuis que
-    # l'âge de référence est fixé à 64 ans, la conversion des droits acquis un
-    # demi-point de plus encore — assez pour le faire passer SOUS le système
-    # actuel. Le dire vaut mieux que de l'arrondir : une réforme qui porte la
-    # part patronale au compte porte des droits, et des droits se paient.
-    assert solde.premiere_annee_equilibree("notionnel_prospectif_employeur") is None
-    assert -0.020 < solde.solde_moyen(
-        "notionnel_prospectif_employeur", debut, fin) < solde.solde_moyen(
-        "actuel", debut, fin)
+    # Le 5 s'équilibre tout à la fin, reste déficitaire en moyenne, et repasse
+    # au-dessus du système actuel. Le dire vaut mieux que de l'arrondir dans un
+    # sens ou dans l'autre : une réforme qui porte la part patronale au compte
+    # porte des droits, et des droits se paient — mais elle ne sert plus la
+    # réversion, et cela lui rend un point de PIB.
+    annee_5 = solde.premiere_annee_equilibree("notionnel_prospectif_employeur")
+    assert annee_5 is not None and annee_5 > fin - 10, annee_5
+    assert solde.solde_moyen("actuel", debut, fin) < solde.solde_moyen(
+        "notionnel_prospectif_employeur", debut, fin) < 0.0
     # Le scénario 5 porte plus de droits que le 3 : il coûte davantage.
     assert (solde.solde_moyen("notionnel_prospectif_employeur", debut, fin)
             < solde.solde_moyen("notionnel_prospectif", debut, fin))
@@ -1485,16 +1485,80 @@ def test_le_rapport_ne_multiplie_que_les_droits_directs(
         assert 0.05 < point.part_derives < 0.13, point.annee
 
         for scenario, _ in SCENARIOS:
-            attendu = (point.depenses * (1.0 - point.part_derives)
-                       * point.rapports[scenario]
-                       + point.depenses * point.part_derives)
+            directe = (point.depenses * (1.0 - point.part_derives)
+                       * point.rapports[scenario])
+            if scenario == "actuel":
+                attendu = point.depenses
+            else:
+                # La réversion n'est retirée que de ce que la réforme a
+                # produit : tout, pour une réforme rétroactive ; la seule part
+                # liquidée après la bascule, pour une réforme prospective.
+                convertie = (point.part_post_bascule
+                             if scenario in CLES_PROSPECTIVES else 1.0)
+                attendu = (directe
+                           + point.depenses * point.part_derives
+                           * (1.0 - convertie))
             assert point.depense(scenario) == pytest.approx(attendu), (
                 point.annee, scenario)
+
+        # Les rétroactifs ne servent plus un euro de réversion.
+        for scenario in ("notionnel_retroactif", "notionnel_liberal"):
+            assert point.depense(scenario) == pytest.approx(
+                point.depenses * (1.0 - point.part_derives)
+                * point.rapports[scenario]), (point.annee, scenario)
 
     # La réversion recule sur l'horizon : c'est la projection du COR, et un
     # modèle qui la figerait dirait autre chose qu'elle.
     assert (cout_assiette.solde.annee(2070).part_derives
             < cout_assiette.solde.annee(2026).part_derives - 0.03)
+
+
+def test_une_reforme_prospective_ne_retire_la_reversion_qu_a_ce_qu_elle_a_produit(
+        cout_assiette: Cout):
+    """Un droit ouvert sous l'ancien droit ne se reprend pas.
+
+    Une pension de réversion dérive de la pension du défunt. Si l'assuré a
+    liquidé en 2010, son conjoint survivant tient son droit du droit de 2010,
+    et une réforme prospective de 2026 ne le lui retire pas : elle ne vaut que
+    pour l'avenir, c'est ce qui la distingue d'une réforme rétroactive.
+
+    D'où ``part_post_bascule``, la fraction de la masse liquidée à la bascule
+    ou après. Elle vaut zéro avant celle-ci — ce qui préserve à l'euro près
+    l'identité des scénarios 3 et 5 avec le système actuel, que
+    ``test_une_reforme_prospective_ne_deplace_rien_avant_sa_bascule`` tient —
+    et monte à mesure que le stock d'avant se renouvelle.
+    """
+    bascule = Parametres().annee_bascule
+    avant = [l for l in cout_assiette.solde.annees if l.annee < bascule]
+    apres = [l for l in cout_assiette.solde.annees if l.annee >= bascule]
+    assert avant and apres
+
+    for point in avant:
+        assert point.part_post_bascule == 0.0, point.annee
+        # Et la réversion des scénarios prospectifs est donc entière : leur
+        # dépense est celle qu'ils auraient si la réversion était servie. On
+        # compare à cette formule-là et non à la base, pour ne pas confondre
+        # cette propriété avec l'identité exacte des courbes, que
+        # `test_une_reforme_prospective_ne_deplace_rien_avant_sa_bascule` tient
+        # sur les années observées.
+        for scenario in CLES_PROSPECTIVES:
+            entiere = (point.depenses * (1.0 - point.part_derives)
+                       * point.rapports[scenario]
+                       + point.depenses * point.part_derives)
+            assert point.depense(scenario) == pytest.approx(entiere), (
+                point.annee, scenario)
+
+    # Elle monte, et sans jamais redescendre : le stock d'avant s'éteint.
+    parts = [point.part_post_bascule for point in apres]
+    assert parts == sorted(parts), parts
+    assert parts[0] < 0.10 and parts[-1] > 0.90
+
+    # Les rétroactifs, eux, ne la regardent pas : ils recalculent tout le monde.
+    for point in apres:
+        for scenario in ("notionnel_retroactif", "notionnel_liberal"):
+            assert point.depense(scenario) == pytest.approx(
+                point.depenses * (1.0 - point.part_derives)
+                * point.rapports[scenario]), (point.annee, scenario)
 
 
 def test_le_systeme_actuel_garde_sa_base_intacte(cout_assiette: Cout):
@@ -1532,14 +1596,17 @@ def test_la_garantie_vieillesse_ne_recoit_aucune_reversion(cout_assiette: Cout):
 def test_les_deux_conventions_de_reversion_se_mesurent(
         depenses: DepensesRetraite, population: Population,
         comptes: ComptesRetraite, assiette: AssietteActivite):
-    """Ce que le choix italien coûte au regard du choix suédois.
+    """Ce que le choix suédois rend au regard du choix italien.
 
-    Le dépôt sert la réversion — le capital notionnel du défunt se partage,
-    comme en Italie. L'autre chemin existe : en Suède, un compte notionnel ne
-    verse qu'à son titulaire. Il est calculable pour qu'on sache ce qu'il vaut,
-    et il n'est pas servi par défaut, parce qu'il est le plus FLATTEUR des deux
-    pour tous les scénarios notionnels — et que le dépôt ne prend pas
-    l'hypothèse flatteuse sans qu'un programme l'ait tranchée.
+    Le dépôt NE sert PAS la réversion dans les scénarios notionnels : c'est un
+    avantage non contributif, et ils les retirent tous. C'est le chemin de la
+    Suède, où un compte notionnel ne verse qu'à son titulaire. Celui de
+    l'Italie, qui partage le capital du défunt, reste calculable pour qu'on
+    sache ce qu'il vaut — comme `convention_recette="rapport"`.
+
+    Il vaut cher : plus d'un point de PIB aux trois scénarios rétroactifs, et
+    huit dixièmes aux deux prospectifs, qui ne cessent de servir la réversion
+    qu'à mesure que les pensions d'avant leur bascule s'éteignent.
     """
     def fait(convention: str) -> Cout:
         return calculer_cout(Simulateur(Parametres()), depenses, population,
@@ -1556,18 +1623,25 @@ def test_les_deux_conventions_de_reversion_se_mesurent(
     assert (servie.solde_moyen("actuel", debut, fin)
             == pytest.approx(supprimee.solde_moyen("actuel", debut, fin)))
 
-    # Les cinq autres y gagnent tous, et c'est pourquoi ce n'est pas le défaut.
+    # Les cinq autres y gagnent tous, et les rétroactifs plus que les
+    # prospectifs : ceux-là ne cessent de servir la réversion qu'à mesure.
+    gains = {}
     for scenario, _ in SCENARIOS:
         if scenario == "actuel":
             continue
-        gain = (supprimee.solde_moyen(scenario, debut, fin)
-                - servie.solde_moyen(scenario, debut, fin))
-        assert gain > 0.005, (scenario, gain)
+        gains[scenario] = (supprimee.solde_moyen(scenario, debut, fin)
+                           - servie.solde_moyen(scenario, debut, fin))
+        assert gains[scenario] > 0.005, (scenario, gains[scenario])
 
-    # Pour le scénario 6, c'est plus d'un point de PIB : de −2,86 % à −1,67 %.
-    ecart = (supprimee.solde_moyen("notionnel_liberal", debut, fin)
-             - servie.solde_moyen("notionnel_liberal", debut, fin))
-    assert 0.010 < ecart < 0.014, ecart
+    retroactifs = [g for s, g in gains.items() if s not in CLES_PROSPECTIVES]
+    prospectifs = [g for s, g in gains.items() if s in CLES_PROSPECTIVES]
+    # Les rétroactifs gagnent tous exactement la même chose : la réversion
+    # entière, qui ne dépend d'aucun rapport.
+    assert max(retroactifs) - min(retroactifs) < 1e-12, retroactifs
+    assert 0.011 < retroactifs[0] < 0.013, retroactifs[0]
+    # Les prospectifs gagnent strictement moins, et eux aussi la même chose.
+    assert max(prospectifs) - min(prospectifs) < 1e-12, prospectifs
+    assert prospectifs[0] < retroactifs[0] - 0.003, (prospectifs, retroactifs)
 
 
 def test_une_convention_de_reversion_inconnue_est_refusee(

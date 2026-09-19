@@ -207,15 +207,30 @@ CONVENTIONS_RECETTE: tuple[str, ...] = (CONVENTION_ASSIETTE, CONVENTION_RAPPORT)
 #: recalculée. ``part_droits_derives`` sépare les deux ; reste à dire ce que le
 #: scénario fait de la seconde, et c'est une décision, pas un calcul.
 #:
-#: ``servie`` est celle du dépôt : la réversion est reconduite telle quelle,
-#: comme en Italie, où le capital notionnel du défunt se partage. C'est la plus
-#: COÛTEUSE des deux pour les scénarios notionnels, et c'est une raison de la
-#: prendre par défaut : l'autre serait l'hypothèse flatteuse, et le dépôt n'en
-#: prend pas sans qu'un programme l'ait tranchée.
+#: ``supprimee`` est la convention du dépôt depuis le 19 septembre 2026, et
+#: elle n'est pas un choix de plus : elle est la RÈGLE DÉJÀ APPLIQUÉE aux
+#: trente-huit autres lignes. Les scénarios 2 à 6 retirent tous les avantages
+#: non contributifs — minimum contributif, trimestres gratuits, majorations
+#: pour enfants, départ anticipé —, et l'inventaire du dépôt range la réversion
+#: parmi eux depuis toujours : « non contributif au sens strict, la cotisation
+#: de l'assuré ayant déjà été rendue par sa propre pension », et « de très
+#: loin, la PREMIÈRE dépense non contributive du système ». La servir dans un
+#: compte notionnel était donc l'exception non écrite, pas la règle. C'est le
+#: chemin de la Suède, où un compte notionnel ne verse qu'à son titulaire.
 #:
-#: ``supprimee`` est l'autre chemin, celui de la Suède, où un compte notionnel
-#: ne verse qu'à son titulaire. Elle reste calculable pour qu'on sache ce
-#: qu'elle vaut, et elle n'est pas servie par défaut.
+#: Ce que ces cinq scénarios mesurent est d'ailleurs cela même : ce qu'une
+#: retraite composée UNIQUEMENT de part contributive représente. Une pension de
+#: réversion n'en est pas.
+#:
+#: ``servie`` reste calculable, et c'est le chemin de l'Italie, où le capital
+#: notionnel du défunt se partage. Elle a été la convention du dépôt pendant
+#: quelques heures, le temps que le volet C sépare les deux masses et que le
+#: programme tranche ; on la garde pour lire ce qu'elle vaut, comme on garde
+#: ``convention_recette="rapport"``.
+#:
+#: LE SCÉNARIO 1 SERT LA RÉVERSION DANS TOUS LES CAS, et aucune convention ne
+#: le touche : il est le droit en vigueur, et le droit en vigueur la sert.
+#: ``masse_du_scenario`` l'écrit en premier.
 CONVENTION_REVERSION_SERVIE = "servie"
 CONVENTION_REVERSION_SUPPRIMEE = "supprimee"
 CONVENTIONS_REVERSION: tuple[str, ...] = (
@@ -302,14 +317,20 @@ class CoutAnnuel:
     #: Part de la masse versée qui est une pension de RÉVERSION, et que le
     #: rapport ne décrit pas — ``masse_du_scenario`` dit pourquoi.
     part_derives: float = 0.0
-    #: Les scénarios notionnels reconduisent-ils la réversion ?
-    reversion_servie: bool = True
+    #: Les scénarios notionnels reconduisent-ils la réversion ? Non, depuis le
+    #: 19 septembre 2026 : elle est un avantage non contributif, et ils les
+    #: retirent tous. Voir ``CONVENTIONS_REVERSION``.
+    reversion_servie: bool = False
+    #: Part de la masse portée par les pensions liquidées à la bascule ou
+    #: après : la seule dont une réforme PROSPECTIVE retire la réversion. Un
+    #: pour les réformes rétroactives, qui recalculent tout le monde.
+    part_post_bascule: float = 1.0
 
     def cout(self, scenario: str) -> float:
         """Coût du système, en millions d'euros courants de l'année."""
         return masse_du_scenario(self.observee, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie)
+                                 self.reversion_servie, self.part_post_bascule)
 
     def cout_constants(self, scenario: str) -> float:
         return self.cout(scenario) * self.coefficient_constants
@@ -320,7 +341,8 @@ class CoutAnnuel:
 
 
 def masse_du_scenario(base: float, part_derives: float, rapport: float,
-                      scenario: str, reversion_servie: bool = True) -> float:
+                      scenario: str, reversion_servie: bool = False,
+                      part_post_bascule: float = 1.0) -> float:
     """Applique un rapport de masses à une base, et au seul morceau qu'il décrit.
 
     LE RAPPORT NE DÉCRIT QUE LES DROITS DIRECTS. Il est le quotient de deux
@@ -331,24 +353,40 @@ def masse_du_scenario(base: float, part_derives: float, rapport: float,
     19 septembre 2026, revenait à réduire la réversion dans la même proportion
     que les pensions propres, sans que rien ne l'ait décidé.
 
-    Le rapport ne multiplie donc que la part DIRECTE de la base, et la part
-    dérivée suit la convention du scénario : reconduite telle quelle, ou
-    supprimée. ``CONVENTIONS_REVERSION`` dit pourquoi la première est celle du
-    dépôt.
+    Le rapport ne multiplie donc que la part DIRECTE de la base. La part
+    dérivée, elle, suit la convention du scénario, et la convention du dépôt est
+    de ne PAS la servir : une pension de réversion est un avantage non
+    contributif, et les scénarios notionnels les retirent tous.
+    ``CONVENTIONS_REVERSION`` dit d'où vient cette règle.
 
-    DEUX CAS À PART. Le système actuel rend sa base sans rien y toucher — son
-    rapport vaut un, et la formule le rendrait de toute façon, mais l'écrire
-    évite qu'un arrondi ne fasse mentir l'identité. Et la GARANTIE VIEILLESSE
-    n'est pas un système : c'est une allocation différentielle calculée, elle
-    aussi, sur les seuls droits directs, et à laquelle on n'ajoute donc aucune
-    réversion.
+    UNE RÉFORME NE SUPPRIME QUE CE QU'ELLE A PRODUIT. ``part_post_bascule`` est
+    la fraction de la masse portée par les pensions liquidées à la bascule ou
+    après, et c'est d'elle seule que la réversion est retirée. Les réformes
+    RÉTROACTIVES recalculent tout le monde : elle vaut un pour elles, et la
+    réversion disparaît en entier. Les réformes PROSPECTIVES ne valent que pour
+    l'avenir : un conjoint survivant dont l'assuré a liquidé en 2010 tient son
+    droit du droit de 2010, et une réforme de 2026 ne le lui retire pas. La
+    part vaut donc zéro avant la bascule — ce qui préserve à l'euro près
+    l'identité des scénarios 3 et 5 avec le système actuel — et monte à mesure
+    que le stock d'avant se renouvelle.
+
+    DEUX CAS À PART. Le SYSTÈME ACTUEL rend sa base sans rien y toucher : il est
+    le droit en vigueur, il sert la réversion, et aucune convention ne le
+    touche. Son rapport vaut un et la formule le rendrait de toute façon, mais
+    l'écrire évite qu'un arrondi ne fasse mentir l'identité. Et la GARANTIE
+    VIEILLESSE n'est pas un système : c'est une allocation différentielle
+    calculée, elle aussi, sur les seuls droits directs, et à laquelle on
+    n'ajoute donc aucune réversion.
     """
     if scenario == "actuel":
         return base
     directe = base * (1.0 - part_derives) * rapport
-    if scenario == COMPOSANTE_GARANTIE or not reversion_servie:
+    if scenario == COMPOSANTE_GARANTIE:
         return directe
-    return directe + base * part_derives
+    if reversion_servie:
+        return directe + base * part_derives
+    convertie = part_post_bascule if scenario in CLES_PROSPECTIVES else 1.0
+    return directe + base * part_derives * (1.0 - convertie)
 
 
 @dataclass
@@ -381,14 +419,20 @@ class AvenirAnnuel:
     #: Part de la masse versée qui est une pension de RÉVERSION, et que le
     #: rapport ne décrit pas — ``masse_du_scenario`` dit pourquoi.
     part_derives: float = 0.0
-    #: Les scénarios notionnels reconduisent-ils la réversion ?
-    reversion_servie: bool = True
+    #: Les scénarios notionnels reconduisent-ils la réversion ? Non, depuis le
+    #: 19 septembre 2026 : elle est un avantage non contributif, et ils les
+    #: retirent tous. Voir ``CONVENTIONS_REVERSION``.
+    reversion_servie: bool = False
+    #: Part de la masse portée par les pensions liquidées à la bascule ou
+    #: après : la seule dont une réforme PROSPECTIVE retire la réversion. Un
+    #: pour les réformes rétroactives, qui recalculent tout le monde.
+    part_post_bascule: float = 1.0
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
         return masse_du_scenario(self.base, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie)
+                                 self.reversion_servie, self.part_post_bascule)
 
     def cout(self, scenario: str) -> float:
         """Le même coût, ramené aux euros courants de son année."""
@@ -505,8 +549,14 @@ class SoldeAnnuel:
     #: Part de la masse versée qui est une pension de RÉVERSION, et que le
     #: rapport ne décrit pas — ``masse_du_scenario`` dit pourquoi.
     part_derives: float = 0.0
-    #: Les scénarios notionnels reconduisent-ils la réversion ?
-    reversion_servie: bool = True
+    #: Les scénarios notionnels reconduisent-ils la réversion ? Non, depuis le
+    #: 19 septembre 2026 : elle est un avantage non contributif, et ils les
+    #: retirent tous. Voir ``CONVENTIONS_REVERSION``.
+    reversion_servie: bool = False
+    #: Part de la masse portée par les pensions liquidées à la bascule ou
+    #: après : la seule dont une réforme PROSPECTIVE retire la réversion. Un
+    #: pour les réformes rétroactives, qui recalculent tout le monde.
+    part_post_bascule: float = 1.0
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB.
@@ -516,7 +566,7 @@ class SoldeAnnuel:
         """
         return masse_du_scenario(self.depenses, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie)
+                                 self.reversion_servie, self.part_post_bascule)
 
     def ressources_de(self, scenario: str) -> float:
         """Ce qu'un système peut compter comme ressources, en part de PIB.
@@ -968,7 +1018,8 @@ class RevalorisationServie:
 
 def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             poids_cas: dict[str, float],
-            revalorisation: RevalorisationServie) -> tuple[dict[str, float], int]:
+            revalorisation: RevalorisationServie
+            ) -> tuple[dict[str, float], int, float]:
     """Masse de pensions par système, une année donnée, et le nombre de couples.
 
     DEUX pondérations se composent ici, et elles ne disent pas la même chose.
@@ -984,6 +1035,17 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     cette carrière-là, et vient des effectifs de caisse de la DREES. Sans elle,
     l'agent de conduite pèserait ce que pèse le salarié au salaire moyen.
 
+    LA TROISIÈME VALEUR RENDUE est la part de la masse du système actuel que
+    portent les pensions LIQUIDÉES À LA BASCULE OU APRÈS. Elle sert à une seule
+    chose, et ``masse_du_scenario`` la dit : une réforme PROSPECTIVE ne
+    supprime la réversion que des pensions qu'elle a elle-même produites. Un
+    conjoint survivant dont l'assuré a liquidé en 2010 tient son droit du droit
+    de 2010, et une réforme de 2026 ne le lui retire pas. Cette part vaut donc
+    zéro avant la bascule — ce qui préserve à l'euro près l'identité des
+    scénarios 3 et 5 avec le système actuel — et monte à mesure que le stock
+    d'avant se renouvelle. Les réformes RÉTROACTIVES, elles, recalculent tout
+    le monde : la part ne les concerne pas, et vaut un pour elles.
+
     Ces deux-là pèsent des TÊTES. Deux autres pèsent des EUROS :
     ``poids_revalorise`` porte ce que la pension est devenue depuis la
     liquidation sous la règle d'indexation — voir :class:`RevalorisationServie`
@@ -995,6 +1057,9 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     """
     masses = {cle: 0.0 for cle in CLES_MASSES}
     vivants = 0
+    # La masse du système actuel portée par les liquidations d'après la
+    # bascule : le numérateur de la troisième valeur rendue.
+    masse_post_bascule = 0.0
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -1003,6 +1068,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         poids_garantie = 0.0
         poids_revalorise = 0.0
         poids_revalorise_prospectif = 0.0
+        poids_post_bascule = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             liquidation = pensionne.annee_liquidation + decalage
             if annee < liquidation:
@@ -1011,6 +1077,8 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                 annee - pensionne.generation - decalage, annee
             )
             poids += effectif
+            if liquidation >= revalorisation.annee_bascule:
+                poids_post_bascule += effectif
             # Le troisième poids porte la revalorisation des pensions SERVIES,
             # et il faut qu'il soit à part : le coefficient dépend de l'année
             # de liquidation, qui n'est pas la même pour les cinq cohortes de
@@ -1030,6 +1098,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         if poids <= 0.0:
             continue
         vivants += 1
+        masse_post_bascule += part * poids_post_bascule * pensionne.pensions["actuel"]
         for cle in CLES_MASSES:
             if cle == COMPOSANTE_GARANTIE:
                 poids_cle = poids_garantie
@@ -1040,7 +1109,10 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             else:
                 poids_cle = poids
             masses[cle] += part * poids_cle * pensionne.pensions[cle]
-    return masses, vivants
+    part_post_bascule = (
+        masse_post_bascule / masses["actuel"] if masses["actuel"] > 0.0 else 0.0
+    )
+    return masses, vivants, part_post_bascule
 
 
 def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
@@ -1137,7 +1209,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             population: Population, simulateur: Simulateur,
             poids: Callable[[int], dict[str, float]],
             revalorisation: RevalorisationServie,
-            reversion_servie: bool = True) -> Avenir:
+            reversion_servie: bool = False) -> Avenir:
     """La trajectoire de la répartition, de la première année ventilée à l'horizon.
 
     Deux régimes, une seule formule. Jusqu'à la dernière année publiée, la base
@@ -1149,7 +1221,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     annee_euros = simulateur.parametres.annee_euros_constants
     derniere_publiee = depenses.derniere_annee
 
-    masses_ancrage, _ = _masses(pensionnes, population, derniere_publiee,
+    masses_ancrage, _, _ = _masses(pensionnes, population, derniere_publiee,
                                 poids(derniere_publiee), revalorisation)
     if masses_ancrage["actuel"] <= 0.0:
         return Avenir()
@@ -1180,7 +1252,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     lignes: list[AvenirAnnuel] = []
     for annee in range(depenses.premiere_annee_ventilee, HORIZON + 1):
         poids_annee = poids(annee)
-        masses, _ = _masses(pensionnes, population, annee, poids_annee,
+        masses, _, part_post_bascule = _masses(pensionnes, population, annee, poids_annee,
                             revalorisation)
         if masses["actuel"] <= 0.0:
             continue
@@ -1206,6 +1278,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                 cotisations, annee, simulateur.parametres.annee_bascule),
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
+            part_post_bascule=part_post_bascule,
         ))
 
     return Avenir(
@@ -1224,7 +1297,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
            derniere_annee_pib: int, assiette: AssietteActivite | None,
            taux_liberal: float, annee_bascule: int,
            convention: str, depenses: DepensesRetraite,
-           reversion_servie: bool = True) -> Solde:
+           reversion_servie: bool = False) -> Solde:
     """Le bilan, obtenu en croisant le compte du COR et les rapports du modèle.
 
     Aucune pension n'est resimulée ici : les rapports de masses sont ceux que
@@ -1274,6 +1347,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             convention_recette=convention,
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
+            part_post_bascule=par_annee[annee].part_post_bascule,
         )
         for annee in comptes.annees() if annee in par_annee
     ]
@@ -1298,7 +1372,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   liquidation: str = "droit",
                   assiette: AssietteActivite | None = None,
                   convention_recette: str = CONVENTION_ASSIETTE,
-                  convention_reversion: str = CONVENTION_REVERSION_SERVIE) -> Cout:
+                  convention_reversion: str = CONVENTION_REVERSION_SUPPRIMEE) -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
     Les années où le modèle ne sert AUCUNE pension — celles d'avant la première
@@ -1317,11 +1391,11 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     la génération 1940 à l'âge légal de 2023.
 
     ``convention_reversion`` dit ce que les scénarios notionnels font de la
-    RÉVERSION, qu'aucun d'eux ne calcule : ``servie``, reconduite telle quelle
-    comme en Italie, ou ``supprimee``, comme en Suède. Ce n'est pas un réglage
-    d'affichage : la réversion pèse un dixième de la masse versée, et
-    ``CONVENTIONS_REVERSION`` dit pourquoi le dépôt prend la plus coûteuse par
-    défaut.
+    RÉVERSION, qu'aucun d'eux ne calcule : ``supprimee``, comme en Suède, et
+    c'est le défaut parce que la réversion est un avantage non contributif de
+    plus ; ou ``servie``, reconduite telle quelle comme en Italie. Le scénario
+    1 la sert dans les deux cas. Ce n'est pas un réglage d'affichage : la
+    réversion pèse un dixième de la masse versée.
 
     ``comptes`` porte le second terme du bilan — les ressources. Il est
     facultatif : sans lui, tout ce qui précède est calculé à l'identique et le
@@ -1355,7 +1429,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
 
     lignes: list[CoutAnnuel] = []
     for annee in depenses.annees():
-        masses, vivants = _masses(pensionnes, population, annee, poids(annee),
+        masses, vivants, part_post_bascule = _masses(pensionnes, population, annee, poids(annee),
                                   revalorisation)
         if masses["actuel"] <= 0.0:
             continue
@@ -1368,6 +1442,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
             pensionnes=vivants,
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
+            part_post_bascule=part_post_bascule,
         ))
 
     fiabilite = min(
