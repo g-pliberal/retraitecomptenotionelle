@@ -6400,6 +6400,9 @@ lignes de journal du 19 septembre 2026 dans `legislation/veille.yaml`.
   à chacun des autres, et le dépôt ne prend pas l'hypothèse flatteuse sans
   qu'un programme l'ait tranchée. À trancher, donc, par le Parti libéral.
 
+  [Tranché le jour même, et dans l'autre sens : voir l'entrée suivante. Ce
+  paragraphe raconte l'état du dépôt entre les deux, il ne décrit plus le code.]
+
   **Mesuré**, en point de solde moyen 2026-2070 : scénario 2, −0,81 ;
   scénario 3, −0,23 ; scénario 4, −0,27 ; scénario 5, −0,09 ; scénario 6,
   −0,35. Le scénario 1 ne bouge pas d'un iota, son rapport valant un, et un
@@ -6441,33 +6444,44 @@ lignes de journal du 19 septembre 2026 dans `legislation/veille.yaml`.
   représente ; une pension de réversion n'en est pas. Le scénario 1 la sert
   dans tous les cas : il est le droit en vigueur.
 
-  **Ce que la décision a forcé à écrire, et qui n'était pas dans la consigne.**
-  Appliquée telle quelle, elle cassait une propriété exacte du modèle : les
-  scénarios PROSPECTIFS sont identiques au système actuel avant leur bascule,
-  et un test le tient. Leur retirer la réversion dès 2026 les en aurait
-  écartés. Or une réversion dérive de la pension du défunt : si l'assuré a
-  liquidé en 2010, son conjoint survivant tient son droit du droit de 2010, et
-  une réforme de 2026 ne le lui retire pas. **Une réforme ne supprime que ce
-  qu'elle a produit.** D'où `part_post_bascule`, calculée dans `_masses` : la
-  fraction de la masse portée par les pensions liquidées à la bascule ou après.
-  Elle vaut zéro avant celle-ci, 4,8 % en 2026, 58,7 % en 2040, 99,9 % en 2070.
-  Les scénarios rétroactifs recalculent tout le monde et ne la regardent pas.
+  **Un détour par une hypothèse que le programme a refusée, et qu'il faut
+  consigner.** On avait d'abord retiré la réversion PROGRESSIVEMENT dans les
+  scénarios prospectifs, au motif qu'une réversion dérive de la pension du
+  défunt et qu'une réforme de 2026 ne reprend pas un droit ouvert en 2010 —
+  avec une `part_post_bascule` calculée dans `_masses`. Le programme a tranché
+  autrement, et sa règle est plus simple : **les cinq scénarios la retirent à
+  tout le monde, du jour où ils s'appliquent.** Le code de la progressivité est
+  retiré ; il ne reste qu'un drapeau, `reforme_en_vigueur`, qui dit si la
+  bascule a eu lieu.
 
-  **Mesuré**, en point de solde moyen 2026-2070 : **+1,19 aux trois scénarios
-  rétroactifs** (2, 4, 6), **+0,78 aux deux prospectifs** (3, 5). L'écart entre
-  les deux est exactement ce que coûte le respect des droits déjà ouverts. Le
-  scénario 1 ne bouge pas d'un iota, et un test l'exige.
+  Ce drapeau ne sert qu'aux scénarios PROSPECTIFS, et pour une raison qui n'est
+  pas une nuance sur la réversion : avant leur bascule, ils SONT le système
+  actuel — ils y recopient ses pensions, et un test tient l'égalité de leurs
+  courbes à l'euro près. Leur retirer quoi que ce soit avant qu'ils existent
+  ferait dire au modèle qu'une réforme de 2026 a économisé de l'argent en 1990.
+
+  **À noter, parce que ce n'est pas le traitement des autres avantages.** Dans
+  un scénario prospectif, un minimum contributif servi à qui a liquidé en 2010
+  lui reste acquis pour toujours, sa pension entière étant recopiée. La
+  réversion fait exception, et par décision du programme : aucun scénario
+  notionnel n'en verse à compter du jour où il s'applique.
+
+  **Mesuré** : **+1,19 point de solde moyen 2026-2070 à chacun des cinq**,
+  exactement le même chiffre. La réversion retirée est une part de la BASE, qui
+  ne dépend d'aucun rapport de masses, et les cinq la retirent sur la même
+  fenêtre, celle qui commence à la bascule. Le scénario 1 ne bouge pas d'un
+  iota, et un test l'exige.
 
   Le scénario 6 passe de −2,861 % à **−1,674 % du PIB**, contre −1,135 % pour
   le système actuel ; il n'est plus pire que lui que dans 33 des 45 années,
-  contre 41. Le scénario 5 retrouve l'équilibre, atteint in extremis en 2067,
-  et repasse au-dessus du système actuel — son test a été rouvert et réécrit.
+  contre 41. Le scénario 5 retrouve l'équilibre dès la bascule et repasse
+  au-dessus du système actuel, sa moyenne restant négative — son test a été
+  rouvert et réécrit.
 
-  Porté dans `moteur/js/`, témoins régénérés, 1038 tests verts. La douzième
+  Porté dans `moteur/js/`, témoins régénérés, 1046 tests verts. La douzième
   réserve de la page Coût dit désormais l'inverse de ce qu'elle disait le
-  matin, et elle le dit en entier : seul le système actuel sert la réversion,
-  et les systèmes prospectifs continuent de la servir aux pensions liquidées
-  avant leur bascule.
+  matin : seul le système actuel sert la réversion.
+
 ---
 
 ### 39. Choisir entre le net et le brut, à toutes les étapes — `fait`

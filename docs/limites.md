@@ -6038,24 +6038,30 @@ le 19 septembre 2026 :
    partage le capital du défunt, reste calculable sous
    `convention_reversion="servie"`.
 
-   **Une réforme ne reprend pas un droit déjà ouvert.** Une réversion dérive de
-   la pension du défunt : si l'assuré a liquidé en 2010, son conjoint survivant
-   tient son droit du droit de 2010, et une réforme de 2026 ne le lui retire
-   pas. Les scénarios RÉTROACTIFS (2, 4, 6) recalculent tout le monde et ne
-   servent plus un euro de réversion. Les scénarios PROSPECTIFS (3, 5) ne
-   cessent de la servir qu'à mesure que le stock d'avant s'éteint :
-   `part_post_bascule` porte cette fraction, elle vaut zéro avant la bascule —
-   ce qui préserve à l'euro près l'identité de ces scénarios avec le système
-   actuel — et dépasse 90 % à l'horizon.
+   **Les cinq la retirent à tout le monde, et du même jour.** Les scénarios
+   RÉTROACTIFS (2, 4, 6) recalculent toutes les pensions depuis 1941 : ils n'en
+   servent jamais un euro. Les scénarios PROSPECTIFS (3, 5) sont, par
+   construction, le système actuel jusqu'à leur bascule — ils y recopient ses
+   pensions, et un test tient l'égalité de leurs courbes à l'euro près —, si
+   bien qu'ils y servent sa réversion comme le reste ; à compter de la bascule
+   ils ne la servent plus, aux veuves d'avant comme à celles d'après.
+   `reforme_en_vigueur` porte ce seul basculement.
 
-   Ce que la décision rend, par scénario, en point de solde moyen 2026-2070 :
-   **+1,19 aux trois scénarios rétroactifs** (2, 4 et 6), qui cessent de la
-   servir tout de suite, et **+0,78 aux deux prospectifs** (3 et 5), qui ne
-   cessent qu'à mesure. L'écart entre les deux chiffres est exactement ce que
-   coûte le respect des droits déjà ouverts. Le scénario 1 ne bouge pas d'un iota, son
+   Ce n'est pas le traitement que le modèle réserve aux autres avantages non
+   contributifs dans les scénarios prospectifs : un minimum contributif servi à
+   qui a liquidé en 2010 lui reste acquis pour toujours, parce que sa pension
+   entière est recopiée. La réversion fait exception, et par décision : le
+   programme a voulu qu'aucun scénario notionnel n'en verse à compter du jour
+   où il s'applique.
+
+   Ce que la décision rend : **+1,19 point de solde moyen 2026-2070 à chacun
+   des cinq**, exactement le même chiffre. Ce n'est pas une coïncidence — la
+   réversion retirée est une part de la BASE, qui ne dépend d'aucun rapport de
+   masses, et les cinq la retirent sur la même fenêtre, celle qui commence à la
+   bascule. Le scénario 1 ne bouge pas d'un iota, son
    rapport valant un, et un test l'exige. Le scénario 5 retrouve au passage
-   l'équilibre, atteint in extremis en 2067, et repasse au-dessus du système
-   actuel.
+   l'équilibre dès la bascule et repasse au-dessus du système actuel, sa
+   moyenne restant néanmoins négative.
 
    **Et la part est contrôlée chez un autre producteur.** Elle est construite à
    partir du classeur du COR, où douze des vingt-deux régimes publient leur
