@@ -54,7 +54,7 @@ Deux tiers des ressources sont des cotisations assises sur des revenus
 d'activité. Le reste ne l'est pas, et il faut le savoir avant de lire un
 coefficient d'équilibre : la contribution que l'État verse au régime de ses
 fonctionnaires est fixée pour ÉQUILIBRER ce régime et non pour acquérir des
-droits, les impôts affectés compensent des exonérations, les subventions
+droits, les impôts affectés n'ouvrent de droit à personne, les subventions
 d'équilibre comblent des régimes en extinction. Un système en comptes
 notionnels ne sait créditer que la première catégorie ; ``contributive`` dit
 laquelle c'est.
@@ -109,7 +109,8 @@ POSTES: tuple[PosteRessources, ...] = (
     ),
     PosteRessources(
         "impots_et_taxes", "Impôts et taxes affectés",
-        "CSG, forfait social, taxe sur les salaires, transferts de TVA. "
+        "CSG, taxe sur les salaires, forfait social, contribution sociale de "
+        "solidarité des sociétés, taxes des régimes agricoles. "
         "38 % en financent le fonds de solidarité vieillesse. Ce n'est PAS la "
         "compensation des allègements généraux de cotisations patronales : "
         "celle-là passe par la TVA, qui finance la branche maladie, et le "
@@ -178,9 +179,9 @@ GROUPES: tuple[GroupeRessources, ...] = (
     ),
     GroupeRessources(
         "impots", "Impôts",
-        "CSG, TVA, taxe sur les salaires. L'État a allégé les cotisations des "
-        "employeurs pour baisser le coût du travail, puis remboursé la retraite "
-        "par l'impôt.",
+        "CSG, taxe sur les salaires, forfait social. Des recettes fiscales "
+        "affectées à la retraite, qui n'ouvrent de droit à personne : plus du "
+        "tiers finance le fonds de solidarité vieillesse.",
         ("impots_et_taxes",),
         "var(--serie-6)",
     ),

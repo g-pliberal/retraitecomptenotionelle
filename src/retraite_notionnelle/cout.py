@@ -517,8 +517,8 @@ class SoldeAnnuel:
     #: Part des ressources qui est une cotisation assise sur un revenu
     #: d'activité, la seule sur laquelle un changement de taux ait prise.
     part_contributive: float = 0.0
-    #: Part des ressources qui est un impôt ou une taxe affectés : CSG,
-    #: forfait social, taxe sur les salaires, transferts de TVA. Le scénario 6
+    #: Part des ressources qui est un impôt ou une taxe affectés : CSG, taxe
+    #: sur les salaires, forfait social, C3S, taxes agricoles. Le scénario 6
     #: ne les reconduit pas, et ``ressources_de`` dit pourquoi.
     part_impots: float = 0.0
     #: La part de ``retrait`` dont la recette arrive par l'impôt et non par un

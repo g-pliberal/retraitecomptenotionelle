@@ -57,7 +57,8 @@ export const POSTES = [
   {
     code: "impots_et_taxes",
     libelle: "Impôts et taxes affectés",
-    glose: "CSG, forfait social, taxe sur les salaires, transferts de TVA. "
+    glose: "CSG, taxe sur les salaires, forfait social, contribution sociale "
+      + "de solidarité des sociétés, taxes des régimes agricoles. "
       + "38 % en financent le fonds de solidarité vieillesse. Ce n'est PAS la "
       + "compensation des allègements généraux de cotisations patronales : "
       + "celle-là passe par la TVA, qui finance la branche maladie, et le "
@@ -115,9 +116,9 @@ export const GROUPES = [
   {
     code: "impots",
     libelle: "Impôts",
-    explication: "CSG, TVA, taxe sur les salaires. L'État a allégé les "
-      + "cotisations des employeurs pour baisser le coût du travail, puis "
-      + "remboursé la retraite par l'impôt.",
+    explication: "CSG, taxe sur les salaires, forfait social. Des recettes "
+      + "fiscales affectées à la retraite, qui n'ouvrent de droit à personne : "
+      + "plus du tiers finance le fonds de solidarité vieillesse.",
     postes: ["impots_et_taxes"],
     couleur: "var(--serie-6)",
   },

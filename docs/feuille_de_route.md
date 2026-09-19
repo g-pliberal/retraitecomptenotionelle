@@ -549,9 +549,9 @@ c'était la condition pour que ce qui précède reste comparable.
   ressources de 2025 sont des cotisations — en comptant la contribution
   d'équilibre de l'État à ses fonctionnaires, que le modèle porte déjà au compte
   des scénarios 4 et 5 —, contre 79,6 % en 2004. Les impôts et taxes affectés
-  passent de 7,1 % à 15,3 % : l'État a exonéré des cotisations patronales, puis
-  remboursé par l'impôt. Un compte notionnel ne sait créditer que la part
-  cotisée ; c'est ce qui borne la lecture du coefficient, et il fallait le
+  passent de 7,1 % à 15,3 % : la retraite est financée par l'impôt pour une
+  part qui a doublé en vingt ans. Un compte notionnel ne sait créditer que la
+  part cotisée ; c'est ce qui borne la lecture du coefficient, et il fallait le
   chiffrer pour pouvoir le dire.
 
 **Ce qui reste dehors, et pourquoi.** L'APPLICATION du coefficient, qui est le
@@ -3793,10 +3793,14 @@ toucher aux moteurs de pension.
       militaires confondus.
 
    Un choix mérite d'être dit : **les impôts et taxes affectés ne comptent PAS
-   dans `part_etat`**. Ils compensent des exonérations de cotisations, ce qui
-   est une aide à l'activité et non un financement de la retraite — `cout.py`
-   tient déjà cette distinction pour l'agrégat, et la brouiller ici ferait
-   dire deux choses au même mot.
+   dans `part_etat`**. Un impôt affecté n'est pas ce que l'État verse comme
+   employeur ni ce qu'il comble comme garant : c'est une recette du système,
+   d'une autre nature que les deux — `cout.py` tient déjà cette distinction
+   pour l'agrégat, et la brouiller ici ferait dire deux choses au même mot.
+   *[Corrigé le 19 septembre 2026 au soir.] Cette ligne justifiait le choix par
+   « ils compensent des exonérations de cotisations, ce qui est une aide à
+   l'activité et non un financement de la retraite ». Le choix tient, la raison
+   non : la TVA qui compense les allègements finance la branche maladie.*
 
    **Ce qui n'est pas fait** : la page « Coût » n'affiche rien de tout cela. La
    série est chargée et lisible, elle n'entre dans aucun calcul de scénario.
@@ -3868,16 +3872,57 @@ toucher aux moteurs de pension.
 
    Porté dans `moteur/js/cout.js` comme le dépôt l'exige, témoins régénérés.
 
-   **Ce qui reste reconduit, et n'est pas tranché** : les impôts et taxes
+   **Ce qui reste reconduit à la fin de cette passe-là** : les impôts et taxes
    affectés (1,944 point de PIB en 2024), les transferts (0,665) et les autres
-   produits (0,303). Le même argument vaudrait pour les impôts — ils compensent
-   des allègements de cotisations patronales qu'un système sans exonération ne
-   consent pas — et c'est la prochaine question.
+   produits (0,303). *[Corrigé.] Cette ligne ajoutait ici que « le même argument
+   vaudrait pour les impôts — ils compensent des allègements de cotisations
+   patronales qu'un système sans exonération ne consent pas ». C'est faux, et
+   c'est la phrase que le dépôt avait lui-même démolie le matin même : la TVA
+   qui compense les allègements finance la branche MALADIE, et le compte de la
+   CNAV n'en porte aucune ligne. Les impôts affectés sont bien sortis, le soir
+   du même jour, mais par un autre argument — quatorzième passe, ci-dessous.*
 
    **Une précaution que le programme a demandée et qu'on respecte** : rien n'est
    écrit au public. La page affiche les chiffres nouveaux, mais aucune prose
    n'explique encore ce fonctionnement — il faut d'abord vérifier que ces
    chiffres font un système cohérent.
+
+   **Quatorzième passe, 19 septembre 2026 : les impôts et taxes affectés
+   sortent aussi, et c'était la dernière des trois.** Le programme a tranché le
+   soir même, et la décision exigeait d'abord une rétractation : l'argument par
+   lequel on la lui avait proposée — « ils compensent des allègements de
+   cotisations patronales qu'un système sans exonération ne consent pas » — est
+   celui que le dépôt avait démoli le matin, en ouvrant le compte de la CNAV.
+
+   **L'argument qui vaut est celui des 18 %** : un compte notionnel ne crédite
+   que ce qui est assis sur un revenu d'activité. Un impôt affecté n'ouvre de
+   droit à personne ; le porter au crédit d'un système qui ne rend que ce qui a
+   été cotisé, c'est lui prêter une recette sans contrepartie. C'est le même
+   argument qui a fait sortir la contribution d'équilibre et les subventions,
+   et il ne doit rien à ce que ce poste compense ou ne compense pas.
+
+   **Il fallait ne le retirer qu'une fois.** 38 % du poste sont les ressources
+   du fonds de solidarité vieillesse (21,7 des 57,1 Md€ de 2024), et ce que ce
+   fonds VERSE aux régimes — 19,6 Md€ — était déjà retiré par `retrait` depuis
+   le matin. Sortir le poste en entier sans toucher au retrait aurait fait
+   sortir la même somme deux fois. D'où `retrait_par_impot`, qui est cette
+   somme et que le scénario 6 rend au compte à l'instant où le poste s'en va ;
+   les quatre autres scénarios notionnels, qui encaissent toujours les impôts
+   affectés, gardent le retrait entier.
+
+   **Ce que la sortie coûte, remesuré le 19 septembre 2026 au soir** :
+   **1,395 point de solde moyen**. Sur 2026-2070, le scénario 6 passe de
+   −0,28 % du PIB, poste reconduit, à **−1,67 %**, contre −1,13 % pour le
+   système actuel ; il est plus déficitaire que lui dans 33 des 45 années, ne
+   revient à l'équilibre sur aucune, et son coefficient de 2040 descend de 0,94
+   à 0,80. *Le jour de la décision, ces deux niveaux étaient −1,12 % et
+   −2,51 % : ils ont monté depuis, la réversion ayant quitté les cinq scénarios
+   notionnels. Le COÛT de la sortie, lui, n'a pas bougé.*
+
+   **Les trois décisions prises ensemble** retirent au scénario 6 les 27 % de
+   ressources qui n'acquièrent de droits à personne. Ce qui reste reconduit, et
+   qu'aucun programme n'a tranché : les transferts (0,665 point de PIB) et les
+   autres produits (0,303) — 7 % des ressources de 2024.
 
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
@@ -3888,9 +3933,9 @@ toucher aux moteurs de pension.
    longue dont la moitié compte autre chose. L'urgence reste faible — la
    mesure du 19 septembre tient : sous la convention du programme, la
    pondération ne déplace pas le solde du scénario 6 d'un millième.
-4. *Dire ce que le programme fait des ressources non cotisées.* **Deux des
-   trois questions sont désormais tranchées, par le programme lui-même, le 19
-   septembre 2026.** La contribution d'équilibre de l'État disparaît : il cotise
+4. *Dire ce que le programme fait des ressources non cotisées.* **Les trois
+   questions sont tranchées, par le programme lui-même, le 19 septembre
+   2026.** La contribution d'équilibre de l'État disparaît : il cotise
    à 18 % comme tout employeur, et l'assiette couvrant toutes les branches, les
    traitements de ses agents y sont déjà. Les subventions d'équilibre
    disparaissent aussi, et l'argument n'est pas comptable mais logique — une
@@ -3902,11 +3947,20 @@ toucher aux moteurs de pension.
    question sont servies comme les autres, pour partie recalculées par le
    notionnel, pour partie portées par les cotisants du système unifié.
 
-   Reste la troisième, et elle n'est pas tranchée : les 18 % remplacent-ils
-   aussi les 64 Md€ d'impôts et taxes affectés, qui compensent pour l'essentiel
-   des allègements de cotisations patronales que ce système ne consent pas ?
-   L'argument qui a fait sortir les deux autres vaudrait pour celle-ci ; le
-   dépôt la reconduit en attendant, et le choix est politique.
+   Les impôts et taxes affectés disparaissent enfin — 14,1 % des ressources,
+   57,1 Md€ en 2024 —, et il faut dire par quel argument ce n'est PAS. Cette
+   ligne demandait auparavant si « les 18 % remplacent aussi les 64 Md€
+   d'impôts et taxes affectés, qui compensent pour l'essentiel des allègements
+   de cotisations patronales que ce système ne consent pas ». La prémisse est
+   fausse : la TVA qui compense les allègements finance la branche maladie, et
+   le compte de la CNAV n'en porte aucune ligne. L'argument qui vaut est celui
+   des 18 % eux-mêmes — un compte notionnel ne crédite que ce qui est assis sur
+   un revenu d'activité, et un impôt affecté n'ouvre de droit à personne. La
+   sortie coûte 1,395 point de solde moyen au scénario 6, six fois ce que
+   coûtaient les subventions ; la quatorzième passe du point 3 la détaille.
+
+   Ce qui reste reconduit, faute qu'aucun programme dise ce qu'il en ferait :
+   les transferts (0,665 point de PIB en 2024) et les autres produits (0,303).
 5. *Sortir les cinq points capitalisés de la recette.* Le pilier obligatoire
    prélève 5 % sur la même assiette et ne finance pas la répartition. L'effort
    contributif du scénario 6 est donc de 23 %, sa recette de système de 18 %,
@@ -5683,8 +5737,11 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   sont éparses et le lecteur REFUSE d'interpoler ; les parts ne somment pas
   toujours à un et ne sont pas normalisées ; la fonction publique d'État est
   d'un seul tenant. Et un choix : les impôts et taxes affectés ne comptent pas
-  dans `part_etat`, parce qu'ils compensent des exonérations — `cout.py` tient
-  déjà cette distinction pour l'agrégat.
+  dans `part_etat`, un impôt affecté n'étant ni ce que l'État verse comme
+  employeur ni ce qu'il comble comme garant — `cout.py` tient déjà cette
+  distinction pour l'agrégat. *[Corrigé le soir même : cette entrée écrivait
+  « parce qu'ils compensent des exonérations », ce qui est la phrase que le
+  dépôt avait démolie le matin.]*
 
   **Ce qui n'est pas fait, et c'est délibéré** : la page « Coût » n'affiche rien
   de tout cela. Le pas suivant demande une décision de MODÈLE et non de

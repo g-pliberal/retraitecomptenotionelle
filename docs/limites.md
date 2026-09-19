@@ -5406,8 +5406,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   points de ressources, dont 24,9 de cotisations, là où le taux légal d'un
   salarié type est de 28 à 29 %. Les quatre points d'écart ont deux causes, et
   le dépôt ne sait pas encore les départager. La première est l'ALLÈGEMENT
-  GÉNÉRAL, décrit ci-dessous, que l'impôt compense et qui reparaît dans les
-  4,6 points d'impôts et taxes affectés. La seconde est la COMPOSITION de la
+  GÉNÉRAL, décrit ci-dessous : l'employeur ne verse pas le taux légal, et ce
+  que la retraite y perd lui revient par une voie que le dépôt n'a pas
+  établie — **pas par ses 4,6 points d'impôts et taxes affectés**, où cette
+  ligne l'a longtemps logé à tort ; le compte de la CNAV ne porte aucune ligne
+  de TVA, et c'est par la TVA que l'État compense. La seconde est la COMPOSITION de la
   grille : ses cas types sont pondérés par les retraités de leur caisse, ce qui
   surreprésente la fonction publique et les régimes spéciaux, dont les taux
   sont les plus élevés, et gonfle donc le taux légal moyen qu'on lui fait
@@ -5480,19 +5483,30 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   | | Solde moyen 2026-2070 | Coefficient 2040 | Équilibre atteint |
   |---|---|---|---|
-  | Scénario 6, convention `assiette` (affichée) | **+0,12 % du PIB** | **0,97** | 2026 |
-  | Scénario 6, convention `rapport` | −0,73 % | 0,88 | 2026 |
+  | Scénario 6, convention `assiette` (affichée) | **−1,67 % du PIB** | **0,80** | jamais |
+  | Scénario 6, convention `rapport` | −0,89 % | 0,87 | 2026 |
   | Système actuel | −1,13 % | — | jamais |
 
-Le taux plein rapporte PLUS que le rapport de taux légaux ne le disait :
-  18 % d'assiette au lieu de 15,5, soit deux points et demi d'assiette gagnés,
-  et c'est ce qui sépare les deux lignes. **Sous sa propre convention, la
-  proposition est donc légèrement excédentaire, là où l'affichage la donne en
-  léger déficit ; dans les deux cas elle fait mieux que le système qu'elle
-  remplace.** *Cette ligne a d'abord été calculée à −1,28 % : on retirait alors
-  tout le poste des impôts et taxes affectés, au motif qu'il compensait les
-  allègements. Il ne les compense pas — voir ci-dessous —, et seule la CSG de
-  solidarité en sort, par le retrait.*
+  Deux effets de sens contraire séparent ces deux lignes, et il faut les
+  compter séparément. Le taux plein rapporte PLUS que le rapport de taux
+  légaux ne le disait — 18 % d'assiette au lieu de 15,5, soit deux points et
+  demi d'assiette gagnés. Mais la convention du programme ne fait pas que poser
+  un taux : elle RETIRE aussi les trois postes qui n'acquièrent de droits à
+  personne, et ce second effet l'emporte largement sur le premier. **Sous sa
+  propre convention, la proposition est donc plus déficitaire que le système
+  qu'elle remplace**, d'un demi-point de PIB en moyenne, là où l'ancienne la
+  donnait au-dessus de lui. C'est le chiffre d'un système qui ne vit que de ses
+  cotisations, et c'est celui que le dépôt affiche.
+
+  *Cette ligne a changé deux fois, et les deux mouvements valent d'être dits.*
+  Elle a d'abord été calculée à −1,28 %, en retirant tout le poste des impôts
+  et taxes affectés au motif qu'il compensait les allègements. Il ne les
+  compense pas — voir ci-dessous —, et cette raison-là est tombée : le poste a
+  été rendu au scénario 6, qui est remonté à +0,12 %. Il en est ressorti pour
+  de bon le soir du 19 septembre 2026, **par l'argument des 18 % et non par
+  celui des allègements** : un compte notionnel ne crédite que ce qui est assis
+  sur un revenu d'activité. Le poste est donc sorti EN ENTIER, une fois, et
+  pour une raison qui tient.
 
   **CE QUE CE POSTE CONTIENT VRAIMENT, ET IL NE CONTIENT PAS CE QU'ON
   CROYAIT.** Lu le 19 septembre 2026 dans le rapport à la Commission des
@@ -5552,11 +5566,15 @@ Le taux plein rapporte PLUS que le rapport de taux légaux ne le disait :
   affectés, gardent le retrait entier. C'est `retrait_par_impot` dans
   `cout.py`, et deux tests le tiennent.
 
-  *Ce que la sortie coûte.* Le solde moyen du scénario 6 sur 2026-2070 passe
-  de −1,12 % du PIB à **−2,51 %**, contre −1,14 % pour le système actuel : il
-  est désormais plus déficitaire que lui dans 38 des 45 années, et ne revient
-  à l'équilibre sur aucune. Son coefficient d'équilibre — ce que le système
-  peut servir rapporté à ce qu'il promet — descend de 0,97 à **0,82**. Les
+  *Ce que la sortie coûte* : **1,395 point de solde moyen**. Sur 2026-2070, le
+  scénario 6 passe de −0,28 % du PIB, poste reconduit, à **−1,67 %**, contre
+  −1,13 % pour le système actuel : il est désormais plus déficitaire que lui
+  dans 33 des 45 années, et ne revient à l'équilibre sur aucune. Son
+  coefficient d'équilibre de 2040 — ce que le système peut servir rapporté à ce
+  qu'il promet — descend de 0,94 à **0,80**. *(Le soir de la décision, ces deux
+  niveaux étaient −1,12 % et −2,51 % ; ils ont monté depuis, la réversion ayant
+  quitté les cinq scénarios notionnels. Le COÛT de la sortie, lui, n'a pas
+  bougé : c'est le même 1,395 point.)* Les
   trois décisions du 19 septembre, prises ensemble, retirent au scénario 6 les
   27 % de ressources qui n'acquièrent de droits à personne, et le chiffre qui
   reste est celui d'un système qui ne vit que de ses cotisations.

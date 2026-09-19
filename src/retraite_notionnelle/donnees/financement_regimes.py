@@ -37,10 +37,10 @@ import csv
 from pathlib import Path
 
 #: Les deux postes par lesquels l'ÉTAT verse directement au régime. Les impôts
-#: et taxes affectés n'en sont pas : ils compensent des exonérations de
-#: cotisations, ce qui est une aide à l'activité et non un financement de la
-#: retraite — ``cout.py`` tient déjà cette distinction pour l'agrégat, et la
-#: mélanger ici ferait dire deux choses différentes au même mot.
+#: et taxes affectés n'en sont pas : une recette fiscale affectée n'est ni ce
+#: que l'État verse comme employeur ni ce qu'il comble comme garant —
+#: ``cout.py`` tient déjà cette distinction pour l'agrégat, et la mélanger ici
+#: ferait dire deux choses différentes au même mot.
 POSTES_ETAT: tuple[str, ...] = ("contribution_equilibre_etat", "subventions_equilibre")
 
 #: Le poste qui n'est financé par personne : ce que le régime devrait emprunter.
