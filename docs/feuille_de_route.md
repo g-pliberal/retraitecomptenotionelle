@@ -2956,9 +2956,53 @@ toucher aux moteurs de pension.
    fusionné), ce qui élargit l'assiette au moment où le taux baisse, et seul un
    rapport calculé sur les carrières capte les deux effets à la fois.
 3. *Une série d'effectifs de cotisants.* `effectifs_retraites.csv` compte les
-   retraités ; la pondération des recettes demande les cotisants, que la même
-   enquête annuelle auprès des caisses publie. C'est la seule donnée nouvelle
-   que l'action exige.
+   retraités ; la pondération des recettes demande les cotisants. **Cette ligne
+   affirmait que « la même enquête annuelle auprès des caisses les publie ».
+   C'est faux, vérifié le 19 septembre 2026**, et ce qui suit est le relevé des
+   impasses, pour qu'on ne les reparcoure pas.
+
+   - **EACR de la DREES — non.** Ses deux classeurs portent douze feuilles :
+     cadrage, prélèvements sociaux, âge conjoncturel, liquidants, droits
+     directs, droits dérivés, minima, cumul, conditions de liquidation,
+     coefficient Agirc-Arrco, invalidité, rentes AT-MP. C'est une enquête sur
+     les RETRAITÉS de bout en bout.
+   - **COR — non.** Les 153 feuilles de ses six classeurs 2026 ne portent
+     qu'une figure de cotisants, la 1.13, en BASE 100 et pour les seuls
+     régimes de la fonction publique.
+   - **Open data DREES et data.gouv.fr — rien.** Aucun jeu de données ne
+     répond à « cotisants ».
+   - **CCSS, fiche « La compensation généralisée vieillesse » — la seule
+     source, et elle est courte.** Elle donne l'effectif de cotisants régime
+     par régime, au sens légal des articles `L. 134-1` et suivants. Trois
+     trous : seul le rapport de mai 2026 rend ce tableau en TEXTE (les
+     quatorze rapports 2013-2026 ont été passés au lecteur ; les autres le
+     portent en image) ; la CANSSM, la CPRPSNCF et la CRPRATP sont intégrées
+     au régime général à compter de l'exercice 2025, si bien que la SNCF
+     n'existe que sur 2024 ; l'Ircantec et l'Agirc-Arrco sont absentes par
+     construction, la compensation ne couvrant que les régimes de BASE.
+
+   Reste donc un instantané de 2024 couvrant douze des treize cas types. Ce
+   n'est pas rien : l'année de bord est reconduite jusqu'en 2070, et c'est
+   exactement l'intervalle où la pondération sert, le rapport de recettes
+   valant 1 par construction avant la bascule. Mais ce n'est pas une série.
+
+   **Ce que ça change, mesuré et non supposé** : sous la convention du
+   programme — 18 % de l'assiette MESURÉE —, la pondération des cas types ne
+   déplace pas le solde du scénario 6 d'un millième. Passer des effectifs de
+   caisse aux poids égaux le laisse à −0,88 %. Elle ne mord que sous la
+   convention `rapport`, où elle vaut 0,14 point. L'urgence est donc faible,
+   et c'est une raison de chercher une VRAIE source plutôt que de bâtir vite
+   sur celle-là.
+
+   **Pistes non explorées**, pour une passe de recherche large : le programme
+   de qualité et d'efficience « Retraites » annexé au PLFSS, qui porte un
+   indicateur d'effectifs de cotisants par régime ; les rapports annuels de
+   chaque caisse (CNAV, CNRACL, CNIEG, CPRPSNCF, CNAVPL, CNBF, MSA, Ircantec
+   via la Caisse des dépôts) ; le rapport de la Cour des comptes de 2024 sur
+   la compensation, cité par la CCSS ; l'annuaire statistique de la Sécurité
+   sociale ; les déclarations sociales nominatives agrégées publiées par
+   l'ACOSS/URSSAF Caisse nationale ; et l'EIC de la DREES, qui échantillonne
+   des CARRIÈRES et non des pensions.
 4. *Dire ce que le programme fait des ressources non cotisées, et ne pas le
    décider à sa place.* Les 18 % remplacent-ils aussi les 64 Md€ d'impôts et
    taxes affectés, qui compensent pour l'essentiel des allègements de
