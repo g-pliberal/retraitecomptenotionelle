@@ -356,10 +356,15 @@ class Comparaison:
             )
         garantie = self.notionnel_liberal.garantie_vieillesse
         if garantie is not None and garantie.servie:
+            quand = (
+                "" if garantie.age_atteint
+                else f", à compter de {garantie.annee_ouverture} (65 ans)"
+            )
             lignes.append(
-                f"Garantie vieillesse du scénario 6 : {garantie.complement:,.0f} € "
-                f"par an, financés par l'impôt, portent la pension contributive "
-                f"de {garantie.pension_contributive:,.0f} € au plancher de "
+                f"Garantie vieillesse du scénario 6{quand} : "
+                f"{garantie.complement:,.0f} € par an, financés par l'impôt, "
+                f"portent la pension obligatoire de "
+                f"{garantie.ressources:,.0f} € au plancher de "
                 f"{garantie.plancher_annuel:,.0f} € ({garantie.situation})."
             )
         if not self.actuel.liquidation_ouverte:
@@ -515,12 +520,16 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
         "garantie_vieillesse": None if resultat.garantie_vieillesse is None else {
             "situation": resultat.garantie_vieillesse.situation,
             "age_atteint": resultat.garantie_vieillesse.age_atteint,
+            "annee_ouverture": resultat.garantie_vieillesse.annee_ouverture,
             "coefficient_prix": resultat.garantie_vieillesse.coefficient_prix,
             "base_annuelle": resultat.garantie_vieillesse.base_annuelle,
             "isolement_annuel": resultat.garantie_vieillesse.isolement_annuel,
             "plancher_annuel": resultat.garantie_vieillesse.plancher_annuel,
             "pension_contributive": resultat.garantie_vieillesse.pension_contributive,
+            "rente_capitalisee": resultat.garantie_vieillesse.rente_capitalisee,
+            "ressources": resultat.garantie_vieillesse.ressources,
             "complement": resultat.garantie_vieillesse.complement,
+            "differee": resultat.garantie_vieillesse.differee,
         },
         "fiabilite": str(resultat.fiabilite),
     }

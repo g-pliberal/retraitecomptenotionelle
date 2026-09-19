@@ -102,13 +102,23 @@ export class ScenarioNotionnel {
   liberal(carriere, regimeFusionne = null,
           libelle = "Comptes notionnels rétroactifs, taux unique dès la bascule et garantie vieillesse") {
     const resultat_ = this.retroactif(carriere, regimeFusionne, libelle);
-    const garantie = this._garantieVieillesse(carriere, resultat_.pension_annuelle);
-    resultat_.pension_annuelle += garantie.complement;
-    resultat_.pension_mensuelle = resultat_.pension_annuelle / 12.0;
-    resultat_.garantie_vieillesse = garantie;
+    // Le pilier capitalisé D'ABORD : la garantie regarde l'ensemble de la
+    // pension obligatoire, les 18 % de répartition ET les 5 % capitalisés.
     resultat_.capitalisation = this._pilierCapitalise(carriere, resultat_);
     resultat_.rente_capitalisation_obligatoire = resultat_.capitalisation === null
       ? 0.0 : resultat_.capitalisation.rente_annuelle;
+    const garantie = this._garantieVieillesse(
+      carriere, resultat_.pension_annuelle,
+      resultat_.rente_capitalisation_obligatoire,
+    );
+    // Avant 65 ans, on ne touche pas le minimum vieillesse : le complément est
+    // calculé, mais il n'entre dans la pension affichée que s'il est dû dès le
+    // départ. `annee_ouverture` dit à partir de quand il l'est.
+    if (garantie.servie_a_la_liquidation) {
+      resultat_.pension_annuelle += garantie.complement;
+    }
+    resultat_.pension_mensuelle = resultat_.pension_annuelle / 12.0;
+    resultat_.garantie_vieillesse = garantie;
     resultat_.pension_totale = resultat_.pension_annuelle
       + resultat_.rente_capitalisation_obligatoire;
     resultat_.pension_totale_mensuelle = resultat_.pension_totale / 12.0;
@@ -123,8 +133,9 @@ export class ScenarioNotionnel {
    * peuvent donc pas diverger — ni sur le plafonnement, ni sur les années
    * d'interruption, ni sur l'année du départ, qui n'est pleine pour personne.
    *
-   * La garantie vieillesse, elle, ne regarde pas cette rente : elle est servie
-   * sur la pension CONTRIBUTIVE de répartition.
+   * La garantie vieillesse REGARDE cette rente : le plancher se compare à
+   * l'ensemble de la pension obligatoire, répartition et capitalisation. Une
+   * allocation différentielle compte les ressources, non leur origine.
    */
   _pilierCapitalise(carriere, resultat_) {
     if (this.capitalisation === null) return null;
@@ -142,14 +153,20 @@ export class ScenarioNotionnel {
   }
 
   /**
-   * Ce qui manque à la pension contributive pour atteindre le plancher.
+   * Ce qui manque à la pension OBLIGATOIRE pour atteindre le plancher.
    *
    * Le plancher d'une personne seule est la garantie de base plus l'allocation
    * d'isolement ; celui d'une personne en couple est la garantie de base seule,
-   * et la pension du conjoint ne compte pas — c'est l'individualisation. L'âge
-   * est celui de l'ASPA, avec la même réserve : le modèle liquide et s'arrête.
+   * et la pension du conjoint ne compte pas — c'est l'individualisation. Les
+   * ressources regardées sont les deux étages obligatoires réunis, 18 % de
+   * répartition et 5 % capitalisés.
+   *
+   * L'ÂGE est celui de l'ASPA, 65 ans, et il ne fait plus disparaître le
+   * complément : il en retarde le service. Le montant vaut à compter de
+   * `annee_ouverture`, et c'est exact plutôt qu'approché — plancher et pension
+   * sont tous deux indexés sur les prix, leur différence est donc invariante.
    */
-  _garantieVieillesse(carriere, pensionContributive) {
+  _garantieVieillesse(carriere, pensionContributive, renteCapitalisee = 0.0) {
     const parametres = this.parametres;
     const annee = carriere.anneeLiquidation;
     const coefficient = this.constructeur.macro.coefficientPrix(
@@ -161,17 +178,25 @@ export class ScenarioNotionnel {
       : 0.0;
     const plancher = base + isolement;
     const ageAtteint = (carriere.age_liquidation || 0.0) >= MinimumVieillesse.AGE_OUVERTURE;
-    const complement = ageAtteint ? Math.max(0.0, plancher - pensionContributive) : 0.0;
+    const ressources = pensionContributive + renteCapitalisee;
+    const complement = Math.max(0.0, plancher - ressources);
     return {
       situation: parametres.situation_foyer,
       age_atteint: ageAtteint,
+      annee_ouverture: ageAtteint
+        ? annee
+        : carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE,
       coefficient_prix: coefficient,
       base_annuelle: base,
       isolement_annuel: isolement,
       plancher_annuel: plancher,
       pension_contributive: pensionContributive,
+      rente_capitalisee: renteCapitalisee,
+      ressources,
       complement,
       servie: complement > 0,
+      servie_a_la_liquidation: ageAtteint && complement > 0,
+      differee: complement > 0 && !ageAtteint,
     };
   }
 

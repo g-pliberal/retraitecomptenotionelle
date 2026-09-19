@@ -322,12 +322,16 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
     garantie_vieillesse: resultat.garantie_vieillesse === null ? null : {
       situation: resultat.garantie_vieillesse.situation,
       age_atteint: resultat.garantie_vieillesse.age_atteint,
+      annee_ouverture: resultat.garantie_vieillesse.annee_ouverture,
       coefficient_prix: resultat.garantie_vieillesse.coefficient_prix,
       base_annuelle: resultat.garantie_vieillesse.base_annuelle,
       isolement_annuel: resultat.garantie_vieillesse.isolement_annuel,
       plancher_annuel: resultat.garantie_vieillesse.plancher_annuel,
       pension_contributive: resultat.garantie_vieillesse.pension_contributive,
+      rente_capitalisee: resultat.garantie_vieillesse.rente_capitalisee,
+      ressources: resultat.garantie_vieillesse.ressources,
       complement: resultat.garantie_vieillesse.complement,
+      differee: resultat.garantie_vieillesse.differee,
     },
     fiabilite: nomFiabilite(resultat.fiabilite),
   };

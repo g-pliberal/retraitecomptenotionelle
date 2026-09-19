@@ -3865,37 +3865,49 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
          f"{taux} pour tous ensuite — divisé par "
          f"{g.nombre(liberal.conversion.diviseur, DECIMALES_DIVISEUR)}",
          g.euros_centimes(garantie.pension_contributive) + " par an"],
-        ["e) Garantie vieillesse servie",
-         "max(0, c − d) à partir de 65 ans, financée par l'impôt"
-         if garantie.age_atteint else
-         "rien : la liquidation a lieu avant 65 ans, l'âge de l'allocation",
+        ["e) + rente du pilier obligatoire",
+         "les 5 % capitalisés : la garantie regarde l'ensemble de la pension "
+         "obligatoire, pas la seule répartition",
+         g.euros_centimes(garantie.rente_capitalisee) + " par an"],
+        ["f) = ressources examinées", "d + e",
+         g.euros_centimes(garantie.ressources) + " par an"],
+        ["g) Garantie vieillesse",
+         "max(0, c − f), financée par l'impôt, servie à partir de 65 ans"
+         + ("" if garantie.age_atteint
+            else f" — soit ici à compter de {garantie.annee_ouverture}"),
          g.euros_centimes(garantie.complement) + " par an"],
-        ["f) = pension du système 4", "d + e",
+        ["h) = pension du système 4",
+         "d + g dès le départ" if garantie.age_atteint
+         else f"d seul jusqu'à 65 ans, puis d + g à partir de {garantie.annee_ouverture}",
          g.euros_centimes(liberal.pension_annuelle) + " par an"],
     ]
 
-    if garantie.servie:
+    if garantie.servie_a_la_liquidation:
         lecture = (
-            f"<p>Ici, la pension contributive de "
-            f"{g.euros_centimes(garantie.pension_contributive / 12)} par mois "
+            f"<p>Ici, la pension obligatoire de "
+            f"{g.euros_centimes(garantie.ressources / 12)} par mois "
             f"reste sous le plancher de {g.euros_centimes(garantie.plancher_annuel / 12)} : "
             f"l'impôt en finance <strong>{g.euros_centimes(garantie.complement / 12)} "
             f"par mois</strong>, soit {g.pourcentage(garantie.complement / liberal.pension_annuelle)} "
             "de ce que le système 4 verse.</p>"
         )
-    elif not garantie.age_atteint:
+    elif garantie.differee:
         lecture = (
-            f"<p>Ici, rien n'est servi : la liquidation a lieu à "
+            f"<p>Ici, la liquidation a lieu à "
             f"{_age(comparaison.carriere.age_liquidation or 0.0)}, avant les 65 ans "
-            "de l'allocation. Le modèle liquide et s'arrête — il ne suit pas "
-            "l'assuré jusqu'à 65 ans, où la garantie s'ouvrirait si sa pension "
-            "restait sous le plancher. C'est la même réserve que pour l'ASPA du "
-            "système 1.</p>"
+            f"de l'allocation : rien n'est servi jusqu'en "
+            f"{garantie.annee_ouverture}. À partir de là, la pension "
+            f"obligatoire de {g.euros_centimes(garantie.ressources / 12)} par "
+            f"mois restant sous le plancher de "
+            f"{g.euros_centimes(garantie.plancher_annuel / 12)}, l'impôt en "
+            f"finance <strong>{g.euros_centimes(garantie.complement / 12)} par "
+            "mois</strong>. Le montant affiché plus haut est celui du départ, "
+            "sans la garantie.</p>"
         )
     else:
         lecture = (
-            f"<p>Ici, la pension contributive de "
-            f"{g.euros_centimes(garantie.pension_contributive / 12)} par mois "
+            f"<p>Ici, la pension obligatoire de "
+            f"{g.euros_centimes(garantie.ressources / 12)} par mois "
             f"dépasse le plancher de {g.euros_centimes(garantie.plancher_annuel / 12)} : "
             "la garantie ne sert rien, et le système 4 est un compte notionnel "
             "à taux unique, sans plus.</p>"

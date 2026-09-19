@@ -118,9 +118,13 @@ class GarantieVieillesse:
 
     #: ``seul`` ou ``couple`` : ne joue que sur l'allocation d'isolement.
     situation: str
-    #: L'allocation est-elle ouverte à l'âge de liquidation ? Même âge que
-    #: l'ASPA : 65 ans, et le modèle ne suit pas l'assuré au-delà du départ.
+    #: L'allocation est-elle ouverte DÈS LA LIQUIDATION ? Même âge que l'ASPA :
+    #: 65 ans. Faux pour qui part plus tôt, sans que cela lui retire rien : la
+    #: garantie s'ouvre alors à 65 ans, et ``annee_ouverture`` dit quand.
     age_atteint: bool
+    #: Année où l'allocation s'ouvre : celle de la liquidation si elle a lieu à
+    #: 65 ans ou plus, celle des 65 ans sinon.
+    annee_ouverture: int
     #: Coefficient de passage des euros de la proposition aux euros de la
     #: liquidation.
     coefficient_prix: float
@@ -128,17 +132,41 @@ class GarantieVieillesse:
     base_annuelle: float
     #: Allocation d'isolement, annuelle — nulle à deux.
     isolement_annuel: float
-    #: ``base + isolement`` : le plancher auquel la pension est comparée.
+    #: ``base + isolement`` : le plancher auquel les ressources sont comparées.
     plancher_annuel: float
     #: La pension issue du compte notionnel seul, avant la garantie.
     pension_contributive: float
-    #: Ce que la garantie ajoute : ``max(0, plancher - contributive)`` si l'âge
-    #: est atteint, zéro sinon. C'est la part financée par l'impôt.
+    #: La rente du pilier capitalisé obligatoire, nulle avant la bascule ou si
+    #: le pilier est désactivé.
+    rente_capitalisee: float
+    #: ``pension_contributive + rente_capitalisee`` : l'ENSEMBLE de la pension
+    #: obligatoire, les 18 % de répartition et les 5 % capitalisés. C'est cela
+    #: que le plancher regarde, et non la seule répartition : les deux sont
+    #: obligatoires, et une allocation différentielle compte les ressources.
+    ressources: float
+    #: Ce que la garantie ajoute à compter de ``annee_ouverture`` :
+    #: ``max(0, plancher - ressources)``. C'est la part financée par l'impôt.
     complement: float
 
     @property
     def servie(self) -> bool:
+        """La garantie sert-elle quelque chose, au plus tard à 65 ans ?"""
         return self.complement > 0
+
+    @property
+    def servie_a_la_liquidation(self) -> bool:
+        """Et le sert-elle DÈS le départ, ou seulement à 65 ans ?
+
+        C'est cette propriété, et non :attr:`servie`, qui décide si le montant
+        entre dans la pension affichée : avant 65 ans, on ne touche pas le
+        minimum vieillesse.
+        """
+        return self.age_atteint and self.complement > 0
+
+    @property
+    def differee(self) -> bool:
+        """La garantie est-elle due, mais plus tard ?"""
+        return self.servie and not self.age_atteint
 
 
 @dataclass(frozen=True)
@@ -321,10 +349,20 @@ class ScenarioNotionnel:
         gardée à part pour que l'on sache ce qui vient de l'impôt.
         """
         resultat = self.retroactif(carriere, regime_fusionne, libelle=libelle)
-        garantie = self._garantie_vieillesse(carriere, resultat.pension_annuelle)
-        resultat.pension_annuelle += garantie.complement
-        resultat.garantie_vieillesse = garantie
+        # Le pilier capitalisé D'ABORD : la garantie regarde l'ensemble de la
+        # pension obligatoire, les 18 % de répartition ET les 5 % capitalisés.
+        # L'ordre importe donc, là où il était indifférent tant que la garantie
+        # ne voyait que la répartition.
         resultat.capitalisation = self._pilier_capitalise(carriere, resultat)
+        rente = (resultat.capitalisation.rente_annuelle
+                 if resultat.capitalisation is not None else 0.0)
+        garantie = self._garantie_vieillesse(carriere, resultat.pension_annuelle, rente)
+        # Avant 65 ans, on ne touche pas le minimum vieillesse : le complément
+        # est calculé, mais il n'entre dans la pension affichée que s'il est dû
+        # dès le départ. ``annee_ouverture`` dit à partir de quand il l'est.
+        if garantie.servie_a_la_liquidation:
+            resultat.pension_annuelle += garantie.complement
+        resultat.garantie_vieillesse = garantie
         return resultat
 
     def _pilier_capitalise(self, carriere: Carriere,
@@ -337,12 +375,14 @@ class ScenarioNotionnel:
         années d'interruption, ni sur l'année du départ, qui n'est pleine pour
         personne.
 
-        La garantie vieillesse, elle, ne regarde pas cette rente : elle est
-        servie sur la pension CONTRIBUTIVE de répartition. La question de
-        savoir si un pilier capitalisé doit réduire une allocation
-        différentielle est une question de droit, pas de modèle ; la laisser
-        hors du calcul est le choix qui n'invente rien, et
-        ``docs/limites.md`` le dit.
+        La garantie vieillesse REGARDE cette rente depuis le 19 septembre
+        2026. La question — un pilier capitalisé obligatoire doit-il réduire
+        une allocation différentielle ? — est une question de droit, pas de
+        modèle, et le programme l'a tranchée : le plancher se compare à
+        l'ensemble de la pension obligatoire, 18 % de répartition et 5 %
+        capitalisés. C'est cohérent avec ce qu'est une allocation
+        différentielle, qui compte les ressources et non leur origine ; c'est
+        aussi ce qui coûte le moins à l'impôt.
         """
         if self.capitalisation is None:
             return None
@@ -357,15 +397,27 @@ class ScenarioNotionnel:
         )
 
     def _garantie_vieillesse(self, carriere: Carriere,
-                             pension_contributive: float) -> GarantieVieillesse:
-        """Ce qui manque à la pension contributive pour atteindre le plancher.
+                             pension_contributive: float,
+                             rente_capitalisee: float = 0.0) -> GarantieVieillesse:
+        """Ce qui manque à la pension OBLIGATOIRE pour atteindre le plancher.
 
         Le plancher d'une personne seule est la garantie de base plus
         l'allocation d'isolement ; celui d'une personne en couple est la
         garantie de base seule, et la pension du conjoint ne compte pas — c'est
         l'individualisation, et c'est ce qui sépare cette garantie de l'ASPA.
-        L'âge est celui de l'ASPA, avec la même réserve : le modèle liquide et
-        s'arrête, il ne suit pas l'assuré jusqu'à 65 ans.
+
+        LES RESSOURCES REGARDÉES sont les deux étages obligatoires réunis : le
+        compte notionnel à 18 % et la rente du pilier capitalisé à 5 %. Une
+        allocation différentielle compte ce dont on dispose, non d'où cela
+        vient.
+
+        L'ÂGE est celui de l'ASPA, 65 ans, et il ne fait plus disparaître le
+        complément : il en retarde le service. Le montant calculé ici vaut donc
+        à compter de ``annee_ouverture``. Cette égalité entre le complément
+        calculé au départ et celui qui sera servi à 65 ans n'est pas une
+        approximation : le plancher est indexé sur les prix, la pension l'est
+        aussi, et leur différence est donc invariante dans les euros de
+        n'importe quelle année entre les deux.
         """
         parametres = self.parametres
         annee = carriere.annee_liquidation
@@ -379,17 +431,22 @@ class ScenarioNotionnel:
         )
         plancher = base + isolement
         age_atteint = (carriere.age_liquidation or 0.0) >= MinimumVieillesse.AGE_OUVERTURE
-        complement = (max(0.0, plancher - pension_contributive)
-                      if age_atteint else 0.0)
+        ressources = pension_contributive + rente_capitalisee
         return GarantieVieillesse(
             situation=parametres.situation_foyer.value,
             age_atteint=age_atteint,
+            annee_ouverture=(
+                annee if age_atteint
+                else carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE
+            ),
             coefficient_prix=coefficient,
             base_annuelle=base,
             isolement_annuel=isolement,
             plancher_annuel=plancher,
             pension_contributive=pension_contributive,
-            complement=complement,
+            rente_capitalisee=rente_capitalisee,
+            ressources=ressources,
+            complement=max(0.0, plancher - ressources),
         )
 
     # -- scénario 3 ----------------------------------------------------------

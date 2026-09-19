@@ -179,12 +179,21 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     for (const ligne of comparaison.notionnel_liberal.compte.cotisations) {
       versements.notionnel_liberal[ligne.annee] = ligne.cotisation;
     }
+    // Le scénario 6 est ramené à sa part CONTRIBUTIVE : la garantie est
+    // financée par l'impôt, elle ne pèse pas sur le compte des cotisants.
+    pensions.notionnel_liberal = comparaison.enEurosConstants(
+      comparaison.notionnel_liberal.garantie_vieillesse.pension_contributive,
+    );
     liste.push({
       // Le code du cas type est la première moitié de la clé : c'est par lui
       // que le couple reçoit son poids.
       code: cle.slice(0, cle.indexOf("|")),
       generation: Number(cle.slice(cle.indexOf("|") + 1)),
       anneeLiquidation: comparaison.carriere.anneeLiquidation,
+      // Avant 65 ans, on ne touche pas le minimum vieillesse : la composante
+      // n'entre qu'à cette date, même pour qui est parti plus tôt.
+      anneeOuvertureGarantie:
+        comparaison.notionnel_liberal.garantie_vieillesse.annee_ouverture,
       pensions,
       cotisations: versements,
     });
@@ -215,14 +224,21 @@ function masses(liste, population, annee, poidsCas) {
     const part = poidsCas[pensionne.code] || 0;
     if (part <= 0) continue;
     let poids = 0;
+    let poidsGarantie = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
       if (annee < pensionne.anneeLiquidation + decalage) continue;
-      poids += population.effectif(annee - pensionne.generation - decalage, annee);
+      const effectif = population.effectif(annee - pensionne.generation - decalage, annee);
+      poids += effectif;
+      // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt.
+      if (annee >= pensionne.anneeOuvertureGarantie + decalage) {
+        poidsGarantie += effectif;
+      }
     }
     if (poids <= 0) continue;
     vivants += 1;
     for (const cle of CLES_MASSES) {
-      total[cle] += part * poids * pensionne.pensions[cle];
+      const poidsCle = cle === COMPOSANTE_GARANTIE ? poidsGarantie : poids;
+      total[cle] += part * poidsCle * pensionne.pensions[cle];
     }
   }
   return { total, vivants };
