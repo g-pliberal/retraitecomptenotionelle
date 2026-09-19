@@ -624,7 +624,7 @@ def test_les_portes_de_2011_se_lisent_generation_par_generation():
 
 
 def test_lecture_d_un_classeur_excel_97():
-    """Le lecteur BIFF doit rendre les nombres, et rien d'autre.
+    """Le décodage des nombres RK, seul endroit où une erreur de bit se cache.
 
     Il n'y a pas de classeur au dépôt — data/brut/ n'est pas versionné — mais
     le décodage des nombres RK, lui, se contrôle seul : c'est le seul endroit
@@ -1563,3 +1563,35 @@ def test_les_postes_du_cor_se_reconnaissent_sans_accent_ni_ponctuation():
         "Subventions d'équilibre versées par l'État aux régimes spéciaux"
     ) == "subventions_equilibre"
     assert verificateur._code_poste("Produits exceptionnels") is None
+
+
+def test_la_table_des_chaines_partagees_survit_a_une_coupure():
+    """Une chaîne coupée en deux morceaux, et qui change de largeur au milieu.
+
+    C'est le seul piège du lecteur BIFF, et il est silencieux : un
+    enregistrement SST ne dépasse pas huit mille octets, la suite passe dans
+    des CONTINUE, et la coupure peut tomber au milieu des CARACTÈRES d'une
+    chaîne. La suite recommence alors par un octet qui redit leur largeur — une
+    même chaîne peut donc être coupée en latin-1 et reprendre en UTF-16.
+
+    Mal décodée, la table ne lève rien : elle DÉCALE. Toutes les chaînes
+    suivantes glissent d'un cran, et un libellé se retrouve sous une autre
+    ligne du tableau. D'où ce témoin synthétique, qui force les trois cas dans
+    l'ordre où ils se présentent.
+    """
+    import struct
+    module = _charger_script("lecture_xls", "scripts", "fetch", "lecture_xls.py")
+
+    entete = struct.pack("<II", 3, 3)
+    simple = struct.pack("<HB", 5, 0x00) + b"HELLO"          # huit bits
+    large = struct.pack("<HB", 3, 0x01) + "ÉTÉ".encode("utf-16-le")
+    # La troisième est coupée : quatre caractères ici, six dans le morceau
+    # suivant, et la largeur change au passage. Dix caractères annoncés, dix
+    # rendus — le compte est la moitié du test, puisqu'un décalage d'un seul
+    # caractère fausserait toutes les chaînes suivantes.
+    debut = struct.pack("<HB", 10, 0x00) + b"BONI"
+    suite = bytes([0x01]) + "FICATI".encode("utf-16-le")
+
+    chaines = module._chaines_partagees([entete + simple + large + debut, suite])
+    assert chaines == ["HELLO", "ÉTÉ", "BONIFICATI"], chaines
+    assert len(chaines[2]) == 10

@@ -100,13 +100,118 @@ def _rk(brut: int) -> float:
     return valeur / 100 if centieme else valeur
 
 
-def feuilles(donnees: bytes) -> dict[str, dict[tuple[int, int], float]]:
-    """Cellules NUMÉRIQUES de chaque feuille, indexées (ligne, colonne).
+def _chaines_partagees(morceaux: list[bytes]) -> list[str]:
+    """Décode la table des chaînes partagées (SST), coupures comprises.
 
-    Le texte est ignoré : ce lecteur sert à extraire des grilles de nombres.
+    C'EST LE SEUL ENDROIT DÉLICAT DU LECTEUR, et la difficulté n'est pas
+    l'encodage : c'est la COUPURE. Un enregistrement BIFF ne dépasse pas
+    8 224 octets, si bien qu'une table de plusieurs milliers de chaînes se
+    poursuit dans des enregistrements ``CONTINUE``. La coupure peut tomber au
+    milieu d'une chaîne — et, quand elle tombe au milieu de ses CARACTÈRES, la
+    suite recommence par un octet de drapeau qui redit leur largeur : une même
+    chaîne peut donc être coupée en latin-1 et reprendre en UTF-16, parce
+    qu'Excel choisit la largeur morceau par morceau.
+
+    D'où la forme retenue : un tampon unique, et la liste des positions où un
+    morceau succède à un autre. Les en-têtes et les queues traversent ces
+    frontières sans rien consommer ; seuls les caractères y lisent un drapeau.
+
+    Une table mal décodée ne lève pas d'erreur, elle DÉCALE : toutes les
+    chaînes suivantes deviennent fausses d'une case, et un libellé se retrouve
+    sous une autre ligne. C'est pour cela que le test synthétique de
+    `tests/test_verification.py` force une coupure au milieu d'un mot.
+    """
+    tampon = b"".join(morceaux)
+    frontieres, position = set(), 0
+    for morceau in morceaux[:-1]:
+        position += len(morceau)
+        frontieres.add(position)
+
+    position = 0
+
+    def prendre(nombre: int) -> bytes:
+        """Lit des octets bruts : un en-tête ou une queue ignore les coupures."""
+        nonlocal position
+        brut = tampon[position:position + nombre]
+        position += nombre
+        return brut
+
+    def caracteres(compte: int, large: bool) -> str:
+        """Lit les caractères, en relisant la largeur à chaque coupure."""
+        nonlocal position
+        morceaux_lus: list[str] = []
+        restant = compte
+        while restant > 0:
+            prochaine = min((f for f in frontieres if f > position),
+                            default=len(tampon))
+            taille = 2 if large else 1
+            possible = (prochaine - position) // taille
+            pris = min(restant, possible)
+            if pris > 0:
+                brut = tampon[position:position + pris * taille]
+                position += pris * taille
+                morceaux_lus.append(
+                    brut.decode("utf-16-le" if large else "latin-1", "replace"))
+                restant -= pris
+            if restant > 0:
+                # On bute sur une coupure : l'octet suivant redit la largeur.
+                position = prochaine
+                if position >= len(tampon):
+                    break
+                large = bool(tampon[position] & 0x01)
+                position += 1
+                frontieres.discard(prochaine)
+        return "".join(morceaux_lus)
+
+    if len(tampon) < 8:
+        return []
+    uniques = struct.unpack_from("<I", tampon, 4)[0]
+    position = 8
+    chaines: list[str] = []
+    for _ in range(uniques):
+        if position + 3 > len(tampon):
+            break
+        compte = struct.unpack_from("<H", tampon, position)[0]
+        drapeaux = tampon[position + 2]
+        position += 3
+        riche = bool(drapeaux & 0x08)
+        phonetique = bool(drapeaux & 0x04)
+        runs = struct.unpack_from("<H", tampon, position)[0] if riche else 0
+        position += 2 if riche else 0
+        extra = struct.unpack_from("<I", tampon, position)[0] if phonetique else 0
+        position += 4 if phonetique else 0
+        chaines.append(caracteres(compte, bool(drapeaux & 0x01)))
+        prendre(runs * 4 + extra)
+    return chaines
+
+
+def _chaine_courte(corps: bytes, decalage: int) -> str:
+    """Une chaîne BIFF8 non partagée, telle que la porte un LABEL."""
+    compte = struct.unpack_from("<H", corps, decalage)[0]
+    large = bool(corps[decalage + 2] & 0x01)
+    debut = decalage + 3
+    brut = corps[debut:debut + compte * (2 if large else 1)]
+    return brut.decode("utf-16-le" if large else "latin-1", "replace")
+
+
+def feuilles(donnees: bytes) -> dict[str, dict[tuple[int, int], float | str]]:
+    """Cellules de chaque feuille, indexées (ligne, colonne).
+
+    Un ``float`` pour un nombre, une ``str`` pour un texte, comme le rend
+    ``lecture_xlsx`` pour les classeurs modernes : les deux lecteurs se lisent
+    de la même façon, et un appelant peut passer de l'un à l'autre.
+
+    LE TEXTE A LONGTEMPS ÉTÉ IGNORÉ, et c'était un choix défendable tant que ce
+    lecteur ne servait qu'à reprendre une grille de quotients de mortalité.
+    Il a cessé de l'être devant le tableur du jaune budgétaire « Pensions de
+    retraite de la fonction publique » : sa feuille des bonifications rendait
+    trente-sept nombres et pas un libellé, donc trente-sept nombres dont on ne
+    savait pas ce qu'ils comptaient. Un nombre sans son intitulé n'est pas une
+    donnée.
     """
     flux = _flux(donnees, "Workbook")
     noms: list[tuple[int, str]] = []
+    partagees: list[str] = []
     position = 0
     while position + 4 <= len(flux):
         type_, longueur = struct.unpack_from("<HH", flux, position)
@@ -118,12 +223,22 @@ def feuilles(donnees: bytes) -> dict[str, dict[tuple[int, int], float]]:
             brut = corps[8:8 + taille_nom * (2 if large else 1)]
             nom = brut.decode("utf-16-le" if large else "latin-1", "replace")
             noms.append((debut, nom))
+        elif type_ == 0x00FC:  # SST, suivie de ses CONTINUE
+            morceaux = [corps]
+            suite = position + 4 + longueur
+            while suite + 4 <= len(flux):
+                type_suite, longueur_suite = struct.unpack_from("<HH", flux, suite)
+                if type_suite != 0x003C:  # CONTINUE
+                    break
+                morceaux.append(flux[suite + 4:suite + 4 + longueur_suite])
+                suite += 4 + longueur_suite
+            partagees = _chaines_partagees(morceaux)
         position += 4 + longueur
 
-    resultat: dict[str, dict[tuple[int, int], float]] = {}
+    resultat: dict[str, dict[tuple[int, int], float | str]] = {}
     for indice, (debut, nom) in enumerate(noms):
         fin = noms[indice + 1][0] if indice + 1 < len(noms) else len(flux)
-        cellules: dict[tuple[int, int], float] = {}
+        cellules: dict[tuple[int, int], float | str] = {}
         position = debut
         while position + 4 <= fin:
             type_, longueur = struct.unpack_from("<HH", flux, position)
@@ -141,6 +256,14 @@ def feuilles(donnees: bytes) -> dict[str, dict[tuple[int, int], float]]:
                 for k in range(nombre):
                     brut = struct.unpack_from("<I", corps, 4 + k * 6 + 2)[0]
                     cellules[(ligne, premiere + k)] = _rk(brut)
+            elif type_ == 0x00FD and len(corps) >= 10:  # LABELSST
+                ligne, colonne = struct.unpack_from("<HH", corps, 0)
+                indice_chaine = struct.unpack_from("<I", corps, 6)[0]
+                if indice_chaine < len(partagees):
+                    cellules[(ligne, colonne)] = partagees[indice_chaine]
+            elif type_ == 0x0204 and len(corps) >= 9:  # LABEL, chaîne non partagée
+                ligne, colonne = struct.unpack_from("<HH", corps, 0)
+                cellules[(ligne, colonne)] = _chaine_courte(corps, 6)
             elif type_ == 0x0006 and len(corps) >= 20:  # FORMULA, résultat en cache
                 ligne, colonne = struct.unpack_from("<HH", corps, 0)
                 cache = corps[6:14]

@@ -998,3 +998,43 @@ journal:
       \ renvoie l'article 125 de la loi n° 83-1179 du 29 décembre 1983 pour les\
       \ premiers, dans une version qui s'arrête en 2000, et la suite n'a pas\
       \ été lue. Les reprises de veille du 17 septembre 2026 restent ouvertes."
+  - date: '2026-09-19'
+    session: "action 37 : le tableur du jaune PLF 2012, lu pour les bonifications"
+    consulte: "Le tableur de données du jaune budgétaire « Pensions de retraite\
+      \ de la fonction publique », annexe au projet de loi de finances pour\
+      \ 2012, récupéré sur data.gouv.fr — seule édition publiée hors de\
+      \ budget.gouv.fr, que protège un pare-feu anti-robot. Vingt et une\
+      \ feuilles, dont une nommée « bonifications ». Aucun texte de droit\
+      \ nouveau : cette session mesure, elle ne transcrit aucune règle."
+    trouve: "LE TABLEAU EXISTE ET IL EST LU. Pour les pensions entrées en\
+      \ paiement en 2010, il donne le nombre de bénéficiaires et la durée\
+      \ moyenne en trimestres de sept bonifications, séparément pour les\
+      \ pensions civiles et militaires de l'État. Le chiffre le plus lourd est\
+      \ la bonification du cinquième des militaires : 12 817 des 12 912\
+      \ pensions militaires de l'année, soit 99,3 %, pour 16,4 trimestres en\
+      \ moyenne — plus de quatre annuités que personne n'a cotisées. Viennent\
+      \ ensuite les bénéfices de campagne (10 173 militaires, 12,8 trimestres)\
+      \ et les services aériens ou sous-marins (7 188, 12,8). Chez les civils,\
+      \ la plus longue est celle qui ne relève pas de l'article L. 12 du\
+      \ CPCMR, que la note du tableau dit principalement attribuée aux\
+      \ policiers et aux agents pénitentiaires : 3 477 bénéficiaires pour 19,1\
+      \ trimestres — c'est la bonification de la loi n° 57-444 lue à la\
+      \ session précédente.\
+      \ \
+      \ IL A FALLU ÉCRIRE LE LECTEUR. Le lecteur de classeurs Excel 97 du\
+      \ dépôt ne rendait que les nombres, par choix assumé : la feuille\
+      \ donnait trente-sept nombres et pas un libellé, donc trente-sept\
+      \ nombres dont on ignorait ce qu'ils comptaient. La table des chaînes\
+      \ partagées est désormais décodée, coupures comprises — une chaîne peut\
+      \ être coupée en latin-1 et reprendre en UTF-16 —, et un test synthétique\
+      \ force ce cas, parce qu'une table mal décodée ne lève rien : elle\
+      \ décale."
+    reste: "CES CHIFFRES NE SONT PAS UN COÛT et ne sont pas certifiés : c'est un\
+      \ FLUX d'entrée et non un stock, ce sont des bénéficiaires et des\
+      \ trimestres et non des euros, et ils datent de 2010. Ils sont donc cités\
+      \ avec leur date dans les notes de l'inventaire, et la page ne les\
+      \ affiche pas. Les colonnes CNRACL de la fonction publique territoriale\
+      \ et hospitalière sont déclarées dans l'en-tête du tableau et laissées\
+      \ vides par le producteur. Une édition récente du jaune reste à obtenir,\
+      \ et budget.gouv.fr ne se laisse pas lire. Les reprises de veille du\
+      \ 17 septembre 2026 restent ouvertes."

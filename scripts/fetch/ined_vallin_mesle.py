@@ -101,8 +101,12 @@ def extraire(donnees: bytes) -> dict[str, float]:
     serie: dict[str, float] = {}
     for feuille, sexe in SEXES.items():
         cellules = classeur[feuille]
-        lignes = {int(cellules[(ligne, 0)]): ligne
-                  for (ligne, colonne) in cellules if colonne == 0}
+        # La colonne 0 porte l'année, mais aussi les intitulés de la feuille :
+        # depuis que le lecteur BIFF rend le TEXTE en plus des nombres, il faut
+        # le dire. Un en-tête n'est pas une année.
+        lignes = {int(valeur): ligne
+                  for (ligne, colonne), valeur in cellules.items()
+                  if colonne == 0 and isinstance(valeur, float)}
         plages = [
             (PREMIERE_ANNEE, DERNIERE_ANNEE, 0),
             (PREMIERE_ANNEE_GRANDS_AGES, DERNIERE_ANNEE_GRANDS_AGES,

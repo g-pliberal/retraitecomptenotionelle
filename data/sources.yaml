@@ -773,6 +773,36 @@ institutions:
         statut_integration: saisi
         cible: data/reference/regimes/fonction_publique_etat.yaml
 
+      - id: sre_jaune_pensions
+        titre: >-
+          Jaune budgétaire « Pensions de retraite de la fonction publique »,
+          tableur des données, annexe au projet de loi de finances
+        url: https://www.data.gouv.fr/datasets/plf2012-jaune-donnees-pensions-de-retraite-de-la-fonction-publique/
+        acces: document
+        statut_integration: lu
+        cible: data/reference/legislation/avantages_non_contributifs.yaml
+        note: >-
+          LE SEUL DOCUMENT PUBLIC QUI DÉNOMBRE LES BONIFICATIONS DE SERVICE, et
+          il a fallu le chercher : le rapport annuel du Service des retraites de
+          l'État, qu'on croyait les porter, est un rapport d'activité et n'en
+          dit rien. Le tableur du jaune porte une feuille « bonifications » qui
+          donne, pour les pensions entrées en paiement dans l'année, le nombre
+          de bénéficiaires et la durée moyenne en trimestres de chacune des
+          sept bonifications, séparément pour les pensions civiles et
+          militaires de l'État.
+
+          DEUX RÉSERVES, et elles interdisent d'en faire un coût. C'est un FLUX
+          d'entrée, non un stock de pensions servies ; et ce sont des
+          bénéficiaires et des trimestres, jamais des euros. Les colonnes CNRACL
+          de la fonction publique territoriale et hospitalière sont d'ailleurs
+          déclarées dans l'en-tête et laissées vides.
+
+          Seule l'édition du PLF 2012 est accessible, sur data.gouv.fr, avec des
+          chiffres 2010 provisoires. Les éditions récentes vivent sur
+          budget.gouv.fr, derrière un pare-feu anti-robot que le dépôt ne
+          contourne pas. Les valeurs sont donc citées avec leur date, dans les
+          notes de l'inventaire, et ne sont pas certifiées.
+
       - id: sre_historique_taux
         titre: Historique des taux de cotisations appelés par le CAS « Pensions »
         url: https://retraitesdeletat.gouv.fr/files/files/Professionnels/CAS/Fiches/Historique%20taux%20cotisations.pdf

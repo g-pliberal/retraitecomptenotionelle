@@ -6661,6 +6661,52 @@ la police restent à certifier : l'index renvoie l'article 125 de la loi
 n° 83-1179 du 29 décembre 1983 pour les sapeurs-pompiers, dans une version qui
 s'arrête en 2000, et la suite n'a pas été lue.
 
+
+**Volet I — le tableur du jaune PLF 2012, récupéré et lu.** À la demande, et
+dans la suite du volet H, qui avait établi que le rapport du SRE ne porte pas
+les bonifications et que le jaune budgétaire les porte.
+
+- *Une seule édition est publique hors de budget.gouv.fr*, celle du PLF 2012,
+  sur data.gouv.fr. Récupérée. Sa feuille `bonifications` donne, pour les
+  pensions entrées en paiement en 2010, le nombre de bénéficiaires et la durée
+  moyenne en trimestres de sept bonifications, civils et militaires séparés.
+
+- *Le chiffre qui saute aux yeux* : la bonification du cinquième touche
+  **12 817 des 12 912 pensions militaires de l'année, soit 99,3 %**, pour 16,4
+  trimestres en moyenne — plus de quatre annuités que personne n'a cotisées,
+  servies à la quasi-totalité des militaires qui partent. Les bénéfices de
+  campagne en touchent quatre sur cinq (12,8 trimestres), les services aériens
+  ou sous-marins plus d'un sur deux. Chez les civils, la plus longue est celle
+  qui ne relève pas de l'article L. 12 du CPCMR, 19,1 trimestres, que la note
+  du tableau dit principalement attribuée aux policiers et aux agents
+  pénitentiaires : c'est la bonification de la loi n° 57-444 certifiée au
+  volet H.
+
+- *Ce n'est pas un coût, et ces chiffres ne sont pas certifiés.* Trois réserves
+  dont chacune suffirait : c'est un FLUX d'entrée et non un stock ; ce sont des
+  bénéficiaires et des trimestres, jamais des euros ; ils datent de 2010. Ils
+  vivent donc dans les notes de l'inventaire, avec leur date, et la page ne les
+  affiche pas. L'inventaire disait pourtant de ces lignes « population
+  étroite » : c'est vrai chez les civils et faux chez les militaires, où la
+  bonification est la règle. Une ligne sans chiffre invite à la croire petite.
+
+- *Il a fallu écrire le lecteur.* Le lecteur de classeurs Excel 97 du dépôt ne
+  rendait que les nombres, par un choix assumé et écrit dans son en-tête. La
+  feuille rendait donc trente-sept nombres et pas un libellé. La table des
+  chaînes partagées est maintenant décodée, coupures comprises — un même mot
+  peut être coupé en latin-1 et reprendre en UTF-16, parce qu'Excel choisit la
+  largeur morceau par morceau. Mal décodée, la table ne lève rien : elle
+  DÉCALE, et tous les libellés suivants glissent sous d'autres lignes. Un test
+  synthétique force ce cas. Le lecteur rend désormais `float | str`, comme
+  celui des classeurs modernes, et son unique appelant a été mis à l'abri des
+  en-têtes qu'il reçoit maintenant en plus des années.
+
+**Ce qui reste du volet I.** Une édition récente du jaune, que budget.gouv.fr ne
+laisse pas lire. Et la conversion en euros, qui demanderait une valeur du
+trimestre par corps et par génération : le dépôt sait la calculer, mais ce
+serait une déduction posée sur un flux de 2010, c'est-à-dire un chiffre
+plausible et faux.
+
 ---
 
 ### 38. Le salaire net d'un actif, sous chaque système — `fait`

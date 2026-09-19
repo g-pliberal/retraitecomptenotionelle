@@ -670,6 +670,68 @@ temps passé en services actifs, plafonné à cinq annuités, et subordonné dep
 le 28 décembre 2023 à la condition de durée de services du onzième alinéa du 1°
 du I de l'article L. 24. Une des deux lignes « à certifier » est close.
 
+### Le tableur du jaune, récupéré et lu
+
+Le rapport du SRE n'ayant rien donné, restait le jaune budgétaire. Une seule
+édition est publique hors de budget.gouv.fr : celle du PLF 2012, sur
+data.gouv.fr. Elle a été récupérée, et sa feuille `bonifications` dit ceci —
+pour les pensions **entrées en paiement en 2010**, en bénéficiaires et en
+durée moyenne, exprimée en trimestres et calculée sur les seuls bénéficiaires.
+
+| Bonification | Pensions civiles de l'État | Pensions militaires |
+|---|---|---|
+| *Effectif total de l'année* | *70 095* | *12 912* |
+| Du cinquième (militaires) | — | **12 817** — 16,4 trim. |
+| Bénéfices de campagne | 1 290 — 3,1 trim. | **10 173** — 12,8 trim. |
+| Services aériens ou sous-marins | 250 — 5,2 trim. | **7 188** — 12,8 trim. |
+| Pour enfants | 27 251 — 7,6 trim. | 703 — 6,9 trim. |
+| Services hors d'Europe | 7 442 — 17,7 trim. | — |
+| Enseignement technique | 508 — 12,7 trim. | — |
+| Hors article L. 12 CPCMR | 3 477 — **19,1 trim.** | 270 — 4,9 trim. |
+
+**Le chiffre qui saute aux yeux est la bonification du cinquième :
+12 817 des 12 912 pensions militaires de l'année, soit 99,3 %**, pour 16,4
+trimestres en moyenne. Plus de quatre annuités que personne n'a cotisées,
+servies à la quasi-totalité des militaires qui partent. Les bénéfices de
+campagne en touchent quatre sur cinq, les services aériens ou sous-marins plus
+d'un sur deux. Chez les civils, la plus longue est celle qui ne relève pas de
+l'article L. 12 du CPCMR — 19,1 trimestres —, que la note du tableau dit
+« principalement attribuées aux policiers et agents de l'administration
+pénitentiaire » : c'est la bonification de la loi n° 57-444 lue plus haut.
+
+**Ce n'est pas un coût, et ces chiffres ne sont pas certifiés.** Trois réserves,
+et chacune suffirait : c'est un FLUX d'entrée et non un stock de pensions
+servies ; ce sont des bénéficiaires et des trimestres, jamais des euros ; et ils
+datent de 2010. Ils vivent donc dans les notes de l'inventaire, avec leur date,
+et la page ne les affiche pas. Les colonnes de la CNRACL, pour la fonction
+publique territoriale et hospitalière, sont d'ailleurs déclarées dans l'en-tête
+du tableau et laissées vides par le producteur.
+
+Ils déplacent tout de même quelque chose. L'inventaire disait de ces lignes
+« population étroite » ; c'est vrai chez les civils et faux chez les militaires,
+où la bonification est la règle et non l'exception. Une ligne sans chiffre
+invite à la croire petite.
+
+### Il a fallu écrire le lecteur
+
+Le tableur est un classeur Excel 97, et le dépôt en a un lecteur, sans
+dépendance. Il ne rendait que les NOMBRES, par un choix assumé et écrit dans son
+en-tête : il ne servait qu'à reprendre une grille de quotients de mortalité. La
+feuille des bonifications rendait donc trente-sept nombres et pas un libellé,
+soit trente-sept nombres dont on ignorait ce qu'ils comptaient. Un nombre sans
+son intitulé n'est pas une donnée.
+
+La table des chaînes partagées est désormais décodée. Sa difficulté n'est pas
+l'encodage mais la **coupure** : un enregistrement BIFF ne dépasse pas huit
+mille octets, la suite passe dans des enregistrements `CONTINUE`, et la coupure
+peut tomber au milieu des caractères d'une chaîne — qui recommence alors par un
+octet redisant leur largeur, si bien qu'un même mot peut être coupé en latin-1
+et reprendre en UTF-16. Mal décodée, la table ne lève aucune erreur : elle
+**décale**, et tous les libellés suivants glissent d'un cran sous d'autres
+lignes. Un test synthétique force donc ce cas précis. Le lecteur rend maintenant
+`float | str`, comme celui des classeurs modernes : les deux se lisent de la
+même façon.
+
 ### Ce que ces trois lignes apprennent
 
 Elles ne pèsent que 0,8 milliard à elles trois, et ce n'est pas le point. Le

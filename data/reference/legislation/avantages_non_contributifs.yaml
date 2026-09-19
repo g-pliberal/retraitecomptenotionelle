@@ -874,7 +874,11 @@ avantages:
         Chiffrable dès qu'une carrière porte une durée de services militaires
         effectifs — l'information est déjà dans
         `legislation/duree_services_militaires.csv`, mais pour l'ouverture du
-        droit, pas pour la bonification.
+        droit, pas pour la bonification. Dénombrée en attendant, et c'est le
+        chiffre le plus lourd du tableau : 12 817 des 12 912 pensions militaires
+        entrées en paiement en 2010, soit 99,3 %, pour 16,4 trimestres en
+        moyenne — plus de quatre annuités que personne n'a cotisées (même
+        source).
 
   - code: bonification_cinquieme_services_actifs
     libelle: Bonification du cinquième des policiers, pompiers et surveillants
@@ -905,8 +909,13 @@ avantages:
     cout:
       mesurable_par: aucune
       note: >-
-        Premier travail à faire : trouver les textes, corps par corps, dans
-        l'index LEGI. Cette ligne existe pour que l'oubli soit visible.
+        Les textes de la police sont lus (loi n° 57-444) ; ceux des autres corps
+        restent à trouver. Dénombrée sous l'intitulé « bonifications ne relevant
+        pas de l'article L. 12 du CPCMR », que la note du tableau dit
+        principalement attribuées aux policiers et aux agents de
+        l'administration pénitentiaire : 3 477 pensions civiles de l'État
+        entrées en paiement en 2010 pour 19,1 trimestres en moyenne, la plus
+        longue de toutes (même source).
 
   - code: bonification_depaysement
     libelle: Bonification de dépaysement
@@ -927,7 +936,13 @@ avantages:
       suppose le lieu d'affectation, que le simulateur ne saisit pas
     cout:
       mesurable_par: aucune
-      note: Population étroite.
+      note: >-
+        Population étroite. Dénombrée pour la première fois : sur les 70 095
+        pensions civiles de l'État entrées en paiement en 2010, 7 442 portaient
+        une bonification pour services hors d'Europe, de 17,7 trimestres en
+        moyenne (jaune budgétaire du PLF 2012, tableau des bonifications,
+        chiffres 2010 provisoires). Des bénéficiaires et des trimestres, non des
+        euros, et sur un flux d'entrée.
 
   - code: benefices_campagne
     libelle: Bénéfices de campagne
@@ -948,7 +963,12 @@ avantages:
       suppose le détail des services, que le simulateur ne saisit pas
     cout:
       mesurable_par: aucune
-      note: Série décroissante ; les générations concernées sortent des effectifs.
+      note: >-
+        Série décroissante ; les générations concernées sortent des effectifs.
+        Dénombrée : 1 290 pensions civiles de l'État entrées en paiement en 2010
+        pour 3,1 trimestres en moyenne, et 10 173 pensions militaires sur 12 912
+        pour 12,8 trimestres — quatre militaires sur cinq (même source). Des
+        bénéficiaires et des trimestres, non des euros, et sur un flux d'entrée.
 
   - code: bonification_service_aerien_sous_marin
     libelle: Bonification pour service aérien ou sous-marin commandé
@@ -970,7 +990,12 @@ avantages:
       simulateur ne saisit pas
     cout:
       mesurable_par: aucune
-      note: Population étroite.
+      note: >-
+        Population étroite chez les civils, courante chez les militaires : 250
+        pensions civiles de l'État entrées en paiement en 2010 pour 5,2
+        trimestres, mais 7 188 pensions militaires sur 12 912 pour 12,8
+        trimestres (même source). Des bénéficiaires et des trimestres, non des
+        euros, et sur un flux d'entrée.
 
   - code: retraite_anticipee_handicap
     libelle: Retraite anticipée des travailleurs handicapés
