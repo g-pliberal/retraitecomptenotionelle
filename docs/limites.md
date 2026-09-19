@@ -4689,8 +4689,8 @@ questions et deux planchers :
 |---|---|---|---|
 | Pensions de 2020 | 800 € | 22,8 %, soit 3,8 M | **18,4 Md €** |
 | Pensions de 2020 | 1 050 € | 32,7 %, soit 5,5 M | **32,2 Md €** |
-| Pensions du scénario 6 | 800 € | 44,3 %, soit 7,4 M | **33,1 Md €** |
-| Pensions du scénario 6 | 1 050 € | 60,2 %, soit 10,0 M | **59,2 Md €** |
+| Pensions du scénario 6 | 800 € | 48,0 %, soit 8,0 M | **35,9 Md €** |
+| Pensions du scénario 6 | 1 050 € | 64,7 %, soit 10,8 M | **64,2 Md €** |
 
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
 l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut
