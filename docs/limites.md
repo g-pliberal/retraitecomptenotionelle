@@ -5219,6 +5219,27 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   chiffre affiché lui est favorable, et le refermer demande une série de taux
   ENCAISSÉS à côté de celle des taux qui acquièrent.
 
+  **Et une fourchette, mesurée le 19 septembre 2026, qui est plus large que
+  tout le reste de cette page.** Le rapport compare des taux LÉGAUX, puis il est
+  appliqué aux ressources OBSERVÉES : cela revient à prêter au taux de 18 % la
+  même déperdition qu'au système actuel. Or cette déperdition est connue. Sur
+  l'assiette des revenus d'activité — 1 250 Md€ en 2024, soit 42,5 % du PIB,
+  établie par deux routes indépendantes qui s'écartent de 3,8 % : les salaires
+  et traitements bruts de l'INSEE plus le revenu mixte des ménages d'un côté,
+  l'inversion du tableau 2.11 du COR de l'autre — le système encaisse 32,4
+  points de ressources, dont 24,9 de cotisations, là où le taux légal d'un
+  salarié type est de 28 à 29 %. Les quatre points d'écart sont les allègements
+  généraux, que l'impôt compense et qui reparaissent dans les 4,6 points
+  d'impôts et taxes affectés. Le modèle fait donc rentrer **15,5 % de l'assiette
+  là où la proposition en affiche 18**. Trois lectures se défendent, et elles
+  encadrent l'affichage : à exonérations inchangées, ce qui est affiché, 22,94
+  points d'assiette ; 18 % prélevés à plat sans exonération et impôts affectés
+  conservés, 25,48 ; 18 % à plat et suppression des impôts qui compensaient ces
+  exonérations, 20,92. De 64 % à 79 % des ressources d'aujourd'hui, le chiffre
+  affiché étant à 71 %. En solde moyen, cela fait environ un point de PIB de
+  part et d'autre du −0,09 %. Le départage n'appartient pas au modèle : c'est
+  une décision de programme, et l'action 35 prévoit d'afficher les trois.
+
   Les réserves financières des régimes, que le COR chiffre à part, ne sont
   toujours pas comptées : le solde dit le flux, jamais le stock.
 
