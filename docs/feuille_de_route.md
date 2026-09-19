@@ -7568,3 +7568,52 @@ qui connaît la tuyauterie des régimes ; il est retiré, et « moyenne » devie
 deux portages, `tests/test_web.py`, le README et `tests/temoins/pages.json`
 suivent. Le champ, lui, n'a pas changé : il accepte de 0,1 à 10 fois le
 salaire moyen, et le refus au-delà le dit en euros.
+
+### 43. Une mère, enfant par enfant : ce que chaque système lui sert — `fait`
+
+**Pourquoi.** La question posée le 19 septembre 2026 : que devient la pension
+d'une femme qui a eu un ou plusieurs enfants, sous le droit en vigueur et sous
+la proposition libérale ? Le modèle savait répondre — le scénario 1 porte la
+majoration de durée d'assurance, la bonification de la fonction publique, la
+majoration de 10 % à trois enfants, l'AVPF sur les années d'arrêt, la surcote
+parentale et les trimestres d'enfants réputés cotisés ; les scénarios
+notionnels neutralisent tout cela, un compte ne portant que ce qui a été
+cotisé —, mais aucun endroit du dépôt ne mettait les deux face à face pour une
+mère. Un seul cas type en a, avec deux enfants, et l'action 37 avait relevé que
+la majoration pour trois enfants y valait zéro.
+
+**Marche.** `scripts/scenarios_meres.py` : une même femme, salariée du privé à
+0,9 fois le salaire moyen, entrée à vingt et un ans, et treize situations —
+zéro à trois enfants, carrière complète ou trois et six ans d'arrêt, départ au
+taux plein ou à l'âge légal, mi-temps au SMIC, fonctionnaire d'État. L'âge de
+départ est résolu par le droit de la génération, comme pour les cas types :
+c'est par là que les trimestres d'enfants se voient, une mère de deux enfants
+atteignant le taux plein seize trimestres avant la femme sans enfant. Chaque
+ligne donne la pension mensuelle des scénarios 1 et 6, en euros de 2026, et
+l'« effet des enfants » de chacun : l'écart à la même carrière sans enfant,
+partie au même âge, ses années d'arrêt devenant de simples années sans
+activité. `--generation`, `--niveau`, `--affiliation`, `--detail` (les
+avantages appliqués sous chaque ligne), `--csv`. Six tests dans
+`tests/test_scenarios_meres.py`.
+
+**Ce que ça mesure, génération 1966.** Le scénario 6 ne sert rien au titre
+des enfants, dans aucune ligne : c'est la construction même du compte, et le
+test l'exige. Le scénario 1 sert, à carrière complète, 134 € par mois pour un
+enfant, 143 € pour deux, 366 € pour trois — les deux premiers presque tout par
+le départ neuf mois plus tôt au même montant, le troisième par la majoration
+de 10 %. Avec des années d'arrêt, l'AVPF et les trimestres assimilés font le
+gros : 543 € pour deux enfants et trois ans, 846 € pour trois enfants et six
+ans. L'écart entre les deux systèmes se creuse d'autant : −30 % sans enfant,
+−34 % avec un ou deux, −40 % avec trois, −46 % pour trois enfants et six ans
+d'arrêt. Le mi-temps au SMIC à trois enfants est le seul cas où la garantie
+vieillesse joue : 711 € à 63 ans et 3 mois, 1 050 € à 65 ans — le plancher
+d'une personne seule —, contre 1 322 € puis 1 437 € sous le scénario 1. La
+fonctionnaire d'État à deux enfants est la seule qui gagne au scénario 6
+(+11 %), par la part patronale de l'État portée au compte ; elle y perd dès
+qu'elle a trois enfants et trois ans d'arrêt (−3 %).
+
+**Ce qui n'y est pas.** La réversion, que le modèle ne voit pas ; la
+majoration pour congé parental et celle pour enfant handicapé, absentes du
+scénario 1 ; le partage de la MDA entre les parents, que la loi de 2010
+permet et que le modèle donne entière à la mère ; et une population : la
+grille dit ce qu'une mère perd ou gagne, pas ce que les mères pèsent.
