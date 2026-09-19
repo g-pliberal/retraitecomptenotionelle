@@ -2292,3 +2292,32 @@ def test_toute_reforme_recente_a_sa_ligne_de_veille(reformes):
     codes = {reforme.code for reforme in reformes}
     inconnues = couvertes - codes
     assert not inconnues, sorted(inconnues)
+
+
+def test_la_structure_de_financement_dit_qui_paie_chaque_regime():
+    """Ce que le coefficient d'équilibre agrégé ne distingue pas.
+
+    `equilibre.py` sait que l'État verse une contribution d'équilibre au
+    système ; il ne sait pas à qui. Cette série le dit régime par régime, et
+    c'est ce qui permet de séparer le coût d'une réforme pour l'État de son
+    coût pour les caisses.
+    """
+    from retraite_notionnelle.donnees.financement_regimes import StructureFinancement
+
+    structure = StructureFinancement(RACINE_DONNEES)
+
+    # L'État finance l'essentiel du régime de ses propres fonctionnaires, et
+    # rien du tout à la CNRACL, dont le déficit n'est couvert par personne.
+    assert structure.part_etat("fonction_publique_etat", 2023) > 0.8
+    assert structure.part_etat("cnracl", 2023) == 0.0
+    assert structure.part_decouvert("cnracl", 2070) > 0.4
+
+    # La SNCF bascule d'un régime cotisé à un régime subventionné.
+    assert structure.part_etat("sncf", 2023) < structure.part_etat("sncf", 2070)
+
+    # LES ANNÉES SONT ÉPARSES, et la classe refuse d'interpoler : le classeur
+    # ne publie que six ou sept dates, et inventer la trajectoire entre elles
+    # serait exactement ce que le dépôt s'interdit.
+    assert 2024 not in structure.annees("cnracl")
+    with pytest.raises(KeyError):
+        structure.ventilation("cnracl", 2024)

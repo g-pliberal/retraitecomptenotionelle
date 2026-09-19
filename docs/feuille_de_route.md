@@ -3747,6 +3747,71 @@ toucher aux moteurs de pension.
    SNCF 506, CNAVPL complémentaire 430, RATP 340, CANSSM 332, Agirc-Arrco 322,
    CNIEG 288.
 
+   **Onzième passe, 19 septembre 2026 : la ventilation État/caisses par
+   régime est posée.** C'est la première fois de cette série de passes que
+   quelque chose ENTRE dans le modèle et non dans un relevé.
+
+   `equilibre.py` savait que l'État verse une contribution d'équilibre au
+   système ; il ne savait pas à QUI. La question que la page « Coût » ne
+   pouvait donc pas poser est pourtant celle qui décide du coût réel d'une
+   réforme : un scénario qui remplace tous les taux par 18 % rend-il de
+   l'argent à l'État, ou en demande-t-il aux caisses ? La réponse dépend du
+   régime, et l'écart est énorme :
+
+   | régime | l'État finance, 2023 | 2070 | découvert 2070 |
+   |---|---:|---:|---:|
+   | fonction publique d'État | 86,0 % | 81,3 % | — |
+   | mines (CANSSM) | 81,1 % | 91,8 % | — |
+   | FSPOEIE | 76,7 % | 85,1 % | — |
+   | ENIM | 76,3 % | 66,8 % | — |
+   | SNCF | 60,8 % | 94,5 % | — |
+   | RATP | 60,8 % | 92,3 % | — |
+   | CNBF | — | — | 57,6 % |
+   | CNRACL | — | — | 48,6 % |
+   | Ircantec | — | — | 35,5 % |
+   | RCI | — | — | 23,3 % |
+   | CNAV | — | — | 19,3 % |
+
+   Deux familles s'y lisent d'un coup d'œil, et elles ne réagiront pas de la
+   même façon à une réforme : les régimes que l'État porte — et qu'il porte de
+   PLUS EN PLUS, la SNCF passant de 61 % à 95 % — et ceux dont le déficit
+   n'est couvert par personne, où c'est la caisse qui encaisse.
+
+   **Ce qui est livré** : `data/reference/regimes/structure_financement.csv`,
+   930 valeurs, 22 régimes, huit postes, certifié par
+   `verifier_donnees.py` contre le classeur du COR ; la source déclarée dans
+   `data/sources.yaml` sous `cor_regimes` ; et
+   `donnees/financement_regimes.py`, exposé par `Simulateur.financement_regimes`.
+
+   **Quatre limites, dans l'en-tête du fichier et dans le lecteur**, parce que
+   c'est le genre de série qu'on utilisera sans relire sa provenance :
+
+   1. **Le millésime est juin 2024**, seul publié, quand le reste du dépôt
+      tourne sur le COR 2026. Les mélanger coudrait deux exercices.
+   2. **Les années sont éparses** — 2010, 2015, 2023, 2030, 2040, 2050, 2070 —
+      et le lecteur REFUSE d'interpoler : `ventilation()` lève sur une année
+      non publiée plutôt que d'inventer une trajectoire que personne n'a
+      calculée.
+   3. **Les parts ne somment pas toujours à un** : 100 couples sur 134 y sont
+      à un millième près, les autres s'en écartent jusqu'à onze pour cent.
+      Rendues telles que publiées, avec `somme()` pour le vérifier avant de
+      conclure.
+   4. **La fonction publique d'État est d'un seul tenant**, civils et
+      militaires confondus.
+
+   Un choix mérite d'être dit : **les impôts et taxes affectés ne comptent PAS
+   dans `part_etat`**. Ils compensent des exonérations de cotisations, ce qui
+   est une aide à l'activité et non un financement de la retraite — `cout.py`
+   tient déjà cette distinction pour l'agrégat, et la brouiller ici ferait
+   dire deux choses au même mot.
+
+   **Ce qui n'est pas fait** : la page « Coût » n'affiche rien de tout cela. La
+   série est chargée et lisible, elle n'entre dans aucun calcul de scénario.
+   C'est le pas suivant, et il demande une décision de modèle plutôt que de
+   données — que devient la contribution d'équilibre de l'État quand le taux
+   devient 18 % ? Le programme ne le dit pas, et le dépôt ne le décidera pas à
+   sa place.
+
    **Ce qu'une session qui code devrait faire**, si elle reprend ce point :
    partir de la fiche 4.1 (2021-2024, à l'unité, script possible avec le
    téléchargeur de rapports CCSS que `ccss_transferts_retraite.py` porte
@@ -5477,3 +5542,36 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
 
   **État final : 5 493 valeurs, 25 régimes, 2011-2025, zéro case remplie deux
   fois, neuf contrôles indépendants sur neuf à l'unité.**
+
+- **Septembre 2026, action 35, volet A : la ventilation État/caisses par
+  régime.** Première fois de cette série de passes que quelque chose entre dans
+  le MODÈLE et non dans un relevé.
+
+  `equilibre.py` savait que l'État verse une contribution d'équilibre au
+  système ; il ne savait pas à qui. La page « Coût » ne pouvait donc pas poser
+  la question qui décide du coût réel d'une réforme : un scénario à 18 % rend-il
+  de l'argent à l'État ou en demande-t-il aux caisses ? Deux familles de régimes
+  se lisent maintenant d'un coup d'œil — ceux que l'État porte, et de plus en
+  plus (SNCF de 61 % à 95 % entre 2023 et 2070, fonction publique d'État à
+  86 %, mines à 81 %), et ceux dont le déficit n'est couvert par personne
+  (CNBF 58 % en 2070, CNRACL 49 %, Ircantec 36 %, CNAV 19 %).
+
+  Livré : `data/reference/regimes/structure_financement.csv`, 930 valeurs, 22
+  régimes, huit postes, certifié contre le classeur du COR ; la source déclarée
+  sous `cor_regimes` ; `donnees/financement_regimes.py`, exposé par
+  `Simulateur.financement_regimes`.
+
+  Quatre limites sont écrites dans l'en-tête du fichier ET dans le lecteur,
+  parce que c'est le genre de série qu'on réutilise sans relire sa provenance :
+  le millésime est juin 2024 quand le dépôt tourne sur le COR 2026 ; les années
+  sont éparses et le lecteur REFUSE d'interpoler ; les parts ne somment pas
+  toujours à un et ne sont pas normalisées ; la fonction publique d'État est
+  d'un seul tenant. Et un choix : les impôts et taxes affectés ne comptent pas
+  dans `part_etat`, parce qu'ils compensent des exonérations — `cout.py` tient
+  déjà cette distinction pour l'agrégat.
+
+  **Ce qui n'est pas fait, et c'est délibéré** : la page « Coût » n'affiche rien
+  de tout cela. Le pas suivant demande une décision de MODÈLE et non de
+  données — que devient la contribution d'équilibre de l'État quand le taux
+  devient 18 % ? Le programme ne le dit pas, et le dépôt ne tranchera pas à sa
+  place.
