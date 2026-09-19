@@ -5876,6 +5876,58 @@ les mêmes six scénarios.
 
 ---
 
+## 5 ante ter. Le net et le brut : ce que la bascule suppose
+
+Le simulateur se lit entièrement en net ou entièrement en brut, saisie comprise.
+Quatre réserves, dont la première commande tout le reste.
+
+**1. Le taux de CSG sur les pensions est celui du TAUX PLEIN, pour tout le
+monde.** L'article L. 136-8 le fait dépendre du revenu fiscal de référence du
+foyer, perçu l'avant-dernière année, et en tire quatre cas pour une part de
+quotient familial (montants 2026, revalorisés chaque année sur les prix) :
+exonéré jusqu'à 11 128 €, 3,80 % jusqu'à 14 548 €, 6,60 % jusqu'à 22 580 %,
+8,30 % au-delà. Le simulateur ne demande ni la composition du foyer, ni les
+autres ressources, ni un revenu d'il y a deux ans : il applique donc 8,30 %,
+plus 0,50 % de CRDS et 0,30 % de CASA, soit **9,10 %**.
+
+La convention SURESTIME le prélèvement sur les petites pensions — et ce sont
+justement celles des scénarios notionnels. Une pension de 660 € par mois
+placerait son titulaire, s'il vivait seul et n'avait rien d'autre, sous le
+premier seuil : il serait exonéré des trois, et son net vaudrait son brut. Le
+site lui retire 9,1 %. L'écart entre systèmes affiché en net est donc un peu
+RESSERRÉ pour les petites pensions, et exact pour les grandes. La page le dit
+sous la clé de lecture.
+
+**2. La cotisation maladie de 1 % sur la retraite complémentaire n'est pas
+comptée.** Elle ne porte que sur une partie de la pension, et les cinq scénarios
+notionnels ne distinguent pas base et complémentaire — leur compte est unique.
+L'appliquer aux uns et pas aux autres fabriquerait un écart qui ne viendrait
+d'aucune règle. Le net d'un retraité du privé est donc, de ce fait, très
+légèrement surestimé.
+
+**3. La rente du pilier capitalisé suit le barème des pensions**, et c'est une
+convention : le dépôt la traite en rente viagère à titre GRATUIT, ce qu'elle est
+quand la cotisation qui l'a constituée a été prélevée à la source et déduite —
+le cas d'une cotisation obligatoire. Une rente à titre onéreux relèverait des
+prélèvements sur revenus du patrimoine, à 17,2 % sur une fraction du montant qui
+dépend de l'âge. La proposition ne tranche pas.
+
+**4. Ce qui reste brut, et le restera.** Un CAPITAL notionnel et une ASSIETTE de
+cotisation n'ont pas de net : on ne « nette » pas un capital. Les tableaux de
+détail — décomposition par régime, capital, cotisations versées, contribution de
+l'employeur — restent donc en brut dans les deux modes, et c'est leur seule
+lecture possible. La bascule ne gouverne que ce qu'on TOUCHE : le salaire et la
+pension.
+
+**Et un mot sur la saisie.** En mode net, le nombre tapé est un net mensuel que
+le modèle convertit en brut en résolvant la fiche de paie du statut — ce n'est
+pas une estimation, c'est l'inverse exact du calcul qui produit le net. Les
+statuts que le modèle ne sait pas décrire — exploitant agricole, élu,
+collectivités d'outre-mer — font exception : leur montant est lu tel quel, et le
+formulaire l'affiche plutôt que de le taire.
+
+---
+
 ## 5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé
 
 La page **Coût** superpose deux natures de chiffres, et il faut les séparer pour
@@ -6299,7 +6351,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- 1038 tests couvrent le chargement, la fiabilité, la règle de certification, la
+- 1046 tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

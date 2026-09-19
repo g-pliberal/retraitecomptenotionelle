@@ -440,11 +440,60 @@ class ProfilRemuneration:
 
 
 @dataclass(frozen=True)
+class TrancheCsgPension:
+    """Un des quatre cas de l'article L. 136-8, pour situer le lecteur."""
+
+    libelle: str
+    taux: float
+    revenu_fiscal_maximum: float | None
+
+
+@dataclass(frozen=True)
+class PrelevementsPension:
+    """Ce qu'on paie une fois retraité — et non plus en travaillant.
+
+    Une pension n'est pas un salaire : aucune cotisation sociale, puisqu'on
+    n'acquiert plus de droits ; aucun abattement pour frais professionnels ; et
+    un taux de CSG propre, que la loi fait dépendre du revenu fiscal de
+    référence du foyer.
+
+    **Le dépôt retient le TAUX PLEIN pour tout le monde**, faute de connaître ce
+    revenu — le simulateur ne demande ni la composition du foyer, ni les autres
+    ressources. La convention surestime donc le prélèvement sur les petites
+    pensions, qui seraient exonérées : le fichier de données dit de combien, et
+    ``docs/limites.md`` porte la réserve. ``bareme_csg`` garde les quatre cas
+    pour que la page puisse les montrer.
+    """
+
+    csg_taux_plein: float
+    crds: float
+    casa: float
+    bareme_csg: tuple[TrancheCsgPension, ...]
+
+    @property
+    def taux_total(self) -> float:
+        """Ce qui sépare une pension brute de sa pension nette : 9,1 %."""
+        return self.csg_taux_plein + self.crds + self.casa
+
+    def net(self, brut: float) -> float:
+        return brut * (1.0 - self.taux_total)
+
+    def brut(self, net: float) -> float:
+        """L'inverse : quelle pension brute laisse ce net.
+
+        Sert à la saisie, où l'on peut taper un montant net.
+        """
+        reste = 1.0 - self.taux_total
+        return net / reste if reste > 0 else net
+
+
+@dataclass(frozen=True)
 class Prelevements:
-    """Les quatre profils, tels que le fichier les écrit."""
+    """Les quatre profils, tels que le fichier les écrit, et les pensions."""
 
     annee: int
     profils: dict[str, ProfilRemuneration]
+    pensions: PrelevementsPension
     fiabilite: Fiabilite
 
     def profil(self, code: str) -> ProfilRemuneration:
@@ -512,7 +561,27 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
                 fiche.get("reduction_generale")),
             fiabilite=fiabilite,
         )
-    return Prelevements(annee=annee, profils=profils, fiabilite=fiabilite)
+    pensions = contenu["pensions"]
+    return Prelevements(
+        annee=annee,
+        profils=profils,
+        pensions=PrelevementsPension(
+            csg_taux_plein=float(pensions["csg_taux_plein"]),
+            crds=float(pensions["crds"]),
+            casa=float(pensions["casa"]),
+            bareme_csg=tuple(
+                TrancheCsgPension(
+                    libelle=tranche["libelle"],
+                    taux=float(tranche["taux"]),
+                    revenu_fiscal_maximum=(
+                        None if tranche.get("revenu_fiscal_maximum") is None
+                        else float(tranche["revenu_fiscal_maximum"])),
+                )
+                for tranche in pensions["bareme_csg"]
+            ),
+        ),
+        fiabilite=fiabilite,
+    )
 
 
 def charger_prelevements(racine_donnees: Path) -> Prelevements:
@@ -809,6 +878,33 @@ class ConstructeurFiche:
             milieu = (bas + haut) / 2
             fiche = self.fiche(0, milieu, plafond_annuel, smic_annuel, bloc, cadre)
             if fiche.cout_du_travail < cout:
+                bas = milieu
+            else:
+                haut = milieu
+        return (bas + haut) / 2
+
+    def brut_a_net_donne(self, net: float, plafond_annuel: float,
+                         smic_annuel: float, bloc: BlocRetraite,
+                         cadre: bool = False) -> float:
+        """Le revenu brut dont il reste ``net`` une fois tout retiré.
+
+        L'inverse de la fiche de paie, et il sert à la SAISIE : le lecteur qui
+        connaît son net — la plupart des gens — le tape tel quel, et le modèle,
+        qui ne raisonne qu'en brut, remonte jusqu'à lui.
+
+        Le net croît strictement avec le brut : chaque taux est inférieur à un,
+        et ceux qui dépendent du niveau — les tranches, les barèmes progressifs
+        des indépendants — ne font que changer la pente. Une dichotomie suffit
+        donc, comme pour le coût du travail. La borne haute part de trois fois
+        le net : aucun profil ne prélève deux tiers d'un revenu.
+        """
+        if net <= 0:
+            return 0.0
+        bas, haut = net, net * 3.0
+        for _ in range(80):
+            milieu = (bas + haut) / 2
+            fiche = self.fiche(0, milieu, plafond_annuel, smic_annuel, bloc, cadre)
+            if fiche.net < net:
                 bas = milieu
             else:
                 haut = milieu
@@ -1203,3 +1299,61 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         affiche_cout_du_travail=profil.cout_du_travail,
         incidence=profil.incidence,
     )
+
+
+def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
+                            statut: str, annee: int, net_annuel: float) -> float:
+    """Le revenu brut annuel dont il reste ``net_annuel`` — ou lui-même.
+
+    C'est l'entrée du mode « net » de la saisie : le lecteur qui connaît son
+    net le tape tel quel, et le modèle, qui ne raisonne qu'en brut, remonte
+    jusqu'à lui par la fiche de paie de son statut.
+
+    Rend le net INCHANGÉ quand le statut n'a pas de fiche de paie — l'exploitant
+    agricole, l'élu, l'outre-mer. Mieux vaut un brut approché par un net qu'un
+    refus de calculer ; le site dit alors, sous le champ, qu'il n'a pas su
+    convertir et que le nombre est lu comme un brut.
+    """
+    if net_annuel <= 0:
+        return net_annuel
+    code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee)
+    if code_profil is None:
+        return net_annuel
+    profil = charger_prelevements(racine_donnees).profil(code_profil)
+    cadre = "cadre" in statut and "non_cadre" not in statut
+    return ConstructeurFiche(profil).brut_a_net_donne(
+        net_annuel,
+        macro.plafond_securite_sociale(annee),
+        smic_annuel(macro, annee),
+        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee),
+        cadre,
+    )
+
+
+def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
+                            statut: str, annee: int, brut_annuel: float) -> float:
+    """Le revenu net annuel que laisse ``brut_annuel`` — ou lui-même.
+
+    Le sens direct, et il sert à la BASCULE : passer du mode brut au mode net
+    doit décrire la même carrière, donc traduire le nombre saisi et non le
+    relire. Même repli que son inverse pour les statuts sans fiche de paie.
+    """
+    if brut_annuel <= 0:
+        return brut_annuel
+    code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee)
+    if code_profil is None:
+        return brut_annuel
+    profil = charger_prelevements(racine_donnees).profil(code_profil)
+    cadre = "cadre" in statut and "non_cadre" not in statut
+    return ConstructeurFiche(profil).fiche(
+        annee, brut_annuel,
+        macro.plafond_securite_sociale(annee),
+        smic_annuel(macro, annee),
+        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee),
+        cadre,
+    ).net
+
+
+def conversion_possible(affiliations, catalogue, statut: str, annee: int) -> bool:
+    """Le modèle sait-il convertir un net en brut pour ce statut ?"""
+    return profil_de_la_fiche(affiliations, catalogue, statut, annee) is not None

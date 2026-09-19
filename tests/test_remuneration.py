@@ -621,3 +621,78 @@ def test_la_fiabilite_du_bareme_est_plafonnee_a_haute(pieces):
     assert pieces["prelevements"].fiabilite <= Fiabilite.HAUTE
     for profil in pieces["prelevements"].profils.values():
         assert profil.fiabilite <= Fiabilite.HAUTE
+
+
+# -- le net et le brut, d'un bout à l'autre du simulateur --------------------
+
+
+def test_les_prelevements_sur_pension_font_neuf_virgule_un_points(pieces):
+    """CSG 8,30 %, CRDS 0,50 %, CASA 0,30 % : ce qui sépare une pension de son net.
+
+    Le taux plein, et lui seul : l'article L. 136-8 le fait dépendre du revenu
+    fiscal de référence du foyer, que le simulateur ne demande pas. La
+    convention est écrite dans le fichier de données et sur la page ; ce test
+    la fixe, et attrapera la prochaine loi de financement qui y touchera.
+    """
+    pensions = pieces["prelevements"].pensions
+    assert pensions.taux_total == pytest.approx(0.091, abs=1e-9)
+    assert pensions.net(1000.0) == pytest.approx(909.0)
+    # L'aller-retour est exact : c'est ce qui permet de saisir un net.
+    assert pensions.brut(pensions.net(2500.0)) == pytest.approx(2500.0)
+
+
+def test_le_bareme_de_csg_est_ordonne_et_finit_au_taux_plein(pieces):
+    """Les quatre cas de la loi, dans l'ordre, et le dernier sans plafond.
+
+    Le modèle n'applique que le dernier, mais la page montre les quatre pour
+    que le lecteur situe sa propre situation. Un barème désordonné ou tronqué
+    la ferait mentir.
+    """
+    bareme = pieces["prelevements"].pensions.bareme_csg
+    assert [tranche.taux for tranche in bareme] == [0.0, 0.038, 0.066, 0.083]
+    seuils = [t.revenu_fiscal_maximum for t in bareme[:-1]]
+    assert seuils == sorted(seuils)
+    assert bareme[-1].revenu_fiscal_maximum is None
+    assert bareme[-1].taux == pieces["prelevements"].pensions.csg_taux_plein
+
+
+def test_le_net_saisi_se_retrouve_par_la_fiche_de_paie(pieces):
+    """L'aller-retour de la saisie : un net tapé redonne le brut qui le laisse.
+
+    C'est ce qui rend le mode « net » honnête : on ne devine pas un brut, on
+    résout l'équation de la fiche de paie. Vérifié sur les quatre profils, et
+    non sur le seul salarié du privé — un indépendant paie tout lui-même, et
+    son barème est progressif.
+    """
+    from retraite_notionnelle.remuneration import (
+        salaire_brut_depuis_net,
+        salaire_net_depuis_brut,
+    )
+
+    for statut in ("salarie_prive_non_cadre", "salarie_prive_cadre",
+                   "fonctionnaire_etat", "contractuel_public", "artisan"):
+        for net_mensuel in (1800.0, 2500.0, 6000.0):
+            brut = salaire_brut_depuis_net(
+                PARAMETRES.racine_donnees, pieces["macro"], pieces["catalogue"],
+                pieces["affiliations"], statut, ANNEE, net_mensuel * 12)
+            retour = salaire_net_depuis_brut(
+                PARAMETRES.racine_donnees, pieces["macro"], pieces["catalogue"],
+                pieces["affiliations"], statut, ANNEE, brut)
+            assert retour == pytest.approx(net_mensuel * 12, rel=1e-6), (
+                f"{statut} à {net_mensuel} € net")
+            assert brut > net_mensuel * 12, f"{statut} : le brut doit dépasser le net"
+
+
+def test_un_statut_sans_fiche_de_paie_rend_le_montant_inchange(pieces):
+    """Mieux vaut un brut approché par un net qu'un refus de calculer.
+
+    L'exploitant agricole relève de la MSA, dont le dépôt n'a pas les taux hors
+    retraite. Le montant saisi est alors lu tel quel, et le formulaire le dit —
+    c'est `_mention_conversion` côté site.
+    """
+    from retraite_notionnelle.remuneration import salaire_brut_depuis_net
+
+    inchange = salaire_brut_depuis_net(
+        PARAMETRES.racine_donnees, pieces["macro"], pieces["catalogue"],
+        pieces["affiliations"], "exploitant_agricole", ANNEE, 30000.0)
+    assert inchange == pytest.approx(30000.0)
