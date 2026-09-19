@@ -3226,6 +3226,33 @@ toucher aux moteurs de pension.
      reste d'un seul tenant, civils et militaires confondus — le partage se
      prend au Jaune « Pensions », qui est toujours le seul à le donner.
 
+     **Son millésime, vérifié le 19 septembre 2026, et c'est une réserve
+     sérieuse.** Le classeur n'existe qu'en UNE version, celle du rapport de
+     juin 2024 : son propre sommaire l'écrit — « Complément du rapport annuel
+     du COR - juin 2024 » —, ses métadonnées le datent du 10 juillet 2024,
+     révisé le 10 février 2025, et l'en-tête `Last-Modified` du serveur, qui
+     affiche avril 2026, ne reflète qu'une remise en ligne. **Il n'existe pas
+     de compléments par régime du millésime 2026.** Quatre contrôles le
+     disent : l'index des fiches du COR, sur toutes ses pages, ne liste que
+     ceux de 2024 ; la page du rapport de juin 2026 n'offre que ses six
+     classeurs de chapitres et aucune fiche de régime ; les chemins
+     `2025-06`, `2025-07` et `2026-06` à `2026-09` répondent 404 pour la fiche
+     CNRACL comme pour le classeur ; et le rapport 2026 lui-même, s'il
+     confirme bâtir « des hypothèses plus fines, notamment celles concernant
+     les effectifs cotisants […] de chaque régime », n'annonce nulle part leur
+     publication. Le rapport 2026 date du 11 juin : trois mois ont passé, là
+     où les fiches de 2024 étaient parues trois semaines après le leur.
+
+     **Ce que cette réserve interdit.** Les effectifs par régime du classeur
+     sont ancrés sur 2023 et sur l'exercice de projection de juin 2024 ; les
+     figures 1.13 et 2.7 du rapport 2026, elles, portent les hypothèses COR
+     2026. **Les mélanger reviendrait à coudre deux exercices de projection**,
+     exactement la faute que la deuxième passe interdit sur les décomptes.
+     Concrètement : pour la FPE, la CNRACL, l'Ircantec, la CNAV et
+     l'Agirc-Arrco, un millésime 2026 existe et c'est lui qu'on prend ; pour
+     les neuf autres caisses, seul l'exercice de 2024 est publié, et il faut
+     l'écrire à côté du chiffre.
+
    - **Cnav, abrégé statistique, chapitre 01 — soixante ans de régime
      général.** « Évolution du nombre de cotisants actifs occupés et de
      retraités du régime général et rapport démographique **depuis 1963** » :
@@ -4600,3 +4627,32 @@ scénario ».
 
   Rien n'est codé : c'est une passe de recherche, et son livrable est le
   relevé.
+
+- **Septembre 2026, action 35, volet A, point 3 : le millésime des
+  compléments par régime du COR.** Réserve levée, et dans le mauvais sens.
+  **Il n'existe pas de compléments par régime du millésime 2026.** Le classeur
+  `Données_régimes_publi_V2.xlsx` n'a qu'une version, celle du rapport de juin
+  2024 : son sommaire l'écrit, ses métadonnées le datent du 10 juillet 2024,
+  révisé le 10 février 2025. L'en-tête `Last-Modified` du serveur affiche
+  avril 2026 et ne veut rien dire — c'est une remise en ligne, pas une mise à
+  jour ; s'y fier aurait fait passer un exercice de 2024 pour un exercice de
+  2026.
+
+  Quatre contrôles concordent : l'index des fiches, sur toutes ses pages, ne
+  liste que les compléments de 2024 ; la page du rapport de juin 2026 n'offre
+  que ses classeurs de chapitres ; les chemins `2025-06`, `2025-07` et
+  `2026-06` à `2026-09` répondent 404 ; et le rapport 2026, s'il confirme
+  bâtir des hypothèses d'effectifs cotisants « de chaque régime », n'annonce
+  pas leur publication. Le rapport est paru le 11 juin, il y a trois mois,
+  quand les fiches de 2024 avaient suivi le leur de trois semaines.
+
+  **Conséquence à tenir.** Les effectifs par régime sont ancrés sur 2023 et
+  sur l'exercice de juin 2024 ; les figures 1.13 et 2.7 du rapport 2026
+  portent les hypothèses COR 2026. Les mélanger coudrait deux exercices de
+  projection — la faute même que la deuxième passe interdit sur les décomptes.
+  Pour la FPE, la CNRACL, l'Ircantec, la CNAV et l'Agirc-Arrco, un millésime
+  2026 existe et c'est lui qu'on prend ; pour les neuf autres caisses, seul
+  l'exercice de 2024 est publié, et il faut l'écrire à côté du chiffre. La
+  troisième passe présentait ce classeur comme « la source qui rend les autres
+  secondaires » : il le reste par sa couverture et son horizon, mais il est
+  d'un millésime de plus que le reste du dépôt, et ça se dit.
