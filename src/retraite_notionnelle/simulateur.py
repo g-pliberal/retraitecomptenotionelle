@@ -41,6 +41,7 @@ from .moteur.compte import ConstructeurCompte
 from .moteur.conversion import Convertisseur
 from .moteur.fusion import RegimeFusionne, fusionner
 from .moteur.indexation import Indexation
+from .remuneration import RemunerationActif, remuneration_de_la_carriere
 from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
 
@@ -137,6 +138,11 @@ class Comparaison:
     #: Coefficient de passage des euros de l'année de liquidation aux euros
     #: constants de ``parametres.annee_euros_constants``.
     coefficient_euros_constants: float = 1.0
+    #: Ce qu'un actif touche entre la bascule et son départ, sous le droit en
+    #: vigueur et sous la proposition : coût du travail, brut, net. ``None``
+    #: pour qui a déjà liquidé — il ne cotise plus — et pour tout statut dont
+    #: ``remuneration.py`` ne sait pas écrire la fiche de paie.
+    remuneration: RemunerationActif | None = None
     #: Dernier revenu d'activité, annualisé ET ramené à l'année de liquidation.
     #: Dénominateur du taux de remplacement. Calculé par le simulateur, qui
     #: seul dispose des séries : voir :meth:`Simulateur._dernier_revenu`.
@@ -863,6 +869,10 @@ class Simulateur:
                 carriere.annee_liquidation, self.parametres.annee_euros_constants
             ),
             dernier_revenu_annualise=_dernier_revenu_annualise(carriere, self.macro),
+            remuneration=remuneration_de_la_carriere(
+                carriere, self.macro, self.catalogue, self.affiliations,
+                self.parametres,
+            ),
         )
 
     def _verifier_fiabilite(self, carriere: Carriere) -> None:

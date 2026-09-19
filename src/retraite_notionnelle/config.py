@@ -503,6 +503,18 @@ class Parametres:
     #: scénario 4. Voir ``SourceCotisations.TAUX_HISTORIQUES_PUIS_UNIFORME``.
     taux_cotisation_liberal: float = 0.18
 
+    #: Partage du taux unique entre l'assuré et son employeur. La proposition
+    #: dit « 18 %, salariale et patronale additionnées » et ne dit pas qui
+    #: porte quoi ; le dépôt partage MOITIÉ-MOITIÉ — 9 % et 9 % —, et de même
+    #: pour les 5 % capitalisés.
+    #:
+    #: Ce paramètre ne touche à AUCUNE pension : le compte notionnel porte la
+    #: somme des deux parts, et le partage lui est indifférent. Il ne sert qu'à
+    #: la fiche de paie de `remuneration.py`, où il déplace la ligne « brut »
+    #: entre le coût du travail et le net — sans déplacer le net lui-même, sous
+    #: l'hypothèse d'incidence que ce module retient.
+    part_salariale_taux_unique: float = 0.5
+
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
     #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les
     #: ressources à un plancher —, mais individualise le plancher. Chacun est
