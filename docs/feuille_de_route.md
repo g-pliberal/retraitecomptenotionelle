@@ -2149,59 +2149,12 @@ versé à l'action 24.
 
 ---
 
-### 24. Convertir les droits acquis à l'âge de départ effectif, par défaut — `à faire`
+### 24. Convertir les droits acquis à l'âge de départ effectif, par défaut — `abandonnée`
 
-**Pourquoi.** Ouverte par l'action 23 : le relecteur demandait de « réexaminer
-si "à l'âge de départ effectif" ne devrait pas être le défaut plutôt qu'une
-option cachée ». Le défaut actuel (`reference`) convertit les droits acquis
-avant la bascule au diviseur de l'âge de référence — 67 ans — puis les sert
-au diviseur de l'âge réel : qui part à 64 ans paie son anticipation une
-seconde fois, sur des droits que le système actuel aurait servis sans décote.
-`methodologie.md` §5 le dit lui-même : « `liquidation` est la convention qu'une
-réforme réelle retiendrait, puisqu'elle seule respecte véritablement les droits
-acquis ». Le site l'écrit désormais sous les fiches du simulateur (action 23),
-mais un défaut que la page doit expliquer à chaque calcul est un défaut qui
-pose question.
-
-**Ce que ça déplacerait, mesuré le 16 septembre 2026.** Sur la carrière témoin
-(né en 1975, salarié non cadre à 3 500 € par mois, départ à 64 ans en 2039), le
-scénario 3 passe de 23 074 € à 25 334 € par an (+9,8 %), le scénario 5 de
-28 452 € à 30 712 €. Sur Cas types, 40 des 91 cellules des scénarios 3 et 5
-bougent, de +0,1 à +30,8 points d'écart au système actuel, médiane +3,9 points ;
-les 51 autres — départs à l'âge de référence ou après, générations déjà
-retraitées — ne bougent pas. Les scénarios 1, 2, 4 et 6 sont indifférents. La
-page Coût bouge sur les seuls scénarios 3 et 5 de sa section « six systèmes ».
-
-**Fichiers.** `src/retraite_notionnelle/config.py` (`age_conversion_droits_acquis`),
-`src/retraite_notionnelle/web/pages.py` (`CONVERSIONS_ACQUIS`, la note et la
-cascade qui présentent le défaut comme tel), `moteur/js/config.js` et
-`moteur/js/pages.js`, `docs/methodologie.md` §5, `README.md` (le tableau
-d'exemple, qu'un test recalcule), les témoins.
-
-**Marche.** Changer le défaut des deux moteurs, régénérer les témoins et lire
-leur diff — c'est lui qui dit, cellule par cellule, ce que la convention
-coûtait. Garder `reference` comme variante, pour que la mesure reste
-reproductible. Réécrire la note et la cascade : elles décrivent aujourd'hui le
-défaut comme une pénalité à retirer ; elles décriront la variante comme une
-lecture stricte du cahier des charges. Le piège à nommer d'avance : le
-scénario 3 est l'étalon d'une réforme applicable, et le relever de dix pour
-cent sur une carrière courante déplace la lecture de tout le site — c'est
-précisément pourquoi la décision se prend en connaissance des témoins, et non
-dans une passe sur le site.
-
-**Fin.** Le défaut du simulateur est la convention qu'une réforme réelle
-retiendrait, `limites.md` §3 et `methodologie.md` §5 disent ce que l'ancien
-défaut coûtait, et la note du simulateur ne parle plus d'un réglage à trouver.
-
-**Ce que deux actions lui ont retiré depuis, et qu'il faut lire avant de la
-reprendre.** L'action 31 a retiré du site les deux scénarios prospectifs, les
-seuls que ce réglage touche : la note et la cascade que cette action veut
-réécrire n'existent plus, et sa conclusion est déjà atteinte par un autre
-chemin. Puis l'âge de référence est passé à 64 ans (journal, septembre 2026) :
-les deux conventions prennent alors le même diviseur pour un départ à 64 ans et
-ne se séparent plus que sur les départs plus précoces. Ce qui reste est un
-chantier d'hygiène du modèle — un défaut que `methodologie.md` §5 désavoue —,
-non un chantier de lecture du site. À reclasser en conséquence.
+Abandonnée le 19 septembre 2026, après mesure. La raison est en bas, sous
+« Ce qui est délibérément en bas » : le réglage qu'elle proposait fait dépendre
+de l'âge de départ la valeur d'un passé qui, lui, ne dépend pas de l'âge de
+départ. Les actions 23, 31 et 34 qui la citent renvoient donc là.
 
 ### 25. Le barème de la surcote de 2004 à 2008, trimestre par trimestre — `fait`
 
@@ -4371,6 +4324,43 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   base en droits directs et dérivés au seul niveau de l'agrégat, et dire ce que
   le scénario 6 fait de la réversion. Modéliser une pension de réversion reste
   en bas.
+- **Convertir les droits acquis à l'âge de départ effectif** — l'action 24,
+  abandonnée le 19 septembre 2026. Elle demandait que les droits d'avant la
+  bascule soient convertis en capital au diviseur de l'âge où l'assuré part
+  vraiment, et non à celui de l'âge de référence. La mesure l'a réfutée.
+
+  *Ce que le réglage ferait.* Les droits acquis sont une pension annuelle ; la
+  convertir en capital demande un âge, et c'est le seul rôle de ce réglage.
+  Pour un même passé — carrière témoin née en 1975, homme, salarié du privé non
+  cadre entré à 21 ans au salaire moyen et à profil plat, donc trente années
+  cotisées avant 2026 et un droit figé de 18 683 € par an —, le défaut actuel
+  constitue un pot de 459 467 € quel que soit l'âge de départ. Le réglage proposé en constituerait **526 244 € pour un départ à
+  60 ans et 411 567 € pour un départ à 67 ans**. Le même passé vaudrait donc
+  28 % de plus à qui arrête plus tôt, ce qui n'a pas de sens : le passé est le
+  même.
+
+  *Ce que ça casse.* Le pot rétrécissant avec l'âge à peu près au rythme où les
+  cotisations nouvelles le remplissent — au privé, −47 900 € de pot contre
+  +53 931 € de versements entre 60 et 67 ans —, les deux s'annulent. Sept
+  années de travail supplémentaires ne feraient plus monter le capital total
+  que de **0,8 %** (1,6 % sur une carrière publique), contre 26 % aujourd'hui,
+  et la pension de 25 % au lieu de 56 %. Un compte notionnel promet qu'on
+  retrouve ce qu'on verse ; le réglage romprait cette promesse sur la part
+  venue du passé, et d'autant plus fort que cette part est lourde — c'est-à-dire
+  pour les générations de transition, les premières concernées.
+
+  *Et il rétablirait ce que le dépôt critique.* `limites.md` chiffre à
+  23,7 milliards en 2024 les annuités servies avant l'âge légal, et les range
+  parmi les avantages non contributifs que les comptes notionnels suppriment.
+  Un capital majoré pour qui part tôt est le même mécanisme, financé par les
+  autres.
+
+  *Ce qui n'entre pas dans la balance, vérifié.* Le pilier capitalisé de 5 %
+  n'appartient qu'au scénario 6, qui est rétroactif et ne fige aucun droit : la
+  convention lui est indifférente au centime, à tout âge de départ. Le RAFP est
+  servi à l'identique par les six scénarios et ne départage rien. Le réglage
+  `liquidation` reste disponible en variante, pour que la mesure soit
+  reproductible.
 
 ---
 

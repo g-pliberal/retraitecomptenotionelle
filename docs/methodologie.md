@@ -948,11 +948,30 @@ droits que le système actuel aurait servis sans décote — l'anticipation est
 payée une seconde fois, sur le passé. La pension du scénario 3 passe de
 23 074 € à 25 334 € par an lorsqu'on retient l'autre convention.
 
-Le défaut est la lecture stricte du cahier des charges : dans un système
-notionnel, l'âge de départ se paie, y compris sur le passé. `liquidation` est la
-convention qu'une réforme réelle retiendrait, puisqu'elle seule respecte
-véritablement les droits acquis. Les deux sont fournies, et le modèle affiche la
-cascade de calcul pour que l'écart soit visible plutôt que subi.
+**Le défaut est celui qui fait dépendre le pot du seul passé**, et c'est la
+raison de fond. Sur une carrière témoin — né en 1975, homme, salarié du privé
+non cadre entré à 21 ans, au salaire moyen et à profil plat, soit trente années
+cotisées avant la bascule et un droit figé de 18 683 € par an —, le pot vaut
+sous `reference` **459 467 € quel que soit l'âge de départ**. Sous
+`liquidation`, le même passé vaudrait **526 244 € pour un départ à 60 ans et
+411 567 € pour un départ à 67 ans** : 28 % d'écart pour un passé identique,
+parce que le diviseur qui constitue le pot rétrécit avec l'âge. Un test tient
+ces deux propriétés.
+
+Cette phrase a longtemps dit l'inverse : que `liquidation` « seule respecte
+véritablement les droits acquis ». C'était un excès. Les deux conventions
+respectent quelque chose de différent — l'une le CAPITAL que le passé
+représente, l'autre la RENTE ANNUELLE qu'il promettait —, et la mesure a
+tranché entre elles : sous `liquidation`, le pot rétrécit avec l'âge à peu près
+au rythme où les cotisations nouvelles le remplissent, si bien que sept années
+de travail supplémentaires ne feraient monter le capital total que de 0,8 %
+contre 26 % aujourd'hui. Un compte notionnel promet qu'on retrouve ce qu'on
+verse ; c'est cette promesse-là que le défaut tient. Le détail de la mesure est
+sous « Ce qui est délibérément en bas » de `feuille_de_route.md`, à l'action 24,
+abandonnée pour ce motif.
+
+`liquidation` reste fournie en variante, et le modèle affiche la cascade de
+calcul pour que l'écart soit visible plutôt que subi.
 
 Dans les deux cas, l'écart de longévité entre l'année de bascule et l'année de
 liquidation subsiste : `G(64, 2039)` dépasse `G(64, 2026)` parce que l'espérance
