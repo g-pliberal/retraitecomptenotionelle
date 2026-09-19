@@ -7,6 +7,7 @@ et échappent systématiquement ce qui vient de l'utilisateur.
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
 from html import escape
@@ -2739,11 +2740,18 @@ def _abscisse(annee: int, premiere: int, derniere: int) -> float:
     return MARGE_GAUCHE + largeur * (annee - premiere) / (derniere - premiere)
 
 
-def _ordonnee(valeur: float, sommet: float) -> float:
+def _ordonnee(valeur: float, sommet: float, plancher: float = 0.0) -> float:
+    """L'ordonnée d'une valeur : ``plancher`` en bas du cadre, ``sommet`` en haut.
+
+    Le plancher vaut zéro tant que rien n'est négatif — c'est le cas de tous
+    les graphiques du site sauf un —, et l'axe des abscisses reste alors au
+    bas du cadre. Une série négative l'abaisse : l'axe monte dans le cadre, et
+    ce qui est en dessous se lit comme ce qui est au-dessus, dans l'autre sens.
+    """
     hauteur = HAUTEUR_TRACE - MARGE_HAUT - MARGE_BAS
-    if sommet <= 0:
+    if sommet <= plancher:
         return HAUTEUR_TRACE - MARGE_BAS
-    return HAUTEUR_TRACE - MARGE_BAS - hauteur * valeur / sommet
+    return HAUTEUR_TRACE - MARGE_BAS - hauteur * (valeur - plancher) / (sommet - plancher)
 
 
 def _graduations_x(premiere: int, derniere: int) -> list[int]:
@@ -2778,7 +2786,8 @@ def _graduations_x(premiere: int, derniere: int) -> list[int]:
     ]
 
 
-def _chemin(serie: Serie, annees: tuple[int, ...], sommet: float) -> str:
+def _chemin(serie: Serie, annees: tuple[int, ...], sommet: float,
+            plancher: float = 0.0) -> str:
     """Chemin SVG d'une courbe, interrompu là où la série n'a pas de valeur."""
     morceaux: list[str] = []
     commence = False
@@ -2787,31 +2796,31 @@ def _chemin(serie: Serie, annees: tuple[int, ...], sommet: float) -> str:
             commence = False
             continue
         x = nombre_brut(_abscisse(annee, annees[0], annees[-1]))
-        y = nombre_brut(_ordonnee(valeur, sommet))
+        y = nombre_brut(_ordonnee(valeur, sommet, plancher))
         morceaux.append(f"{'M' if not commence else 'L'}{x} {y}")
         commence = True
     return " ".join(morceaux)
 
 
 def _bande(basses: list[float], hautes: list[float],
-           annees: tuple[int, ...], sommet: float) -> str:
+           annees: tuple[int, ...], sommet: float, plancher: float = 0.0) -> str:
     """Chemin fermé d'une bande empilée : le dessus à l'aller, le dessous au retour."""
     aller = [
         f"{'M' if rang == 0 else 'L'}"
         f"{nombre_brut(_abscisse(annee, annees[0], annees[-1]))} "
-        f"{nombre_brut(_ordonnee(haute, sommet))}"
+        f"{nombre_brut(_ordonnee(haute, sommet, plancher))}"
         for rang, (annee, haute) in enumerate(zip(annees, hautes))
     ]
     retour = [
         f"L{nombre_brut(_abscisse(annee, annees[0], annees[-1]))} "
-        f"{nombre_brut(_ordonnee(basse, sommet))}"
+        f"{nombre_brut(_ordonnee(basse, sommet, plancher))}"
         for annee, basse in zip(reversed(annees), reversed(basses))
     ]
     return " ".join(aller + retour) + " Z"
 
 
 def _aires_ecart(haute: Serie, basse: Serie, annees: tuple[int, ...],
-                 sommet: float) -> str:
+                 sommet: float, plancher: float = 0.0) -> str:
     """Le ruban entre deux courbes, coloré selon celle qui est au-dessus.
 
     C'est ce qui fait qu'un graphique de ressources et de dépenses se lit sans
@@ -2852,7 +2861,8 @@ def _aires_ecart(haute: Serie, basse: Serie, annees: tuple[int, ...],
 
     def point(annee: int, dessus: float, dessous: float) -> tuple[float, float, float]:
         return (_abscisse(annee, premiere, derniere),
-                _ordonnee(dessus, sommet), _ordonnee(dessous, sommet))
+                _ordonnee(dessus, sommet, plancher),
+                _ordonnee(dessous, sommet, plancher))
 
     # La chaîne des sommets du ruban : les années, plus les croisements qui
     # tombent entre deux d'entre elles. `signes` porte le signe de l'écart sur
@@ -2909,25 +2919,38 @@ def _aires_ecart(haute: Serie, basse: Serie, annees: tuple[int, ...],
     return "".join(morceaux)
 
 
-def _sommet(series: tuple[Serie, ...], empile: bool) -> tuple[float, float]:
-    """Sommet de l'axe vertical et pas de graduation."""
+def _sommet(series: tuple[Serie, ...], empile: bool) -> tuple[float, float, float]:
+    """Sommet de l'axe vertical, pas de graduation, et plancher.
+
+    Le plancher est zéro tant qu'aucune valeur n'est négative, et le sommet
+    est alors ``DIVISIONS_Y`` pas ronds : c'est l'échelle de tous les
+    graphiques du site. Une valeur négative — une réserve, sur le graphique
+    de la dette — étend l'échelle vers le bas : le pas est choisi pour que
+    l'AMPLITUDE tienne dans le même nombre de divisions, puis chaque borne est
+    arrondie au pas, vers le bas pour le plancher et vers le haut pour le
+    sommet, si bien que zéro tombe toujours sur une graduation.
+    """
     if empile:
-        maximum = max(
-            (sum(v for v in colonne if v is not None)
-             for colonne in zip(*(s.valeurs for s in series))),
-            default=0.0,
-        )
+        valeurs = [
+            sum(v for v in colonne if v is not None)
+            for colonne in zip(*(s.valeurs for s in series))
+        ]
     else:
-        maximum = max(
-            (v for serie in series for v in serie.valeurs if v is not None),
-            default=0.0,
-        )
-    pas = pas_graduation(maximum)
-    return pas * DIVISIONS_Y, pas
+        valeurs = [v for serie in series for v in serie.valeurs if v is not None]
+    maximum = max(valeurs, default=0.0)
+    minimum = min(valeurs, default=0.0)
+    if minimum >= 0.0:
+        pas = pas_graduation(maximum)
+        return pas * DIVISIONS_Y, pas, 0.0
+    pas = pas_graduation(maximum - minimum)
+    plancher = math.floor(minimum / pas) * pas
+    sommet = max(0.0, math.ceil(maximum / pas)) * pas
+    return sommet, pas, plancher
 
 
 def _etiquettes_de_fin(series: tuple[Serie, ...], annees: tuple[int, ...],
-                       sommet: float, etiquettes: tuple[str, ...]) -> str:
+                       sommet: float, etiquettes: tuple[str, ...],
+                       plancher: float = 0.0) -> str:
     """Le libellé court de chaque courbe, posé à son extrémité droite.
 
     Second encodage de l'identité, exigé ici parce que la couleur seule ne
@@ -2943,7 +2966,7 @@ def _etiquettes_de_fin(series: tuple[Serie, ...], annees: tuple[int, ...],
         )
         if derniere is None or not texte:
             continue
-        poses.append((_ordonnee(derniere, sommet), rang, texte))
+        poses.append((_ordonnee(derniere, sommet, plancher), rang, texte))
     if not poses:
         return ""
 
@@ -2959,7 +2982,7 @@ def _etiquettes_de_fin(series: tuple[Serie, ...], annees: tuple[int, ...],
 
     # Débordement par le bas : tout le paquet remonte d'un bloc, plutôt que la
     # dernière étiquette sorte du cadre.
-    base = _ordonnee(0.0, sommet)
+    base = _ordonnee(plancher, sommet, plancher)
     debord = max(0.0, precedent - base)
     x = nombre_brut(LARGEUR_TRACE - MARGE_DROITE + 4)
     return "".join(
@@ -3012,20 +3035,25 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     if not annees or not series:
         return ""
 
-    sommet, pas = _sommet(series, empile)
+    sommet, pas, plancher = _sommet(series, empile)
     gauche = nombre_brut(_abscisse(annees[0], annees[0], annees[-1]))
     droite = nombre_brut(_abscisse(annees[-1], annees[0], annees[-1]))
 
     lignes = []
-    for division in range(DIVISIONS_Y + 1):
-        valeur = pas * division
-        y = nombre_brut(_ordonnee(valeur, sommet))
+    # Autant de graduations que l'échelle compte de pas : cinq au-dessus de
+    # zéro d'ordinaire, davantage quand un plancher négatif s'y ajoute.
+    for division in range(round((sommet - plancher) / pas) + 1):
+        valeur = plancher + pas * division
+        y = nombre_brut(_ordonnee(valeur, sommet, plancher))
         lignes.append(
             f'<line class="grille" x1="{gauche}" y1="{y}" x2="{droite}" y2="{y}"/>'
             f'<text class="graduation" x="{nombre_brut(MARGE_GAUCHE - 6)}" y="{y}" '
             f'dy="0.32em" text-anchor="end">{nombre(valeur, decimales)}</text>'
         )
-    base = nombre_brut(_ordonnee(0.0, sommet))
+    # L'axe des abscisses passe par zéro, et le bas du cadre par le plancher :
+    # les deux coïncident tant que rien n'est négatif.
+    base = nombre_brut(_ordonnee(0.0, sommet, plancher))
+    bas = nombre_brut(_ordonnee(plancher, sommet, plancher))
     for annee in _graduations_x(annees[0], annees[-1]):
         x = nombre_brut(_abscisse(annee, annees[0], annees[-1]))
         lignes.append(
@@ -3039,7 +3067,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     # visible là où les deux se croisent.
     if ecart is not None and len(series) > max(ecart):
         traces.append(_aires_ecart(series[ecart[0]], series[ecart[1]],
-                                   annees, sommet))
+                                   annees, sommet, plancher))
     if empile:
         # La PREMIÈRE série est la bande du BAS : la légende se lit alors dans
         # l'ordre du graphique, de bas en haut, et non à l'envers.
@@ -3050,7 +3078,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
             ]
             traces.append(
                 f'<path class="bande" fill="{serie.couleur}" '
-                f'd="{_bande(cumul, hautes, annees, sommet)}"/>'
+                f'd="{_bande(cumul, hautes, annees, sommet, plancher)}"/>'
             )
             cumul = hautes
     else:
@@ -3058,7 +3086,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
             tirets = ' stroke-dasharray="5 4"' if serie.tirets else ""
             traces.append(
                 f'<path class="courbe" stroke="{serie.couleur}"{tirets} '
-                f'd="{_chemin(serie, annees, sommet)}"/>'
+                f'd="{_chemin(serie, annees, sommet, plancher)}"/>'
             )
 
     # L'unité de l'axe part du bord gauche du repère, et non de l'axe vers la
@@ -3085,11 +3113,12 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
         )
         repere_html = (
             f'<line class="repere" x1="{x}" y1="{nombre_brut(MARGE_HAUT)}" '
-            f'x2="{x}" y2="{base}"/>{etiquette}'
+            f'x2="{x}" y2="{bas}"/>{etiquette}'
         )
     legende_html = _legende(series, libelle_ecart) if legende else ""
     etiquettes_html = (
-        _etiquettes_de_fin(series, annees, sommet, etiquettes) if etiquettes else ""
+        _etiquettes_de_fin(series, annees, sommet, etiquettes, plancher)
+        if etiquettes else ""
     )
     # Ce dont la lecture au survol a besoin, et rien de plus.
     #

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 061<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->23 370<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -589,6 +589,37 @@ système actuel. `limites.md` §5 porte les trois.
   se lisait « 49295002 » — et tombait sur une table de correspondance hors du
   plan Unicode ; il lit désormais les rapports à la CCSS de 2013 à 2026, et
   toujours pas ceux d'avant, chiffrés ou compressés en flux d'objets.
+
+- **19 septembre 2026, le stock après le flux : la dette que le solde
+  accumule.** Repris d'un simulateur de transition répartition → capitalisation
+  soumis par l'utilisateur deux choses, et deux seulement : la récurrence de la
+  dette rapportée au PIB — stock(t) = stock(t−1) × (1 + taux) ÷ (1 + croissance)
+  − solde(t) — et l'idée de ne montrer qu'une sensibilité, celle du seul
+  paramètre lu. Le reste ne s'applique pas : ses onze scénarios de bascule, sa
+  taxe sur les plus-values, son livret et son bouclage macroéconomique par
+  élasticités supposent qu'une capitalisation REMPLACE la répartition, ce que
+  la proposition ne fait pas — ses 5 % s'ajoutent, donc pas de dette de
+  transition —, et le dépôt ne pose aucune élasticité ; son « facteur de
+  couverture » est ce que l'ancrage de `cout.py` fait déjà. Livré :
+  `calculer_dette` et `Cout.dette` dans `cout.py`, portés dans `cout.js` ; la
+  section « Ce que le déficit accumule : la dette, si rien ne s'ajuste » sur la
+  page Coût, entre le coefficient d'équilibre et la garantie, dans les deux
+  rendus ; et le graphique du site sait tracer SOUS l'axe — `_sommet` rend un
+  plancher, nul partout ailleurs, et les témoins de toutes les autres pages
+  restent identiques à l'octet. Le taux n'est pas choisi : c'est le forward à
+  un an de la courbe BCE du 17 septembre 2026, celui du pilier capitalisé, lu
+  jusqu'en 2056 et prolongé à plat ensuite ; la croissance est celle du PIB
+  de la projection. Le stock part de zéro en 2025 : les réserves d'aujourd'hui
+  restent hors compte, et la réserve de `limites.md` est réécrite en ce sens
+  sur la page. *Mesuré* : le système actuel accumule **66 % du PIB** de dette
+  de 2026 à 2070 — 51 points de déficits additionnés, le reste d'intérêts nets
+  de la croissance —, 57 % à un point de taux de moins, 78 % à un point de
+  plus, et ses intérêts de 2070 pèsent 2,4 % du PIB ; la proposition, à 18 %,
+  en accumule 150 % ; les systèmes 2 et 3 accumulent l'inverse, des réserves
+  de 526 % et 108 % du PIB, qui mesurent la marge que le coefficient
+  d'équilibre, jamais appliqué, aurait à distribuer. Six tests dans
+  `test_cout.py`, un dans `test_web.py` pour l'échelle négative, le plan de la
+  page Coût compte une entrée de plus.
 
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 

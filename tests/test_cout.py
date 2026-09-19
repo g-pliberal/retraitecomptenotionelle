@@ -40,6 +40,8 @@ from retraite_notionnelle.cout import (
     COMPOSANTE_GARANTIE,
     CONVENTION_REVERSION_SERVIE,
     CONVENTION_REVERSION_SUPPRIMEE,
+    Dette,
+    calculer_dette,
 )
 from retraite_notionnelle.donnees.assiette import (
     POSTES_ASSIETTE,
@@ -1748,3 +1750,105 @@ def test_le_scenario_6_ne_reconduit_pas_les_subventions_d_equilibre(
         assert avec > sans, f"{point.annee} : les subventions ne pèsent rien"
         assert point.part_subventions == pytest.approx(
             comptes.part("subventions_equilibre", point.annee))
+
+
+# -- la dette : ce que le solde accumule, si rien ne s'ajuste ------------------
+
+
+@pytest.fixture(scope="module")
+def dette(cout):
+    return cout.dette
+
+
+def test_la_dette_part_de_zero_a_la_derniere_annee_observee(dette, solde):
+    """Le stock ne compte que les soldes À VENIR : il commence à zéro.
+
+    Ni la dette ni les réserves d'aujourd'hui n'y sont, et la première ligne
+    est la première année projetée du solde.
+    """
+    assert dette.annee_depart == solde.derniere_annee_observee
+    assert dette.premiere_annee == solde.premiere_annee_projetee
+    assert dette.derniere_annee == solde.derniere_annee
+    for scenario, _ in SCENARIOS:
+        assert dette.stock(scenario, dette.annee_depart) == 0.0
+
+
+def test_la_recurrence_de_la_dette_se_verifie_ligne_a_ligne(dette, solde):
+    """stock(t) = stock(t−1) ÷ (1 + n) + intérêts(t) − solde(t), et rien d'autre.
+
+    Les intérêts sont ceux du stock de l'année précédente au taux de l'année,
+    érodés par la croissance ; le solde est exactement celui de ``Solde``.
+    """
+    precedent = {scenario: 0.0 for scenario, _ in SCENARIOS}
+    for ligne in dette.annees:
+        attendu = solde.annee(ligne.annee)
+        assert attendu is not None and attendu.projete
+        for scenario, _ in SCENARIOS:
+            assert ligne.solde(scenario) == attendu.solde(scenario)
+            assert ligne.interet(scenario) == pytest.approx(
+                precedent[scenario] * ligne.taux / (1.0 + ligne.croissance))
+            assert ligne.stock(scenario) == pytest.approx(
+                precedent[scenario] / (1.0 + ligne.croissance)
+                + ligne.interet(scenario) - ligne.solde(scenario))
+            precedent[scenario] = ligne.stock(scenario)
+
+
+def test_le_taux_est_celui_de_la_courbe_et_la_croissance_celle_du_pib(dette, avenir):
+    """Rien n'est prévu : le taux est le forward à un an, le PIB celui d'Avenir."""
+    courbe = Simulateur(Parametres()).courbe_taux
+    assert dette.date_courbe == courbe.date
+    assert dette.derniere_annee_cotee == courbe.annee + courbe.maturite_maximale
+    for ligne in dette.annees:
+        assert ligne.taux == courbe.placement(ligne.annee - 1, 1).taux
+        assert ligne.croissance == pytest.approx(
+            avenir.annee(ligne.annee).pib / avenir.annee(ligne.annee - 1).pib - 1.0)
+    # Au-delà de la dernière maturité cotée, le taux est prolongé à plat et la
+    # fiabilité tombe ; le stock, lui, n'est jamais mieux qu'estimé.
+    assert dette.derniere_annee > dette.derniere_annee_cotee
+    assert dette.fiabilite_taux == Fiabilite.ESTIMEE
+    assert dette.fiabilite == Fiabilite.ESTIMEE
+
+
+def test_le_systeme_actuel_accumule_une_dette_et_les_notionnels_l_inverse(dette, solde):
+    """Un solde toujours négatif fait une dette qui ne cesse de croître.
+
+    Le système actuel est en déficit chaque année projetée : son stock monte
+    d'année en année, culmine à l'horizon, et dépasse ce que les seuls déficits
+    additionnés donneraient — c'est l'effet des intérêts. Les deux systèmes
+    notionnels rétroactifs encaissent plus qu'ils ne servent : leur stock est
+    une réserve, négative, et ils n'ont pas de pic.
+    """
+    stocks = [ligne.stock("actuel") for ligne in dette.annees]
+    assert all(b > a for a, b in zip(stocks, stocks[1:]))
+    assert dette.pic("actuel").annee == dette.derniere_annee
+    assert dette.premiere_annee_decroissance("actuel") is None
+    assert dette.horizon("actuel") > dette.cumul_soldes("actuel") > 0.0
+    assert dette.cumul_interets("actuel") > 0.0
+    for scenario in ("notionnel_retroactif", "notionnel_retroactif_employeur"):
+        assert solde.premiere_annee_equilibree(scenario) == dette.premiere_annee
+        assert dette.horizon(scenario) < 0.0
+        assert dette.pic(scenario) is None
+
+
+def test_un_point_de_taux_deplace_la_dette_dans_le_sens_attendu(cout):
+    """Plus le taux est haut, plus une dette grossit et plus une réserve rapporte."""
+    courbe = Simulateur(Parametres()).courbe_taux
+    moins = calculer_dette(cout.solde, cout.avenir, courbe, -0.01)
+    plus = calculer_dette(cout.solde, cout.avenir, courbe, 0.01)
+    assert moins.ecart_taux == -0.01 and plus.ecart_taux == 0.01
+    for ligne, bas, haut in zip(cout.dette.annees, moins.annees, plus.annees):
+        assert bas.taux == pytest.approx(ligne.taux - 0.01)
+        assert haut.taux == pytest.approx(ligne.taux + 0.01)
+    assert moins.horizon("actuel") < cout.dette.horizon("actuel") < plus.horizon("actuel")
+    assert (moins.horizon("notionnel_retroactif")
+            > cout.dette.horizon("notionnel_retroactif")
+            > plus.horizon("notionnel_retroactif"))
+
+
+def test_sans_solde_la_dette_est_vide(depenses, population):
+    """Sans comptes, pas de solde ; sans solde, pas de stock — et rien ne plante."""
+    sans = calculer_cout(Simulateur(Parametres()), depenses, population)
+    assert sans.solde.annees == []
+    assert sans.dette.annees == []
+    assert isinstance(sans.dette, Dette)
+    assert sans.dette.horizon("actuel") == 0.0

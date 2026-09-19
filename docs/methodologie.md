@@ -1574,6 +1574,29 @@ prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
 
+**Et du solde, le stock.** Un solde est un flux ; un déficit qui se répète
+devient une dette, et une dette porte intérêt. La section suivante de la page
+cumule les soldes projetés de chaque système par la récurrence de toute dette
+publique rapportée au PIB :
+
+```
+stock(t) = stock(t−1) ÷ (1 + croissance(t)) + intérêts(t) − solde(t)
+intérêts(t) = stock(t−1) × taux(t) ÷ (1 + croissance(t))
+```
+
+Le stock part de zéro à la dernière année observée — les réserves et la dette
+d'aujourd'hui, que le COR chiffre à part, n'y entrent pas — et un stock
+négatif est une réserve. Le taux n'est pas choisi : c'est le taux à un an que
+la courbe des taux sans risque de la BCE implique pour chaque année, le forward
+que le pilier capitalisé lit déjà, prolongé à plat au-delà de la dernière
+maturité cotée ; la croissance est celle du PIB nominal de la projection. La
+seule sensibilité montrée est celle de ce taux, un point en plus ou en moins,
+parce que c'est la seule chose que la section lit au lieu de la calculer. Ce
+que la courbe dit d'un système notionnel n'est pas ce qu'il ferait — il se
+règle par le coefficient — mais la marge, ou le manque, que ce coefficient
+aurait à répartir ; ce qu'elle dit du système actuel est ce que coûte
+d'attendre une réforme.
+
 ---
 
 ## 9. Les données

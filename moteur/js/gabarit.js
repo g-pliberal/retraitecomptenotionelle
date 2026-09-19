@@ -987,12 +987,17 @@ function abscisse(annee, premiere, derniere) {
   return MARGE_GAUCHE + largeur * ((annee - premiere) / (derniere - premiere));
 }
 
-function ordonnee(valeur, sommet) {
+/**
+ * L'ordonnée d'une valeur : `plancher` en bas du cadre, `sommet` en haut. Le
+ * plancher vaut zéro tant que rien n'est négatif ; une série négative
+ * l'abaisse, et l'axe des abscisses monte alors dans le cadre.
+ */
+function ordonnee(valeur, sommet, plancher = 0.0) {
   const hauteur = HAUTEUR_TRACE - MARGE_HAUT - MARGE_BAS;
-  if (sommet <= 0) {
+  if (sommet <= plancher) {
     return HAUTEUR_TRACE - MARGE_BAS;
   }
-  return HAUTEUR_TRACE - MARGE_BAS - hauteur * (valeur / sommet);
+  return HAUTEUR_TRACE - MARGE_BAS - hauteur * ((valeur - plancher) / (sommet - plancher));
 }
 
 /** Décennies comprises dans la plage, plus les deux bornes. */
@@ -1023,7 +1028,7 @@ function graduationsX(premiere, derniere) {
 }
 
 /** Chemin SVG d'une courbe, interrompu là où la série n'a pas de valeur. */
-function chemin(serie, annees, sommet) {
+function chemin(serie, annees, sommet, plancher = 0.0) {
   const morceaux = [];
   let commence = false;
   annees.forEach((annee, rang) => {
@@ -1033,7 +1038,7 @@ function chemin(serie, annees, sommet) {
       return;
     }
     const x = nombreBrut(abscisse(annee, annees[0], annees[annees.length - 1]));
-    const y = nombreBrut(ordonnee(valeur, sommet));
+    const y = nombreBrut(ordonnee(valeur, sommet, plancher));
     morceaux.push(`${commence ? "L" : "M"}${x} ${y}`);
     commence = true;
   });
@@ -1041,15 +1046,15 @@ function chemin(serie, annees, sommet) {
 }
 
 /** Chemin fermé d'une bande empilée : le dessus à l'aller, le dessous au retour. */
-function bande(basses, hautes, annees, sommet) {
+function bande(basses, hautes, annees, sommet, plancher = 0.0) {
   const derniere = annees[annees.length - 1];
   const aller = annees.map((annee, rang) => `${rang === 0 ? "M" : "L"}`
     + `${nombreBrut(abscisse(annee, annees[0], derniere))} `
-    + `${nombreBrut(ordonnee(hautes[rang], sommet))}`);
+    + `${nombreBrut(ordonnee(hautes[rang], sommet, plancher))}`);
   const retour = [];
   for (let rang = annees.length - 1; rang >= 0; rang -= 1) {
     retour.push(`L${nombreBrut(abscisse(annees[rang], annees[0], derniere))} `
-      + `${nombreBrut(ordonnee(basses[rang], sommet))}`);
+      + `${nombreBrut(ordonnee(basses[rang], sommet, plancher))}`);
   }
   return `${aller.concat(retour).join(" ")} Z`;
 }
@@ -1075,7 +1080,7 @@ function bande(basses, hautes, annees, sommet) {
  * l'une d'elles a un trou À L'INTÉRIEUR de cette plage : un ruban interpolé
  * par-dessus une année manquante affirmerait un écart que personne n'a mesuré.
  */
-function airesEcart(haute, basse, annees, sommet) {
+function airesEcart(haute, basse, annees, sommet, plancher = 0.0) {
   const presente = (valeur) => valeur !== null && valeur !== undefined;
   if (haute.valeurs.length !== annees.length
       || basse.valeurs.length !== annees.length) {
@@ -1101,8 +1106,8 @@ function airesEcart(haute, basse, annees, sommet) {
   const basses = communs.map((rang) => basse.valeurs[rang]);
   const point = (annee, dessus, dessous) => ({
     x: abscisse(annee, premiere, derniere),
-    dessus: ordonnee(dessus, sommet),
-    dessous: ordonnee(dessous, sommet),
+    dessus: ordonnee(dessus, sommet, plancher),
+    dessous: ordonnee(dessous, sommet, plancher),
   });
 
   // La chaîne des sommets du ruban : les années, plus les croisements qui
@@ -1158,8 +1163,16 @@ function airesEcart(haute, basse, annees, sommet) {
 }
 
 /** Sommet de l'axe vertical et pas de graduation. */
+/**
+ * Sommet, pas et plancher de l'axe vertical. Le plancher est zéro tant
+ * qu'aucune valeur n'est négative — l'échelle de tous les graphiques du site.
+ * Une valeur négative étend l'échelle vers le bas : le pas est choisi pour
+ * que l'AMPLITUDE tienne dans le même nombre de divisions, puis chaque borne
+ * est arrondie au pas, si bien que zéro tombe toujours sur une graduation.
+ */
 function sommetEchelle(series, empile) {
   let maximum = 0.0;
+  let minimum = 0.0;
   if (empile) {
     for (let rang = 0; rang < series[0].valeurs.length; rang += 1) {
       let somme = 0.0;
@@ -1168,18 +1181,25 @@ function sommetEchelle(series, empile) {
         if (valeur !== null && valeur !== undefined) somme += valeur;
       }
       if (somme > maximum) maximum = somme;
+      if (somme < minimum) minimum = somme;
     }
   } else {
     for (const serie of series) {
       for (const valeur of serie.valeurs) {
-        if (valeur !== null && valeur !== undefined && valeur > maximum) {
-          maximum = valeur;
-        }
+        if (valeur === null || valeur === undefined) continue;
+        if (valeur > maximum) maximum = valeur;
+        if (valeur < minimum) minimum = valeur;
       }
     }
   }
-  const pas = pasGraduation(maximum);
-  return { sommet: pas * DIVISIONS_Y, pas };
+  if (minimum >= 0.0) {
+    const pas = pasGraduation(maximum);
+    return { sommet: pas * DIVISIONS_Y, pas, plancher: 0.0 };
+  }
+  const pas = pasGraduation(maximum - minimum);
+  const plancher = Math.floor(minimum / pas) * pas;
+  const sommet = Math.max(0.0, Math.ceil(maximum / pas)) * pas;
+  return { sommet, pas, plancher };
 }
 
 /**
@@ -1198,7 +1218,7 @@ function sommetEchelle(series, empile) {
  * trente-huit mille euros séparent au bout de quarante ans, superposeraient
  * leurs chiffres.
  */
-function etiquettesDeFin(series, sommet, etiquettes) {
+function etiquettesDeFin(series, sommet, etiquettes, plancher = 0.0) {
   const poses = [];
   series.forEach((serie, rang) => {
     const texte = etiquettes[rang];
@@ -1209,7 +1229,7 @@ function etiquettesDeFin(series, sommet, etiquettes) {
       if (valeur !== null && valeur !== undefined) { derniere = valeur; break; }
     }
     if (derniere === null) return;
-    poses.push({ y: ordonnee(derniere, sommet), rang, texte });
+    poses.push({ y: ordonnee(derniere, sommet, plancher), rang, texte });
   });
   if (!poses.length) return "";
 
@@ -1226,7 +1246,7 @@ function etiquettesDeFin(series, sommet, etiquettes) {
 
   // Débordement par le bas : tout le paquet remonte d'un bloc, plutôt que la
   // dernière étiquette sorte du cadre.
-  const base = ordonnee(0.0, sommet);
+  const base = ordonnee(plancher, sommet, plancher);
   const debord = Math.max(0.0, precedent - base);
   const x = nombreBrut(LARGEUR_TRACE - MARGE_DROITE + 4);
   return ecartees.map(({ y, texte }) => `<text class="graduation" x="${x}" `
@@ -1242,20 +1262,26 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   if (!annees.length || !series.length) {
     return "";
   }
-  const { sommet, pas } = sommetEchelle(series, empile);
+  const { sommet, pas, plancher } = sommetEchelle(series, empile);
   const derniereAnnee = annees[annees.length - 1];
   const gauche = nombreBrut(abscisse(annees[0], annees[0], derniereAnnee));
   const droite = nombreBrut(abscisse(derniereAnnee, annees[0], derniereAnnee));
 
   const lignes = [];
-  for (let division = 0; division <= DIVISIONS_Y; division += 1) {
-    const valeur = pas * division;
-    const y = nombreBrut(ordonnee(valeur, sommet));
+  // Autant de graduations que l'échelle compte de pas : cinq au-dessus de
+  // zéro d'ordinaire, davantage quand un plancher négatif s'y ajoute.
+  const divisions = Math.round((sommet - plancher) / pas);
+  for (let division = 0; division <= divisions; division += 1) {
+    const valeur = plancher + pas * division;
+    const y = nombreBrut(ordonnee(valeur, sommet, plancher));
     lignes.push(`<line class="grille" x1="${gauche}" y1="${y}" x2="${droite}" y2="${y}"/>`
       + `<text class="graduation" x="${nombreBrut(MARGE_GAUCHE - 6)}" y="${y}" `
       + `dy="0.32em" text-anchor="end">${nombre(valeur, decimales)}</text>`);
   }
-  const base = nombreBrut(ordonnee(0.0, sommet));
+  // L'axe des abscisses passe par zéro, et le bas du cadre par le plancher :
+  // les deux coïncident tant que rien n'est négatif.
+  const base = nombreBrut(ordonnee(0.0, sommet, plancher));
+  const bas = nombreBrut(ordonnee(plancher, sommet, plancher));
   for (const annee of graduationsX(annees[0], derniereAnnee)) {
     const x = nombreBrut(abscisse(annee, annees[0], derniereAnnee));
     lignes.push(`<text class="graduation" x="${x}" `
@@ -1267,7 +1293,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   // Le ruban d'abord : il est un fond, et une courbe posée par-dessus reste
   // visible là où les deux se croisent.
   if (ecart !== null && series.length > Math.max(ecart[0], ecart[1])) {
-    traces.push(airesEcart(series[ecart[0]], series[ecart[1]], annees, sommet));
+    traces.push(airesEcart(series[ecart[0]], series[ecart[1]], annees, sommet, plancher));
   }
   if (empile) {
     // La PREMIÈRE série est la bande du BAS : la légende se lit alors dans
@@ -1279,14 +1305,14 @@ export function graphique(titre, annees, series, unite = "", empile = false,
         return bas + (valeur === null || valeur === undefined ? 0.0 : valeur);
       });
       traces.push(`<path class="bande" fill="${serie.couleur}" `
-        + `d="${bande(cumul, hautes, annees, sommet)}"/>`);
+        + `d="${bande(cumul, hautes, annees, sommet, plancher)}"/>`);
       cumul = hautes;
     }
   } else {
     for (const serie of series) {
       const tirets = serie.tirets ? ' stroke-dasharray="5 4"' : "";
       traces.push(`<path class="courbe" stroke="${serie.couleur}"${tirets} `
-        + `d="${chemin(serie, annees, sommet)}"/>`);
+        + `d="${chemin(serie, annees, sommet, plancher)}"/>`);
     }
   }
 
@@ -1312,7 +1338,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
         + `${echapper(libelleRepere)}</text>`
       : "";
     repereHtml = `<line class="repere" x1="${x}" y1="${nombreBrut(MARGE_HAUT)}" `
-      + `x2="${x}" y2="${base}"/>${etiquette}`;
+      + `x2="${x}" y2="${bas}"/>${etiquette}`;
   }
   // Ce dont la lecture au survol a besoin, et rien de plus.
   //
@@ -1332,7 +1358,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     + lignes.join("") + traces.join("")
     + `<line class="axe" x1="${gauche}" y1="${base}" x2="${droite}" y2="${base}"/>`
     + repereHtml + uniteHtml
-    + (etiquettes.length ? etiquettesDeFin(series, sommet, etiquettes) : "")
+    + (etiquettes.length ? etiquettesDeFin(series, sommet, etiquettes, plancher) : "")
     + '<g class="survol"></g></svg>'
     + '<div class="lecture" role="status" aria-live="polite" hidden></div>'
     + `${legendeVisible ? legende(series, libelleEcart) : ""}`

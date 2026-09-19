@@ -138,6 +138,7 @@ from .castypes import (
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite
 from .donnees.depenses import DepensesRetraite
+from .donnees.taux import CourbeTauxSansRisque
 from .donnees.equilibre import ComptesRetraite
 from .donnees.population import Population
 from .simulateur import Simulateur
@@ -762,6 +763,205 @@ class Solde:
 
 
 @dataclass
+class DetteAnnuelle:
+    """Une année du stock : ce que les soldes cumulés depuis le départ pèsent.
+
+    Tout est en PART DE PIB, comme le solde dont elle procède. Un stock POSITIF
+    est une dette, un stock NÉGATIF une réserve : le même calcul rend les deux,
+    et c'est voulu — un système qui encaisse plus qu'il ne sert accumule autant
+    qu'un système qui sert plus qu'il n'encaisse, dans l'autre sens.
+    """
+
+    annee: int
+    #: Croissance NOMINALE du PIB sur l'année, en fraction : c'est elle qui
+    #: érode le stock rapporté au PIB.
+    croissance: float
+    #: Taux nominal auquel le stock de fin d'année précédente se refinance sur
+    #: l'année — ou se place, si c'est une réserve —, en fraction.
+    taux: float
+    #: Stock en fin d'année, par système, en part de PIB.
+    stocks: dict[str, float]
+    #: Intérêts de l'année, par système, en part de PIB : ce que le stock de
+    #: l'année précédente coûte (ou rapporte, en négatif) avant tout solde.
+    interets: dict[str, float]
+    #: Le solde de l'année, par système, tel que ``SoldeAnnuel.solde`` le rend.
+    soldes: dict[str, float]
+
+    def stock(self, scenario: str) -> float:
+        return self.stocks[scenario]
+
+    def interet(self, scenario: str) -> float:
+        return self.interets[scenario]
+
+    def solde(self, scenario: str) -> float:
+        return self.soldes[scenario]
+
+
+@dataclass
+class Dette:
+    """Le stock que les soldes à venir accumulent, de l'année de départ à l'horizon.
+
+    LE SOLDE DIT LE FLUX ; CECI DIT LE STOCK. Un déficit qui se répète devient
+    une dette, et une dette porte intérêt : à taux supérieur à la croissance,
+    elle grossit d'elle-même, et c'est l'effet « boule de neige » que le solde
+    seul ne montre pas. La récurrence est celle de toute dette publique
+    rapportée au PIB :
+
+        stock(t) = stock(t−1) × (1 + taux(t)) ÷ (1 + croissance(t)) − solde(t)
+
+    avec, pour que l'identité se vérifie ligne à ligne,
+
+        intérêts(t) = stock(t−1) × taux(t) ÷ (1 + croissance(t))
+        stock(t)    = stock(t−1) ÷ (1 + croissance(t)) + intérêts(t) − solde(t)
+
+    LE STOCK PART DE ZÉRO, à la dernière année observée. Ni la dette que le
+    système porte aujourd'hui ni les réserves qu'il détient n'y sont : le COR
+    les chiffre à part, et les ajouter ferait un stock de deux périmètres. Ce
+    que la série dit est donc ce que les soldes À VENIR ajoutent — ou
+    retirent —, et rien d'autre.
+
+    LE TAUX EST LU, PAS CHOISI. C'est le taux à un an que la courbe des
+    souverains les mieux notés de la zone euro, publiée par la BCE, implique
+    pour chaque année : le forward à un an de ``CourbeTauxSansRisque``, celui-là
+    même auquel le pilier capitalisé place ses versements. Le pilier et la dette
+    lisent ainsi la même courbe, et personne n'a à prévoir un taux. Au-delà de
+    la dernière maturité cotée, le taux est prolongé à plat et la fiabilité
+    tombe à « estimée ». ``ecart_taux`` déplace ce taux d'un écart constant —
+    un point en plus ou en moins —, ce qui est la seule sensibilité que la page
+    montre : elle dit ce que le résultat doit à cette lecture.
+
+    LA CROISSANCE EST CELLE DE LA PROJECTION : le PIB nominal de ``Avenir``,
+    qui suit les hypothèses du COR corrigées de la population d'âge actif.
+    """
+
+    annees: list[DetteAnnuelle] = field(default_factory=list)
+    #: Année de départ, stock nul : la dernière année observée du solde.
+    annee_depart: int = 0
+    #: Écart appliqué au taux lu sur la courbe, en fraction (0,01 = un point).
+    ecart_taux: float = 0.0
+    #: Date de la courbe des taux dont le taux est lu.
+    date_courbe: str = ""
+    #: Dernière année où le taux est lu sur une maturité cotée ; au-delà, il
+    #: est prolongé à plat.
+    derniere_annee_cotee: int = 0
+    #: Niveau du taux : celui de la courbe tant qu'elle est cotée, « estimée »
+    #: au-delà. Le stock, lui, n'est jamais mieux qu'estimé.
+    fiabilite_taux: Fiabilite = Fiabilite.ESTIMEE
+    fiabilite: Fiabilite = Fiabilite.ESTIMEE
+
+    @property
+    def premiere_annee(self) -> int:
+        return self.annees[0].annee
+
+    @property
+    def derniere_annee(self) -> int:
+        return self.annees[-1].annee
+
+    def annee(self, millesime: int) -> DetteAnnuelle | None:
+        for ligne in self.annees:
+            if ligne.annee == millesime:
+                return ligne
+        return None
+
+    def stock(self, scenario: str, millesime: int) -> float:
+        """Le stock en fin d'année, et zéro à l'année de départ ou avant."""
+        ligne = self.annee(millesime)
+        return ligne.stock(scenario) if ligne else 0.0
+
+    def horizon(self, scenario: str) -> float:
+        """Le stock à la dernière année, en part de PIB."""
+        return self.annees[-1].stock(scenario) if self.annees else 0.0
+
+    def cumul_soldes(self, scenario: str) -> float:
+        """Ce que les soldes seuls accumulent, SANS intérêts, en points de PIB.
+
+        Le signe est celui du stock : positif quand les déficits l'emportent.
+        C'est le stock qu'on aurait à taux égal à la croissance, et la
+        différence avec ``horizon`` est ce que l'effet boule de neige ajoute.
+        """
+        return -sum(ligne.solde(scenario) for ligne in self.annees)
+
+    def cumul_interets(self, scenario: str) -> float:
+        """Les intérêts cumulés sur la période, en points de PIB."""
+        return sum(ligne.interet(scenario) for ligne in self.annees)
+
+    def pic(self, scenario: str) -> DetteAnnuelle | None:
+        """L'année où le stock est le plus haut, ``None`` s'il n'est jamais positif."""
+        haut = None
+        for ligne in self.annees:
+            if ligne.stock(scenario) > 0.0 and (
+                haut is None or ligne.stock(scenario) > haut.stock(scenario)
+            ):
+                haut = ligne
+        return haut
+
+    def premiere_annee_decroissance(self, scenario: str) -> int | None:
+        """Première année où une dette positive cesse de croître, ``None`` sinon."""
+        precedent = 0.0
+        for ligne in self.annees:
+            courant = ligne.stock(scenario)
+            if precedent > 0.0 and courant < precedent:
+                return ligne.annee
+            precedent = courant
+        return None
+
+
+def calculer_dette(solde: Solde, avenir: Avenir, courbe: CourbeTauxSansRisque,
+                   ecart_taux: float = 0.0) -> Dette:
+    """Le stock que les soldes projetés accumulent, système par système.
+
+    Rien n'est resimulé : les soldes sont ceux de ``Solde``, le PIB celui de
+    ``Avenir``, le taux celui de la courbe. La fonction ne fait que cumuler,
+    et c'est ce qui la rend gratuite — et ce qui la borne aux années où le
+    solde est PROJETÉ : le passé a été financé, et son stock est ailleurs.
+    """
+    projetees = solde.projetees()
+    if not projetees:
+        return Dette()
+    scenarios = [scenario for scenario, _ in SCENARIOS]
+    stocks = {scenario: 0.0 for scenario in scenarios}
+    fiabilite_taux = courbe.fiabilite_publiee
+    lignes: list[DetteAnnuelle] = []
+    for ligne in projetees:
+        precedente = avenir.annee(ligne.annee - 1)
+        courante = avenir.annee(ligne.annee)
+        if precedente is None or courante is None or precedente.pib <= 0.0:
+            break
+        croissance = courante.pib / precedente.pib - 1.0
+        placement = courbe.placement(ligne.annee - 1, 1)
+        taux = placement.taux + ecart_taux
+        fiabilite_taux = min(fiabilite_taux, placement.fiabilite)
+        interets: dict[str, float] = {}
+        soldes: dict[str, float] = {}
+        for scenario in scenarios:
+            interets[scenario] = stocks[scenario] * taux / (1.0 + croissance)
+            soldes[scenario] = ligne.solde(scenario)
+            stocks[scenario] = (
+                stocks[scenario] / (1.0 + croissance)
+                + interets[scenario] - soldes[scenario]
+            )
+        lignes.append(DetteAnnuelle(
+            annee=ligne.annee,
+            croissance=croissance,
+            taux=taux,
+            stocks=dict(stocks),
+            interets=interets,
+            soldes=soldes,
+        ))
+    if not lignes:
+        return Dette()
+    return Dette(
+        annees=lignes,
+        annee_depart=lignes[0].annee - 1,
+        ecart_taux=ecart_taux,
+        date_courbe=courbe.date,
+        derniere_annee_cotee=courbe.annee + courbe.maturite_maximale,
+        fiabilite_taux=fiabilite_taux,
+        fiabilite=Fiabilite.ESTIMEE,
+    )
+
+
+@dataclass
 class Cout:
     """La série complète, et les cumuls qu'on en tire."""
 
@@ -770,6 +970,8 @@ class Cout:
     avenir: Avenir = field(default_factory=Avenir)
     #: Le bilan : ce qui rentre face à ce que chaque système ferait sortir.
     solde: Solde = field(default_factory=Solde)
+    #: Le stock que les soldes projetés accumulent, avec intérêts.
+    dette: Dette = field(default_factory=Dette)
     #: Année d'expression des euros constants.
     annee_euros: int = 0
     #: Générations effectivement simulées.
@@ -1428,15 +1630,17 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     )
     avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
                      revalorisation, reversion_servie)
+    solde = _solde(
+        avenir, comptes, depenses.pib.derniere_annee, assiette,
+        simulateur.parametres.taux_cotisation_liberal,
+        simulateur.parametres.annee_bascule, convention_recette,
+        depenses, reversion_servie,
+    ) if comptes is not None and avenir.annees else Solde()
     return Cout(
         annees=lignes,
         avenir=avenir,
-        solde=_solde(
-            avenir, comptes, depenses.pib.derniere_annee, assiette,
-            simulateur.parametres.taux_cotisation_liberal,
-            simulateur.parametres.annee_bascule, convention_recette,
-            depenses, reversion_servie,
-        ) if comptes is not None and avenir.annees else Solde(),
+        solde=solde,
+        dette=calculer_dette(solde, avenir, simulateur.courbe_taux),
         annee_euros=annee_euros,
         generations=generations(),
         echecs=echecs,

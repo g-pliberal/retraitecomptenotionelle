@@ -44,7 +44,12 @@ from ..avantages import (
     charger_avantages,
     inventaire_depuis_paquet,
 )
-from ..cout import COMPOSANTE_GARANTIE, calculer_cout, masse_du_scenario
+from ..cout import (
+    COMPOSANTE_GARANTIE,
+    calculer_cout,
+    calculer_dette,
+    masse_du_scenario,
+)
 from ..donnees.assiette import AssietteActivite
 from ..donnees.distribution import DistributionPensions
 from ..garantie import cout_garantie
@@ -5758,6 +5763,7 @@ que de {premiere_ventilee} à {derniere_ventilee}.""",
         _cout_detail_transferts(contexte),
         _cout_detail_scenarios(contexte),
         _cout_detail_equilibre(contexte),
+        _cout_detail_dette(contexte),
         _cout_detail_garantie(contexte),
         _cout_detail_capitalisation(contexte),
         _cout_detail_poids(contexte),
@@ -7008,6 +7014,142 @@ coût de cette page sont celles d'un système qui ne se pilote pas.</div>
 """, identifiant="cout-equilibre")
 
 
+#: L'écart de taux de la sensibilité, en fraction : un point de plus, un de
+#: moins. Le seul réglage que la section montre, parce que le taux est la seule
+#: chose qu'elle LIT au lieu de la calculer.
+ECART_TAUX_DETTE = 0.01
+
+
+def _cout_detail_dette(contexte: Contexte) -> str:
+    """Ce que le déficit accumule : la dette, si rien ne s'ajuste.
+
+    LE SOLDE DIT LE FLUX, CETTE SECTION DIT LE STOCK. La section précédente
+    donne, année par année, ce qui manque ou ce qui reste ; celle-ci cumule,
+    avec intérêts, et rapporte le cumul à un PIB qui grandit. C'est la
+    récurrence de toute dette publique, et elle ajoute une chose que le solde
+    ne montre pas : l'effet boule de neige, quand le taux dépasse la
+    croissance.
+
+    ELLE PART DE ZÉRO, à la dernière année observée, et ne compte donc ni la
+    dette ni les réserves que le système porte aujourd'hui : elle dit ce que
+    les soldes À VENIR ajoutent, jamais ce que le système détient.
+
+    UN STOCK NÉGATIF EST UNE RÉSERVE, et le graphique descend sous l'axe pour
+    le montrer — c'est le seul du site à le faire. Les deux systèmes notionnels
+    « à droits constants » encaissent plus qu'ils ne servent : leur courbe
+    plonge, et ce n'est pas une économie mais la marge que le coefficient
+    d'équilibre aurait à distribuer, comme la section précédente le dit du
+    coefficient lui-même.
+
+    LE TAUX EST LU, PAS CHOISI : le forward à un an de la courbe sans risque de
+    la BCE, celui-là même auquel le pilier capitalisé du système 4 place ses
+    versements. La seule sensibilité montrée est donc celle-là — un point de
+    taux en plus ou en moins —, en deux colonnes de plus dans le tableau.
+    """
+    cout = contexte.cout()
+    dette = cout.dette
+    if not dette.annees:
+        return ""
+    solde = cout.solde
+    avenir = cout.avenir
+    courbe = contexte.simulateur().courbe_taux
+    depart = dette.annee_depart
+    fin = dette.derniere_annee
+    moins = calculer_dette(solde, avenir, courbe, -ECART_TAUX_DETTE)
+    plus = calculer_dette(solde, avenir, courbe, ECART_TAUX_DETTE)
+    annees = tuple(range(depart, fin + 1))
+    series = tuple(
+        g.Serie(
+            libelle,
+            tuple(dette.stock(scenario, annee) * 100 for annee in annees),
+            COULEURS_SCENARIOS[scenario],
+            scenario == "notionnel_liberal",
+        )
+        for scenario, libelle in SCENARIOS_COMPARES
+    )
+    trace = g.graphique(
+        f"Ce que le solde de chaque système accumule de {depart} à {fin}, "
+        "en part du PIB — une dette au-dessus de l'axe, une réserve en dessous",
+        annees, series, "% du PIB", False, 0, True, None, "",
+        tuple(libelle.split(".")[0] for _, libelle in SCENARIOS_COMPARES),
+        "Année", None, "", 1,
+    )
+    lignes = []
+    for scenario, libelle in SCENARIOS_COMPARES:
+        lignes.append([
+            _nom_scenario(scenario, libelle),
+            g.pourcentage(dette.horizon(scenario), signe=True, decimales=0),
+            g.pourcentage(dette.annees[-1].interet(scenario), signe=True,
+                          decimales=1),
+            g.pourcentage(moins.horizon(scenario), signe=True, decimales=0),
+            g.pourcentage(plus.horizon(scenario), signe=True, decimales=0),
+        ])
+    premiere = dette.annees[0]
+    cotee = dette.annee(dette.derniere_annee_cotee) or dette.annees[-1]
+    return g.depliant(
+        "Ce que le déficit accumule : la dette, si rien ne s'ajuste", f"""
+<p>Un solde est un flux : ce qui manque une année, ou ce qui reste. Un déficit
+qui se répète devient un <strong>stock</strong>, et un stock porte intérêt.
+Cette section cumule, à compter de {depart}, le solde de chaque système :
+chaque année, ce qui manque est emprunté et ce qui reste est placé, au taux à
+un an que la courbe des taux sans risque de la zone euro cote pour cette
+année-là ; le stock est rapporté au PIB, qui grandit au rythme de la
+projection. Il part de zéro. Ni la dette ni les réserves que le système porte
+aujourd'hui n'y sont : la courbe dit ce que les soldes à venir ajoutent, jamais
+ce que le système détient.</p>
+
+{trace}
+
+<p><strong>Les déficits du système actuel, simplement additionnés de
+{premiere.annee} à {fin}, font
+{g.pourcentage(dette.cumul_soldes("actuel"), decimales=0)} du PIB.</strong>
+Avec les intérêts, et une fois le tout rapporté à un PIB qui grandit, la dette
+atteint {g.pourcentage(dette.horizon("actuel"), decimales=0)} du PIB en {fin},
+et ses seuls intérêts coûtent cette année-là
+{g.pourcentage(dette.annees[-1].interet("actuel"), decimales=1)} du PIB. Elle
+s'ajouterait à celle que l'État porte déjà, que cette page ne chiffre pas. La
+proposition, qui fixe le taux à 18 % et ne fixe pas les pensions, en accumule
+{g.pourcentage(dette.horizon("notionnel_liberal"), decimales=0)} du PIB au même
+horizon.</p>
+
+{g.tableau(
+    ["Système", f"Dette en {fin}", f"Intérêts de l'année {fin}",
+     "Taux un point plus bas", "Taux un point plus haut"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    titre=f"Stock accumulé par chaque système en {fin}, en part du PIB, "
+    "et ce qu'un point de taux y change",
+    entete_de_ligne=True,
+)}
+<p class="discret">Tout est en part du PIB. Un chiffre négatif est une
+réserve : le système a encaissé plus qu'il n'a servi, et le stock lui rapporte
+au lieu de lui coûter. Les deux dernières colonnes refont le calcul avec un
+taux plus bas, puis plus haut, d'un point sur toute la période.</p>
+
+<div class="note"><strong>Un système notionnel n'accumule ni cette dette ni
+cette réserve.</strong> Il se règle chaque année par le coefficient
+d'équilibre, que la section précédente calcule et que cette page n'applique
+jamais. La courbe d'un système qui plonge sous l'axe mesure la marge que ce
+coefficient aurait à distribuer, celle d'un système qui monte mesure ce qu'il
+faudrait rogner, ou financer autrement. Le système actuel, lui, ne se règle
+pas : il attend une réforme, et la courbe dit ce que coûte l'attente.</div>
+
+<div class="note"><strong>Le taux est lu, pas choisi.</strong> C'est le taux à
+un an que la courbe des souverains les mieux notés de la zone euro, publiée par
+la Banque centrale européenne le {_date_en_clair(dette.date_courbe)}, implique pour
+chaque année : {g.pourcentage(premiere.taux, decimales=1)} en
+{premiere.annee}, {g.pourcentage(cotee.taux, decimales=1)} en {cotee.annee}, la
+dernière année que la courbe cote ; au-delà, il est prolongé à plat. C'est la
+même courbe qui fait le rendement du pilier capitalisé du système 4 : la dette
+et le pilier lisent le même marché, et personne n'a eu à prévoir un taux. Un
+point de plus ou de moins déplace la dette du système actuel en {fin} de
+{g.pourcentage(moins.horizon("actuel"), decimales=0)} à
+{g.pourcentage(plus.horizon("actuel"), decimales=0)} du PIB.</div>
+""",
+        identifiant="cout-dette",
+    )
+
+
 def _cout_detail_garantie(contexte: Contexte) -> str:
     """Ce que la garantie vieillesse coûterait, lue sur la vraie distribution."""
     cout = contexte.cout()
@@ -7320,10 +7462,12 @@ laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
   {g.pourcentage(abs(observe.solde("actuel")), decimales=2)} du PIB, c'est-à-dire
   l'ordre de grandeur de l'écart que le pas de la grille des générations
   introduit à lui seul autour de la bascule.</li>
-  <li><strong>Les réserves ne sont pas comptées.</strong> Le système de retraite
-  détient des réserves financières que le COR chiffre à part ; un solde annuel
-  négatif peut être couvert par elles pendant des années. Le solde dit le flux,
-  jamais le stock.</li>
+  <li><strong>Les réserves d'aujourd'hui ne sont pas comptées.</strong> Le
+  système de retraite détient des réserves financières que le COR chiffre à
+  part ; un solde annuel négatif peut être couvert par elles pendant des
+  années. La dette de la section « ce que le déficit accumule » part de zéro à
+  {solde.derniere_annee_observee} : elle dit ce que les soldes à venir
+  ajoutent, jamais ce que le système détient.</li>
   <li><strong>La projection est celle du COR</strong>, scénario de référence,
   avec ses hypothèses : démographie de l'INSEE, productivité, chômage. Ses
   ressources reculent en part de PIB parce que l'assiette des cotisations y

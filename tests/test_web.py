@@ -2955,6 +2955,39 @@ def test_le_focus_ne_retombe_pas_au_debut_du_document_apres_un_rendu():
 # -- la description détaillée des graphiques -----------------------------------
 
 
+def test_un_graphique_descend_sous_l_axe_quand_une_serie_est_negative():
+    """Une réserve se trace sous l'axe, et l'axe monte dans le cadre.
+
+    Tant que rien n'est négatif, le plancher vaut zéro et l'axe des abscisses
+    est au bas du cadre : c'est l'échelle de tous les graphiques du site, et
+    elle ne doit pas bouger. Une valeur négative abaisse le plancher d'un
+    nombre entier de pas, si bien que zéro reste une graduation ; l'axe passe
+    alors par zéro, et le repère vertical descend jusqu'au plancher, pas
+    jusqu'à l'axe.
+    """
+    positive = g.Serie("Dette", (0.0, 10.0, 30.0), "var(--actuel)")
+    negative = g.Serie("Réserve", (0.0, -20.0, -50.0), "var(--liberal)")
+
+    sans = g.graphique("t", (2025, 2026, 2027), (positive,), repere=2026)
+    axe = re.search(r'<line class="axe"[^>]*y1="([\d.]+)"', sans).group(1)
+    assert axe == str(g.HAUTEUR_TRACE - g.MARGE_BAS) + ".0"
+    assert re.findall(r'<text class="graduation"[^>]*>(-?[\d,]+)</text>', sans)[:6] == [
+        "0", "10", "20", "30", "40", "50"]
+
+    avec = g.graphique("t", (2025, 2026, 2027), (positive, negative), repere=2026)
+    graduations = re.findall(r'<text class="graduation"[^>]*>(-?[\d,]+)</text>', avec)
+    # Amplitude 80 : le pas passe à 20, le plancher tombe à -60 (un multiple
+    # du pas sous -50), le sommet à 40 (le premier multiple au-dessus de 30).
+    assert graduations[:7] == ["-60", "-40", "-20", "0", "20", "40", "2025"]
+    axe = float(re.search(r'<line class="axe"[^>]*y1="([\d.]+)"', avec).group(1))
+    assert g.MARGE_HAUT < axe < g.HAUTEUR_TRACE - g.MARGE_BAS
+    repere = float(re.search(r'<line class="repere"[^>]*y2="([\d.]+)"', avec).group(1))
+    assert repere == g.HAUTEUR_TRACE - g.MARGE_BAS
+    # La courbe négative finit plus bas que l'axe, la positive plus haut.
+    chemins = re.findall(r'<path class="courbe"[^>]*d="([^"]+)"', avec)
+    assert float(chemins[0].split()[-1]) < axe < float(chemins[1].split()[-1])
+
+
 def test_un_graphique_porte_le_tableau_de_ses_points():
     """Un tracé est une image ; le tableau de ses points en est la description.
 
@@ -4523,8 +4556,9 @@ def test_les_pages_longues_portent_leur_plan(contexte):
     """
     for chemin, attendus in (
         ("/cout", ["cout-bilan", "cout-provenance", "cout-depenses", "cout-ressources",
-                   "cout-transferts", "cout-scenarios", "cout-equilibre", "cout-garantie",
-                   "cout-capitalisation", "cout-poids", "cout-sources", "cout-limites"]),
+                   "cout-transferts", "cout-scenarios", "cout-equilibre", "cout-dette",
+                   "cout-garantie", "cout-capitalisation", "cout-poids", "cout-sources",
+                   "cout-limites"]),
         ("/donnees", ["donnees-series", "donnees-fiabilite", "donnees-inventaire",
                       "donnees-sources", "donnees-reutilisation"]),
     ):
@@ -4651,7 +4685,7 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel(cont
     """Un badge là où l'erreur de lecture se produit, non dans un préambule.
 
     Sur Cas types, chaque panneau porte le sien dans son titre ; sur Coût, les
-    trois tableaux qui alignent les six systèmes le portent en tête de ligne.
+    quatre tableaux qui alignent les systèmes le portent en tête de ligne.
     Le système actuel n'en a pas : c'est la référence.
     """
     cas_types = rendre(contexte, "/cas-types", {})[1]
@@ -4664,11 +4698,12 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel(cont
     cout = rendre(contexte, "/cout", {})[1]
     lignes = re.findall(r'<th class="" scope="row">(\d)\. [^<]*(?:<span class="badge (\w+)">)?',
                         cout)
-    # Trois tableaux à quatre lignes : le passé, l'avenir, l'équilibre.
-    assert lignes.count(("1", "")) == 3, lignes
-    assert lignes.count(("4", "proposition")) == 3
+    # Quatre tableaux à quatre lignes : le passé, l'avenir, l'équilibre, la
+    # dette.
+    assert lignes.count(("1", "")) == 4, lignes
+    assert lignes.count(("4", "proposition")) == 4
     for numero in "23":
-        assert lignes.count((numero, "contrefactuel")) == 3, numero
+        assert lignes.count((numero, "contrefactuel")) == 4, numero
     assert ".badge.proposition" in g.FEUILLE_DE_STYLE
 
 

@@ -800,14 +800,169 @@ class Solde {
   }
 }
 
+/**
+ * Une année du stock : ce que les soldes cumulés depuis le départ pèsent, en
+ * part de PIB. Un stock POSITIF est une dette, un stock NÉGATIF une réserve :
+ * le même calcul rend les deux. Portage de `DetteAnnuelle`.
+ */
+class DetteAnnuelle {
+  constructor(annee, croissance, taux, stocks, interets, soldes) {
+    this.annee = annee;
+    // Croissance NOMINALE du PIB sur l'année, et taux nominal auquel le stock
+    // de fin d'année précédente se refinance — ou se place — sur l'année.
+    this.croissance = croissance;
+    this.taux = taux;
+    this.stocks = stocks;
+    this.interets = interets;
+    this.soldes = soldes;
+  }
+
+  stock(scenario) { return this.stocks[scenario]; }
+
+  interet(scenario) { return this.interets[scenario]; }
+
+  solde(scenario) { return this.soldes[scenario]; }
+}
+
+/**
+ * Le stock que les soldes à venir accumulent, de l'année de départ à
+ * l'horizon. Portage de `Dette` : la récurrence est celle de toute dette
+ * publique rapportée au PIB,
+ *
+ *     stock(t) = stock(t−1) ÷ (1 + croissance(t)) + intérêts(t) − solde(t)
+ *     intérêts(t) = stock(t−1) × taux(t) ÷ (1 + croissance(t))
+ *
+ * Le stock part de zéro à la dernière année observée ; le taux est le forward
+ * à un an de la courbe sans risque, celui-là même auquel le pilier capitalisé
+ * place ses versements ; la croissance est celle du PIB de `Avenir`.
+ */
+class Dette {
+  constructor(annees = [], anneeDepart = 0, ecartTaux = 0.0, dateCourbe = "",
+              derniereAnneeCotee = 0, fiabiliteTaux = Fiabilite.ESTIMEE,
+              fiabilite = Fiabilite.ESTIMEE) {
+    this.annees = annees;
+    this.anneeDepart = anneeDepart;
+    this.ecartTaux = ecartTaux;
+    this.dateCourbe = dateCourbe;
+    this.derniereAnneeCotee = derniereAnneeCotee;
+    this.fiabiliteTaux = fiabiliteTaux;
+    this.fiabilite = fiabilite;
+    this.premiereAnnee = annees.length ? annees[0].annee : 0;
+    this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
+  }
+
+  annee(millesime) {
+    for (const ligne of this.annees) {
+      if (ligne.annee === millesime) return ligne;
+    }
+    return null;
+  }
+
+  /** Le stock en fin d'année, et zéro à l'année de départ ou avant. */
+  stock(scenario, millesime) {
+    const ligne = this.annee(millesime);
+    return ligne ? ligne.stock(scenario) : 0.0;
+  }
+
+  /** Le stock à la dernière année, en part de PIB. */
+  horizon(scenario) {
+    return this.annees.length ? this.annees[this.annees.length - 1].stock(scenario) : 0.0;
+  }
+
+  /** Ce que les soldes seuls accumulent, SANS intérêts, en points de PIB. */
+  cumulSoldes(scenario) {
+    let somme = 0.0;
+    for (const ligne of this.annees) somme += ligne.solde(scenario);
+    return -somme;
+  }
+
+  /** Les intérêts cumulés sur la période, en points de PIB. */
+  cumulInterets(scenario) {
+    let somme = 0.0;
+    for (const ligne of this.annees) somme += ligne.interet(scenario);
+    return somme;
+  }
+
+  /** L'année où le stock est le plus haut, `null` s'il n'est jamais positif. */
+  pic(scenario) {
+    let haut = null;
+    for (const ligne of this.annees) {
+      if (ligne.stock(scenario) > 0.0
+          && (haut === null || ligne.stock(scenario) > haut.stock(scenario))) {
+        haut = ligne;
+      }
+    }
+    return haut;
+  }
+
+  /** Première année où une dette positive cesse de croître, `null` sinon. */
+  premiereAnneeDecroissance(scenario) {
+    let precedent = 0.0;
+    for (const ligne of this.annees) {
+      const courant = ligne.stock(scenario);
+      if (precedent > 0.0 && courant < precedent) return ligne.annee;
+      precedent = courant;
+    }
+    return null;
+  }
+}
+
+/**
+ * Le stock que les soldes projetés accumulent, système par système. Rien
+ * n'est resimulé : les soldes sont ceux de `Solde`, le PIB celui de `Avenir`,
+ * le taux celui de la courbe. Borné aux années PROJETÉES : le passé a été
+ * financé, et son stock est ailleurs.
+ */
+export function calculerDette(solde, avenir, courbe, ecartTaux = 0.0) {
+  const projetees = solde.projetees();
+  if (!projetees.length) return new Dette();
+  const scenarios = SCENARIOS.map(([scenario]) => scenario);
+  const stocks = {};
+  for (const scenario of scenarios) stocks[scenario] = 0.0;
+  let fiabiliteTaux = courbe.fiabilitePubliee;
+  const lignes = [];
+  for (const ligne of projetees) {
+    const precedente = avenir.annee(ligne.annee - 1);
+    const courante = avenir.annee(ligne.annee);
+    if (!precedente || !courante || precedente.pib <= 0.0) break;
+    const croissance = courante.pib / precedente.pib - 1.0;
+    const placement = courbe.placement(ligne.annee - 1, 1);
+    const taux = placement.taux + ecartTaux;
+    fiabiliteTaux = Math.min(fiabiliteTaux, placement.fiabilite);
+    const interets = {};
+    const soldes = {};
+    for (const scenario of scenarios) {
+      interets[scenario] = stocks[scenario] * taux / (1.0 + croissance);
+      soldes[scenario] = ligne.solde(scenario);
+      stocks[scenario] = stocks[scenario] / (1.0 + croissance)
+        + interets[scenario] - soldes[scenario];
+    }
+    lignes.push(new DetteAnnuelle(
+      ligne.annee, croissance, taux, { ...stocks }, interets, soldes,
+    ));
+  }
+  if (!lignes.length) return new Dette();
+  return new Dette(
+    lignes,
+    lignes[0].annee - 1,
+    ecartTaux,
+    courbe.date,
+    courbe.annee + courbe.maturiteMaximale,
+    fiabiliteTaux,
+    Fiabilite.ESTIMEE,
+  );
+}
+
 /** La série complète, et les cumuls qu'on en tire. */
 class Cout {
   constructor(annees, avenir, solde, anneeEuros, generationsRetenues, echecs,
               fiabilite, ponderationRetenue = "effectifs", poids = {},
-              liquidationRetenue = "droit") {
+              liquidationRetenue = "droit", dette = new Dette()) {
     this.annees = annees;
     this.avenir = avenir;
     this.solde = solde;
+    // Le stock que les soldes projetés accumulent, avec intérêts.
+    this.dette = dette;
     this.anneeEuros = anneeEuros;
     this.generations = generationsRetenues;
     this.echecs = echecs;
@@ -1061,17 +1216,18 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // pas l'être.
   const avenir = construireAvenir(liste, depenses, population, simulateur, poids,
                                   revalorisation, reversionServie);
+  const solde = comptes && avenir.annees.length
+    ? construireSolde(
+      avenir, comptes, depenses.pib.derniereAnnee, assiette,
+      simulateur.parametres.taux_cotisation_liberal,
+      simulateur.parametres.annee_bascule, conventionRecette, depenses,
+      reversionServie,
+    )
+    : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
   return new Cout(
     lignes,
     avenir,
-    comptes && avenir.annees.length
-      ? construireSolde(
-        avenir, comptes, depenses.pib.derniereAnnee, assiette,
-        simulateur.parametres.taux_cotisation_liberal,
-        simulateur.parametres.annee_bascule, conventionRecette, depenses,
-        reversionServie,
-      )
-      : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE),
+    solde,
     anneeEuros,
     generations(),
     motifs,
@@ -1079,5 +1235,6 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     mode,
     poids(depenses.derniereAnnee),
     liquidation,
+    calculerDette(solde, avenir, simulateur.courbeTaux),
   );
 }
