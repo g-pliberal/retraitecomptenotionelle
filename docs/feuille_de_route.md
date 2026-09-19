@@ -5920,3 +5920,89 @@ message d'attente dans `index.html` ; barre de navigation dans
   **Rien n'est écrit au public**, à la demande du programme : la page affiche
   les chiffres nouveaux, mais aucune prose n'explique encore ce fonctionnement.
   Il faut d'abord vérifier que ces chiffres font un système cohérent.
+
+---
+
+### 38. Le salaire net d'un actif, sous chaque système — `fait`
+
+**La demande.** « Il faudrait afficher le salaire net pour chaque scénario pour
+les actifs. Si on prend moins de cotisations, il faut montrer aux gens
+l'avantage en net qu'ils reçoivent, sinon ce n'est pas très convaincant. C'est
+vraiment le travail de réduire l'écart entre le net et le brut que tant de
+politiques veulent mettre en place mais ne chiffrent jamais. »
+
+**Ce qui est fait.** `src/retraite_notionnelle/remuneration.py` écrit une fiche
+de paie — coût du travail, salaire brut, salaire net — sous n'importe quel bloc
+retraite, et `data/reference/legislation/prelevements_remuneration.yaml` porte
+les taux hors retraite qui manquaient au dépôt : maladie, famille, chômage,
+accidents du travail, CSG, CRDS, et les contributions d'équilibre CEG, CET et
+APEC, que les fiches de régime ne portent pas parce qu'elles n'acquièrent aucun
+droit. Le site affiche trois chiffres sous les quatre pensions — le net
+d'aujourd'hui, celui de la proposition, l'écart — et la fiche entière dans un
+dépliant. Le portage `moteur/js/remuneration.js` suit, et seize tests tiennent
+l'ensemble.
+
+Les systèmes 1, 2 et 3 partagent la même fiche de paie, au centime : ils ne
+changent pas ce qui est PRÉLEVÉ, seulement ce qui est PORTÉ AU COMPTE. Seul le
+système 4 y touche.
+
+**Trois décisions, prises par le programme et écrites plutôt que devinées.**
+
+- **L'incidence est intégrale.** Le coût du travail est tenu fixe — c'est ce que
+  l'employeur a budgété, et aucune réforme des retraites ne le change — et le
+  brut est celui qui l'épuise sous les nouveaux taux. Une cotisation patronale
+  est du salaire différé ; ce que l'employeur ne verse plus remonte dans le
+  brut, puis dans le net. C'est ce que veut dire « réduire l'écart entre le net
+  et le brut », et le module le calcule par dichotomie au lieu de le postuler.
+- **Les 18 % sont partagés moitié-moitié**, comme les 5 % capitalisés. La
+  proposition ne le dit pas.
+- **La réduction générale est modélisée**, et c'est elle qui commande le
+  résultat.
+
+**Deux résultats qui n'étaient pas prévus, et qui sont le sujet.**
+
+*Un.* **Le gain net est négatif au SMIC** — −38 € par mois —, nul vers 1,2 SMIC,
+et croît ensuite : +73 € au salaire moyen, +216 € à cinq SMIC. La raison est
+mécanique, et tient à la réduction générale dégressive unique entrée en vigueur
+le 1er janvier 2026. Son coefficient maximal, 40,21 %, est EXACTEMENT la somme
+des taux patronaux de son périmètre : au SMIC, l'employeur ne verse déjà plus
+rien. Un salarié au SMIC ne supporte donc aujourd'hui que les 11,3 points
+salariaux ; la proposition en prélève 23, dont 9 seulement sont effacés. La loi
+fixe ce coefficient « dans la limite de la somme des taux des cotisations
+incluses dans le périmètre » (L. 241-13, III), si bien qu'un scénario qui baisse
+la cotisation retraite baisse aussi l'allègement : le modèle refait l'addition —
+0,3821 aujourd'hui, 0,3054 sous la proposition — plutôt que de figer le chiffre.
+Les cinq points capitalisés font à eux seuls la bascule : sans eux, le gain est
+positif à tous les niveaux de salaire. Ils ne sont pas perdus pour autant, et le
+site les compte à part — ce compte reste au nom de l'assuré et se transmet.
+
+*Deux, et c'est le plus lourd.* **Le partage salarial/patronal du taux unique
+n'est pas neutre**, alors qu'on l'attendrait sous l'incidence intégrale. Les
+tests l'ont démenti, pour deux raisons distinctes : la CSG et la CRDS sont
+assises sur le BRUT, que le partage déplace ; et la réduction générale n'efface
+que des cotisations PATRONALES. Au salaire moyen, le gain net mensuel vaut
+**−144 €** si les 23 points sont entièrement salariaux, **+73 €** moitié-moitié,
+**+275 €** s'ils sont entièrement patronaux. Le paramètre que la proposition
+laisse ouvert pèse donc plus que la baisse de taux elle-même. C'est un résultat
+sur le droit actuel plus que sur la proposition : il fait dépendre le salaire
+net de la frontière entre les deux parts, alors que cette frontière ne change
+rien à ce que le travail coûte ni à ce qu'il rapporte au système.
+
+**Ce qui reste.** La fiche de paie ne vaut que pour les salariés du PRIVÉ — les
+taux hors retraite sont ceux du régime général —, et le site n'en affiche aucune
+aux autres statuts plutôt qu'un net faux. L'étendre à la fonction publique
+demande de décider ce qu'est le « coût du travail » d'un agent dont l'employeur
+verse un taux d'équilibre de 82 % : c'est le premier prolongement, et il n'est
+pas mécanique. Restent aussi à lire à la source les deux décrets de 2025 qui
+fixent la réduction générale, l'arrêté du taux d'accidents du travail retenu
+dans son périmètre, et la convention d'assurance chômage de 2024 : le dépôt n'en
+connaît aujourd'hui que les valeurs transcrites par OpenFisca, d'où la fiabilité
+`haute` du fichier. Les sept réserves sont dans `docs/limites.md` § 5 ante bis.
+
+**Fichiers.** `src/retraite_notionnelle/remuneration.py` ;
+`data/reference/legislation/prelevements_remuneration.yaml` ;
+`scripts/fetch/openfisca_prelevements.py` ; `moteur/js/remuneration.js` ;
+`tests/test_remuneration.py` ; `part_salariale_taux_unique` dans `config.py` et
+`config.js` ; le bloc `_salaire_net` de `web/pages.py` et son portage ;
+`docs/limites.md` § 5 ante bis ; la ligne de journal du 19 septembre 2026 dans
+`legislation/veille.yaml`.

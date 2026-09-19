@@ -5710,6 +5710,82 @@ deux chiffres décrivent deux futurs, et leur somme n'a pas de sens.
 
 ---
 
+## 5 ante bis. La fiche de paie : sept réserves, dont deux décisives
+
+Le site affiche, sous les quatre pensions, ce qu'un actif touche PENDANT qu'il
+cotise : coût du travail, salaire brut, salaire net, sous le droit en vigueur et
+sous la proposition. C'est la seule grandeur du dépôt qui ne soit pas une
+pension, et elle porte ses incertitudes propres. Les deux premières commandent
+le signe du résultat, pas seulement sa taille.
+
+**1. L'incidence est supposée intégrale, et c'est une hypothèse.** Le coût du
+travail est tenu fixe, et le salaire brut est celui qui l'épuise sous les
+nouveaux taux : ce que l'employeur ne verse plus en cotisations, il le verse en
+salaire. C'est la lecture que fait l'économie du travail à long terme — une
+cotisation patronale est du salaire différé —, et c'est la plus favorable à une
+baisse de cotisation. Rien n'oblige un employeur à rendre son économie du jour
+au lendemain, et la lecture prudente, où seule la part salariale bouge, donne
+environ la moitié du gain (`incidence` dans `remuneration.py`).
+
+**2. Le partage salarial/patronal du taux unique n'est pas neutre, et la
+proposition ne le fixe pas.** Elle dit « 18 %, salariale et patronale
+additionnées ». Le dépôt partage moitié-moitié. On croirait ce choix sans effet
+sous l'incidence intégrale ; il ne l'est pas, pour deux raisons distinctes : la
+CSG et la CRDS sont assises sur le BRUT, que le partage déplace ; et la
+réduction générale n'efface que des cotisations PATRONALES. Le gain net mensuel
+au salaire moyen vaut **−144 € si les 23 points sont entièrement salariaux,
++73 € moitié-moitié, +275 € s'ils sont entièrement patronaux**. Le paramètre
+laissé ouvert par la proposition pèse donc plus que la baisse de taux elle-même.
+C'est la réserve la plus lourde de ce bloc.
+
+**3. Le résultat au voisinage du SMIC est négatif, et il est juste.** La
+réduction générale dégressive unique efface depuis 2026 la totalité des
+cotisations patronales de son périmètre au niveau du SMIC — son coefficient
+maximal, 40,21 %, est exactement leur somme. Un salarié au SMIC ne supporte donc
+aujourd'hui que les 11,3 points salariaux. La proposition en prélève 23, dont 9
+seulement sont effacés : elle prélève **plus**. Le croisement se fait un peu
+au-dessus de 1,2 SMIC. Les cinq points capitalisés font à eux seuls la bascule —
+sans eux le gain est positif à tous les niveaux de salaire —, et ils ne sont pas
+perdus : ce compte reste au nom de l'assuré et se transmet.
+
+**4. L'incidence intégrale n'est pas praticable au SMIC.** Elle y supposerait un
+salaire brut inférieur au salaire minimum, ce que la loi interdit. Dans la
+réalité, c'est le coût du travail qui monterait. Le site pose un avertissement
+quand le cas se produit ; le modèle, lui, ne recalcule pas la variante « coût du
+travail en hausse », qui supposerait de décider ce que l'employeur en fait.
+
+**5. Un salarié du privé, et lui seul.** Les taux hors retraite sont ceux du
+régime général. Un fonctionnaire, un artisan, un agent d'un régime spécial n'ont
+ni les mêmes branches ni les mêmes assiettes, et leur « employeur » est l'État,
+dont la contribution est un taux d'équilibre et non un prix du travail. Le site
+n'affiche donc aucune fiche de paie à ces statuts — mieux vaut rien qu'un net
+faux. C'est le premier prolongement à faire.
+
+**6. Le coût du travail affiché est un plancher.** Ne sont comptées ni la taxe
+d'apprentissage, ni la contribution à la formation, ni la participation à la
+construction, ni le versement mobilité, ni la prévoyance et la mutuelle
+d'entreprise. Aucune ne bouge d'un système à l'autre, et plusieurs dépendent de
+la commune ou de la taille de l'entreprise ; les porter demanderait de choisir
+un employeur type de plus. L'employeur retenu est une entreprise de cinquante
+salariés et plus ; sous le seuil, le FNAL et le coefficient de la réduction
+générale valent 0,40 point de moins. Le taux d'accidents du travail est le taux
+moyen d'OpenFisca (3,00 %), au-dessus du taux net moyen national ; il ne déplace
+aucun écart entre systèmes, seulement le niveau du coût affiché.
+
+**7. Les taux sont ceux d'un millésime, appliqués aux années à venir.** Le
+barème est celui en vigueur au 1er janvier 2026, reconduit tel quel jusqu'au
+départ : le modèle ne prévoit pas la prochaine loi de financement. Les salaires,
+le plafond et le SMIC, eux, suivent les séries projetées, si bien que le rapport
+du salaire au SMIC — ce qui commande la réduction générale — reste stable. Les
+taux viennent d'OpenFisca-France, transcription tierce du Journal officiel :
+fiabilité `haute`, jamais `certifiee`. La réduction générale, elle, a été lue à
+la source (L. 241-13, version du 1er janvier 2026, LEGIARTI000053280526).
+
+Rien de tout cela ne touche une pension : retiré, le modèle calcule exactement
+les mêmes six scénarios.
+
+---
+
 ## 5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé
 
 La page **Coût** superpose deux natures de chiffres, et il faut les séparer pour
