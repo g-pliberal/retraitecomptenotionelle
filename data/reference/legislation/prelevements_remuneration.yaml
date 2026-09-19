@@ -1,11 +1,11 @@
-# Ce qui sépare un salaire net d'un coût du travail — hors retraite
+# Ce qui sépare un revenu net d'un coût du travail — hors retraite
 # =================================================================
 # source_id: openfisca_prelevements
 #
 # Le reste du dépôt ne connaît qu'un prélèvement : celui qui finance la
 # retraite, parce que c'est lui qui alimente le compte notionnel. Ce fichier
 # porte TOUS LES AUTRES — maladie, famille, chômage, accidents du travail,
-# CSG, CRDS —, et il n'a qu'un usage : écrire un salaire NET.
+# CSG, CRDS —, et il n'a qu'un usage : écrire un revenu NET.
 #
 # POURQUOI
 # --------
@@ -15,12 +15,60 @@
 # qui reste une fois TOUT retiré. D'où ce fichier. Il ne touche à aucune
 # pension : retiré, le modèle calcule exactement les mêmes six scénarios.
 #
-# CE QU'IL DÉCRIT : UN SALARIÉ DU SECTEUR PRIVÉ, ET LUI SEUL
-# ----------------------------------------------------------
-# Les taux ci-dessous sont ceux du régime général. Ils ne valent ni pour un
-# fonctionnaire, ni pour un artisan, ni pour un agent d'un régime spécial : le
-# site ne montre donc de fiche de paie qu'aux statuts de la famille `prive`, et
-# le dit quand il ne le fait pas. `docs/limites.md` porte la réserve.
+# QUATRE PROFILS, ET CE QUI LES SÉPARE
+# ------------------------------------
+# Ce fichier a d'abord décrit un salarié du privé, et lui seul ; le site
+# n'affichait rien aux autres statuts. Il en décrit maintenant quatre, et le
+# découpage n'est PAS celui des familles de statut : c'est celui de ce que
+# l'on sait de l'employeur.
+#
+#   `salarie_prive`     — l'employeur verse les cotisations du régime général
+#                         et de l'Agirc-Arrco, que la fiche du régime porte en
+#                         totalité. Familles `prive`, et les statuts de la
+#                         famille `special` que la fermeture des régimes
+#                         spéciaux a versés au régime général (SNCF, RATP,
+#                         IEG, mineurs, clercs de notaire, Banque de France…).
+#   `salarie_ircantec`  — même chose, mais la complémentaire est l'Ircantec et
+#                         non l'Agirc-Arrco : les contributions d'équilibre
+#                         CEG et CET et la cotisation APEC ne sont pas dues.
+#                         C'est l'agent non titulaire de la fonction publique.
+#   `agent_seul`        — la fiche du régime ne porte QUE la retenue de
+#                         l'agent, parce que ce que verse son employeur est un
+#                         taux d'ÉQUILIBRE et non un prix du travail. Le
+#                         fonctionnaire titulaire, le marin, l'artiste de
+#                         l'Opéra. Voir plus bas : c'est la décision qui n'est
+#                         pas mécanique.
+#   `independant`       — pas d'employeur du tout : la cotisation est
+#                         intégralement personnelle, et l'assiette n'est pas
+#                         un salaire mais un revenu professionnel.
+#
+# LA LIGNE « COÛT DU TRAVAIL » N'EST AFFICHÉE QUE LÀ OÙ ELLE VEUT DIRE QUELQUE
+# CHOSE
+# ---------------------------------------------------------------------------
+# Elle suppose de connaître ce que l'emploi coûte à l'employeur, et le modèle
+# en tire son hypothèse d'incidence : le coût est tenu fixe, et ce que
+# l'employeur ne verse plus en cotisations, il le verse en salaire.
+#
+# Cette hypothèse ne se transporte pas au profil `agent_seul`. La contribution
+# de l'employeur public est un taux d'ÉQUILIBRE — jusqu'à 82,28 % du traitement
+# en 2026 pour l'État, voir `contribution_employeur_public.csv` —, fixé pour
+# que le compte d'affectation spéciale « Pensions » tombe juste, c'est-à-dire
+# pour payer les pensions d'aujourd'hui, et non parce que l'agent acquerrait
+# 82 % de son traitement en droits nouveaux. L'appeler « coût du travail » et
+# poser dessus l'incidence intégrale donnerait un gain net absurde : la baisse
+# de 82,28 % à 9 % se lirait comme une augmentation de salaire de soixante-dix
+# points, alors qu'elle ne libère rien — la dette de pensions qu'elle finance
+# reste à payer.
+#
+# Le fichier retient donc la SECONDE branche de l'alternative, et le site
+# l'écrit : pour `agent_seul`, pas de ligne « coût du travail ». Le traitement
+# indiciaire brut est tenu fixe, seule la part de l'agent bouge, et le gain
+# affiché est celui-là. C'est la lecture prudente de l'incidence, celle que le
+# module appelle `assiette` ; elle n'est pas comparable, terme à terme, au gain
+# d'un salarié du privé, et `docs/limites.md` le dit.
+#
+# Le profil `independant` tient l'assiette fixe pour une autre raison, qui n'est
+# pas une hypothèse : il n'y a pas d'employeur, donc rien à répercuter.
 #
 # L'EMPLOYEUR TYPE
 # ----------------
@@ -46,10 +94,16 @@
 # participation à l'effort de construction, versement mobilité. Le versement
 # mobilité dépend de la commune, les autres de la taille de l'entreprise ; les
 # porter demanderait de choisir un employeur type de plus, et aucune ne bouge
-# d'un scénario à l'autre. Ne sont pas ici non plus les couvertures
+# d'un scénario à l'autre. Par symétrie, la contribution à la formation
+# professionnelle des indépendants — 0,25 % du plafond, un forfait et non un
+# taux — n'y est pas non plus. Ne sont pas ici non plus les couvertures
 # conventionnelles — prévoyance, mutuelle d'entreprise —, qui ne sont pas du
 # droit mais de la branche ou de l'accord d'entreprise. Le coût du travail
 # affiché est donc un PLANCHER, et l'écart brut-net un plancher lui aussi.
+#
+# N'y est pas non plus la retraite additionnelle de la fonction publique
+# (RAFP) : elle est assise sur les PRIMES, que l'assiette de ce dépôt — le
+# traitement indiciaire brut et la NBI — exclut par construction.
 #
 # SOURCE ET FIABILITÉ
 # -------------------
@@ -57,10 +111,12 @@
 # et chacun porte ci-dessous les textes qu'OpenFisca cite. OpenFisca transcrit le
 # Journal officiel, il ne le produit pas : la fiabilité est plafonnée à `haute`,
 # comme pour les taux vieillesse de `regimes/taux_cotisation_annuels.csv`.
-# La réduction générale, elle, a été lue à la source : article L. 241-13 du code
-# de la sécurité sociale, version en vigueur du 1er janvier 2026 au 1er janvier
-# 2028 (LEGIARTI000053280526), lue dans l'index LEGI du dépôt le 19 septembre
-# 2026.
+# Quatre barèmes ont en revanche été lus à la source dans l'index LEGI du dépôt,
+# parce qu'OpenFisca n'en portait plus l'état du droit : la réduction générale
+# (L. 241-13), et les trois barèmes d'indépendant que la réforme de l'assiette
+# unique de 2024 a réécrits et qu'OpenFisca décrit encore dans leur rédaction de
+# 2018 — maladie et maternité (D. 621-1 et D. 621-2), allocations familiales
+# (D. 613-1) et indemnités journalières (D. 621-3).
 #
 # LES TAUX SONT CEUX EN VIGUEUR AU 1er JANVIER, comme partout dans le dépôt.
 
@@ -73,6 +129,86 @@ employeur_type:
     de cinquante salariés. Le barème retenu est celui des entreprises de
     cinquante salariés et plus.
 
+# La CSG et la CRDS ne sont pas des cotisations : elles n'ouvrent aucun droit et
+# leur assiette n'est pas le revenu brut mais, pour un salarié, le revenu brut
+# ABATTU pour frais professionnels. Elles sont donc à part, et chaque profil
+# porte les siennes — l'abattement de 1,75 % est propre aux revenus d'ACTIVITÉ
+# SALARIÉE, et ne s'applique pas à un revenu professionnel d'indépendant.
+contributions_sociales_salariees: &csg_salariee
+  csg_deductible: 0.068
+  csg_imposable: 0.024
+  crds: 0.005
+  abattement_frais_professionnels:
+    - {jusqu_en_plafonds: 4, taux: 0.0175}
+    - {jusqu_en_plafonds: null, taux: 0.0000}
+  note: >-
+    CSG 9,20 % et CRDS 0,50 %, assises sur 98,25 % du brut jusqu'à quatre
+    plafonds et sur 100 % au-delà. Le partage entre CSG déductible (6,80 %) et
+    CSG imposable (2,40 %) ne change pas le net : il ne joue que sur l'impôt sur
+    le revenu, que ce dépôt ne calcule pas. Le traitement d'un fonctionnaire est
+    un revenu d'activité comme un autre pour ces deux contributions : même taux,
+    même abattement.
+  textes:
+    - "Articles L. 136-1 à L. 136-8 du code de la sécurité sociale"
+    - "Article L. 136-1-1, III, 1° du code de la sécurité sociale (abattement d'assiette)"
+    - "Ordonnance n° 96-50 du 24 janvier 1996, article 19 (CRDS)"
+
+# La réduction générale dégressive unique, depuis le 1er janvier 2026
+# -------------------------------------------------------------------
+# Elle remplace d'un coup la réduction Fillon et les deux bandeaux maladie et
+# famille. Elle annule l'essentiel des cotisations PATRONALES au niveau du Smic
+# et s'éteint à trois Smic. C'est ce qui rend son omission impossible : sans
+# elle, le coût du travail d'un salarié au Smic est surestimé d'un tiers, et
+# tout gain qu'une baisse de cotisation lui rendrait l'est d'autant.
+#
+# Coefficient = taux_minimum + taux_maximal × max(0 ; ½ × (3 × Smic ÷ brut − 1))^puissance
+# plafonné à taux_minimum + taux_maximal, et nul dès que le brut atteint trois Smic.
+#
+# `taux_maximal` est fixé par décret « dans la limite de la somme des taux des
+# cotisations et contributions incluses dans le périmètre de la réduction ».
+# C'est pourquoi ses COMPOSANTES sont écrites ci-dessous : un scénario qui
+# change le taux de retraite change la somme, donc le coefficient. Le modèle
+# refait l'addition au lieu de figer le chiffre — un allègement ne peut pas
+# alléger une cotisation qui n'existe plus.
+reduction_generale: &reduction_generale
+  libelle: "Réduction générale dégressive unique"
+  plafond_en_smic: 3.0
+  puissance: 1.75
+  taux_minimum: 0.02
+  # « La valeur maximale du coefficient est fixée par décret, dans la limite de
+  # la somme des taux des cotisations et contributions incluses dans le
+  # périmètre de la réduction » (L. 241-13, III). La limite est ATTEINTE : les
+  # dix taux ci-dessous font 40,21 %, et c'est exactement le coefficient. Au
+  # SMIC, l'employeur ne verse donc plus rien de ce périmètre.
+  #
+  # Le décret publie ce coefficient en deux morceaux — un plancher de 2,00 % et
+  # un « taux delta » de 38,21 % — et décompose le second avec les ANCIENS taux
+  # réduits de maladie et de famille plus 5,80 points de compensation de leur
+  # suppression. Le total est le même ; l'écriture ci-dessous est celle qui se
+  # vérifie, puisque chacune de ses lignes est un taux de ce fichier.
+  coefficient_maximal: 0.4021
+  composantes:
+    maladie: 0.1300
+    vieillesse_plafonnee: 0.0855
+    vieillesse_deplafonnee: 0.0211
+    famille: 0.0525
+    accidents_travail: 0.0049
+    autonomie: 0.0030
+    agirc_arrco: 0.0472
+    equilibre_general: 0.0129
+    chomage: 0.0400
+    logement: 0.0050
+  composantes_retraite:
+    - vieillesse_plafonnee
+    - vieillesse_deplafonnee
+    - agirc_arrco
+    - equilibre_general
+  textes:
+    - "Article L. 241-13 du code de la sécurité sociale, version en vigueur du 1er janvier 2026 (LEGIARTI000053280526)"
+    - "Loi n° 2025-199 du 28 février 2025, article 18 (LFSS 2025)"
+    - "Décret n° 2025-887 du 4 septembre 2025"
+    - "Décret n° 2025-1446 du 31 décembre 2025"
+
 # Chaque poste porte deux barèmes — ce que l'assuré supporte, ce que l'employeur
 # verse — découpés par tranche de PLAFOND DE LA SÉCURITÉ SOCIALE.
 # `jusqu_en_plafonds: null` signifie « sans limite ».
@@ -82,13 +218,21 @@ employeur_type:
 # d'équilibre général, la contribution d'équilibre technique, l'APEC. Ils sont
 # bel et bien prélevés, et un scénario qui remplace le financement de la
 # retraite les remplace eux aussi. Ce que les fiches portent — vieillesse de
-# base et Agirc-Arrco — n'est PAS répété ici : le modèle le lit là où il le
-# lisait déjà, pour que la fiche de paie et le compte notionnel ne puissent pas
-# diverger.
+# base, Agirc-Arrco, Ircantec, retenue pour pension — n'est PAS répété ici : le
+# modèle le lit là où il le lisait déjà, pour que la fiche de paie et le compte
+# notionnel ne puissent pas diverger.
 #
 # `dans_la_reduction_generale: true` marque ceux qui entrent dans le périmètre
 # de l'article L. 241-13.
-postes:
+#
+# `progressif` marque les deux postes dont le TAUX dépend du niveau de
+# l'assiette au lieu d'être découpé par tranches — c'est propre aux
+# indépendants, et c'est la forme même de la loi : « le taux de base fait
+# l'objet d'une réduction lorsque l'assiette est inférieure à … ». Le taux
+# interpolé entre deux paliers s'applique à la TOTALITÉ de l'assiette, et non à
+# la seule fraction comprise entre eux ; au-delà de `jusqu_en_plafonds`, les
+# tranches ci-dessous reprennent la main.
+postes_regime_general: &postes_regime_general
 
   - code: maladie
     libelle: "Maladie, maternité, invalidité, décès"
@@ -206,7 +350,8 @@ postes:
       Prélevée pour la retraite, elle n'acquiert AUCUN point : elle finance les
       charges que l'Agirc-Arrco porte sans contrepartie contributive — départs
       avant 67 ans, pensions de réversion. C'est pour cela qu'aucune fiche de
-      régime ne la porte, et pour cela qu'elle est ici.
+      régime ne la porte, et pour cela qu'elle est ici. Elle est propre à
+      l'Agirc-Arrco : un agent affilié à l'Ircantec ne la doit pas.
     textes:
       - "Accord national interprofessionnel du 17 novembre 2017, article 34"
       - "Article L. 921-4 du code de la sécurité sociale"
@@ -248,79 +393,258 @@ postes:
     textes:
       - "Convention nationale du 12 juillet 2011 relative à l'Apec"
 
-# La CSG et la CRDS ne sont pas des cotisations : elles n'ouvrent aucun droit et
-# leur assiette n'est pas le salaire brut mais le salaire brut ABATTU pour frais
-# professionnels. Elles sont donc à part.
-contributions_sociales:
-  csg_deductible: 0.068
-  csg_imposable: 0.024
-  crds: 0.005
-  abattement_frais_professionnels:
-    - {jusqu_en_plafonds: 4, taux: 0.0175}
-    - {jusqu_en_plafonds: null, taux: 0.0000}
-  note: >-
-    CSG 9,20 % et CRDS 0,50 %, assises sur 98,25 % du brut jusqu'à quatre
-    plafonds et sur 100 % au-delà. Le partage entre CSG déductible (6,80 %) et
-    CSG imposable (2,40 %) ne change pas le net : il ne joue que sur l'impôt sur
-    le revenu, que ce dépôt ne calcule pas.
-  textes:
-    - "Articles L. 136-1 à L. 136-8 du code de la sécurité sociale"
-    - "Ordonnance n° 96-50 du 24 janvier 1996, article 19 (CRDS)"
+# Les cinq postes ci-dessus qui ne dépendent ni de l'Agirc-Arrco ni du statut de
+# cadre valent tels quels pour un agent non titulaire de la fonction publique :
+# il relève du régime général pour la base, et de l'Ircantec — que sa fiche de
+# régime porte — pour la complémentaire. Ce que la liste précédente porte en
+# plus et qu'il ne doit PAS : la CEG, la CET et l'APEC, qui sont des
+# contributions de l'Agirc-Arrco.
+postes_regime_general_sans_agirc: &postes_regime_general_sans_agirc
 
-# La réduction générale dégressive unique, depuis le 1er janvier 2026
-# -------------------------------------------------------------------
-# Elle remplace d'un coup la réduction Fillon et les deux bandeaux maladie et
-# famille. Elle annule l'essentiel des cotisations PATRONALES au niveau du Smic
-# et s'éteint à trois Smic. C'est ce qui rend son omission impossible : sans
-# elle, le coût du travail d'un salarié au Smic est surestimé d'un tiers, et
-# tout gain qu'une baisse de cotisation lui rendrait l'est d'autant.
+  - code: maladie
+    libelle: "Maladie, maternité, invalidité, décès"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.1300}]
+    textes:
+      - "Article D. 242-3 du code de la sécurité sociale"
+
+  - code: famille
+    libelle: "Allocations familiales"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0525}]
+    textes:
+      - "Article D. 241-3-1 du code de la sécurité sociale"
+
+  - code: accidents_travail
+    libelle: "Accidents du travail et maladies professionnelles"
+    retraite: false
+    dans_la_reduction_generale: true
+    taux_dans_la_reduction: 0.0049
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0300}]
+    textes:
+      - "Articles L. 241-5 et D. 242-6-1 et suivants du code de la sécurité sociale"
+
+  - code: autonomie
+    libelle: "Contribution de solidarité pour l'autonomie"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0030}]
+    textes:
+      - "Article L. 137-40 du code de la sécurité sociale"
+
+  - code: chomage
+    libelle: "Assurance chômage"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur:
+      - {jusqu_en_plafonds: 4, taux: 0.0400}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    note: >-
+      Un agent non titulaire est affilié à l'assurance chômage, à la différence
+      d'un fonctionnaire titulaire ; c'est aussi ce qui ouvre à son employeur
+      public le bénéfice de la réduction générale.
+    textes:
+      - "Articles L. 5422-9 et L. 5424-1 du code du travail"
+
+  - code: logement
+    libelle: "Fonds national d'aide au logement (FNAL)"
+    retraite: false
+    dans_la_reduction_generale: true
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
+    employeur: [{jusqu_en_plafonds: null, taux: 0.0050}]
+    textes:
+      - "Articles L. 813-4 et L. 813-5 du code de la construction et de l'habitation"
+
+# Les prélèvements personnels d'un travailleur indépendant, hors retraite
+# ------------------------------------------------------------------------
+# Ils sont tous « salariaux » au sens de ce module — il n'y a personne d'autre
+# pour les payer —, et leur assiette est l'ASSIETTE SOCIALE UNIQUE de l'article
+# L. 136-3 : le revenu professionnel après l'abattement de 26 %, la même
+# grandeur pour les cotisations et pour la CSG depuis la réforme de 2024. C'est
+# celle que la carrière porte, et celle que le compte notionnel encaisse.
 #
-# Coefficient = taux_minimum + taux_maximal × max(0 ; ½ × (3 × Smic ÷ brut − 1))^puissance
-# plafonné à taux_minimum + taux_maximal, et nul dès que le brut atteint trois Smic.
-#
-# `taux_maximal` est fixé par décret « dans la limite de la somme des taux des
-# cotisations et contributions incluses dans le périmètre de la réduction ».
-# C'est pourquoi ses COMPOSANTES sont écrites ci-dessous : un scénario qui
-# change le taux de retraite change la somme, donc le coefficient. Le modèle
-# refait l'addition au lieu de figer le chiffre — un allègement ne peut pas
-# alléger une cotisation qui n'existe plus.
-reduction_generale:
-  libelle: "Réduction générale dégressive unique"
-  plafond_en_smic: 3.0
-  puissance: 1.75
-  taux_minimum: 0.02
-  # « La valeur maximale du coefficient est fixée par décret, dans la limite de
-  # la somme des taux des cotisations et contributions incluses dans le
-  # périmètre de la réduction » (L. 241-13, III). La limite est ATTEINTE : les
-  # dix taux ci-dessous font 40,21 %, et c'est exactement le coefficient. Au
-  # SMIC, l'employeur ne verse donc plus rien de ce périmètre.
-  #
-  # Le décret publie ce coefficient en deux morceaux — un plancher de 2,00 % et
-  # un « taux delta » de 38,21 % — et décompose le second avec les ANCIENS taux
-  # réduits de maladie et de famille plus 5,80 points de compensation de leur
-  # suppression. Le total est le même ; l'écriture ci-dessous est celle qui se
-  # vérifie, puisque chacune de ses lignes est un taux de ce fichier.
-  coefficient_maximal: 0.4021
-  composantes:
-    maladie: 0.1300
-    vieillesse_plafonnee: 0.0855
-    vieillesse_deplafonnee: 0.0211
-    famille: 0.0525
-    accidents_travail: 0.0049
-    autonomie: 0.0030
-    agirc_arrco: 0.0472
-    equilibre_general: 0.0129
-    chomage: 0.0400
-    logement: 0.0050
-  composantes_retraite:
-    - vieillesse_plafonnee
-    - vieillesse_deplafonnee
-    - agirc_arrco
-    - equilibre_general
-  textes:
-    - "Article L. 241-13 du code de la sécurité sociale, version en vigueur du 1er janvier 2026 (LEGIARTI000053280526)"
-    - "Loi n° 2025-199 du 28 février 2025, article 18 (LFSS 2025)"
-    - "Décret n° 2025-887 du 4 septembre 2025"
-    - "Décret n° 2025-1446 du 31 décembre 2025"
+# Les deux barèmes progressifs ci-dessous ont été lus dans l'index LEGI le
+# 19 septembre 2026, dans leur version en vigueur : OpenFisca en portait encore
+# la rédaction de 2018, que la réforme de l'assiette unique a remplacée.
+postes_independant: &postes_independant
+
+  - code: maladie_maternite
+    libelle: "Maladie et maternité"
+    retraite: false
+    dans_la_reduction_generale: false
+    # Taux de base : 8,50 % sur la fraction de l'assiette qui n'excède pas trois
+    # plafonds, 6,50 % au-delà (D. 621-1). En deçà de trois plafonds, ce taux
+    # « fait l'objet d'une réduction » (D. 621-2) : le taux du palier interpolé
+    # porte alors sur la TOTALITÉ de l'assiette, et c'est ce que `progressif`
+    # écrit. La continuité est exacte à trois plafonds — 8,50 % des deux côtés.
+    progressif:
+      jusqu_en_plafonds: 3.0
+      paliers:
+        - {en_plafonds: 0.2, taux: 0.0000}
+        - {en_plafonds: 0.4, taux: 0.0150}
+        - {en_plafonds: 0.6, taux: 0.0400}
+        - {en_plafonds: 1.1, taux: 0.0650}
+        - {en_plafonds: 2.0, taux: 0.0770}
+        - {en_plafonds: 3.0, taux: 0.0850}
+    salarie:
+      - {jusqu_en_plafonds: 3, taux: 0.0850}
+      - {jusqu_en_plafonds: null, taux: 0.0650}
+    employeur: []
+    note: >-
+      Le taux est nul en deçà de 20 % du plafond. Il ne l'est pas pour autant
+      pour tout le monde : la loi impose une assiette minimale que ce module
+      n'applique pas, faute de savoir si l'assuré relève d'une de ses
+      exonérations. Le net d'un indépendant à très bas revenu est donc un
+      plafond, et `docs/limites.md` le porte.
+    textes:
+      - "Article D. 621-1 du code de la sécurité sociale, version en vigueur (LEGIARTI000049904610)"
+      - "Article D. 621-2 du code de la sécurité sociale, version en vigueur (LEGIARTI000049904592)"
+      - "Décret n° 2024-688 du 5 juillet 2024, article 6"
+
+  - code: indemnites_journalieres
+    libelle: "Indemnités journalières"
+    retraite: false
+    dans_la_reduction_generale: false
+    salarie:
+      - {jusqu_en_plafonds: 5, taux: 0.0050}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    employeur: []
+    note: >-
+      0,50 % pour les artisans, commerçants et industriels, dans la limite de
+      cinq plafonds ; 0,30 % dans la limite de trois plafonds pour les
+      professions libérales. Le module retient le premier taux, qui est celui du
+      plus grand nombre, et l'écart — 0,20 point sous trois plafonds — ne
+      déplace aucun écart entre systèmes. OpenFisca porte encore 0,70 %, taux
+      de la rédaction de 2018 : la valeur ci-dessus a été lue dans l'index LEGI,
+      comme les deux barèmes progressifs.
+    textes:
+      - "Article D. 621-3 du code de la sécurité sociale, version en vigueur (LEGIARTI000049904537)"
+      - "Article L. 621-2 du code de la sécurité sociale"
+
+  - code: invalidite_deces
+    libelle: "Invalidité et décès"
+    retraite: false
+    dans_la_reduction_generale: false
+    salarie:
+      - {jusqu_en_plafonds: 1, taux: 0.0130}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    employeur: []
+    note: >-
+      1,30 % dans la limite d'un plafond, pour les artisans comme pour les
+      commerçants et industriels. Le régime invalidité-décès des professions
+      libérales est propre à chaque section de la CNAVPL et souvent forfaitaire ;
+      le taux retenu est celui des artisans-commerçants.
+    textes:
+      - "Arrêté du 4 juillet 2014 portant approbation des règlements des régimes d'assurance invalidité-décès des travailleurs indépendants"
+      - "Article L. 635-1 du code de la sécurité sociale"
+
+  - code: famille
+    libelle: "Allocations familiales"
+    retraite: false
+    dans_la_reduction_generale: false
+    # Nul jusqu'à 110 % du plafond, croissant jusqu'à 3,10 % à 140 %, puis
+    # 3,10 % sur la totalité du revenu. Même forme que la maladie : le taux
+    # interpolé porte sur tout, et la continuité est exacte à 140 %.
+    progressif:
+      jusqu_en_plafonds: 1.4
+      paliers:
+        - {en_plafonds: 1.1, taux: 0.0000}
+        - {en_plafonds: 1.4, taux: 0.0310}
+    salarie: [{jusqu_en_plafonds: null, taux: 0.0310}]
+    employeur: []
+    textes:
+      - "Article D. 613-1 du code de la sécurité sociale, version en vigueur (LEGIARTI000041966324)"
+      - "Article L. 613-1 du code de la sécurité sociale"
+
+# Les quatre profils
+# ------------------
+# `incidence` dit ce que le modèle tient FIXE quand il compare deux systèmes :
+#   `cout_du_travail` — l'employeur a budgété un coût, et ce qu'il ne verse plus
+#                       en cotisations, il le verse en salaire. Le brut est
+#                       recalculé par dichotomie.
+#   `assiette`        — le brut (ou le revenu professionnel) ne bouge pas, et
+#                       seule la part de l'assuré change. Lecture prudente, et
+#                       la seule disponible quand la contribution de l'employeur
+#                       n'est pas un prix du travail.
+profils:
+
+  salarie_prive:
+    libelle: "Salarié"
+    libelle_assiette: "Salaire brut"
+    libelle_net: "Salaire net"
+    cout_du_travail: true
+    incidence: cout_du_travail
+    postes: *postes_regime_general
+    contributions_sociales: *csg_salariee
+    reduction_generale: *reduction_generale
+
+  salarie_ircantec:
+    libelle: "Agent non titulaire de la fonction publique"
+    libelle_assiette: "Rémunération brute"
+    libelle_net: "Rémunération nette"
+    cout_du_travail: true
+    incidence: cout_du_travail
+    postes: *postes_regime_general_sans_agirc
+    contributions_sociales: *csg_salariee
+    # Le coefficient maximal du décret est un chiffre national, bâti sur les
+    # taux du privé ; il ne se refait pas employeur par employeur. Ce qui borne
+    # la réduction ici, c'est la règle générale — elle ne peut pas excéder ce
+    # qui est dû —, et le périmètre de cet employeur est plus étroit de la CEG
+    # et plus large de l'Ircantec. Le modèle applique donc le même coefficient
+    # et laisse le plafonnement faire son office.
+    reduction_generale: *reduction_generale
+
+  agent_seul:
+    libelle: "Fonctionnaire ou agent d'un régime à retenue"
+    libelle_assiette: "Traitement indiciaire brut"
+    libelle_net: "Traitement net"
+    cout_du_travail: false
+    incidence: assiette
+    # Rien d'autre que la retenue pour pension, que la fiche de régime porte, et
+    # la CSG-CRDS. Un fonctionnaire titulaire ne cotise ni à la maladie — la
+    # cotisation salariale a disparu en 2018 comme dans le privé —, ni au
+    # chômage, dont il n'est pas assuré ; et la contribution exceptionnelle de
+    # solidarité de 1 % a été supprimée le 1er janvier 2018 en contrepartie de
+    # la hausse de CSG. Cette liste vide est donc un résultat, pas un oubli.
+    postes: []
+    contributions_sociales: *csg_salariee
+    reduction_generale: null
+    textes:
+      - "Article 2 de la loi n° 82-939 du 4 novembre 1982 (contribution de solidarité), abrogé par l'article 143 de la loi n° 2016-1918 du 29 décembre 2016"
+      - "Article L. 5424-1 du code du travail (fonctionnaires non assurés contre le chômage)"
+      - "Article L. 61 du code des pensions civiles et militaires de retraite (retenue pour pension)"
+
+  independant:
+    libelle: "Travailleur indépendant"
+    libelle_assiette: "Revenu professionnel"
+    libelle_net: "Revenu disponible"
+    cout_du_travail: false
+    incidence: assiette
+    postes: *postes_independant
+    contributions_sociales:
+      csg_deductible: 0.068
+      csg_imposable: 0.024
+      crds: 0.005
+      # Pas d'abattement : celui de 1,75 % est propre aux revenus d'activité
+      # SALARIÉE. Depuis la réforme de l'assiette unique, la CSG d'un
+      # indépendant porte sur la même assiette que ses cotisations.
+      abattement_frais_professionnels: []
+      note: >-
+        CSG 9,20 % et CRDS 0,50 % sur l'assiette sociale unique de l'article
+        L. 136-3 — le revenu professionnel après l'abattement de 26 %. C'est la
+        même assiette que celle des cotisations depuis la réforme de 2024, et
+        c'est ce qui permet de n'en écrire qu'une ici.
+      textes:
+        - "Article L. 136-3 du code de la sécurité sociale, version en vigueur (LEGIARTI000051284498)"
+        - "Article L. 131-6 du code de la sécurité sociale, version en vigueur (LEGIARTI000048683707)"
+        - "Loi n° 2023-1250 du 26 décembre 2023, article 18 (LFSS 2024)"
+    reduction_generale: null
 
 fiabilite: haute

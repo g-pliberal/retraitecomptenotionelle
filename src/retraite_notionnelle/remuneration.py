@@ -29,17 +29,20 @@ caisse plutôt qu'à lui. La question — qui la supporte vraiment ? — a une
 réponse à peu près consensuelle en économie du travail à long terme : le
 salarié, par un salaire brut plus bas que ce que l'employeur aurait consenti.
 
-Le module retient donc **l'incidence intégrale au salarié**, et il la calcule
-au lieu de la postuler : le COÛT DU TRAVAIL est tenu fixe — c'est ce que
-l'employeur a budgété pour ce poste, et aucune réforme des retraites ne le
-change —, et le salaire brut est celui qui l'épuise sous les nouveaux taux.
-Le net s'en déduit. C'est ce que veut dire « réduire l'écart entre le net et le
-brut » : la baisse du prélèvement remonte dans le brut, puis dans le net.
+Le module retient donc, **quand l'employeur est connu**, l'incidence intégrale
+au salarié, et il la calcule au lieu de la postuler : le COÛT DU TRAVAIL est
+tenu fixe — c'est ce que l'employeur a budgété pour ce poste, et aucune réforme
+des retraites ne le change —, et le salaire brut est celui qui l'épuise sous les
+nouveaux taux. Le net s'en déduit. C'est ce que veut dire « réduire l'écart
+entre le net et le brut » : la baisse du prélèvement remonte dans le brut, puis
+dans le net.
 
 C'est une HYPOTHÈSE, la plus favorable à une baisse de cotisation, et le site
 l'écrit là où il affiche le chiffre. La lecture prudente — seule la part
 salariale bouge, l'employeur garde son économie — donne à peu près la moitié
-du gain ; elle est disponible par ``incidence="salariale"``.
+du gain ; c'est :data:`Incidence.ASSIETTE`, et ce n'est pas qu'une variante de
+confort : c'est la SEULE lecture disponible pour les statuts dont l'employeur
+ne verse pas un prix du travail. Voir « quatre profils » plus bas.
 
 LE PARTAGE DES 18 %, ET POURQUOI IL N'EST PAS ANODIN
 -----------------------------------------------------
@@ -75,6 +78,10 @@ proposition : notre droit fait dépendre le salaire net de la FRONTIÈRE entre
 part salariale et part patronale, alors que cette frontière ne change rien à
 ce que le travail coûte ni à ce qu'il rapporte au système.
 
+Sous :data:`Incidence.ASSIETTE`, le partage cesse d'être neutre pour une raison
+plus simple encore, et plus brutale : seule la part salariale est comptée, donc
+déplacer un point vers l'employeur le fait disparaître de la fiche.
+
 LA RÉDUCTION GÉNÉRALE, ET POURQUOI ELLE NE PEUT PAS ÊTRE IGNORÉE
 -----------------------------------------------------------------
 Depuis le 1er janvier 2026, la réduction générale dégressive unique annule au
@@ -95,18 +102,64 @@ s'éteint à trois SMIC. Deux conséquences, et la seconde est un résultat :
    C'est l'inverse de ce qu'un tract dirait, et c'est le genre de chose qu'un
    modèle sert à trouver.
 
-À QUI CE MODULE S'APPLIQUE
---------------------------
-Aux salariés du SECTEUR PRIVÉ, et à eux seuls : les taux ci-dessus sont ceux du
-régime général. Un agent public, un artisan, un agent d'un régime spécial n'ont
-ni les mêmes branches ni les mêmes assiettes, et leur « employeur » est l'État.
-``fiche_de_paie_possible`` dit si le statut est couvert ; le site n'affiche rien
-quand il ne l'est pas, et dit pourquoi.
+À QUI CE MODULE S'APPLIQUE : QUATRE PROFILS
+--------------------------------------------
+Il n'en a longtemps décrit qu'un — le salarié du privé —, et le site n'affichait
+rien aux autres statuts. Il en décrit quatre, et le découpage n'est PAS celui
+des familles de statut : c'est celui de ce que l'on sait de l'employeur.
+
+``salarie_prive``
+    L'employeur verse les cotisations du régime général et de l'Agirc-Arrco, que
+    la fiche du régime porte en totalité. La famille ``prive``, et les statuts de
+    la famille ``special`` que la fermeture des régimes spéciaux a versés au
+    régime général — l'agent SNCF, l'agent RATP, le mineur, le clerc de notaire,
+    le personnel navigant.
+``salarie_ircantec``
+    Même chose, mais la complémentaire est l'Ircantec : la CEG, la CET et
+    l'APEC, qui sont des contributions de l'Agirc-Arrco, ne sont pas dues. C'est
+    l'agent non titulaire de la fonction publique.
+``agent_seul``
+    La fiche du régime ne porte QUE la retenue de l'agent, parce que ce que
+    verse son employeur est un taux d'ÉQUILIBRE et non un prix du travail. Le
+    fonctionnaire titulaire, le militaire, le marin, l'artiste de l'Opéra.
+``independant``
+    Pas d'employeur du tout : la cotisation est intégralement personnelle, et
+    l'assiette n'est pas un salaire mais un revenu professionnel.
+
+LA DÉCISION QUI N'EST PAS MÉCANIQUE : LE COÛT DU TRAVAIL D'UN FONCTIONNAIRE
+----------------------------------------------------------------------------
+La contribution de l'employeur public est un TAUX D'ÉQUILIBRE — 82,28 % du
+traitement en 2026 pour l'État, 37,65 % pour la CNRACL, voir
+``legislation/contribution_employeur_public.csv``. Il est fixé pour que le
+compte d'affectation spéciale « Pensions » tombe juste, c'est-à-dire pour payer
+les pensions d'aujourd'hui, et non parce que l'agent acquerrait 82 % de son
+traitement en droits nouveaux.
+
+L'appeler « coût du travail » et poser dessus l'incidence intégrale donnerait un
+gain absurde : la baisse de 82,28 % à 9 % se lirait comme une augmentation de
+salaire de soixante-dix points, alors qu'elle ne libère rien — la dette de
+pensions que cette contribution finance reste à payer, et c'est la page « Coût »
+qui la traite, pas une fiche de paie.
+
+Le module retient donc, pour ``agent_seul``, **l'incidence sur l'assiette** : le
+traitement indiciaire brut est tenu fixe, seule la retenue de l'agent bouge, et
+il n'y a pas de ligne « coût du travail ». Le gain affiché n'est donc pas
+comparable, terme à terme, à celui d'un salarié du privé — c'est la lecture
+prudente contre la lecture intégrale —, et le site comme ``docs/limites.md`` le
+disent.
+
+``independant`` tient lui aussi l'assiette fixe, mais ce n'est pas une
+hypothèse : il n'y a pas d'employeur, donc rien à répercuter.
+
+``profil_de_la_fiche`` choisit le profil ; ``fiche_de_paie_possible`` dit si le
+statut est couvert ; le site n'affiche rien quand il ne l'est pas, et dit
+pourquoi.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from functools import lru_cache
 from pathlib import Path
 
@@ -118,13 +171,34 @@ from .donnees.chargement import Fiabilite, charger_yaml
 HEURES_ANNUELLES_TEMPS_PLEIN = 1820.0
 
 #: Familles de statuts auxquelles la fiche de paie s'applique. Voir le
-#: docstring du module : les taux hors retraite sont ceux du régime général.
-FAMILLES_COUVERTES = frozenset({"prive"})
+#: docstring du module : quatre profils, et le découpage n'est pas celui-ci.
+#: Restent dehors ``agricole`` — dont les taux hors retraite sont ceux de la
+#: MSA, qui ne sont pas ceux du régime général —, ``outre_mer``, dont chaque
+#: collectivité a sa propre caisse, ``elus``, dont l'indemnité n'est pas un
+#: salaire, et ``hors_emploi``, qui ne cotise pas.
+FAMILLES_COUVERTES = frozenset({"prive", "public", "special", "independant"})
+
+
+class Incidence(str, Enum):
+    """Ce que le modèle tient FIXE quand il compare deux systèmes.
+
+    * ``COUT_DU_TRAVAIL`` — l'employeur a budgété un coût pour ce poste, et ce
+      qu'il ne verse plus en cotisations, il le verse en salaire. Le brut est
+      recalculé par dichotomie. C'est l'incidence intégrale, la plus favorable
+      à une baisse de cotisation.
+    * ``ASSIETTE`` — le brut, le traitement ou le revenu professionnel ne bouge
+      pas, et seule la part de l'assuré change. Lecture prudente, et la seule
+      disponible quand la contribution de l'employeur n'est pas un prix du
+      travail — ou quand il n'y a pas d'employeur.
+    """
+
+    COUT_DU_TRAVAIL = "cout_du_travail"
+    ASSIETTE = "assiette"
 
 
 @dataclass(frozen=True)
 class Segment:
-    """Un taux, appliqué à la part du salaire comprise entre deux bornes.
+    """Un taux, appliqué à la part du revenu comprise entre deux bornes.
 
     Les bornes sont exprimées en PLAFONDS ANNUELS de la Sécurité sociale, comme
     les fiches de régime les écrivent ; ``haut_en_plafonds`` à ``None`` signifie
@@ -176,6 +250,63 @@ def _tranches(lignes) -> tuple[Segment, ...]:
 
 
 @dataclass(frozen=True)
+class BaremeProgressif:
+    """Un taux qui dépend du NIVEAU de l'assiette, et porte sur sa totalité.
+
+    C'est la forme qu'a prise la loi pour les indépendants, et elle n'est pas
+    celle d'un barème par tranches : « le taux de base de la cotisation
+    d'assurance maladie et maternité des travailleurs indépendants fait l'objet
+    d'une réduction lorsque le montant annuel de leur assiette de cotisations
+    est inférieur à trois fois la valeur annuelle du plafond » (D. 621-2). Le
+    taux réduit s'applique alors à TOUT le revenu, et non à la seule fraction
+    comprise entre deux paliers — une modélisation par tranches marginales
+    donnerait un montant tout autre.
+
+    Entre deux paliers, le taux est interpolé linéairement, exactement comme les
+    formules de l'article l'écrivent. En deçà du premier palier, c'est le taux
+    de ce palier. Au-delà de ``jusqu_en_plafonds``, ce barème ne s'applique plus
+    et les tranches du poste reprennent la main : la continuité au raccord est
+    une propriété du droit, et un test l'exige.
+    """
+
+    jusqu_en_plafonds: float
+    #: Couples (borne en plafonds, taux atteint à cette borne), triés.
+    paliers: tuple[tuple[float, float], ...]
+
+    def taux(self, assiette_en_plafonds: float) -> float:
+        """Le taux applicable à la totalité de l'assiette, à ce niveau."""
+        if not self.paliers:
+            return 0.0
+        premier_seuil, premier_taux = self.paliers[0]
+        if assiette_en_plafonds <= premier_seuil:
+            return premier_taux
+        precedent_seuil, precedent_taux = self.paliers[0]
+        for seuil, taux in self.paliers[1:]:
+            if assiette_en_plafonds <= seuil:
+                largeur = seuil - precedent_seuil
+                if largeur <= 0:
+                    return taux
+                part = (assiette_en_plafonds - precedent_seuil) / largeur
+                return precedent_taux + part * (taux - precedent_taux)
+            precedent_seuil, precedent_taux = seuil, taux
+        return precedent_taux
+
+
+def _progressif(contenu) -> BaremeProgressif | None:
+    if not contenu:
+        return None
+    paliers = tuple(
+        (float(palier["en_plafonds"]), float(palier["taux"]))
+        for palier in sorted(contenu["paliers"],
+                             key=lambda p: float(p["en_plafonds"]))
+    )
+    return BaremeProgressif(
+        jusqu_en_plafonds=float(contenu["jusqu_en_plafonds"]),
+        paliers=paliers,
+    )
+
+
+@dataclass(frozen=True)
 class Poste:
     """Un prélèvement, avec ses deux barèmes."""
 
@@ -197,6 +328,9 @@ class Poste:
     #: Dû seulement si la rémunération dépasse un plafond, mais assis alors sur
     #: la totalité du salaire (CET).
     due_au_dela_de_un_plafond: bool = False
+    #: Réduction du taux SALARIAL en deçà d'un certain revenu, applicable à la
+    #: totalité de l'assiette. Propre aux indépendants ; ``None`` ailleurs.
+    progressif: BaremeProgressif | None = None
     note: str = ""
 
     def du(self, brut: float, plafond_annuel: float, cadre: bool) -> bool:
@@ -205,6 +339,13 @@ class Poste:
         if self.due_au_dela_de_un_plafond and brut <= plafond_annuel:
             return False
         return True
+
+    def montant_salarie(self, assiette: float, plafond_annuel: float) -> float:
+        """Ce que l'assuré supporte, barème progressif compris."""
+        if (self.progressif is not None
+                and assiette < self.progressif.jusqu_en_plafonds * plafond_annuel):
+            return self.progressif.taux(assiette / plafond_annuel) * assiette
+        return _montant(self.salarie, assiette, plafond_annuel)
 
 
 @dataclass(frozen=True)
@@ -260,16 +401,31 @@ class ReductionGenerale:
 
 
 @dataclass(frozen=True)
-class BaremePrelevements:
-    """Tout ce que le droit prélève sur un salaire, hors retraite acquisitive."""
+class ProfilRemuneration:
+    """Tout ce que le droit prélève sur un revenu, hors retraite acquisitive.
 
+    Un profil par situation d'employeur, et non par famille de statut : voir le
+    docstring du module. C'est l'objet que ``ConstructeurFiche`` consomme.
+    """
+
+    code: str
+    libelle: str
+    #: Comment la page nomme les deux montants qu'elle affiche à coup sûr.
+    libelle_assiette: str
+    libelle_net: str
+    #: La ligne « coût du travail » a-t-elle un sens pour ce profil ? Fausse dès
+    #: que ce que verse l'employeur est un taux d'équilibre, ou qu'il n'y a pas
+    #: d'employeur.
+    cout_du_travail: bool
+    incidence: Incidence
     annee: int
     postes: tuple[Poste, ...]
     csg_deductible: float
     csg_imposable: float
     crds: float
     abattement_frais: tuple[Segment, ...]
-    reduction_generale: ReductionGenerale
+    #: ``None`` quand l'employeur n'y a pas droit — ou qu'il n'y en a pas.
+    reduction_generale: ReductionGenerale | None
     fiabilite: Fiabilite
 
     @property
@@ -278,57 +434,89 @@ class BaremePrelevements:
 
     def taux_retraite_du_droit_en_vigueur(self) -> float:
         """Ce que le coefficient maximal compte aujourd'hui pour la retraite."""
+        if self.reduction_generale is None:
+            return 0.0
         return self.reduction_generale.taux_retraite_inclus
 
 
+@dataclass(frozen=True)
+class Prelevements:
+    """Les quatre profils, tels que le fichier les écrit."""
+
+    annee: int
+    profils: dict[str, ProfilRemuneration]
+    fiabilite: Fiabilite
+
+    def profil(self, code: str) -> ProfilRemuneration:
+        return self.profils[code]
+
+
+def _poste(contenu) -> Poste:
+    return Poste(
+        code=contenu["code"],
+        libelle=contenu["libelle"],
+        retraite=bool(contenu.get("retraite", False)),
+        dans_la_reduction_generale=bool(
+            contenu.get("dans_la_reduction_generale", False)),
+        salarie=_tranches(contenu.get("salarie")),
+        employeur=_tranches(contenu.get("employeur")),
+        taux_dans_la_reduction=(
+            None if contenu.get("taux_dans_la_reduction") is None
+            else float(contenu["taux_dans_la_reduction"])),
+        cadres_seulement=bool(contenu.get("cadres_seulement", False)),
+        due_au_dela_de_un_plafond=bool(
+            contenu.get("due_au_dela_de_un_plafond", False)),
+        progressif=_progressif(contenu.get("progressif")),
+        note=contenu.get("note", ""),
+    )
+
+
+def _reduction_generale(contenu) -> ReductionGenerale | None:
+    if not contenu:
+        return None
+    return ReductionGenerale(
+        libelle=contenu["libelle"],
+        plafond_en_smic=float(contenu["plafond_en_smic"]),
+        puissance=float(contenu["puissance"]),
+        taux_minimum=float(contenu["taux_minimum"]),
+        coefficient_maximal=float(contenu["coefficient_maximal"]),
+        composantes={code: float(valeur)
+                     for code, valeur in contenu["composantes"].items()},
+        composantes_retraite=tuple(contenu["composantes_retraite"]),
+    )
+
+
 @lru_cache(maxsize=4)
-def _charger(chemin: str, signature: tuple) -> BaremePrelevements:
+def _charger(chemin: str, signature: tuple) -> Prelevements:
     contenu = charger_yaml(Path(chemin))
-    postes = tuple(
-        Poste(
-            code=poste["code"],
-            libelle=poste["libelle"],
-            retraite=bool(poste.get("retraite", False)),
-            dans_la_reduction_generale=bool(
-                poste.get("dans_la_reduction_generale", False)),
-            salarie=_tranches(poste.get("salarie")),
-            employeur=_tranches(poste.get("employeur")),
-            taux_dans_la_reduction=(
-                None if poste.get("taux_dans_la_reduction") is None
-                else float(poste["taux_dans_la_reduction"])),
-            cadres_seulement=bool(poste.get("cadres_seulement", False)),
-            due_au_dela_de_un_plafond=bool(
-                poste.get("due_au_dela_de_un_plafond", False)),
-            note=poste.get("note", ""),
+    annee = int(contenu["annee"])
+    fiabilite = Fiabilite.depuis_texte(contenu.get("fiabilite", "haute"))
+    profils: dict[str, ProfilRemuneration] = {}
+    for code, fiche in contenu["profils"].items():
+        contributions = fiche["contributions_sociales"]
+        profils[code] = ProfilRemuneration(
+            code=code,
+            libelle=fiche["libelle"],
+            libelle_assiette=fiche["libelle_assiette"],
+            libelle_net=fiche["libelle_net"],
+            cout_du_travail=bool(fiche["cout_du_travail"]),
+            incidence=Incidence(fiche["incidence"]),
+            annee=annee,
+            postes=tuple(_poste(poste) for poste in fiche.get("postes") or []),
+            csg_deductible=float(contributions["csg_deductible"]),
+            csg_imposable=float(contributions["csg_imposable"]),
+            crds=float(contributions["crds"]),
+            abattement_frais=_tranches(
+                contributions.get("abattement_frais_professionnels")),
+            reduction_generale=_reduction_generale(
+                fiche.get("reduction_generale")),
+            fiabilite=fiabilite,
         )
-        for poste in contenu["postes"]
-    )
-    contributions = contenu["contributions_sociales"]
-    reduction = contenu["reduction_generale"]
-    return BaremePrelevements(
-        annee=int(contenu["annee"]),
-        postes=postes,
-        csg_deductible=float(contributions["csg_deductible"]),
-        csg_imposable=float(contributions["csg_imposable"]),
-        crds=float(contributions["crds"]),
-        abattement_frais=_tranches(
-            contributions["abattement_frais_professionnels"]),
-        reduction_generale=ReductionGenerale(
-            libelle=reduction["libelle"],
-            plafond_en_smic=float(reduction["plafond_en_smic"]),
-            puissance=float(reduction["puissance"]),
-            taux_minimum=float(reduction["taux_minimum"]),
-            coefficient_maximal=float(reduction["coefficient_maximal"]),
-            composantes={code: float(valeur)
-                         for code, valeur in reduction["composantes"].items()},
-            composantes_retraite=tuple(reduction["composantes_retraite"]),
-        ),
-        fiabilite=Fiabilite.depuis_texte(contenu.get("fiabilite", "haute")),
-    )
+    return Prelevements(annee=annee, profils=profils, fiabilite=fiabilite)
 
 
-def charger_prelevements(racine_donnees: Path) -> BaremePrelevements:
-    """Le barème des prélèvements hors retraite, mémorisé sur la signature.
+def charger_prelevements(racine_donnees: Path) -> Prelevements:
+    """Les profils de prélèvements hors retraite, mémorisés sur la signature.
 
     Même convention que ``charger_yaml`` et ``charger_serie_annuelle`` : un
     fichier modifié est relu sans qu'on ait à vider quoi que ce soit.
@@ -373,7 +561,7 @@ class BlocRetraite:
     """Ce qu'un système prélève pour la retraite, étage par étage.
 
     Les contributions d'équilibre — CEG, CET, APEC —, qui n'acquièrent aucun
-    droit et que les fiches de régime ne portent donc pas, viennent du barème
+    droit et que les fiches de régime ne portent donc pas, viennent du profil
     plutôt que d'ici. Un système qui remplace le financement de la retraite les
     remplace aussi, et c'est ce que dit
     ``remplace_les_contributions_d_equilibre``.
@@ -391,18 +579,18 @@ class BlocRetraite:
         return sum(_montant(c.employeur, brut, plafond_annuel)
                    for c in self.composantes)
 
-    def taux_employeur_dans_la_reduction(self, bareme: "BaremePrelevements") -> float:
+    def taux_employeur_dans_la_reduction(self, profil: ProfilRemuneration) -> float:
         """Points de retraite patronale que le coefficient maximal doit compter.
 
         Les étages de ce bloc qui sont dans le périmètre, plus les contributions
-        d'équilibre du barème quand le système les conserve : c'est exactement
+        d'équilibre du profil quand le système les conserve : c'est exactement
         ce que le décret additionne aujourd'hui, et exactement ce qu'il
         additionnerait demain.
         """
         total = sum(c.taux_employeur_premiere_tranche()
                     for c in self.composantes if c.dans_la_reduction_generale)
         if not self.remplace_les_contributions_d_equilibre:
-            for poste in bareme.postes:
+            for poste in profil.postes:
                 if poste.retraite and poste.dans_la_reduction_generale:
                     total += sum(segment.taux for segment in poste.employeur
                                  if segment.bas_en_plafonds < 1.0)
@@ -424,7 +612,10 @@ class Ligne:
 class FicheDePaie:
     """Une année de rémunération, décomposée.
 
-    Tous les montants sont ANNUELS et en euros courants de ``annee``.
+    Tous les montants sont ANNUELS et en euros courants de ``annee``. Quand le
+    profil n'a pas d'employeur — ou que sa contribution n'est pas un prix du
+    travail —, les barèmes patronaux sont vides : ``cout_du_travail`` vaut alors
+    ``brut``, et la page n'affiche pas la ligne.
     """
 
     annee: int
@@ -489,15 +680,20 @@ class FicheDePaie:
 
     @property
     def part_qui_arrive(self) -> float:
-        """Ce que le salarié touche, rapporté à ce que son emploi coûte."""
+        """Ce que l'assuré touche, rapporté à ce que son emploi coûte.
+
+        Quand le profil n'affiche pas de coût du travail, le dénominateur est le
+        brut : la grandeur devient « ce qui reste sur cent euros de traitement »,
+        et la page la nomme ainsi.
+        """
         return self.net / self.cout_du_travail if self.cout_du_travail else 0.0
 
 
 class ConstructeurFiche:
-    """Construit une fiche de paie sous un bloc retraite donné."""
+    """Construit une fiche de paie sous un bloc retraite donné, pour un profil."""
 
-    def __init__(self, bareme: BaremePrelevements) -> None:
-        self.bareme = bareme
+    def __init__(self, profil: ProfilRemuneration) -> None:
+        self.profil = profil
 
     # -- pièces --------------------------------------------------------------
 
@@ -509,16 +705,15 @@ class ConstructeurFiche:
                   employeur=_montant(composante.employeur, brut, plafond))
             for composante in bloc.composantes
         ]
-        for poste in self.bareme.postes:
+        for poste in self.profil.postes:
             if poste.retraite and bloc.remplace_les_contributions_d_equilibre:
                 continue
             if not poste.du(brut, plafond, cadre):
                 continue
-            assiette = brut
             lignes.append(Ligne(
                 code=poste.code, libelle=poste.libelle, retraite=poste.retraite,
-                salarie=_montant(poste.salarie, assiette, plafond),
-                employeur=_montant(poste.employeur, assiette, plafond),
+                salarie=poste.montant_salarie(brut, plafond),
+                employeur=_montant(poste.employeur, brut, plafond),
             ))
         contributions = self._csg_crds(brut, plafond)
         if contributions:
@@ -526,10 +721,10 @@ class ConstructeurFiche:
         return tuple(lignes)
 
     def _csg_crds(self, brut: float, plafond: float) -> Ligne | None:
-        taux = self.bareme.csg + self.bareme.crds
+        taux = self.profil.csg + self.profil.crds
         if taux <= 0:
             return None
-        abattement = _montant(self.bareme.abattement_frais, brut, plafond)
+        abattement = _montant(self.profil.abattement_frais, brut, plafond)
         return Ligne(code="csg_crds", libelle="CSG et CRDS", retraite=False,
                      salarie=(brut - abattement) * taux, employeur=0.0)
 
@@ -541,7 +736,7 @@ class ConstructeurFiche:
             for composante in bloc.composantes
             if composante.dans_la_reduction_generale
         )
-        for poste in self.bareme.postes:
+        for poste in self.profil.postes:
             if not poste.dans_la_reduction_generale:
                 continue
             if poste.retraite and bloc.remplace_les_contributions_d_equilibre:
@@ -556,8 +751,11 @@ class ConstructeurFiche:
 
     def _reduction(self, bloc: BlocRetraite, brut: float, plafond: float,
                    smic_annuel: float, cadre: bool) -> float:
-        coefficient = self.bareme.reduction_generale.coefficient(
-            brut, smic_annuel, bloc.taux_employeur_dans_la_reduction(self.bareme)
+        reduction = self.profil.reduction_generale
+        if reduction is None:
+            return 0.0
+        coefficient = reduction.coefficient(
+            brut, smic_annuel, bloc.taux_employeur_dans_la_reduction(self.profil)
         )
         if coefficient <= 0:
             return 0.0
@@ -571,15 +769,17 @@ class ConstructeurFiche:
     def fiche(self, annee: int, brut: float, plafond_annuel: float,
               smic_annuel: float, bloc: BlocRetraite,
               cadre: bool = False) -> FicheDePaie:
-        """La fiche de paie d'une année, à salaire brut donné."""
+        """La fiche de paie d'une année, à revenu brut donné."""
         lignes = self._lignes(bloc, brut, plafond_annuel, cadre)
         reduction = self._reduction(bloc, brut, plafond_annuel, smic_annuel, cadre)
         salariales = sum(ligne.salarie for ligne in lignes)
         patronales = sum(ligne.employeur for ligne in lignes)
-        taux_retraite = bloc.taux_employeur_dans_la_reduction(self.bareme)
-        maximal = self.bareme.reduction_generale.coefficient_maximal_avec(
-            taux_retraite)
-        part_retraite = taux_retraite / maximal if maximal > 0 else 0.0
+        part_retraite = 0.0
+        if self.profil.reduction_generale is not None:
+            taux_retraite = bloc.taux_employeur_dans_la_reduction(self.profil)
+            maximal = self.profil.reduction_generale.coefficient_maximal_avec(
+                taux_retraite)
+            part_retraite = taux_retraite / maximal if maximal > 0 else 0.0
         return FicheDePaie(
             annee=annee,
             cout_du_travail=brut + patronales - reduction,
@@ -587,14 +787,14 @@ class ConstructeurFiche:
             net=brut - salariales,
             lignes=lignes,
             reduction_generale=reduction,
-            fiabilite=self.bareme.fiabilite,
+            fiabilite=self.profil.fiabilite,
             part_retraite_dans_la_reduction=min(1.0, part_retraite),
         )
 
     def brut_a_cout_donne(self, cout: float, plafond_annuel: float,
                           smic_annuel: float, bloc: BlocRetraite,
                           cadre: bool = False) -> float:
-        """Le salaire brut qui épuise un coût du travail donné.
+        """Le revenu brut qui épuise un coût du travail donné.
 
         C'est l'incidence intégrale : l'employeur a budgété ``cout`` pour ce
         poste, et ce qu'il ne verse plus en cotisations, il le verse en salaire.
@@ -614,6 +814,20 @@ class ConstructeurFiche:
                 haut = milieu
         return (bas + haut) / 2
 
+    def brut_sous_la_proposition(self, actuelle: FicheDePaie, plafond_annuel: float,
+                                 smic_annuel: float, bloc: BlocRetraite,
+                                 cadre: bool = False) -> float:
+        """Le brut à retenir sous le nouveau système, selon l'incidence du profil.
+
+        Une ligne, mais c'est là que se joue la décision du module : tenir le
+        coût du travail fixe quand l'employeur est connu, tenir l'assiette fixe
+        quand il ne l'est pas.
+        """
+        if self.profil.incidence is Incidence.ASSIETTE:
+            return actuelle.brut
+        return self.brut_a_cout_donne(
+            actuelle.cout_du_travail, plafond_annuel, smic_annuel, bloc, cadre)
+
 
 # -- les blocs retraite des scénarios ---------------------------------------
 #
@@ -622,18 +836,27 @@ class ConstructeurFiche:
 # seconde fois aurait garanti qu'ils divergent un jour.
 
 
-def bloc_droit_en_vigueur(catalogue, affiliations, statut: str,
-                          annee: int) -> BlocRetraite:
+def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
+                          ) -> BlocRetraite:
     """Ce que le droit en vigueur prélève pour la retraite, par régime.
 
     Un étage par régime : la vieillesse de base et sa part déplafonnée d'un
     côté, la complémentaire de l'autre, chacun avec ses bornes d'assiette et
     son partage salarié/employeur, lus dans la fiche.
 
+    **Un non-salarié paie tout.** La fiche d'un régime partagé avec des salariés
+    — un artisan relève du régime général — porte la répartition 45/55 d'un
+    salarié : le taux est le bon, la répartition ne le concerne pas. C'est ce
+    que dit ``sans_employeur`` dans ``affiliations.yaml``, et
+    ``moteur/compte.py`` en tire déjà la même conséquence pour le compte
+    notionnel. Sans ce correctif, la fiche de paie d'un artisan aurait montré un
+    employeur qui n'existe pas et aurait sous-estimé de moitié ce qu'il verse.
+
     Ce bloc vaut pour les systèmes 1, 2 et 3 du site : ils ne changent PAS ce
     qui est prélevé, seulement ce qui est porté au compte. C'est la raison pour
     laquelle la fiche de paie de ces trois systèmes est la même, au centime.
     """
+    sans_employeur = affiliations.sans_employeur(statut)
     composantes: list[ComposanteRetraite] = []
     for code in affiliations.regimes(statut, annee):
         if code not in catalogue:
@@ -645,7 +868,7 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str,
         employeur: list[Segment] = []
         for periode in regime.periodes_actives(annee):
             basse, haute = periode.bornes_assiette_en_pass()
-            part = periode.part_salariale
+            part = 1.0 if sans_employeur else periode.part_salariale
             taux = periode.taux_cotisation_retraite
             if taux:
                 salarie.append(Segment(basse, haute, taux * part))
@@ -654,7 +877,8 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str,
             # la précédente : c'est un segment de plus, non une tranche.
             taux_deplafonne = periode.taux_cotisation_deplafonnee
             if taux_deplafonne:
-                part_deplafonnee = periode.part_salariale_deplafonnee
+                part_deplafonnee = (
+                    1.0 if sans_employeur else periode.part_salariale_deplafonnee)
                 salarie.append(
                     Segment(0.0, None, taux_deplafonne * part_deplafonnee))
                 employeur.append(
@@ -710,12 +934,79 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
     )
 
 
+def bloc_taux_unique_sans_employeur(
+        taux_repartition: float, taux_capitalisation: float = 0.0,
+        ) -> BlocRetraite:
+    """Le même bloc pour qui n'a pas d'employeur : il porte les 18 % en entier.
+
+    La proposition additionne « salariale et patronale ». Un indépendant est les
+    deux à la fois — c'est déjà vrai aujourd'hui de ses 26 points —, et lui
+    prêter un employeur pour la moitié de la charge fabriquerait un gain qui
+    n'existe pas.
+    """
+    return bloc_taux_unique(taux_repartition, taux_capitalisation,
+                            part_salariale=1.0)
+
+
+# -- à quel profil un statut appartient --------------------------------------
+
+
+def profil_de_la_fiche(affiliations, catalogue, statut: str,
+                       annee: int) -> str | None:
+    """Le profil de fiche de paie d'un statut, ou ``None`` si aucun ne convient.
+
+    Le découpage est celui de ce que l'on SAIT de l'employeur, et non celui des
+    familles de statut — parce que c'est cela qui décide si une ligne « coût du
+    travail » veut dire quelque chose :
+
+    1. pas d'employeur du tout (``sans_employeur``) → ``independant`` ;
+    2. au moins un régime dont la fiche ne porte que la retenue de l'agent
+       (``perimetre_taux == "agent_seul"``) → ``agent_seul``. C'est le
+       fonctionnaire, le militaire, le marin, l'artiste de l'Opéra : la part
+       employeur existe, mais c'est un taux d'équilibre ;
+    3. la famille ``public`` sans régime à retenue, c'est l'agent non titulaire
+       → ``salarie_ircantec``, qui ne doit ni CEG, ni CET, ni APEC ;
+    4. le reste → ``salarie_prive``. Y tombent les statuts de la famille
+       ``special`` que la fermeture des régimes spéciaux a versés au régime
+       général et à l'Agirc-Arrco : leur fiche de paie est bel et bien celle
+       d'un salarié du privé.
+
+    La distinction (2) se lit dans les fiches de régime plutôt que dans une
+    liste de statuts : c'est elle qui suivra toute seule si un régime spécial
+    de plus est fermé.
+    """
+    try:
+        famille = affiliations.famille(statut)
+    except KeyError:
+        return None
+    if famille not in FAMILLES_COUVERTES:
+        return None
+    if famille == "independant" or affiliations.sans_employeur(statut):
+        return "independant"
+    for code in affiliations.regimes(statut, annee):
+        if code not in catalogue:
+            continue
+        regime = catalogue[code]
+        if regime.hors_repartition:
+            continue
+        for periode in regime.periodes_actives(annee):
+            if periode.perimetre_taux == "agent_seul":
+                return "agent_seul"
+    if famille == "public":
+        return "salarie_ircantec"
+    return "salarie_prive"
+
+
 def fiche_de_paie_possible(affiliations, statut: str) -> bool:
     """La fiche de paie sait-elle décrire ce statut ?
 
-    Les taux hors retraite de ce module sont ceux du régime général. Les
-    opposer au traitement d'un fonctionnaire ou au revenu d'un artisan
-    produirait un net faux sans que rien ne le dise.
+    Ne regarde que la famille, parce que c'est tout ce qu'un formulaire connaît
+    avant d'avoir une année : le choix du profil, lui, demande le catalogue et
+    une année, et c'est ``profil_de_la_fiche`` qui le fait.
+
+    Restent dehors les salariés agricoles — la MSA a ses propres taux hors
+    retraite —, l'outre-mer, dont chaque collectivité a sa caisse, les élus,
+    dont l'indemnité de fonction n'est pas un salaire, et qui n'a pas d'emploi.
     """
     try:
         return affiliations.famille(statut) in FAMILLES_COUVERTES
@@ -743,7 +1034,7 @@ class AnneeComparee:
 
     @property
     def gain_net(self) -> float:
-        """Ce que la proposition ajoute au salaire net, en euros de l'année."""
+        """Ce que la proposition ajoute au revenu net, en euros de l'année."""
         return self.proposition.net - self.droit_en_vigueur.net
 
     @property
@@ -770,7 +1061,8 @@ class AnneeComparee:
         Le cas se produit quand la proposition prélève PLUS que le droit en
         vigueur à coût du travail donné. Il est alors impossible en droit : le
         salaire minimum est un plancher. C'est un avertissement, et le site le
-        porte.
+        porte. Sous l'incidence sur l'assiette, le brut ne bouge pas : la
+        question ne se pose pas.
         """
         return self.proposition.brut < self.droit_en_vigueur.brut and (
             self.proposition.brut < self._smic)
@@ -794,6 +1086,14 @@ class RemunerationActif:
     #: années à venir : le modèle ne prétend pas prévoir la prochaine LFSS.
     millesime_bareme: int
     fiabilite: Fiabilite
+    #: Le profil retenu, et ce que la page doit en savoir pour écrire ses
+    #: libellés et ses hypothèses.
+    profil: str = "salarie_prive"
+    libelle_profil: str = "Salarié"
+    libelle_assiette: str = "Salaire brut"
+    libelle_net: str = "Salaire net"
+    affiche_cout_du_travail: bool = True
+    incidence: Incidence = Incidence.COUT_DU_TRAVAIL
 
     @property
     def reference(self) -> AnneeComparee:
@@ -838,20 +1138,27 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         return None
 
     statut = carriere.ligne(annees_actives[0]).affiliation
-    if not fiche_de_paie_possible(affiliations, statut):
+    code_profil = profil_de_la_fiche(
+        affiliations, catalogue, statut, annees_actives[0])
+    if code_profil is None:
         return None
 
-    bareme = charger_prelevements(parametres.racine_donnees)
-    constructeur = ConstructeurFiche(bareme)
+    prelevements = charger_prelevements(parametres.racine_donnees)
+    profil = prelevements.profil(code_profil)
+    constructeur = ConstructeurFiche(profil)
     # « Cadre » n'est pas une famille d'affiliation : c'est la seule chose qui
     # sépare deux statuts du privé pour la cotisation APEC, qui vaut 0,024 %.
     cadre = "cadre" in statut and "non_cadre" not in statut
-    propose = bloc_taux_unique(
-        parametres.taux_cotisation_liberal,
-        (parametres.taux_capitalisation_obligatoire
-         if parametres.capitalisation_obligatoire else 0.0),
-        part_salariale=parametres.part_salariale_taux_unique,
-    )
+    capitalisation = (parametres.taux_capitalisation_obligatoire
+                      if parametres.capitalisation_obligatoire else 0.0)
+    if affiliations.sans_employeur(statut):
+        propose = bloc_taux_unique_sans_employeur(
+            parametres.taux_cotisation_liberal, capitalisation)
+    else:
+        propose = bloc_taux_unique(
+            parametres.taux_cotisation_liberal, capitalisation,
+            part_salariale=parametres.part_salariale_taux_unique,
+        )
 
     comparees: list[AnneeComparee] = []
     for annee in annees_actives:
@@ -867,8 +1174,8 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee)
         fiche_actuelle = constructeur.fiche(
             annee, brut, plafond, smic, actuel_bloc, cadre)
-        brut_propose = constructeur.brut_a_cout_donne(
-            fiche_actuelle.cout_du_travail, plafond, smic, propose, cadre)
+        brut_propose = constructeur.brut_sous_la_proposition(
+            fiche_actuelle, plafond, smic, propose, cadre)
         fiche_proposee = constructeur.fiche(
             annee, brut_propose, plafond, smic, propose, cadre)
         comparees.append(AnneeComparee(
@@ -887,6 +1194,12 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         libelle_statut=affiliations.libelle(statut),
         cadre=cadre,
         annees=tuple(comparees),
-        millesime_bareme=bareme.annee,
-        fiabilite=bareme.fiabilite,
+        millesime_bareme=profil.annee,
+        fiabilite=profil.fiabilite,
+        profil=profil.code,
+        libelle_profil=profil.libelle,
+        libelle_assiette=profil.libelle_assiette,
+        libelle_net=profil.libelle_net,
+        affiche_cout_du_travail=profil.cout_du_travail,
+        incidence=profil.incidence,
     )

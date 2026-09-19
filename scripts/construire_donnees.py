@@ -733,45 +733,74 @@ def _prelevements_remuneration() -> dict:
     Passe par le chargeur du modèle, comme tout le reste : les segments y sont
     déjà développés depuis la forme cumulative du fichier, si bien que le
     portage n'a pas à refaire cette conversion — donc pas à la refaire
-    autrement.
+    autrement. Le paquet porte les QUATRE PROFILS, le portage choisissant le
+    sien comme le modèle choisit le sien.
     """
-    bareme = charger_prelevements(DONNEES)
+    prelevements = charger_prelevements(DONNEES)
 
     def segments(suite) -> list:
         return [{"bas": s.bas_en_plafonds, "haut": s.haut_en_plafonds,
                  "taux": s.taux} for s in suite]
 
-    reduction = bareme.reduction_generale
+    def progressif(bareme) -> dict | None:
+        if bareme is None:
+            return None
+        return {
+            "jusqu_en_plafonds": bareme.jusqu_en_plafonds,
+            "paliers": [{"en_plafonds": seuil, "taux": taux}
+                        for seuil, taux in bareme.paliers],
+        }
+
+    def reduction(bareme) -> dict | None:
+        if bareme is None:
+            return None
+        return {
+            "libelle": bareme.libelle,
+            "plafond_en_smic": bareme.plafond_en_smic,
+            "puissance": bareme.puissance,
+            "taux_minimum": bareme.taux_minimum,
+            "coefficient_maximal": bareme.coefficient_maximal,
+            "composantes": dict(sorted(bareme.composantes.items())),
+            "composantes_retraite": list(bareme.composantes_retraite),
+        }
+
+    def profil(fiche) -> dict:
+        return {
+            "code": fiche.code,
+            "libelle": fiche.libelle,
+            "libelle_assiette": fiche.libelle_assiette,
+            "libelle_net": fiche.libelle_net,
+            "cout_du_travail": fiche.cout_du_travail,
+            "incidence": fiche.incidence.value,
+            "annee": fiche.annee,
+            "fiabilite": int(fiche.fiabilite),
+            "csg_deductible": fiche.csg_deductible,
+            "csg_imposable": fiche.csg_imposable,
+            "crds": fiche.crds,
+            "abattement_frais": segments(fiche.abattement_frais),
+            "postes": [
+                {
+                    "code": poste.code,
+                    "libelle": poste.libelle,
+                    "retraite": poste.retraite,
+                    "dans_la_reduction_generale": poste.dans_la_reduction_generale,
+                    "taux_dans_la_reduction": poste.taux_dans_la_reduction,
+                    "cadres_seulement": poste.cadres_seulement,
+                    "due_au_dela_de_un_plafond": poste.due_au_dela_de_un_plafond,
+                    "progressif": progressif(poste.progressif),
+                    "salarie": segments(poste.salarie),
+                    "employeur": segments(poste.employeur),
+                }
+                for poste in fiche.postes
+            ],
+            "reduction_generale": reduction(fiche.reduction_generale),
+        }
+
     return {
-        "annee": bareme.annee,
-        "fiabilite": int(bareme.fiabilite),
-        "csg_deductible": bareme.csg_deductible,
-        "csg_imposable": bareme.csg_imposable,
-        "crds": bareme.crds,
-        "abattement_frais": segments(bareme.abattement_frais),
-        "postes": [
-            {
-                "code": poste.code,
-                "libelle": poste.libelle,
-                "retraite": poste.retraite,
-                "dans_la_reduction_generale": poste.dans_la_reduction_generale,
-                "taux_dans_la_reduction": poste.taux_dans_la_reduction,
-                "cadres_seulement": poste.cadres_seulement,
-                "due_au_dela_de_un_plafond": poste.due_au_dela_de_un_plafond,
-                "salarie": segments(poste.salarie),
-                "employeur": segments(poste.employeur),
-            }
-            for poste in bareme.postes
-        ],
-        "reduction_generale": {
-            "libelle": reduction.libelle,
-            "plafond_en_smic": reduction.plafond_en_smic,
-            "puissance": reduction.puissance,
-            "taux_minimum": reduction.taux_minimum,
-            "coefficient_maximal": reduction.coefficient_maximal,
-            "composantes": dict(sorted(reduction.composantes.items())),
-            "composantes_retraite": list(reduction.composantes_retraite),
-        },
+        "annee": prelevements.annee,
+        "fiabilite": int(prelevements.fiabilite),
+        "profils": {code: profil(fiche)
+                    for code, fiche in sorted(prelevements.profils.items())},
     }
 
 

@@ -6167,8 +6167,8 @@ accidents du travail, CSG, CRDS, et les contributions d'équilibre CEG, CET et
 APEC, que les fiches de régime ne portent pas parce qu'elles n'acquièrent aucun
 droit. Le site affiche trois chiffres sous les quatre pensions — le net
 d'aujourd'hui, celui de la proposition, l'écart — et la fiche entière dans un
-dépliant. Le portage `moteur/js/remuneration.js` suit, et seize tests tiennent
-l'ensemble.
+dépliant. Le portage `moteur/js/remuneration.js` suit, et trente-trois tests
+tiennent l'ensemble.
 
 Les systèmes 1, 2 et 3 partagent la même fiche de paie, au centime : ils ne
 changent pas ce qui est PRÉLEVÉ, seulement ce qui est PORTÉ AU COMPTE. Seul le
@@ -6216,24 +6216,80 @@ sur le droit actuel plus que sur la proposition : il fait dépendre le salaire
 net de la frontière entre les deux parts, alors que cette frontière ne change
 rien à ce que le travail coûte ni à ce qu'il rapporte au système.
 
-**Ce qui reste.** La fiche de paie ne vaut que pour les salariés du PRIVÉ — les
-taux hors retraite sont ceux du régime général —, et le site n'en affiche aucune
-aux autres statuts plutôt qu'un net faux. L'étendre à la fonction publique
-demande de décider ce qu'est le « coût du travail » d'un agent dont l'employeur
-verse un taux d'équilibre de 82 % : c'est le premier prolongement, et il n'est
-pas mécanique. Restent aussi à lire à la source les deux décrets de 2025 qui
-fixent la réduction générale, l'arrêté du taux d'accidents du travail retenu
+**L'extension aux trois autres familles, et la décision qu'elle demandait.**
+La fiche de paie n'a longtemps valu que pour les salariés du PRIVÉ, et le site
+n'en affichait aucune aux autres statuts plutôt qu'un net faux. Elle couvre
+maintenant le public, les régimes spéciaux et les indépendants. Ce qui a été
+tranché, et pourquoi :
+
+- **Le découpage n'est pas celui des familles de statut, mais celui de ce qu'on
+  SAIT de l'employeur.** Quatre profils : `salarie_prive` (employeur connu,
+  régime général et Agirc-Arrco) ; `salarie_ircantec` (agent non titulaire,
+  même chose sans la CEG, la CET et l'APEC) ; `agent_seul` (la fiche du régime
+  ne porte que la retenue) ; `independant` (pas d'employeur). Le choix se lit
+  dans les fiches de régime — `perimetre_taux == "agent_seul"` — et non dans
+  une liste de statuts : c'est ainsi qu'un agent SNCF, que la fermeture de 2023
+  a versé au régime général, reçoit bien la fiche de paie d'un salarié du
+  privé, et qu'un régime spécial fermé demain suivra tout seul.
+- **Pas de ligne « coût du travail » pour le profil `agent_seul`**, et c'est la
+  première branche de l'alternative qui avait été posée. La contribution de
+  l'employeur public est un taux d'ÉQUILIBRE — 82,28 % du traitement pour
+  l'État en 2026 —, fixé pour que le compte « Pensions » tombe juste. Poser
+  dessus l'incidence intégrale afficherait une hausse de salaire de
+  soixante-dix points qui n'existe pas : la dette de pensions qu'il finance
+  reste à payer, et c'est la page Coût qui en traite. La seconde branche —
+  emprunter une contribution « de droit commun » — aurait demandé d'inventer un
+  taux que personne ne verse ; le dépôt n'en écrit pas. Le traitement
+  indiciaire brut est donc tenu fixe et seule la retenue de l'agent bouge :
+  c'est `Incidence.ASSIETTE`, que le docstring du module annonçait depuis le
+  début sans qu'elle existe, et qui existe maintenant.
+- **Un indépendant paie tout lui-même**, et il fallait le corriger : la fiche
+  du régime général porte la répartition 45/55 d'un salarié, qui ne le concerne
+  pas. `bloc_droit_en_vigueur` lit désormais `sans_employeur`, comme
+  `moteur/compte.py` le faisait déjà pour le compte notionnel ; sans ce
+  correctif la fiche lui montrait un employeur qui n'existe pas et sous-estimait
+  de moitié ce qu'il verse. Et les 18 % de la proposition sont à sa charge en
+  entier, puisqu'elle les annonce « salariale et patronale additionnées ».
+- **Les barèmes progressifs des indépendants ont été lus dans LEGI, pas dans
+  OpenFisca**, qui en porte encore la rédaction de 2018 : la réforme de
+  l'assiette unique de 2024 les a réécrits. Maladie et maternité (D. 621-1 et
+  D. 621-2 : 8,50 % sous trois plafonds, réduits par cinq paliers en deçà),
+  allocations familiales (D. 613-1), indemnités journalières (D. 621-3 : 0,50 %
+  et non 0,70 %). Leur forme n'est pas celle d'un barème par tranches — le taux
+  interpolé porte sur la TOTALITÉ de l'assiette —, d'où `BaremeProgressif`, et
+  un test qui exige la continuité au raccord avec les tranches.
+
+**Trois résultats de l'extension.** *Un.* Le salarial d'un fonctionnaire
+titulaire se réduit à la retenue pour pension et à la CSG-CRDS, et la liste de
+postes vide de son profil est un résultat vérifié : la cotisation maladie
+salariale a disparu en 2018 comme dans le privé, un titulaire n'est pas assuré
+contre le chômage, et la contribution exceptionnelle de solidarité a été
+supprimée la même année. Son net vaut **79,4 %** de son traitement, à deux
+dixièmes de point de celui d'un salarié du privé. *Deux.* La proposition ne
+déplace presque rien pour lui : sa retenue passe de 11,10 % à 11,50 %, soit
+−13 € par mois au salaire moyen. Tout le mouvement est du côté de l'État, et il
+n'est pas sur une fiche de paie. *Trois.* Un indépendant ne garde aujourd'hui
+que **57 à 60 %** de son revenu professionnel, contre 79 % pour un salarié — il
+porte les deux parts —, et c'est le profil auquel la proposition rend le plus
+au voisinage du revenu médian : +56 € par mois au SMIC, +89 € à 1,6 SMIC.
+
+**Ce qui reste.** La MSA, l'outre-mer et les élus n'ont toujours pas de fiche de
+paie : leurs taux hors retraite ne sont pas ceux du régime général, et mieux
+vaut rien qu'un net faux. La RAFP, assise sur les primes, reste hors de
+l'assiette du dépôt. Restent aussi à lire à la source les deux décrets de 2025
+qui fixent la réduction générale, l'arrêté du taux d'accidents du travail retenu
 dans son périmètre, et la convention d'assurance chômage de 2024 : le dépôt n'en
 connaît aujourd'hui que les valeurs transcrites par OpenFisca, d'où la fiabilité
-`haute` du fichier. Les sept réserves sont dans `docs/limites.md` § 5 ante bis.
+`haute` du fichier. Les neuf réserves sont dans `docs/limites.md` § 5 ante bis.
 
 **Fichiers.** `src/retraite_notionnelle/remuneration.py` ;
 `data/reference/legislation/prelevements_remuneration.yaml` ;
 `scripts/fetch/openfisca_prelevements.py` ; `moteur/js/remuneration.js` ;
 `tests/test_remuneration.py` ; `part_salariale_taux_unique` dans `config.py` et
 `config.js` ; le bloc `_salaire_net` de `web/pages.py` et son portage ;
-`docs/limites.md` § 5 ante bis ; la ligne de journal du 19 septembre 2026 dans
-`legislation/veille.yaml`.
+`scripts/construire_donnees.py` et le témoin `simuler_agent_non_titulaire` de
+`scripts/construire_temoins.py` ; `docs/limites.md` § 5 ante bis ; les deux
+lignes de journal du 19 septembre 2026 dans `legislation/veille.yaml`.
 
 - **Septembre 2026, action 35, volet C : la ventilation droits directs /
   droits dérivés.** Le volet C demandait trois choses : ventiler la base,

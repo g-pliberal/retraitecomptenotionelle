@@ -554,6 +554,16 @@ def _pages(contexte: Contexte) -> dict:
         ("simuler_regime_special", "/simuler", {
             **BASE, "statut": "agent_sncf", "naissance": "1960", "liquidation": "52",
         }),
+        # Le quatrième profil de fiche de paie — celui d'un agent public non
+        # titulaire, qui relève du régime général et de l'Ircantec. Les trois
+        # autres sont déjà couverts : le salarié du privé par `simuler_calcul`,
+        # le fonctionnaire par `simuler_rafp`, l'indépendant par
+        # `simuler_notionnel_plus_genereux`. Sans ce cas, le portage du bloc
+        # « Et pendant que vous cotisez » n'était comparé que sur trois d'entre
+        # eux, et c'est le genre de trou qui se voit six mois plus tard.
+        ("simuler_agent_non_titulaire", "/simuler", {
+            **BASE, "statut": "contractuel_public",
+        }),
         ("simuler_indexation_prix", "/simuler", {**BASE, "indexation": "prix"}),
         ("simuler_conversion_acquis", "/simuler", {
             **BASE, "conversion_acquis": "liquidation",

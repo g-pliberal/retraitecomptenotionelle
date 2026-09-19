@@ -1,5 +1,5 @@
 /**
- * La fiche de paie : coût du travail, salaire brut, salaire net.
+ * La fiche de paie : coût du travail, revenu brut, revenu net.
  *
  * Portage de ``src/retraite_notionnelle/remuneration.py``, dont il reproduit
  * les conventions au centime — les témoins de `tests/temoins/` le vérifient.
@@ -7,13 +7,15 @@
  * n'en garde que ce qu'il faut pour lire le code.
  *
  *     coût du travail = brut + cotisations patronales − réduction générale
- *     salaire net     = brut − cotisations salariales − CSG − CRDS
+ *     revenu net      = brut − cotisations salariales − CSG − CRDS
  *
- * TROIS CHOSES À SAVOIR AVANT DE MODIFIER QUOI QUE CE SOIT ICI.
+ * QUATRE CHOSES À SAVOIR AVANT DE MODIFIER QUOI QUE CE SOIT ICI.
  *
- * 1. **L'incidence est intégrale.** Le coût du travail est tenu fixe, et le
- *    brut est celui qui l'épuise sous les nouveaux taux : ce que l'employeur ne
- *    verse plus en cotisations, il le verse en salaire.
+ * 1. **L'incidence est intégrale quand l'employeur est connu.** Le coût du
+ *    travail est tenu fixe, et le brut est celui qui l'épuise sous les
+ *    nouveaux taux : ce que l'employeur ne verse plus en cotisations, il le
+ *    verse en salaire. Quand il ne l'est pas — ou qu'il n'y en a pas —, c'est
+ *    l'ASSIETTE qui est tenue fixe, et seule la part de l'assuré bouge.
  * 2. **Le partage salarial/patronal du taux unique n'est pas neutre**, bien
  *    qu'on l'attende. La CSG est assise sur le BRUT, que le partage déplace ;
  *    et la réduction générale n'efface que des cotisations patronales.
@@ -21,6 +23,12 @@
  *    maximal est la somme des taux de son périmètre ; un scénario qui baisse la
  *    cotisation retraite patronale la baisse aussi. Au SMIC, où elle efface
  *    tout, baisser cette cotisation ne rend donc rien.
+ * 4. **Quatre profils, et le découpage n'est pas celui des familles de
+ *    statut** : c'est celui de ce que l'on sait de l'employeur. `salarie_prive`,
+ *    `salarie_ircantec`, `agent_seul` — la fiche du régime ne porte que la
+ *    retenue de l'agent, parce que ce que verse son employeur est un taux
+ *    d'ÉQUILIBRE et non un prix du travail — et `independant`, qui n'a pas
+ *    d'employeur du tout. Voir `profilDeLaFiche`.
  */
 
 import { Fiabilite } from "./serie.js";
@@ -28,8 +36,22 @@ import { Fiabilite } from "./serie.js";
 /** Heures d'un temps plein sur une année : 35 heures sur 52 semaines. */
 export const HEURES_ANNUELLES_TEMPS_PLEIN = 1820.0;
 
-/** Familles de statuts dont ce module sait écrire la fiche de paie. */
-export const FAMILLES_COUVERTES = Object.freeze(["prive"]);
+/**
+ * Familles de statuts dont ce module sait écrire la fiche de paie.
+ *
+ * Restent dehors `agricole` — la MSA a ses propres taux hors retraite —,
+ * `outre_mer`, dont chaque collectivité a sa caisse, `elus`, dont l'indemnité
+ * de fonction n'est pas un salaire, et `hors_emploi`, qui ne cotise pas.
+ */
+export const FAMILLES_COUVERTES = Object.freeze([
+  "prive", "public", "special", "independant",
+]);
+
+/** Ce que le modèle tient FIXE quand il compare deux systèmes. */
+export const Incidence = Object.freeze({
+  COUT_DU_TRAVAIL: "cout_du_travail",
+  ASSIETTE: "assiette",
+});
 
 /**
  * Somme des taux appliqués segment par segment à une assiette.
@@ -52,6 +74,49 @@ function montant(segments, assiette, plafondAnnuel) {
     }
   }
   return total;
+}
+
+/**
+ * Un taux qui dépend du NIVEAU de l'assiette, et porte sur sa totalité.
+ *
+ * C'est la forme qu'a prise la loi pour les indépendants, et elle n'est pas
+ * celle d'un barème par tranches : « le taux de base […] fait l'objet d'une
+ * réduction lorsque le montant annuel de leur assiette de cotisations est
+ * inférieur à trois fois la valeur annuelle du plafond » (D. 621-2). Le taux
+ * réduit s'applique alors à TOUT le revenu ; entre deux paliers il est
+ * interpolé linéairement, et au-delà de `jusqu_en_plafonds` ce sont les
+ * tranches du poste qui reprennent la main.
+ */
+function tauxProgressif(bareme, assietteEnPlafonds) {
+  const paliers = bareme.paliers;
+  if (!paliers.length) {
+    return 0;
+  }
+  if (assietteEnPlafonds <= paliers[0].en_plafonds) {
+    return paliers[0].taux;
+  }
+  let precedent = paliers[0];
+  for (const palier of paliers.slice(1)) {
+    if (assietteEnPlafonds <= palier.en_plafonds) {
+      const largeur = palier.en_plafonds - precedent.en_plafonds;
+      if (largeur <= 0) {
+        return palier.taux;
+      }
+      const part = (assietteEnPlafonds - precedent.en_plafonds) / largeur;
+      return precedent.taux + part * (palier.taux - precedent.taux);
+    }
+    precedent = palier;
+  }
+  return precedent.taux;
+}
+
+/** Ce que l'assuré supporte au titre d'un poste, barème progressif compris. */
+function montantSalarie(poste, assiette, plafondAnnuel) {
+  const bareme = poste.progressif;
+  if (bareme && assiette < bareme.jusqu_en_plafonds * plafondAnnuel) {
+    return tauxProgressif(bareme, assiette / plafondAnnuel) * assiette;
+  }
+  return montant(poste.salarie, assiette, plafondAnnuel);
 }
 
 /** La réduction générale dégressive unique, et de quoi la recalculer. */
@@ -99,24 +164,37 @@ export class ReductionGenerale {
   }
 }
 
-/** Tout ce que le droit prélève sur un salaire, hors retraite acquisitive. */
-export class BaremePrelevements {
-  constructor(paquet) {
-    this.annee = paquet.annee;
-    this.fiabilite = paquet.fiabilite;
-    this.csg_deductible = paquet.csg_deductible;
-    this.csg_imposable = paquet.csg_imposable;
-    this.crds = paquet.crds;
-    this.abattement_frais = paquet.abattement_frais;
-    this.postes = paquet.postes;
-    this.reduction_generale = new ReductionGenerale(paquet.reduction_generale);
+/**
+ * Tout ce que le droit prélève sur un revenu, hors retraite acquisitive, pour
+ * une situation d'employeur donnée.
+ *
+ * `reduction_generale` est `null` quand l'employeur n'y a pas droit — ou qu'il
+ * n'y en a pas.
+ */
+export class ProfilRemuneration {
+  constructor(fiche) {
+    this.code = fiche.code;
+    this.libelle = fiche.libelle;
+    this.libelle_assiette = fiche.libelle_assiette;
+    this.libelle_net = fiche.libelle_net;
+    this.cout_du_travail = fiche.cout_du_travail;
+    this.incidence = fiche.incidence;
+    this.annee = fiche.annee;
+    this.fiabilite = fiche.fiabilite;
+    this.csg_deductible = fiche.csg_deductible;
+    this.csg_imposable = fiche.csg_imposable;
+    this.crds = fiche.crds;
+    this.abattement_frais = fiche.abattement_frais;
+    this.postes = fiche.postes;
+    this.reduction_generale = fiche.reduction_generale
+      ? new ReductionGenerale(fiche.reduction_generale) : null;
   }
 
   get csg() {
     return this.csg_deductible + this.csg_imposable;
   }
 
-  /** Ce poste est-il dû à ce salaire, pour cet assuré ? */
+  /** Ce poste est-il dû à ce revenu, pour cet assuré ? */
   static du(poste, brut, plafondAnnuel, cadre) {
     if (poste.cadres_seulement && !cadre) {
       return false;
@@ -125,6 +203,23 @@ export class BaremePrelevements {
       return false;
     }
     return true;
+  }
+}
+
+/** Les quatre profils, tels que le paquet de données les porte. */
+export class BaremePrelevements {
+  constructor(paquet) {
+    this.annee = paquet.annee;
+    this.fiabilite = paquet.fiabilite;
+    this.profils = new Map(
+      Object.entries(paquet.profils).map(
+        ([code, fiche]) => [code, new ProfilRemuneration(fiche)],
+      ),
+    );
+  }
+
+  profil(code) {
+    return this.profils.get(code);
   }
 }
 
@@ -166,12 +261,12 @@ export class BlocRetraite {
    * étages de ce bloc qui sont dans le périmètre, plus les contributions
    * d'équilibre du barème quand le système les conserve.
    */
-  tauxEmployeurDansLaReduction(bareme) {
+  tauxEmployeurDansLaReduction(profil) {
     let total = this.composantes
       .filter((c) => c.dansLaReductionGenerale)
       .reduce((somme, c) => somme + c.tauxEmployeurPremiereTranche(), 0);
     if (!this.remplaceLesContributionsDEquilibre) {
-      for (const poste of bareme.postes) {
+      for (const poste of profil.postes) {
         if (poste.retraite && poste.dans_la_reduction_generale) {
           total += poste.employeur
             .filter((s) => s.bas < 1)
@@ -231,10 +326,10 @@ export class FicheDePaie {
   }
 }
 
-/** Construit une fiche de paie sous un bloc retraite donné. */
+/** Construit une fiche de paie sous un bloc retraite donné, pour un profil. */
 export class ConstructeurFiche {
-  constructor(bareme) {
-    this.bareme = bareme;
+  constructor(profil) {
+    this.profil = profil;
   }
 
   _lignes(bloc, brut, plafond, cadre) {
@@ -245,24 +340,24 @@ export class ConstructeurFiche {
       salarie: montant(composante.salarie, brut, plafond),
       employeur: montant(composante.employeur, brut, plafond),
     }));
-    for (const poste of this.bareme.postes) {
+    for (const poste of this.profil.postes) {
       if (poste.retraite && bloc.remplaceLesContributionsDEquilibre) {
         continue;
       }
-      if (!BaremePrelevements.du(poste, brut, plafond, cadre)) {
+      if (!ProfilRemuneration.du(poste, brut, plafond, cadre)) {
         continue;
       }
       lignes.push({
         code: poste.code,
         libelle: poste.libelle,
         retraite: poste.retraite,
-        salarie: montant(poste.salarie, brut, plafond),
+        salarie: montantSalarie(poste, brut, plafond),
         employeur: montant(poste.employeur, brut, plafond),
       });
     }
-    const taux = this.bareme.csg + this.bareme.crds;
+    const taux = this.profil.csg + this.profil.crds;
     if (taux > 0) {
-      const abattement = montant(this.bareme.abattement_frais, brut, plafond);
+      const abattement = montant(this.profil.abattement_frais, brut, plafond);
       lignes.push({
         code: "csg_crds", libelle: "CSG et CRDS", retraite: false,
         salarie: (brut - abattement) * taux, employeur: 0,
@@ -276,14 +371,14 @@ export class ConstructeurFiche {
     let total = bloc.composantes
       .filter((c) => c.dansLaReductionGenerale)
       .reduce((somme, c) => somme + montant(c.employeur, brut, plafond), 0);
-    for (const poste of this.bareme.postes) {
+    for (const poste of this.profil.postes) {
       if (!poste.dans_la_reduction_generale) {
         continue;
       }
       if (poste.retraite && bloc.remplaceLesContributionsDEquilibre) {
         continue;
       }
-      if (!BaremePrelevements.du(poste, brut, plafond, cadre)) {
+      if (!ProfilRemuneration.du(poste, brut, plafond, cadre)) {
         continue;
       }
       total += poste.taux_dans_la_reduction !== null
@@ -295,8 +390,12 @@ export class ConstructeurFiche {
   }
 
   _reduction(bloc, brut, plafond, smicAnnuel, cadre) {
-    const coefficient = this.bareme.reduction_generale.coefficient(
-      brut, smicAnnuel, bloc.tauxEmployeurDansLaReduction(this.bareme),
+    const reduction = this.profil.reduction_generale;
+    if (reduction === null) {
+      return 0;
+    }
+    const coefficient = reduction.coefficient(
+      brut, smicAnnuel, bloc.tauxEmployeurDansLaReduction(this.profil),
     );
     if (coefficient <= 0) {
       return 0;
@@ -313,8 +412,13 @@ export class ConstructeurFiche {
     const reduction = this._reduction(bloc, brut, plafondAnnuel, smicAnnuel, cadre);
     const salariales = lignes.reduce((total, l) => total + l.salarie, 0);
     const patronales = lignes.reduce((total, l) => total + l.employeur, 0);
-    const tauxRetraite = bloc.tauxEmployeurDansLaReduction(this.bareme);
-    const maximal = this.bareme.reduction_generale.coefficientMaximalAvec(tauxRetraite);
+    let partRetraite = 0;
+    if (this.profil.reduction_generale !== null) {
+      const tauxRetraite = bloc.tauxEmployeurDansLaReduction(this.profil);
+      const maximal = this.profil.reduction_generale
+        .coefficientMaximalAvec(tauxRetraite);
+      partRetraite = maximal > 0 ? Math.min(1, tauxRetraite / maximal) : 0;
+    }
     return new FicheDePaie({
       annee,
       coutDuTravail: brut + patronales - reduction,
@@ -322,9 +426,8 @@ export class ConstructeurFiche {
       net: brut - salariales,
       lignes,
       reductionGenerale: reduction,
-      fiabilite: this.bareme.fiabilite,
-      partRetraiteDansLaReduction: maximal > 0
-        ? Math.min(1, tauxRetraite / maximal) : 0,
+      fiabilite: this.profil.fiabilite,
+      partRetraiteDansLaReduction: partRetraite,
     });
   }
 
@@ -350,6 +453,21 @@ export class ConstructeurFiche {
     }
     return (bas + haut) / 2;
   }
+
+  /**
+   * Le brut à retenir sous le nouveau système, selon l'incidence du profil :
+   * le coût du travail tenu fixe quand l'employeur est connu, l'assiette tenue
+   * fixe quand il ne l'est pas. Une ligne, mais c'est là que se joue la
+   * décision du module.
+   */
+  brutSousLaProposition(actuelle, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
+    if (this.profil.incidence === Incidence.ASSIETTE) {
+      return actuelle.brut;
+    }
+    return this.brutACoutDonne(
+      actuelle.coutDuTravail, plafondAnnuel, smicAnnuel, bloc, cadre,
+    );
+  }
 }
 
 // -- les blocs retraite des scénarios ---------------------------------------
@@ -362,6 +480,11 @@ export class ConstructeurFiche {
  * changent pas ce qui est prélevé — seulement ce qui est porté au compte.
  */
 export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
+  // Un non-salarié paie tout : la fiche d'un régime partagé avec des salariés
+  // — un artisan relève du régime général — porte la répartition 45/55 d'un
+  // salarié, et elle ne le concerne pas. `moteur/compte.js` en tire déjà la
+  // même conséquence pour le compte notionnel.
+  const sansEmployeur = affiliations.sansEmployeur(statut);
   const composantes = [];
   for (const code of affiliations.regimes(statut, annee)) {
     if (!catalogue.contient(code)) {
@@ -375,7 +498,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
     const employeur = [];
     for (const periode of regime.periodesActives(annee)) {
       const [basse, haute] = periode.bornesAssietteEnPass();
-      const part = periode.part_salariale;
+      const part = sansEmployeur ? 1 : periode.part_salariale;
       const taux = periode.taux_cotisation_retraite;
       if (taux) {
         salarie.push({ bas: basse, haut: haute, taux: taux * part });
@@ -385,7 +508,8 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
       // précédente : c'est un segment de plus, non une tranche.
       const deplafonne = periode.taux_cotisation_deplafonnee;
       if (deplafonne) {
-        const partDeplafonnee = periode.part_salariale_deplafonnee;
+        const partDeplafonnee = sansEmployeur
+          ? 1 : periode.part_salariale_deplafonnee;
         salarie.push({ bas: 0, haut: null, taux: deplafonne * partDeplafonnee });
         employeur.push({
           bas: 0, haut: null, taux: deplafonne * (1 - partDeplafonnee),
@@ -441,6 +565,16 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
   });
 }
 
+/**
+ * Le bloc de la proposition pour qui n'a pas d'employeur : il porte les 18 %
+ * en entier. La proposition additionne « salariale et patronale » ; un
+ * indépendant est les deux à la fois, et lui prêter un employeur pour la
+ * moitié de la charge fabriquerait un gain qui n'existe pas.
+ */
+export function blocTauxUniqueSansEmployeur(tauxRepartition, tauxCapitalisation = 0) {
+  return blocTauxUnique(tauxRepartition, tauxCapitalisation, 1);
+}
+
 /** La fiche de paie sait-elle décrire ce statut ? */
 export function ficheDePaiePossible(affiliations, statut) {
   try {
@@ -448,6 +582,53 @@ export function ficheDePaiePossible(affiliations, statut) {
   } catch {
     return false;
   }
+}
+
+/**
+ * Le profil de fiche de paie d'un statut, ou `null` si aucun ne convient.
+ *
+ * Le découpage est celui de ce que l'on SAIT de l'employeur, et non celui des
+ * familles de statut — parce que c'est cela qui décide si une ligne « coût du
+ * travail » veut dire quelque chose :
+ *
+ * 1. pas d'employeur du tout → `independant` ;
+ * 2. au moins un régime dont la fiche ne porte que la retenue de l'agent
+ *    (`perimetre_taux === "agent_seul"`) → `agent_seul` : la part employeur
+ *    existe, mais c'est un taux d'équilibre ;
+ * 3. la famille `public` sans régime à retenue, c'est l'agent non titulaire
+ *    → `salarie_ircantec`, qui ne doit ni CEG, ni CET, ni APEC ;
+ * 4. le reste → `salarie_prive`, où tombent les statuts de la famille
+ *    `special` que la fermeture des régimes spéciaux a versés au régime
+ *    général et à l'Agirc-Arrco.
+ */
+export function profilDeLaFiche(affiliations, catalogue, statut, annee) {
+  let famille;
+  try {
+    famille = affiliations.famille(statut);
+  } catch {
+    return null;
+  }
+  if (!FAMILLES_COUVERTES.includes(famille)) {
+    return null;
+  }
+  if (famille === "independant" || affiliations.sansEmployeur(statut)) {
+    return "independant";
+  }
+  for (const code of affiliations.regimes(statut, annee)) {
+    if (!catalogue.contient(code)) {
+      continue;
+    }
+    const regime = catalogue.obtenir(code);
+    if (regime.hors_repartition) {
+      continue;
+    }
+    for (const periode of regime.periodesActives(annee)) {
+      if (periode.perimetre_taux === "agent_seul") {
+        return "agent_seul";
+      }
+    }
+  }
+  return famille === "public" ? "salarie_ircantec" : "salarie_prive";
 }
 
 /** SMIC annuel d'un temps plein, en euros courants de l'année. */
@@ -542,20 +723,28 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     return null;
   }
   const statut = carriere.ligne(anneesActives[0]).affiliation;
-  if (!ficheDePaiePossible(affiliations, statut)) {
+  const codeProfil = profilDeLaFiche(
+    affiliations, catalogue, statut, anneesActives[0],
+  );
+  if (codeProfil === null) {
     return null;
   }
+  const profil = bareme.profil(codeProfil);
 
-  const constructeur = new ConstructeurFiche(bareme);
+  const constructeur = new ConstructeurFiche(profil);
   // « Cadre » n'est pas une famille d'affiliation : c'est la seule chose qui
   // sépare deux statuts du privé pour la cotisation APEC, qui vaut 0,024 %.
   const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
-  const propose = blocTauxUnique(
-    parametres.taux_cotisation_liberal,
-    parametres.capitalisation_obligatoire
-      ? parametres.taux_capitalisation_obligatoire : 0,
-    parametres.part_salariale_taux_unique,
-  );
+  const capitalisation = parametres.capitalisation_obligatoire
+    ? parametres.taux_capitalisation_obligatoire : 0;
+  const propose = affiliations.sansEmployeur(statut)
+    ? blocTauxUniqueSansEmployeur(
+      parametres.taux_cotisation_liberal, capitalisation,
+    )
+    : blocTauxUnique(
+      parametres.taux_cotisation_liberal, capitalisation,
+      parametres.part_salariale_taux_unique,
+    );
 
   const comparees = [];
   for (const annee of anneesActives) {
@@ -573,8 +762,8 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     const ficheActuelle = constructeur.fiche(
       annee, brut, plafond, smic, blocActuel, cadre,
     );
-    const brutPropose = constructeur.brutACoutDonne(
-      ficheActuelle.coutDuTravail, plafond, smic, propose, cadre,
+    const brutPropose = constructeur.brutSousLaProposition(
+      ficheActuelle, plafond, smic, propose, cadre,
     );
     comparees.push(new AnneeComparee({
       annee,
@@ -596,8 +785,14 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     libelleStatut: affiliations.libelle(statut),
     cadre,
     annees: comparees,
-    millesimeBareme: bareme.annee,
-    fiabilite: bareme.fiabilite,
+    millesimeBareme: profil.annee,
+    fiabilite: profil.fiabilite,
+    profil: profil.code,
+    libelleProfil: profil.libelle,
+    libelleAssiette: profil.libelle_assiette,
+    libelleNet: profil.libelle_net,
+    afficheCoutDuTravail: profil.cout_du_travail,
+    incidence: profil.incidence,
   });
 }
 

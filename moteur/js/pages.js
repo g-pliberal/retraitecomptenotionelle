@@ -3389,6 +3389,12 @@ function eurosSigne(montant, centimes = true) {
  *
  * Trois chiffres ouverts, le reste replié : la page de résultats tient un
  * budget de mots et n'ouvre aucun tableau.
+ *
+ * Quatre profils, et un libellé par profil : ce qui s'écrit « salaire » pour un
+ * salarié du privé s'écrit « traitement » pour un fonctionnaire et « revenu
+ * professionnel » pour un indépendant ; et la ligne « coût du travail » ne
+ * s'affiche que là où ce que verse l'employeur est un prix du travail, non un
+ * taux d'équilibre.
  */
 function salaireNet(comparaison, saisie) {
   const remuneration = comparaison.remuneration;
@@ -3400,8 +3406,9 @@ function salaireNet(comparaison, saisie) {
   const apres = reference.proposition;
   const gain = remuneration.gainNetMensuel;
 
+  const net = echapper(remuneration.libelleNet.toLowerCase());
   const ouverture = [
-    g.fiche(`votre salaire net en ${reference.annee}`, g.eurosCentimes(avant.net / 12)),
+    g.fiche(`votre ${net} en ${reference.annee}`, g.eurosCentimes(avant.net / 12)),
     g.fiche("avec le système 4", g.eurosCentimes(apres.net / 12)),
     g.fiche("par mois", eurosSigne(gain)),
   ].join("");
@@ -3412,6 +3419,12 @@ function salaireNet(comparaison, saisie) {
     ? ` Sur les ${duree} années qui vous séparent de la retraite : `
       + `${eurosSigne(cumul, false)} en euros de ${saisie.euros}.`
     : "";
+  // Deux hypothèses, et il faut dire laquelle vaut ici : le coût du travail
+  // tenu fixe quand l'employeur verse des taux de droit commun, l'assiette
+  // tenue fixe quand il verse un taux d'équilibre — ou qu'il n'y en a pas.
+  const sousQuelleHypothese = remuneration.afficheCoutDuTravail
+    ? "à coût du travail inchangé pour votre employeur"
+    : `à ${echapper(remuneration.libelleAssiette.toLowerCase())} inchangé`;
 
   return `
 <h2 id="salaire-net">Et pendant que vous cotisez</h2>
@@ -3422,7 +3435,7 @@ que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">${ouverture}</div>
   <p>Soit <strong>${eurosSigne(gain)} ${sens} sur votre fiche de paie</strong>,
-  à coût du travail inchangé pour votre employeur.${reste}</p>
+  ${sousQuelleHypothese}.${reste}</p>
   ${salaireNetDetail(comparaison, remuneration, saisie)}
 </div>`;
 }
@@ -3436,18 +3449,36 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
   // TROIS COLONNES, ET NON QUATRE. Une colonne « écart » de plus forçait le
   // tableau à défiler latéralement sur un téléphone, et l'écart qui compte —
   // celui du net — est déjà le chiffre de tête.
-  const lignes = [
+  //
+  // LA PREMIÈRE LIGNE N'EST PAS TOUJOURS LÀ. Le coût du travail suppose de
+  // savoir ce que l'employeur verse ; quand ce qu'il verse est un taux
+  // d'équilibre, ce n'est pas un prix du travail, et l'afficher tromperait.
+  const avecCout = remuneration.afficheCoutDuTravail;
+  const assiette = echapper(remuneration.libelleAssiette);
+  const libelleNet = echapper(remuneration.libelleNet);
+  const lignes = [];
+  if (avecCout) {
     // Le mot s'affiche avec sa capitale, comme les autres intitulés de ligne,
     // mais renvoie à la même entrée du glossaire.
-    [g.terme("Coût du travail", "coût du travail"),
-      mois(avant.coutDuTravail), mois(apres.coutDuTravail)],
-    ["Salaire brut", mois(avant.brut), mois(apres.brut)],
-    ["<strong>Salaire net</strong>", `<strong>${mois(avant.net)}</strong>`,
+    lignes.push([g.terme("Coût du travail", "coût du travail"),
+      mois(avant.coutDuTravail), mois(apres.coutDuTravail)]);
+  }
+  // Ce qu'on met sous « dont pour la retraite » suit la même logique : les deux
+  // parts réunies quand la colonne part d'un coût du travail, la seule part de
+  // l'assuré quand elle part de son assiette.
+  const retraiteAvant = avecCout ? avant.retraiteTotale : avant.retraiteSalarie;
+  const retraiteApres = avecCout ? apres.retraiteTotale : apres.retraiteSalarie;
+  lignes.push(
+    [assiette, mois(avant.brut), mois(apres.brut)],
+    [`<strong>${libelleNet}</strong>`, `<strong>${mois(avant.net)}</strong>`,
       `<strong>${mois(apres.net)}</strong>`],
-    ["Dont pour la retraite", mois(avant.retraiteTotale), mois(apres.retraiteTotale)],
-    ["Ce qui vous arrive, sur 100 € coûtés",
-      g.pourcentage(avant.partQuiArrive), g.pourcentage(apres.partQuiArrive)],
-  ];
+    [avecCout ? "Dont pour la retraite" : "Dont pour la retraite, à votre charge",
+      mois(retraiteAvant), mois(retraiteApres)],
+    [avecCout ? "Ce qui vous arrive, sur 100 € coûtés"
+      : `Ce qui vous reste, sur 100 € de ${assiette.toLowerCase()}`,
+    g.pourcentage(avecCout ? avant.partQuiArrive : avant.net / avant.brut),
+    g.pourcentage(avecCout ? apres.partQuiArrive : apres.net / apres.brut)],
+  );
   const grille = g.tableau(
     ["Par mois", "Systèmes 1 à 3", "Système 4"],
     lignes, ["", "nombre", "nombre"],
@@ -3455,13 +3486,20 @@ function salaireNetDetail(comparaison, remuneration, saisie) {
     + `${remuneration.libelleStatut}`,
     true,
   );
-  const lecture = "<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
-    + `prélèvement retraite, lui, passe de ${mois(avant.retraiteTotale)} à `
-    + `${mois(apres.retraiteTotale)} par mois, soit `
-    + `<strong>${eurosSigne((apres.retraiteTotale - avant.retraiteTotale) / 12)}`
-    + "</strong> ; le salaire brut monte de "
-    + `${eurosSigne((apres.brut - avant.brut) / 12)}, et le net de `
-    + `${eurosSigne((apres.net - avant.net) / 12)}.</p>`;
+  const lecture = avecCout
+    ? "<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
+      + `prélèvement retraite, lui, passe de ${mois(retraiteAvant)} à `
+      + `${mois(retraiteApres)} par mois, soit `
+      + `<strong>${eurosSigne((retraiteApres - retraiteAvant) / 12)}`
+      + "</strong> ; le salaire brut monte de "
+      + `${eurosSigne((apres.brut - avant.brut) / 12)}, et le net de `
+      + `${eurosSigne((apres.net - avant.net) / 12)}.</p>`
+    : `<p>Le ${assiette.toLowerCase()} ne bouge pas : c'est l'hypothèse, et ici `
+      + "c'est la seule disponible. Ce que vous versez pour votre retraite "
+      + `passe de ${mois(retraiteAvant)} à ${mois(retraiteApres)} par mois, `
+      + `soit <strong>${eurosSigne((retraiteApres - retraiteAvant) / 12)}`
+      + "</strong> ; votre net bouge donc de "
+      + `${eurosSigne((apres.net - avant.net) / 12)}.</p>`;
 
   const alerte = remuneration.buteSurLeSmic
     ? '<p class="note avertissement">'
@@ -3501,50 +3539,158 @@ function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
     + "cinq points ne partent pas : ils alimentent un compte qui reste le "
     + "vôtre, transmissible à vos héritiers tant qu'il n'est pas liquidé — "
     + `${g.euros(remuneration.epargneCumulee)} d'ici votre départ, en euros `
-    + `de ${saisie.euros}. Sans eux, le salaire net monterait à tous les `
-    + "niveaux de salaire ; avec eux, il baisse au voisinage du SMIC.</p>";
+    + `de ${saisie.euros}. `
+    + (remuneration.afficheCoutDuTravail
+      ? "Sans eux, le salaire net monterait à tous les niveaux de salaire ; "
+        + "avec eux, il baisse au voisinage du SMIC."
+      : "Sans eux, le chiffre du haut remonterait de la part que vous en "
+        + "supportez : ce que vous perdez en net, vous le retrouvez sur ce "
+        + "compte.")
+    + "</p>";
 }
 
-/** Ce qu'il faut savoir pour discuter le chiffre plutôt que le croire. */
+/**
+ * Ce qu'il faut savoir pour discuter le chiffre plutôt que le croire.
+ *
+ * Le premier paragraphe est celui qui change d'un profil à l'autre, et c'est le
+ * plus important : il dit ce que le modèle tient FIXE, et pourquoi il n'a pas
+ * le choix quand l'employeur verse un taux d'équilibre.
+ */
 function salaireNetMethode(comparaison, remuneration) {
   const parametres = comparaison.parametres;
   const part = g.pourcentage(parametres.part_salariale_taux_unique, false, 0);
+  const assiette = echapper(remuneration.libelleAssiette.toLowerCase());
   return `
 <h3>Comment ce chiffre est calculé, et ce qu'il suppose</h3>
-<p><strong>Le coût du travail est tenu fixe.</strong> C'est ce que votre
+${salaireNetIncidence(remuneration, assiette)}
+${salaireNetPartage(remuneration, parametres, part)}
+${salaireNetAllegement(remuneration)}
+${salaireNetPerimetre(remuneration)}
+<p class="discret">Taux hors retraite : millésime ${remuneration.millesimeBareme},
+appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
+de financement. Fiabilité : ${nomFiabilite(remuneration.fiabilite)}. Les taux de
+retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
+exactement ce que le compte notionnel encaisse.</p>`;
+}
+
+/** Ce que le modèle tient fixe — et, pour le public, pourquoi il le doit. */
+function salaireNetIncidence(remuneration, assiette) {
+  if (remuneration.afficheCoutDuTravail) {
+    return `<p><strong>Le coût du travail est tenu fixe.</strong> C'est ce que votre
 employeur a budgété pour votre poste, et aucune réforme des retraites ne le
 change. Ce qu'il ne verse plus en cotisations, il le verse en salaire : le brut
 monte, et le net avec lui. C'est ce que veut dire « réduire l'écart entre le net
 et le brut », et c'est l'hypothèse la plus favorable à une baisse de cotisation
 — une cotisation patronale est du salaire différé, mais rien n'oblige un
-employeur à le rendre du jour au lendemain.</p>
-<p><strong>Les ${g.pourcentage(parametres.taux_cotisation_liberal, false, 0)}
+employeur à le rendre du jour au lendemain.</p>`;
+  }
+  if (remuneration.profil === "independant") {
+    return `<p><strong>Votre ${assiette} est tenu fixe, et il n'y a pas de coût du
+travail à afficher</strong> : vous n'avez pas d'employeur, et votre cotisation
+est intégralement personnelle. Ce qu'une baisse de taux vous rend vous revient
+donc en entier, sans qu'il faille supposer qui que ce soit pour le répercuter —
+c'est le seul des quatre profils où l'incidence n'est pas une hypothèse.
+L'assiette retenue est l'assiette sociale unique : votre revenu professionnel
+après l'abattement de 26 %, qui sert depuis 2025 aux cotisations comme à la
+CSG.</p>`;
+  }
+  return `<p><strong>Votre ${assiette} est tenu fixe, et le site n'affiche pas de
+coût du travail pour votre statut.</strong> Ce n'est pas un oubli, c'est un
+refus. Ce que verse votre employeur n'est pas le prix de votre travail mais un
+<strong>taux d'équilibre</strong> — jusqu'à 82,28 % du traitement pour l'État en
+2026 —, fixé pour que le compte « Pensions » tombe juste, c'est-à-dire pour
+payer les pensions d'aujourd'hui, et non parce que vous acquerriez 82 % de votre
+traitement en droits nouveaux. Le traiter comme un coût du travail et supposer
+qu'une baisse vous reviendrait en salaire afficherait une augmentation de
+soixante-dix points qui n'existe pas : cette contribution finance une dette de
+pensions qui, elle, reste à payer. C'est la page <a href="${g.lien("/cout")}">Coût</a>
+qui en traite.</p>
+<p>Le chiffre ci-dessus est donc la lecture <strong>prudente</strong> : seule la
+part que vous supportez bouge. Il n'est pas comparable, terme à terme, au gain
+d'un salarié du privé, dont le site fait remonter la part patronale dans le
+brut.</p>`;
+}
+
+/** Le partage des 18 %, et ce qu'il pèse — ou ne pèse pas, sans employeur. */
+function salaireNetPartage(remuneration, parametres, part) {
+  const repartition = g.pourcentage(parametres.taux_cotisation_liberal, false, 0);
+  const capitalise = g.pourcentage(
+    parametres.taux_capitalisation_obligatoire, false, 0,
+  );
+  if (remuneration.profil === "independant") {
+    return `<p><strong>Les ${repartition} et les ${capitalise} capitalisés sont à votre
+charge en entier.</strong> La proposition les annonce « salariale et patronale
+additionnées » ; vous êtes les deux à la fois, comme vous l'êtes déjà des
+vingt-six points que vous versez aujourd'hui. Vous prêter un employeur pour la
+moitié de la charge fabriquerait un gain qui n'existe pas.</p>`;
+  }
+  if (!remuneration.afficheCoutDuTravail) {
+    return `<p><strong>Les ${repartition} sont partagés moitié-moitié</strong> entre
+vous et votre employeur, comme les ${capitalise} capitalisés : votre part est
+donc de ${part} de chacun. La proposition ne dit pas
+qui porte quoi, et ce partage commande directement le chiffre ci-dessus —
+puisque seule votre part y figure, tout déplacer vers l'employeur ferait
+disparaître la hausse, et tout déplacer vers vous la doublerait.</p>`;
+  }
+  return `<p><strong>Les ${repartition}
 sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
-${g.pourcentage(parametres.taux_capitalisation_obligatoire, false, 0)}
+${capitalise}
 capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
 neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
 porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
 bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
-est le partage du milieu (${part} pour vous).</p>
-<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
+est le partage du milieu (${part} pour vous).</p>`;
+}
+
+/** L'allègement sur les bas salaires — quand il s'applique, et sinon pourquoi. */
+function salaireNetAllegement(remuneration) {
+  if (remuneration.afficheCoutDuTravail) {
+    return `<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
 Depuis 2026, il efface au niveau du SMIC la totalité des cotisations patronales
 qu'il vise — son coefficient, 40,21 %, est exactement leur somme — et s'éteint à
 trois SMIC. Conséquence, et elle va à contre-courant : <strong>au SMIC, baisser
 la cotisation retraite de l'employeur ne rend rien</strong>, puisqu'il n'en
 versait déjà plus. La loi fixe ce coefficient « dans la limite de la somme des
 taux » du périmètre ; le modèle refait donc l'addition sous la proposition au
-lieu de garder le chiffre d'aujourd'hui.</p>
-<p><strong>Ce que la fiche de paie ne porte pas</strong> : la taxe
+lieu de garder le chiffre d'aujourd'hui.</p>`;
+  }
+  return `<p><strong>L'allègement sur les bas salaires ne joue pas ici.</strong> La
+réduction générale de l'article L. 241-13 n'efface que des cotisations
+patronales du régime général ; elle ne s'applique ni à la retenue d'un
+fonctionnaire, ni aux cotisations personnelles d'un indépendant. C'est pourtant
+elle qui commande le résultat d'un salarié du privé, chez qui elle rend nul, au
+voisinage du SMIC, le gain d'une baisse de cotisation patronale — une raison de
+plus de ne pas comparer les deux chiffres sans précaution.</p>`;
+}
+
+/** Ce que la fiche ne porte pas, et qui n'est pas le même selon le profil. */
+function salaireNetPerimetre(remuneration) {
+  if (remuneration.profil === "independant") {
+    return `<p><strong>Ce que la fiche ne porte pas</strong> : la contribution à la
+formation professionnelle, qui est un forfait de 0,25 % du plafond et non un
+taux, et l'assiette minimale que la loi impose aux très bas revenus — le net
+affiché en bas de barème est donc un plafond. Vos cotisations de retraite sont
+celles des fiches de régime, qui alignent l'artisan et le commerçant sur le
+régime général : c'est la convention du modèle entier, et elle vaut ici comme
+pour la pension.</p>`;
+  }
+  if (!remuneration.afficheCoutDuTravail) {
+    return `<p><strong>Ce que la fiche ne porte pas</strong> : la retraite
+additionnelle de la fonction publique, assise sur les PRIMES, que l'assiette de
+ce modèle — le traitement indiciaire brut et la nouvelle bonification
+indiciaire — exclut par construction. Un agent dont les primes pèsent lourd voit
+donc ici une fraction de sa rémunération, et non sa feuille de paie entière. Les
+autres prélèvements salariaux sont nuls, et c'est un résultat : la cotisation
+maladie salariale a disparu en 2018 comme dans le privé, un titulaire n'est pas
+assuré contre le chômage, et la contribution exceptionnelle de solidarité de 1 %
+a été supprimée la même année.</p>`;
+  }
+  return `<p><strong>Ce que la fiche ne porte pas</strong> : la taxe
 d'apprentissage, la formation professionnelle, la participation à la
 construction, le versement mobilité, la prévoyance et la mutuelle d'entreprise.
 Aucune ne bouge d'un système à l'autre, et plusieurs dépendent de la commune ou
 de la taille de l'entreprise. Le coût du travail affiché est donc un plancher.
-L'employeur type est une entreprise de cinquante salariés et plus.</p>
-<p class="discret">Taux hors retraite : millésime ${remuneration.millesimeBareme},
-appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
-de financement. Fiabilité : ${nomFiabilite(remuneration.fiabilite)}. Les taux de
-retraite, eux, sont ceux des fiches de régime : la fiche de paie prélève
-exactement ce que le compte notionnel encaisse.</p>`;
+L'employeur type est une entreprise de cinquante salariés et plus.</p>`;
 }
 
 /**
