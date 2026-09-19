@@ -129,7 +129,7 @@ export function generations() {
 }
 
 /** Demi-largeur de la tranche d'âges qu'une génération de la grille représente. */
-const DEMI_TRANCHE = Math.floor(PAS_GENERATIONS / 2);
+export const DEMI_TRANCHE = Math.floor(PAS_GENERATIONS / 2);
 
 /**
  * Les deux pondérations possibles des cas types. `effectifs` est celle des
@@ -383,7 +383,7 @@ function rapportsRecettes(total, annee, bascule) {
  * publiée par la DREES est 2004-2024 : hors d'elle, la répartition du bord est
  * reconduite, et la série le dit en tombant au niveau `estimee`.
  */
-function ponderation(simulateur, mode, casTypes) {
+export function ponderation(simulateur, mode, casTypes) {
   if (!PONDERATIONS.includes(mode)) {
     throw new Error(`pondération inconnue : ${mode}`);
   }

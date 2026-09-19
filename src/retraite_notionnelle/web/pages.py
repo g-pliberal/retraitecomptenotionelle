@@ -38,6 +38,10 @@ from ..config import (
     SituationFoyer,
     TableConversion,
 )
+from ..avantages import (
+    LIBELLES_MOTIFS, MOTIFS, calculer_avantages, charger_avantages,
+    inventaire_depuis_paquet,
+)
 from ..cout import COMPOSANTE_GARANTIE, calculer_cout
 from ..donnees.assiette import AssietteActivite
 from ..donnees.distribution import DistributionPensions
@@ -1281,6 +1285,8 @@ class Contexte:
     _distribution: DistributionPensions | None = None
     _assiette: AssietteActivite | None = None
     _cout: object = None
+    _inventaire_avantages: object = None
+    _avantages: object = None
 
     def simulateur(self, parametres: Parametres | None = None) -> Simulateur:
         parametres = parametres or self.base
@@ -1323,6 +1329,19 @@ class Contexte:
                 self.simulateur(), self.depenses(), self.population(),
                 self.comptes(), assiette=self.assiette())
         return self._cout
+
+    def inventaire_avantages(self):
+        """Les trente-neuf avantages non contributifs — une donnée, pas un calcul."""
+        if self._inventaire_avantages is None:
+            self._inventaire_avantages = charger_avantages(self.base.racine_donnees)
+        return self._inventaire_avantages
+
+    def avantages(self):
+        """Ce que les avantages non contributifs coûtent — quatre secondes, une fois."""
+        if self._avantages is None:
+            self._avantages = calculer_avantages(
+                self.simulateur(), self.depenses(), self.population())
+        return self._avantages
 
     def echelle(self, saisie: Saisie) -> Echelle:
         """L'échelle des salaires de l'année courante, pour cette saisie.
@@ -1408,6 +1427,7 @@ TITRES = {
     "/trajectoire": "Trajectoire",
     "/cas-types": "Cas types",
     "/cout": "Coût",
+    "/avantages": "Avantages",
     "/methode": "Méthode",
     "/donnees": "Données",
     "/partager": "Partager",
@@ -1436,6 +1456,8 @@ DESCRIPTIONS = {
                   "proposition et sous quatre contrefactuels.",
     "/cout": "Ce que la retraite coûte, d'où vient l'argent, et ce qui manque, "
              "de 1959 à 2070 — et ce que chacun des quatre systèmes coûterait.",
+    "/avantages": "Les trente-neuf avantages non contributifs du système actuel : "
+                  "lesquels, depuis quand, et ce que le modèle sait en chiffrer.",
     "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
                 "opérations, et pourquoi la règle de revalorisation décide de "
                 "presque tout.",
@@ -1468,6 +1490,8 @@ def rendre(contexte: Contexte, chemin: str,
         return TITRES[chemin], _cas_types(contexte)
     if chemin == "/cout":
         return TITRES[chemin], _cout(contexte)
+    if chemin == "/avantages":
+        return TITRES[chemin], _avantages(contexte)
     if chemin == "/methode":
         return TITRES[chemin], _methode(contexte)
     if chemin == "/donnees":
@@ -4770,6 +4794,379 @@ retraite</a><a href="{g.lien("/cas-types")}">Voir treize carrières types</a></p
 
 {detail}
 """
+
+
+#: La couleur de chaque famille de l'inventaire, dans l'ordre où le comptage
+#: les empile. Les écarts structurels n'y sont pas : ils ne sont pas des
+#: dispositifs, ils ne se comptent pas avec eux, et l'inventaire le dit.
+COULEURS_FAMILLES: tuple[tuple[str, str], ...] = (
+    ("age_et_bonifications", "var(--serie-2)"),
+    ("droits_familiaux", "var(--serie-3)"),
+    ("minima_de_pension", "var(--serie-4)"),
+    ("droits_derives", "var(--serie-5)"),
+    ("periodes_non_cotisees", "var(--serie-6)"),
+    ("autres_avantages", "var(--serie-7)"),
+)
+
+#: Les couleurs des lignes de coût, dans l'ordre de la légende.
+COULEURS_LIGNES: tuple[str, ...] = (
+    "var(--serie-2)", "var(--serie-3)", "var(--serie-4)", "var(--serie-5)",
+    "var(--serie-6)", "var(--serie-7)", "var(--serie-8)", "var(--serie-9)",
+    "var(--serie-1)",
+)
+
+#: La couleur de chaque motif de départ anticipé.
+COULEURS_MOTIFS: dict[str, str] = {
+    "regime_special": "var(--serie-2)",
+    "classement": "var(--serie-4)",
+    "carriere_longue": "var(--serie-5)",
+}
+
+#: Ce que chacun des quatre états du modèle veut dire, en français courant.
+LIBELLES_ETATS: dict[str, str] = {
+    "chiffre": "chiffré",
+    "integre": "servi, chiffré à part",
+    "declare": "déclaré, non servi",
+    "absent": "absent",
+}
+
+
+def _avantages(contexte: Contexte) -> str:
+    """Tous les avantages non contributifs, depuis quand, et ce qu'ils coûtent.
+
+    CETTE PAGE RÉPOND À UNE QUESTION QU'ON POSE SOUVENT SANS Y RÉPONDRE :
+    pourquoi les pensions d'aujourd'hui dépassent-elles ce que les gens ont
+    cotisé ? Une partie de la réponse tient en une liste, et cette liste
+    n'existait nulle part — pas même dans ce dépôt, qui en portait trois
+    partielles et discordantes.
+
+    TROIS GRAPHIQUES, ET ILS N'ONT PAS LE MÊME STATUT. C'est la contrainte de
+    construction de cette page, et elle décide de l'ordre :
+
+    * **Le premier est une DONNÉE.** Combien de dispositifs non contributifs
+      existent chaque année, par famille. Rien n'y est calculé : chaque barre
+      est la somme des lignes de l'inventaire dont la date de création est
+      passée et la date de fin ne l'est pas. Il est donc exact, et c'est
+      pourquoi il mène.
+    * **Le deuxième est une MESURE, et un plancher très bas.** Ce que coûtent
+      les dispositifs que le modèle sait chiffrer. La grille de cas types n'est
+      pas une population — un seul de ses treize cas types a des enfants, aucun
+      ne connaît le chômage —, et le chiffre vaut 3 % de la dépense là où le
+      COR chiffre les droits de solidarité à « de l'ordre d'un cinquième ». La
+      carte le dit avant de montrer la courbe, et non après.
+    * **Le troisième mesure autre chose**, et c'est le résultat le moins
+      attendu : les annuités servies avant l'âge légal. Un avantage d'âge agit
+      deux fois — sur le montant, et sur la durée —, et la seconde pèse quinze
+      fois la première. La décote étant plafonnée à vingt trimestres, l'agent
+      parti cinq ans trop tôt et l'agent parti à l'heure butent sur le même
+      plafond : le montant ne sait pas les distinguer, la durée le sait.
+
+    LA LISTE ENTIÈRE EST DANS LA PAGE, repliée, avec pour chaque ligne sa base
+    légale et l'état du modèle à son égard. Une page qui ne peut pas se
+    justifier n'est pas honnête, et celle-ci affirme qu'il en existe
+    trente-neuf : elle doit pouvoir les nommer.
+    """
+    inventaire = contexte.inventaire_avantages()
+    cout = contexte.avantages()
+    derniere = cout.derniere
+    chiffres = len(inventaire.chiffres)
+    total = len(inventaire.avantages)
+
+    # -- premier graphique : combien existent, et depuis quand ---------------
+    #
+    # Les bornes sont LUES et non écrites : ajouter à l'inventaire un
+    # dispositif plus ancien doit déplacer le bord du cadre, et pas seulement
+    # une ligne de tableau.
+    dispositifs = tuple(a for a in inventaire.avantages
+                        if a.famille != "ecarts_structurels")
+    premiere_frise = min(a.creation for a in dispositifs)
+    derniere_frise = contexte.base.annee_courante
+    annees_frise = tuple(range(premiere_frise, derniere_frise + 1))
+    familles = {famille.code: famille.libelle for famille in inventaire.familles}
+    bandes = tuple(
+        g.Serie(
+            familles[code],
+            tuple(
+                float(sum(1 for a in dispositifs
+                          if a.famille == code and a.creation <= annee
+                          and (a.fin is None or a.fin >= annee)))
+                for annee in annees_frise
+            ),
+            couleur,
+        )
+        for code, couleur in COULEURS_FAMILLES
+    )
+    en_vigueur = sum(int(bande.valeurs[-1]) for bande in bandes)
+    frise = g.graphique(
+        f"Nombre d'avantages non contributifs en vigueur chaque année, par "
+        f"famille, de {premiere_frise} à {derniere_frise}",
+        annees_frise, bandes, unite="dispositifs", empile=True,
+    )
+
+    # -- les trois chiffres d'ouverture --------------------------------------
+    reperes = g.fiche(
+        "Avantages non contributifs recensés",
+        str(total),
+        "du minimum vieillesse à la bonification du cinquième",
+    ) + g.fiche(
+        "Ce que le modèle sait en chiffrer",
+        _milliards(derniere.gratuit, 1),
+        f"{chiffres} d'entre eux, en {derniere.annee}",
+    ) + g.fiche(
+        "Servi avant l'âge légal",
+        _milliards(derniere.anticipee, 1),
+        g.pourcentage(derniere.anticipee / derniere.observee, decimales=1)
+        + " de la dépense",
+    )
+
+    # -- deuxième graphique : ce qu'ils coûtent ------------------------------
+    annees_cout = tuple(ligne.annee for ligne in cout.annees)
+    couts = tuple(
+        g.Serie(
+            inventaire.libelle_de_ligne(ligne),
+            tuple(annee.lignes.get(ligne, 0.0) / 1000 for annee in cout.annees),
+            COULEURS_LIGNES[rang % len(COULEURS_LIGNES)],
+        )
+        for rang, ligne in enumerate(reversed(cout.lignes))
+    )
+    courbe_cout = g.graphique(
+        f"Coût des avantages non contributifs que le modèle sait chiffrer, de "
+        f"{annees_cout[0]} à {annees_cout[-1]}",
+        annees_cout, couts, unite="Md€ courants", empile=True,
+        decimales_donnees=1,
+    )
+
+    # -- troisième graphique : les annuités servies trop tôt -----------------
+    anticipees = tuple(
+        g.Serie(
+            LIBELLES_MOTIFS[motif],
+            tuple(annee.anticipees.get(motif, 0.0) / 1000 for annee in cout.annees),
+            COULEURS_MOTIFS[motif],
+        )
+        for motif in MOTIFS
+    )
+    courbe_age = g.graphique(
+        f"Pensions servies avant l'âge légal, par ce qui ouvre le départ, de "
+        f"{annees_cout[0]} à {annees_cout[-1]}",
+        annees_cout, anticipees, unite="Md€ courants", empile=True,
+        decimales_donnees=1,
+    )
+
+    carte_frise = g.cle(
+        "Combien le système compte-t-il d'avantages qui ne sont pas cotisés ?",
+        f"""<strong>{en_vigueur} aujourd'hui, contre un seul en
+{premiere_frise}.</strong> Presque aucun n'a jamais été supprimé : la courbe
+monte pendant deux siècles et ne redescend que trois fois.""",
+        frise,
+        """Source : inventaire du dépôt, base légale lue article par article
+dans la base LEGI. Ce graphique ne calcule rien : il compte des lignes.""",
+        identifiant="avantages-frise",
+    )
+
+    carte_cout = g.cle(
+        "Combien coûtent ceux que l'on sait chiffrer ?",
+        f"""<strong>{_milliards(derniere.gratuit, 1)} en {derniere.annee}, soit
+{g.pourcentage(derniere.gratuit / derniere.observee, decimales=1)} de la
+dépense.</strong> C'est un <em>plancher très bas</em> : {chiffres} dispositifs
+sur {total} y sont, et le COR chiffre l'ensemble des droits de solidarité à
+« de l'ordre d'un cinquième » des retraites.""",
+        courbe_cout + g.depliant(
+            "Pourquoi ce chiffre est un plancher, et de combien",
+            """<p>Deux raisons, et la seconde est la plus gênante.</p>
+<p><strong>La réversion n'y est pas</strong>, ni les bonifications de service,
+ni les départs anticipés pour handicap ou inaptitude. La réversion est à elle
+seule la première dépense non contributive du système, et ce modèle ne peut pas
+la voir : il décrit une carrière, pas un ménage.</p>
+<p><strong>Et la grille de carrières types n'est pas une population.</strong> Un
+seul de ses treize cas types a des enfants (deux, quand le seuil est à trois),
+un seul porte des interruptions, aucun ne connaît le chômage. La
+majoration de pension pour trois enfants et plus vaut donc zéro toutes les
+années de la série, quand la branche famille en rembourse près de six
+milliards. Une grille de cas types sert à <em>comparer</em> des systèmes sur une
+même carrière, où les erreurs de niveau s'annulent au dénominateur ; le coût
+d'un avantage est un compte de <em>population</em>.</p>""",
+        ),
+        """Source : décomposition du scénario 1 sur la grille de carrières types,
+rapportée à la dépense observée de la DREES. Seule la part est modélisée.""",
+        identifiant="avantages-cout",
+    )
+
+    part_classement = (derniere.anticipees.get("classement", 0.0)
+                       / derniere.anticipee if derniere.anticipee > 0 else 0.0)
+    carte_age = g.cle(
+        "Et partir plus tôt, combien cela coûte-t-il ?",
+        f"""<strong>{_milliards(derniere.anticipee, 1)} de pensions servies avant
+l'âge légal en {derniere.annee}</strong>, soit treize fois ce que les mêmes
+dispositifs ajoutent au <em>montant</em> des pensions. Une annuité versée avant
+l'âge légal n'est rattrapée par aucune décote.""",
+        courbe_age + g.depliant(
+            "Pourquoi le montant ne suffit pas à le dire",
+            f"""<p>La décote est <strong>plafonnée à vingt trimestres</strong>.
+Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le même
+jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
+de 868 € par an. Le montant ne sait pas distinguer celui qui part cinq ans trop
+tôt ; la durée le sait.</p>
+<p>Le classement de l'emploi en porte
+{g.pourcentage(part_classement, decimales=0)}. Le reste se partage entre les
+âges propres des régimes spéciaux et la <strong>carrière longue</strong>, qui
+n'apparaît qu'après 2010 : mécaniquement, à mesure que l'âge légal monte
+au-dessus de l'âge auquel une carrière commencée tôt réunit sa durée.</p>
+<p><strong>Réserve.</strong> Ce sont des annuités <em>anticipées</em>, non un
+surcoût <em>net</em> : partir tôt, c'est aussi cotiser moins et mourir plus tôt
+en moyenne. C'est exactement l'arbitrage qu'un coefficient de conversion
+notionnel rend automatique, et que le droit actuel ne rend nulle part.</p>""",
+        ),
+        """Source : même décomposition, comparée à l'âge légal de chaque
+génération plutôt qu'à un âge fixe, qui compterait comme anticipé un départ que
+le droit de l'époque disait à l'heure.""",
+        identifiant="avantages-age",
+    )
+
+    detail = (_avantages_detail_liste(contexte)
+              + _avantages_detail_etats(contexte)
+              + _avantages_detail_limites(contexte))
+    plan = g.plan(carte_frise + carte_cout + carte_age + detail, "/avantages")
+
+    tete = g.affiche(
+        "Les avantages",
+        'Ce que la retraite verse <span class="cle-texte">sans que personne '
+        "l'ait cotisé.</span>",
+        "Un compte notionnel ne sert que ce qui a été versé. Le système actuel "
+        "sert bien davantage, et ce qui les sépare porte des noms : minimum "
+        "contributif, trimestres gratuits, départ anticipé, réversion.",
+    )
+
+    return f"""
+{tete}
+
+<div class="note resume"><strong>En clair.</strong> Le système actuel compte
+{en_vigueur} dispositifs qui ajoutent à une pension sans qu'aucune cotisation
+les ait payés, contre un seul en {premiere_frise}. Le modèle sait en chiffrer
+{chiffres} : {_milliards(derniere.gratuit, 1)} en {derniere.annee}. Il mesure à
+part {_milliards(derniere.anticipee, 1)} de pensions servies avant l'âge légal,
+que nulle décote ne rattrape. Les deux chiffres sont des planchers, et cette
+page dit de combien.</div>
+
+<div class="fiches reperes">{reperes}</div>
+
+{plan}
+
+{carte_frise}
+
+{carte_cout}
+
+{carte_age}
+
+<div class="note"><strong>Aucun de ces dispositifs n'est illégitime.</strong>
+Chacun a été voté pour une raison, et plusieurs corrigent de vraies injustices.
+Ce qui pose problème est leur opacité. Personne ne reçoit le décompte de ce
+qu'il a cotisé puis de ce qu'on lui ajoute. Un compte notionnel ne les interdit
+pas : il oblige à les payer par l'impôt, sous leur nom, plutôt que par une
+formule que nul ne lit.</div>
+
+<h2>Et pour vous ?</h2>
+<p>Ce que ces règles donnent sur votre carrière se calcule en quelques secondes,
+dans votre navigateur : la simulation affiche votre part cotisée, puis chaque
+avantage, ligne à ligne.</p>
+<p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer ma
+retraite</a><a href="{g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
+
+<h2>Pour aller plus loin</h2>
+<p class="chapeau">La liste entière, et ce que le modèle sait en faire.</p>
+
+{detail}
+"""
+
+
+def _avantages_detail_liste(contexte: Contexte) -> str:
+    """Les trente-neuf, famille par famille, avec leur base légale."""
+    inventaire = contexte.inventaire_avantages()
+    blocs = []
+    for famille in inventaire.familles:
+        lignes = [
+            [
+                avantage.libelle,
+                "; ".join(avantage.base_legale) or "—",
+                str(avantage.creation),
+                "en vigueur" if avantage.fin is None else str(avantage.fin),
+                LIBELLES_ETATS[avantage.etat_modele],
+            ]
+            for avantage in inventaire.par_famille(famille.code)
+        ]
+        if not lignes:
+            continue
+        blocs.append(
+            f"<h4>{escape(famille.libelle)}</h4><p>{escape(famille.quoi)}</p>"
+            + g.tableau(["Dispositif", "Base légale", "Depuis", "Jusqu'à",
+                         "Dans le modèle"], lignes,
+                        titre=f"{famille.libelle} : {len(lignes)} dispositifs",
+                        entete_de_ligne=True)
+        )
+    return g.depliant(
+        f"La liste entière : {len(inventaire.avantages)} dispositifs",
+        "".join(blocs),
+        identifiant="avantages-liste",
+    )
+
+
+def _avantages_detail_etats(contexte: Contexte) -> str:
+    """Ce que le modèle sait de chacun, et ce qu'il n'en sait pas."""
+    inventaire = contexte.inventaire_avantages()
+    cout = contexte.avantages()
+    lignes = [
+        ["chiffré", str(inventaire.compte("chiffre")),
+         "La cascade du scénario 1 en isole le montant en euros. La somme de "
+         "ces lignes vaut exactement la pension moins sa part cotisée."],
+        ["servi, chiffré à part", str(inventaire.compte("integre")),
+         "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
+         "ou une assiette. Deux sont mesurés par recalcul — on refait la "
+         "pension sans l'avantage —, les autres restent à ouvrir."],
+        ["déclaré, non servi", str(inventaire.compte("declare")),
+         "Une fiche de régime les déclare, aucun code ne les sert. La "
+         "déclaration est une intention."],
+        ["absent", str(inventaire.compte("absent")),
+         "Ni déclarés ni servis : la réversion, les bonifications de service, "
+         "les départs pour handicap ou inaptitude. C'est un écart au droit "
+         "positif, et le dépôt le nomme plutôt que de l'estimer."],
+    ]
+    refus = "".join(
+        f"<p><strong>{escape(ligne)}</strong> — {escape(raison)}</p>"
+        for ligne, raison in sorted(cout.refus.items())
+    )
+    note = (f"<h4>Ce que le modèle a refusé de mesurer</h4><p>Un refus est un "
+            f"résultat : il dit qu'une contrefactuelle existe mais ne vaut rien, "
+            f"ce qui est plus sûr qu'un chiffre plausible.</p>{refus}"
+            if refus else "")
+    return g.depliant(
+        "Ce que le modèle sait de chacun",
+        g.tableau(["État", "Combien", "Ce que cela veut dire"], lignes,
+                  titre="Ce que le modèle sait de chaque avantage",
+                  entete_de_ligne=True) + note,
+        identifiant="avantages-etats",
+    )
+
+
+def _avantages_detail_limites(contexte: Contexte) -> str:
+    """Les trois réserves de la page, et pourquoi elles y sont."""
+    return g.depliant(
+        "Trois choses que ces chiffres ne disent pas",
+        """<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
+Supprimer un avantage ne rend pas son coût : il faudrait décider ce que
+l'assuré aurait fait sans lui — travailler plus longtemps, partir avec moins, ne
+pas partir. Le dépôt ne tranche pas à sa place, et ces chiffres disent ce qui
+est <em>versé</em>, non ce qui serait <em>épargné</em>.</p>
+<p><strong>Elle ne compte pas deux fois la même chose.</strong> Les trois
+« écarts structurels » de l'inventaire (une décote qui n'est pas actuarielle,
+un rendement supérieur à ce que l'assiette porte, un financement par l'impôt)
+ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
+portent sur la même pension, vue sous un autre angle, et les additionner serait
+un double compte.</p>
+<p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
+dans la base LEGI, version par version ; deux lignes sur trente-neuf portent la
+mention « à certifier », parce que leurs textes sont éclatés dans des statuts de
+corps qui n'ont pas été lus. Une déduction n'est pas une lecture.</p>""",
+        identifiant="avantages-limites",
+    )
 
 
 def _cout_detail_depense(contexte: Contexte) -> str:

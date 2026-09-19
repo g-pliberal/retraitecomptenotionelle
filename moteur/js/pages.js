@@ -21,6 +21,9 @@ import {
   SituationFoyer, TableConversion, avec, cleParametres,
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
+import {
+  LIBELLES_MOTIFS, MOTIFS, calculerAvantages, chargerAvantages,
+} from "./avantages.js";
 import { COMPOSANTE_GARANTIE, SCENARIOS, calculerCout } from "./cout.js";
 import { DistributionPensions } from "./distribution.js";
 import { coutGarantie } from "./garantie.js";
@@ -1298,6 +1301,8 @@ export class Contexte {
     this._distribution = null;
     this._assiette = null;
     this._cout = null;
+    this._inventaireAvantages = null;
+    this._avantages = null;
   }
 
   simulateur(parametres = null) {
@@ -1345,6 +1350,24 @@ export class Contexte {
       this._assiette = new AssietteActivite(this.paquet);
     }
     return this._assiette;
+  }
+
+  /** Les trente-neuf avantages non contributifs — une donnée, pas un calcul. */
+  inventaireAvantages() {
+    if (!this._inventaireAvantages) {
+      this._inventaireAvantages = chargerAvantages(this.paquet);
+    }
+    return this._inventaireAvantages;
+  }
+
+  /** Ce que les avantages non contributifs coûtent — une seconde, une fois. */
+  avantages() {
+    if (!this._avantages) {
+      this._avantages = calculerAvantages(
+        this.simulateur(), this.depenses(), this.population(),
+      );
+    }
+    return this._avantages;
   }
 
   /** Le coût agrégé de tous les systèmes — une seconde de calcul, une fois. */
@@ -1464,6 +1487,8 @@ export const DESCRIPTIONS = {
     + "proposition et sous quatre contrefactuels.",
   "/cout": "Ce que la retraite coûte, d'où vient l'argent, et ce qui manque, "
     + "de 1959 à 2070 — et ce que chacun des quatre systèmes coûterait.",
+  "/avantages": "Les trente-neuf avantages non contributifs du système actuel : "
+    + "lesquels, depuis quand, et ce que le modèle sait en chiffrer.",
   "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
     + "opérations, et pourquoi la règle de revalorisation décide de "
     + "presque tout.",
@@ -1480,6 +1505,7 @@ export const TITRES = {
   "/trajectoire": "Trajectoire",
   "/cas-types": "Cas types",
   "/cout": "Coût",
+  "/avantages": "Avantages",
   "/methode": "Méthode",
   "/donnees": "Données",
   "/partager": "Partager",
@@ -1505,6 +1531,9 @@ export function rendre(contexte, chemin, parametres = null) {
   }
   if (chemin === "/cout") {
     return [TITRES[chemin], cout(contexte)];
+  }
+  if (chemin === "/avantages") {
+    return [TITRES[chemin], avantages(contexte)];
   }
   if (chemin === "/methode") {
     return [TITRES[chemin], methode(contexte)];
@@ -4217,6 +4246,347 @@ ${detail}
 }
 
 /** Le détail de la dépense : en euros, puis système par système. */
+/**
+ * La couleur de chaque famille de l'inventaire, dans l'ordre où le comptage les
+ * empile. Les écarts structurels n'y sont pas : ils ne sont pas des
+ * dispositifs, ils ne se comptent pas avec eux, et l'inventaire le dit.
+ */
+const COULEURS_FAMILLES = [
+  ["age_et_bonifications", "var(--serie-2)"],
+  ["droits_familiaux", "var(--serie-3)"],
+  ["minima_de_pension", "var(--serie-4)"],
+  ["droits_derives", "var(--serie-5)"],
+  ["periodes_non_cotisees", "var(--serie-6)"],
+  ["autres_avantages", "var(--serie-7)"],
+];
+
+/** Les couleurs des lignes de coût, dans l'ordre de la légende. */
+const COULEURS_LIGNES = [
+  "var(--serie-2)", "var(--serie-3)", "var(--serie-4)", "var(--serie-5)",
+  "var(--serie-6)", "var(--serie-7)", "var(--serie-8)", "var(--serie-9)",
+  "var(--serie-1)",
+];
+
+/** La couleur de chaque motif de départ anticipé. */
+const COULEURS_MOTIFS = {
+  regime_special: "var(--serie-2)",
+  classement: "var(--serie-4)",
+  carriere_longue: "var(--serie-5)",
+};
+
+/** Ce que chacun des quatre états du modèle veut dire, en français courant. */
+const LIBELLES_ETATS = {
+  chiffre: "chiffré",
+  integre: "servi, chiffré à part",
+  declare: "déclaré, non servi",
+  absent: "absent",
+};
+
+/**
+ * Tous les avantages non contributifs, depuis quand, et ce qu'ils coûtent.
+ *
+ * TROIS GRAPHIQUES, ET ILS N'ONT PAS LE MÊME STATUT. C'est la contrainte de
+ * construction de cette page, et elle décide de l'ordre : le premier est une
+ * DONNÉE — combien de dispositifs existent chaque année —, le deuxième une
+ * MESURE et un plancher très bas, le troisième mesure autre chose, les annuités
+ * servies avant l'âge légal. Voir la référence Python pour le détail.
+ */
+function avantages(contexte) {
+  const inventaire = contexte.inventaireAvantages();
+  const c = contexte.avantages();
+  const derniere = c.derniere;
+  const chiffres = inventaire.chiffres.length;
+  const total = inventaire.avantages.length;
+
+  // -- premier graphique : combien existent, et depuis quand ---------------
+  //
+  // Les bornes sont LUES et non écrites : ajouter à l'inventaire un dispositif
+  // plus ancien doit déplacer le bord du cadre, et pas seulement une ligne de
+  // tableau.
+  const dispositifs = inventaire.avantages.filter(
+    (a) => a.famille !== "ecarts_structurels",
+  );
+  const premiereFrise = Math.min(...dispositifs.map((a) => a.creation));
+  const derniereFrise = contexte.base.annee_courante;
+  const anneesFrise = [];
+  for (let annee = premiereFrise; annee <= derniereFrise; annee += 1) {
+    anneesFrise.push(annee);
+  }
+  const familles = {};
+  for (const famille of inventaire.familles) familles[famille.code] = famille.libelle;
+  const bandes = COULEURS_FAMILLES.map(([code, couleur]) => new g.Serie(
+    familles[code],
+    anneesFrise.map((annee) => dispositifs.filter(
+      (a) => a.famille === code && a.creation <= annee
+        && (a.fin === null || a.fin >= annee),
+    ).length),
+    couleur,
+  ));
+  const enVigueur = bandes.reduce(
+    (somme, bande) => somme + bande.valeurs[bande.valeurs.length - 1], 0,
+  );
+  const frise = g.graphique(
+    `Nombre d'avantages non contributifs en vigueur chaque année, par famille, `
+    + `de ${premiereFrise} à ${derniereFrise}`,
+    anneesFrise, bandes, "dispositifs", true,
+  );
+
+  // -- les trois chiffres d'ouverture --------------------------------------
+  const reperes = g.fiche(
+    "Avantages non contributifs recensés",
+    String(total),
+    "du minimum vieillesse à la bonification du cinquième",
+  ) + g.fiche(
+    "Ce que le modèle sait en chiffrer",
+    milliards(derniere.gratuit, 1),
+    `${chiffres} d'entre eux, en ${derniere.annee}`,
+  ) + g.fiche(
+    "Servi avant l'âge légal",
+    milliards(derniere.anticipee, 1),
+    `${g.pourcentage(derniere.anticipee / derniere.observee, false, 1)} de la dépense`,
+  );
+
+  // -- deuxième graphique : ce qu'ils coûtent ------------------------------
+  const anneesCout = c.annees.map((ligne) => ligne.annee);
+  const couts = [...c.lignes].reverse().map((ligne, rang) => new g.Serie(
+    inventaire.libelleDeLigne(ligne),
+    c.annees.map((annee) => (annee.lignes[ligne] || 0) / 1000),
+    COULEURS_LIGNES[rang % COULEURS_LIGNES.length],
+  ));
+  const courbeCout = g.graphique(
+    `Coût des avantages non contributifs que le modèle sait chiffrer, de `
+    + `${anneesCout[0]} à ${anneesCout[anneesCout.length - 1]}`,
+    anneesCout, couts, "Md€ courants", true, 0, true, null, "", [], "Année",
+    null, "", 1,
+  );
+
+  // -- troisième graphique : les annuités servies trop tôt -----------------
+  const anticipees = MOTIFS.map((motif) => new g.Serie(
+    LIBELLES_MOTIFS[motif],
+    c.annees.map((annee) => (annee.anticipees[motif] || 0) / 1000),
+    COULEURS_MOTIFS[motif],
+  ));
+  const courbeAge = g.graphique(
+    `Pensions servies avant l'âge légal, par ce qui ouvre le départ, de `
+    + `${anneesCout[0]} à ${anneesCout[anneesCout.length - 1]}`,
+    anneesCout, anticipees, "Md€ courants", true, 0, true, null, "", [],
+    "Année", null, "", 1,
+  );
+
+  const carteFrise = g.cle(
+    "Combien le système compte-t-il d'avantages qui ne sont pas cotisés ?",
+    `<strong>${enVigueur} aujourd'hui, contre un seul en
+${premiereFrise}.</strong> Presque aucun n'a jamais été supprimé : la courbe
+monte pendant deux siècles et ne redescend que trois fois.`,
+    frise,
+    `Source : inventaire du dépôt, base légale lue article par article
+dans la base LEGI. Ce graphique ne calcule rien : il compte des lignes.`,
+    "avantages-frise",
+  );
+
+  const carteCout = g.cle(
+    "Combien coûtent ceux que l'on sait chiffrer ?",
+    `<strong>${milliards(derniere.gratuit, 1)} en ${derniere.annee}, soit
+${g.pourcentage(derniere.gratuit / derniere.observee, false, 1)} de la
+dépense.</strong> C'est un <em>plancher très bas</em> : ${chiffres} dispositifs
+sur ${total} y sont, et le COR chiffre l'ensemble des droits de solidarité à
+« de l'ordre d'un cinquième » des retraites.`,
+    courbeCout + g.depliant(
+      "Pourquoi ce chiffre est un plancher, et de combien",
+      `<p>Deux raisons, et la seconde est la plus gênante.</p>
+<p><strong>La réversion n'y est pas</strong>, ni les bonifications de service,
+ni les départs anticipés pour handicap ou inaptitude. La réversion est à elle
+seule la première dépense non contributive du système, et ce modèle ne peut pas
+la voir : il décrit une carrière, pas un ménage.</p>
+<p><strong>Et la grille de carrières types n'est pas une population.</strong> Un
+seul de ses treize cas types a des enfants (deux, quand le seuil est à trois),
+un seul porte des interruptions, aucun ne connaît le chômage. La
+majoration de pension pour trois enfants et plus vaut donc zéro toutes les
+années de la série, quand la branche famille en rembourse près de six
+milliards. Une grille de cas types sert à <em>comparer</em> des systèmes sur une
+même carrière, où les erreurs de niveau s'annulent au dénominateur ; le coût
+d'un avantage est un compte de <em>population</em>.</p>`,
+    ),
+    `Source : décomposition du scénario 1 sur la grille de carrières types,
+rapportée à la dépense observée de la DREES. Seule la part est modélisée.`,
+    "avantages-cout",
+  );
+
+  const partClassement = derniere.anticipee > 0
+    ? (derniere.anticipees.classement || 0) / derniere.anticipee
+    : 0;
+  const carteAge = g.cle(
+    "Et partir plus tôt, combien cela coûte-t-il ?",
+    `<strong>${milliards(derniere.anticipee, 1)} de pensions servies avant
+l'âge légal en ${derniere.annee}</strong>, soit treize fois ce que les mêmes
+dispositifs ajoutent au <em>montant</em> des pensions. Une annuité versée avant
+l'âge légal n'est rattrapée par aucune décote.`,
+    courbeAge + g.depliant(
+      "Pourquoi le montant ne suffit pas à le dire",
+      `<p>La décote est <strong>plafonnée à vingt trimestres</strong>.
+Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le même
+jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
+de 868 € par an. Le montant ne sait pas distinguer celui qui part cinq ans trop
+tôt ; la durée le sait.</p>
+<p>Le classement de l'emploi en porte
+${g.pourcentage(partClassement, false, 0)}. Le reste se partage entre les
+âges propres des régimes spéciaux et la <strong>carrière longue</strong>, qui
+n'apparaît qu'après 2010 : mécaniquement, à mesure que l'âge légal monte
+au-dessus de l'âge auquel une carrière commencée tôt réunit sa durée.</p>
+<p><strong>Réserve.</strong> Ce sont des annuités <em>anticipées</em>, non un
+surcoût <em>net</em> : partir tôt, c'est aussi cotiser moins et mourir plus tôt
+en moyenne. C'est exactement l'arbitrage qu'un coefficient de conversion
+notionnel rend automatique, et que le droit actuel ne rend nulle part.</p>`,
+    ),
+    `Source : même décomposition, comparée à l'âge légal de chaque
+génération plutôt qu'à un âge fixe, qui compterait comme anticipé un départ que
+le droit de l'époque disait à l'heure.`,
+    "avantages-age",
+  );
+
+  const detail = avantagesDetailListe(contexte)
+    + avantagesDetailEtats(contexte)
+    + avantagesDetailLimites(contexte);
+  const plan = g.plan(carteFrise + carteCout + carteAge + detail, "/avantages");
+
+  const tete = g.affiche(
+    "Les avantages",
+    'Ce que la retraite verse <span class="cle-texte">sans que personne '
+    + "l'ait cotisé.</span>",
+    "Un compte notionnel ne sert que ce qui a été versé. Le système actuel "
+    + "sert bien davantage, et ce qui les sépare porte des noms : minimum "
+    + "contributif, trimestres gratuits, départ anticipé, réversion.",
+  );
+
+  return `
+${tete}
+
+<div class="note resume"><strong>En clair.</strong> Le système actuel compte
+${enVigueur} dispositifs qui ajoutent à une pension sans qu'aucune cotisation
+les ait payés, contre un seul en ${premiereFrise}. Le modèle sait en chiffrer
+${chiffres} : ${milliards(derniere.gratuit, 1)} en ${derniere.annee}. Il mesure à
+part ${milliards(derniere.anticipee, 1)} de pensions servies avant l'âge légal,
+que nulle décote ne rattrape. Les deux chiffres sont des planchers, et cette
+page dit de combien.</div>
+
+<div class="fiches reperes">${reperes}</div>
+
+${plan}
+
+${carteFrise}
+
+${carteCout}
+
+${carteAge}
+
+<div class="note"><strong>Aucun de ces dispositifs n'est illégitime.</strong>
+Chacun a été voté pour une raison, et plusieurs corrigent de vraies injustices.
+Ce qui pose problème est leur opacité. Personne ne reçoit le décompte de ce
+qu'il a cotisé puis de ce qu'on lui ajoute. Un compte notionnel ne les interdit
+pas : il oblige à les payer par l'impôt, sous leur nom, plutôt que par une
+formule que nul ne lit.</div>
+
+<h2>Et pour vous ?</h2>
+<p>Ce que ces règles donnent sur votre carrière se calcule en quelques secondes,
+dans votre navigateur : la simulation affiche votre part cotisée, puis chaque
+avantage, ligne à ligne.</p>
+<p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer ma
+retraite</a><a href="${g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
+
+<h2>Pour aller plus loin</h2>
+<p class="chapeau">La liste entière, et ce que le modèle sait en faire.</p>
+
+${detail}
+`;
+}
+
+/** Les trente-neuf, famille par famille, avec leur base légale. */
+function avantagesDetailListe(contexte) {
+  const inventaire = contexte.inventaireAvantages();
+  const blocs = [];
+  for (const famille of inventaire.familles) {
+    const lignes = inventaire.parFamille(famille.code).map((avantage) => [
+      avantage.libelle,
+      avantage.base_legale.join("; ") || "—",
+      String(avantage.creation),
+      avantage.fin === null ? "en vigueur" : String(avantage.fin),
+      LIBELLES_ETATS[avantage.etat_modele],
+    ]);
+    if (lignes.length === 0) continue;
+    blocs.push(
+      `<h4>${echapper(famille.libelle)}</h4><p>${echapper(famille.quoi)}</p>`
+      + g.tableau(["Dispositif", "Base légale", "Depuis", "Jusqu'à",
+        "Dans le modèle"], lignes, null,
+      `${famille.libelle} : ${lignes.length} dispositifs`, true),
+    );
+  }
+  return g.depliant(
+    `La liste entière : ${inventaire.avantages.length} dispositifs`,
+    blocs.join(""),
+    "avantages-liste",
+  );
+}
+
+/** Ce que le modèle sait de chacun, et ce qu'il n'en sait pas. */
+function avantagesDetailEtats(contexte) {
+  const inventaire = contexte.inventaireAvantages();
+  const c = contexte.avantages();
+  const lignes = [
+    ["chiffré", String(inventaire.compte("chiffre")),
+      "La cascade du scénario 1 en isole le montant en euros. La somme de "
+      + "ces lignes vaut exactement la pension moins sa part cotisée."],
+    ["servi, chiffré à part", String(inventaire.compte("integre")),
+      "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
+      + "ou une assiette. Deux sont mesurés par recalcul — on refait la "
+      + "pension sans l'avantage —, les autres restent à ouvrir."],
+    ["déclaré, non servi", String(inventaire.compte("declare")),
+      "Une fiche de régime les déclare, aucun code ne les sert. La "
+      + "déclaration est une intention."],
+    ["absent", String(inventaire.compte("absent")),
+      "Ni déclarés ni servis : la réversion, les bonifications de service, "
+      + "les départs pour handicap ou inaptitude. C'est un écart au droit "
+      + "positif, et le dépôt le nomme plutôt que de l'estimer."],
+  ];
+  const clesRefus = Object.keys(c.refus).sort();
+  const refus = clesRefus.map(
+    (ligne) => `<p><strong>${echapper(ligne)}</strong> — ${echapper(c.refus[ligne])}</p>`,
+  ).join("");
+  const note = refus
+    ? `<h4>Ce que le modèle a refusé de mesurer</h4><p>Un refus est un `
+      + `résultat : il dit qu'une contrefactuelle existe mais ne vaut rien, `
+      + `ce qui est plus sûr qu'un chiffre plausible.</p>${refus}`
+    : "";
+  return g.depliant(
+    "Ce que le modèle sait de chacun",
+    g.tableau(["État", "Combien", "Ce que cela veut dire"], lignes, null,
+      "Ce que le modèle sait de chaque avantage", true) + note,
+    "avantages-etats",
+  );
+}
+
+/** Les trois réserves de la page, et pourquoi elles y sont. */
+function avantagesDetailLimites(contexte) {
+  return g.depliant(
+    "Trois choses que ces chiffres ne disent pas",
+    `<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
+Supprimer un avantage ne rend pas son coût : il faudrait décider ce que
+l'assuré aurait fait sans lui — travailler plus longtemps, partir avec moins, ne
+pas partir. Le dépôt ne tranche pas à sa place, et ces chiffres disent ce qui
+est <em>versé</em>, non ce qui serait <em>épargné</em>.</p>
+<p><strong>Elle ne compte pas deux fois la même chose.</strong> Les trois
+« écarts structurels » de l'inventaire (une décote qui n'est pas actuarielle,
+un rendement supérieur à ce que l'assiette porte, un financement par l'impôt)
+ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
+portent sur la même pension, vue sous un autre angle, et les additionner serait
+un double compte.</p>
+<p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
+dans la base LEGI, version par version ; deux lignes sur trente-neuf portent la
+mention « à certifier », parce que leurs textes sont éclatés dans des statuts de
+corps qui n'ont pas été lus. Une déduction n'est pas une lecture.</p>`,
+    "avantages-limites",
+  );
+}
+
 function coutDetailDepense(contexte) {
   const depenses = contexte.depenses();
   const c = contexte.cout();

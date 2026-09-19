@@ -48,7 +48,8 @@ const FINE = "\u202f";
 export const GROUPES_NAVIGATION = [
   ["Le programme", [["/", "Programme"]]],
   ["La preuve", [["/simuler", "Simuler"], ["/trajectoire", "Trajectoire"],
-    ["/cas-types", "Cas types"], ["/cout", "Coût"]]],
+    ["/cas-types", "Cas types"], ["/cout", "Coût"],
+    ["/avantages", "Avantages"]]],
   ["La confiance", [["/methode", "Méthode"], ["/donnees", "Données"]]],
   ["Faire connaître", [["/partager", "Partager"]]],
 ];

@@ -3773,6 +3773,13 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # courant pour l'autre. Les bornes suivent, d'un paragraphe chacune.
     "/cas-types": (750, 0, 1),
     "/cout": (700, 2, 0),
+    # Trois graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils
+    # ne répondent pas à la même question et n'ont pas le même statut. Le
+    # premier COMPTE des lignes d'inventaire et ne calcule rien ; le deuxième
+    # mesure un coût, et c'est un plancher ; le troisième mesure des annuités,
+    # qui est une autre grandeur. Les replier reviendrait à demander au lecteur
+    # de déplier pour comprendre que les trois chiffres ne s'additionnent pas.
+    "/avantages": (750, 3, 0),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
 }
@@ -4717,13 +4724,14 @@ def test_la_navigation_est_groupee_par_fonction():
         "Le programme", "La preuve", "La confiance", "Faire connaître"]
     pages = [re.findall(r'href="([^"]+)"', liens) for _, liens in groupes]
     assert pages == [["#/"],
-                     ["#/simuler", "#/trajectoire", "#/cas-types", "#/cout"],
+                     ["#/simuler", "#/trajectoire", "#/cas-types", "#/cout",
+                      "#/avantages"],
                      ["#/methode", "#/donnees"],
                      ["#/partager"]]
     assert 'href="#/cout" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
-        "/", "/simuler", "/trajectoire", "/cas-types", "/cout", "/methode",
-        "/donnees", "/partager"]
+        "/", "/simuler", "/trajectoire", "/cas-types", "/cout", "/avantages",
+        "/methode", "/donnees", "/partager"]
     # Toute page de la barre est une page que le routeur sait rendre, et
     # réciproquement : depuis le retrait des mentions légales, le site n'a plus
     # aucune page hors barre.
@@ -4854,6 +4862,10 @@ def _prose(corps: str) -> str:
 INCISES_MAXIMUM = {
     "/": 3, "/simuler": 14, "/trajectoire": 5, "/cas-types": 9, "/cout": 22,
     "/methode": 9, "/donnees": 6, "/partager": 4,
+    # Les deux qui restent sur Avantages sont citées et non rédigées : l'une
+    # est le message de refus du garde-fou, l'autre une énumération de choix
+    # que le dépôt refuse de trancher à la place du lecteur.
+    "/avantages": 3,
 }
 
 

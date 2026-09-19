@@ -170,14 +170,24 @@ tôt.
 | 1990 | 115,9 | 5,6 | 4,8 % | 0,0 | 3,8 | 1,8 |
 | 2000 | 178,1 | 6,6 | 3,7 % | 0,0 | 4,4 | 2,2 |
 | 2010 | 282,1 | 9,7 | 3,4 % | 0,0 | 6,5 | 3,2 |
-| 2024 | 426,7 | **23,7** | **5,6 %** | 5,6 | 8,8 | 9,3 |
+| 2024 | 426,7 | **13,7** | **3,2 %** | 3,8 | 7,5 | 2,4 |
 
-**23,7 milliards en 2024, soit quinze fois l'effet de montant.** Et la
+**13,7 milliards en 2024, soit treize fois l'effet de montant.** Et la
 composition change : jusqu'aux années 2010 les départs anticipés viennent
 entièrement des statuts classés et des régimes spéciaux ; la **carrière longue**
-n'apparaît qu'ensuite, et pèse 5,6 milliards en 2024 — mécaniquement, à mesure
+n'apparaît qu'ensuite, et pèse 3,8 milliards en 2024 — mécaniquement, à mesure
 que l'âge légal monte au-dessus de l'âge auquel une carrière commencée tôt
 réunit sa durée.
+
+> **Une erreur corrigée en construisant la page du site.** Cette table a d'abord
+> annoncé 23,7 milliards en 2024, avec un pic qui triplait la bande des régimes
+> spéciaux sur les deux dernières années. C'était un effet de bord : chaque
+> génération de la grille représente cinq cohortes, et la comparaison opposait
+> l'âge de départ de la génération à l'âge légal de chacune des cinq. Comme la
+> réforme de 2023 relève cet âge d'un trimestre par génération, les cohortes les
+> plus jeunes de chaque tranche devenaient « anticipées » sans que rien n'avance
+> leur départ. L'âge légal est désormais lu une fois, pour la génération de la
+> grille. Le pic a disparu et la série est continue.
 
 > **Réserve, écrite aussi dans le script.** Ce sont des annuités *anticipées*,
 > pas un surcoût *net* : partir tôt, c'est aussi cotiser moins et mourir plus

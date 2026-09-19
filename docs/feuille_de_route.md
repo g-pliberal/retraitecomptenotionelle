@@ -5660,7 +5660,7 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   devient 18 % ? Le programme ne le dit pas, et le dépôt ne tranchera pas à sa
   place.
 
-### 37. Chiffrer les trente-neuf avantages non contributifs, et pas huit — `en cours`
+### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
 
 **La demande.** « J'aimerais qu'on fasse la liste des avantages en retraite
 actuels qui ne sont pas contributifs dans le scénario 1. Le but serait de
@@ -5764,9 +5764,9 @@ par recalcul, dans `scripts/cout_avantages.py`, à date de liquidation inchangé
   sédentaire partis le même jour butent tous deux sur le même plafond. Une
   décote plafonnée ne sait pas dire qui part cinq ans trop tôt. Ce que
   l'avantage coûte vraiment, ce sont les annuités servies avant l'âge légal :
-  `--duree` les compte à l'âge légal de chaque génération, et trouve **23,7
-  milliards en 2024** — 8,8 pour le classement, 9,3 pour les régimes spéciaux,
-  5,6 pour la carrière longue. Quinze fois l'effet de montant. La composition
+  `--duree` les compte à l'âge légal de chaque génération, et trouve **13,7
+  milliards en 2024** — 7,5 pour le classement, 2,4 pour les régimes spéciaux,
+  3,8 pour la carrière longue. Treize fois l'effet de montant. La composition
   change au cours du temps : rien pour la carrière longue jusqu'aux années 2010,
   puis 5,6 milliards, mécaniquement, à mesure que l'âge légal monte au-dessus de
   l'âge auquel une carrière commencée tôt réunit sa durée.
@@ -5795,6 +5795,66 @@ demanderait de projeter la carrière contrefactuelle jusqu'à l'âge légal, don
 décider ce que l'agent aurait fait de ces années : le dépôt ne tranchera pas à
 sa place. C'est exactement l'arbitrage qu'un coefficient de conversion notionnel
 rend automatique et que le droit actuel ne rend nulle part.
+
+**Volet C — la page « Avantages » du site.** À la demande : « une page en plus
+qui illustre par un graphique tous les avantages non contributifs qui existent
+au cours du temps ». Elle est en ligne, sous `#/avantages`, dans le groupe « La
+preuve » de la barre.
+
+*Trois graphiques, et ils n'ont pas le même statut* — c'est la contrainte de
+construction, et elle décide de l'ordre. Le premier COMPTE : combien de
+dispositifs sont en vigueur chaque année, par famille, de 1831 à 2026. Rien n'y
+est calculé, chaque barre est une somme de lignes d'inventaire, et c'est
+pourquoi il mène : **33 aujourd'hui contre un seul en 1831**, un escalier qui ne
+redescend que trois fois en deux siècles. Le deuxième MESURE, et la carte dit
+avant la courbe que c'est un plancher très bas. Le troisième mesure une AUTRE
+GRANDEUR, les annuités servies avant l'âge légal, ventilées par ce qui ouvre le
+départ.
+
+*Le modèle a déménagé du script vers `src/`.* `scripts/cout_avantages.py`
+portait la décomposition ; elle est maintenant dans
+`src/retraite_notionnelle/avantages.py`, que le script appelle et que
+`moteur/js/avantages.js` porte à l'identique. Le paquet de données transporte
+l'inventaire sous la clé `avantages`, comme il transporte déjà celui des
+régimes. Deux rendus au caractère près, vérifiés par le témoin `avantages` de
+`tests/temoins/pages.json`.
+
+*Le calcul est six fois plus rapide en JavaScript qu'en Python* (0,6 s contre
+4,0 s), et deux fois plus rapide qu'il ne l'était : `decomposer` ne calcule plus
+que le scénario 1, là où la grille rendait les six alors que cette décomposition
+n'a besoin que de l'étalon.
+
+**UNE ERREUR TROUVÉE EN TRAÇANT LA COURBE, ET C'EST LE RÉSULTAT DU VOLET.** Le
+troisième graphique portait un pic : la bande des régimes spéciaux triplait sur
+les deux dernières années, et le total de 2024 annonçait 23,7 milliards. Effet
+de bord. Chaque génération de la grille représente cinq cohortes, qui portent
+toutes l'âge de départ calculé pour la génération ; la comparaison, elle,
+opposait cet âge à l'âge légal de CHACUNE des cinq. Comme la réforme de 2023
+relève cet âge d'un trimestre par génération, les cohortes les plus jeunes de
+chaque tranche devenaient « anticipées » sans que rien n'avance leur départ.
+L'âge légal est désormais lu une fois, pour la génération de la grille, et seules
+les années réellement précoces comptent. **Le vrai chiffre est 13,7 milliards en
+2024** — 7,5 pour le classement, 3,8 pour la carrière longue, 2,4 pour les
+régimes spéciaux —, la série est continue, et l'attribution par motif cesse de
+ranger des carrières du privé sous « régimes spéciaux ». Les chiffres du volet B
+ont été repris partout où ils étaient écrits. La leçon : *un tracé voit ce qu'un
+tableau cache*. La table par pas de dix ans ne montrait pas le pic ; la courbe
+l'a montré au premier coup d'œil.
+
+*Ce que la page a coûté en règles d'écriture.* Sept tests du dépôt l'ont refusée
+avant de l'accepter : budget de lecture, incises en tiret, procédé « ce n'est pas
+X, c'est Y », titre de gabarit « Ce que cette page ne dit pas », tableaux sans
+légende ni en-tête de ligne, navigation. Tous ont été satisfaits en réécrivant,
+aucun en desserrant une borne — sauf deux entrées nouvelles dans les tables de
+budget, commentées sur place. Contrôlée au navigateur à 1280 et 390 pixels :
+trois graphiques, aucun débordement horizontal, aucune erreur de console.
+
+**Fichiers.** `src/retraite_notionnelle/avantages.py` ;
+`moteur/js/avantages.js` ; `_avantages` et ses trois dépliants dans
+`src/retraite_notionnelle/web/pages.py` et `moteur/js/pages.js` ; route et
+message d'attente dans `index.html` ; barre de navigation dans
+`web/gabarit.py` et `moteur/js/gabarit.js` ; `scripts/construire_donnees.py`
+(clé `avantages`) et `scripts/construire_temoins.py` (témoin `avantages`).
 
 **Fichiers.** `data/reference/legislation/avantages_non_contributifs.yaml` ;
 `tests/test_avantages.py` ; `scripts/cout_avantages.py` ;

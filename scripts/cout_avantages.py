@@ -69,51 +69,16 @@ sys.path.insert(0, str(RACINE / "src"))
 import yaml  # noqa: E402
 
 from retraite_notionnelle import Parametres  # noqa: E402
-from retraite_notionnelle.castypes import CAS_TYPES, CasType, calculer_cas_types  # noqa: E402
-from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
-from retraite_notionnelle.cout import (  # noqa: E402
-    _DEMI_TRANCHE, _ponderation, generations,
+from retraite_notionnelle.avantages import (  # noqa: E402
+    CONTRIBUTIF, MOTIFS, RECALCULS, SEDENTAIRE, carriere_variante, decomposer,
+    masses, masses_anticipees, motif_de_depart, recalculer,
 )
+from retraite_notionnelle.castypes import CAS_TYPES  # noqa: E402
+from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
+from retraite_notionnelle.cout import _ponderation  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
-
-#: La part contributive, sous une clé qui ne peut être celle d'aucun avantage.
-CONTRIBUTIF = "_contributif"
-
-#: Les avantages que le scénario 1 sert mais que la cascade N'ISOLE PAS, et
-#: qu'on mesure donc par recalcul. Leur montant est PRIS SUR la part
-#: contributive : la cascade, elle, ne les y avait pas comptés comme des
-#: avantages, faute de savoir les séparer.
-RECALCULS: tuple[str, ...] = (
-    "periodes_assimilees",
-    "categorie_active",
-    "age_jouissance_militaire",
-)
-
-#: Pour chaque statut CLASSÉ, le statut sédentaire de mêmes régimes.
-#:
-#: Le classement tient à l'emploi et non à la personne : la contrefactuelle
-#: d'un agent de catégorie active est le même agent, même caisse, même
-#: traitement, dont l'emploi ne serait pas classé. Les régimes sont identiques
-#: des deux côtés — un test l'exige —, si bien que l'écart ne porte que sur
-#: l'âge opposé et sur ce qui en découle.
-#:
-#: Les militaires y figurent sous leur propre ligne : ce n'est pas un
-#: classement d'emploi, c'est une pension qui s'ouvre à une DURÉE DE SERVICES
-#: et non à un âge. Leur contrefactuelle est le fonctionnaire d'État, qui
-#: relève des mêmes régimes qu'eux.
-SEDENTAIRE: dict[str, tuple[str, str]] = {
-    "fonctionnaire_etat_actif": ("fonctionnaire_etat", "categorie_active"),
-    "fonctionnaire_etat_super_actif": ("fonctionnaire_etat", "categorie_active"),
-    "fonctionnaire_territorial_hospitalier_actif": (
-        "fonctionnaire_territorial_hospitalier", "categorie_active"),
-    "fonctionnaire_territorial_hospitalier_super_actif": (
-        "fonctionnaire_territorial_hospitalier", "categorie_active"),
-    "ouvrier_etat_actif": ("ouvrier_etat", "categorie_active"),
-    "militaire": ("fonctionnaire_etat", "age_jouissance_militaire"),
-    "militaire_officier": ("fonctionnaire_etat", "age_jouissance_militaire"),
-}
 
 #: La dose d'interruption appliquée par ``--par-carriere`` à des carrières qui
 #: n'en portent aucune. Cinq ans, c'est-à-dire vingt trimestres : l'ordre de
@@ -141,246 +106,6 @@ def libelles() -> dict[str, str]:
         elif avantage["code"] in RECALCULS:
             noms.setdefault(avantage["code"], []).append(avantage["libelle"])
     return {ligne: " / ".join(sorted(parts)) for ligne, parts in noms.items()}
-
-
-#: Les trois familles de départ anticipé, et ce qui les sépare. Elles ne se
-#: recouvrent pas : un départ est ouvert par un motif et un seul.
-MOTIFS: tuple[str, ...] = ("carriere_longue", "classement", "regime_special")
-
-
-def _motif(cas: CasType, actuel) -> str:
-    """Ce qui ouvre ce départ, quand il est anticipé.
-
-    Le droit ouvre un départ avant l'âge légal de trois façons, et confondre
-    les trois est la meilleure manière de se tromper de réforme :
-
-    * la CARRIÈRE LONGUE, ouverte à qui a commencé tôt et cotisé assez — c'est
-      le seul des trois qui regarde la durée cotisée, donc le moins éloigné
-      d'un principe contributif ;
-    * le CLASSEMENT de l'emploi, catégorie active ou super-active de la
-      fonction publique, qui ne regarde ni la durée ni la pénibilité réelle
-      mais le corps d'appartenance ;
-    * l'âge propre d'un RÉGIME SPÉCIAL — cinquante ans à la conduite SNCF,
-      cinquante-cinq aux IEG, une durée de services chez les militaires.
-
-    Le modèle nomme le premier lui-même (``motif_ouverture``) ; les deux autres
-    se lisent au statut, le classement étant celui des sept affiliations que
-    ``legislation/affiliations.yaml`` marque.
-    """
-    if actuel.motif_ouverture == "carriere_longue":
-        return "carriere_longue"
-    if cas.affiliation in SEDENTAIRE:
-        return "classement"
-    return "regime_special"
-
-
-def carriere_variante(simulateur: Simulateur, cas: CasType, generation: int,
-                      age: float, affiliation: str | None = None,
-                      interruptions: dict[int, str] | None = None):
-    """La carrière d'un cas type, avec une variante possible.
-
-    Reprend ``CasType._carriere`` à deux libertés près, qui sont exactement les
-    deux contrefactuelles : le statut d'affiliation, et le motif des périodes
-    non travaillées. L'âge de liquidation est passé et non recalculé — c'est ce
-    qui tient les deux pensions comparables.
-    """
-    reelles = {
-        int(generation + cas.age_debut + decalage): motif
-        for decalage, motif in cas.interruptions_relatives
-    }
-    return simulateur.carriere_simple(
-        annee_naissance=generation,
-        sexe=cas.sexe,
-        affiliation=affiliation or cas.affiliation,
-        age_debut=cas.age_debut,
-        age_liquidation=age,
-        niveau_salaire=cas.niveau_salaire,
-        profil_carriere=cas.profil_carriere,
-        interruptions=reelles if interruptions is None else interruptions,
-        nombre_enfants=cas.nombre_enfants,
-        part_primes=cas.part_primes,
-        identifiant=f"{cas.libelle} (génération {generation})",
-    )
-
-
-def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
-               age: float, reelle) -> dict[str, float]:
-    """Les avantages non isolés par la cascade, mesurés par recalcul.
-
-    Rend un dictionnaire VIDE quand la carrière n'en porte aucun, plutôt qu'un
-    zéro : la plupart des cas types sont dans ce cas, et un zéro écrit
-    laisserait croire à une mesure là où il n'y a rien à mesurer.
-
-    DEUX PRÉCAUTIONS.
-
-    La première évite un double compte. Neutraliser les périodes non
-    travaillées retire les trimestres assimilés ET l'AVPF, que la cascade
-    chiffre déjà sous sa propre ligne. On la retranche donc de l'écart brut.
-
-    La seconde est une interaction qu'on ne mesure pas. Retirer deux avantages
-    d'âge à la fois n'est pas la somme de deux retraits — la décote est
-    plafonnée, et deux pénalités qui butent sur le même plafond ne
-    s'additionnent pas. Aucun cas type de la grille ne porte les deux
-    (les interruptions sont sur une carrière du privé, le classement sur des
-    carrières publiques), et un test l'exige ; si cela changeait, ce calcul
-    devrait changer aussi.
-
-    ET UN GARDE-FOU, qui refuse plutôt que de rendre un chiffre faux. Un
-    changement de statut ne vaut comme contrefactuelle que s'il ne déplace QUE
-    l'âge opposé. Quand il déplace aussi la DURÉE REQUISE, le rapport de
-    proratisation change avec lui et l'écart ne mesure plus l'avantage : c'est
-    le cas du militaire, dont la pension exige 167 trimestres là où le
-    fonctionnaire civil en exige 152, si bien que la contrefactuelle civile
-    rend une pension PLUS FORTE et l'avantage un montant négatif. La fonction
-    d'appel reçoit alors le refus et sa raison, et l'imprime : ce que la
-    jouissance militaire coûte est une affaire d'annuités servies, que
-    ``--duree`` mesure et que celle-ci ne mesurera jamais.
-    """
-    parts: dict[str, float] = {}
-    refus: dict[str, str] = {}
-    if cas.interruptions_relatives:
-        sans = simulateur.scenario_actuel.calculer(carriere_variante(
-            simulateur, cas, generation, age,
-            interruptions={
-                int(generation + cas.age_debut + decalage): "sans_activite"
-                for decalage, _ in cas.interruptions_relatives
-            },
-        ))
-        avpf = sum(a.montant for a in reelle.avantages_appliques if a.code == "avpf")
-        ecart = reelle.pension_annuelle - sans.pension_annuelle - avpf
-        if ecart > 0.0:
-            parts["periodes_assimilees"] = ecart
-    if cas.affiliation in SEDENTAIRE:
-        temoin, ligne = SEDENTAIRE[cas.affiliation]
-        sans = simulateur.scenario_actuel.calculer(
-            carriere_variante(simulateur, cas, generation, age, affiliation=temoin)
-        )
-        if sans.trimestres_requis != reelle.trimestres_requis:
-            refus[ligne] = (
-                f"{cas.code} : la contrefactuelle {temoin} exige "
-                f"{sans.trimestres_requis} trimestres contre "
-                f"{reelle.trimestres_requis} — la proratisation change avec le "
-                f"statut, l'écart ne mesure plus l'âge"
-            )
-        else:
-            ecart = reelle.pension_annuelle - sans.pension_annuelle
-            if ecart > 0.0:
-                parts[ligne] = ecart
-    return parts, refus
-
-
-def cascades(simulateur: Simulateur, liquidation: str):
-    """Pour chaque couple (cas type, génération) : la décomposition du scénario 1.
-
-    En euros constants de l'année de référence, comme les pensions de
-    ``cout.py``, et par la même conversion. Les montants recalculés sont PRIS
-    SUR la part contributive, où la cascade les avait laissés faute de savoir
-    les séparer — la somme des parts vaut donc toujours la pension entière.
-    """
-    grille = calculer_cas_types(simulateur, CAS_TYPES, generations(), liquidation)
-    par_code = {cas.code: cas for cas in CAS_TYPES}
-    couples = []
-    refus: dict[str, str] = {}
-    for (code, generation), comparaison in grille.resultats.items():
-        actuel = comparaison.actuel
-        parts = {CONTRIBUTIF: actuel.total_contributif}
-        for avantage in actuel.avantages_appliques:
-            parts[avantage.code] = parts.get(avantage.code, 0.0) + avantage.montant
-        recalculs, refuses = recalculer(simulateur, par_code[code], generation,
-                                        comparaison.carriere.age_liquidation, actuel)
-        refus.update(refuses)
-        for ligne, montant in recalculs.items():
-            parts[ligne] = parts.get(ligne, 0.0) + montant
-            parts[CONTRIBUTIF] -= montant
-        parts = {cle: comparaison.en_euros_constants(valeur)
-                 for cle, valeur in parts.items()}
-        couples.append((code, generation, comparaison.carriere.annee_liquidation,
-                        comparaison.carriere.age_liquidation, parts,
-                        _motif(par_code[code], actuel)))
-    # LE REFUS EST CONTAGIEUX, et il doit l'être. La durée requise d'un statut
-    # varie par génération : une contrefactuelle peut être propre pour les unes
-    # et faussée pour les autres. Garder les premières donnerait une série qui
-    # ne porte qu'un morceau de sa population — un agrégat biaisé, et dont le
-    # biais serait invisible. Une ligne refusée quelque part est donc retirée
-    # PARTOUT, et son montant rendu à la part contributive d'où il venait.
-    for code, generation, annee, age, parts, motif in couples:
-        for ligne in list(refus):
-            montant = parts.pop(ligne, 0.0)
-            parts[CONTRIBUTIF] += montant
-    return couples, grille, refus
-
-
-def masses(couples, population: Population, annee: int,
-           poids_cas: dict[str, float]) -> dict[str, float]:
-    """La masse de chaque part une année donnée.
-
-    Copie fidèle de la pondération de ``cout._masses`` pour le scénario 1 :
-    chaque génération de la grille en représente cinq, parcourues une à une,
-    chacune liquidant sa propre année. Le scénario 1 n'est pas revalorisé — le
-    droit l'indexe sur les prix et les masses sont déjà en euros constants —,
-    si bien qu'un seul poids suffit, celui des têtes.
-    """
-    total: dict[str, float] = {}
-    for code, generation, annee_liquidation, _, parts, _motif_ in couples:
-        part_cas = poids_cas.get(code, 0.0)
-        if part_cas <= 0.0:
-            continue
-        poids = 0.0
-        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            if annee < annee_liquidation + decalage:
-                continue
-            poids += population.effectif(annee - generation - decalage, annee)
-        if poids <= 0.0:
-            continue
-        for cle, montant in parts.items():
-            total[cle] = total.get(cle, 0.0) + part_cas * poids * montant
-    return total
-
-
-def masses_anticipees(couples, simulateur: Simulateur, population: Population,
-                      annee: int, poids_cas: dict[str, float]
-                      ) -> tuple[float, dict[str, float]]:
-    """La masse servie AVANT l'âge légal de droit commun, ventilée par motif.
-
-    C'est le second effet d'un avantage d'âge, et le plus lourd : non plus ce
-    qu'il ajoute au montant, mais ce qu'il coûte en ANNÉES DE SERVICE. Une
-    pension servie de cinquante-deux à soixante-quatre ans est douze annuités
-    que personne n'a cotisées et qu'aucune décote ne rattrape — la décote étant
-    plafonnée à vingt trimestres.
-
-    La comparaison se fait à l'âge légal de la GÉNÉRATION, lu dans
-    ``legislation/age_ouverture_requis.csv``, et non à un âge fixe : opposer
-    soixante-quatre ans à une génération qui relevait de soixante compterait
-    comme anticipé un départ que le droit de l'époque disait à l'heure.
-
-    La ventilation par motif est l'essentiel du résultat. Le coût des départs
-    anticipés n'a pas la même origine selon l'époque : il vient des statuts
-    classés et des régimes spéciaux tant que ceux-ci pèsent, puis de la
-    carrière longue à mesure que l'âge légal monte au-dessus de l'âge auquel
-    les carrières commencées tôt réunissent leur durée.
-    """
-    ages = simulateur.scenario_actuel.ages_ouverture
-    totale = 0.0
-    par_motif: dict[str, float] = {motif: 0.0 for motif in MOTIFS}
-    for code, generation, annee_liquidation, _, parts, motif in couples:
-        part_cas = poids_cas.get(code, 0.0)
-        if part_cas <= 0.0:
-            continue
-        pension = sum(parts.values())
-        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            cohorte = generation + decalage
-            if annee < annee_liquidation + decalage:
-                continue
-            age_atteint = annee - cohorte
-            effectif = population.effectif(age_atteint, annee)
-            if effectif <= 0.0:
-                continue
-            masse = part_cas * effectif * pension
-            totale += masse
-            legal = ages.age(cohorte)
-            if legal is not None and age_atteint < legal[0]:
-                par_motif[motif] += masse
-    return totale, par_motif
 
 
 def par_carriere(simulateur: Simulateur, generation: int):
@@ -510,7 +235,7 @@ def main() -> int:
     depenses = DepensesRetraite(parametres.racine_donnees)
     population = Population(parametres.racine_donnees)
     poids = _ponderation(simulateur, options.ponderation, CAS_TYPES)
-    couples, grille, refus = cascades(simulateur, options.liquidation)
+    pensionnes, refus = decomposer(simulateur, options.liquidation)
     noms = libelles()
 
     if options.duree:
@@ -529,7 +254,7 @@ def main() -> int:
             if annee % options.pas and annee != depenses.derniere_annee:
                 continue
             totale, par_motif = masses_anticipees(
-                couples, simulateur, population, annee, poids(annee))
+                pensionnes, simulateur, population, annee, poids(annee))
             if totale <= 0.0:
                 continue
             observee = depenses.depense(annee)
@@ -565,7 +290,7 @@ def main() -> int:
             continue
         if options.jusqu is not None and annee > options.jusqu:
             continue
-        part = masses(couples, population, annee, poids(annee))
+        part = masses(pensionnes, population, annee, poids(annee))
         totale = sum(part.values())
         if totale <= 0.0:
             continue
@@ -581,7 +306,7 @@ def main() -> int:
 
     print("Coût des avantages non contributifs chiffrables du scénario 1")
     print(f"pondération {options.ponderation}, liquidation {options.liquidation}, "
-          f"{len(couples)} couples (cas type, génération)")
+          f"{len(pensionnes)} couples (cas type, génération)")
     print()
     _table_annuelle(lignes, noms, options.pas)
     print()
@@ -597,9 +322,6 @@ def main() -> int:
     print("un sens, et --duree pour le second effet des avantages d'âge.")
 
     _dire_les_refus(refus)
-
-    if grille.echecs:
-        print(f"\n{len(grille.echecs)} couples non calculés, comme dans cout.py.")
 
     if options.csv is not None:
         cles = sorted({cle for _, _, parts in lignes for cle in parts

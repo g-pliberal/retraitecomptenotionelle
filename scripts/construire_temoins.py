@@ -666,6 +666,7 @@ def _pages(contexte: Contexte) -> dict:
         ("trajectoire_carriere", "/trajectoire", dict(BASE)),
         ("cas_types", "/cas-types", {}),
         ("cout", "/cout", {}),
+        ("avantages", "/avantages", {}),
         ("methode", "/methode", {}),
         ("donnees", "/donnees", {}),
         ("partager", "/partager", {}),

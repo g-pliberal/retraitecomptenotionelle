@@ -50,6 +50,7 @@ from retraite_notionnelle.donnees.equilibre import POSTES, POSTES_TRANSFERTS  # 
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
+from retraite_notionnelle.avantages import charger_avantages  # noqa: E402
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
@@ -720,6 +721,23 @@ def _inventaire() -> list:
     return [ligne.dictionnaire() for ligne in charger_inventaire(DONNEES)]
 
 
+def _avantages() -> dict:
+    """Les trente-neuf avantages non contributifs, et les familles qui les rangent.
+
+    C'est une DONNÉE et non un résultat : la frise de la page « Avantages » ne
+    suppose aucun calcul, et c'est ce qui la rend sûre là où les masses de la
+    même page sont des planchers. Le portage la relit telle quelle.
+    """
+    inventaire = charger_avantages(DONNEES)
+    return {
+        "familles": [
+            {"code": famille.code, "libelle": famille.libelle, "quoi": famille.quoi}
+            for famille in inventaire.familles
+        ],
+        "avantages": [avantage.dictionnaire() for avantage in inventaire.avantages],
+    }
+
+
 def construire() -> bytes:
     """Paquet complet, à contenu identique pour des données identiques."""
     paquet = {
@@ -732,6 +750,7 @@ def construire() -> bytes:
         "calibrations": _calibrations(),
         "regimes": _regimes(),
         "inventaire": _inventaire(),
+        "avantages": _avantages(),
         "affiliations": _affiliations(),
         "valeurs_point": _valeurs_point(),
         "rendements_points": _rendements(),
