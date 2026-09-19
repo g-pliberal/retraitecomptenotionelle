@@ -660,8 +660,14 @@ incertaines sans les certifier.
 
 **Ce que l'automatisation a corrigé.** L'API SDMX de la Banque de données
 macroéconomiques de l'INSEE (`api.insee.fr/series/BDM/V1`) est ouverte sans clé
-d'accès et diffuse, elle, les séries longues — contrairement à l'API Melodi, qui
-ne remonte pas avant les années 1990. Le recontrôle a confirmé la plupart des
+d'accès et diffuse, elle, les séries longues — là où l'API Melodi, pour les
+jeux dont ce dépôt avait alors besoin, ne remontait pas avant les années 1990.
+*Nuance ajoutée le 19 septembre 2026 : cette phrase était trop générale.* Melodi
+expose aussi des jeux qui remontent à 1949, dont le tableau économique
+d'ensemble des comptes nationaux, et c'est lui qui a fini par donner le revenu
+mixte des ménages que la banque de données ne publie pas. La règle à retenir
+n'est donc pas « Melodi est courte » mais « les deux portes n'ouvrent pas sur
+les mêmes pièces, et il faut essayer les deux ». Le recontrôle a confirmé la plupart des
 valeurs saisies mais en a corrigé beaucoup : 28 années d'inflation, 72 de
 salaire moyen et 70 de productivité s'écartaient de plus de 0,05 point. Comme
 l'indexation retient le **minimum** de ces trois taux, une erreur sur l'un
@@ -5223,10 +5229,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   tout le reste de cette page.** Le rapport compare des taux LÉGAUX, puis il est
   appliqué aux ressources OBSERVÉES : cela revient à prêter au taux de 18 % la
   même déperdition qu'au système actuel. Or cette déperdition est connue. Sur
-  l'assiette des revenus d'activité — 1 250 Md€ en 2024, soit 42,5 % du PIB,
-  établie par deux routes indépendantes qui s'écartent de 3,8 % : les salaires
-  et traitements bruts de l'INSEE plus le revenu mixte des ménages d'un côté,
-  l'inversion du tableau 2.11 du COR de l'autre — le système encaisse 32,4
+  l'assiette des revenus d'activité — 1 249 Md€ en 2024, soit 42,6 % du PIB,
+  certifiée dans `assiette_activite.csv` et établie par deux routes
+  indépendantes qui s'écartent de 3,9 % : les salaires et traitements bruts de
+  l'INSEE plus le revenu mixte des ménages d'un côté, l'inversion du
+  tableau 2.11 du COR de l'autre — le système encaisse 32,4
   points de ressources, dont 24,9 de cotisations, là où le taux légal d'un
   salarié type est de 28 à 29 %. Les quatre points d'écart sont les allègements
   généraux, que l'impôt compense et qui reparaissent dans les 4,6 points

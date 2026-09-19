@@ -138,6 +138,28 @@ institutions:
           l'emploi salarié intérieur en personnes physiques — la définition du
           SMPT dans les comptes nationaux. Disponible depuis 1949.
 
+      - id: insee_assiette_activite
+        titre: Assiette des revenus d'activité — salaires bruts (D11) et revenu mixte (B3G)
+        url: https://api.insee.fr/melodi/data/DD_CNA_TEE
+        idbank: ["011785411"]
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/assiette_activite.csv
+        recuperation: scripts/fetch/insee_revenu_mixte.py
+        note: >-
+          Les deux moitiés de ce sur quoi l'on prélève : les salaires et
+          traitements bruts du total des branches, assiette des salariés, et le
+          revenu mixte brut des ménages, assiette des non-salariés. La première
+          vient de la banque de données macroéconomiques, la seconde du tableau
+          économique d'ensemble exposé par Melodi — la BDM ne publie qu'un
+          agrégat « excédent d'exploitation / revenu mixte » qui mêle le profit
+          des sociétés au revenu des entrepreneurs individuels, et son jeu de
+          comptes des secteurs institutionnels ne sert que cinq ratios. Rester
+          chez le producteur a un prix mesurable : Eurostat rediffuse la même
+          grandeur sous nasa_10_nf_tr, à 0,8 % près sur 2023. Sert à dire ce
+          qu'un taux de cotisation rapporte réellement, et donc ce que le
+          rapport de recettes du scénario 6 suppose.
+
       - id: insee_bdm_masse_salariale
         titre: Masse salariale (D11), comptes nationaux annuels base 2020
         url: https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/011785411

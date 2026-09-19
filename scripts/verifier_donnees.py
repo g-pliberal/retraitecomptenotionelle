@@ -226,6 +226,64 @@ def source_masse_salariale() -> dict[tuple, float]:
     return {(str(a),): v for a, v in sorted(variations.items())}
 
 
+def _charge_revenu_mixte() -> dict[int, float]:
+    """Revenu mixte brut des ménages, en millions d'euros courants.
+
+    Le tableau économique d'ensemble de Melodi, filtré sur l'opération B3G du
+    secteur S14 et sur le niveau. Les filtres sont RELUS dans le fichier : un
+    téléchargement fait avec d'autres dimensions porterait le même nom et
+    passerait sans cela pour la bonne série.
+    """
+    chemin = BRUT / "insee_revenu_mixte.json"
+    if not chemin.exists():
+        raise SourceAbsente(
+            f"{chemin} absent (lancer scripts/fetch/insee_revenu_mixte.py)"
+        )
+    charge = json.loads(chemin.read_text(encoding="utf-8"))
+    attendus = {"STO": "B3G", "REF_SECTOR": "S14", "TRANSFORMATION": "N"}
+    if charge.get("filtres") != attendus:
+        raise SourceAbsente(
+            f"{chemin} n'a pas été téléchargé avec les filtres attendus "
+            f"{attendus} mais avec {charge.get('filtres')} "
+            "(relancer scripts/fetch/insee_revenu_mixte.py)"
+        )
+    return {
+        int(observation["dimensions"]["TIME_PERIOD"]):
+            float(observation["measures"]["OBS_VALUE_NIVEAU"]["value"])
+        for observation in charge["observations"]
+    }
+
+
+def source_assiette_salaires() -> dict[tuple, float]:
+    """Salaires et traitements bruts (D11), EN NIVEAU et en millions d'euros.
+
+    La même série que ``source_masse_salariale``, qui n'en garde que les
+    variations. Le niveau est ce qu'il faut pour confronter un TAUX de
+    cotisation à ce qui rentre : une variation ne dit pas sur quoi on prélève.
+    """
+    return {
+        (str(annee), "salaires_bruts"): valeur
+        for annee, valeur in sorted(
+            (int(a), v) for a, v in _observations("salaires_bruts").items()
+        )
+    }
+
+
+def source_assiette_revenu_mixte() -> dict[tuple, float]:
+    """Revenu mixte brut des ménages (B3G du secteur S14), en millions d'euros.
+
+    L'autre moitié de l'assiette des revenus d'activité : ce sur quoi les
+    non-salariés cotisent. Mixte parce que cette grandeur rémunère
+    indissociablement le travail de l'entrepreneur individuel et le capital
+    qu'il engage — le compte national ne sait pas les séparer, et l'assiette
+    sociale non plus.
+    """
+    return {
+        (str(annee), "revenu_mixte"): valeur
+        for annee, valeur in sorted(_charge_revenu_mixte().items())
+    }
+
+
 def source_pib_nominal() -> dict[tuple, float]:
     """Variation nominale du produit intérieur brut.
 
@@ -2349,6 +2407,76 @@ CERTIFICATIONS = (
             "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",
         ),
+    ),
+    Certification(
+        nom="assiette_salaires",
+        chemin=REFERENCE / "macro" / "assiette_activite.csv",
+        cles=("annee", "poste"),
+        colonne="montant_meur",
+        source=source_assiette_salaires,
+        origine="INSEE BDM, idbank 011785411 (D11, total des branches)",
+        decimales=1,
+        tolerance=0.05,
+        unite=" M€",
+        entete=(
+            "# Assiette des revenus d'activité, en niveau — France",
+            "# source_id: insee_assiette_activite",
+            "# unite: millions d'euros courants",
+            "# fiabilite:",
+            "#   certifiee (1949-) : comptes nationaux annuels base 2020, lus chez",
+            "#             l'INSEE et recontrôlés par scripts/verifier_donnees.py.",
+            "#             `salaires_bruts` vient de la banque de données",
+            "#             macroéconomiques (idbank 011785411), `revenu_mixte` du",
+            "#             tableau économique d'ensemble exposé par Melodi",
+            "#             (opération B3G, secteur S14).",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire SUR QUOI l'on prélève, et donc ce qu'un taux de cotisation",
+            "# rapporte réellement. Le reste du dépôt travaille en rapports — de",
+            "# masses de pension, de cotisations — parce qu'un rapport est robuste ;",
+            "# mais un rapport de taux LÉGAUX appliqué à des ressources OBSERVÉES",
+            "# transporte avec lui la structure du dénominateur, exonérations",
+            "# comprises. C'est cette série qui permet de le voir : en 2024, les",
+            "# deux postes font 1 250 Md€, soit 42,5 % du PIB, et le système de",
+            "# retraite y prélève 24,9 points de cotisations là où le taux légal",
+            "# d'un salarié type est de 28 à 29 %.",
+            "#",
+            "# LES DEUX POSTES, ET POURQUOI IL EN FAUT DEUX",
+            "# ---------------------------------------------",
+            "# `salaires_bruts` est l'assiette des salariés : c'est sur le salaire",
+            "# brut que les deux parts de la cotisation sont calculées, et c'est",
+            "# aussi sur le traitement que l'État verse sa contribution d'équilibre.",
+            "# `revenu_mixte` est celle des non-salariés. Les additionner suppose",
+            "# que l'on tienne le revenu mixte pour un revenu du TRAVAIL, ce qu'il",
+            "# n'est qu'en partie : il rémunère aussi le capital de l'entrepreneur",
+            "# individuel. Le compte national ne les sépare pas, l'assiette sociale",
+            "# non plus, et la convention est donc celle des deux.",
+            "#",
+            "# UN CONTRÔLE EXTERNE, ET IL TOMBE À 3,8 %",
+            "# -----------------------------------------",
+            "# Le tableau 2.11 du rapport annuel du COR chiffre l'ajustement",
+            "# nécessaire à l'équilibre DEUX FOIS : en pour-cent de la masse de",
+            "# pension et en points de taux de prélèvement. Le rapport des deux",
+            "# donne son assiette sans qu'il ait eu à la publier — 3,19 fois la",
+            "# masse de pension, soit 1 298 Md€ en 2024 contre 1 250 ici. Les deux",
+            "# routes sont indépendantes : l'une ne doit rien au COR, l'autre rien",
+            "# à l'INSEE.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="assiette_revenu_mixte",
+        chemin=REFERENCE / "macro" / "assiette_activite.csv",
+        cles=("annee", "poste"),
+        colonne="montant_meur",
+        source=source_assiette_revenu_mixte,
+        origine="INSEE Melodi, DD_CNA_TEE (B3G du secteur S14)",
+        decimales=1,
+        tolerance=0.05,
+        unite=" M€",
     ),
     Certification(
         nom="pib_nominal",

@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-09-18",
+ "dernier_passage_le": "2026-09-19",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -33,6 +33,28 @@
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-29-1",
    "valeurs": 16,
    "verifiee_le": "2026-09-17"
+  },
+  "assiette_revenu_mixte": {
+   "ajoutees": 77,
+   "colonne": "montant_meur",
+   "corrigees": 0,
+   "empreinte": "9c3a492bb97dfb64",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE Melodi, DD_CNA_TEE (B3G du secteur S14)",
+   "valeurs": 77,
+   "verifiee_le": "2026-09-19"
+  },
+  "assiette_salaires": {
+   "ajoutees": 77,
+   "colonne": "montant_meur",
+   "corrigees": 0,
+   "empreinte": "d34610dbbc21c963",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE BDM, idbank 011785411 (D11, total des branches)",
+   "valeurs": 77,
+   "verifiee_le": "2026-09-19"
   },
   "carriere_longue": {
    "ajoutees": 0,
@@ -362,7 +384,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-18"
+   "verifiee_le": "2026-09-19"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -406,7 +428,7 @@
    "niveau": "certifiee",
    "source": "INSEE BDM, idbank 011785411",
    "valeurs": 76,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-19"
   },
   "minimum_contributif": {
    "ajoutees": 0,
@@ -703,7 +725,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-18"
+   "verifiee_le": "2026-09-19"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
