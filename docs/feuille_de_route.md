@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 183<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 195<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9133,3 +9133,42 @@ la barre cesse de coller, comme avant. Les deux portages sont alignés, les
 témoins de page n'ont pas bougé — ils ne comparent que le corps —, et
 `docs/integration-partiliberalfrancais.md` ne promet plus de lien en tête.
 Le pictogramme `arrow-left` reste dans le jeu d'icônes, sans emploi.
+### 55. Les cinq points rendus sortent de la fiche de paie : le net affiché est le net plein — `fait`
+
+**Demande.** « Je veux changer le comportement de la capitalisation
+volontaire. Il faudrait afficher le salaire plein sans la capitalisation
+volontaire et en même temps la compter pour la retraite. Je ne fais ça
+uniquement car c'est volontaire. »
+
+**Ce qui est fait.** La fiche de paie de la proposition s'arrête à ce que la
+proposition impose : `bloc_taux_unique` ne porte plus de composante
+`capitalisation_volontaire`, et le net qu'elle rend est le net plein — 18 + 5
+prélevés, rien d'autre. Les cinq points rendus sont chiffrés à côté, par
+`AnneeComparee.epargne_volontaire`, sur l'assiette de la proposition (la même
+que le pilier), comme un **placement pris sur le net** : `net_apres_volontaire`
+dit ce qui reste à qui le fait, `gain_net_apres_volontaire` l'écart avec
+aujourd'hui. Le pilier, lui, ne change pas : la rente du scénario 6 compte
+toujours les dix points, et sa part volontaire reste nommée à côté d'elle.
+Portage `moteur/js/remuneration.js` à l'identique, témoins régénérés.
+
+**Comment le site le montre, et pourquoi ainsi.** Le chiffre de tête du bloc
+« Et pendant que vous cotisez » est désormais le net plein, et la phrase qui
+le suit dit trois choses dans l'ordre : que c'est le net plein, que la rente
+affichée plus haut suppose en plus les cinq points placés — « virés de votre
+net sur un compte à votre nom, pas une retenue » —, et ce qu'il reste alors.
+Dans le tableau, la ligne du placement est SOUS le net, avec un tiret dans la
+colonne d'aujourd'hui, suivie de « restant si vous les placez » ; elle n'est
+plus un « dont » du prélèvement retraite. C'est le meilleur moyen trouvé de
+dire « volontaire » : une retenue est dans le brut-moins-net, un placement
+est après le net, et la place de la ligne le dit avant le libellé. Le salaire
+mis en regard des quatre pensions est lui aussi le net plein.
+
+**Ce que ça déplace.** Rien sur les pensions, rien sur les six scénarios, rien
+sur le coût du travail ni le brut. Pour le non-cadre du privé né en 1990, le
+chiffre de tête passe de −107 € à +81 € par mois en 2026, à coût du travail
+inchangé ; les 188 € du placement et les 2 782 € qui restent sont écrits
+juste dessous, et la rente volontaire de 424 € par mois reste nommée sous la
+barre du système 4. Cinq tests réécrits dans `test_remuneration.py` — la
+fiche ne retient pas le volontaire, le placement vaut cinq points du brut
+pris sur le net, le retirer ne change pas la fiche au centime —, un dans
+`test_web.py` ; README et `methodologie.md` suivent.

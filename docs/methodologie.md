@@ -1394,12 +1394,15 @@ pourcentages, l'allocation ne dépend que de l'horizon, aucun seuil n'intervient
 au calcul complet fait à taux réduit.
 
 Deux endroits les séparent, et deux seulement. Sur la **fiche de paie**, les
-cinq points volontaires sont portés en entier par l'assuré, là où les vingt-trois
-points imposés sont partagés avec l'employeur : personne ne cofinance une
-épargne qu'on décide seul, si bien qu'activer la cotisation volontaire ne change
-ni le coût du travail, ni le brut, ni la CSG qui est assise dessus — seulement
-le net, d'exactement son montant. Dans les **résultats**, la rente qu'elle sert
-est écrite sur sa propre ligne, partout où le total du scénario 6 paraît.
+cinq points volontaires n'y sont pas : la fiche de la proposition s'arrête aux
+vingt-trois points imposés, partagés avec l'employeur, et le net qu'elle
+affiche est le net plein. Le placement des cinq points rendus est chiffré
+sous ce net, sur la même assiette que le pilier, et porté en entier par
+l'assuré — personne ne cofinance une épargne qu'on décide seul —, si bien
+qu'activer la cotisation volontaire ne change ni le coût du travail, ni le
+brut, ni la CSG qui est assise dessus, ni le net : seulement ce qui reste à
+qui place, d'exactement son montant. Dans les **résultats**, la rente qu'elle
+sert est écrite sur sa propre ligne, partout où le total du scénario 6 paraît.
 
 Les années antérieures à la bascule ne versent rien, et qui a liquidé avant n'a
 pas de pilier du tout.

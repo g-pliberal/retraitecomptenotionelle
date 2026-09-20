@@ -5027,25 +5027,33 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
         f"{_euros_signe(cumul, centimes=False)} en euros de {saisie.euros}."
         if duree > 1 else ""
     )
-    # LE CHIFFRE DU MILIEU COMPREND L'ÉPARGNE VOLONTAIRE, et il faut le dire
-    # dans la même phrase : cinq points que personne n'impose sont retirés de
-    # ce net, et l'assuré les retrouve sur un compte à son nom. Sans cette
-    # ligne, le lecteur croirait la proposition plus coûteuse qu'elle n'est ;
-    # sans le chiffre du milieu, il croirait cette épargne gratuite.
+    # LE CHIFFRE DU MILIEU EST LE NET PLEIN : ce que la proposition laisse
+    # quand elle a prélevé ses 23 points, et rien d'autre. Les cinq points que
+    # personne n'impose n'en sont pas retirés — une épargne qu'on décide seul
+    # n'est pas une retenue sur salaire —, mais la rente du système 4 affichée
+    # plus haut les suppose placés, et il faut le dire dans la même phrase :
+    # sans elle, le lecteur croirait cette rente gratuite ; avec le net amputé,
+    # il croirait la proposition plus coûteuse qu'elle n'est.
     volontaire = ""
     if remuneration.verse_le_volontaire:
-        sans = remuneration.reference.net_sans_volontaire / 12.0
-        ecart_sans = remuneration.gain_net_mensuel_sans_volontaire
+        parametres = comparaison.parametres
+        impose = (parametres.taux_retraite_propose
+                  - parametres.taux_capitalisation_volontaire_applique)
+        reste_apres = remuneration.reference.net_apres_volontaire / 12.0
+        ecart_apres = remuneration.gain_net_mensuel_apres_volontaire
         volontaire = (
-            f""" Ce chiffre suppose que vous versez les
-  <strong>{g.pourcentage(comparaison.parametres.taux_capitalisation_volontaire_applique, decimales=0)}
-  de capitalisation volontaire</strong> que la proposition vous rend, soit
-  {g.euros_centimes(remuneration.epargne_volontaire_mensuelle)} par mois qui
-  quittent votre {net} pour un compte à votre nom : vous cotisez alors
-  {g.pourcentage(comparaison.parametres.taux_retraite_propose, decimales=0)}
-  en tout, comme aujourd'hui. Si vous ne les versez pas, votre {net} est de
-  {g.euros_centimes(sans)}, soit {_euros_signe(ecart_sans)} par mois — et la
-  rente du système 4 baisse d'autant."""
+            f""" C'est votre {net} plein : le système 4 prélève
+  {g.pourcentage(impose, decimales=0)} pour la retraite, et rien d'autre. La
+  rente qu'il affiche plus haut suppose en plus que vous placez les
+  <strong>{g.pourcentage(parametres.taux_capitalisation_volontaire_applique, decimales=0)}
+  de capitalisation volontaire</strong> que la proposition vous rend — soit
+  {g.euros_centimes(remuneration.epargne_volontaire_mensuelle)} par mois virés
+  de votre {net} sur un compte à votre nom, pas une retenue —, pour cotiser
+  {g.pourcentage(parametres.taux_retraite_propose, decimales=0)} en tout, comme
+  aujourd'hui. Il vous reste alors {g.euros_centimes(reste_apres)} par mois,
+  soit {_euros_signe(ecart_apres)} par rapport à aujourd'hui. Si vous ne les
+  placez pas, vous gardez le {net} plein, et la rente du système 4 baisse de la
+  part nommée « des cinq points volontaires »."""
         )
     # Deux hypothèses, et il faut dire laquelle vaut ici : le coût du travail
     # tenu fixe quand l'employeur verse des taux de droit commun, l'assiette
@@ -5112,18 +5120,18 @@ def _salaire_net_detail(comparaison: Comparaison, remuneration,
          else "Dont pour la retraite, à votre charge",
          mois(retraite_avant), mois(retraite_apres)],
     ]
-    # La ligne que l'assuré peut retirer de sa propre décision. Elle est sous
-    # le prélèvement retraite parce qu'elle en fait partie — c'est bien de la
-    # retraite qui est prélevée —, mais elle est la seule du tableau que rien
-    # n'impose, et la colonne « Systèmes 1 à 3 » y porte un tiret : elle
-    # n'existe pas sous le droit en vigueur.
+    # Le placement que l'assuré décide seul. Il est SOUS le net, et non dans
+    # le prélèvement retraite : rien ne l'impose, la fiche ne le retient pas,
+    # et le net écrit au-dessus est le net plein. La colonne « Systèmes 1 à 3 »
+    # y porte un tiret — il n'existe pas sous le droit en vigueur —, et la
+    # ligne suivante dit ce qui reste à qui le fait.
     if reference.epargne_volontaire > 0:
         lignes.append(
-            ["Dont capitalisation volontaire, à votre nom", "—",
-             mois(reference.epargne_volontaire)])
+            ["Placé volontairement sur un compte à votre nom, les points rendus",
+             "—", mois(reference.epargne_volontaire)])
         lignes.append(
-            [f"{libelle_net} si vous ne la versez pas", mois(avant.net),
-             mois(reference.net_sans_volontaire)])
+            [f"{libelle_net} restant si vous les placez", mois(avant.net),
+             mois(reference.net_apres_volontaire)])
     lignes += [
         ["Ce qui vous arrive, sur 100 € coûtés" if avec_cout
          else f"Ce qui vous reste, sur 100 € de {assiette.lower()}",
@@ -5204,14 +5212,16 @@ def _salaire_net_epargne(epargne: float, remuneration,
     ajout = ""
     if remuneration.verse_le_volontaire:
         ajout = (
-            f" Sur ces {g.pourcentage(parametres.taux_capitalisation_applique, decimales=0)}, "
-            f"{volontaire} sont <strong>volontaires</strong> : ce sont les "
-            "points que la proposition vous rend et que le site suppose remis "
-            f"au même compte, soit {g.euros_centimes(remuneration.epargne_volontaire_mensuelle)} "
+            f" Les {volontaire} <strong>volontaires</strong> n'y sont pas : la "
+            "fiche de paie ne les retient pas, personne ne les impose. Ce sont "
+            "les points que la proposition vous rend, et que le site suppose "
+            "placés sur le même compte, pris sur votre net — soit "
+            f"{g.euros_centimes(remuneration.epargne_volontaire_mensuelle)} "
             f"par mois et {g.euros(remuneration.epargne_volontaire_cumulee)} "
             f"d'ici votre départ. Vous cotisez alors {total} en tout, "
-            "c'est-à-dire ce que vous versez déjà aujourd'hui — et c'est à ce "
-            "prix-là que les deux colonnes se comparent."
+            "c'est-à-dire ce que vous versez déjà aujourd'hui — c'est à ce "
+            "prix-là que la rente du système 4 est calculée, et la part qui "
+            "en vient est nommée à côté d'elle."
         )
     return (
         f'<p class="note resume"><strong>{g.euros_centimes(epargne)} par mois '
@@ -5305,15 +5315,17 @@ def _salaire_net_partage(remuneration, parametres, part: float) -> str:
         parametres.taux_capitalisation_volontaire_applique, decimales=0)
     # Les cinq points volontaires échappent au partage, et ce n'est pas un
     # détail d'écriture : personne ne cofinance une épargne que l'assuré décide
-    # seul. C'est aussi ce qui explique que les activer fasse baisser le net de
-    # leur montant entier, là où les points imposés n'en coûtent que la moitié.
+    # seul. Ils ne sont donc pas sur la fiche — le net affiché est le net plein
+    # — et, placés, ils pèsent leur montant entier là où les points imposés
+    # n'en coûtent que la moitié.
     hors_partage = ""
     if remuneration.verse_le_volontaire and remuneration.profil != "independant":
         hors_partage = f"""
-<p><strong>Les {volontaire} volontaires, eux, ne sont partagés avec
+<p><strong>Les {volontaire} volontaires, eux, ne sont sur la fiche de paie de
 personne.</strong> Aucun employeur ne cofinance une épargne que son salarié
-décide seul : ils sont portés en entier par vous, et le coût du travail ne
-bouge pas quand vous les versez. C'est pourquoi ils retirent de votre net leur
+décide seul : le site les compte comme un placement pris sur votre net, porté
+en entier par vous, et ni le coût du travail, ni le brut, ni le net ne bougent
+quand vous le faites. C'est pourquoi, si vous les placez, ils pèsent leur
 montant entier, quand les {capitalise} imposés ne vous en coûtent que la
 moitié.</p>"""
     if remuneration.profil == "independant":
@@ -5322,9 +5334,10 @@ charge en entier.</strong> La proposition les annonce « salariale et patronale
 additionnées » ; vous êtes les deux à la fois, comme vous l'êtes déjà des
 vingt-six points que vous versez aujourd'hui. Vous prêter un employeur pour la
 moitié de la charge fabriquerait un gain qui n'existe pas. Les {volontaire}
-volontaires le sont aussi, et pour une autre raison : personne ne cofinance une
-épargne qu'on décide seul. Votre profil est le seul où les trois taux pèsent de
-la même façon.</p>"""
+volontaires, eux, ne sont pas sur la fiche : c'est un placement pris sur votre
+revenu net, à votre charge en entier, et pour une autre raison — personne ne
+cofinance une épargne qu'on décide seul. Votre profil est le seul où les trois
+taux pèsent de la même façon.</p>"""
     if not remuneration.affiche_cout_du_travail:
         return f"""<p><strong>Les {repartition} sont partagés moitié-moitié</strong> entre
 vous et votre employeur, comme les {capitalise} capitalisés : votre part est

@@ -1266,20 +1266,24 @@ def test_la_page_ecrit_les_cinq_points_volontaires_partout_ou_ils_pesent(page):
     La règle de ce bloc : nulle part le site n'additionne en silence une
     épargne facultative à une cotisation obligatoire. Partout où le total du
     système 4 paraît, la part volontaire est nommée à côté ; et sur la fiche de
-    paie, les deux nets sont écrits — celui qui la verse, celui qui ne la verse
-    pas.
+    paie, le net affiché est le net PLEIN — la fiche ne retient pas ce que
+    personne n'impose —, puis le placement et ce qui reste à qui le fait.
     """
     texte = page("/simuler", naissance=1995, liquidation=64, salaire=3000,
                  unite_revenu="euros_mois")
+    plat = " ".join(texte.split())
     # Sous la barre du système 4, la rente est coupée en deux lignes nommées.
     assert "de rente capitalisée obligatoire" in texte
-    assert "de rente des cinq points volontaires" in " ".join(texte.split())
+    assert "de rente des cinq points volontaires" in plat
     # Le dépliant du pilier dit ce que chacune des deux sert.
     assert "que vous versez librement" in texte
-    # La fiche de paie porte la ligne et le net qu'on aurait sans elle.
-    assert "Dont capitalisation volontaire, à votre nom" in texte
-    assert "si vous ne la versez pas" in texte
-    assert "de capitalisation volontaire" in " ".join(texte.split())
+    # Le chiffre de tête est le net plein, et la phrase le dit.
+    assert "C'est votre salaire net plein" in plat
+    assert "pas une retenue" in plat
+    # La fiche de paie porte le placement SOUS le net, et ce qui reste après.
+    assert "Placé volontairement sur un compte à votre nom" in texte
+    assert "restant si vous les placez" in texte
+    assert "ne sont sur la fiche de paie de personne" in plat
 
 
 def test_la_proposition_se_compare_a_taux_egal_cotise(contexte):

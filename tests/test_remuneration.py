@@ -701,120 +701,108 @@ def test_un_statut_sans_fiche_de_paie_rend_le_montant_inchange(pieces):
 # -- les cinq points volontaires ---------------------------------------------
 #
 # Ils sont la seule cotisation du modèle que personne n'impose, et tout ce qui
-# suit découle de ce fait : aucun employeur ne les cofinance, donc ils ne
-# touchent ni au coût du travail, ni au brut, ni à la CSG qui est assise
-# dessus. Ils ne déplacent que le net, d'exactement leur montant.
+# suit découle de ce fait : ils ne sont PAS sur la fiche de paie. La fiche de
+# la proposition s'arrête aux 23 points imposés, son net est le net plein, et
+# les cinq points rendus sont un placement pris sur ce net — à la charge du
+# seul assuré, sans toucher au coût du travail, au brut, ni à la CSG.
 
 
-def _fiches_avec_et_sans_volontaire(pieces, niveau: float):
-    """La même année, sous la proposition seule puis avec les points rendus."""
-    actuel, propose = _blocs(pieces)
-    avec = bloc_taux_unique(
-        PARAMETRES.taux_cotisation_liberal,
-        PARAMETRES.taux_capitalisation_obligatoire,
-        PARAMETRES.part_salariale_taux_unique,
-        taux_capitalisation_volontaire=PARAMETRES.taux_capitalisation_volontaire,
-    )
-    constructeur = ConstructeurFiche(pieces["bareme"])
-    reference = constructeur.fiche(
-        ANNEE, niveau * pieces["smic"], pieces["plafond"], pieces["smic"], actuel)
-    fiches = []
-    for bloc in (propose, avec):
-        brut = constructeur.brut_a_cout_donne(
-            reference.cout_du_travail, pieces["plafond"], pieces["smic"], bloc)
-        fiches.append(constructeur.fiche(
-            ANNEE, brut, pieces["plafond"], pieces["smic"], bloc))
-    return reference, fiches[0], fiches[1]
+def _annee_de_reference(parametres=PARAMETRES):
+    simulateur = Simulateur(parametres)
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1990, sexe="H", affiliation=STATUT,
+        age_debut=22, age_liquidation=64,
+    ))
+    return comparaison.remuneration
 
 
-@pytest.mark.parametrize("niveau", [1.0, 1.5, 3.0, 5.0])
-def test_le_volontaire_ne_touche_ni_au_cout_du_travail_ni_au_brut(pieces, niveau):
-    """L'employeur ne verse rien de plus, donc rien ne bouge au-dessus du net.
+def test_la_fiche_de_la_proposition_ne_retient_pas_le_volontaire():
+    """Le bloc de la proposition ne porte que ce qu'elle impose : 18 + 5.
 
-    C'est la conséquence directe du choix de modélisation : une épargne que
-    l'assuré décide seul est portée par lui seul. Si ce test tombait, c'est que
-    la composante volontaire serait passée dans le partage salarié/employeur,
-    et le gain affiché par le site deviendrait faux à tous les salaires.
+    Si ce test tombait, c'est qu'une composante volontaire serait revenue
+    dans la fiche, et le net affiché par le site cesserait d'être le net
+    plein — la proposition paraîtrait plus coûteuse qu'elle n'est.
     """
-    _, sans, avec = _fiches_avec_et_sans_volontaire(pieces, niveau)
-    assert avec.cout_du_travail == pytest.approx(sans.cout_du_travail)
-    assert avec.brut == pytest.approx(sans.brut)
-    assert avec.reduction_generale == pytest.approx(sans.reduction_generale)
+    reference = _annee_de_reference().reference
+    fiche = reference.proposition
+    assert all("volontaire" not in ligne.code for ligne in fiche.lignes)
+    impose = (PARAMETRES.taux_cotisation_liberal
+              + PARAMETRES.taux_capitalisation_obligatoire)
+    # Au barème, avant la réduction générale que `retraite_totale` retranche.
+    assert fiche.retraite_salarie + fiche.retraite_employeur == pytest.approx(
+        fiche.brut * impose)
+    assert reference.epargne_a_votre_nom == pytest.approx(
+        fiche.brut * PARAMETRES.taux_capitalisation_obligatoire)
 
 
-@pytest.mark.parametrize("niveau", [1.0, 1.5, 3.0, 5.0])
-def test_le_volontaire_retire_du_net_exactement_son_montant(pieces, niveau):
-    """Cinq points du brut, ni plus ni moins : la CSG n'en voit pas la couleur.
+def test_le_placement_volontaire_vaut_cinq_points_du_brut_pris_sur_le_net():
+    """Cinq points de l'assiette de la proposition, ni plus ni moins.
 
-    C'est ce qui autorise `AnneeComparee.net_sans_volontaire` à soustraire au
-    lieu de refaire une fiche de paie.
+    C'est ce qui autorise `AnneeComparee.net_apres_volontaire` à soustraire
+    au lieu de refaire une fiche de paie : le placement ne passe pas par la
+    CSG, qui est assise sur le brut, et l'employeur n'en verse rien.
     """
-    _, sans, avec = _fiches_avec_et_sans_volontaire(pieces, niveau)
-    attendu = avec.brut * PARAMETRES.taux_capitalisation_volontaire
-    assert sans.net - avec.net == pytest.approx(attendu)
-    versee = sum(ligne.salarie + ligne.employeur for ligne in avec.lignes
-                 if ligne.code == "capitalisation_volontaire")
-    assert versee == pytest.approx(attendu)
+    reference = _annee_de_reference().reference
+    attendu = (reference.proposition.brut
+               * PARAMETRES.taux_capitalisation_volontaire)
+    assert reference.epargne_volontaire == pytest.approx(attendu)
+    assert reference.net_apres_volontaire == pytest.approx(
+        reference.proposition.net - attendu)
+    assert reference.gain_net_apres_volontaire == pytest.approx(
+        reference.gain_net - attendu)
 
 
-def test_le_volontaire_est_a_la_charge_du_seul_assure(pieces):
-    """Aucune part patronale sur cette ligne, à aucun niveau de salaire."""
-    _, _, avec = _fiches_avec_et_sans_volontaire(pieces, 2.0)
-    ligne = next(l for l in avec.lignes if l.code == "capitalisation_volontaire")
-    assert ligne.employeur == 0.0
-    assert ligne.salarie > 0
-    assert ligne.retraite
-
-
-def test_le_volontaire_porte_le_prelevement_retraite_au_niveau_d_aujourd_hui(pieces):
+def test_le_volontaire_porte_le_prelevement_retraite_au_niveau_d_aujourd_hui():
     """La raison d'être des cinq points : cotiser autant, autrement.
 
     Le rapprochement se fait sur le TAUX affiché — 18 + 5 + 5 contre les 28 %
     d'un salarié du privé —, et non sur les montants, que l'assiette et
-    l'allègement sur les bas salaires font diverger. Au-dessus de trois SMIC,
-    où l'allègement est éteint, les deux prélèvements se touchent de près.
+    l'allègement sur les bas salaires font diverger. La fiche, elle, prélève
+    nettement moins que le droit en vigueur ; le placement referme l'écart.
     """
     total = (PARAMETRES.taux_cotisation_liberal
              + PARAMETRES.taux_capitalisation_obligatoire
              + PARAMETRES.taux_capitalisation_volontaire)
     assert total == pytest.approx(0.28)
-    reference, sans, avec = _fiches_avec_et_sans_volontaire(pieces, 4.0)
-    # Sans les points rendus, la proposition prélève nettement moins ; avec
-    # eux, l'écart au droit en vigueur se referme.
-    assert sans.retraite_totale < reference.retraite_totale
-    assert abs(avec.retraite_totale - reference.retraite_totale) < abs(
-        sans.retraite_totale - reference.retraite_totale)
+    reference = _annee_de_reference().reference
+    avant, apres = reference.droit_en_vigueur, reference.proposition
+    assert apres.retraite_totale < avant.retraite_totale
+    assert abs(apres.retraite_totale + reference.epargne_volontaire
+               - avant.retraite_totale) < abs(
+        apres.retraite_totale - avant.retraite_totale)
 
 
-def test_la_carriere_expose_les_deux_nets(pieces):
-    """Le site affiche les deux montants, et le modèle les lui donne tous deux."""
-    simulateur = Simulateur(PARAMETRES)
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1990, sexe="H", affiliation=STATUT,
-        age_debut=22, age_liquidation=64,
-    ))
-    remuneration = comparaison.remuneration
+def test_la_carriere_expose_les_deux_nets():
+    """Le site affiche le net plein ET ce qui reste à qui place les points rendus."""
+    remuneration = _annee_de_reference()
     assert remuneration.verse_le_volontaire
     reference = remuneration.reference
     assert reference.epargne_volontaire > 0
-    assert reference.net_sans_volontaire == pytest.approx(
-        reference.proposition.net + reference.epargne_volontaire)
-    assert reference.epargne_a_votre_nom > reference.epargne_volontaire
+    assert reference.net_apres_volontaire < reference.proposition.net
+    # Même taux, même assiette : le placement pèse exactement l'obligatoire.
+    assert reference.epargne_volontaire == pytest.approx(
+        reference.epargne_a_votre_nom)
     assert remuneration.epargne_volontaire_cumulee > 0
+    assert remuneration.gain_net_mensuel_apres_volontaire < (
+        remuneration.gain_net_mensuel)
 
 
-def test_retirer_le_volontaire_rend_la_fiche_de_paie_d_avant():
-    """Un paramètre à `False`, et la fiche redevient celle des 23 points."""
-    avec = Simulateur(PARAMETRES)
-    sans = Simulateur(PARAMETRES.avec(capitalisation_volontaire=False))
-    carriere = dict(annee_naissance=1990, sexe="H", affiliation=STATUT,
-                    age_debut=22, age_liquidation=64)
-    reference_avec = avec.simuler(avec.carriere_simple(**carriere)).remuneration
-    reference_sans = sans.simuler(sans.carriere_simple(**carriere)).remuneration
+def test_retirer_le_volontaire_ne_change_pas_la_fiche_de_paie():
+    """Un paramètre à `False`, et seul le placement disparaît.
 
-    assert not reference_sans.verse_le_volontaire
-    assert reference_sans.reference.epargne_volontaire == 0.0
-    assert reference_sans.reference.proposition.net == pytest.approx(
-        reference_avec.reference.net_sans_volontaire)
-    assert reference_sans.reference.proposition.cout_du_travail == pytest.approx(
-        reference_avec.reference.proposition.cout_du_travail)
+    La fiche est la même au centime : c'est la preuve que les cinq points
+    rendus n'y étaient pas, et que le net affiché ne dépend pas d'une
+    décision que personne n'impose.
+    """
+    avec = _annee_de_reference()
+    sans = _annee_de_reference(PARAMETRES.avec(capitalisation_volontaire=False))
+
+    assert not sans.verse_le_volontaire
+    assert sans.reference.epargne_volontaire == 0.0
+    assert sans.reference.net_apres_volontaire == pytest.approx(
+        sans.reference.proposition.net)
+    for attribut in ("cout_du_travail", "brut", "net", "retraite_totale"):
+        assert getattr(sans.reference.proposition, attribut) == pytest.approx(
+            getattr(avec.reference.proposition, attribut))
+
+
