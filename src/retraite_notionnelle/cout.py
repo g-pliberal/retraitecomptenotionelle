@@ -139,7 +139,7 @@ from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle
 from .donnees.depenses import DepensesRetraite
 from .donnees.taux import CourbeTauxSansRisque
-from .donnees.equilibre import ComptesRetraite
+from .donnees.equilibre import ORGANISMES, POSTES, ComptesRetraite
 from .donnees.population import Population
 from .simulateur import Simulateur
 
@@ -236,6 +236,32 @@ CONVENTION_REVERSION_SERVIE = "servie"
 CONVENTION_REVERSION_SUPPRIMEE = "supprimee"
 CONVENTIONS_REVERSION: tuple[str, ...] = (
     CONVENTION_REVERSION_SERVIE, CONVENTION_REVERSION_SUPPRIMEE,
+)
+
+#: LE BILAN, POSTE PAR POSTE. Le COR publie la structure des ressources du
+#: système de retraite en sept lignes — cotisations, contribution d'équilibre,
+#: subventions, impôts et taxes, transferts avec leurs « dont », produits
+#: financiers, autres produits. ``SoldeAnnuel.postes_ressources`` rend la
+#: même chose pour CHAQUE système, en part de PIB, en appliquant à chaque
+#: poste la règle que ``ressources_de`` applique au total : les deux se
+#: somment exactement, et un test le tient. Les six premiers codes sont ceux
+#: de ``equilibre.POSTES`` ; les trois « dont » ventilent le poste des
+#: transferts par celui qui paie, et le quatrième l'impôt par ce qu'en verse
+#: le fonds de solidarité vieillesse, seule part de ce poste que le modèle
+#: sache nommer.
+POSTES_RESSOURCES: tuple[str, ...] = tuple(poste.code for poste in POSTES)
+DONT_TRANSFERTS: tuple[str, ...] = (
+    "transferts_famille", "transferts_chomage", "transferts_autres",
+)
+DONT_IMPOTS: tuple[str, ...] = ("impots_solidarite", "impots_autres")
+
+#: Ce qu'un système verse, en trois lignes que ``masse_du_scenario`` sépare
+#: déjà sans les nommer : les pensions de droit direct, la garantie vieillesse
+#: — financée par l'impôt, hors du compte des cotisants, et redite ici pour
+#: que le tableau la montre —, les pensions de réversion. Les deux premières
+#: font la dépense du système ; la garantie s'y ajoute pour mémoire.
+POSTES_DEPENSES: tuple[str, ...] = (
+    "droits_directs", "droits_derives", "garantie_vieillesse",
 )
 
 #: Première génération dont une liquidation puisse tomber après le début de la
@@ -564,6 +590,15 @@ class SoldeAnnuel:
     #: sont le système actuel avant elle et servent donc sa réversion ;
     #: après, elles ne la servent plus, à personne.
     reforme_en_vigueur: bool = True
+    #: Part de chaque poste dans les ressources de l'année, au découpage du
+    #: COR (``equilibre.POSTES``). ``part_contributive``, ``part_impots`` et
+    #: ``part_subventions`` en sont des sommes ; le détail sert au tableau
+    #: poste par poste, et à rien d'autre.
+    parts: dict[str, float] = field(default_factory=dict)
+    #: ``retrait``, payeur par payeur : ce que la branche famille, l'assurance
+    #: chômage et le fonds de solidarité vieillesse versent chacun pour des
+    #: droits qu'aucun scénario notionnel ne sert, en part de PIB.
+    retraits: dict[str, float] = field(default_factory=dict)
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB.
@@ -705,6 +740,107 @@ class SoldeAnnuel:
     def depense_meur(self, scenario: str) -> float:
         """Ce qui sort, en millions d'euros courants, et zéro si le PIB manque."""
         return self.depense(scenario) * self.pib
+
+    def postes_ressources(self, scenario: str) -> dict[str, float]:
+        """Les ressources d'un système, poste par poste, en part de PIB.
+
+        C'est ``ressources_de`` écrit ligne à ligne, au découpage du rapport
+        annuel du COR, et les lignes somment exactement au total : la même
+        règle est appliquée à chaque poste, jamais une autre. Les postes du
+        COR sont rendus sous leur code (``POSTES_RESSOURCES``) ; les « dont »
+        (``DONT_TRANSFERTS``, ``DONT_IMPOTS``) ventilent deux d'entre eux et
+        ne s'ajoutent pas au total.
+
+        LE SYSTÈME ACTUEL encaisse chaque poste tel que le COR le publie, et
+        les « dont » sont ce que la branche famille, l'assurance chômage et le
+        fonds de solidarité vieillesse versent réellement — lus chez le payeur
+        dans la fenêtre connue, à part constante des ressources ailleurs.
+
+        LA PROPOSITION, à compter de la bascule et sous la convention de
+        l'assiette, remplace la ligne des cotisations par 18 % de l'assiette
+        des revenus d'activité, et met trois postes à zéro — la contribution
+        d'équilibre de l'État, remplacée par ces 18 % appliqués aux
+        traitements ; les subventions d'équilibre, dont la fusion des régimes
+        supprime l'objet ; les impôts et taxes affectés, qui n'acquièrent de
+        droits à personne. Des transferts, elle ne garde que ce qui ne paie
+        pas un droit qu'elle a supprimé. ``ressources_de`` dit pourquoi,
+        décision par décision.
+
+        LES AUTRES SCÉNARIOS NOTIONNELS, et la proposition avant sa bascule,
+        gardent chaque poste à sa valeur, la part cotisée multipliée par le
+        rapport de recette, et retranchent chez le payeur ce qu'ils ne peuvent
+        pas compter : les deux transferts sur leur ligne, la CSG du fonds de
+        solidarité sur celle de l'impôt.
+        """
+        total = self.ressources
+        parts = self.parts
+        famille = self.retraits.get("famille", 0.0)
+        chomage = self.retraits.get("chomage", 0.0)
+        solidarite = self.retraits.get("solidarite", 0.0)
+        if scenario == "actuel":
+            postes = {code: total * parts.get(code, 0.0) for code in POSTES_RESSOURCES}
+            postes["transferts_famille"] = famille
+            postes["transferts_chomage"] = chomage
+            postes["impots_solidarite"] = solidarite
+        elif scenario == "notionnel_liberal" and self.recette_par_assiette:
+            postes = {
+                "cotisations": total * self.taux_liberal / self.taux_prelevement,
+                "contribution_equilibre_etat": 0.0,
+                "subventions_equilibre": 0.0,
+                "impots_et_taxes": 0.0,
+                "transferts": total * parts.get("transferts", 0.0) - famille - chomage,
+                "autres_produits": total * parts.get("autres_produits", 0.0),
+                "transferts_famille": 0.0,
+                "transferts_chomage": 0.0,
+                "impots_solidarite": 0.0,
+            }
+        else:
+            rapport = self.rapports_recettes.get(scenario, 1.0)
+            postes = {
+                "cotisations": total * parts.get("cotisations", 0.0) * rapport,
+                "contribution_equilibre_etat":
+                    total * parts.get("contribution_equilibre_etat", 0.0) * rapport,
+                "subventions_equilibre": total * parts.get("subventions_equilibre", 0.0),
+                "impots_et_taxes": total * parts.get("impots_et_taxes", 0.0) - solidarite,
+                "transferts": total * parts.get("transferts", 0.0) - famille - chomage,
+                "autres_produits": total * parts.get("autres_produits", 0.0),
+                "transferts_famille": 0.0,
+                "transferts_chomage": 0.0,
+                "impots_solidarite": 0.0,
+            }
+        postes["transferts_autres"] = (postes["transferts"] - postes["transferts_famille"]
+                                       - postes["transferts_chomage"])
+        postes["impots_autres"] = postes["impots_et_taxes"] - postes["impots_solidarite"]
+        return postes
+
+    def postes_depenses(self, scenario: str) -> dict[str, float]:
+        """Ce qu'un système verse, en trois lignes et en part de PIB.
+
+        ``droits_directs`` et ``droits_derives`` somment exactement à
+        ``depense`` : la première est la part directe de la base multipliée
+        par le rapport du système, la seconde est ce que ``masse_du_scenario``
+        y ajoute — la réversion entière pour le système actuel, rien pour un
+        scénario notionnel qui ne la sert pas. ``garantie_vieillesse`` est la
+        composante que l'impôt finance, redite ici pour la proposition et
+        nulle pour les autres : elle n'entre pas dans ``depense``, et ce
+        tableau ne l'y ajoute pas non plus.
+        """
+        base = self.depenses
+        directe_base = base * (1.0 - self.part_derives)
+        if scenario == "actuel":
+            return {
+                "droits_directs": directe_base,
+                "droits_derives": base * self.part_derives,
+                "garantie_vieillesse": 0.0,
+            }
+        directs = directe_base * self.rapports[scenario]
+        garantie = (directe_base * self.rapports.get(COMPOSANTE_GARANTIE, 0.0)
+                    if scenario == "notionnel_liberal" else 0.0)
+        return {
+            "droits_directs": directs,
+            "droits_derives": self.depense(scenario) - directs,
+            "garantie_vieillesse": garantie,
+        }
 
 
 @dataclass
@@ -1606,6 +1742,12 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= annee_bascule,
+            parts={poste.code: comptes.part(poste.code, annee) for poste in POSTES},
+            retraits={
+                organisme.code: comptes.recette_non_acquise(
+                    annee, organisme=organisme.code)
+                for organisme in ORGANISMES if organisme.droit_supprime
+            },
         )
         for annee in comptes.annees() if annee in par_annee
     ]

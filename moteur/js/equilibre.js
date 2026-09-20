@@ -406,12 +406,16 @@ export class ComptesRetraite {
    * servent pas. C'est ce qu'il faudrait retirer des ressources avant de lire
    * leur coefficient d'équilibre.
    */
-  transfertSupprimePartPib(annee, parImpot = null) {
+  transfertSupprimePartPib(annee, parImpot = null, organisme = null) {
+    // `organisme` ne garde qu'un seul payeur : c'est ce qui permet au tableau
+    // des postes de la page Coût d'écrire « dont branche famille » et « dont
+    // assurance chômage » sur la ligne des transferts, comme le COR.
     let somme = 0;
-    for (const organisme of ORGANISMES) {
-      if (!organisme.droitSupprime) continue;
-      if (parImpot !== null && Boolean(organisme.recetteParImpot) !== parImpot) continue;
-      somme += this.transfertPartPib(organisme.code, annee);
+    for (const payeur of ORGANISMES) {
+      if (!payeur.droitSupprime) continue;
+      if (parImpot !== null && Boolean(payeur.recetteParImpot) !== parImpot) continue;
+      if (organisme !== null && payeur.code !== organisme) continue;
+      somme += this.transfertPartPib(payeur.code, annee);
     }
     return somme;
   }
@@ -426,14 +430,15 @@ export class ComptesRetraite {
    * est l'hypothèse qui n'en ajoute aucune autre. `parImpot` passe à
    * `transfertSupprimePartPib` et y dit lesquels des quatre organismes compter.
    */
-  recetteNonAcquise(annee, parImpot = null) {
+  recetteNonAcquise(annee, parImpot = null, organisme = null) {
     const premiere = this.premiereAnneeTransferts;
     const derniere = this.derniereAnneeTransferts;
     if (annee >= premiere && annee <= derniere) {
-      return this.transfertSupprimePartPib(annee, parImpot);
+      return this.transfertSupprimePartPib(annee, parImpot, organisme);
     }
     const reference = Math.min(Math.max(annee, premiere), derniere);
-    const part = this.transfertSupprimePartPib(reference, parImpot) / this.ressource(reference);
+    const part = this.transfertSupprimePartPib(reference, parImpot, organisme)
+      / this.ressource(reference);
     return part * this.ressource(annee);
   }
 

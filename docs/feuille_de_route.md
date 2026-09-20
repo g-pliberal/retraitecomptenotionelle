@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 237<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 539<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -4399,6 +4399,34 @@ même : seul le scénario 1 la sert**, les cinq autres la retirant comme tout
 avantage non contributif — c'est le chemin de la Suède. Celui de l'Italie, qui
 partage le capital du défunt, reste calculable sous
 `convention_reversion="servie"`. Le détail est à la fin de ce journal.
+
+**D. Le tableau poste par poste — `fait` le 20 septembre 2026.** Le bilan de
+la page Coût ne se lisait qu'en deux courbes et un coefficient ; ce que chaque
+décision de la proposition retire ou remplace, on le lisait dans une note. La
+page porte désormais, sous « Recettes et dépenses, poste par poste », le
+tableau 2.2 du rapport annuel du COR — la structure des ressources, en
+milliards et en pourcentage du total — refait pour le système actuel et pour
+la proposition, l'année de la bascule, avec les dépenses en face et le solde
+en bas. `SoldeAnnuel.postes_ressources` et `postes_depenses` écrivent
+`ressources_de` et `depense` ligne à ligne, au découpage du COR, et un test
+tient que les lignes somment aux totaux pour les six systèmes et toutes les
+années ; les « dont » de la ligne des transferts sont ce que la branche
+famille et l'assurance chômage versent, celui de la ligne des impôts ce que
+verse le fonds de solidarité vieillesse (`recette_non_acquise` prend un
+`organisme`). Portage dans `moteur/js/cout.js` et `pages.js`, témoins
+régénérés. En 2026, au PIB de 2025 : 417,7 Md€ de ressources pour le système
+actuel (13,96 % du PIB) contre 236,9 pour la proposition (7,92 %), dont 228,9
+de cotisations à 18 % ; 422,5 Md€ de dépenses (14,13 %) contre 276,9 (9,26 %) ;
+un solde de −0,16 point de PIB contre −1,34. Pour mémoire et hors du compte,
+la garantie vieillesse lue sur la distribution des pensions, 35,6 Md€ au
+plancher de base, et le pilier capitalisé, 63,6 Md€. *Une chose vue en
+chemin, non corrigée* : le dépliant de la garantie déplace la distribution du
+facteur `rapports["notionnel_liberal"] − rapports[COMPOSANTE_GARANTIE]`, alors
+que depuis le 19 septembre la masse du scénario 6 est déjà sa seule part
+contributive — la soustraction retire la garantie une seconde fois, et
+abaisse le facteur de quelques centièmes ; le tableau reprend le même facteur
+pour rester cohérent avec ce dépliant, et il faudra trancher aux deux endroits
+à la fois.
 
 **Sources à lire.** INSEE, comptes nationaux annuels, salaires et traitements
 bruts par branche (D11, niveau) et revenu mixte des entrepreneurs individuels ;

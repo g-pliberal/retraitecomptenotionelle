@@ -482,7 +482,8 @@ class ComptesRetraite:
         return self.transfert_part_pib(organisme, annee) / self.ressource(annee)
 
     def transfert_supprime_part_pib(self, annee: int,
-                                    *, par_impot: bool | None = None) -> float:
+                                    *, par_impot: bool | None = None,
+                                    organisme: str | None = None) -> float:
         """Ce que le compte notionnel ne peut pas compter, en part du PIB.
 
         La somme des versements qui financent un droit que les scénarios
@@ -495,13 +496,20 @@ class ComptesRetraite:
         « impôts et taxes affectés » (le fonds de solidarité vieillesse). Qui
         retire un de ces deux postes en entier doit cesser de retirer la ligne
         correspondante, sous peine de retirer la même somme deux fois.
-        """
-        return sum(self.transfert_part_pib(organisme.code, annee)
-                   for organisme in ORGANISMES
-                   if organisme.droit_supprime
-                   and (par_impot is None or organisme.recette_par_impot is par_impot))
 
-    def recette_non_acquise(self, annee: int, *, par_impot: bool | None = None) -> float:
+        ``organisme`` ne garde qu'un seul payeur : c'est ce qui permet au
+        tableau des postes de la page Coût d'écrire « dont branche famille »
+        et « dont assurance chômage » sur la ligne des transferts, comme le
+        COR le fait dans le sien.
+        """
+        return sum(self.transfert_part_pib(payeur.code, annee)
+                   for payeur in ORGANISMES
+                   if payeur.droit_supprime
+                   and (par_impot is None or payeur.recette_par_impot is par_impot)
+                   and (organisme is None or payeur.code == organisme))
+
+    def recette_non_acquise(self, annee: int, *, par_impot: bool | None = None,
+                            organisme: str | None = None) -> float:
         """Ce qu'un scénario notionnel doit retirer de ses ressources, en part du PIB.
 
         Dans la fenêtre où les quatre lignes sont connues, c'est ce que la
@@ -511,14 +519,16 @@ class ComptesRetraite:
         proche : personne ne projette ce que la CNAF versera en 2070, et une
         part constante est l'hypothèse qui n'en ajoute aucune autre.
 
-        ``par_impot`` passe à ``transfert_supprime_part_pib`` et y dit lesquels
-        des quatre organismes compter.
+        ``par_impot`` et ``organisme`` passent à ``transfert_supprime_part_pib``
+        et y disent lesquels des payeurs compter.
         """
         premiere, derniere = self.premiere_annee_transferts, self.derniere_annee_transferts
         if premiere <= annee <= derniere:
-            return self.transfert_supprime_part_pib(annee, par_impot=par_impot)
+            return self.transfert_supprime_part_pib(
+                annee, par_impot=par_impot, organisme=organisme)
         reference = min(max(annee, premiere), derniere)
-        part = (self.transfert_supprime_part_pib(reference, par_impot=par_impot)
+        part = (self.transfert_supprime_part_pib(
+                    reference, par_impot=par_impot, organisme=organisme)
                 / self.ressource(reference))
         return part * self.ressource(annee)
 

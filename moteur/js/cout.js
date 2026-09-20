@@ -42,6 +42,7 @@ import {
   CAS_TYPES, VARIANTES_LIQUIDATION, calculerCasTypes, poidsEffectifs, poidsEgaux,
 } from "./castypes.js";
 import { Fiabilite } from "./serie.js";
+import { ORGANISMES, POSTES } from "./equilibre.js";
 
 /** Les six systèmes, dans l'ordre du tableau de comparaison. */
 export const SCENARIOS = [
@@ -125,6 +126,26 @@ export const CONVENTION_REVERSION_SUPPRIMEE = "supprimee";
 export const CONVENTIONS_REVERSION = [
   CONVENTION_REVERSION_SERVIE, CONVENTION_REVERSION_SUPPRIMEE,
 ];
+
+/**
+ * LE BILAN, POSTE PAR POSTE. Le COR publie la structure des ressources en
+ * sept lignes ; `SoldeAnnuel.postesRessources` rend la même chose pour CHAQUE
+ * système, en part de PIB, en appliquant à chaque poste la règle que
+ * `ressourcesDe` applique au total : les deux se somment exactement. Les six
+ * premiers codes sont ceux d'`equilibre.POSTES` ; les « dont » ventilent le
+ * poste des transferts par celui qui paie, et l'impôt par ce qu'en verse le
+ * fonds de solidarité vieillesse.
+ */
+export const POSTES_RESSOURCES = POSTES.map((poste) => poste.code);
+export const DONT_TRANSFERTS = ["transferts_famille", "transferts_chomage", "transferts_autres"];
+export const DONT_IMPOTS = ["impots_solidarite", "impots_autres"];
+
+/**
+ * Ce qu'un système verse, en trois lignes que `masseDuScenario` sépare déjà
+ * sans les nommer : droit direct, réversion, et la garantie vieillesse —
+ * financée par l'impôt, hors du compte des cotisants, redite pour mémoire.
+ */
+export const POSTES_DEPENSES = ["droits_directs", "droits_derives", "garantie_vieillesse"];
 
 /**
  * Applique un rapport de masses à une base, et au seul morceau qu'il décrit.
@@ -633,7 +654,7 @@ class SoldeAnnuel {
               tauxLiberal = 0.0, anneeBascule = 0,
               convention = CONVENTION_RAPPORT,
               partDerives = 0.0, reversionServie = false,
-              reformeEnVigueur = true) {
+              reformeEnVigueur = true, parts = {}, retraits = {}) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
@@ -672,6 +693,10 @@ class SoldeAnnuel {
     this.reversionServie = reversionServie;
     // La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes prospectives.
     this.reformeEnVigueur = reformeEnVigueur;
+    // Part de chaque poste dans les ressources, au découpage du COR, et le
+    // retrait payeur par payeur : ne servent qu'au tableau poste par poste.
+    this.parts = parts;
+    this.retraits = retraits;
   }
 
   /**
@@ -763,6 +788,90 @@ class SoldeAnnuel {
   /** Ce qui sort, en millions d'euros courants, et zéro si le PIB manque. */
   depenseMeur(scenario) {
     return this.depense(scenario) * this.pib;
+  }
+
+  /**
+   * Les ressources d'un système, poste par poste, en part de PIB : c'est
+   * `ressourcesDe` écrit ligne à ligne, au découpage du COR, et les lignes
+   * somment au total. Le système actuel encaisse chaque poste tel quel, et
+   * ses « dont » sont ce que chaque payeur verse réellement. La proposition,
+   * dès la bascule, remplace les cotisations par 18 % de l'assiette et met à
+   * zéro la contribution d'équilibre, les subventions et les impôts affectés ;
+   * des transferts, elle ne garde que ce qui ne paie pas un droit supprimé.
+   * Les autres scénarios notionnels gardent chaque poste, la part cotisée
+   * multipliée par le rapport de recette, et retranchent chez le payeur ce
+   * qu'ils ne peuvent pas compter.
+   */
+  postesRessources(scenario) {
+    const total = this.ressources;
+    const parts = this.parts;
+    const part = (code) => parts[code] ?? 0.0;
+    const famille = this.retraits.famille ?? 0.0;
+    const chomage = this.retraits.chomage ?? 0.0;
+    const solidarite = this.retraits.solidarite ?? 0.0;
+    let postes;
+    if (scenario === "actuel") {
+      postes = {};
+      for (const code of POSTES_RESSOURCES) postes[code] = total * part(code);
+      postes.transferts_famille = famille;
+      postes.transferts_chomage = chomage;
+      postes.impots_solidarite = solidarite;
+    } else if (scenario === "notionnel_liberal" && this.recetteParAssiette) {
+      postes = {
+        cotisations: total * this.tauxLiberal / this.tauxPrelevement,
+        contribution_equilibre_etat: 0.0,
+        subventions_equilibre: 0.0,
+        impots_et_taxes: 0.0,
+        transferts: total * part("transferts") - famille - chomage,
+        autres_produits: total * part("autres_produits"),
+        transferts_famille: 0.0,
+        transferts_chomage: 0.0,
+        impots_solidarite: 0.0,
+      };
+    } else {
+      const rapport = this.rapportsRecettes[scenario] ?? 1.0;
+      postes = {
+        cotisations: total * part("cotisations") * rapport,
+        contribution_equilibre_etat: total * part("contribution_equilibre_etat") * rapport,
+        subventions_equilibre: total * part("subventions_equilibre"),
+        impots_et_taxes: total * part("impots_et_taxes") - solidarite,
+        transferts: total * part("transferts") - famille - chomage,
+        autres_produits: total * part("autres_produits"),
+        transferts_famille: 0.0,
+        transferts_chomage: 0.0,
+        impots_solidarite: 0.0,
+      };
+    }
+    postes.transferts_autres = postes.transferts - postes.transferts_famille
+      - postes.transferts_chomage;
+    postes.impots_autres = postes.impots_et_taxes - postes.impots_solidarite;
+    return postes;
+  }
+
+  /**
+   * Ce qu'un système verse, en trois lignes et en part de PIB. Droit direct
+   * et réversion somment exactement à `depense` ; la garantie vieillesse est
+   * la composante que l'impôt finance, redite pour la proposition et nulle
+   * pour les autres, et `depense` ne la contient pas.
+   */
+  postesDepenses(scenario) {
+    const base = this.depenses;
+    const directeBase = base * (1.0 - this.partDerives);
+    if (scenario === "actuel") {
+      return {
+        droits_directs: directeBase,
+        droits_derives: base * this.partDerives,
+        garantie_vieillesse: 0.0,
+      };
+    }
+    const directs = directeBase * this.rapports[scenario];
+    const garantie = scenario === "notionnel_liberal"
+      ? directeBase * (this.rapports[COMPOSANTE_GARANTIE] ?? 0.0) : 0.0;
+    return {
+      droits_directs: directs,
+      droits_derives: this.depense(scenario) - directs,
+      garantie_vieillesse: garantie,
+    };
   }
 }
 
@@ -1213,6 +1322,12 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       depenses.partDroitsDerives(annee),
       reversionServie,
       annee >= anneeBascule,
+      Object.fromEntries(POSTES.map((poste) => [poste.code, comptes.part(poste.code, annee)])),
+      Object.fromEntries(
+        ORGANISMES.filter((organisme) => organisme.droitSupprime)
+          .map((organisme) => [organisme.code,
+            comptes.recetteNonAcquise(annee, null, organisme.code)]),
+      ),
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);

@@ -1643,6 +1643,107 @@ def test_le_systeme_actuel_garde_sa_base_intacte(cout_assiette: Cout):
         assert point.cout("actuel") == point.observee, point.annee
 
 
+def test_les_postes_somment_au_total_de_chaque_systeme(cout_assiette: Cout):
+    """Le tableau poste par poste est le bilan écrit ligne à ligne, rien d'autre.
+
+    Pour chaque système et chaque année, les six postes du COR somment aux
+    ressources que ``ressources_de`` compte, et droit direct plus réversion
+    somment à la dépense. Les « dont » ventilent un poste sans s'y ajouter. Un
+    dix-millième de tolérance : les parts publiées par le COR sont arrondies au
+    cent-millième et ne somment à un qu'à cela près.
+
+    Aucune ligne n'est négative, mais cela n'est exigé qu'à compter de la
+    première année où les payeurs sont lus : avant, le fonds de solidarité
+    vieillesse est reconduit à sa part de 2013, année où il finançait encore
+    le minimum contributif, sur un poste « impôts » qui faisait alors moitié
+    moins, et ce qui reste de ce poste une fois le fonds retiré passe sous
+    zéro de cinq centièmes de point en 2002-2004. La page ne montre jamais
+    ces années-là ; le tableau est celui de la bascule.
+    """
+    from retraite_notionnelle.cout import (
+        DONT_IMPOTS, DONT_TRANSFERTS, POSTES_DEPENSES, POSTES_RESSOURCES,
+    )
+    premiere_lue = ComptesRetraite(RACINE_DONNEES).premiere_annee_transferts
+    for point in cout_assiette.solde.annees:
+        for scenario, _ in SCENARIOS:
+            postes = point.postes_ressources(scenario)
+            assert set(postes) == set(POSTES_RESSOURCES) | set(DONT_TRANSFERTS) | set(DONT_IMPOTS)
+            somme = sum(postes[code] for code in POSTES_RESSOURCES)
+            assert somme == pytest.approx(point.ressources_de(scenario), rel=1e-4), (
+                point.annee, scenario)
+            assert sum(postes[code] for code in DONT_TRANSFERTS) == pytest.approx(
+                postes["transferts"], abs=1e-12)
+            assert sum(postes[code] for code in DONT_IMPOTS) == pytest.approx(
+                postes["impots_et_taxes"], abs=1e-12)
+            if point.annee >= premiere_lue:
+                for code in POSTES_RESSOURCES + DONT_TRANSFERTS + DONT_IMPOTS:
+                    assert postes[code] >= -1e-12, (point.annee, scenario, code)
+            depenses_ = point.postes_depenses(scenario)
+            assert set(depenses_) == set(POSTES_DEPENSES)
+            assert depenses_["droits_directs"] + depenses_["droits_derives"] == pytest.approx(
+                point.depense(scenario), abs=1e-12)
+            assert depenses_["garantie_vieillesse"] >= 0.0
+
+
+def test_la_proposition_ne_compte_que_les_cotisations_et_deux_restes(cout_assiette: Cout):
+    """Ce que le tableau montre de la proposition, décision par décision.
+
+    À compter de la bascule, sous la convention de l'assiette : la contribution
+    d'équilibre, les subventions et les impôts affectés sont à zéro ; les
+    cotisations valent 18 % de l'assiette, c'est-à-dire les ressources
+    multipliées par le rapport des deux taux ; ce que la branche famille et
+    l'assurance chômage versent est retiré des transferts, et les autres
+    produits sont reconduits tels quels. Avant la bascule, la proposition
+    prélève les taux réels comme tout le monde, et sa réversion n'est jamais
+    servie.
+    """
+    bascule = cout_assiette.solde.annees[0].annee_bascule
+    for point in cout_assiette.solde.annees:
+        postes = point.postes_ressources("notionnel_liberal")
+        actuel = point.postes_ressources("actuel")
+        assert postes["transferts_famille"] == 0.0
+        assert postes["transferts_chomage"] == 0.0
+        assert postes["transferts_autres"] == pytest.approx(actuel["transferts_autres"])
+        assert postes["autres_produits"] == pytest.approx(actuel["autres_produits"])
+        assert point.postes_depenses("notionnel_liberal")["droits_derives"] == 0.0
+        if point.annee >= bascule:
+            assert point.recette_par_assiette
+            assert postes["contribution_equilibre_etat"] == 0.0
+            assert postes["subventions_equilibre"] == 0.0
+            assert postes["impots_et_taxes"] == 0.0
+            assert postes["cotisations"] == pytest.approx(
+                point.ressources * point.taux_liberal / point.taux_prelevement)
+            assert point.postes_depenses("notionnel_liberal")["garantie_vieillesse"] > 0.0
+        else:
+            assert postes["cotisations"] == pytest.approx(actuel["cotisations"])
+            assert postes["contribution_equilibre_etat"] == pytest.approx(
+                actuel["contribution_equilibre_etat"])
+            assert postes["impots_solidarite"] == 0.0
+            assert postes["impots_et_taxes"] == pytest.approx(
+                actuel["impots_et_taxes"] - actuel["impots_solidarite"])
+
+
+def test_le_systeme_actuel_encaisse_chaque_poste_du_cor(cout_assiette: Cout, comptes):
+    """Pour l'étalon, le tableau redonne la structure publiée, et ses « dont »
+    sont ce que chaque payeur a réellement versé la dernière année connue."""
+    derniere = comptes.derniere_annee_transferts
+    point = cout_assiette.solde.annee(derniere)
+    postes = point.postes_ressources("actuel")
+    for code in CODES_POSTES:
+        assert postes[code] == pytest.approx(comptes.part(code, derniere) * point.ressources)
+    assert postes["transferts_famille"] == pytest.approx(
+        comptes.transfert_part_pib("famille", derniere))
+    assert postes["transferts_chomage"] == pytest.approx(
+        comptes.transfert_part_pib("chomage", derniere))
+    assert postes["impots_solidarite"] == pytest.approx(
+        comptes.transfert_part_pib("solidarite", derniere))
+    assert postes["transferts_famille"] + postes["transferts_chomage"] + postes[
+        "impots_solidarite"] == pytest.approx(point.retrait)
+    assert point.postes_depenses("actuel")["droits_derives"] == pytest.approx(
+        point.depenses * point.part_derives)
+    assert point.postes_depenses("actuel")["garantie_vieillesse"] == 0.0
+
+
 def test_la_garantie_vieillesse_ne_recoit_aucune_reversion(cout_assiette: Cout):
     """Elle n'est pas un système, et une allocation différentielle n'a pas de veuve.
 

@@ -5924,6 +5924,7 @@ que de {premiere_ventilee} à {derniere_ventilee}.""",
         _cout_detail_transferts(contexte),
         _cout_detail_scenarios(contexte),
         _cout_detail_equilibre(contexte),
+        _cout_detail_postes(contexte),
         _cout_detail_dette(contexte),
         _cout_detail_frise(contexte),
         _cout_detail_garantie(contexte),
@@ -7201,6 +7202,202 @@ colonne « dépense » lui prête, et autrement réparti entre les carrières. L
 modèle calcule ce facteur ; il ne l'applique jamais, et toutes les courbes de
 coût de cette page sont celles d'un système qui ne se pilote pas.</div>
 """, identifiant="cout-equilibre")
+
+
+#: Les lignes du tableau poste par poste, dans l'ordre du tableau 2.2 du
+#: rapport annuel du COR — « Structure des ressources du système de retraite » —,
+#: puis les dépenses en face, que le COR publie ailleurs et que ce tableau
+#: réunit. Chaque ligne porte son code dans ``SoldeAnnuel.postes_ressources``
+#: ou ``postes_depenses``, son libellé, et son rang : ``poste`` s'ajoute au
+#: total, ``dont`` ventile la ligne du dessus, ``total`` est le total.
+LIGNES_RECETTES: tuple[tuple[str, str, str], ...] = (
+    ("cotisations", "Cotisations sociales", "poste"),
+    ("contribution_equilibre_etat", "Contribution d'équilibre de l'État", "poste"),
+    ("subventions_equilibre", "Subventions d'équilibre aux régimes spéciaux", "poste"),
+    ("impots_et_taxes", "Impôts et taxes affectés, dont CSG", "poste"),
+    ("impots_solidarite", "Dont fonds de solidarité vieillesse", "dont"),
+    ("transferts", "Transferts d'organismes extérieurs", "poste"),
+    ("transferts_famille", "Dont branche famille", "dont"),
+    ("transferts_chomage", "Dont assurance chômage", "dont"),
+    ("transferts_autres", "Dont autres transferts", "dont"),
+    ("autres_produits", "Autres produits", "poste"),
+)
+LIGNES_DEPENSES: tuple[tuple[str, str, str], ...] = (
+    ("droits_directs", "Pensions de droit direct", "poste"),
+    ("droits_derives", "Pensions de réversion (droit dérivé)", "poste"),
+)
+
+
+def _sans_numero(libelle: str) -> str:
+    """« 4. La proposition libérale » → « La proposition libérale ».
+
+    Le numéro des systèmes est celui des barres de Simuler ; dans un en-tête
+    de colonne, il ne dit rien, et la majuscule reste celle du libellé.
+    """
+    return libelle.split(". ", 1)[1] if ". " in libelle else libelle
+
+
+def _cout_detail_postes(contexte: Contexte) -> str:
+    """Recettes et dépenses poste par poste, le système actuel et la proposition.
+
+    C'est le tableau 2.2 du rapport annuel du COR — la structure des
+    ressources, en milliards et en pourcentage du total — refait pour DEUX
+    systèmes, la même année, avec les dépenses en face et le solde en bas.
+    Tout ce qu'il contient est déjà dans le bilan de la page : ``ressources_de``
+    et ``depense`` y sont simplement écrits ligne à ligne, et les lignes
+    somment au total. Rien n'y est calculé qui ne le soit ailleurs ; ce qui est
+    nouveau, c'est qu'on VOIT ce que chaque décision de la proposition retire
+    ou remplace, poste par poste, au lieu de le lire dans une note.
+
+    L'année est celle de la bascule : c'est la première où la proposition
+    s'applique, et c'est de là que la décision se prend. Le compte du COR y est
+    projeté, et le PIB n'y est pas publié ; les milliards sont donc ceux d'un
+    point de PIB de la dernière année publiée, ce que le tableau dit.
+    """
+    comptes = contexte.comptes()
+    cout = contexte.cout()
+    solde = cout.solde
+    base = contexte.base
+    annee = min(max(base.annee_bascule, solde.premiere_annee), solde.derniere_annee)
+    ligne = solde.annee(annee)
+    annee_pib = comptes.pib.derniere_annee
+    pib = comptes.pib(annee_pib)
+    derniere_ventilee = comptes.derniere_annee_ventilee
+    systemes = ("actuel", "notionnel_liberal")
+    recettes = {s: ligne.postes_ressources(s) for s in systemes}
+    depenses_ = {s: ligne.postes_depenses(s) for s in systemes}
+    total_recettes = {s: ligne.ressources_de(s) for s in systemes}
+    total_depenses = {s: ligne.depense(s) for s in systemes}
+
+    # La garantie vieillesse, lue sur la vraie distribution des pensions comme
+    # le fait le dépliant qui lui est consacré — jamais sur les cas types, dont
+    # ce dépliant dit pourquoi le chiffre est faux. Plancher de base, pensions
+    # de la proposition : la lecture la plus basse des deux qu'il donne.
+    distribution = contexte.distribution()
+    simulateur = contexte.simulateur()
+    vers_enquete = simulateur.macro.coefficient_prix(
+        base.annee_euros_garantie_vieillesse, distribution.millesime)
+    rapports_liberal = cout.annee(distribution.millesime).rapports
+    facteur_contributif = (
+        rapports_liberal["notionnel_liberal"] - rapports_liberal[COMPOSANTE_GARANTIE]
+    )
+    garantie = cout_garantie(
+        distribution,
+        simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
+        base.garantie_vieillesse_mensuelle * vers_enquete, facteur_contributif,
+    )
+    garantie_meur = garantie.cout_annuel_meur / vers_enquete
+    # Le pilier capitalisé : 5 % de la même assiette que les 18 %, donc les
+    # cotisations de la proposition multipliées par le rapport des deux taux.
+    capitalise = (
+        recettes["notionnel_liberal"]["cotisations"]
+        * base.taux_capitalisation_obligatoire / base.taux_cotisation_liberal
+        if ligne.recette_par_assiette else 0.0
+    )
+
+    def cellules(valeur: float, total: float, absent: bool = False) -> list[str]:
+        """Milliards, part de PIB, part du total — ou trois tirets."""
+        if absent:
+            return ["—", "—", "—"]
+        return [
+            _milliards(valeur * pib, 1),
+            g.pourcentage(valeur, decimales=2),
+            g.pourcentage(valeur / total, decimales=1) if total else "—",
+        ]
+
+    def rangee(libelle: str, rang: str, valeurs: dict[str, float],
+               totaux: dict[str, float]) -> list[str]:
+        if rang == "total":
+            texte = f"<strong>{escape(libelle)}</strong>"
+        elif rang == "dont":
+            texte = f'<span class="dont">{escape(libelle)}</span>'
+        else:
+            texte = escape(libelle)
+        cellules_ = [texte]
+        for s in systemes:
+            # Un poste que la proposition ne reconduit pas se lit comme absent,
+            # et non comme un zéro : la note dit pourquoi il est parti.
+            cellules_ += cellules(valeurs[s], totaux[s],
+                                  absent=(rang != "total" and valeurs[s] == 0.0))
+        return cellules_
+
+    lignes: list[list[str]] = []
+    for code, libelle, rang in LIGNES_RECETTES:
+        lignes.append(rangee(libelle, rang, {s: recettes[s][code] for s in systemes},
+                             total_recettes))
+    lignes.append(rangee("Total des ressources", "total", total_recettes, total_recettes))
+    for code, libelle, rang in LIGNES_DEPENSES:
+        lignes.append(rangee(libelle, rang, {s: depenses_[s][code] for s in systemes},
+                             total_depenses))
+    lignes.append(rangee("Total des dépenses", "total", total_depenses, total_depenses))
+    lignes.append(
+        ["<strong>Solde</strong>"]
+        + sum(([_milliards(ligne.solde(s) * pib, 1),
+                g.pourcentage(ligne.solde(s), signe=True, decimales=2), "—"]
+               for s in systemes), [])
+    )
+    lignes.append(
+        ['<span class="dont">Pour mémoire, hors du compte : garantie vieillesse, '
+         "financée par l'impôt</span>", "—", "—", "—",
+         _milliards(garantie_meur, 1),
+         g.pourcentage(garantie_meur / pib, decimales=2), "—"]
+    )
+    lignes.append(
+        ['<span class="dont">Pour mémoire, hors du système : pilier capitalisé '
+         "obligatoire</span>", "—", "—", "—"]
+        + (cellules(capitalise, 0.0) if capitalise else ["—", "—", "—"])
+    )
+
+    return g.depliant(
+        "Recettes et dépenses, poste par poste", f"""
+<p>Le Conseil d'orientation des retraites publie chaque année la structure des
+ressources du système de retraite : sept lignes, en milliards d'euros et en
+pourcentage du total. Voici le même tableau pour le système actuel et pour la
+proposition, en {annee}, l'année de la bascule, avec les dépenses en face et le
+solde en bas. Chaque ligne applique à son poste la règle que le bilan du haut
+applique au total : les lignes somment aux totaux, et les totaux sont ceux des
+courbes.</p>
+
+{g.tableau(
+    ["Poste", f"{_sans_numero(LIBELLES_SYSTEMES['actuel'])}, Md €", "% du PIB", "Part",
+     f"{_sans_numero(LIBELLES_SYSTEMES['notionnel_liberal'])}, Md €", "% du PIB", "Part"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    titre=f"Ressources et dépenses du système de retraite en {annee}, système "
+          f"actuel et proposition, en milliards d'euros et en part du PIB",
+    entete_de_ligne=True,
+)}
+
+<p class="discret">Les parts de PIB sont celles du compte du COR pour {annee},
+année projetée. Le PIB de {annee} n'est pas publié : les milliards sont ceux
+d'un point de PIB de {annee_pib}, dernière année connue
+({_milliards(pib, 0)}), et donnent l'ordre de grandeur, pas la valeur de
+{annee}. La structure des ressources du système actuel est celle de
+{derniere_ventilee}, dernière année que le COR ventile, reconduite ; les
+« dont » sont ce que chaque payeur a réellement versé la dernière année connue,
+à part constante des ressources. « Part » rapporte chaque ligne au total des
+ressources, ou des dépenses, de son système. Un tiret est un poste que le
+système ne compte pas.</p>
+
+<div class="note"><strong>Ce que la proposition change, ligne à ligne.</strong>
+Les cotisations deviennent
+{g.pourcentage(base.taux_cotisation_liberal, decimales=0)} de l'assiette des
+revenus d'activité, parts salariale et patronale additionnées, pour tous les
+statuts. Trois postes disparaissent : la contribution d'équilibre de l'État,
+remplacée par ces {g.pourcentage(base.taux_cotisation_liberal, decimales=0)}
+appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
+dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
+n'acquièrent de droits à personne. Des transferts, seule reste la part qui ne
+paie pas un droit supprimé : la branche famille et l'assurance chômage
+financent des droits que le compte notionnel ne sert plus. Côté dépenses, les
+pensions sont recalculées au franc le franc des cotisations, et la réversion
+n'est plus servie : c'est ce que dit le dépliant sur les conventions du
+modèle. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
+hors du compte des cotisants ; le dépliant qui lui est consacré en donne
+quatre lectures, et la ligne pour mémoire porte la plus basse. Le pilier
+capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
+dépense du système : il est rappelé pour que rien ne manque.</div>
+""", identifiant="cout-postes")
 
 
 #: L'écart de taux de la sensibilité, en fraction : un point de plus, un de

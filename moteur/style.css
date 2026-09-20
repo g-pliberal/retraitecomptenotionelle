@@ -783,6 +783,10 @@ caption > span {
   display: block; position: sticky; left: 0; width: 100cqw; box-sizing: border-box;
 }
 tbody th { font-weight: 700; }
+/* Une ligne « dont » ventile celle du dessus : elle se lit en retrait et en
+   maigre, comme dans le tableau du COR qu'elle imite, et une ligne « pour
+   mémoire » de même — elle n'entre dans aucun total. */
+tbody th .dont { font-weight: 400; color: var(--texte-doux); padding-left: 1.2rem; display: inline-block; }
 th, td { text-align: right; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--trait); }
 th:first-child, td:first-child { text-align: left; }
 thead th {

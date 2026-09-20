@@ -5272,6 +5272,7 @@ que de ${premiereVentilee} à ${derniereVentilee}.`,
     coutDetailTransferts(contexte),
     coutDetailScenarios(contexte),
     coutDetailEquilibre(contexte),
+    coutDetailPostes(contexte),
     coutDetailDette(contexte),
     coutDetailFrise(contexte),
     coutDetailGarantie(contexte),
@@ -6466,6 +6467,187 @@ const SYSTEMES_DETTE_PUBLIQUE = ["actuel", "notionnel_liberal"];
  * montrer. Le taux est le forward à un an de la courbe sans risque, celui du
  * pilier capitalisé. Copie de `_cout_detail_dette` dans `web/pages.py`.
  */
+/**
+ * Les lignes du tableau poste par poste, dans l'ordre du tableau 2.2 du
+ * rapport annuel du COR, puis les dépenses en face. Chaque ligne porte son
+ * code dans `postesRessources` ou `postesDepenses`, son libellé et son rang :
+ * `poste` s'ajoute au total, `dont` ventile la ligne du dessus.
+ */
+const LIGNES_RECETTES = [
+  ["cotisations", "Cotisations sociales", "poste"],
+  ["contribution_equilibre_etat", "Contribution d'équilibre de l'État", "poste"],
+  ["subventions_equilibre", "Subventions d'équilibre aux régimes spéciaux", "poste"],
+  ["impots_et_taxes", "Impôts et taxes affectés, dont CSG", "poste"],
+  ["impots_solidarite", "Dont fonds de solidarité vieillesse", "dont"],
+  ["transferts", "Transferts d'organismes extérieurs", "poste"],
+  ["transferts_famille", "Dont branche famille", "dont"],
+  ["transferts_chomage", "Dont assurance chômage", "dont"],
+  ["transferts_autres", "Dont autres transferts", "dont"],
+  ["autres_produits", "Autres produits", "poste"],
+];
+const LIGNES_DEPENSES = [
+  ["droits_directs", "Pensions de droit direct", "poste"],
+  ["droits_derives", "Pensions de réversion (droit dérivé)", "poste"],
+];
+
+/** « 4. La proposition libérale » → « La proposition libérale ». */
+function sansNumero(libelle) {
+  const coupe = libelle.indexOf(". ");
+  return coupe >= 0 ? libelle.slice(coupe + 2) : libelle;
+}
+
+/**
+ * Recettes et dépenses poste par poste, le système actuel et la proposition :
+ * le tableau 2.2 du rapport annuel du COR refait pour deux systèmes, la même
+ * année, avec les dépenses en face et le solde en bas. `ressourcesDe` et
+ * `depense` y sont écrits ligne à ligne, et les lignes somment au total.
+ * L'année est celle de la bascule ; le PIB n'y est pas publié, et les
+ * milliards sont ceux d'un point de PIB de la dernière année publiée.
+ */
+function coutDetailPostes(contexte) {
+  const comptes = contexte.comptes();
+  const c = contexte.cout();
+  const solde = c.solde;
+  const base = contexte.base;
+  const annee = Math.min(Math.max(base.annee_bascule, solde.premiereAnnee),
+                         solde.derniereAnnee);
+  const ligne = solde.annee(annee);
+  const anneePib = comptes.pib.derniereAnnee;
+  const pib = comptes.pib.valeur(anneePib);
+  const derniereVentilee = comptes.anneesVentilees().at(-1);
+  const systemes = ["actuel", "notionnel_liberal"];
+  const recettes = Object.fromEntries(systemes.map((s) => [s, ligne.postesRessources(s)]));
+  const depenses_ = Object.fromEntries(systemes.map((s) => [s, ligne.postesDepenses(s)]));
+  const totalRecettes = Object.fromEntries(systemes.map((s) => [s, ligne.ressourcesDe(s)]));
+  const totalDepenses = Object.fromEntries(systemes.map((s) => [s, ligne.depense(s)]));
+
+  // La garantie vieillesse, lue sur la vraie distribution des pensions comme
+  // le fait le dépliant qui lui est consacré — plancher de base, pensions de
+  // la proposition : la lecture la plus basse des deux qu'il donne.
+  const distribution = contexte.distribution();
+  const simulateur = contexte.simulateur();
+  const versEnquete = simulateur.macro.coefficientPrix(
+    base.annee_euros_garantie_vieillesse, distribution.millesime,
+  );
+  const rapportsLiberal = c.annee(distribution.millesime).rapports;
+  const facteurContributif = rapportsLiberal.notionnel_liberal
+    - rapportsLiberal[COMPOSANTE_GARANTIE];
+  const garantie = coutGarantie(
+    distribution,
+    simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
+    base.garantie_vieillesse_mensuelle * versEnquete, facteurContributif,
+  );
+  const garantieMeur = garantie.coutAnnuelMeur / versEnquete;
+  // Le pilier capitalisé : 5 % de la même assiette que les 18 %.
+  const capitalise = ligne.recetteParAssiette
+    ? recettes.notionnel_liberal.cotisations
+      * base.taux_capitalisation_obligatoire / base.taux_cotisation_liberal
+    : 0.0;
+
+  // Milliards, part de PIB, part du total — ou trois tirets.
+  const cellules = (valeur, total, absent = false) => {
+    if (absent) return ["—", "—", "—"];
+    return [
+      milliards(valeur * pib, 1),
+      g.pourcentage(valeur, false, 2),
+      total ? g.pourcentage(valeur / total, false, 1) : "—",
+    ];
+  };
+  const rangee = (libelle, rang, valeurs, totaux) => {
+    let texte;
+    if (rang === "total") texte = `<strong>${echapper(libelle)}</strong>`;
+    else if (rang === "dont") texte = `<span class="dont">${echapper(libelle)}</span>`;
+    else texte = echapper(libelle);
+    const cellules_ = [texte];
+    for (const s of systemes) {
+      // Un poste que la proposition ne reconduit pas se lit comme absent, et
+      // non comme un zéro : la note dit pourquoi il est parti.
+      cellules_.push(...cellules(valeurs[s], totaux[s],
+                                 rang !== "total" && valeurs[s] === 0.0));
+    }
+    return cellules_;
+  };
+
+  const lignes = [];
+  for (const [code, libelle, rang] of LIGNES_RECETTES) {
+    lignes.push(rangee(libelle, rang,
+      Object.fromEntries(systemes.map((s) => [s, recettes[s][code]])), totalRecettes));
+  }
+  lignes.push(rangee("Total des ressources", "total", totalRecettes, totalRecettes));
+  for (const [code, libelle, rang] of LIGNES_DEPENSES) {
+    lignes.push(rangee(libelle, rang,
+      Object.fromEntries(systemes.map((s) => [s, depenses_[s][code]])), totalDepenses));
+  }
+  lignes.push(rangee("Total des dépenses", "total", totalDepenses, totalDepenses));
+  lignes.push(["<strong>Solde</strong>", ...systemes.flatMap((s) => [
+    milliards(ligne.solde(s) * pib, 1),
+    g.pourcentage(ligne.solde(s), true, 2), "—",
+  ])]);
+  lignes.push([
+    '<span class="dont">Pour mémoire, hors du compte : garantie vieillesse, '
+    + "financée par l'impôt</span>", "—", "—", "—",
+    milliards(garantieMeur, 1),
+    g.pourcentage(garantieMeur / pib, false, 2), "—",
+  ]);
+  lignes.push([
+    '<span class="dont">Pour mémoire, hors du système : pilier capitalisé '
+    + "obligatoire</span>", "—", "—", "—",
+    ...(capitalise ? cellules(capitalise, 0.0) : ["—", "—", "—"]),
+  ]);
+
+  return g.depliant(
+    "Recettes et dépenses, poste par poste", `
+<p>Le Conseil d'orientation des retraites publie chaque année la structure des
+ressources du système de retraite : sept lignes, en milliards d'euros et en
+pourcentage du total. Voici le même tableau pour le système actuel et pour la
+proposition, en ${annee}, l'année de la bascule, avec les dépenses en face et le
+solde en bas. Chaque ligne applique à son poste la règle que le bilan du haut
+applique au total : les lignes somment aux totaux, et les totaux sont ceux des
+courbes.</p>
+
+${g.tableau(
+      ["Poste", `${sansNumero(LIBELLES_SYSTEMES.actuel)}, Md €`, "% du PIB", "Part",
+        `${sansNumero(LIBELLES_SYSTEMES.notionnel_liberal)}, Md €`, "% du PIB", "Part"],
+      lignes,
+      ["", "nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
+      `Ressources et dépenses du système de retraite en ${annee}, système `
+      + "actuel et proposition, en milliards d'euros et en part du PIB",
+      true,
+    )}
+
+<p class="discret">Les parts de PIB sont celles du compte du COR pour ${annee},
+année projetée. Le PIB de ${annee} n'est pas publié : les milliards sont ceux
+d'un point de PIB de ${anneePib}, dernière année connue
+(${milliards(pib, 0)}), et donnent l'ordre de grandeur, pas la valeur de
+${annee}. La structure des ressources du système actuel est celle de
+${derniereVentilee}, dernière année que le COR ventile, reconduite ; les
+« dont » sont ce que chaque payeur a réellement versé la dernière année connue,
+à part constante des ressources. « Part » rapporte chaque ligne au total des
+ressources, ou des dépenses, de son système. Un tiret est un poste que le
+système ne compte pas.</p>
+
+<div class="note"><strong>Ce que la proposition change, ligne à ligne.</strong>
+Les cotisations deviennent
+${g.pourcentage(base.taux_cotisation_liberal, false, 0)} de l'assiette des
+revenus d'activité, parts salariale et patronale additionnées, pour tous les
+statuts. Trois postes disparaissent : la contribution d'équilibre de l'État,
+remplacée par ces ${g.pourcentage(base.taux_cotisation_liberal, false, 0)}
+appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
+dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
+n'acquièrent de droits à personne. Des transferts, seule reste la part qui ne
+paie pas un droit supprimé : la branche famille et l'assurance chômage
+financent des droits que le compte notionnel ne sert plus. Côté dépenses, les
+pensions sont recalculées au franc le franc des cotisations, et la réversion
+n'est plus servie : c'est ce que dit le dépliant sur les conventions du
+modèle. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
+hors du compte des cotisants ; le dépliant qui lui est consacré en donne
+quatre lectures, et la ligne pour mémoire porte la plus basse. Le pilier
+capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
+dépense du système : il est rappelé pour que rien ne manque.</div>
+`, "cout-postes");
+}
+
+
 function coutDetailDette(contexte) {
   const c = contexte.cout();
   const dette = c.dette;
