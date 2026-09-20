@@ -782,6 +782,35 @@ système actuel. `limites.md` §5 porte les trois.
   qui gardent le diviseur de leur âge ; rien n'est porté dans
   `moteur/js/`.
 
+- **21 septembre 2026, la proposition à 18 %, prospective.** Demandé par
+  l'utilisateur, à la suite de la question « quelle version passe
+  législativement » : le scénario 6 est rétroactif par construction, et
+  c'est ce qui l'expose ; la variante qui garde tout le reste — 18 %, pilier
+  capitalisé, garantie vieillesse relevée — et laisse le stock intact est
+  le scénario 5 à 18 %. Livré : `scripts/proposition_prospective.py`, qui
+  bâtit le sixième système sur `prospectif` au lieu de `retroactif` et le
+  fait traiter par la page Coût comme une réforme prospective (courbes du
+  système actuel jusqu'à la bascule, stock sur les prix, réversion servie
+  avant la bascule) ; quatre tests dans `test_proposition_prospective.py`.
+  *Mesuré*, en points de PIB sous la convention de la page : solde −4,73 en
+  2026, −4,80 en 2040, −1,43 en 2070, moyenne 2026-2070 de **−3,92** contre
+  −1,52 pour la proposition rétroactive et −1,13 pour le système actuel ;
+  dette accumulée en 2070 de 278 % du PIB contre 103 % ; coefficient
+  d'équilibre de 2070 à 0,84. La garantie, hors du solde, coûte 0,38 à 0,45
+  point au lieu de 0,48 à 0,69 : moins de pensions tombent sous le plancher
+  quand le stock n'est pas recalculé. Sur les cas types, la génération 1965
+  retrouve le scénario 5 à un point près, la génération 2000 rejoint la
+  proposition rétroactive à un ou deux points près, et les générations
+  intermédiaires sont entre les deux : −18,6 % au salaire moyen né en 1975
+  contre −40,0 % rétroactif et −12,3 % sous le scénario 5. Ce que cela
+  dit : rendre la proposition prospective enlève l'obstacle juridique et
+  double son coût de transition, parce que le stock est payé en entier avec
+  dix points de cotisation en moins ; face au scénario 5 sous la même
+  convention de recette (−1,65, note du 20 septembre), les 18 % coûtent
+  toujours 2,3 points par an. Ce que le script ne dit pas : la variante
+  n'est pas portée dans `moteur/js/`, et la page garde son scénario 6
+  rétroactif.
+
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est
