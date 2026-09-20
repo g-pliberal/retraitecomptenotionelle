@@ -734,6 +734,16 @@ def _pages(contexte: Contexte) -> dict:
         ("simuler_regles_seules", "/simuler", REGLES_AUTRES),
         ("cas_types_regles", "/cas-types", REGLES_AUTRES),
         ("cout_regles", "/cout", REGLES_AUTRES),
+        # La cascade posée sur l'horizon : le seul témoin qui emprunte l'autre
+        # branche du sélecteur d'année, celle où le PIB n'est plus publié mais
+        # projeté, où la cotisation unique pèse enfin, et où les reprises sur
+        # successions ont une marche. Sans lui, le portage du sélecteur n'était
+        # comparé que sur son année par défaut — c'est-à-dire sur la seule
+        # branche où la moitié du code ne passe pas.
+        ("cout_cascade_horizon", "/cout", {"cascade": "2070"}),
+        # Et une année refusée : elle doit retomber sur l'année mesurée, des
+        # deux côtés du portage, plutôt que lever quoi que ce soit.
+        ("cout_cascade_hors_liste", "/cout", {"cascade": "1999"}),
         ("avantages_regles", "/avantages", REGLES_AUTRES),
         ("methode", "/methode", {}),
         ("risque", "/risque", {}),

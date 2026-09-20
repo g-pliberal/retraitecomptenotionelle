@@ -1465,6 +1465,27 @@ ul.legende .lu {
   fill: var(--texte-doux); font-family: inherit; font-size: 13px;
 }
 .cascade .etiquette.total { fill: var(--texte); font-weight: 700; }
+/* La lecture au survol : le cadre de la marche visée, et ce qu'elle vaut, dit
+   en toutes lettres sous la figure. Les marches qu'on ne vise pas s'effacent
+   d'un quart — assez pour que l'œil trouve la bonne, pas assez pour qu'il
+   perde la forme de la cascade. */
+.cascade .survol .cadre {
+  fill: none; stroke: var(--texte); stroke-width: 2;
+}
+.cascade:has(.survol .cadre) .marche { opacity: 0.55; }
+.cascade:has(.survol .cadre) .marche.visee { opacity: 1; }
+.cascade .lecture {
+  margin-top: 0.5rem; font-size: 0.9375rem; font-weight: 600;
+  color: var(--texte); min-height: 1.5rem;
+}
+.cascade .lecture[hidden] { display: none; }
+.cascade .lecture .part { color: var(--texte-doux); font-weight: 400; }
+.cascade .aide-clavier {
+  margin: 0.35rem 0 0; font-size: 0.8125rem; color: var(--texte-tres-doux);
+  visibility: hidden;
+}
+.cascade:focus-within .aide-clavier { visibility: visible; }
+.cascade .defilant:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
 ul.legende {
   list-style: none; margin: 0.75rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-size: 0.9375rem;
@@ -1771,7 +1792,8 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   }
   /* Ni la lecture au survol — il n'y a pas de pointeur sur du papier —, ni les
      boutons de partage : la page imprimée EST déjà l'image. */
-  .graphique .lecture, .graphique .aide-clavier, section.cle > .partage {
+  .graphique .lecture, .graphique .aide-clavier,
+  .cascade .lecture, .cascade .aide-clavier, section.cle > .partage {
     display: none;
   }
   body { background: #fff; color: #000; font-size: 11pt; overflow-x: visible; }
@@ -3754,8 +3776,9 @@ def cascade(titre: str, marches: tuple[Marche, ...], unite: str = "",
             classe = sens
             teinte = ""
         barres.append(
-            f'<rect class="marche {classe}"{teinte} x="{nombre_brut(x)}" '
-            f'y="{nombre_brut(haut)}" width="{nombre_brut(largeur_barre)}" '
+            f'<rect class="marche {classe}"{teinte} data-rang="{rang}" '
+            f'x="{nombre_brut(x)}" y="{nombre_brut(haut)}" '
+            f'width="{nombre_brut(largeur_barre)}" '
             f'height="{nombre_brut(hauteur)}"/>'
         )
         # Le trait de liaison part du sommet de la marche et rejoint la
@@ -3838,7 +3861,11 @@ def cascade(titre: str, marches: tuple[Marche, ...], unite: str = "",
         f"{''.join(grille)}{''.join(liaisons)}{''.join(barres)}"
         f'<line class="axe" x1="{gauche}" y1="{bas_axe}" x2="{droite}" '
         f'y2="{bas_axe}"/>'
-        f"{unite_html}{''.join(textes)}</svg></div>"
+        f"{unite_html}{''.join(textes)}"
+        f'<g class="survol"></g></svg></div>'
+        '<div class="lecture" role="status" aria-live="polite" hidden></div>'
+        '<p class="aide-clavier">Flèches gauche et droite : parcourir les '
+        "mesures. Échap : quitter.</p>"
         f"{legende_html}</figure>"
         '<details class="donnees-cascade">'
         + sommaire(f"Les chiffres de cette cascade, marche par marche "

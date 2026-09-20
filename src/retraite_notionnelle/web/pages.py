@@ -1891,7 +1891,8 @@ def rendre(contexte: Contexte, chemin: str,
     if chemin == "/partager":
         return TITRES[chemin], _partager(contexte)
     if chemin in PAGES_AGREGEES:
-        return TITRES[chemin], refus + _agregee(chemin, contexte, reglages)
+        return TITRES[chemin], refus + _agregee(chemin, contexte, reglages,
+                                                parametres)
     if chemin == "/risque":
         return TITRES[chemin], _risque(contexte)
     if chemin == "/methode":
@@ -1926,7 +1927,8 @@ def rendre(contexte: Contexte, chemin: str,
     return TITRES["/simuler"], corps
 
 
-def _agregee(chemin: str, contexte: Contexte, reglages: Saisie) -> str:
+def _agregee(chemin: str, contexte: Contexte, reglages: Saisie,
+             parametres: dict[str, str] | None = None) -> str:
     """Une page qui agrège, calculée sous les règles que l'adresse demande.
 
     Le corps de la page n'en sait rien : il reçoit un contexte DÉRIVÉ, dont
@@ -1934,11 +1936,21 @@ def _agregee(chemin: str, contexte: Contexte, reglages: Saisie) -> str:
     ``contexte.simulateur()`` comme il l'a toujours fait. C'est le contexte qui
     sait sous quelles règles on l'interroge, et non chacune des trente lignes
     qui l'interrogent.
+
+    ``parametres`` passe en plus, et ne dit RIEN des règles : il porte ce qu'une
+    page REGARDE — l'année que la cascade de Coût décompose — là où les réglages
+    disent sous quelles règles elle se calcule. Les deux ne se mélangent pas :
+    un réglage change le modèle, et voyage vers toutes les pages ; un regard ne
+    change rien, et ne vaut que pour la sienne.
     """
+    vues = _VUES_DE_PAGE.get(chemin, ())
+    regards = {cle: valeur for cle, valeur in (parametres or {}).items()
+               if cle in vues}
     return (
         _avertissement_reglages(reglages, chemin)
-        + PAGES_AGREGEES[chemin](contexte.pour(reglages.parametres(contexte.base)))
-        + _reglages(reglages, chemin)
+        + PAGES_AGREGEES[chemin](contexte.pour(reglages.parametres(contexte.base)),
+                                 regards)
+        + _reglages(reglages, chemin, regards)
     )
 
 def _programme(contexte: Contexte) -> str:
@@ -3023,7 +3035,8 @@ tant que vous ne les remettez pas :
 </div>"""
 
 
-def _reglages(saisie: Saisie, chemin: str) -> str:
+def _reglages(saisie: Saisie, chemin: str,
+              regards: dict[str, str] | None = None) -> str:
     """Les règles du calcul, et de quoi les changer sans quitter la page.
 
     C'est le même jeu de champs que les options du simulateur, et c'est le même
@@ -3042,6 +3055,10 @@ def _reglages(saisie: Saisie, chemin: str) -> str:
         for cle in ("age_reference", "conversion_acquis")
         if getattr(saisie, cle) != getattr(defauts, cle)
     )
+    # Et les regards de la page, pour la même raison : ce que le lecteur
+    # regardait, « Recalculer cette page » le lui rendait autrement au défaut.
+    caches += "".join(g.cache(cle, valeur)
+                      for cle, valeur in sorted((regards or {}).items()))
     change = bool(saisie.requete_modelisation())
     return f"""
 <details class="section options reglages"{' open' if change else ''}>
@@ -6438,7 +6455,7 @@ facteur, donc tous les niveaux de cette page, sans toucher aux écarts entre car
 qui sont la seule chose que ce site mesure.</div>"""
 
 
-def _cas_types(contexte: Contexte) -> str:
+def _cas_types(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
     """Treize carrières types croisées avec sept générations.
 
     LA PAGE NE MONTRE QU'UNE GRILLE À LA FOIS, ET C'EST LA PROPOSITION. Elle en
@@ -6665,7 +6682,7 @@ def _milliards(millions: float, decimales: int = 0) -> str:
     return g.nombre(millions / 1000, decimales) + "\u202fMd\u202f\u20ac"
 
 
-def _cout(contexte: Contexte) -> str:
+def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
     """Ce que la retraite coûte, d'où vient l'argent, et ce qui manque.
 
     CETTE PAGE S'ADRESSE À QUELQU'UN QUI N'A PAS FAIT D'ÉCONOMIE ET QUI N'A PAS
@@ -6917,7 +6934,7 @@ plus large que les cartes).
         _cout_detail_ressources(contexte),
         _cout_detail_transferts(contexte),
         _cout_detail_scenarios(contexte),
-        _cout_detail_cascade(contexte),
+        _cout_detail_cascade(contexte, regards),
         _cout_detail_equilibre(contexte),
         _cout_detail_postes(contexte),
         _cout_detail_dette(contexte),
@@ -7016,7 +7033,7 @@ LIBELLES_ETATS: dict[str, str] = {
 }
 
 
-def _avantages(contexte: Contexte) -> str:
+def _avantages(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
     """Tous les avantages non contributifs, depuis quand, et ce qu'ils coûtent.
 
     CETTE PAGE RÉPOND À UNE QUESTION QU'ON POSE SOUVENT SANS Y RÉPONDRE :
@@ -7437,6 +7454,20 @@ retraite</a><a href="{g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
 {detail}
 """
 
+
+#: Ce qu'une page REGARDE, page par page — à distinguer des RÉGLAGES, qui
+#: disent sous quelles règles le modèle tourne et voyagent vers toutes les
+#: pages. Un regard ne change aucun chiffre : il choisit lequel on montre, il
+#: ne vaut que pour sa page, et une adresse qui en porte un pour une autre page
+#: est ignorée plutôt que subie.
+#:
+#: ``cascade`` est l'année que la cascade de la page Coût décompose. Il est
+#: écrit ici, et non dans ``Saisie`` : une année de lecture n'est pas une règle
+#: de calcul, et la mettre parmi les réglages l'aurait fait voyager vers Cas
+#: types et Avantages, qui n'ont rien à en faire.
+_VUES_DE_PAGE: dict[str, tuple[str, ...]] = {
+    "/cout": ("cascade",),
+}
 
 #: Les trois pages qui AGRÈGENT : elles ne calculent aucune carrière saisie,
 #: mais elles obéissent aux mêmes règles que le simulateur. La table est posée
@@ -8332,8 +8363,73 @@ def _marches_cascade(base: float, part_derives: float, rapports: dict[str, float
     return marches
 
 
-def _cout_detail_cascade(contexte: Contexte) -> str:
-    """De la dépense d'aujourd'hui à celle de la proposition, mesure par mesure.
+#: Les années que le sélecteur de la cascade propose : l'année mesurée, celle
+#: de la bascule, puis les décennies jusqu'à l'horizon. Pas toutes les années
+#: du compte — quarante-six liens ne se lisent pas, et rien ne distingue 2043
+#: de 2044.
+PAS_ANNEES_CASCADE = 10
+
+
+def _annees_cascade(solde, bascule: int) -> tuple[int, ...]:
+    """Les millésimes offerts, dans l'ordre, sans doublon.
+
+    L'année MESURÉE ouvre la liste : c'est la seule qui ne soit pas une
+    projection, et c'est d'elle que vient le chiffre que tout le monde cite. La
+    BASCULE suit, parce que c'est la première année où la proposition
+    s'applique. Le reste est décennal.
+    """
+    obs = solde.derniere_annee_observee
+    fin = solde.derniere_annee
+    annees = [obs, max(bascule, obs)]
+    debut = (max(bascule, obs) // PAS_ANNEES_CASCADE + 1) * PAS_ANNEES_CASCADE
+    annees += list(range(debut, fin + 1, PAS_ANNEES_CASCADE))
+    if annees[-1] != fin:
+        annees.append(fin)
+    vues: list[int] = []
+    for annee in annees:
+        if annee not in vues and obs <= annee <= fin:
+            vues.append(annee)
+    return tuple(vues)
+
+
+def _annee_cascade(solde, bascule: int, regards: dict[str, str] | None) -> int:
+    """L'année que l'adresse demande, ou l'année mesurée.
+
+    Une année hors de la liste est RAMENÉE à l'année mesurée plutôt que
+    refusée : une adresse partagée puis rejouée après que le compte a avancé
+    d'un millésime ne doit pas afficher une erreur, elle doit afficher la
+    cascade.
+    """
+    offertes = _annees_cascade(solde, bascule)
+    demandee = (regards or {}).get("cascade", "")
+    if _est_entier(demandee) and int(demandee) in offertes:
+        return int(demandee)
+    return offertes[0]
+
+
+def _pib_cascade(contexte: Contexte, annee: int) -> tuple[float, bool]:
+    """Le PIB qui convertit une part en milliards, et s'il est publié.
+
+    LE COMPTE DU COR TIENT SES DEUX BOUTS EN PART DU PIB, de 2002 à 2070 ; il
+    ne publie un PIB en euros que jusqu'à l'année mesurée. Au-delà, c'est le
+    modèle qui en projette un — le même que la trajectoire emploie pour ses
+    propres parts —, et les deux coïncident exactement à l'année mesurée, si
+    bien que la suite des milliards ne saute pas au passage.
+
+    Le second terme du couple dit lequel des deux on a pris, et la page l'écrit
+    sous la figure : un milliard de 2060 est une part du PIB multipliée par un
+    PIB supposé, et cela ne se devine pas.
+    """
+    ligne = contexte.cout().solde.annee(annee)
+    if ligne is not None and ligne.pib:
+        return ligne.pib, True
+    projete = contexte.cout().avenir.annee(annee)
+    return (projete.pib if projete else 0.0), False
+
+
+def _cout_detail_cascade(contexte: Contexte,
+                         regards: dict[str, str] | None = None) -> str:
+    """De la dépense d'une année à celle de la proposition, mesure par mesure.
 
     CE QUE CETTE SECTION AJOUTE AUX TABLEAUX QUI LA PRÉCÈDENT, c'est le
     CHEMIN. Les quatre systèmes y sont comparés deux à deux, ce qui dit de
@@ -8343,91 +8439,110 @@ def _cout_detail_cascade(contexte: Contexte) -> str:
     tableau n'a pas : les marches somment exactement à l'écart des deux totaux,
     ou la dernière barre ne retombe pas où elle devrait.
 
-    DEUX LECTURES, PARCE QU'UNE SEULE MENTIRAIT PAR OMISSION. À l'année
-    observée, la cotisation unique ne déplace rien — elle ne vaut que pour les
-    droits acquis à compter de la bascule, et aucun retraité de cette année-là
-    n'en a acquis un seul sous elle —, si bien qu'une cascade arrêtée là
-    montrerait la mesure centrale du programme à zéro. La seconde lecture est
-    prise à l'horizon du modèle, quand toutes les générations sont passées
-    sous la règle nouvelle, et la mesure y pèse ce qu'elle pèse.
+    L'ANNÉE SE CHOISIT, et il le fallait. À l'année mesurée, la cotisation
+    unique ne déplace rien : elle ne vaut que pour les droits acquis à compter
+    de la bascule, et aucun retraité de cette année-là n'en a acquis un seul
+    sous elle. Une cascade figée sur cette année montrerait donc la mesure
+    centrale du programme à zéro, sans rien dire. Une cascade figée sur
+    l'horizon perdrait le chiffre que tout le monde cite. Le sélecteur rend les
+    deux, et les quarante-cinq années entre elles.
 
-    LES DEUX N'ONT PAS LE MÊME PÉRIMÈTRE, et le dire est la condition pour
-    poser les deux côte à côte. La première suit les comptes du COR et ses
-    euros courants — c'est de là que vient le chiffre que tout le monde cite.
-    La seconde est la trajectoire du modèle, en euros constants, sur les
-    pensions de répartition obligatoire : le § de vigilance du dépliant
-    précédent dit de combien elle s'écarte de la projection du COR. On ne
-    soustrait jamais l'une de l'autre, et aucune marche ne traverse d'un
-    tableau à l'autre.
+    UN SEUL PÉRIMÈTRE, DE BOUT EN BOUT : le compte du COR, qui tient ses deux
+    bouts de 2002 à 2070. La page portait deux cascades sur deux périmètres,
+    dont l'une empruntait son niveau à la trajectoire du modèle ; il n'en reste
+    qu'une, et rien ne traverse plus d'une série à l'autre. Ce qu'on emprunte
+    encore au modèle est ce qu'on lui emprunte partout ailleurs sur cette page :
+    des RAPPORTS sans dimension — les masses relatives des systèmes, et la part
+    de la garantie que les successions rendent.
+
+    ``regards`` porte l'année demandée. C'est une VUE et non un réglage :
+    elle ne change aucun chiffre, elle choisit lequel on montre, et elle ne
+    voyage pas vers les autres pages — voir ``_VUES_DE_PAGE``.
     """
     cout = contexte.cout()
     solde = cout.solde
     avenir = cout.avenir
     base = contexte.base
     bascule = base.annee_bascule
-    euros = cout.annee_euros
 
     obs = solde.derniere_annee_observee
-    observe = solde.annee(obs)
-    depart = observe.depense_meur("actuel") / 1000
-    arrivee = (observe.depense_meur("notionnel_liberal")
-               + observe.depense_meur(COMPOSANTE_GARANTIE)) / 1000
-    marches_obs = (
-        [g.Marche("Système actuel", depart, total=True,
-                  couleur="var(--actuel)",
-                  glose=f"{_sans_numero(LIBELLES_SYSTEMES['actuel'])} : la "
-                        f"dépense de retraite mesurée en {obs}")]
-        + _marches_cascade(observe.depense_meur("actuel"), observe.part_derives,
-                           observe.rapports,
-                           _libelles_cascade(contexte, observe.part_derives, 0.0))
-        + [g.Marche("La proposition", arrivee,
-                    total=True, couleur="var(--liberal)",
-                    glose=f"{_sans_numero(LIBELLES_SYSTEMES['notionnel_liberal'])}"
-                          " : pensions contributives et garantie vieillesse "
-                          "réunies")]
-    )
-    cascade_obs = g.cascade(
-        f"De la dépense du système actuel à celle de la proposition en {obs}, "
-        f"mesure par mesure, en milliards d'euros",
-        tuple(marches_obs), unite=f"Md € {obs}", decimales=1,
-        libelle_marche="Mesure",
-    )
+    offertes = _annees_cascade(solde, bascule)
+    annee = _annee_cascade(solde, bascule, regards)
+    ligne = solde.annee(annee)
+    pib, publie = _pib_cascade(contexte, annee)
 
-    fin = avenir.derniere_annee
-    horizon = avenir.annee(fin)
-    depart_fin = horizon.cout_constants("actuel") / 1000
-    garantie_fin = horizon.cout_constants(COMPOSANTE_GARANTIE)
-    part_reprise = horizon.reprises_constants() / garantie_fin if garantie_fin else 0.0
-    arrivee_fin = (horizon.cout_constants("notionnel_liberal")
-                   + horizon.garantie_nette_constants()) / 1000
-    marches_fin = (
-        [g.Marche("Système actuel", depart_fin, total=True,
+    # La dépense de l'année, en millions : une part du PIB multipliée par le
+    # PIB. À l'année mesurée, cela redonne exactement ce que le COR publie.
+    depense = ligne.depense("actuel") * pib
+    part_directe = depense * (1.0 - ligne.part_derives)
+    arrivee_meur = (
+        part_directe * (ligne.rapports["notionnel_liberal"]
+                        + ligne.rapports[COMPOSANTE_GARANTIE])
+    )
+    # Ce que les successions rendent de la garantie, en fraction de ce qu'elle
+    # a versé : un rapport, seule chose que le compte du COR ne porte pas et
+    # qu'on aille chercher dans la trajectoire.
+    projetee = avenir.annee(annee)
+    garantie_modele = (projetee.cout_constants(COMPOSANTE_GARANTIE)
+                       if projetee else 0.0)
+    part_reprise = ((projetee.reprises_constants() / garantie_modele)
+                    if projetee and garantie_modele else 0.0)
+    arrivee_meur -= part_directe * ligne.rapports[COMPOSANTE_GARANTIE] * part_reprise
+
+    libelles = _libelles_cascade(contexte, ligne.part_derives, part_reprise)
+    marches = (
+        [g.Marche("Système actuel", depense / 1000, total=True,
                   couleur="var(--actuel)",
                   glose=f"{_sans_numero(LIBELLES_SYSTEMES['actuel'])} : la "
-                        f"dépense que le modèle projette pour {fin}")]
-        + _marches_cascade(horizon.cout_constants("actuel"), horizon.part_derives,
-                           horizon.rapports,
-                           _libelles_cascade(contexte, horizon.part_derives,
-                                             part_reprise),
-                           part_reprise)
-        + [g.Marche("La proposition", arrivee_fin, total=True,
+                        f"dépense de retraite "
+                        + (f"mesurée en {annee}" if publie
+                           else f"que le compte du COR projette pour {annee}"))]
+        + _marches_cascade(depense, ligne.part_derives, ligne.rapports,
+                           libelles, part_reprise)
+        + [g.Marche("La proposition", arrivee_meur / 1000, total=True,
                     couleur="var(--liberal)",
                     glose=f"{_sans_numero(LIBELLES_SYSTEMES['notionnel_liberal'])}"
-                          " : pensions contributives et garantie nette des "
-                          "reprises")]
+                          " : pensions contributives et garantie vieillesse, "
+                          "nette de ce que les successions en rendent")]
     )
-    cascade_fin = g.cascade(
-        f"De la dépense du système actuel à celle de la proposition en {fin}, "
-        f"mesure par mesure, en milliards d'euros constants de {euros}",
-        tuple(marches_fin), unite=f"Md € {euros}", decimales=1,
+    figure = g.cascade(
+        f"De la dépense du système actuel à celle de la proposition en "
+        f"{annee}, mesure par mesure, en milliards d'euros",
+        tuple(marches), unite=f"Md € {annee}", decimales=1,
         libelle_marche="Mesure",
     )
 
-    ecart = depart - arrivee
-    ecart_fin = depart_fin - arrivee_fin
+    ecart = (depense - arrivee_meur) / 1000
+    choix = g.bascule(
+        "Année décomposée",
+        [(str(millesime), _lien_cascade(millesime)) for millesime in offertes],
+        str(annee),
+    )
+    # La phrase sur la cotisation unique ne vaut que tant qu'elle ne déplace
+    # rien, c'est-à-dire avant la bascule. L'écrire en toutes années aurait
+    # démenti la figure dès le premier clic sur le sélecteur.
+    note_bascule = ""
+    if annee < bascule:
+        note_bascule = f"""
+<div class="note vigilance"><strong>La cotisation unique ne déplace rien en
+{annee}, et c'est normal.</strong> Elle ne vaut que pour les droits acquis à
+compter de la bascule, en {bascule} : aucun retraité de {annee} n'en a acquis un
+seul sous elle, et sa marche est donc plate. Le chiffre a été calculé, et il
+vaut zéro. C'est la mesure centrale du programme : pour la voir peser, prenez
+une année plus tardive dans le sélecteur ci-dessus. Les reprises sur
+successions sont dans le même cas.</div>
+"""
+    source_pib = (
+        f"Le compte du COR publie un PIB en euros jusqu'en {obs} ; au-delà, la "
+        f"part du PIB est multipliée par le PIB que le modèle projette, celui-là "
+        f"même dont la trajectoire se sert. Les deux coïncident en {obs}, si "
+        f"bien que la suite des milliards ne saute pas au passage."
+        if not publie else
+        f"Les milliards sont ceux du PIB que le COR publie pour {annee}."
+    )
     return g.depliant(
-        f"De {_milliards(observe.depense_meur('actuel'), 0)} à "
-        f"{_milliards(arrivee * 1000, 0)} : ce que chaque mesure déplace", f"""
+        f"De {_milliards(depense, 0)} à {_milliards(arrivee_meur, 0)} : "
+        f"ce que chaque mesure déplace", f"""
 <p>Les tableaux du dessus comparent quatre systèmes deux à deux. Ils disent de
 combien ils s'écartent ; ils ne disent pas <em>par quoi</em>. Voici le chemin :
 on part de la dépense du système actuel, on applique les mesures de la
@@ -8436,37 +8551,20 @@ ajoute à la dépense, une barre verte l'en retire, et la somme des marches vaut
 exactement l'écart des deux totaux : sans cela, la dernière barre ne retomberait
 pas où elle retombe.</p>
 
-<h4>En {obs}, la dernière année mesurée</h4>
-<p>Le point de départ est la dépense que le Conseil d'orientation des retraites
-a constatée : {_milliards(observe.depense_meur("actuel"), 0)}. Le point
-d'arrivée est ce que la proposition aurait coûté cette année-là si elle avait
-toujours été la règle : {_milliards(arrivee * 1000, 0)}, soit
-{_milliards(ecart * 1000, 0)} de moins, {g.pourcentage(ecart / depart, decimales=0)}
-de la facture.</p>
+{choix}
 
-{cascade_obs}
+<p>En {annee}, la dépense passe de {_milliards(depense, 0)} à
+{_milliards(arrivee_meur, 0)}, soit {_milliards(ecart * 1000, 0)} de moins,
+{g.pourcentage(ecart * 1000 / depense, decimales=0)} de la facture. Tout est
+pris sur le compte du <a href="{g.lien("/donnees")}">Conseil d'orientation des
+retraites</a>, le même que les cartes du haut, et il tient ses deux bouts
+jusqu'en {solde.derniere_annee}.</p>
 
-<div class="note vigilance"><strong>La cotisation unique ne déplace rien en
-{obs}, et c'est normal.</strong> Elle ne vaut que pour les droits acquis à
-compter de la bascule, en {bascule} : aucun retraité de {obs} n'en a acquis un
-seul sous elle, et sa marche est donc plate. Le chiffre a été calculé, et il
-vaut zéro. C'est la mesure centrale du programme, et une cascade arrêtée à
-cette année-là la montrerait à zéro sans rien dire. D'où la seconde lecture, prise à l'horizon du
-modèle, quand toutes les générations sont passées sous la règle nouvelle. Les
-reprises sur successions sont dans le même cas, et n'ont pas de marche ici :
-le compte du COR ne les porte pas.</div>
-
-<h4>En {fin}, quand toutes les générations sont passées sous la règle</h4>
-<p>Le périmètre change, et la comparaison des deux cascades ne se fait donc pas
-marche à marche : celle-ci est la trajectoire du modèle, en euros constants de
-{euros}, sur les pensions de répartition obligatoire. Le point de vigilance du
-dépliant précédent dit de combien elle s'écarte de la projection du COR.
-Ce qu'elle apporte est ailleurs : ici, chacune des mesures pèse ce qu'elle
-pèse. La dépense passe de {_milliards(depart_fin * 1000, 0)} à
-{_milliards(arrivee_fin * 1000, 0)},
-{g.pourcentage(ecart_fin / depart_fin, decimales=0)} de moins.</p>
-
-{cascade_fin}
+{figure}
+{note_bascule}
+<p class="discret">{source_pib} Une année antérieure à {obs} n'est pas offerte :
+ce que chaque système aurait coûté sur le passé est dans le dépliant précédent,
+à sa place, celle d'un contrefactuel.</p>
 
 <div class="note"><strong>Une décomposition est séquentielle, et l'ordre
 compte.</strong> Chaque marche est l'effet de sa mesure <em>sachant celles qui
@@ -8487,6 +8585,17 @@ moitié moins servirait moitié moins, ce qui est une autre affaire. Le déplian
 « recettes et dépenses, poste par poste » porte les deux côtés, et celui du
 coefficient d'équilibre dit ce qui manque.</div>
 """, identifiant="cout-cascade")
+
+
+def _lien_cascade(annee: int) -> str:
+    """L'adresse de la page Coût, cascade posée sur cette année-là.
+
+    Les réglages de modélisation que ``g.lien`` porte déjà sont conservés : le
+    sélecteur change ce qu'on REGARDE, jamais sous quelles règles la page se
+    calcule.
+    """
+    adresse = g.lien("/cout")
+    return adresse + ("&" if "?" in adresse else "?") + f"cascade={annee}"
 
 
 def _cout_detail_equilibre(contexte: Contexte) -> str:

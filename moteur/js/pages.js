@@ -1900,7 +1900,7 @@ export function rendre(contexte, chemin, parametres = null) {
     return [TITRES[chemin], partager(contexte)];
   }
   if (chemin in PAGES_AGREGEES) {
-    return [TITRES[chemin], refus + agregee(chemin, contexte, regles)];
+    return [TITRES[chemin], refus + agregee(chemin, contexte, regles, requete)];
   }
   if (chemin === "/risque") {
     return [TITRES[chemin], risque(contexte)];
@@ -1964,6 +1964,16 @@ export function rendre(contexte, chemin, parametres = null) {
  * l'interrogent.
  */
 /**
+ * Ce qu'une page REGARDE, page par page — à distinguer des RÉGLAGES, qui disent
+ * sous quelles règles le modèle tourne et voyagent vers toutes les pages. Un
+ * regard ne change aucun chiffre : il choisit lequel on montre, et il ne vaut
+ * que pour sa page. Copie de `_VUES_DE_PAGE` dans `web/pages.py`.
+ */
+const VUES_DE_PAGE = {
+  "/cout": ["cascade"],
+};
+
+/**
  * Les trois pages qui AGRÈGENT : elles ne calculent aucune carrière saisie,
  * mais elles obéissent aux mêmes règles que le simulateur. Voir `agregee`.
  */
@@ -1973,10 +1983,21 @@ const PAGES_AGREGEES = {
   "/avantages": avantages,
 };
 
-function agregee(chemin, contexte, saisie) {
+/**
+ * `requete` passe en plus des réglages, et ne dit RIEN des règles : elle porte
+ * ce qu'une page REGARDE — l'année que la cascade de Coût décompose — là où les
+ * réglages disent sous quelles règles elle se calcule. Voir `_agregee` dans
+ * `web/pages.py`.
+ */
+function agregee(chemin, contexte, saisie, requete = null) {
+  const vues = VUES_DE_PAGE[chemin] || [];
+  const regards = {};
+  for (const [cle, valeur] of Object.entries(requete || {})) {
+    if (vues.includes(cle)) { regards[cle] = valeur; }
+  }
   return avertissementReglages(saisie, chemin)
-    + PAGES_AGREGEES[chemin](contexte.pour(saisie.parametres(contexte.base)))
-    + reglages(saisie, chemin);
+    + PAGES_AGREGEES[chemin](contexte.pour(saisie.parametres(contexte.base)), regards)
+    + reglages(saisie, chemin, regards);
 }
 
 /**
@@ -2297,14 +2318,18 @@ tant que vous ne les remettez pas :
  * Le formulaire vise la ROUTE et non le lien — voir `gabarit.route` : il écrit
  * lui-même sa requête, à partir de ses champs.
  */
-function reglages(saisie, chemin) {
+function reglages(saisie, chemin, regards = null) {
   // Les deux réglages sans champ voyagent cachés : le formulaire les perdrait,
   // et une adresse qui les portait se retrouverait silencieusement ramenée au
   // défaut au premier « Recalculer ».
-  const caches = ["age_reference", "conversion_acquis"]
+  let caches = ["age_reference", "conversion_acquis"]
     .filter((cle) => saisie[cle] !== DEFAUTS[cle])
     .map((cle) => g.cache(cle, String(saisie[cle])))
     .join("");
+  // Et les regards de la page, pour la même raison : ce que le lecteur
+  // regardait, « Recalculer cette page » le lui rendait autrement au défaut.
+  caches += Object.entries(regards || {}).sort()
+    .map(([cle, valeur]) => g.cache(cle, valeur)).join("");
   const change = Boolean(saisie.requeteModelisation());
   return `
 <details class="section options reglages"${change ? " open" : ""}>
@@ -5542,7 +5567,7 @@ facteur, donc tous les niveaux de cette page, sans toucher aux écarts entre car
 qui sont la seule chose que ce site mesure.</div>`;
 }
 
-function casTypes(contexte) {
+function casTypes(contexte, regards = null) {
   const simulateur = contexte.simulateur();
   const resultat = calculerCasTypes(simulateur);
   const montre = GRILLES_CAS_TYPES[0][0];
@@ -5776,7 +5801,7 @@ function milliards(millions, decimales = 0) {
  * dépendance et de l'épargne retraite. Le décrochement se voit, et c'est bien
  * ainsi — le masquer collerait deux séries qui ne mesurent pas la même chose.
  */
-function cout(contexte) {
+function cout(contexte, regards = null) {
   const comptes = contexte.comptes();
   const c = contexte.cout();
   const solde = c.solde;
@@ -5978,7 +6003,7 @@ plus large que les cartes).
     coutDetailRessources(contexte),
     coutDetailTransferts(contexte),
     coutDetailScenarios(contexte),
-    coutDetailCascade(contexte),
+    coutDetailCascade(contexte, regards),
     coutDetailEquilibre(contexte),
     coutDetailPostes(contexte),
     coutDetailDette(contexte),
@@ -6088,7 +6113,7 @@ const LIBELLES_ETATS = {
  * MESURE et un plancher très bas, le troisième mesure autre chose, les annuités
  * servies avant l'âge légal. Voir la référence Python pour le détail.
  */
-function avantages(contexte) {
+function avantages(contexte, regards = null) {
   const inventaire = contexte.inventaireAvantages();
   const c = contexte.avantages();
   const derniere = c.derniere;
@@ -7253,73 +7278,139 @@ function marchesCascade(base, partDerives, rapports, libelles, partReprise = 0.0
 }
 
 /**
- * De la dépense d'aujourd'hui à celle de la proposition, mesure par mesure.
- * Voir `_cout_detail_cascade` dans `web/pages.py` : deux lectures, parce
- * qu'une seule mentirait par omission — la cotisation unique ne déplace rien
- * l'année d'avant sa bascule.
+ * Les années que le sélecteur de la cascade propose : l'année mesurée, celle de
+ * la bascule, puis les décennies jusqu'à l'horizon. Voir `PAS_ANNEES_CASCADE`
+ * dans `web/pages.py`.
  */
-function coutDetailCascade(contexte) {
+const PAS_ANNEES_CASCADE = 10;
+
+/** Les millésimes offerts, dans l'ordre, sans doublon. */
+function anneesCascade(solde, bascule) {
+  const obs = solde.derniereAnneeObservee;
+  const fin = solde.derniereAnnee;
+  const annees = [obs, Math.max(bascule, obs)];
+  const debut = (Math.floor(Math.max(bascule, obs) / PAS_ANNEES_CASCADE) + 1)
+    * PAS_ANNEES_CASCADE;
+  for (let annee = debut; annee <= fin; annee += PAS_ANNEES_CASCADE) {
+    annees.push(annee);
+  }
+  if (annees[annees.length - 1] !== fin) { annees.push(fin); }
+  const vues = [];
+  for (const annee of annees) {
+    if (!vues.includes(annee) && annee >= obs && annee <= fin) { vues.push(annee); }
+  }
+  return vues;
+}
+
+/**
+ * L'année que l'adresse demande, ou l'année mesurée. Une année hors de la liste
+ * est RAMENÉE plutôt que refusée : une adresse partagée puis rejouée après que
+ * le compte a avancé d'un millésime doit afficher la cascade, pas une erreur.
+ */
+function anneeCascade(solde, bascule, regards) {
+  const offertes = anneesCascade(solde, bascule);
+  const demandee = (regards || {}).cascade || "";
+  if (estEntier(demandee) && offertes.includes(Number(demandee))) {
+    return Number(demandee);
+  }
+  return offertes[0];
+}
+
+/**
+ * Le PIB qui convertit une part en milliards, et s'il est publié. Le compte du
+ * COR tient ses deux bouts en part du PIB de 2002 à 2070, mais ne publie un PIB
+ * en euros que jusqu'à l'année mesurée ; au-delà, c'est le modèle qui en
+ * projette un, et les deux coïncident exactement à l'année mesurée.
+ */
+function pibCascade(contexte, annee) {
+  const ligne = contexte.cout().solde.annee(annee);
+  if (ligne && ligne.pib) { return [ligne.pib, true]; }
+  const projete = contexte.cout().avenir.annee(annee);
+  return [projete ? projete.pib : 0.0, false];
+}
+
+/**
+ * L'adresse de la page Coût, cascade posée sur cette année-là. Les réglages de
+ * modélisation que `g.lien` porte déjà sont conservés : le sélecteur change ce
+ * qu'on REGARDE, jamais sous quelles règles la page se calcule.
+ */
+function lienCascade(annee) {
+  const adresse = g.lien("/cout");
+  return adresse + (adresse.includes("?") ? "&" : "?") + `cascade=${annee}`;
+}
+
+/**
+ * De la dépense d'une année à celle de la proposition, mesure par mesure. Voir
+ * `_cout_detail_cascade` dans `web/pages.py` : un seul périmètre de bout en
+ * bout — le compte du COR —, et l'année se choisit, parce qu'à l'année mesurée
+ * la cotisation unique ne déplace encore rien.
+ */
+function coutDetailCascade(contexte, regards = null) {
   const c = contexte.cout();
   const solde = c.solde;
   const avenir = c.avenir;
   const base = contexte.base;
   const bascule = base.annee_bascule;
-  const euros = c.anneeEuros;
 
   const obs = solde.derniereAnneeObservee;
-  const observe = solde.annee(obs);
-  const depart = observe.depenseMeur("actuel") / 1000;
-  const arrivee = (observe.depenseMeur("notionnel_liberal")
-    + observe.depenseMeur(COMPOSANTE_GARANTIE)) / 1000;
-  const marchesObs = [
-    new g.Marche("Système actuel", depart, true, "var(--actuel)",
+  const offertes = anneesCascade(solde, bascule);
+  const annee = anneeCascade(solde, bascule, regards);
+  const ligne = solde.annee(annee);
+  const [pib, publie] = pibCascade(contexte, annee);
+
+  const depense = ligne.depense("actuel") * pib;
+  const partDirecte = depense * (1.0 - ligne.partDerives);
+  const projetee = avenir.annee(annee);
+  const garantieModele = projetee ? projetee.coutConstants(COMPOSANTE_GARANTIE) : 0.0;
+  const partReprise = (projetee && garantieModele)
+    ? projetee.reprisesConstants() / garantieModele : 0.0;
+  let arriveeMeur = partDirecte * (ligne.rapports.notionnel_liberal
+    + ligne.rapports[COMPOSANTE_GARANTIE]);
+  arriveeMeur -= partDirecte * ligne.rapports[COMPOSANTE_GARANTIE] * partReprise;
+
+  const libelles = libellesCascade(contexte, ligne.partDerives, partReprise);
+  const marches = [
+    new g.Marche("Système actuel", depense / 1000, true, "var(--actuel)",
       `${sansNumero(LIBELLES_SYSTEMES.actuel)} : la dépense de retraite `
-      + `mesurée en ${obs}`),
+      + (publie ? `mesurée en ${annee}`
+        : `que le compte du COR projette pour ${annee}`)),
   ].concat(
-    marchesCascade(observe.depenseMeur("actuel"), observe.partDerives,
-                   observe.rapports,
-                   libellesCascade(contexte, observe.partDerives, 0.0)),
-    [new g.Marche("La proposition", arrivee, true, "var(--liberal)",
+    marchesCascade(depense, ligne.partDerives, ligne.rapports, libelles, partReprise),
+    [new g.Marche("La proposition", arriveeMeur / 1000, true, "var(--liberal)",
       `${sansNumero(LIBELLES_SYSTEMES.notionnel_liberal)} : pensions `
-      + "contributives et garantie vieillesse réunies")],
+      + "contributives et garantie vieillesse, nette de ce que les successions "
+      + "en rendent")],
   );
-  const cascadeObs = g.cascade(
-    `De la dépense du système actuel à celle de la proposition en ${obs}, `
+  const figure = g.cascade(
+    `De la dépense du système actuel à celle de la proposition en ${annee}, `
     + "mesure par mesure, en milliards d'euros",
-    marchesObs, `Md € ${obs}`, 1, 0, "Mesure");
+    marches, `Md € ${annee}`, 1, 0, "Mesure");
 
-  const fin = avenir.derniereAnnee;
-  const horizon = avenir.annee(fin);
-  const departFin = horizon.coutConstants("actuel") / 1000;
-  const garantieFin = horizon.coutConstants(COMPOSANTE_GARANTIE);
-  const partReprise = garantieFin ? horizon.reprisesConstants() / garantieFin : 0.0;
-  const arriveeFin = (horizon.coutConstants("notionnel_liberal")
-    + horizon.garantieNetteConstants()) / 1000;
-  const marchesFin = [
-    new g.Marche("Système actuel", departFin, true, "var(--actuel)",
-      `${sansNumero(LIBELLES_SYSTEMES.actuel)} : la dépense que le modèle `
-      + `projette pour ${fin}`),
-  ].concat(
-    marchesCascade(horizon.coutConstants("actuel"), horizon.partDerives,
-                   horizon.rapports,
-                   libellesCascade(contexte, horizon.partDerives, partReprise),
-                   partReprise),
-    [
-      new g.Marche("La proposition", arriveeFin, true, "var(--liberal)",
-        `${sansNumero(LIBELLES_SYSTEMES.notionnel_liberal)} : pensions `
-        + "contributives et garantie nette des reprises"),
-    ],
-  );
-  const cascadeFin = g.cascade(
-    `De la dépense du système actuel à celle de la proposition en ${fin}, `
-    + `mesure par mesure, en milliards d'euros constants de ${euros}`,
-    marchesFin, `Md € ${euros}`, 1, 0, "Mesure");
-
-  const ecart = depart - arrivee;
-  const ecartFin = departFin - arriveeFin;
+  const ecart = (depense - arriveeMeur) / 1000;
+  const choix = g.bascule(
+    "Année décomposée",
+    offertes.map((millesime) => [String(millesime), lienCascade(millesime)]),
+    String(annee));
+  // La phrase sur la cotisation unique ne vaut que tant qu'elle ne déplace
+  // rien, c'est-à-dire avant la bascule.
+  const noteBascule = annee < bascule ? `
+<div class="note vigilance"><strong>La cotisation unique ne déplace rien en
+${annee}, et c'est normal.</strong> Elle ne vaut que pour les droits acquis à
+compter de la bascule, en ${bascule} : aucun retraité de ${annee} n'en a acquis un
+seul sous elle, et sa marche est donc plate. Le chiffre a été calculé, et il
+vaut zéro. C'est la mesure centrale du programme : pour la voir peser, prenez
+une année plus tardive dans le sélecteur ci-dessus. Les reprises sur
+successions sont dans le même cas.</div>
+` : "";
+  const sourcePib = publie
+    ? `Les milliards sont ceux du PIB que le COR publie pour ${annee}.`
+    : `Le compte du COR publie un PIB en euros jusqu'en ${obs} ; au-delà, la `
+      + "part du PIB est multipliée par le PIB que le modèle projette, celui-là "
+      + `même dont la trajectoire se sert. Les deux coïncident en ${obs}, si `
+      + "bien que la suite des milliards ne saute pas au passage.";
   return g.depliant(
-    `De ${milliards(observe.depenseMeur("actuel"), 0)} à `
-    + `${milliards(arrivee * 1000, 0)} : ce que chaque mesure déplace`, `
+    `De ${milliards(depense, 0)} à ${milliards(arriveeMeur, 0)} : `
+    + "ce que chaque mesure déplace", `
 <p>Les tableaux du dessus comparent quatre systèmes deux à deux. Ils disent de
 combien ils s'écartent ; ils ne disent pas <em>par quoi</em>. Voici le chemin :
 on part de la dépense du système actuel, on applique les mesures de la
@@ -7328,37 +7419,20 @@ ajoute à la dépense, une barre verte l'en retire, et la somme des marches vaut
 exactement l'écart des deux totaux : sans cela, la dernière barre ne retomberait
 pas où elle retombe.</p>
 
-<h4>En ${obs}, la dernière année mesurée</h4>
-<p>Le point de départ est la dépense que le Conseil d'orientation des retraites
-a constatée : ${milliards(observe.depenseMeur("actuel"), 0)}. Le point
-d'arrivée est ce que la proposition aurait coûté cette année-là si elle avait
-toujours été la règle : ${milliards(arrivee * 1000, 0)}, soit
-${milliards(ecart * 1000, 0)} de moins, ${g.pourcentage(ecart / depart, false, 0)}
-de la facture.</p>
+${choix}
 
-${cascadeObs}
+<p>En ${annee}, la dépense passe de ${milliards(depense, 0)} à
+${milliards(arriveeMeur, 0)}, soit ${milliards(ecart * 1000, 0)} de moins,
+${g.pourcentage(ecart * 1000 / depense, false, 0)} de la facture. Tout est
+pris sur le compte du <a href="${g.lien("/donnees")}">Conseil d'orientation des
+retraites</a>, le même que les cartes du haut, et il tient ses deux bouts
+jusqu'en ${solde.derniereAnnee}.</p>
 
-<div class="note vigilance"><strong>La cotisation unique ne déplace rien en
-${obs}, et c'est normal.</strong> Elle ne vaut que pour les droits acquis à
-compter de la bascule, en ${bascule} : aucun retraité de ${obs} n'en a acquis un
-seul sous elle, et sa marche est donc plate. Le chiffre a été calculé, et il
-vaut zéro. C'est la mesure centrale du programme, et une cascade arrêtée à
-cette année-là la montrerait à zéro sans rien dire. D'où la seconde lecture, prise à l'horizon du
-modèle, quand toutes les générations sont passées sous la règle nouvelle. Les
-reprises sur successions sont dans le même cas, et n'ont pas de marche ici :
-le compte du COR ne les porte pas.</div>
-
-<h4>En ${fin}, quand toutes les générations sont passées sous la règle</h4>
-<p>Le périmètre change, et la comparaison des deux cascades ne se fait donc pas
-marche à marche : celle-ci est la trajectoire du modèle, en euros constants de
-${euros}, sur les pensions de répartition obligatoire. Le point de vigilance du
-dépliant précédent dit de combien elle s'écarte de la projection du COR.
-Ce qu'elle apporte est ailleurs : ici, chacune des mesures pèse ce qu'elle
-pèse. La dépense passe de ${milliards(departFin * 1000, 0)} à
-${milliards(arriveeFin * 1000, 0)},
-${g.pourcentage(ecartFin / departFin, false, 0)} de moins.</p>
-
-${cascadeFin}
+${figure}
+${noteBascule}
+<p class="discret">${sourcePib} Une année antérieure à ${obs} n'est pas offerte :
+ce que chaque système aurait coûté sur le passé est dans le dépliant précédent,
+à sa place, celle d'un contrefactuel.</p>
 
 <div class="note"><strong>Une décomposition est séquentielle, et l'ordre
 compte.</strong> Chaque marche est l'effet de sa mesure <em>sachant celles qui

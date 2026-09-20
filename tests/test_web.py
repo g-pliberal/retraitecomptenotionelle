@@ -34,6 +34,7 @@ from retraite_notionnelle.web.pages import (
     COMPOSANTE_GARANTIE,
     MARCHES_HORS_SYSTEMES,
     MARCHES_SYSTEMES,
+    _VUES_DE_PAGE,
     SCENARIOS_MONTRES,
     AGE_DEBUT_MINIMAL,
     AGE_LIQUIDATION_MAXIMAL,
@@ -5597,13 +5598,25 @@ def test_une_page_agregee_porte_son_bloc_de_reglages(page, chemin):
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
 def test_une_page_agregee_au_defaut_ne_dit_rien_des_reglages(page, chemin):
-    """Tant que rien n'est changé, la page est celle d'avant."""
+    """Tant que rien n'est changé, la page est celle d'avant.
+
+    CE QUE CE TEST GARDE, c'est qu'aucun RÉGLAGE ne voyage dans un lien que le
+    lecteur n'a pas demandé : une adresse partagée ne doit porter que ce que
+    son auteur a effectivement changé. Les VUES sont l'autre chose — l'année
+    que la cascade de Coût décompose —, et celles-là voyagent par construction,
+    puisqu'un sélecteur n'a pas d'autre façon de dire où il mène. La
+    distinction est dans ``_VUES_DE_PAGE`` ; ici on vérifie qu'un lien ne porte
+    rien D'AUTRE qu'une vue.
+    """
     corps = page(chemin)
     assert "ne sont pas ceux des réglages par défaut" not in corps
-    # Et ses liens sont nus : une adresse partagée ne porte que ce que son
-    # auteur a effectivement réglé.
     assert '<a href="#/cout"' in corps or '<a href="#/simuler"' in corps
-    assert "#/cout?" not in corps
+    vues = {cle for cles in _VUES_DE_PAGE.values() for cle in cles}
+    for requete in re.findall(r'<a href="#/[a-z-]+\?([^"]*)"', corps):
+        portees = {couple.split("=")[0] for couple in requete.split("&")}
+        assert portees <= vues, (
+            f"{chemin} : un lien porte {portees - vues}, qui n'est pas une vue"
+        )
 
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))

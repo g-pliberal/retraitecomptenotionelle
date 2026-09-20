@@ -827,6 +827,133 @@ document.addEventListener("focusout", (evenement) => {
   }
 });
 
+
+// -- la lecture d'une cascade ------------------------------------------------
+//
+// MÊME CONTRAT QUE LES COURBES : les chiffres viennent du tableau posé sous la
+// figure, et de nulle part ailleurs. Ce qui change est la géométrie — une
+// cascade n'a pas d'abscisse continue, elle a des colonnes — et la façon de
+// viser : on cherche la barre dont le centre est le plus proche du pointeur,
+// en coordonnées d'écran, plutôt que de rejouer l'échelle du viewBox. C'est ce
+// qui rend la lecture juste quelle que soit la largeur, et dans une boîte qui
+// défile, où la position du tracé ne se déduit pas de celle de la figure.
+
+/** Les marches d'une cascade : leur rect, leur ligne de tableau, lues une fois. */
+function marchesDeLaCascade(figure) {
+  if (figure._marches) { return figure._marches; }
+  const grille = figure.nextElementSibling?.querySelector("table");
+  if (!grille) { return null; }
+  const entetes = [...grille.querySelectorAll("thead th")]
+    .slice(1).map((cellule) => cellule.textContent.replace(/\s*\([^)]*\)\s*$/, "").trim());
+  const unite = (grille.querySelector("thead th:nth-child(2)")?.textContent
+    .match(/\(([^)]*)\)\s*$/) || [, ""])[1];
+  const lignes = [...grille.querySelectorAll("tbody tr")].map((ligne) => {
+    const cellules = [...ligne.children].map((c) => c.textContent.trim());
+    // Le nom seul : la glose qui le suit dans la cellule est écrite pour un
+    // tableau, et une boîte de lecture d'une ligne n'en veut pas.
+    const nom = ligne.querySelector("th")?.firstChild?.textContent?.trim()
+      || cellules[0];
+    return { nom, valeurs: cellules.slice(1) };
+  });
+  const rects = [...figure.querySelectorAll("rect.marche")]
+    .sort((a, b) => Number(a.dataset.rang) - Number(b.dataset.rang));
+  figure._marches = { entetes, lignes, rects, unite };
+  return figure._marches;
+}
+
+function effacerCascade(figure) {
+  const survol = figure.querySelector(".survol");
+  if (survol) { survol.replaceChildren(); }
+  const lecture = figure.querySelector(".lecture");
+  if (lecture) { lecture.hidden = true; }
+  for (const rect of figure.querySelectorAll("rect.marche.visee")) {
+    rect.classList.remove("visee");
+  }
+  figure._rang = null;
+}
+
+function montrerCascade(figure, rang) {
+  const marches = marchesDeLaCascade(figure);
+  const survol = figure.querySelector(".survol");
+  const lecture = figure.querySelector(".lecture");
+  if (!marches || !survol || !lecture) { return; }
+  const ligne = marches.lignes[rang];
+  const rect = marches.rects[rang];
+  if (!ligne || !rect) { return; }
+  figure._rang = rang;
+
+  // Le cadre est dessiné DANS le SVG, aux coordonnées du rect visé : il suit
+  // donc l'échelle sans qu'on ait à la connaître. Une marche nulle est haute
+  // d'une unité ; le cadre garde une hauteur lisible, sinon il disparaîtrait
+  // sur celle-là même qu'on cherchait à montrer.
+  const x = Number(rect.getAttribute("x"));
+  const largeur = Number(rect.getAttribute("width"));
+  const hauteur = Math.max(Number(rect.getAttribute("height")), 3);
+  const y = Number(rect.getAttribute("y")) - (hauteur > 3 ? 0 : 1);
+  survol.innerHTML = `<rect class="cadre" x="${x - 3}" y="${y - 3}" `
+    + `width="${largeur + 6}" height="${hauteur + 6}"/>`;
+  for (const autre of marches.rects) { autre.classList.remove("visee"); }
+  rect.classList.add("visee");
+
+  const unite = marches.unite ? ` <span class="part">(${neutraliser(marches.unite)})</span>` : "";
+  const items = ligne.valeurs.map((valeur, colonne) =>
+    `<span class="part">${neutraliser(marches.entetes[colonne])}</span> `
+    + neutraliser(valeur)).join(" · ");
+  lecture.innerHTML = `${neutraliser(ligne.nom)}${unite} — ${items}`;
+  lecture.hidden = false;
+}
+
+/** Le rang de la marche dont le centre est le plus proche du pointeur. */
+function marcheVisee(marches, clientX) {
+  let meilleur = 0;
+  let distance = Infinity;
+  marches.rects.forEach((rect, rang) => {
+    const cadre = rect.getBoundingClientRect();
+    const ecart = Math.abs(clientX - (cadre.left + cadre.width / 2));
+    if (ecart < distance) { distance = ecart; meilleur = rang; }
+  });
+  return meilleur;
+}
+
+document.addEventListener("pointermove", (evenement) => {
+  const figure = evenement.target.closest?.("figure.cascade");
+  if (!figure) { return; }
+  const marches = marchesDeLaCascade(figure);
+  if (!marches || !marches.rects.length) { return; }
+  montrerCascade(figure, marcheVisee(marches, evenement.clientX));
+});
+
+document.addEventListener("pointerleave", (evenement) => {
+  const figure = evenement.target.closest?.("figure.cascade");
+  if (!figure) { return; }
+  if (evenement.relatedTarget && figure.contains(evenement.relatedTarget)) { return; }
+  if (evenement.target !== figure && evenement.relatedTarget) { return; }
+  effacerCascade(figure);
+}, true);
+
+// Le clavier : les flèches parcourent les marches, Échap referme. Le focus est
+// sur la boîte qui défile — c'est elle qui est atteignable au clavier, et qui
+// doit l'être pour qu'on puisse faire défiler un tracé plus large que l'écran.
+document.addEventListener("keydown", (evenement) => {
+  const figure = document.activeElement?.closest?.("figure.cascade");
+  if (!figure) { return; }
+  const marches = marchesDeLaCascade(figure);
+  if (!marches || !marches.rects.length) { return; }
+  const total = marches.rects.length;
+  if (evenement.key === "Escape") { effacerCascade(figure); return; }
+  const pas = { ArrowLeft: -1, ArrowRight: 1, Home: -total, End: total };
+  if (!(evenement.key in pas)) { return; }
+  evenement.preventDefault();
+  const courant = figure._rang === null || figure._rang === undefined
+    ? 0 : figure._rang;
+  montrerCascade(figure, Math.max(0, Math.min(total - 1, courant + pas[evenement.key])));
+});
+
+document.addEventListener("focusout", (evenement) => {
+  const figure = evenement.target.closest?.("figure.cascade");
+  if (figure && !figure.contains(evenement.relatedTarget)) { effacerCascade(figure); }
+});
+
 // -- composer l'image d'une carte --------------------------------------------
 //
 // Une carte du site se lit dans une page ; une image se lit dans un fil. Ce qui
