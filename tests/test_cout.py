@@ -965,6 +965,9 @@ def test_les_reprises_sur_succession_suivent_les_avances(cout):
         # avance dure moins que l'espérance de vie à 65 ans de tous.
         assert 15.0 < projetee.duree_avances < 24.0
         assert projetee.population_mortalite is not None
+        # Les femmes ont les pensions les plus basses : elles sont la majorité
+        # sous le plancher, et leur longévité allonge les avances.
+        assert 0.55 < projetee.part_femmes < 0.8
     premiere = avenir.annee(bascule)
     derniere = avenir.annees[-1]
     # La première année, les décès ne libèrent presque rien : personne n'a

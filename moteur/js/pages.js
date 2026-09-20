@@ -7334,6 +7334,7 @@ function coutDetailGarantie(contexte) {
   const garantieBascule = ligneBascule !== null ? ligneBascule.garantie : null;
   const partReprise = garantieBascule ? garantieBascule.partReprise : 0.0;
   const dureeAvances = garantieBascule ? garantieBascule.dureeAvances : 0.0;
+  const partFemmes = garantieBascule ? garantieBascule.partFemmes : 0.0;
   const repriseCalculee = base.part_reprise_garantie === null
     || base.part_reprise_garantie === undefined;
   const patrimoine = simulateur.patrimoine;
@@ -7400,7 +7401,9 @@ avance : chaque euro versé depuis la bascule porte intérêt au taux réel que 
 courbe des taux sans risque implique, une fois l'inflation retirée, et devient
 une créance sur la succession. Le modèle suit ces avances par âge et les
 libère au décès, avec la mortalité du vingtile de niveau de vie où la pension
-moyenne des bénéficiaires les place : une avance dure ${g.nombre(dureeAvances, 1)} ans en moyenne.
+moyenne des bénéficiaires les place, les deux sexes pesés comme ils le sont
+sous le plancher, ${g.pourcentage(partFemmes, false, 0)} de femmes : une
+avance dure ${g.nombre(dureeAvances, 1)} ans en moyenne.
 La succession en couvre ${g.pourcentage(partReprise, false, 0)}, ${repriseCalculee ? "calculés sur le patrimoine des ménages retraités selon leur revenu" : "le réglage « Part de l'avance couverte par la succession »"}. Ce que la succession ne couvre pas
 est abandonné : c'est cette part-là, et elle seule, que l'impôt finance pour
 de bon. Les lignes « dont reprises » et « garantie nette » des tableaux du
@@ -7414,10 +7417,15 @@ l'ensemble. Chaque tranche de pension sous le plancher reçoit l'avance qu'elle
 constituerait, et la part que la succession en couvre est celle du quart le
 plus modeste pour le premier quart des retraités, celle de l'ensemble à partir
 de la médiane, et le mélange entre les deux ; la part retenue est la moyenne,
-pesée par les avances. Un couple de deux bénéficiaires pèse deux avances sur
-une succession, ce que ce calcul ne voit pas ; il surestime donc la
-couverture. Le réglage « Part de l'avance couverte par la succession »
-remplace ce calcul par un nombre.</p>
+pesée par les avances. Trois choses que ce calcul ne voit pas, faute du
+fichier individuel de l'enquête. Un couple de deux bénéficiaires pèse deux
+avances sur une succession, ce qui surestime la couverture. En sens inverse,
+les bénéficiaires sont surtout des femmes, et une femme dont la pension est
+basse vit souvent dans un ménage qui ne l'est pas — le calcul le sait pour son
+espérance de vie, non pour son patrimoine ; beaucoup sont veuves, et leur
+succession porte alors tout le patrimoine du couple pour une seule avance. Le
+réglage « Part de l'avance couverte par la succession » remplace ce calcul par
+un nombre.</p>
 
 ${g.tableau(
     ["Année", "Versé", "Avances libérées par les décès", "Reprises",

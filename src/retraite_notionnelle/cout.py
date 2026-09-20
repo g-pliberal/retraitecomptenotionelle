@@ -1722,6 +1722,10 @@ class GarantieProjetee:
     #: Cette population : le vingtile de niveau de vie où la pension moyenne
     #: des bénéficiaires les place, ou ``None`` pour la population générale.
     population_mortalite: str | None = None
+    #: La part des femmes parmi les bénéficiaires, qui pèse les deux courbes
+    #: de survie : les pensions des femmes sont plus basses, et elles vivent
+    #: plus longtemps.
+    part_femmes: float = 0.0
 
 
 class GarantieDistribution:
@@ -2057,7 +2061,15 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     de niveau de vie où leur pension moyenne les place, par la convention
     qui rattache déjà un cas type à un vingtile (``population_niveau_de_vie``
     du module de mortalité, docs/methodologie.md §5). Les avances sont plus
-    courtes, et les décès les libèrent plus tôt.
+    courtes, et les décès les libèrent plus tôt. ET CE SONT SURTOUT DES
+    FEMMES : leurs pensions sont plus basses, et l'enquête les distribue à
+    part. La part des femmes parmi les bénéficiaires est celle des femmes
+    sous le plancher, pesée par la part des femmes parmi les 65 ans et plus
+    — que les courbes de survie du modèle donnent, en population
+    stationnaire, faute d'un effectif de retraités par sexe dans le dépôt —,
+    et les deux courbes de survie sont mélangées dans cette proportion, au
+    lieu de moitié-moitié. Les femmes vivant plus longtemps, les avances
+    s'allongent d'autant.
 
     CE QUI EST FIGÉ. Le patrimoine est celui d'un ménage, et un couple de
     deux bénéficiaires pèse deux avances sur une succession, ce qui surestime
@@ -2122,8 +2134,30 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         pension_moyenne = sum(poids * pension for poids, _, pension, _ in tranches) / poids_total
         population = mortalite.population_niveau_de_vie_euros(
             pension_moyenne * macro.coefficient_prix(millesime, mortalite.annee_niveaux_de_vie))
-    survie = [s for s in mortalite.courbe_survie_unisexe(65, bascule, True, population)
-              if s > 1e-9]
+    # Et les deux sexes, pesés comme ils le sont sous le plancher.
+    courbe_h = mortalite.courbe_survie(65, bascule, "H", True, population)
+    courbe_f = mortalite.courbe_survie(65, bascule, "F", True, population)
+    part_femmes = 0.5
+    if poids_total > 0.0:
+        femmes_65 = sum(courbe_f)
+        hommes_65 = sum(courbe_h)
+        sous_plancher = {}
+        for sexe in ("F", "H"):
+            par_sexe = DistributionPensions(parametres.racine_donnees, sexe=sexe)
+            sous_plancher[sexe] = cout_garantie(
+                par_sexe, 1.0, calage.plancher_mensuel, deplacement).part_beneficiaires
+        beneficiaires_f = femmes_65 * sous_plancher["F"]
+        beneficiaires_h = hommes_65 * sous_plancher["H"]
+        if beneficiaires_f + beneficiaires_h > 0.0:
+            part_femmes = beneficiaires_f / (beneficiaires_f + beneficiaires_h)
+    longueur = max(len(courbe_h), len(courbe_f))
+    survie = [
+        s for s in (
+            (1.0 - part_femmes) * (courbe_h[t] if t < len(courbe_h) else 0.0)
+            + part_femmes * (courbe_f[t] if t < len(courbe_f) else 0.0)
+            for t in range(longueur)
+        ) if s > 1e-9
+    ]
     if not survie:
         return
     total_survie = sum(survie)
@@ -2188,6 +2222,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             part_reprise=part,
             duree_avances=total_survie,
             population_mortalite=population,
+            part_femmes=part_femmes,
         )
 
 

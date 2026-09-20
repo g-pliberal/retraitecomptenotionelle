@@ -4997,19 +4997,23 @@ solidarité vieillesse en 2024 (rapport d'activité 2024), deux pour cent de ce
 qu'elle verse. La trajectoire suit ces avances par âge à compter de la
 bascule, au taux réel lu sur la courbe des taux, les libère au décès avec la
 mortalité du vingtile de niveau de vie où la pension moyenne des
-bénéficiaires les place — le premier, et une avance dure 19,6 ans —, et les
-successions en rendent une part CALCULÉE sur le patrimoine des ménages
-retraités selon leur revenu (COR, enquête Histoire de vie et Patrimoine 2018,
-`donnees/patrimoine.py`) : 43 % au réglage par défaut, les plus petites
+bénéficiaires les place — le premier —, les deux sexes pesés comme ils le
+sont sous le plancher, 68 % de femmes, dont la longévité fait durer une avance
+20,5 ans, et les successions en rendent une part CALCULÉE sur le patrimoine
+des ménages retraités selon leur revenu (COR, enquête Histoire de vie et
+Patrimoine 2018, `donnees/patrimoine.py`) : 42 % au réglage par défaut, les plus petites
 pensions rattachées au quart des ménages retraités le plus modeste (médiane
 36 800 €), les autres à l'ensemble (médiane 190 200 €), une avance par
 succession là où un couple en pèse deux, ce qui surestime la couverture. Le
 patrimoine des retraités selon leur PENSION n'est publié nulle part : c'est le
 fichier individuel de l'enquête qui le donnerait, et il se commande, action
 47. Le réglage `reprise` remplace la part calculée par un nombre. Au réglage
-par défaut, en 2070 : 17,7 milliards versés, 9,7 repris, 8,0 nets, 0,22 % du
-PIB ; de 2026 à 2070 : 849 versés, 310 repris, 539 nets, et un stock d'avances
-en cours de 320 milliards à l'horizon. La ligne « dont garantie » reste
+par défaut, en 2070 : 17,7 milliards versés, 9,5 repris, 8,2 nets, 0,22 % du
+PIB ; de 2026 à 2070 : 849 versés, 300 repris, 549 nets, et un stock d'avances
+en cours de 331 milliards à l'horizon. Les femmes sous le plancher vivent
+souvent dans un ménage moins pauvre que leur pension : le calcul le sait pour
+leur espérance de vie, non pour leur patrimoine, ce qui sous-estime la
+couverture. La ligne « dont garantie » reste
 brute ; les lignes « dont reprises » et « garantie nette » disent le reste
 (action 47 de la feuille de route).
 

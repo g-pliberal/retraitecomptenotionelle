@@ -280,6 +280,22 @@ def _distribution_pensions() -> dict:
     }
 
 
+def _distribution_pensions_sexes() -> dict:
+    """La même distribution, femmes et hommes à part : elle pèse les sexes
+    parmi les bénéficiaires de la garantie, dont la mortalité en dépend."""
+    return {
+        sexe: {
+            "millesime": d.millesime,
+            "fiabilite": int(d.fiabilite),
+            "bornes_inferieures": [t.borne_inferieure for t in d.tranches],
+            "bornes_superieures": [t.borne_superieure for t in d.tranches],
+            "parts": [t.part for t in d.tranches],
+        }
+        for sexe in ("F", "H")
+        for d in (DistributionPensions(DONNEES, sexe=sexe),)
+    }
+
+
 def _patrimoine_menages() -> dict:
     """Le patrimoine des ménages : par population, ses statistiques publiées."""
     patrimoine = PatrimoineMenages(DONNEES)
@@ -1013,6 +1029,7 @@ def construire() -> bytes:
         "effectifs_cotisants": _effectifs_cotisants(),
         "distribution_pensions": _distribution_pensions(),
         "patrimoine_menages": _patrimoine_menages(),
+        "distribution_pensions_sexes": _distribution_pensions_sexes(),
         "certification": journal_certification(DONNEES),
     }
     texte = json.dumps(paquet, ensure_ascii=False, sort_keys=True,
