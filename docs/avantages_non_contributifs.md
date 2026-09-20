@@ -785,6 +785,35 @@ Ce que la page dit désormais, à défaut d'un montant : sur chacune de ces cinq
 lignes, la colonne « pourquoi il manque » porte le dénombrement. « Un militaire
 retraité sur deux, 16,9 trimestres » vaut mieux qu'un tiret.
 
+### La dernière base légale, et ce qu'elle corrigeait
+
+L'inventaire portait depuis le début deux lignes dont la base légale disait
+« à certifier ». Les bonifications des corps actifs ont été closes par le jaune,
+qui nomme les quatre lois. Restait l'article 41 de la loi n° 98-1194 du
+23 décembre 1998, pour la cessation anticipée des travailleurs de l'amiante. Il
+a été lu, et **il corrigeait la raison inscrite**.
+
+L'inventaire disait de ce dispositif qu'il « relève du risque emploi et non du
+risque vieillesse-survie », donc hors du compte que la page décompose. C'est
+vrai de l'allocation. Mais le III de l'article crée un fonds qui finance aussi,
+*par un versement aux régimes obligatoires de retraite de base*, les dépenses
+supplémentaires nées des départs anticipés qu'il permet ; et le II répute la
+durée d'assurance remplie au plus tard à soixante-cinq ans. Il y a donc bien une
+part vieillesse, identifiée par la loi et financée de l'extérieur — la forme
+même des transferts de la branche famille et de l'assurance chômage.
+
+Elle n'est pas chiffrée pour autant : le compte du fonds, publié à la Commission
+des comptes de la Sécurité sociale, mêle l'allocation et le versement aux
+régimes sans les séparer. La ligne garde donc son tiret, mais sa raison est
+désormais exacte.
+
+**Aucune ligne ne porte plus « à certifier ».** Les quarante-deux dispositifs
+ont leur base légale lue dans LEGI, version par version. C'est un seuil, et il
+mérite d'être dit pour ce qu'il est : lire n'est pas appliquer. Que les textes
+soient lus ne dit pas que le modèle les applique, et vingt-quatre dispositifs
+restent sans chiffre.
+
+
 ### Il a fallu écrire le lecteur
 
 Le tableur est un classeur Excel 97, et le dépôt en a un lecteur, sans

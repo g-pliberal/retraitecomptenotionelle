@@ -5856,6 +5856,14 @@ function avantagesDetailLimites(contexte) {
   const aCertifier = contexte.inventaireAvantages().avantages.filter(
     (avantage) => avantage.base_legale.some((t) => t.includes("certifier")),
   ).length;
+  // Zéro est un résultat, et il demande une autre phrase. Voir pages.py.
+  const reserveLegale = aCertifier
+    ? `${aCertifier} lignes portent encore la mention « à certifier » :
+leurs textes vivent dans des statuts de corps ou des lois de circonstance qui
+n'ont pas tous été lus. Une déduction n'est pas une lecture.`
+    : `Aucune ne porte plus la mention « à certifier » : les
+bonifications des corps actifs renvoyaient encore, il y a peu, à des « statuts
+particuliers » que personne n'avait ouverts. Lire n'est pas appliquer.`;
   return g.depliant(
     "Trois choses que ces chiffres ne disent pas",
     `<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
@@ -5870,10 +5878,7 @@ ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
 portent sur la même pension, vue sous un autre angle, et les additionner serait
 un double compte.</p>
 <p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
-dans la base LEGI, version par version. ${aCertifier} lignes portent encore la
-mention « à certifier » : leurs textes vivent dans des statuts de corps ou des
-lois de circonstance qui n'ont pas tous été lus. Une déduction n'est pas une
-lecture.</p>`,
+dans la base LEGI, version par version. ${reserveLegale}</p>`,
     "avantages-limites",
   );
 }

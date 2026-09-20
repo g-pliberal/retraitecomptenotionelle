@@ -6600,6 +6600,19 @@ def _avantages_detail_limites(contexte: Contexte) -> str:
         1 for avantage in contexte.inventaire_avantages().avantages
         if any("certifier" in texte for texte in avantage.base_legale)
     )
+    # ZÉRO EST UN RÉSULTAT, et il demande une autre phrase. Le compte a valu
+    # deux pendant tout le chantier, puis un, puis zéro le jour où l'article de
+    # l'amiante a été lu. « 0 lignes portent encore la mention » se lirait comme
+    # une négligence de gabarit là où c'est l'inventaire qui est allé au bout.
+    reserve_legale = (
+        f"""{a_certifier} lignes portent encore la mention « à certifier » :
+leurs textes vivent dans des statuts de corps ou des lois de circonstance qui
+n'ont pas tous été lus. Une déduction n'est pas une lecture."""
+        if a_certifier else
+        """Aucune ne porte plus la mention « à certifier » : les
+bonifications des corps actifs renvoyaient encore, il y a peu, à des « statuts
+particuliers » que personne n'avait ouverts. Lire n'est pas appliquer."""
+    )
     return g.depliant(
         "Trois choses que ces chiffres ne disent pas",
         f"""<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
@@ -6614,10 +6627,7 @@ ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
 portent sur la même pension, vue sous un autre angle, et les additionner serait
 un double compte.</p>
 <p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
-dans la base LEGI, version par version. {a_certifier} lignes portent encore la
-mention « à certifier » : leurs textes vivent dans des statuts de corps ou des
-lois de circonstance qui n'ont pas tous été lus. Une déduction n'est pas une
-lecture.</p>""",
+dans la base LEGI, version par version. {reserve_legale}</p>""",
         identifiant="avantages-limites",
     )
 

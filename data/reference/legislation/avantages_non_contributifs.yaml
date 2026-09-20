@@ -1085,10 +1085,14 @@ avantages:
     libelle: Cessation anticipée d'activité des travailleurs de l'amiante
     famille: age_et_bonifications
     quoi: >-
-      Une allocation servie jusqu'à l'âge de la retraite aux salariés exposés à
-      l'amiante, pendant laquelle les droits à retraite continuent d'être
-      validés sans cotisation du bénéficiaire.
-    base_legale: [loi n° 98-1194 article 41 — à certifier]
+      Une allocation servie jusqu'à l'âge de la retraite aux salariés exposés
+      à l'amiante, pendant laquelle les droits à retraite continuent d'être
+      validés sans cotisation du bénéficiaire. Le III de l'article crée en
+      outre un fonds qui verse aux régimes de base les dépenses
+      supplémentaires nées des départs anticipés qu'il permet, et le II répute
+      la durée d'assurance remplie au plus tard à soixante-cinq ans.
+    base_legale: [Loi n° 98-1194 du 23 décembre 1998 art. 41,
+      L. 161-17-2 CSS]
     veille: [inaptitude_invalidite_penibilite_amiante]
     creation: 1999
     fin: null
@@ -1100,15 +1104,19 @@ avantages:
       loi de 1998 n'a pas été lue dans l'index : elle est donnée pour la
       recherche, pas comme une source.
     sans_chiffre: >-
-      relève du risque emploi et non du risque vieillesse-survie : elle est
-      hors du compte que cette page décompose
+      l'allocation relève du risque emploi ; le versement du fonds aux régimes
+      de retraite n'est isolé par aucun poste
     cout:
       mesurable_par: serie_publiee
       source_id: dss_comptes_secu
       note: >-
         Le fonds de cessation anticipée d'activité des travailleurs de l'amiante
         a son compte propre, publié à la Commission des comptes de la Sécurité
-        sociale.
+        sociale. Il y mêle cependant l'allocation, qui est du risque emploi, et
+        le versement aux régimes de retraite prévu au III de l'article 41, qui
+        est du risque vieillesse : le compte ne les sépare pas, et c'est ce qui
+        manque pour chiffrer cette ligne. À surveiller : une version de
+        l'article prend effet au 1er janvier 2035.
 
   # --- Majorations diverses ------------------------------------------------
 
