@@ -9173,6 +9173,27 @@ qu'un fonctionnaire le perçoit aujourd'hui et que c'est ce qui permet de
 chiffrer ce que la proposition lui retire ; l'étalon est le droit en vigueur,
 et rien d'autre. Python, JS, témoins, `limites.md`.
 
+**La question a été rouverte deux fois dans la même journée, et elle est
+close : le tableau reste tel quel.** Pour qu'une troisième session ne la
+reprenne pas, voici ce qui a été vu et écarté. Les quatre planchers du tableau
+ne sont pas de même nature : l'ASPA est une allocation hors de la masse des
+pensions, que l'impôt paie et à laquelle la garantie succède vraiment — même
+forme différentielle, même âge de 65 ans, même financement — tandis que le
+minimum contributif et le minimum garanti sont servis par les régimes, dans
+une dépense de pensions que la trajectoire remplace en entier. La ligne « ce
+que l'impôt paierait en plus » retranche donc d'un coût payé par l'impôt
+quatre planchers dont deux ne le sont pas : elle mêle deux budgets.
+
+Deux réécritures ont été proposées et refusées. *Un.* Un avant/après séparé
+par payeur : l'État paierait 15,8 milliards de plus — la garantie moins la
+seule ASPA — et les régimes 2,9 de moins, à l'intérieur d'une masse que la
+trajectoire compte déjà. *Deux.* Garder les 12,9 et renommer la ligne « tous
+payeurs confondus », ce qui la rend juste sans rien déplacer. Le programme a
+gardé la formulation actuelle. **C'est un arbitrage, pas un oubli** : le
+chiffre d'affiche du dépliant ne se change pas pour un gain de précision
+comptable, et la page dit déjà, sous le tableau, que le total remplacé est une
+borne basse et l'écart une borne haute.
+
 ### 48. Les pensions déjà servies à la bascule gardent les prix — `fait`
 
 **Ce que c'est.** Sur la page Coût, une réforme prospective faisait passer
