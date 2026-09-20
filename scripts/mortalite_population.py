@@ -9,6 +9,7 @@
                                                                  # au vingtile où son salaire le place
     python scripts/mortalite_population.py --deficit             # ce que le diviseur commun coûte
                                                                  # au régime, en part de PIB
+    python scripts/mortalite_population.py --deficit --depuis 2026  # le flux seul, le stock gardé
 
 CE QU'IL MESURE
 ---------------
@@ -145,8 +146,15 @@ def _euros(montant: float) -> str:
     return f"{montant:,.0f}".replace(",", "\u202f")
 
 
-def _deficit(mortalite) -> int:
-    """Ce que le diviseur commun coûte au régime, sur la trajectoire de la page Coût."""
+def _deficit(mortalite, depuis: int | None = None) -> int:
+    """Ce que le diviseur commun coûte au régime, sur la trajectoire de la page Coût.
+
+    ``depuis`` restreint la mesure au FLUX : seules les pensions liquidées à
+    compter de cette année reçoivent le diviseur de leur vingtile, le stock
+    gardant le diviseur commun — c'est ainsi qu'une réforme s'appliquerait.
+    Sans lui, tout le monde est recalculé, stock compris : c'est le coût du
+    diviseur commun en régime permanent.
+    """
     from retraite_notionnelle.cout import _pensionnes, calculer_cout
     from retraite_notionnelle.donnees.assiette import AssietteActivite
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
@@ -195,17 +203,22 @@ def _deficit(mortalite) -> int:
                 survie = (propre[duree] / commune[duree]
                           if duree < min(len(commune), len(propre)) and commune[duree] > 0
                           else 0.0)
+                applique = rapport if depuis is None or liquidation >= depuis else 1.0
                 for s in cles:
                     pension = pensionne.pensions.get(s, 0.0)
                     base = part * effectif * pension
                     total[s]["page_commun"] += base
-                    total[s]["page_propre"] += base * rapport
+                    total[s]["page_propre"] += base * applique
                     total[s]["vrai_commun"] += base * survie
-                    total[s]["vrai_propre"] += base * survie * rapport
+                    total[s]["vrai_propre"] += base * survie * applique
         return total
 
     print("Chaque cas type au vingtile où son salaire le place ; les têtes, les poids et les "
-          "pensions sont ceux de la trajectoire de la page Coût.\n")
+          "pensions sont ceux de la trajectoire de la page Coût.")
+    print("Le diviseur par vingtile s'applique "
+          + (f"aux seules pensions liquidées à compter de {depuis} ; le stock garde le "
+             "diviseur commun." if depuis else "à toutes les pensions, stock compris.")
+          + "\n")
 
     # D'abord le biais de la page elle-même : elle compte tout le monde à la
     # mortalité générale. Sous les règles actuelles (diviseur commun), de
@@ -299,11 +312,15 @@ def main() -> int:
     parseur.add_argument("--deficit", action="store_true",
                          help="ce que le diviseur commun coûte au régime, sur la trajectoire "
                               "de la page Coût")
+    parseur.add_argument("--depuis", type=int, default=None,
+                         help="avec --deficit : n'appliquer le diviseur par vingtile qu'aux "
+                              "pensions liquidées à compter de cette année (le flux), le stock "
+                              "gardant le diviseur commun")
     args = parseur.parse_args()
 
     mortalite = _simulateur(None).mortalite
     if args.deficit:
-        return _deficit(mortalite)
+        return _deficit(mortalite, args.depuis)
     if args.niveau_de_vie:
         return _par_niveau_de_vie(mortalite, args.generations or [1975])
     if args.population not in mortalite.populations:

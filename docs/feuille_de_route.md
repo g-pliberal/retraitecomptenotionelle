@@ -1338,7 +1338,11 @@ posée qui reçoit sa réponse.**
   −1,80 % du PIB, celui du scénario 4 de +1,47 % à +1,92 %. Sans corriger la
   survie, comme la page compte aujourd'hui, le chiffre serait de 3,2 à 4,1 % :
   la page sous-compte les rentes des vingtiles qui vivent longtemps. Le
-  scénario 1 n'a pas de diviseur, rien n'y bouge. C'est un ordre de grandeur
+  scénario 1 n'a pas de diviseur, rien n'y bouge. Sur le FLUX seul
+  (`--depuis 2026`, le stock gardant le diviseur commun, comme une réforme
+  s'appliquerait), l'économie monte de 1 % de la dépense en 2030 à 3,4 % en
+  2050 et rejoint le régime permanent vers 2070 ; en moyenne 2026-2070, trois
+  dixièmes de point de PIB au lieu de quatre à cinq. C'est un ordre de grandeur
   dont le signe est sûr et le niveau non : la grille pèse le cadre et le
   libéral à la part de leur caisse, plus que leur part réelle, et le
   rattachement par le salaire est une convention.
