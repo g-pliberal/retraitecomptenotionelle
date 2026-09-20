@@ -39,6 +39,7 @@ colonne d'une même année l'emporter sur les précédentes.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -46,6 +47,9 @@ import urllib.error
 import urllib.request
 from datetime import date
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from source_locale import lire_ou_telecharger, option_fichier  # noqa: E402
 
 #: Tableau publié par l'établissement, une page, deux tableaux.
 URL = "https://media.rafp.fr/s3fs-public/2024-02/RAFP-Evolution-valeurs-point.pdf"
@@ -86,6 +90,12 @@ def telecharger(url: str) -> bytes:
     requete = urllib.request.Request(url, headers=ENTETES)
     with urllib.request.urlopen(requete, timeout=180) as reponse:
         return reponse.read()
+
+
+def _analyseur() -> argparse.ArgumentParser:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    option_fichier(analyseur)
+    return analyseur
 
 
 def texte_du_pdf(pdf: bytes) -> str:
@@ -201,6 +211,7 @@ def controler(acquisition: dict[int, float], service: dict[int, float]) -> list[
 
 
 def main(argv: list[str] | None = None) -> int:
+    options = _analyseur().parse_args(argv)
     try:
         import pypdf  # noqa: F401
     except ImportError:
@@ -213,8 +224,8 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
     try:
-        texte = texte_du_pdf(telecharger(URL))
-    except (urllib.error.URLError, TimeoutError) as erreur:
+        texte = texte_du_pdf(lire_ou_telecharger(URL, telecharger, options.fichier))
+    except (urllib.error.URLError, TimeoutError, OSError) as erreur:
         print(f"échec du téléchargement : {erreur}", file=sys.stderr)
         return 1
 

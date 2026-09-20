@@ -44,6 +44,7 @@ dérivations.
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import urllib.error
@@ -54,6 +55,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lecture_xlsx import feuilles  # noqa: E402
+from source_locale import lire_ou_telecharger, option_fichier  # noqa: E402
 
 URL = ("https://www.insee.fr/fr/statistiques/fichier/8990899/hyp_mortalite.xlsx")
 
@@ -153,12 +155,19 @@ def extraire(donnees: bytes) -> dict[str, float]:
     return serie
 
 
-def main() -> int:
+def _telecharger(url: str) -> bytes:
+    with urllib.request.urlopen(url, timeout=300) as reponse:
+        return reponse.read()
+
+
+def main(argv: list[str] | None = None) -> int:
+    analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    option_fichier(analyseur)
+    options = analyseur.parse_args(argv)
     print(f"Source    {URL}")
     try:
-        with urllib.request.urlopen(URL, timeout=300) as reponse:
-            donnees = reponse.read()
-    except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
+        donnees = lire_ou_telecharger(URL, _telecharger, options.fichier)
+    except (urllib.error.HTTPError, urllib.error.URLError, OSError) as erreur:
         print(f"ÉCHEC   téléchargement : {erreur}", file=sys.stderr)
         return 1
     print(f"Classeur  {len(donnees) / 1024:,.0f} Ko")

@@ -60,6 +60,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lecture_pdf import lignes_pdf  # noqa: E402
+from source_locale import lire_ou_telecharger  # noqa: E402
 
 RACINE = "https://www.cnbf.fr/wp-content/uploads"
 
@@ -154,17 +155,21 @@ def verifier(serie: dict[int, tuple[float, float]]) -> list[str]:
     return anomalies
 
 
+def _telecharger(url: str) -> bytes:
+    demande = urllib.request.Request(
+        url, headers={"User-Agent": "retraite-notionnelle/0.1"}
+    )
+    with urllib.request.urlopen(demande, timeout=120) as reponse:
+        return reponse.read()
+
+
 def main() -> int:
     serie: dict[int, tuple[float, float]] = {}
     for annee, chemin in sorted(BAREMES.items()):
         url = f"{RACINE}/{chemin}"
         try:
-            demande = urllib.request.Request(
-                url, headers={"User-Agent": "retraite-notionnelle/0.1"}
-            )
-            with urllib.request.urlopen(demande, timeout=120) as reponse:
-                octets = reponse.read()
-        except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
+            octets = lire_ou_telecharger(url, _telecharger)
+        except (urllib.error.HTTPError, urllib.error.URLError, OSError) as erreur:
             print(f"ÉCHEC   barème {annee} : {erreur}", file=sys.stderr)
             return 1
         valeurs = extraire(octets)

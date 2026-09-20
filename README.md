@@ -1147,7 +1147,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1126 tests Python
+tests/                          1135 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1196,7 +1196,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1126<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1135<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

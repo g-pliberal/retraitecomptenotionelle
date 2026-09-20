@@ -113,6 +113,9 @@ import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from source_locale import lire_ou_telecharger  # noqa: E402
+
 #: Circulaires de revalorisation, par date d'effet. Les adresses portent le
 #: numéro et la date de publication de la circulaire : elles ne se devinent pas
 #: depuis l'année. À compléter chaque année d'une ligne, la plus récente fixant
@@ -383,8 +386,8 @@ def main(argv: list[str] | None = None) -> int:
     for effet, fichier in CIRCULAIRES:
         url = RACINE + fichier
         try:
-            texte = texte_du_pdf(telecharger(url))
-        except (urllib.error.URLError, TimeoutError) as erreur:
+            texte = texte_du_pdf(lire_ou_telecharger(url, telecharger))
+        except (urllib.error.URLError, TimeoutError, OSError) as erreur:
             print(f"échec du téléchargement de {fichier} : {erreur}", file=sys.stderr)
             return 1
         refus = est_annulee(texte)

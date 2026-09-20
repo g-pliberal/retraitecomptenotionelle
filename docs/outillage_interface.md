@@ -139,6 +139,28 @@ demanderait de maquiller les signaux d'automatisation du navigateur, ce que
 le dépôt ne fait pas. Une source qui refuse se consigne comme limite — voir
 le volet H de l'action 37 — plutôt que de se forcer.
 
+Ce refus se consigne à un endroit précis : le champ `blocage` du jeu dans
+`data/sources.yaml` — `refus` quand le site repousse la session et laisserait
+passer un navigateur ordinaire, `reseau` quand c'est la machine qui ne joint
+pas le site, `convention` quand l'accès demande une clé ou un compte. La liste
+de ce que le dépôt ne peut pas aller chercher lui-même se lit d'une commande :
+
+```bash
+python scripts/fetch/source_locale.py
+```
+
+Et ce que la session ne peut pas télécharger, on le lui **apporte**. Un
+navigateur sur un poste ordinaire — le sien, Playwright ou pas — n'a rien à
+maquiller : il est ce que le site attend. Le fichier téléchargé se dépose dans
+`data/brut/` sous le nom que le site lui donne, ou sous le nom que le manifeste
+déclare en `fichier_local` quand l'adresse n'en porte pas ; les récupérateurs
+qui lisent un document le cherchent là avant de sortir, et acceptent aussi
+`--fichier CHEMIN`. `data/brut/` n'est pas versionné : ce qui est versionné,
+c'est ce que le récupérateur en tire, avec les mêmes contrôles qu'après un
+téléchargement. Le premier document qui vaut le déplacement est le jaune
+pensions de `budget.gouv.fr` : il est le producteur, ses valeurs sont saisies
+sans qu'un script les revérifie, et le fichier permettrait de les certifier.
+
 ## Web Interface Guidelines : règles figées
 
 `SKILL.md` lit `guidelines.md`, copie conforme, octet pour octet, de

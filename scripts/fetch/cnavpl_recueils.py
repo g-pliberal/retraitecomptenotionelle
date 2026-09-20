@@ -54,6 +54,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lecture_pdf import _flux, _hexa, _litteral, _objets, _polices, JETONS  # noqa: E402
+from source_locale import lire_ou_telecharger  # noqa: E402
 
 RACINE = "https://www.cnavpl.fr/documents"
 
@@ -133,6 +134,14 @@ def lignes_du_tableau(texte: str) -> dict[int, tuple[float, float, int]]:
     return lu
 
 
+def _telecharger(url: str) -> bytes:
+    demande = urllib.request.Request(
+        url, headers={"User-Agent": "retraite-notionnelle/0.1"}
+    )
+    with urllib.request.urlopen(demande, timeout=300) as reponse:
+        return reponse.read()
+
+
 def main() -> int:
     serie: dict[str, float] = {}
     valeurs: dict[int, float] = {}
@@ -142,12 +151,11 @@ def main() -> int:
     for annee, chemin in sorted(RECUEILS.items()):
         url = f"{RACINE}/{chemin}"
         try:
-            demande = urllib.request.Request(
-                url, headers={"User-Agent": "retraite-notionnelle/0.1"}
-            )
-            with urllib.request.urlopen(demande, timeout=300) as reponse:
-                octets = reponse.read()
-        except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
+            # L'adresse ne nomme pas le fichier (`?wpdmdl=…`) : un recueil
+            # apporté à la main est attendu sous `data/brut/cnavpl_recueil_<annee>.pdf`.
+            octets = lire_ou_telecharger(url, _telecharger,
+                                         nom_local=f"cnavpl_recueil_{annee}.pdf")
+        except (urllib.error.HTTPError, urllib.error.URLError, OSError) as erreur:
             print(f"ÉCHEC   recueil {annee} : {erreur}", file=sys.stderr)
             return 1
 

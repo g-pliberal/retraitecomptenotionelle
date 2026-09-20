@@ -7971,3 +7971,60 @@ soit fautive.
 
 **Fin.** Un lecteur de la page Coût sait quelle part de la dépense n'a été
 cotisée par personne, ou sait où aller le lire.
+
+### 45. Les sources qui refusent la session se déclarent, et leur document s'apporte — `fait`
+
+**Demande.** « Est-ce qu'on a une liste de tous les liens bloquants ? On
+pourrait utiliser Playwright sur mon ordinateur personnel pour aller chercher
+les fichiers manquants ? » Puis : « ajoute le champ dans sources.yaml et
+l'option fichier local ».
+
+**Le diagnostic.** Il n'y avait pas de liste. Ce qu'une session ne peut pas
+atteindre était écrit trois fois et rassemblé nulle part : dans la note du jeu
+de `data/sources.yaml` quand quelqu'un avait pensé à l'y mettre, dans
+`docs/limites.md` pour les entrées fermées, dans `docs/outillage_interface.md`
+pour la règle. Le manifeste avait un champ pour le format (`acces`) et un pour
+l'avancement (`statut_integration`), aucun pour « joignable ou non ». Et le
+jaune pensions, apporté par l'utilisateur en septembre 2026, avait été lu à
+l'écran et saisi : aucun récupérateur ne savait lire un fichier déposé, et
+`data/brut/` — le lieu que le manifeste désignait pour cela — n'était visité
+par personne.
+
+**Ce qui est fait.**
+
+- **Le champ `blocage`** dans `data/sources.yaml`, documenté dans l'en-tête :
+  `refus` (le site repousse la session, un navigateur ordinaire passe),
+  `reseau` (la machine ne joint pas le site), `convention` (clé, compte ou
+  convention). Sept jeux le portent : le jaune pensions et les deux projets
+  annuels de performances de `budget.gouv.fr` — lus le même jour par une
+  autre session, apportés par l'utilisateur —, le rapport de l'OPEF à
+  la Banque de France, les deux entrées Légifrance, et l'EIC de la DREES
+  sous convention. `fichier_local` déclare le nom attendu quand l'adresse n'en porte
+  pas.
+- **`scripts/fetch/source_locale.py`**, la liste et le mécanisme. Lancé sans
+  argument, il imprime les jeux bloqués, la nature du blocage et, pour chacun,
+  le chemin où son fichier est attendu. Importé, il donne
+  `lire_ou_telecharger`, qui lit `--fichier` s'il est passé, sinon
+  `data/brut/<nom du fichier>` s'il existe, et ne télécharge qu'en dernier ;
+  et `option_fichier`, l'option elle-même.
+- **Six récupérateurs y passent** : Agirc-Arrco, ERAFP et projections de
+  mortalité INSEE avec `--fichier` (un document chacun) ; circulaires Cnav,
+  barèmes CNBF et recueils CNAVPL par `data/brut/` (plusieurs documents, un
+  nom chacun ; les recueils, que le site sert sous `?wpdmdl=…`, sont attendus
+  sous `cnavpl_recueil_<année>.pdf`).
+- **`tests/test_source_locale.py`** : une valeur de `blocage` inconnue du
+  module est refusée, un blocage sans note aussi, `fichier_local` sans blocage
+  aussi ; l'ordre fichier, dépôt, site est vérifié sans réseau ; les six
+  récupérateurs appellent bien le module.
+
+**Ce qui n'est pas fait, et pourquoi.** Aucun récupérateur ne lit encore le
+jaune pensions ni le rapport de l'OPEF : leurs valeurs sont saisies, et
+écrire le lecteur demande le document sous la main. C'est le pas suivant, et
+il commence sur le poste de l'utilisateur : télécharger le jaune, le déposer
+dans `data/brut/`, et le manifeste dira sous quel nom dès que `fichier_local`
+sera renseigné. `data/brut/` reste hors de git — un PDF de plusieurs mégaoctets
+n'a pas sa place dans l'historique — et c'est le lecteur, versionné, qui
+rendra la valeur recontrôlable.
+
+**Fin.** Une commande dit ce que le dépôt ne peut pas aller chercher, et un
+fichier déposé au bon endroit est lu sans qu'on touche au script.
