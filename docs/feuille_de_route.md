@@ -748,6 +748,40 @@ système actuel. `limites.md` §5 porte les trois.
   `RegimeFusionne`, lu par `compte.js`, et la recette des scénarios 2 à 5
   dans `cout.js`.
 
+- **21 septembre 2026, le stock converti à 64 ans pour qui est parti à
+  l'âge légal de sa génération.** Demandé par l'utilisateur, sur un point de
+  droit : les scénarios rétroactifs recalculent les pensions déjà servies
+  au diviseur de l'âge de départ, et un assuré parti à 60 ans en 2010 est
+  parti à l'âge que sa loi lui ouvrait — lui compter après coup quatre ans
+  de rente en plus est une atteinte aux effets légitimement attendus d'une
+  situation acquise (décision 2013-682 DC). Le point de départ était
+  faux : la session avait écrit que le modèle « savait déjà » convertir le
+  stock à l'âge légal, alors que les scénarios rétroactifs ne lisent aucun
+  âge de référence (§4 de `methodologie.md`) — ce n'est que le diviseur.
+  Livré : `scripts/stock_age_legal.py`, qui prend le diviseur de 64 ans
+  pour toute liquidation d'avant la bascule faite à l'âge légal ou après,
+  sous deux lectures de l'âge légal — `droit_commun`, celui du régime
+  général pour la génération, et `tout_droit`, celui que le droit de
+  l'assuré lui ouvrait, régime spécial et carrière longue compris —, plus
+  `acquis`, la même règle pour les droits figés des scénarios 3 et 5 ; cinq
+  tests dans `test_stock_age_legal.py`. *Mesuré*, sur la proposition, en
+  points de PIB et sous la convention de la page : solde moyen 2026-2070 de
+  −1,52 à −1,61 sous `droit_commun` (−0,38 en 2026, nul en 2050, dette de
+  2070 de 103 à 110 % du PIB) et à −1,76 sous `tout_droit` (−0,72 en 2026,
+  dette 122 %) ; 270 couples touchés sur la grille dans le premier cas, 525
+  dans le second. Sur les retraités d'avant la bascule, le salarié au
+  salaire moyen né en 1950, parti à 60 ans, regagne 8,2 %, celui de 1960
+  4,3 %, le fonctionnaire sédentaire de 1955 1,6 % ; le cadre et l'artisan
+  partis à 64 ans ou après ne bougent pas. Sous `tout_droit`, l'actif de la
+  fonction publique parti à 57 ans regagne 25 %, l'agent de conduite parti
+  à 52 ans 50 %, le militaire parti après dix-sept ans de services 80 % :
+  c'est le prix de ne faire payer l'âge à personne. Sur les scénarios 3 et
+  5, convertir les droits acquis des générations 1961 à 1967 à leur âge
+  légal plutôt qu'à 64 ans coûte cinq centièmes de point. Ce que le script
+  ne dit pas : la variante ne touche pas ceux partis avant leur âge légal,
+  qui gardent le diviseur de leur âge ; rien n'est porté dans
+  `moteur/js/`.
+
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est
