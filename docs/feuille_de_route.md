@@ -8869,6 +8869,19 @@ inscrire dans le manifeste. Onze tests de plus, sans réseau.
   Coût lit le coefficient dans les deux sens, deux tests tiennent les pages
   et le tableau du README, le parcours de présentation ne promet plus de
   marge. Le détail est sous l'action, qui reste à faire pour le catalogue.
+- **20 septembre 2026, le parcours de présentation est tenu par un test.**
+  Le document qu'on suit pour parler en public portait les chiffres d'une
+  matinée, gelés dans une zone `recit` que rien ne relit. Le modèle a bougé
+  quatre fois dans la journée, et le parcours demandait d'annoncer une baisse
+  du salaire net là où l'écran montrait une hausse de trois cents euros ;
+  cinq autres chiffres avaient dérivé, dont trois comptes sans unité que
+  l'œil ne signale pas. `tests/test_parcours.py` rejoue les adresses que le
+  document donne, rend ses pages, et refuse tout montant, tout pourcentage et
+  tout compte que le site n'affiche pas ; ce qui vient d'ailleurs se déclare
+  dans `HORS_PAGE` avec sa raison, et un test tient cette liste courte. Le
+  parcours gagne au passage la page Risque, la ligne « financé » du système 1
+  et les deux comptes de la page Avantages, 37 en vigueur sur 43 recensés,
+  qui se croisent sans que la page les distingue.
 
 ### 46. L'emploi projeté suit le scénario de référence du COR, pour les systèmes 2 à 6 — `fait`
 

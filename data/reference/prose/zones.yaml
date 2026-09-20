@@ -131,8 +131,12 @@ fichiers:
       "Ce qu'un navigateur ne débloque pas": recit
   docs/integration-partiliberalfrancais.md:
     defaut: a_declarer
-  # Un parcours de présentation, daté dans son titre : ses chiffres sont ceux
-  # que le site affichait ce matin-là, et la page fait foi, pas lui.
+  # Un parcours de présentation. Ses chiffres ne sont plus ceux d'une matinée
+  # : `tests/test_parcours.py` rejoue ses adresses, rend ses pages, et refuse
+  # tout montant, tout pourcentage et tout compte que le site n'affiche pas.
+  # La zone reste `recit` parce que les sondes de `verifier_prose.py` mesurent
+  # le dépôt — des lignes, des poids, des entrées de fichier — et ne savent
+  # pas rendre une page ; c'est le test qui tient ce document, et lui seul.
   docs/parcours_presentation.md:
     defaut: recit
   # Une revue de littérature datée : ses chiffres sont ceux des sources à
