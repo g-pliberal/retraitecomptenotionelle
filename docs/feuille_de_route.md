@@ -706,6 +706,48 @@ système actuel. `limites.md` §5 porte les trois.
   un à-pic de cinq points de PIB qui ne mesurait rien — l'utilisateur l'a vu
   tout de suite.
 
+- **20 septembre 2026, le solde sous quatre régimes uniques, et la recette
+  qui suit leur taux.** Demandé par l'utilisateur : lequel des scénarios 2 à 6
+  tient, et sous quel régime unique. La page Coût ne fait suivre la recette
+  au taux que pour le scénario 6 ; or le régime unique des scénarios 2 à 5
+  change aussi ce qui est prélevé — l'artisan passe de 9 à 25,8 %, l'État de
+  82 à 15 % du traitement. Livré : `scripts/solde_fusion.py`, qui refait le
+  solde 2026-2070 sous quatre barèmes — A le régime unique du modèle
+  (25,83 % déplafonné), B le salarié du privé généralisé avec ses tranches et
+  son plafond de huit PASS, C le régime général seul, D la moyenne des
+  régimes (11,93 %) — et fait suivre la recette des scénarios 2 à 5 au taux
+  effectif lu sur la grille, sous les deux conventions du dépôt : « assiette »,
+  la règle du programme (taux × assiette des revenus d'activité, sans impôts
+  affectés, subventions ni contribution d'équilibre), et « rapport », tout
+  reconduit sauf le taux ; sept tests dans `test_solde_fusion.py`, dont un
+  qui tient les scénarios 1 et 6 et les années d'avant la bascule identiques
+  à la page. *Mesuré*, solde moyen 2026-2070 en points de PIB sous
+  « assiette » (sous « rapport » entre parenthèses), dette accumulée en 2070 :
+  système actuel −1,13 (66 % du PIB) ; proposition à 18 % −1,52 (103 %) ;
+  scénario 5 sous A −1,65 (−1,04), 113 % ; sous B −1,79 (−1,17) ; sous C
+  −5,15 (−4,07), 363 % ; sous D −5,59 (−4,43), 396 % ; scénario 4 sous A
+  +0,75 (+1,36), réserve de 62 % ; sous C −2,75 ; scénario 3 sous A −0,07,
+  à l'équilibre en 2054, sous C −4,24. Trois lectures. *B égale A* à un ou
+  deux dixièmes près : le plafond ne mord que sur le cadre et le libéral, et
+  les âges du régime unique ne sont lus par aucun compte. *Un taux plus bas
+  n'est pas « plus négociable », il est impayable* : sous C et D, la caisse
+  sert pendant vingt-cinq ans les pensions acquises sous l'ancien droit avec
+  la moitié des cotisations, et le déficit annuel dépasse cinq points de PIB
+  jusqu'en 2050. *La proposition à 18 % fait la même chose, en moins fort* :
+  face au scénario 4, qui est elle-même au taux du statut pivot, les 18 %
+  coûtent 2,3 points de PIB par an sur toute la fenêtre, et son solde n'est
+  meilleur que celui du scénario 5 que parce qu'elle recalcule le stock. Ce
+  qui tient sous les règles du programme, c'est donc un compte notionnel
+  au taux d'aujourd'hui, part patronale comprise : rétroactif (4) il dégage
+  une réserve, prospectif (5) il coûte 1,65 point par an et ne s'équilibre
+  pas avant 2070, ou 1,04 si les impôts affectés restent. Ce que le script
+  ne dit pas : le taux effectif de B et C est lu sur treize carrières, non
+  sur la distribution nationale des salaires ; le coefficient d'équilibre
+  n'est toujours pas appliqué ; rien n'est porté dans `moteur/js/`, la page
+  Coût gardant sa convention — la porter demanderait un `bareme` sur
+  `RegimeFusionne`, lu par `compte.js`, et la recette des scénarios 2 à 5
+  dans `cout.js`.
+
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est
