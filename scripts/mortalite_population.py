@@ -176,11 +176,12 @@ def _deficit(mortalite) -> int:
         e_propre = sum(0.5 * (propre[k] + propre[k + 1]) for k in range(len(propre) - 1))
         couples.append((pensionne, e_commune / e_propre, commune, propre))
 
-    def masses(annee: int) -> dict[str, dict[str, float]]:
+    def masses(annee: int, avec_actuel: bool = False) -> dict[str, dict[str, float]]:
         """Masses par scénario : page (survie générale) et vraies (survie du
         vingtile), sous le diviseur commun et sous le diviseur propre."""
+        cles = ["actuel", *scenarios] if avec_actuel else scenarios
         total = {s: {"page_commun": 0.0, "page_propre": 0.0,
-                     "vrai_commun": 0.0, "vrai_propre": 0.0} for s in scenarios}
+                     "vrai_commun": 0.0, "vrai_propre": 0.0} for s in cles}
         for pensionne, rapport, commune, propre in couples:
             part = cout.poids.get(pensionne.code, 0.0)
             if part <= 0.0:
@@ -194,7 +195,7 @@ def _deficit(mortalite) -> int:
                 survie = (propre[duree] / commune[duree]
                           if duree < min(len(commune), len(propre)) and commune[duree] > 0
                           else 0.0)
-                for s in scenarios:
+                for s in cles:
                     pension = pensionne.pensions.get(s, 0.0)
                     base = part * effectif * pension
                     total[s]["page_commun"] += base
@@ -205,6 +206,26 @@ def _deficit(mortalite) -> int:
 
     print("Chaque cas type au vingtile où son salaire le place ; les têtes, les poids et les "
           "pensions sont ceux de la trajectoire de la page Coût.\n")
+
+    # D'abord le biais de la page elle-même : elle compte tout le monde à la
+    # mortalité générale. Sous les règles actuelles (diviseur commun), de
+    # combien la masse vraie — survie du vingtile — dépasse-t-elle la masse
+    # comptée, et de combien le RAPPORT de masses, seule chose que la page
+    # applique à la dépense observée, en est-il déplacé ?
+    print("Ce que la page sous-compte en comptant tout le monde à la mortalité générale :\n")
+    print("| Année | Masse vraie / masse comptée, système actuel | Rapport de masses corrigé / "
+          "rapport de la page, scénario 2 | scénario 4 | scénario 6 |")
+    print("|---:|---:|---:|---:|---:|")
+    for annee in (2030, 2050, 2070):
+        m = masses(annee, avec_actuel=True)
+        biais = {s: m[s]["vrai_commun"] / m[s]["page_commun"] - 1.0
+                 for s in m if m[s]["page_commun"] > 0}
+        rapports = {s: (1.0 + biais[s]) / (1.0 + biais["actuel"]) - 1.0
+                    for s in scenarios if s in biais}
+        print(f"| {annee} | {biais['actuel']:+.1%} | {rapports['notionnel_retroactif']:+.1%} | "
+              f"{rapports['notionnel_retroactif_employeur']:+.1%} | "
+              f"{rapports['notionnel_liberal']:+.1%} |")
+    print()
     print("| Scénario | Année | Baisse de la dépense, survie du vingtile | Baisse si la page "
           "l'appliquait sans corriger la survie | Solde, part de PIB | Solde avec le diviseur "
           "par vingtile |")
