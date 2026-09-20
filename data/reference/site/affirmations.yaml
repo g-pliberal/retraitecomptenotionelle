@@ -440,12 +440,26 @@ affirmations:
     etat: verifiee
     controle: cout_du_travail_fixe
 
-  - id: simuler.partage_moitie_moitie
+  - id: simuler.partage_retenu
     page: /simuler
-    extrait: "sont partagés moitié-moitié"
-    porte: la cotisation unique est portée pour moitié par le salarié
+    extrait: "Sur les 18 % et les 5 % capitalisés, vous portez"
+    porte: le partage retenu laisse la part patronale d'aujourd'hui et abaisse la retenue
     etat: verifiee
-    controle: partage_moitie_moitie
+    controle: partage_des_vingt_trois_points
+
+  - id: simuler.part_du_salarie
+    page: /simuler
+    extrait: "Votre part des 18 % et des 5 % capitalisés est de"
+    porte: la retenue du salarié est le reste, une fois la part patronale d'aujourd'hui laissée
+    etat: verifiee
+    controle: partage_des_vingt_trois_points
+
+  - id: simuler.baisse_immediate
+    page: /simuler
+    extrait: "la baisse arrive tout de suite"
+    porte: la baisse porte sur la retenue, sans passer par le brut ni par l'employeur
+    etat: verifiee
+    controle: partage_des_vingt_trois_points
 
   - id: simuler.volontaires_non_partages
     page: /simuler
