@@ -1778,6 +1778,44 @@ les rapports à la Commission des comptes de la Sécurité sociale. Les scénari
 des ressources avant et sur tout l'horizon projeté. Le système actuel encaisse
 tout, et son solde reste celui du COR.
 
+**Et ce que la proposition n'encaisse plus, elle ne le garde pas.** Le
+scénario 6 ne reconduit ni la contribution d'équilibre de l'État, ni les
+subventions d'équilibre, ni les impôts et taxes affectés : un compte notionnel
+ne crédite que ce qui est assis sur un revenu d'activité. Rien ne disait ce que
+ces recettes devenaient, ce qui revenait à les laisser au budget, c'est-à-dire
+à les consacrer au déficit. Décision du 20 septembre 2026, et c'est un
+partage : **la moitié est rendue aux salaires, la moitié éteint de la dette**
+(`Parametres.part_rendue_aux_salaires`, zéro rendant l'ancienne convention).
+
+Ce qui est rendu l'est dans l'ordre que le droit impose. Deux impôts du poste
+seulement sortent d'une rémunération : la **taxe sur les salaires**, dont
+l'article L. 131-8, 1° du code de la sécurité sociale verse 58,35 % à la
+branche vieillesse, et le **forfait social**, que l'article L. 241-3, 1° lui
+donne en entier — ensemble 28 % du poste, une part stable depuis 2019. Ils sont
+supprimés. Le solde revient par une baisse de la CSG sur les revenus
+d'activité, un peu plus d'un point.
+
+Et il faut dire ce que cette baisse n'est pas. **La CSG sur les revenus
+d'activité ne finance aujourd'hui aucune retraite** : ses 9,20 points vont à la
+CNAF (0,95), aux régimes obligatoires d'assurance maladie (4,25), à la CADES
+(0,45), à l'Unédic (1,47) et à la CNSA (2,08), soit 9,20 exactement, article
+L. 131-8, 3°, version en vigueur au 1er février 2026. Ce que la branche
+vieillesse encaisse en CSG est assis sur le capital et sur les pensions. La
+baisse est donc une dépense fiscale au profit des salariés, financée par une
+recette que la retraite abandonne — pas une restitution.
+
+La contribution d'équilibre d'un employeur public suit la même règle, et c'est
+`Incidence.PARTAGEE` dans `remuneration.py` : la moitié de ce qu'il cesse de
+verser remonte dans le traitement, l'autre moitié paie la dette de pensions
+déjà promises. Ni l'incidence intégrale, qui prêterait à l'agent les
+soixante-dix points comme s'ils avaient été son salaire différé ; ni l'assiette
+fixe, qui ne lui en rendrait aucun.
+
+**Rien de tout cela ne déplace un solde du système de retraite** : ces recettes
+en étaient déjà sorties. Ce que le partage déplace est la fiche de paie, et le
+budget de l'État — que le dépôt ne tient pas, et `docs/limites.md` § 5 ante
+quater le dit.
+
 **Le coefficient est calculé, jamais appliqué.** C'est la distinction à tenir :
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un

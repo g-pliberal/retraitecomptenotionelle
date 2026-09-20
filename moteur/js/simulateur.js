@@ -565,7 +565,7 @@ export class Simulateur {
       dernierRevenuAnnualise: dernierRevenuAnnualise(carriere, this.macro),
       remuneration: remunerationDeLaCarriere(
         carriere, this.macro, this.catalogue, this.affiliations,
-        this.parametres, this.baremePrelevements,
+        this.parametres, this.baremePrelevements, this.paquet,
       ),
     });
   }

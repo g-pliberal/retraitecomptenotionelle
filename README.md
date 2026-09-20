@@ -145,8 +145,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->754<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 335<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->762<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 358<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -924,6 +924,39 @@ recette n'arrive pas par un transfert mais par l'impôt. Il y est entré le
 — ce qui coûte 0,64 point de solde moyen à chacun des cinq scénarios
 notionnels.
 
+**Et ce que la proposition n'encaisse plus, elle ne le garde pas.** Trois
+postes sortent de son compte — la contribution d'équilibre de l'État, les
+subventions d'équilibre, les impôts et taxes affectés —, et le dépôt ne disait
+pas ce qu'ils devenaient, ce qui revenait à les laisser au budget, c'est-à-dire
+à les consacrer au déficit. Décision du 20 septembre 2026 : **la moitié est
+rendue aux salaires, la moitié éteint de la dette**, et la même moitié vaut
+pour les deux postes qui sortent d'une poche identifiable.
+
+Les impôts et taxes affectés valent 2,14 % du PIB en 2026, 64 Md€ : 32 Md€ sont
+rendus, 32 éteignent de la dette. Le droit dit dans quel ordre, et ce qu'il dit
+est contre-intuitif. Deux impôts du poste seulement sortent d'une rémunération :
+**la taxe sur les salaires**, dont l'article L. 131-8, 1° du code de la sécurité
+sociale verse 58,35 % à la branche vieillesse, et **le forfait social**, que
+l'article L. 241-3, 1° lui donne en entier — ensemble 18 Md€, 28 % du poste. Ils
+sont supprimés. Le solde revient en **1,12 point de CSG d'activité**, et il faut
+dire pourquoi ce n'est pas une restitution : **la CSG sur les revenus d'activité
+ne finance aujourd'hui aucune retraite.** Ses 9,20 points vont à la CNAF (0,95),
+à l'assurance maladie (4,25), à la CADES (0,45), à l'Unédic (1,47) et à la CNSA
+(2,08) — 9,20 exactement, et rien à la vieillesse (L. 131-8, 3°, version en
+vigueur au 1er février 2026). Ce que la retraite encaisse en CSG est assis sur
+le capital et sur les pensions.
+
+La contribution d'équilibre de l'employeur public suit la même règle : 82,28 %
+du traitement d'un fonctionnaire d'État en 2026, ramenés à la part patronale du
+taux unique, et la moitié de ce qui est libéré remonte dans le traitement —
+l'autre moitié paie la dette de pensions déjà promises, qui reste due. Sur la
+fiche de paie d'un fonctionnaire d'État, c'est **+32,9 % de traitement net**,
+et à tous les niveaux de traitement : ni réduction générale ni plafond ne
+viennent courber le calcul. Ce n'est ni l'incidence intégrale, qui lui prêterait les
+soixante-dix points comme s'ils avaient été son salaire différé, ni l'assiette
+fixe, qui ne lui en rendrait aucun : `Parametres.part_rendue_aux_salaires` porte
+le partage, et le mettre à zéro rend l'ancienne convention.
+
 **Et les pensions LIQUIDÉES suivent la règle d'indexation, comme le compte qui
 les a produites.** Un système notionnel a deux règles d'indexation — celle du
 compte pendant la carrière, celle de la pension une fois servie — et le modèle
@@ -1155,6 +1188,9 @@ src/retraite_notionnelle/
                                 revenu brut, revenu net, en quatre profils —
                                 la seule grandeur du dépôt qui ne soit pas
                                 une pension
+  restitution.py                ce que la proposition rend au salaire
+                                sur les impôts qu'elle n'encaisse plus,
+                                et ce qu'elle éteint en dette
   castypes.py                   cas général
   cout.py                       ce que chaque système a coûté, coûterait,
                                 et le solde qu'il laisserait
@@ -1223,7 +1259,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1253<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1263<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

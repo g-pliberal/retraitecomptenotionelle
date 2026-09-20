@@ -1349,3 +1349,50 @@ journal:
       fait jamais remonter un frais. Le frais sur la réserve de rente est
       estimé au milieu d'une fourchette du CCSF de 2021, sans mesure de
       l'OPEF. Aucune médiane n'existe pour le versement et la gestion.
+
+  - date: "2026-09-20"
+    session: "les impôts que la proposition n'encaisse plus, rendus pour moitié aux salaires"
+    consulte: >-
+      Index LEGI du dépôt, lu par `dila_cherche.py legi --texte ID` : article
+      L. 131-8 du code de la sécurité sociale, version en vigueur depuis le
+      1er février 2026 (LEGIARTI000053538201), et la version précédente du
+      28 février 2025 (LEGIARTI000051288910) pour dater le déplacement ;
+      article L. 136-8, version en vigueur depuis le 27 juin 2026
+      (LEGIARTI000054336623) ; article L. 200-2, version du 9 août 2020
+      (LEGIARTI000042223785), pour la numérotation des branches ; article
+      L. 241-3, version en vigueur depuis le 1er janvier 2026
+      (LEGIARTI000051289018) ; article L. 137-16, version du 1er janvier 2022
+      (LEGIARTI000044626637) ; article L. 135-3, version du 1er janvier 2019
+      (LEGIARTI000037949072). Et, du côté des comptes, la fiche
+      « contributions sociales et recettes fiscales brutes » du rapport de mai
+      2026 à la Commission des comptes de la Sécurité sociale, et des treize
+      rapports antérieurs.
+    trouve: >-
+      LE RÉSULTAT DE LA SESSION, ET IL EST CONTRE-INTUITIF : la CSG sur les
+      revenus d'ACTIVITÉ ne finance AUCUNE retraite. L. 131-8, 3° répartit ses
+      9,20 points entre la CNAF (0,95), les régimes obligatoires d'assurance
+      maladie (4,25), la CADES (0,45), l'Unédic (1,47) et la CNSA (2,08) —
+      9,20 exactement, et rien pour la branche mentionnée au 3° de l'article
+      L. 200-2, qui est la vieillesse. Ce que la branche vieillesse encaisse en
+      CSG est assis sur le capital (6,67 points sur 10,6, L. 131-8, 3° bis a)
+      et sur les revenus de remplacement (2,94 points, L. 131-8, 3° e). Deux
+      impôts du poste « impôts et taxes affectés » seulement sortent d'une
+      rémunération : la taxe sur les salaires, dont L. 131-8, 1° verse 58,35 %
+      à la vieillesse — 63,25 % dans la version du 28 février 2025, la LFSS
+      pour 2026 ayant déplacé la clé —, et le forfait social (L. 137-15), dont
+      L. 241-3, 1° donne le produit entier à l'assurance vieillesse. Le compte
+      de la CNAV les chiffre à 9 694 et 6 300 M€ en 2024. L. 135-3, depuis le
+      1er janvier 2019, ne laisse au fonds de solidarité vieillesse que de la
+      CSG : c'est ce qui date le début de la série certifiée.
+    reste: >-
+      Le scénario 1 n'est pas modifié : aucune pension calculée ne bouge,
+      aucune ligne du registre ci-dessus n'a changé d'état, et aucune réforme
+      du calendrier n'est touchée. Ce qui a été ajouté est une DÉCISION de
+      programme — la moitié des impôts abandonnés rendue aux salaires, la
+      moitié éteinte en dette — et la série qui la chiffre. Restent à lire à la
+      source : l'affectation de la contribution sociale de solidarité des
+      sociétés, que les comptes rattachent à la CNAV sans que la session ait
+      trouvé l'article qui l'y met, et le barème de la taxe sur les salaires
+      lui-même (article 231 du code général des impôts), qu'il faudrait pour
+      faire apparaître sa suppression sur la fiche de paie d'un employeur non
+      assujetti à la TVA.

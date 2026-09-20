@@ -146,20 +146,29 @@ les pensions d'aujourd'hui, et non parce que l'agent acquerrait 82 % de son
 traitement en droits nouveaux.
 
 L'appeler « coût du travail » et poser dessus l'incidence intégrale donnerait un
-gain absurde : la baisse de 82,28 % à 9 % se lirait comme une augmentation de
-salaire de soixante-dix points, alors qu'elle ne libère rien — la dette de
-pensions que cette contribution finance reste à payer, et c'est la page « Coût »
-qui la traite, pas une fiche de paie.
+gain absurde : la baisse de 82,28 % à 11,50 % se lirait comme une augmentation
+de salaire de soixante-dix points, alors que la dette de pensions que cette
+contribution finance reste à payer. Tenir le traitement FIXE, à l'inverse, ne
+rendrait rien du tout, comme si le taux d'équilibre n'avait jamais rien coûté à
+l'employeur public : or c'est de l'argent public que la proposition libère.
 
-Le module retient donc, pour ``agent_seul``, **l'incidence sur l'assiette** : le
-traitement indiciaire brut est tenu fixe, seule la retenue de l'agent bouge, et
-il n'y a pas de ligne « coût du travail ». Le gain affiché n'est donc pas
-comparable, terme à terme, à celui d'un salarié du privé — c'est la lecture
-prudente contre la lecture intégrale —, et le site comme ``docs/limites.md`` le
-disent.
+Le module a longtemps retenu la seconde branche. Il retient depuis le
+20 septembre 2026 la troisième, qui n'est pas un compromis mais une DÉCISION :
+**la moitié de ce que l'employeur cesse de verser remonte dans le traitement,
+l'autre moitié paie la dette de pensions déjà promises.** C'est
+:data:`Incidence.PARTAGEE`, et ``Parametres.part_rendue_aux_salaires`` porte le
+partage — à zéro, on retrouve exactement l'ancienne convention, ce qu'un test
+vérifie. La ligne « coût du travail » reste absente : un taux d'équilibre n'est
+toujours pas un prix du travail, et l'afficher comme tel dirait le contraire de
+ce que ce partage suppose.
 
-``independant`` tient lui aussi l'assiette fixe, mais ce n'est pas une
-hypothèse : il n'y a pas d'employeur, donc rien à répercuter.
+Le traitement d'un fonctionnaire d'État monte ainsi d'un tiers. C'est beaucoup,
+et deux réserves l'accompagnent dans ``docs/limites.md`` : la pension, elle,
+reste calculée sur le revenu de la carrière et non sur ce traitement-là ; et le
+partage est un état d'arrivée, pas un calendrier.
+
+``independant`` tient l'assiette fixe, et ce n'est pas une hypothèse : il n'y a
+pas d'employeur, donc rien à répercuter.
 
 ``profil_de_la_fiche`` choisit le profil ; ``fiche_de_paie_possible`` dit si le
 statut est couvert ; le site n'affiche rien quand il ne l'est pas, et dit
@@ -174,6 +183,8 @@ from functools import lru_cache
 from pathlib import Path
 
 from .donnees.chargement import Fiabilite, charger_yaml
+from .donnees.regimes import ContributionsEmployeurPubliques
+from .restitution import points_csg_rendus
 
 #: Heures d'un temps plein sur une année : 35 heures sur 52 semaines. Sert à
 #: convertir le SMIC horaire — la seule forme que le dépôt publie — en SMIC
@@ -198,12 +209,25 @@ class Incidence(str, Enum):
       à une baisse de cotisation.
     * ``ASSIETTE`` — le brut, le traitement ou le revenu professionnel ne bouge
       pas, et seule la part de l'assuré change. Lecture prudente, et la seule
-      disponible quand la contribution de l'employeur n'est pas un prix du
-      travail — ou quand il n'y a pas d'employeur.
+      disponible quand il n'y a pas d'employeur.
+    * ``PARTAGEE`` — la MOITIÉ de ce que l'employeur ne verse plus remonte dans
+      l'assiette, l'autre moitié paie la dette qu'il finançait. C'est la
+      décision du 20 septembre 2026 pour la contribution d'équilibre de l'État,
+      et la seule des trois qui ne soit ni une hypothèse d'économiste ni un
+      refus de trancher : elle dit à quoi sert l'argent.
+
+      L'incidence intégrale prêterait au fonctionnaire les soixante-dix points
+      que l'État cesse de verser, comme s'ils avaient été son salaire différé ;
+      or ils payaient les pensions d'aujourd'hui, et ces pensions restent à
+      payer. L'incidence sur l'assiette ne lui en rendrait aucun, comme si le
+      taux d'équilibre n'avait jamais rien coûté à son employeur ; or c'est de
+      l'argent public que la proposition libère. Le partage tranche entre les
+      deux au lieu de choisir un bord.
     """
 
     COUT_DU_TRAVAIL = "cout_du_travail"
     ASSIETTE = "assiette"
+    PARTAGEE = "partagee"
 
 
 @dataclass(frozen=True)
@@ -652,6 +676,23 @@ class BlocRetraite:
     libelle: str
     composantes: tuple[ComposanteRetraite, ...]
     remplace_les_contributions_d_equilibre: bool = False
+    #: Points de CSG d'activité que le système RETIRE de la fiche, en fraction
+    #: du brut abattu — 0,0112 pour 1,12 point. Nul pour le droit en vigueur.
+    #: C'est la moitié des impôts affectés que la proposition rend aux
+    #: salaires, une fois la taxe sur les salaires et le forfait social
+    #: supprimés : voir ``restitution.py``, qui la calcule, et qui dit
+    #: pourquoi cette CSG-là ne finançait aucune retraite.
+    csg_rendue: float = 0.0
+    #: Part de la contribution d'équilibre d'un employeur public que le système
+    #: rend à l'assiette. Ne sert qu'à ``Incidence.PARTAGEE``.
+    part_rendue_aux_salaires: float = 0.0
+    #: Taux d'équilibre que l'employeur public verse AUJOURD'HUI, en fraction
+    #: du traitement. Ne sert qu'à ``Incidence.PARTAGEE``.
+    contribution_equilibre_actuelle: float = 0.0
+
+    def taux_employeur(self, brut: float, plafond_annuel: float) -> float:
+        """Ce que l'employeur verse pour la retraite, rapporté au brut."""
+        return self.patronal(brut, plafond_annuel) / brut if brut else 0.0
 
     def salarial(self, brut: float, plafond_annuel: float) -> float:
         return sum(_montant(c.salarie, brut, plafond_annuel)
@@ -797,17 +838,27 @@ class ConstructeurFiche:
                 salarie=poste.montant_salarie(brut, plafond),
                 employeur=_montant(poste.employeur, brut, plafond),
             ))
-        contributions = self._csg_crds(brut, plafond)
+        contributions = self._csg_crds(bloc, brut, plafond)
         if contributions:
             lignes.append(contributions)
         return tuple(lignes)
 
-    def _csg_crds(self, brut: float, plafond: float) -> Ligne | None:
-        taux = self.profil.csg + self.profil.crds
+    def _csg_crds(self, bloc: BlocRetraite, brut: float,
+                  plafond: float) -> Ligne | None:
+        """La CSG et la CRDS, diminuées des points que le système rend.
+
+        Le taux ne peut pas devenir négatif : un système qui rendrait plus que
+        la CSG ne prélève rien, il ne verse pas. Le libellé dit que la ligne a
+        bougé, et la page dit de combien — une fiche qui afficherait « CSG et
+        CRDS » au même libellé pour deux taux différents ne se relirait pas.
+        """
+        plein = self.profil.csg + self.profil.crds
+        taux = max(0.0, plein - bloc.csg_rendue)
         if taux <= 0:
             return None
         abattement = _montant(self.profil.abattement_frais, brut, plafond)
-        return Ligne(code="csg_crds", libelle="CSG et CRDS", retraite=False,
+        libelle = "CSG et CRDS allégées" if bloc.csg_rendue > 0 else "CSG et CRDS"
+        return Ligne(code="csg_crds", libelle=libelle, retraite=False,
                      salarie=(brut - abattement) * taux, employeur=0.0)
 
     def _perimetre_reduction(self, bloc: BlocRetraite, brut: float,
@@ -923,15 +974,61 @@ class ConstructeurFiche:
                 haut = milieu
         return (bas + haut) / 2
 
+    def brut_partage(self, actuelle: FicheDePaie, plafond_annuel: float,
+                     smic_annuel: float, bloc: BlocRetraite,
+                     cadre: bool = False) -> float:
+        """Le brut quand la MOITIÉ de ce que l'employeur libère lui revient.
+
+        C'est ``Incidence.PARTAGEE``, et elle n'existe que pour un employeur
+        public dont la contribution est un taux d'ÉQUILIBRE : 82,28 % du
+        traitement pour l'État en 2026, 37,65 % pour la CNRACL. Cette
+        contribution n'est pas sur la fiche de paie — elle ne figure ni dans le
+        brut ni dans les cotisations patronales du profil, qui sont vides —,
+        et c'est ``contribution_equilibre_actuelle`` qui la porte.
+
+        Le calcul est celui du coût du travail, décalé d'un cran :
+
+            dépense actuelle  = traitement × (1 + taux d'équilibre)
+            dépense si rien ne bougeait = ce que la proposition prélève sur le
+                                          même traitement
+            libéré            = la différence
+            dépense retenue   = dépense actuelle − (1 − part rendue) × libéré
+
+        et le traitement est celui qui épuise la dépense retenue sous les
+        nouveaux taux. À part rendue nulle, on retrouve l'assiette fixe ; à un,
+        l'incidence intégrale.
+
+        **Sans taux d'équilibre connu, on retombe sur l'assiette fixe.** Un
+        régime dont la série employeur ne couvre pas l'année ne libère rien
+        qu'on sache chiffrer, et lui appliquer la formule ferait BAISSER le
+        traitement — la proposition prélèverait une part patronale que
+        l'employeur ne versait pas.
+        """
+        if bloc.contribution_equilibre_actuelle <= 0.0:
+            return actuelle.brut
+        equilibre = actuelle.brut * bloc.contribution_equilibre_actuelle
+        depense_actuelle = actuelle.cout_du_travail + equilibre
+        a_traitement_inchange = self.fiche(
+            0, actuelle.brut, plafond_annuel, smic_annuel, bloc, cadre
+        ).cout_du_travail
+        libere = max(0.0, depense_actuelle - a_traitement_inchange)
+        retenue = depense_actuelle - (1.0 - bloc.part_rendue_aux_salaires) * libere
+        return self.brut_a_cout_donne(
+            retenue, plafond_annuel, smic_annuel, bloc, cadre)
+
     def brut_sous_la_proposition(self, actuelle: FicheDePaie, plafond_annuel: float,
                                  smic_annuel: float, bloc: BlocRetraite,
                                  cadre: bool = False) -> float:
         """Le brut à retenir sous le nouveau système, selon l'incidence du profil.
 
-        Une ligne, mais c'est là que se joue la décision du module : tenir le
+        Trois lignes, mais c'est là que se joue la décision du module : tenir le
         coût du travail fixe quand l'employeur est connu, tenir l'assiette fixe
-        quand il ne l'est pas.
+        quand il n'y en a pas, partager quand ce qu'il verse est un taux
+        d'équilibre.
         """
+        if self.profil.incidence is Incidence.PARTAGEE:
+            return self.brut_partage(
+                actuelle, plafond_annuel, smic_annuel, bloc, cadre)
         if self.profil.incidence is Incidence.ASSIETTE:
             return actuelle.brut
         return self.brut_a_cout_donne(
@@ -1009,6 +1106,9 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
                      part_salariale: float = 0.5,
                      libelle_repartition: str = "Retraite, compte notionnel",
                      libelle_capitalisation: str = "Retraite, part capitalisée",
+                     csg_rendue: float = 0.0,
+                     part_rendue_aux_salaires: float = 0.0,
+                     contribution_equilibre_actuelle: float = 0.0,
                      ) -> BlocRetraite:
     """Le bloc de la proposition : un taux unique, au premier euro, sans plafond.
 
@@ -1046,11 +1146,15 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
         libelle="Retraite (proposition)",
         composantes=tuple(composantes),
         remplace_les_contributions_d_equilibre=True,
+        csg_rendue=csg_rendue,
+        part_rendue_aux_salaires=part_rendue_aux_salaires,
+        contribution_equilibre_actuelle=contribution_equilibre_actuelle,
     )
 
 
 def bloc_taux_unique_sans_employeur(
         taux_repartition: float, taux_capitalisation: float = 0.0,
+        csg_rendue: float = 0.0,
         ) -> BlocRetraite:
     """Le même bloc pour qui n'a pas d'employeur : il porte les 18 % en entier.
 
@@ -1060,7 +1164,33 @@ def bloc_taux_unique_sans_employeur(
     n'existe pas.
     """
     return bloc_taux_unique(taux_repartition, taux_capitalisation,
-                            part_salariale=1.0)
+                            part_salariale=1.0, csg_rendue=csg_rendue)
+
+
+def contribution_equilibre(racine_donnees: Path, affiliations, statut: str,
+                           annee: int) -> float:
+    """Ce que l'employeur public verse aujourd'hui, en fraction du traitement.
+
+    Zéro quand aucune série ne couvre le régime cette année-là : la fiche
+    retombe alors sur l'assiette fixe, et ``brut_partage`` dit pourquoi c'est
+    la seule issue prudente.
+
+    Les régimes d'un statut sont additionnés parce qu'ils le sont déjà
+    ailleurs : un agent peut relever d'un régime de base et d'un régime
+    additionnel, et la contribution de son employeur est la somme des deux.
+    """
+    table = _contributions_publiques(racine_donnees)
+    total = 0.0
+    for code in affiliations.regimes(statut, annee):
+        contribution = table.taux(code, annee)
+        if contribution is not None:
+            total += contribution.taux
+    return total
+
+
+@lru_cache(maxsize=4)
+def _contributions_publiques(racine: Path) -> ContributionsEmployeurPubliques:
+    return ContributionsEmployeurPubliques(racine)
 
 
 # -- à quel profil un statut appartient --------------------------------------
@@ -1151,6 +1281,14 @@ class AnneeComparee:
     #: fiche s'arrête à ce que la proposition impose, et ce placement se
     #: chiffre à côté, pris sur le net.
     taux_epargne_volontaire: float = 0.0
+    #: Points de CSG d'activité que la proposition rend cette année-là, en
+    #: fraction du brut abattu. Déjà retranchés de ``proposition`` ; gardés ici
+    #: pour que la page puisse dire de combien la ligne a bougé.
+    csg_rendue: float = 0.0
+    #: Taux d'équilibre que l'employeur public verse aujourd'hui, nul pour tout
+    #: autre profil. Gardé pour la même raison : la page doit pouvoir écrire
+    #: d'où vient le traitement supplémentaire.
+    contribution_equilibre: float = 0.0
 
     @property
     def gain_net(self) -> float:
@@ -1249,6 +1387,19 @@ class RemunerationActif:
     libelle_net: str = "Salaire net"
     affiche_cout_du_travail: bool = True
     incidence: Incidence = Incidence.COUT_DU_TRAVAIL
+    #: Part de ce que l'employeur libère qui remonte dans l'assiette, sous
+    #: ``Incidence.PARTAGEE``. La page en a besoin pour écrire « la moitié ».
+    part_rendue_aux_salaires: float = 0.0
+
+    @property
+    def csg_rendue(self) -> float:
+        """Les points de CSG d'activité rendus l'année de référence."""
+        return self.reference.csg_rendue
+
+    @property
+    def contribution_equilibre(self) -> float:
+        """Ce que l'employeur public verse aujourd'hui, l'année de référence."""
+        return self.reference.contribution_equilibre
 
     @property
     def reference(self) -> AnneeComparee:
@@ -1331,13 +1482,35 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
     # que la proposition impose, et leur placement se chiffre sur chaque année,
     # pris sur le net.
     volontaire = parametres.taux_capitalisation_volontaire_applique
-    if affiliations.sans_employeur(statut):
-        propose = bloc_taux_unique_sans_employeur(
-            parametres.taux_cotisation_liberal, capitalisation)
-    else:
-        propose = bloc_taux_unique(
+    sans_employeur = affiliations.sans_employeur(statut)
+    rendue = parametres.part_rendue_aux_salaires
+    # La contribution d'équilibre ne concerne que le profil dont l'employeur en
+    # verse une : la chercher pour un salarié du privé la trouverait nulle, et
+    # coûterait un chargement de série par carrière.
+    partage = profil.incidence is Incidence.PARTAGEE
+
+    def bloc_propose(annee: int) -> BlocRetraite:
+        """Le bloc de la proposition l'année ``annee``.
+
+        Il est reconstruit à chaque année parce que deux de ses trois nouveautés
+        en dépendent : les points de CSG rendus suivent le poste abandonné, que
+        le COR projette année par année, et le taux d'équilibre de l'employeur
+        public suit sa propre série. Le coût est nul — le bloc est trois
+        segments — et l'alternative aurait figé un taux sur toute une carrière.
+        """
+        csg = points_csg_rendus(parametres.racine_donnees, annee, rendue)
+        if sans_employeur:
+            return bloc_taux_unique_sans_employeur(
+                parametres.taux_cotisation_liberal, capitalisation,
+                csg_rendue=csg)
+        return bloc_taux_unique(
             parametres.taux_cotisation_liberal, capitalisation,
             part_salariale=parametres.part_salariale_taux_unique,
+            csg_rendue=csg,
+            part_rendue_aux_salaires=rendue,
+            contribution_equilibre_actuelle=contribution_equilibre(
+                parametres.racine_donnees, affiliations, statut, annee)
+            if partage else 0.0,
         )
 
     comparees: list[AnneeComparee] = []
@@ -1352,6 +1525,7 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         plafond = macro.plafond_securite_sociale(annee)
         smic = smic_annuel(macro, annee)
         actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee)
+        propose = bloc_propose(annee)
         fiche_actuelle = constructeur.fiche(
             annee, brut, plafond, smic, actuel_bloc, cadre)
         brut_propose = constructeur.brut_sous_la_proposition(
@@ -1365,6 +1539,8 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
             coefficient_euros_constants=macro.coefficient_prix(
                 annee, parametres.annee_euros_constants),
             taux_epargne_volontaire=volontaire,
+            csg_rendue=propose.csg_rendue,
+            contribution_equilibre=propose.contribution_equilibre_actuelle,
             _smic=smic,
         ))
 
@@ -1383,6 +1559,7 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         libelle_net=profil.libelle_net,
         affiche_cout_du_travail=profil.cout_du_travail,
         incidence=profil.incidence,
+        part_rendue_aux_salaires=rendue,
     )
 
 

@@ -45,12 +45,13 @@ import {
   POSTES_TRANSFERTS,
   ComptesRetraite,
 } from "./equilibre.js";
+import { Restitution } from "./restitution.js";
 import { Indexation } from "./indexation.js";
 import { Population } from "./population.js";
 import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
 import { nomFiabilite } from "./serie.js";
-import { salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
+import { Incidence, salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur } from "./simulateur.js";
 
 export const PROFILS = [
@@ -1633,6 +1634,17 @@ export class Contexte {
   /** Le second terme du bilan : ce que le système de retraite encaisse. */
   comptes() {
     return this._donnee("comptes", () => new ComptesRetraite(this.paquet));
+  }
+
+  /**
+   * Ce que la proposition rend au salaire, et ce qu'elle éteint en dette.
+   * Mémorisé par jeu de règles et non une fois pour toutes : le partage est un
+   * RÉGLAGE, et deux contextes n'ont pas forcément le même.
+   */
+  restitution() {
+    return this._agregat("restitution", () => new Restitution(
+      this.paquet, this.base.part_rendue_aux_salaires,
+    ));
   }
 
   population() {
@@ -3963,12 +3975,20 @@ function salaireNet(comparaison, saisie) {
     ? ` Sur les ${duree} années qui vous séparent de la retraite : `
       + `${eurosSigne(cumul, false)} en euros de ${saisie.euros}.`
     : "";
-  // Deux hypothèses, et il faut dire laquelle vaut ici : le coût du travail
+  // Trois hypothèses, et il faut dire laquelle vaut ici : le coût du travail
   // tenu fixe quand l'employeur verse des taux de droit commun, l'assiette
-  // tenue fixe quand il verse un taux d'équilibre — ou qu'il n'y en a pas.
-  const sousQuelleHypothese = remuneration.afficheCoutDuTravail
-    ? "à coût du travail inchangé pour votre employeur"
-    : `à ${echapper(remuneration.libelleAssiette.toLowerCase())} inchangé`;
+  // tenue fixe quand il n'y a pas d'employeur, le PARTAGE quand ce qu'il verse
+  // est un taux d'équilibre.
+  let sousQuelleHypothese;
+  if (remuneration.incidence === Incidence.PARTAGEE) {
+    sousQuelleHypothese = "la moitié de ce que votre employeur cesse de verser "
+      + `revenant à votre ${echapper(remuneration.libelleAssiette.toLowerCase())}`;
+  } else if (remuneration.afficheCoutDuTravail) {
+    sousQuelleHypothese = "à coût du travail inchangé pour votre employeur";
+  } else {
+    sousQuelleHypothese = `à ${echapper(remuneration.libelleAssiette.toLowerCase())} inchangé`;
+  }
+  const rendu = salaireNetRendu(remuneration, net);
   // LE CHIFFRE DU MILIEU EST LE NET PLEIN : ce que la proposition laisse quand
   // elle a prélevé ses 23 points, et rien d'autre. Les cinq points que
   // personne n'impose n'en sont pas retirés — une épargne qu'on décide seul
@@ -4004,9 +4024,51 @@ que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">${ouverture}</div>
   <p>Soit <strong>${eurosSigne(gain)} ${sens} sur votre fiche de paie</strong>,
-  ${sousQuelleHypothese}.${reste}${volontaire}</p>
+  ${sousQuelleHypothese}.${reste}${volontaire}</p>${rendu}
   ${salaireNetDetail(comparaison, remuneration, saisie)}
 </div>`;
+}
+
+/**
+ * Ce que la proposition REND, et d'où l'argent vient.
+ *
+ * Deux mouvements, et ils n'ont pas la même cause. Il faut donc deux
+ * paragraphes, et surtout ne pas les fondre en un : le lecteur croirait qu'on
+ * lui rend ce qu'on lui prenait pour sa retraite, et ce serait faux dans les
+ * deux cas — la CSG d'activité ne finance aucune retraite, et la contribution
+ * d'équilibre d'un employeur public n'est pas un prix du travail.
+ */
+function salaireNetRendu(remuneration, net) {
+  const morceaux = [];
+  if (remuneration.csgRendue > 0) {
+    morceaux.push(`
+  <p><strong>Votre CSG baisse de
+  ${g.nombre(remuneration.csgRendue * 100, 2)} point</strong>, et c'est compris
+  dans le chiffre ci-dessus. La proposition cesse d'affecter à la retraite les
+  impôts et taxes qui la financent ; elle n'en garde pas la moitié : celle-là
+  est rendue aux salaires. Ce qui, dans ces impôts, sort déjà d'une
+  rémunération — la taxe sur les salaires et le forfait social — est supprimé,
+  et le reste vous revient en points de CSG. <strong>Cette CSG-là ne finance
+  aujourd'hui aucune retraite</strong> : ses ${g.pourcentage(0.092)} vont à la
+  famille, à la maladie, à la dette sociale, au chômage et à l'autonomie, et
+  rien à la vieillesse. Ce n'est donc pas une cotisation qu'on vous rend, c'est
+  un impôt qu'on supprime. L'autre moitié éteint de la dette.</p>`);
+  }
+  if (remuneration.incidence === Incidence.PARTAGEE
+      && remuneration.contributionEquilibre > 0) {
+    const assiette = echapper(remuneration.libelleAssiette.toLowerCase());
+    morceaux.push(`
+  <p><strong>Votre employeur verse aujourd'hui
+  ${g.pourcentage(remuneration.contributionEquilibre)} de votre
+  ${assiette}</strong> pour votre retraite.
+  Ce n'est pas un prix du travail : c'est le taux qui équilibre le régime,
+  c'est-à-dire qui paie les pensions d'aujourd'hui. La proposition le ramène à
+  la part employeur du taux unique, et la moitié de ce qu'il cesse de verser
+  revient à votre ${assiette} — l'autre
+  moitié paie la dette de pensions déjà promises, qui reste due. C'est pourquoi
+  votre ${net} monte de plus que ne le ferait une simple baisse de retenue.</p>`);
+  }
+  return morceaux.join("");
 }
 
 /** La fiche de paie entière, et ce qu'il faut savoir pour la discuter. */
@@ -6889,6 +6951,52 @@ const LIGNES_DEPENSES = [
 ];
 
 /** « 4. La proposition libérale » → « La proposition libérale ». */
+/**
+ * Où va l'argent que la proposition n'encaisse plus.
+ *
+ * C'est la question que le tableau du dessus pose sans y répondre : trois
+ * postes s'en vont, et le lecteur en déduit naturellement que l'État les
+ * garde — c'est-à-dire qu'ils comblent un déficit. La décision du
+ * 20 septembre 2026 dit le contraire : la moitié est rendue aux salaires, la
+ * moitié éteint de la dette. Le partage est un RÉGLAGE, et la note se tait
+ * quand il vaut zéro.
+ */
+function coutNoteRestitution(contexte, annee, pib, anneePib) {
+  const restitution = contexte.restitution();
+  if (!restitution || restitution.partRendue <= 0) {
+    return "";
+  }
+  const part = restitution.annuelle(annee);
+  if (part.posteAbandonne <= 0) {
+    return "";
+  }
+  return `
+<div class="note"><strong>Ce que la proposition n'encaisse plus, elle ne le
+garde pas.</strong> Les impôts et taxes affectés valent
+${g.pourcentage(part.posteAbandonne, false, 2)} du PIB en ${annee}, soit
+${milliards(part.posteAbandonne * pib, 0)} au point de PIB de ${anneePib}.
+Ne rien dire de cette recette reviendrait à la laisser au budget, c'est-à-dire
+à la consacrer tout entière au déficit. La proposition la partage en deux :
+<strong>${milliards(part.rendu * pib, 0)} sont rendus aux salaires</strong>,
+autant <strong>éteint de la dette</strong>, à commencer par celle que le
+système de retraite porte. Ce qui est rendu l'est dans l'ordre que le droit
+impose : on supprime d'abord les deux impôts du poste qui sortent d'une
+rémunération — la taxe sur les salaires, dont l'article L. 131-8, 1° du code de
+la sécurité sociale verse ${g.pourcentage(0.5835, false, 2)} à la branche
+vieillesse, et le forfait social, que l'article L. 241-3, 1° lui donne en
+entier, ensemble ${milliards(part.supprimeSurLaRemuneration * pib, 0)} —,
+puis le solde revient par une baisse de
+${g.nombre(part.pointsCsg * 100, 2)} point de la CSG sur les revenus
+d'activité. Cette CSG-là ne finance aujourd'hui <em>aucune</em> retraite : ses
+${g.pourcentage(0.092)} vont à la famille, à l'assurance maladie, à la dette
+sociale, à l'Unédic et à l'autonomie, et rien à la vieillesse (L. 131-8, 3°).
+La baisse n'est donc pas la restitution d'un prélèvement retraite, c'est un
+impôt supprimé. <strong>Rien de tout cela ne change le solde ci-dessus</strong> :
+ces recettes étaient déjà sorties du compte de la retraite, et ce que cette
+note ajoute est ce qu'il en advient dans le budget de l'État et sur les fiches
+de paie.</div>`;
+}
+
 function sansNumero(libelle) {
   const coupe = libelle.indexOf(". ");
   return coupe >= 0 ? libelle.slice(coupe + 2) : libelle;
@@ -7058,6 +7166,8 @@ d'activité, et ce système ne reconduit donc aucune des trois ressources qui
 n'acquièrent de droits à personne, celles que la note du dessus nomme. Trois
 postes : 27 % des ressources en 2024, 29 % en 2070. Les cinq autres systèmes
 les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.</div>
+
+${coutNoteRestitution(contexte, annee, pib, anneePib)}
 
 <div class="note"><strong>Seul le système actuel sert la pension de
 réversion.</strong> Une réversion est ce qu'un conjoint survivant reçoit de la
@@ -9917,6 +10027,7 @@ ${depliantCalcul}
 ${programmeJustice(contexte)}
 ${programmeGarantie(contexte)}
 ${programmeCapitalisation(contexte)}
+${programmeRestitution(contexte)}
 ${programmeTransition(contexte)}
 ${programmeBlocages(contexte)}
 
@@ -10284,6 +10395,74 @@ function programmeTransition(contexte) {
 ${etapes}
 <p>Après la bascule, un seul régime : départ possible à
 ${age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>`);
+}
+
+
+/**
+ * Les impôts que la proposition supprime, et où va l'argent.
+ *
+ * C'est la question que personne ne pose et que tout le monde devrait poser :
+ * la proposition cesse d'affecter à la retraite une part importante des
+ * ressources du système, et il faut dire ce qu'elles deviennent. Sans cela, le lecteur
+ * suppose — à raison — qu'elles vont combler un déficit. Le dépliant se tait
+ * quand le partage vaut zéro.
+ */
+function programmeRestitution(contexte) {
+  const base = contexte.base;
+  const restitution = contexte.restitution();
+  if (!restitution || restitution.partRendue <= 0) {
+    return "";
+  }
+  const comptes = contexte.comptes();
+  const annee = base.annee_bascule;
+  const part = restitution.annuelle(annee);
+  if (part.posteAbandonne <= 0) {
+    return "";
+  }
+  const pib = comptes.pib.valeur(comptes.pib.derniereAnnee);
+  const poids = comptes.part("impots_et_taxes", annee);
+  return g.depliant(
+    `Les impôts que nous supprimons : ${milliards(part.rendu * pib, 0)} `
+    + "rendus aux salaires",
+    `
+<p>La retraite est financée à ${g.pourcentage(poids, false, 0)} par des
+<strong>impôts</strong> — ${milliards(part.posteAbandonne * pib, 0)} en
+${annee} — qui n'ouvrent de droit à personne. Un compte notionnel ne sait pas les porter au crédit de qui que ce
+soit : il ne rend que ce qui a été cotisé. <strong>Nous cessons donc de les
+affecter à la retraite.</strong></p>
+<p><strong>Et nous ne les gardons pas.</strong> Ne rien dire de cette recette
+reviendrait à la laisser au budget, c'est-à-dire à la consacrer tout entière au
+déficit. Nous la partageons en deux :
+<strong>${milliards(part.rendu * pib, 0)} rendus aux salaires</strong>, autant
+pour <strong>éteindre de la dette</strong>.</p>
+<ul class="serree">
+  <li><strong>La taxe sur les salaires est supprimée</strong>, pour la part qui
+  finance la retraite — ${g.pourcentage(0.5835, false, 2)} de son produit. La
+  paient les employeurs qui ne sont pas assujettis à la TVA : hôpitaux,
+  cliniques, banques, assurances, associations.</li>
+  <li><strong>Le forfait social est supprimé</strong> : il est assis sur
+  l'intéressement, la participation et l'épargne salariale, et son produit va
+  en entier à l'assurance vieillesse. Avec la taxe sur les salaires, cela fait
+  ${milliards(part.supprimeSurLaRemuneration * pib, 0)}.</li>
+  <li><strong>La CSG sur les revenus d'activité baisse de
+  ${g.nombre(part.pointsCsg * 100, 2)} point</strong> : c'est le solde de ce que
+  nous rendons, et l'assiette la plus large qui porte sur le travail.</li>
+</ul>
+<p>Un mot d'honnêteté sur ce dernier point, parce que l'intuition dit le
+contraire : <strong>la CSG sur les revenus d'activité ne finance aujourd'hui
+aucune retraite.</strong> Ses ${g.pourcentage(0.092)} vont à la branche famille,
+à l'assurance maladie, à la dette sociale, à l'assurance chômage et à
+l'autonomie. Nous ne vous rendons donc pas une cotisation : nous supprimons un
+impôt, avec de l'argent que la retraite n'encaisse plus.</p>
+<p><strong>Les employeurs publics suivent la même règle.</strong> L'État verse
+aujourd'hui, pour la retraite de ses fonctionnaires, un taux qui n'est pas un
+prix du travail mais un solde — celui qui équilibre le régime. Il cotisera
+${g.pourcentage(base.taux_cotisation_liberal, false, 0)} comme tout
+employeur, et la moitié de ce qu'il cesse de verser ira au traitement des
+agents ; l'autre moitié paiera les pensions déjà promises, qui restent dues.
+C'est la seule augmentation de traitement que ce programme contienne, et elle
+n'est pas petite.</p>`,
+  );
 }
 
 

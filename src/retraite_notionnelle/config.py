@@ -631,6 +631,39 @@ class Parametres:
     #: le cas.
     part_salariale_taux_unique: float = 0.5
 
+    #: Ce que la proposition REND aux salaires sur ce qu'elle cesse d'affecter
+    #: à la retraite. Décision du Parti libéral, 20 septembre 2026.
+    #:
+    #: La proposition ne reconduit pas les impôts et taxes affectés — 63,9 Md€
+    #: en 2025 — ni la contribution d'équilibre de l'État — 82,28 % du
+    #: traitement d'un fonctionnaire d'État en 2026. `cout.py` dit pourquoi :
+    #: un compte notionnel ne crédite que ce qui est assis sur un revenu
+    #: d'activité. Le dépôt s'arrêtait là, et ne disait pas ce que devenait
+    #: cette recette — ce qui revenait à la laisser au budget, c'est-à-dire à
+    #: la consacrer TOUT ENTIÈRE au déficit.
+    #:
+    #: Ce paramètre est la réponse, et c'est un PARTAGE :
+    #:
+    #:     la moitié est rendue aux salaires, la moitié éteint de la dette.
+    #:
+    #: Il s'applique en deux endroits, et la même moitié vaut pour les deux :
+    #:
+    #: 1. Les impôts affectés. Ce qui est assis sur une rémunération — la taxe
+    #:    sur les salaires et le forfait social, 28 % du poste — est SUPPRIMÉ ;
+    #:    le solde de la moitié rendue revient par une baisse de la CSG sur les
+    #:    revenus d'activité, un peu plus d'un point. Voir `restitution.py`, et
+    #:    surtout ce qu'il dit de cette CSG : elle ne finance aujourd'hui
+    #:    AUCUNE retraite.
+    #: 2. La contribution d'équilibre de l'employeur public. La moitié de ce
+    #:    qu'il cesse de verser remonte dans le traitement, l'autre moitié paie
+    #:    la dette de pensions qu'elle finançait. C'est `Incidence.PARTAGEE`,
+    #:    et le docstring de `remuneration.py` dit pourquoi ce n'est ni
+    #:    l'incidence intégrale ni l'assiette fixe.
+    #:
+    #: Zéro rend l'ancienne convention, où rien n'était rendu : un test le
+    #: vérifie. Un donne la baisse d'impôt intégrale.
+    part_rendue_aux_salaires: float = 0.5
+
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
     #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les
     #: ressources à un plancher —, mais individualise le plancher. Chacun est

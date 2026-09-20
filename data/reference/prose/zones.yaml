@@ -77,6 +77,12 @@ fichiers:
       # que l'INSEE observe en 2024. Les rafraîchir effacerait ce qui a été
       # corrigé, et le constat n'aurait plus de sens.
       "Le profil de carrière, et les trois choses qu'il suppose": recit
+      # Deux sections datées du 20 septembre 2026 : elles disent ce que la
+      # décision « moitié aux salaires, moitié à la dette » a déplacé, avec les
+      # chiffres mesurés ce jour-là. Les rafraîchir effacerait ce qui a été
+      # décidé, et le constat n'aurait plus de sens. La section de la fiche de
+      # paie était déjà à déclarer ; son titre change, son régime pas.
+      "5 ante quater. Le partage « moitié aux salaires, moitié à la dette » : ce qu'il affirme et ce que rien ne vérifie": recit
   docs/methodologie.md:
     defaut: a_declarer
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce

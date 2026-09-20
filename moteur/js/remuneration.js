@@ -9,13 +9,16 @@
  *     coût du travail = brut + cotisations patronales − réduction générale
  *     revenu net      = brut − cotisations salariales − CSG − CRDS
  *
- * QUATRE CHOSES À SAVOIR AVANT DE MODIFIER QUOI QUE CE SOIT ICI.
+ * CINQ CHOSES À SAVOIR AVANT DE MODIFIER QUOI QUE CE SOIT ICI.
  *
  * 1. **L'incidence est intégrale quand l'employeur est connu.** Le coût du
  *    travail est tenu fixe, et le brut est celui qui l'épuise sous les
  *    nouveaux taux : ce que l'employeur ne verse plus en cotisations, il le
- *    verse en salaire. Quand il ne l'est pas — ou qu'il n'y en a pas —, c'est
- *    l'ASSIETTE qui est tenue fixe, et seule la part de l'assuré bouge.
+ *    verse en salaire. Quand il n'y a pas d'employeur, c'est l'ASSIETTE qui
+ *    est tenue fixe, et seule la part de l'assuré bouge. Et quand ce que verse
+ *    l'employeur est un taux d'ÉQUILIBRE — l'employeur public —, c'est le
+ *    PARTAGE : la moitié de ce qu'il cesse de verser remonte dans le
+ *    traitement, l'autre moitié paie la dette de pensions qu'il finançait.
  * 2. **Le partage salarial/patronal du taux unique n'est pas neutre**, bien
  *    qu'on l'attende. La CSG est assise sur le BRUT, que le partage déplace ;
  *    et la réduction générale n'efface que des cotisations patronales.
@@ -29,9 +32,15 @@
  *    retenue de l'agent, parce que ce que verse son employeur est un taux
  *    d'ÉQUILIBRE et non un prix du travail — et `independant`, qui n'a pas
  *    d'employeur du tout. Voir `profilDeLaFiche`.
+ * 5. **La proposition rend des points de CSG d'activité**, et `restitution.js`
+ *    les calcule : c'est la moitié des impôts affectés qu'elle n'encaisse plus,
+ *    une fois la taxe sur les salaires et le forfait social supprimés. Le bloc
+ *    de la proposition les porte et la ligne « CSG et CRDS » les retranche.
  */
 
 import { tauxCapitalisationVolontaireApplique } from "./config.js";
+import { ContributionsEmployeurPubliques } from "./regimes.js";
+import { pointsCsgRendus } from "./restitution.js";
 import { Fiabilite } from "./serie.js";
 
 /** Heures d'un temps plein sur une année : 35 heures sur 52 semaines. */
@@ -48,10 +57,21 @@ export const FAMILLES_COUVERTES = Object.freeze([
   "prive", "public", "special", "independant",
 ]);
 
-/** Ce que le modèle tient FIXE quand il compare deux systèmes. */
+/**
+ * Ce que le modèle tient FIXE quand il compare deux systèmes.
+ *
+ * `PARTAGEE` est la décision du 20 septembre 2026 : la MOITIÉ de ce que
+ * l'employeur ne verse plus remonte dans l'assiette, l'autre moitié paie la
+ * dette qu'il finançait. L'incidence intégrale prêterait au fonctionnaire les
+ * soixante-dix points que l'État cesse de verser, comme s'ils avaient été son
+ * salaire différé ; or ils payaient les pensions d'aujourd'hui. L'assiette
+ * fixe ne lui en rendrait aucun, comme si le taux d'équilibre n'avait rien
+ * coûté ; or c'est de l'argent public que la proposition libère.
+ */
 export const Incidence = Object.freeze({
   COUT_DU_TRAVAIL: "cout_du_travail",
   ASSIETTE: "assiette",
+  PARTAGEE: "partagee",
 });
 
 /**
@@ -286,10 +306,23 @@ export class ComposanteRetraite {
 
 /** Ce qu'un système prélève pour la retraite, étage par étage. */
 export class BlocRetraite {
-  constructor({ libelle, composantes, remplaceLesContributionsDEquilibre = false }) {
+  constructor({
+    libelle, composantes, remplaceLesContributionsDEquilibre = false,
+    csgRendue = 0, partRendueAuxSalaires = 0, contributionEquilibreActuelle = 0,
+  }) {
     this.libelle = libelle;
     this.composantes = composantes;
     this.remplaceLesContributionsDEquilibre = remplaceLesContributionsDEquilibre;
+    // Points de CSG d'activité que le système RETIRE de la fiche, en fraction
+    // du brut abattu. C'est la moitié des impôts affectés que la proposition
+    // rend aux salaires, une fois la taxe sur les salaires et le forfait
+    // social supprimés : voir `restitution.js`.
+    this.csgRendue = csgRendue;
+    // Ne servent qu'à `Incidence.PARTAGEE` : la part de la contribution
+    // d'équilibre d'un employeur public qui remonte dans le traitement, et le
+    // taux d'équilibre qu'il verse aujourd'hui.
+    this.partRendueAuxSalaires = partRendueAuxSalaires;
+    this.contributionEquilibreActuelle = contributionEquilibreActuelle;
   }
 
   /**
@@ -391,11 +424,17 @@ export class ConstructeurFiche {
         employeur: montant(poste.employeur, brut, plafond),
       });
     }
-    const taux = this.profil.csg + this.profil.crds;
+    // Le taux ne peut pas devenir négatif : un système qui rendrait plus que
+    // la CSG ne prélève rien, il ne verse pas. Le libellé dit que la ligne a
+    // bougé, et la page dit de combien.
+    const plein = this.profil.csg + this.profil.crds;
+    const taux = Math.max(0, plein - bloc.csgRendue);
     if (taux > 0) {
       const abattement = montant(this.profil.abattement_frais, brut, plafond);
       lignes.push({
-        code: "csg_crds", libelle: "CSG et CRDS", retraite: false,
+        code: "csg_crds",
+        libelle: bloc.csgRendue > 0 ? "CSG et CRDS allégées" : "CSG et CRDS",
+        retraite: false,
         salarie: (brut - abattement) * taux, employeur: 0,
       });
     }
@@ -517,12 +556,47 @@ export class ConstructeurFiche {
   }
 
   /**
+   * Le brut quand la MOITIÉ de ce que l'employeur libère lui revient.
+   *
+   * C'est `Incidence.PARTAGEE`, et elle n'existe que pour un employeur public
+   * dont la contribution est un taux d'ÉQUILIBRE : 82,28 % du traitement pour
+   * l'État en 2026. Cette contribution n'est pas sur la fiche de paie, et
+   * c'est `contributionEquilibreActuelle` qui la porte.
+   *
+   *     dépense actuelle = traitement × (1 + taux d'équilibre)
+   *     libéré           = cette dépense, moins ce que la proposition
+   *                        prélèverait sur le même traitement
+   *     dépense retenue  = dépense actuelle − (1 − part rendue) × libéré
+   *
+   * et le traitement est celui qui épuise la dépense retenue sous les nouveaux
+   * taux. Sans taux d'équilibre connu on retombe sur l'assiette fixe : un
+   * régime dont la série employeur ne couvre pas l'année ne libère rien qu'on
+   * sache chiffrer, et lui appliquer la formule ferait BAISSER le traitement.
+   */
+  brutPartage(actuelle, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
+    if (bloc.contributionEquilibreActuelle <= 0) {
+      return actuelle.brut;
+    }
+    const equilibre = actuelle.brut * bloc.contributionEquilibreActuelle;
+    const depenseActuelle = actuelle.coutDuTravail + equilibre;
+    const aTraitementInchange = this.fiche(
+      0, actuelle.brut, plafondAnnuel, smicAnnuel, bloc, cadre,
+    ).coutDuTravail;
+    const libere = Math.max(0, depenseActuelle - aTraitementInchange);
+    const retenue = depenseActuelle - (1 - bloc.partRendueAuxSalaires) * libere;
+    return this.brutACoutDonne(retenue, plafondAnnuel, smicAnnuel, bloc, cadre);
+  }
+
+  /**
    * Le brut à retenir sous le nouveau système, selon l'incidence du profil :
    * le coût du travail tenu fixe quand l'employeur est connu, l'assiette tenue
-   * fixe quand il ne l'est pas. Une ligne, mais c'est là que se joue la
-   * décision du module.
+   * fixe quand il n'y en a pas, le partage quand ce qu'il verse est un taux
+   * d'équilibre. Trois lignes, mais c'est là que se joue la décision du module.
    */
   brutSousLaProposition(actuelle, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
+    if (this.profil.incidence === Incidence.PARTAGEE) {
+      return this.brutPartage(actuelle, plafondAnnuel, smicAnnuel, bloc, cadre);
+    }
     if (this.profil.incidence === Incidence.ASSIETTE) {
       return actuelle.brut;
     }
@@ -607,7 +681,8 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
  * `AnneeComparee.epargneVolontaire`.
  */
 export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
-  partSalariale = 0.5) {
+  partSalariale = 0.5, csgRendue = 0, partRendueAuxSalaires = 0,
+  contributionEquilibreActuelle = 0) {
   const composantes = [new ComposanteRetraite({
     code: "regime_unifie",
     libelle: "Retraite, compte notionnel",
@@ -630,6 +705,9 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
     libelle: "Retraite (proposition)",
     composantes,
     remplaceLesContributionsDEquilibre: true,
+    csgRendue,
+    partRendueAuxSalaires,
+    contributionEquilibreActuelle,
   });
 }
 
@@ -639,9 +717,37 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
  * indépendant est les deux à la fois, et lui prêter un employeur pour la
  * moitié de la charge fabriquerait un gain qui n'existe pas.
  */
-export function blocTauxUniqueSansEmployeur(tauxRepartition, tauxCapitalisation = 0) {
-  return blocTauxUnique(tauxRepartition, tauxCapitalisation, 1);
+export function blocTauxUniqueSansEmployeur(tauxRepartition, tauxCapitalisation = 0,
+  csgRendue = 0) {
+  return blocTauxUnique(tauxRepartition, tauxCapitalisation, 1, csgRendue);
 }
+
+/**
+ * Ce que l'employeur public verse aujourd'hui, en fraction du traitement.
+ *
+ * Zéro quand aucune série ne couvre le régime cette année-là : la fiche
+ * retombe alors sur l'assiette fixe, et `brutPartage` dit pourquoi c'est la
+ * seule issue prudente. Les régimes d'un statut sont additionnés parce qu'ils
+ * le sont déjà ailleurs : un agent peut relever d'un régime de base et d'un
+ * régime additionnel.
+ */
+export function contributionEquilibre(paquet, affiliations, statut, annee) {
+  let table = MEMOIRE_CONTRIBUTIONS.get(paquet);
+  if (!table) {
+    table = new ContributionsEmployeurPubliques(paquet);
+    MEMOIRE_CONTRIBUTIONS.set(paquet, table);
+  }
+  let total = 0;
+  for (const code of affiliations.regimes(statut, annee)) {
+    const contribution = table.taux(code, annee);
+    if (contribution !== null && contribution !== undefined) {
+      total += contribution[0];
+    }
+  }
+  return total;
+}
+
+const MEMOIRE_CONTRIBUTIONS = new Map();
 
 /** La fiche de paie sait-elle décrire ce statut ? */
 export function ficheDePaiePossible(affiliations, statut) {
@@ -781,6 +887,16 @@ export class RemunerationActif {
     return this.annees[0];
   }
 
+  /** Les points de CSG d'activité rendus l'année de référence. */
+  get csgRendue() {
+    return this.reference.csgRendue;
+  }
+
+  /** Ce que l'employeur public verse aujourd'hui, l'année de référence. */
+  get contributionEquilibre() {
+    return this.reference.contributionEquilibre;
+  }
+
   get gainNetMensuel() {
     return this.reference.gainNet / 12;
   }
@@ -830,7 +946,7 @@ export class RemunerationActif {
  * pas décrire.
  */
 export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliations,
-  parametres, bareme) {
+  parametres, bareme, paquet) {
   const debut = Math.max(parametres.annee_bascule, carriere.premiereAnnee);
   const anneesActives = [];
   for (let annee = debut; annee <= carriere.anneeLiquidation; annee += 1) {
@@ -861,14 +977,35 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
   // que la proposition impose, et leur placement se chiffre sur chaque année,
   // pris sur le net.
   const volontaire = tauxCapitalisationVolontaireApplique(parametres);
-  const propose = affiliations.sansEmployeur(statut)
-    ? blocTauxUniqueSansEmployeur(
+  const sansEmployeur = affiliations.sansEmployeur(statut);
+  const rendue = parametres.part_rendue_aux_salaires;
+  // La contribution d'équilibre ne concerne que le profil dont l'employeur en
+  // verse une : la chercher pour un salarié du privé la trouverait nulle, et
+  // coûterait un chargement de série par carrière.
+  const partage = profil.incidence === Incidence.PARTAGEE;
+
+  /**
+   * Le bloc de la proposition l'année `annee`.
+   *
+   * Reconstruit à chaque année parce que deux de ses trois nouveautés en
+   * dépendent : les points de CSG rendus suivent le poste abandonné, que le
+   * COR projette année par année, et le taux d'équilibre de l'employeur public
+   * suit sa propre série. Le coût est nul — le bloc est trois segments.
+   */
+  const blocPropose = (annee) => {
+    const csg = paquet ? pointsCsgRendus(paquet, annee, rendue) : 0;
+    if (sansEmployeur) {
+      return blocTauxUniqueSansEmployeur(
+        parametres.taux_cotisation_liberal, capitalisation, csg,
+      );
+    }
+    return blocTauxUnique(
       parametres.taux_cotisation_liberal, capitalisation,
-    )
-    : blocTauxUnique(
-      parametres.taux_cotisation_liberal, capitalisation,
-      parametres.part_salariale_taux_unique,
+      parametres.part_salariale_taux_unique, csg, rendue,
+      partage && paquet
+        ? contributionEquilibre(paquet, affiliations, statut, annee) : 0,
     );
+  };
 
   const comparees = [];
   for (const annee of anneesActives) {
@@ -883,6 +1020,7 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     const plafond = macro.plafond_securite_sociale.valeur(annee);
     const smic = smicAnnuel(macro, annee);
     const blocActuel = blocDroitEnVigueur(catalogue, affiliations, statut, annee);
+    const propose = blocPropose(annee);
     const ficheActuelle = constructeur.fiche(
       annee, brut, plafond, smic, blocActuel, cadre,
     );
@@ -891,6 +1029,11 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     );
     comparees.push(new AnneeComparee({
       annee,
+      // Déjà retranchés de la fiche proposée ; gardés pour que la page puisse
+      // dire de combien la ligne de CSG a bougé, et d'où vient le traitement
+      // supplémentaire d'un agent public.
+      csgRendue: propose.csgRendue,
+      contributionEquilibre: propose.contributionEquilibreActuelle,
       droitEnVigueur: ficheActuelle,
       proposition: constructeur.fiche(
         annee, brutPropose, plafond, smic, propose, cadre,
@@ -918,6 +1061,9 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     libelleNet: profil.libelle_net,
     afficheCoutDuTravail: profil.cout_du_travail,
     incidence: profil.incidence,
+    // Part de ce que l'employeur libère qui remonte dans l'assiette, sous
+    // `Incidence.PARTAGEE` : la page en a besoin pour écrire « la moitié ».
+    partRendueAuxSalaires: rendue,
   });
 }
 
