@@ -526,6 +526,19 @@ def _(m: Modele):
     assert not any("seuil" in nom for nom in _champs(Parametres))
 
 
+@controle("avances_par_succession")
+def _(m: Modele):
+    """Le conjoint survivant porte souvent la sienne : la succession en affronte plus d'une.
+
+    Et le sens compte : une avance plus grosse est MOINS bien couverte par un
+    patrimoine de ménage, non mieux. La part de reprise doit donc baisser
+    quand le nombre d'avances par succession monte.
+    """
+    garantie = m.cout.avenir.annee(m.cout.avenir.derniere_annee).garantie
+    assert 1.0 < garantie.avances_par_succession < 2.0
+    assert 0 < garantie.part_reprise < 1
+
+
 @controle("garantie_brute_et_nette")
 def _(m: Modele):
     ligne = m.cout.avenir.annee(m.cout.avenir.derniere_annee)

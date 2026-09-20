@@ -3418,8 +3418,8 @@ corriger au passage, et `moteur/js/pages.js` en regard ; les témoins.
 Le portage JavaScript n'a pas à porter le test : le catalogue vise le texte,
 et les deux moteurs rendent le même.
 
-**Fait le 20 septembre 2026.** 198 entrées au catalogue — 174 vérifiées,
-6 contredites, 5 hors modèle, 13 sans portée — et 117 contrôles, soit 386
+**Fait le 20 septembre 2026.** 199 entrées au catalogue — 175 vérifiées,
+6 contredites, 5 hors modèle, 13 sans portée — et 118 contrôles, soit 388
 tests de plus : un par entrée pour la présence de l'extrait, un par entrée qui
 engage quelque chose pour le contrôle, un par affirmation hors modèle pour sa
 source, plus les trois qui tiennent la forme, l'exhaustivité et l'absence de

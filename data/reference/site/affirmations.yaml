@@ -849,6 +849,13 @@ affirmations:
     etat: verifiee
     controle: garantie_est_une_avance_reprise
 
+  - id: cout.avances_par_succession
+    page: /cout
+    extrait: "Une succession porte"
+    porte: une succession porte plus d'une avance, et c'est ce total que le patrimoine affronte
+    etat: verifiee
+    controle: avances_par_succession
+
   - id: cout.brute_avant_reprise
     page: /cout
     extrait: "brute, avant reprise"
