@@ -1,0 +1,189 @@
+# Les bonifications de service, dénombrées par celui qui les paie
+# source_id: sre_jaune_pensions
+#
+# Le « Rapport sur les pensions de retraite de la fonction publique »,
+# annexe au projet de loi de finances (le jaune budgétaire), est le seul
+# document public qui dénombre les bonifications de service. Trois de
+# ses tableaux sont ici, à plat, lus dans le PDF par
+# scripts/fetch/sre_jaune_pensions.py :
+#
+# tableau A-7  : pensions EN PAIEMENT en 2024 (un stock). ligne = la
+#                bonification ; mesure = beneficiaires (nombre de pensions
+#                qui en portent une) ou duree_trimestres (durée moyenne
+#                chez ces seuls bénéficiaires). La ligne `ensemble` porte
+#                l'effectif de droit direct du régime (mesure effectif).
+#                Le document confond bénéfices de campagne et cinquième
+#                (ligne campagne_ou_cinquieme) ; hors_l12 sont les
+#                bonifications hors article L. 12 du CPCMR — police,
+#                surveillants, douanes, contrôleurs aériens.
+# tableau 50   : FLUX des liquidants de 2023. ligne = la bonification, ou
+#                ensemble ; mesure = proportion (part des liquidants qui
+#                en bénéficient, en fraction), gain_trimestres (gain
+#                moyen en durée d'assurance) ou gain_mensuel_eur (gain
+#                sur le montant mensuel de la pension, en euros — la
+#                seule valorisation publiée de ces dispositifs).
+# tableau B-1  : pensions de droit direct entrées en paiement en 2023 ;
+#                seules les lignes complètes du document sont ici,
+#                mesure departs.
+#
+# population : fpe_civils_hors_poste_orange, fpe_civils, fpe_militaires,
+#              fpt, fph (A-7) ; fpe_civils, fpe_militaires, fpt, fph (50) ;
+#              plus fpe_total, ouvriers_etat, cnracl_total (B-1).
+#
+# fiabilite :
+#   certifiee : lu dans le document du producteur et recontrôlé par
+#               scripts/verifier_donnees.py. Le document ne se télécharge
+#               pas depuis une session (budget.gouv.fr refuse), mais
+#               l'Assemblée nationale sert le même fichier, dont
+#               data/sources.yaml porte l'empreinte.
+#
+# Les fiches de avantages_non_contributifs.yaml renvoient ici par leur
+# champ `denombrement` ; un test exige que chaque chiffre qu'elles citent
+# du jaune soit une valeur de ce fichier.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+tableau,ligne,population,mesure,valeur,fiabilite
+50,campagne,fpe_civils,gain_mensuel_eur,56,certifiee
+50,campagne,fpe_civils,gain_trimestres,3.500,certifiee
+50,campagne,fpe_civils,proportion,0.009,certifiee
+50,campagne,fpe_militaires,gain_mensuel_eur,101,certifiee
+50,campagne,fpe_militaires,gain_trimestres,13.100,certifiee
+50,campagne,fpe_militaires,proportion,0.794,certifiee
+50,campagne,fph,gain_trimestres,2.700,certifiee
+50,campagne,fph,proportion,0.005,certifiee
+50,campagne,fpt,gain_trimestres,3.400,certifiee
+50,campagne,fpt,proportion,0.010,certifiee
+50,cinquieme_l12,fpe_civils,proportion,0.000,certifiee
+50,cinquieme_l12,fpe_militaires,gain_mensuel_eur,146,certifiee
+50,cinquieme_l12,fpe_militaires,gain_trimestres,16.400,certifiee
+50,cinquieme_l12,fpe_militaires,proportion,0.984,certifiee
+50,depaysement,fpe_civils,gain_mensuel_eur,266,certifiee
+50,depaysement,fpe_civils,gain_trimestres,19.800,certifiee
+50,depaysement,fpe_civils,proportion,0.090,certifiee
+50,depaysement,fpe_militaires,proportion,0.000,certifiee
+50,depaysement,fph,gain_trimestres,34.800,certifiee
+50,depaysement,fph,proportion,0.024,certifiee
+50,depaysement,fpt,gain_trimestres,36.700,certifiee
+50,depaysement,fpt,proportion,0.029,certifiee
+50,enfant,fpe_civils,gain_mensuel_eur,195,certifiee
+50,enfant,fpe_civils,gain_trimestres,7.900,certifiee
+50,enfant,fpe_civils,proportion,0.450,certifiee
+50,enfant,fpe_militaires,gain_mensuel_eur,59,certifiee
+50,enfant,fpe_militaires,gain_trimestres,6.400,certifiee
+50,enfant,fpe_militaires,proportion,0.030,certifiee
+50,enfant,fph,gain_trimestres,7.700,certifiee
+50,enfant,fph,proportion,0.646,certifiee
+50,enfant,fpt,gain_trimestres,7.400,certifiee
+50,enfant,fpt,proportion,0.452,certifiee
+50,enseignement_technique,fpe_civils,gain_mensuel_eur,330,certifiee
+50,enseignement_technique,fpe_civils,gain_trimestres,16.200,certifiee
+50,enseignement_technique,fpe_civils,proportion,0.004,certifiee
+50,enseignement_technique,fpe_militaires,proportion,0.000,certifiee
+50,ensemble,fpe_civils,gain_mensuel_eur,246,certifiee
+50,ensemble,fpe_civils,gain_trimestres,11.900,certifiee
+50,ensemble,fpe_civils,proportion,0.569,certifiee
+50,ensemble,fpe_militaires,gain_mensuel_eur,315,certifiee
+50,ensemble,fpe_militaires,gain_trimestres,33.500,certifiee
+50,ensemble,fpe_militaires,proportion,0.996,certifiee
+50,ensemble,fph,gain_trimestres,8.900,certifiee
+50,ensemble,fph,proportion,0.662,certifiee
+50,ensemble,fpt,gain_trimestres,10.000,certifiee
+50,ensemble,fpt,proportion,0.483,certifiee
+50,hors_l12,fpe_civils,gain_mensuel_eur,312,certifiee
+50,hors_l12,fpe_civils,gain_trimestres,19.400,certifiee
+50,hors_l12,fpe_civils,proportion,0.066,certifiee
+50,hors_l12,fpe_militaires,gain_mensuel_eur,59,certifiee
+50,hors_l12,fpe_militaires,gain_trimestres,5.800,certifiee
+50,hors_l12,fpe_militaires,proportion,0.029,certifiee
+50,service_aerien_sous_marin,fpe_civils,gain_mensuel_eur,157,certifiee
+50,service_aerien_sous_marin,fpe_civils,gain_trimestres,11.900,certifiee
+50,service_aerien_sous_marin,fpe_civils,proportion,0.004,certifiee
+50,service_aerien_sous_marin,fpe_militaires,gain_mensuel_eur,69,certifiee
+50,service_aerien_sous_marin,fpe_militaires,gain_trimestres,11.000,certifiee
+50,service_aerien_sous_marin,fpe_militaires,proportion,0.583,certifiee
+50,service_aerien_sous_marin,fph,gain_trimestres,7.200,certifiee
+50,service_aerien_sous_marin,fph,proportion,0.000,certifiee
+50,service_aerien_sous_marin,fpt,gain_trimestres,9.700,certifiee
+50,service_aerien_sous_marin,fpt,proportion,0.004,certifiee
+A-7,campagne_ou_cinquieme,fpe_civils,beneficiaires,88932,certifiee
+A-7,campagne_ou_cinquieme,fpe_civils,duree_trimestres,4.900,certifiee
+A-7,campagne_ou_cinquieme,fpe_civils_hors_poste_orange,beneficiaires,62772,certifiee
+A-7,campagne_ou_cinquieme,fpe_civils_hors_poste_orange,duree_trimestres,4.900,certifiee
+A-7,campagne_ou_cinquieme,fpe_militaires,beneficiaires,404478,certifiee
+A-7,campagne_ou_cinquieme,fpe_militaires,duree_trimestres,27.400,certifiee
+A-7,campagne_ou_cinquieme,fph,beneficiaires,2339,certifiee
+A-7,campagne_ou_cinquieme,fph,duree_trimestres,3.100,certifiee
+A-7,campagne_ou_cinquieme,fpt,beneficiaires,6559,certifiee
+A-7,campagne_ou_cinquieme,fpt,duree_trimestres,3.200,certifiee
+A-7,depaysement,fpe_civils,beneficiaires,180010,certifiee
+A-7,depaysement,fpe_civils,duree_trimestres,17.300,certifiee
+A-7,depaysement,fpe_civils_hors_poste_orange,beneficiaires,165086,certifiee
+A-7,depaysement,fpe_civils_hors_poste_orange,duree_trimestres,17.200,certifiee
+A-7,depaysement,fpe_militaires,beneficiaires,447,certifiee
+A-7,depaysement,fpe_militaires,duree_trimestres,4.200,certifiee
+A-7,depaysement,fph,beneficiaires,23874,certifiee
+A-7,depaysement,fph,duree_trimestres,22.100,certifiee
+A-7,depaysement,fpt,beneficiaires,39933,certifiee
+A-7,depaysement,fpt,duree_trimestres,18.700,certifiee
+A-7,enfant,fpe_civils,beneficiaires,786167,certifiee
+A-7,enfant,fpe_civils,duree_trimestres,8.300,certifiee
+A-7,enfant,fpe_civils_hors_poste_orange,beneficiaires,661815,certifiee
+A-7,enfant,fpe_civils_hors_poste_orange,duree_trimestres,8.400,certifiee
+A-7,enfant,fpe_militaires,beneficiaires,24603,certifiee
+A-7,enfant,fpe_militaires,duree_trimestres,7.700,certifiee
+A-7,enfant,fph,beneficiaires,415564,certifiee
+A-7,enfant,fph,duree_trimestres,8.600,certifiee
+A-7,enfant,fpt,beneficiaires,341086,certifiee
+A-7,enfant,fpt,duree_trimestres,8.100,certifiee
+A-7,enseignement_technique,fpe_civils,beneficiaires,13893,certifiee
+A-7,enseignement_technique,fpe_civils,duree_trimestres,16.100,certifiee
+A-7,enseignement_technique,fpe_civils_hors_poste_orange,beneficiaires,13893,certifiee
+A-7,enseignement_technique,fpe_civils_hors_poste_orange,duree_trimestres,16.100,certifiee
+A-7,enseignement_technique,fpe_militaires,beneficiaires,39,certifiee
+A-7,enseignement_technique,fpe_militaires,duree_trimestres,12.900,certifiee
+A-7,ensemble,fpe_civils,effectif,1654863,certifiee
+A-7,ensemble,fpe_civils_hors_poste_orange,effectif,1339945,certifiee
+A-7,ensemble,fpe_militaires,effectif,406645,certifiee
+A-7,ensemble,fph,effectif,630149,certifiee
+A-7,ensemble,fpt,effectif,800833,certifiee
+A-7,hors_l12,fpe_civils,beneficiaires,108453,certifiee
+A-7,hors_l12,fpe_civils,duree_trimestres,19.100,certifiee
+A-7,hors_l12,fpe_civils_hors_poste_orange,beneficiaires,108181,certifiee
+A-7,hors_l12,fpe_civils_hors_poste_orange,duree_trimestres,19.100,certifiee
+A-7,hors_l12,fpe_militaires,beneficiaires,8126,certifiee
+A-7,hors_l12,fpe_militaires,duree_trimestres,5.500,certifiee
+A-7,service_aerien_sous_marin,fpe_civils,beneficiaires,8415,certifiee
+A-7,service_aerien_sous_marin,fpe_civils,duree_trimestres,7.000,certifiee
+A-7,service_aerien_sous_marin,fpe_civils_hors_poste_orange,beneficiaires,7351,certifiee
+A-7,service_aerien_sous_marin,fpe_civils_hors_poste_orange,duree_trimestres,7.700,certifiee
+A-7,service_aerien_sous_marin,fpe_militaires,beneficiaires,202113,certifiee
+A-7,service_aerien_sous_marin,fpe_militaires,duree_trimestres,16.900,certifiee
+A-7,service_aerien_sous_marin,fph,beneficiaires,54,certifiee
+A-7,service_aerien_sous_marin,fph,duree_trimestres,5.600,certifiee
+A-7,service_aerien_sous_marin,fpt,beneficiaires,2708,certifiee
+A-7,service_aerien_sous_marin,fpt,duree_trimestres,9.000,certifiee
+B-1,dparts_pour_invalidit,cnracl_total,departs,7851,certifiee
+B-1,dparts_pour_invalidit,fpe_civils,departs,2890,certifiee
+B-1,dparts_pour_invalidit,fpe_civils_hors_poste_orange,departs,2417,certifiee
+B-1,dparts_pour_invalidit,fpe_militaires,departs,2162,certifiee
+B-1,dparts_pour_invalidit,fpe_total,departs,5052,certifiee
+B-1,dparts_pour_invalidit,fph,departs,2238,certifiee
+B-1,dparts_pour_invalidit,fpt,departs,5613,certifiee
+B-1,dparts_pour_invalidit,ouvriers_etat,departs,23,certifiee
+B-1,dparts_pour_motifs_familiaux,cnracl_total,departs,3619,certifiee
+B-1,dparts_pour_motifs_familiaux,fpe_civils,departs,1592,certifiee
+B-1,dparts_pour_motifs_familiaux,fpe_civils_hors_poste_orange,departs,1403,certifiee
+B-1,dparts_pour_motifs_familiaux,fpe_militaires,departs,0,certifiee
+B-1,dparts_pour_motifs_familiaux,fpe_total,departs,1592,certifiee
+B-1,dparts_pour_motifs_familiaux,fph,departs,1449,certifiee
+B-1,dparts_pour_motifs_familiaux,fpt,departs,2170,certifiee
+B-1,dparts_pour_motifs_familiaux,ouvriers_etat,departs,1,certifiee
+B-1,ensemble_des_dparts,cnracl_total,departs,62748,certifiee
+B-1,ensemble_des_dparts,fpe_civils,departs,46932,certifiee
+B-1,ensemble_des_dparts,fpe_civils_hors_poste_orange,departs,38791,certifiee
+B-1,ensemble_des_dparts,fpe_militaires,departs,11817,certifiee
+B-1,ensemble_des_dparts,fpe_total,departs,58749,certifiee
+B-1,ensemble_des_dparts,fph,departs,19767,certifiee
+B-1,ensemble_des_dparts,fpt,departs,42981,certifiee
+B-1,ensemble_des_dparts,ouvriers_etat,departs,1326,certifiee

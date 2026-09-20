@@ -61,6 +61,22 @@
 #   aucune        : personne ne publie, et le modèle ne le sert pas. Le coût
 #                   est inconnu, et l'écrire est plus utile que de l'estimer.
 #
+# DÉNOMBREMENT — ce que le jaune budgétaire compte, et où c'est certifié
+# ---------------------------------------------------------------------
+# Le « Rapport sur les pensions de retraite de la fonction publique », annexe
+# au projet de loi de finances, est le seul document public qui dénombre les
+# bonifications de service. Ses tableaux sont lus dans le PDF par
+# scripts/fetch/sre_jaune_pensions.py et certifiés, valeur par valeur, dans
+# `bonifications_jaune.csv` par scripts/verifier_donnees.py. Une ligne qui
+# cite ces chiffres porte un champ `denombrement` qui dit où ils sont :
+#   source_id  : sre_jaune_pensions, toujours
+#   tableau_a7 : la ligne du tableau A-7 (le stock 2024) — la bonification
+#                telle que le document la nomme ; il confond bénéfices de
+#                campagne et cinquième (campagne_ou_cinquieme)
+#   tableau_50 : la colonne du tableau 50 (le flux 2023), qui les sépare
+# Un test exige que chaque chiffre que la note cite du jaune soit une valeur
+# certifiée de ces lignes-là : la prose ne peut plus s'écarter du document.
+#
 # L'ORDRE DE GRANDEUR D'ENSEMBLE, mesuré par quelqu'un d'autre
 # -------------------------------------------------------------
 # Le COR, dans le rapport commandé par l'article 75 de la LFSS 2009 (27 janvier
@@ -868,6 +884,10 @@ avantages:
     sans_chiffre: >-
       la durée de services militaires effectifs n'est pas saisie ; le jaune la
       donne à 98,4 % des liquidants, 146 € par mois
+    denombrement:
+      source_id: sre_jaune_pensions
+      tableau_a7: campagne_ou_cinquieme
+      tableau_50: cinquieme_l12
     cout:
       mesurable_par: aucune
       note: >-
@@ -906,6 +926,10 @@ avantages:
     sans_chiffre: >-
       le corps d'appartenance n'est pas saisi ; le jaune en compte 108 453, à
       19,1 trimestres, la plus longue
+    denombrement:
+      source_id: sre_jaune_pensions
+      tableau_a7: hors_l12
+      tableau_50: hors_l12
     cout:
       mesurable_par: aucune
       note: >-
@@ -985,6 +1009,10 @@ avantages:
     sans_chiffre: >-
       le lieu d'affectation n'est pas saisi ; le jaune en compte 180 010, à
       266 € par mois
+    denombrement:
+      source_id: sre_jaune_pensions
+      tableau_a7: depaysement
+      tableau_50: depaysement
     cout:
       mesurable_par: aucune
       note: >-
@@ -1013,6 +1041,10 @@ avantages:
     sans_chiffre: >-
       le détail des services n'est pas saisi ; le jaune la confond avec le
       cinquième : 404 478 militaires sur 406 645, à 27,4 trimestres
+    denombrement:
+      source_id: sre_jaune_pensions
+      tableau_a7: campagne_ou_cinquieme
+      tableau_50: campagne
     cout:
       mesurable_par: aucune
       note: >-
@@ -1042,6 +1074,10 @@ avantages:
     sans_chiffre: >-
       les heures de vol et les services sous-marins ne sont pas saisis ; le
       jaune en compte un militaire sur deux, à 16,9 trimestres
+    denombrement:
+      source_id: sre_jaune_pensions
+      tableau_a7: service_aerien_sous_marin
+      tableau_50: service_aerien_sous_marin
     cout:
       mesurable_par: aucune
       note: >-

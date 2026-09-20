@@ -8578,3 +8578,23 @@ intitulés sont reconnus sans accents, les nombres sont intacts.
 
 **Fin.** Le jaune se lit, ses trois tableaux sont dans un JSON, et chaque
 chiffre qu'on en avait recopié est retrouvé dans le document par un script.
+
+**Le même jour, la suite : le champ structuré, et les valeurs certifiées.**
+« Ajoute le champ structuré pour certifier les valeurs du jaune. » Les
+chiffres vivaient dans des notes ; le vérificateur ne sait certifier qu'un
+CSV à clés, colonne `fiabilite`, et réécrire un YAML avec ses commentaires
+n'est pas à sa portée. D'où la forme : les trois tableaux, à plat, dans
+`data/reference/legislation/bonifications_jaune.csv` — clé (tableau, ligne,
+population, mesure), 143 valeurs, toutes `certifiee` —, écrit par
+`verifier_donnees.py --appliquer` depuis le JSON du lecteur, par deux
+certifications sur le même fichier, l'une pour les entiers (effectifs,
+euros), l'autre pour les décimaux (durées, proportions), parce qu'un format
+unique aurait écrit « 404478.000 » ou « 27 ». Et sur chacune des cinq fiches
+qui citent le jaune, un champ `denombrement` : `source_id`, la ligne du
+tableau A-7 (le stock, où le document confond campagne et cinquième) et la
+colonne du tableau 50 (le flux, où il les sépare). `tests/test_bonifications_jaune.py`
+tient l'ensemble : le CSV ne porte que du certifié, le champ désigne des
+lignes qui existent, et chaque chiffre qu'une note cite du jaune est une
+valeur certifiée de ses lignes — la prose ne peut plus s'écarter du document.
+Le jeu `sre_jaune_pensions` passe à `certifie` dans le manifeste, et le
+journal de certification porte ses deux traces.

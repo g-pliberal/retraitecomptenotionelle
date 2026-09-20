@@ -41,12 +41,21 @@ que « bénéficiaires » s'y lit « bnficiaires » — pdfminer rend la même c
 Les intitulés sont donc reconnus sans leurs accents ; les nombres, eux, sont
 intacts.
 
-**CE QUE ``--confronter`` PROUVE.** Les valeurs du jaune ont d'abord été
-saisies à l'écran dans ``avantages_non_contributifs.yaml``, sans qu'un script
-puisse les revérifier. ``--confronter`` relit chaque note qui cite le jaune, en
-extrait les nombres, et dit pour chacun s'il figure dans les tableaux lus. Un
-nombre absent est une faute de saisie ou un chiffre pris ailleurs : dans les
-deux cas, à regarder.
+**OÙ LES VALEURS VONT.** ``scripts/verifier_donnees.py --appliquer`` lit le
+JSON écrit ici et verse les trois tableaux, à plat, dans
+``data/reference/legislation/bonifications_jaune.csv``, au niveau
+``certifiee`` — clé (tableau, ligne, population, mesure). Les fiches de
+``avantages_non_contributifs.yaml`` y renvoient par leur champ
+``denombrement``, et un test exige que chaque chiffre qu'elles citent du
+jaune soit une valeur de leurs lignes.
+
+**CE QUE ``--confronter`` PROUVE EN PLUS.** Les valeurs du jaune ont d'abord
+été saisies à l'écran dans les notes des fiches. ``--confronter`` relit chaque
+note qui cite le jaune, en extrait les nombres, et dit pour chacun s'il figure
+dans les tableaux lus — sans passer par le CSV ni par le champ, c'est-à-dire
+même pour une note qui n'aurait pas encore son ``denombrement``. Un nombre
+absent est une faute de saisie ou un chiffre pris ailleurs : dans les deux
+cas, à regarder.
 """
 
 from __future__ import annotations

@@ -2752,6 +2752,58 @@ def source_employeur_sncf() -> dict[tuple, float]:
 # ---------------------------------------------------------------------------
 
 
+#: Les mesures du jaune pensions qui sont des effectifs ou des euros, donc des
+#: entiers ; les autres — durées en trimestres, proportions — sont des
+#: décimaux. Deux certifications sur le même fichier, parce qu'un format
+#: unique écrirait « 404478.000 » ou « 27 ».
+MESURES_JAUNE_ENTIERES = frozenset({"effectif", "beneficiaires", "gain_mensuel_eur", "departs"})
+
+
+def _valeurs_jaune() -> dict[tuple, float]:
+    """Les trois tableaux du jaune pensions, à plat.
+
+    Clé : (tableau, ligne, population, mesure). Dans A-7 la ligne est la
+    bonification et la mesure ``beneficiaires`` ou ``duree_trimestres`` —
+    plus une ligne ``ensemble`` qui porte l'``effectif`` du régime ; dans le
+    tableau 50 la ligne est la colonne du document (une bonification, ou
+    ``ensemble``) et la mesure le bloc (``proportion``, ``gain_trimestres``,
+    ``gain_mensuel_eur``) ; dans B-1 la ligne est celle du document et la
+    mesure ``departs``. Une cellule « n.d. » n'est pas une valeur : elle
+    n'entre pas.
+    """
+    tables = _lire_json("sre_jaune_pensions.json", "scripts/fetch/sre_jaune_pensions.py")["tables"]
+    valeurs: dict[tuple, float] = {}
+    a7 = tables["A-7"]
+    for population, valeur in a7["effectif"].items():
+        if valeur is not None:
+            valeurs[("A-7", "ensemble", population, "effectif")] = float(valeur)
+    for code, table in a7["bonifications"].items():
+        for mesure in ("beneficiaires", "duree_trimestres"):
+            for population, valeur in table[mesure].items():
+                if valeur is not None:
+                    valeurs[("A-7", code, population, mesure)] = float(valeur)
+    for bloc, populations in tables["50"].items():
+        for population, colonnes in populations.items():
+            for colonne, valeur in colonnes.items():
+                if valeur is not None:
+                    valeurs[("50", colonne, population, bloc)] = float(valeur)
+    for ligne, contenu in tables["B-1"].items():
+        for population, valeur in contenu["valeurs"].items():
+            if valeur is not None:
+                valeurs[("B-1", ligne, population, "departs")] = float(valeur)
+    return dict(sorted(valeurs.items()))
+
+
+def source_jaune_effectifs() -> dict[tuple, float]:
+    """Les effectifs et les euros du jaune pensions : des entiers."""
+    return {cle: v for cle, v in _valeurs_jaune().items() if cle[3] in MESURES_JAUNE_ENTIERES}
+
+
+def source_jaune_taux() -> dict[tuple, float]:
+    """Les durées et les proportions du jaune pensions : des décimaux."""
+    return {cle: v for cle, v in _valeurs_jaune().items() if cle[3] not in MESURES_JAUNE_ENTIERES}
+
+
 #: Colonnes-clés qui se trient en NOMBRE et non en texte. Sans elles, la borne
 #: « 1000 » d'une tranche de pension tomberait entre « 100 » et « 200 ».
 CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuelle",
@@ -4920,6 +4972,76 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         niveau="haute",
+    ),
+    Certification(
+        nom="bonifications_jaune_effectifs",
+        chemin=REFERENCE / "legislation" / "bonifications_jaune.csv",
+        cles=("tableau", "ligne", "population", "mesure"),
+        colonne="valeur",
+        source=source_jaune_effectifs,
+        origine="Direction du budget, jaune pensions annexé au PLF 2026 (données "
+                "du Service des retraites de l'État, de la CNRACL et du FSPOEIE), "
+                "tableaux A-7, 50 et B-1",
+        decimales=0,
+        tolerance=0.5,
+        entete=(
+            "# Les bonifications de service, dénombrées par celui qui les paie",
+            "# source_id: sre_jaune_pensions",
+            "#",
+            "# Le « Rapport sur les pensions de retraite de la fonction publique »,",
+            "# annexe au projet de loi de finances (le jaune budgétaire), est le seul",
+            "# document public qui dénombre les bonifications de service. Trois de",
+            "# ses tableaux sont ici, à plat, lus dans le PDF par",
+            "# scripts/fetch/sre_jaune_pensions.py :",
+            "#",
+            "# tableau A-7  : pensions EN PAIEMENT en 2024 (un stock). ligne = la",
+            "#                bonification ; mesure = beneficiaires (nombre de pensions",
+            "#                qui en portent une) ou duree_trimestres (durée moyenne",
+            "#                chez ces seuls bénéficiaires). La ligne `ensemble` porte",
+            "#                l'effectif de droit direct du régime (mesure effectif).",
+            "#                Le document confond bénéfices de campagne et cinquième",
+            "#                (ligne campagne_ou_cinquieme) ; hors_l12 sont les",
+            "#                bonifications hors article L. 12 du CPCMR — police,",
+            "#                surveillants, douanes, contrôleurs aériens.",
+            "# tableau 50   : FLUX des liquidants de 2023. ligne = la bonification, ou",
+            "#                ensemble ; mesure = proportion (part des liquidants qui",
+            "#                en bénéficient, en fraction), gain_trimestres (gain",
+            "#                moyen en durée d'assurance) ou gain_mensuel_eur (gain",
+            "#                sur le montant mensuel de la pension, en euros — la",
+            "#                seule valorisation publiée de ces dispositifs).",
+            "# tableau B-1  : pensions de droit direct entrées en paiement en 2023 ;",
+            "#                seules les lignes complètes du document sont ici,",
+            "#                mesure departs.",
+            "#",
+            "# population : fpe_civils_hors_poste_orange, fpe_civils, fpe_militaires,",
+            "#              fpt, fph (A-7) ; fpe_civils, fpe_militaires, fpt, fph (50) ;",
+            "#              plus fpe_total, ouvriers_etat, cnracl_total (B-1).",
+            "#",
+            "# fiabilite :",
+            "#   certifiee : lu dans le document du producteur et recontrôlé par",
+            "#               scripts/verifier_donnees.py. Le document ne se télécharge",
+            "#               pas depuis une session (budget.gouv.fr refuse), mais",
+            "#               l'Assemblée nationale sert le même fichier, dont",
+            "#               data/sources.yaml porte l'empreinte.",
+            "#",
+            "# Les fiches de avantages_non_contributifs.yaml renvoient ici par leur",
+            "# champ `denombrement` ; un test exige que chaque chiffre qu'elles citent",
+            "# du jaune soit une valeur de ce fichier.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="bonifications_jaune_taux",
+        chemin=REFERENCE / "legislation" / "bonifications_jaune.csv",
+        cles=("tableau", "ligne", "population", "mesure"),
+        colonne="valeur",
+        source=source_jaune_taux,
+        origine="Direction du budget, jaune pensions annexé au PLF 2026, "
+                "tableaux A-7 et 50 (durées et proportions)",
+        decimales=3,
+        tolerance=5e-4,
     ),
 )
 

@@ -444,6 +444,11 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "salaires_forfaitaires_marins": "regimes/salaires_forfaitaires.csv",
         "employeur_public_texte":
             "legislation/contribution_employeur_public.csv",
+        # Le jaune pensions, lu dans le PDF : deux contrôles sur le même
+        # fichier et la même colonne, l'un pour les entiers (effectifs, euros),
+        # l'autre pour les décimaux (durées, proportions).
+        "bonifications_jaune_effectifs": "legislation/bonifications_jaune.csv",
+        "bonifications_jaune_taux": "legislation/bonifications_jaune.csv",
     }
     # Les séries d'APPOINT — celles qui ne comblent que ce que les autres ne
     # couvrent pas — peuvent n'avoir rien à dire, et sont alors absentes.

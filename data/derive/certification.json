@@ -56,6 +56,28 @@
    "valeurs": 77,
    "verifiee_le": "2026-09-19"
   },
+  "bonifications_jaune_effectifs": {
+   "ajoutees": 68,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "896ef8bd58494828",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Direction du budget, jaune pensions annexé au PLF 2026 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-7, 50 et B-1",
+   "valeurs": 68,
+   "verifiee_le": "2026-09-20"
+  },
+  "bonifications_jaune_taux": {
+   "ajoutees": 75,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "63be9fb4f7475a5b",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Direction du budget, jaune pensions annexé au PLF 2026, tableaux A-7 et 50 (durées et proportions)",
+   "valeurs": 75,
+   "verifiee_le": "2026-09-20"
+  },
   "carriere_longue": {
    "ajoutees": 0,
    "colonne": "age_depart",

@@ -945,8 +945,10 @@ institutions:
         miroir: https://questions.assemblee-nationale.fr/dyn/contenu/visualisation/1090002/file/12-Jaune2026_Pensions.pdf
         sha256: cbe526b93e2038aed8b04edcbbdca5c947b6260f6e24538900d4d36b2010bbf2
         recuperation: scripts/fetch/sre_jaune_pensions.py
-        statut_integration: saisi
-        cible: data/reference/legislation/avantages_non_contributifs.yaml
+        statut_integration: certifie
+        cible: >-
+          data/reference/legislation/bonifications_jaune.csv,
+          data/reference/legislation/avantages_non_contributifs.yaml
         note: >-
           LE SEUL DOCUMENT PUBLIC QUI DÉNOMBRE LES BONIFICATIONS DE SERVICE, et
           il a fallu le chercher : le rapport annuel du Service des retraites de
