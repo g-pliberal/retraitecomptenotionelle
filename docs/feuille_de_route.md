@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 849<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 875<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -1322,8 +1322,10 @@ piloté — et dit laquelle répond à quelle question.
 décrivait.** Le coefficient n'est toujours pas APPLIQUÉ — aucune courbe de la
 page Coût n'a bougé, aucun moteur de pension n'a été touché —, mais il est
 désormais LU là où le lecteur lit son propre chiffre : sous chaque montant du
-simulateur, un second chiffre dit ce que les comptes du système en financent,
-et un dépliant chiffre les trois façons de combler le manque. Ce qui a fait
+simulateur, un troisième chiffre dit ce que les recettes du système en paient,
+et un dépliant nomme QUI paiera la différence — les retraités, les actifs, ou
+personne pour l'instant — en chiffrant les trois leviers dans les unités où on
+les vit. Ce qui a fait
 passer ce demi-pas devant l'autre est ce que l'action nommait déjà comme son
 piège : un facteur commun ne déplace AUCUN écart entre carrières, si bien que
 l'appliquer dans l'agrégat ne change rien à ce que le site mesure page par
@@ -1342,8 +1344,9 @@ table de diverger du modèle.
 **Ce qui reste de l'action.** Le pilotage lui-même, c'est-à-dire l'agrégat :
 une variante de la page Coût où chaque système est ramené à l'équilibre, puis,
 si l'écart le justifie, l'ajustement porté à la pension individuelle. Le
-second chiffre du simulateur ne le remplace pas — il dit ce que le coefficient
-vaut, la page Coût continue de tracer des courbes qui ne s'en servent pas.
+troisième chiffre du simulateur ne le remplace pas — il dit ce que le
+coefficient vaut, la page Coût continue de tracer des courbes qui ne s'en
+servent pas.
 
 ---
 
@@ -10140,10 +10143,9 @@ sans mentir au visiteur du site ? »
 calculait déjà, depuis l'action 6, sans jamais l'afficher à côté d'une
 pension — le coefficient d'équilibre, 0,99 en 2026 et 0,84 en 2070. Le montant du système 1 n'a pas
 bougé d'un euro, et ne devait pas bouger : il est le droit en vigueur, c'est
-sa définition. À côté de lui, un second chiffre dit ce que les comptes en
-financent, la barre montre la part qui manque, et un dépliant chiffre les
-trois façons de combler ce manque — rogner, lever, emprunter — en disant
-qu'aucune n'est une prévision.
+sa définition. À côté de lui, un troisième chiffre dit ce que les recettes du
+système en paient, avec le manque EN EUROS sous lui ; la barre montre la part
+qui manque ; et un dépliant nomme qui paiera la différence.
 
 **La décision qui a coûté le plus à trancher** est de l'appliquer aux QUATRE
 systèmes et non au seul scénario 1. Le contraire aurait flatté la
@@ -10160,6 +10162,38 @@ identiques au centime. Ce qui bouge est le poids du paquet — le bilan figé
 pèse 40 Ko — et le test de péremption du paquet, qui coûte désormais les
 dix-huit secondes du coût agrégé ; il reçoit le contexte du module pour ne
 pas les payer deux fois.
+
+**Écrit deux fois, et c'est la seconde version qui compte.** La première
+ouvrait sur le coefficient d'équilibre et deux tableaux de nombres sans
+dimension — 0,90 puis 0,87, des points d'assiette, des parts de PIB. Retour de
+l'utilisateur : « c'est pas très clair pour un électeur moyen ». Il avait
+raison, et le défaut n'était pas le fond mais l'unité : personne n'a de repère
+pour « 3,5 points d'assiette », tout le monde en a un pour « 122 € de plus
+prélevés chaque mois ». Trois corrections en sont sorties.
+
+- **Le manque est écrit en euros, sous le chiffre**, dans l'idiome que l'écart
+  de salaire utilisait déjà : « il manque 393 € par mois ». C'est ce que le
+  lecteur retient ; « 87 % » est une proportion, une somme se compare à un
+  loyer.
+- **Les trois leviers sont nommés par QUI paie**, et chiffrés dans les unités
+  où on les vit : les retraités (pensions rognées de 10 %), les actifs (122 €
+  de plus prélevés chaque mois sur un salaire moyen), ou personne pour
+  l'instant (44 milliards empruntés par an). Une liste de trois phrases, et non
+  plus un tableau de trois colonnes qui laissait au lecteur le soin de
+  comprendre qu'il s'agissait du même trou. La conversion en euros a demandé
+  deux étalons, tous deux écrits sur la page : le salaire moyen brut
+  d'aujourd'hui, exact parce que le prélèvement est proportionnel, et le PIB de
+  la dernière année publiée, la table figée le portant désormais — un PIB de
+  2054 serait une hypothèse de croissance déguisée en observation.
+- **Le tableau des coefficients est descendu d'un cran**, sous un dépliant
+  imbriqué, avec ses colonnes en pourcentages avant de l'être en coefficient.
+  Rien n'est retiré, tout est rangé par ordre de lisibilité.
+
+**Deux choses trouvées en chemin.** La clé de lecture promettait encore « deux
+chiffres par ligne » au-dessus de trois — un test l'exige maintenant. Et les
+nombres mis en gras échappaient au catalogue des affirmations, qui ne peut
+tenir que des phrases stables : le gras est désormais réservé aux phrases, et
+les cinq qui portent une affirmation ont leur ligne au catalogue.
 
 ---
 

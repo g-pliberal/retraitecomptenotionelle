@@ -405,26 +405,41 @@ affirmations:
     etat: verifiee
     controle: quatre_systemes_meme_carriere
 
-  # Le second chiffre des résultats : ce que les comptes financent de la
-  # pension que la règle promet. Les trois phrases fortes de son dépliant
-  # affirment trois choses différentes, et n'ont donc pas le même régime.
-  - id: simuler.trois_leviers
+  # Le troisième chiffre des résultats : ce que les recettes du système paient
+  # de la pension que la règle promet. Son dépliant nomme QUI paie la
+  # différence, et les trois façons de la payer se déduisent l'une de l'autre :
+  # un seul contrôle les tient toutes les trois.
+  - id: simuler.levier_retraites
     page: /simuler
-    extrait: "Rogner les pensions est UNE façon de combler le manque, et ce n'est pas une prévision."
-    porte: le manque d'une année se comble de trois façons chiffrées, qui disent toutes la même taille
+    extrait: "Les retraités paient"
+    porte: rogner toutes les pensions du coefficient d'équilibre comble le manque de l'année
     etat: verifiee
     controle: trois_leviers_du_meme_manque
 
-  - id: simuler.coefficients_de_reference
+  - id: simuler.levier_actifs
     page: /simuler
-    extrait: "D'où viennent ces chiffres, et ce qu'ils ne suivent pas."
-    porte: les coefficients affichés sont ceux de la table figée, qui dit ce que le modèle calcule
+    extrait: "Les actifs paient"
+    porte: le même manque se comble en points de prélèvement sur les revenus d'activité
+    etat: verifiee
+    controle: trois_leviers_du_meme_manque
+
+  - id: simuler.levier_dette
+    page: /simuler
+    extrait: "Personne ne paie, pour l'instant"
+    porte: le même manque, laissé tel quel, est le déficit annuel emprunté
+    etat: verifiee
+    controle: trois_leviers_du_meme_manque
+
+  - id: simuler.horizon_des_comptes
+    page: /simuler
+    extrait: "et la page n'invente pas la suite."
+    porte: la moyenne s'arrête à l'horizon des comptes du COR, sans prolonger la projection
     etat: verifiee
     controle: bilan_fige_egale_le_modele
 
   - id: simuler.ajustement_sur_les_actifs
     page: /simuler
-    extrait: "Ce que l'histoire des réformes apprend de la branche qu'on choisit."
+    extrait: "Sur qui l'ajustement est tombé, les fois précédentes."
     porte: dans les réformes observées, l'ajustement a épargné les retraités et pesé sur les actifs
     etat: hors_modele
     source: "McHale, 1999"

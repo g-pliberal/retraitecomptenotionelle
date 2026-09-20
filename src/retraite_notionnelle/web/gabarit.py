@@ -1031,6 +1031,24 @@ tbody tr[hidden] { display: none; }
   color: var(--texte-doux);
 }
 .scenario .finance .unite { white-space: nowrap; text-align: right; }
+/* Ce qui manque, EN EUROS, sous le montant que les recettes paient. C'est le
+   seul endroit de la page où l'écart est une somme et non un taux, et c'est le
+   chiffre que le lecteur retient : « 87 % » est une proportion, « il manque
+   393 € par mois » se compare à un loyer. Même idiome que l'écart de salaire,
+   à la couleur près — celle du manque, qui sert déjà à cela dans les
+   graphiques, et non l'accent, qui dit ailleurs ce que la proposition
+   RAPPORTE. */
+.scenario .finance .ecart { font-size: 0.95rem; font-weight: 700;
+                            color: var(--manque); white-space: nowrap; }
+/* Les trois façons de combler le manque, dans le dépliant des résultats : une
+   liste, pas un tableau. Un tableau de trois lignes et trois colonnes rangeait
+   « 3,5 points d'assiette » en face de « 1,49 % du PIB » et laissait au
+   lecteur le soin de comprendre qu'il s'agissait du même trou ; trois phrases
+   nommant chacune QUI PAIE se lisent d'un coup d'œil. */
+.leviers { list-style: none; padding: 0; margin: 1rem 0; display: grid;
+           gap: 0.75rem; }
+.leviers > li { padding: 0.75rem 1rem; background: var(--fond-appui);
+                border-left: 3px solid var(--trait); line-height: 1.5; }
 @media (max-width: 48rem) {
   .scenario .finance { align-items: flex-start; padding-left: 0;
                        box-shadow: none; }

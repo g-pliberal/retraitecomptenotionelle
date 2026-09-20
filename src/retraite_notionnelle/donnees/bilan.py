@@ -84,6 +84,12 @@ class BilanFige:
     annees: list[AnneeBilan]
     premiere_annee_projetee: int
     assiette: AssietteFigee
+    #: Le PIB de la dernière année PUBLIÉE, en millions d'euros courants, et
+    #: cette année-là. Un manque de 2070 vaut une part de PIB ; le dire en
+    #: euros suppose un PIB, et le seul qu'on ait sans inventer une croissance
+    #: est celui d'aujourd'hui. Les pages qui s'en servent l'écrivent.
+    pib: float = 0.0
+    annee_pib: int = 0
 
     @property
     def premiere_annee(self) -> int:
@@ -126,6 +132,8 @@ def depuis_dictionnaire(donnees: dict) -> BilanFige:
             derniere_annee=int(donnees["annee_assiette"]),
             _part_pib=float(donnees["part_pib_assiette"]),
         ),
+        pib=float(donnees.get("pib", 0.0)),
+        annee_pib=int(donnees.get("annee_pib", 0)),
     )
 
 

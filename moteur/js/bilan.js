@@ -69,10 +69,16 @@ class AssietteFigee {
 
 /** Le bilan des quatre systèmes comparés, tel que la table le porte. */
 export class BilanFige {
-  constructor(annees, premiereAnneeProjetee, assiette) {
+  constructor(annees, premiereAnneeProjetee, assiette, pib = 0.0, anneePib = 0) {
     this.annees = annees;
     this.premiereAnneeProjetee = premiereAnneeProjetee;
     this.assiette = assiette;
+    // Le PIB de la dernière année PUBLIÉE, en millions d'euros courants : un
+    // manque de 2070 vaut une part de PIB, et le dire en euros suppose un
+    // PIB. Le seul qu'on ait sans inventer une croissance est celui
+    // d'aujourd'hui, et les pages qui s'en servent l'écrivent.
+    this.pib = pib;
+    this.anneePib = anneePib;
     this.premiereAnnee = annees.length ? annees[0].annee : 0;
     this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
     this.derniereAnneeObservee = premiereAnneeProjetee - 1;
@@ -95,5 +101,6 @@ export function chargerBilan(donnees) {
     )),
     donnees.premiere_annee_projetee,
     new AssietteFigee(donnees.annee_assiette, donnees.part_pib_assiette),
+    donnees.pib, donnees.annee_pib,
   );
 }
