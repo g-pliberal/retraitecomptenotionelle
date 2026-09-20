@@ -92,6 +92,13 @@ class Population:
         à 478 % du PIB ; c'est une incohérence interne — la part extrapolée
         dépassait le total — qui l'a trahi, et non le chiffre lui-même.
 
+        CE MOTIF N'EST PAS NEUF DANS LE DÉPÔT. ``StructureFinancement`` refuse
+        de la même façon, et depuis plus longtemps : le classeur du COR ne
+        publie la ventilation qu'à six dates, et « interpoler une structure de
+        financement entre 2030 et 2040 reviendrait à inventer une trajectoire
+        que personne n'a calculée ». Sa ``KeyError`` nomme les années
+        disponibles ; c'est le modèle suivi ici.
+
         CE QU'IL FAUT FAIRE À LA PLACE. Une cohorte DÉJÀ NÉE se prolonge par sa
         propre survie : effectif à l'âge ``a + k`` en ``T + k`` égale effectif à
         l'âge ``a`` en ``T`` multiplié par la survie de cette cohorte-là. Le
