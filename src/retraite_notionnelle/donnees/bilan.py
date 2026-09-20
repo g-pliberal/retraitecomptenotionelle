@@ -74,6 +74,44 @@ class AssietteFigee:
 
 
 @dataclass(frozen=True)
+class EngagementFige:
+    """L'engagement acquis à date, tel que la table le porte.
+
+    Les accesseurs sont ceux de ``cout.EngagementAcquis`` : la page ne sait pas
+    lequel des deux elle lit, et c'est ce qui garantit que la table figée et le
+    calcul complet ne peuvent pas dire deux choses.
+    """
+
+    annee: int
+    horizon: int
+    retraites: float
+    actifs: float
+    hors_projection: float
+    #: Ce qu'Eurostat publie pour la même année, en part de PIB : le seul
+    #: point de comparaison extérieur de cette grandeur.
+    publie: float
+    _par_scenario: dict[str, float] = field(default_factory=dict)
+    _sensibilite: tuple[tuple[float, float], ...] = ()
+
+    def part_pib(self, scenario: str = "actuel") -> float:
+        return self._par_scenario.get(scenario, 0.0)
+
+    def sensibilite(self) -> tuple[tuple[float, float], ...]:
+        return self._sensibilite
+
+    def ecart_pour(self, cible: float) -> float | None:
+        """L'écart de taux qui ramènerait l'engagement à ``cible``."""
+        points = self._sensibilite
+        for (ecart_bas, valeur_bas), (ecart_haut, valeur_haut) in zip(points, points[1:]):
+            if valeur_haut <= cible <= valeur_bas:
+                largeur = valeur_bas - valeur_haut
+                if largeur <= 0.0:
+                    return ecart_bas
+                return ecart_bas + (ecart_haut - ecart_bas) * (valeur_bas - cible) / largeur
+        return None
+
+
+@dataclass(frozen=True)
 class BilanFige:
     """Le bilan des quatre systèmes comparés, tel que la table le porte.
 
@@ -90,6 +128,8 @@ class BilanFige:
     #: est celui d'aujourd'hui. Les pages qui s'en servent l'écrivent.
     pib: float = 0.0
     annee_pib: int = 0
+    #: L'engagement acquis à date, à la dernière année qu'Eurostat transmette.
+    engagements: EngagementFige | None = None
 
     @property
     def premiere_annee(self) -> int:
@@ -134,6 +174,27 @@ def depuis_dictionnaire(donnees: dict) -> BilanFige:
         ),
         pib=float(donnees.get("pib", 0.0)),
         annee_pib=int(donnees.get("annee_pib", 0)),
+        engagements=_engagements(donnees.get("engagements")),
+    )
+
+
+def _engagements(brut: dict | None) -> EngagementFige | None:
+    """L'engagement acquis, ou rien : une table écrite avant lui n'en porte pas."""
+    if not brut:
+        return None
+    return EngagementFige(
+        annee=int(brut["annee"]),
+        horizon=int(brut["horizon"]),
+        retraites=float(brut["retraites"]),
+        actifs=float(brut["actifs"]),
+        hors_projection=float(brut["hors_projection"]),
+        publie=float(brut["publie"]),
+        _par_scenario={cle: float(valeur)
+                       for cle, valeur in brut["scenarios"].items()},
+        _sensibilite=tuple(
+            (float(point["ecart"]), float(point["part_pib"]))
+            for point in brut["sensibilite"]
+        ),
     )
 
 

@@ -9993,6 +9993,10 @@ def _cout_detail_sources(contexte: Contexte) -> str:
         f"{g.pourcentage(comptes.engagements(annee), decimales=0)} en {annee}"
         for annee in annees_engagements
     )
+    # Le nôtre, figé sous les réglages de référence comme le reste du bilan :
+    # sommer quatre-vingts années de flux chez le lecteur n'est pas possible.
+    engagement = contexte.bilan().engagements
+    ecart_publie = engagement.ecart_pour(engagement.publie) if engagement else None
     return g.depliant("D'où viennent ces chiffres", f"""
 <p>Cette page croise deux producteurs de comptes, et ils ne comptent pas la
 même chose. Rien n'est mélangé pour autant : du modèle, les deux premières
@@ -10057,7 +10061,26 @@ années de production</strong>, contre quatorze pour-cent de dépense annuelle. 
 dette : un droit acquis à date est une somme actualisée, et les trois
 transmissions donnent {engagements_serie}. Soixante points de PIB d'écart sans
 qu'aucun droit ait changé : c'est le taux qui les actualise qui a bougé. L'ordre de
-grandeur est tout ce qu'on en retient, et le dépôt ne calcule pas le sien.</p>
+grandeur est tout ce qu'on en retient.</p>
+<p class="discret"><strong>Et le dépôt calcule le sien.</strong> Sous la
+convention du COR, dont la note dit que « le taux d'actualisation est supposé
+égal chaque année à la croissance annuelle du PIB », actualiser revient à
+sommer les flux en part de PIB : le modèle porte donc l'engagement sans
+convention de plus. Il trouve
+{g.pourcentage(engagement.part_pib(), decimales=0)} du PIB en {engagement.annee}
+pour le système actuel, dont
+{g.pourcentage(engagement.retraites, decimales=0)} déjà liquidés et
+{g.pourcentage(engagement.actifs, decimales=0)} au prorata des carrières en
+cours. La proposition en doit
+{g.pourcentage(engagement.part_pib("notionnel_liberal"), decimales=0)} : elle
+promet moins, elle doit moins.</p>
+<p class="discret"><strong>Et l'écart avec les
+{g.pourcentage(engagement.publie, decimales=0)} publiés est un TAUX, pas un
+droit.</strong> Les mêmes droits, actualisés
+{g.nombre(ecart_publie * 100, 1)} point{"s" if ecart_publie * 100 >= 2 else ""} de plus par an, valent exactement ce
+que le tableau européen publie. Ni l'un ni l'autre n'est faux : un engagement
+acquis n'a pas de niveau propre, il a un taux. C'est pourquoi le dépôt affiche
+les deux et ne choisit pas.</p>
 
 <h4>Ce que d'autres caisses versent — rapports à la Commission des comptes de
 la Sécurité sociale</h4>

@@ -67,9 +67,53 @@ class AssietteFigee {
   }
 }
 
+/**
+ * L'engagement acquis à date, tel que la table le porte. Les accesseurs sont
+ * ceux de `cout.EngagementAcquis` côté Python : la page ne sait pas lequel des
+ * deux elle lit, et c'est ce qui garantit qu'ils ne disent pas deux choses.
+ */
+export class EngagementFige {
+  constructor(brut) {
+    this.annee = brut.annee;
+    this.horizon = brut.horizon;
+    this.retraites = brut.retraites;
+    this.actifs = brut.actifs;
+    this.horsProjection = brut.hors_projection;
+    // Ce qu'Eurostat publie pour la même année : le seul point de comparaison
+    // extérieur de cette grandeur.
+    this.publie = brut.publie;
+    this._parScenario = brut.scenarios;
+    this._sensibilite = brut.sensibilite.map((p) => [p.ecart, p.part_pib]);
+  }
+
+  partPib(scenario = "actuel") {
+    return this._parScenario[scenario] ?? 0.0;
+  }
+
+  sensibilite() {
+    return this._sensibilite;
+  }
+
+  /** L'écart de taux qui ramènerait l'engagement à `cible`. */
+  ecartPour(cible) {
+    const points = this._sensibilite;
+    for (let i = 0; i + 1 < points.length; i += 1) {
+      const [ecartBas, valeurBas] = points[i];
+      const [ecartHaut, valeurHaut] = points[i + 1];
+      if (valeurHaut <= cible && cible <= valeurBas) {
+        const largeur = valeurBas - valeurHaut;
+        if (largeur <= 0) return ecartBas;
+        return ecartBas + (ecartHaut - ecartBas) * ((valeurBas - cible) / largeur);
+      }
+    }
+    return null;
+  }
+}
+
 /** Le bilan des quatre systèmes comparés, tel que la table le porte. */
 export class BilanFige {
-  constructor(annees, premiereAnneeProjetee, assiette, pib = 0.0, anneePib = 0) {
+  constructor(annees, premiereAnneeProjetee, assiette, pib = 0.0, anneePib = 0,
+              engagements = null) {
     this.annees = annees;
     this.premiereAnneeProjetee = premiereAnneeProjetee;
     this.assiette = assiette;
@@ -79,6 +123,7 @@ export class BilanFige {
     // d'aujourd'hui, et les pages qui s'en servent l'écrivent.
     this.pib = pib;
     this.anneePib = anneePib;
+    this.engagements = engagements;
     this.premiereAnnee = annees.length ? annees[0].annee : 0;
     this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
     this.derniereAnneeObservee = premiereAnneeProjetee - 1;
@@ -102,5 +147,6 @@ export function chargerBilan(donnees) {
     donnees.premiere_annee_projetee,
     new AssietteFigee(donnees.annee_assiette, donnees.part_pib_assiette),
     donnees.pib, donnees.annee_pib,
+    donnees.engagements ? new EngagementFige(donnees.engagements) : null,
   );
 }

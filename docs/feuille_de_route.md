@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 235<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 304<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10618,3 +10618,74 @@ et les additionner n'aurait aucun sens.
 `moteur/js/equilibre.js`, `moteur/js/pages.js`, `scripts/construire_donnees.py`,
 `data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`,
 `tests/test_donnees.py`, `limites.md` § 5 bis, `methodologie.md`.
+
+---
+
+### 68. L'engagement acquis du dépôt, sous le taux d'actualisation du COR — `fait`
+
+**Demande.** « Calcule le nôtre, avec le taux d'actualisation du COR. » Faisait
+suite à l'action 67, qui avait fait entrer l'engagement publié sans produire
+celui du modèle, faute d'un taux d'actualisation — que l'action tenait pour une
+décision et non un calcul.
+
+**Le taux n'avait pas à être décidé : le COR en publie un.** La note de sa
+figure du solde moyen à divers horizons, celle que le décret n° 2014-654
+relatif au Comité de suivi des retraites encadre, dit que « le taux
+d'actualisation est supposé égal chaque année à la croissance annuelle du
+PIB ». C'est une LECTURE, pas une convention du dépôt, et elle change la nature
+du problème.
+
+**Parce qu'actualiser au rythme du PIB revient à sommer des parts de PIB.** Le
+facteur d'actualisation et le dénominateur se simplifient exactement :
+l'unité de tout le dépôt portait déjà l'actualisation. L'engagement est donc la
+somme, année par année, de ce que les droits acquis feront verser, chacun
+rapporté au PIB de son année — et il n'y a aucune convention de plus à poser.
+C'est pourquoi l'action 67 le croyait hors de portée et ne l'était pas.
+
+**Ce que le modèle trouve**, à 2021, dernière date qu'Eurostat transmette :
+**579 % du PIB** pour le système actuel — 231 points de retraités, dont la
+pension entière est un droit acquis, et 347 points d'actifs au prorata de leur
+carrière faite. La proposition en doit **370 %**, le notionnel sur la seule part
+salariale **162 %** : ces systèmes promettent moins, donc ils doivent moins.
+
+**Et l'écart avec les 397 % publiés est un TAUX, pas un droit.** Les mêmes
+droits, actualisés **deux points de plus par an**, valent exactement le chiffre
+d'Eurostat. C'est la même démonstration que les soixante points d'écart entre
+deux transmissions, faite cette fois de l'intérieur : un engagement acquis n'a
+pas de niveau propre, il a un taux. La page affiche les deux et ne choisit pas,
+et la grille de sensibilité est figée avec le reste pour que le lecteur voie la
+pente.
+
+**Trois conventions, toutes nommées.** Le PRORATA TEMPORIS pour ce qu'un actif
+a acquis : celle du tableau 29 pour les régimes à prestations définies, et
+surtout UNE convention appliquée aux six systèmes, sans quoi leurs engagements
+ne se compareraient pas. Un compte notionnel donnerait la sienne sans
+approximation — le capital virtuel EST le droit acquis — mais elle ne vaudrait
+que pour cinq des six, et l'étalon serait hors du tableau. L'EXTRAPOLATION
+au-delà de 2070, où l'INSEE cesse de projeter la pyramide : les cohortes déjà
+nées y sont prolongées par la table de mortalité unisexe du dépôt, celle-là
+même qui sert de diviseur aux comptes notionnels. Elle ne porte que 35 points
+sur 579, et un test borne cette part — un résultat qui dirait d'abord une table
+de mortalité ne vaudrait rien. Et le FIGEAGE sous les réglages de référence,
+comme le reste du bilan : quatre-vingts années de flux ne se somment pas chez
+le lecteur.
+
+**Deux bugs trouvés en route, et il faut les dire.** `Population.effectif`
+RECOPIE la pyramide de 2070 au-delà : demander l'effectif des 85 ans en 2085 y
+rend celui des 85 ans de 2070, qui sont d'une tout autre cohorte. C'est ce qui
+rend l'extrapolation par la survie nécessaire, et non facultative. Et la
+première version prenait pour frontière la dernière année du PIB (2025) au lieu
+de celle de la pyramide (2070), ce qui faisait passer quarante-cinq ans
+d'effectifs par la table de mortalité : l'engagement tombait à 478 % et la part
+extrapolée dépassait le total, ce qui l'a signalé.
+
+**Ce qui reste.** L'engagement hérite de tout ce que la trajectoire suppose —
+treize carrières, une grille au pas de cinq ans, une dépense projetée plus haute
+que celle du COR (§ 5 ter). Il ne remplace pas le tableau 29 : il dit ce que le
+modèle doit, sous une convention nommée, et ce que cette convention vaut.
+
+**Fichiers.** `cout.py` (`calculer_engagements`, `EngagementAcquis`),
+`donnees/bilan.py` (`EngagementFige`), `moteur/js/bilan.js`,
+`scripts/construire_donnees.py`, `web/pages.py`, `moteur/js/pages.js`,
+`data/derive/equilibre.json`, `data/reference/site/affirmations.yaml`,
+`tests/test_affirmations.py`, `limites.md` § 5 bis.
