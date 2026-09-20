@@ -449,6 +449,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # l'autre pour les décimaux (durées, proportions).
         "bonifications_jaune_effectifs": "legislation/bonifications_jaune.csv",
         "bonifications_jaune_taux": "legislation/bonifications_jaune.csv",
+        # Les projets annuels de performances du PLF 2026, lus dans leurs PDF :
+        # une transcription des caisses, donc `haute` ; les âges de départ,
+        # que le lecteur ne sait pas lire, restent au niveau de la saisie.
+        "pap_regimes_subventionnes": "regimes/pap_regimes_subventionnes.csv",
     }
     # Les séries d'APPOINT — celles qui ne comblent que ce que les autres ne
     # couvrent pas — peuvent n'avoir rien à dire, et sont alors absentes.

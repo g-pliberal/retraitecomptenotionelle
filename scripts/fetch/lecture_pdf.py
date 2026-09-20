@@ -105,6 +105,9 @@ class Table(dict):
     """
 
     largeur = 2
+    #: L'encodage qui traduit un code absent de la table, quand la police
+    #: en déclare un (``cp1252`` pour WinAnsiEncoding) ; sinon rien.
+    repli: str | None = None
 
 
 def _cmap(contenu: bytes) -> Table:
@@ -164,7 +167,21 @@ def _dictionnaire(objet: bytes, cle: bytes, objets: dict[int, bytes]) -> bytes:
 def _table_de(police: bytes, objets: dict[int, bytes]) -> Table | None:
     m = re.search(rb"/ToUnicode\s+(\d+)\s+0\s+R", police)
     contenu = _flux(objets.get(int(m.group(1)), b"")) if m else None
-    return _cmap(contenu) if contenu else None
+    if not contenu:
+        return None
+    table = _cmap(contenu)
+    # Une police simple — TrueType, Type1, Type3 — code ses glyphes sur UN
+    # octet, quoi que déclare le codespacerange de sa table : InDesign y
+    # écrit <0000> <FFFF> avec des entrées <64>, et lire par deux rendait
+    # le rapport de l'OPEF en lettres perdues. Seule une police Type0 lit
+    # par deux.
+    if not re.search(rb"/Subtype\s*/Type0\b", police):
+        table.largeur = 1
+        # Et ce que sa table ne dit pas, son encodage le dit : un code absent
+        # d'une table WinAnsi est la lettre WinAnsi de ce code.
+        if b"WinAnsiEncoding" in police:
+            table.repli = "cp1252"
+    return table
 
 
 def _polices_par_contenu(objets: dict[int, bytes]) -> dict[int, dict[bytes, Table]]:
@@ -243,12 +260,18 @@ def _litteral(brut: bytes, table: dict[int, str] | None = None) -> str:
     # une police à encodage standard n'en produit que.
     octets = texte.encode("latin-1", errors="replace")
     largeur = getattr(table, "largeur", 1)
+    repli = getattr(table, "repli", None)
     codes = [int.from_bytes(octets[i:i + largeur], "big")
              for i in range(0, len(octets), largeur)]
-    return "".join(
-        table[code] if code in table else (chr(code) if 32 <= code < 127 else "")
-        for code in codes
-    )
+
+    def lettre(code: int) -> str:
+        if code in table:
+            return table[code]
+        if repli and largeur == 1:
+            return bytes([code]).decode(repli, errors="replace")
+        return chr(code) if 32 <= code < 127 else ""
+
+    return "".join(lettre(code) for code in codes)
 
 
 def _hexa(brut: bytes, table: dict[int, str] | None) -> str:

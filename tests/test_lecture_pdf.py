@@ -150,3 +150,17 @@ def test_une_image_n_est_pas_lue_comme_du_texte():
         _objet(2, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (TEXTE) Tj ET")),
     )
     assert lignes_pdf(pdf) == ["TEXTE"], lignes_pdf(pdf)
+
+
+def test_une_police_simple_lit_par_un_octet_quoi_que_declare_sa_table():
+    """InDesign écrit <0000> <FFFF> en codespacerange d'une police TrueType
+    dont les entrées font un octet ; lue par deux, la page du rapport de
+    l'OPEF perdait ses lettres. Et ce que la table ne dit pas, l'encodage
+    WinAnsi de la police le dit : « é » est le code 233."""
+    pdf = _document(
+        _objet(1, b"<< /Type /Page /Contents 2 0 R /Resources << /Font << /F1 3 0 R >> >> >>"),
+        _objet(2, _flux(b"<< >>", b"BT /F1 10 Tf 70 700 Td (du\\351) Tj ET")),
+        _objet(3, b"<< /Type /Font /Subtype /TrueType /Encoding /WinAnsiEncoding /ToUnicode 4 0 R >>"),
+        _objet(4, _flux(b"<< >>", _cmap(2, {0x64: "d", 0x75: "u"}))),
+    )
+    assert lignes_pdf(pdf) == ["dué"], lignes_pdf(pdf)

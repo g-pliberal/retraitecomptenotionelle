@@ -2794,6 +2794,23 @@ def _valeurs_jaune() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+def source_pap_plf_2026() -> dict[tuple, float]:
+    """Les projets annuels de performances du PLF 2026, lus dans leurs PDF.
+
+    Clé (annee, regime, poste), celle de ``pap_regimes_subventionnes.csv``.
+    Le PAP transcrit les données des caisses : niveau ``haute``, et les
+    lignes que le lecteur ne sait pas lire — les âges moyens de départ,
+    écrits en années et mois sur trois lignes enchevêtrées — gardent leur
+    niveau de saisie.
+    """
+    serie = _serie_json("pap_plf_2026.json", "scripts/fetch/pap_plf_2026.py")
+    valeurs: dict[tuple, float] = {}
+    for cle, valeur in serie.items():
+        annee, regime, poste = cle.split("|")
+        valeurs[(annee, regime, poste)] = float(valeur)
+    return dict(sorted(valeurs.items()))
+
+
 def source_jaune_effectifs() -> dict[tuple, float]:
     """Les effectifs et les euros du jaune pensions : des entiers."""
     return {cle: v for cle, v in _valeurs_jaune().items() if cle[3] in MESURES_JAUNE_ENTIERES}
@@ -2820,7 +2837,10 @@ class Certification:
     colonne: str
     source: Callable[[], dict[tuple, float]]
     origine: str
-    decimales: int
+    #: Décimales écrites dans le fichier ; ``None`` écrit chaque valeur au
+    #: plus court — « 3307 », « 0.57 », « 35.25 » —, pour un fichier dont les
+    #: postes n'ont pas tous la même unité.
+    decimales: int | None
     tolerance: float
     unite: str = ""
     #: colonnes fixes à renseigner sur les lignes créées de toutes pièces
@@ -2839,6 +2859,8 @@ class Certification:
     complementaire: bool = False
 
     def format(self, valeur: float) -> str:
+        if self.decimales is None:
+            return f"{valeur:.6f}".rstrip("0").rstrip(".")
         return f"{valeur:.{self.decimales}f}" if self.decimales else f"{valeur:.0f}"
 
     def confronter(self, appliquer: bool) -> tuple[list[str], dict | None]:
@@ -5042,6 +5064,21 @@ CERTIFICATIONS = (
                 "tableaux A-7 et 50 (durées et proportions)",
         decimales=3,
         tolerance=5e-4,
+    ),
+    Certification(
+        nom="pap_regimes_subventionnes",
+        chemin=REFERENCE / "regimes" / "pap_regimes_subventionnes.csv",
+        cles=("annee", "regime", "poste"),
+        colonne="valeur",
+        source=source_pap_plf_2026,
+        origine="Direction du budget, projets annuels de performances annexés au PLF 2026 "
+                "(mission Régimes sociaux et de retraite, CAS Pensions), lus dans le PDF",
+        # Chaque poste a son unité et ses décimales : le fichier les garde.
+        decimales=None,
+        tolerance=5e-3,
+        # Le PAP transcrit les données des caisses ; une transcription tierce,
+        # même lue par un script, ne monte pas au-dessus de `haute`.
+        niveau="haute",
     ),
 )
 

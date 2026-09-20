@@ -8733,3 +8733,46 @@ le modèle ne compte pas, qui vaut 9 à 15 % de rente au diviseur du modèle,
 quatre à sept fois l'effet des arrérages. Le fichier de frais porte un bloc
 `distributions` avec tout cela, le manifeste un jeu `controle` pour le CCSF,
 et `limites.md` §5 ante le tableau. Le barème du calcul reste inchangé.
+
+### 51. Les deux PAP, lus par le dépôt : 242 valeurs au niveau haute — `fait`
+
+**Demande.** « Fais pareil pour les deux PAP » — après le jaune —, et
+« j'ai rajouté l'OPEF dans le dépôt directement ».
+
+**Les PAP.** `data/reference/regimes/pap_regimes_subventionnes.csv` portait
+294 valeurs saisies à la lecture des deux projets annuels de performances
+du PLF 2026, apportés par l'utilisateur : la mission « Régimes sociaux et de
+retraite » et le CAS Pensions, que l'Assemblée nationale sert depuis
+l'action 45. `scripts/fetch/pap_plf_2026.py` les relit en trois familles :
+les séries 2012-2023 du programme 198 par leur ligne d'années — le libellé
+sur trois lignes, les douze valeurs au milieu, les milliers séparés
+d'espaces ordinaires que seul le compte des colonnes découpe —, les crédits
+2026 par la ligne « Hors titre 2 » de chaque action, et les points en prose
+par des motifs cherchés dans le texte SANS AUCUNE ESPACE, parce que le PDF
+en glisse au milieu des mots (« direc t », « prévisi on ») et que le CAS
+écrit ses apostrophes et son signe euro en codes Windows-1252 que sa police
+ne traduit pas. Résultat : 242 valeurs lues sur 294, 242 identiques à la
+saisie, zéro écart. `verifier_donnees.py` les recontrôle et les verse au
+niveau `haute` — pas `certifiee` : le producteur est la caisse, le PAP la
+transcrit, et une transcription tierce plafonne là même lue par un script.
+Les 52 autres restent `moyenne` : les 48 âges moyens de départ, écrits
+« 55 ans et 8 mois » sur trois lignes enchevêtrées, la subvention 2023 de la
+Comédie-Française, les engagements de la SEITA et les crédits 2025 des
+marins, que le texte ne porte pas tels quels. Le vérificateur accepte
+désormais `decimales=None` — chaque valeur au plus court — pour un fichier
+dont les postes n'ont pas tous la même unité. Huit tests sur des lignes
+fabriquées.
+
+**L'OPEF, au passage.** Le rapport a été déposé par l'utilisateur dans le
+dépôt lui-même, sous `data/brut/OPEF2026.pdf` — le seul fichier de ce
+répertoire que git suive. L'action 50, menée en parallèle par une autre
+session, l'avait déjà lu avec pypdf et confronté ; cette session a fait
+que le lecteur PDF du dépôt le rende aussi : ses polices sont simples mais
+leurs tables Unicode déclarent un espace de codes à deux octets pour des
+entrées à un octet, et `lecture_pdf.py` lit désormais une police simple
+par un octet quoi que sa table déclare, en traduisant par l'encodage
+WinAnsi ce que la table ne dit pas. Un test de plus, et le tableau T7
+rend les mêmes six valeurs par les deux lecteurs.
+
+**Ce qui reste.** Les âges de départ des PAP, à lire dans leur tableau
+enchevêtré ou à laisser saisis. 
