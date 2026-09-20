@@ -83,17 +83,17 @@ fichiers:
       # décidé, et le constat n'aurait plus de sens. La section de la fiche de
       # paie était déjà à déclarer ; son titre change, son régime pas.
       "5 ante quater. Le partage « moitié aux salaires, moitié à la dette » : ce qu'il affirme et ce que rien ne vérifie": recit
-      # Elle dit ce que le second chiffre du simulateur suppose, le jour où il
+      # Elle dit ce que le troisième chiffre du simulateur suppose, le jour où
       # a été posé. Ses nombres sont ceux de ce jour-là — le coefficient d'un
       # départ en 2054, les deux montants qui montrent pourquoi une marge ne
       # se convertit pas en euros — et ils illustrent un raisonnement plutôt
       # qu'ils ne mesurent l'état du dépôt : les rafraîchir déplacerait
-      # l'exemple sans rien apprendre. Ce que le second chiffre vaut
+      # l'exemple sans rien apprendre. Ce que ce chiffre vaut
       # AUJOURD'HUI, le site le recalcule à chaque rendu, et `tests/test_cout.py`
       # tient les propriétés que la section affirme — le sens de la
       # pondération par la survie, la fenêtre qui s'arrête à l'horizon du COR,
       # les trois leviers qui comblent le même trou.
-      "Le second chiffre du simulateur : ce qu'il dit, et les quatre choses qu'il suppose": recit
+      "Le troisième chiffre du simulateur : ce qu'il dit, et les quatre choses qu'il suppose": recit
   docs/methodologie.md:
     defaut: a_declarer
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce

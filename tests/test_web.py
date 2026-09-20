@@ -5007,14 +5007,18 @@ def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(context
     cle = visible[lecture:premier]
     assert "C'est la référence." in cle
     assert "votre <strong>salaire</strong> pendant" in cle
-    assert "votre <strong>pension</strong> une fois" in cle
-    # Le mode se lit dans la clé, et il vaut pour les DEUX chiffres : c'est
+    assert "la <strong>pension</strong> que le système promet" in cle
+    # Le troisième chiffre est annoncé lui aussi : il est apparu sans que la
+    # clé change, et elle a promis « deux chiffres par ligne » au-dessus de
+    # trois pendant le temps d'une session.
+    assert "ce qu'elles en paient\n<strong>vraiment</strong>" in cle
+    # Le mode se lit dans la clé, et il vaut pour les TROIS chiffres : c'est
     # précisément ce que la bascule garantit, et ce que le site ne faisait pas
     # quand il opposait un salaire net à une pension brute.
     # Le mot du mode et l'unité sont sur deux lignes du gabarit : on compare
     # donc sur le texte aplati, comme le lecteur le lit.
     aplati = " ".join(cle.split())
-    assert "en net, l'un comme l'autre, par mois, en euros d'aujourd'hui" in aplati
+    assert "en net tous les trois, par mois, en euros d'aujourd'hui" in aplati
     assert "au <strong>taux plein</strong>" in aplati
 
 
@@ -5061,11 +5065,11 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
         # pension promise, et il ne paraît que là où ils en financent moins
         # qu'elle. Sans son étiquette, il se lirait comme un montant de plus.
         if 'class="chiffre finance"' in entete:
-            assert ">financé</span>" in entete
+            assert ">vraiment payé</span>" in entete
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
     assert f"en euros de {depart}" not in corps.split('<div class="carte">')[0]
-    assert ("en net, l'un comme l'autre, par mois, en euros d'aujourd'hui"
+    assert ("en net tous les trois, par mois, en euros d'aujourd'hui"
             in " ".join(corps.split()))
 
 
@@ -5094,8 +5098,18 @@ def test_le_salaire_net_se_lit_a_cote_de_chaque_pension(contexte):
     assert montants[3] != montants[0], (
         "le système 4 change le prélèvement : son salaire net doit différer"
     )
-    assert entetes[3].count('class="ecart"') == 1
-    assert sum(entete.count('class="ecart"') for entete in entetes[:3]) == 0
+    # L'écart de SALAIRE, et lui seul : le troisième chiffre de chaque ligne
+    # porte le sien — « il manque tant par mois » —, dans le même idiome et
+    # sous la même classe. Les distinguer par le texte plutôt que par le
+    # compte évite de faire échouer ce test-ci pour un manque de financement,
+    # qui n'est pas son sujet.
+    def _ecarts_de_salaire(entete: str) -> list[str]:
+        return [texte for texte in re.findall(r'<span class="ecart">(.*?)</span>',
+                                              entete, re.S)
+                if "il manque" not in texte]
+
+    assert len(_ecarts_de_salaire(entetes[3])) == 1
+    assert sum(len(_ecarts_de_salaire(entete)) for entete in entetes[:3]) == 0
 
 
 def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):

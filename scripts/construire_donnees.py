@@ -1029,10 +1029,17 @@ def _bilan(contexte=None) -> dict:
     solde = contexte.cout().solde
     assiette = contexte.assiette()
     scenarios = [scenario for scenario, _ in SCENARIOS_COMPARES]
+    # Le PIB de la dernière année PUBLIÉE, et elle seule : au-delà, un montant
+    # en milliards ne serait qu'une hypothèse de croissance déguisée en
+    # observation. C'est ce qui permet à la page de dire un manque de 2070 en
+    # euros — « au PIB d'aujourd'hui », et elle l'écrit.
+    publiees = [ligne for ligne in solde.annees if ligne.pib > 0.0]
     return {
         "premiere_annee_projetee": solde.premiere_annee_projetee,
         "annee_assiette": assiette.derniere_annee,
         "part_pib_assiette": assiette.part_pib(assiette.derniere_annee),
+        "annee_pib": publiees[-1].annee if publiees else 0,
+        "pib": publiees[-1].pib if publiees else 0.0,
         "annees": [
             {
                 "annee": ligne.annee,

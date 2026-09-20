@@ -6668,15 +6668,32 @@ pour qui a liquidé avant la bascule. La page ne l'écrit pas en dur : elle test
 l'identité des courbes année par année, et les séparerait si la bascule était
 avancée avant la dernière année publiée.
 
-### Le second chiffre du simulateur : ce qu'il dit, et les quatre choses qu'il suppose
+### Le troisième chiffre du simulateur : ce qu'il dit, et les quatre choses qu'il suppose
 
 Depuis le 20 septembre 2026, chaque montant du simulateur porte à côté de lui
-ce que les comptes du système en FINANCENT, quand ils en financent moins que la
+ce que les recettes du système en PAIENT, quand elles en paient moins que la
 règle n'en promet. Le montant affiché reste celui de la règle — le scénario 1
-est le droit en vigueur et rien d'autre, c'est sa définition —, et le second
+est le droit en vigueur et rien d'autre, c'est sa définition —, et le troisième
 chiffre est le même montant multiplié par le coefficient d'équilibre du
 système, moyenné sur les années où la pension est servie et pondéré par la
-survie. Quatre choses s'y supposent, et aucune ne va de soi.
+survie. Sous lui, le manque EN EUROS : « il manque 393 € par mois » se compare
+à un loyer là où « 87 % » ne se compare à rien.
+
+Le dépliant qui l'explique a été écrit deux fois le même jour. La première
+version ouvrait sur le coefficient d'équilibre et deux tableaux de nombres sans
+dimension — 0,90 puis 0,87, des points d'assiette, des parts de PIB. Tout y
+était vrai et rien n'y était lisible. Les trois leviers sont donc donnés dans
+les unités où on les vit : rogner de 10 %, ou prélever 122 € de plus chaque
+mois sur un salaire moyen, ou emprunter 44 milliards par an — et chacun est
+présenté par QUI paie. Le tableau des coefficients est descendu d'un cran, sous
+un dépliant, pour qui veut refaire le calcul. La conversion en euros suppose
+deux choses, toutes deux écrites sur la page : le salaire moyen brut
+d'aujourd'hui comme étalon de la hausse de cotisation — exact, le prélèvement
+étant proportionnel —, et le PIB de la dernière année publiée pour dire un
+manque de 2054 en milliards, parce qu'un PIB de 2054 serait une hypothèse de
+croissance déguisée en observation.
+
+Quatre choses s'y supposent, et aucune ne va de soi.
 
 **Un facteur commun appliqué à toutes les pensions est UNE façon d'équilibrer
 une année, pas une prévision.** Le Parlement peut aussi lever des cotisations,
@@ -6713,9 +6730,18 @@ page Coût les recalcule sous les réglages qu'on lui demande.
 
 **Enfin, un coefficient supérieur à un n'est jamais converti en euros.** Les
 systèmes 2 et 3 encaissent deux à trois fois ce qu'ils versent, parce qu'ils ne
-versent presque rien : écrire « financé : 927 € » sous une pension de 265 €
-ferait promettre au lecteur une pension que personne n'a décidé de servir. La
-marge est dite en toutes lettres, jamais chiffrée en montant.
+versent presque rien : écrire « vraiment payé : 927 € » sous une pension de
+265 € ferait promettre au lecteur une pension que personne n'a décidé de
+servir. La marge est dite en toutes lettres — « les recettes couvrent ce
+montant 2,6 fois » —, jamais chiffrée en montant.
+
+**Une difficulté tenue plutôt que masquée**, la même écriture l'ayant fait
+apparaître : les trois leviers sont chiffrés à l'année du départ, où ils
+partagent un dénominateur et se déduisent l'un de l'autre, quand le troisième
+chiffre moyenne toute la durée de la retraite et se trouve donc plus sévère —
+13 % là où l'année du départ en donne 10. La page l'écrit, et ne donne le
+manque en euros qu'à un seul endroit, sous le chiffre, pour que deux sommes
+voisines ne se disputent pas le même rôle.
 
 ---
 
@@ -6991,7 +7017,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1777<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1781<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

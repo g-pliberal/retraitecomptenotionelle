@@ -3444,9 +3444,10 @@ function financements(contexte, comparaison) {
 function gloseFinancement(finance) {
   if (finance === null || finance === undefined) return "";
   if (finance.manque > 0) {
-    return ` · les comptes n'en financent que ${g.pourcentage(finance.coefficient, false, 0)}`;
+    return ` · les recettes du système n'en paient que ${g.pourcentage(finance.coefficient, false, 0)}`;
   }
-  return ` · les comptes le financent, et au-delà : ${g.pourcentage(-finance.manque, false, 0)} de marge`;
+  // « 163 % de marge » ne dit rien à personne ; « couvert 2,6 fois », si.
+  return ` · les recettes du système couvrent ce montant ${g.nombre(finance.coefficient, 1)} fois`;
 }
 
 /**
@@ -3460,132 +3461,139 @@ function gloseFinancement(finance) {
  * trois branches dont aucune n'est décidée ; et ce que l'histoire des réformes
  * apprend de la branche qu'on choisit, qui est une régularité observée.
  */
-function financement(contexte, comparaison, finances) {
+function financement(contexte, comparaison, finances, montants) {
   if (!Object.keys(finances).length) return "";
   const bilan = contexte.bilan();
   const depart = comparaison.carriere.anneeLiquidation;
   const reference = finances.actuel === undefined ? null : finances.actuel;
   if (reference === null) return "";
+  const departDit = reference.departCouvert
+    ? `${depart}, l'année où vous partiriez`
+    : `${reference.premiereAnnee}, la première année que les comptes couvrent`;
+
+  // Les trois leviers du système ACTUEL, en unités de la vie courante. Le
+  // salaire moyen brut d'aujourd'hui sert d'étalon à la hausse de cotisation :
+  // un point d'assiette est un point de revenu d'activité, et l'appliquer à un
+  // salaire est exact parce que le prélèvement est proportionnel.
+  const macro = contexte.simulateur(comparaison.parametres).macro;
+  const salaireMoyen = salaireMoyenAnnuel(macro, comparaison.parametres.annee_courante);
+  const cotisationMensuelle = (reference.pointsAssiette * salaireMoyen) / MOIS_PAR_AN;
+  // `milliards` attend des MILLIONS : le PIB de la table est dans cette unité,
+  // et le manque est une part de lui.
+  const manqueMeur = reference.manquePib * bilan.pib;
+  const points = reference.pointsAssiette * 100;
+  const unitePoints = points < 2 ? "point" : "points";
+
+  const leviers = `
+<ul class="leviers">
+  <li><strong>Les retraités paient</strong> — toutes les pensions sont rognées
+    de ${g.pourcentage(1 - reference.coefficientDepart, false, 0)}, la vôtre
+    comme les autres. C'est le levier que le troisième chiffre applique.</li>
+  <li><strong>Les actifs paient</strong> — les cotisations montent de
+    ${g.nombre(points, 1)} ${unitePoints} de revenu d'activité, soit
+    ${g.euros(cotisationMensuelle)} de plus prélevés chaque mois sur un salaire
+    moyen
+    (${g.euros(salaireMoyen / MOIS_PAR_AN)} brut par mois aujourd'hui).</li>
+  <li><strong>Personne ne paie, pour l'instant</strong> — le déficit est
+    emprunté : ${milliards(manqueMeur, 0)} par an, au PIB d'aujourd'hui, qui s'ajoutent à la dette publique et que rembourseront ceux
+    qui viendront après.</li>
+</ul>`;
 
   const lignes = [];
-  const leviers = [];
   for (const [cle, scenario] of Object.entries(SCENARIOS_DES_BARRES)) {
     const finance = finances[cle];
     if (finance === undefined) continue;
     lignes.push([
       LIBELLES_SYSTEMES[scenario],
-      g.nombre(finance.coefficientDepart, 2),
+      g.pourcentage(finance.coefficientDepart, false, 0),
+      g.pourcentage(finance.coefficient, false, 0),
       g.nombre(finance.coefficient, 2),
-      finance.manque > 0
-        ? `${g.pourcentage(finance.manque, false, 0)} à rogner`
-        : `${g.pourcentage(-finance.manque, false, 0)} de marge`,
-    ]);
-    if (finance.manquePib <= 0) {
-      leviers.push([LIBELLES_SYSTEMES[scenario], "aucun manque", "aucune", "aucun"]);
-      continue;
-    }
-    leviers.push([
-      LIBELLES_SYSTEMES[scenario],
-      g.pourcentage(finance.manque, false, 0),
-      `+${g.nombre(finance.pointsAssiette * 100, 1)} pt`,
-      `${g.pourcentage(finance.manquePib, false, 2)} du PIB`,
     ]);
   }
 
   let horizon = "";
   if (!reference.entiere) {
-    horizon = `<p>Les comptes du COR s'arrêtent en ${bilan.derniereAnnee}. Ils `
-      + `couvrent ${g.pourcentage(reference.partCouverte, false, 0)} de `
-      + "votre retraite — la part pondérée par la survie, celle qui pèse "
-      + "dans la moyenne ci-dessus —, et le reste n'est pas projeté. Ce "
-      + "n'est pas une réserve de prudence dans un sens neutre : le "
-      + "coefficient du système actuel BAISSAIT encore à cet horizon, de "
-      + `${g.nombre(bilan.annee(bilan.derniereAnneeObservee).coefficient("actuel"), 2)} `
-      + `en ${bilan.derniereAnneeObservee} à `
-      + `${g.nombre(bilan.annee(bilan.derniereAnnee).coefficient("actuel"), 2)} `
-      + `en ${bilan.derniereAnnee}. Les années que la page ne compte pas `
-      + "sont celles où le manque serait le plus grand, et la moyenne "
-      + "affichée est donc un PLAFOND.</p>";
+    horizon = `<p><strong>Les comptes s'arrêtent en ${bilan.derniereAnnee}, et `
+      + "la page n'invente pas la suite.</strong> Ils couvrent "
+      + `${g.pourcentage(reference.partCouverte, false, 0)} de votre `
+      + "retraite ; les années d'après ne sont comptées nulle part. Ce "
+      + "n'est pas une prudence neutre : le manque GRANDISSAIT encore à "
+      + "cette date — les recettes payaient "
+      + `${g.pourcentage(bilan.annee(bilan.derniereAnneeObservee).coefficient("actuel"), false, 0)} `
+      + `des pensions en ${bilan.derniereAnneeObservee} et `
+      + `${g.pourcentage(bilan.annee(bilan.derniereAnnee).coefficient("actuel"), false, 0)} `
+      + `en ${bilan.derniereAnnee}. Les années que la page laisse de côté `
+      + "sont donc les pires, et le chiffre affiché est un maximum.</p>";
   }
 
-  const departDit = reference.departCouvert
-    ? `l'année de votre départ, ${depart}`
-    : `${reference.premiereAnnee}, première année que les comptes couvrent`;
+  const detail = g.depliant("Le détail : le calcul, et les quatre systèmes", `
+<p>Ce que les recettes d'une année paient des pensions de cette année-là, pour
+chacun des quatre systèmes. Au-dessus de 100 %, le système encaisse plus qu'il
+ne verse : c'est une marge, et le site ne la convertit jamais en pension plus
+élevée, parce que servir une marge est une décision que personne n'a prise.</p>
+
+${g.tableau(
+    ["Système", `En ${depart}`, "Sur toute votre retraite",
+      "Coefficient d'équilibre"],
+    lignes,
+    ["", "nombre", "nombre", "nombre"],
+    "Part des pensions que les recettes paient, aux dates de cette carrière",
+    true,
+  )}
+
+<p class="discret">La dernière colonne est le même nombre sous le nom que lui
+donnent les économistes : le <strong>coefficient d'équilibre</strong>, facteur
+par lequel il faudrait multiplier toutes les pensions d'une année pour que
+cette année tombe juste — ressources divisées par dépenses. Les ressources et
+les dépenses sont celles que le COR consolide, observées jusqu'en
+${bilan.derniereAnneeObservee} et projetées ensuite ;
+<a href="${g.lien("/cout")}">la page Coût</a> les montre poste par poste. Pour
+le système actuel, le coefficient est le rapport de ces deux séries, et aucun
+réglage de ce simulateur ne le déplace. Pour les trois autres, la dépense est
+une masse de pensions que le modèle calcule et qui dépend des règles : les
+coefficients affichés ici sont ceux des réglages de référence, pas de ceux que
+vous avez cochés — la page Coût, elle, les recalcule sous les réglages qu'on
+lui demande.</p>
+`, "resultats-financement-detail");
+
   return g.depliant(
-    "Ce que les comptes financent, et ce qui manque", `
-<p>Les quatre montants ci-dessus sont ceux que chaque système PROMET : le
-premier applique le droit en vigueur, les trois autres appliquent leurs propres
-règles à la même carrière. Savoir si le système a l'argent est une autre
-question, et les comptes y répondent. Le système actuel est en déficit, le
-Conseil d'orientation des retraites le projette en déficit jusqu'en
-${bilan.derniereAnnee}, et rien dans le montant affiché ne le dit.</p>
+    "Le système promet plus qu'il n'encaisse : qui paiera la différence ?", `
+<p class="chapeau">Le système de retraite verse aujourd'hui plus qu'il ne
+reçoit, et le Conseil d'orientation des retraites — l'organisme public qui
+tient ses comptes — le projette en déficit jusqu'en ${bilan.derniereAnnee}. Le
+montant du système 1 est ce que la loi promet ; il ne dit pas que l'argent
+est là.</p>
 
-<p>Le <strong>coefficient d'équilibre</strong> est le facteur par lequel il
-faudrait multiplier toutes les pensions d'une année pour que cette année tombe
-juste : ressources divisées par dépenses. Il vaut un quand le système
-s'équilibre, moins de un quand il promet plus qu'il n'encaisse. Une pension se
-sert vingt ou trente ans : celui de la seule année du départ flatte qui part
-tôt, et la colonne qui compte est la moyenne sur la durée du service, chaque
-année pesant la part des partants encore en vie.</p>
+<p>En ${departDit}, il manquera
+${g.pourcentage(1 - reference.coefficientDepart, false, 0)} de ce que le
+système doit verser. Cette différence, quelqu'un la paiera, et il
+n'y a que trois façons de la payer. Aucune n'est décidée ; les voici toutes les
+trois, pour la même année :</p>
 
-${g.tableau(
-      ["Système", `À ${departDit}`, "Sur votre retraite", "Lecture"],
-      lignes,
-      ["", "nombre", "nombre", "nombre"],
-      "Coefficient d'équilibre de chaque système, aux dates de cette carrière",
-      true,
-    )}
+${leviers}
 
-<p><strong>Rogner les pensions est UNE façon de combler le manque, et ce
-n'est pas une prévision.</strong> C'est celle que le second chiffre applique,
-parce que c'est la seule qui se lise sur le montant affiché. Il y en a deux
-autres, qui comblent exactement le même trou : lever davantage de cotisations
-sur les salaires, ou laisser le déficit et l'emprunter. Le tableau ci-dessous
-les chiffre toutes les trois à ${departDit}, pour chaque système. Aucune n'est
-plus probable que les autres ; ce qu'elles disent ensemble, et qui est le seul
-fait, c'est la TAILLE de l'écart.</p>
-
-${g.tableau(
-      ["Système", "Rogner toutes les pensions de",
-        "Ou lever, sur l'assiette des salaires",
-        "Ou emprunter, chaque année"],
-      leviers,
-      ["", "nombre", "nombre", "nombre"],
-      `Les trois façons de combler le manque de ${departDit}`,
-      true,
-    )}
-
-<p class="discret">Les points d'assiette sont des points de prélèvement en plus
-sur l'ensemble des revenus d'activité — salaires et traitements bruts, plus le
-revenu mixte des non-salariés —, dont
-${g.pourcentage(bilan.assiette.partPib(bilan.assiette.derniereAnnee), false, 1)}
-du PIB en ${bilan.assiette.derniereAnnee}. Le quatrième levier, reculer l'âge,
-n'est pas chiffré ici parce qu'il ne s'applique pas à une pension déjà
-liquidée : il déplace la date du départ, et cette page le mesure déjà —
-changez l'âge de liquidation, et les quatre montants bougent avec.</p>
+<p>Le troisième chiffre des résultats applique la première, parce que c'est la
+seule des trois qui se lise sur une pension. Il est un peu plus sévère que les
+${g.pourcentage(1 - reference.coefficientDepart, false, 0)} ci-dessus : il
+ne s'arrête pas à l'année du départ, il fait la moyenne de toutes vos
+années de retraite, où le manque grandit, chaque
+année comptant pour le nombre de partants encore en vie. Un quatrième levier
+existe — reculer l'âge —, et ce simulateur le mesure déjà : changez l'âge de
+liquidation, et les quatre montants bougent.</p>
 
 ${horizon}
 
-<p><strong>Ce que l'histoire des réformes apprend de la branche qu'on
-choisit.</strong> Les réformes des pays du G7 dans les années 1990 ont eu « un
-impact majeur sur la valeur actualisée des prestations promises aux
-travailleurs d'âge moyen et jeunes », alors que « les prestations des retraités
-et de ceux proches de la retraite sont habituellement protégées »
-(McHale, 1999). Un coefficient appliqué à toutes les pensions de la même façon
-est donc la version DOUCE : dans les réformes observées, l'ajustement tombe sur
-qui n'a pas encore liquidé. <a href="${g.lien("/risque")}">La page Risque</a>
-rassemble ce que la recherche en sait.</p>
+<p><strong>Sur qui l'ajustement est tombé, les fois précédentes.</strong> Les
+réformes des pays du G7 dans les années 1990 ont eu « un impact majeur sur la
+valeur actualisée des prestations promises aux travailleurs d'âge moyen et
+jeunes », alors que « les prestations des retraités et de ceux proches de la
+retraite sont habituellement protégées » (McHale, 1999). Rogner toutes les
+pensions du même taux, comme fait le troisième chiffre, est donc la version
+DOUCE : dans les réformes observées, ce sont ceux qui n'ont pas encore liquidé
+qui ont payé. <a href="${g.lien("/risque")}">La page Risque</a> rassemble ce que
+la recherche en sait.</p>
 
-<div class="note"><strong>D'où viennent ces chiffres, et ce qu'ils ne suivent
-pas.</strong> Les ressources et les dépenses sont celles que le COR consolide,
-observées jusqu'en ${bilan.derniereAnneeObservee} et projetées ensuite ;
-<a href="${g.lien("/cout")}">la page Coût</a> les montre poste par poste. Pour le
-système actuel, le coefficient est le rapport de ces deux séries et aucun
-réglage de ce simulateur ne le déplace. Pour les trois autres, la dépense est
-une masse de pensions que le modèle calcule, et elle dépend des règles : les
-coefficients de ce tableau sont ceux des réglages de RÉFÉRENCE, pas de ceux que
-vous avez cochés. La page Coût, elle, les recalcule sous les réglages qu'on lui
-demande.</div>
+${detail}
 `, "resultats-financement");
 }
 
@@ -3741,11 +3749,17 @@ function resultats(contexte, saisie) {
     let chiffreFinance = "";
     if (finance !== null && finance.manque > 0) {
       const servie = finance.servie(montant, partCapitalisee);
+      // Le manque EN EUROS, sous le chiffre, dans l'idiome que le salaire
+      // utilise déjà pour son écart. C'est lui que le lecteur retient :
+      // « 87 % » est un taux, « il manque 393 € par mois » est une somme
+      // qu'on compare à un loyer.
+      const manqueMensuel = montants.pension(montant - servie) / 12;
       chiffreFinance = `
       <span class="chiffre finance">
-        <span class="categorie">financé</span>
+        <span class="categorie">vraiment payé</span>
         <span class="somme">${g.nombre(montants.pension(servie) / 12)}</span>
         <span class="unite">${montants.unitePension}</span>
+        <span class="ecart">il manque ${g.euros(manqueMensuel)} par mois</span>
       </span>`;
     }
     return `
@@ -3872,9 +3886,14 @@ function resultats(contexte, saisie) {
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
 Les trois autres appliquent chacun d'autres règles à la même carrière.
-Deux chiffres par ligne : à gauche votre <strong>salaire</strong> pendant que
-vous cotisez, à droite votre <strong>pension</strong> une fois retraité — en
-${montants.mot}, l'un comme l'autre, ${uniteReference}.
+Trois chiffres par ligne : votre <strong>salaire</strong> pendant que vous
+cotisez, la <strong>pension</strong> que le système promet une fois retraité,
+et, quand ses recettes n'y suffisent pas, ce qu'elles en paient
+<strong>vraiment</strong> — en ${montants.mot} tous les trois,
+${uniteReference}. Le troisième chiffre n'est pas une prévision : il dit de
+combien les comptes du système sont courts, et le dépliant
+« <a href="#resultats-financement">Le système promet plus qu'il n'encaisse</a> »
+dit qui peut payer la différence.
 ${noteDuMode(montants)}
 Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 
@@ -3902,7 +3921,7 @@ ${salaireNet(comparaison, saisie)}
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
 voir.</p>
-${financement(contexte, comparaison, finances)}
+${financement(contexte, comparaison, finances, montants)}
 ${trajectoire(contexte, comparaison, saisie)}
 ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
