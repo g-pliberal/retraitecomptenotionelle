@@ -304,7 +304,7 @@ affirmations:
 
   - id: accueil.transition_garantie
     page: /
-    extrait: "Elle remplace l'ASPA, le minimum contributif et le minimum garanti le jour de la bascule"
+    extrait: "Elle est le seul plancher du système, et remplace le jour de la bascule les quatre d'aujourd'hui"
     porte: le régime unique ne sert aucun minimum, la garantie les remplace
     etat: verifiee
     controle: garantie_remplace_les_minima
@@ -565,10 +565,17 @@ affirmations:
 
   - id: cas_types.niveau_depend_du_facteur
     page: /cas-types
-    extrait: "Le niveau des cases dépend de ce facteur"
+    extrait: "il multiplierait les cases par le même facteur"
     porte: le coefficient d'équilibre, calculé et non appliqué, déplacerait toutes les cases
     etat: verifiee
     controle: coefficient_jamais_applique
+
+  - id: cas_types.facteur_inferieur_a_un
+    page: /cas-types
+    extrait: "Un coefficient inférieur à un est un manque, le coût de la transition au taux unique."
+    porte: la lecture du coefficient est calculée depuis le solde, et suit son signe
+    etat: verifiee
+    controle: note_du_coefficient_suit_son_signe
 
   - id: reglages.avertissement
     page: [/cas-types, /cout, /avantages]
@@ -680,17 +687,10 @@ affirmations:
     etat: verifiee
     controle: autre_convention_de_recette
 
-  - id: cout.marge_se_sert
+  - id: cout.coefficient_deux_sens
     page: /cout
-    extrait: "Un coefficient supérieur à un est une marge, et une marge se sert."
-    porte: la note suit le signe du coefficient — cette branche s'écrit quand il vaut un ou plus
-    etat: verifiee
-    controle: note_du_coefficient_suit_son_signe
-
-  - id: cout.manque_se_regle
-    page: /cout
-    extrait: "Un coefficient inférieur à un est un manque, et un manque se règle."
-    porte: la note suit le signe du coefficient — cette branche s'écrit quand il est sous un
+    extrait: "Le coefficient se lit dans les deux sens, jamais comme une économie."
+    porte: la lecture du coefficient est calculée depuis le solde, et suit son signe
     etat: verifiee
     controle: note_du_coefficient_suit_son_signe
 
@@ -807,10 +807,17 @@ affirmations:
     etat: verifiee
     controle: garantie_remplace_les_minima
 
-  - id: cout.trois_minima
+  - id: cout.quatre_minima
     page: /cout
-    extrait: "Ce que ces trois minima coûtent"
+    extrait: "Ce que ces quatre minima coûtent"
     porte: les minima remplacés ont chacun une ligne, chiffrée ou déclarée
+    etat: verifiee
+    controle: garantie_remplace_les_minima
+
+  - id: cout.seul_plancher
+    page: /cout
+    extrait: "La garantie est le seul plancher du système 4"
+    porte: le régime unique ne sert aucun minimum, la garantie les remplace tous
     etat: verifiee
     controle: garantie_remplace_les_minima
 
@@ -1212,6 +1219,20 @@ affirmations:
     extrait: "Ce qu'il suppose"
     porte: un titre
     etat: sans_portee
+
+  - id: methode.adossement
+    page: /methode
+    extrait: "Chaque versement achète le titre qui arrive à échéance l'année du départ"
+    porte: le pilier place chaque versement sur la maturité qui tombe au départ
+    etat: verifiee
+    controle: pilier_adosse_a_la_date_du_depart
+
+  - id: methode.echelle_sans_effet
+    page: /methode
+    extrait: "ne changeait rien"
+    porte: sous les anticipations pures, le découpage des maturités laisse le capital inchangé
+    etat: verifiee
+    controle: pilier_adosse_a_la_date_du_depart
 
   - id: methode.vraies_moyennes
     page: /methode
