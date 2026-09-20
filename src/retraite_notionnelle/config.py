@@ -623,7 +623,12 @@ class Parametres:
     #: la CSG est assise sur le BRUT, que le partage déplace, et la réduction
     #: générale n'efface que des cotisations PATRONALES. Plus la part patronale
     #: est grosse, plus le salaire net est élevé à coût du travail donné. Voir
-    #: le docstring de `remuneration.py`.
+    #: le docstring de `remuneration.py`. Ce que chaque partage donne le jour 1
+    #: et au long terme, et à qui : `scripts/partage_taux_unique.py`, action 54
+    #: de la feuille de route. Le moitié-moitié fait monter la part salariale
+    #: d'un salarié du privé (11,31 → 11,50 points) : sa fiche de paie du
+    #: lendemain baisse, et c'est le seul des quatre partages étudiés où c'est
+    #: le cas.
     part_salariale_taux_unique: float = 0.5
 
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
