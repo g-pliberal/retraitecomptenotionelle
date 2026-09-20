@@ -275,6 +275,69 @@ affirmations:
     etat: verifiee
     controle: pilier_capitalise_en_plus
 
+  - id: accueil.impots_non_affectes
+    page: /
+    extrait: "Nous cessons donc de les affecter à la retraite."
+    porte: la proposition ne reconduit pas les impôts et taxes affectés
+    etat: verifiee
+    controle: trois_postes_disparaissent
+
+  - id: accueil.impots_rendus
+    page: /
+    extrait: "Et nous ne les gardons pas."
+    porte: la recette abandonnée est partagée en deux, salaires et dette
+    etat: verifiee
+    controle: impots_abandonnes_partages_en_deux
+
+  - id: accueil.rendus_aux_salaires
+    page: [/, /cout]
+    extrait: "rendus aux salaires"
+    porte: la moitié rendue est chiffrée sur le poste abandonné
+    etat: verifiee
+    controle: impots_abandonnes_partages_en_deux
+
+  - id: accueil.eteindre_de_la_dette
+    page: /
+    extrait: "éteindre de la dette"
+    porte: l'autre moitié éteint de la dette, et vaut la première
+    etat: verifiee
+    controle: impots_abandonnes_partages_en_deux
+
+  - id: accueil.taxe_sur_les_salaires
+    page: /
+    extrait: "La taxe sur les salaires est supprimée"
+    porte: la taxe sur les salaires est l'un des deux impôts supprimés
+    etat: verifiee
+    controle: deux_impots_sur_la_remuneration_supprimes
+
+  - id: accueil.forfait_social
+    page: /
+    extrait: "Le forfait social est supprimé"
+    porte: le forfait social est l'autre impôt supprimé
+    etat: verifiee
+    controle: deux_impots_sur_la_remuneration_supprimes
+
+  - id: accueil.baisse_de_csg
+    page: /
+    extrait: "La CSG sur les revenus d'activité baisse de"
+    porte: le solde de la moitié rendue passe par une baisse de CSG d'activité
+    etat: verifiee
+    controle: points_de_csg_rendus
+
+  - id: accueil.csg_ne_finance_pas
+    page: /
+    extrait: "la CSG sur les revenus d'activité ne finance aujourd'hui aucune retraite."
+    porte: la baisse de CSG n'est pas la restitution d'un prélèvement retraite
+    etat: hors_modele
+    source: "à la branche famille, à l'assurance maladie"
+
+  - id: accueil.employeurs_publics
+    page: /
+    extrait: "Les employeurs publics suivent la même règle."
+    porte: l'État cotise 18 % comme tout employeur, sans contribution d'équilibre
+    etat: verifiee
+    controle: trois_postes_disparaissent
+
   - id: accueil.pourquoi_ce_site
     page: /
     extrait: "Pourquoi ce site."
@@ -404,6 +467,27 @@ affirmations:
     porte: au SMIC, la réduction efface déjà les cotisations patronales qu'elle vise
     etat: verifiee
     controle: allegement_au_smic
+
+  - id: simuler.baisse_de_csg
+    page: /simuler
+    extrait: "Votre CSG baisse de"
+    porte: la fiche porte la baisse de CSG que la restitution finance
+    etat: verifiee
+    controle: points_de_csg_rendus
+
+  - id: simuler.taux_d_equilibre_public
+    page: /simuler
+    extrait: "de votre traitement indiciaire brut"
+    porte: ce que verse l'employeur public est un taux d'équilibre, non un prix du travail
+    etat: verifiee
+    controle: fonctionnaire_assiette_fixe
+
+  - id: simuler.csg_ne_finance_pas
+    page: /simuler
+    extrait: "Cette CSG-là ne finance aujourd'hui aucune retraite"
+    porte: la CSG d'activité ne finance aucune retraite, et la baisse n'est pas une restitution
+    etat: hors_modele
+    source: "à la famille, à la maladie"
 
   - id: simuler.fiche_ne_porte_pas
     page: /simuler
@@ -931,6 +1015,27 @@ affirmations:
     etat: verifiee
     controle: fiabilite_des_trois_sources
 
+  - id: cout.ne_le_garde_pas
+    page: /cout
+    extrait: "Ce que la proposition n'encaisse plus, elle ne le garde pas."
+    porte: le poste abandonné est partagé en deux, salaires et dette
+    etat: verifiee
+    controle: impots_abandonnes_partages_en_deux
+
+  - id: cout.eteint_de_dette
+    page: /cout
+    extrait: "éteint de la dette"
+    porte: la moitié qui éteint de la dette vaut celle rendue aux salaires
+    etat: verifiee
+    controle: impots_abandonnes_partages_en_deux
+
+  - id: cout.restitution_hors_solde
+    page: /cout
+    extrait: "Rien de tout cela ne change le solde ci-dessus"
+    porte: le partage n'entre ni dans les ressources ni dans les dépenses du bilan
+    etat: verifiee
+    controle: restitution_hors_du_solde
+
   - id: cout.limite_recettes
     page: /cout
     extrait: "La recette réagit sur trois points, et sur trois seulement."
@@ -1409,55 +1514,251 @@ affirmations:
   # Risque — une revue de littérature, et ce que le modèle en dit
   # ------------------------------------------------------------------------
 
-  - id: risque.part_non_financee
+  - id: risque.prelevement_mensuel
     page: /risque
-    extrait: "il manquerait 16 % en 2070"
-    porte: la part de la dépense que les recettes ne couvrent pas à l'horizon
+    extrait: "sur un salaire moyen"
+    porte: ce que la retraite prélève chaque mois sur un salaire moyen, les deux parts
     etat: verifiee
-    controle: part_non_financee_a_l_horizon
-
-  - id: risque.ce_qui_arrive
-    page: /risque
-    extrait: "Ce qui arrive, c'est une baisse"
-    porte: aucun grand régime public n'a cessé de payer hors effondrement de l'État
-    etat: hors_modele
-    source: "Jensen et Richter"
+    controle: prelevement_mensuel_du_salaire_moyen
 
   - id: risque.proposition_change
     page: /risque
-    extrait: "Ce que la proposition change."
+    extrait: "Ce que nous proposons d'en faire."
     porte: le compte notionnel ne supprime pas le risque, il le règle par le coefficient
     etat: contredite
     action: 11
     controle: coefficient_calcule_jamais_applique
 
-  - id: risque.russie
+  - id: risque.incidence_salariale
     page: /risque
-    extrait: "Le seul non-paiement documenté dans un grand régime public est russe."
-    porte: un fait historique, appuyé sur la recherche citée
+    extrait: "Le résultat est récent, français, et il est net."
+    porte: la cotisation est payée par le salarié, en salaire qu'il ne touche pas
     etat: hors_modele
-    source: "Jensen et Richter (2004)"
+    source: "Review of Economic Studies"
 
-  - id: risque.grece
+  - id: risque.report
     page: /risque
-    extrait: "La Grèce est le cas européen."
-    porte: un fait historique, appuyé sur la recherche citée
+    extrait: "de report pour les cotisations liées à un droit"
+    porte: le report diffère selon que la cotisation ouvre un droit
     etat: hors_modele
-    source: "Tinios (2016)"
+    source: "Bozio"
 
-  - id: risque.juges
+  - id: risque.cout_de_la_promesse
     page: /risque
-    extrait: "Partout ailleurs, les juges ont défait la coupe."
-    porte: une revue de décisions de justice, pays par pays
+    extrait: "Financer la promesse par les cotisations réduit donc l'activité"
+    porte: une conséquence tirée de la littérature sur l'incidence
     etat: hors_modele
-    source: "Cour constitutionnelle"
+    source: "Review of Economic Studies"
 
-  - id: risque.etats_unis
+  - id: risque.taxation_implicite
     page: /risque
-    extrait: "Les États-Unis sont le cas à venir."
-    porte: l'épuisement de la réserve de la Social Security, daté par ses administrateurs
+    extrait: "cette taxation implicite atteignait 80 % de l'année travaillée"
+    porte: un chiffre de la recherche sur les incitations au départ
     etat: hors_modele
-    source: "administrateurs de la Social Security"
+    source: "Gruber"
+
+  - id: risque.capacite_productive
+    page: /risque
+    extrait: "de leur capacité productive"
+    porte: un chiffre de la recherche sur l'emploi des seniors
+    etat: hors_modele
+    source: "Gruber"
+
+  - id: risque.epargne_privee
+    page: /risque
+    extrait: "se substitue à vingt à cinquante centimes d'épargne privée"
+    porte: un résultat de la littérature sur l'éviction de l'épargne
+    etat: hors_modele
+    source: "Feldstein"
+
+  - id: risque.mortalite_differentielle
+    page: /risque
+    extrait: "Ils meurent plus tôt, et touchent donc moins longtemps."
+    porte: l'écart d'espérance de vie entre les plus aisés et les plus modestes
+    etat: hors_modele
+    source: "INSEE"
+
+  - id: risque.ecart_esperance
+    page: /risque
+    extrait: "entre les 5 % d'hommes les plus aisés et les 5 % les plus modestes"
+    porte: l'écart mesuré par l'INSEE
+    etat: hors_modele
+    source: "INSEE"
+
+  - id: risque.redistribution_rendue
+    page: /risque
+    extrait: "rend donc au sommet de la distribution environ un tiers de ce que les règles lui reprennent"
+    porte: une conséquence tirée de la mortalité différentielle
+    etat: hors_modele
+    source: "INSEE"
+
+  - id: risque.chomage
+    page: /risque
+    extrait: "Ils paient aussi le chômage."
+    porte: ce que l'État consacre à effacer les cotisations sur les bas salaires
+    etat: hors_modele
+    source: "Bozio"
+
+  - id: risque.pauvrete
+    page: /risque
+    extrait: "Et la pauvreté n'est plus là où on la cherche."
+    porte: la pauvreté frappe aujourd'hui les enfants plus que les retraités
+    etat: hors_modele
+    source: "INSEE"
+
+  - id: risque.rendement_des_generations
+    page: /risque
+    extrait: "Le taux monte, le rendement descend."
+    porte: le rendement interne décroît de génération en génération
+    etat: hors_modele
+    source: "Économie et Statistique"
+
+  - id: risque.rendement_1950
+    page: /risque
+    extrait: "pour la génération 1950"
+    porte: le rendement interne mesuré de la génération 1950
+    etat: hors_modele
+    source: "Dubois"
+
+  - id: risque.rendement_1970
+    page: /risque
+    extrait: "à partir de la génération 1970"
+    porte: le rendement interne mesuré à partir de la génération 1970
+    etat: hors_modele
+    source: "Dubois"
+
+  - id: risque.pensions_reculent
+    page: /risque
+    extrait: "Ce qu'ils touchent recule aussi."
+    porte: la pension relative recule, génération après génération
+    etat: hors_modele
+    source: "Conseil d'orientation des retraites"
+
+  - id: risque.patrimoine
+    page: /risque
+    extrait: "Et le patrimoine, lui, ne bouge pas."
+    porte: le patrimoine des retraités ne suit pas la baisse des pensions
+    etat: hors_modele
+    source: "INSEE"
+
+  - id: risque.reformes_mesurees
+    page: /risque
+    extrait: "Ce que ces réformes ont retiré se mesure."
+    porte: l'effet des réformes passées se chiffre
+    etat: hors_modele
+    source: "Conseil d'orientation des retraites"
+
+  - id: risque.pensions_servies_touchees
+    page: /risque
+    extrait: "Les pensions déjà servies ont été touchées aussi."
+    porte: les revalorisations inférieures aux prix ont rogné les pensions servies
+    etat: hors_modele
+    source: "Conseil d'orientation des retraites"
+
+  - id: risque.solde_projete
+    page: /risque
+    extrait: "en 2045 et"
+    porte: le solde projeté du système actuel, tel que le modèle le lit
+    etat: verifiee
+    controle: deficit_se_creuse
+
+  - id: risque.regime_ne_cesse_pas
+    page: /risque
+    extrait: "Un régime public ne cesse pas de payer, sauf si l'État s'effondre."
+    porte: le seul non-paiement documenté est russe, et c'est un effondrement d'État
+    etat: hors_modele
+    source: "Journal of Public Economics"
+
+  - id: risque.consequence
+    page: /risque
+    extrait: "La conséquence est celle que personne ne dit."
+    porte: un point de cotisation de plus coûte un point de salaire, à délai
+    etat: hors_modele
+    source: "Melguizo"
+
+  - id: risque.lien_visible
+    page: /risque
+    extrait: "divise par trois le taux de prélèvement ressenti comme une taxe"
+    porte: rendre le lien visible entre cotisation et pension réduit la taxe ressentie
+    etat: hors_modele
+    source: "Liebman"
+
+  - id: risque.epargne_disparait
+    page: /risque
+    extrait: "sauf dans les pays dotés d'une répartition généreuse, où cet effet disparaît"
+    porte: l'allongement de la vie ne pousse plus à épargner là où la répartition est généreuse
+    etat: hors_modele
+    source: "Bloom"
+
+  - id: risque.chomage_en_hausse
+    page: /risque
+    extrait: "mais un taux de chômage en hausse de sept points"
+    porte: l'effet mesuré de la réforme de 2010 sur l'activité et le chômage
+    etat: hors_modele
+    source: "INSEE"
+
+  - id: risque.pauvrete_des_jeunes
+    page: /risque
+    extrait: "des moins de dix-huit ans"
+    porte: la pauvreté frappe plus les enfants que les retraités
+    etat: hors_modele
+    source: "solidarité active"
+
+  - id: risque.premier_poste
+    page: /risque
+    extrait: "de l'ensemble des dépenses publiques"
+    porte: la retraite est le premier poste de la dépense publique
+    etat: hors_modele
+    source: "Conseil d'orientation des retraites"
+
+  - id: risque.education
+    page: /risque
+    extrait: "à 6,7 % en 2023"
+    porte: la dépense d'éducation a reculé pendant que la retraite montait
+    etat: hors_modele
+    source: "OCDE"
+
+  - id: risque.allegements
+    page: /risque
+    extrait: "milliards d'euros par an"
+    porte: ce que l'État consacre à effacer les cotisations sur les bas salaires
+    etat: hors_modele
+    source: "Wasmer"
+
+  - id: risque.rendement_generation_2000
+    page: /risque
+    extrait: "serait de 0,8 %"
+    porte: le rendement projeté de la génération 2000, sur une carrière type
+    etat: hors_modele
+    source: "Conseil d'orientation des retraites"
+
+  - id: risque.retrait_de_l_etat
+    page: /risque
+    extrait: "point de PIB"
+    porte: le besoin de financement à convention de contribution figée
+    etat: hors_modele
+    source: "Conseil d'orientation des retraites"
+
+  - id: risque.variante_chomage
+    page: /risque
+    extrait: "qui manquent"
+    porte: ce qu'un chômage ramené à 5 % changerait au solde de 2070
+    etat: hors_modele
+    source: "Conseil d'orientation des retraites"
+
+  - id: risque.sources_du_solde
+    page: /risque
+    extrait: "les comptes du Conseil d'orientation des retraites pour le solde"
+    porte: le solde vient des comptes du COR, la part financée du modèle
+    etat: verifiee
+    controle: projection_du_cor
+
+  - id: risque.la_coupe
+    page: /risque
+    extrait: "Ce qui arrive, ailleurs, c'est la coupe."
+    porte: ce que la Grèce a coupé, et ce que les juges en ont fait
+    etat: hors_modele
+    source: "Tinios"
 
   # ------------------------------------------------------------------------
   # Le pied de page, commun à toutes
