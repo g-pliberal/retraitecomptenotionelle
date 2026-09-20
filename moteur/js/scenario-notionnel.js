@@ -70,9 +70,9 @@ export class ScenarioNotionnel {
     const compte = this.constructeur.construire(
       carriere, anneeLiquidation, carriere.premiereAnnee, regimeFusionne,
     );
-    const conversion = this.convertisseur.coefficient(
-      ageLiquidation, anneeLiquidation, this._sexe(carriere),
-      carriere.moisLiquidation, this.convertisseur.populationDe(carriere),
+    const [conversion] = this.convertisseur.resoudre(
+      compte.capital, ageLiquidation, anneeLiquidation, this._sexe(carriere),
+      carriere.moisLiquidation, carriere,
     );
 
     return resultat({
@@ -153,7 +153,9 @@ export class ScenarioNotionnel {
       anneeLiquidation: carriere.anneeLiquidation,
       moisLiquidation: carriere.moisLiquidation,
       sexe: carriere.sexe,
-      population: this.convertisseur.populationDe(carriere),
+      population: this.convertisseur.populationPourPension(
+        resultat_.pension_annuelle, carriere.anneeLiquidation, carriere,
+      ),
     });
   }
 
@@ -244,11 +246,11 @@ export class ScenarioNotionnel {
     const compte = this.constructeur.construire(
       carriere, anneeLiquidation, bascule, regimeFusionne,
     );
-    const conversion = this.convertisseur.coefficient(
-      ageLiquidation, anneeLiquidation, this._sexe(carriere),
-      carriere.moisLiquidation, this.convertisseur.populationDe(carriere),
-    );
     const capitalTotal = compte.capital + capitalAcquis;
+    const [conversion] = this.convertisseur.resoudre(
+      capitalTotal, ageLiquidation, anneeLiquidation, this._sexe(carriere),
+      carriere.moisLiquidation, carriere,
+    );
 
     return resultat({
       pension_annuelle: capitalTotal / conversion.diviseur,
@@ -271,7 +273,10 @@ export class ScenarioNotionnel {
     const actuel = this.scenarioActuel.calculer(carriere);
     const conversion = this.convertisseur.coefficient(
       ageLiquidation, anneeLiquidation, this._sexe(carriere),
-      carriere.moisLiquidation, this.convertisseur.populationDe(carriere),
+      carriere.moisLiquidation,
+      this.convertisseur.populationPourPension(
+        actuel.pension_annuelle, anneeLiquidation, carriere,
+      ),
     );
     const compte = this.constructeur.construire(
       carriere, anneeLiquidation, anneeLiquidation, // aucune cotisation postérieure
@@ -330,7 +335,7 @@ export class ScenarioNotionnel {
       : (carriere.age_liquidation || this.ageReference.age(bascule));
     const conversion = this.convertisseur.coefficient(
       ageConversion, bascule, this._sexe(carriere), 1,
-      this.convertisseur.populationDe(carriere),
+      this.convertisseur.populationPourPension(droits.pension_annuelle, bascule, carriere),
     );
     const capitalALaBascule = droits.pension_annuelle * conversion.diviseur;
 

@@ -121,6 +121,10 @@ export const AgeConversionDroitsAcquis = Object.freeze({
  */
 export const POPULATION_PAR_NIVEAU_DE_VIE = "niveau_de_vie";
 
+/** Comment une carrière est rattachée à son vingtile : par son salaire ou par sa pension. */
+export const RATTACHEMENT_SALAIRE = "salaire";
+export const RATTACHEMENT_PENSION = "pension";
+
 export const TableConversion = Object.freeze({
   UNISEXE: "unisexe",
   PAR_SEXE: "par_sexe",
@@ -237,6 +241,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: commune, la même pour tout le monde, et désactive la mesure ; une clé de
   //: `paquet.populations` vaut pour toutes les carrières, pour mesurer.
   population_conversion: "niveau_de_vie",
+  //: Par quoi la carrière est rattachée à son vingtile : `salaire` (son
+  //: salaire rapporté au salaire moyen) ou `pension` (sa pension nette,
+  //: ramenée aux euros de l'année des vingtiles, résolue par point fixe).
+  rattachement_niveau_de_vie: RATTACHEMENT_SALAIRE,
   //: Taux de préfinancement incorporé au diviseur. 0 : le diviseur est
   //: l'espérance de vie résiduelle actualisée au même taux que l'indexation,
   //: les deux se compensant exactement.

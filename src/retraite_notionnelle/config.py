@@ -274,6 +274,11 @@ class RevalorisationStock(str, Enum):
 #: population générale.
 POPULATION_PAR_NIVEAU_DE_VIE = "niveau_de_vie"
 
+#: Comment une carrière est rattachée à son vingtile de niveau de vie.
+RATTACHEMENT_SALAIRE = "salaire"
+RATTACHEMENT_PENSION = "pension"
+RATTACHEMENTS_NIVEAU_DE_VIE = (RATTACHEMENT_SALAIRE, RATTACHEMENT_PENSION)
+
 
 class SituationFoyer(str, Enum):
     """Situation de foyer retenue pour la garantie vieillesse du scénario 6.
@@ -509,6 +514,16 @@ class Parametres:
     #: Ce que la mesure vaut et ce qu'elle suppose est dans
     #: ``docs/methodologie.md`` §5 et ``docs/limites.md`` §5 (action 14).
     population_conversion: str | None = POPULATION_PAR_NIVEAU_DE_VIE
+
+    #: Par quoi la carrière est rattachée à son vingtile, quand
+    #: ``population_conversion`` vaut ``POPULATION_PAR_NIVEAU_DE_VIE`` :
+    #: ``salaire`` — son salaire rapporté au salaire moyen, appliqué au niveau
+    #: de vie moyen des vingtiles ; ``pension`` — le RANG de sa pension brute
+    #: parmi les retraités, dans la distribution des pensions de la DREES,
+    #: le vingtile étant celui de ce rang. Le second est circulaire sous un
+    #: compte notionnel — la pension dépend du diviseur — et se résout par
+    #: point fixe (``Convertisseur.resoudre``).
+    rattachement_niveau_de_vie: str = RATTACHEMENT_SALAIRE
 
     #: Taux de préfinancement (« front-loading ») incorporé au diviseur.
     #: 0 signifie : le diviseur est l'espérance de vie résiduelle actualisée au

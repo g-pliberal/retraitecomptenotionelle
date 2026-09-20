@@ -95,6 +95,12 @@ export const TABLES = [["unisexe", "Unisexe (défaut)"], ["par_sexe", "Par sexe"
  * place ; « commune » est la table de population générale, la même pour tout le
  * monde, et désactive la mesure ; les autres clés imposent une population.
  */
+/** Par quoi la carrière est rattachée à son vingtile de niveau de vie. */
+export const RATTACHEMENTS = [
+  ["salaire", "Par le salaire (défaut)"],
+  ["pension", "Par la pension"],
+];
+
 export const POPULATIONS = [
   ["niveau_de_vie", "Par niveau de vie (défaut)"],
   ["commune", "Population générale, la même pour tous"],
@@ -409,8 +415,13 @@ export class ErreurSaisie extends Error {}
  */
 export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
+<<<<<<< HEAD
   "conversion_acquis", "part_cotisation", "foyer", "projection", "emploi",
   "stock", "reprise", "bascule", "euros",
+=======
+  "rattachement", "conversion_acquis", "part_cotisation", "foyer",
+  "projection", "emploi", "stock", "bascule", "euros",
+>>>>>>> a5b531f (Le rattachement au vingtile par la pension, en option : le rang parmi les retraités, résolu par point fixe)
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -453,6 +464,7 @@ const DEFAUTS = Object.freeze({
   age_reference: "fixe_apres_bascule",
   table: "unisexe",
   population: "niveau_de_vie",
+  rattachement: "salaire",
   conversion_acquis: "reference",
   part_cotisation: "salariale",
   // Seul ou en couple : la situation de foyer de la garantie vieillesse du
@@ -520,6 +532,7 @@ export class Saisie {
       age_reference: parmi(parametres, "age_reference", AGES_REFERENCE, DEFAUTS.age_reference),
       table: parmi(parametres, "table", TABLES, DEFAUTS.table),
       population: parmi(parametres, "population", POPULATIONS, DEFAUTS.population),
+      rattachement: parmi(parametres, "rattachement", RATTACHEMENTS, DEFAUTS.rattachement),
       conversion_acquis: parmi(
         parametres, "conversion_acquis", CONVERSIONS_ACQUIS, DEFAUTS.conversion_acquis,
       ),
@@ -817,6 +830,7 @@ export class Saisie {
       mode_age_reference: ModeAgeReference[cleEnum(ModeAgeReference, this.age_reference)],
       table_conversion: TableConversion[cleEnum(TableConversion, this.table)],
       population_conversion: this.population === "commune" ? null : this.population,
+      rattachement_niveau_de_vie: this.rattachement,
       age_conversion_droits_acquis:
         AgeConversionDroitsAcquis[cleEnum(AgeConversionDroitsAcquis, this.conversion_acquis)],
       part_cotisation: PartCotisation[
@@ -1156,7 +1170,7 @@ export class Saisie {
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,
-      population: this.population,
+      population: this.population, rattachement: this.rattachement,
       conversion_acquis: this.conversion_acquis,
       part_cotisation: this.part_cotisation,
       foyer: this.foyer,
@@ -2154,6 +2168,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   age_reference: ["âge de référence", AGES_REFERENCE],
   table: ["table de conversion", TABLES],
   population: ["population de la table de conversion", POPULATIONS],
+  rattachement: ["rattachement au niveau de vie", RATTACHEMENTS],
   conversion_acquis: ["âge de conversion des droits acquis", CONVERSIONS_ACQUIS],
   part_cotisation: ["part de la cotisation portée au compte", PARTS_COTISATION],
   foyer: ["situation de foyer", SITUATIONS_FOYER],
@@ -2268,6 +2283,12 @@ function champsModelisation(saisie) {
       + "les plus modestes chez les hommes, et une table commune le leur "
       + "transférerait. « Population générale » revient à cette table "
       + "commune ; les autres imposent une population."),
+    g.liste("rattachement", "Rattachement au niveau de vie", RATTACHEMENTS,
+      saisie.rattachement,
+      "", {}, "Ce qui vous place dans un vingtile : votre salaire rapporté au "
+      + "salaire moyen, ou le rang de votre pension parmi les retraités, dans "
+      + "la distribution de la DREES. Par la pension, le vingtile dépend de la "
+      + "pension qui dépend du diviseur : le modèle itère jusqu'au point fixe."),
     g.liste("part_cotisation", "Part de la cotisation portée au compte",
       PARTS_COTISATION, saisie.part_cotisation,
       "salariale seule, ou salariale et patronale", {},

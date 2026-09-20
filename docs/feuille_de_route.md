@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 394<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 539<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -1411,6 +1411,25 @@ que ce soit facile de désactiver ».**
   notionnels, le SMIC gagne 12 % de pension, le cadre en perd 10 %, la
   proposition gagne quatre dixièmes de point de PIB de solde moyen. Les
   témoins ont été régénérés, Python et JavaScript concordent au bit près.
+
+- *Le rattachement par la pension, en option, le même jour — à la demande :
+  « chiffre avec la pension plutôt que le salaire ».* Première tentative,
+  écartée avant d'être livrée : comparer la pension nette aux niveaux de vie
+  de la population entière classait presque tout le monde en bas — une
+  pension est plus petite qu'un salaire, et les vingtiles mêlent actifs et
+  retraités —, et la proposition perdait huit dixièmes de point. Retenu : le
+  RANG de la pension brute parmi les retraités, lu dans la distribution DREES
+  que le dépôt avait déjà (`DistributionPensions.part_sous`), le vingtile
+  étant celui du rang. Circulaire sous un compte notionnel, résolu par point
+  fixe en six tours au plus (`Convertisseur.resoudre`), porté en JavaScript,
+  sur le site sous « Rattachement au niveau de vie », deux témoins. Le SMIC
+  monte au sixième vingtile, le salaire moyen au onzième, le cadre reste au
+  dix-neuvième, les départs précoces descendent. Sur les soldes moyens
+  2026-2070 : la proposition à −1,78 % par la pension contre −1,52 % par le
+  salaire et −1,93 % sous la table commune ; le scénario 4 à +2,02 % contre
+  +2,20 % et +1,74 %. Le défaut reste le salaire : le rang parmi les
+  retraités suppose que le niveau de vie suit la pension, ce qui néglige le
+  conjoint et le patrimoine, et rien ne dit qu'il vaut mieux.
 
 **Ce qui reste.** Le rattachement est le maillon faible : un salaire n'est pas
 un niveau de vie, et une carrière n'est pas un ménage. Une lecture de la
