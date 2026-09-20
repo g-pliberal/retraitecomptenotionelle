@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 240<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 244<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8845,6 +8845,19 @@ distribution des successions déclarées, pour un recoupement d'ensemble.
 net, sur le patrimoine des bénéficiaires selon leur pension lu dans le fichier
 de l'enquête, couples compris, et le programme dit en une phrase pourquoi il
 reprend là où le Parlement renonce.
+
+*Le 20 septembre 2026, plus tard.* **Le minimum garanti de la fonction publique
+sort du tableau « ce que la garantie remplace ».** Le tableau du dépliant
+compte désormais trois minima, non quatre : minimum vieillesse, minimum
+contributif, pension majorée de référence. Le minimum garanti disparaît bien
+sous le scénario 6, mais les régimes de la fonction publique le servent dans
+leur dépense de pensions, que la trajectoire remplace déjà ; il n'est pas un
+transfert que l'impôt paierait à part, et le compter là faisait baisser
+d'autant « ce que l'impôt paierait en plus ». Le total remplacé passe de 7,8 à
+7,1 milliards en 2024, l'écart monte de 0,7 milliard. Ses 0,72 milliard restent
+sur la page des avantages non contributifs, où il est un avantage du droit en
+vigueur, et le modèle continue de le servir dans le scénario 1. Python, JS,
+témoins et `limites.md`.
 
 ### 48. Les pensions déjà servies à la bascule gardent les prix — `fait`
 
