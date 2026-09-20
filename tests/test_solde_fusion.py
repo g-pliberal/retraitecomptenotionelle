@@ -1,0 +1,125 @@
+"""Le solde sous quatre régimes uniques : ce que le script déplace, et rien d'autre."""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import pytest
+
+from retraite_notionnelle import cout as C
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.donnees.assiette import AssietteActivite
+from retraite_notionnelle.donnees.depenses import DepensesRetraite
+from retraite_notionnelle.donnees.equilibre import ComptesRetraite
+from retraite_notionnelle.donnees.population import Population
+from retraite_notionnelle.moteur.compte import ConstructeurCompte
+from retraite_notionnelle.simulateur import Simulateur
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+
+import solde_fusion  # noqa: E402
+
+RACINE = Parametres().racine_donnees
+
+
+@pytest.fixture(scope="module")
+def donnees():
+    return (DepensesRetraite(RACINE), Population(RACINE), ComptesRetraite(RACINE),
+            AssietteActivite(RACINE))
+
+
+@pytest.fixture(scope="module")
+def reference(donnees):
+    """La page Coût telle qu'elle est : le point de comparaison."""
+    depenses, population, comptes, assiette = donnees
+    return C.calculer_cout(Simulateur(Parametres()), depenses, population, comptes,
+                           assiette=assiette)
+
+
+@pytest.fixture(scope="module")
+def hypotheses():
+    simulateur = Simulateur(Parametres())
+    return simulateur, solde_fusion.hypotheses(simulateur.catalogue, 2026)
+
+
+@pytest.fixture(scope="module")
+def resultat_a(donnees, hypotheses):
+    depenses, population, comptes, assiette = donnees
+    simulateur, toutes = hypotheses
+    return solde_fusion.calculer(toutes["A"], Simulateur(Parametres()), depenses,
+                                 population, comptes, assiette)
+
+
+def test_le_bareme_par_tranches_se_lit_tranche_par_tranche(hypotheses):
+    _, toutes = hypotheses
+    bareme = toutes["B"].bareme
+    (_, taux_1, _), (_, taux_2, _), (_, taux_3, _) = bareme
+    pass_annuel = 47_100.0
+    assert solde_fusion.taux_du_bareme(bareme, 0.5 * pass_annuel, pass_annuel)[0] == pytest.approx(taux_1)
+    assert solde_fusion.taux_du_bareme(bareme, 2 * pass_annuel, pass_annuel)[0] == pytest.approx((taux_1 + taux_2) / 2)
+    assert solde_fusion.taux_du_bareme(bareme, 10 * pass_annuel, pass_annuel)[0] == pytest.approx(
+        (taux_1 + 7 * taux_2 + 2 * taux_3) / 10)
+    assert solde_fusion.taux_du_bareme(bareme, 0.0, pass_annuel) == (0.0, 0.0)
+
+
+def test_les_quatre_hypotheses_se_rangent_par_taux(hypotheses):
+    simulateur, toutes = hypotheses
+    b, c, d = (toutes[l].taux_affiche for l in "BCD")
+    assert b == pytest.approx(simulateur.regime_fusionne.taux_cotisation_retraite)
+    assert b > c > d > 0.0
+
+
+def test_sous_a_le_taux_effectif_est_celui_du_regime_unique(resultat_a, hypotheses, reference):
+    simulateur, _ = hypotheses
+    assert resultat_a.taux_effectif == pytest.approx(
+        simulateur.regime_fusionne.taux_cotisation_retraite, abs=1e-9)
+    assert 0.0 < resultat_a.rapport_recette < 1.0
+    assert resultat_a.echecs == reference.echecs
+
+
+def test_les_scenarios_1_et_6_ne_bougent_pas(resultat_a, reference):
+    for convention in solde_fusion.CONVENTIONS:
+        lectures = resultat_a.lectures[convention]
+        for scenario in ("actuel", "notionnel_liberal"):
+            for ligne in reference.solde.projetees():
+                assert lectures[scenario].soldes[ligne.annee] == pytest.approx(
+                    ligne.solde(scenario), abs=1e-12), (convention, scenario, ligne.annee)
+
+
+def test_avant_la_bascule_rien_ne_change(resultat_a, reference):
+    for ligne in reference.solde.annees:
+        if ligne.annee >= 2026:
+            continue
+        variante = resultat_a.cout.solde.annee(ligne.annee)
+        for scenario, _ in C.SCENARIOS:
+            assert variante.solde(scenario) == pytest.approx(ligne.solde(scenario), abs=1e-12)
+
+
+def test_la_recette_suit_la_regle_du_programme(resultat_a, reference):
+    """Sous « assiette », la recette d'un scénario 2 à 5 est celle du scénario 6
+    à son taux près : taux × assiette, plus les autres produits, moins ce que
+    la CNAF et l'Unédic versent pour des droits qu'il ne sert plus."""
+    ligne = reference.solde.annee(2030)
+    attendu = (ligne.ressources * resultat_a.taux_effectif / ligne.taux_prelevement
+               + ligne.ressources * (1.0 - ligne.part_contributive
+                                     - ligne.part_subventions - ligne.part_impots)
+               - (ligne.retrait - ligne.retrait_par_impot))
+    lecture = resultat_a.lectures[C.CONVENTION_ASSIETTE]["notionnel_prospectif_employeur"]
+    assert lecture.ressources[2030] == pytest.approx(attendu, abs=1e-12)
+    # Sous « rapport », les impôts affectés restent : la recette est plus haute.
+    rapport = resultat_a.lectures[C.CONVENTION_RAPPORT]["notionnel_prospectif_employeur"]
+    assert rapport.ressources[2030] > lecture.ressources[2030]
+    # Et elle ne vaut plus les ressources du système actuel, comme sur la page.
+    assert lecture.ressources[2030] < ligne.ressources
+
+
+def test_le_contexte_rend_ses_attributs(hypotheses):
+    _, toutes = hypotheses
+    avant = (ConstructeurCompte.taux_unifie, C.CLES_RECETTES, C._pensionnes,
+             C._rapports_recettes, C.SoldeAnnuel.ressources_de)
+    with solde_fusion.RegimeUniqueVariante(toutes["C"]):
+        assert C.CLES_RECETTES != avant[1]
+        assert ConstructeurCompte.taux_unifie is not avant[0]
+    assert (ConstructeurCompte.taux_unifie, C.CLES_RECETTES, C._pensionnes,
+            C._rapports_recettes, C.SoldeAnnuel.ressources_de) == avant
