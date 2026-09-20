@@ -8452,3 +8452,62 @@ dit.
 `construire_temoins.py` (`REGLES_AUTRES`), `tests/test_cout.py`,
 `limites.md` § « Et le stock, le jour de la bascule ».
 
+### 49. Le jaune pensions, lu par le dépôt : le lecteur PDF réparé, trois tableaux, trente-neuf chiffres retrouvés — `fait`
+
+**Demande.** « Débrouille-toi pour analyser le PDF du jaune. » Le document
+était là depuis l'action 45, par son miroir à l'Assemblée nationale ; le
+lecteur PDF du dépôt en rendait « 5DSSRUW » pour « Rapport ».
+
+**Le diagnostic, en quatre défauts du lecteur.** `lecture_pdf.py` ne dépliait
+pas les flux d'objets compressés (`/ObjStm`), où un PDF 1.5 range ses pages
+et ses polices : il ne voyait aucune police, donc aucune table. Il n'appliquait
+pas la table ToUnicode aux chaînes littérales, seulement à l'hexadécimal — or
+une police TrueType sous-ensemble numérote ses glyphes dans l'ordre
+d'apparition et les pose en `(\001\002…)`, un octet par code. Il tenait une
+table unique par nom de police pour tout le document, quand Word donne à
+chaque page son `/TT0` et sa table. Et le rang du groupe qui devait porter le
+nom de la police, écrit en dur, désignait en fait le groupe de la chaîne : le
+nom restait à `None`, et aucune table n'avait jamais été appliquée aux
+chaînes — depuis l'origine. Puis trois défauts de lecture qui salissaient les
+tableaux : les espaces posées seules (`( ) Tj`) étaient jetées, ce qui collait
+les mots ; les dictionnaires du contenu balisé (`<</Lang (en-US)>>`)
+s'imprimaient entre chaque cellule ; et la fine insécable des milliers
+devenait une espace ordinaire, si bien que « 1 339 945 1 654 863 » ne se
+découpait plus en deux nombres.
+
+**Ce qui est fait.**
+
+- **`scripts/fetch/lecture_pdf.py`** apprend les sept points : flux d'objets,
+  chaînes littérales traduites par la table avec la largeur de code que son
+  `codespacerange` déclare, polices résolues page par page et formulaire par
+  formulaire (`/Resources` puis `/Font`, rattachés au flux `/Contents` ou au
+  `/Form`), nom de police pris par le groupe nommé, espaces seules gardées,
+  dictionnaires sautés, insécables gardées insécables, reculs d'un tableau
+  `TJ` rendus en espace, images JPEG ignorées. Toujours sans dépendance. Le
+  jaune se lit en sept secondes. `tests/test_lecture_pdf.py` : huit documents
+  minimaux fabriqués à la main, un par point.
+- **`scripts/fetch/sre_jaune_pensions.py`** lit le document — `data/brut/`,
+  sinon le miroir, avec l'empreinte du manifeste — et en tire les trois
+  tableaux qui servent au dépôt : A-7 (six bonifications × cinq colonnes, sur
+  le stock 2024), 50 (trois blocs × quatre populations × huit colonnes, sur le
+  flux 2023), et les lignes complètes de B-1. Deux contrôles refusent
+  d'écrire : plus de bénéficiaires que de pensions, un ensemble sous une
+  bonification seule. Sortie : `data/brut/sre_jaune_pensions.json`.
+- **`--confronter`** relit `avantages_non_contributifs.yaml`, extrait les
+  nombres de chaque note qui cite le jaune, et dit s'ils sont dans les
+  tableaux lus : **trente-neuf sur trente-neuf** le 20 septembre 2026. La
+  saisie faite à l'écran est prouvée par le document. Neuf tests dans
+  `tests/test_sre_jaune_pensions.py`, sur les lignes que le lecteur rend.
+
+**Ce qui reste, et pourquoi.** Le jeu reste `saisi` : la confrontation prouve
+la saisie, elle ne la remplace pas par une valeur lue, faute d'un champ
+structuré dans le fichier cible — les chiffres y vivent dans des notes. Le
+passage à `certifiee` demande ce champ et sa lecture par
+`verifier_donnees.py`, c'est-à-dire une décision sur la forme du fichier des
+avantages, pas une lecture de plus. Et un défaut du document lui-même : la
+table Unicode d'une de ses polices n'a pas les lettres accentuées, si bien que
+« bénéficiaires » s'y lit « bnficiaires » — pdfminer rend la même chose ; les
+intitulés sont reconnus sans accents, les nombres sont intacts.
+
+**Fin.** Le jaune se lit, ses trois tableaux sont dans un JSON, et chaque
+chiffre qu'on en avait recopié est retrouvé dans le document par un script.

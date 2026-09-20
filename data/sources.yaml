@@ -944,6 +944,7 @@ institutions:
         fichier_local: 12-Jaune2026_Pensions.pdf
         miroir: https://questions.assemblee-nationale.fr/dyn/contenu/visualisation/1090002/file/12-Jaune2026_Pensions.pdf
         sha256: cbe526b93e2038aed8b04edcbbdca5c947b6260f6e24538900d4d36b2010bbf2
+        recuperation: scripts/fetch/sre_jaune_pensions.py
         statut_integration: saisi
         cible: data/reference/legislation/avantages_non_contributifs.yaml
         note: >-
@@ -961,12 +962,22 @@ institutions:
           MENSUEL DE LA PENSION, en euros — la seule valorisation publiée de ces
           dispositifs. Le B-1 donne les caractéristiques du flux.
 
-          LE FICHIER N'EST PAS RÉCUPÉRABLE DEPUIS UNE SESSION : budget.gouv.fr
+          LE FICHIER NE SE TÉLÉCHARGE PAS DEPUIS UNE SESSION : budget.gouv.fr
           refuse les adresses de sortie du proxy, page comme fichier, curl comme
-          navigateur (voir `docs/outillage_interface.md`). Les valeurs ont donc
-          été SAISIES à la lecture du document, apporté par l'utilisateur, et
-          non certifiées : aucun script ne peut les revérifier. Elles portent
-          leur numéro de tableau pour qu'un lecteur retrouve chacune.
+          navigateur (voir `docs/outillage_interface.md`). Mais l'annexe est
+          déposée au Parlement et l'Assemblée nationale sert le même fichier,
+          octet pour octet : c'est le `miroir` ci-dessus, avec son empreinte.
+          Les valeurs avaient été SAISIES à la lecture du document, apporté
+          par l'utilisateur ; `scripts/fetch/sre_jaune_pensions.py` lit
+          désormais les tableaux A-7, 50 et B-1 dans le document lui-même
+          (le lecteur PDF du dépôt a dû apprendre ses flux d'objets et ses
+          polices à un octet par code), et `--confronter` retrouve dans ces
+          tableaux chacun des chiffres cités par les notes du fichier cible —
+          trente-neuf sur trente-neuf au 20 septembre 2026. Elles restent
+          `saisi` : la confrontation prouve la saisie, elle ne la remplace
+          pas par une valeur lue, faute d'un champ structuré dans la cible.
+          Elles portent leur numéro de tableau pour qu'un lecteur retrouve
+          chacune.
 
           Millésime : le fichier s'appelle `Jaune2026_Pensions…` et ses données
           vont jusqu'aux pensions en paiement en 2024, ce qui en fait l'annexe
