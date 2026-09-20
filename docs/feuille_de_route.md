@@ -3418,8 +3418,8 @@ corriger au passage, et `moteur/js/pages.js` en regard ; les témoins.
 Le portage JavaScript n'a pas à porter le test : le catalogue vise le texte,
 et les deux moteurs rendent le même.
 
-**Fait le 20 septembre 2026.** 195 entrées au catalogue — 171 vérifiées,
-6 contredites, 5 hors modèle, 13 sans portée — et 116 contrôles, soit 380
+**Fait le 20 septembre 2026.** 198 entrées au catalogue — 174 vérifiées,
+6 contredites, 5 hors modèle, 13 sans portée — et 117 contrôles, soit 386
 tests de plus : un par entrée pour la présence de l'extrait, un par entrée qui
 engage quelque chose pour le contrôle, un par affirmation hors modèle pour sa
 source, plus les trois qui tiennent la forme, l'exhaustivité et l'absence de
@@ -3484,14 +3484,23 @@ phrase revient sur l'établi : c'est ce que `test_le_catalogue_est_bien_forme`
 exige en refusant qu'une entrée `contredite` cite une action `fait`.
 
 **Ce qu'il a coûté au rebasage, et c'est la meilleure preuve qu'il sert.**
-Trois sessions avaient poussé entre-temps : la page Risque, la refonte des
-réserves de la page Coût, les cinq points rendus sortis de la fiche de paie,
-la part de reprise lue sur le patrimoine. Vingt et un tests du catalogue sont
-tombés d'un coup — douze extraits qui n'étaient plus dans la page, huit
-contrôles que le modèle avait déplacés, et la clause d'exhaustivité sur vingt-
-deux phrases neuves. Aucun n'était un faux positif : chacun nommait une phrase
-ou une propriété qui avait bougé sans que personne ait à s'en souvenir. C'est
-exactement ce que l'action demandait, et le coût de le tenir est celui-là.
+Huit sessions avaient poussé entre-temps, en deux vagues. La première : la
+page Risque, la refonte des réserves de la page Coût, les cinq points rendus
+sortis de la fiche de paie, la part de reprise lue sur le patrimoine. Vingt et
+un tests du catalogue sont tombés d'un coup — douze extraits qui n'étaient
+plus dans la page, huit contrôles que le modèle avait déplacés, et la clause
+d'exhaustivité sur vingt-deux phrases neuves. La seconde, huit de plus : la
+garantie devenue le seul plancher, l'échelle de maturités tombée, et surtout
+la lecture du coefficient d'équilibre calculée depuis le solde par
+`_reglage_proposition` — une autre session avait vu la même contradiction le
+même jour et l'a réparée mieux, en composant la phrase au lieu de la brancher.
+Son code a été gardé, et le contrôle du catalogue vérifie désormais que les
+deux pages écrivent les nombres du solde.
+
+Aucun de ces vingt-neuf échecs n'était un faux positif : chacun nommait une
+phrase ou une propriété qui avait bougé sans que personne ait à s'en souvenir.
+C'est exactement ce que l'action demandait, et le coût de le tenir est
+celui-là.
 
 **Ce que le catalogue ne fait pas.** Il ne voit que les `<strong>` : une
 affirmation écrite sans emphase lui échappe, et c'est le prochain cran. Il ne

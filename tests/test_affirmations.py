@@ -79,6 +79,7 @@ from retraite_notionnelle.web.pages import (
     Saisie,
     _cumuls_indexation,
     _options_statuts,
+    _reglage_proposition,
 )
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -646,6 +647,30 @@ def _(m: Modele):
     assert _proche(pilier.rente_annuelle, attendue)
 
 
+@controle("pilier_adosse_a_la_date_du_depart")
+def _(m: Modele):
+    """Un versement achète la maturité de son horizon, et rien d'autre.
+
+    L'échelle de maturités qui glissait du long vers le court est tombée le
+    20 septembre 2026 : sous les anticipations pures, le découpage laissait le
+    capital inchangé au centime. Deux propriétés la remplacent, et ce sont
+    elles que la page affirme : aucune maturité au-delà de l'horizon, aucune
+    échéance avant le départ tant que la courbe couvre l'horizon.
+    """
+    from retraite_notionnelle.moteur.capitalisation import MATURITE_MAXIMALE, repartition
+
+    for horizon in (2, 10, 17, 30, 40):
+        lignes = repartition(horizon)
+        assert len(lignes) == 1, (horizon, lignes)
+        (maturite, poids), = lignes
+        assert poids == 1.0
+        assert maturite == min(horizon, MATURITE_MAXIMALE)
+    pilier = m.defaut.notionnel_liberal.capitalisation
+    for annee in pilier.annees:
+        for maturite, _ in annee.placements:
+            assert maturite <= annee.horizon
+
+
 @controle("pilier_place_sur_la_courbe_sans_risque")
 def _(m: Modele):
     pilier = m.defaut.notionnel_liberal.capitalisation
@@ -993,14 +1018,35 @@ def _(m: Modele):
 
 @controle("note_du_coefficient_suit_son_signe")
 def _(m: Modele):
-    """La branche écrite sous les réglages par défaut est celle du signe calculé."""
-    texte = TEMOINS_PAR_NOM["cout"]["texte"]
-    coefficient = m.horizon.coefficient("notionnel_liberal")
-    marge = "Un coefficient supérieur à un est une marge, et une marge se sert."
-    manque = "Un coefficient inférieur à un est un manque, et un manque se règle."
-    assert (marge in texte) == (coefficient >= 1.0)
-    assert (manque in texte) == (coefficient < 1.0)
-    assert g.nombre(coefficient, 2) in texte
+    """Les deux pages composent leur lecture depuis le solde, et disent son signe.
+
+    Elles la portaient en dur : Cas types promettait « supérieur à un chaque
+    année » quand le tableau de Coût chiffrait 0,92. Les deux lectures se
+    calculent depuis ``_reglage_proposition`` depuis le 20 septembre 2026, et
+    ce contrôle vérifie que les nombres écrits sont ceux du solde.
+    """
+    reglage = _reglage_proposition(m.solde)
+    assert reglage["total"] > 0
+    sous_un = reglage["sous_un"] == reglage["total"]
+    assert sous_un == all(ligne.coefficient("notionnel_liberal") < 1.0
+                          for ligne in m.projetees)
+    dernier = reglage["dernier"]
+    cout = TEMOINS_PAR_NOM["cout"]["texte"]
+    cas_types = TEMOINS_PAR_NOM["cas_types"]["texte"]
+    # La page Coût nomme l'écart du dernier coefficient, dans le bon sens.
+    sens = "un manque de" if dernier < 1.0 else "une marge de"
+    ecart = abs(1.0 - dernier)
+    attendu = normaliser(f"de la proposition en {reglage['fin']} disent {sens} "
+                         f"{g.pourcentage(ecart, decimales=0)}")
+    assert attendu in cout, attendu
+    # Cas types dit de quel côté de un se tient la proposition.
+    cote = "inférieur à un" if sous_un else "supérieur à un"
+    assert f"ce facteur est {cote}" in cas_types, cote
+    for nom, texte in (("cout", cout), ("cas_types", cas_types)):
+        assert normaliser(g.nombre(dernier, 2)) in texte, nom
+        if sous_un:
+            assert normaliser(g.nombre(reglage["minimum"], 2)) in texte, nom
+            assert str(reglage["annee_minimum"]) in texte, nom
 
 
 @controle("part_non_financee_a_l_horizon")
