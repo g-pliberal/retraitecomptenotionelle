@@ -7432,11 +7432,22 @@ function coutDetailGarantie(contexte) {
   const partReprise = garantieBascule ? garantieBascule.partReprise : 0.0;
   const dureeAvances = garantieBascule ? garantieBascule.dureeAvances : 0.0;
   const partFemmes = garantieBascule ? garantieBascule.partFemmes : 0.0;
+  const avancesSuccession = garantieBascule
+    ? garantieBascule.avancesParSuccession : 1.0;
   const repriseCalculee = base.part_reprise_garantie === null
     || base.part_reprise_garantie === undefined;
   const patrimoine = simulateur.patrimoine;
   const modestes = patrimoine.statistiques("retraites_q1");
   const retraites = patrimoine.statistiques("retraites");
+  // Le temps passé en couple après 65 ans, sur la table du vingtile des
+  // bénéficiaires : ce qui regroupe deux avances sur une succession.
+  const vieEnCouple = simulateur.vieEnCouple;
+  const populationGarantie = garantieBascule
+    ? garantieBascule.populationMortalite : null;
+  const coupleH = vieEnCouple.partMoyenne("H", simulateur.mortalite.courbeSurvie(
+    65, base.annee_bascule, "H", true, populationGarantie));
+  const coupleF = vieEnCouple.partMoyenne("F", simulateur.mortalite.courbeSurvie(
+    65, base.annee_bascule, "F", true, populationGarantie));
 
   // Ce que la garantie remplace : les quatre minima, tels qu'ils coûtent la
   // dernière année observée. Les quatre sont ceux du système actuel : le
@@ -7514,15 +7525,24 @@ l'ensemble. Chaque tranche de pension sous le plancher reçoit l'avance qu'elle
 constituerait, et la part que la succession en couvre est celle du quart le
 plus modeste pour le premier quart des retraités, celle de l'ensemble à partir
 de la médiane, et le mélange entre les deux ; la part retenue est la moyenne,
-pesée par les avances. Trois choses que ce calcul ne voit pas, faute du
-fichier individuel de l'enquête. Un couple de deux bénéficiaires pèse deux
-avances sur une succession, ce qui surestime la couverture. En sens inverse,
-les bénéficiaires sont surtout des femmes, et une femme dont la pension est
-basse vit souvent dans un ménage qui ne l'est pas — le calcul le sait pour son
-espérance de vie, non pour son patrimoine ; beaucoup sont veuves, et leur
-succession porte alors tout le patrimoine du couple pour une seule avance. Le
-réglage « Part de l'avance couverte par la succession » remplace ce calcul par
-un nombre.</p>
+pesée par les avances.</p>
+
+<p class="discret"><strong>Une succession porte ${g.nombre(avancesSuccession, 2)} avances</strong>, et
+c'est presque toujours celle de la femme. La règle reporte la reprise au décès
+du conjoint survivant ; or un homme de 65 ans vit en couple ${g.pourcentage(coupleH, false, 0)} du
+temps qui lui reste, une femme ${g.pourcentage(coupleF, false, 0)}, et le conjoint est lui aussi sous
+le plancher assez souvent pour que les deux avances se retrouvent sur la même
+succession. Le patrimoine du fichier étant celui d'un ménage, c'est bien ce
+total-là qu'il affronte, et une avance deux fois plus grosse est moins bien
+couverte, non mieux. Les pensions des deux conjoints sont supposées
+indépendantes, ce qu'elles ne sont pas : la corrélation des revenus dans un
+couple rendrait ce nombre plus grand. Deux choses que le calcul ne voit
+toujours pas, faute du fichier individuel de l'enquête : une femme dont la
+pension est basse vit souvent dans un ménage qui ne l'est pas — le calcul le
+sait pour son espérance de vie, non pour son patrimoine —, et deux concubins
+ne se succèdent pas l'un à l'autre, alors que le recensement les compte en
+couple. Le réglage « Part de l'avance couverte par la succession » remplace
+tout ce calcul par un nombre.</p>
 
 ${g.tableau(
     ["Année", "Versé", "Avances libérées par les décès", "Reprises",

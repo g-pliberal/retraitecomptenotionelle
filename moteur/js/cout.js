@@ -605,7 +605,7 @@ class GarantieDistribution {
                    ayantsDroit: 0, tauxRecours: 1.0, avancesLibereesConstants: 0,
                    reprisesConstants: 0, stockAvancesConstants: 0, tauxReel: 0,
                    partReprise: 0, dureeAvances: 0, populationMortalite: null,
-                   partFemmes: 0 };
+                   partFemmes: 0, avancesParSuccession: 1 };
     if (tetesGarantie <= 0 || this.pensionReference <= 0) return vide;
     const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
     if (facteur <= 0) return vide;
@@ -628,6 +628,7 @@ class GarantieDistribution {
       dureeAvances: 0,
       populationMortalite: null,
       partFemmes: 0,
+      avancesParSuccession: 1,
     };
   }
 }
@@ -1540,12 +1541,12 @@ function reprisesSuccessions(lignes, simulateur, calage) {
   const courbeH = mortalite.courbeSurvie(65, bascule, "H", true, population);
   const courbeF = mortalite.courbeSurvie(65, bascule, "F", true, population);
   let partFemmes = 0.5;
+  const sousPlancher = { F: 0.0, H: 0.0 };
   if (poidsTotal > 0) {
     let femmes65 = 0.0;
     for (const s of courbeF) femmes65 += s;
     let hommes65 = 0.0;
     for (const s of courbeH) hommes65 += s;
-    const sousPlancher = {};
     for (const sexe of ["F", "H"]) {
       const parSexe = new DistributionPensions(simulateur.paquet, sexe);
       sousPlancher[sexe] = coutGarantie(
@@ -1570,7 +1571,21 @@ function reprisesSuccessions(lignes, simulateur, calage) {
   for (const s of survie) totalSurvie += s;
   const deces = survie.map((s, k) => s - (k + 1 < survie.length ? survie[k + 1] : 0.0));
 
-  // 4. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
+  // 4. Le nombre moyen d'avances par succession : un bénéficiaire en couple
+  // avec un autre bénéficiaire lui en laisse deux, celle du survivant.
+  let avancesParSuccession = 1.0;
+  if (poidsTotal > 0) {
+    const couple = simulateur.vieEnCouple;
+    const partsSexe = { F: partFemmes, H: 1.0 - partFemmes };
+    const expositions = { F: courbeF, H: courbeH };
+    const conjoint = { F: "H", H: "F" };
+    for (const sexe of ["F", "H"]) {
+      avancesParSuccession += partsSexe[sexe]
+        * couple.partMoyenne(sexe, expositions[sexe]) * sousPlancher[conjoint[sexe]];
+    }
+  }
+
+  // 5. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
   let part = parametres.part_reprise_garantie;
   if (part === null || part === undefined) {
     const patrimoine = simulateur.patrimoine;
@@ -1584,8 +1599,11 @@ function reprisesSuccessions(lignes, simulateur, calage) {
       const avance = Math.abs(tauxMoyen) > 1e-12
         ? complement * ((1.0 + tauxMoyen) ** totalSurvie - 1.0) / tauxMoyen
         : complement * totalSurvie;
-      const couvertureBas = bas.couverture(avance * versBas);
-      const couvertureHaut = haut.couverture(avance * versHaut);
+      // Ce que la succession affronte n'est pas une avance, mais toutes
+      // celles qu'elle porte.
+      const surSuccession = avance * avancesParSuccession;
+      const couvertureBas = bas.couverture(surSuccession * versBas);
+      const couvertureHaut = haut.couverture(surSuccession * versHaut);
       let couverture;
       if (rang <= 0.25) couverture = couvertureBas;
       else if (rang >= 0.5) couverture = couvertureHaut;
@@ -1596,7 +1614,7 @@ function reprisesSuccessions(lignes, simulateur, calage) {
     part = denominateur > 0 ? numerateur / denominateur : 0.0;
   }
 
-  // 5. Les avances, année par année.
+  // 6. Les avances, année par année.
   const complements = new Map();
   const croissance = new Map();
   let facteur = 1.0;
@@ -1629,6 +1647,7 @@ function reprisesSuccessions(lignes, simulateur, calage) {
     garantie.dureeAvances = totalSurvie;
     garantie.populationMortalite = population;
     garantie.partFemmes = partFemmes;
+    garantie.avancesParSuccession = avancesParSuccession;
   }
 }
 

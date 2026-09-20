@@ -51,6 +51,7 @@ from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
 from retraite_notionnelle.donnees.patrimoine import PatrimoineMenages  # noqa: E402
+from retraite_notionnelle.donnees.vie_en_couple import VieEnCouple  # noqa: E402
 from retraite_notionnelle.avantages import charger_avantages  # noqa: E402
 from retraite_notionnelle.donnees.cotisants import EffectifsCotisants  # noqa: E402
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
@@ -277,6 +278,24 @@ def _distribution_pensions() -> dict:
         "bornes_inferieures": [t.borne_inferieure for t in distribution.tranches],
         "bornes_superieures": [t.borne_superieure for t in distribution.tranches],
         "parts": [t.part for t in distribution.tranches],
+    }
+
+
+def _vie_en_couple() -> dict:
+    """Qui vit en couple après 65 ans : ce qui regroupe deux avances sur une
+    succession. Les parts sont écrites sous une clé « âge|sexe|mode »."""
+    couple = VieEnCouple(DONNEES)
+    return {
+        "annee": couple.annee,
+        "fiabilite": int(couple.fiabilite),
+        "age_minimal": couple.age_minimal,
+        "age_maximal": couple.age_maximal,
+        "parts": {
+            f"{age}|{sexe}|{mode}": couple.part(age, sexe, mode)
+            for age in range(couple.age_minimal, couple.age_maximal + 1)
+            for sexe in ("F", "H")
+            for mode in ("couple", "seul")
+        },
     }
 
 
@@ -1030,6 +1049,7 @@ def construire() -> bytes:
         "distribution_pensions": _distribution_pensions(),
         "patrimoine_menages": _patrimoine_menages(),
         "distribution_pensions_sexes": _distribution_pensions_sexes(),
+        "vie_en_couple": _vie_en_couple(),
         "certification": journal_certification(DONNEES),
     }
     texte = json.dumps(paquet, ensure_ascii=False, sort_keys=True,

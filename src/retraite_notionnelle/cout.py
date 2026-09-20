@@ -1726,6 +1726,10 @@ class GarantieProjetee:
     #: de survie : les pensions des femmes sont plus basses, et elles vivent
     #: plus longtemps.
     part_femmes: float = 0.0
+    #: Le nombre moyen d'avances qu'une succession porte : un bénéficiaire
+    #: seul en laisse une, un couple de deux bénéficiaires en laisse deux sur
+    #: la succession du survivant. Un vaut « chacun sa succession ».
+    avances_par_succession: float = 1.0
 
 
 class GarantieDistribution:
@@ -2071,12 +2075,30 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     lieu de moitié-moitié. Les femmes vivant plus longtemps, les avances
     s'allongent d'autant.
 
-    CE QUI EST FIGÉ. Le patrimoine est celui d'un ménage, et un couple de
-    deux bénéficiaires pèse deux avances sur une succession, ce qui surestime
-    la couverture. Le complément moyen tient lieu de chacun, et rien n'est
+    DEUX AVANCES SUR UNE SUCCESSION. Le patrimoine du fichier est celui d'un
+    MÉNAGE, et une avance est celle d'une PERSONNE : confronter l'une à
+    l'autre supposait que chaque bénéficiaire laisse seul sa succession. Or
+    la règle reporte la reprise au décès du conjoint survivant, et deux
+    bénéficiaires qui vivent ensemble laissent DEUX avances sur UNE
+    succession — presque toujours celle de la femme, qui survit. Le modèle
+    calcule donc le nombre moyen d'avances par succession : la part des
+    bénéficiaires de chaque sexe qui vit en couple (INSEE, recensement 2021,
+    ``donnees/vie_en_couple.py``, moyennée sur les années vécues après 65 ans),
+    multipliée par la probabilité que le conjoint soit lui aussi sous le
+    plancher — celle de l'autre sexe, les pensions du couple étant supposées
+    INDÉPENDANTES. Elles ne le sont pas, et la corrélation des revenus dans un
+    couple rendrait ce nombre plus grand. C'est l'avance MULTIPLIÉE par ce
+    nombre qui est confrontée au patrimoine, et la couverture qui en résulte
+    s'applique à toutes.
+
+    CE QUI EST FIGÉ. Le complément moyen tient lieu de chacun, et rien n'est
     repris avant le décès — ni au premier décès d'un couple, ni sur une
-    donation : la règle les prévoit, le modèle ne les distingue pas. Les
-    lignes d'avant la bascule restent à zéro.
+    donation : la règle les prévoit, le modèle ne les distingue pas. « Vivre
+    en couple » est une cohabitation au sens du recensement, or deux concubins
+    ne se succèdent pas l'un à l'autre. Et une veuve n'hérite pas toujours de
+    tout : le patrimoine que sa succession porte est celui du ménage tel que
+    l'enquête le mesure, ni plus ni moins. Les lignes d'avant la bascule
+    restent à zéro.
     """
     parametres = simulateur.parametres
     bascule = parametres.annee_bascule
@@ -2138,10 +2160,10 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     courbe_h = mortalite.courbe_survie(65, bascule, "H", True, population)
     courbe_f = mortalite.courbe_survie(65, bascule, "F", True, population)
     part_femmes = 0.5
+    sous_plancher = {"F": 0.0, "H": 0.0}
     if poids_total > 0.0:
         femmes_65 = sum(courbe_f)
         hommes_65 = sum(courbe_h)
-        sous_plancher = {}
         for sexe in ("F", "H"):
             par_sexe = DistributionPensions(parametres.racine_donnees, sexe=sexe)
             sous_plancher[sexe] = cout_garantie(
@@ -2164,7 +2186,22 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     deces = [survie[k] - (survie[k + 1] if k + 1 < len(survie) else 0.0)
              for k in range(len(survie))]
 
-    # 4. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
+    # 4. Le nombre moyen d'avances par succession : un bénéficiaire en couple
+    # avec un autre bénéficiaire lui en laisse deux, celle du survivant.
+    avances_par_succession = 1.0
+    if poids_total > 0.0:
+        couple = simulateur.vie_en_couple
+        parts_sexe = {"F": part_femmes, "H": 1.0 - part_femmes}
+        expositions = {"F": courbe_f, "H": courbe_h}
+        conjoint = {"F": "H", "H": "F"}
+        avances_par_succession += sum(
+            parts_sexe[sexe]
+            * couple.part_moyenne(sexe, list(expositions[sexe]))
+            * sous_plancher[conjoint[sexe]]
+            for sexe in ("F", "H")
+        )
+
+    # 5. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
     part = parametres.part_reprise_garantie
     if part is None:
         patrimoine = simulateur.patrimoine
@@ -2177,8 +2214,11 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         for poids, complement, _, rang in tranches:
             avance = (complement * ((1.0 + taux_moyen) ** total_survie - 1.0) / taux_moyen
                       if abs(taux_moyen) > 1e-12 else complement * total_survie)
-            couverture_bas = bas.couverture(avance * vers_bas)
-            couverture_haut = haut.couverture(avance * vers_haut)
+            # Ce que la succession affronte n'est pas une avance, mais toutes
+            # celles qu'elle porte.
+            sur_succession = avance * avances_par_succession
+            couverture_bas = bas.couverture(sur_succession * vers_bas)
+            couverture_haut = haut.couverture(sur_succession * vers_haut)
             if rang <= 0.25:
                 couverture = couverture_bas
             elif rang >= 0.5:
@@ -2189,7 +2229,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             denominateur += poids * avance
         part = numerateur / denominateur if denominateur > 0.0 else 0.0
 
-    # 5. Les avances, année par année.
+    # 6. Les avances, année par année.
     complements: dict[int, float] = {}
     croissance: dict[int, float] = {}
     facteur = 1.0
@@ -2223,6 +2263,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             duree_avances=total_survie,
             population_mortalite=population,
             part_femmes=part_femmes,
+            avances_par_succession=avances_par_succession,
         )
 
 

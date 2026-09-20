@@ -32,6 +32,7 @@ from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.cotisants import EffectifsCotisants
 from .donnees.distribution import DistributionPensions
 from .donnees.patrimoine import PatrimoineMenages
+from .donnees.vie_en_couple import VieEnCouple
 from .donnees.effectifs import EffectifsRetraites
 from .donnees.financement_regimes import StructureFinancement
 from .donnees.macro import DonneesMacro
@@ -681,6 +682,12 @@ class Simulateur:
         de la garantie vieillesse, sur la page « Coût ».
         """
         return PatrimoineMenages(self.parametres.racine_donnees)
+
+    @cached_property
+    def vie_en_couple(self) -> VieEnCouple:
+        """Qui vit en couple après 65 ans — ce qui regroupe deux avances sur
+        une succession. Aucune pension n'en dépend."""
+        return VieEnCouple(self.parametres.racine_donnees)
 
     @cached_property
     def financement_regimes(self) -> StructureFinancement:
