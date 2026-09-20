@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 785<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 804<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9472,7 +9472,7 @@ barre du système 4. Cinq tests réécrits dans `test_remuneration.py` — la
 fiche ne retient pas le volontaire, le placement vaut cinq points du brut
 pris sur le net, le retirer ne change pas la fiche au centime —, un dans
 `test_web.py` ; README et `methodologie.md` suivent.
-### 56. Le partage des 23 points entre le salarié et l'employeur : le couloir, et ce que chaque bord donne — `en cours`
+### 56. Le partage des 23 points entre le salarié et l'employeur : le couloir, sa mesure, et le bord retenu — `fait`
 
 **Demande.** « Je veux calculer ce qui sera le mieux en termes de répartition
 des charges salariales et patronales. Je souhaite un meilleur salaire à long
@@ -9584,20 +9584,78 @@ droits — ce qu'est chaque euro des 18 % — et pas pour les autres. C'est une
 lecture de mémoire, à confirmer sur le texte avant d'en faire une phrase du
 site.
 
-**Ce qui reste, et qui est au programme de trancher.** Adopter un partage,
-c'est changer `Parametres.part_salariale_taux_unique` (0,5 → 0,275 pour A ou
-A') et, pour les variantes primées, donner au pilier capitalisé son propre
-partage — un paramètre de plus dans `bloc_taux_unique`, dans son portage
-`moteur/js/remuneration.js` et dans `config.js` —, puis réécrire la prose qui
-dit « moitié-moitié » en toutes lettres : `_salaire_net_partage` dans
-`web/pages.py` et son portage, le README, les docstrings de `config.py` et de
-`remuneration.py`, `docs/limites.md` § 5 ante bis, et régénérer les témoins.
-Et donner à la page la ligne qui manque : le jour 1 à côté du long terme, pour
-que le lecteur voie les deux chiffres et sache lequel est promis.
+**Le programme a tranché le 20 septembre 2026 : c'est A**, et il est
+implémenté. `part_salariale_taux_unique` vaut `0,0633 / 0,23`, écrit ainsi
+plutôt qu'en décimal pour qu'on lise d'où il vient : 6,33 points sur 23 pour
+l'assuré, 16,67 pour l'employeur, exactement ce que l'employeur verse
+aujourd'hui. Les 18 % et les 5 % capitalisés suivent la même clé, 4,95 + 1,38
+contre 13,05 + 3,62. A et non A' : le pilier capitalisé n'a pas son propre
+partage, ce qui aurait demandé un paramètre de plus dans les deux moteurs, et
+le seul cas qu'A' réglait — le coût du travail qui monte de 66 € par mois au
+SMIC — est écrit dans `limites.md` plutôt que supprimé.
 
-**Fichiers.** `scripts/partage_taux_unique.py` ; `docs/limites.md` § 5 ante
-bis, réserve 2 ; le docstring de `part_salariale_taux_unique` dans `config.py`.
+**Deux millièmes de point, et pourquoi on les laisse.** La part patronale
+d'aujourd'hui vaut 16,6720 points et non 16,67 : l'Agirc-Arrco est à 4,7220.
+Le paramètre est écrit sur le nombre rond qu'une proposition politique énonce,
+si bien que l'employeur verse cinq centimes de moins par mois à un salaire et
+demi le SMIC. Un test borne cet écart plutôt que de l'ignorer : s'il
+grossissait, c'est qu'un taux de régime aurait bougé sans que le partage suive.
 
+**Ce que ça déplace, et ça ne déplace aucune pension.** Le compte notionnel
+porte la somme des deux parts : les six scénarios, la page Coût, la garantie,
+le pilier, les témoins de simulation ne bougent pas d'un centime. Ce qui bouge
+est la fiche de paie, et elle bouge partout dans le même sens. Les chiffres
+ci-dessous isolent CE changement, la restitution aux salaires décidée le même
+jour étant neutralisée (`part_rendue_aux_salaires=0`) : sans cette précaution
+on lirait la somme des deux décisions, et surtout pas la mienne chez un
+fonctionnaire, où l'autre pèse six fois plus.
+
+| Statut, au salaire moyen | Moitié-moitié | Partage retenu |
+|---|---|---|
+| Salarié du privé non cadre | +73 € | **+165 €** |
+| Fonctionnaire d'État | −14 € | **+166 €** |
+| Agent public non titulaire | +4 € | **+96 €** |
+| Artisan | +106 € | +106 € |
+
+Gain net mensuel, euros de 2026, carrière plate liquidée à 64 ans. Au SMIC, le
+salarié du privé passe de **−38 à +39 €** : le gain n'est plus négatif nulle
+part, ce qui était le résultat le plus gênant de l'action 38. Le fonctionnaire
+reçoit la même baisse que tout le monde, sa retenue tombant de 11,10 à 6,33
+points, et l'action 38 concluait que « la proposition ne déplace presque rien
+pour lui » : ce n'est plus vrai, pour deux raisons dont celle-ci est la
+moindre. L'artisan ne bouge pas d'un centime, et c'est normal : il porte les
+23 points en entier, le partage ne le concerne pas.
+
+**Dans l'état du dépôt, restitution comprise**, le salarié du privé au salaire
+moyen passe de +112 à **+203 €** par mois, et le fonctionnaire de +907 à
+**+1 037 €** — l'essentiel de son gain vient de la moitié de la contribution
+d'équilibre de l'État qui remonte dans son traitement, pas d'ici.
+
+**Les tests que le résultat contredisait, réécrits plutôt que rendus muets.**
+`test_le_gain_net_est_negatif_au_smic_et_positif_au_salaire_moyen` exigeait un
+gain négatif au SMIC : il devient
+`test_le_gain_net_est_positif_a_tous_les_salaires_sous_le_partage_retenu`, et
+vérifie les deux horizons séparément en gardant dans son docstring pourquoi
+c'était l'inverse. `test_la_proposition_ne_deplace_presque_rien_pour_un_fonctionnaire`
+devient `test_le_fonctionnaire_gagne_les_cinq_points_que_le_partage_lui_rend`.
+Un test neuf, `test_le_partage_retenu_laisse_la_part_patronale_ou_elle_est`,
+tient la décision elle-même : il compare les deux blocs au lieu de croire le
+paramètre, et c'est lui qui bornera l'écart si un taux bouge.
+
+**Ce qui reste.** Donner à la page la ligne qui manque : le jour 1 à côté du
+long terme, pour que le lecteur voie les deux chiffres et sache lequel est
+promis. Le choix retenu rend cet écart plus petit qu'avant — 182 contre 175 au
+salaire moyen, là où le moitié-moitié opposait −7 à +81 — mais il ne l'annule
+pas, et au SMIC il reste du simple au double. Et confirmer sur le texte, avant
+d'en faire une phrase du site, la réserve ci-dessus sur l'incidence.
+
+**Fichiers.** `scripts/partage_taux_unique.py` ;
+`part_salariale_taux_unique` dans `config.py` et `config.js` ; le docstring du
+module et le défaut de `bloc_taux_unique` dans `remuneration.py`, et son
+portage `moteur/js/remuneration.js` ; `_salaire_net_partage` dans
+`web/pages.py` et `moteur/js/pages.js` ; trois tests de
+`tests/test_remuneration.py` ; `docs/limites.md` § 5 ante bis, réserves 2 et 3 ;
+témoins régénérés.
 
 ### 57. Le total du système 4 est annoncé comme un plafond : « retraite jusqu'à », et le plancher sous lui — `fait`
 

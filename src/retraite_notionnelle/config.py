@@ -614,22 +614,41 @@ class Parametres:
 
     #: Partage du taux unique entre l'assuré et son employeur. La proposition
     #: dit « 18 %, salariale et patronale additionnées » et ne dit pas qui
-    #: porte quoi ; le dépôt partage MOITIÉ-MOITIÉ — 9 % et 9 % —, et de même
-    #: pour les 5 % capitalisés.
+    #: porte quoi ; **le programme a tranché le 20 septembre 2026 : la part
+    #: PATRONALE ne bouge pas, et toute la baisse va au salarié.**
+    #:
+    #: Un salarié du privé verse aujourd'hui 11,31 points sur sa fiche et son
+    #: employeur 16,67, contributions d'équilibre comprises, soit 27,98 en
+    #: tout. La proposition en prélève 23 : l'employeur garde ses 16,67, et la
+    #: part salariale tombe à 6,33 — d'où ``0,0633 / 0,23``, écrit ainsi pour
+    #: qu'on lise d'où il vient. Les 18 % et les 5 % capitalisés suivent la
+    #: même clé : 4,95 + 1,38 pour l'assuré, 13,05 + 3,62 pour l'employeur.
+    #:
+    #: **Pourquoi celui-là**, et ``scripts/partage_taux_unique.py`` le mesure
+    #: (action 56 de la feuille de route) : c'est le seul partage dont la
+    #: baisse arrive en entier le lendemain de la réforme, sans hypothèse
+    #: d'incidence, et le seul qui rende quelque chose au voisinage du SMIC.
+    #: Une baisse de la part patronale, elle, profite d'abord à l'employeur,
+    #: puis remonte dans le brut sur plusieurs années — et en remontant, elle
+    #: grossit l'assiette de la CSG et des autres branches, qui en reprennent
+    #: le quart. Le coût du travail, lui, ne bouge pas : c'est ce que le
+    #: partage retenu garantit à tous les niveaux de salaire sauf au SMIC, où
+    #: la part patronale du pilier capitalisé, hors du périmètre de la
+    #: réduction générale, le fait monter de 66 € par mois.
     #:
     #: Ce paramètre ne touche à AUCUNE pension : le compte notionnel porte la
     #: somme des deux parts, et le partage lui est indifférent. Il ne sert qu'à
     #: la fiche de paie de `remuneration.py` — mais il y compte, et beaucoup :
     #: la CSG est assise sur le BRUT, que le partage déplace, et la réduction
     #: générale n'efface que des cotisations PATRONALES. Plus la part patronale
-    #: est grosse, plus le salaire net est élevé à coût du travail donné. Voir
-    #: le docstring de `remuneration.py`. Ce que chaque partage donne le jour 1
-    #: et au long terme, et à qui : `scripts/partage_taux_unique.py`, action 54
-    #: de la feuille de route. Le moitié-moitié fait monter la part salariale
-    #: d'un salarié du privé (11,31 → 11,50 points) : sa fiche de paie du
-    #: lendemain baisse, et c'est le seul des quatre partages étudiés où c'est
-    #: le cas.
-    part_salariale_taux_unique: float = 0.5
+    #: est grosse, plus le salaire net est élevé à coût du travail donné, et
+    #: plus il faut attendre pour le toucher. Voir le docstring de
+    #: `remuneration.py`.
+    #:
+    #: Le dépôt a partagé MOITIÉ-MOITIÉ jusqu'au 20 septembre 2026, faute
+    #: d'avoir mesuré : ce partage faisait MONTER la part salariale, de 11,31
+    #: à 11,50 points, et la fiche de paie du lendemain baissait.
+    part_salariale_taux_unique: float = 0.0633 / 0.23
 
     #: Ce que la proposition REND aux salaires sur ce qu'elle cesse d'affecter
     #: à la retraite. Décision du Parti libéral, 20 septembre 2026.

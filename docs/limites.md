@@ -6206,32 +6206,51 @@ environ la moitié du gain : c'est `Incidence.ASSIETTE` dans `remuneration.py`,
 et la réserve 5 dit pour quels statuts c'est la seule lecture disponible.
 
 **2. Le partage salarial/patronal du taux unique n'est pas neutre, et la
-proposition ne le fixe pas.** Elle dit « 18 %, salariale et patronale
-additionnées ». Le dépôt partage moitié-moitié. On croirait ce choix sans effet
-sous l'incidence intégrale ; il ne l'est pas, pour deux raisons distinctes : la
-CSG et la CRDS sont assises sur le BRUT, que le partage déplace ; et la
-réduction générale n'efface que des cotisations PATRONALES. Le gain net mensuel
-au salaire moyen vaut **−144 € si les 23 points sont entièrement salariaux,
-+73 € moitié-moitié, +275 € s'ils sont entièrement patronaux**. Le paramètre
-laissé ouvert par la proposition pèse donc plus que la baisse de taux elle-même.
-C'est la réserve la plus lourde de ce bloc. Le 20 septembre 2026, `scripts/partage_taux_unique.py` a mis les
-quatre partages possibles en regard, au jour 1 (brut fixe) comme au long terme
-(coût du travail fixe), et l'action 54 de la feuille de route en tire une
-recommandation : le moitié-moitié est le seul des quatre où la fiche de paie du
-lendemain baisse, parce qu'il fait monter la part salariale de 11,31 à 11,50
-points ; porter toute la baisse sur la part salariale, l'employeur gardant ses
-16,67 points, rend +182 € par mois à deux SMIC dès le jour 1 et ne demande
-aucune hypothèse d'incidence. Le partage reste à trancher par le programme.
+proposition ne le fixait pas.** Elle dit « 18 %, salariale et patronale
+additionnées ». Le dépôt a partagé moitié-moitié jusqu'au 20 septembre 2026,
+faute d'avoir mesuré ; **le programme a tranché ce jour-là, sur la mesure : la
+part patronale ne bouge pas — 16,67 points, ce qu'elle vaut aujourd'hui — et la
+part salariale tombe de 11,31 à 6,33.** On croirait ce choix sans effet sous
+l'incidence intégrale ; il ne l'est pas, pour deux raisons distinctes : la CSG
+et la CRDS sont assises sur le BRUT, que le partage déplace ; et la réduction
+générale n'efface que des cotisations PATRONALES. À deux fois le SMIC, le gain net
+mensuel du partage retenu vaut **+182 € dès le premier mois et +175 € une fois
+le brut stabilisé** ; il valait −7 puis +81 sous le moitié-moitié, −426 puis
+−141 si les 23 points étaient entièrement salariaux, +412 puis +286 s'ils
+étaient entièrement patronaux. Ces quatre lectures isolent le partage : elles
+neutralisent la restitution aux salaires décidée le même jour, qui s'ajoute à
+toutes et que les réserves 8 et 9 de ce bloc décrivent. Le paramètre pèse donc toujours plus que la
+baisse de taux elle-même, et c'est ce qui rend son arbitrage politique.
 
-**3. Le résultat au voisinage du SMIC est négatif, et il est juste.** La
-réduction générale dégressive unique efface depuis 2026 la totalité des
-cotisations patronales de son périmètre au niveau du SMIC — son coefficient
-maximal, 40,21 %, est exactement leur somme. Un salarié au SMIC ne supporte donc
-aujourd'hui que les 11,3 points salariaux. La proposition en prélève 23, dont 9
-seulement sont effacés : elle prélève **plus**. Le croisement se fait un peu
-au-dessus de 1,2 SMIC. Les cinq points capitalisés font à eux seuls la bascule —
-sans eux le gain est positif à tous les niveaux de salaire —, et ils ne sont pas
-perdus : ce compte reste au nom de l'assuré et se transmet.
+**Ce que le choix retenu achète, et ce qu'il coûte**, mesuré par
+`scripts/partage_taux_unique.py` et détaillé à l'action 56 de la feuille de
+route. Il achète l'immédiateté : la baisse est sur la fiche le lendemain de la
+réforme, sans hypothèse d'incidence, et elle ne fuit pas, le brut ne bougeant
+pas pour grossir l'assiette de la CSG et des autres branches. Il coûte le
+brut : celui-ci ne monte pas, donc ni les droits qui en dépendent, ni le crédit
+au compte notionnel. Le partage inverse ferait monter le brut de 2,9 %, mais
+des années plus tard, amputé du quart en chemin, et de rien du tout au SMIC.
+C'est la réserve la plus lourde de ce bloc, et elle n'a pas disparu en étant
+tranchée : elle a changé de nature, d'un paramètre non mesuré à un arbitrage
+entre le net d'aujourd'hui et le brut de demain.
+
+**3. Le résultat au voisinage du SMIC était négatif, et ne l'est plus.** Il
+l'était sous le moitié-moitié, pour une raison qui tient et qu'il faut garder
+en tête : la réduction générale dégressive unique efface depuis 2026 la
+totalité des cotisations patronales de son périmètre au niveau du SMIC — son
+coefficient maximal, 40,21 %, est exactement leur somme —, si bien qu'un
+salarié au SMIC ne supporte aujourd'hui que ses 11,3 points salariaux, et que
+baisser la part patronale ne lui rend rien. Le partage retenu ne touche pas à
+cette part : il ramène la retenue de l'assuré à 6,33 points, et le gain au SMIC
+est de **+91 € par mois le premier mois, +39 € une fois le brut stabilisé**.
+
+**Deux réserves subsistent au SMIC, et elles sont de sens opposé.** Le coût du
+travail y monte de **66 € par mois**, seul niveau de salaire où il bouge : la
+part patronale du pilier capitalisé est hors du périmètre de la réduction
+générale, donc l'employeur la verse pour de bon, là où la réduction absorbait
+ce que le régime général lui prenait. Et la lecture de long terme y est
+impossible en droit, comme la réserve 4 le dit : elle supposerait un brut
+inférieur au salaire minimum.
 
 **4. L'incidence intégrale n'est pas praticable au SMIC.** Elle y supposerait un
 salaire brut inférieur au salaire minimum, ce que la loi interdit. Dans la
@@ -6907,7 +6926,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1265<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1266<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

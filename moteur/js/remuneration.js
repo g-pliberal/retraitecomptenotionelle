@@ -21,7 +21,10 @@
  *    traitement, l'autre moitié paie la dette de pensions qu'il finançait.
  * 2. **Le partage salarial/patronal du taux unique n'est pas neutre**, bien
  *    qu'on l'attende. La CSG est assise sur le BRUT, que le partage déplace ;
- *    et la réduction générale n'efface que des cotisations patronales.
+ *    et la réduction générale n'efface que des cotisations patronales. Le
+ *    programme a tranché le 20 septembre 2026 : la part patronale garde les
+ *    16,67 points qu'elle vaut aujourd'hui, et la part salariale tombe de
+ *    11,31 à 6,33 sur les 23 prélevés.
  * 3. **La réduction générale est recalculée**, pas figée. Son coefficient
  *    maximal est la somme des taux de son périmètre ; un scénario qui baisse la
  *    cotisation retraite patronale la baisse aussi. Au SMIC, où elle efface
@@ -679,9 +682,13 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
  * retenue sur salaire, et la mettre ici ferait baisser un net que la
  * proposition ne baisse pas. Elle est chiffrée à part, sur le net, par
  * `AnneeComparee.epargneVolontaire`.
+ *
+ * `partSalariale` partage chaque taux entre l'assuré et son employeur. Le
+ * programme laisse à l'employeur les 16,67 points qu'il verse aujourd'hui et
+ * ramène l'assuré de 11,31 à 6,33, d'où le défaut `0.0633 / 0.23`.
  */
 export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
-  partSalariale = 0.5, csgRendue = 0, partRendueAuxSalaires = 0,
+  partSalariale = 0.0633 / 0.23, csgRendue = 0, partRendueAuxSalaires = 0,
   contributionEquilibreActuelle = 0) {
   const composantes = [new ComposanteRetraite({
     code: "regime_unifie",

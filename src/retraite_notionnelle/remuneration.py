@@ -47,8 +47,35 @@ ne verse pas un prix du travail. Voir « quatre profils » plus bas.
 LE PARTAGE DES 18 %, ET POURQUOI IL N'EST PAS ANODIN
 -----------------------------------------------------
 La proposition fixe un taux unique de 18 %, « salariale et patronale
-additionnées », et ne dit pas qui porte quoi. Le modèle partage **moitié-moitié**
-— 9 % et 9 % —, et de même pour les 5 % capitalisés obligatoires.
+additionnées », et ne dit pas qui porte quoi. **Le programme a tranché le
+20 septembre 2026 : la part PATRONALE ne bouge pas, et toute la baisse va au
+salarié.** Un salarié du privé verse aujourd'hui 11,31 points sur sa fiche et
+son employeur 16,67, soit 27,98 en tout ; la proposition en prélève 23, dont
+l'employeur garde les mêmes 16,67 et l'assuré ne porte plus que **6,33**. Les
+18 % et les 5 % capitalisés suivent la même clé : 4,95 + 1,38 pour l'assuré,
+13,05 + 3,62 pour l'employeur.
+
+Le partage a été MESURÉ avant d'être choisi — ``scripts/partage_taux_unique.py``
+met les quatre partages possibles en regard, et l'action 56 de la feuille de
+route en tire la décision. Ce qui l'emporte tient en trois traits. La baisse
+arrive **le lendemain** de la réforme, en entier, sans rien supposer de ce
+qu'un employeur rendra : +182 € par mois au salaire moyen, +91 € au SMIC. Elle
+ne **fuit pas** : le brut ne bouge pas, donc ni la CSG ni les autres branches
+ne grossissent avec lui, là où une baisse de la part patronale leur en laisse
+le quart en remontant. Et le **coût du travail ne bouge pas**, à tous les
+niveaux de salaire sauf un — au SMIC, il monte de 66 € par mois, parce que la
+part patronale du pilier capitalisé est hors du périmètre de la réduction
+générale et que l'employeur la verse pour de bon.
+
+Ce qu'il ne fait pas, et qu'il faut dire : il ne fait pas monter le salaire
+BRUT, donc ni le crédit au compte ni les droits assis sur le brut. Le partage
+inverse — toute la baisse à l'employeur — le ferait monter de 2,9 %, au prix
+d'une hypothèse d'incidence, de plusieurs années d'attente, de rien du tout au
+SMIC, et de 90 € de net par mois de moins une fois le long terme atteint.
+
+Le dépôt a partagé **moitié-moitié** jusqu'au 20 septembre 2026, faute d'avoir
+mesuré : ce partage faisait MONTER la part salariale, de 11,31 à 11,50 points,
+et la fiche de paie du lendemain baissait de 7 € par mois au salaire moyen.
 
 Les cinq points de capitalisation VOLONTAIRE ne sont pas sur la fiche de paie
 du tout. Personne ne les impose, donc personne ne les prélève : la fiche de la
@@ -77,11 +104,11 @@ l'autre :
    plus il reste de coût du travail à verser en salaire.
 
 Les deux jouent dans le même sens, et fort : au salaire moyen comme à quatre
-SMIC, faire porter les 23 points imposés entièrement à l'employeur plutôt que
-moitié-moitié vaut plusieurs milliers d'euros de net par an. Le partage retenu
-est donc le choix MÉDIAN d'un paramètre que la proposition laisse ouvert, et pas
-une commodité d'écriture. ``part_salariale_taux_unique`` le rend réglable, et
-deux tests fixent les deux mécanismes.
+SMIC, faire porter les 23 points imposés entièrement à l'employeur plutôt qu'au
+salarié vaut plusieurs milliers d'euros de net par an — mais au long terme
+seulement, et amputés de ce que la CSG et les autres branches reprennent en
+chemin. ``part_salariale_taux_unique`` rend le partage réglable, et deux tests
+fixent les deux mécanismes.
 
 C'est, au passage, un résultat sur le système actuel plus que sur la
 proposition : notre droit fait dépendre le salaire net de la FRONTIÈRE entre
@@ -1103,7 +1130,7 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
 
 
 def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
-                     part_salariale: float = 0.5,
+                     part_salariale: float = 0.0633 / 0.23,
                      libelle_repartition: str = "Retraite, compte notionnel",
                      libelle_capitalisation: str = "Retraite, part capitalisée",
                      csg_rendue: float = 0.0,
@@ -1113,10 +1140,11 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
     """Le bloc de la proposition : un taux unique, au premier euro, sans plafond.
 
     ``part_salariale`` partage chaque taux entre l'assuré et son employeur. La
-    proposition ne le dit pas ; le dépôt partage moitié-moitié, et le docstring
-    du module dit pourquoi ce choix, qu'on croirait sans effet, en a un : la
-    CSG est assise sur le brut, et la réduction générale n'efface que du
-    patronal.
+    proposition ne le dit pas ; le programme laisse à l'employeur les 16,67
+    points qu'il verse aujourd'hui et ramène l'assuré de 11,31 à 6,33, d'où le
+    défaut ``0,0633 / 0,23``. Le docstring du module dit pourquoi ce choix,
+    qu'on croirait sans effet, en a un : la CSG est assise sur le brut, et la
+    réduction générale n'efface que du patronal.
 
     Le pilier capitalisé est un étage à part, et hors du périmètre de la
     réduction générale : il n'est ni une assurance sociale, ni un régime
