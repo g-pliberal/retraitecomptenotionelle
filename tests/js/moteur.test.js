@@ -156,6 +156,35 @@ test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
 });
 
 /**
+ * La pyramide refuse l'année que l'INSEE ne projette pas.
+ *
+ * Les témoins de pages ne peuvent pas atteindre ce chemin : rien, dans le
+ * site, ne demande la pyramide au-delà de 2070. C'est justement pourquoi il
+ * faut un test — un portage qui emprunterait la dernière pyramide rendrait des
+ * chiffres PLAUSIBLES, du bon ordre de grandeur, et sous le nom d'une cohorte
+ * qui n'est pas la leur. Le Python refuse ; le JavaScript doit refuser de la
+ * même façon, et sur les mêmes bornes.
+ */
+test("la pyramide refuse l'année que l'INSEE ne projette pas", () => {
+  const population = new Contexte(paquet).population();
+  const horizon = population.derniereAnnee;
+
+  // En deçà, on emprunte : la dépense observée commence trois ans avant la
+  // pyramide, et ces années-là prennent celle de 1962.
+  assert.equal(population.effectif(80, 1959), population.effectif(80, 1962));
+  assert.ok(population.effectif(80, horizon) > 0);
+
+  // Au-delà, on refuse — y compris pour un âge hors plage, qui rendrait zéro
+  // sans que la question ait eu de sens.
+  assert.throws(() => population.effectif(85, horizon + 15), /au-delà/);
+  assert.throws(() => population.effectif(200, horizon + 1), /au-delà/);
+  // La tranche refuse aussi, VIDE comprise : déléguer le refus aux âges la
+  // laisserait passer.
+  assert.throws(() => population.effectifTranche(65, 80, horizon + 1), /au-delà/);
+  assert.throws(() => population.effectifTranche(80, 65, horizon + 1), /au-delà/);
+});
+
+/**
  * Le ruban d'écart sur un trou de série.
  *
  * Les témoins de pages couvrent déjà tout ce que le ruban fait quand les deux

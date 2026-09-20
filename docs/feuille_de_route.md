@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 304<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 332<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10689,3 +10689,48 @@ modèle doit, sous une convention nommée, et ce que cette convention vaut.
 `scripts/construire_donnees.py`, `web/pages.py`, `moteur/js/pages.js`,
 `data/derive/equilibre.json`, `data/reference/site/affirmations.yaml`,
 `tests/test_affirmations.py`, `limites.md` § 5 bis.
+
+---
+
+### 69. La pyramide des âges refuse l'année qu'elle n'a pas — `fait`
+
+**Demande.** « Corrige le piège dans `Population.effectif` », relevé en écrivant
+l'action 68.
+
+**Ce qu'il était.** `_annee_bornee` ramenait toute année dans la plage publiée,
+des deux côtés. En deçà de 1962, c'est une approximation assumée et documentée :
+la dépense observée commence en 1959, et ces trois années empruntent la pyramide
+de 1962, dont la dépense pèse un demi pour cent de celle d'aujourd'hui. Au-delà
+de 2070, c'était un piège, et personne ne s'y était encore pris parce que rien
+n'y allait.
+
+**Pourquoi emprunter au-delà n'est pas la même chose qu'emprunter en deçà.** Une
+pyramide s'indexe par ÂGE. Rendre l'effectif des 85 ans de 2070 sous le nom des
+85 ans de 2085, ce n'est pas décaler une population de quinze ans : c'est rendre
+des gens nés quinze ans plus tôt, et morts. Reconduire la valeur de bord d'une
+série annuelle, ce que fait `SerieAnnuelle`, ne change qu'un niveau ; reconduire
+un âge change de cohorte.
+
+**Ce qui rend le refus nécessaire, c'est que le chiffre emprunté est
+PLAUSIBLE.** Il a le bon ordre de grandeur, il ne saute pas, rien ne le signale.
+Le 20 septembre 2026 il a fait tomber l'engagement acquis du dépôt de 579 à
+478 % du PIB, et ce qui l'a trahi n'est pas le chiffre : c'est une incohérence
+interne du calcul, la part extrapolée dépassant le total. Un défaut qui ne se
+voit qu'à ce prix-là doit refuser, et non emprunter.
+
+**Ce qui est fait.** `_annee_bornee` emprunte toujours en deçà et lève au-delà,
+des deux côtés du portage, avec un message qui nomme le remède :
+`cout._courbes_survie`, qui prolonge une cohorte déjà née par sa propre survie.
+`effectif_tranche` refuse aussi, tranche VIDE comprise — déléguer le refus aux
+âges l'aurait laissée passer. Aucun appelant n'était concerné : tous bornent à
+`HORIZON`, qui est par définition la dernière année que l'INSEE projette.
+
+**Deux tests, dont un qu'aucun témoin n'atteignait.** Côté Python, l'emprunt en
+deçà et le refus au-delà. Côté JavaScript, le même, dans `tests/js/moteur.test.js` :
+rien dans le site ne demande la pyramide au-delà de 2070, donc les témoins de
+pages ne peuvent pas couvrir ce chemin, et un portage qui emprunterait
+rendrait des chiffres plausibles sous le nom d'une cohorte qui n'est pas la
+leur.
+
+**Fichiers.** `donnees/population.py`, `moteur/js/population.js`, `cout.py`
+(docstring de `_courbes_survie`), `tests/test_cout.py`, `tests/js/moteur.test.js`.
