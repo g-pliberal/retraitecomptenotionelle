@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 265<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 240<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -2573,6 +2573,16 @@ versé à l'action 24.
   s'appelle « Dix réserves à lire avant de citer ces chiffres », dit ce qu'elle
   contient, et s'ouvre sur une phrase qui dit pourquoi elle est là. Un test
   refuse tout titre de section en « ne dit pas ».
+  *Repris le 20 septembre 2026.* Dix réserves étaient devenues quatorze en
+  trois jours : chaque chantier de la page y ajoutait la sienne, et le titre
+  chiffré tenait le compte. Trois étaient des réglages (le stock à la bascule,
+  la reprise sur succession, le coefficient d'équilibre), deux décrivaient un
+  système (ce que la recette suit, la réversion), cinq disaient sous cinq
+  angles que le modèle compte des générations. Les réglages sont dits sous
+  leur réglage ou dans leur dépliant, les deux descriptions sont deux notes de
+  « Recettes et dépenses, poste par poste », les cinq sont devenues deux. Il en
+  reste cinq, sous un titre sans nombre, et le test plafonne la liste à huit :
+  la prochaine réserve en fusionne une.
 
 - [x] 🟠 **Alléger les incises en tiret cadratin** `Global`
   Usage très dense du tiret cadratin en incise (« — c'est-à-dire […] — », « — et c'est […], — »). C'est l'un des tics de ponctuation les plus souvent associés à un texte généré. Remplacer une partie de ces incises par des phrases séparées, des parenthèses, ou des notes de bas de page.

@@ -246,7 +246,7 @@ Deux graphiques, qui se lisent au survol :
 Chaque graphique a un bouton « Partager » qui le télécharge en image. Le
 reste de la page est replié : le détail des dépenses depuis 1959, le
 coefficient d'équilibre, la dette, ce que coûte la garantie vieillesse,
-treize réserves à lire avant de citer ces chiffres. Ouvrir « Ce que coûte la
+les réserves à lire avant de citer ces chiffres. Ouvrir « Ce que coûte la
 garantie vieillesse » seulement si on demande combien coûte le plancher.
 
 ### 5. Avantages — deux minutes
