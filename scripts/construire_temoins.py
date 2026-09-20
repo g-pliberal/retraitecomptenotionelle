@@ -731,6 +731,7 @@ def _pages(contexte: Contexte) -> dict:
         ("cout_regles", "/cout", REGLES_AUTRES),
         ("avantages_regles", "/avantages", REGLES_AUTRES),
         ("methode", "/methode", {}),
+        ("risque", "/risque", {}),
         ("donnees", "/donnees", {}),
         ("partager", "/partager", {}),
     ]

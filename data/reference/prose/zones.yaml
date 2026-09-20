@@ -118,6 +118,10 @@ fichiers:
   # que le site affichait ce matin-là, et la page fait foi, pas lui.
   docs/parcours_presentation.md:
     defaut: recit
+  # Une revue de littérature datée : ses chiffres sont ceux des sources à
+  # leur date de lecture, et la page Risque fait foi pour ceux du modèle.
+  docs/risque_de_defaut.md:
+    defaut: recit
   CLAUDE.md:
     defaut: a_declarer
 

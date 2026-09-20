@@ -1729,7 +1729,7 @@ GROUPES_NAVIGATION = (
     ("Le programme", (("/", "Programme"),)),
     ("La preuve", (("/simuler", "Simuler"), ("/trajectoire", "Trajectoire"),
                    ("/cas-types", "Cas types"), ("/cout", "Coût"),
-                   ("/avantages", "Avantages"))),
+                   ("/risque", "Risque"), ("/avantages", "Avantages"))),
     ("La confiance", (("/methode", "Méthode"), ("/donnees", "Données"))),
     # Partager n'est ni une preuve ni une garantie : c'est ce qu'on fait APRÈS
     # avoir lu. La barre de partage de chaque graphique y renvoie déjà sans
