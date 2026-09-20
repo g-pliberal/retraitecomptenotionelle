@@ -326,6 +326,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # La ventilation du poste « transferts » de ce compte, lue chez celui
         # qui paie : rapports à la CCSS, fiches CNAF, Agirc-Arrco, Ircantec.
         "transferts_retraite": "macro/transferts_retraite.csv",
+        # Les deux impôts du poste « impôts et taxes affectés » qui sont assis
+        # sur une rémunération : la proposition les rend au salaire.
+        "impots_retraite_remuneration":
+            "macro/impots_retraite_remuneration.csv",
         "productivite": "macro/productivite.csv",
         # La courbe sans risque : une ligne par date d'observation et par
         # maturité, et non par année. Elle n'alimente que le pilier capitalisé.

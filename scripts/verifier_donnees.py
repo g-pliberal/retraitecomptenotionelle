@@ -1339,6 +1339,38 @@ def source_transferts_retraite() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Les deux impôts du poste « impôts et taxes affectés » qui sont assis sur une
+#: rémunération, tels que ``ccss_impots_retraite.py`` les écrit.
+POSTES_IMPOTS_REMUNERATION: tuple[str, ...] = (
+    "taxe_sur_les_salaires", "forfait_social",
+)
+
+
+def _ccss_impots() -> dict:
+    return _lire_json("ccss_impots_retraite.json",
+                      "scripts/fetch/ccss_impots_retraite.py")
+
+
+def source_impots_retraite_remuneration() -> dict[tuple, float]:
+    """Ce que la retraite encaisse d'impôts assis sur une rémunération.
+
+    Deux lignes de la section CNAV de la fiche « contributions sociales et
+    recettes fiscales brutes » des rapports à la Commission des comptes de la
+    Sécurité sociale : la taxe sur les salaires, dont l'article L. 131-8, 1° du
+    code de la sécurité sociale verse 58,35 % à la branche vieillesse, et le
+    forfait social, que l'article L. 241-3, 1° lui donne en entier.
+
+    C'est la part du poste « impôts et taxes affectés » que la proposition peut
+    RENDRE AU SALAIRE, puisque c'est la seule qui en sort. Le reste du poste est
+    assis sur du capital, sur des pensions ou sur un chiffre d'affaires.
+    """
+    valeurs: dict[tuple, float] = {}
+    for poste in POSTES_IMPOTS_REMUNERATION:
+        for annee, montant in _ccss_impots()["series"].get(poste, {}).items():
+            valeurs[(annee, poste)] = montant
+    return dict(sorted(valeurs.items()))
+
+
 def _eacr() -> dict:
     return _lire_json("drees_eacr.json", "scripts/fetch/drees_eacr.py")
 
@@ -3930,6 +3962,64 @@ CERTIFICATIONS = (
             "# chômeurs. Le compte notionnel du dépôt SUPPRIME les droits que la",
             "# CNAF finance ; il ne peut pas compter comme acquise la recette qui",
             "# les paie, et c'est ici qu'on lit ce qu'elle vaut.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="impots_retraite_remuneration",
+        chemin=REFERENCE / "macro" / "impots_retraite_remuneration.csv",
+        cles=("annee", "poste"),
+        colonne="montant_meur",
+        source=source_impots_retraite_remuneration,
+        origine="rapports à la Commission des comptes de la Sécurité sociale, "
+                "fiche « contributions sociales et recettes fiscales brutes », "
+                "section CNAV",
+        decimales=1,
+        tolerance=0.06,
+        unite=" M€",
+        niveau="haute",
+        entete=(
+            "# Les impôts de la retraite qui sont assis sur une rémunération",
+            "# source_id: dss_ccss_impots_retraite",
+            "# unite: millions d'euros courants de l'année",
+            "# fiabilite:",
+            "#   haute (2019-…) : comptes arrêtés, lus dans la fiche",
+            "#             « contributions sociales et recettes fiscales brutes »",
+            "#             des rapports à la Commission des comptes de la Sécurité",
+            "#             sociale, section CNAV, recontrôlés par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# La proposition du Parti libéral cesse d'affecter à la retraite les",
+            "# impôts et taxes qui la financent, et rend la moitié de cette recette",
+            "# aux salaires. Encore faut-il savoir ce qui, dans ce poste, est",
+            "# prélevé SUR UNE RÉMUNÉRATION : le reste est assis sur du capital,",
+            "# sur des pensions ou sur un chiffre d'affaires, et le rendre au",
+            "# salarié n'aurait pas de sens. Le droit en désigne deux, et deux",
+            "# seulement :",
+            "#",
+            "#   taxe sur les salaires   article 231 du code général des impôts,",
+            "#                           dont l'article L. 131-8, 1° du code de la",
+            "#                           sécurité sociale verse 58,35 % à la branche",
+            "#                           vieillesse ;",
+            "#   forfait social          article L. 137-15, dont l'article L. 241-3,",
+            "#                           1° donne le produit ENTIER à l'assurance",
+            "#                           vieillesse.",
+            "#",
+            "# Et il dit aussi, ce qui est le résultat le plus contre-intuitif de",
+            "# cette lecture, que la CSG sur les revenus d'ACTIVITÉ ne finance",
+            "# aucune retraite : ses 9,20 points vont à la CNAF (0,95), à",
+            "# l'assurance maladie (4,25), à la CADES (0,45), à l'Unédic (1,47) et",
+            "# à la CNSA (2,08) — 9,20 exactement (L. 131-8, 3°).",
+            "#",
+            "# La série commence en 2019 : jusque-là, le fonds de solidarité",
+            "# vieillesse recevait sa propre fraction de ces deux impôts, et la",
+            "# seule section CNAV aurait sous-estimé le total sans le dire. Depuis",
+            "# le 1er janvier 2019, l'article L. 135-3 ne laisse au fonds que de",
+            "# la CSG.",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",

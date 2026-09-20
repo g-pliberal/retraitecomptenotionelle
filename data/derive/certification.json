@@ -463,6 +463,17 @@
    "valeurs": 450,
    "verifiee_le": "2026-09-13"
   },
+  "impots_retraite_remuneration": {
+   "ajoutees": 0,
+   "colonne": "montant_meur",
+   "corrigees": 0,
+   "empreinte": "460957355208a8c1",
+   "identiques": 14,
+   "niveau": "haute",
+   "source": "rapports à la Commission des comptes de la Sécurité sociale, fiche « contributions sociales et recettes fiscales brutes », section CNAV",
+   "valeurs": 14,
+   "verifiee_le": "2026-09-20"
+  },
   "inflation": {
    "ajoutees": 0,
    "colonne": "variation",
