@@ -50,7 +50,7 @@ BASE = {
     "primes": "0", "enfants": "0", "interruptions": "",
     "indexation": "triple_lock_inverse", "age_reference": "fixe_apres_bascule",
     "table": "unisexe", "conversion_acquis": "reference",
-    "projection": "cor_reference", "emploi": "cor_2026",
+    "projection": "cor_reference", "emploi": "cor_2026", "stock": "prix",
     "bascule": "2026", "euros": "2026",
 }
 
@@ -557,6 +557,9 @@ def sans_bloc_json(html: str) -> str:
 #: bascule décalée de quatre ans, et la part patronale portée au compte.
 REGLES_AUTRES = {
     "indexation": "prix", "bascule": "2030", "part_cotisation": "totale",
+    # Et le stock réindexé à la bascule : la convention d'avant le
+    # 20 septembre 2026, qui ne touche que la page Coût.
+    "stock": "reindexe",
 }
 
 

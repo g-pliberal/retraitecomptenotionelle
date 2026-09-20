@@ -1895,6 +1895,27 @@ une indexée sur les prix.** Il payait moins que son propre contrat, et l'écart
 ne se simplifiait pas dans le rapport au scénario 1, puisque celui-là, lui,
 était correct.
 
+**Et le stock, le jour de la bascule.** La seconde règle pose une question de
+plus pour les réformes qui ne commencent qu'à une date : que deviennent les
+pensions déjà servies ce jour-là ? Jusqu'au 20 septembre 2026, le modèle les
+faisait toutes passer à la règle du compte, la masse salariale, au motif que
+c'est ce que les réformes réelles ont fait pour les prix en 1987. C'était
+offrir aux retraités de 2026 un demi-point par an pendant quinze ans, que
+personne n'avait cotisé, et c'est ce qui dessinait sur la page Coût une bosse
+de dépense de 2026 à 2040 — jusqu'à 7,5 % au-dessus du système actuel en 2039
+pour le système 5, avec la trajectoire d'emploi du COR. Depuis cette date, le
+défaut est l'inverse, et il est celui du droit : une pension liquidée sous le
+système actuel garde l'indice des prix de l'article L. 161-23-1 jusqu'à son
+extinction, et seuls les comptes ouverts sous le nouveau régime suivent sa
+règle (`Parametres.revalorisation_stock`, réglage « Pensions en cours à la
+bascule » du formulaire). Mesuré le jour du changement, trajectoire du COR : le
+système 3 ne dépasse plus jamais le système actuel, le 5 culmine à 1,1 % en
+2039 au lieu de 7,5 %, et le solde de 2039 s'améliore de 0,6 à 0,8 point de PIB
+selon le système ; en 2070, rien ne bouge, le stock étant éteint. Pour la
+proposition, dont le compte est rétroactif, le stock fictif est revalorisé sur
+sa règle jusqu'à la bascule puis gelé : c'est une convention, dite ici. La
+réindexation reste une variante, mesurée par un témoin.
+
 L'écart vaut 0,69 point par an en projection — 2,45 % de masse salariale contre
 1,75 % de prix —, soit ×1,15 sur vingt ans de retraite et jusqu'à ×2,96 pour
 les vingt années qui suivent une liquidation de 1960. `RevalorisationServie`

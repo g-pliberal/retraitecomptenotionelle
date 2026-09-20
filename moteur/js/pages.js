@@ -136,6 +136,14 @@ export const TRAJECTOIRES_EMPLOI = [
   ["constant", "Emploi constant"],
 ];
 
+// Les pensions déjà servies à la bascule, sur la page Coût : elles gardent les
+// prix que le droit leur promet, ou la réforme les réindexe sur la règle du
+// compte le jour où elle s'applique. Systèmes 2 à 6 seulement.
+export const REVALORISATIONS_STOCK = [
+  ["prix", "Gardent les prix (défaut)"],
+  ["reindexe", "Réindexées sur la règle du compte"],
+];
+
 // Les deux façons d'écrire un revenu. Le modèle n'en connaît qu'une — le
 // multiple du salaire moyen, seule qui garde son sens sur quatre-vingts ans —,
 // mais personne ne connaît son salaire dans cette unité-là : c'est l'euro qui
@@ -401,7 +409,7 @@ export class ErreurSaisie extends Error {}
 export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
   "conversion_acquis", "part_cotisation", "foyer", "projection", "emploi",
-  "bascule", "euros",
+  "stock", "bascule", "euros",
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -451,6 +459,7 @@ const DEFAUTS = Object.freeze({
   foyer: "seul",
   projection: "cor_reference",
   emploi: "cor_2026",
+  stock: "prix",
   bascule: 2026,
   euros: 2026,
   //: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -518,6 +527,7 @@ export class Saisie {
       foyer: parmi(parametres, "foyer", SITUATIONS_FOYER, DEFAUTS.foyer),
       projection: parmi(parametres, "projection", PROJECTIONS, DEFAUTS.projection),
       emploi: parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, DEFAUTS.emploi),
+      stock: parmi(parametres, "stock", REVALORISATIONS_STOCK, DEFAUTS.stock),
       bascule: entier(parametres, "bascule", DEFAUTS.bascule),
       euros: entier(parametres, "euros", DEFAUTS.euros),
       // Une adresse qui ne porte QUE des réglages de modélisation ne demande
@@ -805,6 +815,7 @@ export class Saisie {
       situation_foyer: SituationFoyer[cleEnum(SituationFoyer, this.foyer)],
       scenario_projection: this.projection,
       trajectoire_emploi: this.emploi,
+      revalorisation_stock: this.stock,
       annee_bascule: this.bascule,
       annee_euros_constants: this.euros,
     });
@@ -1139,7 +1150,8 @@ export class Saisie {
       conversion_acquis: this.conversion_acquis,
       part_cotisation: this.part_cotisation,
       foyer: this.foyer,
-      projection: this.projection, bascule: this.bascule, euros: this.euros,
+      projection: this.projection, emploi: this.emploi, stock: this.stock,
+      bascule: this.bascule, euros: this.euros,
     };
     // L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut : c'est
     // ce qui distingue une adresse neuve d'une adresse d'avant les euros, dont
@@ -2136,6 +2148,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   foyer: ["situation de foyer", SITUATIONS_FOYER],
   projection: ["scénario macroéconomique", PROJECTIONS],
   emploi: ["emploi projeté", TRAJECTOIRES_EMPLOI],
+  stock: ["pensions en cours à la bascule", REVALORISATIONS_STOCK],
   bascule: ["année de bascule", null],
   euros: ["euros constants de", null],
 });
@@ -2258,12 +2271,22 @@ function champsModelisation(saisie) {
       "au-delà de la dernière observation"),
     g.liste("emploi", "Emploi projeté", TRAJECTOIRES_EMPLOI, saisie.emploi,
       "systèmes 2 à 6 seulement", {},
-      "Au-delà de la dernière observation, la masse des salaires — le "
-      + "rendement des comptes notionnels — est le salaire moyen composé avec "
+      "Au-delà de la dernière observation, la masse des salaires, qui est le "
+      + "rendement des comptes notionnels, est le salaire moyen composé avec "
       + "l'emploi. Par défaut, l'emploi suit le scénario de référence du COR "
       + "de juin 2026 : chômage ramené à 7 % en 2040, population active en "
       + "hausse jusque vers 2040 puis en recul. Le système 1 n'en lit rien : "
       + "il revalorise sur les prix."),
+    g.liste("stock", "Pensions en cours à la bascule", REVALORISATIONS_STOCK,
+      saisie.stock, "page Coût seulement", {},
+      "Ce que la réforme fait des pensions déjà servies le jour où elle "
+      + "s'applique. Par défaut elles gardent l'indice des prix que le droit "
+      + "leur promet, et seuls les comptes ouverts sous le nouveau régime "
+      + "suivent sa règle : personne ne reçoit un demi-point par an qu'il n'a "
+      + "pas cotisé. En variante, la réforme réindexe tout le stock sur la "
+      + "règle du compte, comme les réformes réelles l'ont fait pour les prix "
+      + "en 1987 : c'est la bosse de 2026-2040 sur la page Coût. Le système 1 "
+      + "n'est pas concerné : il est le droit."),
     g.champ("bascule", "Année de bascule", saisie.bascule,
       "passage au régime unique", "number",
       { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
@@ -7392,9 +7415,9 @@ function coutDetailLimites(contexte) {
   const solde = c.solde;
   const avenir = c.avenir;
   const observe = solde.annee(solde.derniereAnneeObservee);
-  return g.depliant("Douze réserves à lire avant de citer ces chiffres",  `
+  return g.depliant("Treize réserves à lire avant de citer ces chiffres",  `
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
-laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
+laisse treize, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
   <li><strong>Les recettes réagissent sur trois points, et sur trois
   seulement.</strong> La recette suit le droit : ce que la branche famille,
@@ -7422,6 +7445,14 @@ laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
   non la part de PIB de l'assiette : celle-ci suit alors les ressources
   projetées par le COR, dont la baisse en part de PIB tient précisément à une
   assiette qui progresse moins vite que le PIB.</li>
+  <li><strong>Les pensions déjà servies à la bascule gardent les prix.</strong>
+  Une pension liquidée sous le système actuel est revalorisée sur les prix, et
+  la réforme ne la touche pas : seuls les comptes ouverts sous le nouveau
+  régime suivent sa règle. C'est un choix, et il se règle : la variante
+  « réindexées » fait passer tout le stock à la règle du compte le jour de la
+  bascule, ce qui creuse une bosse de dépense jusque vers 2040 — le stock
+  reçoit alors un demi-point par an que personne n'a cotisé — sans rien
+  changer à l'horizon, où ce stock est éteint.</li>
   <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
   L'appliquer changerait toutes les pensions par un même facteur, donc tous les
   niveaux de cette page, sans toucher aux écarts entre carrières, qui sont la

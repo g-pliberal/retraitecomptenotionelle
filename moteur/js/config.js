@@ -126,6 +126,18 @@ export const TableConversion = Object.freeze({
  * les revenus du conjoint n'entrent jamais dans le calcul. La situation ne
  * change qu'une chose — l'allocation d'isolement d'une personne vivant seule.
  */
+/**
+ * Ce que deviennent, à la bascule, les pensions DÉJÀ SERVIES : `prix`, elles
+ * gardent l'indice des prix que le droit leur promet, et seuls les comptes
+ * ouverts sous le nouveau régime suivent sa règle ; `reindexe`, la réforme
+ * fait passer tout le stock à la règle du compte le jour de la bascule. Page
+ * Coût seulement, systèmes 2 à 6 seulement.
+ */
+export const RevalorisationStock = Object.freeze({
+  PRIX: "prix",
+  REINDEXE: "reindexe",
+});
+
 export const SituationFoyer = Object.freeze({
   SEUL: "seul",
   COUPLE: "couple",
@@ -172,6 +184,9 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: compose que la masse salariale et le PIB projetés, donc l'indexation des
   //: comptes notionnels : les systèmes 2 à 6 la lisent, pas le système 1.
   trajectoire_emploi: "cor_2026",
+  //: Les pensions déjà servies à la bascule : sur les prix, comme le droit le
+  //: leur promet, ou réindexées sur la règle du compte.
+  revalorisation_stock: RevalorisationStock.PRIX,
 
   // --- Indexation -----------------------------------------------------------
   //: Le défaut est la règle d'ÉQUILIBRE, pas le triple lock inversé qui a donné

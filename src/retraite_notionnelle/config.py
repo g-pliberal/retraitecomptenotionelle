@@ -253,6 +253,21 @@ class TableConversion(str, Enum):
     PAR_SEXE = "par_sexe"
 
 
+class RevalorisationStock(str, Enum):
+    """Ce que deviennent, à la bascule, les pensions DÉJÀ SERVIES.
+
+    ``PRIX`` : elles gardent la revalorisation que le droit leur a promise,
+    l'indice des prix (L. 161-23-1), jusqu'à leur extinction ; seuls les comptes
+    ouverts sous le nouveau régime suivent sa règle. ``REINDEXE`` : la réforme
+    fait passer tout le stock à la règle du compte le jour de la bascule, ce
+    que faisait le modèle jusqu'au 20 septembre 2026. Ne joue que sur la page
+    Coût, et que pour les systèmes 2 à 6 : le système 1 est le droit.
+    """
+
+    PRIX = "prix"
+    REINDEXE = "reindexe"
+
+
 class SituationFoyer(str, Enum):
     """Situation de foyer retenue pour la garantie vieillesse du scénario 6.
 
@@ -373,6 +388,13 @@ class Parametres:
     #: défaut est le scénario de référence du COR de juin 2026 ; ``constant``
     #: retrouve la convention d'avant le 20 septembre 2026.
     trajectoire_emploi: str = "cor_2026"
+
+    #: Les pensions déjà servies à la bascule : sur les prix, comme le droit le
+    #: leur promet, ou réindexées sur la règle du compte. Le défaut retire aux
+    #: retraités de la bascule un demi-point par an qu'ils n'ont pas cotisé, et
+    #: efface la bosse que la page Coût montrait de 2026 à 2040 ; il ne change
+    #: rien à l'horizon, le stock étant éteint. Voir ``RevalorisationStock``.
+    revalorisation_stock: RevalorisationStock = RevalorisationStock.PRIX
 
     # --- Indexation ---------------------------------------------------------
     #: Le défaut est la règle d'ÉQUILIBRE — la croissance de l'assiette des

@@ -18,6 +18,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -349,6 +350,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -680,6 +682,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -1011,6 +1014,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -1328,6 +1332,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -1650,6 +1655,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -1981,6 +1987,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -2312,6 +2319,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -2629,6 +2637,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -2960,6 +2969,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -3291,6 +3301,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -3627,6 +3638,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -3950,6 +3962,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -4267,6 +4280,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -4598,6 +4612,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -4948,6 +4963,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -5277,6 +5293,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -5621,6 +5638,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -5953,6 +5971,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -6293,6 +6312,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -6628,6 +6648,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -6950,6 +6971,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -7288,6 +7310,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "artisan",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -7613,6 +7636,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -7944,6 +7968,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -8275,6 +8300,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -8608,6 +8634,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -8927,6 +8954,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -9241,6 +9269,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -9553,6 +9582,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -9870,6 +9900,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -10182,6 +10213,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -10494,6 +10526,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -10811,6 +10844,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -11142,6 +11176,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -11473,6 +11508,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -11804,6 +11840,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -12125,6 +12162,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -12433,6 +12471,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -12746,6 +12785,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -13059,6 +13099,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -13377,6 +13418,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -13694,6 +13736,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -14025,6 +14068,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -14356,6 +14400,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -14687,6 +14732,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -15018,6 +15064,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -15349,6 +15396,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -15680,6 +15728,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -16011,6 +16060,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -16342,6 +16392,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -16673,6 +16724,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -17004,6 +17056,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -17335,6 +17388,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -17666,6 +17720,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -17997,6 +18052,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -18328,6 +18384,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -18659,6 +18716,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -18990,6 +19048,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -19321,6 +19380,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -19638,6 +19698,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -19970,6 +20031,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -20302,6 +20364,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -20634,6 +20697,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -20966,6 +21030,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -21298,6 +21363,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -21630,6 +21696,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -21962,6 +22029,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -22294,6 +22362,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -22626,6 +22695,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -22958,6 +23028,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -23290,6 +23361,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -23622,6 +23694,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -23954,6 +24027,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -24286,6 +24360,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -24618,6 +24693,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -24950,6 +25026,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -25281,6 +25358,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "marin",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -25592,6 +25670,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -25931,6 +26010,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -26267,6 +26347,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -26603,6 +26684,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -26939,6 +27021,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -27281,6 +27364,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -27649,6 +27733,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -27995,6 +28080,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -28338,6 +28424,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -28690,6 +28777,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -29021,6 +29109,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -29353,6 +29442,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -29684,6 +29774,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "par_sexe"
   },
   "resultat": {
@@ -30015,6 +30106,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -30346,6 +30438,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -30676,6 +30769,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -31007,6 +31101,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -31338,6 +31433,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -31669,6 +31765,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -32002,6 +32099,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -32334,6 +32432,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -32667,6 +32766,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -32999,6 +33099,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -33343,6 +33444,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -33674,6 +33776,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -33987,6 +34090,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -34319,6 +34423,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -34651,6 +34756,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -34983,6 +35089,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -35301,6 +35408,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -35618,6 +35726,7 @@
    "salaire": "2500",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe",
    "unite_revenu": "euros_mois"
   },
@@ -35953,6 +36062,7 @@
    "salaire": "2000",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe",
    "unite_revenu": "euros_mois"
   },
@@ -36291,6 +36401,7 @@
    "salaire": "0.2",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -36622,6 +36733,7 @@
    "salaire": "0.55",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -36953,6 +37065,7 @@
    "salaire": "1.5",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -37284,6 +37397,7 @@
    "salaire": "3",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -37615,6 +37729,7 @@
    "salaire": "8",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -37946,6 +38061,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_banque_de_france",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -38268,6 +38384,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_banque_de_france",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -38576,6 +38693,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_banque_de_france",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -38884,6 +39002,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_banque_de_france",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -39192,6 +39311,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_banque_de_france",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -39500,6 +39620,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_banque_de_france",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -39822,6 +39943,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_chemins_fer_secondaires",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -40150,6 +40272,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_chemins_fer_secondaires",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -40478,6 +40601,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_general_assurance",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -40799,6 +40923,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_general_assurance",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -41106,6 +41231,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_general_assurance",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -41413,6 +41539,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_general_assurance",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -41720,6 +41847,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_general_assurance",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -42027,6 +42155,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_general_assurance",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -42348,6 +42477,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ieg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -42673,6 +42803,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ieg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -42981,6 +43112,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ieg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -43289,6 +43421,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ieg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -43600,6 +43733,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ieg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -43911,6 +44045,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ieg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -44236,6 +44371,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_port_strasbourg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -44558,6 +44694,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_port_strasbourg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -44866,6 +45003,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_port_strasbourg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -45174,6 +45312,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_port_strasbourg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -45482,6 +45621,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_port_strasbourg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -45790,6 +45930,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_port_strasbourg",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -46112,6 +46253,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ratp",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -46437,6 +46579,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ratp",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -46745,6 +46888,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ratp",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -47053,6 +47197,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ratp",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -47364,6 +47509,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ratp",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -47675,6 +47821,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_ratp",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -48000,6 +48147,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_seita",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -48308,6 +48456,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_seita",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -48616,6 +48765,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_seita",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -48924,6 +49074,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_seita",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -49232,6 +49383,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_seita",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -49554,6 +49706,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_sncf",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -49876,6 +50029,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_sncf",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -50184,6 +50338,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_sncf",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -50495,6 +50650,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_sncf",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -50806,6 +50962,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_sncf",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -51117,6 +51274,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "agent_sncf",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -51442,6 +51600,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artisan",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -51768,6 +51927,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artisan",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -52075,6 +52235,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artisan",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -52382,6 +52543,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artisan",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -52689,6 +52851,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artisan",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -53001,6 +53164,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artisan",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -53327,6 +53491,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artiste_auteur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -53648,6 +53813,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artiste_auteur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -53955,6 +54121,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artiste_auteur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -54262,6 +54429,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artiste_auteur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -54569,6 +54737,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artiste_auteur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -54876,6 +55045,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "artiste_auteur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -55197,6 +55367,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_dramatique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -55523,6 +55694,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_dramatique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -55835,6 +56007,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_dramatique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -56147,6 +56320,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_dramatique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -56459,6 +56633,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_dramatique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -56771,6 +56946,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_dramatique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -57097,6 +57273,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_lyrique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -57423,6 +57600,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_lyrique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -57735,6 +57913,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_lyrique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -58047,6 +58226,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_lyrique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -58359,6 +58539,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_lyrique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -58671,6 +58852,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auteur_lyrique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -58997,6 +59179,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auxiliaire_medical",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -59318,6 +59501,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auxiliaire_medical",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -59625,6 +59809,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auxiliaire_medical",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -59932,6 +60117,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auxiliaire_medical",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -60239,6 +60425,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auxiliaire_medical",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -60546,6 +60733,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "auxiliaire_medical",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -60867,6 +61055,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "avocat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -61188,6 +61377,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "avocat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -61495,6 +61685,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "avocat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -61802,6 +61993,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "avocat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -62109,6 +62301,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "avocat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -62416,6 +62609,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "avocat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -62737,6 +62931,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "chirurgien_dentiste_ou_sage_femme",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -63058,6 +63253,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "chirurgien_dentiste_ou_sage_femme",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -63365,6 +63561,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "chirurgien_dentiste_ou_sage_femme",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -63672,6 +63869,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "chirurgien_dentiste_ou_sage_femme",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -63979,6 +64177,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "chirurgien_dentiste_ou_sage_femme",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -64286,6 +64485,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "chirurgien_dentiste_ou_sage_femme",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -64607,6 +64807,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "clerc_de_notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -64929,6 +65130,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "clerc_de_notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -65237,6 +65439,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "clerc_de_notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -65545,6 +65748,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "clerc_de_notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -65853,6 +66057,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "clerc_de_notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -66161,6 +66366,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "clerc_de_notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -66483,6 +66689,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "commercant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -66814,6 +67021,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "commercant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -67121,6 +67329,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "commercant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -67428,6 +67637,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "commercant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -67740,6 +67950,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "commercant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -68057,6 +68268,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "commercant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -68388,6 +68600,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "contractuel_public",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -68709,6 +68922,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "contractuel_public",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -69026,6 +69240,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "contractuel_public",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -69343,6 +69558,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "contractuel_public",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -69660,6 +69876,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "contractuel_public",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -69967,6 +70184,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "contractuel_public",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -70288,6 +70506,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "elu_local",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -70609,6 +70828,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "elu_local",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -70911,6 +71131,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "elu_local",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -71213,6 +71434,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "elu_local",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -71515,6 +71737,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "elu_local",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -71822,6 +72045,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "elu_local",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -72143,6 +72367,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "expert_comptable",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -72464,6 +72689,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "expert_comptable",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -72771,6 +72997,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "expert_comptable",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -73078,6 +73305,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "expert_comptable",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -73385,6 +73613,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "expert_comptable",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -73692,6 +73921,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "expert_comptable",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -74013,6 +74243,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "exploitant_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -74334,6 +74565,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "exploitant_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -74636,6 +74868,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "exploitant_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -74938,6 +75171,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "exploitant_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -75245,6 +75479,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "exploitant_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -75552,6 +75787,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "exploitant_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -75873,6 +76109,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -76203,6 +76440,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -76511,6 +76749,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -76822,6 +77061,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -77141,6 +77381,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -77460,6 +77701,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -77793,6 +78035,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -78123,6 +78366,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -78431,6 +78675,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -78742,6 +78987,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -79061,6 +79307,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -79380,6 +79627,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -79713,6 +79961,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -80043,6 +80292,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -80351,6 +80601,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -80662,6 +80913,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -80981,6 +81233,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -81300,6 +81553,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_etat_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -81633,6 +81887,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_pacifique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -81949,6 +82204,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_pacifique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -82251,6 +82507,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_pacifique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -82553,6 +82810,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_pacifique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -82855,6 +83113,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_pacifique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -83157,6 +83416,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_pacifique",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -83473,6 +83733,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -83800,6 +84061,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -84111,6 +84373,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -84419,6 +84682,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -84732,6 +84996,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -85045,6 +85310,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -85372,6 +85638,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -85699,6 +85966,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -86010,6 +86278,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -86318,6 +86587,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -86631,6 +86901,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -86944,6 +87215,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -87271,6 +87543,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -87598,6 +87871,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -87909,6 +88183,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -88217,6 +88492,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -88530,6 +88806,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -88843,6 +89120,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "fonctionnaire_territorial_hospitalier_super_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -89170,6 +89448,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "gerant_debit_tabac",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -89506,6 +89785,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "gerant_debit_tabac",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -89818,6 +90098,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "gerant_debit_tabac",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -90130,6 +90411,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "gerant_debit_tabac",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -90447,6 +90729,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "gerant_debit_tabac",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -90769,6 +91052,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "gerant_debit_tabac",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -91105,6 +91389,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "liberal_non_reglemente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -91426,6 +91711,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "liberal_non_reglemente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -91733,6 +92019,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "liberal_non_reglemente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -92040,6 +92327,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "liberal_non_reglemente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -92347,6 +92635,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "liberal_non_reglemente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -92654,6 +92943,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "liberal_non_reglemente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -92975,6 +93265,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "maitre_enseignement_prive",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -93311,6 +93602,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "maitre_enseignement_prive",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -93628,6 +93920,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "maitre_enseignement_prive",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -93945,6 +94238,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "maitre_enseignement_prive",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -94262,6 +94556,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "maitre_enseignement_prive",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -94579,6 +94874,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "maitre_enseignement_prive",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -94915,6 +95211,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "marin",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -95237,6 +95534,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "marin",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -95545,6 +95843,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "marin",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -95853,6 +96152,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "marin",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -96161,6 +96461,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "marin",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -96469,6 +96770,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "marin",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -96791,6 +97093,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "medecin_liberal",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -97117,6 +97420,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "medecin_liberal",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -97429,6 +97733,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "medecin_liberal",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -97741,6 +98046,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "medecin_liberal",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -98053,6 +98359,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "medecin_liberal",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -98365,6 +98672,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "medecin_liberal",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -98691,6 +98999,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "membre_cese",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -99007,6 +99316,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "membre_cese",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -99309,6 +99619,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "membre_cese",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -99611,6 +99922,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "membre_cese",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -99913,6 +100225,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "membre_cese",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -100215,6 +100528,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "membre_cese",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -100531,6 +100845,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "micro_entrepreneur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -100862,6 +101177,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "micro_entrepreneur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -101169,6 +101485,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "micro_entrepreneur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -101476,6 +101793,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "micro_entrepreneur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -101788,6 +102106,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "micro_entrepreneur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -102105,6 +102424,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "micro_entrepreneur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -102436,6 +102756,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -102766,6 +103087,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -103074,6 +103396,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -103385,6 +103708,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -103704,6 +104028,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -104023,6 +104348,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -104356,6 +104682,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire_officier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -104686,6 +105013,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire_officier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -104994,6 +105322,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire_officier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -105305,6 +105634,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire_officier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -105624,6 +105954,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire_officier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -105943,6 +106274,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "militaire_officier",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -106276,6 +106608,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "mineur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -106598,6 +106931,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "mineur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -106909,6 +107243,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "mineur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -107220,6 +107555,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "mineur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -107531,6 +107867,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "mineur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -107842,6 +108179,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "mineur",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -108164,6 +108502,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ministre_du_culte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -108480,6 +108819,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ministre_du_culte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -108782,6 +109122,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ministre_du_culte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -109084,6 +109425,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ministre_du_culte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -109386,6 +109728,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ministre_du_culte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -109688,6 +110031,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ministre_du_culte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -110004,6 +110348,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -110325,6 +110670,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -110632,6 +110978,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -110939,6 +111286,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -111246,6 +111594,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -111553,6 +111902,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "notaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -111874,6 +112224,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "officier_ministeriel",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -112195,6 +112546,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "officier_ministeriel",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -112502,6 +112854,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "officier_ministeriel",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -112809,6 +113162,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "officier_ministeriel",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -113116,6 +113470,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "officier_ministeriel",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -113423,6 +113778,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "officier_ministeriel",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -113744,6 +114100,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -114071,6 +114428,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -114379,6 +114737,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -114687,6 +115046,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -115000,6 +115360,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -115313,6 +115674,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -115640,6 +116002,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -115967,6 +116330,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -116275,6 +116639,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -116583,6 +116948,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -116896,6 +117262,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -117209,6 +117576,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "ouvrier_etat_actif",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -117536,6 +117904,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "parlementaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -117852,6 +118221,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "parlementaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -118154,6 +118524,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "parlementaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -118456,6 +118827,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "parlementaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -118758,6 +119130,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "parlementaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -119060,6 +119433,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "parlementaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -119376,6 +119750,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_comedie_francaise",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -119698,6 +120073,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_comedie_francaise",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -120006,6 +120382,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_comedie_francaise",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -120317,6 +120694,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_comedie_francaise",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -120628,6 +121006,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_comedie_francaise",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -120939,6 +121318,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_comedie_francaise",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -121264,6 +121644,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_navigant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -121605,6 +121986,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_navigant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -121927,6 +122309,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_navigant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -122249,6 +122632,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_navigant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -122571,6 +122955,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_navigant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -122893,6 +123278,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_navigant",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -123234,6 +123620,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_opera",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -123556,6 +123943,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_opera",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -123864,6 +124252,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_opera",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -124175,6 +124564,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_opera",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -124486,6 +124876,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_opera",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -124797,6 +125188,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "personnel_opera",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -125122,6 +125514,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "pharmacien",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -125443,6 +125836,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "pharmacien",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -125750,6 +126144,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "pharmacien",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -126057,6 +126452,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "pharmacien",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -126364,6 +126760,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "pharmacien",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -126671,6 +127068,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "pharmacien",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -126992,6 +127390,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "profession_liberale",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -127313,6 +127712,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "profession_liberale",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -127620,6 +128020,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "profession_liberale",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -127927,6 +128328,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "profession_liberale",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -128234,6 +128636,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "profession_liberale",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -128541,6 +128944,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "profession_liberale",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -128862,6 +129266,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -129193,6 +129598,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -129505,6 +129911,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -129817,6 +130224,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -130129,6 +130537,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -130441,6 +130850,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_agricole",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -130772,6 +131182,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_mayotte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -131088,6 +131499,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_mayotte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -131390,6 +131802,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_mayotte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -131692,6 +132105,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_mayotte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -131994,6 +132408,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_mayotte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -132296,6 +132711,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_mayotte",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -132612,6 +133028,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_nouvelle_caledonie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -132943,6 +133360,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_nouvelle_caledonie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -133255,6 +133673,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_nouvelle_caledonie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -133567,6 +133986,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_nouvelle_caledonie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -133879,6 +134299,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_nouvelle_caledonie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -134191,6 +134612,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_nouvelle_caledonie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -134522,6 +134944,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_polynesie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -134843,6 +135266,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_polynesie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -135145,6 +135569,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_polynesie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -135452,6 +135877,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_polynesie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -135759,6 +136185,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_polynesie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -136066,6 +136493,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_polynesie",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -136387,6 +136815,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -136718,6 +137147,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -137030,6 +137460,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -137342,6 +137773,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -137654,6 +138086,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -137966,6 +138399,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -138297,6 +138731,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -138628,6 +139063,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -138945,6 +139381,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -139262,6 +139699,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -139579,6 +140017,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -139896,6 +140335,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -140227,6 +140667,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -140558,6 +140999,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -140875,6 +141317,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -141192,6 +141635,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -141504,6 +141948,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -141816,6 +142261,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -142147,6 +142593,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -142478,6 +142925,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -142790,6 +143238,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -143107,6 +143556,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -143419,6 +143869,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -143731,6 +144182,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre_entreprise_recente",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -144062,6 +144514,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_regime_professionnel_integre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -144398,6 +144851,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_regime_professionnel_integre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -144705,6 +145159,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_regime_professionnel_integre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -145022,6 +145477,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_regime_professionnel_integre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -145339,6 +145795,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_regime_professionnel_integre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -145656,6 +146113,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_regime_professionnel_integre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -145992,6 +146450,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_saint_pierre_et_miquelon",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -146323,6 +146782,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_saint_pierre_et_miquelon",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -146635,6 +147095,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_saint_pierre_et_miquelon",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -146947,6 +147408,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_saint_pierre_et_miquelon",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -147259,6 +147721,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_saint_pierre_et_miquelon",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -147571,6 +148034,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_saint_pierre_et_miquelon",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -147902,6 +148366,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_wallis_et_futuna",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -148218,6 +148683,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_wallis_et_futuna",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -148520,6 +148986,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_wallis_et_futuna",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -148822,6 +149289,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_wallis_et_futuna",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -149124,6 +149592,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_wallis_et_futuna",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -149426,6 +149895,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_wallis_et_futuna",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -149742,6 +150212,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "sans_activite",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -150052,6 +150523,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "sans_activite",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -150348,6 +150820,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "sans_activite",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -150644,6 +151117,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "sans_activite",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -150940,6 +151414,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "sans_activite",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -151236,6 +151711,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "sans_activite",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -151546,6 +152022,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "veterinaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -151867,6 +152344,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "veterinaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -152174,6 +152652,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "veterinaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -152481,6 +152960,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "veterinaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -152788,6 +153268,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "veterinaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -153095,6 +153576,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "veterinaire",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -153416,6 +153898,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -153760,6 +154243,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -154104,6 +154588,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -154442,6 +154927,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "fonctionnaire_etat",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -154782,6 +155268,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "unisexe"
   },
   "resultat": {
@@ -155113,6 +155600,7 @@
    "salaire": "1",
    "sexe": "H",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "par_sexe"
   },
   "resultat": {
@@ -155444,6 +155932,7 @@
    "salaire": "1",
    "sexe": "F",
    "statut": "salarie_prive_non_cadre",
+   "stock": "prix",
    "table": "par_sexe"
   },
   "resultat": {

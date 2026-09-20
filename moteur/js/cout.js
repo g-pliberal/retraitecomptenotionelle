@@ -362,6 +362,8 @@ export class RevalorisationServie {
     // L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
     // qu'elle sert : voir CLES_PROSPECTIVES.
     this.anneeBascule = simulateur.parametres.annee_bascule;
+    // Le stock à la bascule garde-t-il les prix ? Voir `coefficientStock`.
+    this.stockSurLesPrix = simulateur.parametres.revalorisation_stock === "prix";
     this.premiereAnnee = premiereAnnee;
     this.derniereAnnee = Math.max(derniereAnnee, premiereAnnee);
     let index = 1;
@@ -387,6 +389,26 @@ export class RevalorisationServie {
     if (annee <= anneeLiquidation) return 1;
     const depart = this._valeur(anneeLiquidation);
     return depart ? this._valeur(annee) / depart : 1;
+  }
+
+  /**
+   * Le même coefficient, avec la règle du STOCK à la bascule — portage de
+   * `coefficient_stock`. Une pension liquidée à compter de la bascule suit la
+   * règle du compte depuis sa liquidation. Liquidée avant : sous `prix`, elle
+   * garde les prix à compter de la bascule (1 depuis toujours pour une réforme
+   * prospective, coefficient gelé à la bascule pour une rétroactive) ; sous
+   * `reindexe`, la prospective la prend à sa règle le jour de la bascule, la
+   * rétroactive l'a toujours revalorisée sur la sienne.
+   */
+  coefficientStock(anneeLiquidation, annee, prospectif) {
+    const bascule = this.anneeBascule;
+    if (anneeLiquidation >= bascule) return this.coefficient(anneeLiquidation, annee);
+    if (this.stockSurLesPrix) {
+      if (prospectif) return 1;
+      return this.coefficient(anneeLiquidation, Math.min(annee, bascule));
+    }
+    if (prospectif) return this.coefficient(bascule, annee);
+    return this.coefficient(anneeLiquidation, annee);
   }
 }
 
@@ -422,9 +444,9 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       // Le troisième poids porte la revalorisation des pensions SERVIES, et il
       // faut qu'il soit à part : le coefficient dépend de l'année de
       // liquidation, qui n'est pas la même pour les cinq cohortes de la tranche.
-      poidsRevalorise += effectif * revalorisation.coefficient(liquidation, annee);
-      poidsRevaloriseProspectif += effectif * revalorisation.coefficient(
-        Math.max(liquidation, revalorisation.anneeBascule), annee,
+      poidsRevalorise += effectif * revalorisation.coefficientStock(liquidation, annee, false);
+      poidsRevaloriseProspectif += effectif * revalorisation.coefficientStock(
+        liquidation, annee, true,
       );
       // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt.
       if (annee >= pensionne.anneeOuvertureGarantie + decalage) {

@@ -36,6 +36,7 @@ from ..config import (
     ModeAgeReference,
     ModeIndexation,
     Parametres,
+    RevalorisationStock,
     SituationFoyer,
     TableConversion,
 )
@@ -168,6 +169,14 @@ PROJECTIONS = [
 TRAJECTOIRES_EMPLOI = [
     ("cor_2026", "Trajectoire du COR — juin 2026 (défaut)"),
     ("constant", "Emploi constant"),
+]
+
+#: Les pensions déjà servies à la bascule, sur la page Coût : elles gardent
+#: les prix que le droit leur promet, ou la réforme les réindexe sur la règle
+#: du compte le jour où elle s'applique. Systèmes 2 à 6 seulement.
+REVALORISATIONS_STOCK = [
+    ("prix", "Gardent les prix (défaut)"),
+    ("reindexe", "Réindexées sur la règle du compte"),
 ]
 
 
@@ -459,7 +468,7 @@ class MetierSaisi:
 
 #: Les clés de requête qui décrivent les RÈGLES, et non la carrière.
 #:
-#: Ce sont exactement les douze que ``Saisie.parametres`` lit pour fabriquer un
+#: Ce sont exactement les treize que ``Saisie.parametres`` lit pour fabriquer un
 #: jeu de :class:`Parametres` : tout le reste — naissance, statut, revenu,
 #: enfants, profil, interruptions — décrit un individu, et un individu n'a pas
 #: sa place dans un agrégat. C'est cette liste qui permet aux trois pages
@@ -472,7 +481,7 @@ class MetierSaisi:
 CLES_MODELISATION = (
     "indexation", "lissage", "age_reference", "table", "population",
     "conversion_acquis", "part_cotisation", "foyer", "projection", "emploi",
-    "bascule", "euros",
+    "stock", "bascule", "euros",
 )
 
 
@@ -533,6 +542,8 @@ class Saisie:
     projection: str = "cor_reference"
     #: L'emploi projeté : la trajectoire du COR par défaut, ou constant.
     emploi: str = "cor_2026"
+    #: Les pensions déjà servies à la bascule : sur les prix, ou réindexées.
+    stock: str = "prix"
     bascule: int = 2026
     euros: int = 2026
     #: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -602,6 +613,7 @@ class Saisie:
             foyer=_parmi(parametres, "foyer", SITUATIONS_FOYER, defauts.foyer),
             projection=_parmi(parametres, "projection", PROJECTIONS, defauts.projection),
             emploi=_parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, defauts.emploi),
+            stock=_parmi(parametres, "stock", REVALORISATIONS_STOCK, defauts.stock),
             bascule=_entier(parametres, "bascule", defauts.bascule),
             euros=_entier(parametres, "euros", defauts.euros),
             # Une adresse qui ne porte QUE des réglages de modélisation ne
@@ -921,6 +933,7 @@ class Saisie:
             situation_foyer=SituationFoyer(self.foyer),
             scenario_projection=self.projection,
             trajectoire_emploi=self.emploi,
+            revalorisation_stock=RevalorisationStock(self.stock),
             annee_bascule=self.bascule,
             annee_euros_constants=self.euros,
         )
@@ -1173,7 +1186,9 @@ class Saisie:
             "conversion_acquis": self.conversion_acquis,
             "part_cotisation": self.part_cotisation,
             "foyer": self.foyer,
-            "projection": self.projection, "bascule": self.bascule, "euros": self.euros,
+            "projection": self.projection, "emploi": self.emploi,
+            "stock": self.stock,
+            "bascule": self.bascule, "euros": self.euros,
         }
         # L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut :
         # c'est ce qui distingue une adresse neuve d'une adresse d'avant les
@@ -2646,6 +2661,7 @@ LIBELLES_MODELISATION = {
     "foyer": ("situation de foyer", SITUATIONS_FOYER),
     "projection": ("scénario macroéconomique", PROJECTIONS),
     "emploi": ("emploi projeté", TRAJECTOIRES_EMPLOI),
+    "stock": ("pensions en cours à la bascule", REVALORISATIONS_STOCK),
     "bascule": ("année de bascule", None),
     "euros": ("euros constants de", None),
 }
@@ -2773,12 +2789,24 @@ def _champs_modelisation(saisie: Saisie) -> str:
         g.liste("emploi", "Emploi projeté", TRAJECTOIRES_EMPLOI, saisie.emploi,
                 "systèmes 2 à 6 seulement",
                 complement="Au-delà de la dernière observation, la masse des "
-                "salaires — le rendement des comptes notionnels — est le "
+                "salaires, qui est le rendement des comptes notionnels, est le "
                 "salaire moyen composé avec l'emploi. Par défaut, l'emploi "
                 "suit le scénario de référence du COR de juin 2026 : chômage "
                 "ramené à 7 % en 2040, population active en hausse jusque "
                 "vers 2040 puis en recul. Le système 1 n'en lit rien : il "
                 "revalorise sur les prix."),
+        g.liste("stock", "Pensions en cours à la bascule", REVALORISATIONS_STOCK,
+                saisie.stock, "page Coût seulement",
+                complement="Ce que la réforme fait des pensions déjà servies "
+                "le jour où elle s'applique. Par défaut elles gardent "
+                "l'indice des prix que le droit leur promet, et seuls les "
+                "comptes ouverts sous le nouveau régime suivent sa règle : "
+                "personne ne reçoit un demi-point par an qu'il n'a pas "
+                "cotisé. En variante, la réforme réindexe tout le stock sur "
+                "la règle du compte, comme les réformes réelles l'ont fait "
+                "pour les prix en 1987 : c'est la bosse de 2026-2040 sur la "
+                "page Coût. Le système 1 n'est pas concerné : il est le "
+                "droit."),
         g.champ("bascule", "Année de bascule", saisie.bascule,
                 "passage au régime unique", type_="number",
                 min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
@@ -8248,9 +8276,9 @@ def _cout_detail_limites(contexte: Contexte) -> str:
     solde = cout.solde
     avenir = cout.avenir
     observe = solde.annee(solde.derniere_annee_observee)
-    return g.depliant("Douze réserves à lire avant de citer ces chiffres",  f"""
+    return g.depliant("Treize réserves à lire avant de citer ces chiffres",  f"""
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
-laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
+laisse treize, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
   <li><strong>Les recettes réagissent sur trois points, et sur trois
   seulement.</strong> La recette suit le droit : ce que la branche famille,
@@ -8278,6 +8306,14 @@ laisse douze, écrits ici plutôt qu'en note de bas de page.</p>
   non la part de PIB de l'assiette : celle-ci suit alors les ressources
   projetées par le COR, dont la baisse en part de PIB tient précisément à une
   assiette qui progresse moins vite que le PIB.</li>
+  <li><strong>Les pensions déjà servies à la bascule gardent les prix.</strong>
+  Une pension liquidée sous le système actuel est revalorisée sur les prix, et
+  la réforme ne la touche pas : seuls les comptes ouverts sous le nouveau
+  régime suivent sa règle. C'est un choix, et il se règle : la variante
+  « réindexées » fait passer tout le stock à la règle du compte le jour de la
+  bascule, ce qui creuse une bosse de dépense jusque vers 2040 — le stock
+  reçoit alors un demi-point par an que personne n'a cotisé — sans rien
+  changer à l'horizon, où ce stock est éteint.</li>
   <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
   L'appliquer changerait toutes les pensions par un même facteur, donc tous les
   niveaux de cette page, sans toucher aux écarts entre carrières, qui sont la

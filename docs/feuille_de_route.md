@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 060<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 128<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8234,6 +8234,11 @@ bon endroit est lu sans qu'on touche au script.
   retenir : la trajectoire du COR n'est pas un choc favorable — +3,7 % pour
   la génération 1975, −5,2 % pour la génération 2000 —, et le PIB de la page
   Coût ne la lit pas encore.
+- **20 septembre 2026, action 48.** Faite. Les pensions déjà servies à la
+  bascule gardent les prix, et la bosse de la page Coût disparaît sans que
+  l'horizon bouge. Ce qui reste du déficit de la proposition en 2039, 1,27
+  point de PIB, est le coût de transition du 18 %, et c'est l'action 11 qui
+  l'attend.
 
 ### 46. L'emploi projeté suit le scénario de référence du COR, pour les systèmes 2 à 6 — `fait`
 
@@ -8392,3 +8397,36 @@ patrimoine par niveau de pension, ni mortalité selon le patrimoine. Il faut :
 **Fin.** La page Coût donne la garantie en trois lignes, brut, reprises et
 net, sur une distribution de patrimoine citée, et le programme dit en une
 phrase pourquoi il reprend là où le Parlement renonce.
+
+### 48. Les pensions déjà servies à la bascule gardent les prix — `fait`
+
+**Ce que c'est.** Sur la page Coût, une réforme prospective faisait passer
+tout le stock des pensions en cours à la règle du compte le jour de la
+bascule. C'était offrir aux retraités de 2026 un demi-point par an pendant
+quinze ans, que personne n'avait cotisé, et c'était la bosse de dépense de
+2026 à 2040 que l'action 46 avait fait monter à 7,5 % au-dessus du système
+actuel. Le défaut est désormais celui du droit : une pension liquidée sous le
+système actuel garde l'indice des prix jusqu'à son extinction, et seuls les
+comptes ouverts sous le nouveau régime suivent sa règle. La réindexation reste
+en variante, réglage « Pensions en cours à la bascule » du formulaire, et un
+témoin la mesure.
+
+**Ce que ça a déplacé.** Mesuré le 20 septembre 2026, trajectoire du COR : le
+système 3 ne dépasse plus jamais le système actuel (sommet 0,998 en 2026, au
+lieu de 1,049 en 2034), le système 5 culmine à 1,011 en 2039 au lieu de 1,075,
+la proposition passe de 0,822 à 0,775 en 2039. Le solde de 2039 gagne 0,8 point
+de PIB pour le système 3, 0,8 pour le 5 et 0,6 pour la proposition, dont le
+déficit reste à 1,27 point : ce qui reste est le coût de transition du 18 %,
+qu'aucune règle d'indexation ne règle. En 2070, rien ne bouge au millième.
+
+**Ce qui reste.** Le coût de transition, précisément : le coefficient
+d'équilibre de l'action 11, ou une recette de transition explicite. Et deux
+populations de retraités sous deux règles pendant trente ans, ce que la page
+dit.
+
+**Fichiers.** `config.py` (`RevalorisationStock`), `cout.py`
+(`coefficient_stock`), `moteur/js/cout.js`, `web/pages.py` et
+`moteur/js/pages.js` (champ `stock`, encart de la page Coût),
+`construire_temoins.py` (`REGLES_AUTRES`), `tests/test_cout.py`,
+`limites.md` § « Et le stock, le jour de la bascule ».
+

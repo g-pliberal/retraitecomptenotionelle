@@ -22,7 +22,7 @@ from retraite_notionnelle.castypes import (
     poids_effectifs,
     poids_egaux,
 )
-from retraite_notionnelle.config import RACINE_DONNEES
+from retraite_notionnelle.config import RACINE_DONNEES, RevalorisationStock
 from retraite_notionnelle.cout import (
     _ponderation,
     CONVENTION_ASSIETTE,
@@ -384,10 +384,17 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
     monté et reculé : la masse salariale, sur laquelle le stock est indexé,
     croît d'un demi-point de plus par an jusqu'en 2040, le temps que le
     chômage tombe à 7 % et que la population active atteigne son maximum. Le
-    scénario 5 culmine à 7,5 % au-dessus du système actuel en 2039, le 3 à
-    4,9 % en 2034 ; à emploi constant, les anciens sommets se retrouvent. Le
+    scénario 5 culminait à 7,5 % au-dessus du système actuel en 2039, le 3 à
+    4,9 % en 2034 ; à emploi constant, les anciens sommets se retrouvaient. Le
     recul de l'emploi après 2040 fait ensuite tomber le rapport plus bas
     qu'avant : 0,78 en 2070 pour le 5 contre 0,84 à emploi constant.
+
+    ET LE MÊME JOUR, LE STOCK A CESSÉ D'ÊTRE RÉINDEXÉ : par défaut, les
+    pensions déjà servies à la bascule gardent les prix que le droit leur
+    promet (``revalorisation_stock=PRIX``), et la bosse n'est plus qu'un
+    souvenir — le 5 culmine à 1,1 % en 2039, le 3 ne dépasse plus jamais le
+    système actuel. La variante ``REINDEXE`` la fait revenir, et le test
+    d'après tient les deux.
 
     Le sommet est donc CHERCHÉ et non supposé : fixer son année d'avance
     ferait passer le test pour un contrôle alors qu'il ne serait qu'un
@@ -402,15 +409,59 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
         # Et il est borné dans le temps : au plus trois pas de grille — la
         # bosse d'emploi du COR s'achève en 2040, et le sommet avec elle.
         assert sommet.annee <= avenir.annee_bascule + 3 * PAS_GENERATIONS, scenario
-        precedent = None
+        # La décroissance se lit d'un PAS DE GRILLE à l'autre, et non d'une
+        # année à l'autre : la grille échantillonne une génération sur cinq,
+        # et la courbe ondule d'un ou deux dixièmes de point à l'intérieur du
+        # pas — un autre test le borne. Comparer chaque année à celle d'un
+        # pas plus tôt efface l'ondulation et garde la pente.
+        par_annee = {l.annee: l.rapports[scenario] for l in lignes}
         for ligne in lignes:
-            if ligne.annee < sommet.annee:
+            if ligne.annee < sommet.annee + PAS_GENERATIONS:
                 continue
-            rapport = ligne.rapports[scenario]
-            if precedent is not None:
-                assert rapport <= precedent + 1e-12, (scenario, ligne.annee)
-            precedent = rapport
-        assert precedent < 0.85, scenario
+            assert ligne.rapports[scenario] <= (
+                par_annee[ligne.annee - PAS_GENERATIONS] + 1e-12
+            ), (scenario, ligne.annee)
+        assert lignes[-1].rapports[scenario] < 0.85, scenario
+
+
+def test_le_stock_sur_les_prix_efface_la_bosse_sans_toucher_l_horizon(
+        avenir, depenses, population, comptes):
+    """Réindexer le stock à la bascule creuse une bosse jusque vers 2040 et rien
+    d'autre.
+
+    Sous ``REINDEXE``, les pensions servies avant la bascule passent à la masse
+    salariale le jour où la réforme s'applique, et le rapport des prospectifs
+    au système actuel monte au-dessus de celui du défaut jusqu'à ce que ce
+    stock s'éteigne. À l'horizon, les deux réglages se rejoignent au millième :
+    tout ce qui reste vient des comptes, pas du stock. Avant la bascule, les
+    prospectifs sont le système actuel dans les deux cas.
+    """
+    reindexe = calculer_cout(
+        Simulateur(Parametres(revalorisation_stock=RevalorisationStock.REINDEXE)),
+        depenses, population, comptes, convention_recette=CONVENTION_RAPPORT,
+    ).avenir
+    defaut = {l.annee: l for l in avenir.annees}
+    bascule = avenir.annee_bascule
+    for ligne in reindexe.annees:
+        for scenario in CLES_PROSPECTIVES:
+            if ligne.annee < bascule:
+                # La règle du stock ne peut rien AVANT la bascule : les deux
+                # réglages y sont identiques, au pas de grille près, qu'un
+                # autre test borne.
+                assert ligne.rapports[scenario] == pytest.approx(
+                    defaut[ligne.annee].rapports[scenario])
+            elif bascule < ligne.annee <= bascule + 10:
+                assert ligne.rapports[scenario] > defaut[ligne.annee].rapports[scenario], (
+                    scenario, ligne.annee)
+    for scenario in CLES_PROSPECTIVES:
+        assert reindexe.annees[-1].rapports[scenario] == pytest.approx(
+            defaut[reindexe.annees[-1].annee].rapports[scenario], abs=1e-3)
+    # Et la bosse elle-même : sous le défaut, le scénario 3 ne dépasse plus le
+    # système actuel, quand la variante le lui faisait dépasser de 4,9 %.
+    assert max(l.rapports["notionnel_prospectif"]
+               for l in avenir.annees if l.annee >= bascule) < 1.0
+    assert max(l.rapports["notionnel_prospectif"]
+               for l in reindexe.annees if l.annee >= bascule) > 1.04
 
 
 def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir):

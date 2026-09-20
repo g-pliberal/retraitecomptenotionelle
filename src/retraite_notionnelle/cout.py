@@ -135,7 +135,7 @@ from .castypes import (
     poids_effectifs,
     poids_egaux,
 )
-from .config import SituationFoyer
+from .config import RevalorisationStock, SituationFoyer
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle
 from .donnees.depenses import DepensesRetraite
@@ -1348,18 +1348,17 @@ CLES_REVALORISEES: frozenset[str] = frozenset(
 )
 
 #: Les scénarios 3 et 5, dont la règle d'indexation NE COMMENCE QU'À LA
-#: BASCULE. Une réforme prospective ne gèle pas l'indexation du stock : elle
-#: change la règle pour toutes les pensions à compter du jour où elle
-#: s'applique, celles qui étaient déjà servies comprises — c'est ce que font
-#: les réformes réelles, et c'est ce que le programme retient. Ce qu'elle ne
-#: fait pas, c'est agir AVANT elle-même : une pension servie en 2010 a été
-#: revalorisée sur les prix de 2010 à 2025, quoi qu'il advienne en 2026.
-#:
-#: D'où ``max(liquidation, bascule)`` et non « liquidée après la bascule ».
-#: La nuance n'est pas rhétorique : la seconde forme priverait à jamais de la
-#: règle nouvelle tous ceux qui étaient déjà retraités, et ferait du scénario 3
-#: une réforme qui met cinquante ans à s'appliquer. La première la leur donne
-#: le jour de la bascule, et laisse le passé intact — ce qu'un test exige.
+#: BASCULE. Ce qu'une réforme prospective fait du STOCK — les pensions déjà
+#: servies le jour où elle s'applique — est un choix, et il est réglé par
+#: ``Parametres.revalorisation_stock`` (voir
+#: :meth:`RevalorisationServie.coefficient_stock`). Par défaut, depuis le
+#: 20 septembre 2026, le stock garde les prix que le droit lui a promis, et la
+#: règle nouvelle ne vaut que pour les pensions liquidées à compter de la
+#: bascule. En variante, la réforme fait passer tout le stock à sa règle le
+#: jour de la bascule, comme le modèle le faisait jusque-là. Dans les deux
+#: cas, elle n'agit jamais AVANT elle-même : une pension servie en 2010 a été
+#: revalorisée sur les prix de 2010 à 2025, quoi qu'il advienne en 2026, et un
+#: test tient l'égalité des courbes avant la bascule.
 CLES_PROSPECTIVES: frozenset[str] = frozenset({
     "notionnel_prospectif", "notionnel_prospectif_employeur",
 })
@@ -1409,6 +1408,10 @@ class RevalorisationServie:
         #: L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
         #: qu'elle sert : voir :data:`CLES_PROSPECTIVES`.
         self.annee_bascule = simulateur.parametres.annee_bascule
+        #: Le stock à la bascule garde-t-il les prix ? Voir :meth:`coefficient_stock`.
+        self.stock_sur_les_prix = (
+            simulateur.parametres.revalorisation_stock is RevalorisationStock.PRIX
+        )
         self.premiere_annee = premiere_annee
         self.derniere_annee = max(derniere_annee, premiere_annee)
         index = 1.0
@@ -1439,6 +1442,34 @@ class RevalorisationServie:
             return 1.0
         depart = self._valeur(annee_liquidation)
         return self._valeur(annee) / depart if depart else 1.0
+
+    def coefficient_stock(self, annee_liquidation: int, annee: int,
+                          prospectif: bool) -> float:
+        """Le même coefficient, avec la règle du STOCK à la bascule.
+
+        Une pension liquidée à compter de la bascule suit la règle du compte
+        depuis sa liquidation, dans tous les cas. Une pension liquidée AVANT :
+
+        - sous ``PRIX``, elle garde les prix — coefficient 1 en euros
+          constants — à compter de la bascule. Pour une réforme prospective,
+          qui n'existait pas avant, c'est 1 depuis toujours ; pour une réforme
+          rétroactive, dont le compte fictif a été revalorisé sur sa règle
+          jusqu'à la bascule, le coefficient est gelé à sa valeur de la
+          bascule ;
+        - sous ``REINDEXE``, la réforme prospective la prend à sa règle le jour
+          de la bascule (``max(liquidation, bascule)``), et la rétroactive
+          l'a toujours revalorisée sur la sienne.
+        """
+        bascule = self.annee_bascule
+        if annee_liquidation >= bascule:
+            return self.coefficient(annee_liquidation, annee)
+        if self.stock_sur_les_prix:
+            if prospectif:
+                return 1.0
+            return self.coefficient(annee_liquidation, min(annee, bascule))
+        if prospectif:
+            return self.coefficient(bascule, annee)
+        return self.coefficient(annee_liquidation, annee)
 
 
 #: Les deux comptes de TÊTES que la grille rend avec ses masses : tous les
@@ -1502,11 +1533,11 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # la tranche. Le sortir de la boucle appliquerait à toutes celui de
             # la génération du milieu, soit deux ans d'indexation en trop d'un
             # côté et en moins de l'autre.
-            poids_revalorise += effectif * revalorisation.coefficient(
-                liquidation, annee
+            poids_revalorise += effectif * revalorisation.coefficient_stock(
+                liquidation, annee, prospectif=False
             )
-            poids_revalorise_prospectif += effectif * revalorisation.coefficient(
-                max(liquidation, revalorisation.annee_bascule), annee
+            poids_revalorise_prospectif += effectif * revalorisation.coefficient_stock(
+                liquidation, annee, prospectif=True
             )
             # La garantie n'entre qu'à 65 ans, même pour qui est parti plus
             # tôt : avant, on ne touche pas le minimum vieillesse.
