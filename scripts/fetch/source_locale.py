@@ -390,9 +390,13 @@ def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
             *, jeton: str | None = None, sortie=sys.stdout) -> dict[str, str]:
     """Dépose sur la release ``documents-apportes`` chaque jeu de ``a_publier``.
 
-    Rend l'état de chaque jeu : ``publie``, ``ecart`` (le manifeste porte une
-    empreinte et le site sert autre chose : l'asset n'est pas touché),
-    ``navigateur`` (refusé, et aucun navigateur pour insister) ou ``echec``.
+    Rend l'état de chaque jeu : ``publie`` ; ``ecart`` (le manifeste porte une
+    empreinte et le site sert autre chose : l'asset n'est pas touché) ;
+    ``conserve`` (le site refuse ou échoue, mais la release porte déjà
+    l'asset — déposé par une passe précédente ou à la main — et il reste) ;
+    ``navigateur`` (refusé, et aucun navigateur pour insister) ; ``echec``.
+    La release est créée dès la première passe, même vide, pour qu'un
+    document que tout refuse ait un endroit où être déposé à la main.
     L'asset du même nom est remplacé ; la ligne du corps de la release qui le
     décrit aussi. Il faut un jeton qui écrive les releases : celui d'un
     workflow GitHub Actions.
@@ -421,7 +425,7 @@ def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
             etats[jeu["id"]] = "ecart"
             continue
         obtenus.append((jeu, octets, voie))
-    if not obtenus:
+    if not candidats:
         return etats
 
     api = f"https://api.github.com/repos/{DEPOT}"
@@ -435,8 +439,18 @@ def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
             "body": "Déposés par `scripts/fetch/source_locale.py --publier` depuis le workflow "
                     "`documents-apportes.yml`, tels que le site les sert. Le manifeste "
                     "`data/sources.yaml` les déclare en `miroir` avec leur `sha256` ; "
-                    "récupération : `python scripts/fetch/source_locale.py --recuperer`.",
+                    "récupération : `python scripts/fetch/source_locale.py --recuperer`. "
+                    "Un document que le site refuse aussi au runner se dépose ici à la main, "
+                    "une fois, sous le nom que le manifeste attend (`fichier_local`).",
         }).encode())
+    presents = {actif["name"] for actif in release.get("assets", [])}
+    for jeu in candidats:
+        if etats.get(jeu["id"]) in ("navigateur", "echec") and ou_deposer(jeu).name in presents:
+            print(f"{jeu['id']} : la release porte déjà {ou_deposer(jeu).name}, conservé",
+                  file=sortie)
+            etats[jeu["id"]] = "conserve"
+    if not obtenus:
+        return etats
     corps = release.get("body") or ""
     for jeu, octets, voie in obtenus:
         nom = ou_deposer(jeu).name
@@ -535,7 +549,8 @@ def main(argv: list[str] | None = None) -> int:
         etats = publier(bloques, navigateur=navigateur)
         candidats = a_publier(bloques)
         print(f"{sum(e == 'publie' for e in etats.values())} document(s) publié(s) "
-              f"sur {len(candidats)} à publier")
+              f"sur {len(candidats)} à publier, "
+              f"{sum(e == 'conserve' for e in etats.values())} conservé(s)")
         if any(e in ("echec", "ecart") for e in etats.values()):
             return 1
         return 3 if any(e == "navigateur" for e in etats.values()) else 0
@@ -565,7 +580,9 @@ def main(argv: list[str] | None = None) -> int:
         elif a_publier([jeu]):
             print(f"    aucun miroir déclaré : document {adresse_du_document(jeu)}\n"
                   f"    publiable sur la release {ETIQUETTE} par le workflow "
-                  f"documents-apportes.yml (--publier), puis --recuperer")
+                  f"documents-apportes.yml (--publier), puis --recuperer ;\n"
+                  f"    si le site refuse aussi le runner, déposer le fichier sur cette "
+                  f"release à la main, une fois")
         else:
             print(f"    aucun miroir connu : à apporter sous {attendu.relative_to(RACINE)}")
         if jeu["recuperation"]:

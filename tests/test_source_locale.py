@@ -492,10 +492,35 @@ def test_publier_dit_quand_il_faut_un_navigateur_et_quand_ca_echoue(monkeypatch,
     sortie = capsys.readouterr().out
     assert "refuse : NAVIGATEUR REQUIS" in sortie and "absent : ÉCHEC" in sortie
     assert github.envoyes == {"c.pdf": b"c"}
+    # Ce que le site refuse ou perd, mais que la release porte déjà — déposé à
+    # la main, ou par une passe précédente —, est conservé, et ce n'est pas un échec.
+    github.assets += ["a.pdf", "b.pdf"]
+    assert module.publier(jeux[:2], simple, None, jeton="t") == {"refuse": "conserve", "absent": "conserve"}
+    assert "refuse : la release porte déjà a.pdf, conservé" in capsys.readouterr().out
     monkeypatch.delenv("GH_TOKEN", raising=False)
     monkeypatch.delenv("GITHUB_TOKEN", raising=False)
     with pytest.raises(RuntimeError):
         module.publier(jeux, simple, None)
+
+
+def test_publier_cree_la_release_meme_quand_tout_refuse(monkeypatch):
+    """Un document que tout refuse a besoin d'un endroit où être déposé à la
+    main : la release existe dès la première passe, avec le mode d'emploi."""
+    module = _module()
+    github = _GitHubSimule(existe=False)
+    monkeypatch.setattr(module, "_github", github)
+    jeu = {"id": "refuse", "blocage": "refus", "url": "https://a.fr/a.pdf"}
+
+    def simple(url):
+        raise _http_error(403, url)
+
+    assert module.publier([jeu], simple, None, jeton="t") == {"refuse": "navigateur"}
+    assert github.existe and "à la main" in github.corps and github.envoyes == {}
+    # Rien à publier : rien n'est créé.
+    github = _GitHubSimule(existe=False)
+    monkeypatch.setattr(module, "_github", github)
+    assert module.publier([{"id": "eic", "blocage": "convention", "url": "https://a.fr/e"}], simple, None, jeton="t") == {}
+    assert not github.existe
 
 
 def test_recuperer_cherche_la_release_quand_aucun_miroir_n_est_declare(tmp_path, monkeypatch, capsys):
