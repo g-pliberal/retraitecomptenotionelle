@@ -441,6 +441,7 @@ institutions:
         recuperation: scripts/fetch/cor_regimes.py
         cible: >-
           data/reference/regimes/structure_financement.csv,
+          data/reference/regimes/cotisants.csv,
           data/reference/macro/part_droits_derives.csv
         millesime: juin 2024
         note: >-

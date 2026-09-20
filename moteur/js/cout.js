@@ -202,6 +202,15 @@ export const DEMI_TRANCHE = Math.floor(PAS_GENERATIONS / 2);
 export const PONDERATIONS = ["effectifs", "egale"];
 
 /**
+ * Les deux côtés d'un bilan, et l'effectif qui pèse un cas type de chaque côté :
+ * ses RETRAITÉS pour une masse de pensions, ses COTISANTS pour une masse de
+ * cotisations. Un même mode de pondération se lit des deux côtés.
+ */
+export const COTE_RETRAITES = "retraites";
+export const COTE_COTISANTS = "cotisants";
+export const COTES = [COTE_RETRAITES, COTE_COTISANTS];
+
+/**
  * Les deux façons de dater le départ des cas types, reprises de `castypes.js`.
  * `droit` est celle des résultats affichés ; `absolu` est l'ancienne, où toutes
  * les générations partaient à l'âge écrit dans la grille.
@@ -400,6 +409,10 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
  * de la carrière, et la cohorte née deux ans plus tôt verse, l'année `t`, ce que
  * la génération de la grille verse en `t + 2`. C'est cette année-là qu'on va
  * chercher.
+ *
+ * Le poids des cas types est celui des COTISANTS de leur caisse, et non de ses
+ * retraités : `poidsCas` vient ici de `simulateur.cotisants`, la série que le
+ * COR publie et projette régime par régime.
  */
 function massesCotisations(liste, population, annee, poidsCas) {
   const total = {};
@@ -441,23 +454,34 @@ function rapportsRecettes(total, annee, bascule) {
 /**
  * Fonction qui rend le poids de chaque cas type une année donnée.
  *
+ * `cote` dit quel effectif pèse : les RETRAITÉS de la caisse, pour une masse de
+ * pensions, ou ses COTISANTS, pour une masse de cotisations. Les deux ne disent
+ * pas la même chose, et l'écart est le plus grand là où le rapport de recettes
+ * mord : la SNCF a 108 000 cotisants et 158 000 retraités en 2024, et n'a plus
+ * aucun cotisant en 2070.
+ *
  * Les poids d'effectifs varient d'une année à l'autre — la France de 1960
- * comptait plus d'exploitants agricoles que de fonctionnaires —, et la fenêtre
- * publiée par la DREES est 2004-2024 : hors d'elle, la répartition du bord est
- * reconduite, et la série le dit en tombant au niveau `estimee`.
+ * comptait plus d'exploitants agricoles que de fonctionnaires —, et chaque
+ * série a sa fenêtre : 2004-2024 pour les retraités de la DREES, 2010-2070 pour
+ * les cotisants du COR. Hors d'elle, la répartition du bord est reconduite, et
+ * la série le dit en tombant au niveau `estimee`.
  */
-export function ponderation(simulateur, mode, casTypes) {
+export function ponderation(simulateur, mode, casTypes, cote = COTE_RETRAITES) {
   if (!PONDERATIONS.includes(mode)) {
     throw new Error(`pondération inconnue : ${mode}`);
+  }
+  if (!COTES.includes(cote)) {
+    throw new Error(`côté inconnu : ${cote}`);
   }
   if (mode === "egale") {
     const fixes = poidsEgaux(casTypes);
     return () => fixes;
   }
+  const effectifs = cote === COTE_COTISANTS ? simulateur.cotisants : simulateur.effectifs;
   const memoire = new Map();
   return (annee) => {
     if (!memoire.has(annee)) {
-      memoire.set(annee, poidsEffectifs(simulateur.effectifs, annee, casTypes));
+      memoire.set(annee, poidsEffectifs(effectifs, annee, casTypes));
     }
     return memoire.get(annee);
   };
@@ -1000,7 +1024,7 @@ export function calculerDette(solde, avenir, courbe, ecartTaux = 0.0,
 class Cout {
   constructor(annees, avenir, solde, anneeEuros, generationsRetenues, echecs,
               fiabilite, ponderationRetenue = "effectifs", poids = {},
-              liquidationRetenue = "droit", dette = new Dette()) {
+              liquidationRetenue = "droit", dette = new Dette(), poidsCotisants = {}) {
     this.annees = annees;
     this.avenir = avenir;
     this.solde = solde;
@@ -1014,6 +1038,9 @@ class Cout {
     // observée : ce que la page affiche pour dire sur quoi ses agrégats reposent.
     this.ponderation = ponderationRetenue;
     this.poids = poids;
+    // Les mêmes poids du côté de la RECETTE — les cotisants de chaque caisse et
+    // non ses retraités —, la même année. Égaux aux premiers sous `egale`.
+    this.poidsCotisants = poidsCotisants;
     // Datation du départ des cas types : `droit` ou `absolu`.
     this.liquidation = liquidationRetenue;
     this.premiereAnnee = annees[0].annee;
@@ -1063,7 +1090,11 @@ class Cout {
  * année : les deux expressions coïncident exactement à la jonction.
  */
 function construireAvenir(liste, depenses, population, simulateur, poids, revalorisation,
-                          reversionServie = false) {
+                          reversionServie = false, poidsCotisants = null) {
+  // `poids` pèse les cas types dans les masses de PENSIONS, `poidsCotisants`
+  // dans les masses de COTISATIONS ; sans le second, le premier sert aux deux,
+  // ce qui est l'ancienne convention.
+  if (poidsCotisants === null) poidsCotisants = poids;
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
   const dernierePubliee = depenses.derniereAnnee;
@@ -1097,7 +1128,8 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
     const poidsAnnee = poids(annee);
     const { total } = masses(liste, population, annee, poidsAnnee, revalorisation);
     if (total.actuel <= 0) continue;
-    const cotisations = massesCotisations(liste, population, annee, poidsAnnee);
+    const cotisations = massesCotisations(liste, population, annee,
+                                          poidsCotisants(annee));
     const projete = annee > dernierePubliee;
     const coefficient = macro.coefficientPrix(annee, anneeEuros);
     const base = projete
@@ -1222,6 +1254,7 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   const reversionServie = conventionReversion === CONVENTION_REVERSION_SERVIE;
   const { liste, motifs } = pensionnes(simulateur, casTypes, liquidation);
   const poids = ponderation(simulateur, mode, casTypes);
+  const poidsCotisants = ponderation(simulateur, mode, casTypes, COTE_COTISANTS);
   const macro = simulateur.macro;
   const anneeEuros = simulateur.parametres.annee_euros_constants;
   // La seconde règle d'indexation, construite une fois pour les deux régimes de
@@ -1258,7 +1291,7 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // observée est certifiée, le rapport qui la corrige ne l'est pas et ne peut
   // pas l'être.
   const avenir = construireAvenir(liste, depenses, population, simulateur, poids,
-                                  revalorisation, reversionServie);
+                                  revalorisation, reversionServie, poidsCotisants);
   const solde = comptes && avenir.annees.length
     ? construireSolde(
       avenir, comptes, depenses.pib.derniereAnnee, assiette,
@@ -1280,5 +1313,6 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     liquidation,
     calculerDette(solde, avenir, simulateur.courbeTaux, 0.0,
                   comptes ? comptes.dettePublique : null),
+    poidsCotisants(depenses.derniereAnnee),
   );
 }

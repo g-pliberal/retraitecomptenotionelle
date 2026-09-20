@@ -272,6 +272,13 @@ def generations() -> tuple[int, ...]:
 #: ce qu'elle valait.
 PONDERATIONS: tuple[str, ...] = ("effectifs", "egale")
 
+#: Les deux côtés d'un bilan, et l'effectif qui pèse un cas type de chaque
+#: côté : ses RETRAITÉS pour une masse de pensions, ses COTISANTS pour une
+#: masse de cotisations. Un même mode de pondération se lit des deux côtés.
+COTE_RETRAITES = "retraites"
+COTE_COTISANTS = "cotisants"
+COTES: tuple[str, ...] = (COTE_RETRAITES, COTE_COTISANTS)
+
 #: Les deux façons de dater le départ des cas types, reprises de ``castypes``.
 #: ``droit`` est celle des résultats affichés ; ``absolu`` est l'ancienne, où
 #: toutes les générations partaient à l'âge écrit dans la grille.
@@ -1037,6 +1044,10 @@ class Cout:
     #: Poids de chaque cas type la DERNIÈRE année observée — ce que la page
     #: affiche pour dire sur quoi ses agrégats reposent.
     poids: dict[str, float] = field(default_factory=dict)
+    #: Les mêmes poids du côté de la RECETTE — les cotisants de chaque caisse
+    #: et non ses retraités —, la même année. Égaux aux premiers sous
+    #: ``ponderation="egale"``.
+    poids_cotisants: dict[str, float] = field(default_factory=dict)
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
 
     @property
@@ -1354,11 +1365,14 @@ def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
     née un an plus tôt verse, l'année ``t``, ce que la cohorte de la grille
     versait en ``t − 1``. C'est cette année-là qu'on va chercher.
 
-    Le poids des cas types est celui des RETRAITÉS de leur caisse, faute d'une
-    série de cotisants : c'est la réserve principale de cette grandeur, et elle
-    est écrite dans ``limites.md``. Elle surreprésente les régimes qui
-    s'éteignent, dont les taux sont parmi les plus élevés, et pousse donc le
-    rapport vers le bas.
+    Le poids des cas types est celui des COTISANTS de leur caisse, et non de
+    ses retraités : ``poids_cas`` vient ici de ``simulateur.cotisants``, la
+    série que le COR publie et projette régime par régime. Jusqu'au 20
+    septembre 2026, c'étaient les retraités qui servaient, faute d'une série de
+    cotisants, et ``limites.md`` disait le biais : les régimes qui s'éteignent
+    — dont les taux sont parmi les plus élevés — comptaient leurs retraités
+    d'hier au lieu de leurs cotisants de demain, et poussaient le rapport vers
+    le bas.
     """
     masses = {cle: 0.0 for cle in CLES_RECETTES}
     for pensionne in pensionnes:
@@ -1403,20 +1417,30 @@ def _rapports_recettes(masses: dict[str, float], annee: int,
 
 
 def _ponderation(simulateur: Simulateur, mode: str,
-                 cas_types: tuple[CasType, ...]) -> Callable[[int], dict[str, float]]:
+                 cas_types: tuple[CasType, ...],
+                 cote: str = COTE_RETRAITES) -> Callable[[int], dict[str, float]]:
     """Fonction qui rend le poids de chaque cas type une année donnée.
 
+    ``cote`` dit quel effectif pèse : les RETRAITÉS de la caisse, pour une
+    masse de pensions, ou ses COTISANTS, pour une masse de cotisations. Les
+    deux ne disent pas la même chose, et l'écart est le plus grand là où le
+    rapport de recettes mord : la SNCF a 108 000 cotisants et 158 000 retraités
+    en 2024, et n'a plus aucun cotisant en 2070.
+
     Les poids d'effectifs varient d'une année à l'autre — la France de 1960
-    comptait plus d'exploitants agricoles que de fonctionnaires —, et la fenêtre
-    publiée par la DREES est 2004-2024 : hors d'elle, la répartition du bord est
+    comptait plus d'exploitants agricoles que de fonctionnaires —, et chaque
+    série a sa fenêtre : 2004-2024 pour les retraités de la DREES, 2010-2070
+    pour les cotisants du COR. Hors d'elle, la répartition du bord est
     reconduite, et la série le dit en tombant au niveau ``estimee``.
     """
     if mode not in PONDERATIONS:
         raise ValueError(f"pondération inconnue : {mode!r} (attendu : {PONDERATIONS})")
+    if cote not in COTES:
+        raise ValueError(f"côté inconnu : {cote!r} (attendu : {COTES})")
     if mode == "egale":
         fixes = poids_egaux(cas_types)
         return lambda annee: fixes
-    effectifs = simulateur.effectifs
+    effectifs = simulateur.cotisants if cote == COTE_COTISANTS else simulateur.effectifs
     memoire: dict[int, dict[str, float]] = {}
 
     def poids(annee: int) -> dict[str, float]:
@@ -1435,14 +1459,21 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             population: Population, simulateur: Simulateur,
             poids: Callable[[int], dict[str, float]],
             revalorisation: RevalorisationServie,
-            reversion_servie: bool = False) -> Avenir:
+            reversion_servie: bool = False,
+            poids_cotisants: Callable[[int], dict[str, float]] | None = None) -> Avenir:
     """La trajectoire de la répartition, de la première année ventilée à l'horizon.
 
     Deux régimes, une seule formule. Jusqu'à la dernière année publiée, la base
     est la dépense de répartition OBSERVÉE. Au-delà, elle est celle que le
     modèle produit, mise à l'échelle par un ancrage calculé sur cette même
     dernière année : les deux expressions coïncident exactement à la jonction.
+
+    ``poids`` pèse les cas types dans les masses de PENSIONS, ``poids_cotisants``
+    dans les masses de COTISATIONS ; sans le second, le premier sert aux deux,
+    ce qui est l'ancienne convention.
     """
+    if poids_cotisants is None:
+        poids_cotisants = poids
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     derniere_publiee = depenses.derniere_annee
@@ -1482,7 +1513,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                             revalorisation)
         if masses["actuel"] <= 0.0:
             continue
-        cotisations = _masses_cotisations(pensionnes, population, annee, poids_annee)
+        cotisations = _masses_cotisations(pensionnes, population, annee,
+                                          poids_cotisants(annee))
         projete = annee > derniere_publiee
         coefficient = macro.coefficient_prix(annee, annee_euros)
         base = (
@@ -1606,8 +1638,10 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     zéro, et non un résultat.
 
     ``ponderation`` choisit ce que chaque cas type pèse : ``effectifs``, les
-    retraités de sa caisse publiés par la DREES, ou ``egale``, l'ancienne
-    convention. Le second n'existe que pour mesurer ce que le premier a déplacé.
+    retraités de sa caisse publiés par la DREES dans les masses de pensions et
+    ses cotisants publiés par le COR dans les masses de cotisations, ou
+    ``egale``, l'ancienne convention. Le second n'existe que pour mesurer ce
+    que le premier a déplacé.
 
     ``liquidation`` choisit l'âge auquel chaque cas type part : ``droit``,
     celui que le droit de sa génération lui ouvre, ou ``absolu``, l'âge écrit
@@ -1641,6 +1675,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     reversion_servie = convention_reversion == CONVENTION_REVERSION_SERVIE
     pensionnes, echecs = _pensionnes(simulateur, cas_types, liquidation)
     poids = _ponderation(simulateur, ponderation, cas_types)
+    poids_cotisants = _ponderation(simulateur, ponderation, cas_types, COTE_COTISANTS)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     # La seconde règle d'indexation, construite une fois pour les deux régimes
@@ -1676,7 +1711,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         default=Fiabilite.ESTIMEE,
     )
     avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
-                     revalorisation, reversion_servie)
+                     revalorisation, reversion_servie, poids_cotisants)
     solde = _solde(
         avenir, comptes, depenses.pib.derniere_annee, assiette,
         simulateur.parametres.taux_cotisation_liberal,
@@ -1698,6 +1733,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         liquidation=liquidation,
         convention_recette=convention_recette,
         poids=poids(depenses.derniere_annee),
+        poids_cotisants=poids_cotisants(depenses.derniere_annee),
         # Le contrefactuel ne peut jamais valoir mieux qu'« estimé » : la
         # dépense observée est certifiée, le rapport qui la corrige ne l'est
         # pas et ne peut pas l'être — aucune institution ne publie ce qu'un

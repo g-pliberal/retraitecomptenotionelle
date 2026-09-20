@@ -1168,6 +1168,49 @@ def source_structure_financement_regimes() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Les deux blocs du classeur du COR qui portent les effectifs de cotisants, et
+#: l'unité que chacun annonce. Le classeur écrit « en millions » sur dix-sept
+#: feuilles et « en milliers » sur trois — CRPCEN, CRPNPAC, FSPOEIE —, et la
+#: série est rendue en PERSONNES, pour qu'un lecteur n'ait pas à savoir cela.
+BLOCS_COTISANTS_COR: dict[str, float] = {
+    "Effectifs de cotisants en millions": 1e6,
+    "Effectifs de cotisants en milliers": 1e3,
+}
+
+
+def source_cotisants_regimes() -> dict[tuple, float]:
+    """Les cotisants de chaque régime, observés puis projetés, 2010-2070.
+
+    C'est la série que la page « Coût » n'avait pas : le poids d'un cas type
+    parmi les COTISANTS y était celui qu'il a parmi les RETRAITÉS de sa caisse,
+    faute de mieux, et ``limites.md`` disait que cette approximation
+    surreprésente les régimes qui s'éteignent. Le classeur du COR est la seule
+    source publique qui donne les cotisants des treize caisses des cas types à
+    la même maille, l'Ircantec et le RCI compris, et qui les PROJETTE : la
+    CNIEG y tombe de 136 287 cotisants en 2023 à 51 en 2070, la SNCF à zéro,
+    ce qu'aucune reconduction d'effectifs de retraités ne saurait imiter.
+
+    Seule la ligne « Ensemble » est retenue ; le classeur ventile aussi par
+    sexe, et la pondération n'en a pas l'usage. Le régime, le bloc et la
+    série sont ceux du fichier brut ; rien n'est complété : l'année de départ
+    varie d'une feuille à l'autre — 2010 le plus souvent, 2015 pour la FPE,
+    2019 pour le RCI, 2023 pour la CNRACL et la CNBF — et une absence reste
+    une absence. La fonction publique d'État est d'un seul tenant, civils et
+    militaires confondus, comme partout dans ce classeur ; le partage est une
+    décision du modèle, écrite dans ``donnees/cotisants.py``.
+    """
+    valeurs: dict[tuple, float] = {}
+    for ligne in _cor_regimes()["valeurs"]:
+        facteur = BLOCS_COTISANTS_COR.get(ligne["bloc"])
+        if facteur is None or ligne["serie"] != "Ensemble":
+            continue
+        regime = REGIMES_COR.get(ligne["regime"])
+        if regime is None:
+            continue
+        valeurs[(str(ligne["annee"]), regime)] = ligne["valeur"] * facteur
+    return dict(sorted(valeurs.items()))
+
+
 #: Les trois blocs du classeur du COR qui portent la ventilation d'une masse de
 #: pensions. Le troisième sert de FILET : dix des vingt-deux régimes ne publient
 #: pas leur droit dérivé à part, et la différence entre la masse de prestations
@@ -3709,6 +3752,58 @@ CERTIFICATIONS = (
             "#    publie, et on ne normalise pas.",
             "# 4. LA FONCTION PUBLIQUE D'ÉTAT EST D'UN SEUL TENANT, civils et",
             "#    militaires confondus, là où le reste du dépôt les sépare.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="cotisants_regimes",
+        chemin=REFERENCE / "regimes" / "cotisants.csv",
+        cles=("annee", "caisse"),
+        colonne="cotisants",
+        source=source_cotisants_regimes,
+        origine="COR, compléments du rapport annuel de juin 2024, "
+                "projections détaillées par régime",
+        decimales=0,
+        tolerance=0.51,
+        unite=" cotisants",
+        niveau="haute",
+        entete=(
+            "# Cotisants de chaque régime, observés puis projetés",
+            "# source_id: cor_regimes",
+            "# unite: personnes",
+            "# fiabilite:",
+            "#   haute (2010-2070) : effectifs publiés par le COR dans les",
+            "#             compléments de son rapport annuel, et recontrôlés par",
+            "#             scripts/verifier_donnees.py contre son classeur.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À PONDÉRER les cas types du côté de la RECETTE. La page « Coût »",
+            "# fait réagir la recette du système 4 par un rapport de cotisations",
+            "# calculé sur la grille des cas types ; chaque cas type y pesait",
+            "# jusqu'ici le nombre de RETRAITÉS de sa caisse, faute d'une série",
+            "# de cotisants, ce qui surreprésentait les régimes qui s'éteignent.",
+            "# Cette série donne les cotisants, et les projette : la SNCF n'en a",
+            "# plus aucun en 2070, la CNIEG cinquante et un.",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR",
+            "# ------------------------------------------",
+            "# 1. LE MILLÉSIME. Ces effectifs viennent des compléments du rapport",
+            "#    de JUIN 2024, seul millésime publié : ni 2025 ni 2026 ne les",
+            "#    ont reconduits. Le reste du dépôt tourne sur le COR 2026.",
+            "# 2. L'ANNÉE DE DÉPART VARIE d'une caisse à l'autre : 2010 le plus",
+            "#    souvent, 2015 pour la fonction publique d'État, 2019 pour le",
+            "#    RCI, 2023 pour la CNRACL. Hors de la fenêtre de chaque caisse,",
+            "#    la valeur de bord est reconduite au niveau « estimée ».",
+            "# 3. UN COTISANT DE CAISSE N'EST PAS UNE PERSONNE : un polyaffilié",
+            "#    compte dans chacune de ses caisses. Les poids qu'on en tire sont",
+            "#    RELATIFS, comme ceux des retraités.",
+            "# 4. LA FONCTION PUBLIQUE D'ÉTAT EST D'UN SEUL TENANT, civils et",
+            "#    militaires confondus. Le partage entre les deux cas types qui",
+            "#    la réclament est une décision du modèle, écrite dans",
+            "#    donnees/cotisants.py.",
             "#",
             "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",

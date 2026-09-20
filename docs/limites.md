@@ -5441,11 +5441,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   seul, 18 %, parts salariale et patronale additionnées, et sa part cotisée des
   ressources est donc multipliée par le rapport de ce que ce taux prélève sur
   les carrières de la grille à ce que le droit en vigueur y prélève. Ce rapport
-  vaut **0,63** une fois la bascule passée, c'est-à-dire un taux moyen de
-  **28,7 %** aujourd'hui. Le contrôle externe est le meilleur dont cette page
+  vaut **0,64** une fois la bascule passée, c'est-à-dire un taux moyen de
+  **28 %** aujourd'hui. Le contrôle externe est le meilleur dont cette page
   dispose : le COR publie, dans son rapport annuel, le taux de cotisation
   retraite d'un salarié non cadre du privé sous le plafond, parts salariale et
-  employeur — 27,9 % en 2025 —, et le modèle le retrouve à huit dixièmes de
+  employeur — 27,9 % en 2025 —, et le modèle le retrouve à trois dixièmes de
   point près sur une grille qui mêle à ce salarié des fonctionnaires, dont
   l'employeur verse 74,28 % du traitement, et des non-salariés, qui cotisent
   moins. Le scénario 6 passe ainsi d'un solde moyen de +3,75 % du PIB à
@@ -5457,10 +5457,18 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   aucune élasticité n'est posée ici. Que les ressources non cotisées — le quart
   du total — sont reconduites telles quelles, faute que le programme dise ce
   qu'il en ferait ; c'est l'hypothèse la plus favorable au scénario. Et que le
-  poids d'un cas type parmi les COTISANTS est celui qu'il a parmi les
-  retraités de sa caisse, faute d'une série de cotisants : cette approximation
-  surreprésente les régimes qui s'éteignent, dont les taux sont parmi les plus
-  élevés, et pousse donc le rapport vers le bas.
+  poids d'un cas type parmi les COTISANTS est celui de sa caisse dans le
+  classeur par régime du COR (`cotisants.csv`, 2010-2070, millésime de juin
+  2024), la fonction publique d'État y étant partagée entre civils et
+  militaires à la clé du jaune budgétaire « Pensions », tenue constante.
+  Jusqu'au 20 septembre 2026, c'étaient les RETRAITÉS de la caisse qui
+  servaient des deux côtés, faute d'une série de cotisants ; cette
+  approximation surreprésentait les régimes qui s'éteignent, dont les taux sont
+  parmi les plus élevés, et poussait le rapport vers le bas — 0,61, soit un
+  taux implicite de 29,5 %, contre 27,9 % chez le COR. Les cotisants le
+  ramènent à 0,64 et 28 %, et rendent 0,28 point de solde moyen au scénario 6
+  sous la variante `rapport` ; sous la convention `assiette`, celle de la page,
+  ils ne déplacent rien.
 
   **Une réserve de sens opposé, qui ne vaut QUE pour la variante
   `rapport`.** Ce rapport compare des taux qui ACQUIÈRENT des droits, et ce
@@ -6491,7 +6499,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1119<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1123<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

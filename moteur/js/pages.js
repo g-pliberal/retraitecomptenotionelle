@@ -6928,20 +6928,24 @@ function coutDetailPoids(contexte) {
       echapper(cas.libelle),
       cas.caisses.map((caisse) => caisse.replace(/_/g, " ")).join(", "),
       g.pourcentage(c.poids[cas.code] || 0, false, 1),
+      g.pourcentage(c.poidsCotisants[cas.code] || 0, false, 1),
       g.pourcentage(1 / CAS_TYPES.length, false, 1),
     ]);
   return g.depliant("Ce que chaque carrière type pèse dans ces chiffres", `
 <p><strong>Deux pondérations se composent.</strong> Celle de la génération est
 démographique, et vient de l'INSEE. Celle du <strong>cas type</strong> est
-sociologique (combien de retraités ont eu cette carrière-là), et vient des
-effectifs que la DREES publie caisse par caisse. La colonne de droite rappelle
-ce que valait la convention antérieure, qui les pesait à égalité.</p>
+sociologique, et elle se lit des deux côtés du bilan : dans les
+<strong>dépenses</strong>, un cas type pèse les retraités de sa caisse (combien
+ont eu cette carrière-là), publiés par la DREES ; dans les
+<strong>recettes</strong>, il pèse ses cotisants, publiés et projetés par le
+COR. La colonne de droite rappelle ce que valait la convention antérieure, qui
+les pesait à égalité.</p>
 
 ${g.tableau(
-    ["Cas type", "Caisse dont il porte les retraités",
-      `Poids en ${derniere}`, "Ancienne convention"],
+    ["Cas type", "Caisse dont il porte les effectifs",
+      `Retraités en ${derniere}`, `Cotisants en ${derniere}`, "Ancienne convention"],
     lignes,
-    ["", "texte", "nombre", "nombre"],
+    ["", "texte", "nombre", "nombre", "nombre"],
     `Ce que chaque cas type pèse dans les agrégats de cette page, en ${derniere}`,
     true,
   )}
@@ -6949,7 +6953,11 @@ ${g.tableau(
 également entre eux : la Cnav est celle des quatre carrières du privé, et aucune
 source ne dit combien de ses retraités ont été cadres. Hors de la fenêtre que la
 DREES publie (2004 à 2024), la répartition du bord est reconduite : la France
-de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent.</p>
+de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent. Les
+cotisants, eux, sont projetés jusqu'en 2070, et les régimes fermés s'y
+éteignent : la SNCF n'en a plus aucun à cette date. La fonction publique d'État
+n'y est publiée que d'un seul tenant, et se partage entre civils et militaires
+à la clé du jaune budgétaire « Pensions », tenue constante.</p>
 `, "cout-poids");
 }
 

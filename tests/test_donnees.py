@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.donnees.macro import DonneesMacro
@@ -374,6 +375,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "macro/prestations_non_contributives.csv",
         "distribution_pensions": "macro/distribution_pensions.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
+        "cotisants_regimes": "regimes/cotisants.csv",
         # La part de réversion et la ventilation qui la contrôle : deux
         # producteurs, deux fichiers, la même grandeur.
         "part_droits_derives": "macro/part_droits_derives.csv",
@@ -2338,3 +2340,38 @@ def test_la_structure_de_financement_dit_qui_paie_chaque_regime():
     assert 2024 not in structure.annees("cnracl")
     with pytest.raises(KeyError):
         structure.ventilation("cnracl", 2024)
+
+
+def test_les_cotisants_par_regime_sont_lus_et_projetes():
+    """La série que le côté recette de la page « Coût » n'avait pas.
+
+    Le classeur par régime du COR est la seule source publique qui donne les
+    cotisants des treize caisses des cas types à la même maille, et qui les
+    projette : les régimes fermés par la réforme de 2023 s'y éteignent.
+    """
+    from retraite_notionnelle.donnees.cotisants import (
+        EffectifsCotisants, partage_fonction_publique_etat,
+    )
+
+    cotisants = EffectifsCotisants(RACINE_DONNEES)
+    # Chaque caisse que la grille des cas types réclame est servie.
+    for cas in CAS_TYPES:
+        for caisse in cas.caisses:
+            assert cotisants.effectif(caisse, 2030) > 0, (cas.code, caisse)
+    # Les chiffres du classeur, à l'unité : la Cnav et la SNCF de 2023.
+    assert cotisants.effectif("cnav", 2023) == 22_257_775
+    assert cotisants.effectif("sncf", 2023) == 112_232
+    assert cotisants.effectif("sncf", 2070) == 0.0
+    assert cotisants.effectif("cnieg", 2070) == 51
+    # Le CRPCEN est publié en milliers et rendu en personnes.
+    assert cotisants.effectif("crpcen", 2023) == 60_378
+    # Le partage civils/militaires somme à un, et ses deux lignes ne prétendent
+    # pas à mieux qu'« estimée ».
+    assert sum(partage_fonction_publique_etat().values()) == pytest.approx(1.0)
+    assert cotisants.fiabilite("fonction_publique_etat_militaire", 2023) == Fiabilite.ESTIMEE
+    # Hors de la fenêtre publiée, le bord est reconduit au niveau « estimée ».
+    assert cotisants.fiabilite("cnav", 2000) == Fiabilite.ESTIMEE
+    assert cotisants.effectif("cnav", 2000) == cotisants.effectif("cnav", 2010)
+    with pytest.raises(KeyError):
+        cotisants.serie("caisse_inconnue")
+

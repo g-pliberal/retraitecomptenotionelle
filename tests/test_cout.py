@@ -24,6 +24,7 @@ from retraite_notionnelle.castypes import (
 )
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.cout import (
+    _ponderation,
     CONVENTION_ASSIETTE,
     CONVENTION_RAPPORT,
     COMPOSANTE_GARANTIE,
@@ -49,6 +50,10 @@ from retraite_notionnelle.donnees.assiette import (
 )
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.distribution import DistributionPensions
+from retraite_notionnelle.donnees.cotisants import (
+    COTISANTS_ETAT_2024,
+    EffectifsCotisants,
+)
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
 from retraite_notionnelle.donnees.depenses import (
     CODES_SYSTEMES,
@@ -503,6 +508,77 @@ def test_les_poids_somment_a_un_et_reflètent_les_effectifs():
     assert sum(poids_egaux().values()) == pytest.approx(1.0)
 
 
+def test_les_poids_cotisants_somment_a_un_et_ne_sont_pas_ceux_des_retraites():
+    """Le côté recette pèse les cotisants, et ce n'est pas le même poids.
+
+    La SNCF et les IEG ont plus de retraités que de cotisants, et n'auront plus
+    de cotisants du tout en 2070 ; la MSA des exploitants compte trois fois
+    plus de retraités que de cotisants. Les peser par leurs retraités du côté
+    de la recette était le biais que `limites.md` décrivait.
+    """
+    cotisants = EffectifsCotisants(RACINE_DONNEES)
+    retraites = EffectifsRetraites(RACINE_DONNEES)
+    poids = poids_effectifs(cotisants, 2024)
+    reference = poids_effectifs(retraites, 2024)
+    assert sum(poids.values()) == pytest.approx(1.0)
+    assert all(valeur > 0 for valeur in poids.values())
+    for code in ("agent_sncf_conduite", "agent_ieg", "exploitant_agricole"):
+        assert poids[code] < reference[code]
+    # Les régimes fermés par la réforme de 2023 s'éteignent dans la projection,
+    # ce qu'aucune reconduction de retraités n'imite.
+    assert cotisants.effectif("sncf", 2070) == 0.0
+    assert cotisants.effectif("sncf", 2024) > 100_000
+    # La fonction publique d'État, d'un seul tenant chez le COR, est partagée
+    # entre civils et militaires à la clé du jaune budgétaire, et la clé se lit
+    # dans les poids : le militaire pèse ce que le sédentaire pèse, fois le
+    # rapport des deux effectifs de 2024.
+    attendu = (COTISANTS_ETAT_2024["fonction_publique_etat_militaire"]
+               / COTISANTS_ETAT_2024["fonction_publique_etat_civile"])
+    assert poids["militaire"] / poids["fonctionnaire_sedentaire"] == pytest.approx(attendu)
+    assert (cotisants.effectif("fonction_publique_etat_civile", 2030)
+            + cotisants.effectif("fonction_publique_etat_militaire", 2030)
+            == pytest.approx(cotisants.effectif("fonction_publique_etat", 2030)))
+    assert cotisants.fiabilite("fonction_publique_etat", 2030) == Fiabilite.HAUTE
+    assert cotisants.fiabilite("fonction_publique_etat_civile", 2030) == Fiabilite.ESTIMEE
+
+
+def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(
+        cout: Cout, depenses, population, comptes):
+    """Chaque côté du bilan a son poids, et le rapport de recettes s'en ressent.
+
+    Peser la recette par les retraités surreprésentait les régimes qui
+    s'éteignent, dont les taux sont les plus élevés, et poussait le rapport
+    vers le bas — d'où un taux moyen implicite de 29,5 % là où le COR publie
+    27,9 % pour un salarié du privé. Les cotisants le ramènent à 28 %.
+    """
+    assert sum(cout.poids_cotisants.values()) == pytest.approx(1.0)
+    assert cout.poids_cotisants != cout.poids
+    assert cout.poids_cotisants["agent_sncf_conduite"] < cout.poids["agent_sncf_conduite"]
+
+    # L'ancienne convention, reproduite : les retraités des deux côtés.
+    simulateur = Simulateur(Parametres())
+    simulateur.__dict__["cotisants"] = simulateur.effectifs
+    ancien = calculer_cout(simulateur, depenses, population, comptes,
+                           convention_recette=CONVENTION_RAPPORT)
+    assert ancien.poids_cotisants == ancien.poids
+    for annee in (2030, 2050, 2070):
+        nouveau = cout.avenir.annee(annee).rapports_recettes["notionnel_liberal"]
+        vieux = ancien.avenir.annee(annee).rapports_recettes["notionnel_liberal"]
+        assert nouveau > vieux
+        assert 0.27 < 0.18 / nouveau < 0.29
+    # Sous la convention `rapport`, le solde du scénario 6 en profite ; les
+    # autres scénarios, dont le rapport vaut un, ne bougent pas.
+    assert (cout.solde.solde_moyen("notionnel_liberal", 2026, 2070)
+            > ancien.solde.solde_moyen("notionnel_liberal", 2026, 2070))
+    assert (cout.solde.solde_moyen("actuel", 2026, 2070)
+            == pytest.approx(ancien.solde.solde_moyen("actuel", 2026, 2070)))
+
+
+def test_un_cote_de_ponderation_inconnu_est_refuse():
+    with pytest.raises(ValueError, match="côté inconnu"):
+        _ponderation(Simulateur(Parametres()), "effectifs", CAS_TYPES, "ni_l_un_ni_l_autre")
+
+
 def test_la_ponderation_egale_reproduit_l_ancienne_convention(depenses, population):
     """Un poids uniforme se simplifie dans le rapport des masses.
 
@@ -515,6 +591,7 @@ def test_la_ponderation_egale_reproduit_l_ancienne_convention(depenses, populati
     assert egale.ponderation == "egale"
     assert all(poids == pytest.approx(1 / len(CAS_TYPES))
                for poids in egale.poids.values())
+    assert egale.poids_cotisants == egale.poids
     # Les deux pondérations ne donnent pas le même rapport — sans quoi l'action
     # n'aurait rien déplacé — et elles l'écartent dans des sens opposés selon
     # que la part patronale entre au compte ou non.

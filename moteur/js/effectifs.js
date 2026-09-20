@@ -44,3 +44,42 @@ export class EffectifsRetraites {
     return this.serie(caisse).fiabilite(annee);
   }
 }
+
+/**
+ * Effectifs de cotisants par caisse et par année, observés puis projetés.
+ *
+ * Portage de ``src/retraite_notionnelle/donnees/cotisants.py`` : le pendant de
+ * `EffectifsRetraites` du côté de la RECETTE. Un cas type y pèse les cotisants
+ * de sa caisse, tels que le COR les publie et les projette jusqu'en 2070. Les
+ * deux versants de la fonction publique d'État arrivent déjà partagés dans le
+ * paquet, à la clé que le chargeur Python documente.
+ */
+export class EffectifsCotisants {
+  constructor(paquet) {
+    this._series = new Map(
+      Object.entries(paquet.effectifs_cotisants).map(([caisse, serie]) => [
+        caisse, SerieAnnuelle.depuisPaquet(`cotisants_${caisse}`, serie),
+      ]),
+    );
+  }
+
+  caisses() {
+    return [...this._series.keys()];
+  }
+
+  serie(caisse) {
+    const serie = this._series.get(caisse);
+    if (serie === undefined) {
+      throw new Error(`caisse inconnue : ${caisse}`);
+    }
+    return serie;
+  }
+
+  effectif(caisse, annee) {
+    return this.serie(caisse).valeur(annee);
+  }
+
+  fiabilite(caisse, annee) {
+    return this.serie(caisse).fiabilite(annee);
+  }
+}

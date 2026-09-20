@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-09-19",
+ "dernier_passage_le": "2026-09-20",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -99,6 +99,17 @@
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 90,
    "verifiee_le": "2026-09-16"
+  },
+  "cotisants_regimes": {
+   "ajoutees": 1148,
+   "colonne": "cotisants",
+   "corrigees": 0,
+   "empreinte": "bf07f122ad538be6",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
+   "valeurs": 1148,
+   "verifiee_le": "2026-09-20"
   },
   "courbe_taux_sans_risque": {
    "ajoutees": 30,
@@ -406,7 +417,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-09-20"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -549,7 +560,7 @@
    "niveau": "haute",
    "source": "COR, compléments du rapport annuel de juin 2024, masses de pensions de droit direct et de droit dérivé",
    "valeurs": 61,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-09-20"
   },
   "pensions_droits": {
    "ajoutees": 0,
@@ -813,7 +824,7 @@
    "niveau": "haute",
    "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
    "valeurs": 930,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-09-20"
   },
   "structure_ressources_retraite": {
    "ajoutees": 0,
@@ -835,7 +846,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-09-20"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,

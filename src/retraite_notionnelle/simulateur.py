@@ -29,6 +29,7 @@ from .carriere import (
 )
 from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
+from .donnees.cotisants import EffectifsCotisants
 from .donnees.effectifs import EffectifsRetraites
 from .donnees.financement_regimes import StructureFinancement
 from .donnees.macro import DonneesMacro
@@ -638,6 +639,16 @@ class Simulateur:
         disent ce que chaque configuration de carrière pèse réellement.
         """
         return EffectifsRetraites(self.parametres.racine_donnees)
+
+    @cached_property
+    def cotisants(self) -> EffectifsCotisants:
+        """Effectifs de cotisants par caisse — la pondération côté RECETTE.
+
+        Le pendant de ``effectifs`` pour une masse de cotisations : un cas type
+        y pèse les cotisants de sa caisse, et non plus ses retraités. Aucune
+        pension n'en dépend davantage.
+        """
+        return EffectifsCotisants(self.parametres.racine_donnees)
 
     @cached_property
     def financement_regimes(self) -> StructureFinancement:

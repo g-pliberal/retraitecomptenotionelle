@@ -51,6 +51,7 @@ from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
 from retraite_notionnelle.avantages import charger_avantages  # noqa: E402
+from retraite_notionnelle.donnees.cotisants import EffectifsCotisants  # noqa: E402
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
@@ -239,6 +240,19 @@ def _effectifs_retraites() -> dict:
     effectifs = EffectifsRetraites(DONNEES)
     return {
         caisse: _serie(effectifs.serie(caisse)) for caisse in effectifs.caisses()
+    }
+
+
+def _effectifs_cotisants() -> dict:
+    """Cotisants par caisse — la pondération des cas types côté recette.
+
+    Les deux versants de la fonction publique d'État sont déjà partagés par le
+    chargeur Python, à la clé qu'il documente : le portage n'a pas à connaître
+    cette décision, il reçoit les caisses telles que la grille les nomme.
+    """
+    cotisants = EffectifsCotisants(DONNEES)
+    return {
+        caisse: _serie(cotisants.serie(caisse)) for caisse in cotisants.caisses()
     }
 
 
@@ -949,6 +963,7 @@ def construire() -> bytes:
         "comptes_retraite": _comptes_retraite(),
         "population": _population(),
         "effectifs_retraites": _effectifs_retraites(),
+        "effectifs_cotisants": _effectifs_cotisants(),
         "distribution_pensions": _distribution_pensions(),
         "certification": journal_certification(DONNEES),
     }

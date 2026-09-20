@@ -7735,21 +7735,25 @@ def _cout_detail_poids(contexte: Contexte) -> str:
         [escape(cas.libelle),
          ", ".join(caisse.replace("_", " ") for caisse in cas.caisses),
          g.pourcentage(cout.poids.get(cas.code, 0.0), decimales=1),
+         g.pourcentage(cout.poids_cotisants.get(cas.code, 0.0), decimales=1),
          g.pourcentage(1 / len(CAS_TYPES), decimales=1)]
         for cas in sorted(CAS_TYPES, key=lambda c: -cout.poids.get(c.code, 0.0))
     ]
     return g.depliant("Ce que chaque carrière type pèse dans ces chiffres", f"""
 <p><strong>Deux pondérations se composent.</strong> Celle de la génération est
 démographique, et vient de l'INSEE. Celle du <strong>cas type</strong> est
-sociologique (combien de retraités ont eu cette carrière-là), et vient des
-effectifs que la DREES publie caisse par caisse. La colonne de droite rappelle
-ce que valait la convention antérieure, qui les pesait à égalité.</p>
+sociologique, et elle se lit des deux côtés du bilan : dans les
+<strong>dépenses</strong>, un cas type pèse les retraités de sa caisse (combien
+ont eu cette carrière-là), publiés par la DREES ; dans les
+<strong>recettes</strong>, il pèse ses cotisants, publiés et projetés par le
+COR. La colonne de droite rappelle ce que valait la convention antérieure, qui
+les pesait à égalité.</p>
 
 {g.tableau(
-    ["Cas type", "Caisse dont il porte les retraités",
-     f"Poids en {derniere}", "Ancienne convention"],
+    ["Cas type", "Caisse dont il porte les effectifs",
+     f"Retraités en {derniere}", f"Cotisants en {derniere}", "Ancienne convention"],
     lignes,
-    ["", "texte", "nombre", "nombre"],
+    ["", "texte", "nombre", "nombre", "nombre"],
     titre=f"Ce que chaque cas type pèse dans les agrégats de cette page, en {derniere}",
     entete_de_ligne=True,
 )}
@@ -7757,7 +7761,11 @@ ce que valait la convention antérieure, qui les pesait à égalité.</p>
 également entre eux : la Cnav est celle des quatre carrières du privé, et aucune
 source ne dit combien de ses retraités ont été cadres. Hors de la fenêtre que la
 DREES publie (2004 à 2024), la répartition du bord est reconduite : la France
-de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent.</p>
+de 1960 comptait plus d'exploitants agricoles que ces poids ne le disent. Les
+cotisants, eux, sont projetés jusqu'en 2070, et les régimes fermés s'y
+éteignent : la SNCF n'en a plus aucun à cette date. La fonction publique d'État
+n'y est publiée que d'un seul tenant, et se partage entre civils et militaires
+à la clé du jaune budgétaire « Pensions », tenue constante.</p>
 """, identifiant="cout-poids")
 
 

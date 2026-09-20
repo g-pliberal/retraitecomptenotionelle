@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 154<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 237<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -4044,6 +4044,49 @@ toucher aux moteurs de pension.
    longue dont la moitié compte autre chose. L'urgence reste faible — la
    mesure du 19 septembre tient : sous la convention du programme, la
    pondération ne déplace pas le solde du scénario 6 d'un millième.
+
+   **Fait le 20 septembre 2026, et pas par la fiche 4.1.** Le paragraphe
+   ci-dessus recommandait de partir de la CCSS et de compléter ; la troisième
+   passe avait entre-temps trouvé mieux, et c'est le classeur par régime du
+   COR qui est entré : `data/reference/regimes/cotisants.csv`, 1 148 valeurs,
+   21 caisses, 2010-2070, certifiée au niveau `haute` par
+   `verifier_donnees.py` contre le classeur, comme `structure_financement.csv`
+   qui vient du même fichier. Une seule source pour les treize caisses des
+   cas types, l'Ircantec et le RCI compris, et la seule qui PROJETTE : la SNCF
+   n'a plus aucun cotisant en 2070, la CNIEG cinquante et un. Le CRPCEN, publié
+   en milliers sous un en-tête qui le dit, est rendu en personnes. La fonction
+   publique d'État, d'un seul tenant chez le COR, est partagée entre civils et
+   militaires à la clé du jaune « Pensions » — 1,63 million et 0,32 million au
+   1er janvier 2024 —, tenue constante et marquée `estimee`
+   (`donnees/cotisants.py`).
+
+   Ce qui a changé dans le modèle : `_ponderation` a un CÔTÉ. Les masses de
+   pensions pèsent les retraités de la caisse (DREES), les masses de
+   cotisations pèsent ses cotisants (COR) ; `ponderation="egale"` confond les
+   deux comme avant. Porté dans `moteur/js/cout.js`, exposé par
+   `Cout.poids_cotisants`, et le dépliant « Ce que chaque carrière type pèse »
+   de la page Coût porte désormais les deux colonnes.
+
+   *Ce que ça déplace, mesuré.* Les poids de 2024 bougent le plus là où la
+   caisse s'éteint ou vieillit : l'exploitant agricole passe de 4,4 % parmi les
+   retraités à 1,3 % parmi les cotisants, l'agent de conduite de 0,7 % à
+   0,3 %, l'agent des IEG de 0,6 % à 0,4 % ; le libéral monte de 2,0 % à
+   2,8 %. Le rapport de recettes du scénario 6 passe de 0,61 à 0,64 après la
+   bascule, soit un taux moyen implicite de **28,0 %** au lieu de 29,5 %,
+   contre 27,9 % chez le COR pour un salarié non cadre du privé : la réserve
+   que `limites.md` §5 portait — « surreprésente les régimes qui s'éteignent,
+   et pousse le rapport vers le bas » — était juste, et elle vaut 1,3 point de
+   taux. Sous la variante `rapport`, le scénario 6 regagne **0,28 point** de
+   solde moyen 2026-2070 ; sous la convention `assiette`, celle de la page, il
+   ne bouge pas d'un millième, comme la mesure du 19 septembre l'annonçait.
+   Aucune pension, aucun rapport de masses, aucun témoin de simulation ne
+   bouge.
+
+   *Ce que la série ne fait pas.* Elle est du millésime de juin 2024, comme
+   tout ce qui sort de ce classeur, quand le reste de la page tourne sur le COR
+   2026 ; et un cotisant de caisse n'est pas une personne, un polyaffilié
+   comptant dans chacune des siennes — les poids sont relatifs, comme ceux des
+   retraités.
 4. *Dire ce que le programme fait des ressources non cotisées.* **Les trois
    questions sont tranchées, par le programme lui-même, le 19 septembre
    2026.** La contribution d'équilibre de l'État disparaît : il cotise
@@ -4075,7 +4118,13 @@ toucher aux moteurs de pension.
 5. *Sortir les cinq points capitalisés de la recette.* Le pilier obligatoire
    prélève 5 % sur la même assiette et ne finance pas la répartition. L'effort
    contributif du scénario 6 est donc de 23 %, sa recette de système de 18 %,
-   et la page doit porter les deux nombres sans les confondre.
+   et la page doit porter les deux nombres sans les confondre. **Fait le 19
+   septembre 2026**, et la ligne ne le disait pas : la recette du scénario 6
+   n'a jamais compté que les 18 % (`taux_cotisation_liberal`, seul lu par
+   `_solde`), et le dépliant « Ce que le pilier capitalisé prélève, et pourquoi
+   il n'est pas dans ce bilan » de la page Coût porte le tableau à quatre
+   lignes — 18 de répartition, 5 capitalisés d'office, 5 replacés
+   volontairement, 28 en tout — face aux 28 % d'aujourd'hui.
 
 **Ce que le volet A a déplacé, au 18 septembre 2026.** Le point 2 est fait, et
 c'est celui qui portait le résultat. La page Coût n'affiche plus, pour le
@@ -4261,20 +4310,24 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   un coefficient de 1,10 en 2070, contre −1,13 % pour le système actuel.
   L'ancienne convention reste calculable et mesurée, comme
   `ponderation="egale"`.
-- *Ce qui reste du volet A* : la série d'effectifs de COTISANTS (point 3), qui
-  refermerait l'autre moitié de l'écart entre taux légal et taux encaissé, et
-  la ligne des cinq points capitalisés (point 5), pour que la page distingue
-  l'effort contributif de 23 % de la recette de système de 18 %.
+- *Ce qui restait du volet A est fait le 20 septembre 2026* : la série
+  d'effectifs de COTISANTS (point 3) est entrée, et elle referme l'écart
+  entre le taux implicite de la grille et le taux publié par le COR à un
+  dixième de point ; la ligne des cinq points capitalisés (point 5) l'était
+  depuis la veille sans que la feuille le dise.
 
-**Ce qui reste du volet A** : la certification de l'assiette et les trois
-variantes ci-dessus (points 1 et 4, désormais un seul chantier) ; la série d'effectifs de COTISANTS
-(point 3), qui remplacerait la pondération par les retraités ; et la ligne des
-cinq points capitalisés (point 5). Deux sources repérées en chemin, chez le COR et dans le
-classeur que `scripts/fetch/cor_comptes_retraite.py` télécharge déjà : la
-figure 3.1, taux de cotisation d'un non-cadre du privé de 1940 à 2025, à
-certifier ; et le tableau 2.11, qui donne l'équivalence du COR entre un point de
+**Ce qui reste du volet A**, au 20 septembre 2026 : rien de ce que la liste
+numérotait. L'assiette est certifiée et ses variantes calculables (points 1 et
+4), les cotisants pondèrent la recette (point 3), les cinq points capitalisés
+sont hors du bilan et la page le dit (point 5). Deux sources repérées en
+chemin restent à certifier, chez le COR et dans le classeur que
+`scripts/fetch/cor_comptes_retraite.py` télécharge déjà : la figure 3.1, taux
+de cotisation d'un non-cadre du privé de 1940 à 2025 — c'est le contrôle
+externe du rapport de recettes, cité de mémoire de lecture et non tenu par un
+test — ; et le tableau 2.11, qui donne l'équivalence du COR entre un point de
 taux de prélèvement et un pour-cent de masse de pension — 2,76 points contre
-8,6 % à l'horizon 2070, sur le même champ que nos comptes.
+8,6 % à l'horizon 2070, sur le même champ que nos comptes. Le volet B est ce
+qui reste de l'action.
 
 **B. Faire entrer la garantie vieillesse dans la trajectoire.**
 

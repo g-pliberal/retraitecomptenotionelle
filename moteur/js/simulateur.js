@@ -19,7 +19,7 @@ import { ScenarioNotionnel } from "./scenario-notionnel.js";
 import { Affiliations, CatalogueRegimes } from "./regimes.js";
 import { ConstructeurCapitalisation } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
-import { EffectifsRetraites } from "./effectifs.js";
+import { EffectifsCotisants, EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
 import { BaremePrelevements, remunerationDeLaCarriere } from "./remuneration.js";
 import {
@@ -397,6 +397,8 @@ export class Simulateur {
     // Aucune pension n'en dépend : les effectifs de retraités par caisse ne
     // servent qu'aux AGRÉGATS, où ils disent ce que chaque cas type pèse.
     this.effectifs = new EffectifsRetraites(paquet);
+    // Et les cotisants, pour la pondération côté RECETTE.
+    this.cotisants = new EffectifsCotisants(paquet);
     // Les prélèvements hors retraite : ils n'entrent dans AUCUNE pension. Ils
     // ne servent qu'à la fiche de paie, qui dit ce qu'un actif touche pendant
     // qu'il cotise.
