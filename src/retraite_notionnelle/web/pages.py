@@ -7277,11 +7277,11 @@ def _cout_detail_postes(contexte: Contexte) -> str:
     simulateur = contexte.simulateur()
     vers_enquete = simulateur.macro.coefficient_prix(
         base.annee_euros_garantie_vieillesse, distribution.millesime)
-    rapports_liberal = cout.annee(distribution.millesime).rapports
-    # La masse du scénario 6 est déjà sa seule part contributive (la garantie
-    # est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
-    # retirer la garantie une seconde fois.
-    facteur_contributif = rapports_liberal["notionnel_liberal"]
+    # Le facteur est celui de la trajectoire : la pension moyenne que la
+    # garantie regarde, sur celle du système actuel l'année de l'enquête —
+    # voir ``GarantieDistribution``. Le même que le dépliant de la garantie.
+    annee_enquete = cout.annee(distribution.millesime)
+    facteur_contributif = annee_enquete.garantie.facteur if annee_enquete.garantie else 1.0
     garantie = cout_garantie(
         distribution,
         simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
@@ -7738,35 +7738,40 @@ ses chiffres sont redits, ligne par ligne, dans le tableau replié dessous.</p>
 
 
 def _cout_detail_garantie(contexte: Contexte) -> str:
-    """Ce que la garantie vieillesse coûterait, lue sur la vraie distribution."""
+    """Ce que la garantie vieillesse coûte, lue sur la vraie distribution.
+
+    La trajectoire de la page la porte déjà : c'est la ligne « dont garantie »
+    des deux tableaux. Ce dépliant dit d'où elle vient — la distribution des
+    pensions de l'EIR, déplacée année par année par la grille —, ce qu'elle
+    coûterait à pensions inchangées, et ce qu'elle REMPLACE : quatre minima
+    que l'impôt et les caisses paient déjà, dont le premier est réclamé par la
+    moitié seulement de ceux qui y ont droit.
+    """
     cout = contexte.cout()
     distribution = contexte.distribution()
     simulateur = contexte.simulateur()
-    effectif_retraites = simulateur.effectifs.effectif(
-        "tous_regimes", distribution.millesime)
+    base = contexte.base
+    millesime = distribution.millesime
+    effectif_retraites = simulateur.effectifs.effectif("tous_regimes", millesime)
     vers_enquete = simulateur.macro.coefficient_prix(
-        contexte.base.annee_euros_garantie_vieillesse, distribution.millesime)
-    rapports_liberal = cout.annee(distribution.millesime).rapports
-    # La masse du scénario 6 est déjà sa seule part contributive (la garantie
-    # est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
-    # retirer la garantie une seconde fois.
-    facteur_contributif = rapports_liberal["notionnel_liberal"]
+        base.annee_euros_garantie_vieillesse, millesime)
+    annee_enquete = cout.annee(millesime)
+    facteur = annee_enquete.garantie.facteur if annee_enquete.garantie else 1.0
+    seul = base.situation_foyer is SituationFoyer.SEUL
     planchers = (
-        ("Plancher de base, 800 € (vie à deux)",
-         contexte.base.garantie_vieillesse_mensuelle),
+        ("Plancher de base, 800 € (vie à deux)", base.garantie_vieillesse_mensuelle),
         ("Plancher majoré, 1 050 € (personne seule)",
-         contexte.base.garantie_vieillesse_mensuelle
-         + contexte.base.allocation_isolement_mensuelle),
+         base.garantie_vieillesse_mensuelle + base.allocation_isolement_mensuelle),
     )
     assiettes = (
-        (f"Pensions de {distribution.millesime}", 1.0),
-        ("Pensions du système 4", facteur_contributif),
+        (f"Pensions de {millesime}", 1.0),
+        (f"Pensions du système 4 en {millesime}", facteur),
     )
     lignes = []
-    for titre_assiette, facteur in assiettes:
+    for titre_assiette, facteur_assiette in assiettes:
         for titre_plancher, mensuel in planchers:
             chiffre = cout_garantie(
-                distribution, effectif_retraites, mensuel * vers_enquete, facteur)
+                distribution, effectif_retraites, mensuel * vers_enquete, facteur_assiette)
             lignes.append([
                 escape(f"{titre_assiette} — {titre_plancher}"),
                 g.pourcentage(chiffre.part_beneficiaires, decimales=1),
@@ -7776,39 +7781,106 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
             ])
     garantie_basse = cout_garantie(
         distribution, effectif_retraites,
-        contexte.base.garantie_vieillesse_mensuelle * vers_enquete, 1.0)
+        base.garantie_vieillesse_mensuelle * vers_enquete, 1.0)
     garantie_scenario = cout_garantie(
         distribution, effectif_retraites,
-        contexte.base.garantie_vieillesse_mensuelle * vers_enquete,
-        facteur_contributif)
+        base.garantie_vieillesse_mensuelle * vers_enquete, facteur)
 
-    return g.depliant("Ce que coûterait la garantie vieillesse", f"""
+    # La trajectoire, à quelques dates : ce que la ligne « dont garantie »
+    # des tableaux du haut contient, et pourquoi elle décroît.
+    derniere = contexte.depenses().derniere_annee
+    etapes = []
+    for millesime_etape in (millesime, derniere, 2030, 2050, cout.avenir.derniere_annee):
+        ligne = cout.avenir.annee(millesime_etape)
+        if ligne is None or ligne.garantie is None or millesime_etape in [e[0] for e in etapes]:
+            continue
+        etapes.append((millesime_etape, ligne))
+    lignes_etapes = [
+        [str(annee),
+         g.nombre(ligne.garantie.facteur, 2),
+         g.nombre(ligne.garantie.effectif / 1e6, 1) + " M",
+         g.nombre(ligne.garantie.beneficiaires / 1e6, 1) + " M",
+         _milliards(ligne.cout_constants(COMPOSANTE_GARANTIE), 1),
+         g.pourcentage(ligne.part_pib(COMPOSANTE_GARANTIE), decimales=2)]
+        for annee, ligne in etapes
+    ]
+
+    # Ce que la garantie remplace : les quatre minima, tels qu'ils coûtent la
+    # dernière année observée. Le minimum vieillesse est LU dans les comptes,
+    # les deux suivants sont calculés par le modèle sur la grille, le dernier
+    # n'est pas chiffré — et la page le dit ligne par ligne.
+    avantages = contexte.avantages().derniere
+    montants = avantages.lignes if avantages else {}
+    annee_minima = avantages.annee if avantages else derniere
+    remplaces = (
+        ("Minimum vieillesse (ASPA)", "minimum_vieillesse", "lu dans les comptes"),
+        ("Minimum contributif", "minimum_contributif", "calculé sur la grille"),
+        ("Minimum garanti de la fonction publique", "minimum_garanti",
+         "calculé sur la grille"),
+        ("Pension majorée de référence des exploitants", "pension_majoree_reference",
+         "non chiffrée"),
+    )
+    total_remplace = sum(montants.get(code, 0.0) for _, code, _ in remplaces)
+    lignes_remplaces = [
+        [libelle, source,
+         _milliards(montants[code], 2) if montants.get(code) else "—"]
+        for libelle, code, source in remplaces
+    ]
+    garantie_brute = cout.annee(annee_minima).cout(COMPOSANTE_GARANTIE)
+    lignes_remplaces.append(["<strong>Ce que ces quatre minima coûtent</strong>", "",
+                             f"<strong>{_milliards(total_remplace, 1)}</strong>"])
+    lignes_remplaces.append([f"Garantie vieillesse, aux pensions du système 4 en {annee_minima}",
+                             "distribution, ci-dessus",
+                             _milliards(garantie_brute, 1)])
+    lignes_remplaces.append(["<strong>Ce que l'impôt paierait en plus</strong>", "",
+                             f"<strong>{_milliards(garantie_brute - total_remplace, 1)}</strong>"])
+
+    return g.depliant("Ce que coûte la garantie vieillesse", f"""
 <p>La garantie du système 4 est <strong>différentielle</strong> : elle ne verse
 que ce qui manque à une pension pour atteindre son plancher. Son coût est donc
 tout entier celui de la <strong>queue basse de la distribution</strong> des
-pensions, et treize carrières de référence ne décrivent pas une distribution :
-le chiffre que le tableau des quatre systèmes en tire —
-{_milliards(cout.cumul(COMPOSANTE_GARANTIE), 0)} sur soixante-six ans — est
-faux, et il faut le remplacer.</p>
+pensions, et treize carrières de référence ne décrivent pas une distribution.
+La ligne « dont garantie vieillesse » des deux tableaux du haut n'est donc pas
+tirée des cas types : elle est lue sur la distribution que l'échantillon
+interrégimes de retraités de la DREES publie, par tranches de cent euros, pour
+{millesime}. Les cas types ne servent qu'à dire <em>de combien cette
+distribution bouge</em> d'une année à l'autre : la pension moyenne que la
+garantie regarde (le compte notionnel plus la rente du pilier capitalisé, à
+partir de 65 ans), rapportée à la pension moyenne du système actuel en
+{millesime}. Ce facteur vaut {g.nombre(facteur, 2)} en {millesime} : les
+pensions du système 4 y sont plus basses que celles servies, parce que le
+compte rétroactif ne rend que ce qui a été cotisé. Il monte ensuite avec les
+salaires, face à un plancher indexé sur les prix, et la garantie décroît.</p>
 
-<p>L'échantillon interrégimes de retraités de la DREES publie, par tranches de
-cent euros, combien de retraités touchent combien. Le barème s'y applique
-directement, sans passer par aucun cas type. Deux lectures : ce que la garantie
+{g.tableau(
+    ["Année", "Facteur de déplacement", "Retraités de 65 ans et plus",
+     "Bénéficiaires", "Coût annuel, milliards d'euros " + str(cout.annee_euros),
+     "Part du PIB"],
+    lignes_etapes,
+    ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    titre=f"La garantie vieillesse dans la trajectoire, plancher "
+          f"{'majoré (personne seule)' if seul else 'de base (vie à deux)'}",
+    entete_de_ligne=True,
+)}
+
+<p>Deux lectures à la date de l'enquête, et deux planchers. Ce que la garantie
 coûterait <strong>aux pensions d'aujourd'hui</strong>, en remplacement de
-l'ASPA (un calcul qui ne doit rien au modèle), et ce qu'elle coûterait
-<strong>aux pensions du système 4</strong>, toute la distribution étant alors
-déplacée du rapport {g.pourcentage(facteur_contributif, decimales=0)} que le
-modèle donne à sa part contributive. Deux planchers aussi, parce que l'enquête
-dit la pension sans dire avec qui l'on vit : le coût réel est entre les deux.</p>
+l'ASPA, est un calcul qui ne doit rien au modèle ; ce qu'elle coûterait
+<strong>aux pensions du système 4</strong> déplace toute la distribution du
+facteur ci-dessus. Le plancher de base vaut pour qui vit à deux, le plancher
+majoré pour qui vit seul, et l'enquête ne dit pas avec qui l'on vit : le coût
+réel est entre les deux. La trajectoire retient
+{'le plancher majoré' if seul else 'le plancher de base'}, celui que le
+simulateur applique.</p>
 
 {g.tableau(
     ["Assiette et plancher", "Part des retraités", "Bénéficiaires",
      "Complément moyen",
-     f"Coût annuel, milliards d'euros {contexte.base.annee_euros_garantie_vieillesse}"],
+     f"Coût annuel, milliards d'euros {base.annee_euros_garantie_vieillesse}"],
     lignes,
     ["", "nombre", "nombre", "nombre", "nombre"],
     titre=f"Coût annuel de la garantie vieillesse, barème appliqué à la "
-          f"distribution des pensions de l'EIR {distribution.millesime}",
+          f"distribution des pensions de l'EIR {millesime}",
     entete_de_ligne=True,
 )}
 
@@ -7816,10 +7888,46 @@ dit la pension sans dire avec qui l'on vit : le coût réel est entre les deux.<
 huit distributions publiées qui soit dans la même grandeur que celles du modèle.
 Les pensions d'une tranche de cent euros sont supposées y être réparties
 uniformément, et la tranche ouverte du haut est traitée comme une masse
-ponctuelle. Le déplacement des pensions au rapport du système 4 est
-<em>proportionnel et uniforme</em>, alors que le scénario ne déplace pas toutes
-les carrières du même rapport : les deux dernières lignes sont un ordre de
-grandeur là où les deux premières sont un calcul.</p>
+ponctuelle. Le déplacement est <em>proportionnel et uniforme</em>, alors que le
+scénario ne déplace pas toutes les carrières du même rapport ; la forme de la
+distribution est celle de {millesime}, tenue constante sur toute la série, le
+passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
+{millesime} ; la trajectoire ne l'applique qu'à ceux de 65 ans et plus, d'où un
+coût plus bas la même année.</p>
+
+<p><strong>Ce qu'elle remplace.</strong> La garantie succède à l'ASPA, et le
+système 4 ne sert plus le minimum contributif, le minimum garanti ni la pension
+majorée de référence : quatre planchers que l'impôt et les caisses paient déjà.
+Ce que l'impôt paierait <em>en plus</em> est la garantie moins ces quatre-là.</p>
+
+{g.tableau(
+    ["Ligne", "D'où vient le chiffre", f"En {annee_minima}"],
+    lignes_remplaces,
+    ["", "texte", "nombre"],
+    titre=f"Ce que la garantie vieillesse remplace, en {annee_minima}",
+    entete_de_ligne=True,
+)}
+
+<p class="discret">Le minimum vieillesse est le poste des comptes de la
+protection sociale ; les deux minima de pension sont calculés sur la grille des
+cas types, qui n'est pas une population et les sous-estime : le minimum
+contributif est réclamé par des carrières courtes que la grille ne compte
+guère. La pension majorée de référence n'est pas chiffrée, aucun code du
+moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
+haute.</p>
+
+<div class="note"><strong>Deux corrections de sens opposé, et il faut les
+deux.</strong> L'ASPA est réclamée par <strong>une personne seule éligible sur
+deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans la
+demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
+(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Une garantie
+individualisée et automatique n'a pas de non-recours : une part de ce qu'elle
+coûte en plus existe donc déjà, sans être réclamée. En sens inverse, l'ASPA est récupérable sur la succession, et le
+Fonds de solidarité vieillesse en a retiré 108,7 millions d'euros en 2024 (143,9
+en 2023, avant le relèvement du seuil) ; une garantie qui ne se récupère pas
+rend ces deux pour cent-là au contribuable. Le premier effet se compte en
+centaines de millions par an, le second en une centaine, et ni l'un ni l'autre
+n'est dans le tableau.</div>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne

@@ -41,6 +41,7 @@
 import {
   CAS_TYPES, VARIANTES_LIQUIDATION, calculerCasTypes, poidsEffectifs, poidsEgaux,
 } from "./castypes.js";
+import { coutGarantie } from "./garantie.js";
 import { Fiabilite } from "./serie.js";
 import { ORGANISMES, POSTES } from "./equilibre.js";
 
@@ -64,6 +65,22 @@ export const SCENARIOS = [
  * tableau de comparaison comme une ligne à part entière.
  */
 export const COMPOSANTE_GARANTIE = "garantie_vieillesse_liberal";
+
+/**
+ * Ce que la garantie REGARDE, cas type par cas type : la pension contributive
+ * du scénario 6 et la rente du pilier capitalisé, comptées à partir de
+ * soixante-cinq ans et revalorisées jusqu'à l'année. Ni un système ni une
+ * composante : la masse par laquelle la distribution des pensions est DÉPLACÉE
+ * avant qu'on lui applique le plancher — voir `GarantieDistribution`.
+ */
+export const RESSOURCES_GARANTIE = "ressources_garantie_liberal";
+
+/** Tout ce que la grille sait calculer : les six systèmes, et ces ressources. */
+export const CLES_CAS_TYPES = [...SCENARIOS.map(([scenario]) => scenario), RESSOURCES_GARANTIE];
+
+/** Les deux comptes de TÊTES que la grille rend avec ses masses. */
+const TETES_TOUTES = "toutes";
+const TETES_GARANTIE = "garantie";
 
 /** Tout ce dont une masse est calculée : les six systèmes, et la composante. */
 export const CLES_MASSES = [...SCENARIOS.map(([scenario]) => scenario), COMPOSANTE_GARANTIE];
@@ -249,8 +266,12 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
         comparaison[scenario].pension_annuelle,
       );
     }
-    pensions[COMPOSANTE_GARANTIE] = comparaison.enEurosConstants(
-      comparaison.notionnel_liberal.garantie_vieillesse.complement,
+    // Ce que la garantie regarde : la pension contributive ET la rente du
+    // pilier capitalisé, à la liquidation. La grille ne chiffre plus le
+    // complément — elle n'a pas de queue basse —, elle dit seulement de combien
+    // les pensions du scénario 6 déplacent la distribution observée.
+    pensions[RESSOURCES_GARANTIE] = comparaison.enEurosConstants(
+      comparaison.notionnel_liberal.garantie_vieillesse.ressources,
     );
     // La clé de la grille est « code|génération » : la génération en est la
     // seconde moitié, et c'est elle qui dit quel âge ce couple a chaque année.
@@ -379,7 +400,8 @@ export class RevalorisationServie {
  */
 function masses(liste, population, annee, poidsCas, revalorisation) {
   const total = {};
-  for (const cle of CLES_MASSES) total[cle] = 0;
+  for (const cle of CLES_CAS_TYPES) total[cle] = 0;
+  const tetes = { [TETES_TOUTES]: 0, [TETES_GARANTIE]: 0 };
   let vivants = 0;
   for (const pensionne of liste) {
     // Deux pondérations se composent ici : celle de la GÉNÉRATION, démographique,
@@ -389,6 +411,7 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     if (part <= 0) continue;
     let poids = 0;
     let poidsGarantie = 0;
+    let poidsGarantieRevalorise = 0;
     let poidsRevalorise = 0;
     let poidsRevaloriseProspectif = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
@@ -406,19 +429,82 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt.
       if (annee >= pensionne.anneeOuvertureGarantie + decalage) {
         poidsGarantie += effectif;
+        poidsGarantieRevalorise += effectif * revalorisation.coefficient(liquidation, annee);
       }
     }
     if (poids <= 0) continue;
     vivants += 1;
-    for (const cle of CLES_MASSES) {
+    tetes[TETES_TOUTES] += part * poids;
+    tetes[TETES_GARANTIE] += part * poidsGarantie;
+    for (const cle of CLES_CAS_TYPES) {
       let poidsCle = poids;
-      if (cle === COMPOSANTE_GARANTIE) poidsCle = poidsGarantie;
+      if (cle === RESSOURCES_GARANTIE) poidsCle = poidsGarantieRevalorise;
       else if (CLES_PROSPECTIVES.has(cle)) poidsCle = poidsRevaloriseProspectif;
       else if (CLES_REVALORISEES.has(cle)) poidsCle = poidsRevalorise;
       total[cle] += part * poidsCle * pensionne.pensions[cle];
     }
   }
-  return { total, vivants };
+  return { total, vivants, tetes };
+}
+
+/**
+ * Ce que la garantie vieillesse coûte chaque année, lu sur la distribution.
+ *
+ * Portage de `GarantieDistribution` : le barème est appliqué à la distribution
+ * des pensions de l'EIR, et la grille ne sert qu'à dire de combien cette
+ * distribution BOUGE — un seul facteur, la pension moyenne que la garantie
+ * regarde en `t` sur la pension moyenne du système actuel l'année de l'enquête,
+ * l'une et l'autre par tête et en euros constants. L'effectif suit les têtes de
+ * soixante-cinq ans et plus ; le plancher est celui des paramètres, dans les
+ * euros de l'enquête. La forme de la distribution est tenue constante : on la
+ * déplace, on ne la déforme pas.
+ */
+class GarantieDistribution {
+  constructor(distribution, plancherMensuel, pensionReference, effectifParTete,
+              versConstants) {
+    this.distribution = distribution;
+    this.plancherMensuel = plancherMensuel;
+    this.pensionReference = pensionReference;
+    this.effectifParTete = effectifParTete;
+    this.versConstants = versConstants;
+  }
+
+  /** La garantie d'une année, d'après les masses et les têtes de la grille. */
+  chiffrer(total, tetes) {
+    const tetesGarantie = tetes[TETES_GARANTIE];
+    const vide = { facteur: 0, effectif: 0, beneficiaires: 0, coutConstants: 0 };
+    if (tetesGarantie <= 0 || this.pensionReference <= 0) return vide;
+    const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
+    if (facteur <= 0) return vide;
+    const effectif = this.effectifParTete * tetesGarantie;
+    const chiffre = coutGarantie(this.distribution, effectif, this.plancherMensuel, facteur);
+    return {
+      facteur,
+      effectif,
+      beneficiaires: chiffre.beneficiaires,
+      coutConstants: chiffre.coutAnnuelMeur * this.versConstants,
+    };
+  }
+}
+
+/** Cale la distribution sur la grille, l'année de l'enquête. */
+function garantieDistribution(simulateur, liste, population, poids, revalorisation) {
+  const distribution = simulateur.distribution;
+  const parametres = simulateur.parametres;
+  const macro = simulateur.macro;
+  const millesime = distribution.millesime;
+  const { total, tetes } = masses(liste, population, millesime, poids(millesime),
+                                  revalorisation);
+  const plancher = parametres.garantie_vieillesse_mensuelle
+    + (parametres.situation_foyer === "seul" ? parametres.allocation_isolement_mensuelle : 0);
+  const toutes = tetes[TETES_TOUTES];
+  return new GarantieDistribution(
+    distribution,
+    plancher * macro.coefficientPrix(parametres.annee_euros_garantie_vieillesse, millesime),
+    toutes > 0 ? total.actuel / toutes : 0,
+    toutes > 0 ? simulateur.effectifs.effectif("tous_regimes", millesime) / toutes : 0,
+    macro.coefficientPrix(millesime, parametres.annee_euros_constants),
+  );
 }
 
 /**
@@ -508,10 +594,18 @@ export function ponderation(simulateur, mode, casTypes, cote = COTE_RETRAITES) {
   };
 }
 
-function rapports(total) {
+/**
+ * Le rapport de chaque masse à celle du système actuel, composante comprise.
+ * Les six systèmes viennent de la grille ; la composante vient de la
+ * distribution, et son rapport est celui qui redonne son coût une fois
+ * appliqué aux droits directs de la base.
+ */
+function rapports(total, garantie, baseConstants, partDerives) {
   const resultat = {};
-  for (const cle of CLES_MASSES) {
-    resultat[cle] = total[cle] / total.actuel;
+  const directe = baseConstants * (1.0 - partDerives);
+  resultat[COMPOSANTE_GARANTIE] = directe > 0 ? garantie.coutConstants / directe : 0;
+  for (const [scenario] of SCENARIOS) {
+    resultat[scenario] = total[scenario] / total.actuel;
   }
   return resultat;
 }
@@ -519,8 +613,11 @@ function rapports(total) {
 /** Le coût d'une année, observé puis recalculé pour chaque système. */
 class CoutAnnuel {
   constructor(annee, observee, coefficientConstants, partPib, rapportsAnnee, nombre,
-              partDerives = 0.0, reversionServie = false, reformeEnVigueur = true) {
+              partDerives = 0.0, reversionServie = false, reformeEnVigueur = true,
+              garantie = null) {
     this.annee = annee;
+    // La garantie de l'année, lue sur la distribution des pensions.
+    this.garantie = garantie;
     this.observee = observee;
     this.coefficientConstants = coefficientConstants;
     this.partPib = partPib;
@@ -561,8 +658,10 @@ class CoutAnnuel {
 class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
               dependance, recettes = {}, partDerives = 0.0,
-              reversionServie = false, reformeEnVigueur = true) {
+              reversionServie = false, reformeEnVigueur = true, garantie = null) {
     this.annee = annee;
+    // La garantie de l'année, lue sur la distribution des pensions.
+    this.garantie = garantie;
     this.projete = projete;
     this.base = base;
     this.coefficientConstants = coefficientConstants;
@@ -1199,7 +1298,7 @@ class Cout {
  * année : les deux expressions coïncident exactement à la jonction.
  */
 function construireAvenir(liste, depenses, population, simulateur, poids, revalorisation,
-                          reversionServie = false, poidsCotisants = null) {
+                          reversionServie = false, poidsCotisants = null, garantie = null) {
   // `poids` pèse les cas types dans les masses de PENSIONS, `poidsCotisants`
   // dans les masses de COTISATIONS ; sans le second, le premier sert aux deux,
   // ce qui est l'ancienne convention.
@@ -1212,6 +1311,9 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
                               poids(dernierePubliee), revalorisation).total;
   if (ancrageMasses.actuel <= 0) {
     return new Avenir([], 0, 0, anneeEuros, Fiabilite.ESTIMEE);
+  }
+  if (garantie === null) {
+    garantie = garantieDistribution(simulateur, liste, population, poids, revalorisation);
   }
   // Les deux termes sont mis dans la MÊME unité avant d'être divisés : la
   // dépense publiée, en euros de son année, est ramenée aux euros constants où
@@ -1235,7 +1337,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
   const lignes = [];
   for (let annee = depenses.premiereAnneeVentilee; annee <= HORIZON; annee += 1) {
     const poidsAnnee = poids(annee);
-    const { total } = masses(liste, population, annee, poidsAnnee, revalorisation);
+    const { total, tetes } = masses(liste, population, annee, poidsAnnee, revalorisation);
     if (total.actuel <= 0) continue;
     const cotisations = massesCotisations(liste, population, annee,
                                           poidsCotisants(annee));
@@ -1245,6 +1347,8 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       ? ancrage * total.actuel
       : depenses.repartition(annee) * coefficient;
     const actifs = population.actifs.valeur(annee);
+    const partDerives = depenses.partDroitsDerives(annee);
+    const projetee = garantie.chiffrer(total, tetes);
     lignes.push(new AvenirAnnuel(
       annee,
       projete,
@@ -1253,15 +1357,16 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       pibProjete.has(annee)
         ? pibProjete.get(annee)
         : depenses.pib.valeur(Math.min(annee, dernierePib)),
-      rapports(total),
+      rapports(total, projetee, base, partDerives),
       actifs
         ? population.effectifTranche(AGE_DEPENDANCE, population.ageMaximal, annee)
           / actifs
         : 0.0,
       rapportsRecettes(cotisations, annee, simulateur.parametres.annee_bascule),
-      depenses.partDroitsDerives(annee),
+      partDerives,
       reversionServie,
       annee >= simulateur.parametres.annee_bascule,
+      projetee,
     ));
   }
 
@@ -1380,21 +1485,32 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     : HORIZON;
   const revalorisation = new RevalorisationServie(simulateur, premiereLiquidation, HORIZON);
 
+  // La garantie vieillesse ne se lit pas sur la grille mais sur la
+  // distribution des pensions ; la grille dit seulement de combien cette
+  // distribution bouge. Calée une fois, l'année de l'enquête.
+  const garantie = garantieDistribution(simulateur, liste, population, poids,
+                                        revalorisation);
+
   const lignes = [];
   for (const annee of depenses.annees()) {
-    const { total, vivants } = masses(liste, population, annee, poids(annee),
-                                      revalorisation);
+    const { total, vivants, tetes } = masses(liste, population, annee, poids(annee),
+                                             revalorisation);
     if (total.actuel <= 0) continue;
+    const observee = depenses.depense(annee);
+    const coefficient = macro.coefficientPrix(annee, anneeEuros);
+    const partDerives = depenses.partDroitsDerives(annee);
+    const projetee = garantie.chiffrer(total, tetes);
     lignes.push(new CoutAnnuel(
       annee,
-      depenses.depense(annee),
-      macro.coefficientPrix(annee, anneeEuros),
+      observee,
+      coefficient,
       depenses.partPib(annee),
-      rapports(total),
+      rapports(total, projetee, observee * coefficient, partDerives),
       vivants,
-      depenses.partDroitsDerives(annee),
+      partDerives,
       reversionServie,
       annee >= simulateur.parametres.annee_bascule,
+      projetee,
     ));
   }
 
@@ -1406,7 +1522,8 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   // observée est certifiée, le rapport qui la corrige ne l'est pas et ne peut
   // pas l'être.
   const avenir = construireAvenir(liste, depenses, population, simulateur, poids,
-                                  revalorisation, reversionServie, poidsCotisants);
+                                  revalorisation, reversionServie, poidsCotisants,
+                                  garantie);
   const solde = comptes && avenir.annees.length
     ? construireSolde(
       avenir, comptes, depenses.pib.derniereAnnee, assiette,

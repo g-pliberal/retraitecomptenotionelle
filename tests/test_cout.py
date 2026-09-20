@@ -813,31 +813,61 @@ def test_deplacer_les_pensions_vers_le_bas_coute_plus_cher(distribution):
         cout_garantie(distribution, 16e6, 800.0, 0.0)
 
 
-def test_la_garantie_vue_par_les_cas_types_est_bien_plus_basse(cout, avenir, distribution):
-    """Le constat qui a motivé le chiffrage sur la distribution, et ce qu'il est
-    devenu.
+def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distribution):
+    """La ligne « dont garantie » ne vient plus des cas types.
 
-    Les cas types ne voient la garantie que par ceux d'entre eux qui liquident à
-    65 ans ou après. Le facteur qui séparait les deux chiffres se comptait en
-    dizaines tant qu'un seul y parvenait ; il est de deux depuis que chaque cas
-    type liquide à l'âge de SA génération, cinq des treize atteignant alors
-    soixante-cinq ans. La correction a donc retiré l'essentiel de l'écart — et
-    ce qui reste ne se comblera pas, parce qu'il ne vient plus d'un âge mais de
-    la nature d'une grille : une allocation différentielle ne coûte que ce que
-    coûte la queue basse de la distribution, et treize carrières choisies pour
-    couvrir les configurations du système n'en ont pas.
+    Une allocation différentielle ne coûte que ce que coûte la queue basse de
+    la distribution des pensions, et treize carrières choisies pour couvrir
+    les configurations du système n'en ont pas. La trajectoire applique donc
+    le barème à la distribution de l'EIR, déplacée d'un facteur que la grille
+    donne ; ce test refait le calcul de l'année de l'enquête à la main, avec le
+    module ``garantie`` et les nombres que la ligne annuelle expose.
     """
+    simulateur = Simulateur(Parametres())
+    parametres = simulateur.parametres
+    millesime = distribution.millesime
+    ligne = cout.annee(millesime)
+    projetee = ligne.garantie
+    assert projetee is not None
+    # Le facteur dit de combien les pensions du scénario 6 sont plus basses que
+    # celles servies : un compte rétroactif ne rend que ce qui a été cotisé.
+    assert 0.5 < projetee.facteur < 0.9
+    # Le plancher est celui des paramètres — majoré, le foyer par défaut étant
+    # une personne seule —, dans les euros de l'enquête.
+    plancher = (parametres.garantie_vieillesse_mensuelle
+                + parametres.allocation_isolement_mensuelle)
+    vers_enquete = simulateur.macro.coefficient_prix(
+        parametres.annee_euros_garantie_vieillesse, millesime)
+    attendu = cout_garantie(distribution, projetee.effectif,
+                            plancher * vers_enquete, projetee.facteur)
+    assert projetee.beneficiaires == pytest.approx(attendu.beneficiaires)
+    vers_constants = simulateur.macro.coefficient_prix(
+        millesime, parametres.annee_euros_constants)
+    assert projetee.cout_constants == pytest.approx(
+        attendu.cout_annuel_meur * vers_constants)
+    # Et c'est ce coût que le rapport de la composante redonne, appliqué aux
+    # droits directs de la dépense observée.
+    assert ligne.cout_constants(COMPOSANTE_GARANTIE) == pytest.approx(
+        projetee.cout_constants, rel=1e-9)
+    # L'effectif est celui des retraités de 65 ans et plus, sur l'échelle de
+    # la DREES : moins que tous les retraités de l'enquête.
+    tous = simulateur.effectifs.effectif("tous_regimes", millesime)
+    assert 0.7 * tous < projetee.effectif < tous
+
+
+def test_la_garantie_decroit_quand_les_pensions_montent_face_au_plancher(cout, avenir):
+    """Le facteur monte avec les salaires, le plancher suit les prix : la
+    garantie décroît, en bénéficiaires comme en part du PIB, sans jamais
+    s'annuler — une queue basse ne disparaît pas."""
     projetees = avenir.projetees()
-    par_an_vu_des_cas_types = (
-        cout.avenir.cumul(COMPOSANTE_GARANTIE) / len(projetees))
-    par_an_sur_la_distribution = cout_garantie(
-        distribution, 16e6, 800.0).cout_annuel_meur
-    # L'écart n'est plus un abîme : les cas types voient désormais une garantie
-    # du bon ORDRE DE GRANDEUR, là où ils en voyaient zéro. Il reste, et il
-    # tient à ce qu'une grille de treize carrières n'a pas de queue basse.
-    assert par_an_vu_des_cas_types > 0.0
-    rapport = par_an_vu_des_cas_types / par_an_sur_la_distribution
-    assert 0.3 < rapport < 1.5, rapport
+    premiere, derniere = projetees[0], projetees[-1]
+    assert derniere.garantie.facteur > premiere.garantie.facteur
+    assert derniere.garantie.beneficiaires < premiere.garantie.beneficiaires
+    assert derniere.part_pib(COMPOSANTE_GARANTIE) < premiere.part_pib(COMPOSANTE_GARANTIE)
+    assert derniere.part_pib(COMPOSANTE_GARANTIE) > 0.005
+    # Et l'ordre de grandeur est celui du barème appliqué à la distribution,
+    # non plus celui d'une grille sans queue basse.
+    assert 0.005 < premiere.part_pib(COMPOSANTE_GARANTIE) < 0.02
 
 
 # -- le solde : ce qui rentre, face à ce qui sort ----------------------------

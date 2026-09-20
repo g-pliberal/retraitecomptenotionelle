@@ -1257,20 +1257,23 @@ cotisation. Elle est **financée par l'impôt** et non par les cotisations, et l
 page Coût la compte à part, pour que l'on voie ce que ce scénario retire aux
 cotisations et ce qu'il demande au contribuable.
 
-Deux réserves, les mêmes que pour l'ASPA du scénario 1. Le modèle liquide et
-s'arrête : un assuré parti à 62 ans avec une petite pension ne reçoit rien dans
-le scénario 6, alors qu'il recevrait la garantie trois ans plus tard. Et les
-cas types liquident presque tous avant 65 ans : la masse de garantie qu'ils
-produisent n'est pas basse, elle est FAUSSE. Une allocation différentielle ne se
-chiffre pas sur treize carrières, parce que son coût est tout entier celui de la
-queue basse de la distribution des pensions ; la page Coût porte donc, à côté,
-le barème appliqué à la distribution que publie l'échantillon interrégimes de
-retraités de la DREES — 18,4 milliards par an aux pensions d'aujourd'hui,
-jusqu'à 59 à celles du scénario 6 selon le plancher retenu. Sur le passé, la
-page Coût ne voit pas
-non plus le taux unique — aucune pension servie avant la bascule n'a une année
-cotisée à 18 % — et la courbe du scénario 6 y est celle du scénario 4 plus la
-garantie ; c'est d'ici 2070 que le taux se voit.
+Une réserve, et une méthode. Le modèle liquide et s'arrête : un assuré parti à
+62 ans avec une petite pension reçoit la garantie à 65 ans, et la page de
+simulation dit l'année et le montant. Mais une allocation différentielle ne se
+chiffre pas sur treize carrières, parce que son coût est tout entier celui de
+la queue basse de la distribution des pensions, et une grille choisie pour
+couvrir les configurations du système n'en a pas. La masse de garantie de la
+page Coût n'est donc pas tirée des cas types : le barème est appliqué, année
+par année, à la distribution que publie l'échantillon interrégimes de retraités
+de la DREES, et la grille ne sert qu'à dire de combien cette distribution
+bouge — la pension moyenne que la garantie regarde, compte notionnel et rente
+capitalisée réunis à partir de 65 ans, rapportée à la pension moyenne du
+système actuel l'année de l'enquête (`GarantieDistribution` dans `cout.py`).
+La forme de la distribution est tenue constante, le passé comme l'avenir. Sur
+le passé, la page Coût ne voit pas non plus le taux unique — aucune pension
+servie avant la bascule n'a une année cotisée à 18 % — et la courbe du
+scénario 6 y est celle du scénario 4 plus la garantie ; c'est d'ici 2070 que
+le taux se voit.
 
 
 #### Le pilier de capitalisation obligatoire

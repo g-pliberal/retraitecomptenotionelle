@@ -140,8 +140,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->707<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 184<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->710<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 195<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Six pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -679,7 +679,7 @@ de chaque cas type :
 | 4. Notionnel rétroactif, salariale + patronale | 6 598 Md € | −56,0 % |
 | 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
 | 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 218 Md € | −51,8 % |
-| *dont garantie vieillesse du 6, vue par les cas types* | *621 Md €* | |
+| *dont garantie vieillesse du 6, lue sur la distribution des pensions* | *3 757 Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -706,16 +706,19 @@ scénario 4 contre −56,0 %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
-**La garantie vieillesse du scénario 6 ne se chiffre pas sur des cas types.**
-C'est une allocation différentielle : son coût est celui de la queue basse de la
-distribution des pensions, et treize carrières ne décrivent pas une distribution.
-Les 621 milliards de la ligne en italique sont un chiffre faux — cinq cas types
-sur treize liquident à 65 ans ou après, et aucun aux générations anciennes. Le
-barème appliqué à la distribution que publie
-l'échantillon interrégimes de la DREES coûte **18,4 milliards par an** aux
-pensions d'aujourd'hui, 32,2 si l'on sert à tous l'allocation d'isolement, et
-**33 à 59 milliards par an** aux pensions du scénario 6 : la page Coût donne les
-quatre chiffres et dit ce que chacun suppose.
+**La garantie vieillesse du scénario 6 ne se chiffre pas sur des cas types, et
+la ligne en italique ne l'est plus.** C'est une allocation différentielle : son
+coût est celui de la queue basse de la distribution des pensions, et treize
+carrières ne décrivent pas une distribution. Le barème est donc appliqué, année
+par année, à la distribution que publie l'échantillon interrégimes de la DREES
+pour 2020, déplacée du seul facteur que la grille sait donner — la pension
+moyenne que la garantie regarde, rapportée à celle du système actuel en 2020 :
+0,64 cette année-là, 1,26 en 2070. Aux pensions d'aujourd'hui, la garantie
+coûterait **18,4 milliards par an**, 32,2 si l'on sert à tous l'allocation
+d'isolement ; aux pensions du scénario 6, **40 milliards en 2026** (1,3 % du
+PIB), décroissant à 32 en 2070 (0,9 %) à mesure que les pensions montent face à
+un plancher indexé sur les prix. Elle remplace quatre minima qui coûtent
+7,8 milliards en 2024, et la page Coût dit ce que l'impôt paierait en plus.
 
 Les poids de génération, eux, ne sont pas supposés non plus : ce sont les
 effectifs de la **pyramide des âges de l'INSEE**, observés jusqu'en 2023. Reste
@@ -1147,7 +1150,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1135 tests Python
+tests/                          1136 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1196,7 +1199,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1135<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1136<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

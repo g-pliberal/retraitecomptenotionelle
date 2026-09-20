@@ -30,6 +30,7 @@ from .carriere import (
 from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.cotisants import EffectifsCotisants
+from .donnees.distribution import DistributionPensions
 from .donnees.effectifs import EffectifsRetraites
 from .donnees.financement_regimes import StructureFinancement
 from .donnees.macro import DonneesMacro
@@ -649,6 +650,16 @@ class Simulateur:
         pension n'en dépend davantage.
         """
         return EffectifsCotisants(self.parametres.racine_donnees)
+
+    @cached_property
+    def distribution(self) -> DistributionPensions:
+        """La distribution des pensions — elle seule chiffre un plancher.
+
+        Aucune pension n'en dépend. Elle ne sert qu'à la garantie vieillesse de
+        la page « Coût », qui est une allocation différentielle et ne se lit
+        pas sur treize carrières.
+        """
+        return DistributionPensions(self.parametres.racine_donnees)
 
     @cached_property
     def financement_regimes(self) -> StructureFinancement:

@@ -4855,27 +4855,37 @@ l'indice des prix, comme l'ASPA entre deux ancres de son barème. Ce n'est
 qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
 indexée sur les prix depuis 1941.
 
-**La masse que produisent les cas types était nulle sur toute la projection,
-et elle ne l'est plus.** Le 18 septembre 2026, le rapport de masse de la
-garantie valait 8,8 · 10⁻⁶ en 2024 et zéro de 2030 à 2070 : la trajectoire du
-scénario 6 ne portait AUCUNE des dépenses que l'impôt financerait. Le motif
-n'était pas l'âge de l'allocation mais le NIVEAU des pensions de la grille —
-les deux seuls cas types qui tombent sous le plancher, l'exploitant agricole à
-674 € par mois et le carrière complète au SMIC à 797 €, liquident à 64 et
-62 ans, et les cinq qui partent à 65 ans ou plus sont tous au-dessus. Servir la
-garantie à 65 ans à qui est parti plus tôt a refermé ce zéro : la trajectoire
-porte désormais **0,80 % du PIB en 2026**, décroissant à 0,20 % en 2070 à
-mesure que les pensions montent face à un plancher indexé sur les prix, soit
-616 milliards d'euros constants cumulés sur la projection.
+**La masse de la trajectoire n'est plus vue par treize carrières : elle est
+lue sur la distribution des pensions, depuis le 20 septembre 2026.** Une
+allocation DIFFÉRENTIELLE ne se chiffre pas sur treize carrières, parce que
+son coût est tout entier celui de la queue basse de la distribution, et que
+treize carrières choisies pour couvrir les configurations du système n'en ont
+pas. L'histoire de ce chiffre le montre : le 18 septembre 2026, le rapport de
+masse de la garantie valait zéro de 2030 à 2070, les deux seuls cas types sous
+le plancher liquidant avant 65 ans ; servir la garantie à 65 ans à qui est
+parti plus tôt l'a porté à 0,80 % du PIB en 2026 et 0,20 % en 2070 — un ordre
+de grandeur, pas une solution. Le barème est désormais appliqué, année par
+année, à la distribution de l'EIR 2020 décrite plus bas, et la grille ne sert
+plus qu'à dire de combien cette distribution BOUGE : la pension moyenne que la
+garantie regarde — compte notionnel et rente du pilier capitalisé, à partir de
+65 ans, revalorisés — rapportée à la pension moyenne du système actuel en
+2020, l'une et l'autre par tête et en euros constants, lues sur la même grille
+(`GarantieDistribution` dans `cout.py`, porté dans `moteur/js/cout.js`). Ce
+facteur vaut 0,64 en 2020, parce qu'un compte rétroactif ne rend que ce qui a
+été cotisé, et 1,26 en 2070, les pensions montant avec les salaires face à un
+plancher indexé sur les prix. L'effectif suit les têtes de 65 ans et plus de la
+grille, sur l'échelle des retraités de la DREES. La trajectoire porte
+**1,30 % du PIB en 2026** (40 milliards d'euros de 2026, 6,8 millions de
+bénéficiaires), décroissant à 0,86 % en 2070 (32 milliards, 5,1 millions),
+soit 1 621 milliards constants cumulés sur la projection ; et le passé, où le
+même déplacement est appliqué à rebours, en porte 3 757 depuis 1959.
 
-**Elle reste une masse vue par treize carrières, et c'est la limite qui ne se
-refermera pas ainsi.** Une allocation DIFFÉRENTIELLE ne se chiffre pas sur
-treize carrières, parce que son coût est tout entier celui de la queue basse de
-la distribution, et que treize carrières choisies pour couvrir les
-configurations du système n'en ont pas. Le chiffre est maintenant du bon ordre
-de grandeur — de l'ordre des trois quarts de ce que le barème appliqué à la
-distribution réelle donne aux pensions d'aujourd'hui — au lieu d'être nul, ce
-qui est un progrès et non une solution.
+Ce que cette méthode suppose, et qui reste une limite : la FORME de la
+distribution est celle de 2020, déplacée sans être déformée, le passé comme
+l'avenir ; le déplacement est proportionnel et uniforme, quand le scénario ne
+déplace pas toutes les carrières du même rapport ; et les retraités de moins
+de 65 ans, qui attendent la garantie, sont supposés répartis comme les autres.
+Une seule méthode sur toute la série, plutôt qu'une falaise entre deux.
 
 **Ce que la garantie n'est plus : une dépense du compte des cotisants.** Elle
 est financée par l'impôt, et elle a donc quitté la masse contributive du
@@ -4884,17 +4894,42 @@ recette fait déjà — la CSG de solidarité sort des ressources —, et sans e
 garantie aurait été payée deux fois : une fois par les cotisations, une fois
 par le contribuable.
 
-La page porte donc, à côté, le barème appliqué à la distribution des pensions
-brutes de droit direct que publie l'échantillon interrégimes de retraités de la
-DREES (fin 2020, tranches de cent euros). Quatre chiffres, parce que deux
-questions et deux planchers :
+La page porte aussi, à la date de l'enquête, le barème appliqué à la
+distribution des pensions brutes de droit direct que publie l'échantillon
+interrégimes de retraités de la DREES (fin 2020, tranches de cent euros), à
+tous les retraités et non aux seuls 65 ans et plus. Quatre chiffres, parce que
+deux questions et deux planchers :
 
 | Assiette | Plancher | Retraités concernés | Coût annuel, euros de 2026 |
 |---|---|---|---|
 | Pensions de 2020 | 800 € | 22,8 %, soit 3,8 M | **18,4 Md €** |
 | Pensions de 2020 | 1 050 € | 32,7 %, soit 5,5 M | **32,2 Md €** |
-| Pensions du scénario 6 | 800 € | 48,0 %, soit 8,0 M | **35,9 Md €** |
-| Pensions du scénario 6 | 1 050 € | 64,7 %, soit 10,8 M | **64,2 Md €** |
+| Pensions du scénario 6 en 2020 | 800 € | 40,3 %, soit 6,7 M | **30,0 Md €** |
+| Pensions du scénario 6 en 2020 | 1 050 € | 54,7 %, soit 9,1 M | **53,7 Md €** |
+
+*Les deux dernières lignes disaient 35,9 et 64,2 milliards jusqu'au 20
+septembre 2026 : la page déplaçait la distribution du rapport contributif du
+scénario 6 MOINS celui de la garantie, une soustraction juste tant que la
+garantie était dans la masse contributive et fausse depuis qu'elle l'a quittée,
+la veille. Le facteur est désormais celui de la trajectoire, 0,64.*
+
+**Ce qu'elle remplace, et ce que l'impôt paierait en plus.** La garantie
+succède à l'ASPA, et le scénario 6 ne sert plus le minimum contributif, le
+minimum garanti ni la pension majorée de référence. En 2024, ces quatre minima
+coûtent 7,8 milliards — 4,94 de minimum vieillesse lus dans les comptes de la
+protection sociale, 2,18 de minimum contributif et 0,72 de minimum garanti
+calculés sur la grille, qui n'est pas une population et les sous-estime, et
+une pension majorée de référence non chiffrée — contre 39,0 milliards de
+garantie aux pensions du scénario 6 la même année : **31 milliards de plus pour
+l'impôt**, borne haute puisque le total remplacé est une borne basse. Deux
+corrections de sens opposé restent hors du tableau, et il faut les deux : une
+personne seule éligible sur deux ne réclame pas l'ASPA — 321 200 personnes fin
+2016, 790 millions non versés, 59 % des sommes servies (DREES, *Les dossiers de
+la DREES* n° 97, mai 2022) —, si bien qu'une garantie automatique paie pour
+partie une dépense aujourd'hui non réclamée ; et l'ASPA est récupérable sur
+succession, ce qui a rendu 108,7 millions au Fonds de solidarité vieillesse en
+2024 (rapport d'activité 2024), deux pour cent de ce qu'elle verse, qu'une
+garantie non récupérable ne rendrait plus.
 
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
 l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut
@@ -6516,7 +6551,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1135<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1136<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

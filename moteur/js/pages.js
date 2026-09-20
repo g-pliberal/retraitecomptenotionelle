@@ -6529,11 +6529,12 @@ function coutDetailPostes(contexte) {
   const versEnquete = simulateur.macro.coefficientPrix(
     base.annee_euros_garantie_vieillesse, distribution.millesime,
   );
-  const rapportsLiberal = c.annee(distribution.millesime).rapports;
-  // La masse du scénario 6 est déjà sa seule part contributive (la garantie
-  // est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
-  // retirer la garantie une seconde fois.
-  const facteurContributif = rapportsLiberal.notionnel_liberal;
+  // Le facteur est celui de la trajectoire : la pension moyenne que la garantie
+  // regarde, sur celle du système actuel l'année de l'enquête — le même que le
+  // dépliant de la garantie (voir `GarantieDistribution` dans cout.js).
+  const anneeEnquete = c.annee(distribution.millesime);
+  const facteurContributif = anneeEnquete && anneeEnquete.garantie
+    ? anneeEnquete.garantie.facteur : 1.0;
   const garantie = coutGarantie(
     distribution,
     simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
@@ -6915,33 +6916,29 @@ function coutDetailGarantie(contexte) {
   const c = contexte.cout();
   const distribution = contexte.distribution();
   const simulateur = contexte.simulateur();
-  const effectifRetraites = simulateur.effectifs.effectif(
-    "tous_regimes", distribution.millesime,
-  );
+  const base = contexte.base;
+  const millesime = distribution.millesime;
+  const effectifRetraites = simulateur.effectifs.effectif("tous_regimes", millesime);
   const versEnquete = simulateur.macro.coefficientPrix(
-    contexte.base.annee_euros_garantie_vieillesse, distribution.millesime,
+    base.annee_euros_garantie_vieillesse, millesime,
   );
-  const rapportsLiberal = c.annee(distribution.millesime).rapports;
-  // La masse du scénario 6 est déjà sa seule part contributive (la garantie
-  // est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
-  // retirer la garantie une seconde fois.
-  const facteurContributif = rapportsLiberal.notionnel_liberal;
+  const anneeEnquete = c.annee(millesime);
+  const facteur = anneeEnquete && anneeEnquete.garantie ? anneeEnquete.garantie.facteur : 1.0;
+  const seul = base.situation_foyer === "seul";
   const planchers = [
-    ["Plancher de base, 800 € (vie à deux)",
-      contexte.base.garantie_vieillesse_mensuelle],
+    ["Plancher de base, 800 € (vie à deux)", base.garantie_vieillesse_mensuelle],
     ["Plancher majoré, 1 050 € (personne seule)",
-      contexte.base.garantie_vieillesse_mensuelle
-      + contexte.base.allocation_isolement_mensuelle],
+      base.garantie_vieillesse_mensuelle + base.allocation_isolement_mensuelle],
   ];
   const assiettes = [
-    [`Pensions de ${distribution.millesime}`, 1.0],
-    ["Pensions du système 4", facteurContributif],
+    [`Pensions de ${millesime}`, 1.0],
+    [`Pensions du système 4 en ${millesime}`, facteur],
   ];
   const lignes = [];
-  for (const [titreAssiette, facteur] of assiettes) {
+  for (const [titreAssiette, facteurAssiette] of assiettes) {
     for (const [titrePlancher, mensuel] of planchers) {
       const chiffre = coutGarantie(
-        distribution, effectifRetraites, mensuel * versEnquete, facteur,
+        distribution, effectifRetraites, mensuel * versEnquete, facteurAssiette,
       );
       lignes.push([
         echapper(`${titreAssiette} — ${titrePlancher}`),
@@ -6954,41 +6951,104 @@ function coutDetailGarantie(contexte) {
   }
   const garantieBasse = coutGarantie(
     distribution, effectifRetraites,
-    contexte.base.garantie_vieillesse_mensuelle * versEnquete, 1.0,
+    base.garantie_vieillesse_mensuelle * versEnquete, 1.0,
   );
   const garantieScenario = coutGarantie(
     distribution, effectifRetraites,
-    contexte.base.garantie_vieillesse_mensuelle * versEnquete, facteurContributif,
+    base.garantie_vieillesse_mensuelle * versEnquete, facteur,
   );
 
-  return g.depliant("Ce que coûterait la garantie vieillesse", `
+  // La trajectoire, à quelques dates : ce que la ligne « dont garantie » des
+  // tableaux du haut contient, et pourquoi elle décroît.
+  const derniere = contexte.depenses().derniereAnnee;
+  const etapes = [];
+  for (const millesimeEtape of [millesime, derniere, 2030, 2050, c.avenir.derniereAnnee]) {
+    const ligne = c.avenir.annee(millesimeEtape);
+    if (ligne === null || !ligne.garantie || etapes.some(([a]) => a === millesimeEtape)) {
+      continue;
+    }
+    etapes.push([millesimeEtape, ligne]);
+  }
+  const lignesEtapes = etapes.map(([annee, ligne]) => [
+    String(annee),
+    g.nombre(ligne.garantie.facteur, 2),
+    `${g.nombre(ligne.garantie.effectif / 1e6, 1)} M`,
+    `${g.nombre(ligne.garantie.beneficiaires / 1e6, 1)} M`,
+    milliards(ligne.coutConstants(COMPOSANTE_GARANTIE), 1),
+    g.pourcentage(ligne.partPib(COMPOSANTE_GARANTIE), false, 2),
+  ]);
+
+  // Ce que la garantie remplace : les quatre minima, tels qu'ils coûtent la
+  // dernière année observée.
+  const avantages = contexte.avantages().derniere;
+  const montants = avantages ? avantages.lignes : {};
+  const anneeMinima = avantages ? avantages.annee : derniere;
+  const remplaces = [
+    ["Minimum vieillesse (ASPA)", "minimum_vieillesse", "lu dans les comptes"],
+    ["Minimum contributif", "minimum_contributif", "calculé sur la grille"],
+    ["Minimum garanti de la fonction publique", "minimum_garanti", "calculé sur la grille"],
+    ["Pension majorée de référence des exploitants", "pension_majoree_reference",
+      "non chiffrée"],
+  ];
+  let totalRemplace = 0;
+  for (const [, code] of remplaces) totalRemplace += montants[code] || 0;
+  const lignesRemplaces = remplaces.map(([libelle, code, source]) => [
+    libelle, source, montants[code] ? milliards(montants[code], 2) : "—",
+  ]);
+  const garantieBrute = c.annee(anneeMinima).cout(COMPOSANTE_GARANTIE);
+  lignesRemplaces.push(["<strong>Ce que ces quatre minima coûtent</strong>", "",
+    `<strong>${milliards(totalRemplace, 1)}</strong>`]);
+  lignesRemplaces.push([`Garantie vieillesse, aux pensions du système 4 en ${anneeMinima}`,
+    "distribution, ci-dessus", milliards(garantieBrute, 1)]);
+  lignesRemplaces.push(["<strong>Ce que l'impôt paierait en plus</strong>", "",
+    `<strong>${milliards(garantieBrute - totalRemplace, 1)}</strong>`]);
+
+  return g.depliant("Ce que coûte la garantie vieillesse", `
 <p>La garantie du système 4 est <strong>différentielle</strong> : elle ne verse
 que ce qui manque à une pension pour atteindre son plancher. Son coût est donc
 tout entier celui de la <strong>queue basse de la distribution</strong> des
-pensions, et treize carrières de référence ne décrivent pas une distribution :
-le chiffre que le tableau des quatre systèmes en tire —
-${milliards(c.cumul(COMPOSANTE_GARANTIE), 0)} sur soixante-six ans — est
-faux, et il faut le remplacer.</p>
+pensions, et treize carrières de référence ne décrivent pas une distribution.
+La ligne « dont garantie vieillesse » des deux tableaux du haut n'est donc pas
+tirée des cas types : elle est lue sur la distribution que l'échantillon
+interrégimes de retraités de la DREES publie, par tranches de cent euros, pour
+${millesime}. Les cas types ne servent qu'à dire <em>de combien cette
+distribution bouge</em> d'une année à l'autre : la pension moyenne que la
+garantie regarde (le compte notionnel plus la rente du pilier capitalisé, à
+partir de 65 ans), rapportée à la pension moyenne du système actuel en
+${millesime}. Ce facteur vaut ${g.nombre(facteur, 2)} en ${millesime} : les
+pensions du système 4 y sont plus basses que celles servies, parce que le
+compte rétroactif ne rend que ce qui a été cotisé. Il monte ensuite avec les
+salaires, face à un plancher indexé sur les prix, et la garantie décroît.</p>
 
-<p>L'échantillon interrégimes de retraités de la DREES publie, par tranches de
-cent euros, combien de retraités touchent combien. Le barème s'y applique
-directement, sans passer par aucun cas type. Deux lectures : ce que la garantie
+${g.tableau(
+    ["Année", "Facteur de déplacement", "Retraités de 65 ans et plus",
+      "Bénéficiaires", `Coût annuel, milliards d'euros ${c.anneeEuros}`,
+      "Part du PIB"],
+    lignesEtapes,
+    ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    `La garantie vieillesse dans la trajectoire, plancher ${
+      seul ? "majoré (personne seule)" : "de base (vie à deux)"}`,
+    true,
+  )}
+
+<p>Deux lectures à la date de l'enquête, et deux planchers. Ce que la garantie
 coûterait <strong>aux pensions d'aujourd'hui</strong>, en remplacement de
-l'ASPA (un calcul qui ne doit rien au modèle), et ce qu'elle coûterait
-<strong>aux pensions du système 4</strong>, toute la distribution étant alors
-déplacée du rapport ${g.pourcentage(facteurContributif, false, 0)} que le
-modèle donne à sa part contributive. Deux planchers aussi, parce que l'enquête
-dit la pension sans dire avec qui l'on vit : le coût réel est entre les deux.</p>
+l'ASPA, est un calcul qui ne doit rien au modèle ; ce qu'elle coûterait
+<strong>aux pensions du système 4</strong> déplace toute la distribution du
+facteur ci-dessus. Le plancher de base vaut pour qui vit à deux, le plancher
+majoré pour qui vit seul, et l'enquête ne dit pas avec qui l'on vit : le coût
+réel est entre les deux. La trajectoire retient
+${seul ? "le plancher majoré" : "le plancher de base"}, celui que le
+simulateur applique.</p>
 
 ${g.tableau(
     ["Assiette et plancher", "Part des retraités", "Bénéficiaires",
       "Complément moyen",
-      "Coût annuel, milliards d'euros "
-      + `${contexte.base.annee_euros_garantie_vieillesse}`],
+      `Coût annuel, milliards d'euros ${base.annee_euros_garantie_vieillesse}`],
     lignes,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    "Coût annuel de la garantie vieillesse, barème appliqué à la "
-    + `distribution des pensions de l'EIR ${distribution.millesime}`,
+    `Coût annuel de la garantie vieillesse, barème appliqué à la `
+      + `distribution des pensions de l'EIR ${millesime}`,
     true,
   )}
 
@@ -6996,10 +7056,46 @@ ${g.tableau(
 huit distributions publiées qui soit dans la même grandeur que celles du modèle.
 Les pensions d'une tranche de cent euros sont supposées y être réparties
 uniformément, et la tranche ouverte du haut est traitée comme une masse
-ponctuelle. Le déplacement des pensions au rapport du système 4 est
-<em>proportionnel et uniforme</em>, alors que le scénario ne déplace pas toutes
-les carrières du même rapport : les deux dernières lignes sont un ordre de
-grandeur là où les deux premières sont un calcul.</p>
+ponctuelle. Le déplacement est <em>proportionnel et uniforme</em>, alors que le
+scénario ne déplace pas toutes les carrières du même rapport ; la forme de la
+distribution est celle de ${millesime}, tenue constante sur toute la série, le
+passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
+${millesime} ; la trajectoire ne l'applique qu'à ceux de 65 ans et plus, d'où un
+coût plus bas la même année.</p>
+
+<p><strong>Ce qu'elle remplace.</strong> La garantie succède à l'ASPA, et le
+système 4 ne sert plus le minimum contributif, le minimum garanti ni la pension
+majorée de référence : quatre planchers que l'impôt et les caisses paient déjà.
+Ce que l'impôt paierait <em>en plus</em> est la garantie moins ces quatre-là.</p>
+
+${g.tableau(
+    ["Ligne", "D'où vient le chiffre", `En ${anneeMinima}`],
+    lignesRemplaces,
+    ["", "texte", "nombre"],
+    `Ce que la garantie vieillesse remplace, en ${anneeMinima}`,
+    true,
+  )}
+
+<p class="discret">Le minimum vieillesse est le poste des comptes de la
+protection sociale ; les deux minima de pension sont calculés sur la grille des
+cas types, qui n'est pas une population et les sous-estime : le minimum
+contributif est réclamé par des carrières courtes que la grille ne compte
+guère. La pension majorée de référence n'est pas chiffrée, aucun code du
+moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
+haute.</p>
+
+<div class="note"><strong>Deux corrections de sens opposé, et il faut les
+deux.</strong> L'ASPA est réclamée par <strong>une personne seule éligible sur
+deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans la
+demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
+(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Une garantie
+individualisée et automatique n'a pas de non-recours : une part de ce qu'elle
+coûte en plus existe donc déjà, sans être réclamée. En sens inverse, l'ASPA est récupérable sur la succession, et le
+Fonds de solidarité vieillesse en a retiré 108,7 millions d'euros en 2024 (143,9
+en 2023, avant le relèvement du seuil) ; une garantie qui ne se récupère pas
+rend ces deux pour cent-là au contribuable. Le premier effet se compte en
+centaines de millions par an, le second en une centaine, et ni l'un ni l'autre
+n'est dans le tableau.</div>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne

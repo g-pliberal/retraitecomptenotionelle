@@ -659,6 +659,42 @@ institutions:
           pas. Elle sert à chiffrer la garantie vieillesse du scénario 6, qui est
           une allocation différentielle : son coût est celui de la queue basse de
           cette distribution, et ne se lit sur aucun cas type.
+      - id: drees_non_recours_minimum_vieillesse
+        titre: >-
+          Le non-recours au minimum vieillesse des personnes seules (Les
+          dossiers de la DREES n° 97, Pauline Meinzel, 20 mai 2022)
+        url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/les-dossiers-de-la-drees/le-non-recours-au-minimum-vieillesse-des
+        acces: page
+        statut_integration: saisi
+        cible: src/retraite_notionnelle/web/pages.py
+        note: >-
+          Lu le 20 septembre 2026, pour la page Coût. Fin 2016, une personne
+          seule éligible sur deux ne recourt pas au minimum vieillesse :
+          321 200 personnes sous le plafond de ressources sans allocation, soit
+          un taux de non-recours de 50 %. Les non-recourants toucheraient 205 €
+          par mois en moyenne, contre 337 € servis aux allocataires, et le
+          montant du non-recours est estimé à 790 millions d'euros, 59 % des
+          sommes versées. La garantie vieillesse du scénario 6 étant
+          individualisée et automatique, elle n'a pas de non-recours par
+          construction : comparer son coût à celui de l'ASPA sans cette
+          correction ferait passer pour une dépense nouvelle ce qui est, pour
+          partie, une dépense aujourd'hui non réclamée. Chiffres saisis à la
+          lecture, aucun script ne les revérifie.
+      - id: fsv_rapport_activite
+        titre: Fonds de solidarité vieillesse, rapport d'activité 2024
+        url: https://www.fsv.fr/pdf/RA2024.pdf
+        acces: document
+        statut_integration: saisi
+        cible: src/retraite_notionnelle/web/pages.py
+        note: >-
+          Lu le 20 septembre 2026, pour la page Coût. Les récupérations sur
+          succession de l'ensemble des allocations du minimum vieillesse ont
+          rapporté 108,7 millions d'euros en 2024, contre 143,9 en 2023, la
+          baisse tenant au relèvement du seuil de récupération voté en loi de
+          financement rectificative pour 2023. C'est ce que l'ASPA rend à
+          l'impôt et qu'une garantie non récupérable ne rendrait plus : deux
+          pour cent de ce qu'elle verse. Chiffre saisi à la lecture, aucun
+          script ne le revérifie.
       - id: drees_open_data
         titre: Portail open data DREES
         url: https://data.drees.solidarites-sante.gouv.fr/

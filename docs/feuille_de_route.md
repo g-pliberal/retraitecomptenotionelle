@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 543<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 760<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -3008,7 +3008,7 @@ dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre
 
 ---
 
-### 35. Les recettes et les dépenses du scénario 6, chiffrées toutes les deux — `en cours`
+### 35. Les recettes et les dépenses du scénario 6, chiffrées toutes les deux — `fait`
 
 **Pourquoi.** Le scénario 6 est la proposition du dépôt, et c'est celui dont le
 bilan est le moins bien tenu. Sa DÉPENSE réagit à ce qu'il change, parce que le
@@ -4376,9 +4376,64 @@ la projection, là où elle portait zéro. Le solde du scénario 6 ne bouge pas 
 +0,12 % de moyenne — puisque la garantie entre d'un côté et sort de l'autre le
 même jour.
 
-*Ce qui reste du volet B* : projeter la distribution des pensions au lieu de la
-figer à l'EIR 2020, et chiffrer le coût NET des quatre dispositifs que la
-garantie remplace, non-recours de l'ASPA compris.
+*Le volet B est fait le 20 septembre 2026*, et voici comment les deux points
+qui restaient ont été refermés.
+
+**La garantie de la trajectoire est lue sur la distribution, et projetée
+(point 1).** La ligne « dont garantie » des tableaux de la page Coût ne vient
+plus des cas types. `GarantieDistribution`, dans `cout.py`, applique le barème
+de `garantie.py` à la distribution de l'EIR 2020, année par année, et la
+grille ne sert plus qu'à dire de combien cette distribution BOUGE : un seul
+facteur, la pension moyenne que la garantie regarde (compte notionnel et rente
+du pilier capitalisé, à partir de 65 ans, revalorisés) rapportée à la pension
+moyenne du système actuel l'année de l'enquête, l'une et l'autre par tête et en
+euros constants, lues sur la même grille. L'effectif suit les têtes de 65 ans
+et plus de la grille, sur l'échelle des retraités de la DREES ; le plancher est
+celui des paramètres, majoré puisque le foyer par défaut est une personne
+seule. La forme de la distribution est tenue constante, le passé comme
+l'avenir, et le même déplacement est appliqué à rebours avant 2020 : une seule
+méthode sur toute la série, plutôt qu'une falaise entre deux. Porté dans
+`moteur/js/cout.js` ; les lignes annuelles exposent `garantie` (facteur,
+effectif, bénéficiaires, coût) et le dépliant de la page en montre cinq dates.
+
+*Ce que ça déplace.* Le facteur vaut 0,64 en 2020 et 1,26 en 2070. La
+trajectoire porte **1,30 % du PIB en 2026** (40 milliards d'euros de 2026,
+6,8 millions de bénéficiaires) au lieu de 0,80 %, et **0,86 % en 2070**
+(32 milliards, 5,1 millions) au lieu de 0,20 % : la grille voyait bien la
+garantie s'éteindre, faute de queue basse, quand la distribution la voit
+décroître sans s'annuler. Cumul 2025-2070 : 1 621 milliards constants au lieu
+de 616. Le solde du scénario 6 ne bouge pas, la garantie étant financée par
+l'impôt et comptée à part ; aucune pension ni aucun témoin de simulation ne
+change. Le bogue du facteur de déplacement — la garantie retirée deux fois —
+a été vu et corrigé le même jour par une autre session (note ci-dessous, dans
+le volet A) ; le dépliant et le tableau poste par poste prennent désormais le
+facteur DE LA TRAJECTOIRE, `garantie.facteur` de la ligne annuelle, qui compte
+la rente capitalisée et les seuls 65 ans et plus, au lieu du rapport de masses
+nu : 0,64 au lieu de 0,63 en 2020, et les deux lignes « pensions du système 4 »
+du dépliant valent 30,0 et 53,7 milliards.
+
+**Le net est sur la page, et les deux corrections sont sourcées (point 3).**
+Le dépliant porte un tableau « ce que la garantie remplace » en 2024 : minimum
+vieillesse 4,94 Md€ lus dans les comptes de la protection sociale, minimum
+contributif 2,18 et minimum garanti 0,72 calculés sur la grille, pension
+majorée de référence non chiffrée — 7,8 milliards, borne basse — contre
+39,0 milliards de garantie la même année, soit **31 milliards de plus pour
+l'impôt**, borne haute. Le non-recours et la récupération sur succession sont
+lus et cités, non appliqués, parce qu'aucun des deux ne se transporte tel quel
+dans le tableau : le premier vient du *Dossier de la DREES* n° 97 (mai 2022),
+une personne seule éligible sur deux, 321 200 personnes fin 2016, 790 millions
+non versés ; le second du rapport d'activité 2024 du FSV, 108,7 millions
+récupérés en 2024. Les deux sont au manifeste des sources, `saisi`.
+
+*Ce qui reste une limite, et est écrit comme telle* : la forme de la
+distribution est celle de 2020, déplacée sans être déformée ; le déplacement
+est proportionnel et uniforme ; les retraités de moins de 65 ans, qui attendent
+la garantie, sont supposés répartis comme les autres ; les deux minima de
+pension sont calculés sur une grille qui n'est pas une population ; la pension
+majorée de référence attend d'être portée au moteur (action 37).
+
+Le point 1 et le point 3 tels qu'ils avaient été écrits sont ci-dessous, pour
+mémoire.
 
 1. *La chiffrer sur une distribution, jamais sur les cas types.* Une allocation
    différentielle est tout entière la queue basse de la distribution, et treize
@@ -4497,6 +4552,17 @@ rapportent, ce que la répartition verse, ce que l'impôt verse au titre de la
 garantie, et le solde. Les trois variantes de ressources non cotisées sont
 affichables. `limites.md` §5 ne dit plus « les recettes ne réagissent à aucun
 scénario ».
+
+**Où l'action en est le 20 septembre 2026, face à cette fin.** Les quatre
+lignes existent, réparties sur deux tableaux : le solde et le coefficient du
+scénario 6 sont ceux des 18 % face à la répartition, et la garantie est la
+ligne « dont… financée par l'impôt » de la trajectoire, avec son dépliant. Les
+variantes de recette sont CALCULABLES (`convention_recette="rapport"`, et les
+deux pondérations), mesurées et écrites dans `limites.md`, mais la page n'en
+affiche qu'une, par la règle de l'action 40 : un réglage se voit ou n'existe
+pas, et celui-là ne changerait rien à ce que le lecteur décide. `limites.md`
+§5 ne dit plus que les recettes sont inertes. L'action est close ; ce qu'elle
+laisse est écrit ci-dessus, volet par volet.
 
 ---
 

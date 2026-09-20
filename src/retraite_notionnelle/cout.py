@@ -135,12 +135,15 @@ from .castypes import (
     poids_effectifs,
     poids_egaux,
 )
+from .config import SituationFoyer
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle
 from .donnees.depenses import DepensesRetraite
+from .donnees.distribution import DistributionPensions
 from .donnees.taux import CourbeTauxSansRisque
 from .donnees.equilibre import ORGANISMES, POSTES, ComptesRetraite
 from .donnees.population import Population
+from .garantie import cout_garantie
 from .simulateur import Simulateur
 
 #: Les six systèmes, dans l'ordre du tableau de comparaison. Ce sont les
@@ -162,7 +165,24 @@ SCENARIOS: tuple[tuple[str, str], ...] = (
 #: de comparaison comme une ligne à part entière.
 COMPOSANTE_GARANTIE = "garantie_vieillesse_liberal"
 
-#: Tout ce dont une masse est calculée : les six systèmes, et la composante.
+#: Ce que la garantie REGARDE, cas type par cas type : la pension contributive
+#: du scénario 6 et la rente du pilier capitalisé, comptées à partir de
+#: soixante-cinq ans et revalorisées jusqu'à l'année. Ce n'est ni un système ni
+#: une composante, et aucun tableau ne l'affiche : c'est la masse par laquelle
+#: la distribution des pensions est DÉPLACÉE avant qu'on lui applique le
+#: plancher — voir :class:`GarantieDistribution`.
+RESSOURCES_GARANTIE = "ressources_garantie_liberal"
+
+#: Tout ce que la grille des cas types sait calculer : les six systèmes, et
+#: les ressources que la garantie regarde.
+CLES_CAS_TYPES: tuple[str, ...] = tuple(scenario for scenario, _ in SCENARIOS) + (
+    RESSOURCES_GARANTIE,
+)
+
+#: Tout ce qui a un RAPPORT à la masse du système actuel : les six systèmes,
+#: et la composante. La composante n'est pas calculée sur la grille — une
+#: allocation différentielle ne se lit pas sur treize carrières — mais sur la
+#: distribution des pensions, et son rapport est écrit après coup.
 CLES_MASSES: tuple[str, ...] = tuple(scenario for scenario, _ in SCENARIOS) + (
     COMPOSANTE_GARANTIE,
 )
@@ -351,6 +371,9 @@ class CoutAnnuel:
     #: Part de la masse versée qui est une pension de RÉVERSION, et que le
     #: rapport ne décrit pas — ``masse_du_scenario`` dit pourquoi.
     part_derives: float = 0.0
+    #: La garantie de l'année, lue sur la distribution des pensions : le
+    #: facteur de déplacement et les bénéficiaires, que la page redit.
+    garantie: GarantieProjetee | None = None
     #: Les scénarios notionnels reconduisent-ils la réversion ? Non, depuis le
     #: 19 septembre 2026 : elle est un avantage non contributif, et ils les
     #: retirent tous. Voir ``CONVENTIONS_REVERSION``.
@@ -446,6 +469,8 @@ class AvenirAnnuel:
     rapports: dict[str, float]
     #: Rapport de dépendance démographique : 65 ans et plus sur 20-64 ans.
     dependance: float
+    #: La garantie de l'année, lue sur la distribution des pensions.
+    garantie: GarantieProjetee | None = None
     #: Rapport de la RECETTE de chaque système à celle du système actuel. Un
     #: partout, sauf pour le scénario 6 à compter de la bascule.
     rapports_recettes: dict[str, float] = field(default_factory=dict)
@@ -1271,8 +1296,13 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 "notionnel_liberal": comparaison.en_euros_constants(
                     comparaison.notionnel_liberal.garantie_vieillesse.pension_contributive
                 ),
-                COMPOSANTE_GARANTIE: comparaison.en_euros_constants(
-                    comparaison.notionnel_liberal.garantie_vieillesse.complement
+                # Ce que la garantie regarde : la pension contributive ET la
+                # rente du pilier capitalisé, à la liquidation. La grille ne
+                # sert plus à chiffrer le complément — elle n'a pas de queue
+                # basse —, seulement à dire de combien les pensions du
+                # scénario 6 déplacent la distribution observée.
+                RESSOURCES_GARANTIE: comparaison.en_euros_constants(
+                    comparaison.notionnel_liberal.garantie_vieillesse.ressources
                 ),
             },
             cotisations={
@@ -1411,6 +1441,14 @@ class RevalorisationServie:
         return self._valeur(annee) / depart if depart else 1.0
 
 
+#: Les deux comptes de TÊTES que la grille rend avec ses masses : tous les
+#: retraités qu'elle représente, et ceux d'entre eux qui ont atteint l'âge de
+#: la garantie. Ils ne pèsent pas des euros mais des personnes — c'est par eux
+#: que la distribution des pensions reçoit son effectif et sa pension moyenne.
+TETES_TOUTES = "toutes"
+TETES_GARANTIE = "garantie"
+
+
 def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             poids_cas: dict[str, float],
             revalorisation: RevalorisationServie) -> tuple[dict[str, float], int]:
@@ -1438,7 +1476,8 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     vieillesse gardent le poids en têtes, parce que le droit les indexe sur les
     prix et que les masses sont déjà en euros constants.
     """
-    masses = {cle: 0.0 for cle in CLES_MASSES}
+    masses = {cle: 0.0 for cle in CLES_CAS_TYPES}
+    tetes = {TETES_TOUTES: 0.0, TETES_GARANTIE: 0.0}
     vivants = 0
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
@@ -1446,6 +1485,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             continue
         poids = 0.0
         poids_garantie = 0.0
+        poids_garantie_revalorise = 0.0
         poids_revalorise = 0.0
         poids_revalorise_prospectif = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
@@ -1472,12 +1512,17 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # tôt : avant, on ne touche pas le minimum vieillesse.
             if annee >= pensionne.annee_ouverture_garantie + decalage:
                 poids_garantie += effectif
+                poids_garantie_revalorise += effectif * revalorisation.coefficient(
+                    liquidation, annee
+                )
         if poids <= 0.0:
             continue
         vivants += 1
-        for cle in CLES_MASSES:
-            if cle == COMPOSANTE_GARANTIE:
-                poids_cle = poids_garantie
+        tetes[TETES_TOUTES] += part * poids
+        tetes[TETES_GARANTIE] += part * poids_garantie
+        for cle in CLES_CAS_TYPES:
+            if cle == RESSOURCES_GARANTIE:
+                poids_cle = poids_garantie_revalorise
             elif cle in CLES_PROSPECTIVES:
                 poids_cle = poids_revalorise_prospectif
             elif cle in CLES_REVALORISEES:
@@ -1485,7 +1530,136 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             else:
                 poids_cle = poids
             masses[cle] += part * poids_cle * pensionne.pensions[cle]
-    return masses, vivants
+    return masses, vivants, tetes
+
+
+@dataclass(frozen=True)
+class GarantieProjetee:
+    """La garantie d'une année, chiffrée sur la distribution des pensions."""
+
+    #: Rapport par lequel la distribution observée a été déplacée : la
+    #: pension moyenne que la garantie regarde cette année-là, sur la pension
+    #: moyenne du système actuel l'année de l'enquête. Un vaut « les pensions
+    #: telles qu'elles sont ».
+    facteur: float
+    #: Retraités auxquels le barème est appliqué : ceux qui ont atteint
+    #: soixante-cinq ans, sur l'échelle de l'enquête.
+    effectif: float
+    #: Ceux d'entre eux qui tombent sous le plancher.
+    beneficiaires: float
+    #: Coût annuel, en millions d'euros CONSTANTS de l'année de référence.
+    cout_constants: float
+
+
+class GarantieDistribution:
+    """Ce que la garantie vieillesse coûte chaque année, lu sur la distribution.
+
+    LE PROBLÈME QU'ELLE RÉSOUT. La garantie du scénario 6 est une allocation
+    différentielle : son coût est tout entier celui de la queue basse de la
+    distribution des pensions, et treize carrières choisies pour couvrir les
+    configurations du système n'ont pas de queue basse. Chiffrée sur les cas
+    types, elle valait zéro de 2030 à 2070 avant le 19 septembre 2026, puis un
+    ordre de grandeur ; ``limites.md`` disait qu'il fallait la remplacer.
+    C'est fait ici : le barème est appliqué à la distribution que l'échantillon
+    interrégimes de retraités de la DREES publie par tranches de cent euros —
+    :mod:`garantie` sait le faire pour une année —, et la grille ne sert plus
+    qu'à dire de combien cette distribution BOUGE d'une année à l'autre.
+
+    DEUX MOUVEMENTS, UN SEUL FACTEUR. Entre l'année de l'enquête et l'année
+    ``t``, la distribution des ressources que la garantie regarde se déplace
+    pour deux raisons : les pensions du scénario 6 ne sont pas celles du
+    système actuel (le rapport contributif, plus la rente du pilier capitalisé
+    qu'une allocation différentielle compte aussi), et les pensions montent en
+    termes réels avec les salaires. Les deux se composent en un seul nombre,
+    la pension moyenne que la garantie regarde en ``t`` sur la pension moyenne
+    du système actuel l'année de l'enquête, l'une et l'autre par tête et en
+    euros constants, l'une et l'autre lues sur la même grille. Le déplacement
+    est proportionnel et uniforme — c'est la convention du module
+    :mod:`garantie`, et elle reste un ordre de grandeur là où l'assiette
+    observée est un calcul.
+
+    L'EFFECTIF suit les têtes de la grille : les retraités de la DREES l'année
+    de l'enquête, multipliés par le rapport des têtes de soixante-cinq ans et
+    plus en ``t`` aux têtes de l'enquête. La garantie n'entre qu'à cet âge,
+    comme l'ASPA ; qui a liquidé avant l'attend, et la distribution des
+    pensions de ceux qui l'attendent est supposée celle de tous.
+
+    LE PLANCHER est celui des paramètres, dans les euros de l'enquête : la
+    garantie de base, plus l'allocation d'isolement si le foyer paramétré est
+    une personne seule — le même que le simulateur applique à une carrière.
+    L'enquête ne dit pas avec qui l'on vit ; la page donne l'autre plancher à
+    côté, et le coût réel est entre les deux.
+
+    CE QUI EST FIGÉ. La FORME de la distribution est celle de l'enquête, et
+    elle est tenue constante : on la déplace, on ne la déforme pas. Avant
+    l'année de l'enquête, le même déplacement est appliqué à rebours, ce qui
+    fait du passé une extrapolation au même titre que l'avenir. Une seule
+    méthode sur toute la série, plutôt qu'une falaise entre deux.
+    """
+
+    def __init__(self, distribution: DistributionPensions, plancher_mensuel: float,
+                 pension_reference: float, effectif_par_tete: float,
+                 vers_constants: float) -> None:
+        self.distribution = distribution
+        #: Le plancher, dans les euros de l'enquête.
+        self.plancher_mensuel = plancher_mensuel
+        #: Pension moyenne du système actuel l'année de l'enquête, par tête et
+        #: en euros constants de référence : le dénominateur du facteur.
+        self.pension_reference = pension_reference
+        #: Retraités de l'enquête par tête de la grille la même année.
+        self.effectif_par_tete = effectif_par_tete
+        #: Coefficient des euros de l'enquête aux euros constants de référence.
+        self.vers_constants = vers_constants
+
+    def chiffrer(self, masses: dict[str, float], tetes: dict[str, float]) -> GarantieProjetee:
+        """La garantie d'une année, d'après les masses et les têtes de la grille."""
+        tetes_garantie = tetes[TETES_GARANTIE]
+        if tetes_garantie <= 0.0 or self.pension_reference <= 0.0:
+            return GarantieProjetee(0.0, 0.0, 0.0, 0.0)
+        facteur = masses[RESSOURCES_GARANTIE] / tetes_garantie / self.pension_reference
+        if facteur <= 0.0:
+            return GarantieProjetee(0.0, 0.0, 0.0, 0.0)
+        effectif = self.effectif_par_tete * tetes_garantie
+        chiffre = cout_garantie(self.distribution, effectif, self.plancher_mensuel, facteur)
+        return GarantieProjetee(
+            facteur=facteur,
+            effectif=effectif,
+            beneficiaires=chiffre.beneficiaires,
+            cout_constants=chiffre.cout_annuel_meur * self.vers_constants,
+        )
+
+
+def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
+                           population: Population,
+                           poids: Callable[[int], dict[str, float]],
+                           revalorisation: "RevalorisationServie",
+                           distribution: DistributionPensions | None = None,
+                           ) -> GarantieDistribution:
+    """Cale la distribution sur la grille, l'année de l'enquête."""
+    if distribution is None:
+        distribution = simulateur.distribution
+    parametres = simulateur.parametres
+    macro = simulateur.macro
+    millesime = distribution.millesime
+    masses, _, tetes = _masses(pensionnes, population, millesime, poids(millesime),
+                               revalorisation)
+    plancher = parametres.garantie_vieillesse_mensuelle + (
+        parametres.allocation_isolement_mensuelle
+        if parametres.situation_foyer is SituationFoyer.SEUL else 0.0
+    )
+    toutes = tetes[TETES_TOUTES]
+    return GarantieDistribution(
+        distribution=distribution,
+        plancher_mensuel=plancher * macro.coefficient_prix(
+            parametres.annee_euros_garantie_vieillesse, millesime),
+        pension_reference=masses["actuel"] / toutes if toutes > 0.0 else 0.0,
+        effectif_par_tete=(
+            simulateur.effectifs.effectif("tous_regimes", millesime) / toutes
+            if toutes > 0.0 else 0.0
+        ),
+        vers_constants=macro.coefficient_prix(
+            millesime, parametres.annee_euros_constants),
+    )
 
 
 def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
@@ -1587,8 +1761,21 @@ def _ponderation(simulateur: Simulateur, mode: str,
     return poids
 
 
-def _rapports(masses: dict[str, float]) -> dict[str, float]:
-    return {cle: masses[cle] / masses["actuel"] for cle in CLES_MASSES}
+def _rapports(masses: dict[str, float], garantie: GarantieProjetee,
+              base_constants: float, part_derives: float) -> dict[str, float]:
+    """Le rapport de chaque masse à celle du système actuel, composante comprise.
+
+    Les six systèmes viennent de la grille. La composante vient de la
+    distribution, et son rapport est celui qui redonne son coût une fois
+    appliqué à la base par ``masse_du_scenario`` — qui ne multiplie que les
+    droits directs, la garantie n'ajoutant aucune réversion.
+    """
+    rapports = {scenario: masses[scenario] / masses["actuel"] for scenario, _ in SCENARIOS}
+    directe = base_constants * (1.0 - part_derives)
+    rapports[COMPOSANTE_GARANTIE] = (
+        garantie.cout_constants / directe if directe > 0.0 else 0.0
+    )
+    return rapports
 
 
 def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
@@ -1596,7 +1783,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             poids: Callable[[int], dict[str, float]],
             revalorisation: RevalorisationServie,
             reversion_servie: bool = False,
-            poids_cotisants: Callable[[int], dict[str, float]] | None = None) -> Avenir:
+            poids_cotisants: Callable[[int], dict[str, float]] | None = None,
+            garantie: GarantieDistribution | None = None) -> Avenir:
     """La trajectoire de la répartition, de la première année ventilée à l'horizon.
 
     Deux régimes, une seule formule. Jusqu'à la dernière année publiée, la base
@@ -1614,8 +1802,11 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     annee_euros = simulateur.parametres.annee_euros_constants
     derniere_publiee = depenses.derniere_annee
 
-    masses_ancrage, _ = _masses(pensionnes, population, derniere_publiee,
-                                poids(derniere_publiee), revalorisation)
+    masses_ancrage, _, _ = _masses(pensionnes, population, derniere_publiee,
+                                   poids(derniere_publiee), revalorisation)
+    if garantie is None:
+        garantie = _garantie_distribution(simulateur, pensionnes, population,
+                                          poids, revalorisation)
     if masses_ancrage["actuel"] <= 0.0:
         return Avenir()
     # L'ancrage est le prix, en euros constants de référence, d'une unité de la
@@ -1645,8 +1836,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     lignes: list[AvenirAnnuel] = []
     for annee in range(depenses.premiere_annee_ventilee, HORIZON + 1):
         poids_annee = poids(annee)
-        masses, _ = _masses(pensionnes, population, annee, poids_annee,
-                            revalorisation)
+        masses, _, tetes = _masses(pensionnes, population, annee, poids_annee,
+                                   revalorisation)
         if masses["actuel"] <= 0.0:
             continue
         cotisations = _masses_cotisations(pensionnes, population, annee,
@@ -1658,19 +1849,22 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             else depenses.repartition(annee) * coefficient
         )
         actifs = population.actifs(annee)
+        part_derives = depenses.part_droits_derives(annee)
+        projetee = garantie.chiffrer(masses, tetes)
         lignes.append(AvenirAnnuel(
             annee=annee,
             projete=projete,
             base=base,
             coefficient_constants=coefficient,
             pib=pib_projete.get(annee, depenses.pib(min(annee, derniere_pib))),
-            rapports=_rapports(masses),
+            rapports=_rapports(masses, projetee, base, part_derives),
+            garantie=projetee,
             dependance=population.effectif_tranche(
                 AGE_DEPENDANCE, population.age_maximal, annee) / actifs
             if actifs else 0.0,
             rapports_recettes=_rapports_recettes(
                 cotisations, annee, simulateur.parametres.annee_bascule),
-            part_derives=depenses.part_droits_derives(annee),
+            part_derives=part_derives,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
         ))
@@ -1830,20 +2024,31 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         HORIZON,
     )
 
+    # La garantie vieillesse ne se lit pas sur la grille mais sur la
+    # distribution des pensions ; la grille dit seulement de combien cette
+    # distribution bouge. Calée une fois, l'année de l'enquête.
+    garantie = _garantie_distribution(simulateur, pensionnes, population, poids,
+                                      revalorisation)
+
     lignes: list[CoutAnnuel] = []
     for annee in depenses.annees():
-        masses, vivants = _masses(pensionnes, population, annee, poids(annee),
-                                  revalorisation)
+        masses, vivants, tetes = _masses(pensionnes, population, annee, poids(annee),
+                                         revalorisation)
         if masses["actuel"] <= 0.0:
             continue
+        observee = depenses.depense(annee)
+        coefficient = macro.coefficient_prix(annee, annee_euros)
+        part_derives = depenses.part_droits_derives(annee)
+        projetee = garantie.chiffrer(masses, tetes)
         lignes.append(CoutAnnuel(
             annee=annee,
-            observee=depenses.depense(annee),
-            coefficient_constants=macro.coefficient_prix(annee, annee_euros),
+            observee=observee,
+            coefficient_constants=coefficient,
             part_pib=depenses.part_pib(annee),
-            rapports=_rapports(masses),
+            rapports=_rapports(masses, projetee, observee * coefficient, part_derives),
+            garantie=projetee,
             pensionnes=vivants,
-            part_derives=depenses.part_droits_derives(annee),
+            part_derives=part_derives,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
         ))
@@ -1853,7 +2058,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         default=Fiabilite.ESTIMEE,
     )
     avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
-                     revalorisation, reversion_servie, poids_cotisants)
+                     revalorisation, reversion_servie, poids_cotisants, garantie)
     solde = _solde(
         avenir, comptes, depenses.pib.derniere_annee, assiette,
         simulateur.parametres.taux_cotisation_liberal,
