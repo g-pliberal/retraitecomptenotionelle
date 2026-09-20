@@ -743,17 +743,22 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 
 | Système | Coût 2070 | Part du PIB 2070 | Cumul 2025-2070 | Écart |
 |---|---|---|---|---|
-| 1. Système actuel | 718 Md € | **19,4 %** | 25 864 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 223 Md € | 6,0 % | 7 640 Md € | −70,5 % |
-| 3. Notionnel dès 2026, part salariale | 309 Md € | **8,3 %** | 18 128 Md € | −29,9 % |
-| 4. Notionnel rétroactif, salariale + patronale | 497 Md € | 13,4 % | 18 135 Md € | −29,9 % |
-| 5. Notionnel dès 2026, salariale + patronale | 512 Md € | 13,8 % | 21 642 Md € | −16,3 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 381 Md € | 10,3 % | 16 125 Md € | −37,7 % |
+| 1. Système actuel | 714 Md € | **19,3 %** | 25 749 Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | 220 Md € | 5,9 % | 7 852 Md € | −69,5 % |
+| 3. Notionnel dès 2026, part salariale | 337 Md € | **9,1 %** | 19 039 Md € | −26,1 % |
+| 4. Notionnel rétroactif, salariale + patronale | 494 Md € | 13,3 % | 18 627 Md € | −27,7 % |
+| 5. Notionnel dès 2026, salariale + patronale | 526 Md € | 14,2 % | 22 225 Md € | −13,7 % |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 386 Md € | 10,4 % | 16 802 Md € | −34,7 % |
+
+Chiffres du 20 septembre 2026 : l'emploi projeté suit le scénario de référence
+du COR pour les systèmes 2 à 6, et les pensions déjà servies à la bascule
+gardent les prix (actions 46 et 48 de la feuille de route). Le site ne compare
+plus que quatre de ces six systèmes ; le modèle calcule toujours les six.
 
 Trois choses à lire dans ce tableau.
 
 **Le système actuel monte, et le contrôle externe s'est dégradé deux fois.** Il
-passe de 13,6 % du PIB en 2024 à 19,4 % en 2070, alors que le nombre de
+passe de 13,6 % du PIB en 2024 à 19,3 % en 2070, alors que le nombre de
 personnes de 65 ans ou plus rapporté aux 20-64 ans passe de 0,39 à 0,62. Le COR,
 qui projette la même grandeur avec un modèle de population complet, trouve
 **13,9 % en 2024 et 14,2 % en 2070** (rapport annuel de juin 2025). L'écart
@@ -783,11 +788,11 @@ reste — le taux de remplacement du modèle ne recule pas, celui du COR recule.
 
 **Une réforme prospective met une génération à produire son effet.** Le scénario
 3 ne fait rien économiser en 2026 — les droits acquis sont conservés —, et
-10,9 points de PIB en 2070. Décider vite ne fait pas économiser vite ; cela fait
+10,2 points de PIB en 2070. Décider vite ne fait pas économiser vite ; cela fait
 économiser longtemps.
 
 **L'écart entre 3 et 5 mesure encore une seule chose** : ce que verse
-l'employeur. Le scénario 5 économise cinq points et demi de PIB de moins que le
+l'employeur. Le scénario 5 économise cinq points de PIB de moins que le
 scénario 3, parce que son compte est alimenté par la cotisation entière.
 
 Ce que la projection suppose est écrit sur la page et dans
@@ -820,11 +825,11 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +8,78 % | +7,49 % | 2,27 |
-| 3. Notionnel dès 2026, part salariale | −1,32 % | +1,01 % | **1,62** |
-| 4. Notionnel rétroactif, salariale + patronale | +2,95 % | +1,00 % | 1,02 |
-| 5. Notionnel dès 2026, salariale + patronale | −1,33 % | −0,93 % | 0,99 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +2,95 % | **−0,88 %** | **1,00** |
+| 2. Notionnel rétroactif, part salariale | +8,97 % | +7,78 % | 2,50 |
+| 3. Notionnel dès 2026, part salariale | −1,34 % | +1,32 % | **1,64** |
+| 4. Notionnel rétroactif, salariale + patronale | +3,58 % | +1,74 % | 1,12 |
+| 5. Notionnel dès 2026, salariale + patronale | −1,34 % | −0,34 % | 1,05 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +3,59 % | **−1,93 %** | **0,89** |
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -859,7 +864,7 @@ de chômage ; leur coefficient ne compte donc pas ces recettes : elles leur
 sont retirées, année par année de 2013 à 2024, à part constante des ressources
 avant et sur tout l'horizon projeté. C'est pourquoi les scénarios 3 et 5 sont
 déjà en déficit en 2025, où ils servent encore les pensions du système actuel,
-et pourquoi le scénario 3 vaut 1,62 en 2070 et non 1,94. Le système actuel,
+et pourquoi le scénario 3 vaut 1,64 en 2070 et non 1,79. Le système actuel,
 lui, encaisse tout, et son solde reste celui du COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
@@ -870,11 +875,13 @@ le plafond, chiffre que le COR publie dans son rapport annuel et que le modèle
 retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
 dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
 77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
-change le sens du tableau pour ce scénario : son excédent moyen passe de
-+2,11 % du PIB à −0,88 %, et son coefficient de 2070 de 1,29 à 1,00. Il est le
-seul des trois systèmes rétroactifs à ne pas afficher de marge, et il reste
-au-dessus du système actuel, qui est à −1,13 % — d'un quart de point, non plus
-d'un point et quart. Les quatre autres scénarios notionnels ne changent que ce qui
+change le sens du tableau pour ce scénario : son solde moyen passe de
+−0,96 % du PIB à −1,93 %, et son coefficient de 2070 de 1,00 à 0,89. Il est le
+seul des trois systèmes rétroactifs à ne pas afficher de marge, et il passe
+sous le système actuel, qui est à −1,13 % — de huit dixièmes de point. Ce
+déficit est le coût de transition du taux unique : pendant trente ans, la
+caisse paie les pensions de l'ancien système avec dix points de cotisation en
+moins, et aucune règle d'indexation ne le règle. Les quatre autres scénarios notionnels ne changent que ce qui
 est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans
 tous les cas, et leur recette ne bouge pas.
 
@@ -887,7 +894,8 @@ système de retraite y prélève aujourd'hui 32,8 % de ressources en tout ; la
 proposition en prélèverait 18. Le modèle sait aussi calculer la lecture
 inverse, où les 18 % subissent la même déperdition que les taux légaux
 d'aujourd'hui — allègements généraux, assiettes réduites : le scénario 6 y
-serait déficitaire de 1,72 % du PIB. Cette lecture suppose que la proposition
+serait déficitaire de 1,72 % du PIB, mesuré le 19 septembre 2026, avant que
+l'emploi projeté et le stock de la bascule ne changent. Cette lecture suppose que la proposition
 garde la même architecture d'exonérations, ce que son texte ne dit pas ;
 `docs/limites.md` §5 dit ce qui sépare les deux.
 

@@ -8265,6 +8265,14 @@ inscrire dans le manifeste. Onze tests de plus, sans réseau.
   l'horizon bouge. Ce qui reste du déficit de la proposition en 2039, 1,27
   point de PIB, est le coût de transition du 18 %, et c'est l'action 11 qui
   l'attend.
+- **20 septembre 2026, relecture.** Le § 4 du README portait les tableaux de
+  la page Coût d'avant les actions 46 et 48, et déjà d'avant les actions
+  précédentes : personne ne les recompte, à la différence du bloc d'exemple
+  du § 3. Ils sont remis aux chiffres du jour et datés. Et le tableau « par
+  horizon » de la page Coût titrait ses colonnes « Notionnel dès 2026 » quand
+  il montre, depuis l'action 31, le compte notionnel à deux parts et la
+  proposition : les en-têtes disent désormais ce que les colonnes portent, sur
+  les deux moteurs.
 
 ### 46. L'emploi projeté suit le scénario de référence du COR, pour les systèmes 2 à 6 — `fait`
 

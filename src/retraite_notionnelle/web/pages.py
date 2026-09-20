@@ -7214,7 +7214,7 @@ rétroactive, et c'est elle qu'il s'agit de chiffrer.</p>
 <h4>Ce qui pousse la dépense, et ce qui la retient</h4>
 {g.tableau(
     ["Horizon", "65 ans et plus par 20-64 ans", "Système actuel",
-     f"Notionnel dès {bascule}", f"Notionnel dès {bascule}, avec l'employeur"],
+     "Compte notionnel, les deux parts", "La proposition libérale"],
     horizons,
     ["", "nombre", "nombre", "nombre", "nombre"],
     titre="Dépendance démographique et part de la dépense dans le PIB, par horizon",
