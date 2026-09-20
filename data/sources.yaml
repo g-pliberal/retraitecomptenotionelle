@@ -3453,6 +3453,94 @@ institutions:
           15 % de rente au diviseur du modèle — quatre à sept fois les 2,20 %
           d'arrérages. Il ne publie aucune médiane.
 
+  ici:
+    nom: Investment Company Institute
+    role: >-
+      L'association des fonds américains : la seule série de frais sur
+      trente ans, pondérée par les encours, sur un marché où seule la
+      concurrence a joué.
+    jeux:
+      - id: ici_trends_fees_2025
+        titre: Trends in the Expenses and Fees of Funds, 2025 (ICI Research Perspective, mars 2026)
+        url: https://www.ici.org/files/2026/per32-01.pdf
+        acces: document
+        statut_integration: controle
+        millesime: 1996-2025
+        note: >-
+          Aucune valeur du modèle n'en sort. Elle CONTRÔLE la trajectoire du
+          frais de gestion du pilier (`Parametres.frais_gestion_paliers`) :
+          « In 1996, equity mutual fund investors incurred expense ratios of
+          1.04% […] By 2025, that average had fallen to 0.40% », pondéré par
+          les encours, soit 62 % de baisse en vingt-neuf ans, 3,3 % par an ;
+          dans les plans 401(k), de 0,76 % en 2000 à 0,26 % en 2024. C'est le
+          rythme que les paliers du modèle suivent, par marches de dix ans.
+          Lu sur le document le 20 septembre 2026.
+
+  dwp:
+    nom: Department for Work and Pensions (Royaume-Uni)
+    role: >-
+      L'enquête sur les frais des régimes à cotisations définies, avant et
+      après le plafond de 0,75 % d'avril 2015 : ce qu'un plafond fait au
+      stock, d'un coup.
+    jeux:
+      - id: dwp_pension_charges_survey_2020
+        titre: Pension charges survey 2020, charges in defined contribution pension schemes
+        url: https://www.gov.uk/government/publications/pension-charges-survey-2020-charges-in-defined-contribution-pension-schemes/pension-charges-survey-2020-charges-in-defined-contribution-pension-schemes
+        acces: page
+        statut_integration: controle
+        millesime: 2015, 2016, 2020
+        note: >-
+          Aucune valeur du modèle n'en sort. Elle CONTRÔLE la convergence du
+          stock (`Parametres.convergence_frais_stock`) et le niveau qu'un
+          plafond impose : frais moyens des régimes soumis au plafond de 0,75 %
+          de 0,49 % en 2015, 0,50 % en 2016 et 0,48 % en 2020 (0,29 % dans les
+          régimes fiduciaires), « all members in the qualifying schemes […]
+          are now below the cap » ; les régimes non soumis passent de 0,79 %
+          à 0,53 %. Un plafond touche tout le stock d'un coup, et la baisse
+          s'arrête là. Lu le 20 septembre 2026.
+
+  superintendencia_pensiones:
+    nom: Superintendencia de Pensiones (Chili)
+    role: >-
+      L'autorité du système chilien de capitalisation obligatoire, qui adjuge
+      tous les deux ans les nouveaux entrants à la caisse la moins chère :
+      la baisse la plus brutale observée, et sa réversibilité.
+    jeux:
+      - id: sp_licitacion_2025_2027
+        titre: >-
+          Adjudications de la cartera de nuevos afiliados, 2023-2025 et
+          2025-2027 (communiqués)
+        url: https://www.spensiones.cl/portal/institucional/594/w3-article-16290.html
+        acces: page
+        statut_integration: controle
+        millesime: 2010-2025
+        note: >-
+          Aucune valeur du modèle n'en sort. Elle CONTRÔLE la forme des
+          paliers : une adjudication est une marche, pas une pente. AFP Uno
+          adjudicataire à 0,46 % de la rémunération imposable pour 2025-2027,
+          après 0,49 % pour 2023-2025 (Modelo offrait 0,57 %) ; « la comisión
+          más baja del sistema » était de 1,36 % avant la première
+          adjudication de 2010, à 0,41 % au plus bas. Lu le 20 septembre 2026.
+      - id: bcn_comisiones_afp_2018
+        titre: >-
+          Bibliothèque du Congrès national du Chili, « Comisiones, rentabilidad
+          y dinámica de competencia de las AFP », 2018
+        url: https://obtienearchivo.bcn.cl/obtienearchivo?id=repositorio/10221/26900/1/Comisiones__rentabilidad_y_dinamica_de_competencia_de_las_AFP.pdf
+        acces: document
+        statut_integration: controle
+        millesime: 1990-2018
+        note: >-
+          Aucune valeur du modèle n'en sort. Elle CONTRÔLE deux choses. La
+          suite des adjudications : Modelo à 1,14 % de juillet 2010 à juillet
+          2012 puis 0,77 %, Planvital à 0,47 % d'août 2014 à juillet 2016
+          puis 0,41 % jusqu'en juillet 2018 ; la commission moyenne pondérée
+          du système tombe à 1,14 % en juillet 2018. Et la réversibilité : « en
+          agosto de 2018 la comisión promedio ponderada ha vuelto a aumentar,
+          a causa del incremento de la comisión de la AFP Planvital desde el
+          0,47% hasta el 1,16% », dès qu'elle a cessé d'être adjudicataire. Le
+          modèle ne fait jamais remonter un frais, et limites.md le dit. Lu
+          sur le document le 20 septembre 2026.
+
   frr:
     nom: Fonds de réserve pour les retraites
     role: >-
@@ -3503,7 +3591,24 @@ institutions:
           relève la pension de 15 % ; l'administration coûte 0,024 % des
           encours, plafonnée à 157 couronnes par an. Ni frais sur versement,
           ni frais sur arrérages. Lu le 20 septembre 2026. Le tiers du niveau
-          que le modèle retient pour la seule gestion.
+          que le modèle retient pour la seule gestion l'année de la bascule,
+          et la moitié de son plancher de 2066.
+      - id: premiepension_rabattmodell_2014
+        titre: >-
+          « Förändrad rabattmodell sänker högsta fondavgifterna », communiqué
+          de Pensionsmyndigheten, 3 septembre 2014
+        url: https://news.cision.com/se/pensionsmyndigheten/r/forandrad-rabattmodell-sanker-hogsta-fondavgifterna,c9637327
+        acces: page
+        statut_integration: controle
+        millesime: 2013-2015
+        note: >-
+          Aucune valeur du modèle n'en sort. Elle CONTRÔLE la trajectoire
+          suédoise, la plus basse observée : frais moyen de 0,92 % avant
+          remise et 0,31 % après en 2013 ; plafonds nets de 0,42 % (fonds de
+          taux) et 0,80 % (autres) au 1er janvier 2015. Avec 0,21 % en 2020,
+          0,13 % en 2022 et 0,11 % en 2026 (jeu précédent), la série dit une
+          baisse par décisions successives, pas en pente. Lu le 20 septembre
+          2026.
 
   institutions:
     nom: Sites des institutions dont le régime n'est dans aucun texte de l'index

@@ -16,14 +16,17 @@
 # figurent pas : il n'y a pas d'arbitrage dans une allocation qui suit une règle
 # d'horizon, et aucun versement n'est arbitré d'un support à l'autre.
 #
-# CE QUE CES VALEURS NE SONT PAS. Ce sont les frais du PER TEL QU'IL EST VENDU
-# AUJOURD'HUI, à des souscripteurs volontaires, contrat par contrat. Un pilier
-# obligatoire n'aurait ni la même collecte, ni les mêmes coûts d'acquisition —
-# la commission du réseau qui place le contrat est l'essentiel du frais sur
-# versement, et elle n'a pas d'objet quand la cotisation est obligatoire. Les
-# retenir tels quels est donc une borne HAUTE, assumée comme telle : elle dit ce
-# que la proposition coûterait si rien ne bougeait dans la tarification. La page
-# Méthode le dit, et le paramètre se change en un endroit.
+# CE QUE CES VALEURS SONT. Les frais du PER TEL QU'IL EST VENDU en 2025, à
+# des souscripteurs volontaires, contrat par contrat, aux vraies moyennes du
+# marché : c'est le point de départ du calcul, l'année de la bascule. Un
+# pilier obligatoire n'aurait ni la même collecte, ni les mêmes coûts
+# d'acquisition — la commission du réseau qui place le contrat est l'essentiel
+# du frais sur versement, et elle n'a pas d'objet quand la cotisation est
+# obligatoire. Le calcul ne le décrète pas d'emblée : il part du marché, et
+# fait baisser chaque poste par paliers, au rythme et vers les niveaux que
+# d'autres marchés ont atteints (bloc suivant, et `paliers` sur chaque poste).
+# Les paliers sont une hypothèse, datée et sourcée ; les valeurs de départ
+# sont une mesure.
 #
 # CE QUE LE RAPPORT LUI-MÊME AJOUTE, lu le 20 septembre 2026 (tableaux T5 à
 # T7, pages 35 à 38 du rapport 2026) :
@@ -60,11 +63,12 @@
 # Aucune de ces enveloppes ne prélève de frais sur versement, ni sur arrérages.
 #
 # SENSIBILITÉ, mesurée sur le modèle le 20 septembre 2026 pour une carrière
-# entière cotisée après la bascule (né en 2004, 22-64 ans, non-cadre) : sans
-# aucun frais la rente serait supérieure de 22 % ; avec 0,20 % de gestion et
-# les deux autres postes inchangés, de 13 % ; sans frais sur versement seul,
-# de 1 %. Le frais de gestion est le poste qui compte, parce qu'il s'applique
-# chaque année à tout l'encours. docs/limites.md §5 ante donne le tableau.
+# entière cotisée après la bascule (né en 2004, 22-64 ans, non-cadre), réglage
+# retenu en référence : figer les moyennes de 2025 sans aucune baisse coûte
+# 14 % de rente ; l'ancien réglage (2,20 % d'arrérages, pas de frais sur la
+# réserve, rien ne baisse) servait 8 % de moins ; un stock qui garde son tarif
+# coûte 3 %, un stock qui suit tout rend 2 % ; sans aucun frais, la rente
+# serait supérieure de 13 %. docs/limites.md §5 ante donne les tableaux.
 #
 # NIVEAU DE FIABILITÉ. `haute`, et non `certifiee` : les trois valeurs ont été
 # SAISIES depuis la reprise du rapport par la presse spécialisée, puis
@@ -81,11 +85,65 @@ publication: Rapport annuel 2026 de l'Observatoire des produits d'épargne finan
 fiabilite: haute
 confronte_au_document_le: "2026-09-20"
 
+# CE QUE LE CALCUL RETIENT, ET COMMENT IL LE FAIT BOUGER
+# --------------------------------------------------------
+# Chaque poste porte deux valeurs et une trajectoire. `valeur` est ce que la
+# source publie. `valeur_retenue` est ce que le calcul applique l'année de la
+# bascule : la publiée, sauf pour les arrérages, où la publiée est la moyenne
+# des seuls facturants et la retenue la moyenne sur tous les déclarants (voir
+# `distributions`). `paliers` dit comment le poste baisse ensuite : de l'année
+# du palier au suivant, ce taux ; avant le premier palier, la valeur retenue.
+# Un quatrième poste, `encours_rente`, n'est pas dans le rapport de l'OPEF :
+# il vient du CCSF, et il est estimé.
+#
+# POURQUOI DES PALIERS QUI BAISSENT. Partout où une épargne retraite
+# obligatoire existe, les frais sont tombés bien au-dessous de ceux d'un
+# produit vendu au détail, et par à-coups plutôt qu'en pente (sources dans
+# data/sources.yaml, jeux `controle`) :
+# - Royaume-Uni : plafond de 0,75 % sur les fonds par défaut en avril 2015 ;
+#   0,48 % constatés en 2020 sur les régimes concernés, 0,29 % dans les
+#   régimes fiduciaires (enquête du DWP).
+# - Chili : depuis 2010, les nouveaux entrants sont adjugés tous les deux ans
+#   à l'AFP la moins chère ; la commission du gagnant passe de 1,14 % du
+#   salaire (2010) à 0,77 % (2012), 0,47 % (2014), 0,41 % (2016), remonte à
+#   0,69 % (2018), puis 0,58 %, 0,49 %, 0,46 % (2025), contre 1,36 % avant.
+# - Suède : remise imposée aux gérants de la prime de pension ; frais moyen
+#   net de 0,31 % en 2013, 0,21 % en 2020, 0,13 % en 2022, 0,11 % en 2026.
+# - États-Unis, où seule la concurrence joue : le frais moyen des fonds
+#   actions, pondéré par les encours, passe de 1,04 % en 1996 à 0,40 % en
+#   2025, soit 3,3 % de baisse par an ; dans les plans 401(k), de 0,76 % en
+#   2000 à 0,26 % en 2024.
+# - France, OPEF : en deux ans, le frais sur versement du PER passe de 1,20 %
+#   à 1,09 % et celui de l'assurance-vie de 0,75 % à 0,55 %, quand le frais de
+#   gestion, mesuré sur tout l'encours, ne bouge pas (0,73, 0,77, 0,76 %).
+#
+# CE QUE LES PALIERS RETENUS SUPPOSENT. Le frais de gestion suit le rythme
+# américain, le seul observé sur trente ans, par marches de dix ans, jusqu'au
+# plancher que l'ERAFP retient pour ses propres frais (0,20 %). Le frais sur
+# versement rejoint en cinq ans l'assurance-vie d'aujourd'hui, en dix le
+# contrat de capitalisation, en vingt zéro, comme partout où la cotisation est
+# prélevée sur la paie. Le frais sur arrérages, dont la médiane est déjà
+# nulle, s'éteint en vingt ans. Le frais sur la réserve de rente suit le
+# rythme du frais de gestion, dont il est l'équivalent pendant la rente.
+#
+# LA BAISSE PORTE SUR LES NOUVEAUX DÉPÔTS, ET UN PEU SUR LE STOCK. Un frais de
+# gestion est contractuel : chaque versement entre au tarif de son année et le
+# garde ; les cohortes placées ne rejoignent le tarif du jour qu'à raison de
+# `convergence_frais_stock` de l'écart par an (0,10 dans `Parametres` : la
+# moitié de l'écart en sept ans). Zéro serait le contrat privé qu'on ne
+# renégocie pas ; un, le plafond réglementaire qui touche tout le stock d'un
+# coup. La rente garde les frais de l'année où elle est souscrite.
+
 # Tous en fraction de l'assiette indiquée.
 frais:
 
   versement:
     valeur: 0.0109
+    valeur_retenue: 0.0109
+    paliers:
+      - {annee: 2031, taux: 0.0055, repere: l'assurance-vie de 2025}
+      - {annee: 2036, taux: 0.0019, repere: le contrat de capitalisation de 2025}
+      - {annee: 2046, taux: 0.0, repere: une cotisation prélevée sur la paie}
     assiette: chaque versement
     libelle: Frais sur versement, support en euros
     note: >-
@@ -96,6 +154,12 @@ frais:
 
   gestion:
     valeur: 0.0076
+    valeur_retenue: 0.0076
+    paliers:
+      - {annee: 2036, taux: 0.0054, repere: 3,3 % de baisse par an pendant dix ans, le rythme américain}
+      - {annee: 2046, taux: 0.0039, repere: idem}
+      - {annee: 2056, taux: 0.0028, repere: idem}
+      - {annee: 2066, taux: 0.0020, repere: le plancher que l'ERAFP retient}
     assiette: encours, par an
     libelle: Frais de gestion annuels sur encours, support en euros
     note: >-
@@ -106,14 +170,38 @@ frais:
 
   arrerages:
     valeur: 0.0220
+    valeur_retenue: 0.0099
+    paliers:
+      - {annee: 2036, taux: 0.0050, repere: la moitié du marché ne facture déjà rien}
+      - {annee: 2046, taux: 0.0, repere: aucun régime obligatoire n'en prélève}
     assiette: chaque arrérage de rente
     libelle: Frais sur arrérages de la rente viagère
     note: >-
-      Moyenne 2025, en hausse d'un point de base. C'est le prélèvement de
-      l'assureur sur chaque versement de rente ; il réduit la rente servie
-      d'autant, et non le capital qui la constitue. Moyenne NON PONDÉRÉE des 9
-      organismes qui facturent ces frais, sur 20 déclarants : les onze autres
-      ne prélèvent rien sur la rente.
+      Moyenne 2025 publiée, en hausse d'un point de base : moyenne NON
+      PONDÉRÉE des 9 organismes qui facturent ces frais, sur 20 déclarants. Le
+      calcul retient la moyenne sur les vingt, les onze autres prélevant zéro :
+      0,99 %. C'est le prélèvement de l'assureur sur chaque versement de
+      rente ; il réduit la rente servie d'autant, et non le capital qui la
+      constitue.
+
+  encours_rente:
+    valeur: 0.0052
+    valeur_retenue: 0.0052
+    paliers:
+      - {annee: 2036, taux: 0.0037, repere: le rythme du frais de gestion}
+      - {annee: 2046, taux: 0.0027, repere: idem}
+      - {annee: 2056, taux: 0.0019, repere: idem}
+      - {annee: 2066, taux: 0.0014, repere: idem}
+    assiette: réserve de la rente, par an
+    libelle: Frais de gestion annuels sur l'encours de rente
+    note: >-
+      ESTIMÉ, et non publié : le rapport du CCSF de 2021 relève que 22
+      contrats sur 34 prélèvent des frais sur encours de rentes, de 0,60 à 1 %
+      par an, sans en donner la moyenne. 0,80 % au milieu de la fourchette,
+      sur 22/34 des contrats, font 0,52 %. Ce frais s'applique chaque année à
+      la réserve qui porte la rente ; au diviseur du modèle et à taux
+      technique nul, 0,52 % par an valent 8 % de rente en moins, quatre fois
+      l'effet des arrérages retenus. L'OPEF ne le mesure pas.
 
 # CE QUE VALENT CES MOYENNES, ET CE QU'ON SAIT DES MÉDIANES
 # ----------------------------------------------------------

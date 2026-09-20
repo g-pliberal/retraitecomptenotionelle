@@ -25,10 +25,18 @@ class Frais:
     """Un poste de frais, sa valeur et ce sur quoi il est prélevé."""
 
     cle: str
+    #: La valeur publiée par la source, telle qu'elle la publie.
     valeur: float
+    #: La valeur que le calcul retient l'année de la bascule : la publiée, sauf
+    #: quand le fichier en corrige la portée (les arrérages, moyenne des seuls
+    #: facturants, sont ramenés à la moyenne sur tous les déclarants).
+    valeur_retenue: float
     assiette: str
     libelle: str
     note: str
+    #: Les paliers ``(année, taux)`` de la trajectoire retenue, après l'année
+    #: de la bascule. Vide : le poste ne bouge pas.
+    paliers: tuple[tuple[int, float], ...] = ()
 
 
 class FraisEpargneRetraite:
@@ -59,9 +67,14 @@ class FraisEpargneRetraite:
             cle: Frais(
                 cle=cle,
                 valeur=float(poste["valeur"]),
+                valeur_retenue=float(poste.get("valeur_retenue", poste["valeur"])),
                 assiette=str(poste["assiette"]),
                 libelle=str(poste["libelle"]),
                 note=" ".join(str(poste.get("note", "")).split()),
+                paliers=tuple(
+                    (int(palier["annee"]), float(palier["taux"]))
+                    for palier in poste.get("paliers", ())
+                ),
             )
             for cle, poste in self._contenu["frais"].items()
         }
@@ -71,3 +84,9 @@ class FraisEpargneRetraite:
 
     def valeur(self, cle: str) -> float:
         return self.postes[cle].valeur
+
+    def valeur_retenue(self, cle: str) -> float:
+        return self.postes[cle].valeur_retenue
+
+    def paliers(self, cle: str) -> tuple[tuple[int, float], ...]:
+        return self.postes[cle].paliers

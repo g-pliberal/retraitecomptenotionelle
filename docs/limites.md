@@ -6001,25 +6001,27 @@ courbe de personne — et c'est la raison pour laquelle le fichier de référenc
 garde les courbes successives : un chiffre publié doit pouvoir être refait tel
 qu'il a été publié.
 
-**3. Les frais sont ceux d'un produit vendu à des volontaires.** 1,09 % sur
-versement, 0,76 % par an sur encours, 2,20 % sur arrérages : ce sont les
-moyennes 2025 du PER individuel tel qu'il est commercialisé, lues le
-20 septembre 2026 sur le rapport de l'OPEF lui-même (tableau T7), qui
-confirme la saisie faite depuis la presse. Une cotisation obligatoire n'a pas
-de réseau à rémunérer, et les frais d'un pilier obligatoire seraient
-vraisemblablement inférieurs. Le modèle retient donc une **borne haute**, qui
-sous-estime la rente. Trois choses que le rapport dit, et qui situent cette
-borne :
+**3. Les frais sont ceux du marché, et leur baisse est une hypothèse.** Le
+pilier supporte quatre frais, aux vraies moyennes du marché du PER individuel
+en 2025, lues sur le rapport de l'OPEF (tableau T7) et sur celui du CCSF de
+2021 : 1,09 % sur versement et 0,76 % par an sur encours, moyennes pondérées
+par les primes et par l'encours ; 0,99 % sur arrérages, moyenne sur les vingt
+assureurs déclarants et non sur les seuls neuf qui facturent (2,20 %) ; et
+0,52 % par an sur la réserve de la rente, que l'OPEF ne mesure pas et que le
+CCSF relevait sur 22 contrats sur 34, de 0,60 à 1 % par an, estimé au milieu
+de la fourchette sur la part des contrats qui facturent. Ce dernier frais pèse
+plus que les arrérages : 8 % de rente au diviseur du modèle. Trois choses que
+ces sources disent sur ce que les moyennes sont :
 
 - Le frais sur versement du PER (1,09 %) est le double de celui de
   l'assurance-vie (0,55 %) et six fois celui du contrat de capitalisation
   (0,19 %), pour les mêmes assureurs et les mêmes fonds en euros. L'OPEF
   l'explique par des frais fixes qui pèsent sur des primes petites. Une
   cotisation prélevée sur chaque paie n'a pas cette structure de coût.
-- La moyenne des frais sur arrérages est **non pondérée** et ne porte que sur
-  les 9 organismes, sur 20, qui les facturent : onze assureurs sur vingt ne
-  prélèvent rien sur la rente. Le 2,20 % est la moyenne de ceux qui facturent,
-  pas celle du marché.
+- La moyenne des frais sur arrérages publiée est **non pondérée** et ne porte
+  que sur les 9 organismes, sur 20, qui les facturent : onze assureurs sur
+  vingt ne prélèvent rien sur la rente. Le 2,20 % est la moyenne de ceux qui
+  facturent, le 0,99 % celle du marché, et la médiane est nulle.
 - Le frais de gestion du fonds en euros est le poste qui compte, parce qu'il
   s'applique chaque année à tout l'encours, et c'est celui qu'un régime
   obligatoire fait le plus baisser : la prime de pension suédoise, seul pilier
@@ -6030,61 +6032,79 @@ borne :
   provisionne « au moins 0,2 % des encours ». Aucun ne prélève sur les
   versements ni sur les arrérages.
 
-La taille du biais se mesure sur le modèle. Rente mensuelle du pilier, les
-deux cotisations réunies, pour un non-cadre né en 2004 qui cotise de 22 à
-64 ans, donc toute sa carrière après la bascule (le 20 septembre 2026, courbe
-du 17, diviseur par niveau de vie) :
-
-| Barème de frais (versement / gestion / arrérages) | Rente | Écart |
-|---|---|---|
-| PER individuel 2025, retenu : 1,09 / 0,76 / 2,20 | 1 665 € | référence |
-| sans frais sur versement : 0 / 0,76 / 2,20 | 1 684 € | + 1 % |
-| ordre d'un PER d'entreprise : 0 / 0,50 / 1,50 | 1 794 € | + 8 % |
-| gestion ramenée à 0,20 % : 1,09 / 0,20 / 2,20 | 1 883 € | + 13 % |
-| ordre d'un fonds public : 0 / 0,15 / 0,50 | 1 958 € | + 18 % |
-| aucun frais | 2 035 € | + 22 % |
-
-Pour un assuré né en 1985, qui n'a que la moitié de sa carrière après la
-bascule, l'écart entre le barème retenu et l'absence de frais tombe à 14 % ;
-né en 1970, à 7 %. Sur le total servi par le scénario 6, dont le pilier pèse
-au plus deux cinquièmes, le barème déplace donc jusqu'à huit ou neuf points.
-Le sens est connu, la taille est encadrée, et le choix reste celui du
-paramètre : les trois frais se changent en un endroit
-(`frais_*_capitalisation` dans `Parametres`).
-
 **Ce que ces moyennes sont, et ce qu'on sait des médianes.** Les frais sur
 versement et de gestion de l'OPEF sont des moyennes **pondérées** de tout le
 marché remis à l'ACPR, par les primes pour le premier, par l'encours moyen pour
 le second : un euro versé ou placé y pèse un euro, ce sont les vraies moyennes
-de ce qui est payé. Les frais sur arrérages sont une moyenne **non pondérée
-des seuls organismes qui facturent**. Aucune source publique ne donne de
-médiane pour les deux premiers ; la seule autre mesure du même marché est le
-rapport du CCSF de juillet 2021, sur 34 PER assurance et leurs tarifs affichés,
-en moyennes arithmétiques non pondérées. Ce que l'on a, le 20 septembre 2026 :
+de ce qui est payé. Aucune source publique ne donne de médiane pour ces deux
+postes ; la seule autre mesure du même marché est le rapport du CCSF de
+juillet 2021, sur 34 PER assurance et leurs tarifs affichés, en moyennes
+arithmétiques non pondérées. Ce que l'on a, le 20 septembre 2026 :
 
 | Poste | OPEF 2025, marché | Sur tous les déclarants | Médiane | CCSF 2021, 34 contrats affichés |
 |---|---|---|---|---|
 | Versement | 1,09 %, pondéré par les primes | idem | non publiée | maximum affiché 3,18 % en moyenne, 0 à 5 %, courtiers en ligne à 0 |
 | Gestion, fonds en euros | 0,76 %, pondéré par l'encours | idem | non publiée, entre 0,75 et 0,90 % à en juger par la dispersion | 0,87 % en moyenne, 0,60 à 1 % hors un fonds à 2 %, 0,66 à 0,93 % par catégorie |
 | Arrérages | 2,20 %, non pondéré, 9 facturants sur 20 | 0,99 % | nulle, onze déclarants sur vingt à zéro | 1,18 % zéros compris sur 30 contrats, 0 à 3 %, onze à zéro, 0,60 % (banques) à 2,30 % (mutuelles) |
+| Réserve de rente | non mesuré | non mesuré | non publiée | 22 contrats sur 34 facturent, de 0,60 à 1 % par an |
 
-Les 2,20 % retenus sont donc, pour les arrérages, le tarif de ceux qui font
-payer, non celui du marché : la moyenne sur tous les déclarants est 0,99 %, la
-médiane est nulle, et le CCSF trouvait 1,18 % zéros compris. Sur la rente,
-l'écart entre 2,20 % et 0,99 % vaut 1,2 %.
+**La baisse des frais, et ce qu'elle suppose.** Le modèle fait baisser chaque
+poste par paliers (`Parametres.frais_*_paliers`), parce que c'est ainsi que
+les frais ont bougé partout où une épargne retraite obligatoire a mis les
+gérants sous plafond ou en concurrence, et les sources de chaque marche sont
+des jeux `controle` du manifeste :
 
-**Un frais que le modèle ne compte pas, et qui pèse davantage.** Le CCSF
-relève que « 22 contrats affichent également des frais sur encours de rentes,
-avec un minimum de 0,60 % et un maximum de 1 % par an » : un prélèvement
-annuel sur la réserve qui porte la rente, distinct des arrérages, que l'OPEF ne
-mesure pas. Sur la table du modèle, à taux technique nul, il équivaut à une
-rente réduite de 9 % (0,60 %) à 15 % (1 %), pour toutes les générations, soit
-quatre à sept fois l'effet des 2,20 % d'arrérages. Le modèle ne le retient
-pas, comme il ne retient pas la table de mortalité prudente d'un assureur ni
-son taux technique : sa rente est celle d'un régime qui convertit au diviseur
-du compte notionnel, et le PER n'est que l'enveloppe. Si le pilier devait être
-servi par un assureur aux conditions de 2021, c'est ce frais-là, et non les
-arrérages, qui ferait la différence.
+| Marché | Mécanisme | Ce qui s'est passé |
+|---|---|---|
+| Royaume-Uni | plafond de 0,75 % sur les fonds par défaut, avril 2015 | 0,48 % en moyenne en 2020 sur les régimes concernés, 0,29 % dans les régimes fiduciaires ; les régimes hors plafond passent de 0,79 % à 0,53 % |
+| Chili | adjudication des nouveaux entrants tous les deux ans, depuis 2010 | commission du gagnant : 1,14 %, 0,77 %, 0,47 %, 0,41 %, puis 0,69 % en 2018, 0,58 %, 0,49 %, 0,46 % en 2025 ; 1,36 % avant ; un gagnant a remonté de 0,47 à 1,16 % une fois libre |
+| Suède | remise imposée aux gérants de la prime de pension, plafonds en 2015 et 2021 | frais moyen net de 0,31 % en 2013, 0,21 % en 2020, 0,13 % en 2022, 0,11 % en 2026 ; 0,45 % sans la remise |
+| États-Unis | concurrence seule | fonds actions, pondérés par les encours : 1,04 % en 1996, 0,40 % en 2025, 3,3 % de baisse par an ; plans 401(k) : 0,76 % en 2000, 0,26 % en 2024 |
+| Australie | produit par défaut MySuper, 2014 ; test de performance, 2021 | frais MySuper de 1,05 % à 1,00 % en 2023, « la plus forte baisse depuis 2014 » ; plus lent que les autres |
+| France | concurrence des courtiers en ligne, transfert des PER | frais sur versement, mesuré sur les primes de l'année : PER 1,20 % → 1,09 %, assurance-vie 0,75 % → 0,55 % en deux ans ; frais de gestion, mesuré sur tout l'encours : 0,73, 0,77, 0,76 % |
+
+Trois leçons, et le modèle les tient. **La baisse va par à-coups**, une
+décision puis un plateau, d'où des paliers plutôt qu'une pente : le frais de
+gestion suit le rythme américain, le seul observé sur trente ans, par marches
+de dix ans (0,76, 0,54, 0,39, 0,28, 0,20 % en 2066, le plancher de l'ERAFP) ;
+le frais sur versement rejoint l'assurance-vie de 2025 en 2031, le contrat de
+capitalisation en 2036, zéro en 2046 ; le frais sur arrérages, dont la médiane
+est déjà nulle, s'éteint en 2046 ; le frais sur la réserve suit le rythme de
+la gestion. **Elle porte sur les nouveaux dépôts, et un peu sur le stock** :
+un frais de gestion est contractuel, l'OPEF le montre en deux ans, et les
+lignes de l'échelle portent le tarif de leur cohorte, qui ne referme chaque
+année que 10 % de son écart avec le tarif du jour, la moitié en sept ans,
+entre le contrat privé qu'on ne renégocie pas (0) et le plafond qui touche
+tout le stock d'un coup (1), comme au Royaume-Uni et en Suède. **Elle n'est
+pas acquise** : le Chili a vu la commission d'une caisse remonter de 0,47 % à
+1,16 % dès qu'elle a cessé d'être adjudicataire, et le modèle ne fait jamais
+remonter un frais. Les paliers sont une hypothèse, datée et sourcée, pas une
+mesure ; leurs années et leurs niveaux se changent en un endroit.
+
+**Ce que chaque hypothèse déplace.** Rente mensuelle du pilier, les deux
+cotisations réunies, pour un non-cadre né en 2004 qui cotise de 22 à 64 ans,
+donc toute sa carrière après la bascule (le 20 septembre 2026, courbe du 17,
+diviseur par niveau de vie) :
+
+| Réglage | Rente | Écart |
+|---|---|---|
+| retenu : moyennes 2025 du marché, paliers, convergence 0,10 | 1 800 € | référence |
+| PER 2025 tel que vendu, figé, sans frais de réserve, l'ancien réglage : 1,09 / 0,76 / 2,20 | 1 665 € | − 8 % |
+| moyennes 2025 du marché figées, aucune baisse | 1 553 € | − 14 % |
+| paliers, mais le stock garde son tarif, convergence 0 | 1 750 € | − 3 % |
+| paliers, et tout le stock suit, convergence 1 | 1 832 € | + 2 % |
+| retenu, sans frais sur la réserve de rente | 1 839 € | + 2 % |
+| aucun frais | 2 035 € | + 13 % |
+
+Pour un assuré né en 1985, qui liquide en 2049, les paliers ne sont encore
+qu'à moitié parcourus : les moyennes figées lui coûtent 7 %, et le frais sur
+la réserve, encore à 0,27 %, 4 %. Pour un assuré né en 1970, qui liquide en
+2034, aucun palier n'est atteint, et le nouveau réglage sert 7 % de moins que
+l'ancien, parce que le frais sur la réserve de rente (8 %) pèse plus que la
+baisse des arrérages ne rend. Sur le total servi par le scénario 6, dont le
+pilier pèse au plus deux cinquièmes, chaque hypothèse déplace donc de un à six
+points. Le sens de chacune est connu, la taille est encadrée, et le choix
+reste celui du paramètre.
 
 **4. Aucun risque n'est simulé.** Le pilier est sans risque par construction,
 et c'est un choix de proposition autant que de modèle : un régime obligatoire
@@ -6735,7 +6755,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1217<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1222<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

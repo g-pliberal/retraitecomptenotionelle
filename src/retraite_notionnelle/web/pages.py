@@ -4402,11 +4402,19 @@ passé — ni ce taux, ni un autre —, et qui a liquidé avant la bascule reço
 donc, du système 4, la seule pension de répartition.</p>""",
         )
 
-    # Les trois frais sont des paramètres : les lire ici, et non les écrire en
-    # dur, fait que changer le barème change la page.
-    frais = comparaison.parametres
     premiere = pilier.annees[0]
     derniere = pilier.annees[-1]
+
+    # Les frais sont des paramètres, et ils bougent : chaque ligne de la
+    # cascade dit le tarif de la première année et celui de la dernière, tels
+    # que le pilier les a effectivement subis. Changer le barème change la page.
+    def fourchette(debut: float, fin: float) -> str:
+        if abs(debut - fin) < 5e-7:
+            return g.pourcentage(debut, decimales=2)
+        return (f"de {g.pourcentage(debut, decimales=2)} à "
+                f"{g.pourcentage(fin, decimales=2)}")
+    rente_brute = pilier.capital / pilier.conversion.diviseur
+    rente_apres_reserve = rente_brute * pilier.facteur_encours_rente
 
     # Ce que devient un euro versé : la cascade complète, du prélèvement à la
     # rente. Chaque ligne est une opération, et la suivante part du résultat de
@@ -4421,16 +4429,16 @@ donc, du système 4, la seule pension de répartition.</p>""",
              f"de {premiere.annee} à {derniere.annee}, EN PLUS d'elle",
              g.euros(pilier.versements)],
             ["b) − frais sur versement",
-             f"{g.pourcentage(frais.frais_versement_capitalisation, decimales=2)} "
-             "de chaque versement",
+             f"{fourchette(premiere.taux_frais_versement, derniere.taux_frais_versement)} "
+             f"de chaque versement, de {premiere.annee} à {derniere.annee}",
              "− " + g.euros(pilier.frais_versement)],
             ["c) + intérêts",
              "placés sur des titres sans risque, à des maturités qui "
              "raccourcissent à l'approche du départ",
              "+ " + g.euros(pilier.interets)],
             ["d) − frais de gestion",
-             f"{g.pourcentage(frais.frais_gestion_capitalisation, decimales=2)} "
-             "par an sur l'encours",
+             f"{fourchette(premiere.taux_frais_gestion, derniere.taux_frais_gestion)} "
+             "par an sur l'encours, chaque versement gardant le tarif de son année",
              "− " + g.euros(pilier.frais_gestion)],
             ["e) = capital au départ",
              "ce que vaut le compte le jour de la liquidation",
@@ -4438,13 +4446,16 @@ donc, du système 4, la seule pension de répartition.</p>""",
             ["f) ÷ coefficient de conversion",
              f"{g.nombre(pilier.conversion.diviseur, DECIMALES_DIVISEUR)}, la "
              "même table de mortalité que la pension notionnelle",
-             g.euros(pilier.capital / pilier.conversion.diviseur) + " par an"],
-            ["g) − frais sur arrérages",
-             f"{g.pourcentage(frais.frais_arrerages_capitalisation, decimales=2)} "
-             "de chaque versement de rente",
-             "− " + g.euros(pilier.capital / pilier.conversion.diviseur
-                            - pilier.rente_annuelle) + " par an"],
-            ["h) = rente servie", "à vie, et qui s'éteint avec le rentier",
+             g.euros(rente_brute) + " par an"],
+            ["g) − frais sur la réserve de rente",
+             f"{g.pourcentage(pilier.frais_encours_rente, decimales=2)} par an "
+             "sur la réserve qui porte la rente, au tarif de l'année du départ",
+             "− " + g.euros(rente_brute - rente_apres_reserve) + " par an"],
+            ["h) − frais sur arrérages",
+             f"{g.pourcentage(pilier.frais_arrerages, decimales=2)} "
+             "de chaque versement de rente, au tarif de l'année du départ",
+             "− " + g.euros(rente_apres_reserve - pilier.rente_annuelle) + " par an"],
+            ["i) = rente servie", "à vie, et qui s'éteint avec le rentier",
              g.euros_centimes(pilier.rente_annuelle) + " par an"],
         ],
         ["", "texte", "nombre"],
@@ -4556,9 +4567,9 @@ de rente, ou au décès, par l'héritage.{g.bulle(
 souverains les mieux notés de la zone euro, relevée le
 {escape(_date_en_clair(pilier.date_courbe))} et publiée par la Banque centrale
 européenne ; les versements des années suivantes emploient les taux à terme
-que cette même courbe implique. Les trois frais sont les moyennes 2025 des
-plans d'épargne retraite individuels, mesurées par l'Observatoire des produits
-d'épargne financière. La page <a href="{g.lien("/methode/")}">Méthode</a>
+que cette même courbe implique. Les frais partent des moyennes 2025 du marché
+des plans d'épargne retraite individuels, mesurées par l'Observatoire des
+produits d'épargne financière, et baissent ensuite par paliers. La page <a href="{g.lien("/methode/")}">Méthode</a>
 dit ce que ces choix supposent, et la page <a href="{g.lien("/donnees/")}">Données</a>
 d'où ils viennent. Fiabilité de ce compartiment :
 <span class="etiquette-fiabilite">{escape(g.fiabilite_en_clair(pilier.fiabilite))}</span>, le
@@ -8820,23 +8831,37 @@ concentre pas sur un seul point de la courbe.</p>
 {glissement}
 
 <h3>Ce que l'enveloppe coûte</h3>
-<p>Trois prélèvements, ceux du plan d'épargne retraite tel qu'il est vendu
-aujourd'hui, mesurés par l'Observatoire des produits d'épargne financière sur
-les remises de l'ACPR :
+<p>Quatre prélèvements, aux <strong>vraies moyennes du marché</strong> du plan
+d'épargne retraite individuel en 2025, mesurées par l'Observatoire des
+produits d'épargne financière sur les remises de l'ACPR :
 {g.pourcentage(base.frais_versement_capitalisation, decimales=2)} sur chaque
 versement, {g.pourcentage(base.frais_gestion_capitalisation, decimales=2)} par
 an sur l'encours, {g.pourcentage(base.frais_arrerages_capitalisation, decimales=2)}
-sur chaque arrérage de rente. Ce sont les frais d'un produit vendu à des
-volontaires, contrat par contrat, et la commission du réseau qui le place en est
-l'essentiel : elle n'aurait pas d'objet si la cotisation était obligatoire. Les
-retenir tels quels est donc une <strong>borne haute</strong>, assumée comme
-telle : le modèle dit ce que la proposition coûterait si rien ne bougeait dans
-la tarification. Les frais sur versement et de gestion sont des moyennes
-pondérées de tout le marché ; celui sur arrérages est la moyenne des seuls
-assureurs qui le facturent, neuf sur vingt, soit 0,99 % sur les vingt et une
-médiane nulle. Le frais de gestion est le poste qui pèse, parce qu'il
-s'applique chaque année à tout l'encours. Ce que d'autres barèmes
-déplaceraient est mesuré dans les limites du modèle.</p>
+sur chaque arrérage de rente, moyenne sur tous les assureurs et non sur les
+seuls neuf sur vingt qui facturent, et
+{g.pourcentage(base.frais_encours_rente_capitalisation, decimales=2)} par an
+sur la réserve qui porte la rente, un frais que l'Observatoire ne mesure pas et
+que le CCSF relevait sur vingt-deux contrats sur trente-quatre.</p>
+
+<p><strong>Ils baissent ensuite, par paliers.</strong> Partout où une épargne
+retraite obligatoire existe, la concurrence ou la règle ont fait tomber les
+frais bien au-dessous de ceux d'un produit vendu au détail, et par à-coups : un
+plafond au Royaume-Uni, un appel d'offres tous les deux ans au Chili, une
+remise imposée aux gérants en Suède ; et là où seule la concurrence joue, aux
+États-Unis, une baisse de 3,3 % par an pendant trente ans. Le modèle fait
+suivre ce rythme au frais de gestion, par marches de dix ans, jusqu'à
+{g.pourcentage(base.frais_gestion_paliers[-1][1], decimales=2)} en
+{base.frais_gestion_paliers[-1][0]} ; le frais sur versement rejoint
+l'assurance-vie, puis le contrat de capitalisation, puis
+{g.pourcentage(base.frais_versement_paliers[-1][1], decimales=2)} en
+{base.frais_versement_paliers[-1][0]} ; le frais sur arrérages s'éteint en
+{base.frais_arrerages_paliers[-1][0]}. <strong>La baisse porte surtout sur
+les nouveaux dépôts</strong> : chaque versement entre au tarif de son année et
+le garde, et ne se rapproche du tarif du jour que de
+{g.pourcentage(base.convergence_frais_stock, decimales=0)} de l'écart par an.
+La rente garde les frais de l'année où elle est souscrite. Les sources de
+chaque palier, et ce que d'autres trajectoires déplaceraient, sont dans les
+limites du modèle.</p>
 
 <h3>Comment le capital devient une rente</h3>
 <p>Par le mécanisme du plan d'épargne retraite : le capital est divisé par un

@@ -817,6 +817,8 @@ def _frais_epargne_retraite() -> dict:
         "postes": {
             cle: {
                 "valeur": poste.valeur,
+                "valeur_retenue": poste.valeur_retenue,
+                "paliers": [list(palier) for palier in poste.paliers],
                 "assiette": poste.assiette,
                 "libelle": poste.libelle,
                 "note": poste.note,

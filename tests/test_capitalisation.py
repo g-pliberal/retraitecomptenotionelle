@@ -48,6 +48,14 @@ def simulateur() -> Simulateur:
     return Simulateur(Parametres())
 
 
+#: Les frais figés à leur niveau de départ : les tests d'identité vérifient la
+#: convention de date et l'ordre des prélèvements, pas la trajectoire des frais.
+FRAIS_FIGES = dict(
+    frais_versement_paliers=(), frais_gestion_paliers=(),
+    frais_arrerages_paliers=(), frais_encours_rente_paliers=(),
+)
+
+
 class CourbePlate:
     """Courbe fictive à taux unique, pour les tests d'identité.
 
@@ -176,7 +184,7 @@ def test_le_capital_a_la_forme_close_quand_la_courbe_est_plate(mortalite):
     l'année de son versement, exactement comme au compte notionnel —, l'ordre
     des prélèvements et l'absence d'année offerte ou perdue.
     """
-    parametres = Parametres()
+    parametres = Parametres(**FRAIS_FIGES)
     constructeur = _constructeur(0.03, mortalite, parametres)
     assiettes = {annee: 30_000.0 for annee in range(2026, 2041)}
 
@@ -204,6 +212,7 @@ def test_sans_frais_le_capital_est_celui_de_la_courbe_seule(mortalite):
     parametres = Parametres(
         frais_versement_capitalisation=0.0,
         frais_gestion_capitalisation=0.0,
+        **FRAIS_FIGES,
     )
     constructeur = _constructeur(0.04, mortalite, parametres)
     assiettes = {annee: 40_000.0 for annee in range(2026, 2036)}
@@ -261,10 +270,116 @@ def test_la_rente_est_le_capital_divise_puis_ampute_des_frais_d_arrerages(simula
     ))
     pilier = comparaison.notionnel_liberal.capitalisation
     attendu = (pilier.capital / pilier.conversion.diviseur) * (
-        1 - pilier.frais_arrerages
+        pilier.facteur_encours_rente * (1 - pilier.frais_arrerages)
     )
     assert pilier.rente_annuelle == pytest.approx(attendu)
     assert pilier.rente_mensuelle == pytest.approx(pilier.rente_annuelle / 12)
+    # Les deux tarifs sont ceux de l'année de la liquidation, pas ceux du départ.
+    parametres = simulateur.parametres
+    assert pilier.frais_arrerages == parametres.frais_capitalisation(
+        "arrerages", pilier.annee_liquidation)
+    assert pilier.frais_encours_rente == parametres.frais_capitalisation(
+        "encours_rente", pilier.annee_liquidation)
+    assert 0.8 < pilier.facteur_encours_rente < 1.0
+
+
+def test_le_frais_sur_la_reserve_de_rente_vaut_une_actualisation_negative(mortalite):
+    """0,52 % par an sur la réserve d'une rente nivelée, c'est diviser le
+    capital par ``Σ p_t (1 − f)^(−t)`` : au diviseur du modèle, huit pour
+    cent de rente ; et rien du tout quand le frais est nul."""
+    avec = Parametres(**FRAIS_FIGES)
+    sans = Parametres(frais_encours_rente_capitalisation=0.0, **FRAIS_FIGES)
+    assiettes = {annee: 30_000.0 for annee in range(2026, 2066)}
+    args = dict(assiettes=assiettes, annee_naissance=2001,
+                age_liquidation=64.0, annee_liquidation=2065)
+    pilier_avec = _constructeur(0.03, mortalite, avec).construire(**args)
+    pilier_sans = _constructeur(0.03, mortalite, sans).construire(**args)
+    assert pilier_sans.facteur_encours_rente == 1.0
+    assert pilier_avec.capital == pytest.approx(pilier_sans.capital)
+    courbe = mortalite.courbe(64.0, 2065.0, None, avec.table_generation, None)
+    attendu = sum(courbe) / sum(p / (1 - 0.0052) ** t for t, p in enumerate(courbe))
+    assert pilier_avec.facteur_encours_rente == pytest.approx(attendu)
+    assert 0.90 < attendu < 0.94
+    assert pilier_avec.rente_annuelle == pytest.approx(pilier_sans.rente_annuelle * attendu)
+
+
+# -- la trajectoire des frais -------------------------------------------------
+
+
+def test_un_palier_vaut_de_son_annee_au_suivant():
+    parametres = Parametres(
+        frais_gestion_capitalisation=0.0076,
+        frais_gestion_paliers=((2046, 0.0039), (2036, 0.0054)),
+    )
+    assert parametres.frais_capitalisation("gestion", 2026) == 0.0076
+    assert parametres.frais_capitalisation("gestion", 2035) == 0.0076
+    assert parametres.frais_capitalisation("gestion", 2036) == 0.0054
+    assert parametres.frais_capitalisation("gestion", 2045) == 0.0054
+    assert parametres.frais_capitalisation("gestion", 2100) == 0.0039
+    assert Parametres(**FRAIS_FIGES).frais_capitalisation("gestion", 2100) == 0.0076
+
+
+def test_les_frais_par_defaut_baissent_et_ne_remontent_jamais():
+    parametres = Parametres()
+    for poste in ("versement", "gestion", "arrerages", "encours_rente"):
+        taux = [parametres.frais_capitalisation(poste, annee) for annee in range(2026, 2080)]
+        assert taux == sorted(taux, reverse=True), poste
+        assert taux[-1] < taux[0], poste
+    assert parametres.frais_capitalisation("versement", 2079) == 0.0
+    assert parametres.frais_capitalisation("arrerages", 2079) == 0.0
+    assert parametres.frais_capitalisation("gestion", 2079) == pytest.approx(0.0020)
+
+
+def test_la_baisse_porte_sur_les_nouveaux_depots_et_le_stock_garde_son_tarif(mortalite):
+    """Sans convergence, un versement d'avant le palier est prélevé à son tarif
+    d'entrée jusqu'au bout ; celui d'après entre au nouveau tarif."""
+    parametres = Parametres(
+        frais_versement_capitalisation=0.0, frais_versement_paliers=(),
+        frais_gestion_capitalisation=0.01, frais_gestion_paliers=((2030, 0.0),),
+        frais_arrerages_paliers=(), frais_encours_rente_paliers=(),
+        convergence_frais_stock=0.0,
+    )
+    constructeur = _constructeur(0.0, mortalite, parametres)
+    # Un seul versement en 2027 : il garde 1 % par an malgré le palier de 2030.
+    ancien = constructeur.construire(
+        assiettes={2027: 20_000.0}, annee_naissance=1990,
+        age_liquidation=50.0, annee_liquidation=2040,
+    )
+    brut = 20_000.0 * parametres.taux_capitalisation_applique
+    assert ancien.capital == pytest.approx(brut * 0.99 ** 13)
+    assert ancien.annees[-1].taux_frais_gestion == pytest.approx(0.01)
+    # Un seul versement en 2031 : il entre à zéro et n'est jamais prélevé.
+    nouveau = constructeur.construire(
+        assiettes={2031: 20_000.0}, annee_naissance=1990,
+        age_liquidation=50.0, annee_liquidation=2040,
+    )
+    assert nouveau.capital == pytest.approx(brut)
+    assert nouveau.frais_gestion == 0.0
+
+
+def test_la_convergence_rapproche_le_stock_du_tarif_des_nouveaux_depots(mortalite):
+    """À convergence 1, tout le stock passe au tarif du jour ; à 0,5, l'écart
+    se referme de moitié chaque année."""
+    def pilier(convergence):
+        parametres = Parametres(
+            frais_versement_capitalisation=0.0, frais_versement_paliers=(),
+            frais_gestion_capitalisation=0.01, frais_gestion_paliers=((2030, 0.0),),
+            frais_arrerages_paliers=(), frais_encours_rente_paliers=(),
+            convergence_frais_stock=convergence,
+        )
+        return _constructeur(0.0, mortalite, parametres).construire(
+            assiettes={2027: 20_000.0}, annee_naissance=1990,
+            age_liquidation=50.0, annee_liquidation=2040,
+        )
+    brut = 20_000.0 * Parametres().taux_capitalisation_applique
+    total = pilier(1.0)
+    # 1 % en 2028 et 2029, puis zéro dès 2030.
+    assert total.capital == pytest.approx(brut * 0.99 ** 2)
+    partiel = pilier(0.5)
+    taux = [a.taux_frais_gestion for a in partiel.annees if a.annee >= 2030]
+    assert taux[0] == pytest.approx(0.005)
+    assert taux[1] == pytest.approx(0.0025)
+    assert total.capital > partiel.capital > pilier(0.0).capital
 
 
 def test_au_taux_technique_nul_les_deux_diviseurs_sont_le_meme(simulateur):
@@ -345,7 +460,7 @@ def test_la_transmission_suit_la_table_du_modele(mortalite):
     Elle n'est pas une approximation : c'est la somme, année par année, de la
     probabilité de mourir cette année-là par l'encours moyen de l'année.
     """
-    parametres = Parametres()
+    parametres = Parametres(**FRAIS_FIGES)
     constructeur = _constructeur(0.03, mortalite, parametres)
     assiettes = {annee: 30_000.0 for annee in range(2026, 2041)}
     pilier = constructeur.construire(
@@ -471,11 +586,20 @@ def test_les_frais_du_calcul_sont_ceux_du_fichier_de_reference():
     """
     frais = FraisEpargneRetraite(RACINE_DONNEES)
     parametres = Parametres()
-    assert frais.valeur("versement") == parametres.frais_versement_capitalisation
-    assert frais.valeur("gestion") == parametres.frais_gestion_capitalisation
-    assert frais.valeur("arrerages") == parametres.frais_arrerages_capitalisation
+    assert frais.valeur_retenue("versement") == parametres.frais_versement_capitalisation
+    assert frais.valeur_retenue("gestion") == parametres.frais_gestion_capitalisation
+    assert frais.valeur_retenue("arrerages") == parametres.frais_arrerages_capitalisation
+    assert frais.valeur_retenue("encours_rente") == (
+        parametres.frais_encours_rente_capitalisation)
+    # La valeur publiée des arrérages est celle des seuls facturants ; la
+    # retenue est la moyenne sur tous les déclarants, et le fichier dit les deux.
+    assert frais.valeur("arrerages") == 0.0220
+    assert frais.valeur("versement") == frais.valeur_retenue("versement")
     assert frais.fiabilite == Fiabilite.HAUTE
     assert frais.annee_reference >= 2025
+    # Les paliers du calcul sont ceux que le fichier documente.
+    for poste in ("versement", "gestion", "arrerages", "encours_rente"):
+        assert frais.paliers(poste) == getattr(parametres, f"frais_{poste}_paliers"), poste
 
 
 def test_le_manifeste_porte_les_deux_sources_du_pilier():
@@ -515,7 +639,9 @@ def test_le_pilier_pese_ce_qu_une_carriere_entiere_a_cinq_pour_cent_peut_peser(s
     ))
     resultat = comparaison.notionnel_liberal
     part = resultat.rente_capitalisation_obligatoire / resultat.pension_totale
-    assert 0.15 < part < 0.40
+    # Dix points capitalisés contre dix-huit notionnels, à des frais qui
+    # baissent : deux cinquièmes du total, pas la moitié.
+    assert 0.15 < part < 0.45
     assert resultat.capitalisation.rendement_cumule > 1.3
 
 
