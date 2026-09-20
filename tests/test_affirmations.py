@@ -72,6 +72,8 @@ from retraite_notionnelle.web.pages import (
     ORGANISMES,
     POSTES_TRANSFERTS,
     SCENARIOS_MONTRES,
+    TAUX_ACTUEL_PATRONAL,
+    TAUX_ACTUEL_SALARIAL,
     TAUX_ACTUEL_TOTAL,
     TITRES,
     Contexte,
@@ -797,12 +799,30 @@ def _(m: Modele):
                    reference.droit_en_vigueur.cout_du_travail)
 
 
-@controle("partage_moitie_moitie")
+@controle("partage_des_vingt_trois_points")
 def _(m: Modele):
-    assert m.base.part_salariale_taux_unique == 0.5
-    ligne = next(l for l in m.defaut.remuneration.reference.proposition.lignes
-                 if l.code == "regime_unifie")
-    assert ligne.salarie > 0 and _proche(ligne.salarie, ligne.employeur)
+    """La part patronale ne bouge pas, et la retenue tombe d'autant.
+
+    Le partage était moitié-moitié jusqu'au 20 septembre 2026 ; il laisse
+    désormais à l'employeur ce qu'il verse aujourd'hui, et toute la baisse va
+    à la retenue du salarié. Deux propriétés le disent : la part patronale de
+    la proposition égale celle du droit en vigueur, et le brut ne bouge pas.
+    """
+    part = m.base.part_salariale_taux_unique
+    assert 0 < part < 0.5
+    total = m.base.taux_cotisation_liberal + m.base.taux_capitalisation_obligatoire
+    # Ce que la page écrit : la part patronale des 23 points est exactement
+    # celle qu'un employeur verse aujourd'hui, et la retenue est le reste.
+    assert _proche(total * (1 - part), TAUX_ACTUEL_PATRONAL, 1e-3)
+    assert _proche(total * part, total - TAUX_ACTUEL_PATRONAL, 1e-3)
+    assert total * part < TAUX_ACTUEL_SALARIAL
+    # Et la baisse arrive sans passer par le brut : il ne bouge qu'à la marge,
+    # par l'allègement recalculé, quand la retenue tombe de plus d'un tiers.
+    reference = m.defaut.remuneration.reference
+    avant, apres = reference.droit_en_vigueur, reference.proposition
+    assert _proche(apres.cout_du_travail, avant.cout_du_travail)
+    assert abs(apres.brut / avant.brut - 1) < 0.01
+    assert apres.retraite_salarie < 0.75 * avant.retraite_salarie
 
 
 @controle("volontaire_a_la_charge_de_l_assure")

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 804<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 839<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -3418,8 +3418,8 @@ corriger au passage, et `moteur/js/pages.js` en regard ; les témoins.
 Le portage JavaScript n'a pas à porter le test : le catalogue vise le texte,
 et les deux moteurs rendent le même.
 
-**Fait le 20 septembre 2026.** 242 entrées au catalogue — 190 vérifiées,
-6 contredites, 33 hors modèle, 13 sans portée — et 122 contrôles, soit 474
+**Fait le 20 septembre 2026.** 244 entrées au catalogue — 192 vérifiées,
+6 contredites, 33 hors modèle, 13 sans portée — et 122 contrôles, soit 478
 tests de plus : un par entrée pour la présence de l'extrait, un par entrée qui
 engage quelque chose pour le contrôle, un par affirmation hors modèle pour sa
 source, plus les trois qui tiennent la forme, l'exhaustivité et l'absence de
