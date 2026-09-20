@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 839<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 910<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9131,6 +9131,27 @@ retraités. Le garde-fou « les héritiers ne paient jamais plus que l'héritage
 n'est donc pas un cas limite : il est saturé le plus souvent. Et le scénario 6
 ne servant aucune réversion, ce que la réversion versait sans contrepartie
 devient une créance reprise sur le patrimoine du couple.
+
+**Le même jour, la fin : le site le dit.** « Décris cette situation dans le
+site pour parler du minimum vieillesse. » Le dépliant « Le plancher, et ce
+qu'il change pour les petites pensions », sur la page Programme, porte
+désormais deux sections de plus, dans les deux moteurs. *Le minimum vieillesse
+est d'abord une affaire de femmes* : un tableau calculé sur la distribution de
+l'EIR, sans rien emprunter au modèle — 46 % des femmes retraitées ont une
+pension de droit direct sous le plancher majoré contre 18 % des hommes, mais
+l'homme qui tombe dessous tombe plus bas (537 € de manque moyen contre 476),
+parce que ce sont des carrières très courtes là où c'est la règle chez les
+femmes —, puis le recensement de 2021 : 62 % des femmes de 65 ans vivent en
+couple, 26 % à 85 ans, contre 65 % des hommes du même âge. *Ce que cela change
+pour une veuve, et pour ses enfants* : le système actuel sert une réversion
+qu'on ne rembourse pas et qui ne touche pas à l'héritage ; la proposition n'en
+sert aucune (seul le scénario 1 la sert, décision écrite dans `limites.md`),
+et ce qui prend sa place est la garantie, c'est-à-dire une avance reprise sur
+la succession de la veuve, celle qui porte le patrimoine du couple et souvent
+l'avance du mari. La page dit que les héritiers ne paient jamais de leur poche
+et qu'ils héritent souvent de rien, et que le dispositif se refuse. Trois
+règles de style du dépôt ont dû être respectées en chemin : pas de « ce n'est
+pas X, c'est Y », pas de « et non », trois incises en tiret par page au plus.
 
 **Ce qui reste du point 1, et demande une personne.** Le fichier individuel
 de l'enquête Histoire de vie et Patrimoine 2020-2021 ou 2023-2024 : le
