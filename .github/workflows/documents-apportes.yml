@@ -1,0 +1,66 @@
+# Dépose sur la release « documents-apportes » les documents que leur site
+# refuse à une session Claude Code et qu'aucun autre site public ne reprend
+# (voir scripts/fetch/source_locale.py, option --publier, et le champ
+# `blocage` de data/sources.yaml).
+#
+# Le jeton d'une session n'a pas le droit d'écrire les releases ; celui d'un
+# workflow, avec `contents: write`, l'a. Une session, elle, télécharge l'asset :
+# c'est le `miroir` du jeu dans le manifeste, et `--recuperer` le rapporte.
+#
+# Deux passes : une requête simple sous l'identité du dépôt d'abord ; si un
+# site la refuse (code de sortie 3), Playwright et Chromium sont installés,
+# seulement alors, et la publication est reprise avec un navigateur headless
+# ordinaire — rien n'est maquillé, la règle est dans docs/outillage_interface.md.
+#
+# - Lancement à la main (onglet Actions, « Run workflow »).
+# - Le 3 de chaque mois à 5 h UTC : reprend chaque document ; un document
+#   dont le manifeste porte déjà l'empreinte n'est pas remplacé par une
+#   autre édition, l'écart est dit et le job échoue pour qu'on le lise.
+
+name: Documents apportés
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 3 * *"
+
+permissions:
+  contents: write
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer le dépôt
+        run: pip install -e .
+
+      - name: Publier ce qu'une requête simple obtient
+        id: simple
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          python scripts/fetch/source_locale.py --publier --sans-navigateur
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" != 0 ] && [ "$code" != 3 ]; then exit "$code"; fi
+
+      - name: Installer Playwright et Chromium (seulement si un site veut un navigateur)
+        if: steps.simple.outputs.code == '3'
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Publier avec un navigateur ordinaire
+        if: steps.simple.outputs.code == '3'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/fetch/source_locale.py --publier

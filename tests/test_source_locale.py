@@ -259,11 +259,14 @@ def test_recuperer_ecrit_verifie_et_ne_refait_rien(tmp_path, monkeypatch, capsys
         return contenu
 
     faits = module.recuperer(jeux, telecharger)
-    assert faits == [tmp_path / "jaune.pdf"]
+    # Le jeu sans miroir déclaré est cherché sur la release du dépôt, et c'est dit.
+    assert faits == [tmp_path / "jaune.pdf", tmp_path / "a.pdf"]
     assert (tmp_path / "jaune.pdf").read_bytes() == contenu
     assert not (tmp_path / "faux.pdf").exists(), "un document non reconnu n'est pas déposé"
-    assert sorted(appels) == ["https://an.example/faux.pdf", "https://an.example/jaune.pdf"]
-    assert "faux : ÉCHEC" in capsys.readouterr().out
+    assert sorted(appels) == ["https://an.example/faux.pdf", "https://an.example/jaune.pdf",
+                              module.url_publiee("a.pdf")]
+    sortie = capsys.readouterr().out
+    assert "faux : ÉCHEC" in sortie and "sans_miroir : miroir non déclaré" in sortie
 
     # Une seconde passe ne retélécharge pas ce qui est là et conforme.
     appels.clear()
@@ -274,3 +277,260 @@ def test_recuperer_ecrit_verifie_et_ne_refait_rien(tmp_path, monkeypatch, capsys
     module.recuperer(jeux[:1], telecharger)
     assert (tmp_path / "jaune.pdf").read_bytes() == contenu
     assert "remplacé" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# La release du dépôt comme miroir : --publier depuis un workflow, --recuperer
+# depuis une session
+# ---------------------------------------------------------------------------
+
+
+def _http_error(code: int, url: str = "https://x.example/doc.pdf"):
+    import urllib.error
+
+    return urllib.error.HTTPError(url, code, "refus", {}, None)
+
+
+def test_tout_refus_visant_un_fichier_a_un_miroir_ou_un_document_publiable():
+    """Un jeu `refus` qui vise un fichier se récupère sans personne : par un
+    miroir déclaré, ou par la release que `--publier` alimente depuis son
+    adresse de document. Les entrées Légifrance ne visent pas un fichier :
+    leurs textes se lisent dans l'index DILA, rien n'est à apporter."""
+    module = _module()
+    for ident, jeu in _jeux().items():
+        if jeu.get("blocage") != "refus":
+            continue
+        if module.ou_deposer(jeu) is None:
+            assert "fichier_local" not in jeu and "document" not in jeu, (
+                f"{ident} : un fichier est visé, mais l'adresse ne le nomme pas")
+            continue
+        assert jeu.get("miroir") or module.a_publier([jeu]), (
+            f"{ident} : ni miroir, ni adresse de document que --publier sait traiter "
+            "(document: quand url est une page)")
+
+
+def test_le_rapport_opef_declare_son_document_a_la_banque_de_france():
+    jeu = _jeux()["opef_rapport_annuel"]
+    assert jeu["document"].startswith("https://www.banque-france.fr/") and jeu["document"].endswith("OPEF2026.pdf")
+    assert jeu["fichier_local"] == "OPEF2026.pdf"
+
+
+def test_adresse_du_document_prefere_le_champ_document_puis_une_url_qui_nomme():
+    module = _module()
+    assert module.adresse_du_document({"url": "https://a.fr/page", "document": "https://a.fr/f.pdf"}) == "https://a.fr/f.pdf"
+    assert module.adresse_du_document({"url": "https://a.fr/f.pdf"}) == "https://a.fr/f.pdf"
+    assert module.adresse_du_document({"url": "https://a.fr/page"}) is None
+
+
+def test_a_publier_ne_retient_que_les_refus_sans_autre_miroir_que_la_release():
+    module = _module()
+    ici = module.url_publiee("f.pdf")
+    assert ici == "https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/f.pdf"
+    jeux = [
+        {"id": "sans_miroir", "blocage": "refus", "url": "https://a.fr/page", "document": "https://a.fr/f.pdf",
+         "fichier_local": "f.pdf"},
+        {"id": "deja_ici", "blocage": "refus", "url": "https://a.fr/g.pdf", "miroir": ici, "sha256": "0" * 64},
+        {"id": "ailleurs", "blocage": "refus", "url": "https://a.fr/h.pdf", "miroir": "https://an.fr/h.pdf"},
+        {"id": "sans_fichier", "blocage": "refus", "url": "https://a.fr/page"},
+        {"id": "reseau", "blocage": "reseau", "url": "https://a.fr/i.pdf"},
+        {"id": "eic", "blocage": "convention", "url": "https://a.fr/j.pdf"},
+    ]
+    assert [j["id"] for j in module.a_publier(jeux)] == ["sans_miroir", "deja_ici"]
+
+
+def test_telecharger_document_essaie_la_requete_simple_puis_le_navigateur(capsys):
+    module = _module()
+    jeu = {"id": "x", "blocage": "refus", "url": "https://a.fr/page", "document": "https://a.fr/f.pdf"}
+    appels: list[tuple] = []
+
+    def simple_ok(url):
+        appels.append(("simple", url))
+        return b"pdf"
+
+    def simple_403(url):
+        appels.append(("simple", url))
+        raise _http_error(403, url)
+
+    def simple_404(url):
+        raise _http_error(404, url)
+
+    def navigateur(page, document):
+        appels.append(("navigateur", page, document))
+        return b"pdf par chromium"
+
+    assert module.telecharger_document(jeu, simple_ok, navigateur) == (b"pdf", "requête simple")
+    assert appels == [("simple", "https://a.fr/f.pdf")]
+    appels.clear()
+    assert module.telecharger_document(jeu, simple_403, navigateur) == (b"pdf par chromium", "navigateur")
+    assert appels == [("simple", "https://a.fr/f.pdf"), ("navigateur", "https://a.fr/page", "https://a.fr/f.pdf")]
+    # Un 404 n'est pas un refus : un navigateur ne trouverait pas davantage.
+    with pytest.raises(Exception) as info:
+        module.telecharger_document(jeu, simple_404, navigateur)
+    assert info.value.code == 404
+    # Refusé, et personne pour insister.
+    with pytest.raises(module.NavigateurRequis):
+        module.telecharger_document(jeu, simple_403, None)
+    with pytest.raises(ValueError):
+        module.telecharger_document({"id": "y", "blocage": "refus", "url": "https://a.fr/page"}, simple_ok, navigateur)
+
+
+class _GitHubSimule:
+    """Assez de l'API des releases pour voir ce que `publier` lui demande."""
+
+    def __init__(self, existe: bool = True, assets=(), corps: str = ""):
+        self.existe = existe
+        self.assets = list(assets)
+        self.corps = corps
+        self.appels: list[tuple] = []
+        self.envoyes: dict[str, bytes] = {}
+
+    def _release(self):
+        return {"url": "https://api/releases/1", "upload_url": "https://uploads/releases/1/assets{?name,label}",
+                "body": self.corps,
+                "assets": [{"name": n, "url": f"https://api/assets/{n}"} for n in self.assets]}
+
+    def __call__(self, methode, url, jeton, donnees=None, type_contenu="application/json", longueur=None):
+        import json
+
+        self.appels.append((methode, url))
+        if methode == "GET":
+            if not self.existe:
+                raise _http_error(404, url)
+            return self._release()
+        if methode == "POST" and url.endswith("/releases"):
+            self.existe = True
+            self.corps = json.loads(donnees)["body"]
+            return self._release()
+        if methode == "DELETE":
+            self.assets.remove(url.rsplit("/", 1)[-1])
+            return {}
+        if methode == "POST":
+            nom = url.split("?name=")[1]
+            assert type_contenu == "application/pdf" and longueur == len(donnees)
+            self.envoyes[nom] = donnees
+            self.assets.append(nom)
+            return {"browser_download_url": f"https://github.com/x/releases/download/documents-apportes/{nom}"}
+        if methode == "PATCH":
+            self.corps = json.loads(donnees)["body"]
+            return {}
+        raise AssertionError(methode)
+
+
+def test_publier_cree_la_release_depose_l_asset_et_ecrit_la_ligne(monkeypatch, capsys):
+    module = _module()
+    github = _GitHubSimule(existe=False)
+    monkeypatch.setattr(module, "_github", github)
+    contenu = b"%PDF opef"
+    jeux = [
+        {"id": "opef", "blocage": "refus", "url": "https://bdf.fr/page",
+         "document": "https://bdf.fr/OPEF2026.pdf", "fichier_local": "OPEF2026.pdf"},
+        {"id": "jaune", "blocage": "refus", "url": "https://budget.fr/x", "fichier_local": "j.pdf",
+         "miroir": "https://an.fr/j.pdf", "sha256": "0" * 64},
+    ]
+
+    def simple(url):
+        raise _http_error(403, url)
+
+    etats = module.publier(jeux, simple, lambda page, doc: contenu, jeton="t")
+    assert etats == {"opef": "publie"}
+    assert any(m == "POST" and u.endswith("/releases") for m, u in github.appels), (
+        "la release est créée quand elle n'existe pas")
+    assert github.envoyes == {"OPEF2026.pdf": contenu}
+    assert github.assets == ["OPEF2026.pdf"]
+    lignes = [l for l in github.corps.splitlines() if l.startswith("- `OPEF2026.pdf`")]
+    assert len(lignes) == 1
+    assert module.empreinte(contenu) in lignes[0] and "https://bdf.fr/OPEF2026.pdf" in lignes[0]
+    assert "(navigateur)" in lignes[0]
+    assert "Déposés par" in github.corps.splitlines()[0]
+    sortie = capsys.readouterr().out
+    assert "opef : 403 à la requête simple" in sortie
+    assert "opef : OPEF2026.pdf publié" in sortie and module.empreinte(contenu) in sortie
+
+    # Seconde publication : l'asset du même nom est remplacé, la ligne aussi, pas dupliquée.
+    contenu2 = b"%PDF opef v2"
+    etats = module.publier(jeux[:1], lambda url: contenu2, None, jeton="t")
+    assert etats == {"opef": "publie"}
+    assert ("DELETE", "https://api/assets/OPEF2026.pdf") in github.appels
+    assert github.assets == ["OPEF2026.pdf"] and github.envoyes["OPEF2026.pdf"] == contenu2
+    lignes = [l for l in github.corps.splitlines() if l.startswith("- `OPEF2026.pdf`")]
+    assert len(lignes) == 1 and module.empreinte(contenu2) in lignes[0] and "(requête simple)" in lignes[0]
+
+
+def test_publier_ne_remplace_pas_un_document_dont_le_manifeste_porte_une_autre_empreinte(monkeypatch, capsys):
+    module = _module()
+    github = _GitHubSimule(assets=["OPEF2026.pdf"], corps="- `OPEF2026.pdf` : ancien")
+    monkeypatch.setattr(module, "_github", github)
+    ici = module.url_publiee("OPEF2026.pdf")
+    jeu = {"id": "opef", "blocage": "refus", "url": "https://bdf.fr/page", "document": "https://bdf.fr/OPEF2026.pdf",
+           "fichier_local": "OPEF2026.pdf", "miroir": ici, "sha256": module.empreinte(b"edition lue")}
+    assert module.publier([jeu], lambda url: b"autre edition", None, jeton="t") == {"opef": "ecart"}
+    assert github.envoyes == {} and github.corps == "- `OPEF2026.pdf` : ancien"
+    assert "opef : ÉCART" in capsys.readouterr().out
+    # La même édition : republiée, idempotent.
+    assert module.publier([jeu], lambda url: b"edition lue", None, jeton="t") == {"opef": "publie"}
+    assert github.envoyes == {"OPEF2026.pdf": b"edition lue"}
+
+
+def test_publier_dit_quand_il_faut_un_navigateur_et_quand_ca_echoue(monkeypatch, capsys):
+    module = _module()
+    github = _GitHubSimule()
+    monkeypatch.setattr(module, "_github", github)
+    jeux = [
+        {"id": "refuse", "blocage": "refus", "url": "https://a.fr/a.pdf"},
+        {"id": "absent", "blocage": "refus", "url": "https://a.fr/b.pdf"},
+        {"id": "ok", "blocage": "refus", "url": "https://a.fr/c.pdf"},
+    ]
+
+    def simple(url):
+        if url.endswith("a.pdf"):
+            raise _http_error(403, url)
+        if url.endswith("b.pdf"):
+            raise _http_error(404, url)
+        return b"c"
+
+    assert module.publier(jeux, simple, None, jeton="t") == {"refuse": "navigateur", "absent": "echec", "ok": "publie"}
+    sortie = capsys.readouterr().out
+    assert "refuse : NAVIGATEUR REQUIS" in sortie and "absent : ÉCHEC" in sortie
+    assert github.envoyes == {"c.pdf": b"c"}
+    monkeypatch.delenv("GH_TOKEN", raising=False)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    with pytest.raises(RuntimeError):
+        module.publier(jeux, simple, None)
+
+
+def test_recuperer_cherche_la_release_quand_aucun_miroir_n_est_declare(tmp_path, monkeypatch, capsys):
+    module = _module()
+    monkeypatch.setattr(module, "BRUT", tmp_path)
+    monkeypatch.setattr(module, "RACINE", tmp_path)
+    jeu = {"id": "opef", "blocage": "refus", "url": "https://bdf.fr/page",
+           "document": "https://bdf.fr/OPEF2026.pdf", "fichier_local": "OPEF2026.pdf"}
+    ici = module.url_publiee("OPEF2026.pdf")
+    appels: list[str] = []
+
+    def rien(url):
+        appels.append(url)
+        raise _http_error(404, url)
+
+    assert module.recuperer([jeu], rien) == []
+    assert appels == [ici]
+    assert "lancer le workflow documents-apportes.yml" in capsys.readouterr().out
+
+    def publie(url):
+        return b"%PDF"
+
+    assert module.recuperer([jeu], publie) == [tmp_path / "OPEF2026.pdf"]
+    sortie = capsys.readouterr().out
+    assert f"miroir: {ici}" in sortie and f"sha256: {module.empreinte(b'%PDF')}" in sortie
+
+
+def test_le_workflow_documents_apportes_publie_avec_le_droit_d_ecrire():
+    """Sans `contents: write`, `--publier` ne pourrait pas déposer l'asset ; sans
+    `--publier`, le workflow ne servirait à rien."""
+    chemin = RACINE / ".github" / "workflows" / "documents-apportes.yml"
+    workflow = yaml.safe_load(chemin.read_text(encoding="utf-8"))
+    assert workflow["permissions"] == {"contents": "write"}
+    declencheurs = workflow[True] if True in workflow else workflow["on"]
+    assert "workflow_dispatch" in declencheurs and "schedule" in declencheurs
+    texte = chemin.read_text(encoding="utf-8")
+    assert "source_locale.py --publier" in texte
+    assert "playwright install" in texte

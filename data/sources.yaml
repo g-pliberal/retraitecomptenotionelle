@@ -21,12 +21,23 @@
 #   convention -> l'accès demande une clé, un compte ou une convention ; rien
 #                 à apporter, la donnée n'entre pas dans le dépôt telle quelle
 #   Le fichier est attendu sous le nom que l'adresse porte ; quand elle n'en
-#   porte pas (`file-download/31546`), `fichier_local` le déclare. `miroir`
+#   porte pas (`file-download/31546`), `fichier_local` le déclare. `document`
+#   est l'adresse directe du fichier quand `url` est la page qui le présente
+#   (le rapport de l'OPEF : `url` est sa page à la Banque de France,
+#   `document` le PDF). `miroir`
 #   est l'adresse d'un AUTRE hôte qui sert le même fichier et qu'une session
 #   atteint — les annexes budgétaires sont déposées au Parlement, et
 #   l'Assemblée nationale les sert —, et `sha256` l'empreinte du document :
 #   `python scripts/fetch/source_locale.py --recuperer` télécharge chaque
 #   miroir dans data/brut/ et refuse un fichier dont l'empreinte diffère.
+#   Sans miroir public, le dépôt se fait le sien : le workflow
+#   `documents-apportes.yml` (`source_locale.py --publier`, à la main ou
+#   chaque mois) télécharge le `document` d'un jeu `refus` — requête simple,
+#   puis Chromium ordinaire si le site veut un navigateur — et le dépose sur
+#   la release `documents-apportes` du dépôt ; l'adresse de l'asset devient
+#   alors le `miroir`, avec son `sha256`. Un jeu `refus` qui vise un fichier
+#   porte donc soit un `miroir`, soit une adresse de document que `--publier`
+#   sait traiter ; un test l'exige.
 #   `python scripts/fetch/source_locale.py` imprime la liste et, pour chaque
 #   entrée, le chemin où son fichier est attendu. Un test refuse toute autre
 #   valeur, et refuse un blocage sans note qui dise ce qui a été essayé.
@@ -3323,6 +3334,7 @@ institutions:
           Rapport annuel de l'Observatoire des produits d'épargne financière —
           frais des PER individuels, exercice 2025
         url: https://www.banque-france.fr/fr/publications-et-statistiques/publications/rapport-annuel-2026-de-lobservatoire-des-produits-depargne-financiere-opef
+        document: https://www.banque-france.fr/system/files/2026-07/OPEF2026.pdf
         acces: document
         blocage: refus
         fichier_local: OPEF2026.pdf
