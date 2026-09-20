@@ -1515,7 +1515,8 @@ institutions:
         fichier_local: PAP2026_CS_CAS_Pensions_YD.pdf
         miroir: https://www.assemblee-nationale.fr/dyn/dyn/contenu/visualisation/1088071/file/PAP2026_CS_CAS_Pensions_YD.pdf
         sha256: cafb245298406f6ef23c12dbb9ba4924bf7d4a9d2a4b38600ab98c5e1c10f87e
-        statut_integration: saisi
+        recuperation: scripts/fetch/pap_plf_2026.py
+        statut_integration: automatise
         cible: >-
           data/reference/regimes/pap_regimes_subventionnes.csv,
           data/reference/mortalite/esperances_vie_populations.csv
@@ -1548,7 +1549,8 @@ institutions:
         fichier_local: PAP2026_BG_Regimes_sociaux_retraite_RB.pdf
         miroir: https://www.assemblee-nationale.fr/dyn/contenu/visualisation/1088020/file/PAP2026_BG_Regimes_sociaux_retraite_RB.pdf
         sha256: 3f673606e28fe9a530871be43208818953cdc8edd392eb2c0e11e15d2f537307
-        statut_integration: saisi
+        recuperation: scripts/fetch/pap_plf_2026.py
+        statut_integration: automatise
         cible: >-
           data/reference/regimes/pap_regimes_subventionnes.csv,
           data/reference/legislation/avantages_non_contributifs.yaml
@@ -3367,6 +3369,7 @@ institutions:
         blocage: refus
         fichier_local: OPEF2026.pdf
         sha256: eca04bb11f03cfd4b17d3d388d9d5b71a198b71d44f281676147188db15c260e
+        recuperation: scripts/fetch/opef_frais_per.py
         statut_integration: saisi
         cible: data/reference/macro/frais_epargne_retraite.yaml
         note: >-
@@ -3414,6 +3417,11 @@ institutions:
           moyenne NON PONDÉRÉE des seuls facturants, dont on déduit 0,99 % sur
           les vingt déclarants et une médiane nulle. Aucune médiane n'est
           publiée pour les deux premiers.
+          DEPUIS, L'UTILISATEUR L'A DÉPOSÉ DANS LE DÉPÔT LUI-MÊME, le 20 septembre
+          2026, sous `data/brut/OPEF2026.pdf` — le seul fichier de ce répertoire
+          que git suive, à cause de ce refus — ; toute session l'a, et le lecteur
+          PDF du dépôt le rend désormais aussi (une police simple se lit par un
+          octet quoi que déclare sa table).
 
       - id: ccsf_rapport_per_2021
         titre: >-

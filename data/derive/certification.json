@@ -57,22 +57,22 @@
    "verifiee_le": "2026-09-19"
   },
   "bonifications_jaune_effectifs": {
-   "ajoutees": 68,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "896ef8bd58494828",
-   "identiques": 0,
+   "identiques": 68,
    "niveau": "certifiee",
    "source": "Direction du budget, jaune pensions annexé au PLF 2026 (données du Service des retraites de l'État, de la CNRACL et du FSPOEIE), tableaux A-7, 50 et B-1",
    "valeurs": 68,
    "verifiee_le": "2026-09-20"
   },
   "bonifications_jaune_taux": {
-   "ajoutees": 75,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "63be9fb4f7475a5b",
-   "identiques": 0,
+   "identiques": 75,
    "niveau": "certifiee",
    "source": "Direction du budget, jaune pensions annexé au PLF 2026, tableaux A-7 et 50 (durées et proportions)",
    "valeurs": 75,
@@ -572,6 +572,17 @@
    "source": "DILA, base LEGI, code de la sécurité sociale, article D. 815-1",
    "valeurs": 9,
    "verifiee_le": "2026-09-17"
+  },
+  "pap_regimes_subventionnes": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "e6a72e95fec93fbc",
+   "identiques": 242,
+   "niveau": "haute",
+   "source": "Direction du budget, projets annuels de performances annexés au PLF 2026 (mission Régimes sociaux et de retraite, CAS Pensions), lus dans le PDF",
+   "valeurs": 242,
+   "verifiee_le": "2026-09-20"
   },
   "part_droits_derives": {
    "ajoutees": 0,
