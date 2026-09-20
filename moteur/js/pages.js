@@ -10321,6 +10321,23 @@ function programmeGarantie(contexte) {
   const base = contexte.base;
   const plancherSeul = base.garantie_vieillesse_mensuelle
     + base.allocation_isolement_mensuelle;
+  // Qui vit sous ce plancher aujourd'hui, femmes et hommes à part : la
+  // distribution de l'EIR, sans rien emprunter au modèle. Et qui vit seul
+  // après 65 ans, lu au recensement.
+  const simulateur = contexte.simulateur();
+  const distribution = simulateur.distribution;
+  const millesime = distribution.millesime;
+  const versEnquete = simulateur.macro.coefficientPrix(
+    base.annee_euros_garantie_vieillesse, millesime,
+  );
+  const sousPlancher = {};
+  for (const sexe of ["F", "H"]) {
+    sousPlancher[sexe] = coutGarantie(
+      new DistributionPensions(contexte.paquet, sexe), 1.0,
+      plancherSeul * versEnquete, 1.0,
+    );
+  }
+  const couple = simulateur.vieEnCouple;
   return g.depliant("Le plancher, et ce qu'il change pour les petites pensions", `
 <p>Le système actuel superpose l'ASPA, le minimum contributif, le minimum
 garanti de la fonction publique, l'assurance vieillesse des parents au foyer,
@@ -10361,6 +10378,60 @@ n'est récupérée qu'au-delà d'un seuil d'actif net. Quatre règles l'encadren
 <p>Elle se demande, comme l'ASPA, et se refuse : personne ne se voit imposer
 une dette. Le programme retient qu'un ayant droit sur deux la réclame, ce que
 la DREES observe sur l'ASPA, et chiffre son coût ainsi.</p>
+<h3>Le minimum vieillesse est d'abord une affaire de femmes</h3>
+<p>L'échantillon interrégimes de retraités de la DREES le mesure. Rapportées
+au plancher que nous proposons, les pensions de droit direct de ${millesime} se répartissent ainsi
+:</p>
+${g.tableau(
+    ["Retraités", "Pension sous le plancher", "Ce qui leur manque, en moyenne"],
+    [["Femmes", g.pourcentage(sousPlancher.F.partBeneficiaires, false, 0),
+      `${g.euros(sousPlancher.F.complementMoyenMensuel / versEnquete)} par mois`],
+    ["Hommes", g.pourcentage(sousPlancher.H.partBeneficiaires, false, 0),
+      `${g.euros(sousPlancher.H.complementMoyenMensuel / versEnquete)} par mois`]],
+    ["", "nombre", "nombre"],
+    `Pensions de droit direct sous ${g.euros(plancherSeul)} par mois, `
+      + `retraités de ${millesime}`,
+    true,
+  )}
+<p>Deux femmes retraitées sur cinq touchent aujourd'hui moins que ce plancher,
+contre moins d'un homme sur cinq. La raison n'est pas mystérieuse : carrières
+interrompues, temps partiels, salaires plus bas. La dernière colonne dit autre
+chose, et il faut la lire aussi : l'homme qui tombe sous le plancher tombe en
+général plus bas que la femme. Ils sont rares, et ce sont des carrières très
+courtes ; chez les femmes, c'est la règle plutôt que l'accident. Et la même
+inégalité se
+retrouve à la fin de la vie : au recensement de ${couple.annee}, ${g.pourcentage(couple.part(65, "F"), false, 0)}
+des femmes de 65 ans vivent en couple, et il n'en reste que ${g.pourcentage(couple.part(85, "F"), false, 0)} à
+85 ans, quand ${g.pourcentage(couple.part(85, "H"), false, 0)} des hommes du même âge vivent encore avec
+quelqu'un. Les femmes vivent plus longtemps, elles épousent des hommes plus
+âgés, et elles finissent seules : la <strong>veuve pauvre</strong> est la
+figure centrale de ce dispositif, hier comme demain.</p>
+
+<h3>Ce que cela change pour une veuve, et pour ses enfants</h3>
+<p>Il faut le dire sans détour, parce que c'est le point où notre proposition
+prend le plus. Aujourd'hui, une veuve touche une <strong>pension de
+réversion</strong> : une part de la pension de son mari, versée jusqu'à sa
+mort, qu'elle ne rembourse jamais, et qui ne touche pas à ce que ses enfants
+hériteront. <strong>Notre système ne sert aucune réversion</strong> : chacun
+reçoit ce qu'il a cotisé, et rien de plus. Pour une femme dont la pension
+propre est petite, ce qui prend la place de la réversion est cette
+garantie-là.</p>
+<p>Et cette garantie est une avance. La veuve la touche pendant les années où
+elle vit seule, la créance s'accumule, et elle est reprise à sa mort sur la
+succession. Celle-ci porte le patrimoine du couple, et souvent aussi l'avance
+de son mari, que la règle a laissée courir jusque-là. <a
+href="${g.lien("/cout")}">La page Coût</a> chiffre ce que cela donne : les
+bénéficiaires de la garantie sont aux deux tiers des femmes, une succession
+porte en moyenne plus d'une avance, et quand le patrimoine est une maison
+modeste, l'héritage y passe en entier. Les héritiers ne paient jamais de leur
+poche, la règle le garantit ; mais ils héritent souvent de rien.</p>
+<p>C'est un choix, et nous l'assumons pour ce qu'il est : un minimum garanti à
+chacun de son vivant, financé d'abord par ce que ce minimum laisse derrière
+lui, avant de l'être par le contribuable. Il se refuse, comme l'ASPA se
+demande. Ceux qui préfèrent transmettre plutôt que recevoir peuvent ne pas le
+réclamer, et le programme retient qu'un ayant droit sur deux fera ce
+choix.</p>
+
 <p>Le tableau du haut de page le montre : l'ASPA regarde les ressources du
 foyer, et à 300 € et 1 500 € le couple dépasse son plafond et ne reçoit rien.
 La garantie regarde chacun, et sert 500 € au premier. C'est ce changement
