@@ -1075,6 +1075,37 @@ def source_taux_prelevement_projete() -> dict[tuple, float]:
     return _taux_prelevement("projete")
 
 
+def _engagements_retraite() -> dict:
+    return _lire_json("eurostat_engagements_retraite.json",
+                      "scripts/fetch/eurostat_engagements_retraite.py")
+
+
+def source_engagements_retraite() -> dict[tuple, float]:
+    """Droits à pension acquis à date, en part de PIB, France.
+
+    LE STOCK, LÀ OÙ TOUT LE RESTE EST UN FLUX. Le dépôt ne montre du système que
+    ce qui rentre et ce qui sort dans l'année. L'autre moitié d'un compte est ce
+    que le système DOIT DÉJÀ, au titre des droits que les vivants ont acquis, et
+    le règlement (UE) n° 549/2013 la fait publier : le tableau supplémentaire
+    sur les retraites, transmis tous les trois ans, poste ``F63_LE``.
+
+    TROIS VALEURS, ET LEUR ÉCART EST L'INFORMATION. 368 % du PIB en 2015, 431 %
+    en 2018, 397 % en 2021. Un droit acquis à date est une somme ACTUALISÉE :
+    son niveau dépend d'un taux et d'hypothèses de revalorisation qui bougent
+    d'une transmission à l'autre bien plus que les droits eux-mêmes. Soixante-
+    trois points de PIB en trois ans, puis trente-quatre dans l'autre sens, ne
+    sont pas des droits qui apparaissent et disparaissent. C'est pourquoi ce
+    tableau est publié à part des comptes principaux, et pourquoi le dépôt le
+    porte comme un ordre de grandeur et jamais comme une dette.
+    """
+    serie = _engagements_retraite()["serie"]
+    valeurs: dict[tuple, float] = {}
+    for cle, part in serie.items():
+        annee, regime = cle.split("|")
+        valeurs[(annee, regime)] = part
+    return dict(sorted(valeurs.items()))
+
+
 def source_ressources_eec() -> dict[tuple, float]:
     """Les ressources du système sous la convention EEC, scénario de référence.
 
@@ -3806,6 +3837,68 @@ CERTIFICATIONS = (
         decimales=5,
         tolerance=5.1e-6,
         niveau="projetee",
+    ),
+    Certification(
+        nom="engagements_retraite",
+        chemin=REFERENCE / "macro" / "engagements_retraite.csv",
+        cles=("annee", "regime"),
+        colonne="part_pib",
+        source=source_engagements_retraite,
+        origine="Eurostat, tableau supplémentaire sur les retraites du SEC 2010 "
+                "(nasa_10_pens1, poste F63_LE)",
+        decimales=4,
+        tolerance=5.1e-5,
+        # Eurostat n'est pas le producteur : c'est l'INSEE qui transmet, et
+        # Eurostat qui diffuse. C'est le critère 1 du manifeste, le même qui
+        # plafonne les comptes consolidés du COR.
+        niveau="haute",
+        entete=(
+            "# Droits à pension acquis à date, France, en part du PIB",
+            "# source_id: eurostat_engagements_retraite",
+            "# unite: part du produit intérieur brut, en fraction",
+            "# fiabilite:",
+            "#   haute (2015, 2018, 2021) : tableau supplémentaire sur les retraites",
+            "#             du SEC 2010, poste F63_LE — droits à pension dans le bilan",
+            "#             de clôture —, transmis par l'INSEE et diffusé par Eurostat,",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# LE STOCK, LÀ OÙ TOUT LE RESTE DU DÉPÔT EST UN FLUX",
+            "# ---------------------------------------------------",
+            "# Le site ne montre du système que ce qui rentre et ce qui sort dans",
+            "# l'année. L'autre moitié d'un compte est ce que le système DOIT DÉJÀ,",
+            "# au titre des droits que les vivants ont acquis à ce jour. Le",
+            "# règlement (UE) n° 549/2013 la fait publier tous les trois ans, et",
+            "# elle manquait au dépôt — alors que son modèle est en comptes",
+            "# notionnels, où ce stock est la somme des capitaux virtuels.",
+            "#",
+            "# L'ORDRE DE GRANDEUR EST CE QU'ON EN RETIENT : près de QUATRE ANNÉES",
+            "# de production, contre quatorze pour-cent de PIB de dépense annuelle.",
+            "# Un système de retraite porte un engagement d'environ trente fois son",
+            "# flux d'une année. Presque tout est par répartition : le poste",
+            "# `repartition` vaut le total à l'unité près, la France déclarant zéro",
+            "# au titre des régimes par capitalisation.",
+            "#",
+            "# ET L'ÉCART ENTRE LES TROIS TRANSMISSIONS EST L'AUTRE INFORMATION.",
+            "# 368 % du PIB en 2015, 431 % en 2018, 397 % en 2021 : soixante-trois",
+            "# points de PIB en trois ans, puis trente-quatre dans l'autre sens. Ce",
+            "# ne sont pas des droits qui apparaissent et disparaissent. Un droit",
+            "# acquis à date est une somme ACTUALISÉE, et son niveau dépend d'un",
+            "# taux d'actualisation et d'hypothèses de revalorisation qui bougent",
+            "# d'une transmission à l'autre bien plus que les droits eux-mêmes.",
+            "# C'est pourquoi ce tableau est publié à part des comptes principaux,",
+            "# et pourquoi personne ne le porte au bilan des administrations.",
+            "#",
+            "# CE QUE LE DÉPÔT N'EN FAIT PAS. Il ne le compare pas au sien, et il",
+            "# n'en a pas. Un scénario notionnel produit nativement la moitié de",
+            "# cette grandeur — le capital virtuel des ACTIFS en est la définition —,",
+            "# mais pas celle des retraités, dont le capital a été converti en rente",
+            "# à la liquidation. Les additionner demanderait de refaire ce que fait",
+            "# le tableau 29, table de mortalité et taux d'actualisation compris, et",
+            "# le résultat dépendrait de ce taux autant que le sien.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="ressources_eec_retraite",

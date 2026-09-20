@@ -9983,6 +9983,16 @@ def _cout_detail_sources(contexte: Contexte) -> str:
     masse_brute = masse_pensions / pib_masse
     masse_nette = masse_brute * (1.0 - pensions_nettes.taux_total)
     masse_circulaire = masse_pensions * pensions_nettes.csg_affectee_vieillesse
+    # Le stock, à côté des flux : les droits acquis à date du tableau
+    # supplémentaire du SEC 2010. Les années sont lues et non déduites — une
+    # transmission tous les trois ans, et rien entre les deux.
+    annees_engagements = comptes.annees_engagements()
+    annee_engagements = annees_engagements[-1]
+    engagements_dernier = comptes.engagements(annee_engagements)
+    engagements_serie = ", ".join(
+        f"{g.pourcentage(comptes.engagements(annee), decimales=0)} en {annee}"
+        for annee in annees_engagements
+    )
     return g.depliant("D'où viennent ces chiffres", f"""
 <p>Cette page croise deux producteurs de comptes, et ils ne comptent pas la
 même chose. Rien n'est mélangé pour autant : du modèle, les deux premières
@@ -10037,6 +10047,17 @@ cinquième des impôts et taxes que le compte encaisse. Le COR ne se trompe pas
 en les comptant tous les deux, un compte d'encaissements le doit ; mais qui lit
 « dépenses » et « ressources » comme deux grandeurs indépendantes se trompe de
 cette somme-là.</p>
+<p class="discret"><strong>Et tout cela est un FLUX.</strong> Ce qui rentre et
+ce qui sort dans l'année. L'autre moitié d'un compte est ce que le système doit
+DÉJÀ, au titre des droits que les vivants ont acquis : le règlement européen sur
+les comptes nationaux le fait publier tous les trois ans, et pour la France il
+vaut {g.pourcentage(engagements_dernier, decimales=0)} du PIB en
+{annee_engagements}, presque tout par répartition : <strong>près de quatre
+années de production</strong>, contre quatorze pour-cent de dépense annuelle. Ce n'est pas une
+dette : un droit acquis à date est une somme actualisée, et les trois
+transmissions donnent {engagements_serie}. Soixante points de PIB d'écart sans
+qu'aucun droit ait changé : c'est le taux qui les actualise qui a bougé. L'ordre de
+grandeur est tout ce qu'on en retient, et le dépôt ne calcule pas le sien.</p>
 
 <h4>Ce que d'autres caisses versent — rapports à la Commission des comptes de
 la Sécurité sociale</h4>

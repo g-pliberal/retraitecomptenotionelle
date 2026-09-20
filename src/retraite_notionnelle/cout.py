@@ -1246,7 +1246,9 @@ class Dette:
     montre : elle dit ce que le résultat doit à cette lecture.
 
     LA CROISSANCE EST CELLE DE LA PROJECTION : le PIB nominal de ``Avenir``,
-    qui suit les hypothèses du COR corrigées de la population d'âge actif.
+    qui suit les hypothèses du COR composées avec sa trajectoire d'emploi — la
+    même série que lit l'indexation des comptes, depuis que la page a cessé de
+    se fabriquer un PIB à elle (action 65).
 
     LA DETTE PUBLIQUE EST POSÉE DESSOUS, PAS MÉLANGÉE. ``dette_publique_observee``
     porte ce que le pays doit déjà, au sens de Maastricht, tel que l'INSEE le

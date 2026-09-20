@@ -2771,8 +2771,9 @@ institutions:
   eurostat:
     nom: Eurostat
     role: >-
-      Contrôle de cohérence sur l'inflation harmonisée, et espérance de vie à
-      65 ans — que l'INSEE ne publie pas en série longue.
+      Contrôle de cohérence sur l'inflation harmonisée, espérance de vie à
+      65 ans — que l'INSEE ne publie pas en série longue —, et droits à
+      pension acquis à date, seule publication du STOCK que porte le système.
     jeux:
       - id: eurostat_hicp
         titre: HICP — annual data
@@ -2783,6 +2784,32 @@ institutions:
         note: >-
           Contrôle de vraisemblance seulement : l'IPCH et l'IPC national ne
           mesurent pas la même chose, aucune valeur n'est certifiée par ce biais.
+
+      - id: eurostat_engagements_retraite
+        titre: >-
+          Droits à pension acquis à une date donnée dans le cadre de
+          l'assurance sociale (nasa_10_pens1) — tableau supplémentaire sur les
+          retraites du SEC 2010
+        url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nasa_10_pens1
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/eurostat_engagements_retraite.py
+        cible: data/reference/macro/engagements_retraite.csv
+        note: >-
+          LE STOCK, LÀ OÙ TOUT LE RESTE DU DÉPÔT EST UN FLUX. Le règlement
+          (UE) n° 549/2013 fait transmettre, tous les trois ans, ce que chaque
+          système de retraite DOIT DÉJÀ au titre des droits que les vivants
+          ont acquis. Le poste retenu est `F63_LE`, les droits à pension dans
+          le bilan de clôture : 368 % du PIB en 2015, 431 % en 2018, 397 % en
+          2021 pour la France, presque tout par répartition. Eurostat n'en est
+          pas le producteur — c'est l'INSEE qui transmet —, d'où le niveau
+          `haute` et non `certifiee`, comme pour les comptes consolidés du
+          COR. L'écart entre les trois transmissions est l'autre information :
+          soixante-trois points de PIB en trois ans, puis trente-quatre dans
+          l'autre sens, ne sont pas des droits qui apparaissent et
+          disparaissent, mais un taux d'actualisation qui bouge. C'est pourquoi
+          ce tableau est publié à part des comptes principaux, et pourquoi le
+          dépôt le porte comme un ordre de grandeur et jamais comme une dette.
 
       - id: eurostat_mlexpec
         titre: Espérance de vie par âge et par sexe (demo_mlexpec)

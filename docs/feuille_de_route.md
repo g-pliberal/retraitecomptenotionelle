@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 181<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 235<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10550,3 +10550,71 @@ ligne.
 `moteur/js/remuneration.js`, `moteur/js/pages.js`,
 `scripts/construire_donnees.py`, `data/reference/site/affirmations.yaml`,
 `tests/test_affirmations.py`, `tests/test_donnees.py`, `limites.md` § 5 bis.
+
+---
+
+### 67. Le stock : le dépôt ne montrait que des flux — `fait`
+
+**Demande.** Le troisième des écarts de comptabilité de l'audit de l'action 65.
+
+**Ce qui manquait, et pourquoi c'était le comble.** Tout ce que le site montre
+du système de retraite est un FLUX : ce qui rentre et ce qui sort dans l'année.
+C'est la moitié d'un compte. L'autre est ce que le système DOIT DÉJÀ, au titre
+des droits que les vivants ont acquis — et elle n'était nulle part, alors que le
+modèle est en comptes notionnels, où ce stock est par définition la somme des
+capitaux virtuels.
+
+**Ce qui est publié, et que personne ne cite.** Le règlement (UE) n° 549/2013
+fait transmettre, tous les trois ans, un tableau supplémentaire sur les
+retraites. Poste `F63_LE`, droits à pension dans le bilan de clôture. Pour la
+France : **368 % du PIB en 2015, 431 % en 2018, 397 % en 2021**, presque
+intégralement par répartition. `eurostat_engagements_retraite.py` va les
+chercher, `engagements_retraite.csv` les porte, et la page Coût les affiche à
+côté de ses flux.
+
+**Ce qu'on en retient.** L'ordre de grandeur, et rien de plus : près de quatre
+années de production d'engagement contre quatorze pour-cent de PIB de dépense
+annuelle, soit une trentaine de fois le flux d'une année. C'est ce qui rend
+absurde, dans les deux sens, l'idée qu'un tel système se solde comme un budget
+annuel.
+
+**Et l'écart entre transmissions est la seconde information.** Soixante-trois
+points de PIB en trois ans, puis trente-quatre dans l'autre sens. Ce ne sont pas
+des droits qui apparaissent et disparaissent : un droit acquis à date est une
+somme ACTUALISÉE, et son niveau dépend d'un taux qui bouge d'un exercice à
+l'autre bien plus que les droits eux-mêmes. C'est la raison pour laquelle ce
+tableau est publié à part des comptes principaux, et pourquoi le dépôt le porte
+comme un ordre de grandeur et jamais comme une dette. La page le dit.
+
+**Les années sont LUES, pas reconduites.** `SerieAnnuelle` prolonge la valeur du
+bord, ce qui n'aurait ici aucun sens : le producteur n'a rien transmis pour
+2024, et dater de 2024 un engagement de 2021 serait une faute.
+`annees_engagements` lit donc la FIABILITÉ, et un contrôle exige que les années
+rendues soient espacées de trois ans exactement.
+
+**Ce qui reste ouvert, et c'est le vrai chantier.** Le dépôt ne calcule pas le
+SIEN. Un scénario notionnel produit nativement la moitié de la grandeur — le
+capital virtuel des actifs en est la définition —, mais pas celle des retraités,
+dont le capital a été converti en rente à la liquidation. Les additionner
+demanderait de refaire ce que fait le tableau 29 : table de mortalité, taux
+d'actualisation, hypothèses de revalorisation. Le modèle en a les moyens
+techniques — `moteur/compte.py` calcule le capital notionnel année par année,
+`cout.py` sait pondérer une grandeur de la grille par les effectifs de l'INSEE —
+et ce qui manque est une DÉCISION : le taux d'actualisation, qui n'est pas un
+calcul. Le résultat en dépendrait autant que celui d'Eurostat en dépend, et
+serait donc un troisième chiffre conventionnel à côté de deux qui le sont déjà.
+C'est la raison de ne pas l'avoir fait à la hâte, et non une raison de ne
+jamais le faire : un compte notionnel qui ne sait pas dire ce qu'il doit est
+un compte incomplet.
+
+**Et ce n'est pas la dette que la page montre déjà.** `Dette` accumule les
+soldes À VENIR avec leurs intérêts, à partir de zéro. Les droits acquis à date
+sont ce qui est dû AUJOURD'HUI pour le passé. Deux questions, deux grandeurs,
+et les additionner n'aurait aucun sens.
+
+**Fichiers.** `scripts/fetch/eurostat_engagements_retraite.py`,
+`scripts/verifier_donnees.py`, `data/reference/macro/engagements_retraite.csv`,
+`data/sources.yaml`, `donnees/equilibre.py`, `web/pages.py`,
+`moteur/js/equilibre.js`, `moteur/js/pages.js`, `scripts/construire_donnees.py`,
+`data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`,
+`tests/test_donnees.py`, `limites.md` § 5 bis, `methodologie.md`.

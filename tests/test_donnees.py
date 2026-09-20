@@ -330,6 +330,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Les mêmes ressources sous l'autre convention du COR : un fichier à
         # elles, et tout entier projeté.
         "ressources_eec_retraite": "macro/ressources_eec_retraite.csv",
+        # Le stock, à côté des flux : le tableau supplémentaire du SEC 2010,
+        # transmis tous les trois ans.
+        "engagements_retraite": "macro/engagements_retraite.csv",
         # La ventilation du poste « transferts » de ce compte, lue chez celui
         # qui paie : rapports à la CCSS, fiches CNAF, Agirc-Arrco, Ircantec.
         "transferts_retraite": "macro/transferts_retraite.csv",

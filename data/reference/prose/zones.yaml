@@ -105,6 +105,14 @@ fichiers:
       # contrôle `compte_en_brut_et_recette_circulaire` tient déjà les mêmes
       # trois nombres là où ils sont affichés, sur la page Coût.
       "Le compte est en brut, et une part de sa recette sort de sa dépense": recit
+      # Elle porte les trois transmissions du tableau supplémentaire du
+      # SEC 2010, qui sont des valeurs publiées et datées : 2015, 2018, 2021.
+      # Les « rafraîchir » n'aurait pas de sens, le producteur ne transmettant
+      # que tous les trois ans ; et c'est justement leur ÉCART qui est le
+      # propos de la section. Le contrôle
+      # `le_compte_est_un_flux_et_le_stock_existe` tient les mêmes nombres là
+      # où la page les affiche, et il verra la quatrième transmission arriver.
+      "Le stock : ce que le dépôt en montre, et ce qu'il ne calcule pas": recit
       # Elle dit ce que le troisième chiffre du simulateur suppose, le jour où
       # a été posé. Ses nombres sont ceux de ce jour-là — le coefficient d'un
       # départ en 2054, les deux montants qui montrent pourquoi une marge ne

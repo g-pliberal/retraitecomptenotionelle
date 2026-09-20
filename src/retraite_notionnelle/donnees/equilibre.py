@@ -388,6 +388,16 @@ class ComptesRetraite:
         self.ressources_eec = charger_serie_annuelle(
             macro / "ressources_eec_retraite.csv", "part_pib",
             nom="ressources_eec_retraite")
+        # Les droits à pension ACQUIS À DATE, en part de PIB : le stock, là où
+        # tout le reste de ce module est un flux. Trois transmissions, tous les
+        # trois ans ; ``engagements`` dit ce qu'on en retient.
+        self.engagements_acquis: dict[str, SerieAnnuelle] = {
+            regime: charger_serie_annuelle(
+                macro / "engagements_retraite.csv", "part_pib",
+                nom=f"engagements_{regime}", filtre={"regime": regime},
+            )
+            for regime in ("tous_regimes", "repartition")
+        }
         self.pib = charger_serie_annuelle(
             macro / "pib_courant.csv", "pib_meur", nom="pib_courant")
         # La dette de TOUTES les administrations publiques, au sens de
@@ -484,6 +494,38 @@ class ComptesRetraite:
         principal est donc exact, et non un mélange de deux périmètres.
         """
         return self.ressources_eec(annee) - self.depenses(annee)
+
+    def annees_engagements(self) -> list[int]:
+        """Les années transmises, et elles seules : une tous les trois ans.
+
+        ``annees()`` ne rend que les années ÉCRITES, et c'est ce qu'il faut :
+        la série n'en porte que trois, et balayer de la première à la dernière
+        en inventerait quatre, chacune reconduisant la transmission
+        précédente — un engagement de 2021 n'est pas celui de 2022. Le filtre
+        sur la fiabilité ne retire donc rien aujourd'hui ; il est là pour le
+        jour où une valeur estimée s'y glisserait, et le portage JavaScript
+        fait exactement le même geste sur le même tableau d'années.
+        """
+        serie = self.engagements_acquis["tous_regimes"]
+        return [annee for annee in serie.annees()
+                if serie.fiabilite(annee) > Fiabilite.ESTIMEE]
+
+    def engagements(self, annee: int, regime: str = "tous_regimes") -> float:
+        """Les droits à pension acquis à date, en part de PIB.
+
+        LE STOCK, ET NON LE FLUX. Tout le reste de ce module dit ce qui rentre
+        et ce qui sort dans l'année. Ceci dit ce que le système DOIT DÉJÀ, au
+        titre des droits que les vivants ont acquis : près de quatre années de
+        production, contre quatorze pour-cent de PIB de dépense annuelle.
+
+        CE QU'ON EN RETIENT EST L'ORDRE DE GRANDEUR, ET RIEN DE PLUS. Les trois
+        transmissions donnent 368 %, 431 % puis 397 % du PIB. Un droit acquis à
+        date est une somme actualisée, et soixante-trois points de PIB en trois
+        ans ne sont pas des droits qui apparaissent : c'est un taux
+        d'actualisation qui bouge. Le dépôt le montre pour dire que le stock
+        existe et qu'il est grand, jamais comme une dette.
+        """
+        return self.engagements_acquis[regime](annee)
 
     def profil_taux(self, annee: int, reference: int) -> float:
         """Ce que le taux de prélèvement de ``annee`` vaut, rapporté à celui de

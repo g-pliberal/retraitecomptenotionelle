@@ -6760,6 +6760,63 @@ voisines ne se disputent pas le même rôle.
 
 ---
 
+### Le stock : ce que le dépôt en montre, et ce qu'il ne calcule pas
+
+Tout ce que le site montre du système de retraite est un **flux** : ce qui
+rentre et ce qui sort dans l'année, rapporté au PIB de l'année. C'est la moitié
+d'un compte. L'autre moitié est ce que le système **doit déjà**, au titre des
+droits que les vivants ont acquis — et elle manquait, ce qui est le comble pour
+un modèle en comptes notionnels, où ce stock est par définition la somme des
+capitaux virtuels.
+
+**Ce qui est publié.** Le règlement (UE) n° 549/2013 fait transmettre, tous les
+trois ans, un tableau supplémentaire sur les retraites. Son poste central est
+`F63_LE`, les droits à pension dans le bilan de clôture. Pour la France :
+**368 % du PIB en 2015, 431 % en 2018, 397 % en 2021**, presque intégralement
+par répartition. `engagements_retraite.csv` les porte depuis le 20 septembre
+2026, et la page Coût les affiche à côté de ses flux.
+
+**Ce qu'on en retient, et rien de plus.** L'ordre de grandeur : près de quatre
+années de production d'engagement, contre quatorze pour-cent de PIB de dépense
+annuelle. Un système de retraite porte environ trente fois son flux d'une année.
+C'est ce qui rend absurde l'idée qu'un tel système se solde comme un budget
+annuel, dans les deux sens : on ne peut ni l'éteindre par une économie de flux,
+ni le déclarer insoutenable parce qu'un flux manque.
+
+**Et l'écart entre les trois transmissions est la seconde information.**
+Soixante-trois points de PIB en trois ans, puis trente-quatre dans l'autre sens.
+Ce ne sont pas des droits qui apparaissent et disparaissent : un droit acquis à
+date est une somme **actualisée**, et son niveau dépend d'un taux
+d'actualisation et d'hypothèses de revalorisation qui bougent d'un exercice à
+l'autre bien plus que les droits eux-mêmes. C'est la faiblesse connue de cet
+exercice, la raison pour laquelle le tableau est publié **à part** des comptes
+principaux, et pourquoi personne ne le porte au bilan des administrations. Le
+dépôt le montre pour dire que le stock existe et qu'il est grand ; jamais comme
+une dette.
+
+**Ce que le dépôt ne calcule pas : le sien.** Un scénario notionnel produit
+nativement la moitié de cette grandeur — le capital virtuel des ACTIFS en est
+la définition même. L'autre moitié est celle des retraités, la valeur
+actualisée des pensions qu'ils toucheront encore, qu'un compte notionnel ne
+porte plus : le capital a été converti en rente à la liquidation. Les
+additionner demanderait de refaire ce que fait le tableau 29 — table de
+mortalité, taux d'actualisation, hypothèses de revalorisation — et le résultat
+dépendrait de ce taux autant que celui d'Eurostat en dépend. Ce serait donc
+un troisième chiffre conventionnel, à côté de deux qui le sont déjà.
+
+Techniquement, le modèle en a les moyens : `moteur/compte.py` calcule le
+capital notionnel année par année, et `cout.py` sait pondérer une grandeur de
+la grille par les effectifs de l'INSEE. Ce qui manque est la partie des
+retraités et la convention d'actualisation, qui est une décision et non un
+calcul. L'action est ouverte dans la feuille de route.
+
+**Et ce n'est pas la dette que la page montre déjà.** `Dette` accumule les
+SOLDES À VENIR, avec intérêts, à partir de zéro : ce que les déficits
+projetés ajouteraient. Les droits acquis à date sont autre chose — ce qui est
+dû aujourd'hui pour le passé, indépendamment de ce que l'avenir cotisera. Les
+deux grandeurs répondent à deux questions, et les additionner n'aurait aucun
+sens.
+
 ### Le compte est en brut, et une part de sa recette sort de sa dépense
 
 Deux choses que la page Coût affichait sans les dire, et qui ne se voient pas
@@ -7200,7 +7257,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1824<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1828<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

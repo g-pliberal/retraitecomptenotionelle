@@ -769,6 +769,23 @@ affirmations:
     etat: verifiee
     controle: compte_en_brut_et_recette_circulaire
 
+  # LE STOCK, dit le 20 septembre 2026. Le site ne montrait que des flux, ce
+  # qui est le comble pour un modèle en comptes notionnels : le stock y est la
+  # somme des capitaux virtuels, et il n'était nulle part.
+  - id: cout.compte_est_un_flux
+    page: /cout
+    extrait: "Et tout cela est un FLUX."
+    porte: les droits acquis à date sont publiés, valent près de quatre années de PIB, et la page les chiffre
+    etat: verifiee
+    controle: le_compte_est_un_flux_et_le_stock_existe
+
+  - id: cout.stock_ordre_de_grandeur
+    page: /cout
+    extrait: "près de quatre années de production"
+    porte: le stock des droits acquis est d'un tout autre ordre que le flux annuel
+    etat: verifiee
+    controle: le_compte_est_un_flux_et_le_stock_existe
+
   - id: reglages.avertissement
     page: [/cas-types, /cout, /avantages]
     extrait: "Ces chiffres ne sont pas ceux des réglages par défaut."

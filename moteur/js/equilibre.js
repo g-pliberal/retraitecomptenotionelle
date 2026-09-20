@@ -288,6 +288,16 @@ export class ComptesRetraite {
     // années au niveau projeté : `ressourceEec` dit ce qu'elle est.
     this.ressourcesEec = SerieAnnuelle.depuisPaquet("ressources_eec_retraite",
                                                     brut.ressources_eec);
+    // Les droits à pension ACQUIS À DATE, en part de PIB : le stock, là où
+    // tout le reste de ce module est un flux. Trois transmissions, tous les
+    // trois ans ; `engagements` dit ce qu'on en retient.
+    this.engagementsAcquis = new Map(
+      ["tous_regimes", "repartition"].map((regime) => [
+        regime,
+        SerieAnnuelle.depuisPaquet(`engagements_${regime}`,
+                                   brut[`engagements_${regime}`]),
+      ]),
+    );
     this.pib = SerieAnnuelle.depuisPaquet("pib_courant", paquet.depenses.pib_courant);
     // La dette de TOUTES les administrations publiques, au sens de Maastricht,
     // en part de PIB : ce que le pays porte déjà. Elle ne sert à aucun calcul ;
@@ -361,6 +371,30 @@ export class ComptesRetraite {
   get premiereAnneeEec() { return this.ressourcesEec.premiereAnnee; }
 
   get derniereAnneeEec() { return this.ressourcesEec.derniereAnnee; }
+
+  /**
+   * Les années transmises, et elles seules : une tous les trois ans.
+   * `SerieAnnuelle` reconduit la valeur du bord, ce qui n'aurait ici aucun
+   * sens — le producteur n'a rien transmis pour les autres années.
+   */
+  anneesEngagements() {
+    const serie = this.engagementsAcquis.get("tous_regimes");
+    // Les années ÉCRITES, et non une plage : la série n'en porte que trois, et
+    // balayer de la première à la dernière en inventerait quatre, chacune
+    // reconduisant la transmission précédente.
+    return serie.annees.filter((annee) => serie.fiabilite(annee) > Fiabilite.ESTIMEE);
+  }
+
+  /**
+   * Les droits à pension acquis à date, en part de PIB : ce que le système
+   * DOIT DÉJÀ, là où le reste du compte dit ce qui rentre et ce qui sort dans
+   * l'année. Près de quatre années de production. L'ordre de grandeur est tout
+   * ce qu'on en retient : une somme actualisée bouge de soixante points de PIB
+   * d'une transmission à l'autre sans qu'aucun droit ait changé.
+   */
+  engagements(annee, regime = "tous_regimes") {
+    return this.engagementsAcquis.get(regime).valeur(annee);
+  }
 
   profilTaux(annee, reference) {
     const base = this.tauxPrelevement.valeur(reference);

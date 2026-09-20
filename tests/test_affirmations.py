@@ -1298,6 +1298,50 @@ def _(m: Modele):
     assert normaliser(g.nombre(taux * 100, 2)) in cout, taux
 
 
+@controle("le_compte_est_un_flux_et_le_stock_existe")
+def _(m: Modele):
+    """Le site montre des flux ; le stock existe, il est publié, il est grand.
+
+    Tout ce que la page Coût affiche est un flux : ce qui rentre et ce qui sort
+    dans l'année. L'autre moitié d'un compte est ce que le système doit DÉJÀ,
+    au titre des droits acquis, et le règlement (UE) n° 549/2013 la fait
+    transmettre tous les trois ans. Elle manquait au dépôt jusqu'au
+    20 septembre 2026 — ce qui est le comble pour un modèle en comptes
+    notionnels, où ce stock est la somme des capitaux virtuels.
+
+    Trois choses tenues ici. Que le stock soit d'un tout autre ORDRE que le
+    flux : au moins vingt fois la dépense d'une année. Que les années soient
+    celles qui ont été TRANSMISES, et non reconduites de bord en bord, faute de
+    quoi la page daterait de 2024 un engagement de 2021. Et que la page écrive
+    les trois valeurs, qui disent ensemble ce qu'aucune ne dit seule : un
+    engagement actualisé bouge de soixante points de PIB sans qu'aucun droit
+    n'ait changé.
+    """
+    comptes = m.contexte.comptes()
+    annees = comptes.annees_engagements()
+    assert len(annees) >= 3, annees
+    # Une transmission tous les trois ans : des années espacées, et aucune
+    # valeur reconduite entre elles.
+    assert all(b - a == 3 for a, b in zip(annees, annees[1:])), annees
+    assert annees[-1] < comptes.derniere_annee_observee
+
+    for annee in annees:
+        stock = comptes.engagements(annee)
+        assert stock > 20 * comptes.depense(annee), (annee, stock)
+        # La répartition porte tout, ou presque : la France déclare zéro au
+        # titre des régimes par capitalisation.
+        assert comptes.engagements(annee, "repartition") == pytest.approx(stock, abs=0.05)
+
+    # L'écart entre transmissions, qui est ce que la page en dit.
+    valeurs = [comptes.engagements(annee) for annee in annees]
+    assert max(valeurs) - min(valeurs) > 0.40, valeurs
+
+    cout = TEMOINS_PAR_NOM["cout"]["texte"]
+    for annee, valeur in zip(annees, valeurs):
+        assert str(annee) in cout, annee
+        assert normaliser(g.pourcentage(valeur, decimales=0)) in cout, valeur
+
+
 @controle("deficit_se_creuse")
 def _(m: Modele):
     """Le solde du système actuel se creuse, et les pages écrivent ses nombres."""

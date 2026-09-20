@@ -1,0 +1,52 @@
+# Droits à pension acquis à date, France, en part du PIB
+# source_id: eurostat_engagements_retraite
+# unite: part du produit intérieur brut, en fraction
+# fiabilite:
+#   haute (2015, 2018, 2021) : tableau supplémentaire sur les retraites
+#             du SEC 2010, poste F63_LE — droits à pension dans le bilan
+#             de clôture —, transmis par l'INSEE et diffusé par Eurostat,
+#             recontrôlé par scripts/verifier_donnees.py.
+#
+# LE STOCK, LÀ OÙ TOUT LE RESTE DU DÉPÔT EST UN FLUX
+# ---------------------------------------------------
+# Le site ne montre du système que ce qui rentre et ce qui sort dans
+# l'année. L'autre moitié d'un compte est ce que le système DOIT DÉJÀ,
+# au titre des droits que les vivants ont acquis à ce jour. Le
+# règlement (UE) n° 549/2013 la fait publier tous les trois ans, et
+# elle manquait au dépôt — alors que son modèle est en comptes
+# notionnels, où ce stock est la somme des capitaux virtuels.
+#
+# L'ORDRE DE GRANDEUR EST CE QU'ON EN RETIENT : près de QUATRE ANNÉES
+# de production, contre quatorze pour-cent de PIB de dépense annuelle.
+# Un système de retraite porte un engagement d'environ trente fois son
+# flux d'une année. Presque tout est par répartition : le poste
+# `repartition` vaut le total à l'unité près, la France déclarant zéro
+# au titre des régimes par capitalisation.
+#
+# ET L'ÉCART ENTRE LES TROIS TRANSMISSIONS EST L'AUTRE INFORMATION.
+# 368 % du PIB en 2015, 431 % en 2018, 397 % en 2021 : soixante-trois
+# points de PIB en trois ans, puis trente-quatre dans l'autre sens. Ce
+# ne sont pas des droits qui apparaissent et disparaissent. Un droit
+# acquis à date est une somme ACTUALISÉE, et son niveau dépend d'un
+# taux d'actualisation et d'hypothèses de revalorisation qui bougent
+# d'une transmission à l'autre bien plus que les droits eux-mêmes.
+# C'est pourquoi ce tableau est publié à part des comptes principaux,
+# et pourquoi personne ne le porte au bilan des administrations.
+#
+# CE QUE LE DÉPÔT N'EN FAIT PAS. Il ne le compare pas au sien, et il
+# n'en a pas. Un scénario notionnel produit nativement la moitié de
+# cette grandeur — le capital virtuel des ACTIFS en est la définition —,
+# mais pas celle des retraités, dont le capital a été converti en rente
+# à la liquidation. Les additionner demanderait de refaire ce que fait
+# le tableau 29, table de mortalité et taux d'actualisation compris, et
+# le résultat dépendrait de ce taux autant que le sien.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,regime,part_pib,fiabilite
+2015,repartition,3.6800,haute
+2015,tous_regimes,3.6800,haute
+2018,repartition,4.3100,haute
+2018,tous_regimes,4.3100,haute
+2021,repartition,3.9700,haute
+2021,tous_regimes,3.9700,haute
