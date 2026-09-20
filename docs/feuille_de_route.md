@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 010<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 070<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -1276,77 +1276,18 @@ correction a déplacé.
   pension actuelle des indépendants monte, le rapport notionnel/actuel de
   leurs cas types baisse d'autant.
 
-### 11. Appliquer le coefficient d'équilibre — `à faire`
+### 11. Appliquer le coefficient d'équilibre — `archivée`
 
-**Pourquoi.** Ouverte par l'action 6, qui s'arrête juste avant. Le coefficient
-d'équilibre de chaque système est désormais CALCULÉ, année par année, de 2002 à
-2070 ; il n'est pas APPLIQUÉ. Un système notionnel réel ne laisse pas dormir un
-excédent : il relève les pensions jusqu'à l'équilibre, ou les abaisse, par un
-facteur commun à toutes les pensions de l'année et un fonds de réserve qui
-lisse. Tant que ce facteur n'est pas appliqué, les courbes de la page Coût sont
-celles d'un système qui ne se pilote pas, et le coefficient de 1,62 du
-scénario 3 en 2070 se lit trop facilement comme une économie de 38 %.
-
-**Sources.** Aucune à récupérer : tout est là. Le mécanisme, en revanche, se
-décrit — le coefficient suédois (`balansindex`), qui n'ajuste que le
-dénominateur du ratio actif/passif, et le coefficient italien, qui indexe le
-capital notionnel sur le PIB, ne font pas la même chose. Le COR décrit les deux
-dans ses fiches, et elles sont désormais au manifeste sous
-`cor_retour_septieme_rapport` : les documents 5 à 7 de la séance du 5 juillet
-2017 — Suède, Suède (complément), Italie — avec, au document 4, la maquette du
-secrétariat général qui chiffre ce que le mécanisme évite (sur un choc
-démographique permanent, des déficits transitoires de l'ordre de 10 % de la
-masse des cotisations contre près de 90 % en annuités et en points).
-`hypotheses_projection.yaml` est déjà la trace d'un emprunt de cette nature.
-
-**Fichiers.** `src/retraite_notionnelle/cout.py` (la trajectoire et le solde) ;
-`src/retraite_notionnelle/scenarios/` si l'ajustement doit porter sur la pension
-individuelle et non seulement sur l'agrégat ; `moteur/js/` en regard ; les
-témoins ; `limites.md` §5.
-
-**Marche.** Le premier pas est fait : les ressources des scénarios notionnels
-sont diminuées de ce que la branche famille et l'assurance chômage versent pour
-des droits qu'ils ne servent pas (action 6, seconde passe). Ensuite au seul
-niveau de l'AGRÉGAT — une variante de la page Coût où chaque système est ramené à
-l'équilibre —, ce qui ne touche pas les moteurs de pension et se mesure
-aussitôt. Ensuite seulement, si l'écart le justifie,
-l'ajustement porté à la pension individuelle, qui les touche tous les deux. Le
-piège à nommer d'avance : un facteur commun ne déplace AUCUN écart entre
-carrières, si bien qu'appliquer le coefficient ne change rien à ce que le site
-mesure page par page — et change tout à ce que la page Coût affiche.
-
-**Fin.** La page Coût porte les deux lectures — système piloté, système non
-piloté — et dit laquelle répond à quelle question.
-
-**Un demi-pas fait le 20 septembre 2026, et ce n'est pas celui que l'action
-décrivait.** Le coefficient n'est toujours pas APPLIQUÉ — aucune courbe de la
-page Coût n'a bougé, aucun moteur de pension n'a été touché —, mais il est
-désormais LU là où le lecteur lit son propre chiffre : sous chaque montant du
-simulateur, un troisième chiffre dit ce que les recettes du système en paient,
-et un dépliant nomme QUI paiera la différence — les retraités, les actifs, ou
-personne pour l'instant — en chiffrant les trois leviers dans les unités où on
-les vit. Ce qui a fait
-passer ce demi-pas devant l'autre est ce que l'action nommait déjà comme son
-piège : un facteur commun ne déplace AUCUN écart entre carrières, si bien que
-l'appliquer dans l'agrégat ne change rien à ce que le site mesure page par
-page. Le lecteur, lui, ne lit pas l'agrégat : il lit un montant, et ce montant
-se lisait comme une promesse tenue.
-
-La mécanique est décrite dans `src/retraite_notionnelle/donnees/bilan.py`, ses
-quatre réserves dans `docs/limites.md` § 5 bis. Une contrainte nouvelle en
-sort : le bilan des quatre systèmes est figé dans
-`data/derive/equilibre.json`, écrit par `scripts/construire_donnees.py` et
-embarqué dans le paquet, parce que la page d'entrée du site ne peut pas payer
-chez le lecteur les dix-huit secondes que coûte le coût agrégé. Le test de
-péremption du paquet les paie donc, une fois, et c'est ce qui interdit à la
-table de diverger du modèle.
-
-**Ce qui reste de l'action.** Le pilotage lui-même, c'est-à-dire l'agrégat :
-une variante de la page Coût où chaque système est ramené à l'équilibre, puis,
-si l'écart le justifie, l'ajustement porté à la pension individuelle. Le
-troisième chiffre du simulateur ne le remplace pas — il dit ce que le
-coefficient vaut, la page Coût continue de tracer des courbes qui ne s'en
-servent pas.
+**Archivée le 20 septembre 2026, à la demande de l'utilisateur.** Elle
+demandait que le coefficient d'équilibre, calculé année par année depuis
+l'action 6, soit APPLIQUÉ : que les courbes de la page Coût soient celles d'un
+système qui se pilote. Ce qui la rendait secondaire était nommé dans l'action
+elle-même — un facteur commun ne déplace AUCUN écart entre carrières, donc
+appliquer le coefficient n'aurait rien changé à ce que le site mesure page par
+page. Entre-temps, l'action 62 a fait le pas qui comptait : le coefficient est
+LU partout où un lecteur lit un montant. Le reste — le pilotage de l'agrégat —
+est descendu dans « Ce qui est délibérément en bas », avec ce qu'il aurait
+demandé, pour qui voudrait l'y reprendre.
 
 ---
 
@@ -5354,6 +5295,43 @@ lecteur n'a pas demandé.
   base en droits directs et dérivés au seul niveau de l'agrégat, et dire ce que
   le scénario 6 fait de la réversion. Modéliser une pension de réversion reste
   en bas.
+- **Piloter l'agrégat par le coefficient d'équilibre** — l'action 11,
+  archivée le 20 septembre 2026. Un système notionnel réel ne laisse pas
+  dormir un excédent : il relève les pensions jusqu'à l'équilibre, ou les
+  abaisse, par un facteur commun à toutes les pensions de l'année et un fonds
+  de réserve qui lisse. Le dépôt CALCULE ce facteur ; il ne l'applique pas, et
+  les courbes de la page Coût restent celles d'un système qui ne se pilote pas.
+
+  *Pourquoi c'est en bas.* Un facteur commun ne déplace aucun écart entre
+  carrières. L'appliquer changerait tous les niveaux de la page Coût et rien de
+  ce que le site mesure ailleurs, qui est la comparaison de quatre systèmes sur
+  une même carrière. Ce qui manquait vraiment n'était pas le pilotage mais la
+  LECTURE : que le visiteur voie, à côté de la pension que la loi promet, ce
+  que les recettes en paient. C'est l'action 62, faite.
+
+  *Ce qu'il faudrait pour la reprendre.* Rien à récupérer, tout est là. Le
+  mécanisme se décrit en revanche : le coefficient suédois (`balansindex`),
+  qui n'ajuste que le dénominateur du ratio actif/passif, et le coefficient
+  italien, qui indexe le capital notionnel sur le PIB, ne font pas la même
+  chose. Les deux sont au manifeste sous `cor_retour_septieme_rapport` — les
+  documents 5 à 7 de la séance du 5 juillet 2017, avec au document 4 la
+  maquette du secrétariat général, qui chiffre ce que le mécanisme évite : sur
+  un choc démographique permanent, des déficits transitoires de l'ordre de
+  10 % de la masse des cotisations contre près de 90 % en annuités et en
+  points. Les fichiers : `src/retraite_notionnelle/cout.py`, les moteurs de
+  pension si l'ajustement doit porter sur la pension individuelle,
+  `moteur/js/` en regard, les témoins, `limites.md` §5.
+
+  *Ce que l'archivage laisse ouvert, et il faut le dire.* Trois phrases du
+  site promettent ce pilotage — « L'écart se solde chaque année », « Le chiffre
+  qui ramène l'année à zéro est publié et appliqué chaque année », « Dépenser
+  moins n'est pas économiser ». Elles sont au catalogue des affirmations à
+  l'état `contredite`, sous cette action : le modèle ne fait pas ce qu'elles
+  annoncent, et plus rien n'est programmé pour l'y amener. Le programme peut
+  le promettre — c'est une proposition politique, pas une description du
+  modèle —, mais le dépôt ne le simule pas, et c'est le catalogue qui tient
+  cet écart visible.
+
 - **Convertir les droits acquis à l'âge de départ effectif** — l'action 24,
   abandonnée le 19 septembre 2026. Elle demandait que les droits d'avant la
   bascule soient convertis en capital au diviseur de l'âge où l'assuré part
@@ -10330,3 +10308,55 @@ l'accueil la veille, échappait au catalogue des affirmations et laissait
 `test_rien_n_echappe_au_catalogue` rouge avant cette session. Elle y prend sa
 ligne (`accueil.pas_de_reversion`), sous le contrôle qui vérifie déjà la même
 affirmation sur la page Coût.
+
+---
+
+### 64. Deux phrases que le site disait faux, et l'action 11 archivée — `fait`
+
+**Demande.** « Archive l'action 11, je ne veux plus la voir. Corrige les
+autres problèmes. » Faisait suite à une revue où trois points avaient été
+relevés, dont un qui s'est révélé faux à la vérification.
+
+**Ce qui était faux dans ma propre revue, et il faut le dire en premier.**
+J'avais annoncé que la page Cas types portait le même défaut que le
+simulateur avant l'action 62 : des pensions présentées comme acquises. C'est
+inexact, et il suffisait de rendre la page pour le voir. Cas types n'affiche
+AUCUN montant, seulement des écarts en pourcentage d'un système à l'autre, et
+elle porte déjà en tête une note sur le déficit du système actuel, chiffrée.
+Il n'y avait rien à y ajouter de ce côté.
+
+**Le vrai défaut, trouvé en cherchant l'autre.** Cette note disait que le
+coefficient d'équilibre « multiplierait les cases par le même facteur ». La
+phrase est fausse deux fois. Un facteur COMMUN laisserait ces cases
+inchangées, une case étant déjà un rapport de deux pensions, où un facteur
+commun se simplifie. Et il n'y a pas un facteur mais quatre : chaque système a
+le sien, et les ramener chacun à son équilibre déplacerait les écarts du
+rapport de ces coefficients. Mesuré plutôt qu'affirmé : **12 points en médiane
+sur les 80 cases de la grille**, et bien plus sur les générations déjà
+liquidées, où la proposition encaisse plusieurs fois ce qu'elle verse.
+
+**Ce que le catalogue des affirmations n'avait pas rattrapé.** La phrase y
+était, à l'état `verifiee`, sous le contrôle `coefficient_jamais_applique` —
+qui vérifie que le coefficient n'est pas appliqué, c'est-à-dire tout autre
+chose que ce que la phrase affirmait. Un contrôle qui ne teste pas sa phrase
+est pire qu'absent : il la déclare tenue. Elle porte désormais
+`les_ecarts_bougent_si_chaque_systeme_s_equilibre`, qui mesure ce qu'elle dit.
+
+**Deux pourcentages qui se lisaient tous deux « non financé ».** La page
+Risque affiche côte à côte 34 % et 16 %. Le premier compare UNE PENSION à ce
+que les cotisations de cet assuré achèteraient, le second LES DÉPENSES du
+système à ses recettes. Rien de contradictoire, les deux sont justes, mais
+rien n'interdisait de les additionner. Les deux libellés le disent maintenant,
+et une phrase sous les chiffres l'interdit.
+
+**Le budget de lecture a commandé la forme.** Cas types était exactement à son
+plafond de 750 mots : toute phrase ajoutée devait en retirer une autre. Ce qui
+corrige l'affirmation reste donc visible, ce qui l'explique est passé sous une
+bulle. C'est l'idiome du dépôt, et il valait mieux que de rogner ailleurs.
+
+**Action 11, archivée.** Le pilotage de l'agrégat descend dans « Ce qui est
+délibérément en bas », avec ce qu'il aurait demandé et le fait qu'il laisse
+trois phrases du site à l'état `contredite` sans plus rien pour les refermer.
+Sa section ne peut pas disparaître tout à fait : ces trois entrées du
+catalogue nomment l'action, et un test exige qu'elle existe. Il en reste un
+paragraphe qui dit où est passé le reste.

@@ -5567,6 +5567,41 @@ facteur, donc tous les niveaux de cette page, sans toucher aux écarts entre car
 qui sont la seule chose que ce site mesure.</div>`;
 }
 
+/**
+ * De combien les écarts de la grille bougeraient si chaque système était
+ * ramené à SON équilibre — déplacement médian en points, et cases mesurées.
+ * Portage de `_deplacement_des_ecarts`.
+ *
+ * La page Cas types disait que le coefficient d'équilibre « multiplierait les
+ * cases par le même facteur », et le catalogue des affirmations la tenait pour
+ * vérifiée sous un contrôle qui vérifiait tout autre chose. La phrase était
+ * fausse deux fois : un facteur COMMUN laisserait ces cases inchangées, une
+ * case étant déjà un rapport de deux pensions, et il n'y a pas un facteur mais
+ * quatre — chaque système a le sien.
+ *
+ * Médiane basse — l'élément de rang `n / 2` arrondi vers le bas — pour que les
+ * deux implémentations retrouvent le même nombre sans convention de départage.
+ */
+function deplacementDesEcarts(resultat, solde, scenario) {
+  const deplacements = [];
+  for (const cas of CAS_TYPES) {
+    for (const generation of GENERATIONS) {
+      const comparaison = resultat.resultats.get(`${cas.code}|${generation}`);
+      if (comparaison === undefined) continue;
+      const ligne = solde.annee(comparaison.carriere.anneeLiquidation);
+      if (ligne === null) continue;
+      const reference = ligne.coefficient("actuel");
+      if (reference <= 0) continue;
+      const ecart = comparaison.variationTotale(scenario);
+      const equilibre = ((1 + ecart) * ligne.coefficient(scenario)) / reference - 1;
+      deplacements.push(Math.abs(equilibre - ecart));
+    }
+  }
+  if (!deplacements.length) return [0.0, 0];
+  deplacements.sort((a, b) => a - b);
+  return [deplacements[Math.floor(deplacements.length / 2)], deplacements.length];
+}
+
 function casTypes(contexte, regards = null) {
   const simulateur = contexte.simulateur();
   const resultat = calculerCasTypes(simulateur);
@@ -5578,7 +5613,11 @@ function casTypes(contexte, regards = null) {
   const comptes = contexte.comptes();
   const obs = comptes.derniereAnneeObservee;
   const horizon = comptes.derniereAnnee;
-  const reglage = reglageProposition(contexte.cout().solde);
+  const solde = contexte.cout().solde;
+  const reglage = reglageProposition(solde);
+  // Ce que la grille ne mesure pas, chiffré plutôt qu'affirmé : de combien ses
+  // écarts bougeraient si chaque système était ramené à son équilibre.
+  const [deplacement, cases] = deplacementDesEcarts(resultat, solde, montre);
 
   const grille = (scenario, intitule) => {
     const lignes = CAS_TYPES.map((cas) => {
@@ -5711,11 +5750,19 @@ ${tete}
 pension.</strong> Chaque case compare deux carrières calculées sous la même
 règle, et ce que la grille mesure est l'écart entre ses lignes : ce qu'un
 militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
-niveau général dépend d'un
+niveau général, lui, dépend d'un
 ${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
-mais n'applique jamais : il multiplierait les cases par le même facteur.
+mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
+${g.bulle("Ce qu'un coefficient appliqué déplacerait", `Un facteur commun laisserait ces cases inchangées, une case
+étant déjà un rapport de deux pensions. Mais il y a quatre coefficients, un par
+système : les ramener chacun à SON équilibre déplacerait les écarts, de ${g.nombre(deplacement * 100, 0)}
+points en médiane sur les ${cases} cases de cette grille, et bien plus sur les
+générations déjà liquidées, où la proposition encaisse plusieurs fois ce
+qu'elle verse. Le simulateur montre, carrière par carrière, ce que les recettes
+de chaque système paient de la pension qu'il promet.`)}
 ${lectureReglageProposition(reglage)}
-<a href="${g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le chiffre</a>.</div>
+<a href="${g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le
+chiffre</a>.</div>
 
 <div class="fiches reperes">${reperes}</div>
 
@@ -8971,13 +9018,13 @@ function risque(contexte) {
     g.euros(verseMensuel),
     "cotisation salariale et patronale réunies",
   ) + g.fiche(
-    "Promis au-delà de ce que ces cotisations financent",
+    "Promis au-delà de ce que VOS cotisations achèteraient",
     g.pourcentage(partPromise, false, 0),
-    "de la pension, à la charge de quelqu'un d'autre",
+    "de VOTRE pension, à la charge de quelqu'un d'autre",
   ) + g.fiche(
-    `Non financé en ${fin}, sans rien changer`,
+    `Que les recettes du SYSTÈME ne couvriront pas en ${fin}`,
     g.pourcentage(partHorizon, false, 0),
-    "de ce qui serait dû cette année-là",
+    "des pensions dues cette année-là",
   );
 
   const cartePrelevement = g.cle(
@@ -9006,7 +9053,9 @@ ${milliards(manque, 1)} par an.`,
     `Sources : le modèle du site pour la part financée, les comptes du
 Conseil d'orientation des retraites pour le solde, observés puis projetés dans
 son scénario de référence. Le détail année par année est sur la page
-<a href="${g.lien("/cout")}">Coût</a>.`,
+<a href="${g.lien("/cout")}">Coût</a>. Ce que les recettes paient de VOTRE
+pension, à VOTRE date de départ, est sur
+<a href="${g.lien("/simuler")}">le simulateur</a>.`,
     "risque-promesse",
   );
 
@@ -9044,6 +9093,17 @@ paiera moins, comme il le fait depuis trente ans sans le dire, en revalorisant
 les pensions moins vite que les salaires.</div>
 
 <div class="fiches reperes">${reperes}</div>
+
+<p class="discret"><strong>Ces deux pourcentages ne s'additionnent
+pas.</strong> Les ${g.pourcentage(partPromise, false, 0)} comparent une
+pension aux cotisations de cet assuré ; les
+${g.pourcentage(partHorizon, false, 0)}, les dépenses du système à ses
+recettes.${g.bulle("Pourquoi ces deux parts diffèrent", `La première est une question de justice : ce que cet assuré
+reçoit au-delà de ce que ses propres cotisations achèteraient. La seconde est
+une question de solvabilité : ce que le système doit verser au-delà de ce
+qu'il encaisse, une année donnée. La première est la plus grosse parce qu'elle
+ne compte que les cotisations, quand la seconde compte tout ce que le système
+encaisse, impôts affectés compris.`)}</p>
 
 ${plan}
 
