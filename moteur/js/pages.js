@@ -22,6 +22,7 @@ import {
   tauxCapitalisationApplique, tauxCapitalisationVolontaireApplique,
   tauxRetraitePropose,
   sousRegimeFrais,
+  sousRegimeTaux,
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
 import {
@@ -164,6 +165,14 @@ export const REGIMES_FRAIS = [
   ["figes", "Marché 2025, sans baisse"],
   ["detail", "PER vendu en 2025 : 2,20 % d'arrérages, sans frais de réserve, sans baisse"],
   ["aucun", "Aucun frais"],
+];
+
+// Les taux futurs auxquels le pilier du système 4 place ses versements. Les
+// codes sont ceux de `sousRegimeTaux` (config.js), l'ordre est celui du menu.
+export const REGIMES_TAUX = [
+  ["forwards", "Taux à terme de la courbe (défaut)"],
+  ["prime", "Prime de terme retirée : 0,50 point à 30 ans"],
+  ["prime_haute", "Prime de terme haute : 1 point à 30 ans"],
 ];
 
 // Les deux façons d'écrire un revenu. Le modèle n'en connaît qu'une — le
@@ -431,7 +440,8 @@ export class ErreurSaisie extends Error {}
 export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
   "rattachement", "conversion_acquis", "part_cotisation", "foyer",
-  "projection", "emploi", "stock", "reprise", "frais", "bascule", "euros",
+  "projection", "emploi", "stock", "reprise", "frais", "taux", "bascule",
+  "euros",
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -489,6 +499,7 @@ const DEFAUTS = Object.freeze({
   // Les frais du pilier capitalisé : marché 2025 et baisse par paliers, ou
   // l'une des variantes qui disent ce que chaque hypothèse déplace.
   frais: "paliers",
+  taux: "forwards",
   bascule: 2026,
   euros: 2026,
   //: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -560,6 +571,7 @@ export class Saisie {
       stock: parmi(parametres, "stock", REVALORISATIONS_STOCK, DEFAUTS.stock),
       reprise: entier(parametres, "reprise", DEFAUTS.reprise),
       frais: parmi(parametres, "frais", REGIMES_FRAIS, DEFAUTS.frais),
+      taux: parmi(parametres, "taux", REGIMES_TAUX, DEFAUTS.taux),
       bascule: entier(parametres, "bascule", DEFAUTS.bascule),
       euros: entier(parametres, "euros", DEFAUTS.euros),
       // Une adresse qui ne porte QUE des réglages de modélisation ne demande
@@ -858,7 +870,7 @@ export class Saisie {
       annee_bascule: this.bascule,
       annee_euros_constants: this.euros,
     });
-    return sousRegimeFrais(regle, this.frais);
+    return sousRegimeTaux(sousRegimeFrais(regle, this.frais), this.taux);
   }
 
   /**
@@ -1193,6 +1205,7 @@ export class Saisie {
       projection: this.projection, emploi: this.emploi, stock: this.stock,
       reprise: this.reprise === null ? "" : this.reprise,
       frais: this.frais,
+      taux: this.taux,
       bascule: this.bascule, euros: this.euros,
     };
     // L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut : c'est
@@ -2234,6 +2247,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   stock: ["pensions en cours à la bascule", REVALORISATIONS_STOCK],
   reprise: ["part de l'avance couverte par la succession", null],
   frais: ["frais du pilier capitalisé", REGIMES_FRAIS],
+  taux: ["taux futurs du pilier capitalisé", REGIMES_TAUX],
   bascule: ["année de bascule", null],
   euros: ["euros constants de", null],
 });
@@ -2398,6 +2412,21 @@ function champsModelisation(saisie) {
       + "« PER vendu » est l'ancien réglage, aux 2,20 % d'arrérages des seuls "
       + "assureurs qui facturent. La page Méthode et les limites disent d'où "
       + "viennent les paliers."),
+    g.liste("taux", "Taux futurs du pilier capitalisé", REGIMES_TAUX,
+      saisie.taux, "système 4 seulement", {},
+      "À quel taux se placent les versements des années à venir. Par défaut, "
+      + "aux taux à terme que la courbe du jour implique déjà : le modèle ne "
+      + "prévoit rien, il lit ce que le marché cote. Cette hypothèse est "
+      + "arbitrée et explicite, mais elle ignore la prime de terme, le "
+      + "supplément qu'un prêteur exige pour immobiliser son argent "
+      + "longtemps, et elle flatte donc le pilier. Les deux autres réglages "
+      + "la retirent, au milieu puis au haut de la fourchette que la "
+      + "littérature retient. Ils font baisser la rente, et c'est le prix de "
+      + "l'hypothèse. Ils font aussi apparaître ce que l'allocation des "
+      + "maturités vaut : sous le réglage par défaut, elle ne vaut rien du "
+      + "tout, et placer chaque versement sur le titre qui tombe l'année du "
+      + "départ rapporte exactement autant qu'un roulement à un an. La page "
+      + "Méthode et les limites disent pourquoi."),
     g.champ("bascule", "Année de bascule", saisie.bascule,
       "passage au régime unique", "number",
       { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
@@ -9426,9 +9455,9 @@ son argent. Quand la courbe monte, elle flatte donc légèrement le pilier, et
 c'est sous elle que les chiffres de ce site sont publiés. Elle a un second
 effet, moins visible : elle rend le choix des maturités
 <strong>sans conséquence</strong>, puisque c'est l'arbitrage qui détermine le
-forward. Le modèle sait retirer une prime de terme des taux à terme (le
-paramètre existe, il est à zéro), et c'est seulement alors que l'allocation
-se met à peser. Au-delà de trente ans, la courbe ne dit plus rien : le taux est
+forward. Le réglage <strong>« Taux futurs du pilier capitalisé »</strong> la
+retire, au milieu puis au haut de la fourchette de la littérature : la rente
+baisse, et c'est seulement alors que l'allocation se met à peser. Au-delà de trente ans, la courbe ne dit plus rien : le taux est
 prolongé à plat, et tout résultat qui en dépend est déclaré « estimé ».</p>
 
 <h3>Selon quelle règle les maturités sont choisies</h3>
@@ -9454,6 +9483,15 @@ au nom d'une prudence qui n'était pas la bonne. Raccourcir protège d'un prix d
 vente incertain, et ce compte ne vend rien : il attend une date. Ce dont il
 avait à se protéger était l'inverse, le taux auquel chaque échéance serait
 replacée, et c'est l'échelle elle-même qui le créait.</p>
+<p><strong>Ce que l'adossement rapporte se lit au réglage des taux futurs.</strong>
+Sous le réglage par défaut, rien : les deux règles donnent le même euro, et
+l'adossement ne se justifie que par le risque qu'il supprime. En retirant une
+prime de terme de 0,50 point à trente ans, sur une carrière de trente-six ans
+partant en 2060, il rend 1,6 % de capital de plus que l'échelle glissante, soit
+7 € de rente par mois, et 6,2 % de plus qu'un roulement à un an. Le même
+réglage retire par ailleurs 4,8 % au pilier, soit 23 € par mois : la prime de
+terme coûte trois fois ce que la meilleure allocation rapporte, et c'est dans
+cet ordre qu'il faut le lire.</p>
 
 <h3>Ce que l'enveloppe coûte</h3>
 <p>Quatre prélèvements, aux <strong>vraies moyennes du marché</strong> du plan
