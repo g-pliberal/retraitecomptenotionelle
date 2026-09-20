@@ -3328,13 +3328,21 @@ ${tete}
 `;
 }
 
-/** Le libellé de chaque scénario, dans l'ordre des barres. */
+/**
+ * Le libellé de chaque scénario, dans l'ordre des barres.
+ *
+ * « Ce que vous avez cotisé » plutôt que « Compte notionnel » : sur Simuler,
+ * la carrière affichée est celle du lecteur, et l'écart entre les barres 2 et
+ * 3 est exactement ce que son employeur verse. Cas types et Coût gardent la
+ * forme impersonnelle de LIBELLES_SYSTEMES.
+ */
 function titresScenarios(saisie) {
   return [
     ["actuel", "1. Système de répartition actuel"],
-    ["notionnel_retroactif", "2. Compte notionnel, part salariale seule"],
+    ["notionnel_retroactif",
+      "2. Ce que vous avez cotisé, part salariale seule"],
     ["notionnel_retroactif_employeur",
-      "3. Compte notionnel, part salariale + patronale"],
+      "3. Ce que vous avez cotisé, part salariale + patronale"],
     ["notionnel_liberal", "4. La proposition du Parti libéral français"],
   ];
 }
@@ -3765,13 +3773,13 @@ function resultats(contexte, saisie) {
   const scenarios = bloc("actuel", "1. Système de répartition actuel",
     "le droit en vigueur, minima et majorations compris",
     null, comparaison.tauxRemplacementActuel)
-    + bloc("retroactif", "2. Compte notionnel, part salariale seule",
+    + bloc("retroactif", "2. Ce que vous avez cotisé, part salariale seule",
       "toute la carrière recalculée depuis 1941, sur la seule part "
       + "salariale — 11,3 % du brut pour un salarié du privé",
       comparaison.variation("notionnel_retroactif"),
       comparaison.tauxRemplacementRetroactif)
     + bloc("retroactif-employeur",
-      "3. Compte notionnel, part salariale + patronale",
+      "3. Ce que vous avez cotisé, part salariale + patronale",
       "la même carrière recalculée depuis 1941, les deux parts "
       + "comprises — les 28 % prélevés aujourd'hui",
       comparaison.variation("notionnel_retroactif_employeur"),
