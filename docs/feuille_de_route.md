@@ -10791,13 +10791,33 @@ années-là. Les treize s'accordent aujourd'hui ; un test les apparie désormais
 par leurs VALEURS — un nom peut différer d'un côté à l'autre, une série
 d'années et de valeurs identiques ne trompe pas.
 
-**Une piste laissée ouverte.** `structure_financement.csv` et `cotisants.csv`
-portent les projections du COR par jalons — 2010, 2023, 2030, 2040, 2050, 2060,
-2070 — lues en escalier : 2029 y prend la valeur de 2023. Ce n'est pas une
-fausse certification, c'est une question d'exactitude sur une courbe de
-projection, où `lineaire` serait probablement plus juste. Elle n'est pas
-tranchée ici : elle déplacerait des valeurs, là où cette action n'en déplace
-aucune.
+**Une piste annoncée, et elle était fausse des deux côtés.** L'action avait
+laissé ouvert ceci : « `structure_financement.csv` et `cotisants.csv` portent
+les projections du COR par jalons, lues en escalier : 2029 y prend la valeur de
+2023 ». Vérification faite, le 20 septembre 2026 :
+
+- **`cotisants.csv` n'a AUCUN trou.** Elle est annuelle et complète, 2010 à
+  2070, pour toutes ses caisses. Elle avait été écartée de l'affichage du
+  balayage par un filtre, puis nommée sans être regardée.
+- **`structure_financement.csv` en a — 155 clés à six jalons — mais ne passe
+  pas par `SerieAnnuelle`.** `StructureFinancement` a son propre lecteur, qui
+  **REFUSE** une année non publiée : « Interpoler une structure de financement
+  entre 2030 et 2040 reviendrait à inventer une trajectoire que personne n'a
+  calculée. » Demander 2029 y lève une `KeyError` qui nomme les années
+  disponibles.
+
+Il n'y a donc rien à trancher, et surtout : **le dépôt portait déjà le remède
+de l'action 69**, dans ce module, et depuis plus longtemps. C'est là qu'est le
+motif de référence pour une grandeur dont une année absente n'a pas de sens —
+refuser en nommant ce qui existe —, et `donnees/population.py` y renvoie
+désormais.
+
+La leçon est celle de tout ce lot, et elle vaut contre son auteur : une
+affirmation plausible qu'on n'a pas éprouvée est du même bois que la valeur
+plausible qu'aucun test ne regarde. Les autres conclusions du balayage, elles,
+avaient été sondées — la table `vie_en_couple` comptée triplet par triplet, les
+six signatures de mémoire lues une à une, les treize déclarations appariées par
+un test qui tourne.
 
 **Fichiers.** `donnees/chargement.py`, `moteur/js/serie.js`,
 `donnees/effectifs.py`, `donnees/depenses.py`, `donnees/equilibre.py`,
