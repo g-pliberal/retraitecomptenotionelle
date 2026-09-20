@@ -224,8 +224,11 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   part_cotisation: PartCotisation.SALARIALE,
   statut_pivot_cotisations: "salarie_prive_non_cadre",
   //: Plafonnement de l'assiette notionnelle, en multiples du plafond annuel de
-  //: la Sécurité sociale. ``null`` = assiette déplafonnée.
-  plafond_assiette_en_pass: 8.0,
+  //: la Sécurité sociale. ``null`` = assiette déplafonnée, et c'est le défaut :
+  //: le régime fusionné est déclaré déplafonné, et le site promet « au premier
+  //: euro, sans plafond ». Les bornes des fiches, elles, continuent de rogner
+  //: avant la bascule — c'est le droit. Voir `config.py`.
+  plafond_assiette_en_pass: null,
 
   // --- Âge de référence -----------------------------------------------------
   mode_age_reference: ModeAgeReference.FIXE_APRES_BASCULE,

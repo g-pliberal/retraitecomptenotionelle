@@ -215,7 +215,7 @@ poids de ce qu'on voulait exécuter.
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->491<!--/--> simulations complètes et
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->492<!--/--> simulations complètes et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->44<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:a_verifier(le compte des nombres comparés demande de lancer node --test)-->10 615<!--/--> nombres,
@@ -1277,7 +1277,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1800<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1802<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

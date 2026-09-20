@@ -414,18 +414,25 @@ def _(m: Modele):
                    hachee.capital_notionnel)
 
 
-@controle("plafond_d_assiette_apres_la_bascule")
+@controle("assiette_deplafonnee_apres_la_bascule")
 def _(m: Modele):
-    """Contredite : au plus haut revenu du formulaire, l'assiette est plafonnée.
+    """Au plus haut revenu du formulaire, tout le revenu entre au compte.
 
-    Tombe le jour où l'action 53 lève le plafond après la bascule — ou
-    réécrit la phrase.
+    Ce contrôle a d'abord dit le contraire : il constatait le plafond de huit
+    plafonds de la Sécurité sociale que le modèle posait par-dessus le régime
+    fusionné, et tombait le jour où l'action 61 le lèverait. Elle est faite.
+
+    La vérification porte sur la carrière la plus haute que le formulaire
+    accepte — dix fois le salaire moyen —, parce que c'est la seule où la
+    question se posait : en deçà de 9,2 fois le salaire moyen, aucun plafond
+    n'a jamais mordu. AVANT la bascule, en revanche, les bornes des fiches
+    rognent toujours, et elles le doivent : c'est le droit qui s'appliquait.
     """
-    assert m.base.plafond_assiette_en_pass is not None
+    assert m.base.plafond_assiette_en_pass is None
     apres = [c for c in m.haut_revenu.notionnel_liberal.compte.cotisations
              if c.annee >= m.base.annee_bascule and not c.nulle]
     assert apres
-    assert any(c.assiette_retenue < c.revenu - 1.0 for c in apres)
+    assert all(c.assiette_retenue >= c.revenu - 1.0 for c in apres)
 
 
 # .. la bascule, le taux unique, le régime unique ...........................

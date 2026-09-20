@@ -512,8 +512,25 @@ class Parametres:
     statut_pivot_cotisations: str = "salarie_prive_non_cadre"
 
     #: Plafonnement de l'assiette notionnelle, en multiples du plafond annuel de
-    #: la Sécurité sociale. ``None`` = assiette déplafonnée.
-    plafond_assiette_en_pass: float | None = 8.0
+    #: la Sécurité sociale. ``None`` = assiette déplafonnée, et c'est le défaut.
+    #:
+    #: Il a valu 8,0 — le plafond de la tranche B puis C de l'Agirc, que les
+    #: fiches portent —, sans qu'aucune décision l'ait posé. Ce plafond-là ne
+    #: mordait qu'APRÈS LA BASCULE : avant elle, les fiches portent leurs
+    #: propres bornes et ce sont elles qui rognent, ce qui est le droit. Après,
+    #: le régime fusionné est déclaré ``assiette: deplafonnee`` — « la plus
+    #: large : tout revenu cotise » —, et le paramètre le démentait au-delà de
+    #: 8 plafonds, soit 9,2 fois le salaire moyen, 32 040 € par mois en 2026.
+    #: Le site, lui, promet en deuxième geste du calcul « au premier euro, sans
+    #: plafond » : c'était faux pour les plus hauts revenus du formulaire, qui
+    #: perdaient 12 à 14 % de pension, et le catalogue des affirmations le
+    #: disait — entrée ``accueil.on_inscrit``, action 61 de la feuille de route.
+    #:
+    #: Le lever ne déplace AUCUN agrégat : la grille des cas types plafonne à
+    #: 2,5 fois le salaire moyen, si bien que ni le coût, ni le solde, ni les
+    #: coefficients d'équilibre ne changent d'un centime. Ce que cela déplace
+    #: tient dans le simulateur, au-delà de 9,2 fois le salaire moyen.
+    plafond_assiette_en_pass: float | None = None
 
     # --- Âge de référence ---------------------------------------------------
     mode_age_reference: ModeAgeReference = ModeAgeReference.FIXE_APRES_BASCULE

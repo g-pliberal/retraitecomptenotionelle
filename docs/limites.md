@@ -6661,6 +6661,21 @@ le 19 septembre 2026 :
    bord est reconduite au niveau `estimee` : la dépense observée remonte à
    1959, cette ventilation non.
 
+5. **La grille ne monte pas au-delà de 2,5 fois le salaire moyen.** Le plus
+   haut des treize cas types est la profession libérale, à 2,5 ; le
+   simulateur, lui, accepte jusqu'à dix fois le salaire moyen. Toute règle qui
+   ne mord qu'aux hauts revenus est donc INVISIBLE dans l'agrégat, et cela
+   vaut dans les deux sens : ni la pension qu'elle ouvre, ni la cotisation
+   qu'elle appelle. Le déplafonnement de l'assiette, décidé le 20 septembre
+   2026 (action 61), en est la démonstration : il change la pension du
+   simulateur de +12 à +14 % au-delà de neuf fois le salaire moyen, et il ne
+   déplace ni le coût, ni le solde, ni un coefficient d'équilibre — mesuré à
+   l'identique, au centime, sur les quatre systèmes et tout l'horizon. Ce
+   n'est pas une propriété du déplafonnement : c'est que personne, dans la
+   grille, ne gagne assez pour être concerné. La recette supplémentaire qu'un
+   vrai déplafonnement apporterait n'est donc pas chiffrée ici, et la dépense
+   supplémentaire non plus.
+
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
 au sens strict — le scénario prospectif recopie la pension du scénario actuel
@@ -7017,7 +7032,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1800<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1802<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

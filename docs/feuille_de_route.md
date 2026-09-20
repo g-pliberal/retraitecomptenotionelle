@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 875<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 878<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10099,7 +10099,7 @@ patronales. Rien ne dit en combien d'années, et rien ne le mesure.
 dépôt ne modélise aucun budget de l'État : cette moitié est une affirmation du
 programme, pas un résultat du modèle, et rien ne tomberait en défaut si elle
 était fausse.
-### 61. « Au premier euro et sans plafond », sauf au-delà de huit plafonds — `à faire`
+### 61. « Au premier euro et sans plafond », sans exception — `fait`
 
 **Pourquoi.** Ouverte par le catalogue des affirmations (action 34), qui l'a
 trouvée en cherchant ce que le code dément. L'accueil promet, en deuxième
@@ -10135,11 +10135,39 @@ un que rien n'oblige.
    rognée, de combien elle l'a été — comme elle affiche déjà
    l'avertissement d'ouverture.
 
-**Fichiers.** `src/retraite_notionnelle/config.py` (le paramètre),
-`moteur/compte.py` (`_assiette_entre_bornes`), `web/pages.py` et
-`moteur/js/pages.js` (les deux phrases, le rendu), les témoins.
-L'entrée `accueil.on_inscrit` de `data/reference/site/affirmations.yaml`
-nomme cette action : son contrôle tombe le jour où celle-ci est faite.
+**Ce qui a été tranché : l'issue 1**, le paramètre à `None`. C'est la seule
+qui rende la phrase vraie, et c'est aussi celle que le modèle réclamait : sa
+doctrine de fusion dit « assiette : la plus large — tout revenu cotise », et le
+catalogue disait les deux choses à la fois — `accueil.transition_regime_unique`
+vérifiée sur la fiche déplafonnée du régime unique, `accueil.on_inscrit`
+contredite sur le paramètre qui la démentait.
+
+**Ce qu'il fallait mesurer avant, et que la note demandait.** Le plafond ne
+mordait qu'APRÈS la bascule : sur la carrière la plus haute du formulaire, 28
+années rognées, 2026 à 2053, et pas une avant — jusque-là ce sont les bornes
+des fiches qui rognent, et c'est le droit. Le seuil est 8 PASS, soit 9,22 fois
+le salaire moyen, un rapport stable dans le temps : 32 040 € par mois en 2026.
+En deçà de 8 fois le salaire moyen, lever le plafond ne change pas un centime ;
+à 9 fois, la pension monte de 5 % ; à 10 fois, de 14,1 % au système 2, 13,8 %
+au 3 et 12,4 % au 4.
+
+**Et ce que la note redoutait n'existe pas.** « La recette du système 4 aussi —
+à chiffrer » : le coût agrégé, le solde et les coefficients d'équilibre sont
+IDENTIQUES AU CENTIME avec et sans le plafond, sur les quatre systèmes et tout
+l'horizon. La grille des cas types plafonne à 2,5 fois le salaire moyen, et
+personne n'y gagne assez pour être concerné. Ce n'est pas une bonne nouvelle,
+c'est une limite qui se voit enfin : elle est écrite sous `limites.md` § 5 bis,
+cinquième approximation, et dans l'en-tête de `cout.py`.
+
+**Fichiers.** `config.py` et `moteur/js/config.js` (le paramètre, `None` des
+deux côtés), `tests/test_affirmations.py` (le contrôle retourné, devenu
+`assiette_deplafonnee_apres_la_bascule`), `affirmations.yaml`
+(`accueil.on_inscrit` passée en `verifiee`, et la phrase jumelle de la page
+Méthode y prend sa ligne), `scripts/construire_temoins.py` (un témoin à dix
+fois le salaire moyen : c'est le seul niveau qui franchisse l'ancien plafond,
+et c'est lui qui tient les deux moteurs d'accord), `limites.md` et `cout.py`
+(la limite de la grille). Aucune phrase du site n'a changé : elles étaient
+justes, c'est le modèle qui ne les suivait pas.
 
 ---
 

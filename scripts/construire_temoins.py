@@ -389,7 +389,12 @@ def _cas() -> list[dict]:
     # plafond de la Sécurité sociale et sous le SMIC.
     for profil in ("plat", "fortement_ascendant"):
         cas.append((f"profil_{profil}", {"profil": profil}))
-    for salaire in ("0.2", "0.55", "1.5", "3", "8"):
+    # « 10 » est le maximum du formulaire, et il est là pour une raison précise :
+    # c'est le seul niveau qui franchisse les huit plafonds de la Sécurité
+    # sociale que le modèle posait jusqu'au 20 septembre 2026 par-dessus le
+    # régime fusionné. Le plafond levé, l'assiette y vaut le revenu entier, et
+    # ce témoin est ce qui tient les deux moteurs d'accord là-dessus.
+    for salaire in ("0.2", "0.55", "1.5", "3", "8", "10"):
         cas.append((f"salaire_{salaire}", {"salaire": salaire}))
 
     # Le salaire saisi en euros : la division qui le ramène au multiple du

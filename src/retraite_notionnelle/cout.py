@@ -66,7 +66,13 @@ CE QUE CE MODULE NE FAIT TOUJOURS PAS
    l'APPLIQUE pas : les courbes de coût restent celles d'un système qui ne se
    pilote pas. Le facteur étant commun, l'appliquer déplacerait les niveaux
    sans toucher aux écarts entre carrières.
-4. **Les recettes réagissent sur deux points, et sur deux seulement.** Le
+4. **La grille s'arrête à 2,5 fois le salaire moyen.** Le plus haut des cas
+   types est la profession libérale ; le simulateur, lui, va jusqu'à dix fois
+   le salaire moyen. Une règle qui ne mord qu'au-dessus de la grille ne
+   déplace donc RIEN ici, ni en dépense ni en recette — le déplafonnement de
+   l'assiette du 20 septembre 2026 a laissé coût, solde et coefficients
+   identiques au centime, faute de quelqu'un pour être concerné.
+5. **Les recettes réagissent sur deux points, et sur deux seulement.** Le
    solde ci-dessous confronte le coût de chaque système aux ressources du
    système actuel, corrigées de ce que le système en question ne peut pas
    encaisser.
