@@ -66,6 +66,7 @@ from retraite_notionnelle.garantie import cout_garantie
 from retraite_notionnelle.moteur.indexation import Indexation
 from retraite_notionnelle.remuneration import AnneeComparee
 from retraite_notionnelle.scenarios.actuel import MinimumVieillesse, _coefficient_anticipation
+from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web import gabarit as g
 from retraite_notionnelle.web.pages import (
     COMPOSANTE_GARANTIE,
@@ -621,6 +622,50 @@ def _(m: Modele):
     apres = [c for c in liberal.compte.cotisations
              if c.annee >= m.base.annee_bascule and not c.nulle]
     assert all(_proche(c.taux_effectif, m.base.taux_cotisation_liberal) for c in apres)
+
+
+@controle("l_allocation_ne_vaut_que_sous_une_prime_de_terme")
+def _(m: Modele):
+    """Sous le réglage par défaut, adossement et roulement rendent le même euro.
+
+    C'est ce que la page affirme, et c'est ce qui justifie le menu : la valeur
+    de l'allocation est nulle tant que les forwards sont pris pour les taux
+    futurs, et elle apparaît dès qu'une prime de terme est retirée.
+    """
+    import contextlib
+
+    from retraite_notionnelle.moteur import capitalisation as module
+
+    @contextlib.contextmanager
+    def roulement_a_un_an():
+        ancienne = module.repartition
+        module.repartition = lambda h: ((1, 1.0),) if h > 0 else ()
+        try:
+            yield
+        finally:
+            module.repartition = ancienne
+
+    carriere = dict(annee_naissance=2004, sexe="H",
+                    affiliation="salarie_prive_non_cadre",
+                    age_debut=22, age_liquidation=64)
+
+    def capital(parametres) -> float:
+        simulateur = Simulateur(parametres)
+        resultat = simulateur.simuler(simulateur.carriere_simple(**carriere))
+        return resultat.notionnel_liberal.capitalisation.capital
+
+    assert m.base.prime_terme_trente_ans == 0.0, "le site publie sous les forwards"
+    defaut = m.base.sous_regime_taux("forwards")
+    assert defaut == m.base
+    with roulement_a_un_an():
+        roule = capital(defaut)
+    assert _proche(capital(defaut), roule, relatif=1e-9)
+
+    avec_prime = m.base.sous_regime_taux("prime")
+    assert avec_prime.prime_terme_trente_ans > 0
+    with roulement_a_un_an():
+        roule_prime = capital(avec_prime)
+    assert capital(avec_prime) > roule_prime
 
 
 @controle("cinq_points_volontaires_separes")

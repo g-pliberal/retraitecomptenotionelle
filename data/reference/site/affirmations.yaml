@@ -1514,6 +1514,21 @@ affirmations:
     etat: verifiee
     controle: ancrage_du_salaire_moyen
 
+  - id: methode.allocation_ne_vaut_que_sous_une_prime
+    page: /methode
+    extrait: "Ce que l'adossement rapporte se lit au réglage des taux futurs."
+    porte: >-
+      sous le réglage par défaut, adossement et roulement rendent le même
+      capital ; l'écart n'apparaît qu'une prime de terme retirée
+    etat: verifiee
+    controle: l_allocation_ne_vaut_que_sous_une_prime_de_terme
+
+  - id: methode.nom_du_reglage_des_taux
+    page: /methode
+    extrait: "Taux futurs du pilier capitalisé"
+    porte: le nom d'un réglage, cité pour que le lecteur le retrouve dans le menu
+    etat: sans_portee
+
   - id: methode.portage_javascript
     page: /methode
     extrait: "portage en JavaScript"
