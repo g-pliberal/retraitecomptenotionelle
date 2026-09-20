@@ -2088,6 +2088,7 @@ retraite</a><a href="{g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
 {_programme_garantie(contexte)}
 {_programme_capitalisation(contexte)}
 {_programme_transition(contexte)}
+{_programme_blocages(contexte)}
 
 {depliant_verifier}
 """
@@ -2481,6 +2482,76 @@ def _programme_transition(contexte: Contexte) -> str:
 {etapes}
 <p>Après la bascule, un seul régime : départ possible à
 {_age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>""")
+
+
+def _programme_blocages(contexte: Contexte) -> str:
+    """Les points de blocage regardés avant de choisir, et ce qu'on en a fait.
+
+    Les chiffres sont DATÉS, et la page le dit : ils viennent de trois scripts
+    du dépôt qui refont le solde sous d'autres régimes uniques, sous un autre
+    traitement du stock et sous une version prospective de la proposition —
+    vingt secondes de calcul chacun, et des points d'entrée que le portage ne
+    porte pas. La page d'accueil ne calcule rien, et cette section pas
+    davantage : elle cite ce qui a été mesuré, et où.
+    """
+    points = g.tableau(
+        ["Le point", "Ce que nous avons regardé", "Ce que nous en retenons"],
+        [
+            ["La fusion des régimes",
+             "Quatre barèmes possibles pour le régime unique : le taux d'aujourd'hui "
+             "déplafonné, le statut du salarié du privé avec ses tranches, le régime "
+             "général seul, la moyenne des régimes. Un taux plus bas n'est pas plus "
+             "négociable, il est impayable : les pensions déjà acquises sont servies "
+             "avec moins de cotisations, et sous les deux derniers barèmes le déficit "
+             "dépasse cinq points de PIB par an jusqu'en 2050.",
+             "Un régime unique se vote par une loi ordinaire : le projet de 2020 l'a "
+             "établi, et le Conseil d'État n'y a vu aucun obstacle de principe, ni "
+             "pour les fonctionnaires ni pour les complémentaires. Le taux, lui, est "
+             "le nôtre, et son coût est chiffré deux lignes plus bas."],
+            ["Les pensions déjà servies, recalculées",
+             "C'est le point que le juge constitutionnel regarderait en premier : une "
+             "pension liquidée est une situation acquise, et la loi qui la touche doit "
+             "le justifier et rester proportionnée. Nous ne retirons que ce qui n'a "
+             "pas été cotisé, l'indexation sur les prix est conservée, la garantie est "
+             "relevée dans le même texte. L'objection la plus forte, celle de l'assuré "
+             "parti à l'âge que sa loi lui ouvrait, a été chiffrée : lui prendre le "
+             "diviseur de 64 ans plutôt que celui de son âge coûte un dixième de point "
+             "de PIB par an, et plus rien en 2050.",
+             "Le recalcul est maintenu. La version qui laisse le stock intact a été "
+             "chiffrée et écartée : −3,9 points de PIB par an en moyenne jusqu'en "
+             "2070, elle n'est pas finançable."],
+            ["Le taux de 18 %",
+             "Face au taux d'aujourd'hui, 25,8 % part patronale comprise, les 18 % "
+             "coûtent 2,3 points de PIB par an sur 2026-2070, sous les mêmes règles de "
+             "recette. Le solde de la proposition est de −1,5 point par an en moyenne "
+             "contre −1,1 pour le système actuel, et la dette qu'elle accumule en 2070 "
+             "vaut 103 % du PIB contre 66 %.",
+             "C'est le prix d'un prélèvement plus bas, et il est écrit sur la page "
+             "Coût plutôt que caché. Le pilotage annuel, que ces chiffres n'appliquent "
+             "pas, est ce qui le tient : le coefficient d'équilibre de 2070 est de "
+             "0,92."],
+            ["La garantie vieillesse",
+             "Le préambule de 1946 garantit aux vieux travailleurs des moyens "
+             "convenables d'existence, et un compte purement contributif y répond mal.",
+             "La garantie est relevée par rapport à l'ASPA, individualisée, et portée "
+             "dans la même loi que le régime : le juge lira les deux ensemble."],
+            ["Le chemin législatif",
+             "Une réforme systémique n'entre pas dans une loi de financement de la "
+             "sécurité sociale, où le Conseil constitutionnel écarte les cavaliers. Il "
+             "faut une loi ordinaire, une étude d'impact que le Conseil d'État lira "
+             "ligne à ligne, et une trajectoire qui s'explique devant la procédure "
+             "européenne pour déficit excessif.",
+             "Nous publions l'étude d'impact avant le texte : c'est ce site, ses "
+             "réserves comprises."],
+        ],
+        ["", "texte", "texte"],
+        titre="Cinq points de blocage, regardés avant de choisir",
+        entete_de_ligne=True,
+    )
+    return g.depliant("Ce qui pouvait nous arrêter, et ce que nous en avons fait", f"""
+<p>Nous avons cherché ce qui arrêterait cette proposition avant de la défendre. Voici les cinq points, ce que nous avons mesuré, et ce que nous en faisons.</p>
+{points}
+<p class="discret">Mesures des 20 et 21 septembre 2026, par trois scripts du dépôt : le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective. Cette page ne les recalcule pas ; leur détail, décision par décision, est dans la feuille de route du <a href="{g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>""")
 
 
 def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,
