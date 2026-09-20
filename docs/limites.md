@@ -6760,6 +6760,47 @@ voisines ne se disputent pas le même rôle.
 
 ---
 
+### Le compte est en brut, et une part de sa recette sort de sa dépense
+
+Deux choses que la page Coût affichait sans les dire, et qui ne se voient pas
+en lisant « dépenses » et « ressources ».
+
+**Le compte est en BRUT, des deux côtés.** Les pensions comptées sont celles
+qui sont versées, avant contribution sociale généralisée, CRDS et CASA. Au taux
+plein, ces trois-là prélèvent 9,1 % : la masse des pensions vaut 13,68 % du PIB
+en 2024 en brut, et **au plus 12,43 % en net**. « Au plus » est la seule forme
+honnête : l'article L. 136-8 exonère les pensions modestes et en soumet d'autres
+à un taux réduit, selon le revenu fiscal de référence du foyer, que personne ne
+publie par tranche de pension. Le dépôt applique déjà le taux plein à tout le
+monde dans le simulateur, et dit ce que cette convention coûte (§ 5 ante ter) ;
+à l'échelle du compte, elle ne peut donner qu'une borne.
+
+Cela n'affecte pas le SOLDE, dépenses et ressources étant l'une et l'autre
+brutes, mais cela affecte la comparaison : « 13,9 % du PIB » se compare souvent,
+dans le débat, à des dépenses publiques nettes, et n'est pas la même grandeur.
+
+**Et une part de la recette est prélevée sur la dépense.** L'article L. 131-8,
+3° e affecte 2,94 des 8,30 points de CSG d'une pension à la branche vieillesse :
+**un tiers de ce qu'une pension paie revient au système qui la verse**. Au taux
+plein, cela fait au plus 11,8 Md€ en 2024, soit 0,40 point de PIB et le
+cinquième des impôts et taxes affectés que le compte encaisse. Le COR ne se
+trompe pas en portant les deux flux — un compte d'encaissements le doit, et la
+comptabilité nationale aussi — mais qui lit les deux colonnes comme deux
+grandeurs indépendantes se trompe de cette somme.
+
+Ce que cela vaut pour les scénarios notionnels : ils retirent les impôts et
+taxes affectés en entier (§ 5 bis), donc cette CSG avec, et la circularité
+disparaît avec elle. C'est cohérent, et ce n'est pas un hasard : un compte
+notionnel ne crédite que ce qui est assis sur un revenu d'activité, et une CSG
+sur pension n'en est pas un.
+
+**Ce qui reste hors de portée.** La borne est haute des deux côtés parce que le
+taux plein est appliqué à toute la masse. La chiffrer juste demanderait la
+distribution des pensions CROISÉE avec le revenu fiscal du foyer : la DREES
+publie la première (`distribution_pensions.csv`, déjà dans le dépôt), personne
+ne publie le croisement. Une enquête Revenus fiscaux et sociaux le permettrait,
+et elle n'est pas ici.
+
 ### La convention comptable : le déficit affiché est d'APRÈS bouclage
 
 Le compte du COR est tenu sous une convention, et le dépôt la stockait depuis
@@ -7159,7 +7200,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1820<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1824<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

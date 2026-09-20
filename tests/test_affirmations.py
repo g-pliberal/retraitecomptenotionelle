@@ -1256,6 +1256,48 @@ def _(m: Modele):
     assert "équilibre permanent des régimes" in cout
 
 
+@controle("compte_en_brut_et_recette_circulaire")
+def _(m: Modele):
+    """Le compte est en brut, et une part de sa recette sort de sa dépense.
+
+    Deux choses que la page dit depuis le 20 septembre 2026, et que rien ne
+    disait avant.
+
+    LE BRUT. Les pensions du compte sont celles qui sont VERSÉES, avant CSG,
+    CRDS et CASA. Au taux plein ces trois-là prennent 9,1 %, et la masse nette
+    est donc plus basse que la masse brute d'environ un point de PIB. C'est une
+    BORNE : les pensions modestes sont exonérées ou au taux réduit, et le dépôt
+    ne sait pas combien le sont. Le contrôle exige que la page écrive les deux
+    masses, et que le net soit sous le brut.
+
+    LA RECETTE CIRCULAIRE. L'article L. 131-8 reverse 2,94 des 8,30 points de
+    CSG d'une pension à la branche vieillesse : une part de ce que le compte
+    encaisse est prélevée sur ce qu'il verse. Le contrôle exige que cette part
+    soit strictement comprise entre zéro et le tiers de la CSG d'une pension,
+    et que la page écrive le montant.
+    """
+    depenses = m.contexte.depenses()
+    pensions = charger_prelevements(m.base.racine_donnees).pensions
+    annee = min(depenses.pensions_droits["direct"].derniere_annee,
+                depenses.derniere_annee)
+    masse = sum(depenses.pensions_droit(c, annee) for c in ("direct", "derive"))
+    pib = depenses.pib(annee)
+    brute, nette = masse / pib, masse / pib * (1.0 - pensions.taux_total)
+    assert 0.0 < nette < brute, (nette, brute)
+
+    taux = pensions.csg_affectee_vieillesse
+    assert 0.0 < taux < pensions.csg_taux_plein, taux
+    # Un tiers, et pas davantage : la CSG d'une pension finance aussi la
+    # maladie et la CADES, et une part qui approcherait le taux entier dirait
+    # qu'on a confondu l'affectation avec le prélèvement.
+    assert taux / pensions.csg_taux_plein < 0.40
+
+    cout = TEMOINS_PAR_NOM["cout"]["texte"]
+    for valeur in (brute, nette):
+        assert normaliser(g.pourcentage(valeur, decimales=2)) in cout, valeur
+    assert normaliser(g.nombre(taux * 100, 2)) in cout, taux
+
+
 @controle("deficit_se_creuse")
 def _(m: Modele):
     """Le solde du système actuel se creuse, et les pages écrivent ses nombres."""

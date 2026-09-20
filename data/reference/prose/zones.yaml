@@ -98,6 +98,13 @@ fichiers:
       # `convention_comptable_est_une_hypothese` tient déjà les trois nombres
       # que la PAGE affiche, et c'est là qu'ils comptent.
       "La convention comptable : le déficit affiché est d'APRÈS bouclage": recit
+      # Elle dit ce que le compte est — brut — et ce qu'une de ses recettes
+      # doit à sa dépense, avec les valeurs de 2024. Ses nombres sont des
+      # BORNES, calculées au taux plein sur la masse entière : les ancrer
+      # supposerait une sonde qui refasse ce calcul de borne, alors que le
+      # contrôle `compte_en_brut_et_recette_circulaire` tient déjà les mêmes
+      # trois nombres là où ils sont affichés, sur la page Coût.
+      "Le compte est en brut, et une part de sa recette sort de sa dépense": recit
       # Elle dit ce que le troisième chiffre du simulateur suppose, le jour où
       # a été posé. Ses nombres sont ceux de ce jour-là — le coefficient d'un
       # départ en 2054, les deux montants qui montrent pourquoi une marge ne
