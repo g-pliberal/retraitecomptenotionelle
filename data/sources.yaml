@@ -1370,10 +1370,64 @@ institutions:
     role: Compte d'affectation spéciale « Pensions », programmes budgétaires.
     jeux:
       - id: db_cas_pensions
-        titre: Compte d'affectation spéciale Pensions — documents budgétaires
+        titre: >-
+          Projet annuel de performances du programme 741 « Pensions civiles
+          et militaires de retraite et allocations temporaires d'invalidité »,
+          annexe au projet de loi de finances pour 2026 (CAS Pensions)
         url: https://www.budget.gouv.fr/
         acces: document
-        statut_integration: a_faire
+        statut_integration: saisi
+        cible: data/reference/regimes/pap_regimes_subventionnes.csv
+        note: >-
+          Lu le 20 septembre 2026, apporté par l'utilisateur comme le jaune :
+          budget.gouv.fr refuse les adresses de sortie du proxy, et les
+          valeurs sont SAISIES avec leur page imprimée. Ce qu'il porte que
+          rien d'autre ne porte : les entrées et sorties de pensions civiles
+          et militaires 2025-2028, l'âge moyen de départ des sédentaires
+          (64 ans et 2 mois en 2024) et des militaires (48 ans et 11 mois en
+          2023), la pension mensuelle moyenne des nouveaux sédentaires, et
+          l'ESPÉRANCE DE VIE À 65 ANS des fonctionnaires civils — 24,68 ans
+          pour les femmes, 21,16 pour les hommes en 2024 —, que le
+          producteur dit « structurellement supérieure à celle de la
+          population générale » : la seule mesure par population que le
+          dépôt connaisse, pour l'action 14 de la feuille de route. Le taux
+          de contribution employeur n'y est pas ; il est dans
+          `sre_historique_taux`, certifié. Les programmes 743 (pensions
+          militaires d'invalidité) et 148 (fonction publique, DGAFP) ont été
+          lus et ne portent rien pour le modèle.
+
+      - id: db_pap_regimes_sociaux
+        titre: >-
+          Projets annuels de performances de la mission « Régimes sociaux et
+          de retraite », programmes 195, 197 et 198, annexes au projet de loi
+          de finances pour 2026
+        url: https://www.budget.gouv.fr/
+        acces: document
+        statut_integration: saisi
+        cible: >-
+          data/reference/regimes/pap_regimes_subventionnes.csv,
+          data/reference/legislation/avantages_non_contributifs.yaml
+        note: >-
+          Lus le 20 septembre 2026, apportés par l'utilisateur ; mêmes
+          conditions de saisie que le jaune. Trois choses que le dépôt n'avait
+          nulle part. UN : le programme 198 publie, de 2012 à 2023, les
+          années validées ET cotisées du flux de nouveaux pensionnés de la
+          SNCF et les trimestres validés ET cotisés de celui de la RATP —
+          l'écart est la masse des bonifications que l'action 37 cherchait.
+          DEUX : la subvention rapportée aux pensions servies, 2012-2023, pour
+          la SNCF (0,60 à 0,64) et la RATP (0,58 à 0,62), les cotisations
+          reçues de la RATP, et pour les marins la subvention 2026 contre
+          la dépense de pensions — le taux d'ÉQUILIBRE que
+          `contribution_employeur_public.csv` laisse dehors par convention.
+          TROIS : le schéma de financement en vigueur depuis le 1er janvier
+          2025 — la CNAV équilibre les régimes fermés (3° de l'article
+          L. 134-3 CSS) et l'État la compense par crédits budgétaires (8° de
+          l'article L. 241-3) —, que `structure_financement.csv`, sur le
+          millésime COR de juin 2024, ne connaît pas. Aussi, un point par
+          régime : cotisants, pensionnés, pension moyenne, âge moyen de
+          départ, pour les mines, la SEITA, l'Opéra, la Comédie-Française et
+          les gérants de débits de tabac. Le document de mission reprend les
+          trois programmes mot pour mot.
 
   erafp:
     nom: Établissement de retraite additionnelle de la fonction publique

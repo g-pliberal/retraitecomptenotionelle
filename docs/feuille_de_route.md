@@ -176,6 +176,17 @@ de `limites.md` de douze régimes à sept.
   Un mineur et un fonctionnaire d'État ne sont donc pas mesurés à la même aune,
   et la différence joue contre le mineur. C'est écrit dans `limites.md` ; ce
   serait un chantier à part que de l'égaliser.
+- *Les programmes 195, 197 et 198 ont fini par servir, le 20 septembre 2026,
+  mais pas à ce que l'action leur demandait.* Apportés par l'utilisateur — le
+  dépôt ne sait pas les récupérer —, ils ne portent aucun taux employeur : les
+  cotisations de la RATP y sont en millions d'euros, salariés et employeur
+  confondus, et les marins n'y ont que leur subvention. Ils donnent en revanche
+  le taux d'ÉQUILIBRE que la convention ci-dessus laisse dehors : la
+  subvention rapportée aux pensions servies, 0,60 à 0,64 à la SNCF et 0,58 à
+  0,62 à la RATP, chaque année de 2012 à 2023, saisis dans
+  `regimes/pap_regimes_subventionnes.csv` et écrits dans `limites.md`. Et ils
+  disent que depuis 2025 cette subvention ne va plus au régime : la CNAV
+  l'équilibre, l'État la compense, voir `docs/regimes.md`.
 
 ### 3. Certifier les taux de cotisation, matière des scénarios 2 à 6 — `fait`
 
@@ -1208,7 +1219,14 @@ n° 1687 (2018) est la livraison précédente. Vérifier d'abord ce qu'on cherch
 vraiment : non pas l'écart à la naissance, qui est le chiffre de presse, mais
 les quotients à partir de soixante ans, seuls utiles à un diviseur — et la
 profondeur historique, qui ne remonte pas avant 2012 quand le modèle liquide
-depuis 1941.
+depuis 1941. Une mesure par POPULATION existe aussi, lue le 20 septembre 2026
+dans le projet annuel de performances du programme 741 (PLF 2026) : le Service
+des retraites de l'État publie l'espérance de vie à 65 ans de ses pensionnés
+civils — 24,68 ans pour les femmes, 21,16 pour les hommes en 2024 — et la dit
+« structurellement supérieure à celle de la population générale ». Saisie dans
+`regimes/pap_regimes_subventionnes.csv` ; c'est le premier écart entre une
+population de cotisants et la table commune que le dépôt tienne d'un
+producteur.
 
 **Fichiers.** `data/reference/mortalite/` (série nouvelle, `source_id` dans
 `data/sources.yaml`, fiche de certification) ;
@@ -4431,7 +4449,12 @@ pour rester cohérent avec ce dépliant, et il faudra trancher aux deux endroits
 **Sources à lire.** INSEE, comptes nationaux annuels, salaires et traitements
 bruts par branche (D11, niveau) et revenu mixte des entrepreneurs individuels ;
 DREES, enquête annuelle auprès des caisses de retraite, effectifs de COTISANTS
-par régime ; COR, rapport annuel, taux de prélèvement global et assiette des
+par régime — et, lus le 20 septembre 2026, les projets annuels de performances
+du PLF 2026, qui donnent un point par régime (SNCF 110 846 en 2023, RATP
+39 956, ENIM 29 037 en 2024, mines 655, Opéra 1 879, Comédie-Française 352,
+gérants de débits de tabac 25 078 en 2022) et le ratio cotisants/retraités
+2012-2023 de la SNCF et de la RATP, saisis dans
+`regimes/pap_regimes_subventionnes.csv` ; un appoint, pas une série ; COR, rapport annuel, taux de prélèvement global et assiette des
 cotisations, pour recouper la route du rapport par une route en niveau ;
 DREES, Comptes de la protection sociale, ventilation droits directs / droits
 dérivés ; DREES, minima de pension et non-recours à l'ASPA.
@@ -6995,6 +7018,38 @@ laisse pas lire. Et la conversion en euros, qui demanderait une valeur du
 trimestre par corps et par génération : le dépôt sait la calculer, mais ce
 serait une déduction posée sur un flux de 2010, c'est-à-dire un chiffre
 plausible et faux.
+
+**Volet J — les projets annuels de performances du PLF 2026, lus : la masse
+des bonifications des régimes spéciaux, en trimestres.** Le 20 septembre 2026,
+sur sept annexes budgétaires apportées par l'utilisateur (programmes 195, 197,
+198, 741, 743, 148 et le document de mission) — aucune n'avait été prise en
+compte, et le dépôt ne sait pas les récupérer.
+
+- *Ce que le programme 198 publie, et que personne d'autre ne publiait.* Sur
+  le flux de nouveaux pensionnés, de 2012 à 2023, les trimestres COTISÉS et
+  VALIDÉS de la RATP — 125,2 contre 168,5 en 2023, soit 43 trimestres que la
+  pension rémunère sans cotisation, ratio stable à 0,74-0,76 — et les années
+  cotisées et validées de la SNCF, 37,66 contre 38,05, en disant que les
+  validées « comprennent les bonifications propres au régime ». L'écart de la
+  RATP mêle les bonifications de services, d'enfants, de campagne et les
+  périodes validées sans cotisation ; le PAP ne les sépare pas. Celui de la
+  SNCF est petit parce que la bonification de conduite ne va qu'aux
+  conducteurs et que le flux mêle tous les agents.
+- *Une ligne d'inventaire de plus, la quarante-troisième, et elle manquait.*
+  Les fiches de la SNCF et de la RATP déclarent le code `bonifications` depuis
+  toujours, mais le moteur le lit comme la bonification pour ENFANTS de la
+  fonction publique (`actuel.py`) : les bonifications de SERVICES de ces deux
+  régimes n'étaient ni servies ni inventoriées. `bonifications_regimes_speciaux`
+  les porte, `absent`, fondée sur deux articles lus dans l'index LEGI —
+  l'article 9 du décret n° 2008-639 (SNCF : un trimestre par année de
+  conduite au-delà de la troisième, vingt au plus) et l'article 20 du décret
+  n° 2008-637 (RATP : un cinquième des services du tableau B, cinq ans au
+  plus), agents admis avant 2009 dans les deux cas.
+- *Ce qui ne se convertit pas.* En euros, il faudrait une valeur du trimestre
+  par régime et par génération : même refus qu'au volet I. Les chiffres sont
+  saisis, page par page, dans `regimes/pap_regimes_subventionnes.csv`, avec
+  ce que les mêmes documents donnent aux actions 2, 14 et 35 et le schéma de
+  financement de 2025 (`docs/regimes.md`).
 
 ---
 

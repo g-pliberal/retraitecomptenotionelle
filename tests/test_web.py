@@ -3939,7 +3939,10 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # mots-là reviendrait à choisir la longueur de la page contre son
     # exhaustivité, qui est sa seule raison d'être. En revanche la borne ne
     # suit PAS la prose : tout mot ajouté qui ne nomme pas un dispositif doit
-    # en déloger un autre.
+    # en déloger un autre. Puis de 1950 à 2000 le 20 septembre 2026, pour la
+    # quarante-troisième ligne : les bonifications de services de la SNCF et
+    # de la RATP, que les fiches déclaraient et que personne n'avait
+    # inventoriées.
     #
     # Quatre graphiques ouverts, contre deux sur Coût, et c'est délibéré : ils
     # ne répondent pas à la même question et n'ont pas le même statut. Le
@@ -3958,7 +3961,7 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # publication. Deux tracés, deux périmètres, chacun cohérent de bout en
     # bout. Les replier reviendrait à demander au lecteur de déplier pour
     # comprendre que les chiffres ne s'additionnent pas.
-    "/avantages": (1950, 4, 7),
+    "/avantages": (2000, 4, 7),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
 }

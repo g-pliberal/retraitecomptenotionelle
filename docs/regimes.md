@@ -174,6 +174,35 @@ repris par un autre.
 
 <!-- tableaux:fin -->
 
+## Qui équilibre les régimes fermés depuis 2025
+
+Les tableaux disent qui calcule ; ceci dit qui paie, parce que la réponse a
+changé et que le dépôt ne le savait pas. Jusqu'en 2024, l'État versait une
+subvention d'équilibre au régime de la SNCF, de la RATP, des mines ou de la
+SEITA, et `data/reference/regimes/structure_financement.csv` la porte sous
+`subventions_equilibre`, sur le millésime du COR de juin 2024. **Depuis le
+1<sup>er</sup> janvier 2025, le régime général est l'équilibreur en dernier
+ressort des régimes fermés** — SNCF, RATP, mines, SEITA, industries
+électriques et gazières, clercs de notaires, Banque de France, CESE, et les
+régimes sans plus aucun cotisant (chemins de fer d'Afrique du Nord, régies
+ferroviaires d'outre-mer, ORTF, chemins de fer franco-éthiopiens) — en
+application du 3° de l'article `L. 134-3` du code de la sécurité sociale, et
+l'État compense la CNAV par crédits budgétaires au titre du 8° de l'article
+`L. 241-3`. La compensation est calculée sur le besoin de financement du
+régime, net de la compensation démographique que le régime aurait reçue — il
+est désormais agrégé au régime général pour ce calcul — et des cotisations que
+sa fermeture a portées au régime général et à l'Agirc-Arrco. Les marins restent
+subventionnés directement par le programme 197, l'Opéra de Paris et la
+Comédie-Française par le programme 195 depuis 2024.
+
+Lu dans les projets annuels de performances annexés au PLF 2026 (mission
+« Régimes sociaux et de retraite », programmes 195, 197 et 198), apportés par
+l'utilisateur le 20 septembre 2026 ; ce qu'ils chiffrent est saisi dans
+`data/reference/regimes/pap_regimes_subventionnes.csv`, avec la page de
+chaque valeur. Les textes de l'article `L. 134-3` et de l'article `L. 241-3`
+n'ont pas été relus dans l'index LEGI : c'est le PAP qui les cite, et la ligne
+de veille le dit.
+
 ## La liste relue contre l'échantillon interrégimes de cotisants
 
 En septembre 2026, la liste a été relue contre une énumération officielle que

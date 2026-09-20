@@ -1,7 +1,7 @@
 # Les avantages non contributifs du scénario 1
 
 Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce qui a
-été cotisé. **Tout ce qui sépare les deux est ici** : quarante-deux
+été cotisé. **Tout ce qui sépare les deux est ici** : quarante-trois
 dispositifs,
 sous un code, avec leur base légale, les régimes qui les servent, l'état du
 modèle à leur égard et le moyen d'en chiffrer le coût.
@@ -886,6 +886,48 @@ Le compte de dispositifs a d'ailleurs été retiré de la prose de la page parto
 où il n'était pas calculé. Il y était écrit en toutes lettres à huit endroits ;
 il s'est périmé d'un coup. Un nombre qui vit dans une phrase est un nombre qui
 ment un jour.
+
+### Les bonifications de la SNCF et de la RATP, lues dans les PAP 2026
+
+Le 20 septembre 2026, les projets annuels de performances annexés au PLF 2026
+sont arrivés comme le jaune, par l'utilisateur ; le dépôt ne sait pas les
+récupérer, et leurs valeurs sont **saisies et non certifiées**, chacune avec sa
+page, dans `data/reference/regimes/pap_regimes_subventionnes.csv`. Le programme
+198 y fait ce que ni le jaune ni le rapport du SRE ne font pour les régimes
+spéciaux : il publie, sur le flux de nouveaux pensionnés, ce qui a été
+**cotisé** et ce qui a été **validé**.
+
+| Flux de nouveaux pensionnés | 2012 | 2016 | 2020 | 2023 |
+|---|---|---|---|---|
+| RATP — trimestres cotisés | 119,32 | 121,25 | 125,6 | 125,2 |
+| RATP — trimestres validés | 157,68 | 162,52 | 167,1 | 168,5 |
+| RATP — rapport cotisés / validés | 0,76 | 0,75 | 0,75 | 0,74 |
+| SNCF — années cotisées | 34,70 | 35,95 | 37,35 | 37,66 |
+| SNCF — années validées | 35,25 | 36,45 | 37,75 | 38,05 |
+
+À la RATP, **43 trimestres par nouveau pensionné sont rémunérés sans avoir été
+cotisés**, plus de dix ans, et le rapport n'a pas bougé en douze ans. L'écart
+mêle les bonifications de services, celles pour enfants, les bénéfices de
+campagne et les périodes validées sans cotisation ; le PAP ne les sépare pas.
+À la SNCF, l'écart est d'un demi-trimestre, parce que la bonification de
+conduite ne va qu'aux conducteurs et que le flux mêle tous les agents — le PAP
+dit seulement que les années validées « comprennent les bonifications propres
+au régime ».
+
+Ces bonifications n'étaient pas dans l'inventaire. Les fiches de la SNCF et de
+la RATP déclarent le code `bonifications` depuis toujours, mais le moteur le
+lit comme la bonification pour enfants de la fonction publique, et personne
+n'avait relevé que les bonifications de *services* de ces deux régimes
+n'étaient ni servies ni inventoriées. La ligne
+`bonifications_regimes_speciaux` les porte désormais, `absent`, fondée sur
+deux articles lus dans l'index LEGI : l'article 9 du décret n° 2008-639 du
+30 juin 2008 — un trimestre par année de conduite au-delà de la troisième,
+vingt au plus — et l'article 20 du décret n° 2008-637 du même jour — un
+cinquième des services accomplis dans les emplois du tableau B, cinq ans au
+plus —, réservées dans les deux cas aux agents admis avant le 1<sup>er</sup>
+janvier 2009. La conversion en euros se heurte au même mur qu'au jaune : il
+faudrait une valeur du trimestre par régime et par génération, et ce serait
+une déduction.
 
 ## 5. Pourquoi, et c'est le vrai résultat de ce chantier
 

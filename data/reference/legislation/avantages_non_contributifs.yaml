@@ -917,6 +917,56 @@ avantages:
         toutes (jaune budgétaire, tableau A-7), et 312 € de gain mensuel par
         tête sur le flux 2023 (tableau 50).
 
+  - code: bonifications_regimes_speciaux
+    libelle: Bonifications de services de la SNCF et de la RATP
+    famille: age_et_bonifications
+    quoi: >-
+      Des trimestres gratuits que le régime ajoute aux services : à la SNCF,
+      un trimestre par année d'affiliation au-delà de la troisième dans un
+      emploi de conduite, vingt trimestres au plus ; à la RATP, un cinquième
+      des services accomplis dans les emplois du tableau B, ou la moitié des
+      services accomplis après cinquante-quatre ans dans ceux du tableau A,
+      cinq ans au plus en tout. Réservées aux agents admis avant le 1er
+      janvier 2009 ; les bénéfices de campagne s'y ajoutent, aux conditions
+      des fonctionnaires civils de l'État.
+    base_legale: [Décret n° 2008-639 du 30 juin 2008 art. 9 (SNCF),
+      Décret n° 2008-637 du 30 juin 2008 art. 20 (RATP)]
+    veille: []
+    creation: 2008
+    fin: null
+    regimes: SNCF, RATP
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Les fiches de la SNCF et de la RATP déclarent le code `bonifications`,
+      mais le moteur le lit comme la bonification pour ENFANTS de la fonction
+      publique (`actuel.py`), et rien ne compte les années de conduite ni les
+      emplois du tableau B, que le simulateur ne saisit pas. La date de
+      création est celle des décrets de 2008, qui reprennent des règlements
+      antérieurs que la base LEGI ne porte pas.
+    sans_chiffre: >-
+      les années de conduite ne sont pas saisies ; les PAP 2026 donnent
+      l'écart entre validé et cotisé, 43 trimestres par nouveau pensionné à
+      la RATP en 2023
+    cout:
+      mesurable_par: aucune
+      source_id: db_pap_regimes_sociaux
+      note: >-
+        Dénombrées en durée, pas en euros, par le programme 198 du PLF 2026
+        (`regimes/pap_regimes_subventionnes.csv`). La RATP publie sur le flux
+        de nouveaux pensionnés les trimestres COTISÉS et VALIDÉS, 2012-2023 :
+        125,2 contre 168,5 en 2023, soit 43 trimestres — plus de dix ans — que
+        la pension rémunère sans cotisation, ratio stable à 0,74-0,76 depuis
+        2012. Cet écart porte TOUTES les bonifications (services, enfants,
+        campagne) et les périodes validées sans cotisation ; le PAP ne les
+        sépare pas. La SNCF publie de même les années validées et cotisées
+        du flux, en disant que les validées « comprennent les bonifications
+        propres au régime » : 38,05 contre 37,66 en 2023, un demi-trimestre
+        en moyenne, parce que la bonification de conduite ne va qu'aux
+        conducteurs et que le flux mêle tous les agents. Convertir en euros
+        supposerait une valeur du trimestre par régime et par génération,
+        ce que le dépôt refuse de déduire.
+
   - code: bonification_depaysement
     libelle: Bonification de dépaysement
     famille: age_et_bonifications

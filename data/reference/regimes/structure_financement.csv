@@ -34,6 +34,18 @@
 #    publie, et on ne normalise pas.
 # 4. LA FONCTION PUBLIQUE D'ÉTAT EST D'UN SEUL TENANT, civils et
 #    militaires confondus, là où le reste du dépôt les sépare.
+# 5. LE SCHÉMA DE FINANCEMENT A CHANGÉ DEPUIS. Ces parts décrivent une
+#    subvention d'État versée AU régime. Depuis le 1er janvier 2025, la
+#    CNAV équilibre en dernier ressort les régimes fermés — SNCF, RATP,
+#    mines, SEITA, CNIEG, CRPCEN, Banque de France, entre autres (3° de
+#    l'article L. 134-3 CSS) — et l'État la compense par crédits
+#    budgétaires (8° de l'article L. 241-3), nets de la compensation
+#    démographique et des cotisations que la fermeture a portées au
+#    régime général et à l'Agirc-Arrco. Lu dans les projets annuels de
+#    performances du PLF 2026 (`pap_regimes_subventionnes.csv`) ; le
+#    classeur du COR, antérieur, ne le connaît pas, et le poste
+#    `subventions_equilibre` d'après 2025 est à lire comme « ce que le
+#    régime coûte à la solidarité nationale », par la CNAV ou par l'État.
 #
 # Ne pas modifier ces valeurs à la main : elles seraient écrasées
 # au prochain scripts/verifier_donnees.py --appliquer.

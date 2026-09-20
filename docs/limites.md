@@ -4773,6 +4773,23 @@ du tableau : son taux EST un taux d'équilibre. Un agent minier et un
 fonctionnaire d'État ne sont donc pas mesurés à la même aune, et la différence
 joue contre le mineur.
 
+**Ce que les documents budgétaires ajoutent, et ce qu'ils n'ajoutent pas.** Les
+projets annuels de performances annexés au PLF 2026 — programmes 195, 197 et
+198 —, lus le 20 septembre 2026 et saisis dans
+`regimes/pap_regimes_subventionnes.csv`, donnent ce taux d'équilibre que la
+série laisse dehors : la subvention rapportée aux pensions servies vaut 0,60 à
+0,64 à la SNCF et 0,58 à 0,62 à la RATP, chaque année de 2012 à 2023 ; pour les
+marins, la subvention inscrite pour 2026 couvre les trois quarts de la dépense
+de pensions prévue. Ils ne donnent en revanche aucun TAUX employeur : les
+cotisations reçues de la RATP y sont en millions d'euros, salariés et
+employeur confondus, et l'ENIM n'y a que sa subvention. Le tableau ci-dessus
+ne bouge donc pas — il compte des séries de taux —, et la ligne « rien /
+tout » des sept régimes non plus. Depuis le 1er janvier 2025, ces crédits ne
+vont d'ailleurs plus aux régimes : la CNAV les équilibre en dernier ressort et
+l'État la compense, net de la compensation démographique et des cotisations
+que la fermeture a portées au régime général et à l'Agirc-Arrco, si bien que
+les crédits 2026 ne se comparent pas à la subvention d'avant.
+
 Trois conséquences à garder en tête.
 
 **Plus une carrière publique est ancienne, moins le scénario 4 s'écarte du

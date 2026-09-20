@@ -1112,3 +1112,54 @@ journal:
       \ sans chiffre. La version de l'article qui prend effet au 1er janvier\
       \ 2035 est à surveiller. Les reprises de veille du 17 septembre 2026\
       \ restent ouvertes."
+  - date: '2026-09-20'
+    session: "les projets annuels de performances du PLF 2026, lus"
+    consulte: >-
+      Sept annexes au projet de loi de finances pour 2026, apportées par
+      l'utilisateur — budget.gouv.fr refuse les adresses de sortie du proxy :
+      les projets annuels de performances des programmes 195 (mines, SEITA,
+      Opéra, Comédie-Française, gérants de débits de tabac), 197 (marins), 198
+      (SNCF, RATP), 741 (pensions civiles et militaires, CAS Pensions), 743
+      (pensions militaires d'invalidité), 148 (fonction publique), et le
+      document de la mission « Régimes sociaux et de retraite ». Puis, dans
+      l'index LEGI du dépôt, l'article 9 du décret n° 2008-639 du 30 juin
+      2008 (SNCF), version en vigueur LEGIARTI000054622839 du 7 août 2026 et
+      version d'origine LEGIARTI000019108305, et l'article 20 du décret
+      n° 2008-637 du 30 juin 2008 (RATP), version en vigueur
+      LEGIARTI000047914213 du 1er janvier 2025.
+    trouve: >-
+      Trois choses. UN : le programme 198 publie, de 2012 à 2023, les années
+      validées et cotisées du flux de nouveaux pensionnés de la SNCF et les
+      trimestres validés et cotisés de celui de la RATP — 168,5 contre 125,2
+      en 2023, 43 trimestres que la pension rémunère sans cotisation. C'est
+      la masse des bonifications des régimes spéciaux que l'action 37
+      cherchait ; l'inventaire porte désormais une ligne
+      `bonifications_regimes_speciaux`, fondée sur les deux articles lus : un
+      trimestre par année de conduite au-delà de la troisième, vingt au plus,
+      à la SNCF ; un cinquième des services du tableau B, cinq ans au plus, à
+      la RATP ; agents admis avant 2009 dans les deux cas. Le moteur ne les
+      sert pas — il lit le code `bonifications` des fiches comme la
+      bonification pour enfants —, et l'inventaire le dit. DEUX : la
+      subvention rapportée aux pensions servies, 2012-2023, pour la SNCF et
+      la RATP, et pour les marins la subvention 2026 contre la dépense de
+      pensions — le taux d'équilibre que `contribution_employeur_public.csv`
+      laisse dehors par convention, écrit dans `docs/limites.md`. TROIS : le
+      schéma de financement en vigueur depuis le 1er janvier 2025 — la CNAV
+      équilibre les régimes fermés (3° de l'article L. 134-3 CSS), l'État la
+      compense (8° de l'article L. 241-3) —, que `structure_financement.csv`
+      ne connaissait pas ; son en-tête et `docs/regimes.md` le portent.
+      Aussi : l'espérance de vie à 65 ans des fonctionnaires civils (24,68
+      ans pour les femmes, 21,16 pour les hommes en 2024), seule mesure par
+      population que le dépôt connaisse, pour l'action 14. Les programmes
+      743 et 148 ne portent rien pour le modèle.
+    reste: >-
+      Aucune règle du scénario 1 n'est modifiée et aucune ligne du registre
+      ci-dessus n'a changé d'état. Les valeurs sont SAISIES, avec leur page
+      imprimée, dans `regimes/pap_regimes_subventionnes.csv` : aucun script
+      ne les revérifiera. Les articles L. 134-3 et L. 241-3 du code de la
+      sécurité sociale n'ont pas été relus dans LEGI, c'est le PAP qui les
+      cite. L'écart validé-cotisé de la RATP mêle toutes les bonifications et
+      les périodes validées sans cotisation, sans les séparer, et ne se
+      convertit pas en euros sans une valeur du trimestre que le dépôt refuse
+      de déduire. Les reprises de veille du 17 septembre 2026 restent
+      ouvertes.
