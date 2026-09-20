@@ -1307,6 +1307,34 @@ affirmations:
     etat: verifiee
     controle: cascade_ne_porte_que_la_depense
 
+  - id: cout.garantie_hors_ligne_du_systeme_4
+    page: /cout
+    extrait: "ligne du système 4 ne porte que ses pensions contributives"
+    porte: >-
+      la garantie vieillesse, financée par l'impôt, n'entre pas dans la masse
+      du scénario 6 : elle s'y ajoute, et les deux tableaux la portent sur une
+      ligne à part puis dans un total
+    etat: verifiee
+    controle: garantie_hors_masse_contributive
+
+  - id: cout.total_garantie_comprise
+    page: /cout
+    extrait: "4. La proposition libérale, garantie comprise"
+    porte: >-
+      la dernière ligne du tableau du passé additionne la masse contributive du
+      scénario 6 et sa garantie, que la ligne du système 4 ne porte pas
+    etat: verifiee
+    controle: garantie_hors_masse_contributive
+
+  - id: cout.total_garantie_nette_comprise
+    page: /cout
+    extrait: "4. La proposition libérale, garantie nette comprise"
+    porte: >-
+      la dernière ligne du tableau de l'avenir additionne la masse contributive
+      du scénario 6 et sa garantie, nette de ce que les successions rendent
+    etat: verifiee
+    controle: garantie_hors_masse_contributive
+
   - id: cout.limite_certification
     page: /cout
     extrait: "Rien de ce qui suit n'est certifié, et ne peut l'être"

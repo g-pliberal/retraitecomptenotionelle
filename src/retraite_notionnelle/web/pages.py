@@ -6874,8 +6874,14 @@ def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
                glose="autre source, périmètre un peu plus large"),
         _serie("Ce qui sort : les pensions versées", "var(--serie-2)", sortie),
         _serie("Ce qui rentre : cotisations et impôts", "var(--serie-5)", entree),
+        # La glose porte ce que la courbe NE porte PAS : la garantie
+        # vieillesse est financée par l'impôt, hors du compte des cotisants,
+        # et elle est donc absente des deux courbes jaunes comme elle est
+        # absente du solde. Un demi-point de PIB que le lecteur doit savoir
+        # ajouter — le dépliant des systèmes le chiffre et la cascade l'ajoute.
         _serie(f"Ce que coûterait notre proposition, dès {bascule}",
-               "var(--liberal)", apres, tirets=True),
+               "var(--liberal)", apres, tirets=True,
+               glose="hors garantie vieillesse"),
         _serie("Ce qu'elle encaisserait", "var(--liberal)", encaisse,
                glose=f"{g.pourcentage(taux_liberal, decimales=0)} sur les "
                "revenus d'activité, sans la contribution de l'État"),
@@ -7042,8 +7048,8 @@ système en {g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'
 dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
 ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
 on servirait autant, mais réparti autrement entre les carrières</em>. La
-courbe jaune pleine dit ce que la proposition encaisserait, et l'écart entre
-les deux jaunes est son solde.</div>
+courbe jaune pleine dit ce qu'elle encaisserait, et l'écart des deux jaunes
+est son solde, hors garantie vieillesse.</div>
 
 <h2>Et pour vous ?</h2>
 <p>Tout cela est un total national. Ce que chaque règle donne sur votre
@@ -7960,7 +7966,7 @@ cotisée <em>recule</em> : elle était de
 
 
 def _cout_detail_transferts(contexte: Contexte) -> str:
-    """Ce que la branche famille et l'assurance chômage versent, et à qui cela revient.
+    """Ce que d'autres caisses versent pour des droits non cotisés.
 
     Le poste « transferts » de la structure des ressources est un agrégat.
     Ce dépliant le ventile par celui qui paie, et dit la chose que le
@@ -7999,9 +8005,19 @@ def _cout_detail_transferts(contexte: Contexte) -> str:
         ])
 
     part_poste = comptes.part("transferts", derniere)
-    part_ventilee = sum(comptes.transfert_part_ressources(o.code, derniere)
-                        for o in ORGANISMES)
+    # DEUX SOMMES, ET ELLES N'ARRIVENT PAS PAR LE MÊME POSTE. La branche
+    # famille et l'assurance chômage versent un TRANSFERT, qui est dans le
+    # poste « transferts » ; le fonds de solidarité vieillesse verse ce qu'une
+    # CSG lui donne, et sa recette est dans le poste « impôts et taxes
+    # affectés ». Les additionner puis écrire la somme « sur les x % du poste
+    # transferts » donnait un sous-ensemble plus grand que son ensemble —
+    # 8,5 % sur 4,8 % en 2024.
+    part_caisses = sum(comptes.transfert_part_ressources(o.code, derniere)
+                       for o in ORGANISMES if not o.recette_par_impot)
+    part_par_impot = sum(comptes.transfert_part_ressources(o.code, derniere)
+                         for o in ORGANISMES if o.recette_par_impot)
     supprime = comptes.transfert_supprime_part_pib(derniere)
+    supprime_caisses = comptes.transfert_supprime_part_pib(derniere, par_impot=False)
     # Ce que la recette vaut en part des ressources, l'année où on la connaît ;
     # retirée à part CONSTANTE, elle multiplie tout coefficient par le même
     # facteur, et c'est la seule façon de la porter jusqu'à l'horizon du COR
@@ -8017,7 +8033,7 @@ def _cout_detail_transferts(contexte: Contexte) -> str:
         n'est pas le sien.
         """
         return (ligne.ressources_de(scenario) + ligne.retrait) / ligne.depense(scenario)
-    return g.depliant("Ce que la branche famille et l'assurance chômage versent", f"""
+    return g.depliant("Ce que d'autres caisses versent", f"""
 <p>Le poste « transferts d'organismes extérieurs » du tableau précédent est un
 agrégat. Le voici ventilé par celui qui paie, lu dans les rapports à la
 Commission des comptes de la Sécurité sociale, du côté de la caisse qui verse.</p>
@@ -8031,10 +8047,13 @@ Commission des comptes de la Sécurité sociale, du côté de la caisse qui vers
 )}
 {g.gloses([(poste.libelle, poste.glose) for poste in POSTES_TRANSFERTS])}
 <p class="discret">Les deux caisses expliquent
-{g.pourcentage(part_ventilee, decimales=1)} des ressources de {derniere}, sur les
+{g.pourcentage(part_caisses, decimales=1)} des ressources de {derniere}, sur les
 {g.pourcentage(part_poste, decimales=1)} du poste « transferts » ; le reste est
 fait de versements plus petits, de l'assurance maladie et de l'État pour
-l'essentiel. Le COR ventile ce poste pour la dernière année de chaque rapport
+l'essentiel. Le fonds de solidarité vieillesse verse ses
+{g.pourcentage(part_par_impot, decimales=1)} de ressources par une CSG, rangée dans le poste
+« impôts et taxes affectés » du tableau précédent ; il est ici parce qu'il
+paie, comme les deux autres, des droits qu'aucun compte notionnel ne sert. Le COR ventile ce poste pour la dernière année de chaque rapport
 depuis 2023 : son « dont Unédic » est exactement la somme des deux lignes de
 l'assurance chômage, son « dont CNAF » s'écarte de quelques pour cent de ce que
 la branche famille déclare verser, consolidé du côté des régimes qui
@@ -8047,8 +8066,12 @@ rien au compte pendant une année de chômage. Ils comptent pourtant, dans les
 ressources qu'ils supposent inchangées, les
 {_milliards(comptes.transfert_organisme("famille", derniere), 1)} de la branche
 famille et les {_milliards(comptes.transfert_organisme("chomage", derniere), 1)}
-de l'assurance chômage de {derniere} — {g.pourcentage(supprime, decimales=2)}
-du PIB, {g.pourcentage(part_supprimee, decimales=1)} des ressources. <strong>Le
+de l'assurance chômage de {derniere}, soit
+{g.pourcentage(supprime_caisses, decimales=2)} du PIB — et, avec les
+{_milliards(comptes.transfert_organisme("solidarite", derniere), 1)} que le
+fonds de solidarité vieillesse verse pour des trimestres que personne n'a
+cotisés, {g.pourcentage(supprime, decimales=2)} du PIB et
+{g.pourcentage(part_supprimee, decimales=1)} des ressources en tout. <strong>Le
 coefficient d'équilibre du dépliant suivant les leur retire</strong> : année
 par année là où on les connaît, à part constante des ressources avant et
 après, jusqu'à l'horizon du COR. Sans ce retrait, la proposition afficherait
@@ -8118,8 +8141,22 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
                 dernier.reversion_servie, dernier.reforme_en_vigueur),
                 decimales=1),
         ])
+    def _part_pib_passe(scenario: str) -> float:
+        """La part de PIB d'un scénario l'année ``derniere``, règle comprise."""
+        return masse_du_scenario(
+            dernier.part_pib, dernier.part_derives, dernier.rapports[scenario],
+            scenario, dernier.reversion_servie, dernier.reforme_en_vigueur)
+
+    # CETTE LIGNE N'EST PAS UN « DONT », et elle l'a dit pendant un jour. La
+    # garantie a quitté la masse contributive du scénario 6 le 19 septembre
+    # 2026 — elle est financée par l'impôt, hors du compte des cotisants —, si
+    # bien que la ligne du système 4 ne la porte plus : elle s'y AJOUTE. Le mot
+    # « dont » en faisait une part d'un total qui ne la contenait pas, et la
+    # preuve en était sous les yeux du lecteur, les systèmes 3 et 4 affichant
+    # le même montant sur un passé où seule la garantie les sépare.
     lignes_passe.append([
-        "<em>dont garantie vieillesse du système 4, financée par l'impôt</em>",
+        "<em>s'ajoute au système 4 : la garantie vieillesse, financée par "
+        "l'impôt</em>",
         _milliards(cout.cumul(COMPOSANTE_GARANTIE), 0),
         "—",
         _milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
@@ -8127,6 +8164,19 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
             dernier.part_pib, dernier.part_derives,
             dernier.rapports[COMPOSANTE_GARANTIE], COMPOSANTE_GARANTIE,
             dernier.reversion_servie), decimales=1),
+    ])
+    # Et le total, qui est ce que le lecteur vient chercher : additionner deux
+    # lignes de tête n'est pas son travail, et la cascade du dépliant suivant
+    # arrive au même nombre par un autre chemin.
+    cumul_total = cout.cumul("notionnel_liberal") + cout.cumul(COMPOSANTE_GARANTIE)
+    lignes_passe.append([
+        "<strong>4. La proposition libérale, garantie comprise</strong>",
+        _milliards(cumul_total, 0),
+        g.pourcentage(cumul_total / reference - 1, signe=True, decimales=1),
+        _milliards(dernier.cout("notionnel_liberal")
+                   + dernier.cout(COMPOSANTE_GARANTIE), 1),
+        g.pourcentage(_part_pib_passe("notionnel_liberal")
+                      + _part_pib_passe(COMPOSANTE_GARANTIE), decimales=1),
     ])
 
     horizon = avenir.annee(avenir.derniere_annee)
@@ -8146,7 +8196,8 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
             else _milliards(avenir.ecart_cumule(scenario), 0),
         ])
     lignes_avenir.append([
-        "<em>dont garantie vieillesse du système 4, financée par l'impôt</em>",
+        "<em>s'ajoute au système 4 : la garantie vieillesse, financée par "
+        "l'impôt</em>",
         _milliards(horizon.cout_constants(COMPOSANTE_GARANTIE), 0),
         g.pourcentage(horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1),
         _milliards(avenir.cumul(COMPOSANTE_GARANTIE), 0),
@@ -8174,6 +8225,24 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
         _milliards(avenir.cumul(COMPOSANTE_GARANTIE) - reprises_cumul, 0),
         "—",
         "—",
+    ])
+    # Le total de la proposition, garantie nette comprise : c'est le nombre
+    # auquel la cascade du dépliant suivant aboutit, et celui qu'il faut
+    # comparer au système actuel. La ligne « 4 » au-dessus ne porte que les
+    # pensions contributives.
+    cumul_total_avenir = (avenir.cumul("notionnel_liberal")
+                          + avenir.cumul(COMPOSANTE_GARANTIE) - reprises_cumul)
+    lignes_avenir.append([
+        "<strong>4. La proposition libérale, garantie nette comprise</strong>",
+        _milliards(horizon.cout_constants("notionnel_liberal")
+                   + horizon.garantie_nette_constants(), 0),
+        g.pourcentage(horizon.part_pib("notionnel_liberal")
+                      + horizon.part_pib(COMPOSANTE_GARANTIE)
+                      - horizon.part_pib_reprises(), decimales=1),
+        _milliards(cumul_total_avenir, 0),
+        g.pourcentage(cumul_total_avenir / reference_avenir - 1, signe=True,
+                      decimales=1),
+        _milliards(cumul_total_avenir - reference_avenir, 0),
     ])
 
     horizons = []
@@ -8227,6 +8296,14 @@ des âges de l'INSEE ; les écarts viennent des treize cas types croisés avec
 )}
 
 
+<p class="discret"><strong>La ligne du système 4 ne porte que ses pensions
+contributives.</strong> La garantie vieillesse est financée par l'impôt et non
+par les cotisations : elle est tenue hors du compte des cotisants, et ne s'y
+trouve donc pas comprise. C'est pour cela que les systèmes 3 et 4 affichent le
+même montant sur ce passé : avant la bascule ils prélèvent les mêmes taux, et
+seule la garantie les sépare. Elle s'y ajoute, ligne suivante, et la dernière
+ligne donne le total.</p>
+
 <p>Le système 2 aurait coûté {_milliards(cout.cumul("notionnel_retroactif"), 0)}
 au lieu de {_milliards(reference, 0)}. Cet écart mesure tout autre chose que l'effet des
 comptes notionnels. Il mesure deux choses qui n'ont rien à voir avec eux : ce
@@ -8262,7 +8339,10 @@ sans dimension, appliqué aux dépenses du COR.</div>
     entete_de_ligne=True,
 )}
 <p class="discret">Le cumul porte sur les seules années projetées, en euros
-constants de {euros}. <strong>Les trois systèmes notionnels comparés ici sont
+constants de {euros}. Comme sur le passé, <strong>la ligne du système 4 ne
+porte que ses pensions contributives</strong> : la garantie vieillesse, payée
+par l'impôt, s'y ajoute, et la dernière ligne donne le total, net de ce que les
+successions rendent. <strong>Les trois systèmes notionnels comparés ici sont
 des contrefactuels</strong> : ils supposent
 recalculées les pensions de gens qui les perçoivent depuis trente ans, ce
 qu'aucun droit ne permettrait. Ils répondent à « qu'aurait donné cette règle
@@ -8738,8 +8818,9 @@ dernière colonne ne regarde que les années projetées : le passé est ce qu'il
 été. Pour le système actuel, dont le rapport vaut un par construction, ces
 colonnes redonnent exactement le solde publié par le COR, ce qui dit que
 le raccord ne triche pas. Les trois autres systèmes ne comptent pas tout ce que
-le système actuel encaisse : ce que la branche famille et l'assurance chômage
-versent pour des droits qu'ils ne servent pas, soit
+le système actuel encaisse : ce que la branche famille, l'assurance chômage et
+le fonds de solidarité vieillesse versent pour des droits qu'ils ne servent
+pas, soit
 
 {g.pourcentage(observe.retrait, decimales=2)} du PIB en {obs}, leur est
 retiré, à part constante des ressources sur les années projetées. C'est ce
@@ -8752,9 +8833,11 @@ additionnées, et ce taux s'applique à l'ASSIETTE des revenus d'activité : les
 salaires et traitements bruts, plus le revenu mixte des non-salariés, soit
 {_milliards(assiette.montant(annee_assiette), 0)} en {annee_assiette},
 {g.pourcentage(assiette.part_pib(annee_assiette), decimales=1)} du PIB. Le
-système de retraite y prélève aujourd'hui
-{g.pourcentage(horizon.taux_prelevement, decimales=1)} de ressources en tout, et
-la proposition en prélèverait 18 : c'est le rapport de ces deux nombres qui fait
+système de retraite y prélève
+{g.pourcentage(observe.taux_prelevement, decimales=1)} de ressources en tout en
+{obs}, et {g.pourcentage(horizon.taux_prelevement, decimales=1)} en
+{solde.derniere_annee} là où le COR projette son propre taux ; la proposition en
+prélèverait 18 : c'est le rapport de ces deux nombres, année par année, qui fait
 sa recette. Elle ne touche aucune compensation d'allègement, n'en accordant
 aucun, et cela ne lui retire rien ici : cette compensation passe par la TVA, qui
 finance la branche maladie et n'apparaît pas au compte de la retraite.</div>
@@ -9547,7 +9630,7 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
 que ce qui manque à une pension pour atteindre son plancher. Son coût est donc
 tout entier celui de la <strong>queue basse de la distribution</strong> des
 pensions, et treize carrières de référence ne décrivent pas une distribution.
-La ligne « dont garantie vieillesse » des deux tableaux du haut n'est donc pas
+La ligne « garantie vieillesse » des deux tableaux du haut n'est donc pas
 tirée des cas types : elle est lue sur la distribution que l'échantillon
 interrégimes de retraités de la DREES publie, par tranches de cent euros, pour
 {millesime}. Les cas types ne servent qu'à dire <em>de combien cette
