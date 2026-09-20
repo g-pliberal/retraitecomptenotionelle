@@ -1,0 +1,116 @@
+# Taux de prélèvement du système de retraite, en part des revenus d'activité
+# source_id: cor_comptes_systeme_retraite
+# unite: part des revenus d'activité, en fraction
+# fiabilite:
+#   haute    (2002-…) : taux observé, calculé par le SG-COR sur les
+#             rapports à la Commission des comptes de la Sécurité
+#             sociale et les comptes nationaux de l'INSEE, recontrôlé
+#             par scripts/verifier_donnees.py contre le classeur du
+#             dernier rapport annuel.
+#   projetee (…-2070) : scénario de référence du même rapport.
+#
+# CE QUE CETTE SÉRIE TRANCHE, ET QUI ÉTAIT DÉDUIT À L'ENVERS
+# -----------------------------------------------------------
+# Les ressources du COR reculent en part de PIB sur l'horizon projeté :
+# 13,95 % en 2025, 12,91 % en 2070. Les deux colonnes de
+# comptes_retraite.csv ne disent pas POURQUOI — si l'assiette rétrécit
+# ou si le taux baisse —, et la réponse décide de ce qu'un taux unique
+# rapporterait : la proposition prélève 18 % d'une assiette, et cette
+# assiette est le quotient des ressources par ce taux.
+#
+# Le dépôt tenait le taux pour constant au-delà de la dernière année
+# d'assiette publiée, et faisait donc porter tout le recul à
+# l'assiette — 42,5 % du PIB en 2025, 39,3 % en 2070 sous cette
+# convention. C'est l'inverse : le COR projette un TAUX qui baisse,
+# de 32,14 % à 30,05 %, et une assiette qui tient sa part de PIB à un
+# point près. La convention démentie coûtait 0,49 point de PIB de
+# recette à la proposition en 2070, et 0,29 en moyenne sur
+# 2026-2070.
+#
+# CE QUE LE DÉPÔT EN PREND, ET CE QU'IL N'EN PREND PAS
+# -----------------------------------------------------
+# Le PROFIL, jamais le NIVEAU. « Revenus d'activité » n'est pas tout à
+# fait l'assiette d'assiette_activite.csv — salaires et traitements
+# bruts plus revenu mixte des ménages —, et les deux taux diffèrent de
+# 2 % en 2025 : 32,14 % ici, 32,84 % mesuré là. Le dépôt garde sa
+# mesure pour l'année d'ancrage, qui est celle où son assiette est
+# certifiée, et n'emprunte à cette série que le rapport d'une année
+# projetée à cette année-là. Un niveau emprunté à une définition
+# voisine déplacerait la recette de 2 % sans que rien ne le dise.
+#
+# Convention EPR, hors produits et charges financières : la même que
+# comptes_retraite.csv, et il le faut — le taux est le quotient de ces
+# ressources-là par l'assiette.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,taux,fiabilite
+2002,0.26916,haute
+2003,0.27587,haute
+2004,0.27874,haute
+2005,0.27854,haute
+2006,0.28013,haute
+2007,0.28375,haute
+2008,0.28323,haute
+2009,0.28867,haute
+2010,0.28567,haute
+2011,0.29305,haute
+2012,0.30105,haute
+2013,0.31097,haute
+2014,0.31655,haute
+2015,0.31862,haute
+2016,0.31886,haute
+2017,0.31897,haute
+2018,0.31744,haute
+2019,0.31582,haute
+2020,0.32204,haute
+2021,0.31649,haute
+2022,0.31104,haute
+2023,0.30967,haute
+2024,0.31789,haute
+2025,0.32136,haute
+2026,0.32343,projetee
+2027,0.32504,projetee
+2028,0.32543,projetee
+2029,0.32425,projetee
+2030,0.32299,projetee
+2031,0.32098,projetee
+2032,0.31977,projetee
+2033,0.31857,projetee
+2034,0.31741,projetee
+2035,0.31673,projetee
+2036,0.31599,projetee
+2037,0.31519,projetee
+2038,0.31439,projetee
+2039,0.31352,projetee
+2040,0.31269,projetee
+2041,0.31193,projetee
+2042,0.31116,projetee
+2043,0.31047,projetee
+2044,0.30976,projetee
+2045,0.30906,projetee
+2046,0.30839,projetee
+2047,0.30771,projetee
+2048,0.30713,projetee
+2049,0.30656,projetee
+2050,0.30601,projetee
+2051,0.30549,projetee
+2052,0.30494,projetee
+2053,0.30451,projetee
+2054,0.30409,projetee
+2055,0.30365,projetee
+2056,0.30327,projetee
+2057,0.30287,projetee
+2058,0.30251,projetee
+2059,0.30214,projetee
+2060,0.30183,projetee
+2061,0.30157,projetee
+2062,0.30133,projetee
+2063,0.30115,projetee
+2064,0.30101,projetee
+2065,0.30093,projetee
+2066,0.30082,projetee
+2067,0.30076,projetee
+2068,0.30068,projetee
+2069,0.30061,projetee
+2070,0.30048,projetee

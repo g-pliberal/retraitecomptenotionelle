@@ -58,6 +58,21 @@ droits, les impôts affectés n'ouvrent de droit à personne, les subventions
 d'équilibre comblent des régimes en extinction. Un système en comptes
 notionnels ne sait créditer que la première catégorie ; ``contributive`` dit
 laquelle c'est.
+
+CE QUE LE TAUX DE PRÉLÈVEMENT SERT À DIRE
+------------------------------------------
+Les ressources reculent en part de PIB sur l'horizon projeté — 13,95 % en 2025,
+12,91 % en 2070. Les deux colonnes du compte ne disent pas POURQUOI, et la
+réponse décide de ce qu'un taux unique rapporterait : la proposition prélève
+18 % d'une assiette, et cette assiette est le quotient des ressources par le
+taux. Tout ce que le taux ne porte pas, l'assiette le porte.
+
+Le dépôt gelait ce taux au-delà de sa fenêtre de mesure, et faisait donc
+tomber son assiette de 42,5 % du PIB à 39,3 %. Le COR publie la série, dans la
+figure des déterminants de ses ressources, et elle dit l'inverse : le TAUX
+baisse, de 32,14 % à 30,05 %, et l'assiette tient sa part de PIB. ``profil_taux``
+dit ce que le dépôt lui emprunte — la forme, jamais le niveau, les deux
+définitions d'assiette ne coïncidant pas à 2 % près.
 """
 
 from __future__ import annotations
@@ -361,6 +376,13 @@ class ComptesRetraite:
             )
             for poste in POSTES_TRANSFERTS
         }
+        # Le taux de prélèvement du système, en part des REVENUS D'ACTIVITÉ et
+        # non du PIB. C'est la seule série du compte qui dise pourquoi les
+        # ressources reculent en part de PIB : parce que le taux baisse, et non
+        # parce que l'assiette rétrécit. ``profil_taux`` dit ce qu'on en prend.
+        self.taux_prelevement = charger_serie_annuelle(
+            macro / "taux_prelevement_retraite.csv", "taux",
+            nom="taux_prelevement_retraite")
         self.pib = charger_serie_annuelle(
             macro / "pib_courant.csv", "pib_meur", nom="pib_courant")
         # La dette de TOUTES les administrations publiques, au sens de
@@ -414,6 +436,26 @@ class ComptesRetraite:
         que le COR publie séparément.
         """
         return self.ressources(annee) - self.depenses(annee)
+
+    def profil_taux(self, annee: int, reference: int) -> float:
+        """Ce que le taux de prélèvement de ``annee`` vaut, rapporté à celui de
+        ``reference``.
+
+        LE PROFIL, ET JAMAIS LE NIVEAU. Le COR projette son taux de prélèvement
+        sur les revenus d'activité ; le dépôt mesure le sien sur l'assiette
+        qu'il certifie — salaires et traitements bruts plus revenu mixte —, et
+        les deux définitions ne coïncident pas : 32,14 % contre 32,84 % en
+        2025, soit 2 % d'écart. Emprunter le NIVEAU du COR déplacerait la
+        recette de la proposition de 2 % sans que rien ne le dise ; emprunter
+        son RAPPORT d'une année à l'autre n'emprunte que ce que lui seul sait,
+        c'est-à-dire la FORME de la trajectoire.
+
+        Vaut un quand les deux années sont la même, ce qui est le cas de toutes
+        les années où l'assiette est publiée : rien ne change alors sur les
+        années observées, et c'est voulu — elles sont mesurées, pas projetées.
+        """
+        base = self.taux_prelevement(reference)
+        return self.taux_prelevement(annee) / base if base else 1.0
 
     def part(self, code: str, annee: int) -> float:
         """Part d'un poste dans les ressources de l'année."""

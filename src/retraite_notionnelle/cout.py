@@ -2463,18 +2463,24 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
     )
 
     # Le PIB est publié jusqu'en 2025 ; au-delà il croît au rythme nominal des
-    # hypothèses de projection, CORRIGÉ de l'évolution de la population d'âge
-    # actif. Sans cette correction, la France de 2070 produirait avec douze pour
-    # cent d'actifs qu'aucune projection ne lui donne. Le rythme est pris HORS
-    # trajectoire d'emploi : la population d'âge actif en tient lieu ici, et
-    # composer les deux compterait la démographie deux fois.
+    # hypothèses de projection, TRAJECTOIRE D'EMPLOI COMPRISE — c'est-à-dire
+    # ``macro.pib_nominal``, la même série que lit l'indexation des comptes, et
+    # la convention que le fichier d'hypothèses énonce : « le PIB nominal suit
+    # la même convention que la masse salariale ».
+    #
+    # LA PAGE SE FABRIQUAIT SON PROPRE PIB JUSQU'AU 20 SEPTEMBRE 2026, et le
+    # dépôt en portait donc trois : celui-ci, celui de l'indexation, et celui
+    # qu'implique le compte du COR. La correction d'ici était la population des
+    # 20-64 ans, qui recule de 10 % d'ici 2070 là où l'emploi du scénario de
+    # référence du COR recule de 6 % : un proxy inventé par le dépôt, là où la
+    # projection existe et qu'il la lit déjà ailleurs. Une part de PIB dont le
+    # dénominateur n'est pas celui du reste du dépôt ne se compare à rien — et
+    # `limites.md` § 5 ter appelait cette substitution depuis l'action 46.
     derniere_pib = depenses.pib.derniere_annee
     pib_projete: dict[int, float] = {}
     courant = depenses.pib(derniere_pib)
     for annee in range(derniere_pib + 1, HORIZON + 1):
-        courant *= (1.0 + macro.pib_nominal_hors_emploi(annee)) * (
-            population.actifs(annee) / population.actifs(annee - 1)
-        )
+        courant *= 1.0 + macro.pib_nominal(annee)
         pib_projete[annee] = courant
 
     lignes: list[AvenirAnnuel] = []
@@ -2559,17 +2565,29 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
     par_annee = {ligne.annee: ligne for ligne in avenir.annees}
 
     def taux_prelevement(annee: int) -> float:
-        """Le taux de prélèvement de l'année, ou celui de la dernière connue.
+        """Le taux de prélèvement de l'année, mesuré puis suivi chez le COR.
 
-        Il faut le calculer sur une année où l'assiette est PUBLIÉE : la
-        reconduire au-delà reviendrait à figer un montant en euros courants,
-        alors que c'est le taux qui se reconduit. Voir
-        ``AssietteActivite.taux_prelevement``.
+        Deux temps, et ils n'ont pas le même statut. Le NIVEAU est mesuré sur
+        une année où l'assiette est publiée — c'est tout ce que
+        ``AssietteActivite.taux_prelevement`` sait faire, et c'est la seule
+        chose que le dépôt certifie. Le PROFIL au-delà est lu chez le COR, qui
+        projette ce taux dans la figure des déterminants de ses ressources.
+
+        CE QUE CE SECOND TEMPS A CORRIGÉ. Le dépôt reconduisait le taux du bord
+        tel quel, et faisait donc porter tout le recul des ressources à
+        l'assiette : 42,5 % du PIB en 2025, 39,3 % en 2070. Il justifiait cette
+        convention en disant que « c'est le COR qui tranche ». C'était une
+        déduction tirée du total de ses ressources, non une lecture de sa
+        projection — et elle le tranchait à l'envers. Le COR projette un taux
+        qui BAISSE, de 32,14 % à 30,05 %, et une assiette qui tient sa part de
+        PIB à un point près. La convention démentie faisait perdre 0,49 point
+        de PIB de recette à la proposition en 2070.
         """
         if assiette is None:
             return 0.0
         reference = assiette.annee_de_reference(annee)
-        return assiette.taux_prelevement(comptes.ressource(reference), reference)
+        mesure = assiette.taux_prelevement(comptes.ressource(reference), reference)
+        return mesure * comptes.profil_taux(annee, reference)
 
     lignes = [
         SoldeAnnuel(

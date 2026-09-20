@@ -81,10 +81,11 @@ export class AssietteActivite {
    * deux termes sont en part du PIB : le rapport est sans dimension, et c'est
    * lui qui convertit un taux affiché en recette.
    *
-   * Reconduire le TAUX plutôt que la part de PIB de l'assiette n'est pas
-   * indifférent, et c'est le COR qui tranche : ses ressources reculent en part
-   * de PIB sur l'horizon projeté parce que l'assiette y progresse moins vite
-   * que le PIB, non parce qu'il baisserait les taux.
+   * CE QU'ELLE NE FAIT PAS : projeter. Reconduire ce taux tel quel au-delà de
+   * la fenêtre publiée supposerait que tout le recul des ressources du COR
+   * vient de l'assiette — l'inverse de ce qu'il projette. Le prolongement est
+   * le travail de `ComptesRetraite.profilTaux`, qui lit la trajectoire chez le
+   * producteur ; ici, on mesure une année, et une seule.
    */
   tauxPrelevement(ressourcesPartPib, annee) {
     const part = this.partPib(annee);

@@ -726,6 +726,21 @@ affirmations:
     etat: verifiee
     controle: note_du_coefficient_suit_son_signe
 
+  # L'AUTRE BRANCHE DE LA MÊME PHRASE. Elle existait dans le code depuis que la
+  # lecture suit le signe, et rien ne la rendait : sous les réglages par
+  # défaut, le coefficient de la proposition est sous un partout. Il est passé
+  # au-dessus sous d'autres réglages le 20 septembre 2026, quand le taux de
+  # prélèvement projeté a cessé d'être gelé au bord (action 65), et la page a
+  # écrit une phrase forte que le catalogue ne connaissait pas. Le contrôle est
+  # le même : il éprouve les deux côtés de un, et c'est lui qui refuserait que
+  # la page commente une marge par un manque.
+  - id: cas_types.facteur_superieur_a_un
+    page: /cas-types
+    extrait: "Un coefficient supérieur à un est une marge"
+    porte: la lecture du coefficient est calculée depuis le solde, et suit son signe
+    etat: verifiee
+    controle: note_du_coefficient_suit_son_signe
+
   - id: reglages.avertissement
     page: [/cas-types, /cout, /avantages]
     extrait: "Ces chiffres ne sont pas ceux des réglages par défaut."

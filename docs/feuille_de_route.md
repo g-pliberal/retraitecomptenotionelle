@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 070<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 093<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10360,3 +10360,117 @@ trois phrases du site à l'état `contredite` sans plus rien pour les refermer.
 Sa section ne peut pas disparaître tout à fait : ces trois entrées du
 catalogue nomment l'action, et un test exige qu'elle existe. Il en reste un
 paragraphe qui dit où est passé le reste.
+
+---
+
+### 65. L'assiette projetée était une déduction, et le COR publie la réponse — `fait`
+
+**Demande.** « Est-ce que les recettes et les dépenses par rapport au PIB du
+système de retraite correspondent à l'état de l'art de la comptabilité ? »
+Puis, sur l'audit qui a suivi : « fais le lot 1+2 ». Deux corrections, donc :
+l'assiette projetée, et le dénominateur.
+
+**Ce qui n'allait pas, et ce n'était pas une erreur de calcul.** La recette de
+la proposition est 18 % d'une assiette. Sur les années publiées, c'est une
+mesure ; au-delà, il faut dire ce que l'assiette devient. Les ressources que le
+COR projette reculent en part de PIB — 13,95 % en 2025, 12,91 % en 2070 — et ce
+recul se partage entre un taux qui baisse et une assiette qui rétrécit, sans que
+les deux colonnes du compte disent lequel. Le dépôt reconduisait le taux du bord
+et faisait donc porter TOUT le recul à l'assiette, qui tombait de 42,5 % du PIB
+à 39,3 %. Il s'en justifiait dans `assiette.py` : « c'est le COR qui tranche ».
+
+C'était une déduction tirée du total de ses ressources, et elle le tranchait à
+l'envers. Deux choses la démentaient, dont une dans le dépôt même :
+`hypotheses_projection.yaml` refuse explicitement de « projeter une déformation
+du partage de la valeur ajoutée », et 42,5 → 39,3 % en est une, de 7,4 %. Le
+dépôt se contredisait d'un fichier à l'autre, et personne ne l'avait vu parce
+que les deux phrases sont à deux cents lignes l'une de l'autre.
+
+**Ce que le COR publie, et que trois passes de récupération n'avaient pas
+cherché.** La figure « Les déterminants de l'évolution des ressources du système
+de retraite », partie 2 du rapport annuel, porte le TAUX DE PRÉLÈVEMENT en part
+des revenus d'activité, observé de 2002 à 2025 et projeté jusqu'en 2070. Il
+baisse : 32,14 % à 30,05 %. C'est donc le taux qui explique le recul des
+ressources, et l'assiette tient sa part de PIB à un point près — l'inverse de ce
+que le dépôt supposait. `taux_prelevement_retraite.csv` la porte, au même
+niveau `haute`/`projetee` que les deux colonnes du compte.
+
+**Le profil, jamais le niveau.** « Revenus d'activité » chez le COR n'est pas
+l'assiette d'`assiette_activite.csv` : 32,14 % contre 32,84 % mesuré ici en
+2025, 2 % d'écart. Le dépôt garde SA mesure pour l'année d'ancrage, la seule
+qu'il certifie, et n'emprunte que le rapport d'une année projetée à celle-là
+(`ComptesRetraite.profil_taux`). Le profil vaut un sur toute année publiée : les
+années observées ne bougent pas d'un centime, et un test l'exige.
+
+**Ce que ça a déplacé.** Le solde de la proposition gagne **0,49 point de PIB en
+2070**, 0,28 en moyenne sur 2026-2070 : moyenne projetée de −1,52 à −1,24 point,
+2070 de −0,63 à −0,14, coefficient d'équilibre 2070 de 0,92 à 0,98. Les années
+proches bougent à peine, et 2030 bouge dans l'AUTRE sens — le COR fait monter son
+taux jusque-là. Une série lue ne va pas toujours dans le sens qui arrange, et
+c'est ce qui la distingue d'une hypothèse.
+
+**Le lot 2, qui n'était pas celui qu'on croyait.** L'audit proposait de stocker
+les deux colonnes du COR en euros pour recalculer leurs parts contre un seul
+PIB. Vérification faite, le COR **ne publie pas ses comptes en euros** : ses
+figures sont en part de PIB, et le dépôt ne peut pas les rebaser. La note de
+ces figures dit en revanche la base du dénominateur — « comptes nationaux de
+l'Insee base 2020 », celle de `pib_courant.csv`. Le lot 2 est donc devenu deux
+autres choses.
+
+**Un contrôle de base, en euros, une fois par rapport.** Le COR publie une fois
+par rapport la structure de ses ressources EN MILLIARDS : 422,2 Md€ en 2025,
+dont 5,6 de produits financiers que la convention du compte exclut. Les 416,6
+restants sur un PIB de 2 991,1 Md€ font 13,93 %, contre 13,95 % publiés — deux
+centièmes de point. `controle_base_comptable_retraite` tient ce recoupement sur
+toutes les années où le COR donne un total en euros, et c'est lui qui
+s'apercevrait qu'un rapport a changé de base sans le dire. Sans ce contrôle, le
+recoupement des deux périmètres — trois dixièmes de point entre la DREES et le
+COR, le seul contrôle externe de ces séries — pouvait être en partie un effet de
+base, et ne rien dire.
+
+**Le troisième PIB projeté, supprimé.** Le dépôt en portait trois : celui de
+l'indexation (`macro.pib_nominal`, rythme du COR composé avec sa trajectoire
+d'emploi), celui qu'implique le compte du COR, et celui que la page Coût se
+fabriquait — le rythme du COR corrigé par la population des **20-64 ans**, qui
+recule de 10 % quand l'emploi projeté par le COR recule de 6 %. Ce proxy avait
+été posé contre une hypothèse d'emploi constant que l'action 46 a supprimée ; il
+lui a survécu quelques jours. La page lit maintenant `macro.pib_nominal`, et
+`pib_nominal_hors_emploi` disparaît des deux portages, n'ayant plus de lecteur.
+
+**Ce que ça a déplacé.** La trajectoire 2070 du système actuel passe de 19,4 à
+**18,35 % du PIB** — 1,05 point, du dénominateur seul, aucune pension n'ayant
+bougé. L'écart au COR, que `limites.md` § 5 ter chiffrait à cinq points, en
+valait donc un de dénominateur : il est de trois points contre les 15,3 % que le
+rapport de juin 2026 projette. Les 469 témoins de simulation n'ont pas bougé
+d'un bit dans les deux corrections réunies : elles ne touchent aucune pension,
+seulement ce que les comptes en financent et ce à quoi on les rapporte.
+
+**Ce qui reste ouvert, et qui demande un arbitrage.** Le PIB reste UNIQUE PAR
+ANNÉE, commun aux six systèmes — c'est ce qui rend leurs courbes comparables, et
+c'est aussi une hypothèse, puisque la trajectoire d'emploi ne s'applique qu'aux
+systèmes 2 à 6. Un système qui déplacerait réellement l'emploi déplacerait son
+dénominateur, et la page ne sait pas le montrer. Et le taux emprunté au COR
+décrit le système ACTUEL : un système à 18 % sans exonération, sans plafond et
+sans tranche n'aurait pas la même assiette. Le dépôt emprunte la forme d'une
+trajectoire à défaut de savoir produire la sienne.
+
+**Trois écarts de l'audit qui n'ont pas été traités, et qui restent.** La
+convention EPR est écrite dans les en-têtes de données et dans `sources.yaml`,
+et nulle part dans la prose du site : sous cette convention, la contribution de
+l'État au régime de ses fonctionnaires est un solde endogène, et le déficit
+affiché est donc un déficit APRÈS que l'État a bouclé la fonction publique. Le
+COR publie la convention EEC en données complémentaires de la même figure, et le
+dépôt pourrait montrer les deux. Le brut et le net ne sont pas distingués — les
+2,94 points de CSG assis sur les pensions sont une recette qui est une fraction
+de la dépense. Et le dépôt ne porte aucun engagement de retraite ACQUIS À DATE,
+alors qu'un modèle en comptes notionnels le produit nativement : la somme des
+capitaux virtuels est cette grandeur, celle que le tableau supplémentaire du
+SEC 2010 demande.
+
+**Fichiers.** `scripts/fetch/cor_comptes_retraite.py`, `scripts/verifier_donnees.py`,
+`data/reference/macro/taux_prelevement_retraite.csv`, `data/sources.yaml`,
+`donnees/equilibre.py`, `donnees/assiette.py`, `donnees/macro.py`, `cout.py`,
+`moteur/js/equilibre.js`, `moteur/js/assiette.js`, `moteur/js/cout.js`,
+`moteur/js/macro.js`, `scripts/construire_donnees.py`, `tests/test_cout.py`,
+`tests/test_donnees.py`, `limites.md` § 5 bis et § 5 ter,
+`data/reference/prose/zones.yaml`.

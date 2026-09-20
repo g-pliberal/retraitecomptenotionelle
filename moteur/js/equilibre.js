@@ -278,6 +278,12 @@ export class ComptesRetraite {
                                    brut[`transferts_${poste.code}`]),
       ]),
     );
+    // Le taux de prélèvement du système, en part des REVENUS D'ACTIVITÉ et non
+    // du PIB. C'est la seule série du compte qui dise pourquoi les ressources
+    // reculent en part de PIB : parce que le taux baisse, et non parce que
+    // l'assiette rétrécit. `profilTaux` dit ce qu'on en prend.
+    this.tauxPrelevement = SerieAnnuelle.depuisPaquet("taux_prelevement_retraite",
+                                                      brut.taux_prelevement);
     this.pib = SerieAnnuelle.depuisPaquet("pib_courant", paquet.depenses.pib_courant);
     // La dette de TOUTES les administrations publiques, au sens de Maastricht,
     // en part de PIB : ce que le pays porte déjà. Elle ne sert à aucun calcul ;
@@ -320,6 +326,22 @@ export class ComptesRetraite {
   }
 
   /** Part d'un poste dans les ressources de l'année. */
+  /**
+   * Ce que le taux de prélèvement de `annee` vaut, rapporté à celui de
+   * `reference`.
+   *
+   * LE PROFIL, ET JAMAIS LE NIVEAU. Le COR projette son taux sur les revenus
+   * d'activité ; le dépôt mesure le sien sur l'assiette qu'il certifie, et les
+   * deux définitions ne coïncident pas — 32,14 % contre 32,84 % en 2025.
+   * Emprunter le niveau déplacerait la recette de 2 % sans le dire ; emprunter
+   * le rapport d'une année à l'autre n'emprunte que la FORME de la
+   * trajectoire. Vaut un sur toute année où l'assiette est publiée.
+   */
+  profilTaux(annee, reference) {
+    const base = this.tauxPrelevement.valeur(reference);
+    return base ? this.tauxPrelevement.valeur(annee) / base : 1.0;
+  }
+
   part(code, annee) {
     return this.structure.get(code).valeur(annee);
   }

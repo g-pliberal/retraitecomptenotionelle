@@ -53,6 +53,17 @@ que ``ccss_transferts_retraite.py`` va chercher chez le producteur, et c'est
 pour cela qu'on la lit dans chaque rapport annuel encore en ligne, et non dans
 le seul dernier.
 
+Et une sixième, qui règle une question que le dépôt tranchait par déduction :
+le TAUX DE PRÉLÈVEMENT, en part des revenus d'activité, observé de 2002 à 2025
+et projeté jusqu'en 2070 (figure « Les déterminants de l'évolution des
+ressources du système de retraite »). Les ressources du COR reculent en part de
+PIB sur l'horizon projeté — 13,95 % en 2025, 12,91 % en 2070 —, et rien, dans
+les deux colonnes du compte, ne dit si c'est l'assiette qui rétrécit ou le taux
+qui baisse. La réponse change tout pour qui veut chiffrer ce qu'un taux unique
+rapporterait : elle est ici, et c'est le TAUX qui baisse, de 32,14 % à 30,05 %,
+l'assiette restant à peu près stable en part de PIB. Le dépôt supposait
+l'inverse.
+
 POURQUOI LE SCRIPT CHERCHE LE RAPPORT AU LIEU DE L'ADRESSER
 ------------------------------------------------------------
 Le COR republie son rapport chaque année, sous une adresse neuve et des noms de
@@ -94,6 +105,11 @@ LIEN_ANNUEL = re.compile(
     r'href="(/rapports-du-cor/[^"]*evolutions-perspectives-retraites-france[^"]*)"'
 )
 
+#: Intitulé de la série cherchée dans la figure des déterminants des
+#: ressources. La figure en porte deux — le taux de prélèvement et la
+#: contribution de l'État aux régimes équilibrés — et il faut donc la nommer.
+INTITULE_TAUX = "Taux de prélèvement en % des revenus d'activité"
+
 #: Lignes de la ventilation des transferts, du libellé du COR au code du dépôt.
 #: Le tableau porte le total des ressources en dernière ligne, sous deux noms.
 LIGNES_VENTILATION: tuple[tuple[str, str], ...] = (
@@ -101,6 +117,7 @@ LIGNES_VENTILATION: tuple[tuple[str, str], ...] = (
     ("cnaf", "dont cnaf"),
     ("unedic", "dont unedic"),
     ("autres", "autres transferts externes"),
+    ("produits_financiers", "produits financiers"),
     ("total_ressources", "total ressources"),
     ("total_ressources", "total financement"),
 )
@@ -116,6 +133,7 @@ FIGURES: tuple[tuple[str, str], ...] = (
     ("comptes", "depenses et ressources du systeme de retraite"),
     ("solde", "solde du systeme de retraite observe et projete"),
     ("structure", "structure des ressources du systeme de retraite de"),
+    ("determinants", "evolution des ressources du systeme de retraite dans le sc"),
 )
 
 #: Marqueurs que le COR met en tête de ligne pour dire ce qui est observé et ce
@@ -384,6 +402,11 @@ def main() -> int:
             serie["intitule"]: serie["valeurs"] for serie in lus["structure"]
             if serie["intitule"]
         },
+        # En part des REVENUS D'ACTIVITÉ, et non du PIB : c'est le taux que le
+        # COR projette lui-même, et le seul endroit où il dise si ses
+        # ressources reculent parce que l'assiette rétrécit ou parce que le
+        # taux baisse. Voir INTITULE_TAUX.
+        "taux_prelevement": _par_marqueur(lus["determinants"], INTITULE_TAUX),
         # En MILLIONS d'euros, contrairement au reste : c'est un contrôle de la
         # série des rapports à la CCSS, qui sont écrits dans cette unité.
         "ventilation_transferts": ventilation,

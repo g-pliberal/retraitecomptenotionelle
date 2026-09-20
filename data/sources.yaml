@@ -555,7 +555,8 @@ institutions:
         recuperation: scripts/fetch/cor_comptes_retraite.py
         cible: >-
           data/reference/macro/comptes_retraite.csv,
-          data/reference/macro/structure_ressources_retraite.csv
+          data/reference/macro/structure_ressources_retraite.csv,
+          data/reference/macro/taux_prelevement_retraite.csv
         millesime: juin 2026
         note: >-
           Le seul compte français où DÉPENSES ET RESSOURCES de la retraite
@@ -577,6 +578,18 @@ institutions:
           ne connaît aucune adresse de fichier : il suit le lien du rapport
           annuel depuis la page d'accueil et cherche les figures par leur
           titre, un rapport changeant chaque année de numérotation de parties.
+          TROISIÈME CIBLE depuis le 20 septembre 2026 : le TAUX DE PRÉLÈVEMENT
+          en part des revenus d'activité, figure « Les déterminants de
+          l'évolution des ressources du système de retraite ». C'est le seul
+          endroit où le COR dise si ses ressources reculent en part de PIB
+          parce que le taux baisse ou parce que l'assiette rétrécit — et c'est
+          le taux qui baisse, de 32,14 % en 2025 à 30,05 % en 2070. Le dépôt
+          supposait l'inverse, et la déduction lui coûtait un demi-point de PIB
+          de recette en 2070. La même figure porte la contribution de l'État
+          aux régimes équilibrés, qui n'est pas reprise faute d'un lecteur.
+          La note de cette figure date aussi la base du dénominateur :
+          « comptes nationaux de l'Insee base 2020 », celle de pib_courant.csv,
+          ce que controle_base_comptable_retraite vérifie en euros.
       - id: cor_cas_types
         titre: Cas types du COR (carrières de référence)
         url: https://www.cor-retraites.fr/simulateurs

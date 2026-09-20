@@ -83,6 +83,14 @@ fichiers:
       # décidé, et le constat n'aurait plus de sens. La section de la fiche de
       # paie était déjà à déclarer ; son titre change, son régime pas.
       "5 ante quater. Le partage « moitié aux salaires, moitié à la dette » : ce qu'il affirme et ce que rien ne vérifie": recit
+      # Même chose, le 20 septembre 2026 : elle raconte une déduction que le
+      # COR démentait — une assiette qu'on faisait fondre de 42,5 à 39,3 % du
+      # PIB faute d'avoir lu le taux qu'il projette — et chiffre ce que la
+      # lecture a rendu. Les deux jeux de nombres sont l'AVANT et l'APRÈS ;
+      # les rafraîchir effacerait la correction. Ce que l'assiette projetée
+      # vaut aujourd'hui, `test_l_assiette_projetee_garde_sa_part_de_pib` le
+      # tient, et il tomberait si elle repartait à la dérive.
+      "L'assiette projetée : une déduction que le COR démentait, et un demi-point de PIB": recit
       # Elle dit ce que le troisième chiffre du simulateur suppose, le jour où
       # a été posé. Ses nombres sont ceux de ce jour-là — le coefficient d'un
       # départ en 2054, les deux montants qui montrent pourquoi une marge ne

@@ -69,10 +69,6 @@ export class DonneesMacro {
     this.masse_salariale = this._prolongeAvecEmploi(
       serie("masse_salariale"), "masse_salariale_nominale");
     this.pib_nominal = this._prolongeAvecEmploi(serie("pib_nominal"), "pib_nominal");
-    // Le PIB au seul rythme du scénario, SANS l'emploi : ce que la page Coût
-    // lit, parce qu'elle compose elle-même ce rythme avec la population des
-    // 20-64 ans.
-    this.pib_nominal_hors_emploi = prolonger(serie("pib_nominal"), "pib_nominal");
     this.productivite = prolonger(serie("productivite"), "productivite_reelle");
     this.plafond_securite_sociale = this._plafond(serie("pass"), hypotheses);
     this.smic_horaire = this._prolongeParSalaire(serie("smic_horaire"), "smic_horaire");

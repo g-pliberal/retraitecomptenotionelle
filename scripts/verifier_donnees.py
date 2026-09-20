@@ -1049,6 +1049,32 @@ def source_comptes_retraite_projetes() -> dict[tuple, float]:
     return _comptes_retraite("projete")
 
 
+def _taux_prelevement(marqueur: str) -> dict[tuple, float]:
+    """Le taux de prélèvement du système, en part des revenus d'activité.
+
+    C'est la série que le dépôt DÉDUISAIT jusqu'au 20 septembre 2026, et mal :
+    il reconduisait au-delà de la dernière année d'assiette le taux de cette
+    année-là, en tenant pour acquis que les ressources du COR reculent en part
+    de PIB parce que l'assiette y progresse moins vite que le PIB. Le COR
+    publie la réponse dans la figure des déterminants de ses ressources, et
+    elle est l'inverse : le taux passe de 32,14 % en 2025 à 30,05 % en 2070,
+    l'assiette restant à peu près stable en part de PIB. Une déduction n'est
+    pas une lecture.
+    """
+    taux = _cor_comptes()["taux_prelevement"]
+    return {(annee,): part for annee, part in sorted(taux[marqueur].items())}
+
+
+def source_taux_prelevement() -> dict[tuple, float]:
+    """Le taux observé, 2002 à la dernière année que le COR marque « Obs »."""
+    return _taux_prelevement("observe")
+
+
+def source_taux_prelevement_projete() -> dict[tuple, float]:
+    """Le même taux, projeté par le COR dans son scénario de référence."""
+    return _taux_prelevement("projete")
+
+
 def source_structure_ressources() -> dict[tuple, float]:
     """Part de chaque poste dans les ressources du système de retraite.
 
@@ -3668,6 +3694,77 @@ CERTIFICATIONS = (
         niveau="projetee",
     ),
     Certification(
+        nom="taux_prelevement_retraite",
+        chemin=REFERENCE / "macro" / "taux_prelevement_retraite.csv",
+        cles=("annee",),
+        colonne="taux",
+        source=source_taux_prelevement,
+        origine="COR, rapport annuel, déterminants de l'évolution des "
+                "ressources du système de retraite",
+        decimales=5,
+        tolerance=5.1e-6,
+        niveau="haute",
+        entete=(
+            "# Taux de prélèvement du système de retraite, en part des revenus d'activité",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: part des revenus d'activité, en fraction",
+            "# fiabilite:",
+            "#   haute    (2002-…) : taux observé, calculé par le SG-COR sur les",
+            "#             rapports à la Commission des comptes de la Sécurité",
+            "#             sociale et les comptes nationaux de l'INSEE, recontrôlé",
+            "#             par scripts/verifier_donnees.py contre le classeur du",
+            "#             dernier rapport annuel.",
+            "#   projetee (…-2070) : scénario de référence du même rapport.",
+            "#",
+            "# CE QUE CETTE SÉRIE TRANCHE, ET QUI ÉTAIT DÉDUIT À L'ENVERS",
+            "# -----------------------------------------------------------",
+            "# Les ressources du COR reculent en part de PIB sur l'horizon projeté :",
+            "# 13,95 % en 2025, 12,91 % en 2070. Les deux colonnes de",
+            "# comptes_retraite.csv ne disent pas POURQUOI — si l'assiette rétrécit",
+            "# ou si le taux baisse —, et la réponse décide de ce qu'un taux unique",
+            "# rapporterait : la proposition prélève 18 % d'une assiette, et cette",
+            "# assiette est le quotient des ressources par ce taux.",
+            "#",
+            "# Le dépôt tenait le taux pour constant au-delà de la dernière année",
+            "# d'assiette publiée, et faisait donc porter tout le recul à",
+            "# l'assiette — 42,5 % du PIB en 2025, 39,3 % en 2070 sous cette",
+            "# convention. C'est l'inverse : le COR projette un TAUX qui baisse,",
+            "# de 32,14 % à 30,05 %, et une assiette qui tient sa part de PIB à un",
+            "# point près. La convention démentie coûtait 0,49 point de PIB de",
+            "# recette à la proposition en 2070, et 0,29 en moyenne sur",
+            "# 2026-2070.",
+            "#",
+            "# CE QUE LE DÉPÔT EN PREND, ET CE QU'IL N'EN PREND PAS",
+            "# -----------------------------------------------------",
+            "# Le PROFIL, jamais le NIVEAU. « Revenus d'activité » n'est pas tout à",
+            "# fait l'assiette d'assiette_activite.csv — salaires et traitements",
+            "# bruts plus revenu mixte des ménages —, et les deux taux diffèrent de",
+            "# 2 % en 2025 : 32,14 % ici, 32,84 % mesuré là. Le dépôt garde sa",
+            "# mesure pour l'année d'ancrage, qui est celle où son assiette est",
+            "# certifiée, et n'emprunte à cette série que le rapport d'une année",
+            "# projetée à cette année-là. Un niveau emprunté à une définition",
+            "# voisine déplacerait la recette de 2 % sans que rien ne le dise.",
+            "#",
+            "# Convention EPR, hors produits et charges financières : la même que",
+            "# comptes_retraite.csv, et il le faut — le taux est le quotient de ces",
+            "# ressources-là par l'assiette.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="taux_prelevement_retraite_projete",
+        chemin=REFERENCE / "macro" / "taux_prelevement_retraite.csv",
+        cles=("annee",),
+        colonne="taux",
+        source=source_taux_prelevement_projete,
+        origine="COR, rapport annuel, scénario de référence",
+        decimales=5,
+        tolerance=5.1e-6,
+        niveau="projetee",
+    ),
+    Certification(
         nom="structure_ressources_retraite",
         chemin=REFERENCE / "macro" / "structure_ressources_retraite.csv",
         cles=("annee", "poste"),
@@ -5444,6 +5541,83 @@ def controle_solde_retraite() -> list[str]:
     return messages
 
 
+def controle_base_comptable_retraite() -> list[str]:
+    """Le compte du COR et le PIB du dépôt sont-ils sur la même base ?
+
+    POURQUOI CE CONTRÔLE EXISTE. ``comptes_retraite.csv`` ne porte que des
+    PARTS DE PIB : le COR ne publie pas ses deux colonnes en euros, et le dépôt
+    ne peut donc pas les rebaser lui-même. Une part de PIB n'est pourtant pas
+    une grandeur sans convention — elle dépend de la base des comptes
+    nationaux sous laquelle son dénominateur a été calculé, et un changement de
+    base déplace un ratio de 13 % d'un ou deux dixièmes de point, c'est-à-dire
+    de l'ordre du solde lui-même. Le dépôt rapporte, lui, la dépense de la
+    DREES à ``pib_courant.csv``, comptes nationaux base 2020 ; si le COR était
+    sur une autre base, le recoupement des deux périmètres — moins de trois
+    dixièmes de point, et c'est le seul contrôle externe dont ces deux séries
+    disposent — serait en partie un effet de base, et ne dirait plus rien.
+
+    CE QUE LE CONTRÔLE FAIT. Le COR publie une fois par rapport, et une seule,
+    la structure de ses ressources EN MILLIARDS D'EUROS : c'est le tableau dont
+    ``lire_ventilation`` tire déjà le « dont CNAF » et le « dont Unédic ». Son
+    total est à un poste près celui du compte — il inclut les produits
+    financiers, que la convention du compte exclut —, et le retrancher donne
+    les ressources du périmètre, en euros. Divisées par le PIB du dépôt, elles
+    doivent retrouver la part que le COR publie. Elles la retrouvent à deux
+    centièmes de point : les deux séries sont sur la même base, la note de la
+    figure le dit (« comptes nationaux de l'Insee base 2020 »), et ce contrôle
+    est ce qui s'en apercevrait si un rapport à venir changeait de base sans
+    le dire.
+    """
+    try:
+        cor = _cor_comptes().get("ventilation_transferts", {})
+    except SourceAbsente as erreur:
+        return [f"IGNORÉ  base comptable du compte du COR : {erreur}"]
+    annees = sorted(
+        annee for annee, lignes in cor.items()
+        if {"total_ressources", "produits_financiers"} <= set(lignes)
+    )
+    if not annees:
+        return ["IGNORÉ  base comptable du compte du COR : aucun total en euros"]
+
+    pib = {
+        int(ligne["annee"]): float(ligne["pib_meur"])
+        for ligne in charger_csv(REFERENCE / "macro" / "pib_courant.csv")
+    }
+    part = {
+        int(ligne["annee"]): float(ligne["part_pib"])
+        for ligne in charger_csv(REFERENCE / "macro" / "comptes_retraite.csv")
+        if ligne["poste"] == "ressources"
+    }
+
+    # Deux dixièmes de point sépareraient deux bases des comptes nationaux ;
+    # cinq centièmes laissent passer l'arrondi du milliard et la révision d'un
+    # PIB encore provisoire, et rien de plus.
+    marge = 5e-4
+    messages: list[str] = []
+    for cle in annees:
+        annee = int(cle)
+        if annee not in pib or annee not in part:
+            continue
+        lignes = cor[cle]
+        montant = lignes["total_ressources"] - lignes["produits_financiers"]
+        calcule = montant / pib[annee]
+        if abs(calcule - part[annee]) > marge:
+            messages.append(
+                f"ÉCART   base comptable du compte du COR {annee} : "
+                f"{montant / 1000:.1f} Md€ sur un PIB de {pib[annee] / 1000:.1f} Md€ "
+                f"font {calcule:.4f} du PIB, le COR publie {part[annee]:.4f} — "
+                f"les deux séries ne sont pas sur la même base"
+            )
+        else:
+            messages.append(
+                f"OK      base comptable du compte du COR {annee} : "
+                f"{montant / 1000:.1f} Md€ de ressources sur un PIB de "
+                f"{pib[annee] / 1000:.1f} Md€ font {calcule:.4f}, contre "
+                f"{part[annee]:.4f} publiés — même base 2020"
+            )
+    return messages or ["IGNORÉ  base comptable du compte du COR : aucune année commune"]
+
+
 def controle_transferts_retraite() -> list[str]:
     """Ce que la CNAF et l'Unédic versent doit recouper ce que le COR en dit.
 
@@ -6398,6 +6572,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.extend(controle_ventilation_depenses())
     messages.extend(controle_part_droits_derives())
     messages.extend(controle_solde_retraite())
+    messages.extend(controle_base_comptable_retraite())
     messages.extend(controle_transferts_retraite())
     messages.extend(controle_part_salariale())
     messages.append("")

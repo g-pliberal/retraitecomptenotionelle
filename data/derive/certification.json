@@ -109,7 +109,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, comptes du système de retraite (rapports à la CCSS consolidés)",
    "valeurs": 48,
-   "verifiee_le": "2026-09-16"
+   "verifiee_le": "2026-09-20"
   },
   "comptes_retraite_projetes": {
    "ajoutees": 0,
@@ -120,7 +120,7 @@
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 90,
-   "verifiee_le": "2026-09-16"
+   "verifiee_le": "2026-09-20"
   },
   "cotisants_regimes": {
    "ajoutees": 1148,
@@ -879,7 +879,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, structure des ressources du système de retraite",
    "valeurs": 132,
-   "verifiee_le": "2026-09-16"
+   "verifiee_le": "2026-09-20"
   },
   "taux_cotisation_alignes": {
    "ajoutees": 0,
@@ -924,6 +924,28 @@
    "source": "DILA, base LEGI, code de la sécurité sociale D. 242-4 et décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444",
    "valeurs": 368,
    "verifiee_le": "2026-09-15"
+  },
+  "taux_prelevement_retraite": {
+   "ajoutees": 24,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "3e75b26026f10e0f",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "COR, rapport annuel, déterminants de l'évolution des ressources du système de retraite",
+   "valeurs": 24,
+   "verifiee_le": "2026-09-20"
+  },
+  "taux_prelevement_retraite_projete": {
+   "ajoutees": 45,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "1b9e29fbe6638df8",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "COR, rapport annuel, scénario de référence",
+   "valeurs": 45,
+   "verifiee_le": "2026-09-20"
   },
   "transferts_retraite": {
    "ajoutees": 30,
