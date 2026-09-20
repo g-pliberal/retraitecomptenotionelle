@@ -41,7 +41,7 @@
 import {
   CAS_TYPES, VARIANTES_LIQUIDATION, calculerCasTypes, poidsEffectifs, poidsEgaux,
 } from "./castypes.js";
-import { coutGarantie } from "./garantie.js";
+import { coutGarantie, manqueMoyen } from "./garantie.js";
 import { Fiabilite } from "./serie.js";
 import { ORGANISMES, POSTES } from "./equilibre.js";
 
@@ -501,7 +501,8 @@ class GarantieDistribution {
     const tetesGarantie = tetes[TETES_GARANTIE];
     const vide = { facteur: 0, effectif: 0, beneficiaires: 0, coutConstants: 0,
                    ayantsDroit: 0, tauxRecours: 1.0, avancesLibereesConstants: 0,
-                   reprisesConstants: 0, stockAvancesConstants: 0, tauxReel: 0 };
+                   reprisesConstants: 0, stockAvancesConstants: 0, tauxReel: 0,
+                   partReprise: 0, dureeAvances: 0, populationMortalite: null };
     if (tetesGarantie <= 0 || this.pensionReference <= 0) return vide;
     const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
     if (facteur <= 0) return vide;
@@ -520,6 +521,9 @@ class GarantieDistribution {
       reprisesConstants: 0,
       stockAvancesConstants: 0,
       tauxReel: 0,
+      partReprise: 0,
+      dureeAvances: 0,
+      populationMortalite: null,
     };
   }
 }
@@ -1365,29 +1369,107 @@ class Cout {
  * Copie de `_reprises_successions` dans `cout.py`, qui dit la méthode et ce
  * qu'elle fige.
  */
-function reprisesSuccessions(lignes, simulateur) {
+function reprisesSuccessions(lignes, simulateur, calage) {
   const parametres = simulateur.parametres;
   const bascule = parametres.annee_bascule;
-  const part = parametres.part_reprise_garantie;
   const anneeEuros = parametres.annee_euros_constants;
   const macro = simulateur.macro;
-  const survie = simulateur.mortalite.courbeSurvieUnisexe(65, bascule)
+  const mortalite = simulateur.mortalite;
+  const projetees = lignes.filter((ligne) => ligne.annee >= bascule && ligne.garantie);
+  if (!projetees.length) return;
+
+  // 1. Le taux réel de chaque année : le forward à un an, déflaté.
+  const tauxReels = new Map();
+  for (const ligne of projetees) {
+    const annee = ligne.annee;
+    const nominal = simulateur.courbeTaux.placement(annee - 1, 1).taux;
+    const inflation = macro.coefficientPrix(annee - 1, anneeEuros)
+      / macro.coefficientPrix(annee, anneeEuros) - 1.0;
+    tauxReels.set(annee, (1.0 + nominal) / (1.0 + inflation) - 1.0);
+  }
+  let tauxMoyen = 0.0;
+  for (const t of tauxReels.values()) tauxMoyen += t;
+  tauxMoyen /= tauxReels.size;
+
+  // 2. Les bénéficiaires, tranche par tranche, à l'année de l'enquête.
+  const distribution = calage.distribution;
+  const millesime = distribution.millesime;
+  const ligneEnquete = lignes.find((ligne) => ligne.annee === millesime) || null;
+  const deplacement = ligneEnquete && ligneEnquete.garantie && ligneEnquete.garantie.facteur > 0
+    ? ligneEnquete.garantie.facteur : 1.0;
+  const tranches = [];
+  for (const tranche of distribution.tranches) {
+    const ouverte = tranche.borneSuperieure === null || tranche.borneSuperieure === undefined;
+    const superieure = ouverte ? null : tranche.borneSuperieure * deplacement;
+    const [concernee, manque] = manqueMoyen(
+      tranche.borneInferieure * deplacement, superieure, calage.plancherMensuel,
+    );
+    if (concernee <= 0) continue;
+    const milieu = ouverte ? tranche.borneInferieure
+      : 0.5 * (tranche.borneInferieure + tranche.borneSuperieure);
+    tranches.push([
+      tranche.part * concernee,
+      manque / concernee * 12.0 * calage.versConstants,
+      milieu * deplacement,
+      distribution.partSous(milieu),
+    ]);
+  }
+  let poidsTotal = 0.0;
+  for (const [poids] of tranches) poidsTotal += poids;
+
+  // 3. La mortalité des bénéficiaires : le vingtile de niveau de vie le plus
+  // proche de leur pension moyenne, dans les euros de l'étude de l'INSEE.
+  let population = null;
+  if (poidsTotal > 0 && mortalite.anneeNiveauxDeVie !== null
+      && mortalite.anneeNiveauxDeVie !== undefined) {
+    let pensionMoyenne = 0.0;
+    for (const [poids, , pension] of tranches) pensionMoyenne += poids * pension;
+    pensionMoyenne /= poidsTotal;
+    population = mortalite.populationNiveauDeVieEuros(
+      pensionMoyenne * macro.coefficientPrix(millesime, mortalite.anneeNiveauxDeVie),
+    );
+  }
+  const survie = mortalite.courbeSurvieUnisexe(65, bascule, true, population)
     .filter((s) => s > 1e-9);
   if (!survie.length) return;
   let totalSurvie = 0;
   for (const s of survie) totalSurvie += s;
   const deces = survie.map((s, k) => s - (k + 1 < survie.length ? survie[k + 1] : 0.0));
+
+  // 4. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
+  let part = parametres.part_reprise_garantie;
+  if (part === null || part === undefined) {
+    const patrimoine = simulateur.patrimoine;
+    const bas = patrimoine.distribution("retraites_q1");
+    const haut = patrimoine.distribution("retraites");
+    const versBas = macro.coefficientPrix(anneeEuros, bas.annee);
+    const versHaut = macro.coefficientPrix(anneeEuros, haut.annee);
+    let numerateur = 0.0;
+    let denominateur = 0.0;
+    for (const [poids, complement, , rang] of tranches) {
+      const avance = Math.abs(tauxMoyen) > 1e-12
+        ? complement * ((1.0 + tauxMoyen) ** totalSurvie - 1.0) / tauxMoyen
+        : complement * totalSurvie;
+      const couvertureBas = bas.couverture(avance * versBas);
+      const couvertureHaut = haut.couverture(avance * versHaut);
+      let couverture;
+      if (rang <= 0.25) couverture = couvertureBas;
+      else if (rang >= 0.5) couverture = couvertureHaut;
+      else couverture = couvertureBas + (couvertureHaut - couvertureBas) * (rang - 0.25) / 0.25;
+      numerateur += poids * avance * couverture;
+      denominateur += poids * avance;
+    }
+    part = denominateur > 0 ? numerateur / denominateur : 0.0;
+  }
+
+  // 5. Les avances, année par année.
   const complements = new Map();
   const croissance = new Map();
   let facteur = 1.0;
   let stock = 0.0;
-  for (const ligne of lignes) {
-    if (ligne.annee < bascule || !ligne.garantie) continue;
+  for (const ligne of projetees) {
     const annee = ligne.annee;
-    const nominal = simulateur.courbeTaux.placement(annee - 1, 1).taux;
-    const inflation = macro.coefficientPrix(annee - 1, anneeEuros)
-      / macro.coefficientPrix(annee, anneeEuros) - 1.0;
-    const tauxReel = (1.0 + nominal) / (1.0 + inflation) - 1.0;
+    const tauxReel = tauxReels.get(annee);
     facteur *= 1.0 + tauxReel;
     croissance.set(annee, facteur);
     const garantie = ligne.garantie;
@@ -1409,6 +1491,9 @@ function reprisesSuccessions(lignes, simulateur) {
     garantie.reprisesConstants = part * liberees;
     garantie.stockAvancesConstants = stock;
     garantie.tauxReel = tauxReel;
+    garantie.partReprise = part;
+    garantie.dureeAvances = totalSurvie;
+    garantie.populationMortalite = population;
   }
 }
 
@@ -1489,7 +1574,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
   // Une trajectoire ne peut pas valoir mieux qu'estimée : sa démographie est
   // projetée, sa macroéconomie est une hypothèse, et son contrefactuel n'a
   // jamais existé.
-  reprisesSuccessions(lignes, simulateur);
+  reprisesSuccessions(lignes, simulateur, garantie);
   return new Avenir(
     lignes, dernierePubliee + 1, simulateur.parametres.annee_bascule,
     anneeEuros, Fiabilite.ESTIMEE,

@@ -20,6 +20,7 @@ import { Affiliations, CatalogueRegimes } from "./regimes.js";
 import { ConstructeurCapitalisation } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
 import { DistributionPensions } from "./distribution.js";
+import { PatrimoineMenages } from "./patrimoine.js";
 import { EffectifsCotisants, EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
 import { BaremePrelevements, remunerationDeLaCarriere } from "./remuneration.js";
@@ -407,6 +408,9 @@ export class Simulateur {
     // La distribution des pensions : elle seule chiffre un plancher, et ne
     // sert qu'à la garantie vieillesse de la page Coût.
     this.distribution = new DistributionPensions(paquet);
+    // Le patrimoine des ménages retraités : ce qu'une succession couvre de
+    // l'avance de la garantie, page Coût seulement.
+    this.patrimoine = new PatrimoineMenages(paquet);
     // Les prélèvements hors retraite : ils n'entrent dans AUCUNE pension. Ils
     // ne servent qu'à la fiche de paie, qui dit ce qu'un actif touche pendant
     // qu'il cotise.

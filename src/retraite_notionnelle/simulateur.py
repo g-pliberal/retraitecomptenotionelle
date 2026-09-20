@@ -31,6 +31,7 @@ from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.cotisants import EffectifsCotisants
 from .donnees.distribution import DistributionPensions
+from .donnees.patrimoine import PatrimoineMenages
 from .donnees.effectifs import EffectifsRetraites
 from .donnees.financement_regimes import StructureFinancement
 from .donnees.macro import DonneesMacro
@@ -664,6 +665,15 @@ class Simulateur:
         pas sur treize carrières.
         """
         return DistributionPensions(self.parametres.racine_donnees)
+
+    @cached_property
+    def patrimoine(self) -> PatrimoineMenages:
+        """Le patrimoine des ménages retraités — ce qu'une succession couvre.
+
+        Aucune pension n'en dépend. Il ne sert qu'à la reprise sur succession
+        de la garantie vieillesse, sur la page « Coût ».
+        """
+        return PatrimoineMenages(self.parametres.racine_donnees)
 
     @cached_property
     def financement_regimes(self) -> StructureFinancement:

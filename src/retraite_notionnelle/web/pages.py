@@ -552,8 +552,9 @@ class Saisie:
     emploi: str = "cor_2026"
     #: Les pensions déjà servies à la bascule : sur les prix, ou réindexées.
     stock: str = "prix"
-    #: Part de l'avance de la garantie que la succession couvre, en pour cent.
-    reprise: int = 50
+    #: Part de l'avance de la garantie que la succession couvre, en pour cent ;
+    #: vide, elle est calculée sur le patrimoine des ménages retraités.
+    reprise: int | None = None
     bascule: int = 2026
     euros: int = 2026
     #: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -685,7 +686,7 @@ class Saisie:
                 f"Année des euros constants attendue entre {ANNEE_MINIMALE} et "
                 f"{ANNEE_MAXIMALE}."
             )
-        if not 0 <= self.reprise <= 100:
+        if self.reprise is not None and not 0 <= self.reprise <= 100:
             raise ErreurSaisie(
                 "Part de l'avance couverte par la succession attendue entre 0 "
                 "et 100."
@@ -953,7 +954,7 @@ class Saisie:
             scenario_projection=self.projection,
             trajectoire_emploi=self.emploi,
             revalorisation_stock=RevalorisationStock(self.stock),
-            part_reprise_garantie=self.reprise / 100,
+            part_reprise_garantie=None if self.reprise is None else self.reprise / 100,
             annee_bascule=self.bascule,
             annee_euros_constants=self.euros,
         )
@@ -1207,7 +1208,8 @@ class Saisie:
             "part_cotisation": self.part_cotisation,
             "foyer": self.foyer,
             "projection": self.projection, "emploi": self.emploi,
-            "stock": self.stock, "reprise": self.reprise,
+            "stock": self.stock,
+            "reprise": "" if self.reprise is None else self.reprise,
             "bascule": self.bascule, "euros": self.euros,
         }
         # L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut :
@@ -2840,9 +2842,10 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 "page Coût. Le système 1 n'est pas concerné : il est le "
                 "droit."),
         g.champ("reprise", "Part de l'avance couverte par la succession",
-                saisie.reprise, "page Coût seulement, en pour cent",
+                "" if saisie.reprise is None else saisie.reprise,
+                "page Coût seulement, en pour cent ; vide : calculée",
                 type_="number",
-                complement="La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires, que le dépôt ne connaît pas : ce réglage dit quelle part de l'avance d'un bénéficiaire sa succession couvre, en moyenne. La moitié par défaut, l'ordre de grandeur que donne le patrimoine des ménages retraités publié par le COR ; 30 et 70 encadrent. Zéro éteint la reprise, cent suppose que toute avance est remboursée.",
+                complement="La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires. Vide, la part est calculée sur le patrimoine des ménages retraités selon leur revenu (COR, enquête Patrimoine 2018) : les plus petites pensions au quart le plus modeste, les autres à l'ensemble des retraités. Un nombre remplace ce calcul : zéro éteint la reprise, cent suppose que toute avance est remboursée.",
                 min="0", max="100"),
         g.champ("bascule", "Année de bascule", saisie.bascule,
                 "passage au régime unique", type_="number",
@@ -8023,7 +8026,21 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
          _milliards(ligne.garantie.stock_avances_constants, 0)]
         for annee, ligne in etapes_reprises
     ]
-    part_reprise = base.part_reprise_garantie
+    # La part que la succession couvre, telle que la trajectoire l'a retenue :
+    # calculée sur le patrimoine des retraités, ou réglée.
+    ligne_bascule = cout.avenir.annee(base.annee_bascule)
+    garantie_bascule = ligne_bascule.garantie if ligne_bascule is not None else None
+    part_reprise = garantie_bascule.part_reprise if garantie_bascule else 0.0
+    duree_avances = garantie_bascule.duree_avances if garantie_bascule else 0.0
+    reprise_calculee = base.part_reprise_garantie is None
+    origine_reprise = (
+        "calculés sur le patrimoine des ménages retraités selon leur revenu"
+        if reprise_calculee
+        else "le réglage « Part de l'avance couverte par la succession »"
+    )
+    patrimoine = simulateur.patrimoine
+    modestes = patrimoine.statistiques("retraites_q1")
+    retraites = patrimoine.statistiques("retraites")
 
     # Ce que la garantie remplace : les quatre minima, tels qu'ils coûtent la
     # dernière année observée. Le minimum vieillesse est LU dans les comptes,
@@ -8087,15 +8104,26 @@ salaires, face à un plancher indexé sur les prix, et la garantie décroît.</p
 <p><strong>Ce que les successions rendent.</strong> La garantie est une
 avance : chaque euro versé depuis la bascule porte intérêt au taux réel que la
 courbe des taux sans risque implique, une fois l'inflation retirée, et devient
-une créance sur la succession. Le modèle suit ces avances par âge, avec sa
-table de mortalité, et les libère au décès ; la succession en couvre la part
-du réglage « Part de l'avance couverte par la succession », {g.pourcentage(part_reprise, decimales=0)} par
-défaut. Ce taux de couverture est une hypothèse, non une donnée : le dépôt n'a
-pas de distribution de patrimoine par niveau de pension, et l'ordre de
-grandeur vient du patrimoine des ménages retraités que le COR publie. Les
-lignes « dont reprises » et « garantie nette » des tableaux du haut en
-viennent. Ce que la succession ne couvre pas est abandonné : c'est cette
-part-là, et elle seule, que l'impôt finance pour de bon.</p>
+une créance sur la succession. Le modèle suit ces avances par âge et les
+libère au décès, avec la mortalité du vingtile de niveau de vie où la pension
+moyenne des bénéficiaires les place : une avance dure {g.nombre(duree_avances, 1)} ans en moyenne.
+La succession en couvre {g.pourcentage(part_reprise, decimales=0)}, {origine_reprise}. Ce que la succession ne couvre pas
+est abandonné : c'est cette part-là, et elle seule, que l'impôt finance pour
+de bon. Les lignes « dont reprises » et « garantie nette » des tableaux du
+haut en viennent.</p>
+
+<p class="discret">Le patrimoine des retraités selon leur pension n'est publié
+nulle part. Le COR a publié, sur l'enquête Histoire de vie et Patrimoine 2018,
+le patrimoine brut des ménages retraités selon leur revenu disponible : une
+médiane de {g.euros(modestes['mediane'])} pour le quart le plus modeste, de {g.euros(retraites['mediane'])} pour
+l'ensemble. Chaque tranche de pension sous le plancher reçoit l'avance qu'elle
+constituerait, et la part que la succession en couvre est celle du quart le
+plus modeste pour le premier quart des retraités, celle de l'ensemble à partir
+de la médiane, et le mélange entre les deux ; la part retenue est la moyenne,
+pesée par les avances. Un couple de deux bénéficiaires pèse deux avances sur
+une succession, ce que ce calcul ne voit pas ; il surestime donc la
+couverture. Le réglage « Part de l'avance couverte par la succession »
+remplace ce calcul par un nombre.</p>
 
 {g.tableau(
     ["Année", "Versé", "Avances libérées par les décès", "Reprises",
@@ -8405,6 +8433,13 @@ système qui n'a pas existé. Tout est détaillé sur la page
 """, identifiant="cout-sources")
 
 
+def part_reprise_bascule(contexte: Contexte) -> float:
+    """La part de l'avance que la succession couvre, telle que la trajectoire
+    l'a retenue l'année de la bascule — calculée ou réglée."""
+    ligne = contexte.cout().avenir.annee(contexte.base.annee_bascule)
+    return ligne.garantie.part_reprise if ligne is not None and ligne.garantie else 0.0
+
+
 def _cout_detail_limites(contexte: Contexte) -> str:
     """Tout ce que cette page ne dit pas, en une seule liste."""
     cout = contexte.cout()
@@ -8499,12 +8534,17 @@ laisse treize, écrits ici plutôt qu'en note de bas de page.</p>
   vigueur. Les systèmes qui ne valent que pour l'avenir la servent jusqu'à leur
   bascule, n'étant jusque-là rien d'autre que le système actuel. Ensuite ils ne
   la servent plus, aux veuves d'avant comme à celles d'après.</li>
-  <li><strong>La reprise sur succession est une hypothèse, pas une
-  donnée.</strong> Les lignes « dont reprises » et « garantie nette » supposent
-  que la succession couvre {g.pourcentage(contexte.base.part_reprise_garantie, decimales=0)} de l'avance d'un bénéficiaire, un réglage,
-  faute de distribution de patrimoine par niveau de pension ; le taux réel est
-  lu sur la courbe des taux, la mortalité est celle du modèle, et les avances
-  ne commencent qu'à la bascule.</li>
+  <li><strong>La reprise sur succession repose sur le patrimoine des
+  retraités selon leur revenu, faute de le connaître selon leur
+  pension.</strong> Les lignes « dont reprises » et « garantie nette » supposent
+  que la succession couvre {g.pourcentage(part_reprise_bascule(contexte), decimales=0)} de l'avance d'un bénéficiaire : une part
+  calculée sur ce que le COR a publié de l'enquête Patrimoine 2018, par une
+  convention qui rattache les plus petites pensions au quart des ménages
+  retraités le plus modeste, et qui compte une avance par succession là où un
+  couple en pèse deux. Le taux réel est lu sur la courbe des taux, la mortalité
+  est celle du vingtile de niveau de vie des bénéficiaires, et les avances ne
+  commencent qu'à la bascule. Le réglage « Part de l'avance couverte par la
+  succession » remplace la part calculée par un nombre.</li>
   <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
   projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
   COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en

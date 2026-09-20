@@ -723,6 +723,46 @@ institutions:
           pas. Elle sert à chiffrer la garantie vieillesse du scénario 6, qui est
           une allocation différentielle : son coût est celui de la queue basse de
           cette distribution, et ne se lit sur aucun cas type.
+      - id: insee_patrimoine_menages
+        titre: >-
+          Patrimoine des ménages : déciles début 2021 et début 2024, moyennes et
+          médianes par âge début 2021 (Insee Focus n° 287 et page « Distribution
+          du patrimoine des ménages »)
+        url: https://www.insee.fr/fr/statistiques/6689022
+        acces: fichier
+        statut_integration: automatise
+        cible: data/reference/macro/patrimoine_menages.csv
+        recuperation: scripts/fetch/insee_patrimoine_menages.py
+        millesime: 2026
+        note: >-
+          Deux classeurs de quelques kilo-octets, `if287.xlsx` et
+          `reve-patrim-decile.xlsx`, tirés de l'enquête Histoire de vie et
+          Patrimoine : les déciles et centiles de patrimoine brut et net de tous
+          les ménages, et les montants moyens et médians par âge de la personne
+          de référence. Ils ne disent rien des retraités selon leur pension : ils
+          servent au recoupement, et l'entrée suivante porte le reste.
+      - id: cor_patrimoine_retraites
+        titre: >-
+          Le patrimoine des retraités (secrétariat général du COR, document n° 3
+          de la séance du 16 décembre 2021, sur l'enquête Histoire de vie et
+          Patrimoine 2018)
+        url: https://www.cor-retraites.fr/sites/default/files/2021-12/Doc.03_Patrimoine_retrait%C3%A9s.pdf
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/macro/patrimoine_menages.csv
+        recuperation: scripts/fetch/insee_patrimoine_menages.py
+        note: >-
+          La seule publication qui croise le patrimoine des ménages RETRAITÉS et
+          leur revenu : médiane, moyenne, deuxième et neuvième déciles du
+          patrimoine brut hors reste des ménages dont la personne de référence
+          est retraitée, et, pour le quart de ces ménages au revenu disponible
+          le plus bas, la médiane et le rapport de la moyenne à la médiane, lu
+          sur le graphique 7. Ces valeurs sont saisies dans le script de
+          récupération, qui les écrit avec les lignes de l'INSEE : le PDF se lit
+          par `lecture_pdf.py`, ses graphiques non. Elles servent à la reprise
+          sur succession de la garantie vieillesse (action 47) : le premier
+          quartile tient lieu des plus petites pensions, l'ensemble des
+          retraités des autres.
       - id: drees_non_recours_minimum_vieillesse
         titre: >-
           Le non-recours au minimum vieillesse des personnes seules (Les

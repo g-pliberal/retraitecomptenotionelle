@@ -50,6 +50,7 @@ from retraite_notionnelle.donnees.equilibre import POSTES, POSTES_TRANSFERTS  # 
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
+from retraite_notionnelle.donnees.patrimoine import PatrimoineMenages  # noqa: E402
 from retraite_notionnelle.avantages import charger_avantages  # noqa: E402
 from retraite_notionnelle.donnees.cotisants import EffectifsCotisants  # noqa: E402
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
@@ -276,6 +277,22 @@ def _distribution_pensions() -> dict:
         "bornes_inferieures": [t.borne_inferieure for t in distribution.tranches],
         "bornes_superieures": [t.borne_superieure for t in distribution.tranches],
         "parts": [t.part for t in distribution.tranches],
+    }
+
+
+def _patrimoine_menages() -> dict:
+    """Le patrimoine des ménages : par population, ses statistiques publiées."""
+    patrimoine = PatrimoineMenages(DONNEES)
+    return {
+        "patrimoine": patrimoine.patrimoine,
+        "populations": {
+            population: {
+                "annee": patrimoine.annee(population),
+                "fiabilite": int(patrimoine.fiabilite(population)),
+                "statistiques": patrimoine.statistiques(population),
+            }
+            for population in patrimoine.populations
+        },
     }
 
 
@@ -995,6 +1012,7 @@ def construire() -> bytes:
         "effectifs_retraites": _effectifs_retraites(),
         "effectifs_cotisants": _effectifs_cotisants(),
         "distribution_pensions": _distribution_pensions(),
+        "patrimoine_menages": _patrimoine_menages(),
         "certification": journal_certification(DONNEES),
     }
     texte = json.dumps(paquet, ensure_ascii=False, sort_keys=True,

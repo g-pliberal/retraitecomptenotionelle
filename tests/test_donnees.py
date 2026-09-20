@@ -2372,6 +2372,45 @@ def test_la_distribution_des_pensions_est_une_partition():
             assert suivante.borne_inferieure - precedente.borne_inferieure == 100.0
 
 
+# -- le patrimoine des ménages : ce qu'une succession couvre --------------------
+
+
+def test_le_patrimoine_des_menages_dit_ce_qu_une_succession_couvre():
+    """Le fichier porte les retraités du COR et les déciles de l'INSEE, et la
+    couverture d'une avance en décroît : entière pour rien, faible pour une
+    avance que peu de successions atteignent."""
+    from retraite_notionnelle.donnees.patrimoine import (
+        PatrimoineMenages, repartition_normale,
+    )
+
+    patrimoine = PatrimoineMenages(RACINE_DONNEES)
+    assert {"retraites", "retraites_q1", "ensemble"} <= set(patrimoine.populations)
+    modestes = patrimoine.distribution("retraites_q1")
+    retraites = patrimoine.distribution("retraites")
+    ensemble = patrimoine.distribution("ensemble")
+    assert modestes.forme == "log-normale" and modestes.annee == 2018
+    assert retraites.forme == "quantiles" and ensemble.forme == "quantiles"
+    assert ensemble.annee >= 2024
+    assert patrimoine.fiabilite("retraites") == Fiabilite.HAUTE
+    for distribution in (modestes, retraites, ensemble):
+        assert distribution.couverture(0.0) == 1.0
+        precedente = 1.0
+        for avance in (1e3, 1e4, 1e5, 1e6, 1e7):
+            couverture = distribution.couverture(avance)
+            assert 0.0 <= couverture <= precedente
+            precedente = couverture
+    # Les retraités modestes couvrent moins qu'un retraité quelconque, et la
+    # log-normale rend sa médiane : la moitié des ménages est dessous.
+    assert modestes.couverture(1e5) < retraites.couverture(1e5)
+    assert repartition_normale(0.0) == pytest.approx(0.5)
+    assert repartition_normale(1.96) == pytest.approx(0.975, abs=1e-4)
+    # Sur les quantiles, une avance sous le premier point est presque toute
+    # couverte, et une avance au-delà du dernier ne l'est qu'à hauteur de la
+    # masse : la fonction de quantile est plate au-delà, pas prolongée.
+    assert retraites.couverture(10_000) > 0.9
+    assert retraites.couverture(1e7) < 0.05
+
+
 # -- le registre de conformité du scénario 1 au droit ---------------------------
 
 

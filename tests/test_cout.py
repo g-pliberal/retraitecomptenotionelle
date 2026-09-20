@@ -943,8 +943,11 @@ def test_les_reprises_sur_succession_suivent_les_avances(cout):
     générations servies avant que les reprises ne rattrapent le versé."""
     avenir = cout.avenir
     bascule = avenir.annee_bascule
-    part = Parametres().part_reprise_garantie
-    assert 0.0 < part <= 1.0
+    # Sans réglage, la part est calculée sur le patrimoine des retraités : la
+    # même pour toute la trajectoire, et entre le quart et les trois quarts.
+    assert Parametres().part_reprise_garantie is None
+    part = avenir.annee(bascule).garantie.part_reprise
+    assert 0.25 < part < 0.75
     for ligne in avenir.annees:
         projetee = ligne.garantie
         if ligne.annee < bascule:
@@ -957,6 +960,11 @@ def test_les_reprises_sur_succession_suivent_les_avances(cout):
         assert ligne.garantie_nette_constants() == pytest.approx(
             ligne.cout_constants(COMPOSANTE_GARANTIE) - projetee.reprises_constants)
         assert -0.05 < projetee.taux_reel < 0.05
+        assert projetee.part_reprise == part
+        # Les bénéficiaires meurent plus tôt que la population générale : leur
+        # avance dure moins que l'espérance de vie à 65 ans de tous.
+        assert 15.0 < projetee.duree_avances < 24.0
+        assert projetee.population_mortalite is not None
     premiere = avenir.annee(bascule)
     derniere = avenir.annees[-1]
     # La première année, les décès ne libèrent presque rien : personne n'a

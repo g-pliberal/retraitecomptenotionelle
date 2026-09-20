@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 662<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 908<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8694,9 +8694,68 @@ du conjoint survivant, la donation réintégrée, l'assurance-vie. Ce qui reste
 du point 1 ci-dessus, la distribution de patrimoine des bénéficiaires, est
 désormais ce qui remplacerait le réglage par une donnée.
 
+**Le premier temps du point 1, fait le 20 septembre 2026 : la couverture
+calculée, sur ce qui est publié.** « Est-ce qu'on peut faire des recherches
+pour enlever cette limite ? », puis « oui, commence par le premier temps ». Ce
+qui existe de publié : l'INSEE donne les déciles de patrimoine de tous les
+ménages (Insee Focus n° 287, début 2021 ; page « Distribution du patrimoine
+des ménages », début 2024) et les moyennes et médianes par âge, dans deux
+classeurs de quelques kilo-octets ; le patrimoine des retraités selon leur
+PENSION n'est publié nulle part, et la seule publication qui croise le
+patrimoine des ménages retraités et leur REVENU est le document n° 3 du COR
+du 16 décembre 2021, sur l'enquête Histoire de vie et Patrimoine 2018 —
+médiane 190 200 €, moyenne 296 600 €, deuxième décile 23 000 €, neuvième
+622 900 € pour les ménages retraités ; médiane 36 800 € et moyenne triple pour
+le quart au revenu disponible le plus bas. Les médianes des deuxième, troisième
+et quatrième quartiles sont dans un graphique que `lecture_pdf.py` ne lit pas.
+Fait : `scripts/fetch/insee_patrimoine_menages.py` lit les deux classeurs de
+l'INSEE et porte en dur les six valeurs du COR, avec leur `source_id`, dans
+`data/reference/macro/patrimoine_menages.csv` (78 lignes, `haute` ; deux
+entrées au manifeste, `insee_patrimoine_menages` et `cor_patrimoine_retraites`).
+`donnees/patrimoine.py` et `moteur/js/patrimoine.js` en tirent, par
+population, ce qu'une succession couvre d'une avance : une fonction de
+quantile linéaire par morceaux quand la population publie des quantiles,
+plate au-delà du dernier ; une log-normale calée sur la médiane et la moyenne
+sinon, avec la formule 7.1.26 d'Abramowitz et Stegun des deux côtés pour que
+les deux moteurs rendent le même chiffre. `_reprises_successions` calcule la
+part couverte quand `part_reprise_garantie` est `None`, désormais le défaut :
+chaque tranche de pension sous le plancher reçoit l'avance qu'elle
+constituerait (complément annuel capitalisé au taux réel moyen sur la durée
+moyenne d'une avance), la part que la succession en couvre est celle du quart
+le plus modeste pour le premier quart des retraités, celle de l'ensemble à
+partir de la médiane, et le mélange linéaire entre les deux ; la part retenue
+est la moyenne pesée par les avances. Et la mortalité des bénéficiaires est
+celle du vingtile de niveau de vie où leur pension moyenne les place, par la
+convention de l'action 14 (`population_niveau_de_vie_euros`) : le premier
+vingtile, une avance de 19,6 ans au lieu de 24,2. Le réglage `reprise` du
+formulaire est devenu facultatif ; vide, la part est calculée, et la page
+l'écrit avec son origine, un paragraphe du dépliant donnant les deux médianes
+et la convention, et la quatorzième réserve la disant. Ce que ça donne :
+43 % de couverture, contre la moitié posée à la main ; en 2070, 17,7 Md€
+versés, 9,7 repris, 8,0 nets, 0,22 % du PIB ; de 2026 à 2070, 849 versés, 310
+repris, 539 nets ; un stock d'avances de 320 Md€ à l'horizon. Les deux
+mouvements se compensent en partie : la couverture est plus basse que la
+moitié, mais les avances plus courtes se reprennent plus tôt.
+
+**Ce qui reste du point 1, et demande une personne.** Le fichier individuel
+de l'enquête Histoire de vie et Patrimoine 2020-2021 ou 2023-2024 : le
+fichier standard se commande auprès de Progedo-ADISP (data.progedo.fr) sur
+inscription, à des fins de recherche ou d'enseignement, sans passage devant le
+comité du secret ; le fichier de production et de recherche demande ce
+comité, le fichier détaillé du CASD est payant. Avec le fichier, un script du
+dépôt calculerait par personne de 65 ans et plus la pension individuelle et le
+patrimoine net du ménage, donc la couverture par tranche de pension, et le
+poids des couples ; le fichier resterait hors de git, la table agrégée
+entrerait avec son script. À vérifier au dictionnaire des variables que le
+montant individuel des pensions y est. Deux sites refusent la session et se
+déclarent par l'action 45 : celui de l'ADISP, et celui de la Cour des comptes,
+dont le rapport de septembre 2024 sur les droits de succession donne la
+distribution des successions déclarées, pour un recoupement d'ensemble.
+
 **Fin.** La page Coût donne la garantie en trois lignes, brut, reprises et
-net, sur une distribution de patrimoine citée, et le programme dit en une
-phrase pourquoi il reprend là où le Parlement renonce.
+net, sur le patrimoine des bénéficiaires selon leur pension lu dans le fichier
+de l'enquête, couples compris, et le programme dit en une phrase pourquoi il
+reprend là où le Parlement renonce.
 
 ### 48. Les pensions déjà servies à la bascule gardent les prix — `fait`
 
