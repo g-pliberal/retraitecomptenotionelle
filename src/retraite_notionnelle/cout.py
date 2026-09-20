@@ -2634,6 +2634,250 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
     )
 
 
+#: Année jusqu'à laquelle court la somme des flux d'un engagement acquis. Les
+#: cohortes de la grille qui portent un droit en 2021 sont nées avant 2004 ;
+#: elles y ont quatre-vingt-seize ans, et ce qu'elles touchent encore après ne
+#: se compte plus. C'est aussi l'horizon que le fichier d'hypothèses déclare
+#: (``annee_fin_projection``) : au-delà, les séries macro ne projettent plus.
+HORIZON_ENGAGEMENTS = 2100
+
+#: Les écarts de taux d'actualisation dont la sensibilité est chiffrée, en
+#: points au-dessus de la croissance du PIB. Zéro est la convention du COR ;
+#: les autres disent de combien le niveau d'un engagement acquis dépend d'un
+#: taux que personne n'observe.
+ECARTS_ACTUALISATION: tuple[float, ...] = (0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03)
+
+
+@dataclass(frozen=True)
+class EngagementAcquis:
+    """Ce que le système doit DÉJÀ, au titre des droits acquis à une date.
+
+    LE STOCK, LÀ OÙ LE RESTE DE CE MODULE EST UN FLUX. Un solde dit ce qui
+    manque une année ; ceci dit ce qui est dû pour le passé, que l'avenir
+    cotise ou non. C'est la grandeur du tableau supplémentaire du SEC 2010, et
+    la seule qu'un modèle en comptes notionnels produise nativement.
+
+    POURQUOI ELLE SE CALCULE SANS CONVENTION DE PLUS. Actualiser demande un
+    taux, et un taux est une décision — sauf que le COR en publie un : la note
+    de sa figure du solde moyen dit que « le taux d'actualisation est supposé
+    égal chaque année à la croissance annuelle du PIB », convention que le
+    décret n° 2014-654 relatif au Comité de suivi des retraites encadre.
+    Actualiser au rythme du PIB revient à SOMMER les flux exprimés en part de
+    PIB : le facteur d'actualisation et le dénominateur se simplifient
+    exactement. L'unité de tout le dépôt porte donc déjà l'actualisation, et
+    l'engagement est la somme, année par année, de ce que les droits acquis
+    feront verser, chacun rapporté au PIB de son année.
+
+    CE QUE ``sensibilite`` SERT À DIRE. Que ce niveau n'est pas un fait. Un
+    engagement acquis est une somme actualisée, et le même droit vaut deux
+    fois moins sous un taux supérieur de trois points. Eurostat publie 397 %
+    du PIB pour 2021 sous la convention du tableau 29 ; le dépôt trouve
+    beaucoup plus sous celle du COR, et la différence est un taux, pas un
+    droit. La page le montre plutôt que de choisir un chiffre.
+    """
+
+    annee: int
+    #: Dernière année sommée. Au-delà, les cohortes concernées sont éteintes.
+    horizon: int
+    _par_scenario: dict[str, float]
+    #: La part due à ceux qui ont DÉJÀ liquidé à la date de référence : leur
+    #: pension entière est un droit acquis. Le reste est celle des actifs, au
+    #: prorata de la carrière déjà faite.
+    retraites: float
+    actifs: float
+    #: La part que le modèle somme APRÈS la dernière année que l'INSEE projette,
+    #: où les effectifs ne sont plus lus mais déduits de la table de mortalité.
+    #: Elle dit ce que l'extrapolation porte, et donc ce qu'elle risque.
+    hors_projection: float
+    #: Le même engagement du système actuel sous un taux d'actualisation
+    #: SUPÉRIEUR à la croissance du PIB, écart par écart.
+    _sensibilite: tuple[tuple[float, float], ...] = ()
+
+    def part_pib(self, scenario: str = "actuel") -> float:
+        """L'engagement acquis, en part du PIB de l'année de référence."""
+        return self._par_scenario.get(scenario, 0.0)
+
+    def sensibilite(self) -> tuple[tuple[float, float], ...]:
+        return self._sensibilite
+
+    def ecart_pour(self, cible: float) -> float | None:
+        """L'écart de taux qui ramènerait l'engagement à ``cible``.
+
+        Interpolé linéairement sur la grille chiffrée, et ``None`` si la cible
+        est hors de sa portée : c'est ce qui permet à la page de dire de
+        combien le taux du tableau 29 diffère de celui du COR sans que
+        personne ait à le publier — aucun des deux producteurs ne le fait.
+        """
+        points = self._sensibilite
+        for (ecart_bas, valeur_bas), (ecart_haut, valeur_haut) in zip(points, points[1:]):
+            if valeur_haut <= cible <= valeur_bas:
+                largeur = valeur_bas - valeur_haut
+                if largeur <= 0.0:
+                    return ecart_bas
+                return ecart_bas + (ecart_haut - ecart_bas) * (valeur_bas - cible) / largeur
+        return None
+
+
+def _courbes_survie(mortalite, cohortes: set[int], depart: int,
+                    horizon: int) -> dict[int, tuple[float, ...]]:
+    """Survie de chaque cohorte à partir de ``depart``, table unisexe.
+
+    L'INSEE ne projette sa pyramide que jusqu'en 2070, et ``Population``
+    RECOPIE cette année-là au-delà : demander l'effectif des 85 ans en 2085 y
+    rend celui des 85 ans de 2070, qui sont d'une tout autre cohorte. Pour une
+    cohorte DÉJÀ NÉE, l'extrapolation juste est sa propre survie, et le dépôt
+    porte la table qu'il faut. C'est la même table unisexe que le diviseur des
+    comptes notionnels, prise en génération.
+    """
+    courbes: dict[int, tuple[float, ...]] = {}
+    for cohorte in cohortes:
+        age = depart - cohorte
+        courbes[cohorte] = (
+            mortalite.courbe(float(age), float(depart), None)
+            if 0 <= age else ()
+        )
+    return courbes
+
+
+def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
+                         population: Population, annee: int,
+                         scenarios: Sequence[str],
+                         cas_types: tuple[CasType, ...] = CAS_TYPES,
+                         ponderation: str = "effectifs",
+                         liquidation: str = "droit") -> EngagementAcquis:
+    """L'engagement acquis à ``annee``, système par système, en part de PIB.
+
+    LA CONVENTION D'ACQUISITION EST LE PRORATA TEMPORIS, et il faut la nommer :
+    un actif qui a fait les trois quarts de sa carrière a acquis les trois
+    quarts de sa pension. C'est la convention que le tableau 29 retient pour
+    les régimes à prestations définies, et surtout c'est UNE convention
+    appliquée aux six systèmes, ce qui est la condition pour que leurs
+    engagements se comparent. Un compte notionnel donnerait la sienne sans
+    approximation — le capital virtuel EST le droit acquis —, mais elle ne
+    vaudrait que pour cinq des six systèmes, et l'étalon serait hors du
+    tableau.
+
+    CE QUE LA SOMME COURT. De ``annee`` à ``HORIZON_ENGAGEMENTS``, pour chaque
+    couple (cas type, cohorte) de la grille : la pension qu'il touchera,
+    pondérée par l'effectif survivant de sa cohorte et par le poids de sa
+    caisse, multipliée par la fraction de carrière déjà faite, et rapportée au
+    PIB de l'année. Les effectifs viennent de l'INSEE tant qu'il les projette,
+    de la table de mortalité ensuite — ``hors_projection`` dit ce que cette
+    seconde moitié pèse, et c'est peu.
+    """
+    pensionnes, _ = _pensionnes(simulateur, cas_types, liquidation)
+    poids = _ponderation(simulateur, ponderation, cas_types)
+    macro = simulateur.macro
+    annee_euros = simulateur.parametres.annee_euros_constants
+    horizon = HORIZON_ENGAGEMENTS
+    revalorisation = RevalorisationServie(
+        simulateur,
+        min((p.annee_liquidation for p in pensionnes), default=horizon) - _DEMI_TRANCHE,
+        horizon,
+    )
+
+    derniere_publiee = depenses.derniere_annee
+    masses_ancrage, _, _ = _masses(pensionnes, population, derniere_publiee,
+                                   poids(derniere_publiee), revalorisation)
+    if masses_ancrage["actuel"] <= 0.0:
+        return EngagementAcquis(annee, horizon, {}, 0.0, 0.0, 0.0)
+    # Le prix d'une unité de masse du modèle, en euros constants de référence :
+    # le même ancrage que la trajectoire, et pour la même raison.
+    ancrage = (
+        depenses.repartition(derniere_publiee)
+        * macro.coefficient_prix(derniere_publiee, annee_euros)
+        / masses_ancrage["actuel"]
+    )
+
+    derniere_pib = depenses.pib.derniere_annee
+    pib: dict[int, float] = {}
+    courant = depenses.pib(derniere_pib)
+    for millesime in range(annee, horizon + 1):
+        if millesime <= derniere_pib:
+            pib[millesime] = depenses.pib(millesime)
+        else:
+            courant *= 1.0 + macro.pib_nominal(millesime)
+            pib[millesime] = courant
+    # ``pib`` a été rempli dans l'ordre des années : la récurrence ci-dessus
+    # suppose que la dernière année publiée précède la première projetée, ce
+    # qui est vrai tant que ``annee`` est une année observée.
+    poids_par_annee = {a: poids(a) for a in range(annee, horizon + 1)}
+
+    ages_debut = {cas.code: int(cas.age_debut) for cas in cas_types}
+    cohortes = {
+        pensionne.generation + decalage
+        for pensionne in pensionnes
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
+    }
+    # La frontière est celle de la PYRAMIDE, et non celle du PIB : c'est
+    # l'INSEE qui cesse de projeter les effectifs en 2070, quand la série de
+    # PIB s'arrête cinq ans plus tôt et se prolonge, elle, par un taux.
+    depart_survie = population.derniere_annee
+    survies = _courbes_survie(simulateur.mortalite, cohortes, depart_survie, horizon)
+    # Les facteurs d'actualisation, une fois par année plutôt qu'une fois par
+    # couple : la boucle intérieure en compte des centaines de milliers.
+    facteurs = {
+        millesime: tuple((1.0 + ecart) ** (annee - millesime)
+                         for ecart in ECARTS_ACTUALISATION)
+        for millesime in range(annee, horizon + 1)
+    }
+
+    cles = list(dict.fromkeys(scenarios))
+    totaux = {cle: 0.0 for cle in cles}
+    parts = {"retraites": 0.0, "actifs": 0.0, "hors_projection": 0.0}
+    sensibilite = {ecart: 0.0 for ecart in ECARTS_ACTUALISATION}
+
+    for pensionne in pensionnes:
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            cohorte = pensionne.generation + decalage
+            fin_carriere = pensionne.annee_liquidation + decalage
+            debut_carriere = cohorte + ages_debut[pensionne.code]
+            if fin_carriere <= debut_carriere:
+                continue
+            acquis = (annee - debut_carriere) / (fin_carriere - debut_carriere)
+            acquis = min(1.0, max(0.0, acquis))
+            if acquis <= 0.0:
+                continue
+            courbe = survies.get(cohorte, ())
+            effectif_bord = population.effectif(depart_survie - cohorte, depart_survie)
+            for millesime in range(max(annee, fin_carriere), horizon + 1):
+                part_caisse = poids_par_annee[millesime].get(pensionne.code, 0.0)
+                if part_caisse <= 0.0:
+                    continue
+                if millesime <= depart_survie:
+                    effectif = population.effectif(millesime - cohorte, millesime)
+                else:
+                    rang = millesime - depart_survie
+                    effectif = effectif_bord * (courbe[rang] if rang < len(courbe) else 0.0)
+                if effectif <= 0.0:
+                    continue
+                commun = (
+                    acquis * part_caisse * effectif
+                    * revalorisation.coefficient_stock(fin_carriere, millesime,
+                                                       prospectif=False)
+                    * ancrage / macro.coefficient_prix(millesime, annee_euros)
+                    / pib[millesime]
+                )
+                for cle in cles:
+                    totaux[cle] += commun * pensionne.pensions[cle]
+                valeur = commun * pensionne.pensions["actuel"]
+                parts["retraites" if acquis >= 1.0 else "actifs"] += valeur
+                if millesime > depart_survie:
+                    parts["hors_projection"] += valeur
+                for ecart, facteur in zip(ECARTS_ACTUALISATION, facteurs[millesime]):
+                    sensibilite[ecart] += valeur * facteur
+
+    return EngagementAcquis(
+        annee=annee,
+        horizon=horizon,
+        _par_scenario=totaux,
+        retraites=parts["retraites"],
+        actifs=parts["actifs"],
+        hors_projection=parts["hors_projection"],
+        _sensibilite=tuple((ecart, sensibilite[ecart]) for ecart in ECARTS_ACTUALISATION),
+    )
+
+
 def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   population: Population,
                   comptes: ComptesRetraite | None = None,

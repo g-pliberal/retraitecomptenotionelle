@@ -6794,21 +6794,59 @@ principaux, et pourquoi personne ne le porte au bilan des administrations. Le
 dépôt le montre pour dire que le stock existe et qu'il est grand ; jamais comme
 une dette.
 
-**Ce que le dépôt ne calcule pas : le sien.** Un scénario notionnel produit
-nativement la moitié de cette grandeur — le capital virtuel des ACTIFS en est
-la définition même. L'autre moitié est celle des retraités, la valeur
-actualisée des pensions qu'ils toucheront encore, qu'un compte notionnel ne
-porte plus : le capital a été converti en rente à la liquidation. Les
-additionner demanderait de refaire ce que fait le tableau 29 — table de
-mortalité, taux d'actualisation, hypothèses de revalorisation — et le résultat
-dépendrait de ce taux autant que celui d'Eurostat en dépend. Ce serait donc
-un troisième chiffre conventionnel, à côté de deux qui le sont déjà.
+**Et le dépôt calcule le sien, depuis le 20 septembre 2026.** Le taux
+d'actualisation n'avait pas à être décidé : **le COR en publie un**. La note de
+sa figure du solde moyen — celle que le décret n° 2014-654 relatif au Comité de
+suivi des retraites encadre — dit que « le taux d'actualisation est supposé égal
+chaque année à la croissance annuelle du PIB ». Or actualiser au rythme du PIB
+revient à **sommer les flux exprimés en part de PIB** : le facteur
+d'actualisation et le dénominateur se simplifient exactement. L'unité de tout le
+dépôt portait donc déjà l'actualisation, et l'engagement est la somme, année par
+année, de ce que les droits acquis feront verser, chacun rapporté au PIB de son
+année.
 
-Techniquement, le modèle en a les moyens : `moteur/compte.py` calcule le
-capital notionnel année par année, et `cout.py` sait pondérer une grandeur de
-la grille par les effectifs de l'INSEE. Ce qui manque est la partie des
-retraités et la convention d'actualisation, qui est une décision et non un
-calcul. L'action est ouverte dans la feuille de route.
+**Ce que le modèle trouve**, à la dernière date qu'Eurostat transmette :
+
+| | Part du PIB en 2021 |
+|---|---|
+| Système actuel, convention du COR | **579 %** |
+| — dont retraités (pension entière acquise) | 231 % |
+| — dont actifs, au prorata de la carrière faite | 347 % |
+| Proposition (système 6) | 370 % |
+| Notionnel part salariale (système 2) | 162 % |
+| Publié par Eurostat, tableau 29 | 397 % |
+
+La proposition doit moins parce qu'elle promet moins : c'est la même règle qui
+fait baisser ses pensions et son engagement, et le rapport des deux est à peu
+près celui des masses.
+
+**L'écart avec le chiffre publié est un TAUX, pas un droit.** Les mêmes droits,
+actualisés **deux points de plus par an**, valent exactement les 397 %
+d'Eurostat. Ni l'un ni l'autre n'est faux : un engagement acquis n'a pas de
+niveau propre, il a un taux. C'est la même démonstration que les soixante points
+d'écart entre deux transmissions, faite cette fois de l'intérieur, et c'est
+pourquoi la page affiche les deux sans choisir.
+
+**Trois conventions à connaître.** Le **prorata temporis** : un actif qui a fait
+les trois quarts de sa carrière a acquis les trois quarts de sa pension. C'est
+celle du tableau 29 pour les régimes à prestations définies, et surtout c'est UNE
+convention appliquée aux six systèmes, ce qui est la condition pour que leurs
+engagements se comparent. Un compte notionnel donnerait la sienne sans
+approximation — le capital virtuel EST le droit acquis — mais elle ne vaudrait
+que pour cinq des six, et l'étalon serait hors du tableau. Ensuite,
+l'**extrapolation au-delà de 2070** : l'INSEE ne projette pas la pyramide plus
+loin, et les cohortes déjà nées y sont prolongées par la table de mortalité du
+dépôt, la même qui sert de diviseur aux comptes notionnels. Elle ne porte que
+**35 points sur 579**, soit six pour cent : le résultat ne dit donc pas d'abord
+une table de mortalité, et un test borne cette part. Enfin, la table est **figée
+sous les réglages de référence**, comme le reste du bilan, parce que sommer
+quatre-vingts années de flux ne peut pas se faire chez le lecteur.
+
+**Ce qui reste.** L'engagement du dépôt hérite de tout ce que sa trajectoire
+suppose — treize carrières, une grille de générations au pas de cinq ans, et une
+dépense projetée plus haute que celle du COR (§ 5 ter). Il ne remplace pas le
+tableau 29 : il dit ce que le modèle doit, sous une convention nommée, et ce que
+cette convention vaut.
 
 **Et ce n'est pas la dette que la page montre déjà.** `Dette` accumule les
 SOLDES À VENIR, avec intérêts, à partir de zéro : ce que les déficits
@@ -7257,7 +7295,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1828<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1832<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

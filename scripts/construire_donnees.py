@@ -1054,7 +1054,30 @@ def _bilan(contexte=None) -> dict:
     # observation. C'est ce qui permet à la page de dire un manque de 2070 en
     # euros — « au PIB d'aujourd'hui », et elle l'écrit.
     publiees = [ligne for ligne in solde.annees if ligne.pib > 0.0]
+    # L'ENGAGEMENT ACQUIS, à la dernière date qu'Eurostat transmette : c'est
+    # par elle que le chiffre du dépôt et celui du tableau 29 se comparent, et
+    # la choisir ailleurs comparerait deux millésimes. Douze secondes de plus,
+    # pour la même raison que le reste de cette table : la page ne peut pas
+    # sommer quatre-vingts années de flux chez le lecteur.
+    from retraite_notionnelle.cout import calculer_engagements
+
+    comptes = contexte.comptes()
+    annee_engagement = comptes.annees_engagements()[-1]
+    engagement = calculer_engagements(
+        contexte.simulateur(), contexte.depenses(), contexte.population(),
+        annee_engagement, scenarios)
     return {
+        "engagements": {
+            "annee": engagement.annee,
+            "horizon": engagement.horizon,
+            "scenarios": {s: engagement.part_pib(s) for s in scenarios},
+            "retraites": engagement.retraites,
+            "actifs": engagement.actifs,
+            "hors_projection": engagement.hors_projection,
+            "sensibilite": [{"ecart": ecart, "part_pib": part}
+                            for ecart, part in engagement.sensibilite()],
+            "publie": comptes.engagements(annee_engagement),
+        },
         "premiere_annee_projetee": solde.premiere_annee_projetee,
         "annee_assiette": assiette.derniere_annee,
         "part_pib_assiette": assiette.part_pib(assiette.derniere_annee),

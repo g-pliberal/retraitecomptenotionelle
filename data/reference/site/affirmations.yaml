@@ -786,6 +786,23 @@ affirmations:
     etat: verifiee
     controle: le_compte_est_un_flux_et_le_stock_existe
 
+  # LE NÔTRE, calculé le 20 septembre 2026 sous la convention que le COR
+  # publie. Le dépôt portait l'engagement acquis d'Eurostat sans produire le
+  # sien, ce qui était le comble pour un modèle en comptes notionnels.
+  - id: cout.engagement_du_depot
+    page: /cout
+    extrait: "Et le dépôt calcule le sien."
+    porte: l'engagement acquis du modèle est calculé sous la convention d'actualisation du COR, et ses deux moitiés sont chiffrées
+    etat: verifiee
+    controle: engagement_acquis_du_depot
+
+  - id: cout.engagement_est_un_taux
+    page: /cout
+    extrait: "est un TAUX, pas un droit"
+    porte: l'écart entre l'engagement du dépôt et celui publié s'explique par un écart de taux d'actualisation, chiffré
+    etat: verifiee
+    controle: engagement_acquis_du_depot
+
   - id: reglages.avertissement
     page: [/cas-types, /cout, /avantages]
     extrait: "Ces chiffres ne sont pas ceux des réglages par défaut."

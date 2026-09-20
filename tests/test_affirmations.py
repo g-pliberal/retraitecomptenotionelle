@@ -1342,6 +1342,51 @@ def _(m: Modele):
         assert normaliser(g.pourcentage(valeur, decimales=0)) in cout, valeur
 
 
+@controle("engagement_acquis_du_depot")
+def _(m: Modele):
+    """Le dépôt calcule son propre engagement acquis, et l'écart est un taux.
+
+    C'EST LA GRANDEUR QU'UN COMPTE NOTIONNEL DOIT SAVOIR DIRE. Le dépôt la
+    portait de l'extérieur — le tableau supplémentaire du SEC 2010 — sans
+    produire la sienne. Il la produit depuis le 20 septembre 2026, sous la
+    convention que le COR publie : « le taux d'actualisation est supposé égal
+    chaque année à la croissance annuelle du PIB ». Actualiser au rythme du PIB
+    revient à sommer des parts de PIB, et c'est ce qui rend le calcul possible
+    sans décider d'un taux.
+
+    Quatre choses tenues ici. Que l'engagement soit d'un autre ORDRE que le
+    flux — au moins vingt fois la dépense d'une année. Que ses deux moitiés
+    somment au total, retraités et actifs au prorata. Que l'extrapolation
+    au-delà de la pyramide de l'INSEE ne porte qu'une petite part, faute de
+    quoi le résultat dirait surtout la table de mortalité. Et qu'un écart de
+    taux POSITIF et modeste ramène l'engagement du dépôt sur celui qu'Eurostat
+    publie : c'est la démonstration que le niveau d'un engagement acquis est un
+    taux, et non un droit.
+    """
+    engagement = m.contexte.bilan().engagements
+    assert engagement is not None, "la table figée ne porte pas l'engagement"
+    comptes = m.contexte.comptes()
+    total = engagement.part_pib()
+    assert total > 20 * comptes.depense(engagement.annee), total
+    assert engagement.retraites + engagement.actifs == pytest.approx(total, rel=1e-9)
+    assert 0.0 < engagement.hors_projection < 0.15 * total, engagement.hors_projection
+
+    # La proposition promet moins, donc elle doit moins.
+    assert 0.0 < engagement.part_pib("notionnel_liberal") < total
+
+    ecart = engagement.ecart_pour(engagement.publie)
+    assert ecart is not None, "la grille de sensibilité ne couvre pas le publié"
+    assert 0.0 < ecart < 0.05, ecart
+    # La sensibilité décroît : un taux plus élevé ne peut pas valoir plus.
+    valeurs = [valeur for _, valeur in engagement.sensibilite()]
+    assert valeurs == sorted(valeurs, reverse=True), valeurs
+
+    cout = TEMOINS_PAR_NOM["cout"]["texte"]
+    for valeur in (total, engagement.retraites, engagement.actifs,
+                   engagement.part_pib("notionnel_liberal")):
+        assert normaliser(g.pourcentage(valeur, decimales=0)) in cout, valeur
+
+
 @controle("deficit_se_creuse")
 def _(m: Modele):
     """Le solde du système actuel se creuse, et les pages écrivent ses nombres."""
