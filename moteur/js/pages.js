@@ -6029,11 +6029,19 @@ par année.`,
   const partClassement = derniere.anticipee > 0
     ? (derniere.anticipees.classement || 0) / derniere.anticipee
     : 0;
+  // Ce que les mêmes dispositifs ajoutent au MONTANT des pensions : les
+  // lignes d'âge que le modèle calcule. Compté, jamais écrit : voir le Python.
+  const montantAge = c.lignesModele
+    .filter((ligne) => inventaire.familleDeLigne(ligne) === "age_et_bonifications")
+    .reduce((somme, ligne) => somme + (derniere.lignes[ligne] || 0), 0);
+  const rapportAge = montantAge > 0
+    ? `, soit ${g.nombre(derniere.anticipee / montantAge, 0)} fois ce que `
+      + "les mêmes dispositifs ajoutent au <em>montant</em> des pensions"
+    : "";
   const carteAge = g.cle(
     "Et partir plus tôt, combien cela coûte-t-il ?",
     `<strong>${milliards(derniere.anticipee, 1)} de pensions servies avant
-l'âge légal en ${derniere.annee}</strong>, soit treize fois ce que les mêmes
-dispositifs ajoutent au <em>montant</em> des pensions. Une annuité versée avant
+l'âge légal en ${derniere.annee}</strong>${rapportAge}. Une annuité versée avant
 l'âge légal n'est rattrapée par aucune décote.`,
     courbeAge + g.depliant(
       "Pourquoi le montant ne suffit pas à le dire",
@@ -6850,6 +6858,28 @@ function coutDetailEquilibre(contexte) {
       equilibre ? String(equilibre) : "jamais",
     ];
   });
+  // La dernière note SUIT LE SIGNE du coefficient, sous peine de démentir le
+  // nombre qu'elle commente : voir le modèle Python.
+  const coefficient = horizon.coefficient("notionnel_liberal");
+  const lectureCoefficient = coefficient >= 1.0
+    ? "<strong>Un coefficient supérieur à un est une marge, et une "
+      + `marge se sert.</strong> Lire les ${g.nombre(coefficient, 2)} de la `
+      + "proposition comme une économie de "
+      + `${g.pourcentage(1 - 1 / coefficient, false, 0)} serait un `
+      + "contresens : à ces recettes-là, ce système servirait davantage que "
+      + "ce que la colonne « dépense » lui prête, et autrement réparti entre "
+      + "les carrières."
+    : "<strong>Un coefficient inférieur à un est un manque, et un manque "
+      + `se règle.</strong> Les ${g.nombre(coefficient, 2)} de la proposition `
+      + `en ${solde.derniereAnnee} disent qu'à ses recettes, `
+      + `${g.pourcentage(horizon.tauxLiberal, false, 0)} appliqués à `
+      + "l'assiette des revenus d'activité, sans les impôts affectés ni les "
+      + "transferts qui payaient des droits supprimés, le système servirait "
+      + `${g.pourcentage(coefficient, false, 0)} de ce que la colonne `
+      + "« dépense » lui prête. Il faudrait rogner de "
+      + `${g.pourcentage(1 - coefficient, false, 0)}, relever le taux, ou `
+      + "financer autrement. C'est au réglage annuel du programme de "
+      + "l'absorber, et il déplacerait toutes les pensions du même facteur.";
   return g.depliant(
     "Le coefficient d'équilibre : de combien faudrait-il rogner ?", `
 <p>Un système en comptes notionnels se pilote par un seul chiffre : le facteur
@@ -6898,15 +6928,17 @@ sa recette. Elle ne touche aucune compensation d'allègement, n'en accordant
 aucun, et cela ne lui retire rien ici : cette compensation passe par la TVA, qui
 finance la branche maladie et n'apparaît pas au compte de la retraite.</div>
 
-<div class="note"><strong>L'autre lecture, plus sévère d'un point de
+<div class="note"><strong>L'autre lecture, plus généreuse d'un point de
 PIB.</strong> Le modèle sait aussi appliquer aux 18 % la DÉPERDITION du système
 actuel : les allègements généraux et les assiettes réduites font qu'un taux
 légal proche de
 ${g.pourcentage(0.18 / horizon.rapportsRecettes.notionnel_liberal, false, 0)}
 ne rentre pas en entier. Compter ainsi revient à supposer que la proposition
-garde la même architecture d'exonérations, ce que son texte ne dit pas. Les deux
-lectures se défendent, elles sont toutes deux calculées, et la page a retenu la
-première.</div>
+garde la même architecture d'exonérations, ce que son texte ne dit pas, et à
+lui laisser du même mouvement les impôts affectés et les subventions
+d'équilibre que la lecture retenue ne reconduit pas. Son solde moyen projeté
+est meilleur d'environ un point de PIB. Les deux lectures se défendent, elles
+sont toutes deux calculées, et la page a retenu la plus sévère.</div>
 
 ${noteLectureCoefficient(reglageProposition(solde))}
 `, "cout-equilibre");
@@ -10411,9 +10443,11 @@ function programmeTransition(contexte) {
         + "règles : rien ne change encore pour personne, mais le relevé de "
         + "carrière devient lisible. Les données existent déjà."],
       [`2. La bascule (${base.annee_bascule})`,
-        "Les droits déjà acquis sont figés, réduits à leur part "
-        + "contributive et convertis en capital. Les pensions déjà versées "
-        + "ne sont pas touchées. Les régimes fusionnent en un seul."],
+        "Chaque carrière est recalculée depuis sa première cotisation, "
+        + "y compris celles dont la pension est déjà liquidée : le compte "
+        + "notionnel remplace la pension du droit en vigueur, et ce qui "
+        + "n'a pas été cotisé n'est plus servi. Les régimes fusionnent en "
+        + "un seul."],
       ["3. Le taux unique",
         "Toute cotisation postérieure à la bascule est prélevée à "
         + `${g.pourcentage(base.taux_cotisation_liberal, false, 0)} de la `
@@ -10431,16 +10465,17 @@ function programmeTransition(contexte) {
         "Le chiffre qui ramène l'année à zéro est publié et appliqué "
         + "chaque année. C'est ce qui remplace les réformes."],
       ["6. Le régime de croisière",
-        "La dernière pension calculée en partie sous l'ancien barème est "
-        + "versée une quarantaine d'années après la bascule. D'ici là, les "
-        + "deux systèmes coexistent dans chaque pension."],
+        "La dernière pension dont une part des cotisations a été versée "
+        + "aux anciens taux est liquidée une quarantaine d'années après la "
+        + "bascule. D'ici là, chaque compte porte des années cotisées aux "
+        + "taux réels de son régime et des années au taux unique."],
     ],
     ["", "texte"],
     "Du système actuel au régime unique",
     true,
   );
   return g.depliant("Comment on y va, étape par étape", `
-<p>La bascule fige ce qui est acquis.</p>
+<p>La bascule recalcule tout, depuis la première cotisation.</p>
 ${etapes}
 <p>Après la bascule, un seul régime : départ possible à
 ${age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>`);

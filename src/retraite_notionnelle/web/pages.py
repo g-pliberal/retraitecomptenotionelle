@@ -2480,9 +2480,11 @@ def _programme_transition(contexte: Contexte) -> str:
              "règles : rien ne change encore pour personne, mais le relevé de "
              "carrière devient lisible. Les données existent déjà."],
             [f"2. La bascule ({base.annee_bascule})",
-             "Les droits déjà acquis sont figés, réduits à leur part "
-             "contributive et convertis en capital. Les pensions déjà versées "
-             "ne sont pas touchées. Les régimes fusionnent en un seul."],
+             "Chaque carrière est recalculée depuis sa première cotisation, "
+             "y compris celles dont la pension est déjà liquidée : le compte "
+             "notionnel remplace la pension du droit en vigueur, et ce qui "
+             "n'a pas été cotisé n'est plus servi. Les régimes fusionnent en "
+             "un seul."],
             ["3. Le taux unique",
              f"Toute cotisation postérieure à la bascule est prélevée à "
              f"{g.pourcentage(base.taux_cotisation_liberal, decimales=0)} de la "
@@ -2500,16 +2502,17 @@ def _programme_transition(contexte: Contexte) -> str:
              "Le chiffre qui ramène l'année à zéro est publié et appliqué "
              "chaque année. C'est ce qui remplace les réformes."],
             ["6. Le régime de croisière",
-             "La dernière pension calculée en partie sous l'ancien barème est "
-             "versée une quarantaine d'années après la bascule. D'ici là, les "
-             "deux systèmes coexistent dans chaque pension."],
+             "La dernière pension dont une part des cotisations a été versée "
+             "aux anciens taux est liquidée une quarantaine d'années après la "
+             "bascule. D'ici là, chaque compte porte des années cotisées aux "
+             "taux réels de son régime et des années au taux unique."],
         ],
         ["", "texte"],
         titre="Du système actuel au régime unique",
         entete_de_ligne=True,
     )
     return g.depliant("Comment on y va, étape par étape", f"""
-<p>La bascule fige ce qui est acquis.</p>
+<p>La bascule recalcule tout, depuis la première cotisation.</p>
 {etapes}
 <p>Après la bascule, un seul régime : départ possible à
 {_age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>""")
@@ -6917,11 +6920,25 @@ par année.""",
 
     part_classement = (derniere.anticipees.get("classement", 0.0)
                        / derniere.anticipee if derniere.anticipee > 0 else 0.0)
+    # Ce que les mêmes dispositifs ajoutent au MONTANT des pensions : les
+    # lignes d'âge que le modèle calcule — la catégorie active ; la carrière
+    # longue et les âges des régimes spéciaux ne se mesurent que par la durée.
+    # Le rapport était écrit « treize fois » ; il a valu quinze, puis
+    # vingt-sept, sans que la phrase bouge. Il est compté, et le catalogue des
+    # affirmations du site le tient.
+    montant_age = sum(
+        derniere.lignes.get(ligne, 0.0) for ligne in cout.lignes_modele
+        if inventaire.famille_de_ligne(ligne) == "age_et_bonifications"
+    )
+    rapport_age = (
+        f", soit {g.nombre(derniere.anticipee / montant_age, 0)} fois ce que "
+        "les mêmes dispositifs ajoutent au <em>montant</em> des pensions"
+        if montant_age > 0 else ""
+    )
     carte_age = g.cle(
         "Et partir plus tôt, combien cela coûte-t-il ?",
         f"""<strong>{_milliards(derniere.anticipee, 1)} de pensions servies avant
-l'âge légal en {derniere.annee}</strong>, soit treize fois ce que les mêmes
-dispositifs ajoutent au <em>montant</em> des pensions. Une annuité versée avant
+l'âge légal en {derniere.annee}</strong>{rapport_age}. Une annuité versée avant
 l'âge légal n'est rattrapée par aucune décote.""",
         courbe_age + g.depliant(
             "Pourquoi le montant ne suffit pas à le dire",
@@ -7791,6 +7808,36 @@ def _cout_detail_equilibre(contexte: Contexte) -> str:
             g.nombre(horizon.coefficient(scenario), 2),
             str(equilibre) if equilibre else "jamais",
         ])
+    # La dernière note SUIT LE SIGNE du coefficient, sous peine de démentir le
+    # nombre qu'elle commente. Elle ne connaissait qu'une marge, et le jour où
+    # la recette de la proposition est devenue ses 18 % sur l'assiette, le
+    # facteur est passé sous un : la page lisait « une économie de −9 % »
+    # au-dessus d'un 0,92. Le catalogue des affirmations du site le tient.
+    coefficient = horizon.coefficient("notionnel_liberal")
+    if coefficient >= 1.0:
+        lecture_coefficient = (
+            "<strong>Un coefficient supérieur à un est une marge, et une "
+            f"marge se sert.</strong> Lire les {g.nombre(coefficient, 2)} de la "
+            "proposition comme une économie de "
+            f"{g.pourcentage(1 - 1 / coefficient, decimales=0)} serait un "
+            "contresens : à ces recettes-là, ce système servirait davantage que "
+            "ce que la colonne « dépense » lui prête, et autrement réparti entre "
+            "les carrières."
+        )
+    else:
+        lecture_coefficient = (
+            "<strong>Un coefficient inférieur à un est un manque, et un manque "
+            f"se règle.</strong> Les {g.nombre(coefficient, 2)} de la proposition "
+            f"en {solde.derniere_annee} disent qu'à ses recettes, "
+            f"{g.pourcentage(horizon.taux_liberal, decimales=0)} appliqués à "
+            "l'assiette des revenus d'activité, sans les impôts affectés ni les "
+            "transferts qui payaient des droits supprimés, le système servirait "
+            f"{g.pourcentage(coefficient, decimales=0)} de ce que la colonne "
+            "« dépense » lui prête. Il faudrait rogner de "
+            f"{g.pourcentage(1 - coefficient, decimales=0)}, relever le taux, ou "
+            "financer autrement. C'est au réglage annuel du programme de "
+            "l'absorber, et il déplacerait toutes les pensions du même facteur."
+        )
     return g.depliant(
         "Le coefficient d'équilibre : de combien faudrait-il rogner ?", f"""
 <p>Un système en comptes notionnels se pilote par un seul chiffre : le facteur
@@ -7839,15 +7886,17 @@ sa recette. Elle ne touche aucune compensation d'allègement, n'en accordant
 aucun, et cela ne lui retire rien ici : cette compensation passe par la TVA, qui
 finance la branche maladie et n'apparaît pas au compte de la retraite.</div>
 
-<div class="note"><strong>L'autre lecture, plus sévère d'un point de
+<div class="note"><strong>L'autre lecture, plus généreuse d'un point de
 PIB.</strong> Le modèle sait aussi appliquer aux 18 % la DÉPERDITION du système
 actuel : les allègements généraux et les assiettes réduites font qu'un taux
 légal proche de
 {g.pourcentage(0.18 / horizon.rapports_recettes["notionnel_liberal"], decimales=0)}
 ne rentre pas en entier. Compter ainsi revient à supposer que la proposition
-garde la même architecture d'exonérations, ce que son texte ne dit pas. Les deux
-lectures se défendent, elles sont toutes deux calculées, et la page a retenu la
-première.</div>
+garde la même architecture d'exonérations, ce que son texte ne dit pas, et à
+lui laisser du même mouvement les impôts affectés et les subventions
+d'équilibre que la lecture retenue ne reconduit pas. Son solde moyen projeté
+est meilleur d'environ un point de PIB. Les deux lectures se défendent, elles
+sont toutes deux calculées, et la page a retenu la plus sévère.</div>
 
 {_note_lecture_coefficient(_reglage_proposition(solde))}
 """, identifiant="cout-equilibre")
